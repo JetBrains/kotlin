@@ -4,11 +4,11 @@ FILE fqName:<root> fileName:/genericDelegatedProperty.kt
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
     CONSTRUCTOR visibility:public <> () returnType:<root>.C<T of <root>.C> [primary]
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C modality:FINAL visibility:public superTypes:[kotlin.Any]'
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -23,14 +23,14 @@ FILE fqName:<root> fileName:/genericDelegatedProperty.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Delegate
     CONSTRUCTOR visibility:private <> () returnType:<root>.Delegate [primary]
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Delegate modality:FINAL visibility:public superTypes:[kotlin.Any]'
     FUN name:getValue visibility:public modality:FINAL <> ($this:<root>.Delegate, thisRef:kotlin.Any?, kProp:kotlin.Any?) returnType:kotlin.Int [operator]
       $this: VALUE_PARAMETER name:<this> type:<root>.Delegate
       VALUE_PARAMETER name:thisRef index:0 type:kotlin.Any?
       VALUE_PARAMETER name:kProp index:1 type:kotlin.Any?
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun getValue (thisRef: kotlin.Any?, kProp: kotlin.Any?): kotlin.Int [operator] declared in <root>.Delegate'
+        RETURN type=kotlin.Nothing from='public final fun getValue (thisRef: kotlin.Any?, kProp: kotlin.Any?): kotlin.Int declared in <root>.Delegate'
           CONST Int type=kotlin.Int value=42
     FUN name:setValue visibility:public modality:FINAL <> ($this:<root>.Delegate, thisRef:kotlin.Any?, kProp:kotlin.Any?, newValue:kotlin.Int) returnType:kotlin.Unit [operator]
       $this: VALUE_PARAMETER name:<this> type:<root>.Delegate
@@ -40,7 +40,7 @@ FILE fqName:<root> fileName:/genericDelegatedProperty.kt
       BLOCK_BODY
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -61,10 +61,10 @@ FILE fqName:<root> fileName:/genericDelegatedProperty.kt
       $receiver: VALUE_PARAMETER name:<this> type:<root>.C<T of <root>.<get-genericDelegatedProperty>>
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-genericDelegatedProperty> <T> (): kotlin.Int declared in <root>'
-          CALL 'public final fun getValue (thisRef: kotlin.Any?, kProp: kotlin.Any?): kotlin.Int [operator] declared in <root>.Delegate' type=kotlin.Int origin=null
+          CALL 'public final fun getValue (thisRef: kotlin.Any?, kProp: kotlin.Any?): kotlin.Int declared in <root>.Delegate' type=kotlin.Int origin=null
             $this: GET_FIELD 'FIELD PROPERTY_DELEGATE name:genericDelegatedProperty$delegate type:<root>.Delegate visibility:private [final,static]' type=<root>.Delegate origin=null
             thisRef: GET_VAR '<this>: <root>.C<T of <root>.<get-genericDelegatedProperty>> declared in <root>.<get-genericDelegatedProperty>' type=<root>.C<T of <root>.<get-genericDelegatedProperty>> origin=null
-            kProp: PROPERTY_REFERENCE 'public final genericDelegatedProperty: kotlin.Int [delegated,var]' field=null getter='public final fun <get-genericDelegatedProperty> <T> (): kotlin.Int declared in <root>' setter='public final fun <set-genericDelegatedProperty> <T> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.reflect.KMutableProperty1<<root>.C<T of <root>.<get-genericDelegatedProperty>>, kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+            kProp: PROPERTY_REFERENCE 'public final genericDelegatedProperty: kotlin.Int' field=null getter='public final fun <get-genericDelegatedProperty> <T> (): kotlin.Int declared in <root>' setter='public final fun <set-genericDelegatedProperty> <T> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.reflect.KMutableProperty1<<root>.C<T of <root>.<get-genericDelegatedProperty>>, kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
               <1>: T of <root>.<get-genericDelegatedProperty>
     FUN DELEGATED_PROPERTY_ACCESSOR name:<set-genericDelegatedProperty> visibility:public modality:FINAL <T> ($receiver:<root>.C<T of <root>.<set-genericDelegatedProperty>>, <set-?>:kotlin.Int) returnType:kotlin.Unit
       correspondingProperty: PROPERTY name:genericDelegatedProperty visibility:public modality:FINAL [delegated,var]
@@ -73,9 +73,9 @@ FILE fqName:<root> fileName:/genericDelegatedProperty.kt
       VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <set-genericDelegatedProperty> <T> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>'
-          CALL 'public final fun setValue (thisRef: kotlin.Any?, kProp: kotlin.Any?, newValue: kotlin.Int): kotlin.Unit [operator] declared in <root>.Delegate' type=kotlin.Unit origin=null
+          CALL 'public final fun setValue (thisRef: kotlin.Any?, kProp: kotlin.Any?, newValue: kotlin.Int): kotlin.Unit declared in <root>.Delegate' type=kotlin.Unit origin=null
             $this: GET_FIELD 'FIELD PROPERTY_DELEGATE name:genericDelegatedProperty$delegate type:<root>.Delegate visibility:private [final,static]' type=<root>.Delegate origin=null
             thisRef: GET_VAR '<this>: <root>.C<T of <root>.<set-genericDelegatedProperty>> declared in <root>.<set-genericDelegatedProperty>' type=<root>.C<T of <root>.<set-genericDelegatedProperty>> origin=null
-            kProp: PROPERTY_REFERENCE 'public final genericDelegatedProperty: kotlin.Int [delegated,var]' field=null getter='public final fun <get-genericDelegatedProperty> <T> (): kotlin.Int declared in <root>' setter='public final fun <set-genericDelegatedProperty> <T> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.reflect.KMutableProperty1<<root>.C<T of <root>.<set-genericDelegatedProperty>>, kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+            kProp: PROPERTY_REFERENCE 'public final genericDelegatedProperty: kotlin.Int' field=null getter='public final fun <get-genericDelegatedProperty> <T> (): kotlin.Int declared in <root>' setter='public final fun <set-genericDelegatedProperty> <T> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.reflect.KMutableProperty1<<root>.C<T of <root>.<set-genericDelegatedProperty>>, kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
               <1>: T of <root>.<set-genericDelegatedProperty>
             newValue: GET_VAR '<set-?>: kotlin.Int declared in <root>.<set-genericDelegatedProperty>' type=kotlin.Int origin=null

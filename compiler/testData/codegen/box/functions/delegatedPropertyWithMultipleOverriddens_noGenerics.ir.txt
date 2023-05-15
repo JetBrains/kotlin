@@ -9,7 +9,7 @@ FILE fqName:<root> fileName:/delegatedPropertyWithMultipleOverriddens_noGenerics
         $this: VALUE_PARAMETER name:<this> type:<root>.MyCollection
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -28,7 +28,7 @@ FILE fqName:<root> fileName:/delegatedPropertyWithMultipleOverriddens_noGenerics
       $this: VALUE_PARAMETER name:<this> type:<root>.MyList
     PROPERTY name:bar visibility:public modality:ABSTRACT [val]
       overridden:
-        public abstract bar: kotlin.String [val]
+        public abstract bar: kotlin.String
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-bar> visibility:public modality:ABSTRACT <> ($this:<root>.MyList) returnType:kotlin.String
         correspondingProperty: PROPERTY name:bar visibility:public modality:ABSTRACT [val]
         overridden:
@@ -36,16 +36,16 @@ FILE fqName:<root> fileName:/delegatedPropertyWithMultipleOverriddens_noGenerics
         $this: VALUE_PARAMETER name:<this> type:<root>.MyList
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.MyCollection
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.MyCollection
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
       overridden:
-        public open fun hashCode (): kotlin.Int [fake_override] declared in <root>.MyCollection
+        public open fun hashCode (): kotlin.Int declared in <root>.MyCollection
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
       overridden:
-        public open fun toString (): kotlin.String [fake_override] declared in <root>.MyCollection
+        public open fun toString (): kotlin.String declared in <root>.MyCollection
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS INTERFACE name:MyMutableCollection modality:ABSTRACT visibility:public superTypes:[<root>.MyCollection]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MyMutableCollection
@@ -55,7 +55,7 @@ FILE fqName:<root> fileName:/delegatedPropertyWithMultipleOverriddens_noGenerics
       $this: VALUE_PARAMETER name:<this> type:<root>.MyCollection
     PROPERTY FAKE_OVERRIDE name:bar visibility:public modality:ABSTRACT [fake_override,val]
       overridden:
-        public abstract bar: kotlin.String [val]
+        public abstract bar: kotlin.String
       FUN FAKE_OVERRIDE name:<get-bar> visibility:public modality:ABSTRACT <> ($this:<root>.MyCollection) returnType:kotlin.String [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:bar visibility:public modality:ABSTRACT [fake_override,val]
         overridden:
@@ -63,55 +63,55 @@ FILE fqName:<root> fileName:/delegatedPropertyWithMultipleOverriddens_noGenerics
         $this: VALUE_PARAMETER name:<this> type:<root>.MyCollection
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.MyCollection
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.MyCollection
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
       overridden:
-        public open fun hashCode (): kotlin.Int [fake_override] declared in <root>.MyCollection
+        public open fun hashCode (): kotlin.Int declared in <root>.MyCollection
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
       overridden:
-        public open fun toString (): kotlin.String [fake_override] declared in <root>.MyCollection
+        public open fun toString (): kotlin.String declared in <root>.MyCollection
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS INTERFACE name:MyMutableList modality:ABSTRACT visibility:public superTypes:[<root>.MyList; <root>.MyMutableCollection]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MyMutableList
     FUN FAKE_OVERRIDE name:foo visibility:public modality:ABSTRACT <> ($this:<root>.MyList) returnType:kotlin.String [fake_override]
       overridden:
         public abstract fun foo (): kotlin.String declared in <root>.MyList
-        public abstract fun foo (): kotlin.String [fake_override] declared in <root>.MyMutableCollection
+        public abstract fun foo (): kotlin.String declared in <root>.MyMutableCollection
       $this: VALUE_PARAMETER name:<this> type:<root>.MyList
     PROPERTY FAKE_OVERRIDE name:bar visibility:public modality:ABSTRACT [fake_override,val]
       overridden:
-        public abstract bar: kotlin.String [val]
-        public abstract bar: kotlin.String [fake_override,val]
+        public abstract bar: kotlin.String
+        public abstract bar: kotlin.String
       FUN FAKE_OVERRIDE name:<get-bar> visibility:public modality:ABSTRACT <> ($this:<root>.MyList) returnType:kotlin.String [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:bar visibility:public modality:ABSTRACT [fake_override,val]
         overridden:
           public abstract fun <get-bar> (): kotlin.String declared in <root>.MyList
-          public abstract fun <get-bar> (): kotlin.String [fake_override] declared in <root>.MyMutableCollection
+          public abstract fun <get-bar> (): kotlin.String declared in <root>.MyMutableCollection
         $this: VALUE_PARAMETER name:<this> type:<root>.MyList
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.MyList
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.MyMutableCollection
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.MyList
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.MyMutableCollection
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
       overridden:
-        public open fun hashCode (): kotlin.Int [fake_override] declared in <root>.MyList
-        public open fun hashCode (): kotlin.Int [fake_override] declared in <root>.MyMutableCollection
+        public open fun hashCode (): kotlin.Int declared in <root>.MyList
+        public open fun hashCode (): kotlin.Int declared in <root>.MyMutableCollection
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
       overridden:
-        public open fun toString (): kotlin.String [fake_override] declared in <root>.MyList
-        public open fun toString (): kotlin.String [fake_override] declared in <root>.MyMutableCollection
+        public open fun toString (): kotlin.String declared in <root>.MyList
+        public open fun toString (): kotlin.String declared in <root>.MyMutableCollection
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS CLASS name:MyAbstractCollection modality:ABSTRACT visibility:public superTypes:[<root>.MyCollection]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MyAbstractCollection
     CONSTRUCTOR visibility:protected <> () returnType:<root>.MyAbstractCollection [primary]
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:MyAbstractCollection modality:ABSTRACT visibility:public superTypes:[<root>.MyCollection]'
     FUN name:foo visibility:public modality:ABSTRACT <> ($this:<root>.MyAbstractCollection) returnType:kotlin.String
       overridden:
@@ -119,7 +119,7 @@ FILE fqName:<root> fileName:/delegatedPropertyWithMultipleOverriddens_noGenerics
       $this: VALUE_PARAMETER name:<this> type:<root>.MyAbstractCollection
     PROPERTY name:bar visibility:public modality:ABSTRACT [val]
       overridden:
-        public abstract bar: kotlin.String [val]
+        public abstract bar: kotlin.String
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-bar> visibility:public modality:ABSTRACT <> ($this:<root>.MyAbstractCollection) returnType:kotlin.String
         correspondingProperty: PROPERTY name:bar visibility:public modality:ABSTRACT [val]
         overridden:
@@ -127,26 +127,26 @@ FILE fqName:<root> fileName:/delegatedPropertyWithMultipleOverriddens_noGenerics
         $this: VALUE_PARAMETER name:<this> type:<root>.MyAbstractCollection
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.MyCollection
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.MyCollection
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
       overridden:
-        public open fun hashCode (): kotlin.Int [fake_override] declared in <root>.MyCollection
+        public open fun hashCode (): kotlin.Int declared in <root>.MyCollection
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
       overridden:
-        public open fun toString (): kotlin.String [fake_override] declared in <root>.MyCollection
+        public open fun toString (): kotlin.String declared in <root>.MyCollection
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS CLASS name:MyArrayList modality:FINAL visibility:public superTypes:[<root>.MyMutableList; <root>.MyAbstractCollection]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MyArrayList
     CONSTRUCTOR visibility:public <> () returnType:<root>.MyArrayList [primary]
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'protected constructor <init> () [primary] declared in <root>.MyAbstractCollection'
+        DELEGATING_CONSTRUCTOR_CALL 'protected constructor <init> () declared in <root>.MyAbstractCollection'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:MyArrayList modality:FINAL visibility:public superTypes:[<root>.MyMutableList; <root>.MyAbstractCollection]'
     FUN name:foo visibility:public modality:OPEN <> ($this:<root>.MyArrayList) returnType:kotlin.String
       overridden:
-        public abstract fun foo (): kotlin.String [fake_override] declared in <root>.MyMutableList
+        public abstract fun foo (): kotlin.String declared in <root>.MyMutableList
         public abstract fun foo (): kotlin.String declared in <root>.MyAbstractCollection
       $this: VALUE_PARAMETER name:<this> type:<root>.MyArrayList
       BLOCK_BODY
@@ -154,15 +154,15 @@ FILE fqName:<root> fileName:/delegatedPropertyWithMultipleOverriddens_noGenerics
           CONST String type=kotlin.String value="O"
     PROPERTY name:bar visibility:public modality:OPEN [val]
       overridden:
-        public abstract bar: kotlin.String [fake_override,val]
-        public abstract bar: kotlin.String [val]
+        public abstract bar: kotlin.String
+        public abstract bar: kotlin.String
       FIELD PROPERTY_BACKING_FIELD name:bar type:kotlin.String visibility:private [final]
         EXPRESSION_BODY
           CONST String type=kotlin.String value="K"
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-bar> visibility:public modality:OPEN <> ($this:<root>.MyArrayList) returnType:kotlin.String
         correspondingProperty: PROPERTY name:bar visibility:public modality:OPEN [val]
         overridden:
-          public abstract fun <get-bar> (): kotlin.String [fake_override] declared in <root>.MyMutableList
+          public abstract fun <get-bar> (): kotlin.String declared in <root>.MyMutableList
           public abstract fun <get-bar> (): kotlin.String declared in <root>.MyAbstractCollection
         $this: VALUE_PARAMETER name:<this> type:<root>.MyArrayList
         BLOCK_BODY
@@ -171,36 +171,36 @@ FILE fqName:<root> fileName:/delegatedPropertyWithMultipleOverriddens_noGenerics
               receiver: GET_VAR '<this>: <root>.MyArrayList declared in <root>.MyArrayList.<get-bar>' type=<root>.MyArrayList origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.MyMutableList
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.MyAbstractCollection
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.MyMutableList
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.MyAbstractCollection
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
       overridden:
-        public open fun hashCode (): kotlin.Int [fake_override] declared in <root>.MyMutableList
-        public open fun hashCode (): kotlin.Int [fake_override] declared in <root>.MyAbstractCollection
+        public open fun hashCode (): kotlin.Int declared in <root>.MyMutableList
+        public open fun hashCode (): kotlin.Int declared in <root>.MyAbstractCollection
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
       overridden:
-        public open fun toString (): kotlin.String [fake_override] declared in <root>.MyMutableList
-        public open fun toString (): kotlin.String [fake_override] declared in <root>.MyAbstractCollection
+        public open fun toString (): kotlin.String declared in <root>.MyMutableList
+        public open fun toString (): kotlin.String declared in <root>.MyAbstractCollection
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS CLASS name:MC modality:FINAL visibility:public superTypes:[<root>.MyMutableCollection]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MC
     CONSTRUCTOR visibility:public <> () returnType:<root>.MC [primary]
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:MC modality:FINAL visibility:public superTypes:[<root>.MyMutableCollection]'
     FIELD DELEGATE name:$$delegate_0 type:<root>.MyArrayList visibility:private [final]
       EXPRESSION_BODY
-        CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.MyArrayList' type=<root>.MyArrayList origin=null
+        CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.MyArrayList' type=<root>.MyArrayList origin=null
     PROPERTY DELEGATED_MEMBER name:bar visibility:public modality:OPEN [val]
       overridden:
-        public abstract bar: kotlin.String [fake_override,val]
+        public abstract bar: kotlin.String
       FUN DELEGATED_MEMBER name:<get-bar> visibility:public modality:OPEN <> ($this:<root>.MC) returnType:kotlin.String
         correspondingProperty: PROPERTY DELEGATED_MEMBER name:bar visibility:public modality:OPEN [val]
         overridden:
-          public abstract fun <get-bar> (): kotlin.String [fake_override] declared in <root>.MyMutableCollection
+          public abstract fun <get-bar> (): kotlin.String declared in <root>.MyMutableCollection
         $this: VALUE_PARAMETER name:<this> type:<root>.MC
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public open fun <get-bar> (): kotlin.String declared in <root>.MC'
@@ -209,7 +209,7 @@ FILE fqName:<root> fileName:/delegatedPropertyWithMultipleOverriddens_noGenerics
                 receiver: GET_VAR '<this>: <root>.MC declared in <root>.MC.<get-bar>' type=<root>.MC origin=null
     FUN DELEGATED_MEMBER name:foo visibility:public modality:OPEN <> ($this:<root>.MC) returnType:kotlin.String
       overridden:
-        public abstract fun foo (): kotlin.String [fake_override] declared in <root>.MyMutableCollection
+        public abstract fun foo (): kotlin.String declared in <root>.MyMutableCollection
       $this: VALUE_PARAMETER name:<this> type:<root>.MC
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun foo (): kotlin.String declared in <root>.MC'
@@ -218,24 +218,24 @@ FILE fqName:<root> fileName:/delegatedPropertyWithMultipleOverriddens_noGenerics
               receiver: GET_VAR '<this>: <root>.MC declared in <root>.MC.foo' type=<root>.MC origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.MyMutableCollection
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.MyMutableCollection
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
       overridden:
-        public open fun hashCode (): kotlin.Int [fake_override] declared in <root>.MyMutableCollection
+        public open fun hashCode (): kotlin.Int declared in <root>.MyMutableCollection
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
       overridden:
-        public open fun toString (): kotlin.String [fake_override] declared in <root>.MyMutableCollection
+        public open fun toString (): kotlin.String declared in <root>.MyMutableCollection
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
     BLOCK_BODY
       VAR name:x type:<root>.MC [val]
-        CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.MC' type=<root>.MC origin=null
+        CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.MC' type=<root>.MC origin=null
       RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
-        CALL 'public final fun plus (other: kotlin.Any?): kotlin.String [operator] declared in kotlin.String' type=kotlin.String origin=PLUS
+        CALL 'public final fun plus (other: kotlin.Any?): kotlin.String declared in kotlin.String' type=kotlin.String origin=PLUS
           $this: CALL 'public open fun foo (): kotlin.String declared in <root>.MC' type=kotlin.String origin=null
-            $this: GET_VAR 'val x: <root>.MC [val] declared in <root>.box' type=<root>.MC origin=null
+            $this: GET_VAR 'val x: <root>.MC declared in <root>.box' type=<root>.MC origin=null
           other: CALL 'public open fun <get-bar> (): kotlin.String declared in <root>.MC' type=kotlin.String origin=GET_PROPERTY
-            $this: GET_VAR 'val x: <root>.MC [val] declared in <root>.box' type=<root>.MC origin=null
+            $this: GET_VAR 'val x: <root>.MC declared in <root>.box' type=<root>.MC origin=null

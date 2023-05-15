@@ -16,5 +16,5 @@ FILE fqName:<root> fileName:/LocalSuspendFun.kt
     VALUE_PARAMETER name:callback index:0 type:kotlin.Function0<T of <root>.useMemo>
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun useMemo <T> (callback: kotlin.Function0<T of <root>.useMemo>): T of <root>.useMemo declared in <root>'
-        CALL 'public abstract fun invoke (): R of kotlin.Function0 [operator] declared in kotlin.Function0' type=T of <root>.useMemo origin=INVOKE
+        CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=T of <root>.useMemo origin=INVOKE
           $this: GET_VAR 'callback: kotlin.Function0<T of <root>.useMemo> declared in <root>.useMemo' type=kotlin.Function0<T of <root>.useMemo> origin=VARIABLE_AS_FUNCTION

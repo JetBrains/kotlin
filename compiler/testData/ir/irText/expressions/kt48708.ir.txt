@@ -15,7 +15,7 @@ FILE fqName:<root> fileName:/kt48708.kt
                 CONSTRUCTOR_CALL 'public constructor <init> () declared in java.lang.Exception' type=java.lang.Exception origin=null
               CONST Int type=kotlin.Int value=0
       CALL 'public final fun takeInt (x: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        x: GET_VAR 'val x: kotlin.Int [val] declared in <root>.test' type=kotlin.Int origin=null
+        x: GET_VAR 'val x: kotlin.Int declared in <root>.test' type=kotlin.Int origin=null
   FUN name:takeInt visibility:public modality:FINAL <> (x:kotlin.Int) returnType:kotlin.Unit
     VALUE_PARAMETER name:x index:0 type:kotlin.Int
     BLOCK_BODY

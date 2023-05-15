@@ -5,7 +5,7 @@ FILE fqName:<root> fileName:/overloading.kt
     VALUE_PARAMETER name:$context_receiver_1 index:1 type:kotlin.String
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun foo ($context_receiver_0: kotlin.Int, $context_receiver_1: kotlin.String): kotlin.Int declared in <root>'
-        CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=PLUS
+        CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUS
           $this: GET_VAR '$context_receiver_0: kotlin.Int declared in <root>.foo' type=kotlin.Int origin=null
           other: CONST Int type=kotlin.Int value=42
   FUN name:foo visibility:public modality:FINAL <> ($context_receiver_0:kotlin.Int) returnType:kotlin.Int
@@ -13,13 +13,13 @@ FILE fqName:<root> fileName:/overloading.kt
     VALUE_PARAMETER name:$context_receiver_0 index:0 type:kotlin.Int
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun foo ($context_receiver_0: kotlin.Int): kotlin.Int declared in <root>'
-        CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=PLUS
+        CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUS
           $this: GET_VAR '$context_receiver_0: kotlin.Int declared in <root>.foo' type=kotlin.Int origin=null
           other: CONST Int type=kotlin.Int value=42
   FUN name:test visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        CALL 'public final fun with <T, R> (receiver: T of kotlin.StandardKt.with, block: @[ExtensionFunctionType] kotlin.Function1<T of kotlin.StandardKt.with, R of kotlin.StandardKt.with>): R of kotlin.StandardKt.with [inline] declared in kotlin.StandardKt' type=kotlin.Int origin=null
+        CALL 'public final fun with <T, R> (receiver: T of kotlin.StandardKt.with, block: @[ExtensionFunctionType] kotlin.Function1<T of kotlin.StandardKt.with, R of kotlin.StandardKt.with>): R of kotlin.StandardKt.with declared in kotlin.StandardKt' type=kotlin.Int origin=null
           <T>: kotlin.Int
           <R>: kotlin.Int
           receiver: CONST Int type=kotlin.Int value=42

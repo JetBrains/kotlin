@@ -4,7 +4,7 @@ FILE fqName:<root> fileName:/assignments.kt
     CONSTRUCTOR visibility:public <> (x:kotlin.Int) returnType:<root>.Ref [primary]
       VALUE_PARAMETER name:x index:0 type:kotlin.Int
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Ref modality:FINAL visibility:public superTypes:[kotlin.Any]'
     PROPERTY name:x visibility:public modality:FINAL [var]
       FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private
@@ -27,7 +27,7 @@ FILE fqName:<root> fileName:/assignments.kt
             value: GET_VAR '<set-?>: kotlin.Int declared in <root>.Ref.<set-x>' type=kotlin.Int origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -42,11 +42,11 @@ FILE fqName:<root> fileName:/assignments.kt
     BLOCK_BODY
       VAR name:x type:kotlin.Int [var]
         CONST Int type=kotlin.Int value=0
-      SET_VAR 'var x: kotlin.Int [var] declared in <root>.test1' type=kotlin.Unit origin=EQ
+      SET_VAR 'var x: kotlin.Int declared in <root>.test1' type=kotlin.Unit origin=EQ
         CONST Int type=kotlin.Int value=1
-      SET_VAR 'var x: kotlin.Int [var] declared in <root>.test1' type=kotlin.Unit origin=EQ
-        CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=PLUS
-          $this: GET_VAR 'var x: kotlin.Int [var] declared in <root>.test1' type=kotlin.Int origin=null
+      SET_VAR 'var x: kotlin.Int declared in <root>.test1' type=kotlin.Unit origin=EQ
+        CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUS
+          $this: GET_VAR 'var x: kotlin.Int declared in <root>.test1' type=kotlin.Int origin=null
           other: CONST Int type=kotlin.Int value=1
   FUN name:test2 visibility:public modality:FINAL <> (r:<root>.Ref) returnType:kotlin.Unit
     VALUE_PARAMETER name:r index:0 type:<root>.Ref

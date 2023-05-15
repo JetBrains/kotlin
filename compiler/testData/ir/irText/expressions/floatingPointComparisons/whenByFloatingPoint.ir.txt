@@ -9,7 +9,7 @@ FILE fqName:<root> fileName:/whenByFloatingPoint.kt
           WHEN type=kotlin.Int origin=WHEN
             BRANCH
               if: CALL 'public final fun ieee754equals (arg0: kotlin.Double?, arg1: kotlin.Double?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                arg0: GET_VAR 'val tmp_0: kotlin.Double [val] declared in <root>.testSimple' type=kotlin.Double origin=null
+                arg0: GET_VAR 'val tmp_0: kotlin.Double declared in <root>.testSimple' type=kotlin.Double origin=null
                 arg1: CONST Double type=kotlin.Double value=0.0
               then: CONST Int type=kotlin.Int value=0
             BRANCH
@@ -32,7 +32,7 @@ FILE fqName:<root> fileName:/whenByFloatingPoint.kt
             BRANCH
               if: CALL 'public final fun ieee754equals (arg0: kotlin.Double?, arg1: kotlin.Double?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
                 arg0: TYPE_OP type=kotlin.Double origin=IMPLICIT_CAST typeOperand=kotlin.Double
-                  GET_VAR 'val tmp_1: kotlin.Any [val] declared in <root>.testSmartCastInWhenSubject' type=kotlin.Any origin=null
+                  GET_VAR 'val tmp_1: kotlin.Any declared in <root>.testSmartCastInWhenSubject' type=kotlin.Any origin=null
                 arg1: CONST Double type=kotlin.Double value=0.0
               then: CONST Int type=kotlin.Int value=0
             BRANCH
@@ -55,7 +55,7 @@ FILE fqName:<root> fileName:/whenByFloatingPoint.kt
           WHEN type=kotlin.Int origin=WHEN
             BRANCH
               if: CALL 'public final fun ieee754equals (arg0: kotlin.Double?, arg1: kotlin.Double?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                arg0: GET_VAR 'val tmp_2: kotlin.Double [val] declared in <root>.testSmartCastInWhenCondition' type=kotlin.Double origin=null
+                arg0: GET_VAR 'val tmp_2: kotlin.Double declared in <root>.testSmartCastInWhenCondition' type=kotlin.Double origin=null
                 arg1: TYPE_OP type=kotlin.Double origin=IMPLICIT_CAST typeOperand=kotlin.Double
                   GET_VAR 'y: kotlin.Any declared in <root>.testSmartCastInWhenCondition' type=kotlin.Any origin=null
               then: CONST Int type=kotlin.Int value=0
@@ -71,14 +71,14 @@ FILE fqName:<root> fileName:/whenByFloatingPoint.kt
             GET_VAR 'x: kotlin.Any declared in <root>.testSmartCastInWhenConditionInBranch' type=kotlin.Any origin=null
           WHEN type=kotlin.Int origin=WHEN
             BRANCH
-              if: CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCL
+              if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCL
                 $this: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Double
-                  GET_VAR 'val tmp_3: kotlin.Any [val] declared in <root>.testSmartCastInWhenConditionInBranch' type=kotlin.Any origin=null
+                  GET_VAR 'val tmp_3: kotlin.Any declared in <root>.testSmartCastInWhenConditionInBranch' type=kotlin.Any origin=null
               then: CONST Int type=kotlin.Int value=-1
             BRANCH
               if: CALL 'public final fun ieee754equals (arg0: kotlin.Double?, arg1: kotlin.Double?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
                 arg0: TYPE_OP type=kotlin.Double origin=IMPLICIT_CAST typeOperand=kotlin.Double
-                  GET_VAR 'val tmp_3: kotlin.Any [val] declared in <root>.testSmartCastInWhenConditionInBranch' type=kotlin.Any origin=null
+                  GET_VAR 'val tmp_3: kotlin.Any declared in <root>.testSmartCastInWhenConditionInBranch' type=kotlin.Any origin=null
                 arg1: CONST Double type=kotlin.Double value=0.0
               then: CONST Int type=kotlin.Int value=0
             BRANCH
@@ -108,7 +108,7 @@ FILE fqName:<root> fileName:/whenByFloatingPoint.kt
             BRANCH
               if: CALL 'public final fun ieee754equals (arg0: kotlin.Double?, arg1: kotlin.Double?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
                 arg0: TYPE_OP type=kotlin.Double origin=IMPLICIT_CAST typeOperand=kotlin.Double
-                  GET_VAR 'val tmp_4: kotlin.Any [val] declared in <root>.testSmartCastToDifferentTypes' type=kotlin.Any origin=null
+                  GET_VAR 'val tmp_4: kotlin.Any declared in <root>.testSmartCastToDifferentTypes' type=kotlin.Any origin=null
                 arg1: CALL 'public open fun toDouble (): kotlin.Double declared in kotlin.Float' type=kotlin.Double origin=null
                   $this: TYPE_OP type=kotlin.Float origin=IMPLICIT_CAST typeOperand=kotlin.Float
                     GET_VAR 'y: kotlin.Any declared in <root>.testSmartCastToDifferentTypes' type=kotlin.Any origin=null
@@ -131,7 +131,7 @@ FILE fqName:<root> fileName:/whenByFloatingPoint.kt
           WHEN type=kotlin.Int origin=WHEN
             BRANCH
               if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                arg0: GET_VAR 'val tmp_5: kotlin.Any [val] declared in <root>.testWithPrematureExitInConditionSubexpression' type=kotlin.Any origin=null
+                arg0: GET_VAR 'val tmp_5: kotlin.Any declared in <root>.testWithPrematureExitInConditionSubexpression' type=kotlin.Any origin=null
                 arg1: CALL 'public final fun foo (x: kotlin.Double): kotlin.Double declared in <root>' type=kotlin.Double origin=null
                   x: WHEN type=kotlin.Double origin=IF
                     BRANCH

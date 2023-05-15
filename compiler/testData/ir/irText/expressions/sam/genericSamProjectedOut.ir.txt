@@ -2,10 +2,10 @@ FILE fqName:<root> fileName:/genericSamProjectedOut.kt
   FUN name:test visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       VAR name:a type:example.SomeJavaClass<out kotlin.String> [var]
-        CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in example.SomeJavaClass' type=example.SomeJavaClass<kotlin.String> origin=null
+        CONSTRUCTOR_CALL 'public constructor <init> () declared in example.SomeJavaClass' type=example.SomeJavaClass<kotlin.String> origin=null
           <class: A>: kotlin.String
       CALL 'public open fun someFunction (hello: @[FlexibleNullability] example.Hello<@[FlexibleNullability] A of example.SomeJavaClass?>?): kotlin.Unit declared in example.SomeJavaClass' type=kotlin.Unit origin=null
-        $this: GET_VAR 'var a: example.SomeJavaClass<out kotlin.String> [var] declared in <root>.test' type=example.SomeJavaClass<out kotlin.String> origin=null
+        $this: GET_VAR 'var a: example.SomeJavaClass<out kotlin.String> declared in <root>.test' type=example.SomeJavaClass<out kotlin.String> origin=null
         hello: TYPE_OP type=@[FlexibleNullability] example.Hello<kotlin.Nothing>? origin=SAM_CONVERSION typeOperand=@[FlexibleNullability] example.Hello<kotlin.Nothing>?
           FUN_EXPR type=kotlin.Function1<@[FlexibleNullability] kotlin.String?, kotlin.Unit> origin=LAMBDA
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:@[FlexibleNullability] kotlin.String?) returnType:kotlin.Unit
@@ -14,8 +14,8 @@ FILE fqName:<root> fileName:/genericSamProjectedOut.kt
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: @[FlexibleNullability] kotlin.String?): kotlin.Unit declared in <root>.test'
                   GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        CALL 'public open fun plus (hello: @[FlexibleNullability] example.Hello<@[FlexibleNullability] A of example.SomeJavaClass?>?): @[FlexibleNullability] example.SomeJavaClass<@[FlexibleNullability] A of example.SomeJavaClass?>? [operator] declared in example.SomeJavaClass' type=@[FlexibleNullability] example.SomeJavaClass<out @[FlexibleNullability] kotlin.String?>? origin=PLUS
-          $this: GET_VAR 'var a: example.SomeJavaClass<out kotlin.String> [var] declared in <root>.test' type=example.SomeJavaClass<out kotlin.String> origin=null
+        CALL 'public open fun plus (hello: @[FlexibleNullability] example.Hello<@[FlexibleNullability] A of example.SomeJavaClass?>?): @[FlexibleNullability] example.SomeJavaClass<@[FlexibleNullability] A of example.SomeJavaClass?>? declared in example.SomeJavaClass' type=@[FlexibleNullability] example.SomeJavaClass<out @[FlexibleNullability] kotlin.String?>? origin=PLUS
+          $this: GET_VAR 'var a: example.SomeJavaClass<out kotlin.String> declared in <root>.test' type=example.SomeJavaClass<out kotlin.String> origin=null
           hello: TYPE_OP type=@[FlexibleNullability] example.Hello<kotlin.Nothing>? origin=SAM_CONVERSION typeOperand=@[FlexibleNullability] example.Hello<kotlin.Nothing>?
             FUN_EXPR type=kotlin.Function1<@[FlexibleNullability] kotlin.String?, kotlin.Unit> origin=LAMBDA
               FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:@[FlexibleNullability] kotlin.String?) returnType:kotlin.Unit
@@ -23,8 +23,8 @@ FILE fqName:<root> fileName:/genericSamProjectedOut.kt
                 BLOCK_BODY
                   RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: @[FlexibleNullability] kotlin.String?): kotlin.Unit declared in <root>.test'
                     GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
-      CALL 'public open fun get (hello: @[FlexibleNullability] example.Hello<@[FlexibleNullability] A of example.SomeJavaClass?>?): kotlin.Unit [operator] declared in example.SomeJavaClass' type=kotlin.Unit origin=GET_ARRAY_ELEMENT
-        $this: GET_VAR 'var a: example.SomeJavaClass<out kotlin.String> [var] declared in <root>.test' type=example.SomeJavaClass<out kotlin.String> origin=null
+      CALL 'public open fun get (hello: @[FlexibleNullability] example.Hello<@[FlexibleNullability] A of example.SomeJavaClass?>?): kotlin.Unit declared in example.SomeJavaClass' type=kotlin.Unit origin=GET_ARRAY_ELEMENT
+        $this: GET_VAR 'var a: example.SomeJavaClass<out kotlin.String> declared in <root>.test' type=example.SomeJavaClass<out kotlin.String> origin=null
         hello: TYPE_OP type=@[FlexibleNullability] example.Hello<kotlin.Nothing>? origin=SAM_CONVERSION typeOperand=@[FlexibleNullability] example.Hello<kotlin.Nothing>?
           FUN_EXPR type=kotlin.Function1<@[FlexibleNullability] kotlin.String?, kotlin.Unit> origin=LAMBDA
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:@[FlexibleNullability] kotlin.String?) returnType:kotlin.Unit
@@ -32,10 +32,10 @@ FILE fqName:<root> fileName:/genericSamProjectedOut.kt
               BLOCK_BODY
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: @[FlexibleNullability] kotlin.String?): kotlin.Unit declared in <root>.test'
                   GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
-      SET_VAR 'var a: example.SomeJavaClass<out kotlin.String> [var] declared in <root>.test' type=kotlin.Unit origin=PLUSEQ
+      SET_VAR 'var a: example.SomeJavaClass<out kotlin.String> declared in <root>.test' type=kotlin.Unit origin=PLUSEQ
         TYPE_OP type=example.SomeJavaClass<out @[FlexibleNullability] kotlin.String?> origin=IMPLICIT_NOTNULL typeOperand=example.SomeJavaClass<out @[FlexibleNullability] kotlin.String?>
-          CALL 'public open fun plus (hello: @[FlexibleNullability] example.Hello<@[FlexibleNullability] A of example.SomeJavaClass?>?): @[FlexibleNullability] example.SomeJavaClass<@[FlexibleNullability] A of example.SomeJavaClass?>? [operator] declared in example.SomeJavaClass' type=@[FlexibleNullability] example.SomeJavaClass<out @[FlexibleNullability] kotlin.String?>? origin=PLUSEQ
-            $this: GET_VAR 'var a: example.SomeJavaClass<out kotlin.String> [var] declared in <root>.test' type=example.SomeJavaClass<out kotlin.String> origin=PLUSEQ
+          CALL 'public open fun plus (hello: @[FlexibleNullability] example.Hello<@[FlexibleNullability] A of example.SomeJavaClass?>?): @[FlexibleNullability] example.SomeJavaClass<@[FlexibleNullability] A of example.SomeJavaClass?>? declared in example.SomeJavaClass' type=@[FlexibleNullability] example.SomeJavaClass<out @[FlexibleNullability] kotlin.String?>? origin=PLUSEQ
+            $this: GET_VAR 'var a: example.SomeJavaClass<out kotlin.String> declared in <root>.test' type=example.SomeJavaClass<out kotlin.String> origin=PLUSEQ
             hello: TYPE_OP type=@[FlexibleNullability] example.Hello<kotlin.Nothing>? origin=SAM_CONVERSION typeOperand=@[FlexibleNullability] example.Hello<kotlin.Nothing>?
               FUN_EXPR type=kotlin.Function1<@[FlexibleNullability] kotlin.String?, kotlin.Unit> origin=LAMBDA
                 FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:@[FlexibleNullability] kotlin.String?) returnType:kotlin.Unit
@@ -43,8 +43,8 @@ FILE fqName:<root> fileName:/genericSamProjectedOut.kt
                   BLOCK_BODY
                     RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: @[FlexibleNullability] kotlin.String?): kotlin.Unit declared in <root>.test'
                       GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
-      CALL 'public open fun set (i: kotlin.Int, hello: @[FlexibleNullability] example.Hello<@[FlexibleNullability] A of example.SomeJavaClass?>?): kotlin.Unit [operator] declared in example.SomeJavaClass' type=kotlin.Unit origin=EQ
-        $this: GET_VAR 'var a: example.SomeJavaClass<out kotlin.String> [var] declared in <root>.test' type=example.SomeJavaClass<out kotlin.String> origin=null
+      CALL 'public open fun set (i: kotlin.Int, hello: @[FlexibleNullability] example.Hello<@[FlexibleNullability] A of example.SomeJavaClass?>?): kotlin.Unit declared in example.SomeJavaClass' type=kotlin.Unit origin=EQ
+        $this: GET_VAR 'var a: example.SomeJavaClass<out kotlin.String> declared in <root>.test' type=example.SomeJavaClass<out kotlin.String> origin=null
         i: CONST Int type=kotlin.Int value=0
         hello: TYPE_OP type=@[FlexibleNullability] example.Hello<kotlin.Nothing>? origin=SAM_CONVERSION typeOperand=@[FlexibleNullability] example.Hello<kotlin.Nothing>?
           FUN_EXPR type=kotlin.Function1<@[FlexibleNullability] kotlin.String?, kotlin.Unit> origin=LAMBDA

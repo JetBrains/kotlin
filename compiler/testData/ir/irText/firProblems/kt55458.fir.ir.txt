@@ -2,13 +2,13 @@ FILE fqName:<root> fileName:/kt55458.kt
   FUN name:main visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:kotlin.Pair<kotlin.Int, kotlin.Int> [val]
-        CALL 'public final fun to <A, B> (that: B of kotlin.to): kotlin.Pair<A of kotlin.to, B of kotlin.to> [infix] declared in kotlin' type=kotlin.Pair<kotlin.Int, kotlin.Int> origin=null
+        CALL 'public final fun to <A, B> (that: B of kotlin.to): kotlin.Pair<A of kotlin.to, B of kotlin.to> declared in kotlin' type=kotlin.Pair<kotlin.Int, kotlin.Int> origin=null
           <A>: kotlin.Int
           <B>: kotlin.Int
           $receiver: CONST Int type=kotlin.Int value=1
           that: CONST Int type=kotlin.Int value=2
       VAR name:a type:kotlin.Int [val]
-        CALL 'public final fun component1 (): A of kotlin.Pair [operator] declared in kotlin.Pair' type=kotlin.Int origin=COMPONENT_N(index=1)
-          $this: GET_VAR 'val tmp_0: kotlin.Pair<kotlin.Int, kotlin.Int> [val] declared in <root>.main' type=kotlin.Pair<kotlin.Int, kotlin.Int> origin=null
-      CALL 'public final fun println (message: kotlin.Any?): kotlin.Unit [inline] declared in kotlin.io' type=kotlin.Unit origin=null
-        message: GET_VAR 'val a: kotlin.Int [val] declared in <root>.main' type=kotlin.Int origin=null
+        CALL 'public final fun component1 (): A of kotlin.Pair declared in kotlin.Pair' type=kotlin.Int origin=COMPONENT_N(index=1)
+          $this: GET_VAR 'val tmp_0: kotlin.Pair<kotlin.Int, kotlin.Int> declared in <root>.main' type=kotlin.Pair<kotlin.Int, kotlin.Int> origin=null
+      CALL 'public final fun println (message: kotlin.Any?): kotlin.Unit declared in kotlin.io' type=kotlin.Unit origin=null
+        message: GET_VAR 'val a: kotlin.Int declared in <root>.main' type=kotlin.Int origin=null

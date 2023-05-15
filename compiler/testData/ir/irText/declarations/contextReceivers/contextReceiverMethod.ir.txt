@@ -3,7 +3,7 @@ FILE fqName:<root> fileName:/contextReceiverMethod.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Context
     CONSTRUCTOR visibility:public <> () returnType:<root>.Context [primary]
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Context modality:FINAL visibility:public superTypes:[kotlin.Any]'
     FUN name:foo visibility:public modality:FINAL <> ($this:<root>.Context) returnType:kotlin.Int
       $this: VALUE_PARAMETER name:<this> type:<root>.Context
@@ -12,7 +12,7 @@ FILE fqName:<root> fileName:/contextReceiverMethod.kt
           CONST Int type=kotlin.Int value=1
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -29,7 +29,7 @@ FILE fqName:<root> fileName:/contextReceiverMethod.kt
     CONSTRUCTOR visibility:public <> ($context_receiver_0:<root>.Context) returnType:<root>.Test [primary]
       VALUE_PARAMETER name:$context_receiver_0 index:0 type:<root>.Context
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         SET_FIELD 'FIELD FIELD_FOR_CLASS_CONTEXT_RECEIVER name:contextReceiverField0 type:<root>.Context visibility:private [final]' type=kotlin.Unit origin=null
           receiver: GET_VAR '<this>: <root>.Test declared in <root>.Test' type=<root>.Test origin=null
           value: GET_VAR '$context_receiver_0: <root>.Context declared in <root>.Test.<init>' type=<root>.Context origin=null
@@ -48,7 +48,7 @@ FILE fqName:<root> fileName:/contextReceiverMethod.kt
               receiver: GET_VAR '<this>: <root>.Test declared in <root>.Test.bar' type=<root>.Test origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]

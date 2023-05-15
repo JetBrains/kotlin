@@ -4,7 +4,7 @@ FILE fqName:<root> fileName:/localVariableOfIntersectionType.kt
     TYPE_PARAMETER name:T index:0 variance:in superTypes:[kotlin.Any?] reified:false
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -24,7 +24,7 @@ FILE fqName:<root> fileName:/localVariableOfIntersectionType.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.Inv<T of <root>.Inv>
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -44,7 +44,7 @@ FILE fqName:<root> fileName:/localVariableOfIntersectionType.kt
       VALUE_PARAMETER name:y index:1 type:<root>.In<T of <root>.Z.create>
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -61,7 +61,7 @@ FILE fqName:<root> fileName:/localVariableOfIntersectionType.kt
       $this: VALUE_PARAMETER name:<this> type:<root>.IA
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -78,7 +78,7 @@ FILE fqName:<root> fileName:/localVariableOfIntersectionType.kt
       $this: VALUE_PARAMETER name:<this> type:<root>.IB
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -117,7 +117,7 @@ FILE fqName:<root> fileName:/localVariableOfIntersectionType.kt
             x: GET_VAR 'a: <root>.In<<root>.IA> declared in <root>.test' type=<root>.In<<root>.IA> origin=null
             y: GET_VAR 'b: <root>.In<<root>.IB> declared in <root>.test' type=<root>.In<<root>.IB> origin=null
       CALL 'public abstract fun foo (): kotlin.Unit declared in <root>.IA' type=kotlin.Unit origin=null
-        $this: GET_VAR 'val t: <root>.IA [val] declared in <root>.test' type=<root>.IA origin=null
+        $this: GET_VAR 'val t: <root>.IA declared in <root>.test' type=<root>.IA origin=null
       CALL 'public abstract fun bar (): kotlin.Unit declared in <root>.IB' type=kotlin.Unit origin=null
         $this: TYPE_OP type=<root>.IB origin=IMPLICIT_CAST typeOperand=<root>.IB
-          GET_VAR 'val t: <root>.IA [val] declared in <root>.test' type=<root>.IA origin=null
+          GET_VAR 'val t: <root>.IA declared in <root>.test' type=<root>.IA origin=null

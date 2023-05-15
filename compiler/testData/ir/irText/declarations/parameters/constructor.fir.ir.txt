@@ -7,7 +7,7 @@ FILE fqName:<root> fileName:/constructor.kt
       VALUE_PARAMETER name:x index:0 type:T1 of <root>.Test1
       VALUE_PARAMETER name:y index:1 type:T2 of <root>.Test1
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test1 modality:FINAL visibility:public superTypes:[kotlin.Any]'
     PROPERTY name:x visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:x type:T1 of <root>.Test1 visibility:private [final]
@@ -33,7 +33,7 @@ FILE fqName:<root> fileName:/constructor.kt
               receiver: GET_VAR '<this>: <root>.Test1<T1 of <root>.Test1, T2 of <root>.Test1> declared in <root>.Test1.<get-y>' type=<root>.Test1<T1 of <root>.Test1, T2 of <root>.Test1> origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -50,7 +50,7 @@ FILE fqName:<root> fileName:/constructor.kt
       VALUE_PARAMETER name:x index:0 type:kotlin.Int
       VALUE_PARAMETER name:y index:1 type:kotlin.String
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test2 modality:FINAL visibility:public superTypes:[kotlin.Any]'
     PROPERTY name:y visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.String visibility:private [final]
@@ -70,7 +70,7 @@ FILE fqName:<root> fileName:/constructor.kt
         $outer: VALUE_PARAMETER name:<this> type:<root>.Test2
         VALUE_PARAMETER name:z index:0 type:Z of <root>.Test2.TestInner
         BLOCK_BODY
-          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
           INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:TestInner modality:FINAL visibility:public [inner] superTypes:[kotlin.Any]'
       PROPERTY name:z visibility:public modality:FINAL [val]
         FIELD PROPERTY_BACKING_FIELD name:z type:Z of <root>.Test2.TestInner visibility:private [final]
@@ -88,13 +88,13 @@ FILE fqName:<root> fileName:/constructor.kt
         VALUE_PARAMETER name:z index:0 type:Z of <root>.Test2.TestInner
         VALUE_PARAMETER name:i index:1 type:kotlin.Int
         BLOCK_BODY
-          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (z: Z of <root>.Test2.TestInner) [primary] declared in <root>.Test2.TestInner'
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (z: Z of <root>.Test2.TestInner) declared in <root>.Test2.TestInner'
             <Z>: Z of <root>.Test2.TestInner
             $this: GET_VAR '<this>: <root>.Test2 declared in <root>.Test2' type=<root>.Test2 origin=null
             z: GET_VAR 'z: Z of <root>.Test2.TestInner declared in <root>.Test2.TestInner.<init>' type=Z of <root>.Test2.TestInner origin=null
       FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
         overridden:
-          public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+          public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
         $this: VALUE_PARAMETER name:<this> type:kotlin.Any
         VALUE_PARAMETER name:other index:0 type:kotlin.Any?
       FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -107,7 +107,7 @@ FILE fqName:<root> fileName:/constructor.kt
         $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -126,7 +126,7 @@ FILE fqName:<root> fileName:/constructor.kt
         EXPRESSION_BODY
           CONST String type=kotlin.String value=""
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test3 modality:FINAL visibility:public superTypes:[kotlin.Any]'
     PROPERTY name:x visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]
@@ -152,7 +152,7 @@ FILE fqName:<root> fileName:/constructor.kt
               receiver: GET_VAR '<this>: <root>.Test3 declared in <root>.Test3.<get-y>' type=<root>.Test3 origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -169,7 +169,7 @@ FILE fqName:<root> fileName:/constructor.kt
     CONSTRUCTOR visibility:public <> (x:kotlin.Int) returnType:<root>.Test4<T of <root>.Test4> [primary]
       VALUE_PARAMETER name:x index:0 type:kotlin.Int
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test4 modality:FINAL visibility:public superTypes:[kotlin.Any]'
     PROPERTY name:x visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]
@@ -188,14 +188,14 @@ FILE fqName:<root> fileName:/constructor.kt
         EXPRESSION_BODY
           CONST Int type=kotlin.Int value=42
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (x: kotlin.Int) [primary] declared in <root>.Test4'
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (x: kotlin.Int) declared in <root>.Test4'
           <T>: T of <root>.Test4
-          x: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=PLUS
+          x: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUS
             $this: GET_VAR 'x: kotlin.Int declared in <root>.Test4.<init>' type=kotlin.Int origin=null
             other: GET_VAR 'y: kotlin.Int declared in <root>.Test4.<init>' type=kotlin.Int origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]

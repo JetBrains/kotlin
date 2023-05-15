@@ -4,7 +4,7 @@ FILE fqName:test fileName:/boundInnerGenericConstructor.kt
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
     CONSTRUCTOR visibility:public <> () returnType:test.Foo<T of test.Foo> [primary]
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Foo modality:FINAL visibility:public superTypes:[kotlin.Any]'
     CLASS CLASS name:Inner modality:FINAL visibility:public [inner] superTypes:[kotlin.Any]
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.Foo.Inner<P of test.Foo.Inner, T of test.Foo>
@@ -14,7 +14,7 @@ FILE fqName:test fileName:/boundInnerGenericConstructor.kt
         VALUE_PARAMETER name:a index:0 type:T of test.Foo
         VALUE_PARAMETER name:b index:1 type:P of test.Foo.Inner
         BLOCK_BODY
-          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
           INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Inner modality:FINAL visibility:public [inner] superTypes:[kotlin.Any]'
       PROPERTY name:a visibility:public modality:FINAL [val]
         FIELD PROPERTY_BACKING_FIELD name:a type:T of test.Foo visibility:private [final]
@@ -40,7 +40,7 @@ FILE fqName:test fileName:/boundInnerGenericConstructor.kt
                 receiver: GET_VAR '<this>: test.Foo.Inner<P of test.Foo.Inner, T of test.Foo> declared in test.Foo.Inner.<get-b>' type=test.Foo.Inner<P of test.Foo.Inner, T of test.Foo> origin=null
       FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
         overridden:
-          public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+          public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
         $this: VALUE_PARAMETER name:<this> type:kotlin.Any
         VALUE_PARAMETER name:other index:0 type:kotlin.Any?
       FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -53,7 +53,7 @@ FILE fqName:test fileName:/boundInnerGenericConstructor.kt
         $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -71,28 +71,28 @@ FILE fqName:test fileName:/boundInnerGenericConstructor.kt
     VALUE_PARAMETER name:b index:1 type:B of test.foo
     VALUE_PARAMETER name:x index:2 type:kotlin.Function2<A of test.foo, B of test.foo, test.Foo.Inner<B of test.foo, A of test.foo>>
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun foo <A, B> (a: A of test.foo, b: B of test.foo, x: kotlin.Function2<A of test.foo, B of test.foo, test.Foo.Inner<B of test.foo, A of test.foo>>): test.Foo.Inner<B of test.foo, A of test.foo> [inline] declared in test'
-        CALL 'public abstract fun invoke (p1: P1 of kotlin.Function2, p2: P2 of kotlin.Function2): R of kotlin.Function2 [operator] declared in kotlin.Function2' type=test.Foo.Inner<B of test.foo, A of test.foo> origin=INVOKE
+      RETURN type=kotlin.Nothing from='public final fun foo <A, B> (a: A of test.foo, b: B of test.foo, x: kotlin.Function2<A of test.foo, B of test.foo, test.Foo.Inner<B of test.foo, A of test.foo>>): test.Foo.Inner<B of test.foo, A of test.foo> declared in test'
+        CALL 'public abstract fun invoke (p1: P1 of kotlin.Function2, p2: P2 of kotlin.Function2): R of kotlin.Function2 declared in kotlin.Function2' type=test.Foo.Inner<B of test.foo, A of test.foo> origin=INVOKE
           $this: GET_VAR 'x: kotlin.Function2<A of test.foo, B of test.foo, test.Foo.Inner<B of test.foo, A of test.foo>> declared in test.foo' type=kotlin.Function2<A of test.foo, B of test.foo, test.Foo.Inner<B of test.foo, A of test.foo>> origin=VARIABLE_AS_FUNCTION
           p1: GET_VAR 'a: A of test.foo declared in test.foo' type=A of test.foo origin=null
           p2: GET_VAR 'b: B of test.foo declared in test.foo' type=B of test.foo origin=null
   FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
     BLOCK_BODY
       VAR name:z type:test.Foo<kotlin.String> [val]
-        CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in test.Foo' type=test.Foo<kotlin.String> origin=null
+        CONSTRUCTOR_CALL 'public constructor <init> () declared in test.Foo' type=test.Foo<kotlin.String> origin=null
           <class: T>: kotlin.String
       VAR name:foo type:test.Foo.Inner<kotlin.String, kotlin.String> [val]
-        CALL 'public final fun foo <A, B> (a: A of test.foo, b: B of test.foo, x: kotlin.Function2<A of test.foo, B of test.foo, test.Foo.Inner<B of test.foo, A of test.foo>>): test.Foo.Inner<B of test.foo, A of test.foo> [inline] declared in test' type=test.Foo.Inner<kotlin.String, kotlin.String> origin=null
+        CALL 'public final fun foo <A, B> (a: A of test.foo, b: B of test.foo, x: kotlin.Function2<A of test.foo, B of test.foo, test.Foo.Inner<B of test.foo, A of test.foo>>): test.Foo.Inner<B of test.foo, A of test.foo> declared in test' type=test.Foo.Inner<kotlin.String, kotlin.String> origin=null
           <A>: kotlin.String
           <B>: kotlin.String
           a: CONST String type=kotlin.String value="O"
           b: CONST String type=kotlin.String value="K"
-          x: FUNCTION_REFERENCE 'public constructor <init> (a: T of test.Foo, b: P of test.Foo.Inner) [primary] declared in test.Foo.Inner' type=kotlin.reflect.KFunction2<kotlin.String, kotlin.String, test.Foo.Inner<kotlin.String, kotlin.String>> origin=null reflectionTarget=<same>
+          x: FUNCTION_REFERENCE 'public constructor <init> (a: T of test.Foo, b: P of test.Foo.Inner) declared in test.Foo.Inner' type=kotlin.reflect.KFunction2<kotlin.String, kotlin.String, test.Foo.Inner<kotlin.String, kotlin.String>> origin=null reflectionTarget=<same>
             <P>: kotlin.String
-            $this: GET_VAR 'val z: test.Foo<kotlin.String> [val] declared in test.box' type=test.Foo<kotlin.String> origin=null
+            $this: GET_VAR 'val z: test.Foo<kotlin.String> declared in test.box' type=test.Foo<kotlin.String> origin=null
       RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in test'
-        CALL 'public final fun plus (other: kotlin.Any?): kotlin.String [operator] declared in kotlin.String' type=kotlin.String origin=PLUS
+        CALL 'public final fun plus (other: kotlin.Any?): kotlin.String declared in kotlin.String' type=kotlin.String origin=PLUS
           $this: CALL 'public final fun <get-a> (): T of test.Foo declared in test.Foo.Inner' type=kotlin.String origin=GET_PROPERTY
-            $this: GET_VAR 'val foo: test.Foo.Inner<kotlin.String, kotlin.String> [val] declared in test.box' type=test.Foo.Inner<kotlin.String, kotlin.String> origin=null
+            $this: GET_VAR 'val foo: test.Foo.Inner<kotlin.String, kotlin.String> declared in test.box' type=test.Foo.Inner<kotlin.String, kotlin.String> origin=null
           other: CALL 'public final fun <get-b> (): P of test.Foo.Inner declared in test.Foo.Inner' type=kotlin.String origin=GET_PROPERTY
-            $this: GET_VAR 'val foo: test.Foo.Inner<kotlin.String, kotlin.String> [val] declared in test.box' type=test.Foo.Inner<kotlin.String, kotlin.String> origin=null
+            $this: GET_VAR 'val foo: test.Foo.Inner<kotlin.String, kotlin.String> declared in test.box' type=test.Foo.Inner<kotlin.String, kotlin.String> origin=null

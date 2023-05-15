@@ -6,7 +6,7 @@ FILE fqName:<root> fileName:/localVarInDoWhile.kt
           body: COMPOSITE type=kotlin.Unit origin=DO_WHILE_LOOP
             VAR name:x type:kotlin.Int [val]
               CONST Int type=kotlin.Int value=42
-          condition: CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+          condition: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
             $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
-              arg0: GET_VAR 'val x: kotlin.Int [val] declared in <root>.foo' type=kotlin.Int origin=null
+              arg0: GET_VAR 'val x: kotlin.Int declared in <root>.foo' type=kotlin.Int origin=null
               arg1: CONST Int type=kotlin.Int value=42

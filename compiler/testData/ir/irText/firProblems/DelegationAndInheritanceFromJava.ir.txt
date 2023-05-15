@@ -4,154 +4,154 @@ FILE fqName:<root> fileName:/DelegationAndInheritanceFromJava.kt
     CONSTRUCTOR visibility:public <> (b:<root>.Foo.B) returnType:<root>.Impl [primary]
       VALUE_PARAMETER name:b index:0 type:<root>.Foo.B
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Impl modality:FINAL visibility:public superTypes:[<root>.Foo.A; <root>.Foo.B]'
     FIELD DELEGATE name:$$delegate_0 type:<root>.Foo.B visibility:private [final]
       EXPRESSION_BODY
         GET_VAR 'b: <root>.Foo.B declared in <root>.Impl.<init>' type=<root>.Foo.B origin=null
     PROPERTY DELEGATED_MEMBER name:size visibility:public modality:OPEN [val]
       overridden:
-        public abstract size: kotlin.Int [fake_override,val]
-        public abstract size: kotlin.Int [fake_override,val]
+        public abstract size: kotlin.Int
+        public abstract size: kotlin.Int
       FUN DELEGATED_MEMBER name:<get-size> visibility:public modality:OPEN <> ($this:<root>.Impl) returnType:kotlin.Int
         correspondingProperty: PROPERTY DELEGATED_MEMBER name:size visibility:public modality:OPEN [val]
         overridden:
-          public abstract fun <get-size> (): kotlin.Int [fake_override] declared in <root>.Foo.A
-          public abstract fun <get-size> (): kotlin.Int [fake_override] declared in <root>.Foo.B
+          public abstract fun <get-size> (): kotlin.Int declared in <root>.Foo.A
+          public abstract fun <get-size> (): kotlin.Int declared in <root>.Foo.B
         $this: VALUE_PARAMETER name:<this> type:<root>.Impl
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public open fun <get-size> (): kotlin.Int declared in <root>.Impl'
-            CALL 'public abstract fun <get-size> (): kotlin.Int [fake_override] declared in <root>.Foo.B' type=kotlin.Int origin=null
+            CALL 'public abstract fun <get-size> (): kotlin.Int declared in <root>.Foo.B' type=kotlin.Int origin=null
               $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.Foo.B visibility:private [final]' type=<root>.Foo.B origin=null
                 receiver: GET_VAR '<this>: <root>.Impl declared in <root>.Impl.<get-size>' type=<root>.Impl origin=null
     FUN DELEGATED_MEMBER name:add visibility:public modality:OPEN <> ($this:<root>.Impl, element:@[FlexibleNullability] kotlin.String?) returnType:kotlin.Boolean
       overridden:
-        public abstract fun add (element: @[FlexibleNullability] kotlin.String?): kotlin.Boolean [fake_override] declared in <root>.Foo.A
-        public abstract fun add (element: @[FlexibleNullability] kotlin.String?): kotlin.Boolean [fake_override] declared in <root>.Foo.B
+        public abstract fun add (element: @[FlexibleNullability] kotlin.String?): kotlin.Boolean declared in <root>.Foo.A
+        public abstract fun add (element: @[FlexibleNullability] kotlin.String?): kotlin.Boolean declared in <root>.Foo.B
       $this: VALUE_PARAMETER name:<this> type:<root>.Impl
       VALUE_PARAMETER name:element index:0 type:@[FlexibleNullability] kotlin.String?
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun add (element: @[FlexibleNullability] kotlin.String?): kotlin.Boolean declared in <root>.Impl'
-          CALL 'public abstract fun add (element: @[FlexibleNullability] kotlin.String?): kotlin.Boolean [fake_override] declared in <root>.Foo.B' type=kotlin.Boolean origin=null
+          CALL 'public abstract fun add (element: @[FlexibleNullability] kotlin.String?): kotlin.Boolean declared in <root>.Foo.B' type=kotlin.Boolean origin=null
             $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.Foo.B visibility:private [final]' type=<root>.Foo.B origin=null
               receiver: GET_VAR '<this>: <root>.Impl declared in <root>.Impl.add' type=<root>.Impl origin=null
             element: GET_VAR 'element: @[FlexibleNullability] kotlin.String? declared in <root>.Impl.add' type=@[FlexibleNullability] kotlin.String? origin=null
     FUN DELEGATED_MEMBER name:addAll visibility:public modality:OPEN <> ($this:<root>.Impl, elements:kotlin.collections.Collection<@[FlexibleNullability] kotlin.String?>) returnType:kotlin.Boolean
       overridden:
-        public abstract fun addAll (elements: kotlin.collections.Collection<@[FlexibleNullability] kotlin.String?>): kotlin.Boolean [fake_override] declared in <root>.Foo.A
-        public abstract fun addAll (elements: kotlin.collections.Collection<@[FlexibleNullability] kotlin.String?>): kotlin.Boolean [fake_override] declared in <root>.Foo.B
+        public abstract fun addAll (elements: kotlin.collections.Collection<@[FlexibleNullability] kotlin.String?>): kotlin.Boolean declared in <root>.Foo.A
+        public abstract fun addAll (elements: kotlin.collections.Collection<@[FlexibleNullability] kotlin.String?>): kotlin.Boolean declared in <root>.Foo.B
       $this: VALUE_PARAMETER name:<this> type:<root>.Impl
       VALUE_PARAMETER name:elements index:0 type:kotlin.collections.Collection<@[FlexibleNullability] kotlin.String?>
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun addAll (elements: kotlin.collections.Collection<@[FlexibleNullability] kotlin.String?>): kotlin.Boolean declared in <root>.Impl'
-          CALL 'public abstract fun addAll (elements: kotlin.collections.Collection<@[FlexibleNullability] kotlin.String?>): kotlin.Boolean [fake_override] declared in <root>.Foo.B' type=kotlin.Boolean origin=null
+          CALL 'public abstract fun addAll (elements: kotlin.collections.Collection<@[FlexibleNullability] kotlin.String?>): kotlin.Boolean declared in <root>.Foo.B' type=kotlin.Boolean origin=null
             $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.Foo.B visibility:private [final]' type=<root>.Foo.B origin=null
               receiver: GET_VAR '<this>: <root>.Impl declared in <root>.Impl.addAll' type=<root>.Impl origin=null
             elements: GET_VAR 'elements: kotlin.collections.Collection<@[FlexibleNullability] kotlin.String?> declared in <root>.Impl.addAll' type=kotlin.collections.Collection<@[FlexibleNullability] kotlin.String?> origin=null
     FUN DELEGATED_MEMBER name:clear visibility:public modality:OPEN <> ($this:<root>.Impl) returnType:kotlin.Unit
       overridden:
-        public abstract fun clear (): kotlin.Unit [fake_override] declared in <root>.Foo.A
-        public abstract fun clear (): kotlin.Unit [fake_override] declared in <root>.Foo.B
+        public abstract fun clear (): kotlin.Unit declared in <root>.Foo.A
+        public abstract fun clear (): kotlin.Unit declared in <root>.Foo.B
       $this: VALUE_PARAMETER name:<this> type:<root>.Impl
       BLOCK_BODY
-        CALL 'public abstract fun clear (): kotlin.Unit [fake_override] declared in <root>.Foo.B' type=kotlin.Unit origin=null
+        CALL 'public abstract fun clear (): kotlin.Unit declared in <root>.Foo.B' type=kotlin.Unit origin=null
           $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.Foo.B visibility:private [final]' type=<root>.Foo.B origin=null
             receiver: GET_VAR '<this>: <root>.Impl declared in <root>.Impl.clear' type=<root>.Impl origin=null
     FUN DELEGATED_MEMBER name:contains visibility:public modality:OPEN <> ($this:<root>.Impl, element:@[FlexibleNullability] kotlin.String?) returnType:kotlin.Boolean [operator]
       overridden:
-        public abstract fun contains (element: @[FlexibleNullability] kotlin.String?): kotlin.Boolean [fake_override,operator] declared in <root>.Foo.A
-        public abstract fun contains (element: @[FlexibleNullability] kotlin.String?): kotlin.Boolean [fake_override,operator] declared in <root>.Foo.B
+        public abstract fun contains (element: @[FlexibleNullability] kotlin.String?): kotlin.Boolean declared in <root>.Foo.A
+        public abstract fun contains (element: @[FlexibleNullability] kotlin.String?): kotlin.Boolean declared in <root>.Foo.B
       $this: VALUE_PARAMETER name:<this> type:<root>.Impl
       VALUE_PARAMETER name:element index:0 type:@[FlexibleNullability] kotlin.String?
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public open fun contains (element: @[FlexibleNullability] kotlin.String?): kotlin.Boolean [operator] declared in <root>.Impl'
-          CALL 'public abstract fun contains (element: @[FlexibleNullability] kotlin.String?): kotlin.Boolean [fake_override,operator] declared in <root>.Foo.B' type=kotlin.Boolean origin=null
+        RETURN type=kotlin.Nothing from='public open fun contains (element: @[FlexibleNullability] kotlin.String?): kotlin.Boolean declared in <root>.Impl'
+          CALL 'public abstract fun contains (element: @[FlexibleNullability] kotlin.String?): kotlin.Boolean declared in <root>.Foo.B' type=kotlin.Boolean origin=null
             $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.Foo.B visibility:private [final]' type=<root>.Foo.B origin=null
               receiver: GET_VAR '<this>: <root>.Impl declared in <root>.Impl.contains' type=<root>.Impl origin=null
             element: GET_VAR 'element: @[FlexibleNullability] kotlin.String? declared in <root>.Impl.contains' type=@[FlexibleNullability] kotlin.String? origin=null
     FUN DELEGATED_MEMBER name:containsAll visibility:public modality:OPEN <> ($this:<root>.Impl, elements:kotlin.collections.Collection<@[FlexibleNullability] kotlin.String?>) returnType:kotlin.Boolean
       overridden:
-        public abstract fun containsAll (elements: kotlin.collections.Collection<@[FlexibleNullability] kotlin.String?>): kotlin.Boolean [fake_override] declared in <root>.Foo.A
-        public abstract fun containsAll (elements: kotlin.collections.Collection<@[FlexibleNullability] kotlin.String?>): kotlin.Boolean [fake_override] declared in <root>.Foo.B
+        public abstract fun containsAll (elements: kotlin.collections.Collection<@[FlexibleNullability] kotlin.String?>): kotlin.Boolean declared in <root>.Foo.A
+        public abstract fun containsAll (elements: kotlin.collections.Collection<@[FlexibleNullability] kotlin.String?>): kotlin.Boolean declared in <root>.Foo.B
       $this: VALUE_PARAMETER name:<this> type:<root>.Impl
       VALUE_PARAMETER name:elements index:0 type:kotlin.collections.Collection<@[FlexibleNullability] kotlin.String?>
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun containsAll (elements: kotlin.collections.Collection<@[FlexibleNullability] kotlin.String?>): kotlin.Boolean declared in <root>.Impl'
-          CALL 'public abstract fun containsAll (elements: kotlin.collections.Collection<@[FlexibleNullability] kotlin.String?>): kotlin.Boolean [fake_override] declared in <root>.Foo.B' type=kotlin.Boolean origin=null
+          CALL 'public abstract fun containsAll (elements: kotlin.collections.Collection<@[FlexibleNullability] kotlin.String?>): kotlin.Boolean declared in <root>.Foo.B' type=kotlin.Boolean origin=null
             $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.Foo.B visibility:private [final]' type=<root>.Foo.B origin=null
               receiver: GET_VAR '<this>: <root>.Impl declared in <root>.Impl.containsAll' type=<root>.Impl origin=null
             elements: GET_VAR 'elements: kotlin.collections.Collection<@[FlexibleNullability] kotlin.String?> declared in <root>.Impl.containsAll' type=kotlin.collections.Collection<@[FlexibleNullability] kotlin.String?> origin=null
     FUN DELEGATED_MEMBER name:isEmpty visibility:public modality:OPEN <> ($this:<root>.Impl) returnType:kotlin.Boolean
       overridden:
-        public abstract fun isEmpty (): kotlin.Boolean [fake_override] declared in <root>.Foo.A
-        public abstract fun isEmpty (): kotlin.Boolean [fake_override] declared in <root>.Foo.B
+        public abstract fun isEmpty (): kotlin.Boolean declared in <root>.Foo.A
+        public abstract fun isEmpty (): kotlin.Boolean declared in <root>.Foo.B
       $this: VALUE_PARAMETER name:<this> type:<root>.Impl
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun isEmpty (): kotlin.Boolean declared in <root>.Impl'
-          CALL 'public abstract fun isEmpty (): kotlin.Boolean [fake_override] declared in <root>.Foo.B' type=kotlin.Boolean origin=null
+          CALL 'public abstract fun isEmpty (): kotlin.Boolean declared in <root>.Foo.B' type=kotlin.Boolean origin=null
             $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.Foo.B visibility:private [final]' type=<root>.Foo.B origin=null
               receiver: GET_VAR '<this>: <root>.Impl declared in <root>.Impl.isEmpty' type=<root>.Impl origin=null
     FUN DELEGATED_MEMBER name:iterator visibility:public modality:OPEN <> ($this:<root>.Impl) returnType:kotlin.collections.MutableIterator<@[FlexibleNullability] kotlin.String?> [operator]
       overridden:
-        public abstract fun iterator (): kotlin.collections.MutableIterator<@[FlexibleNullability] kotlin.String?> [fake_override,operator] declared in <root>.Foo.A
-        public abstract fun iterator (): kotlin.collections.MutableIterator<@[FlexibleNullability] kotlin.String?> [fake_override,operator] declared in <root>.Foo.B
+        public abstract fun iterator (): kotlin.collections.MutableIterator<@[FlexibleNullability] kotlin.String?> declared in <root>.Foo.A
+        public abstract fun iterator (): kotlin.collections.MutableIterator<@[FlexibleNullability] kotlin.String?> declared in <root>.Foo.B
       $this: VALUE_PARAMETER name:<this> type:<root>.Impl
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public open fun iterator (): kotlin.collections.MutableIterator<@[FlexibleNullability] kotlin.String?> [operator] declared in <root>.Impl'
-          CALL 'public abstract fun iterator (): kotlin.collections.MutableIterator<@[FlexibleNullability] kotlin.String?> [fake_override,operator] declared in <root>.Foo.B' type=kotlin.collections.MutableIterator<@[FlexibleNullability] kotlin.String?> origin=null
+        RETURN type=kotlin.Nothing from='public open fun iterator (): kotlin.collections.MutableIterator<@[FlexibleNullability] kotlin.String?> declared in <root>.Impl'
+          CALL 'public abstract fun iterator (): kotlin.collections.MutableIterator<@[FlexibleNullability] kotlin.String?> declared in <root>.Foo.B' type=kotlin.collections.MutableIterator<@[FlexibleNullability] kotlin.String?> origin=null
             $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.Foo.B visibility:private [final]' type=<root>.Foo.B origin=null
               receiver: GET_VAR '<this>: <root>.Impl declared in <root>.Impl.iterator' type=<root>.Impl origin=null
     FUN DELEGATED_MEMBER name:remove visibility:public modality:OPEN <> ($this:<root>.Impl, element:@[FlexibleNullability] kotlin.String?) returnType:kotlin.Boolean
       overridden:
-        public abstract fun remove (element: @[FlexibleNullability] kotlin.String?): kotlin.Boolean [fake_override] declared in <root>.Foo.A
-        public abstract fun remove (element: @[FlexibleNullability] kotlin.String?): kotlin.Boolean [fake_override] declared in <root>.Foo.B
+        public abstract fun remove (element: @[FlexibleNullability] kotlin.String?): kotlin.Boolean declared in <root>.Foo.A
+        public abstract fun remove (element: @[FlexibleNullability] kotlin.String?): kotlin.Boolean declared in <root>.Foo.B
       $this: VALUE_PARAMETER name:<this> type:<root>.Impl
       VALUE_PARAMETER name:element index:0 type:@[FlexibleNullability] kotlin.String?
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun remove (element: @[FlexibleNullability] kotlin.String?): kotlin.Boolean declared in <root>.Impl'
-          CALL 'public abstract fun remove (element: @[FlexibleNullability] kotlin.String?): kotlin.Boolean [fake_override] declared in <root>.Foo.B' type=kotlin.Boolean origin=null
+          CALL 'public abstract fun remove (element: @[FlexibleNullability] kotlin.String?): kotlin.Boolean declared in <root>.Foo.B' type=kotlin.Boolean origin=null
             $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.Foo.B visibility:private [final]' type=<root>.Foo.B origin=null
               receiver: GET_VAR '<this>: <root>.Impl declared in <root>.Impl.remove' type=<root>.Impl origin=null
             element: GET_VAR 'element: @[FlexibleNullability] kotlin.String? declared in <root>.Impl.remove' type=@[FlexibleNullability] kotlin.String? origin=null
     FUN DELEGATED_MEMBER name:removeAll visibility:public modality:OPEN <> ($this:<root>.Impl, elements:kotlin.collections.Collection<@[FlexibleNullability] kotlin.String?>) returnType:kotlin.Boolean
       overridden:
-        public abstract fun removeAll (elements: kotlin.collections.Collection<@[FlexibleNullability] kotlin.String?>): kotlin.Boolean [fake_override] declared in <root>.Foo.A
-        public abstract fun removeAll (elements: kotlin.collections.Collection<@[FlexibleNullability] kotlin.String?>): kotlin.Boolean [fake_override] declared in <root>.Foo.B
+        public abstract fun removeAll (elements: kotlin.collections.Collection<@[FlexibleNullability] kotlin.String?>): kotlin.Boolean declared in <root>.Foo.A
+        public abstract fun removeAll (elements: kotlin.collections.Collection<@[FlexibleNullability] kotlin.String?>): kotlin.Boolean declared in <root>.Foo.B
       $this: VALUE_PARAMETER name:<this> type:<root>.Impl
       VALUE_PARAMETER name:elements index:0 type:kotlin.collections.Collection<@[FlexibleNullability] kotlin.String?>
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun removeAll (elements: kotlin.collections.Collection<@[FlexibleNullability] kotlin.String?>): kotlin.Boolean declared in <root>.Impl'
-          CALL 'public abstract fun removeAll (elements: kotlin.collections.Collection<@[FlexibleNullability] kotlin.String?>): kotlin.Boolean [fake_override] declared in <root>.Foo.B' type=kotlin.Boolean origin=null
+          CALL 'public abstract fun removeAll (elements: kotlin.collections.Collection<@[FlexibleNullability] kotlin.String?>): kotlin.Boolean declared in <root>.Foo.B' type=kotlin.Boolean origin=null
             $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.Foo.B visibility:private [final]' type=<root>.Foo.B origin=null
               receiver: GET_VAR '<this>: <root>.Impl declared in <root>.Impl.removeAll' type=<root>.Impl origin=null
             elements: GET_VAR 'elements: kotlin.collections.Collection<@[FlexibleNullability] kotlin.String?> declared in <root>.Impl.removeAll' type=kotlin.collections.Collection<@[FlexibleNullability] kotlin.String?> origin=null
     FUN DELEGATED_MEMBER name:retainAll visibility:public modality:OPEN <> ($this:<root>.Impl, elements:kotlin.collections.Collection<@[FlexibleNullability] kotlin.String?>) returnType:kotlin.Boolean
       overridden:
-        public abstract fun retainAll (elements: kotlin.collections.Collection<@[FlexibleNullability] kotlin.String?>): kotlin.Boolean [fake_override] declared in <root>.Foo.A
-        public abstract fun retainAll (elements: kotlin.collections.Collection<@[FlexibleNullability] kotlin.String?>): kotlin.Boolean [fake_override] declared in <root>.Foo.B
+        public abstract fun retainAll (elements: kotlin.collections.Collection<@[FlexibleNullability] kotlin.String?>): kotlin.Boolean declared in <root>.Foo.A
+        public abstract fun retainAll (elements: kotlin.collections.Collection<@[FlexibleNullability] kotlin.String?>): kotlin.Boolean declared in <root>.Foo.B
       $this: VALUE_PARAMETER name:<this> type:<root>.Impl
       VALUE_PARAMETER name:elements index:0 type:kotlin.collections.Collection<@[FlexibleNullability] kotlin.String?>
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun retainAll (elements: kotlin.collections.Collection<@[FlexibleNullability] kotlin.String?>): kotlin.Boolean declared in <root>.Impl'
-          CALL 'public abstract fun retainAll (elements: kotlin.collections.Collection<@[FlexibleNullability] kotlin.String?>): kotlin.Boolean [fake_override] declared in <root>.Foo.B' type=kotlin.Boolean origin=null
+          CALL 'public abstract fun retainAll (elements: kotlin.collections.Collection<@[FlexibleNullability] kotlin.String?>): kotlin.Boolean declared in <root>.Foo.B' type=kotlin.Boolean origin=null
             $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.Foo.B visibility:private [final]' type=<root>.Foo.B origin=null
               receiver: GET_VAR '<this>: <root>.Impl declared in <root>.Impl.retainAll' type=<root>.Impl origin=null
             elements: GET_VAR 'elements: kotlin.collections.Collection<@[FlexibleNullability] kotlin.String?> declared in <root>.Impl.retainAll' type=kotlin.collections.Collection<@[FlexibleNullability] kotlin.String?> origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.Foo.A
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.Foo.B
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Foo.A
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Foo.B
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
       overridden:
-        public open fun hashCode (): kotlin.Int [fake_override] declared in <root>.Foo.A
-        public open fun hashCode (): kotlin.Int [fake_override] declared in <root>.Foo.B
+        public open fun hashCode (): kotlin.Int declared in <root>.Foo.A
+        public open fun hashCode (): kotlin.Int declared in <root>.Foo.B
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
       overridden:
-        public open fun toString (): kotlin.String [fake_override] declared in <root>.Foo.A
-        public open fun toString (): kotlin.String [fake_override] declared in <root>.Foo.B
+        public open fun toString (): kotlin.String declared in <root>.Foo.A
+        public open fun toString (): kotlin.String declared in <root>.Foo.B
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
     BLOCK_BODY

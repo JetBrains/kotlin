@@ -8,9 +8,9 @@ FILE fqName:<root> fileName:/localFunction.kt
           TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
             BLOCK type=kotlin.Int origin=POSTFIX_INCR
               VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:kotlin.Int [val]
-                GET_VAR 'var x: kotlin.Int [var] declared in <root>.outer' type=kotlin.Int origin=null
-              SET_VAR 'var x: kotlin.Int [var] declared in <root>.outer' type=kotlin.Unit origin=POSTFIX_INCR
-                CALL 'public final fun inc (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
-                  $this: GET_VAR 'val tmp_0: kotlin.Int [val] declared in <root>.outer.local' type=kotlin.Int origin=null
-              GET_VAR 'val tmp_0: kotlin.Int [val] declared in <root>.outer.local' type=kotlin.Int origin=null
+                GET_VAR 'var x: kotlin.Int declared in <root>.outer' type=kotlin.Int origin=null
+              SET_VAR 'var x: kotlin.Int declared in <root>.outer' type=kotlin.Unit origin=POSTFIX_INCR
+                CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+                  $this: GET_VAR 'val tmp_0: kotlin.Int declared in <root>.outer.local' type=kotlin.Int origin=null
+              GET_VAR 'val tmp_0: kotlin.Int declared in <root>.outer.local' type=kotlin.Int origin=null
       CALL 'local final fun local (): kotlin.Unit declared in <root>.outer' type=kotlin.Unit origin=null

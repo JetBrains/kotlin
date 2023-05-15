@@ -7,8 +7,8 @@ val test1: Any
     //   Mangled name (compatible mode: false): {}test1.<no name provided>
     //   Mangled name (compatible mode: true):  test1.<no name provided>
     // CHECK JS_IR NATIVE:
-    //   Mangled name: #<get-test1>(){}
-    //   Public signature: /test1.<get-test1>|-5735092642142423279[0]
+    //   Mangled name (compatible mode: false): {}test1.<no name provided>
+    //   Mangled name (compatible mode: true):  test1.<no name provided>
     local class <no name provided> {
       // CHECK:
       //   Mangled name (compatible mode: false): {}test1.<no name provided>#<init>(){}
@@ -17,9 +17,12 @@ val test1: Any
 
     }
 
-  // CHECK:
+  // CHECK JVM_IR:
   //   Mangled name: #<get-test1>(){}kotlin.Any
   //   Public signature: /test1.<get-test1>|-6000098324399857556[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: #<get-test1>(){}
+  //   Public signature: /test1.<get-test1>|-5735092642142423279[0]
   get
 
 // CHECK:
@@ -31,8 +34,8 @@ val test2: IFoo
     //   Mangled name (compatible mode: false): {}test2.<no name provided>
     //   Mangled name (compatible mode: true):  test2.<no name provided>
     // CHECK JS_IR NATIVE:
-    //   Mangled name: #<get-test2>(){}
-    //   Public signature: /test2.<get-test2>|-5218942532816206869[0]
+    //   Mangled name (compatible mode: false): {}test2.<no name provided>
+    //   Mangled name (compatible mode: true):  test2.<no name provided>
     local class <no name provided> : IFoo {
       // CHECK:
       //   Mangled name (compatible mode: false): {}test2.<no name provided>#<init>(){}
@@ -46,9 +49,12 @@ val test2: IFoo
 
     }
 
-  // CHECK:
+  // CHECK JVM_IR:
   //   Mangled name: #<get-test2>(){}IFoo
   //   Public signature: /test2.<get-test2>|8558399082919905120[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: #<get-test2>(){}
+  //   Public signature: /test2.<get-test2>|-5218942532816206869[0]
   get
 
 // CHECK:
@@ -83,15 +89,21 @@ class Outer {
   //   Mangled name: Outer#test3(){}
   //   Public signature: /Outer.test3|-3759735065270951803[0]
   fun test3(): Inner
-    // CHECK:
+    // CHECK JVM_IR:
     //   Mangled name: Outer#test3(){}Outer.Inner.<no name provided>
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: Outer#test3(){}.<no name provided>
     local class <no name provided> : Inner {
-      // CHECK:
+      // CHECK JVM_IR:
       //   Mangled name: Outer#test3(){}Outer.Inner.<no name provided>#<init>(){}
+      // CHECK JS_IR NATIVE:
+      //   Mangled name: Outer#test3(){}.<no name provided>#<init>(){}
       constructor() /* primary */
 
-      // CHECK:
+      // CHECK JVM_IR:
       //   Mangled name: Outer#test3(){}Outer.Inner.<no name provided>#foo(){}
+      // CHECK JS_IR NATIVE:
+      //   Mangled name: Outer#test3(){}.<no name provided>#foo(){}
       override fun foo(): Unit
 
     }
@@ -117,15 +129,21 @@ interface IFoo {
 //   Mangled name: #test4@Outer(){}
 //   Public signature: /test4|5715080467126173402[0]
 fun Outer.test4(): Inner
-  // CHECK:
+  // CHECK JVM_IR:
   //   Mangled name: #test4@Outer(){}Outer.Inner.<no name provided>
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: #test4@Outer(){}.<no name provided>
   local class <no name provided> : Inner {
-    // CHECK:
+    // CHECK JVM_IR:
     //   Mangled name: #test4@Outer(){}Outer.Inner.<no name provided>#<init>(){}
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: #test4@Outer(){}.<no name provided>#<init>(){}
     constructor() /* primary */
 
-    // CHECK:
+    // CHECK JVM_IR:
     //   Mangled name: #test4@Outer(){}Outer.Inner.<no name provided>#foo(){}
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: #test4@Outer(){}.<no name provided>#foo(){}
     override fun foo(): Unit
 
   }

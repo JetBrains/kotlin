@@ -9,9 +9,9 @@ FILE fqName:<root> fileName:/dynamicElvisOperator.kt
           WHEN type=dynamic origin=null
             BRANCH
               if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                arg0: GET_VAR 'val tmp_0: dynamic [val] declared in <root>.test' type=dynamic origin=null
+                arg0: GET_VAR 'val tmp_0: dynamic declared in <root>.test' type=dynamic origin=null
                 arg1: CONST Null type=kotlin.Nothing? value=null
               then: CONST String type=kotlin.String value="other"
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
-              then: GET_VAR 'val tmp_0: dynamic [val] declared in <root>.test' type=dynamic origin=null
+              then: GET_VAR 'val tmp_0: dynamic declared in <root>.test' type=dynamic origin=null

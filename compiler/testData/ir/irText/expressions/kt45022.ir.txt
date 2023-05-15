@@ -2,27 +2,27 @@ FILE fqName:<root> fileName:/kt45022.kt
   TYPEALIAS name:AX visibility:public expandedType:<root>.X
   FUN name:test visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
-      CALL 'public final fun plusAssign (any: kotlin.Any): kotlin.Unit [operator] declared in <root>.X' type=kotlin.Unit origin=PLUSEQ
+      CALL 'public final fun plusAssign (any: kotlin.Any): kotlin.Unit declared in <root>.X' type=kotlin.Unit origin=PLUSEQ
         $this: GET_OBJECT 'CLASS OBJECT name:X modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.X
         any: CONST Int type=kotlin.Int value=1
-      CALL 'public final fun plusAssign (any: kotlin.Any): kotlin.Unit [operator] declared in <root>.X' type=kotlin.Unit origin=PLUSEQ
+      CALL 'public final fun plusAssign (any: kotlin.Any): kotlin.Unit declared in <root>.X' type=kotlin.Unit origin=PLUSEQ
         $this: GET_OBJECT 'CLASS OBJECT name:X modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.X
         any: CONST Int type=kotlin.Int value=1
   CLASS OBJECT name:X modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.X
     CONSTRUCTOR visibility:private <> () returnType:<root>.X [primary]
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:X modality:FINAL visibility:public superTypes:[kotlin.Any]'
     FUN name:plusAssign visibility:public modality:FINAL <> ($this:<root>.X, any:kotlin.Any) returnType:kotlin.Unit [operator]
       $this: VALUE_PARAMETER name:<this> type:<root>.X
       VALUE_PARAMETER name:any index:0 type:kotlin.Any
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun plusAssign (any: kotlin.Any): kotlin.Unit [operator] declared in <root>.X'
+        RETURN type=kotlin.Nothing from='public final fun plusAssign (any: kotlin.Any): kotlin.Unit declared in <root>.X'
           GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]

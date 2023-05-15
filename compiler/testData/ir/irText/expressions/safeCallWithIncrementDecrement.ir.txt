@@ -3,11 +3,11 @@ FILE fqName:test fileName:/safeCallWithIncrementDecrement.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.C
     CONSTRUCTOR visibility:public <> () returnType:test.C [primary]
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C modality:FINAL visibility:public superTypes:[kotlin.Any]'
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -33,25 +33,25 @@ FILE fqName:test fileName:/safeCallWithIncrementDecrement.kt
   FUN name:inc visibility:public modality:FINAL <> ($receiver:kotlin.Int?) returnType:kotlin.Int? [operator]
     $receiver: VALUE_PARAMETER name:<this> type:kotlin.Int?
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun inc (): kotlin.Int? [operator] declared in test'
+      RETURN type=kotlin.Nothing from='public final fun inc (): kotlin.Int? declared in test'
         BLOCK type=kotlin.Int? origin=SAFE_CALL
           VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:kotlin.Int? [val]
             GET_VAR '<this>: kotlin.Int? declared in test.inc' type=kotlin.Int? origin=null
           WHEN type=kotlin.Int? origin=null
             BRANCH
               if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                arg0: GET_VAR 'val tmp_0: kotlin.Int? [val] declared in test.inc' type=kotlin.Int? origin=null
+                arg0: GET_VAR 'val tmp_0: kotlin.Int? declared in test.inc' type=kotlin.Int? origin=null
                 arg1: CONST Null type=kotlin.Nothing? value=null
               then: CONST Null type=kotlin.Nothing? value=null
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
-              then: CALL 'public final fun inc (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
-                $this: GET_VAR 'val tmp_0: kotlin.Int? [val] declared in test.inc' type=kotlin.Int? origin=null
+              then: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+                $this: GET_VAR 'val tmp_0: kotlin.Int? declared in test.inc' type=kotlin.Int? origin=null
   FUN name:get visibility:public modality:FINAL <> ($receiver:kotlin.Int?, index:kotlin.Int) returnType:kotlin.Int [operator]
     $receiver: VALUE_PARAMETER name:<this> type:kotlin.Int?
     VALUE_PARAMETER name:index index:0 type:kotlin.Int
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun get (index: kotlin.Int): kotlin.Int [operator] declared in test'
+      RETURN type=kotlin.Nothing from='public final fun get (index: kotlin.Int): kotlin.Int declared in test'
         CONST Int type=kotlin.Int value=42
   FUN name:set visibility:public modality:FINAL <> ($receiver:kotlin.Int?, index:kotlin.Int, value:kotlin.Int) returnType:kotlin.Unit [operator]
     $receiver: VALUE_PARAMETER name:<this> type:kotlin.Int?
@@ -68,23 +68,23 @@ FILE fqName:test fileName:/safeCallWithIncrementDecrement.kt
           WHEN type=kotlin.Int? origin=null
             BRANCH
               if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                arg0: GET_VAR 'val tmp_1: test.C? [val] declared in test.testProperty' type=test.C? origin=null
+                arg0: GET_VAR 'val tmp_1: test.C? declared in test.testProperty' type=test.C? origin=null
                 arg1: CONST Null type=kotlin.Nothing? value=null
               then: CONST Null type=kotlin.Nothing? value=null
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
               then: BLOCK type=kotlin.Int origin=POSTFIX_INCR
                 VAR IR_TEMPORARY_VARIABLE name:tmp_2 type:test.C? [val]
-                  GET_VAR 'val tmp_1: test.C? [val] declared in test.testProperty' type=test.C? origin=null
+                  GET_VAR 'val tmp_1: test.C? declared in test.testProperty' type=test.C? origin=null
                 BLOCK type=kotlin.Int origin=POSTFIX_INCR
                   VAR IR_TEMPORARY_VARIABLE name:tmp_3 type:kotlin.Int [val]
                     CALL 'public final fun <get-p> (): kotlin.Int declared in test' type=kotlin.Int origin=POSTFIX_INCR
-                      $receiver: GET_VAR 'val tmp_2: test.C? [val] declared in test.testProperty' type=test.C? origin=null
+                      $receiver: GET_VAR 'val tmp_2: test.C? declared in test.testProperty' type=test.C? origin=null
                   CALL 'public final fun <set-p> (value: kotlin.Int): kotlin.Unit declared in test' type=kotlin.Unit origin=POSTFIX_INCR
-                    $receiver: GET_VAR 'val tmp_2: test.C? [val] declared in test.testProperty' type=test.C? origin=null
-                    value: CALL 'public final fun inc (): kotlin.Int? [operator] declared in test' type=kotlin.Int? origin=POSTFIX_INCR
-                      $receiver: GET_VAR 'val tmp_3: kotlin.Int [val] declared in test.testProperty' type=kotlin.Int origin=null
-                  GET_VAR 'val tmp_3: kotlin.Int [val] declared in test.testProperty' type=kotlin.Int origin=null
+                    $receiver: GET_VAR 'val tmp_2: test.C? declared in test.testProperty' type=test.C? origin=null
+                    value: CALL 'public final fun inc (): kotlin.Int? declared in test' type=kotlin.Int? origin=POSTFIX_INCR
+                      $receiver: GET_VAR 'val tmp_3: kotlin.Int declared in test.testProperty' type=kotlin.Int origin=null
+                  GET_VAR 'val tmp_3: kotlin.Int declared in test.testProperty' type=kotlin.Int origin=null
   FUN name:testArrayAccess visibility:public modality:FINAL <> (nc:test.C?) returnType:kotlin.Unit
     VALUE_PARAMETER name:nc index:0 type:test.C?
     BLOCK_BODY
@@ -97,22 +97,22 @@ FILE fqName:test fileName:/safeCallWithIncrementDecrement.kt
               WHEN type=kotlin.Int? origin=null
                 BRANCH
                   if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                    arg0: GET_VAR 'val tmp_5: test.C? [val] declared in test.testArrayAccess' type=test.C? origin=null
+                    arg0: GET_VAR 'val tmp_5: test.C? declared in test.testArrayAccess' type=test.C? origin=null
                     arg1: CONST Null type=kotlin.Nothing? value=null
                   then: CONST Null type=kotlin.Nothing? value=null
                 BRANCH
                   if: CONST Boolean type=kotlin.Boolean value=true
                   then: CALL 'public final fun <get-p> (): kotlin.Int declared in test' type=kotlin.Int origin=GET_PROPERTY
-                    $receiver: GET_VAR 'val tmp_5: test.C? [val] declared in test.testArrayAccess' type=test.C? origin=null
+                    $receiver: GET_VAR 'val tmp_5: test.C? declared in test.testArrayAccess' type=test.C? origin=null
           VAR IR_TEMPORARY_VARIABLE name:tmp_6 type:kotlin.Int [val]
             CONST Int type=kotlin.Int value=0
           VAR IR_TEMPORARY_VARIABLE name:tmp_7 type:kotlin.Int [val]
-            CALL 'public final fun get (index: kotlin.Int): kotlin.Int [operator] declared in test' type=kotlin.Int origin=POSTFIX_INCR
-              $receiver: GET_VAR 'val tmp_4: kotlin.Int? [val] declared in test.testArrayAccess' type=kotlin.Int? origin=null
-              index: GET_VAR 'val tmp_6: kotlin.Int [val] declared in test.testArrayAccess' type=kotlin.Int origin=null
-          CALL 'public final fun set (index: kotlin.Int, value: kotlin.Int): kotlin.Unit [operator] declared in test' type=kotlin.Unit origin=POSTFIX_INCR
-            $receiver: GET_VAR 'val tmp_4: kotlin.Int? [val] declared in test.testArrayAccess' type=kotlin.Int? origin=null
-            index: GET_VAR 'val tmp_6: kotlin.Int [val] declared in test.testArrayAccess' type=kotlin.Int origin=null
-            value: CALL 'public final fun inc (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_INCR
-              $this: GET_VAR 'val tmp_7: kotlin.Int [val] declared in test.testArrayAccess' type=kotlin.Int origin=null
-          GET_VAR 'val tmp_7: kotlin.Int [val] declared in test.testArrayAccess' type=kotlin.Int origin=null
+            CALL 'public final fun get (index: kotlin.Int): kotlin.Int declared in test' type=kotlin.Int origin=POSTFIX_INCR
+              $receiver: GET_VAR 'val tmp_4: kotlin.Int? declared in test.testArrayAccess' type=kotlin.Int? origin=null
+              index: GET_VAR 'val tmp_6: kotlin.Int declared in test.testArrayAccess' type=kotlin.Int origin=null
+          CALL 'public final fun set (index: kotlin.Int, value: kotlin.Int): kotlin.Unit declared in test' type=kotlin.Unit origin=POSTFIX_INCR
+            $receiver: GET_VAR 'val tmp_4: kotlin.Int? declared in test.testArrayAccess' type=kotlin.Int? origin=null
+            index: GET_VAR 'val tmp_6: kotlin.Int declared in test.testArrayAccess' type=kotlin.Int origin=null
+            value: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_INCR
+              $this: GET_VAR 'val tmp_7: kotlin.Int declared in test.testArrayAccess' type=kotlin.Int origin=null
+          GET_VAR 'val tmp_7: kotlin.Int declared in test.testArrayAccess' type=kotlin.Int origin=null

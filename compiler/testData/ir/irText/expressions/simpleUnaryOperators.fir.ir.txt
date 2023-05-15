@@ -3,7 +3,7 @@ FILE fqName:<root> fileName:/simpleUnaryOperators.kt
     VALUE_PARAMETER name:x index:0 type:kotlin.Int
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test1 (x: kotlin.Int): kotlin.Int declared in <root>'
-        CALL 'public final fun unaryMinus (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
+        CALL 'public final fun unaryMinus (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
           $this: GET_VAR 'x: kotlin.Int declared in <root>.test1' type=kotlin.Int origin=null
   FUN name:test2 visibility:public modality:FINAL <> () returnType:kotlin.Int
     BLOCK_BODY
@@ -13,7 +13,7 @@ FILE fqName:<root> fileName:/simpleUnaryOperators.kt
     VALUE_PARAMETER name:x index:0 type:kotlin.Int
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test3 (x: kotlin.Int): kotlin.Int declared in <root>'
-        CALL 'public final fun unaryPlus (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
+        CALL 'public final fun unaryPlus (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
           $this: GET_VAR 'x: kotlin.Int declared in <root>.test3' type=kotlin.Int origin=null
   FUN name:test4 visibility:public modality:FINAL <> () returnType:kotlin.Int
     BLOCK_BODY
@@ -23,7 +23,7 @@ FILE fqName:<root> fileName:/simpleUnaryOperators.kt
     VALUE_PARAMETER name:x index:0 type:kotlin.Boolean
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test5 (x: kotlin.Boolean): kotlin.Boolean declared in <root>'
-        CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=null
+        CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=null
           $this: GET_VAR 'x: kotlin.Boolean declared in <root>.test5' type=kotlin.Boolean origin=null
   FUN name:test6 visibility:public modality:FINAL <> () returnType:kotlin.Boolean
     BLOCK_BODY

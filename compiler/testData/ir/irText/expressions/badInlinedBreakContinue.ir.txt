@@ -2,21 +2,21 @@ FILE fqName:<root> fileName:/badInlinedBreakContinue.kt
   FUN name:foo visibility:public modality:FINAL <> (block:kotlin.Function0<kotlin.Unit>) returnType:kotlin.Unit [inline]
     VALUE_PARAMETER name:block index:0 type:kotlin.Function0<kotlin.Unit>
     BLOCK_BODY
-      CALL 'public abstract fun invoke (): R of kotlin.Function0 [operator] declared in kotlin.Function0' type=kotlin.Unit origin=INVOKE
+      CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.Unit origin=INVOKE
         $this: GET_VAR 'block: kotlin.Function0<kotlin.Unit> declared in <root>.foo' type=kotlin.Function0<kotlin.Unit> origin=VARIABLE_AS_FUNCTION
   FUN name:bar visibility:public modality:FINAL <> (block1:kotlin.Function0<kotlin.Unit>, block2:kotlin.Function0<kotlin.Unit>) returnType:kotlin.Unit [inline]
     VALUE_PARAMETER name:block1 index:0 type:kotlin.Function0<kotlin.Unit>
     VALUE_PARAMETER name:block2 index:1 type:kotlin.Function0<kotlin.Unit> [noinline]
     BLOCK_BODY
-      CALL 'public abstract fun invoke (): R of kotlin.Function0 [operator] declared in kotlin.Function0' type=kotlin.Unit origin=INVOKE
+      CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.Unit origin=INVOKE
         $this: GET_VAR 'block1: kotlin.Function0<kotlin.Unit> declared in <root>.bar' type=kotlin.Function0<kotlin.Unit> origin=VARIABLE_AS_FUNCTION
-      CALL 'public abstract fun invoke (): R of kotlin.Function0 [operator] declared in kotlin.Function0' type=kotlin.Unit origin=INVOKE
-        $this: GET_VAR 'block2: kotlin.Function0<kotlin.Unit> [noinline] declared in <root>.bar' type=kotlin.Function0<kotlin.Unit> origin=VARIABLE_AS_FUNCTION
+      CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.Unit origin=INVOKE
+        $this: GET_VAR 'block2: kotlin.Function0<kotlin.Unit> declared in <root>.bar' type=kotlin.Function0<kotlin.Unit> origin=VARIABLE_AS_FUNCTION
   FUN name:baz visibility:public modality:FINAL <> (block:kotlin.Function0<kotlin.Unit>) returnType:kotlin.Unit [inline]
     VALUE_PARAMETER name:block index:0 type:kotlin.Function0<kotlin.Unit> [crossinline]
     BLOCK_BODY
-      CALL 'public abstract fun invoke (): R of kotlin.Function0 [operator] declared in kotlin.Function0' type=kotlin.Unit origin=INVOKE
-        $this: GET_VAR 'block: kotlin.Function0<kotlin.Unit> [crossinline] declared in <root>.baz' type=kotlin.Function0<kotlin.Unit> origin=VARIABLE_AS_FUNCTION
+      CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.Unit origin=INVOKE
+        $this: GET_VAR 'block: kotlin.Function0<kotlin.Unit> declared in <root>.baz' type=kotlin.Function0<kotlin.Unit> origin=VARIABLE_AS_FUNCTION
   FUN name:myForEach visibility:public modality:FINAL <T> ($receiver:kotlin.collections.Iterable<T of <root>.myForEach>, action:kotlin.Function1<T of <root>.myForEach, kotlin.Unit>) returnType:kotlin.Unit [inline]
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
     $receiver: VALUE_PARAMETER name:<this> type:kotlin.collections.Iterable<T of <root>.myForEach>
@@ -24,48 +24,48 @@ FILE fqName:<root> fileName:/badInlinedBreakContinue.kt
     BLOCK_BODY
       BLOCK type=kotlin.Unit origin=FOR_LOOP
         VAR FOR_LOOP_ITERATOR name:tmp_0 type:kotlin.collections.Iterator<T of <root>.myForEach> [val]
-          CALL 'public abstract fun iterator (): kotlin.collections.Iterator<T of kotlin.collections.Iterable> [operator] declared in kotlin.collections.Iterable' type=kotlin.collections.Iterator<T of <root>.myForEach> origin=FOR_LOOP_ITERATOR
+          CALL 'public abstract fun iterator (): kotlin.collections.Iterator<T of kotlin.collections.Iterable> declared in kotlin.collections.Iterable' type=kotlin.collections.Iterator<T of <root>.myForEach> origin=FOR_LOOP_ITERATOR
             $this: GET_VAR '<this>: kotlin.collections.Iterable<T of <root>.myForEach> declared in <root>.myForEach' type=kotlin.collections.Iterable<T of <root>.myForEach> origin=null
         WHILE label=null origin=FOR_LOOP_INNER_WHILE
-          condition: CALL 'public abstract fun hasNext (): kotlin.Boolean [operator] declared in kotlin.collections.Iterator' type=kotlin.Boolean origin=FOR_LOOP_HAS_NEXT
-            $this: GET_VAR 'val tmp_0: kotlin.collections.Iterator<T of <root>.myForEach> [val] declared in <root>.myForEach' type=kotlin.collections.Iterator<T of <root>.myForEach> origin=null
+          condition: CALL 'public abstract fun hasNext (): kotlin.Boolean declared in kotlin.collections.Iterator' type=kotlin.Boolean origin=FOR_LOOP_HAS_NEXT
+            $this: GET_VAR 'val tmp_0: kotlin.collections.Iterator<T of <root>.myForEach> declared in <root>.myForEach' type=kotlin.collections.Iterator<T of <root>.myForEach> origin=null
           body: BLOCK type=kotlin.Unit origin=FOR_LOOP_INNER_WHILE
             VAR FOR_LOOP_VARIABLE name:element type:T of <root>.myForEach [val]
-              CALL 'public abstract fun next (): T of kotlin.collections.Iterator [operator] declared in kotlin.collections.Iterator' type=T of <root>.myForEach origin=FOR_LOOP_NEXT
-                $this: GET_VAR 'val tmp_0: kotlin.collections.Iterator<T of <root>.myForEach> [val] declared in <root>.myForEach' type=kotlin.collections.Iterator<T of <root>.myForEach> origin=null
-            CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 [operator] declared in kotlin.Function1' type=kotlin.Unit origin=INVOKE
+              CALL 'public abstract fun next (): T of kotlin.collections.Iterator declared in kotlin.collections.Iterator' type=T of <root>.myForEach origin=FOR_LOOP_NEXT
+                $this: GET_VAR 'val tmp_0: kotlin.collections.Iterator<T of <root>.myForEach> declared in <root>.myForEach' type=kotlin.collections.Iterator<T of <root>.myForEach> origin=null
+            CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=kotlin.Unit origin=INVOKE
               $this: GET_VAR 'action: kotlin.Function1<T of <root>.myForEach, kotlin.Unit> declared in <root>.myForEach' type=kotlin.Function1<T of <root>.myForEach, kotlin.Unit> origin=VARIABLE_AS_FUNCTION
-              p1: GET_VAR 'val element: T of <root>.myForEach [val] declared in <root>.myForEach' type=T of <root>.myForEach origin=null
+              p1: GET_VAR 'val element: T of <root>.myForEach declared in <root>.myForEach' type=T of <root>.myForEach origin=null
   FUN name:test1 visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       ERROR_EXPR '{break}()
     {continue}()' type=IrErrorType([Error type: Error expression type])
-      CALL 'public abstract fun invoke (): R of kotlin.Function0 [operator] declared in kotlin.Function0' type=kotlin.Unit origin=INVOKE
+      CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.Unit origin=INVOKE
         $this: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=ANONYMOUS_FUNCTION
           FUN LOCAL_FUNCTION name:<no name provided> visibility:local modality:FINAL <> () returnType:kotlin.Unit
             BLOCK_BODY
               ERROR_EXPR 'Loop not found for break expression: break' type=kotlin.Nothing
-      CALL 'public abstract fun invoke (): R of kotlin.Function0 [operator] declared in kotlin.Function0' type=kotlin.Unit origin=INVOKE
+      CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.Unit origin=INVOKE
         $this: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=ANONYMOUS_FUNCTION
           FUN LOCAL_FUNCTION name:<no name provided> visibility:local modality:FINAL <> () returnType:kotlin.Unit
             BLOCK_BODY
               ERROR_EXPR 'Loop not found for continue expression: continue' type=kotlin.Nothing
-      CALL 'public final fun foo (block: kotlin.Function0<kotlin.Unit>): kotlin.Unit [inline] declared in <root>' type=kotlin.Unit origin=null
+      CALL 'public final fun foo (block: kotlin.Function0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
         block: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
           FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
             BLOCK_BODY
               ERROR_EXPR 'Loop not found for break expression: break' type=kotlin.Nothing
-      CALL 'public final fun foo (block: kotlin.Function0<kotlin.Unit>): kotlin.Unit [inline] declared in <root>' type=kotlin.Unit origin=null
+      CALL 'public final fun foo (block: kotlin.Function0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
         block: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
           FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
             BLOCK_BODY
               ERROR_EXPR 'Loop not found for continue expression: continue' type=kotlin.Nothing
-      CALL 'public final fun foo (block: kotlin.Function0<kotlin.Unit>): kotlin.Unit [inline] declared in <root>' type=kotlin.Unit origin=null
+      CALL 'public final fun foo (block: kotlin.Function0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
         block: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=ANONYMOUS_FUNCTION
           FUN LOCAL_FUNCTION name:<no name provided> visibility:local modality:FINAL <> () returnType:kotlin.Unit
             BLOCK_BODY
               ERROR_EXPR 'Loop not found for break expression: break' type=kotlin.Nothing
-      CALL 'public final fun foo (block: kotlin.Function0<kotlin.Unit>): kotlin.Unit [inline] declared in <root>' type=kotlin.Unit origin=null
+      CALL 'public final fun foo (block: kotlin.Function0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
         block: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=ANONYMOUS_FUNCTION
           FUN LOCAL_FUNCTION name:<no name provided> visibility:local modality:FINAL <> () returnType:kotlin.Unit
             BLOCK_BODY
@@ -77,32 +77,32 @@ FILE fqName:<root> fileName:/badInlinedBreakContinue.kt
         body: BLOCK type=kotlin.Unit origin=null
           ERROR_EXPR '{break@ERROR}()
         {continue@ERROR}()' type=IrErrorType([Error type: Error expression type])
-          CALL 'public abstract fun invoke (): R of kotlin.Function0 [operator] declared in kotlin.Function0' type=kotlin.Unit origin=INVOKE
+          CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.Unit origin=INVOKE
             $this: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=ANONYMOUS_FUNCTION
               FUN LOCAL_FUNCTION name:<no name provided> visibility:local modality:FINAL <> () returnType:kotlin.Unit
                 BLOCK_BODY
                   ERROR_EXPR 'Loop not found for break expression: break@ERROR' type=kotlin.Nothing
-          CALL 'public abstract fun invoke (): R of kotlin.Function0 [operator] declared in kotlin.Function0' type=kotlin.Unit origin=INVOKE
+          CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.Unit origin=INVOKE
             $this: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=ANONYMOUS_FUNCTION
               FUN LOCAL_FUNCTION name:<no name provided> visibility:local modality:FINAL <> () returnType:kotlin.Unit
                 BLOCK_BODY
                   ERROR_EXPR 'Loop not found for continue expression: continue@ERROR' type=kotlin.Nothing
-          CALL 'public final fun foo (block: kotlin.Function0<kotlin.Unit>): kotlin.Unit [inline] declared in <root>' type=kotlin.Unit origin=null
+          CALL 'public final fun foo (block: kotlin.Function0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
             block: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
               FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
                 BLOCK_BODY
                   ERROR_EXPR 'Loop not found for break expression: break@ERROR' type=kotlin.Nothing
-          CALL 'public final fun foo (block: kotlin.Function0<kotlin.Unit>): kotlin.Unit [inline] declared in <root>' type=kotlin.Unit origin=null
+          CALL 'public final fun foo (block: kotlin.Function0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
             block: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
               FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
                 BLOCK_BODY
                   ERROR_EXPR 'Loop not found for continue expression: continue@ERROR' type=kotlin.Nothing
-          CALL 'public final fun foo (block: kotlin.Function0<kotlin.Unit>): kotlin.Unit [inline] declared in <root>' type=kotlin.Unit origin=null
+          CALL 'public final fun foo (block: kotlin.Function0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
             block: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=ANONYMOUS_FUNCTION
               FUN LOCAL_FUNCTION name:<no name provided> visibility:local modality:FINAL <> () returnType:kotlin.Unit
                 BLOCK_BODY
                   ERROR_EXPR 'Loop not found for break expression: break@ERROR' type=kotlin.Nothing
-          CALL 'public final fun foo (block: kotlin.Function0<kotlin.Unit>): kotlin.Unit [inline] declared in <root>' type=kotlin.Unit origin=null
+          CALL 'public final fun foo (block: kotlin.Function0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
             block: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=ANONYMOUS_FUNCTION
               FUN LOCAL_FUNCTION name:<no name provided> visibility:local modality:FINAL <> () returnType:kotlin.Unit
                 BLOCK_BODY
@@ -118,32 +118,32 @@ FILE fqName:<root> fileName:/badInlinedBreakContinue.kt
                 BLOCK_BODY
                   ERROR_EXPR '{break@L1}()
             {continue@L1}()' type=IrErrorType([Error type: Error expression type])
-                  CALL 'public abstract fun invoke (): R of kotlin.Function0 [operator] declared in kotlin.Function0' type=kotlin.Unit origin=INVOKE
+                  CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.Unit origin=INVOKE
                     $this: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=ANONYMOUS_FUNCTION
                       FUN LOCAL_FUNCTION name:<no name provided> visibility:local modality:FINAL <> () returnType:kotlin.Unit
                         BLOCK_BODY
                           ERROR_EXPR 'Loop not found for break expression: break@L1' type=kotlin.Nothing
-                  CALL 'public abstract fun invoke (): R of kotlin.Function0 [operator] declared in kotlin.Function0' type=kotlin.Unit origin=INVOKE
+                  CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.Unit origin=INVOKE
                     $this: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=ANONYMOUS_FUNCTION
                       FUN LOCAL_FUNCTION name:<no name provided> visibility:local modality:FINAL <> () returnType:kotlin.Unit
                         BLOCK_BODY
                           ERROR_EXPR 'Loop not found for continue expression: continue@L1' type=kotlin.Nothing
-                  CALL 'public final fun foo (block: kotlin.Function0<kotlin.Unit>): kotlin.Unit [inline] declared in <root>' type=kotlin.Unit origin=null
+                  CALL 'public final fun foo (block: kotlin.Function0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
                     block: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
                       FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
                         BLOCK_BODY
                           ERROR_EXPR 'Loop not found for break expression: break@L1' type=kotlin.Nothing
-                  CALL 'public final fun foo (block: kotlin.Function0<kotlin.Unit>): kotlin.Unit [inline] declared in <root>' type=kotlin.Unit origin=null
+                  CALL 'public final fun foo (block: kotlin.Function0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
                     block: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
                       FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
                         BLOCK_BODY
                           ERROR_EXPR 'Loop not found for continue expression: continue@L1' type=kotlin.Nothing
-                  CALL 'public final fun foo (block: kotlin.Function0<kotlin.Unit>): kotlin.Unit [inline] declared in <root>' type=kotlin.Unit origin=null
+                  CALL 'public final fun foo (block: kotlin.Function0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
                     block: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=ANONYMOUS_FUNCTION
                       FUN LOCAL_FUNCTION name:<no name provided> visibility:local modality:FINAL <> () returnType:kotlin.Unit
                         BLOCK_BODY
                           ERROR_EXPR 'Loop not found for break expression: break@L1' type=kotlin.Nothing
-                  CALL 'public final fun foo (block: kotlin.Function0<kotlin.Unit>): kotlin.Unit [inline] declared in <root>' type=kotlin.Unit origin=null
+                  CALL 'public final fun foo (block: kotlin.Function0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
                     block: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=ANONYMOUS_FUNCTION
                       FUN LOCAL_FUNCTION name:<no name provided> visibility:local modality:FINAL <> () returnType:kotlin.Unit
                         BLOCK_BODY
@@ -151,7 +151,7 @@ FILE fqName:<root> fileName:/badInlinedBreakContinue.kt
   FUN name:test4 visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       WHILE label=null origin=WHILE_LOOP
-        condition: CALL 'public abstract fun invoke (): R of kotlin.Function0 [operator] declared in kotlin.Function0' type=kotlin.Nothing origin=INVOKE
+        condition: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.Nothing origin=INVOKE
           $this: FUN_EXPR type=kotlin.Function0<kotlin.Nothing> origin=LAMBDA
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Nothing
               BLOCK_BODY
@@ -159,7 +159,7 @@ FILE fqName:<root> fileName:/badInlinedBreakContinue.kt
                   ERROR_EXPR 'Loop not found for break expression: break' type=kotlin.Nothing
         body: BLOCK type=kotlin.Unit origin=null
       WHILE label=null origin=WHILE_LOOP
-        condition: CALL 'public abstract fun invoke (): R of kotlin.Function0 [operator] declared in kotlin.Function0' type=kotlin.Nothing origin=INVOKE
+        condition: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.Nothing origin=INVOKE
           $this: FUN_EXPR type=kotlin.Function0<kotlin.Nothing> origin=LAMBDA
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Nothing
               BLOCK_BODY
@@ -168,7 +168,7 @@ FILE fqName:<root> fileName:/badInlinedBreakContinue.kt
         body: BLOCK type=kotlin.Unit origin=null
       WHILE label=null origin=WHILE_LOOP
         condition: TYPE_OP type=kotlin.Boolean origin=IMPLICIT_CAST typeOperand=kotlin.Boolean
-          CALL 'public abstract fun invoke (): R of kotlin.Function0 [operator] declared in kotlin.Function0' type=kotlin.Unit origin=INVOKE
+          CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.Unit origin=INVOKE
             $this: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=ANONYMOUS_FUNCTION
               FUN LOCAL_FUNCTION name:<no name provided> visibility:local modality:FINAL <> () returnType:kotlin.Unit
                 BLOCK_BODY
@@ -176,7 +176,7 @@ FILE fqName:<root> fileName:/badInlinedBreakContinue.kt
         body: BLOCK type=kotlin.Unit origin=null
       WHILE label=null origin=WHILE_LOOP
         condition: TYPE_OP type=kotlin.Boolean origin=IMPLICIT_CAST typeOperand=kotlin.Boolean
-          CALL 'public abstract fun invoke (): R of kotlin.Function0 [operator] declared in kotlin.Function0' type=kotlin.Unit origin=INVOKE
+          CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.Unit origin=INVOKE
             $this: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=ANONYMOUS_FUNCTION
               FUN LOCAL_FUNCTION name:<no name provided> visibility:local modality:FINAL <> () returnType:kotlin.Unit
                 BLOCK_BODY
@@ -184,7 +184,7 @@ FILE fqName:<root> fileName:/badInlinedBreakContinue.kt
         body: BLOCK type=kotlin.Unit origin=null
       WHILE label=null origin=WHILE_LOOP
         condition: TYPE_OP type=kotlin.Boolean origin=IMPLICIT_CAST typeOperand=kotlin.Boolean
-          CALL 'public final fun foo (block: kotlin.Function0<kotlin.Unit>): kotlin.Unit [inline] declared in <root>' type=kotlin.Unit origin=null
+          CALL 'public final fun foo (block: kotlin.Function0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
             block: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
               FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
                 BLOCK_BODY
@@ -192,7 +192,7 @@ FILE fqName:<root> fileName:/badInlinedBreakContinue.kt
         body: BLOCK type=kotlin.Unit origin=null
       WHILE label=null origin=WHILE_LOOP
         condition: TYPE_OP type=kotlin.Boolean origin=IMPLICIT_CAST typeOperand=kotlin.Boolean
-          CALL 'public final fun foo (block: kotlin.Function0<kotlin.Unit>): kotlin.Unit [inline] declared in <root>' type=kotlin.Unit origin=null
+          CALL 'public final fun foo (block: kotlin.Function0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
             block: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
               FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
                 BLOCK_BODY
@@ -200,7 +200,7 @@ FILE fqName:<root> fileName:/badInlinedBreakContinue.kt
         body: BLOCK type=kotlin.Unit origin=null
       WHILE label=null origin=WHILE_LOOP
         condition: TYPE_OP type=kotlin.Boolean origin=IMPLICIT_CAST typeOperand=kotlin.Boolean
-          CALL 'public final fun foo (block: kotlin.Function0<kotlin.Unit>): kotlin.Unit [inline] declared in <root>' type=kotlin.Unit origin=null
+          CALL 'public final fun foo (block: kotlin.Function0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
             block: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=ANONYMOUS_FUNCTION
               FUN LOCAL_FUNCTION name:<no name provided> visibility:local modality:FINAL <> () returnType:kotlin.Unit
                 BLOCK_BODY
@@ -208,7 +208,7 @@ FILE fqName:<root> fileName:/badInlinedBreakContinue.kt
         body: BLOCK type=kotlin.Unit origin=null
       WHILE label=null origin=WHILE_LOOP
         condition: TYPE_OP type=kotlin.Boolean origin=IMPLICIT_CAST typeOperand=kotlin.Boolean
-          CALL 'public final fun foo (block: kotlin.Function0<kotlin.Unit>): kotlin.Unit [inline] declared in <root>' type=kotlin.Unit origin=null
+          CALL 'public final fun foo (block: kotlin.Function0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
             block: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=ANONYMOUS_FUNCTION
               FUN LOCAL_FUNCTION name:<no name provided> visibility:local modality:FINAL <> () returnType:kotlin.Unit
                 BLOCK_BODY
@@ -216,7 +216,7 @@ FILE fqName:<root> fileName:/badInlinedBreakContinue.kt
         body: BLOCK type=kotlin.Unit origin=null
   FUN name:test5 visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
-      CALL 'public final fun forEach <T> (action: kotlin.Function1<T of kotlin.collections.CollectionsKt.forEach, kotlin.Unit>): kotlin.Unit [inline] declared in kotlin.collections.CollectionsKt' type=kotlin.Unit origin=null
+      CALL 'public final fun forEach <T> (action: kotlin.Function1<T of kotlin.collections.CollectionsKt.forEach, kotlin.Unit>): kotlin.Unit declared in kotlin.collections.CollectionsKt' type=kotlin.Unit origin=null
         <T>: kotlin.Int
         $receiver: CALL 'public final fun listOf <T> (vararg elements: T of kotlin.collections.CollectionsKt.listOf): kotlin.collections.List<T of kotlin.collections.CollectionsKt.listOf> declared in kotlin.collections.CollectionsKt' type=kotlin.collections.List<kotlin.Int> origin=null
           <T>: kotlin.Int
@@ -234,7 +234,7 @@ FILE fqName:<root> fileName:/badInlinedBreakContinue.kt
                     arg0: GET_VAR 'i: kotlin.Int declared in <root>.test5.<anonymous>' type=kotlin.Int origin=null
                     arg1: CONST Int type=kotlin.Int value=2
                   then: ERROR_EXPR 'Loop not found for break expression: break' type=kotlin.Nothing
-      CALL 'public final fun forEach <T> (action: kotlin.Function1<T of kotlin.collections.CollectionsKt.forEach, kotlin.Unit>): kotlin.Unit [inline] declared in kotlin.collections.CollectionsKt' type=kotlin.Unit origin=null
+      CALL 'public final fun forEach <T> (action: kotlin.Function1<T of kotlin.collections.CollectionsKt.forEach, kotlin.Unit>): kotlin.Unit declared in kotlin.collections.CollectionsKt' type=kotlin.Unit origin=null
         <T>: kotlin.Int
         $receiver: CALL 'public final fun listOf <T> (vararg elements: T of kotlin.collections.CollectionsKt.listOf): kotlin.collections.List<T of kotlin.collections.CollectionsKt.listOf> declared in kotlin.collections.CollectionsKt' type=kotlin.collections.List<kotlin.Int> origin=null
           <T>: kotlin.Int
@@ -252,7 +252,7 @@ FILE fqName:<root> fileName:/badInlinedBreakContinue.kt
                     arg0: GET_VAR 'i: kotlin.Int declared in <root>.test5.<anonymous>' type=kotlin.Int origin=null
                     arg1: CONST Int type=kotlin.Int value=2
                   then: ERROR_EXPR 'Loop not found for continue expression: continue' type=kotlin.Nothing
-      CALL 'public final fun forEach <T> (action: kotlin.Function1<T of kotlin.collections.CollectionsKt.forEach, kotlin.Unit>): kotlin.Unit [inline] declared in kotlin.collections.CollectionsKt' type=kotlin.Unit origin=null
+      CALL 'public final fun forEach <T> (action: kotlin.Function1<T of kotlin.collections.CollectionsKt.forEach, kotlin.Unit>): kotlin.Unit declared in kotlin.collections.CollectionsKt' type=kotlin.Unit origin=null
         <T>: kotlin.Int
         $receiver: CALL 'public final fun listOf <T> (vararg elements: T of kotlin.collections.CollectionsKt.listOf): kotlin.collections.List<T of kotlin.collections.CollectionsKt.listOf> declared in kotlin.collections.CollectionsKt' type=kotlin.collections.List<kotlin.Int> origin=null
           <T>: kotlin.Int
@@ -270,7 +270,7 @@ FILE fqName:<root> fileName:/badInlinedBreakContinue.kt
                     arg0: GET_VAR 'i: kotlin.Int declared in <root>.test5.<no name provided>' type=kotlin.Int origin=null
                     arg1: CONST Int type=kotlin.Int value=2
                   then: ERROR_EXPR 'Loop not found for break expression: break' type=kotlin.Nothing
-      CALL 'public final fun forEach <T> (action: kotlin.Function1<T of kotlin.collections.CollectionsKt.forEach, kotlin.Unit>): kotlin.Unit [inline] declared in kotlin.collections.CollectionsKt' type=kotlin.Unit origin=null
+      CALL 'public final fun forEach <T> (action: kotlin.Function1<T of kotlin.collections.CollectionsKt.forEach, kotlin.Unit>): kotlin.Unit declared in kotlin.collections.CollectionsKt' type=kotlin.Unit origin=null
         <T>: kotlin.Int
         $receiver: CALL 'public final fun listOf <T> (vararg elements: T of kotlin.collections.CollectionsKt.listOf): kotlin.collections.List<T of kotlin.collections.CollectionsKt.listOf> declared in kotlin.collections.CollectionsKt' type=kotlin.collections.List<kotlin.Int> origin=null
           <T>: kotlin.Int
@@ -293,7 +293,7 @@ FILE fqName:<root> fileName:/badInlinedBreakContinue.kt
       WHILE label=null origin=WHILE_LOOP
         condition: CONST Boolean type=kotlin.Boolean value=true
         body: BLOCK type=kotlin.Unit origin=null
-          CALL 'public final fun bar (block1: kotlin.Function0<kotlin.Unit>, block2: kotlin.Function0<kotlin.Unit>): kotlin.Unit [inline] declared in <root>' type=kotlin.Unit origin=null
+          CALL 'public final fun bar (block1: kotlin.Function0<kotlin.Unit>, block2: kotlin.Function0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
             block1: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
               FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
                 BLOCK_BODY
@@ -303,7 +303,7 @@ FILE fqName:<root> fileName:/badInlinedBreakContinue.kt
               FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
                 BLOCK_BODY
                   ERROR_EXPR 'Loop not found for break expression: break' type=kotlin.Nothing
-          CALL 'public final fun bar (block1: kotlin.Function0<kotlin.Unit>, block2: kotlin.Function0<kotlin.Unit>): kotlin.Unit [inline] declared in <root>' type=kotlin.Unit origin=null
+          CALL 'public final fun bar (block1: kotlin.Function0<kotlin.Unit>, block2: kotlin.Function0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
             block1: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
               FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
                 BLOCK_BODY
@@ -313,7 +313,7 @@ FILE fqName:<root> fileName:/badInlinedBreakContinue.kt
               FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
                 BLOCK_BODY
                   ERROR_EXPR 'Loop not found for continue expression: continue' type=kotlin.Nothing
-          CALL 'public final fun bar (block1: kotlin.Function0<kotlin.Unit>, block2: kotlin.Function0<kotlin.Unit>): kotlin.Unit [inline] declared in <root>' type=kotlin.Unit origin=null
+          CALL 'public final fun bar (block1: kotlin.Function0<kotlin.Unit>, block2: kotlin.Function0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
             block1: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=ANONYMOUS_FUNCTION
               FUN LOCAL_FUNCTION name:<no name provided> visibility:local modality:FINAL <> () returnType:kotlin.Unit
                 BLOCK_BODY
@@ -321,7 +321,7 @@ FILE fqName:<root> fileName:/badInlinedBreakContinue.kt
               FUN LOCAL_FUNCTION name:<no name provided> visibility:local modality:FINAL <> () returnType:kotlin.Unit
                 BLOCK_BODY
                   ERROR_EXPR 'Loop not found for break expression: break' type=kotlin.Nothing
-          CALL 'public final fun bar (block1: kotlin.Function0<kotlin.Unit>, block2: kotlin.Function0<kotlin.Unit>): kotlin.Unit [inline] declared in <root>' type=kotlin.Unit origin=null
+          CALL 'public final fun bar (block1: kotlin.Function0<kotlin.Unit>, block2: kotlin.Function0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
             block1: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=ANONYMOUS_FUNCTION
               FUN LOCAL_FUNCTION name:<no name provided> visibility:local modality:FINAL <> () returnType:kotlin.Unit
                 BLOCK_BODY
@@ -331,9 +331,9 @@ FILE fqName:<root> fileName:/badInlinedBreakContinue.kt
                   ERROR_EXPR 'Loop not found for continue expression: continue' type=kotlin.Nothing
   FUN name:test7 visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
-      CALL 'public final fun myForEach <T> (action: kotlin.Function1<T of <root>.myForEach, kotlin.Unit>): kotlin.Unit [inline] declared in <root>' type=kotlin.Unit origin=null
+      CALL 'public final fun myForEach <T> (action: kotlin.Function1<T of <root>.myForEach, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
         <T>: kotlin.Int
-        $receiver: CALL 'public final fun rangeTo (other: kotlin.Int): kotlin.ranges.IntRange [operator] declared in kotlin.Int' type=kotlin.ranges.IntRange origin=RANGE
+        $receiver: CALL 'public final fun rangeTo (other: kotlin.Int): kotlin.ranges.IntRange declared in kotlin.Int' type=kotlin.ranges.IntRange origin=RANGE
           $this: CONST Int type=kotlin.Int value=1
           other: CONST Int type=kotlin.Int value=3
         action: FUN_EXPR type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=LAMBDA
@@ -352,7 +352,7 @@ FILE fqName:<root> fileName:/badInlinedBreakContinue.kt
       WHILE label=null origin=WHILE_LOOP
         condition: CONST Boolean type=kotlin.Boolean value=true
         body: BLOCK type=kotlin.Unit origin=null
-          CALL 'public final fun baz (block: kotlin.Function0<kotlin.Unit>): kotlin.Unit [inline] declared in <root>' type=kotlin.Unit origin=null
+          CALL 'public final fun baz (block: kotlin.Function0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
             block: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
               FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
                 BLOCK_BODY

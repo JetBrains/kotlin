@@ -3,7 +3,7 @@ FILE fqName:<root> fileName:/contextualFunctionConversion.kt
     VALUE_PARAMETER name:f index:0 type:@[ContextFunctionTypeParams(count = '1')] kotlin.Function1<kotlin.String, kotlin.String>
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun withContext (f: @[ContextFunctionTypeParams(count = '1')] kotlin.Function1<kotlin.String, kotlin.String>): kotlin.String declared in <root>'
-        CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 [operator] declared in kotlin.Function1' type=kotlin.String origin=INVOKE
+        CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=kotlin.String origin=INVOKE
           $this: GET_VAR 'f: @[ContextFunctionTypeParams(count = '1')] kotlin.Function1<kotlin.String, kotlin.String> declared in <root>.withContext' type=@[ContextFunctionTypeParams(count = '1')] kotlin.Function1<kotlin.String, kotlin.String> origin=VARIABLE_AS_FUNCTION
           p1: CONST String type=kotlin.String value="OK"
   FUN name:callWithContext visibility:public modality:FINAL <> (f:kotlin.Function1<kotlin.String, kotlin.String>) returnType:kotlin.String

@@ -17,7 +17,7 @@ FILE fqName:<root> fileName:/typeCheckOnDefinitelyNotNull.kt
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.CharSequence?] reified:true
     VALUE_PARAMETER name:x index:0 type:kotlin.Any
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun implicitAsFoo <T> (x: kotlin.Any): kotlin.Int [inline] declared in <root>'
+      RETURN type=kotlin.Nothing from='public final fun implicitAsFoo <T> (x: kotlin.Any): kotlin.Int declared in <root>'
         WHEN type=kotlin.Int origin=IF
           BRANCH
             if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=T of <root>.implicitAsFoo

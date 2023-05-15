@@ -7,7 +7,7 @@ FILE fqName:<root> fileName:/openDataClass.kt
       VALUE_PARAMETER name:test1 index:0 type:kotlin.String
       VALUE_PARAMETER name:test2 index:1 type:kotlin.String
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:ValidatedProperties modality:OPEN visibility:public [data] superTypes:[kotlin.Any]'
     PROPERTY name:test1 visibility:public modality:OPEN [val]
       FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.String visibility:private [final]
@@ -34,13 +34,13 @@ FILE fqName:<root> fileName:/openDataClass.kt
     FUN GENERATED_DATA_CLASS_MEMBER name:component1 visibility:public modality:FINAL <> ($this:<root>.ValidatedProperties) returnType:kotlin.String [operator]
       $this: VALUE_PARAMETER name:<this> type:<root>.ValidatedProperties
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun component1 (): kotlin.String [operator] declared in <root>.ValidatedProperties'
+        RETURN type=kotlin.Nothing from='public final fun component1 (): kotlin.String declared in <root>.ValidatedProperties'
           CALL 'public open fun <get-test1> (): kotlin.String declared in <root>.ValidatedProperties' type=kotlin.String origin=null
             $this: GET_VAR '<this>: <root>.ValidatedProperties declared in <root>.ValidatedProperties.component1' type=<root>.ValidatedProperties origin=null
     FUN GENERATED_DATA_CLASS_MEMBER name:component2 visibility:public modality:FINAL <> ($this:<root>.ValidatedProperties) returnType:kotlin.String [operator]
       $this: VALUE_PARAMETER name:<this> type:<root>.ValidatedProperties
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun component2 (): kotlin.String [operator] declared in <root>.ValidatedProperties'
+        RETURN type=kotlin.Nothing from='public final fun component2 (): kotlin.String declared in <root>.ValidatedProperties'
           CALL 'public open fun <get-test2> (): kotlin.String declared in <root>.ValidatedProperties' type=kotlin.String origin=null
             $this: GET_VAR '<this>: <root>.ValidatedProperties declared in <root>.ValidatedProperties.component2' type=<root>.ValidatedProperties origin=null
     FUN GENERATED_DATA_CLASS_MEMBER name:copy visibility:public modality:FINAL <> ($this:<root>.ValidatedProperties, test1:kotlin.String, test2:kotlin.String) returnType:<root>.ValidatedProperties
@@ -55,7 +55,7 @@ FILE fqName:<root> fileName:/openDataClass.kt
             $this: GET_VAR '<this>: <root>.ValidatedProperties declared in <root>.ValidatedProperties.copy' type=<root>.ValidatedProperties origin=null
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun copy (test1: kotlin.String, test2: kotlin.String): <root>.ValidatedProperties declared in <root>.ValidatedProperties'
-          CONSTRUCTOR_CALL 'public constructor <init> (test1: kotlin.String, test2: kotlin.String) [primary] declared in <root>.ValidatedProperties' type=<root>.ValidatedProperties origin=null
+          CONSTRUCTOR_CALL 'public constructor <init> (test1: kotlin.String, test2: kotlin.String) declared in <root>.ValidatedProperties' type=<root>.ValidatedProperties origin=null
             test1: GET_VAR 'test1: kotlin.String declared in <root>.ValidatedProperties.copy' type=kotlin.String origin=null
             test2: GET_VAR 'test2: kotlin.String declared in <root>.ValidatedProperties.copy' type=kotlin.String origin=null
     FUN GENERATED_DATA_CLASS_MEMBER name:toString visibility:public modality:OPEN <> ($this:<root>.ValidatedProperties) returnType:kotlin.String
@@ -80,22 +80,22 @@ FILE fqName:<root> fileName:/openDataClass.kt
       $this: VALUE_PARAMETER name:<this> type:<root>.ValidatedProperties
       BLOCK_BODY
         VAR name:result type:kotlin.Int [var]
-          CALL 'public open fun hashCode (): kotlin.Int [fake_override] declared in kotlin.String' type=kotlin.Int origin=null
+          CALL 'public open fun hashCode (): kotlin.Int declared in kotlin.String' type=kotlin.Int origin=null
             $this: CALL 'public open fun <get-test1> (): kotlin.String declared in <root>.ValidatedProperties' type=kotlin.String origin=null
               $this: GET_VAR '<this>: <root>.ValidatedProperties declared in <root>.ValidatedProperties.hashCode' type=<root>.ValidatedProperties origin=null
-        SET_VAR 'var result: kotlin.Int [var] declared in <root>.ValidatedProperties.hashCode' type=kotlin.Unit origin=EQ
-          CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
-            $this: CALL 'public final fun times (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
-              $this: GET_VAR 'var result: kotlin.Int [var] declared in <root>.ValidatedProperties.hashCode' type=kotlin.Int origin=null
+        SET_VAR 'var result: kotlin.Int declared in <root>.ValidatedProperties.hashCode' type=kotlin.Unit origin=EQ
+          CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+            $this: CALL 'public final fun times (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+              $this: GET_VAR 'var result: kotlin.Int declared in <root>.ValidatedProperties.hashCode' type=kotlin.Int origin=null
               other: CONST Int type=kotlin.Int value=31
-            other: CALL 'public open fun hashCode (): kotlin.Int [fake_override] declared in kotlin.String' type=kotlin.Int origin=null
+            other: CALL 'public open fun hashCode (): kotlin.Int declared in kotlin.String' type=kotlin.Int origin=null
               $this: CALL 'public open fun <get-test2> (): kotlin.String declared in <root>.ValidatedProperties' type=kotlin.String origin=null
                 $this: GET_VAR '<this>: <root>.ValidatedProperties declared in <root>.ValidatedProperties.hashCode' type=<root>.ValidatedProperties origin=null
         RETURN type=kotlin.Nothing from='public open fun hashCode (): kotlin.Int declared in <root>.ValidatedProperties'
-          GET_VAR 'var result: kotlin.Int [var] declared in <root>.ValidatedProperties.hashCode' type=kotlin.Int origin=null
+          GET_VAR 'var result: kotlin.Int declared in <root>.ValidatedProperties.hashCode' type=kotlin.Int origin=null
     FUN GENERATED_DATA_CLASS_MEMBER name:equals visibility:public modality:OPEN <> ($this:<root>.ValidatedProperties, other:kotlin.Any?) returnType:kotlin.Boolean [operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:<root>.ValidatedProperties
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
       BLOCK_BODY
@@ -104,36 +104,36 @@ FILE fqName:<root> fileName:/openDataClass.kt
             if: CALL 'public final fun EQEQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQEQ
               arg0: GET_VAR '<this>: <root>.ValidatedProperties declared in <root>.ValidatedProperties.equals' type=<root>.ValidatedProperties origin=null
               arg1: GET_VAR 'other: kotlin.Any? declared in <root>.ValidatedProperties.equals' type=kotlin.Any? origin=null
-            then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in <root>.ValidatedProperties'
+            then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.ValidatedProperties'
               CONST Boolean type=kotlin.Boolean value=true
         WHEN type=kotlin.Unit origin=null
           BRANCH
             if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=<root>.ValidatedProperties
               GET_VAR 'other: kotlin.Any? declared in <root>.ValidatedProperties.equals' type=kotlin.Any? origin=null
-            then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in <root>.ValidatedProperties'
+            then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.ValidatedProperties'
               CONST Boolean type=kotlin.Boolean value=false
         VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:<root>.ValidatedProperties [val]
           TYPE_OP type=<root>.ValidatedProperties origin=CAST typeOperand=<root>.ValidatedProperties
             GET_VAR 'other: kotlin.Any? declared in <root>.ValidatedProperties.equals' type=kotlin.Any? origin=null
         WHEN type=kotlin.Unit origin=null
           BRANCH
-            if: CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+            if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
               $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
                 arg0: CALL 'public open fun <get-test1> (): kotlin.String declared in <root>.ValidatedProperties' type=kotlin.String origin=null
                   $this: GET_VAR '<this>: <root>.ValidatedProperties declared in <root>.ValidatedProperties.equals' type=<root>.ValidatedProperties origin=null
                 arg1: CALL 'public open fun <get-test1> (): kotlin.String declared in <root>.ValidatedProperties' type=kotlin.String origin=null
-                  $this: GET_VAR 'val tmp_0: <root>.ValidatedProperties [val] declared in <root>.ValidatedProperties.equals' type=<root>.ValidatedProperties origin=null
-            then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in <root>.ValidatedProperties'
+                  $this: GET_VAR 'val tmp_0: <root>.ValidatedProperties declared in <root>.ValidatedProperties.equals' type=<root>.ValidatedProperties origin=null
+            then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.ValidatedProperties'
               CONST Boolean type=kotlin.Boolean value=false
         WHEN type=kotlin.Unit origin=null
           BRANCH
-            if: CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+            if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
               $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
                 arg0: CALL 'public open fun <get-test2> (): kotlin.String declared in <root>.ValidatedProperties' type=kotlin.String origin=null
                   $this: GET_VAR '<this>: <root>.ValidatedProperties declared in <root>.ValidatedProperties.equals' type=<root>.ValidatedProperties origin=null
                 arg1: CALL 'public open fun <get-test2> (): kotlin.String declared in <root>.ValidatedProperties' type=kotlin.String origin=null
-                  $this: GET_VAR 'val tmp_0: <root>.ValidatedProperties [val] declared in <root>.ValidatedProperties.equals' type=<root>.ValidatedProperties origin=null
-            then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in <root>.ValidatedProperties'
+                  $this: GET_VAR 'val tmp_0: <root>.ValidatedProperties declared in <root>.ValidatedProperties.equals' type=<root>.ValidatedProperties origin=null
+            then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.ValidatedProperties'
               CONST Boolean type=kotlin.Boolean value=false
-        RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in <root>.ValidatedProperties'
+        RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.ValidatedProperties'
           CONST Boolean type=kotlin.Boolean value=true

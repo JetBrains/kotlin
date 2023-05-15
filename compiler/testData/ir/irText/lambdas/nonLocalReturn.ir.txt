@@ -1,7 +1,7 @@
 FILE fqName:<root> fileName:/nonLocalReturn.kt
   FUN name:test0 visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
-      CALL 'public final fun run <R> (block: kotlin.Function0<R of kotlin.StandardKt.run>): R of kotlin.StandardKt.run [inline] declared in kotlin.StandardKt' type=kotlin.Nothing origin=null
+      CALL 'public final fun run <R> (block: kotlin.Function0<R of kotlin.StandardKt.run>): R of kotlin.StandardKt.run declared in kotlin.StandardKt' type=kotlin.Nothing origin=null
         <R>: kotlin.Nothing
         block: FUN_EXPR type=kotlin.Function0<kotlin.Nothing> origin=LAMBDA
           FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Nothing
@@ -10,7 +10,7 @@ FILE fqName:<root> fileName:/nonLocalReturn.kt
                 GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
   FUN name:test1 visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
-      CALL 'public final fun run <R> (block: kotlin.Function0<R of kotlin.StandardKt.run>): R of kotlin.StandardKt.run [inline] declared in kotlin.StandardKt' type=kotlin.Unit origin=null
+      CALL 'public final fun run <R> (block: kotlin.Function0<R of kotlin.StandardKt.run>): R of kotlin.StandardKt.run declared in kotlin.StandardKt' type=kotlin.Unit origin=null
         <R>: kotlin.Unit
         block: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
           FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
@@ -19,7 +19,7 @@ FILE fqName:<root> fileName:/nonLocalReturn.kt
                 GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
   FUN name:test2 visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
-      CALL 'public final fun run <R> (block: kotlin.Function0<R of kotlin.StandardKt.run>): R of kotlin.StandardKt.run [inline] declared in kotlin.StandardKt' type=kotlin.Unit origin=null
+      CALL 'public final fun run <R> (block: kotlin.Function0<R of kotlin.StandardKt.run>): R of kotlin.StandardKt.run declared in kotlin.StandardKt' type=kotlin.Unit origin=null
         <R>: kotlin.Unit
         block: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
           FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
@@ -28,12 +28,12 @@ FILE fqName:<root> fileName:/nonLocalReturn.kt
                 GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
   FUN name:test3 visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
-      CALL 'public final fun run <R> (block: kotlin.Function0<R of kotlin.StandardKt.run>): R of kotlin.StandardKt.run [inline] declared in kotlin.StandardKt' type=kotlin.Unit origin=null
+      CALL 'public final fun run <R> (block: kotlin.Function0<R of kotlin.StandardKt.run>): R of kotlin.StandardKt.run declared in kotlin.StandardKt' type=kotlin.Unit origin=null
         <R>: kotlin.Unit
         block: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
           FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
             BLOCK_BODY
-              CALL 'public final fun run <R> (block: kotlin.Function0<R of kotlin.StandardKt.run>): R of kotlin.StandardKt.run [inline] declared in kotlin.StandardKt' type=kotlin.Nothing origin=null
+              CALL 'public final fun run <R> (block: kotlin.Function0<R of kotlin.StandardKt.run>): R of kotlin.StandardKt.run declared in kotlin.StandardKt' type=kotlin.Nothing origin=null
                 <R>: kotlin.Nothing
                 block: FUN_EXPR type=kotlin.Function0<kotlin.Nothing> origin=LAMBDA
                   FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Nothing
@@ -43,7 +43,7 @@ FILE fqName:<root> fileName:/nonLocalReturn.kt
   FUN name:testLrmFoo1 visibility:public modality:FINAL <> (ints:kotlin.collections.List<kotlin.Int>) returnType:kotlin.Unit
     VALUE_PARAMETER name:ints index:0 type:kotlin.collections.List<kotlin.Int>
     BLOCK_BODY
-      CALL 'public final fun forEach <T> (action: kotlin.Function1<T of kotlin.collections.CollectionsKt.forEach, kotlin.Unit>): kotlin.Unit [inline] declared in kotlin.collections.CollectionsKt' type=kotlin.Unit origin=null
+      CALL 'public final fun forEach <T> (action: kotlin.Function1<T of kotlin.collections.CollectionsKt.forEach, kotlin.Unit>): kotlin.Unit declared in kotlin.collections.CollectionsKt' type=kotlin.Unit origin=null
         <T>: kotlin.Int
         $receiver: GET_VAR 'ints: kotlin.collections.List<kotlin.Int> declared in <root>.testLrmFoo1' type=kotlin.collections.List<kotlin.Int> origin=null
         action: FUN_EXPR type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=LAMBDA
@@ -57,12 +57,12 @@ FILE fqName:<root> fileName:/nonLocalReturn.kt
                     arg1: CONST Int type=kotlin.Int value=0
                   then: RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: kotlin.Int): kotlin.Unit declared in <root>.testLrmFoo1'
                     GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
-              CALL 'public final fun print (message: kotlin.Int): kotlin.Unit [inline] declared in kotlin.io' type=kotlin.Unit origin=null
+              CALL 'public final fun print (message: kotlin.Int): kotlin.Unit declared in kotlin.io' type=kotlin.Unit origin=null
                 message: GET_VAR 'it: kotlin.Int declared in <root>.testLrmFoo1.<anonymous>' type=kotlin.Int origin=null
   FUN name:testLrmFoo2 visibility:public modality:FINAL <> (ints:kotlin.collections.List<kotlin.Int>) returnType:kotlin.Unit
     VALUE_PARAMETER name:ints index:0 type:kotlin.collections.List<kotlin.Int>
     BLOCK_BODY
-      CALL 'public final fun forEach <T> (action: kotlin.Function1<T of kotlin.collections.CollectionsKt.forEach, kotlin.Unit>): kotlin.Unit [inline] declared in kotlin.collections.CollectionsKt' type=kotlin.Unit origin=null
+      CALL 'public final fun forEach <T> (action: kotlin.Function1<T of kotlin.collections.CollectionsKt.forEach, kotlin.Unit>): kotlin.Unit declared in kotlin.collections.CollectionsKt' type=kotlin.Unit origin=null
         <T>: kotlin.Int
         $receiver: GET_VAR 'ints: kotlin.collections.List<kotlin.Int> declared in <root>.testLrmFoo2' type=kotlin.collections.List<kotlin.Int> origin=null
         action: FUN_EXPR type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=LAMBDA
@@ -76,5 +76,5 @@ FILE fqName:<root> fileName:/nonLocalReturn.kt
                     arg1: CONST Int type=kotlin.Int value=0
                   then: RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: kotlin.Int): kotlin.Unit declared in <root>.testLrmFoo2'
                     GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
-              CALL 'public final fun print (message: kotlin.Int): kotlin.Unit [inline] declared in kotlin.io' type=kotlin.Unit origin=null
+              CALL 'public final fun print (message: kotlin.Int): kotlin.Unit declared in kotlin.io' type=kotlin.Unit origin=null
                 message: GET_VAR 'it: kotlin.Int declared in <root>.testLrmFoo2.<anonymous>' type=kotlin.Int origin=null

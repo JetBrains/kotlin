@@ -34,7 +34,7 @@ FILE fqName:<root> fileName:/ArrayListOverrides.kt
       $this: VALUE_PARAMETER name:<this> type:java.util.ArrayList<kotlin.String>
     FUN FAKE_OVERRIDE name:iterator visibility:public modality:OPEN <> ($this:java.util.ArrayList<kotlin.String>) returnType:@[EnhancedNullability] kotlin.collections.MutableIterator<@[EnhancedNullability] kotlin.String> [fake_override,operator]
       overridden:
-        public open fun iterator (): @[EnhancedNullability] kotlin.collections.MutableIterator<@[EnhancedNullability] E of java.util.ArrayList> [operator] declared in java.util.ArrayList
+        public open fun iterator (): @[EnhancedNullability] kotlin.collections.MutableIterator<@[EnhancedNullability] E of java.util.ArrayList> declared in java.util.ArrayList
       $this: VALUE_PARAMETER name:<this> type:java.util.ArrayList<kotlin.String>
     FUN FAKE_OVERRIDE name:remove visibility:public modality:OPEN <> ($this:java.util.ArrayList<kotlin.String>, element:@[EnhancedNullability] kotlin.String) returnType:kotlin.Boolean [fake_override]
       overridden:
@@ -53,12 +53,12 @@ FILE fqName:<root> fileName:/ArrayListOverrides.kt
       VALUE_PARAMETER name:elements index:0 type:kotlin.collections.Collection<@[EnhancedNullability] kotlin.String>
     FUN FAKE_OVERRIDE name:contains visibility:public modality:OPEN <> ($this:java.util.ArrayList<kotlin.String>, element:@[EnhancedNullability] kotlin.String) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun contains (element: @[EnhancedNullability] E of java.util.ArrayList): kotlin.Boolean [operator] declared in java.util.ArrayList
+        public open fun contains (element: @[EnhancedNullability] E of java.util.ArrayList): kotlin.Boolean declared in java.util.ArrayList
       $this: VALUE_PARAMETER name:<this> type:java.util.ArrayList<kotlin.String>
       VALUE_PARAMETER name:element index:0 type:@[EnhancedNullability] kotlin.String
     FUN FAKE_OVERRIDE name:containsAll visibility:public modality:OPEN <> ($this:java.util.AbstractCollection<@[FlexibleNullability] kotlin.String?>, elements:kotlin.collections.Collection<@[EnhancedNullability] kotlin.String>) returnType:kotlin.Boolean [fake_override]
       overridden:
-        public open fun containsAll (elements: kotlin.collections.Collection<@[EnhancedNullability] E of java.util.ArrayList>): kotlin.Boolean [fake_override] declared in java.util.ArrayList
+        public open fun containsAll (elements: kotlin.collections.Collection<@[EnhancedNullability] E of java.util.ArrayList>): kotlin.Boolean declared in java.util.ArrayList
       $this: VALUE_PARAMETER name:<this> type:java.util.AbstractCollection<@[FlexibleNullability] kotlin.String?>
       VALUE_PARAMETER name:elements index:0 type:kotlin.collections.Collection<@[EnhancedNullability] kotlin.String>
     FUN FAKE_OVERRIDE name:isEmpty visibility:public modality:OPEN <> ($this:java.util.ArrayList<kotlin.String>) returnType:kotlin.Boolean [fake_override]
@@ -67,16 +67,16 @@ FILE fqName:<root> fileName:/ArrayListOverrides.kt
       $this: VALUE_PARAMETER name:<this> type:java.util.ArrayList<kotlin.String>
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:java.util.AbstractList<@[FlexibleNullability] kotlin.String?>, other:@[EnhancedNullability] kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: @[EnhancedNullability] kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in java.util.ArrayList
+        public open fun equals (other: @[EnhancedNullability] kotlin.Any?): kotlin.Boolean declared in java.util.ArrayList
       $this: VALUE_PARAMETER name:<this> type:java.util.AbstractList<@[FlexibleNullability] kotlin.String?>
       VALUE_PARAMETER name:other index:0 type:@[EnhancedNullability] kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:java.util.AbstractList<@[FlexibleNullability] kotlin.String?>) returnType:kotlin.Int [fake_override]
       overridden:
-        public open fun hashCode (): kotlin.Int [fake_override] declared in java.util.ArrayList
+        public open fun hashCode (): kotlin.Int declared in java.util.ArrayList
       $this: VALUE_PARAMETER name:<this> type:java.util.AbstractList<@[FlexibleNullability] kotlin.String?>
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:java.util.AbstractCollection<@[FlexibleNullability] kotlin.String?>) returnType:@[EnhancedNullability] kotlin.String [fake_override]
       overridden:
-        public open fun toString (): @[EnhancedNullability] kotlin.String [fake_override] declared in java.util.ArrayList
+        public open fun toString (): @[EnhancedNullability] kotlin.String declared in java.util.ArrayList
       $this: VALUE_PARAMETER name:<this> type:java.util.AbstractCollection<@[FlexibleNullability] kotlin.String?>
     FUN FAKE_OVERRIDE name:forEach visibility:public modality:OPEN <> ($this:java.util.ArrayList<kotlin.String>, p0:@[FlexibleNullability] java.util.function.Consumer<in @[FlexibleNullability] kotlin.String?>?) returnType:kotlin.Unit [fake_override]
       overridden:
@@ -104,11 +104,11 @@ FILE fqName:<root> fileName:/ArrayListOverrides.kt
       VALUE_PARAMETER name:p0 index:0 type:@[EnhancedNullability] java.util.function.Predicate<in @[EnhancedNullability] kotlin.String>
     FUN FAKE_OVERRIDE name:stream visibility:public modality:OPEN <> ($this:kotlin.collections.Collection<@[FlexibleNullability] kotlin.String?>) returnType:@[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] kotlin.String> [fake_override]
       overridden:
-        public open fun stream (): @[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] E of java.util.ArrayList> [fake_override] declared in java.util.ArrayList
+        public open fun stream (): @[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] E of java.util.ArrayList> declared in java.util.ArrayList
       $this: VALUE_PARAMETER name:<this> type:kotlin.collections.Collection<@[FlexibleNullability] kotlin.String?>
     FUN FAKE_OVERRIDE name:parallelStream visibility:public modality:OPEN <> ($this:kotlin.collections.Collection<@[FlexibleNullability] kotlin.String?>) returnType:@[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] kotlin.String> [fake_override]
       overridden:
-        public open fun parallelStream (): @[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] E of java.util.ArrayList> [fake_override] declared in java.util.ArrayList
+        public open fun parallelStream (): @[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] E of java.util.ArrayList> declared in java.util.ArrayList
       $this: VALUE_PARAMETER name:<this> type:kotlin.collections.Collection<@[FlexibleNullability] kotlin.String?>
     FUN FAKE_OVERRIDE name:listIterator visibility:public modality:OPEN <> ($this:java.util.ArrayList<kotlin.String>, index:kotlin.Int) returnType:@[EnhancedNullability] kotlin.collections.MutableListIterator<@[EnhancedNullability] kotlin.String> [fake_override]
       overridden:
@@ -126,7 +126,7 @@ FILE fqName:<root> fileName:/ArrayListOverrides.kt
       VALUE_PARAMETER name:p0 index:0 type:kotlin.Int
     FUN FAKE_OVERRIDE name:set visibility:public modality:OPEN <> ($this:java.util.ArrayList<kotlin.String>, index:kotlin.Int, element:@[EnhancedNullability] kotlin.String) returnType:@[EnhancedNullability] kotlin.String [fake_override,operator]
       overridden:
-        public open fun set (index: kotlin.Int, element: @[EnhancedNullability] E of java.util.ArrayList): @[EnhancedNullability] E of java.util.ArrayList [operator] declared in java.util.ArrayList
+        public open fun set (index: kotlin.Int, element: @[EnhancedNullability] E of java.util.ArrayList): @[EnhancedNullability] E of java.util.ArrayList declared in java.util.ArrayList
       $this: VALUE_PARAMETER name:<this> type:java.util.ArrayList<kotlin.String>
       VALUE_PARAMETER name:index index:0 type:kotlin.Int
       VALUE_PARAMETER name:element index:1 type:@[EnhancedNullability] kotlin.String
@@ -138,7 +138,7 @@ FILE fqName:<root> fileName:/ArrayListOverrides.kt
       VALUE_PARAMETER name:toIndex index:1 type:kotlin.Int
     FUN FAKE_OVERRIDE name:get visibility:public modality:OPEN <> ($this:java.util.ArrayList<kotlin.String>, index:kotlin.Int) returnType:@[EnhancedNullability] kotlin.String [fake_override,operator]
       overridden:
-        public open fun get (index: kotlin.Int): @[EnhancedNullability] E of java.util.ArrayList [operator] declared in java.util.ArrayList
+        public open fun get (index: kotlin.Int): @[EnhancedNullability] E of java.util.ArrayList declared in java.util.ArrayList
       $this: VALUE_PARAMETER name:<this> type:java.util.ArrayList<kotlin.String>
       VALUE_PARAMETER name:index index:0 type:kotlin.Int
     FUN FAKE_OVERRIDE name:indexOf visibility:public modality:OPEN <> ($this:java.util.ArrayList<kotlin.String>, element:@[EnhancedNullability] kotlin.String) returnType:kotlin.Int [fake_override]
@@ -182,7 +182,7 @@ FILE fqName:<root> fileName:/ArrayListOverrides.kt
       VALUE_PARAMETER name:p0 index:0 type:kotlin.Int
     PROPERTY FAKE_OVERRIDE name:size visibility:public modality:OPEN [fake_override,val]
       overridden:
-        public open size: kotlin.Int [val]
+        public open size: kotlin.Int
       FUN FAKE_OVERRIDE name:<get-size> visibility:public modality:OPEN <> ($this:java.util.ArrayList<kotlin.String>) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:size visibility:public modality:OPEN [fake_override,val]
         overridden:
@@ -190,7 +190,7 @@ FILE fqName:<root> fileName:/ArrayListOverrides.kt
         $this: VALUE_PARAMETER name:<this> type:java.util.ArrayList<kotlin.String>
     PROPERTY FAKE_OVERRIDE name:modCount visibility:protected/*protected and package*/ modality:FINAL [fake_override,var]
       overridden:
-        protected/*protected and package*/ final modCount: kotlin.Int [fake_override,var]
+        protected/*protected and package*/ final modCount: kotlin.Int
   CLASS CLASS name:A2 modality:FINAL visibility:public superTypes:[java.util.ArrayList<kotlin.String>]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A2
     CONSTRUCTOR visibility:public <> () returnType:<root>.A2 [primary]
@@ -234,7 +234,7 @@ FILE fqName:<root> fileName:/ArrayListOverrides.kt
       $this: VALUE_PARAMETER name:<this> type:java.util.ArrayList<kotlin.String>
     FUN FAKE_OVERRIDE name:iterator visibility:public modality:OPEN <> ($this:java.util.ArrayList<kotlin.String>) returnType:@[EnhancedNullability] kotlin.collections.MutableIterator<@[EnhancedNullability] kotlin.String> [fake_override,operator]
       overridden:
-        public open fun iterator (): @[EnhancedNullability] kotlin.collections.MutableIterator<@[EnhancedNullability] E of java.util.ArrayList> [operator] declared in java.util.ArrayList
+        public open fun iterator (): @[EnhancedNullability] kotlin.collections.MutableIterator<@[EnhancedNullability] E of java.util.ArrayList> declared in java.util.ArrayList
       $this: VALUE_PARAMETER name:<this> type:java.util.ArrayList<kotlin.String>
     FUN FAKE_OVERRIDE name:removeAll visibility:public modality:OPEN <> ($this:java.util.ArrayList<kotlin.String>, elements:kotlin.collections.Collection<@[EnhancedNullability] kotlin.String>) returnType:kotlin.Boolean [fake_override]
       overridden:
@@ -248,12 +248,12 @@ FILE fqName:<root> fileName:/ArrayListOverrides.kt
       VALUE_PARAMETER name:elements index:0 type:kotlin.collections.Collection<@[EnhancedNullability] kotlin.String>
     FUN FAKE_OVERRIDE name:contains visibility:public modality:OPEN <> ($this:java.util.ArrayList<kotlin.String>, element:@[EnhancedNullability] kotlin.String) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun contains (element: @[EnhancedNullability] E of java.util.ArrayList): kotlin.Boolean [operator] declared in java.util.ArrayList
+        public open fun contains (element: @[EnhancedNullability] E of java.util.ArrayList): kotlin.Boolean declared in java.util.ArrayList
       $this: VALUE_PARAMETER name:<this> type:java.util.ArrayList<kotlin.String>
       VALUE_PARAMETER name:element index:0 type:@[EnhancedNullability] kotlin.String
     FUN FAKE_OVERRIDE name:containsAll visibility:public modality:OPEN <> ($this:java.util.AbstractCollection<@[FlexibleNullability] kotlin.String?>, elements:kotlin.collections.Collection<@[EnhancedNullability] kotlin.String>) returnType:kotlin.Boolean [fake_override]
       overridden:
-        public open fun containsAll (elements: kotlin.collections.Collection<@[EnhancedNullability] E of java.util.ArrayList>): kotlin.Boolean [fake_override] declared in java.util.ArrayList
+        public open fun containsAll (elements: kotlin.collections.Collection<@[EnhancedNullability] E of java.util.ArrayList>): kotlin.Boolean declared in java.util.ArrayList
       $this: VALUE_PARAMETER name:<this> type:java.util.AbstractCollection<@[FlexibleNullability] kotlin.String?>
       VALUE_PARAMETER name:elements index:0 type:kotlin.collections.Collection<@[EnhancedNullability] kotlin.String>
     FUN FAKE_OVERRIDE name:isEmpty visibility:public modality:OPEN <> ($this:java.util.ArrayList<kotlin.String>) returnType:kotlin.Boolean [fake_override]
@@ -262,16 +262,16 @@ FILE fqName:<root> fileName:/ArrayListOverrides.kt
       $this: VALUE_PARAMETER name:<this> type:java.util.ArrayList<kotlin.String>
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:java.util.AbstractList<@[FlexibleNullability] kotlin.String?>, other:@[EnhancedNullability] kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: @[EnhancedNullability] kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in java.util.ArrayList
+        public open fun equals (other: @[EnhancedNullability] kotlin.Any?): kotlin.Boolean declared in java.util.ArrayList
       $this: VALUE_PARAMETER name:<this> type:java.util.AbstractList<@[FlexibleNullability] kotlin.String?>
       VALUE_PARAMETER name:other index:0 type:@[EnhancedNullability] kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:java.util.AbstractList<@[FlexibleNullability] kotlin.String?>) returnType:kotlin.Int [fake_override]
       overridden:
-        public open fun hashCode (): kotlin.Int [fake_override] declared in java.util.ArrayList
+        public open fun hashCode (): kotlin.Int declared in java.util.ArrayList
       $this: VALUE_PARAMETER name:<this> type:java.util.AbstractList<@[FlexibleNullability] kotlin.String?>
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:java.util.AbstractCollection<@[FlexibleNullability] kotlin.String?>) returnType:@[EnhancedNullability] kotlin.String [fake_override]
       overridden:
-        public open fun toString (): @[EnhancedNullability] kotlin.String [fake_override] declared in java.util.ArrayList
+        public open fun toString (): @[EnhancedNullability] kotlin.String declared in java.util.ArrayList
       $this: VALUE_PARAMETER name:<this> type:java.util.AbstractCollection<@[FlexibleNullability] kotlin.String?>
     FUN FAKE_OVERRIDE name:forEach visibility:public modality:OPEN <> ($this:java.util.ArrayList<kotlin.String>, p0:@[FlexibleNullability] java.util.function.Consumer<in @[FlexibleNullability] kotlin.String?>?) returnType:kotlin.Unit [fake_override]
       overridden:
@@ -299,11 +299,11 @@ FILE fqName:<root> fileName:/ArrayListOverrides.kt
       VALUE_PARAMETER name:p0 index:0 type:@[EnhancedNullability] java.util.function.Predicate<in @[EnhancedNullability] kotlin.String>
     FUN FAKE_OVERRIDE name:stream visibility:public modality:OPEN <> ($this:kotlin.collections.Collection<@[FlexibleNullability] kotlin.String?>) returnType:@[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] kotlin.String> [fake_override]
       overridden:
-        public open fun stream (): @[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] E of java.util.ArrayList> [fake_override] declared in java.util.ArrayList
+        public open fun stream (): @[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] E of java.util.ArrayList> declared in java.util.ArrayList
       $this: VALUE_PARAMETER name:<this> type:kotlin.collections.Collection<@[FlexibleNullability] kotlin.String?>
     FUN FAKE_OVERRIDE name:parallelStream visibility:public modality:OPEN <> ($this:kotlin.collections.Collection<@[FlexibleNullability] kotlin.String?>) returnType:@[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] kotlin.String> [fake_override]
       overridden:
-        public open fun parallelStream (): @[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] E of java.util.ArrayList> [fake_override] declared in java.util.ArrayList
+        public open fun parallelStream (): @[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] E of java.util.ArrayList> declared in java.util.ArrayList
       $this: VALUE_PARAMETER name:<this> type:kotlin.collections.Collection<@[FlexibleNullability] kotlin.String?>
     FUN FAKE_OVERRIDE name:listIterator visibility:public modality:OPEN <> ($this:java.util.ArrayList<kotlin.String>, index:kotlin.Int) returnType:@[EnhancedNullability] kotlin.collections.MutableListIterator<@[EnhancedNullability] kotlin.String> [fake_override]
       overridden:
@@ -321,7 +321,7 @@ FILE fqName:<root> fileName:/ArrayListOverrides.kt
       VALUE_PARAMETER name:p0 index:0 type:kotlin.Int
     FUN FAKE_OVERRIDE name:set visibility:public modality:OPEN <> ($this:java.util.ArrayList<kotlin.String>, index:kotlin.Int, element:@[EnhancedNullability] kotlin.String) returnType:@[EnhancedNullability] kotlin.String [fake_override,operator]
       overridden:
-        public open fun set (index: kotlin.Int, element: @[EnhancedNullability] E of java.util.ArrayList): @[EnhancedNullability] E of java.util.ArrayList [operator] declared in java.util.ArrayList
+        public open fun set (index: kotlin.Int, element: @[EnhancedNullability] E of java.util.ArrayList): @[EnhancedNullability] E of java.util.ArrayList declared in java.util.ArrayList
       $this: VALUE_PARAMETER name:<this> type:java.util.ArrayList<kotlin.String>
       VALUE_PARAMETER name:index index:0 type:kotlin.Int
       VALUE_PARAMETER name:element index:1 type:@[EnhancedNullability] kotlin.String
@@ -333,7 +333,7 @@ FILE fqName:<root> fileName:/ArrayListOverrides.kt
       VALUE_PARAMETER name:toIndex index:1 type:kotlin.Int
     FUN FAKE_OVERRIDE name:get visibility:public modality:OPEN <> ($this:java.util.ArrayList<kotlin.String>, index:kotlin.Int) returnType:@[EnhancedNullability] kotlin.String [fake_override,operator]
       overridden:
-        public open fun get (index: kotlin.Int): @[EnhancedNullability] E of java.util.ArrayList [operator] declared in java.util.ArrayList
+        public open fun get (index: kotlin.Int): @[EnhancedNullability] E of java.util.ArrayList declared in java.util.ArrayList
       $this: VALUE_PARAMETER name:<this> type:java.util.ArrayList<kotlin.String>
       VALUE_PARAMETER name:index index:0 type:kotlin.Int
     FUN FAKE_OVERRIDE name:indexOf visibility:public modality:OPEN <> ($this:java.util.ArrayList<kotlin.String>, element:@[EnhancedNullability] kotlin.String) returnType:kotlin.Int [fake_override]
@@ -377,7 +377,7 @@ FILE fqName:<root> fileName:/ArrayListOverrides.kt
       VALUE_PARAMETER name:p0 index:0 type:kotlin.Int
     PROPERTY FAKE_OVERRIDE name:size visibility:public modality:OPEN [fake_override,val]
       overridden:
-        public open size: kotlin.Int [val]
+        public open size: kotlin.Int
       FUN FAKE_OVERRIDE name:<get-size> visibility:public modality:OPEN <> ($this:java.util.ArrayList<kotlin.String>) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:size visibility:public modality:OPEN [fake_override,val]
         overridden:
@@ -385,4 +385,4 @@ FILE fqName:<root> fileName:/ArrayListOverrides.kt
         $this: VALUE_PARAMETER name:<this> type:java.util.ArrayList<kotlin.String>
     PROPERTY FAKE_OVERRIDE name:modCount visibility:protected/*protected and package*/ modality:FINAL [fake_override,var]
       overridden:
-        protected/*protected and package*/ final modCount: kotlin.Int [fake_override,var]
+        protected/*protected and package*/ final modCount: kotlin.Int

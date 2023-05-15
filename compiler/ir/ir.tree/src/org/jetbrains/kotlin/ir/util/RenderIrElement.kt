@@ -86,7 +86,9 @@ class RenderIrElementVisitor(private val options: DumpIrTreeOptions = DumpIrTree
                 append(declaration.type.renderTypeWithRenderer(null, options))
                 append(' ')
 
-                append(declaration.renderVariableFlags())
+                if (options.printFlagsInDeclarationReferences) {
+                    append(declaration.renderVariableFlags())
+                }
 
                 renderDeclaredIn(declaration)
             }
@@ -98,7 +100,9 @@ class RenderIrElementVisitor(private val options: DumpIrTreeOptions = DumpIrTree
                 append(declaration.type.renderTypeWithRenderer(null, options))
                 append(' ')
 
-                append(declaration.renderValueParameterFlags())
+                if (options.printFlagsInDeclarationReferences) {
+                    append(declaration.renderValueParameterFlags())
+                }
 
                 renderDeclaredIn(declaration)
             }
@@ -144,9 +148,11 @@ class RenderIrElementVisitor(private val options: DumpIrTreeOptions = DumpIrTree
                 }
                 append(' ')
 
-                when (declaration) {
-                    is IrSimpleFunction -> append(declaration.renderSimpleFunctionFlags())
-                    is IrConstructor -> append(declaration.renderConstructorFlags())
+                if (options.printFlagsInDeclarationReferences) {
+                    when (declaration) {
+                        is IrSimpleFunction -> append(declaration.renderSimpleFunctionFlags())
+                        is IrConstructor -> append(declaration.renderConstructorFlags())
+                    }
                 }
 
                 renderDeclaredIn(declaration)
@@ -179,8 +185,10 @@ class RenderIrElementVisitor(private val options: DumpIrTreeOptions = DumpIrTree
                     append(type.renderTypeWithRenderer(null, options))
                 }
 
-                append(' ')
-                append(declaration.renderPropertyFlags())
+                if (options.printFlagsInDeclarationReferences) {
+                    append(' ')
+                    append(declaration.renderPropertyFlags())
+                }
             }
 
         override fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty, data: Nothing?): String =

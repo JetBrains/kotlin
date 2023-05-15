@@ -6,7 +6,7 @@ FILE fqName:<root> fileName:/arrayAugmentedAssignment2.kt
       VALUE_PARAMETER name:index index:0 type:kotlin.String
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -26,7 +26,7 @@ FILE fqName:<root> fileName:/arrayAugmentedAssignment2.kt
       VALUE_PARAMETER name:value index:1 type:kotlin.Int
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -46,12 +46,12 @@ FILE fqName:<root> fileName:/arrayAugmentedAssignment2.kt
           GET_VAR 'a: <root>.IA declared in <root>.test' type=<root>.IA origin=null
         VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:kotlin.String [val]
           CONST String type=kotlin.String value=""
-        CALL 'public abstract fun set (index: kotlin.String, value: kotlin.Int): kotlin.Unit [operator] declared in <root>.IB' type=kotlin.Unit origin=PLUSEQ
+        CALL 'public abstract fun set (index: kotlin.String, value: kotlin.Int): kotlin.Unit declared in <root>.IB' type=kotlin.Unit origin=PLUSEQ
           $this: GET_VAR '<this>: <root>.IB declared in <root>.test' type=<root>.IB origin=null
-          $receiver: GET_VAR 'val tmp_0: <root>.IA [val] declared in <root>.test' type=<root>.IA origin=null
-          index: GET_VAR 'val tmp_1: kotlin.String [val] declared in <root>.test' type=kotlin.String origin=null
-          value: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=PLUSEQ
-            $this: CALL 'public abstract fun get (index: kotlin.String): kotlin.Int [operator] declared in <root>.IA' type=kotlin.Int origin=PLUSEQ
-              $this: GET_VAR 'val tmp_0: <root>.IA [val] declared in <root>.test' type=<root>.IA origin=null
-              index: GET_VAR 'val tmp_1: kotlin.String [val] declared in <root>.test' type=kotlin.String origin=null
+          $receiver: GET_VAR 'val tmp_0: <root>.IA declared in <root>.test' type=<root>.IA origin=null
+          index: GET_VAR 'val tmp_1: kotlin.String declared in <root>.test' type=kotlin.String origin=null
+          value: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUSEQ
+            $this: CALL 'public abstract fun get (index: kotlin.String): kotlin.Int declared in <root>.IA' type=kotlin.Int origin=PLUSEQ
+              $this: GET_VAR 'val tmp_0: <root>.IA declared in <root>.test' type=<root>.IA origin=null
+              index: GET_VAR 'val tmp_1: kotlin.String declared in <root>.test' type=kotlin.String origin=null
             other: CONST Int type=kotlin.Int value=42

@@ -3,11 +3,11 @@ FILE fqName:<root> fileName:/cannotCastToFunction.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.IrElement
     CONSTRUCTOR visibility:public <> () returnType:<root>.IrElement [primary]
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:IrElement modality:OPEN visibility:public superTypes:[kotlin.Any]'
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -66,6 +66,6 @@ FILE fqName:<root> fileName:/cannotCastToFunction.kt
                       $receiver: GET_VAR 'p0: <root>.IrElement declared in <root>.dump.dump' type=<root>.IrElement origin=null
               FUNCTION_REFERENCE 'local final fun dump (p0: <root>.IrElement): kotlin.String declared in <root>.dump' type=kotlin.Function1<<root>.IrElement, kotlin.String> origin=ADAPTED_FUNCTION_REFERENCE reflectionTarget=public final fun dump (normalizeNames: kotlin.Boolean, stableOrder: kotlin.Boolean): kotlin.String declared in <root>
       RETURN type=kotlin.Nothing from='public final fun dump (data: <root>.IrElement, dumpStrategy: kotlin.String): kotlin.String declared in <root>'
-        CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 [operator] declared in kotlin.Function1' type=kotlin.String origin=INVOKE
-          $this: GET_VAR 'val dump: @[ExtensionFunctionType] kotlin.Function1<<root>.IrElement, kotlin.String> [val] declared in <root>.dump' type=@[ExtensionFunctionType] kotlin.Function1<<root>.IrElement, kotlin.String> origin=VARIABLE_AS_FUNCTION
+        CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=kotlin.String origin=INVOKE
+          $this: GET_VAR 'val dump: @[ExtensionFunctionType] kotlin.Function1<<root>.IrElement, kotlin.String> declared in <root>.dump' type=@[ExtensionFunctionType] kotlin.Function1<<root>.IrElement, kotlin.String> origin=VARIABLE_AS_FUNCTION
           p1: GET_VAR 'data: <root>.IrElement declared in <root>.dump' type=<root>.IrElement origin=null

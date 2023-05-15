@@ -5,7 +5,7 @@ FILE fqName:<root> fileName:/nnStringVsTXString.kt
     VALUE_PARAMETER name:fn index:1 type:kotlin.Function0<T of <root>.useTX>
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun useTX <T> (x: T of <root>.useTX, fn: kotlin.Function0<T of <root>.useTX>): T of <root>.useTX declared in <root>'
-        CALL 'public abstract fun invoke (): R of kotlin.Function0 [operator] declared in kotlin.Function0' type=T of <root>.useTX origin=INVOKE
+        CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=T of <root>.useTX origin=INVOKE
           $this: GET_VAR 'fn: kotlin.Function0<T of <root>.useTX> declared in <root>.useTX' type=kotlin.Function0<T of <root>.useTX> origin=VARIABLE_AS_FUNCTION
   FUN name:testWithNullCheck visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY

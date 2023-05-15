@@ -3,11 +3,11 @@ FILE fqName:<root> fileName:/functionalType.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Param
     CONSTRUCTOR visibility:public <> () returnType:<root>.Param [primary]
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Param modality:FINAL visibility:public superTypes:[kotlin.Any]'
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -22,7 +22,7 @@ FILE fqName:<root> fileName:/functionalType.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.O
     CONSTRUCTOR visibility:public <> () returnType:<root>.O [primary]
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:O modality:FINAL visibility:public superTypes:[kotlin.Any]'
     PROPERTY name:o visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:o type:kotlin.String visibility:private [final]
@@ -37,7 +37,7 @@ FILE fqName:<root> fileName:/functionalType.kt
               receiver: GET_VAR '<this>: <root>.O declared in <root>.O.<get-o>' type=<root>.O origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -52,7 +52,7 @@ FILE fqName:<root> fileName:/functionalType.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.K
     CONSTRUCTOR visibility:public <> () returnType:<root>.K [primary]
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:K modality:FINAL visibility:public superTypes:[kotlin.Any]'
     PROPERTY name:k visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:k type:kotlin.String visibility:private [final]
@@ -67,7 +67,7 @@ FILE fqName:<root> fileName:/functionalType.kt
               receiver: GET_VAR '<this>: <root>.K declared in <root>.K.<get-k>' type=<root>.K origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -86,18 +86,18 @@ FILE fqName:<root> fileName:/functionalType.kt
     VALUE_PARAMETER name:g index:1 type:@[ExtensionFunctionType] @[ContextFunctionTypeParams(count = '1')] kotlin.Function3<<root>.O, <root>.K, <root>.Param, T of <root>.f>
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun f <T> ($context_receiver_0: <root>.O, g: @[ExtensionFunctionType] @[ContextFunctionTypeParams(count = '1')] kotlin.Function3<<root>.O, <root>.K, <root>.Param, T of <root>.f>): T of <root>.f declared in <root>'
-        CALL 'public abstract fun invoke (p1: P1 of kotlin.Function3, p2: P2 of kotlin.Function3, p3: P3 of kotlin.Function3): R of kotlin.Function3 [operator] declared in kotlin.Function3' type=T of <root>.f origin=INVOKE
+        CALL 'public abstract fun invoke (p1: P1 of kotlin.Function3, p2: P2 of kotlin.Function3, p3: P3 of kotlin.Function3): R of kotlin.Function3 declared in kotlin.Function3' type=T of <root>.f origin=INVOKE
           $this: GET_VAR 'g: @[ExtensionFunctionType] @[ContextFunctionTypeParams(count = '1')] kotlin.Function3<<root>.O, <root>.K, <root>.Param, T of <root>.f> declared in <root>.f' type=@[ExtensionFunctionType] @[ContextFunctionTypeParams(count = '1')] kotlin.Function3<<root>.O, <root>.K, <root>.Param, T of <root>.f> origin=VARIABLE_AS_FUNCTION
           p1: GET_VAR '$context_receiver_0: <root>.O declared in <root>.f' type=<root>.O origin=null
           p2: GET_VAR '<this>: <root>.K declared in <root>.f' type=<root>.K origin=null
-          p3: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Param' type=<root>.Param origin=null
+          p3: CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Param' type=<root>.Param origin=null
   FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
-        CALL 'public final fun with <T, R> (receiver: T of kotlin.StandardKt.with, block: @[ExtensionFunctionType] kotlin.Function1<T of kotlin.StandardKt.with, R of kotlin.StandardKt.with>): R of kotlin.StandardKt.with [inline] declared in kotlin.StandardKt' type=kotlin.String origin=null
+        CALL 'public final fun with <T, R> (receiver: T of kotlin.StandardKt.with, block: @[ExtensionFunctionType] kotlin.Function1<T of kotlin.StandardKt.with, R of kotlin.StandardKt.with>): R of kotlin.StandardKt.with declared in kotlin.StandardKt' type=kotlin.String origin=null
           <T>: <root>.O
           <R>: kotlin.String
-          receiver: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.O' type=<root>.O origin=null
+          receiver: CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.O' type=<root>.O origin=null
           block: FUN_EXPR type=@[ExtensionFunctionType] kotlin.Function1<<root>.O, kotlin.String> origin=LAMBDA
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.O) returnType:kotlin.String
               $receiver: VALUE_PARAMETER name:$this$with type:<root>.O
@@ -105,7 +105,7 @@ FILE fqName:<root> fileName:/functionalType.kt
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.String declared in <root>.box'
                   CALL 'public final fun f <T> ($context_receiver_0: <root>.O, g: @[ExtensionFunctionType] @[ContextFunctionTypeParams(count = '1')] kotlin.Function3<<root>.O, <root>.K, <root>.Param, T of <root>.f>): T of <root>.f declared in <root>' type=kotlin.String origin=null
                     <T>: kotlin.String
-                    $receiver: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.K' type=<root>.K origin=null
+                    $receiver: CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.K' type=<root>.K origin=null
                     $context_receiver_0: GET_VAR '$this$with: <root>.O declared in <root>.box.<anonymous>' type=<root>.O origin=null
                     g: FUN_EXPR type=@[ExtensionFunctionType] @[ContextFunctionTypeParams(count = '1')] kotlin.Function3<<root>.O, <root>.K, <root>.Param, kotlin.String> origin=LAMBDA
                       FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.K, $context_receiver_0:<root>.O, it:<root>.Param) returnType:kotlin.String
@@ -115,7 +115,7 @@ FILE fqName:<root> fileName:/functionalType.kt
                         VALUE_PARAMETER name:it index:1 type:<root>.Param
                         BLOCK_BODY
                           RETURN type=kotlin.Nothing from='local final fun <anonymous> ($context_receiver_0: <root>.O, it: <root>.Param): kotlin.String declared in <root>.box.<anonymous>'
-                            CALL 'public final fun plus (other: kotlin.Any?): kotlin.String [operator] declared in kotlin.String' type=kotlin.String origin=PLUS
+                            CALL 'public final fun plus (other: kotlin.Any?): kotlin.String declared in kotlin.String' type=kotlin.String origin=PLUS
                               $this: CALL 'public final fun <get-o> (): kotlin.String declared in <root>.O' type=kotlin.String origin=GET_PROPERTY
                                 $this: GET_VAR '$this$with: <root>.O declared in <root>.box.<anonymous>' type=<root>.O origin=null
                               other: CALL 'public final fun <get-k> (): kotlin.String declared in <root>.K' type=kotlin.String origin=GET_PROPERTY

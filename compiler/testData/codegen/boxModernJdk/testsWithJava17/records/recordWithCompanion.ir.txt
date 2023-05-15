@@ -23,11 +23,11 @@ FILE fqName:<root> fileName:/recordWithCompanion.kt
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Tag.Companion
       CONSTRUCTOR visibility:private <> () returnType:<root>.Tag.Companion [primary]
         BLOCK_BODY
-          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
           INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[kotlin.Any]'
       FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
         overridden:
-          public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+          public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
         $this: VALUE_PARAMETER name:<this> type:kotlin.Any
         VALUE_PARAMETER name:other index:0 type:kotlin.Any?
       FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -41,7 +41,7 @@ FILE fqName:<root> fileName:/recordWithCompanion.kt
     FUN GENERATED_DATA_CLASS_MEMBER name:component1 visibility:public modality:FINAL <> ($this:<root>.Tag) returnType:kotlin.String [operator]
       $this: VALUE_PARAMETER name:<this> type:<root>.Tag
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun component1 (): kotlin.String [operator] declared in <root>.Tag'
+        RETURN type=kotlin.Nothing from='public final fun component1 (): kotlin.String declared in <root>.Tag'
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:id type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
             receiver: GET_VAR '<this>: <root>.Tag declared in <root>.Tag.component1' type=<root>.Tag origin=null
     FUN GENERATED_DATA_CLASS_MEMBER name:copy visibility:public modality:FINAL <> ($this:<root>.Tag, id:kotlin.String) returnType:<root>.Tag
@@ -52,7 +52,7 @@ FILE fqName:<root> fileName:/recordWithCompanion.kt
             receiver: GET_VAR '<this>: <root>.Tag declared in <root>.Tag.copy' type=<root>.Tag origin=null
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun copy (id: kotlin.String): <root>.Tag declared in <root>.Tag'
-          CONSTRUCTOR_CALL 'public constructor <init> (id: kotlin.String) [primary] declared in <root>.Tag' type=<root>.Tag origin=null
+          CONSTRUCTOR_CALL 'public constructor <init> (id: kotlin.String) declared in <root>.Tag' type=<root>.Tag origin=null
             id: GET_VAR 'id: kotlin.String declared in <root>.Tag.copy' type=kotlin.String origin=null
     FUN GENERATED_DATA_CLASS_MEMBER name:toString visibility:public modality:OPEN <> ($this:<root>.Tag) returnType:kotlin.String
       overridden:
@@ -72,12 +72,12 @@ FILE fqName:<root> fileName:/recordWithCompanion.kt
       $this: VALUE_PARAMETER name:<this> type:<root>.Tag
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun hashCode (): kotlin.Int declared in <root>.Tag'
-          CALL 'public open fun hashCode (): kotlin.Int [fake_override] declared in kotlin.String' type=kotlin.Int origin=null
+          CALL 'public open fun hashCode (): kotlin.Int declared in kotlin.String' type=kotlin.Int origin=null
             $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:id type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
               receiver: GET_VAR '<this>: <root>.Tag declared in <root>.Tag.hashCode' type=<root>.Tag origin=null
     FUN GENERATED_DATA_CLASS_MEMBER name:equals visibility:public modality:OPEN <> ($this:<root>.Tag, other:kotlin.Any?) returnType:kotlin.Boolean [operator]
       overridden:
-        public abstract fun equals (other: @[EnhancedNullability] kotlin.Any?): kotlin.Boolean [operator] declared in java.lang.Record
+        public abstract fun equals (other: @[EnhancedNullability] kotlin.Any?): kotlin.Boolean declared in java.lang.Record
       $this: VALUE_PARAMETER name:<this> type:<root>.Tag
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
       BLOCK_BODY
@@ -86,34 +86,34 @@ FILE fqName:<root> fileName:/recordWithCompanion.kt
             if: CALL 'public final fun EQEQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQEQ
               arg0: GET_VAR '<this>: <root>.Tag declared in <root>.Tag.equals' type=<root>.Tag origin=null
               arg1: GET_VAR 'other: kotlin.Any? declared in <root>.Tag.equals' type=kotlin.Any? origin=null
-            then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in <root>.Tag'
+            then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Tag'
               CONST Boolean type=kotlin.Boolean value=true
         WHEN type=kotlin.Unit origin=null
           BRANCH
             if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=<root>.Tag
               GET_VAR 'other: kotlin.Any? declared in <root>.Tag.equals' type=kotlin.Any? origin=null
-            then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in <root>.Tag'
+            then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Tag'
               CONST Boolean type=kotlin.Boolean value=false
         VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:<root>.Tag [val]
           TYPE_OP type=<root>.Tag origin=CAST typeOperand=<root>.Tag
             GET_VAR 'other: kotlin.Any? declared in <root>.Tag.equals' type=kotlin.Any? origin=null
         WHEN type=kotlin.Unit origin=null
           BRANCH
-            if: CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+            if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
               $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
                 arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:id type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
                   receiver: GET_VAR '<this>: <root>.Tag declared in <root>.Tag.equals' type=<root>.Tag origin=null
                 arg1: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:id type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
-                  receiver: GET_VAR 'val tmp_0: <root>.Tag [val] declared in <root>.Tag.equals' type=<root>.Tag origin=null
-            then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in <root>.Tag'
+                  receiver: GET_VAR 'val tmp_0: <root>.Tag declared in <root>.Tag.equals' type=<root>.Tag origin=null
+            then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Tag'
               CONST Boolean type=kotlin.Boolean value=false
-        RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in <root>.Tag'
+        RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Tag'
           CONST Boolean type=kotlin.Boolean value=true
   FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
         CALL 'public final fun <get-id> (): kotlin.String declared in <root>.Tag' type=kotlin.String origin=GET_PROPERTY
-          $this: CONSTRUCTOR_CALL 'public constructor <init> (id: kotlin.String) [primary] declared in <root>.Tag' type=<root>.Tag origin=null
+          $this: CONSTRUCTOR_CALL 'public constructor <init> (id: kotlin.String) declared in <root>.Tag' type=<root>.Tag origin=null
             id: CONST String type=kotlin.String value="OK"
 FILE fqName:<root> fileName:/Generated_Box_Main.kt
   FUN name:main visibility:public modality:FINAL <> () returnType:kotlin.Unit [suspend]
@@ -122,10 +122,10 @@ FILE fqName:<root> fileName:/Generated_Box_Main.kt
         CALL 'public final fun box (): kotlin.String declared in <root>' type=kotlin.String origin=null
       WHEN type=kotlin.Unit origin=IF
         BRANCH
-          if: CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+          if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
             $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
-              arg0: GET_VAR 'val res: kotlin.String [val] declared in <root>.main' type=kotlin.String origin=null
+              arg0: GET_VAR 'val res: kotlin.String declared in <root>.main' type=kotlin.String origin=null
               arg1: CONST String type=kotlin.String value="OK"
           then: THROW type=kotlin.Nothing
             CONSTRUCTOR_CALL 'public constructor <init> (p0: @[FlexibleNullability] kotlin.Any?) declared in java.lang.AssertionError' type=java.lang.AssertionError origin=null
-              p0: GET_VAR 'val res: kotlin.String [val] declared in <root>.main' type=kotlin.String origin=null
+              p0: GET_VAR 'val res: kotlin.String declared in <root>.main' type=kotlin.String origin=null

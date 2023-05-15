@@ -5,7 +5,7 @@ FILE fqName:<root> fileName:/property.kt
       $this: VALUE_PARAMETER name:<this> type:<root>.A
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -22,7 +22,7 @@ FILE fqName:<root> fileName:/property.kt
       $this: VALUE_PARAMETER name:<this> type:<root>.B
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -41,7 +41,7 @@ FILE fqName:<root> fileName:/property.kt
       VALUE_PARAMETER name:$context_receiver_1 index:1 type:<root>.B
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-c> ($context_receiver_0: <root>.A, $context_receiver_1: <root>.B): kotlin.Int declared in <root>'
-          CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=PLUS
+          CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUS
             $this: CALL 'public abstract fun a (): kotlin.Int declared in <root>.A' type=kotlin.Int origin=null
               $this: GET_VAR '$context_receiver_0: <root>.A declared in <root>.<get-c>' type=<root>.A origin=null
             other: CALL 'public abstract fun b (): kotlin.Int declared in <root>.B' type=kotlin.Int origin=null

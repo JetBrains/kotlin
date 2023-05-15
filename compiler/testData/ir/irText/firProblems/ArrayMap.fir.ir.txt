@@ -8,7 +8,7 @@ FILE fqName:<root> fileName:/ArrayMap.kt
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any] reified:false
     CONSTRUCTOR visibility:protected <> () returnType:<root>.ArrayMap<T of <root>.ArrayMap> [primary]
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:ArrayMap modality:SEALED visibility:public superTypes:[kotlin.collections.Iterable<T of <root>.ArrayMap>]'
     PROPERTY name:size visibility:public modality:ABSTRACT [val]
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-size> visibility:public modality:ABSTRACT <> ($this:<root>.ArrayMap<T of <root>.ArrayMap>) returnType:kotlin.Int
@@ -25,20 +25,20 @@ FILE fqName:<root> fileName:/ArrayMap.kt
       $this: VALUE_PARAMETER name:<this> type:<root>.ArrayMap<T of <root>.ArrayMap>
     FUN FAKE_OVERRIDE name:iterator visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Iterable<T of kotlin.collections.Iterable>) returnType:kotlin.collections.Iterator<T of <root>.ArrayMap> [fake_override,operator]
       overridden:
-        public abstract fun iterator (): kotlin.collections.Iterator<T of kotlin.collections.Iterable> [operator] declared in kotlin.collections.Iterable
+        public abstract fun iterator (): kotlin.collections.Iterator<T of kotlin.collections.Iterable> declared in kotlin.collections.Iterable
       $this: VALUE_PARAMETER name:<this> type:kotlin.collections.Iterable<T of kotlin.collections.Iterable>
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in kotlin.collections.Iterable
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.collections.Iterable
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
       overridden:
-        public open fun hashCode (): kotlin.Int [fake_override] declared in kotlin.collections.Iterable
+        public open fun hashCode (): kotlin.Int declared in kotlin.collections.Iterable
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
       overridden:
-        public open fun toString (): kotlin.String [fake_override] declared in kotlin.collections.Iterable
+        public open fun toString (): kotlin.String declared in kotlin.collections.Iterable
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   FUN name:isEmpty visibility:public modality:FINAL <> ($receiver:<root>.ArrayMap<*>) returnType:kotlin.Boolean
     $receiver: VALUE_PARAMETER name:<this> type:<root>.ArrayMap<*>
@@ -52,7 +52,7 @@ FILE fqName:<root> fileName:/ArrayMap.kt
     $receiver: VALUE_PARAMETER name:<this> type:<root>.ArrayMap<*>
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun isNotEmpty (): kotlin.Boolean declared in <root>'
-        CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+        CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
           $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
             arg0: CALL 'public abstract fun <get-size> (): kotlin.Int declared in <root>.ArrayMap' type=kotlin.Int origin=GET_PROPERTY
               $this: GET_VAR '<this>: <root>.ArrayMap<*> declared in <root>.isNotEmpty' type=<root>.ArrayMap<*> origin=null
@@ -61,12 +61,12 @@ FILE fqName:<root> fileName:/ArrayMap.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.EmptyArrayMap
     CONSTRUCTOR visibility:private <> () returnType:<root>.EmptyArrayMap [primary]
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'protected constructor <init> () [primary] declared in <root>.ArrayMap'
+        DELEGATING_CONSTRUCTOR_CALL 'protected constructor <init> () declared in <root>.ArrayMap'
           <T>: kotlin.Nothing
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:EmptyArrayMap modality:FINAL visibility:internal superTypes:[<root>.ArrayMap<kotlin.Nothing>]'
     PROPERTY name:size visibility:public modality:OPEN [val]
       overridden:
-        public abstract size: kotlin.Int [val]
+        public abstract size: kotlin.Int
       FUN name:<get-size> visibility:public modality:OPEN <> ($this:<root>.EmptyArrayMap) returnType:kotlin.Int
         correspondingProperty: PROPERTY name:size visibility:public modality:OPEN [val]
         overridden:
@@ -77,7 +77,7 @@ FILE fqName:<root> fileName:/ArrayMap.kt
             CONST Int type=kotlin.Int value=0
     FUN name:set visibility:public modality:OPEN <> ($this:<root>.EmptyArrayMap, index:kotlin.Int, value:kotlin.Nothing) returnType:kotlin.Unit [operator]
       overridden:
-        public abstract fun set (index: kotlin.Int, value: T of <root>.ArrayMap): kotlin.Unit [operator] declared in <root>.ArrayMap
+        public abstract fun set (index: kotlin.Int, value: T of <root>.ArrayMap): kotlin.Unit declared in <root>.ArrayMap
       $this: VALUE_PARAMETER name:<this> type:<root>.EmptyArrayMap
       VALUE_PARAMETER name:index index:0 type:kotlin.Int
       VALUE_PARAMETER name:value index:1 type:kotlin.Nothing
@@ -86,11 +86,11 @@ FILE fqName:<root> fileName:/ArrayMap.kt
           CONSTRUCTOR_CALL 'public constructor <init> () declared in java.lang.IllegalStateException' type=java.lang.IllegalStateException origin=null
     FUN name:get visibility:public modality:OPEN <> ($this:<root>.EmptyArrayMap, index:kotlin.Int) returnType:kotlin.Nothing? [operator]
       overridden:
-        public abstract fun get (index: kotlin.Int): T of <root>.ArrayMap? [operator] declared in <root>.ArrayMap
+        public abstract fun get (index: kotlin.Int): T of <root>.ArrayMap? declared in <root>.ArrayMap
       $this: VALUE_PARAMETER name:<this> type:<root>.EmptyArrayMap
       VALUE_PARAMETER name:index index:0 type:kotlin.Int
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public open fun get (index: kotlin.Int): kotlin.Nothing? [operator] declared in <root>.EmptyArrayMap'
+        RETURN type=kotlin.Nothing from='public open fun get (index: kotlin.Int): kotlin.Nothing? declared in <root>.EmptyArrayMap'
           CONST Null type=kotlin.Nothing? value=null
     FUN name:copy visibility:public modality:OPEN <> ($this:<root>.EmptyArrayMap) returnType:<root>.ArrayMap<kotlin.Nothing>
       overridden:
@@ -101,58 +101,58 @@ FILE fqName:<root> fileName:/ArrayMap.kt
           GET_VAR '<this>: <root>.EmptyArrayMap declared in <root>.EmptyArrayMap.copy' type=<root>.EmptyArrayMap origin=null
     FUN name:iterator visibility:public modality:OPEN <> ($this:<root>.EmptyArrayMap) returnType:kotlin.collections.Iterator<kotlin.Nothing> [operator]
       overridden:
-        public abstract fun iterator (): kotlin.collections.Iterator<T of <root>.ArrayMap> [fake_override,operator] declared in <root>.ArrayMap
+        public abstract fun iterator (): kotlin.collections.Iterator<T of <root>.ArrayMap> declared in <root>.ArrayMap
       $this: VALUE_PARAMETER name:<this> type:<root>.EmptyArrayMap
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public open fun iterator (): kotlin.collections.Iterator<kotlin.Nothing> [operator] declared in <root>.EmptyArrayMap'
+        RETURN type=kotlin.Nothing from='public open fun iterator (): kotlin.collections.Iterator<kotlin.Nothing> declared in <root>.EmptyArrayMap'
           BLOCK type=<root>.EmptyArrayMap.iterator.<no name provided> origin=OBJECT_LITERAL
             CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[kotlin.collections.Iterator<kotlin.Nothing>]
               $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.EmptyArrayMap.iterator.<no name provided>
               CONSTRUCTOR visibility:public <> () returnType:<root>.EmptyArrayMap.iterator.<no name provided> [primary]
                 BLOCK_BODY
-                  DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+                  DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
                   INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[kotlin.collections.Iterator<kotlin.Nothing>]'
               FUN name:hasNext visibility:public modality:OPEN <> ($this:<root>.EmptyArrayMap.iterator.<no name provided>) returnType:kotlin.Boolean [operator]
                 overridden:
-                  public abstract fun hasNext (): kotlin.Boolean [operator] declared in kotlin.collections.Iterator
+                  public abstract fun hasNext (): kotlin.Boolean declared in kotlin.collections.Iterator
                 $this: VALUE_PARAMETER name:<this> type:<root>.EmptyArrayMap.iterator.<no name provided>
                 BLOCK_BODY
-                  RETURN type=kotlin.Nothing from='public open fun hasNext (): kotlin.Boolean [operator] declared in <root>.EmptyArrayMap.iterator.<no name provided>'
+                  RETURN type=kotlin.Nothing from='public open fun hasNext (): kotlin.Boolean declared in <root>.EmptyArrayMap.iterator.<no name provided>'
                     CONST Boolean type=kotlin.Boolean value=false
               FUN name:next visibility:public modality:OPEN <> ($this:<root>.EmptyArrayMap.iterator.<no name provided>) returnType:kotlin.Nothing [operator]
                 overridden:
-                  public abstract fun next (): T of kotlin.collections.Iterator [operator] declared in kotlin.collections.Iterator
+                  public abstract fun next (): T of kotlin.collections.Iterator declared in kotlin.collections.Iterator
                 $this: VALUE_PARAMETER name:<this> type:<root>.EmptyArrayMap.iterator.<no name provided>
                 BLOCK_BODY
-                  RETURN type=kotlin.Nothing from='public open fun next (): kotlin.Nothing [operator] declared in <root>.EmptyArrayMap.iterator.<no name provided>'
+                  RETURN type=kotlin.Nothing from='public open fun next (): kotlin.Nothing declared in <root>.EmptyArrayMap.iterator.<no name provided>'
                     THROW type=kotlin.Nothing
                       CONSTRUCTOR_CALL 'public constructor <init> () declared in java.util.NoSuchElementException' type=java.util.NoSuchElementException origin=null
               FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
                 overridden:
-                  public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in kotlin.collections.Iterator
+                  public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.collections.Iterator
                 $this: VALUE_PARAMETER name:<this> type:kotlin.Any
                 VALUE_PARAMETER name:other index:0 type:kotlin.Any?
               FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
                 overridden:
-                  public open fun hashCode (): kotlin.Int [fake_override] declared in kotlin.collections.Iterator
+                  public open fun hashCode (): kotlin.Int declared in kotlin.collections.Iterator
                 $this: VALUE_PARAMETER name:<this> type:kotlin.Any
               FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
                 overridden:
-                  public open fun toString (): kotlin.String [fake_override] declared in kotlin.collections.Iterator
+                  public open fun toString (): kotlin.String declared in kotlin.collections.Iterator
                 $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-            CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.EmptyArrayMap.iterator.<no name provided>' type=<root>.EmptyArrayMap.iterator.<no name provided> origin=OBJECT_LITERAL
+            CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.EmptyArrayMap.iterator.<no name provided>' type=<root>.EmptyArrayMap.iterator.<no name provided> origin=OBJECT_LITERAL
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.ArrayMap
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.ArrayMap
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
       overridden:
-        public open fun hashCode (): kotlin.Int [fake_override] declared in <root>.ArrayMap
+        public open fun hashCode (): kotlin.Int declared in <root>.ArrayMap
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
       overridden:
-        public open fun toString (): kotlin.String [fake_override] declared in <root>.ArrayMap
+        public open fun toString (): kotlin.String declared in <root>.ArrayMap
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS CLASS name:OneElementArrayMap modality:FINAL visibility:internal superTypes:[<root>.ArrayMap<T of <root>.OneElementArrayMap>]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.OneElementArrayMap<T of <root>.OneElementArrayMap>
@@ -161,7 +161,7 @@ FILE fqName:<root> fileName:/ArrayMap.kt
       VALUE_PARAMETER name:value index:0 type:T of <root>.OneElementArrayMap
       VALUE_PARAMETER name:index index:1 type:kotlin.Int
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'protected constructor <init> () [primary] declared in <root>.ArrayMap'
+        DELEGATING_CONSTRUCTOR_CALL 'protected constructor <init> () declared in <root>.ArrayMap'
           <T>: T of <root>.OneElementArrayMap
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:OneElementArrayMap modality:FINAL visibility:internal superTypes:[<root>.ArrayMap<T of <root>.OneElementArrayMap>]'
     PROPERTY name:value visibility:public modality:FINAL [val]
@@ -188,7 +188,7 @@ FILE fqName:<root> fileName:/ArrayMap.kt
               receiver: GET_VAR '<this>: <root>.OneElementArrayMap<T of <root>.OneElementArrayMap> declared in <root>.OneElementArrayMap.<get-index>' type=<root>.OneElementArrayMap<T of <root>.OneElementArrayMap> origin=null
     PROPERTY name:size visibility:public modality:OPEN [val]
       overridden:
-        public abstract size: kotlin.Int [val]
+        public abstract size: kotlin.Int
       FUN name:<get-size> visibility:public modality:OPEN <> ($this:<root>.OneElementArrayMap<T of <root>.OneElementArrayMap>) returnType:kotlin.Int
         correspondingProperty: PROPERTY name:size visibility:public modality:OPEN [val]
         overridden:
@@ -199,7 +199,7 @@ FILE fqName:<root> fileName:/ArrayMap.kt
             CONST Int type=kotlin.Int value=1
     FUN name:set visibility:public modality:OPEN <> ($this:<root>.OneElementArrayMap<T of <root>.OneElementArrayMap>, index:kotlin.Int, value:T of <root>.OneElementArrayMap) returnType:kotlin.Unit [operator]
       overridden:
-        public abstract fun set (index: kotlin.Int, value: T of <root>.ArrayMap): kotlin.Unit [operator] declared in <root>.ArrayMap
+        public abstract fun set (index: kotlin.Int, value: T of <root>.ArrayMap): kotlin.Unit declared in <root>.ArrayMap
       $this: VALUE_PARAMETER name:<this> type:<root>.OneElementArrayMap<T of <root>.OneElementArrayMap>
       VALUE_PARAMETER name:index index:0 type:kotlin.Int
       VALUE_PARAMETER name:value index:1 type:T of <root>.OneElementArrayMap
@@ -208,11 +208,11 @@ FILE fqName:<root> fileName:/ArrayMap.kt
           CONSTRUCTOR_CALL 'public constructor <init> () declared in java.lang.IllegalStateException' type=java.lang.IllegalStateException origin=null
     FUN name:get visibility:public modality:OPEN <> ($this:<root>.OneElementArrayMap<T of <root>.OneElementArrayMap>, index:kotlin.Int) returnType:T of <root>.OneElementArrayMap? [operator]
       overridden:
-        public abstract fun get (index: kotlin.Int): T of <root>.ArrayMap? [operator] declared in <root>.ArrayMap
+        public abstract fun get (index: kotlin.Int): T of <root>.ArrayMap? declared in <root>.ArrayMap
       $this: VALUE_PARAMETER name:<this> type:<root>.OneElementArrayMap<T of <root>.OneElementArrayMap>
       VALUE_PARAMETER name:index index:0 type:kotlin.Int
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public open fun get (index: kotlin.Int): T of <root>.OneElementArrayMap? [operator] declared in <root>.OneElementArrayMap'
+        RETURN type=kotlin.Nothing from='public open fun get (index: kotlin.Int): T of <root>.OneElementArrayMap? declared in <root>.OneElementArrayMap'
           WHEN type=T of <root>.OneElementArrayMap? origin=IF
             BRANCH
               if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
@@ -230,7 +230,7 @@ FILE fqName:<root> fileName:/ArrayMap.kt
       $this: VALUE_PARAMETER name:<this> type:<root>.OneElementArrayMap<T of <root>.OneElementArrayMap>
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun copy (): <root>.ArrayMap<T of <root>.OneElementArrayMap> declared in <root>.OneElementArrayMap'
-          CONSTRUCTOR_CALL 'public constructor <init> (value: T of <root>.OneElementArrayMap, index: kotlin.Int) [primary] declared in <root>.OneElementArrayMap' type=<root>.OneElementArrayMap<T of <root>.OneElementArrayMap> origin=null
+          CONSTRUCTOR_CALL 'public constructor <init> (value: T of <root>.OneElementArrayMap, index: kotlin.Int) declared in <root>.OneElementArrayMap' type=<root>.OneElementArrayMap<T of <root>.OneElementArrayMap> origin=null
             <class: T>: T of <root>.OneElementArrayMap
             value: CALL 'public final fun <get-value> (): T of <root>.OneElementArrayMap declared in <root>.OneElementArrayMap' type=T of <root>.OneElementArrayMap origin=GET_PROPERTY
               $this: GET_VAR '<this>: <root>.OneElementArrayMap<T of <root>.OneElementArrayMap> declared in <root>.OneElementArrayMap.copy' type=<root>.OneElementArrayMap<T of <root>.OneElementArrayMap> origin=null
@@ -238,16 +238,16 @@ FILE fqName:<root> fileName:/ArrayMap.kt
               $this: GET_VAR '<this>: <root>.OneElementArrayMap<T of <root>.OneElementArrayMap> declared in <root>.OneElementArrayMap.copy' type=<root>.OneElementArrayMap<T of <root>.OneElementArrayMap> origin=null
     FUN name:iterator visibility:public modality:OPEN <> ($this:<root>.OneElementArrayMap<T of <root>.OneElementArrayMap>) returnType:kotlin.collections.Iterator<T of <root>.OneElementArrayMap> [operator]
       overridden:
-        public abstract fun iterator (): kotlin.collections.Iterator<T of <root>.ArrayMap> [fake_override,operator] declared in <root>.ArrayMap
+        public abstract fun iterator (): kotlin.collections.Iterator<T of <root>.ArrayMap> declared in <root>.ArrayMap
       $this: VALUE_PARAMETER name:<this> type:<root>.OneElementArrayMap<T of <root>.OneElementArrayMap>
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public open fun iterator (): kotlin.collections.Iterator<T of <root>.OneElementArrayMap> [operator] declared in <root>.OneElementArrayMap'
+        RETURN type=kotlin.Nothing from='public open fun iterator (): kotlin.collections.Iterator<T of <root>.OneElementArrayMap> declared in <root>.OneElementArrayMap'
           BLOCK type=<root>.OneElementArrayMap.iterator.<no name provided><T of <root>.OneElementArrayMap> origin=OBJECT_LITERAL
             CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[kotlin.collections.Iterator<T of <root>.OneElementArrayMap>]
               $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.OneElementArrayMap.iterator.<no name provided><T of <root>.OneElementArrayMap>
               CONSTRUCTOR visibility:public <> () returnType:<root>.OneElementArrayMap.iterator.<no name provided><T of <root>.OneElementArrayMap> [primary]
                 BLOCK_BODY
-                  DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+                  DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
                   INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[kotlin.collections.Iterator<T of <root>.OneElementArrayMap>]'
               PROPERTY name:notVisited visibility:private modality:FINAL [var]
                 FIELD PROPERTY_BACKING_FIELD name:notVisited type:kotlin.Boolean visibility:private
@@ -270,15 +270,15 @@ FILE fqName:<root> fileName:/ArrayMap.kt
                       value: GET_VAR '<set-?>: kotlin.Boolean declared in <root>.OneElementArrayMap.iterator.<no name provided>.<set-notVisited>' type=kotlin.Boolean origin=null
               FUN name:hasNext visibility:public modality:OPEN <> ($this:<root>.OneElementArrayMap.iterator.<no name provided><T of <root>.OneElementArrayMap>) returnType:kotlin.Boolean [operator]
                 overridden:
-                  public abstract fun hasNext (): kotlin.Boolean [operator] declared in kotlin.collections.Iterator
+                  public abstract fun hasNext (): kotlin.Boolean declared in kotlin.collections.Iterator
                 $this: VALUE_PARAMETER name:<this> type:<root>.OneElementArrayMap.iterator.<no name provided><T of <root>.OneElementArrayMap>
                 BLOCK_BODY
-                  RETURN type=kotlin.Nothing from='public open fun hasNext (): kotlin.Boolean [operator] declared in <root>.OneElementArrayMap.iterator.<no name provided>'
+                  RETURN type=kotlin.Nothing from='public open fun hasNext (): kotlin.Boolean declared in <root>.OneElementArrayMap.iterator.<no name provided>'
                     CALL 'private final fun <get-notVisited> (): kotlin.Boolean declared in <root>.OneElementArrayMap.iterator.<no name provided>' type=kotlin.Boolean origin=GET_PROPERTY
                       $this: GET_VAR '<this>: <root>.OneElementArrayMap.iterator.<no name provided><T of <root>.OneElementArrayMap> declared in <root>.OneElementArrayMap.iterator.<no name provided>.hasNext' type=<root>.OneElementArrayMap.iterator.<no name provided><T of <root>.OneElementArrayMap> origin=null
               FUN name:next visibility:public modality:OPEN <> ($this:<root>.OneElementArrayMap.iterator.<no name provided><T of <root>.OneElementArrayMap>) returnType:T of <root>.OneElementArrayMap [operator]
                 overridden:
-                  public abstract fun next (): T of kotlin.collections.Iterator [operator] declared in kotlin.collections.Iterator
+                  public abstract fun next (): T of kotlin.collections.Iterator declared in kotlin.collections.Iterator
                 $this: VALUE_PARAMETER name:<this> type:<root>.OneElementArrayMap.iterator.<no name provided><T of <root>.OneElementArrayMap>
                 BLOCK_BODY
                   WHEN type=kotlin.Nothing origin=IF
@@ -289,7 +289,7 @@ FILE fqName:<root> fileName:/ArrayMap.kt
                         CALL 'private final fun <set-notVisited> (<set-?>: kotlin.Boolean): kotlin.Unit declared in <root>.OneElementArrayMap.iterator.<no name provided>' type=kotlin.Unit origin=EQ
                           $this: GET_VAR '<this>: <root>.OneElementArrayMap.iterator.<no name provided><T of <root>.OneElementArrayMap> declared in <root>.OneElementArrayMap.iterator.<no name provided>.next' type=<root>.OneElementArrayMap.iterator.<no name provided><T of <root>.OneElementArrayMap> origin=null
                           <set-?>: CONST Boolean type=kotlin.Boolean value=false
-                        RETURN type=kotlin.Nothing from='public open fun next (): T of <root>.OneElementArrayMap [operator] declared in <root>.OneElementArrayMap.iterator.<no name provided>'
+                        RETURN type=kotlin.Nothing from='public open fun next (): T of <root>.OneElementArrayMap declared in <root>.OneElementArrayMap.iterator.<no name provided>'
                           CALL 'public final fun <get-value> (): T of <root>.OneElementArrayMap declared in <root>.OneElementArrayMap' type=T of <root>.OneElementArrayMap origin=GET_PROPERTY
                             $this: GET_VAR '<this>: <root>.OneElementArrayMap<T of <root>.OneElementArrayMap> declared in <root>.OneElementArrayMap.iterator' type=<root>.OneElementArrayMap<T of <root>.OneElementArrayMap> origin=null
                     BRANCH
@@ -298,30 +298,30 @@ FILE fqName:<root> fileName:/ArrayMap.kt
                         CONSTRUCTOR_CALL 'public constructor <init> () declared in java.util.NoSuchElementException' type=java.util.NoSuchElementException origin=null
               FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
                 overridden:
-                  public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in kotlin.collections.Iterator
+                  public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.collections.Iterator
                 $this: VALUE_PARAMETER name:<this> type:kotlin.Any
                 VALUE_PARAMETER name:other index:0 type:kotlin.Any?
               FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
                 overridden:
-                  public open fun hashCode (): kotlin.Int [fake_override] declared in kotlin.collections.Iterator
+                  public open fun hashCode (): kotlin.Int declared in kotlin.collections.Iterator
                 $this: VALUE_PARAMETER name:<this> type:kotlin.Any
               FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
                 overridden:
-                  public open fun toString (): kotlin.String [fake_override] declared in kotlin.collections.Iterator
+                  public open fun toString (): kotlin.String declared in kotlin.collections.Iterator
                 $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-            CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.OneElementArrayMap.iterator.<no name provided>' type=<root>.OneElementArrayMap.iterator.<no name provided><T of <root>.OneElementArrayMap> origin=OBJECT_LITERAL
+            CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.OneElementArrayMap.iterator.<no name provided>' type=<root>.OneElementArrayMap.iterator.<no name provided><T of <root>.OneElementArrayMap> origin=OBJECT_LITERAL
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.ArrayMap
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.ArrayMap
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
       overridden:
-        public open fun hashCode (): kotlin.Int [fake_override] declared in <root>.ArrayMap
+        public open fun hashCode (): kotlin.Int declared in <root>.ArrayMap
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
       overridden:
-        public open fun toString (): kotlin.String [fake_override] declared in <root>.ArrayMap
+        public open fun toString (): kotlin.String declared in <root>.ArrayMap
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS CLASS name:ArrayMapImpl modality:FINAL visibility:internal superTypes:[<root>.ArrayMap<T of <root>.ArrayMapImpl>]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ArrayMapImpl<T of <root>.ArrayMapImpl>
@@ -329,7 +329,7 @@ FILE fqName:<root> fileName:/ArrayMap.kt
     CONSTRUCTOR visibility:private <> (data:kotlin.Array<kotlin.Any?>) returnType:<root>.ArrayMapImpl<T of <root>.ArrayMapImpl> [primary]
       VALUE_PARAMETER name:data index:0 type:kotlin.Array<kotlin.Any?>
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'protected constructor <init> () [primary] declared in <root>.ArrayMap'
+        DELEGATING_CONSTRUCTOR_CALL 'protected constructor <init> () declared in <root>.ArrayMap'
           <T>: T of <root>.ArrayMapImpl
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:ArrayMapImpl modality:FINAL visibility:internal superTypes:[<root>.ArrayMap<T of <root>.ArrayMapImpl>]'
     PROPERTY name:data visibility:private modality:FINAL [var]
@@ -355,7 +355,7 @@ FILE fqName:<root> fileName:/ArrayMap.kt
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ArrayMapImpl.Companion
       CONSTRUCTOR visibility:private <> () returnType:<root>.ArrayMapImpl.Companion [primary]
         BLOCK_BODY
-          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
           INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[kotlin.Any]'
       PROPERTY name:DEFAULT_SIZE visibility:private modality:FINAL [const,val]
         FIELD PROPERTY_BACKING_FIELD name:DEFAULT_SIZE type:kotlin.Int visibility:private [final]
@@ -381,7 +381,7 @@ FILE fqName:<root> fileName:/ArrayMap.kt
                 receiver: GET_VAR '<this>: <root>.ArrayMapImpl.Companion declared in <root>.ArrayMapImpl.Companion.<get-INCREASE_K>' type=<root>.ArrayMapImpl.Companion origin=null
       FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
         overridden:
-          public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+          public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
         $this: VALUE_PARAMETER name:<this> type:kotlin.Any
         VALUE_PARAMETER name:other index:0 type:kotlin.Any?
       FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -394,14 +394,14 @@ FILE fqName:<root> fileName:/ArrayMap.kt
         $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     CONSTRUCTOR visibility:public <> () returnType:<root>.ArrayMapImpl<T of <root>.ArrayMapImpl>
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'private constructor <init> (data: kotlin.Array<kotlin.Any?>) [primary] declared in <root>.ArrayMapImpl'
+        DELEGATING_CONSTRUCTOR_CALL 'private constructor <init> (data: kotlin.Array<kotlin.Any?>) declared in <root>.ArrayMapImpl'
           <T>: T of <root>.ArrayMapImpl
           data: CALL 'public final fun arrayOfNulls <T> (size: kotlin.Int): kotlin.Array<T of kotlin.arrayOfNulls?> declared in kotlin' type=kotlin.Array<kotlin.Any?> origin=null
             <T>: kotlin.Any
             size: CONST Int type=kotlin.Int value=20
     PROPERTY name:size visibility:public modality:OPEN [var]
       overridden:
-        public abstract size: kotlin.Int [val]
+        public abstract size: kotlin.Int
       FIELD PROPERTY_BACKING_FIELD name:size type:kotlin.Int visibility:private
         EXPRESSION_BODY
           CONST Int type=kotlin.Int value=0
@@ -436,18 +436,18 @@ FILE fqName:<root> fileName:/ArrayMap.kt
             then: BLOCK type=kotlin.Unit origin=null
               CALL 'private final fun <set-data> (<set-?>: kotlin.Array<kotlin.Any?>): kotlin.Unit declared in <root>.ArrayMapImpl' type=kotlin.Unit origin=EQ
                 $this: GET_VAR '<this>: <root>.ArrayMapImpl<T of <root>.ArrayMapImpl> declared in <root>.ArrayMapImpl.ensureCapacity' type=<root>.ArrayMapImpl<T of <root>.ArrayMapImpl> origin=null
-                <set-?>: CALL 'public final fun copyOf <T> (newSize: kotlin.Int): kotlin.Array<T of kotlin.collections.ArraysKt.copyOf?> [inline] declared in kotlin.collections.ArraysKt' type=kotlin.Array<kotlin.Any?> origin=null
+                <set-?>: CALL 'public final fun copyOf <T> (newSize: kotlin.Int): kotlin.Array<T of kotlin.collections.ArraysKt.copyOf?> declared in kotlin.collections.ArraysKt' type=kotlin.Array<kotlin.Any?> origin=null
                   <T>: kotlin.Any?
                   $receiver: CALL 'private final fun <get-data> (): kotlin.Array<kotlin.Any?> declared in <root>.ArrayMapImpl' type=kotlin.Array<kotlin.Any?> origin=GET_PROPERTY
                     $this: GET_VAR '<this>: <root>.ArrayMapImpl<T of <root>.ArrayMapImpl> declared in <root>.ArrayMapImpl.ensureCapacity' type=<root>.ArrayMapImpl<T of <root>.ArrayMapImpl> origin=null
-                  newSize: CALL 'public final fun times (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=MUL
+                  newSize: CALL 'public final fun times (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=MUL
                     $this: CALL 'public final fun <get-size> (): kotlin.Int declared in kotlin.Array' type=kotlin.Int origin=GET_PROPERTY
                       $this: CALL 'private final fun <get-data> (): kotlin.Array<kotlin.Any?> declared in <root>.ArrayMapImpl' type=kotlin.Array<kotlin.Any?> origin=GET_PROPERTY
                         $this: GET_VAR '<this>: <root>.ArrayMapImpl<T of <root>.ArrayMapImpl> declared in <root>.ArrayMapImpl.ensureCapacity' type=<root>.ArrayMapImpl<T of <root>.ArrayMapImpl> origin=null
                     other: CONST Int type=kotlin.Int value=2
     FUN name:set visibility:public modality:OPEN <> ($this:<root>.ArrayMapImpl<T of <root>.ArrayMapImpl>, index:kotlin.Int, value:T of <root>.ArrayMapImpl) returnType:kotlin.Unit [operator]
       overridden:
-        public abstract fun set (index: kotlin.Int, value: T of <root>.ArrayMap): kotlin.Unit [operator] declared in <root>.ArrayMap
+        public abstract fun set (index: kotlin.Int, value: T of <root>.ArrayMap): kotlin.Unit declared in <root>.ArrayMap
       $this: VALUE_PARAMETER name:<this> type:<root>.ArrayMapImpl<T of <root>.ArrayMapImpl>
       VALUE_PARAMETER name:index index:0 type:kotlin.Int
       VALUE_PARAMETER name:value index:1 type:T of <root>.ArrayMapImpl
@@ -458,7 +458,7 @@ FILE fqName:<root> fileName:/ArrayMap.kt
         WHEN type=kotlin.Unit origin=IF
           BRANCH
             if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-              arg0: CALL 'public final fun get (index: kotlin.Int): T of kotlin.Array [operator] declared in kotlin.Array' type=kotlin.Any? origin=null
+              arg0: CALL 'public final fun get (index: kotlin.Int): T of kotlin.Array declared in kotlin.Array' type=kotlin.Any? origin=null
                 $this: CALL 'private final fun <get-data> (): kotlin.Array<kotlin.Any?> declared in <root>.ArrayMapImpl' type=kotlin.Array<kotlin.Any?> origin=GET_PROPERTY
                   $this: GET_VAR '<this>: <root>.ArrayMapImpl<T of <root>.ArrayMapImpl> declared in <root>.ArrayMapImpl.set' type=<root>.ArrayMapImpl<T of <root>.ArrayMapImpl> origin=null
                 index: GET_VAR 'index: kotlin.Int declared in <root>.ArrayMapImpl.set' type=kotlin.Int origin=null
@@ -470,21 +470,21 @@ FILE fqName:<root> fileName:/ArrayMap.kt
                     $this: GET_VAR '<this>: <root>.ArrayMapImpl<T of <root>.ArrayMapImpl> declared in <root>.ArrayMapImpl.set' type=<root>.ArrayMapImpl<T of <root>.ArrayMapImpl> origin=null
                 CALL 'private open fun <set-size> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.ArrayMapImpl' type=kotlin.Unit origin=EQ
                   $this: GET_VAR '<this>: <root>.ArrayMapImpl<T of <root>.ArrayMapImpl> declared in <root>.ArrayMapImpl.set' type=<root>.ArrayMapImpl<T of <root>.ArrayMapImpl> origin=null
-                  <set-?>: CALL 'public final fun inc (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
-                    $this: GET_VAR 'val tmp_0: kotlin.Int [val] declared in <root>.ArrayMapImpl.set' type=kotlin.Int origin=null
-                GET_VAR 'val tmp_0: kotlin.Int [val] declared in <root>.ArrayMapImpl.set' type=kotlin.Int origin=null
-        CALL 'public final fun set (index: kotlin.Int, value: T of kotlin.Array): kotlin.Unit [operator] declared in kotlin.Array' type=kotlin.Unit origin=null
+                  <set-?>: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+                    $this: GET_VAR 'val tmp_0: kotlin.Int declared in <root>.ArrayMapImpl.set' type=kotlin.Int origin=null
+                GET_VAR 'val tmp_0: kotlin.Int declared in <root>.ArrayMapImpl.set' type=kotlin.Int origin=null
+        CALL 'public final fun set (index: kotlin.Int, value: T of kotlin.Array): kotlin.Unit declared in kotlin.Array' type=kotlin.Unit origin=null
           $this: CALL 'private final fun <get-data> (): kotlin.Array<kotlin.Any?> declared in <root>.ArrayMapImpl' type=kotlin.Array<kotlin.Any?> origin=GET_PROPERTY
             $this: GET_VAR '<this>: <root>.ArrayMapImpl<T of <root>.ArrayMapImpl> declared in <root>.ArrayMapImpl.set' type=<root>.ArrayMapImpl<T of <root>.ArrayMapImpl> origin=null
           index: GET_VAR 'index: kotlin.Int declared in <root>.ArrayMapImpl.set' type=kotlin.Int origin=null
           value: GET_VAR 'value: T of <root>.ArrayMapImpl declared in <root>.ArrayMapImpl.set' type=T of <root>.ArrayMapImpl origin=null
     FUN name:get visibility:public modality:OPEN <> ($this:<root>.ArrayMapImpl<T of <root>.ArrayMapImpl>, index:kotlin.Int) returnType:T of <root>.ArrayMapImpl? [operator]
       overridden:
-        public abstract fun get (index: kotlin.Int): T of <root>.ArrayMap? [operator] declared in <root>.ArrayMap
+        public abstract fun get (index: kotlin.Int): T of <root>.ArrayMap? declared in <root>.ArrayMap
       $this: VALUE_PARAMETER name:<this> type:<root>.ArrayMapImpl<T of <root>.ArrayMapImpl>
       VALUE_PARAMETER name:index index:0 type:kotlin.Int
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public open fun get (index: kotlin.Int): T of <root>.ArrayMapImpl? [operator] declared in <root>.ArrayMapImpl'
+        RETURN type=kotlin.Nothing from='public open fun get (index: kotlin.Int): T of <root>.ArrayMapImpl? declared in <root>.ArrayMapImpl'
           TYPE_OP type=T of <root>.ArrayMapImpl? origin=CAST typeOperand=T of <root>.ArrayMapImpl?
             CALL 'public final fun getOrNull <T> (index: kotlin.Int): T of kotlin.collections.ArraysKt.getOrNull? declared in kotlin.collections.ArraysKt' type=kotlin.Any? origin=null
               <T>: kotlin.Any?
@@ -497,24 +497,24 @@ FILE fqName:<root> fileName:/ArrayMap.kt
       $this: VALUE_PARAMETER name:<this> type:<root>.ArrayMapImpl<T of <root>.ArrayMapImpl>
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun copy (): <root>.ArrayMap<T of <root>.ArrayMapImpl> declared in <root>.ArrayMapImpl'
-          CONSTRUCTOR_CALL 'private constructor <init> (data: kotlin.Array<kotlin.Any?>) [primary] declared in <root>.ArrayMapImpl' type=<root>.ArrayMapImpl<T of <root>.ArrayMapImpl> origin=null
+          CONSTRUCTOR_CALL 'private constructor <init> (data: kotlin.Array<kotlin.Any?>) declared in <root>.ArrayMapImpl' type=<root>.ArrayMapImpl<T of <root>.ArrayMapImpl> origin=null
             <class: T>: T of <root>.ArrayMapImpl
-            data: CALL 'public final fun copyOf <T> (): kotlin.Array<T of kotlin.collections.ArraysKt.copyOf> [inline] declared in kotlin.collections.ArraysKt' type=kotlin.Array<kotlin.Any?> origin=null
+            data: CALL 'public final fun copyOf <T> (): kotlin.Array<T of kotlin.collections.ArraysKt.copyOf> declared in kotlin.collections.ArraysKt' type=kotlin.Array<kotlin.Any?> origin=null
               <T>: kotlin.Any?
               $receiver: CALL 'private final fun <get-data> (): kotlin.Array<kotlin.Any?> declared in <root>.ArrayMapImpl' type=kotlin.Array<kotlin.Any?> origin=GET_PROPERTY
                 $this: GET_VAR '<this>: <root>.ArrayMapImpl<T of <root>.ArrayMapImpl> declared in <root>.ArrayMapImpl.copy' type=<root>.ArrayMapImpl<T of <root>.ArrayMapImpl> origin=null
     FUN name:iterator visibility:public modality:OPEN <> ($this:<root>.ArrayMapImpl<T of <root>.ArrayMapImpl>) returnType:kotlin.collections.Iterator<T of <root>.ArrayMapImpl> [operator]
       overridden:
-        public abstract fun iterator (): kotlin.collections.Iterator<T of <root>.ArrayMap> [fake_override,operator] declared in <root>.ArrayMap
+        public abstract fun iterator (): kotlin.collections.Iterator<T of <root>.ArrayMap> declared in <root>.ArrayMap
       $this: VALUE_PARAMETER name:<this> type:<root>.ArrayMapImpl<T of <root>.ArrayMapImpl>
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public open fun iterator (): kotlin.collections.Iterator<T of <root>.ArrayMapImpl> [operator] declared in <root>.ArrayMapImpl'
+        RETURN type=kotlin.Nothing from='public open fun iterator (): kotlin.collections.Iterator<T of <root>.ArrayMapImpl> declared in <root>.ArrayMapImpl'
           BLOCK type=<root>.ArrayMapImpl.iterator.<no name provided><T of <root>.ArrayMapImpl> origin=OBJECT_LITERAL
             CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[kotlin.collections.AbstractIterator<T of <root>.ArrayMapImpl>]
               $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ArrayMapImpl.iterator.<no name provided><T of <root>.ArrayMapImpl>
               CONSTRUCTOR visibility:public <> () returnType:<root>.ArrayMapImpl.iterator.<no name provided><T of <root>.ArrayMapImpl> [primary]
                 BLOCK_BODY
-                  DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.collections.AbstractIterator'
+                  DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.collections.AbstractIterator'
                     <T>: T of <root>.ArrayMapImpl
                   INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[kotlin.collections.AbstractIterator<T of <root>.ArrayMapImpl>]'
               PROPERTY name:index visibility:private modality:FINAL [var]
@@ -549,9 +549,9 @@ FILE fqName:<root> fileName:/ArrayMap.kt
                             $this: GET_VAR '<this>: <root>.ArrayMapImpl.iterator.<no name provided><T of <root>.ArrayMapImpl> declared in <root>.ArrayMapImpl.iterator.<no name provided>.computeNext' type=<root>.ArrayMapImpl.iterator.<no name provided><T of <root>.ArrayMapImpl> origin=null
                         CALL 'private final fun <set-index> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.ArrayMapImpl.iterator.<no name provided>' type=kotlin.Unit origin=POSTFIX_INCR
                           $this: GET_VAR '<this>: <root>.ArrayMapImpl.iterator.<no name provided><T of <root>.ArrayMapImpl> declared in <root>.ArrayMapImpl.iterator.<no name provided>.computeNext' type=<root>.ArrayMapImpl.iterator.<no name provided><T of <root>.ArrayMapImpl> origin=null
-                          <set-?>: CALL 'public final fun inc (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
-                            $this: GET_VAR 'val tmp_1: kotlin.Int [val] declared in <root>.ArrayMapImpl.iterator.<no name provided>.computeNext' type=kotlin.Int origin=null
-                        GET_VAR 'val tmp_1: kotlin.Int [val] declared in <root>.ArrayMapImpl.iterator.<no name provided>.computeNext' type=kotlin.Int origin=null
+                          <set-?>: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+                            $this: GET_VAR 'val tmp_1: kotlin.Int declared in <root>.ArrayMapImpl.iterator.<no name provided>.computeNext' type=kotlin.Int origin=null
+                        GET_VAR 'val tmp_1: kotlin.Int declared in <root>.ArrayMapImpl.iterator.<no name provided>.computeNext' type=kotlin.Int origin=null
                       condition: WHEN type=kotlin.Boolean origin=ANDAND
                         BRANCH
                           if: CALL 'public final fun less (arg0: kotlin.Int, arg1: kotlin.Int): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=LT
@@ -561,7 +561,7 @@ FILE fqName:<root> fileName:/ArrayMap.kt
                               $this: CALL 'private final fun <get-data> (): kotlin.Array<kotlin.Any?> declared in <root>.ArrayMapImpl' type=kotlin.Array<kotlin.Any?> origin=GET_PROPERTY
                                 $this: GET_VAR '<this>: <root>.ArrayMapImpl<T of <root>.ArrayMapImpl> declared in <root>.ArrayMapImpl.iterator' type=<root>.ArrayMapImpl<T of <root>.ArrayMapImpl> origin=null
                           then: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                            arg0: CALL 'public final fun get (index: kotlin.Int): T of kotlin.Array [operator] declared in kotlin.Array' type=kotlin.Any? origin=null
+                            arg0: CALL 'public final fun get (index: kotlin.Int): T of kotlin.Array declared in kotlin.Array' type=kotlin.Any? origin=null
                               $this: CALL 'private final fun <get-data> (): kotlin.Array<kotlin.Any?> declared in <root>.ArrayMapImpl' type=kotlin.Array<kotlin.Any?> origin=GET_PROPERTY
                                 $this: GET_VAR '<this>: <root>.ArrayMapImpl<T of <root>.ArrayMapImpl> declared in <root>.ArrayMapImpl.iterator' type=<root>.ArrayMapImpl<T of <root>.ArrayMapImpl> origin=null
                               index: CALL 'private final fun <get-index> (): kotlin.Int declared in <root>.ArrayMapImpl.iterator.<no name provided>' type=kotlin.Int origin=GET_PROPERTY
@@ -578,14 +578,14 @@ FILE fqName:<root> fileName:/ArrayMap.kt
                         arg1: CALL 'public final fun <get-size> (): kotlin.Int declared in kotlin.Array' type=kotlin.Int origin=GET_PROPERTY
                           $this: CALL 'private final fun <get-data> (): kotlin.Array<kotlin.Any?> declared in <root>.ArrayMapImpl' type=kotlin.Array<kotlin.Any?> origin=GET_PROPERTY
                             $this: GET_VAR '<this>: <root>.ArrayMapImpl<T of <root>.ArrayMapImpl> declared in <root>.ArrayMapImpl.iterator' type=<root>.ArrayMapImpl<T of <root>.ArrayMapImpl> origin=null
-                      then: CALL 'protected final fun done (): kotlin.Unit [fake_override] declared in <root>.ArrayMapImpl.iterator.<no name provided>' type=kotlin.Unit origin=null
+                      then: CALL 'protected final fun done (): kotlin.Unit declared in <root>.ArrayMapImpl.iterator.<no name provided>' type=kotlin.Unit origin=null
                         $this: GET_VAR '<this>: <root>.ArrayMapImpl.iterator.<no name provided><T of <root>.ArrayMapImpl> declared in <root>.ArrayMapImpl.iterator.<no name provided>.computeNext' type=<root>.ArrayMapImpl.iterator.<no name provided><T of <root>.ArrayMapImpl> origin=null
                     BRANCH
                       if: CONST Boolean type=kotlin.Boolean value=true
-                      then: CALL 'protected final fun setNext (value: T of <root>.ArrayMapImpl): kotlin.Unit [fake_override] declared in <root>.ArrayMapImpl.iterator.<no name provided>' type=kotlin.Unit origin=null
+                      then: CALL 'protected final fun setNext (value: T of <root>.ArrayMapImpl): kotlin.Unit declared in <root>.ArrayMapImpl.iterator.<no name provided>' type=kotlin.Unit origin=null
                         $this: GET_VAR '<this>: <root>.ArrayMapImpl.iterator.<no name provided><T of <root>.ArrayMapImpl> declared in <root>.ArrayMapImpl.iterator.<no name provided>.computeNext' type=<root>.ArrayMapImpl.iterator.<no name provided><T of <root>.ArrayMapImpl> origin=null
                         value: TYPE_OP type=T of <root>.ArrayMapImpl origin=CAST typeOperand=T of <root>.ArrayMapImpl
-                          CALL 'public final fun get (index: kotlin.Int): T of kotlin.Array [operator] declared in kotlin.Array' type=kotlin.Any? origin=null
+                          CALL 'public final fun get (index: kotlin.Int): T of kotlin.Array declared in kotlin.Array' type=kotlin.Any? origin=null
                             $this: CALL 'private final fun <get-data> (): kotlin.Array<kotlin.Any?> declared in <root>.ArrayMapImpl' type=kotlin.Array<kotlin.Any?> origin=GET_PROPERTY
                               $this: GET_VAR '<this>: <root>.ArrayMapImpl<T of <root>.ArrayMapImpl> declared in <root>.ArrayMapImpl.iterator' type=<root>.ArrayMapImpl<T of <root>.ArrayMapImpl> origin=null
                             index: CALL 'private final fun <get-index> (): kotlin.Int declared in <root>.ArrayMapImpl.iterator.<no name provided>' type=kotlin.Int origin=GET_PROPERTY
@@ -596,11 +596,11 @@ FILE fqName:<root> fileName:/ArrayMap.kt
                 $this: VALUE_PARAMETER name:<this> type:kotlin.collections.AbstractIterator<T of kotlin.collections.AbstractIterator>
               FUN FAKE_OVERRIDE name:hasNext visibility:public modality:OPEN <> ($this:kotlin.collections.AbstractIterator<T of kotlin.collections.AbstractIterator>) returnType:kotlin.Boolean [fake_override,operator]
                 overridden:
-                  public open fun hasNext (): kotlin.Boolean [operator] declared in kotlin.collections.AbstractIterator
+                  public open fun hasNext (): kotlin.Boolean declared in kotlin.collections.AbstractIterator
                 $this: VALUE_PARAMETER name:<this> type:kotlin.collections.AbstractIterator<T of kotlin.collections.AbstractIterator>
               FUN FAKE_OVERRIDE name:next visibility:public modality:OPEN <> ($this:kotlin.collections.AbstractIterator<T of kotlin.collections.AbstractIterator>) returnType:T of <root>.ArrayMapImpl [fake_override,operator]
                 overridden:
-                  public open fun next (): T of kotlin.collections.AbstractIterator [operator] declared in kotlin.collections.AbstractIterator
+                  public open fun next (): T of kotlin.collections.AbstractIterator declared in kotlin.collections.AbstractIterator
                 $this: VALUE_PARAMETER name:<this> type:kotlin.collections.AbstractIterator<T of kotlin.collections.AbstractIterator>
               FUN FAKE_OVERRIDE name:setNext visibility:protected modality:FINAL <> ($this:kotlin.collections.AbstractIterator<T of kotlin.collections.AbstractIterator>, value:T of <root>.ArrayMapImpl) returnType:kotlin.Unit [fake_override]
                 overridden:
@@ -609,27 +609,27 @@ FILE fqName:<root> fileName:/ArrayMap.kt
                 VALUE_PARAMETER name:value index:0 type:T of <root>.ArrayMapImpl
               FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
                 overridden:
-                  public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in kotlin.collections.AbstractIterator
+                  public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.collections.AbstractIterator
                 $this: VALUE_PARAMETER name:<this> type:kotlin.Any
                 VALUE_PARAMETER name:other index:0 type:kotlin.Any?
               FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
                 overridden:
-                  public open fun hashCode (): kotlin.Int [fake_override] declared in kotlin.collections.AbstractIterator
+                  public open fun hashCode (): kotlin.Int declared in kotlin.collections.AbstractIterator
                 $this: VALUE_PARAMETER name:<this> type:kotlin.Any
               FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
                 overridden:
-                  public open fun toString (): kotlin.String [fake_override] declared in kotlin.collections.AbstractIterator
+                  public open fun toString (): kotlin.String declared in kotlin.collections.AbstractIterator
                 $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-            CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.ArrayMapImpl.iterator.<no name provided>' type=<root>.ArrayMapImpl.iterator.<no name provided><T of <root>.ArrayMapImpl> origin=OBJECT_LITERAL
+            CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.ArrayMapImpl.iterator.<no name provided>' type=<root>.ArrayMapImpl.iterator.<no name provided><T of <root>.ArrayMapImpl> origin=OBJECT_LITERAL
     FUN name:remove visibility:public modality:FINAL <> ($this:<root>.ArrayMapImpl<T of <root>.ArrayMapImpl>, index:kotlin.Int) returnType:kotlin.Unit
       $this: VALUE_PARAMETER name:<this> type:<root>.ArrayMapImpl<T of <root>.ArrayMapImpl>
       VALUE_PARAMETER name:index index:0 type:kotlin.Int
       BLOCK_BODY
         WHEN type=kotlin.Unit origin=IF
           BRANCH
-            if: CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+            if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
               $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
-                arg0: CALL 'public final fun get (index: kotlin.Int): T of kotlin.Array [operator] declared in kotlin.Array' type=kotlin.Any? origin=null
+                arg0: CALL 'public final fun get (index: kotlin.Int): T of kotlin.Array declared in kotlin.Array' type=kotlin.Any? origin=null
                   $this: CALL 'private final fun <get-data> (): kotlin.Array<kotlin.Any?> declared in <root>.ArrayMapImpl' type=kotlin.Array<kotlin.Any?> origin=GET_PROPERTY
                     $this: GET_VAR '<this>: <root>.ArrayMapImpl<T of <root>.ArrayMapImpl> declared in <root>.ArrayMapImpl.remove' type=<root>.ArrayMapImpl<T of <root>.ArrayMapImpl> origin=null
                   index: GET_VAR 'index: kotlin.Int declared in <root>.ArrayMapImpl.remove' type=kotlin.Int origin=null
@@ -641,10 +641,10 @@ FILE fqName:<root> fileName:/ArrayMap.kt
                     $this: GET_VAR '<this>: <root>.ArrayMapImpl<T of <root>.ArrayMapImpl> declared in <root>.ArrayMapImpl.remove' type=<root>.ArrayMapImpl<T of <root>.ArrayMapImpl> origin=null
                 CALL 'private open fun <set-size> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.ArrayMapImpl' type=kotlin.Unit origin=EQ
                   $this: GET_VAR '<this>: <root>.ArrayMapImpl<T of <root>.ArrayMapImpl> declared in <root>.ArrayMapImpl.remove' type=<root>.ArrayMapImpl<T of <root>.ArrayMapImpl> origin=null
-                  <set-?>: CALL 'public final fun dec (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
-                    $this: GET_VAR 'val tmp_2: kotlin.Int [val] declared in <root>.ArrayMapImpl.remove' type=kotlin.Int origin=null
-                GET_VAR 'val tmp_2: kotlin.Int [val] declared in <root>.ArrayMapImpl.remove' type=kotlin.Int origin=null
-        CALL 'public final fun set (index: kotlin.Int, value: T of kotlin.Array): kotlin.Unit [operator] declared in kotlin.Array' type=kotlin.Unit origin=null
+                  <set-?>: CALL 'public final fun dec (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+                    $this: GET_VAR 'val tmp_2: kotlin.Int declared in <root>.ArrayMapImpl.remove' type=kotlin.Int origin=null
+                GET_VAR 'val tmp_2: kotlin.Int declared in <root>.ArrayMapImpl.remove' type=kotlin.Int origin=null
+        CALL 'public final fun set (index: kotlin.Int, value: T of kotlin.Array): kotlin.Unit declared in kotlin.Array' type=kotlin.Unit origin=null
           $this: CALL 'private final fun <get-data> (): kotlin.Array<kotlin.Any?> declared in <root>.ArrayMapImpl' type=kotlin.Array<kotlin.Any?> origin=GET_PROPERTY
             $this: GET_VAR '<this>: <root>.ArrayMapImpl<T of <root>.ArrayMapImpl> declared in <root>.ArrayMapImpl.remove' type=<root>.ArrayMapImpl<T of <root>.ArrayMapImpl> origin=null
           index: GET_VAR 'index: kotlin.Int declared in <root>.ArrayMapImpl.remove' type=kotlin.Int origin=null
@@ -653,7 +653,7 @@ FILE fqName:<root> fileName:/ArrayMap.kt
       $this: VALUE_PARAMETER name:<this> type:<root>.ArrayMapImpl<T of <root>.ArrayMapImpl>
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun entries (): kotlin.collections.List<<root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl>> declared in <root>.ArrayMapImpl'
-          CALL 'public final fun mapIndexedNotNull <T, R> (transform: kotlin.Function2<@[ParameterName(name = 'index')] kotlin.Int, T of kotlin.collections.ArraysKt.mapIndexedNotNull, R of kotlin.collections.ArraysKt.mapIndexedNotNull?>): kotlin.collections.List<R of kotlin.collections.ArraysKt.mapIndexedNotNull> [inline] declared in kotlin.collections.ArraysKt' type=kotlin.collections.List<<root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl>> origin=null
+          CALL 'public final fun mapIndexedNotNull <T, R> (transform: kotlin.Function2<@[ParameterName(name = 'index')] kotlin.Int, T of kotlin.collections.ArraysKt.mapIndexedNotNull, R of kotlin.collections.ArraysKt.mapIndexedNotNull?>): kotlin.collections.List<R of kotlin.collections.ArraysKt.mapIndexedNotNull> declared in kotlin.collections.ArraysKt' type=kotlin.collections.List<<root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl>> origin=null
             <T>: kotlin.Any?
             <R>: <root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl>
             $receiver: CALL 'private final fun <get-data> (): kotlin.Array<kotlin.Any?> declared in <root>.ArrayMapImpl' type=kotlin.Array<kotlin.Any?> origin=GET_PROPERTY
@@ -666,11 +666,11 @@ FILE fqName:<root> fileName:/ArrayMap.kt
                   RETURN type=kotlin.Nothing from='local final fun <anonymous> (index: @[ParameterName(name = 'index')] kotlin.Int, value: kotlin.Any?): <root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl>? declared in <root>.ArrayMapImpl.entries'
                     WHEN type=<root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl>? origin=IF
                       BRANCH
-                        if: CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+                        if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
                           $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
                             arg0: GET_VAR 'value: kotlin.Any? declared in <root>.ArrayMapImpl.entries.<anonymous>' type=kotlin.Any? origin=null
                             arg1: CONST Null type=kotlin.Nothing? value=null
-                        then: CONSTRUCTOR_CALL 'public constructor <init> (key: kotlin.Int, value: T of <root>.ArrayMapImpl.Entry) [primary] declared in <root>.ArrayMapImpl.Entry' type=<root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl> origin=null
+                        then: CONSTRUCTOR_CALL 'public constructor <init> (key: kotlin.Int, value: T of <root>.ArrayMapImpl.Entry) declared in <root>.ArrayMapImpl.Entry' type=<root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl> origin=null
                           <class: T>: T of <root>.ArrayMapImpl
                           key: GET_VAR 'index: @[ParameterName(name = 'index')] kotlin.Int declared in <root>.ArrayMapImpl.entries.<anonymous>' type=@[ParameterName(name = 'index')] kotlin.Int origin=null
                           value: TYPE_OP type=T of <root>.ArrayMapImpl origin=CAST typeOperand=T of <root>.ArrayMapImpl
@@ -685,11 +685,11 @@ FILE fqName:<root> fileName:/ArrayMap.kt
         VALUE_PARAMETER name:key index:0 type:kotlin.Int
         VALUE_PARAMETER name:value index:1 type:T of <root>.ArrayMapImpl.Entry
         BLOCK_BODY
-          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
           INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Entry modality:FINAL visibility:public [data] superTypes:[kotlin.collections.Map.Entry<kotlin.Int, T of <root>.ArrayMapImpl.Entry>]'
       PROPERTY name:key visibility:public modality:OPEN [val]
         overridden:
-          public abstract key: K of kotlin.collections.Map.Entry [val]
+          public abstract key: K of kotlin.collections.Map.Entry
         FIELD PROPERTY_BACKING_FIELD name:key type:kotlin.Int visibility:private [final]
           EXPRESSION_BODY
             GET_VAR 'key: kotlin.Int declared in <root>.ArrayMapImpl.Entry.<init>' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
@@ -704,7 +704,7 @@ FILE fqName:<root> fileName:/ArrayMap.kt
                 receiver: GET_VAR '<this>: <root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl.Entry> declared in <root>.ArrayMapImpl.Entry.<get-key>' type=<root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl.Entry> origin=null
       PROPERTY name:value visibility:public modality:OPEN [val]
         overridden:
-          public abstract value: V of kotlin.collections.Map.Entry [val]
+          public abstract value: V of kotlin.collections.Map.Entry
         FIELD PROPERTY_BACKING_FIELD name:value type:T of <root>.ArrayMapImpl.Entry visibility:private [final]
           EXPRESSION_BODY
             GET_VAR 'value: T of <root>.ArrayMapImpl.Entry declared in <root>.ArrayMapImpl.Entry.<init>' type=T of <root>.ArrayMapImpl.Entry origin=INITIALIZE_PROPERTY_FROM_PARAMETER
@@ -720,13 +720,13 @@ FILE fqName:<root> fileName:/ArrayMap.kt
       FUN GENERATED_DATA_CLASS_MEMBER name:component1 visibility:public modality:FINAL <> ($this:<root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl.Entry>) returnType:kotlin.Int [operator]
         $this: VALUE_PARAMETER name:<this> type:<root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl.Entry>
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='public final fun component1 (): kotlin.Int [operator] declared in <root>.ArrayMapImpl.Entry'
+          RETURN type=kotlin.Nothing from='public final fun component1 (): kotlin.Int declared in <root>.ArrayMapImpl.Entry'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:key type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl.Entry> declared in <root>.ArrayMapImpl.Entry.component1' type=<root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl.Entry> origin=null
       FUN GENERATED_DATA_CLASS_MEMBER name:component2 visibility:public modality:FINAL <> ($this:<root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl.Entry>) returnType:T of <root>.ArrayMapImpl.Entry [operator]
         $this: VALUE_PARAMETER name:<this> type:<root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl.Entry>
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='public final fun component2 (): T of <root>.ArrayMapImpl.Entry [operator] declared in <root>.ArrayMapImpl.Entry'
+          RETURN type=kotlin.Nothing from='public final fun component2 (): T of <root>.ArrayMapImpl.Entry declared in <root>.ArrayMapImpl.Entry'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value type:T of <root>.ArrayMapImpl.Entry visibility:private [final]' type=T of <root>.ArrayMapImpl.Entry origin=null
               receiver: GET_VAR '<this>: <root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl.Entry> declared in <root>.ArrayMapImpl.Entry.component2' type=<root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl.Entry> origin=null
       FUN GENERATED_DATA_CLASS_MEMBER name:copy visibility:public modality:FINAL <> ($this:<root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl.Entry>, key:kotlin.Int, value:T of <root>.ArrayMapImpl.Entry) returnType:<root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl.Entry>
@@ -741,13 +741,13 @@ FILE fqName:<root> fileName:/ArrayMap.kt
               receiver: GET_VAR '<this>: <root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl.Entry> declared in <root>.ArrayMapImpl.Entry.copy' type=<root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl.Entry> origin=null
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun copy (key: kotlin.Int, value: T of <root>.ArrayMapImpl.Entry): <root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl.Entry> declared in <root>.ArrayMapImpl.Entry'
-            CONSTRUCTOR_CALL 'public constructor <init> (key: kotlin.Int, value: T of <root>.ArrayMapImpl.Entry) [primary] declared in <root>.ArrayMapImpl.Entry' type=<root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl.Entry> origin=null
+            CONSTRUCTOR_CALL 'public constructor <init> (key: kotlin.Int, value: T of <root>.ArrayMapImpl.Entry) declared in <root>.ArrayMapImpl.Entry' type=<root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl.Entry> origin=null
               <class: T>: kotlin.Any
               key: GET_VAR 'key: kotlin.Int declared in <root>.ArrayMapImpl.Entry.copy' type=kotlin.Int origin=null
               value: GET_VAR 'value: T of <root>.ArrayMapImpl.Entry declared in <root>.ArrayMapImpl.Entry.copy' type=T of <root>.ArrayMapImpl.Entry origin=null
       FUN GENERATED_DATA_CLASS_MEMBER name:equals visibility:public modality:OPEN <> ($this:<root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl.Entry>, other:kotlin.Any?) returnType:kotlin.Boolean [operator]
         overridden:
-          public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+          public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
         $this: VALUE_PARAMETER name:<this> type:<root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl.Entry>
         VALUE_PARAMETER name:other index:0 type:kotlin.Any?
         BLOCK_BODY
@@ -756,38 +756,38 @@ FILE fqName:<root> fileName:/ArrayMap.kt
               if: CALL 'public final fun EQEQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQEQ
                 arg0: GET_VAR '<this>: <root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl.Entry> declared in <root>.ArrayMapImpl.Entry.equals' type=<root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl.Entry> origin=null
                 arg1: GET_VAR 'other: kotlin.Any? declared in <root>.ArrayMapImpl.Entry.equals' type=kotlin.Any? origin=null
-              then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in <root>.ArrayMapImpl.Entry'
+              then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.ArrayMapImpl.Entry'
                 CONST Boolean type=kotlin.Boolean value=true
           WHEN type=kotlin.Unit origin=null
             BRANCH
               if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=<root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl.Entry>
                 GET_VAR 'other: kotlin.Any? declared in <root>.ArrayMapImpl.Entry.equals' type=kotlin.Any? origin=null
-              then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in <root>.ArrayMapImpl.Entry'
+              then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.ArrayMapImpl.Entry'
                 CONST Boolean type=kotlin.Boolean value=false
           VAR IR_TEMPORARY_VARIABLE name:tmp_3 type:<root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl.Entry> [val]
             TYPE_OP type=<root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl.Entry> origin=CAST typeOperand=<root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl.Entry>
               GET_VAR 'other: kotlin.Any? declared in <root>.ArrayMapImpl.Entry.equals' type=kotlin.Any? origin=null
           WHEN type=kotlin.Unit origin=null
             BRANCH
-              if: CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+              if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
                 $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
                   arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:key type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
                     receiver: GET_VAR '<this>: <root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl.Entry> declared in <root>.ArrayMapImpl.Entry.equals' type=<root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl.Entry> origin=null
                   arg1: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:key type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
-                    receiver: GET_VAR 'val tmp_3: <root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl.Entry> [val] declared in <root>.ArrayMapImpl.Entry.equals' type=<root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl.Entry> origin=null
-              then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in <root>.ArrayMapImpl.Entry'
+                    receiver: GET_VAR 'val tmp_3: <root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl.Entry> declared in <root>.ArrayMapImpl.Entry.equals' type=<root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl.Entry> origin=null
+              then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.ArrayMapImpl.Entry'
                 CONST Boolean type=kotlin.Boolean value=false
           WHEN type=kotlin.Unit origin=null
             BRANCH
-              if: CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+              if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
                 $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
                   arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value type:T of <root>.ArrayMapImpl.Entry visibility:private [final]' type=T of <root>.ArrayMapImpl.Entry origin=null
                     receiver: GET_VAR '<this>: <root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl.Entry> declared in <root>.ArrayMapImpl.Entry.equals' type=<root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl.Entry> origin=null
                   arg1: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value type:T of <root>.ArrayMapImpl.Entry visibility:private [final]' type=T of <root>.ArrayMapImpl.Entry origin=null
-                    receiver: GET_VAR 'val tmp_3: <root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl.Entry> [val] declared in <root>.ArrayMapImpl.Entry.equals' type=<root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl.Entry> origin=null
-              then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in <root>.ArrayMapImpl.Entry'
+                    receiver: GET_VAR 'val tmp_3: <root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl.Entry> declared in <root>.ArrayMapImpl.Entry.equals' type=<root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl.Entry> origin=null
+              then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.ArrayMapImpl.Entry'
                 CONST Boolean type=kotlin.Boolean value=false
-          RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in <root>.ArrayMapImpl.Entry'
+          RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.ArrayMapImpl.Entry'
             CONST Boolean type=kotlin.Boolean value=true
       FUN GENERATED_DATA_CLASS_MEMBER name:hashCode visibility:public modality:OPEN <> ($this:<root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl.Entry>) returnType:kotlin.Int
         overridden:
@@ -795,13 +795,13 @@ FILE fqName:<root> fileName:/ArrayMap.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl.Entry>
         BLOCK_BODY
           VAR name:result type:kotlin.Int [var]
-            CALL 'public open fun hashCode (): kotlin.Int [fake_override] declared in kotlin.Int' type=kotlin.Int origin=null
+            CALL 'public open fun hashCode (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
               $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:key type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
                 receiver: GET_VAR '<this>: <root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl.Entry> declared in <root>.ArrayMapImpl.Entry.hashCode' type=<root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl.Entry> origin=null
-          SET_VAR 'var result: kotlin.Int [var] declared in <root>.ArrayMapImpl.Entry.hashCode' type=kotlin.Unit origin=EQ
-            CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
-              $this: CALL 'public final fun times (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
-                $this: GET_VAR 'var result: kotlin.Int [var] declared in <root>.ArrayMapImpl.Entry.hashCode' type=kotlin.Int origin=null
+          SET_VAR 'var result: kotlin.Int declared in <root>.ArrayMapImpl.Entry.hashCode' type=kotlin.Unit origin=EQ
+            CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+              $this: CALL 'public final fun times (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+                $this: GET_VAR 'var result: kotlin.Int declared in <root>.ArrayMapImpl.Entry.hashCode' type=kotlin.Int origin=null
                 other: CONST Int type=kotlin.Int value=31
               other: WHEN type=kotlin.Int origin=null
                 BRANCH
@@ -816,7 +816,7 @@ FILE fqName:<root> fileName:/ArrayMap.kt
                     $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value type:T of <root>.ArrayMapImpl.Entry visibility:private [final]' type=T of <root>.ArrayMapImpl.Entry origin=null
                       receiver: GET_VAR '<this>: <root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl.Entry> declared in <root>.ArrayMapImpl.Entry.hashCode' type=<root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl.Entry> origin=null
           RETURN type=kotlin.Nothing from='public open fun hashCode (): kotlin.Int declared in <root>.ArrayMapImpl.Entry'
-            GET_VAR 'var result: kotlin.Int [var] declared in <root>.ArrayMapImpl.Entry.hashCode' type=kotlin.Int origin=null
+            GET_VAR 'var result: kotlin.Int declared in <root>.ArrayMapImpl.Entry.hashCode' type=kotlin.Int origin=null
       FUN GENERATED_DATA_CLASS_MEMBER name:toString visibility:public modality:OPEN <> ($this:<root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl.Entry>) returnType:kotlin.String
         overridden:
           public open fun toString (): kotlin.String declared in kotlin.Any
@@ -833,14 +833,14 @@ FILE fqName:<root> fileName:/ArrayMap.kt
               CONST String type=kotlin.String value=")"
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.ArrayMap
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.ArrayMap
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
       overridden:
-        public open fun hashCode (): kotlin.Int [fake_override] declared in <root>.ArrayMap
+        public open fun hashCode (): kotlin.Int declared in <root>.ArrayMap
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
       overridden:
-        public open fun toString (): kotlin.String [fake_override] declared in <root>.ArrayMap
+        public open fun toString (): kotlin.String declared in <root>.ArrayMap
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any

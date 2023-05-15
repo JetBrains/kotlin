@@ -4,7 +4,7 @@ FILE fqName:<root> fileName:/Fir2IrClassifierStorage.kt
     CONSTRUCTOR visibility:public <> (name:kotlin.String) returnType:<root>.FirSession [primary]
       VALUE_PARAMETER name:name index:0 type:kotlin.String
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:FirSession modality:FINAL visibility:public superTypes:[kotlin.Any]'
     PROPERTY name:name visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:name type:kotlin.String visibility:private [final]
@@ -19,7 +19,7 @@ FILE fqName:<root> fileName:/Fir2IrClassifierStorage.kt
               receiver: GET_VAR '<this>: <root>.FirSession declared in <root>.FirSession.<get-name>' type=<root>.FirSession origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -42,7 +42,7 @@ FILE fqName:<root> fileName:/Fir2IrClassifierStorage.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.Fir2IrComponents
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -58,11 +58,11 @@ FILE fqName:<root> fileName:/Fir2IrClassifierStorage.kt
     CONSTRUCTOR visibility:public <> (session:<root>.FirSession) returnType:<root>.Fir2IrComponentsStorage [primary]
       VALUE_PARAMETER name:session index:0 type:<root>.FirSession
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Fir2IrComponentsStorage modality:FINAL visibility:public superTypes:[<root>.Fir2IrComponents]'
     PROPERTY name:session visibility:public modality:OPEN [val]
       overridden:
-        public abstract session: <root>.FirSession [val]
+        public abstract session: <root>.FirSession
       FIELD PROPERTY_BACKING_FIELD name:session type:<root>.FirSession visibility:private [final]
         EXPRESSION_BODY
           GET_VAR 'session: <root>.FirSession declared in <root>.Fir2IrComponentsStorage.<init>' type=<root>.FirSession origin=INITIALIZE_PROPERTY_FROM_PARAMETER
@@ -77,7 +77,7 @@ FILE fqName:<root> fileName:/Fir2IrClassifierStorage.kt
               receiver: GET_VAR '<this>: <root>.Fir2IrComponentsStorage declared in <root>.Fir2IrComponentsStorage.<get-session>' type=<root>.Fir2IrComponentsStorage origin=null
     PROPERTY name:classifierStorage visibility:public modality:OPEN [lateinit,var]
       overridden:
-        public abstract classifierStorage: <root>.Fir2IrClassifierStorage [val]
+        public abstract classifierStorage: <root>.Fir2IrClassifierStorage
       FIELD PROPERTY_BACKING_FIELD name:classifierStorage type:<root>.Fir2IrClassifierStorage visibility:public
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-classifierStorage> visibility:public modality:OPEN <> ($this:<root>.Fir2IrComponentsStorage) returnType:<root>.Fir2IrClassifierStorage
         correspondingProperty: PROPERTY name:classifierStorage visibility:public modality:OPEN [lateinit,var]
@@ -98,27 +98,27 @@ FILE fqName:<root> fileName:/Fir2IrClassifierStorage.kt
             value: GET_VAR '<set-?>: <root>.Fir2IrClassifierStorage declared in <root>.Fir2IrComponentsStorage.<set-classifierStorage>' type=<root>.Fir2IrClassifierStorage origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.Fir2IrComponents
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Fir2IrComponents
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
       overridden:
-        public open fun hashCode (): kotlin.Int [fake_override] declared in <root>.Fir2IrComponents
+        public open fun hashCode (): kotlin.Int declared in <root>.Fir2IrComponents
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
       overridden:
-        public open fun toString (): kotlin.String [fake_override] declared in <root>.Fir2IrComponents
+        public open fun toString (): kotlin.String declared in <root>.Fir2IrComponents
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS CLASS name:Fir2IrClassifierStorage modality:FINAL visibility:public superTypes:[<root>.Fir2IrComponents]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Fir2IrClassifierStorage
     CONSTRUCTOR visibility:public <> (components:<root>.Fir2IrComponents) returnType:<root>.Fir2IrClassifierStorage [primary]
       VALUE_PARAMETER name:components index:0 type:<root>.Fir2IrComponents
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Fir2IrClassifierStorage modality:FINAL visibility:public superTypes:[<root>.Fir2IrComponents]'
     PROPERTY DELEGATED_MEMBER name:session visibility:public modality:OPEN [val]
       overridden:
-        public abstract session: <root>.FirSession [val]
+        public abstract session: <root>.FirSession
       FUN DELEGATED_MEMBER name:<get-session> visibility:public modality:OPEN <> ($this:<root>.Fir2IrClassifierStorage) returnType:<root>.FirSession
         correspondingProperty: PROPERTY DELEGATED_MEMBER name:session visibility:public modality:OPEN [val]
         overridden:
@@ -131,7 +131,7 @@ FILE fqName:<root> fileName:/Fir2IrClassifierStorage.kt
                 receiver: GET_VAR '<this>: <root>.Fir2IrClassifierStorage declared in <root>.Fir2IrClassifierStorage.<get-session>' type=<root>.Fir2IrClassifierStorage origin=null
     PROPERTY DELEGATED_MEMBER name:classifierStorage visibility:public modality:OPEN [val]
       overridden:
-        public abstract classifierStorage: <root>.Fir2IrClassifierStorage [val]
+        public abstract classifierStorage: <root>.Fir2IrClassifierStorage
       FUN DELEGATED_MEMBER name:<get-classifierStorage> visibility:public modality:OPEN <> ($this:<root>.Fir2IrClassifierStorage) returnType:<root>.Fir2IrClassifierStorage
         correspondingProperty: PROPERTY DELEGATED_MEMBER name:classifierStorage visibility:public modality:OPEN [val]
         overridden:
@@ -168,14 +168,14 @@ FILE fqName:<root> fileName:/Fir2IrClassifierStorage.kt
               receiver: GET_VAR '<this>: <root>.Fir2IrClassifierStorage declared in <root>.Fir2IrClassifierStorage.<get-name>' type=<root>.Fir2IrClassifierStorage origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.Fir2IrComponents
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Fir2IrComponents
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
       overridden:
-        public open fun hashCode (): kotlin.Int [fake_override] declared in <root>.Fir2IrComponents
+        public open fun hashCode (): kotlin.Int declared in <root>.Fir2IrComponents
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
       overridden:
-        public open fun toString (): kotlin.String [fake_override] declared in <root>.Fir2IrComponents
+        public open fun toString (): kotlin.String declared in <root>.Fir2IrComponents
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any

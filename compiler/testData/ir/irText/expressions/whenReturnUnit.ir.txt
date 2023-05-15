@@ -16,13 +16,13 @@ FILE fqName:<root> fileName:/whenReturnUnit.kt
                   WHEN type=kotlin.Unit origin=WHEN
                     BRANCH
                       if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                        arg0: GET_VAR 'val tmp_0: kotlin.Int [val] declared in <root>.branch.<anonymous>' type=kotlin.Int origin=null
+                        arg0: GET_VAR 'val tmp_0: kotlin.Int declared in <root>.branch.<anonymous>' type=kotlin.Int origin=null
                         arg1: CONST Int type=kotlin.Int value=1
-                      then: CALL 'public final fun TODO (reason: kotlin.String): kotlin.Nothing [inline] declared in kotlin.StandardKt' type=kotlin.Nothing origin=null
+                      then: CALL 'public final fun TODO (reason: kotlin.String): kotlin.Nothing declared in kotlin.StandardKt' type=kotlin.Nothing origin=null
                         reason: CONST String type=kotlin.String value="1"
                     BRANCH
                       if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                        arg0: GET_VAR 'val tmp_0: kotlin.Int [val] declared in <root>.branch.<anonymous>' type=kotlin.Int origin=null
+                        arg0: GET_VAR 'val tmp_0: kotlin.Int declared in <root>.branch.<anonymous>' type=kotlin.Int origin=null
                         arg1: CONST Int type=kotlin.Int value=2
-                      then: CALL 'public final fun TODO (reason: kotlin.String): kotlin.Nothing [inline] declared in kotlin.StandardKt' type=kotlin.Nothing origin=null
+                      then: CALL 'public final fun TODO (reason: kotlin.String): kotlin.Nothing declared in kotlin.StandardKt' type=kotlin.Nothing origin=null
                         reason: CONST String type=kotlin.String value="2"

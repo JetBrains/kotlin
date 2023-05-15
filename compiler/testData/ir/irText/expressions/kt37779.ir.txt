@@ -7,7 +7,7 @@ FILE fqName:<root> fileName:/kt37779.kt
       CALL 'public final fun foo (vararg s: kotlin.String): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
         s: VARARG type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String
           SPREAD_ELEMENT
-            CALL 'public final fun arrayOf <T> (vararg elements: T of kotlin.arrayOf): kotlin.Array<T of kotlin.arrayOf> [inline] declared in kotlin' type=kotlin.Array<kotlin.String> origin=null
+            CALL 'public final fun arrayOf <T> (vararg elements: T of kotlin.arrayOf): kotlin.Array<T of kotlin.arrayOf> declared in kotlin' type=kotlin.Array<kotlin.String> origin=null
               <T>: kotlin.String
               elements: VARARG type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String
                 CONST String type=kotlin.String value=""

@@ -24,7 +24,7 @@ FILE fqName:<root> fileName:/smartCasts.kt
             GET_VAR 'x: kotlin.Any declared in <root>.test1' type=kotlin.Any origin=null
           then: RETURN type=kotlin.Nothing from='public final fun test1 (x: kotlin.Any): kotlin.Unit declared in <root>'
             GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
-      CALL 'public final fun println (message: kotlin.Int): kotlin.Unit [inline] declared in kotlin.io' type=kotlin.Unit origin=null
+      CALL 'public final fun println (message: kotlin.Int): kotlin.Unit declared in kotlin.io' type=kotlin.Unit origin=null
         message: CALL 'public open fun <get-length> (): kotlin.Int declared in kotlin.String' type=kotlin.Int origin=GET_PROPERTY
           $this: TYPE_OP type=kotlin.String origin=IMPLICIT_CAST typeOperand=kotlin.String
             GET_VAR 'x: kotlin.Any declared in <root>.test1' type=kotlin.Any origin=null

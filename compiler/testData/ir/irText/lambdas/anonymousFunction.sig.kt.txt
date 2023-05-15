@@ -7,12 +7,15 @@ val anonymous: Function0<Unit>
     //   Mangled name (compatible mode: false): {}anonymous#<no name provided>#static(){}
     //   Mangled name (compatible mode: true):  anonymous#<no name provided>#static(){}
     // CHECK JS_IR NATIVE:
-    //   Mangled name: #<get-anonymous>(){}
-    //   Public signature: /anonymous.<get-anonymous>|-7938030596525369571[0]
+    //   Mangled name (compatible mode: false): {}anonymous#<no name provided>#static(){}
+    //   Mangled name (compatible mode: true):  anonymous#<no name provided>#static(){}
     local fun <no name provided>(): Unit
 
-  // CHECK:
+  // CHECK JVM_IR:
   //   Mangled name: #<get-anonymous>(){}kotlin.Function0<kotlin.Unit>
   //   Public signature: /anonymous.<get-anonymous>|4047260013555274752[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: #<get-anonymous>(){}
+  //   Public signature: /anonymous.<get-anonymous>|-7938030596525369571[0]
   get
 

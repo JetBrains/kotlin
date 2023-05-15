@@ -50,12 +50,15 @@ fun IrFile.dumpTreesFromLineNumber(lineNumber: Int, options: DumpIrTreeOptions =
  * @property verboseErrorTypes Whether to dump the value of [IrErrorType.kotlinType] for [IrErrorType] nodes
  * @property printFacadeClassInFqNames Whether printed fully-qualified names of top-level declarations should include the name of
  * the file facade class (see [IrDeclarationOrigin.FILE_CLASS])
+ * @property printFlagsInDeclarationReferences If `false`, flags like `fake_override`, `inline` etc. are not printed in rendered declaration
+ * references.
  */
 data class DumpIrTreeOptions(
     val normalizeNames: Boolean = false,
     val stableOrder: Boolean = false,
     val verboseErrorTypes: Boolean = true,
     val printFacadeClassInFqNames: Boolean = true,
+    val printFlagsInDeclarationReferences: Boolean = true,
 )
 
 private fun IrFile.shouldSkipDump(): Boolean {

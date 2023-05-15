@@ -15,15 +15,15 @@ FILE fqName:<root> fileName:/javaSyntheticGenericPropertyAccess.kt
             GET_VAR 'j: <root>.J<F of <root>.test> declared in <root>.test' type=<root>.J<F of <root>.test> origin=null
           VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:kotlin.Int [val]
             CALL 'public open fun getFoo (): kotlin.Int declared in <root>.J' type=kotlin.Int origin=GET_PROPERTY
-              $this: GET_VAR 'val tmp_0: <root>.J<F of <root>.test> [val] declared in <root>.test' type=<root>.J<F of <root>.test> origin=null
+              $this: GET_VAR 'val tmp_0: <root>.J<F of <root>.test> declared in <root>.test' type=<root>.J<F of <root>.test> origin=null
           CALL 'public open fun setFoo (x: kotlin.Int): kotlin.Unit declared in <root>.J' type=kotlin.Unit origin=EQ
-            $this: GET_VAR 'val tmp_0: <root>.J<F of <root>.test> [val] declared in <root>.test' type=<root>.J<F of <root>.test> origin=null
-            x: CALL 'public final fun inc (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
-              $this: GET_VAR 'val tmp_1: kotlin.Int [val] declared in <root>.test' type=kotlin.Int origin=null
-          GET_VAR 'val tmp_1: kotlin.Int [val] declared in <root>.test' type=kotlin.Int origin=null
+            $this: GET_VAR 'val tmp_0: <root>.J<F of <root>.test> declared in <root>.test' type=<root>.J<F of <root>.test> origin=null
+            x: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+              $this: GET_VAR 'val tmp_1: kotlin.Int declared in <root>.test' type=kotlin.Int origin=null
+          GET_VAR 'val tmp_1: kotlin.Int declared in <root>.test' type=kotlin.Int origin=null
       CALL 'public open fun setFoo (x: kotlin.Int): kotlin.Unit declared in <root>.J' type=kotlin.Unit origin=EQ
         $this: GET_VAR 'j: <root>.J<F of <root>.test> declared in <root>.test' type=<root>.J<F of <root>.test> origin=null
-        x: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
+        x: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
           $this: CALL 'public open fun getFoo (): kotlin.Int declared in <root>.J' type=kotlin.Int origin=GET_PROPERTY
             $this: GET_VAR 'j: <root>.J<F of <root>.test> declared in <root>.test' type=<root>.J<F of <root>.test> origin=null
           other: CONST Int type=kotlin.Int value=1

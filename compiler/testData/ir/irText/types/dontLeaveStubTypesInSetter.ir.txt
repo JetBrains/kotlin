@@ -5,7 +5,7 @@ FILE fqName:<root> fileName:/dontLeaveStubTypesInSetter.kt
     CONSTRUCTOR visibility:public <> (x:T of <root>.Foo) returnType:<root>.Foo<T of <root>.Foo> [primary]
       VALUE_PARAMETER name:x index:0 type:T of <root>.Foo
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Foo modality:FINAL visibility:public superTypes:[kotlin.Any]'
     PROPERTY name:x visibility:public modality:FINAL [var]
       FIELD PROPERTY_BACKING_FIELD name:x type:T of <root>.Foo visibility:private
@@ -28,7 +28,7 @@ FILE fqName:<root> fileName:/dontLeaveStubTypesInSetter.kt
             value: GET_VAR '<set-?>: T of <root>.Foo declared in <root>.Foo.<set-x>' type=T of <root>.Foo origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -44,11 +44,11 @@ FILE fqName:<root> fileName:/dontLeaveStubTypesInSetter.kt
     VALUE_PARAMETER name:x index:0 type:kotlin.collections.MutableList<K of <root>.foo>
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun foo <K> (x: kotlin.collections.MutableList<K of <root>.foo>): <root>.Foo<K of <root>.foo> declared in <root>'
-        CALL 'public final fun TODO (): kotlin.Nothing [inline] declared in kotlin.StandardKt' type=kotlin.Nothing origin=null
+        CALL 'public final fun TODO (): kotlin.Nothing declared in kotlin.StandardKt' type=kotlin.Nothing origin=null
   FUN name:main visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       VAR name:x type:kotlin.collections.List<kotlin.String> [val]
-        CALL 'public final fun buildList <E> (builderAction: @[ExtensionFunctionType] kotlin.Function1<kotlin.collections.MutableList<E of kotlin.collections.CollectionsKt.buildList>, kotlin.Unit>): kotlin.collections.List<E of kotlin.collections.CollectionsKt.buildList> [inline] declared in kotlin.collections.CollectionsKt' type=kotlin.collections.List<kotlin.String> origin=null
+        CALL 'public final fun buildList <E> (builderAction: @[ExtensionFunctionType] kotlin.Function1<kotlin.collections.MutableList<E of kotlin.collections.CollectionsKt.buildList>, kotlin.Unit>): kotlin.collections.List<E of kotlin.collections.CollectionsKt.buildList> declared in kotlin.collections.CollectionsKt' type=kotlin.collections.List<kotlin.String> origin=null
           <E>: kotlin.String
           builderAction: FUN_EXPR type=@[ExtensionFunctionType] kotlin.Function1<kotlin.collections.MutableList<kotlin.String>, kotlin.Unit> origin=LAMBDA
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:kotlin.collections.MutableList<kotlin.String>) returnType:kotlin.Unit
@@ -63,5 +63,5 @@ FILE fqName:<root> fileName:/dontLeaveStubTypesInSetter.kt
                     <K>: kotlin.String
                     x: GET_VAR '$this$buildList: kotlin.collections.MutableList<kotlin.String> declared in <root>.main.<anonymous>' type=kotlin.collections.MutableList<kotlin.String> origin=null
                 CALL 'public final fun <set-x> (<set-?>: T of <root>.Foo): kotlin.Unit declared in <root>.Foo' type=kotlin.Unit origin=EQ
-                  $this: GET_VAR 'val foo: <root>.Foo<kotlin.String> [val] declared in <root>.main.<anonymous>' type=<root>.Foo<kotlin.String> origin=null
+                  $this: GET_VAR 'val foo: <root>.Foo<kotlin.String> declared in <root>.main.<anonymous>' type=<root>.Foo<kotlin.String> origin=null
                   <set-?>: CONST String type=kotlin.String value=""

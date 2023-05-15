@@ -5,7 +5,7 @@ FILE fqName:<root> fileName:/stringVsTConstrained.kt
     VALUE_PARAMETER name:fn index:1 type:kotlin.Function0<T of <root>.useTConstrained>
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun useTConstrained <T> (xs: kotlin.Array<T of <root>.useTConstrained>, fn: kotlin.Function0<T of <root>.useTConstrained>): T of <root>.useTConstrained declared in <root>'
-        CALL 'public abstract fun invoke (): R of kotlin.Function0 [operator] declared in kotlin.Function0' type=T of <root>.useTConstrained origin=INVOKE
+        CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=T of <root>.useTConstrained origin=INVOKE
           $this: GET_VAR 'fn: kotlin.Function0<T of <root>.useTConstrained> declared in <root>.useTConstrained' type=kotlin.Function0<T of <root>.useTConstrained> origin=VARIABLE_AS_FUNCTION
   FUN name:testWithNullCheck visibility:public modality:FINAL <> (xs:kotlin.Array<kotlin.String>) returnType:kotlin.Unit
     VALUE_PARAMETER name:xs index:0 type:kotlin.Array<kotlin.String>

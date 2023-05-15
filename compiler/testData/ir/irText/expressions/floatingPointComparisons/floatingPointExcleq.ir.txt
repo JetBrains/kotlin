@@ -4,7 +4,7 @@ FILE fqName:<root> fileName:/floatingPointExcleq.kt
     VALUE_PARAMETER name:y index:1 type:kotlin.Double
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test1d (x: kotlin.Double, y: kotlin.Double): kotlin.Boolean declared in <root>'
-        CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+        CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
           $this: CALL 'public final fun ieee754equals (arg0: kotlin.Double?, arg1: kotlin.Double?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
             arg0: GET_VAR 'x: kotlin.Double declared in <root>.test1d' type=kotlin.Double origin=null
             arg1: GET_VAR 'y: kotlin.Double declared in <root>.test1d' type=kotlin.Double origin=null
@@ -13,7 +13,7 @@ FILE fqName:<root> fileName:/floatingPointExcleq.kt
     VALUE_PARAMETER name:y index:1 type:kotlin.Double?
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test2d (x: kotlin.Double, y: kotlin.Double?): kotlin.Boolean declared in <root>'
-        CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+        CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
           $this: CALL 'public final fun ieee754equals (arg0: kotlin.Double?, arg1: kotlin.Double?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
             arg0: GET_VAR 'x: kotlin.Double declared in <root>.test2d' type=kotlin.Double origin=null
             arg1: GET_VAR 'y: kotlin.Double? declared in <root>.test2d' type=kotlin.Double? origin=null
@@ -22,7 +22,7 @@ FILE fqName:<root> fileName:/floatingPointExcleq.kt
     VALUE_PARAMETER name:y index:1 type:kotlin.Any
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test3d (x: kotlin.Double, y: kotlin.Any): kotlin.Boolean declared in <root>'
-        CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+        CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
           $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
             arg0: GET_VAR 'x: kotlin.Double declared in <root>.test3d' type=kotlin.Double origin=null
             arg1: GET_VAR 'y: kotlin.Any declared in <root>.test3d' type=kotlin.Any origin=null
@@ -31,7 +31,7 @@ FILE fqName:<root> fileName:/floatingPointExcleq.kt
     VALUE_PARAMETER name:y index:1 type:kotlin.Number
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test4d (x: kotlin.Double, y: kotlin.Number): kotlin.Boolean declared in <root>'
-        CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+        CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
           $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
             arg0: GET_VAR 'x: kotlin.Double declared in <root>.test4d' type=kotlin.Double origin=null
             arg1: GET_VAR 'y: kotlin.Number declared in <root>.test4d' type=kotlin.Number origin=null
@@ -44,7 +44,7 @@ FILE fqName:<root> fileName:/floatingPointExcleq.kt
           BRANCH
             if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Double
               GET_VAR 'y: kotlin.Any declared in <root>.test5d' type=kotlin.Any origin=null
-            then: CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+            then: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
               $this: CALL 'public final fun ieee754equals (arg0: kotlin.Double?, arg1: kotlin.Double?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
                 arg0: GET_VAR 'x: kotlin.Double declared in <root>.test5d' type=kotlin.Double origin=null
                 arg1: TYPE_OP type=kotlin.Double origin=IMPLICIT_CAST typeOperand=kotlin.Double
@@ -68,7 +68,7 @@ FILE fqName:<root> fileName:/floatingPointExcleq.kt
               BRANCH
                 if: CONST Boolean type=kotlin.Boolean value=true
                 then: CONST Boolean type=kotlin.Boolean value=false
-            then: CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+            then: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
               $this: CALL 'public final fun ieee754equals (arg0: kotlin.Double?, arg1: kotlin.Double?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
                 arg0: TYPE_OP type=kotlin.Double origin=IMPLICIT_CAST typeOperand=kotlin.Double
                   GET_VAR 'x: kotlin.Any declared in <root>.test6d' type=kotlin.Any origin=null
@@ -82,7 +82,7 @@ FILE fqName:<root> fileName:/floatingPointExcleq.kt
     VALUE_PARAMETER name:y index:1 type:kotlin.Float
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test1f (x: kotlin.Float, y: kotlin.Float): kotlin.Boolean declared in <root>'
-        CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+        CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
           $this: CALL 'public final fun ieee754equals (arg0: kotlin.Float?, arg1: kotlin.Float?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
             arg0: GET_VAR 'x: kotlin.Float declared in <root>.test1f' type=kotlin.Float origin=null
             arg1: GET_VAR 'y: kotlin.Float declared in <root>.test1f' type=kotlin.Float origin=null
@@ -91,7 +91,7 @@ FILE fqName:<root> fileName:/floatingPointExcleq.kt
     VALUE_PARAMETER name:y index:1 type:kotlin.Float?
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test2f (x: kotlin.Float, y: kotlin.Float?): kotlin.Boolean declared in <root>'
-        CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+        CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
           $this: CALL 'public final fun ieee754equals (arg0: kotlin.Float?, arg1: kotlin.Float?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
             arg0: GET_VAR 'x: kotlin.Float declared in <root>.test2f' type=kotlin.Float origin=null
             arg1: GET_VAR 'y: kotlin.Float? declared in <root>.test2f' type=kotlin.Float? origin=null
@@ -100,7 +100,7 @@ FILE fqName:<root> fileName:/floatingPointExcleq.kt
     VALUE_PARAMETER name:y index:1 type:kotlin.Any
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test3f (x: kotlin.Float, y: kotlin.Any): kotlin.Boolean declared in <root>'
-        CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+        CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
           $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
             arg0: GET_VAR 'x: kotlin.Float declared in <root>.test3f' type=kotlin.Float origin=null
             arg1: GET_VAR 'y: kotlin.Any declared in <root>.test3f' type=kotlin.Any origin=null
@@ -109,7 +109,7 @@ FILE fqName:<root> fileName:/floatingPointExcleq.kt
     VALUE_PARAMETER name:y index:1 type:kotlin.Number
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test4f (x: kotlin.Float, y: kotlin.Number): kotlin.Boolean declared in <root>'
-        CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+        CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
           $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
             arg0: GET_VAR 'x: kotlin.Float declared in <root>.test4f' type=kotlin.Float origin=null
             arg1: GET_VAR 'y: kotlin.Number declared in <root>.test4f' type=kotlin.Number origin=null
@@ -122,7 +122,7 @@ FILE fqName:<root> fileName:/floatingPointExcleq.kt
           BRANCH
             if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Float
               GET_VAR 'y: kotlin.Any declared in <root>.test5f' type=kotlin.Any origin=null
-            then: CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+            then: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
               $this: CALL 'public final fun ieee754equals (arg0: kotlin.Float?, arg1: kotlin.Float?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
                 arg0: GET_VAR 'x: kotlin.Float declared in <root>.test5f' type=kotlin.Float origin=null
                 arg1: TYPE_OP type=kotlin.Float origin=IMPLICIT_CAST typeOperand=kotlin.Float
@@ -146,7 +146,7 @@ FILE fqName:<root> fileName:/floatingPointExcleq.kt
               BRANCH
                 if: CONST Boolean type=kotlin.Boolean value=true
                 then: CONST Boolean type=kotlin.Boolean value=false
-            then: CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+            then: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
               $this: CALL 'public final fun ieee754equals (arg0: kotlin.Float?, arg1: kotlin.Float?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
                 arg0: TYPE_OP type=kotlin.Float origin=IMPLICIT_CAST typeOperand=kotlin.Float
                   GET_VAR 'x: kotlin.Any declared in <root>.test6f' type=kotlin.Any origin=null
@@ -171,7 +171,7 @@ FILE fqName:<root> fileName:/floatingPointExcleq.kt
               BRANCH
                 if: CONST Boolean type=kotlin.Boolean value=true
                 then: CONST Boolean type=kotlin.Boolean value=false
-            then: CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+            then: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
               $this: CALL 'public final fun ieee754equals (arg0: kotlin.Double?, arg1: kotlin.Double?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
                 arg0: CALL 'public open fun toDouble (): kotlin.Double declared in kotlin.Float' type=kotlin.Double origin=null
                   $this: TYPE_OP type=kotlin.Float origin=IMPLICIT_CAST typeOperand=kotlin.Float
@@ -197,7 +197,7 @@ FILE fqName:<root> fileName:/floatingPointExcleq.kt
               BRANCH
                 if: CONST Boolean type=kotlin.Boolean value=true
                 then: CONST Boolean type=kotlin.Boolean value=false
-            then: CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+            then: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
               $this: CALL 'public final fun ieee754equals (arg0: kotlin.Double?, arg1: kotlin.Double?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
                 arg0: TYPE_OP type=kotlin.Double origin=IMPLICIT_CAST typeOperand=kotlin.Double
                   GET_VAR 'x: kotlin.Any declared in <root>.testDF' type=kotlin.Any origin=null

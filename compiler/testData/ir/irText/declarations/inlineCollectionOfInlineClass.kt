@@ -1,6 +1,3 @@
-// IGNORE_BACKEND: JS_IR
-// IGNORE_BACKEND: JS_IR_ES6
-
 inline class IT(val x: Int)
 
 inline class InlineMutableSet(private val ms: MutableSet<IT>) : MutableSet<IT> {

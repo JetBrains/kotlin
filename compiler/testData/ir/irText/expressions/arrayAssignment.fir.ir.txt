@@ -7,8 +7,8 @@ FILE fqName:<root> fileName:/arrayAssignment.kt
             CONST Int type=kotlin.Int value=1
             CONST Int type=kotlin.Int value=2
             CONST Int type=kotlin.Int value=3
-      CALL 'public final fun set (index: kotlin.Int, value: kotlin.Int): kotlin.Unit [operator] declared in kotlin.IntArray' type=kotlin.Unit origin=null
-        $this: GET_VAR 'val x: kotlin.IntArray [val] declared in <root>.test' type=kotlin.IntArray origin=null
+      CALL 'public final fun set (index: kotlin.Int, value: kotlin.Int): kotlin.Unit declared in kotlin.IntArray' type=kotlin.Unit origin=null
+        $this: GET_VAR 'val x: kotlin.IntArray declared in <root>.test' type=kotlin.IntArray origin=null
         index: CONST Int type=kotlin.Int value=1
         value: CONST Int type=kotlin.Int value=0
   FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Int
@@ -17,7 +17,7 @@ FILE fqName:<root> fileName:/arrayAssignment.kt
         CONST Int type=kotlin.Int value=1
   FUN name:test2 visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
-      CALL 'public final fun set (index: kotlin.Int, value: kotlin.Int): kotlin.Unit [operator] declared in kotlin.IntArray' type=kotlin.Unit origin=null
+      CALL 'public final fun set (index: kotlin.Int, value: kotlin.Int): kotlin.Unit declared in kotlin.IntArray' type=kotlin.Unit origin=null
         $this: CALL 'public final fun intArrayOf (vararg elements: kotlin.Int): kotlin.IntArray declared in kotlin' type=kotlin.IntArray origin=null
           elements: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
             CONST Int type=kotlin.Int value=1

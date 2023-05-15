@@ -3,7 +3,7 @@ FILE fqName:<root> fileName:/DeepCopyIrTree.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.IrType
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -26,7 +26,7 @@ FILE fqName:<root> fileName:/DeepCopyIrTree.kt
       $this: VALUE_PARAMETER name:<this> type:<root>.TypeRemapper
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -49,25 +49,25 @@ FILE fqName:<root> fileName:/DeepCopyIrTree.kt
         VALUE_PARAMETER name:<set-?> index:0 type:kotlin.collections.List<<root>.IrTypeParameter>
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.IrDeclaration
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.IrDeclarationParent
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.IrDeclaration
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.IrDeclarationParent
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
       overridden:
-        public open fun hashCode (): kotlin.Int [fake_override] declared in <root>.IrDeclaration
-        public open fun hashCode (): kotlin.Int [fake_override] declared in <root>.IrDeclarationParent
+        public open fun hashCode (): kotlin.Int declared in <root>.IrDeclaration
+        public open fun hashCode (): kotlin.Int declared in <root>.IrDeclarationParent
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
       overridden:
-        public open fun toString (): kotlin.String [fake_override] declared in <root>.IrDeclaration
-        public open fun toString (): kotlin.String [fake_override] declared in <root>.IrDeclarationParent
+        public open fun toString (): kotlin.String declared in <root>.IrDeclaration
+        public open fun toString (): kotlin.String declared in <root>.IrDeclarationParent
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS INTERFACE name:IrDeclaration modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.IrDeclaration
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -86,22 +86,22 @@ FILE fqName:<root> fileName:/DeepCopyIrTree.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.IrTypeParameter
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.IrDeclaration
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.IrDeclaration
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
       overridden:
-        public open fun hashCode (): kotlin.Int [fake_override] declared in <root>.IrDeclaration
+        public open fun hashCode (): kotlin.Int declared in <root>.IrDeclaration
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
       overridden:
-        public open fun toString (): kotlin.String [fake_override] declared in <root>.IrDeclaration
+        public open fun toString (): kotlin.String declared in <root>.IrDeclaration
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS INTERFACE name:IrDeclarationParent modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.IrDeclarationParent
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -117,7 +117,7 @@ FILE fqName:<root> fileName:/DeepCopyIrTree.kt
     CONSTRUCTOR visibility:public <> (typeRemapper:<root>.TypeRemapper) returnType:<root>.DeepCopyIrTreeWithSymbols [primary]
       VALUE_PARAMETER name:typeRemapper index:0 type:<root>.TypeRemapper
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:DeepCopyIrTreeWithSymbols modality:FINAL visibility:public superTypes:[kotlin.Any]'
     PROPERTY name:typeRemapper visibility:private modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:typeRemapper type:<root>.TypeRemapper visibility:private [final]
@@ -143,7 +143,7 @@ FILE fqName:<root> fileName:/DeepCopyIrTree.kt
       BLOCK_BODY
         CALL 'public abstract fun <set-typeParameters> (<set-?>: kotlin.collections.List<<root>.IrTypeParameter>): kotlin.Unit declared in <root>.IrTypeParametersContainer' type=kotlin.Unit origin=EQ
           $this: GET_VAR '<this>: <root>.IrTypeParametersContainer declared in <root>.DeepCopyIrTreeWithSymbols.copyTypeParametersFrom' type=<root>.IrTypeParametersContainer origin=null
-          <set-?>: CALL 'public final fun map <T, R> (transform: kotlin.Function1<T of kotlin.collections.CollectionsKt.map, R of kotlin.collections.CollectionsKt.map>): kotlin.collections.List<R of kotlin.collections.CollectionsKt.map> [inline] declared in kotlin.collections.CollectionsKt' type=kotlin.collections.List<<root>.IrTypeParameter> origin=null
+          <set-?>: CALL 'public final fun map <T, R> (transform: kotlin.Function1<T of kotlin.collections.CollectionsKt.map, R of kotlin.collections.CollectionsKt.map>): kotlin.collections.List<R of kotlin.collections.CollectionsKt.map> declared in kotlin.collections.CollectionsKt' type=kotlin.collections.List<<root>.IrTypeParameter> origin=null
             <T>: <root>.IrTypeParameter
             <R>: <root>.IrTypeParameter
             $receiver: CALL 'public abstract fun <get-typeParameters> (): kotlin.collections.List<<root>.IrTypeParameter> declared in <root>.IrTypeParametersContainer' type=kotlin.collections.List<<root>.IrTypeParameter> origin=GET_PROPERTY
@@ -156,7 +156,7 @@ FILE fqName:<root> fileName:/DeepCopyIrTree.kt
                     CALL 'private final fun copyTypeParameter (declaration: <root>.IrTypeParameter): <root>.IrTypeParameter declared in <root>.DeepCopyIrTreeWithSymbols' type=<root>.IrTypeParameter origin=null
                       $this: GET_VAR '<this>: <root>.DeepCopyIrTreeWithSymbols declared in <root>.DeepCopyIrTreeWithSymbols.copyTypeParametersFrom' type=<root>.DeepCopyIrTreeWithSymbols origin=null
                       declaration: GET_VAR 'it: <root>.IrTypeParameter declared in <root>.DeepCopyIrTreeWithSymbols.copyTypeParametersFrom.<anonymous>' type=<root>.IrTypeParameter origin=null
-        CALL 'public final fun withinScope <T> (irTypeParametersContainer: <root>.IrTypeParametersContainer, fn: kotlin.Function0<T of <root>.withinScope>): T of <root>.withinScope [inline] declared in <root>' type=kotlin.Unit origin=null
+        CALL 'public final fun withinScope <T> (irTypeParametersContainer: <root>.IrTypeParametersContainer, fn: kotlin.Function0<T of <root>.withinScope>): T of <root>.withinScope declared in <root>' type=kotlin.Unit origin=null
           <T>: kotlin.Unit
           $receiver: CALL 'private final fun <get-typeRemapper> (): <root>.TypeRemapper declared in <root>.DeepCopyIrTreeWithSymbols' type=<root>.TypeRemapper origin=GET_PROPERTY
             $this: GET_VAR '<this>: <root>.DeepCopyIrTreeWithSymbols declared in <root>.DeepCopyIrTreeWithSymbols.copyTypeParametersFrom' type=<root>.DeepCopyIrTreeWithSymbols origin=null
@@ -166,8 +166,8 @@ FILE fqName:<root> fileName:/DeepCopyIrTree.kt
               BLOCK_BODY
                 BLOCK type=kotlin.Unit origin=FOR_LOOP
                   VAR FOR_LOOP_ITERATOR name:tmp_0 type:kotlin.collections.Iterator<kotlin.Pair<<root>.IrTypeParameter, <root>.IrTypeParameter>> [val]
-                    CALL 'public abstract fun iterator (): kotlin.collections.Iterator<E of kotlin.collections.List> [operator] declared in kotlin.collections.List' type=kotlin.collections.Iterator<kotlin.Pair<<root>.IrTypeParameter, <root>.IrTypeParameter>> origin=FOR_LOOP_ITERATOR
-                      $this: CALL 'public final fun zip <T, R> (other: kotlin.collections.Iterable<R of kotlin.collections.CollectionsKt.zip>): kotlin.collections.List<kotlin.Pair<T of kotlin.collections.CollectionsKt.zip, R of kotlin.collections.CollectionsKt.zip>> [infix] declared in kotlin.collections.CollectionsKt' type=kotlin.collections.List<kotlin.Pair<<root>.IrTypeParameter, <root>.IrTypeParameter>> origin=null
+                    CALL 'public abstract fun iterator (): kotlin.collections.Iterator<E of kotlin.collections.List> declared in kotlin.collections.List' type=kotlin.collections.Iterator<kotlin.Pair<<root>.IrTypeParameter, <root>.IrTypeParameter>> origin=FOR_LOOP_ITERATOR
+                      $this: CALL 'public final fun zip <T, R> (other: kotlin.collections.Iterable<R of kotlin.collections.CollectionsKt.zip>): kotlin.collections.List<kotlin.Pair<T of kotlin.collections.CollectionsKt.zip, R of kotlin.collections.CollectionsKt.zip>> declared in kotlin.collections.CollectionsKt' type=kotlin.collections.List<kotlin.Pair<<root>.IrTypeParameter, <root>.IrTypeParameter>> origin=null
                         <T>: <root>.IrTypeParameter
                         <R>: <root>.IrTypeParameter
                         $receiver: CALL 'public abstract fun <get-typeParameters> (): kotlin.collections.List<<root>.IrTypeParameter> declared in <root>.IrTypeParametersContainer' type=kotlin.collections.List<<root>.IrTypeParameter> origin=GET_PROPERTY
@@ -175,28 +175,28 @@ FILE fqName:<root> fileName:/DeepCopyIrTree.kt
                         other: CALL 'public abstract fun <get-typeParameters> (): kotlin.collections.List<<root>.IrTypeParameter> declared in <root>.IrTypeParametersContainer' type=kotlin.collections.List<<root>.IrTypeParameter> origin=GET_PROPERTY
                           $this: GET_VAR 'other: <root>.IrTypeParametersContainer declared in <root>.DeepCopyIrTreeWithSymbols.copyTypeParametersFrom' type=<root>.IrTypeParametersContainer origin=null
                   WHILE label=null origin=FOR_LOOP_INNER_WHILE
-                    condition: CALL 'public abstract fun hasNext (): kotlin.Boolean [operator] declared in kotlin.collections.Iterator' type=kotlin.Boolean origin=FOR_LOOP_HAS_NEXT
-                      $this: GET_VAR 'val tmp_0: kotlin.collections.Iterator<kotlin.Pair<<root>.IrTypeParameter, <root>.IrTypeParameter>> [val] declared in <root>.DeepCopyIrTreeWithSymbols.copyTypeParametersFrom.<anonymous>' type=kotlin.collections.Iterator<kotlin.Pair<<root>.IrTypeParameter, <root>.IrTypeParameter>> origin=null
+                    condition: CALL 'public abstract fun hasNext (): kotlin.Boolean declared in kotlin.collections.Iterator' type=kotlin.Boolean origin=FOR_LOOP_HAS_NEXT
+                      $this: GET_VAR 'val tmp_0: kotlin.collections.Iterator<kotlin.Pair<<root>.IrTypeParameter, <root>.IrTypeParameter>> declared in <root>.DeepCopyIrTreeWithSymbols.copyTypeParametersFrom.<anonymous>' type=kotlin.collections.Iterator<kotlin.Pair<<root>.IrTypeParameter, <root>.IrTypeParameter>> origin=null
                     body: BLOCK type=kotlin.Unit origin=FOR_LOOP_INNER_WHILE
                       VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:kotlin.Pair<<root>.IrTypeParameter, <root>.IrTypeParameter> [val]
-                        CALL 'public abstract fun next (): T of kotlin.collections.Iterator [operator] declared in kotlin.collections.Iterator' type=kotlin.Pair<<root>.IrTypeParameter, <root>.IrTypeParameter> origin=FOR_LOOP_NEXT
-                          $this: GET_VAR 'val tmp_0: kotlin.collections.Iterator<kotlin.Pair<<root>.IrTypeParameter, <root>.IrTypeParameter>> [val] declared in <root>.DeepCopyIrTreeWithSymbols.copyTypeParametersFrom.<anonymous>' type=kotlin.collections.Iterator<kotlin.Pair<<root>.IrTypeParameter, <root>.IrTypeParameter>> origin=null
+                        CALL 'public abstract fun next (): T of kotlin.collections.Iterator declared in kotlin.collections.Iterator' type=kotlin.Pair<<root>.IrTypeParameter, <root>.IrTypeParameter> origin=FOR_LOOP_NEXT
+                          $this: GET_VAR 'val tmp_0: kotlin.collections.Iterator<kotlin.Pair<<root>.IrTypeParameter, <root>.IrTypeParameter>> declared in <root>.DeepCopyIrTreeWithSymbols.copyTypeParametersFrom.<anonymous>' type=kotlin.collections.Iterator<kotlin.Pair<<root>.IrTypeParameter, <root>.IrTypeParameter>> origin=null
                       VAR name:thisTypeParameter type:<root>.IrTypeParameter [val]
-                        CALL 'public final fun component1 (): A of kotlin.Pair [operator] declared in kotlin.Pair' type=<root>.IrTypeParameter origin=COMPONENT_N(index=1)
-                          $this: GET_VAR 'val tmp_1: kotlin.Pair<<root>.IrTypeParameter, <root>.IrTypeParameter> [val] declared in <root>.DeepCopyIrTreeWithSymbols.copyTypeParametersFrom.<anonymous>' type=kotlin.Pair<<root>.IrTypeParameter, <root>.IrTypeParameter> origin=null
+                        CALL 'public final fun component1 (): A of kotlin.Pair declared in kotlin.Pair' type=<root>.IrTypeParameter origin=COMPONENT_N(index=1)
+                          $this: GET_VAR 'val tmp_1: kotlin.Pair<<root>.IrTypeParameter, <root>.IrTypeParameter> declared in <root>.DeepCopyIrTreeWithSymbols.copyTypeParametersFrom.<anonymous>' type=kotlin.Pair<<root>.IrTypeParameter, <root>.IrTypeParameter> origin=null
                       VAR name:otherTypeParameter type:<root>.IrTypeParameter [val]
-                        CALL 'public final fun component2 (): B of kotlin.Pair [operator] declared in kotlin.Pair' type=<root>.IrTypeParameter origin=COMPONENT_N(index=2)
-                          $this: GET_VAR 'val tmp_1: kotlin.Pair<<root>.IrTypeParameter, <root>.IrTypeParameter> [val] declared in <root>.DeepCopyIrTreeWithSymbols.copyTypeParametersFrom.<anonymous>' type=kotlin.Pair<<root>.IrTypeParameter, <root>.IrTypeParameter> origin=null
+                        CALL 'public final fun component2 (): B of kotlin.Pair declared in kotlin.Pair' type=<root>.IrTypeParameter origin=COMPONENT_N(index=2)
+                          $this: GET_VAR 'val tmp_1: kotlin.Pair<<root>.IrTypeParameter, <root>.IrTypeParameter> declared in <root>.DeepCopyIrTreeWithSymbols.copyTypeParametersFrom.<anonymous>' type=kotlin.Pair<<root>.IrTypeParameter, <root>.IrTypeParameter> origin=null
                       BLOCK type=kotlin.Unit origin=null
                         TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-                          CALL 'public final fun mapTo <T, R, C> (destination: C of kotlin.collections.CollectionsKt.mapTo, transform: kotlin.Function1<T of kotlin.collections.CollectionsKt.mapTo, R of kotlin.collections.CollectionsKt.mapTo>): C of kotlin.collections.CollectionsKt.mapTo [inline] declared in kotlin.collections.CollectionsKt' type=kotlin.collections.MutableList<<root>.IrType> origin=null
+                          CALL 'public final fun mapTo <T, R, C> (destination: C of kotlin.collections.CollectionsKt.mapTo, transform: kotlin.Function1<T of kotlin.collections.CollectionsKt.mapTo, R of kotlin.collections.CollectionsKt.mapTo>): C of kotlin.collections.CollectionsKt.mapTo declared in kotlin.collections.CollectionsKt' type=kotlin.collections.MutableList<<root>.IrType> origin=null
                             <T>: <root>.IrType
                             <R>: <root>.IrType
                             <C>: kotlin.collections.MutableList<<root>.IrType>
                             $receiver: CALL 'public abstract fun <get-superTypes> (): kotlin.collections.MutableList<<root>.IrType> declared in <root>.IrTypeParameter' type=kotlin.collections.MutableList<<root>.IrType> origin=GET_PROPERTY
-                              $this: GET_VAR 'val otherTypeParameter: <root>.IrTypeParameter [val] declared in <root>.DeepCopyIrTreeWithSymbols.copyTypeParametersFrom.<anonymous>' type=<root>.IrTypeParameter origin=null
+                              $this: GET_VAR 'val otherTypeParameter: <root>.IrTypeParameter declared in <root>.DeepCopyIrTreeWithSymbols.copyTypeParametersFrom.<anonymous>' type=<root>.IrTypeParameter origin=null
                             destination: CALL 'public abstract fun <get-superTypes> (): kotlin.collections.MutableList<<root>.IrType> declared in <root>.IrTypeParameter' type=kotlin.collections.MutableList<<root>.IrType> origin=GET_PROPERTY
-                              $this: GET_VAR 'val thisTypeParameter: <root>.IrTypeParameter [val] declared in <root>.DeepCopyIrTreeWithSymbols.copyTypeParametersFrom.<anonymous>' type=<root>.IrTypeParameter origin=null
+                              $this: GET_VAR 'val thisTypeParameter: <root>.IrTypeParameter declared in <root>.DeepCopyIrTreeWithSymbols.copyTypeParametersFrom.<anonymous>' type=<root>.IrTypeParameter origin=null
                             transform: FUN_EXPR type=kotlin.Function1<<root>.IrType, <root>.IrType> origin=LAMBDA
                               FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<root>.IrType) returnType:<root>.IrType
                                 VALUE_PARAMETER name:it index:0 type:<root>.IrType
@@ -208,7 +208,7 @@ FILE fqName:<root> fileName:/DeepCopyIrTree.kt
                                       type: GET_VAR 'it: <root>.IrType declared in <root>.DeepCopyIrTreeWithSymbols.copyTypeParametersFrom.<anonymous>.<anonymous>' type=<root>.IrType origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -229,9 +229,9 @@ FILE fqName:<root> fileName:/DeepCopyIrTree.kt
         $this: GET_VAR '<this>: <root>.TypeRemapper declared in <root>.withinScope' type=<root>.TypeRemapper origin=null
         irTypeParametersContainer: GET_VAR 'irTypeParametersContainer: <root>.IrTypeParametersContainer declared in <root>.withinScope' type=<root>.IrTypeParametersContainer origin=null
       VAR name:result type:T of <root>.withinScope [val]
-        CALL 'public abstract fun invoke (): R of kotlin.Function0 [operator] declared in kotlin.Function0' type=T of <root>.withinScope origin=INVOKE
+        CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=T of <root>.withinScope origin=INVOKE
           $this: GET_VAR 'fn: kotlin.Function0<T of <root>.withinScope> declared in <root>.withinScope' type=kotlin.Function0<T of <root>.withinScope> origin=VARIABLE_AS_FUNCTION
       CALL 'public abstract fun leaveScope (): kotlin.Unit declared in <root>.TypeRemapper' type=kotlin.Unit origin=null
         $this: GET_VAR '<this>: <root>.TypeRemapper declared in <root>.withinScope' type=<root>.TypeRemapper origin=null
-      RETURN type=kotlin.Nothing from='public final fun withinScope <T> (irTypeParametersContainer: <root>.IrTypeParametersContainer, fn: kotlin.Function0<T of <root>.withinScope>): T of <root>.withinScope [inline] declared in <root>'
-        GET_VAR 'val result: T of <root>.withinScope [val] declared in <root>.withinScope' type=T of <root>.withinScope origin=null
+      RETURN type=kotlin.Nothing from='public final fun withinScope <T> (irTypeParametersContainer: <root>.IrTypeParametersContainer, fn: kotlin.Function0<T of <root>.withinScope>): T of <root>.withinScope declared in <root>'
+        GET_VAR 'val result: T of <root>.withinScope declared in <root>.withinScope' type=T of <root>.withinScope origin=null

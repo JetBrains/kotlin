@@ -12,12 +12,12 @@ FILE fqName:<root> fileName:/breakContinueInLoopHeader.kt
               WHEN type=kotlin.Boolean origin=ELVIS
                 BRANCH
                   if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                    arg0: GET_VAR 'val tmp_0: kotlin.Boolean? [val] declared in <root>.test1' type=kotlin.Boolean? origin=null
+                    arg0: GET_VAR 'val tmp_0: kotlin.Boolean? declared in <root>.test1' type=kotlin.Boolean? origin=null
                     arg1: CONST Null type=kotlin.Nothing? value=null
                   then: BREAK label=L loop.label=L
                 BRANCH
                   if: CONST Boolean type=kotlin.Boolean value=true
-                  then: GET_VAR 'val tmp_0: kotlin.Boolean? [val] declared in <root>.test1' type=kotlin.Boolean? origin=null
+                  then: GET_VAR 'val tmp_0: kotlin.Boolean? declared in <root>.test1' type=kotlin.Boolean? origin=null
             body: BLOCK type=kotlin.Unit origin=null
   FUN name:test2 visibility:public modality:FINAL <> (c:kotlin.Boolean?) returnType:kotlin.Unit
     VALUE_PARAMETER name:c index:0 type:kotlin.Boolean?
@@ -32,12 +32,12 @@ FILE fqName:<root> fileName:/breakContinueInLoopHeader.kt
               WHEN type=kotlin.Boolean origin=ELVIS
                 BRANCH
                   if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                    arg0: GET_VAR 'val tmp_1: kotlin.Boolean? [val] declared in <root>.test2' type=kotlin.Boolean? origin=null
+                    arg0: GET_VAR 'val tmp_1: kotlin.Boolean? declared in <root>.test2' type=kotlin.Boolean? origin=null
                     arg1: CONST Null type=kotlin.Nothing? value=null
                   then: CONTINUE label=L loop.label=L
                 BRANCH
                   if: CONST Boolean type=kotlin.Boolean value=true
-                  then: GET_VAR 'val tmp_1: kotlin.Boolean? [val] declared in <root>.test2' type=kotlin.Boolean? origin=null
+                  then: GET_VAR 'val tmp_1: kotlin.Boolean? declared in <root>.test2' type=kotlin.Boolean? origin=null
             body: BLOCK type=kotlin.Unit origin=null
   FUN name:test3 visibility:public modality:FINAL <> (ss:kotlin.collections.List<kotlin.String>?) returnType:kotlin.Unit
     VALUE_PARAMETER name:ss index:0 type:kotlin.collections.List<kotlin.String>?
@@ -47,26 +47,26 @@ FILE fqName:<root> fileName:/breakContinueInLoopHeader.kt
         body: BLOCK type=kotlin.Unit origin=null
           BLOCK type=kotlin.Unit origin=FOR_LOOP
             VAR FOR_LOOP_ITERATOR name:tmp_2 type:kotlin.collections.Iterator<kotlin.String> [val]
-              CALL 'public abstract fun iterator (): kotlin.collections.Iterator<E of kotlin.collections.List> [operator] declared in kotlin.collections.List' type=kotlin.collections.Iterator<kotlin.String> origin=FOR_LOOP_ITERATOR
+              CALL 'public abstract fun iterator (): kotlin.collections.Iterator<E of kotlin.collections.List> declared in kotlin.collections.List' type=kotlin.collections.Iterator<kotlin.String> origin=FOR_LOOP_ITERATOR
                 $this: BLOCK type=kotlin.collections.List<kotlin.String> origin=ELVIS
                   VAR IR_TEMPORARY_VARIABLE name:tmp_3 type:kotlin.collections.List<kotlin.String>? [val]
                     GET_VAR 'ss: kotlin.collections.List<kotlin.String>? declared in <root>.test3' type=kotlin.collections.List<kotlin.String>? origin=null
                   WHEN type=kotlin.collections.List<kotlin.String> origin=ELVIS
                     BRANCH
                       if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                        arg0: GET_VAR 'val tmp_3: kotlin.collections.List<kotlin.String>? [val] declared in <root>.test3' type=kotlin.collections.List<kotlin.String>? origin=null
+                        arg0: GET_VAR 'val tmp_3: kotlin.collections.List<kotlin.String>? declared in <root>.test3' type=kotlin.collections.List<kotlin.String>? origin=null
                         arg1: CONST Null type=kotlin.Nothing? value=null
                       then: CONTINUE label=L loop.label=L
                     BRANCH
                       if: CONST Boolean type=kotlin.Boolean value=true
-                      then: GET_VAR 'val tmp_3: kotlin.collections.List<kotlin.String>? [val] declared in <root>.test3' type=kotlin.collections.List<kotlin.String>? origin=null
+                      then: GET_VAR 'val tmp_3: kotlin.collections.List<kotlin.String>? declared in <root>.test3' type=kotlin.collections.List<kotlin.String>? origin=null
             WHILE label=L2 origin=FOR_LOOP_INNER_WHILE
-              condition: CALL 'public abstract fun hasNext (): kotlin.Boolean [operator] declared in kotlin.collections.Iterator' type=kotlin.Boolean origin=FOR_LOOP_HAS_NEXT
-                $this: GET_VAR 'val tmp_2: kotlin.collections.Iterator<kotlin.String> [val] declared in <root>.test3' type=kotlin.collections.Iterator<kotlin.String> origin=null
+              condition: CALL 'public abstract fun hasNext (): kotlin.Boolean declared in kotlin.collections.Iterator' type=kotlin.Boolean origin=FOR_LOOP_HAS_NEXT
+                $this: GET_VAR 'val tmp_2: kotlin.collections.Iterator<kotlin.String> declared in <root>.test3' type=kotlin.collections.Iterator<kotlin.String> origin=null
               body: BLOCK type=kotlin.Unit origin=FOR_LOOP_INNER_WHILE
                 VAR FOR_LOOP_VARIABLE name:s type:kotlin.String [val]
-                  CALL 'public abstract fun next (): T of kotlin.collections.Iterator [operator] declared in kotlin.collections.Iterator' type=kotlin.String origin=FOR_LOOP_NEXT
-                    $this: GET_VAR 'val tmp_2: kotlin.collections.Iterator<kotlin.String> [val] declared in <root>.test3' type=kotlin.collections.Iterator<kotlin.String> origin=null
+                  CALL 'public abstract fun next (): T of kotlin.collections.Iterator declared in kotlin.collections.Iterator' type=kotlin.String origin=FOR_LOOP_NEXT
+                    $this: GET_VAR 'val tmp_2: kotlin.collections.Iterator<kotlin.String> declared in <root>.test3' type=kotlin.collections.Iterator<kotlin.String> origin=null
                 BLOCK type=kotlin.Unit origin=null
   FUN name:test4 visibility:public modality:FINAL <> (ss:kotlin.collections.List<kotlin.String>?) returnType:kotlin.Unit
     VALUE_PARAMETER name:ss index:0 type:kotlin.collections.List<kotlin.String>?
@@ -76,26 +76,26 @@ FILE fqName:<root> fileName:/breakContinueInLoopHeader.kt
         body: BLOCK type=kotlin.Unit origin=null
           BLOCK type=kotlin.Unit origin=FOR_LOOP
             VAR FOR_LOOP_ITERATOR name:tmp_4 type:kotlin.collections.Iterator<kotlin.String> [val]
-              CALL 'public abstract fun iterator (): kotlin.collections.Iterator<E of kotlin.collections.List> [operator] declared in kotlin.collections.List' type=kotlin.collections.Iterator<kotlin.String> origin=FOR_LOOP_ITERATOR
+              CALL 'public abstract fun iterator (): kotlin.collections.Iterator<E of kotlin.collections.List> declared in kotlin.collections.List' type=kotlin.collections.Iterator<kotlin.String> origin=FOR_LOOP_ITERATOR
                 $this: BLOCK type=kotlin.collections.List<kotlin.String> origin=ELVIS
                   VAR IR_TEMPORARY_VARIABLE name:tmp_5 type:kotlin.collections.List<kotlin.String>? [val]
                     GET_VAR 'ss: kotlin.collections.List<kotlin.String>? declared in <root>.test4' type=kotlin.collections.List<kotlin.String>? origin=null
                   WHEN type=kotlin.collections.List<kotlin.String> origin=ELVIS
                     BRANCH
                       if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                        arg0: GET_VAR 'val tmp_5: kotlin.collections.List<kotlin.String>? [val] declared in <root>.test4' type=kotlin.collections.List<kotlin.String>? origin=null
+                        arg0: GET_VAR 'val tmp_5: kotlin.collections.List<kotlin.String>? declared in <root>.test4' type=kotlin.collections.List<kotlin.String>? origin=null
                         arg1: CONST Null type=kotlin.Nothing? value=null
                       then: BREAK label=L loop.label=L
                     BRANCH
                       if: CONST Boolean type=kotlin.Boolean value=true
-                      then: GET_VAR 'val tmp_5: kotlin.collections.List<kotlin.String>? [val] declared in <root>.test4' type=kotlin.collections.List<kotlin.String>? origin=null
+                      then: GET_VAR 'val tmp_5: kotlin.collections.List<kotlin.String>? declared in <root>.test4' type=kotlin.collections.List<kotlin.String>? origin=null
             WHILE label=L2 origin=FOR_LOOP_INNER_WHILE
-              condition: CALL 'public abstract fun hasNext (): kotlin.Boolean [operator] declared in kotlin.collections.Iterator' type=kotlin.Boolean origin=FOR_LOOP_HAS_NEXT
-                $this: GET_VAR 'val tmp_4: kotlin.collections.Iterator<kotlin.String> [val] declared in <root>.test4' type=kotlin.collections.Iterator<kotlin.String> origin=null
+              condition: CALL 'public abstract fun hasNext (): kotlin.Boolean declared in kotlin.collections.Iterator' type=kotlin.Boolean origin=FOR_LOOP_HAS_NEXT
+                $this: GET_VAR 'val tmp_4: kotlin.collections.Iterator<kotlin.String> declared in <root>.test4' type=kotlin.collections.Iterator<kotlin.String> origin=null
               body: BLOCK type=kotlin.Unit origin=FOR_LOOP_INNER_WHILE
                 VAR FOR_LOOP_VARIABLE name:s type:kotlin.String [val]
-                  CALL 'public abstract fun next (): T of kotlin.collections.Iterator [operator] declared in kotlin.collections.Iterator' type=kotlin.String origin=FOR_LOOP_NEXT
-                    $this: GET_VAR 'val tmp_4: kotlin.collections.Iterator<kotlin.String> [val] declared in <root>.test4' type=kotlin.collections.Iterator<kotlin.String> origin=null
+                  CALL 'public abstract fun next (): T of kotlin.collections.Iterator declared in kotlin.collections.Iterator' type=kotlin.String origin=FOR_LOOP_NEXT
+                    $this: GET_VAR 'val tmp_4: kotlin.collections.Iterator<kotlin.String> declared in <root>.test4' type=kotlin.collections.Iterator<kotlin.String> origin=null
                 BLOCK type=kotlin.Unit origin=null
   FUN name:test5 visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
@@ -106,23 +106,23 @@ FILE fqName:<root> fileName:/breakContinueInLoopHeader.kt
         body: BLOCK type=kotlin.Unit origin=null
           TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
             BLOCK type=kotlin.Int origin=null
-              SET_VAR 'var i: kotlin.Int [var] declared in <root>.test5' type=kotlin.Unit origin=PREFIX_INCR
-                CALL 'public final fun inc (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
-                  $this: GET_VAR 'var i: kotlin.Int [var] declared in <root>.test5' type=kotlin.Int origin=null
-              GET_VAR 'var i: kotlin.Int [var] declared in <root>.test5' type=kotlin.Int origin=null
+              SET_VAR 'var i: kotlin.Int declared in <root>.test5' type=kotlin.Unit origin=PREFIX_INCR
+                CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+                  $this: GET_VAR 'var i: kotlin.Int declared in <root>.test5' type=kotlin.Int origin=null
+              GET_VAR 'var i: kotlin.Int declared in <root>.test5' type=kotlin.Int origin=null
           VAR name:j type:kotlin.Int [var]
             CONST Int type=kotlin.Int value=0
           BLOCK type=kotlin.Unit origin=null
             DO_WHILE label=Inner origin=DO_WHILE_LOOP
               body: BLOCK type=kotlin.Int origin=null
-                SET_VAR 'var j: kotlin.Int [var] declared in <root>.test5' type=kotlin.Unit origin=PREFIX_INCR
-                  CALL 'public final fun inc (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
-                    $this: GET_VAR 'var j: kotlin.Int [var] declared in <root>.test5' type=kotlin.Int origin=null
-                GET_VAR 'var j: kotlin.Int [var] declared in <root>.test5' type=kotlin.Int origin=null
+                SET_VAR 'var j: kotlin.Int declared in <root>.test5' type=kotlin.Unit origin=PREFIX_INCR
+                  CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+                    $this: GET_VAR 'var j: kotlin.Int declared in <root>.test5' type=kotlin.Int origin=null
+                GET_VAR 'var j: kotlin.Int declared in <root>.test5' type=kotlin.Int origin=null
               condition: WHEN type=kotlin.Boolean origin=IF
                 BRANCH
                   if: CALL 'public final fun greaterOrEqual (arg0: kotlin.Int, arg1: kotlin.Int): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=GTEQ
-                    arg0: GET_VAR 'var j: kotlin.Int [var] declared in <root>.test5' type=kotlin.Int origin=null
+                    arg0: GET_VAR 'var j: kotlin.Int declared in <root>.test5' type=kotlin.Int origin=null
                     arg1: CONST Int type=kotlin.Int value=3
                   then: CONST Boolean type=kotlin.Boolean value=false
                 BRANCH
@@ -131,6 +131,6 @@ FILE fqName:<root> fileName:/breakContinueInLoopHeader.kt
           WHEN type=kotlin.Unit origin=IF
             BRANCH
               if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                arg0: GET_VAR 'var i: kotlin.Int [var] declared in <root>.test5' type=kotlin.Int origin=null
+                arg0: GET_VAR 'var i: kotlin.Int declared in <root>.test5' type=kotlin.Int origin=null
                 arg1: CONST Int type=kotlin.Int value=3
               then: BREAK label=Outer loop.label=Outer

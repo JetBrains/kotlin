@@ -3,27 +3,27 @@ FILE fqName:<root> fileName:/nullCheckOnGenericLambdaReturn.kt
     VALUE_PARAMETER name:fn index:0 type:kotlin.Function0<kotlin.Any>
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun checkAny (fn: kotlin.Function0<kotlin.Any>): kotlin.Any declared in <root>'
-        CALL 'public abstract fun invoke (): R of kotlin.Function0 [operator] declared in kotlin.Function0' type=kotlin.Any origin=INVOKE
+        CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.Any origin=INVOKE
           $this: GET_VAR 'fn: kotlin.Function0<kotlin.Any> declared in <root>.checkAny' type=kotlin.Function0<kotlin.Any> origin=VARIABLE_AS_FUNCTION
   FUN name:checkAnyN visibility:public modality:FINAL <> (fn:kotlin.Function0<kotlin.Any?>) returnType:kotlin.Any?
     VALUE_PARAMETER name:fn index:0 type:kotlin.Function0<kotlin.Any?>
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun checkAnyN (fn: kotlin.Function0<kotlin.Any?>): kotlin.Any? declared in <root>'
-        CALL 'public abstract fun invoke (): R of kotlin.Function0 [operator] declared in kotlin.Function0' type=kotlin.Any? origin=INVOKE
+        CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.Any? origin=INVOKE
           $this: GET_VAR 'fn: kotlin.Function0<kotlin.Any?> declared in <root>.checkAnyN' type=kotlin.Function0<kotlin.Any?> origin=VARIABLE_AS_FUNCTION
   FUN name:checkT visibility:public modality:FINAL <T> (fn:kotlin.Function0<T of <root>.checkT>) returnType:T of <root>.checkT
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
     VALUE_PARAMETER name:fn index:0 type:kotlin.Function0<T of <root>.checkT>
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun checkT <T> (fn: kotlin.Function0<T of <root>.checkT>): T of <root>.checkT declared in <root>'
-        CALL 'public abstract fun invoke (): R of kotlin.Function0 [operator] declared in kotlin.Function0' type=T of <root>.checkT origin=INVOKE
+        CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=T of <root>.checkT origin=INVOKE
           $this: GET_VAR 'fn: kotlin.Function0<T of <root>.checkT> declared in <root>.checkT' type=kotlin.Function0<T of <root>.checkT> origin=VARIABLE_AS_FUNCTION
   FUN name:checkTAny visibility:public modality:FINAL <T> (fn:kotlin.Function0<T of <root>.checkTAny>) returnType:T of <root>.checkTAny
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any] reified:false
     VALUE_PARAMETER name:fn index:0 type:kotlin.Function0<T of <root>.checkTAny>
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun checkTAny <T> (fn: kotlin.Function0<T of <root>.checkTAny>): T of <root>.checkTAny declared in <root>'
-        CALL 'public abstract fun invoke (): R of kotlin.Function0 [operator] declared in kotlin.Function0' type=T of <root>.checkTAny origin=INVOKE
+        CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=T of <root>.checkTAny origin=INVOKE
           $this: GET_VAR 'fn: kotlin.Function0<T of <root>.checkTAny> declared in <root>.checkTAny' type=kotlin.Function0<T of <root>.checkTAny> origin=VARIABLE_AS_FUNCTION
   FUN name:id visibility:public modality:FINAL <T> (x:T of <root>.id) returnType:T of <root>.id
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false

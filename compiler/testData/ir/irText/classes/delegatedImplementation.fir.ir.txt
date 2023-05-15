@@ -12,7 +12,7 @@ FILE fqName:<root> fileName:/delegatedImplementation.kt
       $receiver: VALUE_PARAMETER name:<this> type:kotlin.String
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -27,7 +27,7 @@ FILE fqName:<root> fileName:/delegatedImplementation.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.BaseImpl
     CONSTRUCTOR visibility:private <> () returnType:<root>.BaseImpl [primary]
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:BaseImpl modality:FINAL visibility:public superTypes:[<root>.IBase]'
     FUN name:foo visibility:public modality:OPEN <> ($this:<root>.BaseImpl, x:kotlin.Int, s:kotlin.String) returnType:kotlin.Unit
       overridden:
@@ -51,16 +51,16 @@ FILE fqName:<root> fileName:/delegatedImplementation.kt
       BLOCK_BODY
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.IBase
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.IBase
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
       overridden:
-        public open fun hashCode (): kotlin.Int [fake_override] declared in <root>.IBase
+        public open fun hashCode (): kotlin.Int declared in <root>.IBase
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
       overridden:
-        public open fun toString (): kotlin.String [fake_override] declared in <root>.IBase
+        public open fun toString (): kotlin.String declared in <root>.IBase
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS INTERFACE name:IOther modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.IOther
@@ -93,7 +93,7 @@ FILE fqName:<root> fileName:/delegatedImplementation.kt
         VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -114,11 +114,11 @@ FILE fqName:<root> fileName:/delegatedImplementation.kt
             $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.otherImpl.<no name provided>
             CONSTRUCTOR visibility:public <> () returnType:<root>.otherImpl.<no name provided> [primary]
               BLOCK_BODY
-                DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+                DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
                 INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.IOther]'
             PROPERTY name:x visibility:public modality:OPEN [val]
               overridden:
-                public abstract x: kotlin.String [val]
+                public abstract x: kotlin.String
               FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.String visibility:private [final]
                 EXPRESSION_BODY
                   GET_VAR 'x0: kotlin.String declared in <root>.otherImpl' type=kotlin.String origin=null
@@ -133,7 +133,7 @@ FILE fqName:<root> fileName:/delegatedImplementation.kt
                       receiver: GET_VAR '<this>: <root>.otherImpl.<no name provided> declared in <root>.otherImpl.<no name provided>.<get-x>' type=<root>.otherImpl.<no name provided> origin=null
             PROPERTY name:y visibility:public modality:OPEN [var]
               overridden:
-                public abstract y: kotlin.Int [var]
+                public abstract y: kotlin.Int
               FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.Int visibility:private
                 EXPRESSION_BODY
                   GET_VAR 'y0: kotlin.Int declared in <root>.otherImpl' type=kotlin.Int origin=null
@@ -158,7 +158,7 @@ FILE fqName:<root> fileName:/delegatedImplementation.kt
                     value: GET_VAR '<set-?>: kotlin.Int declared in <root>.otherImpl.<no name provided>.<set-y>' type=kotlin.Int origin=null
             PROPERTY name:z1 visibility:public modality:OPEN [val]
               overridden:
-                public abstract z1: kotlin.Int [val]
+                public abstract z1: kotlin.Int
               FUN name:<get-z1> visibility:public modality:OPEN <> ($this:<root>.otherImpl.<no name provided>, $receiver:kotlin.Byte) returnType:kotlin.Int
                 correspondingProperty: PROPERTY name:z1 visibility:public modality:OPEN [val]
                 overridden:
@@ -170,7 +170,7 @@ FILE fqName:<root> fileName:/delegatedImplementation.kt
                     CONST Int type=kotlin.Int value=1
             PROPERTY name:z2 visibility:public modality:OPEN [var]
               overridden:
-                public abstract z2: kotlin.Int [var]
+                public abstract z2: kotlin.Int
               FUN name:<get-z2> visibility:public modality:OPEN <> ($this:<root>.otherImpl.<no name provided>, $receiver:kotlin.Byte) returnType:kotlin.Int
                 correspondingProperty: PROPERTY name:z2 visibility:public modality:OPEN [var]
                 overridden:
@@ -190,23 +190,23 @@ FILE fqName:<root> fileName:/delegatedImplementation.kt
                 BLOCK_BODY
             FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
               overridden:
-                public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.IOther
+                public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.IOther
               $this: VALUE_PARAMETER name:<this> type:kotlin.Any
               VALUE_PARAMETER name:other index:0 type:kotlin.Any?
             FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
               overridden:
-                public open fun hashCode (): kotlin.Int [fake_override] declared in <root>.IOther
+                public open fun hashCode (): kotlin.Int declared in <root>.IOther
               $this: VALUE_PARAMETER name:<this> type:kotlin.Any
             FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
               overridden:
-                public open fun toString (): kotlin.String [fake_override] declared in <root>.IOther
+                public open fun toString (): kotlin.String declared in <root>.IOther
               $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-          CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.otherImpl.<no name provided>' type=<root>.otherImpl.<no name provided> origin=OBJECT_LITERAL
+          CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.otherImpl.<no name provided>' type=<root>.otherImpl.<no name provided> origin=OBJECT_LITERAL
   CLASS CLASS name:Test1 modality:FINAL visibility:public superTypes:[<root>.IBase]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test1
     CONSTRUCTOR visibility:public <> () returnType:<root>.Test1 [primary]
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test1 modality:FINAL visibility:public superTypes:[<root>.IBase]'
     FUN DELEGATED_MEMBER name:foo visibility:public modality:OPEN <> ($this:<root>.Test1, x:kotlin.Int, s:kotlin.String) returnType:kotlin.Unit
       overridden:
@@ -244,22 +244,22 @@ FILE fqName:<root> fileName:/delegatedImplementation.kt
         GET_OBJECT 'CLASS OBJECT name:BaseImpl modality:FINAL visibility:public superTypes:[<root>.IBase]' type=<root>.BaseImpl
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.IBase
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.IBase
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
       overridden:
-        public open fun hashCode (): kotlin.Int [fake_override] declared in <root>.IBase
+        public open fun hashCode (): kotlin.Int declared in <root>.IBase
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
       overridden:
-        public open fun toString (): kotlin.String [fake_override] declared in <root>.IBase
+        public open fun toString (): kotlin.String declared in <root>.IBase
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS CLASS name:Test2 modality:FINAL visibility:public superTypes:[<root>.IBase; <root>.IOther]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test2
     CONSTRUCTOR visibility:public <> () returnType:<root>.Test2 [primary]
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test2 modality:FINAL visibility:public superTypes:[<root>.IBase; <root>.IOther]'
     FUN DELEGATED_MEMBER name:foo visibility:public modality:OPEN <> ($this:<root>.Test2, x:kotlin.Int, s:kotlin.String) returnType:kotlin.Unit
       overridden:
@@ -297,7 +297,7 @@ FILE fqName:<root> fileName:/delegatedImplementation.kt
         GET_OBJECT 'CLASS OBJECT name:BaseImpl modality:FINAL visibility:public superTypes:[<root>.IBase]' type=<root>.BaseImpl
     PROPERTY DELEGATED_MEMBER name:x visibility:public modality:OPEN [val]
       overridden:
-        public abstract x: kotlin.String [val]
+        public abstract x: kotlin.String
       FUN DELEGATED_MEMBER name:<get-x> visibility:public modality:OPEN <> ($this:<root>.Test2) returnType:kotlin.String
         correspondingProperty: PROPERTY DELEGATED_MEMBER name:x visibility:public modality:OPEN [val]
         overridden:
@@ -310,7 +310,7 @@ FILE fqName:<root> fileName:/delegatedImplementation.kt
                 receiver: GET_VAR '<this>: <root>.Test2 declared in <root>.Test2.<get-x>' type=<root>.Test2 origin=null
     PROPERTY DELEGATED_MEMBER name:y visibility:public modality:OPEN [var]
       overridden:
-        public abstract y: kotlin.Int [var]
+        public abstract y: kotlin.Int
       FUN DELEGATED_MEMBER name:<get-y> visibility:public modality:OPEN <> ($this:<root>.Test2) returnType:kotlin.Int
         correspondingProperty: PROPERTY DELEGATED_MEMBER name:y visibility:public modality:OPEN [var]
         overridden:
@@ -334,7 +334,7 @@ FILE fqName:<root> fileName:/delegatedImplementation.kt
             <set-?>: GET_VAR '<set-?>: kotlin.Int declared in <root>.Test2.<set-y>' type=kotlin.Int origin=null
     PROPERTY DELEGATED_MEMBER name:z1 visibility:public modality:OPEN [val]
       overridden:
-        public abstract z1: kotlin.Int [val]
+        public abstract z1: kotlin.Int
       FUN DELEGATED_MEMBER name:<get-z1> visibility:public modality:OPEN <> ($this:<root>.Test2, $receiver:kotlin.Byte) returnType:kotlin.Int
         correspondingProperty: PROPERTY DELEGATED_MEMBER name:z1 visibility:public modality:OPEN [val]
         overridden:
@@ -349,7 +349,7 @@ FILE fqName:<root> fileName:/delegatedImplementation.kt
               $receiver: GET_VAR '<this>: kotlin.Byte declared in <root>.Test2.<get-z1>' type=kotlin.Byte origin=null
     PROPERTY DELEGATED_MEMBER name:z2 visibility:public modality:OPEN [var]
       overridden:
-        public abstract z2: kotlin.Int [var]
+        public abstract z2: kotlin.Int
       FUN DELEGATED_MEMBER name:<get-z2> visibility:public modality:OPEN <> ($this:<root>.Test2, $receiver:kotlin.Byte) returnType:kotlin.Int
         correspondingProperty: PROPERTY DELEGATED_MEMBER name:z2 visibility:public modality:OPEN [var]
         overridden:
@@ -382,17 +382,17 @@ FILE fqName:<root> fileName:/delegatedImplementation.kt
           y0: CONST Int type=kotlin.Int value=42
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.IBase
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.IOther
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.IBase
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.IOther
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
       overridden:
-        public open fun hashCode (): kotlin.Int [fake_override] declared in <root>.IBase
-        public open fun hashCode (): kotlin.Int [fake_override] declared in <root>.IOther
+        public open fun hashCode (): kotlin.Int declared in <root>.IBase
+        public open fun hashCode (): kotlin.Int declared in <root>.IOther
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
       overridden:
-        public open fun toString (): kotlin.String [fake_override] declared in <root>.IBase
-        public open fun toString (): kotlin.String [fake_override] declared in <root>.IOther
+        public open fun toString (): kotlin.String declared in <root>.IBase
+        public open fun toString (): kotlin.String declared in <root>.IOther
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any

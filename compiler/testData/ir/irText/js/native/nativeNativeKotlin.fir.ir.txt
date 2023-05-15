@@ -3,13 +3,13 @@ FILE fqName:foo fileName:/nativeNativeKotlin.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:foo.A
     CONSTRUCTOR visibility:public <> () returnType:foo.A [primary]
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:OPEN visibility:public [external] superTypes:[kotlin.Any]'
     FUN name:foo visibility:public modality:FINAL <> ($this:foo.A) returnType:kotlin.String
       $this: VALUE_PARAMETER name:<this> type:foo.A
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -24,7 +24,7 @@ FILE fqName:foo fileName:/nativeNativeKotlin.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:foo.B
     CONSTRUCTOR visibility:public <> () returnType:foo.B [primary]
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:B modality:OPEN visibility:public [external] superTypes:[foo.A]'
     FUN name:bar visibility:public modality:FINAL <> ($this:foo.B) returnType:kotlin.String
       $this: VALUE_PARAMETER name:<this> type:foo.B
@@ -34,22 +34,22 @@ FILE fqName:foo fileName:/nativeNativeKotlin.kt
       $this: VALUE_PARAMETER name:<this> type:foo.A
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in foo.A
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in foo.A
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
       overridden:
-        public open fun hashCode (): kotlin.Int [fake_override] declared in foo.A
+        public open fun hashCode (): kotlin.Int declared in foo.A
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
       overridden:
-        public open fun toString (): kotlin.String [fake_override] declared in foo.A
+        public open fun toString (): kotlin.String declared in foo.A
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS CLASS name:C modality:FINAL visibility:public superTypes:[foo.B]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:foo.C
     CONSTRUCTOR visibility:public <> () returnType:foo.C [primary]
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in foo.B'
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in foo.B'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C modality:FINAL visibility:public superTypes:[foo.B]'
     FUN FAKE_OVERRIDE name:bar visibility:public modality:FINAL <> ($this:foo.B) returnType:kotlin.String [fake_override]
       overridden:
@@ -57,24 +57,24 @@ FILE fqName:foo fileName:/nativeNativeKotlin.kt
       $this: VALUE_PARAMETER name:<this> type:foo.B
     FUN FAKE_OVERRIDE name:foo visibility:public modality:FINAL <> ($this:foo.A) returnType:kotlin.String [fake_override]
       overridden:
-        public final fun foo (): kotlin.String [fake_override] declared in foo.B
+        public final fun foo (): kotlin.String declared in foo.B
       $this: VALUE_PARAMETER name:<this> type:foo.A
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in foo.B
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in foo.B
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
       overridden:
-        public open fun hashCode (): kotlin.Int [fake_override] declared in foo.B
+        public open fun hashCode (): kotlin.Int declared in foo.B
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
       overridden:
-        public open fun toString (): kotlin.String [fake_override] declared in foo.B
+        public open fun toString (): kotlin.String declared in foo.B
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
     BLOCK_BODY
       VAR name:c type:foo.C [val]
-        CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in foo.C' type=foo.C origin=null
+        CONSTRUCTOR_CALL 'public constructor <init> () declared in foo.C' type=foo.C origin=null
       RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in foo'
         CONST String type=kotlin.String value="OK"

@@ -10,13 +10,13 @@ FILE fqName:<root> fileName:/typeParameterWithMultipleNullableBounds.kt
           WHEN type=kotlin.Int? origin=null
             BRANCH
               if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                arg0: GET_VAR 'val tmp_0: T of <root>.f [val] declared in <root>.f' type=T of <root>.f origin=null
+                arg0: GET_VAR 'val tmp_0: T of <root>.f declared in <root>.f' type=T of <root>.f origin=null
                 arg1: CONST Null type=kotlin.Nothing? value=null
               then: CONST Null type=kotlin.Nothing? value=null
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
-              then: CALL 'public abstract fun compareTo (other: T of kotlin.Comparable): kotlin.Int [operator] declared in kotlin.Comparable' type=kotlin.Int origin=null
-                $this: GET_VAR 'val tmp_0: T of <root>.f [val] declared in <root>.f' type=T of <root>.f origin=null
+              then: CALL 'public abstract fun compareTo (other: T of kotlin.Comparable): kotlin.Int declared in kotlin.Comparable' type=kotlin.Int origin=null
+                $this: GET_VAR 'val tmp_0: T of <root>.f declared in <root>.f' type=T of <root>.f origin=null
                 other: GET_VAR 'x: T of <root>.f declared in <root>.f' type=T of <root>.f origin=null
   FUN name:test visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY

@@ -37,7 +37,7 @@ FILE fqName:<root> fileName:/references.kt
       VAR name:x type:kotlin.String [val]
         CONST String type=kotlin.String value="OK"
       RETURN type=kotlin.Nothing from='public final fun test3 (): kotlin.String declared in <root>'
-        GET_VAR 'val x: kotlin.String [val] declared in <root>.test3' type=kotlin.String origin=null
+        GET_VAR 'val x: kotlin.String declared in <root>.test3' type=kotlin.String origin=null
   FUN name:test4 visibility:public modality:FINAL <> () returnType:kotlin.String
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test4 (): kotlin.String declared in <root>'

@@ -47,9 +47,9 @@ FILE fqName:<root> fileName:/enhancedNullability.kt
       VAR name:ns type:@[FlexibleNullability] kotlin.String? [val]
         CALL 'public open fun nullString (): @[FlexibleNullability] kotlin.String? declared in <root>.J' type=@[FlexibleNullability] kotlin.String? origin=null
       CALL 'public open fun use (s: @[EnhancedNullability] kotlin.String): kotlin.Unit declared in <root>.J' type=kotlin.Unit origin=null
-        s: GET_VAR 'val ns: @[FlexibleNullability] kotlin.String? [val] declared in <root>.testLocalVarUse' type=@[FlexibleNullability] kotlin.String? origin=null
+        s: GET_VAR 'val ns: @[FlexibleNullability] kotlin.String? declared in <root>.testLocalVarUse' type=@[FlexibleNullability] kotlin.String? origin=null
       VAR name:nns type:kotlin.String [val]
         TYPE_OP type=kotlin.String origin=IMPLICIT_NOTNULL typeOperand=kotlin.String
           CALL 'public open fun notNullString (): @[EnhancedNullability] kotlin.String declared in <root>.J' type=@[EnhancedNullability] kotlin.String origin=null
       CALL 'public open fun use (s: @[EnhancedNullability] kotlin.String): kotlin.Unit declared in <root>.J' type=kotlin.Unit origin=null
-        s: GET_VAR 'val nns: kotlin.String [val] declared in <root>.testLocalVarUse' type=kotlin.String origin=null
+        s: GET_VAR 'val nns: kotlin.String declared in <root>.testLocalVarUse' type=kotlin.String origin=null

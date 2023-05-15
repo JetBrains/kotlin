@@ -10,13 +10,13 @@ FILE fqName:<root> fileName:/extFunSafeInvoke.kt
           WHEN type=kotlin.Unit? origin=null
             BRANCH
               if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                arg0: GET_VAR 'val tmp_0: kotlin.Any? [val] declared in <root>.test' type=kotlin.Any? origin=null
+                arg0: GET_VAR 'val tmp_0: kotlin.Any? declared in <root>.test' type=kotlin.Any? origin=null
                 arg1: CONST Null type=kotlin.Nothing? value=null
               then: CONST Null type=kotlin.Nothing? value=null
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
-              then: CALL 'public abstract fun invoke (p1: P1 of kotlin.Function3, p2: P2 of kotlin.Function3, p3: P3 of kotlin.Function3): R of kotlin.Function3 [operator] declared in kotlin.Function3' type=kotlin.Unit origin=INVOKE
+              then: CALL 'public abstract fun invoke (p1: P1 of kotlin.Function3, p2: P2 of kotlin.Function3, p3: P3 of kotlin.Function3): R of kotlin.Function3 declared in kotlin.Function3' type=kotlin.Unit origin=INVOKE
                 $this: GET_VAR 'fn: @[ExtensionFunctionType] kotlin.Function3<kotlin.Any, kotlin.Int, kotlin.String, kotlin.Unit> declared in <root>.test' type=@[ExtensionFunctionType] kotlin.Function3<kotlin.Any, kotlin.Int, kotlin.String, kotlin.Unit> origin=VARIABLE_AS_FUNCTION
-                p1: GET_VAR 'val tmp_0: kotlin.Any? [val] declared in <root>.test' type=kotlin.Any? origin=null
+                p1: GET_VAR 'val tmp_0: kotlin.Any? declared in <root>.test' type=kotlin.Any? origin=null
                 p2: CONST Int type=kotlin.Int value=42
                 p3: CONST String type=kotlin.String value="Hello"

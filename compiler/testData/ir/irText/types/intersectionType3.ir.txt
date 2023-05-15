@@ -4,7 +4,7 @@ FILE fqName:<root> fileName:/intersectionType3.kt
     TYPE_PARAMETER name:T index:0 variance:in superTypes:[kotlin.Any?] reified:false
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -19,7 +19,7 @@ FILE fqName:<root> fileName:/intersectionType3.kt
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:true
     $receiver: VALUE_PARAMETER name:<this> type:<root>.In<T of <root>.isT>
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun isT <T> (): kotlin.Boolean [inline] declared in <root>'
+      RETURN type=kotlin.Nothing from='public final fun isT <T> (): kotlin.Boolean declared in <root>'
         TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=T of <root>.isT
           GET_VAR '<this>: <root>.In<T of <root>.isT> declared in <root>.isT' type=<root>.In<T of <root>.isT> origin=null
   FUN name:asT visibility:public modality:FINAL <T> ($receiver:<root>.In<T of <root>.asT>) returnType:kotlin.Unit [inline]
@@ -40,7 +40,7 @@ FILE fqName:<root> fileName:/intersectionType3.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -55,7 +55,7 @@ FILE fqName:<root> fileName:/intersectionType3.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.B
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -70,74 +70,74 @@ FILE fqName:<root> fileName:/intersectionType3.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A1
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.A
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.A
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
       overridden:
-        public open fun hashCode (): kotlin.Int [fake_override] declared in <root>.A
+        public open fun hashCode (): kotlin.Int declared in <root>.A
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
       overridden:
-        public open fun toString (): kotlin.String [fake_override] declared in <root>.A
+        public open fun toString (): kotlin.String declared in <root>.A
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS INTERFACE name:A2 modality:ABSTRACT visibility:public superTypes:[<root>.A]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A2
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.A
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.A
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
       overridden:
-        public open fun hashCode (): kotlin.Int [fake_override] declared in <root>.A
+        public open fun hashCode (): kotlin.Int declared in <root>.A
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
       overridden:
-        public open fun toString (): kotlin.String [fake_override] declared in <root>.A
+        public open fun toString (): kotlin.String declared in <root>.A
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS INTERFACE name:Z1 modality:ABSTRACT visibility:public superTypes:[<root>.A; <root>.B]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Z1
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.A
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.B
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.A
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.B
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
       overridden:
-        public open fun hashCode (): kotlin.Int [fake_override] declared in <root>.A
-        public open fun hashCode (): kotlin.Int [fake_override] declared in <root>.B
+        public open fun hashCode (): kotlin.Int declared in <root>.A
+        public open fun hashCode (): kotlin.Int declared in <root>.B
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
       overridden:
-        public open fun toString (): kotlin.String [fake_override] declared in <root>.A
-        public open fun toString (): kotlin.String [fake_override] declared in <root>.B
+        public open fun toString (): kotlin.String declared in <root>.A
+        public open fun toString (): kotlin.String declared in <root>.B
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS INTERFACE name:Z2 modality:ABSTRACT visibility:public superTypes:[<root>.A; <root>.B]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Z2
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.A
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.B
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.A
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.B
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
       overridden:
-        public open fun hashCode (): kotlin.Int [fake_override] declared in <root>.A
-        public open fun hashCode (): kotlin.Int [fake_override] declared in <root>.B
+        public open fun hashCode (): kotlin.Int declared in <root>.A
+        public open fun hashCode (): kotlin.Int declared in <root>.B
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
       overridden:
-        public open fun toString (): kotlin.String [fake_override] declared in <root>.A
-        public open fun toString (): kotlin.String [fake_override] declared in <root>.B
+        public open fun toString (): kotlin.String declared in <root>.A
+        public open fun toString (): kotlin.String declared in <root>.B
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   FUN name:testInIs1 visibility:public modality:FINAL <> (x:<root>.In<<root>.A>, y:<root>.In<<root>.B>) returnType:kotlin.Boolean
     VALUE_PARAMETER name:x index:0 type:<root>.In<<root>.A>
     VALUE_PARAMETER name:y index:1 type:<root>.In<<root>.B>
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun testInIs1 (x: <root>.In<<root>.A>, y: <root>.In<<root>.B>): kotlin.Boolean declared in <root>'
-        CALL 'public final fun isT <T> (): kotlin.Boolean [inline] declared in <root>' type=kotlin.Boolean origin=null
+        CALL 'public final fun isT <T> (): kotlin.Boolean declared in <root>' type=kotlin.Boolean origin=null
           <T>: kotlin.Any
           $receiver: CALL 'public final fun sel <S> (x: S of <root>.sel, y: S of <root>.sel): S of <root>.sel declared in <root>' type=<root>.In<kotlin.Nothing> origin=null
             <S>: <root>.In<kotlin.Nothing>
@@ -148,7 +148,7 @@ FILE fqName:<root> fileName:/intersectionType3.kt
     VALUE_PARAMETER name:y index:1 type:<root>.In<<root>.Z2>
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun testInIs2 (x: <root>.In<<root>.Z1>, y: <root>.In<<root>.Z2>): kotlin.Boolean declared in <root>'
-        CALL 'public final fun isT <T> (): kotlin.Boolean [inline] declared in <root>' type=kotlin.Boolean origin=null
+        CALL 'public final fun isT <T> (): kotlin.Boolean declared in <root>' type=kotlin.Boolean origin=null
           <T>: kotlin.Any
           $receiver: CALL 'public final fun sel <S> (x: S of <root>.sel, y: S of <root>.sel): S of <root>.sel declared in <root>' type=<root>.In<kotlin.Nothing> origin=null
             <S>: <root>.In<kotlin.Nothing>
@@ -159,7 +159,7 @@ FILE fqName:<root> fileName:/intersectionType3.kt
     VALUE_PARAMETER name:y index:1 type:<root>.In<<root>.A2>
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun testInIs3 (x: <root>.In<<root>.A1>, y: <root>.In<<root>.A2>): kotlin.Boolean declared in <root>'
-        CALL 'public final fun isT <T> (): kotlin.Boolean [inline] declared in <root>' type=kotlin.Boolean origin=null
+        CALL 'public final fun isT <T> (): kotlin.Boolean declared in <root>' type=kotlin.Boolean origin=null
           <T>: <root>.A
           $receiver: CALL 'public final fun sel <S> (x: S of <root>.sel, y: S of <root>.sel): S of <root>.sel declared in <root>' type=<root>.In<kotlin.Nothing> origin=null
             <S>: <root>.In<kotlin.Nothing>
@@ -170,7 +170,7 @@ FILE fqName:<root> fileName:/intersectionType3.kt
     VALUE_PARAMETER name:y index:1 type:<root>.In<<root>.B>
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun testInAs1 (x: <root>.In<<root>.A>, y: <root>.In<<root>.B>): kotlin.Unit declared in <root>'
-        CALL 'public final fun asT <T> (): kotlin.Unit [inline] declared in <root>' type=kotlin.Unit origin=null
+        CALL 'public final fun asT <T> (): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
           <T>: kotlin.Any
           $receiver: CALL 'public final fun sel <S> (x: S of <root>.sel, y: S of <root>.sel): S of <root>.sel declared in <root>' type=<root>.In<kotlin.Nothing> origin=null
             <S>: <root>.In<kotlin.Nothing>
@@ -181,7 +181,7 @@ FILE fqName:<root> fileName:/intersectionType3.kt
     VALUE_PARAMETER name:y index:1 type:<root>.In<<root>.Z2>
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun testInAs2 (x: <root>.In<<root>.Z1>, y: <root>.In<<root>.Z2>): kotlin.Unit declared in <root>'
-        CALL 'public final fun asT <T> (): kotlin.Unit [inline] declared in <root>' type=kotlin.Unit origin=null
+        CALL 'public final fun asT <T> (): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
           <T>: kotlin.Any
           $receiver: CALL 'public final fun sel <S> (x: S of <root>.sel, y: S of <root>.sel): S of <root>.sel declared in <root>' type=<root>.In<kotlin.Nothing> origin=null
             <S>: <root>.In<kotlin.Nothing>
@@ -192,7 +192,7 @@ FILE fqName:<root> fileName:/intersectionType3.kt
     VALUE_PARAMETER name:y index:1 type:<root>.In<<root>.A2>
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun testInAs3 (x: <root>.In<<root>.A1>, y: <root>.In<<root>.A2>): kotlin.Unit declared in <root>'
-        CALL 'public final fun asT <T> (): kotlin.Unit [inline] declared in <root>' type=kotlin.Unit origin=null
+        CALL 'public final fun asT <T> (): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
           <T>: <root>.A
           $receiver: CALL 'public final fun sel <S> (x: S of <root>.sel, y: S of <root>.sel): S of <root>.sel declared in <root>' type=<root>.In<kotlin.Nothing> origin=null
             <S>: <root>.In<kotlin.Nothing>

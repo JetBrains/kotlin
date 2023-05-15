@@ -3,7 +3,7 @@ FILE fqName:<root> fileName:/TypeParameterInNestedClass.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Retry
     CONSTRUCTOR visibility:private <> () returnType:<root>.Retry [primary]
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Retry modality:FINAL visibility:public superTypes:[kotlin.Any]'
     CLASS CLASS name:Builder modality:FINAL visibility:public superTypes:[kotlin.Any]
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Retry.Builder<B of <root>.Retry.Builder>
@@ -11,7 +11,7 @@ FILE fqName:<root> fileName:/TypeParameterInNestedClass.kt
       CONSTRUCTOR visibility:public <> (action:kotlin.coroutines.SuspendFunction0<B of <root>.Retry.Builder>) returnType:<root>.Retry.Builder<B of <root>.Retry.Builder> [primary]
         VALUE_PARAMETER name:action index:0 type:kotlin.coroutines.SuspendFunction0<B of <root>.Retry.Builder>
         BLOCK_BODY
-          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
           INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Builder modality:FINAL visibility:public superTypes:[kotlin.Any]'
       PROPERTY name:action visibility:private modality:FINAL [val]
         FIELD PROPERTY_BACKING_FIELD name:action type:kotlin.coroutines.SuspendFunction0<B of <root>.Retry.Builder> visibility:private [final]
@@ -26,7 +26,7 @@ FILE fqName:<root> fileName:/TypeParameterInNestedClass.kt
                 receiver: GET_VAR '<this>: <root>.Retry.Builder<B of <root>.Retry.Builder> declared in <root>.Retry.Builder.<get-action>' type=<root>.Retry.Builder<B of <root>.Retry.Builder> origin=null
       FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
         overridden:
-          public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+          public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
         $this: VALUE_PARAMETER name:<this> type:kotlin.Any
         VALUE_PARAMETER name:other index:0 type:kotlin.Any?
       FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -43,20 +43,20 @@ FILE fqName:<root> fileName:/TypeParameterInNestedClass.kt
       VALUE_PARAMETER name:action index:0 type:kotlin.Function0<W of <root>.Retry.withExponentialBackoff>
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun withExponentialBackoff <W> (action: kotlin.Function0<W of <root>.Retry.withExponentialBackoff>): <root>.Retry.Builder<W of <root>.Retry.withExponentialBackoff> declared in <root>.Retry'
-          CONSTRUCTOR_CALL 'public constructor <init> (action: kotlin.coroutines.SuspendFunction0<B of <root>.Retry.Builder>) [primary] declared in <root>.Retry.Builder' type=<root>.Retry.Builder<W of <root>.Retry.withExponentialBackoff> origin=null
+          CONSTRUCTOR_CALL 'public constructor <init> (action: kotlin.coroutines.SuspendFunction0<B of <root>.Retry.Builder>) declared in <root>.Retry.Builder' type=<root>.Retry.Builder<W of <root>.Retry.withExponentialBackoff> origin=null
             <class: B>: W of <root>.Retry.withExponentialBackoff
             action: BLOCK type=kotlin.coroutines.SuspendFunction0<B of <root>.Retry.Builder> origin=SUSPEND_CONVERSION
               FUN ADAPTER_FOR_SUSPEND_CONVERSION name:suspendConversion visibility:local modality:FINAL <> ($receiver:kotlin.Function0<W of <root>.Retry.withExponentialBackoff>) returnType:B of <root>.Retry.Builder [suspend]
                 $receiver: VALUE_PARAMETER ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION name:callee type:kotlin.Function0<W of <root>.Retry.withExponentialBackoff>
                 BLOCK_BODY
-                  RETURN type=kotlin.Nothing from='local final fun suspendConversion (): B of <root>.Retry.Builder [suspend] declared in <root>.Retry.withExponentialBackoff'
-                    CALL 'public abstract fun invoke (): R of kotlin.Function0 [operator] declared in kotlin.Function0' type=B of <root>.Retry.Builder origin=null
+                  RETURN type=kotlin.Nothing from='local final fun suspendConversion (): B of <root>.Retry.Builder declared in <root>.Retry.withExponentialBackoff'
+                    CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=B of <root>.Retry.Builder origin=null
                       $this: GET_VAR 'callee: kotlin.Function0<W of <root>.Retry.withExponentialBackoff> declared in <root>.Retry.withExponentialBackoff.suspendConversion' type=kotlin.Function0<W of <root>.Retry.withExponentialBackoff> origin=null
-              FUNCTION_REFERENCE 'local final fun suspendConversion (): B of <root>.Retry.Builder [suspend] declared in <root>.Retry.withExponentialBackoff' type=kotlin.coroutines.SuspendFunction0<B of <root>.Retry.Builder> origin=SUSPEND_CONVERSION reflectionTarget=null
+              FUNCTION_REFERENCE 'local final fun suspendConversion (): B of <root>.Retry.Builder declared in <root>.Retry.withExponentialBackoff' type=kotlin.coroutines.SuspendFunction0<B of <root>.Retry.Builder> origin=SUSPEND_CONVERSION reflectionTarget=null
                 $receiver: GET_VAR 'action: kotlin.Function0<W of <root>.Retry.withExponentialBackoff> declared in <root>.Retry.withExponentialBackoff' type=kotlin.Function0<W of <root>.Retry.withExponentialBackoff> origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]

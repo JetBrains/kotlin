@@ -3,11 +3,11 @@ FILE fqName:<root> fileName:/primaryConstructorWithSuperConstructorCall.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Base
     CONSTRUCTOR visibility:public <> () returnType:<root>.Base [primary]
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Base modality:OPEN visibility:public superTypes:[kotlin.Any]'
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -22,39 +22,39 @@ FILE fqName:<root> fileName:/primaryConstructorWithSuperConstructorCall.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestImplicitPrimaryConstructor
     CONSTRUCTOR visibility:public <> () returnType:<root>.TestImplicitPrimaryConstructor [primary]
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Base'
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Base'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:TestImplicitPrimaryConstructor modality:FINAL visibility:public superTypes:[<root>.Base]'
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.Base
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Base
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
       overridden:
-        public open fun hashCode (): kotlin.Int [fake_override] declared in <root>.Base
+        public open fun hashCode (): kotlin.Int declared in <root>.Base
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
       overridden:
-        public open fun toString (): kotlin.String [fake_override] declared in <root>.Base
+        public open fun toString (): kotlin.String declared in <root>.Base
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS CLASS name:TestExplicitPrimaryConstructor modality:FINAL visibility:public superTypes:[<root>.Base]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestExplicitPrimaryConstructor
     CONSTRUCTOR visibility:public <> () returnType:<root>.TestExplicitPrimaryConstructor [primary]
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Base'
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Base'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:TestExplicitPrimaryConstructor modality:FINAL visibility:public superTypes:[<root>.Base]'
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.Base
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Base
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
       overridden:
-        public open fun hashCode (): kotlin.Int [fake_override] declared in <root>.Base
+        public open fun hashCode (): kotlin.Int declared in <root>.Base
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
       overridden:
-        public open fun toString (): kotlin.String [fake_override] declared in <root>.Base
+        public open fun toString (): kotlin.String declared in <root>.Base
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS CLASS name:TestWithDelegatingConstructor modality:FINAL visibility:public superTypes:[<root>.Base]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestWithDelegatingConstructor
@@ -62,7 +62,7 @@ FILE fqName:<root> fileName:/primaryConstructorWithSuperConstructorCall.kt
       VALUE_PARAMETER name:x index:0 type:kotlin.Int
       VALUE_PARAMETER name:y index:1 type:kotlin.Int
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Base'
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Base'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:TestWithDelegatingConstructor modality:FINAL visibility:public superTypes:[<root>.Base]'
     PROPERTY name:x visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]
@@ -89,19 +89,19 @@ FILE fqName:<root> fileName:/primaryConstructorWithSuperConstructorCall.kt
     CONSTRUCTOR visibility:public <> (x:kotlin.Int) returnType:<root>.TestWithDelegatingConstructor
       VALUE_PARAMETER name:x index:0 type:kotlin.Int
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (x: kotlin.Int, y: kotlin.Int) [primary] declared in <root>.TestWithDelegatingConstructor'
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (x: kotlin.Int, y: kotlin.Int) declared in <root>.TestWithDelegatingConstructor'
           x: GET_VAR 'x: kotlin.Int declared in <root>.TestWithDelegatingConstructor.<init>' type=kotlin.Int origin=null
           y: CONST Int type=kotlin.Int value=0
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.Base
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Base
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
       overridden:
-        public open fun hashCode (): kotlin.Int [fake_override] declared in <root>.Base
+        public open fun hashCode (): kotlin.Int declared in <root>.Base
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
       overridden:
-        public open fun toString (): kotlin.String [fake_override] declared in <root>.Base
+        public open fun toString (): kotlin.String declared in <root>.Base
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any

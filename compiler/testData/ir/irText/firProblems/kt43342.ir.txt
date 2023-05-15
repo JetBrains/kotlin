@@ -6,7 +6,7 @@ FILE fqName:<root> fileName:/kt43342.kt
     CONSTRUCTOR visibility:public <> (map:kotlin.collections.Map<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo>) returnType:<root>.ControlFlowInfo<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> [primary]
       VALUE_PARAMETER name:map index:0 type:kotlin.collections.Map<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo>
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:ControlFlowInfo modality:OPEN visibility:public superTypes:[kotlin.collections.Map<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo>]'
     PROPERTY name:map visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:map type:kotlin.collections.Map<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> visibility:private [final]
@@ -21,7 +21,7 @@ FILE fqName:<root> fileName:/kt43342.kt
               receiver: GET_VAR '<this>: <root>.ControlFlowInfo<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> declared in <root>.ControlFlowInfo.<get-map>' type=<root>.ControlFlowInfo<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> origin=null
     PROPERTY DELEGATED_MEMBER name:entries visibility:public modality:OPEN [val]
       overridden:
-        public abstract entries: kotlin.collections.Set<kotlin.collections.Map.Entry<K of kotlin.collections.Map, V of kotlin.collections.Map>> [val]
+        public abstract entries: kotlin.collections.Set<kotlin.collections.Map.Entry<K of kotlin.collections.Map, V of kotlin.collections.Map>>
       FUN DELEGATED_MEMBER name:<get-entries> visibility:public modality:OPEN <> ($this:<root>.ControlFlowInfo<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo>) returnType:kotlin.collections.Set<kotlin.collections.Map.Entry<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo>>
         correspondingProperty: PROPERTY DELEGATED_MEMBER name:entries visibility:public modality:OPEN [val]
         overridden:
@@ -34,7 +34,7 @@ FILE fqName:<root> fileName:/kt43342.kt
                 receiver: GET_VAR '<this>: <root>.ControlFlowInfo<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> declared in <root>.ControlFlowInfo.<get-entries>' type=<root>.ControlFlowInfo<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> origin=null
     PROPERTY DELEGATED_MEMBER name:keys visibility:public modality:OPEN [val]
       overridden:
-        public abstract keys: kotlin.collections.Set<K of kotlin.collections.Map> [val]
+        public abstract keys: kotlin.collections.Set<K of kotlin.collections.Map>
       FUN DELEGATED_MEMBER name:<get-keys> visibility:public modality:OPEN <> ($this:<root>.ControlFlowInfo<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo>) returnType:kotlin.collections.Set<K of <root>.ControlFlowInfo>
         correspondingProperty: PROPERTY DELEGATED_MEMBER name:keys visibility:public modality:OPEN [val]
         overridden:
@@ -47,7 +47,7 @@ FILE fqName:<root> fileName:/kt43342.kt
                 receiver: GET_VAR '<this>: <root>.ControlFlowInfo<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> declared in <root>.ControlFlowInfo.<get-keys>' type=<root>.ControlFlowInfo<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> origin=null
     PROPERTY DELEGATED_MEMBER name:size visibility:public modality:OPEN [val]
       overridden:
-        public abstract size: kotlin.Int [val]
+        public abstract size: kotlin.Int
       FUN DELEGATED_MEMBER name:<get-size> visibility:public modality:OPEN <> ($this:<root>.ControlFlowInfo<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo>) returnType:kotlin.Int
         correspondingProperty: PROPERTY DELEGATED_MEMBER name:size visibility:public modality:OPEN [val]
         overridden:
@@ -60,7 +60,7 @@ FILE fqName:<root> fileName:/kt43342.kt
                 receiver: GET_VAR '<this>: <root>.ControlFlowInfo<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> declared in <root>.ControlFlowInfo.<get-size>' type=<root>.ControlFlowInfo<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> origin=null
     PROPERTY DELEGATED_MEMBER name:values visibility:public modality:OPEN [val]
       overridden:
-        public abstract values: kotlin.collections.Collection<V of kotlin.collections.Map> [val]
+        public abstract values: kotlin.collections.Collection<V of kotlin.collections.Map>
       FUN DELEGATED_MEMBER name:<get-values> visibility:public modality:OPEN <> ($this:<root>.ControlFlowInfo<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo>) returnType:kotlin.collections.Collection<V of <root>.ControlFlowInfo>
         correspondingProperty: PROPERTY DELEGATED_MEMBER name:values visibility:public modality:OPEN [val]
         overridden:
@@ -95,12 +95,12 @@ FILE fqName:<root> fileName:/kt43342.kt
             value: GET_VAR 'value: V of <root>.ControlFlowInfo declared in <root>.ControlFlowInfo.containsValue' type=V of <root>.ControlFlowInfo origin=null
     FUN DELEGATED_MEMBER name:get visibility:public modality:OPEN <> ($this:<root>.ControlFlowInfo<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo>, key:K of <root>.ControlFlowInfo) returnType:V of <root>.ControlFlowInfo? [operator]
       overridden:
-        public abstract fun get (key: K of kotlin.collections.Map): V of kotlin.collections.Map? [operator] declared in kotlin.collections.Map
+        public abstract fun get (key: K of kotlin.collections.Map): V of kotlin.collections.Map? declared in kotlin.collections.Map
       $this: VALUE_PARAMETER name:<this> type:<root>.ControlFlowInfo<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo>
       VALUE_PARAMETER name:key index:0 type:K of <root>.ControlFlowInfo
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public open fun get (key: K of <root>.ControlFlowInfo): V of <root>.ControlFlowInfo? [operator] declared in <root>.ControlFlowInfo'
-          CALL 'public abstract fun get (key: K of kotlin.collections.Map): V of kotlin.collections.Map? [operator] declared in kotlin.collections.Map' type=V of <root>.ControlFlowInfo? origin=null
+        RETURN type=kotlin.Nothing from='public open fun get (key: K of <root>.ControlFlowInfo): V of <root>.ControlFlowInfo? declared in <root>.ControlFlowInfo'
+          CALL 'public abstract fun get (key: K of kotlin.collections.Map): V of kotlin.collections.Map? declared in kotlin.collections.Map' type=V of <root>.ControlFlowInfo? origin=null
             $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:map type:kotlin.collections.Map<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> visibility:private [final]' type=kotlin.collections.Map<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> origin=null
               receiver: GET_VAR '<this>: <root>.ControlFlowInfo<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> declared in <root>.ControlFlowInfo.get' type=<root>.ControlFlowInfo<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> origin=null
             key: GET_VAR 'key: K of <root>.ControlFlowInfo declared in <root>.ControlFlowInfo.get' type=K of <root>.ControlFlowInfo origin=null
@@ -115,23 +115,23 @@ FILE fqName:<root> fileName:/kt43342.kt
               receiver: GET_VAR '<this>: <root>.ControlFlowInfo<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> declared in <root>.ControlFlowInfo.isEmpty' type=<root>.ControlFlowInfo<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in kotlin.collections.Map
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.collections.Map
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
       overridden:
-        public open fun hashCode (): kotlin.Int [fake_override] declared in kotlin.collections.Map
+        public open fun hashCode (): kotlin.Int declared in kotlin.collections.Map
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
       overridden:
-        public open fun toString (): kotlin.String [fake_override] declared in kotlin.collections.Map
+        public open fun toString (): kotlin.String declared in kotlin.collections.Map
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS CLASS name:StringFlowInfo modality:FINAL visibility:public superTypes:[<root>.ControlFlowInfo<kotlin.String, kotlin.String>]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.StringFlowInfo
     CONSTRUCTOR visibility:public <> (map:kotlin.collections.Map<kotlin.String, kotlin.String>) returnType:<root>.StringFlowInfo [primary]
       VALUE_PARAMETER name:map index:0 type:kotlin.collections.Map<kotlin.String, kotlin.String>
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (map: kotlin.collections.Map<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo>) [primary] declared in <root>.ControlFlowInfo'
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (map: kotlin.collections.Map<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo>) declared in <root>.ControlFlowInfo'
           <K>: kotlin.String
           <V>: kotlin.String
           map: GET_VAR 'map: kotlin.collections.Map<kotlin.String, kotlin.String> declared in <root>.StringFlowInfo.<init>' type=kotlin.collections.Map<kotlin.String, kotlin.String> origin=null
@@ -141,14 +141,14 @@ FILE fqName:<root> fileName:/kt43342.kt
       VALUE_PARAMETER name:info index:0 type:<root>.StringFlowInfo
       BLOCK_BODY
         TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-          CALL 'public open fun <get-keys> (): kotlin.collections.Set<kotlin.String> [fake_override] declared in <root>.StringFlowInfo' type=kotlin.collections.Set<kotlin.String> origin=GET_PROPERTY
+          CALL 'public open fun <get-keys> (): kotlin.collections.Set<kotlin.String> declared in <root>.StringFlowInfo' type=kotlin.collections.Set<kotlin.String> origin=GET_PROPERTY
             $this: GET_VAR '<this>: <root>.StringFlowInfo declared in <root>.StringFlowInfo.foo' type=<root>.StringFlowInfo origin=null
         TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-          CALL 'public open fun <get-keys> (): kotlin.collections.Set<kotlin.String> [fake_override] declared in <root>.StringFlowInfo' type=kotlin.collections.Set<kotlin.String> origin=GET_PROPERTY
+          CALL 'public open fun <get-keys> (): kotlin.collections.Set<kotlin.String> declared in <root>.StringFlowInfo' type=kotlin.collections.Set<kotlin.String> origin=GET_PROPERTY
             $this: GET_VAR 'info: <root>.StringFlowInfo declared in <root>.StringFlowInfo.foo' type=<root>.StringFlowInfo origin=null
     PROPERTY FAKE_OVERRIDE name:map visibility:public modality:FINAL [fake_override,val]
       overridden:
-        public final map: kotlin.collections.Map<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> [val]
+        public final map: kotlin.collections.Map<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo>
       FUN FAKE_OVERRIDE name:<get-map> visibility:public modality:FINAL <> ($this:<root>.ControlFlowInfo<kotlin.String, kotlin.String>) returnType:kotlin.collections.Map<kotlin.String, kotlin.String> [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:map visibility:public modality:FINAL [fake_override,val]
         overridden:
@@ -156,7 +156,7 @@ FILE fqName:<root> fileName:/kt43342.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.ControlFlowInfo<kotlin.String, kotlin.String>
     PROPERTY FAKE_OVERRIDE name:entries visibility:public modality:OPEN [fake_override,val]
       overridden:
-        public open entries: kotlin.collections.Set<kotlin.collections.Map.Entry<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo>> [val]
+        public open entries: kotlin.collections.Set<kotlin.collections.Map.Entry<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo>>
       FUN FAKE_OVERRIDE name:<get-entries> visibility:public modality:OPEN <> ($this:<root>.ControlFlowInfo<kotlin.String, kotlin.String>) returnType:kotlin.collections.Set<kotlin.collections.Map.Entry<kotlin.String, kotlin.String>> [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:entries visibility:public modality:OPEN [fake_override,val]
         overridden:
@@ -164,7 +164,7 @@ FILE fqName:<root> fileName:/kt43342.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.ControlFlowInfo<kotlin.String, kotlin.String>
     PROPERTY FAKE_OVERRIDE name:keys visibility:public modality:OPEN [fake_override,val]
       overridden:
-        public open keys: kotlin.collections.Set<K of <root>.ControlFlowInfo> [val]
+        public open keys: kotlin.collections.Set<K of <root>.ControlFlowInfo>
       FUN FAKE_OVERRIDE name:<get-keys> visibility:public modality:OPEN <> ($this:<root>.ControlFlowInfo<kotlin.String, kotlin.String>) returnType:kotlin.collections.Set<kotlin.String> [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:keys visibility:public modality:OPEN [fake_override,val]
         overridden:
@@ -172,7 +172,7 @@ FILE fqName:<root> fileName:/kt43342.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.ControlFlowInfo<kotlin.String, kotlin.String>
     PROPERTY FAKE_OVERRIDE name:size visibility:public modality:OPEN [fake_override,val]
       overridden:
-        public open size: kotlin.Int [val]
+        public open size: kotlin.Int
       FUN FAKE_OVERRIDE name:<get-size> visibility:public modality:OPEN <> ($this:<root>.ControlFlowInfo<kotlin.String, kotlin.String>) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:size visibility:public modality:OPEN [fake_override,val]
         overridden:
@@ -180,7 +180,7 @@ FILE fqName:<root> fileName:/kt43342.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.ControlFlowInfo<kotlin.String, kotlin.String>
     PROPERTY FAKE_OVERRIDE name:values visibility:public modality:OPEN [fake_override,val]
       overridden:
-        public open values: kotlin.collections.Collection<V of <root>.ControlFlowInfo> [val]
+        public open values: kotlin.collections.Collection<V of <root>.ControlFlowInfo>
       FUN FAKE_OVERRIDE name:<get-values> visibility:public modality:OPEN <> ($this:<root>.ControlFlowInfo<kotlin.String, kotlin.String>) returnType:kotlin.collections.Collection<kotlin.String> [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:values visibility:public modality:OPEN [fake_override,val]
         overridden:
@@ -198,17 +198,17 @@ FILE fqName:<root> fileName:/kt43342.kt
       VALUE_PARAMETER name:value index:0 type:kotlin.String
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.ControlFlowInfo
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.ControlFlowInfo
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:get visibility:public modality:OPEN <> ($this:<root>.ControlFlowInfo<kotlin.String, kotlin.String>, key:kotlin.String) returnType:kotlin.String? [fake_override,operator]
       overridden:
-        public open fun get (key: K of <root>.ControlFlowInfo): V of <root>.ControlFlowInfo? [operator] declared in <root>.ControlFlowInfo
+        public open fun get (key: K of <root>.ControlFlowInfo): V of <root>.ControlFlowInfo? declared in <root>.ControlFlowInfo
       $this: VALUE_PARAMETER name:<this> type:<root>.ControlFlowInfo<kotlin.String, kotlin.String>
       VALUE_PARAMETER name:key index:0 type:kotlin.String
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
       overridden:
-        public open fun hashCode (): kotlin.Int [fake_override] declared in <root>.ControlFlowInfo
+        public open fun hashCode (): kotlin.Int declared in <root>.ControlFlowInfo
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN FAKE_OVERRIDE name:isEmpty visibility:public modality:OPEN <> ($this:<root>.ControlFlowInfo<kotlin.String, kotlin.String>) returnType:kotlin.Boolean [fake_override]
       overridden:
@@ -216,5 +216,5 @@ FILE fqName:<root> fileName:/kt43342.kt
       $this: VALUE_PARAMETER name:<this> type:<root>.ControlFlowInfo<kotlin.String, kotlin.String>
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
       overridden:
-        public open fun toString (): kotlin.String [fake_override] declared in <root>.ControlFlowInfo
+        public open fun toString (): kotlin.String declared in <root>.ControlFlowInfo
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any

@@ -7,7 +7,7 @@ FILE fqName:<root> fileName:/lambdaInCAO.kt
     $receiver: VALUE_PARAMETER name:<this> type:kotlin.Any
     VALUE_PARAMETER name:index index:0 type:kotlin.Function0<kotlin.Unit>
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun get (index: kotlin.Function0<kotlin.Unit>): kotlin.Int [operator] declared in <root>'
+      RETURN type=kotlin.Nothing from='public final fun get (index: kotlin.Function0<kotlin.Unit>): kotlin.Int declared in <root>'
         CONST Int type=kotlin.Int value=42
   FUN name:set visibility:public modality:FINAL <> ($receiver:kotlin.Any, index:kotlin.Function0<kotlin.Unit>, value:kotlin.Int) returnType:kotlin.Unit [operator]
     $receiver: VALUE_PARAMETER name:<this> type:kotlin.Any
@@ -17,7 +17,7 @@ FILE fqName:<root> fileName:/lambdaInCAO.kt
   FUN name:test1 visibility:public modality:FINAL <> (a:kotlin.Any) returnType:kotlin.Unit
     VALUE_PARAMETER name:a index:0 type:kotlin.Any
     BLOCK_BODY
-      CALL 'public final fun plusAssign (lambda: kotlin.Function0<kotlin.Unit>): kotlin.Unit [operator] declared in <root>' type=kotlin.Unit origin=PLUSEQ
+      CALL 'public final fun plusAssign (lambda: kotlin.Function0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=PLUSEQ
         $receiver: GET_VAR 'a: kotlin.Any declared in <root>.test1' type=kotlin.Any origin=PLUSEQ
         lambda: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
           FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
@@ -36,13 +36,13 @@ FILE fqName:<root> fileName:/lambdaInCAO.kt
               BLOCK_BODY
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Unit declared in <root>.test2'
                   GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
-        CALL 'public final fun set (index: kotlin.Function0<kotlin.Unit>, value: kotlin.Int): kotlin.Unit [operator] declared in <root>' type=kotlin.Unit origin=PLUSEQ
-          $receiver: GET_VAR 'val tmp_0: kotlin.Any [val] declared in <root>.test2' type=kotlin.Any origin=null
-          index: GET_VAR 'val tmp_1: kotlin.Function0<kotlin.Unit> [val] declared in <root>.test2' type=kotlin.Function0<kotlin.Unit> origin=null
-          value: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=PLUSEQ
-            $this: CALL 'public final fun get (index: kotlin.Function0<kotlin.Unit>): kotlin.Int [operator] declared in <root>' type=kotlin.Int origin=PLUSEQ
-              $receiver: GET_VAR 'val tmp_0: kotlin.Any [val] declared in <root>.test2' type=kotlin.Any origin=null
-              index: GET_VAR 'val tmp_1: kotlin.Function0<kotlin.Unit> [val] declared in <root>.test2' type=kotlin.Function0<kotlin.Unit> origin=null
+        CALL 'public final fun set (index: kotlin.Function0<kotlin.Unit>, value: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=PLUSEQ
+          $receiver: GET_VAR 'val tmp_0: kotlin.Any declared in <root>.test2' type=kotlin.Any origin=null
+          index: GET_VAR 'val tmp_1: kotlin.Function0<kotlin.Unit> declared in <root>.test2' type=kotlin.Function0<kotlin.Unit> origin=null
+          value: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUSEQ
+            $this: CALL 'public final fun get (index: kotlin.Function0<kotlin.Unit>): kotlin.Int declared in <root>' type=kotlin.Int origin=PLUSEQ
+              $receiver: GET_VAR 'val tmp_0: kotlin.Any declared in <root>.test2' type=kotlin.Any origin=null
+              index: GET_VAR 'val tmp_1: kotlin.Function0<kotlin.Unit> declared in <root>.test2' type=kotlin.Function0<kotlin.Unit> origin=null
             other: CONST Int type=kotlin.Int value=42
   FUN name:test3 visibility:public modality:FINAL <> (a:kotlin.Any) returnType:kotlin.Unit
     VALUE_PARAMETER name:a index:0 type:kotlin.Any
@@ -58,12 +58,12 @@ FILE fqName:<root> fileName:/lambdaInCAO.kt
                   RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Unit declared in <root>.test3'
                     GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
           VAR IR_TEMPORARY_VARIABLE name:tmp_4 type:kotlin.Int [val]
-            CALL 'public final fun get (index: kotlin.Function0<kotlin.Unit>): kotlin.Int [operator] declared in <root>' type=kotlin.Int origin=POSTFIX_INCR
-              $receiver: GET_VAR 'val tmp_2: kotlin.Any [val] declared in <root>.test3' type=kotlin.Any origin=null
-              index: GET_VAR 'val tmp_3: kotlin.Function0<kotlin.Unit> [val] declared in <root>.test3' type=kotlin.Function0<kotlin.Unit> origin=null
-          CALL 'public final fun set (index: kotlin.Function0<kotlin.Unit>, value: kotlin.Int): kotlin.Unit [operator] declared in <root>' type=kotlin.Unit origin=POSTFIX_INCR
-            $receiver: GET_VAR 'val tmp_2: kotlin.Any [val] declared in <root>.test3' type=kotlin.Any origin=null
-            index: GET_VAR 'val tmp_3: kotlin.Function0<kotlin.Unit> [val] declared in <root>.test3' type=kotlin.Function0<kotlin.Unit> origin=null
-            value: CALL 'public final fun inc (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_INCR
-              $this: GET_VAR 'val tmp_4: kotlin.Int [val] declared in <root>.test3' type=kotlin.Int origin=null
-          GET_VAR 'val tmp_4: kotlin.Int [val] declared in <root>.test3' type=kotlin.Int origin=null
+            CALL 'public final fun get (index: kotlin.Function0<kotlin.Unit>): kotlin.Int declared in <root>' type=kotlin.Int origin=POSTFIX_INCR
+              $receiver: GET_VAR 'val tmp_2: kotlin.Any declared in <root>.test3' type=kotlin.Any origin=null
+              index: GET_VAR 'val tmp_3: kotlin.Function0<kotlin.Unit> declared in <root>.test3' type=kotlin.Function0<kotlin.Unit> origin=null
+          CALL 'public final fun set (index: kotlin.Function0<kotlin.Unit>, value: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=POSTFIX_INCR
+            $receiver: GET_VAR 'val tmp_2: kotlin.Any declared in <root>.test3' type=kotlin.Any origin=null
+            index: GET_VAR 'val tmp_3: kotlin.Function0<kotlin.Unit> declared in <root>.test3' type=kotlin.Function0<kotlin.Unit> origin=null
+            value: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_INCR
+              $this: GET_VAR 'val tmp_4: kotlin.Int declared in <root>.test3' type=kotlin.Int origin=null
+          GET_VAR 'val tmp_4: kotlin.Int declared in <root>.test3' type=kotlin.Int origin=null

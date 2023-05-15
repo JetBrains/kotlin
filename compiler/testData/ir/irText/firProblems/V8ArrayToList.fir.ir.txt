@@ -3,11 +3,11 @@ FILE fqName:<root> fileName:/v8arrayToList.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.V8Array
     CONSTRUCTOR visibility:public <> () returnType:<root>.V8Array [primary]
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:V8Array modality:FINAL visibility:public superTypes:[kotlin.Any]'
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -21,12 +21,12 @@ FILE fqName:<root> fileName:/v8arrayToList.kt
   FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
     BLOCK_BODY
       VAR name:array type:<root>.V8Array [val]
-        CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.V8Array' type=<root>.V8Array origin=null
+        CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.V8Array' type=<root>.V8Array origin=null
       VAR name:list type:kotlin.collections.List<kotlin.String> [val]
         TYPE_OP type=kotlin.collections.List<kotlin.String> origin=CAST typeOperand=kotlin.collections.List<kotlin.String>
           CALL 'public open fun toList (array: @[FlexibleNullability] <root>.V8Array?): @[FlexibleNullability] kotlin.collections.MutableList<in @[FlexibleNullability] kotlin.Any?>? declared in <root>.Utils' type=@[FlexibleNullability] kotlin.collections.MutableList<in @[FlexibleNullability] kotlin.Any?>? origin=null
-            array: GET_VAR 'val array: <root>.V8Array [val] declared in <root>.box' type=<root>.V8Array origin=null
+            array: GET_VAR 'val array: <root>.V8Array declared in <root>.box' type=<root>.V8Array origin=null
       RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
-        CALL 'public abstract fun get (index: kotlin.Int): E of kotlin.collections.List [operator] declared in kotlin.collections.List' type=kotlin.String origin=null
-          $this: GET_VAR 'val list: kotlin.collections.List<kotlin.String> [val] declared in <root>.box' type=kotlin.collections.List<kotlin.String> origin=null
+        CALL 'public abstract fun get (index: kotlin.Int): E of kotlin.collections.List declared in kotlin.collections.List' type=kotlin.String origin=null
+          $this: GET_VAR 'val list: kotlin.collections.List<kotlin.String> declared in <root>.box' type=kotlin.collections.List<kotlin.String> origin=null
           index: CONST Int type=kotlin.Int value=0

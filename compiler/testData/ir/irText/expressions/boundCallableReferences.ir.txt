@@ -3,7 +3,7 @@ FILE fqName:<root> fileName:/boundCallableReferences.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A
     CONSTRUCTOR visibility:public <> () returnType:<root>.A [primary]
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:FINAL visibility:public superTypes:[kotlin.Any]'
     FUN name:foo visibility:public modality:FINAL <> ($this:<root>.A) returnType:kotlin.Unit
       $this: VALUE_PARAMETER name:<this> type:<root>.A
@@ -21,7 +21,7 @@ FILE fqName:<root> fileName:/boundCallableReferences.kt
               receiver: GET_VAR '<this>: <root>.A declared in <root>.A.<get-bar>' type=<root>.A origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -39,7 +39,7 @@ FILE fqName:<root> fileName:/boundCallableReferences.kt
     FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.reflect.KFunction0<kotlin.Unit> visibility:private [final,static]
       EXPRESSION_BODY
         FUNCTION_REFERENCE 'public final fun foo (): kotlin.Unit declared in <root>.A' type=kotlin.reflect.KFunction0<kotlin.Unit> origin=null reflectionTarget=<same>
-          $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.A' type=<root>.A origin=null
+          $this: CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.A' type=<root>.A origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test1> visibility:public modality:FINAL <> () returnType:kotlin.reflect.KFunction0<kotlin.Unit>
       correspondingProperty: PROPERTY name:test1 visibility:public modality:FINAL [val]
       BLOCK_BODY
@@ -48,8 +48,8 @@ FILE fqName:<root> fileName:/boundCallableReferences.kt
   PROPERTY name:test2 visibility:public modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.reflect.KProperty0<kotlin.Int> visibility:private [final,static]
       EXPRESSION_BODY
-        PROPERTY_REFERENCE 'public final bar: kotlin.Int [val]' field=null getter='public final fun <get-bar> (): kotlin.Int declared in <root>.A' setter=null type=kotlin.reflect.KProperty0<kotlin.Int> origin=null
-          $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.A' type=<root>.A origin=null
+        PROPERTY_REFERENCE 'public final bar: kotlin.Int' field=null getter='public final fun <get-bar> (): kotlin.Int declared in <root>.A' setter=null type=kotlin.reflect.KProperty0<kotlin.Int> origin=null
+          $this: CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.A' type=<root>.A origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test2> visibility:public modality:FINAL <> () returnType:kotlin.reflect.KProperty0<kotlin.Int>
       correspondingProperty: PROPERTY name:test2 visibility:public modality:FINAL [val]
       BLOCK_BODY
@@ -59,7 +59,7 @@ FILE fqName:<root> fileName:/boundCallableReferences.kt
     FIELD PROPERTY_BACKING_FIELD name:test3 type:kotlin.reflect.KFunction0<kotlin.Unit> visibility:private [final,static]
       EXPRESSION_BODY
         FUNCTION_REFERENCE 'public final fun qux (): kotlin.Unit declared in <root>' type=kotlin.reflect.KFunction0<kotlin.Unit> origin=null reflectionTarget=<same>
-          $receiver: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.A' type=<root>.A origin=null
+          $receiver: CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.A' type=<root>.A origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test3> visibility:public modality:FINAL <> () returnType:kotlin.reflect.KFunction0<kotlin.Unit>
       correspondingProperty: PROPERTY name:test3 visibility:public modality:FINAL [val]
       BLOCK_BODY

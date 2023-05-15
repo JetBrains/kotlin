@@ -15,14 +15,14 @@ FILE fqName:<root> fileName:/suspendConversionForExtensionFunction.kt
             BLOCK_BODY
               RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Unit declared in <root>.main'
                 GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
-      CALL 'public abstract fun invoke (p1: P1 of kotlin.Function2, p2: P2 of kotlin.Function2): R of kotlin.Function2 [operator] declared in kotlin.Function2' type=kotlin.Unit origin=INVOKE
-        $this: GET_VAR 'val foo: @[ExtensionFunctionType] kotlin.Function2<kotlin.String, kotlin.coroutines.SuspendFunction0<kotlin.Unit>, kotlin.Unit> [val] declared in <root>.main' type=@[ExtensionFunctionType] kotlin.Function2<kotlin.String, kotlin.coroutines.SuspendFunction0<kotlin.Unit>, kotlin.Unit> origin=VARIABLE_AS_FUNCTION
+      CALL 'public abstract fun invoke (p1: P1 of kotlin.Function2, p2: P2 of kotlin.Function2): R of kotlin.Function2 declared in kotlin.Function2' type=kotlin.Unit origin=INVOKE
+        $this: GET_VAR 'val foo: @[ExtensionFunctionType] kotlin.Function2<kotlin.String, kotlin.coroutines.SuspendFunction0<kotlin.Unit>, kotlin.Unit> declared in <root>.main' type=@[ExtensionFunctionType] kotlin.Function2<kotlin.String, kotlin.coroutines.SuspendFunction0<kotlin.Unit>, kotlin.Unit> origin=VARIABLE_AS_FUNCTION
         p1: CONST String type=kotlin.String value=""
         p2: BLOCK type=kotlin.coroutines.SuspendFunction0<kotlin.Unit> origin=SUSPEND_CONVERSION
           FUN ADAPTER_FOR_SUSPEND_CONVERSION name:suspendConversion visibility:local modality:FINAL <> ($receiver:kotlin.Function0<kotlin.Unit>) returnType:kotlin.Unit [suspend]
             $receiver: VALUE_PARAMETER ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION name:callee type:kotlin.Function0<kotlin.Unit>
             BLOCK_BODY
-              CALL 'public abstract fun invoke (): R of kotlin.Function0 [operator] declared in kotlin.Function0' type=kotlin.Unit origin=null
+              CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.Unit origin=null
                 $this: GET_VAR 'callee: kotlin.Function0<kotlin.Unit> declared in <root>.main.suspendConversion' type=kotlin.Function0<kotlin.Unit> origin=null
-          FUNCTION_REFERENCE 'local final fun suspendConversion (): kotlin.Unit [suspend] declared in <root>.main' type=kotlin.coroutines.SuspendFunction0<kotlin.Unit> origin=SUSPEND_CONVERSION reflectionTarget=null
-            $receiver: GET_VAR 'val f: kotlin.Function0<kotlin.Unit> [val] declared in <root>.main' type=kotlin.Function0<kotlin.Unit> origin=null
+          FUNCTION_REFERENCE 'local final fun suspendConversion (): kotlin.Unit declared in <root>.main' type=kotlin.coroutines.SuspendFunction0<kotlin.Unit> origin=SUSPEND_CONVERSION reflectionTarget=null
+            $receiver: GET_VAR 'val f: kotlin.Function0<kotlin.Unit> declared in <root>.main' type=kotlin.Function0<kotlin.Unit> origin=null

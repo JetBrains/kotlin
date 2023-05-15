@@ -4,7 +4,7 @@ FILE fqName:<root> fileName:/kt31649.kt
     CONSTRUCTOR visibility:public <> (nn:kotlin.Nothing?) returnType:<root>.TestData [primary]
       VALUE_PARAMETER name:nn index:0 type:kotlin.Nothing?
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:TestData modality:FINAL visibility:public [data] superTypes:[kotlin.Any]'
     PROPERTY name:nn visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:nn type:kotlin.Nothing? visibility:private [final]
@@ -20,7 +20,7 @@ FILE fqName:<root> fileName:/kt31649.kt
     FUN GENERATED_DATA_CLASS_MEMBER name:component1 visibility:public modality:FINAL <> ($this:<root>.TestData) returnType:kotlin.Nothing? [operator]
       $this: VALUE_PARAMETER name:<this> type:<root>.TestData
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun component1 (): kotlin.Nothing? [operator] declared in <root>.TestData'
+        RETURN type=kotlin.Nothing from='public final fun component1 (): kotlin.Nothing? declared in <root>.TestData'
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:nn type:kotlin.Nothing? visibility:private [final]' type=kotlin.Nothing? origin=null
             receiver: GET_VAR '<this>: <root>.TestData declared in <root>.TestData.component1' type=<root>.TestData origin=null
     FUN GENERATED_DATA_CLASS_MEMBER name:copy visibility:public modality:FINAL <> ($this:<root>.TestData, nn:kotlin.Nothing?) returnType:<root>.TestData
@@ -31,7 +31,7 @@ FILE fqName:<root> fileName:/kt31649.kt
             receiver: GET_VAR '<this>: <root>.TestData declared in <root>.TestData.copy' type=<root>.TestData origin=null
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun copy (nn: kotlin.Nothing?): <root>.TestData declared in <root>.TestData'
-          CONSTRUCTOR_CALL 'public constructor <init> (nn: kotlin.Nothing?) [primary] declared in <root>.TestData' type=<root>.TestData origin=null
+          CONSTRUCTOR_CALL 'public constructor <init> (nn: kotlin.Nothing?) declared in <root>.TestData' type=<root>.TestData origin=null
             nn: GET_VAR 'nn: kotlin.Nothing? declared in <root>.TestData.copy' type=kotlin.Nothing? origin=null
     FUN GENERATED_DATA_CLASS_MEMBER name:toString visibility:public modality:OPEN <> ($this:<root>.TestData) returnType:kotlin.String
       overridden:
@@ -65,7 +65,7 @@ FILE fqName:<root> fileName:/kt31649.kt
                   receiver: GET_VAR '<this>: <root>.TestData declared in <root>.TestData.hashCode' type=<root>.TestData origin=null
     FUN GENERATED_DATA_CLASS_MEMBER name:equals visibility:public modality:OPEN <> ($this:<root>.TestData, other:kotlin.Any?) returnType:kotlin.Boolean [operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:<root>.TestData
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
       BLOCK_BODY
@@ -74,35 +74,35 @@ FILE fqName:<root> fileName:/kt31649.kt
             if: CALL 'public final fun EQEQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQEQ
               arg0: GET_VAR '<this>: <root>.TestData declared in <root>.TestData.equals' type=<root>.TestData origin=null
               arg1: GET_VAR 'other: kotlin.Any? declared in <root>.TestData.equals' type=kotlin.Any? origin=null
-            then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in <root>.TestData'
+            then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.TestData'
               CONST Boolean type=kotlin.Boolean value=true
         WHEN type=kotlin.Unit origin=null
           BRANCH
             if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=<root>.TestData
               GET_VAR 'other: kotlin.Any? declared in <root>.TestData.equals' type=kotlin.Any? origin=null
-            then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in <root>.TestData'
+            then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.TestData'
               CONST Boolean type=kotlin.Boolean value=false
         VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:<root>.TestData [val]
           TYPE_OP type=<root>.TestData origin=CAST typeOperand=<root>.TestData
             GET_VAR 'other: kotlin.Any? declared in <root>.TestData.equals' type=kotlin.Any? origin=null
         WHEN type=kotlin.Unit origin=null
           BRANCH
-            if: CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+            if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
               $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
                 arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:nn type:kotlin.Nothing? visibility:private [final]' type=kotlin.Nothing? origin=null
                   receiver: GET_VAR '<this>: <root>.TestData declared in <root>.TestData.equals' type=<root>.TestData origin=null
                 arg1: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:nn type:kotlin.Nothing? visibility:private [final]' type=kotlin.Nothing? origin=null
-                  receiver: GET_VAR 'val tmp_0: <root>.TestData [val] declared in <root>.TestData.equals' type=<root>.TestData origin=null
-            then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in <root>.TestData'
+                  receiver: GET_VAR 'val tmp_0: <root>.TestData declared in <root>.TestData.equals' type=<root>.TestData origin=null
+            then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.TestData'
               CONST Boolean type=kotlin.Boolean value=false
-        RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in <root>.TestData'
+        RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.TestData'
           CONST Boolean type=kotlin.Boolean value=true
   CLASS CLASS name:TestInline modality:FINAL visibility:public [value] superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestInline
     CONSTRUCTOR visibility:public <> (nn:kotlin.Nothing?) returnType:<root>.TestInline [primary]
       VALUE_PARAMETER name:nn index:0 type:kotlin.Nothing?
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:TestInline modality:FINAL visibility:public [value] superTypes:[kotlin.Any]'
     PROPERTY name:nn visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:nn type:kotlin.Nothing? visibility:private [final]
@@ -147,7 +147,7 @@ FILE fqName:<root> fileName:/kt31649.kt
                   receiver: GET_VAR '<this>: <root>.TestInline declared in <root>.TestInline.hashCode' type=<root>.TestInline origin=null
     FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:equals visibility:public modality:OPEN <> ($this:<root>.TestInline, other:kotlin.Any?) returnType:kotlin.Boolean [operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:<root>.TestInline
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
       BLOCK_BODY
@@ -155,20 +155,20 @@ FILE fqName:<root> fileName:/kt31649.kt
           BRANCH
             if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=<root>.TestInline
               GET_VAR 'other: kotlin.Any? declared in <root>.TestInline.equals' type=kotlin.Any? origin=null
-            then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in <root>.TestInline'
+            then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.TestInline'
               CONST Boolean type=kotlin.Boolean value=false
         VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:<root>.TestInline [val]
           TYPE_OP type=<root>.TestInline origin=CAST typeOperand=<root>.TestInline
             GET_VAR 'other: kotlin.Any? declared in <root>.TestInline.equals' type=kotlin.Any? origin=null
         WHEN type=kotlin.Unit origin=null
           BRANCH
-            if: CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+            if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
               $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
                 arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:nn type:kotlin.Nothing? visibility:private [final]' type=kotlin.Nothing? origin=null
                   receiver: GET_VAR '<this>: <root>.TestInline declared in <root>.TestInline.equals' type=<root>.TestInline origin=null
                 arg1: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:nn type:kotlin.Nothing? visibility:private [final]' type=kotlin.Nothing? origin=null
-                  receiver: GET_VAR 'val tmp_1: <root>.TestInline [val] declared in <root>.TestInline.equals' type=<root>.TestInline origin=null
-            then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in <root>.TestInline'
+                  receiver: GET_VAR 'val tmp_1: <root>.TestInline declared in <root>.TestInline.equals' type=<root>.TestInline origin=null
+            then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.TestInline'
               CONST Boolean type=kotlin.Boolean value=false
-        RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in <root>.TestInline'
+        RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.TestInline'
           CONST Boolean type=kotlin.Boolean value=true

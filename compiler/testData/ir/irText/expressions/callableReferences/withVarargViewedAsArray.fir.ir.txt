@@ -6,22 +6,22 @@ FILE fqName:<root> fileName:/withVarargViewedAsArray.kt
         CONST Int type=kotlin.Int value=0
       BLOCK type=kotlin.Unit origin=FOR_LOOP
         VAR FOR_LOOP_ITERATOR name:tmp_0 type:kotlin.collections.IntIterator [val]
-          CALL 'public final fun iterator (): kotlin.collections.IntIterator [operator] declared in kotlin.IntArray' type=kotlin.collections.IntIterator origin=null
-            $this: GET_VAR 'args: kotlin.IntArray [vararg] declared in <root>.sum' type=kotlin.IntArray origin=null
+          CALL 'public final fun iterator (): kotlin.collections.IntIterator declared in kotlin.IntArray' type=kotlin.collections.IntIterator origin=null
+            $this: GET_VAR 'args: kotlin.IntArray declared in <root>.sum' type=kotlin.IntArray origin=null
         WHILE label=null origin=FOR_LOOP_INNER_WHILE
-          condition: CALL 'public abstract fun hasNext (): kotlin.Boolean [fake_override,operator] declared in kotlin.collections.IntIterator' type=kotlin.Boolean origin=FOR_LOOP_HAS_NEXT
-            $this: GET_VAR 'val tmp_0: kotlin.collections.IntIterator [val] declared in <root>.sum' type=kotlin.collections.IntIterator origin=null
+          condition: CALL 'public abstract fun hasNext (): kotlin.Boolean declared in kotlin.collections.IntIterator' type=kotlin.Boolean origin=FOR_LOOP_HAS_NEXT
+            $this: GET_VAR 'val tmp_0: kotlin.collections.IntIterator declared in <root>.sum' type=kotlin.collections.IntIterator origin=null
           body: BLOCK type=kotlin.Unit origin=FOR_LOOP_INNER_WHILE
             VAR FOR_LOOP_VARIABLE name:arg type:kotlin.Int [val]
-              CALL 'public final fun next (): kotlin.Int [operator] declared in kotlin.collections.IntIterator' type=kotlin.Int origin=FOR_LOOP_NEXT
-                $this: GET_VAR 'val tmp_0: kotlin.collections.IntIterator [val] declared in <root>.sum' type=kotlin.collections.IntIterator origin=null
+              CALL 'public final fun next (): kotlin.Int declared in kotlin.collections.IntIterator' type=kotlin.Int origin=FOR_LOOP_NEXT
+                $this: GET_VAR 'val tmp_0: kotlin.collections.IntIterator declared in <root>.sum' type=kotlin.collections.IntIterator origin=null
             BLOCK type=kotlin.Unit origin=null
-              SET_VAR 'var result: kotlin.Int [var] declared in <root>.sum' type=kotlin.Unit origin=PLUSEQ
-                CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
-                  $this: GET_VAR 'var result: kotlin.Int [var] declared in <root>.sum' type=kotlin.Int origin=null
-                  other: GET_VAR 'val arg: kotlin.Int [val] declared in <root>.sum' type=kotlin.Int origin=null
+              SET_VAR 'var result: kotlin.Int declared in <root>.sum' type=kotlin.Unit origin=PLUSEQ
+                CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+                  $this: GET_VAR 'var result: kotlin.Int declared in <root>.sum' type=kotlin.Int origin=null
+                  other: GET_VAR 'val arg: kotlin.Int declared in <root>.sum' type=kotlin.Int origin=null
       RETURN type=kotlin.Nothing from='public final fun sum (vararg args: kotlin.Int): kotlin.Int declared in <root>'
-        GET_VAR 'var result: kotlin.Int [var] declared in <root>.sum' type=kotlin.Int origin=null
+        GET_VAR 'var result: kotlin.Int declared in <root>.sum' type=kotlin.Int origin=null
   FUN name:nsum visibility:public modality:FINAL <> (args:kotlin.Array<out kotlin.Number>) returnType:kotlin.Int
     VALUE_PARAMETER name:args index:0 type:kotlin.Array<out kotlin.Number> varargElementType:kotlin.Number [vararg]
     BLOCK_BODY
@@ -31,15 +31,15 @@ FILE fqName:<root> fileName:/withVarargViewedAsArray.kt
             SPREAD_ELEMENT
               CONSTRUCTOR_CALL 'public constructor <init> (size: kotlin.Int, init: kotlin.Function1<kotlin.Int, kotlin.Int>) declared in kotlin.IntArray' type=kotlin.IntArray origin=null
                 size: CALL 'public final fun <get-size> (): kotlin.Int declared in kotlin.Array' type=kotlin.Int origin=GET_PROPERTY
-                  $this: GET_VAR 'args: kotlin.Array<out kotlin.Number> [vararg] declared in <root>.nsum' type=kotlin.Array<out kotlin.Number> origin=null
+                  $this: GET_VAR 'args: kotlin.Array<out kotlin.Number> declared in <root>.nsum' type=kotlin.Array<out kotlin.Number> origin=null
                 init: FUN_EXPR type=kotlin.Function1<kotlin.Int, kotlin.Int> origin=LAMBDA
                   FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:kotlin.Int) returnType:kotlin.Int
                     VALUE_PARAMETER name:it index:0 type:kotlin.Int
                     BLOCK_BODY
                       RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: kotlin.Int): kotlin.Int declared in <root>.nsum'
                         CALL 'public abstract fun toInt (): kotlin.Int declared in kotlin.Number' type=kotlin.Int origin=null
-                          $this: CALL 'public final fun get (index: kotlin.Int): T of kotlin.Array [operator] declared in kotlin.Array' type=kotlin.Number origin=null
-                            $this: GET_VAR 'args: kotlin.Array<out kotlin.Number> [vararg] declared in <root>.nsum' type=kotlin.Array<out kotlin.Number> origin=null
+                          $this: CALL 'public final fun get (index: kotlin.Int): T of kotlin.Array declared in kotlin.Array' type=kotlin.Number origin=null
+                            $this: GET_VAR 'args: kotlin.Array<out kotlin.Number> declared in <root>.nsum' type=kotlin.Array<out kotlin.Number> origin=null
                             index: GET_VAR 'it: kotlin.Int declared in <root>.nsum.<anonymous>' type=kotlin.Int origin=null
   FUN name:zap visibility:public modality:FINAL <> (b:kotlin.Array<out kotlin.String>, k:kotlin.Int) returnType:kotlin.Unit
     VALUE_PARAMETER name:b index:0 type:kotlin.Array<out kotlin.String> varargElementType:kotlin.String [vararg]

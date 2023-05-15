@@ -4,7 +4,7 @@ FILE fqName:<root> fileName:/local.kt
     CONSTRUCTOR visibility:public <> (value:kotlin.String) returnType:<root>.Delegate [primary]
       VALUE_PARAMETER name:value index:0 type:kotlin.String
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Delegate modality:FINAL visibility:public superTypes:[kotlin.Any]'
     PROPERTY name:value visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.String visibility:private [final]
@@ -22,12 +22,12 @@ FILE fqName:<root> fileName:/local.kt
       VALUE_PARAMETER name:thisRef index:0 type:kotlin.Any?
       VALUE_PARAMETER name:property index:1 type:kotlin.Any?
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun getValue (thisRef: kotlin.Any?, property: kotlin.Any?): kotlin.String [operator] declared in <root>.Delegate'
+        RETURN type=kotlin.Nothing from='public final fun getValue (thisRef: kotlin.Any?, property: kotlin.Any?): kotlin.String declared in <root>.Delegate'
           CALL 'public final fun <get-value> (): kotlin.String declared in <root>.Delegate' type=kotlin.String origin=GET_PROPERTY
             $this: GET_VAR '<this>: <root>.Delegate declared in <root>.Delegate.getValue' type=<root>.Delegate origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -43,7 +43,7 @@ FILE fqName:<root> fileName:/local.kt
     CONSTRUCTOR visibility:public <> (value:kotlin.String) returnType:<root>.DelegateProvider [primary]
       VALUE_PARAMETER name:value index:0 type:kotlin.String
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:DelegateProvider modality:FINAL visibility:public superTypes:[kotlin.Any]'
     PROPERTY name:value visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.String visibility:private [final]
@@ -61,13 +61,13 @@ FILE fqName:<root> fileName:/local.kt
       VALUE_PARAMETER name:thisRef index:0 type:kotlin.Any?
       VALUE_PARAMETER name:property index:1 type:kotlin.Any?
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun provideDelegate (thisRef: kotlin.Any?, property: kotlin.Any?): <root>.Delegate [operator] declared in <root>.DelegateProvider'
-          CONSTRUCTOR_CALL 'public constructor <init> (value: kotlin.String) [primary] declared in <root>.Delegate' type=<root>.Delegate origin=null
+        RETURN type=kotlin.Nothing from='public final fun provideDelegate (thisRef: kotlin.Any?, property: kotlin.Any?): <root>.Delegate declared in <root>.DelegateProvider'
+          CONSTRUCTOR_CALL 'public constructor <init> (value: kotlin.String) declared in <root>.Delegate' type=<root>.Delegate origin=null
             value: CALL 'public final fun <get-value> (): kotlin.String declared in <root>.DelegateProvider' type=kotlin.String origin=GET_PROPERTY
               $this: GET_VAR '<this>: <root>.DelegateProvider declared in <root>.DelegateProvider.provideDelegate' type=<root>.DelegateProvider origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -82,15 +82,15 @@ FILE fqName:<root> fileName:/local.kt
     BLOCK_BODY
       LOCAL_DELEGATED_PROPERTY name:testMember type:kotlin.String flags:val
         VAR PROPERTY_DELEGATE name:testMember$delegate type:<root>.Delegate [val]
-          CALL 'public final fun provideDelegate (thisRef: kotlin.Any?, property: kotlin.Any?): <root>.Delegate [operator] declared in <root>.DelegateProvider' type=<root>.Delegate origin=null
-            $this: CONSTRUCTOR_CALL 'public constructor <init> (value: kotlin.String) [primary] declared in <root>.DelegateProvider' type=<root>.DelegateProvider origin=null
+          CALL 'public final fun provideDelegate (thisRef: kotlin.Any?, property: kotlin.Any?): <root>.Delegate declared in <root>.DelegateProvider' type=<root>.Delegate origin=null
+            $this: CONSTRUCTOR_CALL 'public constructor <init> (value: kotlin.String) declared in <root>.DelegateProvider' type=<root>.DelegateProvider origin=null
               value: CONST String type=kotlin.String value="OK"
             thisRef: CONST Null type=kotlin.Nothing? value=null
-            property: LOCAL_DELEGATED_PROPERTY_REFERENCE 'val testMember: kotlin.String by (...)' delegate='val testMember$delegate: <root>.Delegate [val] declared in <root>.foo' getter='local final fun <get-testMember> (): kotlin.String declared in <root>.foo' setter=null type=kotlin.reflect.KProperty0<kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+            property: LOCAL_DELEGATED_PROPERTY_REFERENCE 'val testMember: kotlin.String by (...)' delegate='val testMember$delegate: <root>.Delegate declared in <root>.foo' getter='local final fun <get-testMember> (): kotlin.String declared in <root>.foo' setter=null type=kotlin.reflect.KProperty0<kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
         FUN DELEGATED_PROPERTY_ACCESSOR name:<get-testMember> visibility:local modality:FINAL <> () returnType:kotlin.String
           BLOCK_BODY
             RETURN type=kotlin.Nothing from='local final fun <get-testMember> (): kotlin.String declared in <root>.foo'
-              CALL 'public final fun getValue (thisRef: kotlin.Any?, property: kotlin.Any?): kotlin.String [operator] declared in <root>.Delegate' type=kotlin.String origin=null
-                $this: GET_VAR 'val testMember$delegate: <root>.Delegate [val] declared in <root>.foo' type=<root>.Delegate origin=null
+              CALL 'public final fun getValue (thisRef: kotlin.Any?, property: kotlin.Any?): kotlin.String declared in <root>.Delegate' type=kotlin.String origin=null
+                $this: GET_VAR 'val testMember$delegate: <root>.Delegate declared in <root>.foo' type=<root>.Delegate origin=null
                 thisRef: CONST Null type=kotlin.Nothing? value=null
-                property: LOCAL_DELEGATED_PROPERTY_REFERENCE 'val testMember: kotlin.String by (...)' delegate='val testMember$delegate: <root>.Delegate [val] declared in <root>.foo' getter='local final fun <get-testMember> (): kotlin.String declared in <root>.foo' setter=null type=kotlin.reflect.KProperty0<kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+                property: LOCAL_DELEGATED_PROPERTY_REFERENCE 'val testMember: kotlin.String by (...)' delegate='val testMember$delegate: <root>.Delegate declared in <root>.foo' getter='local final fun <get-testMember> (): kotlin.String declared in <root>.foo' setter=null type=kotlin.reflect.KProperty0<kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE

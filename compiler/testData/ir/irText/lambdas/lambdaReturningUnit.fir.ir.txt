@@ -3,11 +3,11 @@ FILE fqName:<root> fileName:/lambdaReturningUnit.kt
     VALUE_PARAMETER name:block index:0 type:kotlin.Function0<kotlin.Any?>
     BLOCK_BODY
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        CALL 'public abstract fun invoke (): R of kotlin.Function0 [operator] declared in kotlin.Function0' type=kotlin.Any? origin=INVOKE
+        CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.Any? origin=INVOKE
           $this: GET_VAR 'block: kotlin.Function0<kotlin.Any?> declared in <root>.flaf' type=kotlin.Function0<kotlin.Any?> origin=VARIABLE_AS_FUNCTION
   FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.Unit [suspend]
     BLOCK_BODY
-      CALL 'public final fun flaf (block: kotlin.Function0<kotlin.Any?>): kotlin.Unit [inline] declared in <root>' type=kotlin.Unit origin=null
+      CALL 'public final fun flaf (block: kotlin.Function0<kotlin.Any?>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
         block: FUN_EXPR type=kotlin.Function0<kotlin.Any?> origin=LAMBDA
           FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Any?
             BLOCK_BODY

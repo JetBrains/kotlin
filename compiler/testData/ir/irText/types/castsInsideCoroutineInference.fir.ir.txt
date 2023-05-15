@@ -14,35 +14,35 @@ FILE fqName:<root> fileName:/castsInsideCoroutineInference.kt
               BLOCK_BODY
                 VAR name:collector type:<root>.FlowCollector<R of <root>.scopedFlow> [val]
                   GET_VAR '$this$flow: <root>.FlowCollector<R of <root>.scopedFlow> declared in <root>.scopedFlow.<anonymous>' type=<root>.FlowCollector<R of <root>.scopedFlow> origin=null
-                CALL 'public final fun flowScope <R> (block: @[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<<root>.CoroutineScope, R of <root>.flowScope>): R of <root>.flowScope [suspend] declared in <root>' type=kotlin.Unit origin=null
+                CALL 'public final fun flowScope <R> (block: @[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<<root>.CoroutineScope, R of <root>.flowScope>): R of <root>.flowScope declared in <root>' type=kotlin.Unit origin=null
                   <R>: kotlin.Unit
                   block: FUN_EXPR type=@[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<<root>.CoroutineScope, kotlin.Unit> origin=LAMBDA
                     FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.CoroutineScope) returnType:kotlin.Unit [suspend]
                       $receiver: VALUE_PARAMETER name:$this$flowScope type:<root>.CoroutineScope
                       BLOCK_BODY
-                        CALL 'public abstract fun invoke (p1: P1 of kotlin.coroutines.SuspendFunction2, p2: P2 of kotlin.coroutines.SuspendFunction2): R of kotlin.coroutines.SuspendFunction2 [suspend,operator] declared in kotlin.coroutines.SuspendFunction2' type=kotlin.Unit origin=null
+                        CALL 'public abstract fun invoke (p1: P1 of kotlin.coroutines.SuspendFunction2, p2: P2 of kotlin.coroutines.SuspendFunction2): R of kotlin.coroutines.SuspendFunction2 declared in kotlin.coroutines.SuspendFunction2' type=kotlin.Unit origin=null
                           $this: GET_VAR 'block: @[ExtensionFunctionType] kotlin.coroutines.SuspendFunction2<<root>.CoroutineScope, <root>.FlowCollector<R of <root>.scopedFlow>, kotlin.Unit> declared in <root>.scopedFlow' type=@[ExtensionFunctionType] kotlin.coroutines.SuspendFunction2<<root>.CoroutineScope, <root>.FlowCollector<R of <root>.scopedFlow>, kotlin.Unit> origin=VARIABLE_AS_FUNCTION
                           p1: GET_VAR '$this$flowScope: <root>.CoroutineScope declared in <root>.scopedFlow.<anonymous>.<anonymous>' type=<root>.CoroutineScope origin=null
-                          p2: GET_VAR 'val collector: <root>.FlowCollector<R of <root>.scopedFlow> [val] declared in <root>.scopedFlow.<anonymous>' type=<root>.FlowCollector<R of <root>.scopedFlow> origin=null
+                          p2: GET_VAR 'val collector: <root>.FlowCollector<R of <root>.scopedFlow> declared in <root>.scopedFlow.<anonymous>' type=<root>.FlowCollector<R of <root>.scopedFlow> origin=null
   FUN name:onCompletion visibility:public modality:FINAL <T> ($receiver:<root>.Flow<T of <root>.onCompletion>, action:@[ExtensionFunctionType] kotlin.coroutines.SuspendFunction2<<root>.FlowCollector<T of <root>.onCompletion>, @[ParameterName(name = 'cause')] kotlin.Throwable?, kotlin.Unit>) returnType:<root>.Flow<T of <root>.onCompletion>
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
     $receiver: VALUE_PARAMETER name:<this> type:<root>.Flow<T of <root>.onCompletion>
     VALUE_PARAMETER name:action index:0 type:@[ExtensionFunctionType] kotlin.coroutines.SuspendFunction2<<root>.FlowCollector<T of <root>.onCompletion>, @[ParameterName(name = 'cause')] kotlin.Throwable?, kotlin.Unit>
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun onCompletion <T> (action: @[ExtensionFunctionType] kotlin.coroutines.SuspendFunction2<<root>.FlowCollector<T of <root>.onCompletion>, @[ParameterName(name = 'cause')] kotlin.Throwable?, kotlin.Unit>): <root>.Flow<T of <root>.onCompletion> declared in <root>'
-        CALL 'public final fun unsafeFlow <T> (block: @[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<<root>.FlowCollector<T of <root>.unsafeFlow>, kotlin.Unit>): <root>.Flow<T of <root>.unsafeFlow> [inline] declared in <root>' type=<root>.Flow<T of <root>.onCompletion> origin=null
+        CALL 'public final fun unsafeFlow <T> (block: @[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<<root>.FlowCollector<T of <root>.unsafeFlow>, kotlin.Unit>): <root>.Flow<T of <root>.unsafeFlow> declared in <root>' type=<root>.Flow<T of <root>.onCompletion> origin=null
           <T>: T of <root>.onCompletion
           block: FUN_EXPR type=@[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<<root>.FlowCollector<T of <root>.onCompletion>, kotlin.Unit> origin=LAMBDA
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.FlowCollector<T of <root>.onCompletion>) returnType:kotlin.Unit [suspend]
               $receiver: VALUE_PARAMETER name:$this$unsafeFlow type:<root>.FlowCollector<T of <root>.onCompletion>
               BLOCK_BODY
                 VAR name:safeCollector type:<root>.SafeCollector<T of <root>.onCompletion> [val]
-                  CONSTRUCTOR_CALL 'public constructor <init> (collector: <root>.FlowCollector<T of <root>.SafeCollector>) [primary] declared in <root>.SafeCollector' type=<root>.SafeCollector<T of <root>.onCompletion> origin=null
+                  CONSTRUCTOR_CALL 'public constructor <init> (collector: <root>.FlowCollector<T of <root>.SafeCollector>) declared in <root>.SafeCollector' type=<root>.SafeCollector<T of <root>.onCompletion> origin=null
                     <class: T>: T of <root>.onCompletion
                     collector: GET_VAR '$this$unsafeFlow: <root>.FlowCollector<T of <root>.onCompletion> declared in <root>.onCompletion.<anonymous>' type=<root>.FlowCollector<T of <root>.onCompletion> origin=null
-                CALL 'public final fun invokeSafely <T> (action: @[ExtensionFunctionType] kotlin.coroutines.SuspendFunction2<<root>.FlowCollector<T of <root>.invokeSafely>, @[ParameterName(name = 'cause')] kotlin.Throwable?, kotlin.Unit>): kotlin.Unit [suspend] declared in <root>' type=kotlin.Unit origin=null
+                CALL 'public final fun invokeSafely <T> (action: @[ExtensionFunctionType] kotlin.coroutines.SuspendFunction2<<root>.FlowCollector<T of <root>.invokeSafely>, @[ParameterName(name = 'cause')] kotlin.Throwable?, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
                   <T>: T of <root>.onCompletion
-                  $receiver: GET_VAR 'val safeCollector: <root>.SafeCollector<T of <root>.onCompletion> [val] declared in <root>.onCompletion.<anonymous>' type=<root>.SafeCollector<T of <root>.onCompletion> origin=null
+                  $receiver: GET_VAR 'val safeCollector: <root>.SafeCollector<T of <root>.onCompletion> declared in <root>.onCompletion.<anonymous>' type=<root>.SafeCollector<T of <root>.onCompletion> origin=null
                   action: GET_VAR 'action: @[ExtensionFunctionType] kotlin.coroutines.SuspendFunction2<<root>.FlowCollector<T of <root>.onCompletion>, @[ParameterName(name = 'cause')] kotlin.Throwable?, kotlin.Unit> declared in <root>.onCompletion' type=@[ExtensionFunctionType] kotlin.coroutines.SuspendFunction2<<root>.FlowCollector<T of <root>.onCompletion>, @[ParameterName(name = 'cause')] kotlin.Throwable?, kotlin.Unit> origin=null
   FUN name:invokeSafely visibility:public modality:FINAL <T> ($receiver:<root>.FlowCollector<T of <root>.invokeSafely>, action:@[ExtensionFunctionType] kotlin.coroutines.SuspendFunction2<<root>.FlowCollector<T of <root>.invokeSafely>, @[ParameterName(name = 'cause')] kotlin.Throwable?, kotlin.Unit>) returnType:kotlin.Unit [suspend]
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
@@ -55,8 +55,8 @@ FILE fqName:<root> fileName:/castsInsideCoroutineInference.kt
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
     VALUE_PARAMETER name:block index:0 type:@[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<<root>.FlowCollector<T of <root>.unsafeFlow>, kotlin.Unit> [crossinline]
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun unsafeFlow <T> (block: @[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<<root>.FlowCollector<T of <root>.unsafeFlow>, kotlin.Unit>): <root>.Flow<T of <root>.unsafeFlow> [inline] declared in <root>'
-        CALL 'public final fun TODO (): kotlin.Nothing [inline] declared in kotlin.StandardKt' type=kotlin.Nothing origin=null
+      RETURN type=kotlin.Nothing from='public final fun unsafeFlow <T> (block: @[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<<root>.FlowCollector<T of <root>.unsafeFlow>, kotlin.Unit>): <root>.Flow<T of <root>.unsafeFlow> declared in <root>'
+        CALL 'public final fun TODO (): kotlin.Nothing declared in kotlin.StandardKt' type=kotlin.Nothing origin=null
   FUN name:onCompletion visibility:public modality:FINAL <T> ($receiver:<root>.Flow<T of <root>.onCompletion>, action:kotlin.coroutines.SuspendFunction1<@[ParameterName(name = 'cause')] kotlin.Throwable?, kotlin.Unit>) returnType:<root>.Flow<T of <root>.onCompletion>
     annotations:
       Deprecated(message = 'binary compatibility with a version w/o FlowCollector receiver', replaceWith = <null>, level = GET_ENUM 'ENUM_ENTRY IR_EXTERNAL_DECLARATION_STUB name:HIDDEN' type=kotlin.DeprecationLevel)
@@ -73,7 +73,7 @@ FILE fqName:<root> fileName:/castsInsideCoroutineInference.kt
               $receiver: VALUE_PARAMETER name:$this$onCompletion type:<root>.FlowCollector<T of <root>.onCompletion>
               VALUE_PARAMETER name:it index:0 type:@[ParameterName(name = 'cause')] kotlin.Throwable?
               BLOCK_BODY
-                CALL 'public abstract fun invoke (p1: P1 of kotlin.coroutines.SuspendFunction1): R of kotlin.coroutines.SuspendFunction1 [suspend,operator] declared in kotlin.coroutines.SuspendFunction1' type=kotlin.Unit origin=null
+                CALL 'public abstract fun invoke (p1: P1 of kotlin.coroutines.SuspendFunction1): R of kotlin.coroutines.SuspendFunction1 declared in kotlin.coroutines.SuspendFunction1' type=kotlin.Unit origin=null
                   $this: GET_VAR 'action: kotlin.coroutines.SuspendFunction1<@[ParameterName(name = 'cause')] kotlin.Throwable?, kotlin.Unit> declared in <root>.onCompletion' type=kotlin.coroutines.SuspendFunction1<@[ParameterName(name = 'cause')] kotlin.Throwable?, kotlin.Unit> origin=VARIABLE_AS_FUNCTION
                   p1: GET_VAR 'it: @[ParameterName(name = 'cause')] kotlin.Throwable? declared in <root>.onCompletion.<anonymous>' type=@[ParameterName(name = 'cause')] kotlin.Throwable? origin=null
   FUN name:asFairChannel visibility:private modality:FINAL <> ($receiver:<root>.CoroutineScope, flow:<root>.Flow<*>) returnType:<root>.ReceiveChannel<kotlin.Any>
@@ -92,28 +92,28 @@ FILE fqName:<root> fileName:/castsInsideCoroutineInference.kt
                   TYPE_OP type=<root>.ChannelCoroutine<kotlin.Any> origin=CAST typeOperand=<root>.ChannelCoroutine<kotlin.Any>
                     CALL 'public abstract fun <get-channel> (): <root>.SendChannel<E of <root>.ProducerScope> declared in <root>.ProducerScope' type=<root>.SendChannel<kotlin.Any> origin=GET_PROPERTY
                       $this: GET_VAR '$this$produce: <root>.ProducerScope<kotlin.Any> declared in <root>.asFairChannel.<anonymous>' type=<root>.ProducerScope<kotlin.Any> origin=null
-                CALL 'public final fun collect <T> (action: kotlin.coroutines.SuspendFunction1<@[ParameterName(name = 'value')] T of <root>.collect, kotlin.Unit>): kotlin.Unit [inline,suspend] declared in <root>' type=kotlin.Unit origin=null
+                CALL 'public final fun collect <T> (action: kotlin.coroutines.SuspendFunction1<@[ParameterName(name = 'value')] T of <root>.collect, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
                   <T>: kotlin.Any?
                   $receiver: GET_VAR 'flow: <root>.Flow<*> declared in <root>.asFairChannel' type=<root>.Flow<*> origin=null
                   action: FUN_EXPR type=kotlin.coroutines.SuspendFunction1<@[ParameterName(name = 'value')] kotlin.Any?, kotlin.Unit> origin=LAMBDA
                     FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (value:@[ParameterName(name = 'value')] kotlin.Any?) returnType:kotlin.Unit [suspend]
                       VALUE_PARAMETER name:value index:0 type:@[ParameterName(name = 'value')] kotlin.Any?
                       BLOCK_BODY
-                        RETURN type=kotlin.Nothing from='local final fun <anonymous> (value: @[ParameterName(name = 'value')] kotlin.Any?): kotlin.Unit [suspend] declared in <root>.asFairChannel.<anonymous>'
-                          CALL 'public final fun sendFair (element: E of <root>.ChannelCoroutine): kotlin.Unit [suspend] declared in <root>.ChannelCoroutine' type=kotlin.Unit origin=null
-                            $this: GET_VAR 'val channel: <root>.ChannelCoroutine<kotlin.Any> [val] declared in <root>.asFairChannel.<anonymous>' type=<root>.ChannelCoroutine<kotlin.Any> origin=null
+                        RETURN type=kotlin.Nothing from='local final fun <anonymous> (value: @[ParameterName(name = 'value')] kotlin.Any?): kotlin.Unit declared in <root>.asFairChannel.<anonymous>'
+                          CALL 'public final fun sendFair (element: E of <root>.ChannelCoroutine): kotlin.Unit declared in <root>.ChannelCoroutine' type=kotlin.Unit origin=null
+                            $this: GET_VAR 'val channel: <root>.ChannelCoroutine<kotlin.Any> declared in <root>.asFairChannel.<anonymous>' type=<root>.ChannelCoroutine<kotlin.Any> origin=null
                             element: BLOCK type=@[ParameterName(name = 'value')] kotlin.Any origin=ELVIS
                               VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:@[ParameterName(name = 'value')] kotlin.Any? [val]
                                 GET_VAR 'value: @[ParameterName(name = 'value')] kotlin.Any? declared in <root>.asFairChannel.<anonymous>.<anonymous>' type=@[ParameterName(name = 'value')] kotlin.Any? origin=null
                               WHEN type=@[ParameterName(name = 'value')] kotlin.Any origin=ELVIS
                                 BRANCH
                                   if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                                    arg0: GET_VAR 'val tmp_0: @[ParameterName(name = 'value')] kotlin.Any? [val] declared in <root>.asFairChannel.<anonymous>.<anonymous>' type=@[ParameterName(name = 'value')] kotlin.Any? origin=null
+                                    arg0: GET_VAR 'val tmp_0: @[ParameterName(name = 'value')] kotlin.Any? declared in <root>.asFairChannel.<anonymous>.<anonymous>' type=@[ParameterName(name = 'value')] kotlin.Any? origin=null
                                     arg1: CONST Null type=kotlin.Nothing? value=null
-                                  then: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any' type=kotlin.Any origin=null
+                                  then: CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any' type=kotlin.Any origin=null
                                 BRANCH
                                   if: CONST Boolean type=kotlin.Boolean value=true
-                                  then: GET_VAR 'val tmp_0: @[ParameterName(name = 'value')] kotlin.Any? [val] declared in <root>.asFairChannel.<anonymous>.<anonymous>' type=@[ParameterName(name = 'value')] kotlin.Any? origin=null
+                                  then: GET_VAR 'val tmp_0: @[ParameterName(name = 'value')] kotlin.Any? declared in <root>.asFairChannel.<anonymous>.<anonymous>' type=@[ParameterName(name = 'value')] kotlin.Any? origin=null
   FUN name:asChannel visibility:private modality:FINAL <> ($receiver:<root>.CoroutineScope, flow:<root>.Flow<*>) returnType:<root>.ReceiveChannel<kotlin.Any>
     $receiver: VALUE_PARAMETER name:<this> type:<root>.CoroutineScope
     VALUE_PARAMETER name:flow index:0 type:<root>.Flow<*>
@@ -126,15 +126,15 @@ FILE fqName:<root> fileName:/castsInsideCoroutineInference.kt
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.ProducerScope<kotlin.Any>) returnType:kotlin.Unit [suspend]
               $receiver: VALUE_PARAMETER name:$this$produce type:<root>.ProducerScope<kotlin.Any>
               BLOCK_BODY
-                CALL 'public final fun collect <T> (action: kotlin.coroutines.SuspendFunction1<@[ParameterName(name = 'value')] T of <root>.collect, kotlin.Unit>): kotlin.Unit [inline,suspend] declared in <root>' type=kotlin.Unit origin=null
+                CALL 'public final fun collect <T> (action: kotlin.coroutines.SuspendFunction1<@[ParameterName(name = 'value')] T of <root>.collect, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
                   <T>: kotlin.Any?
                   $receiver: GET_VAR 'flow: <root>.Flow<*> declared in <root>.asChannel' type=<root>.Flow<*> origin=null
                   action: FUN_EXPR type=kotlin.coroutines.SuspendFunction1<@[ParameterName(name = 'value')] kotlin.Any?, kotlin.Unit> origin=LAMBDA
                     FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (value:@[ParameterName(name = 'value')] kotlin.Any?) returnType:kotlin.Unit [suspend]
                       VALUE_PARAMETER name:value index:0 type:@[ParameterName(name = 'value')] kotlin.Any?
                       BLOCK_BODY
-                        RETURN type=kotlin.Nothing from='local final fun <anonymous> (value: @[ParameterName(name = 'value')] kotlin.Any?): kotlin.Unit [suspend] declared in <root>.asChannel.<anonymous>'
-                          CALL 'public abstract fun send (e: E of <root>.SendChannel): kotlin.Unit [suspend] declared in <root>.SendChannel' type=kotlin.Unit origin=null
+                        RETURN type=kotlin.Nothing from='local final fun <anonymous> (value: @[ParameterName(name = 'value')] kotlin.Any?): kotlin.Unit declared in <root>.asChannel.<anonymous>'
+                          CALL 'public abstract fun send (e: E of <root>.SendChannel): kotlin.Unit declared in <root>.SendChannel' type=kotlin.Unit origin=null
                             $this: CALL 'public abstract fun <get-channel> (): <root>.SendChannel<E of <root>.ProducerScope> declared in <root>.ProducerScope' type=<root>.SendChannel<kotlin.Any> origin=GET_PROPERTY
                               $this: GET_VAR '$this$produce: <root>.ProducerScope<kotlin.Any> declared in <root>.asChannel.<anonymous>' type=<root>.ProducerScope<kotlin.Any> origin=null
                             e: BLOCK type=@[ParameterName(name = 'value')] kotlin.Any origin=ELVIS
@@ -143,19 +143,19 @@ FILE fqName:<root> fileName:/castsInsideCoroutineInference.kt
                               WHEN type=@[ParameterName(name = 'value')] kotlin.Any origin=ELVIS
                                 BRANCH
                                   if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                                    arg0: GET_VAR 'val tmp_1: @[ParameterName(name = 'value')] kotlin.Any? [val] declared in <root>.asChannel.<anonymous>.<anonymous>' type=@[ParameterName(name = 'value')] kotlin.Any? origin=null
+                                    arg0: GET_VAR 'val tmp_1: @[ParameterName(name = 'value')] kotlin.Any? declared in <root>.asChannel.<anonymous>.<anonymous>' type=@[ParameterName(name = 'value')] kotlin.Any? origin=null
                                     arg1: CONST Null type=kotlin.Nothing? value=null
-                                  then: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any' type=kotlin.Any origin=null
+                                  then: CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any' type=kotlin.Any origin=null
                                 BRANCH
                                   if: CONST Boolean type=kotlin.Boolean value=true
-                                  then: GET_VAR 'val tmp_1: @[ParameterName(name = 'value')] kotlin.Any? [val] declared in <root>.asChannel.<anonymous>.<anonymous>' type=@[ParameterName(name = 'value')] kotlin.Any? origin=null
+                                  then: GET_VAR 'val tmp_1: @[ParameterName(name = 'value')] kotlin.Any? declared in <root>.asChannel.<anonymous>.<anonymous>' type=@[ParameterName(name = 'value')] kotlin.Any? origin=null
   CLASS CLASS name:SafeCollector modality:FINAL visibility:public superTypes:[<root>.FlowCollector<T of <root>.SafeCollector>]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.SafeCollector<T of <root>.SafeCollector>
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
     CONSTRUCTOR visibility:public <> (collector:<root>.FlowCollector<T of <root>.SafeCollector>) returnType:<root>.SafeCollector<T of <root>.SafeCollector> [primary]
       VALUE_PARAMETER name:collector index:0 type:<root>.FlowCollector<T of <root>.SafeCollector>
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:SafeCollector modality:FINAL visibility:public superTypes:[<root>.FlowCollector<T of <root>.SafeCollector>]'
     PROPERTY name:collector visibility:internal modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:collector type:<root>.FlowCollector<T of <root>.SafeCollector> visibility:private [final]
@@ -170,22 +170,22 @@ FILE fqName:<root> fileName:/castsInsideCoroutineInference.kt
               receiver: GET_VAR '<this>: <root>.SafeCollector<T of <root>.SafeCollector> declared in <root>.SafeCollector.<get-collector>' type=<root>.SafeCollector<T of <root>.SafeCollector> origin=null
     FUN name:emit visibility:public modality:OPEN <> ($this:<root>.SafeCollector<T of <root>.SafeCollector>, value:T of <root>.SafeCollector) returnType:kotlin.Unit [suspend]
       overridden:
-        public abstract fun emit (value: T of <root>.FlowCollector): kotlin.Unit [suspend] declared in <root>.FlowCollector
+        public abstract fun emit (value: T of <root>.FlowCollector): kotlin.Unit declared in <root>.FlowCollector
       $this: VALUE_PARAMETER name:<this> type:<root>.SafeCollector<T of <root>.SafeCollector>
       VALUE_PARAMETER name:value index:0 type:T of <root>.SafeCollector
       BLOCK_BODY
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.FlowCollector
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.FlowCollector
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
       overridden:
-        public open fun hashCode (): kotlin.Int [fake_override] declared in <root>.FlowCollector
+        public open fun hashCode (): kotlin.Int declared in <root>.FlowCollector
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
       overridden:
-        public open fun toString (): kotlin.String [fake_override] declared in <root>.FlowCollector
+        public open fun toString (): kotlin.String declared in <root>.FlowCollector
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   FUN name:flow visibility:public modality:FINAL <T> (block:@[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<<root>.FlowCollector<T of <root>.flow>, kotlin.Unit>) returnType:<root>.Flow<T of <root>.flow>
     annotations:
@@ -194,15 +194,15 @@ FILE fqName:<root> fileName:/castsInsideCoroutineInference.kt
     VALUE_PARAMETER name:block index:0 type:@[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<<root>.FlowCollector<T of <root>.flow>, kotlin.Unit>
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun flow <T> (block: @[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<<root>.FlowCollector<T of <root>.flow>, kotlin.Unit>): <root>.Flow<T of <root>.flow> declared in <root>'
-        CALL 'public final fun TODO (): kotlin.Nothing [inline] declared in kotlin.StandardKt' type=kotlin.Nothing origin=null
+        CALL 'public final fun TODO (): kotlin.Nothing declared in kotlin.StandardKt' type=kotlin.Nothing origin=null
   FUN name:flowScope visibility:public modality:FINAL <R> (block:@[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<<root>.CoroutineScope, R of <root>.flowScope>) returnType:R of <root>.flowScope [suspend]
     annotations:
       OptIn(markerClass = [CLASS_REFERENCE 'CLASS IR_EXTERNAL_DECLARATION_STUB ANNOTATION_CLASS name:ExperimentalTypeInference modality:FINAL visibility:public superTypes:[kotlin.Annotation]' type=kotlin.reflect.KClass<kotlin.experimental.ExperimentalTypeInference>])
     TYPE_PARAMETER name:R index:0 variance: superTypes:[kotlin.Any?] reified:false
     VALUE_PARAMETER name:block index:0 type:@[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<<root>.CoroutineScope, R of <root>.flowScope>
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun flowScope <R> (block: @[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<<root>.CoroutineScope, R of <root>.flowScope>): R of <root>.flowScope [suspend] declared in <root>'
-        CALL 'public final fun TODO (): kotlin.Nothing [inline] declared in kotlin.StandardKt' type=kotlin.Nothing origin=null
+      RETURN type=kotlin.Nothing from='public final fun flowScope <R> (block: @[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<<root>.CoroutineScope, R of <root>.flowScope>): R of <root>.flowScope declared in <root>'
+        CALL 'public final fun TODO (): kotlin.Nothing declared in kotlin.StandardKt' type=kotlin.Nothing origin=null
   FUN name:collect visibility:public modality:FINAL <T> ($receiver:<root>.Flow<T of <root>.collect>, action:kotlin.coroutines.SuspendFunction1<@[ParameterName(name = 'value')] T of <root>.collect, kotlin.Unit>) returnType:kotlin.Unit [inline,suspend]
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
     $receiver: VALUE_PARAMETER name:<this> type:<root>.Flow<T of <root>.collect>
@@ -213,7 +213,7 @@ FILE fqName:<root> fileName:/castsInsideCoroutineInference.kt
     TYPE_PARAMETER name:E index:0 variance: superTypes:[kotlin.Any?] reified:false
     CONSTRUCTOR visibility:public <> () returnType:<root>.ChannelCoroutine<E of <root>.ChannelCoroutine> [primary]
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:ChannelCoroutine modality:OPEN visibility:public superTypes:[kotlin.Any]'
     FUN name:sendFair visibility:public modality:FINAL <> ($this:<root>.ChannelCoroutine<E of <root>.ChannelCoroutine>, element:E of <root>.ChannelCoroutine) returnType:kotlin.Unit [suspend]
       $this: VALUE_PARAMETER name:<this> type:<root>.ChannelCoroutine<E of <root>.ChannelCoroutine>
@@ -221,7 +221,7 @@ FILE fqName:<root> fileName:/castsInsideCoroutineInference.kt
       BLOCK_BODY
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -236,7 +236,7 @@ FILE fqName:<root> fileName:/castsInsideCoroutineInference.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.CoroutineScope
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -255,7 +255,7 @@ FILE fqName:<root> fileName:/castsInsideCoroutineInference.kt
       VALUE_PARAMETER name:collector index:0 type:<root>.FlowCollector<T of <root>.Flow>
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -274,7 +274,7 @@ FILE fqName:<root> fileName:/castsInsideCoroutineInference.kt
       VALUE_PARAMETER name:value index:0 type:T of <root>.FlowCollector
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -290,7 +290,7 @@ FILE fqName:<root> fileName:/castsInsideCoroutineInference.kt
     TYPE_PARAMETER name:E index:0 variance:out superTypes:[kotlin.Any?] reified:false
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -309,7 +309,7 @@ FILE fqName:<root> fileName:/castsInsideCoroutineInference.kt
     VALUE_PARAMETER name:block index:0 type:@[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<<root>.ProducerScope<E of <root>.produce>, kotlin.Unit>
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun produce <E> (block: @[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<<root>.ProducerScope<E of <root>.produce>, kotlin.Unit>): <root>.ReceiveChannel<E of <root>.produce> declared in <root>'
-        CALL 'public final fun TODO (): kotlin.Nothing [inline] declared in kotlin.StandardKt' type=kotlin.Nothing origin=null
+        CALL 'public final fun TODO (): kotlin.Nothing declared in kotlin.StandardKt' type=kotlin.Nothing origin=null
   CLASS INTERFACE name:ProducerScope modality:ABSTRACT visibility:public superTypes:[<root>.CoroutineScope; <root>.SendChannel<E of <root>.ProducerScope>]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ProducerScope<E of <root>.ProducerScope>
     TYPE_PARAMETER name:E index:0 variance:in superTypes:[kotlin.Any?] reified:false
@@ -319,23 +319,23 @@ FILE fqName:<root> fileName:/castsInsideCoroutineInference.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.ProducerScope<E of <root>.ProducerScope>
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.CoroutineScope
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.SendChannel
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.CoroutineScope
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.SendChannel
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
       overridden:
-        public open fun hashCode (): kotlin.Int [fake_override] declared in <root>.CoroutineScope
-        public open fun hashCode (): kotlin.Int [fake_override] declared in <root>.SendChannel
+        public open fun hashCode (): kotlin.Int declared in <root>.CoroutineScope
+        public open fun hashCode (): kotlin.Int declared in <root>.SendChannel
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
       overridden:
-        public open fun toString (): kotlin.String [fake_override] declared in <root>.CoroutineScope
-        public open fun toString (): kotlin.String [fake_override] declared in <root>.SendChannel
+        public open fun toString (): kotlin.String declared in <root>.CoroutineScope
+        public open fun toString (): kotlin.String declared in <root>.SendChannel
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN FAKE_OVERRIDE name:send visibility:public modality:ABSTRACT <> ($this:<root>.SendChannel<E of <root>.SendChannel>, e:E of <root>.ProducerScope) returnType:kotlin.Unit [suspend,fake_override]
       overridden:
-        public abstract fun send (e: E of <root>.SendChannel): kotlin.Unit [suspend] declared in <root>.SendChannel
+        public abstract fun send (e: E of <root>.SendChannel): kotlin.Unit declared in <root>.SendChannel
       $this: VALUE_PARAMETER name:<this> type:<root>.SendChannel<E of <root>.SendChannel>
       VALUE_PARAMETER name:e index:0 type:E of <root>.ProducerScope
   CLASS INTERFACE name:SendChannel modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
@@ -346,7 +346,7 @@ FILE fqName:<root> fileName:/castsInsideCoroutineInference.kt
       VALUE_PARAMETER name:e index:0 type:E of <root>.SendChannel
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]

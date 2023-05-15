@@ -136,7 +136,7 @@ FILE fqName:<root> fileName:/arrayAsVarargAfterSamArgument.kt
               GET_VAR 'arr: kotlin.Array<kotlin.String> declared in <root>.test' type=kotlin.Array<kotlin.String> origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         CALL 'public open fun foo2 (r1: @[FlexibleNullability] java.lang.Runnable?, r2: @[FlexibleNullability] java.lang.Runnable?, vararg strs: @[FlexibleNullability] kotlin.String?): @[FlexibleNullability] kotlin.String? declared in <root>.Test' type=@[FlexibleNullability] kotlin.String? origin=null
-          $this: GET_VAR 'val i1: <root>.Test [val] declared in <root>.test' type=<root>.Test origin=null
+          $this: GET_VAR 'val i1: <root>.Test declared in <root>.test' type=<root>.Test origin=null
           r1: TYPE_OP type=@[FlexibleNullability] java.lang.Runnable? origin=SAM_CONVERSION typeOperand=@[FlexibleNullability] java.lang.Runnable?
             FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
               FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
@@ -152,7 +152,7 @@ FILE fqName:<root> fileName:/arrayAsVarargAfterSamArgument.kt
           strs: GET_VAR 'arr: kotlin.Array<kotlin.String> declared in <root>.test' type=kotlin.Array<kotlin.String> origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         CALL 'public open fun foo2 (r1: @[FlexibleNullability] java.lang.Runnable?, r2: @[FlexibleNullability] java.lang.Runnable?, vararg strs: @[FlexibleNullability] kotlin.String?): @[FlexibleNullability] kotlin.String? declared in <root>.Test' type=@[FlexibleNullability] kotlin.String? origin=null
-          $this: GET_VAR 'val i1: <root>.Test [val] declared in <root>.test' type=<root>.Test origin=null
+          $this: GET_VAR 'val i1: <root>.Test declared in <root>.test' type=<root>.Test origin=null
           r1: GET_VAR 'r: java.lang.Runnable declared in <root>.test' type=java.lang.Runnable origin=null
           r2: TYPE_OP type=@[FlexibleNullability] java.lang.Runnable? origin=SAM_CONVERSION typeOperand=@[FlexibleNullability] java.lang.Runnable?
             FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
@@ -164,7 +164,7 @@ FILE fqName:<root> fileName:/arrayAsVarargAfterSamArgument.kt
             CONST String type=kotlin.String value=""
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         CALL 'public open fun foo2 (r1: @[FlexibleNullability] java.lang.Runnable?, r2: @[FlexibleNullability] java.lang.Runnable?, vararg strs: @[FlexibleNullability] kotlin.String?): @[FlexibleNullability] kotlin.String? declared in <root>.Test' type=@[FlexibleNullability] kotlin.String? origin=null
-          $this: GET_VAR 'val i1: <root>.Test [val] declared in <root>.test' type=<root>.Test origin=null
+          $this: GET_VAR 'val i1: <root>.Test declared in <root>.test' type=<root>.Test origin=null
           r1: TYPE_OP type=@[FlexibleNullability] java.lang.Runnable? origin=SAM_CONVERSION typeOperand=@[FlexibleNullability] java.lang.Runnable?
             FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
               FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
@@ -182,7 +182,7 @@ FILE fqName:<root> fileName:/arrayAsVarargAfterSamArgument.kt
               GET_VAR 'arr: kotlin.Array<kotlin.String> declared in <root>.test' type=kotlin.Array<kotlin.String> origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         CALL 'public open fun foo2 (r1: @[FlexibleNullability] java.lang.Runnable?, r2: @[FlexibleNullability] java.lang.Runnable?, vararg strs: @[FlexibleNullability] kotlin.String?): @[FlexibleNullability] kotlin.String? declared in <root>.Test' type=@[FlexibleNullability] kotlin.String? origin=null
-          $this: GET_VAR 'val i1: <root>.Test [val] declared in <root>.test' type=<root>.Test origin=null
+          $this: GET_VAR 'val i1: <root>.Test declared in <root>.test' type=<root>.Test origin=null
           r1: GET_VAR 'r: java.lang.Runnable declared in <root>.test' type=java.lang.Runnable origin=null
           r2: TYPE_OP type=@[FlexibleNullability] java.lang.Runnable? origin=SAM_CONVERSION typeOperand=@[FlexibleNullability] java.lang.Runnable?
             FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA

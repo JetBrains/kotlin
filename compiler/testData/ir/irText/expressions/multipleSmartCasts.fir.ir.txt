@@ -5,7 +5,7 @@ FILE fqName:<root> fileName:/multipleSmartCasts.kt
       $this: VALUE_PARAMETER name:<this> type:<root>.IC1
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -22,7 +22,7 @@ FILE fqName:<root> fileName:/multipleSmartCasts.kt
       $this: VALUE_PARAMETER name:<this> type:<root>.IC2
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -53,11 +53,11 @@ FILE fqName:<root> fileName:/multipleSmartCasts.kt
               TYPE_OP type=<root>.IC1 origin=IMPLICIT_CAST typeOperand=<root>.IC1
                 GET_VAR 'x: kotlin.Any declared in <root>.test' type=kotlin.Any origin=null
             VAR name:x1 type:kotlin.Int [val]
-              CALL 'public abstract fun component1 (): kotlin.Int [operator] declared in <root>.IC1' type=kotlin.Int origin=COMPONENT_N(index=1)
+              CALL 'public abstract fun component1 (): kotlin.Int declared in <root>.IC1' type=kotlin.Int origin=COMPONENT_N(index=1)
                 $this: TYPE_OP type=<root>.IC1 origin=IMPLICIT_CAST typeOperand=<root>.IC1
-                  GET_VAR 'val tmp_0: kotlin.Any [val] declared in <root>.test' type=kotlin.Any origin=null
+                  GET_VAR 'val tmp_0: kotlin.Any declared in <root>.test' type=kotlin.Any origin=null
             VAR name:x2 type:kotlin.String [val]
-              CALL 'public abstract fun component2 (): kotlin.String [operator] declared in <root>.IC2' type=kotlin.String origin=COMPONENT_N(index=2)
+              CALL 'public abstract fun component2 (): kotlin.String declared in <root>.IC2' type=kotlin.String origin=COMPONENT_N(index=2)
                 $this: TYPE_OP type=<root>.IC2 origin=IMPLICIT_CAST typeOperand=<root>.IC2
                   TYPE_OP type=<root>.IC1 origin=IMPLICIT_CAST typeOperand=<root>.IC1
-                    GET_VAR 'val tmp_0: kotlin.Any [val] declared in <root>.test' type=kotlin.Any origin=null
+                    GET_VAR 'val tmp_0: kotlin.Any declared in <root>.test' type=kotlin.Any origin=null

@@ -17,7 +17,7 @@ FILE fqName:<root> fileName:/dynamicAndMembersOfAny.kt
     VALUE_PARAMETER name:d index:0 type:dynamic
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test3 (d: dynamic): kotlin.Boolean declared in <root>'
-        CALL 'public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any' type=kotlin.Boolean origin=null
+        CALL 'public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any' type=kotlin.Boolean origin=null
           $this: TYPE_OP type=kotlin.Any origin=IMPLICIT_DYNAMIC_CAST typeOperand=kotlin.Any
             GET_VAR 'd: dynamic declared in <root>.test3' type=dynamic origin=null
           other: CONST Int type=kotlin.Int value=42

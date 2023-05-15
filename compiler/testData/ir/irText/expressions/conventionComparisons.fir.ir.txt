@@ -3,7 +3,7 @@ FILE fqName:<root> fileName:/conventionComparisons.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.IA
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -22,7 +22,7 @@ FILE fqName:<root> fileName:/conventionComparisons.kt
       VALUE_PARAMETER name:other index:0 type:<root>.IA
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -40,7 +40,7 @@ FILE fqName:<root> fileName:/conventionComparisons.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test1 (a1: <root>.IA, a2: <root>.IA): kotlin.Boolean declared in <root>'
         CALL 'public final fun greater (arg0: kotlin.Int, arg1: kotlin.Int): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=GT
-          arg0: CALL 'public abstract fun compareTo (other: <root>.IA): kotlin.Int [operator] declared in <root>.IB' type=kotlin.Int origin=null
+          arg0: CALL 'public abstract fun compareTo (other: <root>.IA): kotlin.Int declared in <root>.IB' type=kotlin.Int origin=null
             $this: GET_VAR '<this>: <root>.IB declared in <root>.test1' type=<root>.IB origin=null
             $receiver: GET_VAR 'a1: <root>.IA declared in <root>.test1' type=<root>.IA origin=null
             other: GET_VAR 'a2: <root>.IA declared in <root>.test1' type=<root>.IA origin=null
@@ -52,7 +52,7 @@ FILE fqName:<root> fileName:/conventionComparisons.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test2 (a1: <root>.IA, a2: <root>.IA): kotlin.Boolean declared in <root>'
         CALL 'public final fun greaterOrEqual (arg0: kotlin.Int, arg1: kotlin.Int): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=GTEQ
-          arg0: CALL 'public abstract fun compareTo (other: <root>.IA): kotlin.Int [operator] declared in <root>.IB' type=kotlin.Int origin=null
+          arg0: CALL 'public abstract fun compareTo (other: <root>.IA): kotlin.Int declared in <root>.IB' type=kotlin.Int origin=null
             $this: GET_VAR '<this>: <root>.IB declared in <root>.test2' type=<root>.IB origin=null
             $receiver: GET_VAR 'a1: <root>.IA declared in <root>.test2' type=<root>.IA origin=null
             other: GET_VAR 'a2: <root>.IA declared in <root>.test2' type=<root>.IA origin=null
@@ -64,7 +64,7 @@ FILE fqName:<root> fileName:/conventionComparisons.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test3 (a1: <root>.IA, a2: <root>.IA): kotlin.Boolean declared in <root>'
         CALL 'public final fun less (arg0: kotlin.Int, arg1: kotlin.Int): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=LT
-          arg0: CALL 'public abstract fun compareTo (other: <root>.IA): kotlin.Int [operator] declared in <root>.IB' type=kotlin.Int origin=null
+          arg0: CALL 'public abstract fun compareTo (other: <root>.IA): kotlin.Int declared in <root>.IB' type=kotlin.Int origin=null
             $this: GET_VAR '<this>: <root>.IB declared in <root>.test3' type=<root>.IB origin=null
             $receiver: GET_VAR 'a1: <root>.IA declared in <root>.test3' type=<root>.IA origin=null
             other: GET_VAR 'a2: <root>.IA declared in <root>.test3' type=<root>.IA origin=null
@@ -76,7 +76,7 @@ FILE fqName:<root> fileName:/conventionComparisons.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test4 (a1: <root>.IA, a2: <root>.IA): kotlin.Boolean declared in <root>'
         CALL 'public final fun lessOrEqual (arg0: kotlin.Int, arg1: kotlin.Int): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=LTEQ
-          arg0: CALL 'public abstract fun compareTo (other: <root>.IA): kotlin.Int [operator] declared in <root>.IB' type=kotlin.Int origin=null
+          arg0: CALL 'public abstract fun compareTo (other: <root>.IA): kotlin.Int declared in <root>.IB' type=kotlin.Int origin=null
             $this: GET_VAR '<this>: <root>.IB declared in <root>.test4' type=<root>.IB origin=null
             $receiver: GET_VAR 'a1: <root>.IA declared in <root>.test4' type=<root>.IA origin=null
             other: GET_VAR 'a2: <root>.IA declared in <root>.test4' type=<root>.IA origin=null

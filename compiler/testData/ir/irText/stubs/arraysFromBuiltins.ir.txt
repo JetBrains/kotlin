@@ -2,8 +2,8 @@ FILE fqName:<root> fileName:/arraysFromBuiltins.kt
   PROPERTY name:test visibility:public modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:test type:kotlin.collections.IntIterator visibility:private [final,static]
       EXPRESSION_BODY
-        CALL 'public final fun iterator (): kotlin.collections.IntIterator [operator] declared in kotlin.IntArray' type=kotlin.collections.IntIterator origin=null
-          $this: CONSTRUCTOR_CALL 'public constructor <init> (size: kotlin.Int) [primary] declared in kotlin.IntArray' type=kotlin.IntArray origin=null
+        CALL 'public final fun iterator (): kotlin.collections.IntIterator declared in kotlin.IntArray' type=kotlin.collections.IntIterator origin=null
+          $this: CONSTRUCTOR_CALL 'public constructor <init> (size: kotlin.Int) declared in kotlin.IntArray' type=kotlin.IntArray origin=null
             size: CONST Int type=kotlin.Int value=1
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test> visibility:public modality:FINAL <> () returnType:kotlin.collections.IntIterator
       correspondingProperty: PROPERTY name:test visibility:public modality:FINAL [val]

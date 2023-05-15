@@ -5,7 +5,7 @@ FILE fqName:<root> fileName:/localClassWithOverrides.kt
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.outer.ALocal
         CONSTRUCTOR visibility:public <> () returnType:<root>.outer.ALocal [primary]
           BLOCK_BODY
-            DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+            DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
             INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:ALocal modality:ABSTRACT visibility:local superTypes:[kotlin.Any]'
         FUN name:afun visibility:public modality:ABSTRACT <> ($this:<root>.outer.ALocal) returnType:kotlin.Unit
           $this: VALUE_PARAMETER name:<this> type:<root>.outer.ALocal
@@ -23,7 +23,7 @@ FILE fqName:<root> fileName:/localClassWithOverrides.kt
             VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
         FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
           overridden:
-            public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+            public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
           $this: VALUE_PARAMETER name:<this> type:kotlin.Any
           VALUE_PARAMETER name:other index:0 type:kotlin.Any?
         FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -38,7 +38,7 @@ FILE fqName:<root> fileName:/localClassWithOverrides.kt
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.outer.Local
         CONSTRUCTOR visibility:public <> () returnType:<root>.outer.Local [primary]
           BLOCK_BODY
-            DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.outer.ALocal'
+            DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.outer.ALocal'
             INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Local modality:FINAL visibility:local superTypes:[<root>.outer.ALocal]'
         FUN name:afun visibility:public modality:OPEN <> ($this:<root>.outer.Local) returnType:kotlin.Unit
           overridden:
@@ -47,7 +47,7 @@ FILE fqName:<root> fileName:/localClassWithOverrides.kt
           BLOCK_BODY
         PROPERTY name:aval visibility:public modality:OPEN [val]
           overridden:
-            public abstract aval: kotlin.Int [val]
+            public abstract aval: kotlin.Int
           FIELD PROPERTY_BACKING_FIELD name:aval type:kotlin.Int visibility:private [final]
             EXPRESSION_BODY
               CONST Int type=kotlin.Int value=1
@@ -62,7 +62,7 @@ FILE fqName:<root> fileName:/localClassWithOverrides.kt
                   receiver: GET_VAR '<this>: <root>.outer.Local declared in <root>.outer.Local.<get-aval>' type=<root>.outer.Local origin=null
         PROPERTY name:avar visibility:public modality:OPEN [var]
           overridden:
-            public abstract avar: kotlin.Int [var]
+            public abstract avar: kotlin.Int
           FIELD PROPERTY_BACKING_FIELD name:avar type:kotlin.Int visibility:private
             EXPRESSION_BODY
               CONST Int type=kotlin.Int value=2
@@ -87,14 +87,14 @@ FILE fqName:<root> fileName:/localClassWithOverrides.kt
                 value: GET_VAR '<set-?>: kotlin.Int declared in <root>.outer.Local.<set-avar>' type=kotlin.Int origin=null
         FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
           overridden:
-            public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.outer.ALocal
+            public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.outer.ALocal
           $this: VALUE_PARAMETER name:<this> type:kotlin.Any
           VALUE_PARAMETER name:other index:0 type:kotlin.Any?
         FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
           overridden:
-            public open fun hashCode (): kotlin.Int [fake_override] declared in <root>.outer.ALocal
+            public open fun hashCode (): kotlin.Int declared in <root>.outer.ALocal
           $this: VALUE_PARAMETER name:<this> type:kotlin.Any
         FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
           overridden:
-            public open fun toString (): kotlin.String [fake_override] declared in <root>.outer.ALocal
+            public open fun toString (): kotlin.String declared in <root>.outer.ALocal
           $this: VALUE_PARAMETER name:<this> type:kotlin.Any

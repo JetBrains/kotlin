@@ -4,7 +4,7 @@ FILE fqName:<root> fileName:/simpleOperators.kt
     VALUE_PARAMETER name:b index:1 type:kotlin.Int
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test1 (a: kotlin.Int, b: kotlin.Int): kotlin.Int declared in <root>'
-        CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=PLUS
+        CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUS
           $this: GET_VAR 'a: kotlin.Int declared in <root>.test1' type=kotlin.Int origin=null
           other: GET_VAR 'b: kotlin.Int declared in <root>.test1' type=kotlin.Int origin=null
   FUN name:test2 visibility:public modality:FINAL <> (a:kotlin.Int, b:kotlin.Int) returnType:kotlin.Int
@@ -12,7 +12,7 @@ FILE fqName:<root> fileName:/simpleOperators.kt
     VALUE_PARAMETER name:b index:1 type:kotlin.Int
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test2 (a: kotlin.Int, b: kotlin.Int): kotlin.Int declared in <root>'
-        CALL 'public final fun minus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=MINUS
+        CALL 'public final fun minus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=MINUS
           $this: GET_VAR 'a: kotlin.Int declared in <root>.test2' type=kotlin.Int origin=null
           other: GET_VAR 'b: kotlin.Int declared in <root>.test2' type=kotlin.Int origin=null
   FUN name:test3 visibility:public modality:FINAL <> (a:kotlin.Int, b:kotlin.Int) returnType:kotlin.Int
@@ -20,7 +20,7 @@ FILE fqName:<root> fileName:/simpleOperators.kt
     VALUE_PARAMETER name:b index:1 type:kotlin.Int
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test3 (a: kotlin.Int, b: kotlin.Int): kotlin.Int declared in <root>'
-        CALL 'public final fun times (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=MUL
+        CALL 'public final fun times (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=MUL
           $this: GET_VAR 'a: kotlin.Int declared in <root>.test3' type=kotlin.Int origin=null
           other: GET_VAR 'b: kotlin.Int declared in <root>.test3' type=kotlin.Int origin=null
   FUN name:test4 visibility:public modality:FINAL <> (a:kotlin.Int, b:kotlin.Int) returnType:kotlin.Int
@@ -28,7 +28,7 @@ FILE fqName:<root> fileName:/simpleOperators.kt
     VALUE_PARAMETER name:b index:1 type:kotlin.Int
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test4 (a: kotlin.Int, b: kotlin.Int): kotlin.Int declared in <root>'
-        CALL 'public final fun div (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=DIV
+        CALL 'public final fun div (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=DIV
           $this: GET_VAR 'a: kotlin.Int declared in <root>.test4' type=kotlin.Int origin=null
           other: GET_VAR 'b: kotlin.Int declared in <root>.test4' type=kotlin.Int origin=null
   FUN name:test5 visibility:public modality:FINAL <> (a:kotlin.Int, b:kotlin.Int) returnType:kotlin.Int
@@ -36,7 +36,7 @@ FILE fqName:<root> fileName:/simpleOperators.kt
     VALUE_PARAMETER name:b index:1 type:kotlin.Int
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test5 (a: kotlin.Int, b: kotlin.Int): kotlin.Int declared in <root>'
-        CALL 'public final fun rem (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=PERC
+        CALL 'public final fun rem (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PERC
           $this: GET_VAR 'a: kotlin.Int declared in <root>.test5' type=kotlin.Int origin=null
           other: GET_VAR 'b: kotlin.Int declared in <root>.test5' type=kotlin.Int origin=null
   FUN name:test6 visibility:public modality:FINAL <> (a:kotlin.Int, b:kotlin.Int) returnType:kotlin.ranges.IntRange
@@ -44,7 +44,7 @@ FILE fqName:<root> fileName:/simpleOperators.kt
     VALUE_PARAMETER name:b index:1 type:kotlin.Int
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test6 (a: kotlin.Int, b: kotlin.Int): kotlin.ranges.IntRange declared in <root>'
-        CALL 'public final fun rangeTo (other: kotlin.Int): kotlin.ranges.IntRange [operator] declared in kotlin.Int' type=kotlin.ranges.IntRange origin=RANGE
+        CALL 'public final fun rangeTo (other: kotlin.Int): kotlin.ranges.IntRange declared in kotlin.Int' type=kotlin.ranges.IntRange origin=RANGE
           $this: GET_VAR 'a: kotlin.Int declared in <root>.test6' type=kotlin.Int origin=null
           other: GET_VAR 'b: kotlin.Int declared in <root>.test6' type=kotlin.Int origin=null
   FUN name:test1x visibility:public modality:FINAL <> (a:kotlin.Int, b:kotlin.Int) returnType:kotlin.Int
@@ -52,7 +52,7 @@ FILE fqName:<root> fileName:/simpleOperators.kt
     VALUE_PARAMETER name:b index:1 type:kotlin.Int
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test1x (a: kotlin.Int, b: kotlin.Int): kotlin.Int declared in <root>'
-        CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
+        CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
           $this: GET_VAR 'a: kotlin.Int declared in <root>.test1x' type=kotlin.Int origin=null
           other: GET_VAR 'b: kotlin.Int declared in <root>.test1x' type=kotlin.Int origin=null
   FUN name:test2x visibility:public modality:FINAL <> (a:kotlin.Int, b:kotlin.Int) returnType:kotlin.Int
@@ -60,7 +60,7 @@ FILE fqName:<root> fileName:/simpleOperators.kt
     VALUE_PARAMETER name:b index:1 type:kotlin.Int
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test2x (a: kotlin.Int, b: kotlin.Int): kotlin.Int declared in <root>'
-        CALL 'public final fun minus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
+        CALL 'public final fun minus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
           $this: GET_VAR 'a: kotlin.Int declared in <root>.test2x' type=kotlin.Int origin=null
           other: GET_VAR 'b: kotlin.Int declared in <root>.test2x' type=kotlin.Int origin=null
   FUN name:test3x visibility:public modality:FINAL <> (a:kotlin.Int, b:kotlin.Int) returnType:kotlin.Int
@@ -68,7 +68,7 @@ FILE fqName:<root> fileName:/simpleOperators.kt
     VALUE_PARAMETER name:b index:1 type:kotlin.Int
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test3x (a: kotlin.Int, b: kotlin.Int): kotlin.Int declared in <root>'
-        CALL 'public final fun times (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
+        CALL 'public final fun times (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
           $this: GET_VAR 'a: kotlin.Int declared in <root>.test3x' type=kotlin.Int origin=null
           other: GET_VAR 'b: kotlin.Int declared in <root>.test3x' type=kotlin.Int origin=null
   FUN name:test4x visibility:public modality:FINAL <> (a:kotlin.Int, b:kotlin.Int) returnType:kotlin.Int
@@ -76,7 +76,7 @@ FILE fqName:<root> fileName:/simpleOperators.kt
     VALUE_PARAMETER name:b index:1 type:kotlin.Int
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test4x (a: kotlin.Int, b: kotlin.Int): kotlin.Int declared in <root>'
-        CALL 'public final fun div (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
+        CALL 'public final fun div (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
           $this: GET_VAR 'a: kotlin.Int declared in <root>.test4x' type=kotlin.Int origin=null
           other: GET_VAR 'b: kotlin.Int declared in <root>.test4x' type=kotlin.Int origin=null
   FUN name:test5x visibility:public modality:FINAL <> (a:kotlin.Int, b:kotlin.Int) returnType:kotlin.Int
@@ -84,6 +84,6 @@ FILE fqName:<root> fileName:/simpleOperators.kt
     VALUE_PARAMETER name:b index:1 type:kotlin.Int
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test5x (a: kotlin.Int, b: kotlin.Int): kotlin.Int declared in <root>'
-        CALL 'public final fun rem (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
+        CALL 'public final fun rem (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
           $this: GET_VAR 'a: kotlin.Int declared in <root>.test5x' type=kotlin.Int origin=null
           other: GET_VAR 'b: kotlin.Int declared in <root>.test5x' type=kotlin.Int origin=null

@@ -64,18 +64,18 @@ FILE fqName:<root> fileName:/primitivesImplicitConversions.kt
       VAR name:test4 type:kotlin.Long? [val]
         CONST Long type=kotlin.Long value=-1
       VAR name:test5 type:kotlin.Long? [val]
-        CALL 'public final fun unaryMinus (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
+        CALL 'public final fun unaryMinus (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
           $this: CONST Int type=kotlin.Int value=1
       VAR name:test6 type:kotlin.Short? [val]
-        CALL 'public final fun unaryMinus (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
+        CALL 'public final fun unaryMinus (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
           $this: CONST Int type=kotlin.Int value=1
       VAR name:test7 type:kotlin.Byte? [val]
-        CALL 'public final fun unaryMinus (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
+        CALL 'public final fun unaryMinus (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
           $this: CONST Int type=kotlin.Int value=1
   FUN name:testImplicitArguments visibility:public modality:FINAL <> (x:kotlin.Long) returnType:kotlin.Unit
     VALUE_PARAMETER name:x index:0 type:kotlin.Long
       EXPRESSION_BODY
-        CALL 'public final fun unaryMinus (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
+        CALL 'public final fun unaryMinus (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
           $this: CONST Int type=kotlin.Int value=1
     BLOCK_BODY
   CLASS CLASS name:TestImplicitArguments modality:FINAL visibility:public superTypes:[kotlin.Any]
@@ -83,10 +83,10 @@ FILE fqName:<root> fileName:/primitivesImplicitConversions.kt
     CONSTRUCTOR visibility:public <> (x:kotlin.Long) returnType:<root>.TestImplicitArguments [primary]
       VALUE_PARAMETER name:x index:0 type:kotlin.Long
         EXPRESSION_BODY
-          CALL 'public final fun unaryMinus (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
+          CALL 'public final fun unaryMinus (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
             $this: CONST Int type=kotlin.Int value=1
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:TestImplicitArguments modality:FINAL visibility:public superTypes:[kotlin.Any]'
     PROPERTY name:x visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Long visibility:private [final]
@@ -101,7 +101,7 @@ FILE fqName:<root> fileName:/primitivesImplicitConversions.kt
               receiver: GET_VAR '<this>: <root>.TestImplicitArguments declared in <root>.TestImplicitArguments.<get-x>' type=<root>.TestImplicitArguments origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]

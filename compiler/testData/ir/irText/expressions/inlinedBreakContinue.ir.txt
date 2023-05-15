@@ -2,37 +2,37 @@ FILE fqName:<root> fileName:/inlinedBreakContinue.kt
   FUN name:foo visibility:public modality:FINAL <> (block:kotlin.Function0<kotlin.Unit>) returnType:kotlin.Unit [inline]
     VALUE_PARAMETER name:block index:0 type:kotlin.Function0<kotlin.Unit>
     BLOCK_BODY
-      CALL 'public abstract fun invoke (): R of kotlin.Function0 [operator] declared in kotlin.Function0' type=kotlin.Unit origin=INVOKE
+      CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.Unit origin=INVOKE
         $this: GET_VAR 'block: kotlin.Function0<kotlin.Unit> declared in <root>.foo' type=kotlin.Function0<kotlin.Unit> origin=VARIABLE_AS_FUNCTION
   FUN name:bar visibility:public modality:FINAL <> (block1:kotlin.Function0<kotlin.Unit>, block2:kotlin.Function0<kotlin.Unit>) returnType:kotlin.Unit [inline]
     VALUE_PARAMETER name:block1 index:0 type:kotlin.Function0<kotlin.Unit>
     VALUE_PARAMETER name:block2 index:1 type:kotlin.Function0<kotlin.Unit> [noinline]
     BLOCK_BODY
-      CALL 'public abstract fun invoke (): R of kotlin.Function0 [operator] declared in kotlin.Function0' type=kotlin.Unit origin=INVOKE
+      CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.Unit origin=INVOKE
         $this: GET_VAR 'block1: kotlin.Function0<kotlin.Unit> declared in <root>.bar' type=kotlin.Function0<kotlin.Unit> origin=VARIABLE_AS_FUNCTION
-      CALL 'public abstract fun invoke (): R of kotlin.Function0 [operator] declared in kotlin.Function0' type=kotlin.Unit origin=INVOKE
-        $this: GET_VAR 'block2: kotlin.Function0<kotlin.Unit> [noinline] declared in <root>.bar' type=kotlin.Function0<kotlin.Unit> origin=VARIABLE_AS_FUNCTION
+      CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.Unit origin=INVOKE
+        $this: GET_VAR 'block2: kotlin.Function0<kotlin.Unit> declared in <root>.bar' type=kotlin.Function0<kotlin.Unit> origin=VARIABLE_AS_FUNCTION
   FUN name:test1 visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       WHILE label=null origin=WHILE_LOOP
         condition: CONST Boolean type=kotlin.Boolean value=true
         body: BLOCK type=kotlin.Unit origin=null
-          CALL 'public final fun foo (block: kotlin.Function0<kotlin.Unit>): kotlin.Unit [inline] declared in <root>' type=kotlin.Unit origin=null
+          CALL 'public final fun foo (block: kotlin.Function0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
             block: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
               FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
                 BLOCK_BODY
                   BREAK label=null loop.label=null
-          CALL 'public final fun foo (block: kotlin.Function0<kotlin.Unit>): kotlin.Unit [inline] declared in <root>' type=kotlin.Unit origin=null
+          CALL 'public final fun foo (block: kotlin.Function0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
             block: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
               FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
                 BLOCK_BODY
                   CONTINUE label=null loop.label=null
-          CALL 'public final fun foo (block: kotlin.Function0<kotlin.Unit>): kotlin.Unit [inline] declared in <root>' type=kotlin.Unit origin=null
+          CALL 'public final fun foo (block: kotlin.Function0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
             block: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=ANONYMOUS_FUNCTION
               FUN LOCAL_FUNCTION name:<no name provided> visibility:local modality:FINAL <> () returnType:kotlin.Unit
                 BLOCK_BODY
                   BREAK label=null loop.label=null
-          CALL 'public final fun foo (block: kotlin.Function0<kotlin.Unit>): kotlin.Unit [inline] declared in <root>' type=kotlin.Unit origin=null
+          CALL 'public final fun foo (block: kotlin.Function0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
             block: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=ANONYMOUS_FUNCTION
               FUN LOCAL_FUNCTION name:<no name provided> visibility:local modality:FINAL <> () returnType:kotlin.Unit
                 BLOCK_BODY
@@ -42,7 +42,7 @@ FILE fqName:<root> fileName:/inlinedBreakContinue.kt
       WHILE label=null origin=WHILE_LOOP
         condition: CONST Boolean type=kotlin.Boolean value=true
         body: BLOCK type=kotlin.Unit origin=null
-          CALL 'public final fun bar (block1: kotlin.Function0<kotlin.Unit>, block2: kotlin.Function0<kotlin.Unit>): kotlin.Unit [inline] declared in <root>' type=kotlin.Unit origin=null
+          CALL 'public final fun bar (block1: kotlin.Function0<kotlin.Unit>, block2: kotlin.Function0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
             block1: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
               FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
                 BLOCK_BODY
@@ -52,7 +52,7 @@ FILE fqName:<root> fileName:/inlinedBreakContinue.kt
                 BLOCK_BODY
                   RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Unit declared in <root>.test2'
                     GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
-          CALL 'public final fun bar (block1: kotlin.Function0<kotlin.Unit>, block2: kotlin.Function0<kotlin.Unit>): kotlin.Unit [inline] declared in <root>' type=kotlin.Unit origin=null
+          CALL 'public final fun bar (block1: kotlin.Function0<kotlin.Unit>, block2: kotlin.Function0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
             block1: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
               FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
                 BLOCK_BODY
@@ -62,7 +62,7 @@ FILE fqName:<root> fileName:/inlinedBreakContinue.kt
                 BLOCK_BODY
                   RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Unit declared in <root>.test2'
                     GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
-          CALL 'public final fun bar (block1: kotlin.Function0<kotlin.Unit>, block2: kotlin.Function0<kotlin.Unit>): kotlin.Unit [inline] declared in <root>' type=kotlin.Unit origin=null
+          CALL 'public final fun bar (block1: kotlin.Function0<kotlin.Unit>, block2: kotlin.Function0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
             block1: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=ANONYMOUS_FUNCTION
               FUN LOCAL_FUNCTION name:<no name provided> visibility:local modality:FINAL <> () returnType:kotlin.Unit
                 BLOCK_BODY
@@ -70,7 +70,7 @@ FILE fqName:<root> fileName:/inlinedBreakContinue.kt
             block2: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=ANONYMOUS_FUNCTION
               FUN LOCAL_FUNCTION name:<no name provided> visibility:local modality:FINAL <> () returnType:kotlin.Unit
                 BLOCK_BODY
-          CALL 'public final fun bar (block1: kotlin.Function0<kotlin.Unit>, block2: kotlin.Function0<kotlin.Unit>): kotlin.Unit [inline] declared in <root>' type=kotlin.Unit origin=null
+          CALL 'public final fun bar (block1: kotlin.Function0<kotlin.Unit>, block2: kotlin.Function0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
             block1: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=ANONYMOUS_FUNCTION
               FUN LOCAL_FUNCTION name:<no name provided> visibility:local modality:FINAL <> () returnType:kotlin.Unit
                 BLOCK_BODY

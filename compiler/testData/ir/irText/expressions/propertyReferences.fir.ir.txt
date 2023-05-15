@@ -3,14 +3,14 @@ FILE fqName:<root> fileName:/propertyReferences.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Delegate
     CONSTRUCTOR visibility:private <> () returnType:<root>.Delegate [primary]
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Delegate modality:FINAL visibility:public superTypes:[kotlin.Any]'
     FUN name:getValue visibility:public modality:FINAL <> ($this:<root>.Delegate, thisRef:kotlin.Any?, kProp:kotlin.Any) returnType:kotlin.Int [operator]
       $this: VALUE_PARAMETER name:<this> type:<root>.Delegate
       VALUE_PARAMETER name:thisRef index:0 type:kotlin.Any?
       VALUE_PARAMETER name:kProp index:1 type:kotlin.Any
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun getValue (thisRef: kotlin.Any?, kProp: kotlin.Any): kotlin.Int [operator] declared in <root>.Delegate'
+        RETURN type=kotlin.Nothing from='public final fun getValue (thisRef: kotlin.Any?, kProp: kotlin.Any): kotlin.Int declared in <root>.Delegate'
           CONST Int type=kotlin.Int value=1
     FUN name:setValue visibility:public modality:FINAL <> ($this:<root>.Delegate, thisRef:kotlin.Any?, kProp:kotlin.Any, value:kotlin.Int) returnType:kotlin.Unit [operator]
       $this: VALUE_PARAMETER name:<this> type:<root>.Delegate
@@ -20,7 +20,7 @@ FILE fqName:<root> fileName:/propertyReferences.kt
       BLOCK_BODY
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -35,7 +35,7 @@ FILE fqName:<root> fileName:/propertyReferences.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C
     CONSTRUCTOR visibility:public <> () returnType:<root>.C [primary]
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C modality:OPEN visibility:public superTypes:[kotlin.Any]'
     PROPERTY name:varWithPrivateSet visibility:public modality:FINAL [var]
       FIELD PROPERTY_BACKING_FIELD name:varWithPrivateSet type:kotlin.Int visibility:private
@@ -77,7 +77,7 @@ FILE fqName:<root> fileName:/propertyReferences.kt
             value: GET_VAR '<set-?>: kotlin.Int declared in <root>.C.<set-varWithProtectedSet>' type=kotlin.Int origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -100,7 +100,7 @@ FILE fqName:<root> fileName:/propertyReferences.kt
   PROPERTY name:test_valWithBackingField visibility:public modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:test_valWithBackingField type:kotlin.reflect.KProperty0<kotlin.Int> visibility:private [final,static]
       EXPRESSION_BODY
-        PROPERTY_REFERENCE 'public final valWithBackingField: kotlin.Int [val]' field=null getter='public final fun <get-valWithBackingField> (): kotlin.Int declared in <root>' setter=null type=kotlin.reflect.KProperty0<kotlin.Int> origin=null
+        PROPERTY_REFERENCE 'public final valWithBackingField: kotlin.Int' field=null getter='public final fun <get-valWithBackingField> (): kotlin.Int declared in <root>' setter=null type=kotlin.reflect.KProperty0<kotlin.Int> origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test_valWithBackingField> visibility:public modality:FINAL <> () returnType:kotlin.reflect.KProperty0<kotlin.Int>
       correspondingProperty: PROPERTY name:test_valWithBackingField visibility:public modality:FINAL [val]
       BLOCK_BODY
@@ -124,7 +124,7 @@ FILE fqName:<root> fileName:/propertyReferences.kt
   PROPERTY name:test_varWithBackingField visibility:public modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:test_varWithBackingField type:kotlin.reflect.KMutableProperty0<kotlin.Int> visibility:private [final,static]
       EXPRESSION_BODY
-        PROPERTY_REFERENCE 'public final varWithBackingField: kotlin.Int [var]' field=null getter='public final fun <get-varWithBackingField> (): kotlin.Int declared in <root>' setter='public final fun <set-varWithBackingField> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null
+        PROPERTY_REFERENCE 'public final varWithBackingField: kotlin.Int' field=null getter='public final fun <get-varWithBackingField> (): kotlin.Int declared in <root>' setter='public final fun <set-varWithBackingField> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test_varWithBackingField> visibility:public modality:FINAL <> () returnType:kotlin.reflect.KMutableProperty0<kotlin.Int>
       correspondingProperty: PROPERTY name:test_varWithBackingField visibility:public modality:FINAL [val]
       BLOCK_BODY
@@ -148,7 +148,7 @@ FILE fqName:<root> fileName:/propertyReferences.kt
   PROPERTY name:test_varWithBackingFieldAndAccessors visibility:public modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:test_varWithBackingFieldAndAccessors type:kotlin.reflect.KMutableProperty0<kotlin.Int> visibility:private [final,static]
       EXPRESSION_BODY
-        PROPERTY_REFERENCE 'public final varWithBackingFieldAndAccessors: kotlin.Int [var]' field=null getter='public final fun <get-varWithBackingFieldAndAccessors> (): kotlin.Int declared in <root>' setter='public final fun <set-varWithBackingFieldAndAccessors> (value: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null
+        PROPERTY_REFERENCE 'public final varWithBackingFieldAndAccessors: kotlin.Int' field=null getter='public final fun <get-varWithBackingFieldAndAccessors> (): kotlin.Int declared in <root>' setter='public final fun <set-varWithBackingFieldAndAccessors> (value: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test_varWithBackingFieldAndAccessors> visibility:public modality:FINAL <> () returnType:kotlin.reflect.KMutableProperty0<kotlin.Int>
       correspondingProperty: PROPERTY name:test_varWithBackingFieldAndAccessors visibility:public modality:FINAL [val]
       BLOCK_BODY
@@ -163,7 +163,7 @@ FILE fqName:<root> fileName:/propertyReferences.kt
   PROPERTY name:test_valWithAccessors visibility:public modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:test_valWithAccessors type:kotlin.reflect.KProperty0<kotlin.Int> visibility:private [final,static]
       EXPRESSION_BODY
-        PROPERTY_REFERENCE 'public final valWithAccessors: kotlin.Int [val]' field=null getter='public final fun <get-valWithAccessors> (): kotlin.Int declared in <root>' setter=null type=kotlin.reflect.KProperty0<kotlin.Int> origin=null
+        PROPERTY_REFERENCE 'public final valWithAccessors: kotlin.Int' field=null getter='public final fun <get-valWithAccessors> (): kotlin.Int declared in <root>' setter=null type=kotlin.reflect.KProperty0<kotlin.Int> origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test_valWithAccessors> visibility:public modality:FINAL <> () returnType:kotlin.reflect.KProperty0<kotlin.Int>
       correspondingProperty: PROPERTY name:test_valWithAccessors visibility:public modality:FINAL [val]
       BLOCK_BODY
@@ -182,7 +182,7 @@ FILE fqName:<root> fileName:/propertyReferences.kt
   PROPERTY name:test_varWithAccessors visibility:public modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:test_varWithAccessors type:kotlin.reflect.KMutableProperty0<kotlin.Int> visibility:private [final,static]
       EXPRESSION_BODY
-        PROPERTY_REFERENCE 'public final varWithAccessors: kotlin.Int [var]' field=null getter='public final fun <get-varWithAccessors> (): kotlin.Int declared in <root>' setter='public final fun <set-varWithAccessors> (value: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null
+        PROPERTY_REFERENCE 'public final varWithAccessors: kotlin.Int' field=null getter='public final fun <get-varWithAccessors> (): kotlin.Int declared in <root>' setter='public final fun <set-varWithAccessors> (value: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test_varWithAccessors> visibility:public modality:FINAL <> () returnType:kotlin.reflect.KMutableProperty0<kotlin.Int>
       correspondingProperty: PROPERTY name:test_varWithAccessors visibility:public modality:FINAL [val]
       BLOCK_BODY
@@ -196,14 +196,14 @@ FILE fqName:<root> fileName:/propertyReferences.kt
       correspondingProperty: PROPERTY name:delegatedVal visibility:public modality:FINAL [delegated,val]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-delegatedVal> (): kotlin.Int declared in <root>'
-          CALL 'public final fun getValue (thisRef: kotlin.Any?, kProp: kotlin.Any): kotlin.Int [operator] declared in <root>.Delegate' type=kotlin.Int origin=null
+          CALL 'public final fun getValue (thisRef: kotlin.Any?, kProp: kotlin.Any): kotlin.Int declared in <root>.Delegate' type=kotlin.Int origin=null
             $this: GET_FIELD 'FIELD PROPERTY_DELEGATE name:delegatedVal$delegate type:<root>.Delegate visibility:private [final,static]' type=<root>.Delegate origin=null
             thisRef: CONST Null type=kotlin.Nothing? value=null
-            kProp: PROPERTY_REFERENCE 'public final delegatedVal: kotlin.Int [delegated,val]' field=null getter='public final fun <get-delegatedVal> (): kotlin.Int declared in <root>' setter=null type=kotlin.reflect.KProperty0<kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+            kProp: PROPERTY_REFERENCE 'public final delegatedVal: kotlin.Int' field=null getter='public final fun <get-delegatedVal> (): kotlin.Int declared in <root>' setter=null type=kotlin.reflect.KProperty0<kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
   PROPERTY name:test_delegatedVal visibility:public modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:test_delegatedVal type:kotlin.reflect.KProperty0<kotlin.Int> visibility:private [final,static]
       EXPRESSION_BODY
-        PROPERTY_REFERENCE 'public final delegatedVal: kotlin.Int [delegated,val]' field=null getter='public final fun <get-delegatedVal> (): kotlin.Int declared in <root>' setter=null type=kotlin.reflect.KProperty0<kotlin.Int> origin=null
+        PROPERTY_REFERENCE 'public final delegatedVal: kotlin.Int' field=null getter='public final fun <get-delegatedVal> (): kotlin.Int declared in <root>' setter=null type=kotlin.reflect.KProperty0<kotlin.Int> origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test_delegatedVal> visibility:public modality:FINAL <> () returnType:kotlin.reflect.KProperty0<kotlin.Int>
       correspondingProperty: PROPERTY name:test_delegatedVal visibility:public modality:FINAL [val]
       BLOCK_BODY
@@ -217,23 +217,23 @@ FILE fqName:<root> fileName:/propertyReferences.kt
       correspondingProperty: PROPERTY name:delegatedVar visibility:public modality:FINAL [delegated,var]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-delegatedVar> (): kotlin.Int declared in <root>'
-          CALL 'public final fun getValue (thisRef: kotlin.Any?, kProp: kotlin.Any): kotlin.Int [operator] declared in <root>.Delegate' type=kotlin.Int origin=null
+          CALL 'public final fun getValue (thisRef: kotlin.Any?, kProp: kotlin.Any): kotlin.Int declared in <root>.Delegate' type=kotlin.Int origin=null
             $this: GET_FIELD 'FIELD PROPERTY_DELEGATE name:delegatedVar$delegate type:<root>.Delegate visibility:private [final,static]' type=<root>.Delegate origin=null
             thisRef: CONST Null type=kotlin.Nothing? value=null
-            kProp: PROPERTY_REFERENCE 'public final delegatedVar: kotlin.Int [delegated,var]' field=null getter='public final fun <get-delegatedVar> (): kotlin.Int declared in <root>' setter='public final fun <set-delegatedVar> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+            kProp: PROPERTY_REFERENCE 'public final delegatedVar: kotlin.Int' field=null getter='public final fun <get-delegatedVar> (): kotlin.Int declared in <root>' setter='public final fun <set-delegatedVar> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
     FUN DELEGATED_PROPERTY_ACCESSOR name:<set-delegatedVar> visibility:public modality:FINAL <> (<set-?>:kotlin.Int) returnType:kotlin.Unit
       correspondingProperty: PROPERTY name:delegatedVar visibility:public modality:FINAL [delegated,var]
       VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
       BLOCK_BODY
-        CALL 'public final fun setValue (thisRef: kotlin.Any?, kProp: kotlin.Any, value: kotlin.Int): kotlin.Unit [operator] declared in <root>.Delegate' type=kotlin.Unit origin=null
+        CALL 'public final fun setValue (thisRef: kotlin.Any?, kProp: kotlin.Any, value: kotlin.Int): kotlin.Unit declared in <root>.Delegate' type=kotlin.Unit origin=null
           $this: GET_FIELD 'FIELD PROPERTY_DELEGATE name:delegatedVar$delegate type:<root>.Delegate visibility:private [final,static]' type=<root>.Delegate origin=null
           thisRef: CONST Null type=kotlin.Nothing? value=null
-          kProp: PROPERTY_REFERENCE 'public final delegatedVar: kotlin.Int [delegated,var]' field=null getter='public final fun <get-delegatedVar> (): kotlin.Int declared in <root>' setter='public final fun <set-delegatedVar> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+          kProp: PROPERTY_REFERENCE 'public final delegatedVar: kotlin.Int' field=null getter='public final fun <get-delegatedVar> (): kotlin.Int declared in <root>' setter='public final fun <set-delegatedVar> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
           value: GET_VAR '<set-?>: kotlin.Int declared in <root>.<set-delegatedVar>' type=kotlin.Int origin=null
   PROPERTY name:test_delegatedVar visibility:public modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:test_delegatedVar type:kotlin.reflect.KMutableProperty0<kotlin.Int> visibility:private [final,static]
       EXPRESSION_BODY
-        PROPERTY_REFERENCE 'public final delegatedVar: kotlin.Int [delegated,var]' field=null getter='public final fun <get-delegatedVar> (): kotlin.Int declared in <root>' setter='public final fun <set-delegatedVar> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null
+        PROPERTY_REFERENCE 'public final delegatedVar: kotlin.Int' field=null getter='public final fun <get-delegatedVar> (): kotlin.Int declared in <root>' setter='public final fun <set-delegatedVar> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test_delegatedVar> visibility:public modality:FINAL <> () returnType:kotlin.reflect.KMutableProperty0<kotlin.Int>
       correspondingProperty: PROPERTY name:test_delegatedVar visibility:public modality:FINAL [val]
       BLOCK_BODY
@@ -251,7 +251,7 @@ FILE fqName:<root> fileName:/propertyReferences.kt
   PROPERTY name:test_constVal visibility:public modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:test_constVal type:kotlin.reflect.KProperty0<kotlin.Int> visibility:private [final,static]
       EXPRESSION_BODY
-        PROPERTY_REFERENCE 'public final constVal: kotlin.Int [val]' field=null getter='public final fun <get-constVal> (): kotlin.Int declared in <root>' setter=null type=kotlin.reflect.KProperty0<kotlin.Int> origin=null
+        PROPERTY_REFERENCE 'public final constVal: kotlin.Int' field=null getter='public final fun <get-constVal> (): kotlin.Int declared in <root>' setter=null type=kotlin.reflect.KProperty0<kotlin.Int> origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test_constVal> visibility:public modality:FINAL <> () returnType:kotlin.reflect.KProperty0<kotlin.Int>
       correspondingProperty: PROPERTY name:test_constVal visibility:public modality:FINAL [val]
       BLOCK_BODY
@@ -260,7 +260,7 @@ FILE fqName:<root> fileName:/propertyReferences.kt
   PROPERTY name:test_J_CONST visibility:public modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:test_J_CONST type:kotlin.reflect.KProperty0<kotlin.Int> visibility:private [final,static]
       EXPRESSION_BODY
-        PROPERTY_REFERENCE 'public final CONST: kotlin.Int [val]' field='FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:CONST type:kotlin.Int visibility:public [final,static]' getter=null setter=null type=kotlin.reflect.KProperty0<kotlin.Int> origin=null
+        PROPERTY_REFERENCE 'public final CONST: kotlin.Int' field='FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:CONST type:kotlin.Int visibility:public [final,static]' getter=null setter=null type=kotlin.reflect.KProperty0<kotlin.Int> origin=null
           <1>: <none>
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test_J_CONST> visibility:public modality:FINAL <> () returnType:kotlin.reflect.KProperty0<kotlin.Int>
       correspondingProperty: PROPERTY name:test_J_CONST visibility:public modality:FINAL [val]
@@ -270,7 +270,7 @@ FILE fqName:<root> fileName:/propertyReferences.kt
   PROPERTY name:test_J_nonConst visibility:public modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:test_J_nonConst type:kotlin.reflect.KMutableProperty0<kotlin.Int> visibility:private [final,static]
       EXPRESSION_BODY
-        PROPERTY_REFERENCE 'public open nonConst: kotlin.Int [var]' field='FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:nonConst type:kotlin.Int visibility:public [static]' getter=null setter=null type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null
+        PROPERTY_REFERENCE 'public open nonConst: kotlin.Int' field='FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:nonConst type:kotlin.Int visibility:public [static]' getter=null setter=null type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null
           <1>: <none>
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test_J_nonConst> visibility:public modality:FINAL <> () returnType:kotlin.reflect.KMutableProperty0<kotlin.Int>
       correspondingProperty: PROPERTY name:test_J_nonConst visibility:public modality:FINAL [val]
@@ -280,7 +280,7 @@ FILE fqName:<root> fileName:/propertyReferences.kt
   PROPERTY name:test_varWithPrivateSet visibility:public modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:test_varWithPrivateSet type:kotlin.reflect.KProperty1<<root>.C, kotlin.Int> visibility:private [final,static]
       EXPRESSION_BODY
-        PROPERTY_REFERENCE 'public final varWithPrivateSet: kotlin.Int [var]' field=null getter='public final fun <get-varWithPrivateSet> (): kotlin.Int declared in <root>.C' setter=null type=kotlin.reflect.KProperty1<<root>.C, kotlin.Int> origin=null
+        PROPERTY_REFERENCE 'public final varWithPrivateSet: kotlin.Int' field=null getter='public final fun <get-varWithPrivateSet> (): kotlin.Int declared in <root>.C' setter=null type=kotlin.reflect.KProperty1<<root>.C, kotlin.Int> origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test_varWithPrivateSet> visibility:public modality:FINAL <> () returnType:kotlin.reflect.KProperty1<<root>.C, kotlin.Int>
       correspondingProperty: PROPERTY name:test_varWithPrivateSet visibility:public modality:FINAL [val]
       BLOCK_BODY
@@ -289,7 +289,7 @@ FILE fqName:<root> fileName:/propertyReferences.kt
   PROPERTY name:test_varWithProtectedSet visibility:public modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:test_varWithProtectedSet type:kotlin.reflect.KProperty1<<root>.C, kotlin.Int> visibility:private [final,static]
       EXPRESSION_BODY
-        PROPERTY_REFERENCE 'public final varWithProtectedSet: kotlin.Int [var]' field=null getter='public final fun <get-varWithProtectedSet> (): kotlin.Int declared in <root>.C' setter=null type=kotlin.reflect.KProperty1<<root>.C, kotlin.Int> origin=null
+        PROPERTY_REFERENCE 'public final varWithProtectedSet: kotlin.Int' field=null getter='public final fun <get-varWithProtectedSet> (): kotlin.Int declared in <root>.C' setter=null type=kotlin.reflect.KProperty1<<root>.C, kotlin.Int> origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test_varWithProtectedSet> visibility:public modality:FINAL <> () returnType:kotlin.reflect.KProperty1<<root>.C, kotlin.Int>
       correspondingProperty: PROPERTY name:test_varWithProtectedSet visibility:public modality:FINAL [val]
       BLOCK_BODY

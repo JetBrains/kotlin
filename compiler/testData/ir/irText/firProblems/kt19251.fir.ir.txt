@@ -2,7 +2,7 @@ FILE fqName:<root> fileName:/test.kt
   FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
     BLOCK_BODY
       VAR name:map type:kotlin.collections.MutableMap<<root>.Fun, kotlin.String> [val]
-        CALL 'public final fun mutableMapOf <K, V> (): kotlin.collections.MutableMap<K of kotlin.collections.MapsKt.mutableMapOf, V of kotlin.collections.MapsKt.mutableMapOf> [inline] declared in kotlin.collections.MapsKt' type=kotlin.collections.MutableMap<<root>.Fun, kotlin.String> origin=null
+        CALL 'public final fun mutableMapOf <K, V> (): kotlin.collections.MutableMap<K of kotlin.collections.MapsKt.mutableMapOf, V of kotlin.collections.MapsKt.mutableMapOf> declared in kotlin.collections.MapsKt' type=kotlin.collections.MutableMap<<root>.Fun, kotlin.String> origin=null
           <K>: <root>.Fun
           <V>: kotlin.String
       VAR name:fn type:<root>.Fun [val]
@@ -11,12 +11,12 @@ FILE fqName:<root> fileName:/test.kt
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:@[FlexibleNullability] kotlin.String?) returnType:@[FlexibleNullability] kotlin.String?
               VALUE_PARAMETER name:it index:0 type:@[FlexibleNullability] kotlin.String?
               BLOCK_BODY
-                CALL 'public final fun TODO (): kotlin.Nothing [inline] declared in kotlin.StandardKt' type=kotlin.Nothing origin=null
+                CALL 'public final fun TODO (): kotlin.Nothing declared in kotlin.StandardKt' type=kotlin.Nothing origin=null
       RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
         TYPE_OP type=kotlin.String origin=IMPLICIT_NOTNULL typeOperand=kotlin.String
           CALL 'public open fun computeIfAbsent (p0: @[EnhancedNullability] K of kotlin.collections.MutableMap, p1: @[EnhancedNullability] java.util.function.Function<in @[EnhancedNullability] K of kotlin.collections.MutableMap, out @[EnhancedNullability] V of kotlin.collections.MutableMap>): @[EnhancedNullability] V of kotlin.collections.MutableMap declared in kotlin.collections.MutableMap' type=@[EnhancedNullability] kotlin.String origin=null
-            $this: GET_VAR 'val map: kotlin.collections.MutableMap<<root>.Fun, kotlin.String> [val] declared in <root>.box' type=kotlin.collections.MutableMap<<root>.Fun, kotlin.String> origin=null
-            p0: GET_VAR 'val fn: <root>.Fun [val] declared in <root>.box' type=<root>.Fun origin=null
+            $this: GET_VAR 'val map: kotlin.collections.MutableMap<<root>.Fun, kotlin.String> declared in <root>.box' type=kotlin.collections.MutableMap<<root>.Fun, kotlin.String> origin=null
+            p0: GET_VAR 'val fn: <root>.Fun declared in <root>.box' type=<root>.Fun origin=null
             p1: TYPE_OP type=@[EnhancedNullability] java.util.function.Function<kotlin.Any?, @[EnhancedNullability] kotlin.String> origin=SAM_CONVERSION typeOperand=@[EnhancedNullability] java.util.function.Function<kotlin.Any?, @[EnhancedNullability] kotlin.String>
               TYPE_OP type=kotlin.Function1<@[EnhancedNullability] kotlin.Any?, @[EnhancedNullability] kotlin.String> origin=IMPLICIT_CAST typeOperand=kotlin.Function1<@[EnhancedNullability] kotlin.Any?, @[EnhancedNullability] kotlin.String>
                 FUN_EXPR type=kotlin.Function1<@[EnhancedNullability] <root>.Fun, @[EnhancedNullability] kotlin.String> origin=LAMBDA

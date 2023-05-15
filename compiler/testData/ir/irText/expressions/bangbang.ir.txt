@@ -18,13 +18,13 @@ FILE fqName:<root> fileName:/bangbang.kt
             WHEN type=kotlin.Int? origin=null
               BRANCH
                 if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                  arg0: GET_VAR 'val tmp_0: kotlin.Any? [val] declared in <root>.test2' type=kotlin.Any? origin=null
+                  arg0: GET_VAR 'val tmp_0: kotlin.Any? declared in <root>.test2' type=kotlin.Any? origin=null
                   arg1: CONST Null type=kotlin.Nothing? value=null
                 then: CONST Null type=kotlin.Nothing? value=null
               BRANCH
                 if: CONST Boolean type=kotlin.Boolean value=true
                 then: CALL 'public open fun hashCode (): kotlin.Int declared in kotlin.Any' type=kotlin.Int origin=null
-                  $this: GET_VAR 'val tmp_0: kotlin.Any? [val] declared in <root>.test2' type=kotlin.Any? origin=null
+                  $this: GET_VAR 'val tmp_0: kotlin.Any? declared in <root>.test2' type=kotlin.Any? origin=null
   FUN name:test3 visibility:public modality:FINAL <X> (a:X of <root>.test3) returnType:{X of <root>.test3 & Any}
     TYPE_PARAMETER name:X index:0 variance: superTypes:[kotlin.Any?] reified:false
     VALUE_PARAMETER name:a index:0 type:X of <root>.test3

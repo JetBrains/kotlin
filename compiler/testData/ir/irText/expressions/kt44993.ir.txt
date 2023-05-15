@@ -13,30 +13,30 @@ FILE fqName:<root> fileName:/kt44993.kt
                 WHEN type=<root>.JavaBox? origin=null
                   BRANCH
                     if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                      arg0: GET_VAR 'val tmp_1: <root>.KotlinBox<<root>.JavaBox> [val] declared in <root>.f' type=<root>.KotlinBox<<root>.JavaBox> origin=null
+                      arg0: GET_VAR 'val tmp_1: <root>.KotlinBox<<root>.JavaBox> declared in <root>.f' type=<root>.KotlinBox<<root>.JavaBox> origin=null
                       arg1: CONST Null type=kotlin.Nothing? value=null
                     then: CONST Null type=kotlin.Nothing? value=null
                   BRANCH
                     if: CONST Boolean type=kotlin.Boolean value=true
                     then: CALL 'public final fun <get-data> (): T of <root>.KotlinBox? declared in <root>.KotlinBox' type=<root>.JavaBox? origin=GET_PROPERTY
-                      $this: GET_VAR 'val tmp_1: <root>.KotlinBox<<root>.JavaBox> [val] declared in <root>.f' type=<root>.KotlinBox<<root>.JavaBox> origin=null
+                      $this: GET_VAR 'val tmp_1: <root>.KotlinBox<<root>.JavaBox> declared in <root>.f' type=<root>.KotlinBox<<root>.JavaBox> origin=null
             WHEN type=@[FlexibleNullability] kotlin.String? origin=null
               BRANCH
                 if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                  arg0: GET_VAR 'val tmp_0: <root>.JavaBox? [val] declared in <root>.f' type=<root>.JavaBox? origin=null
+                  arg0: GET_VAR 'val tmp_0: <root>.JavaBox? declared in <root>.f' type=<root>.JavaBox? origin=null
                   arg1: CONST Null type=kotlin.Nothing? value=null
                 then: CONST Null type=kotlin.Nothing? value=null
               BRANCH
                 if: CONST Boolean type=kotlin.Boolean value=true
                 then: GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:element type:@[FlexibleNullability] kotlin.String? visibility:public [final]' type=@[FlexibleNullability] kotlin.String? origin=GET_PROPERTY
-                  receiver: GET_VAR 'val tmp_0: <root>.JavaBox? [val] declared in <root>.f' type=<root>.JavaBox? origin=null
+                  receiver: GET_VAR 'val tmp_0: <root>.JavaBox? declared in <root>.f' type=<root>.JavaBox? origin=null
   CLASS CLASS name:KotlinBox modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.KotlinBox<T of <root>.KotlinBox>
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
     CONSTRUCTOR visibility:public <> (data:T of <root>.KotlinBox?) returnType:<root>.KotlinBox<T of <root>.KotlinBox> [primary]
       VALUE_PARAMETER name:data index:0 type:T of <root>.KotlinBox?
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:KotlinBox modality:FINAL visibility:public superTypes:[kotlin.Any]'
     PROPERTY name:data visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:data type:T of <root>.KotlinBox? visibility:public [final]
@@ -53,7 +53,7 @@ FILE fqName:<root> fileName:/kt44993.kt
               receiver: GET_VAR '<this>: <root>.KotlinBox<T of <root>.KotlinBox> declared in <root>.KotlinBox.<get-data>' type=<root>.KotlinBox<T of <root>.KotlinBox> origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]

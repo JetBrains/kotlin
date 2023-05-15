@@ -3,7 +3,7 @@ FILE fqName:<root> fileName:/smartCastOnFakeOverrideReceiver.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A
     CONSTRUCTOR visibility:public <> () returnType:<root>.A [primary]
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:OPEN visibility:public superTypes:[kotlin.Any]'
     FUN name:f visibility:public modality:FINAL <> ($this:<root>.A) returnType:kotlin.Int
       $this: VALUE_PARAMETER name:<this> type:<root>.A
@@ -30,7 +30,7 @@ FILE fqName:<root> fileName:/smartCastOnFakeOverrideReceiver.kt
             BRANCH
               if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=<root>.B
                 GET_VAR 'x: kotlin.Any declared in <root>.A.testA1' type=kotlin.Any origin=null
-              then: CALL 'public final fun f (): kotlin.Int [fake_override] declared in <root>.B' type=kotlin.Int origin=null
+              then: CALL 'public final fun f (): kotlin.Int declared in <root>.B' type=kotlin.Int origin=null
                 $this: TYPE_OP type=<root>.B origin=IMPLICIT_CAST typeOperand=<root>.B
                   GET_VAR 'x: kotlin.Any declared in <root>.A.testA1' type=kotlin.Any origin=null
             BRANCH
@@ -45,7 +45,7 @@ FILE fqName:<root> fileName:/smartCastOnFakeOverrideReceiver.kt
             BRANCH
               if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=<root>.B
                 GET_VAR 'x: kotlin.Any declared in <root>.A.testA2' type=kotlin.Any origin=null
-              then: CALL 'public final fun <get-aVal> (): kotlin.Int [fake_override] declared in <root>.B' type=kotlin.Int origin=GET_PROPERTY
+              then: CALL 'public final fun <get-aVal> (): kotlin.Int declared in <root>.B' type=kotlin.Int origin=GET_PROPERTY
                 $this: TYPE_OP type=<root>.B origin=IMPLICIT_CAST typeOperand=<root>.B
                   GET_VAR 'x: kotlin.Any declared in <root>.A.testA2' type=kotlin.Any origin=null
             BRANCH
@@ -53,7 +53,7 @@ FILE fqName:<root> fileName:/smartCastOnFakeOverrideReceiver.kt
               then: CONST Null type=kotlin.Nothing? value=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -68,7 +68,7 @@ FILE fqName:<root> fileName:/smartCastOnFakeOverrideReceiver.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.B
     CONSTRUCTOR visibility:public <> () returnType:<root>.B [primary]
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.A'
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.A'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:B modality:FINAL visibility:public superTypes:[<root>.A]'
     FUN name:testB1 visibility:public modality:FINAL <> ($this:<root>.B, x:kotlin.Any) returnType:kotlin.Int?
       $this: VALUE_PARAMETER name:<this> type:<root>.B
@@ -79,7 +79,7 @@ FILE fqName:<root> fileName:/smartCastOnFakeOverrideReceiver.kt
             BRANCH
               if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=<root>.B
                 GET_VAR 'x: kotlin.Any declared in <root>.B.testB1' type=kotlin.Any origin=null
-              then: CALL 'public final fun f (): kotlin.Int [fake_override] declared in <root>.B' type=kotlin.Int origin=null
+              then: CALL 'public final fun f (): kotlin.Int declared in <root>.B' type=kotlin.Int origin=null
                 $this: TYPE_OP type=<root>.B origin=IMPLICIT_CAST typeOperand=<root>.B
                   GET_VAR 'x: kotlin.Any declared in <root>.B.testB1' type=kotlin.Any origin=null
             BRANCH
@@ -94,7 +94,7 @@ FILE fqName:<root> fileName:/smartCastOnFakeOverrideReceiver.kt
             BRANCH
               if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=<root>.B
                 GET_VAR 'x: kotlin.Any declared in <root>.B.testB2' type=kotlin.Any origin=null
-              then: CALL 'public final fun <get-aVal> (): kotlin.Int [fake_override] declared in <root>.B' type=kotlin.Int origin=GET_PROPERTY
+              then: CALL 'public final fun <get-aVal> (): kotlin.Int declared in <root>.B' type=kotlin.Int origin=GET_PROPERTY
                 $this: TYPE_OP type=<root>.B origin=IMPLICIT_CAST typeOperand=<root>.B
                   GET_VAR 'x: kotlin.Any declared in <root>.B.testB2' type=kotlin.Any origin=null
             BRANCH
@@ -106,7 +106,7 @@ FILE fqName:<root> fileName:/smartCastOnFakeOverrideReceiver.kt
       $this: VALUE_PARAMETER name:<this> type:<root>.A
     PROPERTY FAKE_OVERRIDE name:aVal visibility:public modality:FINAL [fake_override,val]
       overridden:
-        public final aVal: kotlin.Int [val]
+        public final aVal: kotlin.Int
       FUN FAKE_OVERRIDE name:<get-aVal> visibility:public modality:FINAL <> ($this:<root>.A) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:aVal visibility:public modality:FINAL [fake_override,val]
         overridden:
@@ -124,23 +124,23 @@ FILE fqName:<root> fileName:/smartCastOnFakeOverrideReceiver.kt
       VALUE_PARAMETER name:x index:0 type:kotlin.Any
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.A
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.A
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
       overridden:
-        public open fun hashCode (): kotlin.Int [fake_override] declared in <root>.A
+        public open fun hashCode (): kotlin.Int declared in <root>.A
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
       overridden:
-        public open fun toString (): kotlin.String [fake_override] declared in <root>.A
+        public open fun toString (): kotlin.String declared in <root>.A
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS CLASS name:GA modality:OPEN visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.GA<T of <root>.GA>
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
     CONSTRUCTOR visibility:public <> () returnType:<root>.GA<T of <root>.GA> [primary]
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:GA modality:OPEN visibility:public superTypes:[kotlin.Any]'
     FUN name:f visibility:public modality:FINAL <> ($this:<root>.GA<T of <root>.GA>) returnType:kotlin.Int
       $this: VALUE_PARAMETER name:<this> type:<root>.GA<T of <root>.GA>
@@ -160,7 +160,7 @@ FILE fqName:<root> fileName:/smartCastOnFakeOverrideReceiver.kt
               receiver: GET_VAR '<this>: <root>.GA<T of <root>.GA> declared in <root>.GA.<get-aVal>' type=<root>.GA<T of <root>.GA> origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -177,7 +177,7 @@ FILE fqName:<root> fileName:/smartCastOnFakeOverrideReceiver.kt
     TYPE_PARAMETER name:S index:1 variance: superTypes:[kotlin.Any?] reified:false
     CONSTRUCTOR visibility:public <> () returnType:<root>.GB<T of <root>.GB, S of <root>.GB> [primary]
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.GA'
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.GA'
           <T>: T of <root>.GB
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:GB modality:FINAL visibility:public superTypes:[<root>.GA<T of <root>.GB>]'
     FUN name:testGB1 visibility:public modality:FINAL <> ($this:<root>.GB<T of <root>.GB, S of <root>.GB>, a:kotlin.Any) returnType:kotlin.Unit
@@ -188,11 +188,11 @@ FILE fqName:<root> fileName:/smartCastOnFakeOverrideReceiver.kt
           TYPE_OP type=<root>.GB<kotlin.Int, kotlin.String> origin=CAST typeOperand=<root>.GB<kotlin.Int, kotlin.String>
             GET_VAR 'a: kotlin.Any declared in <root>.GB.testGB1' type=kotlin.Any origin=null
         TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-          CALL 'public final fun f (): kotlin.Int [fake_override] declared in <root>.GB' type=kotlin.Int origin=null
+          CALL 'public final fun f (): kotlin.Int declared in <root>.GB' type=kotlin.Int origin=null
             $this: TYPE_OP type=<root>.GB<kotlin.Int, kotlin.String> origin=IMPLICIT_CAST typeOperand=<root>.GB<kotlin.Int, kotlin.String>
               GET_VAR 'a: kotlin.Any declared in <root>.GB.testGB1' type=kotlin.Any origin=null
         TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-          CALL 'public final fun <get-aVal> (): kotlin.Int [fake_override] declared in <root>.GB' type=kotlin.Int origin=GET_PROPERTY
+          CALL 'public final fun <get-aVal> (): kotlin.Int declared in <root>.GB' type=kotlin.Int origin=GET_PROPERTY
             $this: TYPE_OP type=<root>.GB<kotlin.Int, kotlin.String> origin=IMPLICIT_CAST typeOperand=<root>.GB<kotlin.Int, kotlin.String>
               GET_VAR 'a: kotlin.Any declared in <root>.GB.testGB1' type=kotlin.Any origin=null
     FUN FAKE_OVERRIDE name:f visibility:public modality:FINAL <> ($this:<root>.GA<T of <root>.GA>) returnType:kotlin.Int [fake_override]
@@ -201,7 +201,7 @@ FILE fqName:<root> fileName:/smartCastOnFakeOverrideReceiver.kt
       $this: VALUE_PARAMETER name:<this> type:<root>.GA<T of <root>.GA>
     PROPERTY FAKE_OVERRIDE name:aVal visibility:public modality:FINAL [fake_override,val]
       overridden:
-        public final aVal: kotlin.Int [val]
+        public final aVal: kotlin.Int
       FUN FAKE_OVERRIDE name:<get-aVal> visibility:public modality:FINAL <> ($this:<root>.GA<T of <root>.GA>) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:aVal visibility:public modality:FINAL [fake_override,val]
         overridden:
@@ -209,14 +209,14 @@ FILE fqName:<root> fileName:/smartCastOnFakeOverrideReceiver.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.GA<T of <root>.GA>
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.GA
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.GA
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
       overridden:
-        public open fun hashCode (): kotlin.Int [fake_override] declared in <root>.GA
+        public open fun hashCode (): kotlin.Int declared in <root>.GA
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
       overridden:
-        public open fun toString (): kotlin.String [fake_override] declared in <root>.GA
+        public open fun toString (): kotlin.String declared in <root>.GA
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any

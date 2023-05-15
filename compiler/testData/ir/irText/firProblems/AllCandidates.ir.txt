@@ -4,11 +4,11 @@ FILE fqName:<root> fileName:/AllCandidates.kt
     TYPE_PARAMETER name:C index:0 variance: superTypes:[kotlin.Any?] reified:false
     CONSTRUCTOR visibility:public <> () returnType:<root>.ResolvedCall<C of <root>.ResolvedCall> [primary]
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:ResolvedCall modality:FINAL visibility:public superTypes:[kotlin.Any]'
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -24,7 +24,7 @@ FILE fqName:<root> fileName:/AllCandidates.kt
     CONSTRUCTOR visibility:public <> (resolvedCall:<root>.ResolvedCall<*>) returnType:<root>.MyCandidate [primary]
       VALUE_PARAMETER name:resolvedCall index:0 type:<root>.ResolvedCall<*>
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:MyCandidate modality:FINAL visibility:public superTypes:[kotlin.Any]'
     PROPERTY name:resolvedCall visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:resolvedCall type:<root>.ResolvedCall<*> visibility:private [final]
@@ -39,7 +39,7 @@ FILE fqName:<root> fileName:/AllCandidates.kt
               receiver: GET_VAR '<this>: <root>.MyCandidate declared in <root>.MyCandidate.<get-resolvedCall>' type=<root>.MyCandidate origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -55,7 +55,7 @@ FILE fqName:<root> fileName:/AllCandidates.kt
     VALUE_PARAMETER name:allCandidates index:0 type:kotlin.collections.Collection<<root>.MyCandidate>
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='private final fun allCandidatesResult <A> (allCandidates: kotlin.collections.Collection<<root>.MyCandidate>): @[FlexibleNullability] <root>.OverloadResolutionResultsImpl<@[FlexibleNullability] A of <root>.allCandidatesResult?>? declared in <root>'
-        CALL 'public final fun apply <T> (block: @[ExtensionFunctionType] kotlin.Function1<T of kotlin.StandardKt.apply, kotlin.Unit>): T of kotlin.StandardKt.apply [inline] declared in kotlin.StandardKt' type=@[FlexibleNullability] <root>.OverloadResolutionResultsImpl<@[FlexibleNullability] A of <root>.allCandidatesResult?>? origin=null
+        CALL 'public final fun apply <T> (block: @[ExtensionFunctionType] kotlin.Function1<T of kotlin.StandardKt.apply, kotlin.Unit>): T of kotlin.StandardKt.apply declared in kotlin.StandardKt' type=@[FlexibleNullability] <root>.OverloadResolutionResultsImpl<@[FlexibleNullability] A of <root>.allCandidatesResult?>? origin=null
           <T>: @[FlexibleNullability] <root>.OverloadResolutionResultsImpl<@[FlexibleNullability] A of <root>.allCandidatesResult?>?
           $receiver: CALL 'public open fun nameNotFound <R> (): @[FlexibleNullability] <root>.OverloadResolutionResultsImpl<@[FlexibleNullability] R of <root>.OverloadResolutionResultsImpl.nameNotFound?>? declared in <root>.OverloadResolutionResultsImpl' type=@[FlexibleNullability] <root>.OverloadResolutionResultsImpl<@[FlexibleNullability] A of <root>.allCandidatesResult?>? origin=null
             <R>: @[FlexibleNullability] A of <root>.allCandidatesResult?
@@ -67,7 +67,7 @@ FILE fqName:<root> fileName:/AllCandidates.kt
                   <1>: @[FlexibleNullability] A of <root>.allCandidatesResult?
                   $this: TYPE_OP type=<root>.OverloadResolutionResultsImpl<@[FlexibleNullability] A of <root>.allCandidatesResult?> origin=IMPLICIT_NOTNULL typeOperand=<root>.OverloadResolutionResultsImpl<@[FlexibleNullability] A of <root>.allCandidatesResult?>
                     GET_VAR '$this$apply: @[FlexibleNullability] <root>.OverloadResolutionResultsImpl<@[FlexibleNullability] A of <root>.allCandidatesResult?>? declared in <root>.allCandidatesResult.<anonymous>' type=@[FlexibleNullability] <root>.OverloadResolutionResultsImpl<@[FlexibleNullability] A of <root>.allCandidatesResult?>? origin=null
-                  allCandidates: CALL 'public final fun map <T, R> (transform: kotlin.Function1<T of kotlin.collections.CollectionsKt.map, R of kotlin.collections.CollectionsKt.map>): kotlin.collections.List<R of kotlin.collections.CollectionsKt.map> [inline] declared in kotlin.collections.CollectionsKt' type=kotlin.collections.List<<root>.ResolvedCall<A of <root>.allCandidatesResult>> origin=null
+                  allCandidates: CALL 'public final fun map <T, R> (transform: kotlin.Function1<T of kotlin.collections.CollectionsKt.map, R of kotlin.collections.CollectionsKt.map>): kotlin.collections.List<R of kotlin.collections.CollectionsKt.map> declared in kotlin.collections.CollectionsKt' type=kotlin.collections.List<<root>.ResolvedCall<A of <root>.allCandidatesResult>> origin=null
                     <T>: <root>.MyCandidate
                     <R>: <root>.ResolvedCall<A of <root>.allCandidatesResult>
                     $receiver: GET_VAR 'allCandidates: kotlin.collections.Collection<<root>.MyCandidate> declared in <root>.allCandidatesResult' type=kotlin.collections.Collection<<root>.MyCandidate> origin=null

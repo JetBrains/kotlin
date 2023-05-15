@@ -5,7 +5,7 @@ FILE fqName:<root> fileName:/stringComparisons.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test1 (a: kotlin.String, b: kotlin.String): kotlin.Boolean declared in <root>'
         CALL 'public final fun greater (arg0: kotlin.Int, arg1: kotlin.Int): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=GT
-          arg0: CALL 'public open fun compareTo (other: kotlin.String): kotlin.Int [operator] declared in kotlin.String' type=kotlin.Int origin=null
+          arg0: CALL 'public open fun compareTo (other: kotlin.String): kotlin.Int declared in kotlin.String' type=kotlin.Int origin=null
             $this: GET_VAR 'a: kotlin.String declared in <root>.test1' type=kotlin.String origin=null
             other: GET_VAR 'b: kotlin.String declared in <root>.test1' type=kotlin.String origin=null
           arg1: CONST Int type=kotlin.Int value=0
@@ -15,7 +15,7 @@ FILE fqName:<root> fileName:/stringComparisons.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test2 (a: kotlin.String, b: kotlin.String): kotlin.Boolean declared in <root>'
         CALL 'public final fun less (arg0: kotlin.Int, arg1: kotlin.Int): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=LT
-          arg0: CALL 'public open fun compareTo (other: kotlin.String): kotlin.Int [operator] declared in kotlin.String' type=kotlin.Int origin=null
+          arg0: CALL 'public open fun compareTo (other: kotlin.String): kotlin.Int declared in kotlin.String' type=kotlin.Int origin=null
             $this: GET_VAR 'a: kotlin.String declared in <root>.test2' type=kotlin.String origin=null
             other: GET_VAR 'b: kotlin.String declared in <root>.test2' type=kotlin.String origin=null
           arg1: CONST Int type=kotlin.Int value=0
@@ -25,7 +25,7 @@ FILE fqName:<root> fileName:/stringComparisons.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test3 (a: kotlin.String, b: kotlin.String): kotlin.Boolean declared in <root>'
         CALL 'public final fun greaterOrEqual (arg0: kotlin.Int, arg1: kotlin.Int): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=GTEQ
-          arg0: CALL 'public open fun compareTo (other: kotlin.String): kotlin.Int [operator] declared in kotlin.String' type=kotlin.Int origin=null
+          arg0: CALL 'public open fun compareTo (other: kotlin.String): kotlin.Int declared in kotlin.String' type=kotlin.Int origin=null
             $this: GET_VAR 'a: kotlin.String declared in <root>.test3' type=kotlin.String origin=null
             other: GET_VAR 'b: kotlin.String declared in <root>.test3' type=kotlin.String origin=null
           arg1: CONST Int type=kotlin.Int value=0
@@ -35,7 +35,7 @@ FILE fqName:<root> fileName:/stringComparisons.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test4 (a: kotlin.String, b: kotlin.String): kotlin.Boolean declared in <root>'
         CALL 'public final fun lessOrEqual (arg0: kotlin.Int, arg1: kotlin.Int): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=LTEQ
-          arg0: CALL 'public open fun compareTo (other: kotlin.String): kotlin.Int [operator] declared in kotlin.String' type=kotlin.Int origin=null
+          arg0: CALL 'public open fun compareTo (other: kotlin.String): kotlin.Int declared in kotlin.String' type=kotlin.Int origin=null
             $this: GET_VAR 'a: kotlin.String declared in <root>.test4' type=kotlin.String origin=null
             other: GET_VAR 'b: kotlin.String declared in <root>.test4' type=kotlin.String origin=null
           arg1: CONST Int type=kotlin.Int value=0

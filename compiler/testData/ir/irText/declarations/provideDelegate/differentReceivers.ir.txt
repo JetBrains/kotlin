@@ -4,7 +4,7 @@ FILE fqName:<root> fileName:/differentReceivers.kt
     CONSTRUCTOR visibility:public <> (value:kotlin.String) returnType:<root>.MyClass [primary]
       VALUE_PARAMETER name:value index:0 type:kotlin.String
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:MyClass modality:FINAL visibility:public superTypes:[kotlin.Any]'
     PROPERTY name:value visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.String visibility:private [final]
@@ -19,7 +19,7 @@ FILE fqName:<root> fileName:/differentReceivers.kt
               receiver: GET_VAR '<this>: <root>.MyClass declared in <root>.MyClass.<get-value>' type=<root>.MyClass origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -35,7 +35,7 @@ FILE fqName:<root> fileName:/differentReceivers.kt
     VALUE_PARAMETER name:host index:0 type:kotlin.Any?
     VALUE_PARAMETER name:p index:1 type:kotlin.Any
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun provideDelegate (host: kotlin.Any?, p: kotlin.Any): kotlin.String [operator] declared in <root>'
+      RETURN type=kotlin.Nothing from='public final fun provideDelegate (host: kotlin.Any?, p: kotlin.Any): kotlin.String declared in <root>'
         CALL 'public final fun <get-value> (): kotlin.String declared in <root>.MyClass' type=kotlin.String origin=GET_PROPERTY
           $this: GET_VAR '<this>: <root>.MyClass declared in <root>.provideDelegate' type=<root>.MyClass origin=null
   FUN name:getValue visibility:public modality:FINAL <> ($receiver:kotlin.String, receiver:kotlin.Any?, p:kotlin.Any) returnType:kotlin.String [operator]
@@ -43,24 +43,24 @@ FILE fqName:<root> fileName:/differentReceivers.kt
     VALUE_PARAMETER name:receiver index:0 type:kotlin.Any?
     VALUE_PARAMETER name:p index:1 type:kotlin.Any
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun getValue (receiver: kotlin.Any?, p: kotlin.Any): kotlin.String [operator] declared in <root>'
+      RETURN type=kotlin.Nothing from='public final fun getValue (receiver: kotlin.Any?, p: kotlin.Any): kotlin.String declared in <root>'
         GET_VAR '<this>: kotlin.String declared in <root>.getValue' type=kotlin.String origin=null
   PROPERTY name:testO visibility:public modality:FINAL [delegated,val]
     FIELD PROPERTY_DELEGATE name:testO$delegate type:kotlin.String visibility:private [final,static]
       EXPRESSION_BODY
-        CALL 'public final fun provideDelegate (host: kotlin.Any?, p: kotlin.Any): kotlin.String [operator] declared in <root>' type=kotlin.String origin=null
-          $receiver: CONSTRUCTOR_CALL 'public constructor <init> (value: kotlin.String) [primary] declared in <root>.MyClass' type=<root>.MyClass origin=null
+        CALL 'public final fun provideDelegate (host: kotlin.Any?, p: kotlin.Any): kotlin.String declared in <root>' type=kotlin.String origin=null
+          $receiver: CONSTRUCTOR_CALL 'public constructor <init> (value: kotlin.String) declared in <root>.MyClass' type=<root>.MyClass origin=null
             value: CONST String type=kotlin.String value="O"
           host: CONST Null type=kotlin.Nothing? value=null
-          p: PROPERTY_REFERENCE 'public final testO: kotlin.String [delegated,val]' field=null getter='public final fun <get-testO> (): kotlin.String declared in <root>' setter=null type=kotlin.reflect.KProperty0<kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+          p: PROPERTY_REFERENCE 'public final testO: kotlin.String' field=null getter='public final fun <get-testO> (): kotlin.String declared in <root>' setter=null type=kotlin.reflect.KProperty0<kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
     FUN DELEGATED_PROPERTY_ACCESSOR name:<get-testO> visibility:public modality:FINAL <> () returnType:kotlin.String
       correspondingProperty: PROPERTY name:testO visibility:public modality:FINAL [delegated,val]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-testO> (): kotlin.String declared in <root>'
-          CALL 'public final fun getValue (receiver: kotlin.Any?, p: kotlin.Any): kotlin.String [operator] declared in <root>' type=kotlin.String origin=null
+          CALL 'public final fun getValue (receiver: kotlin.Any?, p: kotlin.Any): kotlin.String declared in <root>' type=kotlin.String origin=null
             $receiver: GET_FIELD 'FIELD PROPERTY_DELEGATE name:testO$delegate type:kotlin.String visibility:private [final,static]' type=kotlin.String origin=null
             receiver: CONST Null type=kotlin.Nothing? value=null
-            p: PROPERTY_REFERENCE 'public final testO: kotlin.String [delegated,val]' field=null getter='public final fun <get-testO> (): kotlin.String declared in <root>' setter=null type=kotlin.reflect.KProperty0<kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+            p: PROPERTY_REFERENCE 'public final testO: kotlin.String' field=null getter='public final fun <get-testO> (): kotlin.String declared in <root>' setter=null type=kotlin.reflect.KProperty0<kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
   PROPERTY name:testK visibility:public modality:FINAL [delegated,val]
     FIELD PROPERTY_DELEGATE name:testK$delegate type:kotlin.String visibility:private [final,static]
       EXPRESSION_BODY
@@ -69,14 +69,14 @@ FILE fqName:<root> fileName:/differentReceivers.kt
       correspondingProperty: PROPERTY name:testK visibility:public modality:FINAL [delegated,val]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-testK> (): kotlin.String declared in <root>'
-          CALL 'public final fun getValue (receiver: kotlin.Any?, p: kotlin.Any): kotlin.String [operator] declared in <root>' type=kotlin.String origin=null
+          CALL 'public final fun getValue (receiver: kotlin.Any?, p: kotlin.Any): kotlin.String declared in <root>' type=kotlin.String origin=null
             $receiver: GET_FIELD 'FIELD PROPERTY_DELEGATE name:testK$delegate type:kotlin.String visibility:private [final,static]' type=kotlin.String origin=null
             receiver: CONST Null type=kotlin.Nothing? value=null
-            p: PROPERTY_REFERENCE 'public final testK: kotlin.String [delegated,val]' field=null getter='public final fun <get-testK> (): kotlin.String declared in <root>' setter=null type=kotlin.reflect.KProperty0<kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+            p: PROPERTY_REFERENCE 'public final testK: kotlin.String' field=null getter='public final fun <get-testK> (): kotlin.String declared in <root>' setter=null type=kotlin.reflect.KProperty0<kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
   PROPERTY name:testOK visibility:public modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:testOK type:kotlin.String visibility:private [final,static]
       EXPRESSION_BODY
-        CALL 'public final fun plus (other: kotlin.Any?): kotlin.String [operator] declared in kotlin.String' type=kotlin.String origin=PLUS
+        CALL 'public final fun plus (other: kotlin.Any?): kotlin.String declared in kotlin.String' type=kotlin.String origin=PLUS
           $this: CALL 'public final fun <get-testO> (): kotlin.String declared in <root>' type=kotlin.String origin=GET_PROPERTY
           other: CALL 'public final fun <get-testK> (): kotlin.String declared in <root>' type=kotlin.String origin=GET_PROPERTY
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-testOK> visibility:public modality:FINAL <> () returnType:kotlin.String

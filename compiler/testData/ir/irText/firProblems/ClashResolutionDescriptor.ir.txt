@@ -3,7 +3,7 @@ FILE fqName:<root> fileName:/ClashResolutionDescriptor.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ComponentContainer
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -19,7 +19,7 @@ FILE fqName:<root> fileName:/ClashResolutionDescriptor.kt
     TYPE_PARAMETER name:S index:0 variance: superTypes:[<root>.PlatformSpecificExtension<S of <root>.PlatformSpecificExtension>] reified:false
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -34,7 +34,7 @@ FILE fqName:<root> fileName:/ClashResolutionDescriptor.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ComponentDescriptor
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -51,7 +51,7 @@ FILE fqName:<root> fileName:/ClashResolutionDescriptor.kt
     CONSTRUCTOR visibility:public <> (applicableTo:java.lang.Class<E of <root>.PlatformExtensionsClashResolver>) returnType:<root>.PlatformExtensionsClashResolver<E of <root>.PlatformExtensionsClashResolver> [primary]
       VALUE_PARAMETER name:applicableTo index:0 type:java.lang.Class<E of <root>.PlatformExtensionsClashResolver>
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:PlatformExtensionsClashResolver modality:ABSTRACT visibility:public superTypes:[kotlin.Any]'
     PROPERTY name:applicableTo visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:applicableTo type:java.lang.Class<E of <root>.PlatformExtensionsClashResolver> visibility:private [final]
@@ -66,7 +66,7 @@ FILE fqName:<root> fileName:/ClashResolutionDescriptor.kt
               receiver: GET_VAR '<this>: <root>.PlatformExtensionsClashResolver<E of <root>.PlatformExtensionsClashResolver> declared in <root>.PlatformExtensionsClashResolver.<get-applicableTo>' type=<root>.PlatformExtensionsClashResolver<E of <root>.PlatformExtensionsClashResolver> origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -85,7 +85,7 @@ FILE fqName:<root> fileName:/ClashResolutionDescriptor.kt
       VALUE_PARAMETER name:resolver index:1 type:<root>.PlatformExtensionsClashResolver<E of <root>.ClashResolutionDescriptor>
       VALUE_PARAMETER name:clashedComponents index:2 type:kotlin.collections.List<<root>.ComponentDescriptor>
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:ClashResolutionDescriptor modality:FINAL visibility:public superTypes:[kotlin.Any]'
     PROPERTY name:resolver visibility:private modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:resolver type:<root>.PlatformExtensionsClashResolver<E of <root>.ClashResolutionDescriptor> visibility:private [final]
@@ -111,7 +111,7 @@ FILE fqName:<root> fileName:/ClashResolutionDescriptor.kt
               receiver: GET_VAR '<this>: <root>.ClashResolutionDescriptor<E of <root>.ClashResolutionDescriptor> declared in <root>.ClashResolutionDescriptor.<get-clashedComponents>' type=<root>.ClashResolutionDescriptor<E of <root>.ClashResolutionDescriptor> origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -125,7 +125,7 @@ FILE fqName:<root> fileName:/ClashResolutionDescriptor.kt
   PROPERTY name:registrationMap visibility:private modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:registrationMap type:java.util.HashMap<java.lang.reflect.Type, kotlin.Any>{ kotlin.collections.HashMap<java.lang.reflect.Type, kotlin.Any> } visibility:private [final,static]
       EXPRESSION_BODY
-        CALL 'public final fun hashMapOf <K, V> (): java.util.HashMap<K of kotlin.collections.MapsKt.hashMapOf, V of kotlin.collections.MapsKt.hashMapOf>{ kotlin.collections.HashMap<K of kotlin.collections.MapsKt.hashMapOf, V of kotlin.collections.MapsKt.hashMapOf> } [inline] declared in kotlin.collections.MapsKt' type=java.util.HashMap<java.lang.reflect.Type, kotlin.Any>{ kotlin.collections.HashMap<java.lang.reflect.Type, kotlin.Any> } origin=null
+        CALL 'public final fun hashMapOf <K, V> (): java.util.HashMap<K of kotlin.collections.MapsKt.hashMapOf, V of kotlin.collections.MapsKt.hashMapOf>{ kotlin.collections.HashMap<K of kotlin.collections.MapsKt.hashMapOf, V of kotlin.collections.MapsKt.hashMapOf> } declared in kotlin.collections.MapsKt' type=java.util.HashMap<java.lang.reflect.Type, kotlin.Any>{ kotlin.collections.HashMap<java.lang.reflect.Type, kotlin.Any> } origin=null
           <K>: java.lang.reflect.Type
           <V>: kotlin.Any
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-registrationMap> visibility:private modality:FINAL <> () returnType:java.util.HashMap<java.lang.reflect.Type, kotlin.Any>{ kotlin.collections.HashMap<java.lang.reflect.Type, kotlin.Any> }
@@ -139,38 +139,38 @@ FILE fqName:<root> fileName:/ClashResolutionDescriptor.kt
     BLOCK_BODY
       BLOCK type=kotlin.Unit origin=FOR_LOOP
         VAR FOR_LOOP_ITERATOR name:tmp_0 type:kotlin.collections.Iterator<<root>.PlatformExtensionsClashResolver<*>> [val]
-          CALL 'public abstract fun iterator (): kotlin.collections.Iterator<E of kotlin.collections.List> [operator] declared in kotlin.collections.List' type=kotlin.collections.Iterator<<root>.PlatformExtensionsClashResolver<*>> origin=FOR_LOOP_ITERATOR
+          CALL 'public abstract fun iterator (): kotlin.collections.Iterator<E of kotlin.collections.List> declared in kotlin.collections.List' type=kotlin.collections.Iterator<<root>.PlatformExtensionsClashResolver<*>> origin=FOR_LOOP_ITERATOR
             $this: GET_VAR 'clashResolvers: kotlin.collections.List<<root>.PlatformExtensionsClashResolver<*>> declared in <root>.resolveClashesIfAny' type=kotlin.collections.List<<root>.PlatformExtensionsClashResolver<*>> origin=null
         WHILE label=null origin=FOR_LOOP_INNER_WHILE
-          condition: CALL 'public abstract fun hasNext (): kotlin.Boolean [operator] declared in kotlin.collections.Iterator' type=kotlin.Boolean origin=FOR_LOOP_HAS_NEXT
-            $this: GET_VAR 'val tmp_0: kotlin.collections.Iterator<<root>.PlatformExtensionsClashResolver<*>> [val] declared in <root>.resolveClashesIfAny' type=kotlin.collections.Iterator<<root>.PlatformExtensionsClashResolver<*>> origin=null
+          condition: CALL 'public abstract fun hasNext (): kotlin.Boolean declared in kotlin.collections.Iterator' type=kotlin.Boolean origin=FOR_LOOP_HAS_NEXT
+            $this: GET_VAR 'val tmp_0: kotlin.collections.Iterator<<root>.PlatformExtensionsClashResolver<*>> declared in <root>.resolveClashesIfAny' type=kotlin.collections.Iterator<<root>.PlatformExtensionsClashResolver<*>> origin=null
           body: BLOCK type=kotlin.Unit origin=FOR_LOOP_INNER_WHILE
             VAR FOR_LOOP_VARIABLE name:resolver type:<root>.PlatformExtensionsClashResolver<*> [val]
-              CALL 'public abstract fun next (): T of kotlin.collections.Iterator [operator] declared in kotlin.collections.Iterator' type=<root>.PlatformExtensionsClashResolver<*> origin=FOR_LOOP_NEXT
-                $this: GET_VAR 'val tmp_0: kotlin.collections.Iterator<<root>.PlatformExtensionsClashResolver<*>> [val] declared in <root>.resolveClashesIfAny' type=kotlin.collections.Iterator<<root>.PlatformExtensionsClashResolver<*>> origin=null
+              CALL 'public abstract fun next (): T of kotlin.collections.Iterator declared in kotlin.collections.Iterator' type=<root>.PlatformExtensionsClashResolver<*> origin=FOR_LOOP_NEXT
+                $this: GET_VAR 'val tmp_0: kotlin.collections.Iterator<<root>.PlatformExtensionsClashResolver<*>> declared in <root>.resolveClashesIfAny' type=kotlin.collections.Iterator<<root>.PlatformExtensionsClashResolver<*>> origin=null
             BLOCK type=kotlin.Unit origin=null
               VAR name:clashedComponents type:kotlin.collections.Collection<<root>.ComponentDescriptor> [val]
                 BLOCK type=kotlin.collections.Collection<<root>.ComponentDescriptor> origin=ELVIS
                   VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:kotlin.collections.Collection<<root>.ComponentDescriptor>? [val]
                     TYPE_OP type=kotlin.collections.Collection<<root>.ComponentDescriptor>? origin=SAFE_CAST typeOperand=kotlin.collections.Collection<<root>.ComponentDescriptor>
-                      CALL 'public open fun get (key: @[EnhancedNullability] K of java.util.HashMap): @[EnhancedNullability] V of java.util.HashMap? [operator] declared in java.util.HashMap' type=@[EnhancedNullability] kotlin.Any? origin=GET_ARRAY_ELEMENT
+                      CALL 'public open fun get (key: @[EnhancedNullability] K of java.util.HashMap): @[EnhancedNullability] V of java.util.HashMap? declared in java.util.HashMap' type=@[EnhancedNullability] kotlin.Any? origin=GET_ARRAY_ELEMENT
                         $this: CALL 'private final fun <get-registrationMap> (): java.util.HashMap<java.lang.reflect.Type, kotlin.Any>{ kotlin.collections.HashMap<java.lang.reflect.Type, kotlin.Any> } declared in <root>' type=java.util.HashMap<java.lang.reflect.Type, kotlin.Any>{ kotlin.collections.HashMap<java.lang.reflect.Type, kotlin.Any> } origin=GET_PROPERTY
                         key: CALL 'public final fun <get-applicableTo> (): java.lang.Class<E of <root>.PlatformExtensionsClashResolver> declared in <root>.PlatformExtensionsClashResolver' type=java.lang.Class<out <root>.PlatformSpecificExtension<*>> origin=GET_PROPERTY
-                          $this: GET_VAR 'val resolver: <root>.PlatformExtensionsClashResolver<*> [val] declared in <root>.resolveClashesIfAny' type=<root>.PlatformExtensionsClashResolver<*> origin=null
+                          $this: GET_VAR 'val resolver: <root>.PlatformExtensionsClashResolver<*> declared in <root>.resolveClashesIfAny' type=<root>.PlatformExtensionsClashResolver<*> origin=null
                   WHEN type=kotlin.collections.Collection<<root>.ComponentDescriptor> origin=null
                     BRANCH
                       if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                        arg0: GET_VAR 'val tmp_1: kotlin.collections.Collection<<root>.ComponentDescriptor>? [val] declared in <root>.resolveClashesIfAny' type=kotlin.collections.Collection<<root>.ComponentDescriptor>? origin=null
+                        arg0: GET_VAR 'val tmp_1: kotlin.collections.Collection<<root>.ComponentDescriptor>? declared in <root>.resolveClashesIfAny' type=kotlin.collections.Collection<<root>.ComponentDescriptor>? origin=null
                         arg1: CONST Null type=kotlin.Nothing? value=null
                       then: CONTINUE label=null loop.label=null
                     BRANCH
                       if: CONST Boolean type=kotlin.Boolean value=true
-                      then: GET_VAR 'val tmp_1: kotlin.collections.Collection<<root>.ComponentDescriptor>? [val] declared in <root>.resolveClashesIfAny' type=kotlin.collections.Collection<<root>.ComponentDescriptor>? origin=null
+                      then: GET_VAR 'val tmp_1: kotlin.collections.Collection<<root>.ComponentDescriptor>? declared in <root>.resolveClashesIfAny' type=kotlin.collections.Collection<<root>.ComponentDescriptor>? origin=null
               VAR name:substituteDescriptor type:<root>.ClashResolutionDescriptor<out <root>.PlatformSpecificExtension<out <root>.PlatformSpecificExtension<out <root>.PlatformSpecificExtension<out <root>.PlatformSpecificExtension<out <root>.PlatformSpecificExtension<out kotlin.Any?>>>>>> [val]
-                CONSTRUCTOR_CALL 'public constructor <init> (container: <root>.ComponentContainer, resolver: <root>.PlatformExtensionsClashResolver<E of <root>.ClashResolutionDescriptor>, clashedComponents: kotlin.collections.List<<root>.ComponentDescriptor>) [primary] declared in <root>.ClashResolutionDescriptor' type=<root>.ClashResolutionDescriptor<out <root>.PlatformSpecificExtension<out <root>.PlatformSpecificExtension<out <root>.PlatformSpecificExtension<out <root>.PlatformSpecificExtension<out <root>.PlatformSpecificExtension<out kotlin.Any?>>>>>> origin=null
+                CONSTRUCTOR_CALL 'public constructor <init> (container: <root>.ComponentContainer, resolver: <root>.PlatformExtensionsClashResolver<E of <root>.ClashResolutionDescriptor>, clashedComponents: kotlin.collections.List<<root>.ComponentDescriptor>) declared in <root>.ClashResolutionDescriptor' type=<root>.ClashResolutionDescriptor<out <root>.PlatformSpecificExtension<out <root>.PlatformSpecificExtension<out <root>.PlatformSpecificExtension<out <root>.PlatformSpecificExtension<out <root>.PlatformSpecificExtension<out kotlin.Any?>>>>>> origin=null
                   <class: E>: <root>.PlatformSpecificExtension<out <root>.PlatformSpecificExtension<out <root>.PlatformSpecificExtension<out <root>.PlatformSpecificExtension<out <root>.PlatformSpecificExtension<out kotlin.Any?>>>>>
                   container: GET_VAR 'container: <root>.ComponentContainer declared in <root>.resolveClashesIfAny' type=<root>.ComponentContainer origin=null
-                  resolver: GET_VAR 'val resolver: <root>.PlatformExtensionsClashResolver<*> [val] declared in <root>.resolveClashesIfAny' type=<root>.PlatformExtensionsClashResolver<*> origin=null
+                  resolver: GET_VAR 'val resolver: <root>.PlatformExtensionsClashResolver<*> declared in <root>.resolveClashesIfAny' type=<root>.PlatformExtensionsClashResolver<*> origin=null
                   clashedComponents: CALL 'public final fun toList <T> (): kotlin.collections.List<T of kotlin.collections.CollectionsKt.toList> declared in kotlin.collections.CollectionsKt' type=kotlin.collections.List<<root>.ComponentDescriptor> origin=null
                     <T>: <root>.ComponentDescriptor
-                    $receiver: GET_VAR 'val clashedComponents: kotlin.collections.Collection<<root>.ComponentDescriptor> [val] declared in <root>.resolveClashesIfAny' type=kotlin.collections.Collection<<root>.ComponentDescriptor> origin=null
+                    $receiver: GET_VAR 'val clashedComponents: kotlin.collections.Collection<<root>.ComponentDescriptor> declared in <root>.resolveClashesIfAny' type=kotlin.collections.Collection<<root>.ComponentDescriptor> origin=null

@@ -32,7 +32,7 @@ FILE fqName:<root> fileName:/implicitCastToNonNull.kt
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.CharSequence?] reified:true
     VALUE_PARAMETER name:x index:0 type:kotlin.Any
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun test3 <T> (x: kotlin.Any): kotlin.Int [inline] declared in <root>'
+      RETURN type=kotlin.Nothing from='public final fun test3 <T> (x: kotlin.Any): kotlin.Int declared in <root>'
         WHEN type=kotlin.Int origin=IF
           BRANCH
             if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=T of <root>.test3
@@ -47,7 +47,7 @@ FILE fqName:<root> fileName:/implicitCastToNonNull.kt
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.CharSequence] reified:true
     VALUE_PARAMETER name:x index:0 type:kotlin.Any?
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun test4 <T> (x: kotlin.Any?): kotlin.Int [inline] declared in <root>'
+      RETURN type=kotlin.Nothing from='public final fun test4 <T> (x: kotlin.Any?): kotlin.Int declared in <root>'
         WHEN type=kotlin.Int origin=IF
           BRANCH
             if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=T of <root>.test4
@@ -66,10 +66,10 @@ FILE fqName:<root> fileName:/implicitCastToNonNull.kt
     BLOCK_BODY
       WHEN type=kotlin.Unit origin=IF
         BRANCH
-          if: CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+          if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
             $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
               arg0: GET_VAR 'x: T of <root>.test5 declared in <root>.test5' type=T of <root>.test5 origin=null
               arg1: CONST Null type=kotlin.Nothing? value=null
-          then: CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 [operator] declared in kotlin.Function1' type=kotlin.Unit origin=INVOKE
+          then: CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=kotlin.Unit origin=INVOKE
             $this: GET_VAR 'fn: kotlin.Function1<S of <root>.test5, kotlin.Unit> declared in <root>.test5' type=kotlin.Function1<S of <root>.test5, kotlin.Unit> origin=VARIABLE_AS_FUNCTION
             p1: GET_VAR 'x: T of <root>.test5 declared in <root>.test5' type=T of <root>.test5 origin=null

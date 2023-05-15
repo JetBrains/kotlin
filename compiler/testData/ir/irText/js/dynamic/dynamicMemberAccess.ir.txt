@@ -15,10 +15,10 @@ FILE fqName:<root> fileName:/dynamicMemberAccess.kt
           WHEN type=dynamic origin=null
             BRANCH
               if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                arg0: GET_VAR 'val tmp_0: dynamic [val] declared in <root>.test2' type=dynamic origin=null
+                arg0: GET_VAR 'val tmp_0: dynamic declared in <root>.test2' type=dynamic origin=null
                 arg1: CONST Null type=kotlin.Nothing? value=null
               then: CONST Null type=kotlin.Nothing? value=null
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
               then: DYN_MEMBER memberName='member' type=dynamic
-                GET_VAR 'val tmp_0: dynamic [val] declared in <root>.test2' type=dynamic origin=null
+                GET_VAR 'val tmp_0: dynamic declared in <root>.test2' type=dynamic origin=null

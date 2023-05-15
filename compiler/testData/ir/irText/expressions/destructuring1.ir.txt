@@ -3,11 +3,11 @@ FILE fqName:<root> fileName:/destructuring1.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A
     CONSTRUCTOR visibility:private <> () returnType:<root>.A [primary]
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:A modality:FINAL visibility:public superTypes:[kotlin.Any]'
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -22,23 +22,23 @@ FILE fqName:<root> fileName:/destructuring1.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.B
     CONSTRUCTOR visibility:private <> () returnType:<root>.B [primary]
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:B modality:FINAL visibility:public superTypes:[kotlin.Any]'
     FUN name:component1 visibility:public modality:FINAL <> ($this:<root>.B, $receiver:<root>.A) returnType:kotlin.Int [operator]
       $this: VALUE_PARAMETER name:<this> type:<root>.B
       $receiver: VALUE_PARAMETER name:<this> type:<root>.A
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun component1 (): kotlin.Int [operator] declared in <root>.B'
+        RETURN type=kotlin.Nothing from='public final fun component1 (): kotlin.Int declared in <root>.B'
           CONST Int type=kotlin.Int value=1
     FUN name:component2 visibility:public modality:FINAL <> ($this:<root>.B, $receiver:<root>.A) returnType:kotlin.Int [operator]
       $this: VALUE_PARAMETER name:<this> type:<root>.B
       $receiver: VALUE_PARAMETER name:<this> type:<root>.A
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun component2 (): kotlin.Int [operator] declared in <root>.B'
+        RETURN type=kotlin.Nothing from='public final fun component2 (): kotlin.Int declared in <root>.B'
           CONST Int type=kotlin.Int value=2
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -56,10 +56,10 @@ FILE fqName:<root> fileName:/destructuring1.kt
         VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:<root>.A [val]
           GET_OBJECT 'CLASS OBJECT name:A modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.A
         VAR name:x type:kotlin.Int [val]
-          CALL 'public final fun component1 (): kotlin.Int [operator] declared in <root>.B' type=kotlin.Int origin=COMPONENT_N(index=1)
+          CALL 'public final fun component1 (): kotlin.Int declared in <root>.B' type=kotlin.Int origin=COMPONENT_N(index=1)
             $this: GET_VAR '<this>: <root>.B declared in <root>.test' type=<root>.B origin=null
-            $receiver: GET_VAR 'val tmp_0: <root>.A [val] declared in <root>.test' type=<root>.A origin=null
+            $receiver: GET_VAR 'val tmp_0: <root>.A declared in <root>.test' type=<root>.A origin=null
         VAR name:y type:kotlin.Int [val]
-          CALL 'public final fun component2 (): kotlin.Int [operator] declared in <root>.B' type=kotlin.Int origin=COMPONENT_N(index=2)
+          CALL 'public final fun component2 (): kotlin.Int declared in <root>.B' type=kotlin.Int origin=COMPONENT_N(index=2)
             $this: GET_VAR '<this>: <root>.B declared in <root>.test' type=<root>.B origin=null
-            $receiver: GET_VAR 'val tmp_0: <root>.A [val] declared in <root>.test' type=<root>.A origin=null
+            $receiver: GET_VAR 'val tmp_0: <root>.A declared in <root>.test' type=<root>.A origin=null

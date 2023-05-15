@@ -4,7 +4,7 @@ FILE fqName:<root> fileName:/stringVsT.kt
     VALUE_PARAMETER name:fn index:0 type:kotlin.Function0<T of <root>.useT>
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun useT <T> (fn: kotlin.Function0<T of <root>.useT>): T of <root>.useT declared in <root>'
-        CALL 'public abstract fun invoke (): R of kotlin.Function0 [operator] declared in kotlin.Function0' type=T of <root>.useT origin=INVOKE
+        CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=T of <root>.useT origin=INVOKE
           $this: GET_VAR 'fn: kotlin.Function0<T of <root>.useT> declared in <root>.useT' type=kotlin.Function0<T of <root>.useT> origin=VARIABLE_AS_FUNCTION
   FUN name:testNoNullCheck visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY

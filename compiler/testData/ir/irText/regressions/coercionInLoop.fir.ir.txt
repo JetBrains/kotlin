@@ -2,36 +2,36 @@ FILE fqName:<root> fileName:/coercionInLoop.kt
   FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
     BLOCK_BODY
       VAR name:a type:kotlin.DoubleArray [val]
-        CONSTRUCTOR_CALL 'public constructor <init> (size: kotlin.Int) [primary] declared in kotlin.DoubleArray' type=kotlin.DoubleArray origin=null
+        CONSTRUCTOR_CALL 'public constructor <init> (size: kotlin.Int) declared in kotlin.DoubleArray' type=kotlin.DoubleArray origin=null
           size: CONST Int type=kotlin.Int value=5
       VAR name:x type:kotlin.collections.DoubleIterator [val]
-        CALL 'public final fun iterator (): kotlin.collections.DoubleIterator [operator] declared in kotlin.DoubleArray' type=kotlin.collections.DoubleIterator origin=null
-          $this: GET_VAR 'val a: kotlin.DoubleArray [val] declared in <root>.box' type=kotlin.DoubleArray origin=null
+        CALL 'public final fun iterator (): kotlin.collections.DoubleIterator declared in kotlin.DoubleArray' type=kotlin.collections.DoubleIterator origin=null
+          $this: GET_VAR 'val a: kotlin.DoubleArray declared in <root>.box' type=kotlin.DoubleArray origin=null
       VAR name:i type:kotlin.Int [var]
         CONST Int type=kotlin.Int value=0
       WHILE label=null origin=WHILE_LOOP
-        condition: CALL 'public abstract fun hasNext (): kotlin.Boolean [fake_override,operator] declared in kotlin.collections.DoubleIterator' type=kotlin.Boolean origin=null
-          $this: GET_VAR 'val x: kotlin.collections.DoubleIterator [val] declared in <root>.box' type=kotlin.collections.DoubleIterator origin=null
+        condition: CALL 'public abstract fun hasNext (): kotlin.Boolean declared in kotlin.collections.DoubleIterator' type=kotlin.Boolean origin=null
+          $this: GET_VAR 'val x: kotlin.collections.DoubleIterator declared in <root>.box' type=kotlin.collections.DoubleIterator origin=null
         body: BLOCK type=kotlin.Int origin=null
           WHEN type=kotlin.Unit origin=IF
             BRANCH
-              if: CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+              if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
                 $this: CALL 'public final fun ieee754equals (arg0: kotlin.Double?, arg1: kotlin.Double?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
-                  arg0: CALL 'public final fun get (index: kotlin.Int): kotlin.Double [operator] declared in kotlin.DoubleArray' type=kotlin.Double origin=null
-                    $this: GET_VAR 'val a: kotlin.DoubleArray [val] declared in <root>.box' type=kotlin.DoubleArray origin=null
-                    index: GET_VAR 'var i: kotlin.Int [var] declared in <root>.box' type=kotlin.Int origin=null
-                  arg1: CALL 'public final fun next (): kotlin.Double [operator] declared in kotlin.collections.DoubleIterator' type=kotlin.Double origin=null
-                    $this: GET_VAR 'val x: kotlin.collections.DoubleIterator [val] declared in <root>.box' type=kotlin.collections.DoubleIterator origin=null
+                  arg0: CALL 'public final fun get (index: kotlin.Int): kotlin.Double declared in kotlin.DoubleArray' type=kotlin.Double origin=null
+                    $this: GET_VAR 'val a: kotlin.DoubleArray declared in <root>.box' type=kotlin.DoubleArray origin=null
+                    index: GET_VAR 'var i: kotlin.Int declared in <root>.box' type=kotlin.Int origin=null
+                  arg1: CALL 'public final fun next (): kotlin.Double declared in kotlin.collections.DoubleIterator' type=kotlin.Double origin=null
+                    $this: GET_VAR 'val x: kotlin.collections.DoubleIterator declared in <root>.box' type=kotlin.collections.DoubleIterator origin=null
               then: RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
                 STRING_CONCATENATION type=kotlin.String
                   CONST String type=kotlin.String value="Fail "
-                  GET_VAR 'var i: kotlin.Int [var] declared in <root>.box' type=kotlin.Int origin=null
+                  GET_VAR 'var i: kotlin.Int declared in <root>.box' type=kotlin.Int origin=null
           BLOCK type=kotlin.Int origin=POSTFIX_INCR
             VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:kotlin.Int [val]
-              GET_VAR 'var i: kotlin.Int [var] declared in <root>.box' type=kotlin.Int origin=null
-            SET_VAR 'var i: kotlin.Int [var] declared in <root>.box' type=kotlin.Unit origin=POSTFIX_INCR
-              CALL 'public final fun inc (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
-                $this: GET_VAR 'val tmp_0: kotlin.Int [val] declared in <root>.box' type=kotlin.Int origin=null
-            GET_VAR 'val tmp_0: kotlin.Int [val] declared in <root>.box' type=kotlin.Int origin=null
+              GET_VAR 'var i: kotlin.Int declared in <root>.box' type=kotlin.Int origin=null
+            SET_VAR 'var i: kotlin.Int declared in <root>.box' type=kotlin.Unit origin=POSTFIX_INCR
+              CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+                $this: GET_VAR 'val tmp_0: kotlin.Int declared in <root>.box' type=kotlin.Int origin=null
+            GET_VAR 'val tmp_0: kotlin.Int declared in <root>.box' type=kotlin.Int origin=null
       RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
         CONST String type=kotlin.String value="OK"

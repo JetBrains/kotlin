@@ -18,45 +18,45 @@ FILE fqName:<root> fileName:/augmentedAssignment1.kt
     BLOCK_BODY
       VAR name:x type:kotlin.Int [var]
         CONST Int type=kotlin.Int value=0
-      SET_VAR 'var x: kotlin.Int [var] declared in <root>.testVariable' type=kotlin.Unit origin=PLUSEQ
-        CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
-          $this: GET_VAR 'var x: kotlin.Int [var] declared in <root>.testVariable' type=kotlin.Int origin=null
+      SET_VAR 'var x: kotlin.Int declared in <root>.testVariable' type=kotlin.Unit origin=PLUSEQ
+        CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+          $this: GET_VAR 'var x: kotlin.Int declared in <root>.testVariable' type=kotlin.Int origin=null
           other: CONST Int type=kotlin.Int value=1
-      SET_VAR 'var x: kotlin.Int [var] declared in <root>.testVariable' type=kotlin.Unit origin=MINUSEQ
-        CALL 'public final fun minus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
-          $this: GET_VAR 'var x: kotlin.Int [var] declared in <root>.testVariable' type=kotlin.Int origin=null
+      SET_VAR 'var x: kotlin.Int declared in <root>.testVariable' type=kotlin.Unit origin=MINUSEQ
+        CALL 'public final fun minus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+          $this: GET_VAR 'var x: kotlin.Int declared in <root>.testVariable' type=kotlin.Int origin=null
           other: CONST Int type=kotlin.Int value=2
-      SET_VAR 'var x: kotlin.Int [var] declared in <root>.testVariable' type=kotlin.Unit origin=EQ
-        CALL 'public final fun times (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
-          $this: GET_VAR 'var x: kotlin.Int [var] declared in <root>.testVariable' type=kotlin.Int origin=null
+      SET_VAR 'var x: kotlin.Int declared in <root>.testVariable' type=kotlin.Unit origin=EQ
+        CALL 'public final fun times (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+          $this: GET_VAR 'var x: kotlin.Int declared in <root>.testVariable' type=kotlin.Int origin=null
           other: CONST Int type=kotlin.Int value=3
-      SET_VAR 'var x: kotlin.Int [var] declared in <root>.testVariable' type=kotlin.Unit origin=EQ
-        CALL 'public final fun div (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
-          $this: GET_VAR 'var x: kotlin.Int [var] declared in <root>.testVariable' type=kotlin.Int origin=null
+      SET_VAR 'var x: kotlin.Int declared in <root>.testVariable' type=kotlin.Unit origin=EQ
+        CALL 'public final fun div (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+          $this: GET_VAR 'var x: kotlin.Int declared in <root>.testVariable' type=kotlin.Int origin=null
           other: CONST Int type=kotlin.Int value=4
-      SET_VAR 'var x: kotlin.Int [var] declared in <root>.testVariable' type=kotlin.Unit origin=EQ
-        CALL 'public final fun rem (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
-          $this: GET_VAR 'var x: kotlin.Int [var] declared in <root>.testVariable' type=kotlin.Int origin=null
+      SET_VAR 'var x: kotlin.Int declared in <root>.testVariable' type=kotlin.Unit origin=EQ
+        CALL 'public final fun rem (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+          $this: GET_VAR 'var x: kotlin.Int declared in <root>.testVariable' type=kotlin.Int origin=null
           other: CONST Int type=kotlin.Int value=5
   FUN name:testProperty visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       CALL 'public final fun <set-p> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=EQ
-        <set-?>: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
+        <set-?>: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
           $this: CALL 'public final fun <get-p> (): kotlin.Int declared in <root>' type=kotlin.Int origin=GET_PROPERTY
           other: CONST Int type=kotlin.Int value=1
       CALL 'public final fun <set-p> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=EQ
-        <set-?>: CALL 'public final fun minus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
+        <set-?>: CALL 'public final fun minus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
           $this: CALL 'public final fun <get-p> (): kotlin.Int declared in <root>' type=kotlin.Int origin=GET_PROPERTY
           other: CONST Int type=kotlin.Int value=2
       CALL 'public final fun <set-p> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=EQ
-        <set-?>: CALL 'public final fun times (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
+        <set-?>: CALL 'public final fun times (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
           $this: CALL 'public final fun <get-p> (): kotlin.Int declared in <root>' type=kotlin.Int origin=GET_PROPERTY
           other: CONST Int type=kotlin.Int value=3
       CALL 'public final fun <set-p> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=EQ
-        <set-?>: CALL 'public final fun div (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
+        <set-?>: CALL 'public final fun div (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
           $this: CALL 'public final fun <get-p> (): kotlin.Int declared in <root>' type=kotlin.Int origin=GET_PROPERTY
           other: CONST Int type=kotlin.Int value=4
       CALL 'public final fun <set-p> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=EQ
-        <set-?>: CALL 'public final fun rem (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
+        <set-?>: CALL 'public final fun rem (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
           $this: CALL 'public final fun <get-p> (): kotlin.Int declared in <root>' type=kotlin.Int origin=GET_PROPERTY
           other: CONST Int type=kotlin.Int value=5

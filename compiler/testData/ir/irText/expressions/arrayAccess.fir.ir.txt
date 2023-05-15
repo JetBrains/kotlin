@@ -16,14 +16,14 @@ FILE fqName:<root> fileName:/arrayAccess.kt
     VALUE_PARAMETER name:a index:0 type:kotlin.IntArray
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test (a: kotlin.IntArray): kotlin.Int declared in <root>'
-        CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=PLUS
-          $this: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=PLUS
-            $this: CALL 'public final fun get (index: kotlin.Int): kotlin.Int [operator] declared in kotlin.IntArray' type=kotlin.Int origin=null
+        CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUS
+          $this: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUS
+            $this: CALL 'public final fun get (index: kotlin.Int): kotlin.Int declared in kotlin.IntArray' type=kotlin.Int origin=null
               $this: GET_VAR 'a: kotlin.IntArray declared in <root>.test' type=kotlin.IntArray origin=null
               index: CONST Int type=kotlin.Int value=0
-            other: CALL 'public final fun get (index: kotlin.Int): kotlin.Int [operator] declared in kotlin.IntArray' type=kotlin.Int origin=null
+            other: CALL 'public final fun get (index: kotlin.Int): kotlin.Int declared in kotlin.IntArray' type=kotlin.Int origin=null
               $this: GET_VAR 'a: kotlin.IntArray declared in <root>.test' type=kotlin.IntArray origin=null
               index: CALL 'public final fun <get-p> (): kotlin.Int declared in <root>' type=kotlin.Int origin=GET_PROPERTY
-          other: CALL 'public final fun get (index: kotlin.Int): kotlin.Int [operator] declared in kotlin.IntArray' type=kotlin.Int origin=null
+          other: CALL 'public final fun get (index: kotlin.Int): kotlin.Int declared in kotlin.IntArray' type=kotlin.Int origin=null
             $this: GET_VAR 'a: kotlin.IntArray declared in <root>.test' type=kotlin.IntArray origin=null
             index: CALL 'public final fun foo (): kotlin.Int declared in <root>' type=kotlin.Int origin=null

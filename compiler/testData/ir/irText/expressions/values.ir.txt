@@ -3,17 +3,17 @@ FILE fqName:<root> fileName:/values.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Enum
     CONSTRUCTOR visibility:private <> () returnType:<root>.Enum [primary]
       BLOCK_BODY
-        ENUM_CONSTRUCTOR_CALL 'public constructor <init> (name: kotlin.String, ordinal: kotlin.Int) [primary] declared in kotlin.Enum'
+        ENUM_CONSTRUCTOR_CALL 'public constructor <init> (name: kotlin.String, ordinal: kotlin.Int) declared in kotlin.Enum'
           <E>: <root>.Enum
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:Enum modality:FINAL visibility:public superTypes:[kotlin.Enum<<root>.Enum>]'
     ENUM_ENTRY name:A
       init: EXPRESSION_BODY
-        ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.Enum'
+        ENUM_CONSTRUCTOR_CALL 'private constructor <init> () declared in <root>.Enum'
     PROPERTY FAKE_OVERRIDE name:name visibility:public modality:FINAL [fake_override,val]
       annotations:
         IntrinsicConstEvaluation
       overridden:
-        public final name: kotlin.String [val]
+        public final name: kotlin.String
       FUN FAKE_OVERRIDE name:<get-name> visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.Enum>) returnType:kotlin.String [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:name visibility:public modality:FINAL [fake_override,val]
         overridden:
@@ -21,7 +21,7 @@ FILE fqName:<root> fileName:/values.kt
         $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.Enum>
     PROPERTY FAKE_OVERRIDE name:ordinal visibility:public modality:FINAL [fake_override,val]
       overridden:
-        public final ordinal: kotlin.Int [val]
+        public final ordinal: kotlin.Int
       FUN FAKE_OVERRIDE name:<get-ordinal> visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.Enum>) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:ordinal visibility:public modality:FINAL [fake_override,val]
         overridden:
@@ -33,12 +33,12 @@ FILE fqName:<root> fileName:/values.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.Enum>
     FUN FAKE_OVERRIDE name:compareTo visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.Enum>, other:<root>.Enum) returnType:kotlin.Int [fake_override,operator]
       overridden:
-        public final fun compareTo (other: E of kotlin.Enum): kotlin.Int [operator] declared in kotlin.Enum
+        public final fun compareTo (other: E of kotlin.Enum): kotlin.Int declared in kotlin.Enum
       $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.Enum>
       VALUE_PARAMETER name:other index:0 type:<root>.Enum
     FUN FAKE_OVERRIDE name:equals visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.Enum>, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public final fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Enum
+        public final fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Enum
       $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.Enum>
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:finalize visibility:protected/*protected and package*/ modality:FINAL <> ($this:kotlin.Enum<<root>.Enum>) returnType:kotlin.Unit [fake_override]
@@ -70,11 +70,11 @@ FILE fqName:<root> fileName:/values.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A
     CONSTRUCTOR visibility:private <> () returnType:<root>.A [primary]
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:A modality:FINAL visibility:public superTypes:[kotlin.Any]'
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -98,17 +98,17 @@ FILE fqName:<root> fileName:/values.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Z
     CONSTRUCTOR visibility:public <> () returnType:<root>.Z [primary]
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Z modality:FINAL visibility:public superTypes:[kotlin.Any]'
     CLASS OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[kotlin.Any]
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Z.Companion
       CONSTRUCTOR visibility:private <> () returnType:<root>.Z.Companion [primary]
         BLOCK_BODY
-          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
           INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[kotlin.Any]'
       FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
         overridden:
-          public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+          public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
         $this: VALUE_PARAMETER name:<this> type:kotlin.Any
         VALUE_PARAMETER name:other index:0 type:kotlin.Any?
       FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -121,7 +121,7 @@ FILE fqName:<root> fileName:/values.kt
         $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]

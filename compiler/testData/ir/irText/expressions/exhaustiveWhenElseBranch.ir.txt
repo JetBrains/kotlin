@@ -3,17 +3,17 @@ FILE fqName:<root> fileName:/exhaustiveWhenElseBranch.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A
     CONSTRUCTOR visibility:private <> () returnType:<root>.A [primary]
       BLOCK_BODY
-        ENUM_CONSTRUCTOR_CALL 'public constructor <init> (name: kotlin.String, ordinal: kotlin.Int) [primary] declared in kotlin.Enum'
+        ENUM_CONSTRUCTOR_CALL 'public constructor <init> (name: kotlin.String, ordinal: kotlin.Int) declared in kotlin.Enum'
           <E>: <root>.A
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:A modality:FINAL visibility:public superTypes:[kotlin.Enum<<root>.A>]'
     ENUM_ENTRY name:V1
       init: EXPRESSION_BODY
-        ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.A'
+        ENUM_CONSTRUCTOR_CALL 'private constructor <init> () declared in <root>.A'
     PROPERTY FAKE_OVERRIDE name:name visibility:public modality:FINAL [fake_override,val]
       annotations:
         IntrinsicConstEvaluation
       overridden:
-        public final name: kotlin.String [val]
+        public final name: kotlin.String
       FUN FAKE_OVERRIDE name:<get-name> visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.A>) returnType:kotlin.String [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:name visibility:public modality:FINAL [fake_override,val]
         overridden:
@@ -21,7 +21,7 @@ FILE fqName:<root> fileName:/exhaustiveWhenElseBranch.kt
         $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.A>
     PROPERTY FAKE_OVERRIDE name:ordinal visibility:public modality:FINAL [fake_override,val]
       overridden:
-        public final ordinal: kotlin.Int [val]
+        public final ordinal: kotlin.Int
       FUN FAKE_OVERRIDE name:<get-ordinal> visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.A>) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:ordinal visibility:public modality:FINAL [fake_override,val]
         overridden:
@@ -33,12 +33,12 @@ FILE fqName:<root> fileName:/exhaustiveWhenElseBranch.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.A>
     FUN FAKE_OVERRIDE name:compareTo visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.A>, other:<root>.A) returnType:kotlin.Int [fake_override,operator]
       overridden:
-        public final fun compareTo (other: E of kotlin.Enum): kotlin.Int [operator] declared in kotlin.Enum
+        public final fun compareTo (other: E of kotlin.Enum): kotlin.Int declared in kotlin.Enum
       $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.A>
       VALUE_PARAMETER name:other index:0 type:<root>.A
     FUN FAKE_OVERRIDE name:equals visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.A>, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public final fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Enum
+        public final fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Enum
       $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.A>
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:finalize visibility:protected/*protected and package*/ modality:FINAL <> ($this:kotlin.Enum<<root>.A>) returnType:kotlin.Unit [fake_override]
@@ -76,9 +76,9 @@ FILE fqName:<root> fileName:/exhaustiveWhenElseBranch.kt
         WHEN type=kotlin.Unit origin=WHEN
           BRANCH
             if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-              arg0: GET_VAR 'val tmp_0: <root>.A [val] declared in <root>.testVariableAssignment_throws' type=<root>.A origin=null
+              arg0: GET_VAR 'val tmp_0: <root>.A declared in <root>.testVariableAssignment_throws' type=<root>.A origin=null
               arg1: GET_ENUM 'ENUM_ENTRY name:V1' type=<root>.A
-            then: SET_VAR 'val x: kotlin.Int [val] declared in <root>.testVariableAssignment_throws' type=kotlin.Unit origin=EQ
+            then: SET_VAR 'val x: kotlin.Int declared in <root>.testVariableAssignment_throws' type=kotlin.Unit origin=EQ
               CONST Int type=kotlin.Int value=11
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
@@ -92,7 +92,7 @@ FILE fqName:<root> fileName:/exhaustiveWhenElseBranch.kt
         WHEN type=kotlin.Unit origin=WHEN
           BRANCH
             if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-              arg0: GET_VAR 'val tmp_1: <root>.A [val] declared in <root>.testStatement_empty' type=<root>.A origin=null
+              arg0: GET_VAR 'val tmp_1: <root>.A declared in <root>.testStatement_empty' type=<root>.A origin=null
               arg1: GET_ENUM 'ENUM_ENTRY name:V1' type=<root>.A
             then: TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
               CONST Int type=kotlin.Int value=1
@@ -105,7 +105,7 @@ FILE fqName:<root> fileName:/exhaustiveWhenElseBranch.kt
         WHEN type=kotlin.Unit origin=WHEN
           BRANCH
             if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-              arg0: GET_VAR 'val tmp_2: <root>.A [val] declared in <root>.testParenthesized_throwsJvm' type=<root>.A origin=null
+              arg0: GET_VAR 'val tmp_2: <root>.A declared in <root>.testParenthesized_throwsJvm' type=<root>.A origin=null
               arg1: GET_ENUM 'ENUM_ENTRY name:V1' type=<root>.A
             then: TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
               CONST Int type=kotlin.Int value=1
@@ -118,7 +118,7 @@ FILE fqName:<root> fileName:/exhaustiveWhenElseBranch.kt
         WHEN type=kotlin.Unit origin=WHEN
           BRANCH
             if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-              arg0: GET_VAR 'val tmp_3: <root>.A [val] declared in <root>.testAnnotated_throwsJvm' type=<root>.A origin=null
+              arg0: GET_VAR 'val tmp_3: <root>.A declared in <root>.testAnnotated_throwsJvm' type=<root>.A origin=null
               arg1: GET_ENUM 'ENUM_ENTRY name:V1' type=<root>.A
             then: TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
               CONST Int type=kotlin.Int value=1
@@ -132,7 +132,7 @@ FILE fqName:<root> fileName:/exhaustiveWhenElseBranch.kt
           WHEN type=kotlin.Int origin=WHEN
             BRANCH
               if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                arg0: GET_VAR 'val tmp_4: <root>.A [val] declared in <root>.testExpression_throws' type=<root>.A origin=null
+                arg0: GET_VAR 'val tmp_4: <root>.A declared in <root>.testExpression_throws' type=<root>.A origin=null
                 arg1: GET_ENUM 'ENUM_ENTRY name:V1' type=<root>.A
               then: CONST Int type=kotlin.Int value=1
             BRANCH
@@ -156,7 +156,7 @@ FILE fqName:<root> fileName:/exhaustiveWhenElseBranch.kt
               WHEN type=kotlin.Unit origin=WHEN
                 BRANCH
                   if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                    arg0: GET_VAR 'val tmp_5: <root>.A [val] declared in <root>.testIfTheElseStatement_empty' type=<root>.A origin=null
+                    arg0: GET_VAR 'val tmp_5: <root>.A declared in <root>.testIfTheElseStatement_empty' type=<root>.A origin=null
                     arg1: GET_ENUM 'ENUM_ENTRY name:V1' type=<root>.A
                   then: TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
                     CONST Int type=kotlin.Int value=1
@@ -178,7 +178,7 @@ FILE fqName:<root> fileName:/exhaustiveWhenElseBranch.kt
               WHEN type=kotlin.Unit origin=WHEN
                 BRANCH
                   if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                    arg0: GET_VAR 'val tmp_6: <root>.A [val] declared in <root>.testIfTheElseParenthesized_throwsJvm' type=<root>.A origin=null
+                    arg0: GET_VAR 'val tmp_6: <root>.A declared in <root>.testIfTheElseParenthesized_throwsJvm' type=<root>.A origin=null
                     arg1: GET_ENUM 'ENUM_ENTRY name:V1' type=<root>.A
                   then: TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
                     CONST Int type=kotlin.Int value=1
@@ -200,7 +200,7 @@ FILE fqName:<root> fileName:/exhaustiveWhenElseBranch.kt
               WHEN type=kotlin.Unit origin=WHEN
                 BRANCH
                   if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                    arg0: GET_VAR 'val tmp_7: <root>.A [val] declared in <root>.testIfTheElseAnnotated_throwsJvm' type=<root>.A origin=null
+                    arg0: GET_VAR 'val tmp_7: <root>.A declared in <root>.testIfTheElseAnnotated_throwsJvm' type=<root>.A origin=null
                     arg1: GET_ENUM 'ENUM_ENTRY name:V1' type=<root>.A
                   then: TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
                     CONST Int type=kotlin.Int value=1
@@ -208,7 +208,7 @@ FILE fqName:<root> fileName:/exhaustiveWhenElseBranch.kt
     VALUE_PARAMETER name:a index:0 type:<root>.A
     BLOCK_BODY
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        CALL 'public abstract fun invoke (): R of kotlin.Function0 [operator] declared in kotlin.Function0' type=kotlin.Int origin=INVOKE
+        CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.Int origin=INVOKE
           $this: FUN_EXPR type=kotlin.Function0<kotlin.Int> origin=LAMBDA
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Int
               BLOCK_BODY
@@ -219,7 +219,7 @@ FILE fqName:<root> fileName:/exhaustiveWhenElseBranch.kt
                     WHEN type=kotlin.Int origin=WHEN
                       BRANCH
                         if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                          arg0: GET_VAR 'val tmp_8: <root>.A [val] declared in <root>.testLambdaResultExpression_throws.<anonymous>' type=<root>.A origin=null
+                          arg0: GET_VAR 'val tmp_8: <root>.A declared in <root>.testLambdaResultExpression_throws.<anonymous>' type=<root>.A origin=null
                           arg1: GET_ENUM 'ENUM_ENTRY name:V1' type=<root>.A
                         then: CONST Int type=kotlin.Int value=1
                       BRANCH

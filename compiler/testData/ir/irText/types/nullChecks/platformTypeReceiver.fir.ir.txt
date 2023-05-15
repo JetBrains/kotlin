@@ -2,12 +2,12 @@ FILE fqName:<root> fileName:/platformTypeReceiver.kt
   FUN name:test1 visibility:public modality:FINAL <> () returnType:kotlin.Boolean
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test1 (): kotlin.Boolean declared in <root>'
-        CALL 'public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=null
+        CALL 'public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=null
           $this: GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:BOOL_NULL type:@[FlexibleNullability] kotlin.Boolean? visibility:public [static]' type=@[FlexibleNullability] kotlin.Boolean? origin=GET_PROPERTY
           other: CONST Null type=kotlin.Nothing? value=null
   FUN name:test2 visibility:public modality:FINAL <> () returnType:kotlin.Boolean
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test2 (): kotlin.Boolean declared in <root>'
-        CALL 'public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=null
+        CALL 'public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=null
           $this: CALL 'public open fun boolNull (): @[FlexibleNullability] kotlin.Boolean? declared in <root>.J' type=@[FlexibleNullability] kotlin.Boolean? origin=null
           other: CONST Null type=kotlin.Nothing? value=null

@@ -3,20 +3,20 @@ FILE fqName:<root> fileName:/annotationsOnDelegatedMembers.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Ann
     CONSTRUCTOR visibility:public <> () returnType:<root>.Ann [primary]
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ANNOTATION_CLASS name:Ann modality:OPEN visibility:public superTypes:[kotlin.Annotation]'
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in kotlin.Annotation
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Annotation
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
       overridden:
-        public open fun hashCode (): kotlin.Int [fake_override] declared in kotlin.Annotation
+        public open fun hashCode (): kotlin.Int declared in kotlin.Annotation
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
       overridden:
-        public open fun toString (): kotlin.String [fake_override] declared in kotlin.Annotation
+        public open fun toString (): kotlin.String declared in kotlin.Annotation
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS INTERFACE name:IFoo modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.IFoo
@@ -44,7 +44,7 @@ FILE fqName:<root> fileName:/annotationsOnDelegatedMembers.kt
       $receiver: VALUE_PARAMETER name:<this> type:kotlin.String
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -60,14 +60,14 @@ FILE fqName:<root> fileName:/annotationsOnDelegatedMembers.kt
     CONSTRUCTOR visibility:public <> (d:<root>.IFoo) returnType:<root>.DFoo [primary]
       VALUE_PARAMETER name:d index:0 type:<root>.IFoo
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:DFoo modality:FINAL visibility:public superTypes:[<root>.IFoo]'
     FIELD DELEGATE name:$$delegate_0 type:<root>.IFoo visibility:private [final]
       EXPRESSION_BODY
         GET_VAR 'd: <root>.IFoo declared in <root>.DFoo.<init>' type=<root>.IFoo origin=null
     PROPERTY DELEGATED_MEMBER name:testVal visibility:public modality:OPEN [val]
       overridden:
-        public abstract testVal: kotlin.String [val]
+        public abstract testVal: kotlin.String
       FUN DELEGATED_MEMBER name:<get-testVal> visibility:public modality:OPEN <> ($this:<root>.DFoo) returnType:kotlin.String
         correspondingProperty: PROPERTY DELEGATED_MEMBER name:testVal visibility:public modality:OPEN [val]
         overridden:
@@ -80,7 +80,7 @@ FILE fqName:<root> fileName:/annotationsOnDelegatedMembers.kt
                 receiver: GET_VAR '<this>: <root>.DFoo declared in <root>.DFoo.<get-testVal>' type=<root>.DFoo origin=null
     PROPERTY DELEGATED_MEMBER name:testExtVal visibility:public modality:OPEN [val]
       overridden:
-        public abstract testExtVal: kotlin.String [val]
+        public abstract testExtVal: kotlin.String
       FUN DELEGATED_MEMBER name:<get-testExtVal> visibility:public modality:OPEN <> ($this:<root>.DFoo, $receiver:kotlin.String) returnType:kotlin.String
         correspondingProperty: PROPERTY DELEGATED_MEMBER name:testExtVal visibility:public modality:OPEN [val]
         overridden:
@@ -117,14 +117,14 @@ FILE fqName:<root> fileName:/annotationsOnDelegatedMembers.kt
           $receiver: GET_VAR '<this>: kotlin.String declared in <root>.DFoo.testExtFun' type=kotlin.String origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.IFoo
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.IFoo
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
       overridden:
-        public open fun hashCode (): kotlin.Int [fake_override] declared in <root>.IFoo
+        public open fun hashCode (): kotlin.Int declared in <root>.IFoo
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
       overridden:
-        public open fun toString (): kotlin.String [fake_override] declared in <root>.IFoo
+        public open fun toString (): kotlin.String declared in <root>.IFoo
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any

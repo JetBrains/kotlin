@@ -65,6 +65,7 @@ class IrTextDumpHandler(testServices: TestServices) : AbstractIrHandler(testServ
         val dumpOptions = DumpIrTreeOptions(
             normalizeNames = true,
             printFacadeClassInFqNames = false,
+            printFlagsInDeclarationReferences = false,
         )
 
         info.processAllIrModuleFragments(module) { irModuleFragment, moduleName ->

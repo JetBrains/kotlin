@@ -12,7 +12,7 @@ FILE fqName:<root> fileName:/equality.kt
     VALUE_PARAMETER name:b index:1 type:kotlin.Int
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test2 (a: kotlin.Int, b: kotlin.Int): kotlin.Boolean declared in <root>'
-        CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+        CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
           $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
             arg0: GET_VAR 'a: kotlin.Int declared in <root>.test2' type=kotlin.Int origin=null
             arg1: GET_VAR 'b: kotlin.Int declared in <root>.test2' type=kotlin.Int origin=null

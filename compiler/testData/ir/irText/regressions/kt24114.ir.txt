@@ -18,7 +18,7 @@ FILE fqName:<root> fileName:/kt24114.kt
             WHEN type=kotlin.Unit origin=WHEN
               BRANCH
                 if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                  arg0: GET_VAR 'val tmp_0: kotlin.Int [val] declared in <root>.test1' type=kotlin.Int origin=null
+                  arg0: GET_VAR 'val tmp_0: kotlin.Int declared in <root>.test1' type=kotlin.Int origin=null
                   arg1: CONST Int type=kotlin.Int value=1
                 then: BLOCK type=kotlin.Unit origin=null
                   BLOCK type=kotlin.Unit origin=WHEN
@@ -27,7 +27,7 @@ FILE fqName:<root> fileName:/kt24114.kt
                     WHEN type=kotlin.Unit origin=WHEN
                       BRANCH
                         if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                          arg0: GET_VAR 'val tmp_1: kotlin.Int [val] declared in <root>.test1' type=kotlin.Int origin=null
+                          arg0: GET_VAR 'val tmp_1: kotlin.Int declared in <root>.test1' type=kotlin.Int origin=null
                           arg1: CONST Int type=kotlin.Int value=2
                         then: RETURN type=kotlin.Nothing from='public final fun test1 (): kotlin.Int declared in <root>'
                           CONST Int type=kotlin.Int value=2
@@ -46,7 +46,7 @@ FILE fqName:<root> fileName:/kt24114.kt
             WHEN type=kotlin.Unit origin=WHEN
               BRANCH
                 if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                  arg0: GET_VAR 'val tmp_2: kotlin.Int [val] declared in <root>.test2' type=kotlin.Int origin=null
+                  arg0: GET_VAR 'val tmp_2: kotlin.Int declared in <root>.test2' type=kotlin.Int origin=null
                   arg1: CONST Int type=kotlin.Int value=1
                 then: BLOCK type=kotlin.Unit origin=WHEN
                   VAR IR_TEMPORARY_VARIABLE name:tmp_3 type:kotlin.Int [val]
@@ -54,7 +54,7 @@ FILE fqName:<root> fileName:/kt24114.kt
                   WHEN type=kotlin.Unit origin=WHEN
                     BRANCH
                       if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                        arg0: GET_VAR 'val tmp_3: kotlin.Int [val] declared in <root>.test2' type=kotlin.Int origin=null
+                        arg0: GET_VAR 'val tmp_3: kotlin.Int declared in <root>.test2' type=kotlin.Int origin=null
                         arg1: CONST Int type=kotlin.Int value=2
                       then: RETURN type=kotlin.Nothing from='public final fun test2 (): kotlin.Int declared in <root>'
                         CONST Int type=kotlin.Int value=2

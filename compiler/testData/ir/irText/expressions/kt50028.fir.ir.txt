@@ -18,4 +18,4 @@ FILE fqName:<root> fileName:/kt50028.kt
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: THROW type=kotlin.Nothing
-              CONSTRUCTOR_CALL 'public constructor <init> (message: kotlin.String) [primary] declared in kotlin.NotImplementedError' type=kotlin.NotImplementedError origin=null
+              CONSTRUCTOR_CALL 'public constructor <init> (message: kotlin.String) declared in kotlin.NotImplementedError' type=kotlin.NotImplementedError origin=null

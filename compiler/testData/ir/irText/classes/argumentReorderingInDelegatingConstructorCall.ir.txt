@@ -5,7 +5,7 @@ FILE fqName:<root> fileName:/argumentReorderingInDelegatingConstructorCall.kt
       VALUE_PARAMETER name:x index:0 type:kotlin.Int
       VALUE_PARAMETER name:y index:1 type:kotlin.Int
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Base modality:OPEN visibility:public superTypes:[kotlin.Any]'
     PROPERTY name:x visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]
@@ -31,7 +31,7 @@ FILE fqName:<root> fileName:/argumentReorderingInDelegatingConstructorCall.kt
               receiver: GET_VAR '<this>: <root>.Base declared in <root>.Base.<get-y>' type=<root>.Base origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -48,13 +48,13 @@ FILE fqName:<root> fileName:/argumentReorderingInDelegatingConstructorCall.kt
       VALUE_PARAMETER name:xx index:0 type:kotlin.Int
       VALUE_PARAMETER name:yy index:1 type:kotlin.Int
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (x: kotlin.Int, y: kotlin.Int) [primary] declared in <root>.Base'
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (x: kotlin.Int, y: kotlin.Int) declared in <root>.Base'
           x: GET_VAR 'xx: kotlin.Int declared in <root>.Test1.<init>' type=kotlin.Int origin=null
           y: GET_VAR 'yy: kotlin.Int declared in <root>.Test1.<init>' type=kotlin.Int origin=null
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test1 modality:FINAL visibility:public superTypes:[<root>.Base]'
     PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL [fake_override,val]
       overridden:
-        public final x: kotlin.Int [val]
+        public final x: kotlin.Int
       FUN FAKE_OVERRIDE name:<get-x> visibility:public modality:FINAL <> ($this:<root>.Base) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL [fake_override,val]
         overridden:
@@ -62,7 +62,7 @@ FILE fqName:<root> fileName:/argumentReorderingInDelegatingConstructorCall.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.Base
     PROPERTY FAKE_OVERRIDE name:y visibility:public modality:FINAL [fake_override,val]
       overridden:
-        public final y: kotlin.Int [val]
+        public final y: kotlin.Int
       FUN FAKE_OVERRIDE name:<get-y> visibility:public modality:FINAL <> ($this:<root>.Base) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:y visibility:public modality:FINAL [fake_override,val]
         overridden:
@@ -70,16 +70,16 @@ FILE fqName:<root> fileName:/argumentReorderingInDelegatingConstructorCall.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.Base
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.Base
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Base
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
       overridden:
-        public open fun hashCode (): kotlin.Int [fake_override] declared in <root>.Base
+        public open fun hashCode (): kotlin.Int declared in <root>.Base
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
       overridden:
-        public open fun toString (): kotlin.String [fake_override] declared in <root>.Base
+        public open fun toString (): kotlin.String declared in <root>.Base
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS CLASS name:Test2 modality:FINAL visibility:public superTypes:[<root>.Base]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test2
@@ -87,7 +87,7 @@ FILE fqName:<root> fileName:/argumentReorderingInDelegatingConstructorCall.kt
       VALUE_PARAMETER name:xx index:0 type:kotlin.Int
       VALUE_PARAMETER name:yy index:1 type:kotlin.Int
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (x: kotlin.Int, y: kotlin.Int) [primary] declared in <root>.Base'
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (x: kotlin.Int, y: kotlin.Int) declared in <root>.Base'
           x: GET_VAR 'xx: kotlin.Int declared in <root>.Test2.<init>' type=kotlin.Int origin=null
           y: GET_VAR 'yy: kotlin.Int declared in <root>.Test2.<init>' type=kotlin.Int origin=null
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test2 modality:FINAL visibility:public superTypes:[<root>.Base]'
@@ -101,7 +101,7 @@ FILE fqName:<root> fileName:/argumentReorderingInDelegatingConstructorCall.kt
           yy: GET_VAR 'yyy: kotlin.Int declared in <root>.Test2.<init>' type=kotlin.Int origin=null
     PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL [fake_override,val]
       overridden:
-        public final x: kotlin.Int [val]
+        public final x: kotlin.Int
       FUN FAKE_OVERRIDE name:<get-x> visibility:public modality:FINAL <> ($this:<root>.Base) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL [fake_override,val]
         overridden:
@@ -109,7 +109,7 @@ FILE fqName:<root> fileName:/argumentReorderingInDelegatingConstructorCall.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.Base
     PROPERTY FAKE_OVERRIDE name:y visibility:public modality:FINAL [fake_override,val]
       overridden:
-        public final y: kotlin.Int [val]
+        public final y: kotlin.Int
       FUN FAKE_OVERRIDE name:<get-y> visibility:public modality:FINAL <> ($this:<root>.Base) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:y visibility:public modality:FINAL [fake_override,val]
         overridden:
@@ -117,14 +117,14 @@ FILE fqName:<root> fileName:/argumentReorderingInDelegatingConstructorCall.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.Base
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.Base
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Base
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
       overridden:
-        public open fun hashCode (): kotlin.Int [fake_override] declared in <root>.Base
+        public open fun hashCode (): kotlin.Int declared in <root>.Base
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
       overridden:
-        public open fun toString (): kotlin.String [fake_override] declared in <root>.Base
+        public open fun toString (): kotlin.String declared in <root>.Base
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any

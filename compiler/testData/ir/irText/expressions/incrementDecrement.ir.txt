@@ -31,7 +31,7 @@ FILE fqName:<root> fileName:/incrementDecrement.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C
     CONSTRUCTOR visibility:public <> () returnType:<root>.C [primary]
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C modality:FINAL visibility:public superTypes:[kotlin.Any]'
     PROPERTY name:p visibility:public modality:FINAL [var]
       FIELD PROPERTY_BACKING_FIELD name:p type:kotlin.Int visibility:private
@@ -56,7 +56,7 @@ FILE fqName:<root> fileName:/incrementDecrement.kt
       $this: VALUE_PARAMETER name:<this> type:<root>.C
       VALUE_PARAMETER name:i index:0 type:kotlin.Int
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun get (i: kotlin.Int): kotlin.Int [operator] declared in <root>.C'
+        RETURN type=kotlin.Nothing from='public final fun get (i: kotlin.Int): kotlin.Int declared in <root>.C'
           GET_VAR 'i: kotlin.Int declared in <root>.C.get' type=kotlin.Int origin=null
     FUN name:set visibility:public modality:FINAL <> ($this:<root>.C, i:kotlin.Int, value:kotlin.Int) returnType:kotlin.Unit [operator]
       $this: VALUE_PARAMETER name:<this> type:<root>.C
@@ -65,7 +65,7 @@ FILE fqName:<root> fileName:/incrementDecrement.kt
       BLOCK_BODY
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -80,7 +80,7 @@ FILE fqName:<root> fileName:/incrementDecrement.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.O
     CONSTRUCTOR visibility:private <> () returnType:<root>.O [primary]
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:O modality:FINAL visibility:public superTypes:[kotlin.Any]'
     PROPERTY name:p visibility:public modality:FINAL [var]
       FIELD PROPERTY_BACKING_FIELD name:p type:kotlin.Int visibility:private
@@ -105,7 +105,7 @@ FILE fqName:<root> fileName:/incrementDecrement.kt
       $this: VALUE_PARAMETER name:<this> type:<root>.O
       VALUE_PARAMETER name:i index:0 type:kotlin.Int
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun get (i: kotlin.Int): kotlin.Int [operator] declared in <root>.O'
+        RETURN type=kotlin.Nothing from='public final fun get (i: kotlin.Int): kotlin.Int declared in <root>.O'
           GET_VAR 'i: kotlin.Int declared in <root>.O.get' type=kotlin.Int origin=null
     FUN name:set visibility:public modality:FINAL <> ($this:<root>.O, i:kotlin.Int, value:kotlin.Int) returnType:kotlin.Unit [operator]
       $this: VALUE_PARAMETER name:<this> type:<root>.O
@@ -114,7 +114,7 @@ FILE fqName:<root> fileName:/incrementDecrement.kt
       BLOCK_BODY
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -131,16 +131,16 @@ FILE fqName:<root> fileName:/incrementDecrement.kt
         CONST Int type=kotlin.Int value=0
       VAR name:x1 type:kotlin.Int [val]
         BLOCK type=kotlin.Int origin=PREFIX_INCR
-          SET_VAR 'var x: kotlin.Int [var] declared in <root>.testVarPrefix' type=kotlin.Unit origin=PREFIX_INCR
-            CALL 'public final fun inc (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=PREFIX_INCR
-              $this: GET_VAR 'var x: kotlin.Int [var] declared in <root>.testVarPrefix' type=kotlin.Int origin=PREFIX_INCR
-          GET_VAR 'var x: kotlin.Int [var] declared in <root>.testVarPrefix' type=kotlin.Int origin=PREFIX_INCR
+          SET_VAR 'var x: kotlin.Int declared in <root>.testVarPrefix' type=kotlin.Unit origin=PREFIX_INCR
+            CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PREFIX_INCR
+              $this: GET_VAR 'var x: kotlin.Int declared in <root>.testVarPrefix' type=kotlin.Int origin=PREFIX_INCR
+          GET_VAR 'var x: kotlin.Int declared in <root>.testVarPrefix' type=kotlin.Int origin=PREFIX_INCR
       VAR name:x2 type:kotlin.Int [val]
         BLOCK type=kotlin.Int origin=PREFIX_DECR
-          SET_VAR 'var x: kotlin.Int [var] declared in <root>.testVarPrefix' type=kotlin.Unit origin=PREFIX_DECR
-            CALL 'public final fun dec (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=PREFIX_DECR
-              $this: GET_VAR 'var x: kotlin.Int [var] declared in <root>.testVarPrefix' type=kotlin.Int origin=PREFIX_DECR
-          GET_VAR 'var x: kotlin.Int [var] declared in <root>.testVarPrefix' type=kotlin.Int origin=PREFIX_DECR
+          SET_VAR 'var x: kotlin.Int declared in <root>.testVarPrefix' type=kotlin.Unit origin=PREFIX_DECR
+            CALL 'public final fun dec (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PREFIX_DECR
+              $this: GET_VAR 'var x: kotlin.Int declared in <root>.testVarPrefix' type=kotlin.Int origin=PREFIX_DECR
+          GET_VAR 'var x: kotlin.Int declared in <root>.testVarPrefix' type=kotlin.Int origin=PREFIX_DECR
   FUN name:testVarPostfix visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       VAR name:x type:kotlin.Int [var]
@@ -148,33 +148,33 @@ FILE fqName:<root> fileName:/incrementDecrement.kt
       VAR name:x1 type:kotlin.Int [val]
         BLOCK type=kotlin.Int origin=POSTFIX_INCR
           VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:kotlin.Int [val]
-            GET_VAR 'var x: kotlin.Int [var] declared in <root>.testVarPostfix' type=kotlin.Int origin=POSTFIX_INCR
-          SET_VAR 'var x: kotlin.Int [var] declared in <root>.testVarPostfix' type=kotlin.Unit origin=POSTFIX_INCR
-            CALL 'public final fun inc (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_INCR
-              $this: GET_VAR 'val tmp_0: kotlin.Int [val] declared in <root>.testVarPostfix' type=kotlin.Int origin=null
-          GET_VAR 'val tmp_0: kotlin.Int [val] declared in <root>.testVarPostfix' type=kotlin.Int origin=null
+            GET_VAR 'var x: kotlin.Int declared in <root>.testVarPostfix' type=kotlin.Int origin=POSTFIX_INCR
+          SET_VAR 'var x: kotlin.Int declared in <root>.testVarPostfix' type=kotlin.Unit origin=POSTFIX_INCR
+            CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_INCR
+              $this: GET_VAR 'val tmp_0: kotlin.Int declared in <root>.testVarPostfix' type=kotlin.Int origin=null
+          GET_VAR 'val tmp_0: kotlin.Int declared in <root>.testVarPostfix' type=kotlin.Int origin=null
       VAR name:x2 type:kotlin.Int [val]
         BLOCK type=kotlin.Int origin=POSTFIX_DECR
           VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:kotlin.Int [val]
-            GET_VAR 'var x: kotlin.Int [var] declared in <root>.testVarPostfix' type=kotlin.Int origin=POSTFIX_DECR
-          SET_VAR 'var x: kotlin.Int [var] declared in <root>.testVarPostfix' type=kotlin.Unit origin=POSTFIX_DECR
-            CALL 'public final fun dec (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_DECR
-              $this: GET_VAR 'val tmp_1: kotlin.Int [val] declared in <root>.testVarPostfix' type=kotlin.Int origin=null
-          GET_VAR 'val tmp_1: kotlin.Int [val] declared in <root>.testVarPostfix' type=kotlin.Int origin=null
+            GET_VAR 'var x: kotlin.Int declared in <root>.testVarPostfix' type=kotlin.Int origin=POSTFIX_DECR
+          SET_VAR 'var x: kotlin.Int declared in <root>.testVarPostfix' type=kotlin.Unit origin=POSTFIX_DECR
+            CALL 'public final fun dec (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_DECR
+              $this: GET_VAR 'val tmp_1: kotlin.Int declared in <root>.testVarPostfix' type=kotlin.Int origin=null
+          GET_VAR 'val tmp_1: kotlin.Int declared in <root>.testVarPostfix' type=kotlin.Int origin=null
   FUN name:testPropPrefix visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       VAR name:p1 type:kotlin.Int [val]
         BLOCK type=kotlin.Int origin=PREFIX_INCR
           BLOCK type=kotlin.Int origin=PREFIX_INCR
             CALL 'public final fun <set-p> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=PREFIX_INCR
-              <set-?>: CALL 'public final fun inc (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=PREFIX_INCR
+              <set-?>: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PREFIX_INCR
                 $this: CALL 'public final fun <get-p> (): kotlin.Int declared in <root>' type=kotlin.Int origin=PREFIX_INCR
             CALL 'public final fun <get-p> (): kotlin.Int declared in <root>' type=kotlin.Int origin=PREFIX_INCR
       VAR name:p2 type:kotlin.Int [val]
         BLOCK type=kotlin.Int origin=PREFIX_DECR
           BLOCK type=kotlin.Int origin=PREFIX_DECR
             CALL 'public final fun <set-p> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=PREFIX_DECR
-              <set-?>: CALL 'public final fun dec (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=PREFIX_DECR
+              <set-?>: CALL 'public final fun dec (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PREFIX_DECR
                 $this: CALL 'public final fun <get-p> (): kotlin.Int declared in <root>' type=kotlin.Int origin=PREFIX_DECR
             CALL 'public final fun <get-p> (): kotlin.Int declared in <root>' type=kotlin.Int origin=PREFIX_DECR
   FUN name:testPropPostfix visibility:public modality:FINAL <> () returnType:kotlin.Unit
@@ -185,18 +185,18 @@ FILE fqName:<root> fileName:/incrementDecrement.kt
             VAR IR_TEMPORARY_VARIABLE name:tmp_2 type:kotlin.Int [val]
               CALL 'public final fun <get-p> (): kotlin.Int declared in <root>' type=kotlin.Int origin=POSTFIX_INCR
             CALL 'public final fun <set-p> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=POSTFIX_INCR
-              <set-?>: CALL 'public final fun inc (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_INCR
-                $this: GET_VAR 'val tmp_2: kotlin.Int [val] declared in <root>.testPropPostfix' type=kotlin.Int origin=null
-            GET_VAR 'val tmp_2: kotlin.Int [val] declared in <root>.testPropPostfix' type=kotlin.Int origin=null
+              <set-?>: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_INCR
+                $this: GET_VAR 'val tmp_2: kotlin.Int declared in <root>.testPropPostfix' type=kotlin.Int origin=null
+            GET_VAR 'val tmp_2: kotlin.Int declared in <root>.testPropPostfix' type=kotlin.Int origin=null
       VAR name:p2 type:kotlin.Int [val]
         BLOCK type=kotlin.Int origin=POSTFIX_DECR
           BLOCK type=kotlin.Int origin=POSTFIX_DECR
             VAR IR_TEMPORARY_VARIABLE name:tmp_3 type:kotlin.Int [val]
               CALL 'public final fun <get-p> (): kotlin.Int declared in <root>' type=kotlin.Int origin=POSTFIX_DECR
             CALL 'public final fun <set-p> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=POSTFIX_DECR
-              <set-?>: CALL 'public final fun dec (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_DECR
-                $this: GET_VAR 'val tmp_3: kotlin.Int [val] declared in <root>.testPropPostfix' type=kotlin.Int origin=null
-            GET_VAR 'val tmp_3: kotlin.Int [val] declared in <root>.testPropPostfix' type=kotlin.Int origin=null
+              <set-?>: CALL 'public final fun dec (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_DECR
+                $this: GET_VAR 'val tmp_3: kotlin.Int declared in <root>.testPropPostfix' type=kotlin.Int origin=null
+            GET_VAR 'val tmp_3: kotlin.Int declared in <root>.testPropPostfix' type=kotlin.Int origin=null
   FUN name:testArrayPrefix visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       VAR name:a1 type:kotlin.Int [val]
@@ -205,32 +205,32 @@ FILE fqName:<root> fileName:/incrementDecrement.kt
             CALL 'public final fun <get-arr> (): kotlin.IntArray declared in <root>' type=kotlin.IntArray origin=GET_PROPERTY
           VAR IR_TEMPORARY_VARIABLE name:tmp_5 type:kotlin.Int [val]
             CONST Int type=kotlin.Int value=0
-          CALL 'public final fun set (index: kotlin.Int, value: kotlin.Int): kotlin.Unit [operator] declared in kotlin.IntArray' type=kotlin.Unit origin=PREFIX_INCR
-            $this: GET_VAR 'val tmp_4: kotlin.IntArray [val] declared in <root>.testArrayPrefix' type=kotlin.IntArray origin=null
-            index: GET_VAR 'val tmp_5: kotlin.Int [val] declared in <root>.testArrayPrefix' type=kotlin.Int origin=null
-            value: CALL 'public final fun inc (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=PREFIX_INCR
-              $this: CALL 'public final fun get (index: kotlin.Int): kotlin.Int [operator] declared in kotlin.IntArray' type=kotlin.Int origin=PREFIX_INCR
-                $this: GET_VAR 'val tmp_4: kotlin.IntArray [val] declared in <root>.testArrayPrefix' type=kotlin.IntArray origin=null
-                index: GET_VAR 'val tmp_5: kotlin.Int [val] declared in <root>.testArrayPrefix' type=kotlin.Int origin=null
-          CALL 'public final fun get (index: kotlin.Int): kotlin.Int [operator] declared in kotlin.IntArray' type=kotlin.Int origin=PREFIX_INCR
-            $this: GET_VAR 'val tmp_4: kotlin.IntArray [val] declared in <root>.testArrayPrefix' type=kotlin.IntArray origin=null
-            index: GET_VAR 'val tmp_5: kotlin.Int [val] declared in <root>.testArrayPrefix' type=kotlin.Int origin=null
+          CALL 'public final fun set (index: kotlin.Int, value: kotlin.Int): kotlin.Unit declared in kotlin.IntArray' type=kotlin.Unit origin=PREFIX_INCR
+            $this: GET_VAR 'val tmp_4: kotlin.IntArray declared in <root>.testArrayPrefix' type=kotlin.IntArray origin=null
+            index: GET_VAR 'val tmp_5: kotlin.Int declared in <root>.testArrayPrefix' type=kotlin.Int origin=null
+            value: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PREFIX_INCR
+              $this: CALL 'public final fun get (index: kotlin.Int): kotlin.Int declared in kotlin.IntArray' type=kotlin.Int origin=PREFIX_INCR
+                $this: GET_VAR 'val tmp_4: kotlin.IntArray declared in <root>.testArrayPrefix' type=kotlin.IntArray origin=null
+                index: GET_VAR 'val tmp_5: kotlin.Int declared in <root>.testArrayPrefix' type=kotlin.Int origin=null
+          CALL 'public final fun get (index: kotlin.Int): kotlin.Int declared in kotlin.IntArray' type=kotlin.Int origin=PREFIX_INCR
+            $this: GET_VAR 'val tmp_4: kotlin.IntArray declared in <root>.testArrayPrefix' type=kotlin.IntArray origin=null
+            index: GET_VAR 'val tmp_5: kotlin.Int declared in <root>.testArrayPrefix' type=kotlin.Int origin=null
       VAR name:a2 type:kotlin.Int [val]
         BLOCK type=kotlin.Int origin=PREFIX_DECR
           VAR IR_TEMPORARY_VARIABLE name:tmp_6 type:kotlin.IntArray [val]
             CALL 'public final fun <get-arr> (): kotlin.IntArray declared in <root>' type=kotlin.IntArray origin=GET_PROPERTY
           VAR IR_TEMPORARY_VARIABLE name:tmp_7 type:kotlin.Int [val]
             CONST Int type=kotlin.Int value=0
-          CALL 'public final fun set (index: kotlin.Int, value: kotlin.Int): kotlin.Unit [operator] declared in kotlin.IntArray' type=kotlin.Unit origin=PREFIX_DECR
-            $this: GET_VAR 'val tmp_6: kotlin.IntArray [val] declared in <root>.testArrayPrefix' type=kotlin.IntArray origin=null
-            index: GET_VAR 'val tmp_7: kotlin.Int [val] declared in <root>.testArrayPrefix' type=kotlin.Int origin=null
-            value: CALL 'public final fun dec (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=PREFIX_DECR
-              $this: CALL 'public final fun get (index: kotlin.Int): kotlin.Int [operator] declared in kotlin.IntArray' type=kotlin.Int origin=PREFIX_DECR
-                $this: GET_VAR 'val tmp_6: kotlin.IntArray [val] declared in <root>.testArrayPrefix' type=kotlin.IntArray origin=null
-                index: GET_VAR 'val tmp_7: kotlin.Int [val] declared in <root>.testArrayPrefix' type=kotlin.Int origin=null
-          CALL 'public final fun get (index: kotlin.Int): kotlin.Int [operator] declared in kotlin.IntArray' type=kotlin.Int origin=PREFIX_DECR
-            $this: GET_VAR 'val tmp_6: kotlin.IntArray [val] declared in <root>.testArrayPrefix' type=kotlin.IntArray origin=null
-            index: GET_VAR 'val tmp_7: kotlin.Int [val] declared in <root>.testArrayPrefix' type=kotlin.Int origin=null
+          CALL 'public final fun set (index: kotlin.Int, value: kotlin.Int): kotlin.Unit declared in kotlin.IntArray' type=kotlin.Unit origin=PREFIX_DECR
+            $this: GET_VAR 'val tmp_6: kotlin.IntArray declared in <root>.testArrayPrefix' type=kotlin.IntArray origin=null
+            index: GET_VAR 'val tmp_7: kotlin.Int declared in <root>.testArrayPrefix' type=kotlin.Int origin=null
+            value: CALL 'public final fun dec (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PREFIX_DECR
+              $this: CALL 'public final fun get (index: kotlin.Int): kotlin.Int declared in kotlin.IntArray' type=kotlin.Int origin=PREFIX_DECR
+                $this: GET_VAR 'val tmp_6: kotlin.IntArray declared in <root>.testArrayPrefix' type=kotlin.IntArray origin=null
+                index: GET_VAR 'val tmp_7: kotlin.Int declared in <root>.testArrayPrefix' type=kotlin.Int origin=null
+          CALL 'public final fun get (index: kotlin.Int): kotlin.Int declared in kotlin.IntArray' type=kotlin.Int origin=PREFIX_DECR
+            $this: GET_VAR 'val tmp_6: kotlin.IntArray declared in <root>.testArrayPrefix' type=kotlin.IntArray origin=null
+            index: GET_VAR 'val tmp_7: kotlin.Int declared in <root>.testArrayPrefix' type=kotlin.Int origin=null
   FUN name:testArrayPostfix visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       VAR name:a1 type:kotlin.Int [val]
@@ -240,15 +240,15 @@ FILE fqName:<root> fileName:/incrementDecrement.kt
           VAR IR_TEMPORARY_VARIABLE name:tmp_9 type:kotlin.Int [val]
             CONST Int type=kotlin.Int value=0
           VAR IR_TEMPORARY_VARIABLE name:tmp_10 type:kotlin.Int [val]
-            CALL 'public final fun get (index: kotlin.Int): kotlin.Int [operator] declared in kotlin.IntArray' type=kotlin.Int origin=POSTFIX_INCR
-              $this: GET_VAR 'val tmp_8: kotlin.IntArray [val] declared in <root>.testArrayPostfix' type=kotlin.IntArray origin=null
-              index: GET_VAR 'val tmp_9: kotlin.Int [val] declared in <root>.testArrayPostfix' type=kotlin.Int origin=null
-          CALL 'public final fun set (index: kotlin.Int, value: kotlin.Int): kotlin.Unit [operator] declared in kotlin.IntArray' type=kotlin.Unit origin=POSTFIX_INCR
-            $this: GET_VAR 'val tmp_8: kotlin.IntArray [val] declared in <root>.testArrayPostfix' type=kotlin.IntArray origin=null
-            index: GET_VAR 'val tmp_9: kotlin.Int [val] declared in <root>.testArrayPostfix' type=kotlin.Int origin=null
-            value: CALL 'public final fun inc (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_INCR
-              $this: GET_VAR 'val tmp_10: kotlin.Int [val] declared in <root>.testArrayPostfix' type=kotlin.Int origin=null
-          GET_VAR 'val tmp_10: kotlin.Int [val] declared in <root>.testArrayPostfix' type=kotlin.Int origin=null
+            CALL 'public final fun get (index: kotlin.Int): kotlin.Int declared in kotlin.IntArray' type=kotlin.Int origin=POSTFIX_INCR
+              $this: GET_VAR 'val tmp_8: kotlin.IntArray declared in <root>.testArrayPostfix' type=kotlin.IntArray origin=null
+              index: GET_VAR 'val tmp_9: kotlin.Int declared in <root>.testArrayPostfix' type=kotlin.Int origin=null
+          CALL 'public final fun set (index: kotlin.Int, value: kotlin.Int): kotlin.Unit declared in kotlin.IntArray' type=kotlin.Unit origin=POSTFIX_INCR
+            $this: GET_VAR 'val tmp_8: kotlin.IntArray declared in <root>.testArrayPostfix' type=kotlin.IntArray origin=null
+            index: GET_VAR 'val tmp_9: kotlin.Int declared in <root>.testArrayPostfix' type=kotlin.Int origin=null
+            value: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_INCR
+              $this: GET_VAR 'val tmp_10: kotlin.Int declared in <root>.testArrayPostfix' type=kotlin.Int origin=null
+          GET_VAR 'val tmp_10: kotlin.Int declared in <root>.testArrayPostfix' type=kotlin.Int origin=null
       VAR name:a2 type:kotlin.Int [val]
         BLOCK type=kotlin.Int origin=POSTFIX_DECR
           VAR IR_TEMPORARY_VARIABLE name:tmp_11 type:kotlin.IntArray [val]
@@ -256,137 +256,137 @@ FILE fqName:<root> fileName:/incrementDecrement.kt
           VAR IR_TEMPORARY_VARIABLE name:tmp_12 type:kotlin.Int [val]
             CONST Int type=kotlin.Int value=0
           VAR IR_TEMPORARY_VARIABLE name:tmp_13 type:kotlin.Int [val]
-            CALL 'public final fun get (index: kotlin.Int): kotlin.Int [operator] declared in kotlin.IntArray' type=kotlin.Int origin=POSTFIX_DECR
-              $this: GET_VAR 'val tmp_11: kotlin.IntArray [val] declared in <root>.testArrayPostfix' type=kotlin.IntArray origin=null
-              index: GET_VAR 'val tmp_12: kotlin.Int [val] declared in <root>.testArrayPostfix' type=kotlin.Int origin=null
-          CALL 'public final fun set (index: kotlin.Int, value: kotlin.Int): kotlin.Unit [operator] declared in kotlin.IntArray' type=kotlin.Unit origin=POSTFIX_DECR
-            $this: GET_VAR 'val tmp_11: kotlin.IntArray [val] declared in <root>.testArrayPostfix' type=kotlin.IntArray origin=null
-            index: GET_VAR 'val tmp_12: kotlin.Int [val] declared in <root>.testArrayPostfix' type=kotlin.Int origin=null
-            value: CALL 'public final fun dec (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_DECR
-              $this: GET_VAR 'val tmp_13: kotlin.Int [val] declared in <root>.testArrayPostfix' type=kotlin.Int origin=null
-          GET_VAR 'val tmp_13: kotlin.Int [val] declared in <root>.testArrayPostfix' type=kotlin.Int origin=null
+            CALL 'public final fun get (index: kotlin.Int): kotlin.Int declared in kotlin.IntArray' type=kotlin.Int origin=POSTFIX_DECR
+              $this: GET_VAR 'val tmp_11: kotlin.IntArray declared in <root>.testArrayPostfix' type=kotlin.IntArray origin=null
+              index: GET_VAR 'val tmp_12: kotlin.Int declared in <root>.testArrayPostfix' type=kotlin.Int origin=null
+          CALL 'public final fun set (index: kotlin.Int, value: kotlin.Int): kotlin.Unit declared in kotlin.IntArray' type=kotlin.Unit origin=POSTFIX_DECR
+            $this: GET_VAR 'val tmp_11: kotlin.IntArray declared in <root>.testArrayPostfix' type=kotlin.IntArray origin=null
+            index: GET_VAR 'val tmp_12: kotlin.Int declared in <root>.testArrayPostfix' type=kotlin.Int origin=null
+            value: CALL 'public final fun dec (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_DECR
+              $this: GET_VAR 'val tmp_13: kotlin.Int declared in <root>.testArrayPostfix' type=kotlin.Int origin=null
+          GET_VAR 'val tmp_13: kotlin.Int declared in <root>.testArrayPostfix' type=kotlin.Int origin=null
   FUN name:testClassPropPrefix visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       VAR name:p1 type:kotlin.Int [val]
         BLOCK type=kotlin.Int origin=PREFIX_INCR
           VAR IR_TEMPORARY_VARIABLE name:tmp_14 type:<root>.C [val]
-            CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.C' type=<root>.C origin=null
+            CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.C' type=<root>.C origin=null
           BLOCK type=kotlin.Int origin=PREFIX_INCR
             CALL 'public final fun <set-p> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=PREFIX_INCR
-              $this: GET_VAR 'val tmp_14: <root>.C [val] declared in <root>.testClassPropPrefix' type=<root>.C origin=null
-              <set-?>: CALL 'public final fun inc (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=PREFIX_INCR
+              $this: GET_VAR 'val tmp_14: <root>.C declared in <root>.testClassPropPrefix' type=<root>.C origin=null
+              <set-?>: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PREFIX_INCR
                 $this: CALL 'public final fun <get-p> (): kotlin.Int declared in <root>.C' type=kotlin.Int origin=PREFIX_INCR
-                  $this: GET_VAR 'val tmp_14: <root>.C [val] declared in <root>.testClassPropPrefix' type=<root>.C origin=null
+                  $this: GET_VAR 'val tmp_14: <root>.C declared in <root>.testClassPropPrefix' type=<root>.C origin=null
             CALL 'public final fun <get-p> (): kotlin.Int declared in <root>.C' type=kotlin.Int origin=PREFIX_INCR
-              $this: GET_VAR 'val tmp_14: <root>.C [val] declared in <root>.testClassPropPrefix' type=<root>.C origin=null
+              $this: GET_VAR 'val tmp_14: <root>.C declared in <root>.testClassPropPrefix' type=<root>.C origin=null
       VAR name:p2 type:kotlin.Int [val]
         BLOCK type=kotlin.Int origin=PREFIX_DECR
           VAR IR_TEMPORARY_VARIABLE name:tmp_15 type:<root>.C [val]
-            CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.C' type=<root>.C origin=null
+            CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.C' type=<root>.C origin=null
           BLOCK type=kotlin.Int origin=PREFIX_DECR
             CALL 'public final fun <set-p> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=PREFIX_DECR
-              $this: GET_VAR 'val tmp_15: <root>.C [val] declared in <root>.testClassPropPrefix' type=<root>.C origin=null
-              <set-?>: CALL 'public final fun dec (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=PREFIX_DECR
+              $this: GET_VAR 'val tmp_15: <root>.C declared in <root>.testClassPropPrefix' type=<root>.C origin=null
+              <set-?>: CALL 'public final fun dec (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PREFIX_DECR
                 $this: CALL 'public final fun <get-p> (): kotlin.Int declared in <root>.C' type=kotlin.Int origin=PREFIX_DECR
-                  $this: GET_VAR 'val tmp_15: <root>.C [val] declared in <root>.testClassPropPrefix' type=<root>.C origin=null
+                  $this: GET_VAR 'val tmp_15: <root>.C declared in <root>.testClassPropPrefix' type=<root>.C origin=null
             CALL 'public final fun <get-p> (): kotlin.Int declared in <root>.C' type=kotlin.Int origin=PREFIX_DECR
-              $this: GET_VAR 'val tmp_15: <root>.C [val] declared in <root>.testClassPropPrefix' type=<root>.C origin=null
+              $this: GET_VAR 'val tmp_15: <root>.C declared in <root>.testClassPropPrefix' type=<root>.C origin=null
   FUN name:testClassPropPostfix visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       VAR name:p1 type:kotlin.Int [val]
         BLOCK type=kotlin.Int origin=POSTFIX_INCR
           VAR IR_TEMPORARY_VARIABLE name:tmp_16 type:<root>.C [val]
-            CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.C' type=<root>.C origin=null
+            CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.C' type=<root>.C origin=null
           BLOCK type=kotlin.Int origin=POSTFIX_INCR
             VAR IR_TEMPORARY_VARIABLE name:tmp_17 type:kotlin.Int [val]
               CALL 'public final fun <get-p> (): kotlin.Int declared in <root>.C' type=kotlin.Int origin=POSTFIX_INCR
-                $this: GET_VAR 'val tmp_16: <root>.C [val] declared in <root>.testClassPropPostfix' type=<root>.C origin=null
+                $this: GET_VAR 'val tmp_16: <root>.C declared in <root>.testClassPropPostfix' type=<root>.C origin=null
             CALL 'public final fun <set-p> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=POSTFIX_INCR
-              $this: GET_VAR 'val tmp_16: <root>.C [val] declared in <root>.testClassPropPostfix' type=<root>.C origin=null
-              <set-?>: CALL 'public final fun inc (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_INCR
-                $this: GET_VAR 'val tmp_17: kotlin.Int [val] declared in <root>.testClassPropPostfix' type=kotlin.Int origin=null
-            GET_VAR 'val tmp_17: kotlin.Int [val] declared in <root>.testClassPropPostfix' type=kotlin.Int origin=null
+              $this: GET_VAR 'val tmp_16: <root>.C declared in <root>.testClassPropPostfix' type=<root>.C origin=null
+              <set-?>: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_INCR
+                $this: GET_VAR 'val tmp_17: kotlin.Int declared in <root>.testClassPropPostfix' type=kotlin.Int origin=null
+            GET_VAR 'val tmp_17: kotlin.Int declared in <root>.testClassPropPostfix' type=kotlin.Int origin=null
       VAR name:p2 type:kotlin.Int [val]
         BLOCK type=kotlin.Int origin=POSTFIX_DECR
           VAR IR_TEMPORARY_VARIABLE name:tmp_18 type:<root>.C [val]
-            CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.C' type=<root>.C origin=null
+            CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.C' type=<root>.C origin=null
           BLOCK type=kotlin.Int origin=POSTFIX_DECR
             VAR IR_TEMPORARY_VARIABLE name:tmp_19 type:kotlin.Int [val]
               CALL 'public final fun <get-p> (): kotlin.Int declared in <root>.C' type=kotlin.Int origin=POSTFIX_DECR
-                $this: GET_VAR 'val tmp_18: <root>.C [val] declared in <root>.testClassPropPostfix' type=<root>.C origin=null
+                $this: GET_VAR 'val tmp_18: <root>.C declared in <root>.testClassPropPostfix' type=<root>.C origin=null
             CALL 'public final fun <set-p> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=POSTFIX_DECR
-              $this: GET_VAR 'val tmp_18: <root>.C [val] declared in <root>.testClassPropPostfix' type=<root>.C origin=null
-              <set-?>: CALL 'public final fun dec (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_DECR
-                $this: GET_VAR 'val tmp_19: kotlin.Int [val] declared in <root>.testClassPropPostfix' type=kotlin.Int origin=null
-            GET_VAR 'val tmp_19: kotlin.Int [val] declared in <root>.testClassPropPostfix' type=kotlin.Int origin=null
+              $this: GET_VAR 'val tmp_18: <root>.C declared in <root>.testClassPropPostfix' type=<root>.C origin=null
+              <set-?>: CALL 'public final fun dec (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_DECR
+                $this: GET_VAR 'val tmp_19: kotlin.Int declared in <root>.testClassPropPostfix' type=kotlin.Int origin=null
+            GET_VAR 'val tmp_19: kotlin.Int declared in <root>.testClassPropPostfix' type=kotlin.Int origin=null
   FUN name:testClassOperatorPrefix visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       VAR name:a1 type:kotlin.Int [val]
         BLOCK type=kotlin.Int origin=PREFIX_INCR
           VAR IR_TEMPORARY_VARIABLE name:tmp_20 type:<root>.C [val]
-            CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.C' type=<root>.C origin=null
+            CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.C' type=<root>.C origin=null
           VAR IR_TEMPORARY_VARIABLE name:tmp_21 type:kotlin.Int [val]
             CONST Int type=kotlin.Int value=0
-          CALL 'public final fun set (i: kotlin.Int, value: kotlin.Int): kotlin.Unit [operator] declared in <root>.C' type=kotlin.Unit origin=PREFIX_INCR
-            $this: GET_VAR 'val tmp_20: <root>.C [val] declared in <root>.testClassOperatorPrefix' type=<root>.C origin=null
-            i: GET_VAR 'val tmp_21: kotlin.Int [val] declared in <root>.testClassOperatorPrefix' type=kotlin.Int origin=null
-            value: CALL 'public final fun inc (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=PREFIX_INCR
-              $this: CALL 'public final fun get (i: kotlin.Int): kotlin.Int [operator] declared in <root>.C' type=kotlin.Int origin=PREFIX_INCR
-                $this: GET_VAR 'val tmp_20: <root>.C [val] declared in <root>.testClassOperatorPrefix' type=<root>.C origin=null
-                i: GET_VAR 'val tmp_21: kotlin.Int [val] declared in <root>.testClassOperatorPrefix' type=kotlin.Int origin=null
-          CALL 'public final fun get (i: kotlin.Int): kotlin.Int [operator] declared in <root>.C' type=kotlin.Int origin=PREFIX_INCR
-            $this: GET_VAR 'val tmp_20: <root>.C [val] declared in <root>.testClassOperatorPrefix' type=<root>.C origin=null
-            i: GET_VAR 'val tmp_21: kotlin.Int [val] declared in <root>.testClassOperatorPrefix' type=kotlin.Int origin=null
+          CALL 'public final fun set (i: kotlin.Int, value: kotlin.Int): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=PREFIX_INCR
+            $this: GET_VAR 'val tmp_20: <root>.C declared in <root>.testClassOperatorPrefix' type=<root>.C origin=null
+            i: GET_VAR 'val tmp_21: kotlin.Int declared in <root>.testClassOperatorPrefix' type=kotlin.Int origin=null
+            value: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PREFIX_INCR
+              $this: CALL 'public final fun get (i: kotlin.Int): kotlin.Int declared in <root>.C' type=kotlin.Int origin=PREFIX_INCR
+                $this: GET_VAR 'val tmp_20: <root>.C declared in <root>.testClassOperatorPrefix' type=<root>.C origin=null
+                i: GET_VAR 'val tmp_21: kotlin.Int declared in <root>.testClassOperatorPrefix' type=kotlin.Int origin=null
+          CALL 'public final fun get (i: kotlin.Int): kotlin.Int declared in <root>.C' type=kotlin.Int origin=PREFIX_INCR
+            $this: GET_VAR 'val tmp_20: <root>.C declared in <root>.testClassOperatorPrefix' type=<root>.C origin=null
+            i: GET_VAR 'val tmp_21: kotlin.Int declared in <root>.testClassOperatorPrefix' type=kotlin.Int origin=null
       VAR name:a2 type:kotlin.Int [val]
         BLOCK type=kotlin.Int origin=PREFIX_DECR
           VAR IR_TEMPORARY_VARIABLE name:tmp_22 type:<root>.C [val]
-            CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.C' type=<root>.C origin=null
+            CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.C' type=<root>.C origin=null
           VAR IR_TEMPORARY_VARIABLE name:tmp_23 type:kotlin.Int [val]
             CONST Int type=kotlin.Int value=0
-          CALL 'public final fun set (i: kotlin.Int, value: kotlin.Int): kotlin.Unit [operator] declared in <root>.C' type=kotlin.Unit origin=PREFIX_DECR
-            $this: GET_VAR 'val tmp_22: <root>.C [val] declared in <root>.testClassOperatorPrefix' type=<root>.C origin=null
-            i: GET_VAR 'val tmp_23: kotlin.Int [val] declared in <root>.testClassOperatorPrefix' type=kotlin.Int origin=null
-            value: CALL 'public final fun dec (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=PREFIX_DECR
-              $this: CALL 'public final fun get (i: kotlin.Int): kotlin.Int [operator] declared in <root>.C' type=kotlin.Int origin=PREFIX_DECR
-                $this: GET_VAR 'val tmp_22: <root>.C [val] declared in <root>.testClassOperatorPrefix' type=<root>.C origin=null
-                i: GET_VAR 'val tmp_23: kotlin.Int [val] declared in <root>.testClassOperatorPrefix' type=kotlin.Int origin=null
-          CALL 'public final fun get (i: kotlin.Int): kotlin.Int [operator] declared in <root>.C' type=kotlin.Int origin=PREFIX_DECR
-            $this: GET_VAR 'val tmp_22: <root>.C [val] declared in <root>.testClassOperatorPrefix' type=<root>.C origin=null
-            i: GET_VAR 'val tmp_23: kotlin.Int [val] declared in <root>.testClassOperatorPrefix' type=kotlin.Int origin=null
+          CALL 'public final fun set (i: kotlin.Int, value: kotlin.Int): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=PREFIX_DECR
+            $this: GET_VAR 'val tmp_22: <root>.C declared in <root>.testClassOperatorPrefix' type=<root>.C origin=null
+            i: GET_VAR 'val tmp_23: kotlin.Int declared in <root>.testClassOperatorPrefix' type=kotlin.Int origin=null
+            value: CALL 'public final fun dec (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PREFIX_DECR
+              $this: CALL 'public final fun get (i: kotlin.Int): kotlin.Int declared in <root>.C' type=kotlin.Int origin=PREFIX_DECR
+                $this: GET_VAR 'val tmp_22: <root>.C declared in <root>.testClassOperatorPrefix' type=<root>.C origin=null
+                i: GET_VAR 'val tmp_23: kotlin.Int declared in <root>.testClassOperatorPrefix' type=kotlin.Int origin=null
+          CALL 'public final fun get (i: kotlin.Int): kotlin.Int declared in <root>.C' type=kotlin.Int origin=PREFIX_DECR
+            $this: GET_VAR 'val tmp_22: <root>.C declared in <root>.testClassOperatorPrefix' type=<root>.C origin=null
+            i: GET_VAR 'val tmp_23: kotlin.Int declared in <root>.testClassOperatorPrefix' type=kotlin.Int origin=null
   FUN name:testClassOperatorPostfix visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       VAR name:a1 type:kotlin.Int [val]
         BLOCK type=kotlin.Int origin=POSTFIX_INCR
           VAR IR_TEMPORARY_VARIABLE name:tmp_24 type:<root>.C [val]
-            CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.C' type=<root>.C origin=null
+            CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.C' type=<root>.C origin=null
           VAR IR_TEMPORARY_VARIABLE name:tmp_25 type:kotlin.Int [val]
             CONST Int type=kotlin.Int value=0
           VAR IR_TEMPORARY_VARIABLE name:tmp_26 type:kotlin.Int [val]
-            CALL 'public final fun get (i: kotlin.Int): kotlin.Int [operator] declared in <root>.C' type=kotlin.Int origin=POSTFIX_INCR
-              $this: GET_VAR 'val tmp_24: <root>.C [val] declared in <root>.testClassOperatorPostfix' type=<root>.C origin=null
-              i: GET_VAR 'val tmp_25: kotlin.Int [val] declared in <root>.testClassOperatorPostfix' type=kotlin.Int origin=null
-          CALL 'public final fun set (i: kotlin.Int, value: kotlin.Int): kotlin.Unit [operator] declared in <root>.C' type=kotlin.Unit origin=POSTFIX_INCR
-            $this: GET_VAR 'val tmp_24: <root>.C [val] declared in <root>.testClassOperatorPostfix' type=<root>.C origin=null
-            i: GET_VAR 'val tmp_25: kotlin.Int [val] declared in <root>.testClassOperatorPostfix' type=kotlin.Int origin=null
-            value: CALL 'public final fun inc (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_INCR
-              $this: GET_VAR 'val tmp_26: kotlin.Int [val] declared in <root>.testClassOperatorPostfix' type=kotlin.Int origin=null
-          GET_VAR 'val tmp_26: kotlin.Int [val] declared in <root>.testClassOperatorPostfix' type=kotlin.Int origin=null
+            CALL 'public final fun get (i: kotlin.Int): kotlin.Int declared in <root>.C' type=kotlin.Int origin=POSTFIX_INCR
+              $this: GET_VAR 'val tmp_24: <root>.C declared in <root>.testClassOperatorPostfix' type=<root>.C origin=null
+              i: GET_VAR 'val tmp_25: kotlin.Int declared in <root>.testClassOperatorPostfix' type=kotlin.Int origin=null
+          CALL 'public final fun set (i: kotlin.Int, value: kotlin.Int): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=POSTFIX_INCR
+            $this: GET_VAR 'val tmp_24: <root>.C declared in <root>.testClassOperatorPostfix' type=<root>.C origin=null
+            i: GET_VAR 'val tmp_25: kotlin.Int declared in <root>.testClassOperatorPostfix' type=kotlin.Int origin=null
+            value: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_INCR
+              $this: GET_VAR 'val tmp_26: kotlin.Int declared in <root>.testClassOperatorPostfix' type=kotlin.Int origin=null
+          GET_VAR 'val tmp_26: kotlin.Int declared in <root>.testClassOperatorPostfix' type=kotlin.Int origin=null
       VAR name:a2 type:kotlin.Int [val]
         BLOCK type=kotlin.Int origin=POSTFIX_DECR
           VAR IR_TEMPORARY_VARIABLE name:tmp_27 type:<root>.C [val]
-            CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.C' type=<root>.C origin=null
+            CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.C' type=<root>.C origin=null
           VAR IR_TEMPORARY_VARIABLE name:tmp_28 type:kotlin.Int [val]
             CONST Int type=kotlin.Int value=0
           VAR IR_TEMPORARY_VARIABLE name:tmp_29 type:kotlin.Int [val]
-            CALL 'public final fun get (i: kotlin.Int): kotlin.Int [operator] declared in <root>.C' type=kotlin.Int origin=POSTFIX_DECR
-              $this: GET_VAR 'val tmp_27: <root>.C [val] declared in <root>.testClassOperatorPostfix' type=<root>.C origin=null
-              i: GET_VAR 'val tmp_28: kotlin.Int [val] declared in <root>.testClassOperatorPostfix' type=kotlin.Int origin=null
-          CALL 'public final fun set (i: kotlin.Int, value: kotlin.Int): kotlin.Unit [operator] declared in <root>.C' type=kotlin.Unit origin=POSTFIX_DECR
-            $this: GET_VAR 'val tmp_27: <root>.C [val] declared in <root>.testClassOperatorPostfix' type=<root>.C origin=null
-            i: GET_VAR 'val tmp_28: kotlin.Int [val] declared in <root>.testClassOperatorPostfix' type=kotlin.Int origin=null
-            value: CALL 'public final fun dec (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_DECR
-              $this: GET_VAR 'val tmp_29: kotlin.Int [val] declared in <root>.testClassOperatorPostfix' type=kotlin.Int origin=null
-          GET_VAR 'val tmp_29: kotlin.Int [val] declared in <root>.testClassOperatorPostfix' type=kotlin.Int origin=null
+            CALL 'public final fun get (i: kotlin.Int): kotlin.Int declared in <root>.C' type=kotlin.Int origin=POSTFIX_DECR
+              $this: GET_VAR 'val tmp_27: <root>.C declared in <root>.testClassOperatorPostfix' type=<root>.C origin=null
+              i: GET_VAR 'val tmp_28: kotlin.Int declared in <root>.testClassOperatorPostfix' type=kotlin.Int origin=null
+          CALL 'public final fun set (i: kotlin.Int, value: kotlin.Int): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=POSTFIX_DECR
+            $this: GET_VAR 'val tmp_27: <root>.C declared in <root>.testClassOperatorPostfix' type=<root>.C origin=null
+            i: GET_VAR 'val tmp_28: kotlin.Int declared in <root>.testClassOperatorPostfix' type=kotlin.Int origin=null
+            value: CALL 'public final fun dec (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_DECR
+              $this: GET_VAR 'val tmp_29: kotlin.Int declared in <root>.testClassOperatorPostfix' type=kotlin.Int origin=null
+          GET_VAR 'val tmp_29: kotlin.Int declared in <root>.testClassOperatorPostfix' type=kotlin.Int origin=null
   FUN name:testObjectPropPrefix visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       VAR name:p1 type:kotlin.Int [val]
@@ -395,24 +395,24 @@ FILE fqName:<root> fileName:/incrementDecrement.kt
             GET_OBJECT 'CLASS OBJECT name:O modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.O
           BLOCK type=kotlin.Int origin=PREFIX_INCR
             CALL 'public final fun <set-p> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.O' type=kotlin.Unit origin=PREFIX_INCR
-              $this: GET_VAR 'val tmp_30: <root>.O [val] declared in <root>.testObjectPropPrefix' type=<root>.O origin=null
-              <set-?>: CALL 'public final fun inc (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=PREFIX_INCR
+              $this: GET_VAR 'val tmp_30: <root>.O declared in <root>.testObjectPropPrefix' type=<root>.O origin=null
+              <set-?>: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PREFIX_INCR
                 $this: CALL 'public final fun <get-p> (): kotlin.Int declared in <root>.O' type=kotlin.Int origin=PREFIX_INCR
-                  $this: GET_VAR 'val tmp_30: <root>.O [val] declared in <root>.testObjectPropPrefix' type=<root>.O origin=null
+                  $this: GET_VAR 'val tmp_30: <root>.O declared in <root>.testObjectPropPrefix' type=<root>.O origin=null
             CALL 'public final fun <get-p> (): kotlin.Int declared in <root>.O' type=kotlin.Int origin=PREFIX_INCR
-              $this: GET_VAR 'val tmp_30: <root>.O [val] declared in <root>.testObjectPropPrefix' type=<root>.O origin=null
+              $this: GET_VAR 'val tmp_30: <root>.O declared in <root>.testObjectPropPrefix' type=<root>.O origin=null
       VAR name:p2 type:kotlin.Int [val]
         BLOCK type=kotlin.Int origin=PREFIX_DECR
           VAR IR_TEMPORARY_VARIABLE name:tmp_31 type:<root>.O [val]
             GET_OBJECT 'CLASS OBJECT name:O modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.O
           BLOCK type=kotlin.Int origin=PREFIX_DECR
             CALL 'public final fun <set-p> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.O' type=kotlin.Unit origin=PREFIX_DECR
-              $this: GET_VAR 'val tmp_31: <root>.O [val] declared in <root>.testObjectPropPrefix' type=<root>.O origin=null
-              <set-?>: CALL 'public final fun dec (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=PREFIX_DECR
+              $this: GET_VAR 'val tmp_31: <root>.O declared in <root>.testObjectPropPrefix' type=<root>.O origin=null
+              <set-?>: CALL 'public final fun dec (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PREFIX_DECR
                 $this: CALL 'public final fun <get-p> (): kotlin.Int declared in <root>.O' type=kotlin.Int origin=PREFIX_DECR
-                  $this: GET_VAR 'val tmp_31: <root>.O [val] declared in <root>.testObjectPropPrefix' type=<root>.O origin=null
+                  $this: GET_VAR 'val tmp_31: <root>.O declared in <root>.testObjectPropPrefix' type=<root>.O origin=null
             CALL 'public final fun <get-p> (): kotlin.Int declared in <root>.O' type=kotlin.Int origin=PREFIX_DECR
-              $this: GET_VAR 'val tmp_31: <root>.O [val] declared in <root>.testObjectPropPrefix' type=<root>.O origin=null
+              $this: GET_VAR 'val tmp_31: <root>.O declared in <root>.testObjectPropPrefix' type=<root>.O origin=null
   FUN name:testObjectPropPostfix visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       VAR name:p1 type:kotlin.Int [val]
@@ -422,12 +422,12 @@ FILE fqName:<root> fileName:/incrementDecrement.kt
           BLOCK type=kotlin.Int origin=POSTFIX_INCR
             VAR IR_TEMPORARY_VARIABLE name:tmp_33 type:kotlin.Int [val]
               CALL 'public final fun <get-p> (): kotlin.Int declared in <root>.O' type=kotlin.Int origin=POSTFIX_INCR
-                $this: GET_VAR 'val tmp_32: <root>.O [val] declared in <root>.testObjectPropPostfix' type=<root>.O origin=null
+                $this: GET_VAR 'val tmp_32: <root>.O declared in <root>.testObjectPropPostfix' type=<root>.O origin=null
             CALL 'public final fun <set-p> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.O' type=kotlin.Unit origin=POSTFIX_INCR
-              $this: GET_VAR 'val tmp_32: <root>.O [val] declared in <root>.testObjectPropPostfix' type=<root>.O origin=null
-              <set-?>: CALL 'public final fun inc (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_INCR
-                $this: GET_VAR 'val tmp_33: kotlin.Int [val] declared in <root>.testObjectPropPostfix' type=kotlin.Int origin=null
-            GET_VAR 'val tmp_33: kotlin.Int [val] declared in <root>.testObjectPropPostfix' type=kotlin.Int origin=null
+              $this: GET_VAR 'val tmp_32: <root>.O declared in <root>.testObjectPropPostfix' type=<root>.O origin=null
+              <set-?>: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_INCR
+                $this: GET_VAR 'val tmp_33: kotlin.Int declared in <root>.testObjectPropPostfix' type=kotlin.Int origin=null
+            GET_VAR 'val tmp_33: kotlin.Int declared in <root>.testObjectPropPostfix' type=kotlin.Int origin=null
       VAR name:p2 type:kotlin.Int [val]
         BLOCK type=kotlin.Int origin=POSTFIX_DECR
           VAR IR_TEMPORARY_VARIABLE name:tmp_34 type:<root>.O [val]
@@ -435,12 +435,12 @@ FILE fqName:<root> fileName:/incrementDecrement.kt
           BLOCK type=kotlin.Int origin=POSTFIX_DECR
             VAR IR_TEMPORARY_VARIABLE name:tmp_35 type:kotlin.Int [val]
               CALL 'public final fun <get-p> (): kotlin.Int declared in <root>.O' type=kotlin.Int origin=POSTFIX_DECR
-                $this: GET_VAR 'val tmp_34: <root>.O [val] declared in <root>.testObjectPropPostfix' type=<root>.O origin=null
+                $this: GET_VAR 'val tmp_34: <root>.O declared in <root>.testObjectPropPostfix' type=<root>.O origin=null
             CALL 'public final fun <set-p> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.O' type=kotlin.Unit origin=POSTFIX_DECR
-              $this: GET_VAR 'val tmp_34: <root>.O [val] declared in <root>.testObjectPropPostfix' type=<root>.O origin=null
-              <set-?>: CALL 'public final fun dec (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_DECR
-                $this: GET_VAR 'val tmp_35: kotlin.Int [val] declared in <root>.testObjectPropPostfix' type=kotlin.Int origin=null
-            GET_VAR 'val tmp_35: kotlin.Int [val] declared in <root>.testObjectPropPostfix' type=kotlin.Int origin=null
+              $this: GET_VAR 'val tmp_34: <root>.O declared in <root>.testObjectPropPostfix' type=<root>.O origin=null
+              <set-?>: CALL 'public final fun dec (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_DECR
+                $this: GET_VAR 'val tmp_35: kotlin.Int declared in <root>.testObjectPropPostfix' type=kotlin.Int origin=null
+            GET_VAR 'val tmp_35: kotlin.Int declared in <root>.testObjectPropPostfix' type=kotlin.Int origin=null
   FUN name:testObjectOperatorPrefix visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       VAR name:a1 type:kotlin.Int [val]
@@ -449,32 +449,32 @@ FILE fqName:<root> fileName:/incrementDecrement.kt
             GET_OBJECT 'CLASS OBJECT name:O modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.O
           VAR IR_TEMPORARY_VARIABLE name:tmp_37 type:kotlin.Int [val]
             CONST Int type=kotlin.Int value=0
-          CALL 'public final fun set (i: kotlin.Int, value: kotlin.Int): kotlin.Unit [operator] declared in <root>.O' type=kotlin.Unit origin=PREFIX_INCR
-            $this: GET_VAR 'val tmp_36: <root>.O [val] declared in <root>.testObjectOperatorPrefix' type=<root>.O origin=null
-            i: GET_VAR 'val tmp_37: kotlin.Int [val] declared in <root>.testObjectOperatorPrefix' type=kotlin.Int origin=null
-            value: CALL 'public final fun inc (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=PREFIX_INCR
-              $this: CALL 'public final fun get (i: kotlin.Int): kotlin.Int [operator] declared in <root>.O' type=kotlin.Int origin=PREFIX_INCR
-                $this: GET_VAR 'val tmp_36: <root>.O [val] declared in <root>.testObjectOperatorPrefix' type=<root>.O origin=null
-                i: GET_VAR 'val tmp_37: kotlin.Int [val] declared in <root>.testObjectOperatorPrefix' type=kotlin.Int origin=null
-          CALL 'public final fun get (i: kotlin.Int): kotlin.Int [operator] declared in <root>.O' type=kotlin.Int origin=PREFIX_INCR
-            $this: GET_VAR 'val tmp_36: <root>.O [val] declared in <root>.testObjectOperatorPrefix' type=<root>.O origin=null
-            i: GET_VAR 'val tmp_37: kotlin.Int [val] declared in <root>.testObjectOperatorPrefix' type=kotlin.Int origin=null
+          CALL 'public final fun set (i: kotlin.Int, value: kotlin.Int): kotlin.Unit declared in <root>.O' type=kotlin.Unit origin=PREFIX_INCR
+            $this: GET_VAR 'val tmp_36: <root>.O declared in <root>.testObjectOperatorPrefix' type=<root>.O origin=null
+            i: GET_VAR 'val tmp_37: kotlin.Int declared in <root>.testObjectOperatorPrefix' type=kotlin.Int origin=null
+            value: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PREFIX_INCR
+              $this: CALL 'public final fun get (i: kotlin.Int): kotlin.Int declared in <root>.O' type=kotlin.Int origin=PREFIX_INCR
+                $this: GET_VAR 'val tmp_36: <root>.O declared in <root>.testObjectOperatorPrefix' type=<root>.O origin=null
+                i: GET_VAR 'val tmp_37: kotlin.Int declared in <root>.testObjectOperatorPrefix' type=kotlin.Int origin=null
+          CALL 'public final fun get (i: kotlin.Int): kotlin.Int declared in <root>.O' type=kotlin.Int origin=PREFIX_INCR
+            $this: GET_VAR 'val tmp_36: <root>.O declared in <root>.testObjectOperatorPrefix' type=<root>.O origin=null
+            i: GET_VAR 'val tmp_37: kotlin.Int declared in <root>.testObjectOperatorPrefix' type=kotlin.Int origin=null
       VAR name:a2 type:kotlin.Int [val]
         BLOCK type=kotlin.Int origin=PREFIX_DECR
           VAR IR_TEMPORARY_VARIABLE name:tmp_38 type:<root>.O [val]
             GET_OBJECT 'CLASS OBJECT name:O modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.O
           VAR IR_TEMPORARY_VARIABLE name:tmp_39 type:kotlin.Int [val]
             CONST Int type=kotlin.Int value=0
-          CALL 'public final fun set (i: kotlin.Int, value: kotlin.Int): kotlin.Unit [operator] declared in <root>.O' type=kotlin.Unit origin=PREFIX_DECR
-            $this: GET_VAR 'val tmp_38: <root>.O [val] declared in <root>.testObjectOperatorPrefix' type=<root>.O origin=null
-            i: GET_VAR 'val tmp_39: kotlin.Int [val] declared in <root>.testObjectOperatorPrefix' type=kotlin.Int origin=null
-            value: CALL 'public final fun dec (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=PREFIX_DECR
-              $this: CALL 'public final fun get (i: kotlin.Int): kotlin.Int [operator] declared in <root>.O' type=kotlin.Int origin=PREFIX_DECR
-                $this: GET_VAR 'val tmp_38: <root>.O [val] declared in <root>.testObjectOperatorPrefix' type=<root>.O origin=null
-                i: GET_VAR 'val tmp_39: kotlin.Int [val] declared in <root>.testObjectOperatorPrefix' type=kotlin.Int origin=null
-          CALL 'public final fun get (i: kotlin.Int): kotlin.Int [operator] declared in <root>.O' type=kotlin.Int origin=PREFIX_DECR
-            $this: GET_VAR 'val tmp_38: <root>.O [val] declared in <root>.testObjectOperatorPrefix' type=<root>.O origin=null
-            i: GET_VAR 'val tmp_39: kotlin.Int [val] declared in <root>.testObjectOperatorPrefix' type=kotlin.Int origin=null
+          CALL 'public final fun set (i: kotlin.Int, value: kotlin.Int): kotlin.Unit declared in <root>.O' type=kotlin.Unit origin=PREFIX_DECR
+            $this: GET_VAR 'val tmp_38: <root>.O declared in <root>.testObjectOperatorPrefix' type=<root>.O origin=null
+            i: GET_VAR 'val tmp_39: kotlin.Int declared in <root>.testObjectOperatorPrefix' type=kotlin.Int origin=null
+            value: CALL 'public final fun dec (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PREFIX_DECR
+              $this: CALL 'public final fun get (i: kotlin.Int): kotlin.Int declared in <root>.O' type=kotlin.Int origin=PREFIX_DECR
+                $this: GET_VAR 'val tmp_38: <root>.O declared in <root>.testObjectOperatorPrefix' type=<root>.O origin=null
+                i: GET_VAR 'val tmp_39: kotlin.Int declared in <root>.testObjectOperatorPrefix' type=kotlin.Int origin=null
+          CALL 'public final fun get (i: kotlin.Int): kotlin.Int declared in <root>.O' type=kotlin.Int origin=PREFIX_DECR
+            $this: GET_VAR 'val tmp_38: <root>.O declared in <root>.testObjectOperatorPrefix' type=<root>.O origin=null
+            i: GET_VAR 'val tmp_39: kotlin.Int declared in <root>.testObjectOperatorPrefix' type=kotlin.Int origin=null
   FUN name:testObjectOperatorPostfix visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       VAR name:a1 type:kotlin.Int [val]
@@ -484,15 +484,15 @@ FILE fqName:<root> fileName:/incrementDecrement.kt
           VAR IR_TEMPORARY_VARIABLE name:tmp_41 type:kotlin.Int [val]
             CONST Int type=kotlin.Int value=0
           VAR IR_TEMPORARY_VARIABLE name:tmp_42 type:kotlin.Int [val]
-            CALL 'public final fun get (i: kotlin.Int): kotlin.Int [operator] declared in <root>.O' type=kotlin.Int origin=POSTFIX_INCR
-              $this: GET_VAR 'val tmp_40: <root>.O [val] declared in <root>.testObjectOperatorPostfix' type=<root>.O origin=null
-              i: GET_VAR 'val tmp_41: kotlin.Int [val] declared in <root>.testObjectOperatorPostfix' type=kotlin.Int origin=null
-          CALL 'public final fun set (i: kotlin.Int, value: kotlin.Int): kotlin.Unit [operator] declared in <root>.O' type=kotlin.Unit origin=POSTFIX_INCR
-            $this: GET_VAR 'val tmp_40: <root>.O [val] declared in <root>.testObjectOperatorPostfix' type=<root>.O origin=null
-            i: GET_VAR 'val tmp_41: kotlin.Int [val] declared in <root>.testObjectOperatorPostfix' type=kotlin.Int origin=null
-            value: CALL 'public final fun inc (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_INCR
-              $this: GET_VAR 'val tmp_42: kotlin.Int [val] declared in <root>.testObjectOperatorPostfix' type=kotlin.Int origin=null
-          GET_VAR 'val tmp_42: kotlin.Int [val] declared in <root>.testObjectOperatorPostfix' type=kotlin.Int origin=null
+            CALL 'public final fun get (i: kotlin.Int): kotlin.Int declared in <root>.O' type=kotlin.Int origin=POSTFIX_INCR
+              $this: GET_VAR 'val tmp_40: <root>.O declared in <root>.testObjectOperatorPostfix' type=<root>.O origin=null
+              i: GET_VAR 'val tmp_41: kotlin.Int declared in <root>.testObjectOperatorPostfix' type=kotlin.Int origin=null
+          CALL 'public final fun set (i: kotlin.Int, value: kotlin.Int): kotlin.Unit declared in <root>.O' type=kotlin.Unit origin=POSTFIX_INCR
+            $this: GET_VAR 'val tmp_40: <root>.O declared in <root>.testObjectOperatorPostfix' type=<root>.O origin=null
+            i: GET_VAR 'val tmp_41: kotlin.Int declared in <root>.testObjectOperatorPostfix' type=kotlin.Int origin=null
+            value: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_INCR
+              $this: GET_VAR 'val tmp_42: kotlin.Int declared in <root>.testObjectOperatorPostfix' type=kotlin.Int origin=null
+          GET_VAR 'val tmp_42: kotlin.Int declared in <root>.testObjectOperatorPostfix' type=kotlin.Int origin=null
       VAR name:a2 type:kotlin.Int [val]
         BLOCK type=kotlin.Int origin=POSTFIX_DECR
           VAR IR_TEMPORARY_VARIABLE name:tmp_43 type:<root>.O [val]
@@ -500,12 +500,12 @@ FILE fqName:<root> fileName:/incrementDecrement.kt
           VAR IR_TEMPORARY_VARIABLE name:tmp_44 type:kotlin.Int [val]
             CONST Int type=kotlin.Int value=0
           VAR IR_TEMPORARY_VARIABLE name:tmp_45 type:kotlin.Int [val]
-            CALL 'public final fun get (i: kotlin.Int): kotlin.Int [operator] declared in <root>.O' type=kotlin.Int origin=POSTFIX_DECR
-              $this: GET_VAR 'val tmp_43: <root>.O [val] declared in <root>.testObjectOperatorPostfix' type=<root>.O origin=null
-              i: GET_VAR 'val tmp_44: kotlin.Int [val] declared in <root>.testObjectOperatorPostfix' type=kotlin.Int origin=null
-          CALL 'public final fun set (i: kotlin.Int, value: kotlin.Int): kotlin.Unit [operator] declared in <root>.O' type=kotlin.Unit origin=POSTFIX_DECR
-            $this: GET_VAR 'val tmp_43: <root>.O [val] declared in <root>.testObjectOperatorPostfix' type=<root>.O origin=null
-            i: GET_VAR 'val tmp_44: kotlin.Int [val] declared in <root>.testObjectOperatorPostfix' type=kotlin.Int origin=null
-            value: CALL 'public final fun dec (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_DECR
-              $this: GET_VAR 'val tmp_45: kotlin.Int [val] declared in <root>.testObjectOperatorPostfix' type=kotlin.Int origin=null
-          GET_VAR 'val tmp_45: kotlin.Int [val] declared in <root>.testObjectOperatorPostfix' type=kotlin.Int origin=null
+            CALL 'public final fun get (i: kotlin.Int): kotlin.Int declared in <root>.O' type=kotlin.Int origin=POSTFIX_DECR
+              $this: GET_VAR 'val tmp_43: <root>.O declared in <root>.testObjectOperatorPostfix' type=<root>.O origin=null
+              i: GET_VAR 'val tmp_44: kotlin.Int declared in <root>.testObjectOperatorPostfix' type=kotlin.Int origin=null
+          CALL 'public final fun set (i: kotlin.Int, value: kotlin.Int): kotlin.Unit declared in <root>.O' type=kotlin.Unit origin=POSTFIX_DECR
+            $this: GET_VAR 'val tmp_43: <root>.O declared in <root>.testObjectOperatorPostfix' type=<root>.O origin=null
+            i: GET_VAR 'val tmp_44: kotlin.Int declared in <root>.testObjectOperatorPostfix' type=kotlin.Int origin=null
+            value: CALL 'public final fun dec (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_DECR
+              $this: GET_VAR 'val tmp_45: kotlin.Int declared in <root>.testObjectOperatorPostfix' type=kotlin.Int origin=null
+          GET_VAR 'val tmp_45: kotlin.Int declared in <root>.testObjectOperatorPostfix' type=kotlin.Int origin=null

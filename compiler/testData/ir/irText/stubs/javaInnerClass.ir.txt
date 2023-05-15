@@ -3,12 +3,12 @@ FILE fqName:<root> fileName:/javaInnerClass.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test1
     CONSTRUCTOR visibility:public <> () returnType:<root>.Test1 [primary]
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.J'
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.J'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test1 modality:FINAL visibility:public superTypes:[<root>.J]'
     PROPERTY name:test visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:test type:<root>.J.JInner visibility:private [final]
         EXPRESSION_BODY
-          CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.J.JInner' type=<root>.J.JInner origin=null
+          CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.J.JInner' type=<root>.J.JInner origin=null
             $outer: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1' type=<root>.Test1 origin=null
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test> visibility:public modality:FINAL <> ($this:<root>.Test1) returnType:<root>.J.JInner
         correspondingProperty: PROPERTY name:test visibility:public modality:FINAL [val]
@@ -19,16 +19,16 @@ FILE fqName:<root> fileName:/javaInnerClass.kt
               receiver: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.<get-test>' type=<root>.Test1 origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.J
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.J
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
       overridden:
-        public open fun hashCode (): kotlin.Int [fake_override] declared in <root>.J
+        public open fun hashCode (): kotlin.Int declared in <root>.J
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
       overridden:
-        public open fun toString (): kotlin.String [fake_override] declared in <root>.J
+        public open fun toString (): kotlin.String declared in <root>.J
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN FAKE_OVERRIDE name:bar visibility:public modality:OPEN <> ($this:<root>.J) returnType:kotlin.Unit [fake_override]
       overridden:
@@ -36,4 +36,4 @@ FILE fqName:<root> fileName:/javaInnerClass.kt
       $this: VALUE_PARAMETER name:<this> type:<root>.J
     PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL [fake_override,var]
       overridden:
-        public final x: kotlin.Int [var]
+        public final x: kotlin.Int

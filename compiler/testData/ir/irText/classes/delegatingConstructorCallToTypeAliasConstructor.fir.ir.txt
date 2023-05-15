@@ -8,7 +8,7 @@ FILE fqName:<root> fileName:/delegatingConstructorCallToTypeAliasConstructor.kt
     CONSTRUCTOR visibility:public <> (value:T of <root>.Cell) returnType:<root>.Cell<T of <root>.Cell> [primary]
       VALUE_PARAMETER name:value index:0 type:T of <root>.Cell
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Cell modality:OPEN visibility:public superTypes:[kotlin.Any]'
     PROPERTY name:value visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:value type:T of <root>.Cell visibility:private [final]
@@ -23,7 +23,7 @@ FILE fqName:<root> fileName:/delegatingConstructorCallToTypeAliasConstructor.kt
               receiver: GET_VAR '<this>: <root>.Cell<T of <root>.Cell> declared in <root>.Cell.<get-value>' type=<root>.Cell<T of <root>.Cell> origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -38,13 +38,13 @@ FILE fqName:<root> fileName:/delegatingConstructorCallToTypeAliasConstructor.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C1
     CONSTRUCTOR visibility:public <> () returnType:<root>.C1 [primary]
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (value: T of <root>.Cell) [primary] declared in <root>.Cell'
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (value: T of <root>.Cell) declared in <root>.Cell'
           <T>: kotlin.String
           value: CONST String type=kotlin.String value="O"
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C1 modality:FINAL visibility:public superTypes:[<root>.Cell<kotlin.String>]'
     PROPERTY FAKE_OVERRIDE name:value visibility:public modality:FINAL [fake_override,val]
       overridden:
-        public final value: T of <root>.Cell [val]
+        public final value: T of <root>.Cell
       FUN FAKE_OVERRIDE name:<get-value> visibility:public modality:FINAL <> ($this:<root>.Cell<T of <root>.Cell>) returnType:kotlin.String [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:value visibility:public modality:FINAL [fake_override,val]
         overridden:
@@ -52,28 +52,28 @@ FILE fqName:<root> fileName:/delegatingConstructorCallToTypeAliasConstructor.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.Cell<T of <root>.Cell>
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.Cell
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Cell
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
       overridden:
-        public open fun hashCode (): kotlin.Int [fake_override] declared in <root>.Cell
+        public open fun hashCode (): kotlin.Int declared in <root>.Cell
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
       overridden:
-        public open fun toString (): kotlin.String [fake_override] declared in <root>.Cell
+        public open fun toString (): kotlin.String declared in <root>.Cell
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS CLASS name:C2 modality:FINAL visibility:public superTypes:[<root>.Cell<kotlin.String>]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C2
     CONSTRUCTOR visibility:public <> () returnType:<root>.C2 [primary]
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (value: T of <root>.Cell) [primary] declared in <root>.Cell'
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (value: T of <root>.Cell) declared in <root>.Cell'
           <T>: kotlin.String
           value: CONST String type=kotlin.String value="K"
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C2 modality:FINAL visibility:public superTypes:[<root>.Cell<kotlin.String>]'
     PROPERTY FAKE_OVERRIDE name:value visibility:public modality:FINAL [fake_override,val]
       overridden:
-        public final value: T of <root>.Cell [val]
+        public final value: T of <root>.Cell
       FUN FAKE_OVERRIDE name:<get-value> visibility:public modality:FINAL <> ($this:<root>.Cell<T of <root>.Cell>) returnType:kotlin.String [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:value visibility:public modality:FINAL [fake_override,val]
         overridden:
@@ -81,14 +81,14 @@ FILE fqName:<root> fileName:/delegatingConstructorCallToTypeAliasConstructor.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.Cell<T of <root>.Cell>
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.Cell
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Cell
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
       overridden:
-        public open fun hashCode (): kotlin.Int [fake_override] declared in <root>.Cell
+        public open fun hashCode (): kotlin.Int declared in <root>.Cell
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
       overridden:
-        public open fun toString (): kotlin.String [fake_override] declared in <root>.Cell
+        public open fun toString (): kotlin.String declared in <root>.Cell
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any

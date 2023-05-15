@@ -60,11 +60,11 @@ FILE fqName:<root> fileName:/implicitCastToDynamic.kt
     BLOCK_BODY
       VAR name:d type:dynamic [var]
         CALL 'public final fun <get-p> (): kotlin.Int declared in <root>' type=kotlin.Int origin=GET_PROPERTY
-      SET_VAR 'var d: dynamic [var] declared in <root>.test4' type=kotlin.Unit origin=EQ
+      SET_VAR 'var d: dynamic declared in <root>.test4' type=kotlin.Unit origin=EQ
         GET_VAR 'a: kotlin.Any declared in <root>.test4' type=kotlin.Any origin=null
-      SET_VAR 'var d: dynamic [var] declared in <root>.test4' type=kotlin.Unit origin=EQ
+      SET_VAR 'var d: dynamic declared in <root>.test4' type=kotlin.Unit origin=EQ
         GET_VAR 'na: kotlin.Any? declared in <root>.test4' type=kotlin.Any? origin=null
-      SET_VAR 'var d: dynamic [var] declared in <root>.test4' type=kotlin.Unit origin=EQ
+      SET_VAR 'var d: dynamic declared in <root>.test4' type=kotlin.Unit origin=EQ
         GET_VAR 's: kotlin.String declared in <root>.test4' type=kotlin.String origin=null
   FUN name:test5 visibility:public modality:FINAL <> (a:kotlin.Any, s:kotlin.String, na:kotlin.Any?) returnType:kotlin.Unit
     VALUE_PARAMETER name:a index:0 type:kotlin.Any

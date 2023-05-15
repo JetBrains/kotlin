@@ -13,18 +13,18 @@ FILE fqName:<root> fileName:/suspendConversionInVararg.kt
             FUN ADAPTER_FOR_SUSPEND_CONVERSION name:suspendConversion visibility:local modality:FINAL <> ($receiver:kotlin.Function0<kotlin.Unit>) returnType:kotlin.Unit [suspend]
               $receiver: VALUE_PARAMETER ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION name:callee type:kotlin.Function0<kotlin.Unit>
               BLOCK_BODY
-                CALL 'public abstract fun invoke (): R of kotlin.Function0 [operator] declared in kotlin.Function0' type=kotlin.Unit origin=null
+                CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.Unit origin=null
                   $this: GET_VAR 'callee: kotlin.Function0<kotlin.Unit> declared in <root>.testSuspendConversionInVarargElementsSome.suspendConversion' type=kotlin.Function0<kotlin.Unit> origin=null
-            FUNCTION_REFERENCE 'local final fun suspendConversion (): kotlin.Unit [suspend] declared in <root>.testSuspendConversionInVarargElementsSome' type=kotlin.coroutines.SuspendFunction0<kotlin.Unit> origin=SUSPEND_CONVERSION reflectionTarget=null
+            FUNCTION_REFERENCE 'local final fun suspendConversion (): kotlin.Unit declared in <root>.testSuspendConversionInVarargElementsSome' type=kotlin.coroutines.SuspendFunction0<kotlin.Unit> origin=SUSPEND_CONVERSION reflectionTarget=null
               $receiver: GET_VAR 'f1: kotlin.Function0<kotlin.Unit> declared in <root>.testSuspendConversionInVarargElementsSome' type=kotlin.Function0<kotlin.Unit> origin=null
           GET_VAR 'sf2: kotlin.coroutines.SuspendFunction0<kotlin.Unit> declared in <root>.testSuspendConversionInVarargElementsSome' type=kotlin.coroutines.SuspendFunction0<kotlin.Unit> origin=null
           BLOCK type=kotlin.coroutines.SuspendFunction0<kotlin.Unit> origin=SUSPEND_CONVERSION
             FUN ADAPTER_FOR_SUSPEND_CONVERSION name:suspendConversion visibility:local modality:FINAL <> ($receiver:kotlin.Function0<kotlin.Unit>) returnType:kotlin.Unit [suspend]
               $receiver: VALUE_PARAMETER ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION name:callee type:kotlin.Function0<kotlin.Unit>
               BLOCK_BODY
-                CALL 'public abstract fun invoke (): R of kotlin.Function0 [operator] declared in kotlin.Function0' type=kotlin.Unit origin=null
+                CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.Unit origin=null
                   $this: GET_VAR 'callee: kotlin.Function0<kotlin.Unit> declared in <root>.testSuspendConversionInVarargElementsSome.suspendConversion' type=kotlin.Function0<kotlin.Unit> origin=null
-            FUNCTION_REFERENCE 'local final fun suspendConversion (): kotlin.Unit [suspend] declared in <root>.testSuspendConversionInVarargElementsSome' type=kotlin.coroutines.SuspendFunction0<kotlin.Unit> origin=SUSPEND_CONVERSION reflectionTarget=null
+            FUNCTION_REFERENCE 'local final fun suspendConversion (): kotlin.Unit declared in <root>.testSuspendConversionInVarargElementsSome' type=kotlin.coroutines.SuspendFunction0<kotlin.Unit> origin=SUSPEND_CONVERSION reflectionTarget=null
               $receiver: GET_VAR 'f3: kotlin.Function0<kotlin.Unit> declared in <root>.testSuspendConversionInVarargElementsSome' type=kotlin.Function0<kotlin.Unit> origin=null
   FUN name:testSuspendConversionInVarargElementsAll visibility:public modality:FINAL <> (f1:kotlin.Function0<kotlin.Unit>, f2:kotlin.Function0<kotlin.Unit>, f3:kotlin.Function0<kotlin.Unit>) returnType:kotlin.Unit
     VALUE_PARAMETER name:f1 index:0 type:kotlin.Function0<kotlin.Unit>
@@ -37,23 +37,23 @@ FILE fqName:<root> fileName:/suspendConversionInVararg.kt
             FUN ADAPTER_FOR_SUSPEND_CONVERSION name:suspendConversion visibility:local modality:FINAL <> ($receiver:kotlin.Function0<kotlin.Unit>) returnType:kotlin.Unit [suspend]
               $receiver: VALUE_PARAMETER ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION name:callee type:kotlin.Function0<kotlin.Unit>
               BLOCK_BODY
-                CALL 'public abstract fun invoke (): R of kotlin.Function0 [operator] declared in kotlin.Function0' type=kotlin.Unit origin=null
+                CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.Unit origin=null
                   $this: GET_VAR 'callee: kotlin.Function0<kotlin.Unit> declared in <root>.testSuspendConversionInVarargElementsAll.suspendConversion' type=kotlin.Function0<kotlin.Unit> origin=null
-            FUNCTION_REFERENCE 'local final fun suspendConversion (): kotlin.Unit [suspend] declared in <root>.testSuspendConversionInVarargElementsAll' type=kotlin.coroutines.SuspendFunction0<kotlin.Unit> origin=SUSPEND_CONVERSION reflectionTarget=null
+            FUNCTION_REFERENCE 'local final fun suspendConversion (): kotlin.Unit declared in <root>.testSuspendConversionInVarargElementsAll' type=kotlin.coroutines.SuspendFunction0<kotlin.Unit> origin=SUSPEND_CONVERSION reflectionTarget=null
               $receiver: GET_VAR 'f1: kotlin.Function0<kotlin.Unit> declared in <root>.testSuspendConversionInVarargElementsAll' type=kotlin.Function0<kotlin.Unit> origin=null
           BLOCK type=kotlin.coroutines.SuspendFunction0<kotlin.Unit> origin=SUSPEND_CONVERSION
             FUN ADAPTER_FOR_SUSPEND_CONVERSION name:suspendConversion visibility:local modality:FINAL <> ($receiver:kotlin.Function0<kotlin.Unit>) returnType:kotlin.Unit [suspend]
               $receiver: VALUE_PARAMETER ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION name:callee type:kotlin.Function0<kotlin.Unit>
               BLOCK_BODY
-                CALL 'public abstract fun invoke (): R of kotlin.Function0 [operator] declared in kotlin.Function0' type=kotlin.Unit origin=null
+                CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.Unit origin=null
                   $this: GET_VAR 'callee: kotlin.Function0<kotlin.Unit> declared in <root>.testSuspendConversionInVarargElementsAll.suspendConversion' type=kotlin.Function0<kotlin.Unit> origin=null
-            FUNCTION_REFERENCE 'local final fun suspendConversion (): kotlin.Unit [suspend] declared in <root>.testSuspendConversionInVarargElementsAll' type=kotlin.coroutines.SuspendFunction0<kotlin.Unit> origin=SUSPEND_CONVERSION reflectionTarget=null
+            FUNCTION_REFERENCE 'local final fun suspendConversion (): kotlin.Unit declared in <root>.testSuspendConversionInVarargElementsAll' type=kotlin.coroutines.SuspendFunction0<kotlin.Unit> origin=SUSPEND_CONVERSION reflectionTarget=null
               $receiver: GET_VAR 'f2: kotlin.Function0<kotlin.Unit> declared in <root>.testSuspendConversionInVarargElementsAll' type=kotlin.Function0<kotlin.Unit> origin=null
           BLOCK type=kotlin.coroutines.SuspendFunction0<kotlin.Unit> origin=SUSPEND_CONVERSION
             FUN ADAPTER_FOR_SUSPEND_CONVERSION name:suspendConversion visibility:local modality:FINAL <> ($receiver:kotlin.Function0<kotlin.Unit>) returnType:kotlin.Unit [suspend]
               $receiver: VALUE_PARAMETER ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION name:callee type:kotlin.Function0<kotlin.Unit>
               BLOCK_BODY
-                CALL 'public abstract fun invoke (): R of kotlin.Function0 [operator] declared in kotlin.Function0' type=kotlin.Unit origin=null
+                CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.Unit origin=null
                   $this: GET_VAR 'callee: kotlin.Function0<kotlin.Unit> declared in <root>.testSuspendConversionInVarargElementsAll.suspendConversion' type=kotlin.Function0<kotlin.Unit> origin=null
-            FUNCTION_REFERENCE 'local final fun suspendConversion (): kotlin.Unit [suspend] declared in <root>.testSuspendConversionInVarargElementsAll' type=kotlin.coroutines.SuspendFunction0<kotlin.Unit> origin=SUSPEND_CONVERSION reflectionTarget=null
+            FUNCTION_REFERENCE 'local final fun suspendConversion (): kotlin.Unit declared in <root>.testSuspendConversionInVarargElementsAll' type=kotlin.coroutines.SuspendFunction0<kotlin.Unit> origin=SUSPEND_CONVERSION reflectionTarget=null
               $receiver: GET_VAR 'f3: kotlin.Function0<kotlin.Unit> declared in <root>.testSuspendConversionInVarargElementsAll' type=kotlin.Function0<kotlin.Unit> origin=null

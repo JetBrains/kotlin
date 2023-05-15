@@ -3,7 +3,7 @@ FILE fqName:<root> fileName:/typeArguments.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Host
     CONSTRUCTOR visibility:private <> () returnType:<root>.Host [primary]
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Host modality:FINAL visibility:public superTypes:[kotlin.Any]'
     FUN name:objectMember visibility:public modality:FINAL <T> ($this:<root>.Host, x:T of <root>.Host.objectMember) returnType:kotlin.Unit [inline]
       TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:true
@@ -12,7 +12,7 @@ FILE fqName:<root> fileName:/typeArguments.kt
       BLOCK_BODY
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -34,7 +34,7 @@ FILE fqName:<root> fileName:/typeArguments.kt
   PROPERTY name:test1 visibility:public modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.Function1<kotlin.Int, kotlin.Unit> visibility:private [final,static]
       EXPRESSION_BODY
-        FUNCTION_REFERENCE 'public final fun topLevel1 <T> (x: T of <root>.topLevel1): kotlin.Unit [inline] declared in <root>' type=kotlin.reflect.KFunction1<@[ParameterName(name = 'x')] kotlin.Int, kotlin.Unit> origin=null reflectionTarget=<same>
+        FUNCTION_REFERENCE 'public final fun topLevel1 <T> (x: T of <root>.topLevel1): kotlin.Unit declared in <root>' type=kotlin.reflect.KFunction1<@[ParameterName(name = 'x')] kotlin.Int, kotlin.Unit> origin=null reflectionTarget=<same>
           <T>: kotlin.Int
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test1> visibility:public modality:FINAL <> () returnType:kotlin.Function1<kotlin.Int, kotlin.Unit>
       correspondingProperty: PROPERTY name:test1 visibility:public modality:FINAL [val]
@@ -44,7 +44,7 @@ FILE fqName:<root> fileName:/typeArguments.kt
   PROPERTY name:test2 visibility:public modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.Function1<kotlin.collections.List<kotlin.String>, kotlin.Unit> visibility:private [final,static]
       EXPRESSION_BODY
-        FUNCTION_REFERENCE 'public final fun topLevel2 <T> (x: kotlin.collections.List<T of <root>.topLevel2>): kotlin.Unit [inline] declared in <root>' type=kotlin.reflect.KFunction1<@[ParameterName(name = 'x')] kotlin.collections.List<kotlin.String>, kotlin.Unit> origin=null reflectionTarget=<same>
+        FUNCTION_REFERENCE 'public final fun topLevel2 <T> (x: kotlin.collections.List<T of <root>.topLevel2>): kotlin.Unit declared in <root>' type=kotlin.reflect.KFunction1<@[ParameterName(name = 'x')] kotlin.collections.List<kotlin.String>, kotlin.Unit> origin=null reflectionTarget=<same>
           <T>: kotlin.String
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test2> visibility:public modality:FINAL <> () returnType:kotlin.Function1<kotlin.collections.List<kotlin.String>, kotlin.Unit>
       correspondingProperty: PROPERTY name:test2 visibility:public modality:FINAL [val]
@@ -54,7 +54,7 @@ FILE fqName:<root> fileName:/typeArguments.kt
   PROPERTY name:test3 visibility:public modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:test3 type:kotlin.Function1<kotlin.Int, kotlin.Unit> visibility:private [final,static]
       EXPRESSION_BODY
-        FUNCTION_REFERENCE 'public final fun objectMember <T> (x: T of <root>.Host.objectMember): kotlin.Unit [inline] declared in <root>.Host' type=kotlin.reflect.KFunction1<@[ParameterName(name = 'x')] kotlin.Int, kotlin.Unit> origin=null reflectionTarget=<same>
+        FUNCTION_REFERENCE 'public final fun objectMember <T> (x: T of <root>.Host.objectMember): kotlin.Unit declared in <root>.Host' type=kotlin.reflect.KFunction1<@[ParameterName(name = 'x')] kotlin.Int, kotlin.Unit> origin=null reflectionTarget=<same>
           <T>: kotlin.Int
           $this: GET_OBJECT 'CLASS OBJECT name:Host modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.Host
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test3> visibility:public modality:FINAL <> () returnType:kotlin.Function1<kotlin.Int, kotlin.Unit>

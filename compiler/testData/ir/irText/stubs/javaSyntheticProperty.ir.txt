@@ -3,7 +3,7 @@ FILE fqName:<root> fileName:/javaSyntheticProperty.kt
     FIELD PROPERTY_BACKING_FIELD name:test type:@[FlexibleNullability] kotlin.String? visibility:private [final,static]
       EXPRESSION_BODY
         CALL 'public open fun getFoo (): @[FlexibleNullability] kotlin.String? declared in <root>.J' type=@[FlexibleNullability] kotlin.String? origin=GET_PROPERTY
-          $this: CONSTRUCTOR_CALL 'public/*package*/ constructor <init> () [primary] declared in <root>.J' type=<root>.J origin=null
+          $this: CONSTRUCTOR_CALL 'public/*package*/ constructor <init> () declared in <root>.J' type=<root>.J origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test> visibility:public modality:FINAL <> () returnType:@[FlexibleNullability] kotlin.String?
       correspondingProperty: PROPERTY name:test visibility:public modality:FINAL [val]
       BLOCK_BODY

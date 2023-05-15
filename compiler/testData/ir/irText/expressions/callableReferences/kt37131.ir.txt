@@ -13,7 +13,7 @@ FILE fqName:<root> fileName:/kt37131.kt
         EXPRESSION_BODY
           CONST String type=kotlin.String value=""
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C modality:FINAL visibility:public superTypes:[kotlin.Any]'
     PROPERTY name:x visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.String visibility:private [final]
@@ -28,7 +28,7 @@ FILE fqName:<root> fileName:/kt37131.kt
               receiver: GET_VAR '<this>: <root>.C declared in <root>.C.<get-x>' type=<root>.C origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -43,7 +43,7 @@ FILE fqName:<root> fileName:/kt37131.kt
     VALUE_PARAMETER name:fn index:0 type:kotlin.Function0<kotlin.Any>
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun use (fn: kotlin.Function0<kotlin.Any>): kotlin.Any declared in <root>'
-        CALL 'public abstract fun invoke (): R of kotlin.Function0 [operator] declared in kotlin.Function0' type=kotlin.Any origin=INVOKE
+        CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.Any origin=INVOKE
           $this: GET_VAR 'fn: kotlin.Function0<kotlin.Any> declared in <root>.use' type=kotlin.Function0<kotlin.Any> origin=VARIABLE_AS_FUNCTION
   FUN name:testFn visibility:public modality:FINAL <> () returnType:kotlin.Any
     BLOCK_BODY
@@ -63,5 +63,5 @@ FILE fqName:<root> fileName:/kt37131.kt
             FUN ADAPTER_FOR_CALLABLE_REFERENCE name:<init> visibility:local modality:FINAL <> () returnType:<root>.C
               BLOCK_BODY
                 RETURN type=kotlin.Nothing from='local final fun <init> (): <root>.C declared in <root>.testCtor'
-                  CONSTRUCTOR_CALL 'public constructor <init> (x: kotlin.String) [primary] declared in <root>.C' type=<root>.C origin=null
-            FUNCTION_REFERENCE 'local final fun <init> (): <root>.C declared in <root>.testCtor' type=kotlin.Function0<<root>.C> origin=ADAPTED_FUNCTION_REFERENCE reflectionTarget=public constructor <init> (x: kotlin.String) [primary] declared in <root>.C
+                  CONSTRUCTOR_CALL 'public constructor <init> (x: kotlin.String) declared in <root>.C' type=<root>.C origin=null
+            FUNCTION_REFERENCE 'local final fun <init> (): <root>.C declared in <root>.testCtor' type=kotlin.Function0<<root>.C> origin=ADAPTED_FUNCTION_REFERENCE reflectionTarget=public constructor <init> (x: kotlin.String) declared in <root>.C

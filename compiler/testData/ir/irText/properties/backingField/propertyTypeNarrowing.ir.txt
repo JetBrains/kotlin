@@ -3,7 +3,7 @@ FILE fqName:<root> fileName:/propertyTypeNarrowing.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A
     CONSTRUCTOR visibility:public <> () returnType:<root>.A [primary]
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:FINAL visibility:public superTypes:[kotlin.Any]'
     PROPERTY name:it visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:it type:kotlin.Int visibility:private [final]
@@ -20,7 +20,7 @@ FILE fqName:<root> fileName:/propertyTypeNarrowing.kt
       $this: VALUE_PARAMETER name:<this> type:<root>.A
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun test (): kotlin.Int declared in <root>.A'
-          CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=PLUS
+          CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUS
             $this: CALL 'public final fun <get-it> (): kotlin.Number declared in <root>.A' type=kotlin.Int origin=GET_PROPERTY
               $this: GET_VAR '<this>: <root>.A declared in <root>.A.test' type=<root>.A origin=null
             other: CONST Int type=kotlin.Int value=3
@@ -37,7 +37,7 @@ FILE fqName:<root> fileName:/propertyTypeNarrowing.kt
               receiver: GET_VAR '<this>: <root>.A declared in <root>.A.<get-p>' type=<root>.A origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -53,7 +53,7 @@ FILE fqName:<root> fileName:/propertyTypeNarrowing.kt
       VAR name:d type:kotlin.Unit [val]
         CALL 'public final fun test (): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
       VAR name:b type:kotlin.Int [val]
-        CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=PLUS
+        CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUS
           $this: CALL 'public final fun <get-p> (): kotlin.Int declared in <root>.A' type=kotlin.Int origin=GET_PROPERTY
-            $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.A' type=<root>.A origin=null
+            $this: CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.A' type=<root>.A origin=null
           other: CONST Int type=kotlin.Int value=2

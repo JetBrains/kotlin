@@ -7,7 +7,7 @@ FILE fqName:b fileName:/b.kt
     VALUE_PARAMETER name:f index:0 type:kotlin.Function0<kotlin.String{ a.A }>
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun foo (f: kotlin.Function0<kotlin.String{ a.A }>): kotlin.String{ a.A } declared in b'
-        CALL 'public abstract fun invoke (): R of kotlin.Function0 [operator] declared in kotlin.Function0' type=kotlin.String{ a.A } origin=INVOKE
+        CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.String{ a.A } origin=INVOKE
           $this: GET_VAR 'f: kotlin.Function0<kotlin.String{ a.A }> declared in b.foo' type=kotlin.Function0<kotlin.String{ a.A }> origin=VARIABLE_AS_FUNCTION
 Module: c
 FILE fqName:<root> fileName:/c.kt

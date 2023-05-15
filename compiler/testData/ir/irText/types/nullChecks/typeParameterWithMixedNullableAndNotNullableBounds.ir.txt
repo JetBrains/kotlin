@@ -4,7 +4,7 @@ FILE fqName:<root> fileName:/typeParameterWithMixedNullableAndNotNullableBounds.
     VALUE_PARAMETER name:x index:0 type:T of <root>.f
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun f <T> (x: T of <root>.f): kotlin.Int declared in <root>'
-        CALL 'public abstract fun compareTo (other: T of kotlin.Comparable): kotlin.Int [operator] declared in kotlin.Comparable' type=kotlin.Int origin=null
+        CALL 'public abstract fun compareTo (other: T of kotlin.Comparable): kotlin.Int declared in kotlin.Comparable' type=kotlin.Int origin=null
           $this: GET_VAR 'x: T of <root>.f declared in <root>.f' type=T of <root>.f origin=null
           other: GET_VAR 'x: T of <root>.f declared in <root>.f' type=T of <root>.f origin=null
   FUN name:test visibility:public modality:FINAL <> () returnType:kotlin.Unit

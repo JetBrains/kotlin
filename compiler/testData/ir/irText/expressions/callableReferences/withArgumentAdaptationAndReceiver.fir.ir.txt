@@ -2,14 +2,14 @@ FILE fqName:<root> fileName:/withArgumentAdaptationAndReceiver.kt
   FUN name:use visibility:public modality:FINAL <> (fn:kotlin.Function1<kotlin.Int, kotlin.Unit>) returnType:kotlin.Unit
     VALUE_PARAMETER name:fn index:0 type:kotlin.Function1<kotlin.Int, kotlin.Unit>
     BLOCK_BODY
-      CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 [operator] declared in kotlin.Function1' type=kotlin.Unit origin=INVOKE
+      CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=kotlin.Unit origin=INVOKE
         $this: GET_VAR 'fn: kotlin.Function1<kotlin.Int, kotlin.Unit> declared in <root>.use' type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=VARIABLE_AS_FUNCTION
         p1: CONST Int type=kotlin.Int value=1
   CLASS CLASS name:Host modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Host
     CONSTRUCTOR visibility:public <> () returnType:<root>.Host [primary]
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Host modality:FINAL visibility:public superTypes:[kotlin.Any]'
     FUN name:withVararg visibility:public modality:FINAL <> ($this:<root>.Host, xs:kotlin.IntArray) returnType:kotlin.String
       $this: VALUE_PARAMETER name:<this> type:<root>.Host
@@ -36,7 +36,7 @@ FILE fqName:<root> fileName:/withArgumentAdaptationAndReceiver.kt
       $this: VALUE_PARAMETER name:<this> type:<root>.Host
       BLOCK_BODY
         VAR name:h type:<root>.Host [val]
-          CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Host' type=<root>.Host origin=null
+          CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Host' type=<root>.Host origin=null
         CALL 'public final fun use (fn: kotlin.Function1<kotlin.Int, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
           fn: BLOCK type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE
             FUN ADAPTER_FOR_CALLABLE_REFERENCE name:withVararg visibility:local modality:FINAL <> ($receiver:<root>.Host, p0:kotlin.Int) returnType:kotlin.Unit
@@ -48,12 +48,12 @@ FILE fqName:<root> fileName:/withArgumentAdaptationAndReceiver.kt
                   xs: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
                     GET_VAR 'p0: kotlin.Int declared in <root>.Host.testBoundReceiverLocalVal.withVararg' type=kotlin.Int origin=null
             FUNCTION_REFERENCE 'local final fun withVararg (p0: kotlin.Int): kotlin.Unit declared in <root>.Host.testBoundReceiverLocalVal' type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE reflectionTarget=null
-              $receiver: GET_VAR 'val h: <root>.Host [val] declared in <root>.Host.testBoundReceiverLocalVal' type=<root>.Host origin=null
+              $receiver: GET_VAR 'val h: <root>.Host declared in <root>.Host.testBoundReceiverLocalVal' type=<root>.Host origin=null
     FUN name:testBoundReceiverLocalVar visibility:public modality:FINAL <> ($this:<root>.Host) returnType:kotlin.Unit
       $this: VALUE_PARAMETER name:<this> type:<root>.Host
       BLOCK_BODY
         VAR name:h type:<root>.Host [var]
-          CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Host' type=<root>.Host origin=null
+          CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Host' type=<root>.Host origin=null
         CALL 'public final fun use (fn: kotlin.Function1<kotlin.Int, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
           fn: BLOCK type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE
             FUN ADAPTER_FOR_CALLABLE_REFERENCE name:withVararg visibility:local modality:FINAL <> ($receiver:<root>.Host, p0:kotlin.Int) returnType:kotlin.Unit
@@ -65,7 +65,7 @@ FILE fqName:<root> fileName:/withArgumentAdaptationAndReceiver.kt
                   xs: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
                     GET_VAR 'p0: kotlin.Int declared in <root>.Host.testBoundReceiverLocalVar.withVararg' type=kotlin.Int origin=null
             FUNCTION_REFERENCE 'local final fun withVararg (p0: kotlin.Int): kotlin.Unit declared in <root>.Host.testBoundReceiverLocalVar' type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE reflectionTarget=null
-              $receiver: GET_VAR 'var h: <root>.Host [var] declared in <root>.Host.testBoundReceiverLocalVar' type=<root>.Host origin=null
+              $receiver: GET_VAR 'var h: <root>.Host declared in <root>.Host.testBoundReceiverLocalVar' type=<root>.Host origin=null
     FUN name:testBoundReceiverParameter visibility:public modality:FINAL <> ($this:<root>.Host, h:<root>.Host) returnType:kotlin.Unit
       $this: VALUE_PARAMETER name:<this> type:<root>.Host
       VALUE_PARAMETER name:h index:0 type:<root>.Host
@@ -96,10 +96,10 @@ FILE fqName:<root> fileName:/withArgumentAdaptationAndReceiver.kt
                   xs: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
                     GET_VAR 'p0: kotlin.Int declared in <root>.Host.testBoundReceiverExpression.withVararg' type=kotlin.Int origin=null
             FUNCTION_REFERENCE 'local final fun withVararg (p0: kotlin.Int): kotlin.Unit declared in <root>.Host.testBoundReceiverExpression' type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE reflectionTarget=null
-              $receiver: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Host' type=<root>.Host origin=null
+              $receiver: CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Host' type=<root>.Host origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]

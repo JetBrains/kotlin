@@ -5,7 +5,7 @@ FILE fqName:<root> fileName:/kt36956.kt
     CONSTRUCTOR visibility:public <> (value:T of <root>.A) returnType:<root>.A<T of <root>.A> [primary]
       VALUE_PARAMETER name:value index:0 type:T of <root>.A
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:FINAL visibility:public superTypes:[kotlin.Any]'
     PROPERTY name:value visibility:private modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:value type:T of <root>.A visibility:private [final]
@@ -22,7 +22,7 @@ FILE fqName:<root> fileName:/kt36956.kt
       $this: VALUE_PARAMETER name:<this> type:<root>.A<T of <root>.A>
       VALUE_PARAMETER name:i index:0 type:kotlin.Int
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun get (i: kotlin.Int): T of <root>.A [operator] declared in <root>.A'
+        RETURN type=kotlin.Nothing from='public final fun get (i: kotlin.Int): T of <root>.A declared in <root>.A'
           CALL 'private final fun <get-value> (): T of <root>.A declared in <root>.A' type=T of <root>.A origin=GET_PROPERTY
             $this: GET_VAR '<this>: <root>.A<T of <root>.A> declared in <root>.A.get' type=<root>.A<T of <root>.A> origin=null
     FUN name:set visibility:public modality:FINAL <> ($this:<root>.A<T of <root>.A>, i:kotlin.Int, v:T of <root>.A) returnType:kotlin.Unit [operator]
@@ -32,7 +32,7 @@ FILE fqName:<root> fileName:/kt36956.kt
       BLOCK_BODY
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -46,7 +46,7 @@ FILE fqName:<root> fileName:/kt36956.kt
   PROPERTY name:aFloat visibility:public modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:aFloat type:<root>.A<kotlin.Float> visibility:private [final,static]
       EXPRESSION_BODY
-        CONSTRUCTOR_CALL 'public constructor <init> (value: T of <root>.A) [primary] declared in <root>.A' type=<root>.A<kotlin.Float> origin=null
+        CONSTRUCTOR_CALL 'public constructor <init> (value: T of <root>.A) declared in <root>.A' type=<root>.A<kotlin.Float> origin=null
           <class: T>: kotlin.Float
           value: CONST Float type=kotlin.Float value=0.0
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-aFloat> visibility:public modality:FINAL <> () returnType:<root>.A<kotlin.Float>
@@ -63,15 +63,15 @@ FILE fqName:<root> fileName:/kt36956.kt
           VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:kotlin.Int [val]
             CONST Int type=kotlin.Int value=1
           VAR IR_TEMPORARY_VARIABLE name:tmp_2 type:kotlin.Float [val]
-            CALL 'public final fun get (i: kotlin.Int): T of <root>.A [operator] declared in <root>.A' type=kotlin.Float origin=null
-              $this: GET_VAR 'val tmp_0: <root>.A<kotlin.Float> [val] declared in <root>.aInt' type=<root>.A<kotlin.Float> origin=null
-              i: GET_VAR 'val tmp_1: kotlin.Int [val] declared in <root>.aInt' type=kotlin.Int origin=null
-          CALL 'public final fun set (i: kotlin.Int, v: T of <root>.A): kotlin.Unit [operator] declared in <root>.A' type=kotlin.Unit origin=null
-            $this: GET_VAR 'val tmp_0: <root>.A<kotlin.Float> [val] declared in <root>.aInt' type=<root>.A<kotlin.Float> origin=null
-            i: GET_VAR 'val tmp_1: kotlin.Int [val] declared in <root>.aInt' type=kotlin.Int origin=null
-            v: CALL 'public final fun dec (): kotlin.Float [operator] declared in kotlin.Float' type=kotlin.Float origin=null
-              $this: GET_VAR 'val tmp_2: kotlin.Float [val] declared in <root>.aInt' type=kotlin.Float origin=null
-          GET_VAR 'val tmp_2: kotlin.Float [val] declared in <root>.aInt' type=kotlin.Float origin=null
+            CALL 'public final fun get (i: kotlin.Int): T of <root>.A declared in <root>.A' type=kotlin.Float origin=null
+              $this: GET_VAR 'val tmp_0: <root>.A<kotlin.Float> declared in <root>.aInt' type=<root>.A<kotlin.Float> origin=null
+              i: GET_VAR 'val tmp_1: kotlin.Int declared in <root>.aInt' type=kotlin.Int origin=null
+          CALL 'public final fun set (i: kotlin.Int, v: T of <root>.A): kotlin.Unit declared in <root>.A' type=kotlin.Unit origin=null
+            $this: GET_VAR 'val tmp_0: <root>.A<kotlin.Float> declared in <root>.aInt' type=<root>.A<kotlin.Float> origin=null
+            i: GET_VAR 'val tmp_1: kotlin.Int declared in <root>.aInt' type=kotlin.Int origin=null
+            v: CALL 'public final fun dec (): kotlin.Float declared in kotlin.Float' type=kotlin.Float origin=null
+              $this: GET_VAR 'val tmp_2: kotlin.Float declared in <root>.aInt' type=kotlin.Float origin=null
+          GET_VAR 'val tmp_2: kotlin.Float declared in <root>.aInt' type=kotlin.Float origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-aInt> visibility:public modality:FINAL <> () returnType:kotlin.Float
       correspondingProperty: PROPERTY name:aInt visibility:public modality:FINAL [val]
       BLOCK_BODY

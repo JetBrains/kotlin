@@ -2,9 +2,9 @@ FILE fqName:<root> fileName:/genericConstructorCallWithTypeArguments.kt
   FUN name:testSimple visibility:public modality:FINAL <> () returnType:<root>.Box<kotlin.Long>
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun testSimple (): <root>.Box<kotlin.Long> declared in <root>'
-        CONSTRUCTOR_CALL 'public constructor <init> (value: T of <root>.Box) [primary] declared in <root>.Box' type=<root>.Box<kotlin.Long> origin=null
+        CONSTRUCTOR_CALL 'public constructor <init> (value: T of <root>.Box) declared in <root>.Box' type=<root>.Box<kotlin.Long> origin=null
           <class: T>: kotlin.Long
-          value: CALL 'public final fun times (other: kotlin.Int): kotlin.Long [operator] declared in kotlin.Long' type=kotlin.Long origin=MUL
+          value: CALL 'public final fun times (other: kotlin.Int): kotlin.Long declared in kotlin.Long' type=kotlin.Long origin=MUL
             $this: CONST Long type=kotlin.Long value=2
             other: CONST Int type=kotlin.Int value=3
   FUN name:testArray visibility:public modality:FINAL <T> (n:kotlin.Int, block:kotlin.Function0<T of <root>.testArray>) returnType:kotlin.Array<T of <root>.testArray> [inline]
@@ -12,7 +12,7 @@ FILE fqName:<root> fileName:/genericConstructorCallWithTypeArguments.kt
     VALUE_PARAMETER name:n index:0 type:kotlin.Int
     VALUE_PARAMETER name:block index:1 type:kotlin.Function0<T of <root>.testArray> [crossinline]
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun testArray <T> (n: kotlin.Int, block: kotlin.Function0<T of <root>.testArray>): kotlin.Array<T of <root>.testArray> [inline] declared in <root>'
+      RETURN type=kotlin.Nothing from='public final fun testArray <T> (n: kotlin.Int, block: kotlin.Function0<T of <root>.testArray>): kotlin.Array<T of <root>.testArray> declared in <root>'
         CONSTRUCTOR_CALL 'public constructor <init> (size: kotlin.Int, init: kotlin.Function1<kotlin.Int, T of kotlin.Array>) declared in kotlin.Array' type=kotlin.Array<T of <root>.testArray> origin=null
           <class: T>: T of <root>.testArray
           size: GET_VAR 'n: kotlin.Int declared in <root>.testArray' type=kotlin.Int origin=null
@@ -21,15 +21,15 @@ FILE fqName:<root> fileName:/genericConstructorCallWithTypeArguments.kt
               VALUE_PARAMETER name:it index:0 type:kotlin.Int
               BLOCK_BODY
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: kotlin.Int): T of <root>.testArray declared in <root>.testArray'
-                  CALL 'public abstract fun invoke (): R of kotlin.Function0 [operator] declared in kotlin.Function0' type=T of <root>.testArray origin=INVOKE
-                    $this: GET_VAR 'block: kotlin.Function0<T of <root>.testArray> [crossinline] declared in <root>.testArray' type=kotlin.Function0<T of <root>.testArray> origin=VARIABLE_AS_FUNCTION
+                  CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=T of <root>.testArray origin=INVOKE
+                    $this: GET_VAR 'block: kotlin.Function0<T of <root>.testArray> declared in <root>.testArray' type=kotlin.Function0<T of <root>.testArray> origin=VARIABLE_AS_FUNCTION
   CLASS CLASS name:Box modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Box<T of <root>.Box>
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
     CONSTRUCTOR visibility:public <> (value:T of <root>.Box) returnType:<root>.Box<T of <root>.Box> [primary]
       VALUE_PARAMETER name:value index:0 type:T of <root>.Box
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Box modality:FINAL visibility:public superTypes:[kotlin.Any]'
     PROPERTY name:value visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:value type:T of <root>.Box visibility:private [final]
@@ -44,7 +44,7 @@ FILE fqName:<root> fileName:/genericConstructorCallWithTypeArguments.kt
               receiver: GET_VAR '<this>: <root>.Box<T of <root>.Box> declared in <root>.Box.<get-value>' type=<root>.Box<T of <root>.Box> origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]

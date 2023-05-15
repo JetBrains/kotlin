@@ -4,7 +4,7 @@ FILE fqName:<root> fileName:/contextualPrimaryConstructorWithParams.kt
     CONSTRUCTOR visibility:public <> (o:kotlin.String) returnType:<root>.O [primary]
       VALUE_PARAMETER name:o index:0 type:kotlin.String
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:O modality:FINAL visibility:public superTypes:[kotlin.Any]'
     PROPERTY name:o visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:o type:kotlin.String visibility:private [final]
@@ -19,7 +19,7 @@ FILE fqName:<root> fileName:/contextualPrimaryConstructorWithParams.kt
               receiver: GET_VAR '<this>: <root>.O declared in <root>.O.<get-o>' type=<root>.O origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -37,7 +37,7 @@ FILE fqName:<root> fileName:/contextualPrimaryConstructorWithParams.kt
       VALUE_PARAMETER name:$context_receiver_0 index:0 type:<root>.O
       VALUE_PARAMETER name:k index:1 type:kotlin.String
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         SET_FIELD 'FIELD FIELD_FOR_CLASS_CONTEXT_RECEIVER name:contextReceiverField0 type:<root>.O visibility:private [final]' type=kotlin.Unit origin=null
           receiver: GET_VAR '<this>: <root>.OK declared in <root>.OK' type=<root>.OK origin=null
           value: GET_VAR '$context_receiver_0: <root>.O declared in <root>.OK.<init>' type=<root>.O origin=null
@@ -56,7 +56,7 @@ FILE fqName:<root> fileName:/contextualPrimaryConstructorWithParams.kt
     PROPERTY name:result visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:result type:kotlin.String visibility:private [final]
         EXPRESSION_BODY
-          CALL 'public final fun plus (other: kotlin.Any?): kotlin.String [operator] declared in kotlin.String' type=kotlin.String origin=PLUS
+          CALL 'public final fun plus (other: kotlin.Any?): kotlin.String declared in kotlin.String' type=kotlin.String origin=PLUS
             $this: CALL 'public final fun <get-o> (): kotlin.String declared in <root>.O' type=kotlin.String origin=GET_PROPERTY
               $this: GET_FIELD 'FIELD FIELD_FOR_CLASS_CONTEXT_RECEIVER name:contextReceiverField0 type:<root>.O visibility:private [final]' type=<root>.O origin=null
                 receiver: GET_VAR '<this>: <root>.OK declared in <root>.OK' type=<root>.OK origin=null
@@ -71,7 +71,7 @@ FILE fqName:<root> fileName:/contextualPrimaryConstructorWithParams.kt
               receiver: GET_VAR '<this>: <root>.OK declared in <root>.OK.<get-result>' type=<root>.OK origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -85,19 +85,19 @@ FILE fqName:<root> fileName:/contextualPrimaryConstructorWithParams.kt
   FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
-        CALL 'public final fun with <T, R> (receiver: T of kotlin.StandardKt.with, block: @[ExtensionFunctionType] kotlin.Function1<T of kotlin.StandardKt.with, R of kotlin.StandardKt.with>): R of kotlin.StandardKt.with [inline] declared in kotlin.StandardKt' type=kotlin.String origin=null
+        CALL 'public final fun with <T, R> (receiver: T of kotlin.StandardKt.with, block: @[ExtensionFunctionType] kotlin.Function1<T of kotlin.StandardKt.with, R of kotlin.StandardKt.with>): R of kotlin.StandardKt.with declared in kotlin.StandardKt' type=kotlin.String origin=null
           <T>: <root>.O
           <R>: kotlin.String
-          receiver: CONSTRUCTOR_CALL 'public constructor <init> (o: kotlin.String) [primary] declared in <root>.O' type=<root>.O origin=null
+          receiver: CONSTRUCTOR_CALL 'public constructor <init> (o: kotlin.String) declared in <root>.O' type=<root>.O origin=null
             o: CONST String type=kotlin.String value="O"
           block: FUN_EXPR type=@[ExtensionFunctionType] kotlin.Function1<<root>.O, kotlin.String> origin=LAMBDA
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.O) returnType:kotlin.String
               $receiver: VALUE_PARAMETER name:$this$with type:<root>.O
               BLOCK_BODY
                 VAR name:ok type:<root>.OK [val]
-                  CONSTRUCTOR_CALL 'public constructor <init> ($context_receiver_0: <root>.O, k: kotlin.String) [primary] declared in <root>.OK' type=<root>.OK origin=null
+                  CONSTRUCTOR_CALL 'public constructor <init> ($context_receiver_0: <root>.O, k: kotlin.String) declared in <root>.OK' type=<root>.OK origin=null
                     $context_receiver_0: GET_VAR '$this$with: <root>.O declared in <root>.box.<anonymous>' type=<root>.O origin=null
                     k: CONST String type=kotlin.String value="K"
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.String declared in <root>.box'
                   CALL 'public final fun <get-result> (): kotlin.String declared in <root>.OK' type=kotlin.String origin=GET_PROPERTY
-                    $this: GET_VAR 'val ok: <root>.OK [val] declared in <root>.box.<anonymous>' type=<root>.OK origin=null
+                    $this: GET_VAR 'val ok: <root>.OK declared in <root>.box.<anonymous>' type=<root>.OK origin=null

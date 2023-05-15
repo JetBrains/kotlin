@@ -3,7 +3,7 @@ FILE fqName:<root> fileName:/stringVsAny.kt
     VALUE_PARAMETER name:fn index:0 type:kotlin.Function0<kotlin.Any>
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun useAny (fn: kotlin.Function0<kotlin.Any>): kotlin.Any declared in <root>'
-        CALL 'public abstract fun invoke (): R of kotlin.Function0 [operator] declared in kotlin.Function0' type=kotlin.Any origin=INVOKE
+        CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.Any origin=INVOKE
           $this: GET_VAR 'fn: kotlin.Function0<kotlin.Any> declared in <root>.useAny' type=kotlin.Function0<kotlin.Any> origin=VARIABLE_AS_FUNCTION
   FUN name:testNullCheck visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY

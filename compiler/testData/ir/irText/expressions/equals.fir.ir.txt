@@ -12,7 +12,7 @@ FILE fqName:<root> fileName:/equals.kt
     VALUE_PARAMETER name:b index:1 type:kotlin.Int
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun testEquals (a: kotlin.Int, b: kotlin.Int): kotlin.Boolean declared in <root>'
-        CALL 'public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Int' type=kotlin.Boolean origin=null
+        CALL 'public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Int' type=kotlin.Boolean origin=null
           $this: GET_VAR 'a: kotlin.Int declared in <root>.testEquals' type=kotlin.Int origin=null
           other: GET_VAR 'b: kotlin.Int declared in <root>.testEquals' type=kotlin.Int origin=null
   FUN name:testJEqeqNull visibility:public modality:FINAL <> () returnType:kotlin.Boolean
@@ -24,6 +24,6 @@ FILE fqName:<root> fileName:/equals.kt
   FUN name:testJEqualsNull visibility:public modality:FINAL <> () returnType:kotlin.Boolean
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun testJEqualsNull (): kotlin.Boolean declared in <root>'
-        CALL 'public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Int' type=kotlin.Boolean origin=null
+        CALL 'public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Int' type=kotlin.Boolean origin=null
           $this: GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:INT_NULL type:@[FlexibleNullability] kotlin.Int? visibility:public [static]' type=@[FlexibleNullability] kotlin.Int? origin=GET_PROPERTY
           other: CONST Null type=kotlin.Nothing? value=null
