@@ -390,6 +390,8 @@ public interface Errors {
 
     DiagnosticFactory0<KtTypeReference> SUPERTYPE_NOT_A_CLASS_OR_INTERFACE = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtTypeReference> SUPERTYPE_IS_EXTENSION_FUNCTION_TYPE = DiagnosticFactory0.create(ERROR);
+
+    DiagnosticFactory0<KtTypeReference> SUPERTYPE_IS_SUSPEND_EXTENSION_FUNCTION_TYPE = DiagnosticFactory0.create(WARNING);
     DiagnosticFactory0<KtTypeReference> SUPERTYPE_IS_SUSPEND_FUNCTION_TYPE = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtTypeReference> SUPERTYPE_IS_KSUSPEND_FUNCTION_TYPE = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> MIXING_SUSPEND_AND_NON_SUSPEND_SUPERTYPES = DiagnosticFactory0.create(ERROR);
