@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.scopes
 
+import com.intellij.psi.PsiManager
+import com.intellij.psi.impl.file.PsiPackageImpl
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.providers.impl.forEachNonKotlinPsiElementFinder
 import org.jetbrains.kotlin.fir.FirSession
@@ -21,10 +23,10 @@ internal object DeclarationsInPackageProvider {
 
             when {
                 analysisSession.targetPlatform.isJvm() -> {
+                    val psiPackage = PsiPackageImpl(PsiManager.getInstance(analysisSession.project), packageFqName.asString())
                     forEachNonKotlinPsiElementFinder(analysisSession.project) { finder ->
-                        finder.findPackage(packageFqName.asString())
-                            ?.getClasses(analysisSession.useSiteAnalysisScope)
-                            ?.mapNotNullTo(this) { it.name?.let(Name::identifier) }
+                        finder.getClassNames(psiPackage, analysisSession.useSiteAnalysisScope)
+                            .mapNotNullTo(this, Name::identifier)
                     }
                 }
             }
