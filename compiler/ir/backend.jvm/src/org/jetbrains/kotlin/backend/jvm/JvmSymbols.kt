@@ -649,6 +649,54 @@ class JvmSymbols(
     val arrayOfAnyType = irBuiltIns.arrayClass.typeWith(irBuiltIns.anyType)
     val arrayOfAnyNType = irBuiltIns.arrayClass.typeWith(irBuiltIns.anyNType)
 
+    private fun IrClass.addPrimaryConstructorByFields() {
+        addConstructor { isPrimary = true }.apply {
+            fields.forEach { field -> addValueParameter(field.name, field.type) }
+        }
+    }
+
+    val vArrayWrapperPerSizeClass: IrClassSymbol = createClass(FqName("kotlin.jvm.internal.VArrayWrapperPerSize")) { klass ->
+        klass.addField("ones", irBuiltIns.byteArray.defaultType.makeNullable(), DescriptorVisibilities.PUBLIC)
+        klass.addField("twos", irBuiltIns.shortArray.defaultType.makeNullable(), DescriptorVisibilities.PUBLIC)
+        klass.addField("fours", irBuiltIns.intArray.defaultType.makeNullable(), DescriptorVisibilities.PUBLIC)
+        klass.addField("eights", irBuiltIns.longArray.defaultType.makeNullable(), DescriptorVisibilities.PUBLIC)
+        klass.addField("refs", arrayOfAnyNType.makeNullable(), DescriptorVisibilities.PUBLIC)
+        klass.addField("size", irBuiltIns.intType, DescriptorVisibilities.PUBLIC)
+
+        klass.addPrimaryConstructorByFields()
+    }
+
+    val vArrayWrapperTwoArrays: IrClassSymbol = createClass(FqName("kotlin.jvm.internal.VArrayWrapperTwoArrays")) { klass ->
+        klass.addField("longs", irBuiltIns.longArray.defaultType.makeNullable(), DescriptorVisibilities.PUBLIC)
+        klass.addField("refs", arrayOfAnyNType.makeNullable(), DescriptorVisibilities.PUBLIC)
+        klass.addField("size", irBuiltIns.intType, DescriptorVisibilities.PUBLIC)
+
+        klass.addPrimaryConstructorByFields()
+    }
+
+    val vArrayPerSizeIteratorStateHolder: IrClassSymbol =
+        createClass(FqName("kotlin.jvm.internal.VArrayPerSizeIteratorStateHolder")) { klass ->
+            klass.addField("array", vArrayWrapperPerSizeClass.owner.defaultType, DescriptorVisibilities.PUBLIC)
+            klass.addField("index", irBuiltIns.intType, DescriptorVisibilities.PUBLIC)
+
+            klass.addPrimaryConstructorByFields()
+        }
+
+    val vArrayTwoArraysIteratorStateHolder: IrClassSymbol =
+        createClass(FqName("kotlin.jvm.internal.VArrayTwoArraysIteratorStateHolder")) { klass ->
+            klass.addField("array", vArrayWrapperTwoArrays.owner.defaultType, DescriptorVisibilities.PUBLIC)
+            klass.addField("index", irBuiltIns.intType, DescriptorVisibilities.PUBLIC)
+
+            klass.addPrimaryConstructorByFields()
+        }
+
+    val arrayIndexOutOfBoundsException: IrClassSymbol = createClass(FqName("java.lang.ArrayIndexOutOfBoundsException"))
+    val noSuchElementException: IrClassSymbol = createClass(FqName("java.util.NoSuchElementException")) { klass ->
+        klass.addConstructor().apply {
+            addValueParameter("message", string.defaultType)
+        }
+    }
+
     // Intrinsic to represent closure creation using INVOKEDYNAMIC with LambdaMetafactory.{metafactory, altMetafactory}
     // as a bootstrap method.
     //      fun <SAM_TYPE> `<jvm-indy-lambda-metafactory>`(
@@ -831,6 +879,60 @@ class JvmSymbols(
             addValueParameter("name", irBuiltIns.stringType)
         }
     }
+
+    val charCodeGetter: IrFunctionSymbol =
+        irFactory.buildProperty {
+            name = Name.identifier("code")
+        }.apply {
+            parent = createClass(FqName("kotlin.CharCodeKt")).owner
+            addGetter().apply {
+                isInline = true
+                addExtensionReceiver(irBuiltIns.charType)
+                returnType = irBuiltIns.intType
+            }
+        }.getter!!.symbol
+
+    val floatToRawBits: IrFunctionSymbol =
+        irFactory.buildFun {
+            name = Name.identifier("toRawBits")
+        }.apply {
+            isInline = true
+            parent = createClass(FqName("kotlin.NumbersKt__NumbersJVMKt")).owner
+            addExtensionReceiver(irBuiltIns.floatType)
+            returnType = irBuiltIns.intType
+        }.symbol
+
+    val floatFromBits: IrSimpleFunctionSymbol =
+        irFactory.buildFun {
+            name = Name.identifier("fromBits")
+        }.apply {
+            isInline = true
+            parent = createClass(FqName("kotlin.NumbersKt__NumbersJVMKt")).owner
+            addExtensionReceiver(irBuiltIns.floatClass.owner.companionObject()!!.defaultType)
+            addValueParameter("bits", irBuiltIns.intType)
+            returnType = irBuiltIns.floatType
+        }.symbol
+
+    val doubleFromBits: IrSimpleFunctionSymbol =
+        irFactory.buildFun {
+            name = Name.identifier("fromBits")
+        }.apply {
+            isInline = true
+            parent = createClass(FqName("kotlin.NumbersKt__NumbersJVMKt")).owner
+            addExtensionReceiver(irBuiltIns.doubleClass.owner.companionObject()!!.defaultType)
+            addValueParameter("bits", irBuiltIns.longType)
+            returnType = irBuiltIns.doubleType
+        }.symbol
+
+    val doubleToRawBits: IrFunctionSymbol =
+        irFactory.buildFun {
+            name = Name.identifier("toRawBits")
+        }.apply {
+            isInline = true
+            parent = createClass(FqName("kotlin.NumbersKt__NumbersJVMKt")).owner
+            addExtensionReceiver(irBuiltIns.doubleType)
+            returnType = irBuiltIns.longType
+        }.symbol
 
     val kClassJava: IrPropertySymbol =
         irFactory.buildProperty {

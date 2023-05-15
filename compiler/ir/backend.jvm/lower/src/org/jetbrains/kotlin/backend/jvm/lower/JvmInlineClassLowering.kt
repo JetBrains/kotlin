@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.InlineClassRepresentation
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
@@ -101,6 +102,8 @@ internal class JvmInlineClassLowering(
     }
 
     override fun handleSpecificNewClass(declaration: IrClass) {
+        transformInlineClassRepresentationIfNeeded(declaration)
+
         val irConstructor = declaration.primaryConstructor!!
         // The field getter is used by reflection and cannot be removed here unless it is internal.
         declaration.declarations.removeIf {
@@ -111,6 +114,16 @@ internal class JvmInlineClassLowering(
         buildUnboxFunction(declaration)
         buildSpecializedEqualsMethodIfNeeded(declaration)
         addJvmInlineAnnotation(declaration)
+    }
+
+    private fun transformInlineClassRepresentationIfNeeded(declaration: IrClass) {
+        require(declaration.inlineClassRepresentation != null)
+        val inlineClassRepresentation = declaration.inlineClassRepresentation!!
+        val transformedUnderlyingType =
+            applyVArrayWrappingTypeTransformation(inlineClassRepresentation.underlyingType, replacements.flatteningSymbolsHelper)
+        require(transformedUnderlyingType is IrSimpleType)
+        declaration.valueClassRepresentation =
+            InlineClassRepresentation(inlineClassRepresentation.underlyingPropertyName, transformedUnderlyingType)
     }
 
     private fun addJvmInlineAnnotation(valueClass: IrClass) {

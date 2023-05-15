@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.jvm
 
 import org.jetbrains.kotlin.backend.jvm.MemoizedMultiFieldValueClassReplacements.RemappedParameter.MultiFieldValueClassMapping
 import org.jetbrains.kotlin.backend.jvm.ir.*
+import org.jetbrains.kotlin.config.JvmMfvcVArrayFlatteningScheme
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
@@ -15,9 +16,7 @@ import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
-import org.jetbrains.kotlin.ir.types.IrSimpleType
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.defaultType
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.InlineClassDescriptorResolver
@@ -305,6 +304,15 @@ class MemoizedMultiFieldValueClassReplacements(
     val getRootMfvcNode: (IrClass) -> RootMfvcNode = storageManager.createMemoizedFunction {
         require(it.defaultType.needsMfvcFlattening()) { it.defaultType.render() }
         getRootNode(context, it)
+    }
+
+    val getMfvcVArrayMapper: (RootMfvcNode) -> MfvcVArrayMapper = storageManager.createMemoizedFunction {
+        when (context.state.mfvcVArrayFlatteningScheme) {
+            JvmMfvcVArrayFlatteningScheme.PER_TYPE -> TODO("Scheme is not implemented yet")
+            JvmMfvcVArrayFlatteningScheme.PER_SIZE -> PerSizeMapper(it, flatteningSymbolsHelper)
+            JvmMfvcVArrayFlatteningScheme.THREE_ARRAYS -> TODO("Scheme is not implemented yet")
+            JvmMfvcVArrayFlatteningScheme.TWO_ARRAYS -> TwoArraysMapper(it, flatteningSymbolsHelper)
+        }
     }
 
     fun getRootMfvcNodeOrNull(irClass: IrClass): RootMfvcNode? =

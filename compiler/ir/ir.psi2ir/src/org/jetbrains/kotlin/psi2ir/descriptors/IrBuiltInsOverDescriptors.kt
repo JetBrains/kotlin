@@ -478,6 +478,8 @@ class IrBuiltInsOverDescriptors(
                 it.descriptor.valueParameters.size == 1 && KotlinBuiltIns.isInt(it.descriptor.valueParameters[0].type)
     }
 
+    override val vArrayIteratorFunction: IrSimpleFunctionSymbol? = null // not implemented in old frontend
+
     override val linkageErrorSymbol: IrSimpleFunctionSymbol = defineOperator("linkageError", nothingType, listOf(stringType))
 
     override val enumClass = builtIns.enum.toIrSymbol()

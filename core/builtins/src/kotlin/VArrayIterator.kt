@@ -7,4 +7,5 @@ package kotlin
 
 interface VArrayIterator<T> : Iterator<T> {
     override fun next(): T
+    override fun hasNext(): Boolean
 }

@@ -11,6 +11,7 @@ private class ArrayIterator<T>(val array: Array<T>) : Iterator<T> {
     override fun next() = try { array[index++] } catch (e: ArrayIndexOutOfBoundsException) { index -= 1; throw NoSuchElementException(e.message) }
 }
 
+// TODO: add 'reified' to T
 public class VArrayIteratorImpl<T>(val array: VArray<T>) : VArrayIterator<T> {
     private var index = 0
     override fun hasNext() = index < array.size

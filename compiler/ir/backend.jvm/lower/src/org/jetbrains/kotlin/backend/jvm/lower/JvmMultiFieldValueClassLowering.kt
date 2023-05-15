@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.jvm.lower
 import org.jetbrains.kotlin.backend.common.ScopeWithIr
 import org.jetbrains.kotlin.backend.common.ir.inline
 import org.jetbrains.kotlin.backend.common.lower.irCatch
+import org.jetbrains.kotlin.backend.common.lower.irThrow
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.jvm.*
@@ -19,9 +20,7 @@ import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
 import org.jetbrains.kotlin.backend.jvm.lower.BlockOrBody.Block
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
@@ -30,16 +29,13 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrEnumConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
-import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
-import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
+import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrAnonymousInitializerSymbolImpl
-import org.jetbrains.kotlin.ir.transformStatement
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 internal class JvmMultiFieldValueClassLowering(
@@ -196,6 +192,49 @@ internal class JvmMultiFieldValueClassLowering(
             return getterExpression
         }
 
+        fun IrBlockBuilder.lowerMfvcVArrayGet(expression: IrCall): IrExpression {
+            val mfvcNode = replacements.getRootMfvcNode(expression.type.erasedUpperBound)
+            val mapper = replacements.getMfvcVArrayMapper(mfvcNode)
+            require(expression.dispatchReceiver != null)
+            val vArrayWrapperTempVariable = savableStandaloneVariableWithSetter(
+                expression = expression.dispatchReceiver!!,
+                origin = IrDeclarationOrigin.IR_TEMPORARY_VARIABLE,
+                saveVariable = ::variablesSaver
+            )
+            require(expression.valueArgumentsCount == 1)
+            val indexInVArrayExpr = expression.getValueArgument(0)!!
+            val indexInVArrayTempVariable = savableStandaloneVariableWithSetter(
+                expression = indexInVArrayExpr,
+                origin = IrDeclarationOrigin.IR_TEMPORARY_VARIABLE,
+                saveVariable = ::variablesSaver
+            )
+            val tempVariables = List(mfvcNode.leavesCount) { leafIndex ->
+                val mapping = mapper.map(indexInVArrayTempVariable, leafIndex, this, replacements.flatteningSymbolsHelper)
+                val leafValue = irCall(mapping.wrapperArrayGetFunction).apply {
+                    dispatchReceiver = irGetField(
+                        irGet(vArrayWrapperTempVariable),
+                        mapping.wrapperField.owner
+                    )
+                    putValueArgument(0, mapping.indexInWrapperArray)
+                }
+                val decodedValue = mapping.decodeFunction(leafValue, this)
+                // TODO: Investigate how to get rid of temporary variables. They are presumably blame for excess bytecode.
+                savableStandaloneVariableWithSetter(
+                    decodedValue,
+                    name = null,
+                    isMutable = false,
+                    origin = JvmLoweredDeclarationOrigin.MULTI_FIELD_VALUE_CLASS_REPRESENTATION_VARIABLE,
+                    saveVariable = ::variablesSaver
+                )
+            }
+            val typeArguments = makeTypeArgumentsFromType(expression.type as IrSimpleType)
+            val nodeInstance = ValueDeclarationMfvcNodeInstance(mfvcNode, typeArguments, tempVariables)
+            val resultExpr = nodeInstance.makeGetterExpression(this, irCurrentClass, ::registerPossibleExtraBoxUsage)
+            registerReplacement(resultExpr, nodeInstance)
+            +resultExpr
+            return resultExpr
+        }
+
         private fun makeTypeArgumentsFromField(expression: IrFieldAccessExpression) = buildMap {
             val field = expression.symbol.owner
             putAll(makeTypeArgumentsFromType(field.type as IrSimpleType))
@@ -303,7 +342,13 @@ internal class JvmMultiFieldValueClassLowering(
             }
         }
 
+        transformVArrayTypes(declaration)
+
         return declaration
+    }
+
+    private fun transformVArrayTypes(declaration: IrClass) {
+        declaration.transformChildrenVoid(MfvcVArrayTypeWrapperVisitor(replacements.flatteningSymbolsHelper))
     }
 
     override fun visitClassNewDeclarationsWhenParallel(declaration: IrDeclaration) =
@@ -963,6 +1008,24 @@ internal class JvmMultiFieldValueClassLowering(
                 }
             }
 
+            isCreationOfFlattenedVArray(expression, context) -> {
+                context.createJvmIrBuilder(currentScope.symbol, expression).irBlock {
+                    require(expression.typeArgumentsCount == 1)
+                    val rootNode = replacements.getRootMfvcNode(expression.getTypeArgument(0)!!.erasedUpperBound)
+                    val flatteningScheme = replacements.getMfvcVArrayMapper(rootNode)
+                    require(expression.valueArgumentsCount == 1)
+                    val vArraySizeExpr = expression.getValueArgument(0)!!
+                    val constructorCall =
+                        flatteningScheme.getVArrayWrapperCreationCall(
+                            vArraySizeExpr,
+                            this,
+                            replacements.flatteningSymbolsHelper,
+                            ::variablesSaver
+                        )
+                    +constructorCall
+                }.unwrapBlock()
+            }
+
             replacement != null -> context.createJvmIrBuilder(currentScope.symbol, expression).irBlock {
                 buildReplacement(function, expression, replacement)
             }.unwrapBlock()
@@ -1069,7 +1132,175 @@ internal class JvmMultiFieldValueClassLowering(
                 }
             }.unwrapBlock()
         }
+        if (isGetOnFlattenedVArray(expression, replacements.flatteningSymbolsHelper)) {
+            expression.transformChildrenVoid()
+            return context.createJvmIrBuilder(getCurrentScopeSymbol(), expression).irBlock {
+                with(valueDeclarationsRemapper) {
+                    lowerMfvcVArrayGet(expression)
+                }
+            }.unwrapBlock()
+        }
+        if (isSetOnFlattenVArray(expression, replacements.flatteningSymbolsHelper)) {
+            expression.transformChildrenVoid()
+            val flattenSetBlock = context.createJvmIrBuilder(getCurrentScopeSymbol(), expression).irBlock {
+                lowerMfvcVArraySet(expression)
+            }
+            return flattenSetBlock
+        }
+        if (isGetSizeOnFlattenedVArray(expression, replacements.flatteningSymbolsHelper)) {
+            expression.transformChildrenVoid()
+            return context.createJvmIrBuilder(getCurrentScopeSymbol(), expression)
+                .irGetField(expression.dispatchReceiver!!, replacements.flatteningSymbolsHelper.wrapperSizeField.owner)
+        }
+        if (isFlattenedVArrayIteratorCreation(expression, context)) {
+            require(expression.extensionReceiver != null)
+            expression.transformChildrenVoid()
+            return with(context.createJvmIrBuilder(getCurrentScopeSymbol(), expression)) {
+                irCall(replacements.flatteningSymbolsHelper.vArrayWrapperIteratorStateHolderConstructor).apply {
+                    putValueArgument(0, expression.extensionReceiver)
+                    putValueArgument(1, irInt(0))
+                }
+            }
+        }
+        if (isFlattenedVArrayIteratorHasNext(expression)) {
+            expression.transformChildrenVoid()
+            return context.createJvmIrBuilder(getCurrentScopeSymbol(), expression).irBlock {
+                lowerMfvcVArrayIteratorHasNext(expression)
+            }
+        }
+        if (isFlattenedVArrayIteratorNext(expression)) {
+            val lowered = context.createJvmIrBuilder(getCurrentScopeSymbol(), expression).irBlock {
+                lowerMfvcVArrayIteratorNext(expression)
+            }
+            lowered.transformChildrenVoid()
+            return lowered
+        }
         return super.visitCall(expression)
+    }
+
+    private fun IrBlockBuilder.lowerMfvcVArrayIteratorNext(expression: IrCall) {
+        require(expression.dispatchReceiver != null)
+        val symbols = replacements.flatteningSymbolsHelper
+        // Generate IR for:
+        // try { it.array[it.index++] } catch (e: ArrayIndexOutOfBoundsException) { it.index--; throw NoSuchElementException(e.message) }
+        val iteratorTempVariable = savableStandaloneVariableWithSetter(
+            expression = expression.dispatchReceiver!!,
+            origin = IrDeclarationOrigin.IR_TEMPORARY_VARIABLE,
+            saveVariable = ::variablesSaver
+        )
+        val vArrayGet = irCall(symbols.vArrayGet!!, expression.type).apply {
+            dispatchReceiver = irGetField(irGet(iteratorTempVariable), symbols.vArrayWrapperIteratorStateHolderArrayField.owner)
+            putValueArgument(0, irBlock {
+                val indexTempVariable = savableStandaloneVariableWithSetter(
+                    expression = irGetField(irGet(iteratorTempVariable), symbols.vArrayWrapperIteratorStateHolderIndexField.owner),
+                    origin = IrDeclarationOrigin.IR_TEMPORARY_VARIABLE,
+                    saveVariable = ::variablesSaver
+                )
+                +irSetField(
+                    irGet(iteratorTempVariable),
+                    symbols.vArrayWrapperIteratorStateHolderIndexField.owner,
+                    irCall(context.irBuiltIns.intClass.getSimpleFunction("inc")!!).apply {
+                        dispatchReceiver = irGet(indexTempVariable)
+                    }
+                )
+                +irGet(indexTempVariable)
+            })
+        }
+        val catchParameter = savableStandaloneVariable(
+            type = this@JvmMultiFieldValueClassLowering.context.ir.symbols.arrayIndexOutOfBoundsException.defaultType,
+            isVar = false,
+            origin = IrDeclarationOrigin.CATCH_PARAMETER,
+            saveVariable = {}
+        )
+        +irTry(
+            type = expression.type,
+            tryResult = vArrayGet,
+            catches = listOf(irCatch(
+                catchParameter = catchParameter,
+                result = irBlock {
+                    +irSetField(
+                        irGet(iteratorTempVariable),
+                        symbols.vArrayWrapperIteratorStateHolderIndexField.owner,
+                        irCall(context.irBuiltIns.intClass.getSimpleFunction("dec")!!).apply {
+                            dispatchReceiver =
+                                irGetField(irGet(iteratorTempVariable), symbols.vArrayWrapperIteratorStateHolderIndexField.owner)
+                        })
+                    +irThrow(irCall(symbols.noSuchElementExceptionConstructor).apply {
+                        putValueArgument(0, irCall(symbols.throwableMessageGetter).apply {
+                            dispatchReceiver = irGet(catchParameter)
+                        })
+                    })
+                }
+            )),
+            finallyExpression = null
+        )
+    }
+
+    private fun IrBlockBuilder.lowerMfvcVArrayIteratorHasNext(expression: IrCall) {
+        require(expression.dispatchReceiver != null)
+        val iteratorTempVariable = savableStandaloneVariableWithSetter(
+            expression = expression.dispatchReceiver!!,
+            origin = IrDeclarationOrigin.IR_TEMPORARY_VARIABLE,
+            saveVariable = ::variablesSaver
+        )
+        // IR for: iteratorStateHolder.index < iteratorStateHolder.array.size
+        +irCall(context.irBuiltIns.lessFunByOperandType[context.irBuiltIns.intType.classifierOrFail]!!).apply {
+            putValueArgument(
+                0,
+                irGetField(
+                    irGet(iteratorTempVariable),
+                    replacements.flatteningSymbolsHelper.vArrayWrapperIteratorStateHolderIndexField.owner
+                )
+            )
+            putValueArgument(
+                1,
+                irGetField(
+                    irGetField(
+                        irGet(iteratorTempVariable),
+                        replacements.flatteningSymbolsHelper.vArrayWrapperIteratorStateHolderArrayField.owner
+                    ), replacements.flatteningSymbolsHelper.wrapperSizeField.owner
+                )
+            )
+        }
+    }
+
+    private fun IrBlockBuilder.lowerMfvcVArraySet(setCall: IrCall) {
+        require(setCall.valueArgumentsCount == 2)
+        val vArrayIndexExpr = setCall.getValueArgument(0)!!
+        val vArrayIndexTempVariable = savableStandaloneVariableWithSetter(
+            expression = vArrayIndexExpr,
+            origin = IrDeclarationOrigin.IR_TEMPORARY_VARIABLE,
+            saveVariable = ::variablesSaver
+        )
+        val tempVariableForSetValue = savableStandaloneVariableWithSetter(
+            setCall.getValueArgument(1)!!,
+            origin = IrDeclarationOrigin.IR_TEMPORARY_VARIABLE,
+            saveVariable = ::variablesSaver
+        )
+        require(setCall.dispatchReceiver != null)
+        val vArrayWrapperTempVariable = savableStandaloneVariableWithSetter(
+            expression = setCall.dispatchReceiver!!,
+            origin = IrDeclarationOrigin.IR_TEMPORARY_VARIABLE,
+            saveVariable = ::variablesSaver
+        )
+        val mfvcNode = replacements.getRootMfvcNode(setCall.getValueArgument(1)!!.type.erasedUpperBound)
+        val mapper = replacements.getMfvcVArrayMapper(mfvcNode)
+        mfvcNode.leaves.forEachIndexed { leafIndex, leaf ->
+            val mapping = mapper.map(vArrayIndexTempVariable, leafIndex, this, replacements.flatteningSymbolsHelper)
+            val leafValue = irCall(leaf.unboxMethod).apply {
+                dispatchReceiver = irGet(tempVariableForSetValue)
+            }
+            val encodedValue = mapping.encodeFunction(leafValue, this)
+            val leafSetCall = irCall(mapping.wrapperArraySetFunction).apply {
+                dispatchReceiver = irGetField(
+                    irGet(vArrayWrapperTempVariable),
+                    mapping.wrapperField.owner
+                )
+                putValueArgument(0, mapping.indexInWrapperArray)
+                putValueArgument(1, encodedValue)
+            }
+            +leafSetCall
+        }
     }
 
     private fun IrBlockBuilder.buildReplacement(
@@ -1670,4 +1901,71 @@ private fun BlockOrBody.extractVariablesSettersToOuterPossibleBlock(variables: S
 private fun <T> MutableList<T>.replaceAll(replacement: List<T>) {
     clear()
     addAll(replacement)
+}
+
+private fun isFlattenedVArrayIterator(type: IrType): Boolean {
+    if (type !is IrSimpleType) return false
+    if (type.classFqName != StandardClassIds.vArrayIterator.asSingleFqName()) return false
+    require(type.arguments.size == 1)
+    val typeArg = type.arguments[0]
+    require(typeArg is IrSimpleType)
+    return typeArg.needsMfvcFlattening()
+}
+
+private fun isFlattenedVArrayIteratorNext(expression: IrCall): Boolean {
+    if (expression.dispatchReceiver == null) return false
+    return isFlattenedVArrayIterator(expression.dispatchReceiver!!.type) && expression.symbol.owner.name == Name.identifier("next")
+}
+
+private fun isFlattenedVArrayIteratorHasNext(expression: IrCall): Boolean {
+    if (expression.dispatchReceiver == null) return false
+    return isFlattenedVArrayIterator(expression.dispatchReceiver!!.type) && expression.symbol.owner.name == Name.identifier("hasNext")
+}
+
+private fun isFlattenedVArrayIteratorCreation(expression: IrCall, context: JvmBackendContext) =
+    expression.symbol == context.irBuiltIns.vArrayIteratorFunction && expression.extensionReceiver?.type?.isFlattenedVArray() == true
+
+private fun isCreationOfFlattenedVArray(expression: IrFunctionAccessExpression, context: JvmBackendContext) =
+    expression.symbol == context.irBuiltIns.vArrayOfNulls && expression.type.isFlattenedVArray()
+
+private fun isGetSizeOnFlattenedVArray(expression: IrCall, symbols: FlatteningSymbolsHelper) =
+    expression.symbol == symbols.vArraySizeGetter && expression.dispatchReceiver?.type?.isFlattenedVArray() == true
+
+private fun isGetOnFlattenedVArray(expression: IrCall, symbols: FlatteningSymbolsHelper) =
+    expression.symbol == symbols.vArrayGet && expression.type.needsMfvcFlattening()
+
+private fun isSetOnFlattenVArray(expression: IrCall, symbols: FlatteningSymbolsHelper) =
+    expression.symbol == symbols.vArraySet && expression.getValueArgument(1)?.type?.needsMfvcFlattening() == true
+
+private class MfvcVArrayTypeWrapperVisitor(private val symbols: FlatteningSymbolsHelper) :
+    IrElementTransformerVoid() {
+
+    override fun visitCall(expression: IrCall): IrExpression {
+        return visitExpression(expression)
+    }
+
+    override fun visitExpression(expression: IrExpression): IrExpression {
+        expression.type = applyVArrayWrappingTypeTransformation(expression.type, symbols)
+        return super.visitExpression(expression)
+    }
+
+    override fun visitValueParameter(declaration: IrValueParameter): IrStatement {
+        declaration.type = applyVArrayWrappingTypeTransformation(declaration.type, symbols)
+        return super.visitValueParameter(declaration)
+    }
+
+    override fun visitField(declaration: IrField): IrStatement {
+        declaration.type = applyVArrayWrappingTypeTransformation(declaration.type, symbols)
+        return super.visitField(declaration)
+    }
+
+    override fun visitVariable(declaration: IrVariable): IrStatement {
+        declaration.type = applyVArrayWrappingTypeTransformation(declaration.type, symbols)
+        return super.visitVariable(declaration)
+    }
+
+    override fun visitFunction(declaration: IrFunction): IrStatement {
+        declaration.returnType = applyVArrayWrappingTypeTransformation(declaration.returnType, symbols)
+        return super.visitFunction(declaration)
+    }
 }

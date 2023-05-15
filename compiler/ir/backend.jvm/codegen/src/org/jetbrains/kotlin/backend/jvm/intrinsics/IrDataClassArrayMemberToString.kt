@@ -9,16 +9,22 @@ import org.jetbrains.kotlin.backend.jvm.codegen.BlockInfo
 import org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen
 import org.jetbrains.kotlin.backend.jvm.codegen.PromisedValue
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
+import org.jetbrains.kotlin.ir.types.classFqName
 import org.jetbrains.kotlin.ir.util.isPrimitiveArray
 
 object IrDataClassArrayMemberToString : IntrinsicMethod() {
     override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue? =
         with(codegen) {
             val arrayType = expression.getValueArgument(0)!!.type
-            val asmArrayType = codegen.typeMapper.mapType(arrayType)
-            gen(expression.getValueArgument(0)!!, asmArrayType, arrayType, data)
-            val toStringArgumentDescriptor = if (arrayType.isPrimitiveArray()) asmArrayType.descriptor else "[Ljava/lang/Object;"
-            mv.invokestatic("java/util/Arrays", "toString", "($toStringArgumentDescriptor)Ljava/lang/String;", false)
+            // TODO: temporary solution until implementation of VArrays.toString()
+            if (arrayType.classFqName!!.shortName().asString().startsWith("VArrayWrapper")) {
+                mv.aconst("STUB")
+            } else {
+                val asmArrayType = codegen.typeMapper.mapType(arrayType)
+                gen(expression.getValueArgument(0)!!, asmArrayType, arrayType, data)
+                val toStringArgumentDescriptor = if (arrayType.isPrimitiveArray()) asmArrayType.descriptor else "[Ljava/lang/Object;"
+                mv.invokestatic("java/util/Arrays", "toString", "($toStringArgumentDescriptor)Ljava/lang/String;", false)
+            }
             return expression.onStack
         }
 }

@@ -52198,6 +52198,124 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
         public void testVarargParameterOfInlineType() throws Exception {
             runTest("compiler/testData/codegen/box/vArrays/varargParameterOfInlineType.kt");
         }
+
+        @Nested
+        @TestMetadata("compiler/testData/codegen/box/vArrays/mfvc")
+        @TestDataPath("$PROJECT_ROOT")
+        public class Mfvc {
+            @Test
+            public void testAllFilesPresentInMfvc() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/vArrays/mfvc"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+            }
+
+            @Test
+            @TestMetadata("customIterator.kt")
+            public void testCustomIterator() throws Exception {
+                runTest("compiler/testData/codegen/box/vArrays/mfvc/customIterator.kt");
+            }
+
+            @Test
+            @TestMetadata("typesEncodings.kt")
+            public void testTypesEncodings() throws Exception {
+                runTest("compiler/testData/codegen/box/vArrays/mfvc/typesEncodings.kt");
+            }
+
+            @Test
+            @TestMetadata("vArray2D.kt")
+            public void testVArray2D() throws Exception {
+                runTest("compiler/testData/codegen/box/vArrays/mfvc/vArray2D.kt");
+            }
+
+            @Test
+            @TestMetadata("vArrayAsFunctionParameter.kt")
+            public void testVArrayAsFunctionParameter() throws Exception {
+                runTest("compiler/testData/codegen/box/vArrays/mfvc/vArrayAsFunctionParameter.kt");
+            }
+
+            @Test
+            @TestMetadata("vArrayAsLambdaParameter.kt")
+            public void testVArrayAsLambdaParameter() throws Exception {
+                runTest("compiler/testData/codegen/box/vArrays/mfvc/vArrayAsLambdaParameter.kt");
+            }
+
+            @Test
+            @TestMetadata("vArrayAsLambdaReturnType.kt")
+            public void testVArrayAsLambdaReturnType() throws Exception {
+                runTest("compiler/testData/codegen/box/vArrays/mfvc/vArrayAsLambdaReturnType.kt");
+            }
+
+            @Test
+            @TestMetadata("vArrayAsMfvcProperty.kt")
+            public void testVArrayAsMfvcProperty() throws Exception {
+                runTest("compiler/testData/codegen/box/vArrays/mfvc/vArrayAsMfvcProperty.kt");
+            }
+
+            @Test
+            @TestMetadata("vArrayAsProperty.kt")
+            public void testVArrayAsProperty() throws Exception {
+                runTest("compiler/testData/codegen/box/vArrays/mfvc/vArrayAsProperty.kt");
+            }
+
+            @Test
+            @TestMetadata("vArrayAsPropertyNoBackingField.kt")
+            public void testVArrayAsPropertyNoBackingField() throws Exception {
+                runTest("compiler/testData/codegen/box/vArrays/mfvc/vArrayAsPropertyNoBackingField.kt");
+            }
+
+            @Test
+            @TestMetadata("vArrayAsReturnType.kt")
+            public void testVArrayAsReturnType() throws Exception {
+                runTest("compiler/testData/codegen/box/vArrays/mfvc/vArrayAsReturnType.kt");
+            }
+
+            @Test
+            @TestMetadata("vArrayAsSfvcProperty.kt")
+            public void testVArrayAsSfvcProperty() throws Exception {
+                runTest("compiler/testData/codegen/box/vArrays/mfvc/vArrayAsSfvcProperty.kt");
+            }
+
+            @Test
+            @TestMetadata("vArrayChainAssignment.kt")
+            public void testVArrayChainAssignment() throws Exception {
+                runTest("compiler/testData/codegen/box/vArrays/mfvc/vArrayChainAssignment.kt");
+            }
+
+            @Test
+            @TestMetadata("vArrayExpression.kt")
+            public void testVArrayExpression() throws Exception {
+                runTest("compiler/testData/codegen/box/vArrays/mfvc/vArrayExpression.kt");
+            }
+
+            @Test
+            @TestMetadata("vArrayInIfElseBlock.kt")
+            public void testVArrayInIfElseBlock() throws Exception {
+                runTest("compiler/testData/codegen/box/vArrays/mfvc/vArrayInIfElseBlock.kt");
+            }
+
+            @Test
+            @TestMetadata("vArrayInTryBlock.kt")
+            public void testVArrayInTryBlock() throws Exception {
+                runTest("compiler/testData/codegen/box/vArrays/mfvc/vArrayInTryBlock.kt");
+            }
+
+            @Test
+            @TestMetadata("vArrayInWhenExpr.kt")
+            public void testVArrayInWhenExpr() throws Exception {
+                runTest("compiler/testData/codegen/box/vArrays/mfvc/vArrayInWhenExpr.kt");
+            }
+
+            @Test
+            @TestMetadata("vArrayIterator.kt")
+            public void testVArrayIterator() throws Exception {
+                runTest("compiler/testData/codegen/box/vArrays/mfvc/vArrayIterator.kt");
+            }
+
+            @Test
+            @TestMetadata("vArraySize.kt")
+            public void testVArraySize() throws Exception {
+                runTest("compiler/testData/codegen/box/vArrays/mfvc/vArraySize.kt");
+            }
+        }
     }
 
     @Nested

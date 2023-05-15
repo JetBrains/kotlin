@@ -26,6 +26,8 @@ abstract class MemoizedValueClassAbstractReplacements(
 ) {
     private val propertyMap = ConcurrentHashMap<IrPropertySymbol, IrProperty>()
 
+    val flatteningSymbolsHelper = FlatteningSymbolsHelper(context)
+
     /**
      * Get a replacement for a function or a constructor.
      */

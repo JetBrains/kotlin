@@ -5,6 +5,7 @@
 
 package kotlin
 
+// TODO: add 'reified' to T
 class VArray<T> {
     public operator fun get(index: Int): T
     public operator fun set(index: Int, value: T): Unit

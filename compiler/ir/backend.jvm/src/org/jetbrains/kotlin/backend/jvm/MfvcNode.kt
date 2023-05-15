@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 
 typealias TypeArguments = Map<IrTypeParameterSymbol, IrType>
 
@@ -458,3 +459,27 @@ fun IrType.needsMfvcFlattening(): Boolean = isMultiFieldValueClassType() && !isN
         classifierOrNull.let { classifier ->
             classifier is IrTypeParameterSymbol && classifier.owner.superTypes.any { it.needsMfvcFlattening() }
         } // add not is annotated as @UseBox etc
+
+fun IrType.isFlattenedVArray() =
+    isVArray && (this as? IrSimpleType)?.arguments?.let { it.size == 1 && ((it[0] as? IrType)?.needsMfvcFlattening() == true) } == true
+
+fun applyVArrayWrappingTypeTransformation(irType: IrType, symbols: FlatteningSymbolsHelper): IrType = when {
+    // TODO Investigate if we need to transform arguments of non-reified type, i.e. X<VArray<MFVC>> -> X<VArrayWrapper>
+    irType.isFlattenedVArray() -> symbols.vArrayWrapperClass.defaultType
+    irType.isVArray -> {
+        val typeArg = (irType as IrSimpleType).arguments[0]
+        require(typeArg is IrType)
+        symbols.backendContext.irBuiltIns.vArrayClass!!.typeWith(applyVArrayWrappingTypeTransformation(typeArg, symbols))
+    }
+    irType.isBoxedArray -> irType // TODO Transform array type argument, i.e. Array<VArray<Mfvc>> -> Array<VArrayWrapper>
+    isFlattenedVArrayIterator(irType) -> symbols.vArrayWrapperIteratorStateHolderClass.defaultType
+    else -> irType
+}
+
+fun isFlattenedVArrayIterator(irType: IrType): Boolean {
+    if (irType !is IrSimpleType) return false
+    if (irType.classFqName != StandardClassIds.vArrayIterator.asSingleFqName()) return false
+    val typeArg = irType.arguments[0]
+    if (typeArg !is IrType) return false
+    return typeArg.needsMfvcFlattening()
+}

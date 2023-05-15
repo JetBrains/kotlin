@@ -415,6 +415,14 @@ class IrBuiltInsOverFir(
         }
     }
 
+    override val vArrayIteratorFunction: IrSimpleFunctionSymbol? by lazy {
+        findFunctions(kotlinPackage, Name.identifier("iterator")).firstOrNull {
+            it.owner.extensionReceiverParameter?.type?.classOrNull == vArrayClass
+                    && it.owner.valueParameters.size == 0
+        }
+    }
+
+
     override lateinit var checkNotNullSymbol: IrSimpleFunctionSymbol private set
     override val arrayOfNulls: IrSimpleFunctionSymbol by lazy {
         findFunctions(kotlinPackage, Name.identifier("arrayOfNulls")).first {

@@ -42472,6 +42472,22 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
             public void testAllFilesPresentInVArrays() throws Exception {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/vArrays"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
             }
+
+            @Nested
+            @TestMetadata("compiler/testData/codegen/box/vArrays/mfvc")
+            @TestDataPath("$PROJECT_ROOT")
+            @Tag("codegenK2")
+            @Tag("firCodegen")
+            @UseExtTestCaseGroupProvider()
+            @FirPipeline()
+            @UsePartialLinkage(mode = Mode.DISABLED)
+            @Tag("no-partial-linkage-may-be-skipped")
+            public class Mfvc {
+                @Test
+                public void testAllFilesPresentInMfvc() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/vArrays/mfvc"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+                }
+            }
         }
 
         @Nested

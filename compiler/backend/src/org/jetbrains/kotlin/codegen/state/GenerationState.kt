@@ -241,6 +241,8 @@ class GenerationState private constructor(
             configuration.get(JVMConfigurationKeys.STRING_CONCAT) ?: JvmStringConcat.INDY_WITH_CONSTANTS
         else JvmStringConcat.INLINE
 
+    val mfvcVArrayFlatteningScheme = JvmMfvcVArrayFlatteningScheme.PER_SIZE // TODO init with respect to configuration
+
     val samConversionsScheme = run {
         val fromConfig = configuration.get(JVMConfigurationKeys.SAM_CONVERSIONS)
         if (fromConfig != null && target >= fromConfig.minJvmTarget)

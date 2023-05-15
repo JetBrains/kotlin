@@ -37248,6 +37248,16 @@ public class IrJsES6CodegenBoxTestGenerated extends AbstractIrJsES6CodegenBoxTes
         public void testAllFilesPresentInVArrays() throws Exception {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/vArrays"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
         }
+
+        @Nested
+        @TestMetadata("compiler/testData/codegen/box/vArrays/mfvc")
+        @TestDataPath("$PROJECT_ROOT")
+        public class Mfvc {
+            @Test
+            public void testAllFilesPresentInMfvc() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/vArrays/mfvc"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+            }
+        }
     }
 
     @Nested
