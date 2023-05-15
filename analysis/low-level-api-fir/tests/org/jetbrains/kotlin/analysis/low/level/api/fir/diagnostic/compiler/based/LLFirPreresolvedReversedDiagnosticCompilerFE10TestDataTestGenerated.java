@@ -1251,6 +1251,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
             runTest("compiler/testData/diagnostics/tests/Variance.kt");
         }
 
+        @Test
+        @TestMetadata("whileConditionExpectedType.kt")
+        public void testWhileConditionExpectedType() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/whileConditionExpectedType.kt");
+        }
+
         @Nested
         @TestMetadata("compiler/testData/diagnostics/tests/annotations")
         @TestDataPath("$PROJECT_ROOT")
