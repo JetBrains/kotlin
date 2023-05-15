@@ -160,6 +160,9 @@ object ComposeErrors {
             Severity.ERROR
         )
 
+    @JvmField
+    val REDUNDANT_COMPOSABLE_ANNOTATION = DiagnosticFactory0.create<PsiElement>(Severity.WARNING)
+
     init {
         Errors.Initializer.initializeFactoryNamesAndDefaultErrorMessages(
             ComposeErrors::class.java,
