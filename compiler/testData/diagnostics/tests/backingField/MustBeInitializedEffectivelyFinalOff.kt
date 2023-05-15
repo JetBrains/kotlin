@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !LANGUAGE:-TakeIntoAccountEffectivelyFinalInMustBeInitializedCheck
 open class Base {
     open var x: String = ""

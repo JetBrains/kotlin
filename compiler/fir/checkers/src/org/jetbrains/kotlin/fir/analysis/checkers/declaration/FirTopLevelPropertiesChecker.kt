@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
@@ -42,7 +44,7 @@ object FirTopLevelPropertiesChecker : FirPropertyChecker() {
             containingClass = null,
             declaration,
             modifierList,
-            isInitialized = declaration.initializer != null,
+            isDefinitelyAssignedInConstructor = false, // Only member properties can be assigned in constructors
             reporter,
             context
         )
@@ -72,7 +74,7 @@ internal fun checkPropertyInitializer(
     containingClass: FirClass?,
     property: FirProperty,
     modifierList: FirModifierList?,
-    isInitialized: Boolean,
+    isDefinitelyAssignedInConstructor: Boolean,
     reporter: DiagnosticReporter,
     context: CheckerContext,
     reachable: Boolean = true
@@ -94,7 +96,7 @@ internal fun checkPropertyInitializer(
     }
 
     val backingFieldRequired = property.hasBackingField
-    if (inInterface && backingFieldRequired && property.hasAccessorImplementation) {
+    if (inInterface && backingFieldRequired && property.hasAnyAccessorImplementation) {
         property.source?.let {
             reporter.reportOn(it, FirErrors.BACKING_FIELD_IN_INTERFACE, context)
         }
@@ -136,19 +138,22 @@ internal fun checkPropertyInitializer(
         else -> {
             val propertySource = property.source ?: return
             val isExternal = property.isEffectivelyExternal(containingClass, context)
+            val isCorrectlyInitialized =
+                property.initializer != null || isDefinitelyAssignedInConstructor && !property.hasSetterAccessorImplementation &&
+                        property.getEffectiveModality(containingClass, context.languageVersionSettings) != Modality.OPEN
             if (
                 backingFieldRequired &&
                 !inInterface &&
                 !property.isLateInit &&
                 !isExpect &&
-                !isInitialized &&
+                !isCorrectlyInitialized &&
                 !isExternal &&
                 !property.hasExplicitBackingField
             ) {
-                if (property.receiverParameter != null && !property.hasAccessorImplementation) {
+                if (property.receiverParameter != null && !property.hasAnyAccessorImplementation) {
                     reporter.reportOn(propertySource, FirErrors.EXTENSION_PROPERTY_MUST_HAVE_ACCESSORS_OR_BE_ABSTRACT, context)
                 } else if (reachable) { // TODO: can be suppressed not to report diagnostics about no body
-                    if (containingClass == null || property.hasAccessorImplementation) {
+                    if (containingClass == null || property.hasAnyAccessorImplementation) {
                         reporter.reportOn(propertySource, FirErrors.MUST_BE_INITIALIZED, context)
                     } else {
                         reporter.reportOn(propertySource, FirErrors.MUST_BE_INITIALIZED_OR_BE_ABSTRACT, context)
@@ -160,7 +165,7 @@ internal fun checkPropertyInitializer(
                     reporter.reportOn(propertySource, FirErrors.EXPECTED_LATEINIT_PROPERTY, context)
                 }
                 // TODO: like [BindingContext.MUST_BE_LATEINIT], we should consider variable with uninitialized error.
-                if (backingFieldRequired && !inInterface && isInitialized) {
+                if (backingFieldRequired && !inInterface && isCorrectlyInitialized) {
                     if (context.languageVersionSettings.supportsFeature(LanguageFeature.EnableDfaWarningsInK2)) {
                         reporter.reportOn(propertySource, FirErrors.UNNECESSARY_LATEINIT, context)
                     }
@@ -170,6 +175,14 @@ internal fun checkPropertyInitializer(
     }
 }
 
-private val FirProperty.hasAccessorImplementation: Boolean
-    get() = (getter !is FirDefaultPropertyAccessor && getter?.hasBody == true) ||
-            (setter !is FirDefaultPropertyAccessor && setter?.hasBody == true)
+private val FirProperty.hasSetterAccessorImplementation: Boolean
+    get() = (setter !is FirDefaultPropertyAccessor && setter?.hasBody == true)
+private val FirProperty.hasAnyAccessorImplementation: Boolean
+    get() = (getter !is FirDefaultPropertyAccessor && getter?.hasBody == true) || hasSetterAccessorImplementation
+
+private fun FirProperty.getEffectiveModality(containingClass: FirClass?, languageVersionSettings: LanguageVersionSettings): Modality? =
+    when (languageVersionSettings.supportsFeature(LanguageFeature.TakeIntoAccountEffectivelyFinalInMustBeInitializedCheck) &&
+            status.modality == Modality.OPEN && containingClass?.status?.modality == Modality.FINAL) {
+        true -> Modality.FINAL
+        false -> status.modality
+    }
