@@ -1,6 +1,6 @@
 // FIR_IDENTICAL
-// !LANGUAGE:-ProhibitMissedMustBeInitializedWhenThereIsNoPrimaryConstructor
-// !DIAGNOSTICS: -DEBUG_INFO_LEAKING_THIS
+// LANGUAGE:-ProhibitMissedMustBeInitializedWhenThereIsNoPrimaryConstructor
+// DIAGNOSTICS: -DEBUG_INFO_LEAKING_THIS
 class Foo() {
     constructor(x: Int) : this()
 

@@ -1,4 +1,4 @@
-// !LANGUAGE: +RestrictionOfValReassignmentViaBackingField
+// LANGUAGE: +RestrictionOfValReassignmentViaBackingField
 
 class Outer {
     val i: Int = 1
