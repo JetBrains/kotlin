@@ -27,6 +27,7 @@ kotlin {
                 "org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi",
                 "org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi",
                 "org.jetbrains.kotlin.gradle.ExternalKotlinTargetApi",
+                "org.jetbrains.kotlin.gradle.DelicateKotlinGradlePluginApi",
                 "org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi",
             )
         )

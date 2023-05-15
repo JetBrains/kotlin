@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.plugin
 import org.gradle.api.Action
 import org.gradle.api.Named
 import org.gradle.api.file.SourceDirectorySet
+import org.jetbrains.kotlin.gradle.DelicateKotlinGradlePluginApi
 import org.jetbrains.kotlin.tooling.core.HasMutableExtras
 
 interface KotlinSourceSet : Named, HasProject, HasMutableExtras, HasKotlinDependencies {
@@ -23,7 +24,40 @@ interface KotlinSourceSet : Named, HasProject, HasMutableExtras, HasKotlinDepend
     fun languageSettings(configure: LanguageSettingsBuilder.() -> Unit): LanguageSettingsBuilder
     fun languageSettings(configure: Action<LanguageSettingsBuilder>): LanguageSettingsBuilder
 
+    /**
+     * ### ⚠️ This API is marked as [DelicateKotlinGradlePluginApi]
+     * It is preferred to express target hierarchies using the Kotlin Target Hierarchy DSL:
+     * #### Example:
+     * ```kotlin
+     * kotlin {
+     *     targetHierarchy.default()
+     *     targetHierarchy.default { /* describe my extension */ }
+     * }
+     * ```
+     *
+     *
+     * This API will mark this [KotlinSourceSet] as 'dependsOn' to the [other] Source Set:
+     * #### Example: Lets consider creating an intermediate 'nativeMain' Source set, which can provide actuals for 'commonMain' and
+     * expects for 'iosMain'
+     *
+     * ```kotlin
+     * kotlin {
+     *     // Step 1: Get reference to the Source Sets:
+     *     val commonMain = sourceSets.commonMain.get()
+     *     val nativeMain = sourceSets.nativeMain.get()
+     *     val iosMain = sourceSets.iosMain.get()
+     *
+     *     // Step 2: Add 'dependsOn' edge from 'nativeMain' to 'commonMain'
+     *     nativeMain.dependsOn(commonMain)
+     *
+     *     // Step 3: Add 'dependsOn' edge from 'iosMain' to 'nativeMain'
+     *     iosMain.dependsOn(nativeMain)
+     * }
+     * ```
+     */
+    @DelicateKotlinGradlePluginApi
     fun dependsOn(other: KotlinSourceSet)
+
     val dependsOn: Set<KotlinSourceSet>
 
     @Deprecated(message = "KT-55312")
