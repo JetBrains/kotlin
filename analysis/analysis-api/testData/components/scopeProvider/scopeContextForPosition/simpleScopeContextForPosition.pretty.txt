@@ -82,14 +82,14 @@ scopes:
 
   PackageMemberScope, index = 14
     classifiers: 3
-      class C : JavaClass()
-      class B
       class A
+      class B
+      class C : JavaClass()
     callables: 4
+      fun withA(f: A.() -> kotlin.Unit)
+      fun withB(f: B.() -> kotlin.Unit)
       fun withJavaClass(f: JavaClass.() -> kotlin.Unit)
       fun topLevel(): kotlin.Int
-      fun withB(f: B.() -> kotlin.Unit)
-      fun withA(f: A.() -> kotlin.Unit)
 
   DefaultSimpleImportingScope, index = 15
 

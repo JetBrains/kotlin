@@ -678,7 +678,7 @@ scopes:
     classifiers: 3
       KtNamedClassOrObjectSymbol:
         annotationsList: []
-        classIdIfNonLocal: C
+        classIdIfNonLocal: A
         classKind: CLASS
         companionObject: null
         contextReceivers: []
@@ -688,13 +688,13 @@ scopes:
         isInline: false
         isInner: false
         modality: FINAL
-        name: C
+        name: A
         origin: SOURCE
         superTypes: [
           KtUsualClassType:
             annotationsList: []
             ownTypeArguments: []
-            type: JavaClass
+            type: kotlin/Any
         ]
         symbolKind: TOP_LEVEL
         typeParameters: []
@@ -724,7 +724,7 @@ scopes:
         visibility: Public
       KtNamedClassOrObjectSymbol:
         annotationsList: []
-        classIdIfNonLocal: A
+        classIdIfNonLocal: C
         classKind: CLASS
         companionObject: null
         contextReceivers: []
@@ -734,18 +734,132 @@ scopes:
         isInline: false
         isInner: false
         modality: FINAL
-        name: A
+        name: C
         origin: SOURCE
         superTypes: [
           KtUsualClassType:
             annotationsList: []
             ownTypeArguments: []
-            type: kotlin/Any
+            type: JavaClass
         ]
         symbolKind: TOP_LEVEL
         typeParameters: []
         visibility: Public
     callables: 4
+      KtFunctionSymbol:
+        annotationsList: []
+        callableIdIfNonLocal: /withA
+        contextReceivers: []
+        contractEffects: []
+        hasStableParameterNames: true
+        isBuiltinFunctionInvoke: false
+        isExtension: false
+        isExternal: false
+        isInfix: false
+        isInline: false
+        isOperator: false
+        isOverride: false
+        isStatic: false
+        isSuspend: false
+        modality: FINAL
+        name: withA
+        origin: SOURCE
+        receiverParameter: null
+        returnType: KtUsualClassType:
+          annotationsList: []
+          ownTypeArguments: []
+          type: kotlin/Unit
+        symbolKind: TOP_LEVEL
+        typeParameters: []
+        valueParameters: [
+          KtValueParameterSymbol:
+            annotationsList: []
+            callableIdIfNonLocal: null
+            contextReceivers: []
+            generatedPrimaryConstructorProperty: null
+            hasDefaultValue: false
+            isCrossinline: false
+            isExtension: false
+            isImplicitLambdaParameter: false
+            isNoinline: false
+            isVararg: false
+            name: f
+            origin: SOURCE
+            receiverParameter: null
+            returnType: KtFunctionalType:
+              annotationsList: []
+              ownTypeArguments: [
+                KtUsualClassType:
+                  annotationsList: []
+                  ownTypeArguments: []
+                  type: A
+                KtUsualClassType:
+                  annotationsList: []
+                  ownTypeArguments: []
+                  type: kotlin/Unit
+              ]
+              type: @ExtensionFunctionType kotlin/Function1<A, kotlin/Unit>
+            symbolKind: LOCAL
+            typeParameters: []
+        ]
+        visibility: Public
+      KtFunctionSymbol:
+        annotationsList: []
+        callableIdIfNonLocal: /withB
+        contextReceivers: []
+        contractEffects: []
+        hasStableParameterNames: true
+        isBuiltinFunctionInvoke: false
+        isExtension: false
+        isExternal: false
+        isInfix: false
+        isInline: false
+        isOperator: false
+        isOverride: false
+        isStatic: false
+        isSuspend: false
+        modality: FINAL
+        name: withB
+        origin: SOURCE
+        receiverParameter: null
+        returnType: KtUsualClassType:
+          annotationsList: []
+          ownTypeArguments: []
+          type: kotlin/Unit
+        symbolKind: TOP_LEVEL
+        typeParameters: []
+        valueParameters: [
+          KtValueParameterSymbol:
+            annotationsList: []
+            callableIdIfNonLocal: null
+            contextReceivers: []
+            generatedPrimaryConstructorProperty: null
+            hasDefaultValue: false
+            isCrossinline: false
+            isExtension: false
+            isImplicitLambdaParameter: false
+            isNoinline: false
+            isVararg: false
+            name: f
+            origin: SOURCE
+            receiverParameter: null
+            returnType: KtFunctionalType:
+              annotationsList: []
+              ownTypeArguments: [
+                KtUsualClassType:
+                  annotationsList: []
+                  ownTypeArguments: []
+                  type: B
+                KtUsualClassType:
+                  annotationsList: []
+                  ownTypeArguments: []
+                  type: kotlin/Unit
+              ]
+              type: @ExtensionFunctionType kotlin/Function1<B, kotlin/Unit>
+            symbolKind: LOCAL
+            typeParameters: []
+        ]
+        visibility: Public
       KtFunctionSymbol:
         annotationsList: []
         callableIdIfNonLocal: /withJavaClass
@@ -829,120 +943,6 @@ scopes:
         symbolKind: TOP_LEVEL
         typeParameters: []
         valueParameters: []
-        visibility: Public
-      KtFunctionSymbol:
-        annotationsList: []
-        callableIdIfNonLocal: /withB
-        contextReceivers: []
-        contractEffects: []
-        hasStableParameterNames: true
-        isBuiltinFunctionInvoke: false
-        isExtension: false
-        isExternal: false
-        isInfix: false
-        isInline: false
-        isOperator: false
-        isOverride: false
-        isStatic: false
-        isSuspend: false
-        modality: FINAL
-        name: withB
-        origin: SOURCE
-        receiverParameter: null
-        returnType: KtUsualClassType:
-          annotationsList: []
-          ownTypeArguments: []
-          type: kotlin/Unit
-        symbolKind: TOP_LEVEL
-        typeParameters: []
-        valueParameters: [
-          KtValueParameterSymbol:
-            annotationsList: []
-            callableIdIfNonLocal: null
-            contextReceivers: []
-            generatedPrimaryConstructorProperty: null
-            hasDefaultValue: false
-            isCrossinline: false
-            isExtension: false
-            isImplicitLambdaParameter: false
-            isNoinline: false
-            isVararg: false
-            name: f
-            origin: SOURCE
-            receiverParameter: null
-            returnType: KtFunctionalType:
-              annotationsList: []
-              ownTypeArguments: [
-                KtUsualClassType:
-                  annotationsList: []
-                  ownTypeArguments: []
-                  type: B
-                KtUsualClassType:
-                  annotationsList: []
-                  ownTypeArguments: []
-                  type: kotlin/Unit
-              ]
-              type: @ExtensionFunctionType kotlin/Function1<B, kotlin/Unit>
-            symbolKind: LOCAL
-            typeParameters: []
-        ]
-        visibility: Public
-      KtFunctionSymbol:
-        annotationsList: []
-        callableIdIfNonLocal: /withA
-        contextReceivers: []
-        contractEffects: []
-        hasStableParameterNames: true
-        isBuiltinFunctionInvoke: false
-        isExtension: false
-        isExternal: false
-        isInfix: false
-        isInline: false
-        isOperator: false
-        isOverride: false
-        isStatic: false
-        isSuspend: false
-        modality: FINAL
-        name: withA
-        origin: SOURCE
-        receiverParameter: null
-        returnType: KtUsualClassType:
-          annotationsList: []
-          ownTypeArguments: []
-          type: kotlin/Unit
-        symbolKind: TOP_LEVEL
-        typeParameters: []
-        valueParameters: [
-          KtValueParameterSymbol:
-            annotationsList: []
-            callableIdIfNonLocal: null
-            contextReceivers: []
-            generatedPrimaryConstructorProperty: null
-            hasDefaultValue: false
-            isCrossinline: false
-            isExtension: false
-            isImplicitLambdaParameter: false
-            isNoinline: false
-            isVararg: false
-            name: f
-            origin: SOURCE
-            receiverParameter: null
-            returnType: KtFunctionalType:
-              annotationsList: []
-              ownTypeArguments: [
-                KtUsualClassType:
-                  annotationsList: []
-                  ownTypeArguments: []
-                  type: A
-                KtUsualClassType:
-                  annotationsList: []
-                  ownTypeArguments: []
-                  type: kotlin/Unit
-              ]
-              type: @ExtensionFunctionType kotlin/Function1<A, kotlin/Unit>
-            symbolKind: LOCAL
-            typeParameters: []
-        ]
         visibility: Public
 
   DefaultSimpleImportingScope, index = 15
