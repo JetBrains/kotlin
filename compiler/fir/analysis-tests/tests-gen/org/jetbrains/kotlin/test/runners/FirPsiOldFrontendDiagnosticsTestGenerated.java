@@ -3021,6 +3021,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
             }
 
             @Test
+            @TestMetadata("ValWithSetterDeferredInit.kt")
+            public void testValWithSetterDeferredInit() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/backingField/ValWithSetterDeferredInit.kt");
+            }
+
+            @Test
             @TestMetadata("VarDeferredInitInFinalClass.kt")
             public void testVarDeferredInitInFinalClass() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/backingField/VarDeferredInitInFinalClass.kt");
