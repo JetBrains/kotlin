@@ -128,5 +128,10 @@ class ComposeErrorMessages : DefaultErrorMessages.Extension {
             ComposeErrors.COMPOSE_INVALID_DELEGATE,
             "Composable setValue operator is not currently supported."
         )
+        MAP.put(
+            ComposeErrors.REDUNDANT_COMPOSABLE_ANNOTATION,
+            "Invalid `@Composable` annotation on inline lambda." +
+                " This will become an error in Kotlin 2.0."
+        )
     }
 }
