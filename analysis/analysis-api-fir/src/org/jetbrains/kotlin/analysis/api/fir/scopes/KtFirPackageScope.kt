@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.scopes
 
-import com.intellij.psi.JavaPsiFacade
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
@@ -15,12 +14,14 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassifierSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtPackageSymbol
+import org.jetbrains.kotlin.analysis.providers.impl.forEachNonKotlinPsiElementFinder
 import org.jetbrains.kotlin.fir.extensions.FirExtensionService
 import org.jetbrains.kotlin.fir.extensions.declarationGenerators
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.scopes.impl.FirPackageMemberScope
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.platform.jvm.isJvm
 
 internal class KtFirPackageScope(
     private val fqName: FqName,
@@ -46,10 +47,15 @@ internal class KtFirPackageScope(
         hashSetOf<Name>().apply {
             addAll(analysisSession.useSiteScopeDeclarationProvider.getTopLevelKotlinClassLikeDeclarationNamesInPackage(fqName))
 
-            JavaPsiFacade.getInstance(analysisSession.project)
-                .findPackage(fqName.asString())
-                ?.getClasses(analysisSession.useSiteAnalysisScope)
-                ?.mapNotNullTo(this) { it.name?.let(Name::identifier) }
+            when {
+                analysisSession.targetPlatform.isJvm() -> {
+                    forEachNonKotlinPsiElementFinder(analysisSession.project) { finder ->
+                        finder.findPackage(fqName.asString())
+                            ?.getClasses(analysisSession.useSiteAnalysisScope)
+                            ?.mapNotNullTo(this) { it.name?.let(Name::identifier) }
+                    }
+                }
+            }
 
             addAll(collectGeneratedTopLevelClassifiers())
         }
