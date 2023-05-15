@@ -2,13 +2,13 @@
 // INFERENCE_HELPERS
 
 fun test() {
-    while (materialize()) { // K1: OK, K2: NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER
+    while (materialize()) {
 
     }
 
     do {
 
-    } while (materialize()) // K1: OK, K2: NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER
+    } while (materialize())
 
     if (materialize()) {
 
