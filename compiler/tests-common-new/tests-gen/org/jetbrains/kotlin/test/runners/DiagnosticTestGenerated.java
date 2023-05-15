@@ -36750,6 +36750,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
         }
 
         @Test
+        @TestMetadata("incorrectComparatorInvocation.kt")
+        public void testIncorrectComparatorInvocation() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/incorrectComparatorInvocation.kt");
+        }
+
+        @Test
         @TestMetadata("instar.kt")
         public void testInstar() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithStdLib/instar.kt");
