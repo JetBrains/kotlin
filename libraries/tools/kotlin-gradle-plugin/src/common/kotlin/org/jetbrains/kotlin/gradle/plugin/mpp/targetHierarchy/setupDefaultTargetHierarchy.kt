@@ -11,7 +11,11 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.await
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics.KotlinTargetHierarchyFallbackDependsOnUsageDetected
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics.KotlinTargetHierarchyFallbackIllegalTargetNames
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.kotlinToolingDiagnosticsCollector
 
 internal suspend fun Project.setupDefaultKotlinTargetHierarchy() {
     KotlinPluginLifecycle.Stage.FinaliseRefinesEdges.await()
@@ -20,23 +24,35 @@ internal suspend fun Project.setupDefaultKotlinTargetHierarchy() {
     /* User configured a target hierarchy explicitly: No need for our defaults here */
     if (extension.internalKotlinTargetHierarchy.appliedDescriptors.isNotEmpty()) return
 
+    /* User explicitly disabled the default target hierarchy by Gradle property */
+    if (!kotlinPropertiesProvider.mppEnableDefaultTargetHierarchy) {
+        setupPreMultiplatformStableDefaultDependsOnEdges()
+        return
+    }
+
     /*
     User manually added a .dependsOn:
     We fall back to the old behaviour and add the commonMain/commonTest default edges
      */
-    if (extension.sourceSets.any { sourceSet -> sourceSet.dependsOn.isNotEmpty() }) {
+    run check@{
+        val sourceSetsWithDependsOnEdges = extension.sourceSets.filter { sourceSet -> sourceSet.dependsOn.isNotEmpty() }
+        if (sourceSetsWithDependsOnEdges.isEmpty()) return@check
+        val diagnostic = KotlinTargetHierarchyFallbackDependsOnUsageDetected(sourceSetsWithDependsOnEdges)
+        kotlinToolingDiagnosticsCollector.report(project, diagnostic)
         setupPreMultiplatformStableDefaultDependsOnEdges()
         return
     }
 
 
     /*
-    Using a group of the 'defaultTargetHierarchy' as 'target name' will potentially lead to conflicts
-    e.g.
-
+    Using a group of the 'defaultTargetHierarchy' as 'target name' will potentially lead to conflicts e.g.:
     linuxX64("linux") or macosX64("native") can lead to confusion of for 'linuxMain' and 'nativeMain' SourceSets
      */
-    if (!targetNamesAreCompatibleWithDefaultHierarchy()) {
+    run check@{
+        val illegalTargetNamesUsed = illegalTargetNamesUsed()
+        if (illegalTargetNamesUsed.isEmpty()) return@check
+        val diagnostic = KotlinTargetHierarchyFallbackIllegalTargetNames(illegalTargetNamesUsed)
+        kotlinToolingDiagnosticsCollector.report(project, diagnostic)
         setupPreMultiplatformStableDefaultDependsOnEdges()
         return
     }
@@ -44,14 +60,14 @@ internal suspend fun Project.setupDefaultKotlinTargetHierarchy() {
     extension.targetHierarchy.default()
 }
 
-private suspend fun Project.targetNamesAreCompatibleWithDefaultHierarchy(): Boolean {
+private suspend fun Project.illegalTargetNamesUsed(): Set<String> {
     val targets = multiplatformExtension.awaitTargets()
     val targetNames = targets.map { it.name }.toSet()
-    return multiplatformExtension.awaitTargets().flatMap { it.compilations }.none { compilation ->
-        val hierarchy = defaultKotlinTargetHierarchy.buildKotlinTargetHierarchy(compilation) ?: return@none false
+    return multiplatformExtension.awaitTargets().flatMap { it.compilations }.mapNotNull { compilation ->
+        val hierarchy = defaultKotlinTargetHierarchy.buildKotlinTargetHierarchy(compilation) ?: return@mapNotNull null
         val nodeNames = hierarchy.childrenClosure.mapNotNull { it.node as? KotlinTargetHierarchyTree.Node.Group }.map { it.name }.toSet()
-        nodeNames.intersect(targetNames).isNotEmpty()
-    }
+        nodeNames.intersect(targetNames)
+    }.flatten().toSet()
 }
 
 /**
