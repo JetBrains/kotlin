@@ -28,7 +28,6 @@ internal class LLFirLockProvider(private val checker: LLFirLazyResolveContractCh
     private val globalLock = ReentrantLock()
 
     private val implicitTypesLock = ReentrantLock()
-    private val statusLock = ReentrantLock()
     private val compilerAnnotationsLock = ReentrantLock()
 
     inline fun <R> withGlobalLock(
@@ -57,7 +56,6 @@ internal class LLFirLockProvider(private val checker: LLFirLazyResolveContractCh
     ) {
         val lock = when (phase) {
             FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE -> implicitTypesLock
-            FirResolvePhase.STATUS -> statusLock
             FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS -> compilerAnnotationsLock
             else -> null
         }
