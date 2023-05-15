@@ -1212,6 +1212,7 @@ class Fir2IrDeclarationStorage(
         }
     }
 
+    // TODO: KT-58686
     private var lastTemporaryIndex: Int = 0
     private fun nextTemporaryIndex(): Int = lastTemporaryIndex++
 
