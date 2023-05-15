@@ -162,6 +162,11 @@ class KotlinNativeCompileArgumentsTest {
             }
         }
 
+        /* Set a flat target hierarchy */
+        kotlin.targetHierarchy.custom {
+            common { withLinux() }
+        }
+
         val linuxX64SourceFile = project.file("src/linuxX64Main/kotlin/CommonMain.kt")
         linuxX64SourceFile.parentFile.mkdirs()
         linuxX64SourceFile.writeText("object Linux")

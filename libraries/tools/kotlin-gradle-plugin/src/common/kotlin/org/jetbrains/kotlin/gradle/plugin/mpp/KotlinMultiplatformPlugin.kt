@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.addBuildListenerForXcode
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal.runDeprecationDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.copyAttributes
 import org.jetbrains.kotlin.gradle.plugin.mpp.targetHierarchy.orNull
+import org.jetbrains.kotlin.gradle.plugin.mpp.targetHierarchy.setupDefaultKotlinTargetHierarchy
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultLanguageSettingsBuilder
 import org.jetbrains.kotlin.gradle.plugin.sources.awaitPlatformCompilations
 import org.jetbrains.kotlin.gradle.plugin.sources.checkSourceSetVisibilityRequirements
@@ -60,6 +61,7 @@ class KotlinMultiplatformPlugin : Plugin<Project> {
         setupDefaultPresets(project)
         customizeKotlinDependencies(project)
         configureSourceSets(project)
+        setupTargetsBuildStatsReport(project)
 
         // set up metadata publishing
         kotlinMultiplatformExtension.targetFromPreset(
@@ -171,36 +173,26 @@ class KotlinMultiplatformPlugin : Plugin<Project> {
     }
 
 
-    private fun configureSourceSets(project: Project) = with(project.multiplatformExtension) {
-        /* Create 'commonMain' and 'commonTest' SourceSets */
-        sourceSets.create(KotlinSourceSet.COMMON_MAIN_SOURCE_SET_NAME)
-        sourceSets.create(KotlinSourceSet.COMMON_TEST_SOURCE_SET_NAME)
+    private fun configureSourceSets(project: Project) {
+        project.multiplatformExtension.sourceSets.create(KotlinSourceSet.COMMON_MAIN_SOURCE_SET_NAME)
+        project.multiplatformExtension.sourceSets.create(KotlinSourceSet.COMMON_TEST_SOURCE_SET_NAME)
 
-        /* Create default 'dependsOn' to commonMain/commonTest (or even common{SourceSetTree}) */
-        targets.all { target ->
-            project.launchInStage(KotlinPluginLifecycle.Stage.FinaliseRefinesEdges) {
-                /* Only setup default refines edges when no KotlinTargetHierarchy was applied */
-                if (project.multiplatformExtension.internalKotlinTargetHierarchy.appliedDescriptors.isNotEmpty()) return@launchInStage
-
-                target.compilations.forEach { compilation ->
-                    val sourceSetTree = SourceSetTree.orNull(compilation) ?: return@forEach
-                    val commonSourceSet = sourceSets.findByName(lowerCamelCaseName("common", sourceSetTree.name)) ?: return@forEach
-                    compilation.defaultSourceSet.dependsOn(commonSourceSet)
-                }
-            }
-
-            /* Report the platform to tbe build stats service */
-            val targetName = if (target is KotlinNativeTarget)
-                target.konanTarget.name
-            else
-                target.platformType.name
-            KotlinBuildStatsService.getInstance()?.report(StringMetrics.MPP_PLATFORMS, targetName)
+        project.launch {
+            project.setupDefaultKotlinTargetHierarchy()
         }
 
         project.launchInStage(KotlinPluginLifecycle.Stage.ReadyForExecution) {
             project.runProjectConfigurationHealthCheck {
                 checkSourceSetVisibilityRequirements(project)
             }
+        }
+    }
+
+    private fun setupTargetsBuildStatsReport(project: Project) {
+        project.project.multiplatformExtension.targets.all { target ->
+            val targetName = if (target is KotlinNativeTarget) target.konanTarget.name
+            else target.platformType.name
+            KotlinBuildStatsService.getInstance()?.report(StringMetrics.MPP_PLATFORMS, targetName)
         }
     }
 
