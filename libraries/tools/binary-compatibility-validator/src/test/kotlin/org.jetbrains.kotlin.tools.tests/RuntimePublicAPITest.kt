@@ -20,7 +20,7 @@ class RuntimePublicAPITest {
     val testName = TestName()
 
     @Test fun kotlinStdlibRuntimeMerged() {
-        snapshotAPIAndCompare("../../stdlib/jvm/build/libs", "kotlin-stdlib", listOf("kotlin.jvm.internal"))
+        snapshotAPIAndCompare("../../stdlib/build/libs", "kotlin-stdlib", listOf("kotlin.jvm.internal"))
     }
 
     @Test fun kotlinStdlibJdk7() {
