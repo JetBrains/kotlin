@@ -11,6 +11,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
 import org.jetbrains.kotlin.analysis.decompiler.stub.file.CachedAttributeData
 import org.jetbrains.kotlin.analysis.decompiler.stub.file.ClsKotlinBinaryClassCache
+import org.jetbrains.kotlin.analysis.decompiler.stub.file.DummyFileAttributeService
 import org.jetbrains.kotlin.analysis.decompiler.stub.file.FileAttributeService
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.test.*
@@ -42,7 +43,7 @@ abstract class AbstractDecompiledClassTest : KotlinTestWithEnvironment() {
 
     private fun CoreApplicationEnvironment.registerApplicationServices() {
         if (application.getService(FileAttributeService::class.java) == null) {
-            registerApplicationService(FileAttributeService::class.java, DummyFileAttributeService)
+            registerApplicationService(FileAttributeService::class.java, DummyFileAttributeService())
             registerApplicationService(ClsKotlinBinaryClassCache::class.java, ClsKotlinBinaryClassCache())
         }
     }
@@ -112,12 +113,3 @@ internal data class TestData(
     }
 }
 
-object DummyFileAttributeService : FileAttributeService {
-    override fun <T> write(file: VirtualFile, id: String, value: T, writeValueFun: (DataOutput, T) -> Unit): CachedAttributeData<T> {
-        return CachedAttributeData(value, 0)
-    }
-
-    override fun <T> read(file: VirtualFile, id: String, readValueFun: (DataInput) -> T): CachedAttributeData<T>? {
-        return null
-    }
-}

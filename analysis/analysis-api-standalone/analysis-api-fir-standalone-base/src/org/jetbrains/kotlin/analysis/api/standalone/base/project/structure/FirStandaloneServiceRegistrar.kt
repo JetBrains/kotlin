@@ -34,6 +34,9 @@ import org.jetbrains.kotlin.light.classes.symbol.SymbolKotlinAsJavaSupport
 @OptIn(LLFirInternals::class, KtAnalysisApiInternals::class)
 object FirStandaloneServiceRegistrar : AnalysisApiStandaloneServiceRegistrar {
     override fun registerApplicationServices(application: MockApplication) {
+        application.apply {
+
+        }
     }
 
     override fun registerProjectExtensionPoints(project: MockProject) {
