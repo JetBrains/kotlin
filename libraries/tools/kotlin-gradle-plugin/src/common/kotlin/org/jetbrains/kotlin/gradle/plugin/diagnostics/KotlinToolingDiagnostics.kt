@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.gradle.plugin.diagnostics
 
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_ENABLE_DEFAULT_TARGET_HIERARCHY
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic.Severity.ERROR
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic.Severity.WARNING
 import org.jetbrains.kotlin.gradle.plugin.sources.android.multiplatformAndroidSourceSetLayoutV1
@@ -175,6 +177,30 @@ object KotlinToolingDiagnostics {
                 
                 Learn more about the new Kotlin/Android SourceSet Layout: 
                 https://kotlinlang.org/docs/whatsnew18.html#kotlin-multiplatform-a-new-android-source-set-layout
+            """.trimIndent()
+        )
+    }
+
+    object KotlinTargetHierarchyFallbackDependsOnUsageDetected : ToolingDiagnosticFactory(WARNING) {
+        operator fun invoke(sourceSetsWithDependsOnEdges: Iterable<KotlinSourceSet>) = build(
+            """
+                Default Kotlin Target Hierarchy was not applied to the project:
+                Manual .dependsOn() edges were configured for the following source sets: 
+                ${sourceSetsWithDependsOnEdges.toSet().map { it.name }}
+                
+                To suppress the 'Default Target Hierarchy' add '$KOTLIN_MPP_ENABLE_DEFAULT_TARGET_HIERARCHY=false' to your gradle.properties
+            """.trimIndent()
+        )
+    }
+
+    object KotlinTargetHierarchyFallbackIllegalTargetNames : ToolingDiagnosticFactory(WARNING) {
+        operator fun invoke(illegalTargetNamesUsed: Iterable<String>) = build(
+            """
+                Default Kotlin Target Hierarchy was not applied to the project:
+                Illegal target names were found:
+                ${illegalTargetNamesUsed.toSet()}
+                
+                To suppress the 'Default Target Hierarchy' add '$KOTLIN_MPP_ENABLE_DEFAULT_TARGET_HIERARCHY=false' to your gradle.properties
             """.trimIndent()
         )
     }
