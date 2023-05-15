@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
 import org.jetbrains.kotlin.backend.jvm.localDeclarationsPhase
-import org.jetbrains.kotlin.backend.jvm.lower.FragmentSharedVariablesLowering.Companion.GENERATED_FUNCTION_NAME
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.irCall
@@ -58,7 +57,11 @@ internal class FragmentLocalFunctionPatchLowering(
         declaration.body?.transformChildrenVoid(object : IrElementTransformerVoidWithContext() {
             override fun visitCall(expression: IrCall): IrExpression {
                 expression.transformChildrenVoid(this)
-                val localsData = localDeclarationsData[expression.symbol.owner] ?: return super.visitCall(expression)
+                val localDeclarationsDataKey = when (expression.symbol.owner.origin) {
+                    is IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER -> context.mapping.defaultArgumentsOriginalFunction[expression.symbol.owner]
+                    else -> expression.symbol.owner
+                }
+                val localsData = localDeclarationsData[localDeclarationsDataKey] ?: return super.visitCall(expression)
                 val remappedTarget: LocalDeclarationsLowering.LocalFunctionContext = localsData.localContext
 
                 val irBuilder = context.createJvmIrBuilder(declaration.symbol)
