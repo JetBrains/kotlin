@@ -177,7 +177,7 @@ class CliJavaModuleFinder(
         )
     }
 
-    private fun codeFor(release: Int): String = release.toString(36).uppercase(Locale.getDefault())
+    private fun codeFor(release: Int): String = release.toString(36).uppercase()
 
     private fun matchesRelease(fileName: String, release: Int) =
         !fileName.contains("-") && fileName.contains(codeFor(release)) // skip `*-modules`
