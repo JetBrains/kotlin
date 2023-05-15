@@ -1626,8 +1626,8 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(INITIALIZATION_BEFORE_DECLARATION, "Variable cannot be initialized before declaration", SYMBOL)
         map.put(TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM, "Type checking has run into a recursive problem. Easiest workaround: specify types of your declarations explicitly")
 
-        map.put(MUST_BE_INITIALIZED, "Property must be initialized. This warning will become an error in future releases.")
-        map.put(MUST_BE_INITIALIZED_WARNING, "Property must be initialized")
+        map.put(MUST_BE_INITIALIZED, "Property must be initialized")
+        map.put(MUST_BE_INITIALIZED_WARNING, "Property must be initialized. This warning will become an error in future releases.")
         map.put(MUST_BE_INITIALIZED_OR_BE_FINAL, "Property must be initialized or be final")
         map.put(MUST_BE_INITIALIZED_OR_BE_FINAL_WARNING, "Property must be initialized or be final. This warning will become an error in future releases.")
         map.put(MUST_BE_INITIALIZED_OR_BE_ABSTRACT, "Property must be initialized or be abstract")
