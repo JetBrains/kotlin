@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.buildtools.api
 
+/**
+ * A logger object used to log messages from the Build Tools API.
+ */
 public interface KotlinLogger {
     public val isDebugEnabled: Boolean
     public fun error(msg: String, throwable: Throwable? = null)

@@ -5,12 +5,54 @@
 
 package org.jetbrains.kotlin.buildtools.api
 
+import org.jetbrains.kotlin.buildtools.api.jvm.ClasspathEntrySnapshot
+import org.jetbrains.kotlin.buildtools.api.jvm.JvmCompilationConfiguration
+import java.io.File
+
 /**
- * A facade for invoking compilation in Kotlin compiler. It allows to use compiler in different modes.
- * TODO: add a mention where to see the available modes after implementing them
+ * A facade for invoking compilation and related stuff (such as [calculateClasspathSnapshot]) in Kotlin compiler.
+ *
+ * An example of the basic usage is:
+ * ```
+ *  val service = CompilationService.loadImplementation(ClassLoader.getSystemClassLoader())
+ *  val executionConfig = service.makeCompilerExecutionStrategyConfiguration()
+ *  val compilationConfig = service.makeJvmCompilationConfiguration()
+ *  service.compileJvm(executionConfig, compilationConfig, listOf(File("src/a.kt")), listOf("-Xexplicit-api=strict"))
+ * ```
+ *
+ * This interface is not intended to be implemented by the API consumers. An instance of [CompilationService] is expected to be obtained from [loadImplementation].
  */
 public interface CompilationService {
-    public fun compile()
+    /**
+     * TODO KT-57565
+     */
+    public fun calculateClasspathSnapshot(classpathEntry: File): ClasspathEntrySnapshot
+
+    /**
+     * Provides a default [CompilerExecutionStrategyConfiguration] allowing to use it as is or customizing for specific requirements.
+     * Could be used as an overview to default values of the options (as they are implementation-specific).
+     */
+    public fun makeCompilerExecutionStrategyConfiguration(): CompilerExecutionStrategyConfiguration
+
+    /**
+     * Provides a default [CompilerExecutionStrategyConfiguration] allowing to use it as is or customizing for specific requirements.
+     * Could be used as an overview to default values of the options (as they are implementation-specific).
+     */
+    public fun makeJvmCompilationConfiguration(): JvmCompilationConfiguration
+
+    /**
+     * Compiles Kotlin code targeting JVM platform and using specified options.
+     * @param strategyConfig an instance of [CompilerExecutionStrategyConfiguration] initially obtained from [makeCompilerExecutionStrategyConfiguration]
+     * @param compilationConfig an instance of [JvmCompilationConfiguration] initially obtained from [makeJvmCompilationConfiguration]
+     * @param sources a list of all sources of the compilation unit
+     * @param arguments a list of Kotlin JVM compiler arguments
+     */
+    public fun compileJvm(
+        strategyConfig: CompilerExecutionStrategyConfiguration,
+        compilationConfig: JvmCompilationConfiguration,
+        sources: List<File>,
+        arguments: List<String>
+    )
 
     public companion object {
         @JvmStatic

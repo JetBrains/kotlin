@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.compilerRunner.GradleKotlinCompilerWorkArguments
 import org.jetbrains.kotlin.gradle.internal.ClassLoadersCachingBuildService
 import org.jetbrains.kotlin.gradle.internal.ParentClassLoaderProvider
 import java.io.File
-import java.util.*
 
 internal abstract class BuildToolsApiCompilationWork : WorkAction<BuildToolsApiCompilationWork.BuildToolsApiCompilationParameters> {
     internal interface BuildToolsApiCompilationParameters : WorkParameters {
@@ -36,7 +35,16 @@ internal abstract class BuildToolsApiCompilationWork : WorkAction<BuildToolsApiC
         val classLoader = parameters.classLoadersCachingService.get()
             .getClassLoader(workArguments.compilerFullClasspath, SharedApiClassesClassLoaderProvider)
         val compilationService = CompilationService.loadImplementation(classLoader)
-        compilationService.compile()
+        val executionConfig = compilationService.makeCompilerExecutionStrategyConfiguration().apply {
+            useInProcessStrategy()
+        }
+        val jvmCompilationConfig = compilationService.makeJvmCompilationConfiguration()
+        compilationService.compileJvm(
+            executionConfig,
+            jvmCompilationConfig,
+            emptyList(),
+            emptyList(),
+        )
     }
 }
 
