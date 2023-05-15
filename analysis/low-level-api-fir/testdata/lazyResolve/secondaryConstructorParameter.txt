@@ -102,7 +102,7 @@ TYPES:
 FILE: [ResolvedTo(IMPORTS)] secondaryConstructorParameter.kt
     [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(TYPES)] class A : R|kotlin/Any| {
-        public? [ResolvedTo(TYPES)] [ContainingClassKey=A] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=/A.prop] prop: R|kotlin/Int| = LAZY_EXPRESSION, [ResolvedTo(TYPES)] c: R|kotlin/String|): R|A| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/A.prop] prop: Int = LAZY_EXPRESSION, [ResolvedTo(RAW_FIR)] c: String): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
 

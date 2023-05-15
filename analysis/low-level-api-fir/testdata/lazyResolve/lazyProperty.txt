@@ -161,7 +161,7 @@ FILE: [ResolvedTo(IMPORTS)] lazyProperty.kt
     public? final? [ResolvedTo(RAW_FIR)] fun getAny(): Any? { LAZY_BLOCK }
     public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] Q> materialize(): Q { LAZY_BLOCK }
     public? final? [ResolvedTo(TYPES)] class Test : R|kotlin/Any| {
-        public? [ResolvedTo(TYPES)] [ContainingClassKey=Test] constructor(): R|Test| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Test] constructor(): R|Test| {
             LAZY_super<R|kotlin/Any|>
         }
 

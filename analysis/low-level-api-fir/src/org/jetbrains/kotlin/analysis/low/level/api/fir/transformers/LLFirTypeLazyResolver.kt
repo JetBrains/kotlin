@@ -13,9 +13,11 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkPhase
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkReceiverTypeRefIsResolved
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkReturnTypeRefIsResolved
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkTypeRefIsResolved
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirFileAnnotationsContainer
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.PrivateForInline
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.FirTypeResolveTransformer
@@ -96,37 +98,32 @@ private class LLFirTypeTargetResolver(
 
             transformer.withClassScopes(
                 firClass,
-                actionInsideStaticScope = {
-                    resolveConstructors(firClass)
-                },
                 action = action,
             )
-        }
-    }
-
-    private fun resolveConstructors(firClass: FirRegularClass): Unit = transformer.withScopeCleanup {
-        transformer.addTypeParametersScope(firClass)
-
-        for (member in firClass.declarations) {
-            if (member !is FirConstructor) continue
-
-            member.lazyResolveToPhase(resolverPhase.previous)
-
-            performCustomResolveUnderLock(member) {
-                // ConstructedTypeRef should be resolved only with type parameters, but not with nested classes and classes from supertypes
-                transformer.transformDelegatedConstructorCall(member)
-
-                transformer.withClassScopes(firClass) {
-                    member.accept(transformer, null)
-                }
-            }
         }
     }
 
     override fun doLazyResolveUnderLock(target: FirElementWithResolveState) {
         when (target) {
             is FirConstructor -> {
-                error("Should be resolved during ${::resolveConstructors.name}")
+                // ConstructedTypeRef should be resolved only with type parameters, but not with nested classes and classes from supertypes
+                val scopesBeforeContainingClass = transformer.scopesBefore
+                    ?: errorWithFirSpecificEntries("The containing class scope is not found", fir = target)
+
+                @OptIn(PrivateForInline::class)
+                transformer.withScopeCleanup {
+                    val clazz = transformer.classDeclarationsStack.last()
+                    if (!transformer.removeOuterTypeParameterScope(clazz)) {
+                        transformer.scopes = scopesBeforeContainingClass
+                    } else {
+                        transformer.scopes = transformer.staticScopes
+                        transformer.addTypeParametersScope(clazz)
+                    }
+
+                    transformer.transformDelegatedConstructorCall(target)
+                }
+
+                target.accept(transformer, null)
             }
             is FirDanglingModifierList, is FirFileAnnotationsContainer, is FirCallableDeclaration, is FirTypeAlias, is FirScript -> {
                 target.accept(transformer, null)

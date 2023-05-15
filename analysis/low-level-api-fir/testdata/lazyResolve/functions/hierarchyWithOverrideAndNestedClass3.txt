@@ -391,12 +391,12 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass3.kt
 
     }
     public? abstract [ResolvedTo(TYPES)] class OuterClass : R|Foo1| {
-        public? [ResolvedTo(TYPES)] [ContainingClassKey=OuterClass] constructor(): R|OuterClass| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OuterClass] constructor(): R|OuterClass| {
             LAZY_super<<implicit>>
         }
 
         public? final? [ResolvedTo(TYPES)] class SimpleNestedClass : R|kotlin/Any| {
-            public? [ResolvedTo(TYPES)] [ContainingClassKey=SimpleNestedClass] constructor(): R|OuterClass.SimpleNestedClass| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=SimpleNestedClass] constructor(): R|OuterClass.SimpleNestedClass| {
                 LAZY_super<R|kotlin/Any|>
             }
 

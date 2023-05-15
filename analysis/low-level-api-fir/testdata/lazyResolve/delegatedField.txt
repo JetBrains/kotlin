@@ -132,7 +132,7 @@ FILE: [ResolvedTo(IMPORTS)] delegatedField.kt
 
     }
     public? final? [ResolvedTo(TYPES)] [DelegateFieldsMapKey={0=FirFieldSymbol one/Usage.$$delegate_0}] class Usage : R|one/Foo| {
-        public? [ResolvedTo(TYPES)] [ContainingClassKey=Usage] constructor([ResolvedTo(TYPES)] prop: R|one/Foo|): R|one/Usage| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Usage] constructor([ResolvedTo(RAW_FIR)] prop: Foo): R|one/Usage| {
             LAZY_super<<implicit>>
         }
 

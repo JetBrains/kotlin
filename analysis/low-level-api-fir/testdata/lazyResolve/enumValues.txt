@@ -102,7 +102,7 @@ TYPES:
 FILE: [ResolvedTo(IMPORTS)] enumValues.kt
     [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(TYPES)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
-        private [ResolvedTo(TYPES)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
+        private [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
             LAZY_super<R|kotlin/Enum<one/MyEnum>|>
         }
 

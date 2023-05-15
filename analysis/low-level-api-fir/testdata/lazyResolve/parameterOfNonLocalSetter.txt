@@ -72,7 +72,7 @@ TYPES:
 FILE: [ResolvedTo(IMPORTS)] parameterOfNonLocalSetter.kt
     [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(TYPES)] class X : R|kotlin/Any| {
-        public? [ResolvedTo(TYPES)] [ContainingClassKey=X] constructor(): R|X| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor(): R|X| {
             LAZY_super<R|kotlin/Any|>
         }
 

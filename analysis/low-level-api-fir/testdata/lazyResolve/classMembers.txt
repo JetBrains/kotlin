@@ -97,7 +97,7 @@ TYPES:
 FILE: [ResolvedTo(IMPORTS)] classMembers.kt
     [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(TYPES)] class A : R|kotlin/Any| {
-        public? [ResolvedTo(TYPES)] [ContainingClassKey=A] constructor(): R|A| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
 

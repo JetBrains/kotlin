@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers
 
+import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.collections.immutable.toPersistentList
 import org.jetbrains.kotlin.KtFakeSourceElementKind
@@ -75,6 +76,9 @@ open class FirTypeResolveTransformer(
      */
     @PrivateForInline
     var staticScopes = scopes
+
+    @set:PrivateForInline
+    var scopesBefore: PersistentList<FirScope>? = null
 
     private var currentDeclaration: FirDeclaration? = null
 
@@ -366,12 +370,14 @@ open class FirTypeResolveTransformer(
     }
 
     inline fun <T> withScopeCleanup(crossinline l: () -> T): T {
-        val scopesBefore = scopes
+        val scopesBeforeSnapshot = scopes
+        scopesBefore = scopesBeforeSnapshot
+
         val staticScopesBefore = staticScopes
 
         val result = l()
 
-        scopes = scopesBefore
+        scopes = scopesBeforeSnapshot
         staticScopes = staticScopesBefore
 
         return result
@@ -406,13 +412,15 @@ open class FirTypeResolveTransformer(
         constructor.delegatedConstructor?.let(this::resolveConstructedTypeRefForDelegatedConstructorCall)
     }
 
+    fun removeOuterTypeParameterScope(firClass: FirClass): Boolean = !firClass.isInner && !firClass.isLocal
+
     inline fun <R> withClassScopes(
         firClass: FirClass,
         crossinline actionInsideStaticScope: () -> Unit = {},
         crossinline action: () -> R,
     ): R = withScopeCleanup {
         // Remove type parameter scopes for classes that are neither inner nor local
-        if (!firClass.isInner && !firClass.isLocal) {
+        if (removeOuterTypeParameterScope(firClass)) {
             this.scopes = staticScopes
         }
 

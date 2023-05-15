@@ -77,7 +77,7 @@ TYPES:
 FILE: [ResolvedTo(IMPORTS)] functionInValueClass.kt
     [ResolvedTo(BODY_RESOLVE)] annotations container
     @R|kotlin/jvm/JvmInline|[Types]() public? final? inline [ResolvedTo(TYPES)] class Value : R|kotlin/Any| {
-        public? [ResolvedTo(TYPES)] [ContainingClassKey=Value] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=/Value.value] value: R|kotlin/Int|): R|Value| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Value] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Value.value] value: Int): R|Value| {
             LAZY_super<R|kotlin/Any|>
         }
 

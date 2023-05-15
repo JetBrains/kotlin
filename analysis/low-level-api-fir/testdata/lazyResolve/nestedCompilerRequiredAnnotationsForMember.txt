@@ -321,7 +321,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedCompilerRequiredAnnotationsForMember.kt
 
     }
     @R|kotlin/Deprecated|[Types](String(FirstClass)) @R|Anno|[Types](LAZY_EXPRESSION) public? final? [ResolvedTo(TYPES)] class FirstClass : R|kotlin/Any| {
-        @R|kotlin/Deprecated|[Types](String(constructor)) @R|Anno|[Types](LAZY_EXPRESSION) public? [ResolvedTo(TYPES)] [ContainingClassKey=FirstClass] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=/FirstClass.a] @R|Anno|[Types](LAZY_EXPRESSION) a: R|kotlin/Int|): R|FirstClass| {
+        @Deprecated[Unresolved](LAZY_EXPRESSION) @Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/FirstClass.a] @Deprecated[Unresolved](LAZY_EXPRESSION) @Anno[Unresolved](LAZY_EXPRESSION) a: Int): R|FirstClass| {
             LAZY_super<R|kotlin/Any|>
         }
 
@@ -334,7 +334,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedCompilerRequiredAnnotationsForMember.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstClass] get(): <implicit>
 
         @R|kotlin/Deprecated|[Types](String(NestedClass)) @R|Anno|[Types](LAZY_EXPRESSION) public? final? [ResolvedTo(TYPES)] class NestedClass : R|kotlin/Any| {
-            @R|kotlin/Deprecated|[Types](String(constructor)) @R|Anno|[Types](LAZY_EXPRESSION) public? [ResolvedTo(TYPES)] [ContainingClassKey=NestedClass] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=/FirstClass.NestedClass.a] @R|Anno|[Types](LAZY_EXPRESSION) a: R|kotlin/Int|): R|FirstClass.NestedClass| {
+            @Deprecated[Unresolved](LAZY_EXPRESSION) @Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/FirstClass.NestedClass.a] @Deprecated[Unresolved](LAZY_EXPRESSION) @Anno[Unresolved](LAZY_EXPRESSION) a: Int): R|FirstClass.NestedClass| {
                 LAZY_super<R|kotlin/Any|>
             }
 

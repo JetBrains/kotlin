@@ -157,8 +157,8 @@ TYPES:
 FILE: [ResolvedTo(IMPORTS)] nestedTypeAlias.kt
     [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(TYPES)] class OuterClass<[ResolvedTo(TYPES)] T1> : R|SuperForOuter| {
-        public? [ResolvedTo(TYPES)] [ContainingClassKey=OuterClass] constructor<[ResolvedTo(TYPES)] T1>(): R|OuterClass<T1>| {
-            LAZY_super<R|SuperForOuter|>
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OuterClass] constructor<[ResolvedTo(TYPES)] T1>(): R|OuterClass<T1>| {
+            LAZY_super<SuperForOuter>
         }
 
         public? final? [ResolvedTo(SUPER_TYPES)] class NestedClass<[ResolvedTo(SUPER_TYPES)] T2> : R|Another| {

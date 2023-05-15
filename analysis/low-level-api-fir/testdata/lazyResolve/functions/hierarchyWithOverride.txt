@@ -170,7 +170,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverride.kt
 
     }
     public? abstract [ResolvedTo(TYPES)] class Usage : R|Foo2| {
-        public? [ResolvedTo(TYPES)] [ContainingClassKey=Usage] constructor(): R|Usage| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Usage] constructor(): R|Usage| {
             LAZY_super<<implicit>>
         }
 

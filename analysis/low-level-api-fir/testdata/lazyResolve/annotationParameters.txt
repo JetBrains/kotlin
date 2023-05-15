@@ -222,7 +222,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationParameters.kt
 
     }
     public? final? [ResolvedTo(TYPES)] class B : R|kotlin/Any| {
-        public? [ResolvedTo(TYPES)] [ContainingClassKey=B] constructor(): R|B| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
             LAZY_super<R|kotlin/Any|>
         }
 

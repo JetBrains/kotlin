@@ -68,7 +68,7 @@ FILE: [ResolvedTo(IMPORTS)] localConstructor.kt
     [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> magic(): T { LAZY_BLOCK }
     public? final? [ResolvedTo(TYPES)] class Q : R|kotlin/Any| {
-        public? [ResolvedTo(TYPES)] [ContainingClassKey=Q] constructor(): R|Q| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Q] constructor(): R|Q| {
             LAZY_super<R|kotlin/Any|>
         }
 

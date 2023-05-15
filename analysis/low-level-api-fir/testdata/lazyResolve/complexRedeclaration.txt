@@ -542,7 +542,7 @@ FILE: [ResolvedTo(IMPORTS)] complexRedeclaration.kt
 
     }
     public? final? [ResolvedTo(TYPES)] object B : R|kotlin/Any| {
-        private [ResolvedTo(TYPES)] [ContainingClassKey=B] constructor(): R|B| {
+        private [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
             LAZY_super<R|kotlin/Any|>
         }
 
