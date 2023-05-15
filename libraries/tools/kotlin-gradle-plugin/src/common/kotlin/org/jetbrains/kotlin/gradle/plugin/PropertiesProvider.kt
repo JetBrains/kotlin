@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLI
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_HIERARCHICAL_STRUCTURE_BY_DEFAULT
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_HIERARCHICAL_STRUCTURE_SUPPORT
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_DEPRECATED_PROPERTIES_NO_WARN
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_ENABLE_DEFAULT_TARGET_HIERARCHY
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_IMPORT_ENABLE_KGP_DEPENDENCY_RESOLUTION
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_IMPORT_ENABLE_SLOW_SOURCES_JAR_RESOLVER
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_DEPENDENCY_PROPAGATION
@@ -280,6 +281,9 @@ internal class PropertiesProvider private constructor(private val project: Proje
 
     val ignoreHmppDeprecationWarnings: Boolean?
         get() = booleanProperty(KOTLIN_MPP_DEPRECATED_PROPERTIES_NO_WARN)
+
+    val mppEnableDefaultTargetHierarchy: Boolean
+        get() = booleanProperty(KOTLIN_MPP_ENABLE_DEFAULT_TARGET_HIERARCHY) ?: true
 
     /**
      * Enables individual test task reporting for aggregated test tasks.
@@ -617,6 +621,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
         const val KOTLIN_MPP_IMPORT_ENABLE_KGP_DEPENDENCY_RESOLUTION = "kotlin.mpp.import.enableKgpDependencyResolution"
         const val KOTLIN_MPP_IMPORT_ENABLE_SLOW_SOURCES_JAR_RESOLVER = "kotlin.mpp.import.enableSlowSourcesJarResolver"
         const val KOTLIN_MPP_ENABLE_INTRANSITIVE_METADATA_CONFIGURATION = "kotlin.mpp.enableIntransitiveMetadataConfiguration"
+        const val KOTLIN_MPP_ENABLE_DEFAULT_TARGET_HIERARCHY = "kotlin.mpp.enableDefaultTargetHierarchy"
         const val KOTLIN_NATIVE_DEPENDENCY_PROPAGATION = "kotlin.native.enableDependencyPropagation"
         const val KOTLIN_NATIVE_CACHE_ORCHESTRATION = "kotlin.native.cacheOrchestration"
         const val KOTLIN_NATIVE_PARALLEL_THREADS = "kotlin.native.parallelThreads"
