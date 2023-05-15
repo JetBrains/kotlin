@@ -23,6 +23,8 @@ plugins {
 configureJvmToolchain(JdkMajorVersion.JDK_1_8)
 
 val configurationBuiltins = configurations.create("builtins") {
+    isCanBeResolved = true
+    isCanBeConsumed = false
     attributes.attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, project.objects.named(LibraryElements.JAR))
 }
 dependencies {
