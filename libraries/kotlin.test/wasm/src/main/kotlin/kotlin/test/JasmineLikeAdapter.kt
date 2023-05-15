@@ -48,13 +48,12 @@ internal class JasmineLikeAdapter : FrameworkAdapter {
             (testFn() as? Promise<*>)?.catch { exception ->
                 val jsException = exception
                     .toThrowableOrNull()
-                    ?.let { it.toJsError() }
+                    ?.toJsError()
                     ?: exception
                 Promise.reject(jsException)
             }
         } catch (exception: Throwable) {
             jsThrow(exception.toJsError())
-            null
         }
 
     override fun test(name: String, ignored: Boolean, testFn: () -> Any?) {
