@@ -599,7 +599,10 @@ internal object ControlFlowSensibleEscapeAnalysis {
             }
 
             inner class GraphBuilder(startEdgesCount: Int = 10) {
-                val nodes = ArrayList<Node?>(totalNodes).also { it.ensureSize(totalNodes) }
+                val nodes = ArrayList<Node?>(totalNodes).also {
+                    it.addAll(arrayOf(Node.Nothing, Node.Null, Node.Unit, Node.Object(Node.GLOBAL_ID, Levels.GLOBAL, null, "G")))
+                    it.ensureSize(totalNodes)
+                }
                 val parameterNodes = mutableMapOf<IrValueParameter, Node.Parameter>()
                 val variableNodes = mutableMapOf<IrVariable, Node.Variable>()
 
@@ -904,6 +907,7 @@ internal object ControlFlowSensibleEscapeAnalysis {
             fun bypass(v: Node.Reference, nodeContext: NodeContext, anchorNodeId: Int = 0) {
                 require(v.assignedTo.isNotEmpty())
                 val assignedWith = v.assignedWith.ifEmpty { listOf(at(nodeContext, anchorNodeId).newObject()) }
+                        .filter { it != v }
                 for (u in v.assignedTo) {
                     u.assignedWith.removeAll(v)
                     u.assignedWith.addAll(assignedWith)
@@ -1705,18 +1709,23 @@ internal object ControlFlowSensibleEscapeAnalysis {
                     return state.graph.unreachable()
                 }
 
-                if (argumentNodeIds.any { it == Node.NOTHING_ID }) {
+                if (argumentNodeIds.any { it == Node.NOTHING_ID }
+                        || argumentNodeIds.any { it >= state.graph.nodes.size || state.graph.nodes[it] == null }) {
                     context.log { "Unreachable code - skipping call to ${callee.render()}" }
                     return state.graph.unreachable()
                 }
-
-                val arguments = argumentNodeIds.map { state.graph.nodes[it]!! }
 
                 debug {
                     context.log { "before calling ${callee.render()}" }
                     state.graph.logDigraph()
                     context.log { "callee EA result" }
                     calleeEscapeAnalysisResult.graph.logDigraph(calleeEscapeAnalysisResult.returnValue)
+                    context.log { "argumentIds: ${argumentNodeIds.joinToString { it.toString() }}" }
+                }
+
+                val arguments = argumentNodeIds.map { state.graph.nodes[it]!! }
+
+                debug {
                     context.log { "arguments: ${arguments.joinToString { it.toString() }}" }
                 }
 
@@ -1979,7 +1988,8 @@ internal object ControlFlowSensibleEscapeAnalysis {
             override fun visitConstructorCall(expression: IrConstructorCall, data: BuilderState): Node {
                 val thisObject = data.allocObjectNode(expression, expression.symbol.owner.constructedClass)
                 processConstructorCall(expression.symbol.owner, thisObject, expression, data)
-                return if (data.graph.forest.totalNodes > maxAllowedGraphSize)
+                return if (data.graph.forest.totalNodes > maxAllowedGraphSize
+                        || thisObject.id >= data.graph.nodes.size || data.graph.nodes[thisObject.id] == null)
                     Node.Nothing
                 else
                     data.graph.nodes[thisObject.id]!!
@@ -2330,7 +2340,7 @@ internal object ControlFlowSensibleEscapeAnalysis {
         ) {
             propagateLevels()
             allocations.forEach { (ir, id) ->
-                if (id >= graph.nodes.size) return@forEach // An allocation from unreachable code.
+                if (id >= graph.nodes.size || graph.nodes[id] == null) return@forEach // An allocation from unreachable code.
                 val node = graph.nodes[id] as Node.Object
                 val computedLifetime = lifetimeOf(node)
                 var lifetime = computedLifetime
