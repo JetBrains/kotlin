@@ -25,8 +25,7 @@ open class BinaryenRootExtension(@Transient val rootProject: Project) : Configur
 
     var installationPath by Property(gradleHome.resolve("binaryen"))
     var downloadBaseUrl by Property("https://github.com/WebAssembly/binaryen/releases/download/")
-    // TODO stop using old GC instructions before moving to 112+
-    var version by Property("111")
+    var version by Property("112")
 
     val setupTaskProvider: TaskProvider<out Copy>
         get() = rootProject.tasks.withType(Copy::class.java).named(BinaryenRootPlugin.INSTALL_TASK_NAME)

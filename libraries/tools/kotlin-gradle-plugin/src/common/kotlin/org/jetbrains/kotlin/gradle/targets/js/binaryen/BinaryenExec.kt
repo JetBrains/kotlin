@@ -37,7 +37,7 @@ constructor() : AbstractExecTask<BinaryenExec>(BinaryenExec::class.java) {
         // Other options
         "--enable-nontrapping-float-to-int",
         "--nominal",
-        // TODO uncomment after switching to 112+
+        // It's turned out that it's not safe
         // "--closed-world",
 
         // Optimizations:
@@ -50,15 +50,14 @@ constructor() : AbstractExecTask<BinaryenExec>(BinaryenExec::class.java) {
         "--inline-functions-with-loops",
         "--traps-never-happen",
         "--fast-math",
-        // TODO uncomment after switching to 112+
-        // "--type-ssa",
-        "-O4",
-        "-O4",
+        "--type-ssa",
+        "-O3",
+        "-O3",
         "--gufa",
-        "-O4",
-        // TODO uncomment after switching to 112+
+        "-O3",
+        // requires --closed-world
         // "--type-merging",
-        "-O4",
+        "-O3",
         "-Oz",
     )
 
