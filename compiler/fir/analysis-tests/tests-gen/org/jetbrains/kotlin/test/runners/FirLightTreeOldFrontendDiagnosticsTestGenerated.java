@@ -31999,6 +31999,18 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
             }
 
             @Test
+            @TestMetadata("suspendExtFunctionTypeAsSuperType.kt")
+            public void testSuspendExtFunctionTypeAsSuperType() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/subtyping/suspendExtFunctionTypeAsSuperType.kt");
+            }
+
+            @Test
+            @TestMetadata("suspendExtFunctionTypeAsSuperTypeRestrictionLifted.kt")
+            public void testSuspendExtFunctionTypeAsSuperTypeRestrictionLifted() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/subtyping/suspendExtFunctionTypeAsSuperTypeRestrictionLifted.kt");
+            }
+
+            @Test
             @TestMetadata("topLevelAnonymousObjects.kt")
             public void testTopLevelAnonymousObjects() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/subtyping/topLevelAnonymousObjects.kt");

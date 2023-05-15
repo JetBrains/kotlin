@@ -104,6 +104,9 @@ val KotlinType.isNonExtensionFunctionType: Boolean
 val KotlinType.isExtensionFunctionType: Boolean
     get() = isFunctionType && isTypeAnnotatedWithExtensionFunctionType
 
+val KotlinType.isSuspendExtensionFunctionType: Boolean
+    get() = isSuspendFunctionType && isTypeAnnotatedWithExtensionFunctionType
+
 val KotlinType.isBuiltinExtensionFunctionalType: Boolean
     get() = isBuiltinFunctionalType && isTypeAnnotatedWithExtensionFunctionType
 
