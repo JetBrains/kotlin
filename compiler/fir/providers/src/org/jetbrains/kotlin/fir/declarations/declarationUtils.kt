@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 fun FirClass.constructors(session: FirSession): List<FirConstructorSymbol> {
     val result = mutableListOf<FirConstructorSymbol>()
-    session.declaredMemberScope(this).processDeclaredConstructors { result += it }
+    session.declaredMemberScope(this, memberRequiredPhase = null).processDeclaredConstructors { result += it }
     return result
 }
 

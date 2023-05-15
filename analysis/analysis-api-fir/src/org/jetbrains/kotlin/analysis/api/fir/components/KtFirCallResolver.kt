@@ -86,7 +86,11 @@ internal class KtFirCallResolver(
 ) : AbstractKtCallResolver(), KtFirAnalysisSessionComponent {
     private val equalsSymbolInAny: FirNamedFunctionSymbol by lazy(LazyThreadSafetyMode.PUBLICATION) {
         val session = analysisSession.useSiteSession
-        val scope = session.declaredMemberScope(session.builtinTypes.anyType.toRegularClassSymbol(session)!!)
+        val scope = session.declaredMemberScope(
+            session.builtinTypes.anyType.toRegularClassSymbol(session)!!,
+            memberRequiredPhase = FirResolvePhase.STATUS,
+        )
+
         lateinit var result: FirNamedFunctionSymbol
         scope.processFunctionsByName(EQUALS) {
             result = it

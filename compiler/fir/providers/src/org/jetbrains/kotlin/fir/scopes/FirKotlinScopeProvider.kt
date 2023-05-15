@@ -44,22 +44,27 @@ class FirKotlinScopeProvider(
         }
 
         return scopeSession.getOrBuild(klass.symbol, USE_SITE) {
-            val declaredScope = useSiteSession.declaredMemberScope(klass)
-
-            val decoratedDeclaredMemberScope =
-                declaredMemberScopeDecorator(klass, declaredScope, useSiteSession, scopeSession, memberRequiredPhase).let {
-                    val delegateFields = klass.delegateFields
-                    if (delegateFields.isEmpty())
-                        it
-                    else
-                        FirDelegatedMemberScope(useSiteSession, scopeSession, klass, it, delegateFields)
-                }
+            val declaredScope = useSiteSession.declaredMemberScope(klass, memberRequiredPhase)
+            val decoratedDeclaredMemberScope = declaredMemberScopeDecorator(
+                klass,
+                declaredScope,
+                useSiteSession,
+                scopeSession,
+                memberRequiredPhase
+            ).let {
+                val delegateFields = klass.delegateFields
+                if (delegateFields.isEmpty())
+                    it
+                else
+                    FirDelegatedMemberScope(useSiteSession, scopeSession, klass, it, delegateFields)
+            }
 
             val scopes = lookupSuperTypes(
                 klass, lookupInterfaces = true, deep = false, useSiteSession = useSiteSession, substituteTypes = true
             ).mapNotNull { useSiteSuperType ->
                 useSiteSuperType.scopeForSupertype(useSiteSession, scopeSession, klass, memberRequiredPhase = memberRequiredPhase)
             }
+
             FirClassUseSiteMemberScope(
                 klass,
                 useSiteSession,
@@ -75,7 +80,14 @@ class FirKotlinScopeProvider(
         scopeSession: ScopeSession
     ): FirContainingNamesAwareScope? {
         return when (klass.classKind) {
-            ClassKind.ENUM_CLASS -> FirNameAwareOnlyCallablesScope(FirStaticScope(useSiteSession.declaredMemberScope(klass)))
+            ClassKind.ENUM_CLASS -> FirNameAwareOnlyCallablesScope(
+                FirStaticScope(
+                    useSiteSession.declaredMemberScope(
+                        klass,
+                        memberRequiredPhase = null,
+                    )
+                )
+            )
             else -> null
         }
     }

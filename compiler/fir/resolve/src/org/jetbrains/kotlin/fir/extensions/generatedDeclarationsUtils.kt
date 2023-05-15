@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,13 +9,12 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.scopes.processClassifiersByName
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 
 fun FirClass.generatedNestedClassifiers(session: FirSession): List<FirClassLikeDeclaration> {
-    val scope = session.declaredMemberScope(this)
+    val scope = session.declaredMemberScope(this, memberRequiredPhase = null)
     val result = mutableListOf<FirClassLikeDeclaration>()
     for (name in scope.getClassifierNames()) {
         scope.processClassifiersByName(name) {
@@ -30,7 +29,7 @@ fun FirClass.generatedNestedClassifiers(session: FirSession): List<FirClassLikeD
 }
 
 fun FirClass.generatedMembers(session: FirSession): List<FirCallableDeclaration> {
-    val scope = session.declaredMemberScope(this)
+    val scope = session.declaredMemberScope(this, memberRequiredPhase = null)
     val result = mutableListOf<FirCallableDeclaration>()
     for (name in scope.getCallableNames()) {
         scope.processFunctionsByName(name) {

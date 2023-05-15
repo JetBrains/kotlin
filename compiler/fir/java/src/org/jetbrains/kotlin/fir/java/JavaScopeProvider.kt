@@ -74,11 +74,15 @@ object JavaScopeProvider : FirScopeProvider() {
     }
 
     private fun buildDeclaredMemberScope(useSiteSession: FirSession, regularClass: FirRegularClass): FirContainingNamesAwareScope {
-        return if (regularClass is FirJavaClass) useSiteSession.declaredMemberScopeWithLazyNestedScope(
-            regularClass,
-            existingNames = regularClass.existingNestedClassifierNames,
-            symbolProvider = useSiteSession.symbolProvider
-        ) else useSiteSession.declaredMemberScope(regularClass)
+        return if (regularClass is FirJavaClass) {
+            useSiteSession.declaredMemberScopeWithLazyNestedScope(
+                regularClass,
+                existingNames = regularClass.existingNestedClassifierNames,
+                symbolProvider = useSiteSession.symbolProvider
+            )
+        } else {
+            useSiteSession.declaredMemberScope(regularClass, memberRequiredPhase = null)
+        }
     }
 
     private fun buildUseSiteMemberScopeWithJavaTypes(
@@ -89,13 +93,12 @@ object JavaScopeProvider : FirScopeProvider() {
     ): JavaClassUseSiteMemberScope {
         return scopeSession.getOrBuild(regularClass.symbol, JAVA_USE_SITE) {
             val declaredScope = buildDeclaredMemberScope(useSiteSession, regularClass)
-            val superTypes =
-                if (regularClass.isThereLoopInSupertypes(useSiteSession))
-                    listOf(StandardClassIds.Any.constructClassLikeType(emptyArray(), isNullable = false))
-                else
-                    lookupSuperTypes(
-                        regularClass, lookupInterfaces = true, deep = false, useSiteSession = useSiteSession, substituteTypes = true
-                    )
+            val superTypes = if (regularClass.isThereLoopInSupertypes(useSiteSession))
+                listOf(StandardClassIds.Any.constructClassLikeType(emptyArray(), isNullable = false))
+            else
+                lookupSuperTypes(
+                    regularClass, lookupInterfaces = true, deep = false, useSiteSession = useSiteSession, substituteTypes = true
+                )
 
             val superTypeScopes = superTypes.mapNotNull {
                 it.scopeForSupertype(useSiteSession, scopeSession, regularClass, memberRequiredPhase = memberRequiredPhase)

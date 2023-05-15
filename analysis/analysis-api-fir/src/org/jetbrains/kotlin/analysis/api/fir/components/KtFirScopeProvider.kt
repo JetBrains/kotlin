@@ -108,14 +108,14 @@ internal class KtFirScopeProvider(
         if (classSymbol is KtFirScriptSymbol) {
             return KtFirDelegatingNamesAwareScope(
                 FirScriptDeclarationsScope(useSiteSession, classSymbol.firSymbol.fir),
-                builder
+                builder,
             )
         }
 
         val firScope = classSymbol.withFirForScope {
             when (val regularClass = classSymbol.firSymbol.fir) {
                 is FirJavaClass -> buildJavaEnhancementDeclaredMemberScope(useSiteSession, regularClass.symbol, getScopeSession())
-                else -> useSiteSession.declaredMemberScope(it)
+                else -> useSiteSession.declaredMemberScope(it, memberRequiredPhase = null)
             }
         } ?: return getEmptyScope()
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -86,7 +86,7 @@ inline fun <T, R> Iterable<T>.flatMapToNullableSet(transform: (T) -> Iterable<R>
 
 private fun FirSymbolProvider.getClassDeclaredMemberScope(classId: ClassId): FirScope? {
     val classSymbol = getClassLikeSymbolByClassId(classId) as? FirRegularClassSymbol ?: return null
-    return session.declaredMemberScope(classSymbol.fir)
+    return session.declaredMemberScope(classSymbol.fir, memberRequiredPhase = null)
 }
 
 fun FirSymbolProvider.getClassDeclaredConstructors(classId: ClassId): List<FirConstructorSymbol> {

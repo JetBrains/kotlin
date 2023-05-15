@@ -161,7 +161,7 @@ private fun FirConstructor.generateNoArgDelegatingConstructorCall() {
         }
         constructedTypeRef = singleSupertype.toFirResolvedTypeRef()
         val superSymbol = singleSupertype.toRegularClassSymbol(session) ?: error("Symbol for supertype $singleSupertype not found")
-        val superConstructorSymbol = superSymbol.declaredMemberScope(session)
+        val superConstructorSymbol = superSymbol.declaredMemberScope(session, memberRequiredPhase = null)
             .getDeclaredConstructors()
             .firstOrNull { it.valueParameterSymbols.isEmpty() }
             ?: error("No arguments constructor for class $singleSupertype not found")
