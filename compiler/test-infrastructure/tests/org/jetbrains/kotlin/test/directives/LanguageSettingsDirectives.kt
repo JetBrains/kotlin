@@ -26,6 +26,21 @@ object LanguageSettingsDirectives : SimpleDirectivesContainer() {
         parser = this::parseLanguageVersion
     )
 
+    val ALLOW_DANGEROUS_LANGUAGE_VERSION_TESTING by directive(
+        description = """
+            Allows the use of the LANGUAGE_VERSION directive. However, before you use it, please
+            make sure that you actually do need to pin language versions.
+
+            The LANGUAGE_VERSION directive is prone to limiting test to a specific language version,
+            which will become obsolete at some point and the test won't check things like feature
+            intersection with newer releases.
+
+            For language feature testing, use `// !LANGUAGE: [+-]FeatureName` directive instead,
+            where FeatureName is an entry of the enum `LanguageFeature`
+        """.trimIndent()
+    )
+
+
     // --------------------- Analysis Flags ---------------------
 
     val OPT_IN by stringDirective(

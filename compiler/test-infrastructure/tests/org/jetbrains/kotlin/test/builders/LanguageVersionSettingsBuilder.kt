@@ -63,7 +63,24 @@ class LanguageVersionSettingsBuilder {
             this.languageVersion = languageVersion
         }
         val languageVersionDirective = directives.singleOrZeroValue(LanguageSettingsDirectives.LANGUAGE_VERSION)
+        val allowDangerousLanguageVersionTesting =
+            directives.contains(LanguageSettingsDirectives.ALLOW_DANGEROUS_LANGUAGE_VERSION_TESTING)
         if (languageVersionDirective != null) {
+            if (!allowDangerousLanguageVersionTesting) {
+                error(
+                    """
+                        The LANGUAGE_VERSION directive is prone to limiting test to a specific language version,
+                        which will become obsolete at some point and the test won't check things like feature
+                        intersection with newer releases.
+
+                        For language feature testing, use `// !LANGUAGE: [+-]FeatureName` directive instead,
+                        where FeatureName is an entry of the enum `LanguageFeature`
+
+                        If you are really sure you need to pin language versions, use the LANGUAGE_VERSION
+                        directive in combination with the ALLOW_DANGEROUS_LANGUAGE_VERSION_TESTING directive.
+                    """.trimIndent()
+                )
+            }
             languageVersion = languageVersionDirective
             if (languageVersion < LanguageVersion.fromVersionString(this.apiVersion.versionString)!!) {
                 error(
