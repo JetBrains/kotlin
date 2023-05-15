@@ -1,6 +1,6 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] delegatedField.kt
-    [ResolvedTo(RAW_FIR)] annotations container
+    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(RAW_FIR)] class Boo : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Boo] constructor(): R|one/Boo| {
             LAZY_super<R|kotlin/Any|>
@@ -24,7 +24,7 @@ FILE: [ResolvedTo(RAW_FIR)] delegatedField.kt
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] delegatedField.kt
-    [ResolvedTo(RAW_FIR)] annotations container
+    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(RAW_FIR)] class Boo : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Boo] constructor(): R|one/Boo| {
             LAZY_super<R|kotlin/Any|>
@@ -48,7 +48,7 @@ FILE: [ResolvedTo(IMPORTS)] delegatedField.kt
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] delegatedField.kt
-    [ResolvedTo(RAW_FIR)] annotations container
+    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(RAW_FIR)] class Boo : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Boo] constructor(): R|one/Boo| {
             LAZY_super<R|kotlin/Any|>
@@ -72,7 +72,7 @@ FILE: [ResolvedTo(IMPORTS)] delegatedField.kt
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] delegatedField.kt
-    [ResolvedTo(RAW_FIR)] annotations container
+    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(RAW_FIR)] class Boo : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Boo] constructor(): R|one/Boo| {
             LAZY_super<R|kotlin/Any|>
@@ -96,7 +96,7 @@ FILE: [ResolvedTo(IMPORTS)] delegatedField.kt
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] delegatedField.kt
-    [ResolvedTo(RAW_FIR)] annotations container
+    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(RAW_FIR)] class Boo : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Boo] constructor(): R|one/Boo| {
             LAZY_super<R|kotlin/Any|>
@@ -120,7 +120,7 @@ FILE: [ResolvedTo(IMPORTS)] delegatedField.kt
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] delegatedField.kt
-    [ResolvedTo(RAW_FIR)] annotations container
+    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(RAW_FIR)] class Boo : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Boo] constructor(): R|one/Boo| {
             LAZY_super<R|kotlin/Any|>
@@ -144,7 +144,7 @@ FILE: [ResolvedTo(IMPORTS)] delegatedField.kt
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] delegatedField.kt
-    [ResolvedTo(RAW_FIR)] annotations container
+    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(RAW_FIR)] class Boo : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Boo] constructor(): R|one/Boo| {
             LAZY_super<R|kotlin/Any|>
@@ -168,7 +168,7 @@ FILE: [ResolvedTo(IMPORTS)] delegatedField.kt
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] delegatedField.kt
-    [ResolvedTo(RAW_FIR)] annotations container
+    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(RAW_FIR)] class Boo : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Boo] constructor(): R|one/Boo| {
             LAZY_super<R|kotlin/Any|>
@@ -192,7 +192,7 @@ FILE: [ResolvedTo(IMPORTS)] delegatedField.kt
 
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] delegatedField.kt
-    [ResolvedTo(RAW_FIR)] annotations container
+    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(RAW_FIR)] class Boo : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Boo] constructor(): R|one/Boo| {
             LAZY_super<R|kotlin/Any|>
@@ -216,7 +216,7 @@ FILE: [ResolvedTo(IMPORTS)] delegatedField.kt
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] delegatedField.kt
-    [ResolvedTo(RAW_FIR)] annotations container
+    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(RAW_FIR)] class Boo : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Boo] constructor(): R|one/Boo| {
             LAZY_super<R|kotlin/Any|>
@@ -240,7 +240,7 @@ FILE: [ResolvedTo(IMPORTS)] delegatedField.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] delegatedField.kt
-    [ResolvedTo(RAW_FIR)] annotations container
+    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(RAW_FIR)] class Boo : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Boo] constructor(): R|one/Boo| {
             LAZY_super<R|kotlin/Any|>
@@ -264,7 +264,7 @@ FILE: [ResolvedTo(IMPORTS)] delegatedField.kt
 
 ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: [ResolvedTo(IMPORTS)] delegatedField.kt
-    [ResolvedTo(RAW_FIR)] annotations container
+    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(RAW_FIR)] class Boo : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Boo] constructor(): R|one/Boo| {
             LAZY_super<R|kotlin/Any|>
@@ -288,7 +288,7 @@ FILE: [ResolvedTo(IMPORTS)] delegatedField.kt
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] delegatedField.kt
-    [ResolvedTo(RAW_FIR)] annotations container
+    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(RAW_FIR)] class Boo : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Boo] constructor(): R|one/Boo| {
             LAZY_super<R|kotlin/Any|>

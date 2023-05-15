@@ -1,6 +1,6 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] cyclicHierarchy3.kt
-    [ResolvedTo(RAW_FIR)] annotations container
+    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(RAW_FIR)] interface B : A, ResolveMe {
     }
     public? final? [ResolvedTo(RAW_FIR)] interface C1 : B {
@@ -20,7 +20,7 @@ FILE: [ResolvedTo(RAW_FIR)] cyclicHierarchy3.kt
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy3.kt
-    [ResolvedTo(RAW_FIR)] annotations container
+    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(RAW_FIR)] interface B : A, ResolveMe {
     }
     public? final? [ResolvedTo(RAW_FIR)] interface C1 : B {
@@ -40,7 +40,7 @@ FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy3.kt
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy3.kt
-    [ResolvedTo(RAW_FIR)] annotations container
+    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(RAW_FIR)] interface B : A, ResolveMe {
     }
     public? final? [ResolvedTo(RAW_FIR)] interface C1 : B {
@@ -60,7 +60,7 @@ FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy3.kt
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy3.kt
-    [ResolvedTo(RAW_FIR)] annotations container
+    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(RAW_FIR)] interface B : A, ResolveMe {
     }
     public? final? [ResolvedTo(RAW_FIR)] interface C1 : B {
@@ -80,7 +80,7 @@ FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy3.kt
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy3.kt
-    [ResolvedTo(RAW_FIR)] annotations container
+    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(SUPER_TYPES)] interface B : <ERROR TYPE REF: Symbol not found for A>, <ERROR TYPE REF: Loop in supertype: /B -> /ResolveMe> {
     }
     public? final? [ResolvedTo(SUPER_TYPES)] interface C1 : <ERROR TYPE REF: Loop in supertype: /C1 -> /B> {
@@ -100,7 +100,7 @@ FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy3.kt
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy3.kt
-    [ResolvedTo(RAW_FIR)] annotations container
+    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(SUPER_TYPES)] interface B : <ERROR TYPE REF: Symbol not found for A>, <ERROR TYPE REF: Loop in supertype: /B -> /ResolveMe> {
     }
     public? final? [ResolvedTo(SUPER_TYPES)] interface C1 : <ERROR TYPE REF: Loop in supertype: /C1 -> /B> {
@@ -120,7 +120,7 @@ FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy3.kt
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy3.kt
-    [ResolvedTo(RAW_FIR)] annotations container
+    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(SUPER_TYPES)] interface B : <ERROR TYPE REF: Symbol not found for A>, <ERROR TYPE REF: Loop in supertype: /B -> /ResolveMe> {
     }
     public? final? [ResolvedTo(SUPER_TYPES)] interface C1 : <ERROR TYPE REF: Loop in supertype: /C1 -> /B> {
@@ -140,7 +140,7 @@ FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy3.kt
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy3.kt
-    [ResolvedTo(RAW_FIR)] annotations container
+    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(SUPER_TYPES)] interface B : <ERROR TYPE REF: Symbol not found for A>, <ERROR TYPE REF: Loop in supertype: /B -> /ResolveMe> {
     }
     public? final? [ResolvedTo(SUPER_TYPES)] interface C1 : <ERROR TYPE REF: Loop in supertype: /C1 -> /B> {
@@ -160,7 +160,7 @@ FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy3.kt
 
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy3.kt
-    [ResolvedTo(RAW_FIR)] annotations container
+    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(SUPER_TYPES)] interface B : <ERROR TYPE REF: Symbol not found for A>, <ERROR TYPE REF: Loop in supertype: /B -> /ResolveMe> {
     }
     public? final? [ResolvedTo(SUPER_TYPES)] interface C1 : <ERROR TYPE REF: Loop in supertype: /C1 -> /B> {
@@ -180,7 +180,7 @@ FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy3.kt
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy3.kt
-    [ResolvedTo(RAW_FIR)] annotations container
+    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(SUPER_TYPES)] interface B : <ERROR TYPE REF: Symbol not found for A>, <ERROR TYPE REF: Loop in supertype: /B -> /ResolveMe> {
     }
     public? final? [ResolvedTo(SUPER_TYPES)] interface C1 : <ERROR TYPE REF: Loop in supertype: /C1 -> /B> {
@@ -200,7 +200,7 @@ FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy3.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy3.kt
-    [ResolvedTo(RAW_FIR)] annotations container
+    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(SUPER_TYPES)] interface B : <ERROR TYPE REF: Symbol not found for A>, <ERROR TYPE REF: Loop in supertype: /B -> /ResolveMe> {
     }
     public? final? [ResolvedTo(SUPER_TYPES)] interface C1 : <ERROR TYPE REF: Loop in supertype: /C1 -> /B> {
@@ -220,7 +220,7 @@ FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy3.kt
 
 ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy3.kt
-    [ResolvedTo(RAW_FIR)] annotations container
+    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(SUPER_TYPES)] interface B : <ERROR TYPE REF: Symbol not found for A>, <ERROR TYPE REF: Loop in supertype: /B -> /ResolveMe> {
     }
     public? final? [ResolvedTo(SUPER_TYPES)] interface C1 : <ERROR TYPE REF: Loop in supertype: /C1 -> /B> {
@@ -240,7 +240,7 @@ FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy3.kt
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy3.kt
-    [ResolvedTo(RAW_FIR)] annotations container
+    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(SUPER_TYPES)] interface B : <ERROR TYPE REF: Symbol not found for A>, <ERROR TYPE REF: Loop in supertype: /B -> /ResolveMe> {
     }
     public? final? [ResolvedTo(SUPER_TYPES)] interface C1 : <ERROR TYPE REF: Loop in supertype: /C1 -> /B> {

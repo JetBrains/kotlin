@@ -1,6 +1,6 @@
 RAW_FIR:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStringTemplate.kt
-    [ResolvedTo(RAW_FIR)] annotations container
+    [ResolvedTo(BODY_RESOLVE)] annotations container
     public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] s: R|kotlin/String|): R|one/ClassWithParameter| {
             LAZY_super<R|kotlin/Any|>
@@ -19,7 +19,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStringTemplate.kt
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStringTemplate.kt
-    [ResolvedTo(RAW_FIR)] annotations container
+    [ResolvedTo(BODY_RESOLVE)] annotations container
     public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] s: R|kotlin/String|): R|one/ClassWithParameter| {
             LAZY_super<R|kotlin/Any|>
@@ -38,7 +38,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStringTemplate.kt
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStringTemplate.kt
-    [ResolvedTo(RAW_FIR)] annotations container
+    [ResolvedTo(BODY_RESOLVE)] annotations container
     public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] s: R|kotlin/String|): R|one/ClassWithParameter| {
             LAZY_super<R|kotlin/Any|>
@@ -57,7 +57,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStringTemplate.kt
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStringTemplate.kt
-    [ResolvedTo(RAW_FIR)] annotations container
+    [ResolvedTo(BODY_RESOLVE)] annotations container
     public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] s: R|kotlin/String|): R|one/ClassWithParameter| {
             LAZY_super<R|kotlin/Any|>
@@ -76,7 +76,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStringTemplate.kt
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStringTemplate.kt
-    [ResolvedTo(RAW_FIR)] annotations container
+    [ResolvedTo(BODY_RESOLVE)] annotations container
     public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] s: R|kotlin/String|): R|one/ClassWithParameter| {
             LAZY_super<R|kotlin/Any|>
@@ -95,7 +95,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStringTemplate.kt
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStringTemplate.kt
-    [ResolvedTo(RAW_FIR)] annotations container
+    [ResolvedTo(BODY_RESOLVE)] annotations container
     public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] s: R|kotlin/String|): R|one/ClassWithParameter| {
             LAZY_super<R|kotlin/Any|>
@@ -114,7 +114,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStringTemplate.kt
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStringTemplate.kt
-    [ResolvedTo(RAW_FIR)] annotations container
+    [ResolvedTo(BODY_RESOLVE)] annotations container
     public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] s: R|kotlin/String|): R|one/ClassWithParameter| {
             LAZY_super<R|kotlin/Any|>
@@ -133,7 +133,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStringTemplate.kt
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStringTemplate.kt
-    [ResolvedTo(RAW_FIR)] annotations container
+    [ResolvedTo(BODY_RESOLVE)] annotations container
     public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] s: R|kotlin/String|): R|one/ClassWithParameter| {
             LAZY_super<R|kotlin/Any|>
@@ -152,7 +152,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStringTemplate.kt
 
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStringTemplate.kt
-    [ResolvedTo(RAW_FIR)] annotations container
+    [ResolvedTo(BODY_RESOLVE)] annotations container
     public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] s: R|kotlin/String|): R|one/ClassWithParameter| {
             LAZY_super<R|kotlin/Any|>
@@ -171,7 +171,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStringTemplate.kt
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStringTemplate.kt
-    [ResolvedTo(RAW_FIR)] annotations container
+    [ResolvedTo(BODY_RESOLVE)] annotations container
     public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] s: R|kotlin/String|): R|one/ClassWithParameter| {
             LAZY_super<R|kotlin/Any|>
@@ -190,7 +190,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStringTemplate.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStringTemplate.kt
-    [ResolvedTo(RAW_FIR)] annotations container
+    [ResolvedTo(BODY_RESOLVE)] annotations container
     public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] s: R|kotlin/String|): R|one/ClassWithParameter| {
             LAZY_super<R|kotlin/Any|>
@@ -209,7 +209,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStringTemplate.kt
 
 ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStringTemplate.kt
-    [ResolvedTo(RAW_FIR)] annotations container
+    [ResolvedTo(BODY_RESOLVE)] annotations container
     public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] s: R|kotlin/String|): R|one/ClassWithParameter| {
             LAZY_super<R|kotlin/Any|>
@@ -228,7 +228,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStringTemplate.kt
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStringTemplate.kt
-    [ResolvedTo(RAW_FIR)] annotations container
+    [ResolvedTo(BODY_RESOLVE)] annotations container
     public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] s: R|kotlin/String|): R|one/ClassWithParameter| {
             LAZY_super<R|kotlin/Any|>

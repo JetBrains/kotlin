@@ -1,6 +1,6 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] annotationParameters.kt
-    [ResolvedTo(RAW_FIR)] annotations container
+    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(RAW_FIR)] enum class X : R|kotlin/Enum<X>| {
         private [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor(): R|X| {
             LAZY_super<R|kotlin/Enum<X>|>
@@ -39,7 +39,7 @@ FILE: [ResolvedTo(RAW_FIR)] annotationParameters.kt
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] annotationParameters.kt
-    [ResolvedTo(RAW_FIR)] annotations container
+    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(RAW_FIR)] enum class X : R|kotlin/Enum<X>| {
         private [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor(): R|X| {
             LAZY_super<R|kotlin/Enum<X>|>
@@ -78,7 +78,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationParameters.kt
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] annotationParameters.kt
-    [ResolvedTo(RAW_FIR)] annotations container
+    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(RAW_FIR)] enum class X : R|kotlin/Enum<X>| {
         private [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor(): R|X| {
             LAZY_super<R|kotlin/Enum<X>|>
@@ -117,7 +117,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationParameters.kt
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] annotationParameters.kt
-    [ResolvedTo(RAW_FIR)] annotations container
+    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(RAW_FIR)] enum class X : R|kotlin/Enum<X>| {
         private [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor(): R|X| {
             LAZY_super<R|kotlin/Enum<X>|>
@@ -156,7 +156,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationParameters.kt
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] annotationParameters.kt
-    [ResolvedTo(RAW_FIR)] annotations container
+    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(RAW_FIR)] enum class X : R|kotlin/Enum<X>| {
         private [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor(): R|X| {
             LAZY_super<R|kotlin/Enum<X>|>
@@ -195,7 +195,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationParameters.kt
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] annotationParameters.kt
-    [ResolvedTo(RAW_FIR)] annotations container
+    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(RAW_FIR)] enum class X : R|kotlin/Enum<X>| {
         private [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor(): R|X| {
             LAZY_super<R|kotlin/Enum<X>|>
@@ -234,7 +234,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationParameters.kt
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] annotationParameters.kt
-    [ResolvedTo(RAW_FIR)] annotations container
+    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(RAW_FIR)] enum class X : R|kotlin/Enum<X>| {
         private [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor(): R|X| {
             LAZY_super<R|kotlin/Enum<X>|>
@@ -273,7 +273,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationParameters.kt
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] annotationParameters.kt
-    [ResolvedTo(RAW_FIR)] annotations container
+    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(RAW_FIR)] enum class X : R|kotlin/Enum<X>| {
         private [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor(): R|X| {
             LAZY_super<R|kotlin/Enum<X>|>
@@ -312,7 +312,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationParameters.kt
 
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] annotationParameters.kt
-    [ResolvedTo(RAW_FIR)] annotations container
+    [ResolvedTo(BODY_RESOLVE)] annotations container
     public final [ResolvedTo(STATUS)] enum class X : R|kotlin/Enum<X>| {
         private [ResolvedTo(STATUS)] [ContainingClassKey=X] constructor(): R|X| {
             LAZY_super<R|kotlin/Enum<X>|>
@@ -351,7 +351,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationParameters.kt
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] annotationParameters.kt
-    [ResolvedTo(RAW_FIR)] annotations container
+    [ResolvedTo(BODY_RESOLVE)] annotations container
     public final [ResolvedTo(STATUS)] enum class X : R|kotlin/Enum<X>| {
         private [ResolvedTo(STATUS)] [ContainingClassKey=X] constructor(): R|X| {
             LAZY_super<R|kotlin/Enum<X>|>
@@ -391,7 +391,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationParameters.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] annotationParameters.kt
-    [ResolvedTo(RAW_FIR)] annotations container
+    [ResolvedTo(BODY_RESOLVE)] annotations container
     public final [ResolvedTo(STATUS)] enum class X : R|kotlin/Enum<X>| {
         private [ResolvedTo(STATUS)] [ContainingClassKey=X] constructor(): R|X| {
             LAZY_super<R|kotlin/Enum<X>|>
@@ -431,7 +431,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationParameters.kt
 
 ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: [ResolvedTo(IMPORTS)] annotationParameters.kt
-    [ResolvedTo(RAW_FIR)] annotations container
+    [ResolvedTo(BODY_RESOLVE)] annotations container
     public final [ResolvedTo(STATUS)] enum class X : R|kotlin/Enum<X>| {
         private [ResolvedTo(STATUS)] [ContainingClassKey=X] constructor(): R|X| {
             LAZY_super<R|kotlin/Enum<X>|>
@@ -471,7 +471,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationParameters.kt
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] annotationParameters.kt
-    [ResolvedTo(RAW_FIR)] annotations container
+    [ResolvedTo(BODY_RESOLVE)] annotations container
     public final [ResolvedTo(STATUS)] enum class X : R|kotlin/Enum<X>| {
         private [ResolvedTo(STATUS)] [ContainingClassKey=X] constructor(): R|X| {
             LAZY_super<R|kotlin/Enum<X>|>

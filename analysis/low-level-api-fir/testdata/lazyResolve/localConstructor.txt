@@ -1,6 +1,6 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] localConstructor.kt
-    [ResolvedTo(RAW_FIR)] annotations container
+    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> magic(): T { LAZY_BLOCK }
     public? final? [ResolvedTo(RAW_FIR)] class Q : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Q] constructor(): R|Q| {
@@ -13,7 +13,7 @@ FILE: [ResolvedTo(RAW_FIR)] localConstructor.kt
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] localConstructor.kt
-    [ResolvedTo(RAW_FIR)] annotations container
+    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> magic(): T { LAZY_BLOCK }
     public? final? [ResolvedTo(RAW_FIR)] class Q : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Q] constructor(): R|Q| {
@@ -26,7 +26,7 @@ FILE: [ResolvedTo(IMPORTS)] localConstructor.kt
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] localConstructor.kt
-    [ResolvedTo(RAW_FIR)] annotations container
+    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> magic(): T { LAZY_BLOCK }
     public? final? [ResolvedTo(RAW_FIR)] class Q : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Q] constructor(): R|Q| {
@@ -39,7 +39,7 @@ FILE: [ResolvedTo(IMPORTS)] localConstructor.kt
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] localConstructor.kt
-    [ResolvedTo(RAW_FIR)] annotations container
+    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> magic(): T { LAZY_BLOCK }
     public? final? [ResolvedTo(RAW_FIR)] class Q : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Q] constructor(): R|Q| {
@@ -52,7 +52,7 @@ FILE: [ResolvedTo(IMPORTS)] localConstructor.kt
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] localConstructor.kt
-    [ResolvedTo(RAW_FIR)] annotations container
+    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> magic(): T { LAZY_BLOCK }
     public? final? [ResolvedTo(SUPER_TYPES)] class Q : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Q] constructor(): R|Q| {
@@ -65,7 +65,7 @@ FILE: [ResolvedTo(IMPORTS)] localConstructor.kt
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] localConstructor.kt
-    [ResolvedTo(RAW_FIR)] annotations container
+    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> magic(): T { LAZY_BLOCK }
     public? final? [ResolvedTo(TYPES)] class Q : R|kotlin/Any| {
         public? [ResolvedTo(TYPES)] [ContainingClassKey=Q] constructor(): R|Q| {
@@ -78,7 +78,7 @@ FILE: [ResolvedTo(IMPORTS)] localConstructor.kt
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] localConstructor.kt
-    [ResolvedTo(RAW_FIR)] annotations container
+    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> magic(): T { LAZY_BLOCK }
     public final [ResolvedTo(STATUS)] class Q : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Q] constructor(): R|Q| {
@@ -91,7 +91,7 @@ FILE: [ResolvedTo(IMPORTS)] localConstructor.kt
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] localConstructor.kt
-    [ResolvedTo(RAW_FIR)] annotations container
+    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> magic(): T { LAZY_BLOCK }
     public final [ResolvedTo(STATUS)] class Q : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Q] constructor(): R|Q| {
@@ -104,7 +104,7 @@ FILE: [ResolvedTo(IMPORTS)] localConstructor.kt
 
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] localConstructor.kt
-    [ResolvedTo(RAW_FIR)] annotations container
+    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> magic(): T { LAZY_BLOCK }
     public final [ResolvedTo(STATUS)] class Q : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Q] constructor(): R|Q| {
@@ -117,7 +117,7 @@ FILE: [ResolvedTo(IMPORTS)] localConstructor.kt
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] localConstructor.kt
-    [ResolvedTo(RAW_FIR)] annotations container
+    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> magic(): T { LAZY_BLOCK }
     public final [ResolvedTo(STATUS)] class Q : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Q] constructor(): R|Q| {
@@ -151,7 +151,7 @@ FILE: [ResolvedTo(IMPORTS)] localConstructor.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] localConstructor.kt
-    [ResolvedTo(RAW_FIR)] annotations container
+    [ResolvedTo(BODY_RESOLVE)] annotations container
     public final [ResolvedTo(CONTRACTS)] fun <[ResolvedTo(CONTRACTS)] T> magic(): R|T| {
         ^magic Null(null)!!
     }
@@ -187,7 +187,7 @@ FILE: [ResolvedTo(IMPORTS)] localConstructor.kt
 
 ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: [ResolvedTo(IMPORTS)] localConstructor.kt
-    [ResolvedTo(RAW_FIR)] annotations container
+    [ResolvedTo(BODY_RESOLVE)] annotations container
     public final [ResolvedTo(CONTRACTS)] fun <[ResolvedTo(CONTRACTS)] T> magic(): R|T| {
         ^magic Null(null)!!
     }
@@ -223,7 +223,7 @@ FILE: [ResolvedTo(IMPORTS)] localConstructor.kt
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] localConstructor.kt
-    [ResolvedTo(RAW_FIR)] annotations container
+    [ResolvedTo(BODY_RESOLVE)] annotations container
     public final [ResolvedTo(CONTRACTS)] fun <[ResolvedTo(CONTRACTS)] T> magic(): R|T| {
         ^magic Null(null)!!
     }

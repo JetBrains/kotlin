@@ -1,6 +1,6 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] resolveSuperTypeFromLocalClass.kt
-    [ResolvedTo(RAW_FIR)] annotations container
+    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|one/two/UnusedClass| {
             LAZY_super<R|kotlin/Any|>
@@ -15,7 +15,7 @@ FILE: [ResolvedTo(RAW_FIR)] resolveSuperTypeFromLocalClass.kt
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] resolveSuperTypeFromLocalClass.kt
-    [ResolvedTo(RAW_FIR)] annotations container
+    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|one/two/UnusedClass| {
             LAZY_super<R|kotlin/Any|>
@@ -30,7 +30,7 @@ FILE: [ResolvedTo(IMPORTS)] resolveSuperTypeFromLocalClass.kt
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] resolveSuperTypeFromLocalClass.kt
-    [ResolvedTo(RAW_FIR)] annotations container
+    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|one/two/UnusedClass| {
             LAZY_super<R|kotlin/Any|>
@@ -45,7 +45,7 @@ FILE: [ResolvedTo(IMPORTS)] resolveSuperTypeFromLocalClass.kt
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] resolveSuperTypeFromLocalClass.kt
-    [ResolvedTo(RAW_FIR)] annotations container
+    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|one/two/UnusedClass| {
             LAZY_super<R|kotlin/Any|>
@@ -60,7 +60,7 @@ FILE: [ResolvedTo(IMPORTS)] resolveSuperTypeFromLocalClass.kt
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] resolveSuperTypeFromLocalClass.kt
-    [ResolvedTo(RAW_FIR)] annotations container
+    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|one/two/UnusedClass| {
             LAZY_super<R|kotlin/Any|>
@@ -75,7 +75,7 @@ FILE: [ResolvedTo(IMPORTS)] resolveSuperTypeFromLocalClass.kt
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] resolveSuperTypeFromLocalClass.kt
-    [ResolvedTo(RAW_FIR)] annotations container
+    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|one/two/UnusedClass| {
             LAZY_super<R|kotlin/Any|>
@@ -90,7 +90,7 @@ FILE: [ResolvedTo(IMPORTS)] resolveSuperTypeFromLocalClass.kt
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] resolveSuperTypeFromLocalClass.kt
-    [ResolvedTo(RAW_FIR)] annotations container
+    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|one/two/UnusedClass| {
             LAZY_super<R|kotlin/Any|>
@@ -105,7 +105,7 @@ FILE: [ResolvedTo(IMPORTS)] resolveSuperTypeFromLocalClass.kt
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] resolveSuperTypeFromLocalClass.kt
-    [ResolvedTo(RAW_FIR)] annotations container
+    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|one/two/UnusedClass| {
             LAZY_super<R|kotlin/Any|>
@@ -120,7 +120,7 @@ FILE: [ResolvedTo(IMPORTS)] resolveSuperTypeFromLocalClass.kt
 
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] resolveSuperTypeFromLocalClass.kt
-    [ResolvedTo(RAW_FIR)] annotations container
+    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|one/two/UnusedClass| {
             LAZY_super<R|kotlin/Any|>
@@ -135,7 +135,7 @@ FILE: [ResolvedTo(IMPORTS)] resolveSuperTypeFromLocalClass.kt
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] resolveSuperTypeFromLocalClass.kt
-    [ResolvedTo(RAW_FIR)] annotations container
+    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|one/two/UnusedClass| {
             LAZY_super<R|kotlin/Any|>
@@ -158,7 +158,7 @@ FILE: [ResolvedTo(IMPORTS)] resolveSuperTypeFromLocalClass.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] resolveSuperTypeFromLocalClass.kt
-    [ResolvedTo(RAW_FIR)] annotations container
+    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|one/two/UnusedClass| {
             LAZY_super<R|kotlin/Any|>
@@ -181,7 +181,7 @@ FILE: [ResolvedTo(IMPORTS)] resolveSuperTypeFromLocalClass.kt
 
 ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: [ResolvedTo(IMPORTS)] resolveSuperTypeFromLocalClass.kt
-    [ResolvedTo(RAW_FIR)] annotations container
+    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|one/two/UnusedClass| {
             LAZY_super<R|kotlin/Any|>
@@ -204,7 +204,7 @@ FILE: [ResolvedTo(IMPORTS)] resolveSuperTypeFromLocalClass.kt
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] resolveSuperTypeFromLocalClass.kt
-    [ResolvedTo(RAW_FIR)] annotations container
+    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|one/two/UnusedClass| {
             LAZY_super<R|kotlin/Any|>

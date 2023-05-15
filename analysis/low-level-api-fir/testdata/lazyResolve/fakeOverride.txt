@@ -1,6 +1,6 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] fakeOverride.kt
-    [ResolvedTo(RAW_FIR)] annotations container
+    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(RAW_FIR)] fun expression([ResolvedTo(RAW_FIR)] expression: IrConst<*>): R|kotlin/Unit| { LAZY_BLOCK }
     public? sealed [ResolvedTo(RAW_FIR)] class Kind<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
         protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=Kind] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Kind.asString] asString: String): R|Kind<T>| {
@@ -39,7 +39,7 @@ FILE: [ResolvedTo(RAW_FIR)] fakeOverride.kt
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] fakeOverride.kt
-    [ResolvedTo(RAW_FIR)] annotations container
+    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(RAW_FIR)] fun expression([ResolvedTo(RAW_FIR)] expression: IrConst<*>): R|kotlin/Unit| { LAZY_BLOCK }
     public? sealed [ResolvedTo(RAW_FIR)] class Kind<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
         protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=Kind] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Kind.asString] asString: String): R|Kind<T>| {
@@ -78,7 +78,7 @@ FILE: [ResolvedTo(IMPORTS)] fakeOverride.kt
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] fakeOverride.kt
-    [ResolvedTo(RAW_FIR)] annotations container
+    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun expression([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] expression: IrConst<*>): R|kotlin/Unit| { LAZY_BLOCK }
     public? sealed [ResolvedTo(RAW_FIR)] class Kind<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
         protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=Kind] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Kind.asString] asString: String): R|Kind<T>| {
@@ -117,7 +117,7 @@ FILE: [ResolvedTo(IMPORTS)] fakeOverride.kt
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] fakeOverride.kt
-    [ResolvedTo(RAW_FIR)] annotations container
+    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(COMPANION_GENERATION)] fun expression([ResolvedTo(COMPANION_GENERATION)] expression: IrConst<*>): R|kotlin/Unit| { LAZY_BLOCK }
     public? sealed [ResolvedTo(RAW_FIR)] class Kind<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
         protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=Kind] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Kind.asString] asString: String): R|Kind<T>| {
@@ -156,7 +156,7 @@ FILE: [ResolvedTo(IMPORTS)] fakeOverride.kt
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] fakeOverride.kt
-    [ResolvedTo(RAW_FIR)] annotations container
+    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(SUPER_TYPES)] fun expression([ResolvedTo(SUPER_TYPES)] expression: IrConst<*>): R|kotlin/Unit| { LAZY_BLOCK }
     public? sealed [ResolvedTo(RAW_FIR)] class Kind<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
         protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=Kind] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Kind.asString] asString: String): R|Kind<T>| {
@@ -195,7 +195,7 @@ FILE: [ResolvedTo(IMPORTS)] fakeOverride.kt
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] fakeOverride.kt
-    [ResolvedTo(RAW_FIR)] annotations container
+    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(TYPES)] fun expression([ResolvedTo(TYPES)] expression: R|IrConst<*>|): R|kotlin/Unit| { LAZY_BLOCK }
     public? sealed [ResolvedTo(RAW_FIR)] class Kind<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
         protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=Kind] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Kind.asString] asString: String): R|Kind<T>| {
@@ -234,7 +234,7 @@ FILE: [ResolvedTo(IMPORTS)] fakeOverride.kt
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] fakeOverride.kt
-    [ResolvedTo(RAW_FIR)] annotations container
+    [ResolvedTo(BODY_RESOLVE)] annotations container
     public final [ResolvedTo(STATUS)] fun expression([ResolvedTo(STATUS)] expression: R|IrConst<*>|): R|kotlin/Unit| { LAZY_BLOCK }
     public? sealed [ResolvedTo(RAW_FIR)] class Kind<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
         protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=Kind] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Kind.asString] asString: String): R|Kind<T>| {
@@ -273,7 +273,7 @@ FILE: [ResolvedTo(IMPORTS)] fakeOverride.kt
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] fakeOverride.kt
-    [ResolvedTo(RAW_FIR)] annotations container
+    [ResolvedTo(BODY_RESOLVE)] annotations container
     public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun expression([ResolvedTo(EXPECT_ACTUAL_MATCHING)] expression: R|IrConst<*>|): R|kotlin/Unit| { LAZY_BLOCK }
     public? sealed [ResolvedTo(RAW_FIR)] class Kind<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
         protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=Kind] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Kind.asString] asString: String): R|Kind<T>| {
@@ -312,7 +312,7 @@ FILE: [ResolvedTo(IMPORTS)] fakeOverride.kt
 
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] fakeOverride.kt
-    [ResolvedTo(RAW_FIR)] annotations container
+    [ResolvedTo(BODY_RESOLVE)] annotations container
     public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] fun expression([ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] expression: R|IrConst<*>|): R|kotlin/Unit| { LAZY_BLOCK }
     public? sealed [ResolvedTo(RAW_FIR)] class Kind<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
         protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=Kind] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Kind.asString] asString: String): R|Kind<T>| {
@@ -351,7 +351,7 @@ FILE: [ResolvedTo(IMPORTS)] fakeOverride.kt
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] fakeOverride.kt
-    [ResolvedTo(RAW_FIR)] annotations container
+    [ResolvedTo(BODY_RESOLVE)] annotations container
     public final [ResolvedTo(CONTRACTS)] fun expression([ResolvedTo(CONTRACTS)] expression: R|IrConst<*>|): R|kotlin/Unit| {
         when ([ResolvedTo(RAW_FIR)] lval kind: <implicit> = expression#.kind#) {
             ($subj$ is Kind.Null) ->  {
@@ -399,7 +399,7 @@ FILE: [ResolvedTo(IMPORTS)] fakeOverride.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] fakeOverride.kt
-    [ResolvedTo(RAW_FIR)] annotations container
+    [ResolvedTo(BODY_RESOLVE)] annotations container
     public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun expression([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] expression: R|IrConst<*>|): R|kotlin/Unit| {
         when ([ResolvedTo(RAW_FIR)] lval kind: <implicit> = expression#.kind#) {
             ($subj$ is Kind.Null) ->  {
@@ -447,7 +447,7 @@ FILE: [ResolvedTo(IMPORTS)] fakeOverride.kt
 
 ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: [ResolvedTo(IMPORTS)] fakeOverride.kt
-    [ResolvedTo(RAW_FIR)] annotations container
+    [ResolvedTo(BODY_RESOLVE)] annotations container
     public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun expression([ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] expression: R|IrConst<*>|): R|kotlin/Unit| {
         when ([ResolvedTo(RAW_FIR)] lval kind: <implicit> = expression#.kind#) {
             ($subj$ is Kind.Null) ->  {
@@ -495,7 +495,7 @@ FILE: [ResolvedTo(IMPORTS)] fakeOverride.kt
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] fakeOverride.kt
-    [ResolvedTo(RAW_FIR)] annotations container
+    [ResolvedTo(BODY_RESOLVE)] annotations container
     public final [ResolvedTo(BODY_RESOLVE)] fun expression([ResolvedTo(BODY_RESOLVE)] expression: R|IrConst<*>|): R|kotlin/Unit| {
         when ([ResolvedTo(BODY_RESOLVE)] lval kind: R|Kind<out kotlin/Any?>| = R|<local>/expression|.R|SubstitutionOverride</IrConst.kind: R|Kind<CapturedType(*)>|>|) {
             ($subj$ is R|Kind.Null|) ->  {

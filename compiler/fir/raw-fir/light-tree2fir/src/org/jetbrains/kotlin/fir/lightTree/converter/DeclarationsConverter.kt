@@ -120,11 +120,12 @@ class DeclarationsConverter(
             this.sourceFile = sourceFile
             this.sourceFileLinesMapping = linesMapping
             this.packageDirective = packageDirective ?: buildPackageDirective { packageFqName = context.packageFqName }
-            annotationsContainer = fileAnnotationContainer
-                 ?: buildFileAnnotationsContainer {
-                    moduleData = baseModuleData
-                    containingFileSymbol = fileSymbol
-                }
+            annotationsContainer = fileAnnotationContainer ?: buildFileAnnotationsContainer {
+                moduleData = baseModuleData
+                containingFileSymbol = fileSymbol
+                resolvePhase = FirResolvePhase.BODY_RESOLVE
+            }
+
             imports += importList
             declarations += firDeclarationList
         }
@@ -328,6 +329,10 @@ class DeclarationsConverter(
                     ANNOTATION -> container += convertAnnotation(node)
                     ANNOTATION_ENTRY -> container += convertAnnotationEntry(node)
                 }
+            }
+
+            annotations.ifEmpty {
+                resolvePhase = FirResolvePhase.BODY_RESOLVE
             }
         }
     }

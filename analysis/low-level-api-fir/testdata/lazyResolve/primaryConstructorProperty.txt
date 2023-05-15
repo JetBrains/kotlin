@@ -1,6 +1,6 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] primaryConstructorProperty.kt
-    [ResolvedTo(RAW_FIR)] annotations container
+    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor([ResolvedTo(RAW_FIR)] a: Boolean, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/A.prop] prop: Int = LAZY_EXPRESSION): R|A| {
             LAZY_super<R|kotlin/Any|>
@@ -15,7 +15,7 @@ FILE: [ResolvedTo(RAW_FIR)] primaryConstructorProperty.kt
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] primaryConstructorProperty.kt
-    [ResolvedTo(RAW_FIR)] annotations container
+    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor([ResolvedTo(RAW_FIR)] a: Boolean, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/A.prop] prop: Int = LAZY_EXPRESSION): R|A| {
             LAZY_super<R|kotlin/Any|>
@@ -30,7 +30,7 @@ FILE: [ResolvedTo(IMPORTS)] primaryConstructorProperty.kt
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] primaryConstructorProperty.kt
-    [ResolvedTo(RAW_FIR)] annotations container
+    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
         public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingClassKey=A] constructor([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] a: Boolean, [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [CorrespondingProperty=/A.prop] prop: Int = LAZY_EXPRESSION): R|A| {
             LAZY_super<R|kotlin/Any|>
@@ -45,7 +45,7 @@ FILE: [ResolvedTo(IMPORTS)] primaryConstructorProperty.kt
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] primaryConstructorProperty.kt
-    [ResolvedTo(RAW_FIR)] annotations container
+    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
         public? [ResolvedTo(COMPANION_GENERATION)] [ContainingClassKey=A] constructor([ResolvedTo(COMPANION_GENERATION)] a: Boolean, [ResolvedTo(COMPANION_GENERATION)] [CorrespondingProperty=/A.prop] prop: Int = LAZY_EXPRESSION): R|A| {
             LAZY_super<R|kotlin/Any|>
@@ -60,7 +60,7 @@ FILE: [ResolvedTo(IMPORTS)] primaryConstructorProperty.kt
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] primaryConstructorProperty.kt
-    [ResolvedTo(RAW_FIR)] annotations container
+    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(SUPER_TYPES)] class A : R|kotlin/Any| {
         public? [ResolvedTo(SUPER_TYPES)] [ContainingClassKey=A] constructor([ResolvedTo(SUPER_TYPES)] a: Boolean, [ResolvedTo(SUPER_TYPES)] [CorrespondingProperty=/A.prop] prop: Int = LAZY_EXPRESSION): R|A| {
             LAZY_super<R|kotlin/Any|>
@@ -75,7 +75,7 @@ FILE: [ResolvedTo(IMPORTS)] primaryConstructorProperty.kt
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] primaryConstructorProperty.kt
-    [ResolvedTo(RAW_FIR)] annotations container
+    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(TYPES)] class A : R|kotlin/Any| {
         public? [ResolvedTo(TYPES)] [ContainingClassKey=A] constructor([ResolvedTo(TYPES)] a: R|kotlin/Boolean|, [ResolvedTo(TYPES)] [CorrespondingProperty=/A.prop] prop: R|kotlin/Int| = LAZY_EXPRESSION): R|A| {
             LAZY_super<R|kotlin/Any|>
@@ -90,7 +90,7 @@ FILE: [ResolvedTo(IMPORTS)] primaryConstructorProperty.kt
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] primaryConstructorProperty.kt
-    [ResolvedTo(RAW_FIR)] annotations container
+    [ResolvedTo(BODY_RESOLVE)] annotations container
     public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor([ResolvedTo(STATUS)] a: R|kotlin/Boolean|, [ResolvedTo(STATUS)] [CorrespondingProperty=/A.prop] prop: R|kotlin/Int| = LAZY_EXPRESSION): R|A| {
             LAZY_super<R|kotlin/Any|>
@@ -105,7 +105,7 @@ FILE: [ResolvedTo(IMPORTS)] primaryConstructorProperty.kt
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] primaryConstructorProperty.kt
-    [ResolvedTo(RAW_FIR)] annotations container
+    [ResolvedTo(BODY_RESOLVE)] annotations container
     public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
         public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=A] constructor([ResolvedTo(EXPECT_ACTUAL_MATCHING)] a: R|kotlin/Boolean|, [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [CorrespondingProperty=/A.prop] prop: R|kotlin/Int| = LAZY_EXPRESSION): R|A| {
             LAZY_super<R|kotlin/Any|>
@@ -120,7 +120,7 @@ FILE: [ResolvedTo(IMPORTS)] primaryConstructorProperty.kt
 
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] primaryConstructorProperty.kt
-    [ResolvedTo(RAW_FIR)] annotations container
+    [ResolvedTo(BODY_RESOLVE)] annotations container
     public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
         public [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] [ContainingClassKey=A] constructor([ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] a: R|kotlin/Boolean|, [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] [CorrespondingProperty=/A.prop] prop: R|kotlin/Int| = LAZY_EXPRESSION): R|A| {
             LAZY_super<R|kotlin/Any|>
@@ -135,7 +135,7 @@ FILE: [ResolvedTo(IMPORTS)] primaryConstructorProperty.kt
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] primaryConstructorProperty.kt
-    [ResolvedTo(RAW_FIR)] annotations container
+    [ResolvedTo(BODY_RESOLVE)] annotations container
     public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
         public [ResolvedTo(CONTRACTS)] [ContainingClassKey=A] constructor([ResolvedTo(CONTRACTS)] a: R|kotlin/Boolean|, [ResolvedTo(CONTRACTS)] [CorrespondingProperty=/A.prop] prop: R|kotlin/Int| = IntegerLiteral(42)): R|A| {
             super<R|kotlin/Any|>()
@@ -150,7 +150,7 @@ FILE: [ResolvedTo(IMPORTS)] primaryConstructorProperty.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] primaryConstructorProperty.kt
-    [ResolvedTo(RAW_FIR)] annotations container
+    [ResolvedTo(BODY_RESOLVE)] annotations container
     public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=A] constructor([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] a: R|kotlin/Boolean|, [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [CorrespondingProperty=/A.prop] prop: R|kotlin/Int| = IntegerLiteral(42)): R|A| {
             super<R|kotlin/Any|>()
@@ -165,7 +165,7 @@ FILE: [ResolvedTo(IMPORTS)] primaryConstructorProperty.kt
 
 ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: [ResolvedTo(IMPORTS)] primaryConstructorProperty.kt
-    [ResolvedTo(RAW_FIR)] annotations container
+    [ResolvedTo(BODY_RESOLVE)] annotations container
     public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
         public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] [ContainingClassKey=A] constructor([ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] a: R|kotlin/Boolean|, [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] [CorrespondingProperty=/A.prop] prop: R|kotlin/Int| = IntegerLiteral(42)): R|A| {
             super<R|kotlin/Any|>()
@@ -180,7 +180,7 @@ FILE: [ResolvedTo(IMPORTS)] primaryConstructorProperty.kt
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] primaryConstructorProperty.kt
-    [ResolvedTo(RAW_FIR)] annotations container
+    [ResolvedTo(BODY_RESOLVE)] annotations container
     public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] constructor([ResolvedTo(BODY_RESOLVE)] a: R|kotlin/Boolean|, [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/A.prop] prop: R|kotlin/Int| = Int(42)): R|A| {
             super<R|kotlin/Any|>()
