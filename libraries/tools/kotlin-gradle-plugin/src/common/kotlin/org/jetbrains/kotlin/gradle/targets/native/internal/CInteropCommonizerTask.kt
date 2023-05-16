@@ -275,11 +275,11 @@ internal open class CInteropCommonizerTask
             .mapNotNull { compilation -> CInteropCommonizerDependent.from(compilation) }
             .toSet()
 
-        val fromSourceSets = multiplatformExtension.sourceSets
+        val fromSourceSets = multiplatformExtension.awaitSourceSets()
             .mapNotNull { sourceSet -> CInteropCommonizerDependent.from(sourceSet) }
             .toSet()
 
-        val fromSourceSetsAssociateCompilations = multiplatformExtension.sourceSets
+        val fromSourceSetsAssociateCompilations = multiplatformExtension.awaitSourceSets()
             .mapNotNull { sourceSet -> CInteropCommonizerDependent.fromAssociateCompilations(sourceSet) }
             .toSet()
 

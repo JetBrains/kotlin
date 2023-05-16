@@ -177,7 +177,7 @@ open class KotlinProjectExtension @Inject constructor(project: Project) : Kotlin
         }
 
     internal suspend fun awaitSourceSets(): NamedDomainObjectContainer<KotlinSourceSet> {
-        KotlinPluginLifecycle.Stage.AfterFinaliseDsl.await()
+        KotlinPluginLifecycle.Stage.AfterFinaliseRefinesEdges.await()
         return sourceSets
     }
 }
