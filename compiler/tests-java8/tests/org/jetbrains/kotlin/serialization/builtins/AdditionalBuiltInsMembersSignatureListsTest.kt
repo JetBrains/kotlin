@@ -78,5 +78,15 @@ class AdditionalBuiltInsMembersSignatureListsTest : KotlinTestWithEnvironment() 
     private val LATE_JDK_SIGNATURES = mapOf(
         "java/lang/String" to setOf("isBlank()Z", "lines()Ljava/util/stream/Stream;", "repeat(I)Ljava/lang/String;"),
         "java/lang/CharSequence" to setOf("isEmpty()Z"),
+        "java/util/List" to setOf(
+            // From JDK 21
+            "addFirst(Ljava/lang/Object;)V",
+            "addLast(Ljava/lang/Object;)V",
+            "getFirst()Ljava/lang/Object;",
+            "getLast()Ljava/lang/Object;",
+            "removeFirst()Ljava/lang/Object;",
+            "removeLast()Ljava/lang/Object;",
+            "reversed()Ljava/util/List;",
+        )
     )
 }
