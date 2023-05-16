@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformerDispatcher
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirTowerDataContextCollector
 import org.jetbrains.kotlin.fir.resolve.transformers.plugin.FirAnnotationArgumentsResolveTransformer
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
@@ -84,20 +83,20 @@ private class LLFirAnnotationArgumentsTargetResolver(
 
     override fun doLazyResolveUnderLock(target: FirElementWithResolveState) {
         FirLazyBodiesCalculator.calculateAnnotations(target)
-        transformer.transformAnnotations(target)
+        transformAnnotations(target)
     }
 }
 
-internal fun FirAbstractBodyResolveTransformerDispatcher.transformAnnotations(target: FirElementWithResolveState) {
+internal fun LLFirAbstractBodyTargetResolver.transformAnnotations(target: FirElementWithResolveState) {
     when {
         target is FirRegularClass -> {
-            target.transformAnnotations(declarationsTransformer, ResolutionMode.ContextIndependent)
-            target.transformTypeParameters(declarationsTransformer, ResolutionMode.ContextIndependent)
-            target.transformSuperTypeRefs(declarationsTransformer, ResolutionMode.ContextIndependent)
+            target.transformAnnotations(transformer.declarationsTransformer, ResolutionMode.ContextIndependent)
+            target.transformTypeParameters(transformer.declarationsTransformer, ResolutionMode.ContextIndependent)
+            target.transformSuperTypeRefs(transformer.declarationsTransformer, ResolutionMode.ContextIndependent)
         }
 
         target.isRegularDeclarationWithAnnotation -> {
-            target.transformSingle(this, ResolutionMode.ContextIndependent)
+            target.transformSingle(transformer, ResolutionMode.ContextIndependent)
         }
 
         else -> throwUnexpectedFirElementError(target)
