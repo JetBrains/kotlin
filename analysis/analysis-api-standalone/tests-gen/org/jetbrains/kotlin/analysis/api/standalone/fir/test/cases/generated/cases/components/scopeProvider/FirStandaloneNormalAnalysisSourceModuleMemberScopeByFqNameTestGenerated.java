@@ -105,4 +105,10 @@ public class FirStandaloneNormalAnalysisSourceModuleMemberScopeByFqNameTestGener
     public void testMutableList() throws Exception {
         runTest("analysis/analysis-api/testData/components/scopeProvider/memberScopeByFqName/MutableList.kt");
     }
+
+    @Test
+    @TestMetadata("substitutionOverride.kt")
+    public void testSubstitutionOverride() throws Exception {
+        runTest("analysis/analysis-api/testData/components/scopeProvider/memberScopeByFqName/substitutionOverride.kt");
+    }
 }

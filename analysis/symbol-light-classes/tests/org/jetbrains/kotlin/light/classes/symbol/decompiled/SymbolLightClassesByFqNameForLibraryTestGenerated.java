@@ -283,6 +283,12 @@ public class SymbolLightClassesByFqNameForLibraryTestGenerated extends AbstractS
     }
 
     @Test
+    @TestMetadata("SubstitutionOverride.kt")
+    public void testSubstitutionOverride() throws Exception {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/SubstitutionOverride.kt");
+    }
+
+    @Test
     @TestMetadata("Throws.kt")
     public void testThrows() throws Exception {
         runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/Throws.kt");
@@ -319,6 +325,12 @@ public class SymbolLightClassesByFqNameForLibraryTestGenerated extends AbstractS
         @TestMetadata("Property.kt")
         public void testProperty() throws Exception {
             runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/delegation/Property.kt");
+        }
+
+        @Test
+        @TestMetadata("WithImplicitType.kt")
+        public void testWithImplicitType() throws Exception {
+            runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/delegation/WithImplicitType.kt");
         }
     }
 

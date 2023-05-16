@@ -244,6 +244,11 @@ public class CompilerLightClassTestGenerated extends AbstractCompilerLightClassT
         runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/StubOrderForOverloads.kt");
     }
 
+    @TestMetadata("SubstitutionOverride.kt")
+    public void testSubstitutionOverride() throws Exception {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/SubstitutionOverride.kt");
+    }
+
     @TestMetadata("Throws.kt")
     public void testThrows() throws Exception {
         runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/Throws.kt");
@@ -402,6 +407,11 @@ public class CompilerLightClassTestGenerated extends AbstractCompilerLightClassT
         @TestMetadata("Property.kt")
         public void testProperty() throws Exception {
             runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/delegation/Property.kt");
+        }
+
+        @TestMetadata("WithImplicitType.kt")
+        public void testWithImplicitType() throws Exception {
+            runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/delegation/WithImplicitType.kt");
         }
     }
 

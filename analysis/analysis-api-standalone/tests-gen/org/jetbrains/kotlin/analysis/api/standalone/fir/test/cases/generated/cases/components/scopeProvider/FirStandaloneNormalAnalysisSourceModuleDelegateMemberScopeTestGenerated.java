@@ -59,6 +59,12 @@ public class FirStandaloneNormalAnalysisSourceModuleDelegateMemberScopeTestGener
     }
 
     @Test
+    @TestMetadata("withImplicitType.kt")
+    public void testWithImplicitType() throws Exception {
+        runTest("analysis/analysis-api/testData/components/scopeProvider/delegatedMemberScope/withImplicitType.kt");
+    }
+
+    @Test
     @TestMetadata("withOverridden.kt")
     public void testWithOverridden() throws Exception {
         runTest("analysis/analysis-api/testData/components/scopeProvider/delegatedMemberScope/withOverridden.kt");

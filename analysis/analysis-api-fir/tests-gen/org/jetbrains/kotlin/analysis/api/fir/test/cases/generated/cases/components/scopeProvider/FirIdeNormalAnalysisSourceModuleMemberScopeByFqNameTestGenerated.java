@@ -106,6 +106,12 @@ public class FirIdeNormalAnalysisSourceModuleMemberScopeByFqNameTestGenerated ex
         runTest("analysis/analysis-api/testData/components/scopeProvider/memberScopeByFqName/MutableList.kt");
     }
 
+    @Test
+    @TestMetadata("substitutionOverride.kt")
+    public void testSubstitutionOverride() throws Exception {
+        runTest("analysis/analysis-api/testData/components/scopeProvider/memberScopeByFqName/substitutionOverride.kt");
+    }
+
     @Nested
     @TestMetadata("analysis/analysis-api/testData/components/scopeProvider/memberScopeByFqName/withTestCompilerPluginEnabled")
     @TestDataPath("$PROJECT_ROOT")
