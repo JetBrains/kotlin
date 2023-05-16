@@ -11,11 +11,11 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinTargetHierarchy.SourceSetTree
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetHierarchyBuilder
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetHierarchyDescriptor
 
-@ExperimentalKotlinGradlePluginApi
 interface KotlinTargetHierarchyDsl {
+    @ExperimentalKotlinGradlePluginApi
     fun apply(
         hierarchyDescriptor: KotlinTargetHierarchyDescriptor,
-        describeExtension: (KotlinTargetHierarchyBuilder.Root.() -> Unit)? = null
+        describeExtension: (KotlinTargetHierarchyBuilder.Root.() -> Unit)? = null,
     )
 
     /**
@@ -81,7 +81,13 @@ interface KotlinTargetHierarchyDsl {
      * @param describeExtension: Additional groups can  be described to extend the 'default'/'natural' hierarchy:
      * @see KotlinTargetHierarchyDescriptor.extend
      */
-    fun default(describeExtension: (KotlinTargetHierarchyBuilder.Root.() -> Unit)? = null)
+    fun default()
+
+    /**
+     * ## See [default]
+     */
+    @ExperimentalKotlinGradlePluginApi
+    fun default(describeExtension: (KotlinTargetHierarchyBuilder.Root.() -> Unit))
 
     /**
      * Allows to create a fully custom hierarchy (no defaults applied)
@@ -167,5 +173,6 @@ interface KotlinTargetHierarchyDsl {
      *                iosX64Main   iosArm64Main
      * ```
      */
+    @ExperimentalKotlinGradlePluginApi
     fun custom(describe: KotlinTargetHierarchyBuilder.Root.() -> Unit)
 }
