@@ -154,7 +154,7 @@ class FirSignatureEnhancement(
                 val getterDelegate = firElement.getter.delegate
                 val enhancedGetterSymbol = if (getterDelegate is FirJavaMethod) {
                     enhanceMethod(
-                        getterDelegate, getterDelegate.symbol.callableId, getterDelegate.name,
+                        getterDelegate, getterDelegate.symbol.callableId, getterDelegate.name, enhancedTypeParameters = null,
                     )
                 } else {
                     getterDelegate.symbol
@@ -162,7 +162,7 @@ class FirSignatureEnhancement(
                 val setterDelegate = firElement.setter?.delegate
                 val enhancedSetterSymbol = if (setterDelegate is FirJavaMethod) {
                     enhanceMethod(
-                        setterDelegate, setterDelegate.symbol.callableId, setterDelegate.name,
+                        setterDelegate, setterDelegate.symbol.callableId, setterDelegate.name, enhancedTypeParameters = null,
                     )
                 } else {
                     setterDelegate?.symbol
@@ -195,14 +195,20 @@ class FirSignatureEnhancement(
         if (firMethod !is FirJavaMethod && firMethod !is FirJavaConstructor) {
             return original
         }
-        enhanceTypeParameterBoundsForMethod(firMethod)
-        return enhanceMethod(firMethod, original.callableId, name)
+
+        val enhancedParameters = enhanceTypeParameterBoundsForMethod(firMethod)
+        return enhanceMethod(firMethod, original.callableId, name, enhancedParameters)
     }
 
+    /**
+     * @param enhancedTypeParameters pass enhanced type parameters that will be used instead of original ones.
+     * **null** means that [enhanceMethod] will use the original type parameters to create an enhanced function
+     */
     private fun enhanceMethod(
         firMethod: FirFunction,
         methodId: CallableId,
-        name: Name?
+        name: Name?,
+        enhancedTypeParameters: List<FirTypeParameterRef>?,
     ): FirFunctionSymbol<*> {
         val predefinedEnhancementInfo =
             SignatureBuildingComponents.signature(
@@ -282,11 +288,11 @@ class FirSignatureEnhancement(
                     moduleData = this@FirSignatureEnhancement.moduleData
                     resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
                     origin = FirDeclarationOrigin.Enhancement
-                    this.typeParameters += firMethod.typeParameters
+                    this.typeParameters += (enhancedTypeParameters ?: firMethod.typeParameters)
                 }
             }
             is FirJavaMethod -> {
-                isJavaRecordComponent = firMethod.isJavaRecordComponent ?: false
+                isJavaRecordComponent = firMethod.isJavaRecordComponent == true
                 FirSimpleFunctionBuilder().apply {
                     source = firMethod.source
                     moduleData = this@FirSignatureEnhancement.moduleData
@@ -304,12 +310,18 @@ class FirSignatureEnhancement(
                     status = firMethod.status
                     symbol = FirNamedFunctionSymbol(methodId).also { functionSymbol = it }
                     resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
-                    typeParameters += firMethod.typeParameters.map { typeParameter ->
+                    typeParameters += (enhancedTypeParameters ?: firMethod.typeParameters).map { typeParameter ->
+                        // FirJavaMethod contains only FirTypeParameter so [enhancedTypeParameters] must have the same type
+                        require(typeParameter is FirTypeParameter) {
+                            "Unexpected type parameter type: ${typeParameter::class.simpleName}"
+                        }
+
                         buildTypeParameterCopy(typeParameter) {
                             origin = FirDeclarationOrigin.Enhancement
                             containingDeclarationSymbol = functionSymbol
                         }
                     }
+
                     dispatchReceiverType = firMethod.dispatchReceiverType
                     attributes = firMethod.attributes.copy()
                 }
@@ -369,19 +381,24 @@ class FirSignatureEnhancement(
      *
      * See the usages of FirJavaTypeConversionMode.TYPE_PARAMETER_BOUND_FIRST_ROUND
      */
-    fun performFirstRoundOfBoundsResolution(typeParameters: List<FirTypeParameterRef>): List<List<FirTypeRef>> {
+    fun performFirstRoundOfBoundsResolution(typeParameters: List<FirTypeParameterRef>): Pair<List<List<FirTypeRef>>, List<FirTypeParameterRef>> {
         val initialBounds: MutableList<List<FirTypeRef>> = mutableListOf()
-
+        val typeParametersCopy = ArrayList<FirTypeParameterRef>(typeParameters.size)
         for (typeParameter in typeParameters) {
-            if (typeParameter is FirTypeParameter) {
+            typeParametersCopy += if (typeParameter is FirTypeParameter) {
                 initialBounds.add(typeParameter.bounds.toList())
-                typeParameter.replaceBounds(typeParameter.bounds.map {
-                    it.resolveIfJavaType(session, javaTypeParameterStack, FirJavaTypeConversionMode.TYPE_PARAMETER_BOUND_FIRST_ROUND)
-                })
+                buildTypeParameterCopy(typeParameter) {
+                    bounds.clear()
+                    typeParameter.bounds.mapTo(bounds) {
+                        it.resolveIfJavaType(session, javaTypeParameterStack, FirJavaTypeConversionMode.TYPE_PARAMETER_BOUND_FIRST_ROUND)
+                    }
+                }
+            } else {
+                typeParameter
             }
         }
 
-        return initialBounds
+        return initialBounds to typeParametersCopy
     }
 
     /**
@@ -437,9 +454,10 @@ class FirSignatureEnhancement(
         }
     }
 
-    private fun enhanceTypeParameterBoundsForMethod(firMethod: FirFunction) {
-        val initialBounds = performFirstRoundOfBoundsResolution(firMethod.typeParameters)
-        enhanceTypeParameterBoundsAfterFirstRound(firMethod.typeParameters, initialBounds)
+    private fun enhanceTypeParameterBoundsForMethod(firMethod: FirFunction): List<FirTypeParameterRef> {
+        val (initialBounds, copiedParameters) = performFirstRoundOfBoundsResolution(firMethod.typeParameters)
+        enhanceTypeParameterBoundsAfterFirstRound(copiedParameters, initialBounds)
+        return copiedParameters
     }
 
     private inline fun List<FirTypeParameterRef>.replaceBounds(block: (FirTypeParameter, FirTypeRef) -> FirTypeRef) {

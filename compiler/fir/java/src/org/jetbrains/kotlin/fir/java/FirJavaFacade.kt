@@ -176,7 +176,9 @@ abstract class FirJavaFacade(
         //   as we have a nested ordering here.
 
         val enhancement = FirSignatureEnhancement(firJavaClass, session) { emptyList() }
-        val initialBounds = enhancement.performFirstRoundOfBoundsResolution(firJavaClass.typeParameters)
+        val (initialBounds, enhancedTypeParameters) = enhancement.performFirstRoundOfBoundsResolution(firJavaClass.typeParameters)
+        firJavaClass.typeParameters.clear()
+        firJavaClass.typeParameters += enhancedTypeParameters
 
         // 1. (will happen lazily in FirJavaClass.annotations) Resolve annotations
         // 2. Enhance type parameter bounds - may refer to each other, take default nullability from annotations
