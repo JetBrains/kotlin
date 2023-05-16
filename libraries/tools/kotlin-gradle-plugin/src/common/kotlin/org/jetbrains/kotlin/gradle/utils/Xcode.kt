@@ -15,9 +15,20 @@ import org.jetbrains.kotlin.konan.target.Family.*
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toUpperCaseAsciiOnly
+import java.io.Serializable
 
 @InternalKotlinGradlePluginApi
 val Xcode = XcodeUtils.INSTANCE
+
+@InternalKotlinGradlePluginApi
+data class XcodeVersion(val major: Int, val minor: Int) : Serializable, Comparable<XcodeVersion> {
+    override fun compareTo(other: XcodeVersion): Int {
+        return when (val majorComparison = major.compareTo(other.major)) {
+            0 -> minor.compareTo(other.minor)
+            else -> majorComparison
+        }
+    }
+}
 
 @InternalKotlinGradlePluginApi
 class XcodeUtils private constructor() {
@@ -25,11 +36,21 @@ class XcodeUtils private constructor() {
     companion object {
         internal val INSTANCE: XcodeUtils? =
             if (HostManager.hostIsMac) XcodeUtils() else null
+
+        internal fun parseFromXcodebuild(output: String): XcodeVersion? {
+            val version = output.lines()[0].removePrefix("Xcode ")
+            val split = version.split("(\\s+|\\.|-)".toRegex())
+            return XcodeVersion(
+                major = split[0].toIntOrNull() ?: return null,
+                minor = split.getOrNull(1)?.toIntOrNull() ?: return null,
+            )
+
+        }
     }
 
-    val currentVersion: String by lazy {
+    val currentVersion: XcodeVersion by lazy {
         val out = runCommand(listOf("/usr/bin/xcrun", "xcodebuild", "-version"))
-        out.lines()[0].removePrefix("Xcode ")
+        parseFromXcodebuild(out) ?: XcodeVersion(1, 0)
     }
 
     private val defaultTestDevices: Map<Family, String> by lazy {
@@ -66,7 +87,7 @@ class XcodeUtils private constructor() {
     fun getDefaultTestDeviceId(target: KonanTarget): String? = defaultTestDevices[target.family]
 
     fun defaultBitcodeEmbeddingMode(target: KonanTarget, buildType: NativeBuildType): BitcodeEmbeddingMode {
-        if (currentVersion.split(".")[0].toInt() < 14) {
+        if (currentVersion.major < 14) {
             if (target.family in listOf(IOS, WATCHOS, TVOS) && target.architecture in listOf(ARM32, ARM64)) {
                 when (buildType) {
                     NativeBuildType.RELEASE -> return BitcodeEmbeddingMode.BITCODE

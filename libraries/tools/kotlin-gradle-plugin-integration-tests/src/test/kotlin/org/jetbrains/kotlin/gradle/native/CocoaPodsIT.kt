@@ -1727,6 +1727,7 @@ class CocoaPodsIT : BaseGradleIT() {
                     spec.summary                  = 'CocoaPods test library'
                     spec.vendored_frameworks      = 'build/cocoapods/framework/${frameworkName ?: "kotlin_library"}.framework'
                     spec.libraries                = 'c++'
+                    spec.ios.deployment_target = '11.0'
                     spec.dependency 'pod_dependency', '1.0'
                     spec.dependency 'subspec_dependency/Core', '1.0'
                     spec.pod_target_xcconfig = {
