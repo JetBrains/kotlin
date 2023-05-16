@@ -8,6 +8,7 @@ buildscript {
 
 plugins {
     kotlin("jvm")
+    id("jps-compatible")
 }
 
 repositories {
