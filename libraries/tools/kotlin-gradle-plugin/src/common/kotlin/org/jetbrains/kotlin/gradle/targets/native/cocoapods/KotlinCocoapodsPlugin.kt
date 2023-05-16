@@ -537,6 +537,7 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
                 task.family.set(family)
                 task.platformSettings.set(platformSettings)
                 task.pods.set(cocoapodsExtension.pods)
+                task.xcodeVersion.set(Xcode?.currentVersion)
             }
 
             project.registerTask<PodInstallSyntheticTask>(family.toPodInstallSyntheticTaskName) { task ->

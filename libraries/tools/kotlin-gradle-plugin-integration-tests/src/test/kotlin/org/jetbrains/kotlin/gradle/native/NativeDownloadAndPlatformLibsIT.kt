@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.gradle.transformProjectWithPluginsDsl
 import org.jetbrains.kotlin.gradle.util.modify
 import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
 import org.jetbrains.kotlin.gradle.utils.Xcode
+import org.jetbrains.kotlin.gradle.utils.XcodeVersion
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.presetName
@@ -252,15 +253,8 @@ class NativeDownloadAndPlatformLibsIT : BaseGradleIT() {
         Assume.assumeTrue(maven != MAVEN_CENTRAL)
 
         if (HostManager.hostIsMac) {
-            val xcodeVersion = Xcode!!.currentVersion
-            val versionSplit = xcodeVersion.split("(\\s+|\\.|-)".toRegex())
-            check(versionSplit.size >= 2) {
-                "Unrecognised version of Xcode $xcodeVersion was split to $versionSplit"
-            }
-            val major = versionSplit[0].toInt()
-            val minor = versionSplit[1].toInt()
             // Building platform libs require Xcode 14.1
-            Assume.assumeTrue(major >= 14 && minor >= 1)
+            Assume.assumeTrue(Xcode!!.currentVersion >= XcodeVersion(14, 1))
         }
 
         with(transformNativeTestProjectWithPluginDsl("native-download-maven")) {

@@ -364,7 +364,7 @@ class GeneralNativeIT : BaseGradleIT() {
             frameworkPaths.forEach { assertFileExists(it) }
 
             assertTrue(fileInWorkingDir(headerPaths[0]).readText().contains("+ (int32_t)exported"))
-            val xcodeMajorVersion = Xcode!!.currentVersion.split(".")[0].toInt()
+            val xcodeMajorVersion = Xcode!!.currentVersion.major
 
             // Check that by default release frameworks have bitcode embedded.
             withNativeCommandLineArguments(":linkMainReleaseFrameworkIos") { arguments ->
