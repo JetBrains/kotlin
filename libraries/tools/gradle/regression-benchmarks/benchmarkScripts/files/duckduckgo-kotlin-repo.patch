@@ -1,21 +1,69 @@
+ diff --git a/anvil/anvil-compiler/src/main/java/com/duckduckgo/anvil/compiler/ContributesRemoteFeatureCodeGenerator.kt b/anvil/anvil-compiler/src/main/java/com/duckduckgo/anvil/compiler/ContributesRemoteFeatureCodeGenerator.kt
+index 483cc75b1..d24e836ab 100644
+--- a/anvil/anvil-compiler/src/main/java/com/duckduckgo/anvil/compiler/ContributesRemoteFeatureCodeGenerator.kt
++++ b/anvil/anvil-compiler/src/main/java/com/duckduckgo/anvil/compiler/ContributesRemoteFeatureCodeGenerator.kt
+@@ -827,7 +827,7 @@ class ContributesRemoteFeatureCodeGenerator : CodeGenerator {
+         }
+ 
+         // validate functions must be annotated with DefaultValue
+-        if (boundType.declaredFunctions().any { !it.isAnnotatedWith(Toggle.DefaultValue::class.fqName) }) {
++        if (boundType.declaredFunctions().any { !it.isAnnotatedWith(listOf(Toggle.DefaultValue::class.fqName)) }) {
+             throw AnvilCompilationException(
+                 "All functions in ${boundType.fqName} must be annotated with [Toggle.DefaultValue]",
+                 element = vmClass.clazz.identifyingElement,
+diff --git a/anvil/anvil-compiler/src/main/java/com/duckduckgo/anvil/compiler/Extensions.kt b/anvil/anvil-compiler/src/main/java/com/duckduckgo/anvil/compiler/Extensions.kt
+index 8b38dd9a3..20dd1f342 100644
+--- a/anvil/anvil-compiler/src/main/java/com/duckduckgo/anvil/compiler/Extensions.kt
++++ b/anvil/anvil-compiler/src/main/java/com/duckduckgo/anvil/compiler/Extensions.kt
+@@ -17,9 +17,11 @@
+ package com.duckduckgo.anvil.compiler
+ 
+ import com.squareup.anvil.annotations.ExperimentalAnvilApi
++import com.squareup.anvil.compiler.internal.fqNameOrNull
+ import com.squareup.anvil.compiler.internal.reference.AnnotatedReference
+ import com.squareup.anvil.compiler.internal.reference.AnnotationReference
+ import com.squareup.anvil.compiler.internal.reference.ClassReference
++import com.squareup.anvil.compiler.internal.reference.FunctionReference
+ import com.squareup.anvil.compiler.internal.reference.argumentAt
+ import org.jetbrains.kotlin.name.FqName
+ 
+@@ -31,6 +33,18 @@ internal fun AnnotatedReference.isAnnotatedWith(fqName: List<FqName>): Boolean {
+     return annotations.any { it.fqName in fqName }
+ }
+ 
++@OptIn(ExperimentalAnvilApi::class)
++internal fun FunctionReference.isAnnotatedWith(fqNames: List<FqName>): Boolean {
++    return when (this) {
++        is FunctionReference.Psi -> function.annotations.any { annotation ->
++            fqNames.any { annotation.fqNameOrNull(module) == it }
++        }
++        is FunctionReference.Descriptor  -> fqNames.any { fqName ->
++            function.annotations.any { it.fqName == fqName }
++        }
++    }
++}
++
+ @OptIn(ExperimentalAnvilApi::class)
+ internal fun AnnotatedReference.fqNameIntersect(fqName: List<FqName>): List<FqName> {
+     annotations.map { it.fqName }.intersect(fqName.toSet()).let {
 diff --git a/build.gradle b/build.gradle
-index 738db1cd9..a79b8a479 100644
+index 1a1c2897c..768116f6f 100644
 --- a/build.gradle
 +++ b/build.gradle
 @@ -3,9 +3,8 @@
  buildscript {
-
+ 
      ext {
 -        kotlin_version = '1.7.10'
          spotless = "6.1.2"
 -        anvil_version = "2.4.1"
-+        anvil_version = "2.4.4"
++        anvil_version = "2.4.5"
          gradle_plugin = "7.2.2" // When updating, also update lint_version
          lint_version = "30.2.2" // This value must always be gradle_plugin + 23
          min_sdk = 23
 @@ -16,6 +15,7 @@ buildscript {
      }
-
+ 
      repositories {
 +        mavenLocal()
          google()
@@ -27,21 +75,21 @@ index 738db1cd9..a79b8a479 100644
          classpath "com.squareup.anvil:gradle-plugin:$anvil_version"
 -        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
 +        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
-
+ 
          // NOTE: Do not place your application dependencies here; they belong
          // in the individual module build.gradle files
 @@ -38,6 +38,7 @@ plugins {
-
+ 
  allprojects {
      repositories {
 +        mavenLocal()
          google()
          mavenCentral()
      }
-@@ -139,4 +140,4 @@ fladle {
+@@ -138,4 +139,4 @@ fladle {
      }
  }
-
+ 
 -apply plugin: 'android-reporting'
 \ No newline at end of file
 +apply plugin: 'android-reporting'
@@ -52,19 +100,27 @@ index 709ee46cd..272c1dd8f 100644
 @@ -21,3 +21,4 @@ org.gradle.caching=true
  org.gradle.parallel=true
  org.gradle.configureondemand=true
-
-+kotlinVersion=<current_version>
+ 
++kotlinVersion=<kotlin_version>
 diff --git a/versions.properties b/versions.properties
-index 8cdd45631..dd1f42aaf 100644
+index b6fea38be..fcd8cdb7b 100644
 --- a/versions.properties
 +++ b/versions.properties
-@@ -77,7 +77,8 @@ version.jakewharton.rxrelay2=2.0.0
-
- version.jakewharton.timber=5.0.1
-
--version.kotlin=1.7.10
-+version.kotlin=1.8.0
-+## # available=1.8.255-SNAPSHOT
-
- version.kotlinx.coroutines=1.6.4
+@@ -31,7 +31,7 @@ version.androidx.legacy=1.0.0
+ 
+ version.androidx.lifecycle=2.5.1
+ 
+-version.androidx.room=2.5.0
++version.androidx.room=2.6.0-alpha01
+ 
+ version.androidx.swiperefreshlayout=1.1.0
+ 
+@@ -73,7 +73,7 @@ version.com.nhaarman.mockitokotlin2..mockito-kotlin=2.2.0
+ 
+ version.google.android.material=1.7.0
+ 
+-version.google.dagger=2.44.2
++version.google.dagger=2.46.1
+ 
+ version.jakewharton.rxrelay2=2.0.0
 

@@ -4,8 +4,8 @@
 @file:BenchmarkProject(
     name = "duckduckgo",
     gitUrl = "https://github.com/duckduckgo/Android.git",
-    gitCommitSha = "43bc063d9c044f2ca4a9eae1836cc783fcc7121c",
-    stableKotlinVersion = "1.8.0",
+    gitCommitSha = "3df1c07fad63f238f5e02050320c06abde732f58",
+    stableKotlinVersion = "1.8.21",
 )
 
 import java.io.File
