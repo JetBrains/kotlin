@@ -235,7 +235,7 @@ private fun <A : CommonToolArguments> parsePreprocessedCommandLineArguments(
             }
         }
 
-        if (!argumentField.getter.returnType.isArray && !visitedArgs.add(argument.value) && value is String && getter(result) != value
+        if (!getter.returnType.isArray && !visitedArgs.add(argument.value) && value is String && getter(result) != value
         ) {
             errors.value.duplicateArguments[argument.value] = value
         }
