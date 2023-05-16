@@ -1,6 +1,3 @@
-public abstract interface annotation class org/jetbrains/kotlin/gradle/DelicateKotlinGradlePluginApi : java/lang/annotation/Annotation {
-}
-
 public abstract interface annotation class org/jetbrains/kotlin/gradle/ExperimentalKotlinGradlePluginApi : java/lang/annotation/Annotation {
 }
 

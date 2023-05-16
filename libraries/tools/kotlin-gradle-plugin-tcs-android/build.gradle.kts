@@ -15,7 +15,6 @@ configureKotlinCompileTasksGradleCompatibility()
 kotlin {
     sourceSets.all {
         languageSettings.optIn("org.jetbrains.kotlin.gradle.ExternalKotlinTargetApi")
-        languageSettings.optIn("org.jetbrains.kotlin.gradle.DelicateKotlinGradlePluginApi")
         /* Workaround for KT-54823 */
         languageSettings.optIn("org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi")
     }

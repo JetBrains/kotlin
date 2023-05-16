@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.gradle.plugin
 import org.gradle.api.Action
 import org.gradle.api.Named
 import org.gradle.api.file.SourceDirectorySet
-import org.jetbrains.kotlin.gradle.DelicateKotlinGradlePluginApi
 import org.jetbrains.kotlin.tooling.core.HasMutableExtras
 
 interface KotlinSourceSet : Named, HasProject, HasMutableExtras, HasKotlinDependencies {
@@ -25,7 +24,7 @@ interface KotlinSourceSet : Named, HasProject, HasMutableExtras, HasKotlinDepend
     fun languageSettings(configure: Action<LanguageSettingsBuilder>): LanguageSettingsBuilder
 
     /**
-     * ### ⚠️ This API is marked as [DelicateKotlinGradlePluginApi]
+     * ### ⚠️ This API is considered advanced and shall be used with care!
      * It is preferred to express target hierarchies using the Kotlin Target Hierarchy DSL:
      * #### Example:
      * ```kotlin
@@ -55,7 +54,6 @@ interface KotlinSourceSet : Named, HasProject, HasMutableExtras, HasKotlinDepend
      * }
      * ```
      */
-    @DelicateKotlinGradlePluginApi
     fun dependsOn(other: KotlinSourceSet)
 
     val dependsOn: Set<KotlinSourceSet>
