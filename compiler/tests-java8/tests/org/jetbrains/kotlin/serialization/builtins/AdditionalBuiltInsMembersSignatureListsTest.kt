@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.test.TestJdkKind
 
 class AdditionalBuiltInsMembersSignatureListsTest : KotlinTestWithEnvironment() {
     override fun createEnvironment(): KotlinCoreEnvironment {
-        return createEnvironmentWithJdk(ConfigurationKind.JDK_ONLY, TestJdkKind.FULL_JDK)
+        return createEnvironmentWithJdk(ConfigurationKind.JDK_ONLY, TestJdkKind.FULL_JDK_17)
     }
 
     fun testAllListedSignaturesExistInJdk() {
@@ -76,8 +76,6 @@ class AdditionalBuiltInsMembersSignatureListsTest : KotlinTestWithEnvironment() 
     }
 
     private val LATE_JDK_SIGNATURES = mapOf(
-        "java/lang/String" to setOf("isBlank()Z", "lines()Ljava/util/stream/Stream;", "repeat(I)Ljava/lang/String;"),
-        "java/lang/CharSequence" to setOf("isEmpty()Z"),
         "java/util/List" to setOf(
             // From JDK 21
             "addFirst(Ljava/lang/Object;)V",
