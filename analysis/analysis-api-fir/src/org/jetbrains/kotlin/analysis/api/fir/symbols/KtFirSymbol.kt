@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.scopes.impl.importedFromObjectOrStaticData
 import org.jetbrains.kotlin.fir.scopes.impl.originalForWrappedIntegerOperator
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 
 internal interface KtFirSymbol<out S : FirBasedSymbol<*>> : KtSymbol, KtLifetimeOwner {
@@ -106,7 +105,7 @@ internal tailrec fun FirDeclaration.ktSymbolOrigin(): KtSymbolOrigin = when (ori
 }
 
 internal fun KtClassLikeSymbol.getSymbolKind(): KtSymbolKind {
-    val firSymbol = firSymbol as FirClassLikeSymbol<*>
+    val firSymbol = firSymbol
     if (firSymbol.isLocal) {
         // TODO: hack should be dropped after KT-54390
         when {

@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtEnumEntrySymbol
+import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
 import org.jetbrains.kotlin.psi.KtElement
@@ -86,7 +87,7 @@ public interface KtReferenceShortenerMixIn : KtAnalysisSessionMixIn {
 
     /**
      * Collects possible references to shorten. By default, it shortens a fully-qualified members to the outermost class and does not
-     * shorten enum entries.
+     * shorten enum entries.  In case of KDoc shortens reference only if it is already imported.
      *
      * N.B. This API is not implemented for the FE10 implementation!
      * For a K1- and K2-compatible API, use [org.jetbrains.kotlin.idea.base.codeInsight.ShortenReferencesFacility].
@@ -134,11 +135,12 @@ public interface KtReferenceShortenerMixIn : KtAnalysisSessionMixIn {
 
 public interface ShortenCommand {
     public val targetFile: SmartPsiElementPointer<KtFile>
-    public val importsToAdd: List<FqName>
-    public val starImportsToAdd: List<FqName>
+    public val importsToAdd: Set<FqName>
+    public val starImportsToAdd: Set<FqName>
     public val typesToShorten: List<SmartPsiElementPointer<KtUserType>>
     public val qualifiersToShorten: List<SmartPsiElementPointer<KtDotQualifiedExpression>>
+    public val kDocQualifiersToShorten: List<SmartPsiElementPointer<KDocName>>
 
     public val isEmpty: Boolean
-        get() = typesToShorten.isEmpty() && qualifiersToShorten.isEmpty()
+        get() = typesToShorten.isEmpty() && qualifiersToShorten.isEmpty() && kDocQualifiersToShorten.isEmpty()
 }

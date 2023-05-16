@@ -239,6 +239,24 @@ public class FirIdeNormalAnalysisSourceModuleReferenceShortenerTestGenerated ext
     }
 
     @Test
+    @TestMetadata("kdoc.kt")
+    public void testKdoc() throws Exception {
+        runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/kdoc.kt");
+    }
+
+    @Test
+    @TestMetadata("kdocQualifierSelected.kt")
+    public void testKdocQualifierSelected() throws Exception {
+        runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/kdocQualifierSelected.kt");
+    }
+
+    @Test
+    @TestMetadata("kdocUnresolved.kt")
+    public void testKdocUnresolved() throws Exception {
+        runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/kdocUnresolved.kt");
+    }
+
+    @Test
     @TestMetadata("multipleImport.kt")
     public void testMultipleImport() throws Exception {
         runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/multipleImport.kt");

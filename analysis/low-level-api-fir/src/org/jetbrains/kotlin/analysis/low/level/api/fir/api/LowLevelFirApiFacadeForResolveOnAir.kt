@@ -134,7 +134,7 @@ object LowLevelFirApiFacadeForResolveOnAir {
             FileTowerProvider(place, onAirGetTowerContextForFile(firResolveSession, place))
         } else {
             val validPlace = PsiTreeUtil.findFirstParent(place, false) {
-                RawFirReplacement.isApplicableForReplacement(it as KtElement)
+                it is KtElement && RawFirReplacement.isApplicableForReplacement(it)
             } as KtElement
 
             FirTowerDataContextAllElementsCollector().also {
