@@ -30,8 +30,12 @@ internal class KotlinTargetHierarchyDslImpl(
         applyKotlinTargetHierarchy(descriptor, targets, sourceSets)
     }
 
-    override fun default(describeExtension: (KotlinTargetHierarchyBuilder.Root.() -> Unit)?) {
+    override fun default(describeExtension: (KotlinTargetHierarchyBuilder.Root.() -> Unit)) {
         apply(defaultKotlinTargetHierarchy, describeExtension)
+    }
+
+    override fun default() {
+        apply(defaultKotlinTargetHierarchy)
     }
 
     override fun custom(describe: KotlinTargetHierarchyBuilder.Root.() -> Unit) {

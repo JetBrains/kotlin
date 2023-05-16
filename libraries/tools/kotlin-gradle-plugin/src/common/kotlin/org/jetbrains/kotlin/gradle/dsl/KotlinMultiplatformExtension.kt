@@ -49,7 +49,6 @@ abstract class KotlinMultiplatformExtension(project: Project) :
         KotlinTargetHierarchyDslImpl(targets, sourceSets)
     }
 
-    @ExperimentalKotlinGradlePluginApi
     val targetHierarchy: KotlinTargetHierarchyDsl get() = internalKotlinTargetHierarchy
 
     @Suppress("unused") // DSL
