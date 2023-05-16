@@ -147,7 +147,7 @@ class MainKtsIT {
         val serializationPlugin = paths.jar(KotlinPaths.Jar.SerializationPlugin)
         runWithKotlinc(
             arrayOf(
-                "-Xplugin", serializationPlugin.absolutePath,
+                "-Xplugin=${serializationPlugin.absolutePath}",
                 "-cp", paths.jar(KotlinPaths.Jar.MainKts).absolutePath,
                 "-script", File("$TEST_DATA_ROOT/hello-kotlinx-serialization.main.kts").absolutePath
             ),
