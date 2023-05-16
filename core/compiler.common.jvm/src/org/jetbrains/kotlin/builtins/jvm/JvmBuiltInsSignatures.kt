@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.load.kotlin.signatures
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 import java.io.Serializable
-import java.util.*
 
 object JvmBuiltInsSignatures {
     val DROP_LIST_METHOD_SIGNATURES: Set<String> =
@@ -24,7 +23,18 @@ object JvmBuiltInsSignatures {
         signatures {
             buildPrimitiveValueMethodsSet() +
 
-                    inJavaUtil("List", "sort(Ljava/util/Comparator;)V") +
+                    inJavaUtil(
+                        "List",
+                        "sort(Ljava/util/Comparator;)V",
+                        // From JDK 21
+                        "addFirst(Ljava/lang/Object;)V",
+                        "addLast(Ljava/lang/Object;)V",
+                        "getFirst()Ljava/lang/Object;",
+                        "getLast()Ljava/lang/Object;",
+                        "removeFirst()Ljava/lang/Object;",
+                        "removeLast()Ljava/lang/Object;",
+                        "reversed()Ljava/util/List;",
+                    ) +
 
                     inJavaLang(
                         "String",
