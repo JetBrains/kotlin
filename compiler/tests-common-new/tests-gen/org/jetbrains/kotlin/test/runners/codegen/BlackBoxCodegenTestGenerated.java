@@ -32095,6 +32095,26 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                     runTest("compiler/testData/codegen/box/multiplatform/k2/defaultArguments/withTypeParameter.kt");
                 }
             }
+
+            @Nested
+            @TestMetadata("compiler/testData/codegen/box/multiplatform/k2/migratedOldTests")
+            @TestDataPath("$PROJECT_ROOT")
+            public class MigratedOldTests {
+                @Test
+                public void testAllFilesPresentInMigratedOldTests() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2/migratedOldTests"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+                }
+            }
+        }
+
+        @Nested
+        @TestMetadata("compiler/testData/codegen/box/multiplatform/migratedOldTests")
+        @TestDataPath("$PROJECT_ROOT")
+        public class MigratedOldTests {
+            @Test
+            public void testAllFilesPresentInMigratedOldTests() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/migratedOldTests"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+            }
         }
 
         @Nested

@@ -33,6 +33,7 @@ fun main() {
                     disabledInOneStageMode(
                         "codegen/box/coroutines/featureIntersection/defaultExpect.kt",
                         "codegen/box/multiplatform/defaultArguments/*.kt",
+                        "codegen/box/multiplatform/migratedOldTests/*.kt",
                         "codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt"
                     )
                 )

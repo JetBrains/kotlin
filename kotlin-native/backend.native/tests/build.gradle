@@ -3415,39 +3415,6 @@ standaloneTest("array_out_of_memory") {
     }
 }
 
-standaloneTest("mpp1") {
-    disabled = isK2(project) // KT-56071
-    source = "codegen/mpp/mpp1.kt"
-    flags = ['-tr', '-Xmulti-platform']
-}
-
-linkTest("mpp2") {
-    disabled = isK2(project) // KT-56071
-    useGoldenData = true
-    source = "codegen/mpp/mpp2.kt"
-    lib = "codegen/mpp/libmpp2.kt"
-    flags = ['-Xmulti-platform']
-}
-
-standaloneTest("mpp_default_args") {
-    // Disabled in one stage mode because of KT-57747
-    disabled = !twoStageEnabled || isK2(project) // KT-56071
-    source = "codegen/mpp/mpp_default_args.kt"
-    flags = ['-tr', '-Xmulti-platform']
-}
-
-standaloneTest("mpp_optional_expectation") {
-    source = "codegen/mpp/mpp_optional_expectation.kt"
-    def outputRoot = project.ext.testOutputLocal.toString()
-    def srcPath = "$outputRoot/$name/mpp_optional_expectation.kt".with {
-        isWindows() ? it.replaceAll("/", "\\\\") : it
-    }
-    flags = [
-            '-Xmulti-platform',
-            "-Xcommon-sources=$srcPath"
-    ]
-}
-
 standaloneTest("freezing_control_basic_full") {
     enabled = isExperimentalMM && cacheTesting == null
     source = "runtime/freezing_control/basic.kt"
@@ -5656,14 +5623,6 @@ linkTest("private_fake_overrides_0") {
 linkTest("private_fake_overrides_1") {
     source = "link/private_fake_overrides/override_main.kt"
     lib = "link/private_fake_overrides/override_lib.kt"
-    useGoldenData = true
-}
-
-linkTest("remap_expect_property_refs") {
-    disabled = isK2(project) // KT-56071
-    source = "codegen/mpp/remap_expect_property_ref_main.kt"
-    lib = "codegen/mpp/remap_expect_property_ref_lib.kt"
-    flags = ["-Xmulti-platform"]
     useGoldenData = true
 }
 
