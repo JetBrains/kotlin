@@ -7,24 +7,19 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.targetHierarchy
 
 import org.gradle.api.DomainObjectCollection
 import org.gradle.api.NamedDomainObjectContainer
-import org.gradle.api.model.ObjectFactory
-import org.gradle.api.provider.Property
-import org.jetbrains.kotlin.gradle.dsl.KotlinAndroidTargetHierarchyDsl
-import org.jetbrains.kotlin.gradle.dsl.KotlinAndroidVariantHierarchyDsl
 import org.jetbrains.kotlin.gradle.dsl.KotlinTargetHierarchyDsl
-import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.gradle.utils.property
+import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
+import org.jetbrains.kotlin.gradle.plugin.KotlinTargetHierarchyBuilder
+import org.jetbrains.kotlin.gradle.plugin.KotlinTargetHierarchyDescriptor
 
 internal class KotlinTargetHierarchyDslImpl(
-    objects: ObjectFactory,
     private val targets: DomainObjectCollection<KotlinTarget>,
     private val sourceSets: NamedDomainObjectContainer<KotlinSourceSet>,
 ) : KotlinTargetHierarchyDsl {
 
     private val _appliedDescriptors = mutableListOf<KotlinTargetHierarchyDescriptor>()
     val appliedDescriptors: List<KotlinTargetHierarchyDescriptor> get() = _appliedDescriptors
-
-    override val android: KotlinAndroidTargetHierarchyDsl = KotlinAndroidTargetHierarchyDslImpl(objects)
 
     override fun apply(
         hierarchyDescriptor: KotlinTargetHierarchyDescriptor,
@@ -42,21 +37,8 @@ internal class KotlinTargetHierarchyDslImpl(
     override fun custom(describe: KotlinTargetHierarchyBuilder.Root.() -> Unit) {
         apply(KotlinTargetHierarchyDescriptor(describe))
     }
-
-    override fun android(configure: KotlinAndroidTargetHierarchyDsl.() -> Unit) {
-        android.configure()
-    }
 }
 
 private fun KotlinTargetHierarchyDescriptor.extendIfNotNull(describe: (KotlinTargetHierarchyBuilder.Root.() -> Unit)?) =
     if (describe == null) this else extend(describe)
 
-internal class KotlinAndroidTargetHierarchyDslImpl(objects: ObjectFactory) : KotlinAndroidTargetHierarchyDsl {
-    override val main: KotlinAndroidVariantHierarchyDsl = KotlinAndroidVariantHierarchyDslImpl(objects)
-    override val unitTest: KotlinAndroidVariantHierarchyDsl = KotlinAndroidVariantHierarchyDslImpl(objects)
-    override val instrumentedTest: KotlinAndroidVariantHierarchyDsl = KotlinAndroidVariantHierarchyDslImpl(objects)
-}
-
-internal class KotlinAndroidVariantHierarchyDslImpl(objects: ObjectFactory) : KotlinAndroidVariantHierarchyDsl {
-    override val sourceSetTree: Property<KotlinTargetHierarchy.SourceSetTree> = objects.property()
-}

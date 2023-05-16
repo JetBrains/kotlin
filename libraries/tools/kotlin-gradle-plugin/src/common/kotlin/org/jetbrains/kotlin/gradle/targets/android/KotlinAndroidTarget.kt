@@ -7,14 +7,13 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import com.android.build.gradle.api.BaseVariant
-import org.gradle.api.InvalidUserDataException
-import org.gradle.api.Named
-import org.gradle.api.NamedDomainObjectContainer
-import org.gradle.api.Project
+import org.gradle.api.*
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.attributes.AttributeContainer
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.KotlinTargetHierarchy.SourceSetTree
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.copyAttributes
 import org.jetbrains.kotlin.gradle.utils.dashSeparatedName
 import org.jetbrains.kotlin.gradle.utils.forAllAndroidVariants
@@ -26,7 +25,7 @@ import javax.inject.Inject
 
 abstract class KotlinAndroidTarget @Inject constructor(
     final override val targetName: String,
-    project: Project
+    project: Project,
 ) : AbstractKotlinTarget(project) {
 
     final override val disambiguationClassifier: String = targetName
@@ -37,6 +36,109 @@ abstract class KotlinAndroidTarget @Inject constructor(
     override val compilations: NamedDomainObjectContainer<out KotlinJvmAndroidCompilation> =
         project.container(KotlinJvmAndroidCompilation::class.java)
 
+    /**
+     * Configure Android specific settings within the context of [KotlinTargetHierarchy].
+     * The difference between Android and other targets is that the build author is free to choose
+     * the names of compilations, whereas Android is using predefined SourceSet names.
+     *
+     * ### Default dependsOn edges
+     * By default, Kotlin Multiplatform will set the following default dependsOn edges:
+     * - `androidMain` -> `commonMain`
+     * - `androidUnitTest` -> `commonTest`
+     *
+     * In this default setup, SourceSets like `androidInstrumentedTest` will *not* dependOn `commonTest`.
+     * This API can be used to change the default behavior
+     *
+     * #### Example 1: Setting up androidInstrumentedTest -> commonTest
+     * This can be done by putting the 'androidInstrumentedTest' variants into the 'test' [SourceSetTree]:
+     * ```kotlin
+     * androidTarget().targetHierarchy {
+     *     instrumentedTest.sourceSetTree.set(SourceSetTree.test)
+     * }
+     * ```
+     *
+     * #### Example 2: Setting up androidInstrumentedTest -> commonTest and removing 'unitTests' from the 'test' [SourceSetTree]
+     * ```kotlin
+     * androidTarget().targetHierarchy {
+     *     instrumentedTest.sourceSetTree.set(SourceSetTree.test)
+     *     unitTest.sourceSetTree.set(SourceSetTree.unitTest) // ! <- Anything *other* than 'test'
+     * }
+     * ```
+     */
+    @ExperimentalKotlinGradlePluginApi
+    val targetHierarchy: KotlinAndroidTargetHierarchyDsl = KotlinAndroidTargetHierarchyDslImpl(project.objects).apply {
+        main.sourceSetTree.convention(SourceSetTree.main)
+        unitTest.sourceSetTree.convention(SourceSetTree.test)
+        instrumentedTest.sourceSetTree.convention(SourceSetTree.instrumentedTest)
+    }
+
+    /**
+     * Configure Android specific settings within the context of [KotlinTargetHierarchy].
+     * The difference between Android and other targets is that the build author is free to choose
+     * the names of compilations, whereas Android is using predefined SourceSet names.
+     *
+     * ### Default dependsOn edges
+     * By default, Kotlin Multiplatform will set the following default dependsOn edges:
+     * - `androidMain` -> `commonMain`
+     * - `androidUnitTest` -> `commonTest`
+     *
+     * In this default setup, SourceSets like `androidInstrumentedTest` will *not* dependOn `commonTest`.
+     * This API can be used to change the default behavior
+     *
+     * #### Example 1: Setting up androidInstrumentedTest -> commonTest
+     * This can be done by putting the 'androidInstrumentedTest' variants into the 'test' [SourceSetTree]:
+     * ```kotlin
+     * androidTarget().targetHierarchy {
+     *     instrumentedTest.sourceSetTree.set(SourceSetTree.test)
+     * }
+     * ```
+     *
+     * #### Example 2: Setting up androidInstrumentedTest -> commonTest and removing 'unitTests' from the 'test' [SourceSetTree]
+     * ```kotlin
+     * androidTarget().targetHierarchy {
+     *     instrumentedTest.sourceSetTree.set(SourceSetTree.test)
+     *     unitTest.sourceSetTree.set(SourceSetTree.unitTest) // ! <- Anything *other* than 'test'
+     * }
+     * ```
+     */
+    @ExperimentalKotlinGradlePluginApi
+    fun targetHierarchy(configure: Action<KotlinAndroidTargetHierarchyDsl>) {
+        configure.execute(targetHierarchy)
+    }
+
+    /**
+     * Configure Android specific settings within the context of [KotlinTargetHierarchy].
+     * The difference between Android and other targets is that the build author is free to choose
+     * the names of compilations, whereas Android is using predefined SourceSet names.
+     *
+     * ### Default dependsOn edges
+     * By default, Kotlin Multiplatform will set the following default dependsOn edges:
+     * - `androidMain` -> `commonMain`
+     * - `androidUnitTest` -> `commonTest`
+     *
+     * In this default setup, SourceSets like `androidInstrumentedTest` will *not* dependOn `commonTest`.
+     * This API can be used to change the default behavior
+     *
+     * #### Example 1: Setting up androidInstrumentedTest -> commonTest
+     * This can be done by putting the 'androidInstrumentedTest' variants into the 'test' [SourceSetTree]:
+     * ```kotlin
+     * androidTarget().targetHierarchy {
+     *     instrumentedTest.sourceSetTree.set(SourceSetTree.test)
+     * }
+     * ```
+     *
+     * #### Example 2: Setting up androidInstrumentedTest -> commonTest and removing 'unitTests' from the 'test' [SourceSetTree]
+     * ```kotlin
+     * androidTarget().targetHierarchy {
+     *     instrumentedTest.sourceSetTree.set(SourceSetTree.test)
+     *     unitTest.sourceSetTree.set(SourceSetTree.unitTest) // ! <- Anything *other* than 'test'
+     * }
+     * ```
+     */
+    @ExperimentalKotlinGradlePluginApi
+    fun targetHierarchy(configure: KotlinAndroidTargetHierarchyDsl.() -> Unit) {
+        targetHierarchy.configure()
+    }
 
     /** Names of the Android library variants that should be published from the target's project within the default publications which are
      * set up if the `maven-publish` Gradle plugin is applied.
@@ -241,7 +343,7 @@ abstract class KotlinAndroidTarget @Inject constructor(
     private fun createSourcesElementsIfNeeded(
         variantName: String,
         apiElementsConfigurationName: String,
-        sourcesElementsConfigurationName: String
+        sourcesElementsConfigurationName: String,
     ): Configuration {
         val existingConfiguration = project.configurations.findByName(sourcesElementsConfigurationName)
         if (existingConfiguration != null) return existingConfiguration
@@ -261,7 +363,7 @@ abstract class KotlinAndroidTarget @Inject constructor(
     /** We filter this variant out as it is never requested on the consumer side, while keeping it leads to ambiguity between Android and
      * JVM variants due to non-nesting sets of unmatched attributes. */
     private fun filterOutAndroidVariantAttribute(
-        attribute: Attribute<*>
+        attribute: Attribute<*>,
     ): Boolean =
         attribute.name != "com.android.build.gradle.internal.attributes.VariantAttr" &&
                 attribute.name != "com.android.build.api.attributes.VariantAttr"
@@ -269,7 +371,7 @@ abstract class KotlinAndroidTarget @Inject constructor(
     private fun filterOutAndroidBuildTypeAttribute(
         it: Attribute<*>,
         valueString: String,
-        isSinglePublishedVariant: Boolean
+        isSinglePublishedVariant: Boolean,
     ) = when {
         PropertiesProvider(project).keepAndroidBuildTypeAttribute -> true
         it.name != "com.android.build.api.attributes.BuildTypeAttr" -> true
@@ -281,6 +383,7 @@ abstract class KotlinAndroidTarget @Inject constructor(
     }
 
     private fun filterOutAndroidAgpVersionAttribute(
-        attribute: Attribute<*>
+        attribute: Attribute<*>,
     ): Boolean = attribute.name != "com.android.build.api.attributes.AgpVersionAttr"
 }
+

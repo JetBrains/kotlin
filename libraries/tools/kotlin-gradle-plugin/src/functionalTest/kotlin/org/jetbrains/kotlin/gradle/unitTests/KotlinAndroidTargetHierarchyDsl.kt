@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.AfterFinal
 import org.jetbrains.kotlin.gradle.plugin.awaitFinalValue
 import org.jetbrains.kotlin.gradle.plugin.currentKotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.kotlinPluginLifecycle
-import org.jetbrains.kotlin.gradle.plugin.mpp.targetHierarchy.KotlinAndroidVariantHierarchyDslImpl
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidVariantHierarchyDslImpl
 import org.jetbrains.kotlin.gradle.util.*
 import org.junit.Test
 import kotlin.test.assertEquals
@@ -38,7 +38,7 @@ class KotlinAndroidTargetHierarchyDsl {
         afterEvaluate { dsl.sourceSetTree.set(KotlinTargetHierarchy.SourceSetTree("x")) }
         dsl.sourceSetTree.set(KotlinTargetHierarchy.SourceSetTree("-set-before-after-evaluate-"))
         assertEquals("x", dsl.sourceSetTree.awaitFinalValue()?.name)
-        assertEquals(KotlinPluginLifecycle.Stage.FinaliseDsl, currentKotlinPluginLifecycle().stage)
+        assertEquals(KotlinPluginLifecycle.Stage.AfterFinaliseDsl, currentKotlinPluginLifecycle().stage)
     }
 
     @Test
@@ -51,9 +51,7 @@ class KotlinAndroidTargetHierarchyDsl {
 
         val kotlin = project.multiplatformExtension
         project.runLifecycleAwareTest {
-            kotlin.androidTarget()
-
-            kotlin.targetHierarchy.android {
+            kotlin.androidTarget().targetHierarchy {
                 unitTest.sourceSetTree.set(KotlinTargetHierarchy.SourceSetTree.test)
                 instrumentedTest.sourceSetTree.set(KotlinTargetHierarchy.SourceSetTree.test)
             }
@@ -75,9 +73,7 @@ class KotlinAndroidTargetHierarchyDsl {
 
         val kotlin = project.multiplatformExtension
         project.runLifecycleAwareTest {
-            kotlin.androidTarget()
-
-            kotlin.targetHierarchy.android {
+            kotlin.androidTarget().targetHierarchy {
                 unitTest.sourceSetTree.set(KotlinTargetHierarchy.SourceSetTree("xxx"))
                 instrumentedTest.sourceSetTree.set(KotlinTargetHierarchy.SourceSetTree("yyy"))
             }
