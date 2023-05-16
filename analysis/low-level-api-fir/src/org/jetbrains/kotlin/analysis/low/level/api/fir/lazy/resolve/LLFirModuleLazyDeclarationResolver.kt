@@ -198,29 +198,33 @@ private fun handleExceptionFromResolve(
     exception: Exception,
     firDeclarationToResolve: FirElementWithResolveState,
     fromPhase: FirResolvePhase,
-    toPhase: FirResolvePhase?
+    toPhase: FirResolvePhase
 ): Nothing {
     if (exception is InvalidSessionException) {
         throw exception
     }
 
-    firDeclarationToResolve.llFirSession.invalidate()
+    val session = firDeclarationToResolve.llFirSession
+    session.invalidate()
+
+    val moduleData = firDeclarationToResolve.llFirModuleData
+    val module = moduleData.ktModule
+
     rethrowExceptionWithDetails(
         buildString {
-            val moduleData = firDeclarationToResolve.llFirModuleData
             appendLine("Error while resolving ${firDeclarationToResolve::class.java.name} ")
             appendLine("from $fromPhase to $toPhase")
             appendLine("current declaration phase ${firDeclarationToResolve.resolvePhase}")
             appendLine("origin: ${(firDeclarationToResolve as? FirDeclaration)?.origin}")
-            appendLine("session: ${firDeclarationToResolve.llFirSession::class}")
+            appendLine("session: ${session::class}")
             appendLine("module data: ${moduleData::class}")
-            appendLine("KtModule: ${moduleData.ktModule::class}")
-            appendLine("platform: ${moduleData.ktModule.platform}")
+            appendLine("KtModule: ${module::class}")
+            appendLine("platform: ${module.platform}")
         },
         exception = exception,
     ) {
-        withEntry("KtModule", firDeclarationToResolve.llFirModuleData.ktModule) { it.moduleDescription }
-        withEntry("session", firDeclarationToResolve.llFirSession) { it.toString() }
+        withEntry("KtModule", module) { it.moduleDescription }
+        withEntry("session", session) { it.toString() }
         withEntry("moduleData", firDeclarationToResolve.moduleData) { it.toString() }
         withFirEntry("firDeclarationToResolve", firDeclarationToResolve)
     }
@@ -229,27 +233,30 @@ private fun handleExceptionFromResolve(
 private fun handleExceptionFromResolve(
     exception: Exception,
     designation: LLFirResolveTarget,
-    toPhase: FirResolvePhase?
+    toPhase: FirResolvePhase
 ): Nothing {
     if (exception is InvalidSessionException) {
         throw exception
     }
 
-    val llFirSession = designation.firFile.llFirSession
-    llFirSession.invalidate()
-    val moduleData = llFirSession.llFirModuleData
+    val session = designation.firFile.llFirSession
+    session.invalidate()
+
+    val moduleData = session.llFirModuleData
+    val module = moduleData.ktModule
+
     rethrowExceptionWithDetails(
         buildString {
             appendLine("Error while resolving ${designation::class.java.name} ")
             appendLine("to $toPhase")
             appendLine("module data: ${moduleData::class}")
-            appendLine("KtModule: ${moduleData.ktModule::class}")
-            appendLine("platform: ${moduleData.ktModule.platform}")
+            appendLine("KtModule: ${module::class}")
+            appendLine("platform: ${module.platform}")
         },
         exception = exception,
     ) {
-        withEntry("KtModule", moduleData.ktModule) { it.moduleDescription }
-        withEntry("session", designation.firFile.llFirSession) { it.toString() }
+        withEntry("KtModule", module) { it.moduleDescription }
+        withEntry("session", session) { it.toString() }
         withEntry("moduleData", moduleData) { it.toString() }
         withEntry("firDesignationToResolve", designation) { it.toString() }
     }
