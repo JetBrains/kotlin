@@ -24,6 +24,9 @@ internal interface SyntheticFirClassProvider {
     }
 }
 
+internal val FirSession.isOnAirAnalysis: Boolean
+    get() = onAirProviderForThread.get()?.session == this
+
 /**
  * Injects a designation-based class file provider to 'LLFirProvider'.
  * Used for on-air analysis.

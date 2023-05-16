@@ -5,12 +5,15 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve
 
+import com.intellij.psi.PsiElement
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignation
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
+import org.jetbrains.kotlin.fir.contracts.FirRawContractDescription
+import org.jetbrains.kotlin.fir.contracts.impl.FirEmptyContractDescription
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.getExplicitBackingField
 import org.jetbrains.kotlin.fir.expressions.*
@@ -26,7 +29,6 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.name.StandardClassIds.Annotations.SinceKotlin
 import org.jetbrains.kotlin.fir.types.customAnnotations
 import org.jetbrains.kotlin.fir.types.forEachType
 
@@ -68,6 +70,68 @@ private fun replaceValueParameterDefaultValues(valueParameters: List<FirValuePar
     }
 }
 
+private inline fun <reified T : FirDeclaration> revive(
+    designation: FirDesignation,
+    psiFactory: (FirDesignation) -> PsiElement? = { it.target.psi }
+): T {
+    val session = designation.target.moduleData.session
+
+    return RawFirNonLocalDeclarationBuilder.buildWithFunctionSymbolRebind(
+        session = session,
+        scopeProvider = session.kotlinScopeProvider,
+        designation = designation,
+        rootNonLocalDeclaration = psiFactory(designation) as KtDeclaration,
+    ) as T
+}
+
+private fun replaceLazyValueParameters(target: FirFunction, copy: FirFunction) {
+    val targetParameters = target.valueParameters
+    val copyParameters = copy.valueParameters
+    require(targetParameters.size == copyParameters.size)
+
+    for ((valueParameter, newValueParameter) in targetParameters.zip(copyParameters)) {
+        if (valueParameter.defaultValue is FirLazyExpression) {
+            valueParameter.replaceDefaultValue(newValueParameter.defaultValue)
+        }
+    }
+}
+
+private fun replaceLazyBody(target: FirFunction, copy: FirFunction) {
+    if (target.body is FirLazyBlock) {
+        target.replaceBody(copy.body)
+    }
+}
+
+private fun replaceLazyContractDescription(target: FirContractDescriptionOwner, copy: FirContractDescriptionOwner) {
+    val shouldReplace = when (val currentContractDescription = target.contractDescription) {
+        is FirRawContractDescription -> currentContractDescription.rawEffects.any { it is FirLazyExpression }
+        is FirEmptyContractDescription -> copy.contractDescription !is FirEmptyContractDescription
+        else -> false
+    }
+
+    if (shouldReplace) {
+        target.replaceContractDescription(copy.contractDescription)
+    }
+}
+
+private fun replaceLazyDelegatedConstructor(target: FirConstructor, copy: FirConstructor) {
+    if (target.delegatedConstructor is FirLazyDelegatedConstructorCall) {
+        target.replaceDelegatedConstructor(copy.delegatedConstructor)
+    }
+}
+
+private fun replaceLazyInitializer(target: FirVariable, copy: FirVariable) {
+    if (target.initializer is FirLazyExpression) {
+        target.replaceInitializer(copy.initializer)
+    }
+}
+
+private fun replaceLazyExpression(target: FirWrappedExpression, copy: FirWrappedExpression) {
+    if (target.expression is FirLazyExpression) {
+        target.replaceExpression(copy.expression)
+    }
+}
+
 private fun calculateLazyArgumentsForAnnotation(annotationCall: FirAnnotationCall, session: FirSession) {
     require(needCalculatingAnnotationCall(annotationCall))
     val builder = RawFirBuilder(session, baseScopeProvider = session.kotlinScopeProvider)
@@ -80,77 +144,54 @@ private fun calculateLazyArgumentsForAnnotation(annotationCall: FirAnnotationCal
 private fun calculateLazyBodiesForFunction(designation: FirDesignation) {
     val simpleFunction = designation.target as FirSimpleFunction
     require(needCalculatingLazyBodyForFunction(simpleFunction))
-    val newFunction = RawFirNonLocalDeclarationBuilder.buildWithFunctionSymbolRebind(
-        session = simpleFunction.moduleData.session,
-        scopeProvider = simpleFunction.moduleData.session.kotlinScopeProvider,
-        designation = designation,
-        rootNonLocalDeclaration = simpleFunction.psi as KtNamedFunction,
-    ) as FirSimpleFunction
 
-    simpleFunction.apply {
-        replaceBody(newFunction.body)
-        replaceContractDescription(newFunction.contractDescription)
-        replaceValueParameterDefaultValues(valueParameters, newFunction.valueParameters)
-    }
+    val newSimpleFunction = revive<FirSimpleFunction>(designation)
+
+    replaceLazyContractDescription(simpleFunction, newSimpleFunction)
+    replaceLazyBody(simpleFunction, newSimpleFunction)
+    replaceLazyValueParameters(simpleFunction, newSimpleFunction)
 }
 
 private fun calculateLazyBodyForConstructor(designation: FirDesignation) {
     val constructor = designation.target as FirConstructor
     require(needCalculatingLazyBodyForConstructor(constructor))
 
-    val newConstructor = RawFirNonLocalDeclarationBuilder.buildWithFunctionSymbolRebind(
-        session = constructor.moduleData.session,
-        scopeProvider = constructor.moduleData.session.kotlinScopeProvider,
-        designation = designation,
-        rootNonLocalDeclaration = constructor.psi as KtDeclaration,
-    ) as FirConstructor
+    val newConstructor = revive<FirConstructor>(designation)
 
-    constructor.apply {
-        replaceBody(newConstructor.body)
-        replaceContractDescription(newConstructor.contractDescription)
-        replaceDelegatedConstructor(newConstructor.delegatedConstructor)
-        replaceValueParameterDefaultValues(valueParameters, newConstructor.valueParameters)
-    }
+    replaceLazyContractDescription(constructor, newConstructor)
+    replaceLazyBody(constructor, newConstructor)
+    replaceLazyDelegatedConstructor(constructor, newConstructor)
+    replaceLazyValueParameters(constructor, newConstructor)
 }
 
 private fun calculateLazyBodyForProperty(designation: FirDesignation) {
     val firProperty = designation.target as FirProperty
     if (!needCalculatingLazyBodyForProperty(firProperty)) return
 
-    val newProperty = RawFirNonLocalDeclarationBuilder.buildWithFunctionSymbolRebind(
-        session = firProperty.moduleData.session,
-        scopeProvider = firProperty.moduleData.session.kotlinScopeProvider,
-        designation = designation,
-        rootNonLocalDeclaration = firProperty.psi as KtProperty
-    ) as FirProperty
+    val newProperty = revive<FirProperty>(designation)
 
-    firProperty.getter?.takeIf { it.body is FirLazyBlock }?.let { getter ->
+    firProperty.getter?.let { getter ->
         val newGetter = newProperty.getter!!
-        getter.replaceBody(newGetter.body)
-        getter.replaceContractDescription(newGetter.contractDescription)
+        replaceLazyContractDescription(getter, newGetter)
+        replaceLazyBody(getter, newGetter)
     }
 
-    firProperty.setter?.takeIf { it.body is FirLazyBlock }?.let { setter ->
+    firProperty.setter?.let { setter ->
         val newSetter = newProperty.setter!!
-        setter.replaceBody(newSetter.body)
-        setter.replaceContractDescription(newSetter.contractDescription)
+        replaceLazyContractDescription(setter, newSetter)
+        replaceLazyBody(setter, newSetter)
     }
 
-    if (firProperty.initializer is FirLazyExpression) {
-        firProperty.replaceInitializer(newProperty.initializer)
+    replaceLazyInitializer(firProperty, newProperty)
+
+    firProperty.getExplicitBackingField()?.let { backingField ->
+        val newBackingField = newProperty.getExplicitBackingField()!!
+        replaceLazyInitializer(backingField, newBackingField)
     }
 
-    firProperty.getExplicitBackingField()?.takeIf { it.initializer is FirLazyExpression }?.let { backingField ->
-        val newInitializer = newProperty.getExplicitBackingField()?.initializer
-        backingField.replaceInitializer(newInitializer)
-    }
-
-    val delegate = firProperty.delegate as? FirWrappedDelegateExpression
-    val delegateExpression = delegate?.expression
-    if (delegateExpression is FirLazyExpression) {
-        val newDelegate = newProperty.delegate as? FirWrappedDelegateExpression
-        check(newDelegate != null) { "Invalid replacement delegate" }
-        delegate.replaceExpression(newDelegate.expression)
+    (firProperty.delegate as? FirWrappedDelegateExpression)?.let { delegate ->
+        val newDelegate = newProperty.delegate as FirWrappedDelegateExpression
+        replaceLazyExpression(delegate, newDelegate)
         delegate.replaceDelegateProvider(newDelegate.delegateProvider)
     }
 }
@@ -159,32 +200,16 @@ private fun calculateLazyInitializerForEnumEntry(designation: FirDesignation) {
     val enumEntry = designation.target as FirEnumEntry
     require(enumEntry.initializer is FirLazyExpression)
 
-    val newEntry = RawFirNonLocalDeclarationBuilder.buildWithFunctionSymbolRebind(
-        session = enumEntry.moduleData.session,
-        scopeProvider = enumEntry.moduleData.session.kotlinScopeProvider,
-        designation = designation,
-        rootNonLocalDeclaration = enumEntry.psi as KtEnumEntry,
-    ) as FirEnumEntry
-
-    enumEntry.apply {
-        replaceInitializer(newEntry.initializer)
-    }
+    val newEnumEntry = revive<FirEnumEntry>(designation)
+    enumEntry.replaceInitializer(newEnumEntry.initializer)
 }
 
 private fun calculateLazyBodyForAnonymousInitializer(designation: FirDesignation) {
     val initializer = designation.target as FirAnonymousInitializer
     require(initializer.body is FirLazyBlock)
 
-    val newInitializer = RawFirNonLocalDeclarationBuilder.buildWithFunctionSymbolRebind(
-        session = initializer.moduleData.session,
-        scopeProvider = initializer.moduleData.session.kotlinScopeProvider,
-        designation = designation,
-        rootNonLocalDeclaration = initializer.psi as KtAnonymousInitializer,
-    ) as FirAnonymousInitializer
-
-    initializer.apply {
-        replaceBody(newInitializer.body)
-    }
+    val newInitializer = revive<FirAnonymousInitializer>(designation)
+    initializer.replaceBody(newInitializer.body)
 }
 
 private fun needCalculatingLazyBodyForConstructor(firConstructor: FirConstructor): Boolean =
@@ -193,19 +218,25 @@ private fun needCalculatingLazyBodyForConstructor(firConstructor: FirConstructor
 private fun calculateLazyBodiesForField(designation: FirDesignation) {
     val field = designation.target as FirField
     require(field.initializer is FirLazyExpression)
-    val newField = RawFirNonLocalDeclarationBuilder.buildWithFunctionSymbolRebind(
-        session = field.moduleData.session,
-        scopeProvider = field.moduleData.session.kotlinScopeProvider,
-        designation = designation,
-        rootNonLocalDeclaration = designation.path.last().psi as KtClassOrObject,
-    ) as FirField
-    field.apply {
-        replaceInitializer(newField.initializer)
-    }
+
+    val newField = revive<FirField>(designation) { it.path.last().psi }
+    field.replaceInitializer(newField.initializer)
 }
 
-private fun needCalculatingLazyBodyForFunction(firFunction: FirFunction): Boolean =
-    firFunction.body is FirLazyBlock || firFunction.valueParameters.any { it.defaultValue is FirLazyExpression }
+private fun needCalculatingLazyBodyForContractDescriptionOwner(firContractOwner: FirContractDescriptionOwner): Boolean {
+    val contractDescription = firContractOwner.contractDescription
+    if (contractDescription is FirRawContractDescription) {
+        return contractDescription.rawEffects.any { it is FirLazyExpression }
+    }
+
+    return false
+}
+
+private fun needCalculatingLazyBodyForFunction(firFunction: FirFunction): Boolean {
+    return (firFunction.body is FirLazyBlock
+            || firFunction.valueParameters.any { it.defaultValue is FirLazyExpression })
+            || (firFunction is FirContractDescriptionOwner && needCalculatingLazyBodyForContractDescriptionOwner(firFunction))
+}
 
 private fun needCalculatingLazyBodyForProperty(firProperty: FirProperty): Boolean =
     firProperty.getter?.let { needCalculatingLazyBodyForFunction(it) } == true

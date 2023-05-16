@@ -16,13 +16,21 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkPhase
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.resolvePhase
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
+import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.extensions.registeredPluginAnnotations
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirTowerDataContextCollector
 import org.jetbrains.kotlin.fir.resolve.transformers.plugin.CompilerRequiredAnnotationsComputationSession
+import org.jetbrains.kotlin.fir.resolve.transformers.plugin.CompilerRequiredAnnotationsHelper
 import org.jetbrains.kotlin.fir.resolve.transformers.plugin.FirCompilerRequiredAnnotationsResolveTransformer
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
+import org.jetbrains.kotlin.fir.types.FirUserTypeRef
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 
 internal object LLFirCompilerAnnotationsLazyResolver : LLFirLazyResolver(FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS) {
@@ -93,27 +101,65 @@ private class LLFirCompilerRequiredAnnotationsTargetResolver(
         }
     }
 
-    override fun doLazyResolveUnderLock(target: FirElementWithResolveState) {
-        FirLazyBodiesCalculator.calculateCompilerAnnotations(target)
+    private val stateKeepers = CompilerAnnotationsStateKeepers(session)
 
+    override fun doLazyResolveUnderLock(target: FirElementWithResolveState) {
         when {
             target is FirRegularClass -> {
-                transformer.annotationTransformer.resolveRegularClass(
-                    target,
-                    transformChildren = {
-                        target.transformSuperTypeRefs(transformer.annotationTransformer, null)
-                    },
-                    afterChildrenTransform = {
-                        transformer.annotationTransformer.calculateDeprecations(target)
-                    }
-                )
+                resolveWithKeeper(target, stateKeepers.DECLARATION) {
+                    FirLazyBodiesCalculator.calculateCompilerAnnotations(target)
+                    transformer.annotationTransformer.resolveRegularClass(
+                        target,
+                        transformChildren = {
+                            target.transformSuperTypeRefs(transformer.annotationTransformer, null)
+                        },
+                        afterChildrenTransform = {
+                            transformer.annotationTransformer.calculateDeprecations(target)
+                        }
+                    )
+                }
             }
 
             target.isRegularDeclarationWithAnnotation -> {
-                target.transformSingle(transformer.annotationTransformer, null)
+                resolveWithKeeper(target, stateKeepers.DECLARATION) {
+                    FirLazyBodiesCalculator.calculateCompilerAnnotations(target)
+                    target.transformSingle(transformer.annotationTransformer, null)
+                }
             }
 
             else -> throwUnexpectedFirElementError(target)
         }
+    }
+}
+
+private class CompilerAnnotationsStateKeepers(session: FirSession) : AbstractAnnotationStateKeepers() {
+    private companion object {
+        val REQUIRED_ANNOTATION_NAMES = CompilerRequiredAnnotationsHelper.REQUIRED_ANNOTATIONS.map { it.shortClassName }
+    }
+
+    private val pluginAnnotations = session.registeredPluginAnnotations
+
+    override val ANNOTATION: StateKeeper<FirAnnotation> = stateKeeper { annotation ->
+        if (shouldHandle(annotation)) {
+            add(ANNOTATION_BASE)
+        }
+    }
+
+    private fun shouldHandle(annotation: FirAnnotation): Boolean {
+        if (annotation !is FirAnnotationCall) {
+            return false
+        }
+
+        if (pluginAnnotations.metaAnnotations.isNotEmpty()) {
+            return true
+        }
+
+        val typeRef = annotation.typeRef as? FirUserTypeRef
+        val shortName = typeRef?.qualifier?.lastOrNull()?.name
+        if (shortName in REQUIRED_ANNOTATION_NAMES) {
+            return true
+        }
+
+        return pluginAnnotations.annotations.any { it.shortName() == shortName }
     }
 }

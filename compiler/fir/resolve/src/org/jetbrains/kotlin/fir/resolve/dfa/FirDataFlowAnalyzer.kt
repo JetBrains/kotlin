@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.contracts.description.ConeReturnsEffectDeclarati
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.impl.FirContractCallBlock
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.references.toResolvedPropertySymbol
@@ -291,9 +292,17 @@ abstract class FirDataFlowAnalyzer(
 
     fun enterBlock(block: FirBlock) {
         graphBuilder.enterBlock(block).mergeIncomingFlow()
+
+        if (block is FirContractCallBlock) {
+            enterContractDescription()
+        }
     }
 
     fun exitBlock(block: FirBlock) {
+        if (block is FirContractCallBlock) {
+            exitContractDescription()
+        }
+
         graphBuilder.exitBlock(block).mergeIncomingFlow()
     }
 

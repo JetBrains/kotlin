@@ -15,12 +15,10 @@ import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirFileAnnotationsContainer
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirImplicitAwareBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirTowerDataContextCollector
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.ImplicitBodyResolveComputationSession
-import org.jetbrains.kotlin.fir.visitors.transformSingle
 
 internal object LLFirImplicitTypesLazyResolver : LLFirLazyResolver(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE) {
     override fun resolve(
@@ -81,22 +79,20 @@ internal class LLFirImplicitBodyTargetResolver(
 
     override fun doLazyResolveUnderLock(target: FirElementWithResolveState) {
         when (target) {
+            is FirSimpleFunction -> resolve(target, BodyStateKeepers.FUNCTION)
+            is FirProperty -> resolve(target, BodyStateKeepers.PROPERTY)
+            is FirVariable -> resolve(target, BodyStateKeepers.VARIABLE)
+            is FirPropertyAccessor -> resolve(target.propertySymbol.fir, BodyStateKeepers.PROPERTY)
             is FirRegularClass,
-            is FirDanglingModifierList,
-            is FirAnonymousInitializer,
-            is FirFileAnnotationsContainer,
             is FirTypeAlias,
+            is FirDanglingModifierList,
+            is FirFileAnnotationsContainer,
             is FirScript,
-            is FirConstructor,
-            -> {
-                // no implicit bodies here
-            }
+            is FirAnonymousInitializer,
             is FirCallableDeclaration -> {
-                calculateLazyBodies(target)
-                target.transformSingle(transformer, ResolutionMode.ContextIndependent)
+                // No implicit bodies here
             }
             else -> throwUnexpectedFirElementError(target)
         }
     }
 }
-
