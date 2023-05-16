@@ -61,17 +61,17 @@ private class KotlinTargetHierarchyBuilderRootImpl(
 
 
     override fun sourceSetTrees(vararg tree: KotlinTargetHierarchy.SourceSetTree) {
-        builder.modules = tree.toHashSet()
+        builder.sourceSetTrees = tree.toHashSet()
     }
 
     override fun withSourceSetTree(vararg tree: KotlinTargetHierarchy.SourceSetTree) {
-        builder.modules = builder.modules.orEmpty().plus(tree)
+        builder.sourceSetTrees = builder.sourceSetTrees.orEmpty().plus(tree)
     }
 
     override fun excludeSourceSetTree(vararg tree: KotlinTargetHierarchy.SourceSetTree) {
         val modules = tree.toHashSet()
         if (modules.isEmpty()) return
-        builder.modules = builder.modules.orEmpty() - modules
+        builder.sourceSetTrees = builder.sourceSetTrees.orEmpty() - modules
     }
 }
 
@@ -84,7 +84,7 @@ private class KotlinTargetHierarchyBuilderImpl(
     val children = mutableSetOf<KotlinTargetHierarchyBuilderImpl>()
     val childrenClosure get() = closure { it.children }
 
-    var modules: Set<KotlinTargetHierarchy.SourceSetTree>? = null
+    var sourceSetTrees: Set<KotlinTargetHierarchy.SourceSetTree>? = null
     private var includePredicate: ((KotlinCompilation<*>) -> Boolean) = { false }
     private var excludePredicate: ((KotlinCompilation<*>) -> Boolean) = { false }
 
@@ -104,9 +104,9 @@ private class KotlinTargetHierarchyBuilderImpl(
     }
 
     suspend fun contains(compilation: KotlinCompilation<*>): Boolean {
-        modules?.let { modules ->
-            val module = KotlinTargetHierarchy.SourceSetTree.orNull(compilation) ?: return false
-            if (module !in modules) return false
+        sourceSetTrees?.let { sourceSetTrees ->
+            val sourceSetTree = KotlinTargetHierarchy.SourceSetTree.orNull(compilation) ?: return false
+            if (sourceSetTree !in sourceSetTrees) return false
         }
 
         /* Return eagerly, when compilation is explicitly excluded */

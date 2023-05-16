@@ -12,9 +12,9 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.DefaultKotlinCompi
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationAssociator
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationSourceSetsContainer
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.KotlinCompilationImplFactory.KotlinCompilationTaskNamesContainerFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.decoratedInstance
 import org.jetbrains.kotlin.gradle.plugin.mpp.external.DecoratedExternalKotlinCompilation.Delegate
+import org.jetbrains.kotlin.gradle.plugin.mpp.targetHierarchy.sourceSetTreeClassifier
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
 
 /**
@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
  */
 @ExternalKotlinTargetApi
 fun <T : DecoratedExternalKotlinCompilation> DecoratedExternalKotlinTarget.createCompilation(
-    descriptor: ExternalKotlinCompilationDescriptor<T>
+    descriptor: ExternalKotlinCompilationDescriptor<T>,
 ): T {
     val compilationImplFactory = KotlinCompilationImplFactory(
         compilerOptionsFactory = when (platformType) {
@@ -42,7 +42,7 @@ fun <T : DecoratedExternalKotlinCompilation> DecoratedExternalKotlinTarget.creat
             KotlinPlatformType.wasm -> KotlinMultiplatformCommonCompilerOptionsFactory
         },
         compilationSourceSetsContainerFactory = { _, _ -> KotlinCompilationSourceSetsContainer(descriptor.defaultSourceSet) },
-        compilationTaskNamesContainerFactory = KotlinCompilationTaskNamesContainerFactory { target, compilationName ->
+        compilationTaskNamesContainerFactory = { target, compilationName ->
             val default = DefaultKotlinCompilationTaskNamesContainerFactory.create(target, compilationName)
             default.copy(
                 compileTaskName = descriptor.compileTaskName ?: default.compileTaskName,
@@ -70,6 +70,7 @@ fun <T : DecoratedExternalKotlinCompilation> DecoratedExternalKotlinTarget.creat
 
     val compilationImpl = compilationImplFactory.create(this, descriptor.compilationName)
     val decoratedCompilation = descriptor.compilationFactory.create(Delegate(compilationImpl))
+    decoratedCompilation.sourceSetTreeClassifier = descriptor.sourceSetTreeClassifier
     descriptor.configure?.invoke(decoratedCompilation)
     this.delegate.compilations.add(decoratedCompilation)
 
@@ -83,13 +84,13 @@ fun <T : DecoratedExternalKotlinCompilation> DecoratedExternalKotlinTarget.creat
  */
 @ExternalKotlinTargetApi
 fun <T : DecoratedExternalKotlinCompilation> DecoratedExternalKotlinTarget.createCompilation(
-    descriptor: ExternalKotlinCompilationDescriptorBuilder<T>.() -> Unit
+    descriptor: ExternalKotlinCompilationDescriptorBuilder<T>.() -> Unit,
 ): T {
     return createCompilation(ExternalKotlinCompilationDescriptor(descriptor))
 }
 
 private fun DecoratedExternalKotlinTarget.setupCompileTask(
-    compilation: DecoratedExternalKotlinCompilation
+    compilation: DecoratedExternalKotlinCompilation,
 ) {
     val tasksProvider = KotlinTasksProvider()
     val compilationInfo = KotlinCompilationInfo(compilation)
