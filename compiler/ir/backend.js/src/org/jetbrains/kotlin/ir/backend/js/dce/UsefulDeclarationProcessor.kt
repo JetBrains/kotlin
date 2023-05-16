@@ -166,7 +166,9 @@ abstract class UsefulDeclarationProcessor(
 
     protected open fun processSimpleFunction(irFunction: IrSimpleFunction) {
         if (irFunction.isFakeOverride) {
-            irFunction.resolveFakeOverride()?.enqueue(irFunction, "real overridden fun", isContagious = false)
+            irFunction.overriddenSymbols.forEach {
+                it.owner.enqueue(irFunction, "overridden by a useful fake override", isContagious = false)
+            }
         }
     }
 
@@ -198,6 +200,8 @@ abstract class UsefulDeclarationProcessor(
             declaration.findOverriddenContagiousDeclaration()?.let {
                 declaration.enqueue(it, "overrides useful declaration")
             }
+
+
         }
 
         if (declaration is IrSimpleFunction && declaration.isAccessorForOverriddenExternalField()) {

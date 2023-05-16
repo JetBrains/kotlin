@@ -176,33 +176,6 @@ internal class JsUsefulDeclarationProcessor(
         }
     }
 
-    private fun collectLastBaseClassOverrides(declaration: IrOverridableDeclaration<*>): Set<IrDeclaration> {
-        val allOverrides = mutableSetOf<IrDeclaration>()
-
-        val todo = mutableListOf(declaration)
-        val visited = hashSetOf<IrDeclaration>(declaration)
-        while (todo.isNotEmpty()) {
-            val decl = todo.popLast()
-            if (decl.parentClassOrNull?.isClass == true) {
-                for (overriddenSymbol in decl.overriddenSymbols) {
-                    val overriddenDeclaration = overriddenSymbol.owner as? IrOverridableDeclaration<*> ?: continue
-                    val parent = overriddenDeclaration.parentClassOrNull ?: continue
-                    if (parent.isInterface) {
-                        if (overriddenDeclaration.modality != Modality.ABSTRACT) {
-                            allOverrides.add(decl)
-                        }
-                    } else {
-                        if (visited.add(overriddenDeclaration)) {
-                            todo.add(overriddenDeclaration)
-                        }
-                    }
-                }
-            }
-        }
-
-        return allOverrides.also { it.remove(declaration) }
-    }
-
     override fun processSimpleFunction(irFunction: IrSimpleFunction) {
         super.processSimpleFunction(irFunction)
 
@@ -212,10 +185,6 @@ internal class JsUsefulDeclarationProcessor(
 
         if (irFunction.isReal && irFunction.body != null) {
             irFunction.parentClassOrNull?.takeIf { it.isInterface }?.enqueue(irFunction, "interface default method is used")
-        }
-
-        collectLastBaseClassOverrides(irFunction).forEach {
-            it.enqueue(irFunction, "first override of interface default")
         }
 
         if (context.es6mode && isEsModules) return
