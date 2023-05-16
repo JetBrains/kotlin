@@ -17,6 +17,8 @@ import org.jetbrains.kotlin.ir.util.render
  * The base class for all public (wrt linkage) symbols.
  *
  * Its [signature] is never `null`.
+ *
+ * TODO: Merge with [IrSymbolBase] ([KT-44721](https://youtrack.jetbrains.com/issue/KT-44721))
  */
 abstract class IrPublicSymbolBase<out Descriptor : DeclarationDescriptor>(
     override val signature: IdSignature,

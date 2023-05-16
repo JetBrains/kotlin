@@ -43,32 +43,6 @@ import org.jetbrains.kotlin.types.model.TypeParameterMarker
  * During the linkage phase, we collect all the unbound symbols in the IR tree and try to resolve them to the declarations they should
  * refer to. For unbound symbols for public declarations from other modules, [signature] is used to resolve those declarations.
  *
- * ### Symbol hierarchy
- * ```
- * IrSymbol
- *   ├─IrPackageFragmentSymbol
- *   │   ├─IrFileSymbol
- *   │   └─IrExternalPackageFragmentSymbol
- *   ├─IrClassifierSymbol
- *   │   ├─IrClassSymbol
- *   │   ├─IrScriptSymbol
- *   │   └─IrTypeParameterSymbol
- *   ├─IrValueSymbol
- *   │   ├─IrValueParameterSymbol
- *   │   └─IrVariableSymbol
- *   ├─IrReturnTargetSymbol
- *   │   ├─IrFunctionSymbol
- *   │   │   ├─IrConstructorSymbol
- *   │   │   └─IrSimpleFunction
- *   │   └─IrReturnableBlockSymbol
- *   ├─IrAnonymousInitializerSymbol
- *   ├─IrEnumEntrySymbol
- *   ├─IrFieldSymbol
- *   ├─IrPropertySymbol
- *   ├─IrLocalDelegatedPropertySymbol
- *   └─IrTypeAliasSymbol
- * ```
- *
  * @see IdSignature
  * @see SymbolTable
  */
