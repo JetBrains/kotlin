@@ -5,7 +5,7 @@
     * frame #0: [..]`kfun:[..]main$lambda$0[..] at kt42208-2.kt:15:5
       frame #1: [..]`kfun:$main$lambda$0$FUNCTION_REFERENCE$0[..]invoke[..](_this=[..])[..] at kt42208-1.kt:10:71
       frame #2: [..]`kfun:$main$lambda$0$FUNCTION_REFERENCE$0.[..]$<bridge-BNN>invoke(_this=[..]){}kotlin.Boolean[..] at kt42208-1.kt:10:71
-      frame #3: [..]`kfun:kotlin.Function0#invoke(){}1:0-trampoline + [..]
+      frame #3: [..]`kfun:kotlin.Function0#invoke(){}1:0-trampoline [..]
       frame #4: [..]`kfun:#main(){} at kt42208-1.kt:6:5
       frame #5: [..]`Konan_start(args=[..]) at [..]
       frame #6: [..]
@@ -15,7 +15,7 @@
     * frame #0: [..]`kfun:[..]main$lambda$0[..] at kt42208-2.kt:15:5
       frame #1: [..]`kfun:$main$lambda$0$FUNCTION_REFERENCE$0[..]invoke[..](_this=[..])[..] at kt42208-1.kt:10:71
       frame #2: [..]`kfun:$main$lambda$0$FUNCTION_REFERENCE$0.[..]$<bridge-BNN>invoke(_this=[..]){}kotlin.Boolean[..] at kt42208-1.kt:10:71
-      frame #3: [..]`kfun:kotlin.Function0#invoke(){}1:0-trampoline + [..]
+      frame #3: [..]`kfun:kotlin.Function0#invoke(){}1:0-trampoline [..]
       frame #4: [..]`kfun:#main(){} at kt42208-1.kt:7:5
       frame #5: [..]`Konan_start(args=[..]) at [..]
 > c
@@ -24,7 +24,7 @@
     * frame #0: [..]`kfun:[..]main$lambda$0[..] at kt42208-2.kt:15:5
       frame #1: [..]`kfun:$main$lambda$0$FUNCTION_REFERENCE$0[..]invoke[..](_this=[..])[..] at kt42208-1.kt:10:71
       frame #2: [..]`kfun:$main$lambda$0$FUNCTION_REFERENCE$0.[..]$<bridge-BNN>invoke(_this=[..]){}kotlin.Boolean[..] at kt42208-1.kt:10:71
-      frame #3: [..]`kfun:kotlin.Function0#invoke(){}1:0-trampoline + [..]
+      frame #3: [..]`kfun:kotlin.Function0#invoke(){}1:0-trampoline [..]
       frame #4: [..]`kfun:#main(){} at kt42208-1.kt:8:5
       frame #5: [..]`Konan_start(args=[..]) at [..]
 > q
