@@ -175,7 +175,7 @@ class KotlinTargetHierarchyDslTest {
             common {
                 group("jvmAndAndroid") {
                     withJvm()
-                    withAndroid()
+                    withAndroidTarget()
                 }
             }
         }

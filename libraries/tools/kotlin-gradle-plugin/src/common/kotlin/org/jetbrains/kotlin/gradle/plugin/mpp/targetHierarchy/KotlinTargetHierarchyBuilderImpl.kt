@@ -56,7 +56,7 @@ private class KotlinTargetHierarchyBuilderImplContext(private val compilation: K
 }
 
 private class KotlinTargetHierarchyBuilderRootImpl(
-    private val builder: KotlinTargetHierarchyBuilderImpl
+    private val builder: KotlinTargetHierarchyBuilderImpl,
 ) : KotlinTargetHierarchyBuilder.Root, KotlinTargetHierarchyBuilder by builder {
 
 
@@ -161,7 +161,10 @@ private class KotlinTargetHierarchyBuilderImpl(
                 (it is KotlinWithJavaTarget<*, *> && it.platformType == KotlinPlatformType.jvm)
     }
 
-    override fun withAndroid() = withTargets { it is KotlinAndroidTarget }
+    @Suppress("OVERRIDE_DEPRECATION")
+    override fun withAndroid() = withAndroidTarget()
+
+    override fun withAndroidTarget() = withTargets { it is KotlinAndroidTarget }
 
     override fun withAndroidNativeX64() = withTargets {
         it is KotlinNativeTarget && it.konanTarget == KonanTarget.ANDROID_X64

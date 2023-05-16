@@ -41,7 +41,7 @@ class IdeJvmAndAndroidDependencyResolutionTest {
             common {
                 group("jvmAndAndroid") {
                     withJvm()
-                    withAndroid()
+                    withAndroidTarget()
                 }
             }
         }
