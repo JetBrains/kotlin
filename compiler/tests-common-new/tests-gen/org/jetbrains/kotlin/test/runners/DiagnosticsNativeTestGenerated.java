@@ -25,6 +25,12 @@ public class DiagnosticsNativeTestGenerated extends AbstractDiagnosticsNativeTes
     }
 
     @Test
+    @TestMetadata("cloneableInNative.kt")
+    public void testCloneableInNative() throws Exception {
+        runTest("compiler/testData/diagnostics/nativeTests/cloneableInNative.kt");
+    }
+
+    @Test
     @TestMetadata("identifiers.kt")
     public void testIdentifiers() throws Exception {
         runTest("compiler/testData/diagnostics/nativeTests/identifiers.kt");
