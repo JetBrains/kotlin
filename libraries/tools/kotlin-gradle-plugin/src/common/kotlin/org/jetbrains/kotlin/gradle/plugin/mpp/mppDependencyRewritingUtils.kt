@@ -222,7 +222,6 @@ private fun KotlinTargetComponent.findUsageContext(configurationName: String): U
         @Suppress("DEPRECATION")
         configurationName in compilation.relatedConfigurationNames ||
                 configurationName == compilation.target.apiElementsConfigurationName ||
-                configurationName == compilation.target.runtimeElementsConfigurationName ||
-                configurationName == compilation.target.defaultConfigurationName
+                configurationName == compilation.target.runtimeElementsConfigurationName
     }
 }

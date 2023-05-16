@@ -228,10 +228,6 @@ internal fun applyUserDefinedAttributes(target: AbstractKotlinTarget) {
         }.toMutableList()
 
         val mainCompilation = target.compilations.findByName(KotlinCompilation.MAIN_COMPILATION_NAME)
-        val defaultTargetConfiguration = project.configurations.findByName(target.defaultConfigurationName)
-        if (mainCompilation != null && defaultTargetConfiguration != null) {
-            outputConfigurationsWithCompilations += defaultTargetConfiguration to mainCompilation
-        }
 
         // Add usages of android library when its variants are grouped by flavor
         outputConfigurationsWithCompilations += target.kotlinComponents

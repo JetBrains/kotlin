@@ -36,7 +36,6 @@ interface KotlinTarget : Named, HasAttributes, HasProject, HasMutableExtras {
 
     val artifactsTaskName: String
 
-    val defaultConfigurationName: String
     val apiElementsConfigurationName: String
     val runtimeElementsConfigurationName: String
     val sourcesElementsConfigurationName: String

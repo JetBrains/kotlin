@@ -67,9 +67,6 @@ internal class ExternalKotlinTargetImpl internal constructor(
     override val artifactsTaskName: String
         get() = artifactsTask.name
 
-    override val defaultConfigurationName: String
-        get() = defaultConfiguration.name
-
     override val apiElementsConfigurationName: String
         get() = apiElementsConfiguration.name
 

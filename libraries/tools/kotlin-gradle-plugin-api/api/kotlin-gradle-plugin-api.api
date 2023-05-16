@@ -1025,7 +1025,6 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinTarget 
 	public abstract fun getArtifactsTaskName ()Ljava/lang/String;
 	public abstract fun getCompilations ()Lorg/gradle/api/NamedDomainObjectContainer;
 	public abstract fun getComponents ()Ljava/util/Set;
-	public abstract fun getDefaultConfigurationName ()Ljava/lang/String;
 	public abstract fun getDisambiguationClassifier ()Ljava/lang/String;
 	public abstract fun getName ()Ljava/lang/String;
 	public abstract fun getOverrideDisambiguationClassifierOnIdeImport ()Ljava/lang/String;
