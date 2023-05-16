@@ -36,109 +36,52 @@ abstract class KotlinAndroidTarget @Inject constructor(
     override val compilations: NamedDomainObjectContainer<out KotlinJvmAndroidCompilation> =
         project.container(KotlinJvmAndroidCompilation::class.java)
 
-    /**
-     * Configure Android specific settings within the context of [KotlinTargetHierarchy].
-     * The difference between Android and other targets is that the build author is free to choose
-     * the names of compilations, whereas Android is using predefined SourceSet names.
-     *
-     * ### Default dependsOn edges
-     * By default, Kotlin Multiplatform will set the following default dependsOn edges:
-     * - `androidMain` -> `commonMain`
-     * - `androidUnitTest` -> `commonTest`
-     *
-     * In this default setup, SourceSets like `androidInstrumentedTest` will *not* dependOn `commonTest`.
-     * This API can be used to change the default behavior
-     *
-     * #### Example 1: Setting up androidInstrumentedTest -> commonTest
-     * This can be done by putting the 'androidInstrumentedTest' variants into the 'test' [SourceSetTree]:
-     * ```kotlin
-     * androidTarget().targetHierarchy {
-     *     instrumentedTest.sourceSetTree.set(SourceSetTree.test)
-     * }
-     * ```
-     *
-     * #### Example 2: Setting up androidInstrumentedTest -> commonTest and removing 'unitTests' from the 'test' [SourceSetTree]
-     * ```kotlin
-     * androidTarget().targetHierarchy {
-     *     instrumentedTest.sourceSetTree.set(SourceSetTree.test)
-     *     unitTest.sourceSetTree.set(SourceSetTree.unitTest) // ! <- Anything *other* than 'test'
-     * }
-     * ```
-     */
+
     @ExperimentalKotlinGradlePluginApi
-    val targetHierarchy: KotlinAndroidTargetHierarchyDsl = KotlinAndroidTargetHierarchyDslImpl(project.objects).apply {
-        main.sourceSetTree.convention(SourceSetTree.main)
-        unitTest.sourceSetTree.convention(SourceSetTree.test)
-        instrumentedTest.sourceSetTree.convention(SourceSetTree.instrumentedTest)
+    val mainVariant: KotlinAndroidTargetVariantDsl = KotlinAndroidTargetVariantDslImpl(project.objects).apply {
+        sourceSetTree.convention(SourceSetTree.main)
     }
 
-    /**
-     * Configure Android specific settings within the context of [KotlinTargetHierarchy].
-     * The difference between Android and other targets is that the build author is free to choose
-     * the names of compilations, whereas Android is using predefined SourceSet names.
-     *
-     * ### Default dependsOn edges
-     * By default, Kotlin Multiplatform will set the following default dependsOn edges:
-     * - `androidMain` -> `commonMain`
-     * - `androidUnitTest` -> `commonTest`
-     *
-     * In this default setup, SourceSets like `androidInstrumentedTest` will *not* dependOn `commonTest`.
-     * This API can be used to change the default behavior
-     *
-     * #### Example 1: Setting up androidInstrumentedTest -> commonTest
-     * This can be done by putting the 'androidInstrumentedTest' variants into the 'test' [SourceSetTree]:
-     * ```kotlin
-     * androidTarget().targetHierarchy {
-     *     instrumentedTest.sourceSetTree.set(SourceSetTree.test)
-     * }
-     * ```
-     *
-     * #### Example 2: Setting up androidInstrumentedTest -> commonTest and removing 'unitTests' from the 'test' [SourceSetTree]
-     * ```kotlin
-     * androidTarget().targetHierarchy {
-     *     instrumentedTest.sourceSetTree.set(SourceSetTree.test)
-     *     unitTest.sourceSetTree.set(SourceSetTree.unitTest) // ! <- Anything *other* than 'test'
-     * }
-     * ```
-     */
     @ExperimentalKotlinGradlePluginApi
-    fun targetHierarchy(configure: Action<KotlinAndroidTargetHierarchyDsl>) {
-        configure.execute(targetHierarchy)
+    fun mainVariant(action: Action<KotlinAndroidTargetVariantDsl>) {
+        action.execute(mainVariant)
     }
 
-    /**
-     * Configure Android specific settings within the context of [KotlinTargetHierarchy].
-     * The difference between Android and other targets is that the build author is free to choose
-     * the names of compilations, whereas Android is using predefined SourceSet names.
-     *
-     * ### Default dependsOn edges
-     * By default, Kotlin Multiplatform will set the following default dependsOn edges:
-     * - `androidMain` -> `commonMain`
-     * - `androidUnitTest` -> `commonTest`
-     *
-     * In this default setup, SourceSets like `androidInstrumentedTest` will *not* dependOn `commonTest`.
-     * This API can be used to change the default behavior
-     *
-     * #### Example 1: Setting up androidInstrumentedTest -> commonTest
-     * This can be done by putting the 'androidInstrumentedTest' variants into the 'test' [SourceSetTree]:
-     * ```kotlin
-     * androidTarget().targetHierarchy {
-     *     instrumentedTest.sourceSetTree.set(SourceSetTree.test)
-     * }
-     * ```
-     *
-     * #### Example 2: Setting up androidInstrumentedTest -> commonTest and removing 'unitTests' from the 'test' [SourceSetTree]
-     * ```kotlin
-     * androidTarget().targetHierarchy {
-     *     instrumentedTest.sourceSetTree.set(SourceSetTree.test)
-     *     unitTest.sourceSetTree.set(SourceSetTree.unitTest) // ! <- Anything *other* than 'test'
-     * }
-     * ```
-     */
     @ExperimentalKotlinGradlePluginApi
-    fun targetHierarchy(configure: KotlinAndroidTargetHierarchyDsl.() -> Unit) {
-        targetHierarchy.configure()
+    fun mainVariant(configure: KotlinAndroidTargetVariantDsl.() -> Unit) {
+        mainVariant.configure()
     }
+
+    @ExperimentalKotlinGradlePluginApi
+    val unitTestVariant: KotlinAndroidTargetVariantDsl = KotlinAndroidTargetVariantDslImpl(project.objects).apply {
+        sourceSetTree.convention(SourceSetTree.test)
+    }
+
+    @ExperimentalKotlinGradlePluginApi
+    fun unitTestVariant(action: Action<KotlinAndroidTargetVariantDsl>) {
+        action.execute(unitTestVariant)
+    }
+
+    @ExperimentalKotlinGradlePluginApi
+    fun unitTestVariant(configure: KotlinAndroidTargetVariantDsl.() -> Unit) {
+        unitTestVariant.configure()
+    }
+
+    @ExperimentalKotlinGradlePluginApi
+    val instrumentedTestVariant: KotlinAndroidTargetVariantDsl = KotlinAndroidTargetVariantDslImpl(project.objects).apply {
+        sourceSetTree.convention(SourceSetTree.instrumentedTest)
+    }
+
+    @ExperimentalKotlinGradlePluginApi
+    fun instrumentedTestVariant(action: Action<KotlinAndroidTargetVariantDsl>) {
+        action.execute(instrumentedTestVariant)
+    }
+
+    @ExperimentalKotlinGradlePluginApi
+    fun instrumentedTestVariant(configure: KotlinAndroidTargetVariantDsl.() -> Unit) {
+        instrumentedTestVariant.configure()
+    }
+
 
     /** Names of the Android library variants that should be published from the target's project within the default publications which are
      * set up if the `maven-publish` Gradle plugin is applied.
