@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -35,10 +35,11 @@ internal class KtFirOverrideInfoProvider(
         require(memberSymbol is KtFirSymbol<*>)
         require(classSymbol is KtFirSymbol<*>)
 
-        // Inspecting visibility requires resolving to status
-        classSymbol.firSymbol.lazyResolveToPhase(FirResolvePhase.STATUS)
         val memberFir = memberSymbol.firSymbol.fir as? FirCallableDeclaration ?: return false
         val parentClassFir = classSymbol.firSymbol.fir as? FirClass ?: return false
+
+        // Inspecting visibility requires resolving to status
+        classSymbol.firSymbol.lazyResolveToPhase(FirResolvePhase.STATUS)
 
         return memberFir.isVisibleInClass(parentClassFir)
     }
@@ -48,9 +49,9 @@ internal class KtFirOverrideInfoProvider(
         require(parentClassSymbol is KtFirSymbol<*>)
 
         // Inspecting implementation status requires resolving to status
-        parentClassSymbol.firSymbol.lazyResolveToPhase(FirResolvePhase.STATUS)
         val memberFir = memberSymbol.firSymbol.fir as? FirCallableDeclaration ?: return null
         val parentClassFir = parentClassSymbol.firSymbol.fir as? FirClass ?: return null
+        memberFir.lazyResolveToPhase(FirResolvePhase.STATUS)
 
         return memberFir.symbol.getImplementationStatus(
             SessionHolderImpl(
