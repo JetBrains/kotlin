@@ -182,7 +182,7 @@ internal suspend fun Stage.await() {
  * final value.
  */
 internal suspend fun <T : Any> Property<T>.awaitFinalValue(): T? {
-    Stage.FinaliseDsl.await()
+    Stage.AfterFinaliseDsl.await()
     finalizeValue()
     return orNull
 }

@@ -7,9 +7,9 @@
 
 package org.jetbrains.kotlin.gradle.unitTests
 
+import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
-import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.EvaluateBuildscript
-import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.FinaliseDsl
+import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.*
 import org.jetbrains.kotlin.gradle.plugin.awaitFinalValue
 import org.jetbrains.kotlin.gradle.plugin.currentKotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.launchInStage
@@ -40,7 +40,7 @@ class LifecycleAwaitFinalPropertyValueTest {
 
         assertEquals(EvaluateBuildscript, currentKotlinPluginLifecycle().stage)
         assertEquals(2, property.awaitFinalValue())
-        assertEquals(FinaliseDsl, currentKotlinPluginLifecycle().stage)
+        assertEquals(AfterFinaliseDsl, currentKotlinPluginLifecycle().stage)
     }
 
     @Test
@@ -48,7 +48,7 @@ class LifecycleAwaitFinalPropertyValueTest {
         val property = project.newProperty<Int>()
         property.set(1)
 
-        launchInStage(FinaliseDsl.previousOrThrow) {
+        launch {
             property.awaitFinalValue()
         }
 
