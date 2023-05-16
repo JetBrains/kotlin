@@ -18,7 +18,7 @@ object KtDiagnosticClassRenderer : AbstractDiagnosticsDataClassRenderer() {
     }
 
     private fun SmartPrinter.printDiagnosticClasses(diagnosticList: HLDiagnosticList) {
-        inBracketsWithIndent("sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI>") {
+        inBracketsWithIndent("sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI>") {
             for (diagnostic in diagnosticList.diagnostics) {
                 printDiagnosticClass(diagnostic, diagnosticList)
                 println()
@@ -27,9 +27,9 @@ object KtDiagnosticClassRenderer : AbstractDiagnosticsDataClassRenderer() {
     }
 
     private fun SmartPrinter.printDiagnosticClass(diagnostic: HLDiagnostic, diagnosticList: HLDiagnosticList) {
-        print("abstract class ${diagnostic.className} : KtFirDiagnostic<")
+        print("interface ${diagnostic.className} : KtFirDiagnostic<")
         printTypeWithShortNames(diagnostic.original.psiType)
-        print(">()")
+        print(">")
         inBracketsWithIndent {
             println("override val diagnosticClass get() = ${diagnostic.className}::class")
             printDiagnosticParameters(diagnostic, diagnosticList)
@@ -38,7 +38,7 @@ object KtDiagnosticClassRenderer : AbstractDiagnosticsDataClassRenderer() {
 
     private fun SmartPrinter.printDiagnosticParameters(diagnostic: HLDiagnostic, diagnosticList: HLDiagnosticList) {
         diagnostic.parameters.forEach { parameter ->
-            print("abstract val ${parameter.name}: ")
+            print("val ${parameter.name}: ")
             printTypeWithShortNames(parameter.type) { type ->
                 diagnosticList.containsClashingBySimpleNameType(type)
             }

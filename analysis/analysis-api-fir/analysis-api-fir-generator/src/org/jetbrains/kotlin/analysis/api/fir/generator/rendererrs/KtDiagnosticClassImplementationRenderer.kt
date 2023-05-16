@@ -32,17 +32,17 @@ object KtDiagnosticClassImplementationRenderer : AbstractDiagnosticsDataClassRen
         withIndent {
             printParameters(diagnostic, diagnosticList)
         }
-        print(") : KtFirDiagnostic.${diagnostic.className}(), KtAbstractFirDiagnostic<")
+        print(") : KtAbstractFirDiagnostic<")
         printTypeWithShortNames(diagnostic.original.psiType)
-        println(">")
+        println(">(firDiagnostic, token), KtFirDiagnostic.${diagnostic.className}")
     }
 
     private fun SmartPrinter.printParameters(diagnostic: HLDiagnostic, diagnosticList: HLDiagnosticList) {
         for (parameter in diagnostic.parameters) {
             printParameter(parameter, diagnosticList)
         }
-        println("override val firDiagnostic: KtPsiDiagnostic,")
-        println("override val token: KtLifetimeToken,")
+        println("firDiagnostic: KtPsiDiagnostic,")
+        println("token: KtLifetimeToken,")
     }
 
     private fun SmartPrinter.printParameter(parameter: HLDiagnosticParameter, diagnosticList: HLDiagnosticList) {
