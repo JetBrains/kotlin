@@ -49,7 +49,7 @@ class Fir2IrConverter(
     private var wereSourcesFakeOverridesBound = false
     private val postponedDeclarationsForFakeOverridesBinding = mutableListOf<IrDeclaration>()
 
-    private fun runSourcesConversion(
+    fun runSourcesConversion(
         allFirFiles: List<FirFile>,
         irModuleFragment: IrModuleFragmentImpl,
         irGenerationExtensions: Collection<IrGenerationExtension>,
