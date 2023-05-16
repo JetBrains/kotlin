@@ -1,4 +1,3 @@
-// SKIP_TXT
 class A : <!SUPERTYPE_IS_EXTENSION_FUNCTION_TYPE!>suspend Double.() -> Unit<!> {
     override suspend fun invoke(p1: Double) {}
 }

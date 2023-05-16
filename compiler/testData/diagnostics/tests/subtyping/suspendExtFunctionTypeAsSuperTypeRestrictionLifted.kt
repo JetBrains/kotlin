@@ -1,6 +1,5 @@
 // FIR_IDENTICAL
 // !LANGUAGE: +FunctionalTypeWithExtensionAsSupertype
-// SKIP_TXT
 class A : suspend Double.() -> Unit {
     override suspend fun invoke(p1: Double) {}
 }
