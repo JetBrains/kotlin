@@ -5,10 +5,8 @@
 
 package org.jetbrains.kotlin.gradle.dsl
 
-import org.gradle.api.provider.Property
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
-import org.jetbrains.kotlin.gradle.plugin.KotlinTargetHierarchy
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetHierarchy.SourceSetTree
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetHierarchyBuilder
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetHierarchyDescriptor

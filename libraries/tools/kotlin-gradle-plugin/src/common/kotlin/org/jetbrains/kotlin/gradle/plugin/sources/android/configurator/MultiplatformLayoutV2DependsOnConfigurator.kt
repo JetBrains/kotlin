@@ -38,9 +38,9 @@ internal object MultiplatformLayoutV2DependsOnConfigurator : KotlinAndroidSource
             }
 
             val sourceSetTree = when (variantType) {
-                AndroidVariantType.Main -> target.targetHierarchy.main.sourceSetTree.awaitFinalValue()
-                AndroidVariantType.UnitTest -> target.targetHierarchy.unitTest.sourceSetTree.awaitFinalValue()
-                AndroidVariantType.InstrumentedTest -> target.targetHierarchy.instrumentedTest.sourceSetTree.awaitFinalValue()
+                AndroidVariantType.Main -> target.mainVariant.sourceSetTree.awaitFinalValue()
+                AndroidVariantType.UnitTest -> target.unitTestVariant.sourceSetTree.awaitFinalValue()
+                AndroidVariantType.InstrumentedTest -> target.instrumentedTestVariant.sourceSetTree.awaitFinalValue()
                 AndroidVariantType.Unknown -> null
             } ?: return@launchInStage
 
