@@ -26,29 +26,6 @@ enum class EvaluationMode(protected val mustCheckBody: Boolean) {
         override fun canEvaluateReference(reference: IrCallableReference<*>, context: IrCall?): Boolean = true
     },
 
-    WITH_ANNOTATIONS(mustCheckBody = false) {
-        override fun canEvaluateFunction(function: IrFunction, context: IrCall?): Boolean {
-            if (function.isCompileTimePropertyAccessor()) return true
-            return function.isMarkedAsCompileTime() || function.origin == IrBuiltIns.BUILTIN_OPERATOR ||
-                    (function is IrSimpleFunction && function.isOperator && function.name.asString() == "invoke") ||
-                    (function is IrSimpleFunction && function.isFakeOverride && function.overriddenSymbols.any { canEvaluateFunction(it.owner) }) ||
-                    function.isCompileTimeTypeAlias()
-        }
-
-        private fun IrFunction?.isCompileTimePropertyAccessor(): Boolean {
-            val property = this?.property ?: return false
-            if (property.isConst) return true
-            if (property.isMarkedAsCompileTime() || property.isCompileTimeTypeAlias()) return true
-
-            val backingField = property.backingField
-            val backingFieldExpression = backingField?.initializer?.expression as? IrGetValue
-            return backingFieldExpression?.origin == IrStatementOrigin.INITIALIZE_PROPERTY_FROM_PARAMETER
-        }
-
-        override fun canEvaluateEnumValue(enumEntry: IrGetEnumValue, context: IrCall?): Boolean = true
-        override fun canEvaluateReference(reference: IrCallableReference<*>, context: IrCall?): Boolean = true
-    },
-
     ONLY_BUILTINS(mustCheckBody = false) {
         private val allowedMethodsOnPrimitives = setOf(
             "not", "unaryMinus", "unaryPlus", "inv",

@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 class IrCompileTimeChecker(
     containingDeclaration: IrElement? = null,
-    private val mode: EvaluationMode = EvaluationMode.WITH_ANNOTATIONS,
+    private val mode: EvaluationMode,
     private val interpreterConfiguration: IrInterpreterConfiguration,
 ) : IrElementVisitor<Boolean, Nothing?> {
     private var contextExpression: IrCall? = null
@@ -344,7 +344,6 @@ class IrCompileTimeChecker(
         return with(mode) {
             when (this) {
                 EvaluationMode.FULL -> true
-                EvaluationMode.WITH_ANNOTATIONS -> (expression.symbol.owner as IrClass).isMarkedAsCompileTime()
                 EvaluationMode.ONLY_BUILTINS, EvaluationMode.ONLY_INTRINSIC_CONST -> false
             }
         }
