@@ -123,15 +123,16 @@ private fun <A : CommonToolArguments> parsePreprocessedCommandLineArguments(
     data class ArgumentField(val getter: Method, val setter: Method, val argument: Argument)
 
     val superClasses = mutableListOf<Class<*>>(result::class.java)
-    while (superClasses.last() != CommonToolArguments::class.java) {
+    while (superClasses.last() != Any::class.java) {
         superClasses.add(superClasses.last().superclass)
     }
 
+    val resultClass = result::class.java
     val properties = superClasses.flatMap {
         it.declaredFields.mapNotNull { field ->
             field.getAnnotation(Argument::class.java)?.let { argument ->
-                val getter = result::class.java.getMethod(JvmAbi.getterName(field.name))
-                val setter = result::class.java.getMethod(JvmAbi.setterName(field.name), field.type)
+                val getter = resultClass.getMethod(JvmAbi.getterName(field.name))
+                val setter = resultClass.getMethod(JvmAbi.setterName(field.name), field.type)
                 ArgumentField(getter, setter, argument)
             }
         }
