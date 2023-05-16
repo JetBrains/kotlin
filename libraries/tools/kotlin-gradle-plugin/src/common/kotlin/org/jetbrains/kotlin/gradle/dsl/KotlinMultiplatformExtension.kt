@@ -53,7 +53,7 @@ abstract class KotlinMultiplatformExtension(project: Project) :
     }
 
     internal val internalKotlinTargetHierarchy by lazy {
-        KotlinTargetHierarchyDslImpl(project.objects, targets, sourceSets)
+        KotlinTargetHierarchyDslImpl(targets, sourceSets)
     }
 
     @ExperimentalKotlinGradlePluginApi
@@ -76,13 +76,13 @@ abstract class KotlinMultiplatformExtension(project: Project) :
     fun <T : KotlinTarget> targetFromPreset(
         preset: KotlinTargetPreset<T>,
         name: String = preset.name,
-        configure: T.() -> Unit = { }
+        configure: T.() -> Unit = { },
     ): T = configureOrCreate(name, preset, configure)
 
     fun <T : KotlinTarget> targetFromPreset(
         preset: KotlinTargetPreset<T>,
         name: String,
-        configure: Action<T>
+        configure: Action<T>,
     ) = targetFromPreset(preset, name) { configure.execute(this) }
 
     fun <T : KotlinTarget> targetFromPreset(preset: KotlinTargetPreset<T>) = targetFromPreset(preset, preset.name) { }
@@ -100,37 +100,37 @@ interface TargetsFromPresetExtension : NamedDomainObjectCollection<KotlinTarget>
     fun <T : KotlinTarget> fromPreset(
         preset: KotlinTargetPreset<T>,
         name: String,
-        configureAction: T.() -> Unit = {}
+        configureAction: T.() -> Unit = {},
     ): T
 
     fun <T : KotlinTarget> fromPreset(
         preset: KotlinTargetPreset<T>,
-        name: String
+        name: String,
     ): T = fromPreset(preset, name, {})
 
     fun <T : KotlinTarget> fromPreset(
         preset: KotlinTargetPreset<T>,
         name: String,
-        configureAction: Action<T>
+        configureAction: Action<T>,
     ): T
 }
 
 internal abstract class DefaultTargetsFromPresetExtension @Inject constructor(
     private val targetsContainer: () -> KotlinTargetsContainerWithPresets,
-    val targets: NamedDomainObjectCollection<KotlinTarget>
+    val targets: NamedDomainObjectCollection<KotlinTarget>,
 ) : TargetsFromPresetExtension,
     NamedDomainObjectCollection<KotlinTarget> by targets {
 
     override fun <T : KotlinTarget> fromPreset(
         preset: KotlinTargetPreset<T>,
         name: String,
-        configureAction: T.() -> Unit
+        configureAction: T.() -> Unit,
     ): T = targetsContainer().configureOrCreate(name, preset, configureAction)
 
     override fun <T : KotlinTarget> fromPreset(
         preset: KotlinTargetPreset<T>,
         name: String,
-        configureAction: Action<T>
+        configureAction: Action<T>,
     ) = fromPreset(preset, name) {
         configureAction.execute(this)
     }
@@ -142,7 +142,7 @@ internal fun KotlinTarget.isProducedFromPreset(kotlinTargetPreset: KotlinTargetP
 internal fun <T : KotlinTarget> KotlinTargetsContainerWithPresets.configureOrCreate(
     targetName: String,
     targetPreset: KotlinTargetPreset<T>,
-    configure: T.() -> Unit
+    configure: T.() -> Unit,
 ): T {
     val existingTarget = targets.findByName(targetName)
     when {
@@ -172,7 +172,7 @@ internal fun <T : KotlinTarget> KotlinTargetsContainerWithPresets.configureOrCre
 
 internal fun KotlinTargetsContainerWithPresets.configureOrCreateAndroidTargetAndReportDeprecation(
     targetName: String,
-    configure: KotlinAndroidTarget.() -> Unit
+    configure: KotlinAndroidTarget.() -> Unit,
 ): KotlinAndroidTarget {
     val targetPreset = presets.getByName("android") as KotlinAndroidTargetPreset
     val result = configureOrCreate(targetName, targetPreset, configure)

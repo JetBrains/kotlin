@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.DecoratedKotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.external.ExternalKotlinCompilationDescriptor.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.targetHierarchy.SourceSetTreeClassifier
 import kotlin.properties.Delegates
 
 /**
@@ -54,6 +55,7 @@ interface ExternalKotlinCompilationDescriptor<T : DecoratedExternalKotlinCompila
     val compilationFactory: CompilationFactory<T>
     val friendArtifactResolver: FriendArtifactResolver<T>?
     val compilationAssociator: CompilationAssociator<T>?
+    val sourceSetTreeClassifier: SourceSetTreeClassifier
     val configure: ((T) -> Unit)?
 }
 
@@ -70,6 +72,7 @@ fun <T : DecoratedExternalKotlinCompilation> ExternalKotlinCompilationDescriptor
             compilationFactory = compilationFactory,
             friendArtifactResolver = friendArtifactResolver,
             compilationAssociator = compilationAssociator,
+            sourceSetTreeClassifier = sourceSetTreeClassifier,
             configure = this.configure
         )
     }
@@ -84,6 +87,8 @@ class ExternalKotlinCompilationDescriptorBuilder<T : DecoratedExternalKotlinComp
     var compilationFactory: CompilationFactory<T> by Delegates.notNull()
     var friendArtifactResolver: FriendArtifactResolver<T>? = null
     var compilationAssociator: CompilationAssociator<T>? = null
+    var sourceSetTreeClassifier: SourceSetTreeClassifier = SourceSetTreeClassifier.Default
+
     internal var configure: ((T) -> Unit)? = null
 
     fun configure(action: (T) -> Unit) = apply {
@@ -101,5 +106,6 @@ private data class ExternalKotlinCompilationDescriptorImpl<T : DecoratedExternal
     override val compilationFactory: CompilationFactory<T>,
     override val friendArtifactResolver: FriendArtifactResolver<T>?,
     override val compilationAssociator: CompilationAssociator<T>?,
+    override val sourceSetTreeClassifier: SourceSetTreeClassifier,
     override val configure: ((T) -> Unit)?,
 ) : ExternalKotlinCompilationDescriptor<T>

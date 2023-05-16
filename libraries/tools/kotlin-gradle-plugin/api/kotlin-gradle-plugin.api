@@ -231,6 +231,7 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/mpp/external/
 	public abstract fun getConfigure ()Lkotlin/jvm/functions/Function1;
 	public abstract fun getDefaultSourceSet ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinSourceSet;
 	public abstract fun getFriendArtifactResolver ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinCompilationDescriptor$FriendArtifactResolver;
+	public abstract fun getSourceSetTreeClassifier ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/targetHierarchy/SourceSetTreeClassifier;
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinCompilationDescriptor$CompilationAssociator {
@@ -254,6 +255,7 @@ public final class org/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotli
 	public final fun getCompileTaskName ()Ljava/lang/String;
 	public final fun getDefaultSourceSet ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinSourceSet;
 	public final fun getFriendArtifactResolver ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinCompilationDescriptor$FriendArtifactResolver;
+	public final fun getSourceSetTreeClassifier ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/targetHierarchy/SourceSetTreeClassifier;
 	public final fun setCompilationAssociator (Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinCompilationDescriptor$CompilationAssociator;)V
 	public final fun setCompilationFactory (Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinCompilationDescriptor$CompilationFactory;)V
 	public final fun setCompilationName (Ljava/lang/String;)V
@@ -261,6 +263,7 @@ public final class org/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotli
 	public final fun setCompileTaskName (Ljava/lang/String;)V
 	public final fun setDefaultSourceSet (Lorg/jetbrains/kotlin/gradle/plugin/KotlinSourceSet;)V
 	public final fun setFriendArtifactResolver (Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinCompilationDescriptor$FriendArtifactResolver;)V
+	public final fun setSourceSetTreeClassifier (Lorg/jetbrains/kotlin/gradle/plugin/mpp/targetHierarchy/SourceSetTreeClassifier;)V
 }
 
 public final class org/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinCompilationDescriptorKt {
@@ -310,5 +313,46 @@ public final class org/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotli
 
 public final class org/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinTargetDescriptorKt {
 	public static final fun ExternalKotlinTargetDescriptor (Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinTargetDescriptor;
+}
+
+public abstract class org/jetbrains/kotlin/gradle/plugin/mpp/targetHierarchy/SourceSetTreeClassifier {
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/mpp/targetHierarchy/SourceSetTreeClassifier$Default : org/jetbrains/kotlin/gradle/plugin/mpp/targetHierarchy/SourceSetTreeClassifier {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/gradle/plugin/mpp/targetHierarchy/SourceSetTreeClassifier$Default;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/mpp/targetHierarchy/SourceSetTreeClassifier$Name : org/jetbrains/kotlin/gradle/plugin/mpp/targetHierarchy/SourceSetTreeClassifier {
+	public fun <init> (Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/targetHierarchy/SourceSetTreeClassifier$Name;
+	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/gradle/plugin/mpp/targetHierarchy/SourceSetTreeClassifier$Name;Ljava/lang/String;ILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/targetHierarchy/SourceSetTreeClassifier$Name;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getName ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/mpp/targetHierarchy/SourceSetTreeClassifier$None : org/jetbrains/kotlin/gradle/plugin/mpp/targetHierarchy/SourceSetTreeClassifier {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/gradle/plugin/mpp/targetHierarchy/SourceSetTreeClassifier$None;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/mpp/targetHierarchy/SourceSetTreeClassifier$Property : org/jetbrains/kotlin/gradle/plugin/mpp/targetHierarchy/SourceSetTreeClassifier {
+	public fun <init> (Lorg/gradle/api/provider/Property;)V
+	public final fun getProperty ()Lorg/gradle/api/provider/Property;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/mpp/targetHierarchy/SourceSetTreeClassifier$Value : org/jetbrains/kotlin/gradle/plugin/mpp/targetHierarchy/SourceSetTreeClassifier {
+	public fun <init> (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchy$SourceSetTree;)V
+	public final fun component1 ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchy$SourceSetTree;
+	public final fun copy (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchy$SourceSetTree;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/targetHierarchy/SourceSetTreeClassifier$Value;
+	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/gradle/plugin/mpp/targetHierarchy/SourceSetTreeClassifier$Value;Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchy$SourceSetTree;ILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/targetHierarchy/SourceSetTreeClassifier$Value;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getTree ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchy$SourceSetTree;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
 }
 

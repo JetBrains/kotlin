@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMultiplatformPlugin.Companio
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.addBuildListenerForXcode
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal.runDeprecationDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.copyAttributes
+import org.jetbrains.kotlin.gradle.plugin.mpp.targetHierarchy.orNull
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultLanguageSettingsBuilder
 import org.jetbrains.kotlin.gradle.plugin.sources.checkSourceSetVisibilityRequirements
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
@@ -85,7 +86,7 @@ class KotlinMultiplatformPlugin : Plugin<Project> {
     }
 
     private fun exportProjectStructureMetadataForOtherBuilds(
-        extension: KotlinMultiplatformExtension
+        extension: KotlinMultiplatformExtension,
     ) {
         GlobalProjectStructureMetadataStorage.registerProjectStructureMetadata(extension.project) {
             extension.kotlinProjectStructureMetadata
@@ -168,22 +169,24 @@ class KotlinMultiplatformPlugin : Plugin<Project> {
 
 
     private fun configureSourceSets(project: Project) = with(project.multiplatformExtension) {
-        val production = sourceSets.create(KotlinSourceSet.COMMON_MAIN_SOURCE_SET_NAME)
-        val test = sourceSets.create(KotlinSourceSet.COMMON_TEST_SOURCE_SET_NAME)
+        /* Create 'commonMain' and 'commonTest' SourceSets */
+        sourceSets.create(KotlinSourceSet.COMMON_MAIN_SOURCE_SET_NAME)
+        sourceSets.create(KotlinSourceSet.COMMON_TEST_SOURCE_SET_NAME)
+
+        /* Create default 'dependsOn' to commonMain/commonTest (or even common{SourceSetTree}) */
         targets.all { target ->
             project.launchInStage(KotlinPluginLifecycle.Stage.FinaliseRefinesEdges) {
                 /* Only setup default refines edges when no KotlinTargetHierarchy was applied */
                 if (project.multiplatformExtension.internalKotlinTargetHierarchy.appliedDescriptors.isNotEmpty()) return@launchInStage
 
-                target.compilations.findByName(KotlinCompilation.MAIN_COMPILATION_NAME)?.let { mainCompilation ->
-                    mainCompilation.defaultSourceSet.takeIf { it != production }?.dependsOn(production)
-                }
-
-                target.compilations.findByName(KotlinCompilation.TEST_COMPILATION_NAME)?.let { testCompilation ->
-                    testCompilation.defaultSourceSet.takeIf { it != test }?.dependsOn(test)
+                target.compilations.forEach { compilation ->
+                    val sourceSetTree = KotlinTargetHierarchy.SourceSetTree.orNull(compilation) ?: return@forEach
+                    val commonSourceSet = sourceSets.findByName(lowerCamelCaseName("common", sourceSetTree.name)) ?: return@forEach
+                    compilation.defaultSourceSet.dependsOn(commonSourceSet)
                 }
             }
 
+            /* Report the platform to tbe build stats service */
             val targetName = if (target is KotlinNativeTarget)
                 target.konanTarget.name
             else
@@ -277,7 +280,7 @@ private fun sourcesJarTask(
     project: Project,
     sourceSets: Future<Map<String, Iterable<File>>>,
     taskNamePrefix: String,
-    artifactNameAppendix: String
+    artifactNameAppendix: String,
 ): TaskProvider<Jar> =
     sourcesJarTaskNamed(lowerCamelCaseName(taskNamePrefix, "sourcesJar"), taskNamePrefix, project, sourceSets, artifactNameAppendix)
 
