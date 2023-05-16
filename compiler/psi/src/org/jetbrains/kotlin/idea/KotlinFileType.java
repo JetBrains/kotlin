@@ -24,6 +24,7 @@ import javax.swing.*;
 
 public class KotlinFileType extends LanguageFileType {
     public static final String EXTENSION = "kt";
+    public static final String DOT_DEFAULT_EXTENSION = "." + EXTENSION;
     public static final KotlinFileType INSTANCE = new KotlinFileType();
 
     private final NotNullLazyValue<Icon> myIcon = NotNullLazyValue.lazy(() -> KotlinIconProviderService.getInstance().getFileIcon());
