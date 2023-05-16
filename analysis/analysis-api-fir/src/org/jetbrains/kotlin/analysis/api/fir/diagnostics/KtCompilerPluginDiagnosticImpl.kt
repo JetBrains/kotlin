@@ -5,40 +5,41 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.diagnostics
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.diagnostics.*
 
 internal class KtCompilerPluginDiagnostic0Impl(
-    override val firDiagnostic: KtPsiSimpleDiagnostic,
-    override val token: KtLifetimeToken
-) : KtCompilerPluginDiagnostic0()
+    firDiagnostic: KtPsiSimpleDiagnostic,
+    token: KtLifetimeToken
+) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtCompilerPluginDiagnostic0
 
 internal class KtCompilerPluginDiagnostic1Impl(
-    override val firDiagnostic: KtPsiDiagnosticWithParameters1<*>,
-    override val token: KtLifetimeToken,
+    firDiagnostic: KtPsiDiagnosticWithParameters1<*>,
+    token: KtLifetimeToken,
     override val parameter1: Any?
-) : KtCompilerPluginDiagnostic1()
+) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtCompilerPluginDiagnostic1
 
 internal class KtCompilerPluginDiagnostic2Impl(
-    override val firDiagnostic: KtPsiDiagnosticWithParameters2<*, *>,
-    override val token: KtLifetimeToken,
+    firDiagnostic: KtPsiDiagnosticWithParameters2<*, *>,
+    token: KtLifetimeToken,
     override val parameter1: Any?,
     override val parameter2: Any?
-) : KtCompilerPluginDiagnostic2()
+) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtCompilerPluginDiagnostic2
 
 internal class KtCompilerPluginDiagnostic3Impl(
-    override val firDiagnostic: KtPsiDiagnosticWithParameters3<*, *, *>,
-    override val token: KtLifetimeToken,
+    firDiagnostic: KtPsiDiagnosticWithParameters3<*, *, *>,
+    token: KtLifetimeToken,
     override val parameter1: Any?,
     override val parameter2: Any?,
     override val parameter3: Any?
-) : KtCompilerPluginDiagnostic3()
+) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtCompilerPluginDiagnostic3
 
 internal class KtCompilerPluginDiagnostic4Impl(
-    override val firDiagnostic: KtPsiDiagnosticWithParameters4<*, *, *, *>,
-    override val token: KtLifetimeToken,
+    firDiagnostic: KtPsiDiagnosticWithParameters4<*, *, *, *>,
+    token: KtLifetimeToken,
     override val parameter1: Any?,
     override val parameter2: Any?,
     override val parameter3: Any?,
     override val parameter4: Any?
-) : KtCompilerPluginDiagnostic4()
+) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtCompilerPluginDiagnostic4
