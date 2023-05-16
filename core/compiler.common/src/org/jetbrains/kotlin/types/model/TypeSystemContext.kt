@@ -227,12 +227,6 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
     fun CapturedTypeMarker.typeParameter(): TypeParameterMarker?
     fun CapturedTypeMarker.withNotNullProjection(): KotlinTypeMarker
 
-    fun typeSubstitutorByTypeConstructor(map: Map<TypeConstructorMarker, KotlinTypeMarker>): TypeSubstitutorMarker
-    fun createEmptySubstitutor(): TypeSubstitutorMarker
-
-    fun TypeSubstitutorMarker.safeSubstitute(type: KotlinTypeMarker): KotlinTypeMarker
-
-
     fun TypeVariableMarker.defaultType(): SimpleTypeMarker
 
     fun createTypeWithAlternativeForIntersectionResult(
@@ -552,6 +546,14 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
     fun substitutionSupertypePolicy(type: SimpleTypeMarker): TypeCheckerState.SupertypesPolicy
 
     fun KotlinTypeMarker.isTypeVariableType(): Boolean
+
+    fun typeSubstitutorByTypeConstructor(map: Map<TypeConstructorMarker, KotlinTypeMarker>): TypeSubstitutorMarker
+    fun createEmptySubstitutor(): TypeSubstitutorMarker
+
+    /**
+     * @returns substituted type or [type] if there were no substitution
+     */
+    fun TypeSubstitutorMarker.safeSubstitute(type: KotlinTypeMarker): KotlinTypeMarker
 }
 
 enum class CaptureStatus {

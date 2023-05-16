@@ -22,17 +22,14 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.getDescriptorsFiltered
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.*
-import org.jetbrains.kotlin.types.model.KotlinTypeMarker
-import org.jetbrains.kotlin.types.model.TypeConstructorMarker
-import org.jetbrains.kotlin.types.model.TypeSubstitutorMarker
-import org.jetbrains.kotlin.types.model.TypeSystemInferenceExtensionContext
+import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 import org.jetbrains.kotlin.utils.addToStdlib.UnsafeCastFunction
 import org.jetbrains.kotlin.utils.addToStdlib.castAll
 import org.jetbrains.kotlin.utils.keysToMap
 
 class ClassicExpectActualMatchingContext(val platformModule: ModuleDescriptor) : ExpectActualMatchingContext<MemberDescriptor>,
-    TypeSystemInferenceExtensionContext by ClassicTypeSystemContextForCS(platformModule.builtIns, KotlinTypeRefiner.Default)
+    TypeSystemContext by ClassicTypeSystemContextForCS(platformModule.builtIns, KotlinTypeRefiner.Default)
 {
     override val shouldCheckReturnTypesOfCallables: Boolean
         get() = true

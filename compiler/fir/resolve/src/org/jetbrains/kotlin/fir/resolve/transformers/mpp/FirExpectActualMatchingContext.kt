@@ -25,10 +25,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.mpp.ExpectActualMatchingContext
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.types.model.KotlinTypeMarker
-import org.jetbrains.kotlin.types.model.SimpleTypeMarker
-import org.jetbrains.kotlin.types.model.TypeSubstitutorMarker
-import org.jetbrains.kotlin.types.model.TypeSystemInferenceExtensionContext
+import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.UnsafeCastFunction
 import org.jetbrains.kotlin.utils.addToStdlib.castAll
@@ -36,7 +33,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.castAll
 class FirExpectActualMatchingContext(
     private val actualSession: FirSession,
     private val scopeSession: ScopeSession
-) : ExpectActualMatchingContext<FirBasedSymbol<*>>, TypeSystemInferenceExtensionContext by actualSession.typeContext {
+) : ExpectActualMatchingContext<FirBasedSymbol<*>>, TypeSystemContext by actualSession.typeContext {
     override val shouldCheckReturnTypesOfCallables: Boolean
         get() = false
 

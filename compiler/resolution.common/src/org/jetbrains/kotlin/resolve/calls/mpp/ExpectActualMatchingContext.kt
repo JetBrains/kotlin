@@ -15,9 +15,9 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeSubstitutorMarker
-import org.jetbrains.kotlin.types.model.TypeSystemInferenceExtensionContext
+import org.jetbrains.kotlin.types.model.TypeSystemContext
 
-interface ExpectActualMatchingContext<T : DeclarationSymbolMarker> : TypeSystemInferenceExtensionContext {
+interface ExpectActualMatchingContext<T : DeclarationSymbolMarker> : TypeSystemContext {
     val shouldCheckReturnTypesOfCallables: Boolean
 
     val RegularClassSymbolMarker.classId: ClassId
