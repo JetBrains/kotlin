@@ -1,0 +1,5 @@
+[KotlinTargetHierarchyFallbackDependsOnUsageDetected | WARNING] Default Kotlin Target Hierarchy was not applied to the project:
+Manual .dependsOn() edges were configured for the following source sets:
+[iosArm64Main, iosArm64Test, iosMain, iosTest, iosX64Main, iosX64Test]
+
+To suppress the 'Default Target Hierarchy' add 'kotlin.mpp.enableDefaultTargetHierarchy=false' to your gradle.properties
