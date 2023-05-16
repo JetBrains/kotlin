@@ -171,27 +171,3 @@ interface KotlinTargetHierarchyDsl {
      */
     fun custom(describe: KotlinTargetHierarchyBuilder.Root.() -> Unit)
 }
-
-
-
-@ExperimentalKotlinGradlePluginApi
-interface KotlinAndroidVariantHierarchyDsl {
-    /**
-     * Configures under which [SourceSetTree] the currently configured Android Variant shall be placed.
-     * e.g.
-     *
-     * ```kotlin
-     * kotlin {
-     *     targetHierarchy.android {
-     *         instrumentedTest.sourceSetTree.set(SourceSetTree.test)
-     *     }
-     * }
-     * ```
-     *
-     * Will ensure that all android instrumented tests (androidInstrumentedTest, androidInstrumentedTestDebug, ...)
-     * will be placed into the 'test' SourceSet tree (with 'commonTest' as root)
-     *
-     * See [KotlinTargetHierarchyDsl.android]
-     */
-    val sourceSetTree: Property<SourceSetTree>
-}
