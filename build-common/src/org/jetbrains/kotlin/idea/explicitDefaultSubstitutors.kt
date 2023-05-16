@@ -13,8 +13,9 @@ import kotlin.reflect.KClass
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.findAnnotation
 
-val defaultSubstitutors: Map<KClass<out CommonToolArguments>, Collection<ExplicitDefaultSubstitutor>> =
-    mapOf(K2JVMCompilerArguments::class to listOf(JvmTargetDefaultSubstitutor))
+//used by IJ facet import
+@SuppressWarnings("unused")
+val defaultSubstitutors: Map<KClass<out CommonToolArguments>, Collection<ExplicitDefaultSubstitutor>> = emptyMap()
 
 sealed class ExplicitDefaultSubstitutor {
     abstract val substitutedProperty: KProperty1<out CommonToolArguments, String?>
@@ -27,6 +28,7 @@ sealed class ExplicitDefaultSubstitutor {
     }
 }
 
+@Deprecated(message = "Minimal supported jvmTarget version is 1.8")
 object JvmTargetDefaultSubstitutor : ExplicitDefaultSubstitutor() {
     override val substitutedProperty
         get() = K2JVMCompilerArguments::jvmTarget
