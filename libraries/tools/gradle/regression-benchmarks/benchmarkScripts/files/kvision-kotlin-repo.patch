@@ -1,5 +1,5 @@
 diff --git a/build.gradle.kts b/build.gradle.kts
-index bb80d4cbc0..9020570e83 100644
+index a2eb037fd8..5e6896deed 100644
 --- a/build.gradle.kts
 +++ b/build.gradle.kts
 @@ -1,6 +1,5 @@
@@ -20,7 +20,7 @@ index bb80d4cbc0..9020570e83 100644
  val coroutinesVersion: String by project
  val snabbdomKotlinVersion: String by project
 diff --git a/buildSrc/build.gradle.kts b/buildSrc/build.gradle.kts
-index 9f429bd18d..3204cec9cb 100644
+index d0ef18b67b..ae67887584 100644
 --- a/buildSrc/build.gradle.kts
 +++ b/buildSrc/build.gradle.kts
 @@ -3,12 +3,15 @@ plugins {
@@ -35,10 +35,10 @@ index 9f429bd18d..3204cec9cb 100644
 +val kotlinVersion: String by extra
 +
  dependencies {
--    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:1.8.0")
+-    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:1.8.21")
 +    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
-     implementation("de.marcphilipp.gradle:nexus-publish-plugin:0.4.0")
-     implementation("org.jetbrains.dokka:dokka-gradle-plugin:1.7.20")
+     implementation("io.github.gradle-nexus:publish-plugin:1.2.0")
+     implementation("org.jetbrains.dokka:dokka-gradle-plugin:1.8.10")
      implementation(gradleApi())
 diff --git a/buildSrc/gradle.properties b/buildSrc/gradle.properties
 new file mode 100644
@@ -48,7 +48,7 @@ index 0000000000..b67c10f362
 @@ -0,0 +1 @@
 +kotlinVersion=<kotlin_version>
 diff --git a/buildSrc/src/main/kotlin/Shared.kt b/buildSrc/src/main/kotlin/Shared.kt
-index 28ead2b4ec..7eca72163f 100644
+index 59bf038735..0e0929a594 100644
 --- a/buildSrc/src/main/kotlin/Shared.kt
 +++ b/buildSrc/src/main/kotlin/Shared.kt
 @@ -16,8 +16,8 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
@@ -62,18 +62,18 @@ index 28ead2b4ec..7eca72163f 100644
  }
 
 diff --git a/gradle.properties b/gradle.properties
-index bc5d1d2286..852cc018b5 100644
+index 9315dcac95..d5fabb822c 100644
 --- a/gradle.properties
 +++ b/gradle.properties
 @@ -1,7 +1,7 @@
  group=io.kvision
- versionNumber=6.0.6
+ versionNumber=6.3.2
 
--systemProp.kotlinVersion=1.8.0
+-systemProp.kotlinVersion=1.8.21
 +kotlinVersion=<kotlin_version>
  javaVersion=17
  coroutinesVersion=1.6.4
- serializationVersion=1.4.1
+ serializationVersion=1.5.0
 diff --git a/settings.gradle.kts b/settings.gradle.kts
 index 901058aae2..7c338f6ba2 100644
 --- a/settings.gradle.kts
