@@ -93,9 +93,10 @@ KtFunctionSymbol:
   name: withOuterGeneric
   origin: SUBSTITUTION_OVERRIDE
   receiverParameter: null
-  returnType: KtTypeErrorType:
+  returnType: KtUsualClassType:
     annotationsList: []
-    type: ERROR CLASS: empty body
+    ownTypeArguments: []
+    type: kotlin/String
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
@@ -330,9 +331,10 @@ KtFunctionSymbol:
   name: withOuterAndOwnGeneric
   origin: SUBSTITUTION_OVERRIDE
   receiverParameter: null
-  returnType: KtTypeErrorType:
+  returnType: KtUsualClassType:
     annotationsList: []
-    type: ERROR CLASS: empty body
+    ownTypeArguments: []
+    type: kotlin/Long
   symbolKind: CLASS_MEMBER
   typeParameters: [
     KtTypeParameterSymbol(TT)

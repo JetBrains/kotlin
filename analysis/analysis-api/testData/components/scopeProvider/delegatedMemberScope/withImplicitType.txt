@@ -17,9 +17,10 @@ KtFunctionSymbol:
   name: foo
   origin: DELEGATED
   receiverParameter: null
-  returnType: KtTypeErrorType:
+  returnType: KtUsualClassType:
     annotationsList: []
-    type: ERROR CLASS: empty body
+    ownTypeArguments: []
+    type: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []

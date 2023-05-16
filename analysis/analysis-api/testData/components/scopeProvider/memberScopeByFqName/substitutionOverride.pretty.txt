@@ -2,7 +2,7 @@ fun noGeneric(): kotlin.Int
 
 fun noGenericWithExplicitType(): kotlin.Int
 
-fun withOuterGeneric(t: test.Foo): ERROR(empty body)
+fun withOuterGeneric(t: test.Foo): kotlin.String
 
 fun withOuterGenericWithExplicitType(t: test.Foo): kotlin.String
 
@@ -10,7 +10,7 @@ fun <TT> withOwnGeneric(tt: TT): kotlin.Boolean
 
 fun <TT> withOwnGenericWithExplicitType(tt: TT): kotlin.Boolean
 
-fun <TT> withOuterAndOwnGeneric(t: test.Foo, tt: TT): ERROR(empty body)
+fun <TT> withOuterAndOwnGeneric(t: test.Foo, tt: TT): kotlin.Long
 
 fun <TT> withOuterAndOwnGenericWithExplicitType(t: test.Foo, tt: TT): kotlin.Long
 

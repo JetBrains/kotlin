@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirImplicitAwareBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirTowerDataContextCollector
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.ImplicitBodyResolveComputationSession
+import org.jetbrains.kotlin.fir.scopes.fakeOverrideSubstitution
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 
 internal object LLFirImplicitTypesLazyResolver : LLFirLazyResolver(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE) {
@@ -91,10 +92,16 @@ internal class LLFirImplicitBodyTargetResolver(
             -> {
                 // no implicit bodies here
             }
+
             is FirCallableDeclaration -> {
-                calculateLazyBodies(target)
-                target.transformSingle(transformer, ResolutionMode.ContextIndependent)
+                if (target.attributes.fakeOverrideSubstitution != null) {
+                    transformer.returnTypeCalculator.fakeOverrideTypeCalculator.computeReturnType(target)
+                } else {
+                    calculateLazyBodies(target)
+                    target.transformSingle(transformer, ResolutionMode.ContextIndependent)
+                }
             }
+
             else -> throwUnexpectedFirElementError(target)
         }
     }
