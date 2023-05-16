@@ -91,9 +91,9 @@ private class LLFirBodyTargetResolver(
                 if (target.resolvePhase >= resolverPhase) return true
 
                 // resolve class CFG graph here, to do this we need to have property & init blocks resoled
-                resolveMemberProperties(target)
+                resolveMembersForControlFlowGraph(target)
                 performCustomResolveUnderLock(target) {
-                    calculateCFG(target)
+                    calculateControlFlowGraph(target)
                 }
 
                 return true
@@ -103,10 +103,10 @@ private class LLFirBodyTargetResolver(
         return false
     }
 
-    private fun calculateCFG(target: FirRegularClass) {
+    private fun calculateControlFlowGraph(target: FirRegularClass) {
         checkWithAttachmentBuilder(
             target.controlFlowGraphReference == null,
-            { "controlFlowGraphReference should be null if class phase < $resolverPhase)" },
+            { "'controlFlowGraphReference' should be 'null' if the class phase < $resolverPhase)" },
         ) {
             withFirEntry("firClass", target)
         }
@@ -114,22 +114,22 @@ private class LLFirBodyTargetResolver(
         val dataFlowAnalyzer = transformer.declarationsTransformer.dataFlowAnalyzer
         dataFlowAnalyzer.enterClass(target, buildGraph = true)
         val controlFlowGraph = dataFlowAnalyzer.exitClass()
-            ?: buildErrorWithAttachment("CFG should not be null as buildGraph is specified") {
+            ?: buildErrorWithAttachment("CFG should not be 'null' as 'buildGraph' is specified") {
                 withFirEntry("firClass", target)
             }
 
         target.replaceControlFlowGraphReference(FirControlFlowGraphReferenceImpl(controlFlowGraph))
     }
 
-    private fun resolveMemberProperties(target: FirRegularClass) {
+    private fun resolveMembersForControlFlowGraph(target: FirRegularClass) {
         withRegularClass(target) {
             transformer.firTowerDataContextCollector?.addDeclarationContext(target, transformer.context.towerDataContext)
 
             for (member in target.declarations) {
                 if (member is FirCallableDeclaration || member is FirAnonymousInitializer) {
-                    /* TODO we should resolve only properties and init blocks here but due to the recent changes in the compiler, we also have to do this for all callable members
-                    we should avoid doing it as it leads to additional work and also can might to problems with incremental analysis
-                    */
+                    // TODO: Ideally, only properties and init blocks should be resolved here.
+                    // However, dues to changes in the compiler resolution, we temporarily have to resolve all callable members.
+                    // Such additional work might affect incremental analysis performance.
                     member.lazyResolveToPhase(resolverPhase.previous)
                     performResolve(member)
                 }
