@@ -48,7 +48,7 @@ class LifecycleAwarePropertyTest {
         assertFalse(property.isKotlinPluginLifecycleAware())
         assertEquals(KotlinPluginLifecycle.Stage.EvaluateBuildscript, currentKotlinPluginLifecycle().stage)
         assertNull(property.awaitFinalValue())
-        assertEquals(KotlinPluginLifecycle.Stage.FinaliseDsl, currentKotlinPluginLifecycle().stage)
+        assertEquals(KotlinPluginLifecycle.Stage.AfterFinaliseDsl, currentKotlinPluginLifecycle().stage)
         assertFails { property.set("x") }
     }
 

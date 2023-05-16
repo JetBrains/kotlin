@@ -189,7 +189,7 @@ internal suspend fun <T : Any> Property<T>.awaitFinalValue(): T? {
         return lifecycleAwareProperty.awaitFinalValue()
     }
 
-    Stage.FinaliseDsl.await()
+    Stage.AfterFinaliseDsl.await()
     finalizeValue()
     return orNull
 }
