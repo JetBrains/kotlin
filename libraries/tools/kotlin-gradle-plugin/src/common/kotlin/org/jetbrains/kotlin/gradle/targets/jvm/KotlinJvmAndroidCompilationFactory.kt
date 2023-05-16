@@ -46,9 +46,9 @@ class KotlinJvmAndroidCompilationFactory internal constructor(
 
     private fun configureSourceSetTreeClassifier(compilation: KotlinJvmAndroidCompilation) {
         compilation.sourceSetTreeClassifier = when (variant.type) {
-            AndroidVariantType.Main -> Property(target.targetHierarchy.main.sourceSetTree)
-            AndroidVariantType.UnitTest -> Property(target.targetHierarchy.unitTest.sourceSetTree)
-            AndroidVariantType.InstrumentedTest -> Property(target.targetHierarchy.instrumentedTest.sourceSetTree)
+            AndroidVariantType.Main -> Property(target.mainVariant.sourceSetTree)
+            AndroidVariantType.UnitTest -> Property(target.unitTestVariant.sourceSetTree)
+            AndroidVariantType.InstrumentedTest -> Property(target.instrumentedTestVariant.sourceSetTree)
             AndroidVariantType.Unknown -> SourceSetTreeClassifier.None
         }
     }

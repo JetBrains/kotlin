@@ -9,47 +9,30 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
-import org.jetbrains.kotlin.gradle.dsl.KotlinTargetHierarchyDsl
-import org.jetbrains.kotlin.gradle.plugin.KotlinTargetHierarchy
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetHierarchy.SourceSetTree
 import org.jetbrains.kotlin.gradle.utils.property
 
-@ExperimentalKotlinGradlePluginApi
-interface KotlinAndroidTargetHierarchyDsl {
-    val main: KotlinAndroidVariantHierarchyDsl
-    val unitTest: KotlinAndroidVariantHierarchyDsl
-    val instrumentedTest: KotlinAndroidVariantHierarchyDsl
-}
-
 
 @ExperimentalKotlinGradlePluginApi
-interface KotlinAndroidVariantHierarchyDsl {
+interface KotlinAndroidTargetVariantDsl {
     /**
      * Configures under which [SourceSetTree] the currently configured Android Variant shall be placed.
      * e.g.
      *
      * ```kotlin
      * kotlin {
-     *     targetHierarchy.android {
-     *         instrumentedTest.sourceSetTree.set(SourceSetTree.test)
+     *     androidTarget().instrumentedTest {
+     *         sourceSetTree.set(SourceSetTree.test)
      *     }
      * }
      * ```
      *
      * Will ensure that all android instrumented tests (androidInstrumentedTest, androidInstrumentedTestDebug, ...)
      * will be placed into the 'test' SourceSet tree (with 'commonTest' as root)
-     *
-     * See [KotlinTargetHierarchyDsl.android]
      */
     val sourceSetTree: Property<SourceSetTree>
 }
 
-internal class KotlinAndroidTargetHierarchyDslImpl(objects: ObjectFactory) : KotlinAndroidTargetHierarchyDsl {
-    override val main: KotlinAndroidVariantHierarchyDsl = KotlinAndroidVariantHierarchyDslImpl(objects)
-    override val unitTest: KotlinAndroidVariantHierarchyDsl = KotlinAndroidVariantHierarchyDslImpl(objects)
-    override val instrumentedTest: KotlinAndroidVariantHierarchyDsl = KotlinAndroidVariantHierarchyDslImpl(objects)
-}
-
-internal class KotlinAndroidVariantHierarchyDslImpl(objects: ObjectFactory) : KotlinAndroidVariantHierarchyDsl {
+internal class KotlinAndroidTargetVariantDslImpl(objects: ObjectFactory) : KotlinAndroidTargetVariantDsl {
     override val sourceSetTree: Property<SourceSetTree> = objects.property()
 }
