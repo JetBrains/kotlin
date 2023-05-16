@@ -12,10 +12,7 @@ import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.backend.js.utils.isJsExport
-import org.jetbrains.kotlin.ir.backend.js.utils.findUnitGetInstanceFunction
-import org.jetbrains.kotlin.ir.backend.js.utils.getJsNameOrKotlinName
-import org.jetbrains.kotlin.ir.backend.js.utils.realOverrideTarget
+import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrConst
@@ -515,7 +512,8 @@ fun generateConstExpression(
 ) =
     when (val kind = expression.kind) {
         is IrConstKind.Null -> {
-            val bottomType = if (expression.type.getClass()?.isExternal == true) WasmRefNullExternrefType else WasmRefNullNoneType
+            val isExternal = expression.type.getClass()?.isExternal ?: expression.type.erasedUpperBound?.isExternal
+            val bottomType = if (isExternal == true) WasmRefNullExternrefType else WasmRefNullNoneType
             body.buildInstr(WasmOp.REF_NULL, location, WasmImmediate.HeapType(bottomType))
         }
         is IrConstKind.Boolean -> body.buildConstI32(if (kind.valueOf(expression)) 1 else 0, location)
