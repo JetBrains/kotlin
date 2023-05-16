@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.cli.metadata
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFileManager
 import org.jetbrains.kotlin.analyzer.common.CommonPlatformAnalyzerServices
-import org.jetbrains.kotlin.backend.common.CommonJsKLibResolver
+import org.jetbrains.kotlin.backend.common.CommonKLibResolver
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -78,7 +78,7 @@ internal class FirMetadataSerializer(
             .filterIsInstance<JvmClasspathRoot>()
             .filter { it.file.isDirectory || it.file.extension == "klib" }
             .map { it.file.absolutePath }
-        val resolvedLibraries = CommonJsKLibResolver.resolve(klibFiles, DummyLogger).getFullResolvedList()
+        val resolvedLibraries = CommonKLibResolver.resolve(klibFiles, DummyLogger).getFullResolvedList()
 
         val outputs = if (isLightTree) {
             val projectEnvironment = environment.toAbstractProjectEnvironment() as VfsBasedProjectEnvironment

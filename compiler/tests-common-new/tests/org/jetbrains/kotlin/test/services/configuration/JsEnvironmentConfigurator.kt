@@ -161,33 +161,6 @@ class JsEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigu
             return result
         }
 
-        fun getKlibDependencies(module: TestModule, testServices: TestServices, kind: DependencyRelation): List<File> {
-            val visited = mutableSetOf<TestModule>()
-            fun getRecursive(module: TestModule, relation: DependencyRelation) {
-                val dependencies = if (relation == DependencyRelation.FriendDependency) {
-                    module.friendDependencies
-                } else {
-                    module.regularDependencies
-                }
-                dependencies
-                    // See: `dependencyKind =` in AbstractJsBlackBoxCodegenTestBase.kt
-                    .filter { it.kind != DependencyKind.Source }
-                    .map { testServices.dependencyProvider.getTestModule(it.moduleName) }.forEach {
-                        if (it !in visited) {
-                            visited += it
-                            getRecursive(it, relation)
-                        }
-                    }
-            }
-            getRecursive(module, kind)
-            return visited.map { testServices.dependencyProvider.getArtifact(it, ArtifactKinds.KLib).outputFile }
-        }
-
-        fun getDependencies(module: TestModule, testServices: TestServices, kind: DependencyRelation): List<ModuleDescriptor> {
-            return getKlibDependencies(module, testServices, kind)
-                .map { testServices.jsLibraryProvider.getDescriptorByPath(it.absolutePath) }
-        }
-
         fun getMainCallParametersForModule(module: TestModule): MainCallParameters {
             return when (JsEnvironmentConfigurationDirectives.CALL_MAIN) {
                 in module.directives -> MainCallParameters.mainWithArguments(listOf())
@@ -233,13 +206,6 @@ class JsEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigu
             return JsEnvironmentConfigurationDirectives.SKIP_IR_INCREMENTAL_CHECKS !in testServices.moduleStructure.allDirectives &&
                     testServices.moduleStructure.modules.any { it.hasFilesToRecompile() }
         }
-    }
-
-
-    private fun TestModule.allTransitiveDependencies(): Set<DependencyDescription> {
-        val modules = testServices.moduleStructure.modules
-        return regularDependencies.toSet() +
-                regularDependencies.flatMap { modules.single { module -> module.name == it.moduleName }.allTransitiveDependencies() }
     }
 
     override fun provideAdditionalAnalysisFlags(

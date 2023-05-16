@@ -34,37 +34,6 @@ class WasmEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfi
     override val directiveContainers: List<DirectivesContainer>
         get() = listOf(JsEnvironmentConfigurationDirectives)
 
-    companion object {
-        private fun getKlibDependencies(module: TestModule, testServices: TestServices, kind: DependencyRelation): List<File> {
-            val visited = mutableSetOf<TestModule>()
-            fun getRecursive(module: TestModule, relation: DependencyRelation) {
-                val dependencies = if (relation == DependencyRelation.FriendDependency) {
-                    module.friendDependencies
-                } else {
-                    module.regularDependencies
-                }
-                dependencies
-                    // See: `dependencyKind =` in AbstractJsBlackBoxCodegenTestBase.kt
-                    .filter { it.kind != DependencyKind.Source }
-                    .map { testServices.dependencyProvider.getTestModule(it.moduleName) }.forEach {
-                        if (it !in visited) {
-                            visited += it
-                            getRecursive(it, relation)
-                        }
-                    }
-            }
-            getRecursive(module, kind)
-            return visited.map { testServices.dependencyProvider.getArtifact(it, ArtifactKinds.KLib).outputFile }
-        }
-
-        fun getDependencies(module: TestModule, testServices: TestServices, kind: DependencyRelation): List<ModuleDescriptor> {
-            return getKlibDependencies(module, testServices, kind)
-                .map { testServices.jsLibraryProvider.getDescriptorByPath(it.absolutePath) }
-        }
-
-    }
-
-
     override fun provideAdditionalAnalysisFlags(
         directives: RegisteredDirectives,
         languageVersion: LanguageVersion

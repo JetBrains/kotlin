@@ -1,9 +1,9 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.test.runners
+package org.jetbrains.kotlin.konan.diagnostics
 
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.test.Constructor
@@ -21,7 +21,11 @@ import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.frontend.fir.handlers.*
 import org.jetbrains.kotlin.test.model.*
+import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
+import org.jetbrains.kotlin.test.runners.configurationForClassicAndFirTestsAlongside
+import org.jetbrains.kotlin.test.runners.enableLazyResolvePhaseChecking
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.NativeEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
 
@@ -43,7 +47,10 @@ abstract class AbstractDiagnosticsNativeTestBase<R : ResultingArtifact.FrontendO
 
         enableMetaInfoHandler()
 
-        useConfigurators(::CommonEnvironmentConfigurator)
+        useConfigurators(
+            ::CommonEnvironmentConfigurator,
+            ::NativeEnvironmentConfigurator,
+        )
 
         useMetaInfoProcessors(::OldNewInferenceMetaInfoProcessor)
         useAdditionalSourceProviders(
@@ -121,5 +128,3 @@ abstract class AbstractFirNativeDiagnosticsTestBase(val parser: FirParser) : Abs
 
 abstract class AbstractFirPsiNativeDiagnosticsTest : AbstractFirNativeDiagnosticsTestBase(FirParser.Psi)
 abstract class AbstractFirLightTreeNativeDiagnosticsTest : AbstractFirNativeDiagnosticsTestBase(FirParser.LightTree)
-
-

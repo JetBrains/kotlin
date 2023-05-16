@@ -167,7 +167,7 @@ fun AbstractFirAnalyzerFacade.convertToJsIr(
 ): Fir2IrResult {
     this as FirAnalyzerFacade
     // TODO: consider avoiding repeated libraries resolution
-    val libraries = resolveJsLibraries(module, testServices, configuration)
+    val libraries = resolveLibraries(configuration, getAllJsDependenciesPaths(module, testServices))
     val (dependencies, builtIns) = loadResolvedLibraries(libraries, configuration.languageVersionSettings, testServices)
 
     val fir2IrConfiguration = Fir2IrConfiguration(

@@ -4,7 +4,7 @@
 
 package org.jetbrains.kotlin.ir.backend.js.ic
 
-import org.jetbrains.kotlin.backend.common.CommonJsKLibResolver
+import org.jetbrains.kotlin.backend.common.CommonKLibResolver
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.serialization.IrInterningService
 import org.jetbrains.kotlin.backend.common.serialization.cityHash64
@@ -96,7 +96,7 @@ class CacheUpdater(
         // libraries in topological order: [stdlib, ..., main]
         val libraryDependencies = stopwatch.measure("Resolving and loading klib dependencies") {
             val zipAccessor = compilerConfiguration.get(JSConfigurationKeys.ZIP_FILE_SYSTEM_ACCESSOR)
-            val allResolvedDependencies = CommonJsKLibResolver.resolve(allModules, compilerConfiguration.resolverLogger, zipAccessor)
+            val allResolvedDependencies = CommonKLibResolver.resolve(allModules, compilerConfiguration.resolverLogger, zipAccessor)
 
             val libraries = allResolvedDependencies.getFullList(TopologicalLibraryOrder).let { resolvedLibraries ->
                 val mainLibraryIndex = resolvedLibraries.indexOfLast {

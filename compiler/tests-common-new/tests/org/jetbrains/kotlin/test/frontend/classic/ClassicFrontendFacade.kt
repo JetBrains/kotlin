@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.analyzer.common.CommonDependenciesContainer
 import org.jetbrains.kotlin.analyzer.common.CommonPlatformAnalyzerServices
 import org.jetbrains.kotlin.analyzer.common.CommonResolverForModuleFactory
-import org.jetbrains.kotlin.backend.common.CommonJsKLibResolver
+import org.jetbrains.kotlin.backend.common.CommonKLibResolver
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltIns
@@ -75,7 +75,7 @@ import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
-import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.getDependencies
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.types.typeUtil.closure
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
@@ -273,7 +273,7 @@ class ClassicFrontendFacade(
     }
 
     private fun loadKlib(names: List<String>, configuration: CompilerConfiguration): List<ModuleDescriptor> {
-        val resolvedLibraries = CommonJsKLibResolver.resolve(
+        val resolvedLibraries = CommonKLibResolver.resolve(
             names,
             configuration.resolverLogger
         ).getFullResolvedList()
@@ -315,8 +315,8 @@ class ClassicFrontendFacade(
     ): AnalysisResult {
         val runtimeKlibsNames = JsEnvironmentConfigurator.getRuntimePathsForModule(module, testServices)
         val runtimeKlibs = loadKlib(runtimeKlibsNames, configuration)
-        val transitiveLibraries = JsEnvironmentConfigurator.getDependencies(module, testServices, DependencyRelation.RegularDependency)
-        val friendLibraries = JsEnvironmentConfigurator.getDependencies(module, testServices, DependencyRelation.FriendDependency)
+        val transitiveLibraries = getDependencies(module, testServices, DependencyRelation.RegularDependency)
+        val friendLibraries = getDependencies(module, testServices, DependencyRelation.FriendDependency)
         val allDependencies = runtimeKlibs + dependencyDescriptors + friendLibraries + friendsDescriptors + transitiveLibraries
 
         val analyzer = AnalyzerWithCompilerReport(configuration)
@@ -357,8 +357,8 @@ class ClassicFrontendFacade(
             }
 
         val runtimeKlibs = loadKlib(runtimeKlibsNames, configuration)
-        val transitiveLibraries = WasmEnvironmentConfigurator.getDependencies(module, testServices, DependencyRelation.RegularDependency)
-        val friendLibraries = WasmEnvironmentConfigurator.getDependencies(module, testServices, DependencyRelation.FriendDependency)
+        val transitiveLibraries = getDependencies(module, testServices, DependencyRelation.RegularDependency)
+        val friendLibraries = getDependencies(module, testServices, DependencyRelation.FriendDependency)
         val allDependencies = runtimeKlibs + dependencyDescriptors + friendLibraries + friendsDescriptors + transitiveLibraries
 
         val builtInModuleDescriptor = allDependencies.firstNotNullOfOrNull { it.builtIns }?.builtInsModule

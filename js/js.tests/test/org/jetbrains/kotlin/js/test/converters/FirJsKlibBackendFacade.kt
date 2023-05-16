@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.js.test.converters
 
-import org.jetbrains.kotlin.backend.common.CommonJsKLibResolver
+import org.jetbrains.kotlin.backend.common.CommonKLibResolver
 import org.jetbrains.kotlin.backend.common.actualizer.IrActualizer
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.frontend.classic.ModuleDescriptorProvider
 import org.jetbrains.kotlin.test.frontend.classic.moduleDescriptorProvider
 import org.jetbrains.kotlin.test.frontend.fir.getAllJsDependenciesPaths
-import org.jetbrains.kotlin.test.frontend.fir.resolveJsLibraries
+import org.jetbrains.kotlin.test.frontend.fir.resolveLibraries
 import org.jetbrains.kotlin.test.model.ArtifactKinds
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.FrontendKinds
@@ -39,12 +39,12 @@ import java.io.File
 class FirJsKlibBackendFacade(
     testServices: TestServices,
     private val firstTimeCompilation: Boolean
-) : IrBackendFacade<BinaryArtifacts.KLib>(testServices, ArtifactKinds.KLib)  {
+) : IrBackendFacade<BinaryArtifacts.KLib>(testServices, ArtifactKinds.KLib) {
 
     override val additionalServices: List<ServiceRegistrationData>
         get() = listOf(service(::JsIrIncrementalDataProvider), service(::ModuleDescriptorProvider))
 
-    constructor(testServices: TestServices): this(testServices, firstTimeCompilation = true)
+    constructor(testServices: TestServices) : this(testServices, firstTimeCompilation = true)
 
     override fun shouldRunAnalysis(module: TestModule): Boolean {
         return module.backendKind == inputKind
@@ -59,7 +59,7 @@ class FirJsKlibBackendFacade(
         val outputFile = JsEnvironmentConfigurator.getJsKlibArtifactPath(testServices, module.name)
 
         // TODO: consider avoiding repeated libraries resolution
-        val libraries = resolveJsLibraries(module, testServices, configuration)
+        val libraries = resolveLibraries(configuration, getAllJsDependenciesPaths(module, testServices))
 
         // TODO: find out how to pass diagnostics to the test infra in this case
         val diagnosticReporter = DiagnosticReporterFactory.createReporter()
@@ -98,7 +98,7 @@ class FirJsKlibBackendFacade(
         }
 
         // TODO: consider avoiding repeated libraries resolution
-        val lib = CommonJsKLibResolver.resolve(
+        val lib = CommonKLibResolver.resolve(
             getAllJsDependenciesPaths(module, testServices) + listOf(outputFile),
             configuration.resolverLogger
         ).getFullResolvedList().last().library

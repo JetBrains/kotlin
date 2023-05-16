@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.library.metadata.resolver.KotlinLibraryResolver
 import org.jetbrains.kotlin.library.metadata.resolver.impl.libraryResolver
 import org.jetbrains.kotlin.util.Logger
 
-object CommonJsKLibResolver {
+object CommonKLibResolver {
     fun resolve(
         libraries: Collection<String>,
         logger: Logger,
