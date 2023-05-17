@@ -24,8 +24,8 @@ class KT58319ProjectMetadataProvider {
     @Test
     fun `test - ProjectMetadataProviderImpl - supports single target projects`() {
         val rootProject = buildProject()
-        val producerProject = buildProjectWithMPP(projectBuilder = { withParent(rootProject) })
-        val consumerProject = buildProjectWithMPP(projectBuilder = { withParent(rootProject) })
+        val producerProject = buildProjectWithMPP(projectBuilder = { withName("producer").withParent(rootProject) })
+        val consumerProject = buildProjectWithMPP(projectBuilder = { withName("consumer").withParent(rootProject) })
 
         producerProject.multiplatformExtension.jvm()
         consumerProject.multiplatformExtension.jvm()
