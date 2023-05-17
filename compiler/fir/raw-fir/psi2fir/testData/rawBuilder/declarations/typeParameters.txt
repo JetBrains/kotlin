@@ -27,3 +27,5 @@ FILE: typeParameters.kt
         }
 
     }
+    public? final? fun <From : To, To : Any> copyNotNull(from: List<From>, to: List<To>): R|kotlin/Unit| {
+    }

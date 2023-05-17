@@ -1834,5 +1834,17 @@ public class FirIdeNormalAnalysisLibrarySourceModuleReferenceResolveTestGenerate
         public void testTypeParameterInFunctionLiteral() throws Exception {
             runTest("analysis/analysis-api/testData/referenceResolve/typeParameter/TypeParameterInFunctionLiteral.kt");
         }
+
+        @Test
+        @TestMetadata("whereClause1.kt")
+        public void testWhereClause1() throws Exception {
+            runTest("analysis/analysis-api/testData/referenceResolve/typeParameter/whereClause1.kt");
+        }
+
+        @Test
+        @TestMetadata("whereClause2.kt")
+        public void testWhereClause2() throws Exception {
+            runTest("analysis/analysis-api/testData/referenceResolve/typeParameter/whereClause2.kt");
+        }
     }
 }

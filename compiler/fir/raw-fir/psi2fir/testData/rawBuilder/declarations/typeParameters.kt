@@ -14,3 +14,6 @@ class SomeList : AbstractList<Int>() {
 
     override fun concat(other: List<Int>): List<Int> = this
 }
+
+fun <From, To> copyNotNull(from: List<From>, to: List<To>) where From : To, To : Any {
+}

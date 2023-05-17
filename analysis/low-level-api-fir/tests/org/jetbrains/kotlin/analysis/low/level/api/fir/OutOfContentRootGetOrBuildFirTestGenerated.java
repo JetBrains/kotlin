@@ -470,6 +470,18 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
         public void testPropertyDelegateExpression() throws Exception {
             runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/declarations/propertyDelegateExpression.kt");
         }
+
+        @Test
+        @TestMetadata("whereClause1.kt")
+        public void testWhereClause1() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/declarations/whereClause1.kt");
+        }
+
+        @Test
+        @TestMetadata("whereClause2.kt")
+        public void testWhereClause2() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/declarations/whereClause2.kt");
+        }
     }
 
     @Nested

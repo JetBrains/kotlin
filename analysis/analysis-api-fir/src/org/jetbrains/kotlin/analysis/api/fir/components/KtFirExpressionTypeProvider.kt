@@ -73,7 +73,7 @@ internal class KtFirExpressionTypeProvider(
             is FirExpression -> fir.typeRef.coneType.asKtType()
             is FirNamedReference -> fir.getReferencedElementType().asKtType()
             is FirStatement -> with(analysisSession) { builtinTypes.UNIT }
-            is FirTypeRef, is FirImport, is FirPackageDirective, is FirLabel -> null
+            is FirTypeRef, is FirImport, is FirPackageDirective, is FirLabel, is FirTypeParameterRef -> null
             // For invalid code like the following,
             // ```
             // when {

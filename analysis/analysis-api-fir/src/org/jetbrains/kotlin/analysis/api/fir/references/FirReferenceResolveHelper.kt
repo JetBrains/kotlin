@@ -218,6 +218,7 @@ internal object FirReferenceResolveHelper {
             is FirResolvable -> getSymbolsByResolvable(fir, expression, session, symbolBuilder)
             is FirNamedArgumentExpression -> getSymbolsByNameArgumentExpression(expression, analysisSession, symbolBuilder)
             is FirEqualityOperatorCall -> getSymbolsByEqualsName(fir, session, analysisSession, symbolBuilder)
+            is FirTypeParameter -> getSybmolsByTypeParameter(symbolBuilder, fir)
             else -> handleUnknownFirElement(expression, analysisSession, session, symbolBuilder)
         }
     }
@@ -426,6 +427,13 @@ internal object FirReferenceResolveHelper {
     private fun getSymbolsByFirFile(
         symbolBuilder: KtSymbolByFirBuilder,
         fir: FirFile
+    ): List<KtSymbol> {
+        return listOf(symbolBuilder.buildSymbol(fir.symbol))
+    }
+
+    private fun getSybmolsByTypeParameter(
+        symbolBuilder: KtSymbolByFirBuilder,
+        fir: FirTypeParameter
     ): List<KtSymbol> {
         return listOf(symbolBuilder.buildSymbol(fir.symbol))
     }

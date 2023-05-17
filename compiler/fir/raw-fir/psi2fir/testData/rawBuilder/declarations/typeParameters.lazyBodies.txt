@@ -23,3 +23,4 @@ FILE: typeParameters.kt
         public? open? override fun concat(other: List<Int>): List<Int> { LAZY_BLOCK }
 
     }
+    public? final? fun <From : To, To : Any> copyNotNull(from: List<From>, to: List<To>): R|kotlin/Unit| { LAZY_BLOCK }
