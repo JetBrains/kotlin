@@ -1,7 +1,7 @@
 [versions]
 
-gradlePlugin-kotlin = "1.8.10"
-gradlePlugin-android = "4.0.1"
+gradlePlugin-kotlin = "1.8.20"
+gradlePlugin-android = "4.1.3"
 gradlePlugin-dokka = "1.7.10"
 
 kotlinx-coroutines = "1.6.3"

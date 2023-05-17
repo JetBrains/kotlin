@@ -20,10 +20,11 @@ private val objectMapper = run {
 }
 
 @PublishedApi
-internal class TypeReference<T> private constructor(
+internal class TypeReference<T> @PublishedApi internal constructor(
     internal val jackson: JacksonTypeReference<T>
 ) {
     companion object {
+        @PublishedApi
         internal inline operator fun <reified T> invoke(): TypeReference<T> = TypeReference(jacksonTypeRef())
     }
 }
