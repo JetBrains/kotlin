@@ -34,6 +34,10 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.isEnumValueOfMethod
 import java.util.*
 import kotlin.math.abs
 
+class JsNameSuggestion : NameSuggestion()
+
+class WasmNameSuggestion : NameSuggestion()
+
 /**
  * This class is responsible for generating names for declarations. It does not produce fully-qualified JS name, instead
  * it tries to generate a simple name and specify a scoping declaration. This information can be used by the front-end
@@ -43,7 +47,7 @@ import kotlin.math.abs
  * A new instance of this class can be created for each request, however, it's recommended to use stable instance, since
  * [NameSuggestion] supports caching.
  */
-class NameSuggestion {
+open class NameSuggestion {
     private val cache: MutableMap<DeclarationDescriptor, SuggestedName?> = Collections.synchronizedMap(WeakHashMap())
 
     /**

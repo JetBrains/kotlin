@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.platform.impl.CommonIdePlatformKind
 import org.jetbrains.kotlin.platform.impl.JsIdePlatformKind
 import org.jetbrains.kotlin.platform.impl.JvmIdePlatformKind
 import org.jetbrains.kotlin.platform.impl.NativeIdePlatformKind
-import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
+import org.jetbrains.kotlin.platform.impl.WasmIdePlatformKind
 
 abstract class IdePlatformKind {
     abstract fun supportsTargetPlatform(platform: TargetPlatform): Boolean
@@ -54,6 +54,7 @@ abstract class IdePlatformKind {
             get() = listOf(
                 JvmIdePlatformKind,
                 JsIdePlatformKind,
+                WasmIdePlatformKind,
                 CommonIdePlatformKind,
                 NativeIdePlatformKind
             )

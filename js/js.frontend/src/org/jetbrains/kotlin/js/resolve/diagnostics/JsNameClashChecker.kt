@@ -20,8 +20,10 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.js.naming.JsNameSuggestion
 import org.jetbrains.kotlin.js.naming.NameSuggestion
 import org.jetbrains.kotlin.js.naming.SuggestedName
+import org.jetbrains.kotlin.js.naming.WasmNameSuggestion
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -35,6 +37,26 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 
 class JsNameClashChecker(
+    nameSuggestion: JsNameSuggestion,
+    languageVersionSettings: LanguageVersionSettings,
+    kotlinTypeRefiner: KotlinTypeRefiner,
+) : AbstractNameClashChecker(
+    nameSuggestion,
+    languageVersionSettings,
+    kotlinTypeRefiner,
+)
+
+class WasmNameClashChecker(
+    nameSuggestion: WasmNameSuggestion,
+    languageVersionSettings: LanguageVersionSettings,
+    kotlinTypeRefiner: KotlinTypeRefiner,
+) : AbstractNameClashChecker(
+    nameSuggestion,
+    languageVersionSettings,
+    kotlinTypeRefiner,
+)
+
+abstract class AbstractNameClashChecker(
     private val nameSuggestion: NameSuggestion,
     private val languageVersionSettings: LanguageVersionSettings,
     private val kotlinTypeRefiner: KotlinTypeRefiner,

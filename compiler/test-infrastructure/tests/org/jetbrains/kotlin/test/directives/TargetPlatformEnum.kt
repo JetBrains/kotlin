@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.test.directives
 
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.platform.WasmPlatform
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.platform.jvm.JdkPlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
@@ -19,6 +20,7 @@ enum class TargetPlatformEnum(val targetPlatform: TargetPlatform) {
             setOf(
                 JdkPlatform(JvmTarget.DEFAULT),
                 JsPlatforms.DefaultSimpleJsPlatform,
+                WasmPlatform,
                 NativePlatformUnspecifiedTarget
             )
         )

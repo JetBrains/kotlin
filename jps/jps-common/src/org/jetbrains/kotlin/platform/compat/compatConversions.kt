@@ -15,12 +15,15 @@ import org.jetbrains.kotlin.platform.impl.JsIdePlatformKind
 import org.jetbrains.kotlin.platform.impl.JvmIdePlatformKind
 import org.jetbrains.kotlin.platform.impl.NativeIdePlatformKind
 import org.jetbrains.kotlin.platform.JsPlatform
+import org.jetbrains.kotlin.platform.WasmPlatform
+import org.jetbrains.kotlin.platform.impl.WasmIdePlatformKind
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.platform.jvm.JdkPlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.platform.konan.NativePlatform
+import org.jetbrains.kotlin.platform.wasm.WasmPlatforms
 
 typealias OldPlatform = org.jetbrains.kotlin.resolve.TargetPlatform
 typealias NewPlatform = org.jetbrains.kotlin.platform.TargetPlatform
@@ -51,6 +54,7 @@ fun IdePlatform<*, *>.toNewPlatform(): NewPlatform = when (this) {
     is CommonIdePlatformKind.Platform -> CommonPlatforms.defaultCommonPlatform
     is JvmIdePlatformKind.Platform -> JvmPlatforms.jvmPlatformByTargetVersion(this.version)
     is JsIdePlatformKind.Platform -> JsPlatforms.defaultJsPlatform
+    is WasmIdePlatformKind.Platform -> WasmPlatforms.Default
     is NativeIdePlatformKind.Platform -> NativePlatforms.unspecifiedNativePlatform
     else -> error("Unknown platform $this")
 }
@@ -60,6 +64,7 @@ fun NewPlatform.toIdePlatform(): IdePlatform<*, *> = when (val single = singleOr
     is JdkPlatform -> JvmIdePlatformKind.Platform(single.targetVersion)
     is JvmPlatform -> JvmIdePlatformKind.Platform(JvmTarget.DEFAULT)
     is JsPlatform -> JsIdePlatformKind.Platform
+    is WasmPlatform -> WasmIdePlatformKind.Platform
     is NativePlatform -> NativeIdePlatformKind.Platform
     else -> error("Unknown platform $single")
 }

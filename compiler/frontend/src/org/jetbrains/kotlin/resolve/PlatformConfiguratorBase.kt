@@ -98,7 +98,9 @@ private val DEFAULT_CLASH_RESOLVERS = listOf<PlatformExtensionsClashResolver<*>>
 
     PlatformExtensionsClashResolver.FallbackToDefault(DynamicTypesSettings(), DynamicTypesSettings::class.java),
 
-    PlatformExtensionsClashResolver.FirstWins(AbsentDescriptorHandler::class.java)
+    PlatformExtensionsClashResolver.FirstWins(AbsentDescriptorHandler::class.java),
+
+    PlatformDiagnosticSuppressorClashesResolver()
 )
 
 fun StorageComponentContainer.configureDefaultCheckers() {
