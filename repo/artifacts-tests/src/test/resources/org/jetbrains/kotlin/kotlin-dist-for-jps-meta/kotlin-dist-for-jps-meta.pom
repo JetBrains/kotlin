@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+    xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <artifactId>kotlin-dist-for-jps-meta</artifactId>
+  <packaging>pom</packaging>
+
+  <parent>
+    <artifactId>kotlin-project</artifactId>
+    <groupId>org.jetbrains.kotlin</groupId>
+    <version>ArtifactsTest.version</version>
+    <relativePath>../../pom.xml</relativePath>
+  </parent>
+
+  <name>Kotlin Dist For Jps Meta</name>
+  <description>Kotlin Dist For Jps Meta</description>
+  <url>https://kotlinlang.org/</url>
+
+  <licenses>
+    <license>
+      <name>The Apache Software License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+    </license>
+  </licenses>
+
+  <scm>
+    <connection>scm:git:https://github.com/JetBrains/kotlin.git</connection>
+    <developerConnection>scm:git:https://github.com/JetBrains/kotlin.git</developerConnection>
+    <url>https://github.com/JetBrains/kotlin</url>
+  </scm>
+
+  <developers>
+    <developer>
+      <name>Kotlin Team</name>
+      <organization>JetBrains</organization>
+      <organizationUrl>https://www.jetbrains.com</organizationUrl>
+    </developer>
+  </developers>
+
+  <dependencies>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>kotlin-annotations-jvm</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>kotlin-compiler</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>kotlin-daemon</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>kotlin-main-kts</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>kotlin-reflect</artifactId>
+      <version>1.6.10</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>kotlin-script-runtime</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>kotlin-scripting-common</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>kotlin-scripting-compiler-impl</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>kotlin-scripting-compiler</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>kotlin-scripting-jvm</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>kotlin-stdlib-jdk7</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>kotlin-stdlib-jdk8</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>kotlin-stdlib</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jetbrains.intellij.deps</groupId>
+      <artifactId>trove4j</artifactId>
+      <version>1.0.20200330</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jetbrains.kotlinx</groupId>
+      <artifactId>kotlinx-coroutines-core-jvm</artifactId>
+      <version>1.5.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jetbrains</groupId>
+      <artifactId>annotations</artifactId>
+      <version>13.0</version>
+    </dependency>
+
+    <!-- Compiler plugins. They can be added to the JPS process via KOTLIN_BUNDLED Path Variable -->
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>kotlin-serialization-compiler-plugin</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>kotlin-maven-serialization</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>kotlin-sam-with-receiver-compiler-plugin</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>kotlin-maven-sam-with-receiver</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>kotlin-allopen-compiler-plugin</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>kotlin-maven-allopen</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>kotlin-lombok-compiler-plugin</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>kotlin-maven-lombok</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>kotlin-noarg-compiler-plugin</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>kotlin-maven-noarg</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>kotlin-assignment-compiler-plugin</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+  </dependencies>
+</project>

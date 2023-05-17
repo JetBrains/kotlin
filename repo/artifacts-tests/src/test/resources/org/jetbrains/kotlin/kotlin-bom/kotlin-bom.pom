@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+    xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.jetbrains.kotlin</groupId>
+    <artifactId>kotlin-bom</artifactId>
+    <version>ArtifactsTest.version</version>
+    <packaging>pom</packaging>
+
+    <!-- No parent to avoid accidentally inheriting parent's dependencyManagement section -->
+
+    <name>Kotlin Libraries bill-of-materials</name>
+    <description>Kotlin is a statically typed programming language that compiles to JVM byte codes and JavaScript</description>
+    <url>https://kotlinlang.org/</url>
+
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+            <comments>A business-friendly OSS license</comments>
+        </license>
+    </licenses>
+
+    <scm>
+        <url>https://github.com/JetBrains/kotlin</url>
+        <connection>scm:git:https://github.com/JetBrains/kotlin.git</connection>
+        <developerConnection>scm:git:https://github.com/JetBrains/kotlin.git</developerConnection>
+    </scm>
+
+    <developers>
+        <developer>
+            <id>JetBrains</id>
+            <name>JetBrains Team</name>
+            <organization>JetBrains</organization>
+            <organizationUrl>https://www.jetbrains.com</organizationUrl>
+        </developer>
+    </developers>
+
+
+    <properties>
+        <!--
+        All dependencies listed in this pom will have version same as the version of this pom.
+
+        This property is local to this project,
+        it isn't affected by the same named property in a consumer project,
+        neither it is visible in the consumer project.
+        -->
+        <kotlin.version>${project.version}</kotlin.version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- Standard Library -->
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>kotlin-stdlib</artifactId>
+                <version>${kotlin.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>kotlin-stdlib-jdk7</artifactId>
+                <version>${kotlin.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>kotlin-stdlib-jdk8</artifactId>
+                <version>${kotlin.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>kotlin-stdlib-js</artifactId>
+                <version>${kotlin.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>kotlin-stdlib-common</artifactId>
+                <version>${kotlin.version}</version>
+            </dependency>
+            <!-- Reflection Library -->
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>kotlin-reflect</artifactId>
+                <version>${kotlin.version}</version>
+            </dependency>
+            <!-- OSGI -->
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>kotlin-osgi-bundle</artifactId>
+                <version>${kotlin.version}</version>
+            </dependency>
+            <!-- kotlin.test -->
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>kotlin-test</artifactId>
+                <version>${kotlin.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>kotlin-test-junit</artifactId>
+                <version>${kotlin.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>kotlin-test-junit5</artifactId>
+                <version>${kotlin.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>kotlin-test-testng</artifactId>
+                <version>${kotlin.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>kotlin-test-js</artifactId>
+                <version>${kotlin.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>kotlin-test-common</artifactId>
+                <version>${kotlin.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>kotlin-test-annotations-common</artifactId>
+                <version>${kotlin.version}</version>
+            </dependency>
+            <!-- Scripting -->
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>kotlin-main-kts</artifactId>
+                <version>${kotlin.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>kotlin-script-runtime</artifactId>
+                <version>${kotlin.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>kotlin-scripting-common</artifactId>
+                <version>${kotlin.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>kotlin-scripting-jvm</artifactId>
+                <version>${kotlin.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>kotlin-scripting-jvm-host</artifactId>
+                <version>${kotlin.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>kotlin-scripting-ide-services</artifactId>
+                <version>${kotlin.version}</version>
+            </dependency>
+            <!-- Compiler dependency required by scripting -->
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>kotlin-compiler</artifactId>
+                <version>${kotlin.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>kotlin-compiler-embeddable</artifactId>
+                <version>${kotlin.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>kotlin-daemon-client</artifactId>
+                <version>${kotlin.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <distributionManagement>
+        <repository>
+            <id>${deploy-repo}</id>
+            <url>${deploy-url}</url>
+        </repository>
+        <snapshotRepository>
+            <id>sonatype-nexus-staging</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
+
+    <profiles>
+        <profile>
+            <id>sign-artifacts</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>1.6</version>
+                        <configuration>
+                            <passphrase>${kotlin.key.passphrase}</passphrase>
+                            <keyname>${kotlin.key.name}</keyname>
+                            <homedir>../../.gnupg</homedir>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                                <configuration>
+                                    <gpgArguments>
+                                        <arg>--pinentry-mode</arg>
+                                        <arg>loopback</arg>
+                                    </gpgArguments>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+</project>

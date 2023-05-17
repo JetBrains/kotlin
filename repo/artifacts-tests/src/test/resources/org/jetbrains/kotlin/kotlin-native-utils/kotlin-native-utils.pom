@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.jetbrains.kotlin</groupId>
+  <artifactId>kotlin-native-utils</artifactId>
+  <version>ArtifactsTest.version</version>
+  <name>Kotlin Native Utils</name>
+  <description>Kotlin/Native utils</description>
+  <url>https://kotlinlang.org/</url>
+  <licenses>
+    <license>
+      <name>The Apache License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+    </license>
+  </licenses>
+  <developers>
+    <developer>
+      <name>Kotlin Team</name>
+      <organization>JetBrains</organization>
+      <organizationUrl>https://www.jetbrains.com</organizationUrl>
+    </developer>
+  </developers>
+  <scm>
+    <connection>scm:git:https://github.com/JetBrains/kotlin.git</connection>
+    <developerConnection>scm:git:https://github.com/JetBrains/kotlin.git</developerConnection>
+    <url>https://github.com/JetBrains/kotlin</url>
+  </scm>
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.jetbrains.kotlin</groupId>
+        <artifactId>kotlin-gradle-plugins-bom</artifactId>
+        <version>ArtifactsTest.version</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+  <dependencies>
+    <dependency>
+      <groupId>org.jetbrains.kotlin</groupId>
+      <artifactId>kotlin-util-io</artifactId>
+      <version>ArtifactsTest.version</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jetbrains.kotlin</groupId>
+      <artifactId>kotlin-util-klib</artifactId>
+      <version>ArtifactsTest.version</version>
+      <scope>compile</scope>
+    </dependency>
+  </dependencies>
+</project>

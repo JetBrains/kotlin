@@ -1,0 +1,426 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project
+        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+        xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.jetbrains.kotlin</groupId>
+    <artifactId>kotlin-project</artifactId>
+    <version>ArtifactsTest.version</version>
+    <packaging>pom</packaging>
+
+    <name>Kotlin</name>
+    <description>Kotlin is a statically typed programming language that compiles to JVM byte codes and JavaScript</description>
+    <url>https://kotlinlang.org/</url>
+
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+            <comments>A business-friendly OSS license</comments>
+        </license>
+    </licenses>
+
+    <scm>
+        <url>https://github.com/JetBrains/kotlin</url>
+        <connection>scm:git:https://github.com/JetBrains/kotlin.git</connection>
+        <developerConnection>scm:git:https://github.com/JetBrains/kotlin.git</developerConnection>
+    </scm>
+
+    <developers>
+        <developer>
+            <id>JetBrains</id>
+            <name>JetBrains Team</name>
+            <organization>JetBrains</organization>
+            <organizationUrl>https://www.jetbrains.com</organizationUrl>
+        </developer>
+    </developers>
+
+    <organization>
+        <name>JetBrains s.r.o.</name>
+    </organization>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project-root>../../..</project-root>
+
+        <junit-version>4.13.1</junit-version>
+        <pegdown.version>1.1.0</pegdown.version>
+        <surefire-version>2.16</surefire-version>
+        <exec-maven-plugin.version>1.2.1</exec-maven-plugin.version>
+        <selenium.version>2.53.1</selenium.version>
+        <htmlunit.version>2.24</htmlunit.version>
+        <maven.version>3.8.6</maven.version>
+        <maven-plugin-annotations.version>3.7.0</maven-plugin-annotations.version>
+
+        <kotlin-dist>${project-root}/dist</kotlin-dist>
+        <kotlin-sdk>${kotlin-dist}/kotlinc</kotlin-sdk>
+        <kotlin.compiler.jdkHome>${jdk_1_8}</kotlin.compiler.jdkHome>
+
+        <maven.compiler.source>1.6</maven.compiler.source>
+        <maven.compiler.target>1.6</maven.compiler.target>
+    </properties>
+
+    <prerequisites>
+        <maven>3.0.2</maven>
+    </prerequisites>
+
+    <distributionManagement>
+        <repository>
+            <id>${deploy-repo}</id>
+            <url>${deploy-url}</url>
+        </repository>
+        <snapshotRepository>
+            <id>sonatype-nexus-staging</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
+
+    <modules>
+        <module>tools/kotlin-maven-plugin</module>
+
+        <module>tools/kotlin-osgi-bundle</module>
+
+        <module>tools/maven-archetypes</module>
+
+        <module>tools/kotlin-maven-allopen</module>
+        <module>tools/kotlin-maven-noarg</module>
+        <module>tools/kotlin-maven-sam-with-receiver</module>
+        <module>tools/kotlin-maven-serialization</module>
+        <module>tools/kotlin-maven-lombok</module>
+
+        <module>tools/kotlin-bom</module>
+        <module>tools/kotlin-dist-for-jps-meta</module>
+
+        <module>tools/kotlin-maven-plugin-test</module>
+
+        <module>examples/kotlin-java-example</module>
+    </modules>
+
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit-version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>2.3.2</version>
+                    <configuration>
+                        <source>${maven.compiler.source}</source>
+                        <target>${maven.compiler.target}</target>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-source-plugin</artifactId>
+                    <version>3.2.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>2.9</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <version>2.7</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>build-helper-maven-plugin</artifactId>
+                    <version>1.7</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>3.2.2</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>versions-maven-plugin</artifactId>
+                    <version>2.13.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-assembly-plugin</artifactId>
+                    <version>3.5.0</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
+        <plugins>
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${surefire-version}</version>
+                <configuration>
+                    <forkMode>once</forkMode>
+                    <jvm>${jdk_1_6}/bin/java</jvm>
+                    <useSystemClassLoader>false</useSystemClassLoader>
+                    <useManifestOnlyJar>false</useManifestOnlyJar>
+                    <failIfNoTests>false</failIfNoTests>
+                    <includes>
+                        <include>**/*Test.*</include>
+                    </includes>
+                    <excludes>
+                    </excludes>
+                    <systemProperties>
+                        <project.version>${project.version}</project.version>
+                    </systemProperties>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <configuration>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-empty-javadoc</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>attach-artifact</goal>
+                        </goals>
+                        <configuration>
+                            <artifacts>
+                                <artifact>
+                                    <file>${highest-basedir}/lib/empty-javadoc.jar</file>
+                                    <type>jar</type>
+                                    <classifier>javadoc</classifier>
+                                </artifact>
+                            </artifacts>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.commonjava.maven.plugins</groupId>
+                <artifactId>directory-maven-plugin</artifactId>
+                <version>0.3.1</version>
+                <executions>
+                    <execution>
+                        <id>directories</id>
+                        <goals>
+                            <goal>highest-basedir</goal>
+                        </goals>
+                        <phase>initialize</phase>
+                        <configuration>
+                            <property>highest-basedir</property>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>io.github.zlika</groupId>
+                <artifactId>reproducible-build-maven-plugin</artifactId>
+                <version>0.15</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>strip-jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.spdx</groupId>
+                <artifactId>spdx-maven-plugin</artifactId>
+                <version>0.6.5</version>
+                <executions>
+                    <execution>
+                        <id>build-spdx</id>
+                        <goals>
+                            <goal>createSPDX</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <spdxDocumentNamespace>https://www.jetbrains.com/spdxdocs/${project.artifactId}-${project.version}</spdxDocumentNamespace>
+                    <creators>
+                        <creator>Organization: JetBrains s.r.o.</creator>
+                    </creators>
+                    <originator>Organization: JetBrains s.r.o.</originator>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>jdk_1_8_new</id>
+            <activation>
+                <property>
+                    <name>env.JDK_1_8</name>
+                </property>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <jdk_1_8>${env.JDK_1_8}</jdk_1_8>
+            </properties>
+        </profile>
+        <profile>
+            <id>jdk_1_8_old</id>
+            <activation>
+                <property>
+                    <name>!env.JDK_1_8</name>
+                </property>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <jdk_1_8>${env.JDK_18}</jdk_1_8>
+            </properties>
+        </profile>
+        <profile>
+            <id>jdk_1_6_new</id>
+            <activation>
+                <property>
+                    <name>env.JDK_1_6</name>
+                </property>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <jdk_1_6>${env.JDK_1_6}</jdk_1_6>
+            </properties>
+        </profile>
+        <profile>
+            <id>jdk_1_6_old</id>
+            <activation>
+                <property>
+                    <name>!env.JDK_1_6</name>
+                </property>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <jdk_1_6>${env.JDK_16}</jdk_1_6>
+            </properties>
+        </profile>
+        <profile>
+            <id>jdk_1_7_new</id>
+            <activation>
+                <property>
+                    <name>env.JDK_1_7</name>
+                </property>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <jdk_1_7>${env.JDK_1_7}</jdk_1_7>
+            </properties>
+        </profile>
+        <profile>
+            <id>jdk_1_7_old</id>
+            <activation>
+                <property>
+                    <name>!env.JDK_1_7</name>
+                </property>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <jdk_1_7>${env.JDK_17}</jdk_1_7>
+            </properties>
+        </profile>
+        <profile>
+            <id>jdk_9_0_new</id>
+            <activation>
+                <property>
+                    <name>env.JDK_9_0</name>
+                </property>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <jdk_9_0>${env.JDK_9_0}</jdk_9_0>
+            </properties>
+        </profile>
+        <profile>
+            <id>jdk_9_0_old</id>
+            <activation>
+                <property>
+                    <name>!env.JDK_9_0</name>
+                </property>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <jdk_9_0>${env.JDK_9}</jdk_9_0>
+            </properties>
+        </profile>
+        <profile>
+            <id>jdk_17_0_new</id>
+            <activation>
+                <property>
+                    <name>env.JDK_17_0</name>
+                </property>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <jdk_17_0>${env.JDK_17_0}</jdk_17_0>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>sign-artifacts</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>1.6</version>
+                        <configuration>
+                            <passphrase>${kotlin.key.passphrase}</passphrase>
+                            <keyname>${kotlin.key.name}</keyname>
+                            <homedir>${highest-basedir}/.gnupg</homedir>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                                <configuration>
+                                    <gpgArguments>
+                                        <arg>--pinentry-mode</arg>
+                                        <arg>loopback</arg>
+                                    </gpgArguments>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+</project>

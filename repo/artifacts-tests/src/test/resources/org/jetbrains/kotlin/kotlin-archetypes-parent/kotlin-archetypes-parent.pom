@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.jetbrains.kotlin</groupId>
+        <artifactId>kotlin-project</artifactId>
+        <version>ArtifactsTest.version</version>
+        <relativePath>../../pom.xml</relativePath>
+    </parent>
+
+    <groupId>org.jetbrains.kotlin</groupId>
+    <name>kotlin-archetypes</name>
+    <description>Kotlin archetypes parent</description>
+    <artifactId>kotlin-archetypes-parent</artifactId>
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>kotlin-archetype-jvm</module>
+        <module>kotlin-archetype-js</module>
+    </modules>
+
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>META-INF/maven/archetype-metadata.xml</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>false</filtering>
+                <excludes>
+                    <exclude>META-INF/maven/archetype-metadata.xml</exclude>
+                </excludes>
+            </resource>
+        </resources>
+        <testResources>
+            <testResource>
+                <directory>src/test/resources</directory>
+                <filtering>true</filtering>
+            </testResource>
+        </testResources>
+
+        <extensions>
+            <extension>
+                <groupId>org.apache.maven.archetype</groupId>
+                <artifactId>archetype-packaging</artifactId>
+                <version>2.4</version>
+            </extension>
+        </extensions>
+
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <artifactId>maven-archetype-plugin</artifactId>
+                    <version>3.0.1</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+</project>
