@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirContractDescriptionOwner
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.impl.FirContractCallBlock
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
@@ -125,9 +126,18 @@ object FirCallsEffectAnalyzer : FirControlFlowChecker() {
         private val leakedSymbols: MutableMap<FirBasedSymbol<*>, MutableList<KtSourceElement>>,
     ) {
         private var scopeDepth: Int = 0
+        private var isContractDefinition: Boolean = false
         private var illegalScopeDepth: Int? = null
 
         val inIllegalScope: Boolean get() = illegalScopeDepth != null
+
+        fun enterContractDefinition() {
+            isContractDefinition = true
+        }
+
+        fun exitContractDefinition() {
+            isContractDefinition = false
+        }
 
         fun enterScope(legal: Boolean) {
             scopeDepth++
@@ -144,6 +154,10 @@ object FirCallsEffectAnalyzer : FirControlFlowChecker() {
             source: KtSourceElement? = fir?.source,
             illegalUsage: () -> Boolean = { false }
         ) {
+            if (isContractDefinition) {
+                return
+            }
+
             val symbol = referenceToSymbol(fir.toQualifiedReference())
             if (symbol != null && symbol in functionalTypeSymbols && (inIllegalScope || illegalUsage())) {
                 leakedSymbols.getOrPut(symbol, ::mutableListOf).addIfNotNull(source)
@@ -180,6 +194,18 @@ object FirCallsEffectAnalyzer : FirControlFlowChecker() {
 
         override fun visitInitBlockExitNode(node: InitBlockExitNode, data: IllegalScopeContext) {
             data.exitScope()
+        }
+
+        override fun visitBlockEnterNode(node: BlockEnterNode, data: IllegalScopeContext) {
+            if (node.fir is FirContractCallBlock) {
+                data.enterContractDefinition()
+            }
+        }
+
+        override fun visitBlockExitNode(node: BlockExitNode, data: IllegalScopeContext) {
+            if (node.fir is FirContractCallBlock) {
+                data.exitContractDefinition()
+            }
         }
 
         override fun visitVariableAssignmentNode(node: VariableAssignmentNode, data: IllegalScopeContext) {
