@@ -17,10 +17,15 @@ import java.net.UnknownHostException
 private const val DOMAIN_NAME = "kotlin-build-properties.labs.jb.gg"
 private const val SETUP_JSON_URL = "https://$DOMAIN_NAME/setup.json"
 
+private const val PLUGIN_SWITCH_PROPERTY = "kotlin.build.internal.gradle.setup"
+
 abstract class InternalGradleSetupSettingsPlugin : Plugin<Settings> {
     private val log = Logging.getLogger(javaClass)
 
     override fun apply(target: Settings) {
+        // `kotlin-build-gradle-plugin` is not used here intentionally, as it caches properties, we don't want to cache them before modificaation
+        val shouldApplyPlugin = target.providers.gradleProperty(PLUGIN_SWITCH_PROPERTY).orElse("false").map(String::toBoolean)
+        if (!shouldApplyPlugin.get()) return // the plugin is disabled, do nothing at all
         val isTeamCityBuild = (target as? ExtensionAware)?.extra?.has("teamcity") == true || System.getenv("TEAMCITY_VERSION") != null
         if (isTeamCityBuild) {
             log.info("TeamCity build detected. Skipping automatic local.properties configuration")
