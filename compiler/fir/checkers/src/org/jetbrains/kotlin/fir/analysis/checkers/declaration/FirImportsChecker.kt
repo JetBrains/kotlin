@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.visibilityChecker
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.utils.addToStdlib.filterIsInstanceWithChecker
@@ -103,23 +104,12 @@ object FirImportsChecker : FirFileChecker() {
             return
         }
 
-        val resolvedClassSymbol = ClassId.topLevel(importedFqName).resolveToClass(context)
+        val possibleDeclarations = importedFqName.resolveToDeclarations(context)
 
-        if (resolvedClassSymbol != null) {
-            if (!resolvedClassSymbol.fir.isVisible(context)) {
-                reporter.reportOn(import.getSourceForImportSegment(0), FirErrors.INVISIBLE_REFERENCE, resolvedClassSymbol, context)
-            }
-
-            return
-        }
-
-        // Note: two checks below are both heavyweight, so we should do them lazily!
-
-        val topLevelCallableSymbol = symbolProvider.getTopLevelCallableSymbols(importedFqName.parent(), importedName)
-        if (topLevelCallableSymbol.isNotEmpty()) {
-            if (topLevelCallableSymbol.none { it.fir.isVisible(context) }) {
+        if (possibleDeclarations.isNotEmpty()) {
+            if (possibleDeclarations.none { it.isVisible(context) }) {
                 val source = import.getSourceForImportSegment(0)
-                reporter.reportOn(source, FirErrors.INVISIBLE_REFERENCE, topLevelCallableSymbol.first(), context)
+                reporter.reportOn(source, FirErrors.INVISIBLE_REFERENCE, possibleDeclarations.first().symbol, context)
             }
 
             return
@@ -211,6 +201,12 @@ object FirImportsChecker : FirFileChecker() {
             is FirTypeAliasSymbol -> classSymbol.fullyExpandedClass(context.session)
             is FirAnonymousObjectSymbol -> null
         }
+    }
+
+    private fun FqName.resolveToDeclarations(context: CheckerContext): List<FirMemberDeclaration> {
+        val resolvedClassSymbol = ClassId.topLevel(this).resolveToClass(context)?.fir
+        val resolvedCallableSymbols = context.session.symbolProvider.getTopLevelCallableSymbols(parent(), shortName())
+        return listOfNotNull(resolvedClassSymbol) + resolvedCallableSymbols.map { it.fir }
     }
 
     private fun FirRegularClassSymbol.hasFunction(
