@@ -106,11 +106,11 @@ class JsPluginKgpDependencyResolutionPropertyTest {
         val project = buildProject {
         }
 
-        val mppSubproject = buildProject({ withParent(project) }) {
+        val mppSubproject = buildProject({ withName("mpp").withParent(project) }) {
             applyMultiplatformPlugin()
         }
 
-        val jsSubproject = buildProject({ withParent(project) }) {
+        val jsSubproject = buildProject({ withName("js").withParent(project) }) {
             plugins.apply("org.jetbrains.kotlin.js")
         }
 
