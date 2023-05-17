@@ -46,10 +46,9 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
 import org.jetbrains.kotlin.scripting.compiler.plugin.FirScriptingSamWithReceiverExtensionRegistrar
 import org.jetbrains.kotlin.scripting.definitions.findScriptDefinition
-import org.jetbrains.kotlin.utils.addIfNotNull
-import org.jetbrains.kotlin.utils.addToStdlib.partitionIsInstance
 import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
+import org.jetbrains.kotlin.analysis.providers.impl.util.mergeInto
 
 @OptIn(PrivateSessionConstructor::class, SessionConfiguration::class)
 internal abstract class LLFirAbstractSessionFactory(protected val project: Project) {
@@ -503,29 +502,10 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
         session: LLFirSession,
         destination: MutableList<FirSymbolProvider>,
     ) {
-        SymbolProviderMerger(this, destination).apply {
+        mergeInto(destination) {
             merge<LLFirKotlinSymbolProvider> { LLFirCombinedKotlinSymbolProvider.merge(session, project, it) }
             merge<JavaSymbolProvider> { LLFirCombinedJavaSymbolProvider.merge(session, project, it) }
             merge<FirExtensionSyntheticFunctionInterfaceProvider> { LLFirCombinedSyntheticFunctionSymbolProvider.merge(session, it) }
-            finish()
-        }
-    }
-
-    private class SymbolProviderMerger(
-        symbolProviders: List<FirSymbolProvider>,
-        private val destination: MutableList<FirSymbolProvider>
-    ) {
-        private var remainingSymbolProviders = symbolProviders
-
-        inline fun <reified A : FirSymbolProvider> merge(create: (List<A>) -> FirSymbolProvider?) {
-            val (specificSymbolProviders, remainingSymbolProviders) = remainingSymbolProviders.partitionIsInstance<_, A>()
-            destination.addIfNotNull(create(specificSymbolProviders))
-            this.remainingSymbolProviders = remainingSymbolProviders
-        }
-
-        fun finish() {
-            destination.addAll(remainingSymbolProviders)
-            remainingSymbolProviders = emptyList()
         }
     }
 }
