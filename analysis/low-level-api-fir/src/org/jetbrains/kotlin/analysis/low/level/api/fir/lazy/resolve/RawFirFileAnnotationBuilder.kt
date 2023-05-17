@@ -24,8 +24,8 @@ internal fun buildFileFirAnnotation(
 
     val builder = object : RawFirBuilder(session, baseScopeProvider) {
         inner class VisitorWithReplacement : Visitor() {
-            override fun convertElement(element: KtElement): FirElement? =
-                super.convertElement(replacementApplier?.tryReplace(element) ?: element)
+            override fun convertElement(element: KtElement, original: FirElement?): FirElement? =
+                super.convertElement(replacementApplier?.tryReplace(element) ?: element, original)
         }
     }
     builder.context.packageFqName = fileAnnotation.containingKtFile.packageFqName

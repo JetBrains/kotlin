@@ -177,8 +177,8 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
     }
 
     private inner class VisitorWithReplacement(private val containingClass: FirRegularClass?) : Visitor() {
-        override fun convertElement(element: KtElement): FirElement? =
-            super.convertElement(replacementApplier?.tryReplace(element) ?: element)
+        override fun convertElement(element: KtElement, original: FirElement?): FirElement? =
+            super.convertElement(replacementApplier?.tryReplace(element) ?: element, original)
 
         override fun convertProperty(
             property: KtProperty,
@@ -226,7 +226,7 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
             return ConstructorConversionParams(superTypeCallEntry, selfType, typeParameters)
         }
 
-        override fun visitSecondaryConstructor(constructor: KtSecondaryConstructor, data: Unit?): FirElement {
+        override fun visitSecondaryConstructor(constructor: KtSecondaryConstructor, data: FirElement?): FirElement {
             val classOrObject = constructor.getContainingClassOrObject()
             val params = extractContructorConversionParams(classOrObject, constructor)
             val delegatedTypeRef = (originalDeclaration as FirConstructor).delegatedConstructor?.constructedTypeRef
@@ -260,10 +260,10 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
             return newConstructor
         }
 
-        override fun visitPrimaryConstructor(constructor: KtPrimaryConstructor, data: Unit?): FirElement =
+        override fun visitPrimaryConstructor(constructor: KtPrimaryConstructor, data: FirElement?): FirElement =
             processPrimaryConstructor(constructor.getContainingClassOrObject(), constructor)
 
-        override fun visitEnumEntry(enumEntry: KtEnumEntry, data: Unit?): FirElement {
+        override fun visitEnumEntry(enumEntry: KtEnumEntry, data: FirElement?): FirElement {
             val owner = containingClass ?: buildErrorWithAttachment("Enum entry outside of class") {
                 withPsiEntry("enumEntry", enumEntry, baseSession.llFirModuleData.ktModule)
             }
@@ -310,17 +310,17 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
                         // Constructor outside of class, syntax error, we should not do anything
                         originalDeclaration
                     } else {
-                        visitor.convertElement(declarationToBuild)
+                        visitor.convertElement(declarationToBuild, originalDeclaration)
                     }
                 }
                 is KtClassOrObject -> {
                     when {
                         originalDeclaration is FirConstructor -> visitor.processPrimaryConstructor(declarationToBuild, null)
                         originalDeclaration is FirField -> visitor.processField(declarationToBuild, originalDeclaration)
-                        else -> visitor.convertElement(declarationToBuild)
+                        else -> visitor.convertElement(declarationToBuild, originalDeclaration)
                     }
                 }
-                else -> visitor.convertElement(declarationToBuild)
+                else -> visitor.convertElement(declarationToBuild, originalDeclaration)
             } as FirDeclaration
         }
 

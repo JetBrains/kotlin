@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve
 
-import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.types.FirUserTypeRef
@@ -17,7 +17,7 @@ internal fun buildFirUserTypeRef(
     baseScopeProvider: FirScopeProvider
 ): FirUserTypeRef {
     val builder = object : RawFirBuilder(session, baseScopeProvider) {
-        fun build(): FirUserTypeRef = Visitor().visitTypeReference(typeReference, Unit) as FirUserTypeRef
+        fun build(): FirUserTypeRef = Visitor().visitTypeReference(typeReference, null) as FirUserTypeRef
     }
     builder.context.packageFqName = typeReference.containingKtFile.packageFqName
     return builder.build()

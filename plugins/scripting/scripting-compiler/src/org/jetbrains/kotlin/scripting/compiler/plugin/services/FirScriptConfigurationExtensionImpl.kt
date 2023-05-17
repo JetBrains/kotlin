@@ -41,38 +41,16 @@ import kotlin.script.experimental.host.StringScriptSource
 class FirScriptConfiguratorExtensionImpl(
     session: FirSession,
     // TODO: left here because it seems it will be needed soon, remove supression if used or remove the param if it is not the case
-    @Suppress("UNUSED_PARAMETER") hostConfiguration: ScriptingHostConfiguration
+    @Suppress("UNUSED_PARAMETER") hostConfiguration: ScriptingHostConfiguration,
 ) : FirScriptConfiguratorExtension(session) {
+
     @OptIn(SymbolInternals::class)
     override fun FirScriptBuilder.configure(fileBuilder: FirFileBuilder) {
+        val sourceFile = fileBuilder.sourceFile ?: return
 
-        // TODO: rewrite/extract decision logic for clarity
-        val compilationConfiguration = session.scriptDefinitionProviderService?.let { providerService ->
-            fileBuilder.sourceFile?.toSourceCode()?.let { script ->
-                val ktFile = (script as? KtFileScriptSource)?.ktFile ?: error("only PSI scripts are supported at the moment")
-                providerService.configurationProvider?.getScriptConfigurationResult(ktFile)?.valueOrNull()?.configuration
-                    ?: providerService.definitionProvider?.findDefinition(script)?.compilationConfiguration
-            } ?: providerService.definitionProvider?.getDefaultDefinition()?.compilationConfiguration
-        }
-
-        if (compilationConfiguration != null) {
-
-            compilationConfiguration[ScriptCompilationConfiguration.defaultImports]?.forEach { defaultImport ->
-                val trimmed = defaultImport.trim()
-                val endsWithStar = trimmed.endsWith("*")
-                val stripped = if (endsWithStar) trimmed.substring(0, trimmed.length - 2) else trimmed
-                val fqName = FqName.fromSegments(stripped.split("."))
-                fileBuilder.imports += buildImport {
-                    fileBuilder.sourceFile?.project()?.let {
-                        val dummyElement = KtPsiFactory(it, markGenerated = true).createColon()
-                        source = KtFakeSourceElement(dummyElement, KtFakeSourceElementKind.ImplicitImport)
-                    }
-                    importedFqName = fqName
-                    isAllUnder = endsWithStar
-                }
-            }
-
-            compilationConfiguration[ScriptCompilationConfiguration.baseClass]?.let { baseClass ->
+        withConfigurationIfAny(sourceFile) { configuration ->
+            // TODO: rewrite/extract decision logic for clarity
+            configuration[ScriptCompilationConfiguration.baseClass]?.let { baseClass ->
                 val baseClassFqn = FqName.fromSegments(baseClass.typeName.split("."))
                 contextReceivers.add(buildContextReceiverWithFqName(baseClassFqn))
 
@@ -88,8 +66,8 @@ class FirScriptConfiguratorExtensionImpl(
                                 origin = FirDeclarationOrigin.ScriptCustomization
                                 // TODO: copy type parameters?
                                 returnTypeRef = baseCtorParameter.returnTypeRef
-                                this.name = baseCtorParameter.name
-                                this.symbol = FirPropertySymbol(this.name)
+                                name = baseCtorParameter.name
+                                symbol = FirPropertySymbol(name)
                                 status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
                                 isLocal = true
                                 isVar = false
@@ -98,12 +76,10 @@ class FirScriptConfiguratorExtensionImpl(
                     }
                 }
             }
-
-            compilationConfiguration[ScriptCompilationConfiguration.implicitReceivers]?.forEach { implicitReceiver ->
+            configuration[ScriptCompilationConfiguration.implicitReceivers]?.forEach { implicitReceiver ->
                 contextReceivers.add(buildContextReceiverWithFqName(FqName.fromSegments(implicitReceiver.typeName.split("."))))
             }
-
-            compilationConfiguration[ScriptCompilationConfiguration.providedProperties]?.forEach { propertyName, propertyType ->
+            configuration[ScriptCompilationConfiguration.providedProperties]?.forEach { propertyName, propertyType ->
                 val typeRef = buildUserTypeRef {
                     isMarkedNullable = propertyType.isNullable
                     propertyType.typeName.split(".").forEach {
@@ -115,19 +91,51 @@ class FirScriptConfiguratorExtensionImpl(
                         moduleData = session.moduleData
                         origin = FirDeclarationOrigin.ScriptCustomization
                         returnTypeRef = typeRef
-                        this.name = Name.identifier(propertyName)
-                        this.symbol = FirPropertySymbol(this.name)
+                        name = Name.identifier(propertyName)
+                        symbol = FirPropertySymbol(name)
                         status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
                         isLocal = true
                         isVar = false
                     }
                 )
             }
+            configuration[ScriptCompilationConfiguration.annotationsForSamWithReceivers]?.forEach {
+                _knownAnnotationsForSamWithReceiver.add(it.typeName)
+            }
 
-            compilationConfiguration[ScriptCompilationConfiguration.annotationsForSamWithReceivers]?.forEach {
+            configuration[ScriptCompilationConfiguration.defaultImports]?.forEach { defaultImport ->
+                val trimmed = defaultImport.trim()
+                val endsWithStar = trimmed.endsWith("*")
+                val stripped = if (endsWithStar) trimmed.substring(0, trimmed.length - 2) else trimmed
+                val fqName = FqName.fromSegments(stripped.split("."))
+                fileBuilder.imports += buildImport {
+                    fileBuilder.sourceFile?.project()?.let {
+                        val dummyElement = KtPsiFactory(it, markGenerated = true).createColon()
+                        source = KtFakeSourceElement(dummyElement, KtFakeSourceElementKind.ImplicitImport)
+                    }
+                    importedFqName = fqName
+                    isAllUnder = endsWithStar
+                }
+            }
+
+            configuration[ScriptCompilationConfiguration.annotationsForSamWithReceivers]?.forEach {
                 _knownAnnotationsForSamWithReceiver.add(it.typeName)
             }
         }
+    }
+
+    private fun withConfigurationIfAny(file: KtSourceFile, body: (ScriptCompilationConfiguration) -> Unit) {
+        val configuration = session.scriptDefinitionProviderService?.let { providerService ->
+            val sourceCode = file.toSourceCode()
+            val ktFile = sourceCode?.originalKtFile()
+            with(providerService) {
+                ktFile?.let { configurationFor(it) }
+                    ?: sourceCode?.let { configurationFor(it) }
+                    ?: defaultConfiguration()
+            }
+        }
+
+        configuration?.let { body.invoke(it) }
     }
 
     private fun buildContextReceiverWithFqName(baseClassFqn: FqName) =
@@ -155,6 +163,19 @@ class FirScriptConfiguratorExtensionImpl(
 }
 
 private fun KtSourceFile.project(): Project? = (toSourceCode() as? KtFileScriptSource)?.ktFile?.project
+
+private fun SourceCode.originalKtFile(): KtFile =
+    (this as? KtFileScriptSource)?.ktFile?.originalFile as? KtFile
+        ?: error("only PSI scripts are supported at the moment")
+
+private fun FirScriptDefinitionProviderService.configurationFor(file: KtFile): ScriptCompilationConfiguration? =
+    configurationProvider?.getScriptConfigurationResult(file)?.valueOrNull()?.configuration
+
+private fun FirScriptDefinitionProviderService.configurationFor(sourceCode: SourceCode): ScriptCompilationConfiguration? =
+    definitionProvider?.findDefinition(sourceCode)?.compilationConfiguration
+
+private fun FirScriptDefinitionProviderService.defaultConfiguration(): ScriptCompilationConfiguration? =
+    definitionProvider?.getDefaultDefinition()?.compilationConfiguration
 
 fun KtSourceFile.toSourceCode(): SourceCode? = when (this) {
     is KtPsiSourceFile -> (psiFile as? KtFile)?.let(::KtFileScriptSource) ?: VirtualFileScriptSource(psiFile.virtualFile)
