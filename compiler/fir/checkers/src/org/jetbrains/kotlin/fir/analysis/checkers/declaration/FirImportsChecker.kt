@@ -103,25 +103,33 @@ object FirImportsChecker : FirFileChecker() {
             return
         }
 
-        val resolvedClassSymbol = ClassId.topLevel(importedFqName).resolveToClass(context)
+        var resolvedDeclaration: FirMemberDeclaration? = null
 
-        if (resolvedClassSymbol != null) {
-            if (!resolvedClassSymbol.fir.isVisible(context)) {
-                reporter.reportOn(import.getSourceForImportSegment(0), FirErrors.INVISIBLE_REFERENCE, resolvedClassSymbol, context)
+        ClassId.topLevel(importedFqName).resolveToClass(context)?.let {
+            resolvedDeclaration = it.fir
+
+            if (it.fir.isVisible(context)) {
+                return
             }
-
-            return
         }
 
         // Note: two checks below are both heavyweight, so we should do them lazily!
 
         val topLevelCallableSymbol = symbolProvider.getTopLevelCallableSymbols(importedFqName.parent(), importedName)
-        if (topLevelCallableSymbol.isNotEmpty()) {
-            if (topLevelCallableSymbol.none { it.fir.isVisible(context) }) {
-                val source = import.getSourceForImportSegment(0)
-                reporter.reportOn(source, FirErrors.INVISIBLE_REFERENCE, topLevelCallableSymbol.first(), context)
+
+        for (it in topLevelCallableSymbol) {
+            if (it.fir.isVisible(context)) {
+                return
             }
 
+            if (resolvedDeclaration == null) {
+                resolvedDeclaration = it.fir
+            }
+        }
+
+        resolvedDeclaration?.let {
+            val source = import.getSourceForImportSegment(0)
+            reporter.reportOn(source, FirErrors.INVISIBLE_REFERENCE, it.symbol, context)
             return
         }
 
