@@ -820,13 +820,13 @@ class DeclarationsChecker(
         val suggestMakingItFinal = containingDeclaration is ClassDescriptor &&
                 !propertyDescriptor.hasSetterAccessorImplementation() &&
                 propertyDescriptor.getEffectiveModality(languageVersionSettings) != Modality.FINAL &&
-                trace.bindingContext.get(IS_DEFINITELY_ASSIGNED_IN_CONSTRUCTOR, propertyDescriptor) == true
+                trace.bindingContext.get(IS_DEFINITELY_NOT_ASSIGNED_IN_CONSTRUCTOR, propertyDescriptor) == false
         val suggestMakingItAbstract = containingDeclaration is ClassDescriptor && !hasAnyAccessorImplementation
         val isOpenValDeferredInitDeprecationWarning =
             !languageVersionSettings.supportsFeature(LanguageFeature.ProhibitOpenValDeferredInitialization) &&
                     propertyDescriptor.getEffectiveModality(languageVersionSettings) == Modality.OPEN &&
                     !propertyDescriptor.isVar &&
-                    trace.bindingContext.get(IS_DEFINITELY_ASSIGNED_IN_CONSTRUCTOR, propertyDescriptor) == true
+                    trace.bindingContext.get(IS_DEFINITELY_NOT_ASSIGNED_IN_CONSTRUCTOR, propertyDescriptor) == false
         if (isOpenValDeferredInitDeprecationWarning && !suggestMakingItFinal && suggestMakingItAbstract) {
             error("Not reachable case. Every \"open val + deferred init\" case that could be made `abstract`, also could be made `final`")
         }
@@ -834,7 +834,7 @@ class DeclarationsChecker(
             !languageVersionSettings.supportsFeature(LanguageFeature.ProhibitMissedMustBeInitializedWhenThereIsNoPrimaryConstructor) &&
                     containingDeclaration is ClassDescriptor &&
                     containingDeclaration.constructors.none { it.isPrimary } &&
-                    trace.bindingContext.get(IS_DEFINITELY_ASSIGNED_IN_CONSTRUCTOR, propertyDescriptor) == true
+                    trace.bindingContext.get(IS_DEFINITELY_NOT_ASSIGNED_IN_CONSTRUCTOR, propertyDescriptor) == false
         val factory = when {
             suggestMakingItFinal && suggestMakingItAbstract -> MUST_BE_INITIALIZED_OR_FINAL_OR_ABSTRACT
             suggestMakingItFinal -> MUST_BE_INITIALIZED_OR_BE_FINAL

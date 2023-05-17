@@ -652,15 +652,14 @@ class ControlFlowInformationProviderImpl private constructor(
         val initializers = initializersMap[pseudocode.exitInstruction] ?: return
         val declaredVariables = pseudocodeVariablesData.getDeclaredVariables(pseudocode, false)
         for (variable in declaredVariables) {
+            // - If we have a primary constructor and several secondary constructors then the `if` below is called only once for the primary
+            //   constructor/init block
+            // - If we have several secondary constructors without a primary constructor then the `if` below is called each time for every
+            //   secondary constructor. (init block is considered as part of each secondary constructor in that case)
             if (variable is PropertyDescriptor) {
-                if (initializers.incoming.getOrNull(variable)?.definitelyInitialized() == true) {
-                    if (trace.bindingContext.get(IS_DEFINITELY_ASSIGNED_IN_CONSTRUCTOR, variable) == null) {
-                        trace.record(IS_DEFINITELY_ASSIGNED_IN_CONSTRUCTOR, variable)
-                    }
-                } else {
-                    trace.record(IS_DEFINITELY_ASSIGNED_IN_CONSTRUCTOR, variable, false)
-                    trace.record(IS_UNINITIALIZED, variable)
-                }
+                if (initializers.incoming.getOrNull(variable)?.definitelyInitialized() == true) continue
+                trace.record(IS_DEFINITELY_NOT_ASSIGNED_IN_CONSTRUCTOR, variable)
+                trace.record(IS_UNINITIALIZED, variable)
             }
         }
     }
