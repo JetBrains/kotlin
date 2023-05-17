@@ -1,0 +1,252 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] compilerRequiredAnnotationsOnPropertyDelegate.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    field:@PROPERTY_DELEGATE_FIELD:Deprecated[Unresolved](LAZY_EXPRESSION) @PROPERTY_DELEGATE_FIELD:Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] val memberProperty: <implicit>by LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
+            ^ D|/memberProperty|.getValue#(Null(null), ::R|/memberProperty|)
+        }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyDelegate.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    field:@PROPERTY_DELEGATE_FIELD:Deprecated[Unresolved](LAZY_EXPRESSION) @PROPERTY_DELEGATE_FIELD:Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] val memberProperty: <implicit>by LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
+            ^ D|/memberProperty|.getValue#(Null(null), ::R|/memberProperty|)
+        }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyDelegate.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    field:@PROPERTY_DELEGATE_FIELD:R|kotlin/Deprecated|[CompilerRequiredAnnotations](String(delegate)) @PROPERTY_DELEGATE_FIELD:Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] val memberProperty: <implicit>by LAZY_EXPRESSION
+        public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] get(): <implicit> {
+            ^ D|/memberProperty|.getValue#(Null(null), ::R|/memberProperty|)
+        }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyDelegate.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    field:@PROPERTY_DELEGATE_FIELD:R|kotlin/Deprecated|[CompilerRequiredAnnotations](String(delegate)) @PROPERTY_DELEGATE_FIELD:Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(COMPANION_GENERATION)] val memberProperty: <implicit>by LAZY_EXPRESSION
+        public? [ResolvedTo(COMPANION_GENERATION)] get(): <implicit> {
+            ^ D|/memberProperty|.getValue#(Null(null), ::R|/memberProperty|)
+        }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyDelegate.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    field:@PROPERTY_DELEGATE_FIELD:R|kotlin/Deprecated|[CompilerRequiredAnnotations](String(delegate)) @PROPERTY_DELEGATE_FIELD:Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(SUPER_TYPES)] val memberProperty: <implicit>by LAZY_EXPRESSION
+        public? [ResolvedTo(SUPER_TYPES)] get(): <implicit> {
+            ^ D|/memberProperty|.getValue#(Null(null), ::R|/memberProperty|)
+        }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyDelegate.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    field:@PROPERTY_DELEGATE_FIELD:R|kotlin/Deprecated|[Types](String(delegate)) @PROPERTY_DELEGATE_FIELD:R|Anno|[Types](LAZY_EXPRESSION) public? final? [ResolvedTo(TYPES)] val memberProperty: <implicit>by LAZY_EXPRESSION
+        public? [ResolvedTo(TYPES)] get(): <implicit> {
+            ^ D|/memberProperty|.getValue#(Null(null), ::R|/memberProperty|)
+        }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyDelegate.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    field:@PROPERTY_DELEGATE_FIELD:R|kotlin/Deprecated|[Types](String(delegate)) @PROPERTY_DELEGATE_FIELD:R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] val memberProperty: <implicit>by LAZY_EXPRESSION
+        public [ResolvedTo(STATUS)] get(): <implicit> {
+            ^ D|/memberProperty|.getValue#(Null(null), ::R|/memberProperty|)
+        }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyDelegate.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    field:@PROPERTY_DELEGATE_FIELD:R|kotlin/Deprecated|[Types](String(delegate)) @PROPERTY_DELEGATE_FIELD:R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] val memberProperty: <implicit>by LAZY_EXPRESSION
+        public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] get(): <implicit> {
+            ^ D|/memberProperty|.getValue#(Null(null), ::R|/memberProperty|)
+        }
+
+ARGUMENTS_OF_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyDelegate.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    field:@PROPERTY_DELEGATE_FIELD:R|kotlin/Deprecated|[Types](String(delegate)) @PROPERTY_DELEGATE_FIELD:R|Anno|[Types](String(delegate)) public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] val memberProperty: <implicit>by LAZY_EXPRESSION
+        public [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] get(): <implicit> {
+            ^ D|/memberProperty|.getValue#(Null(null), ::R|/memberProperty|)
+        }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyDelegate.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    field:@PROPERTY_DELEGATE_FIELD:R|kotlin/Deprecated|[Types](String(delegate)) @PROPERTY_DELEGATE_FIELD:R|Anno|[Types](String(delegate)) public final [ResolvedTo(CONTRACTS)] val memberProperty: <implicit>by lazy#(<L> = [ResolvedTo(RAW_FIR)] lazy@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+        String(42)
+    }
+    )
+        public [ResolvedTo(CONTRACTS)] get(): <implicit> {
+            ^ D|/memberProperty|.getValue#(Null(null), ::R|/memberProperty|)
+        }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyDelegate.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+    }
+    field:@PROPERTY_DELEGATE_FIELD:R|kotlin/Deprecated|[Types](message = String(delegate)) @PROPERTY_DELEGATE_FIELD:R|Anno|[Types](s = String(delegate)) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val memberProperty: R|kotlin/String|by R|kotlin/lazy|<R|kotlin/String|>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function0<T>] lazy@fun <anonymous>(): R|kotlin/String| <inline=NoInline>  {
+        ^ String(42)
+    }
+    )
+        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String| {
+            ^ D|/memberProperty|.R|kotlin/getValue|<R|kotlin/String|>(Null(null), ::R|/memberProperty|)
+        }
+
+ANNOTATIONS_ARGUMENTS_MAPPING:
+FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyDelegate.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+    }
+    field:@PROPERTY_DELEGATE_FIELD:R|kotlin/Deprecated|[Types](message = String(delegate)) @PROPERTY_DELEGATE_FIELD:R|Anno|[Types](s = String(delegate)) public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] val memberProperty: R|kotlin/String|by R|kotlin/lazy|<R|kotlin/String|>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function0<T>] lazy@fun <anonymous>(): R|kotlin/String| <inline=NoInline>  {
+        ^ String(42)
+    }
+    )
+        public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] get(): R|kotlin/String| {
+            ^ D|/memberProperty|.R|kotlin/getValue|<R|kotlin/String|>(Null(null), ::R|/memberProperty|)
+        }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyDelegate.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+    }
+    field:@PROPERTY_DELEGATE_FIELD:R|kotlin/Deprecated|[Types](message = String(delegate)) @PROPERTY_DELEGATE_FIELD:R|Anno|[Types](s = String(delegate)) public final [ResolvedTo(BODY_RESOLVE)] val memberProperty: R|kotlin/String|by R|kotlin/lazy|<R|kotlin/String|>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function0<T>] lazy@fun <anonymous>(): R|kotlin/String| <inline=NoInline>  {
+        ^ String(42)
+    }
+    )
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String| {
+            ^ D|/memberProperty|.R|kotlin/getValue|<R|kotlin/String|>(Null(null), ::R|/memberProperty|)
+        }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyDelegate.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+    }
+    field:@PROPERTY_DELEGATE_FIELD:R|kotlin/Deprecated|[Types](message = String(delegate)) @PROPERTY_DELEGATE_FIELD:R|Anno|[Types](s = String(delegate)) public final [ResolvedTo(BODY_RESOLVE)] val memberProperty: R|kotlin/String|by R|kotlin/lazy|<R|kotlin/String|>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function0<T>] lazy@fun <anonymous>(): R|kotlin/String| <inline=NoInline>  {
+        ^ String(42)
+    }
+    )
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String| {
+            ^ D|/memberProperty|.R|kotlin/getValue|<R|kotlin/String|>(Null(null), ::R|/memberProperty|)
+        }

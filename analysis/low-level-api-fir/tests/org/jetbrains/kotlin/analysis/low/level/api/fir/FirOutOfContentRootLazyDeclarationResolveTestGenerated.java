@@ -79,6 +79,36 @@ public class FirOutOfContentRootLazyDeclarationResolveTestGenerated extends Abst
     }
 
     @Test
+    @TestMetadata("compilerRequiredAnnotationsOnConstructor.kt")
+    public void testCompilerRequiredAnnotationsOnConstructor() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/lazyResolve/compilerRequiredAnnotationsOnConstructor.kt");
+    }
+
+    @Test
+    @TestMetadata("compilerRequiredAnnotationsOnConstructorProperty.kt")
+    public void testCompilerRequiredAnnotationsOnConstructorProperty() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/lazyResolve/compilerRequiredAnnotationsOnConstructorProperty.kt");
+    }
+
+    @Test
+    @TestMetadata("compilerRequiredAnnotationsOnFunction.kt")
+    public void testCompilerRequiredAnnotationsOnFunction() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/lazyResolve/compilerRequiredAnnotationsOnFunction.kt");
+    }
+
+    @Test
+    @TestMetadata("compilerRequiredAnnotationsOnProperty.kt")
+    public void testCompilerRequiredAnnotationsOnProperty() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/lazyResolve/compilerRequiredAnnotationsOnProperty.kt");
+    }
+
+    @Test
+    @TestMetadata("compilerRequiredAnnotationsOnPropertyDelegate.kt")
+    public void testCompilerRequiredAnnotationsOnPropertyDelegate() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/lazyResolve/compilerRequiredAnnotationsOnPropertyDelegate.kt");
+    }
+
+    @Test
     @TestMetadata("complexLocalHierarchy.kt")
     public void testComplexLocalHierarchy() throws Exception {
         runTest("analysis/low-level-api-fir/testdata/lazyResolve/complexLocalHierarchy.kt");
