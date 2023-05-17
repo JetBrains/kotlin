@@ -99,6 +99,10 @@ See `org.jetbrains.kotlin.fir.resolve.inference.PostponedArgumentsAnalyzer.apply
 
 Once the lambda body was analyzed return arguments are added into the call-tree
 
+> ##### Note: Incomplete calls in return arguments
+> We don't add last expression of lambda to the call-tree as a return argument if its functional-type has Unit return-type, to
+> avoid situations when last expression contains incomplete call, see [Incomplete call in return arguments](#incomplete-call-in-return-arguments)
+
 Then, we perform inference of postponed type variables
 
 See `org.jetbrains.kotlin.fir.resolve.inference.FirBuilderInferenceSession.inferPostponedVariables`
@@ -208,3 +212,13 @@ It causes unsound solutions in the call-tree CS
 #### Resulting substitution is unclear
 Its unclear why we mix stub type substitutor with type-variable-type substitutor, and why we need to manually handle substitution to error
 types
+#### Incomplete call in return arguments
+If incomplete call is present among return arguments during [Lambda analysis finalization](#lambda-analysis-finalization) we add it to the 
+main call-tree, but then complete it as part of [result writing](#result-write).
+
+It leads to violation of contract in `org.jetbrains.kotlin.fir.resolve.inference.ConstraintSystemCompleter.getOrderedAllTypeVariables` as type variables for completed call couldn't be found anymore
+
+To avoid such problem, we have [workaround for lambdas with Unit return-type](#Note-Incomplete-calls-in-return-arguments), but problem still 
+occurs:
+- When we have [lambdas with non-Unit return-type](https://youtrack.jetbrains.com/issue/KT-58741)
+- When the [incomplete call is present in a return argument that isn't last expression](https://youtrack.jetbrains.com/issue/KT-58742)

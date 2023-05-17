@@ -15198,6 +15198,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
                 }
 
                 @Test
+                @TestMetadata("incompleteCallInReturnArgumentsWithProperExpectType.kt")
+                public void testIncompleteCallInReturnArgumentsWithProperExpectType() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/builderInference/incompleteCallInReturnArgumentsWithProperExpectType.kt");
+                }
+
+                @Test
                 @TestMetadata("invalidateKeys.kt")
                 public void testInvalidateKeys() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/builderInference/invalidateKeys.kt");
