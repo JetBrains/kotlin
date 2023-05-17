@@ -14,7 +14,7 @@ fun <RowType : Any> QueryPagingSource(randomParam: Int) {}
 
 package main
 
-import pagind.<!INVISIBLE_REFERENCE!>QueryPagingSource<!>
+import pagind.QueryPagingSource
 
 fun test() {
     QueryPagingSource<Int>(10)
