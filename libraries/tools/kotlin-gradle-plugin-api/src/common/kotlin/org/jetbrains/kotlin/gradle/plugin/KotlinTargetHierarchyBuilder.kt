@@ -167,21 +167,21 @@ interface KotlinTargetHierarchyBuilder {
     fun withMacosArm64()
     fun withLinuxArm64()
 
-    @Deprecated(DEPRECATED_TARGET_MESSAGE)
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
     fun withWatchosX86()
 
-    @Deprecated(DEPRECATED_TARGET_MESSAGE)
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
     fun withMingwX86()
 
-    @Deprecated(DEPRECATED_TARGET_MESSAGE)
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
     fun withLinuxArm32Hfp()
 
-    @Deprecated(DEPRECATED_TARGET_MESSAGE)
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
     fun withLinuxMips32()
 
-    @Deprecated(DEPRECATED_TARGET_MESSAGE)
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
     fun withLinuxMipsel32()
 
-    @Deprecated(DEPRECATED_TARGET_MESSAGE)
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
     fun withWasm32()
 }

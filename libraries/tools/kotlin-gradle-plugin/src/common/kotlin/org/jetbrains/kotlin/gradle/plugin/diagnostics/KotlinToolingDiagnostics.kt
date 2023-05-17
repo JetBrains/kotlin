@@ -22,9 +22,9 @@ object KotlinToolingDiagnostics {
         )
     }
 
-    object DeprecatedKotlinNativeTargetsDiagnostic : ToolingDiagnosticFactory(WARNING) {
+    object DeprecatedKotlinNativeTargetsDiagnostic : ToolingDiagnosticFactory(ERROR) {
         operator fun invoke(usedTargetIds: List<String>) = build(
-            "The following deprecated Kotlin/Native targets were used in the project: ${usedTargetIds.joinToString()}"
+            "The following removed Kotlin/Native targets were used in the project: ${usedTargetIds.joinToString()}"
         )
     }
 

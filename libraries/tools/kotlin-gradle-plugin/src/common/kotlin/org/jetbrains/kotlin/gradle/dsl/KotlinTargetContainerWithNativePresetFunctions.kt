@@ -75,8 +75,8 @@ interface KotlinTargetContainerWithNativePresetFunctions : KotlinTargetsContaine
     fun androidNativeArm64(configure: Action<KotlinNativeTarget>) = androidNativeArm64 { configure.execute(this) }
 
 
-    @Deprecated(DEPRECATED_TARGET_MESSAGE)
-    @Suppress("DEPRECATION")
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
+    @Suppress("DEPRECATION_ERROR")
     fun iosArm32(
         name: String = "iosArm32",
         configure: KotlinNativeTarget.() -> Unit = { }
@@ -88,20 +88,20 @@ interface KotlinTargetContainerWithNativePresetFunctions : KotlinTargetsContaine
         )
 
 
-    @Deprecated(DEPRECATED_TARGET_MESSAGE)
-    @Suppress("DEPRECATION")
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
+    @Suppress("DEPRECATION_ERROR")
     fun iosArm32() = iosArm32("iosArm32") { }
 
-    @Deprecated(DEPRECATED_TARGET_MESSAGE)
-    @Suppress("DEPRECATION")
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
+    @Suppress("DEPRECATION_ERROR")
     fun iosArm32(name: String) = iosArm32(name) { }
 
-    @Deprecated(DEPRECATED_TARGET_MESSAGE)
-    @Suppress("DEPRECATION")
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
+    @Suppress("DEPRECATION_ERROR")
     fun iosArm32(name: String, configure: Action<KotlinNativeTarget>) = iosArm32(name) { configure.execute(this) }
 
-    @Deprecated(DEPRECATED_TARGET_MESSAGE)
-    @Suppress("DEPRECATION")
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
+    @Suppress("DEPRECATION_ERROR")
     fun iosArm32(configure: Action<KotlinNativeTarget>) = iosArm32 { configure.execute(this) }
 
     fun iosArm64(
@@ -180,8 +180,8 @@ interface KotlinTargetContainerWithNativePresetFunctions : KotlinTargetsContaine
     fun watchosArm64(configure: Action<KotlinNativeTarget>) = watchosArm64 { configure.execute(this) }
 
 
-    @Deprecated(DEPRECATED_TARGET_MESSAGE)
-    @Suppress("DEPRECATION")
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
+    @Suppress("DEPRECATION_ERROR")
     fun watchosX86(
         name: String = "watchosX86",
         configure: KotlinNativeTargetWithSimulatorTests.() -> Unit = { }
@@ -193,20 +193,20 @@ interface KotlinTargetContainerWithNativePresetFunctions : KotlinTargetsContaine
         )
 
 
-    @Deprecated(DEPRECATED_TARGET_MESSAGE)
-    @Suppress("DEPRECATION")
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
+    @Suppress("DEPRECATION_ERROR")
     fun watchosX86() = watchosX86("watchosX86") { }
 
-    @Deprecated(DEPRECATED_TARGET_MESSAGE)
-    @Suppress("DEPRECATION")
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
+    @Suppress("DEPRECATION_ERROR")
     fun watchosX86(name: String) = watchosX86(name) { }
 
-    @Deprecated(DEPRECATED_TARGET_MESSAGE)
-    @Suppress("DEPRECATION")
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
+    @Suppress("DEPRECATION_ERROR")
     fun watchosX86(name: String, configure: Action<KotlinNativeTargetWithSimulatorTests>) = watchosX86(name) { configure.execute(this) }
 
-    @Deprecated(DEPRECATED_TARGET_MESSAGE)
-    @Suppress("DEPRECATION")
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
+    @Suppress("DEPRECATION_ERROR")
     fun watchosX86(configure: Action<KotlinNativeTargetWithSimulatorTests>) = watchosX86 { configure.execute(this) }
 
     fun watchosX64(
@@ -315,8 +315,8 @@ interface KotlinTargetContainerWithNativePresetFunctions : KotlinTargetsContaine
     fun linuxX64(configure: Action<KotlinNativeTargetWithHostTests>) = linuxX64 { configure.execute(this) }
 
 
-    @Deprecated(DEPRECATED_TARGET_MESSAGE)
-    @Suppress("DEPRECATION")
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
+    @Suppress("DEPRECATION_ERROR")
     fun mingwX86(
         name: String = "mingwX86",
         configure: KotlinNativeTarget.() -> Unit = { }
@@ -328,20 +328,20 @@ interface KotlinTargetContainerWithNativePresetFunctions : KotlinTargetsContaine
         )
 
 
-    @Deprecated(DEPRECATED_TARGET_MESSAGE)
-    @Suppress("DEPRECATION")
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
+    @Suppress("DEPRECATION_ERROR")
     fun mingwX86() = mingwX86("mingwX86") { }
 
-    @Deprecated(DEPRECATED_TARGET_MESSAGE)
-    @Suppress("DEPRECATION")
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
+    @Suppress("DEPRECATION_ERROR")
     fun mingwX86(name: String) = mingwX86(name) { }
 
-    @Deprecated(DEPRECATED_TARGET_MESSAGE)
-    @Suppress("DEPRECATION")
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
+    @Suppress("DEPRECATION_ERROR")
     fun mingwX86(name: String, configure: Action<KotlinNativeTarget>) = mingwX86(name) { configure.execute(this) }
 
-    @Deprecated(DEPRECATED_TARGET_MESSAGE)
-    @Suppress("DEPRECATION")
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
+    @Suppress("DEPRECATION_ERROR")
     fun mingwX86(configure: Action<KotlinNativeTarget>) = mingwX86 { configure.execute(this) }
 
     fun mingwX64(
@@ -405,8 +405,8 @@ interface KotlinTargetContainerWithNativePresetFunctions : KotlinTargetsContaine
     fun linuxArm64(configure: Action<KotlinNativeTarget>) = linuxArm64 { configure.execute(this) }
 
 
-    @Deprecated(DEPRECATED_TARGET_MESSAGE)
-    @Suppress("DEPRECATION")
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
+    @Suppress("DEPRECATION_ERROR")
     fun linuxArm32Hfp(
         name: String = "linuxArm32Hfp",
         configure: KotlinNativeTarget.() -> Unit = { }
@@ -418,25 +418,25 @@ interface KotlinTargetContainerWithNativePresetFunctions : KotlinTargetsContaine
         )
 
 
-    @Deprecated(DEPRECATED_TARGET_MESSAGE)
-    @Suppress("DEPRECATION")
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
+    @Suppress("DEPRECATION_ERROR")
     fun linuxArm32Hfp() = linuxArm32Hfp("linuxArm32Hfp") { }
 
-    @Deprecated(DEPRECATED_TARGET_MESSAGE)
-    @Suppress("DEPRECATION")
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
+    @Suppress("DEPRECATION_ERROR")
     fun linuxArm32Hfp(name: String) = linuxArm32Hfp(name) { }
 
-    @Deprecated(DEPRECATED_TARGET_MESSAGE)
-    @Suppress("DEPRECATION")
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
+    @Suppress("DEPRECATION_ERROR")
     fun linuxArm32Hfp(name: String, configure: Action<KotlinNativeTarget>) = linuxArm32Hfp(name) { configure.execute(this) }
 
-    @Deprecated(DEPRECATED_TARGET_MESSAGE)
-    @Suppress("DEPRECATION")
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
+    @Suppress("DEPRECATION_ERROR")
     fun linuxArm32Hfp(configure: Action<KotlinNativeTarget>) = linuxArm32Hfp { configure.execute(this) }
 
 
-    @Deprecated(DEPRECATED_TARGET_MESSAGE)
-    @Suppress("DEPRECATION")
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
+    @Suppress("DEPRECATION_ERROR")
     fun linuxMips32(
         name: String = "linuxMips32",
         configure: KotlinNativeTarget.() -> Unit = { }
@@ -448,25 +448,25 @@ interface KotlinTargetContainerWithNativePresetFunctions : KotlinTargetsContaine
         )
 
 
-    @Deprecated(DEPRECATED_TARGET_MESSAGE)
-    @Suppress("DEPRECATION")
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
+    @Suppress("DEPRECATION_ERROR")
     fun linuxMips32() = linuxMips32("linuxMips32") { }
 
-    @Deprecated(DEPRECATED_TARGET_MESSAGE)
-    @Suppress("DEPRECATION")
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
+    @Suppress("DEPRECATION_ERROR")
     fun linuxMips32(name: String) = linuxMips32(name) { }
 
-    @Deprecated(DEPRECATED_TARGET_MESSAGE)
-    @Suppress("DEPRECATION")
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
+    @Suppress("DEPRECATION_ERROR")
     fun linuxMips32(name: String, configure: Action<KotlinNativeTarget>) = linuxMips32(name) { configure.execute(this) }
 
-    @Deprecated(DEPRECATED_TARGET_MESSAGE)
-    @Suppress("DEPRECATION")
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
+    @Suppress("DEPRECATION_ERROR")
     fun linuxMips32(configure: Action<KotlinNativeTarget>) = linuxMips32 { configure.execute(this) }
 
 
-    @Deprecated(DEPRECATED_TARGET_MESSAGE)
-    @Suppress("DEPRECATION")
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
+    @Suppress("DEPRECATION_ERROR")
     fun linuxMipsel32(
         name: String = "linuxMipsel32",
         configure: KotlinNativeTarget.() -> Unit = { }
@@ -478,25 +478,25 @@ interface KotlinTargetContainerWithNativePresetFunctions : KotlinTargetsContaine
         )
 
 
-    @Deprecated(DEPRECATED_TARGET_MESSAGE)
-    @Suppress("DEPRECATION")
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
+    @Suppress("DEPRECATION_ERROR")
     fun linuxMipsel32() = linuxMipsel32("linuxMipsel32") { }
 
-    @Deprecated(DEPRECATED_TARGET_MESSAGE)
-    @Suppress("DEPRECATION")
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
+    @Suppress("DEPRECATION_ERROR")
     fun linuxMipsel32(name: String) = linuxMipsel32(name) { }
 
-    @Deprecated(DEPRECATED_TARGET_MESSAGE)
-    @Suppress("DEPRECATION")
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
+    @Suppress("DEPRECATION_ERROR")
     fun linuxMipsel32(name: String, configure: Action<KotlinNativeTarget>) = linuxMipsel32(name) { configure.execute(this) }
 
-    @Deprecated(DEPRECATED_TARGET_MESSAGE)
-    @Suppress("DEPRECATION")
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
+    @Suppress("DEPRECATION_ERROR")
     fun linuxMipsel32(configure: Action<KotlinNativeTarget>) = linuxMipsel32 { configure.execute(this) }
 
 
-    @Deprecated(DEPRECATED_TARGET_MESSAGE)
-    @Suppress("DEPRECATION")
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
+    @Suppress("DEPRECATION_ERROR")
     fun wasm32(
         name: String = "wasm32",
         configure: KotlinNativeTarget.() -> Unit = { }
@@ -508,20 +508,20 @@ interface KotlinTargetContainerWithNativePresetFunctions : KotlinTargetsContaine
         )
 
 
-    @Deprecated(DEPRECATED_TARGET_MESSAGE)
-    @Suppress("DEPRECATION")
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
+    @Suppress("DEPRECATION_ERROR")
     fun wasm32() = wasm32("wasm32") { }
 
-    @Deprecated(DEPRECATED_TARGET_MESSAGE)
-    @Suppress("DEPRECATION")
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
+    @Suppress("DEPRECATION_ERROR")
     fun wasm32(name: String) = wasm32(name) { }
 
-    @Deprecated(DEPRECATED_TARGET_MESSAGE)
-    @Suppress("DEPRECATION")
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
+    @Suppress("DEPRECATION_ERROR")
     fun wasm32(name: String, configure: Action<KotlinNativeTarget>) = wasm32(name) { configure.execute(this) }
 
-    @Deprecated(DEPRECATED_TARGET_MESSAGE)
-    @Suppress("DEPRECATION")
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
+    @Suppress("DEPRECATION_ERROR")
     fun wasm32(configure: Action<KotlinNativeTarget>) = wasm32 { configure.execute(this) }
 
 }

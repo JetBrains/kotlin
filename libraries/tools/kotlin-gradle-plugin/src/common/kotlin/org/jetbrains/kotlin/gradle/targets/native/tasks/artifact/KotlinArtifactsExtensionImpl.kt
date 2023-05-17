@@ -52,25 +52,25 @@ abstract class KotlinArtifactsExtensionImpl @Inject constructor(project: Project
     val linuxArm64 = KonanTarget.LINUX_ARM64
 
 
-    @Deprecated(DEPRECATED_TARGET_MESSAGE)
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
     val iosArm32 = KonanTarget.IOS_ARM32
 
-    @Deprecated(DEPRECATED_TARGET_MESSAGE)
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
     val watchosX86 = KonanTarget.WATCHOS_X86
 
-    @Deprecated(DEPRECATED_TARGET_MESSAGE)
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
     val mingwX86 = KonanTarget.MINGW_X86
 
-    @Deprecated(DEPRECATED_TARGET_MESSAGE)
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
     val linuxArm32Hfp = KonanTarget.LINUX_ARM32_HFP
 
-    @Deprecated(DEPRECATED_TARGET_MESSAGE)
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
     val linuxMips32 = KonanTarget.LINUX_MIPS32
 
-    @Deprecated(DEPRECATED_TARGET_MESSAGE)
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
     val linuxMipsel32 = KonanTarget.LINUX_MIPSEL32
 
-    @Deprecated(DEPRECATED_TARGET_MESSAGE)
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
     val wasm32 = KonanTarget.WASM32
 
 }

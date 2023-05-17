@@ -21,7 +21,7 @@ private fun generateKotlinTargetContainerWithPresetFunctionsInterface() {
     // Generate KotlinMultiplatformExtension subclass with member functions for the presets:
     val functions = nativePresetEntries.map { kotlinPreset ->
         // magic indent is needed to make the result look pretty
-        val funPrefix = kotlinPreset.deprecation?.let { "\n    $it\n    @Suppress(\"DEPRECATION\")\n    " } ?: ""
+        val funPrefix = kotlinPreset.deprecation?.let { "\n    $it\n    @Suppress(\"DEPRECATION_ERROR\")\n    " } ?: ""
         generatePresetFunctions(kotlinPreset, presetsProperty, "configureOrCreate", funPrefix)
     }
 

@@ -63,7 +63,7 @@ internal val nativePresetEntries = HostManager().targets
             else ->
                 Presets.simple to Targets.base
         }
-        val deprecation = "@Deprecated(DEPRECATED_TARGET_MESSAGE)".takeIf { target in KonanTarget.deprecatedTargets }
+        val deprecation = "@Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)".takeIf { target in KonanTarget.deprecatedTargets }
 
         KotlinPresetEntry(target.presetName, typeName(presetType), typeName(targetType), deprecation)
     }
