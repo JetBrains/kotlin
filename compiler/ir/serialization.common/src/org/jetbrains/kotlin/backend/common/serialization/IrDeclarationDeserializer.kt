@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.symbols.*
-import org.jetbrains.kotlin.ir.symbols.impl.IrPublicSymbolBase
 import org.jetbrains.kotlin.ir.symbols.impl.IrTypeParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.*
@@ -813,8 +812,7 @@ class IrDeclarationDeserializer(
             // Don't consider IR_FIELDS here.
             else -> return false
         }
-        if (symbol !is IrPublicSymbolBase<*>) return false
-        if (!symbol.signature.isPubliclyVisible) return false
+        if (symbol.signature?.isPubliclyVisible != true) return false
 
         return when (proto.declaratorCase!!) {
             IR_FUNCTION -> FunctionFlags.decode(proto.irFunction.base.base.flags).isFakeOverride

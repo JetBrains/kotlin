@@ -700,7 +700,7 @@ class IrBuiltInsOverFir(
             } else null
             (loaded != null) to (loaded ?: components.symbolTable.declareClass(
                 signature,
-                { IrClassPublicSymbolImpl(signature) },
+                { IrClassSymbolImpl(signature) },
                 { symbol ->
                     IrClassBuilder().run {
                         name = Name.identifier(signature.shortName)
@@ -764,7 +764,7 @@ class IrBuiltInsOverFir(
         block: IrClass.() -> Unit = {}
     ): IrClassSymbol = components.symbolTable.declareClass(
         signature,
-        { IrClassPublicSymbolImpl(signature) },
+        { IrClassSymbolImpl(signature) },
         { symbol ->
             IrClassBuilder().run {
                 name = Name.identifier(signature.shortName)
@@ -921,7 +921,7 @@ class IrBuiltInsOverFir(
 
         val irFun4SignatureCalculation = makeWithSymbol(IrSimpleFunctionSymbolImpl())
         val signature = irSignatureBuilder.computeSignature(irFun4SignatureCalculation)
-        return components.symbolTable.declareSimpleFunction(signature, { IrSimpleFunctionPublicSymbolImpl(signature, null) }, ::makeWithSymbol)
+        return components.symbolTable.declareSimpleFunction(signature, { IrSimpleFunctionSymbolImpl(signature, null) }, ::makeWithSymbol)
     }
 
     private fun IrClass.addArrayMembers(elementType: IrType, iteratorType: IrType) {

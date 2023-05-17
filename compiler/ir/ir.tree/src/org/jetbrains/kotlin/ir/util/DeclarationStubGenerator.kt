@@ -264,7 +264,7 @@ abstract class DeclarationStubGenerator(
         // `descriptor`, a symbol created for `descriptor` will be bound, not the built-in symbol which should be. If `generateClassStub` is
         // called twice for such a `descriptor`, an exception will occur because `descriptor`'s symbol will already have been bound.
         //
-        // Note as well that not all symbols have descriptors. For example, `irClassSymbol` might be an `IrClassPublicSymbolImpl` without a
+        // Note as well that not all symbols have descriptors. For example, `irClassSymbol` might be an `IrClassSymbolImpl` without a
         // descriptor. For such symbols, the `descriptor` argument needs to be used.
         val targetDescriptor = if (irClassSymbol.hasDescriptor) irClassSymbol.descriptor else descriptor
         with(targetDescriptor) {

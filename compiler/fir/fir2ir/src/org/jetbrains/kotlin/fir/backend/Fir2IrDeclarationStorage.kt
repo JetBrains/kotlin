@@ -1118,7 +1118,7 @@ class Fir2IrDeclarationStorage(
         return field.convertWithOffsets { startOffset, endOffset ->
             if (signature != null) {
                 symbolTable.declareField(
-                    signature, symbolFactory = { IrFieldPublicSymbolImpl(signature) }
+                    signature, symbolFactory = { IrFieldSymbolImpl(signature) }
                 ) { symbol ->
                     irFactory.createField(
                         startOffset, endOffset, origin, symbol,

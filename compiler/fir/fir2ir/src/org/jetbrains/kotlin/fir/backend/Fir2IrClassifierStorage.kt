@@ -426,7 +426,7 @@ class Fir2IrClassifierStorage(
                     if (ownerSymbol is IrClassifierSymbol) {
                         symbolTable.declareGlobalTypeParameter(
                             signature,
-                            symbolFactory = { IrTypeParameterPublicSymbolImpl(signature) }
+                            symbolFactory = { IrTypeParameterSymbolImpl(signature) }
                         ) { symbol ->
                             irFactory.createTypeParameter(
                                 startOffset, endOffset, origin, symbol,
@@ -438,7 +438,7 @@ class Fir2IrClassifierStorage(
                     } else {
                         symbolTable.declareScopedTypeParameter(
                             signature,
-                            symbolFactory = { IrTypeParameterPublicSymbolImpl(signature) }
+                            symbolFactory = { IrTypeParameterSymbolImpl(signature) }
                         ) { symbol ->
                             irFactory.createTypeParameter(
                                 startOffset, endOffset, origin, symbol,
