@@ -78,29 +78,30 @@ val commonTestSources by task<Sync> {
 D8RootPlugin.apply(rootProject).version = v8Version
 
 kotlin {
+    @OptIn(org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl::class)
     wasm {
         d8()
     }
 
     sourceSets {
-        val wasmMain by getting {
+        named("wasmMain") {
             kotlin.srcDirs("builtins", "internal", "runtime", "src", "stubs")
             kotlin.srcDirs("$rootDir/libraries/stdlib/native-wasm/src")
             kotlin.srcDirs(files(builtInsSources.map { it.destinationDir }))
         }
 
-        val commonMain by getting {
+        named("commonMain") {
             kotlin.srcDirs(files(commonMainSources.map { it.destinationDir }))
         }
 
-        val commonTest by getting {
+        named("commonTest") {
             dependencies {
                 api(project(":kotlin-test:kotlin-test-wasm"))
             }
             kotlin.srcDir(files(commonTestSources.map { it.destinationDir }))
         }
 
-        val wasmTest by getting {
+        named("wasmTest") {
             dependencies {
                 api(project(":kotlin-test:kotlin-test-wasm"))
             }

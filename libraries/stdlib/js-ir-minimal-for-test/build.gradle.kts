@@ -125,11 +125,11 @@ val jsMainSources by task<Sync> {
 
 kotlin {
     sourceSets {
-        val commonMain by getting {
+        named("commonMain") {
             kotlin.srcDir(files(commonMainSources.map { it.destinationDir }))
             kotlin.srcDir(files(commonMainCollectionSources.map { it.destinationDir }))
         }
-        val jsMain by getting {
+        named("jsMain") {
             kotlin.srcDir(files(jsMainSources.map { it.destinationDir }))
         }
     }

@@ -336,7 +336,7 @@ if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
         implementation(project(":kotlin-tooling-metadata"))
         implementation(project.dependencies.testFixtures(project(":kotlin-gradle-plugin-idea")))
         implementation("com.github.gundy:semver4j:0.16.4:nodeps") {
-            (this as ExternalModuleDependency).exclude(group = "*")
+            exclude(group = "*")
         }
         implementation("org.reflections:reflections:0.10.2")
     }

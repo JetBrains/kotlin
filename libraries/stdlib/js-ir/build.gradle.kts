@@ -113,22 +113,22 @@ val jsTestSources by task<Sync> {
 
 kotlin {
     sourceSets {
-        val commonMain by getting {
+        named("commonMain") {
             kotlin.srcDir(files(commonMainSources.map { it.destinationDir }))
         }
-        val jsMain by getting {
+        named("jsMain") {
             kotlin.srcDir(files(jsMainSources.map { it.destinationDir }))
             kotlin.srcDir("builtins")
             kotlin.srcDir("runtime")
             kotlin.srcDir("src")
         }
-        val commonTest by getting {
+        named("commonTest") {
             dependencies {
                 api(project(":kotlin-test:kotlin-test-js-ir"))
             }
             kotlin.srcDir(files(commonTestSources.map { it.destinationDir }))
         }
-        val jsTest by getting {
+        named("jsTest") {
             dependencies {
                 api(project(":kotlin-test:kotlin-test-js-ir"))
             }

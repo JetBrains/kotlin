@@ -28,16 +28,16 @@ kotlin {
     }
 
     sourceSets {
-        val commonMain by getting {
+        named("commonMain") {
             dependencies {
                 api(project(":kotlin-stdlib-js-ir"))
             }
             kotlin.srcDir(commonMainSources.get().destinationDir)
         }
-        val commonTest by getting {
+        named("commonTest") {
             kotlin.srcDir(commonTestSources.get().destinationDir)
         }
-        val jsMain by getting {
+        named("jsMain") {
             dependencies {
                 api(project(":kotlin-stdlib-js-ir"))
             }

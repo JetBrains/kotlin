@@ -38,7 +38,7 @@ kotlin {
     }
 
     sourceSets {
-        val test by getting {
+        named("test") {
             kotlin.srcDir(jsMainSources.get().destinationDir)
         }
     }
@@ -78,7 +78,7 @@ fun createFrameworkTest(name: String): TaskProvider<NpmTask> {
     return tasks.register("test$name", NpmTask::class.java) {
         dependsOn(compileTestDevelopmentExecutableKotlinJs, populateNodeModules, "npmInstall")
         val testName = name
-        val lowerName = name.toLowerCase()
+        val lowerName = name.lowercase()
         val tcOutput = project.file("$buildDir/tc-${lowerName}.log")
         val stdOutput = "$buildDir/test-${lowerName}.log"
         val errOutput = "$buildDir/test-${lowerName}.err.log"
