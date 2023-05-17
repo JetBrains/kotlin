@@ -75,6 +75,7 @@ class AdditionalBuiltInsMembersSignatureListsTest : KotlinTestWithEnvironment() 
         }
     }
 
+    // TODO: Get rid of it once JDK 21 is released (KT-58765 for tracking)
     private val LATE_JDK_SIGNATURES = mapOf(
         "java/util/List" to setOf(
             // From JDK 21

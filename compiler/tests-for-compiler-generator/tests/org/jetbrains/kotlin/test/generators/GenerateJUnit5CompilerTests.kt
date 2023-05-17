@@ -10,8 +10,11 @@ import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.runners.*
 import org.jetbrains.kotlin.test.runners.codegen.*
-import org.jetbrains.kotlin.test.runners.ir.*
-import org.jetbrains.kotlin.test.runners.ir.interpreter.*
+import org.jetbrains.kotlin.test.runners.ir.AbstractClassicJvmIrTextTest
+import org.jetbrains.kotlin.test.runners.ir.AbstractFirLightTreeJvmIrTextTest
+import org.jetbrains.kotlin.test.runners.ir.AbstractFirPsiJvmIrTextTest
+import org.jetbrains.kotlin.test.runners.ir.interpreter.AbstractJvmIrInterpreterAfterFirPsi2IrTest
+import org.jetbrains.kotlin.test.runners.ir.interpreter.AbstractJvmIrInterpreterAfterPsi2IrTest
 import org.jetbrains.kotlin.test.utils.CUSTOM_TEST_DATA_EXTENSION_PATTERN
 import org.jetbrains.kotlin.visualizer.fir.AbstractFirVisualizerTest
 import org.jetbrains.kotlin.visualizer.psi.AbstractPsiVisualizerTest
@@ -24,6 +27,10 @@ fun generateJUnit5CompilerTests(args: Array<String>) {
             testClass<AbstractDiagnosticTest> {
                 model("diagnostics/tests", pattern = "^(.*)\\.kts?$", excludedPattern = excludedCustomTestdataPattern)
                 model("diagnostics/testsWithStdLib", excludedPattern = excludedCustomTestdataPattern)
+            }
+
+            testClass<AbstractJdk21DiagnosticTest> {
+                model("diagnostics/testsWithJdk21", excludedPattern = excludedCustomTestdataPattern)
             }
 
             testClass<AbstractDiagnosticUsingJavacTest> {
@@ -207,6 +214,14 @@ fun generateJUnit5CompilerTests(args: Array<String>) {
                     excludedPattern = excludedCustomTestdataPattern
                 )
                 model("diagnostics/testsWithStdLib", excludedPattern = excludedCustomTestdataPattern)
+            }
+
+            testClass<AbstractFirPsiJdk21DiagnosticTest> {
+                model("diagnostics/testsWithJdk21", excludedPattern = excludedCustomTestdataPattern)
+            }
+
+            testClass<AbstractFirLightTreeJdk21DiagnosticTest> {
+                model("diagnostics/testsWithJdk21", excludedPattern = excludedCustomTestdataPattern)
             }
 
             testClass<AbstractFirPsiWithActualizerDiagnosticsTest>(suiteTestClassName = "FirOldFrontendMPPDiagnosticsWithPsiTestGenerated") {

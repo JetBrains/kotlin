@@ -7,7 +7,10 @@ package org.jetbrains.kotlin.test.backend.handlers
 
 import junit.framework.TestCase
 import org.jetbrains.kotlin.backend.common.CodegenUtil.getMemberDeclarationsToGenerate
-import org.jetbrains.kotlin.codegen.*
+import org.jetbrains.kotlin.codegen.ClassFileFactory
+import org.jetbrains.kotlin.codegen.CodegenTestUtil
+import org.jetbrains.kotlin.codegen.GeneratedClassLoader
+import org.jetbrains.kotlin.codegen.extractUrls
 import org.jetbrains.kotlin.fileClasses.JvmFileClassInfo
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil.getFileClassInfoNoResolve
 import org.jetbrains.kotlin.psi.KtFile
@@ -181,6 +184,7 @@ open class JvmBoxRunner(testServices: TestServices) : JvmBinaryArtifactHandler(t
             TestJdkKind.FULL_JDK -> KtTestUtil.getJdk8Home()
             TestJdkKind.FULL_JDK_11 -> KtTestUtil.getJdk11Home()
             TestJdkKind.FULL_JDK_17 -> KtTestUtil.getJdk17Home()
+            TestJdkKind.FULL_JDK_21 -> KtTestUtil.getJdk21Home()
             else -> error("Unsupported JDK kind: $jdkKind")
         }
 

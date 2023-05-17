@@ -159,6 +159,10 @@ public class KtTestUtil {
         return getJdkHome("JDK_17_0", "JDK_17");
     }
 
+    public static File getJdk21Home() {
+        return getJdkHome("JDK_21_0", "JDK_21");
+    }
+
     @NotNull
     public static String getTestDataPathBase() {
         return getHomeDirectory() + "/compiler/testData";
