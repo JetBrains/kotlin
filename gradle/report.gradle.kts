@@ -54,7 +54,7 @@ private class BuildTimeReporter(
         UNCATEGORIZED;
 
         private fun String.toTitleCase() =
-            if (length <= 1) capitalize() else { get(0).toUpperCase() + substring(1).toLowerCase() }
+            if (length <= 1) capitalize() else { get(0).uppercase() + substring(1).lowercase() }
 
         fun description(): String =
             name.replace("_", " ").toTitleCase()

@@ -28,15 +28,18 @@ kotlin {
     }
 
     sourceSets {
+        @Suppress("UNUSED_VARIABLE")
         val commonMain by getting {
             dependencies {
                 api(project(":kotlin-stdlib-js-ir"))
             }
             kotlin.srcDir(commonMainSources.get().destinationDir)
         }
+        @Suppress("UNUSED_VARIABLE")
         val commonTest by getting {
             kotlin.srcDir(commonTestSources.get().destinationDir)
         }
+        @Suppress("UNUSED_VARIABLE")
         val jsMain by getting {
             dependencies {
                 api(project(":kotlin-stdlib-js-ir"))

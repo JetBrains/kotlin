@@ -429,7 +429,7 @@ allprojects {
             val isReflect = requested.name == "kotlin-reflect" || requested.name == "kotlin-reflect-api"
             // More strict check for "compilerModules". We can't apply this check for all modules because it would force to
             // exclude kotlin-reflect from transitive dependencies of kotlin-poet, ktor, com.android.tools.build:gradle, etc
-            if (project.path in (rootProject.extra["compilerModules"] as Array<String>)) {
+            if (project.path in @Suppress("UNCHECKED_CAST") (rootProject.extra["compilerModules"] as Array<String>)) {
                 val expectedReflectVersion = commonDependencyVersion("org.jetbrains.kotlin", "kotlin-reflect")
                 if (isReflect) {
                     check(requested.version == expectedReflectVersion) {
@@ -880,9 +880,9 @@ fun Project.secureZipTask(zipTask: TaskProvider<Zip>): RegisteringDomainObjectDe
     val checkSumTask = tasks.register("${zipTask.name}Checksum", Checksum::class) {
         dependsOn(zipTask)
         val compilerFile = zipTask.get().outputs.files.singleFile
-        files = files(compilerFile)
-        outputDir = compilerFile.parentFile
-        algorithm = Checksum.Algorithm.SHA256
+        inputFiles.from(compilerFile)
+        outputDirectory.set(compilerFile.parentFile)
+        checksumAlgorithm.set(Checksum.Algorithm.SHA256)
     }
 
     val signTask = tasks.register("${zipTask.name}Sign", Sign::class) {
@@ -934,9 +934,9 @@ gradle.taskGraph.whenReady(checkYarnAndNPMSuppressed)
 
 plugins.withType(org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin::class) {
     extensions.configure(org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension::class.java) {
-        npmInstallTaskProvider?.configure {
+        npmInstallTaskProvider.configure {
             args += listOf("--network-concurrency", "1", "--mutex", "network")
-        } ?: error("kotlinNpmInstall task should exist inside NodeJsRootExtension")
+        }
     }
 }
 
