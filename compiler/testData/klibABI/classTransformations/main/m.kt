@@ -57,6 +57,17 @@ fun box() = abiTest {
     expectFailure(linkage("Can not get instance of singleton 'EnumToClass.Baz': No enum entry found for symbol '/EnumToClass.Baz'")) { getEnumToClassBazAsAny() }
     expectFailure(linkage("Can not get instance of singleton 'EnumToClass.Baz': No enum entry found for symbol '/EnumToClass.Baz'")) { getEnumToClassBazAsAnyInline() }
 
+    expectFailure(linkage("Function 'values' can not be called: No function found for symbol '/EnumToClass.values'")) { getEnumToClassBarAsAnyThroughValues() }
+    expectFailure(linkage("Function 'values' can not be called: No function found for symbol '/EnumToClass.values'")) { getEnumToClassBarAsAnyInlineThroughValues() }
+    expectFailure(linkage("Property accessor 'entries.<get-entries>' can not be called: No property accessor found for symbol '/EnumToClass.entries.<get-entries>'")) { getEnumToClassBarAsAnyThroughEntries() }
+    expectFailure(linkage("Property accessor 'entries.<get-entries>' can not be called: No property accessor found for symbol '/EnumToClass.entries.<get-entries>'")) { getEnumToClassBarAsAnyInlineThroughEntries() }
+    expectFailure(linkage("Function 'valueOf' can not be called: No function found for symbol '/EnumToClass.valueOf'")) { getEnumToClassBarAsAnyThroughValueOf() }
+    expectFailure(linkage("Function 'valueOf' can not be called: No function found for symbol '/EnumToClass.valueOf'")) { getEnumToClassBarAsAnyInlineThroughValueOf() }
+    expectFailure(linkage("Function 'enumValues' can not be called: 'EnumToClass' is class while enum class is expected")) { getEnumToClassBarAsAnyThroughEnumValues() }
+    expectFailure(linkage("Function 'enumValues' can not be called: 'EnumToClass' is class while enum class is expected")) { getEnumToClassBarAsAnyInlineThroughEnumValues() }
+    expectFailure(linkage("Function 'enumValueOf' can not be called: 'EnumToClass' is class while enum class is expected")) { getEnumToClassBarAsAnyThroughEnumValueOf() }
+    expectFailure(linkage("Function 'enumValueOf' can not be called: 'EnumToClass' is class while enum class is expected")) { getEnumToClassBarAsAnyInlineThroughEnumValueOf() }
+
     expectFailure(linkage("Can not get instance of singleton 'EnumToObject.Foo': No enum entry found for symbol '/EnumToObject.Foo'")) { getEnumToObjectFoo() }
     expectFailure(linkage("Can not get instance of singleton 'EnumToObject.Foo': No enum entry found for symbol '/EnumToObject.Foo'")) { getEnumToObjectFooInline() }
     expectFailure(linkage("Can not get instance of singleton 'EnumToObject.Foo': No enum entry found for symbol '/EnumToObject.Foo'")) { getEnumToObjectFooAsAny() }

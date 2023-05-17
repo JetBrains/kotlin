@@ -38,6 +38,17 @@ inline fun getEnumToClassBazInline(): EnumToClass = EnumToClass.Baz
 fun getEnumToClassBazAsAny(): Any = EnumToClass.Baz
 inline fun getEnumToClassBazAsAnyInline(): Any = EnumToClass.Baz
 
+fun getEnumToClassBarAsAnyThroughValues(): Any = EnumToClass.values().first { it.name == "Bar" }
+inline fun getEnumToClassBarAsAnyInlineThroughValues(): Any = EnumToClass.values().first { it.name == "Bar" }
+fun getEnumToClassBarAsAnyThroughEntries(): Any = EnumToClass.entries.first { it.name == "Bar" }
+inline fun getEnumToClassBarAsAnyInlineThroughEntries(): Any = EnumToClass.entries.first { it.name == "Bar" }
+fun getEnumToClassBarAsAnyThroughValueOf(): Any = EnumToClass.valueOf("Bar")
+inline fun getEnumToClassBarAsAnyInlineThroughValueOf(): Any = EnumToClass.valueOf("Bar")
+fun getEnumToClassBarAsAnyThroughEnumValues(): Any = enumValues<EnumToClass>().first { it.name == "Bar" }
+inline fun getEnumToClassBarAsAnyInlineThroughEnumValues(): Any = enumValues<EnumToClass>().first { it.name == "Bar" }
+fun getEnumToClassBarAsAnyThroughEnumValueOf(): Any = enumValueOf<EnumToClass>("Bar")
+inline fun getEnumToClassBarAsAnyInlineThroughEnumValueOf(): Any = enumValueOf<EnumToClass>("Bar")
+
 fun getEnumToObjectFoo(): EnumToObject = EnumToObject.Foo
 inline fun getEnumToObjectFooInline(): EnumToObject = EnumToObject.Foo
 fun getEnumToObjectFooAsAny(): Any = EnumToObject.Foo

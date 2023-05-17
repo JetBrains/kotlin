@@ -26,12 +26,15 @@ import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrAnonymousInitializerSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.types.isSubtypeOfClass
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds.BASE_KOTLIN_PACKAGE
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.compact
 import java.util.*
@@ -504,6 +507,7 @@ internal class PartiallyLinkedIrTreePatcher(
                 ?: checkReferencedDeclaration(superQualifierSymbol)
                 ?: checkExpressionTypeArguments()
                 ?: checkArgumentsAndValueParameters()
+                ?: checkSpecialIntrinsicCall()
         }
 
         override fun visitConstructorCall(expression: IrConstructorCall) = expression.maybeThrowLinkageError {
@@ -812,6 +816,22 @@ internal class PartiallyLinkedIrTreePatcher(
                 null
         }
 
+        private fun IrCall.checkSpecialIntrinsicCall(): PartialLinkageCase? {
+            val function = symbol.owner
+
+            return when {
+                function.isEnumIntrinsic() -> {
+                    // Enum intrinsics such as `kotlin.enumValues()` and `kotlin.enumValueOf` can be called only on
+                    // enum class passed in type argument.
+                    val typeArgument: IrType? = if (typeArgumentsCount > 0) getTypeArgument(0) else null
+                    val enumClass: IrClass = (typeArgument?.classifierOrNull as? IrClassSymbol)?.owner ?: return null
+
+                    checkReferencedDeclarationType(enumClass, "enum class") { it.kind == ClassKind.ENUM_CLASS }
+                }
+                else -> null
+            }
+        }
+
         private fun IrConstructorCall.checkNotAbstractClass(): PartialLinkageCase? {
             val createdClass = symbol.owner.parentAsClass
             return if (createdClass.modality == Modality.ABSTRACT || createdClass.modality == Modality.SEALED)
@@ -1102,5 +1122,11 @@ internal class PartiallyLinkedIrTreePatcher(
             is IrWhen, is IrLoop, is IrTry, is IrSuspensionPoint, is IrSuspendableExpression -> true
             else -> false
         }
+
+        private fun IrSimpleFunction.isEnumIntrinsic() =
+            (name == NAME_ENUM_VALUES || name == NAME_ENUM_VALUE_OF) && (parent as? IrPackageFragment)?.fqName == BASE_KOTLIN_PACKAGE
+
+        private val NAME_ENUM_VALUES = Name.identifier("enumValues")
+        private val NAME_ENUM_VALUE_OF = Name.identifier("enumValueOf")
     }
 }
