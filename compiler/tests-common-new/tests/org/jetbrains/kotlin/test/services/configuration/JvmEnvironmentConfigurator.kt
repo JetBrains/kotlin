@@ -135,6 +135,7 @@ class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfig
             TestJdkKind.FULL_JDK_6 -> File(System.getenv("JDK_16") ?: error("Environment variable JDK_16 is not set"))
             TestJdkKind.FULL_JDK_11 -> KtTestUtil.getJdk11Home()
             TestJdkKind.FULL_JDK_17 -> KtTestUtil.getJdk17Home()
+            TestJdkKind.FULL_JDK_21 -> KtTestUtil.getJdk21Home()
             TestJdkKind.FULL_JDK -> if (JavaVersion.current() >= JavaVersion.compose(9)) File(System.getProperty("java.home")) else null
             TestJdkKind.ANDROID_API -> null
         }
@@ -146,6 +147,7 @@ class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfig
             TestJdkKind.FULL_JDK_6 -> null
             TestJdkKind.FULL_JDK_11 -> null
             TestJdkKind.FULL_JDK_17 -> null
+            TestJdkKind.FULL_JDK_21 -> null
             TestJdkKind.FULL_JDK -> null
         }
     }
@@ -197,6 +199,7 @@ class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfig
             TestJdkKind.FULL_JDK_6 -> {}
             TestJdkKind.FULL_JDK_11 -> {}
             TestJdkKind.FULL_JDK_17 -> {}
+            TestJdkKind.FULL_JDK_21 -> {}
             TestJdkKind.FULL_JDK -> {}
         }
 
