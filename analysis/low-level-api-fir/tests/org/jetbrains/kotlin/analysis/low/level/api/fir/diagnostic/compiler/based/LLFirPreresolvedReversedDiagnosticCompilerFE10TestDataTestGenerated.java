@@ -448,6 +448,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
         }
 
         @Test
+        @TestMetadata("invisibleClassInsteadOfFun.kt")
+        public void testInvisibleClassInsteadOfFun() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/invisibleClassInsteadOfFun.kt");
+        }
+
+        @Test
         @TestMetadata("InvokeAndRecursiveResolve.kt")
         public void testInvokeAndRecursiveResolve() throws Exception {
             runTest("compiler/testData/diagnostics/tests/InvokeAndRecursiveResolve.kt");
