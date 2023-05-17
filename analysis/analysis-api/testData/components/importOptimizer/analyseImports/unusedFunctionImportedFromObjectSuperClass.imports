@@ -1,0 +1,6 @@
+test.Foo.callableReference
+test.Foo.extFuncFromBase
+test.Foo.extPropFromBase
+test.Foo.funcFromBase
+test.Foo.invoke
+test.Foo.propFromBase

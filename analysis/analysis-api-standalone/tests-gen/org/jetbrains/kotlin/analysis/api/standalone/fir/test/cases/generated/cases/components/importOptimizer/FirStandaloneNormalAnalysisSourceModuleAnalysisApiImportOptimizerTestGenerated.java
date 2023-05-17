@@ -65,6 +65,12 @@ public class FirStandaloneNormalAnalysisSourceModuleAnalysisApiImportOptimizerTe
     }
 
     @Test
+    @TestMetadata("unusedFunctionImportedFromObjectSuperClass.kt")
+    public void testUnusedFunctionImportedFromObjectSuperClass() throws Exception {
+        runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/unusedFunctionImportedFromObjectSuperClass.kt");
+    }
+
+    @Test
     @TestMetadata("unusedFunctionImports.kt")
     public void testUnusedFunctionImports() throws Exception {
         runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/unusedFunctionImports.kt");
@@ -116,6 +122,12 @@ public class FirStandaloneNormalAnalysisSourceModuleAnalysisApiImportOptimizerTe
     @TestMetadata("usedFunctionImport.kt")
     public void testUsedFunctionImport() throws Exception {
         runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/usedFunctionImport.kt");
+    }
+
+    @Test
+    @TestMetadata("usedFunctionImportedFromObjectSuperClass.kt")
+    public void testUsedFunctionImportedFromObjectSuperClass() throws Exception {
+        runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/usedFunctionImportedFromObjectSuperClass.kt");
     }
 
     @Test
