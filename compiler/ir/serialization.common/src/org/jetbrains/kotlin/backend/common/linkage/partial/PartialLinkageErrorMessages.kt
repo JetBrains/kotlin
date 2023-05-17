@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.ir.linkage.partial.ExploredClassifier.Unusable
 import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageCase
 import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageCase.*
 import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.util.IdSignature.*
 import org.jetbrains.kotlin.ir.util.isAnonymousObject
 import org.jetbrains.kotlin.ir.util.parentAsClass
@@ -52,6 +53,10 @@ internal fun PartialLinkageCase.renderLinkageError(): String = buildString {
                 expressionValueArgumentCount,
                 functionValueParameterCount
             )
+        }
+
+        is InvalidSamConversion -> expression(expression) {
+            invalidSamConversion(expression, abstractFunctionSymbols, abstractPropertySymbol)
         }
 
         is SuspendableFunctionCallWithoutCoroutineContext -> expression(expression) {
@@ -143,6 +148,7 @@ private enum class ExpressionKind(val prefix: String?, val postfix: String?) {
     WRITING("Can not write value to", null),
     GETTING_INSTANCE("Can not get instance of", null),
     TYPE_OPERATOR("Type operator expression", "can not be evaluated"),
+    SAM_CONVERSION("Single abstract method (SAM) conversion expression", "can not be evaluated"),
     ANONYMOUS_OBJECT_LITERAL("Anonymous object literal", "can not be evaluated"),
     OTHER_EXPRESSION("Expression", "can not be evaluated")
 }
@@ -169,7 +175,12 @@ private val IrExpression.expression: Expression
             else -> Expression(REFERENCE, OTHER_DECLARATION)
         }
         is IrInstanceInitializerCall -> Expression(CALLING_INSTANCE_INITIALIZER, classSymbol.declarationKind)
-        is IrTypeOperatorCall -> Expression(TYPE_OPERATOR, null)
+        is IrTypeOperatorCall -> {
+            if (operator == IrTypeOperator.SAM_CONVERSION)
+                Expression(SAM_CONVERSION, null)
+            else
+                Expression(TYPE_OPERATOR, null)
+        }
         else -> {
             if (this is IrBlock && origin == IrStatementOrigin.OBJECT_LITERAL)
                 Expression(ANONYMOUS_OBJECT_LITERAL, null)
@@ -264,6 +275,11 @@ private fun Appendable.declarationKindName(symbol: IrSymbol, capitalized: Boolea
         else -> Unit
     }
     return append(" ").declarationName(symbol)
+}
+
+private fun Appendable.sortedDeclarationsName(symbols: Set<IrSymbol>): Appendable {
+    symbols.map { symbol -> buildString inner@ { this@inner.declarationName(symbol) } }.sorted().joinTo(this)
+    return this
 }
 
 private fun Appendable.declarationNameIsKind(symbol: IrSymbol): Appendable =
@@ -513,6 +529,19 @@ private fun Appendable.memberAccessExpressionArgumentsMismatch(
             .append(" value arguments (").append(expressionValueArgumentCount.toString()).append(") than the ")
             .declarationKind(functionSymbol, capitalized = false).append(" requires (")
             .append(functionValueParameterCount.toString()).append(")")
+}
+
+private fun Appendable.invalidSamConversion(
+    expression: IrTypeOperatorCall,
+    abstractFunctionSymbols: Set<IrSimpleFunctionSymbol>,
+    abstractPropertySymbol: IrPropertySymbol?,
+): Appendable {
+    declarationKindName(expression.typeOperand.classifierOrFail, capitalized = true)
+    return when {
+        abstractPropertySymbol != null -> append(" has abstract ").declarationKindName(abstractPropertySymbol, capitalized = false)
+        abstractFunctionSymbols.isEmpty() -> append(" does not have an abstract function")
+        else -> append(" has more than one abstract function: ").sortedDeclarationsName(abstractFunctionSymbols)
+    }
 }
 
 private fun Appendable.suspendableCallWithoutCoroutine(): Appendable =

@@ -24,9 +24,7 @@ import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageCase.*
 import org.jetbrains.kotlin.ir.overrides.isEffectivelyPrivate
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrAnonymousInitializerSymbolImpl
-import org.jetbrains.kotlin.ir.types.IrSimpleType
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.isSubtypeOfClass
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
@@ -35,6 +33,7 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import org.jetbrains.kotlin.utils.compact
+import org.jetbrains.kotlin.utils.newHashSetWithExpectedSize
 import java.util.*
 import kotlin.properties.Delegates
 import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageUtils.File as PLFile
@@ -481,6 +480,7 @@ internal class PartiallyLinkedIrTreePatcher(
 
         override fun visitTypeOperator(expression: IrTypeOperatorCall) = expression.maybeThrowLinkageError {
             (typeOperand !== type).ifTrue { checkExpressionType(typeOperand) }
+                ?: checkSamConversion()
         }
 
         override fun visitDeclarationReference(expression: IrDeclarationReference) = expression.maybeThrowLinkageError {
@@ -808,6 +808,39 @@ internal class PartiallyLinkedIrTreePatcher(
                     functionHasDispatchReceiver,
                     expressionValueArgumentCount,
                     functionValueParameterCount
+                )
+            else
+                null
+        }
+
+        private fun IrTypeOperatorCall.checkSamConversion(): PartialLinkageCase? {
+            if (operator != IrTypeOperator.SAM_CONVERSION) return null
+
+            val funInterface: IrClass = typeOperand.classOrNull?.owner ?: return null
+
+            val abstractFunctionSymbols = newHashSetWithExpectedSize<IrSimpleFunctionSymbol>(funInterface.declarations.size)
+            funInterface.declarations.forEach { member ->
+                when (member) {
+                    is IrSimpleFunction -> {
+                        if (member.modality == Modality.ABSTRACT)
+                            abstractFunctionSymbols += member.symbol
+                    }
+                    is IrProperty -> {
+                        if (member.modality == Modality.ABSTRACT)
+                            return InvalidSamConversion(
+                                expression = this,
+                                abstractFunctionSymbols = emptySet(),
+                                abstractPropertySymbol = member.symbol
+                            )
+                    }
+                }
+            }
+
+            return if (abstractFunctionSymbols.size != 1)
+                InvalidSamConversion(
+                    expression = this,
+                    abstractFunctionSymbols = abstractFunctionSymbols,
+                    abstractPropertySymbol = null
                 )
             else
                 null

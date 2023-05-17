@@ -104,6 +104,17 @@ sealed interface PartialLinkageCase {
     ) : PartialLinkageCase
 
     /**
+     * SAM-conversion to a function interface that effectively has more than one abstract function or at least one abstract property.
+     *
+     * Applicable to: Expressions.
+     */
+    class InvalidSamConversion(
+        val expression: IrTypeOperatorCall,
+        val abstractFunctionSymbols: Set<IrSimpleFunctionSymbol>,
+        val abstractPropertySymbol: IrPropertySymbol?
+    ) : PartialLinkageCase
+
+    /**
      * An [IrCall] of suspendable function at the place where no coroutine context is available.
      *
      * Applicable to: Expressions.
