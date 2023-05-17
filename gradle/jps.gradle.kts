@@ -535,7 +535,7 @@ fun RecursiveArtifact.sourceJarsFromConfiguration(configuration: Configuration, 
         .map { it.id.componentIdentifier }
         .filterIsInstance<ProjectComponentIdentifier>()
         .forEach {
-            val jarBaseName = project(it.projectPath).the<BasePluginConvention>().archivesBaseName
+            val jarBaseName = project(it.projectPath).the<BasePluginExtension>().archivesName.get()
             val renamed = renamer("$jarBaseName-sources") + ".jar"
             archive(renamed) {
                 project(it.projectPath)
@@ -560,7 +560,7 @@ fun RecursiveArtifact.jarsFromConfiguration(configuration: Configuration, rename
         .map { it.id.componentIdentifier }
         .filterIsInstance<ProjectComponentIdentifier>()
         .forEach {
-            val jarBaseName = project(it.projectPath).the<BasePluginConvention>().archivesBaseName
+            val jarBaseName = project(it.projectPath).the<BasePluginExtension>().archivesName.get()
             val artifactName = renamer(jarBaseName) + ".jar"
             if (it.projectName in jarArtifactProjects) {
                 artifact(artifactName)

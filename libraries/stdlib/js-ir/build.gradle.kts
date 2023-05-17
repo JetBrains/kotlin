@@ -113,21 +113,25 @@ val jsTestSources by task<Sync> {
 
 kotlin {
     sourceSets {
+        @Suppress("UNUSED_VARIABLE")
         val commonMain by getting {
             kotlin.srcDir(files(commonMainSources.map { it.destinationDir }))
         }
+        @Suppress("UNUSED_VARIABLE")
         val jsMain by getting {
             kotlin.srcDir(files(jsMainSources.map { it.destinationDir }))
             kotlin.srcDir("builtins")
             kotlin.srcDir("runtime")
             kotlin.srcDir("src")
         }
+        @Suppress("UNUSED_VARIABLE")
         val commonTest by getting {
             dependencies {
                 api(project(":kotlin-test:kotlin-test-js-ir"))
             }
             kotlin.srcDir(files(commonTestSources.map { it.destinationDir }))
         }
+        @Suppress("UNUSED_VARIABLE")
         val jsTest by getting {
             dependencies {
                 api(project(":kotlin-test:kotlin-test-js-ir"))

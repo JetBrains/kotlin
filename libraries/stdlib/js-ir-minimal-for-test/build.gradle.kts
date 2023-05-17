@@ -125,10 +125,12 @@ val jsMainSources by task<Sync> {
 
 kotlin {
     sourceSets {
+        @Suppress("UNUSED_VARIABLE")
         val commonMain by getting {
             kotlin.srcDir(files(commonMainSources.map { it.destinationDir }))
             kotlin.srcDir(files(commonMainCollectionSources.map { it.destinationDir }))
         }
+        @Suppress("UNUSED_VARIABLE")
         val jsMain by getting {
             kotlin.srcDir(files(jsMainSources.map { it.destinationDir }))
         }

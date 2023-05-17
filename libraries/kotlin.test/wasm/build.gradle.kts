@@ -13,6 +13,7 @@ val commonMainSources by task<Sync> {
 }
 
 kotlin {
+    @OptIn(org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl::class)
     wasm {
         nodejs()
     }
