@@ -453,8 +453,8 @@ open class RawFirBuilder(
                         }
                         this.isGetter = isGetter
                         this.status = status
-                        extractAnnotationsTo(this)
                         annotations += accessorAnnotationsFromProperty
+                        extractAnnotationsTo(this)
                         this@RawFirBuilder.context.firFunctionTargets += accessorTarget
                         symbol = FirPropertyAccessorSymbol()
                         extractValueParametersTo(

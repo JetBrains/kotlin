@@ -27,9 +27,9 @@ KtKotlinPropertySymbol:
   contextReceivers: []
   getter: KtPropertyGetterSymbol:
     annotationsList: [
-      ExplicitGetAnnotation()
-        psi: KtAnnotationEntry
       GetAnnotation()
+        psi: KtAnnotationEntry
+      ExplicitGetAnnotation()
         psi: KtAnnotationEntry
     ]
     callableIdIfNonLocal: null
@@ -75,9 +75,9 @@ KtKotlinPropertySymbol:
     type: kotlin/Int
   setter: KtPropertySetterSymbol:
     annotationsList: [
-      ExplicitSetAnnotation()
-        psi: KtAnnotationEntry
       SetAnnotation()
+        psi: KtAnnotationEntry
+      ExplicitSetAnnotation()
         psi: KtAnnotationEntry
     ]
     callableIdIfNonLocal: null

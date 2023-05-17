@@ -1457,8 +1457,8 @@ class DeclarationsConverter(
             this.isGetter = isGetter
             this.status = status
             context.firFunctionTargets += target
-            annotations += modifiers.annotations
             annotations += accessorAdditionalAnnotations
+            annotations += modifiers.annotations
 
             if (!isGetter) {
                 valueParameters += firValueParameters

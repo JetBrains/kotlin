@@ -1,8 +1,8 @@
 KtPropertyGetterSymbol:
   annotationsList: [
-    ExplicitGetAnnotation()
-      psi: KtAnnotationEntry
     GetAnnotation()
+      psi: KtAnnotationEntry
+    ExplicitGetAnnotation()
       psi: KtAnnotationEntry
   ]
   callableIdIfNonLocal: null

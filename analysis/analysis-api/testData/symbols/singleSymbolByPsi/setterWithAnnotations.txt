@@ -1,8 +1,8 @@
 KtPropertySetterSymbol:
   annotationsList: [
-    ExplicitSetAnnotation()
-      psi: KtAnnotationEntry
     SetAnnotation()
+      psi: KtAnnotationEntry
+    ExplicitSetAnnotation()
       psi: KtAnnotationEntry
   ]
   callableIdIfNonLocal: null
