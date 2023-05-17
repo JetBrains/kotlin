@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import org.jetbrains.kotlin.utils.compact
 import java.util.*
 import kotlin.properties.Delegates
@@ -479,7 +480,7 @@ internal class PartiallyLinkedIrTreePatcher(
         }
 
         override fun visitTypeOperator(expression: IrTypeOperatorCall) = expression.maybeThrowLinkageError {
-            checkExpressionType(typeOperand)
+            (typeOperand !== type).ifTrue { checkExpressionType(typeOperand) }
         }
 
         override fun visitDeclarationReference(expression: IrDeclarationReference) = expression.maybeThrowLinkageError {
