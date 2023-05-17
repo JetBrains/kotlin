@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.components
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.analysis.api.components.KtImportOptimizer
 import org.jetbrains.kotlin.analysis.api.components.KtImportOptimizerResult
@@ -33,10 +34,7 @@ import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.parentOrNull
+import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getCallNameExpression
 import org.jetbrains.kotlin.psi.psiUtil.getPossiblyQualifiedCallExpression
@@ -107,6 +105,12 @@ internal class KtFirImportOptimizer(
         val unresolvedNames: Set<Name>,
     )
 
+    /**
+     * Collects information about entities referenced in the given FIR file, including used imports and unresolved names.
+     *
+     * @param firFile The FIR file for which referenced entities should be collected.
+     * @return A ReferencedEntitiesResult containing the used imports, represented as a map of FqName to a set of Name, and a set of unresolved names.
+     */
     private fun collectReferencedEntities(firFile: FirFile): ReferencedEntitiesResult {
         val usedImports = mutableMapOf<FqName, MutableSet<Name>>()
         val unresolvedNames = mutableSetOf<Name>()
@@ -178,17 +182,13 @@ internal class KtFirImportOptimizer(
                 processErrorNameReference(functionCall)
 
                 val referencesByName = functionCall.functionReferenceName ?: return
-                val functionSymbol = functionCall.referencedCallableSymbol ?: return
-
-                saveCallable(functionSymbol, referencesByName)
+                saveCallable(functionCall, referencesByName)
             }
 
             private fun processImplicitFunctionCall(implicitInvokeCall: FirImplicitInvokeCall) {
                 processErrorNameReference(implicitInvokeCall)
 
-                val functionSymbol = implicitInvokeCall.referencedCallableSymbol ?: return
-
-                saveCallable(functionSymbol, OperatorNameConventions.INVOKE)
+                saveCallable(implicitInvokeCall, OperatorNameConventions.INVOKE)
             }
 
             private fun processPropertyAccessExpression(propertyAccessExpression: FirPropertyAccessExpression) {
@@ -196,9 +196,8 @@ internal class KtFirImportOptimizer(
                 processErrorNameReference(propertyAccessExpression)
 
                 val referencedByName = propertyAccessExpression.propertyReferenceName ?: return
-                val propertySymbol = propertyAccessExpression.referencedCallableSymbol ?: return
 
-                saveCallable(propertySymbol, referencedByName)
+                saveCallable(propertyAccessExpression, referencedByName)
             }
 
             private fun processTypeRef(resolvedTypeRef: FirResolvedTypeRef) {
@@ -212,9 +211,7 @@ internal class KtFirImportOptimizer(
                 processErrorNameReference(callableReferenceAccess)
 
                 val referencedByName = callableReferenceAccess.callableReferenceName ?: return
-                val resolvedSymbol = callableReferenceAccess.referencedCallableSymbol ?: return
-
-                saveCallable(resolvedSymbol, referencedByName)
+                saveCallable(callableReferenceAccess, referencedByName)
             }
 
             private fun processResolvedQualifier(resolvedQualifier: FirResolvedQualifier) {
@@ -237,10 +234,30 @@ internal class KtFirImportOptimizer(
                 saveReferencedItem(importableName, referencedByName)
             }
 
-            private fun saveCallable(resolvedSymbol: FirCallableSymbol<*>, referencedByName: Name) {
-                val importableName = resolvedSymbol.computeImportableName(firSession) ?: return
+            private fun saveCallable(qualifiedCall: FirQualifiedAccessExpression, referencedByName: Name) {
+                val importableName = importableNameForReferencedSymbol(qualifiedCall) ?: return
 
                 saveReferencedItem(importableName, referencedByName)
+            }
+
+            private fun importableNameForReferencedSymbol(qualifiedCall: FirQualifiedAccessExpression): FqName? {
+                return qualifiedCall.importableNameForImplicitlyDispatchedCallable()
+                    ?: qualifiedCall.referencedCallableSymbol?.computeImportableName(firSession)
+            }
+
+            private fun FirQualifiedAccessExpression.importableNameForImplicitlyDispatchedCallable(): FqName? {
+                val dispatchReceiver = dispatchReceiver
+                if (
+                    dispatchReceiver !is FirResolvedQualifier ||
+                    dispatchReceiver.source?.kind != KtFakeSourceElementKind.ImplicitReceiver
+                ) {
+                    return null
+                }
+
+                val dispatcherClass = dispatchReceiver.classId ?: return null
+                val referencedSymbolName = referencedCallableSymbol?.name ?: return null
+
+                return CallableId(dispatcherClass, referencedSymbolName).asSingleFqName()
             }
 
             private fun saveReferencedItem(importableName: FqName, referencedByName: Name) {
@@ -271,7 +288,7 @@ private val ConeUnresolvedError.unresolvedName: Name?
 
 
 /**
- * An actual name by which this callable reference were used.
+ * An actual name by which this callable reference was used.
  */
 private val FirCallableReferenceAccess.callableReferenceName: Name?
     get() {
