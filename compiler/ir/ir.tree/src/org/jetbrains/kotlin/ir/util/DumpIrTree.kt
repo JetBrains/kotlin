@@ -313,7 +313,7 @@ class DumpIrTreeVisitor(
         if (expression !is IrInlinedFunctionBlock) return super.visitBlock(expression, data)
         expression.dumpLabeledElementWith(data) {
             expression.inlinedElement.dumpInternal("inlinedElement")
-            super.visitBlock(expression, data)
+            expression.acceptChildren(this, "")
         }
     }
 
