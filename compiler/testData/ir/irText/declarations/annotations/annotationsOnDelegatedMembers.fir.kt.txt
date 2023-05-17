@@ -41,13 +41,11 @@ class DFoo : IFoo {
     (<this>.#$$delegate_0, <this>).testExtFun()
   }
 
-  @Ann
   override val testVal: String
     override get(): String {
       return <this>.#$$delegate_0.<get-testVal>()
     }
 
-  @Ann
   override val String.testExtVal: String
     override get(): String {
       return (<this>.#$$delegate_0, <this>).<get-testExtVal>()

@@ -85,8 +85,6 @@ FILE fqName:<root> fileName:/annotationsOnDelegatedMembers.kt
             receiver: GET_VAR '<this>: <root>.DFoo declared in <root>.DFoo.testExtFun' type=<root>.DFoo origin=null
           $receiver: GET_VAR '<this>: kotlin.String declared in <root>.DFoo.testExtFun' type=kotlin.String origin=null
     PROPERTY DELEGATED_MEMBER name:testVal visibility:public modality:OPEN [val]
-      annotations:
-        Ann
       overridden:
         public abstract testVal: kotlin.String [val]
       FUN DELEGATED_MEMBER name:<get-testVal> visibility:public modality:OPEN <> ($this:<root>.DFoo) returnType:kotlin.String
@@ -100,8 +98,6 @@ FILE fqName:<root> fileName:/annotationsOnDelegatedMembers.kt
               $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.IFoo visibility:private [final]' type=<root>.IFoo origin=null
                 receiver: GET_VAR '<this>: <root>.DFoo declared in <root>.DFoo.<get-testVal>' type=<root>.DFoo origin=null
     PROPERTY DELEGATED_MEMBER name:testExtVal visibility:public modality:OPEN [val]
-      annotations:
-        Ann
       overridden:
         public abstract testExtVal: kotlin.String [val]
       FUN DELEGATED_MEMBER name:<get-testExtVal> visibility:public modality:OPEN <> ($this:<root>.DFoo, $receiver:kotlin.String) returnType:kotlin.String

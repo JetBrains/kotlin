@@ -1,6 +1,3 @@
-// IGNORE_BACKEND_K2: JVM_IR
-// FIR status: KT-57228 K2: annotations for interface member properties implemented by delegation are copied
-
 interface IFoo {
     @Deprecated("")
     val prop: String get() = ""

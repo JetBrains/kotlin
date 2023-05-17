@@ -41,8 +41,6 @@ FILE fqName:<root> fileName:/inheritingDeprecation.kt
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Delegated modality:FINAL visibility:public superTypes:[<root>.IFoo]'
     PROPERTY DELEGATED_MEMBER name:prop visibility:public modality:OPEN [val]
-      annotations:
-        Deprecated(message = '', replaceWith = <null>, level = <null>)
       overridden:
         public open prop: kotlin.String [val]
       FUN DELEGATED_MEMBER name:<get-prop> visibility:public modality:OPEN <> ($this:<root>.Delegated) returnType:kotlin.String
@@ -56,8 +54,6 @@ FILE fqName:<root> fileName:/inheritingDeprecation.kt
               $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.IFoo visibility:private [final]' type=<root>.IFoo origin=null
                 receiver: GET_VAR '<this>: <root>.Delegated declared in <root>.Delegated.<get-prop>' type=<root>.Delegated origin=null
     PROPERTY DELEGATED_MEMBER name:extProp visibility:public modality:OPEN [val]
-      annotations:
-        Deprecated(message = '', replaceWith = <null>, level = <null>)
       overridden:
         public open extProp: kotlin.String [val]
       FUN DELEGATED_MEMBER name:<get-extProp> visibility:public modality:OPEN <> ($this:<root>.Delegated, $receiver:kotlin.String) returnType:kotlin.String

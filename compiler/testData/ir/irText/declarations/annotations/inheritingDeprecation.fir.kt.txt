@@ -20,13 +20,11 @@ class Delegated : IFoo {
 
   }
 
-  @Deprecated(message = "")
   override val prop: String
     override get(): String {
       return <this>.#$$delegate_0.<get-prop>()
     }
 
-  @Deprecated(message = "")
   override val String.extProp: String
     override get(): String {
       return (<this>.#$$delegate_0, <this>).<get-extProp>()
