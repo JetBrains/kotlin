@@ -331,8 +331,7 @@ fun Test.setUpBoxTests() {
 
     systemProperty("kotlin.js.test.root.out.dir", "$nodeDir/")
     systemProperty(
-        "overwrite.output", project.providers.gradleProperty("overwrite.output")
-            .forUseAtConfigurationTime().orNull ?: "false"
+        "overwrite.output", project.providers.gradleProperty("overwrite.output").orNull ?: "false"
     )
 
     forwardProperties()
