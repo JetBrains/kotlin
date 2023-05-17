@@ -11,6 +11,7 @@ import org.gradle.api.provider.Property
 import org.gradle.api.services.ServiceReference
 import org.gradle.api.tasks.Input
 import org.jetbrains.kotlin.gradle.plugin.statistics.BuildFlowService
+import org.jetbrains.kotlin.gradle.plugin.statistics.MetricContainer
 import org.jetbrains.kotlin.gradle.report.BuildMetricsService
 import org.jetbrains.kotlin.gradle.report.BuildScanExtensionHolder
 import javax.inject.Inject
@@ -53,7 +54,7 @@ class BuildFinishFlowAction : FlowAction<BuildFinishFlowAction.Parameters> {
 
     override fun execute(parameters: Parameters) {
         parameters.buildFlowServiceProperty.get().buildFinished(
-            parameters.action.orNull, parameters.buildFailed.get()
+            parameters.action.orNull, parameters.buildFailed.get(), MetricContainer()
         )
         parameters.buildMetricService.orNull?.addCollectedTagsToBuildScan(parameters.buildScanExtensionHolder.orNull)
     }

@@ -7,10 +7,9 @@ package org.jetbrains.kotlin.gradle.plugin.statistics
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.DependencySet
-import org.gradle.api.invocation.Gradle
 import org.gradle.api.logging.Logging
-import org.gradle.api.provider.Provider
-import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.plugin.internal.configurationTimePropertiesAccessor
+import org.jetbrains.kotlin.gradle.plugin.internal.usedAtConfigurationTime
 import org.jetbrains.kotlin.gradle.utils.API
 import org.jetbrains.kotlin.gradle.utils.COMPILE
 import org.jetbrains.kotlin.gradle.utils.IMPLEMENTATION
@@ -64,11 +63,10 @@ class KotlinBuildStatHandler {
     }
 
     fun reportGlobalMetrics(
-        gradle: Gradle?,
         sessionLogger: BuildSessionLogger,
     ) {
         runSafe("${KotlinBuildStatHandler::class.java}.reportGlobalMetrics") {
-            if (gradle != null) reportGlobalMetricsImpl(gradle, sessionLogger)
+            reportGlobalMetricsImpl(sessionLogger)
         }
     }
 
@@ -76,43 +74,38 @@ class KotlinBuildStatHandler {
         sessionLogger: BuildSessionLogger,
         action: String?,
         buildFailed: Boolean,
+        configurationMetrics: MetricContainer,
     ) {
         runSafe("${KotlinBuildStatHandler::class.java}.reportBuildFinish") {
+            configurationMetrics.report(sessionLogger)
             sessionLogger.finishBuildSession(action, buildFailed)
         }
     }
 
-    private fun <T : Any> Provider<T>.forUseAtConfigurationTimeCompat(): Provider<T> =
-        if (GradleVersion.current() < GradleVersion.version("7.4")) {
-            forUseAtConfigurationTime()
-        } else {
-            this
-        }
-
-    private fun reportGlobalMetricsImpl(gradle: Gradle, sessionLogger: BuildSessionLogger) {
-        sessionLogger.report(StringMetrics.PROJECT_PATH, gradle.rootProject.projectDir.absolutePath)
-        System.getProperty("os.name")?.also { sessionLogger.report(StringMetrics.OS_TYPE, System.getProperty("os.name")) }
-        sessionLogger.report(NumericalMetrics.CPU_NUMBER_OF_CORES, Runtime.getRuntime().availableProcessors().toLong())
-        sessionLogger.report(StringMetrics.GRADLE_VERSION, gradle.gradleVersion)
-        sessionLogger.report(BooleanMetrics.EXECUTED_FROM_IDEA, System.getProperty("idea.active") != null)
-        sessionLogger.report(NumericalMetrics.GRADLE_DAEMON_HEAP_SIZE, Runtime.getRuntime().maxMemory())
-        sessionLogger.report(
+    fun collectConfigurationTimeMetrics(
+        project: Project,
+        sessionLogger: BuildSessionLogger,
+    ): MetricContainer {
+        val gradle = project.gradle
+        val configurationTimeMetrics = MetricContainer()
+        configurationTimeMetrics.put(StringMetrics.PROJECT_PATH, gradle.rootProject.projectDir.absolutePath)
+        configurationTimeMetrics.put(StringMetrics.GRADLE_VERSION, gradle.gradleVersion)
+        configurationTimeMetrics.put(
             BooleanMetrics.KOTLIN_OFFICIAL_CODESTYLE,
-            gradle.rootProject.providers.gradleProperty("kotlin.code.style").forUseAtConfigurationTimeCompat().orNull == "official"
-        ) // constants are saved in IDEA plugin and could not be accessed directly
-
+            gradle.rootProject.providers.gradleProperty("kotlin.code.style")
+                .usedAtConfigurationTime(gradle.rootProject.configurationTimePropertiesAccessor).orNull == "official"
+        )
         gradle.taskGraph.whenReady() { taskExecutionGraph ->
             val executedTaskNames = taskExecutionGraph.allTasks.map { it.name }.distinct()
-            report(sessionLogger, BooleanMetrics.MAVEN_PUBLISH_EXECUTED, executedTaskNames.contains("install"), null)
-        }
-
+            configurationTimeMetrics.put(BooleanMetrics.MAVEN_PUBLISH_EXECUTED, executedTaskNames.contains("install"))
+        }// constants are saved in IDEA plugin and could not be accessed directly
         fun buildSrcExists(project: Project) = File(project.projectDir, "buildSrc").exists()
-        sessionLogger.report(BooleanMetrics.BUILD_SRC_EXISTS, buildSrcExists(gradle.rootProject))
+        configurationTimeMetrics.put(BooleanMetrics.BUILD_SRC_EXISTS, buildSrcExists(gradle.rootProject))
 
         val statisticOverhead = measureTimeMillis {
             gradle.allprojects { project ->
                 project.plugins.findPlugin(DOKKA_PLUGIN)?.also {
-                    sessionLogger.report(BooleanMetrics.ENABLED_DOKKA, true)
+                    configurationTimeMetrics.put(BooleanMetrics.ENABLED_DOKKA, true)
                 }
                 for (configuration in project.configurations) {
                     val configurationName = configuration.name
@@ -120,41 +113,44 @@ class KotlinBuildStatHandler {
 
                     when (configurationName) {
                         "KoverEngineConfig" -> {
-                            sessionLogger.report(BooleanMetrics.ENABLED_KOVER, true)
+                            configurationTimeMetrics.put(BooleanMetrics.ENABLED_KOVER, true)
                         }
                         "kapt" -> {
-                            sessionLogger.report(BooleanMetrics.ENABLED_KAPT, true)
+                            configurationTimeMetrics.put(BooleanMetrics.ENABLED_KAPT, true)
                             for (dependency in dependencies) {
                                 when (dependency.group) {
-                                    "com.google.dagger" -> sessionLogger.report(BooleanMetrics.ENABLED_DAGGER, true)
-                                    "com.android.databinding" -> sessionLogger.report(BooleanMetrics.ENABLED_DATABINDING, true)
+                                    "com.google.dagger" -> configurationTimeMetrics.put(BooleanMetrics.ENABLED_DAGGER, true)
+                                    "com.android.databinding" -> configurationTimeMetrics.put(BooleanMetrics.ENABLED_DATABINDING, true)
                                 }
                             }
                         }
                         API -> {
-                            sessionLogger.report(NumericalMetrics.CONFIGURATION_API_COUNT, 1)
-                            reportLibrariesVersions(sessionLogger, dependencies)
+                            configurationTimeMetrics.put(NumericalMetrics.CONFIGURATION_API_COUNT, 1)
+                            reportLibrariesVersions(configurationTimeMetrics, dependencies)
                         }
                         IMPLEMENTATION -> {
-                            sessionLogger.report(NumericalMetrics.CONFIGURATION_IMPLEMENTATION_COUNT, 1)
-                            reportLibrariesVersions(sessionLogger, dependencies)
+                            configurationTimeMetrics.put(NumericalMetrics.CONFIGURATION_IMPLEMENTATION_COUNT, 1)
+                            reportLibrariesVersions(configurationTimeMetrics, dependencies)
                         }
                         COMPILE -> {
-                            sessionLogger.report(NumericalMetrics.CONFIGURATION_COMPILE_COUNT, 1)
-                            reportLibrariesVersions(sessionLogger, dependencies)
+                            configurationTimeMetrics.put(NumericalMetrics.CONFIGURATION_COMPILE_COUNT, 1)
+                            reportLibrariesVersions(configurationTimeMetrics, dependencies)
                         }
                         RUNTIME -> {
-                            sessionLogger.report(NumericalMetrics.CONFIGURATION_RUNTIME_COUNT, 1)
-                            reportLibrariesVersions(sessionLogger, dependencies)
+                            configurationTimeMetrics.put(NumericalMetrics.CONFIGURATION_RUNTIME_COUNT, 1)
+                            reportLibrariesVersions(configurationTimeMetrics, dependencies)
                         }
                     }
                 }
                 val taskNames = project.tasks.names
 
-                sessionLogger.report(NumericalMetrics.NUMBER_OF_SUBPROJECTS, 1)
-                sessionLogger.report(BooleanMetrics.KOTLIN_KTS_USED, project.buildscript.sourceFile?.name?.endsWith(".kts") ?: false)
-                sessionLogger.report(NumericalMetrics.GRADLE_NUMBER_OF_TASKS, taskNames.size.toLong())
-                sessionLogger.report(
+                configurationTimeMetrics.put(NumericalMetrics.NUMBER_OF_SUBPROJECTS, 1)
+                configurationTimeMetrics.put(
+                    BooleanMetrics.KOTLIN_KTS_USED,
+                    project.buildscript.sourceFile?.name?.endsWith(".kts") ?: false
+                )
+                configurationTimeMetrics.put(NumericalMetrics.GRADLE_NUMBER_OF_TASKS, taskNames.size.toLong())
+                configurationTimeMetrics.put(
                     NumericalMetrics.GRADLE_NUMBER_OF_UNCONFIGURED_TASKS,
                     taskNames.count { name ->
                         try {
@@ -166,51 +162,59 @@ class KotlinBuildStatHandler {
                 )
 
                 if (buildSrcExists(project)) {
-                    sessionLogger.report(NumericalMetrics.BUILD_SRC_COUNT, 1)
-                    sessionLogger.report(BooleanMetrics.BUILD_SRC_EXISTS, true)
+                    configurationTimeMetrics.put(NumericalMetrics.BUILD_SRC_COUNT, 1)
+                    configurationTimeMetrics.put(BooleanMetrics.BUILD_SRC_EXISTS, true)
                 }
             }
         }
         sessionLogger.report(NumericalMetrics.STATISTICS_VISIT_ALL_PROJECTS_OVERHEAD, statisticOverhead)
+        return configurationTimeMetrics
     }
 
-    private fun reportLibrariesVersions(sessionLogger: BuildSessionLogger, dependencies: DependencySet?) {
+    private fun reportGlobalMetricsImpl(sessionLogger: BuildSessionLogger) {
+        System.getProperty("os.name")?.also { sessionLogger.report(StringMetrics.OS_TYPE, System.getProperty("os.name")) }
+        sessionLogger.report(NumericalMetrics.CPU_NUMBER_OF_CORES, Runtime.getRuntime().availableProcessors().toLong())
+        sessionLogger.report(BooleanMetrics.EXECUTED_FROM_IDEA, System.getProperty("idea.active") != null)
+        sessionLogger.report(NumericalMetrics.GRADLE_DAEMON_HEAP_SIZE, Runtime.getRuntime().maxMemory())
+    }
+
+    private fun reportLibrariesVersions(configurationTimeMetrics: MetricContainer, dependencies: DependencySet?) {
         dependencies?.forEach { dependency ->
             when {
-                dependency.group?.startsWith("org.springframework") ?: false -> sessionLogger.report(
+                dependency.group?.startsWith("org.springframework") ?: false -> configurationTimeMetrics.put(
                     StringMetrics.LIBRARY_SPRING_VERSION,
                     dependency.version ?: "0.0.0"
                 )
-                dependency.group?.startsWith("com.vaadin") ?: false -> sessionLogger.report(
+                dependency.group?.startsWith("com.vaadin") ?: false -> configurationTimeMetrics.put(
                     StringMetrics.LIBRARY_VAADIN_VERSION,
                     dependency.version ?: "0.0.0"
                 )
-                dependency.group?.startsWith("com.google.gwt") ?: false -> sessionLogger.report(
+                dependency.group?.startsWith("com.google.gwt") ?: false -> configurationTimeMetrics.put(
                     StringMetrics.LIBRARY_GWT_VERSION,
                     dependency.version ?: "0.0.0"
                 )
-                dependency.group?.startsWith("org.hibernate") ?: false -> sessionLogger.report(
+                dependency.group?.startsWith("org.hibernate") ?: false -> configurationTimeMetrics.put(
                     StringMetrics.LIBRARY_HIBERNATE_VERSION,
                     dependency.version ?: "0.0.0"
                 )
-                dependency.group == "org.jetbrains.kotlin" && dependency.name.startsWith("kotlin-stdlib") -> sessionLogger.report(
+                dependency.group == "org.jetbrains.kotlin" && dependency.name.startsWith("kotlin-stdlib") -> configurationTimeMetrics.put(
                     StringMetrics.KOTLIN_STDLIB_VERSION,
                     dependency.version ?: "0.0.0"
                 )
-                dependency.group == "org.jetbrains.kotlinx" && dependency.name == "kotlinx-coroutines" -> sessionLogger.report(
+                dependency.group == "org.jetbrains.kotlinx" && dependency.name == "kotlinx-coroutines" -> configurationTimeMetrics.put(
                     StringMetrics.KOTLIN_COROUTINES_VERSION,
                     dependency.version ?: "0.0.0"
                 )
-                dependency.group == "org.jetbrains.kotlin" && dependency.name == "kotlin-reflect" -> sessionLogger.report(
+                dependency.group == "org.jetbrains.kotlin" && dependency.name == "kotlin-reflect" -> configurationTimeMetrics.put(
                     StringMetrics.KOTLIN_REFLECT_VERSION,
                     dependency.version ?: "0.0.0"
                 )
                 dependency.group == "org.jetbrains.kotlinx" && dependency.name
-                    .startsWith("kotlinx-serialization-runtime") -> sessionLogger.report(
+                    .startsWith("kotlinx-serialization-runtime") -> configurationTimeMetrics.put(
                     StringMetrics.KOTLIN_SERIALIZATION_VERSION,
                     dependency.version ?: "0.0.0"
                 )
-                dependency.group == "com.android.tools.build" && dependency.name.startsWith("gradle") -> sessionLogger.report(
+                dependency.group == "com.android.tools.build" && dependency.name.startsWith("gradle") -> configurationTimeMetrics.put(
                     StringMetrics.ANDROID_GRADLE_PLUGIN_VERSION,
                     dependency.version ?: "0.0.0"
                 )
@@ -223,7 +227,7 @@ class KotlinBuildStatHandler {
         metric: BooleanMetrics,
         value: Boolean,
         subprojectName: String?,
-        weight: Long? = null
+        weight: Long? = null,
     ) = runSafe("report metric ${metric.name}") {
         sessionLogger.report(metric, value, subprojectName, weight)
     } ?: false
@@ -233,7 +237,7 @@ class KotlinBuildStatHandler {
         metric: NumericalMetrics,
         value: Long,
         subprojectName: String?,
-        weight: Long? = null
+        weight: Long? = null,
     ) = runSafe("report metric ${metric.name}") {
         sessionLogger.report(metric, value, subprojectName, weight)
     } ?: false
@@ -243,7 +247,7 @@ class KotlinBuildStatHandler {
         metric: StringMetrics,
         value: String,
         subprojectName: String?,
-        weight: Long? = null
+        weight: Long? = null,
     ) = runSafe("report metric ${metric.name}") {
         sessionLogger.report(metric, value, subprojectName, weight)
     } ?: false

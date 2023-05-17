@@ -13,6 +13,7 @@ import org.gradle.initialization.BuildRequestMetaData
 import org.gradle.invocation.DefaultGradle
 import org.gradle.tooling.events.OperationCompletionListener
 import org.gradle.tooling.events.task.TaskFinishEvent
+import org.jetbrains.kotlin.build.report.metrics.BuildMetrics
 import org.jetbrains.kotlin.gradle.plugin.BuildEventsListenerRegistryHolder
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatHandler.Companion.runSafe
 import org.jetbrains.kotlin.gradle.plugin.statistics.old.Pre232IdeaKotlinBuildStatsMXBean
@@ -212,9 +213,9 @@ abstract class KotlinBuildStatsService internal constructor() : IStatisticsValue
         instance = null
     }
 
-    open fun buildFinished(action: String?, buildFailed: Boolean) {}
+    open fun buildFinished(action: String?, buildFailed: Boolean, configurationTimeMetrics: MetricContainer) {}
 
-    open fun buildStarted(gradle: Gradle) {}
+    open fun buildStartedMetrics(project: Project): MetricContainer = MetricContainer()
 
     open fun projectsEvaluated(gradle: Gradle) {}
 }
@@ -324,12 +325,12 @@ internal class DefaultKotlinBuildStatsService internal constructor(
         report(StringMetrics.valueOf(name), value, subprojectName, weight)
 
     //only one jmx bean service should report global metrics
-    override fun buildFinished(action: String?, buildFailed: Boolean) {
-        KotlinBuildStatHandler().reportBuildFinished(sessionLogger, action, buildFailed)
+    override fun buildFinished(action: String?, buildFailed: Boolean, configurationTimeMetrics: MetricContainer) {
+        KotlinBuildStatHandler().reportGlobalMetrics(sessionLogger)
+        KotlinBuildStatHandler().reportBuildFinished(sessionLogger, action, buildFailed, configurationTimeMetrics)
     }
 
-    override fun buildStarted(gradle: Gradle) {
-        KotlinBuildStatHandler().reportGlobalMetrics(gradle, sessionLogger)
-    }
+    override fun buildStartedMetrics(project: Project) = KotlinBuildStatHandler().collectConfigurationTimeMetrics(project, sessionLogger)
+
 
 }
