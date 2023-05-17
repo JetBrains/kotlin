@@ -100,9 +100,7 @@ private class LLFirCompilerRequiredAnnotationsTargetResolver(
             target is FirRegularClass -> {
                 transformer.annotationTransformer.resolveRegularClass(
                     target,
-                    transformChildren = {
-                        target.transformSuperTypeRefs(transformer.annotationTransformer, null)
-                    },
+                    transformChildren = {},
                     afterChildrenTransform = {
                         transformer.annotationTransformer.calculateDeprecations(target)
                     }
