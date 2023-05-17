@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.fir.serialization
 
+import com.intellij.lang.LighterASTNode
+import com.intellij.openapi.util.Ref
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
@@ -13,6 +15,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.ConeFlexibleType
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.library.metadata.KlibMetadataSerializerProtocol
 import org.jetbrains.kotlin.metadata.ProtoBuf
@@ -96,10 +99,12 @@ class FirKLibSerializerExtension(
         }
     }
 
-    private fun FirDeclaration.findKDocString(): String? {
-        // TODO: KT-56090
-        return null
-    }
+    private fun FirDeclaration.findKDocString(): String? =
+        source?.let {
+            val kidsRef = Ref<Array<LighterASTNode?>>()
+            it.treeStructure.getChildren(it.lighterASTNode, kidsRef)
+            kidsRef.get().singleOrNull { it?.tokenType == KtTokens.DOC_COMMENT }?.toString()
+        }
 
     @Suppress("Reformat")
     private fun <

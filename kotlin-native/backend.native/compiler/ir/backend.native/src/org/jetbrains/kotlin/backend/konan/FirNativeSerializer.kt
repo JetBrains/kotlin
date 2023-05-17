@@ -68,7 +68,7 @@ internal fun PhaseContext.firSerializer(
                 FirKLibSerializerExtension(
                         session, metadataVersion,
                         ConstValueProviderImpl(input.components),
-                        allowErrorTypes = false, exportKDoc = false
+                        allowErrorTypes = false, exportKDoc = shouldExportKDoc()
                 ),
                 configuration.languageVersionSettings,
         )
