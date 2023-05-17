@@ -1334,6 +1334,21 @@ class CocoaPodsIT : BaseGradleIT() {
         }
     }
 
+    @Test
+    fun `configuration fails when pod depends on itself`() = with(getProjectByName("native-cocoapods-dependant-pods")) {
+        gradleBuildScript().appendToCocoapodsBlock("""
+            pod("Foo") { useInteropBindingFrom("Foo") }
+        """.trimIndent())
+
+        build(
+            ":help",
+            "-Pkotlin.native.cocoapods.generate.wrapper=true",
+        ) {
+            assertFailed()
+            assertContains("Pod 'Foo' has an interop-binding dependency on itself")
+        }
+    }
+
     // test configuration phase
 
     private class CustomHooks {

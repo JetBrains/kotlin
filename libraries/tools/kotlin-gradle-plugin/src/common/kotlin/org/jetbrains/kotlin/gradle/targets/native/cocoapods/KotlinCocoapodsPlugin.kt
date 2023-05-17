@@ -378,6 +378,10 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
         interop: DefaultCInteropSettings,
         dependencyName: String,
     ) {
+        if (pod.name == dependencyName) {
+            error("Pod '${pod.name}' has an interop-binding dependency on itself")
+        }
+
         val dependencyPod = cocoapodsExtension.pods.findByName(dependencyName)
             ?: error("Couldn't find declaration of pod '$dependencyName' (interop-binding dependency of pod '${pod.name}')")
 
