@@ -519,7 +519,14 @@ fun generateConstExpression(
         is IrConstKind.Long -> body.buildConstI64(kind.valueOf(expression), location)
         is IrConstKind.Char -> body.buildConstI32(kind.valueOf(expression).code, location)
         is IrConstKind.Float -> body.buildConstF32(kind.valueOf(expression), location)
-        is IrConstKind.Double -> body.buildConstF64(kind.valueOf(expression), location)
+        is IrConstKind.Double -> {
+            // Workaround for K2 kotlin.Float constant with IrConstKind.Double
+            if (expression.type == context.backendContext.irBuiltIns.floatType) {
+                body.buildConstF32(kind.valueOf(expression).toFloat(), location)
+            } else {
+                body.buildConstF64(kind.valueOf(expression), location)
+            }
+        }
         is IrConstKind.String -> {
             val stringValue = kind.valueOf(expression)
             val (literalAddress, literalPoolId) = context.referenceStringLiteralAddressAndId(stringValue)
