@@ -32,7 +32,7 @@
 // f = open + not initialized in place
 // d = open + initialized in place
 class Foo : I {
-    //                                                                 no setter;                                                                 setter with field;                                                                       setter with empty body;                                                        setter no field;
+    //                                             no setter;                                                                 setter with field;                                                                       setter with empty body;                                                        setter no field;
     // no getter
                                                    var a00: Int;                                <!MUST_BE_INITIALIZED!>var a01: Int<!>; set(v) { field = v };                                                               var a02: Int; set;                              <!MUST_BE_INITIALIZED!>var a03: Int<!>; set(v) {};
              <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>var e00: Int<!>;                             <!MUST_BE_INITIALIZED!>var e01: Int<!>; set(v) { field = v };                         <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>var e02: Int<!>; set;                           <!MUST_BE_INITIALIZED!>var e03: Int<!>; set(v) {};
