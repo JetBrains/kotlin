@@ -98,4 +98,46 @@ class FusStatisticsIT : KGPDaemonsBaseTest() {
             }
         }
     }
+
+    @DisplayName("general fields with configuration cache")
+    @GradleTest
+    fun testFusStatisticsWithConfigurationCache(gradleVersion: GradleVersion) {
+        project(
+            "simpleProject",
+            gradleVersion,
+        ) {
+            val expectedMetrics = arrayOf(
+                "OS_TYPE",
+                "BUILD_FAILED=false",
+                "EXECUTED_FROM_IDEA=false",
+                "BUILD_FINISH_TIME",
+                "GRADLE_VERSION",
+                "KOTLIN_STDLIB_VERSION",
+                "KOTLIN_COMPILER_VERSION",
+            )
+            build(
+                "compileKotlin",
+                "-Pkotlin.session.logger.root.path=$projectPath",
+                buildOptions = defaultBuildOptions.copy(configurationCache = true)
+            ) {
+                val fusStatisticsPath = fusStatisticsPath
+                assertFileContains(
+                    fusStatisticsPath,
+                    *expectedMetrics
+                )
+            }
+
+            build(
+                "compileKotlin",
+                "-Pkotlin.session.logger.root.path=$projectPath",
+                buildOptions = defaultBuildOptions.copy(configurationCache = true)
+            ) {
+                val fusStatisticsPath = fusStatisticsPath
+                assertFileContains(
+                    fusStatisticsPath,
+                    *expectedMetrics
+                )
+            }
+        }
+    }
 }

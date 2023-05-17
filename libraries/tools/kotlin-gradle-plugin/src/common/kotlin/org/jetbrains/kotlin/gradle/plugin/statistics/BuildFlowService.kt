@@ -36,9 +36,11 @@ abstract class BuildFlowService : BuildService<BuildFlowService.Parameters>, Aut
             project: Project,
         ): Provider<BuildFlowService> {
             return project.gradle.registerClassLoaderScopedBuildService(BuildFlowService::class) { buidService ->
-                    project.gradle.projectsEvaluated {
-                        buidService.parameters.configurationMetrics.set(project.provider { KotlinBuildStatsService.getInstance()?.buildStartedMetrics(project) })
-                    }
+                project.gradle.projectsEvaluated {
+                    buidService.parameters.configurationMetrics.set(project.provider {
+                        KotlinBuildStatsService.getInstance()?.buildStartedMetrics(project)
+                    })
+                }
             }.also {
                 KotlinBuildStatsService.applyIfInitialised {
                     it.projectsEvaluated(project.gradle)
@@ -77,13 +79,13 @@ class MetricContainer : Serializable {
 
     fun report(sessionLogger: IStatisticsValuesConsumer) {
         for ((key, value) in numericalMetrics) {
-            sessionLogger.report(key , value)
+            sessionLogger.report(key, value)
         }
         for ((key, value) in booleanMetrics) {
-            sessionLogger.report(key , value)
+            sessionLogger.report(key, value)
         }
         for ((key, value) in stringMetrics) {
-            sessionLogger.report(key , value)
+            sessionLogger.report(key, value)
         }
     }
 
