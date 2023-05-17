@@ -160,6 +160,10 @@ internal fun configureProjectEnvironment(
         KotlinStaticDeclarationProviderFactory(project, ktFiles)
     )
     project.registerService(
+        KotlinDeclarationProviderMerger::class.java,
+        KotlinStaticDeclarationProviderMerger(project)
+    )
+    project.registerService(
         KotlinPackageProviderFactory::class.java,
         KotlinStaticPackageProviderFactory(project, ktFiles)
     )

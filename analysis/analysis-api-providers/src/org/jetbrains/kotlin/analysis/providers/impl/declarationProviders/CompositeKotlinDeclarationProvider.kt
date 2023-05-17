@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 
 public class CompositeKotlinDeclarationProvider private constructor(
-    private val providers: List<KotlinDeclarationProvider>
+    public val providers: List<KotlinDeclarationProvider>
 ) : KotlinDeclarationProvider() {
     override fun getClassLikeDeclarationByClassId(classId: ClassId): KtClassLikeDeclaration? {
         return providers.firstNotNullOfOrNull { it.getClassLikeDeclarationByClassId(classId) }
@@ -75,5 +75,16 @@ public class CompositeKotlinDeclarationProvider private constructor(
                 else -> CompositeKotlinDeclarationProvider(providers)
             }
         }
+
+        public fun createFlattened(providers: List<KotlinDeclarationProvider>): KotlinDeclarationProvider =
+            create(if (providers.size > 1) flatten(providers) else providers)
+
+        public fun flatten(providers: List<KotlinDeclarationProvider>): List<KotlinDeclarationProvider> =
+            providers.flatMap { provider ->
+                when (provider) {
+                    is CompositeKotlinDeclarationProvider -> provider.providers
+                    else -> listOf(provider)
+                }
+            }
     }
 }

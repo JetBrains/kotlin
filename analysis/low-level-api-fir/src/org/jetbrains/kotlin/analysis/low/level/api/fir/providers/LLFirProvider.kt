@@ -109,6 +109,8 @@ internal class LLFirProvider(
 
     @NoMutableState
     internal inner class SymbolProvider : LLFirKotlinSymbolProvider(session) {
+        override val declarationProvider: KotlinDeclarationProvider get() = providerHelper.declarationProvider
+
         override val symbolNamesProvider: FirSymbolNamesProvider get() = providerHelper.symbolNameCache
 
         override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? {

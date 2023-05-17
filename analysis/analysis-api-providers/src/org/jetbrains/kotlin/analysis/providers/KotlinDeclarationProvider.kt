@@ -49,9 +49,40 @@ public abstract class KotlinDeclarationProvider {
 
 public abstract class KotlinDeclarationProviderFactory {
     public abstract fun createDeclarationProvider(scope: GlobalSearchScope, contextualModule: KtModule?): KotlinDeclarationProvider
+
+    public companion object {
+        public fun getInstance(project: Project): KotlinDeclarationProviderFactory =
+            project.getService(KotlinDeclarationProviderFactory::class.java)
+    }
 }
 
-public fun Project.createDeclarationProvider(scope: GlobalSearchScope, module: KtModule?): KotlinDeclarationProvider {
-    return getService(KotlinDeclarationProviderFactory::class.java)
-        .createDeclarationProvider(scope, module)
+/**
+ * While the main declaration provider created via [createDeclarationProvider] is scope-based, there are other declaration providers which
+ * are not, such as file-based declaration providers. Not all declarations provided by such declaration providers can be provided by the
+ * main declaration provider, even if the correct scope is provided (such as a file-based scope). For example, the main declaration provider
+ * may be based on an index which doesn't contain the declarations provided by file-based declaration providers.
+ *
+ * Hence, [KotlinDeclarationProvider]s cannot just be combined by combining the scopes of all declaration providers and calling
+ * [createDeclarationProvider]. [KotlinDeclarationProviderMerger] should implement proper merging logic that takes these concerns into
+ * account.
+ */
+public abstract class KotlinDeclarationProviderMerger {
+    /**
+     * Merges [declarationProviders] if possible, creating a combined declaration provider that should be more efficient compared to calling
+     * separate declaration providers. Not all given declaration providers might be mergeable, or there might be multiple separate sets of
+     * declaration providers which can be merged individually, so the resulting declaration provider may be a composite Kotlin declaration
+     * provider.
+     */
+    public abstract fun mergeDeclarationProviders(declarationProviders: List<KotlinDeclarationProvider>): KotlinDeclarationProvider
+
+    public companion object {
+        public fun getInstance(project: Project): KotlinDeclarationProviderMerger =
+            project.getService(KotlinDeclarationProviderMerger::class.java)
+    }
 }
+
+public fun Project.createDeclarationProvider(scope: GlobalSearchScope, module: KtModule?): KotlinDeclarationProvider =
+    KotlinDeclarationProviderFactory.getInstance(this).createDeclarationProvider(scope, module)
+
+public fun Project.mergeDeclarationProviders(declarationProviders: List<KotlinDeclarationProvider>): KotlinDeclarationProvider =
+    KotlinDeclarationProviderMerger.getInstance(this).mergeDeclarationProviders(declarationProviders)

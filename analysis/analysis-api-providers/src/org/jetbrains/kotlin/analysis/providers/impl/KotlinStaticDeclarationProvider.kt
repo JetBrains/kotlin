@@ -21,13 +21,14 @@ import com.intellij.util.containers.CollectionFactory
 import com.intellij.util.indexing.FileContent
 import com.intellij.util.indexing.FileContentImpl
 import com.intellij.util.io.URLUtil
-import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.analysis.decompiler.psi.KotlinBuiltInDecompiler
 import org.jetbrains.kotlin.analysis.decompiler.stub.file.ClsKotlinBinaryClassCache
 import org.jetbrains.kotlin.analysis.decompiler.stub.file.KotlinClsStubBuilder
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.providers.KotlinDeclarationProvider
 import org.jetbrains.kotlin.analysis.providers.KotlinDeclarationProviderFactory
+import org.jetbrains.kotlin.analysis.providers.createDeclarationProvider
+import org.jetbrains.kotlin.analysis.providers.impl.util.mergeOnly
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.name.*
@@ -39,7 +40,7 @@ import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerial
 
 public class KotlinStaticDeclarationProvider internal constructor(
     private val index: KotlinStaticDeclarationIndex,
-    private val scope: GlobalSearchScope,
+    public val scope: GlobalSearchScope,
 ) : KotlinDeclarationProvider() {
 
     private val KtElement.inScope: Boolean
@@ -118,7 +119,6 @@ public class KotlinStaticDeclarationProvider internal constructor(
         getTopLevelProperties(callableId).mapTo(this) { it.containingKtFile }
         getTopLevelFunctions(callableId).mapTo(this) { it.containingKtFile }
     }
-
 }
 
 public class KotlinStaticDeclarationProviderFactory(
@@ -367,4 +367,16 @@ public class KotlinFakeClsStubsCache {
             }
         }
     }
+}
+
+public class KotlinStaticDeclarationProviderMerger(private val project: Project) : KotlinDeclarationProviderMergerBase() {
+    override fun mergeToList(declarationProviders: List<KotlinDeclarationProvider>): List<KotlinDeclarationProvider> =
+        declarationProviders.mergeOnly<_, KotlinStaticDeclarationProvider> { providers ->
+            val combinedScope = GlobalSearchScope.union(providers.map { it.scope })
+            project.createDeclarationProvider(combinedScope, module = null).apply {
+                check(this is KotlinStaticDeclarationProvider) {
+                    "`KotlinStaticDeclarationProvider` can only be merged into a combined declaration provider of the same type."
+                }
+            }
+        }
 }
