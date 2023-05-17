@@ -16,7 +16,7 @@ import org.gradle.tooling.events.task.TaskFailureResult
 import org.gradle.tooling.events.task.TaskFinishEvent
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.BuildEventsListenerRegistryHolder
-import org.jetbrains.kotlin.gradle.plugin.FlowParameterHolder
+import org.jetbrains.kotlin.gradle.plugin.StatisticsBuildFlowManager
 import org.jetbrains.kotlin.gradle.utils.registerClassLoaderScopedBuildService
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import org.jetbrains.kotlin.statistics.metrics.IStatisticsValuesConsumer
@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.statistics.metrics.NumericalMetrics
 import org.jetbrains.kotlin.statistics.metrics.StringMetrics
 import java.io.Serializable
 
-abstract class BuildFlowService : BuildService<BuildFlowService.Parameters>, AutoCloseable, OperationCompletionListener {
+internal abstract class BuildFlowService : BuildService<BuildFlowService.Parameters>, AutoCloseable, OperationCompletionListener {
     private var buildFailed: Boolean = false
 
 
@@ -35,23 +35,24 @@ abstract class BuildFlowService : BuildService<BuildFlowService.Parameters>, Aut
         fun registerIfAbsentImpl(
             project: Project,
         ): Provider<BuildFlowService> {
-            return project.gradle.registerClassLoaderScopedBuildService(BuildFlowService::class) { buidService ->
+            val buildService = project.gradle.registerClassLoaderScopedBuildService(BuildFlowService::class) { buidlService ->
                 project.gradle.projectsEvaluated {
-                    buidService.parameters.configurationMetrics.set(project.provider {
-                        KotlinBuildStatsService.getInstance()?.buildStartedMetrics(project)
+                    buidlService.parameters.configurationMetrics.set(project.provider {
+                        KotlinBuildStatsService.getInstance()?.collectedStartMetrics(project)
                     })
-                }
-            }.also {
-                KotlinBuildStatsService.applyIfInitialised {
-                    it.projectsEvaluated(project.gradle)
-                }
-                if (GradleVersion.current().baseVersion < GradleVersion.version("8.1")) {
-                    BuildEventsListenerRegistryHolder.getInstance(project).listenerRegistry.onTaskCompletion(it)
-                } else {
-                    FlowParameterHolder.getInstance(project).subscribeForBuildResult(project)
                 }
             }
 
+            KotlinBuildStatsService.applyIfInitialised {
+                it.recordProjectsEvaluated(project.gradle)
+            }
+            if (GradleVersion.current().baseVersion < GradleVersion.version("8.1")) {
+                BuildEventsListenerRegistryHolder.getInstance(project).listenerRegistry.onTaskCompletion(buildService)
+            } else {
+                StatisticsBuildFlowManager.getInstance(project).subscribeForBuildResult(project)
+            }
+
+            return buildService
         }
     }
 
@@ -62,17 +63,17 @@ abstract class BuildFlowService : BuildService<BuildFlowService.Parameters>, Aut
     }
 
     override fun close() {
-        buildFinished(null, buildFailed, parameters.configurationMetrics.get())
+        recordBuildFinished(null, buildFailed, parameters.configurationMetrics.get())
     }
 
-    internal fun buildFinished(action: String?, buildFailed: Boolean, configurationTimeMetrics: MetricContainer) {
+    internal fun recordBuildFinished(action: String?, buildFailed: Boolean, configurationTimeMetrics: MetricContainer) {
         KotlinBuildStatsService.applyIfInitialised {
-            it.buildFinished(action, buildFailed, configurationTimeMetrics)
+            it.recordBuildFinish(action, buildFailed, configurationTimeMetrics)
         }
     }
 }
 
-class MetricContainer : Serializable {
+internal class MetricContainer : Serializable {
     private val numericalMetrics = HashMap<NumericalMetrics, Long>()
     private val booleanMetrics = HashMap<BooleanMetrics, Boolean>()
     private val stringMetrics = HashMap<StringMetrics, String>()

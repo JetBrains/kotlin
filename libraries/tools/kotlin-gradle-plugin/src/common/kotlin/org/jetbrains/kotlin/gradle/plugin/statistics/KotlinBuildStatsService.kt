@@ -13,7 +13,6 @@ import org.gradle.initialization.BuildRequestMetaData
 import org.gradle.invocation.DefaultGradle
 import org.gradle.tooling.events.OperationCompletionListener
 import org.gradle.tooling.events.task.TaskFinishEvent
-import org.jetbrains.kotlin.build.report.metrics.BuildMetrics
 import org.jetbrains.kotlin.gradle.plugin.BuildEventsListenerRegistryHolder
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatHandler.Companion.runSafe
 import org.jetbrains.kotlin.gradle.plugin.statistics.old.Pre232IdeaKotlinBuildStatsMXBean
@@ -47,7 +46,7 @@ interface KotlinBuildStatsMXBean {
 }
 
 
-abstract class KotlinBuildStatsService internal constructor() : IStatisticsValuesConsumer, Closeable {
+internal abstract class KotlinBuildStatsService internal constructor() : IStatisticsValuesConsumer, Closeable {
     companion object {
         // Do not rename this bean otherwise compatibility with the older Kotlin Gradle Plugins would be lost
         private const val JMX_BEAN_NAME_BEFORE_232_IDEA = "org.jetbrains.kotlin.gradle.plugin.statistics:type=StatsService"
@@ -213,11 +212,17 @@ abstract class KotlinBuildStatsService internal constructor() : IStatisticsValue
         instance = null
     }
 
-    open fun buildFinished(action: String?, buildFailed: Boolean, configurationTimeMetrics: MetricContainer) {}
+    /**
+     * Collects metrics at the end of a build
+     */
+    open fun recordBuildFinish(action: String?, buildFailed: Boolean, configurationTimeMetrics: MetricContainer) {}
 
-    open fun buildStartedMetrics(project: Project): MetricContainer = MetricContainer()
+    /**
+     * Collect project general and configuration metrics at the start of a build
+     */
+    open fun collectedStartMetrics(project: Project): MetricContainer = MetricContainer()
 
-    open fun projectsEvaluated(gradle: Gradle) {}
+    open fun recordProjectsEvaluated(gradle: Gradle) {}
 }
 
 internal class JMXKotlinBuildStatsService(private val mbs: MBeanServer, private val beanName: ObjectName) :
@@ -283,7 +288,7 @@ internal abstract class AbstractKotlinBuildStatsService(
         return (gradle as? DefaultGradle)?.services?.get(BuildRequestMetaData::class.java)?.startTime
     }
 
-    override fun projectsEvaluated(gradle: Gradle) {
+    override fun recordProjectsEvaluated(gradle: Gradle) {
         runSafe("${DefaultKotlinBuildStatsService::class.java}.projectEvaluated") {
             if (!sessionLogger.isBuildSessionStarted()) {
                 sessionLogger.startBuildSession(
@@ -325,12 +330,11 @@ internal class DefaultKotlinBuildStatsService internal constructor(
         report(StringMetrics.valueOf(name), value, subprojectName, weight)
 
     //only one jmx bean service should report global metrics
-    override fun buildFinished(action: String?, buildFailed: Boolean, configurationTimeMetrics: MetricContainer) {
+    override fun recordBuildFinish(action: String?, buildFailed: Boolean, configurationTimeMetrics: MetricContainer) {
         KotlinBuildStatHandler().reportGlobalMetrics(sessionLogger)
         KotlinBuildStatHandler().reportBuildFinished(sessionLogger, action, buildFailed, configurationTimeMetrics)
     }
 
-    override fun buildStartedMetrics(project: Project) = KotlinBuildStatHandler().collectConfigurationTimeMetrics(project, sessionLogger)
-
+    override fun collectedStartMetrics(project: Project) = KotlinBuildStatHandler().collectConfigurationTimeMetrics(project, sessionLogger)
 
 }

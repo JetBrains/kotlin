@@ -239,11 +239,11 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
             gradleVersion,
             buildOptions = defaultBuildOptions.copy(buildReport = listOf(BuildReportType.FILE))
         ) {
-            build("clean", "assemble") {
+            build("assemble") {
                 assertBuildReportPathIsPrinted()
             }
 
-            build("clean", "assemble") {
+            build("assemble") {
                 assertBuildReportPathIsPrinted()
             }
         }
