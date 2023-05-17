@@ -63,7 +63,7 @@ internal abstract class BuildFlowService : BuildService<BuildFlowService.Paramet
     }
 
     override fun close() {
-        recordBuildFinished(null, buildFailed, parameters.configurationMetrics.get())
+        recordBuildFinished(null, buildFailed, parameters.configurationMetrics.orElse(MetricContainer()).get())
     }
 
     internal fun recordBuildFinished(action: String?, buildFailed: Boolean, configurationTimeMetrics: MetricContainer) {
