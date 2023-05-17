@@ -1,0 +1,4 @@
+[KT55201DefaultTargetConfigurationNameAccess | ERROR] `defaultConfigurationName` property of 'jvm' Kotlin Target is not used in Kotlin Gradle Plugin and will be removed in Kotlin 2.0.
+Use `Dependency.DEFAULT_CONFIGURATION` instead.
+----
+[KT55201DefaultTargetConfigurationNameAccess | ERROR] `defaultConfigurationName` property of 'linuxX64' Kotlin Target is not used in Kotlin Gradle Plugin and will be removed in Kotlin 2.0.

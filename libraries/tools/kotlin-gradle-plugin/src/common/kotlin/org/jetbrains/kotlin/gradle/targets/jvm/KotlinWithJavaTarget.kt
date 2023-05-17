@@ -17,6 +17,7 @@ import org.gradle.jvm.tasks.Jar
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.HasCompilerOptions
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.internal.JavaSourceSetsAccessor
 import org.jetbrains.kotlin.gradle.plugin.variantImplementationFactory
 import org.jetbrains.kotlin.gradle.tasks.KOTLIN_BUILD_DIR_NAME
@@ -33,8 +34,16 @@ abstract class KotlinWithJavaTarget<KotlinOptionsType : KotlinCommonOptions, CO 
     override var disambiguationClassifier: String? = null
         internal set
 
+    @Deprecated(
+        "Scheduled for removal with Kotlin 2.0",
+        level = DeprecationLevel.ERROR,
+        replaceWith = ReplaceWith("Dependency.DEFAULT_CONFIGURATION")
+    )
     override val defaultConfigurationName: String
-        get() = Dependency.DEFAULT_CONFIGURATION
+        get() {
+            KotlinToolingDiagnostics.KT55201DefaultTargetConfigurationNameAccess.reportForTarget(this)
+            return Dependency.DEFAULT_CONFIGURATION
+        }
 
     override val apiElementsConfigurationName: String
         get() = JavaPlugin.API_ELEMENTS_CONFIGURATION_NAME

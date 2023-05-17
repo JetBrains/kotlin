@@ -6,11 +6,14 @@
 package org.jetbrains.kotlin.gradle.plugin.diagnostics
 
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic.Severity.ERROR
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic.Severity.WARNING
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaTarget
 import org.jetbrains.kotlin.gradle.plugin.sources.android.multiplatformAndroidSourceSetLayoutV1
 import org.jetbrains.kotlin.gradle.plugin.sources.android.multiplatformAndroidSourceSetLayoutV2
+import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 
 @InternalKotlinGradlePluginApi // used in integration tests
 object KotlinToolingDiagnostics {
@@ -177,5 +180,20 @@ object KotlinToolingDiagnostics {
                 https://kotlinlang.org/docs/whatsnew18.html#kotlin-multiplatform-a-new-android-source-set-layout
             """.trimIndent()
         )
+    }
+
+    object KT55201DefaultTargetConfigurationNameAccess : ToolingDiagnosticFactory(ERROR) {
+        fun reportForTarget(target: KotlinTarget) {
+            val project = target.project
+            val diagnosticMessage = "`defaultConfigurationName` property of '${target.name}' Kotlin Target is not used " +
+                    "in Kotlin Gradle Plugin and will be removed in Kotlin 2.0."
+            val diagnostic = when(target) {
+                is KotlinWithJavaTarget<*, *> -> build("$diagnosticMessage\nUse `Dependency.DEFAULT_CONFIGURATION` instead.")
+                is KotlinJvmTarget -> build("$diagnosticMessage\nUse `Dependency.DEFAULT_CONFIGURATION` instead.")
+                else -> build(diagnosticMessage)
+            }
+
+            project.kotlinToolingDiagnosticsCollector.report(project, diagnostic)
+        }
     }
 }

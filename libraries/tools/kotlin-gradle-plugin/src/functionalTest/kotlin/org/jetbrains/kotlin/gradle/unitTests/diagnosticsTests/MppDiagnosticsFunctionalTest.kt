@@ -122,4 +122,16 @@ class MppDiagnosticsFunctionalTest {
             }
         }
     }
+
+    @Test
+    fun testKT55201DefaultTargetConfigurationNameAccess() {
+        checkDiagnosticsWithMppProject("kt55201DefaultTargetConfigurationNameAccess") {
+            kotlin {
+                listOf(jvm(), linuxX64()).forEach {
+                    @Suppress("DEPRECATION_ERROR")
+                    it.defaultConfigurationName
+                }
+            }
+        }
+    }
 }

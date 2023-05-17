@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetComponent
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.mpp.HierarchyAttributeContainer
 import org.jetbrains.kotlin.gradle.plugin.mpp.InternalKotlinTarget
 import org.jetbrains.kotlin.tooling.core.MutableExtras
@@ -27,6 +28,7 @@ internal class ExternalKotlinTargetImpl internal constructor(
     override val targetName: String,
     override val platformType: KotlinPlatformType,
     override val publishable: Boolean,
+    @Deprecated("Scheduled for removal with Kotlin 2.0")
     val defaultConfiguration: Configuration,
     val apiElementsConfiguration: Configuration,
     val runtimeElementsConfiguration: Configuration,
@@ -67,8 +69,13 @@ internal class ExternalKotlinTargetImpl internal constructor(
     override val artifactsTaskName: String
         get() = artifactsTask.name
 
+    @Deprecated("Scheduled for removal with Kotlin 2.0", level = DeprecationLevel.ERROR)
     override val defaultConfigurationName: String
-        get() = defaultConfiguration.name
+        get() {
+            KotlinToolingDiagnostics.KT55201DefaultTargetConfigurationNameAccess.reportForTarget(this)
+            @Suppress("DEPRECATION")
+            return defaultConfiguration.name
+        }
 
     override val apiElementsConfigurationName: String
         get() = apiElementsConfiguration.name

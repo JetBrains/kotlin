@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsageContext.MavenScope.*
 import org.jetbrains.kotlin.gradle.utils.dashSeparatedName
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
@@ -41,8 +42,12 @@ abstract class AbstractKotlinTarget(
 
     override fun getAttributes(): AttributeContainer = attributeContainer
 
+    @Deprecated("Scheduled for removal with Kotlin 2.0", level = DeprecationLevel.ERROR)
     override val defaultConfigurationName: String
-        get() = disambiguateName("default")
+        get() {
+            KotlinToolingDiagnostics.KT55201DefaultTargetConfigurationNameAccess.reportForTarget(this)
+            return disambiguateName("default")
+        }
 
     @Deprecated("Scheduled for removal with Kotlin 2.2")
     override var useDisambiguationClassifierAsSourceSetNamePrefix: Boolean = true

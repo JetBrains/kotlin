@@ -36,6 +36,7 @@ interface KotlinTarget : Named, HasAttributes, HasProject, HasMutableExtras {
 
     val artifactsTaskName: String
 
+    @Deprecated("Scheduled for removal with Kotlin 2.0", level = DeprecationLevel.ERROR)
     val defaultConfigurationName: String
     val apiElementsConfigurationName: String
     val runtimeElementsConfigurationName: String
