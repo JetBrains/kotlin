@@ -776,7 +776,8 @@ class ControlFlowInformationProviderImpl private constructor(
 
         if (functionDescriptor.isExpect || functionDescriptor.isActual ||
             functionDescriptor.isEffectivelyExternal() ||
-            !diagnosticSuppressor.shouldReportUnusedParameter(variableDescriptor, trace.bindingContext)
+            !diagnosticSuppressor.shouldReportUnusedParameter(variableDescriptor, trace.bindingContext) ||
+            !diagnosticSuppressor.shouldReportUnusedParameter(variableDescriptor)
         ) return
 
         when (val owner = element.parent.parent) {
