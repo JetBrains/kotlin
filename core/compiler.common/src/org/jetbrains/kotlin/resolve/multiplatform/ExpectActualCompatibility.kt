@@ -50,7 +50,7 @@ sealed class ExpectActualCompatibility<out D> {
 
         object FunctionModifiersDifferent : Incompatible<Nothing>("modifiers are different (suspend)")
         object FunctionModifiersNotSubset : Incompatible<Nothing>(
-            "some modifiers on expected declaration are missing on the actual one (external, infix, inline, operator, tailrec)"
+            "some modifiers on expected declaration are missing on the actual one (infix, inline, operator)"
         )
 
         // Properties

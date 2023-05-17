@@ -432,11 +432,9 @@ object AbstractExpectActualCompatibilityChecker {
         }
 
         if (
-            expectFunction.isExternal && !actualFunction.isExternal ||
             expectFunction.isInfix && !actualFunction.isInfix ||
             expectFunction.isInline && !actualFunction.isInline ||
-            expectFunction.isOperator && !actualFunction.isOperator ||
-            expectFunction.isTailrec && !actualFunction.isTailrec
+            expectFunction.isOperator && !actualFunction.isOperator
         ) {
             return Incompatible.FunctionModifiersNotSubset
         }

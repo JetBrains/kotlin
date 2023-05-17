@@ -2761,6 +2761,16 @@ internal class ExpectedPrivateDeclarationImpl(
     override val token: KtLifetimeToken,
 ) : KtFirDiagnostic.ExpectedPrivateDeclaration(), KtAbstractFirDiagnostic<KtModifierListOwner>
 
+internal class ExpectedExternalDeclarationImpl(
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.ExpectedExternalDeclaration(), KtAbstractFirDiagnostic<KtModifierListOwner>
+
+internal class ExpectedTailrecFunctionImpl(
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.ExpectedTailrecFunction(), KtAbstractFirDiagnostic<KtModifierListOwner>
+
 internal class ImplementationByDelegationInExpectClassImpl(
     override val firDiagnostic: KtPsiDiagnostic,
     override val token: KtLifetimeToken,

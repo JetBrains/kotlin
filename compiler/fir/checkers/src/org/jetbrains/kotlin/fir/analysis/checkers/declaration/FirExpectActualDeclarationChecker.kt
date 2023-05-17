@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -15,6 +16,9 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isActual
+import org.jetbrains.kotlin.fir.declarations.utils.isExpect
+import org.jetbrains.kotlin.fir.declarations.utils.isExternal
+import org.jetbrains.kotlin.fir.declarations.utils.isTailRec
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -33,8 +37,57 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker() {
     override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
         if (!context.session.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)) return
         if (declaration !is FirMemberDeclaration) return
+        if (declaration.isExpect) {
+            checkExpectDeclarationModifiers(declaration, context, reporter)
+        }
         if (declaration.isActual) {
             checkActualDeclarationHasExpected(declaration, context, reporter)
+        }
+    }
+
+    private fun checkExpectDeclarationModifiers(
+        declaration: FirMemberDeclaration,
+        context: CheckerContext,
+        reporter: DiagnosticReporter,
+    ) {
+        checkExpectDeclarationHasNoExternalModifier(declaration, context, reporter)
+        if (declaration is FirProperty) {
+            checkExpectPropertyAccessorsModifiers(declaration, context, reporter)
+        }
+        if (declaration is FirFunction && declaration.isTailRec) {
+            reporter.reportOn(declaration.source, FirErrors.EXPECTED_TAILREC_FUNCTION, context)
+        }
+    }
+
+    private fun checkExpectPropertyAccessorsModifiers(
+        property: FirProperty,
+        context: CheckerContext,
+        reporter: DiagnosticReporter,
+    ) {
+        for (accessor in listOfNotNull(property.getter, property.setter)) {
+            checkExpectPropertyAccessorModifiers(accessor, context, reporter)
+        }
+    }
+
+    private fun checkExpectPropertyAccessorModifiers(
+        accessor: FirPropertyAccessor,
+        context: CheckerContext,
+        reporter: DiagnosticReporter,
+    ) {
+        fun FirPropertyAccessor.isDefault() = source?.kind == KtFakeSourceElementKind.DefaultAccessor
+
+        if (!accessor.isDefault()) {
+            checkExpectDeclarationHasNoExternalModifier(accessor, context, reporter)
+        }
+    }
+
+    private fun checkExpectDeclarationHasNoExternalModifier(
+        declaration: FirMemberDeclaration,
+        context: CheckerContext,
+        reporter: DiagnosticReporter,
+    ) {
+        if (declaration.isExternal) {
+            reporter.reportOn(declaration.source, FirErrors.EXPECTED_EXTERNAL_DECLARATION, context)
         }
     }
 

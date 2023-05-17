@@ -32,6 +32,12 @@ public class FirOldFrontendMPPDiagnosticsWithPsiTestGenerated extends AbstractFi
     }
 
     @Test
+    @TestMetadata("expectExternal.kt")
+    public void testExpectExternal() throws Exception {
+        runTest("compiler/testData/diagnostics/tests/multiplatform/expectExternal.kt");
+    }
+
+    @Test
     @TestMetadata("expectInterfaceApplicability.kt")
     public void testExpectInterfaceApplicability() throws Exception {
         runTest("compiler/testData/diagnostics/tests/multiplatform/expectInterfaceApplicability.kt");
@@ -41,6 +47,12 @@ public class FirOldFrontendMPPDiagnosticsWithPsiTestGenerated extends AbstractFi
     @TestMetadata("expectObjectWithAbstractMember.kt")
     public void testExpectObjectWithAbstractMember() throws Exception {
         runTest("compiler/testData/diagnostics/tests/multiplatform/expectObjectWithAbstractMember.kt");
+    }
+
+    @Test
+    @TestMetadata("expectTailrec.kt")
+    public void testExpectTailrec() throws Exception {
+        runTest("compiler/testData/diagnostics/tests/multiplatform/expectTailrec.kt");
     }
 
     @Test

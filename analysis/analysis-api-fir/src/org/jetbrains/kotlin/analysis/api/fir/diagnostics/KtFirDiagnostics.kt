@@ -2290,6 +2290,14 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = ExpectedPrivateDeclaration::class
     }
 
+    abstract class ExpectedExternalDeclaration : KtFirDiagnostic<KtModifierListOwner>() {
+        override val diagnosticClass get() = ExpectedExternalDeclaration::class
+    }
+
+    abstract class ExpectedTailrecFunction : KtFirDiagnostic<KtModifierListOwner>() {
+        override val diagnosticClass get() = ExpectedTailrecFunction::class
+    }
+
     abstract class ImplementationByDelegationInExpectClass : KtFirDiagnostic<KtDelegatedSuperTypeEntry>() {
         override val diagnosticClass get() = ImplementationByDelegationInExpectClass::class
     }

@@ -340,6 +340,11 @@ object SourceElementPositioningStrategies {
         PositioningStrategies.TAILREC_MODIFIER
     )
 
+    val EXTERNAL_MODIFIER = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.EXTERNAL_MODIFIER,
+        PositioningStrategies.EXTERNAL_MODIFIER
+    )
+
     val PROPERTY_DELEGATE = SourceElementPositioningStrategy(
         LightTreePositioningStrategies.PROPERTY_DELEGATE,
         PositioningStrategies.PROPERTY_DELEGATE

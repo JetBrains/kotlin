@@ -343,7 +343,7 @@ class DeclarationsChecker(
 
         checkPrimaryConstructor(classOrObject, classDescriptor)
 
-        checkPrivateExpectedDeclaration(classOrObject, classDescriptor)
+        checkExpectDeclarationModifiers(classOrObject, classDescriptor)
     }
 
     private fun checkLocalAnnotation(classDescriptor: ClassDescriptor, classOrObject: KtClassOrObject) {
@@ -618,13 +618,28 @@ class DeclarationsChecker(
         shadowedExtensionChecker.checkDeclaration(property, propertyDescriptor)
         checkPropertyTypeParametersAreUsedInReceiverType(propertyDescriptor)
         checkImplicitCallableType(property, propertyDescriptor)
-        checkPrivateExpectedDeclaration(property, propertyDescriptor)
+        checkExpectDeclarationModifiers(property, propertyDescriptor)
         checkBackingField(property)
     }
 
-    private fun checkPrivateExpectedDeclaration(declaration: KtDeclaration, descriptor: MemberDescriptor) {
-        if (descriptor.isExpect && DescriptorVisibilities.isPrivate(descriptor.visibility)) {
+    private fun checkExpectDeclarationModifiers(declaration: KtDeclaration, descriptor: MemberDescriptor) {
+        if (!descriptor.isExpect) return
+
+        if (DescriptorVisibilities.isPrivate(descriptor.visibility)) {
             trace.report(EXPECTED_PRIVATE_DECLARATION.on(declaration.modifierList?.getModifier(KtTokens.PRIVATE_KEYWORD) ?: declaration))
+        }
+
+        checkExpectDeclarationHasNoExternalModifier(declaration)
+        if (declaration is KtFunction) {
+            declaration.modifierList?.getModifier(KtTokens.TAILREC_KEYWORD)?.let {
+                trace.report(EXPECTED_TAILREC_FUNCTION.on(it))
+            }
+        }
+    }
+
+    private fun checkExpectDeclarationHasNoExternalModifier(declaration: KtDeclaration) {
+        declaration.modifierList?.getModifier(KtTokens.EXTERNAL_KEYWORD)?.let {
+            trace.report(EXPECTED_EXTERNAL_DECLARATION.on(it))
         }
     }
 
@@ -925,7 +940,7 @@ class DeclarationsChecker(
             trace.report(EXPECTED_DECLARATION_WITH_BODY.on(function))
         }
 
-        checkPrivateExpectedDeclaration(function, functionDescriptor)
+        checkExpectDeclarationModifiers(function, functionDescriptor)
     }
 
     private fun checkActualFunction(element: KtDeclaration, functionDescriptor: FunctionDescriptor) {
@@ -1021,6 +1036,9 @@ class DeclarationsChecker(
                     reportVisibilityModifierDiagnostics(tokens.values, SETTER_VISIBILITY_INCONSISTENT_WITH_PROPERTY_VISIBILITY)
                 }
             }
+        }
+        if (propertyDescriptor.isExpect) {
+            checkExpectDeclarationHasNoExternalModifier(accessor)
         }
     }
 
