@@ -1,5 +1,8 @@
 // TARGET_BACKEND: JVM
 // IGNORE_BACKEND_K2: JVM_IR, JS_IR
+// IGNORING_WASM_FOR_K2
+// IGNORE_BACKEND: WASM
+// IGNORE_BACKEND: WASM
 // FIR status: validation failed. TODO decide if we want to fix KT-42020 for FIR as well
 
 open class Base<T> {

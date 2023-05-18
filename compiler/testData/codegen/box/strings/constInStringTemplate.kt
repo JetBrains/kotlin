@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: WASM
 // WASM_MUTE_REASON: Float.toString()
 // WITH_STDLIB
 

@@ -1,5 +1,7 @@
 // TARGET_BACKEND: JVM
 // IGNORE_BACKEND_K2: JVM_IR, JS_IR
+// IGNORING_WASM_FOR_K2
+// IGNORE_BACKEND: WASM
 // FIR status: KT-46419, ILT conversions to Byte and Short are not supported by design
 // WITH_STDLIB
 // This test exists only to check that we don't accidentally break the buggy behavior of the old JVM backend in JVM IR (KT-42321).

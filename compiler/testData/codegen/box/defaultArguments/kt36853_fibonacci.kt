@@ -1,6 +1,8 @@
 // WITH_STDLIB
 
 // IGNORE_BACKEND_K2: JVM_IR, JS_IR, NATIVE
+// IGNORING_WASM_FOR_K2
+// IGNORE_BACKEND: WASM
 // FIR status:
 //  java.lang.StackOverflowError
 //	at Nat$Companion$invoke$1.next(kt36853_fibonacci.kt:40) ...

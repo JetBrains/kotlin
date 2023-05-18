@@ -1,6 +1,8 @@
 // !LANGUAGE: +ContextReceivers
 // TARGET_BACKEND: JVM_IR
 // IGNORE_BACKEND_K2: JS_IR
+// IGNORING_WASM_FOR_K2
+// IGNORE_BACKEND: WASM
 // WITH_STDLIB
 
 class A(val ok: String)

@@ -1,4 +1,6 @@
 // IGNORE_BACKEND_K2: JVM_IR, JS_IR, NATIVE
+// IGNORING_WASM_FOR_K2
+// IGNORE_BACKEND: WASM
 // FIR status: KT-46419, ILT conversions to Byte and Short are not supported by design
 
 fun box(): String {

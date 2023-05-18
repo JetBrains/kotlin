@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND_K1: JS_IR, JS_IR_ES6
 var initialized = 0
 
