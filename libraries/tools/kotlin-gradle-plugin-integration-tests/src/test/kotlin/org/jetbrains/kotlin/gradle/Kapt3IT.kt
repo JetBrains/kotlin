@@ -1237,4 +1237,38 @@ open class Kapt3IT : Kapt3BaseIT() {
             }
         }
     }
+
+    @DisplayName("KT-58745: compiler plugin options should be passed to KaptGenerateStubs task")
+    @GradleTest
+    fun kaptGenerateStubsConfiguredWithCompilerPluginOptions(gradleVersion: GradleVersion) {
+        project(
+            "simple".withPrefix,
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
+        ) {
+
+            buildGradle.modify {
+                //language=groovy
+                """
+                |${it.substringBefore("plugins {")}
+                |plugins {
+                |   id "org.jetbrains.kotlin.plugin.noarg"
+                |${it.substringAfter("plugins {")}
+                |
+                |noArg {
+                |    annotation("my.custom.Annotation")
+                |}
+                """.trimMargin()
+            }
+
+            build(":kaptGenerateStubsKotlin") {
+                assertTasksExecuted(":kaptGenerateStubsKotlin")
+
+                assertCompilerArgument(
+                    ":kaptGenerateStubsKotlin",
+                    "plugin:org.jetbrains.kotlin.noarg:annotation=my.custom.Annotation"
+                )
+            }
+        }
+    }
 }
