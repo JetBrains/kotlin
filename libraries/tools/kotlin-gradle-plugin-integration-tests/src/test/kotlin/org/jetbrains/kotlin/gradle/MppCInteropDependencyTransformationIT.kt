@@ -257,8 +257,8 @@ abstract class MppCInteropDependencyTransformationIT : BaseGradleIT() {
             )
             project.build(":p3:transformNativeMainCInteropDependenciesMetadata", options = repositoryDependencyOptions) {
                 assertSuccessful()
-                /* Same binaries to transform; does not matter if coming from project dependency or direct one */
-                assertTasksUpToDate(":p3:transformNativeMainCInteropDependenciesMetadata")
+                /* Same binaries to transform; but the outputs are different (transformed libraries file) */
+                assertTasksExecuted(":p3:transformNativeMainCInteropDependenciesMetadata")
             }
         }
 
@@ -293,15 +293,15 @@ abstract class MppCInteropDependencyTransformationIT : BaseGradleIT() {
         @Test
         fun `test UP-TO-DATE - when changing consumer targets - dependencyMode=repository`() {
             project.publishP1ToBuildRepository()
-            `test UP-TO-DATE - when changing consumer targets`(repositoryDependencyOptions, DependencyMode.Repository)
+            `test UP-TO-DATE - when changing consumer targets`(repositoryDependencyOptions)
         }
 
         @Test
         fun `test UP-TO-DATE - when changing consumer targets - dependencyMode=project`() {
-            `test UP-TO-DATE - when changing consumer targets`(projectDependencyOptions, DependencyMode.Project)
+            `test UP-TO-DATE - when changing consumer targets`(projectDependencyOptions)
         }
 
-        private fun `test UP-TO-DATE - when changing consumer targets`(options: BuildOptions, mode: DependencyMode) {
+        private fun `test UP-TO-DATE - when changing consumer targets`(options: BuildOptions) {
             project.build(":p2:transformCommonMainCInteropDependenciesMetadata", options = options) {
                 assertSuccessful()
             }
@@ -316,13 +316,7 @@ abstract class MppCInteropDependencyTransformationIT : BaseGradleIT() {
 
             project.build(":p2:transformCommonMainCInteropDependenciesMetadata", options = optionsWithAdditionalTargetEnabled) {
                 assertSuccessful()
-
-                when (mode) {
-                    DependencyMode.Repository -> assertTasksExecuted(":p2:transformCommonMainCInteropDependenciesMetadata")
-                    /* Had nothing to do before (project to project dependencies are not handled by this task), has still nothing to do) */
-                    DependencyMode.Project -> assertTasksUpToDate(":p2:transformCommonMainCInteropDependenciesMetadata")
-                }
-
+                assertTasksExecuted(":p2:transformCommonMainCInteropDependenciesMetadata")
             }
 
             project.build(":p2:transformCommonMainCInteropDependenciesMetadata", options = optionsWithAdditionalTargetEnabled) {
@@ -333,12 +327,7 @@ abstract class MppCInteropDependencyTransformationIT : BaseGradleIT() {
 
             project.build(":p2:transformCommonMainCInteropDependenciesMetadata", options = options) {
                 assertSuccessful()
-
-                when (mode) {
-                    DependencyMode.Repository -> assertTasksExecuted(":p2:transformCommonMainCInteropDependenciesMetadata")
-                    /* Had nothing to do before (project to project dependencies are not handled by this task), has still nothing to do) */
-                    DependencyMode.Project -> assertTasksUpToDate(":p2:transformCommonMainCInteropDependenciesMetadata")
-                }
+                assertTasksExecuted(":p2:transformCommonMainCInteropDependenciesMetadata")
             }
 
             project.build(":p2:transformCommonMainCInteropDependenciesMetadata", options = options) {
