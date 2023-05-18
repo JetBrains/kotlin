@@ -240,6 +240,17 @@ internal object BodyStateKeepers {
 
 private val FirFunction.isCertainlyResolved: Boolean
     get() {
+        if (this is FirPropertyAccessor) {
+            val requiredState = when {
+                isSetter -> FirPropertyBodyResolveState.EVERYTHING_RESOLVED
+                else -> FirPropertyBodyResolveState.INITIALIZER_AND_GETTER_RESOLVED
+            }
+
+            if (propertySymbol.fir.bodyResolveState >= requiredState) {
+                return true
+            }
+        }
+
         val body = this.body ?: return false // Not completely sure
         return body !is FirLazyBlock && body.typeRef is FirResolvedTypeRef
     }
