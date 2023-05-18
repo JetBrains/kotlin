@@ -136,6 +136,8 @@ open class CompilerRequiredAnnotationsComputationSession {
         return file in filesWithResolvedImports
     }
 
+    open val useCacheForImportScope: Boolean get() = false
+
     fun recordThatImportsAreResolved(file: FirFile) {
         if (!filesWithResolvedImports.add(file)) {
             error("Imports are resolved twice")

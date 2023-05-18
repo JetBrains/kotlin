@@ -391,7 +391,7 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
     lateinit var scopes: List<FirScope>
 
     inline fun <T> withFileScopes(file: FirFile, f: () -> T): T {
-        scopes = createImportingScopes(file, session, scopeSession, useCaching = false)
+        scopes = createImportingScopes(file, session, scopeSession, useCaching = computationSession.useCacheForImportScope)
         return f()
     }
 

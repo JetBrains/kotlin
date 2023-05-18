@@ -85,6 +85,8 @@ private class LLFirCompilerRequiredAnnotationsTargetResolver(
 
             resolver.resolveDesignation()
         }
+
+        override val useCacheForImportScope: Boolean get() = true
     }
 
     private val transformer = FirCompilerRequiredAnnotationsResolveTransformer(
