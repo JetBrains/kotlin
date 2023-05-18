@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveT
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.asResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.throwUnexpectedFirElementError
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
-import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyBodiesCalculator
+import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyBodiesCalculator.calculateCompilerAnnotations
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.LLFirPhaseUpdater
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkPhase
@@ -106,8 +106,7 @@ private class LLFirCompilerRequiredAnnotationsTargetResolver(
     override fun doLazyResolveUnderLock(target: FirElementWithResolveState) {
         when {
             target is FirRegularClass -> {
-                resolveWithKeeper(target, stateKeepers.DECLARATION) {
-                    FirLazyBodiesCalculator.calculateCompilerAnnotations(target)
+                resolveWithKeeper(target, stateKeepers.DECLARATION, ::calculateCompilerAnnotations) {
                     transformer.annotationTransformer.resolveRegularClass(
                         target,
                         transformChildren = {
@@ -121,8 +120,7 @@ private class LLFirCompilerRequiredAnnotationsTargetResolver(
             }
 
             target.isRegularDeclarationWithAnnotation -> {
-                resolveWithKeeper(target, stateKeepers.DECLARATION) {
-                    FirLazyBodiesCalculator.calculateCompilerAnnotations(target)
+                resolveWithKeeper(target, stateKeepers.DECLARATION, ::calculateCompilerAnnotations) {
                     target.transformSingle(transformer.annotationTransformer, null)
                 }
             }

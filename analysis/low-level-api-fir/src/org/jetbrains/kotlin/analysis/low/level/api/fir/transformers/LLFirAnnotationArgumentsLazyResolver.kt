@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.throwUnexpectedFirElementError
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
-import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyBodiesCalculator
+import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyBodiesCalculator.calculateAnnotations
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.LLFirPhaseUpdater
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkPhase
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkTypeRefIsResolved
@@ -84,8 +84,7 @@ private class LLFirAnnotationArgumentsTargetResolver(
     )
 
     override fun doLazyResolveUnderLock(target: FirElementWithResolveState) {
-        resolveWithKeeper(target, AnnotationArgumentsStateKeepers.DECLARATION) {
-            FirLazyBodiesCalculator.calculateAnnotations(target)
+        resolveWithKeeper(target, AnnotationArgumentsStateKeepers.DECLARATION, ::calculateAnnotations) {
             transformAnnotations(target)
         }
     }

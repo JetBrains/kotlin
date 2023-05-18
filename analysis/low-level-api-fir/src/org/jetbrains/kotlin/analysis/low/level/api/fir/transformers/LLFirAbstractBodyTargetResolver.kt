@@ -67,13 +67,8 @@ internal abstract class LLFirAbstractBodyTargetResolver(
     }
 
     protected fun <T : FirElementWithResolveState> resolve(target: T, keeper: StateKeeper<T>) {
-        resolveWithKeeper(target, keeper) {
-            rawResolve(target)
+        resolveWithKeeper(target, keeper, ::calculateLazyBodies) {
+            target.transformSingle(transformer, ResolutionMode.ContextIndependent)
         }
-    }
-
-    protected fun <T : FirElementWithResolveState> rawResolve(target: T): T {
-        calculateLazyBodies(target)
-        return target.transformSingle(transformer, ResolutionMode.ContextIndependent)
     }
 }

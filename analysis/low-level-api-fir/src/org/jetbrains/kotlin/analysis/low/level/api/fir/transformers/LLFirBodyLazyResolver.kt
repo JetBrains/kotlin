@@ -20,7 +20,9 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.getExplicitBackingField
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildLazyDelegatedConstructorCall
+import org.jetbrains.kotlin.fir.expressions.impl.FirContractCallBlock
 import org.jetbrains.kotlin.fir.expressions.impl.FirLazyDelegatedConstructorCall
+import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.references.builder.buildExplicitSuperReference
@@ -172,6 +174,31 @@ private class LLFirBodyTargetResolver(
     }
 }
 
+context(StateKeeperBuilder)
+private inline fun StateKeeperScope<FirFunction>.preserveContractBlock(
+    function: FirFunction,
+    block: StateKeeperScope<FirFunction>.() -> Unit
+) {
+    val existingBody = function.body
+    if (existingBody != null && existingBody !is FirLazyBlock) {
+        val existingContractBlock = existingBody.statements.firstOrNull() as? FirContractCallBlock
+        if (existingContractBlock != null && existingContractBlock.call.calleeReference is FirResolvedNamedReference) {
+            block()
+
+            postProcess {
+                val newBody = function.body
+                if (newBody != null && newBody.statements.isNotEmpty()) {
+                    newBody.replaceFirstStatement<FirContractCallBlock> { existingContractBlock }
+                }
+            }
+
+            return
+        }
+    }
+
+    block()
+}
+
 internal object BodyStateKeepers {
     val SCRIPT: StateKeeper<FirScript> = stateKeeper {
         // TODO Lazy body is not supported for scripts yet
@@ -189,7 +216,9 @@ internal object BodyStateKeepers {
         add(FirFunction::returnTypeRef, FirFunction::replaceReturnTypeRef)
 
         if (!isCallableWithSpecialBody(function)) {
-            add(FirFunction::bodyIfUnresolved, FirFunction::replaceBody, ::blockGuard)
+            preserveContractBlock(function) {
+                add(FirFunction::body, FirFunction::replaceBody, ::blockGuard)
+            }
 
             entityList(function.valueParameters) { valueParameter ->
                 if (valueParameter.defaultValue != null) {
@@ -254,9 +283,6 @@ private val FirFunction.isCertainlyResolved: Boolean
         val body = this.body ?: return false // Not completely sure
         return body !is FirLazyBlock && body.typeRef is FirResolvedTypeRef
     }
-
-private val FirFunction.bodyIfUnresolved: FirBlock?
-    get() = if (!isCertainlyResolved) body else null
 
 private val FirVariable.initializerIfUnresolved: FirExpression?
     get() = when (this) {

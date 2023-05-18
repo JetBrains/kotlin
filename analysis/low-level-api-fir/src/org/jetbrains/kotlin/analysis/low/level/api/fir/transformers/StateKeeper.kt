@@ -11,9 +11,12 @@ import java.util.concurrent.atomic.AtomicBoolean
 @DslMarker
 internal annotation class StateKeeperDsl
 
+internal typealias PostProcessor = () -> Unit
+
 @StateKeeperDsl
 internal interface StateKeeperBuilder {
     fun register(state: PreservedState)
+    fun registerPostProcessor(block: PostProcessor)
 }
 
 @JvmInline
@@ -45,6 +48,12 @@ internal value class StateKeeperScope<Owner : Any>(private val owner: Owner) {
     fun add(keeper: StateKeeper<Owner>) {
         val owner = this@StateKeeperScope.owner
         register(keeper.prepare(owner))
+        keeper.postProcessors.forEach(::registerPostProcessor)
+    }
+
+    context(StateKeeperBuilder)
+    fun postProcess(block: PostProcessor) {
+        registerPostProcessor(block)
     }
 }
 
@@ -74,23 +83,32 @@ internal inline fun <Entity : Any> entityList(list: List<Entity?>?, block: State
 }
 
 internal fun <Owner : Any> stateKeeper(block: context(StateKeeperBuilder) StateKeeperScope<Owner>.(Owner) -> Unit): StateKeeper<Owner> {
-    return StateKeeper { owner ->
-        val states = mutableListOf<PreservedState>()
+    val states = mutableListOf<PreservedState>()
+    val postProcessors = mutableListOf<PostProcessor>()
 
-        val builder = object : StateKeeperBuilder {
-            override fun register(state: PreservedState) {
-                states += state
-            }
+    val builder = object : StateKeeperBuilder {
+        override fun register(state: PreservedState) {
+            states += state
         }
 
+        override fun registerPostProcessor(block: PostProcessor) {
+            postProcessors += block
+        }
+    }
+
+    fun provider(owner: Owner): List<PreservedState> {
         val scope = StateKeeperScope(owner)
         block(builder, scope, owner)
-
-        return@StateKeeper states
+        return states
     }
+
+    return StateKeeper(::provider, postProcessors)
 }
 
-internal class StateKeeper<in Owner : Any>(val provider: (Owner) -> List<PreservedState>) {
+internal class StateKeeper<in Owner : Any>(
+    val provider: (Owner) -> List<PreservedState>,
+    val postProcessors: List<PostProcessor>
+) {
     fun prepare(owner: Owner): PreservedState {
         val states = provider(owner)
 
@@ -103,18 +121,23 @@ internal class StateKeeper<in Owner : Any>(val provider: (Owner) -> List<Preserv
             }
         }
     }
+
+    fun postProcess() {
+        postProcessors.forEach { it() }
+    }
 }
 
-internal fun <Target : FirElementWithResolveState, Result> resolveWithKeeper(
+internal inline fun <Target : FirElementWithResolveState, Result> resolveWithKeeper(
     target: Target,
     keeper: StateKeeper<Target>,
-    block: () -> Result
+    prepareTarget: (Target) -> Unit,
+    action: () -> Result
 ): Result {
     if (target.moduleData.session.isOnAirAnalysis) {
         // Several arrangers reset declaration bodies to lazy ones, and then re-construct the FIR tree from the backing PSI.
         // This won't work for on-air analysis, as the tree is manually modified. However, it doesn't seem that tree guards are needed
         // in the first place, as results of the on-air analysis aren't going to be shared.
-        return block()
+        return action()
     }
 
     var preservedState: PreservedState? = null
@@ -122,7 +145,9 @@ internal fun <Target : FirElementWithResolveState, Result> resolveWithKeeper(
 
     try {
         preservedState = keeper.prepare(target)
-        val result = block()
+        prepareTarget(target)
+        keeper.postProcess()
+        val result = action()
         isSuccessful = true
         return result
     } catch (e: Throwable) {
