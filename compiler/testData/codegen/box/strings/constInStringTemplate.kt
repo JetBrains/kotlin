@@ -1,4 +1,4 @@
-// WASM_MUTE_REASON: Float.toString()
+// IGNORE_BACKEND_K1: WASM
 // WITH_STDLIB
 
 import kotlin.test.assertEquals

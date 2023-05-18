@@ -13,8 +13,8 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
-import org.jetbrains.kotlin.fir.session.FirJsSessionFactory
 import org.jetbrains.kotlin.fir.session.FirSessionConfigurator
+import org.jetbrains.kotlin.fir.session.FirWasmSessionFactory
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.ir.backend.js.resolverLogger
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinResolvedLibrary
@@ -41,7 +41,7 @@ object TestFirWasmSessionFactory {
         val libraries = getAllWasmDependenciesPaths(module, testServices)
         val resolvedLibraries = CommonJsKLibResolver.resolve(libraries, logger).getFullResolvedList()
 
-        return FirJsSessionFactory.createLibrarySession(
+        return FirWasmSessionFactory.createLibrarySession(
             mainModuleName,
             resolvedLibraries.map { it.library },
             sessionProvider,
@@ -58,7 +58,7 @@ object TestFirWasmSessionFactory {
         registerExtraComponents: ((FirSession) -> Unit),
         sessionConfigurator: FirSessionConfigurator.() -> Unit,
     ): FirSession =
-        FirJsSessionFactory.createModuleBasedSession(
+        FirWasmSessionFactory.createModuleBasedSession(
             mainModuleData,
             sessionProvider,
             extensionRegistrars,

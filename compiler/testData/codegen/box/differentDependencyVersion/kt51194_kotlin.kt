@@ -2,8 +2,6 @@
 // ISSUE: KT-51194
 // DIAGNOSTICS: +CONFLICTING_INHERITED_MEMBERS_WARNING
 // IGNORE_BACKEND_K2: JVM_IR, JS_IR
-// IGNORING_WASM_FOR_K2
-// IGNORE_BACKEND: WASM
 // FIR status: FIR correctly reports CONFLICTING_INHERITED_MEMBERS, so this test should not pass design
 //   For details see related issue
 

@@ -1,8 +1,6 @@
 // WITH_REFLECT
 // TARGET_BACKEND: JVM
 // IGNORE_BACKEND_K2: JVM_IR, JS_IR, NATIVE
-// IGNORING_WASM_FOR_K2
-// IGNORE_BACKEND: WASM
 // FIR status: KotlinNothingValueException from create()
 
 fun <T : A> create(modelClass: Class<T>): T {

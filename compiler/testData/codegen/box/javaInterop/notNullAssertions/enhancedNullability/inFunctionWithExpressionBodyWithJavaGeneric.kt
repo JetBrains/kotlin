@@ -1,8 +1,6 @@
 // !LANGUAGE: +StrictJavaNullabilityAssertions -ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated
 // TARGET_BACKEND: JVM
 // IGNORE_BACKEND_K2: JVM_IR, JS_IR
-// IGNORING_WASM_FOR_K2
-// IGNORE_BACKEND: WASM
 // FIR status: expected: <OK> but was: <Fail: SHOULD NOT throw>, issue related to T & Any
 // See KT-8135
 // We could generate runtime assertion on call site for 'generic<NOT_NULL_TYPE>()' below.

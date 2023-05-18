@@ -282,7 +282,7 @@ class ClassicFrontendFacade(
         val dependencies = mutableListOf<ModuleDescriptorImpl>()
 
         return resolvedLibraries.map { resolvedLibrary ->
-            testServices.jsLibraryProvider.getOrCreateStdlibByPath(resolvedLibrary.library.libraryName) {
+            testServices.libraryProvider.getOrCreateStdlibByPath(resolvedLibrary.library.libraryName) {
                 val storageManager = LockBasedStorageManager("ModulesStructure")
                 val isBuiltIns = resolvedLibrary.library.unresolvedDependencies.isEmpty()
 
@@ -346,12 +346,10 @@ class ClassicFrontendFacade(
         dependencyDescriptors: List<ModuleDescriptor>,
         friendsDescriptors: List<ModuleDescriptor>,
     ): AnalysisResult {
-        val needsKotlinTest = ConfigurationDirectives.WITH_STDLIB in module.directives
-
         val runtimeKlibsNames =
             listOfNotNull(
                 System.getProperty("kotlin.wasm.stdlib.path")!!,
-                System.getProperty("kotlin.wasm.kotlin.test.path")!!.takeIf { needsKotlinTest }
+                System.getProperty("kotlin.wasm.kotlin.test.path")!!
             ).map {
                 File(it).absolutePath
             }

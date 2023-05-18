@@ -9,6 +9,10 @@ import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 
 object WasmEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
+    val RUN_UNIT_TESTS by directive(
+        description = "Run kotlin.test unit tests (function marked with @Test)",
+    )
+
     // Next directives are used only inside test system and must not be present in test file
 
     val PATH_TO_TEST_DIR by stringDirective(

@@ -16,9 +16,8 @@ import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.SourceMapSourceEmbedding
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.serialization.js.ModuleKind
-import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
+import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.INFER_MAIN_MODULE
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.EXPECT_ACTUAL_LINKER
-import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.NO_INLINE
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.PROPERTY_LAZY_INITIALIZATION
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.SOURCE_MAP_EMBED_SOURCES
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives
@@ -52,7 +51,6 @@ class WasmEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfi
                     module.regularDependencies
                 }
                 dependencies
-                    // See: `dependencyKind =` in AbstractJsBlackBoxCodegenTestBase.kt
                     .filter { it.kind != DependencyKind.Source }
                     .map { testServices.dependencyProvider.getTestModule(it.moduleName) }.forEach {
                         if (it !in visited) {
@@ -67,7 +65,7 @@ class WasmEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfi
 
         fun getDependencies(module: TestModule, testServices: TestServices, kind: DependencyRelation): List<ModuleDescriptor> {
             return getKlibDependencies(module, testServices, kind)
-                .map { testServices.jsLibraryProvider.getDescriptorByPath(it.absolutePath) }
+                .map { testServices.libraryProvider.getDescriptorByPath(it.absolutePath) }
         }
 
 
@@ -99,12 +97,23 @@ class WasmEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfi
 
         fun getAllRecursiveLibrariesFor(module: TestModule, testServices: TestServices): Map<KotlinLibrary, ModuleDescriptorImpl> {
             val dependencies = getAllRecursiveDependenciesFor(module, testServices)
-            return dependencies.associateBy { testServices.jsLibraryProvider.getCompiledLibraryByDescriptor(it) }
+            return dependencies.associateBy { testServices.libraryProvider.getCompiledLibraryByDescriptor(it) }
+        }
+
+        fun getAllDependenciesMappingFor(module: TestModule, testServices: TestServices): Map<KotlinLibrary, List<KotlinLibrary>> {
+            val allRecursiveLibraries: Map<KotlinLibrary, ModuleDescriptor> =
+                getAllRecursiveLibrariesFor(module, testServices)
+            val m2l = allRecursiveLibraries.map { it.value to it.key }.toMap()
+
+            return allRecursiveLibraries.keys.associateWith { m ->
+                val descriptor = allRecursiveLibraries[m] ?: error("No descriptor found for library ${m.libraryName}")
+                descriptor.allDependencyModules.filter { it != descriptor }.map { m2l.getValue(it) }
+            }
         }
 
         fun getMainModule(testServices: TestServices): TestModule {
             val modules = testServices.moduleStructure.modules
-            val inferMainModule = JsEnvironmentConfigurationDirectives.INFER_MAIN_MODULE in testServices.moduleStructure.allDirectives
+            val inferMainModule = INFER_MAIN_MODULE in testServices.moduleStructure.allDirectives
             return when {
                 inferMainModule -> modules.last()
                 else -> modules.singleOrNull { it.name == ModuleStructureExtractor.DEFAULT_MODULE_NAME } ?: modules.last()
@@ -133,10 +142,10 @@ class WasmEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfi
     override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {
         val registeredDirectives = module.directives
         configuration.put(JSConfigurationKeys.MODULE_KIND, ModuleKind.ES)
-
-        val noInline = registeredDirectives.contains(NO_INLINE)
-        configuration.put(CommonConfigurationKeys.DISABLE_INLINE, noInline)
         configuration.put(CommonConfigurationKeys.MODULE_NAME, module.name)
+
+        configuration.put(JSConfigurationKeys.WASM_ENABLE_ASSERTS, true)
+        configuration.put(JSConfigurationKeys.WASM_ENABLE_ARRAY_RANGE_CHECKS, true)
 
         val sourceDirs = module.files.map { it.originalFile.parent }.distinct()
         configuration.put(JSConfigurationKeys.SOURCE_MAP_SOURCE_ROOTS, sourceDirs)

@@ -1,7 +1,5 @@
 // TARGET_BACKEND: JVM
 // IGNORE_BACKEND_K2: JVM_IR, JS_IR
-// IGNORING_WASM_FOR_K2
-// IGNORE_BACKEND: WASM
 // FIR status: Fail 2: kotlin.collections.List<kotlin.String!>
 // WITH_REFLECT
 // FILE: box.kt

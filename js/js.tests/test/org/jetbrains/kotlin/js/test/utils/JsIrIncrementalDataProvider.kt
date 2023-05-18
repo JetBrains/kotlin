@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.test.services.TestService
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
-import org.jetbrains.kotlin.test.services.jsLibraryProvider
+import org.jetbrains.kotlin.test.services.libraryProvider
 import java.io.ByteArrayOutputStream
 import java.io.File
 
@@ -81,8 +81,8 @@ class JsIrIncrementalDataProvider(private val testServices: TestServices) : Test
     private fun recordIncrementalDataForRuntimeKlib(module: TestModule) {
         val runtimeKlibPath = JsEnvironmentConfigurator.getRuntimePathsForModule(module, testServices)
         val libs = runtimeKlibPath.map {
-            val descriptor = testServices.jsLibraryProvider.getDescriptorByPath(it)
-            testServices.jsLibraryProvider.getCompiledLibraryByDescriptor(descriptor)
+            val descriptor = testServices.libraryProvider.getDescriptorByPath(it)
+            testServices.libraryProvider.getCompiledLibraryByDescriptor(descriptor)
         }
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
 

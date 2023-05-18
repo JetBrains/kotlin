@@ -1,9 +1,7 @@
 // !LANGUAGE: +UnrestrictedBuilderInference -UseBuilderInferenceOnlyIfNeeded
 // WITH_STDLIB
 // !DIAGNOSTICS: -OPT_IN_USAGE_ERROR -CAST_NEVER_SUCCEEDS
-// IGNORE_BACKEND_K2: JVM_IR, JS_IR, NATIVE
-// IGNORING_WASM_FOR_K2
-// IGNORE_BACKEND: WASM
+// IGNORE_BACKEND_K2: JVM_IR, JS_IR, NATIVE, WASM
 // FIR status: Initializer type mismatch at first val x = : expected kotlin/collections/MutableList<kotlin/CharSequence>, actual kotlin/collections/MutableList<kotlin/String>
 
 import kotlin.experimental.ExperimentalTypeInference

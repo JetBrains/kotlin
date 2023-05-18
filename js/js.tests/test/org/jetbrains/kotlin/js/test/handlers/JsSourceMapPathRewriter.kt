@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.js.parser.sourcemaps.*
 import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
-import org.jetbrains.kotlin.test.services.jsLibraryProvider
+import org.jetbrains.kotlin.test.services.libraryProvider
 import org.jetbrains.kotlin.test.services.moduleStructure
 import java.io.File
 
@@ -60,7 +60,7 @@ class JsSourceMapPathRewriter(testServices: TestServices) : AbstractJsArtifactsC
     private fun tryToMapLibrarySourceFile(dependencies: Iterable<ModuleDescriptor>, sourceMapPath: String): String? {
         for (dependency in dependencies) {
             val libraryFile = try {
-                File(testServices.jsLibraryProvider.getPathByDescriptor(dependency))
+                File(testServices.libraryProvider.getPathByDescriptor(dependency))
             } catch (e: NoSuchElementException) {
                 continue
             }
