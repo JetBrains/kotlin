@@ -159,13 +159,11 @@ object LowLevelFirApiFacadeForResolveOnAir {
         val firFile = moduleComponents.firFileBuilder.buildRawFirFileWithCaching(file)
 
         val scopeSession = firResolveSession.getScopeSessionFor(session)
-        firFile.lazyResolveToPhase(FirResolvePhase.IMPORTS)
-
         return firFile.createTowerDataContext(scopeSession)
     }
 
     private fun FirFile.createTowerDataContext(scopeSession: ScopeSession): FirTowerDataContext {
-        val importingScopes = createImportingScopes(this, moduleData.session, scopeSession, useCaching = false)
+        val importingScopes = createImportingScopes(this, moduleData.session, scopeSession)
         val fileScopeElements = importingScopes.map { it.asTowerDataElement(isLocal = false) }
         return FirTowerDataContext().addNonLocalTowerDataElements(fileScopeElements)
     }
