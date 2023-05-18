@@ -21,6 +21,6 @@ import kotlin.wasm.internal.*
 
 internal interface anyref
 internal interface eqref : anyref
-internal interface dataref : eqref
+internal interface structref : eqref
 internal interface i31ref : eqref
 internal interface funcref : anyref

@@ -101,7 +101,7 @@ class WasmTypeTransformer(
                     when (val name = klass.name.identifier) {
                         "anyref" -> WasmAnyRef
                         "eqref" -> WasmEqRef
-                        "dataref" -> WasmRefNullType(WasmHeapType.Simple.Data)
+                        "structref" -> WasmRefNullType(WasmHeapType.Simple.Struct)
                         "i31ref" -> WasmI31Ref
                         "funcref" -> WasmRefNullType(WasmHeapType.Simple.Func)
                         else -> error("Unknown reference type $name")

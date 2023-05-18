@@ -43,23 +43,23 @@ fun testExterRef() {
     check(null2ExternRef() == null)
 }
 
-class DataRefImpl
-typealias DataRef = JsReference<DataRefImpl>
+class StructRefImpl
+typealias StructRef = JsReference<StructRefImpl>
 
-fun notNullDataRef(x: DataRef): DataRef = js("x")
+fun notNullStructRef(x: StructRef): StructRef = js("x")
 
-fun notNull2DataRef(x: DataRef): DataRef = js("null")
+fun notNull2StructRef(x: StructRef): StructRef = js("null")
 
-fun nullDataRef(x: DataRef): DataRef? = js("x")
+fun nullStructRef(x: StructRef): StructRef? = js("x")
 
-fun null2DataRef(x: DataRef): DataRef? = js("null")
+fun null2StructRef(x: StructRef): StructRef? = js("null")
 
-fun testDataRef() {
-    val dataRef = DataRefImpl().toJsReference()
-    check(notNullDataRef(dataRef) == dataRef)
-    checkNPE { notNull2DataRef(dataRef) }
-    check (nullDataRef(dataRef) == dataRef)
-    check (null2DataRef(dataRef) == null)
+fun testStructRef() {
+    val structRef = StructRefImpl().toJsReference()
+    check(notNullStructRef(structRef) == structRef)
+    checkNPE { notNull2StructRef(structRef) }
+    check (nullStructRef(structRef) == structRef)
+    check (null2StructRef(structRef) == null)
 }
 
 fun notNullInt(): Int = js("123")
@@ -125,7 +125,7 @@ fun testFloat() {
 fun box(): String {
     testString()
     testExterRef()
-    testDataRef()
+    testStructRef()
     testInt()
     testBoolean()
     testShort()

@@ -282,7 +282,7 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
             // Thus, we export helper "caller" method that JavaScript will use to call kotlin closures:
             //
             //     @JsExport
-            //     fun __callFunction_<signatureString>(f: dataref, p1: JsType1, p2: JsType2, ...): JsTypeRes {
+            //     fun __callFunction_<signatureString>(f: structref, p1: JsType1, p2: JsType2, ...): JsTypeRes {
             //          return adapt(
             //              cast<FunctionN>(f).invoke(
             //                  adapt(p1),
@@ -302,7 +302,7 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
             //     @JsFun("""(f) => {
             //        (p1, p2, ...) => <wasm-exports>.__callFunction_<signatureString>(f, p1, p2, ...)
             //     }""")
-            //     external fun __convertKotlinClosureToJsClosure_<signatureString>(f: dataref): ExternalRef
+            //     external fun __convertKotlinClosureToJsClosure_<signatureString>(f: structref): ExternalRef
             //
             val kotlinToJsClosureConvertor = context.kotlinClosureToJsConverters.getOrPut(functionTypeInfo.signatureString) {
                 createKotlinToJsClosureConvertor(functionTypeInfo)
@@ -436,7 +436,7 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
         result.parent = currentParent
         result.addValueParameter {
             name = Name.identifier("f")
-            type = context.wasmSymbols.wasmDataRefType
+            type = context.wasmSymbols.wasmStructRefType
         }
         var count = 0
         info.adaptedParameterTypes.forEach { type ->
@@ -476,7 +476,7 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
         result.parent = currentParent
         result.addValueParameter {
             name = Name.identifier("f")
-            type = context.wasmSymbols.wasmDataRefType
+            type = context.wasmSymbols.wasmStructRefType
         }
         val builder = context.createIrBuilder(result.symbol)
         // TODO: Cache created JS closures
@@ -722,24 +722,24 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
     }
 
     /**
-     * Current V8 Wasm GC mandates dataref type instead of structs and arrays
+     * Current V8 Wasm GC mandates structref type instead of structs and arrays
      */
     inner class SendKotlinObjectToJsAdapter(
         override val fromType: IrType
     ) : InteropTypeAdapter {
-        override val toType: IrType = context.wasmSymbols.wasmDataRefType
+        override val toType: IrType = context.wasmSymbols.wasmStructRefType
         override fun adapt(expression: IrExpression, builder: IrBuilderWithScope): IrExpression {
             return builder.irReinterpretCast(expression, toType)
         }
     }
 
     /**
-     * Current V8 Wasm GC mandates dataref type instead of structs and arrays
+     * Current V8 Wasm GC mandates structref type instead of structs and arrays
      */
     inner class ReceivingKotlinObjectFromJsAdapter(
         override val toType: IrType
     ) : InteropTypeAdapter {
-        override val fromType: IrType = context.wasmSymbols.wasmDataRefType
+        override val fromType: IrType = context.wasmSymbols.wasmStructRefType
         override fun adapt(expression: IrExpression, builder: IrBuilderWithScope): IrExpression {
             val call = builder.irCall(context.wasmSymbols.refCastNull)
             call.putValueArgument(0, expression)
@@ -749,7 +749,7 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
     }
 
     /**
-     * Current V8 Wasm GC mandates dataref type instead of structs and arrays
+     * Current V8 Wasm GC mandates structref type instead of structs and arrays
      */
 
     /**

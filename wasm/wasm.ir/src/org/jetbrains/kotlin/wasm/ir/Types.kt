@@ -35,7 +35,7 @@ data class WasmRefType(val heapType: WasmHeapType) : WasmType("ref", -0x15)
 object WasmI31Ref : WasmType("i31ref", -0x16)
 
 @Suppress("unused")
-object WasmDataRef : WasmType("dataref", -0x19)
+object WasmStructRef : WasmType("structref", -0x19)
 
 sealed class WasmHeapType {
     data class Type(val type: WasmSymbolReadOnly<WasmTypeDeclaration>) : WasmHeapType() {
@@ -49,7 +49,7 @@ sealed class WasmHeapType {
         object Extern : Simple("extern", -0x11)
         object Any : Simple("any", -0x12)
         object Eq : Simple("eq", -0x13)
-        object Data : Simple("data", -0x19)
+        object Struct : Simple("struct", -0x19)
         object NullNone : Simple("nullref", -0x1b)
         object NullNoExtern : Simple("nullexternref", -0x17)
 

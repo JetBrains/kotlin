@@ -9,10 +9,6 @@
 
 package kotlin.wasm.internal
 
-import kotlin.wasm.internal.reftypes.anyref
-import kotlin.wasm.internal.reftypes.dataref
-import kotlin.wasm.internal.reftypes.funcref
-import kotlin.wasm.internal.reftypes.i31ref
 import kotlin.wasm.internal.ExternalInterfaceType
 
 @WasmOp(WasmOp.UNREACHABLE)
