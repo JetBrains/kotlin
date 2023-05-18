@@ -1191,6 +1191,25 @@ open class HierarchicalMppIT : KGPBaseTest() {
         }
     }
 
+    @GradleTest
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_0)
+    fun `test type safe project accessors with KotlinDependencyHandler`(gradleVersion: GradleVersion) {
+        project("mpp-project-with-type-safe-accessors", gradleVersion) {
+            build("help") {
+                println(output)
+                val actualDependencies = output.lineSequence()
+                    .filter { it.startsWith("PROJECT_DEPENDENCY: ") }
+                    .map { it.removePrefix("PROJECT_DEPENDENCY: ") }
+                    .toList()
+
+                assertEquals(
+                    listOf(":foo", ":bar"),
+                    actualDependencies
+                )
+            }
+        }
+    }
+
 
     private fun TestProject.testDependencyTransformations(
         subproject: String? = null,
