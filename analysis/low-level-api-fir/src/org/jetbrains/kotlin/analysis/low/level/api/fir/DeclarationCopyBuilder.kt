@@ -27,7 +27,6 @@ internal object DeclarationCopyBuilder {
         declarations.addAll(classWithBody.declarations)
         symbol = classWithBody.symbol
         initDeclaration(this@withBodyFrom, classWithBody)
-        resolvePhase = minOf(this.resolvePhase, FirResolvePhase.IMPORTS) //TODO move into initDeclaration?
     }
 
     fun FirScript.withBodyFrom(
