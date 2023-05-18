@@ -443,6 +443,12 @@ public class FirSourceLazyDeclarationResolveTestGenerated extends AbstractFirSou
     @TestDataPath("$PROJECT_ROOT")
     public class Classes {
         @Test
+        @TestMetadata("actual.kt")
+        public void testActual() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/lazyResolve/classes/actual.kt");
+        }
+
+        @Test
         public void testAllFilesPresentInClasses() throws Exception {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testdata/lazyResolve/classes"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
