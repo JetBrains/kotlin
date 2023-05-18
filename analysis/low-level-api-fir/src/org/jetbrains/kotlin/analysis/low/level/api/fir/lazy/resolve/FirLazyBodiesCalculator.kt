@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.name.StandardClassIds.Annotations.SinceKotlin
 import org.jetbrains.kotlin.fir.types.customAnnotations
 import org.jetbrains.kotlin.fir.types.forEachType
 
@@ -57,6 +56,18 @@ internal object FirLazyBodiesCalculator {
             FirLazyAnnotationTransformerData(firElement.moduleData.session, FirLazyAnnotationTransformerScope.COMPILER_ONLY)
         )
     }
+
+    fun calculateLazyArgumentsForAnnotation(annotationCall: FirAnnotationCall, session: FirSession): FirArgumentList {
+        require(needCalculatingAnnotationCall(annotationCall))
+        val builder = RawFirBuilder(session, baseScopeProvider = session.kotlinScopeProvider)
+        val ktAnnotationEntry = annotationCall.psi as KtAnnotationEntry
+        builder.context.packageFqName = ktAnnotationEntry.containingKtFile.packageFqName
+        val newAnnotationCall = builder.buildAnnotationCall(ktAnnotationEntry)
+        return newAnnotationCall.argumentList
+    }
+
+    fun needCalculatingAnnotationCall(firAnnotationCall: FirAnnotationCall): Boolean =
+        firAnnotationCall.argumentList.arguments.any { it is FirLazyExpression }
 }
 
 private fun replaceValueParameterDefaultValues(valueParameters: List<FirValueParameter>, newValueParameters: List<FirValueParameter>) {
@@ -66,15 +77,6 @@ private fun replaceValueParameterDefaultValues(valueParameters: List<FirValuePar
             valueParameter.replaceDefaultValue(newValueParameter.defaultValue)
         }
     }
-}
-
-private fun calculateLazyArgumentsForAnnotation(annotationCall: FirAnnotationCall, session: FirSession) {
-    require(needCalculatingAnnotationCall(annotationCall))
-    val builder = RawFirBuilder(session, baseScopeProvider = session.kotlinScopeProvider)
-    val ktAnnotationEntry = annotationCall.psi as KtAnnotationEntry
-    builder.context.packageFqName = ktAnnotationEntry.containingKtFile.packageFqName
-    val newAnnotationCall = builder.buildAnnotationCall(ktAnnotationEntry)
-    annotationCall.replaceArgumentList(newAnnotationCall.argumentList)
 }
 
 private fun calculateLazyBodiesForFunction(designation: FirDesignation) {
@@ -214,9 +216,6 @@ private fun needCalculatingLazyBodyForProperty(firProperty: FirProperty): Boolea
             || (firProperty.delegate as? FirWrappedDelegateExpression)?.expression is FirLazyExpression
             || firProperty.getExplicitBackingField()?.initializer is FirLazyExpression
 
-private fun needCalculatingAnnotationCall(firAnnotationCall: FirAnnotationCall): Boolean =
-    firAnnotationCall.argumentList.arguments.any { it is FirLazyExpression }
-
 private enum class FirLazyAnnotationTransformerScope {
     ALL_ANNOTATIONS,
     COMPILER_ONLY;
@@ -287,8 +286,9 @@ private abstract class FirLazyAnnotationTransformer : FirTransformer<FirLazyAnno
     override fun transformAnnotationCall(annotationCall: FirAnnotationCall, data: FirLazyAnnotationTransformerData): FirStatement {
         val shouldCalculate = data.compilerAnnotationsOnly == FirLazyAnnotationTransformerScope.ALL_ANNOTATIONS ||
                 canBeCompilerAnnotation(annotationCall, data.session)
-        if (shouldCalculate && needCalculatingAnnotationCall(annotationCall)) {
-            calculateLazyArgumentsForAnnotation(annotationCall, data.session)
+        if (shouldCalculate && FirLazyBodiesCalculator.needCalculatingAnnotationCall(annotationCall)) {
+            val newArgumentList = FirLazyBodiesCalculator.calculateLazyArgumentsForAnnotation(annotationCall, data.session)
+            annotationCall.replaceArgumentList(newArgumentList)
         }
 
         super.transformAnnotationCall(annotationCall, data)

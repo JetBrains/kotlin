@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -95,13 +95,25 @@ fun FirAnnotationContainer.getDeprecationsProvider(session: FirSession): Depreca
     return extractDeprecationInfoPerUseSite(session).toDeprecationsProvider(session.firCachesFactory)
 }
 
-fun FirAnnotationContainer.extractDeprecationInfoPerUseSite(session: FirSession): DeprecationAnnotationInfoPerUseSiteStorage {
+fun FirAnnotationContainer.extractDeprecationInfoPerUseSite(
+    session: FirSession,
+    customAnnotations: List<FirAnnotation>? = annotations,
+    getterAnnotations: List<FirAnnotation>? = null,
+    setterAnnotations: List<FirAnnotation>? = null,
+): DeprecationAnnotationInfoPerUseSiteStorage {
     val fromJava = this is FirDeclaration && this.isJavaOrEnhancement
-
     return buildDeprecationAnnotationInfoPerUseSiteStorage {
-        add(annotations.extractDeprecationAnnotationInfoPerUseSite(session, fromJava))
+        add((customAnnotations ?: annotations).extractDeprecationAnnotationInfoPerUseSite(session, fromJava))
         if (this@extractDeprecationInfoPerUseSite is FirProperty) {
-            add(getDeprecationsAnnotationInfoByUseSiteFromAccessors(session, getter, setter))
+            add(
+                getDeprecationsAnnotationInfoByUseSiteFromAccessors(
+                    session = session,
+                    getter = getter,
+                    getterAnnotations = getterAnnotations,
+                    setter = setter,
+                    setterAnnotations = setterAnnotations,
+                )
+            )
         }
     }
 }
@@ -110,31 +122,34 @@ fun getDeprecationsProviderFromAccessors(
     session: FirSession,
     getter: FirFunction?,
     setter: FirFunction?
-): DeprecationsProvider {
-    return getDeprecationsAnnotationInfoByUseSiteFromAccessors(session, getter, setter).toDeprecationsProvider(session.firCachesFactory)
-}
+): DeprecationsProvider = getDeprecationsAnnotationInfoByUseSiteFromAccessors(
+    session = session,
+    getter = getter,
+    setter = setter,
+).toDeprecationsProvider(session.firCachesFactory)
 
 fun getDeprecationsAnnotationInfoByUseSiteFromAccessors(
     session: FirSession,
     getter: FirFunction?,
-    setter: FirFunction?
-): DeprecationAnnotationInfoPerUseSiteStorage {
-    return buildDeprecationAnnotationInfoPerUseSiteStorage {
-        val setterDeprecations = setter?.extractDeprecationInfoPerUseSite(session)
-        setterDeprecations?.storage?.forEach { (useSite, infos) ->
-            if (useSite == null) {
-                add(AnnotationUseSiteTarget.PROPERTY_SETTER, infos)
-            } else {
-                add(useSite, infos)
-            }
+    getterAnnotations: List<FirAnnotation>? = getter?.annotations,
+    setter: FirFunction?,
+    setterAnnotations: List<FirAnnotation>? = setter?.annotations,
+): DeprecationAnnotationInfoPerUseSiteStorage = buildDeprecationAnnotationInfoPerUseSiteStorage {
+    val setterDeprecations = setter?.extractDeprecationInfoPerUseSite(session, customAnnotations = setterAnnotations)
+    setterDeprecations?.storage?.forEach { (useSite, infos) ->
+        if (useSite == null) {
+            add(AnnotationUseSiteTarget.PROPERTY_SETTER, infos)
+        } else {
+            add(useSite, infos)
         }
-        val getterDeprecations = getter?.extractDeprecationInfoPerUseSite(session)
-        getterDeprecations?.storage?.forEach { (useSite, infos) ->
-            if (useSite == null) {
-                add(AnnotationUseSiteTarget.PROPERTY_GETTER, infos)
-            } else {
-                add(useSite, infos)
-            }
+    }
+
+    val getterDeprecations = getter?.extractDeprecationInfoPerUseSite(session, customAnnotations = getterAnnotations)
+    getterDeprecations?.storage?.forEach { (useSite, infos) ->
+        if (useSite == null) {
+            add(AnnotationUseSiteTarget.PROPERTY_GETTER, infos)
+        } else {
+            add(useSite, infos)
         }
     }
 }

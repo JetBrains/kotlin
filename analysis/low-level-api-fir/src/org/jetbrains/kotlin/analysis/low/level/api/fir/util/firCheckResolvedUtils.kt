@@ -105,6 +105,15 @@ internal fun checkDefaultValueIsResolved(parameter: FirValueParameter) {
     }
 }
 
+internal fun checkDeprecationProviderIsResolved(declaration: FirDeclaration, provider: DeprecationsProvider) {
+    checkWithAttachmentBuilder(
+        condition = provider !is UnresolvedDeprecationProvider,
+        message = { "Unresolved deprecation provider found for ${declaration::class.simpleName}" }
+    ) {
+        withFirEntry("declaration", declaration)
+    }
+}
+
 internal fun checkReturnTypeRefIsResolved(declaration: FirCallableDeclaration, acceptImplicitTypeRef: Boolean = false) {
     checkTypeRefIsResolved(declaration.returnTypeRef, typeRefName = "return type", declaration, acceptImplicitTypeRef)
 }

@@ -220,11 +220,13 @@ object LowLevelFirApiFacadeForResolveOnAir {
             fileAnnotation = annotationEntry,
             replacement = replacement
         )
+
         val fileAnnotationsContainer = buildFileAnnotationsContainer {
             moduleData = firFile.moduleData
             containingFileSymbol = firFile.symbol
             annotations += annotationCall
         }
+
         val llFirResolvableSession = firFile.llFirResolvableSession
             ?: buildErrorWithAttachment("FirFile session expected to be a resolvable session but was ${firFile.llFirSession::class.java}") {
                 withEntry("firSession", firFile.llFirSession) { it.toString() }
@@ -239,7 +241,8 @@ object LowLevelFirApiFacadeForResolveOnAir {
 
         collector?.addFileContext(firFile, firFile.createTowerDataContext(firResolveSession.getScopeSessionFor(llFirResolvableSession)))
 
-        return annotationCall
+        // We should return annotation from fileAnnotationsContainer because the original annotation can be replaced
+        return fileAnnotationsContainer.annotations.single()
     }
 
     private fun runBodyResolveOnAir(

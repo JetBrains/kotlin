@@ -226,27 +226,28 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
     override fun transformAnnotationCall(annotationCall: FirAnnotationCall, data: Nothing?): FirStatement {
         val annotationTypeRef = annotationCall.annotationTypeRef
         if (annotationTypeRef !is FirUserTypeRef) return annotationCall
-        val name = annotationTypeRef.qualifier.last().name
+        if (!shouldRunAnnotationResolve(annotationTypeRef)) return annotationCall
+        transformAnnotationCall(annotationCall, annotationTypeRef)
+        return annotationCall
+    }
 
-        if (!shouldRunAnnotationResolve(name)) return annotationCall
-
+    fun transformAnnotationCall(annotationCall: FirAnnotationCall, typeRef: FirUserTypeRef) {
         val transformedAnnotationType = typeResolverTransformer.transformUserTypeRef(
-            annotationTypeRef.createDeepCopy(),
-            ScopeClassDeclaration(scopes.asReversed(), classDeclarationsStack)
-        ) as? FirResolvedTypeRef ?: return annotationCall
+            userTypeRef = createDeepCopyOfTypeRef(typeRef),
+            data = ScopeClassDeclaration(scopes.asReversed(), classDeclarationsStack),
+        ) as? FirResolvedTypeRef ?: return
 
         resolveAnnotationsOnAnnotationIfNeeded(transformedAnnotationType)
 
-        if (!transformedAnnotationType.requiredToSave()) return annotationCall
+        if (!transformedAnnotationType.requiredToSave()) return
 
         annotationCall.replaceAnnotationTypeRef(transformedAnnotationType)
         annotationCall.replaceAnnotationResolvePhase(FirAnnotationResolvePhase.CompilerRequiredAnnotations)
+
         // TODO: what if we have type alias here?
         if (transformedAnnotationType.coneTypeSafe<ConeClassLikeType>()?.lookupTag?.classId in REQUIRED_ANNOTATIONS_WITH_ARGUMENTS) {
             argumentsTransformer.transformAnnotation(annotationCall, ResolutionMode.ContextDependent)
         }
-
-        return annotationCall
     }
 
     private fun resolveAnnotationsOnAnnotationIfNeeded(annotationTypeRef: FirResolvedTypeRef) {
@@ -258,7 +259,8 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
         error("Should not be there")
     }
 
-    private fun shouldRunAnnotationResolve(name: Name): Boolean {
+    fun shouldRunAnnotationResolve(typeRef: FirUserTypeRef): Boolean {
+        val name = typeRef.qualifier.last().name
         if (metaAnnotationsFromPlugins.isNotEmpty()) return true
         return name in REQUIRED_ANNOTATION_NAMES || annotationsFromPlugins.any { it.shortName() == name }
     }
@@ -420,19 +422,30 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
     }
 
     private fun FirProperty.moveJavaDeprecatedAnnotationToBackingField() {
-        val annotations = this.annotations
-        val backingField = this.backingField
-        if (annotations.isNotEmpty() && backingField != null) {
-            val (backingFieldAnnotations, propertyAnnotations) = annotations.partition {
-                it.toAnnotationClassIdSafe(session) == Java.Deprecated
-            }
-
-            if (backingFieldAnnotations.isNotEmpty()) {
-                this.replaceAnnotations(propertyAnnotations)
-                backingField.replaceAnnotations(backingField.annotations + backingFieldAnnotations)
-            }
-        }
+        val newPosition = extractBackingFieldAnnotationsFromProperty(this) ?: return
+        this.replaceAnnotations(newPosition.propertyAnnotations)
+        backingField?.replaceAnnotations(newPosition.backingFieldAnnotations)
     }
+
+    fun extractBackingFieldAnnotationsFromProperty(
+        property: FirProperty,
+        propertyAnnotations: List<FirAnnotation> = property.annotations,
+        backingFieldAnnotations: List<FirAnnotation> = property.backingField?.annotations.orEmpty(),
+    ): AnnotationsPosition? {
+        if (propertyAnnotations.isEmpty() || property.backingField == null) return null
+
+        val (newBackingFieldAnnotations, newPropertyAnnotations) = propertyAnnotations.partition {
+            it.toAnnotationClassIdSafe(session) == Java.Deprecated
+        }
+
+        if (newBackingFieldAnnotations.isEmpty()) return null
+        return AnnotationsPosition(
+            propertyAnnotations = newPropertyAnnotations,
+            backingFieldAnnotations = backingFieldAnnotations + newBackingFieldAnnotations,
+        )
+    }
+
+    class AnnotationsPosition(val backingFieldAnnotations: List<FirAnnotation>, val propertyAnnotations: List<FirAnnotation>)
 
     override fun transformSimpleFunction(
         simpleFunction: FirSimpleFunction,
@@ -525,20 +538,18 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
         }
     }
 
-    private fun FirUserTypeRef.createDeepCopy(): FirUserTypeRef {
-        val original = this
-        return buildUserTypeRef {
-            source = original.source
-            isMarkedNullable = original.isMarkedNullable
-            annotations.addAll(original.annotations)
-            original.qualifier.mapTo(qualifier) { it.createDeepCopy() }
-        }
+    fun createDeepCopyOfTypeRef(original: FirUserTypeRef): FirUserTypeRef = buildUserTypeRef {
+        source = original.source
+        isMarkedNullable = original.isMarkedNullable
+        annotations.addAll(original.annotations)
+        original.qualifier.mapTo(qualifier) { it.createDeepCopy() }
     }
 
     private fun FirQualifierPart.createDeepCopy(): FirQualifierPart {
         val newArgumentList = FirTypeArgumentListImpl(typeArgumentList.source).apply {
             typeArgumentList.typeArguments.mapTo(typeArguments) { it.createDeepCopy() }
         }
+
         return FirQualifierPartImpl(
             source,
             name,
@@ -551,7 +562,7 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
             is FirTypeProjectionWithVariance -> buildTypeProjectionWithVariance {
                 source = original.source
                 typeRef = when (val originalTypeRef = original.typeRef) {
-                    is FirUserTypeRef -> originalTypeRef.createDeepCopy()
+                    is FirUserTypeRef -> createDeepCopyOfTypeRef(originalTypeRef)
                     else -> originalTypeRef
                 }
                 variance = original.variance

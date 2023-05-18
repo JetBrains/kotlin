@@ -30,7 +30,7 @@ FILE: [ResolvedTo(IMPORTS)] fileAnnotations.kt
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] fileAnnotations.kt
-    @FILE:Deprecated[Unresolved](String())
+    @FILE:R|kotlin/Deprecated|[CompilerRequiredAnnotations](String())
     @FILE:Anno[Unresolved](LAZY_EXPRESSION)
     [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotations container
     @Target[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
@@ -45,7 +45,7 @@ FILE: [ResolvedTo(IMPORTS)] fileAnnotations.kt
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] fileAnnotations.kt
-    @FILE:Deprecated[Unresolved](String())
+    @FILE:R|kotlin/Deprecated|[CompilerRequiredAnnotations](String())
     @FILE:Anno[Unresolved](LAZY_EXPRESSION)
     [ResolvedTo(COMPANION_GENERATION)] annotations container
     @Target[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
@@ -60,7 +60,7 @@ FILE: [ResolvedTo(IMPORTS)] fileAnnotations.kt
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] fileAnnotations.kt
-    @FILE:Deprecated[Unresolved](String())
+    @FILE:R|kotlin/Deprecated|[CompilerRequiredAnnotations](String())
     @FILE:Anno[Unresolved](LAZY_EXPRESSION)
     [ResolvedTo(SUPER_TYPES)] annotations container
     @Target[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
