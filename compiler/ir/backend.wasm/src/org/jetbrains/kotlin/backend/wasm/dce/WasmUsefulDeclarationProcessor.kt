@@ -141,6 +141,12 @@ internal class WasmUsefulDeclarationProcessor(
         irClass.getWasmArrayAnnotation()?.type
             ?.enqueueType(irClass, "array type for wasm array annotated")
 
+        if (irClass.symbol in context.wasmSymbols.primitiveTypeToCreateTypedArray.keys) {
+            irClass.declarations.forEach {
+                (it as? IrField)?.enqueue(irClass, "preserve all fields for primitive arrays")
+            }
+        }
+
         if (context.inlineClassesUtils.isClassInlineLike(irClass)) {
             irClass.declarations
                 .firstIsInstanceOrNull<IrConstructor>()
@@ -166,7 +172,11 @@ internal class WasmUsefulDeclarationProcessor(
         irFunction.getEffectiveValueParameters().forEach { it.enqueueValueParameterType(irFunction) }
         irFunction.returnType.enqueueType(irFunction, "function return type")
 
-        kotlinClosureToJsClosureConvertFunToKotlinClosureCallFun[irFunction]?.enqueue(irFunction, "kotlin closure to JS closure conversion", false)
+        kotlinClosureToJsClosureConvertFunToKotlinClosureCallFun[irFunction]?.enqueue(
+            irFunction,
+            "kotlin closure to JS closure conversion",
+            false
+        )
     }
 
     override fun processSimpleFunction(irFunction: IrSimpleFunction) {

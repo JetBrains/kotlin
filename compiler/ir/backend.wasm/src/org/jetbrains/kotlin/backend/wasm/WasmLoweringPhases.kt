@@ -18,6 +18,8 @@ import org.jetbrains.kotlin.backend.common.lower.optimizations.PropertyAccessorI
 import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.backend.common.toMultiModuleAction
 import org.jetbrains.kotlin.backend.wasm.lower.*
+import org.jetbrains.kotlin.backend.wasm.lower.WasmArrayConstructorLowering
+import org.jetbrains.kotlin.backend.wasm.lower.WasmArrayConstructorReferenceLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.*
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.AddContinuationToFunctionCallsLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.JsSuspendFunctionsLowering
@@ -111,6 +113,19 @@ private val lateinitUsageLoweringPhase = makeWasmModulePhase(
     ::LateinitUsageLowering,
     name = "LateinitUsage",
     description = "Insert checks for lateinit field references"
+)
+
+private val arrayConstructorReferencePhase = makeWasmModulePhase(
+    ::WasmArrayConstructorReferenceLowering,
+    name = "ArrayConstructorReference",
+    description = "Transform `::Array` into a lambda"
+)
+
+private val arrayConstructorPhase = makeWasmModulePhase(
+    ::WasmArrayConstructorLowering,
+    name = "ArrayConstructor",
+    description = "Transform `Array(size) { index -> value }` into a loop",
+    prerequisite = setOf(arrayConstructorReferencePhase)
 )
 
 private val sharedVariablesLoweringPhase = makeWasmModulePhase(
@@ -607,6 +622,8 @@ val wasmPhases = SameTypeNamedCompilerPhase(
             lateinitNullableFieldsPhase then
             lateinitDeclarationLoweringPhase then
             lateinitUsageLoweringPhase then
+            arrayConstructorReferencePhase then
+            arrayConstructorPhase then
             sharedVariablesLoweringPhase then
             localClassesInInlineLambdasPhase then
             localClassesInInlineFunctionsPhase then

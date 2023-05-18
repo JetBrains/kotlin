@@ -3,6 +3,14 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress(
+    "TYPE_PARAMETER_AS_REIFIED",
+    "WRONG_MODIFIER_TARGET",
+    "NON_ABSTRACT_FUNCTION_WITH_NO_BODY",
+    "PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED",
+    "UNUSED_PARAMETER"
+)
+
 package kotlin
 
 import kotlin.wasm.internal.*
@@ -17,9 +25,8 @@ import kotlin.wasm.internal.*
 public class Array<T> @PublishedApi internal constructor(size: Int) {
     internal val storage: WasmAnyArray = WasmAnyArray(size)
 
-    @Suppress("TYPE_PARAMETER_AS_REIFIED", "UNUSED_PARAMETER", "CAST_NEVER_SUCCEEDS")
     @WasmPrimitiveConstructor
-    internal constructor(storage: WasmAnyArray) : this(check(false) as Int)
+    internal constructor(storage: WasmAnyArray)
 
     /**
      * Creates a new array with the specified [size], where each element is calculated by calling the specified
@@ -28,11 +35,7 @@ public class Array<T> @PublishedApi internal constructor(size: Int) {
      * The function [init] is called for each array element sequentially starting from the first one.
      * It should return the value for an array element given its index.
      */
-    // TODO: it have to be inline 
-    @Suppress("TYPE_PARAMETER_AS_REIFIED")
-    public constructor(size: Int, init: (Int) -> T) : this(size) {
-        storage.fill(size, init)
-    }
+    public inline constructor(size: Int, init: (Int) -> T)
 
     /**
      * Returns the array element at the specified [index]. This method can be called using the
@@ -83,3 +86,8 @@ internal fun <T> arrayIterator(array: Array<T>) = object : Iterator<T> {
     override fun next() = if (index != array.size) array[index++] else throw NoSuchElementException("$index")
 }
 
+internal inline fun <reified T> createAnyArray(size: Int, invokable: (Int) -> T): Array<T> {
+    val result = WasmAnyArray(size)
+    result.fill(size, invokable)
+    return Array(result)
+}

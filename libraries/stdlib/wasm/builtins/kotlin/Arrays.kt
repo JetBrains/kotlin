@@ -3,6 +3,14 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress(
+    "TYPE_PARAMETER_AS_REIFIED",
+    "WRONG_MODIFIER_TARGET",
+    "NON_ABSTRACT_FUNCTION_WITH_NO_BODY",
+    "PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED",
+    "UNUSED_PARAMETER"
+)
+
 package kotlin
 
 import kotlin.wasm.internal.*
@@ -10,13 +18,10 @@ import kotlin.wasm.internal.*
 public class ByteArray(size: Int) {
     internal val storage = WasmByteArray(size)
 
-    @Suppress("TYPE_PARAMETER_AS_REIFIED", "UNUSED_PARAMETER", "CAST_NEVER_SUCCEEDS")
     @WasmPrimitiveConstructor
-    internal constructor(storage: WasmByteArray) : this(check(false) as Int)
+    internal constructor(storage: WasmByteArray)
 
-    public constructor(size: Int, init: (Int) -> Byte) : this(size) {
-        storage.fill(size, init)
-    }
+    public inline constructor(size: Int, init: (Int) -> Byte)
 
     public operator fun get(index: Int): Byte {
         rangeCheck(index, storage.len())
@@ -40,17 +45,19 @@ internal fun byteArrayIterator(array: ByteArray) = object : ByteIterator() {
     override fun nextByte() = if (index != array.size) array[index++] else throw NoSuchElementException("$index")
 }
 
+internal inline fun createByteArray(size: Int, invokable: (Int) -> Byte): ByteArray {
+    val result = WasmByteArray(size)
+    result.fill(size, invokable)
+    return ByteArray(result)
+}
 
 public class CharArray(size: Int) {
     internal val storage = WasmCharArray(size)
 
-    @Suppress("TYPE_PARAMETER_AS_REIFIED", "UNUSED_PARAMETER", "CAST_NEVER_SUCCEEDS")
     @WasmPrimitiveConstructor
-    internal constructor(storage: WasmCharArray) : this(check(false) as Int)
+    internal constructor(storage: WasmCharArray)
 
-    public constructor(size: Int, init: (Int) -> Char) : this(size) {
-        storage.fill(size) { init(it) }
-    }
+    public inline constructor(size: Int, init: (Int) -> Char)
 
     public operator fun get(index: Int): Char {
         rangeCheck(index, storage.len())
@@ -75,17 +82,19 @@ internal fun charArrayIterator(array: CharArray) = object : CharIterator() {
     override fun nextChar() = if (index != array.size) array[index++] else throw NoSuchElementException("$index")
 }
 
+internal inline fun createCharArray(size: Int, invokable: (Int) -> Char): CharArray {
+    val result = WasmCharArray(size)
+    result.fill(size, invokable)
+    return CharArray(result)
+}
 
 public class ShortArray(size: Int) {
     internal val storage = WasmShortArray(size)
 
-    @Suppress("TYPE_PARAMETER_AS_REIFIED", "UNUSED_PARAMETER", "CAST_NEVER_SUCCEEDS")
     @WasmPrimitiveConstructor
-    internal constructor(storage: WasmShortArray) : this(check(false) as Int)
+    internal constructor(storage: WasmShortArray)
 
-    public constructor(size: Int, init: (Int) -> Short) : this(size) {
-        storage.fill(size, init)
-    }
+    public inline constructor(size: Int, init: (Int) -> Short)
 
     public operator fun get(index: Int): Short {
         rangeCheck(index, storage.len())
@@ -110,17 +119,19 @@ internal fun shortArrayIterator(array: ShortArray) = object : ShortIterator() {
     override fun nextShort() = if (index != array.size) array[index++] else throw NoSuchElementException("$index")
 }
 
+internal inline fun createShortArray(size: Int, invokable: (Int) -> Short): ShortArray {
+    val result = WasmShortArray(size)
+    result.fill(size, invokable)
+    return ShortArray(result)
+}
 
 public class IntArray(size: Int) {
     internal val storage = WasmIntArray(size)
 
-    @Suppress("TYPE_PARAMETER_AS_REIFIED", "UNUSED_PARAMETER", "CAST_NEVER_SUCCEEDS")
     @WasmPrimitiveConstructor
-    internal constructor(storage: WasmIntArray) : this(check(false) as Int)
+    internal constructor(storage: WasmIntArray)
 
-    public constructor(size: Int, init: (Int) -> Int) : this(size) {
-        storage.fill(size, init)
-    }
+    public inline constructor(size: Int, init: (Int) -> Int)
 
     public operator fun get(index: Int): Int {
         rangeCheck(index, storage.len())
@@ -145,17 +156,19 @@ internal fun intArrayIterator(array: IntArray) = object : IntIterator() {
     override fun nextInt() = if (index != array.size) array[index++] else throw NoSuchElementException("$index")
 }
 
+internal inline fun createIntArray(size: Int, invokable: (Int) -> Int): IntArray {
+    val result = WasmIntArray(size)
+    result.fill(size, invokable)
+    return IntArray(result)
+}
 
 public class LongArray(size: Int) {
     internal val storage = WasmLongArray (size)
 
-    @Suppress("TYPE_PARAMETER_AS_REIFIED", "UNUSED_PARAMETER", "CAST_NEVER_SUCCEEDS")
     @WasmPrimitiveConstructor
-    internal constructor(storage: WasmLongArray) : this(check(false) as Int)
+    internal constructor(storage: WasmLongArray)
 
-    public constructor(size: Int, init: (Int) -> Long) : this(size) {
-        storage.fill(size, init)
-    }
+    public inline constructor(size: Int, init: (Int) -> Long)
 
     public operator fun get(index: Int): Long {
         rangeCheck(index, storage.len())
@@ -179,17 +192,19 @@ internal fun longArrayIterator(array: LongArray) = object : LongIterator() {
     override fun nextLong() = if (index != array.size) array[index++] else throw NoSuchElementException("$index")
 }
 
+internal inline fun createLongArray(size: Int, invokable: (Int) -> Long): LongArray {
+    val result = WasmLongArray(size)
+    result.fill(size, invokable)
+    return LongArray(result)
+}
 
 public class FloatArray(size: Int) {
     internal val storage = WasmFloatArray(size)
 
-    @Suppress("TYPE_PARAMETER_AS_REIFIED", "UNUSED_PARAMETER", "CAST_NEVER_SUCCEEDS")
     @WasmPrimitiveConstructor
-    internal constructor(storage: WasmFloatArray) : this(check(false) as Int)
+    internal constructor(storage: WasmFloatArray)
 
-    public constructor(size: Int, init: (Int) -> Float) : this(size) {
-        storage.fill(size, init)
-    }
+    public inline constructor(size: Int, init: (Int) -> Float)
 
     public operator fun get(index: Int): Float {
         rangeCheck(index, storage.len())
@@ -213,17 +228,19 @@ internal fun floatArrayIterator(array: FloatArray) = object : FloatIterator() {
     override fun nextFloat() = if (index != array.size) array[index++] else throw NoSuchElementException("$index")
 }
 
+internal inline fun createFloatArray(size: Int, invokable: (Int) -> Float): FloatArray {
+    val result = WasmFloatArray(size)
+    result.fill(size, invokable)
+    return FloatArray(result)
+}
 
 public class DoubleArray(size: Int) {
     internal val storage = WasmDoubleArray(size)
 
-    @Suppress("TYPE_PARAMETER_AS_REIFIED", "UNUSED_PARAMETER", "CAST_NEVER_SUCCEEDS")
     @WasmPrimitiveConstructor
-    internal constructor(storage: WasmDoubleArray) : this(check(false) as Int)
+    internal constructor(storage: WasmDoubleArray)
 
-    public constructor(size: Int, init: (Int) -> Double) : this(size) {
-        storage.fill(size, init)
-    }
+    public inline constructor(size: Int, init: (Int) -> Double)
 
     public operator fun get(index: Int): Double {
         rangeCheck(index, storage.len())
@@ -247,17 +264,19 @@ internal fun doubleArrayIterator(array: DoubleArray) = object : DoubleIterator()
     override fun nextDouble() = if (index != array.size) array[index++] else throw NoSuchElementException("$index")
 }
 
+internal inline fun createDoubleArray(size: Int, invokable: (Int) -> Double): DoubleArray {
+    val result = WasmDoubleArray(size)
+    result.fill(size, invokable)
+    return DoubleArray(result)
+}
 
 public class BooleanArray(size: Int) {
     internal val storage = WasmByteArray(size)
 
-    @Suppress("TYPE_PARAMETER_AS_REIFIED", "CAST_NEVER_SUCCEEDS", "UNUSED_PARAMETER")
     @WasmPrimitiveConstructor
-    internal constructor(storage: WasmByteArray) : this(check(false) as Int)
+    internal constructor(storage: WasmByteArray)
 
-    public constructor(size: Int, init: (Int) -> Boolean) : this(size) {
-        storage.fill(size) { init(it).toInt().reinterpretAsByte() }
-    }
+    public inline constructor(size: Int, init: (Int) -> Boolean)
 
     public operator fun get(index: Int): Boolean {
         rangeCheck(index, storage.len())
@@ -279,4 +298,16 @@ internal fun booleanArrayIterator(array: BooleanArray) = object : BooleanIterato
     var index = 0
     override fun hasNext() = index != array.size
     override fun nextBoolean() = if (index != array.size) array[index++] else throw NoSuchElementException("$index")
+}
+
+@WasmNoOpCast
+private fun Boolean.reinterpretAsByte(): Byte =
+    implementedAsIntrinsic
+
+internal inline fun createBooleanArray(size: Int, invokable: (Int) -> Boolean): BooleanArray {
+    val result = WasmByteArray(size)
+    result.fill(size) {
+        invokable(it).reinterpretAsByte()
+    }
+    return BooleanArray(result)
 }
