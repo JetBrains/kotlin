@@ -127,6 +127,10 @@ class LanguageVersionSettingsBuilder {
             specificFeatures[LanguageFeature.JsAllowValueClassesInExternals] = LanguageFeature.State.ENABLED
         }
 
+        if (targetBackend == TargetBackend.WASM) {
+            specificFeatures[LanguageFeature.JsAllowImplementingFunctionInterface] = LanguageFeature.State.ENABLED
+        }
+
         directives[LanguageSettingsDirectives.LANGUAGE].forEach { parseLanguageFeature(it) }
     }
 
