@@ -1,5 +1,7 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import com.github.jengelman.gradle.plugins.shadow.transformers.DontIncludeResourceTransformer
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.pill.PillExtension
 
 plugins {
@@ -274,6 +276,15 @@ if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
     }
 
     val functionalTestCompilation = kotlin.target.compilations.getByName("functionalTest")
+    functionalTestCompilation.compileJavaTaskProvider.configure {
+        sourceCompatibility = JavaLanguageVersion.of(11).toString()
+        targetCompatibility = JavaLanguageVersion.of(11).toString()
+    }
+    functionalTestCompilation.compileTaskProvider.configure {
+        with(this as KotlinCompile) {
+            kotlinJavaToolchain.toolchain.use(project.getToolchainLauncherFor(JdkMajorVersion.JDK_11_0))
+        }
+    }
     functionalTestCompilation.associateWith(kotlin.target.compilations.getByName("main"))
     functionalTestCompilation.associateWith(kotlin.target.compilations.getByName("common"))
 
@@ -316,8 +327,8 @@ if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
         val implementation = project.configurations.getByName(functionalTestSourceSet.implementationConfigurationName)
         val compileOnly = project.configurations.getByName(functionalTestSourceSet.compileOnlyConfigurationName)
 
-        implementation("com.android.tools.build:gradle:7.2.1")
-        implementation("com.android.tools.build:gradle-api:7.2.1")
+        implementation("com.android.tools.build:gradle:7.4.2")
+        implementation("com.android.tools.build:gradle-api:7.4.2")
         compileOnly("com.android.tools:common:30.2.1")
         implementation(gradleKotlinDsl())
         implementation(project(":kotlin-gradle-plugin-kpm-android"))
