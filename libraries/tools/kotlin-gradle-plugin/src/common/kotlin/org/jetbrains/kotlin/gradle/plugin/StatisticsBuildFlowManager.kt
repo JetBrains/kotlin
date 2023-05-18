@@ -11,8 +11,6 @@ import org.gradle.api.provider.Property
 import org.gradle.api.services.ServiceReference
 import org.gradle.api.tasks.Input
 import org.jetbrains.kotlin.gradle.plugin.statistics.BuildFlowService
-import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
-import org.jetbrains.kotlin.gradle.plugin.statistics.MetricContainer
 import org.jetbrains.kotlin.gradle.report.BuildMetricsService
 import org.jetbrains.kotlin.gradle.report.BuildScanExtensionHolder
 import javax.inject.Inject
@@ -28,15 +26,12 @@ internal abstract class StatisticsBuildFlowManager @Inject constructor(
 
     fun subscribeForBuildResult(project: Project) {
         val buildScanExtension = project.rootProject.extensions.findByName("buildScan")
-        val buildScan = buildScanExtension?.let { BuildScanExtensionHolder(it) }
-        val configurationTimeMetrics = project.provider {
-            KotlinBuildStatsService.getInstance()?.collectedStartMetrics(project)
-        }
+        val buildScanHolder = buildScanExtension?.let { BuildScanExtensionHolder(it) }
+
         flowScope.always(
             BuildFinishFlowAction::class.java
         ) { spec ->
-            spec.parameters.buildScanExtensionHolder.set(buildScan)
-            spec.parameters.configurationTimeMetrics.set(configurationTimeMetrics)
+            spec.parameters.buildScanExtensionHolder.set(buildScanHolder)
             spec.parameters.buildFailed.set(flowProviders.buildWorkResult.map { it.failure.isPresent })
         }
     }
@@ -59,14 +54,11 @@ internal class BuildFinishFlowAction : FlowAction<BuildFinishFlowAction.Paramete
 
         @get:Input
         val buildScanExtensionHolder: Property<BuildScanExtensionHolder?>
-
-        @get:Input
-        val configurationTimeMetrics: Property<MetricContainer>
     }
 
     override fun execute(parameters: Parameters) {
         parameters.buildFlowServiceProperty.get().recordBuildFinished(
-            parameters.action.orNull, parameters.buildFailed.get(), parameters.configurationTimeMetrics.get()
+            parameters.action.orNull, parameters.buildFailed.get()
         )
         parameters.buildMetricService.orNull?.addCollectedTagsToBuildScan(parameters.buildScanExtensionHolder.orNull)
     }

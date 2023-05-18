@@ -27,20 +27,18 @@ import java.io.Serializable
 internal abstract class BuildFlowService : BuildService<BuildFlowService.Parameters>, AutoCloseable, OperationCompletionListener {
     private var buildFailed: Boolean = false
 
-
     interface Parameters : BuildServiceParameters {
         val configurationMetrics: Property<MetricContainer>
     }
+
     companion object {
         fun registerIfAbsentImpl(
             project: Project,
         ): Provider<BuildFlowService> {
-            val buildService = project.gradle.registerClassLoaderScopedBuildService(BuildFlowService::class) { buidlService ->
-                project.gradle.projectsEvaluated {
-                    buidlService.parameters.configurationMetrics.set(project.provider {
-                        KotlinBuildStatsService.getInstance()?.collectedStartMetrics(project)
-                    })
-                }
+            val buildService = project.gradle.registerClassLoaderScopedBuildService(BuildFlowService::class) { spec ->
+                spec.parameters.configurationMetrics.set(project.provider {
+                    KotlinBuildStatsService.getInstance()?.collectedStartMetrics(project)
+                })
             }
 
             KotlinBuildStatsService.applyIfInitialised {
@@ -63,12 +61,12 @@ internal abstract class BuildFlowService : BuildService<BuildFlowService.Paramet
     }
 
     override fun close() {
-        recordBuildFinished(null, buildFailed, parameters.configurationMetrics.orElse(MetricContainer()).get())
+        recordBuildFinished(null, buildFailed)
     }
 
-    internal fun recordBuildFinished(action: String?, buildFailed: Boolean, configurationTimeMetrics: MetricContainer) {
+    internal fun recordBuildFinished(action: String?, buildFailed: Boolean) {
         KotlinBuildStatsService.applyIfInitialised {
-            it.recordBuildFinish(action, buildFailed, configurationTimeMetrics)
+            it.recordBuildFinish(action, buildFailed, parameters.configurationMetrics.orElse(MetricContainer()).get())
         }
     }
 }

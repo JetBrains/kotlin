@@ -112,38 +112,42 @@ class KotlinBuildStatHandler {
                     configurationTimeMetrics.put(BooleanMetrics.ENABLED_DOKKA, true)
                 }
                 for (configuration in project.configurations) {
-                    val configurationName = configuration.name
-                    val dependencies = configuration.dependencies
+                    try {
+                        val configurationName = configuration.name
+                        val dependencies = configuration.dependencies
 
-                    when (configurationName) {
-                        "KoverEngineConfig" -> {
-                            configurationTimeMetrics.put(BooleanMetrics.ENABLED_KOVER, true)
-                        }
-                        "kapt" -> {
-                            configurationTimeMetrics.put(BooleanMetrics.ENABLED_KAPT, true)
-                            for (dependency in dependencies) {
-                                when (dependency.group) {
-                                    "com.google.dagger" -> configurationTimeMetrics.put(BooleanMetrics.ENABLED_DAGGER, true)
-                                    "com.android.databinding" -> configurationTimeMetrics.put(BooleanMetrics.ENABLED_DATABINDING, true)
+                        when (configurationName) {
+                            "KoverEngineConfig" -> {
+                                configurationTimeMetrics.put(BooleanMetrics.ENABLED_KOVER, true)
+                            }
+                            "kapt" -> {
+                                configurationTimeMetrics.put(BooleanMetrics.ENABLED_KAPT, true)
+                                for (dependency in dependencies) {
+                                    when (dependency.group) {
+                                        "com.google.dagger" -> configurationTimeMetrics.put(BooleanMetrics.ENABLED_DAGGER, true)
+                                        "com.android.databinding" -> configurationTimeMetrics.put(BooleanMetrics.ENABLED_DATABINDING, true)
+                                    }
                                 }
                             }
+                            API -> {
+                                configurationTimeMetrics.put(NumericalMetrics.CONFIGURATION_API_COUNT, 1)
+                                reportLibrariesVersions(configurationTimeMetrics, dependencies)
+                            }
+                            IMPLEMENTATION -> {
+                                configurationTimeMetrics.put(NumericalMetrics.CONFIGURATION_IMPLEMENTATION_COUNT, 1)
+                                reportLibrariesVersions(configurationTimeMetrics, dependencies)
+                            }
+                            COMPILE -> {
+                                configurationTimeMetrics.put(NumericalMetrics.CONFIGURATION_COMPILE_COUNT, 1)
+                                reportLibrariesVersions(configurationTimeMetrics, dependencies)
+                            }
+                            RUNTIME -> {
+                                configurationTimeMetrics.put(NumericalMetrics.CONFIGURATION_RUNTIME_COUNT, 1)
+                                reportLibrariesVersions(configurationTimeMetrics, dependencies)
+                            }
                         }
-                        API -> {
-                            configurationTimeMetrics.put(NumericalMetrics.CONFIGURATION_API_COUNT, 1)
-                            reportLibrariesVersions(configurationTimeMetrics, dependencies)
-                        }
-                        IMPLEMENTATION -> {
-                            configurationTimeMetrics.put(NumericalMetrics.CONFIGURATION_IMPLEMENTATION_COUNT, 1)
-                            reportLibrariesVersions(configurationTimeMetrics, dependencies)
-                        }
-                        COMPILE -> {
-                            configurationTimeMetrics.put(NumericalMetrics.CONFIGURATION_COMPILE_COUNT, 1)
-                            reportLibrariesVersions(configurationTimeMetrics, dependencies)
-                        }
-                        RUNTIME -> {
-                            configurationTimeMetrics.put(NumericalMetrics.CONFIGURATION_RUNTIME_COUNT, 1)
-                            reportLibrariesVersions(configurationTimeMetrics, dependencies)
-                        }
+                    } catch (e: Throwable) {
+                        // log?
                     }
                 }
                 val taskNames = project.tasks.names
