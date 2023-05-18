@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.test.model
 
 import org.jetbrains.kotlin.KtSourceFile
+import org.jetbrains.kotlin.backend.wasm.WasmCompilerResult
 import org.jetbrains.kotlin.codegen.ClassFileFactory
 import org.jetbrains.kotlin.fileClasses.JvmFileClassInfo
 import org.jetbrains.kotlin.ir.backend.js.CompilerResult
@@ -47,6 +48,11 @@ object BinaryArtifacts {
     class Native : ResultingArtifact.Binary<Native>() {
         override val kind: BinaryKind<Native>
             get() = ArtifactKinds.Native
+    }
+
+    class Wasm(val compilerResult: WasmCompilerResult) : ResultingArtifact.Binary<Wasm>() {
+        override val kind: BinaryKind<Wasm>
+            get() = ArtifactKinds.Wasm
     }
 
     class KLib(val outputFile: File) : ResultingArtifact.Binary<KLib>() {

@@ -7,22 +7,24 @@ package org.jetbrains.kotlin.test.services.configuration
 
 import org.jetbrains.kotlin.config.AnalysisFlag
 import org.jetbrains.kotlin.config.AnalysisFlags.allowFullyQualifiedNameInKClass
-import org.jetbrains.kotlin.config.AnalysisFlags.skipPrereleaseCheck
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.SourceMapSourceEmbedding
+import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.EXPECT_ACTUAL_LINKER
-import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.GENERATE_INLINE_ANONYMOUS_FUNCTIONS
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.NO_INLINE
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.PROPERTY_LAZY_INITIALIZATION
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.SOURCE_MAP_EMBED_SOURCES
+import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
+import org.jetbrains.kotlin.test.frontend.classic.moduleDescriptorProvider
 import org.jetbrains.kotlin.test.model.ArtifactKinds
 import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.DependencyRelation
@@ -32,10 +34,16 @@ import java.io.File
 
 class WasmEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
     override val directiveContainers: List<DirectivesContainer>
-        get() = listOf(JsEnvironmentConfigurationDirectives)
+        get() = listOf(WasmEnvironmentConfigurationDirectives)
 
     companion object {
-        private fun getKlibDependencies(module: TestModule, testServices: TestServices, kind: DependencyRelation): List<File> {
+        private const val OUTPUT_KLIB_DIR_NAME = "outputKlibDir"
+
+        fun getRuntimePathsForModule(): List<String> {
+            return listOf(System.getProperty("kotlin.wasm.stdlib.path")!!, System.getProperty("kotlin.wasm.kotlin.test.path")!!)
+        }
+
+        fun getKlibDependencies(module: TestModule, testServices: TestServices, kind: DependencyRelation): List<File> {
             val visited = mutableSetOf<TestModule>()
             fun getRecursive(module: TestModule, relation: DependencyRelation) {
                 val dependencies = if (relation == DependencyRelation.FriendDependency) {
@@ -62,6 +70,50 @@ class WasmEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfi
                 .map { testServices.jsLibraryProvider.getDescriptorByPath(it.absolutePath) }
         }
 
+
+        fun getWasmKlibArtifactPath(testServices: TestServices, moduleName: String): String {
+            return getWasmKlibOutputDir(testServices).absolutePath + File.separator + JsEnvironmentConfigurator.getJsArtifactSimpleName(
+                testServices,
+                moduleName
+            )
+        }
+
+        fun getWasmKlibOutputDir(testServices: TestServices): File {
+            return testServices.temporaryDirectoryManager.getOrCreateTempDirectory(OUTPUT_KLIB_DIR_NAME)
+        }
+
+        fun getAllRecursiveDependenciesFor(module: TestModule, testServices: TestServices): Set<ModuleDescriptorImpl> {
+            val visited = mutableSetOf<ModuleDescriptorImpl>()
+            fun getRecursive(descriptor: ModuleDescriptor) {
+                descriptor.allDependencyModules.forEach {
+                    if (it is ModuleDescriptorImpl && it !in visited) {
+                        visited += it
+                        getRecursive(it)
+                    }
+                }
+            }
+
+            getRecursive(testServices.moduleDescriptorProvider.getModuleDescriptor(module))
+            return visited
+        }
+
+        fun getAllRecursiveLibrariesFor(module: TestModule, testServices: TestServices): Map<KotlinLibrary, ModuleDescriptorImpl> {
+            val dependencies = getAllRecursiveDependenciesFor(module, testServices)
+            return dependencies.associateBy { testServices.jsLibraryProvider.getCompiledLibraryByDescriptor(it) }
+        }
+
+        fun getMainModule(testServices: TestServices): TestModule {
+            val modules = testServices.moduleStructure.modules
+            val inferMainModule = JsEnvironmentConfigurationDirectives.INFER_MAIN_MODULE in testServices.moduleStructure.allDirectives
+            return when {
+                inferMainModule -> modules.last()
+                else -> modules.singleOrNull { it.name == ModuleStructureExtractor.DEFAULT_MODULE_NAME } ?: modules.last()
+            }
+        }
+
+        fun isMainModule(module: TestModule, testServices: TestServices): Boolean {
+            return module == getMainModule(testServices)
+        }
     }
 
 
