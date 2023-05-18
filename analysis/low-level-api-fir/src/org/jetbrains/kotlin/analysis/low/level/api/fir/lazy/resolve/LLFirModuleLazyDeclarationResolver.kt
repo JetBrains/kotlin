@@ -19,12 +19,12 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkCanceled
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.getContainingFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withFirEntry
 import org.jetbrains.kotlin.analysis.utils.errors.rethrowExceptionWithDetails
-import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.FirImportResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirTowerDataContextCollector
+import org.jetbrains.kotlin.fir.visitors.transformSingle
 
 internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirModuleResolveComponents) {
     /**
@@ -120,7 +120,8 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
         onAirCreatedDeclaration: Boolean,
         towerDataContextCollector: FirTowerDataContextCollector?,
     ) {
-        resolveFileToImportsWithoutLock(designation.firFile)
+        resolveFileToImportsWithLock(designation.firFile)
+
         val target = when (designation.target) {
             is FirRegularClass -> LLFirClassWithAllMembersResolveTarget(designation.firFile, designation.path, designation.target)
             else -> LLFirSingleResolveTarget(designation.firFile, designation.path, designation.target)
@@ -145,16 +146,13 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
     private fun resolveContainingFileToImports(target: FirElementWithResolveState) {
         if (target.resolvePhase >= FirResolvePhase.IMPORTS) return
         val firFile = target.getContainingFile() ?: return
-        if (firFile.resolvePhase >= FirResolvePhase.IMPORTS) return
-        moduleComponents.globalResolveComponents.lockProvider.withWriteLock(firFile, FirResolvePhase.IMPORTS) {
-            resolveFileToImportsWithoutLock(firFile)
-        }
+        resolveFileToImportsWithLock(firFile)
     }
 
-    private fun resolveFileToImportsWithoutLock(firFile: FirFile) {
-        if (firFile.resolvePhase >= FirResolvePhase.IMPORTS) return
-        checkCanceled()
-        firFile.transform<FirElement, Any?>(FirImportResolveTransformer(firFile.moduleData.session), null)
+    private fun resolveFileToImportsWithLock(firFile: FirFile) {
+        moduleComponents.globalResolveComponents.lockProvider.withWriteLock(firFile, FirResolvePhase.IMPORTS) {
+            firFile.transformSingle(FirImportResolveTransformer(firFile.moduleData.session), null)
+        }
     }
 
     private fun lazyResolveTargets(
