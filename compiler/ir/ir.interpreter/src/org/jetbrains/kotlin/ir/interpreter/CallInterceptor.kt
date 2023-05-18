@@ -91,7 +91,9 @@ internal class DefaultCallInterceptor(override val interpreter: IrInterpreter) :
             irClass.defaultType.isUnsignedType() -> {
                 // Check for type is a hack needed for Native;
                 // in UInt, for example, we may have (after lowerings, I guess) additional property "$companion".
-                val propertySymbol = irClass.declarations.single { it is IrProperty && it.getter?.returnType?.isPrimitiveType() == true }.symbol
+                // Check for fake overrides is a hack needed for Wasm;
+                // in UInt, for example, we may have additional typeInfo and hashCode properties declared in "Any"
+                val propertySymbol = irClass.declarations.single { it is IrProperty && !it.isFakeOverride && it.getter?.returnType?.isPrimitiveType() == true }.symbol
                 callStack.pushState(receiver.apply { this.setField(propertySymbol, args.single()) })
             }
             else -> defaultAction()
