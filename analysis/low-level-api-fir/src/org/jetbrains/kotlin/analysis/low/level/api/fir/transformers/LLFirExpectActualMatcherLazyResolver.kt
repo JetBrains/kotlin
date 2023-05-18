@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkPhase
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirTowerDataContextCollector
 import org.jetbrains.kotlin.fir.resolve.transformers.mpp.FirExpectActualMatcherTransformer
@@ -45,7 +46,12 @@ private class LLFirExpectActualMatchingTargetResolver(
     session: FirSession,
     scopeSession: ScopeSession,
 ) : LLFirTargetResolver(target, lockProvider, FirResolvePhase.EXPECT_ACTUAL_MATCHING) {
-    private val transformer = FirExpectActualMatcherTransformer(session, scopeSession)
+    private val transformer = object : FirExpectActualMatcherTransformer(session, scopeSession) {
+        override fun transformRegularClass(regularClass: FirRegularClass, data: Nothing?): FirStatement {
+            transformMemberDeclaration(regularClass)
+            return regularClass
+        }
+    }
 
     override fun withFile(firFile: FirFile, action: () -> Unit) {
         action()
