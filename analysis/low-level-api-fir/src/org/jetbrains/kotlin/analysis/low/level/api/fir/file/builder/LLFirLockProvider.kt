@@ -171,10 +171,15 @@ internal class LLFirLockProvider(private val checker: LLFirLazyResolveContractCh
 
                 is FirResolvedToPhaseState -> {
                     if (!tryLock(toPhase, stateSnapshot)) continue
+
+                    var exceptionOccurred = false
                     try {
                         action()
+                    } catch (e: Throwable) {
+                        exceptionOccurred = true
+                        throw e
                     } finally {
-                        val newPhase = if (updatePhase) toPhase else stateSnapshot.resolvePhase
+                        val newPhase = if (updatePhase && !exceptionOccurred) toPhase else stateSnapshot.resolvePhase
                         unlock(toPhase = newPhase)
                     }
 
