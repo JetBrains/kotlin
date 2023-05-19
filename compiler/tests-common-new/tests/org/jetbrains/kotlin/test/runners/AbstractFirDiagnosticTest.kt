@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.test.frontend.fir.handlers.*
 import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.FrontendFacade
 import org.jetbrains.kotlin.test.model.FrontendKinds
-import org.jetbrains.kotlin.test.services.JsLibraryProvider
+import org.jetbrains.kotlin.test.services.LibraryProvider
 import org.jetbrains.kotlin.test.services.TestService
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
@@ -106,7 +106,7 @@ abstract class AbstractFirWithActualizerDiagnosticsTest(val parser: FirParser) :
             )
         }
 
-        useAdditionalService(::JsLibraryProvider)
+        useAdditionalService(::LibraryProvider)
     }
 }
 
