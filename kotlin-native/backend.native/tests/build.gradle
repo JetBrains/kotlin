@@ -5418,8 +5418,7 @@ dynamicTest("kt41904") {
 for (i in 0..2) {
     dynamicTest("kt42796_$i") {
         clangTool = "clang++"
-        disabled = (project.testTarget == 'wasm32') || // wasm doesn't support -produce dynamic
-                (i==1 && isK2(project)) // KT-56182
+        disabled = (project.testTarget == 'wasm32') // wasm doesn't support -produce dynamic
         source = "produce_dynamic/kt-42796/main-${i}.kt"
         cSource = "$projectDir/produce_dynamic/kt-42796/main.cpp"
         useGoldenData = true
@@ -5455,12 +5454,16 @@ dynamicTest("interop_concurrentRuntime") {
     expectedExitStatus = 99
 }
 
-dynamicTest("interop_kt42397") {
-    disabled = (project.testTarget == 'wasm32') || // wasm doesn't support -produce dynamic
-            isK2(project) // KT-56182
-    source = "interop/kt42397/knlibrary.kt"
-    cSource = "$projectDir/interop/kt42397/test.cpp"
-    clangTool = "clang++"
+for (i in ["kt42397", "kt56182_root", "kt56182_package1lvl", "kt56182_subpackage2lvl", "kt56182_root_package1lvl", "kt56182_root_subpackage2lvl"]) {
+    // note: kt56182_package1lvl is same as kt42397
+    // note: kt56182_root_package1lvl is similar as kt41904
+    // note: kt56182_subpackage2lvl is similar as kt42796_1
+    dynamicTest("interop_$i") {
+        disabled = (project.testTarget == 'wasm32') // wasm doesn't support -produce dynamic
+        source = "interop/$i/knlibrary.kt"
+        cSource = "$projectDir/interop/$i/test.cpp"
+        clangTool = "clang++"
+    }
 }
 
 dynamicTest("interop_cleaners_main_thread") {
