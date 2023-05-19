@@ -88,12 +88,6 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
     }
 
     @Test
-    @TestMetadata("replaceFunctionCall.kt")
-    public void testReplaceFunctionCall() throws Exception {
-        runTest("testData/box/replaceFunctionCall.kt");
-    }
-
-    @Test
     @TestMetadata("unhandledIntrisic.kt")
     public void testUnhandledIntrisic() throws Exception {
         runTest("testData/box/unhandledIntrisic.kt");

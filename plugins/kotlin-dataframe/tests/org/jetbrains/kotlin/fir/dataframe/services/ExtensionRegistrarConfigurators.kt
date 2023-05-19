@@ -8,8 +8,13 @@ package org.jetbrains.kotlin.fir.dataframe.services
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.dataframe.extensions.DataFrameIrBodyFiller
 import org.jetbrains.kotlin.fir.dataframe.FirDataFrameExtensionRegistrar
+import org.jetbrains.kotlin.fir.dataframe.FirMetaContextImpl
+import org.jetbrains.kotlin.fir.dataframe.TemplateCompiler
+import org.jetbrains.kotlin.fir.dataframe.extensions.FirDataFrameFunctionTransformer
+import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
@@ -22,5 +27,22 @@ class ExtensionRegistrarConfigurator(testServices: TestServices) : EnvironmentCo
     ) {
         FirExtensionRegistrarAdapter.registerExtension(FirDataFrameExtensionRegistrar(null))
         IrGenerationExtension.registerExtension(DataFrameIrBodyFiller())
+    }
+}
+
+class ExperimentalExtensionRegistrarConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
+    override fun CompilerPluginRegistrar.ExtensionStorage.registerCompilerExtensions(
+        module: TestModule,
+        configuration: CompilerConfiguration
+    ) {
+        FirExtensionRegistrarAdapter.registerExtension(object : FirExtensionRegistrar() {
+            override fun ExtensionRegistrarContext.configurePlugin() {
+                +{ it: FirSession ->
+                    val templateCompiler = TemplateCompiler()
+                    templateCompiler.session = it
+                    FirDataFrameFunctionTransformer(it, FirMetaContextImpl(it, templateCompiler))
+                }
+            }
+        })
     }
 }

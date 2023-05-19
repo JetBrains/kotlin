@@ -149,11 +149,6 @@ class FirDataFrameExtensionRegistrar(val path: String?) : FirExtensionRegistrar(
             }
             +{ it: FirSession -> FirDataFrameAdditionalCheckers(it) }
             +{ it: FirSession -> FirDataFrameCandidateInterceptor(it, ::nextFunction, callableState, this::nextName) }
-            +{ it: FirSession ->
-                val templateCompiler = TemplateCompiler()
-                templateCompiler.session = it
-                FirDataFrameFunctionTransformer(it, FirMetaContextImpl(it, templateCompiler))
-            }
             +{ it: FirSession -> FirDataFrameTokenGenerator(it, tokens, tokenState) }
         }
     }
