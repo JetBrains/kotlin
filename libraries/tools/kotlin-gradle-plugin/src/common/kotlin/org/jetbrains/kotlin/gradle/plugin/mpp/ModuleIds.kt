@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.PublishedModuleCoordinatesPro
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.ComputedCapability
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.currentBuildId
 import org.jetbrains.kotlin.gradle.utils.getValue
+import org.jetbrains.kotlin.gradle.utils.isProjectComponentIdentifierInCurrentBuild
 import org.jetbrains.kotlin.project.model.KpmLocalModuleIdentifier
 import org.jetbrains.kotlin.project.model.KpmMavenModuleIdentifier
 import org.jetbrains.kotlin.project.model.KpmModuleIdentifier
@@ -47,7 +48,7 @@ internal object ModuleIds {
 
     fun fromComponent(thisProject: Project, component: ResolvedComponentResult) =
         // If the project component comes from another build, we can't extract anything from it, so just use the module coordinates:
-        if ((component.id as? ProjectComponentIdentifier)?.build?.isCurrentBuild == false)
+        if (!component.id.isProjectComponentIdentifierInCurrentBuild)
             ModuleDependencyIdentifier(component.moduleVersion?.group ?: "unspecified", component.moduleVersion?.name ?: "unspecified")
         else
             fromComponentId(thisProject, component.id)

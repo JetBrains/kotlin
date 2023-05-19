@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.utils.filesProvider
+import org.jetbrains.kotlin.gradle.utils.isProjectComponentIdentifierInCurrentBuild
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 
 internal class MetadataDependencyTransformationTaskInputs(
@@ -81,8 +82,6 @@ internal class MetadataDependencyTransformationTaskInputs(
 
 private fun Configuration.withoutProjectDependencies(): FileCollection {
     return incoming.artifactView { view ->
-        view.componentFilter { componentIdentifier ->
-            componentIdentifier !is ProjectComponentIdentifier || !componentIdentifier.build.isCurrentBuild
-        }
+        view.componentFilter { componentIdentifier -> !componentIdentifier.isProjectComponentIdentifierInCurrentBuild }
     }.files
 }

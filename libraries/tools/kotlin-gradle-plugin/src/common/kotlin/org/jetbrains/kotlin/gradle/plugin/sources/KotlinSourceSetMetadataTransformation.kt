@@ -10,6 +10,7 @@ import org.gradle.api.artifacts.Configuration
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.targets.metadata.dependsOnClosureWithInterCompilationDependencies
+import org.jetbrains.kotlin.gradle.utils.isProjectComponentIdentifierInCurrentBuild
 import org.jetbrains.kotlin.tooling.core.extrasNullableLazyProperty
 
 /**
@@ -83,7 +84,7 @@ private fun Project.applyTransformationToLegacyDependenciesMetadataConfiguration
             configuration.exclude(mapOf("group" to group, "module" to name))
         }
 
-        requested.filter { it.dependency.currentBuildProjectIdOrNull == null }.forEach {
+        requested.filter { !it.dependency.id.isProjectComponentIdentifierInCurrentBuild }.forEach {
             val (group, name) = ModuleIds.fromComponent(project, it.dependency)
             val notation = listOfNotNull(group.orEmpty(), name, it.dependency.moduleVersion?.version).joinToString(":")
             configuration.resolutionStrategy.force(notation)

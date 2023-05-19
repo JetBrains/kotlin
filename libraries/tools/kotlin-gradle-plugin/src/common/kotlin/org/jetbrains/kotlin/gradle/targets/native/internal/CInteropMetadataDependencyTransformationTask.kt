@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.filesProvider
+import org.jetbrains.kotlin.gradle.utils.isProjectComponentIdentifierInCurrentBuild
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.project.model.KpmModuleIdentifier
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
@@ -198,12 +199,7 @@ internal open class CInteropMetadataDependencyTransformationTask @Inject constru
     private fun Iterable<MetadataDependencyResolution>.resolutionsToTransform(): List<ChooseVisibleSourceSets> {
         return filterIsInstance<ChooseVisibleSourceSets>()
             .applyIf(skipProjectDependencies) {
-                filterNot {
-                    val dependencyId = it.dependency.id
-                    // filter out ProjectDependencies but keep the ones which are coming from included builds
-                    // i.e. they are ProjectDependencies but have isCurrentBuild = false
-                    dependencyId is ProjectComponentIdentifier && dependencyId.build.isCurrentBuild
-                }
+                filterNot { it.dependency.id.isProjectComponentIdentifierInCurrentBuild }
             }
     }
 }

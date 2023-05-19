@@ -316,15 +316,6 @@ internal class GranularMetadataTransformation(
 
 }
 
-internal val ResolvedComponentResult.currentBuildProjectIdOrNull
-    get(): ProjectComponentIdentifier? {
-        val identifier = id
-        return when {
-            identifier is ProjectComponentIdentifier && identifier.build.isCurrentBuild -> identifier
-            else -> null
-        }
-    }
-
 private val Project.allProjectsData: Map<String, GranularMetadataTransformation.ProjectData>
     get() = rootProject
         .extraProperties
