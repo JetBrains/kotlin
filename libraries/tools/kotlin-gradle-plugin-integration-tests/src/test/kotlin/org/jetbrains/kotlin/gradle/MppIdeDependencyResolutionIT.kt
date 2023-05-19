@@ -18,12 +18,15 @@ import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.assertMatches
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.binaryCoordinates
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.kotlinNativeDistributionDependencies
+import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.gradle.util.resolveIdeDependencies
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget.*
 import org.junit.AssumptionViolatedException
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.io.TempDir
 import java.nio.ByteBuffer
+import java.nio.file.Path
 import java.util.*
 import java.util.zip.CRC32
 import kotlin.test.assertEquals
@@ -253,6 +256,22 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
             resolveIdeDependencies { dependencies ->
                 dependencies["commonMain"].cinteropDependencies().assertMatches(
                     binaryCoordinates(Regex("""a:cinterop-ios-cinterop-myinterop.*\(ios_x64, linux_x64\)"""))
+                )
+            }
+        }
+    }
+
+    @GradleTest
+    fun `test dependency on composite build with commonized cinterops`(gradleVersion: GradleVersion, @TempDir tempDir: Path) {
+        val includedLib = project("composite-build-with-cinterop-commonization/includedLib", gradleVersion, localRepoDir = tempDir)
+        project("composite-build-with-cinterop-commonization", gradleVersion, localRepoDir = tempDir) {
+            settingsGradleKts.replaceText("<includedLib_path>", includedLib.projectPath.toUri().toString())
+            // Quick fix for: KT-58815
+            build(":lib:copyCommonizeCInteropForIde")
+            resolveIdeDependencies { dependencies ->
+                dependencies["linuxMain"].cinteropDependencies().assertMatches(
+                    binaryCoordinates("org.example:included-lib-cinterop-a:null:(linux_arm64, linux_x64)"),
+                    binaryCoordinates("org.example:lib-cinterop-a:null:(linux_arm64, linux_x64)"),
                 )
             }
         }
