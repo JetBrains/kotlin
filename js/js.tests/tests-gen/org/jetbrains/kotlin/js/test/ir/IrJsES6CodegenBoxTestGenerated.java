@@ -16442,6 +16442,12 @@ public class IrJsES6CodegenBoxTestGenerated extends AbstractIrJsES6CodegenBoxTes
         }
 
         @Test
+        @TestMetadata("initInCompanion.kt")
+        public void testInitInCompanion() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/initInCompanion.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("inlineClassAsLastExpressionInInLambda.kt")
         public void testInlineClassAsLastExpressionInInLambda() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/inlineClassAsLastExpressionInInLambda.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());

@@ -17427,6 +17427,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
                 register("compiler/testData/codegen/box/inlineClasses/genericVararg2ndConstructor.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                 register("compiler/testData/codegen/box/inlineClasses/initBlock.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                 register("compiler/testData/codegen/box/inlineClasses/initBlockGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                register("compiler/testData/codegen/box/inlineClasses/initInCompanion.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                 register("compiler/testData/codegen/box/inlineClasses/inlineClassAsLastExpressionInInLambda.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                 register("compiler/testData/codegen/box/inlineClasses/inlineClassAsLastExpressionInInLambdaGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                 register("compiler/testData/codegen/box/inlineClasses/inlineClassEqualityShouldUseTotalOrderForFloatingPointData.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -18613,6 +18614,13 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
             public void testInitBlockGeneric() throws Exception {
                 // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
                 runTest("compiler/testData/codegen/box/inlineClasses/initBlockGeneric.kt");
+            }
+
+            @Test
+            @TestMetadata("initInCompanion.kt")
+            public void testInitInCompanion() throws Exception {
+                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                runTest("compiler/testData/codegen/box/inlineClasses/initInCompanion.kt");
             }
 
             @Test

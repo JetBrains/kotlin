@@ -16708,6 +16708,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/inlineClasses/equalsEvaluationOrderInlineClassGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
         }
 
+        @TestMetadata("initInCompanion.kt")
+        public void ignoreInitInCompanion() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/initInCompanion.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
         @TestMetadata("inlineClassFieldHandlingGeneric.kt")
         public void ignoreInlineClassFieldHandlingGeneric() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/inlineClassFieldHandlingGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
