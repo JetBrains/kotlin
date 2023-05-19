@@ -149,9 +149,9 @@ internal class DefaultCallInterceptor(override val interpreter: IrInterpreter) :
     private data class Arg(var type: String, var value: Any?)
 
     private fun calculateBuiltIns(irFunction: IrFunction, args: List<State>) {
-        val methodName = when (val property = irFunction.property?.symbol) {
+        val methodName = when (val property = irFunction.property) {
             null -> irFunction.name.asString()
-            else -> property.owner.name.asString()
+            else -> property.name.asString()
         }
 
         val receiverType = irFunction.dispatchReceiverParameter?.type ?: irFunction.extensionReceiverParameter?.type
