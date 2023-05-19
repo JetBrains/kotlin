@@ -121,12 +121,12 @@ sealed class EffectiveVisibility(val name: String, val publicApi: Boolean = fals
                 Public -> this
                 PrivateInClass, PrivateInFile, Local, ProtectedBound, InternalProtectedBound -> other
                 is Protected -> when (relation(other, typeCheckerContextProvider)) {
-                    Permissiveness.SAME, Permissiveness.MORE -> this
-                    Permissiveness.LESS -> other
+                    Permissiveness.SAME, Permissiveness.LESS -> this
+                    Permissiveness.MORE -> other
                     Permissiveness.UNKNOWN -> ProtectedBound
                 }
                 is InternalProtected -> when (relation(other, typeCheckerContextProvider)) {
-                    Permissiveness.LESS -> other
+                    Permissiveness.MORE -> other
                     else -> InternalProtectedBound
                 }
                 is InternalOrPackage -> InternalProtected(containerTypeConstructor)
@@ -192,8 +192,8 @@ sealed class EffectiveVisibility(val name: String, val publicApi: Boolean = fals
                 Public, is InternalOrPackage -> this
                 PrivateInClass, PrivateInFile, Local, InternalProtectedBound -> other
                 is Protected, is InternalProtected -> when (relation(other, typeCheckerContextProvider)) {
-                    Permissiveness.SAME, Permissiveness.MORE -> this
-                    Permissiveness.LESS -> other
+                    Permissiveness.SAME, Permissiveness.LESS -> this
+                    Permissiveness.MORE -> other
                     Permissiveness.UNKNOWN -> InternalProtectedBound
                 }
                 ProtectedBound -> InternalProtectedBound
