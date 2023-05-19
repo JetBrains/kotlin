@@ -18,7 +18,6 @@ internal val LANGUAGE_VERSION_K2: String = System.getProperty("fir.bench.languag
 class FullPipelineModularizedTest : AbstractFullPipelineModularizedTest() {
 
     override fun configureArguments(args: K2JVMCompilerArguments, moduleData: ModuleData) {
-        args.useIR = true
         args.languageVersion = LANGUAGE_VERSION_K2
 
         // TODO: Remove when support for old modularized tests is removed

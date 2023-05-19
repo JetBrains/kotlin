@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.daemon.common.configureDaemonJVMOptions
 import org.jetbrains.kotlin.daemon.common.filterExtractProps
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsProjectExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.internal.ClassLoadersCachingBuildService
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
@@ -46,7 +47,6 @@ import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import org.jetbrains.kotlin.statistics.metrics.StringMetrics
 import java.io.File
 import java.lang.ref.WeakReference
-import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 
 
 const val CREATED_CLIENT_FILE_PREFIX = "Created client-is-alive flag file: "
@@ -169,7 +169,6 @@ internal open class GradleCompilerRunner(
                     KotlinBuildStatsService.getInstance()?.apply {
                         val args = K2JVMCompilerArguments()
                         parseCommandLineArguments(argsArray.toList(), args)
-                        report(BooleanMetrics.JVM_COMPILER_IR_MODE, args.useIR)
                         report(StringMetrics.JVM_DEFAULTS, args.jvmDefault)
                         report(StringMetrics.USE_FIR, args.useK2.toString())
 

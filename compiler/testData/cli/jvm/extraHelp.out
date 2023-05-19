@@ -141,7 +141,6 @@ where advanced options include:
                              including freshly supported reading of the type use annotations from class files.
                              See KT-45671 for more details
   -Xuse-fast-jar-file-system Use fast implementation on Jar FS. This may speed up compilation time, but currently it's an experimental mode
-  -Xuse-ir                   Use the IR backend. This option has no effect unless the language version less than 1.5 is used
   -Xuse-javac                Use javac for Java source and class files analysis
   -Xuse-old-backend          Use the old JVM backend
   -Xuse-old-class-files-reading Use old class files reading implementation. This may slow down the build and cause problems with Groovy interop.

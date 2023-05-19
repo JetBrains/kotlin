@@ -145,16 +145,6 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
 
     // Advanced options
 
-    @Argument(
-        value = "-Xuse-ir",
-        description = "Use the IR backend. This option has no effect unless the language version less than 1.5 is used"
-    )
-    var useIR = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
     @Argument(value = "-Xuse-old-backend", description = "Use the old JVM backend")
     var useOldBackend = false
         set(value) {

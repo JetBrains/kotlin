@@ -246,14 +246,8 @@ fun CompilerConfiguration.configureAdvancedJvmOptions(arguments: K2JVMCompilerAr
 
     put(JVMConfigurationKeys.PARAMETERS_METADATA, arguments.javaParameters)
 
-    // TODO: ignore previous configuration value when we do not need old backend in scripting by default
-    val useOldBackend = arguments.useOldBackend || (!arguments.useIR && get(JVMConfigurationKeys.IR) == false)
-    val useIR = arguments.useK2 || languageVersionSettings.languageVersion.usesK2 ||
-            if (languageVersionSettings.supportsFeature(LanguageFeature.JvmIrEnabledByDefault)) {
-                !useOldBackend
-            } else {
-                arguments.useIR && !useOldBackend
-            }
+    val useOldBackend = arguments.useOldBackend
+    val useIR = arguments.useK2 || languageVersionSettings.languageVersion.usesK2 || !useOldBackend
 
     messageCollector.report(LOGGING, "Using ${if (useIR) "JVM IR" else "old JVM"} backend")
 

@@ -14,7 +14,6 @@ abstract class AbstractIncrementalFirLightTreeJvmCompilerRunnerTest : AbstractIn
         super.createCompilerArguments(destinationDir, testDir).apply {
             useK2 = true
             languageVersion = "2.0"
-            useIR = true
             useFirIC = false
             useFirLT = true
         }

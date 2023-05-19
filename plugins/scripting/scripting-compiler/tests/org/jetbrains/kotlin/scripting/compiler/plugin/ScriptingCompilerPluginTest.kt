@@ -81,14 +81,6 @@ class ScriptingCompilerPluginTest : TestCase() {
         return KotlinCoreEnvironment.createForTests(disposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
     }
 
-    fun testUseOldBackendPreservedOnOptionsUpdate() {
-        val configuration = KotlinTestUtils.newConfiguration(ConfigurationKind.NO_KOTLIN_REFLECT, TestJdkKind.FULL_JDK).apply {
-            put(JVMConfigurationKeys.IR, false)
-            updateWithCompilerOptions(emptyList())
-        }
-        Assert.assertEquals(configuration[JVMConfigurationKeys.IR], false)
-    }
-
     fun testScriptResolverEnvironmentArgsParsing() {
 
         val longStr = (1..100).joinToString("\\,") { """\" $it aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa \\""" }

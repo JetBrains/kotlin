@@ -6,19 +6,11 @@
 package org.jetbrains.kotlin.jps.build
 
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
-import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.incremental.testingUtils.BuildLogFinder
-import org.jetbrains.kotlin.jps.model.k2JvmCompilerArguments
 
 abstract class AbstractIncrementalK2LightTreeJvmJpsTest(
     allowNoFilesWithSuffixInTestData: Boolean = false
 ) : AbstractIncrementalJpsTest(allowNoFilesWithSuffixInTestData = allowNoFilesWithSuffixInTestData) {
-    override fun overrideModuleSettings() {
-        myProject.k2JvmCompilerArguments = K2JVMCompilerArguments().also {
-            it.useIR = true
-        }
-    }
-
     override fun updateCommandLineArguments(arguments: CommonCompilerArguments) {
         additionalCommandLineArguments = additionalCommandLineArguments + listOf("-Xuse-k2", "-Xuse-fir-lt")
         super.updateCommandLineArguments(arguments)

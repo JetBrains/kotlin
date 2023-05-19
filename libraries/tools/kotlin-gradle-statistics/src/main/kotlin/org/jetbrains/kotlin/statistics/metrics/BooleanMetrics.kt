@@ -40,7 +40,6 @@ enum class BooleanMetrics(val type: BooleanOverridePolicy, val anonymization: Bo
     KOTLIN_OFFICIAL_CODESTYLE(OVERRIDE, SAFE),
     KOTLIN_PROGRESSIVE_MODE(OVERRIDE, SAFE),
     KOTLIN_KTS_USED(OR, SAFE),
-    JVM_COMPILER_IR_MODE(OR, SAFE),
 
     JS_GENERATE_EXTERNALS(OR, SAFE),
 
