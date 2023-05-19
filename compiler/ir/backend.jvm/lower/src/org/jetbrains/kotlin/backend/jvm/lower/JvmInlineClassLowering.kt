@@ -442,6 +442,7 @@ internal class JvmInlineClassLowering(
         val function = context.inlineClassReplacements.getReplacementFunction(irConstructor)!!
 
         val initBlocks = valueClass.declarations.filterIsInstance<IrAnonymousInitializer>()
+            .filterNot { it.isStatic }
 
         function.valueParameters.forEach { it.transformChildrenVoid() }
         function.body = context.createIrBuilder(function.symbol).irBlockBody {
