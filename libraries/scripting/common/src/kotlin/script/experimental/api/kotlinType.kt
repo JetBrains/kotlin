@@ -29,7 +29,7 @@ class KotlinType private constructor(
      * Constructs KotlinType from reflected [kclass]
      */
     @JvmOverloads
-    constructor(kclass: KClass<*>, isNullable: Boolean = false) : this(kclass.java.name, kclass, isNullable)
+    constructor(kclass: KClass<*>, isNullable: Boolean = false) : this(kclass.qualifiedName ?: error("Cannot use class $kclass as a KotlinType"), kclass, isNullable)
 
     // TODO: implement other approach for non-class types
     /**
