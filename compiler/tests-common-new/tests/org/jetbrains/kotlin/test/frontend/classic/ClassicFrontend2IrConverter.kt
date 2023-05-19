@@ -42,7 +42,7 @@ class ClassicFrontend2IrConverter(
     BackendKinds.IrBackend
 ) {
     override val additionalServices: List<ServiceRegistrationData>
-        get() = listOf(service(::JsLibraryProvider))
+        get() = listOf(service(::LibraryProvider))
 
     override fun transform(module: TestModule, inputArtifact: ClassicFrontendOutputArtifact): IrBackendInput {
         return when (module.targetBackend) {
@@ -102,7 +102,7 @@ class ClassicFrontend2IrConverter(
             IrFactoryImpl,
             verifySignatures
         ) {
-            testServices.jsLibraryProvider.getDescriptorByCompiledLibrary(it)
+            testServices.libraryProvider.getDescriptorByCompiledLibrary(it)
         }
 
         val errorPolicy = configuration.get(JSConfigurationKeys.ERROR_TOLERANCE_POLICY) ?: ErrorTolerancePolicy.DEFAULT
