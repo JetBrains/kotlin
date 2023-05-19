@@ -29,7 +29,7 @@ internal fun FirBasedSymbol<*>.errorInLazyResolve(name: String, actualClass: KCl
             ).renderElementAsString(fir),
         )
 
-        withAttachment("FirBasedSymbol.txt", this::class.simpleName)
+        withAttachment("FirBasedSymbol.txt", this@errorInLazyResolve::class.simpleName)
         withAttachment("KtSourceElementKind.txt", fir.source?.kind?.let { it::class.simpleName })
         withPsiAttachment("PsiElement.txt", fir.psi)
     }
