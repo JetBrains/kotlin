@@ -69,7 +69,7 @@ class JsKlibBackendFacade(
 
         val dependencies = JsEnvironmentConfigurator.getAllRecursiveDependenciesFor(module, testServices).toList()
         val lib = CommonKLibResolver.resolve(
-            dependencies.map { testServices.jsLibraryProvider.getPathByDescriptor(it) } + listOf(outputFile),
+            dependencies.map { testServices.libraryProvider.getPathByDescriptor(it) } + listOf(outputFile),
             configuration.resolverLogger
         ).getFullResolvedList().last().library
 
@@ -87,7 +87,7 @@ class JsKlibBackendFacade(
         if (JsEnvironmentConfigurator.incrementalEnabled(testServices)) {
             testServices.jsIrIncrementalDataProvider.recordIncrementalData(module, lib)
         }
-        testServices.jsLibraryProvider.setDescriptorAndLibraryByName(outputFile, moduleDescriptor, lib)
+        testServices.libraryProvider.setDescriptorAndLibraryByName(outputFile, moduleDescriptor, lib)
 
         return BinaryArtifacts.KLib(File(outputFile))
     }
