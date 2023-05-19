@@ -197,7 +197,14 @@ internal open class CInteropMetadataDependencyTransformationTask @Inject constru
 
     private fun Iterable<MetadataDependencyResolution>.resolutionsToTransform(): List<ChooseVisibleSourceSets> {
         return filterIsInstance<ChooseVisibleSourceSets>()
-            .applyIf(skipProjectDependencies) { filter { it.dependency.id !is ProjectComponentIdentifier } }
+            .applyIf(skipProjectDependencies) {
+                filterNot {
+                    val dependencyId = it.dependency.id
+                    // filter out ProjectDependencies but keep the ones which are coming from included builds
+                    // i.e. they are ProjectDependencies but have isCurrentBuild = false
+                    dependencyId is ProjectComponentIdentifier && dependencyId.build.isCurrentBuild
+                }
+            }
     }
 }
 

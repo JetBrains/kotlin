@@ -82,7 +82,7 @@ internal class MetadataDependencyTransformationTaskInputs(
 private fun Configuration.withoutProjectDependencies(): FileCollection {
     return incoming.artifactView { view ->
         view.componentFilter { componentIdentifier ->
-            componentIdentifier !is ProjectComponentIdentifier
+            componentIdentifier !is ProjectComponentIdentifier || !componentIdentifier.build.isCurrentBuild
         }
     }.files
 }
