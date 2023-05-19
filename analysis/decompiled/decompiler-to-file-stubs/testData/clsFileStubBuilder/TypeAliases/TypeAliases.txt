@@ -13,82 +13,55 @@ PsiJetFileStubImpl[package=test]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
             TYPE_REFERENCE
-              FUNCTION_TYPE
-                VALUE_PARAMETER_LIST
-                TYPE_REFERENCE
-                  USER_TYPE
-                    USER_TYPE
-                      REFERENCE_EXPRESSION[referencedName=kotlin]
-                    REFERENCE_EXPRESSION[referencedName=Unit]
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=dependency]
+                REFERENCE_EXPRESSION[referencedName=A]
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=b]
             TYPE_REFERENCE
-              FUNCTION_TYPE
-                VALUE_PARAMETER_LIST
-                  VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
-                    TYPE_REFERENCE
-                      FUNCTION_TYPE
-                        VALUE_PARAMETER_LIST
-                        TYPE_REFERENCE
-                          USER_TYPE
-                            USER_TYPE
-                              REFERENCE_EXPRESSION[referencedName=kotlin]
-                            REFERENCE_EXPRESSION[referencedName=Unit]
-                TYPE_REFERENCE
+              USER_TYPE
+                USER_TYPE
                   USER_TYPE
-                    USER_TYPE
-                      REFERENCE_EXPRESSION[referencedName=kotlin]
-                    REFERENCE_EXPRESSION[referencedName=Unit]
+                    REFERENCE_EXPRESSION[referencedName=test]
+                  REFERENCE_EXPRESSION[referencedName=TypeAliases]
+                REFERENCE_EXPRESSION[referencedName=B]
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=ta]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
                   USER_TYPE
-                    REFERENCE_EXPRESSION[referencedName=kotlin]
-                  REFERENCE_EXPRESSION[referencedName=collections]
-                REFERENCE_EXPRESSION[referencedName=Map]
+                    USER_TYPE
+                      REFERENCE_EXPRESSION[referencedName=test]
+                    REFERENCE_EXPRESSION[referencedName=Outer]
+                    TYPE_ARGUMENT_LIST
+                      TYPE_PROJECTION[projectionKind=NONE]
+                        TYPE_REFERENCE
+                          USER_TYPE
+                            USER_TYPE
+                              REFERENCE_EXPRESSION[referencedName=kotlin]
+                            REFERENCE_EXPRESSION[referencedName=String]
+                      TYPE_PROJECTION[projectionKind=NONE]
+                        TYPE_REFERENCE
+                          USER_TYPE
+                            USER_TYPE
+                              REFERENCE_EXPRESSION[referencedName=kotlin]
+                            REFERENCE_EXPRESSION[referencedName=Double]
+                  REFERENCE_EXPRESSION[referencedName=Inner]
+                  TYPE_ARGUMENT_LIST
+                    TYPE_PROJECTION[projectionKind=NONE]
+                      TYPE_REFERENCE
+                        USER_TYPE
+                          USER_TYPE
+                            REFERENCE_EXPRESSION[referencedName=kotlin]
+                          REFERENCE_EXPRESSION[referencedName=Int]
+                REFERENCE_EXPRESSION[referencedName=TA]
                 TYPE_ARGUMENT_LIST
                   TYPE_PROJECTION[projectionKind=NONE]
                     TYPE_REFERENCE
                       USER_TYPE
                         USER_TYPE
-                          USER_TYPE
-                            REFERENCE_EXPRESSION[referencedName=kotlin]
-                          REFERENCE_EXPRESSION[referencedName=collections]
-                        REFERENCE_EXPRESSION[referencedName=Map]
-                        TYPE_ARGUMENT_LIST
-                          TYPE_PROJECTION[projectionKind=NONE]
-                            TYPE_REFERENCE
-                              USER_TYPE
-                                USER_TYPE
-                                  REFERENCE_EXPRESSION[referencedName=kotlin]
-                                REFERENCE_EXPRESSION[referencedName=String]
-                          TYPE_PROJECTION[projectionKind=NONE]
-                            TYPE_REFERENCE
-                              USER_TYPE
-                                USER_TYPE
-                                  REFERENCE_EXPRESSION[referencedName=kotlin]
-                                REFERENCE_EXPRESSION[referencedName=Double]
-                  TYPE_PROJECTION[projectionKind=NONE]
-                    TYPE_REFERENCE
-                      USER_TYPE
-                        USER_TYPE
-                          USER_TYPE
-                            REFERENCE_EXPRESSION[referencedName=kotlin]
-                          REFERENCE_EXPRESSION[referencedName=collections]
-                        REFERENCE_EXPRESSION[referencedName=Map]
-                        TYPE_ARGUMENT_LIST
-                          TYPE_PROJECTION[projectionKind=NONE]
-                            TYPE_REFERENCE
-                              USER_TYPE
-                                USER_TYPE
-                                  REFERENCE_EXPRESSION[referencedName=kotlin]
-                                REFERENCE_EXPRESSION[referencedName=Int]
-                          TYPE_PROJECTION[projectionKind=NONE]
-                            TYPE_REFERENCE
-                              USER_TYPE
-                                USER_TYPE
-                                  REFERENCE_EXPRESSION[referencedName=kotlin]
-                                REFERENCE_EXPRESSION[referencedName=Boolean]
+                          REFERENCE_EXPRESSION[referencedName=kotlin]
+                        REFERENCE_EXPRESSION[referencedName=Boolean]
         TYPE_REFERENCE
           USER_TYPE
             USER_TYPE
@@ -115,8 +88,8 @@ PsiJetFileStubImpl[package=test]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
-                  REFERENCE_EXPRESSION[referencedName=dependency]
-                REFERENCE_EXPRESSION[referencedName=SomeClass]
+                  REFERENCE_EXPRESSION[referencedName=test]
+                REFERENCE_EXPRESSION[referencedName=Z]
         TYPE_REFERENCE
           USER_TYPE
             USER_TYPE

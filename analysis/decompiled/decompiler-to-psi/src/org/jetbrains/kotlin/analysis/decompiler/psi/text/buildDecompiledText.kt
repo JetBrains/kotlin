@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.decompiler.psi.text
 
+import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.analysis.decompiler.stub.COMPILED_DEFAULT_INITIALIZER
 import org.jetbrains.kotlin.analysis.decompiler.stub.COMPILED_DEFAULT_PARAMETER_VALUE
 import org.jetbrains.kotlin.builtins.StandardNames
@@ -19,6 +20,7 @@ import org.jetbrains.kotlin.renderer.DescriptorRendererOptions
 import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.DataClassDescriptorResolver
 import org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumEntry
+import org.jetbrains.kotlin.resolve.constants.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.secondaryConstructors
 import org.jetbrains.kotlin.types.isFlexible
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -40,7 +42,6 @@ fun DescriptorRendererOptions.defaultDecompilerRendererOptions() {
     defaultParameterValueRenderer = { _ -> COMPILED_DEFAULT_PARAMETER_VALUE }
     includePropertyConstant = true
     propertyConstantRenderer = { _ -> COMPILED_DEFAULT_INITIALIZER }
-    renderTypeExpansions = true
 }
 
 internal fun CallableMemberDescriptor.mustNotBeWrittenToDecompiledText(): Boolean {
