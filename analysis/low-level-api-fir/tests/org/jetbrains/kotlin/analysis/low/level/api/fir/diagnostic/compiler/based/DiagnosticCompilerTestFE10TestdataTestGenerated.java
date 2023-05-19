@@ -5073,6 +5073,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
             }
 
             @Test
+            @TestMetadata("kt51062Error.kt")
+            public void testKt51062Error() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/checkArguments/kt51062Error.kt");
+            }
+
+            @Test
             @TestMetadata("overloadedFunction.kt")
             public void testOverloadedFunction() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/checkArguments/overloadedFunction.kt");
