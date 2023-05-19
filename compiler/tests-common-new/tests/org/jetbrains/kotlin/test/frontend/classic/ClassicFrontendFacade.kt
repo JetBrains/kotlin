@@ -282,7 +282,7 @@ class ClassicFrontendFacade(
         val dependencies = mutableListOf<ModuleDescriptorImpl>()
 
         return resolvedLibraries.map { resolvedLibrary ->
-            testServices.jsLibraryProvider.getOrCreateStdlibByPath(resolvedLibrary.library.libraryName) {
+            testServices.libraryProvider.getOrCreateStdlibByPath(resolvedLibrary.library.libraryName) {
                 val storageManager = LockBasedStorageManager("ModulesStructure")
                 val isBuiltIns = resolvedLibrary.library.unresolvedDependencies.isEmpty()
 
