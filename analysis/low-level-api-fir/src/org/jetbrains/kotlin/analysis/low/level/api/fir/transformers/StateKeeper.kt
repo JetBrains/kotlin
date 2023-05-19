@@ -48,7 +48,6 @@ internal value class StateKeeperScope<Owner : Any>(private val owner: Owner) {
     fun add(keeper: StateKeeper<Owner>) {
         val owner = this@StateKeeperScope.owner
         register(keeper.prepare(owner))
-        keeper.postProcessors.forEach(::registerPostProcessor)
     }
 
     context(StateKeeperBuilder)
@@ -83,37 +82,31 @@ internal inline fun <Entity : Any> entityList(list: List<Entity?>?, block: State
 }
 
 internal fun <Owner : Any> stateKeeper(block: context(StateKeeperBuilder) StateKeeperScope<Owner>.(Owner) -> Unit): StateKeeper<Owner> {
-    val states = mutableListOf<PreservedState>()
-    val postProcessors = mutableListOf<PostProcessor>()
+    return StateKeeper { owner ->
+        val states = mutableListOf<PreservedState>()
+        val postProcessors = mutableListOf<PostProcessor>()
 
-    val builder = object : StateKeeperBuilder {
-        override fun register(state: PreservedState) {
-            states += state
+        val builder = object : StateKeeperBuilder {
+            override fun register(state: PreservedState) {
+                states += state
+            }
+
+            override fun registerPostProcessor(block: PostProcessor) {
+                postProcessors += block
+            }
         }
 
-        override fun registerPostProcessor(block: PostProcessor) {
-            postProcessors += block
-        }
-    }
-
-    fun provider(owner: Owner): List<PreservedState> {
         val scope = StateKeeperScope(owner)
         block(builder, scope, owner)
-        return states
-    }
 
-    return StateKeeper(::provider, postProcessors)
-}
-
-internal class StateKeeper<in Owner : Any>(
-    val provider: (Owner) -> List<PreservedState>,
-    val postProcessors: List<PostProcessor>
-) {
-    fun prepare(owner: Owner): PreservedState {
-        val states = provider(owner)
-
-        return object : PreservedState {
+        object : KeeperState {
+            private val postProcessed = AtomicBoolean(false)
             private val isRestored = AtomicBoolean(false)
+
+            override fun postProcess() {
+                if (!postProcessed.compareAndSet(false, true)) return
+                postProcessors.forEach { it() }
+            }
 
             override fun restore() {
                 if (!isRestored.compareAndSet(false, true)) return
@@ -121,9 +114,11 @@ internal class StateKeeper<in Owner : Any>(
             }
         }
     }
+}
 
-    fun postProcess() {
-        postProcessors.forEach { it() }
+internal class StateKeeper<in Owner : Any>(val provider: (Owner) -> KeeperState) {
+    fun prepare(owner: Owner): KeeperState {
+        return provider(owner)
     }
 }
 
@@ -146,7 +141,7 @@ internal inline fun <Target : FirElementWithResolveState, Result> resolveWithKee
     try {
         preservedState = keeper.prepare(target)
         prepareTarget(target)
-        keeper.postProcess()
+        preservedState.postProcess()
         val result = action()
         isSuccessful = true
         return result
@@ -160,9 +155,9 @@ internal inline fun <Target : FirElementWithResolveState, Result> resolveWithKee
 }
 
 internal fun interface PreservedState {
-    companion object Empty : PreservedState {
-        override fun restore() {}
-    }
-
     fun restore()
+}
+
+internal interface KeeperState : PreservedState {
+    fun postProcess()
 }
