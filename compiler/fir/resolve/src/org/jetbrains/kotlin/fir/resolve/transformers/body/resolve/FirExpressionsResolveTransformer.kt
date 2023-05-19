@@ -804,13 +804,18 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         equalityOperatorCall: FirEqualityOperatorCall,
         data: ResolutionMode
     ): FirStatement = whileAnalysing(session, equalityOperatorCall) {
-        // Currently, we use expectedType=Any? for both operands
-        // In FE1.0, it's only used for the right
-        // But it seems a bit inconsistent (see KT-47409)
-        // Also it's kind of complicated to transform different arguments with different expectType considering current FIR structure
+        val arguments = equalityOperatorCall.argumentList.arguments
+        require(arguments.size == 2) {
+            "Unexpected number of arguments in equality call: ${arguments.size}"
+        }
+        // In cases like materialize1() == materialize2() we add expected type just for the right argument.
+        // One of the reasons is just consistency with K1 and with the desugared form `a.equals(b)`. See KT-47409 for clarifications.
+        val leftArgumentTransformed: FirExpression = arguments[0].transform(transformer, ResolutionMode.ContextIndependent)
+        val rightArgumentTransformed: FirExpression = arguments[1].transform(transformer, withExpectedType(builtinTypes.nullableAnyType))
+
         equalityOperatorCall
             .transformAnnotations(transformer, ResolutionMode.ContextIndependent)
-            .replaceArgumentList(equalityOperatorCall.argumentList.transform(transformer, withExpectedType(builtinTypes.nullableAnyType)))
+            .replaceArgumentList(buildBinaryArgumentList(leftArgumentTransformed, rightArgumentTransformed))
         equalityOperatorCall.resultType = equalityOperatorCall.typeRef.resolvedTypeFromPrototype(builtinTypes.booleanType.type)
 
         dataFlowAnalyzer.exitEqualityOperatorCall(equalityOperatorCall)
