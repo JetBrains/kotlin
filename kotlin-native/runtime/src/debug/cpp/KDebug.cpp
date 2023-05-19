@@ -273,6 +273,10 @@ RUNTIME_USED RUNTIME_WEAK int32_t Konan_DebugIsArray(KRef obj) {
   return impl(obj);
 }
 
+RUNTIME_USED RUNTIME_WEAK int32_t Konan_DebugIsInstance(KRef obj, const TypeInfo* typeInfo) {
+  return IsInstanceInternal(obj, typeInfo);
+}
+
 RUNTIME_USED RUNTIME_WEAK int32_t Konan_DebugGetFieldCount(KRef obj) {
   auto* impl = getImpl<int32_t (*)(KRef)>(obj, DO_DebugGetFieldCount);
   if (impl == nullptr) return 0;

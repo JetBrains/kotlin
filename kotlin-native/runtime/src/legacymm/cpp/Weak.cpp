@@ -63,7 +63,7 @@ OBJ_GETTER(Konan_getWeakReferenceImpl, ObjHeader* referred) {
     }
 
 #if KONAN_OBJC_INTEROP
-  if (IsInstance(referred, theObjCObjectWrapperTypeInfo)) {
+  if (IsInstanceInternal(referred, theObjCObjectWrapperTypeInfo)) {
       RETURN_RESULT_OF(makeObjCWeakReferenceImpl, referred->GetAssociatedObject());
   }
 #endif // KONAN_OBJC_INTEROP

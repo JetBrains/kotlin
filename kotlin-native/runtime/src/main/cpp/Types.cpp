@@ -8,7 +8,12 @@
 
 extern "C" {
 
-KBoolean IsInstance(const ObjHeader* obj, const TypeInfo* type_info) {
+// Note: keeping it for compatibility with external tools only, will be deprecated and removed in the future.
+RUNTIME_PURE RUNTIME_USED RUNTIME_WEAK KBoolean IsInstance(const ObjHeader* obj, const TypeInfo* type_info) {
+  return IsInstanceInternal(obj, type_info);
+}
+
+KBoolean IsInstanceInternal(const ObjHeader* obj, const TypeInfo* type_info) {
   // We assume null check is handled by caller.
   RuntimeAssert(obj != nullptr, "must not be null");
   const TypeInfo* obj_type_info = obj->type_info();
@@ -42,7 +47,7 @@ KBoolean IsArray(KConstRef obj) {
 }
 
 KBoolean Kotlin_TypeInfo_isInstance(KConstRef obj, KNativePtr typeInfo) {
-  return IsInstance(obj, reinterpret_cast<const TypeInfo*>(typeInfo));
+  return IsInstanceInternal(obj, reinterpret_cast<const TypeInfo*>(typeInfo));
 }
 
 OBJ_GETTER(Kotlin_TypeInfo_getPackageName, KNativePtr typeInfo, KBoolean checkFlags) {

@@ -36,7 +36,7 @@ extern "C" void Kotlin_runUnhandledExceptionHook(KRef exception);
 extern "C" void ReportUnhandledException(KRef exception);
 
 void ThrowException(KRef exception) {
-  RuntimeAssert(exception != nullptr && IsInstance(exception, theThrowableTypeInfo),
+  RuntimeAssert(exception != nullptr && IsInstanceInternal(exception, theThrowableTypeInfo),
                 "Throwing something non-throwable");
 #if KONAN_NO_EXCEPTIONS
   PrintThrowable(exception);

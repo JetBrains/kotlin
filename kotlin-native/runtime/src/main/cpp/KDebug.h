@@ -59,6 +59,9 @@ int32_t Konan_DebugPrint(KRef obj);
 RUNTIME_USED RUNTIME_WEAK
 int32_t Konan_DebugIsArray(KRef obj);
 
+RUNTIME_USED RUNTIME_WEAK
+int32_t Konan_DebugIsInstance(KRef obj, const TypeInfo* typeInfo);
+
 // Returns number of fields in an objects, or elements in an array.
 RUNTIME_USED RUNTIME_WEAK
 int32_t Konan_DebugGetFieldCount(KRef obj);

@@ -93,11 +93,11 @@ def _type_info_by_address(address, debugger = lldb.debugger):
     return candidates
 
 def is_instance_of(addr, typeinfo):
-    return evaluate("(bool)IsInstance({:#x}, {:#x})".format(addr, typeinfo)).GetValue() == "true"
+    return evaluate("(bool)Konan_DebugIsInstance({:#x}, {:#x})".format(addr, typeinfo)).GetValue() == "true"
 
 def is_string_or_array(value):
     start = time.monotonic()
-    soa = evaluate("(int)IsInstance({0:#x}, {1:#x}) ? 1 : ((int)Konan_DebugIsArray({0:#x})) ? 2 : 0)"
+    soa = evaluate("(int)Konan_DebugIsInstance({0:#x}, {1:#x}) ? 1 : ((int)Konan_DebugIsArray({0:#x})) ? 2 : 0)"
                    .format(value.unsigned, _symbol_loaded_address('kclass:kotlin.String'))).unsigned
     log(lambda: "is_string_or_array:{:#x}:{}".format(value.unsigned, soa))
     bench(start, lambda: "is_string_or_array({:#x}) = {}".format(value.unsigned, soa))
