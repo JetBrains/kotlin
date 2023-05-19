@@ -2363,6 +2363,33 @@ internal object ControlFlowSensibleEscapeAnalysis {
             for (id in 0 until graph.nodes.size)
                 if (removed.get(id))
                     graph.nodes[id] = null
+
+            val referencesSets = arrayOfNulls<BitSet>(graph.nodes.size)
+            for (node in graph.nodes) {
+                val reference = node as? Node.Reference ?: continue
+                for (pointee in reference.assignedWith) {
+                    if (pointee is Node.Parameter || pointee !is Node.Object
+                            || !pointee.isFictitious || pointee.fields.isNotEmpty()) continue
+                    val set = (referencesSets[pointee.id] ?: BitSet().also { referencesSets[pointee.id] = it })
+                    set.set(reference.id)
+                }
+            }
+            removed.clear()
+            val set = mutableSetOf<BitSet>()
+            for (id in referencesSets.indices) {
+                val referencesSet = referencesSets[id] ?: continue
+                if (objectsReferencedFromThrown.get(id))
+                    referencesSet.set(Node.GLOBAL_ID)
+                if (!set.add(referencesSet)) {
+                    removed.set(id)
+                    graph.nodes[id] = null
+                }
+            }
+            for (id in 0 until graph.nodes.size) {
+                val reference = graph.nodes[id] as? Node.Reference ?: continue
+                reference.assignedWith.removeAll { removed.get(it.id) }
+                reference.assignedTo.removeAll { removed.get(it.id) }
+            }
         }
 
         private fun EscapeAnalysisResult.simplifyFieldValues() {
