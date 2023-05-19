@@ -18876,6 +18876,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
                 }
 
                 @Test
+                @TestMetadata("protectedInlineInsideInternal.kt")
+                public void testProtectedInlineInsideInternal() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inline/nonPublicMember/protectedInlineInsideInternal.kt");
+                }
+
+                @Test
                 @TestMetadata("publishedApi.kt")
                 public void testPublishedApi() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inline/nonPublicMember/publishedApi.kt");
