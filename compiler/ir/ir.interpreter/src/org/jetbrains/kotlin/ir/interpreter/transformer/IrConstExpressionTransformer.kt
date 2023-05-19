@@ -6,12 +6,10 @@
 package org.jetbrains.kotlin.ir.interpreter.transformer
 
 import org.jetbrains.kotlin.constant.EvaluatedConstTracker
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrField
-import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrStringConcatenationImpl
@@ -32,9 +30,34 @@ internal class IrConstExpressionTransformer(
     onError: (IrFile, IrElement, IrErrorExpression) -> Unit,
     suppressExceptions: Boolean,
 ) : IrConstTransformer(interpreter, irFile, mode, checker, evaluatedConstTracker, onWarning, onError, suppressExceptions) {
+    private var inAnnotation: Boolean = false
+
+    private inline fun <T> visitAnnotationClass(crossinline block: () -> T): T {
+        val oldInAnnotation = inAnnotation
+        inAnnotation = true
+        try {
+            return block()
+        } finally {
+            inAnnotation = oldInAnnotation
+        }
+    }
+
+    override fun visitFunction(declaration: IrFunction, data: Nothing?): IrStatement {
+        // It is useless to visit default accessor and if we do that we could render excess information for `IrGetField`
+        if (declaration.origin == IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR) return declaration
+        return super.visitFunction(declaration, data)
+    }
+
+    override fun visitClass(declaration: IrClass, data: Nothing?): IrStatement {
+        if (declaration.kind == ClassKind.ANNOTATION_CLASS) {
+            return visitAnnotationClass { super.visitClass(declaration, data) }
+        }
+        return super.visitClass(declaration, data)
+    }
+
     override fun visitCall(expression: IrCall, data: Nothing?): IrElement {
         if (expression.canBeInterpreted()) {
-            return expression.interpret(failAsError = false)
+            return expression.interpret(failAsError = inAnnotation)
         }
         return super.visitCall(expression, data)
     }
@@ -53,15 +76,9 @@ internal class IrConstExpressionTransformer(
         return super.visitField(declaration, data)
     }
 
-    override fun visitFunction(declaration: IrFunction, data: Nothing?): IrStatement {
-        // It is useless to visit default accessor and if we do that we could render excess information for `IrGetField`
-        if (declaration.origin == IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR) return declaration
-        return super.visitFunction(declaration, data)
-    }
-
     override fun visitGetField(expression: IrGetField, data: Nothing?): IrExpression {
         if (expression.canBeInterpreted()) {
-            return expression.interpret(failAsError = false)
+            return expression.interpret(failAsError = inAnnotation)
         }
         return super.visitGetField(expression, data)
     }
@@ -71,7 +88,7 @@ internal class IrConstExpressionTransformer(
             this.startOffset, this.endOffset, expression.type, listOf(this@wrapInStringConcat)
         )
 
-        fun IrExpression.wrapInToStringConcatAndInterpret(): IrExpression = wrapInStringConcat().interpret(failAsError = false)
+        fun IrExpression.wrapInToStringConcatAndInterpret(): IrExpression = wrapInStringConcat().interpret(failAsError = inAnnotation)
         fun IrExpression.getConstStringOrEmpty(): String = if (this is IrConst<*>) value.toString() else ""
 
         // If we have some complex expression in arguments (like some `IrComposite`) we will skip it,
