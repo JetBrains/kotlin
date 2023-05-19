@@ -9,19 +9,19 @@ typealias OneList<X> = List<TK<X, X>>
 typealias Both<T, K> = TK<T, K>
 typealias BothList<T, K> = List<TK<T, K>>
 
-object O1 : <!UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION!>One<Any><!>() // compiler error expected
-object O2 : <!UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION!>Both<Any, Any><!>()
+object O1 : One<<!UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED!>Any<!>>() // compiler error expected
+object O2 : Both<<!UPPER_BOUND_VIOLATED!>Any<!>, <!UPPER_BOUND_VIOLATED!>Any<!>>()
 
-class A1<T : <!UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION!>One<Any><!>>
-class A2<T : <!UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION!>One<Any, Any><!>>
+class A1<T : One<<!UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED!>Any<!>>>
+class A2<T : One<<!UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED!>Any<!>, Any>>
 
-interface IO1 : OneList<Any> {}
-interface IO2 : BothList<Any, Any> {}
+interface IO1 : OneList<<!UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED!>Any<!>> {}
+interface IO2 : BothList<<!UPPER_BOUND_VIOLATED!>Any<!>, <!UPPER_BOUND_VIOLATED!>Any<!>> {}
 
-fun foo1(x: <!UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION!>One<Any><!>) {}
-fun foo2(x: <!UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION!>Both<Any, Any><!>) {}
+fun foo1(x: One<<!UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED!>Any<!>>) {}
+fun foo2(x: Both<<!UPPER_BOUND_VIOLATED!>Any<!>, <!UPPER_BOUND_VIOLATED!>Any<!>>) {}
 
 fun main() {
-    <!UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED!>One<Any>()<!>
-    <!UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED!>Both<Any, Any>()<!>
+    One<<!UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED!>Any<!>>()
+    Both<<!UPPER_BOUND_VIOLATED!>Any<!>, <!UPPER_BOUND_VIOLATED!>Any<!>>()
 }
