@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.LLFirPhaseUpdater
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkExpectForActualIsResolved
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkPhase
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirSession
@@ -35,7 +36,10 @@ internal object LLFirExpectActualMatcherLazyResolver : LLFirLazyResolver(FirReso
 
     override fun checkIsResolved(target: FirElementWithResolveState) {
         target.checkPhase(resolverPhase)
-        // TODO check if expect-actual matching is present
+        if (target is FirMemberDeclaration && target.canHaveExpectCounterPart()) {
+            checkExpectForActualIsResolved(target)
+        }
+
         checkNestedDeclarationsAreResolved(target)
     }
 }
@@ -68,13 +72,14 @@ private class LLFirExpectActualMatchingTargetResolver(
         transformer.transformMemberDeclaration(target)
     }
 
-    private fun FirMemberDeclaration.canHaveExpectCounterPart(): Boolean = when (this) {
-        is FirEnumEntry -> true
-        is FirProperty -> true
-        is FirConstructor -> true
-        is FirSimpleFunction -> true
-        is FirRegularClass -> true
-        is FirTypeAlias -> true
-        else -> false
-    }
+}
+
+private fun FirMemberDeclaration.canHaveExpectCounterPart(): Boolean = when (this) {
+    is FirEnumEntry -> true
+    is FirProperty -> true
+    is FirConstructor -> true
+    is FirSimpleFunction -> true
+    is FirRegularClass -> true
+    is FirTypeAlias -> true
+    else -> false
 }

@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.contracts.FirResolvedContractDescription
 import org.jetbrains.kotlin.fir.contracts.impl.FirEmptyContractDescription
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.isActual
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirResolvable
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
@@ -49,6 +50,17 @@ internal fun checkBodyIsResolved(function: FirFunction) {
     val block = function.body ?: return
     checkTypeRefIsResolved(block.typeRef, "block type", function) {
         withFirEntry("block", block)
+    }
+}
+
+internal fun checkExpectForActualIsResolved(memberDeclaration: FirMemberDeclaration) {
+    if (!memberDeclaration.isActual) return
+
+    checkWithAttachmentBuilder(
+        condition = memberDeclaration.expectForActual != null,
+        message = { "Expect for actual matching is missing" }
+    ) {
+        withFirEntry("declaration", memberDeclaration)
     }
 }
 
