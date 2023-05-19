@@ -185,7 +185,7 @@ class JsEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigu
 
         fun getDependencies(module: TestModule, testServices: TestServices, kind: DependencyRelation): List<ModuleDescriptor> {
             return getKlibDependencies(module, testServices, kind)
-                .map { testServices.jsLibraryProvider.getDescriptorByPath(it.absolutePath) }
+                .map { testServices.libraryProvider.getDescriptorByPath(it.absolutePath) }
         }
 
         fun getMainCallParametersForModule(module: TestModule): MainCallParameters {
@@ -212,7 +212,7 @@ class JsEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigu
 
         fun getAllRecursiveLibrariesFor(module: TestModule, testServices: TestServices): Map<KotlinLibrary, ModuleDescriptorImpl> {
             val dependencies = getAllRecursiveDependenciesFor(module, testServices)
-            return dependencies.associateBy { testServices.jsLibraryProvider.getCompiledLibraryByDescriptor(it) }
+            return dependencies.associateBy { testServices.libraryProvider.getCompiledLibraryByDescriptor(it) }
         }
 
         fun getAllDependenciesMappingFor(module: TestModule, testServices: TestServices): Map<KotlinLibrary, List<KotlinLibrary>> {
