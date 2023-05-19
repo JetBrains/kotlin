@@ -1,0 +1,8 @@
+error: pre-release classes were found in dependencies. Remove them from the classpath, recompile with a release compiler or use '-Xskip-prerelease-check' to suppress errors
+compiler/testData/compileKotlinAgainstCustomBinaries/againstFir/source.kt:4:5: error: class 'lib.AKt' is compiled by a pre-release version of Kotlin and cannot be loaded by this version of the compiler
+    get { Box("OK").value }
+    ^
+compiler/testData/compileKotlinAgainstCustomBinaries/againstFir/source.kt:4:11: error: class 'lib.Box' is compiled by a pre-release version of Kotlin and cannot be loaded by this version of the compiler
+    get { Box("OK").value }
+          ^
+COMPILATION_ERROR

@@ -648,11 +648,6 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
         compileKotlin("source.kt", tmpdir, listOf(library), additionalOptions = listOf("-language-version", "2.0"))
     }
 
-    fun testFirAgainstOldJvm() {
-        val library = compileLibrary("library")
-        compileKotlin("source.kt", tmpdir, listOf(library), additionalOptions = listOf("-language-version", "2.0"))
-    }
-
     fun testFirIncorrectJavaSignature() {
         compileKotlin(
             "source.kt", tmpdir,
@@ -671,7 +666,7 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
         )
     }
 
-    fun testOldJvmAgainstJvmIr() {
+    fun testAgainstStable() {
         val library = compileLibrary("library")
         compileKotlin("source.kt", tmpdir, listOf(library))
 
@@ -679,7 +674,7 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
         compileKotlin("source.kt", tmpdir, listOf(library2))
     }
 
-    fun testOldJvmAgainstFir() {
+    fun testAgainstFir() {
         val library = compileLibrary("library", additionalOptions = listOf("-language-version", "2.0"))
         compileKotlin("source.kt", tmpdir, listOf(library))
 
@@ -687,22 +682,22 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
         compileKotlin("source.kt", tmpdir, listOf(library2))
     }
 
-    fun testOldJvmAgainstJvmIrWithUnstableAbi() {
+    fun testAgainstUnstable() {
         val library = compileLibrary("library", additionalOptions = listOf("-Xabi-stability=unstable"))
         compileKotlin("source.kt", tmpdir, listOf(library))
     }
 
-    fun testOldJvmAgainstFirWithStableAbi() {
+    fun testAgainstFirWithStableAbi() {
         val library = compileLibrary("library", additionalOptions = listOf("-language-version", "2.0", "-Xabi-stability=stable"))
         compileKotlin("source.kt", tmpdir, listOf(library))
     }
 
-    fun testOldJvmAgainstFirWithStableAbiAndNoPrereleaseCheck() {
+    fun testAgainstFirWithStableAbiAndNoPrereleaseCheck() {
         val library = compileLibrary("library", additionalOptions = listOf("-language-version", "2.0", "-Xabi-stability=stable"))
         compileKotlin("source.kt", tmpdir, listOf(library), additionalOptions = listOf("-Xskip-prerelease-check"))
     }
 
-    fun testOldJvmAgainstFirWithAllowUnstableDependencies() {
+    fun testAgainstFirWithAllowUnstableDependencies() {
         val library = compileLibrary("library", additionalOptions = listOf("-language-version", "2.0"))
         compileKotlin("source.kt", tmpdir, listOf(library), additionalOptions = listOf("-Xallow-unstable-dependencies", "-Xskip-metadata-version-check"))
     }
