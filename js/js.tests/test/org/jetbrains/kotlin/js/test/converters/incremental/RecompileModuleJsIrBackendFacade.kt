@@ -31,7 +31,7 @@ class RecompileModuleJsIrBackendFacade(
 
     override fun TestServices.register(module: TestModule) {
         register(ModuleDescriptorProvider::class, testServices.moduleDescriptorProvider)
-        register(JsLibraryProvider::class, testServices.jsLibraryProvider)
+        register(LibraryProvider::class, testServices.libraryProvider)
         register(JsIrIncrementalDataProvider::class, testServices.jsIrIncrementalDataProvider)
     }
 }

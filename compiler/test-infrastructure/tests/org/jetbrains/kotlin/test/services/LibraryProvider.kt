@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.test.services
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.library.KotlinLibrary
 
-class JsLibraryProvider(private val testServices: TestServices) : TestService {
+class LibraryProvider(private val testServices: TestServices) : TestService {
     private val descriptorToLibrary = mutableMapOf<ModuleDescriptor, KotlinLibrary>()
     private val stdlibPathToDescriptor = mutableMapOf<String, ModuleDescriptor>()
 
@@ -49,4 +49,4 @@ class JsLibraryProvider(private val testServices: TestServices) : TestService {
     }
 }
 
-val TestServices.jsLibraryProvider: JsLibraryProvider by TestServices.testServiceAccessor()
+val TestServices.libraryProvider: LibraryProvider by TestServices.testServiceAccessor()

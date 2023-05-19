@@ -44,7 +44,7 @@ import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator.Companion.getJsArtifactSimpleName
 import org.jetbrains.kotlin.test.services.configuration.getDependencies
-import org.jetbrains.kotlin.test.services.jsLibraryProvider
+import org.jetbrains.kotlin.test.services.libraryProvider
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.fileUtils.withReplacedExtensionOrNull
@@ -215,9 +215,9 @@ class JsIrBackendFacade(
         val symbolTable = SymbolTable(IdSignatureDescriptor(JsManglerDesc), IrFactoryImplForJsIC(WholeWorldStageController()))
 
         val moduleDescriptor = testServices.moduleDescriptorProvider.getModuleDescriptor(module)
-        val mainModuleLib = testServices.jsLibraryProvider.getCompiledLibraryByDescriptor(moduleDescriptor)
+        val mainModuleLib = testServices.libraryProvider.getCompiledLibraryByDescriptor(moduleDescriptor)
         val friendLibraries = getDependencies(module, testServices, DependencyRelation.FriendDependency)
-            .map { testServices.jsLibraryProvider.getCompiledLibraryByDescriptor(it) }
+            .map { testServices.libraryProvider.getCompiledLibraryByDescriptor(it) }
         val friendModules = mapOf(mainModuleLib.uniqueName to friendLibraries.map { it.uniqueName })
 
         return getIrModuleInfoForKlib(
@@ -229,7 +229,7 @@ class JsIrBackendFacade(
             symbolTable,
             messageLogger,
             loadFunctionInterfacesIntoStdlib = true,
-        ) { if (it == mainModuleLib) moduleDescriptor else testServices.jsLibraryProvider.getDescriptorByCompiledLibrary(it) }
+        ) { if (it == mainModuleLib) moduleDescriptor else testServices.libraryProvider.getDescriptorByCompiledLibrary(it) }
     }
 
     private fun BinaryArtifacts.Js.JsIrArtifact.dump(
