@@ -22,14 +22,16 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.INCO
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.INCOMPATIBLE_THROWS_INHERITED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.INCOMPATIBLE_THROWS_OVERRIDE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.INVALID_CHARACTERS_NATIVE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.INVALID_OBJC_HIDES_TARGETS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.INVALID_OBJC_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.INVALID_OBJC_NAME_CHARS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.INVALID_OBJC_NAME_FIRST_CHAR
-import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.INVALID_OBJC_REFINEMENT_TARGETS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.INVALID_REFINES_IN_SWIFT_TARGETS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.MISSING_EXACT_OBJC_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.MISSING_EXCEPTION_IN_THROWS_ON_SUSPEND
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.REDUNDANT_SWIFT_REFINEMENT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.NON_LITERAL_OBJC_NAME_ARG
+import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.SUBTYPE_OF_HIDDEN_FROM_OBJC
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.THROWS_LIST_EMPTY
 
 object FirNativeErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
@@ -60,8 +62,12 @@ object FirNativeErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             SYMBOLS
         )
         map.put(
-            INVALID_OBJC_REFINEMENT_TARGETS,
-            "Refines annotations are only applicable to annotations with targets CLASS, FUNCTION and/or PROPERTY"
+            INVALID_OBJC_HIDES_TARGETS,
+            "@HidesFromObjC annotation is only applicable to annotations with targets CLASS, FUNCTION and/or PROPERTY"
+        )
+        map.put(
+            INVALID_REFINES_IN_SWIFT_TARGETS,
+            "@RefinesInSwift annotation is only applicable to annotations with targets FUNCTION and/or PROPERTY"
         )
         map.put(INAPPLICABLE_OBJC_NAME, "@ObjCName is not applicable on overrides")
         map.put(INVALID_OBJC_NAME, "@ObjCName should have a name and/or swiftName")
@@ -72,5 +78,6 @@ object FirNativeErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(INAPPLICABLE_EXACT_OBJC_NAME, "Exact @ObjCName is only applicable to classes, objects and interfaces")
         map.put(MISSING_EXACT_OBJC_NAME, "Exact @ObjCName is required to have an ObjC name")
         map.put(NON_LITERAL_OBJC_NAME_ARG, "@ObjCName accepts only literal string and boolean values")
+        map.put(SUBTYPE_OF_HIDDEN_FROM_OBJC, "Only @HiddenFromObjC declaration can be a subtype of @HiddenFromObjC declaration")
     }
 }

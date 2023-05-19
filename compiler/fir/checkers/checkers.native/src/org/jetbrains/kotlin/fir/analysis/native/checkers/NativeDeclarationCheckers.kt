@@ -30,6 +30,7 @@ object NativeDeclarationCheckers : DeclarationCheckers() {
 
     override val regularClassCheckers: Set<FirRegularClassChecker>
         get() = setOf(
-            FirNativeObjCRefinementAnnotationChecker
+            FirNativeObjCRefinementAnnotationChecker,
+            FirNativeHiddenFromObjCInheritanceChecker,
         )
 }

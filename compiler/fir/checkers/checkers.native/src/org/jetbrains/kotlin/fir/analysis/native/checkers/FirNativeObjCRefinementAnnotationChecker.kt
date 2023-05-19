@@ -6,9 +6,11 @@
 package org.jetbrains.kotlin.fir.analysis.native.checkers
 
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirRegularClassChecker
@@ -21,12 +23,13 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 
 object FirNativeObjCRefinementAnnotationChecker : FirRegularClassChecker() {
 
-    private val supportedTargets = arrayOf(KotlinTarget.FUNCTION, KotlinTarget.PROPERTY, KotlinTarget.CLASS)
+    private val hidesFromObjCSupportedTargets = arrayOf(KotlinTarget.FUNCTION, KotlinTarget.PROPERTY, KotlinTarget.CLASS)
+    private val refinesInSwiftSupportedTargets = arrayOf(KotlinTarget.FUNCTION, KotlinTarget.PROPERTY)
 
     override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
         if (declaration.classKind != ClassKind.ANNOTATION_CLASS) return
         val session = context.session
-        val (objCAnnotation, swiftAnnotation) = declaration.findMetaAnnotations(session)
+        val (objCAnnotation, swiftAnnotation) = declaration.annotations.findMetaAnnotations(session)
         if (objCAnnotation == null && swiftAnnotation == null) return
         if (objCAnnotation != null && swiftAnnotation != null) {
             reporter.reportOn(
@@ -36,23 +39,35 @@ object FirNativeObjCRefinementAnnotationChecker : FirRegularClassChecker() {
             )
         }
         val targets = declaration.getAllowedAnnotationTargets(session)
-        val unsupportedTargets = targets - supportedTargets
-        if (unsupportedTargets.isNotEmpty()) {
-            objCAnnotation?.let { reporter.reportOn(it.source, FirNativeErrors.INVALID_OBJC_REFINEMENT_TARGETS, context) }
-            swiftAnnotation?.let { reporter.reportOn(it.source, FirNativeErrors.INVALID_OBJC_REFINEMENT_TARGETS, context) }
-        }
-    }
 
-    private fun FirRegularClass.findMetaAnnotations(session: FirSession): Pair<FirAnnotation?, FirAnnotation?> {
-        var objCAnnotation: FirAnnotation? = null
-        var swiftAnnotation: FirAnnotation? = null
-        for (annotation in annotations) {
-            when (annotation.toAnnotationClassId(session)) {
-                hidesFromObjCClassId -> objCAnnotation = annotation
-                refinesInSwiftClassId -> swiftAnnotation = annotation
+        objCAnnotation?.let {
+            if ((targets - hidesFromObjCSupportedTargets).isNotEmpty()) {
+                reporter.reportOn(it.source, FirNativeErrors.INVALID_OBJC_HIDES_TARGETS, context)
             }
-            if (objCAnnotation != null && swiftAnnotation != null) break
         }
-        return objCAnnotation to swiftAnnotation
+        swiftAnnotation?.let {
+            if ((targets - refinesInSwiftSupportedTargets).isNotEmpty()) {
+                reporter.reportOn(it.source, FirNativeErrors.INVALID_REFINES_IN_SWIFT_TARGETS, context)
+            }
+        }
     }
 }
+
+internal data class ObjCExportMetaAnnotations(
+    val hidesFromObjCAnnotation: FirAnnotation?,
+    val refinesInSwiftAnnotation: FirAnnotation?,
+)
+
+internal fun List<FirAnnotation>.findMetaAnnotations(session: FirSession): ObjCExportMetaAnnotations {
+    var objCAnnotation: FirAnnotation? = null
+    var swiftAnnotation: FirAnnotation? = null
+    for (annotation in this) {
+        when (annotation.toAnnotationClassId(session)) {
+            hidesFromObjCClassId -> objCAnnotation = annotation
+            refinesInSwiftClassId -> swiftAnnotation = annotation
+        }
+        if (objCAnnotation != null && swiftAnnotation != null) break
+    }
+    return ObjCExportMetaAnnotations(objCAnnotation, swiftAnnotation)
+}
+

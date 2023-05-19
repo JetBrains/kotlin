@@ -35,7 +35,6 @@ object FirNativeErrors {
     val INVALID_CHARACTERS_NATIVE by deprecationError1<PsiElement, String>(ProhibitInvalidCharsInNativeIdentifiers, SourceElementPositioningStrategies.NAME_IDENTIFIER)
     val REDUNDANT_SWIFT_REFINEMENT by error0<KtElement>()
     val INCOMPATIBLE_OBJC_REFINEMENT_OVERRIDE by error2<KtElement, FirBasedSymbol<*>, Collection<FirRegularClassSymbol>>()
-    val INVALID_OBJC_REFINEMENT_TARGETS by error0<KtElement>()
     val INAPPLICABLE_OBJC_NAME by error0<KtElement>()
     val INVALID_OBJC_NAME by error0<KtElement>()
     val INVALID_OBJC_NAME_CHARS by error1<KtElement, String>()
@@ -45,6 +44,9 @@ object FirNativeErrors {
     val INAPPLICABLE_EXACT_OBJC_NAME by error0<KtElement>()
     val MISSING_EXACT_OBJC_NAME by error0<KtElement>()
     val NON_LITERAL_OBJC_NAME_ARG by error0<KtElement>()
+    val INVALID_OBJC_HIDES_TARGETS by error0<KtElement>()
+    val INVALID_REFINES_IN_SWIFT_TARGETS by error0<KtElement>()
+    val SUBTYPE_OF_HIDDEN_FROM_OBJC by error0<KtElement>()
 
     init {
         RootDiagnosticRendererFactory.registerFactory(FirNativeErrorsDefaultMessages)

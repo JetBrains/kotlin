@@ -63,8 +63,16 @@ private val DIAGNOSTIC_FACTORY_TO_RENDERER by lazy {
             CommonRenderers.commaSeparated(Renderers.NAME)
         )
         put(
-            ErrorsNative.INVALID_OBJC_REFINEMENT_TARGETS,
-            "Refines annotations are only applicable to annotations with targets CLASS, FUNCTION and/or PROPERTY"
+            ErrorsNative.INVALID_OBJC_HIDES_TARGETS,
+            "@HidesFromObjC annotation is only applicable to annotations with targets CLASS, FUNCTION and/or PROPERTY"
+        )
+        put(
+            ErrorsNative.INVALID_REFINES_IN_SWIFT_TARGETS,
+            "@RefinesInSwift annotation is only applicable to annotations with targets FUNCTION and/or PROPERTY"
+        )
+        put(
+            ErrorsNative.SUBTYPE_OF_HIDDEN_FROM_OBJC,
+            "Only @HiddenFromObjC declaration can be a subtype of @HiddenFromObjC declaration"
         )
     }
 }

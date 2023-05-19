@@ -28,7 +28,7 @@ object NativePlatformConfigurator : PlatformConfiguratorBase(
         NativeTopLevelSingletonChecker, NativeThreadLocalChecker,
         NativeObjCNameChecker, NativeObjCNameOverridesChecker,
         NativeObjCRefinementChecker, NativeObjCRefinementAnnotationChecker,
-        NativeObjCRefinementOverridesChecker
+        NativeObjCRefinementOverridesChecker, NativeHiddenFromObjCInheritanceChecker
     )
 ) {
     override fun configureModuleComponents(container: StorageComponentContainer) {
