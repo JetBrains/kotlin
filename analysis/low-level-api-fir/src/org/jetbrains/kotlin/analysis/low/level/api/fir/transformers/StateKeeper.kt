@@ -16,7 +16,6 @@ internal typealias PostProcessor = () -> Unit
 @StateKeeperDsl
 internal interface StateKeeperBuilder {
     fun register(state: PreservedState)
-    fun registerPostProcessor(block: PostProcessor)
 }
 
 @JvmInline
@@ -34,14 +33,21 @@ internal value class StateKeeperScope<Owner : Any>(private val owner: Owner) {
             }
         }
 
-        register { mutator(owner, storedValue) }
+        register(object : PreservedState {
+            override fun restore() = mutator(owner, storedValue)
+            override fun postProcess() {}
+        })
     }
 
     context(StateKeeperBuilder)
     inline fun <Value> add(provider: (Owner) -> Value, crossinline mutator: (Owner, Value) -> Unit) {
         val owner = this@StateKeeperScope.owner
         val storedValue = provider(owner)
-        register { mutator(owner, storedValue) }
+
+        register(object : PreservedState {
+            override fun restore() = mutator(owner, storedValue)
+            override fun postProcess() {}
+        })
     }
 
     context(StateKeeperBuilder)
@@ -52,7 +58,10 @@ internal value class StateKeeperScope<Owner : Any>(private val owner: Owner) {
 
     context(StateKeeperBuilder)
     fun postProcess(block: PostProcessor) {
-        registerPostProcessor(block)
+        register(object : PreservedState {
+            override fun postProcess() = block()
+            override fun restore() {}
+        })
     }
 }
 
@@ -84,28 +93,23 @@ internal inline fun <Entity : Any> entityList(list: List<Entity?>?, block: State
 internal fun <Owner : Any> stateKeeper(block: context(StateKeeperBuilder) StateKeeperScope<Owner>.(Owner) -> Unit): StateKeeper<Owner> {
     return StateKeeper { owner ->
         val states = mutableListOf<PreservedState>()
-        val postProcessors = mutableListOf<PostProcessor>()
 
         val builder = object : StateKeeperBuilder {
             override fun register(state: PreservedState) {
                 states += state
-            }
-
-            override fun registerPostProcessor(block: PostProcessor) {
-                postProcessors += block
             }
         }
 
         val scope = StateKeeperScope(owner)
         block(builder, scope, owner)
 
-        object : KeeperState {
+        object : PreservedState {
             private val postProcessed = AtomicBoolean(false)
             private val isRestored = AtomicBoolean(false)
 
             override fun postProcess() {
                 if (!postProcessed.compareAndSet(false, true)) return
-                postProcessors.forEach { it() }
+                states.forEach { it.postProcess() }
             }
 
             override fun restore() {
@@ -116,8 +120,8 @@ internal fun <Owner : Any> stateKeeper(block: context(StateKeeperBuilder) StateK
     }
 }
 
-internal class StateKeeper<in Owner : Any>(val provider: (Owner) -> KeeperState) {
-    fun prepare(owner: Owner): KeeperState {
+internal class StateKeeper<in Owner : Any>(val provider: (Owner) -> PreservedState) {
+    fun prepare(owner: Owner): PreservedState {
         return provider(owner)
     }
 }
@@ -154,10 +158,7 @@ internal inline fun <Target : FirElementWithResolveState, Result> resolveWithKee
     }
 }
 
-internal fun interface PreservedState {
-    fun restore()
-}
-
-internal interface KeeperState : PreservedState {
+internal interface PreservedState {
     fun postProcess()
+    fun restore()
 }

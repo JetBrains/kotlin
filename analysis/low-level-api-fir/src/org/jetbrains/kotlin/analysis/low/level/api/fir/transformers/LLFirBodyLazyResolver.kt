@@ -174,31 +174,6 @@ private class LLFirBodyTargetResolver(
     }
 }
 
-context(StateKeeperBuilder)
-private inline fun StateKeeperScope<FirFunction>.preserveContractBlock(
-    function: FirFunction,
-    block: StateKeeperScope<FirFunction>.() -> Unit
-) {
-    val existingBody = function.body
-    if (existingBody != null && existingBody !is FirLazyBlock) {
-        val existingContractBlock = existingBody.statements.firstOrNull() as? FirContractCallBlock
-        if (existingContractBlock != null && existingContractBlock.call.calleeReference is FirResolvedNamedReference) {
-            block()
-
-            postProcess {
-                val newBody = function.body
-                if (newBody != null && newBody.statements.isNotEmpty()) {
-                    newBody.replaceFirstStatement<FirContractCallBlock> { existingContractBlock }
-                }
-            }
-
-            return
-        }
-    }
-
-    block()
-}
-
 internal object BodyStateKeepers {
     val SCRIPT: StateKeeper<FirScript> = stateKeeper {
         // TODO Lazy body is not supported for scripts yet
@@ -216,9 +191,9 @@ internal object BodyStateKeepers {
         add(FirFunction::returnTypeRef, FirFunction::replaceReturnTypeRef)
 
         if (!isCallableWithSpecialBody(function)) {
-            preserveContractBlock(function) {
-                add(FirFunction::body, FirFunction::replaceBody, ::blockGuard)
-            }
+            preserveContractBlock(function)
+
+            add(FirFunction::body, FirFunction::replaceBody, ::blockGuard)
 
             entityList(function.valueParameters) { valueParameter ->
                 if (valueParameter.defaultValue != null) {
@@ -263,6 +238,26 @@ internal object BodyStateKeepers {
         entity(property.delegateIfUnresolved) {
             add(FirWrappedDelegateExpression::expression, FirWrappedDelegateExpression::replaceExpression, ::expressionGuard)
             add(FirWrappedDelegateExpression::delegateProvider, FirWrappedDelegateExpression::replaceDelegateProvider, ::expressionGuard)
+        }
+    }
+}
+
+context(StateKeeperBuilder)
+private fun StateKeeperScope<FirFunction>.preserveContractBlock(function: FirFunction) {
+    val existingBody = function.body
+    if (existingBody == null || existingBody is FirLazyBlock) {
+        return
+    }
+
+    val existingContractBlock = existingBody.statements.firstOrNull() as? FirContractCallBlock
+    if (existingContractBlock == null || existingContractBlock.call.calleeReference !is FirResolvedNamedReference) {
+        return
+    }
+
+    postProcess {
+        val newBody = function.body
+        if (newBody != null && newBody.statements.isNotEmpty()) {
+            newBody.replaceFirstStatement<FirContractCallBlock> { existingContractBlock }
         }
     }
 }
