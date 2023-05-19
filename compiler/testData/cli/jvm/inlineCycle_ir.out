@@ -1,7 +1,0 @@
-compiler/testData/cli/jvm/inlineCycle.kt:2:5: error: the 'b' invocation is a part of inline cycle
-    b(q)
-    ^
-compiler/testData/cli/jvm/inlineCycle.kt:18:5: error: the 'a' invocation is a part of inline cycle
-    a(p)
-    ^
-COMPILATION_ERROR

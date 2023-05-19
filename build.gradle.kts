@@ -699,11 +699,9 @@ tasks {
     register("scriptingJvmTest") {
         dependsOn("dist")
         dependsOn(":kotlin-scripting-compiler:test")
-        dependsOn(":kotlin-scripting-compiler:testWithIr")
         dependsOn(":kotlin-scripting-common:test")
         dependsOn(":kotlin-scripting-jvm:test")
         dependsOn(":kotlin-scripting-jvm-host-test:test")
-        dependsOn(":kotlin-scripting-jvm-host-test:testWithIr")
         dependsOn(":kotlin-scripting-dependencies:test")
         dependsOn(":kotlin-scripting-dependencies-maven:test")
         dependsOn(":kotlin-scripting-jsr223-test:test")

@@ -74,7 +74,7 @@ class CompilerOptionsProjectIT : KGPBaseTest() {
                 |         apiVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_0
                 |         progressiveMode = true
                 |         optIn.add("my.custom.OptInAnnotation")
-                |         freeCompilerArgs.add("-Xuse-ir")
+                |         freeCompilerArgs.add("-Xdebug")
                 |    }
                 |}
                 """.trimMargin()
@@ -105,9 +105,9 @@ class CompilerOptionsProjectIT : KGPBaseTest() {
                     "Compiler arguments does not contain '-opt-in my.custom.OptInAnnotation': $compilationArgs"
                 }
 
-                assert(compilationArgs.contains("-Xuse-ir")) {
+                assert(compilationArgs.contains("-Xdebug")) {
                     printBuildOutput()
-                    "Compiler arguments does not contain '-Xuse-ir': $compilationArgs"
+                    "Compiler arguments does not contain '-Xdebug': $compilationArgs"
                 }
             }
         }
@@ -132,7 +132,7 @@ class CompilerOptionsProjectIT : KGPBaseTest() {
                 |         apiVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_0
                 |         progressiveMode = true
                 |         optIn.add("my.custom.OptInAnnotation")
-                |         freeCompilerArgs.add("-Xuse-ir")
+                |         freeCompilerArgs.add("-Xdebug")
                 |    }
                 |    
                 |    sourceSets.all {

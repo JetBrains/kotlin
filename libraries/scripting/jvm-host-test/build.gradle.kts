@@ -43,7 +43,6 @@ tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
 projectTest(parallel = true) {
     dependsOn(":dist")
     workingDir = rootDir
-    systemProperty("kotlin.script.test.base.compiler.arguments", "-Xuse-old-backend")
 }
 
 // This doesn;t work now due to conflicts between embeddable compiler contents and intellij sdk modules
@@ -53,12 +52,6 @@ projectTest(parallel = true) {
 //    dependsOn(embeddableTestRuntime)
 //    classpath = embeddableTestRuntime
 //}
-
-projectTest(taskName = "testWithIr", parallel = true) {
-    dependsOn(":dist")
-    workingDir = rootDir
-    systemProperty("kotlin.script.base.compiler.arguments", "-Xuse-ir")
-}
 
 projectTest(taskName = "testWithK2", parallel = true) {
     dependsOn(":dist")

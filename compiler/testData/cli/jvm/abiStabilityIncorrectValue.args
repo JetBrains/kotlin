@@ -1,5 +1,4 @@
 $TESTDATA_DIR$/simple.kt
 -d
 $TEMP_DIR$
--Xuse-ir
 -Xabi-stability=unknown
