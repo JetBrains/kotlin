@@ -22,6 +22,7 @@ abstract class AbstractDiagnosticCompilerTestDataTest : AbstractCompilerBasedTes
     override fun TestConfigurationBuilder.configureTest() {
         baseFirDiagnosticTestConfiguration(frontendFacade = ::LowLevelFirFrontendFacade.bind(LLFirAnalyzerFacadeFactoryWithoutPreresolve))
         useAfterAnalysisCheckers(::ContractViolationSuppressor)
+        useAfterAnalysisCheckers(::DiagnosticSuppressor)
     }
 }
 
@@ -49,5 +50,31 @@ private class ContractViolationSuppressor(testServices: TestServices) : AfterAna
 
     companion object : SimpleDirectivesContainer() {
         val IGNORE_CONTRACT_VIOLATIONS by directive("Temporary disables test with contract violation until the issue is fixed")
+    }
+}
+
+private class DiagnosticSuppressor(testServices: TestServices) : AfterAnalysisChecker(testServices) {
+    override val directiveContainers: List<DirectivesContainer> get() = listOf(Companion)
+
+    override fun suppressIfNeeded(failedAssertions: List<WrappedException>): List<WrappedException> {
+        if (!isDisabled()) {
+            return failedAssertions
+        }
+
+        return if (failedAssertions.isEmpty()) {
+            listOf(
+                AssertionError(
+                    "Test contains $IGNORE_DIAGNOSTIC_API directive but no errors was reported. Please remove directive",
+                ).wrap()
+            )
+        } else {
+            emptyList()
+        }
+    }
+
+    private fun isDisabled(): Boolean = IGNORE_DIAGNOSTIC_API in testServices.moduleStructure.allDirectives
+
+    companion object : SimpleDirectivesContainer() {
+        val IGNORE_DIAGNOSTIC_API by directive("Temporary disables diagnostic api test until the issue is fixed")
     }
 }
