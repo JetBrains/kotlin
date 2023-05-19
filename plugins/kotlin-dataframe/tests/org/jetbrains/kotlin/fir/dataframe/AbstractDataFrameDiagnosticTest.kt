@@ -10,9 +10,9 @@ import org.jetbrains.kotlin.fir.dataframe.services.ExtensionRegistrarConfigurato
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.frontend.fir.DisableLazyResolveChecksAfterAnalysisChecker
+import org.jetbrains.kotlin.test.initIdeaConfiguration
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
 import org.jetbrains.kotlin.test.runners.baseFirDiagnosticTestConfiguration
-import org.jetbrains.kotlin.test.initIdeaConfiguration
 import org.jetbrains.kotlin.test.services.EnvironmentBasedStandardLibrariesPathProvider
 import org.jetbrains.kotlin.test.services.KotlinStandardLibrariesPathProvider
 import org.junit.jupiter.api.BeforeAll
