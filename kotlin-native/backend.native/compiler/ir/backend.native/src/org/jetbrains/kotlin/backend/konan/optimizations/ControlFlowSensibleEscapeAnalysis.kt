@@ -929,7 +929,9 @@ internal object ControlFlowSensibleEscapeAnalysis {
                 is Node.Object -> listOf(node)
                 is Node.Reference -> {
                     val visited = BitSet()
-                    visited.set(Node.NULL_ID) // Skip null, as getting/setting its field would lead to NPE.
+                    // Skip null, as getting/setting its field would lead to a segfault
+                    // (not NPE, which is being thrown explicitly by !! operator).
+                    visited.set(Node.NULL_ID)
                     visited.set(Node.UNIT_ID) // Unit might get here because of generics and non-exact devirtualization.
                     val reachable = mutableListOf<Node.Reference>()
 
@@ -1888,6 +1890,7 @@ internal object ControlFlowSensibleEscapeAnalysis {
                                     NodeContext(state.level, state.anchorIds, node.loop ?: state.loop, callSite), node.id
                             ).newObject(node.label)
                             reflectNode(node, mirroredObject)
+                            // TODO: Do we need to do this?
                             if (calleeEscapeAnalysisResult.objectsReferencedFromThrown.get(node.id))
                                 objectsReferencedFromThrown.set(mirroredObject.id)
                             node.fields.forEach { (field, fieldValue) ->
