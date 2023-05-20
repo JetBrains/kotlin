@@ -141,12 +141,6 @@ internal class WasmUsefulDeclarationProcessor(
         irClass.getWasmArrayAnnotation()?.type
             ?.enqueueType(irClass, "array type for wasm array annotated")
 
-        if (irClass.symbol in context.wasmSymbols.primitiveTypeToCreateTypedArray.keys) {
-            irClass.declarations.forEach {
-                (it as? IrField)?.enqueue(irClass, "preserve all fields for primitive arrays")
-            }
-        }
-
         if (context.inlineClassesUtils.isClassInlineLike(irClass)) {
             irClass.declarations
                 .firstIsInstanceOrNull<IrConstructor>()
@@ -187,8 +181,17 @@ internal class WasmUsefulDeclarationProcessor(
 
     override fun processConstructor(irConstructor: IrConstructor) {
         super.processConstructor(irConstructor)
-        if (!context.inlineClassesUtils.isClassInlineLike(irConstructor.parentAsClass)) {
+        val constructedClass = irConstructor.constructedClass
+        if (!context.inlineClassesUtils.isClassInlineLike(constructedClass)) {
             processIrFunction(irConstructor)
+        }
+
+        if (irConstructor.hasWasmPrimitiveConstructorAnnotation()) {
+            constructedClass.declarations.forEach { declaration ->
+                if (declaration is IrField) {
+                    declaration.enqueue(constructedClass, "preserve all fields for primitive constructors")
+                }
+            }
         }
     }
 

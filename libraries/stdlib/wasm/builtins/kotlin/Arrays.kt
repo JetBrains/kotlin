@@ -45,9 +45,9 @@ internal fun byteArrayIterator(array: ByteArray) = object : ByteIterator() {
     override fun nextByte() = if (index != array.size) array[index++] else throw NoSuchElementException("$index")
 }
 
-internal inline fun createByteArray(size: Int, invokable: (Int) -> Byte): ByteArray {
+internal inline fun createByteArray(size: Int, init: (Int) -> Byte): ByteArray {
     val result = WasmByteArray(size)
-    result.fill(size, invokable)
+    result.fill(size, init)
     return ByteArray(result)
 }
 
@@ -82,9 +82,9 @@ internal fun charArrayIterator(array: CharArray) = object : CharIterator() {
     override fun nextChar() = if (index != array.size) array[index++] else throw NoSuchElementException("$index")
 }
 
-internal inline fun createCharArray(size: Int, invokable: (Int) -> Char): CharArray {
+internal inline fun createCharArray(size: Int, init: (Int) -> Char): CharArray {
     val result = WasmCharArray(size)
-    result.fill(size, invokable)
+    result.fill(size, init)
     return CharArray(result)
 }
 
@@ -119,9 +119,9 @@ internal fun shortArrayIterator(array: ShortArray) = object : ShortIterator() {
     override fun nextShort() = if (index != array.size) array[index++] else throw NoSuchElementException("$index")
 }
 
-internal inline fun createShortArray(size: Int, invokable: (Int) -> Short): ShortArray {
+internal inline fun createShortArray(size: Int, init: (Int) -> Short): ShortArray {
     val result = WasmShortArray(size)
-    result.fill(size, invokable)
+    result.fill(size, init)
     return ShortArray(result)
 }
 
@@ -156,9 +156,9 @@ internal fun intArrayIterator(array: IntArray) = object : IntIterator() {
     override fun nextInt() = if (index != array.size) array[index++] else throw NoSuchElementException("$index")
 }
 
-internal inline fun createIntArray(size: Int, invokable: (Int) -> Int): IntArray {
+internal inline fun createIntArray(size: Int, init: (Int) -> Int): IntArray {
     val result = WasmIntArray(size)
-    result.fill(size, invokable)
+    result.fill(size, init)
     return IntArray(result)
 }
 
@@ -192,9 +192,9 @@ internal fun longArrayIterator(array: LongArray) = object : LongIterator() {
     override fun nextLong() = if (index != array.size) array[index++] else throw NoSuchElementException("$index")
 }
 
-internal inline fun createLongArray(size: Int, invokable: (Int) -> Long): LongArray {
+internal inline fun createLongArray(size: Int, init: (Int) -> Long): LongArray {
     val result = WasmLongArray(size)
-    result.fill(size, invokable)
+    result.fill(size, init)
     return LongArray(result)
 }
 
@@ -228,9 +228,9 @@ internal fun floatArrayIterator(array: FloatArray) = object : FloatIterator() {
     override fun nextFloat() = if (index != array.size) array[index++] else throw NoSuchElementException("$index")
 }
 
-internal inline fun createFloatArray(size: Int, invokable: (Int) -> Float): FloatArray {
+internal inline fun createFloatArray(size: Int, init: (Int) -> Float): FloatArray {
     val result = WasmFloatArray(size)
-    result.fill(size, invokable)
+    result.fill(size, init)
     return FloatArray(result)
 }
 
@@ -264,9 +264,9 @@ internal fun doubleArrayIterator(array: DoubleArray) = object : DoubleIterator()
     override fun nextDouble() = if (index != array.size) array[index++] else throw NoSuchElementException("$index")
 }
 
-internal inline fun createDoubleArray(size: Int, invokable: (Int) -> Double): DoubleArray {
+internal inline fun createDoubleArray(size: Int, init: (Int) -> Double): DoubleArray {
     val result = WasmDoubleArray(size)
-    result.fill(size, invokable)
+    result.fill(size, init)
     return DoubleArray(result)
 }
 
@@ -304,10 +304,10 @@ internal fun booleanArrayIterator(array: BooleanArray) = object : BooleanIterato
 private fun Boolean.reinterpretAsByte(): Byte =
     implementedAsIntrinsic
 
-internal inline fun createBooleanArray(size: Int, invokable: (Int) -> Boolean): BooleanArray {
+internal inline fun createBooleanArray(size: Int, init: (Int) -> Boolean): BooleanArray {
     val result = WasmByteArray(size)
     result.fill(size) {
-        invokable(it).reinterpretAsByte()
+        init(it).reinterpretAsByte()
     }
     return BooleanArray(result)
 }

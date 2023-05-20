@@ -86,8 +86,8 @@ internal fun <T> arrayIterator(array: Array<T>) = object : Iterator<T> {
     override fun next() = if (index != array.size) array[index++] else throw NoSuchElementException("$index")
 }
 
-internal inline fun <reified T> createAnyArray(size: Int, invokable: (Int) -> T): Array<T> {
+internal inline fun <reified T> createAnyArray(size: Int, init: (Int) -> T): Array<T> {
     val result = WasmAnyArray(size)
-    result.fill(size, invokable)
+    result.fill(size, init)
     return Array(result)
 }

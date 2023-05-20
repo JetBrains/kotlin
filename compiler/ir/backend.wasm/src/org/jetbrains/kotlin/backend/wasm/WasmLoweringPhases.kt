@@ -118,13 +118,13 @@ private val lateinitUsageLoweringPhase = makeWasmModulePhase(
 private val arrayConstructorReferencePhase = makeWasmModulePhase(
     ::WasmArrayConstructorReferenceLowering,
     name = "ArrayConstructorReference",
-    description = "Transform `::Array` into a lambda"
+    description = "Transform `::Array` into a ::create#Array"
 )
 
 private val arrayConstructorPhase = makeWasmModulePhase(
     ::WasmArrayConstructorLowering,
     name = "ArrayConstructor",
-    description = "Transform `Array(size) { index -> value }` into a loop",
+    description = "Transform `Array(size) { index -> value }` into create#Array { index -> value } call",
     prerequisite = setOf(arrayConstructorReferencePhase)
 )
 
@@ -629,8 +629,6 @@ val wasmPhases = SameTypeNamedCompilerPhase(
             localClassesInInlineFunctionsPhase then
             localClassesExtractionFromInlineFunctionsPhase then
 
-            // TODO: Need some helpers from stdlib
-            // arrayConstructorPhase then
             wrapInlineDeclarationsWithReifiedTypeParametersPhase then
 
             functionInliningPhase then
