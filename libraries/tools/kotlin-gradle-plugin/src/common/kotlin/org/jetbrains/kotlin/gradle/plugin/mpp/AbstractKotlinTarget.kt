@@ -9,6 +9,7 @@ import org.gradle.api.DomainObjectSet
 import org.gradle.api.Project
 import org.gradle.api.artifacts.ConfigurablePublishArtifact
 import org.gradle.api.attributes.*
+import org.gradle.api.component.AdhocComponentWithVariants
 import org.gradle.api.component.ComponentWithCoordinates
 import org.gradle.api.component.ComponentWithVariants
 import org.gradle.api.component.SoftwareComponent
@@ -240,7 +241,7 @@ internal fun Project.buildAdhocComponentsFromKotlinVariants(kotlinVariants: Set<
 
         adhocVariant as SoftwareComponent
 
-        object : ComponentWithVariants, ComponentWithCoordinates, SoftwareComponentInternal {
+        object : ComponentWithVariants, ComponentWithCoordinates, SoftwareComponentInternal, AdhocComponentWithVariants by adhocVariant {
             override fun getCoordinates() =
                 (kotlinVariant as? ComponentWithCoordinates)?.coordinates ?: error("kotlinVariant is not ComponentWithCoordinates")
 
