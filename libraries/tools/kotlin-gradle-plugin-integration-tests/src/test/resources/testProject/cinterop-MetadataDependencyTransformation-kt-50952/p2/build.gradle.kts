@@ -16,6 +16,7 @@ kotlin {
     linuxArm64()
 
     if (properties.containsKey("p2.enableLinuxArm32Hfp")) {
+        @Suppress("DEPRECATION_ERROR")
         linuxArm32Hfp()
     }
 

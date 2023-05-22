@@ -15,6 +15,7 @@ kotlin {
         implementation(kotlin("stdlib-common"))
     }
 
+    @Suppress("DEPRECATION_ERROR")
     iosArm32()
     iosArm64()
     iosX64()

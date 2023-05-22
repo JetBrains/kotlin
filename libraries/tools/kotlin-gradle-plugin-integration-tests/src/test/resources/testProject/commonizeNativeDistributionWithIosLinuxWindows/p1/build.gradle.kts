@@ -4,10 +4,12 @@ plugins {
 
 kotlin {
     iosX64()
+    @Suppress("DEPRECATION_ERROR")
     iosArm32()
     linuxX64()
     linuxArm64()
     mingwX64("windowsX64")
+    @Suppress("DEPRECATION_ERROR")
     mingwX86("windowsX86")
 
     val commonMain by sourceSets.getting

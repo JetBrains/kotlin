@@ -8,6 +8,7 @@ repositories {
 }
 
 kotlin {
+    @Suppress("DEPRECATION_ERROR")
     linuxArm32Hfp("intPlatform") {
         compilations.get("main").cinterops.create("intPropertyInterop") {
             header(file("libs/intPlatform.h"))

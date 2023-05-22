@@ -19,6 +19,7 @@ publishing {
 }
 
 kotlin {
+    @Suppress("DEPRECATION_ERROR")
     linuxArm32Hfp()
     val targetsWithInterop = listOf(linuxX64(), linuxArm64())
 

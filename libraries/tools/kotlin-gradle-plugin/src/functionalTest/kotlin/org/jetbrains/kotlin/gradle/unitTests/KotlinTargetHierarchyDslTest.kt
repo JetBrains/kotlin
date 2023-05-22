@@ -26,7 +26,7 @@ class KotlinTargetHierarchyDslTest {
 
 
     @Test
-    @Suppress("DEPRECATION") // deprecated K/N targets
+    @Suppress("DEPRECATION_ERROR") // deprecated K/N targets
     fun `test - hierarchy default - targets from all families`() {
         kotlin.apply {
             targetHierarchy.default()

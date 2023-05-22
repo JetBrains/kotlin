@@ -31,6 +31,7 @@ kotlin {
     ios()
 
     mingwX64("windowsX64")
+    @Suppress("DEPRECATION_ERROR")
     mingwX86("windowsX86")
 
     val commonMain by sourceSets.getting

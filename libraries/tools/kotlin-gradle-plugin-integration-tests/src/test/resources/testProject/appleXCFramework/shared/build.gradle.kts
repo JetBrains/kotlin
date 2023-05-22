@@ -15,6 +15,7 @@ kotlin {
 
     val iosX64 = iosX64()
     val iosArm64 = iosArm64()
+    @Suppress("DEPRECATION_ERROR")
     val iosArm32 = iosArm32()
     val iosSimulatorArm64 = iosSimulatorArm64()
 
@@ -32,6 +33,7 @@ kotlin {
         watchosArm64(),
         watchosDeviceArm64(),
         watchosSimulatorArm64(),
+        @Suppress("DEPRECATION_ERROR")
         watchosX86(),
         watchosX64()
     ).forEach { target ->

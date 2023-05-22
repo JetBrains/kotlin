@@ -37,6 +37,7 @@ kotlin {
     iosSimulatorArm64()
 
     mingwX64()
+    @Suppress("DEPRECATION_ERROR")
     mingwX86()
 
     sourceSets.all {

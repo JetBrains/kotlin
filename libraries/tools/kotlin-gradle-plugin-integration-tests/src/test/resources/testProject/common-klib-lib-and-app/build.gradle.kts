@@ -19,7 +19,9 @@ kotlin {
 	linuxArm64()
 
 	// Linux-specific targets – embedded:
+	@Suppress("DEPRECATION_ERROR")
 	linuxMips32()
+	@Suppress("DEPRECATION_ERROR")
 	linuxMipsel32()
 
 	// macOS-specific targets - created by the ios() shortcut:
@@ -27,6 +29,7 @@ kotlin {
 
 	// Windows-specific targets:
 	mingwX64()
+	@Suppress("DEPRECATION_ERROR")
 	mingwX86()
 
 	sourceSets {
@@ -67,6 +70,7 @@ kotlin {
 			dependsOn(commonMain)
 		}
 
+		@Suppress("DEPRECATION_ERROR")
 		configure(listOf(linuxMips32(), linuxMipsel32())) {
 			compilations["main"].defaultSourceSet.dependsOn(embeddedMain)
 		}
@@ -75,6 +79,7 @@ kotlin {
 			dependsOn(commonMain)
 		}
 
+		@Suppress("DEPRECATION_ERROR")
 		configure(listOf(mingwX64(), mingwX86())) {
 			compilations["main"].defaultSourceSet.dependsOn(windowsMain)
 		}

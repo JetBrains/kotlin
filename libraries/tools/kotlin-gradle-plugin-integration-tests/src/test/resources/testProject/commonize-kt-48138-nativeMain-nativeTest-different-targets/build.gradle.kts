@@ -22,6 +22,7 @@ repositories {
 kotlin {
     linuxX64()
     linuxArm64()
+    @Suppress("DEPRECATION_ERROR")
     linuxArm32Hfp()
 
     val commonMain by sourceSets.getting
