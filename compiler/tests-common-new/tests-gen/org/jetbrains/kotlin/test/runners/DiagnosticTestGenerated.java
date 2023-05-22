@@ -37893,6 +37893,76 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                     runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/prohibitPositionedArgument/withoutValue.kt");
                 }
             }
+
+            @Nested
+            @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/subclassOptInRequired")
+            @TestDataPath("$PROJECT_ROOT")
+            public class SubclassOptInRequired {
+                @Test
+                public void testAllFilesPresentInSubclassOptInRequired() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/annotations/subclassOptInRequired"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+                }
+
+                @Test
+                @TestMetadata("CorrectApplicability.kt")
+                public void testCorrectApplicability() throws Exception {
+                    runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/subclassOptInRequired/CorrectApplicability.kt");
+                }
+
+                @Test
+                @TestMetadata("IncorrectApplicability.kt")
+                public void testIncorrectApplicability() throws Exception {
+                    runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/subclassOptInRequired/IncorrectApplicability.kt");
+                }
+
+                @Test
+                @TestMetadata("InheritingByLocalClassifiers.kt")
+                public void testInheritingByLocalClassifiers() throws Exception {
+                    runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/subclassOptInRequired/InheritingByLocalClassifiers.kt");
+                }
+
+                @Test
+                @TestMetadata("InheritingDifferentOptInLevels.kt")
+                public void testInheritingDifferentOptInLevels() throws Exception {
+                    runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/subclassOptInRequired/InheritingDifferentOptInLevels.kt");
+                }
+
+                @Test
+                @TestMetadata("NotApiMarkerAsArgument.kt")
+                public void testNotApiMarkerAsArgument() throws Exception {
+                    runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/subclassOptInRequired/NotApiMarkerAsArgument.kt");
+                }
+
+                @Test
+                @TestMetadata("UsageOptInIsNotImplied.kt")
+                public void testUsageOptInIsNotImplied() throws Exception {
+                    runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/subclassOptInRequired/UsageOptInIsNotImplied.kt");
+                }
+
+                @Test
+                @TestMetadata("WithAbstractClasses.kt")
+                public void testWithAbstractClasses() throws Exception {
+                    runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/subclassOptInRequired/WithAbstractClasses.kt");
+                }
+
+                @Test
+                @TestMetadata("WithInheritanceByDelegation.kt")
+                public void testWithInheritanceByDelegation() throws Exception {
+                    runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/subclassOptInRequired/WithInheritanceByDelegation.kt");
+                }
+
+                @Test
+                @TestMetadata("WithInterfaces.kt")
+                public void testWithInterfaces() throws Exception {
+                    runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/subclassOptInRequired/WithInterfaces.kt");
+                }
+
+                @Test
+                @TestMetadata("WithOpenClasses.kt")
+                public void testWithOpenClasses() throws Exception {
+                    runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/subclassOptInRequired/WithOpenClasses.kt");
+                }
+            }
         }
 
         @Nested
@@ -40108,24 +40178,6 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             @TestMetadata("overrideInPrimaryConstructor.kt")
             public void testOverrideInPrimaryConstructor() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/overrideInPrimaryConstructor.kt");
-            }
-
-            @Test
-            @TestMetadata("subClassOptInModality.kt")
-            public void testSubClassOptInModality() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/subClassOptInModality.kt");
-            }
-
-            @Test
-            @TestMetadata("subClassOptInRequired.kt")
-            public void testSubClassOptInRequired() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/subClassOptInRequired.kt");
-            }
-
-            @Test
-            @TestMetadata("subclassOptInInheritance.kt")
-            public void testSubclassOptInInheritance() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/subclassOptInInheritance.kt");
             }
 
             @Test
