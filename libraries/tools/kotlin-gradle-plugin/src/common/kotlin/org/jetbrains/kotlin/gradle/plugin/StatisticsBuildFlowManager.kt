@@ -54,7 +54,7 @@ internal class BuildScanFlowAction : FlowAction<BuildScanFlowAction.Parameters> 
     }
 
     override fun execute(parameters: Parameters) {
-        parameters.buildMetricService.orNull?.addCollectedTagsToBuildScan(parameters.buildScanExtensionHolder.orNull)
+        parameters.buildMetricService.orNull?.addBuildScanReport(parameters.buildScanExtensionHolder.orNull)
     }
 }
 
