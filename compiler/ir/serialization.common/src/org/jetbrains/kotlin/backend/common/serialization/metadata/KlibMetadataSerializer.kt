@@ -250,10 +250,22 @@ fun serializeKlibHeader(
     moduleDescriptor: ModuleDescriptor,
     fragmentNames: List<String>,
     emptyPackages: List<String>
+) = serializeKlibHeader(
+    languageVersionSettings,
+    moduleDescriptor.name.asString(),
+    fragmentNames,
+    emptyPackages,
+)
+
+fun serializeKlibHeader(
+    languageVersionSettings: LanguageVersionSettings,
+    moduleName: String,
+    fragmentNames: List<String>,
+    emptyPackages: List<String>
 ): KlibMetadataProtoBuf.Header {
     val header = KlibMetadataProtoBuf.Header.newBuilder()
 
-    header.moduleName = moduleDescriptor.name.asString()
+    header.moduleName = moduleName
 
     if (languageVersionSettings.isPreRelease()) {
         header.flags = KlibMetadataHeaderFlags.PRE_RELEASE

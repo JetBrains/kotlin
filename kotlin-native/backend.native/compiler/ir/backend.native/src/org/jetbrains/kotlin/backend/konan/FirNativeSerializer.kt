@@ -6,6 +6,7 @@ import org.jetbrains.kotlin.backend.common.serialization.metadata.makeSerialized
 import org.jetbrains.kotlin.backend.common.serialization.metadata.serializeKlibHeader
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.phases.Fir2IrOutput
+import org.jetbrains.kotlin.backend.konan.driver.phases.FirOutput
 import org.jetbrains.kotlin.backend.konan.driver.phases.SerializerOutput
 import org.jetbrains.kotlin.backend.konan.serialization.KonanIrModuleSerializer
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
@@ -16,6 +17,9 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.ConstValueProviderImpl
 import org.jetbrains.kotlin.fir.backend.extractFirDeclarations
 import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.moduleData
+import org.jetbrains.kotlin.fir.packageFqName
+import org.jetbrains.kotlin.fir.pipeline.FirResult
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.serialization.*
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
@@ -27,14 +31,22 @@ import org.jetbrains.kotlin.library.metadata.resolver.TopologicalLibraryOrder
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.utils.toMetadataVersion
 
-internal fun PhaseContext.firSerializer(
-        input: Fir2IrOutput
+internal fun PhaseContext.firSerializer(input: FirOutput): SerializerOutput? = when (input) {
+    !is FirOutput.Full -> null
+    else -> firSerializerBase(input.firResult, null)
+}
+
+internal fun PhaseContext.fir2IrSerializer(input: Fir2IrOutput) = firSerializerBase(input.firResult, input)
+
+internal fun PhaseContext.firSerializerBase(
+        firResult: FirResult,
+        fir2IrInput: Fir2IrOutput?,
 ): SerializerOutput {
     val configuration = config.configuration
     val sourceFiles = mutableListOf<KtSourceFile>()
     val firFilesAndSessionsBySourceFile = mutableMapOf<KtSourceFile, Triple<FirFile, FirSession, ScopeSession>>()
 
-    for (firOutput in input.firResult.outputs) {
+    for (firOutput in firResult.outputs) {
         for (firFile in firOutput.fir) {
             sourceFiles.add(firFile.sourceFile!!)
             firFilesAndSessionsBySourceFile[firFile.sourceFile!!] = Triple(firFile, firOutput.session, firOutput.scopeSession)
@@ -45,21 +57,24 @@ internal fun PhaseContext.firSerializer(
             configuration.get(CommonConfigurationKeys.METADATA_VERSION)
                     ?: configuration.languageVersionSettings.languageVersion.toMetadataVersion()
 
-    val resolvedLibraries = config.resolvedLibraries.getFullResolvedList(TopologicalLibraryOrder)
-    val usedResolvedLibraries = resolvedLibraries.filter {
-        (!it.isDefault && !configuration.getBoolean(KonanConfigKeys.PURGE_USER_LIBS)) || it in input.usedLibraries
+    val usedResolvedLibraries = fir2IrInput?.let {
+        config.resolvedLibraries.getFullResolvedList(TopologicalLibraryOrder).filter {
+            (!it.isDefault && !configuration.getBoolean(KonanConfigKeys.PURGE_USER_LIBS)) || it in fir2IrInput.usedLibraries
+        }
     }
-    val actualizedFirDeclarations = input.irActualizedResult.extractFirDeclarations()
+
+    val actualizedFirDeclarations = fir2IrInput?.irActualizedResult?.extractFirDeclarations()
     return serializeNativeModule(
             configuration = configuration,
             messageLogger = configuration.get(IrMessageLogger.IR_MESSAGE_LOGGER) ?: IrMessageLogger.None,
             sourceFiles,
-            usedResolvedLibraries.map { it.library as KonanLibrary },
-            input.irModuleFragment,
-            expectDescriptorToSymbol = mutableMapOf() // TODO: expect -> actual mapping
-    ) { file ->
-        val (firFile, session, scopeSession) = firFilesAndSessionsBySourceFile[file]
-                ?: error("cannot find FIR file by source file ${file.name} (${file.path})")
+            usedResolvedLibraries?.map { it.library as KonanLibrary },
+            fir2IrInput?.irModuleFragment,
+            moduleName = fir2IrInput?.irModuleFragment?.descriptor?.name?.asString()
+                    ?: firResult.outputs.last().session.moduleData.name.asString(),
+            expectDescriptorToSymbol = mutableMapOf(), // TODO: expect -> actual mapping
+            firFilesAndSessionsBySourceFile,
+    ) { firFile, session, scopeSession ->
         serializeSingleFirFile(
                 firFile,
                 session,
@@ -67,7 +82,9 @@ internal fun PhaseContext.firSerializer(
                 actualizedFirDeclarations,
                 FirKLibSerializerExtension(
                         session, metadataVersion,
-                        ConstValueProviderImpl(input.components),
+                        fir2IrInput?.let {
+                            ConstValueProviderImpl(fir2IrInput.components)
+                        },
                         allowErrorTypes = false, exportKDoc = shouldExportKDoc()
                 ),
                 configuration.languageVersionSettings,
@@ -75,60 +92,77 @@ internal fun PhaseContext.firSerializer(
     }
 }
 
-class KotlinFileSerializedData(val metadata: ByteArray, val irData: SerializedIrFile)
+class KotlinFileSerializedData(
+        val source: KtSourceFile,
+        val firFile: FirFile,
+        val metadata: ByteArray,
+        val irData: SerializedIrFile?,
+) {
+    val fqName: String get() = irData?.fqName ?: firFile.packageFqName.asString()
+    val path: String? get() = irData?.path ?: source.path
+}
 
 internal fun PhaseContext.serializeNativeModule(
         configuration: CompilerConfiguration,
         messageLogger: IrMessageLogger,
         files: List<KtSourceFile>,
-        dependencies: List<KonanLibrary>,
-        moduleFragment: IrModuleFragment,
+        dependencies: List<KonanLibrary>?,
+        moduleFragment: IrModuleFragment?,
+        moduleName: String,
         expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>,
-        serializeSingleFile: (KtSourceFile) -> ProtoBuf.PackageFragment
+        firFilesAndSessionsBySourceFile: Map<KtSourceFile, Triple<FirFile, FirSession, ScopeSession>>,
+        serializeSingleFile: (FirFile, FirSession, ScopeSession) -> ProtoBuf.PackageFragment
 ): SerializerOutput {
-    assert(files.size == moduleFragment.files.size)
+    if (moduleFragment != null) {
+        assert(files.size == moduleFragment.files.size)
+    }
 
     val sourceBaseDirs = configuration[CommonConfigurationKeys.KLIB_RELATIVE_PATH_BASES] ?: emptyList()
     val absolutePathNormalization = configuration[CommonConfigurationKeys.KLIB_NORMALIZE_ABSOLUTE_PATH] ?: false
     val expectActualLinker = config.configuration.get(CommonConfigurationKeys.EXPECT_ACTUAL_LINKER) ?: false
 
-    val serializedIr =
-            KonanIrModuleSerializer(
-                    messageLogger,
-                    moduleFragment.irBuiltins,
-                    expectDescriptorToSymbol,
-                    skipExpects = !expectActualLinker,
-                    CompatibilityMode.CURRENT,
-                    normalizeAbsolutePaths = absolutePathNormalization,
-                    sourceBaseDirs = sourceBaseDirs,
-                    languageVersionSettings = configuration.languageVersionSettings,
-            ).serializedIrModule(moduleFragment)
+    val serializedIr = moduleFragment?.let {
+        KonanIrModuleSerializer(
+                messageLogger,
+                moduleFragment.irBuiltins,
+                expectDescriptorToSymbol,
+                skipExpects = !expectActualLinker,
+                CompatibilityMode.CURRENT,
+                normalizeAbsolutePaths = absolutePathNormalization,
+                sourceBaseDirs = sourceBaseDirs,
+                languageVersionSettings = configuration.languageVersionSettings,
+        ).serializedIrModule(moduleFragment)
+    }
 
-    val moduleDescriptor = moduleFragment.descriptor
+    val serializedFiles = serializedIr?.files?.toList()
 
-    val compiledKotlinFiles = files.zip(serializedIr.files).map { (ktSourceFile, binaryFile) ->
-        assert(ktSourceFile.path == binaryFile.path) {
-            """The Kt and Ir files are put in different order
+    val compiledKotlinFiles = files.mapIndexed { index, ktSourceFile ->
+        val binaryFile = serializedFiles?.get(index)?.also {
+            assert(ktSourceFile.path == it.path) {
+                """The Kt and Ir files are put in different order
                 Kt: ${ktSourceFile.path}
-                Ir: ${binaryFile.path}
+                Ir: ${it.path}
             """.trimMargin()
+            }
         }
-        val packageFragment = serializeSingleFile(ktSourceFile)
-        KotlinFileSerializedData(packageFragment.toByteArray(), binaryFile)
+        val (firFile, session, scopeSession) = firFilesAndSessionsBySourceFile[ktSourceFile]
+                ?: error("cannot find FIR file by source file ${ktSourceFile.name} (${ktSourceFile.path})")
+        val packageFragment = serializeSingleFile(firFile, session, scopeSession)
+        KotlinFileSerializedData(ktSourceFile, firFile, packageFragment.toByteArray(), binaryFile)
     }
 
     val header = serializeKlibHeader(
-            configuration.languageVersionSettings, moduleDescriptor,
-            compiledKotlinFiles.map { it.irData.fqName }.distinct().sorted(),
+            configuration.languageVersionSettings, moduleName,
+            compiledKotlinFiles.map { it.fqName }.distinct().sorted(),
             emptyList()
     ).toByteArray()
 
     val serializedMetadata =
             makeSerializedKlibMetadata(
-                    compiledKotlinFiles.groupBy { it.irData.fqName }
-                            .map { (fqn, data) -> fqn to data.sortedBy { it.irData.path }.map { it.metadata } }.toMap(),
+                    compiledKotlinFiles.groupBy { it.fqName }
+                            .map { (fqn, data) -> fqn to data.sortedBy { it.path }.map { it.metadata } }.toMap(),
                     header
             )
 
-    return SerializerOutput(serializedMetadata, serializedIr, null, dependencies)
+    return SerializerOutput(serializedMetadata, serializedIr, null, dependencies.orEmpty())
 }

@@ -103,9 +103,13 @@ internal class DynamicCompilerDriver : CompilerDriver() {
         if (frontendOutput is FirOutput.ShouldNotGenerateCode) return null
         require(frontendOutput is FirOutput.Full)
 
-        val fir2IrOutput = engine.runFir2Ir(frontendOutput)
-        engine.runK2SpecialBackendChecks(fir2IrOutput)
-        return engine.runFirSerializer(fir2IrOutput)
+        return if (environment.configuration.getBoolean(KonanConfigKeys.METADATA_KLIB)) {
+            engine.runFirSerializer(frontendOutput)
+        } else {
+            val fir2IrOutput = engine.runFir2Ir(frontendOutput)
+            engine.runK2SpecialBackendChecks(fir2IrOutput)
+            engine.runFir2IrSerializer(fir2IrOutput)
+        }
     }
 
     private fun serializeKlibK1(
