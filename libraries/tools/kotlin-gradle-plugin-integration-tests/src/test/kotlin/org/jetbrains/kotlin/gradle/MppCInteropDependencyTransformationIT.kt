@@ -96,6 +96,9 @@ abstract class MppCInteropDependencyTransformationIT : BaseGradleIT() {
                 /* Assert p2 & p3 compiled tests */
                 assertTasksExecuted(":p2:compileTestKotlinLinuxX64")
                 assertTasksExecuted(":p3:compileTestKotlinLinuxX64")
+
+                /* Configurations should not be resolved during configuration phase */
+                assertNotContains("Configuration resolved before Task Graph is ready")
             }
         }
 
@@ -257,7 +260,7 @@ abstract class MppCInteropDependencyTransformationIT : BaseGradleIT() {
             )
             project.build(":p3:transformNativeMainCInteropDependenciesMetadata", options = repositoryDependencyOptions) {
                 assertSuccessful()
-                /* Same binaries to transform; but the outputs are different (transformed libraries file) */
+                /* Same binaries to transform; but project(":p2") is excluded from Task Inputs now */
                 assertTasksExecuted(":p3:transformNativeMainCInteropDependenciesMetadata")
             }
         }
