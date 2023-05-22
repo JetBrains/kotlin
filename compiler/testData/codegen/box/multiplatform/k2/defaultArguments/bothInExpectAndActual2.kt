@@ -19,15 +19,17 @@ actual interface I {
     actual fun test(source: String = "actual")
 }
 
-actual interface J : I {
+actual interface J : I
+
+interface K : J {
     override fun test(source: String) {
         if (source != "actual") throw AssertionError(source)
     }
 }
 
-class K : J
+class L : K
 
 fun box(): String {
-    K().test()
+    L().test()
     return "OK"
 }
