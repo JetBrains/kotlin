@@ -43,6 +43,7 @@ bool SweepObject(uint8_t* object, FinalizerQueue& finalizerQueue, gc::GCHandle::
         if (!extraObject->getFlag(mm::ExtraObjectData::FLAGS_IN_FINALIZER_QUEUE)) {
             CustomAllocDebug("SweepObject(%p): needs to be finalized, extraObject at %p", object, extraObject);
             extraObject->setFlag(mm::ExtraObjectData::FLAGS_IN_FINALIZER_QUEUE);
+            extraObject->ClearRegularWeakReferenceImpl();
             CustomAllocDebug("SweepObject: fromExtraObject(%p) = %p", extraObject, ExtraObjectCell::fromExtraObject(extraObject));
             finalizerQueue.Push(ExtraObjectCell::fromExtraObject(extraObject));
             gcHandle.addMarkedObject();
