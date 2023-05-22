@@ -61,20 +61,31 @@ fun MfvcNode.createInstanceFromBox(
  * Create instance-specific [ValueDeclarationMfvcNodeInstance] from instance-agnostic [MfvcNode] using new flattened variables as data source.
  */
 fun MfvcNode.createInstanceFromValueDeclarationsAndBoxType(
-    scope: IrBuilderWithScope, type: IrSimpleType, name: Name, saveVariable: (IrVariable) -> Unit, isVar: Boolean
-): ValueDeclarationMfvcNodeInstance = createInstanceFromValueDeclarations(scope, makeTypeArgumentsFromType(type), name, saveVariable, isVar)
+    scope: IrBuilderWithScope,
+    type: IrSimpleType,
+    name: Name,
+    saveVariable: (IrVariable) -> Unit,
+    isVar: Boolean,
+    origin: IrDeclarationOrigin,
+): ValueDeclarationMfvcNodeInstance =
+    createInstanceFromValueDeclarations(scope, makeTypeArgumentsFromType(type), name, saveVariable, isVar, origin)
 
 /**
  * Create instance-specific [ValueDeclarationMfvcNodeInstance] from instance-agnostic [MfvcNode] using new flattened variables as data source.
  */
 fun MfvcNode.createInstanceFromValueDeclarations(
-    scope: IrBuilderWithScope, typeArguments: TypeArguments, name: Name, saveVariable: (IrVariable) -> Unit, isVar: Boolean
+    scope: IrBuilderWithScope,
+    typeArguments: TypeArguments,
+    name: Name,
+    saveVariable: (IrVariable) -> Unit,
+    isVar: Boolean,
+    origin: IrDeclarationOrigin,
 ): ValueDeclarationMfvcNodeInstance {
     val valueDeclarations = mapLeaves {
         scope.savableStandaloneVariable(
             type = it.type,
             name = listOf(name, it.fullFieldName).joinToString("-"),
-            origin = JvmLoweredDeclarationOrigin.MULTI_FIELD_VALUE_CLASS_REPRESENTATION_VARIABLE,
+            origin = origin,
             saveVariable = saveVariable,
             isVar = isVar,
         )
