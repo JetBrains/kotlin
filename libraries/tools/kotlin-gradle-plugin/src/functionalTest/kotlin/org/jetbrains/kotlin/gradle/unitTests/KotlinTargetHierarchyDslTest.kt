@@ -168,7 +168,7 @@ class KotlinTargetHierarchyDslTest {
 
         val kotlin = project.multiplatformExtension
 
-        assumeAndroidSdkAvailable()
+        assertAndroidSdkAvailable()
         project.androidLibrary { compileSdk = 31 }
 
         kotlin.targetHierarchy.default {

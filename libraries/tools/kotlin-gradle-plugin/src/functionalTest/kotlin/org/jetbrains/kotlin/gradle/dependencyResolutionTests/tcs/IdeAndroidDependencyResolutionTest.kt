@@ -48,7 +48,7 @@ class IdeAndroidDependencyResolutionTest {
 
     @BeforeTest
     fun checkEnvironment() {
-        assumeAndroidSdkAvailable()
+        assertAndroidSdkAvailable()
     }
 
     @Test

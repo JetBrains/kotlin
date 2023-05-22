@@ -6,14 +6,14 @@
 package org.jetbrains.kotlin.gradle.util
 
 import org.gradle.api.Project
-import org.junit.Assume
 import java.io.File
+import kotlin.test.assertTrue
 
 val androidSdk: String? = System.getProperty("android.sdk")?.replace("\\", "/")
 
-fun assumeAndroidSdkAvailable() {
-    Assume.assumeTrue("Missing android sdk in <$androidSdk> location.",
-                      androidSdk?.let { root -> File(root).exists() } ?: false)
+fun assertAndroidSdkAvailable() {
+    assertTrue(androidSdk?.let { root -> File(root).exists() } ?: false,
+               "Missing android sdk in <$androidSdk> location.")
 }
 
 fun setAndroidSdkDirProperty(project: Project) {

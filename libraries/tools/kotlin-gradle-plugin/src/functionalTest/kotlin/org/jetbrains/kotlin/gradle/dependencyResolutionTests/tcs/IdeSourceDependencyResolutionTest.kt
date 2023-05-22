@@ -133,7 +133,7 @@ class IdeSourceDependencyResolutionTest {
 
     @Test
     fun `test - multiplatform to multiplatform - sample 1 - jvmAndAndroid`() {
-        assumeAndroidSdkAvailable()
+        assertAndroidSdkAvailable()
         val root = buildProject()
 
         fun Project.setup() {

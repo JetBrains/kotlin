@@ -84,7 +84,7 @@ class IdeBinaryDependencyResolverTest {
 
     @Test
     fun `test - android artifact transformation`() {
-        assumeAndroidSdkAvailable()
+        assertAndroidSdkAvailable()
 
         /* Setup simple project that can resolve MVIKotlin */
         val project = buildProject {

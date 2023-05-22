@@ -24,7 +24,7 @@ class IdeJvmAndAndroidDependencyResolutionTest {
 
     @BeforeTest
     fun checkEnvironment() {
-        assumeAndroidSdkAvailable()
+        assertAndroidSdkAvailable()
     }
 
     private fun Project.configureAndroidAndMultiplatform(enableDefaultStdlib: Boolean = false) {
