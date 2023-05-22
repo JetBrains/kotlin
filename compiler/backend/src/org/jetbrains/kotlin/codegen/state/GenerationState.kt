@@ -315,16 +315,15 @@ class GenerationState private constructor(
     val assertionsMode: JVMAssertionsMode = configuration.get(JVMConfigurationKeys.ASSERTIONS_MODE, JVMAssertionsMode.DEFAULT)
     val isInlineDisabled: Boolean = configuration.getBoolean(CommonConfigurationKeys.DISABLE_INLINE)
     val useTypeTableInSerializer: Boolean = configuration.getBoolean(JVMConfigurationKeys.USE_TYPE_TABLE)
-    val unifiedNullChecks: Boolean = (
-            languageVersionSettings.apiVersion >= ApiVersion.KOTLIN_1_4 &&
-                    !configuration.getBoolean(JVMConfigurationKeys.NO_UNIFIED_NULL_CHECKS)
-            ).also {
-            check(it || !languageVersionSettings.supportsFeature(LanguageFeature.NoSourceCodeInNotNullAssertionExceptions)) {
-                // This assertion is needed because we generate calls to `Intrinsics.checkNotNull` which is only available since 1.4.
-                "Language feature ${LanguageFeature.NoSourceCodeInNotNullAssertionExceptions.name} is not supported " +
-                        "if -Xno-unified-null-checks is enabled."
-            }
-        }
+    val unifiedNullChecks: Boolean =
+        languageVersionSettings.apiVersion >= ApiVersion.KOTLIN_1_4 &&
+                !configuration.getBoolean(JVMConfigurationKeys.NO_UNIFIED_NULL_CHECKS)
+
+    val noSourceCodeInNotNullAssertionExceptions: Boolean =
+        languageVersionSettings.supportsFeature(LanguageFeature.NoSourceCodeInNotNullAssertionExceptions)
+                // This check is needed because we generate calls to `Intrinsics.checkNotNull` which is only available since 1.4
+                // (when unified null checks were introduced).
+                && unifiedNullChecks
 
     val generateSmapCopyToAnnotation: Boolean = !configuration.getBoolean(JVMConfigurationKeys.NO_SOURCE_DEBUG_EXTENSION)
     val functionsWithInlineClassReturnTypesMangled: Boolean =
