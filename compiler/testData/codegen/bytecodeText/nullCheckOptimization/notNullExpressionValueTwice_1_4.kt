@@ -20,4 +20,4 @@ fun test() {
 }
 
 // @KKt.class:
-// 1 checkNotNullExpressionValue
+// 1 checkNotNull
