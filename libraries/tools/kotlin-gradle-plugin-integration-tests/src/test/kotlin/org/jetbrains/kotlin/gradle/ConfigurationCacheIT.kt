@@ -232,6 +232,11 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
 
     @JvmGradlePluginTests
     @DisplayName("with build report")
+    @GradleTestVersions(
+        minVersion = TestVersions.Gradle.MIN_SUPPORTED,
+        additionalVersions = [TestVersions.Gradle.G_7_6, TestVersions.Gradle.G_8_0],
+        maxVersion = TestVersions.Gradle.G_8_1
+    )
     @GradleTest
     fun testBuildReportSmokeTestForConfigurationCache(gradleVersion: GradleVersion) {
         project(
@@ -251,6 +256,11 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
 
     @JvmGradlePluginTests
     @DisplayName("with build scan report")
+    @GradleTestVersions(
+        minVersion = TestVersions.Gradle.MIN_SUPPORTED,
+        additionalVersions = [TestVersions.Gradle.G_7_6], //build scan reports doesn't work properly for Gradle 8.0
+        maxVersion = TestVersions.Gradle.G_8_1
+    )
     @GradleTest
     fun testBuildScanReportSmokeTestForConfigurationCache(gradleVersion: GradleVersion) {
         project("simpleProject", gradleVersion) {
