@@ -126,15 +126,15 @@ bool gc::GC::FinalizersThreadIsRunning() noexcept {
 
 // static
 ALWAYS_INLINE void gc::GC::processObjectInMark(void* state, ObjHeader* object) noexcept {
-    gc::internal::processObjectInMark<gc::mark::MarkTraits>(state, object);
+    gc::internal::processObjectInMark<gc::mark::MarkDispatcher::MarkTraits>(state, object);
 }
 
 // static
 ALWAYS_INLINE void gc::GC::processArrayInMark(void* state, ArrayHeader* array) noexcept {
-    gc::internal::processArrayInMark<gc::mark::MarkTraits>(state, array);
+    gc::internal::processArrayInMark<gc::mark::MarkDispatcher::MarkTraits>(state, array);
 }
 
 // static
 ALWAYS_INLINE void gc::GC::processFieldInMark(void* state, ObjHeader* field) noexcept {
-    gc::internal::processFieldInMark<gc::mark::MarkTraits>(state, field);
+    gc::internal::processFieldInMark<gc::mark::MarkDispatcher::MarkTraits>(state, field);
 }

@@ -88,6 +88,11 @@ void processExtraObjectData(GCHandle::GCMarkScope& markHandle, typename Traits::
 template <typename Traits>
 void Mark(GCHandle handle, typename Traits::MarkQueue& markQueue) noexcept {
     auto markHandle = handle.mark();
+    Mark<Traits>(markHandle, markQueue);
+}
+
+template <typename Traits>
+void Mark(GCHandle::GCMarkScope& markHandle, typename Traits::MarkQueue& markQueue) noexcept {
     while (ObjHeader* top = Traits::tryDequeue(markQueue)) {
         // TODO: Consider moving it to the sweep phase to make this loop more tight.
         //       This, however, requires care with scheduler interoperation.

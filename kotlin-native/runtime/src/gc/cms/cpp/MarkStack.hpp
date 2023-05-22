@@ -5,7 +5,6 @@
 
 #include "Allocator.hpp"
 #include "IntrusiveList.hpp"
-#include "CooperativeIntrusiveList.hpp"
 #include "ObjectFactory.hpp"
 #include "Types.h"
 #include "Utils.hpp"
@@ -54,30 +53,5 @@ private:
     std::atomic<ObjectData*> next_ = nullptr;
 };
 
-class MarkTraits {
-public:
-    using MarkQueue = CooperativeIntrusiveList<ObjectData>;
-    using ObjectFactory = ObjectData::ObjectFactory;
-
-    static void clear(MarkQueue& queue) noexcept { queue.clearLocal(); }
-
-    // DELETED static ObjHeader* tryDequeue(MarkQueue& queue) noexcept;
-
-    static bool tryEnqueue(MarkQueue& queue, ObjHeader* object) noexcept {
-        auto& objectData = ObjectFactory::NodeRef::From(object).ObjectData();
-        return queue.tryPushLocal(objectData);
-    }
-
-    static bool tryMark(ObjHeader* object) noexcept {
-        auto& objectData = ObjectFactory::NodeRef::From(object).ObjectData();
-        return objectData.tryMark();
-    }
-
-    static void processInMark(MarkQueue& markQueue, ObjHeader* object) noexcept {
-        auto process = object->type_info()->processObjectInMark;
-        RuntimeAssert(process != nullptr, "Got null processObjectInMark for object %p", object);
-        process(static_cast<void*>(&markQueue), object);
-    }
-};
 
 } // namespace kotlin::gc::mark

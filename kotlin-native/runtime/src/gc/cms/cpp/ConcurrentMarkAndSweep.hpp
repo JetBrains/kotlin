@@ -102,7 +102,7 @@ public:
     void StopFinalizerThreadIfRunning() noexcept;
     bool FinalizersThreadIsRunning() noexcept;
 
-    void reconfigure(bool mutatorsCooperate, size_t auxGCThreads) noexcept;
+    void reconfigure(std::size_t maxParallelism, bool mutatorsCooperate, size_t auxGCThreads) noexcept;
 
 #ifdef CUSTOM_ALLOCATOR
     alloc::Heap& heap() noexcept { return heap_; }
