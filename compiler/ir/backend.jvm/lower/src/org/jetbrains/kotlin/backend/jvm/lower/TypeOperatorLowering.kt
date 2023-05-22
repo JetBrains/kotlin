@@ -764,7 +764,7 @@ private class TypeOperatorLowering(private val backendContext: JvmBackendContext
     }
 
     private fun IrBuilderWithScope.computeNotNullAssertionText(typeOperatorCall: IrTypeOperatorCall): String? {
-        if (backendContext.state.languageVersionSettings.supportsFeature(LanguageFeature.NoSourceCodeInNotNullAssertionExceptions)) {
+        if (backendContext.state.noSourceCodeInNotNullAssertionExceptions) {
             return when (val argument = typeOperatorCall.argument) {
                 is IrCall -> "${argument.symbol.owner.name.asString()}(...)"
                 is IrGetField -> argument.symbol.owner.name.asString()
