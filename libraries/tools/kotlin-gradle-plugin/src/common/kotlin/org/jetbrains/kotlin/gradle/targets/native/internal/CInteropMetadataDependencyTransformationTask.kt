@@ -113,7 +113,10 @@ internal open class CInteropMetadataDependencyTransformationTask @Inject constru
     @Transient @get:Internal val sourceSet: DefaultKotlinSourceSet,
     @get:OutputDirectory val outputDirectory: File,
     @get:Internal val cleaning: Cleaning,
-    objectFactory: ObjectFactory
+    /** when set, project-to-project dependencies will not be included to [outputLibraryFiles],
+     *  assuming they are added during gradle configuration, see [createCInteropMetadataDependencyClasspath] for details */
+    private val skipProjectDependencies: Boolean,
+    objectFactory: ObjectFactory,
 ) : DefaultTask() {
 
     private val parameters = GranularMetadataTransformation.Params(project, sourceSet)
@@ -133,38 +136,8 @@ internal open class CInteropMetadataDependencyTransformationTask @Inject constru
         }
     }
 
-    @Suppress("unused")
-    class ChooseVisibleSourceSetProjection(
-        @Input val dependencyModuleIdentifiers: List<KpmModuleIdentifier>,
-        @Nested val projectStructureMetadata: KotlinProjectStructureMetadata,
-        @Optional @Input val visibleSourceSetProvidingCInterops: String?
-    ) {
-        constructor(chooseVisibleSourceSets: ChooseVisibleSourceSets) : this(
-            dependencyModuleIdentifiers = chooseVisibleSourceSets.dependency.toKpmModuleIdentifiers(),
-            projectStructureMetadata = chooseVisibleSourceSets.projectStructureMetadata,
-            visibleSourceSetProvidingCInterops = chooseVisibleSourceSets.visibleSourceSetProvidingCInterops
-        )
-    }
-
-    @Suppress("unused")
-    @get:Classpath
-    protected val inputArtifactFiles: FileCollection = sourceSet
-        .internal
-        .resolvableMetadataConfiguration
-        .withoutProjectDependencies()
-
-    @get:Internal
-    protected val chooseVisibleSourceSets
-        get() = sourceSet
-            .metadataTransformation
-            .metadataDependencyResolutionsOrEmpty
-            .resolutionsToTransform()
-
-    @Suppress("unused")
     @get:Nested
-    protected val chooseVisibleSourceSetsProjection by lazy {
-        chooseVisibleSourceSets.map(::ChooseVisibleSourceSetProjection).toSet()
-    }
+    internal val inputs = MetadataDependencyTransformationTaskInputs(project, sourceSet, skipProjectDependencies)
 
     @get:OutputFile
     protected val outputLibrariesFileIndex: RegularFileProperty = objectFactory

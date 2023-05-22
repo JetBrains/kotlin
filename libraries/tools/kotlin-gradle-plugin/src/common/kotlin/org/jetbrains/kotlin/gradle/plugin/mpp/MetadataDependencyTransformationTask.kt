@@ -16,11 +16,7 @@ import org.gradle.api.file.ProjectLayout
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.tasks.*
-import org.gradle.work.NormalizeLineEndings
-import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
-import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope.*
-import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.targets.metadata.dependsOnClosureWithInterCompilationDependencies
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
@@ -64,34 +60,12 @@ open class MetadataDependencyTransformationTask
     //region Task Configuration State & Inputs
     private val transformationParameters = GranularMetadataTransformation.Params(project, kotlinSourceSet)
 
+    @Suppress("unused") // task inputs for up-to-date checks
+    @get:Nested
+    internal val taskInputs = MetadataDependencyTransformationTaskInputs(project, kotlinSourceSet)
+
     @get:OutputDirectory
     internal val outputsDir: File get() = projectLayout.kotlinTransformedMetadataLibraryDirectoryForBuild(transformationParameters.sourceSetName)
-
-    @Suppress("unused") // Gradle input
-    @get:InputFiles
-    @get:PathSensitive(PathSensitivity.RELATIVE)
-    @get:IgnoreEmptyDirectories
-    @get:NormalizeLineEndings
-    internal val configurationToResolve: FileCollection = kotlinSourceSet.internal.resolvableMetadataConfiguration
-
-    @Suppress("unused") // Gradle input
-    @get:InputFiles
-    @get:PathSensitive(PathSensitivity.RELATIVE)
-    @get:IgnoreEmptyDirectories
-    @get:NormalizeLineEndings
-    protected val hostSpecificMetadataConfigurationsToResolve: FileCollection = project.filesProvider {
-        kotlinSourceSet.internal.compilations
-            .filter { compilation -> if (compilation is KotlinNativeCompilation) compilation.konanTarget.enabledOnCurrentHost else true }
-            .mapNotNull { compilation -> compilation.internal.configurations.hostSpecificMetadataConfiguration }
-    }
-
-    @Transient // Only needed for configuring task inputs
-    private val participatingSourceSetsLazy: Lazy<Set<KotlinSourceSet>>? = lazy {
-        kotlinSourceSet.internal.withDependsOnClosure.toMutableSet().apply {
-            if (any { it.name == KotlinSourceSet.COMMON_MAIN_SOURCE_SET_NAME })
-                add(project.kotlinExtension.sourceSets.getByName(KotlinSourceSet.COMMON_MAIN_SOURCE_SET_NAME))
-        }
-    }
 
     @Transient // Only needed for configuring task inputs
     private val parentTransformationTasksLazy: Lazy<List<TaskProvider<MetadataDependencyTransformationTask>>>? = lazy {
@@ -102,36 +76,12 @@ open class MetadataDependencyTransformationTask
         }
     }
 
-    private val participatingSourceSets: Set<KotlinSourceSet>
-        get() = participatingSourceSetsLazy?.value
-            ?: error(
-                "`participatingSourceSets` is null. " +
-                        "Probably it is accessed it during Task Execution with state loaded from Configuration Cache"
-            )
-
     private val parentTransformationTasks: List<TaskProvider<MetadataDependencyTransformationTask>>
         get() = parentTransformationTasksLazy?.value
             ?: error(
                 "`parentTransformationTasks` is null. " +
                         "Probably it is accessed it during Task Execution with state loaded from Configuration Cache"
             )
-
-    @Suppress("unused") // Gradle input
-    @get:Input
-    protected val inputSourceSetsAndCompilations: Map<String, Iterable<String>> by lazy {
-        participatingSourceSets.associate { sourceSet ->
-            sourceSet.name to sourceSet.internal.compilations.map { it.name }.sorted()
-        }
-    }
-
-    @Suppress("unused") // Gradle input
-    @get:Input
-    protected val inputCompilationDependencies: Map<String, Set<List<String?>>> by lazy {
-        participatingSourceSets.flatMap { it.internal.compilations }.associate {
-            it.name to project.configurations.getByName(it.compileDependencyConfigurationName)
-                .allDependencies.map { listOf(it.group, it.name, it.version) }.toSet()
-        }
-    }
 
     @get:OutputFile
     protected val transformedLibrariesIndexFile: RegularFileProperty = objectFactory
