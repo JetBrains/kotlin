@@ -6,7 +6,10 @@ archivesBaseName = 'kotlin-stdlib'
 
 JvmToolchain.configureJvmToolchain(project, JdkMajorVersion.JDK_1_8)
 
-configurePublishing(project)
+def sbom = configureSbom(project)
+configurePublishing(project, {
+    artifact(sbom)
+})
 configureJavadocJar()
 configureSourcesJar()
 

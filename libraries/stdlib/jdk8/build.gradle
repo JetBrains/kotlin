@@ -2,7 +2,10 @@ description = 'Kotlin Standard Library JDK 8 extension'
 
 apply plugin: 'kotlin'
 
-configurePublishing(project)
+def sbom = configureSbom(project)
+configurePublishing(project, {
+    artifact(sbom)
+})
 configureSourcesJar()
 configureJavadocJar()
 
