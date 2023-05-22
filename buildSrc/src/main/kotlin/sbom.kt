@@ -1,5 +1,5 @@
 import org.gradle.api.Project
-import org.gradle.api.artifacts.Configuration
+import org.gradle.api.artifacts.PublishArtifact
 import org.gradle.kotlin.dsl.apply
 import org.gradle.kotlin.dsl.configure
 import org.spdx.sbom.gradle.SpdxSbomExtension
@@ -14,7 +14,7 @@ import java.util.*
 fun Project.configureSbom(
     moduleName: String = this.name,
     gradleConfigurations: Iterable<String> = setOf("runtimeClasspath"),
-): Configuration {
+): PublishArtifact {
     val project = this
     apply<SpdxSbomPlugin>()
 
@@ -44,12 +44,12 @@ fun Project.configureSbom(
         isCanBeConsumed = true
     }
     val sbomFile = layout.buildDirectory.file("spdx/$moduleName.spdx.json")
-    artifacts.add(sbomCfg.name, sbomFile.get().asFile) {
+    val sbomArtifact = artifacts.add(sbomCfg.name, sbomFile.get().asFile) {
         type = "sbom"
         extension = "spdx.json"
         val capitalizedModuleName =
             moduleName.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
         builtBy("spdxSbomFor$capitalizedModuleName")
     }
-    return sbomCfg
+    return sbomArtifact
 }

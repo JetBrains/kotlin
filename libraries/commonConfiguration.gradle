@@ -56,8 +56,8 @@ ext.configurePublishing = { Project project, configure = { } ->
     }
 }
 
-ext.configureSbom = { Project project, Iterable<String> gradleConfigurations = ["runtimeClasspath"] ->
-    SbomKt.configureSbom(project, gradleConfigurations)
+ext.configureSbom = { Project project, String moduleName = project.name, Iterable<String> gradleConfigurations = ["runtimeClasspath"] ->
+    SbomKt.configureSbom(project, moduleName, gradleConfigurations)
 }
 
 ext.configureFrontendIr = { Project project ->
