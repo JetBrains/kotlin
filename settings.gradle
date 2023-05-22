@@ -566,6 +566,7 @@ if (buildProperties.inJpsBuildIdeaSync) {
     def stdlibMpp = buildProperties.getBoolean("kotlin.stdlib.mpp", false)
     include ":core:builtins",
             ":kotlin-stdlib-common",
+            ":kotlin-stdlib-common-test",
             ":kotlin-stdlib",
             ":kotlin-stdlib-js",
             ":kotlin-stdlib-js-ir",
@@ -591,6 +592,7 @@ if (buildProperties.inJpsBuildIdeaSync) {
     if (!stdlibMpp) include ":kotlin-stdlib-mpp"
 
     project(':kotlin-stdlib-common').projectDir = "$rootDir/libraries/stdlib/common" as File
+    project(':kotlin-stdlib-common-test').projectDir = "$rootDir/libraries/stdlib/common-test" as File
     project(':kotlin-stdlib').projectDir = "$rootDir/libraries/stdlib" + (stdlibMpp ? "" : "/jvm") as File
     project(':kotlin-stdlib-js').projectDir = "$rootDir/libraries/stdlib/js-v1" as File
     project(':kotlin-stdlib-js-ir').projectDir = "$rootDir/libraries/stdlib/js-ir" as File
