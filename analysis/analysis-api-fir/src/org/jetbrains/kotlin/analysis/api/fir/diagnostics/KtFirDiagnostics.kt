@@ -1758,6 +1758,12 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         val missingDeclaration: KtCallableSymbol
     }
 
+    interface AbstractMemberNotImplementedByEnumEntry : KtFirDiagnostic<KtEnumEntry> {
+        override val diagnosticClass get() = AbstractMemberNotImplementedByEnumEntry::class
+        val enumEntry: KtSymbol
+        val missingDeclarations: List<KtCallableSymbol>
+    }
+
     interface AbstractClassMemberNotImplemented : KtFirDiagnostic<KtClassOrObject> {
         override val diagnosticClass get() = AbstractClassMemberNotImplemented::class
         val classOrObject: KtClassLikeSymbol

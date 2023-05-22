@@ -2110,6 +2110,13 @@ internal class AbstractMemberNotImplementedImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<KtClassOrObject>(firDiagnostic, token), KtFirDiagnostic.AbstractMemberNotImplemented
 
+internal class AbstractMemberNotImplementedByEnumEntryImpl(
+    override val enumEntry: KtSymbol,
+    override val missingDeclarations: List<KtCallableSymbol>,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<KtEnumEntry>(firDiagnostic, token), KtFirDiagnostic.AbstractMemberNotImplementedByEnumEntry
+
 internal class AbstractClassMemberNotImplementedImpl(
     override val classOrObject: KtClassLikeSymbol,
     override val missingDeclaration: KtCallableSymbol,

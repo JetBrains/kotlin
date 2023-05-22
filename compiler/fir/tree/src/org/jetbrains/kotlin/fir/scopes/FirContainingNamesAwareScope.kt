@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.scopes
 
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.name.Name
@@ -23,6 +24,13 @@ fun FirContainingNamesAwareScope.processAllFunctions(processor: (FirNamedFunctio
 
 fun FirContainingNamesAwareScope.processAllProperties(processor: (FirVariableSymbol<*>) -> Unit) {
     for (name in getCallableNames()) {
+        processPropertiesByName(name, processor)
+    }
+}
+
+fun FirContainingNamesAwareScope.processAllCallables(processor: (FirCallableSymbol<*>) -> Unit) {
+    for (name in getCallableNames()) {
+        processFunctionsByName(name, processor)
         processPropertiesByName(name, processor)
     }
 }

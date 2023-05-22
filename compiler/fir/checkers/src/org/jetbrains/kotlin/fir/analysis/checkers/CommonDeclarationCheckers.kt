@@ -92,6 +92,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
         get() = setOf(
             FirOverrideChecker,
             FirNotImplementedOverrideChecker,
+            FirNotImplementedOverrideSimpleEnumEntryChecker,
             FirThrowableSubclassChecker,
             FirOpenMemberChecker,
             FirClassVarianceChecker,
