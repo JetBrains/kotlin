@@ -8,6 +8,7 @@ import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
+import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.pipeline.FirResult
@@ -29,7 +30,7 @@ internal inline fun <F> PhaseContext.firFrontend(
         fileHasSyntaxErrors: (F) -> Boolean,
         noinline isCommonSource: (F) -> Boolean,
         noinline fileBelongsToModule: (F, String) -> Boolean,
-        buildResolveAndCheckFir: (FirSession, List<F>) -> ModuleCompilerAnalyzedOutput,
+        buildResolveAndCheckFir: (FirSession, List<F>, BaseDiagnosticsCollector) -> ModuleCompilerAnalyzedOutput,
 ): FirOutput {
     val configuration = input.configuration
     val messageCollector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
@@ -75,7 +76,7 @@ internal inline fun <F> PhaseContext.firFrontend(
     )
 
     val outputs = sessionsWithSources.map { (session, sources) ->
-        buildResolveAndCheckFir(session, sources).also {
+        buildResolveAndCheckFir(session, sources, diagnosticsReporter).also {
             if (shouldPrintFiles()) {
                 it.fir.forEach { file -> println(file.render()) }
             }
@@ -93,7 +94,6 @@ internal inline fun <F> PhaseContext.firFrontend(
 internal fun PhaseContext.firFrontendWithPsi(input: KotlinCoreEnvironment): FirOutput {
     val configuration = input.configuration
     val messageCollector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
-    val diagnosticsReporter = DiagnosticReporterFactory.createPendingReporter()
     // FIR
 
     val ktFiles = input.getSourceFiles()
@@ -105,7 +105,7 @@ internal fun PhaseContext.firFrontendWithPsi(input: KotlinCoreEnvironment): FirO
             },
             isCommonSource = isCommonSourceForPsi,
             fileBelongsToModule = fileBelongsToModuleForPsi,
-            buildResolveAndCheckFir = { session, files ->
+            buildResolveAndCheckFir = { session, files, diagnosticsReporter ->
                 buildResolveAndCheckFirFromKtFiles(session, files, diagnosticsReporter)
             },
     )
@@ -114,7 +114,6 @@ internal fun PhaseContext.firFrontendWithPsi(input: KotlinCoreEnvironment): FirO
 internal fun PhaseContext.firFrontendWithLightTree(input: KotlinCoreEnvironment): FirOutput {
     val configuration = input.configuration
     val messageCollector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
-    val diagnosticsReporter = DiagnosticReporterFactory.createPendingReporter()
     // FIR
 
     val groupedSources = collectSources(configuration, input.project, messageCollector)
@@ -130,7 +129,7 @@ internal fun PhaseContext.firFrontendWithLightTree(input: KotlinCoreEnvironment)
             fileHasSyntaxErrors = { false },
             isCommonSource = { groupedSources.isCommonSourceForLt(it) },
             fileBelongsToModule = { file, it -> groupedSources.fileBelongsToModuleForLt(file, it) },
-            buildResolveAndCheckFir = { session, files ->
+            buildResolveAndCheckFir = { session, files, diagnosticsReporter ->
                 buildResolveAndCheckFirViaLightTree(session, files, diagnosticsReporter, null)
             },
     )
