@@ -215,7 +215,11 @@ class MethodInliner(
 
             override fun anew(type: Type) {
                 if (isSamWrapper(type.internalName) || isAnonymousClass(type.internalName)) {
-                    handleAnonymousObjectRegeneration()
+                    if (transformations.isNotEmpty()) {
+                        handleAnonymousObjectRegeneration()
+                    } else {
+                        result.addNotChangedClass(type.internalName)
+                    }
                 }
 
                 //in case of regenerated transformationInfo type would be remapped to new one via remappingMethodAdapter
