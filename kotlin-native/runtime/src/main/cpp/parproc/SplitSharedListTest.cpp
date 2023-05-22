@@ -3,7 +3,7 @@
  * that can be found in the LICENSE file.
  */
 
-#include "CooperativeIntrusiveList.hpp"
+#include "SplitSharedList.hpp"
 
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
@@ -11,7 +11,6 @@
 #include "ScopedThread.hpp"
 #include "TestSupport.hpp"
 
-#include "std_support/Deque.hpp"
 #include "std_support/Vector.hpp"
 #include "std_support/List.hpp"
 
@@ -53,7 +52,7 @@ private:
     Node* next_ = nullptr;
 };
 
-using TestSubject = CooperativeIntrusiveList<Node>;
+using TestSubject = SplitSharedList<intrusive_forward_list<Node>>;
 
 std_support::vector<int> range(int first, int lastExclusive) {
     std_support::vector<int> values;
@@ -81,20 +80,20 @@ void drainLocalInto(TestSubject& list, std_support::vector<int>& dest) {
 
 } // namespace
 
-TEST(CooperativeIntrusiveListTest, Init) {
+TEST(SplitSHaredListTest, Init) {
     TestSubject list;
     EXPECT_THAT(list.localEmpty(), true);
     EXPECT_THAT(list.localSize(), 0);
     EXPECT_THAT(list.sharedEmpty(), true);
 }
 
-TEST(CooperativeIntrusiveListTest, TryPopLocalEmpty) {
+TEST(SplitSHaredListTest, TryPopLocalEmpty) {
     TestSubject list;
     auto res = list.tryPopLocal();
     EXPECT_THAT(res, nullptr);
 }
 
-TEST(CooperativeIntrusiveListTest, TryPushLocalPopLocal) {
+TEST(SplitSHaredListTest, TryPushLocalPopLocal) {
     TestSubject list;
     typename TestSubject::value_type value1(1);
     typename TestSubject::value_type value2(2);
@@ -113,7 +112,7 @@ TEST(CooperativeIntrusiveListTest, TryPushLocalPopLocal) {
     EXPECT_THAT(popped, testing::UnorderedElementsAre(1, 2));
 }
 
-TEST(CooperativeIntrusiveListTest, TryPushLocalTwice) {
+TEST(SplitSHaredListTest, TryPushLocalTwice) {
     TestSubject list;
     typename TestSubject::value_type value(1);
     bool pushed1 = list.tryPushLocal(value);
@@ -125,31 +124,31 @@ TEST(CooperativeIntrusiveListTest, TryPushLocalTwice) {
     EXPECT_THAT(list.sharedEmpty(), true);
 }
 
-TEST(CooperativeIntrusiveListTest, ShareSome) {
+TEST(SplitSHaredListTest, ShareSome) {
     TestSubject list;
     auto values = range(0, 10);
     auto nodeHandle = fill(list, values);
     EXPECT_THAT(list.localEmpty(), false);
     EXPECT_THAT(list.localSize(), values.size());
     EXPECT_THAT(list.sharedEmpty(), true);
-    auto sharedAmount = list.shareAll();
+    auto sharedAmount = list.shareAllWith(list);
     EXPECT_THAT(sharedAmount, values.size());
     EXPECT_THAT(list.localEmpty(), true);
     EXPECT_THAT(list.sharedEmpty(), false);
 }
 
-TEST(CooperativeIntrusiveListTest, TryTransferFromEmpty) {
+TEST(SplitSHaredListTest, TryTransferFromEmpty) {
     TestSubject from;
     TestSubject thief;
     auto stolenAmount = thief.tryTransferFrom(from, 1);
     EXPECT_THAT(stolenAmount, 0);
 }
 
-TEST(CooperativeIntrusiveListTest, TryTransferHalf) {
+TEST(SplitSHaredListTest, TryTransferHalf) {
     TestSubject from;
     auto values = range(0, 10);
     auto nodeHandle = fill(from, values);
-    from.shareAll();
+    from.shareAllWith(from);
 
     TestSubject thief;
     auto toTransfer = values.size() / 2;
@@ -166,11 +165,11 @@ TEST(CooperativeIntrusiveListTest, TryTransferHalf) {
     EXPECT_THAT(allTheElements, testing::UnorderedElementsAreArray(values));
 }
 
-TEST(CooperativeIntrusiveListTest, TryTransferAllEventually) {
+TEST(SplitSHaredListTest, TryTransferAllEventually) {
     TestSubject from;
     auto values = range(0, 10);
     auto nodeHandle = fill(from, values);
-    from.shareAll();
+    from.shareAllWith(from);
 
     TestSubject thief;
     for (std::size_t i = 0; i < values.size(); ++i) {
@@ -186,7 +185,7 @@ TEST(CooperativeIntrusiveListTest, TryTransferAllEventually) {
     EXPECT_THAT(allTheElements, testing::UnorderedElementsAreArray(values));
 }
 
-TEST(CooperativeIntrusiveListTest, TransferingPingPong) {
+TEST(SplitSHaredListTest, TransferingPingPong) {
     TestSubject list1;
     TestSubject list2;
     const auto size = 100;
@@ -205,9 +204,9 @@ TEST(CooperativeIntrusiveListTest, TransferingPingPong) {
                 std::this_thread::yield();
             }
             for (int iter = 0; iter < kIters; ++iter) {
-                if (!self.localEmpty()) self.shareAll();
+                if (!self.localEmpty()) self.shareAllWith(self);
                 self.tryTransferFrom(from, size / 2);
-                if (!self.localEmpty()) self.shareAll();
+                if (!self.localEmpty()) self.shareAllWith(self);
                 self.tryTransferFrom(from, size);
                 if (auto popped = self.tryPopLocal()) {
                     popped->clearNext();
