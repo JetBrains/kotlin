@@ -4543,12 +4543,6 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         }
 
         @Test
-        @TestMetadata("expressionValueIsNotNullTwice.kt")
-        public void testExpressionValueIsNotNullTwice() throws Exception {
-            runTest("compiler/testData/codegen/bytecodeText/nullCheckOptimization/expressionValueIsNotNullTwice.kt");
-        }
-
-        @Test
         @TestMetadata("ifNullEqualsNull.kt")
         public void testIfNullEqualsNull() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/nullCheckOptimization/ifNullEqualsNull.kt");

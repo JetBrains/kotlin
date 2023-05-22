@@ -276,6 +276,7 @@ enum class LanguageFeature(
     NativeJsProhibitLateinitIsInitializedIntrinsicWithoutPrivateAccess(KOTLIN_1_9, kind = BUG_FIX), // KT-27002
     TakeIntoAccountEffectivelyFinalInMustBeInitializedCheck(KOTLIN_1_9, kind = OTHER), // KT-58587
     ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated(sinceVersion = KOTLIN_1_9), // KT-36770
+    NoSourceCodeInNotNullAssertionExceptions(KOTLIN_1_9, sinceApiVersion = ApiVersion.KOTLIN_1_4, kind = OTHER), // KT-57570
 
     // End of 1.* language features --------------------------------------------------
 
@@ -344,7 +345,6 @@ enum class LanguageFeature(
     ForbidInferringTypeVariablesIntoEmptyIntersection(sinceVersion = null, kind = BUG_FIX), // KT-51221
     IntrinsicConstEvaluation(sinceVersion = null, kind = UNSTABLE_FEATURE), // KT-49303
     DisableCheckingChangedProgressionsResolve(sinceVersion = null, kind = OTHER), // KT-49276
-    NoSourceCodeInNotNullAssertionExceptions(sinceVersion = null, sinceApiVersion = ApiVersion.KOTLIN_1_4, kind = OTHER), // KT-57570
     ;
 
     init {
