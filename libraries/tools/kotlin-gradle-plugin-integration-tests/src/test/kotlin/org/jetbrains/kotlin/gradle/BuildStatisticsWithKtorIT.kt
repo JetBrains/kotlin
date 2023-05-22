@@ -156,7 +156,7 @@ class BuildStatisticsWithKtorIT : KGPBaseTest() {
             project("incrementalMultiproject", gradleVersion) {
                 enableStatisticReports(BuildReportType.HTTP, "http://localhost:$port/badRequest")
                 build("assemble") {
-                    assertOutputContainsExactTimes("Failed to send statistic to", 1)
+                    assertOutputContainsExactlyTimes("Failed to send statistic to", 1)
                 }
             }
         }
