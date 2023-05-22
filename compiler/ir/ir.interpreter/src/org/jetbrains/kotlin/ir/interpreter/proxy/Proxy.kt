@@ -35,8 +35,6 @@ internal fun State.wrap(callInterceptor: CallInterceptor, remainArraysAsIs: Bool
         is Primitive<*> -> when {
             this.isNull() -> null
             this.type.isArray() || this.type.isPrimitiveArray() -> if (remainArraysAsIs) this else this.value
-            // TODO: for consistency with current K/JS implementation Float constant should be treated as a Double (KT-35422)
-            this.type.isFloat() && callInterceptor.environment.configuration.treatFloatInSpecialWay -> this.value.toString().toDouble()
             else -> this.value
         }
         is Common -> this.asProxy(callInterceptor, extendFrom)

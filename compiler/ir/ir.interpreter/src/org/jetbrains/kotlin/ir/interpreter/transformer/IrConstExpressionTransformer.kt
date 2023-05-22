@@ -44,7 +44,7 @@ internal class IrConstExpressionTransformer(
         if (!isConst) return super.visitField(declaration, data)
 
         val getField = declaration.createGetField()
-        if (getField.canBeInterpreted(interpreter.environment.configuration.copy(treatFloatInSpecialWay = false))) {
+        if (getField.canBeInterpreted()) {
             initializer.expression = expression.interpret(failAsError = true)
         }
 

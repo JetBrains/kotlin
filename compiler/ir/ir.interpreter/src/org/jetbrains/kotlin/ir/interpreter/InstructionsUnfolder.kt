@@ -395,7 +395,7 @@ private fun unfoldStringConcatenation(expression: IrStringConcatenation, environ
     val explicitToStringCheck = fun() {
         when (val state = callStack.peekState()) {
             is Primitive<*> -> {
-                // This block is not really needed, but this way it is easier to handle `toString` with `treatFloatInSpecialWay` enabled.
+                // This block is not really needed, but this way it is easier to handle `toString` for JS.
                 callStack.popState()
                 val toStringCall = IrCallImpl.fromSymbolOwner(
                     UNDEFINED_OFFSET, UNDEFINED_OFFSET,

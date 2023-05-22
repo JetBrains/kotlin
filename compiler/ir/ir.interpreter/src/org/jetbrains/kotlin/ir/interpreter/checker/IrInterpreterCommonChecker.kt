@@ -61,13 +61,6 @@ class IrInterpreterCommonChecker : IrInterpreterChecker {
         val owner = expression.symbol.owner
         if (!data.mode.canEvaluateFunction(owner)) return false
 
-        // We disable `toFloat` folding on K/JS till `toFloat` is fixed (KT-35422)
-        // This check must be placed here instead of CallInterceptor because we still
-        // want to evaluate (1) `const val` expressions and (2) values in annotations.
-        if (owner.name.asString() == "toFloat" && data.interpreterConfiguration.treatFloatInSpecialWay) {
-            return super.visitCall(expression, data)
-        }
-
         if (expression.dispatchReceiver.isAccessToNotNullableObject()) {
             return expression.isGetterToConstVal()
         }
