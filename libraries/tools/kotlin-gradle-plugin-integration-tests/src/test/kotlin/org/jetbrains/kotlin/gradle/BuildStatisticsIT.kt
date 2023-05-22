@@ -21,7 +21,18 @@ class BuildStatisticsIT : KGPBaseTest() {
         project("incrementalMultiproject", gradleVersion) {
             enableStatisticReports(BuildReportType.HTTP, "invalid/url")
             build("assemble") {
-                assertOutputContainsExactTimes("Unable to open connection to")
+                assertOutputContainsExactlyTimes("Http report: Unable to open connection to")
+            }
+        }
+    }
+
+    @DisplayName("invalid http host")
+    @GradleTest
+    fun testHttpReportWithUnknownHost(gradleVersion: GradleVersion) {
+        project("incrementalMultiproject", gradleVersion) {
+            enableStatisticReports(BuildReportType.HTTP, "https://invalid")
+            build("compileKotlin", "-Pkotlin.internal.build.report.http.use.executor=false", buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)) {
+                assertOutputContainsExactlyTimes("Http report: Unexpected exception happened: ", 6) //twice for every module and at the end of the build
             }
         }
     }

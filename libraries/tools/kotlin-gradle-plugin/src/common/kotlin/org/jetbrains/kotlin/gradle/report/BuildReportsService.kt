@@ -22,8 +22,6 @@ import java.io.File
 import java.net.InetAddress
 import java.text.SimpleDateFormat
 import java.util.*
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import kotlin.system.measureTimeMillis
 
@@ -36,7 +34,8 @@ class BuildReportsService {
 
     private val startTime = System.nanoTime()
     private val buildUuid = UUID.randomUUID().toString()
-    private val executorService: ExecutorService = Executors.newSingleThreadExecutor()
+
+    private val httpReportService = HttpReportService()
 
     private val tags = LinkedHashSet<StatTag>()
     private var customValues = 0 // doesn't need to be thread-safe
@@ -58,8 +57,10 @@ class BuildReportsService {
 
         val reportingSettings = parameters.reportingSettings
 
-        reportingSettings.httpReportSettings?.also {
-            executorService.submit { reportBuildFinish(parameters) }
+        parameters.httpReportParameters?.also {
+            httpReportService.sendData(it, loggerAdapter) {
+                reportBuildFinish(parameters)
+            }
         }
         reportingSettings.fileReportSettings?.also {
             GradleFileReportService(
@@ -89,7 +90,9 @@ class BuildReportsService {
         }
 
         //It's expected that bad internet connection can cause a significant delay for big project
-        executorService.shutdown()
+        parameters.httpReportParameters?.also {
+            httpReportService.close(it, loggerAdapter)
+        }
     }
 
     private fun transformOperationRecordsToCompileStatisticsData(
@@ -121,8 +124,9 @@ class BuildReportsService {
         addHttpReport(event, buildOperation, parameters)
     }
 
-    private fun reportBuildFinish(parameters: BuildReportParameters) {
-        val httpReportSettings = parameters.reportingSettings.httpReportSettings ?: return
+    private fun reportBuildFinish(parameters: BuildReportParameters): BuildFinishStatisticsData? {
+        val httpReportSettings = parameters.reportingSettings.httpReportSettings
+            ?: return log.debug("Unable to send build finish event, httpReportSettings is null ").let { null }
 
         val branchName = if (httpReportSettings.includeGitBranchName) {
             val process = ProcessBuilder("git", "rev-parse", "--abbrev-ref", "HEAD")
@@ -133,7 +137,7 @@ class BuildReportsService {
             process.inputStream.reader().readText()
         } else "is not set"
 
-        val buildFinishData = BuildFinishStatisticsData(
+        return BuildFinishStatisticsData(
             projectName = parameters.projectName,
             startParameters = parameters.startParameters
                 .includeVerboseEnvironment(parameters.reportingSettings.httpReportSettings.verboseEnvironment),
@@ -145,8 +149,6 @@ class BuildReportsService {
             tags = tags,
             gitBranch = branchName
         )
-
-        parameters.httpService?.sendData(buildFinishData, loggerAdapter)
     }
 
     private fun BuildStartParameters.includeVerboseEnvironment(verboseEnvironment: Boolean): BuildStartParameters {
@@ -168,8 +170,8 @@ class BuildReportsService {
         buildOperationRecord: BuildOperationRecord,
         parameters: BuildReportParameters,
     ) {
-        parameters.httpService?.also { httpService ->
-            val data =
+        parameters.httpReportParameters?.also { httpService ->
+            httpReportService.sendData(httpService, loggerAdapter) {
                 prepareData(
                     event,
                     parameters.projectName,
@@ -180,11 +182,8 @@ class BuildReportsService {
                     onlyKotlinTask = true,
                     parameters.additionalTags
                 )
-            data?.also {
-                executorService.submit {
-                    httpService.sendData(data, loggerAdapter)
-                }
             }
+
         }
 
     }
@@ -418,7 +417,7 @@ enum class TaskExecutionState {
 data class BuildReportParameters(
     val startParameters: BuildStartParameters,
     val reportingSettings: ReportingSettings,
-    val httpService: HttpReportService?,
+    val httpReportParameters: HttpReportParameters?,
 
     val projectDir: File,
     val label: String?,
