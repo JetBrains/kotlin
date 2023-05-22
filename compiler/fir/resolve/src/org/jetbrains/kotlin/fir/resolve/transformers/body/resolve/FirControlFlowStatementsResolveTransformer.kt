@@ -218,10 +218,13 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
 
     override fun transformThrowExpression(
         throwExpression: FirThrowExpression,
-        data: ResolutionMode
+        data: ResolutionMode,
     ): FirStatement {
-        return transformer.transformExpression(throwExpression, ResolutionMode.ContextIndependent).also {
-            dataFlowAnalyzer.exitThrowExceptionNode(it as FirThrowExpression)
+        return throwExpression.apply {
+            replaceTypeRef(throwExpression.typeRef.transform(transformer, data))
+            transformAnnotations(transformer, data)
+            transformException(transformer, withExpectedType(session.builtinTypes.throwableType))
+            dataFlowAnalyzer.exitThrowExceptionNode(this)
         }
     }
 

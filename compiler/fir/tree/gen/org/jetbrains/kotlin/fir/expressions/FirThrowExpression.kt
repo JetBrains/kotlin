@@ -32,4 +32,6 @@ abstract class FirThrowExpression : FirExpression() {
     abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirThrowExpression
+
+    abstract fun <D> transformException(transformer: FirTransformer<D>, data: D): FirThrowExpression
 }

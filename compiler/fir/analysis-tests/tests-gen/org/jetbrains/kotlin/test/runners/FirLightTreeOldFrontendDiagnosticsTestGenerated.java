@@ -14619,6 +14619,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
             }
 
             @Test
+            @TestMetadata("genericCallInThrow.kt")
+            public void testGenericCallInThrow() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/genericCallInThrow.kt");
+            }
+
+            @Test
             @TestMetadata("hasErrorInConstrainingTypes.kt")
             public void testHasErrorInConstrainingTypes() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inference/hasErrorInConstrainingTypes.kt");

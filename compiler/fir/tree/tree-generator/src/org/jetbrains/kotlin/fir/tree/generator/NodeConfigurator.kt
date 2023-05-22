@@ -620,7 +620,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         }
 
         throwExpression.configure {
-            +field("exception", expression)
+            +field("exception", expression).withTransform()
         }
 
         variableAssignment.configure {
