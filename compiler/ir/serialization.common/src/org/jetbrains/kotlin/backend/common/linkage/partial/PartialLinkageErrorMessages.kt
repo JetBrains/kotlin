@@ -277,6 +277,12 @@ private fun Appendable.declarationKindName(symbol: IrSymbol, capitalized: Boolea
     return append(" ").declarationName(symbol)
 }
 
+// Note: All items are rendered lower-case.
+private fun Appendable.sortedDeclarationsKindName(symbols: Set<IrSymbol>): Appendable {
+    symbols.map { symbol -> buildString inner@ { this@inner.declarationKindName(symbol, capitalized = false) } }.sorted().joinTo(this)
+    return this
+}
+
 private fun Appendable.sortedDeclarationsName(symbols: Set<IrSymbol>): Appendable {
     symbols.map { symbol -> buildString inner@ { this@inner.declarationName(symbol) } }.sorted().joinTo(this)
     return this
@@ -547,15 +553,11 @@ private fun Appendable.invalidSamConversion(
 private fun Appendable.suspendableCallWithoutCoroutine(): Appendable =
     append("Suspend function can be called only from a coroutine or another suspend function")
 
-private fun Appendable.illegalNonLocalReturn(expression: IrReturn, validReturnTargets: Set<IrReturnTargetSymbol>): Appendable {
-    append("Illegal non-local return: The return target is ").declarationKindName(expression.returnTargetSymbol, capitalized = false)
-    append(" while only the following return targets are allowed: ")
-    validReturnTargets.forEachIndexed { index, returnTarget ->
-        if (index > 0) append(", ")
-        declarationKindName(returnTarget, capitalized = false)
-    }
-    return this
-}
+private fun Appendable.illegalNonLocalReturn(expression: IrReturn, validReturnTargets: Set<IrReturnTargetSymbol>): Appendable =
+    append("Illegal non-local return: The return target is ")
+        .declarationKindName(expression.returnTargetSymbol, capitalized = false)
+        .append(" while only the following return targets are allowed: ")
+        .sortedDeclarationsKindName(validReturnTargets)
 
 private fun Appendable.inaccessibleDeclaration(
     referencedDeclarationSymbol: IrSymbol,
