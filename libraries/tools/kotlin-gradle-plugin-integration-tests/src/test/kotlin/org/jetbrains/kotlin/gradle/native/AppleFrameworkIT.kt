@@ -138,6 +138,38 @@ class AppleFrameworkIT : KGPBaseTest() {
         }
     }
 
+    @DisplayName("EmbedAnsSign executes normally when signing is disabled")
+    @OptIn(EnvironmentalVariablesOverride::class)
+    // We need to use Gradle 7.2 here because of the issue https://github.com/gradle/gradle/issues/13957
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_2)
+    @GradleAndroidTest
+    fun testEmbedAnsSignExecutionWithoutSigning(
+        gradleVersion: GradleVersion,
+        agpVersion: String,
+        jdkProvider: JdkVersions.ProvidedJdk,
+    ) {
+
+        nativeProject(
+            "sharedAppleFramework",
+            gradleVersion,
+            buildJdk = jdkProvider.location,
+            buildOptions = defaultBuildOptions.copy(
+                androidVersion = agpVersion
+            )
+        ) {
+            val environmentVariables = mapOf(
+                "CONFIGURATION" to "debug",
+                "SDK_NAME" to "iphoneos",
+                "ARCHS" to "arm64",
+                "TARGET_BUILD_DIR" to projectPath.absolutePathString(),
+                "FRAMEWORKS_FOLDER_PATH" to "build/xcode-derived"
+            )
+            build(":shared:embedAndSignAppleFrameworkForXcode", environmentVariables = EnvironmentalVariables(environmentVariables)) {
+                assertDirectoryInProjectExists("build/xcode-derived/sdk.framework")
+            }
+        }
+    }
+
     @DisplayName("embedAndSignAppleFrameworkForXcode fail")
     @GradleAndroidTest
     // We need to use Gradle 7.2 here because of the issue https://github.com/gradle/gradle/issues/13957

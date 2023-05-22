@@ -183,7 +183,9 @@ internal fun Project.registerEmbedAndSignAppleFrameworkTask(framework: Framework
             property("type", envBuildType)
             property("targets", envTargets)
             property("embeddedFrameworksDir", envEmbeddedFrameworksDir)
-            property("sign", envSign)
+            if (envSign != null) {
+                property("sign", envSign)
+            }
         }
     }
 
@@ -194,12 +196,14 @@ internal fun Project.registerEmbedAndSignAppleFrameworkTask(framework: Framework
         task.dependsOn(assembleTask)
         task.files = files(File(appleFrameworkDir(envFrameworkSearchDir), framework.outputFile.name))
         task.destDir = envEmbeddedFrameworksDir
-        if (envSign != null) task.doLast {
-            val binary = envEmbeddedFrameworksDir
-                .resolve(framework.outputFile.name)
-                .resolve(framework.outputFile.nameWithoutExtension)
-            exec {
-                it.commandLine("codesign", "--force", "--sign", envSign, "--", binary)
+        if (envSign != null) {
+            task.doLast {
+                val binary = envEmbeddedFrameworksDir
+                    .resolve(framework.outputFile.name)
+                    .resolve(framework.outputFile.nameWithoutExtension)
+                exec {
+                    it.commandLine("codesign", "--force", "--sign", envSign, "--", binary)
+                }
             }
         }
     }
