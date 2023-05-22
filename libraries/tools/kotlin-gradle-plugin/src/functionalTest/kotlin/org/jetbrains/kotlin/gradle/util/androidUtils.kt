@@ -9,11 +9,11 @@ import org.gradle.api.Project
 import org.junit.Assume
 import java.io.File
 
-val androidSdk: String? = System.getProperty("android.sdk")
-val isAndroidSdkAvailable: Boolean = androidSdk?.let { root -> File(root).exists() } ?: false
+val androidSdk: String? = System.getProperty("android.sdk")?.replace("\\", "/")
 
 fun assumeAndroidSdkAvailable() {
-    Assume.assumeTrue("Missing android sdk", isAndroidSdkAvailable)
+    Assume.assumeTrue("Missing android sdk in <$androidSdk> location.",
+                      androidSdk?.let { root -> File(root).exists() } ?: false)
 }
 
 fun setAndroidSdkDirProperty(project: Project) {
