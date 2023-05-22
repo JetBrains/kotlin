@@ -425,7 +425,7 @@ internal class KtFirCallResolver(
                 dispatchReceiverValue =
                     KtExplicitReceiverValue(explicitReceiverPsi, dispatchReceiver.typeRef.coneType.asKtType(), false, token)
                 if (firstArgIsExtensionReceiver) {
-                    extensionReceiverValue = (fir as FirFunctionCall).arguments.first().toKtReceiverValue()
+                    extensionReceiverValue = (fir as FirFunctionCall).arguments.firstOrNull()?.toKtReceiverValue()
                 } else {
                     extensionReceiverValue = extensionReceiver.toKtReceiverValue()
                 }

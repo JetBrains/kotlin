@@ -1,0 +1,6 @@
+KT element: KtCallExpression
+FIR element: FirImplicitInvokeCallImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+R|<local>/f2|.R|SubstitutionOverride<kotlin/Function1.invoke: R|kotlin/Unit|><Inapplicable(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR): kotlin/Function1.invoke>#|()

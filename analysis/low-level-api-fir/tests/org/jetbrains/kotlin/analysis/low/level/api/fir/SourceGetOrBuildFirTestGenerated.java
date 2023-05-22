@@ -360,6 +360,12 @@ public class SourceGetOrBuildFirTestGenerated extends AbstractSourceGetOrBuildFi
         }
 
         @Test
+        @TestMetadata("noReceiverOnLambda.kt")
+        public void testNoReceiverOnLambda() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/calls/noReceiverOnLambda.kt");
+        }
+
+        @Test
         @TestMetadata("qualifiedCallInsidePropertyInsideConstructor.kt")
         public void testQualifiedCallInsidePropertyInsideConstructor() throws Exception {
             runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/calls/qualifiedCallInsidePropertyInsideConstructor.kt");
