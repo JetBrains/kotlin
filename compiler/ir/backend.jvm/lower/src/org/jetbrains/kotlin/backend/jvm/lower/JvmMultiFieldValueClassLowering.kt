@@ -30,10 +30,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrEnumConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
-import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
-import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
+import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrAnonymousInitializerSymbolImpl
 import org.jetbrains.kotlin.ir.transformStatement
 import org.jetbrains.kotlin.ir.types.*
@@ -877,6 +874,7 @@ internal class JvmMultiFieldValueClassLowering(
                         name = Name.identifier("constructor_tmp"),
                         saveVariable = ::variablesSaver,
                         isVar = false,
+                        origin = JvmLoweredDeclarationOrigin.MULTI_FIELD_VALUE_CLASS_REPRESENTATION_VARIABLE
                     )
                     for (valueDeclaration in instance.valueDeclarations) {
                         valueDeclaration.origin = JvmLoweredDeclarationOrigin.TEMPORARY_MULTI_FIELD_VALUE_CLASS_VARIABLE
@@ -1173,14 +1171,25 @@ internal class JvmMultiFieldValueClassLowering(
             }
         }.unwrapBlock()
 
+    private val IrDeclarationOrigin.isTemporary
+        get() =
+            this == IrDeclarationOrigin.IR_TEMPORARY_VARIABLE
+                    || this == IrDeclarationOrigin.IR_TEMPORARY_VARIABLE_FOR_INLINED_EXTENSION_RECEIVER
+                    || this == IrDeclarationOrigin.IR_TEMPORARY_VARIABLE_FOR_INLINED_PARAMETER
+
     override fun visitVariable(declaration: IrVariable): IrStatement {
         val initializer = declaration.initializer
         if (declaration.type.needsMfvcFlattening()) {
             val irClass = declaration.type.erasedUpperBound
             val rootNode = replacements.getRootMfvcNode(irClass)
             return context.createJvmIrBuilder(getCurrentScopeSymbol(), declaration).irBlock {
+                val origin = if (declaration.origin.isTemporary) {
+                    JvmLoweredDeclarationOrigin.TEMPORARY_MULTI_FIELD_VALUE_CLASS_VARIABLE
+                } else {
+                    JvmLoweredDeclarationOrigin.MULTI_FIELD_VALUE_CLASS_REPRESENTATION_VARIABLE
+                }
                 val instance = rootNode.createInstanceFromValueDeclarationsAndBoxType(
-                    this, declaration.type as IrSimpleType, declaration.name, ::variablesSaver, declaration.isVar
+                    this, declaration.type as IrSimpleType, declaration.name, ::variablesSaver, declaration.isVar, origin
                 )
                 valueDeclarationsRemapper.registerReplacement(declaration, instance)
                 initializer?.let {
