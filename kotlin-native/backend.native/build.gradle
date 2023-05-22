@@ -225,7 +225,7 @@ task external_jars(type: Copy) {
 
 task debugCompiler(type: JavaExec) {
     dependsOn ':dist'
-    main = 'org.jetbrains.kotlin.cli.bc.K2NativeKt'
+    mainClass = 'org.jetbrains.kotlin.cli.bc.K2NativeKt'
     classpath = project.fileTree("${distDir.canonicalPath}/konan/lib/") {
         include '*.jar'
     }

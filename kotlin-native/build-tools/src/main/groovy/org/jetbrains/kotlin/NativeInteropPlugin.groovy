@@ -198,7 +198,7 @@ class NamedNativeInteropConfig implements Named {
             dependsOn ":kotlin-native:Interop:Indexer:nativelibs"
             dependsOn ":kotlin-native:Interop:Runtime:nativelibs"
             classpath = project.configurations.interopStubGenerator
-            main = "org.jetbrains.kotlin.native.interop.gen.jvm.MainKt"
+            mainClass = "org.jetbrains.kotlin.native.interop.gen.jvm.MainKt"
             jvmArgs '-ea'
 
             systemProperties "java.library.path" : project.files(

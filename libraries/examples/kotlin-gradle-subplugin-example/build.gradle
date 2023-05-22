@@ -72,11 +72,9 @@ configurations[sourceSet.runtimeElementsConfigurationName].artifacts.removeAll {
 configurations[sourceSet.apiElementsConfigurationName].artifacts.removeAll { true }
 
 // Adding instead artifact from shadow jar task
-configurations {
-    artifacts {
-        add(sourceSet.runtimeElementsConfigurationName, shadowJarTask)
-        add(sourceSet.apiElementsConfigurationName, shadowJarTask)
-    }
+artifacts {
+    add(sourceSet.runtimeElementsConfigurationName, shadowJarTask)
+    add(sourceSet.apiElementsConfigurationName, shadowJarTask)
 }
 
 publishing {

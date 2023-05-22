@@ -12,7 +12,7 @@ val gsonVersion = rootProject.extra["versions.gson"] as String
 dependencies {
     constraints {
         configurations.all {
-            if (isCanBeResolved) {
+            if (isCanBeResolved && !isCanBeConsumed) {
                 allDependencies.configureEach {
                     if (group == "com.google.code.gson" && name == "gson") {
                         this@constraints.add(this@all.name, "com.google.code.gson:gson") {
