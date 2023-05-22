@@ -34,7 +34,7 @@ internal abstract class KtFe10ScopeResolution : KtScope, KtLifetimeOwner {
             .mapNotNull { it.toKtSymbol(analysisContext) as? KtCallableSymbol }
     }
 
-    override fun getCallableSymbols(names: Collection<Name>): Sequence<KtCallableSymbol> {
+    override fun getCallableSymbols(names: Collection<Name>): Sequence<KtCallableSymbol> = withValidityAssertion {
         if (names.isEmpty()) return emptySequence()
         val namesSet = names.toSet()
         return getCallableSymbols { it in namesSet }
@@ -48,7 +48,7 @@ internal abstract class KtFe10ScopeResolution : KtScope, KtLifetimeOwner {
             .mapNotNull { it.toKtSymbol(analysisContext) as? KtClassifierSymbol }
     }
 
-    override fun getClassifierSymbols(names: Collection<Name>): Sequence<KtClassifierSymbol> {
+    override fun getClassifierSymbols(names: Collection<Name>): Sequence<KtClassifierSymbol> = withValidityAssertion {
         if (names.isEmpty()) return emptySequence()
         val namesSet = names.toSet()
         return getClassifierSymbols { it in namesSet }

@@ -22,7 +22,7 @@ internal class KtFirDelegatedMemberScope(
         return super.getCallableSymbols(nameFilter).filter { it.origin == KtSymbolOrigin.DELEGATED }
     }
 
-    override fun getCallableSymbols(names: Collection<Name>): Sequence<KtCallableSymbol> {
+    override fun getCallableSymbols(names: Collection<Name>): Sequence<KtCallableSymbol> = withValidityAssertion {
         return super.getCallableSymbols(names).filter { it.origin == KtSymbolOrigin.DELEGATED }
     }
 }
