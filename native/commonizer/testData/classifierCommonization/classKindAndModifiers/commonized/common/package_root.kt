@@ -94,3 +94,5 @@ expect class LL1(value: String) {
 expect class LL2(value: String) {
     val value: String
 }
+
+expect class ExternalClass()

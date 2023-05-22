@@ -18,7 +18,6 @@ interface CirPropertySetter : CirDeclaration, CirPropertyAccessor, CirHasVisibil
             parameterAnnotations: List<CirAnnotation>,
             visibility: Visibility,
             isDefault: Boolean,
-            isExternal: Boolean,
             isInline: Boolean
         ): CirPropertySetter = interner.intern(
             CirPropertySetterInternedImpl(
@@ -26,7 +25,6 @@ interface CirPropertySetter : CirDeclaration, CirPropertyAccessor, CirHasVisibil
                 parameterAnnotations = parameterAnnotations,
                 visibility = visibility,
                 isDefault = isDefault,
-                isExternal = isExternal,
                 isInline = isInline
             )
         )
@@ -37,7 +35,6 @@ interface CirPropertySetter : CirDeclaration, CirPropertyAccessor, CirHasVisibil
             parameterAnnotations = emptyList(),
             visibility = visibility,
             isDefault = visibility == Visibilities.Public,
-            isExternal = false,
             isInline = false
         )
 
@@ -50,6 +47,5 @@ private data class CirPropertySetterInternedImpl(
     override val parameterAnnotations: List<CirAnnotation>,
     override val visibility: Visibility,
     override val isDefault: Boolean,
-    override val isExternal: Boolean,
     override val isInline: Boolean
 ) : CirPropertySetter

@@ -15,7 +15,6 @@ class PropertyCommonizer(
     functionOrPropertyBaseCommonizer: FunctionOrPropertyBaseCommonizer
 ) : AbstractStandardCommonizer<CirProperty, CirProperty?>() {
     private val setter = PropertySetterCommonizer.asNullableCommonizer()
-    private var isExternal = true
     private lateinit var constCommonizationState: ConstCommonizationState
     private val functionOrPropertyBaseCommonizer = functionOrPropertyBaseCommonizer.asCommonizer()
 
@@ -36,7 +35,6 @@ class PropertyCommonizer(
             visibility = functionOrPropertyBase.visibility,
             modality = functionOrPropertyBase.modality,
             containingClass = null, // does not matter
-            isExternal = isExternal,
             extensionReceiver = functionOrPropertyBase.extensionReceiver,
             returnType = functionOrPropertyBase.returnType,
             kind = functionOrPropertyBase.kind,
@@ -91,10 +89,6 @@ class PropertyCommonizer(
 
         val result = functionOrPropertyBaseCommonizer.commonizeWith(next)
                 && setter.commonizeWith(next.setter)
-
-        if (result) {
-            isExternal = isExternal && next.isExternal
-        }
 
         return result
     }

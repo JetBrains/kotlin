@@ -14,7 +14,6 @@ interface CirClass : CirClassifier, CirContainingClass, AnyClass {
     val isCompanion: Boolean
     val isValue: Boolean
     val isInner: Boolean
-    val isExternal: Boolean
     val hasEnumEntries: Boolean
     val supertypes: List<CirType>
 
@@ -33,7 +32,6 @@ interface CirClass : CirClassifier, CirContainingClass, AnyClass {
             isData: Boolean,
             isValue: Boolean,
             isInner: Boolean,
-            isExternal: Boolean,
             hasEnumEntries: Boolean
         ): CirClass = CirClassImpl(
             annotations = annotations,
@@ -48,7 +46,6 @@ interface CirClass : CirClassifier, CirContainingClass, AnyClass {
             isData = isData,
             isValue = isValue,
             isInner = isInner,
-            isExternal = isExternal,
             hasEnumEntries = hasEnumEntries
         )
     }
@@ -67,6 +64,5 @@ data class CirClassImpl(
     override val isData: Boolean,
     override val isValue: Boolean,
     override val isInner: Boolean,
-    override val isExternal: Boolean,
     override val hasEnumEntries: Boolean
 ) : CirClass

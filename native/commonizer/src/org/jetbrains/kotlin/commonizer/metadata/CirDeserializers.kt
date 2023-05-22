@@ -102,7 +102,6 @@ object CirDeserializers {
             visibility = visibility(source.flags),
             modality = modality(source.flags),
             containingClass = containingClass,
-            isExternal = Flag.Property.IS_EXTERNAL(source.flags),
             extensionReceiver = source.receiverParameterType?.let { extensionReceiver(it, typeResolver) },
             returnType = type(source.returnType, typeResolver),
             kind = callableKind(source.flags),
@@ -133,7 +132,6 @@ object CirDeserializers {
         return CirPropertyGetter.createInterned(
             annotations = annotations,
             isDefault = isDefault,
-            isExternal = Flag.PropertyAccessor.IS_EXTERNAL(getterFlags),
             isInline = Flag.PropertyAccessor.IS_INLINE(getterFlags)
         )
     }
@@ -151,7 +149,6 @@ object CirDeserializers {
             }.orEmpty(),
             visibility = visibility(setterFlags),
             isDefault = !Flag.PropertyAccessor.IS_NOT_DEFAULT(setterFlags),
-            isExternal = Flag.PropertyAccessor.IS_EXTERNAL(setterFlags),
             isInline = Flag.PropertyAccessor.IS_INLINE(setterFlags)
         )
     }
@@ -186,9 +183,7 @@ object CirDeserializers {
         isOperator = Flag.Function.IS_OPERATOR(source.flags),
         isInfix = Flag.Function.IS_INFIX(source.flags),
         isInline = Flag.Function.IS_INLINE(source.flags),
-        isTailrec = Flag.Function.IS_TAILREC(source.flags),
         isSuspend = Flag.Function.IS_SUSPEND(source.flags),
-        isExternal = Flag.Function.IS_EXTERNAL(source.flags)
     )
 
     private fun valueParameter(source: KmValueParameter, typeResolver: CirTypeResolver): CirValueParameter =
@@ -265,7 +260,6 @@ object CirDeserializers {
         isData = Flag.Class.IS_DATA(source.flags),
         isValue = Flag.Class.IS_VALUE(source.flags),
         isInner = Flag.Class.IS_INNER(source.flags),
-        isExternal = Flag.Class.IS_EXTERNAL(source.flags),
         hasEnumEntries = Flag.Class.HAS_ENUM_ENTRIES(source.flags)
     )
 
@@ -295,7 +289,6 @@ object CirDeserializers {
         isData = false,
         isValue = false,
         isInner = false,
-        isExternal = false,
         hasEnumEntries = hasEnumEntries
     )
 

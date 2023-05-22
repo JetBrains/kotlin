@@ -127,7 +127,7 @@ internal class InlineTypeAliasCirNodeTransformer(
     private fun CirTypeAlias.toArtificialCirClass(targetIndex: Int): CirClass = CirClass.create(
         annotations = emptyList(), name = name, typeParameters = typeParameters, supertypes = resolveSupertypes(targetIndex),
         visibility = this.visibility, modality = Modality.FINAL, kind = ClassKind.CLASS,
-        companion = null, isCompanion = false, isData = false, isValue = false, isInner = false, isExternal = false, hasEnumEntries = false
+        companion = null, isCompanion = false, isData = false, isValue = false, isInner = false, hasEnumEntries = false
     )
 
     private fun CirTypeAlias.resolveSupertypes(targetIndex: Int): List<CirType> {

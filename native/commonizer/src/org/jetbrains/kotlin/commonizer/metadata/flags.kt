@@ -47,7 +47,6 @@ internal fun CirPropertyAccessor.propertyAccessorFlags(
         visibilityHolder.visibilityFlag,
         modalityHolder.modalityFlag,
         Flag.PropertyAccessor.IS_NOT_DEFAULT.takeIf { !isDefault },
-        Flag.PropertyAccessor.IS_EXTERNAL.takeIf { isExternal },
         Flag.PropertyAccessor.IS_INLINE.takeIf { isInline }
     )
 }
@@ -88,7 +87,6 @@ internal fun CirClass.classFlags(isExpect: Boolean): Flags =
         Flag.Class.IS_COMPANION_OBJECT.takeIf { isCompanion },
         Flag.Class.IS_INNER.takeIf { isInner },
         Flag.Class.IS_DATA.takeIf { isData },
-        Flag.Class.IS_EXTERNAL.takeIf { isExternal },
         Flag.Class.IS_EXPECT.takeIf { isExpect },
         Flag.Class.IS_VALUE.takeIf { isValue },
         Flag.Class.HAS_ENUM_ENTRIES.takeIf { hasEnumEntries }
@@ -163,9 +161,7 @@ private inline val CirFunctionModifiers.modifiersFlags: Flags
         Flag.Function.IS_OPERATOR.takeIf { isOperator },
         Flag.Function.IS_INFIX.takeIf { isInfix },
         Flag.Function.IS_INLINE.takeIf { isInline },
-        Flag.Function.IS_TAILREC.takeIf { isTailrec },
         Flag.Function.IS_SUSPEND.takeIf { isSuspend },
-        Flag.Function.IS_EXTERNAL.takeIf { isExternal }
     )
 
 private inline val CirProperty.modifiersFlags: Flags
@@ -174,7 +170,6 @@ private inline val CirProperty.modifiersFlags: Flags
         Flag.Property.IS_CONST.takeIf { isConst },
         Flag.Property.HAS_CONSTANT.takeIf { compileTimeInitializer.takeIf { it !is CirConstantValue.NullValue } != null },
         Flag.Property.IS_LATEINIT.takeIf { isLateInit },
-        Flag.Property.IS_EXTERNAL.takeIf { isExternal }
     )
 
 private inline val CirType.nullableFlag: Flag?

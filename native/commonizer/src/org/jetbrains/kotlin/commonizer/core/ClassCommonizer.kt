@@ -38,7 +38,6 @@ class ClassCommonizer internal constructor(
             isData = false,
             isValue = isValue,
             isInner = isInner,
-            isExternal = false,
             hasEnumEntries = hasEnumEntries
         )
     }

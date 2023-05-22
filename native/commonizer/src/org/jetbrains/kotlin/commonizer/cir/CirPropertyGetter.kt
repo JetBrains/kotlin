@@ -15,13 +15,11 @@ interface CirPropertyGetter : CirPropertyAccessor {
         fun createInterned(
             annotations: List<CirAnnotation>,
             isDefault: Boolean,
-            isExternal: Boolean,
             isInline: Boolean
         ): CirPropertyGetter = interner.intern(
             CirPropertyGetterInternedImpl(
                 annotations = annotations,
                 isDefault = isDefault,
-                isExternal = isExternal,
                 isInline = isInline
             )
         )
@@ -32,7 +30,6 @@ interface CirPropertyGetter : CirPropertyAccessor {
             DEFAULT_NO_ANNOTATIONS = createInterned(
                 annotations = emptyList(),
                 isDefault = true,
-                isExternal = false,
                 isInline = false
             )
         }
@@ -42,6 +39,5 @@ interface CirPropertyGetter : CirPropertyAccessor {
 private data class CirPropertyGetterInternedImpl(
     override val annotations: List<CirAnnotation>,
     override val isDefault: Boolean,
-    override val isExternal: Boolean,
     override val isInline: Boolean
 ) : CirPropertyGetter
