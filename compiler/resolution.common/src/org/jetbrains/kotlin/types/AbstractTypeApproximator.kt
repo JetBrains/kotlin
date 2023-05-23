@@ -375,7 +375,7 @@ abstract class AbstractTypeApproximator(
         }
 
         if (typeConstructor is TypeVariableTypeConstructorMarker) {
-            return if (conf.typeVariable(typeConstructor)) null else type.defaultResult(toSuper)
+            return if (shouldHandleAsTypeVariable(conf, typeConstructor)) null else type.defaultResult(toSuper)
         }
 
         if (typeConstructor.isIntegerLiteralConstantTypeConstructor()) {
@@ -391,6 +391,15 @@ abstract class AbstractTypeApproximator(
         }
 
         return approximateLocalTypes(type, conf, toSuper, depth) // simple classifier type
+    }
+
+    private fun shouldHandleAsTypeVariable(
+        conf: TypeApproximatorConfiguration,
+        typeConstructorMarker: TypeVariableTypeConstructorMarker,
+    ): Boolean = when (conf.typeVariable(typeConstructorMarker)) {
+        TypeApproximatorConfiguration.HandleAsTypeVariable.ALWAYS -> true
+        TypeApproximatorConfiguration.HandleAsTypeVariable.K2_ONLY -> isK2
+        TypeApproximatorConfiguration.HandleAsTypeVariable.NEVER -> false
     }
 
     private fun approximateDefinitelyNotNullType(
