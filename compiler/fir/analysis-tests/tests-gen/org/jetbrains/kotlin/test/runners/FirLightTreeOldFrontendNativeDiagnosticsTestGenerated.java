@@ -43,6 +43,12 @@ public class FirLightTreeOldFrontendNativeDiagnosticsTestGenerated extends Abstr
     }
 
     @Test
+    @TestMetadata("nativeProtectedFunCall.kt")
+    public void testNativeProtectedFunCall() throws Exception {
+        runTest("compiler/testData/diagnostics/nativeTests/nativeProtectedFunCall.kt");
+    }
+
+    @Test
     @TestMetadata("objCName.kt")
     public void testObjCName() throws Exception {
         runTest("compiler/testData/diagnostics/nativeTests/objCName.kt");
