@@ -92,6 +92,42 @@ class TimeMarkTest {
         markPast1.assertHasPassed(true)
     }
 
+    fun testAdjustmentBig(timeSource: TimeSource.WithComparableMarks) {
+        val baseMark = timeSource.markNow()
+        val longDuration = Long.MAX_VALUE.nanoseconds
+        val long2Duration = longDuration + 1001.milliseconds
+
+        val pastMark = baseMark - longDuration
+        val futureMark = pastMark + long2Duration
+        val sameMark = futureMark - (long2Duration - longDuration)
+
+        val elapsedMark = timeSource.markNow()
+        run {
+            val iterations = 1..100
+            for (i in iterations) {
+                val elapsedDiff1 = (sameMark.elapsedNow() - baseMark.elapsedNow()).absoluteValue
+                val elapsedDiff2 = (baseMark.elapsedNow() - sameMark.elapsedNow()).absoluteValue
+                // some iterations of this assertion can fail due to an unpredictable delay between subsequent elapsedNow calls
+                // but if the mark adjustment arithmetic was wrong, all of them will fail
+                if (maxOf(elapsedDiff1, elapsedDiff2) < 1.milliseconds) break
+                if (i == iterations.last) fail("$elapsedDiff1, $elapsedDiff2")
+            }
+        }
+        // may not pass exactly for double-based value time marks in JS/WASM due to rounding
+//        assertEquals(elapsedMark - baseMark, elapsedMark - sameMark, "$elapsedMark; $baseMark; $sameMark")
+        val elapsedBaseDiff = elapsedMark - baseMark
+        val elapsedSameDiff = elapsedMark - sameMark
+        assertTrue((elapsedBaseDiff - elapsedSameDiff).absoluteValue < 1.milliseconds, "elapsedMark=$elapsedMark; baseMark=$baseMark; sameMark=$sameMark")
+    }
+
+    @Test
+    fun adjustmentBig() {
+        testAdjustmentBig(TestTimeSource())
+        for (unit in units) {
+            testAdjustmentBig(LongTimeSource(unit))
+        }
+    }
+
     fun testAdjustmentInfinite(timeSource: TimeSource.WithComparableMarks) {
         val baseMark = timeSource.markNow()
         val infiniteFutureMark = baseMark + Duration.INFINITE
@@ -122,32 +158,6 @@ class TimeMarkTest {
                 assertEqualMarks(infiniteMark, infiniteMark - offset)
             }
         }
-
-
-        val longDuration = Long.MAX_VALUE.nanoseconds
-        val long2Duration = longDuration + 1001.milliseconds
-
-        val pastMark = baseMark - longDuration
-        val futureMark = pastMark + long2Duration
-        val sameMark = futureMark - (long2Duration - longDuration)
-
-        val elapsedMark = timeSource.markNow()
-        run {
-            val iterations = 1..100
-            for (i in iterations) {
-                val elapsedDiff1 = (sameMark.elapsedNow() - baseMark.elapsedNow()).absoluteValue
-                val elapsedDiff2 = (baseMark.elapsedNow() - sameMark.elapsedNow()).absoluteValue
-                // some iterations of this assertion can fail due to an unpredictable delay between subsequent elapsedNow calls
-                // but if the mark adjustment arithmetic was wrong, all of them will fail
-                if (maxOf(elapsedDiff1, elapsedDiff2) < 1.milliseconds) break
-                if (i == iterations.last) fail("$elapsedDiff1, $elapsedDiff2")
-            }
-        }
-        // TODO: doesn't pass exactly for double-based value time marks in JS/WASM due to rounding
-//        assertEquals(elapsedMark - baseMark, elapsedMark - sameMark, "$elapsedMark; $baseMark; $sameMark")
-        val elapsedBaseDiff = elapsedMark - baseMark
-        val elapsedSameDiff = elapsedMark - sameMark
-        assertTrue((elapsedBaseDiff - elapsedSameDiff).absoluteValue < 1.milliseconds, "elapsedMark=$elapsedMark; baseMark=$baseMark; sameMark=$sameMark")
     }
 
     @Test
@@ -356,23 +366,11 @@ class TimeMarkTest {
     }
 
     @Test
-    fun defaultTimeMarkAdjustmentInfinite() {
-        testAdjustmentInfinite(TimeSource.Monotonic)
+    fun defaultTimeMarkAdjustmentBig() {
+        testAdjustmentBig(TimeSource.Monotonic)
 
         // do the same with specialized methods
         val baseMark = TimeSource.Monotonic.markNow()
-        val infiniteFutureMark = baseMark + Duration.INFINITE
-        val infinitePastMark = baseMark - Duration.INFINITE
-
-        assertEquals(-Duration.INFINITE, infiniteFutureMark.elapsedNow())
-        assertTrue(infiniteFutureMark.hasNotPassedNow())
-
-        assertEquals(Duration.INFINITE, infinitePastMark.elapsedNow())
-        assertTrue(infinitePastMark.hasPassedNow())
-
-        assertFailsWith<IllegalArgumentException> { infiniteFutureMark - Duration.INFINITE }
-        assertFailsWith<IllegalArgumentException> { infinitePastMark + Duration.INFINITE }
-
         val longDuration = Long.MAX_VALUE.nanoseconds
         val long2Duration = longDuration + 1001.milliseconds
 
@@ -395,6 +393,25 @@ class TimeMarkTest {
         val elapsedBaseDiff = elapsedMark - baseMark
         val elapsedSameDiff = elapsedMark - sameMark
         assertTrue((elapsedBaseDiff - elapsedSameDiff).absoluteValue < 1.milliseconds, "elapsedMark=$elapsedMark; baseMark=$baseMark; sameMark=$sameMark")
+    }
+
+    @Test
+    fun defaultTimeMarkAdjustmentInfinite() {
+        testAdjustmentInfinite(TimeSource.Monotonic)
+
+        // do the same with specialized methods
+        val baseMark = TimeSource.Monotonic.markNow()
+        val infiniteFutureMark = baseMark + Duration.INFINITE
+        val infinitePastMark = baseMark - Duration.INFINITE
+
+        assertEquals(-Duration.INFINITE, infiniteFutureMark.elapsedNow())
+        assertTrue(infiniteFutureMark.hasNotPassedNow())
+
+        assertEquals(Duration.INFINITE, infinitePastMark.elapsedNow())
+        assertTrue(infinitePastMark.hasPassedNow())
+
+        assertFailsWith<IllegalArgumentException> { infiniteFutureMark - Duration.INFINITE }
+        assertFailsWith<IllegalArgumentException> { infinitePastMark + Duration.INFINITE }
     }
 
     @Test
