@@ -109,6 +109,16 @@ private class ScriptsToClassesLowering(val context: JvmBackendContext, val inner
     private fun collectCapturingClasses(irScript: IrScript, typeRemapper: SimpleTypeRemapper): Set<IrClassImpl> {
         val annotator = ClosureAnnotator(irScript, irScript)
         val capturingClasses = mutableSetOf<IrClassImpl>()
+
+        val scriptsReceivers = mutableSetOf<IrType>().also {
+            it.addIfNotNull(irScript.thisReceiver?.type)
+        }
+        irScript.earlierScripts?.forEach { scriptsReceivers.addIfNotNull(it.owner.thisReceiver?.type) }
+        irScript.implicitReceiversParameters.forEach {
+            scriptsReceivers.add(it.type)
+            scriptsReceivers.add(typeRemapper.remapType(it.type))
+        }
+
         val collector = object : IrElementVisitorVoid {
             override fun visitElement(element: IrElement) {
                 element.acceptChildrenVoid(this)
@@ -117,15 +127,6 @@ private class ScriptsToClassesLowering(val context: JvmBackendContext, val inner
             override fun visitClass(declaration: IrClass) {
                 if (declaration is IrClassImpl && !declaration.isInner) {
                     val closure = annotator.getClassClosure(declaration)
-                    val scriptsReceivers = mutableSetOf<IrType>().also {
-                        it.addIfNotNull(irScript.thisReceiver?.type)
-                    }
-                    irScript.earlierScripts?.forEach { scriptsReceivers.addIfNotNull(it.owner.thisReceiver?.type) }
-                    irScript.implicitReceiversParameters.forEach {
-                        scriptsReceivers.add(it.type)
-                        scriptsReceivers.add(typeRemapper.remapType(it.type))
-                    }
-
                     if (closure.capturedValues.any { it.owner.type in scriptsReceivers }) {
                         fun reportError(factory: KtDiagnosticFactory1<String>, name: Name? = null) {
                             context.ktDiagnosticReporter.at(declaration).report(factory, (name ?: declaration.name).asString())
@@ -854,7 +855,7 @@ private class ScriptToClassTransformer(
             }
         } else if (irScript.needsReceiverProcessing) {
             val getValueParameter = expression.symbol.owner as? IrValueParameter
-            if (getValueParameter != null && getValueParameter.name == SpecialNames.THIS) {
+            if (getValueParameter != null && isValidNameForReceiver(getValueParameter.name)) {
                 val newExpression = getDispatchReceiverExpression(
                     data, expression, getValueParameter.type, expression.origin, getValueParameter
                 )
@@ -865,6 +866,9 @@ private class ScriptToClassTransformer(
         }
         return super.visitGetValue(expression, data)
     }
+
+    private fun isValidNameForReceiver(name: Name) =
+        name == SpecialNames.THIS || irScript.implicitReceiversParameters.any { it.name == name }
 
     private fun IrDeclaration.isCurrentScriptTopLevelDeclaration(data: ScriptToClassTransformerContext): Boolean {
         if (data.topLevelDeclaration == null || (parent != irScript && parent != irScriptClass)) return false

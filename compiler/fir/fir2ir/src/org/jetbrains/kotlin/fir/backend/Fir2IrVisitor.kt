@@ -607,6 +607,17 @@ class Fir2IrVisitor(
                     }
                 }
             }
+        } else if (boundSymbol is FirScriptSymbol && calleeReference.contextReceiverNumber >= 0) {
+            val firScript = boundSymbol.fir
+            val irScript = declarationStorage.getCachedIrScript(firScript) ?: error("IrScript for ${firScript.name} not found")
+            val receiverParameter = irScript.implicitReceiversParameters.find { it.index == calleeReference.contextReceiverNumber }
+            if (receiverParameter != null) {
+                return thisReceiverExpression.convertWithOffsets { startOffset, endOffset ->
+                    IrGetValueImpl(startOffset, endOffset, receiverParameter.type, receiverParameter.symbol)
+                }
+            } else {
+                error("Expecting implicit receiver") // TODO: check if any valid situations possible here
+            }
         } else if (boundSymbol is FirCallableSymbol) {
             val irFunction = when (boundSymbol) {
                 is FirFunctionSymbol -> declarationStorage.getIrFunctionSymbol(boundSymbol).owner
