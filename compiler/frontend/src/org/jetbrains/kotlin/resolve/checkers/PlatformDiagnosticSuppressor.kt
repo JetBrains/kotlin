@@ -27,13 +27,13 @@ import org.jetbrains.kotlin.resolve.BindingContext
 interface PlatformDiagnosticSuppressor : PlatformSpecificExtension<PlatformDiagnosticSuppressor>{
     // Function without binding context is kept for binary compatibility
     // Diagnostic should be suppressed if any of two overloads return false
-    fun shouldReportUnusedParameter(parameter: VariableDescriptor): Boolean
+    @Deprecated("Use shouldReportUnusedParameter with bindingContext parameter")
+    fun shouldReportUnusedParameter(parameter: VariableDescriptor): Boolean = true
     fun shouldReportUnusedParameter(parameter: VariableDescriptor, bindingContext: BindingContext): Boolean = true
 
     fun shouldReportNoBody(descriptor: CallableMemberDescriptor): Boolean
 
     object Default : PlatformDiagnosticSuppressor {
-        override fun shouldReportUnusedParameter(parameter: VariableDescriptor): Boolean = true
         override fun shouldReportUnusedParameter(parameter: VariableDescriptor, bindingContext: BindingContext): Boolean = true
 
         override fun shouldReportNoBody(descriptor: CallableMemberDescriptor): Boolean = true
@@ -44,8 +44,12 @@ class CompositePlatformDiagnosticSuppressor(private val suppressors: List<Platfo
     override fun shouldReportUnusedParameter(parameter: VariableDescriptor, bindingContext: BindingContext): Boolean =
         suppressors.all { it.shouldReportUnusedParameter(parameter, bindingContext) }
 
+    @Deprecated("Use shouldReportUnusedParameter with bindingContext parameter")
     override fun shouldReportUnusedParameter(parameter: VariableDescriptor): Boolean =
-        suppressors.all { it.shouldReportUnusedParameter(parameter) }
+        suppressors.all {
+            @Suppress("DEPRECATION")
+            it.shouldReportUnusedParameter(parameter)
+        }
 
     override fun shouldReportNoBody(descriptor: CallableMemberDescriptor): Boolean =
         suppressors.all { it.shouldReportNoBody(descriptor) }
