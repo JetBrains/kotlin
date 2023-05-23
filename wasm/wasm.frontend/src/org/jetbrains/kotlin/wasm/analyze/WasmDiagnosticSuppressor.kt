@@ -25,8 +25,5 @@ object WasmDiagnosticSuppressor : PlatformDiagnosticSuppressor {
         return true
     }
 
-    override fun shouldReportUnusedParameter(parameter: VariableDescriptor): Boolean =
-        true
-
     override fun shouldReportNoBody(descriptor: CallableMemberDescriptor): Boolean = true
 }
