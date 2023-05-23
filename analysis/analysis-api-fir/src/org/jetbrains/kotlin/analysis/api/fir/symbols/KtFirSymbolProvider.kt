@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.api.getModule
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbolOfType
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.throwUnexpectedFirElementError
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withFirSymbolEntry
 import org.jetbrains.kotlin.analysis.utils.errors.buildErrorWithAttachment
@@ -185,9 +186,11 @@ internal class KtFirSymbolProvider(
 
     override val ROOT_PACKAGE_SYMBOL: KtPackageSymbol = KtFirPackageSymbol(FqName.ROOT, firResolveSession.project, token)
 
-    override fun getDestructuringDeclarationEntrySymbol(psi: KtDestructuringDeclarationEntry): KtLocalVariableSymbol {
-        return firSymbolBuilder.variableLikeBuilder.buildLocalVariableSymbol(
-            psi.resolveToFirSymbolOfType<FirPropertySymbol>(firResolveSession)
-        )
+    override fun getDestructuringDeclarationEntrySymbol(psi: KtDestructuringDeclarationEntry): KtFirLocalOrErrorVariableSymbol<*, *> {
+        return when (val firSymbol = psi.resolveToFirSymbolOfType<FirVariableSymbol<*>>(firResolveSession)) {
+            is FirPropertySymbol -> firSymbolBuilder.variableLikeBuilder.buildLocalVariableSymbol(firSymbol)
+            is FirErrorPropertySymbol -> firSymbolBuilder.variableLikeBuilder.buildErrorVariableSymbol(firSymbol)
+            else -> throwUnexpectedFirElementError(firSymbol, psi, FirPropertySymbol::class, FirErrorPropertySymbol::class)
+        }
     }
 }
