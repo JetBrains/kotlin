@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_K2: WASM
 // WITH_STDLIB
 // FILE: externals.js
 

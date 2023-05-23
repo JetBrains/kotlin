@@ -1,6 +1,5 @@
 // !LANGUAGE: +MultiPlatformProjects
 // IGNORE_BACKEND_K1: ANY
-// IGNORE_BACKEND: WASM
 // MODULE: common
 // FILE: common.kt
 
