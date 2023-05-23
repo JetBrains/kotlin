@@ -135,18 +135,37 @@ class DataFrameCommandLineProcessor : CommandLineProcessor {
     }
 }
 
-class FirDataFrameExtensionRegistrar(val path: String?) : FirExtensionRegistrar() {
+enum class Mode {
+    OBSOLETE, EXPERIMENTAL
+}
+
+class FirDataFrameExtensionRegistrar(
+    private val path: String?,
+    private val mode: Mode = Mode.OBSOLETE
+) : FirExtensionRegistrar() {
     override fun ExtensionRegistrarContext.configurePlugin() {
         val flag = true
         val generator = if (flag) PredefinedNames() else GeneratedNames()
         with(generator) {
             +::ExtensionsGenerator
-            +{ it: FirSession ->
-                ReceiverInjector(it, scopeState, tokenState, path, this::nextName, this::nextScope)
+            when (mode) {
+                Mode.OBSOLETE -> {
+                    +{ it: FirSession ->
+                        ExpressionAnalyzerReceiverInjector(it, scopeState, tokenState, path, this::nextName, this::nextScope)
+                    }
+                    +{ it: FirSession -> ExpressionAnalysisAdditionalChecker(it) }
+                    +{ it: FirSession -> TokenGenerator(it, tokens, tokenState) }
+                }
+                Mode.EXPERIMENTAL -> {
+                    +{ it: FirSession ->
+                        val templateCompiler = TemplateCompiler()
+                        templateCompiler.session = it
+                        FunctionTransformer(it, FirMetaContextImpl(it, templateCompiler))
+                    }
+                }
             }
-            +{ it: FirSession -> ExpressionAnalysisAdditionalChecker(it) }
+
             +{ it: FirSession -> CandidateInterceptor(it, ::nextFunction, callableState, this::nextName) }
-            +{ it: FirSession -> TokenGenerator(it, tokens, tokenState) }
         }
     }
 }

@@ -55,7 +55,7 @@ private class DataFrameFileLowering(val context: IrPluginContext) : FileLowering
 
     override fun visitClass(declaration: IrClass): IrStatement {
         val origin = declaration.origin
-        return if (origin is IrDeclarationOrigin.GeneratedByPlugin && origin.pluginKey == ReceiverInjector.DataFramePluginKey) {
+        return if (origin is IrDeclarationOrigin.GeneratedByPlugin && origin.pluginKey == ExpressionAnalyzerReceiverInjector.DataFramePluginKey) {
             declaration.transformChildren(this, null)
             declaration
         } else {
@@ -144,7 +144,7 @@ private class DataFrameFileLowering(val context: IrPluginContext) : FileLowering
 
     override fun visitErrorCallExpression(expression: IrErrorCallExpression): IrExpression {
         val origin = (expression.type.classifierOrNull?.owner as? IrClass)?.origin ?: return expression
-        if (!(origin is IrDeclarationOrigin.GeneratedByPlugin && origin.pluginKey == ReceiverInjector.DataFramePluginKey)) {
+        if (!(origin is IrDeclarationOrigin.GeneratedByPlugin && origin.pluginKey == ExpressionAnalyzerReceiverInjector.DataFramePluginKey)) {
             return expression
         }
         val classFqName = expression.type.classFqName ?: return expression

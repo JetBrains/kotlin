@@ -40,7 +40,7 @@ class TokenGenerator(session: FirSession, val tokens: Set<ClassId>, val tokenSta
         val klass = buildRegularClass {
             moduleData = session.moduleData
             resolvePhase = FirResolvePhase.BODY_RESOLVE
-            origin = FirDeclarationOrigin.Plugin(ReceiverInjector.DataFramePluginKey)
+            origin = FirDeclarationOrigin.Plugin(ExpressionAnalyzerReceiverInjector.DataFramePluginKey)
             status = FirResolvedDeclarationStatusImpl(Visibilities.Internal, Modality.FINAL, EffectiveVisibility.Internal)
             classKind = ClassKind.INTERFACE
             scopeProvider = FirKotlinScopeProvider()

@@ -33,7 +33,7 @@ import kotlin.math.abs
 
 class SchemaContext(val properties: List<SchemaProperty>)
 
-class ReceiverInjector(
+class ExpressionAnalyzerReceiverInjector(
     session: FirSession,
     private val scopeState: MutableMap<ClassId, SchemaContext>,
     val tokenState: MutableMap<ClassId, SchemaContext>,
@@ -168,7 +168,7 @@ fun KotlinTypeFacade.analyzeRefinedCallShape(call: FirFunctionCall, reporter: In
         return null
     }
     val origin = rootMarker.toSymbol(session)?.origin
-    if (origin !is FirDeclarationOrigin.Plugin || origin.key != ReceiverInjector.DataFramePluginKey) {
+    if (origin !is FirDeclarationOrigin.Plugin || origin.key != ExpressionAnalyzerReceiverInjector.DataFramePluginKey) {
         return null
     }
 
