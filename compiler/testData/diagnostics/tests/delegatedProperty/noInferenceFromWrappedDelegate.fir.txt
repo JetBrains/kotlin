@@ -1,0 +1,26 @@
+FILE: noInferenceFromWrappedDelegate.fir.kt
+    public final class State<T> : R|kotlin/Any| {
+        public constructor<T>(value: R|T|): R|State<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final var value: R|T| = R|<local>/value|
+            public get(): R|T|
+            public set(value: R|T|): R|kotlin/Unit|
+
+    }
+    public final inline operator fun <T> R|State<T>|.getValue(thisRef: R|kotlin/Any?|, property: R|kotlin/reflect/KProperty<*>|): R|T| {
+        ^getValue this@R|/getValue|.R|SubstitutionOverride</State.value: R|T|>|
+    }
+    public final inline fun <T> remember(block: R|() -> T|): R|T| {
+        ^remember R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|T|>|()
+    }
+    public final val list: R|kotlin/Any?|by R|/remember|<R|State<kotlin/collections/List<kotlin/Int>>|>(<L> = remember@fun <anonymous>(): R|State<kotlin/collections/List<kotlin/Int>>| <inline=Inline, kind=UNKNOWN>  {
+        ^ R|/State.State|<R|kotlin/collections/List<kotlin/Int>|>(R|kotlin/collections/listOf|<R|kotlin/Int|>(Int(0)))
+    }
+    )
+        public get(): R|kotlin/Any?| {
+            ^ D|/list|.R|/getValue|<R|kotlin/collections/List<kotlin/Int>|>(Null(null), ::R|/list|)
+        }
+    public final val first: <ERROR TYPE REF: Unresolved name: first> = R|/list|.<Unresolved name: first>#()
+        public get(): <ERROR TYPE REF: Unresolved name: first>

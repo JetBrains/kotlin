@@ -8749,6 +8749,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
             }
 
             @Test
+            @TestMetadata("noInferenceFromWrappedDelegate.kt")
+            public void testNoInferenceFromWrappedDelegate() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/delegatedProperty/noInferenceFromWrappedDelegate.kt");
+            }
+
+            @Test
             @TestMetadata("nonDefaultAccessors.kt")
             public void testNonDefaultAccessors() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/delegatedProperty/nonDefaultAccessors.kt");
