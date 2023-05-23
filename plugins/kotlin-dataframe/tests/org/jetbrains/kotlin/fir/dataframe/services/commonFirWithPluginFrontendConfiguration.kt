@@ -16,20 +16,16 @@ fun TestConfigurationBuilder.commonFirWithPluginFrontendConfiguration() {
     useAfterAnalysisCheckers(
         ::DisableLazyResolveChecksAfterAnalysisChecker,
     )
-
     firHandlersStep {
         useHandlers(
             ::FirResolveContractViolationErrorHandler,
         )
     }
-
     defaultDirectives {
         +ENABLE_PLUGIN_PHASES
         +FIR_DUMP
     }
-
     useConfigurators(
-        ::DataFramePluginAnnotationsProvider,
-        ::ExtensionRegistrarConfigurator,
+        ::DataFramePluginAnnotationsProvider
     )
 }

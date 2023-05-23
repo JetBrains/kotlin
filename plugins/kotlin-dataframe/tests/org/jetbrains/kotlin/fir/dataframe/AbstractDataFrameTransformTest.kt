@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.test.builders.firHandlersStep
 import org.jetbrains.kotlin.test.builders.irHandlersStep
 import org.jetbrains.kotlin.test.builders.jvmArtifactsHandlersStep
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
-import org.jetbrains.kotlin.test.frontend.fir.DisableLazyResolveChecksAfterAnalysisChecker
 import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirCfgConsistencyHandler
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirCfgDumpHandler
@@ -50,9 +49,6 @@ abstract class AbstractDataFrameTransformTest : BaseTestRunner() {
             +JvmEnvironmentConfigurationDirectives.WITH_REFLECT
         }
         facadeStep(::FirFrontendFacade)
-        useAfterAnalysisCheckers(
-            ::DisableLazyResolveChecksAfterAnalysisChecker,
-        )
         firHandlersStep {
             useHandlers(
                 ::FirResolveContractViolationErrorHandler,

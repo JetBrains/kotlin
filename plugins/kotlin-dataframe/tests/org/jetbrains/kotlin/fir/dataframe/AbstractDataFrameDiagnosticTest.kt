@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.dataframe
 
 import org.jetbrains.kotlin.fir.dataframe.services.DataFramePluginAnnotationsProvider
-import org.jetbrains.kotlin.fir.dataframe.services.ExtensionRegistrarConfigurator
+import org.jetbrains.kotlin.fir.dataframe.services.ObsoleteExtensionRegistrarConfigurator
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.frontend.fir.DisableLazyResolveChecksAfterAnalysisChecker
@@ -47,7 +47,7 @@ abstract class AbstractDataFrameDiagnosticTest : AbstractKotlinCompilerTest() {
 
         useConfigurators(
             ::DataFramePluginAnnotationsProvider,
-            ::ExtensionRegistrarConfigurator
+            ::ObsoleteExtensionRegistrarConfigurator
         )
         useAfterAnalysisCheckers(
             ::DisableLazyResolveChecksAfterAnalysisChecker,
