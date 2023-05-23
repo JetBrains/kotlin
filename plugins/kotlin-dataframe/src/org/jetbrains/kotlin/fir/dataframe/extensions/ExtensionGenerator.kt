@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.toClassLikeSymbol
 import org.jetbrains.kotlin.fir.containingClassForStaticMemberAttr
-import org.jetbrains.kotlin.fir.dataframe.GeneratedNames
 import org.jetbrains.kotlin.fir.dataframe.IGeneratedNames
 import org.jetbrains.kotlin.fir.dataframe.Names
 import org.jetbrains.kotlin.fir.dataframe.projectOverDataColumnType
@@ -27,7 +26,6 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusIm
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
 import org.jetbrains.kotlin.fir.extensions.MemberGenerationContext
-import org.jetbrains.kotlin.fir.extensions.predicate.DeclarationPredicate
 import org.jetbrains.kotlin.fir.extensions.predicate.LookupPredicate
 import org.jetbrains.kotlin.fir.extensions.predicate.LookupPredicate.BuilderContext.annotated
 import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
@@ -41,11 +39,11 @@ import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlinx.dataframe.annotations.DataSchema
 
-fun IGeneratedNames.FirDataFrameExtensionsGenerator(session: FirSession): FirDeclarationGenerationExtension {
-    return FirDataFrameExtensionsGenerator(session, scopes, scopeState, callables, callableState)
+fun IGeneratedNames.ExtensionsGenerator(session: FirSession): FirDeclarationGenerationExtension {
+    return ExtensionGenerator(session, scopes, scopeState, callables, callableState)
 }
 
-class FirDataFrameExtensionsGenerator(
+class ExtensionGenerator(
     session: FirSession,
     private val scopes: Set<ClassId>,
     private val scopeState: Map<ClassId, SchemaContext>,
@@ -270,7 +268,7 @@ class FirDataFrameExtensionsGenerator(
         val klass = buildRegularClass {
             moduleData = session.moduleData
             resolvePhase = FirResolvePhase.BODY_RESOLVE
-            origin = FirDeclarationOrigin.Plugin(FirDataFrameReceiverInjector.DataFramePluginKey)
+            origin = FirDeclarationOrigin.Plugin(ReceiverInjector.DataFramePluginKey)
             status = FirResolvedDeclarationStatusImpl(Visibilities.Internal, Modality.FINAL, EffectiveVisibility.Internal)
             classKind = ClassKind.CLASS
             scopeProvider = FirKotlinScopeProvider()

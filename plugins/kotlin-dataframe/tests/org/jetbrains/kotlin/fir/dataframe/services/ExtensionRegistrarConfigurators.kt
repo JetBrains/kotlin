@@ -9,11 +9,11 @@ import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.dataframe.extensions.DataFrameIrBodyFiller
+import org.jetbrains.kotlin.fir.dataframe.extensions.IrBodyFiller
 import org.jetbrains.kotlin.fir.dataframe.FirDataFrameExtensionRegistrar
 import org.jetbrains.kotlin.fir.dataframe.FirMetaContextImpl
 import org.jetbrains.kotlin.fir.dataframe.TemplateCompiler
-import org.jetbrains.kotlin.fir.dataframe.extensions.FirDataFrameFunctionTransformer
+import org.jetbrains.kotlin.fir.dataframe.extensions.FunctionTransformer
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
 import org.jetbrains.kotlin.test.model.TestModule
@@ -26,7 +26,7 @@ class ExtensionRegistrarConfigurator(testServices: TestServices) : EnvironmentCo
         configuration: CompilerConfiguration
     ) {
         FirExtensionRegistrarAdapter.registerExtension(FirDataFrameExtensionRegistrar(null))
-        IrGenerationExtension.registerExtension(DataFrameIrBodyFiller())
+        IrGenerationExtension.registerExtension(IrBodyFiller())
     }
 }
 
@@ -40,7 +40,7 @@ class ExperimentalExtensionRegistrarConfigurator(testServices: TestServices) : E
                 +{ it: FirSession ->
                     val templateCompiler = TemplateCompiler()
                     templateCompiler.session = it
-                    FirDataFrameFunctionTransformer(it, FirMetaContextImpl(it, templateCompiler))
+                    FunctionTransformer(it, FirMetaContextImpl(it, templateCompiler))
                 }
             }
         })

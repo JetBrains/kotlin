@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.fir.analysis.extensions.FirAdditionalCheckersExtensi
 import org.jetbrains.kotlin.fir.dataframe.InterpretationErrorReporter
 import org.jetbrains.kotlin.fir.dataframe.pluginDataFrameSchema
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
-import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
@@ -39,13 +38,13 @@ import org.jetbrains.kotlinx.dataframe.plugin.SimpleCol
 import org.jetbrains.kotlinx.dataframe.plugin.SimpleColumnGroup
 import org.jetbrains.kotlinx.dataframe.plugin.SimpleFrameColumn
 
-class FirDataFrameAdditionalCheckers(session: FirSession) : FirAdditionalCheckersExtension(session) {
+class ExpressionAnalysisAdditionalChecker(session: FirSession) : FirAdditionalCheckersExtension(session) {
     override val expressionCheckers: ExpressionCheckers = object : ExpressionCheckers() {
         override val functionCallCheckers: Set<FirFunctionCallChecker> = setOf(Checker())
     }
 }
 
-class Checker : FirFunctionCallChecker() {
+private class Checker : FirFunctionCallChecker() {
     companion object {
         val ERROR by error1<KtElement, String>(SourceElementPositioningStrategies.DEFAULT)
         val CAST_ERROR by error1<KtElement, String>(SourceElementPositioningStrategies.CALL_ELEMENT_WITH_DOT)
