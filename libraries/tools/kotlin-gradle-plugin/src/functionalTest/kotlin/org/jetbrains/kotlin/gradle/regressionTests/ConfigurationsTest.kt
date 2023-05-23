@@ -441,7 +441,11 @@ class ConfigurationsTest : MultiplatformExtensionTest() {
                 jvm()
                 sourceSets.getByName("jvmMain").apply {
                     dependencies {
-                        api(platform("test:platform-dependency:1.0.0"))
+                        api(
+                            // Deprecated in KT-58759, remove test after deletion
+                            @Suppress("DEPRECATION")
+                            platform("test:platform-dependency:1.0.0")
+                        )
                     }
                 }
             }
@@ -464,7 +468,11 @@ class ConfigurationsTest : MultiplatformExtensionTest() {
                 }
                 sourceSets.getByName("browserMain").apply {
                     dependencies {
-                        implementation(enforcedPlatform("test:enforced-platform-dependency"))
+                        implementation(
+                            // Deprecated in KT-58759, remove test after deletion
+                            @Suppress("DEPRECATION")
+                            enforcedPlatform("test:enforced-platform-dependency")
+                        )
                     }
                 }
             }
