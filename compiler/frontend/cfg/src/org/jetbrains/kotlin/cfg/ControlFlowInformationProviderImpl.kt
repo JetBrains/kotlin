@@ -778,6 +778,7 @@ class ControlFlowInformationProviderImpl private constructor(
     private fun processUnusedParameter(ctxt: VariableUseContext, element: KtParameter, variableDescriptor: VariableDescriptor) {
         val functionDescriptor = variableDescriptor.containingDeclaration as FunctionDescriptor
 
+        @Suppress("DEPRECATION")
         if (functionDescriptor.isExpect || functionDescriptor.isActual ||
             functionDescriptor.isEffectivelyExternal() ||
             !diagnosticSuppressor.shouldReportUnusedParameter(variableDescriptor, trace.bindingContext) ||
