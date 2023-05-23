@@ -442,12 +442,6 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
         }
 
         @Test
-        @TestMetadata("destructionWithNoRValue.kt")
-        public void testDestructionWithNoRValue() throws Exception {
-            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/declarations/destructionWithNoRValue.kt");
-        }
-
-        @Test
         @TestMetadata("destructuring.kt")
         public void testDestructuring() throws Exception {
             runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/declarations/destructuring.kt");

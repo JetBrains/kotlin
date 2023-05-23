@@ -311,12 +311,6 @@ internal class KtSymbolByFirBuilder constructor(
             }
         }
 
-        fun buildErrorVariableSymbol(firSymbol: FirErrorPropertySymbol): KtFirErrorVariableSymbol {
-            return symbolsCache.cache(firSymbol) {
-                KtFirErrorVariableSymbol(firSymbol, analysisSession)
-            }
-        }
-
         fun buildSyntheticJavaPropertySymbol(firSymbol: FirSyntheticPropertySymbol): KtFirSyntheticJavaPropertySymbol {
             return symbolsCache.cache(firSymbol) {
                 KtFirSyntheticJavaPropertySymbol(firSymbol, analysisSession)
