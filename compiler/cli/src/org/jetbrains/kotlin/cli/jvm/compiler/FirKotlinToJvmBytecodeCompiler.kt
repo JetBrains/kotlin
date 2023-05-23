@@ -159,6 +159,7 @@ object FirKotlinToJvmBytecodeCompiler {
             linkViaSignatures = moduleConfiguration.getBoolean(JVMConfigurationKeys.LINK_VIA_SIGNATURES),
             evaluatedConstTracker = moduleConfiguration
                 .putIfAbsent(CommonConfigurationKeys.EVALUATED_CONST_TRACKER, EvaluatedConstTracker.create()),
+            inlineConstTracker = moduleConfiguration[CommonConfigurationKeys.INLINE_CONST_TRACKER],
         )
         val fir2IrAndIrActualizerResult = firResult.convertToIrAndActualizeForJvm(
             fir2IrExtensions,

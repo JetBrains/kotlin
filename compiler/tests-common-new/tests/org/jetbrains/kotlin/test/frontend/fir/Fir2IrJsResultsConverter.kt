@@ -175,6 +175,7 @@ fun AbstractFirAnalyzerFacade.convertToJsIr(
         linkViaSignatures = generateSignatures,
         evaluatedConstTracker = configuration
             .putIfAbsent(CommonConfigurationKeys.EVALUATED_CONST_TRACKER, EvaluatedConstTracker.create()),
+        inlineConstTracker = null,
     )
     return Fir2IrConverter.createModuleFragmentWithSignaturesIfNeeded(
         session, scopeSession, firFiles.toList(),

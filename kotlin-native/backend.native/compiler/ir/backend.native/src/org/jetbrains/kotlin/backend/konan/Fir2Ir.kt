@@ -80,6 +80,7 @@ internal fun PhaseContext.fir2Ir(
                     linkViaSignatures = false,
                     evaluatedConstTracker = configuration
                             .putIfAbsent(CommonConfigurationKeys.EVALUATED_CONST_TRACKER, EvaluatedConstTracker.create()),
+                    inlineConstTracker = null,
             ),
             IrGenerationExtension.getInstances(config.project),
             signatureComposer = DescriptorSignatureComposerStub(KonanManglerDesc),

@@ -431,7 +431,12 @@ class Fir2IrConverter(
             val interpreter = IrInterpreter(IrInterpreterEnvironment(irModuleFragment.irBuiltins, configuration))
             val mode = if (intrinsicConstEvaluation) EvaluationMode.ONLY_INTRINSIC_CONST else EvaluationMode.ONLY_BUILTINS
             irModuleFragment.files.forEach {
-                it.transformConst(interpreter, mode = mode, evaluatedConstTracker = fir2IrConfiguration.evaluatedConstTracker)
+                it.transformConst(
+                    interpreter,
+                    mode = mode,
+                    evaluatedConstTracker = fir2IrConfiguration.evaluatedConstTracker,
+                    inlineConstTracker = fir2IrConfiguration.inlineConstTracker,
+                )
             }
         }
 

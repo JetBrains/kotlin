@@ -26,10 +26,14 @@ class ConstEvaluationLowering(
 ) : FileLoweringPass {
     private val interpreter = IrInterpreter(IrInterpreterEnvironment(context.irBuiltIns, configuration), emptyMap())
     private val evaluatedConstTracker = context.configuration[CommonConfigurationKeys.EVALUATED_CONST_TRACKER]
+    private val inlineConstTracker = context.configuration[CommonConfigurationKeys.INLINE_CONST_TRACKER]
 
     override fun lower(irFile: IrFile) {
         irFile.transformConst(
-            interpreter, mode = EvaluationMode.ONLY_INTRINSIC_CONST, evaluatedConstTracker, onWarning, onError, suppressErrors
+            interpreter,
+            mode = EvaluationMode.ONLY_INTRINSIC_CONST,
+            evaluatedConstTracker, inlineConstTracker,
+            onWarning, onError, suppressErrors
         )
     }
 }

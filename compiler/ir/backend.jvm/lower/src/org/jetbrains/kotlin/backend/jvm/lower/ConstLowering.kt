@@ -12,10 +12,10 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.constantValue
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.incremental.components.InlineConstTracker
-import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.util.classId
-import org.jetbrains.kotlin.ir.util.parentAsClass
+import org.jetbrains.kotlin.ir.declarations.IrField
+import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.expressions.IrConst
+import org.jetbrains.kotlin.ir.interpreter.transformer.reportOnIr
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
 internal val constPhase1 = makeIrFilePhase(
@@ -40,14 +40,6 @@ class ConstLowering(val context: JvmBackendContext) : FileLoweringPass {
 private class JvmInlineConstTransformer(val irFile: IrFile, val inlineConstTracker: InlineConstTracker?) : InlineConstTransformer() {
     override val IrField.constantInitializer get() = constantValue()
     override fun reportInlineConst(field: IrField, value: IrConst<*>) {
-        if (inlineConstTracker == null) return
-        if (field.origin != IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB) return
-
-        val path = irFile.path
-        val owner = field.parentAsClass.classId?.asString()?.replace(".", "$")?.replace("/", ".") ?: return
-        val name = field.name.asString()
-        val constType = value.kind.asString
-
-        inlineConstTracker.report(path, owner, name, constType)
+        inlineConstTracker?.reportOnIr(irFile, field, value)
     }
 }

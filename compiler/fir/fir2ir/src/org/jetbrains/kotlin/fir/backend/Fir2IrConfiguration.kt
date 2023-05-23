@@ -18,9 +18,11 @@ package org.jetbrains.kotlin.fir.backend
 
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.constant.EvaluatedConstTracker
+import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 
 data class Fir2IrConfiguration(
     val languageVersionSettings: LanguageVersionSettings,
     val linkViaSignatures: Boolean,
     val evaluatedConstTracker: EvaluatedConstTracker,
+    val inlineConstTracker: InlineConstTracker?,
 )
