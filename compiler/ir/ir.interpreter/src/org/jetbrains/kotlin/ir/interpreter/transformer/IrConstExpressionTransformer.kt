@@ -8,8 +8,10 @@ package org.jetbrains.kotlin.ir.interpreter.transformer
 import org.jetbrains.kotlin.constant.EvaluatedConstTracker
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrStringConcatenationImpl
@@ -49,6 +51,19 @@ internal class IrConstExpressionTransformer(
         }
 
         return super.visitField(declaration, data)
+    }
+
+    override fun visitFunction(declaration: IrFunction, data: Nothing?): IrStatement {
+        // It is useless to visit default accessor and if we do that we could render excess information for `IrGetField`
+        if (declaration.origin == IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR) return declaration
+        return super.visitFunction(declaration, data)
+    }
+
+    override fun visitGetField(expression: IrGetField, data: Nothing?): IrExpression {
+        if (expression.canBeInterpreted()) {
+            return expression.interpret(failAsError = false)
+        }
+        return super.visitGetField(expression, data)
     }
 
     override fun visitStringConcatenation(expression: IrStringConcatenation, data: Nothing?): IrExpression {

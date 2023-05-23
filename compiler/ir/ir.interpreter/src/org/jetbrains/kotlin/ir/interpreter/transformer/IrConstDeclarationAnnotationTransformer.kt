@@ -35,14 +35,6 @@ internal class IrConstDeclarationAnnotationTransformer(
 
     override fun visitDeclaration(declaration: IrDeclarationBase, data: Nothing?): IrStatement {
         transformAnnotations(declaration)
-        if (declaration is IrClass && declaration.kind == ClassKind.ANNOTATION_CLASS) {
-            declaration.primaryConstructor?.valueParameters?.forEach {
-                val defaultExpression = it.defaultValue?.expression ?: return@forEach
-                if (defaultExpression.canBeInterpreted()) {
-                    it.defaultValue?.expression = transformAnnotationArgument(defaultExpression, it)
-                }
-            }
-        }
         return super.visitDeclaration(declaration, data)
     }
 }
