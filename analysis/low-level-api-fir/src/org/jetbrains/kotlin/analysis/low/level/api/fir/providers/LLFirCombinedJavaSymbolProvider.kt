@@ -90,9 +90,9 @@ internal class LLFirCombinedJavaSymbolProvider private constructor(
     override fun getPackage(fqName: FqName): FqName? = providers.firstNotNullOfOrNull { it.getPackage(fqName) }
 
     companion object {
-        fun merge(session: FirSession, project: Project, providers: List<JavaSymbolProvider>): FirSymbolProvider? =
+        fun merge(session: FirSession, project: Project, providers: List<LLFirJavaSymbolProvider>): FirSymbolProvider? =
             if (providers.size > 1) {
-                val combinedScope = GlobalSearchScope.union(providers.map { it.session.llFirModuleData.ktModule.contentScope })
+                val combinedScope = GlobalSearchScope.union(providers.map { it.searchScope })
                 val javaClassFinder = project.createJavaClassFinder(combinedScope)
                 LLFirCombinedJavaSymbolProvider(session, project, providers, javaClassFinder)
             } else providers.singleOrNull()

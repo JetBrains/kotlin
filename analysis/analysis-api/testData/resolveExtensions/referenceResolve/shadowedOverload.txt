@@ -1,0 +1,2 @@
+Resolved to:
+0: (in generated) fun kotlin.Any.generatedOverloadedExtensionFunction(): kotlin.Int

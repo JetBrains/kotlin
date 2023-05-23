@@ -25,7 +25,7 @@ internal class LLFirJvmSessionFactory(project: Project) : LLFirAbstractSessionFa
         return doCreateSourcesSession(module, FirKotlinScopeProvider(::wrapScopeWithJvmMapped)) { context ->
             registerCommonJavaComponents(JavaModuleResolver.getInstance(project))
             registerJavaSpecificResolveComponents()
-            val javaSymbolProvider = createJavaSymbolProvider(this, context.moduleData, project, context.contentScope)
+            val javaSymbolProvider = LLFirJavaSymbolProvider(this, context.moduleData, project, context.contentScope)
             register(JavaSymbolProvider::class, javaSymbolProvider)
 
             register(
@@ -50,7 +50,7 @@ internal class LLFirJvmSessionFactory(project: Project) : LLFirAbstractSessionFa
         return doCreateLibrarySession(module) { context ->
             registerCommonJavaComponents(JavaModuleResolver.getInstance(project))
             registerJavaSpecificResolveComponents()
-            val javaSymbolProvider = createJavaSymbolProvider(this, context.moduleData, project, context.contentScope)
+            val javaSymbolProvider = LLFirJavaSymbolProvider(this, context.moduleData, project, context.contentScope)
             register(
                 FirSymbolProvider::class,
                 LLFirModuleWithDependenciesSymbolProvider(
