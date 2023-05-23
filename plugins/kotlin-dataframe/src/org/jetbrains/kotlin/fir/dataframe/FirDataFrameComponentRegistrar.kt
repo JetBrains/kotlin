@@ -143,13 +143,13 @@ class FirDataFrameExtensionRegistrar(val path: String?) : FirExtensionRegistrar(
         val flag = true
         val generator = if (flag) PredefinedNames() else GeneratedNames()
         with(generator) {
-            +::FirDataFrameExtensionsGenerator
+            +::ExtensionsGenerator
             +{ it: FirSession ->
-                FirDataFrameReceiverInjector(it, scopeState, tokenState, path, this::nextName, this::nextScope)
+                ReceiverInjector(it, scopeState, tokenState, path, this::nextName, this::nextScope)
             }
-            +{ it: FirSession -> FirDataFrameAdditionalCheckers(it) }
-            +{ it: FirSession -> FirDataFrameCandidateInterceptor(it, ::nextFunction, callableState, this::nextName) }
-            +{ it: FirSession -> FirDataFrameTokenGenerator(it, tokens, tokenState) }
+            +{ it: FirSession -> ExpressionAnalysisAdditionalChecker(it) }
+            +{ it: FirSession -> CandidateInterceptor(it, ::nextFunction, callableState, this::nextName) }
+            +{ it: FirSession -> TokenGenerator(it, tokens, tokenState) }
         }
     }
 }
@@ -158,7 +158,7 @@ class FirDataFrameComponentRegistrar : CompilerPluginRegistrar() {
 
     override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
         FirExtensionRegistrarAdapter.registerExtension(FirDataFrameExtensionRegistrar(configuration.get(PATH)))
-        IrGenerationExtension.registerExtension(DataFrameIrBodyFiller())
+        IrGenerationExtension.registerExtension(IrBodyFiller())
     }
 
     override val supportsK2: Boolean = true

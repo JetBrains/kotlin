@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
-class FirDataFrameTokenGenerator(session: FirSession, val tokens: Set<ClassId>, val tokenState: Map<ClassId, SchemaContext>) : FirDeclarationGenerationExtension(session) {
+class TokenGenerator(session: FirSession, val tokens: Set<ClassId>, val tokenState: Map<ClassId, SchemaContext>) : FirDeclarationGenerationExtension(session) {
     object Key : GeneratedDeclarationKey()
 
     override fun getTopLevelClassIds(): Set<ClassId> {
@@ -40,7 +40,7 @@ class FirDataFrameTokenGenerator(session: FirSession, val tokens: Set<ClassId>, 
         val klass = buildRegularClass {
             moduleData = session.moduleData
             resolvePhase = FirResolvePhase.BODY_RESOLVE
-            origin = FirDeclarationOrigin.Plugin(FirDataFrameReceiverInjector.DataFramePluginKey)
+            origin = FirDeclarationOrigin.Plugin(ReceiverInjector.DataFramePluginKey)
             status = FirResolvedDeclarationStatusImpl(Visibilities.Internal, Modality.FINAL, EffectiveVisibility.Internal)
             classKind = ClassKind.INTERFACE
             scopeProvider = FirKotlinScopeProvider()

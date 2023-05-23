@@ -36,13 +36,13 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import kotlin.math.abs
 
-class FirDataFrameCandidateInterceptor(
+class CandidateInterceptor(
     session: FirSession,
     val nextFunction: (String) -> CallableId,
     val callableState: MutableMap<Name, FirSimpleFunction>,
     val nextName: (String) -> ClassId
 ) : FirCandidateFactoryInterceptor(session) {
-    val Key = FirDataFrameExtensionsGenerator.DataFramePlugin
+    val Key = ExtensionGenerator.DataFramePlugin
 
     @OptIn(SymbolInternals::class)
     override fun intercept(callInfo: CallInfo, symbol: FirBasedSymbol<*>, dispatchReceiverValue: ReceiverValue?): FirBasedSymbol<*> {

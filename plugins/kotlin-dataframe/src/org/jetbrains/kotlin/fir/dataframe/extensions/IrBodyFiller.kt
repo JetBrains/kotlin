@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.lower
 import org.jetbrains.kotlin.backend.jvm.ir.getValueArgument
-import org.jetbrains.kotlin.fir.expressions.FirConstExpression
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBody
@@ -27,9 +26,7 @@ import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.primaryConstructor
-import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
@@ -38,13 +35,13 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlinx.dataframe.DataColumn
 import org.jetbrains.kotlinx.dataframe.columns.ColumnGroup
 
-class DataFrameIrBodyFiller : IrGenerationExtension {
+class IrBodyFiller : IrGenerationExtension {
     override fun generate(moduleFragment: IrModuleFragment, pluginContext: IrPluginContext) {
         DataFrameFileLowering(pluginContext).lower(moduleFragment)
     }
 }
 
-class DataFrameFileLowering(val context: IrPluginContext) : FileLoweringPass, IrElementTransformerVoid() {
+private class DataFrameFileLowering(val context: IrPluginContext) : FileLoweringPass, IrElementTransformerVoid() {
     companion object {
         val COLUMNS_CONTAINER_ID =
             CallableId(ClassId(FqName("org.jetbrains.kotlinx.dataframe"), Name.identifier("ColumnsContainer")), Name.identifier("get"))
@@ -58,7 +55,7 @@ class DataFrameFileLowering(val context: IrPluginContext) : FileLoweringPass, Ir
 
     override fun visitClass(declaration: IrClass): IrStatement {
         val origin = declaration.origin
-        return if (origin is IrDeclarationOrigin.GeneratedByPlugin && origin.pluginKey == FirDataFrameReceiverInjector.DataFramePluginKey) {
+        return if (origin is IrDeclarationOrigin.GeneratedByPlugin && origin.pluginKey == ReceiverInjector.DataFramePluginKey) {
             declaration.transformChildren(this, null)
             declaration
         } else {
@@ -68,7 +65,7 @@ class DataFrameFileLowering(val context: IrPluginContext) : FileLoweringPass, Ir
 
     override fun visitConstructor(declaration: IrConstructor): IrStatement {
         val origin = declaration.origin
-        if (!(origin is IrDeclarationOrigin.GeneratedByPlugin && origin.pluginKey == FirDataFrameExtensionsGenerator.DataFramePlugin)) return declaration
+        if (!(origin is IrDeclarationOrigin.GeneratedByPlugin && origin.pluginKey == ExtensionGenerator.DataFramePlugin)) return declaration
         declaration.body = generateBodyForDefaultConstructor(declaration)
         return declaration
     }
@@ -97,7 +94,7 @@ class DataFrameFileLowering(val context: IrPluginContext) : FileLoweringPass, Ir
 
     override fun visitProperty(declaration: IrProperty): IrStatement {
         val origin = declaration.origin
-        if (!(origin is IrDeclarationOrigin.GeneratedByPlugin && origin.pluginKey == FirDataFrameExtensionsGenerator.DataFramePlugin)) return declaration
+        if (!(origin is IrDeclarationOrigin.GeneratedByPlugin && origin.pluginKey == ExtensionGenerator.DataFramePlugin)) return declaration
         val getter = declaration.getter ?: return declaration
 
         val constructors = context.referenceConstructors(ClassId(FqName("kotlin.jvm"), Name.identifier("JvmName")))
@@ -147,7 +144,7 @@ class DataFrameFileLowering(val context: IrPluginContext) : FileLoweringPass, Ir
 
     override fun visitErrorCallExpression(expression: IrErrorCallExpression): IrExpression {
         val origin = (expression.type.classifierOrNull?.owner as? IrClass)?.origin ?: return expression
-        if (!(origin is IrDeclarationOrigin.GeneratedByPlugin && origin.pluginKey == FirDataFrameReceiverInjector.DataFramePluginKey)) {
+        if (!(origin is IrDeclarationOrigin.GeneratedByPlugin && origin.pluginKey == ReceiverInjector.DataFramePluginKey)) {
             return expression
         }
         val classFqName = expression.type.classFqName ?: return expression
@@ -169,7 +166,7 @@ class DataFrameFileLowering(val context: IrPluginContext) : FileLoweringPass, Ir
 */
         if (declaration.isPropertyAccessor) return declaration
         val origin = declaration.origin
-        if (origin !is IrDeclarationOrigin.GeneratedByPlugin || origin.pluginKey != FirDataFrameExtensionsGenerator.DataFramePlugin) {
+        if (origin !is IrDeclarationOrigin.GeneratedByPlugin || origin.pluginKey != ExtensionGenerator.DataFramePlugin) {
             declaration.transformChildrenVoid(this)
             return declaration
         }

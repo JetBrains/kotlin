@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.name.Name
 
-class FirDataFrameFunctionTransformer(session: FirSession, private val context: FirMetaContext) : FirFunctionTransformerExtension(session) {
+class FunctionTransformer(session: FirSession, private val context: FirMetaContext) : FirFunctionTransformerExtension(session) {
     @OptIn(SymbolInternals::class)
     override fun transform(call: FirFunctionCall): FirFunctionCall = with (context) {
         if (call.calleeReference.name == Name.identifier("add")) {

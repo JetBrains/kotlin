@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.dataframe.*
-import org.jetbrains.kotlin.fir.dataframe.extensions.FirDataFrameExtensionsGenerator
+import org.jetbrains.kotlin.fir.dataframe.extensions.ExtensionsGenerator
 import org.jetbrains.kotlin.fir.dataframe.extensions.SchemaContext
 import org.jetbrains.kotlin.fir.dataframe.services.BaseTestRunner
 import org.jetbrains.kotlin.fir.dataframe.services.DataFramePluginAnnotationsProvider
@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.model.TestModule
-import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
 import org.jetbrains.kotlin.test.runners.baseFirDiagnosticTestConfiguration
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.TestServices
@@ -81,7 +80,7 @@ abstract class TestWithCompileTimeInformation : BaseTestRunner() {
             FirExtensionRegistrarAdapter.registerExtension(object : FirExtensionRegistrar() {
                 override fun ExtensionRegistrarContext.configurePlugin() {
                     with(GeneratedNames()) {
-                        +::FirDataFrameExtensionsGenerator
+                        +::ExtensionsGenerator
                         +{ it: FirSession -> InterpretersRunner(it, tokenState, getTestFilePath, setTestSubject, onCompile) }
                     }
                 }

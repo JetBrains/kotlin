@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlinx.dataframe.KotlinTypeFacade
-import org.jetbrains.kotlinx.dataframe.annotations.*
 import org.jetbrains.kotlinx.dataframe.plugin.PluginDataFrameSchema
 import org.jetbrains.kotlinx.dataframe.plugin.SimpleCol
 import org.jetbrains.kotlinx.dataframe.plugin.SimpleColumnGroup
@@ -34,7 +33,7 @@ import kotlin.math.abs
 
 class SchemaContext(val properties: List<SchemaProperty>)
 
-class FirDataFrameReceiverInjector(
+class ReceiverInjector(
     session: FirSession,
     private val scopeState: MutableMap<ClassId, SchemaContext>,
     val tokenState: MutableMap<ClassId, SchemaContext>,
@@ -169,7 +168,7 @@ fun KotlinTypeFacade.analyzeRefinedCallShape(call: FirFunctionCall, reporter: In
         return null
     }
     val origin = rootMarker.toSymbol(session)?.origin
-    if (origin !is FirDeclarationOrigin.Plugin || origin.key != FirDataFrameReceiverInjector.DataFramePluginKey) {
+    if (origin !is FirDeclarationOrigin.Plugin || origin.key != ReceiverInjector.DataFramePluginKey) {
         return null
     }
 

@@ -64,7 +64,7 @@ abstract class AbstractDataFrameInterpretationTests : BaseTestRunner() {
             FirExtensionRegistrarAdapter.registerExtension(object : FirExtensionRegistrar() {
                 override fun ExtensionRegistrarContext.configurePlugin() {
                     with(GeneratedNames()) {
-                        +{ it: FirSession -> FirDataFrameExtensionsGenerator(it, scopes, scopeState, callables, callableState) }
+                        +{ it: FirSession -> ExtensionGenerator(it, scopes, scopeState, callables, callableState) }
                         +{ it: FirSession ->
                             InterpretersRunner(it,
                                 scopeState,
@@ -73,7 +73,7 @@ abstract class AbstractDataFrameInterpretationTests : BaseTestRunner() {
                                 this::nextName,
                                 this::nextScope)
                         }
-                        +{ it: FirSession -> FirDataFrameAdditionalCheckers(it) }
+                        +{ it: FirSession -> ExpressionAnalysisAdditionalChecker(it) }
                     }
                 }
             })
