@@ -1,7 +1,6 @@
 // WITH_STDLIB
 // WITH_COROUTINES
 // IGNORE_BACKEND_K1: ANY
-// IGNORE_BACKEND: WASM
 
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*

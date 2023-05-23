@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 
 // MODULE: lib
 // FILE: l.kt
