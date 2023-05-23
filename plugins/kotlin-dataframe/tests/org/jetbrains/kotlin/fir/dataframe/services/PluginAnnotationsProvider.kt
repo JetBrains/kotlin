@@ -7,10 +7,10 @@ package org.jetbrains.kotlin.fir.dataframe.services
 
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.fir.dataframe.services.classpath.classpathFromClassloader
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.assertions
 import java.io.File
 
 class DataFramePluginAnnotationsProvider(testServices: TestServices) : EnvironmentConfigurator(testServices) {

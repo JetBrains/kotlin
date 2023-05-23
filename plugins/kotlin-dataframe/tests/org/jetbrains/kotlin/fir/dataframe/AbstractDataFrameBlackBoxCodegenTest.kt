@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.dataframe
 
 import org.jetbrains.kotlin.fir.dataframe.services.BaseTestRunner
-import org.jetbrains.kotlin.fir.dataframe.services.classpathFromClassloader
+import org.jetbrains.kotlin.fir.dataframe.services.classpath.classpathFromClassloader
 import org.jetbrains.kotlin.fir.dataframe.services.commonFirWithPluginFrontendConfiguration
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.test.TargetBackend

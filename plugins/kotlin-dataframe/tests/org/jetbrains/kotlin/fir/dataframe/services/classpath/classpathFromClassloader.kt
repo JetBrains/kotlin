@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.fir.dataframe.services
+package org.jetbrains.kotlin.fir.dataframe.services.classpath
 
 import java.io.File
 import java.io.FileInputStream
