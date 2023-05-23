@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.incremental.ClasspathChanges.ClasspathSnapshotEnable
 import org.jetbrains.kotlin.incremental.ClasspathSnapshotFiles
 import org.jetbrains.kotlin.incremental.IncrementalJvmCompilerRunner
 import org.jetbrains.kotlin.incremental.multiproject.EmptyModulesApiHistory
-import org.jetbrains.kotlin.incremental.withIC
+import org.jetbrains.kotlin.incremental.withIncrementalCompilation
 
 internal fun parseArgs(
     args: Array<String>,
@@ -115,7 +115,7 @@ object IncrementalDaemonCompiler : DaemonCompiler {
         return try {
             val compilerArgs = parseArgs(args, daemonCompilerSettings.composePluginPath)
             compilerArgs.moduleName = "test"
-            withIC(compilerArgs) {
+            withIncrementalCompilation(compilerArgs) {
                 compiler.compile(
                     compilerArgs.freeArgs.map { File(it) },
                     compilerArgs,
