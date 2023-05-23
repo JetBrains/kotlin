@@ -13,7 +13,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.JvmFirDeserializedSymbolProviderFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirModuleData
-import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.createJavaSymbolProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirJavaSymbolProvider
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.deserialization.SingleModuleDataProvider
@@ -56,7 +56,7 @@ class JvmStubBasedDeserializedSymbolProviderFactory : JvmFirDeserializedSymbolPr
                     FirDeclarationOrigin.Library
                 )
             )
-            add(createJavaSymbolProvider(session, moduleData, project, scope))
+            add(LLFirJavaSymbolProvider(session, moduleData, project, scope))
         }
     }
 }

@@ -5,12 +5,17 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references
 
+import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.impl.base.test.util.KtSingleModuleResolveExtensionProviderForTest
 import org.jetbrains.kotlin.analysis.api.resolve.extensions.KtResolveExtensionFile
 import org.jetbrains.kotlin.analysis.api.resolve.extensions.KtResolveExtensionProvider
 import org.jetbrains.kotlin.name.FqName
 
 abstract class AbstractSingleModuleReferenceResolveWithResolveExtensionTest : AbstractReferenceResolveWithResolveExtensionTest() {
-    override fun createResolveExtensionProvider(files: List<KtResolveExtensionFile>, packages: Set<FqName>): KtResolveExtensionProvider =
-        KtSingleModuleResolveExtensionProviderForTest(files, packages)
+    override fun createResolveExtensionProvider(
+        files: List<KtResolveExtensionFile>,
+        packages: Set<FqName>,
+        shadowedScope: GlobalSearchScope,
+    ): KtResolveExtensionProvider =
+        KtSingleModuleResolveExtensionProviderForTest(files, packages, shadowedScope)
 }

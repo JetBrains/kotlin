@@ -114,7 +114,7 @@ private constructor(
 
     override val typesCreatorImpl: KtTypeCreator = KtFirTypeCreator(this, token)
 
-    override val analysisScopeProviderImpl: KtAnalysisScopeProvider = KtAnalysisScopeProviderImpl(this, token)
+    override val analysisScopeProviderImpl: KtAnalysisScopeProvider
 
     override val referenceResolveProviderImpl: KtReferenceResolveProvider = KtFirReferenceResolveProvider(this)
 
@@ -153,9 +153,10 @@ private constructor(
     internal val firSymbolProvider: FirSymbolProvider get() = useSiteSession.symbolProvider
     internal val targetPlatform: TargetPlatform get() = useSiteSession.moduleData.platform
 
-    val useSiteAnalysisScope: GlobalSearchScope = analysisScopeProviderImpl.getAnalysisScope()
-
     val extensionTools: List<LLFirResolveExtensionTool>
+
+    val useSiteAnalysisScope: GlobalSearchScope
+
     val useSiteScopeDeclarationProvider: KotlinDeclarationProvider
     val useSitePackageProvider: KotlinPackageProvider
 
@@ -167,6 +168,20 @@ private constructor(
                 firResolveSession.getSessionFor(dependency).llResolveExtensionTool
             }
         }
+
+        val shadowedScope = GlobalSearchScope.union(
+            buildSet {
+                // Add an empty scope to the shadowed set to give GlobalSearchScope.union something
+                // to work with if there are no extension tools.
+                // If there are extension tools, any empty scopes, whether from shadowedSearchScope
+                // on the extension tools or from this add() call, will be ignored.
+                add(GlobalSearchScope.EMPTY_SCOPE)
+                extensionTools.mapTo(this) { it.shadowedSearchScope }
+            }
+        )
+        analysisScopeProviderImpl = KtAnalysisScopeProviderImpl(this, token, shadowedScope)
+        useSiteAnalysisScope = analysisScopeProviderImpl.getAnalysisScope()
+
         useSiteScopeDeclarationProvider = CompositeKotlinDeclarationProvider.create(
             buildList {
                 add(project.createDeclarationProvider(useSiteAnalysisScope, useSiteModule))

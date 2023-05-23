@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.providers
 
+import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.SyntheticFirClassProvider
 import org.jetbrains.kotlin.analysis.providers.KotlinDeclarationProvider
-import org.jetbrains.kotlin.analysis.providers.KotlinPackageProvider
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.NoMutableState
 import org.jetbrains.kotlin.fir.ThreadSafeMutableState
 import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
@@ -29,21 +29,22 @@ import org.jetbrains.kotlin.psi.KtProperty
 
 @ThreadSafeMutableState
 internal class LLFirProvider(
-    val session: FirSession,
+    val session: LLFirSession,
     private val moduleComponents: LLFirModuleResolveComponents,
-    private val declarationProvider: KotlinDeclarationProvider,
-    packageProvider: KotlinPackageProvider,
     canContainKotlinPackage: Boolean,
+    declarationProviderFactory: (GlobalSearchScope) -> KotlinDeclarationProvider?,
 ) : FirProvider() {
     override val symbolProvider: FirSymbolProvider = SymbolProvider()
 
     private val providerHelper = LLFirProviderHelper(
         session,
         moduleComponents.firFileBuilder,
-        declarationProvider,
-        packageProvider,
         canContainKotlinPackage,
+        declarationProviderFactory,
     )
+
+    val searchScope: GlobalSearchScope
+        get() = providerHelper.searchScope
 
     override val isPhasedFirAllowed: Boolean get() = true
 
@@ -103,9 +104,7 @@ internal class LLFirProvider(
 
     override fun getFirFilesByPackage(fqName: FqName): List<FirFile> = error("Should not be called in FIR IDE")
 
-
-    override fun getClassNamesInPackage(fqName: FqName): Set<Name> =
-        declarationProvider.getTopLevelKotlinClassLikeDeclarationNamesInPackage(fqName)
+    override fun getClassNamesInPackage(fqName: FqName): Set<Name> = providerHelper.getTopLevelClassNamesInPackage(fqName)
 
     @NoMutableState
     internal inner class SymbolProvider : LLFirKotlinSymbolProvider(session) {

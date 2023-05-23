@@ -92,15 +92,3 @@ internal fun LLFirSourcesSession.registerCompilerPluginServices(
     )
 
 }
-
-internal fun createJavaSymbolProvider(
-    firSession: FirSession,
-    moduleData: LLFirModuleData,
-    project: Project,
-    contentScope: GlobalSearchScope
-): JavaSymbolProvider {
-    return JavaSymbolProvider(
-        firSession,
-        FirJavaFacadeForSource(firSession, moduleData, project.createJavaClassFinder(contentScope))
-    )
-}
