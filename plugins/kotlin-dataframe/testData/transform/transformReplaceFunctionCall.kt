@@ -13,5 +13,5 @@ fun box(): String {
 
 fun test() {
     val df = dataFrameOf("a")(1)
-    df.add("ff") { 42 }.print()
+    df.add("ff") { 42 }.col1.print()
 }

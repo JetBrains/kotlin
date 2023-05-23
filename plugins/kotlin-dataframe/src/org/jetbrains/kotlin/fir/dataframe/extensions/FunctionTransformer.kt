@@ -25,7 +25,22 @@ class FunctionTransformer(session: FirSession, private val context: FirMetaConte
                 import org.jetbrains.kotlinx.dataframe.DataFrame
             
                 fun test(df1: DataFrame<*>) {
-                    df1.let { println(it); it }
+                    df1.let { 
+                        
+                        open class _DataFrameType1
+                        
+                        class Scope1 {
+                            val ColumnsContainer<_DataFrameType1>.col1: DataColumn<Int> get() = this["col1"] as DataColumn<Int>
+                            val DataRow<_DataFrameType1>.col1: Int get() = this["col1"] as Int
+                        }
+                        
+                        class $name : _DataFrameType1() {
+                            val scope1: Scope1 = TODO()
+                        }
+                        
+                        
+                        it as DataFrame<$name>
+                    }
                 }
                 """.trimIndent(),
                 listOfNotNull(((call.explicitReceiver as? FirPropertyAccessExpression)?.calleeReference as? FirResolvedNamedReference)?.resolvedSymbol?.fir)
