@@ -675,7 +675,7 @@ class CallAndReferenceGenerator(
                         IrConstructorCallImpl(
                             startOffset, endOffset, type, irConstructor,
                             valueArgumentsCount = irConstructor.owner.valueParameters.size,
-                            typeArgumentsCount = 0,
+                            typeArgumentsCount = annotation.typeArguments.size,
                             constructorTypeArgumentsCount = 0
                         )
                     }
@@ -693,7 +693,10 @@ class CallAndReferenceGenerator(
             }
         }
         return visitor.withAnnotationMode {
-            irConstructorCall.applyCallArguments(annotation.toAnnotationCall())
+            val annotationCall = annotation.toAnnotationCall()
+            irConstructorCall
+                .applyCallArguments(annotationCall)
+                .applyTypeArguments(annotationCall?.typeArguments, null)
         }
     }
 
@@ -1050,11 +1053,22 @@ class CallAndReferenceGenerator(
     }
 
     internal fun IrExpression.applyTypeArguments(access: FirQualifiedAccessExpression): IrExpression {
+        return applyTypeArguments(
+            access.typeArguments,
+            (access.calleeReference.toResolvedCallableSymbol()?.fir as? FirTypeParametersOwner)?.typeParameters
+        )
+    }
+
+    private fun IrExpression.applyTypeArguments(
+        typeArguments: List<FirTypeProjection>?,
+        typeParameters: List<FirTypeParameter>?,
+    ): IrExpression {
         if (this !is IrMemberAccessExpression<*>) return this
-        val argumentsCount = access.typeArguments.size
+
+        val argumentsCount = typeArguments?.size ?: return this
         if (argumentsCount <= typeArgumentsCount) {
-            for ((index, argument) in access.typeArguments.withIndex()) {
-                val typeParameter = access.findTypeParameter(index)
+            for ((index, argument) in typeArguments.withIndex()) {
+                val typeParameter = typeParameters?.get(index)
                 val argumentFirType = (argument as FirTypeProjectionWithVariance).typeRef
                 val argumentIrType = if (typeParameter?.isReified == true) {
                     argumentFirType.approximateDeclarationType(
@@ -1077,9 +1091,6 @@ class CallAndReferenceGenerator(
             )
         }
     }
-
-    private fun FirQualifiedAccessExpression.findTypeParameter(index: Int): FirTypeParameter? =
-        ((calleeReference as? FirResolvedNamedReference)?.resolvedSymbol?.fir as? FirTypeParametersOwner)?.typeParameters?.get(index)
 
     private fun FirQualifiedAccessExpression.findIrDispatchReceiver(explicitReceiverExpression: IrExpression?): IrExpression? =
         findIrReceiver(explicitReceiverExpression, isDispatch = true)

@@ -87,11 +87,11 @@ open annotation class Test5<T : Any?> : Annotation {
 
 }
 
-@Test1(x = 42)
-@Test2(x = 38)
-@Test3(x = Test1<I<C<String>>>(x = 39))
+@Test1<ARG>(x = 42)
+@Test2<String, String>(x = 38)
+@Test3<String, C<String>>(x = Test1<I<C<String>>>(x = 39))
 @Test4(x = [Test3<ErrorType, ErrorType>(x = Test1<ErrorType>(x = 40)), Test3<ErrorType, ErrorType>(x = Test1<ErrorType>(x = 50)), Test3<ErrorType, ErrorType>(x = Test1<ErrorType>(x = 60))])
-@Test5(xs = [Test3<ARG, C<ARG>>(x = Test1<I<C<ARG>>>(x = 70)), Test3<ARG, C<ARG>>(x = Test1<I<C<ARG>>>(x = 80))])
+@Test5<ARG>(xs = [Test3<ARG, C<ARG>>(x = Test1<I<C<ARG>>>(x = 70)), Test3<ARG, C<ARG>>(x = Test1<I<C<ARG>>>(x = 80))])
 class CC {
   constructor() /* primary */ {
     super/*Any*/()
