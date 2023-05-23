@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.name.Name
 // For library and incremental compilation sessions use `KotlinDeserializedJvmSymbolsProvider`
 // in order to load Kotlin classes as well.
 //Also used in IDE for loading java classes separately from stub based kotlin classes
-class JavaSymbolProvider(
+open class JavaSymbolProvider(
     session: FirSession,
     private val javaFacade: FirJavaFacade,
 ) : FirSymbolProvider(session) {

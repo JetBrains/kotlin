@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.extensions
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.ModificationTracker
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.KtAnalysisAllowanceManager
 import org.jetbrains.kotlin.analysis.api.resolve.extensions.KtResolveExtension
 import org.jetbrains.kotlin.analysis.api.resolve.extensions.KtResolveExtensionFile
@@ -40,6 +41,7 @@ abstract class LLFirResolveExtensionTool : FirSessionComponent {
     abstract val declarationProvider: LLFirResolveExtensionToolDeclarationProvider
     abstract val packageProvider: KotlinPackageProvider
     abstract val packageFilter: LLFirResolveExtensionToolPackageFilter
+    abstract val shadowedSearchScope: GlobalSearchScope
     internal abstract val symbolNamesProvider: FirSymbolNamesProvider
 }
 
@@ -57,12 +59,18 @@ internal class LLFirNonEmptyResolveExtensionTool(
 
     override val packageFilter = LLFirResolveExtensionToolPackageFilter(extensions)
 
-    override val modificationTrackers by lazy { extensions.map { it.getModificationTracker() } }
+    override val modificationTrackers by lazy { forbidAnalysis { extensions.map { it.getModificationTracker() } } }
 
     override val declarationProvider: LLFirResolveExtensionToolDeclarationProvider =
         LLFirResolveExtensionToolDeclarationProvider(fileProvider, session.ktModule)
 
     override val packageProvider: KotlinPackageProvider = LLFirResolveExtensionToolPackageProvider(packageFilter)
+
+    override val shadowedSearchScope by lazy {
+        forbidAnalysis {
+            GlobalSearchScope.union(extensions.mapTo(mutableSetOf()) { it.getShadowedScope() })
+        }
+    }
 
     override val symbolNamesProvider: FirSymbolNamesProvider = LLFirResolveExtensionToolSymbolNamesProvider(packageFilter, fileProvider)
 }
@@ -310,7 +318,7 @@ internal class LLFirResolveExtensionsFileProvider(
             .filter { it.getFilePackageName() == packageFqName }
     }
 
-    fun getAllFiles(): Sequence<KtResolveExtensionFile> {
+    fun getAllFiles(): Sequence<KtResolveExtensionFile> = forbidAnalysis {
         return extensions
             .asSequence()
             .flatMap { it.getKtFiles() }

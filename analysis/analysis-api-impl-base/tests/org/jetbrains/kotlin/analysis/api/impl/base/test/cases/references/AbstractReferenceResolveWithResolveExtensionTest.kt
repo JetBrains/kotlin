@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references
 
+import com.intellij.openapi.module.Module
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.impl.base.test.util.KtResolveExtensionFileForTests
 import org.jetbrains.kotlin.analysis.api.impl.base.test.util.KtResolveExtensionProviderForTestPreAnalysisHandler
 import org.jetbrains.kotlin.analysis.api.resolve.extensions.KtResolveExtensionFile
@@ -17,17 +20,22 @@ abstract class AbstractReferenceResolveWithResolveExtensionTest : AbstractRefere
     abstract fun createResolveExtensionProvider(
         files: List<KtResolveExtensionFile>,
         packages: Set<FqName>,
+        shadowedScope: GlobalSearchScope,
     ): KtResolveExtensionProvider
 
     override fun configureTest(builder: TestConfigurationBuilder) {
         super.configureTest(builder)
         val provider = createResolveExtensionProvider(
-            listOf(
+            files = listOf(
                 KtResolveExtensionFileForTests(
                     "extension1.kt",
                     packageName = FqName("generated"),
                     topLevelClassifiersNames = setOf("GeneratedClass1"),
-                    topLevelCallableNames = setOf("generatedTopLevelFunction1", "generatedTopLevelExtensionFunction1"),
+                    topLevelCallableNames = setOf(
+                        "generatedTopLevelFunction1",
+                        "generatedTopLevelExtensionFunction1",
+                        "generatedOverloadedExtensionFunction",
+                    ),
                     fileText = """|package generated
                        |
                        |class GeneratedClass1 {
@@ -37,6 +45,8 @@ abstract class AbstractReferenceResolveWithResolveExtensionTest : AbstractRefere
                        |fun generatedTopLevelFunction1(): GeneratedClass2
                        |
                        |fun String.generatedTopLevelExtensionFunction1(boolean: Boolean): Int
+                       |
+                       |fun Any.generatedOverloadedExtensionFunction(): Int
                     """.trimMargin()
                 ),
                 KtResolveExtensionFileForTests(
@@ -52,7 +62,14 @@ abstract class AbstractReferenceResolveWithResolveExtensionTest : AbstractRefere
                     """.trimMargin(),
                 )
             ),
-            setOf(FqName("generated"))
+            packages = setOf(FqName("generated")),
+            shadowedScope = object : GlobalSearchScope() {
+                override fun contains(file: VirtualFile): Boolean = ".hidden." in file.name
+
+                override fun isSearchInModuleContent(aModule: Module): Boolean = false
+
+                override fun isSearchInLibraries(): Boolean = false
+            }
         )
         with(builder) {
             usePreAnalysisHandlers(::KtResolveExtensionProviderForTestPreAnalysisHandler.bind(listOf(provider)))

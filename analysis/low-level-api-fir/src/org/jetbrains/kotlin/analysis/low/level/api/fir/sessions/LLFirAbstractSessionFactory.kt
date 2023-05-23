@@ -15,11 +15,11 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveCompone
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.*
 import org.jetbrains.kotlin.analysis.project.structure.*
+import org.jetbrains.kotlin.analysis.providers.KotlinDeclarationProvider
 import org.jetbrains.kotlin.analysis.providers.createAnnotationResolver
 import org.jetbrains.kotlin.analysis.providers.createDeclarationProvider
-import org.jetbrains.kotlin.analysis.providers.createPackageProvider
-import org.jetbrains.kotlin.analysis.providers.impl.declarationProviders.EmptyKotlinDeclarationProvider
 import org.jetbrains.kotlin.analysis.providers.impl.declarationProviders.FileBasedKotlinDeclarationProvider
+import org.jetbrains.kotlin.analysis.providers.impl.util.mergeInto
 import org.jetbrains.kotlin.analysis.utils.trackers.CompositeModificationTracker
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -48,7 +48,6 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.FirScriptingSamWithReceive
 import org.jetbrains.kotlin.scripting.definitions.findScriptDefinition
 import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
-import org.jetbrains.kotlin.analysis.providers.impl.util.mergeInto
 
 @OptIn(PrivateSessionConstructor::class, SessionConfiguration::class)
 internal abstract class LLFirAbstractSessionFactory(protected val project: Project) {
@@ -66,7 +65,6 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
         val scopeProvider = FirKotlinScopeProvider(::wrapScopeWithJvmMapped)
 
         val components = LLFirModuleResolveComponents(module, globalResolveComponents, scopeProvider)
-        val contentScope = module.contentScope
 
         val dependencies = collectSourceModuleDependencies(module)
         val dependencyTracker = createSourceModuleDependencyTracker(module, dependencies)
@@ -90,10 +88,10 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
             val provider = LLFirProvider(
                 this,
                 components,
-                FileBasedKotlinDeclarationProvider(module.file),
-                project.createPackageProvider(contentScope),
                 canContainKotlinPackage = true,
-            )
+            ) { scope ->
+                scope.createScopedDeclarationProviderForFile(module.file)
+            }
 
             register(FirProvider::class, provider)
             register(FirLazyDeclarationResolver::class, LLFirLazyDeclarationResolver())
@@ -103,7 +101,7 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
                 add(builtinsSession.symbolProvider)
             })
 
-            val javaSymbolProvider = createJavaSymbolProvider(this, moduleData, project, contentScope)
+            val javaSymbolProvider = LLFirJavaSymbolProvider(this, moduleData, project, provider.searchScope)
             register(JavaSymbolProvider::class, javaSymbolProvider)
 
             register(
@@ -170,10 +168,10 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
             val provider = LLFirProvider(
                 this,
                 components,
-                if (ktFile != null) FileBasedKotlinDeclarationProvider(ktFile) else EmptyKotlinDeclarationProvider,
-                project.createPackageProvider(module.contentScope),
                 canContainKotlinPackage = true,
-            )
+            ) { scope ->
+                ktFile?.let { scope.createScopedDeclarationProviderForFile(it) }
+            }
 
             register(FirProvider::class, provider)
             register(FirLazyDeclarationResolver::class, LLFirLazyDeclarationResolver())
@@ -226,8 +224,6 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
         components.session = session
 
         val moduleData = createModuleData(session)
-        val contentScope = module.contentScope
-
 
         return session.apply {
             registerModuleData(moduleData)
@@ -240,16 +236,16 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
             val firProvider = LLFirProvider(
                 this,
                 components,
-                project.createDeclarationProvider(contentScope, module),
-                project.createPackageProvider(contentScope),
                 /* Source modules can contain `kotlin` package only if `-Xallow-kotlin-package` is specified, this is handled in LLFirProvider */
                 canContainKotlinPackage = false,
-            )
+            ) { scope ->
+                project.createDeclarationProvider(scope, module)
+            }
 
             register(FirProvider::class, firProvider)
             register(FirLazyDeclarationResolver::class, LLFirLazyDeclarationResolver())
 
-            registerCompilerPluginServices(contentScope, project, module)
+            registerCompilerPluginServices(firProvider.searchScope, project, module)
             registerCompilerPluginExtensions(project, module)
             registerCommonComponentsAfterExtensionsAreConfigured()
 
@@ -273,7 +269,7 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
                 }
 
             val context = SourceSessionCreationContext(
-                moduleData, contentScope, firProvider, dependencyProvider, syntheticFunctionInterfaceProvider,
+                moduleData, firProvider.searchScope, firProvider, dependencyProvider, syntheticFunctionInterfaceProvider,
                 switchableExtensionDeclarationsSymbolProvider,
             )
             additionalSessionConfiguration(context)
@@ -320,22 +316,20 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
             registerCommonComponentsAfterExtensionsAreConfigured()
             registerResolveComponents()
 
-            val contentScope = module.contentScope
-
             val firProvider = LLFirProvider(
                 this,
                 components,
-                project.createDeclarationProvider(contentScope, module),
-                project.createPackageProvider(contentScope),
                 canContainKotlinPackage = true,
-            )
+            ) { scope ->
+                project.createDeclarationProvider(scope, module)
+            }
 
             register(FirProvider::class, firProvider)
 
             register(FirLazyDeclarationResolver::class, LLFirLazyDeclarationResolver())
 
             // We need FirRegisteredPluginAnnotations during extensions' registration process
-            val annotationsResolver = project.createAnnotationResolver(contentScope)
+            val annotationsResolver = project.createAnnotationResolver(firProvider.searchScope)
             register(FirRegisteredPluginAnnotations::class, LLFirIdeRegisteredPluginAnnotations(this, annotationsResolver))
             register(FirPredicateBasedProvider::class, FirEmptyPredicateBasedProvider)
 
@@ -360,7 +354,7 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
             register(DEPENDENCIES_SYMBOL_PROVIDER_QUALIFIED_KEY, dependencyProvider)
             register(LLFirFirClassByPsiClassProvider::class, LLFirFirClassByPsiClassProvider(this))
 
-            val context = LibrarySessionCreationContext(moduleData, contentScope, firProvider, dependencyProvider)
+            val context = LibrarySessionCreationContext(moduleData, firProvider.searchScope, firProvider, dependencyProvider)
             additionalSessionConfiguration(context)
 
             LLFirSessionConfigurator.configure(this)
@@ -504,8 +498,21 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
     ) {
         mergeInto(destination) {
             merge<LLFirProvider.SymbolProvider> { LLFirCombinedKotlinSymbolProvider.merge(session, project, it) }
-            merge<JavaSymbolProvider> { LLFirCombinedJavaSymbolProvider.merge(session, project, it) }
+            merge<LLFirJavaSymbolProvider> { LLFirCombinedJavaSymbolProvider.merge(session, project, it) }
             merge<FirExtensionSyntheticFunctionInterfaceProvider> { LLFirCombinedSyntheticFunctionSymbolProvider.merge(session, it) }
         }
     }
+
+    /**
+     * Creates a single-file [KotlinDeclarationProvider] for the provided file, if it is in the search scope.
+     *
+     * Otherwise, returns `null`.
+     */
+    private fun GlobalSearchScope.createScopedDeclarationProviderForFile(file: KtFile): KotlinDeclarationProvider? =
+        // KtFiles without a backing VirtualFile can't be covered by a shadow scope, and are thus assumed in-scope.
+        if (file.virtualFile == null || contains(file.virtualFile)) {
+            FileBasedKotlinDeclarationProvider(file)
+        } else {
+            null
+        }
 }

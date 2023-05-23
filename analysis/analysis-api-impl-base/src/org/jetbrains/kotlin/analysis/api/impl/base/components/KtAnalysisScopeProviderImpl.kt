@@ -23,7 +23,8 @@ import org.jetbrains.kotlin.psi.psiUtil.contains
 
 class KtAnalysisScopeProviderImpl(
     override val analysisSession: KtAnalysisSession,
-    override val token: KtLifetimeToken
+    override val token: KtLifetimeToken,
+    private val shadowedScope: GlobalSearchScope
 ) : KtAnalysisScopeProvider() {
 
     private val baseResolveScope by lazy(LazyThreadSafetyMode.PUBLICATION) {
@@ -31,13 +32,13 @@ class KtAnalysisScopeProviderImpl(
     }
 
     private val resolveScope by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        KtAnalysisScopeProviderResolveScope(baseResolveScope, analysisSession.useSiteModule)
+        KtAnalysisScopeProviderResolveScope(baseResolveScope, analysisSession.useSiteModule, shadowedScope)
     }
 
     override fun getAnalysisScope(): GlobalSearchScope = resolveScope
 
     override fun canBeAnalysed(psi: PsiElement): Boolean {
-        return baseResolveScope.contains(psi)
+        return (baseResolveScope.contains(psi) && !shadowedScope.contains(psi))
                 || psi.isFromGeneratedModule()
     }
 
@@ -49,12 +50,17 @@ class KtAnalysisScopeProviderImpl(
 
 private class KtAnalysisScopeProviderResolveScope(
     private val base: GlobalSearchScope,
-    private val useSiteModule: KtModule
+    private val useSiteModule: KtModule,
+    private val shadowed: GlobalSearchScope,
 ) : GlobalSearchScope() {
     override fun getProject(): Project? = base.project
     override fun isSearchInModuleContent(aModule: Module): Boolean = base.isSearchInModuleContent(aModule)
     override fun isSearchInLibraries(): Boolean = base.isSearchInLibraries
-    override fun contains(file: VirtualFile): Boolean = base.contains(file) || file.isFromGeneratedModule(useSiteModule)
+    override fun contains(file: VirtualFile): Boolean =
+        (base.contains(file) && !shadowed.contains(file)) || file.isFromGeneratedModule(useSiteModule)
+
+    override fun toString() =
+        "Analysis scope for $useSiteModule (base: $base, shadowed: $shadowed)"
 }
 
 @OptIn(KtModuleStructureInternals::class)

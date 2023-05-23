@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.descriptors
 
 import com.intellij.openapi.project.Project
+import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.components.*
@@ -61,7 +62,8 @@ class KtFe10AnalysisSession(
     override val importOptimizerImpl: KtImportOptimizer = KtFe10ImportOptimizer(this)
     override val jvmTypeMapperImpl: KtJvmTypeMapper = KtFe10JvmTypeMapper(this)
     override val symbolInfoProviderImpl: KtSymbolInfoProvider = KtFe10SymbolInfoProvider(this)
-    override val analysisScopeProviderImpl: KtAnalysisScopeProvider = KtAnalysisScopeProviderImpl(this, token)
+    override val analysisScopeProviderImpl: KtAnalysisScopeProvider =
+        KtAnalysisScopeProviderImpl(this, token, shadowedScope = GlobalSearchScope.EMPTY_SCOPE)
     override val referenceResolveProviderImpl: KtReferenceResolveProvider = KtFe10ReferenceResolveProvider(this)
     override val signatureSubstitutorImpl: KtSignatureSubstitutor = KtFe10SignatureSubstitutor(this)
     override val scopeSubstitutionImpl: KtScopeSubstitution = KtFe10ScopeSubstitution(this)
