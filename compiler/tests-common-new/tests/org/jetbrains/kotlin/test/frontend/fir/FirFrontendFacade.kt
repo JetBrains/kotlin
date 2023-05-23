@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.platform.isJs
+import org.jetbrains.kotlin.platform.isWasm
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.platform.konan.isNative
 import org.jetbrains.kotlin.psi.KtFile
@@ -240,6 +241,20 @@ open class FirFrontendFacade(
                     registerExtraComponents = ::registerExtraComponents,
                 )
             }
+            module.targetPlatform.isWasm() -> {
+                projectEnvironment = null
+                TestFirWasmSessionFactory.createLibrarySession(
+                    moduleName,
+                    sessionProvider,
+                    moduleDataProvider,
+                    module,
+                    testServices,
+                    configuration,
+                    extensionRegistrars,
+                    languageVersionSettings,
+                    registerExtraComponents = ::registerExtraComponents,
+                )
+            }
             else -> error("Unsupported")
         }
         return projectEnvironment
@@ -377,6 +392,17 @@ open class FirFrontendFacade(
                     languageVersionSettings,
                     registerExtraComponents = ::registerExtraComponents,
                     init = sessionConfigurator
+                )
+            }
+            targetPlatform.isWasm() -> {
+                TestFirWasmSessionFactory.createModuleBasedSession(
+                    moduleData,
+                    sessionProvider,
+                    extensionRegistrars,
+                    languageVersionSettings,
+                    null,
+                    registerExtraComponents = ::registerExtraComponents,
+                    sessionConfigurator,
                 )
             }
             else -> error("Unsupported")

@@ -129,23 +129,18 @@ val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateWa
     dependsOn(":compiler:generateTestData")
 }
 
-projectTest(parallel = true) {
-    workingDir = rootDir
-    exclude("**/diagnostics/*.class")
-    setupV8()
-    setupSpiderMonkey()
-    setupWasmStdlib()
-    setupGradlePropertiesForwarding()
-    systemProperty("kotlin.wasm.test.root.out.dir", "$buildDir/")
-}
-
 projectTest(
-    taskName = "diagnosticsTest",
+    taskName = "test",
     parallel = true,
     jUnitMode = JUnitMode.JUnit5
 ) {
     workingDir = rootDir
     include("**/diagnostics/*.class")
+    include("**/FirWasm*.class")
+    include("**/K1Wasm*.class")
+    include("**/Wasm*.class")
+    setupV8()
+    setupSpiderMonkey()
     useJUnitPlatform()
     setupWasmStdlib()
     setupGradlePropertiesForwarding()
