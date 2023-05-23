@@ -20,16 +20,3 @@ abstract class BaseTestRunner : AbstractKotlinCompilerTest() {
     }
 }
 
-//fun TestConfigurationBuilder.commonFirWithPluginFrontendConfiguration() {
-//    baseFirDiagnosticTestConfiguration()
-//
-//    defaultDirectives {
-//        +FirDiagnosticsDirectives.ENABLE_PLUGIN_PHASES
-//        +FirDiagnosticsDirectives.FIR_DUMP
-//    }
-//
-//    useConfigurators(
-//        ::PluginAnnotationsProvider,
-//        ::ExtensionRegistrarConfigurator
-//    )
-//}
