@@ -132,9 +132,17 @@ class TimeMarkTest {
         val sameMark = futureMark - (long2Duration - longDuration)
 
         val elapsedMark = timeSource.markNow()
-        val elapsedDiff = (sameMark.elapsedNow() - baseMark.elapsedNow()).absoluteValue
-        val elapsedDiff2 = (baseMark.elapsedNow() - sameMark.elapsedNow()).absoluteValue
-        assertTrue(maxOf(elapsedDiff, elapsedDiff2) < 1.milliseconds, "$elapsedDiff, $elapsedDiff2")
+        run {
+            val iterations = 1..100
+            for (i in iterations) {
+                val elapsedDiff1 = (sameMark.elapsedNow() - baseMark.elapsedNow()).absoluteValue
+                val elapsedDiff2 = (baseMark.elapsedNow() - sameMark.elapsedNow()).absoluteValue
+                // some iterations of this assertion can fail due to an unpredictable delay between subsequent elapsedNow calls
+                // but if the mark adjustment arithmetic was wrong, all of them will fail
+                if (maxOf(elapsedDiff1, elapsedDiff2) < 1.milliseconds) break
+                if (i == iterations.last) fail("$elapsedDiff1, $elapsedDiff2")
+            }
+        }
         // TODO: doesn't pass exactly for double-based value time marks in JS/WASM due to rounding
 //        assertEquals(elapsedMark - baseMark, elapsedMark - sameMark, "$elapsedMark; $baseMark; $sameMark")
         val elapsedBaseDiff = elapsedMark - baseMark
@@ -372,10 +380,17 @@ class TimeMarkTest {
         val futureMark = pastMark + long2Duration
         val sameMark = futureMark - (long2Duration - longDuration)
 
-        val elapsedDiff = (sameMark.elapsedNow() - baseMark.elapsedNow()).absoluteValue
-        val elapsedDiff2 = (baseMark.elapsedNow() - sameMark.elapsedNow()).absoluteValue
-        assertTrue(maxOf(elapsedDiff, elapsedDiff2) < 1.milliseconds, "$elapsedDiff, $elapsedDiff2")
-
+        run {
+            val iterations = 1..100
+            for (i in iterations) {
+                val elapsedDiff1 = (sameMark.elapsedNow() - baseMark.elapsedNow()).absoluteValue
+                val elapsedDiff2 = (baseMark.elapsedNow() - sameMark.elapsedNow()).absoluteValue
+                // some iterations of this assertion can fail due to an unpredictable delay between subsequent elapsedNow calls
+                // but if the mark adjustment arithmetic was wrong, all of them will fail
+                if (maxOf(elapsedDiff1, elapsedDiff2) < 1.milliseconds) break
+                if (i == iterations.last) fail("$elapsedDiff1, $elapsedDiff2")
+            }
+        }
         val elapsedMark = TimeSource.Monotonic.markNow()
         val elapsedBaseDiff = elapsedMark - baseMark
         val elapsedSameDiff = elapsedMark - sameMark
