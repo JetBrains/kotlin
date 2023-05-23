@@ -157,6 +157,7 @@ class FirDataFrameExtensionRegistrar(
                     +{ it: FirSession -> TokenGenerator(it, tokens, tokenState) }
                 }
                 Mode.EXPERIMENTAL -> {
+                    +::ReturnTypeBasedReceiverInjector
                     +{ it: FirSession ->
                         val templateCompiler = TemplateCompiler()
                         templateCompiler.session = it
