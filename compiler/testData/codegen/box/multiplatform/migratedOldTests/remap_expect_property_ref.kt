@@ -7,9 +7,6 @@
 
 // IGNORE_BACKEND_K2: ANY
 
-// Can't link symbol function Foo.<get-p>
-// IGNORE_BACKEND_K1: WASM
-
 // FILE: common.kt
 
 expect class Foo {

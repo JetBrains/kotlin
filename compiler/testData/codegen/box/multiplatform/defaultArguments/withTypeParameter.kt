@@ -1,6 +1,5 @@
 // !LANGUAGE: +MultiPlatformProjects
-// IGNORE_BACKEND: WASM
-// IGNORE_BACKEND_K2: JVM_IR, JS_IR, NATIVE
+// IGNORE_BACKEND_K2: JVM_IR, JS_IR, NATIVE, WASM
 // FIR status: outdated code (expect/actual in the same module)
 // WITH_STDLIB
 // MODULE: lib
