@@ -27962,6 +27962,12 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
             }
 
             @Test
+            @TestMetadata("suspendOperators.kt")
+            public void testSuspendOperators() throws Exception {
+                runTest("compiler/testData/codegen/box/operatorConventions/suspendOperators.kt");
+            }
+
+            @Test
             @TestMetadata("untilOperator.kt")
             public void testUntilOperator() throws Exception {
                 runTest("compiler/testData/codegen/box/operatorConventions/untilOperator.kt");

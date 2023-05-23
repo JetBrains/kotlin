@@ -22062,6 +22062,11 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
             runTest("compiler/testData/codegen/box/operatorConventions/remOverModOperation.kt");
         }
 
+        @TestMetadata("suspendOperators.kt")
+        public void testSuspendOperators() throws Exception {
+            runTest("compiler/testData/codegen/box/operatorConventions/suspendOperators.kt");
+        }
+
         @TestMetadata("untilOperator.kt")
         public void testUntilOperator() throws Exception {
             runTest("compiler/testData/codegen/box/operatorConventions/untilOperator.kt");
