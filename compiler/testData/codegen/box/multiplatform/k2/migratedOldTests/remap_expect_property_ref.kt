@@ -7,9 +7,6 @@
 
 // IGNORE_BACKEND_K1: ANY
 
-// Can't link symbol function Foo.<get-p>
-// IGNORE_BACKEND: WASM
-
 // MODULE: common
 // FILE: common.kt
 

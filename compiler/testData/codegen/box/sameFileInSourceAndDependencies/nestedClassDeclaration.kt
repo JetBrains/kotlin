@@ -2,6 +2,7 @@
 // NATIVE error: error: compilation failed: IrClassPublicSymbolImpl for box.sameFileInSourceAndDependencies.nestedClassDeclaration/Host|null[0] is already bound: CLASS CLASS name:Host modality:FINAL visibility:public superTypes:[kotlin.Any]
 // IGNORE_BACKEND: JS_IR, JS_IR_ES6
 // JS_IR error: IrClassPublicSymbolImpl for /Host|null[0] is already bound: CLASS CLASS name:Host modality:FINAL visibility:public superTypes:[kotlin.Any]
+// IGNORE_BACKEND: WASM
 
 // MODULE: lib
 // FILE: 2.kt

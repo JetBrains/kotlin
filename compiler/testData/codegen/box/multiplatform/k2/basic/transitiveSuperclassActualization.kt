@@ -1,9 +1,7 @@
 // IGNORE_BACKEND_K1: ANY
 //   IGNORE_REASON: new rules for supertypes matching are implemented only in K2
-// IGNORE_BACKEND_K2: JS_IR
+// IGNORE_BACKEND_K2: JS_IR, WASM
 //   IGNORE_REASON: `JsName` in js.translator/testData/_commonFiles/testUtils.kt is invisible for some reason
-// IGNORE_BACKEND: WASM
-//   IGNORE_REASON: wasm tests don't support IGNORE_BACKEND_K1 directive
 // LANGUAGE: +MultiPlatformProjects
 // ISSUE: KT-59356
 
