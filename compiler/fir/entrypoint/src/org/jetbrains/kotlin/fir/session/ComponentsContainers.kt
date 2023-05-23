@@ -11,8 +11,10 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.CheckersComponent
 import org.jetbrains.kotlin.fir.analysis.FirOverridesBackwardCompatibilityHelper
+import org.jetbrains.kotlin.fir.analysis.checkers.FirInlineCheckerExtension
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirNameConflictsTracker
 import org.jetbrains.kotlin.fir.analysis.jvm.FirJvmOverridesBackwardCompatibilityHelper
+import org.jetbrains.kotlin.fir.analysis.jvm.checkers.FirJvmInlineCheckerExtension
 import org.jetbrains.kotlin.fir.caches.FirCachesFactory
 import org.jetbrains.kotlin.fir.caches.FirThreadUnsafeCachesFactory
 import org.jetbrains.kotlin.fir.declarations.SealedClassInheritorsProvider
@@ -153,6 +155,7 @@ fun FirSession.registerJavaSpecificResolveComponents() {
     register(FirPlatformClassMapper::class, FirJavaClassMapper(this))
     register(FirSyntheticNamesProvider::class, FirJavaSyntheticNamesProvider)
     register(FirOverridesBackwardCompatibilityHelper::class, FirJvmOverridesBackwardCompatibilityHelper)
+    register(FirInlineCheckerExtension::class, FirJvmInlineCheckerExtension())
 }
 
 @OptIn(SessionConfiguration::class)

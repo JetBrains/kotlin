@@ -11,13 +11,7 @@ import org.jetbrains.kotlin.fir.analysis.js.checkers.declaration.*
 object JsDeclarationCheckers : DeclarationCheckers() {
     override val functionCheckers: Set<FirFunctionChecker>
         get() = setOf(
-            FirJsInlineDeclarationChecker,
             FirJsInheritanceFunctionChecker,
-        )
-
-    override val propertyCheckers: Set<FirPropertyChecker>
-        get() = setOf(
-            FirJsInlinePropertyChecker,
         )
 
     override val basicDeclarationCheckers: Set<FirBasicDeclarationChecker>

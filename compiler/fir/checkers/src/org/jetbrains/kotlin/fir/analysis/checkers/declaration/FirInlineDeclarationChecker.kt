@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContextForProvider
 import org.jetbrains.kotlin.fir.analysis.checkers.getModifier
+import org.jetbrains.kotlin.fir.analysis.checkers.inlineCheckerExtension
 import org.jetbrains.kotlin.fir.analysis.checkers.isInlineOnly
 import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
 import org.jetbrains.kotlin.fir.analysis.collectors.AbstractDiagnosticCollectorVisitor
@@ -39,13 +40,13 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
-abstract class FirInlineDeclarationChecker : FirFunctionChecker() {
+object FirInlineDeclarationChecker : FirFunctionChecker() {
     override fun check(declaration: FirFunction, context: CheckerContext, reporter: DiagnosticReporter) {
         if (!declaration.isInline) {
             checkParametersInNotInline(declaration, context, reporter)
             return
         }
-
+        if (context.session.inlineCheckerExtension?.isGenerallyOk(declaration, context, reporter) == false) return
         if (declaration !is FirPropertyAccessor && declaration !is FirSimpleFunction) return
 
         val effectiveVisibility = declaration.effectiveVisibility
@@ -53,7 +54,7 @@ abstract class FirInlineDeclarationChecker : FirFunctionChecker() {
         checkCallableDeclaration(declaration, context, reporter)
     }
 
-    protected fun checkInlineFunctionBody(
+    private fun checkInlineFunctionBody(
         function: FirFunction,
         effectiveVisibility: EffectiveVisibility,
         context: CheckerContext,
@@ -66,7 +67,8 @@ abstract class FirInlineDeclarationChecker : FirFunctionChecker() {
             !type.isMarkedNullable && type.isNonReflectFunctionType(context.session)
         }.map { it.symbol }
 
-        val visitor = inlineVisitor(
+        val createVisitor = context.session.inlineCheckerExtension?.inlineVisitor ?: ::BasicInlineVisitor
+        val visitor = createVisitor(
             function,
             effectiveVisibility,
             inalienableParameters,
@@ -76,12 +78,10 @@ abstract class FirInlineDeclarationChecker : FirFunctionChecker() {
         body.checkChildrenWithCustomVisitor(context, visitor, function)
     }
 
-    open val inlineVisitor get() = ::BasicInlineVisitor
-
     open class BasicInlineVisitor(
         val inlineFunction: FirFunction,
-        val inlineFunEffectiveVisibility: EffectiveVisibility,
-        val inalienableParameters: List<FirValueParameterSymbol>,
+        private val inlineFunEffectiveVisibility: EffectiveVisibility,
+        private val inalienableParameters: List<FirValueParameterSymbol>,
         val session: FirSession,
         val reporter: DiagnosticReporter
     ) : FirDefaultVisitor<Unit, CheckerContext>() {
@@ -381,21 +381,6 @@ abstract class FirInlineDeclarationChecker : FirFunctionChecker() {
         }
     }
 
-    protected open fun checkSuspendFunctionalParameterWithDefaultValue(
-        param: FirValueParameter,
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
-    ) {
-    }
-
-    protected open fun checkFunctionalParametersWithInheritedDefaultValues(
-        function: FirSimpleFunction,
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
-        overriddenSymbols: List<FirCallableSymbol<out FirCallableDeclaration>>,
-    ) {
-    }
-
     private fun checkParameters(
         function: FirSimpleFunction,
         overriddenSymbols: List<FirCallableSymbol<out FirCallableDeclaration>>,
@@ -409,14 +394,14 @@ abstract class FirInlineDeclarationChecker : FirFunctionChecker() {
             val isSuspendFunctionType = functionKind?.isSuspendOrKSuspendFunction == true
             val defaultValue = param.defaultValue
 
-            if (!(isFunctionalType || isSuspendFunctionType) && (param.isNoinline || param.isCrossinline)) {
+            if (!isFunctionalType && (param.isNoinline || param.isCrossinline)) {
                 reporter.reportOn(param.source, FirErrors.ILLEGAL_INLINE_PARAMETER_MODIFIER, context)
             }
 
             if (param.isNoinline) continue
 
             if (function.isSuspend && defaultValue != null && isSuspendFunctionType) {
-                checkSuspendFunctionalParameterWithDefaultValue(param, context, reporter)
+                context.session.inlineCheckerExtension?.checkSuspendFunctionalParameterWithDefaultValue(param, context, reporter)
             }
 
             if (isSuspendFunctionType && !param.isCrossinline) {
@@ -460,10 +445,12 @@ abstract class FirInlineDeclarationChecker : FirFunctionChecker() {
         }
 
         //check for inherited default values
-        checkFunctionalParametersWithInheritedDefaultValues(function, context, reporter, overriddenSymbols)
+        context.session.inlineCheckerExtension?.checkFunctionalParametersWithInheritedDefaultValues(
+            function, context, reporter, overriddenSymbols
+        )
     }
 
-    protected fun checkParametersInNotInline(function: FirFunction, context: CheckerContext, reporter: DiagnosticReporter) {
+    private fun checkParametersInNotInline(function: FirFunction, context: CheckerContext, reporter: DiagnosticReporter) {
         for (param in function.valueParameters) {
             if (param.isNoinline || param.isCrossinline) {
                 reporter.reportOn(param.source, FirErrors.ILLEGAL_INLINE_PARAMETER_MODIFIER, context)

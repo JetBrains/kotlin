@@ -11,13 +11,13 @@ open class ProtectedInsideInlineError : ProtectedInsideInlineParent() {
     protected var protectedVar = 0
     protected fun protectedFun() = 0
 
-    inline fun publicInlineUserFun() {
-        <!UNRESOLVED_REFERENCE!>println<!>(protectedVar + protectedParentVar)
-        protectedFun()
-        protectedParentFun()
+    <!NOTHING_TO_INLINE!>inline<!> fun publicInlineUserFun() {
+        <!UNRESOLVED_REFERENCE!>println<!>(<!PROTECTED_CALL_FROM_PUBLIC_INLINE_ERROR!>protectedVar<!> + <!PROTECTED_CALL_FROM_PUBLIC_INLINE_ERROR!>protectedParentVar<!>)
+        <!PROTECTED_CALL_FROM_PUBLIC_INLINE_ERROR!>protectedFun<!>()
+        <!PROTECTED_CALL_FROM_PUBLIC_INLINE_ERROR!>protectedParentFun<!>()
     }
 
     inline var publicInlineUserVal: Int
-        get() = protectedVar + protectedFun() + protectedParentVar + protectedParentFun()
-        set(value) { protectedVar + protectedFun() + protectedParentVar + protectedParentFun() }
+        get() = <!PROTECTED_CALL_FROM_PUBLIC_INLINE_ERROR!>protectedVar<!> + <!PROTECTED_CALL_FROM_PUBLIC_INLINE_ERROR!>protectedFun<!>() + <!PROTECTED_CALL_FROM_PUBLIC_INLINE_ERROR!>protectedParentVar<!> + <!PROTECTED_CALL_FROM_PUBLIC_INLINE_ERROR!>protectedParentFun<!>()
+        set(value) { <!PROTECTED_CALL_FROM_PUBLIC_INLINE_ERROR!>protectedVar<!> + <!PROTECTED_CALL_FROM_PUBLIC_INLINE_ERROR!>protectedFun<!>() + <!PROTECTED_CALL_FROM_PUBLIC_INLINE_ERROR!>protectedParentVar<!> + <!PROTECTED_CALL_FROM_PUBLIC_INLINE_ERROR!>protectedParentFun<!>() }
 }
