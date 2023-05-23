@@ -1,6 +1,7 @@
 // EXPECTED_REACHABLE_NODES: 1735
 // KJS_WITH_FULL_RUNTIME
 // SKIP_DCE_DRIVEN
+// RUN_UNIT_TESTS
 
 import common.*
 import kotlin.test.Test

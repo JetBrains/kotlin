@@ -40,11 +40,11 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.platform.isJs
+import org.jetbrains.kotlin.platform.isWasm
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.platform.konan.isNative
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.FirParser
-import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.singleValue
@@ -181,6 +181,12 @@ open class FirFrontendFacade(
                     dependencies(transitiveLibraries.map { it.toPath().toAbsolutePath() })
                     friendDependencies(friendLibraries.map { it.toPath().toAbsolutePath() })
                 }
+                targetPlatform.isWasm() -> {
+                    val (runtimeKlibsPaths, transitiveLibraries, friendLibraries) = getWasmDependencies(mainModule, testServices)
+                    dependencies(runtimeKlibsPaths.map { Paths.get(it).toAbsolutePath() })
+                    dependencies(transitiveLibraries.map { it.toPath().toAbsolutePath() })
+                    friendDependencies(friendLibraries.map { it.toPath().toAbsolutePath() })
+                }
                 else -> error("Unsupported")
             }
         }
@@ -256,6 +262,20 @@ open class FirFrontendFacade(
                     listOf(),
                     sessionProvider,
                     moduleDataProvider,
+                    extensionRegistrars,
+                    languageVersionSettings,
+                    registerExtraComponents = ::registerExtraComponents,
+                )
+            }
+            module.targetPlatform.isWasm() -> {
+                projectEnvironment = null
+                TestFirWasmSessionFactory.createLibrarySession(
+                    moduleName,
+                    sessionProvider,
+                    moduleDataProvider,
+                    module,
+                    testServices,
+                    configuration,
                     extensionRegistrars,
                     languageVersionSettings,
                     registerExtraComponents = ::registerExtraComponents,
@@ -398,6 +418,17 @@ open class FirFrontendFacade(
                     languageVersionSettings,
                     registerExtraComponents = ::registerExtraComponents,
                     init = sessionConfigurator
+                )
+            }
+            targetPlatform.isWasm() -> {
+                TestFirWasmSessionFactory.createModuleBasedSession(
+                    moduleData,
+                    sessionProvider,
+                    extensionRegistrars,
+                    languageVersionSettings,
+                    null,
+                    registerExtraComponents = ::registerExtraComponents,
+                    sessionConfigurator,
                 )
             }
             else -> error("Unsupported")

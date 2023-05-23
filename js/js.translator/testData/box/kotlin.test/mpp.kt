@@ -4,6 +4,7 @@
 // FIR status: expect/actual in one module
 // KJS_WITH_FULL_RUNTIME
 // SKIP_DCE_DRIVEN
+// RUN_UNIT_TESTS
 
 // FILE: lib.kt
 import kotlin.test.Test
