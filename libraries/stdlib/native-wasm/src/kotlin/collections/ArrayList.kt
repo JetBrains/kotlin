@@ -160,12 +160,14 @@ actual class ArrayList<E> private constructor(
 
     actual fun trimToSize() {
         if (backingList != null) throw IllegalStateException() // just in case somebody casts subList to ArrayList
+        registerModification()
         if (length < backingArray.size)
             backingArray = backingArray.copyOfUninitializedElements(length)
     }
 
     final actual fun ensureCapacity(minCapacity: Int) {
         if (backingList != null) throw IllegalStateException() // just in case somebody casts subList to ArrayList
+        registerModification()
         if (minCapacity <= backingArray.size) return
         ensureCapacityInternal(minCapacity)
     }
@@ -205,6 +207,10 @@ actual class ArrayList<E> private constructor(
 
     // ---------------------------- private ----------------------------
 
+    private fun registerModification() {
+        modCount += 1
+    }
+
     private fun checkIsMutable() {
         if (isReadOnly || root != null && root.isReadOnly) throw UnsupportedOperationException()
     }
@@ -232,6 +238,7 @@ actual class ArrayList<E> private constructor(
     }
 
     private fun addAtInternal(i: Int, element: E) {
+        registerModification()
         if (backingList != null) {
             backingList.addAtInternal(i, element)
             backingArray = backingList.backingArray
@@ -243,6 +250,7 @@ actual class ArrayList<E> private constructor(
     }
 
     private fun addAllInternal(i: Int, elements: Collection<E>, n: Int) {
+        registerModification()
         if (backingList != null) {
             backingList.addAllInternal(i, elements, n)
             backingArray = backingList.backingArray
@@ -259,6 +267,7 @@ actual class ArrayList<E> private constructor(
     }
 
     private fun removeAtInternal(i: Int): E {
+        registerModification()
         if (backingList != null) {
             val old = backingList.removeAtInternal(i)
             length--
@@ -273,6 +282,7 @@ actual class ArrayList<E> private constructor(
     }
 
     private fun removeRangeInternal(rangeOffset: Int, rangeLength: Int) {
+        if (rangeLength > 0) registerModification()
         if (backingList != null) {
             backingList.removeRangeInternal(rangeOffset, rangeLength)
         } else {
@@ -284,10 +294,8 @@ actual class ArrayList<E> private constructor(
 
     /** Retains elements if [retain] == true and removes them it [retain] == false. */
     private fun retainOrRemoveAllInternal(rangeOffset: Int, rangeLength: Int, elements: Collection<E>, retain: Boolean): Int {
-        if (backingList != null) {
-            val removed = backingList.retainOrRemoveAllInternal(rangeOffset, rangeLength, elements, retain)
-            length -= removed
-            return removed
+        val removed = if (backingList != null) {
+            backingList.retainOrRemoveAllInternal(rangeOffset, rangeLength, elements, retain)
         } else {
             var i = 0
             var j = 0
@@ -301,20 +309,24 @@ actual class ArrayList<E> private constructor(
             val removed = rangeLength - j
             backingArray.copyInto(backingArray, startIndex = rangeOffset + rangeLength, endIndex = length, destinationOffset = rangeOffset + j)
             backingArray.resetRange(fromIndex = length - removed, toIndex = length)
-            length -= removed
-            return removed
+            removed
         }
+        if (removed > 0) registerModification()
+        length -= removed
+        return removed
     }
 
     private class Itr<E> : MutableListIterator<E> {
         private val list: ArrayList<E>
         private var index: Int
         private var lastIndex: Int
+        private var expectedModCount: Int
 
         constructor(list: ArrayList<E>, index: Int) {
             this.list = list
             this.index = index
             this.lastIndex = -1
+            this.expectedModCount = list.modCount
         }
 
         override fun hasPrevious(): Boolean = index > 0
@@ -324,32 +336,44 @@ actual class ArrayList<E> private constructor(
         override fun nextIndex(): Int = index
 
         override fun previous(): E {
+            checkForComodification()
             if (index <= 0) throw NoSuchElementException()
             lastIndex = --index
             return list.backingArray[list.offset + lastIndex]
         }
 
         override fun next(): E {
+            checkForComodification()
             if (index >= list.length) throw NoSuchElementException()
             lastIndex = index++
             return list.backingArray[list.offset + lastIndex]
         }
 
         override fun set(element: E) {
+            checkForComodification()
             check(lastIndex != -1) { "Call next() or previous() before replacing element from the iterator." }
             list.set(lastIndex, element)
         }
 
         override fun add(element: E) {
+            checkForComodification()
             list.add(index++, element)
             lastIndex = -1
+            expectedModCount = list.modCount
         }
 
         override fun remove() {
+            checkForComodification()
             check(lastIndex != -1) { "Call next() or previous() before removing element from the iterator." }
             list.removeAt(lastIndex)
             index = lastIndex
             lastIndex = -1
+            expectedModCount = list.modCount
+        }
+
+        private fun checkForComodification() {
+            if (list.modCount != expectedModCount)
+                throw ConcurrentModificationException()
         }
     }
 }
