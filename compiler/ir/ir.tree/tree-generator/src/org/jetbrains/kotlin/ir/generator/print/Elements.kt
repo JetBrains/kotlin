@@ -266,7 +266,7 @@ fun printElements(generationPath: File, model: Model) = sequence {
             element.generationCallback?.invoke(this)
         }.build()
 
-        yield(printTypeCommon(generationPath, elementName.packageName, elementType))
+        yield(printTypeCommon(generationPath, elementName.packageName, elementType, element.additionalImports))
     }
 }
 

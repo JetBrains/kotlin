@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.ir.generator
 
-import com.squareup.kotlinpoet.FunSpec
-import com.squareup.kotlinpoet.PropertySpec
-import com.squareup.kotlinpoet.KModifier
-import com.squareup.kotlinpoet.MemberName
+import com.squareup.kotlinpoet.*
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.SourceElement
@@ -23,6 +20,7 @@ import org.jetbrains.kotlin.ir.generator.config.SimpleFieldConfig
 import org.jetbrains.kotlin.ir.generator.model.Element.Companion.elementName2typeName
 import org.jetbrains.kotlin.ir.generator.print.toPoet
 import org.jetbrains.kotlin.ir.generator.util.*
+import org.jetbrains.kotlin.ir.generator.util.Import
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
@@ -165,11 +163,36 @@ object IrTree : AbstractTreeBuilder() {
         +field("varargElementType", irTypeType, nullable = true)
         +field("isCrossinline", boolean)
         +field("isNoinline", boolean)
-        // if true parameter is not included into IdSignature.
-        // Skipping hidden params makes IrFunction be look similar to FE.
-        // NOTE: it is introduced to fix KT-40980 because more clear solution was not possible to implement.
-        // Once we are able to load any top-level declaration from klib this hack should be deprecated and removed.
-        +field("isHidden", boolean)
+        +field("isHidden", boolean) {
+            additionalImports.add(Import("org.jetbrains.kotlin.ir.util", "IdSignature"))
+            kdoc = """
+            If `true`, the value parameter does not participate in [IdSignature] computation.
+
+            This is a workaround that is needed for better support of compiler plugins.
+            Suppose you have the following code and some IR plugin that adds a value parameter to functions
+            marked with the `@PluginMarker` annotation.
+            ```kotlin
+            @PluginMarker
+            fun foo(defined: Int) { /* ... */ }
+            ```
+
+            Suppose that after applying the plugin the function is changed to:
+            ```kotlin
+            @PluginMarker
+            fun foo(defined: Int, ${'$'}extra: String) { /* ... */ }
+            ```
+
+            If a compiler plugin adds parameters to an [${elementName2typeName(function.name)}],
+            the representations of the function in the frontend and in the backend may diverge, potentially causing signature mismatch and
+            linkage errors (see [KT-40980](https://youtrack.jetbrains.com/issue/KT-40980)).
+            We wouldn't want IR plugins to affect the frontend representation, since in an IDE you'd want to be able to see those
+            declarations in their original form (without the `${'$'}extra` parameter).
+
+            To fix this problem, [$name] was introduced.
+            
+            TODO: consider dropping [$name] if it isn't used by any known plugin.
+            """.trimIndent()
+        }
         +field("defaultValue", expressionBody, nullable = true, isChild = true)
     }
     val `class`: ElementConfig by element(Declaration) {

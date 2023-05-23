@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
@@ -35,6 +36,36 @@ abstract class IrValueParameter : IrDeclarationBase(), IrValueDeclaration {
 
     abstract var isNoinline: Boolean
 
+    /**
+     * If `true`, the value parameter does not participate in [IdSignature] computation.
+     *
+     * This is a workaround that is needed for better support of compiler plugins.
+     * Suppose you have the following code and some IR plugin that adds a value parameter to
+     * functions
+     * marked with the `@PluginMarker` annotation.
+     * ```kotlin
+     * @PluginMarker
+     * fun foo(defined: Int) { /* ... */ }
+     * ```
+     *
+     * Suppose that after applying the plugin the function is changed to:
+     * ```kotlin
+     * @PluginMarker
+     * fun foo(defined: Int, $extra: String) { /* ... */ }
+     * ```
+     *
+     * If a compiler plugin adds parameters to an [IrFunction],
+     * the representations of the function in the frontend and in the backend may diverge,
+     * potentially causing signature mismatch and
+     * linkage errors (see [KT-40980](https://youtrack.jetbrains.com/issue/KT-40980)).
+     * We wouldn't want IR plugins to affect the frontend representation, since in an IDE you'd want
+     * to be able to see those
+     * declarations in their original form (without the `$extra` parameter).
+     *
+     * To fix this problem, [isHidden] was introduced.
+     *
+     * TODO: consider dropping [isHidden] if it isn't used by any known plugin.
+     */
     abstract var isHidden: Boolean
 
     abstract var defaultValue: IrExpressionBody?

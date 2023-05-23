@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.generator.print
 import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.TypeSpec
 import org.jetbrains.kotlin.ir.generator.util.GeneratedFile
+import org.jetbrains.kotlin.ir.generator.util.Import
 import java.io.File
 
 private val COPYRIGHT by lazy { File("license/COPYRIGHT_HEADER.txt").readText() }
@@ -17,8 +18,16 @@ private val GENERATED_MESSAGE = """
      """.trimIndent()
 private val PREFIX by lazy { "$COPYRIGHT\n\n$GENERATED_MESSAGE\n\n" }
 
-fun printTypeCommon(generationPath: File, packageName: String, type: TypeSpec): GeneratedFile {
+fun printTypeCommon(
+    generationPath: File,
+    packageName: String,
+    type: TypeSpec,
+    additionalImports: List<Import> = emptyList(),
+): GeneratedFile {
     val code = FileSpec.builder(packageName, type.name!!)
+        .apply {
+            additionalImports.forEach { addImport(it.packageName, it.className) }
+        }
         .indent("    ")
         .addType(type)
         .build()

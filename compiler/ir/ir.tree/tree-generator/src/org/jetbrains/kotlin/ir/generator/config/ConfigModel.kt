@@ -24,6 +24,7 @@ class ElementConfig(
     val params = mutableListOf<TypeVariable>()
     val parents = mutableListOf<TypeRef>()
     val fields = mutableListOf<FieldConfig>()
+    val additionalImports = mutableListOf<Import>()
 
     var visitorName: String? = null
     var visitorParent: ElementConfig? = null

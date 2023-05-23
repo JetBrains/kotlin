@@ -43,6 +43,7 @@ class Element(
     val suppressPrint = config.suppressPrint
     val propertyName = config.propertyName
     val kDoc = config.kDoc
+    val additionalImports: List<Import> = config.additionalImports
 
     override fun toString() = name
 

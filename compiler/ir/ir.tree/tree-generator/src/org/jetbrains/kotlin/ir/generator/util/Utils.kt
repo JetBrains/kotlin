@@ -14,6 +14,8 @@ import java.io.File
 
 class GeneratedFile(val file: File, val newText: String)
 
+class Import(val packageName: String, val className: String)
+
 fun ClassName.parameterizedByIfAny(typeArguments: List<TypeName>) =
     if (typeArguments.isNotEmpty()) parameterizedBy(typeArguments) else this
 
