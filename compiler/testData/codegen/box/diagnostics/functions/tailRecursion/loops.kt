@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: WASM
-// WASM_MUTE_REASON: IGNORED_IN_JS
 
 tailrec fun test(x : Int) : Int {
     var z = if (x > 3) 3 else x

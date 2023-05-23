@@ -4,8 +4,7 @@
 // IGNORE_BACKEND: NATIVE
 
 // IGNORE_BACKEND: JS
-// IGNORE_BACKEND: WASM
-// IGNORE_BACKEND_K2: JS_IR
+// IGNORE_BACKEND_K2: JS_IR, WASM
 
 // Test that if we have two different files with the same name in the same package, KT-54028 doesn't reproduce.
 
