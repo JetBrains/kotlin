@@ -23,9 +23,6 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-val size = 5000
-//val size = 500
-
 interface IGeneratedNames {
     val scopes: Set<ClassId>
     val callables: Set<CallableId>
