@@ -7,14 +7,21 @@ import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.extensions.FirFunctionTransformerExtension
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
+import org.jetbrains.kotlin.fir.types.ConeClassLikeType
+import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.name.Name
 
 class FunctionTransformer(session: FirSession, private val context: FirMetaContext) : FirFunctionTransformerExtension(session) {
     @OptIn(SymbolInternals::class)
     override fun transform(call: FirFunctionCall): FirFunctionCall = with (context) {
         if (call.calleeReference.name == Name.identifier("add")) {
+            val token = (call.typeRef as FirResolvedTypeRef).type.typeArguments[0] as ConeClassLikeType
+            val name = token.type.classId?.shortClassName?.identifierOrNullIfSpecial!!
             val newCall = compile<FirFunctionCall>(
                 """
+                package org.jetbrains.kotlinx.dataframe                    
+
                 import org.jetbrains.kotlinx.dataframe.DataFrame
             
                 fun test(df1: DataFrame<*>) {

@@ -75,7 +75,8 @@ fun KotlinTypeFacade.generateAccessorsScopesForRefinedCall(
     nextScope: (String) -> ClassId,
 ): List<ConeKotlinType> {
     // root marker is generated as return type of intercepted function
-    val (rootMarker, dataFrameSchema) = analyzeRefinedCallShape(functionCall, reporter) ?: return emptyList()
+    val (rootMarker, dataFrameSchema) =
+        analyzeRefinedCallShape(functionCall, reporter) ?: return emptyList()
 
     val types: MutableList<ConeClassLikeType> = mutableListOf()
 
