@@ -13,13 +13,11 @@ import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.utils.hasBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
 
-abstract class FirInlinePropertyChecker : FirPropertyChecker() {
-    abstract val inlineDeclarationChecker: FirInlineDeclarationChecker
-
+object FirInlinePropertyChecker : FirPropertyChecker() {
     override fun check(declaration: FirProperty, context: CheckerContext, reporter: DiagnosticReporter) {
         if (declaration.getter?.isInline != true && declaration.setter?.isInline != true) return
 
-        inlineDeclarationChecker.checkCallableDeclaration(declaration, context, reporter)
+        FirInlineDeclarationChecker.checkCallableDeclaration(declaration, context, reporter)
 
         if (declaration.hasBackingField || declaration.delegate != null) {
             reporter.reportOn(declaration.source, FirErrors.INLINE_PROPERTY_WITH_BACKING_FIELD, context)

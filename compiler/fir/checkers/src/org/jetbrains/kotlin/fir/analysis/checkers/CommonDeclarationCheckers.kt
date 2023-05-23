@@ -47,6 +47,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
             FirContractChecker,
             FirFunctionParameterChecker,
             FirFunctionReturnChecker,
+            FirInlineDeclarationChecker,
         )
 
     override val simpleFunctionCheckers: Set<FirSimpleFunctionChecker>
@@ -78,6 +79,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
             FirLocalExtensionPropertyChecker,
             ContractSyntaxV2PropertyChecker,
             FirVolatileAnnotationChecker,
+            FirInlinePropertyChecker,
         )
 
     override val backingFieldCheckers: Set<FirBackingFieldChecker>
