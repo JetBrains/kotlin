@@ -539,10 +539,11 @@ internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass
                         }
 
                         // After the checks, insert the original method body.
-                        if (body is IrExpressionBody) {
-                            +irReturn((body as IrExpressionBody).expression)
-                        } else {
-                            (body as IrBlockBody).statements.forEach { +it }
+                        when (val body = body) {
+                            is IrExpressionBody -> +irReturn(body.expression)
+                            is IrBlockBody -> body.statements.forEach { +it }
+                            null -> {}
+                            else -> error("Unsupported method body kind: ${body.render()}")
                         }
                     }
                 }
