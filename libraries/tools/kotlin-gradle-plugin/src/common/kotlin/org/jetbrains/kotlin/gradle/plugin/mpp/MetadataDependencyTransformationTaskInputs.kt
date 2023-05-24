@@ -3,7 +3,6 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ProjectDependency
-import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.*
 import org.gradle.work.NormalizeLineEndings
@@ -17,7 +16,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 internal class MetadataDependencyTransformationTaskInputs(
     project: Project,
     kotlinSourceSet: KotlinSourceSet,
-    private val skipProjectDependencies: Boolean = false,
+    private val keepProjectDependencies: Boolean = true,
 ) {
     @Suppress("unused") // Gradle input
     @get:InputFiles
@@ -27,7 +26,7 @@ internal class MetadataDependencyTransformationTaskInputs(
     val configurationToResolve: FileCollection = kotlinSourceSet
         .internal
         .resolvableMetadataConfiguration
-        .applyIf(skipProjectDependencies) { withoutProjectDependencies() }
+        .applyIf(!keepProjectDependencies) { withoutProjectDependencies() }
 
     @Suppress("unused") // Gradle input
     @get:InputFiles
@@ -37,11 +36,12 @@ internal class MetadataDependencyTransformationTaskInputs(
     val hostSpecificMetadataConfigurationsToResolve: FileCollection = project.filesProvider {
         kotlinSourceSet.internal.compilations
             .filter { compilation -> if (compilation is KotlinNativeCompilation) compilation.konanTarget.enabledOnCurrentHost else true }
-            .mapNotNull { compilation -> compilation
-                .internal
-                .configurations
-                .hostSpecificMetadataConfiguration
-                ?.applyIf(skipProjectDependencies) { withoutProjectDependencies() }
+            .mapNotNull { compilation ->
+                compilation
+                    .internal
+                    .configurations
+                    .hostSpecificMetadataConfiguration
+                    ?.applyIf(!keepProjectDependencies) { withoutProjectDependencies() }
             }
     }
 
@@ -74,7 +74,7 @@ internal class MetadataDependencyTransformationTaskInputs(
         participatingSourceSets.flatMap { it.internal.compilations }.associate {
             it.name to project.configurations.getByName(it.compileDependencyConfigurationName)
                 .allDependencies
-                .applyIf(skipProjectDependencies) { filterNot { it is ProjectDependency } }
+                .applyIf(!keepProjectDependencies) { filterNot { it is ProjectDependency } }
                 .map { listOf(it.group, it.name, it.version) }.toSet()
         }
     }

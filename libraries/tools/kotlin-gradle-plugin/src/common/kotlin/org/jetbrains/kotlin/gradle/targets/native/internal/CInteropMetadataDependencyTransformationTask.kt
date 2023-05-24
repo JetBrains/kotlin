@@ -7,8 +7,6 @@ package org.jetbrains.kotlin.gradle.targets.native.internal
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
-import org.gradle.api.artifacts.Configuration
-import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.model.ObjectFactory
@@ -22,17 +20,14 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.ArtifactMetadataProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.ProjectMetadataProvider
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.toKpmModuleIdentifiers
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
-import org.jetbrains.kotlin.gradle.plugin.sources.metadataTransformation
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.filesProvider
 import org.jetbrains.kotlin.gradle.utils.isProjectComponentIdentifierInCurrentBuild
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
-import org.jetbrains.kotlin.project.model.KpmModuleIdentifier
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import java.io.File
 import java.io.Serializable
@@ -58,8 +53,8 @@ internal fun Project.locateOrRegisterCInteropMetadataDependencyTransformationTas
             project.layout.kotlinTransformedCInteropMetadataLibraryDirectoryForBuild(sourceSet.name),
             /* cleaning = */
             CInteropMetadataDependencyTransformationTask.Cleaning.DeleteOutputDirectory,
-            /* skipProjectDependencies = */
-            false, // we want project dependencies to be included in the output
+            /* transformProjectDependencies = */
+            true,
         ),
         configureTask = { configureTaskOrder(); onlyIfSourceSetIsSharedNative() }
     )
@@ -86,8 +81,8 @@ internal fun Project.locateOrRegisterCInteropMetadataDependencyTransformationTas
             project.kotlinTransformedCInteropMetadataLibraryDirectoryForIde,
             /* cleaning = */
             CInteropMetadataDependencyTransformationTask.Cleaning.None,
-            /* skipProjectDependencies = */
-            true,
+            /* transformProjectDependencies = */
+            false, // For IDE Project Dependencies will be transformed during configuration, see [createCInteropMetadataDependencyClasspath]
         ),
         configureTask = { configureTaskOrder(); onlyIfSourceSetIsSharedNative() }
     )
@@ -119,9 +114,9 @@ internal open class CInteropMetadataDependencyTransformationTask @Inject constru
     @Transient @get:Internal val sourceSet: DefaultKotlinSourceSet,
     @get:OutputDirectory val outputDirectory: File,
     @get:Internal val cleaning: Cleaning,
-    /** when set, project-to-project dependencies will not be included to [outputLibraryFiles],
+    /** when false, project-to-project dependencies will not be transformed and listed in [outputLibraryFiles],
      *  assuming they are added during gradle configuration, see [createCInteropMetadataDependencyClasspath] for details */
-    private val skipProjectDependencies: Boolean,
+    private val transformProjectDependencies: Boolean,
     objectFactory: ObjectFactory,
 ) : DefaultTask() {
 
@@ -142,7 +137,7 @@ internal open class CInteropMetadataDependencyTransformationTask @Inject constru
     }
 
     @get:Nested
-    internal val inputs = MetadataDependencyTransformationTaskInputs(project, sourceSet, skipProjectDependencies)
+    internal val inputs = MetadataDependencyTransformationTaskInputs(project, sourceSet, transformProjectDependencies)
 
     @get:OutputFile
     protected val outputLibrariesFileIndex: RegularFileProperty = objectFactory
@@ -177,7 +172,7 @@ internal open class CInteropMetadataDependencyTransformationTask @Inject constru
         val metadataProvider = chooseVisibleSourceSets.metadataProvider
         return when (metadataProvider) {
             is ProjectMetadataProvider -> {
-                if (skipProjectDependencies) return emptyList()
+                if (!transformProjectDependencies) return emptyList()
                 val visibleSourceSetName = chooseVisibleSourceSets.visibleSourceSetProvidingCInterops ?: return emptyList()
                 metadataProvider
                     .getSourceSetCInteropMetadata(visibleSourceSetName, ProjectMetadataProvider.MetadataConsumer.Cli)
@@ -198,7 +193,7 @@ internal open class CInteropMetadataDependencyTransformationTask @Inject constru
 
     private fun Iterable<MetadataDependencyResolution>.resolutionsToTransform(): List<ChooseVisibleSourceSets> {
         return filterIsInstance<ChooseVisibleSourceSets>()
-            .applyIf(skipProjectDependencies) {
+            .applyIf(!transformProjectDependencies) {
                 filterNot { it.dependency.id.isProjectComponentIdentifierInCurrentBuild }
             }
     }
