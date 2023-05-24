@@ -23,7 +23,9 @@ import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.SimpleTypeNullability
 import org.jetbrains.kotlin.ir.types.classFqName
 import org.jetbrains.kotlin.ir.types.classifierOrNull
+import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
+import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.primaryConstructor
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
@@ -147,12 +149,9 @@ private class DataFrameFileLowering(val context: IrPluginContext) : FileLowering
         if (!(origin is IrDeclarationOrigin.GeneratedByPlugin && origin.pluginKey == ExpressionAnalyzerReceiverInjector.DataFramePluginKey)) {
             return expression
         }
-        val classFqName = expression.type.classFqName ?: return expression
-        val constructor = context
-            .referenceConstructors(ClassId(classFqName.parent(), classFqName.shortName()))
-            .single()
+        val constructor = expression.type.getClass()!!.constructors.toList().single()
         val type = expression.type
-        return IrConstructorCallImpl(-1, -1, type, constructor, 0, 0, 0)
+        return IrConstructorCallImpl(-1, -1, type, constructor.symbol, 0, 0, 0)
     }
 
     override fun visitFunction(declaration: IrFunction): IrStatement {
