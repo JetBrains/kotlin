@@ -364,6 +364,8 @@ class KotlinCoreEnvironment private constructor(
             }
         }
 
+        configuration.addAll(CLIConfigurationKeys.CONTENT_ROOTS, contentRoots - configuration.getList(CLIConfigurationKeys.CONTENT_ROOTS))
+
         return rootsIndex.addNewIndexForRoots(newRoots)?.let { newIndex ->
             updateClasspathFromRootsIndex(newIndex)
             newIndex.indexedRoots.mapNotNull { (file) ->
