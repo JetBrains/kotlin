@@ -253,6 +253,7 @@ extra["kotlinJpsPluginEmbeddedDependencies"] = listOf(
     ":compiler:config",
     ":compiler:config.jvm",
     ":js:js.config",
+    ":wasm:wasm.config",
     ":core:util.runtime",
     ":compiler:compiler.version",
     ":compiler:build-tools:kotlin-build-statistics",
