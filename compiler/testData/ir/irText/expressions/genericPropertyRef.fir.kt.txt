@@ -20,13 +20,13 @@ class Value<T : Any?> {
 val <T : Any?> Value<T>.additionalText: Int /* by */
   field = DVal(kmember = Value::text)
   get(): Int {
-    return #additionalText$delegate.getValue(t = <this>, p = ::additionalText/*</* null */>()*/)
+    return #additionalText$delegate.getValue(t = <this>, p = ::additionalText/*<T>()*/)
   }
 
 val <T : Any?> Value<T>.additionalValue: Int /* by */
   field = DVal(kmember = Value::value)
   get(): Int {
-    return #additionalValue$delegate.getValue(t = <this>, p = ::additionalValue/*</* null */>()*/)
+    return #additionalValue$delegate.getValue(t = <this>, p = ::additionalValue/*<T>()*/)
   }
 
 class DVal {

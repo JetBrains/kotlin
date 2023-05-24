@@ -79,7 +79,7 @@ FILE fqName:<root> fileName:/genericPropertyRef.kt
             $this: GET_FIELD 'FIELD PROPERTY_DELEGATE name:additionalText$delegate type:<root>.DVal visibility:private [final,static]' type=<root>.DVal origin=null
             t: GET_VAR '<this>: <root>.Value<T of <root>.<get-additionalText>> declared in <root>.<get-additionalText>' type=<root>.Value<T of <root>.<get-additionalText>> origin=null
             p: PROPERTY_REFERENCE 'public final additionalText: kotlin.Int [delegated,val]' field=null getter='public final fun <get-additionalText> <T> (): kotlin.Int declared in <root>' setter=null type=kotlin.reflect.KProperty1<<root>.Value<T of <root>.<get-additionalText>>, kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
-              <1>: <none>
+              <1>: T of <root>.<get-additionalText>
   PROPERTY name:additionalValue visibility:public modality:FINAL [delegated,val]
     FIELD PROPERTY_DELEGATE name:additionalValue$delegate type:<root>.DVal visibility:private [final,static]
       EXPRESSION_BODY
@@ -95,7 +95,7 @@ FILE fqName:<root> fileName:/genericPropertyRef.kt
             $this: GET_FIELD 'FIELD PROPERTY_DELEGATE name:additionalValue$delegate type:<root>.DVal visibility:private [final,static]' type=<root>.DVal origin=null
             t: GET_VAR '<this>: <root>.Value<T of <root>.<get-additionalValue>> declared in <root>.<get-additionalValue>' type=<root>.Value<T of <root>.<get-additionalValue>> origin=null
             p: PROPERTY_REFERENCE 'public final additionalValue: kotlin.Int [delegated,val]' field=null getter='public final fun <get-additionalValue> <T> (): kotlin.Int declared in <root>' setter=null type=kotlin.reflect.KProperty1<<root>.Value<T of <root>.<get-additionalValue>>, kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
-              <1>: <none>
+              <1>: T of <root>.<get-additionalValue>
   CLASS CLASS name:DVal modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.DVal
     CONSTRUCTOR visibility:public <> (kmember:kotlin.Any) returnType:<root>.DVal [primary]

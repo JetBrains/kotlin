@@ -26,8 +26,8 @@ object Delegate {
 var <T : Any?> C<T>.genericDelegatedProperty: Int /* by */
   field = Delegate
   get(): Int {
-    return #genericDelegatedProperty$delegate.getValue(thisRef = <this>, kProp = ::genericDelegatedProperty/*</* null */>()*/)
+    return #genericDelegatedProperty$delegate.getValue(thisRef = <this>, kProp = ::genericDelegatedProperty/*<T>()*/)
   }
   set(<set-?>: Int) {
-    #genericDelegatedProperty$delegate.setValue(thisRef = <this>, kProp = ::genericDelegatedProperty/*</* null */>()*/, newValue = <set-?>)
+    #genericDelegatedProperty$delegate.setValue(thisRef = <this>, kProp = ::genericDelegatedProperty/*<T>()*/, newValue = <set-?>)
   }

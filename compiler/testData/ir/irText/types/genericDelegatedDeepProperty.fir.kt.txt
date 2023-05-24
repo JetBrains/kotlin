@@ -141,5 +141,5 @@ val <T : Any?> Value<T, CR<T>>.additionalText: P<T, T> /* by */
     <no name provided>()
   }
   get(): P<T, T> {
-    return #additionalText$delegate.getValue(t = <this>, p = ::additionalText/*</* null */>()*/)
+    return #additionalText$delegate.getValue(t = <this>, p = ::additionalText/*<T>()*/)
   }

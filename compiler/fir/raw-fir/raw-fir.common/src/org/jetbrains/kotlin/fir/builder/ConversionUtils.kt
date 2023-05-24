@@ -44,11 +44,13 @@ import org.jetbrains.kotlin.fir.types.ConeStarProjection
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.builder.buildTypeProjectionWithVariance
 import org.jetbrains.kotlin.fir.types.impl.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.types.ConstantValueKind
+import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import kotlin.contracts.ExperimentalContracts
@@ -387,6 +389,15 @@ fun <T> FirPropertyBuilder.generateAccessorsByDelegate(
                 FirImplicitKMutableProperty1TypeRef(null, ConeStarProjection, ConeStarProjection)
             } else {
                 FirImplicitKProperty1TypeRef(null, ConeStarProjection, ConeStarProjection)
+            }
+        }
+        this@generateAccessorsByDelegate.typeParameters.mapTo(typeArguments) {
+            buildTypeProjectionWithVariance {
+                source = fakeSource
+                variance = Variance.INVARIANT
+                typeRef = buildResolvedTypeRef {
+                    type = ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), false)
+                }
             }
         }
     }
