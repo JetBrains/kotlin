@@ -22,10 +22,14 @@ class NativeWithConfigurationCacheIT : KGPBaseTest() {
     @GradleTestVersions(minVersion = TestVersions.Gradle.G_8_1) // Since 8.1 Gradle on configuration cache it detects when the build logic accesses the "outside world" more strict https://docs.gradle.org/8.1.1/release-notes.html#configuration-inputs-detection-improvements
     @GradleTest
     fun testConfigurationCacheReusedSecondTime(gradleVersion: GradleVersion) {
-        nativeProject("native-with-configuration-cache", gradleVersion, enableGradleDebug = true) {
+        nativeProject("native-with-configuration-cache", gradleVersion) {
             // we need to download compiler on the first build, that is why we are setting custom konan home dir without any compiler inside
             val localKonan = workingDir.resolve(".konan")
-            build("help", "-Pkonan.data.dir=$localKonan") {
+            build(
+                "help", buildOptions = defaultBuildOptions.copy(
+                    konanDataDir = localKonan
+                )
+            ) {
                 assertOutputContains("Configure project")
                 assertOutputContains("Unpack Kotlin/Native compiler to")
             }

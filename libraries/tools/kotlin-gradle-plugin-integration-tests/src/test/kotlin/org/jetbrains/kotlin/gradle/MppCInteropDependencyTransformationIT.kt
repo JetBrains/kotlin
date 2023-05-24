@@ -136,7 +136,7 @@ abstract class MppCInteropDependencyTransformationIT : BaseGradleIT() {
 
         private fun WithSourceSetCommonizerDependencies.assertP2SourceSetDependencies() {
             listOf("nativeMain", "nativeTest").forEach { sourceSetName ->
-                getCommonizerDependencies(sourceSetName).withoutNativeDistributionDependencies()
+                getCommonizerDependencies(sourceSetName).withoutNativeDistributionDependencies(defaultBuildOptions().konanDataDir)
                     .assertDependencyFilesMatches(".*cinterop-simple.*", ".*cinterop-withPosix.*")
                     .assertTargetOnAllDependencies(
                         CommonizerTarget(LINUX_ARM64, LINUX_X64, IOS_ARM64, IOS_X64, MACOS_X64, MINGW_X64)
@@ -145,26 +145,26 @@ abstract class MppCInteropDependencyTransformationIT : BaseGradleIT() {
 
             if (HostManager.hostIsMac) {
                 listOf("appleAndLinuxMain", "appleAndLinuxTest").forEach { sourceSetName ->
-                    getCommonizerDependencies(sourceSetName).withoutNativeDistributionDependencies()
+                    getCommonizerDependencies(sourceSetName).withoutNativeDistributionDependencies(defaultBuildOptions().konanDataDir)
                         .assertDependencyFilesMatches(".*cinterop-simple.*", ".*cinterop-withPosix.*")
                         .assertTargetOnAllDependencies(CommonizerTarget(LINUX_ARM64, LINUX_X64, IOS_ARM64, IOS_X64, MACOS_X64))
                 }
 
                 listOf("appleMain", "appleTest").forEach { sourceSetName ->
-                    getCommonizerDependencies(sourceSetName).withoutNativeDistributionDependencies()
+                    getCommonizerDependencies(sourceSetName).withoutNativeDistributionDependencies(defaultBuildOptions().konanDataDir)
                         .assertDependencyFilesMatches(".*cinterop-simple.*", ".*cinterop-withPosix.*")
                         .assertTargetOnAllDependencies(CommonizerTarget(IOS_ARM64, IOS_X64, MACOS_X64))
                 }
 
                 listOf("iosMain", "iosTest").forEach { sourceSetName ->
-                    getCommonizerDependencies(sourceSetName).withoutNativeDistributionDependencies()
+                    getCommonizerDependencies(sourceSetName).withoutNativeDistributionDependencies(defaultBuildOptions().konanDataDir)
                         .assertDependencyFilesMatches(".*cinterop-simple.*", ".*cinterop-withPosix.*")
                         .assertTargetOnAllDependencies(CommonizerTarget(IOS_ARM64, IOS_X64))
                 }
             }
 
             listOf("linuxMain", "linuxTest").forEach { sourceSetName ->
-                getCommonizerDependencies(sourceSetName).withoutNativeDistributionDependencies()
+                getCommonizerDependencies(sourceSetName).withoutNativeDistributionDependencies(defaultBuildOptions().konanDataDir)
                     .assertDependencyFilesMatches(".*cinterop-simple.*", ".*cinterop-withPosix.*")
                     .assertTargetOnAllDependencies(CommonizerTarget(LINUX_ARM64, LINUX_X64))
             }
@@ -176,7 +176,7 @@ abstract class MppCInteropDependencyTransformationIT : BaseGradleIT() {
             They will choose cinterops associated with 'nativeMain'
             */
             listOf("nativeMain", "nativeTest", "windowsAndLinuxMain", "windowsAndLinuxTest").forEach { sourceSetName ->
-                getCommonizerDependencies(sourceSetName).withoutNativeDistributionDependencies()
+                getCommonizerDependencies(sourceSetName).withoutNativeDistributionDependencies(defaultBuildOptions().konanDataDir)
                     .assertDependencyFilesMatches(".*cinterop-simple.*", ".*cinterop-withPosix.*")
                     .assertTargetOnAllDependencies(
                         CommonizerTarget(LINUX_ARM64, LINUX_X64, IOS_ARM64, IOS_X64, MACOS_X64, MINGW_X64)
@@ -185,13 +185,13 @@ abstract class MppCInteropDependencyTransformationIT : BaseGradleIT() {
 
             if (HostManager.hostIsMac) {
                 listOf("appleAndLinuxMain", "appleAndLinuxTest").forEach { sourceSetName ->
-                    getCommonizerDependencies(sourceSetName).withoutNativeDistributionDependencies()
+                    getCommonizerDependencies(sourceSetName).withoutNativeDistributionDependencies(defaultBuildOptions().konanDataDir)
                         .assertDependencyFilesMatches(".*cinterop-simple.*", ".*cinterop-withPosix.*")
                         .assertTargetOnAllDependencies(CommonizerTarget(LINUX_ARM64, LINUX_X64, IOS_ARM64, IOS_X64, MACOS_X64))
                 }
 
                 listOf("iosMain", "iosTest").forEach { sourceSetName ->
-                    getCommonizerDependencies(sourceSetName).withoutNativeDistributionDependencies()
+                    getCommonizerDependencies(sourceSetName).withoutNativeDistributionDependencies(defaultBuildOptions().konanDataDir)
                         .assertDependencyFilesMatches(".*cinterop-simple.*", ".*cinterop-withPosix.*")
                         .assertTargetOnAllDependencies(CommonizerTarget(IOS_ARM64, IOS_X64))
                 }

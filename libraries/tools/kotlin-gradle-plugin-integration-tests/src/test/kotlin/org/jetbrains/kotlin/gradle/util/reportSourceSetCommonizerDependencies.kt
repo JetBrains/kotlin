@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.library.commonizerTarget
 import org.jetbrains.kotlin.library.resolveSingleFileKlib
 import org.jetbrains.kotlin.tooling.core.linearClosure
 import java.io.File
+import java.nio.file.Path
 import javax.annotation.RegEx
 import kotlin.io.path.appendText
 import kotlin.test.fail
@@ -35,22 +36,22 @@ data class SourceSetCommonizerDependencies(
     val dependencies: Set<SourceSetCommonizerDependency>,
 ) {
 
-    fun withoutNativeDistributionDependencies(): SourceSetCommonizerDependencies {
+    fun withoutNativeDistributionDependencies(konanDataDirProperty: Path): SourceSetCommonizerDependencies {
         return SourceSetCommonizerDependencies(
             sourceSetName,
-            dependencies.filter { dependency -> !dependency.isFromNativeDistribution() }.toSet()
+            dependencies.filter { dependency -> !dependency.isFromNativeDistribution(konanDataDirProperty) }.toSet()
         )
     }
 
-    fun onlyNativeDistributionDependencies(): SourceSetCommonizerDependencies {
+    fun onlyNativeDistributionDependencies(konanDataDirProperty: Path): SourceSetCommonizerDependencies {
         return SourceSetCommonizerDependencies(
             sourceSetName,
-            dependencies.filter { dependency -> dependency.isFromNativeDistribution() }.toSet()
+            dependencies.filter { dependency -> dependency.isFromNativeDistribution(konanDataDirProperty) }.toSet()
         )
     }
 
-    private fun SourceSetCommonizerDependency.isFromNativeDistribution(): Boolean {
-        val konanDataDir = System.getenv("KONAN_DATA_DIR")?.let(::File)
+    private fun SourceSetCommonizerDependency.isFromNativeDistribution(konanDataDirProperty: Path?): Boolean {
+        val konanDataDir = konanDataDirProperty?.toRealPath()?.toFile() ?: System.getenv("KONAN_DATA_DIR")?.let(::File)
         if (konanDataDir != null) {
             return file.startsWith(konanDataDir)
         }

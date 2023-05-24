@@ -332,6 +332,10 @@ tasks.named<Task>("check") {
 }
 
 tasks.withType<Test> {
+    // Disable KONAN_DATA_DIR env variable for all integration tests
+    // because we are using `konan.data.dir` gradle property instead
+    environment.remove("KONAN_DATA_DIR")
+
     val noTestProperty = project.providers.gradleProperty("noTest")
     onlyIf { !noTestProperty.isPresent }
 

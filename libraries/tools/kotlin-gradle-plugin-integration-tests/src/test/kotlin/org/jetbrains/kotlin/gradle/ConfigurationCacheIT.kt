@@ -97,7 +97,8 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
             // Override kotlin native home location to be able to run clean native distribution commonization task
             // since by default it is global location on host
             val buildOptions = defaultBuildOptions.copy(
-                freeArgs = listOf("-Porg.jetbrains.kotlin.native.home=$konanHome")
+                freeArgs = listOf("-Porg.jetbrains.kotlin.native.home=$konanHome"),
+                konanDataDir = null
             )
             build(":cleanNativeDistributionCommonization", buildOptions = buildOptions) {
                 assertOutputContains("0 problems were found storing the configuration cache.")

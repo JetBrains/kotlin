@@ -359,12 +359,14 @@ open class CommonizerIT : KGPBaseTest() {
         nativeProject("commonize-kt-48118-c-interop-in-common-main", gradleVersion) {
             reportSourceSetCommonizerDependencies {
                 val upperMain = getCommonizerDependencies("upperMain")
-                upperMain.withoutNativeDistributionDependencies().assertDependencyFilesMatches(".*cinterop-dummy")
-                upperMain.onlyNativeDistributionDependencies().assertNotEmpty()
+                val konanDataDirProperty = buildOptions.konanDataDir
+                    ?: error("konanDataDir must not be null in this test. Please set a custom konanDataDir property.")
+                upperMain.withoutNativeDistributionDependencies(konanDataDirProperty).assertDependencyFilesMatches(".*cinterop-dummy")
+                upperMain.onlyNativeDistributionDependencies(konanDataDirProperty).assertNotEmpty()
 
                 val commonMain = getCommonizerDependencies("commonMain")
-                commonMain.withoutNativeDistributionDependencies().assertDependencyFilesMatches(".*cinterop-dummy")
-                commonMain.onlyNativeDistributionDependencies().assertNotEmpty()
+                commonMain.withoutNativeDistributionDependencies(konanDataDirProperty).assertDependencyFilesMatches(".*cinterop-dummy")
+                commonMain.onlyNativeDistributionDependencies(konanDataDirProperty).assertNotEmpty()
             }
 
             build(":compileCommonMainKotlinMetadata")
@@ -407,13 +409,15 @@ open class CommonizerIT : KGPBaseTest() {
         nativeProject("commonize-kt-48138-nativeMain-nativeTest-different-targets", gradleVersion) {
             reportSourceSetCommonizerDependencies {
                 val nativeMain = getCommonizerDependencies("nativeMain")
-                nativeMain.withoutNativeDistributionDependencies().assertDependencyFilesMatches(".*cinterop-dummy")
-                nativeMain.onlyNativeDistributionDependencies().assertNotEmpty()
+                val konanDataDirProperty = buildOptions.konanDataDir
+                    ?: error("konanDataDir must not be null in this test. Please set a custom konanDataDir property.")
+                nativeMain.withoutNativeDistributionDependencies(konanDataDirProperty).assertDependencyFilesMatches(".*cinterop-dummy")
+                nativeMain.onlyNativeDistributionDependencies(konanDataDirProperty).assertNotEmpty()
                 nativeMain.assertTargetOnAllDependencies(CommonizerTarget(LINUX_X64, LINUX_ARM64, MINGW_X64))
 
                 val nativeTest = getCommonizerDependencies("nativeTest")
-                nativeTest.onlyNativeDistributionDependencies().assertNotEmpty()
-                nativeTest.withoutNativeDistributionDependencies().assertDependencyFilesMatches(".*cinterop-dummy")
+                nativeTest.onlyNativeDistributionDependencies(konanDataDirProperty).assertNotEmpty()
+                nativeTest.withoutNativeDistributionDependencies(konanDataDirProperty).assertDependencyFilesMatches(".*cinterop-dummy")
                 nativeTest.assertTargetOnAllDependencies(CommonizerTarget(LINUX_X64, LINUX_ARM64))
             }
         }
@@ -523,36 +527,38 @@ open class CommonizerIT : KGPBaseTest() {
                 getCommonizerDependencies("commonMain").assertEmpty()
                 getCommonizerDependencies("commonTest").assertEmpty()
 
-                getCommonizerDependencies("nativeMain").withoutNativeDistributionDependencies().apply {
+                val konanDataDirProperty = buildOptions.konanDataDir
+                    ?: error("konanDataDir must not be null in this test. Please set a custom konanDataDir property.")
+                getCommonizerDependencies("nativeMain").withoutNativeDistributionDependencies(konanDataDirProperty).apply {
                     assertDependencyFilesMatches(".*nativeHelper")
                     assertTargetOnAllDependencies(
                         CommonizerTarget(IOS_X64, IOS_ARM64, LINUX_X64, LINUX_ARM64, MACOS_X64, MINGW_X64)
                     )
                 }
 
-                getCommonizerDependencies("nativeTest").withoutNativeDistributionDependencies().apply {
+                getCommonizerDependencies("nativeTest").withoutNativeDistributionDependencies(konanDataDirProperty).apply {
                     assertDependencyFilesMatches(".*nativeHelper", ".*nativeTestHelper")
                     assertTargetOnAllDependencies(
                         CommonizerTarget(IOS_X64, IOS_ARM64, LINUX_X64, LINUX_ARM64, MACOS_X64, MINGW_X64)
                     )
                 }
 
-                getCommonizerDependencies("unixMain").withoutNativeDistributionDependencies().apply {
+                getCommonizerDependencies("unixMain").withoutNativeDistributionDependencies(konanDataDirProperty).apply {
                     assertDependencyFilesMatches(".*nativeHelper", ".*unixHelper")
                     assertTargetOnAllDependencies(CommonizerTarget(IOS_X64, IOS_ARM64, LINUX_X64, LINUX_ARM64, MACOS_X64))
                 }
 
-                getCommonizerDependencies("unixTest").withoutNativeDistributionDependencies().apply {
+                getCommonizerDependencies("unixTest").withoutNativeDistributionDependencies(konanDataDirProperty).apply {
                     assertDependencyFilesMatches(".*nativeHelper", ".*unixHelper", ".*nativeTestHelper")
                     assertTargetOnAllDependencies(CommonizerTarget(IOS_X64, IOS_ARM64, LINUX_X64, LINUX_ARM64, MACOS_X64))
                 }
 
-                getCommonizerDependencies("linuxMain").withoutNativeDistributionDependencies().apply {
+                getCommonizerDependencies("linuxMain").withoutNativeDistributionDependencies(konanDataDirProperty).apply {
                     assertDependencyFilesMatches(".*nativeHelper", ".*unixHelper")
                     assertTargetOnAllDependencies(CommonizerTarget(LINUX_X64, LINUX_ARM64))
                 }
 
-                getCommonizerDependencies("linuxTest").withoutNativeDistributionDependencies().apply {
+                getCommonizerDependencies("linuxTest").withoutNativeDistributionDependencies(konanDataDirProperty).apply {
                     assertDependencyFilesMatches(".*nativeHelper", ".*unixHelper", ".*nativeTestHelper")
                     assertTargetOnAllDependencies(CommonizerTarget(LINUX_X64, LINUX_ARM64))
                 }
@@ -563,22 +569,22 @@ open class CommonizerIT : KGPBaseTest() {
                 getCommonizerDependencies("linuxArm64Test").assertEmpty()
 
                 if (isMac) {
-                    getCommonizerDependencies("appleMain").withoutNativeDistributionDependencies().apply {
+                    getCommonizerDependencies("appleMain").withoutNativeDistributionDependencies(konanDataDirProperty).apply {
                         assertDependencyFilesMatches(".*nativeHelper", ".*unixHelper", ".*appleHelper")
                         assertTargetOnAllDependencies(CommonizerTarget(IOS_X64, IOS_ARM64, MACOS_X64))
                     }
 
-                    getCommonizerDependencies("appleTest").withoutNativeDistributionDependencies().apply {
+                    getCommonizerDependencies("appleTest").withoutNativeDistributionDependencies(konanDataDirProperty).apply {
                         assertDependencyFilesMatches(".*nativeHelper", ".*unixHelper", ".*appleHelper", ".*nativeTestHelper")
                         assertTargetOnAllDependencies(CommonizerTarget(IOS_X64, IOS_ARM64, MACOS_X64))
                     }
 
-                    getCommonizerDependencies("iosMain").withoutNativeDistributionDependencies().apply {
+                    getCommonizerDependencies("iosMain").withoutNativeDistributionDependencies(konanDataDirProperty).apply {
                         assertDependencyFilesMatches(".*nativeHelper", ".*unixHelper", ".*appleHelper")
                         assertTargetOnAllDependencies(CommonizerTarget(IOS_X64, IOS_ARM64))
                     }
 
-                    getCommonizerDependencies("iosTest").withoutNativeDistributionDependencies().apply {
+                    getCommonizerDependencies("iosTest").withoutNativeDistributionDependencies(konanDataDirProperty).apply {
                         assertDependencyFilesMatches(
                             ".*nativeHelper", ".*unixHelper", ".*appleHelper", ".*nativeTestHelper", ".*iosTestHelper"
                         )
