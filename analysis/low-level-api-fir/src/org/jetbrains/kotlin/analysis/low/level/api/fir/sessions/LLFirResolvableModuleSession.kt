@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.sessions
 
-import com.intellij.openapi.util.ModificationTracker
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.fir.BuiltinTypes
@@ -15,9 +14,8 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 
 abstract class LLFirResolvableModuleSession(
     ktModule: KtModule,
-    dependencyTracker: ModificationTracker,
     builtinTypes: BuiltinTypes
-) : LLFirModuleSession(ktModule, dependencyTracker, builtinTypes, Kind.Source) {
+) : LLFirModuleSession(ktModule, builtinTypes, Kind.Source) {
     internal abstract val moduleComponents: LLFirModuleResolveComponents
 
     final override fun getScopeSession(): ScopeSession {

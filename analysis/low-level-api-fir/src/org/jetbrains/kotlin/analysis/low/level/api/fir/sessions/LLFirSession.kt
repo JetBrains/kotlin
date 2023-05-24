@@ -5,103 +5,97 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.sessions
 
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.ModificationTracker
-import com.intellij.psi.PsiFile
-import com.intellij.psi.SmartPointerManager
-import org.jetbrains.kotlin.analysis.project.structure.*
-import org.jetbrains.kotlin.analysis.providers.KotlinModificationTrackerFactory
-import org.jetbrains.kotlin.analysis.providers.KtModuleStateTracker
-import org.jetbrains.kotlin.analysis.utils.trackers.CompositeModificationTracker
+import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.USE_STATE_KEEPER
+import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.fir.BuiltinTypes
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.PrivateSessionConstructor
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.atomic.AtomicLong
 
 @OptIn(PrivateSessionConstructor::class)
 abstract class LLFirSession(
     val ktModule: KtModule,
-    dependencyTracker: ModificationTracker,
     override val builtinTypes: BuiltinTypes,
     kind: Kind
 ) : FirSession(sessionProvider = null, kind) {
     abstract fun getScopeSession(): ScopeSession
 
-    private val initialModificationCount: Long
-    private val isExplicitlyInvalidated = AtomicBoolean(false)
-
-    val modificationTracker: ModificationTracker
-
     val project: Project
         get() = ktModule.project
 
-    init {
-        val trackerFactory = KotlinModificationTrackerFactory.getService(ktModule.project)
-        val validityTracker = trackerFactory.createModuleStateTracker(ktModule)
+    private val _isValid = AtomicBoolean(true)
 
-        val outOfBlockTracker = when (ktModule) {
-            is KtSourceModule -> trackerFactory.createModuleWithoutDependenciesOutOfBlockModificationTracker(ktModule)
-            is KtNotUnderContentRootModule -> ktModule.file?.let(::FileModificationTracker)
-            is KtScriptModule -> FileModificationTracker(ktModule.file)
-            is KtScriptDependencyModule -> ktModule.file?.let(::FileModificationTracker)
-            else -> null
+    /**
+     * Whether the [LLFirSession] is valid. The session should not be used if it is invalid.
+     *
+     * [isValid] should be set to `false` at the same time as the session is removed from [LLFirSessionCache]. Hence, [isValid] should be
+     * managed by [LLFirSessionCache].
+     */
+    var isValid: Boolean
+        get() = _isValid.get()
+        internal set(value) {
+            check(!value) { "An invalid LL FIR session cannot become valid again." }
+            _isValid.set(value)
         }
-
-        modificationTracker = CompositeModificationTracker.createFlattened(
-            buildList {
-                add(ExplicitInvalidationTracker(ktModule, isExplicitlyInvalidated))
-                add(ModuleStateModificationTracker(ktModule, validityTracker))
-                addIfNotNull(outOfBlockTracker)
-                add(dependencyTracker)
-            }
-        )
-
-        initialModificationCount = modificationTracker.modificationCount
-    }
-
-    private class ModuleStateModificationTracker(val module: KtModule, val tracker: KtModuleStateTracker) : ModificationTracker {
-        override fun getModificationCount(): Long = tracker.rootModificationCount
-        override fun toString(): String = "Module state tracker for module '${module.moduleDescription}'"
-    }
-
-    private class ExplicitInvalidationTracker(val module: KtModule, val isExplicitlyInvalidated: AtomicBoolean) : ModificationTracker {
-        override fun getModificationCount(): Long = if (isExplicitlyInvalidated.get()) 1 else 0
-        override fun toString(): String = "Explicit invalidation tracker for module '${module.moduleDescription}'"
-    }
-
-    private class FileModificationTracker(file: PsiFile) : ModificationTracker {
-        private val pointer = SmartPointerManager.getInstance(file.project).createSmartPsiElementPointer(file)
-
-        override fun getModificationCount(): Long {
-            val file = pointer.element ?: return Long.MAX_VALUE
-            return file.modificationStamp
-        }
-
-        override fun toString(): String {
-            val file = pointer.element ?: return "File tracker for a collected file"
-            val virtualFile = file.virtualFile ?: return "File tracker for a non-physical file '${file.name}'"
-            return "File tracker for path '${virtualFile.path}'"
-        }
-    }
 
     fun invalidate() {
-        isExplicitlyInvalidated.set(true)
+        val application = ApplicationManager.getApplication()
+        if (application.isWriteAccessAllowed) {
+            invalidateInWriteAction()
+        } else {
+            // We have to invalidate the session on the EDT per the contract of `LLFirSessionInvalidationService`. The timing here is not
+            // 100% waterproof, but `LLFirSession.invalidate` is only a workaround for when FIR guards consistency protection (see KT-56503)
+            // is turned off. The check restricts usage of `invalidate` to this scenario.
+            check(!USE_STATE_KEEPER) {
+                "Outside a write action, a session may only be invalidated directly when FIR guards are turned off."
+            }
+
+            application.invokeLater(
+                { application.runWriteAction { invalidateInWriteAction() } },
+
+                // `ModalityState.any()` can be used because session invalidation does not modify PSI, VFS, or the project model.
+                ModalityState.any(),
+            )
+        }
     }
 
-    val isValid: Boolean
-        get() = modificationTracker.modificationCount == initialModificationCount
+    private fun invalidateInWriteAction() {
+        LLFirSessionInvalidationService.getInstance(project).invalidate(ktModule)
+    }
+
+    /**
+     * Creates a [ModificationTracker] which tracks the validity of this session via [isValid].
+     */
+    fun createValidityTracker(): ModificationTracker = ValidityModificationTracker()
+
+    private inner class ValidityModificationTracker : ModificationTracker {
+        private var count = AtomicLong()
+
+        override fun getModificationCount(): Long {
+            if (isValid) return 0
+
+            // When the session is invalid, we cannot simply return a static modification count of 1. For example, consider situations where
+            // a cached value was created with an already invalid session (so it remembers the modification count of 1). Then, if we return
+            // a static modification count of 1, the modification count never changes and the cached value misses that the session has been
+            // invalidated. Hence, `count` is incremented on each modification count access.
+            return count.incrementAndGet()
+        }
+    }
 }
 
 abstract class LLFirModuleSession(
     ktModule: KtModule,
-    dependencyTracker: ModificationTracker,
     builtinTypes: BuiltinTypes,
     kind: Kind
-) : LLFirSession(ktModule, dependencyTracker, builtinTypes, kind)
+) : LLFirSession(ktModule, builtinTypes, kind)
 
 val FirElementWithResolveState.llFirSession: LLFirSession
     get() = moduleData.session as LLFirSession
