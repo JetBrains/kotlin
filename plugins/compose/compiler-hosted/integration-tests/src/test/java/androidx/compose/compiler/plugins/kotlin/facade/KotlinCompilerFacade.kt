@@ -22,10 +22,10 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.text.StringUtilRt
-import com.intellij.openapi.vfs.CharsetToolkit
 import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.impl.PsiFileFactoryImpl
 import com.intellij.testFramework.LightVirtualFile
+import java.nio.charset.StandardCharsets
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
@@ -62,7 +62,7 @@ class SourceFile(
             override fun getPath(): String = "/$name"
         }
 
-        virtualFile.charset = CharsetToolkit.UTF8_CHARSET
+        virtualFile.charset = StandardCharsets.UTF_8
         val factory = PsiFileFactory.getInstance(project) as PsiFileFactoryImpl
         val ktFile = factory.trySetupPsiForFile(
             virtualFile, KotlinLanguage.INSTANCE, true, false
