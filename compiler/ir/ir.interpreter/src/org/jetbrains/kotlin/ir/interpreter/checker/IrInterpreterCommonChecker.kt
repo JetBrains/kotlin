@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.interpreter.accessesTopLevelOrObjectField
 import org.jetbrains.kotlin.ir.interpreter.fqName
 import org.jetbrains.kotlin.ir.interpreter.isAccessToNotNullableObject
+import org.jetbrains.kotlin.ir.interpreter.preprocessor.IrInterpreterKCallableNamePreprocessor.Companion.isEnumName
+import org.jetbrains.kotlin.ir.interpreter.preprocessor.IrInterpreterKCallableNamePreprocessor.Companion.isKCallableNameCall
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.parentAsClass
@@ -60,6 +62,8 @@ class IrInterpreterCommonChecker : IrInterpreterChecker {
 
         val owner = expression.symbol.owner
         if (!data.mode.canEvaluateFunction(owner)) return false
+
+        if (expression.isKCallableNameCall(data.irBuiltIns) || expression.isEnumName()) return true
 
         if (expression.dispatchReceiver.isAccessToNotNullableObject()) {
             return expression.isGetterToConstVal()

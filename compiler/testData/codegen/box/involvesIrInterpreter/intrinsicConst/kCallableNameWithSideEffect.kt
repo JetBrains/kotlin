@@ -27,7 +27,7 @@ class A {
         val insideStringConcat = "${temp::b.<!EVALUATED("b")!>name<!>}"
 
         val complexExpression1 = A()::a.<!EVALUATED("a")!>name<!> + A()::b.<!EVALUATED("b")!>name<!>
-        val complexExpression2 = A::a.<!EVALUATED("a")!>name<!> <!EVALUATED("ab")!>+ A::b.<!EVALUATED("b")!>name<!><!>
+        val complexExpression2 = A::a.name <!EVALUATED("ab")!>+ A::b.name<!>
 
         var recursive = ::test.<!EVALUATED("test")!>name<!>
     }

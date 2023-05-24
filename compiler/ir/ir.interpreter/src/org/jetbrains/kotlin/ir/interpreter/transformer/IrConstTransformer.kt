@@ -38,25 +38,19 @@ fun IrFile.transformConst(
         preprocessor.preprocess(file, IrInterpreterPreprocessorData(mode, interpreter.irBuiltIns))
     }
 
-    val checkers = setOf(
-        IrInterpreterNameChecker(),
-        IrInterpreterCommonChecker(),
+    val checker = IrInterpreterCommonChecker()
+    val irConstExpressionTransformer = IrConstExpressionTransformer(
+        interpreter, preprocessedFile, mode, checker, evaluatedConstTracker, inlineConstTracker, onWarning, onError, suppressExceptions
     )
-
-    checkers.fold(preprocessedFile) { file, checker ->
-        val irConstExpressionTransformer = IrConstExpressionTransformer(
-            interpreter, file, mode, checker, evaluatedConstTracker, inlineConstTracker, onWarning, onError, suppressExceptions
-        )
-        val irConstDeclarationAnnotationTransformer = IrConstDeclarationAnnotationTransformer(
-            interpreter, file, mode, checker, evaluatedConstTracker, inlineConstTracker, onWarning, onError, suppressExceptions
-        )
-        val irConstTypeAnnotationTransformer = IrConstTypeAnnotationTransformer(
-            interpreter, file, mode, checker, evaluatedConstTracker, inlineConstTracker, onWarning, onError, suppressExceptions
-        )
-        file.transform(irConstExpressionTransformer, null)
-        file.transform(irConstDeclarationAnnotationTransformer, null)
-        file.transform(irConstTypeAnnotationTransformer, null)
-    }
+    val irConstDeclarationAnnotationTransformer = IrConstDeclarationAnnotationTransformer(
+        interpreter, preprocessedFile, mode, checker, evaluatedConstTracker, inlineConstTracker, onWarning, onError, suppressExceptions
+    )
+    val irConstTypeAnnotationTransformer = IrConstTypeAnnotationTransformer(
+        interpreter, preprocessedFile, mode, checker, evaluatedConstTracker, inlineConstTracker, onWarning, onError, suppressExceptions
+    )
+    preprocessedFile.transform(irConstExpressionTransformer, null)
+    preprocessedFile.transform(irConstDeclarationAnnotationTransformer, null)
+    preprocessedFile.transform(irConstTypeAnnotationTransformer, null)
 }
 
 // Note: We are using `IrElementTransformer` here instead of `IrElementTransformerVoid` to avoid conflicts with `IrTypeVisitorVoid`
