@@ -137,7 +137,7 @@ void loadCommandLineProperties() {
         }
     }
 
-    ext.testTarget = project.hasProperty("test_target") ? ext.test_target : null
+    ext.testTarget = project.hasProperty("test_target") ? ext.test_target : ext.hostName
 }
 
 configurations {
