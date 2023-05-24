@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure
 
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.ModificationTracker
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.DelegatingGlobalSearchScope
 import com.intellij.psi.util.CachedValue
@@ -70,7 +69,7 @@ class LLFirBuiltinsSessionFactory(private val project: Project) {
         builtinsAndCloneableSessions.getOrPut(platform) {
             CachedValuesManager.getManager(project).createCachedValue {
                 val session = createBuiltinsAndCloneableSession(platform)
-                CachedValueProvider.Result(session, session.modificationTracker)
+                CachedValueProvider.Result(session, session.createValidityTracker())
             }
         }.value
 
@@ -83,7 +82,7 @@ class LLFirBuiltinsSessionFactory(private val project: Project) {
     private fun createBuiltinsAndCloneableSession(platform: TargetPlatform): LLFirBuiltinsAndCloneableSession {
         val builtinsModule = getBuiltinsModule(platform)
 
-        val session = LLFirBuiltinsAndCloneableSession(builtinsModule, ModificationTracker.NEVER_CHANGED, builtInTypes)
+        val session = LLFirBuiltinsAndCloneableSession(builtinsModule, builtInTypes)
         val moduleData = LLFirModuleData(builtinsModule).apply { bindSession(session) }
 
         return session.apply {

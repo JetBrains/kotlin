@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.sessions
 
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.ModificationTracker
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.ProjectScope
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirGlobalResolveComponents
@@ -22,7 +21,6 @@ import org.jetbrains.kotlin.analysis.providers.createDeclarationProvider
 import org.jetbrains.kotlin.analysis.providers.impl.declarationProviders.FileBasedKotlinDeclarationProvider
 import org.jetbrains.kotlin.analysis.providers.impl.util.mergeInto
 import org.jetbrains.kotlin.analysis.utils.errors.withKtModuleEntry
-import org.jetbrains.kotlin.analysis.utils.trackers.CompositeModificationTracker
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
@@ -104,9 +102,8 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
         val components = LLFirModuleResolveComponents(module, globalResolveComponents, scopeProvider)
 
         val dependencies = collectSourceModuleDependencies(module)
-        val dependencyTracker = createSourceModuleDependencyTracker(module, dependencies)
 
-        val session = LLFirScriptSession(module, dependencyTracker, components, builtinsSession.builtinTypes)
+        val session = LLFirScriptSession(module, components, builtinsSession.builtinTypes)
         components.session = session
 
         val moduleData = createModuleData(session)
@@ -180,14 +177,13 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
         }
     }
 
-    fun createNotUnderContentRootResolvableSession(module: KtNotUnderContentRootModule): LLFirNonUnderContentRootResolvableModuleSession {
+    fun createNotUnderContentRootResolvableSession(module: KtNotUnderContentRootModule): LLFirNotUnderContentRootResolvableModuleSession {
         val builtinsSession = LLFirBuiltinsSessionFactory.getInstance(project).getBuiltinsSession(JvmPlatforms.unspecifiedJvmPlatform)
         val languageVersionSettings = LanguageVersionSettingsImpl.DEFAULT
         val scopeProvider = FirKotlinScopeProvider(::wrapScopeWithJvmMapped)
         val components = LLFirModuleResolveComponents(module, globalResolveComponents, scopeProvider)
 
-        val dependencyTracker = builtinsSession.modificationTracker
-        val session = LLFirNonUnderContentRootResolvableModuleSession(module, dependencyTracker, components, builtinsSession.builtinTypes)
+        val session = LLFirNotUnderContentRootResolvableModuleSession(module, components, builtinsSession.builtinTypes)
         components.session = session
 
         val moduleData = createModuleData(session)
@@ -259,8 +255,7 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
         val components = LLFirModuleResolveComponents(module, globalResolveComponents, scopeProvider)
 
         val dependencies = collectSourceModuleDependencies(module)
-        val dependencyTracker = createSourceModuleDependencyTracker(module, dependencies)
-        val session = LLFirSourcesSession(module, dependencyTracker, components, builtinsSession.builtinTypes)
+        val session = LLFirSourcesSession(module, components, builtinsSession.builtinTypes)
         components.session = session
 
         val moduleData = createModuleData(session)
@@ -346,9 +341,7 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
             LLFirSessionCache.getInstance(project).getSession(it)
         }
 
-        val dependencyTracker = createLibraryDependencyTracker(moduleAnchorSession, builtinsSession)
-        val session =
-            LLFirLibraryOrLibrarySourceResolvableModuleSession(module, dependencyTracker, components, builtinsSession.builtinTypes)
+        val session = LLFirLibraryOrLibrarySourceResolvableModuleSession(module, components, builtinsSession.builtinTypes)
         components.session = session
 
         val moduleData = createModuleData(session)
@@ -423,8 +416,7 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
         val platform = module.platform
         val builtinsSession = LLFirBuiltinsSessionFactory.getInstance(project).getBuiltinsSession(platform)
 
-        val dependencyTracker = ModificationTracker.NEVER_CHANGED
-        val session = LLFirLibrarySession(module, dependencyTracker, builtinsSession.builtinTypes)
+        val session = LLFirLibrarySession(module, builtinsSession.builtinTypes)
 
         val moduleData = createModuleData(session)
 
@@ -505,27 +497,6 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
         }
 
         return dependencyModules.mapNotNull(::getOrCreateSessionForDependency)
-    }
-
-    private fun createSourceModuleDependencyTracker(module: KtModule, exposedDependencies: List<LLFirSession>): ModificationTracker {
-        val llFirSessionCache = LLFirSessionCache.getInstance(project)
-        val friendDependencies = module.directFriendDependencies
-        val trackers = ArrayList<ModificationTracker>(exposedDependencies.size + friendDependencies.size)
-
-        exposedDependencies.forEach { trackers += it.modificationTracker }
-        friendDependencies.forEach { trackers += llFirSessionCache.getSession(it).modificationTracker }
-
-        return CompositeModificationTracker.createFlattened(trackers)
-    }
-
-    private fun createLibraryDependencyTracker(moduleAnchorSession: LLFirSession?, builtinsSession: LLFirBuiltinsAndCloneableSession): ModificationTracker {
-        return moduleAnchorSession?.let {
-            CompositeModificationTracker.createFlattened(buildList {
-                add(moduleAnchorSession.modificationTracker)
-                add(builtinsSession.modificationTracker)
-            })
-        }
-            ?: builtinsSession.modificationTracker
     }
 
     private fun createModuleData(session: LLFirSession): LLFirModuleData {

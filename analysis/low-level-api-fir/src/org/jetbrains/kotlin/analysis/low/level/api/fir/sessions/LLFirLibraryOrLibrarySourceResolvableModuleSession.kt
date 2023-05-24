@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.sessions
 
-import com.intellij.openapi.util.ModificationTracker
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
 import org.jetbrains.kotlin.analysis.project.structure.KtLibraryModule
 import org.jetbrains.kotlin.analysis.project.structure.KtLibrarySourceModule
@@ -14,10 +13,9 @@ import org.jetbrains.kotlin.fir.BuiltinTypes
 
 internal class LLFirLibraryOrLibrarySourceResolvableModuleSession(
     ktModule: KtModule,
-    dependencyTracker: ModificationTracker,
     override val moduleComponents: LLFirModuleResolveComponents,
     builtinTypes: BuiltinTypes,
-) : LLFirResolvableModuleSession(ktModule, dependencyTracker, builtinTypes) {
+) : LLFirResolvableModuleSession(ktModule, builtinTypes) {
     init {
         checkIsValidKtModule(ktModule)
     }

@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.JvmFirD
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirBuiltinsSessionFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionCache
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionConfigurator
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionInvalidationService
 import org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserialization.JvmStubBasedDeserializedSymbolProviderFactory
 import org.jetbrains.kotlin.asJava.KotlinAsJavaSupport
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
@@ -56,6 +57,9 @@ object FirStandaloneServiceRegistrar : AnalysisApiStandaloneServiceRegistrar {
             registerService(JvmFirDeserializedSymbolProviderFactory::class.java, JvmStubBasedDeserializedSymbolProviderFactory::class.java)
             registerService(KotlinReferenceProviderContributor::class.java, KotlinFirReferenceContributor::class.java)
             registerService(ReadWriteAccessChecker::class.java, ReadWriteAccessCheckerFirImpl::class.java)
+
+            registerService(LLFirSessionInvalidationService::class.java)
+            LLFirSessionInvalidationService.getInstance(project).subscribeToModificationEvents()
         }
     }
 

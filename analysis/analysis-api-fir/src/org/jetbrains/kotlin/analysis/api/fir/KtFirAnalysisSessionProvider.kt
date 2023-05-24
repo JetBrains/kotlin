@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.api.fir
 
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.roots.ProjectRootModificationTracker
 import com.intellij.openapi.util.LowMemoryWatcher
 import com.intellij.psi.util.CachedValue
 import com.intellij.psi.util.CachedValueProvider
@@ -21,7 +20,6 @@ import org.jetbrains.kotlin.analysis.api.session.KtAnalysisSessionProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getFirResolveSession
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
-import org.jetbrains.kotlin.analysis.providers.createProjectWideOutOfBlockModificationTracker
 import org.jetbrains.kotlin.psi.KtElement
 import java.util.concurrent.ConcurrentMap
 import kotlin.reflect.KClass
@@ -49,9 +47,7 @@ class KtFirAnalysisSessionProvider(project: Project) : KtAnalysisSessionProvider
 
                 CachedValueProvider.Result(
                     KtFirAnalysisSession.createAnalysisSessionByFirResolveSession(firResolveSession, validityToken),
-                    firResolveSession.useSiteFirSession.modificationTracker,
-                    ProjectRootModificationTracker.getInstance(project),
-                    project.createProjectWideOutOfBlockModificationTracker()
+                    firResolveSession.useSiteFirSession.createValidityTracker(),
                 )
             }
         }.value
