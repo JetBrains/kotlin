@@ -279,6 +279,7 @@ if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
         dependsOnKotlinGradlePluginInstall()
         useAndroidSdk()
         doFirst { acceptAndroidSdkLicenses() }
+        maxParallelForks = 8
 
         testLogging {
             events("passed", "skipped", "failed")
