@@ -83,124 +83,124 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.VALUE_CLAS
 object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
 
     override val MAP = KtDiagnosticFactoryToRendererMap("FIR").also { map ->
-        map.put(CONFLICTING_JVM_DECLARATIONS, "Platform declaration clash")
-        map.put(JAVA_TYPE_MISMATCH, "Java type mismatch: expected ''{0}'' but found ''{1}''. Use explicit cast", RENDER_TYPE, RENDER_TYPE)
-        map.put(UPPER_BOUND_CANNOT_BE_ARRAY, "Upper bound of a type parameter cannot be an array")
-        map.put(STRICTFP_ON_CLASS, "'@Strictfp' annotation on classes is unsupported yet")
-        map.put(SYNCHRONIZED_ON_ABSTRACT, "'@Synchronized' annotation cannot be used on abstract functions")
-        map.put(SYNCHRONIZED_ON_INLINE, "'@Synchronized' annotation has no effect on inline functions")
-        map.put(SYNCHRONIZED_ON_SUSPEND, "@Synchronized annotation is not applicable to suspend functions and lambdas")
-        map.put(SYNCHRONIZED_IN_INTERFACE, "'@Synchronized' annotation cannot be used on interface members")
-        map.put(OVERLOADS_WITHOUT_DEFAULT_ARGUMENTS, "'@JvmOverloads' annotation has no effect for methods without default arguments")
-        map.put(OVERLOADS_ABSTRACT, "'@JvmOverloads' annotation cannot be used on abstract methods")
-        map.put(OVERLOADS_INTERFACE, "'@JvmOverloads' annotation cannot be used on interface methods")
-        map.put(OVERLOADS_PRIVATE, "'@JvmOverloads' annotation has no effect on private declarations")
-        map.put(OVERLOADS_LOCAL, "'@JvmOverloads' annotation cannot be used on local declarations")
+        map.put(CONFLICTING_JVM_DECLARATIONS, "Platform declaration clash.")
+        map.put(JAVA_TYPE_MISMATCH, "Java type mismatch: expected ''{0}'' but found ''{1}''. Use explicit cast.", RENDER_TYPE, RENDER_TYPE)
+        map.put(UPPER_BOUND_CANNOT_BE_ARRAY, "Upper bound of type parameter cannot be an array.")
+        map.put(STRICTFP_ON_CLASS, "'@Strictfp' annotation on classes is not yet supported.")
+        map.put(SYNCHRONIZED_ON_ABSTRACT, "'@Synchronized' annotation cannot be used on abstract functions.")
+        map.put(SYNCHRONIZED_ON_INLINE, "'@Synchronized' annotation has no effect on inline functions.")
+        map.put(SYNCHRONIZED_ON_SUSPEND, "'@Synchronized' annotation is not applicable to 'suspend' functions and lambdas.")
+        map.put(SYNCHRONIZED_IN_INTERFACE, "'@Synchronized' annotation cannot be used on interface members.")
+        map.put(OVERLOADS_WITHOUT_DEFAULT_ARGUMENTS, "'@JvmOverloads' annotation has no effect for methods without default arguments.")
+        map.put(OVERLOADS_ABSTRACT, "'@JvmOverloads' annotation cannot be used on abstract methods.")
+        map.put(OVERLOADS_INTERFACE, "'@JvmOverloads' annotation cannot be used on interface methods.")
+        map.put(OVERLOADS_PRIVATE, "'@JvmOverloads' annotation has no effect on private declarations.")
+        map.put(OVERLOADS_LOCAL, "'@JvmOverloads' annotation cannot be used on local declarations.")
         map.put(
             OVERLOADS_ANNOTATION_CLASS_CONSTRUCTOR,
-            "'@JvmOverloads' annotation cannot be used on constructors of annotation classes"
+            "'@JvmOverloads' annotation cannot be used on constructors of annotation classes."
         )
-        map.put(DEPRECATED_JAVA_ANNOTATION, "This annotation is deprecated in Kotlin. Use ''@{0}'' instead", TO_STRING)
-        map.put(POSITIONED_VALUE_ARGUMENT_FOR_JAVA_ANNOTATION, "Only named arguments are available for Java annotations")
-        map.put(JVM_PACKAGE_NAME_CANNOT_BE_EMPTY, "'@JvmPackageName' annotation value cannot be empty")
+        map.put(DEPRECATED_JAVA_ANNOTATION, "This annotation is deprecated in Kotlin. Use ''@{0}'' instead.", TO_STRING)
+        map.put(POSITIONED_VALUE_ARGUMENT_FOR_JAVA_ANNOTATION, "Only named arguments are available for Java annotations.")
+        map.put(JVM_PACKAGE_NAME_CANNOT_BE_EMPTY, "'@JvmPackageName' annotation value cannot be empty.")
         map.put(
             JVM_PACKAGE_NAME_MUST_BE_VALID_NAME,
-            "'@JvmPackageName' annotation value must be a valid dot-qualified name of a package"
+            "'@JvmPackageName' annotation value must be a valid dot-qualified name of a package."
         )
         map.put(
             JVM_PACKAGE_NAME_NOT_SUPPORTED_IN_FILES_WITH_CLASSES,
-            "'@JvmPackageName' annotation is not supported for files with class declarations"
+            "'@JvmPackageName' annotation is not supported for files with class declarations."
         )
         map.put(
             SUPER_CALL_WITH_DEFAULT_PARAMETERS,
-            "Super-calls with default arguments are not allowed. Please specify all arguments of ''super.{0}'' explicitly",
+            "Super-calls with default arguments are prohibited. Please specify all arguments of ''super.{0}'' explicitly.",
             TO_STRING
         )
 
-        map.put(LOCAL_JVM_RECORD, "Local @JvmRecord classes are not allowed")
-        map.put(NON_FINAL_JVM_RECORD, "@JvmRecord class should be final")
-        map.put(ENUM_JVM_RECORD, "@JvmRecord class should not be an enum")
+        map.put(LOCAL_JVM_RECORD, "Local '@JvmRecord' classes are prohibited.")
+        map.put(NON_FINAL_JVM_RECORD, "'@JvmRecord' class should be final.")
+        map.put(ENUM_JVM_RECORD, "'@JvmRecord' class should not be an enum.")
         map.put(
             JVM_RECORD_WITHOUT_PRIMARY_CONSTRUCTOR_PARAMETERS,
-            "Primary constructor with parameters is required for @JvmRecord class"
+            "Primary constructor with parameters is required for '@JvmRecord' class."
         )
-        map.put(JVM_RECORD_NOT_VAL_PARAMETER, "Constructor parameter of @JvmRecord class should be a val")
-        map.put(JVM_RECORD_NOT_LAST_VARARG_PARAMETER, "Only the last constructor parameter of @JvmRecord may be a vararg")
-        map.put(JVM_RECORD_EXTENDS_CLASS, "Record cannot inherit a class", RENDER_TYPE)
-        map.put(INNER_JVM_RECORD, "@JvmRecord class should not be inner")
-        map.put(FIELD_IN_JVM_RECORD, "It's not allowed to have non-constructor properties with backing field in @JvmRecord class")
-        map.put(DELEGATION_BY_IN_JVM_RECORD, "Delegation is not allowed for @JvmRecord classes")
-        map.put(NON_DATA_CLASS_JVM_RECORD, "Only data classes are allowed to be marked as @JvmRecord")
-        map.put(ILLEGAL_JAVA_LANG_RECORD_SUPERTYPE, "Classes cannot have explicit 'java.lang.Record' supertype")
+        map.put(JVM_RECORD_NOT_VAL_PARAMETER, "Constructor parameter of '@JvmRecord' class should be a 'val'.")
+        map.put(JVM_RECORD_NOT_LAST_VARARG_PARAMETER, "Only the last constructor parameter of '@JvmRecord' can be a vararg.")
+        map.put(JVM_RECORD_EXTENDS_CLASS, "Record cannot extend a class.", RENDER_TYPE)
+        map.put(INNER_JVM_RECORD, "'@JvmRecord' class should not be inner.")
+        map.put(FIELD_IN_JVM_RECORD, "Non-constructor properties with backing field in '@JvmRecord' class are prohibited.")
+        map.put(DELEGATION_BY_IN_JVM_RECORD, "Delegation is prohibited for '@JvmRecord' classes.")
+        map.put(NON_DATA_CLASS_JVM_RECORD, "Only data classes are allowed to be marked as '@JvmRecord'.")
+        map.put(ILLEGAL_JAVA_LANG_RECORD_SUPERTYPE, "Classes cannot have explicit 'java.lang.Record' supertype.")
 
-        map.put(OVERRIDE_CANNOT_BE_STATIC, "Override member cannot be '@JvmStatic' in object")
+        map.put(OVERRIDE_CANNOT_BE_STATIC, "Override member cannot be '@JvmStatic' in an object.")
         map.put(
             JVM_STATIC_NOT_IN_OBJECT_OR_CLASS_COMPANION,
-            "Only members in named objects and companion objects of classes can be annotated with '@JvmStatic'"
+            "Only members in named objects and companion objects of classes can be annotated with '@JvmStatic'."
         )
         map.put(
             JVM_STATIC_NOT_IN_OBJECT_OR_COMPANION,
-            "Only members in named objects and companion objects can be annotated with '@JvmStatic'"
+            "Only members in named objects and companion objects can be annotated with '@JvmStatic'."
         )
         map.put(
             JVM_STATIC_ON_NON_PUBLIC_MEMBER,
-            "Only public members in interface companion objects can be annotated with '@JvmStatic'"
+            "Only public members in interface companion objects can be annotated with '@JvmStatic'."
         )
         map.put(
             JVM_STATIC_ON_CONST_OR_JVM_FIELD,
-            "'@JvmStatic' annotation is useless for const or '@JvmField' properties",
+            "'@JvmStatic' annotation is useless for const or '@JvmField' properties.",
         )
         map.put(
             JVM_STATIC_ON_EXTERNAL_IN_INTERFACE,
-            "'@JvmStatic' annotation cannot be used on 'external' members of interface companions"
+            "'@JvmStatic' annotation cannot be used on 'external' members of interface companions."
         )
 
-        map.put(INAPPLICABLE_JVM_NAME, "'@JvmName' annotation is not applicable to this declaration")
-        map.put(ILLEGAL_JVM_NAME, "Illegal JVM name")
+        map.put(INAPPLICABLE_JVM_NAME, "'@JvmName' annotation is not applicable to this declaration.")
+        map.put(ILLEGAL_JVM_NAME, "Illegal JVM name.")
 
-        map.put(FUNCTION_DELEGATE_MEMBER_NAME_CLASH, "Spread operator is prohibited for arguments to signature-polymorphic calls")
+        map.put(FUNCTION_DELEGATE_MEMBER_NAME_CLASH, "Spread operator is prohibited for arguments to signature-polymorphic calls.")
 
-        map.put(VALUE_CLASS_WITHOUT_JVM_INLINE_ANNOTATION, "Value classes without @JvmInline annotation are not supported yet")
-        map.put(JVM_INLINE_WITHOUT_VALUE_CLASS, "@JvmInline annotation is only applicable to value classes")
+        map.put(VALUE_CLASS_WITHOUT_JVM_INLINE_ANNOTATION, "Value classes without '@JvmInline' annotation are not yet supported.")
+        map.put(JVM_INLINE_WITHOUT_VALUE_CLASS, "'@JvmInline' annotation is applicable only to value classes.")
 
-        map.put(JVM_DEFAULT_IN_DECLARATION, "Usage of ''@{0}'' is only allowed with -Xjvm-default option", STRING)
+        map.put(JVM_DEFAULT_IN_DECLARATION, "Usage of ''@{0}'' is only allowed with ''-Xjvm-default'' option.", STRING)
         map.put(
             JVM_DEFAULT_WITH_COMPATIBILITY_IN_DECLARATION,
-            "Usage of '@JvmDefaultWithCompatibility' is only allowed with '-Xjvm-default=all' option"
+            "Usage of '@JvmDefaultWithCompatibility' is only allowed with '-Xjvm-default=all' option."
         )
         map.put(
             JVM_DEFAULT_WITH_COMPATIBILITY_NOT_ON_INTERFACE,
-            "'@JvmDefaultWithCompatibility' annotation is only allowed on interfaces"
+            "'@JvmDefaultWithCompatibility' annotation is allowed only on interfaces."
         )
 
-        map.put(EXTERNAL_DECLARATION_IN_INTERFACE, "Members of interfaces can not be external")
-        map.put(EXTERNAL_DECLARATION_CANNOT_BE_ABSTRACT, "External declaration can not be abstract")
-        map.put(EXTERNAL_DECLARATION_CANNOT_HAVE_BODY, "External declaration can not have a body")
-        map.put(EXTERNAL_DECLARATION_CANNOT_BE_INLINED, "Inline functions can not be external")
+        map.put(EXTERNAL_DECLARATION_IN_INTERFACE, "Members of interfaces cannot be external.")
+        map.put(EXTERNAL_DECLARATION_CANNOT_BE_ABSTRACT, "External declaration cannot be abstract.")
+        map.put(EXTERNAL_DECLARATION_CANNOT_HAVE_BODY, "External declaration cannot have a body.")
+        map.put(EXTERNAL_DECLARATION_CANNOT_BE_INLINED, "Inline functions cannot be external.")
 
-        map.put(INAPPLICABLE_JVM_FIELD, "{0}", STRING)
-        map.put(INAPPLICABLE_JVM_FIELD_WARNING, "{0}. This warning will become an error in further releases", STRING)
+        map.put(INAPPLICABLE_JVM_FIELD, "{0}.", STRING)
+        map.put(INAPPLICABLE_JVM_FIELD_WARNING, "{0}. This warning will become an error in future releases.", STRING)
 
-        map.put(JVM_SYNTHETIC_ON_DELEGATE, "'@JvmSynthetic' annotation cannot be used on delegated properties")
+        map.put(JVM_SYNTHETIC_ON_DELEGATE, "'@JvmSynthetic' annotation cannot be used on delegated properties.")
 
         map.put(
             NON_SOURCE_REPEATED_ANNOTATION,
-            "Repeatable annotations with non-SOURCE retention are only supported starting from Kotlin 1.6"
+            "Repeatable annotations with non-SOURCE retention are supported only in Kotlin 1.6 and later."
         )
         map.put(
             REPEATED_ANNOTATION_WITH_CONTAINER,
-            "Repeated annotation ''@{0}'' cannot be used on a declaration which is annotated with its container annotation ''@{1}''",
+            "Repeated annotation ''@{0}'' cannot be used on a declaration that is annotated with its container annotation ''@{1}''.",
             TO_STRING,
             TO_STRING
         )
 
         map.put(
             INTERFACE_CANT_CALL_DEFAULT_METHOD_VIA_SUPER,
-            "Interfaces can call JVM-default members via super only within JVM-default members. Please use '-Xjvm-default=all/all-compatibility' modes for such calls"
+            "Interfaces can only call JVM-default members via super within JVM-default members. Please use '-Xjvm-default=all/all-compatibility' modes for such calls."
         )
         map.put(
             SUBCLASS_CANT_CALL_COMPANION_PROTECTED_NON_STATIC,
-            "Using protected members which are not @JvmStatic in the superclass companion is unsupported yet"
+            "Using protected members that are not '@JvmStatic' in the superclass companion is not yet supported."
         )
 
         map.put(
@@ -231,37 +231,37 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             REPEATABLE_ANNOTATION_HAS_NESTED_CLASS_NAMED_CONTAINER,
-            "Repeatable annotation cannot have a nested class named 'Container'. This name is reserved for auto-generated container class"
+            "Repeatable annotation cannot have a nested class named 'Container'. This name is reserved for auto-generated container class."
         )
         map.put(
             SUSPENSION_POINT_INSIDE_CRITICAL_SECTION,
-            "The ''{0}'' suspension point is inside a critical section",
+            "The ''{0}'' suspension point is inside a critical section.",
             SYMBOL
         )
         map.put(
             CONCURRENT_HASH_MAP_CONTAINS_OPERATOR,
-            "Method 'contains' from ConcurrentHashMap may have unexpected semantics: it calls 'containsValue' instead of 'containsKey'. " +
-                    "Use explicit form of the call to 'containsKey'/'containsValue'/'contains' or cast the value to kotlin.collections.Map instead. " +
-                    "See https://youtrack.jetbrains.com/issue/KT-18053 for more details"
+            "Method 'contains' from ConcurrentHashMap might have unexpected semantics: it calls 'containsValue' instead of 'containsKey'. " +
+                    "Use the explicit form of the call to 'containsKey'/'containsValue'/'contains' or cast the value to 'kotlin.collections.Map' instead. " +
+                    "See https://youtrack.jetbrains.com/issue/KT-18053 for more details."
         )
         map.put(
             SPREAD_ON_SIGNATURE_POLYMORPHIC_CALL,
-            "Spread operator is prohibited for arguments to signature-polymorphic calls"
+            "Spread operator is prohibited for arguments to signature-polymorphic calls."
         )
         map.put(
             JAVA_SAM_INTERFACE_CONSTRUCTOR_REFERENCE,
-            "Java SAM interface constructor references are prohibited"
+            "Java SAM interface constructor references are prohibited."
         )
         map.put(
             REDUNDANT_REPEATABLE_ANNOTATION,
-            "Please, remove the ''{0}'' annotation, as ''{1}'' is already enough",
+            "Please remove the ''{0}'' annotation, as it is redundant in presence of ''{1}''.",
             TO_STRING,
             TO_STRING,
         )
         map.put(
             NO_REFLECTION_IN_CLASS_PATH,
             "Call uses reflection API which is not found in compilation classpath. " +
-                    "Make sure you have kotlin-reflect.jar in the classpath"
+                    "Make sure you have kotlin-reflect.jar in the classpath."
         )
     }
 }

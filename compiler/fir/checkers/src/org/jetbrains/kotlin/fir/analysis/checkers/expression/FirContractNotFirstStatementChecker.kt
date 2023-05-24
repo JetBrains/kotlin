@@ -23,9 +23,9 @@ object FirContractNotFirstStatementChecker : FirFunctionCallChecker() {
         val containingDeclaration = context.containingDeclarations.last()
         if (!(containingDeclaration is FirFunction && expression.isCorrectlyPlacedIn(containingDeclaration))) {
             val message = if (containingDeclaration is FirFunction && containingDeclaration.body is FirSingleExpressionBlock) {
-                "Contracts are only allowed in function body blocks"
+                "Contracts are only allowed in function body blocks."
             } else {
-                "Contract should be the first statement"
+                "Contract should be the first statement."
             }
 
             reporter.reportOn(expression.source, FirErrors.CONTRACT_NOT_ALLOWED, message, context)

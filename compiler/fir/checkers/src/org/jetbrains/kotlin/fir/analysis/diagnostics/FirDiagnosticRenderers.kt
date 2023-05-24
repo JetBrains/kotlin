@@ -161,7 +161,7 @@ object FirDiagnosticRenderers {
     }
 
     val MODULE_DATA = Renderer<FirModuleData> {
-        "Module ${it.name}"
+        "module ${it.name}"
     }
 
     val NAME_OF_CONTAINING_DECLARATION_OR_FILE = Renderer { symbol: CallableId ->
