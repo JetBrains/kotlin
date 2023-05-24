@@ -36,6 +36,23 @@ private class IrJvmFlexibleTypeImpl(
             // No change in classifier is needed for mutability because type's classifier is set to the lower bound anyway
             // (see TypeTranslator.translateType).
             kotlinType = null
+            if (mutability) {
+                val klass = classifier?.owner as? IrClass
+                    ?: error("Mutability-flexible type's classifier is not a class: ${irType.render()}")
+                val readonlyClassFqName = FlexibleTypeBoundsChecker.getBaseBoundFqNameByMutability(klass.fqNameWhenAvailable!!)
+                classifier = when (readonlyClassFqName) {
+                    StandardNames.FqNames.iterable -> builtIns.mutableIterableClass
+                    StandardNames.FqNames.iterator -> builtIns.mutableIteratorClass
+                    StandardNames.FqNames.listIterator -> builtIns.mutableListIteratorClass
+                    StandardNames.FqNames.list -> builtIns.mutableListClass
+                    StandardNames.FqNames.collection -> builtIns.mutableCollectionClass
+                    StandardNames.FqNames.set -> builtIns.mutableSetClass
+                    StandardNames.FqNames.map -> builtIns.mutableMapClass
+                    StandardNames.FqNames.mapEntry -> builtIns.mutableMapEntryClass
+                    else -> error("Mutability-flexible type with unknown classifier: ${irType.render()}, FQ name: $readonlyClassFqName")
+                }
+            }
+
         }
 
     override val upperBound: IrSimpleType
