@@ -1,0 +1,78 @@
+@kotlin.Metadata()
+public final class MyList<T extends java.lang.Object> implements java.util.List<T>, kotlin.jvm.internal.markers.KMappedMarker {
+    private final java.util.List<T> wrappedList = null;
+
+    public MyList(@org.jetbrains.annotations.NotNull()
+    java.util.List<? extends T> wrappedList) {
+        super();
+    }
+
+    @java.lang.Override()
+    public boolean contains(@org.jetbrains.annotations.NotNull()
+    java.lang.Object element) {
+        return false;
+    }
+
+    @java.lang.Override()
+    public boolean containsAll(@org.jetbrains.annotations.NotNull()
+    java.util.Collection<? extends java.lang.Object> elements) {
+        return false;
+    }
+
+    @java.lang.Override()
+    @org.jetbrains.annotations.NotNull()
+    public T get(int index) {
+        return null;
+    }
+
+    @java.lang.Override()
+    public int getSize() {
+        return 0;
+    }
+
+    @java.lang.Override()
+    public int indexOf(@org.jetbrains.annotations.NotNull()
+    java.lang.Object element) {
+        return 0;
+    }
+
+    @java.lang.Override()
+    public boolean isEmpty() {
+        return false;
+    }
+
+    @java.lang.Override()
+    @org.jetbrains.annotations.NotNull()
+    public java.util.Iterator<T> iterator() {
+        return null;
+    }
+
+    @java.lang.Override()
+    public int lastIndexOf(@org.jetbrains.annotations.NotNull()
+    java.lang.Object element) {
+        return 0;
+    }
+
+    @java.lang.Override()
+    @org.jetbrains.annotations.NotNull()
+    public java.util.ListIterator<T> listIterator() {
+        return null;
+    }
+
+    @java.lang.Override()
+    @org.jetbrains.annotations.NotNull()
+    public java.util.ListIterator<T> listIterator(int index) {
+        return null;
+    }
+
+    @java.lang.Override()
+    public final int size() {
+        return 0;
+    }
+
+    @java.lang.Override()
+    @org.jetbrains.annotations.NotNull()
+    public java.util.List<T> subList(int fromIndex, int toIndex) {
+        return null;
+    }
+}
