@@ -35,21 +35,33 @@ internal fun Project.createCInteropMetadataDependencyClasspath(sourceSet: Defaul
     else locateOrRegisterCInteropMetadataDependencyTransformationTask(sourceSet)
     if (dependencyTransformationTask == null) return project.files()
 
-    /*
-    The classpath will be assembled by three independent parts
-    1) C-Interop Metadata which will be downloaded Jar files that get transformed by the transformation task
-    2) C-Interop Metadata directly provided by dependency projects (in the same build)
-    3) C-Interop Metadata from 'associated compilations' / additionalVisible source sets
-       (e.g. 'nativeTest' will be able to access the classpath from 'nativeMain')
-     */
-    return project.files(dependencyTransformationTask.map { it.outputLibraryFiles }) +
-            createCInteropMetadataDependencyClasspathFromProjectDependencies(sourceSet, forIde) +
-            createCInteropMetadataDependencyClasspathFromAssociatedCompilations(sourceSet, forIde)
+    val dependencyTransformationTaskOutputs = project.files(dependencyTransformationTask.map { it.outputLibraryFiles })
+    return if (forIde) {
+        /*
+            For IDE Import the classpath will be assembled by three independent parts:
+            1) C-Interop Metadata which will be downloaded Jar files that get transformed by the transformation task
+            2) C-Interop Metadata directly provided by dependency projects (in the same build)
+            3) C-Interop Metadata from 'associated compilations' / additionalVisible source sets
+               (e.g. 'nativeTest' will be able to access the classpath from 'nativeMain')
+         */
+        dependencyTransformationTaskOutputs +
+                createCInteropMetadataDependencyClasspathFromProjectDependenciesForIde(sourceSet) +
+                createCInteropMetadataDependencyClasspathFromAssociatedCompilations(sourceSet, true)
+    } else {
+        /*
+            For CLI execution the classpath will be assembled from two parts:
+            1) C-Interop metadata from the transformation task which transforms
+                Project Dependencies and External Module Dependencies (e.g. the ones that downloaded from maven repo)
+            2) C-Interop Metadata from 'associated compilations' / additionalVisible source sets
+               (e.g. 'nativeTest' will be able to access the classpath from 'nativeMain')
+         */
+        dependencyTransformationTaskOutputs +
+                createCInteropMetadataDependencyClasspathFromAssociatedCompilations(sourceSet, false)
+    }
 }
 
-private fun Project.createCInteropMetadataDependencyClasspathFromProjectDependencies(
-    sourceSet: DefaultKotlinSourceSet,
-    forIde: Boolean
+private fun Project.createCInteropMetadataDependencyClasspathFromProjectDependenciesForIde(
+    sourceSet: DefaultKotlinSourceSet
 ): FileCollection {
     return filesProvider {
         sourceSet.metadataTransformation
@@ -63,7 +75,7 @@ private fun Project.createCInteropMetadataDependencyClasspathFromProjectDependen
                 }
 
                 chooseVisibleSourceSets.visibleSourceSetProvidingCInterops?.let { visibleSourceSetName ->
-                    projectMetadataProvider.getSourceSetCInteropMetadata(visibleSourceSetName, if (forIde) Ide else Cli)
+                    projectMetadataProvider.getSourceSetCInteropMetadata(visibleSourceSetName, Ide)
                 }
             }
     }

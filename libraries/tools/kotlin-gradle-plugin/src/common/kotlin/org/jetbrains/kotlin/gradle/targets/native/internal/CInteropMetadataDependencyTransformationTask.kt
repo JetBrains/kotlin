@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.filesProvider
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.project.model.KpmModuleIdentifier
+import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import java.io.File
 import java.io.Serializable
 import java.util.concurrent.Callable
@@ -55,7 +56,9 @@ internal fun Project.locateOrRegisterCInteropMetadataDependencyTransformationTas
             /* outputDirectory = */
             project.layout.kotlinTransformedCInteropMetadataLibraryDirectoryForBuild(sourceSet.name),
             /* cleaning = */
-            CInteropMetadataDependencyTransformationTask.Cleaning.DeleteOutputDirectory
+            CInteropMetadataDependencyTransformationTask.Cleaning.DeleteOutputDirectory,
+            /* skipProjectDependencies = */
+            false, // we want project dependencies to be included in the output
         ),
         configureTask = { configureTaskOrder(); onlyIfSourceSetIsSharedNative() }
     )
@@ -81,7 +84,9 @@ internal fun Project.locateOrRegisterCInteropMetadataDependencyTransformationTas
             /* outputDirectory = */
             project.kotlinTransformedCInteropMetadataLibraryDirectoryForIde,
             /* cleaning = */
-            CInteropMetadataDependencyTransformationTask.Cleaning.None
+            CInteropMetadataDependencyTransformationTask.Cleaning.None,
+            /* skipProjectDependencies = */
+            true,
         ),
         configureTask = { configureTaskOrder(); onlyIfSourceSetIsSharedNative() }
     )
@@ -120,7 +125,6 @@ internal open class CInteropMetadataDependencyTransformationTask @Inject constru
 ) : DefaultTask() {
 
     private val parameters = GranularMetadataTransformation.Params(project, sourceSet)
-
 
     sealed class Cleaning : Serializable {
         abstract fun cleanOutputDirectory(outputDirectory: File)
@@ -168,32 +172,32 @@ internal open class CInteropMetadataDependencyTransformationTask @Inject constru
 
     private fun materializeMetadata(
         chooseVisibleSourceSets: ChooseVisibleSourceSets
-    ): List<File> = when (chooseVisibleSourceSets.metadataProvider) {
-        /* Nothing to transform: We will use original commonizer output in such cases */
-        is ProjectMetadataProvider -> emptyList()
-
-        /* Extract/Materialize all cinterop files from composite jar file */
-        is ArtifactMetadataProvider -> chooseVisibleSourceSets.metadataProvider.read { artifactContent ->
-            val visibleSourceSetName = chooseVisibleSourceSets.visibleSourceSetProvidingCInterops ?: return emptyList()
-            val sourceSetContent = artifactContent.findSourceSet(visibleSourceSetName) ?: return emptyList()
-            sourceSetContent.cinteropMetadataBinaries
-                .onEach { cInteropMetadataBinary -> cInteropMetadataBinary.copyIntoDirectory(outputDirectory) }
-                .map { cInteropMetadataBinary -> outputDirectory.resolve(cInteropMetadataBinary.relativeFile) }
-        }
-    }
-
-    private fun Configuration.withoutProjectDependencies(): FileCollection {
-        return incoming.artifactView { view ->
-            view.componentFilter { componentIdentifier ->
-                componentIdentifier !is ProjectComponentIdentifier
+    ): Iterable<File> {
+        val metadataProvider = chooseVisibleSourceSets.metadataProvider
+        return when (metadataProvider) {
+            is ProjectMetadataProvider -> {
+                if (skipProjectDependencies) return emptyList()
+                val visibleSourceSetName = chooseVisibleSourceSets.visibleSourceSetProvidingCInterops ?: return emptyList()
+                metadataProvider
+                    .getSourceSetCInteropMetadata(visibleSourceSetName, ProjectMetadataProvider.MetadataConsumer.Cli)
+                    ?.files
+                    .orEmpty()
             }
-        }.files
+
+            /* Extract/Materialize all cinterop files from composite jar file */
+            is ArtifactMetadataProvider -> metadataProvider.read { artifactContent ->
+                val visibleSourceSetName = chooseVisibleSourceSets.visibleSourceSetProvidingCInterops ?: return emptyList()
+                val sourceSetContent = artifactContent.findSourceSet(visibleSourceSetName) ?: return emptyList()
+                sourceSetContent.cinteropMetadataBinaries
+                    .onEach { cInteropMetadataBinary -> cInteropMetadataBinary.copyIntoDirectory(outputDirectory) }
+                    .map { cInteropMetadataBinary -> outputDirectory.resolve(cInteropMetadataBinary.relativeFile) }
+            }
+        }
     }
 
     private fun Iterable<MetadataDependencyResolution>.resolutionsToTransform(): List<ChooseVisibleSourceSets> {
         return filterIsInstance<ChooseVisibleSourceSets>()
-            /* We do not care about Project to Project dependencies: Those shall use the commonizer output directly (no transformation) */
-            .filter { it.dependency.id !is ProjectComponentIdentifier }
+            .applyIf(skipProjectDependencies) { filter { it.dependency.id !is ProjectComponentIdentifier } }
     }
 }
 
