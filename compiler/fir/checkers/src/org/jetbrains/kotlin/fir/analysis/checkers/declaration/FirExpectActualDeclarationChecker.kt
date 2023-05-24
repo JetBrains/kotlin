@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
@@ -35,8 +36,19 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 @Suppress("DuplicatedCode")
 object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker() {
     override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (!context.session.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)) return
         if (declaration !is FirMemberDeclaration) return
+        if (!context.session.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)) {
+            if ((declaration.isExpect || declaration.isActual) && context.containingDeclarations.lastOrNull() is FirFile) {
+                reporter.reportOn(
+                    declaration.source,
+                    FirErrors.UNSUPPORTED_FEATURE,
+                    LanguageFeature.MultiPlatformProjects to context.session.languageVersionSettings,
+                    context,
+                    positioningStrategy = SourceElementPositioningStrategies.EXPECT_ACTUAL_MODIFIER
+                )
+            }
+            return
+        }
         if (declaration.isExpect) {
             checkExpectDeclarationModifiers(declaration, context, reporter)
         }

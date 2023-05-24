@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.cli.common.arguments
 
+import org.jetbrains.kotlin.config.LanguageFeature
+
 class K2MetadataCompilerArguments : CommonCompilerArguments() {
     companion object {
         @JvmStatic private val serialVersionUID = 0L
@@ -80,4 +82,8 @@ class K2MetadataCompilerArguments : CommonCompilerArguments() {
         }
 
     override fun copyOf(): Freezable = copyK2MetadataCompilerArguments(this, K2MetadataCompilerArguments())
+
+    override fun configureExtraLanguageFeatures(map: HashMap<LanguageFeature, LanguageFeature.State>) {
+        map[LanguageFeature.MultiPlatformProjects] = LanguageFeature.State.ENABLED
+    }
 }

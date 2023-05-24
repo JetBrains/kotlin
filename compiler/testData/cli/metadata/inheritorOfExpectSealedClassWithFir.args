@@ -3,6 +3,11 @@ $TESTDATA_DIR$/inheritorOfExpectSealedClass/common-2.kt
 $TESTDATA_DIR$/inheritorOfExpectSealedClass/common-3.kt
 -d
 $TEMP_DIR$
--Xcommon-sources=$TESTDATA_DIR$/inheritorOfExpectSealedClass/common-1.kt,$TESTDATA_DIR$/inheritorOfExpectSealedClass/common-2.kt
 -language-version
 2.0
+-Xfragments=a,b,c
+-Xfragment-sources=a\:$TESTDATA_DIR$/inheritorOfExpectSealedClass/common-1.kt
+-Xfragment-sources=b\:$TESTDATA_DIR$/inheritorOfExpectSealedClass/common-2.kt
+-Xfragment-sources=c\:$TESTDATA_DIR$/inheritorOfExpectSealedClass/common-3.kt
+-Xfragment-refines=b\:a
+-Xfragment-refines=c\:b

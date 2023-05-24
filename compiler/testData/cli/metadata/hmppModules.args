@@ -5,7 +5,6 @@ $TESTDATA_DIR$/../jvm/hmpp/src/c.kt
 $TEMP_DIR$
 -language-version
 2.0
--XXLanguage\:+MultiPlatformProjects
 -Xfragments=a,b,c
 -Xfragment-sources=a\:$TESTDATA_DIR$/../jvm/hmpp/src/a.kt
 -Xfragment-sources=b\:$TESTDATA_DIR$/../jvm/hmpp/src/b.kt

@@ -868,7 +868,11 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
             if (internalArguments.isNotEmpty()) {
                 configureLanguageFeaturesFromInternalArgs(collector)
             }
+
+            configureExtraLanguageFeatures(this)
         }
+
+    protected open fun configureExtraLanguageFeatures(map: HashMap<LanguageFeature, LanguageFeature.State>) {}
 
     private fun HashMap<LanguageFeature, LanguageFeature.State>.configureLanguageFeaturesFromInternalArgs(collector: MessageCollector) {
         val featuresThatForcePreReleaseBinaries = mutableListOf<LanguageFeature>()
