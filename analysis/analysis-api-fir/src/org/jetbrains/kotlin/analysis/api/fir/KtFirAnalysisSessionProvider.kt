@@ -11,7 +11,7 @@ import com.intellij.psi.util.CachedValue
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.util.CachedValueBase
-import com.intellij.util.containers.CollectionFactory
+import java.util.concurrent.ConcurrentHashMap
 import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
@@ -26,8 +26,7 @@ import kotlin.reflect.KClass
 
 @OptIn(KtAnalysisApiInternals::class)
 class KtFirAnalysisSessionProvider(project: Project) : KtAnalysisSessionProvider(project) {
-    private val cache: ConcurrentMap<Pair<KtModule, KClass<out KtLifetimeToken>>, CachedValue<KtAnalysisSession>> =
-        CollectionFactory.createConcurrentWeakValueMap()
+    private val cache: ConcurrentMap<Pair<KtModule, KClass<out KtLifetimeToken>>, CachedValue<KtAnalysisSession>> = ConcurrentHashMap()
 
     init {
         LowMemoryWatcher.register(::clearCaches, project)
