@@ -6422,6 +6422,11 @@ fileCheckTest("filecheck_kt49847_generic_receiver") {
     enabled = project.globalTestArgs.contains('-opt')
 }
 
+fileCheckTest("filecheck_kt58654") {
+    annotatedSource = project.file('filecheck/kt58654.kt')
+    enabled = project.globalTestArgs.contains('-opt')
+}
+
 fileCheckTest("filecheck_kt53261_inline_unbox") {
     annotatedSource = project.file('filecheck/kt53261/kt53261_inline_unbox.kt')
     enabled = project.globalTestArgs.contains('-opt')
