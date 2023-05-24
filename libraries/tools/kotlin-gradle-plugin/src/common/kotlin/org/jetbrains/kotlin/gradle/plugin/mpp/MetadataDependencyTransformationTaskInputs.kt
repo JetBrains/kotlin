@@ -47,10 +47,7 @@ internal class MetadataDependencyTransformationTaskInputs(
 
     @Transient // Only needed for configuring task inputs
     private val participatingSourceSetsLazy: Lazy<Set<KotlinSourceSet>>? = lazy {
-        kotlinSourceSet.internal.withDependsOnClosure.toMutableSet().apply {
-            if (any { it.name == KotlinSourceSet.COMMON_MAIN_SOURCE_SET_NAME })
-                add(project.kotlinExtension.sourceSets.getByName(KotlinSourceSet.COMMON_MAIN_SOURCE_SET_NAME))
-        }
+        kotlinSourceSet.internal.withDependsOnClosure
     }
 
     private val participatingSourceSets: Set<KotlinSourceSet>
