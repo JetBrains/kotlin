@@ -149,7 +149,7 @@ fun TestConfigurationBuilder.commonHandlersForCodegenTest() {
 }
 
 fun HandlersStepBuilder<IrBackendInput>.dumpHandlersForConverterStep() {
-    useHandlers(::IrTreeVerifierHandler, ::IrTextDumpHandler)
+    useHandlers(::IrTreeVerifierHandler, ::IrTextDumpHandler, ::IrMangledNameAndSignatureDumpHandler)
 }
 
 fun HandlersStepBuilder<BinaryArtifacts.Jvm>.dumpHandlersForBackendStep() {

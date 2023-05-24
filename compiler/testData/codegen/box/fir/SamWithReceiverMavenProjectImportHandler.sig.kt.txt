@@ -1,0 +1,80 @@
+// MODULE: maven
+// FILE: MavenProject.kt
+package maven
+
+// CHECK:
+//   Mangled name: maven.MavenProject
+//   Public signature: maven/MavenProject|null[0]
+interface MavenProject {
+
+}
+
+// MODULE: lib
+// FILE: lib.kt
+
+// CHECK:
+//   Mangled name: AbstractMavenImportHandler
+//   Public signature: /AbstractMavenImportHandler|null[0]
+abstract class AbstractMavenImportHandler {
+  // CHECK:
+  //   Mangled name: AbstractMavenImportHandler#<init>(){}
+  //   Public signature: /AbstractMavenImportHandler.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: AbstractMavenImportHandler#getOptions(maven.MavenProject;kotlin.collections.List<kotlin.String>;kotlin.collections.List<kotlin.String>){}kotlin.collections.List<kotlin.String>?
+  //   Public signature: /AbstractMavenImportHandler.getOptions|-4460773764155808974[0]
+  // CHECK JS_IR JS_IR_ES6 NATIVE:
+  //   Mangled name: AbstractMavenImportHandler#getOptions(maven.MavenProject;kotlin.collections.List<kotlin.String>;kotlin.collections.List<kotlin.String>){}
+  //   Public signature: /AbstractMavenImportHandler.getOptions|5665422840163221243[0]
+  protected open fun getOptions(mavenProject: MavenProject, enabledCompilerPlugins: List<String>, compilerPluginOptions: List<String>): List<String>?
+
+  // CHECK JVM_IR:
+  //   Mangled name: AbstractMavenImportHandler#getOptions(kotlin.collections.List<kotlin.String>;kotlin.collections.List<kotlin.String>){}kotlin.collections.List<kotlin.String>?
+  //   Public signature: /AbstractMavenImportHandler.getOptions|6958005737432622530[0]
+  // CHECK JS_IR JS_IR_ES6 NATIVE:
+  //   Mangled name: AbstractMavenImportHandler#getOptions(kotlin.collections.List<kotlin.String>;kotlin.collections.List<kotlin.String>){}
+  //   Public signature: /AbstractMavenImportHandler.getOptions|227676264994967555[0]
+  abstract fun getOptions(enabledCompilerPlugins: List<String>, compilerPluginOptions: List<String>): List<String>?
+
+}
+
+// MODULE: main
+// FILE: sam.kt
+
+// CHECK:
+//   Mangled name: SamWithReceiverMavenProjectImportHandler
+//   Public signature: /SamWithReceiverMavenProjectImportHandler|null[0]
+class SamWithReceiverMavenProjectImportHandler : AbstractMavenImportHandler {
+  // CHECK:
+  //   Mangled name: SamWithReceiverMavenProjectImportHandler#<init>(){}
+  //   Public signature: /SamWithReceiverMavenProjectImportHandler.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: SamWithReceiverMavenProjectImportHandler#getOptions(maven.MavenProject;kotlin.collections.List<kotlin.String>;kotlin.collections.List<kotlin.String>){}kotlin.collections.List<kotlin.String>?
+  //   Public signature: /SamWithReceiverMavenProjectImportHandler.getOptions|-4460773764155808974[0]
+  // CHECK JS_IR JS_IR_ES6 NATIVE:
+  //   Mangled name: SamWithReceiverMavenProjectImportHandler#getOptions(maven.MavenProject;kotlin.collections.List<kotlin.String>;kotlin.collections.List<kotlin.String>){}
+  //   Public signature: /SamWithReceiverMavenProjectImportHandler.getOptions|5665422840163221243[0]
+  protected /* fake */ override fun getOptions(mavenProject: MavenProject, enabledCompilerPlugins: List<String>, compilerPluginOptions: List<String>): List<String>?
+
+  // CHECK JVM_IR:
+  //   Mangled name: SamWithReceiverMavenProjectImportHandler#getOptions(kotlin.collections.List<kotlin.String>;kotlin.collections.List<kotlin.String>){}kotlin.collections.List<kotlin.String>?
+  //   Public signature: /SamWithReceiverMavenProjectImportHandler.getOptions|6958005737432622530[0]
+  // CHECK JS_IR JS_IR_ES6 NATIVE:
+  //   Mangled name: SamWithReceiverMavenProjectImportHandler#getOptions(kotlin.collections.List<kotlin.String>;kotlin.collections.List<kotlin.String>){}
+  //   Public signature: /SamWithReceiverMavenProjectImportHandler.getOptions|227676264994967555[0]
+  override fun getOptions(enabledCompilerPlugins: List<String>, compilerPluginOptions: List<String>): List<String>?
+
+}
+
+// FILE: main.kt
+
+// CHECK JVM_IR:
+//   Mangled name: #box(){}kotlin.String
+//   Public signature: /box|-9347091776561469[0]
+// CHECK JS_IR JS_IR_ES6 NATIVE:
+//   Mangled name: #box(){}
+//   Public signature: /box|2173511048851971368[0]
+fun box(): String

@@ -1,13 +1,16 @@
-// TARGET_BACKEND: JVM_IR
 // WITH_STDLIB
+// LINK_VIA_SIGNATURES
+// DUMP_SIGNATURES
 
 // MODULE: maven
 // FILE: MavenProject.kt
+package maven
 
 interface MavenProject
 
 // MODULE: lib(maven)
 // FILE: lib.kt
+import maven.MavenProject
 
 abstract class AbstractMavenImportHandler {
     abstract fun getOptions(enabledCompilerPlugins: List<String>, compilerPluginOptions: List<String>): List<String>?

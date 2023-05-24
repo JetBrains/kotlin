@@ -70,8 +70,8 @@ internal fun dumpModuleKotlinLike(
     info.processAllIrModuleFragments(module) { irModuleFragment, moduleName ->
         val irFiles = irModuleFragment.files
         val builder = multiModuleInfoDumper.builderForModule(moduleName)
-        val filteredIrFiles = irFiles.groupWithTestFiles(module).filterNot {
-            it.first?.directives?.contains(EXTERNAL_FILE) == true
+        val filteredIrFiles = irFiles.groupWithTestFiles(module).filterNot { (testFile, _) ->
+            testFile?.let { EXTERNAL_FILE in it.directives || it.isAdditional } ?: false
         }.map { it.second }
         val printFileName = filteredIrFiles.size > 1 || allModules.size > 1
         val modifiedOptions = options.copy(printFileName = printFileName)

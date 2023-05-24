@@ -14925,6 +14925,12 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
             }
 
             @Test
+            @TestMetadata("SamWithReceiverMavenProjectImportHandler.kt")
+            public void testSamWithReceiverMavenProjectImportHandler() throws Exception {
+                runTest("compiler/testData/codegen/box/fir/SamWithReceiverMavenProjectImportHandler.kt");
+            }
+
+            @Test
             @TestMetadata("toLong.kt")
             public void testToLong() throws Exception {
                 runTest("compiler/testData/codegen/box/fir/toLong.kt");

@@ -171,7 +171,7 @@ open class FirMangleComputer(
                     is FirTypeParameterSymbol -> tBuilder.mangleTypeParameterReference(symbol.toLookupTag())
                     // This is performed for a case with invisible class-like symbol in fake override
                     null -> (type.lookupTag as? ConeClassLikeLookupTag)?.let {
-                        tBuilder.append(it.classId)
+                        tBuilder.append(it.classId.asFqNameString())
                     }
                 }
 
