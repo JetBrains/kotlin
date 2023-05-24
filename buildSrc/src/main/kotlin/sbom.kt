@@ -1,25 +1,31 @@
-import org.gradle.api.Project
-import org.gradle.api.artifacts.PublishArtifact
-import org.gradle.kotlin.dsl.apply
-import org.gradle.kotlin.dsl.configure
-import org.spdx.sbom.gradle.SpdxSbomExtension
-import org.spdx.sbom.gradle.SpdxSbomPlugin
-import java.util.*
-
 /*
  * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+import org.gradle.api.Project
+import org.gradle.api.publish.PublishingExtension
+import org.gradle.api.publish.maven.MavenPublication
+import org.gradle.api.tasks.TaskProvider
+import org.gradle.kotlin.dsl.*
+import org.spdx.sbom.gradle.SpdxSbomExtension
+import org.spdx.sbom.gradle.SpdxSbomPlugin
+import org.spdx.sbom.gradle.SpdxSbomTask
+import plugins.mainPublicationName
+import java.util.*
+
+
 fun Project.configureSbom(
-    moduleName: String = this.name,
-    gradleConfigurations: Iterable<String> = setOf("runtimeClasspath"),
-): PublishArtifact {
+    target: String? = null,
+    documentName: String? = null,
+    gradleConfigurations: Iterable<String> = setOf("runtimeClasspath")
+): TaskProvider<SpdxSbomTask> {
     val project = this
+    val targetName = target ?: "${mainPublicationName}Publication"
     apply<SpdxSbomPlugin>()
 
     configure<SpdxSbomExtension> {
-        targets.create(moduleName) {
+        targets.create(targetName) {
             configurations.set(gradleConfigurations)
             scm {
                 tool.set("git")
@@ -29,7 +35,7 @@ fun Project.configureSbom(
 
             // adjust properties of the document
             document {
-                this.name.set("SpdxDoc for $moduleName")
+                name.set(documentName ?: project.name)
                 // NOTE: The URI does not have to be accessible. It is only intended to provide a unique ID.
                 // In many cases, the URI will point to a Web accessible document, but this should not be assumed to be the case.
                 namespace.set("https://www.jetbrains.com/spdxdocs/${UUID.randomUUID()}")
@@ -39,17 +45,26 @@ fun Project.configureSbom(
         }
     }
 
-    val sbomCfg = configurations.maybeCreate("sbomFor$moduleName").apply {
+    val spdxSbomTask = tasks.named<SpdxSbomTask>("spdxSbomFor$targetName")
+    val sbomFile = spdxSbomTask.map { it.outputDirectory.file("$targetName.spdx.json") }
+
+    val sbomCfg = configurations.maybeCreate("sbomFor$targetName").apply {
         isCanBeResolved = false
         isCanBeConsumed = true
     }
-    val sbomFile = layout.buildDirectory.file("spdx/$moduleName.spdx.json")
-    val sbomArtifact = artifacts.add(sbomCfg.name, sbomFile.get().asFile) {
+
+    val sbomArtifact = artifacts.add(sbomCfg.name, sbomFile) {
         type = "sbom"
         extension = "spdx.json"
-        val capitalizedModuleName =
-            moduleName.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
-        builtBy("spdxSbomFor$capitalizedModuleName")
+        builtBy(spdxSbomTask)
     }
-    return sbomArtifact
+
+    if (target == null) {
+        pluginManager.withPlugin("kotlin-build-publishing") {
+            val mainPublication = the<PublishingExtension>().publications[mainPublicationName] as MavenPublication
+            mainPublication.artifact(sbomArtifact)
+        }
+    }
+
+    return spdxSbomTask
 }

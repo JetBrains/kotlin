@@ -380,7 +380,7 @@ fun Project.publishTestJar(projects: List<String>, excludedPaths: List<String>) 
         }
     }
 
-    publish()
+    publish(sbom = false)
 
     val jar: Jar by tasks
 
