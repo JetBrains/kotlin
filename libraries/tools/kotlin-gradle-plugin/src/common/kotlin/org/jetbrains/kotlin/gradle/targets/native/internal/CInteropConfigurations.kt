@@ -10,20 +10,21 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.attributes.*
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.plugin.KotlinNativeTargetConfigurator.NativeArtifactFormat
+import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.AfterFinaliseDsl
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.categoryByName
 import org.jetbrains.kotlin.gradle.plugin.internal.artifactTypeAttribute
+import org.jetbrains.kotlin.gradle.plugin.launchInStage
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.copyAttributes
 import org.jetbrains.kotlin.gradle.plugin.usesPlatformOf
-import org.jetbrains.kotlin.gradle.plugin.whenEvaluated
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropKlibLibraryElements.cinteropKlibLibraryElements
 import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
 
 internal fun createCInteropApiElementsKlibArtifact(
     target: KotlinNativeTarget,
     settings: DefaultCInteropSettings,
-    interopTask: TaskProvider<out CInteropProcess>
+    interopTask: TaskProvider<out CInteropProcess>,
 ) {
     val project = target.project
     val configurationName = cInteropApiElementsConfigurationName(target)
@@ -51,7 +52,7 @@ internal fun Project.locateOrCreateCInteropDependencyConfiguration(
         isCanBeConsumed = false
 
         /* Deferring attributes to wait for compilation.attributes to be configured  by user*/
-        whenEvaluated {
+        launchInStage(AfterFinaliseDsl) {
             usesPlatformOf(compilation.target)
             copyAttributes(compilation.attributes, attributes)
             attributes.attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, cinteropKlibLibraryElements())
@@ -74,7 +75,7 @@ internal fun Project.locateOrCreateCInteropApiElementsConfiguration(target: Kotl
         isCanBeConsumed = true
 
         /* Deferring attributes to wait for target.attributes to be configured by user */
-        whenEvaluated {
+        launchInStage(AfterFinaliseDsl) {
             usesPlatformOf(target)
             copyAttributes(target.attributes, attributes)
             attributes.attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, cinteropKlibLibraryElements())
