@@ -6,14 +6,14 @@ FILE fqName:<root> fileName:/kt45934.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C modality:FINAL visibility:public superTypes:[<root>.I]'
-    FUN DELEGATED_MEMBER name:foo visibility:public modality:OPEN <C> ($this:<root>.C) returnType:@[FlexibleNullability] kotlin.collections.MutableList<@[FlexibleNullability] C of <root>.C.foo?>?
+    FUN DELEGATED_MEMBER name:foo visibility:public modality:OPEN <C> ($this:<root>.C) returnType:@[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableList<@[FlexibleNullability] C of <root>.C.foo?>?
       overridden:
-        public abstract fun foo <C> (): @[FlexibleNullability] kotlin.collections.MutableList<@[FlexibleNullability] C of <root>.I.foo?>? declared in <root>.I
+        public abstract fun foo <C> (): @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableList<@[FlexibleNullability] C of <root>.I.foo?>? declared in <root>.I
       TYPE_PARAMETER name:C index:0 variance: superTypes:[@[FlexibleNullability] kotlin.Any?] reified:false
       $this: VALUE_PARAMETER name:<this> type:<root>.C
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public open fun foo <C> (): @[FlexibleNullability] kotlin.collections.MutableList<@[FlexibleNullability] C of <root>.C.foo?>? declared in <root>.C'
-          CALL 'public open fun foo (): @[FlexibleNullability] kotlin.collections.MutableList<@[FlexibleNullability] kotlin.String?>? declared in <root>.J' type=@[FlexibleNullability] kotlin.collections.MutableList<@[FlexibleNullability] kotlin.String?>? origin=null
+        RETURN type=kotlin.Nothing from='public open fun foo <C> (): @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableList<@[FlexibleNullability] C of <root>.C.foo?>? declared in <root>.C'
+          CALL 'public open fun foo (): @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableList<@[FlexibleNullability] kotlin.String?>? declared in <root>.J' type=@[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableList<@[FlexibleNullability] kotlin.String?>? origin=null
             $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.J visibility:private [final]' type=<root>.J origin=null
               receiver: GET_VAR '<this>: <root>.C declared in <root>.C.foo' type=<root>.C origin=null
     FIELD DELEGATE name:$$delegate_0 type:<root>.J visibility:private [final]

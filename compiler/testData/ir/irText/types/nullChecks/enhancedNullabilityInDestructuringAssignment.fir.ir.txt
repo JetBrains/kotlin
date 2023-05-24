@@ -182,8 +182,8 @@ FILE fqName:<root> fileName:/enhancedNullabilityInDestructuringAssignment.kt
           <T>: kotlin.collections.IndexedValue<@[EnhancedNullability] <root>.P>
           $receiver: CALL 'public final fun withIndex <T> (): kotlin.collections.Iterable<kotlin.collections.IndexedValue<T of kotlin.collections.CollectionsKt.withIndex>> declared in kotlin.collections.CollectionsKt' type=kotlin.collections.Iterable<kotlin.collections.IndexedValue<@[EnhancedNullability] <root>.P>> origin=null
             <T>: @[EnhancedNullability] <root>.P
-            $receiver: TYPE_OP type=kotlin.collections.MutableList<@[EnhancedNullability] <root>.P> origin=IMPLICIT_NOTNULL typeOperand=kotlin.collections.MutableList<@[EnhancedNullability] <root>.P>
-              CALL 'public open fun listOfNotNull (): @[FlexibleNullability] kotlin.collections.MutableList<@[EnhancedNullability] <root>.P>? declared in <root>.J' type=@[FlexibleNullability] kotlin.collections.MutableList<@[EnhancedNullability] <root>.P>? origin=null
+            $receiver: TYPE_OP type=@[FlexibleMutability] kotlin.collections.MutableList<@[EnhancedNullability] <root>.P> origin=IMPLICIT_NOTNULL typeOperand=@[FlexibleMutability] kotlin.collections.MutableList<@[EnhancedNullability] <root>.P>
+              CALL 'public open fun listOfNotNull (): @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableList<@[EnhancedNullability] <root>.P>? declared in <root>.J' type=@[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableList<@[EnhancedNullability] <root>.P>? origin=null
       VAR name:x type:kotlin.Int [val]
         CALL 'public final fun component1 (): kotlin.Int [operator] declared in kotlin.collections.IndexedValue' type=kotlin.Int origin=COMPONENT_N(index=1)
           $this: GET_VAR 'val tmp_3: kotlin.collections.IndexedValue<@[EnhancedNullability] <root>.P> [val] declared in <root>.test4' type=kotlin.collections.IndexedValue<@[EnhancedNullability] <root>.P> origin=null

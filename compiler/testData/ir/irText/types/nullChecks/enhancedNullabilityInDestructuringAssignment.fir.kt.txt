@@ -80,7 +80,7 @@ fun test3() {
 }
 
 fun test4() {
-  val <destruct>: IndexedValue<@EnhancedNullability P> = listOfNotNull() /*!! MutableList<@EnhancedNullability P> */.withIndex<@EnhancedNullability P>().first<IndexedValue<@EnhancedNullability P>>()
+  val <destruct>: IndexedValue<@EnhancedNullability P> = listOfNotNull() /*!! @FlexibleMutability MutableList<@EnhancedNullability P> */.withIndex<@EnhancedNullability P>().first<IndexedValue<@EnhancedNullability P>>()
   val x: Int = <destruct>.component1()
   val y: @EnhancedNullability P = <destruct>.component2() /*!! P */
   use(x = x, y = y)

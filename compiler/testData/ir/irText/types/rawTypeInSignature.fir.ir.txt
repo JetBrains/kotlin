@@ -84,24 +84,24 @@ FILE fqName:<root> fileName:/rawTypeInSignature.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:KRaw modality:FINAL visibility:public superTypes:[<root>.JRaw]'
-    FUN DELEGATED_MEMBER name:takesRawList visibility:public modality:OPEN <> ($this:<root>.KRaw, list:@[FlexibleNullability] @[RawType] kotlin.collections.MutableList<kotlin.Any?>) returnType:kotlin.Unit
+    FUN DELEGATED_MEMBER name:takesRawList visibility:public modality:OPEN <> ($this:<root>.KRaw, list:@[FlexibleNullability] @[FlexibleMutability] @[RawType] kotlin.collections.MutableList<kotlin.Any?>) returnType:kotlin.Unit
       overridden:
-        public abstract fun takesRawList (list: @[FlexibleNullability] @[RawType] kotlin.collections.MutableList<kotlin.Any?>): kotlin.Unit declared in <root>.JRaw
+        public abstract fun takesRawList (list: @[FlexibleNullability] @[FlexibleMutability] @[RawType] kotlin.collections.MutableList<kotlin.Any?>): kotlin.Unit declared in <root>.JRaw
       $this: VALUE_PARAMETER name:<this> type:<root>.KRaw
-      VALUE_PARAMETER name:list index:0 type:@[FlexibleNullability] @[RawType] kotlin.collections.MutableList<kotlin.Any?>
+      VALUE_PARAMETER name:list index:0 type:@[FlexibleNullability] @[FlexibleMutability] @[RawType] kotlin.collections.MutableList<kotlin.Any?>
       BLOCK_BODY
-        CALL 'public abstract fun takesRawList (list: @[FlexibleNullability] @[RawType] kotlin.collections.MutableList<kotlin.Any?>): kotlin.Unit declared in <root>.JRaw' type=kotlin.Unit origin=null
+        CALL 'public abstract fun takesRawList (list: @[FlexibleNullability] @[FlexibleMutability] @[RawType] kotlin.collections.MutableList<kotlin.Any?>): kotlin.Unit declared in <root>.JRaw' type=kotlin.Unit origin=null
           $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.JRaw visibility:private [final]' type=<root>.JRaw origin=null
             receiver: GET_VAR '<this>: <root>.KRaw declared in <root>.KRaw.takesRawList' type=<root>.KRaw origin=null
-          list: GET_VAR 'list: @[FlexibleNullability] @[RawType] kotlin.collections.MutableList<kotlin.Any?> declared in <root>.KRaw.takesRawList' type=@[FlexibleNullability] @[RawType] kotlin.collections.MutableList<kotlin.Any?> origin=null
-    FUN DELEGATED_MEMBER name:returnsRawList visibility:public modality:OPEN <> ($this:<root>.KRaw) returnType:@[FlexibleNullability] @[RawType] kotlin.collections.MutableList<kotlin.Any?>
+          list: GET_VAR 'list: @[FlexibleNullability] @[FlexibleMutability] @[RawType] kotlin.collections.MutableList<kotlin.Any?> declared in <root>.KRaw.takesRawList' type=@[FlexibleNullability] @[FlexibleMutability] @[RawType] kotlin.collections.MutableList<kotlin.Any?> origin=null
+    FUN DELEGATED_MEMBER name:returnsRawList visibility:public modality:OPEN <> ($this:<root>.KRaw) returnType:@[FlexibleNullability] @[FlexibleMutability] @[RawType] kotlin.collections.MutableList<kotlin.Any?>
       overridden:
-        public abstract fun returnsRawList (): @[FlexibleNullability] @[RawType] kotlin.collections.MutableList<kotlin.Any?> declared in <root>.JRaw
+        public abstract fun returnsRawList (): @[FlexibleNullability] @[FlexibleMutability] @[RawType] kotlin.collections.MutableList<kotlin.Any?> declared in <root>.JRaw
       $this: VALUE_PARAMETER name:<this> type:<root>.KRaw
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public open fun returnsRawList (): @[FlexibleNullability] @[RawType] kotlin.collections.MutableList<kotlin.Any?> declared in <root>.KRaw'
-          TYPE_OP type=@[RawType] kotlin.collections.MutableList<kotlin.Any?> origin=IMPLICIT_NOTNULL typeOperand=@[RawType] kotlin.collections.MutableList<kotlin.Any?>
-            CALL 'public abstract fun returnsRawList (): @[FlexibleNullability] @[RawType] kotlin.collections.MutableList<kotlin.Any?> declared in <root>.JRaw' type=@[FlexibleNullability] @[RawType] kotlin.collections.MutableList<kotlin.Any?> origin=null
+        RETURN type=kotlin.Nothing from='public open fun returnsRawList (): @[FlexibleNullability] @[FlexibleMutability] @[RawType] kotlin.collections.MutableList<kotlin.Any?> declared in <root>.KRaw'
+          TYPE_OP type=@[FlexibleMutability] @[RawType] kotlin.collections.MutableList<kotlin.Any?> origin=IMPLICIT_NOTNULL typeOperand=@[FlexibleMutability] @[RawType] kotlin.collections.MutableList<kotlin.Any?>
+            CALL 'public abstract fun returnsRawList (): @[FlexibleNullability] @[FlexibleMutability] @[RawType] kotlin.collections.MutableList<kotlin.Any?> declared in <root>.JRaw' type=@[FlexibleNullability] @[FlexibleMutability] @[RawType] kotlin.collections.MutableList<kotlin.Any?> origin=null
               $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.JRaw visibility:private [final]' type=<root>.JRaw origin=null
                 receiver: GET_VAR '<this>: <root>.KRaw declared in <root>.KRaw.returnsRawList' type=<root>.KRaw origin=null
     FUN DELEGATED_MEMBER name:takesRawGenericInv visibility:public modality:OPEN <> ($this:<root>.KRaw, g:@[FlexibleNullability] @[RawType] <root>.GenericInv<kotlin.Number>) returnType:kotlin.Unit

@@ -40,6 +40,7 @@ class Fir2IrJvmSpecialAnnotationSymbolProvider : Fir2IrSpecialSymbolProvider() {
         when (id) {
             ENHANCED_NULLABILITY_ID -> id.toIrClass(kotlinJvmInternalPackage).symbol
             FLEXIBLE_NULLABILITY_ID -> id.toIrClass(kotlinInternalIrPackage).symbol
+            FLEXIBLE_MUTABILITY_ID -> id.toIrClass(kotlinInternalIrPackage).symbol
             RAW_TYPE_ANNOTATION_ID -> id.toIrClass(kotlinInternalIrPackage).symbol
             else -> null
         }
@@ -60,6 +61,8 @@ class Fir2IrJvmSpecialAnnotationSymbolProvider : Fir2IrSpecialSymbolProvider() {
         private val ENHANCED_NULLABILITY_ID = ClassId.topLevel(JvmAnnotationNames.ENHANCED_NULLABILITY_ANNOTATION)
         private val FLEXIBLE_NULLABILITY_ID =
             ClassId.topLevel(IrBuiltIns.KOTLIN_INTERNAL_IR_FQN.child(Name.identifier("FlexibleNullability")))
+        private val FLEXIBLE_MUTABILITY_ID =
+            ClassId.topLevel(IrBuiltIns.KOTLIN_INTERNAL_IR_FQN.child(Name.identifier("FlexibleMutability")))
         private val RAW_TYPE_ANNOTATION_ID =
             ClassId.topLevel(IrBuiltIns.KOTLIN_INTERNAL_IR_FQN.child(Name.identifier("RawType")))
     }

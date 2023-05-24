@@ -174,6 +174,7 @@ object StandardClassIds {
 
         val RawTypeAnnotation = "RawType".internalIrId()
         val FlexibleNullability = "FlexibleNullability".internalIrId()
+        val FlexibleMutability = "FlexibleMutability".internalIrId()
         val EnhancedNullability = "EnhancedNullability".jvmInternalId()
 
         val InlineOnly = "InlineOnly".internalId()

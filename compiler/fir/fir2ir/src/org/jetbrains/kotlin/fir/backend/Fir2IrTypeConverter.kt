@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.ir.types.makeNotNull
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.ExtensionFunctionType
+import org.jetbrains.kotlin.types.CommonFlexibleTypeBoundsChecker
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.types.Variance
 
@@ -109,6 +110,7 @@ class Fir2IrTypeConverter(
         typeContext: ConversionTypeContext = ConversionTypeContext.DEFAULT,
         annotations: List<FirAnnotation> = emptyList(),
         hasFlexibleNullability: Boolean = false,
+        hasFlexibleMutability: Boolean = false,
         addRawTypeAnnotation: Boolean = false
     ): IrType {
         return when (this) {
@@ -135,6 +137,11 @@ class Fir2IrTypeConverter(
                         builtIns.flexibleNullabilityAnnotationConstructorCall()?.let {
                             typeAnnotations += it
                         }
+                    }
+                }
+                if (hasFlexibleMutability) {
+                    builtIns.flexibleMutabilityAnnotationConstructorCall()?.let {
+                        typeAnnotations += it
                     }
                 }
 
@@ -173,6 +180,7 @@ class Fir2IrTypeConverter(
                     typeContext,
                     annotations,
                     hasFlexibleNullability = lowerBound.nullability != upperBound.nullability,
+                    hasFlexibleMutability = isMutabilityFlexible(),
                     addRawTypeAnnotation = true
                 )
             }
@@ -190,10 +198,18 @@ class Fir2IrTypeConverter(
                     (intermediate.withNullability(upper.isNullable) as ConeKotlinType)
                         .withAttributes(lower.attributes)
                         .toIrType(
-                            typeContext, annotations, hasFlexibleNullability = lower.nullability != upper.nullability
+                            typeContext,
+                            annotations,
+                            hasFlexibleNullability = lower.nullability != upper.nullability,
+                            hasFlexibleMutability = isMutabilityFlexible()
                         )
                 } else {
-                    upperBound.toIrType(typeContext, annotations, hasFlexibleNullability = lowerBound.nullability != upperBound.nullability)
+                    upperBound.toIrType(
+                        typeContext,
+                        annotations,
+                        hasFlexibleNullability = lowerBound.nullability != upperBound.nullability,
+                        hasFlexibleMutability = isMutabilityFlexible()
+                    )
                 }
             }
             is ConeCapturedType -> {
@@ -224,6 +240,14 @@ class Fir2IrTypeConverter(
             is ConeStubType -> createErrorType()
             is ConeIntegerLiteralType -> createErrorType()
         }
+    }
+
+    private fun ConeFlexibleType.isMutabilityFlexible(): Boolean {
+        val lowerFqName = lowerBound.classId?.asSingleFqName() ?: return false
+        val upperFqName = upperBound.classId?.asSingleFqName() ?: return false
+        if (lowerFqName == upperFqName) return false
+        return CommonFlexibleTypeBoundsChecker.getBaseBoundFqNameByMutability(lowerFqName) ==
+                CommonFlexibleTypeBoundsChecker.getBaseBoundFqNameByMutability(upperFqName)
     }
 
     private fun ConeTypeProjection.toIrTypeArgument(typeContext: ConversionTypeContext): IrTypeArgument {

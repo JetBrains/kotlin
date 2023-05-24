@@ -42,6 +42,13 @@ class Fir2IrBuiltIns(
     internal fun flexibleNullabilityAnnotationConstructorCall(): IrConstructorCall? =
         flexibleNullabilityAnnotationSymbol?.toConstructorCall()
 
+    private val flexibleMutabilityAnnotationSymbol by lazy {
+        specialAnnotationIrSymbolById(StandardClassIds.Annotations.FlexibleMutability)
+    }
+
+    internal fun flexibleMutabilityAnnotationConstructorCall(): IrConstructorCall? =
+        flexibleMutabilityAnnotationSymbol?.toConstructorCall()
+
     private val rawTypeAnnotationSymbol by lazy {
         specialAnnotationIrSymbolById(StandardClassIds.Annotations.RawTypeAnnotation)
     }
