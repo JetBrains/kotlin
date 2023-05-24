@@ -445,6 +445,8 @@ private fun TestProject.withBuildSummary(
     }
 }
 
+val konanDir get() = Paths.get(".").resolve("build").resolve(".konan")
+
 /**
  * On changing test kit dir location update related location in 'cleanTestKitCache' task.
  */

@@ -531,7 +531,7 @@ class CompilerOptionsProjectIT : KGPBaseTest() {
                 assertCompilerArguments(":compileCommonMainKotlinMetadata", "-language-version 1.7", "-api-version 1.7")
             }
 
-            build(":compileKotlinJvm", enableGradleDebug = true) {
+            build(":compileKotlinJvm") {
                 assertCompilerArguments(
                     ":compileKotlinJvm",
                     "-language-version 1.8",

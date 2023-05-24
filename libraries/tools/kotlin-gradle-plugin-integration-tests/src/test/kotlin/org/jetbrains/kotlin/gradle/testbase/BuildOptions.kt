@@ -16,7 +16,10 @@ import org.jetbrains.kotlin.gradle.dsl.NativeCacheKind
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.junit.jupiter.api.condition.OS
+import java.nio.file.Path
+import java.nio.file.Paths
 import java.util.*
+import kotlin.io.path.absolutePathString
 
 data class BuildOptions(
     val logLevel: LogLevel = LogLevel.INFO,
@@ -51,6 +54,7 @@ data class BuildOptions(
     val nativeOptions: NativeOptions = NativeOptions(),
     val compilerExecutionStrategy: KotlinCompilerExecutionStrategy? = null,
     val runViaBuildToolsApi: Boolean? = null,
+    val konanDataDir: Path? = konanDir,
 ) {
     val isK2ByDefault
         get() = KotlinVersion.DEFAULT >= KotlinVersion.KOTLIN_2_0
@@ -68,7 +72,7 @@ data class BuildOptions(
         val verbose: Boolean = false,
         val incrementalKapt: Boolean = false,
         val includeCompileClasspath: Boolean = false,
-        val classLoadersCacheSize: Int? = null
+        val classLoadersCacheSize: Int? = null,
     )
 
     data class JsOptions(
@@ -78,7 +82,7 @@ data class BuildOptions(
     )
 
     data class NativeOptions(
-        val cacheKind: NativeCacheKind = NativeCacheKind.NONE,
+        val cacheKind: NativeCacheKind? = NativeCacheKind.NONE,
         val cocoapodsGenerateWrapper: Boolean? = null,
         val cocoapodsPlatform: String? = null,
         val cocoapodsConfiguration: String? = null,
@@ -93,7 +97,7 @@ data class BuildOptions(
     )
 
     fun toArguments(
-        gradleVersion: GradleVersion
+        gradleVersion: GradleVersion,
     ): List<String> {
         val arguments = mutableListOf<String>()
         when (logLevel) {
@@ -209,6 +213,10 @@ data class BuildOptions(
             arguments.add("--$stacktraceMode")
         }
 
+        konanDataDir?.let {
+            arguments.add("-Pkonan.data.dir=${konanDataDir.absolutePathString()}")
+        }
+
         arguments.addAll(freeArgs)
 
         return arguments.toList()
@@ -218,7 +226,9 @@ data class BuildOptions(
         arguments: MutableList<String>,
     ) {
 
-        arguments.add("-Pkotlin.native.cacheKind=${nativeOptions.cacheKind.name.lowercase()}")
+        nativeOptions.cacheKind?.let {
+            arguments.add("-Pkotlin.native.cacheKind=${nativeOptions.cacheKind.name.lowercase()}")
+        }
 
         nativeOptions.cocoapodsGenerateWrapper?.let {
             arguments.add("-Pkotlin.native.cocoapods.generate.wrapper=${it}")
@@ -260,7 +270,7 @@ data class BuildOptions(
 
 fun BuildOptions.suppressDeprecationWarningsOn(
     @Suppress("UNUSED_PARAMETER") reason: String, // just to require specifying a reason for suppressing
-    predicate: (BuildOptions) -> Boolean
+    predicate: (BuildOptions) -> Boolean,
 ) = if (predicate(this)) {
     copy(warningMode = WarningMode.Summary)
 } else {
@@ -270,7 +280,7 @@ fun BuildOptions.suppressDeprecationWarningsOn(
 fun BuildOptions.suppressDeprecationWarningsSinceGradleVersion(
     gradleVersion: String,
     currentGradleVersion: GradleVersion,
-    reason: String
+    reason: String,
 ) = suppressDeprecationWarningsOn(reason) {
     currentGradleVersion >= GradleVersion.version(gradleVersion)
 }

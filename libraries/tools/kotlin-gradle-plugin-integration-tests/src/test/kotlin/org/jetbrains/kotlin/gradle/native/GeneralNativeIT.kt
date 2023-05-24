@@ -1121,7 +1121,7 @@ class GeneralNativeIT : BaseGradleIT() {
                 "build",
                 options = defaultBuildOptions().copy(
                     forceOutputToStdout = true,
-                    customEnvironmentVariables = mapOf("KONAN_DATA_DIR" to Files.createTempDirectory("konan-data-dir").absolutePathString())
+                    konanDataDir = Files.createTempDirectory("konan-data-dir").toAbsolutePath()
                 )
             ) {
                 assertFailed()
