@@ -75,6 +75,19 @@ class Fir2IrTypeConverter(
         )
     }
 
+    internal fun isBuiltInEssentialClass(classId: ClassId): Boolean {
+        return when (classId) {
+            INTRINSIC_CONST_EVALUATION_ANNOTATION -> {
+                // IntrinsicConstEvaluation appeared in Kotlin 1.7
+                // and might be absent when resolving against older stdlib
+                false
+            }
+            else -> {
+                true
+            }
+        }
+    }
+
     private val capturedTypeCache = mutableMapOf<ConeCapturedType, IrType>()
     private val errorTypeForCapturedTypeStub by lazy { createErrorType() }
 
