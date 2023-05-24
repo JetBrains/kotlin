@@ -243,7 +243,10 @@ open class FrameworkTest : DefaultTask(), KonanTestExecutable {
             |stdout: $stdOut
             |stderr: $stdErr
             """.trimMargin())
-        check(exitCode == expectedExitStatus ?: 0) { "Execution of $testExecName failed with exit code: $exitCode " }
+        val timeoutMessage = if (exitCode == -1) {
+            "WARNING: probably a timeout\n"
+        } else ""
+        check(exitCode == expectedExitStatus ?: 0) { "${timeoutMessage}Execution of $testExecName failed with exit code: $exitCode " }
     }
 
     private fun validateBitcodeEmbedding(frameworkBinary: String) {

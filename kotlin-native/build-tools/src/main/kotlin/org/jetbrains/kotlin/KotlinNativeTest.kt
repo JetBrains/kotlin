@@ -334,6 +334,9 @@ open class KonanLocalTest : KonanTest() {
             exitCode + other.exitCode)
 
     private fun ProcessOutput.check() {
+        val timeoutMessage = if (exitCode == -1) {
+            "WARNING: probably a timeout\n"
+        } else ""
         val exitCodeMismatch = !expectedExitStatusChecker(exitCode)
         if (exitCodeMismatch) {
             val message = if (expectedExitStatus != null)
@@ -342,7 +345,7 @@ open class KonanLocalTest : KonanTest() {
                 "Actual exit status doesn't match with exit status checker: $exitCode"
             check(expectedFail) {
                 """
-                    |Test failed. $message
+                    |${timeoutMessage}Test failed. $message
                     |stdout:
                     |$stdOut
                     |stderr:
@@ -358,7 +361,7 @@ open class KonanLocalTest : KonanTest() {
             val message = goldenData?.let { goldenData -> "Expected output: $goldenData, actual output: $output" }
                     ?: "Actual output doesn't match with output checker: $output"
 
-            check(expectedFail) { "Test failed. $message" }
+            check(expectedFail) { "${timeoutMessage}Test failed. $message" }
             println("Expected failure. $message")
         }
 

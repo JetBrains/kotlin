@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+@file:OptIn(kotlin.time.ExperimentalTime::class)
 package org.jetbrains.kotlin
 
 import com.google.gson.annotations.Expose
@@ -34,6 +35,10 @@ import java.nio.file.Paths
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.concurrent.TimeUnit
+
+import kotlin.time.Duration
+import kotlin.time.DurationUnit
+import kotlin.time.toDuration
 
 /**
  * A replacement of the standard `exec {}`
@@ -56,6 +61,7 @@ private fun Executor.service(project: Project) = object: ExecutorService {
         val request = ExecuteRequest(
                 executableAbsolutePath = execSpec.executable,
                 args = execSpec.args,
+                timeout = 15.toDuration(DurationUnit.MINUTES),
         ).apply {
             execSpec.standardInput?.let {
                 stdin = it

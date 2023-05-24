@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.konan.target.TargetDomainObjectContainer
 import org.jetbrains.kotlin.konan.target.TargetWithSanitizer
 import org.jetbrains.kotlin.testing.native.GoogleTestExtension
 import org.jetbrains.kotlin.utils.capitalized
+import java.time.Duration
 import javax.inject.Inject
 
 private fun String.snakeCaseToUpperCamelCase() = split('_').joinToString(separator = "") { it.capitalized }
@@ -602,6 +603,7 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
                 filter.set(project.findProperty("gtest_filter") as? String)
                 tsanSuppressionsFile.set(project.layout.projectDirectory.file("tsan_suppressions.txt"))
                 this.target.set(target)
+                this.executionTimeout.set(Duration.ofMinutes(30)) // The tests binaries are big.
 
                 usesService(runGTestSemaphore)
             }

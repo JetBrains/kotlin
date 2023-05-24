@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.native.executors
 
 import java.io.*
 import kotlin.time.Duration
-import kotlin.time.ExperimentalTime
 
 private class CloseProtectedOutputStream(stream : OutputStream) : FilterOutputStream(stream) {
     override fun close() {
@@ -52,7 +51,7 @@ data class ExecuteRequest(
         /**
          * Bound execution time of the process. By default it's [Duration.INFINITE] meaning it's unbounded.
          */
-        val timeout: Duration = Duration.INFINITE
+        var timeout: Duration = Duration.INFINITE
 ) {
     /**
      * Create a copy of this [ExecuteRequest], modify the copy by running [block] on it, and return that copy.
@@ -76,7 +75,13 @@ data class ExecuteResponse(
      * @throws IllegalStateException if [exitCode] is not 0.
      */
     fun assertSuccess(): ExecuteResponse {
-        check(exitCode == 0) { "Exited with code $exitCode" }
+        check(exitCode == 0) {
+            if (exitCode == null) {
+                "Timed out in $executionTime"
+            } else {
+                "Exited with code $exitCode in $executionTime"
+            }
+        }
         return this
     }
 }
