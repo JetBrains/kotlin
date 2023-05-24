@@ -178,4 +178,12 @@ object KotlinToolingDiagnostics {
             """.trimIndent()
         )
     }
+
+    object KotlinJvmMainRunTaskConflict : ToolingDiagnosticFactory(WARNING) {
+        operator fun invoke(targetName: String, taskName: String) = build(
+            """
+                Target '$targetName': Unable to create run task '$taskName' as there is already such a task registered
+            """.trimIndent()
+        )
+    }
 }
