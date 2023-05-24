@@ -26226,6 +26226,12 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                     }
 
                     @Test
+                    @TestMetadata("expectActualTypealiasCoercion.kt")
+                    public void testExpectActualTypealiasCoercion() throws Exception {
+                        runTest("compiler/testData/codegen/box/multiplatform/k2/basic/expectActualTypealiasCoercion.kt");
+                    }
+
+                    @Test
                     @TestMetadata("expectInterfaceInSupertypes.kt")
                     public void testExpectInterfaceInSupertypes() throws Exception {
                         runTest("compiler/testData/codegen/box/multiplatform/k2/basic/expectInterfaceInSupertypes.kt");
@@ -40295,6 +40301,12 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @TestMetadata("implicitIntegerCoercionNamedArg.kt")
             public void testImplicitIntegerCoercionNamedArg() throws Exception {
                 runTest("compiler/testData/codegen/box/unsignedTypes/implicitIntegerCoercionNamedArg.kt");
+            }
+
+            @Test
+            @TestMetadata("implicitIntegerCoercionOverloadResolutionAmbiguity.kt")
+            public void testImplicitIntegerCoercionOverloadResolutionAmbiguity() throws Exception {
+                runTest("compiler/testData/codegen/box/unsignedTypes/implicitIntegerCoercionOverloadResolutionAmbiguity.kt");
             }
 
             @Test

@@ -4855,8 +4855,7 @@ interopTest("interop_cppSkia") {
 }
 
 interopTest("interop_cppSkiaSignature") {
-    disabled = (project.testTarget == 'wasm32' || // No interop for wasm yet.
-            isK2(project)) || // KT-57484
+    disabled = (project.testTarget == 'wasm32') || // No interop for wasm yet.
             isAppleTarget(project) // KT-58422
     source = "interop/cpp/skiaSignature.kt"
     interop = "cppSkiaSignature"
@@ -4959,7 +4958,6 @@ if (PlatformInfo.isAppleTarget(project)) {
     }
 
     interopTestMultifile("interop_objc_tests") {
-        disabled = isK2(project) // KT-57504
         source = "interop/objc/tests/"
         interop = 'objcTests'
         flags = ['-tr', '-e', 'main']

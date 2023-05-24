@@ -517,8 +517,11 @@ private fun getExpectedTypeWithImplicintIntegerCoercion(
     if (!parameter.isMarkedWithImplicitIntegerCoercion) return null
 
     val argumentType =
-        if (argument.isIntegerLiteralOrOperatorCall()) argument.resultType.coneType
-        else {
+        if (argument.isIntegerLiteralOrOperatorCall()) {
+            if (candidateExpectedType.fullyExpandedType(session).isUnsignedTypeOrNullableUnsignedType)
+                argument.resultType.coneType
+            else null
+        } else {
             argument.calleeReference?.toResolvedCallableSymbol()?.takeIf {
                 it.rawStatus.isConst && it.isMarkedWithImplicitIntegerCoercion
             }?.resolvedReturnType
