@@ -11,24 +11,31 @@ import kotlin.reflect.KProperty
 import kotlin.reflect.full.memberProperties
 
 fun KtDiagnosticFactoryToRendererMap.verifyMessages(objectWithErrors: Any) {
+    val errors = mutableListOf<String>()
     for (property in objectWithErrors::class.memberProperties) {
         when (val factory = property.getter.call(objectWithErrors)) {
             is AbstractKtDiagnosticFactory -> {
-                verifyMessageForFactory(factory, property)
+                errors += verifyMessageForFactory(factory, property)
             }
             is KtDiagnosticFactoryForDeprecation<*> -> {
-                verifyMessageForFactory(factory.warningFactory, property)
-                verifyMessageForFactory(factory.errorFactory, property)
+                errors += verifyMessageForFactory(factory.warningFactory, property)
+                errors += verifyMessageForFactory(factory.errorFactory, property)
             }
             else -> {}
         }
+    }
+
+    if (errors.isNotEmpty()) {
+        Assert.fail(errors.joinToString("\n", prefix = "\n"))
     }
 }
 
 private val messageParameterRegex = """\{\d.*?}""".toRegex()
 
-fun KtDiagnosticFactoryToRendererMap.verifyMessageForFactory(factory: AbstractKtDiagnosticFactory, property: KProperty<*>) {
-    Assert.assertTrue("No default diagnostic renderer is provided for ${property.name}", containsKey(factory))
+fun KtDiagnosticFactoryToRendererMap.verifyMessageForFactory(factory: AbstractKtDiagnosticFactory, property: KProperty<*>) = buildList {
+    if (!containsKey(factory)) {
+        add("No default diagnostic renderer is provided for ${property.name}")
+    }
 
     val renderer = get(factory)!!
 
@@ -42,6 +49,16 @@ fun KtDiagnosticFactoryToRendererMap.verifyMessageForFactory(factory: AbstractKt
 
     for (parameter in messageParameterRegex.findAll(renderer.message)) {
         val index = parameter.value.substring(1, 2).toInt()
-        Assert.assertTrue("Message for ${property.name} references wrong parameter {$index}", index < parameterCount)
+        if (index >= parameterCount) {
+            add("Message for ${property.name} references wrong parameter {$index}")
+        }
+    }
+
+    if (parameterCount > 0 && renderer.message.contains("(?<!')'(?!')".toRegex())) {
+        add("Renderer for ${property.name} has parameters and contains single quote. Text inside single quotes is not formatted in MessageFormat. Use double quote instead.")
+    }
+
+    if (parameterCount == 0 && renderer.message.contains("(?<!')''(?!')".toRegex())) {
+        add("Renderer for ${property.name} has no parameters and contains double quote. Single quote should be used.")
     }
 }

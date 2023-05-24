@@ -1064,7 +1064,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
 
         // Modifiers
-        map.put(INAPPLICABLE_INFIX_MODIFIER, "''infix'' modifier is inapplicable to this function")
+        map.put(INAPPLICABLE_INFIX_MODIFIER, "'infix' modifier is inapplicable to this function")
         map.put(REPEATED_MODIFIER, "Repeated ''{0}''", TO_STRING)
         map.put(REDUNDANT_MODIFIER, "Modifier ''{0}'' is redundant because ''{1}'' is present", TO_STRING, TO_STRING)
         map.put(DEPRECATED_MODIFIER, "Modifier ''{0}'' is deprecated, use ''{1}'' instead", TO_STRING, TO_STRING)
@@ -1178,7 +1178,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(ITERATOR_ON_NULLABLE, "Not nullable value required to call an 'iterator()' method on for-loop range")
         map.put(ITERATOR_AMBIGUITY, "Method ''iterator()'' is ambiguous for this expression: {0}", SYMBOLS)
 
-        map.put(NEXT_MISSING, "Method ''next()'' cannot be called on ''iterator()''")
+        map.put(NEXT_MISSING, "Method 'next()' cannot be called on 'iterator()'")
         map.put(NEXT_AMBIGUITY, "Method ''next()'' is ambiguous for this expression: {0}", SYMBOLS)
         map.put(AMBIGUOUS_FUNCTION_TYPE_KIND, "Multiple functional type conversions are not allowed for a single type. Detected type conversions: {0}", FUNCTIONAL_TYPE_KINDS)
         map.put(NEXT_NONE_APPLICABLE, "None of the ''next()'' functions is applicable for ''iterator()'' of type ''{0}''", SYMBOLS)
@@ -1784,7 +1784,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             LATEINIT_FIELD_IN_VAL_PROPERTY,
-            "Only mutable properties can have a mutable backing field. Consider changing ''val'' to ''var''"
+            "Only mutable properties can have a mutable backing field. Consider changing 'val' to 'var'"
         )
         map.put(
             LATEINIT_NULLABLE_BACKING_FIELD,
@@ -2343,15 +2343,15 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             NON_MODIFIER_FORM_FOR_BUILT_IN_SUSPEND,
-            "''suspend'' function can only be called in a form of modifier of a lambda: suspend { ... }"
+            "'suspend' function can only be called in a form of modifier of a lambda: suspend { ... }"
         )
         map.put(
             MODIFIER_FORM_FOR_NON_BUILT_IN_SUSPEND,
-            "Calls having a form of ''suspend {}'' are deprecated because ''suspend'' in the context will have a meaning of a modifier. Surround the lambda with parentheses: ''suspend({ ... })''"
+            "Calls having a form of 'suspend {}' are deprecated because 'suspend' in the context will have a meaning of a modifier. Surround the lambda with parentheses: 'suspend({ ... })'"
         )
         map.put(
             MODIFIER_FORM_FOR_NON_BUILT_IN_SUSPEND_FUN,
-            "Calls having a form of ''suspend fun'' are deprecated because ''suspend'' in the context will have a meaning of a modifier. Surround the argument of the call with parens: ''suspend(fun() { ... })''." +
+            "Calls having a form of 'suspend fun' are deprecated because 'suspend' in the context will have a meaning of a modifier. Surround the argument of the call with parens: 'suspend(fun() { ... })'." +
             " See https://youtrack.jetbrains.com/issue/KT-49264"
         )
         map.put(RETURN_FOR_BUILT_IN_SUSPEND, "Using implicit label for this lambda is prohibited")
