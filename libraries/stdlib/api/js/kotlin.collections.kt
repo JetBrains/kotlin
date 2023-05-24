@@ -10580,6 +10580,42 @@ public interface MutableSet<E> : kotlin.collections.Set<E>, kotlin.collections.M
     public abstract override fun retainAll(elements: kotlin.collections.Collection<E>): kotlin.Boolean
 }
 
+public final class NativeMap<K, V> : kotlin.collections.AbstractMutableMap<K, V>, kotlin.collections.MutableMap<K, V> {
+    public constructor NativeMap<K, V>()
+
+    public constructor NativeMap<K, V>(original: kotlin.collections.Map<out K, V>)
+
+    public open override val entries: kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<K, V>> { get; }
+
+    public open override val keys: kotlin.collections.MutableSet<K> { get; }
+
+    public open override val size: kotlin.Int { get; }
+
+    public open override val values: kotlin.collections.MutableCollection<V> { get; }
+
+    public open override fun clear(): kotlin.Unit
+
+    public open override fun containsKey(key: K): kotlin.Boolean
+
+    public open override operator fun get(key: K): V?
+
+    public open override fun put(key: K, value: V): V?
+
+    public final fun putAll(pairs: kotlin.Array<out kotlin.Pair<K, V>>): kotlin.Unit
+
+    public final fun putAll(pairs: kotlin.collections.Iterable<kotlin.Pair<K, V>>): kotlin.Unit
+
+    public open override fun putAll(from: kotlin.collections.Map<out K, V>): kotlin.Unit
+
+    public final fun putAll(pairs: kotlin.sequences.Sequence<kotlin.Pair<K, V>>): kotlin.Unit
+
+    public final fun putFast(key: K, value: V): kotlin.Unit
+
+    public open override fun remove(key: K): V?
+
+    public final fun removeFast(key: K): kotlin.Unit
+}
+
 public interface RandomAccess {
 }
 
