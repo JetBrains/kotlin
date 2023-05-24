@@ -26,15 +26,15 @@ sealed class TowerGroupKind(val index: Byte) : Comparable<TowerGroupKind> {
         }
     }
 
-    object Start : TowerGroupKind(0b0)
+    data object Start : TowerGroupKind(0b0)
 
-    object Qualifier : TowerGroupKind(1)
+    data object Qualifier : TowerGroupKind(1)
 
-    object Classifier : TowerGroupKind(2)
+    data object Classifier : TowerGroupKind(2)
 
     class TopPrioritized(depth: Int) : WithDepth(3, depth)
 
-    object Member : TowerGroupKind(4)
+    data object Member : TowerGroupKind(4)
 
     class Local(depth: Int) : WithDepth(5, depth)
 
@@ -42,13 +42,13 @@ sealed class TowerGroupKind(val index: Byte) : Comparable<TowerGroupKind> {
 
     class ContextReceiverGroup(depth: Int) : WithDepth(7, depth)
 
-    object InvokeExtension : TowerGroupKind(8)
+    data object InvokeExtension : TowerGroupKind(8)
 
-    object QualifierValue : TowerGroupKind(9)
+    data object QualifierValue : TowerGroupKind(9)
 
     class UnqualifiedEnum(depth: Int) : WithDepth(9, depth)
 
-    object Last : TowerGroupKind(0b1111)
+    data object Last : TowerGroupKind(0b1111)
 
     override fun compareTo(other: TowerGroupKind): Int {
         val indexResult = index.compareTo(other.index)
