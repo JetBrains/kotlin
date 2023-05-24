@@ -7,7 +7,7 @@ FILE: transformReplaceFunctionCall.kt
     }
     public final fun test(): R|kotlin/Unit| {
         lval df: R|org/jetbrains/kotlinx/dataframe/AnyFrame| = R|org/jetbrains/kotlinx/dataframe/api/dataFrameOf|(vararg(String(a))).R|org/jetbrains/kotlinx/dataframe/api/DataFrameBuilder.invoke|(vararg(Int(1)))
-        R|<local>/df|.R|kotlin/let|<R|org/jetbrains/kotlinx/dataframe/DataFrame<*>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Token499>|>(<L> = let@fun <anonymous>(it: R|org/jetbrains/kotlinx/dataframe/DataFrame<*>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Token499>| <inline=Inline, kind=EXACTLY_ONCE>  {
+        (this@R|org/jetbrains/kotlinx/dataframe/test|, R|<local>/df|.R|kotlin/let|<R|org/jetbrains/kotlinx/dataframe/DataFrame<*>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Token499>|>(<L> = let@fun <anonymous>(it: R|org/jetbrains/kotlinx/dataframe/DataFrame<*>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Token499>| <inline=Inline, kind=EXACTLY_ONCE>  {
             local open class _DataFrameType1 : R|kotlin/Any| {
                 public constructor(): R|org/jetbrains/kotlinx/dataframe/_DataFrameType1| {
                     super<R|kotlin/Any|>()
@@ -44,7 +44,7 @@ FILE: transformReplaceFunctionCall.kt
 
             ^ (R|<local>/it| as R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Token499>|)
         }
-        ).R|org/jetbrains/kotlinx/dataframe/api/print|<R|org/jetbrains/kotlinx/dataframe/Token499|>()
+        )).R|<local>/col1|.R|org/jetbrains/kotlinx/dataframe/api/print|<R|kotlin/Int|>()
     }
 FILE: __GENERATED DECLARATIONS__.kt
     package org.jetbrains.kotlinx.dataframe
