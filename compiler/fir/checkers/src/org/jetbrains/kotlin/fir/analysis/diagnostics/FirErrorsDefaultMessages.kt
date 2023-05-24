@@ -673,6 +673,17 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRONG_NUMBER_OF_T
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRONG_SETTER_PARAMETER_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRONG_SETTER_RETURN_TYPE
 
+/**
+ * ## Guidelines for diagnostic messages
+ *
+ * - Sentences and fragments should end with a full stop.
+ * - If a message has parameters, single quotes (') must be escaped by using double single quotes ('').
+ * Otherwise, text inside single quotes will not be formatted (see [java.text.MessageFormat]).
+ * - If a message has no parameters, no double single quotes should be used.
+ * [java.text.MessageFormat] won't be used under the hood, and so the double single quotes will be printed.
+ * - Parameters referring to the user's declarations should be quoted (with two single quotes).
+ * - Use single quotes (') instead of backticks (`) or double quotes (")
+ */
 @Suppress("unused")
 object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
 
