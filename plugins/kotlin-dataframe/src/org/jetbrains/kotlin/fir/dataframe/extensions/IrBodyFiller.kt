@@ -146,7 +146,9 @@ private class DataFrameFileLowering(val context: IrPluginContext) : FileLowering
 
     override fun visitErrorCallExpression(expression: IrErrorCallExpression): IrExpression {
         val origin = (expression.type.classifierOrNull?.owner as? IrClass)?.origin ?: return expression
-        if (!(origin is IrDeclarationOrigin.GeneratedByPlugin && origin.pluginKey == ExpressionAnalyzerReceiverInjector.DataFramePluginKey)) {
+        val fromPlugin = origin is IrDeclarationOrigin.GeneratedByPlugin && origin.pluginKey == ExpressionAnalyzerReceiverInjector.DataFramePluginKey
+        val scopeReference = expression.type.classFqName?.shortName()?.asString()?.startsWith("Scope") ?: false
+        if (!(fromPlugin || scopeReference)) {
             return expression
         }
         val constructor = expression.type.getClass()!!.constructors.toList().single()
