@@ -57,19 +57,9 @@ internal val FrontendPhase = createSimpleNamedCompilerPhase(
         val sourceFiles = input.getSourceFiles()
 
         if (sourceFiles.isNotEmpty()) {
-            if (input.configuration.getBoolean(CommonConfigurationKeys.USE_FIR)) {
-                context.reportCompilationError(
-                        "language version 2.0 doesn't support compiling sources " +
-                                "(${sourceFiles.first().virtualFilePath} in particular) " +
-                                "directly to native binaries " +
-                                "(e.g. a ${context.config.produce.name.toLowerCaseAsciiOnly()}).\n" +
-                                "If you are using the command-line compiler (e.g. konanc or kotlinc-native), then " +
-                                "compile the sources to a klib first with '-p library' compiler flag, " +
-                                "and then use '-Xinclude=<klib>' flag to compile this to a binary.\n" +
-                                "See more details at https://youtrack.jetbrains.com/issue/KT-56855\n" +
-                                "If you are seeing this error message when compiling with Gradle, " +
-                                "please report this here: https://kotl.in/issue"
-                )
+            require (!input.configuration.getBoolean(CommonConfigurationKeys.USE_FIR)) {
+                "For K2 compiler, no source files should have been passed here. " +
+                        "K2Native.doExecute() must transform such compilation into two-stage compilation"
             }
         } else {
             // TODO: we shouldn't be here in this case.
