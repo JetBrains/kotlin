@@ -72,6 +72,9 @@ projectTest(
 projectTest(
     "jdk21Tests",
     jUnitMode = JUnitMode.JUnit5,
+    defineJDKEnvVariables = listOf(
+        JdkMajorVersion.JDK_21_0
+    )
 ) {
     configureTest {
         includeTags("Jdk21Test")
