@@ -1348,6 +1348,7 @@ internal object ControlFlowSensibleEscapeAnalysis {
 
                 return (when (receiverObjects.size) {
                     0 -> { // This will lead to NPE at runtime: treat like a throw operator.
+                        // TODO: this will lead to a segfault actually, so may be just treat this like unreachable code?
                         (data.tryBlock?.let { tryBlocksThrowGraphs[it]!! } ?: returnTargetResults[function.symbol]!!.graphBuilder)
                                 .merge(this)
                         unreachable()
@@ -1400,6 +1401,7 @@ internal object ControlFlowSensibleEscapeAnalysis {
 
                     if (receiverObjects.isEmpty()) {
                         // This will lead to NPE at runtime: treat like a throw operator.
+                        // TODO: this will lead to a segfault actually, so may be just treat this like unreachable code?
                         (data.tryBlock?.let { tryBlocksThrowGraphs[it]!! } ?: returnTargetResults[function.symbol]!!.graphBuilder)
                                 .merge(this)
 
@@ -1408,8 +1410,14 @@ internal object ControlFlowSensibleEscapeAnalysis {
                         receiverObjects.forEach { receiverObject ->
                             val fieldNode = receiverObject.getField(expression.symbol)
                             // TODO: Probably can do for any outer loop as well (not only for the current).
-                            if (receiverObjects.size == 1 && data.loop == receiverObjects[0].loop && data.tryBlock == null)
+                            if (receiverObjects.size == 1 // Otherwise, we don't know which object actually gets its field rewritten.
+                                    // 'intestines' is not a single field but rather all internals of an object,
+                                    // we don't know which actual field gets rewritten.
+                                    && expression.symbol != intestinesField
+                                    && data.loop == receiverObjects[0].loop && data.tryBlock == null
+                            ) {
                                 eraseValue(fieldNode, data.toNodeContext(expression))
+                            }
                             fieldNode.addEdge(valueNode)
                         }
 
@@ -1792,7 +1800,7 @@ internal object ControlFlowSensibleEscapeAnalysis {
                                 // Can reflect directly field value to field value.
                                 null
                             }
-                            actualObjects.isEmpty() -> { // This is going to be NPE at runtime.
+                            actualObjects.isEmpty() -> { // This is going to be a segfault at runtime.
                                 reflectNode(fieldValue, Node.Null)
                                 null
                             }
@@ -1848,10 +1856,14 @@ internal object ControlFlowSensibleEscapeAnalysis {
                                 val objFieldValue = with(state.graph) { obj.getField(field) }
                                 if (fieldPointee != null) { // An actual field rewrite.
                                     // TODO: Probably can do for any outer loop as well (not only for the current).
-                                    if (actualObjects.size == 1 && state.loop == obj.loop && state.tryBlock == null) {
+                                    // Same conditions as for IrSetField (see the comment there).
+                                    if (actualObjects.size == 1
+                                            && field != intestinesField
+                                            && state.loop == obj.loop && state.tryBlock == null
+                                    ) {
                                         state.graph.eraseValue(objFieldValue, state.toNodeContext(callSite), fieldValue.id + 2 * calleeGraph.nodes.size)
                                     } else {
-                                        require(mirroredNode?.outNode != null)
+                                        require(mirroredNode?.outNode != null || field == intestinesField)
                                     }
                                 }
 
@@ -2093,6 +2105,7 @@ internal object ControlFlowSensibleEscapeAnalysis {
             val producerInvocations = mutableMapOf<IrExpression, IrCall>()
             val jobInvocations = mutableMapOf<IrCall, IrCall>()
             val devirtualizedCallSites = mutableMapOf<IrCall, MutableList<IrFunctionSymbol>>()
+            val failedToDevirtualizeCallSites = mutableSetOf<IrCall>()
             for (callSite in callGraphNode.callSites) {
                 val call = callSite.call
                 val irCall = call.irCallSite as? IrCall ?: continue
@@ -2101,9 +2114,17 @@ internal object ControlFlowSensibleEscapeAnalysis {
                 else if (irCall.origin == STATEMENT_ORIGIN_JOB_INVOCATION)
                     jobInvocations[irCall.getValueArgument(0) as IrCall] = irCall
                 if (call !is DataFlowIR.Node.VirtualCall) continue
+                if (callSite.isVirtual)
+                    failedToDevirtualizeCallSites.add(irCall)
                 devirtualizedCallSites.getOrPut(irCall) { mutableListOf() }.add(
                         callSite.actualCallee.irFunction?.symbol ?: error("No IR for ${callSite.actualCallee}")
                 )
+            }
+            // TODO: Remove after testing.
+            failedToDevirtualizeCallSites.forEach {
+                val list = devirtualizedCallSites[it] ?: return@forEach
+                require(list.size == 1)
+                devirtualizedCallSites.remove(it)
             }
 
             val forest = PointsToGraphForest()
