@@ -1,4 +1,4 @@
-// !LANGUAGE: +EnumEntries -PrioritizedEnumEntries
+// !LANGUAGE: +EnumEntries +PrioritizedEnumEntries
 // WITH_STDLIB
 // FIR_DUMP
 
@@ -15,7 +15,7 @@ enum class A {
 }
 
 fun test() {
-    A.entries
+    A.<!DEPRECATED_ACCESS_TO_ENUM_ENTRY_COMPANION_PROPERTY!>entries<!>
 
     with(A) {
         entries

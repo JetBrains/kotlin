@@ -11072,6 +11072,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
                 }
 
                 @Test
+                @TestMetadata("conflictingPropertyEntriesAndReferencePrioritized.kt")
+                public void testConflictingPropertyEntriesAndReferencePrioritized() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/enum/entries/conflictingPropertyEntriesAndReferencePrioritized.kt");
+                }
+
+                @Test
                 @TestMetadata("entriesPropertyAsExtensionClash.kt")
                 public void testEntriesPropertyAsExtensionClash() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/enum/entries/entriesPropertyAsExtensionClash.kt");
@@ -11084,6 +11090,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
                 }
 
                 @Test
+                @TestMetadata("entriesPropertyAsExtensionClashPrioritized.kt")
+                public void testEntriesPropertyAsExtensionClashPrioritized() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/enum/entries/entriesPropertyAsExtensionClashPrioritized.kt");
+                }
+
+                @Test
                 @TestMetadata("entriesPropertyImportedClash.kt")
                 public void testEntriesPropertyImportedClash() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/enum/entries/entriesPropertyImportedClash.kt");
@@ -11093,6 +11105,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
                 @TestMetadata("entriesPropertyImportedClashOn.kt")
                 public void testEntriesPropertyImportedClashOn() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/enum/entries/entriesPropertyImportedClashOn.kt");
+                }
+
+                @Test
+                @TestMetadata("entriesPropertyImportedClashPrioritized.kt")
+                public void testEntriesPropertyImportedClashPrioritized() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/enum/entries/entriesPropertyImportedClashPrioritized.kt");
                 }
 
                 @Test
@@ -11117,6 +11135,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
                 @TestMetadata("entriesPropertyWithJvmStaticClashOn.kt")
                 public void testEntriesPropertyWithJvmStaticClashOn() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/enum/entries/entriesPropertyWithJvmStaticClashOn.kt");
+                }
+
+                @Test
+                @TestMetadata("entriesPropertyWithJvmStaticClashPrioritized.kt")
+                public void testEntriesPropertyWithJvmStaticClashPrioritized() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/enum/entries/entriesPropertyWithJvmStaticClashPrioritized.kt");
                 }
 
                 @Test
@@ -11165,6 +11189,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
                 @TestMetadata("nameShadowingOfExternallyDefinedEntriesOn.kt")
                 public void testNameShadowingOfExternallyDefinedEntriesOn() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/enum/entries/nameShadowingOfExternallyDefinedEntriesOn.kt");
+                }
+
+                @Test
+                @TestMetadata("nameShadowingOfExternallyDefinedEntriesPrioritized.kt")
+                public void testNameShadowingOfExternallyDefinedEntriesPrioritized() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/enum/entries/nameShadowingOfExternallyDefinedEntriesPrioritized.kt");
                 }
 
                 @Test

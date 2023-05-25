@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls
 
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
@@ -95,7 +96,9 @@ class CandidateFactory private constructor(
             // Flag all property references that are resolved from an convention operator call.
             result.addDiagnostic(PropertyAsOperator)
         }
-        if (symbol is FirPropertySymbol) {
+        if (symbol is FirPropertySymbol &&
+            !context.session.languageVersionSettings.supportsFeature(LanguageFeature.PrioritizedEnumEntries)
+        ) {
             val containingClass = symbol.containingClassLookupTag()?.toFirRegularClass(context.session)
             if (containingClass != null && symbol.fir.isEnumEntries(containingClass)) {
                 result.addDiagnostic(LowerPriorityToPreserveCompatibilityDiagnostic)

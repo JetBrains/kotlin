@@ -1,0 +1,44 @@
+FILE: entriesPropertyAsExtensionClashPrioritized.fir.kt
+    package pckg
+
+    public final enum class A : R|kotlin/Enum<pckg/A>| {
+        private constructor(): R|pckg/A| {
+            super<R|kotlin/Enum<pckg/A>|>()
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|pckg/A.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        public final static fun values(): R|kotlin/Array<pckg/A>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|pckg/A| {
+        }
+
+        public final static val entries: R|kotlin/enums/EnumEntries<pckg/A>|
+            public get(): R|kotlin/enums/EnumEntries<pckg/A>|
+
+    }
+    public final val R|pckg/A.Companion|.entries: R|kotlin/Int|
+        public get(): R|kotlin/Int| {
+            ^ Int(0)
+        }
+    public final fun test(): R|kotlin/Unit| {
+        Q|pckg/A|.R|pckg/A.entries*s|
+        Q|pckg/A.Companion|.R|pckg/entries|
+        R|kotlin/with|<R|pckg/A.Companion|, R|kotlin/Int|>(Q|pckg/A|, <L> = with@fun R|pckg/A.Companion|.<anonymous>(): R|kotlin/Int| <inline=Inline, kind=EXACTLY_ONCE>  {
+            this@R|special/anonymous|.R|pckg/entries|
+            ^ this@R|special/anonymous|.R|pckg/entries|
+        }
+        )
+        R|kotlin/with|<R|pckg/A.Companion|, R|kotlin/Int|>(Q|pckg/A.Companion|, <L> = with@fun R|pckg/A.Companion|.<anonymous>(): R|kotlin/Int| <inline=Inline, kind=EXACTLY_ONCE>  {
+            ^ this@R|special/anonymous|.R|pckg/entries|
+        }
+        )
+        lval aCompanion: R|pckg/A.Companion| = Q|pckg/A.Companion|
+        R|<local>/aCompanion|.R|pckg/entries|
+    }
