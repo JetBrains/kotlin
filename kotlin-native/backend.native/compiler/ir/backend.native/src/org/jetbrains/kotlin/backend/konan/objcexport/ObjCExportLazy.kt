@@ -182,7 +182,11 @@ internal class ObjCExportLazyImpl(
             if ((it is KtFunction || it is KtProperty) && it.isPublic && !it.hasExpectModifier()) {
                 val classDescriptor = getClassIfExtension(it)
                 if (classDescriptor != null) {
-                    extensions.getOrPut(classDescriptor, { mutableListOf() }) += it
+                    // If a class is hidden from Objective-C API then it is meaningless
+                    // to export its extensions.
+                    if (!classDescriptor.isHiddenFromObjC()) {
+                        extensions.getOrPut(classDescriptor, { mutableListOf() }) += it
+                    }
                 } else {
                     topLevel += it
                 }

@@ -11,6 +11,15 @@ import kotlin.experimental.ExperimentalObjCRefinement
 @HiddenFromObjC
 data class ClassNotAvailableInSwift(val param: String)
 
+// KT-58839
+fun ClassNotAvailableInSwift.doSomethingMeaningless(another: ClassNotAvailableInSwift): ClassNotAvailableInSwift {
+    return ClassNotAvailableInSwift(this.param + another.param)
+}
+
+fun String.doSomethingMeaningless(another: ClassNotAvailableInSwift): ClassNotAvailableInSwift {
+    return ClassNotAvailableInSwift(this + another.param)
+}
+
 // Check that inner and nested classes are hidden if enclosing class is hidden
 @OptIn(ExperimentalObjCRefinement::class)
 @HiddenFromObjC
