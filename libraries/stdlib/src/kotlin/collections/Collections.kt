@@ -350,8 +350,6 @@ public fun <T : Comparable<T>> List<T?>.binarySearch(element: T?, fromIndex: Int
  *
  * If the list contains multiple elements equal to the specified [element], there is no guarantee which one will be found.
  *
- * `null` value is considered to be less than any non-null value.
- *
  * @return the index of the element, if it is contained in the list within the specified range;
  * otherwise, the inverted insertion point `(-insertion point - 1)`.
  * The insertion point is defined as the index at which the element should be inserted,
