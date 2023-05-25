@@ -27,50 +27,38 @@ abstract class AbstractIrTypeSubstitutor(private val irBuiltIns: IrBuiltIns) : T
 
     fun substitute(type: IrType): IrType {
         if (isEmptySubstitution()) return type
-
-        return type.typeParameterConstructor()?.let {
-            when (val typeArgument = getSubstitutionArgument(it)) {
-                is IrStarProjection -> irBuiltIns.anyNType // TODO upper bound for T
-                is IrTypeProjection -> typeArgument.type.run { if (type.isMarkedNullable()) makeNullable() else this }
-            }
-        } ?: substituteType(type)
+        return substituteType(type)
     }
 
     private fun substituteType(irType: IrType): IrType {
+        val substitutedTypeParameter = irType.typeParameterConstructor()?.let {
+            when (val typeArgument = getSubstitutionArgument(it)) {
+                is IrStarProjection -> irBuiltIns.anyNType // TODO upper bound for T
+                is IrTypeProjection -> typeArgument.type.mergeNullability(irType)
+            }
+        }
+        if (substitutedTypeParameter != null) {
+            return substitutedTypeParameter
+        }
+
         return when (irType) {
-            is IrSimpleType ->
-                with(irType.toBuilder()) {
-                    arguments = irType.arguments.memoryOptimizedMap { substituteTypeArgument(it) }
-                    buildSimpleType()
-                }
+            is IrSimpleType -> with(irType.toBuilder()) {
+                arguments = irType.arguments.memoryOptimizedMap { substituteTypeArgument(it) }
+                buildSimpleType()
+            }
             is IrDynamicType,
-            is IrErrorType ->
-                irType
-            else ->
-                throw AssertionError("Unexpected type: $irType")
+            is IrErrorType -> irType
+            else -> error("Unexpected type: $irType")
         }
     }
 
     private fun substituteTypeArgument(typeArgument: IrTypeArgument): IrTypeArgument {
-        when (typeArgument) {
-            is IrStarProjection -> return typeArgument
-            is IrTypeProjection -> {
-                val type = typeArgument.type
-                if (type is IrSimpleType) {
-                    val classifier = type.classifier
-                    if (classifier is IrTypeParameterSymbol) {
-                        val newArgument = getSubstitutionArgument(classifier)
-                        return if (newArgument is IrTypeProjection) {
-                            makeTypeProjection(newArgument.type, typeArgument.variance)
-                        } else newArgument
-                    }
-                }
-                return makeTypeProjection(substituteType(typeArgument.type), typeArgument.variance)
-            }
+        return when (typeArgument) {
+            is IrStarProjection -> typeArgument
+            is IrTypeProjection -> makeTypeProjection(substituteType(typeArgument.type), typeArgument.variance)
         }
     }
 }
-
 
 class IrTypeSubstitutor(
     typeParameters: List<IrTypeParameterSymbol>,
