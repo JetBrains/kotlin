@@ -73,7 +73,6 @@ dependencies {
     commonImplementation(project(":kotlin-gradle-plugin-idea-proto"))
     commonImplementation(project(":kotlin-util-klib"))
     commonImplementation(project(":native:kotlin-klib-commonizer-api"))
-    commonImplementation(project(":kotlin-project-model"))
     commonImplementation(project(":compiler:build-tools:kotlin-build-tools-api"))
 
     commonRuntimeOnly(project(":kotlin-compiler-embeddable"))
