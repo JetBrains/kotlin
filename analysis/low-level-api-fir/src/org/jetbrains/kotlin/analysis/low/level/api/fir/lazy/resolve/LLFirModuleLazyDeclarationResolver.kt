@@ -12,8 +12,10 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveT
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirSingleResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.InvalidSessionException
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.llFirModuleData
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLFirLazyResolverRunner
+import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.USE_STATE_KEEPER
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.withOnAirDesignation
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkCanceled
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.getContainingFile
@@ -205,7 +207,7 @@ private fun handleExceptionFromResolve(
     }
 
     val session = firDeclarationToResolve.llFirSession
-    session.invalidate()
+    invalidateFailedSessionIfNeeded(session)
 
     val moduleData = firDeclarationToResolve.llFirModuleData
     val module = moduleData.ktModule
@@ -240,7 +242,7 @@ private fun handleExceptionFromResolve(
     }
 
     val session = designation.firFile.llFirSession
-    session.invalidate()
+    invalidateFailedSessionIfNeeded(session)
 
     val moduleData = session.llFirModuleData
     val module = moduleData.ktModule
@@ -259,5 +261,11 @@ private fun handleExceptionFromResolve(
         withEntry("session", session) { it.toString() }
         withEntry("moduleData", moduleData) { it.toString() }
         withEntry("firDesignationToResolve", designation) { it.toString() }
+    }
+}
+
+private fun invalidateFailedSessionIfNeeded(session: LLFirSession) {
+    if (!USE_STATE_KEEPER) {
+        session.invalidate()
     }
 }

@@ -7,17 +7,18 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyBodiesCalculator.calculateAnnotations
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.LLFirPhaseUpdater
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkAnnotationArgumentsMappingIsResolved
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkPhase
-import org.jetbrains.kotlin.fir.FirAnnotationContainer
-import org.jetbrains.kotlin.fir.FirElementWithResolveState
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirTowerDataContextCollector
 import org.jetbrains.kotlin.fir.resolve.transformers.plugin.FirAnnotationArgumentsMappingTransformer
+import org.jetbrains.kotlin.fir.types.FirTypeProjection
 
 internal object LLFirAnnotationArgumentMappingLazyResolver : LLFirLazyResolver(FirResolvePhase.ANNOTATIONS_ARGUMENTS_MAPPING) {
     override fun resolve(
@@ -66,6 +67,22 @@ private class LLFirAnnotationArgumentsMappingTargetResolver(
     )
 
     override fun doLazyResolveUnderLock(target: FirElementWithResolveState) {
-        transformAnnotations(target)
+        resolveWithKeeper(target, AnnotationArgumentMappingStateKeepers.DECLARATION, ::calculateAnnotations) {
+            transformAnnotations(target)
+        }
     }
 }
+
+private object AnnotationArgumentMappingStateKeepers : AbstractAnnotationStateKeepers() {
+    override val ANNOTATION: StateKeeper<FirAnnotation> = stateKeeper {
+        add(ANNOTATION_BASE)
+        add(FirAnnotation::argumentMapping, FirAnnotation::replaceArgumentMapping)
+        add(FirAnnotation::typeArgumentsCopied, FirAnnotation::replaceTypeArguments)
+    }
+
+    val DECLARATION: StateKeeper<FirElementWithResolveState>
+        get() = DECLARATION_BASE
+}
+
+private val FirAnnotation.typeArgumentsCopied: List<FirTypeProjection>
+    get() = ArrayList(typeArguments)

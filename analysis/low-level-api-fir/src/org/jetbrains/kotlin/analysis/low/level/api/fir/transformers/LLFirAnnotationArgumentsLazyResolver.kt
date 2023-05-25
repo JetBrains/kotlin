@@ -8,21 +8,23 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.throwUnexpectedFirElementError
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
-import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyBodiesCalculator
+import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyBodiesCalculator.calculateAnnotations
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.LLFirPhaseUpdater
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkPhase
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkTypeRefIsResolved
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.expressionGuard
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withFirEntry
-import org.jetbrains.kotlin.fir.FirAnnotationContainer
-import org.jetbrains.kotlin.fir.FirElementWithResolveState
-import org.jetbrains.kotlin.fir.FirFileAnnotationsContainer
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.builder.buildArgumentList
+import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirTowerDataContextCollector
 import org.jetbrains.kotlin.fir.resolve.transformers.plugin.FirAnnotationArgumentsResolveTransformer
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
+import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 
 internal object LLFirAnnotationArgumentsLazyResolver : LLFirLazyResolver(FirResolvePhase.ARGUMENTS_OF_ANNOTATIONS) {
@@ -82,8 +84,9 @@ private class LLFirAnnotationArgumentsTargetResolver(
     )
 
     override fun doLazyResolveUnderLock(target: FirElementWithResolveState) {
-        FirLazyBodiesCalculator.calculateAnnotations(target)
-        transformAnnotations(target)
+        resolveWithKeeper(target, AnnotationArgumentsStateKeepers.DECLARATION, ::calculateAnnotations) {
+            transformAnnotations(target)
+        }
     }
 }
 
@@ -114,3 +117,67 @@ internal val FirElementWithResolveState.isRegularDeclarationWithAnnotation: Bool
         -> true
         else -> false
     }
+
+@Suppress("PropertyName", "PrivatePropertyName")
+internal abstract class AbstractAnnotationStateKeepers {
+    protected abstract val ANNOTATION: StateKeeper<FirAnnotation>
+
+    protected val ANNOTATION_BASE: StateKeeper<FirAnnotation> = stateKeeper { annotation ->
+        add(FirAnnotation::typeRef, FirAnnotation::replaceTypeRef)
+        add(FirAnnotation::annotationTypeRef, FirAnnotation::replaceAnnotationTypeRef)
+
+        if (annotation is FirAnnotationCall) {
+            entity(annotation, ANNOTATION_CALL)
+        }
+    }
+
+    private val ANNOTATION_CALL: StateKeeper<FirAnnotationCall> = stateKeeper { annotationCall ->
+        add(FirAnnotationCall::calleeReference, FirAnnotationCall::replaceCalleeReference)
+        add(FirAnnotationCall::annotationResolvePhase, FirAnnotationCall::replaceAnnotationResolvePhase)
+
+        val argumentList = annotationCall.argumentList
+        if (argumentList !is FirResolvedArgumentList && argumentList !is FirEmptyArgumentList) {
+            add(FirAnnotationCall::argumentList, FirAnnotationCall::replaceArgumentList) { oldList ->
+                buildArgumentList {
+                    source = oldList.source
+                    for (argument in oldList.arguments) {
+                        arguments.add(expressionGuard(argument))
+                    }
+                }
+            }
+        }
+    }
+
+    protected open val DECLARATION_BASE: StateKeeper<FirElementWithResolveState> = stateKeeper { target ->
+        val visitor = object : FirVisitorVoid() {
+            override fun visitDeclaration(declaration: FirDeclaration) {
+                if (declaration === target) {
+                    // Avoid nested declarations
+                    super.visitDeclaration(declaration)
+                }
+            }
+
+            override fun visitElement(element: FirElement) {
+                element.acceptChildren(this)
+            }
+
+            override fun visitAnnotation(annotation: FirAnnotation) {
+                entity(annotation, ANNOTATION)
+                super.visitAnnotation(annotation)
+            }
+
+            override fun visitStatement(statement: FirStatement) {}
+            override fun visitExpression(expression: FirExpression) {}
+        }
+
+        target.accept(visitor)
+    }
+}
+
+private object AnnotationArgumentsStateKeepers : AbstractAnnotationStateKeepers() {
+    override val ANNOTATION: StateKeeper<FirAnnotation>
+        get() = ANNOTATION_BASE
+
+    val DECLARATION: StateKeeper<FirElementWithResolveState>
+        get() = DECLARATION_BASE
+}

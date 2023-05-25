@@ -11,14 +11,14 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.LLFirRetu
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyBodiesCalculator
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
-import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformerDispatcher
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirTowerDataContextCollector
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.ImplicitBodyResolveComputationSession
+import org.jetbrains.kotlin.fir.visitors.transformSingle
 
 internal abstract class LLFirAbstractBodyTargetResolver(
     resolveTarget: LLFirResolveTarget,
@@ -64,5 +64,15 @@ internal abstract class LLFirAbstractBodyTargetResolver(
     protected fun calculateLazyBodies(declaration: FirElementWithResolveState) {
         val firDesignation = FirDesignationWithFile(nestedClassesStack, declaration, resolveTarget.firFile)
         FirLazyBodiesCalculator.calculateBodies(firDesignation)
+    }
+
+    protected fun <T : FirElementWithResolveState> resolve(target: T, keeper: StateKeeper<T>) {
+        resolveWithKeeper(target, keeper, ::calculateLazyBodies) {
+            rawResolve(target)
+        }
+    }
+
+    protected open fun rawResolve(target: FirElementWithResolveState) {
+        target.transformSingle(transformer, ResolutionMode.ContextIndependent)
     }
 }
