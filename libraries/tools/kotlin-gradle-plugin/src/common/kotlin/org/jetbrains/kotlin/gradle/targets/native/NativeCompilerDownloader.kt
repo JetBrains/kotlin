@@ -103,9 +103,12 @@ class NativeCompilerDownloader(
     }
 
     private val repoUrl by lazy {
+        val versionPattern = "(\\d+)\\.(\\d+)(?:\\.(\\d+))?(?:-(\\p{Alpha}*\\p{Alnum}|[\\p{Alpha}-]*))?(?:-(\\d+))?".toRegex()
+        val (_, _, _, buildType, _) = versionPattern.matchEntire(compilerVersion)?.destructured
+            ?: error("Unable to parse version $compilerVersion")
         buildString {
             append("${kotlinProperties.nativeBaseDownloadUrl}/")
-            append(if (compilerVersion.contains("-dev-")) "dev/" else "releases/")
+            append(if (buildType in listOf("RC", "RC2", "Beta") || buildType.isEmpty()) "releases/" else "dev/")
             append("$compilerVersion/")
             append(simpleOsName)
         }
