@@ -16,10 +16,10 @@
 
 package org.jetbrains.kotlin.compilerRunner
 
-import groovy.json.StringEscapeUtils
+import org.gradle.internal.impldep.org.apache.commons.lang.StringEscapeUtils
 import org.jetbrains.kotlin.cli.common.ExitCode
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
@@ -34,11 +34,14 @@ import org.jetbrains.org.objectweb.asm.ClassVisitor
 import org.jetbrains.org.objectweb.asm.FieldVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
 import java.io.File
+import java.io.StringWriter
 import java.nio.file.Files
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.util.*
 import java.util.zip.ZipFile
 import kotlin.concurrent.thread
+
 
 internal fun loadCompilerVersion(compilerClasspath: Iterable<File>): String {
     var result: String? = null
@@ -94,7 +97,7 @@ internal fun runToolInSeparateProcess(
     classpath: Iterable<File>,
     logger: KotlinLogger,
     buildDir: File,
-    jvmArgs: List<String> = emptyList()
+    jvmArgs: List<String> = emptyList(),
 ): ExitCode {
     val javaBin = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java"
     val classpathString = classpath.joinToString(separator = File.pathSeparator) { it.absolutePath }
@@ -143,8 +146,58 @@ private fun writeArgumentsToFile(directory: File, argsArray: Array<String>): Fil
         Files.createTempFile(directory.toPath(), prefix, suffix).toFile()
     else
         Files.createTempFile(prefix, suffix).toFile()
-    compilerOptions.writeText(argsArray.joinToString(" ") { "\"${StringEscapeUtils.escapeJava(it)}\"" })
+    compilerOptions.writeText(
+        argsArray.joinToString(" ") {
+            "\"${it.escapeJavaStyleString()}\""
+        }
+    )
     return compilerOptions
+}
+
+// Ported method from Groovy:
+// https://github.com/apache/groovy/blob/73c0f12ab35427bc3e7fd76929b482df61e1b80d/subprojects/groovy-json/src/main/java/groovy/json/StringEscapeUtils.java#L175
+// Note: using '/f' char produces a compilation error, so removed it
+internal fun String.escapeJavaStyleString(
+    escapeSingleQuote: Boolean = false,
+    escapeForwardSlash: Boolean = false,
+): String {
+    return buildString {
+        this@escapeJavaStyleString.forEach { ch ->
+            when {
+                ch.toInt() > 0xfff -> append("\\u${ch.hex()}")
+                ch.toInt() > 0xff -> append("\\u0${ch.hex()}")
+                ch.toInt() >= 0x7f -> append("\\u00${ch.hex()}")
+                ch < 32.toChar() -> when (ch) {
+                    '\b' -> append('\\').append('b')
+                    '\n' -> append('\\').append('n')
+                    '\t' -> append('\\').append('t')
+                    '\r' -> append('\\').append('r')
+                    else -> if (ch > 0xf.toChar()) {
+                        append("\\u00${ch.hex()}")
+                    } else {
+                        append("\\u000${ch.hex()}")
+                    }
+                }
+                else -> when (ch) {
+                    '\'' -> {
+                        if (escapeSingleQuote) append('\\')
+                        append('\'')
+                    }
+                    '"' -> append('\\').append('"')
+                    '\\' -> append('\\').append('\\')
+                    '/' -> {
+                        if (escapeForwardSlash) append('\\')
+                        append('/')
+                    }
+                    else -> append(ch)
+                }
+            }
+        }
+    }
+}
+
+private fun Char.hex(): String {
+    return Integer.toHexString(toInt()).toUpperCase(Locale.ENGLISH)
 }
 
 private fun createLoggingMessageCollector(log: KotlinLogger): MessageCollector = object : MessageCollector {
@@ -164,7 +217,7 @@ private fun createLoggingMessageCollector(log: KotlinLogger): MessageCollector =
             CompilerMessageSeverity.ERROR,
             CompilerMessageSeverity.STRONG_WARNING,
             CompilerMessageSeverity.WARNING,
-            CompilerMessageSeverity.INFO
+            CompilerMessageSeverity.INFO,
             -> log.info(locMessage)
             CompilerMessageSeverity.LOGGING -> log.debug(locMessage)
             CompilerMessageSeverity.OUTPUT -> {
