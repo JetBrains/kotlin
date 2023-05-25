@@ -166,6 +166,128 @@ class ConcurrentModificationTest {
             }
         }
     }
+
+    @Test
+    fun mutableSet() {
+        if (TestPlatform.current == TestPlatform.Js) return
+
+        val operations = listOf<CollectionOperation<MutableSet<String>>>(
+            CollectionOperation("add(non-existing)") { add("e") },
+            CollectionOperation("add(existing)", throwsCME = false) { add("d") },
+
+            CollectionOperation("remove(non-existing)", throwsCME = false) { remove("e") },
+            CollectionOperation("remove(existing)") { remove("d") },
+
+            CollectionOperation("addAll(emptyList())", throwsCME = false) { addAll(emptyList()) },
+            CollectionOperation("addAll(existing)", throwsCME = false) { addAll(listOf("d", "b")) },
+            CollectionOperation("addAll(some exist)") { addAll(listOf("d", "e")) },
+            CollectionOperation("addAll(non-existing)") { addAll(listOf("e", "f")) },
+
+            CollectionOperation("removeAll(non-existing)", throwsCME = false) { removeAll(listOf("e", "f")) },
+            CollectionOperation("removeAll(some exist") { removeAll(listOf("d", "e")) },
+            CollectionOperation("removeAll(emptyList())", throwsCME = false) { removeAll(emptyList()) },
+
+            CollectionOperation("retainAll(this.toMutableSet())", throwsCME = false) { retainAll(this.toMutableSet()) },
+            CollectionOperation("retainAll(non-existing)") { retainAll(listOf("e", "f")) },
+            CollectionOperation("retainAll(some exist)") { retainAll(listOf("d", "e")) },
+            CollectionOperation("retainAll(emptyList())") { retainAll(emptyList()) },
+
+            CollectionOperation("clear()") { clear() },
+            CollectionOperation("iterator.remove()") { iterator().apply { next(); remove() } },
+        )
+
+        fun testThrowsCME(withMutableSet: WithCollection<MutableSet<String>>) {
+            for (setOp in operations) {
+                for (iteratorOp in iteratorOperations<String>()) {
+                    testThrowsCME(withMutableSet, { iterator() }, setOp, iteratorOp)
+                }
+            }
+        }
+
+        // Because platform implementations may have different load factor and rehash strategy,
+        // make sure there is enough capacity to avoid rehash.
+
+        val elements = listOf("a", "b", "c", "d")
+
+        testThrowsCME { action ->
+            LinkedHashSet<String>(10).apply {
+                addAll(elements)
+                action(this)
+            }
+        }
+        testThrowsCME { action ->
+            HashSet<String>(10).apply {
+                addAll(elements)
+                action(this)
+            }
+        }
+
+        testThrowsCME { action ->
+            buildSet(10) {
+                addAll(elements)
+                action(this)
+            }
+        }
+    }
+
+    @Test
+    fun mutableMap() {
+        if (TestPlatform.current == TestPlatform.Js) return
+
+        val operations = listOf<CollectionOperation<MutableMap<String, String>>>(
+            CollectionOperation("put(non-existing)") { put("e", "e") },
+            CollectionOperation("put(existing)", throwsCME = false) { put("d", "d") },
+            CollectionOperation("put(update value)", throwsCME = false) { put("d", "D") },
+
+            CollectionOperation("remove(non-existing)", throwsCME = false) { remove("e") },
+            CollectionOperation("remove(existing)") { remove("d") },
+
+            CollectionOperation("putAll(emptyList())", throwsCME = false) { putAll(emptyMap()) },
+            CollectionOperation("putAll(existing)", throwsCME = false) { putAll(mapOf("d" to "d", "b" to "b")) },
+            CollectionOperation("putAll(update values)", throwsCME = false) { putAll(mapOf("d" to "D", "b" to "B")) },
+            CollectionOperation("putAll(some exist)") { putAll(mapOf("d" to "d", "e" to "e")) },
+            CollectionOperation("putAll(non-existing)") { putAll(mapOf("e" to "e", "f" to "f")) },
+
+            CollectionOperation("clear()") { clear() },
+            CollectionOperation("iterator.remove()") { iterator().apply { next(); remove() } },
+        )
+
+        fun testThrowsCME(withMutableMap: WithCollection<MutableMap<String, String>>) {
+            for (mapOp in operations) {
+                for (iteratorOp in iteratorOperations<String>()) {
+                    testThrowsCME(withMutableMap, { keys.iterator() }, mapOp, iteratorOp)
+                    testThrowsCME(withMutableMap, { values.iterator() }, mapOp, iteratorOp)
+                }
+                for (iteratorOp in iteratorOperations<MutableMap.MutableEntry<String, String>>()) {
+                    testThrowsCME(withMutableMap, { entries.iterator() }, mapOp, iteratorOp)
+                }
+            }
+        }
+
+        // Because platform implementations may have different load factor and rehash strategy,
+        // make sure there is enough capacity to avoid rehash.
+
+        val entries = mapOf("a" to "a", "b" to "b", "c" to "c", "d" to "d")
+
+        testThrowsCME { action ->
+            LinkedHashMap<String, String>(10).apply {
+                putAll(entries)
+                action(this)
+            }
+        }
+        testThrowsCME { action ->
+            HashMap<String, String>(10).apply {
+                putAll(entries)
+                action(this)
+            }
+        }
+        testThrowsCME { action ->
+            buildMap(10) {
+                putAll(entries)
+                action(this)
+            }
+        }
+    }
 }
 
 private typealias WithCollection<C> = (action: (C) -> Unit) -> Unit
