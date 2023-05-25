@@ -346,9 +346,6 @@ private class InvokeReceiverResolveTask(
     collector,
     candidateFactory,
 ) {
-    override fun interceptTowerGroup(towerGroup: TowerGroup): TowerGroup =
-        towerGroup.InvokeResolvePriority(InvokeResolvePriority.INVOKE_RECEIVER)
-
     override fun onSuccessfulLevel(towerGroup: TowerGroup) {
         this.onSuccessfulLevel.invoke(towerGroup)
     }
@@ -369,11 +366,8 @@ private class InvokeFunctionResolveTask(
     candidateFactory,
 ) {
 
-    override fun interceptTowerGroup(towerGroup: TowerGroup): TowerGroup {
-        val invokeGroup = towerGroup.InvokeResolvePriority(InvokeResolvePriority.COMMON_INVOKE)
-        val max = maxOf(invokeGroup, receiverGroup)
-        return max.InvokeReceiver(receiverGroup)
-    }
+    private fun TowerGroup.withGivenInvokeReceiverGroup(invokeResolvePriority: InvokeResolvePriority): TowerGroup =
+        InvokeReceiver(receiverGroup, invokeResolvePriority)
 
     suspend fun runResolverForInvoke(
         info: CallInfo,
@@ -418,7 +412,7 @@ private class InvokeFunctionResolveTask(
     ) {
         processLevel(
             invokeReceiverValue.toMemberScopeTowerLevel(),
-            info, TowerGroup.Member.InvokeResolvePriority(InvokeResolvePriority.INVOKE_EXTENSION),
+            info, TowerGroup.Member.withGivenInvokeReceiverGroup(InvokeResolvePriority.INVOKE_EXTENSION),
             ExplicitReceiverKind.DISPATCH_RECEIVER
         )
     }
@@ -434,8 +428,8 @@ private class InvokeFunctionResolveTask(
             val towerGroup =
                 TowerGroup
                     .Implicit(depth)
-                    .InvokeExtension
-                    .InvokeResolvePriority(InvokeResolvePriority.INVOKE_EXTENSION)
+                    .InvokeExtensionWithImplicitReceiver
+                    .withGivenInvokeReceiverGroup(InvokeResolvePriority.INVOKE_EXTENSION)
 
             processLevel(
                 invokeReceiverValue.toMemberScopeTowerLevel(),
@@ -453,7 +447,7 @@ private class InvokeFunctionResolveTask(
         explicitReceiverKind: ExplicitReceiverKind
     ) = processLevel(
         towerLevel, callInfo,
-        group.InvokeResolvePriority(InvokeResolvePriority.COMMON_INVOKE),
+        group.withGivenInvokeReceiverGroup(InvokeResolvePriority.COMMON_INVOKE),
         explicitReceiverKind
     )
 }

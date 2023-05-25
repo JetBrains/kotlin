@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.calls.tower
 
 import java.lang.Long.toBinaryString
+import java.lang.Long.compareUnsigned
 
 sealed class TowerGroupKind(val index: Byte) : Comparable<TowerGroupKind> {
     abstract class WithDepth(index: Byte, val depth: Int) : TowerGroupKind(index) {
@@ -42,7 +43,7 @@ sealed class TowerGroupKind(val index: Byte) : Comparable<TowerGroupKind> {
 
     class ContextReceiverGroup(depth: Int) : WithDepth(7, depth)
 
-    data object InvokeExtension : TowerGroupKind(8)
+    data object InvokeExtensionWithImplicitReceiver : TowerGroupKind(8)
 
     data object QualifierValue : TowerGroupKind(9)
 
@@ -145,6 +146,23 @@ private constructor(
             }
         }
 
+        private fun compareDebugKinds(aDebugKinds: Array<TowerGroupKind>, bDebugKinds: Array<TowerGroupKind>): Int {
+            var index = 0
+            while (index < aDebugKinds.size) {
+                if (index >= bDebugKinds.size) return 1
+                when {
+                    aDebugKinds[index] < bDebugKinds[index] -> return -1
+                    aDebugKinds[index] > bDebugKinds[index] -> return 1
+                }
+                index++
+            }
+            if (index < bDebugKinds.size) return -1
+
+            return 0
+        }
+
+        val DEBUG_KINDS_COMPARATOR: Comparator<Array<TowerGroupKind>> = Comparator(::compareDebugKinds)
+
         private fun kindOf(kind: TowerGroupKind): TowerGroup {
             return TowerGroup(subscript(0, kind), debugKindArrayOf(kind))
         }
@@ -186,11 +204,24 @@ private constructor(
 
     fun ContextReceiverGroup(depth: Int) = kindOf(TowerGroupKind.ContextReceiverGroup(depth))
 
-    val InvokeExtension get() = kindOf(TowerGroupKind.InvokeExtension)
+    val InvokeExtensionWithImplicitReceiver get() = kindOf(TowerGroupKind.InvokeExtensionWithImplicitReceiver)
 
     fun TopPrioritized(depth: Int) = kindOf(TowerGroupKind.TopPrioritized(depth))
 
-    fun InvokeReceiver(receiverGroup: TowerGroup) = TowerGroup(code, debugKinds, invokeResolvePriority, receiverGroup)
+    fun InvokeReceiver(
+        receiverGroup: TowerGroup,
+        invokeResolvePriority: InvokeResolvePriority
+    ): TowerGroup {
+        require(invokeResolvePriority != InvokeResolvePriority.NONE) {
+            "invokeResolvePriority should be non-trivial when receiverGroup is specified"
+        }
+
+        require(receiverGroup.receiverGroup == null) {
+            "receiverGroup should be trivial, but ${receiverGroup.receiverGroup} was found"
+        }
+
+        return TowerGroup(code, debugKinds, invokeResolvePriority, receiverGroup)
+    }
 
     // Treating `a.foo()` common calls as more prioritized than `a.foo.invoke()`
     // It's not the same as TowerGroupKind because it's not about tower levels, but rather a different dimension semantically.
@@ -201,38 +232,55 @@ private constructor(
     }
 
     private fun debugCompareTo(other: TowerGroup): Int {
-        var index = 0
-        while (index < debugKinds.size) {
-            if (index >= other.debugKinds.size) return 1
-            when {
-                debugKinds[index] < other.debugKinds[index] -> return -1
-                debugKinds[index] > other.debugKinds[index] -> return 1
-            }
-            index++
-        }
-        if (index < other.debugKinds.size) return -1
+        val receiverDebugKinds = receiverGroup?.debugKinds ?: emptyArray()
+        val otherReceiverDebugKinds = other.receiverGroup?.debugKinds ?: emptyArray()
 
-        val actualResult = invokeResolvePriority.compareTo(other.invokeResolvePriority)
-        if (actualResult == 0) {
-            return if (receiverGroup == null || other.receiverGroup == null) 0
-            else receiverGroup.debugCompareTo(other.receiverGroup)
+        val thisMax = maxOf(debugKinds, receiverDebugKinds, DEBUG_KINDS_COMPARATOR)
+        val otherMax = maxOf(other.debugKinds, otherReceiverDebugKinds, DEBUG_KINDS_COMPARATOR)
+
+        val maxResult = compareDebugKinds(thisMax, otherMax)
+        if (maxResult != 0) return maxResult
+
+        val invokeKindPriority = invokeResolvePriority.compareTo(other.invokeResolvePriority)
+        if (invokeKindPriority != 0) return invokeKindPriority
+
+        // thisMax == otherMax
+        return if (compareDebugKinds(receiverDebugKinds, thisMax) == 0 && compareDebugKinds(otherReceiverDebugKinds, thisMax) == 0) {
+            compareDebugKinds(debugKinds, other.debugKinds)
+        } else {
+            compareDebugKinds(receiverDebugKinds, otherReceiverDebugKinds)
         }
-        return actualResult
     }
 
     override fun compareTo(other: TowerGroup): Int = run {
-        val result = java.lang.Long.compareUnsigned(code, other.code)
-        if (result != 0) return@run result
-        val actualResult = invokeResolvePriority.compareTo(other.invokeResolvePriority)
-        if (actualResult == 0) {
-            return@run if (receiverGroup == null || other.receiverGroup == null) 0
-            else receiverGroup.compareTo(other.receiverGroup)
+        // Fast-path
+        if (receiverGroup == null && other.receiverGroup == null) return@run compareUnsigned(code, other.code)
+        val receiverCode = receiverGroup?.code ?: 0 // TowerGroup.Start.code
+        val otherReceiverCode = other.receiverGroup?.code ?: 0
+
+        val thisMax: Long = if (compareUnsigned(code, receiverCode) >= 0) code else receiverCode
+        val otherMax: Long = if (compareUnsigned(other.code, otherReceiverCode) >= 0) other.code else otherReceiverCode
+
+        val resultMax = compareUnsigned(thisMax, otherMax)
+        if (resultMax != 0) return@run resultMax
+
+        val invokeKindPriority = invokeResolvePriority.compareTo(other.invokeResolvePriority)
+        if (invokeKindPriority != 0) return invokeKindPriority
+
+        return if (compareUnsigned(receiverCode, thisMax) == 0 && compareUnsigned(otherReceiverCode, thisMax) == 0) {
+            compareUnsigned(code, other.code)
+        } else {
+            compareUnsigned(receiverCode, otherReceiverCode)
         }
-        return@run actualResult
     }.also {
         if (DEBUG) {
             val debugResult = debugCompareTo(other)
-            require(debugResult == it) { "Kind comparison incorrect: $this vs $other, expected: $it, $debugResult" }
+            require(debugResult == it) {
+                "Kind comparison incorrect: $this vs $other, expected: $it, $debugResult"
+            }
+            require((this == other) == (debugResult == 0)) {
+                "Equality and compareTo should work consistently, but $debugResult found"
+            }
         }
     }
 
@@ -266,5 +314,5 @@ private constructor(
 }
 
 enum class InvokeResolvePriority {
-    NONE, INVOKE_RECEIVER, COMMON_INVOKE, INVOKE_EXTENSION;
+    NONE, COMMON_INVOKE, INVOKE_EXTENSION;
 }
