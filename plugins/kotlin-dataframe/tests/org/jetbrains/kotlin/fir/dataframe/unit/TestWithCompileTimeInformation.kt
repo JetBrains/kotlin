@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.dataframe.*
 import org.jetbrains.kotlin.fir.dataframe.extensions.ExtensionsGenerator
+import org.jetbrains.kotlin.fir.dataframe.extensions.RefinedFunctionsGenerator
+import org.jetbrains.kotlin.fir.dataframe.extensions.ScopesGenerator
 import org.jetbrains.kotlin.fir.dataframe.extensions.SchemaContext
 import org.jetbrains.kotlin.fir.dataframe.services.BaseTestRunner
 import org.jetbrains.kotlin.fir.dataframe.services.DataFramePluginAnnotationsProvider
@@ -81,6 +83,8 @@ abstract class TestWithCompileTimeInformation : BaseTestRunner() {
                 override fun ExtensionRegistrarContext.configurePlugin() {
                     with(GeneratedNames()) {
                         +::ExtensionsGenerator
+                        +::ScopesGenerator
+                        +{ it: FirSession -> RefinedFunctionsGenerator(it, callables, callableState) }
                         +{ it: FirSession -> InterpretersRunner(it, tokenState, getTestFilePath, setTestSubject, onCompile) }
                     }
                 }

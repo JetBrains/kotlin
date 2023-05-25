@@ -67,7 +67,7 @@ private class DataFrameFileLowering(val context: IrPluginContext) : FileLowering
 
     override fun visitConstructor(declaration: IrConstructor): IrStatement {
         val origin = declaration.origin
-        if (!(origin is IrDeclarationOrigin.GeneratedByPlugin && origin.pluginKey == ExtensionGenerator.DataFramePlugin)) return declaration
+        if (!(origin is IrDeclarationOrigin.GeneratedByPlugin && origin.pluginKey == ScopesGenerator.DataFramePlugin)) return declaration
         declaration.body = generateBodyForDefaultConstructor(declaration)
         return declaration
     }
@@ -96,7 +96,7 @@ private class DataFrameFileLowering(val context: IrPluginContext) : FileLowering
 
     override fun visitProperty(declaration: IrProperty): IrStatement {
         val origin = declaration.origin
-        if (!(origin is IrDeclarationOrigin.GeneratedByPlugin && origin.pluginKey == ExtensionGenerator.DataFramePlugin)) return declaration
+        if (!(origin is IrDeclarationOrigin.GeneratedByPlugin && origin.pluginKey == ScopesGenerator.DataFramePlugin)) return declaration
         val getter = declaration.getter ?: return declaration
 
         val constructors = context.referenceConstructors(ClassId(FqName("kotlin.jvm"), Name.identifier("JvmName")))
@@ -167,7 +167,7 @@ private class DataFrameFileLowering(val context: IrPluginContext) : FileLowering
 */
         if (declaration.isPropertyAccessor) return declaration
         val origin = declaration.origin
-        if (origin !is IrDeclarationOrigin.GeneratedByPlugin || origin.pluginKey != ExtensionGenerator.DataFramePlugin) {
+        if (origin !is IrDeclarationOrigin.GeneratedByPlugin || origin.pluginKey != ScopesGenerator.DataFramePlugin) {
             declaration.transformChildrenVoid(this)
             return declaration
         }
