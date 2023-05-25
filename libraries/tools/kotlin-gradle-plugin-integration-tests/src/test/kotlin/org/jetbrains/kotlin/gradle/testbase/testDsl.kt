@@ -131,7 +131,6 @@ fun KGPBaseTest.nativeProject(
 /**
  * Trigger test project build with given [buildArguments] and assert build is successful.
  */
-@OptIn(EnvironmentalVariablesOverride::class)
 fun TestProject.build(
     vararg buildArguments: String,
     forceOutput: Boolean = this.forceOutput,

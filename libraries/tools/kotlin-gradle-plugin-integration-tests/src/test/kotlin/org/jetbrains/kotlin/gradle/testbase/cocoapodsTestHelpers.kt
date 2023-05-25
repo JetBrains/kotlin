@@ -34,9 +34,9 @@ fun TestProject.useCustomCocoapodsFrameworkName(
     }
 }
 
-private fun Path.addKotlinBlock(str: String) = appendLine(str.wrapIntoBlock("kotlin"))
+fun Path.addCocoapodsBlock(str: String) = addKotlinBlock(str.wrapIntoBlock("cocoapods"))
 
-private fun Path.addCocoapodsBlock(str: String) = addKotlinBlock(str.wrapIntoBlock("cocoapods"))
+private fun Path.addKotlinBlock(str: String) = appendLine(str.wrapIntoBlock("kotlin"))
 
 private fun Path.addFrameworkBlock(str: String) = addCocoapodsBlock(str.wrapIntoBlock("framework"))
 

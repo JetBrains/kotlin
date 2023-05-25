@@ -13,8 +13,6 @@ import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Compan
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.POD_INSTALL_TASK_NAME
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.POD_SETUP_BUILD_TASK_NAME
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.POD_SPEC_TASK_NAME
-import org.jetbrains.kotlin.gradle.testbase.TestVersions
-import org.jetbrains.kotlin.gradle.testbase.normalizeCocoapadsFrameworkName
 import org.jetbrains.kotlin.gradle.util.createTempDir
 import org.jetbrains.kotlin.gradle.util.modify
 import org.jetbrains.kotlin.gradle.util.runProcess
@@ -110,58 +108,6 @@ class CocoaPodsIT : BaseGradleIT() {
     }
 
     @Test
-    fun testXcodeUseFrameworksSingle() = doTestXcode(
-        cocoapodsSingleKtPod,
-        ImportMode.FRAMEWORKS,
-        "ios-app", mapOf("kotlin-library" to null)
-    )
-
-    @Test
-    fun testXcodeUseFrameworksWithCustomFrameworkNameSingle() = doTestXcode(
-        cocoapodsSingleKtPod,
-        ImportMode.FRAMEWORKS,
-        "ios-app",
-        mapOf("kotlin-library" to "MultiplatformLibrary")
-    )
-
-    @Test
-    fun testXcodeUseModularHeadersSingle() = doTestXcode(
-        cocoapodsSingleKtPod,
-        ImportMode.MODULAR_HEADERS,
-        "ios-app",
-        mapOf("kotlin-library" to null)
-    )
-
-    @Test
-    fun testXcodeUseModularHeadersWithCustomFrameworkNameSingle() = doTestXcode(
-        cocoapodsSingleKtPod,
-        ImportMode.MODULAR_HEADERS,
-        "ios-app",
-        mapOf("kotlin-library" to "MultiplatformLibrary")
-    )
-
-    @Test
-    fun testXcodeBuildsWithKotlinLibraryFromRootProject() {
-
-        val project = transformProjectWithPluginsDsl(templateProjectName, GradleVersionRequired.AtLeast(TestVersions.Gradle.G_7_6))
-
-        project.gradleBuildScript().appendToCocoapodsBlock("""
-            framework {
-                baseName = "kotlin-library"
-            }
-            name = "kotlin-library"
-            podfile = project.file("ios-app/Podfile")
-        """.trimIndent())
-
-        doTestXcode(
-            project,
-            ImportMode.FRAMEWORKS,
-            "ios-app",
-            mapOf("" to null),
-        )
-    }
-
-    @Test
     fun testPodImportSingle() {
         val project = getProjectByName(cocoapodsSingleKtPod)
 
@@ -193,38 +139,6 @@ class CocoaPodsIT : BaseGradleIT() {
         }
         project.testSynthetic(":second-library:podImport")
     }
-
-    @Test
-    fun testXcodeUseFrameworksMultiple() = doTestXcode(
-        cocoapodsMultipleKtPods,
-        ImportMode.FRAMEWORKS,
-        null,
-        mapOf("kotlin-library" to null, "second-library" to null)
-    )
-
-    @Test
-    fun testXcodeUseFrameworksWithCustomFrameworkNameMultiple() = doTestXcode(
-        cocoapodsMultipleKtPods,
-        ImportMode.FRAMEWORKS,
-        null,
-        mapOf("kotlin-library" to "FirstMultiplatformLibrary", "second-library" to "SecondMultiplatformLibrary")
-    )
-
-    @Test
-    fun testXcodeUseModularHeadersMultiple() = doTestXcode(
-        cocoapodsMultipleKtPods,
-        ImportMode.MODULAR_HEADERS,
-        null,
-        mapOf("kotlin-library" to null, "second-library" to null)
-    )
-
-    @Test
-    fun testXcodeUseModularHeadersWithCustomFrameworkNameMultiple() = doTestXcode(
-        cocoapodsMultipleKtPods,
-        ImportMode.MODULAR_HEADERS,
-        null,
-        mapOf("kotlin-library" to "FirstMultiplatformLibrary", "second-library" to "SecondMultiplatformLibrary")
-    )
 
     @Test
     fun testSpecReposImport() {
@@ -1512,19 +1426,6 @@ class CocoaPodsIT : BaseGradleIT() {
         }
     }
 
-    private fun Project.useCustomFrameworkName(subproject: String, frameworkName: String, iosAppLocation: String? = null) {
-        // Change the name at the Gradle side.
-        gradleBuildScript(subproject).appendToFrameworkBlock("baseName = \"$frameworkName\"")
-
-        // Change swift sources import if needed.
-        if (iosAppLocation != null) {
-            val iosAppDir = projectDir.resolve(iosAppLocation)
-            iosAppDir.resolve("ios-app/ViewController.swift").modify {
-                it.replace("import ${subproject.normalizeCocoapadsFrameworkName}", "import $frameworkName")
-            }
-        }
-    }
-
     private enum class ImportMode(val directive: String) {
         FRAMEWORKS("use_frameworks!"),
         MODULAR_HEADERS("use_modular_headers!")
@@ -1563,90 +1464,6 @@ class CocoaPodsIT : BaseGradleIT() {
             fail("Command '$command ${args.joinToString(" ")}' killed by timeout.".trimIndent())
         }
         CommandResult(process.exitValue(), stdOut, stdErr).block()
-    }
-
-    private fun doTestXcode(
-        projectName: String,
-        mode: ImportMode,
-        iosAppLocation: String?,
-        subprojectsToFrameworkNamesMap: Map<String, String?>,
-    ) {
-        val gradleProject = transformProjectWithPluginsDsl(projectName, gradleVersion)
-
-        doTestXcode(
-            gradleProject = gradleProject,
-            mode = mode,
-            iosAppLocation = iosAppLocation,
-            subprojectsToFrameworkNamesMap = subprojectsToFrameworkNamesMap,
-        )
-    }
-
-    private fun doTestXcode(
-        gradleProject: Project,
-        mode: ImportMode,
-        iosAppLocation: String?,
-        subprojectsToFrameworkNamesMap: Map<String, String?>,
-        arch: String = "x86_64",
-    ) {
-
-        gradleProject.projectDir.resolve("gradle.properties")
-            .takeIf(File::exists)
-            ?.let {
-                it.appendLine("kotlin_version=${defaultBuildOptions().kotlinVersion}")
-                it.appendLine("test_fixes_version=${defaultBuildOptions().kotlinVersion}")
-            }
-
-        with(gradleProject) {
-            setupWorkingDir()
-
-            for ((subproject, frameworkName) in subprojectsToFrameworkNamesMap) {
-
-                val taskPrefix = if (subproject.isNotEmpty()) ":$subproject" else ""
-
-                // Add property with custom framework name
-                frameworkName?.let {
-                    useCustomFrameworkName(subproject, it, iosAppLocation)
-                }
-
-                // Generate podspec.
-                build("$taskPrefix:podspec", "-Pkotlin.native.cocoapods.generate.wrapper=true") {
-                    assertSuccessful()
-                }
-                iosAppLocation?.also {
-                    // Set import mode for Podfile.
-                    preparePodfile(it, mode)
-                    // Install pods.
-                    build("$taskPrefix:podInstall", "-Pkotlin.native.cocoapods.generate.wrapper=true") {
-                        assertSuccessful()
-                    }
-
-                    projectDir.resolve(it).apply {
-                        // Run Xcode build.
-                        runCommand(
-                            this, "xcodebuild",
-                            "-sdk", "iphonesimulator",
-                            "-configuration", "Release",
-                            "-workspace", "$name.xcworkspace",
-                            "-scheme", name,
-                            "-arch", arch,
-                            inheritIO = true // Xcode doesn't finish the process if the PIPE redirect is used.
-                        ) {
-                            assertEquals(
-                                0, exitCode, """
-                        |Exit code mismatch for `xcodebuild`.
-                        |stdout:
-                        |$stdOut
-                        |
-                        |stderr:
-                        |$stdErr
-                    """.trimMargin()
-                            )
-                        }
-                    }
-                }
-            }
-
-        }
     }
 
     private fun Project.preparePodfile(iosAppLocation: String, mode: ImportMode) {

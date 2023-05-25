@@ -13,7 +13,7 @@ import kotlin.io.path.readText
 import kotlin.test.assertEquals
 
 @OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
-@DisplayName("K/N tests cocoapods")
+@DisplayName("K/N tests with cocoapods' podspec")
 @NativeGradlePluginTests
 class CocoaPodsPodspecIT : KGPBaseTest() {
 

@@ -13,7 +13,8 @@ class ProcessRunResult(
     private val cmd: List<String>,
     private val workingDir: File,
     val exitCode: Int,
-    val output: String
+    val output: String,
+    val stdErr: String,
 ) {
     val isSuccessful: Boolean
         get() = exitCode == 0
@@ -47,9 +48,10 @@ fun runProcess(
         }
         sb.append(it).append(SYSTEM_LINE_SEPARATOR)
     }
+    val stdErr = process.errorStream.bufferedReader().use { it.readText() }
     val exitCode = process.waitFor()
 
-    return ProcessRunResult(cmd, workingDir, exitCode, sb.toString())
+    return ProcessRunResult(cmd, workingDir, exitCode, sb.toString(), stdErr)
 }
 
 fun createGradleCommand(wrapperDir: File, tailParameters: List<String>): List<String> {
@@ -84,6 +86,11 @@ fun assertProcessRunResult(result: ProcessRunResult, assertions: ProcessRunResul
                 |Process output:
                 |#######################
                 |${result.output}
+                |#######################
+                |
+                |Process error output:
+                |#######################
+                |${result.stdErr}
                 |#######################
                 |
                 """.trimMargin()
