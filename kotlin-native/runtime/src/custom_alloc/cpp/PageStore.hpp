@@ -48,9 +48,10 @@ public:
             used_.Push(page);
             return page;
         }
+        auto handle = gc::GCHandle::currentEpoch();
         if ((page = unswept_.Pop())) {
             // If there're unswept_ pages, the GC is in progress.
-            GCSweepScope sweepHandle = T::currentGCSweepScope();
+            GCSweepScope sweepHandle = T::currentGCSweepScope(*handle);
             if ((page = SweepSingle(sweepHandle, page, unswept_, used_, finalizerQueue))) {
                 return page;
             }

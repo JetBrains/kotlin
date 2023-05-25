@@ -20,7 +20,7 @@ class alignas(8) NextFitPage {
 public:
     using GCSweepScope = gc::GCHandle::GCSweepScope;
 
-    static GCSweepScope currentGCSweepScope() noexcept { return gc::GCHandle::currentEpoch()->sweep(); }
+    static GCSweepScope currentGCSweepScope(gc::GCHandle& handle) noexcept { return handle.sweep(); }
 
     static NextFitPage* Create(uint32_t cellCount) noexcept;
 

@@ -37,7 +37,7 @@ class alignas(8) ExtraObjectPage {
 public:
     using GCSweepScope = gc::GCHandle::GCSweepExtraObjectsScope;
 
-    static GCSweepScope currentGCSweepScope() noexcept { return gc::GCHandle::currentEpoch()->sweepExtraObjects(); }
+    static GCSweepScope currentGCSweepScope(gc::GCHandle& handle) noexcept { return handle.sweepExtraObjects(); }
 
     static ExtraObjectPage* Create(uint32_t ignored) noexcept;
 
