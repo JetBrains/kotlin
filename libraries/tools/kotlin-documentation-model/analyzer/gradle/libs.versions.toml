@@ -41,6 +41,7 @@ node = "16.13.0"
 gradlePlugin-shadow = "7.1.2"
 gradlePlugin-nexusPublish = "1.1.0"
 gradlePlugin-gradlePluginPublish = "0.20.0"
+gradlePlugin-gradleNode = "3.5.1"
 
 ## Test
 junit = "5.9.2"
@@ -109,3 +110,4 @@ kotlinx-binaryCompatibilityValidator = { id = "org.jetbrains.kotlinx.binary-comp
 shadow = { id = "com.github.johnrengelman.shadow", version.ref = "gradlePlugin-shadow" }
 gradlePublish = { id = "com.gradle.plugin-publish", version.ref = "gradlePlugin-gradlePluginPublish" }
 nexusPublish = { id = "io.github.gradle-nexus.publish-plugin", version.ref = "gradlePlugin-nexusPublish" }
+gradleNode = { id = "com.github.node-gradle.node", version.ref = "gradlePlugin-gradleNode" }

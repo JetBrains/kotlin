@@ -68,7 +68,6 @@ include(
 
     ":plugins:base",
     ":plugins:base:frontend",
-    ":plugins:base:search-component",
     ":plugins:base:base-test-utils",
     ":plugins:all-modules-page",
     ":plugins:templating",
