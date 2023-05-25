@@ -1003,7 +1003,7 @@ class Fir2IrDeclarationStorage(
                             delegate != null -> IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR
                             origin == IrDeclarationOrigin.FAKE_OVERRIDE -> origin
                             origin == IrDeclarationOrigin.DELEGATED_MEMBER -> origin
-                            getter is FirDefaultPropertyGetter -> IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
+                            getter == null || getter is FirDefaultPropertyGetter -> IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
                             else -> origin
                         },
                         startOffset, endOffset,

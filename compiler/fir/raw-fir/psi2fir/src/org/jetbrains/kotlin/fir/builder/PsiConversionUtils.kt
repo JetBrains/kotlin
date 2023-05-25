@@ -124,6 +124,7 @@ internal fun generateDestructuringBlock(
     multiDeclaration: KtDestructuringDeclaration,
     container: FirVariable,
     tmpVariable: Boolean,
+    localEntries: Boolean,
     extractAnnotationsTo: KtAnnotated.(FirAnnotationContainerBuilder) -> Unit,
     toFirOrImplicitTypeRef: KtTypeReference?.() -> FirTypeRef,
 ): FirBlock {
@@ -150,7 +151,7 @@ internal fun generateDestructuringBlock(
                     componentIndex = index + 1
                 }
                 this.isVar = isVar
-                isLocal = true
+                isLocal = localEntries
                 status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
                 symbol = FirPropertySymbol(name)
                 entry.extractAnnotationsTo(this)

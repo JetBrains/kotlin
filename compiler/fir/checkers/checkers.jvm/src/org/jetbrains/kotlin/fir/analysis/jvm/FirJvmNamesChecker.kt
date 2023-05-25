@@ -22,10 +22,7 @@ object FirJvmNamesChecker {
 
 
     fun checkNameAndReport(name: Name, declarationSource: KtSourceElement?, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (declarationSource != null &&
-            declarationSource.kind !is KtFakeSourceElementKind &&
-            !name.isSpecial
-        ) {
+        if (declarationSource != null && declarationSource.kind !is KtFakeSourceElementKind && !name.isSpecial) {
             val nameString = name.asString()
             if (nameString.any { it in INVALID_CHARS }) {
                 reporter.reportOn(

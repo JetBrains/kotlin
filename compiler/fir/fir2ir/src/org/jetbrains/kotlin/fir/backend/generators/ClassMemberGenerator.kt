@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.backend.generators
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.backend.*
@@ -190,7 +191,7 @@ internal class ClassMemberGenerator(
                     }
                 }
             }
-            if (irFunction !is IrConstructor || !irFunction.isPrimary) {
+            if (firFunction != null && (irFunction !is IrConstructor || !irFunction.isPrimary)) {
                 // Scope for primary constructor should be left after class declaration
                 declarationStorage.leaveScope(irFunction)
             }
@@ -209,9 +210,13 @@ internal class ClassMemberGenerator(
         if (containingClass != null) {
             irProperty.overriddenSymbols = property.generateOverriddenPropertySymbols(containingClass)
         }
+        val needGenerateDefaultGetter =
+            property.getter is FirDefaultPropertyGetter ||
+                    (property.getter == null && irProperty.parent is IrScript && property.destructuringDeclarationContainerVariable != null)
+
         irProperty.getter?.setPropertyAccessorContent(
             property, property.getter, irProperty, propertyType,
-            property.getter is FirDefaultPropertyGetter,
+            isDefault = needGenerateDefaultGetter,
             isGetter = true,
             containingClass = containingClass
         )

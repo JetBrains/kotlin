@@ -1121,6 +1121,33 @@ open class PsiRawFirBuilder(
                         is KtScriptInitializer -> {
                             declaration.body?.let { statements.add(it.toFirStatement()) }
                         }
+                        is KtDestructuringDeclaration -> {
+                            val destructuringContainerVar = generateTemporaryVariable(
+                                baseModuleData,
+                                declaration.toFirSourceElement(),
+                                "destruct",
+                                declaration.initializer.toFirExpression { ConeSyntaxDiagnostic("Initializer required for destructuring declaration") },
+                                extractAnnotationsTo = { extractAnnotationsTo(it) }
+                            ).apply {
+                                isDestructuringDeclarationContainerVariable = true
+                            }
+                            val destructuringBlock = generateDestructuringBlock(
+                                baseModuleData,
+                                declaration,
+                                destructuringContainerVar,
+                                tmpVariable = false,
+                                localEntries = false,
+                                extractAnnotationsTo = { extractAnnotationsTo(it) },
+                            ) {
+                                toFirOrImplicitType()
+                            }.apply {
+                                statements.forEach {
+                                    (it as FirProperty).destructuringDeclarationContainerVariable = destructuringContainerVar.symbol
+                                }
+                            }
+                            statements.add(destructuringContainerVar)
+                            statements.addAll(destructuringBlock.statements)
+                        }
                         else -> {
                             statements.add(declaration.toFirStatement())
                         }
@@ -1648,6 +1675,7 @@ open class PsiRawFirBuilder(
                             multiDeclaration,
                             multiParameter,
                             tmpVariable = false,
+                            localEntries = true,
                             extractAnnotationsTo = { extractAnnotationsTo(it) },
                         ) { toFirOrImplicitType() }.statements
                         multiParameter
@@ -2463,7 +2491,8 @@ open class PsiRawFirBuilder(
                     if (ktParameter != null) {
                         val multiDeclaration = ktParameter.destructuringDeclaration
                         val firLoopParameter = generateTemporaryVariable(
-                            moduleData = baseModuleData, source = expression.loopParameter?.toFirSourceElement(),
+                            moduleData = baseModuleData,
+                            source = expression.loopParameter?.toFirSourceElement(),
                             name = if (multiDeclaration != null) SpecialNames.DESTRUCT else ktParameter.nameAsSafeName,
                             initializer = buildFunctionCall {
                                 source = fakeSource
@@ -2481,6 +2510,7 @@ open class PsiRawFirBuilder(
                                 multiDeclaration = multiDeclaration,
                                 container = firLoopParameter,
                                 tmpVariable = true,
+                                localEntries = true,
                                 extractAnnotationsTo = { extractAnnotationsTo(it) },
                             ) { toFirOrImplicitType() }
                             blockBuilder.statements.addAll(destructuringBlock.statements)
@@ -2843,6 +2873,7 @@ open class PsiRawFirBuilder(
                 multiDeclaration,
                 baseVariable,
                 tmpVariable = true,
+                localEntries = true,
                 extractAnnotationsTo = { extractAnnotationsTo(it) },
             ) {
                 toFirOrImplicitType()

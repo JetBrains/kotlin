@@ -217,6 +217,12 @@ public class FirScriptCodegenTestGenerated extends AbstractFirScriptCodegenTest 
         runTest("compiler/testData/codegen/script/topLevelTypealias.kts");
     }
 
+    @Test
+    @TestMetadata("twoDestructuringDeclarations.kts")
+    public void testTwoDestructuringDeclarations() throws Exception {
+        runTest("compiler/testData/codegen/script/twoDestructuringDeclarations.kts");
+    }
+
     @Nested
     @TestMetadata("compiler/testData/codegen/script/scriptInstanceCapturing")
     @TestDataPath("$PROJECT_ROOT")

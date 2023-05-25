@@ -7,9 +7,9 @@ val (c1) = <!COMPONENT_FUNCTION_MISSING, UNRESOLVED_REFERENCE!>unresolved<!>
 
 val (e1, _) = A()
 
-<!UNRESOLVED_REFERENCE!>a1<!>
-<!UNRESOLVED_REFERENCE!>a2<!>
-<!UNRESOLVED_REFERENCE!>e1<!>
+a1
+a2
+e1
 
 class A {
     operator fun component1() = 1

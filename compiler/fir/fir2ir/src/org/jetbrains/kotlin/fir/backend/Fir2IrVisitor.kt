@@ -227,9 +227,41 @@ class Fir2IrVisitor(
             }
 
             conversionScope.withParent(irScript) {
+                val destructComposites = mutableMapOf<FirVariableSymbol<*>, IrComposite>()
                 for (statement in script.statements) {
                     val irStatement = if (statement is FirDeclaration) {
                         when {
+                            statement is FirVariable && statement.isDestructuringDeclarationContainerVariable == true -> {
+                                statement.convertWithOffsets { startOffset, endOffset ->
+                                    IrCompositeImpl(
+                                        startOffset, endOffset,
+                                        irBuiltIns.unitType, IrStatementOrigin.DESTRUCTURING_DECLARATION
+                                    ).also {
+                                        it.statements.add(
+                                            declarationStorage.createIrVariable(statement, conversionScope.parentFromStack()).also {
+                                                it.initializer = statement.initializer?.toIrStatement() as? IrExpression
+                                            }
+                                        )
+                                        destructComposites[(statement).symbol] = it
+                                    }
+                                }
+                            }
+                            statement is FirProperty && statement.destructuringDeclarationContainerVariable != null -> {
+                                (statement.accept(this@Fir2IrVisitor, null) as IrProperty).also {
+                                    val irComponentInitializer = IrSetFieldImpl(
+                                        it.startOffset, it.endOffset,
+                                        it.backingField!!.symbol,
+                                        irBuiltIns.unitType,
+                                        origin = null, superQualifierSymbol = null
+                                    ).apply {
+                                        value = it.backingField!!.initializer!!.expression
+                                        receiver = null
+                                    }
+                                    val correspondingComposite = destructComposites[statement.destructuringDeclarationContainerVariable!!]!!
+                                    correspondingComposite.statements.add(irComponentInitializer)
+                                    it.backingField!!.initializer = null
+                                }
+                            }
                             statement is FirClass -> {
                                 (statement.accept(this@Fir2IrVisitor, null) as IrClass).also {
                                     converter.bindFakeOverridesInClass(it)

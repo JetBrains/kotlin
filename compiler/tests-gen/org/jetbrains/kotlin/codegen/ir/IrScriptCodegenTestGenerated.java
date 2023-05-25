@@ -190,6 +190,11 @@ public class IrScriptCodegenTestGenerated extends AbstractIrScriptCodegenTest {
         runTest("compiler/testData/codegen/script/topLevelTypealias.kts");
     }
 
+    @TestMetadata("twoDestructuringDeclarations.kts")
+    public void testTwoDestructuringDeclarations() throws Exception {
+        runTest("compiler/testData/codegen/script/twoDestructuringDeclarations.kts");
+    }
+
     @TestMetadata("compiler/testData/codegen/script/scriptInstanceCapturing")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

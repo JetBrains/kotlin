@@ -1,4 +1,4 @@
-// IGNORE_BACKEND_K2: JVM_IR
+// DUMP_IR
 
 val (abc, def) = A()
 
