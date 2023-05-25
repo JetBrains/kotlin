@@ -94,6 +94,15 @@ abstract class AbstractDiagnosticCollectorVisitor(
         }
     }
 
+    override fun visitScript(script: FirScript, data: Nothing?) {
+        withAnnotationContainer(script) {
+            checkElement(script)
+            withDeclaration(script) {
+                visitNestedElements(script)
+            }
+        }
+    }
+
     override fun visitSimpleFunction(simpleFunction: FirSimpleFunction, data: Nothing?) {
         withAnnotationContainer(simpleFunction) {
             visitWithDeclarationAndReceiver(simpleFunction, simpleFunction.name, simpleFunction.receiverParameter)

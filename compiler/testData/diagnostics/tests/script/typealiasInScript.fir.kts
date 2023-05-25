@@ -1,4 +1,4 @@
-typealias TopLevelInScript = String
+<!TOPLEVEL_TYPEALIASES_ONLY!>typealias TopLevelInScript = String<!>
 
 class C {
     <!TOPLEVEL_TYPEALIASES_ONLY!>typealias NestedInClass = String<!>

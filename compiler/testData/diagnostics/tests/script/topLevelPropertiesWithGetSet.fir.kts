@@ -16,10 +16,10 @@ get() = 42
 val testValLineBreakNoType
 get() = 42
 
-<!MUST_BE_INITIALIZED!>val testValLineBreakSemi: Int<!>;
+val testValLineBreakSemi: Int;
 <!VARIABLE_EXPECTED!><!UNRESOLVED_REFERENCE!>get<!>()<!> = 42
 
-<!MUST_BE_INITIALIZED!>val testValLineBreakSemiNoType<!>;
+val testValLineBreakSemiNoType;
 <!VARIABLE_EXPECTED!><!UNRESOLVED_REFERENCE!>get<!>()<!> = 42
 
 var testVarLineBreak: Int
@@ -30,10 +30,10 @@ var String.testExtVarLineBreak: Int
 get() = 42
 set(value) {}
 
-<!MUST_BE_INITIALIZED!>var testVarLineBreakSemi: Int<!>;
+var testVarLineBreakSemi: Int;
 <!VARIABLE_EXPECTED!><!UNRESOLVED_REFERENCE!>get<!>()<!> = 42
 <!UNRESOLVED_REFERENCE!>set<!>(<!UNRESOLVED_REFERENCE!>value<!>) {}
 
-<!EXTENSION_PROPERTY_MUST_HAVE_ACCESSORS_OR_BE_ABSTRACT!>var String.testExtVarLineBreakSemi: Int<!>;
+var String.testExtVarLineBreakSemi: Int;
 <!VARIABLE_EXPECTED!><!UNRESOLVED_REFERENCE!>get<!>()<!> = 42
 <!UNRESOLVED_REFERENCE!>set<!>(<!UNRESOLVED_REFERENCE!>value<!>) {}
