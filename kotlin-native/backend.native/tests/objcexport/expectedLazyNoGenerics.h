@@ -756,6 +756,7 @@ __attribute__((swift_name("WrapperOverUnavailable")))
 __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("HiddenfromobjcKt")))
 @interface KtHiddenfromobjcKt : KtBase
++ (id)doSomethingMeaningless:(NSString *)receiver another:(id)another __attribute__((swift_name("doSomethingMeaningless(_:another:)")));
 + (id)useOfUnavailableClassParam:(id)param __attribute__((swift_name("useOfUnavailableClass(param:)")));
 + (id _Nullable)useOfNullableUnavailableClassParam:(id _Nullable)param __attribute__((swift_name("useOfNullableUnavailableClass(param:)")));
 + (id)produceUnavailable __attribute__((swift_name("produceUnavailable()")));

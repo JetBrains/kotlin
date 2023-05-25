@@ -1204,7 +1204,11 @@ abstract class ObjCExportHeaderGenerator internal constructor(
                     .forEach {
                         val classDescriptor = mapper.getClassIfCategory(it)
                         if (classDescriptor != null) {
-                            extensions.getOrPut(classDescriptor, { mutableListOf() }) += it
+                            // If a class is hidden from Objective-C API then it is meaningless
+                            // to export its extensions.
+                            if (!classDescriptor.isHiddenFromObjC()) {
+                                extensions.getOrPut(classDescriptor, { mutableListOf() }) += it
+                            }
                         } else {
                             topLevel.getOrPut(it.findSourceFile(), { mutableListOf() }) += it
                         }
