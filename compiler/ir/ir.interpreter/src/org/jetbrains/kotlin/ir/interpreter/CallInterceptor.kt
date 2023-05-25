@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.platform.isJs
 import java.lang.invoke.MethodHandle
 
 internal interface CallInterceptor {
@@ -166,7 +167,7 @@ internal class DefaultCallInterceptor(override val interpreter: IrInterpreter) :
     }
 
     private fun interpretBuiltinFunction(signature: Signature): Any? {
-        if (environment.configuration.treatFloatInSpecialWay) {
+        if (environment.configuration.platform.isJs()) {
             if (signature.name == "toString") return signature.args[0].value.specialToStringForJs()
             if (signature.name == "toFloat") signature.name = "toDouble"
             signature.args.filter { it.type == "Float" }.forEach {

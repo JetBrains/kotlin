@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.isSubclassOf
 import org.jetbrains.kotlin.ir.util.properties
+import org.jetbrains.kotlin.platform.isJs
 
 class IrInterpreterEnvironment(
     val irBuiltIns: IrBuiltIns,
@@ -117,13 +118,12 @@ class IrInterpreterEnvironment(
         val end = original.endOffset
         val type = original.type.makeNotNull()
         return when (state) {
-            is Primitive<*> ->
-                when {
-                    configuration.treatFloatInSpecialWay && state.value is Float -> IrConstImpl.float(start, end, type, state.value)
-                    configuration.treatFloatInSpecialWay && state.value is Double -> IrConstImpl.double(start, end, type, state.value)
-                    state.value == null || type.isPrimitiveType() || type.isString() -> state.value.toIrConst(type, start, end)
-                    else -> original // TODO support for arrays
-                }
+            is Primitive<*> -> when {
+                configuration.platform.isJs() && state.value is Float -> IrConstImpl.float(start, end, type, state.value)
+                configuration.platform.isJs() && state.value is Double -> IrConstImpl.double(start, end, type, state.value)
+                state.value == null || type.isPrimitiveType() || type.isString() -> state.value.toIrConst(type, start, end)
+                else -> original // TODO support for arrays
+            }
             is ExceptionState -> {
                 val message = if (configuration.printOnlyExceptionMessage) state.getShortDescription() else "\n" + state.getFullDescription()
                 IrErrorExpressionImpl(original.startOffset, original.endOffset, original.type, message)
