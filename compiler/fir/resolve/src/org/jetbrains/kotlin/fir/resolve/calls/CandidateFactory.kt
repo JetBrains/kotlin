@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
@@ -15,9 +15,8 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildErrorProperty
 import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.isIntegerLiteralOrOperatorCall
-import org.jetbrains.kotlin.fir.returnExpressions
+import org.jetbrains.kotlin.fir.resolve.toFirRegularClass
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.originalForWrappedIntegerOperator
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -95,6 +94,12 @@ class CandidateFactory private constructor(
         if (callInfo.origin == FirFunctionCallOrigin.Operator && symbol is FirPropertySymbol) {
             // Flag all property references that are resolved from an convention operator call.
             result.addDiagnostic(PropertyAsOperator)
+        }
+        if (symbol is FirPropertySymbol) {
+            val containingClass = symbol.containingClassLookupTag()?.toFirRegularClass(context.session)
+            if (containingClass != null && symbol.fir.isEnumEntries(containingClass)) {
+                result.addDiagnostic(LowerPriorityToPreserveCompatibilityDiagnostic)
+            }
         }
         return result
     }

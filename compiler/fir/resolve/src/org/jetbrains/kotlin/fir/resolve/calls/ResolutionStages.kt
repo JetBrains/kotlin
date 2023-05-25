@@ -534,9 +534,6 @@ internal object DiscriminateSynthetics : CheckerStage() {
         if (candidate.symbol is SyntheticSymbol) {
             sink.reportDiagnostic(ResolvedWithSynthetic)
         }
-        if (candidate.symbol is FirPropertySymbol && candidate.symbol.source?.kind is KtFakeSourceElementKind.EnumGeneratedDeclaration) {
-            sink.reportDiagnostic(ResolvedWithSynthetic)
-        }
     }
 }
 

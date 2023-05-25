@@ -18,8 +18,8 @@ FILE: conflictingPropertyEntriesAndReferenceOn.fir.kt
 
     }
     public final fun test(): R|kotlin/Unit| {
-        Q|E|::R|/E.entries*s|
-        lval ref: R|kotlin/reflect/KProperty0<kotlin/enums/EnumEntries<E>>| = Q|E|::R|/E.entries*s|
+        Q|E|::R|/E.entries|
+        lval ref: R|kotlin/reflect/KProperty1<E, kotlin/Int>| = Q|E|::R|/E.entries|
         lval refType: R|(E) -> kotlin/Int| = Q|E|::R|/E.entries|
-        lval refTypeWithAnyExpectedType: R|kotlin/Any| = Q|E|::R|/E.entries*s|
+        lval refTypeWithAnyExpectedType: R|kotlin/Any| = Q|E|::R|/E.entries|
     }

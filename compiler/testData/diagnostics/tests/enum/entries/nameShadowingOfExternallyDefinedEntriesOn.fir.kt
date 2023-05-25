@@ -10,7 +10,7 @@ enum class E {
     ;
 
     fun foo() {
-        entries.<!UNRESOLVED_REFERENCE!>length<!>
+        entries.length
         pckg.entries.length
     }
 }
@@ -21,7 +21,7 @@ class A {
 
         class B {
             fun foo() {
-                entries.<!UNRESOLVED_REFERENCE!>length<!>
+                entries.length
                 pckg.entries.length
             }
         }

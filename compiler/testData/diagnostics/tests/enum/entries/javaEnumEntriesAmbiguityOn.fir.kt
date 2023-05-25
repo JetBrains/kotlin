@@ -26,9 +26,11 @@ public enum JEnumField {
 
 // FILE: test.kt
 
-fun test() {
-    JEnumEntry.entries
-    JEnumStaticField.entries
+fun test(): String {
+    val first = JEnumEntry.entries
+    val second = JEnumStaticField.entries
 
-    JEnumField::entries
+    val third = JEnumField::entries
+
+    return "$first$second$third"
 }
