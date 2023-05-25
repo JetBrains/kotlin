@@ -39,7 +39,6 @@ apiValidation {
     // note that subprojects are ignored by their name, not their path https://github.com/Kotlin/binary-compatibility-validator/issues/16
     ignoredProjects += setOf(
         // NAME                    PATH
-        "search-component",    // :plugins:search-component
         "frontend",            // :plugins:base:frontend
 
         "kotlin-analysis",     // :kotlin-analysis
