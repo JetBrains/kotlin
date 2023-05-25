@@ -43,8 +43,7 @@ internal class PartiallyLinkedIrTreePatcher(
     private val builtIns: IrBuiltIns,
     private val classifierExplorer: ClassifierExplorer,
     private val stubGenerator: MissingDeclarationStubGenerator,
-    logLevel: PartialLinkageLogLevel,
-    private val messageLogger: IrMessageLogger
+    logger: PartialLinkageLogger
 ) {
     // Avoid revisiting roots that already have been visited.
     private val visitedModuleFragments = hashSetOf<IrModuleFragment>()
@@ -56,7 +55,7 @@ internal class PartiallyLinkedIrTreePatcher(
     private val IrModuleFragment.shouldBeSkipped: Boolean get() = files.isEmpty() || name.asString() == stdlibModule.name
 
     // Used only to generate IR expressions that throw linkage errors.
-    private val supportForLowerings by lazy { PartialLinkageSupportForLoweringsImpl(builtIns, logLevel, messageLogger) }
+    private val supportForLowerings by lazy { PartialLinkageSupportForLoweringsImpl(builtIns, logger) }
 
     fun shouldBeSkipped(declaration: IrDeclaration): Boolean = PLModule.determineModuleFor(declaration).shouldBeSkipped
 

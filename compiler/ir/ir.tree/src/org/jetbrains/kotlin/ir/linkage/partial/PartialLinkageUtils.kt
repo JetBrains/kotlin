@@ -44,7 +44,7 @@ object PartialLinkageUtils {
             override val name = "<missing declarations>"
         }
 
-        fun defaultLocationWithoutPath() = IrMessageLogger.Location(name, UNDEFINED_LINE_NUMBER, UNDEFINED_COLUMN_NUMBER)
+        fun defaultLocationWithoutPath() = PartialLinkageLogger.Location(name, /* no path */ "", UNDEFINED_LINE_NUMBER, UNDEFINED_COLUMN_NUMBER)
 
         companion object {
             fun determineModuleFor(declaration: IrDeclaration): Module = determineFor(
@@ -60,18 +60,17 @@ object PartialLinkageUtils {
 
     sealed interface File {
         val module: Module
-        fun computeLocationForOffset(offset: Int): IrMessageLogger.Location
+        fun computeLocationForOffset(offset: Int): PartialLinkageLogger.Location
 
         data class IrBased(private val file: IrFile) : File {
             override val module = Module.Real(file.module.name)
 
-            override fun computeLocationForOffset(offset: Int): IrMessageLogger.Location {
-                val lineNumber = if (offset == UNDEFINED_OFFSET) UNDEFINED_LINE_NUMBER else file.fileEntry.getLineNumber(offset) + 1 // since humans count from 1, not 0
-                val columnNumber = if (offset == UNDEFINED_OFFSET) UNDEFINED_COLUMN_NUMBER else file.fileEntry.getColumnNumber(offset) + 1
-
-                // TODO: should module name still be added here?
-                return IrMessageLogger.Location("${module.name} @ ${file.fileEntry.name}", lineNumber, columnNumber)
-            }
+            override fun computeLocationForOffset(offset: Int) = PartialLinkageLogger.Location(
+                moduleName = module.name,
+                filePath = file.fileEntry.name,
+                lineNumber = if (offset == UNDEFINED_OFFSET) UNDEFINED_LINE_NUMBER else file.fileEntry.getLineNumber(offset) + 1, // since humans count from 1, not 0
+                columnNumber = if (offset == UNDEFINED_OFFSET) UNDEFINED_COLUMN_NUMBER else file.fileEntry.getColumnNumber(offset) + 1
+            )
         }
 
         class LazyIrBased(packageFragmentDescriptor: PackageFragmentDescriptor) : File {
@@ -132,5 +131,36 @@ object PartialLinkageUtils {
                 else -> onError()
             }
         }
+    }
+}
+
+// A workaround for KT-58837 until KT-58904 is fixed. TODO: Merge with IrMessageLogger.
+class PartialLinkageLogger(private val irLogger: IrMessageLogger, logLevel: PartialLinkageLogLevel) {
+    class Location(val moduleName: String, val filePath: String, val lineNumber: Int, val columnNumber: Int) {
+        fun render(): StringBuilder = StringBuilder().apply {
+            append(moduleName)
+            if (filePath.isNotEmpty()) {
+                append(" @ ").append(filePath)
+                if (lineNumber != UNDEFINED_LINE_NUMBER && columnNumber != UNDEFINED_COLUMN_NUMBER) {
+                    append(':').append(lineNumber).append(':').append(columnNumber)
+                }
+            }
+        }
+
+        override fun toString() = render().toString()
+    }
+
+    private val irLoggerSeverity = when (logLevel) {
+        PartialLinkageLogLevel.INFO -> IrMessageLogger.Severity.INFO
+        PartialLinkageLogLevel.WARNING -> IrMessageLogger.Severity.WARNING
+        PartialLinkageLogLevel.ERROR -> IrMessageLogger.Severity.ERROR
+    }
+
+    fun log(message: String, location: Location) {
+        irLogger.report(
+            severity = irLoggerSeverity,
+            message = location.render().append(": ").append(message).toString(),
+            location = null
+        )
     }
 }

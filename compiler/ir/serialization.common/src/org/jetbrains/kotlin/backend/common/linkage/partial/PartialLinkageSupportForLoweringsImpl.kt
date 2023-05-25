@@ -23,14 +23,13 @@ fun createPartialLinkageSupportForLowerings(
     builtIns: IrBuiltIns,
     messageLogger: IrMessageLogger
 ): PartialLinkageSupportForLowerings = if (partialLinkageConfig.isEnabled)
-    PartialLinkageSupportForLoweringsImpl(builtIns, partialLinkageConfig.logLevel, messageLogger)
+    PartialLinkageSupportForLoweringsImpl(builtIns, PartialLinkageLogger(messageLogger, partialLinkageConfig.logLevel))
 else
     PartialLinkageSupportForLowerings.DISABLED
 
 internal class PartialLinkageSupportForLoweringsImpl(
     private val builtIns: IrBuiltIns,
-    logLevel: PartialLinkageLogLevel,
-    private val messageLogger: IrMessageLogger
+    private val logger: PartialLinkageLogger
 ) : PartialLinkageSupportForLowerings {
     override val isEnabled get() = true
 
@@ -40,12 +39,6 @@ internal class PartialLinkageSupportForLoweringsImpl(
 
     var errorMessagesRendered = 0 // Track each rendered error message.
         private set
-
-    private val irLoggerSeverity = when (logLevel) {
-        PartialLinkageLogLevel.INFO -> IrMessageLogger.Severity.INFO
-        PartialLinkageLogLevel.WARNING -> IrMessageLogger.Severity.WARNING
-        PartialLinkageLogLevel.ERROR -> IrMessageLogger.Severity.ERROR
-    }
 
     override fun throwLinkageError(
         partialLinkageCase: PartialLinkageCase,
@@ -77,7 +70,7 @@ internal class PartialLinkageSupportForLoweringsImpl(
         val errorMessage = renderLinkageError(partialLinkageCase)
         val locationInSourceCode = file.computeLocationForOffset(element.startOffsetOfFirstDenotableIrElement())
 
-        messageLogger.report(irLoggerSeverity, errorMessage, locationInSourceCode) // It's OK. We log it as a warning.
+        logger.log(errorMessage, locationInSourceCode)
 
         return errorMessage
     }

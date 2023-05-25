@@ -114,11 +114,15 @@ private sealed interface AbstractFailurePattern : FailurePattern {
 private sealed class AbstractIrLinkageErrorPattern : AbstractFailurePattern {
     final override fun validateFailure(t: Throwable) =
         if (t.isLinkageError)
-            checkIrLinkageErrorMessage(t.message) // OK, this is IR linkage error. Validate the message.
+            checkIrLinkageErrorMessage(t.message?.skipLocationPrefix()) // OK, this is IR linkage error. Validate the message.
         else
             TestFailedWithException(t) // Unexpected type of exception.
 
     abstract fun checkIrLinkageErrorMessage(errorMessage: String?): TestFailureDetails?
+
+    companion object {
+        private fun String.skipLocationPrefix() = if (startsWith('<')) substringAfter(": ") else this
+    }
 }
 
 private class GeneralIrLinkageError(private val expectedMessageWithoutHashes: String) : AbstractIrLinkageErrorPattern() {
