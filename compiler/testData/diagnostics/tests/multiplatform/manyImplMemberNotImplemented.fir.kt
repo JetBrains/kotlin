@@ -8,14 +8,14 @@
 expect open class C1()
 expect interface I1
 
-<!MANY_IMPL_MEMBER_NOT_IMPLEMENTED{JVM}!>open class A : C1(), I1<!>
+open class A : C1(), I1
 <!MANY_IMPL_MEMBER_NOT_IMPLEMENTED{JVM}!>open class B : I1, C1()<!>
 
 expect abstract class C2()
 expect interface I2
 
 // TODO: KT-58829
-<!MANY_IMPL_MEMBER_NOT_IMPLEMENTED{JVM}!>class C : C2(), I2<!>
+class C : C2(), I2
 
 // MODULE: jvm()()(common)
 // TARGET_PLATFORM: JVM
