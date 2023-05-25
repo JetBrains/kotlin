@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirFileAnnotationsContainer
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirImplicitAwareBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirTowerDataContextCollector
@@ -82,28 +81,29 @@ internal class LLFirImplicitBodyTargetResolver(
 
     override fun doLazyResolveUnderLock(target: FirElementWithResolveState) {
         when (target) {
+            is FirSimpleFunction -> resolve(target, BodyStateKeepers.FUNCTION)
+            is FirProperty -> resolve(target, BodyStateKeepers.PROPERTY)
+            is FirVariable -> resolve(target, BodyStateKeepers.VARIABLE)
+            is FirPropertyAccessor -> resolve(target.propertySymbol.fir, BodyStateKeepers.PROPERTY)
             is FirRegularClass,
-            is FirDanglingModifierList,
-            is FirAnonymousInitializer,
-            is FirFileAnnotationsContainer,
             is FirTypeAlias,
+            is FirDanglingModifierList,
+            is FirFileAnnotationsContainer,
             is FirScript,
-            is FirConstructor,
-            -> {
-                // no implicit bodies here
-            }
-
+            is FirAnonymousInitializer,
             is FirCallableDeclaration -> {
-                if (target.attributes.fakeOverrideSubstitution != null) {
-                    transformer.returnTypeCalculator.fakeOverrideTypeCalculator.computeReturnType(target)
-                } else {
-                    calculateLazyBodies(target)
-                    target.transformSingle(transformer, ResolutionMode.ContextIndependent)
-                }
+                // No implicit bodies here
             }
-
             else -> throwUnexpectedFirElementError(target)
         }
     }
-}
 
+    override fun rawResolve(target: FirElementWithResolveState) {
+        if (target is FirCallableDeclaration && target.attributes.fakeOverrideSubstitution != null) {
+            transformer.returnTypeCalculator.fakeOverrideTypeCalculator.computeReturnType(target)
+            return
+        }
+
+        super.rawResolve(target)
+    }
+}
