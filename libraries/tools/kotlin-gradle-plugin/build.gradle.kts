@@ -44,6 +44,18 @@ dependencies {
     commonApi(project(":kotlin-gradle-plugin-api"))
     commonApi(project(":kotlin-gradle-plugin-model"))
 
+    // Following two dependencies is a workaround for IDEA import to pick-up them correctly
+    commonCompileOnly(project(":kotlin-gradle-plugin-api")) {
+        capabilities {
+            requireCapability("org.jetbrains.kotlin:kotlin-gradle-plugin-api-common")
+        }
+    }
+    commonCompileOnly(project(":kotlin-gradle-plugin-model")) {
+        capabilities {
+            requireCapability("org.jetbrains.kotlin:kotlin-gradle-plugin-model-common")
+        }
+    }
+
     commonCompileOnly(project(":compiler:incremental-compilation-impl"))
     commonCompileOnly(project(":daemon-common"))
     commonCompileOnly(project(":kotlin-daemon-client"))
