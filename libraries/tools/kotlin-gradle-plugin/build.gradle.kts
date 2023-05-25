@@ -43,13 +43,11 @@ dependencies {
     commonApi(platform(project(":kotlin-gradle-plugins-bom")))
     commonApi(project(":kotlin-gradle-plugin-api"))
     commonApi(project(":kotlin-gradle-plugin-model"))
-    commonApi(project(":kotlin-tooling-core"))
 
     commonCompileOnly(project(":compiler"))
     commonCompileOnly(project(":compiler:incremental-compilation-impl"))
     commonCompileOnly(project(":daemon-common"))
     commonCompileOnly(project(":kotlin-gradle-compiler-types"))
-    commonCompileOnly(project(":native:kotlin-native-utils"))
     commonCompileOnly(project(":kotlin-android-extensions"))
     commonCompileOnly(project(":kotlin-build-common"))
     commonCompileOnly(project(":kotlin-compiler-runner"))
