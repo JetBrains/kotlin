@@ -8,7 +8,11 @@
 @property (readonly) NSInteger delegate;
 @end
 
-@interface InterfaceDerived : InterfaceBase<IntegerProperty>
+@protocol UIntegerProperty
+@property (readonly) NSUInteger delegate;
+@end
+
+@interface InterfaceDerived : InterfaceBase<IntegerProperty, UIntegerProperty>
 // property `delegate` is affected by parent declarations:
 // - `InterfaceBase* InterfaceBase.delegate` and
 // - `NSInteger IntegerProperty.delegate`

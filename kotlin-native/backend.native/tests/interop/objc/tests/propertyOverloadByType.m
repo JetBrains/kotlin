@@ -5,6 +5,3 @@
 
 @implementation InterfaceDerived
 @end
-
-@implementation InterfaceIntegerProperty
-@end

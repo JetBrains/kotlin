@@ -33,6 +33,7 @@ class ObjCOverridabilityCondition : ExternalOverridabilityCondition {
         subClassDescriptor: ClassDescriptor?
     ): ExternalOverridabilityCondition.Result {
         if (superDescriptor.name == subDescriptor.name) { // Slow path:
+            // KT-57640: There's no necessity to implement platform-dependent overridability check for properties
             if (superDescriptor is FunctionDescriptor && subDescriptor is FunctionDescriptor) {
                 superDescriptor.getExternalObjCMethodInfo()?.let { superInfo ->
                     val subInfo = subDescriptor.getExternalObjCMethodInfo()
@@ -51,16 +52,11 @@ class ObjCOverridabilityCondition : ExternalOverridabilityCondition {
                         }
                     }
                 }
-            } else if (superDescriptor.isExternalObjCClassProperty() && subDescriptor.isExternalObjCClassProperty()) {
-                return ExternalOverridabilityCondition.Result.OVERRIDABLE
             }
         }
 
         return ExternalOverridabilityCondition.Result.UNKNOWN
     }
-
-    private fun CallableDescriptor.isExternalObjCClassProperty() = this is PropertyDescriptor &&
-            (this.containingDeclaration as? ClassDescriptor)?.isExternalObjCClass() == true
 
     private fun parameterNamesMatch(first: FunctionDescriptor, second: FunctionDescriptor): Boolean {
         // The original Objective-C method selector is represented as
