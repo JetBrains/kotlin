@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_K2: JVM_IR
 
 package script.long.name.inside.packag
 

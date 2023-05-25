@@ -213,13 +213,21 @@ class Fir2IrVisitor(
             }
             conversionScope.withParent(irScript) {
                 for (statement in script.statements) {
-                    if (statement is FirDeclaration) {
-                        val irDeclaration = statement.accept(this@Fir2IrVisitor, null) as IrDeclaration
-                        irScript.statements.add(irDeclaration)
+                    val irStatement = if (statement is FirDeclaration) {
+                        when {
+                            statement is FirClass -> {
+                                (statement.accept(this@Fir2IrVisitor, null) as IrClass).also {
+                                    converter.bindFakeOverridesInClass(it)
+                                }
+                            }
+                            else -> {
+                                statement.accept(this@Fir2IrVisitor, null) as? IrDeclaration
+                            }
+                        }
                     } else {
-                        val irStatement = statement.toIrStatement()!!
-                        irScript.statements.add(irStatement)
+                        statement.toIrStatement()
                     }
+                    irScript.statements.add(irStatement!!)
                 }
             }
             declarationStorage.leaveScope(irScript)
