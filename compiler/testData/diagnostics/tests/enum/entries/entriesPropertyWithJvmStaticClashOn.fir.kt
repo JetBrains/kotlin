@@ -2,14 +2,11 @@
 // WITH_STDLIB
 // FIR_DUMP
 
-package foo
-
-import foo.A.Companion.entries
-
 enum class A {
     ;
 
     companion object {
+        @JvmStatic
         val entries = 0
     }
 }
@@ -20,4 +17,6 @@ fun test() {
     with(A) {
         entries
     }
+
+    A.Companion.entries
 }

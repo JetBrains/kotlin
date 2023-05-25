@@ -11072,6 +11072,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("conflictingPropertyEntriesAndReferenceOn.kt")
+                public void testConflictingPropertyEntriesAndReferenceOn() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/enum/entries/conflictingPropertyEntriesAndReferenceOn.kt");
+                }
+
+                @Test
                 @TestMetadata("entriesPropertyAsExtensionClash.kt")
                 public void testEntriesPropertyAsExtensionClash() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/enum/entries/entriesPropertyAsExtensionClash.kt");
@@ -11114,6 +11120,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("entriesPropertyWithJvmStaticClashOn.kt")
+                public void testEntriesPropertyWithJvmStaticClashOn() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/enum/entries/entriesPropertyWithJvmStaticClashOn.kt");
+                }
+
+                @Test
                 @TestMetadata("entriesUnsupported.kt")
                 public void testEntriesUnsupported() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/enum/entries/entriesUnsupported.kt");
@@ -11132,9 +11144,21 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("genericEntriesPropertyClashOn.kt")
+                public void testGenericEntriesPropertyClashOn() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/enum/entries/genericEntriesPropertyClashOn.kt");
+                }
+
+                @Test
                 @TestMetadata("javaEnumEntriesAmbiguity.kt")
                 public void testJavaEnumEntriesAmbiguity() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/enum/entries/javaEnumEntriesAmbiguity.kt");
+                }
+
+                @Test
+                @TestMetadata("javaEnumEntriesAmbiguityOn.kt")
+                public void testJavaEnumEntriesAmbiguityOn() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/enum/entries/javaEnumEntriesAmbiguityOn.kt");
                 }
 
                 @Test

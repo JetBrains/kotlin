@@ -1,5 +1,6 @@
 // !LANGUAGE: +EnumEntries
 // WITH_STDLIB
+// FIR_DUMP
 
 enum class E {
     <!DEPRECATED_DECLARATION_OF_ENUM_ENTRY!>entries,<!> Entries;

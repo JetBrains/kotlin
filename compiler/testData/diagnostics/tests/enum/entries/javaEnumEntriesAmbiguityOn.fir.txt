@@ -1,0 +1,6 @@
+FILE: test.kt
+    public final fun test(): R|kotlin/Unit| {
+        Q|JEnumEntry|.R|/JEnumEntry.entries|
+        Q|JEnumStaticField|.R|/JEnumStaticField.entries|
+        Q|JEnumField|::R|/JEnumField.entries|
+    }
