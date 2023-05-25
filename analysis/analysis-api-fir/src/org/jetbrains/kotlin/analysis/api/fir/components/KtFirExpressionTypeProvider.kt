@@ -74,19 +74,24 @@ internal class KtFirExpressionTypeProvider(
             is FirNamedReference -> fir.getReferencedElementType().asKtType()
             is FirStatement -> with(analysisSession) { builtinTypes.UNIT }
             is FirTypeRef, is FirImport, is FirPackageDirective, is FirLabel, is FirTypeParameterRef -> null
-            // For invalid code like the following,
+
+            // `listOf<_>(1)` where `expression` is `_`
+            is FirPlaceholderProjection -> null
+
+            // There are various cases where we have no corresponding fir due to invalid code
+            // Some examples:
             // ```
             // when {
             //   true, false -> {}
             // }
             // ```
-            // `false` does not have a corresponding elements on the FIR side and hence the containing `FirWhenBranch` is returned. In this
-            // case, we simply report null since FIR does not know about it.
-            is FirWhenBranch -> null
-
-            // `listOf<_>(1)` where `expression` is `_`
-            is FirPlaceholderProjection -> null
-            else -> error("Unexpected ${fir?.let { it::class }} for ${expression::class} with text `${expression.text}`")
+            // `false` does not have a corresponding elements on the FIR side and hence the containing `FirWhenBranch` is returned.
+            // ```
+            // @Volatile
+            // private var
+            // ```
+            // Volatile does not have corresponding element, so `FirFileImpl` is returned
+            else -> null
         }
     }
 
