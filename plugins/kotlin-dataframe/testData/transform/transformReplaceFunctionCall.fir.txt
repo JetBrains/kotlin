@@ -42,7 +42,10 @@ FILE: transformReplaceFunctionCall.kt
 
             }
 
-            ^ (R|<local>/it| as R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Token499>|)
+            ^ (R|<local>/df|.R|org/jetbrains/kotlinx/dataframe/api/refined_499|<R|kotlin/Int|, R|kotlin/Any?|>(String(col1), <L> = add@fun R|org/jetbrains/kotlinx/dataframe/api/AddDataRow<kotlin/Any?>|.<anonymous>(it: R|org/jetbrains/kotlinx/dataframe/api/AddDataRow<kotlin/Any?>|): R|kotlin/Int| <inline=NoInline>  {
+                ^ Int(42)
+            }
+            ) as R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Token499>|)
         }
         )).R|<local>/col1|.R|org/jetbrains/kotlinx/dataframe/api/print|<R|kotlin/Int|>()
     }
