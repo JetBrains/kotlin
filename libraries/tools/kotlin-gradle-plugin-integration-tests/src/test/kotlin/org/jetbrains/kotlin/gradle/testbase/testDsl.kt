@@ -46,7 +46,7 @@ fun KGPBaseTest.project(
     buildJdk: File? = null,
     localRepoDir: Path? = null,
     environmentVariables: EnvironmentalVariables = EnvironmentalVariables(),
-    test: TestProject.() -> Unit = {}
+    test: TestProject.() -> Unit = {},
 ): TestProject {
     val projectPath = setupProjectFromTestResources(
         projectName,
@@ -108,7 +108,7 @@ fun KGPBaseTest.nativeProject(
     buildJdk: File? = null,
     localRepoDir: Path? = null,
     environmentVariables: EnvironmentalVariables = EnvironmentalVariables(),
-    test: TestProject.() -> Unit = {}
+    test: TestProject.() -> Unit = {},
 ): TestProject {
     val project = project(
         projectName = projectName,
@@ -141,7 +141,7 @@ fun TestProject.build(
     enableBuildScan: Boolean = this.enableBuildScan,
     buildOptions: BuildOptions = this.buildOptions,
     environmentVariables: EnvironmentalVariables = this.environmentVariables,
-    assertions: BuildResult.() -> Unit = {}
+    assertions: BuildResult.() -> Unit = {},
 ) {
     if (enableBuildScan) agreeToBuildScanService()
 
@@ -178,7 +178,7 @@ fun TestProject.buildAndFail(
     enableBuildScan: Boolean = this.enableBuildScan,
     buildOptions: BuildOptions = this.buildOptions,
     environmentVariables: EnvironmentalVariables = this.environmentVariables,
-    assertions: BuildResult.() -> Unit = {}
+    assertions: BuildResult.() -> Unit = {},
 ) {
     if (enableBuildScan) agreeToBuildScanService()
 
@@ -267,6 +267,13 @@ fun TestProject.enableStatisticReports(
         )
     }
 }
+
+fun String.wrapIntoBlock(s: String): String =
+    """
+        |$s {
+        |    $this
+        |}
+        """.trimMargin()
 
 open class GradleProject(
     val projectName: String,
