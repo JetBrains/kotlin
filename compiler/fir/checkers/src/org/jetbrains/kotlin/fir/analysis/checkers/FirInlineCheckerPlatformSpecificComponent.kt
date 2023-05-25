@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 
-open class FirInlineCheckerExtension : FirSessionComponent {
+abstract class FirInlineCheckerPlatformSpecificComponent : FirSessionComponent {
     open fun isGenerallyOk(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter): Boolean = true
 
     open val inlineVisitor get() = FirInlineDeclarationChecker::BasicInlineVisitor
@@ -37,4 +37,4 @@ open class FirInlineCheckerExtension : FirSessionComponent {
     }
 }
 
-val FirSession.inlineCheckerExtension by FirSession.nullableSessionComponentAccessor<FirInlineCheckerExtension>()
+val FirSession.inlineCheckerExtension by FirSession.nullableSessionComponentAccessor<FirInlineCheckerPlatformSpecificComponent>()
