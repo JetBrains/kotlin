@@ -246,13 +246,7 @@ FILE: [ResolvedTo(IMPORTS)] enumEntry.kt
             LAZY_super<R|kotlin/Enum<Foo>|>
         }
 
-        @R|Anno|[Types]() public final static [ResolvedTo(CONTRACTS)] [ContainingClassKey=Foo] enum entry ResolveMe: R|Foo| = object : R|Foo| {
-            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
-                super<R|Foo|>()
-            }
-
-        }
-
+        @R|Anno|[Types]() public final static [ResolvedTo(CONTRACTS)] [ContainingClassKey=Foo] enum entry ResolveMe: R|Foo| = LAZY_EXPRESSION
         public final static [ResolvedTo(STATUS)] [ContainingClassKey=Foo] fun values(): R|kotlin/Array<Foo>| {
         }
 

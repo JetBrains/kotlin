@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignationWithFile
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
@@ -23,6 +24,9 @@ internal interface SyntheticFirClassProvider {
         }
     }
 }
+
+internal val FirSession.onAirAnalysisTarget: FirElementWithResolveState?
+    get() = onAirProviderForThread.get()?.target
 
 /**
  * Injects a designation-based class file provider to 'LLFirProvider'.
@@ -44,6 +48,7 @@ internal fun withOnAirDesignation(designation: FirDesignationWithFile, block: ()
 
 private class OnAirSyntheticFirClassProvider private constructor(
     private val firFile: FirFile,
+    val target: FirElementWithResolveState,
     private val classes: Map<ClassId, FirClassLikeDeclaration>
 ) : SyntheticFirClassProvider {
     val session: FirSession
@@ -73,7 +78,7 @@ private class OnAirSyntheticFirClassProvider private constructor(
             }
 
             nodeInfoCollector.visitElement(firElement)
-            return OnAirSyntheticFirClassProvider(firFile, nodeInfoCollector.classes)
+            return OnAirSyntheticFirClassProvider(firFile, designation.target, nodeInfoCollector.classes)
         }
     }
 }
