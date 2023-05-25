@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 class FirJvmInlineCheckerComponent : FirInlineCheckerPlatformSpecificComponent() {
     override fun isGenerallyOk(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter): Boolean {
         // local inline functions are prohibited
-        return if (declaration.isLocalMember) {
+        return if (declaration.isLocalMember && context.containingDeclarations.lastOrNull() !is FirScript) {
             reporter.reportOn(declaration.source, FirErrors.NOT_YET_SUPPORTED_IN_INLINE, "Local inline functions", context)
             false
         } else {

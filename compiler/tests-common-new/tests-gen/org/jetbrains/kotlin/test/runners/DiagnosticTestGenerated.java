@@ -30009,6 +30009,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("topLevelInlineFun.kts")
+            public void testTopLevelInlineFun() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/script/topLevelInlineFun.kts");
+            }
+
+            @Test
             @TestMetadata("topLevelPropertiesWithGetSet.kts")
             public void testTopLevelPropertiesWithGetSet() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/script/topLevelPropertiesWithGetSet.kts");
