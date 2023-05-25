@@ -192,6 +192,18 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         )
     }
 
+    fun testRunnerExpressionLanguageVersion20() {
+        runProcess(
+            "kotlin",
+            "-language-version", "2.0", "-e",
+            "println(args.joinToString())",
+            "-a",
+            "b",
+            expectedStdout = "-a, b\n",
+            expectedStderr = "warning: language version 2.0 is experimental, there are no backwards compatibility guarantees for new language and library features\n"
+        )
+    }
+
     fun testCommandlineProcessing() {
         runProcess(
             "kotlin",
