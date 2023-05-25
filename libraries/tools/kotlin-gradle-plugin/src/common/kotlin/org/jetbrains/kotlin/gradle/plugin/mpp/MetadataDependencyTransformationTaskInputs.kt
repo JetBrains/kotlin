@@ -45,17 +45,8 @@ internal class MetadataDependencyTransformationTaskInputs(
             }
     }
 
-    @Transient // Only needed for configuring task inputs
-    private val participatingSourceSetsLazy: Lazy<Set<KotlinSourceSet>>? = lazy {
-        kotlinSourceSet.internal.withDependsOnClosure
-    }
-
-    private val participatingSourceSets: Set<KotlinSourceSet>
-        get() = participatingSourceSetsLazy?.value
-            ?: error(
-                "`participatingSourceSets` is null. " +
-                        "Probably it is accessed it during Task Execution with state loaded from Configuration Cache"
-            )
+    @Transient // Only needed for configuring task inputs;
+    private val participatingSourceSets: Set<KotlinSourceSet> = kotlinSourceSet.internal.withDependsOnClosure
 
     @Suppress("unused") // Gradle input
     @get:Input
