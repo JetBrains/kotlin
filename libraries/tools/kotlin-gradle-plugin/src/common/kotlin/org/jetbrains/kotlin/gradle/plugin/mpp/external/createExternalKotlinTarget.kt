@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.gradle.utils.named
 fun <T : DecoratedExternalKotlinTarget> KotlinMultiplatformExtension.createExternalKotlinTarget(
     descriptor: ExternalKotlinTargetDescriptor<T>
 ): T {
-    val defaultConfiguration = project.configurations.maybeCreate(lowerCamelCaseName(descriptor.targetName, "default"))
     val apiElementsConfiguration = project.configurations.maybeCreate(lowerCamelCaseName(descriptor.targetName, "apiElements"))
     val runtimeElementsConfiguration = project.configurations.maybeCreate(lowerCamelCaseName(descriptor.targetName, "runtimeElements"))
     val sourcesElementsConfiguration = project.configurations.maybeCreate(lowerCamelCaseName(descriptor.targetName, "sourcesElements"))
@@ -58,7 +57,6 @@ fun <T : DecoratedExternalKotlinTarget> KotlinMultiplatformExtension.createExter
         targetName = descriptor.targetName,
         platformType = descriptor.platformType,
         publishable = true,
-        defaultConfiguration = defaultConfiguration,
         apiElementsConfiguration = apiElementsConfiguration,
         runtimeElementsConfiguration = runtimeElementsConfiguration,
         sourcesElementsConfiguration = sourcesElementsConfiguration,

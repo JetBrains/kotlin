@@ -33,9 +33,6 @@ abstract class KotlinWithJavaTarget<KotlinOptionsType : KotlinCommonOptions, CO 
     override var disambiguationClassifier: String? = null
         internal set
 
-    val defaultConfigurationName: String
-        get() = Dependency.DEFAULT_CONFIGURATION
-
     override val apiElementsConfigurationName: String
         get() = JavaPlugin.API_ELEMENTS_CONFIGURATION_NAME
 
