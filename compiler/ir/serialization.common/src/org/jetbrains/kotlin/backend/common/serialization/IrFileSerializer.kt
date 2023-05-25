@@ -21,8 +21,6 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.library.SerializedDeclaration
 import org.jetbrains.kotlin.library.SerializedIrFile
-import org.jetbrains.kotlin.library.SkippedDeclaration
-import org.jetbrains.kotlin.library.TopLevelDeclaration
 import org.jetbrains.kotlin.library.impl.IrMemoryArrayWriter
 import org.jetbrains.kotlin.library.impl.IrMemoryDeclarationWriter
 import org.jetbrains.kotlin.library.impl.IrMemoryStringWriter
@@ -1425,7 +1423,8 @@ open class IrFileSerializer(
 
         file.declarations.forEach {
             if (skipExpects && it.descriptor.isExpectMember && !it.descriptor.isSerializableExpectClass) {
-                topLevelDeclarations.add(SkippedDeclaration)
+                // Skip the declaration unless it is `expect annotation class` marked with `OptionalExpectation`
+                // without the corresponding `actual` counterpart for the current leaf target.
                 return@forEach
             }
 
@@ -1437,7 +1436,7 @@ open class IrFileSerializer(
             // TODO: keep order similar
             val sigIndex = protoIdSignatureMap[idSig]
                 ?: if (it is IrErrorDeclaration) protoIdSignature(idSig) else error("Not found ID for $idSig (${it.render()})")
-            topLevelDeclarations.add(TopLevelDeclaration(sigIndex, idSig.toString(), byteArray))
+            topLevelDeclarations.add(SerializedDeclaration(sigIndex, idSig.toString(), byteArray))
             proto.addDeclarationId(sigIndex)
         }
 
