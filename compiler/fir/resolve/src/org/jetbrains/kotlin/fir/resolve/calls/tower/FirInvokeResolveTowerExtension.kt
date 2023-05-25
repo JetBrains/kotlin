@@ -217,7 +217,6 @@ internal class FirInvokeResolveTowerExtension(
             manager.enqueueResolverTask {
                 task.runResolverForBuiltinInvokeExtensionWithExplicitArgument(
                     invokeFunctionInfo, explicitReceiver,
-                    TowerGroup.EmptyRoot
                 )
             }
         } else {
@@ -226,7 +225,6 @@ internal class FirInvokeResolveTowerExtension(
                 manager.enqueueResolverTask {
                     task.runResolverForBuiltinInvokeExtensionWithImplicitArgument(
                         invokeFunctionInfo, explicitReceiver,
-                        TowerGroup.EmptyRoot
                     )
                 }
             }
@@ -234,7 +232,6 @@ internal class FirInvokeResolveTowerExtension(
             manager.enqueueResolverTask {
                 task.runResolverForInvoke(
                     invokeFunctionInfo, explicitReceiver,
-                    TowerGroup.EmptyRoot
                 )
             }
         }
@@ -247,19 +244,16 @@ internal class FirInvokeResolveTowerExtension(
         manager.enqueueResolverTask {
             task.runResolverForInvoke(
                 info, explicitReceiverValue,
-                TowerGroup.EmptyRoot
             )
         }
         manager.enqueueResolverTask {
             task.runResolverForBuiltinInvokeExtensionWithExplicitArgument(
                 info, explicitReceiverValue,
-                TowerGroup.EmptyRoot
             )
         }
         manager.enqueueResolverTask {
             task.runResolverForBuiltinInvokeExtensionWithImplicitArgument(
                 info, explicitReceiverValue,
-                TowerGroup.EmptyRoot
             )
         }
     }
@@ -384,11 +378,10 @@ private class InvokeFunctionResolveTask(
     suspend fun runResolverForInvoke(
         info: CallInfo,
         invokeReceiverValue: ExpressionReceiverValue,
-        parentGroupForInvokeCandidates: TowerGroup
     ) {
         processLevelForRegularInvoke(
             invokeReceiverValue.toMemberScopeTowerLevel(),
-            info, parentGroupForInvokeCandidates.Member,
+            info, TowerGroup.Member,
             ExplicitReceiverKind.DISPATCH_RECEIVER
         )
 
@@ -422,11 +415,10 @@ private class InvokeFunctionResolveTask(
     suspend fun runResolverForBuiltinInvokeExtensionWithExplicitArgument(
         info: CallInfo,
         invokeReceiverValue: ExpressionReceiverValue,
-        parentGroupForInvokeCandidates: TowerGroup
     ) {
         processLevel(
             invokeReceiverValue.toMemberScopeTowerLevel(),
-            info, parentGroupForInvokeCandidates.Member.InvokeResolvePriority(InvokeResolvePriority.INVOKE_EXTENSION),
+            info, TowerGroup.Member.InvokeResolvePriority(InvokeResolvePriority.INVOKE_EXTENSION),
             ExplicitReceiverKind.DISPATCH_RECEIVER
         )
     }
@@ -437,11 +429,10 @@ private class InvokeFunctionResolveTask(
         info: CallInfo,
         // "f" should have an extension function type
         invokeReceiverValue: ExpressionReceiverValue,
-        parentGroupForInvokeCandidates: TowerGroup
     ) {
         for ((depth, implicitReceiverValue) in towerDataElementsForName.implicitReceivers) {
             val towerGroup =
-                parentGroupForInvokeCandidates
+                TowerGroup
                     .Implicit(depth)
                     .InvokeExtension
                     .InvokeResolvePriority(InvokeResolvePriority.INVOKE_EXTENSION)
