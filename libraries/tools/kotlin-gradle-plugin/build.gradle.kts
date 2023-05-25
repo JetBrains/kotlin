@@ -57,8 +57,6 @@ dependencies {
     commonCompileOnly(project(":kotlin-gradle-build-metrics"))
     commonCompileOnly("com.android.tools.build:gradle:4.2.2")
     commonCompileOnly("com.android.tools.build:gradle-api:4.2.2")
-    commonCompileOnly("com.android.tools.build:builder:4.2.2")
-    commonCompileOnly("com.android.tools.build:builder-model:4.2.2")
     commonCompileOnly(intellijCore())
     commonCompileOnly(commonDependency("org.jetbrains.teamcity:serviceMessages"))
     commonCompileOnly("com.gradle:gradle-enterprise-gradle-plugin:3.12.4")
