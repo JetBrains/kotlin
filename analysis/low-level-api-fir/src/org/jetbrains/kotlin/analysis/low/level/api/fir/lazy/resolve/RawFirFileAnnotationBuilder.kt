@@ -29,7 +29,7 @@ internal fun buildFileFirAnnotation(
         }
     }
     builder.context.packageFqName = fileAnnotation.containingKtFile.packageFqName
-    val result = builder.VisitorWithReplacement().convertElement(fileAnnotation) as FirAnnotation
+    val result = builder.VisitorWithReplacement().convertElement(fileAnnotation, null) as FirAnnotation
     replacementApplier?.ensureApplied()
     return result
 }

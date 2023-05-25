@@ -164,10 +164,10 @@ open class RawFirBuilder(
 
     protected open inner class Visitor : KtVisitor<FirElement, FirElement?>() {
         private inline fun <reified R : FirElement> KtElement?.convertSafe(): R? =
-            this?.let(::convertElement) as? R
+            this?.let { convertElement(it, null)} as? R
 
         private inline fun <reified R : FirElement> KtElement.convert(): R =
-            convertElement(this) as R
+            convertElement(this, null) as R
 
         private inline fun <T> buildOrLazy(build: () -> T, noinline lazy: () -> T): T {
             return when (mode) {
@@ -262,7 +262,7 @@ open class RawFirBuilder(
                 return buildErrorExpression(source = null, diagnosticFn())
             }
 
-            val result = when (val fir = convertElement(this)) {
+            val result = when (val fir = convertElement(this, null)) {
                 is FirExpression -> fir
                 else -> {
                     return buildErrorExpression {
@@ -298,7 +298,7 @@ open class RawFirBuilder(
         }
 
         private inline fun KtExpression.toFirStatement(errorReasonLazy: () -> String): FirStatement {
-            return when (val fir = convertElement(this)) {
+            return when (val fir = convertElement(this, null)) {
                 is FirStatement -> fir
                 else -> buildErrorExpression {
                     nonExpressionElement = fir
