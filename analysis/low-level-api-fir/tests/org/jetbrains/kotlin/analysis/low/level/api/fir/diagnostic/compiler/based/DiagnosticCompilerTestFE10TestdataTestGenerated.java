@@ -334,6 +334,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
         }
 
         @Test
+        @TestMetadata("funReturnsAny.kt")
+        public void testFunReturnsAny() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/funReturnsAny.kt");
+        }
+
+        @Test
         @TestMetadata("FunctionCalleeExpressions.kt")
         public void testFunctionCalleeExpressions() throws Exception {
             runTest("compiler/testData/diagnostics/tests/FunctionCalleeExpressions.kt");
