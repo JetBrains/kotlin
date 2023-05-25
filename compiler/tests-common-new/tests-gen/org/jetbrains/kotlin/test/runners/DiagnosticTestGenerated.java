@@ -28294,6 +28294,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("avoidTypeCheckerRecursion.kt")
+                public void testAvoidTypeCheckerRecursion() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/resolve/invoke/avoidTypeCheckerRecursion.kt");
+                }
+
+                @Test
                 @TestMetadata("closeInvokesFarVariable.kt")
                 public void testCloseInvokesFarVariable() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/resolve/invoke/closeInvokesFarVariable.kt");

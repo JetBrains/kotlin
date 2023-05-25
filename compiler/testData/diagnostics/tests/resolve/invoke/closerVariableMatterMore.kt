@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // ISSUE: KT-37375
 
 fun takeDouble(x: Double) {}

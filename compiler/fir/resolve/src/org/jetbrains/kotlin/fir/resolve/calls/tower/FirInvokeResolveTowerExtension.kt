@@ -240,7 +240,7 @@ internal class FirInvokeResolveTowerExtension(
     // For calls having a form of "x.(f)()"
     fun enqueueResolveTasksForImplicitInvokeCall(info: CallInfo, receiverExpression: FirExpression) {
         val explicitReceiverValue = ExpressionReceiverValue(receiverExpression)
-        val task = createInvokeFunctionResolveTask(info, TowerGroup.EmptyRoot)
+        val task = createInvokeFunctionResolveTask(info, TowerGroup.EmptyRootForInvokeReceiver)
         manager.enqueueResolverTask {
             task.runResolverForInvoke(
                 info, explicitReceiverValue,
@@ -369,11 +369,8 @@ private class InvokeFunctionResolveTask(
     candidateFactory,
 ) {
 
-    override fun interceptTowerGroup(towerGroup: TowerGroup): TowerGroup {
-        val invokeGroup = towerGroup.InvokeResolvePriority(InvokeResolvePriority.COMMON_INVOKE)
-        val max = maxOf(invokeGroup, receiverGroup)
-        return max.InvokeReceiver(receiverGroup)
-    }
+    private fun TowerGroup.withGivenInvokeReceiverGroup(invokeResolvePriority: InvokeResolvePriority): TowerGroup =
+        InvokeReceiver(receiverGroup, invokeResolvePriority)
 
     suspend fun runResolverForInvoke(
         info: CallInfo,
@@ -418,7 +415,7 @@ private class InvokeFunctionResolveTask(
     ) {
         processLevel(
             invokeReceiverValue.toMemberScopeTowerLevel(),
-            info, TowerGroup.Member.InvokeResolvePriority(InvokeResolvePriority.INVOKE_EXTENSION),
+            info, TowerGroup.Member.withGivenInvokeReceiverGroup(InvokeResolvePriority.INVOKE_EXTENSION),
             ExplicitReceiverKind.DISPATCH_RECEIVER
         )
     }
@@ -434,8 +431,8 @@ private class InvokeFunctionResolveTask(
             val towerGroup =
                 TowerGroup
                     .Implicit(depth)
-                    .InvokeExtension
-                    .InvokeResolvePriority(InvokeResolvePriority.INVOKE_EXTENSION)
+                    .InvokeExtensionWithImplicitReceiver
+                    .withGivenInvokeReceiverGroup(InvokeResolvePriority.INVOKE_EXTENSION)
 
             processLevel(
                 invokeReceiverValue.toMemberScopeTowerLevel(),
@@ -453,7 +450,7 @@ private class InvokeFunctionResolveTask(
         explicitReceiverKind: ExplicitReceiverKind
     ) = processLevel(
         towerLevel, callInfo,
-        group.InvokeResolvePriority(InvokeResolvePriority.COMMON_INVOKE),
+        group.withGivenInvokeReceiverGroup(InvokeResolvePriority.COMMON_INVOKE),
         explicitReceiverKind
     )
 }
