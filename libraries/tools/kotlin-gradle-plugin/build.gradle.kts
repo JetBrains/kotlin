@@ -18,13 +18,19 @@ pill {
     variant = PillExtension.Variant.FULL
 }
 
-kotlin.sourceSets.all {
-    languageSettings.optIn("kotlin.RequiresOptIn")
-    languageSettings.optIn("org.jetbrains.kotlin.gradle.plugin.mpp.pm20.AdvancedKotlinGradlePluginApi")
-    languageSettings.optIn("org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi")
-    languageSettings.optIn("org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi")
-    languageSettings.optIn("org.jetbrains.kotlin.gradle.ExternalKotlinTargetApi")
-    languageSettings.optIn("org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi")
+kotlin {
+    compilerOptions {
+        optIn.addAll(
+            listOf(
+                "kotlin.RequiresOptIn",
+                "org.jetbrains.kotlin.gradle.plugin.mpp.pm20.AdvancedKotlinGradlePluginApi",
+                "org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi",
+                "org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi",
+                "org.jetbrains.kotlin.gradle.ExternalKotlinTargetApi",
+                "org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi",
+            )
+        )
+    }
 }
 
 apiValidation {
