@@ -1,15 +1,22 @@
 package org.jetbrains.kotlin.fir.dataframe.extensions
 
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.dataframe.FirMetaContext
+import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
+import org.jetbrains.kotlin.fir.expressions.FirStatement
+import org.jetbrains.kotlin.fir.expressions.builder.buildBlock
 import org.jetbrains.kotlin.fir.extensions.FirFunctionTransformerExtension
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.classId
+import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
+import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitorVoid
+import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.Name
 
 class FunctionTransformer(session: FirSession, private val context: FirMetaContext) : FirFunctionTransformerExtension(session) {
@@ -47,7 +54,38 @@ class FunctionTransformer(session: FirSession, private val context: FirMetaConte
             )
             newCall.replaceExplicitReceiver(call.explicitReceiver)
             newCall.replaceExtensionReceiver(call.extensionReceiver)
+            newCall.acceptChildren(object : FirDefaultVisitorVoid() {
+                override fun visitElement(element: FirElement) {
+                    element.acceptChildren(this)
+                }
+
+                override fun visitAnonymousFunction(anonymousFunction: FirAnonymousFunction) {
+                    val block = buildBlock {
+                        val original = anonymousFunction.body?.statements ?: emptyList()
+                        for ((i, statement) in original.withIndex()) {
+                            if (i == original.lastIndex) {
+                                statements.add(statement.transformSingle(InsertOriginalCall(call), null))
+                            } else {
+                                statements.add(statement)
+                            }
+                        }
+                    }
+                    block.replaceTypeRef(anonymousFunction.body?.typeRef!!)
+                    anonymousFunction.replaceBody(block)
+                }
+            })
             return newCall
         } else call
+    }
+
+    private class InsertOriginalCall(val call: FirFunctionCall) :  FirDefaultTransformer<Nothing?>() {
+        override fun <E : FirElement> transformElement(element: E, data: Nothing?): E {
+            return element.transformChildren(this, data) as E
+        }
+
+        override fun transformPropertyAccessExpression(propertyAccessExpression: FirPropertyAccessExpression, data: Nothing?): FirStatement {
+            call.replaceExplicitReceiver(propertyAccessExpression)
+            return call
+        }
     }
 }
