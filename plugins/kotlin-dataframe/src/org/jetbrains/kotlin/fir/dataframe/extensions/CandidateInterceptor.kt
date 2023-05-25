@@ -42,7 +42,7 @@ class CandidateInterceptor(
     val callableState: MutableMap<Name, FirSimpleFunction>,
     val nextName: (String) -> ClassId
 ) : FirCandidateFactoryInterceptor(session) {
-    val Key = ExtensionGenerator.DataFramePlugin
+    val Key = ScopesGenerator.DataFramePlugin
 
     @OptIn(SymbolInternals::class)
     override fun intercept(callInfo: CallInfo, symbol: FirBasedSymbol<*>, dispatchReceiverValue: ReceiverValue?): FirBasedSymbol<*> {

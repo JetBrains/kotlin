@@ -150,6 +150,8 @@ class FirDataFrameExtensionRegistrar(
             +::ExtensionsGenerator
             when (mode) {
                 Mode.OBSOLETE -> {
+                    +::ScopesGenerator
+                    +{ it: FirSession -> RefinedFunctionsGenerator(it, callables, callableState) }
                     +{ it: FirSession ->
                         ExpressionAnalyzerReceiverInjector(it, scopeState, tokenState, path, this::nextName, this::nextScope)
                     }
