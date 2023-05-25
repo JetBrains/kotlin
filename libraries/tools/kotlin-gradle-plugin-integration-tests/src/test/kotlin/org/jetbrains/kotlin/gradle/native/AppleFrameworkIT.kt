@@ -9,6 +9,7 @@ import org.gradle.api.JavaVersion
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.util.replaceText
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import kotlin.io.path.absolutePathString
@@ -573,6 +574,8 @@ class AppleFrameworkIT : KGPBaseTest() {
                     else "variant \"$variantName\""
                 )
             }
+
+            subProject("iosApp").buildGradleKts.replaceText("<applePluginTestVersion>", "\"${TestVersions.AppleGradlePlugin.V222_0_21}\"")
 
             build(*dependencyInsight("iosAppIosX64DebugImplementation")) {
                 assertContainsVariant("mainDynamicDebugFrameworkIos")

@@ -68,6 +68,9 @@ data class BuildOptions(
     data class NativeOptions(
         val cacheKind: NativeCacheKind = NativeCacheKind.NONE,
         val cocoapodsGenerateWrapper: Boolean? = null,
+        val cocoapodsPlatform: String? = null,
+        val cocoapodsConfiguration: String? = null,
+        val cocoapodsArchs: String? = null,
         val distributionType: String? = null,
         val distributionDownloadFromMaven: Boolean? = null,
         val platformLibrariesMode: String? = null,
@@ -198,6 +201,15 @@ data class BuildOptions(
 
         nativeOptions.cocoapodsGenerateWrapper?.let {
             arguments.add("-Pkotlin.native.cocoapods.generate.wrapper=${it}")
+        }
+        nativeOptions.cocoapodsPlatform?.let {
+            arguments.add("-Pkotlin.native.cocoapods.platform=${it}")
+        }
+        nativeOptions.cocoapodsArchs?.let {
+            arguments.add("-Pkotlin.native.cocoapods.archs=${it}")
+        }
+        nativeOptions.cocoapodsConfiguration?.let {
+            arguments.add("-Pkotlin.native.cocoapods.configuration=${it}")
         }
 
         nativeOptions.distributionDownloadFromMaven?.let {

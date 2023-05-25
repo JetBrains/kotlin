@@ -6,10 +6,11 @@
 package org.jetbrains.kotlin.gradle.native
 
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.POD_INSTALL_TASK_NAME
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.assertProcessRunResult
-import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.gradle.util.runProcess
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import java.nio.file.Path
@@ -24,18 +25,16 @@ import kotlin.test.assertEquals
 @OptIn(EnvironmentalVariablesOverride::class)
 class CocoaPodsXcodeIT : KGPBaseTest() {
 
-    private val podfileImportDirectivePlaceholder = "<import_mode_directive>"
-
     private val cocoapodsSingleKtPod = "native-cocoapods-single"
     private val cocoapodsMultipleKtPods = "native-cocoapods-multiple"
     private val templateProjectName = "native-cocoapods-template"
 
-    private val environmentVariables = EnvironmentalVariables(
-        mapOf(
-            // CocoaPods 1.11 requires UTF-8 locale being set, more details: https://github.com/CocoaPods/CocoaPods/issues/10939
-            "LC_ALL" to "en_US.UTF-8"
-        )
-    )
+    private val environmentVariables = EnvironmentalVariables(cocoaPodsEnvironmentVariables())
+
+    @BeforeAll
+    fun setUp() {
+        ensureCocoapodsInstalled()
+    }
 
     @DisplayName("Checks xcodebuild for ios-app with a single framework")
     @GradleTest
@@ -142,20 +141,6 @@ class CocoaPodsXcodeIT : KGPBaseTest() {
         mapOf("kotlin-library" to "FirstMultiplatformLibrary", "second-library" to "SecondMultiplatformLibrary")
     )
 
-    private enum class ImportMode(val directive: String) {
-        FRAMEWORKS("use_frameworks!"),
-        MODULAR_HEADERS("use_modular_headers!")
-    }
-
-    private fun TestProject.preparePodfile(iosAppLocation: String, mode: ImportMode) {
-        val iosAppDir = projectPath.resolve(iosAppLocation)
-
-        // Set import mode for Podfile.
-        iosAppDir.resolve("Podfile")
-            .takeIf { it.exists() }
-            ?.replaceText(podfileImportDirectivePlaceholder, mode.directive)
-    }
-
     private fun doTestXcode(
         projectName: String,
         gradleVersion: GradleVersion,
@@ -208,7 +193,7 @@ class CocoaPodsXcodeIT : KGPBaseTest() {
                 // Set import mode for Podfile.
                 preparePodfile(it, mode)
                 // Install pods.
-                build("$taskPrefix:podInstall", buildOptions = buildOptions)
+                build("$taskPrefix:$POD_INSTALL_TASK_NAME", buildOptions = buildOptions)
 
                 projectPath.resolve(it).apply {
                     // Run Xcode build.

@@ -87,6 +87,7 @@ dependencies {
     testImplementation(commonDependency("org.jetbrains.intellij.deps", "trove4j"))
     testImplementation(commonDependency("io.ktor", "ktor-server-test-host"))
     testImplementation(commonDependency("io.ktor", "ktor-server-core"))
+    testImplementation(commonDependency("io.ktor", "ktor-client-cio"))
     testImplementation(commonDependency("io.ktor", "ktor-server-netty"))
     testImplementation(commonDependency("io.ktor", "ktor-client-mock"))
 
