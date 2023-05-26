@@ -37,13 +37,17 @@ sealed class TowerGroupKind(val index: Byte) : Comparable<TowerGroupKind> {
 
     data object Member : TowerGroupKind(4)
 
-    class Local(depth: Int) : WithDepth(5, depth)
+    // If a variable of extension function type belong to some scope X, and there's an implicit receiver Y, then its invoke candidate
+    // should be less prioritized than the member scope of Y (see diagnostics/tests/resolve/priority/invokeExtensionVsOther2.kt),
+    // but more prioritized than extensions in X with bound receiver of Y (see analysis-tests/testData/resolveWithStdlib/problems/invokePriority.kt).
+    // That's why it's been places between Member and Local/ImplicitOrNonLocal.
+    data object InvokeExtensionWithImplicitReceiver : TowerGroupKind(5)
 
-    class ImplicitOrNonLocal(depth: Int, val kindForDebugSake: String) : WithDepth(6, depth)
+    class Local(depth: Int) : WithDepth(6, depth)
 
-    class ContextReceiverGroup(depth: Int) : WithDepth(7, depth)
+    class ImplicitOrNonLocal(depth: Int, val kindForDebugSake: String) : WithDepth(7, depth)
 
-    data object InvokeExtensionWithImplicitReceiver : TowerGroupKind(8)
+    class ContextReceiverGroup(depth: Int) : WithDepth(8, depth)
 
     data object QualifierValue : TowerGroupKind(9)
 
@@ -198,14 +202,14 @@ private constructor(
 
     val Member get() = kindOf(TowerGroupKind.Member)
 
+    val InvokeExtensionWithImplicitReceiver get() = kindOf(TowerGroupKind.InvokeExtensionWithImplicitReceiver)
+
     fun Local(depth: Int) = kindOf(TowerGroupKind.Local(depth))
 
     fun Implicit(depth: Int) = kindOf(TowerGroupKind.Implicit(depth))
     fun NonLocal(depth: Int) = kindOf(TowerGroupKind.NonLocal(depth))
 
     fun ContextReceiverGroup(depth: Int) = kindOf(TowerGroupKind.ContextReceiverGroup(depth))
-
-    val InvokeExtensionWithImplicitReceiver get() = kindOf(TowerGroupKind.InvokeExtensionWithImplicitReceiver)
 
     fun TopPrioritized(depth: Int) = kindOf(TowerGroupKind.TopPrioritized(depth))
 

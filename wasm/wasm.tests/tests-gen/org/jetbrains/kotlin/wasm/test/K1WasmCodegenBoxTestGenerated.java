@@ -13644,6 +13644,12 @@ public class K1WasmCodegenBoxTestGenerated extends AbstractK1WasmCodegenBoxTest 
         }
 
         @Test
+        @TestMetadata("localInvokeExtension.kt")
+        public void testLocalInvokeExtension() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/localInvokeExtension.kt");
+        }
+
+        @Test
         @TestMetadata("localOverrideWithDefaultInLocalOverridden.kt")
         public void testLocalOverrideWithDefaultInLocalOverridden() throws Exception {
             runTest("compiler/testData/codegen/box/fir/localOverrideWithDefaultInLocalOverridden.kt");

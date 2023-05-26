@@ -26,11 +26,11 @@ class Case1 {
             this.<!DEBUG_INFO_CALL("fqName: Case1.bar.foo; typeCall: extension function")!>foo()<!> //resolves to (2)
         }
         "".run {
-            <!DEBUG_INFO_CALL("fqName: Case1.bar.foo; typeCall: extension function")!>foo()<!>      //resolves to (1) !!!
+            <!DEBUG_INFO_CALL("fqName: kotlin.Function1.invoke; typeCall: variable&invoke")!>foo()<!>      //resolves to (1) !!!
             this.<!DEBUG_INFO_CALL("fqName: Case1.bar.foo; typeCall: extension function")!>foo()<!> //resolves to (2)
         }
         "".apply {
-            <!DEBUG_INFO_CALL("fqName: Case1.bar.foo; typeCall: extension function")!>foo()<!>      //resolves to (1) !!!
+            <!DEBUG_INFO_CALL("fqName: kotlin.Function1.invoke; typeCall: variable&invoke")!>foo()<!>      //resolves to (1) !!!
             this.<!DEBUG_INFO_CALL("fqName: Case1.bar.foo; typeCall: extension function")!>foo()<!> //resolves to (2)
         }
         "".also {

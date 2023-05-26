@@ -431,6 +431,7 @@ private class InvokeFunctionResolveTask(
             val towerGroup =
                 TowerGroup
                     .Implicit(depth)
+                    // see invokeExtensionVsOther2.kt test
                     .InvokeExtensionWithImplicitReceiver
                     .withGivenInvokeReceiverGroup(InvokeResolvePriority.INVOKE_EXTENSION)
 
