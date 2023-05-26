@@ -114,10 +114,6 @@ class IrInterpreterCommonChecker : IrInterpreterChecker {
     }
 
     override fun visitConst(expression: IrConst<*>, data: IrInterpreterCheckerData): Boolean {
-        if (expression.type.getUnsignedType() != null) {
-            val constructor = expression.type.classOrNull?.owner?.constructors?.singleOrNull() ?: return false
-            return data.mode.canEvaluateFunction(constructor)
-        }
         return true
     }
 
