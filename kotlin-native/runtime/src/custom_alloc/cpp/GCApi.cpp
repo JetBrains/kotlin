@@ -82,6 +82,9 @@ void* SafeAlloc(uint64_t size) noexcept {
     } else {
 #if KONAN_WINDOWS
         RuntimeFail("mmap is not available on mingw");
+#elif KONAN_LINUX
+        memory = mmap(nullptr, size, PROT_WRITE | PROT_READ, MAP_ANONYMOUS | MAP_PRIVATE | MAP_NORESERVE | MAP_POPULATE, -1, 0);
+        error = memory == MAP_FAILED;
 #else
         memory = mmap(nullptr, size, PROT_WRITE | PROT_READ, MAP_ANONYMOUS | MAP_PRIVATE | MAP_NORESERVE, -1, 0);
         error = memory == MAP_FAILED;
