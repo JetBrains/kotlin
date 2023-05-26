@@ -168,8 +168,12 @@ fun KotlinTypeFacade.analyzeRefinedCallShape(call: FirFunctionCall, reporter: In
     if (rootMarker !is ConeClassLikeType) {
         return null
     }
+
     val origin = rootMarker.toSymbol(session)?.origin
-    if (origin !is FirDeclarationOrigin.Plugin || origin.key != ExpressionAnalyzerReceiverInjector.DataFramePluginKey) {
+    val notFromPlugin = origin !is FirDeclarationOrigin.Plugin || origin.key != ExpressionAnalyzerReceiverInjector.DataFramePluginKey
+    // temporary hack to workaround Token classes not existing when toSymbol is called
+    val notToken = rootMarker.classId?.shortClassName?.asString()?.startsWith("Token") != true
+    if (notFromPlugin && notToken) {
         return null
     }
 
