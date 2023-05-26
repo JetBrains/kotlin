@@ -63,7 +63,6 @@ abstract class AbstractWasmBlackBoxCodegenTestBase<R : ResultingArtifact.Fronten
         }
 
         useConfigurators(
-            ::CommonEnvironmentConfigurator,
             ::WasmEnvironmentConfigurator,
         )
 
