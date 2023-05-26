@@ -9,6 +9,11 @@ repositories {
 val testArtifacts by configurations.creating
 val signature by configurations.creating
 
+sourceSets {
+    "main" { none() }
+    "test" { kotlin.srcDir("src/test") }
+}
+
 dependencies {
     api("org.codehaus.mojo:animal-sniffer:1.21")
     // should be without configuration, but https://issues.gradle.org/browse/GRADLE-3330 still not fixed properly
