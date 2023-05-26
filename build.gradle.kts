@@ -323,6 +323,7 @@ extra["compilerArtifactsForIde"] = listOfNotNull(
     ":kotlin-stdlib-common",
     ":kotlin-stdlib",
     ":kotlin-stdlib-js",
+    ":kotlin-stdlib-wasm",
     ":kotlin-test",
     ":kotlin-daemon",
     ":kotlin-compiler",
