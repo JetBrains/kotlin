@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.expandedConeType
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
+import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.FirStatement
@@ -286,24 +287,31 @@ open class FirSupertypeResolverVisitor(
         }
     }
 
-    private fun prepareScopeForNestedClasses(klass: FirClass): ScopePersistentList {
-        return supertypeComputationSession.getOrPutScopeForNestedClasses(klass) {
-            calculateScopes(klass, true)
+    private fun prepareScopeForNestedClasses(klass: FirClass, forStaticNestedClass: Boolean): ScopePersistentList {
+        return if (forStaticNestedClass) {
+            supertypeComputationSession.getOrPutScopeForStaticNestedClasses(klass) {
+                calculateScopes(klass, withCompanionScopes = true, forStaticNestedClass = true)
+            }
+        } else {
+            supertypeComputationSession.getOrPutScopeForNestedClasses(klass) {
+                calculateScopes(klass, withCompanionScopes = true, forStaticNestedClass = false)
+            }
         }
     }
 
     private fun prepareScopeForCompanion(klass: FirClass): ScopePersistentList {
         return supertypeComputationSession.getOrPutScopeForCompanion(klass) {
-            calculateScopes(klass, false)
+            calculateScopes(klass, withCompanionScopes = false, forStaticNestedClass = true)
         }
     }
 
     private fun calculateScopes(
         outerClass: FirClass,
         withCompanionScopes: Boolean,
+        forStaticNestedClass: Boolean,
     ): PersistentList<FirScope> {
         resolveAllSupertypesForOuterClass(outerClass)
-        return prepareScopes(outerClass).pushAll(
+        return prepareScopes(outerClass, forStaticNestedClass).pushAll(
             createOtherScopesForNestedClassesOrCompanion(
                 klass = outerClass,
                 session = session,
@@ -338,7 +346,7 @@ open class FirSupertypeResolverVisitor(
         }
     }
 
-    private fun prepareScopes(classLikeDeclaration: FirClassLikeDeclaration): PersistentList<FirScope> {
+    private fun prepareScopes(classLikeDeclaration: FirClassLikeDeclaration, forStaticNestedClass: Boolean): PersistentList<FirScope> {
         val classId = classLikeDeclaration.symbol.classId
         val classModuleSession = classLikeDeclaration.moduleData.session
 
@@ -351,7 +359,7 @@ open class FirSupertypeResolverVisitor(
                 val parent = localClassesNavigationInfo.parentForClass[classLikeDeclaration]
 
                 when {
-                    parent != null && parent is FirClass -> prepareScopeForNestedClasses(parent)
+                    parent != null && parent is FirClass -> prepareScopeForNestedClasses(parent, forStaticNestedClass)
                     else -> scopeForLocalClass ?: return persistentListOf()
                 }
             }
@@ -361,12 +369,17 @@ open class FirSupertypeResolverVisitor(
             }
             classId.isNestedClass -> {
                 val outerClassFir = classId.outerClassId?.let { getFirClassifierByFqName(classModuleSession, it) } as? FirRegularClass
-                prepareScopeForNestedClasses(outerClassFir ?: return persistentListOf())
+                // TypeAliases are treated as inner classes even though they are technically not allowed
+                val isStatic = !classLikeDeclaration.isInner && classLikeDeclaration !is FirTypeAlias
+                prepareScopeForNestedClasses(outerClassFir ?: return persistentListOf(), isStatic || forStaticNestedClass)
             }
             else -> getFirClassifierContainerFileIfAny(classLikeDeclaration.symbol)?.let(::prepareFileScopes) ?: persistentListOf()
         }
 
-        return result.pushIfNotNull(classLikeDeclaration.typeParametersScope())
+        return when {
+            forStaticNestedClass -> result
+            else -> result.pushIfNotNull(classLikeDeclaration.typeParametersScope())
+        }
     }
 
     private fun resolveSpecificClassLikeSupertypes(
@@ -386,7 +399,7 @@ open class FirSupertypeResolverVisitor(
         }
 
         supertypeComputationSession.startComputingSupertypes(classLikeDeclaration)
-        val scopes = prepareScopes(classLikeDeclaration)
+        val scopes = prepareScopes(classLikeDeclaration, forStaticNestedClass = false)
 
         val transformer = FirSpecificTypeResolverTransformer(session, supertypeSupplier = supertypeComputationSession.supertypesSupplier)
 
@@ -559,6 +572,7 @@ private fun createErrorTypeRef(fir: FirElement, message: String, kind: Diagnosti
 open class SupertypeComputationSession {
     private val fileScopesMap = hashMapOf<FirFile, ScopePersistentList>()
     private val scopesForNestedClassesMap = hashMapOf<FirClass, ScopePersistentList>()
+    private val scopesForStaticNestedClassesMap = hashMapOf<FirClass, ScopePersistentList>()
     private val scopesForCompanionMap = hashMapOf<FirClass, ScopePersistentList>()
     private val supertypeStatusMap = linkedMapOf<FirClassLikeDeclaration, SupertypeComputationStatus>()
 
@@ -585,6 +599,9 @@ open class SupertypeComputationSession {
 
     fun getOrPutScopeForNestedClasses(klass: FirClass, scope: () -> ScopePersistentList): ScopePersistentList =
         scopesForNestedClassesMap.getOrPut(klass) { scope() }
+
+    fun getOrPutScopeForStaticNestedClasses(klass: FirClass, scope: () -> ScopePersistentList): ScopePersistentList =
+        scopesForStaticNestedClassesMap.getOrPut(klass) { scope() }
 
     fun getOrPutScopeForCompanion(klass: FirClass, scope: () -> ScopePersistentList): ScopePersistentList =
         scopesForCompanionMap.getOrPut(klass) { scope() }

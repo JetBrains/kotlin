@@ -56,6 +56,10 @@ private class NavigationInfoVisitor : FirDefaultVisitor<Unit, Any?>() {
         visitClass(anonymousObject, null)
     }
 
+    override fun visitTypeAlias(typeAlias: FirTypeAlias, data: Any?) {
+        parentForClass[typeAlias] = currentPath.lastOrNull()
+    }
+
     override fun visitClass(klass: FirClass, data: Any?) {
         parentForClass[klass] = currentPath.lastOrNull()
         currentPath.add(klass)

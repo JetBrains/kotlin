@@ -19419,6 +19419,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
             }
 
             @Test
+            @TestMetadata("nestedClassTypeParameterNameCollision.kt")
+            public void testNestedClassTypeParameterNameCollision() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inner/nestedClassTypeParameterNameCollision.kt");
+            }
+
+            @Test
             @TestMetadata("nestedObject.kt")
             public void testNestedObject() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inner/nestedObject.kt");

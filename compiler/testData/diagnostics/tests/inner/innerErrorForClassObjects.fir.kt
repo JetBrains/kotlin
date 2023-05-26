@@ -1,6 +1,6 @@
 open class SomeClass<T>
 class TestSome<P> {
-    companion object : SomeClass<P>() {
+    companion object : SomeClass<<!UNRESOLVED_REFERENCE!>P<!>>() {
     }
 }
 
