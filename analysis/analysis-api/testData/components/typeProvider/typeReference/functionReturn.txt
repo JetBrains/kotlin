@@ -1,0 +1,2 @@
+expression: Boolean
+ktType: kotlin.Boolean
