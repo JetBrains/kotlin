@@ -4196,6 +4196,12 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
             }
 
             @Test
+            @TestMetadata("delegatedDataClass.kt")
+            public void testDelegatedDataClass() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/scopes/delegatedDataClass.kt");
+            }
+
+            @Test
             @TestMetadata("explicitOverrideOfTwoMembers.kt")
             public void testExplicitOverrideOfTwoMembers() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/scopes/explicitOverrideOfTwoMembers.kt");

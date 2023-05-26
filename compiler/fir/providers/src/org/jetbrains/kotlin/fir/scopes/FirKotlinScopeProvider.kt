@@ -45,7 +45,7 @@ class FirKotlinScopeProvider(
 
         return scopeSession.getOrBuild(klass.symbol, USE_SITE) {
             val declaredScope = useSiteSession.declaredMemberScope(klass, memberRequiredPhase)
-            val decoratedDeclaredMemberScope = declaredMemberScopeDecorator(
+            val possiblyDelegatedDeclaredMemberScope = declaredMemberScopeDecorator(
                 klass,
                 declaredScope,
                 useSiteSession,
@@ -58,29 +58,25 @@ class FirKotlinScopeProvider(
                 else
                     FirDelegatedMemberScope(useSiteSession, scopeSession, klass, it, delegateFields)
             }
+            val declaredMemberScopeWithPossiblySynthesizedMembers =
+                if (klass is FirRegularClass && !klass.isExpect && (klass.isData || klass.isInline)) {
+                    // See also KT-58926 (we apply delegation first, and data/value classes after it)
+                    FirClassAnySynthesizedMemberScope(useSiteSession, possiblyDelegatedDeclaredMemberScope, klass, scopeSession)
+                } else {
+                    possiblyDelegatedDeclaredMemberScope
+                }
 
             val scopes = lookupSuperTypes(
                 klass, lookupInterfaces = true, deep = false, useSiteSession = useSiteSession, substituteTypes = true
             ).mapNotNull { useSiteSuperType ->
                 useSiteSuperType.scopeForSupertype(useSiteSession, scopeSession, klass, memberRequiredPhase = memberRequiredPhase)
             }
-            val useSiteMemberScope = FirClassUseSiteMemberScope(
+            FirClassUseSiteMemberScope(
                 klass,
                 useSiteSession,
                 scopes,
-                decoratedDeclaredMemberScope,
+                declaredMemberScopeWithPossiblySynthesizedMembers,
             )
-            if (klass is FirRegularClass && !klass.isExpect && (klass.isData || klass.isInline)) {
-                val lookupTag = klass.symbol.toLookupTag()
-                scopeSession.getOrBuild(lookupTag, AnySynthesizedScopeKey(lookupTag)) {
-                    FirClassAnySynthesizedMemberScope(
-                        useSiteSession, useSiteMemberScope, lookupTag,
-                        klass.moduleData, klass.defaultType(), klass.source
-                    )
-                }
-            } else {
-                useSiteMemberScope
-            }
         }
     }
 

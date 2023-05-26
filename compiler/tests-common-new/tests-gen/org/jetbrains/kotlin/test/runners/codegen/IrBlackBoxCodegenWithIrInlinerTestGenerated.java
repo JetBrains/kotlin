@@ -18412,6 +18412,12 @@ public class IrBlackBoxCodegenWithIrInlinerTestGenerated extends AbstractIrBlack
         }
 
         @Test
+        @TestMetadata("delegatedAndDataTogether.kt")
+        public void testDelegatedAndDataTogether() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/delegatedAndDataTogether.kt");
+        }
+
+        @Test
         @TestMetadata("differentSinceKotlin.kt")
         public void testDifferentSinceKotlin() throws Exception {
             runTest("compiler/testData/codegen/box/fir/differentSinceKotlin.kt");

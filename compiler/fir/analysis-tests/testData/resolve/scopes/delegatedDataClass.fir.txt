@@ -1,0 +1,42 @@
+FILE: delegatedDataClass.kt
+    public abstract interface AnyNeighbor : R|kotlin/Any| {
+        public abstract override operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean|
+
+        public abstract override fun hashCode(): R|kotlin/Int|
+
+        public abstract override fun toString(): R|kotlin/String|
+
+    }
+    public final class Impl : R|AnyNeighbor| {
+        public constructor(): R|Impl| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open override operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean| {
+            ^equals Boolean(true)
+        }
+
+        public open override fun hashCode(): R|kotlin/Int| {
+            ^hashCode Int(0)
+        }
+
+        public open override fun toString(): R|kotlin/String| {
+            ^toString String()
+        }
+
+    }
+    public final data class Data : R|AnyNeighbor| {
+        public constructor(i: R|Impl|): R|Data| {
+            super<R|kotlin/Any|>()
+        }
+
+        private final field $$delegate_0: R|AnyNeighbor| = R|<local>/i|
+
+        public final val i: R|Impl| = R|<local>/i|
+            public get(): R|Impl|
+
+        public final operator fun component1(): R|Impl|
+
+        public final fun copy(i: R|Impl| = this@R|/Data|.R|/Data.i|): R|Data|
+
+    }
