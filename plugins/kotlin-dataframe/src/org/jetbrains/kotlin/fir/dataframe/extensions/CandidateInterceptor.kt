@@ -2,6 +2,7 @@ package org.jetbrains.kotlin.fir.dataframe.extensions
 
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.dataframe.Mode
 import org.jetbrains.kotlin.fir.dataframe.Names
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
@@ -40,7 +41,9 @@ class CandidateInterceptor(
     session: FirSession,
     val nextFunction: (String) -> CallableId,
     val callableState: MutableMap<Name, FirSimpleFunction>,
-    val nextName: (String) -> ClassId
+    val originalSymbol: MutableMap<Name, FirBasedSymbol<*>>,
+    val nextName: (String) -> ClassId,
+    val mode: Mode
 ) : FirCandidateFactoryInterceptor(session) {
     val Key = ScopesGenerator.DataFramePlugin
 
@@ -95,45 +98,50 @@ class CandidateInterceptor(
         }
 
         val function = buildSimpleFunctionCopy(symbol.fir) {
-            moduleData = session.moduleData
-            origin = FirDeclarationOrigin.Plugin(Key)
-            source = null
-            containerSource = null
-            val substitutorMap = mutableMapOf<FirTypeParameterSymbol, ConeKotlinType>()
-            typeParameters.replaceAll {
-                val originalSymbol = it.symbol
-
-                val newTypeParameterSymbol = FirTypeParameterSymbol()
-
-                substitutorMap[originalSymbol] = ConeTypeParameterTypeImpl(
-                    ConeTypeParameterLookupTag(newTypeParameterSymbol),
-                    isNullable = false
-                )
-
-                buildTypeParameterCopy(it) {
+            when (mode) {
+                Mode.EXPERIMENTAL -> { }
+                Mode.OBSOLETE -> {
                     moduleData = session.moduleData
+                    origin = FirDeclarationOrigin.Plugin(Key)
                     source = null
-                    origin = FirDeclarationOrigin.Plugin(Key)
-                    this.symbol = newTypeParameterSymbol
-                    containingDeclarationSymbol = newSymbol
-                }.also { newTypeParameterSymbol.bind(it) }
-            }
-            val substitutorByMap = substitutorByMap(substitutorMap, session)
+                    containerSource = null
+                    val substitutorMap = mutableMapOf<FirTypeParameterSymbol, ConeKotlinType>()
+                    typeParameters.replaceAll {
+                        val originalSymbol = it.symbol
 
-            receiverParameter = buildReceiverParameterCopy(receiverParameter!!) {
-                this.typeRef = buildResolvedTypeRefCopy(this.typeRef as FirResolvedTypeRef) {
-                    type = substitutorByMap.substituteOrSelf(type)
-                }
-            }
+                        val newTypeParameterSymbol = FirTypeParameterSymbol()
 
-            valueParameters.replaceAll {
-                buildValueParameterCopy(it) {
-                    moduleData = session.moduleData
-                    origin = FirDeclarationOrigin.Plugin(Key)
-                    val myReturnTypeRef = returnTypeRef
-                    if (myReturnTypeRef is FirResolvedTypeRef) {
-                        returnTypeRef = buildResolvedTypeRefCopy(myReturnTypeRef) {
+                        substitutorMap[originalSymbol] = ConeTypeParameterTypeImpl(
+                            ConeTypeParameterLookupTag(newTypeParameterSymbol),
+                            isNullable = false
+                        )
+
+                        buildTypeParameterCopy(it) {
+                            moduleData = session.moduleData
+                            source = null
+                            origin = FirDeclarationOrigin.Plugin(Key)
+                            this.symbol = newTypeParameterSymbol
+                            containingDeclarationSymbol = newSymbol
+                        }.also { newTypeParameterSymbol.bind(it) }
+                    }
+                    val substitutorByMap = substitutorByMap(substitutorMap, session)
+
+                    receiverParameter = buildReceiverParameterCopy(receiverParameter!!) {
+                        this.typeRef = buildResolvedTypeRefCopy(this.typeRef as FirResolvedTypeRef) {
                             type = substitutorByMap.substituteOrSelf(type)
+                        }
+                    }
+
+                    valueParameters.replaceAll {
+                        buildValueParameterCopy(it) {
+                            moduleData = session.moduleData
+                            origin = FirDeclarationOrigin.Plugin(Key)
+                            val myReturnTypeRef = returnTypeRef
+                            if (myReturnTypeRef is FirResolvedTypeRef) {
+                                returnTypeRef = buildResolvedTypeRefCopy(myReturnTypeRef) {
+                                    type = substitutorByMap.substituteOrSelf(type)
+                                }
+                            }
                         }
                     }
                 }
@@ -145,6 +153,7 @@ class CandidateInterceptor(
             returnTypeRef = typeRef
         }.also { newSymbol.bind(it) }
         callableState[generatedName.callableName] = function
+        originalSymbol[generatedName.callableName] = symbol
         return newSymbol
     }
 }

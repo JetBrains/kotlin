@@ -10,19 +10,40 @@ import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.expressions.builder.buildBlock
 import org.jetbrains.kotlin.fir.extensions.FirFunctionTransformerExtension
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
+import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
+import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitorVoid
+import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.Name
 
-class FunctionTransformer(session: FirSession, private val context: FirMetaContext) : FirFunctionTransformerExtension(session) {
+class FunctionTransformer(
+    session: FirSession,
+    private val context: FirMetaContext,
+    val refinedToOriginal: MutableMap<Name, FirBasedSymbol<*>>,
+) : FirFunctionTransformerExtension(session) {
     @OptIn(SymbolInternals::class)
     override fun transform(call: FirFunctionCall): FirFunctionCall = with (context) {
         if (call.calleeReference.name == Name.identifier("add")) {
+            call.transformCalleeReference(object : FirTransformer<Nothing?>() {
+                override fun <E : FirElement> transformElement(element: E, data: Nothing?): E {
+                    return if (element is FirResolvedNamedReference) {
+                        buildResolvedNamedReference {
+                            name = element.name
+                            val refinedName = call.calleeReference.toResolvedCallableSymbol()?.callableId?.callableName!!
+                            resolvedSymbol = refinedToOriginal[refinedName]!!
+                        } as E
+                    } else {
+                        element
+                    }
+                }
+            }, null)
             val token = (call.typeRef as FirResolvedTypeRef).type.typeArguments[0] as ConeClassLikeType
             val name = token.type.classId?.shortClassName?.identifierOrNullIfSpecial!!
             val newCall = compile<FirFunctionCall>(

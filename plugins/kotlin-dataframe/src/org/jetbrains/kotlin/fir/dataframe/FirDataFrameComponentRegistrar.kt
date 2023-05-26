@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.dataframe.extensions.*
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -146,6 +147,7 @@ class FirDataFrameExtensionRegistrar(
     override fun ExtensionRegistrarContext.configurePlugin() {
         val flag = true
         val generator = if (flag) PredefinedNames() else GeneratedNames()
+        val refinedToOriginal = mutableMapOf<Name, FirBasedSymbol<*>>()
         with(generator) {
             +::ExtensionsGenerator
             when (mode) {
@@ -163,12 +165,12 @@ class FirDataFrameExtensionRegistrar(
                     +{ it: FirSession ->
                         val templateCompiler = TemplateCompiler()
                         templateCompiler.session = it
-                        FunctionTransformer(it, FirMetaContextImpl(it, templateCompiler))
+                        FunctionTransformer(it, FirMetaContextImpl(it, templateCompiler), refinedToOriginal)
                     }
                 }
             }
 
-            +{ it: FirSession -> CandidateInterceptor(it, ::nextFunction, callableState, this::nextName) }
+            +{ it: FirSession -> CandidateInterceptor(it, ::nextFunction, callableState, refinedToOriginal, this::nextName, mode) }
         }
     }
 }
