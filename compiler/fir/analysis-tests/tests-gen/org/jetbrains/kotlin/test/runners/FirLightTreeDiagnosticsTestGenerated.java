@@ -4942,6 +4942,12 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
             }
 
             @Test
+            @TestMetadata("enumWithTheSameNameAsEntry.kt")
+            public void testEnumWithTheSameNameAsEntry() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/unqualifiedEnum/enumWithTheSameNameAsEntry.kt");
+            }
+
+            @Test
             @TestMetadata("incorrectJava.kt")
             public void testIncorrectJava() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/unqualifiedEnum/incorrectJava.kt");

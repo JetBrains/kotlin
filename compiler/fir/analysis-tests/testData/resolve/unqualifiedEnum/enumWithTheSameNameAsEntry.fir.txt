@@ -1,0 +1,29 @@
+FILE: enumWithTheSameNameAsEntry.kt
+    public final enum class A : R|kotlin/Enum<A>| {
+        private constructor(): R|A| {
+            super<R|kotlin/Enum<A>|>()
+        }
+
+        public final static enum entry A: R|A|
+        public final static enum entry B: R|A|
+        public final static fun values(): R|kotlin/Array<A>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|A| {
+        }
+
+        public final static val entries: R|kotlin/enums/EnumEntries<A>|
+            public get(): R|kotlin/enums/EnumEntries<A>|
+
+    }
+    public final fun test(a: R|A|): R|kotlin/Unit| {
+        ^test when (R|<local>/a|) {
+            ==($subj$, R|/A.A|.<Unresolved name: A>#) ->  {
+                String(A)
+            }
+            ==($subj$, R|/A.A|.<Unresolved name: B>#) ->  {
+                String(B)
+            }
+        }
+
+    }

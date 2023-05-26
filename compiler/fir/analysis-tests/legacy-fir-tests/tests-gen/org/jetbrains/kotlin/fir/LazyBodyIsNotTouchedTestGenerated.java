@@ -4400,6 +4400,11 @@ public class LazyBodyIsNotTouchedTestGenerated extends AbstractLazyBodyIsNotTouc
             runTest("compiler/fir/analysis-tests/testData/resolve/unqualifiedEnum/correctJava.kt");
         }
 
+        @TestMetadata("enumWithTheSameNameAsEntry.kt")
+        public void testEnumWithTheSameNameAsEntry() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/unqualifiedEnum/enumWithTheSameNameAsEntry.kt");
+        }
+
         @TestMetadata("incorrectJava.kt")
         public void testIncorrectJava() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/unqualifiedEnum/incorrectJava.kt");
