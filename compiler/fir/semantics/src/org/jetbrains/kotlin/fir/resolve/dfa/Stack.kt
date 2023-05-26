@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.fir.resolve.dfa
 
-import org.jetbrains.kotlin.fir.util.asReversedFrozen
-
 abstract class Stack<T> {
     abstract val size: Int
     abstract fun top(): T
@@ -41,5 +39,5 @@ private class StackImpl<T>(vararg values: T) : Stack<T>() {
         stack.clear()
     }
 
-    override fun all(): List<T> = stack.asReversedFrozen()
+    override fun all(): List<T> = stack.asReversed()
 }

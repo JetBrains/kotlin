@@ -302,18 +302,9 @@ open class FirTypeResolveTransformer(
 
     override fun transformTypeRef(typeRef: FirTypeRef, data: Any?): FirResolvedTypeRef {
         return typeResolverTransformer.withFile(currentFile) {
-            val scopes = scopes
-            // optimized implementation of reversed Iterable on top of PersistentList
-            val reversedScopes = object : Iterable<FirScope> {
-                override fun iterator() = object : Iterator<FirScope> {
-                    private val iter = scopes.listIterator(scopes.size)
-                    override fun hasNext() = iter.hasPrevious()
-                    override fun next() = iter.previous()
-                }
-            }
             typeRef.transform(
                 typeResolverTransformer,
-                ScopeClassDeclaration(reversedScopes, classDeclarationsStack, containerDeclaration = currentDeclaration)
+                ScopeClassDeclaration(scopes.asReversed(), classDeclarationsStack, containerDeclaration = currentDeclaration)
             )
         }
     }

@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.fir.scopes.impl.FirWhenSubjectImportingScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
-import org.jetbrains.kotlin.fir.util.asReversedFrozen
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.descriptorUtil.HIDES_MEMBERS_NAME_LIST
@@ -32,7 +31,7 @@ internal class TowerDataElementsForName(
     name: Name,
     towerDataContext: FirTowerDataContext
 ) {
-    val nonLocalTowerDataElements = towerDataContext.nonLocalTowerDataElements.asReversedFrozen()
+    val nonLocalTowerDataElements = towerDataContext.nonLocalTowerDataElements.asReversed()
 
     val reversedFilteredLocalScopes by lazy(LazyThreadSafetyMode.NONE) {
         buildList {
