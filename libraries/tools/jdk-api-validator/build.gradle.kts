@@ -16,8 +16,7 @@ sourceSets {
 
 dependencies {
     api("org.codehaus.mojo:animal-sniffer:1.21")
-    // should be without configuration, but https://issues.gradle.org/browse/GRADLE-3330 still not fixed properly
-    api(project(":kotlin-stdlib", configuration = "kotlinStdlibJdk6"))
+    api(kotlinStdlib())
 
     testApi(project(":kotlin-test:kotlin-test-junit"))
 
