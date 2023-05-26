@@ -36,12 +36,12 @@ import java.io.File
 class FirWasmKlibBackendFacade(
     testServices: TestServices,
     private val firstTimeCompilation: Boolean
-) : IrBackendFacade<BinaryArtifacts.KLib>(testServices, ArtifactKinds.KLib)  {
+) : IrBackendFacade<BinaryArtifacts.KLib>(testServices, ArtifactKinds.KLib) {
 
     override val additionalServices: List<ServiceRegistrationData>
         get() = listOf(service(::ModuleDescriptorProvider))
 
-    constructor(testServices: TestServices): this(testServices, firstTimeCompilation = true)
+    constructor(testServices: TestServices) : this(testServices, firstTimeCompilation = true)
 
     override fun shouldRunAnalysis(module: TestModule): Boolean {
         return module.backendKind == inputKind
