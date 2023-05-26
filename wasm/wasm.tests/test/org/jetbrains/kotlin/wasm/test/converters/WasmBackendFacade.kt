@@ -131,7 +131,7 @@ fun extractTestPackage(testServices: TestServices): String? {
             }
     }
 
-    val fileWithBoxFunction = ktFiles.find {file ->
+    val fileWithBoxFunction = ktFiles.find { file ->
         file.declarations.find { it is KtNamedFunction && it.name == "box" } != null
     } ?: return null
 
