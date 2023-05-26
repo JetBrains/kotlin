@@ -16,15 +16,18 @@
 
 package org.jetbrains.kotlin.cli.common
 
+import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.KtSourceFileLinesMapping
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.cli.common.messages.MessageUtil
+import org.jetbrains.kotlin.cli.common.messages.*
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.IncrementalCompilation
+import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.packageFqName
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.isSubpackageOf
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.text
 import org.jetbrains.kotlin.util.Logger
 import java.io.File
 import kotlin.system.exitProcess
@@ -37,17 +40,23 @@ fun incrementalCompilationIsEnabledForJs(arguments: CommonCompilerArguments): Bo
     return arguments.incrementalCompilation ?: IncrementalCompilation.isEnabledForJs()
 }
 
-fun checkKotlinPackageUsage(configuration: CompilerConfiguration, files: Collection<KtFile>, messageCollector: MessageCollector): Boolean {
+fun <F> checkKotlinPackageUsage(
+    configuration: CompilerConfiguration,
+    files: Collection<F>,
+    messageCollector: MessageCollector,
+    getPackage: (F) -> FqName,
+    getMessageLocation: (F) -> CompilerMessageSourceLocation?,
+): Boolean {
     if (configuration.getBoolean(CLIConfigurationKeys.ALLOW_KOTLIN_PACKAGE)) {
         return true
     }
     val kotlinPackage = FqName("kotlin")
     for (file in files) {
-        if (file.packageFqName.isSubpackageOf(kotlinPackage)) {
+        if (getPackage(file).isSubpackageOf(kotlinPackage)) {
             messageCollector.report(
                 CompilerMessageSeverity.ERROR,
                 "Only the Kotlin standard library is allowed to use the 'kotlin' package",
-                MessageUtil.psiElementToMessageLocation(file.packageDirective!!)
+                getMessageLocation(file),
             )
             return false
         }
@@ -55,8 +64,40 @@ fun checkKotlinPackageUsage(configuration: CompilerConfiguration, files: Collect
     return true
 }
 
-fun checkKotlinPackageUsage(configuration: CompilerConfiguration, files: Collection<KtFile>): Boolean =
-    checkKotlinPackageUsage(configuration, files, configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE))
+fun checkKotlinPackageUsageForPsi(configuration: CompilerConfiguration, files: Collection<KtFile>, messageCollector: MessageCollector) =
+    checkKotlinPackageUsage(
+        configuration, files, messageCollector,
+        getPackage = { it.packageFqName },
+        getMessageLocation = { MessageUtil.psiElementToMessageLocation(it.packageDirective!!) },
+    )
+
+fun checkKotlinPackageUsageForPsi(configuration: CompilerConfiguration, files: Collection<KtFile>): Boolean =
+    checkKotlinPackageUsageForPsi(
+        configuration, files, configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE)
+    )
+
+fun checkKotlinPackageUsageForLightTree(configuration: CompilerConfiguration, files: Collection<FirFile>): Boolean =
+    checkKotlinPackageUsage(
+        configuration, files, configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE),
+        getPackage = { it.packageFqName },
+        getMessageLocation = { it.packageDirective.source?.getLocationWithin(it) },
+    )
+
+private fun KtSourceElement.getLocationWithin(file: FirFile): CompilerMessageLocationWithRange? {
+    val sourceFile = file.sourceFile ?: return null
+    val (startLine, startOffset) = file.getLineAndOffsetStartingWithOnesAt(startOffset) ?: return null
+    val (endLine, endOffset) = file.getLineAndOffsetStartingWithOnesAt(endOffset) ?: return null
+    return CompilerMessageLocationWithRange.create(sourceFile.path, startLine, startOffset, endLine, endOffset, text?.toString())
+}
+
+private fun FirFile.getLineAndOffsetStartingWithOnesAt(offset: Int?): Pair<Int, Int>? {
+    return offset?.let { sourceFileLinesMapping?.getLineAndColumnByOffsetStartingWithOnes(it) }
+}
+
+private fun KtSourceFileLinesMapping.getLineAndColumnByOffsetStartingWithOnes(startOffset: Int): Pair<Int, Int> {
+    val (line, offset) = getLineAndColumnByOffset(startOffset)
+    return line + 1 to offset + 1
+}
 
 fun <PathProvider : Any> getLibraryFromHome(
     paths: PathProvider?,

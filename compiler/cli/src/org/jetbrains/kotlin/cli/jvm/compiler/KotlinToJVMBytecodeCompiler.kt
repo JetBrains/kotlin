@@ -15,7 +15,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
-import org.jetbrains.kotlin.cli.common.checkKotlinPackageUsage
+import org.jetbrains.kotlin.cli.common.checkKotlinPackageUsageForPsi
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
@@ -107,7 +107,7 @@ object KotlinToJVMBytecodeCompiler {
             ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
 
             val ktFiles = module.getSourceFiles(environment.getSourceFiles(), localFileSystem, chunk.size > 1, buildFile)
-            if (!checkKotlinPackageUsage(environment.configuration, ktFiles)) return false
+            if (!checkKotlinPackageUsageForPsi(environment.configuration, ktFiles)) return false
             val moduleConfiguration = projectConfiguration.applyModuleProperties(module, buildFile)
 
             val backendInput = codegenFactory.getModuleChunkBackendInput(wholeBackendInput, ktFiles)
@@ -133,7 +133,7 @@ object KotlinToJVMBytecodeCompiler {
             moduleVisibilityManager.addFriendPath(path)
         }
 
-        if (!checkKotlinPackageUsage(environment.configuration, environment.getSourceFiles())) return false
+        if (!checkKotlinPackageUsageForPsi(environment.configuration, environment.getSourceFiles())) return false
 
         val generationState = analyzeAndGenerate(environment) ?: return false
 

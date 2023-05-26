@@ -595,6 +595,16 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/flagAllowingResultAsReturnType.args");
         }
 
+        @TestMetadata("forbidKotlinPackageK1.args")
+        public void testForbidKotlinPackageK1() throws Exception {
+            runTest("compiler/testData/cli/jvm/forbidKotlinPackageK1.args");
+        }
+
+        @TestMetadata("forbidKotlinPackageK2.args")
+        public void testForbidKotlinPackageK2() throws Exception {
+            runTest("compiler/testData/cli/jvm/forbidKotlinPackageK2.args");
+        }
+
         @TestMetadata("functionReferenceWithDefaultValuesFeatureIsEnabledWithNewInference.args")
         public void testFunctionReferenceWithDefaultValuesFeatureIsEnabledWithNewInference() throws Exception {
             runTest("compiler/testData/cli/jvm/functionReferenceWithDefaultValuesFeatureIsEnabledWithNewInference.args");

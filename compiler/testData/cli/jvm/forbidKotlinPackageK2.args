@@ -1,0 +1,5 @@
+$TESTDATA_DIR$/forbidKotlinPackage.kt
+-language-version
+2.0
+-d
+$TEMP_DIR$
