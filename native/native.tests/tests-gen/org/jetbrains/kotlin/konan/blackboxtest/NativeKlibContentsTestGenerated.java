@@ -7,8 +7,6 @@ package org.jetbrains.kotlin.konan.blackboxtest;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
-import org.junit.jupiter.api.Tag;
-import org.jetbrains.kotlin.konan.blackboxtest.support.group.FirPipeline;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -20,9 +18,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("native/native.tests/testData/klibContents")
 @TestDataPath("$PROJECT_ROOT")
-@Tag("frontend-fir")
-@FirPipeline()
-public class FirNativeKLibContentsTestGenerated extends AbstractNativeKlibContentsTest {
+public class NativeKlibContentsTestGenerated extends AbstractNativeKlibContentsTest {
     @Test
     public void testAllFilesPresentInKlibContents() throws Exception {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/klibContents"), Pattern.compile("^([^_](.+)).kt$"), null, true);
@@ -67,8 +63,6 @@ public class FirNativeKLibContentsTestGenerated extends AbstractNativeKlibConten
     @Nested
     @TestMetadata("native/native.tests/testData/klibContents/builtinsSerializer")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
-    @FirPipeline()
     public class BuiltinsSerializer {
         @Test
         public void testAllFilesPresentInBuiltinsSerializer() throws Exception {
@@ -138,8 +132,6 @@ public class FirNativeKLibContentsTestGenerated extends AbstractNativeKlibConten
         @Nested
         @TestMetadata("native/native.tests/testData/klibContents/builtinsSerializer/annotationArguments")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
-        @FirPipeline()
         public class AnnotationArguments {
             @Test
             public void testAllFilesPresentInAnnotationArguments() throws Exception {
@@ -187,8 +179,6 @@ public class FirNativeKLibContentsTestGenerated extends AbstractNativeKlibConten
     @Nested
     @TestMetadata("native/native.tests/testData/klibContents/klib")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
-    @FirPipeline()
     public class Klib {
         @Test
         public void testAllFilesPresentInKlib() throws Exception {

@@ -186,19 +186,38 @@ fun main() {
         // Klib contents tests
         testGroup("native/native.tests/tests-gen", "native/native.tests/testData") {
             testClass<AbstractNativeKlibContentsTest>(
-                suiteTestClassName = "NativeKLibContentsTestGenerated"
+                suiteTestClassName = "NativeKlibContentsTestGenerated"
             ) {
                 model("klibContents", pattern = "^([^_](.+)).kt$", recursive = true)
             }
         }
         testGroup("native/native.tests/tests-gen", "native/native.tests/testData") {
             testClass<AbstractNativeKlibContentsTest>(
-                suiteTestClassName = "FirNativeKLibContentsTestGenerated",
+                suiteTestClassName = "FirNativeKlibContentsTestGenerated",
                 annotations = listOf(
                     *frontendFir()
                 )
             ) {
                 model("klibContents", pattern = "^([^_](.+)).kt$", recursive = true)
+            }
+        }
+
+        // Klib ir tests
+        testGroup("native/native.tests/tests-gen", "native/native.tests/testData") {
+            testClass<AbstractNativeKlibIrTest>(
+                suiteTestClassName = "NativeKlibIrTestGenerated",
+            ) {
+                model("klibIr", pattern = "^([^_](.+)).kt$", recursive = true)
+            }
+        }
+        testGroup("native/native.tests/tests-gen", "native/native.tests/testData") {
+            testClass<AbstractNativeKlibIrTest>(
+                suiteTestClassName = "FirNativeKlibIrTestGenerated",
+                annotations = listOf(
+                    *frontendFir()
+                )
+            ) {
+                model("klibIr", pattern = "^([^_](.+)).kt$", recursive = true)
             }
         }
 
