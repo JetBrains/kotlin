@@ -354,6 +354,12 @@ public abstract class KotlinBuiltIns {
         return getBuiltInClassByFqName(FqNames.kClass.toSafe());
     }
 
+
+    @NotNull
+    public ClassDescriptor getKType() {
+        return getBuiltInClassByFqName(FqNames.kType.toSafe());
+    }
+
     @NotNull
     public ClassDescriptor getKCallable() {
         return getBuiltInClassByFqName(FqNames.kCallable.toSafe());

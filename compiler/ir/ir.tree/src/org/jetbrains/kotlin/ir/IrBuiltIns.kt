@@ -83,6 +83,7 @@ abstract class IrBuiltIns {
     abstract val kCallableClass: IrClassSymbol
     abstract val kPropertyClass: IrClassSymbol
     abstract val kClassClass: IrClassSymbol
+    abstract val kTypeClass: IrClassSymbol
     abstract val kProperty0Class: IrClassSymbol
     abstract val kProperty1Class: IrClassSymbol
     abstract val kProperty2Class: IrClassSymbol

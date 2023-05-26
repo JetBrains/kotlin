@@ -37,11 +37,7 @@ class IrInterpreterEnvironment(
     internal val kTypeParameterClass by lazy { irBuiltIns.kClassClass.getIrClassOfReflectionFromList("typeParameters")!! }
     internal val kParameterClass by lazy { irBuiltIns.kFunctionClass.getIrClassOfReflectionFromList("parameters")!! }
     internal val kTypeProjectionClass by lazy { kTypeClass.getIrClassOfReflectionFromList("arguments")!! }
-    internal val kTypeClass: IrClassSymbol by lazy {
-        // here we use fallback to `Any` because `KType` cannot be found on JS/Native by this way
-        // but still this class is used to represent type arguments in interpreter
-        irBuiltIns.kClassClass.getIrClassOfReflectionFromList("supertypes") ?: irBuiltIns.anyClass
-    }
+    internal val kTypeClass: IrClassSymbol by lazy { irBuiltIns.kTypeClass }
 
     init {
         mapOfObjects[irBuiltIns.unitClass] = Common(irBuiltIns.unitClass.owner)

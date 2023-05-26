@@ -340,6 +340,7 @@ class IrBuiltInsOverDescriptors(
     override val kCallableClass = builtIns.kCallable.toIrSymbol()
     override val kPropertyClass = builtIns.kProperty.toIrSymbol()
     override val kClassClass = builtIns.kClass.toIrSymbol()
+    override val kTypeClass = builtIns.kType.toIrSymbol()
 
     override val kProperty0Class = builtIns.kProperty0.toIrSymbol()
     override val kProperty1Class = builtIns.kProperty1.toIrSymbol()

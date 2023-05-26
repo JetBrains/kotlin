@@ -265,6 +265,8 @@ class IrBuiltInsOverFir(
     override val kPropertyClass: IrClassSymbol get() = kProperty.klass
     private val kClass by loadClass(StandardClassIds.KClass)
     override val kClassClass: IrClassSymbol get() = kClass.klass
+    private val kType by loadClass(StandardClassIds.KType)
+    override val kTypeClass: IrClassSymbol get() = kType.klass
     private val kProperty0 by loadClass(StandardClassIds.KProperty0)
     override val kProperty0Class: IrClassSymbol get() = kProperty0.klass
     private val kProperty1 by loadClass(StandardClassIds.KProperty1)

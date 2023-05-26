@@ -70,6 +70,7 @@ object StandardClassIds {
     val KFunction = "KFunction".reflectId()
     val KClass = "KClass".reflectId()
     val KCallable = "KCallable".reflectId()
+    val KType = "KType".reflectId()
 
     val Comparable = "Comparable".baseId()
     val Number = "Number".baseId()
