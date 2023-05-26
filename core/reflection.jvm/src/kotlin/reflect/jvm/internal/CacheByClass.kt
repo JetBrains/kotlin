@@ -52,6 +52,7 @@ private class ComputableClassValue<V>(@JvmField val compute: (Class<*>) -> V) : 
     fun createNewCopy() = ComputableClassValue(compute)
 }
 
+@kotlin.reflect.jvm.internal.SuppressAnimalSniffer
 private class ClassValueCache<V>(compute: (Class<*>) -> V) : CacheByClass<V>() {
 
     @Volatile
