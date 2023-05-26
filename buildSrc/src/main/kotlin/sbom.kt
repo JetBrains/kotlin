@@ -46,8 +46,7 @@ fun Project.configureSbom(
     }
 
     val spdxSbomTask = tasks.named<SpdxSbomTask>("spdxSbomFor$targetName")
-    val sbomFile = spdxSbomTask.map { it.outputDirectory.file("$targetName.spdx.json") }
-
+    val sbomFile = layout.buildDirectory.file("spdx/$targetName.spdx.json")
     val sbomCfg = configurations.maybeCreate("sbomFor$targetName").apply {
         isCanBeResolved = false
         isCanBeConsumed = true

@@ -8,14 +8,13 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ConfigurationContainer
 import org.gradle.api.artifacts.PublishArtifact
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
-import org.gradle.api.attributes.LibraryElements
-import org.gradle.api.attributes.Usage
 import org.gradle.api.component.AdhocComponentWithVariants
 import org.gradle.api.file.ArchiveOperations
 import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.api.plugins.BasePluginExtension
 import org.gradle.api.plugins.JavaPlugin
-import org.gradle.api.plugins.JavaPlugin.*
+import org.gradle.api.plugins.JavaPlugin.JAVADOC_ELEMENTS_CONFIGURATION_NAME
+import org.gradle.api.plugins.JavaPlugin.SOURCES_ELEMENTS_CONFIGURATION_NAME
 import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.provider.Provider
 import org.gradle.api.publish.PublishingExtension
@@ -271,7 +270,7 @@ fun Project.standardPublicJars() {
     javadocJar()
 }
 
-fun Project.publish(moduleMetadata: Boolean = false, configure: MavenPublication.() -> Unit = { }) {
+fun Project.publish(moduleMetadata: Boolean = false, sbom: Boolean = true, configure: MavenPublication.() -> Unit = { }) {
     apply<KotlinBuildPublishingPlugin>()
 
     if (!moduleMetadata) {
@@ -284,6 +283,9 @@ fun Project.publish(moduleMetadata: Boolean = false, configure: MavenPublication
         ?.publications
         ?.findByName(mainPublicationName) as MavenPublication
     publication.configure()
+    if (sbom) {
+        configureSbom()
+    }
 }
 
 fun Project.idePluginDependency(block: () -> Unit) {

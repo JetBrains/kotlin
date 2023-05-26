@@ -2,7 +2,6 @@ description = 'Kotlin Common Standard Library'
 
 apply plugin: 'kotlin-platform-common'
 
-configureSbom(project)
 configurePublishing(project)
 
 JvmToolchain.updateJvmTarget(project, "1.8")

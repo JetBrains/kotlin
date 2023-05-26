@@ -155,7 +155,7 @@ val compileTestDevelopmentExecutableKotlinWasm = tasks.named<KotlinJsIrLink>("co
 val runtimeElements by configurations.creating {}
 val apiElements by configurations.creating {}
 
-publish {
+publish(sbom = false) {
     pom.packaging = "klib"
     artifact(tasks.named("wasmJar")) {
         extension = "klib"

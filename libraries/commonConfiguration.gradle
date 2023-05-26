@@ -50,7 +50,7 @@ task preparePublication {
 }
 
 ext.configurePublishing = { Project project, configure = { } ->
-    ArtifactsKt.publish(project, false) { publication ->
+    ArtifactsKt.publish(project, false, false) { publication ->
         configure.delegate = publication
         configure()
     }

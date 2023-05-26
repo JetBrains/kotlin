@@ -250,7 +250,6 @@ dependencies {
     fatJarContentsStripVersions(commonDependency("one.util:streamex")) { isTransitive = false }
 }
 
-configureSbom() // sbom for main maven publication
 publish()
 
 // sbom for dist
@@ -449,7 +448,7 @@ distTask<Copy>("dist") {
 
     from(buildNumber)
     from(distStdlibMinimalForTests)
-    from(distSbomTask.map { it.outputDirectory.file("dist.spdx.json") }) {
+    from(distSbomTask.map { it.outputDirectory.file("Dist.spdx.json") }) {
         rename(".*", "${project.name}-${project.version}.spdx.json")
     }
 }

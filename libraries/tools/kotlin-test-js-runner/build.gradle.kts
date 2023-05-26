@@ -7,7 +7,7 @@ plugins {
     id("com.github.node-gradle.node") version "3.2.1"
 }
 
-publish()
+publish(sbom = false)
 
 val default = configurations.getByName(Dependency.DEFAULT_CONFIGURATION)
 default.extendsFrom(configurations.publishedRuntime.get())
