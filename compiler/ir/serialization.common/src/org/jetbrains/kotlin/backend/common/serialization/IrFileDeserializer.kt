@@ -61,10 +61,9 @@ class FileDeserializationState(
     val file: IrFile,
     val fileReader: IrLibraryFileFromBytes,
     fileProto: ProtoFile,
-    deserializeBodies: Boolean,
+    deserializationStrategy: DeserializationStrategy,
     allowErrorNodes: Boolean,
-    deserializeInlineFunctions: Boolean,
-    moduleDeserializer: IrModuleDeserializer
+    moduleDeserializer: IrModuleDeserializer,
 ) {
 
     val symbolDeserializer =
@@ -86,8 +85,8 @@ class FileDeserializationState(
         fileReader,
         file,
         allowErrorNodes,
-        deserializeInlineFunctions,
-        deserializeBodies,
+        deserializationStrategy.inlineBodies,
+        deserializationStrategy.needBodies,
         symbolDeserializer,
         linker.fakeOverrideBuilder.platformSpecificClassFilter,
         linker.fakeOverrideBuilder,
@@ -101,13 +100,15 @@ class FileDeserializationState(
     private val reachableTopLevels = LinkedHashSet<IdSignature>()
 
     init {
-        // Explicitly exported declarations (e.g. top-level initializers) must be deserialized before all other declarations.
-        // Thus we schedule their deserialization in deserializer's constructor.
-        fileProto.explicitlyExportedToCompilerList.forEach {
-            val symbolData = symbolDeserializer.parseSymbolData(it)
-            val sig = symbolDeserializer.deserializeIdSignature(symbolData.signatureId)
-            assert(!sig.isPackageSignature())
-            addIdSignature(sig.topLevelSignature())
+        if (!deserializationStrategy.theWholeWorld) {
+            // Explicitly exported declarations (e.g. top-level initializers) must be deserialized before all other declarations.
+            // Thus, we schedule their deserialization in deserializer's constructor.
+            fileProto.explicitlyExportedToCompilerList.forEach {
+                val symbolData = symbolDeserializer.parseSymbolData(it)
+                val sig = symbolDeserializer.deserializeIdSignature(symbolData.signatureId)
+                assert(!sig.isPackageSignature())
+                addIdSignature(sig.topLevelSignature())
+            }
         }
     }
 
