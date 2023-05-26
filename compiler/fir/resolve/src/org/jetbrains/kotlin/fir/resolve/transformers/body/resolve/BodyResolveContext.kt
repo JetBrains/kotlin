@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.PrivateForInline
@@ -15,6 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
 import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitExtensionReceiverValue
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitReceiverValue
@@ -534,19 +536,28 @@ class BodyResolveContext(
     inline fun <T> withWhenSubjectType(
         subjectType: ConeKotlinType?,
         sessionHolder: SessionHolder,
-        f: () -> T
+        f: () -> T,
     ): T {
         val session = sessionHolder.session
-        val subjectClassSymbol = (subjectType as? ConeClassLikeType)
-            ?.lookupTag?.toFirRegularClassSymbol(session)?.takeIf { it.fir.classKind == ClassKind.ENUM_CLASS }
-        val whenSubjectImportingScope = subjectClassSymbol?.let {
-            FirWhenSubjectImportingScope(it.classId, session, sessionHolder.scopeSession)
+
+        val withContextSensitiveResolution =
+            session.languageVersionSettings.supportsFeature(LanguageFeature.ContextSensitiveEnumResolutionInWhen)
+
+        if (withContextSensitiveResolution) {
+            val subjectClassSymbol = (subjectType as? ConeClassLikeType)
+                ?.lookupTag?.toFirRegularClassSymbol(session)?.takeIf { it.fir.classKind == ClassKind.ENUM_CLASS }
+            val whenSubjectImportingScope = subjectClassSymbol?.let {
+                FirWhenSubjectImportingScope(it.classId, session, sessionHolder.scopeSession)
+            }
+            whenSubjectImportingScopes.add(whenSubjectImportingScope)
         }
-        whenSubjectImportingScopes.add(whenSubjectImportingScope)
+
         return try {
             f()
         } finally {
-            whenSubjectImportingScopes.removeLast()
+            if (withContextSensitiveResolution) {
+                whenSubjectImportingScopes.removeLast()
+            }
         }
     }
 

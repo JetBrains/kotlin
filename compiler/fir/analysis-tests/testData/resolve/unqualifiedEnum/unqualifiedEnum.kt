@@ -1,3 +1,4 @@
+// LANGUAGE: +ContextSensitiveEnumResolutionInWhen
 package test
 
 enum class Sample {

@@ -35943,6 +35943,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
             }
 
             @Test
+            @TestMetadata("whenOverEnumWithSameNameAsEntry.kt")
+            public void testWhenOverEnumWithSameNameAsEntry() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/when/whenOverEnumWithSameNameAsEntry.kt");
+            }
+
+            @Test
             @TestMetadata("WhenTypeDisjunctions.kt")
             public void testWhenTypeDisjunctions() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/when/WhenTypeDisjunctions.kt");
