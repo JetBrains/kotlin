@@ -232,6 +232,8 @@ class WasmBoxRunner(
         writeToFilesAndRunTest("dev", artifacts.compilerResult)
         writeToFilesAndRunTest("dce", artifacts.compilerResultWithDCE)
     }
+
+    private class AdditionalFile(val name: String, val content: String)
 }
 
 fun TestServices.getWasmTestOutputDirectory(): File {
@@ -251,5 +253,3 @@ fun TestServices.getWasmTestOutputDirectory(): File {
         .fold(testGroupOutputDir, ::File)
         .let { File(it, originalFile.nameWithoutExtension) }
 }
-
-class AdditionalFile(val name: String, val content: String)
