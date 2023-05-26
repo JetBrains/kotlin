@@ -1144,7 +1144,7 @@ internal object ControlFlowSensibleEscapeAnalysis {
                 if (forest.totalNodes > maxAllowedGraphSize)
                     return PointsToGraphBuilderResult(EscapeAnalysisResult.pessimistic(function), emptyMap())
                 if (functionResult.valueIds.isEmpty) // Function returns Nothing.
-                    functionResult.valueIds.set(Node.UNIT_ID)
+                    functionResult.valueIds.set(Node.NOTHING_ID)
                 val functionResultNode = controlFlowMergePoint(pointsToGraph, state.toNodeContext(null), function.returnType, functionResult)
                 return PointsToGraphBuilderResult(
                         EscapeAnalysisResult(pointsToGraph, functionResultNode, objectsReferencedFromThrown),
@@ -1217,7 +1217,6 @@ internal object ControlFlowSensibleEscapeAnalysis {
                     graph: PointsToGraph, nodeContext: NodeContext,
                     type: IrType, multipleResult: MultipleExpressionResult
             ): Node {
-                require(!multipleResult.valueIds.get(Node.NOTHING_ID)) { "Can't return Nothing" }
                 if (multipleResult.valueIds.isEmpty)
                     return graph.unreachable()
                 graph.copyFrom(multipleResult.graphBuilder.build())
@@ -1359,17 +1358,18 @@ internal object ControlFlowSensibleEscapeAnalysis {
                     logDigraph(receiverNode)
                 }
 
-                val receiverObjects = getObjectNodes(receiverNode, data.toNodeContext(expression), 1)
+                val receiverObjects =
+                        if (data.graph.forest.totalNodes > maxAllowedGraphSize)
+                            emptyList()
+                        else
+                            getObjectNodes(receiverNode, data.toNodeContext(expression), 1)
                 debug {
                     context.log { "after getting receiver's objects" }
                     logDigraph(context, receiverObjects)
                 }
 
                 return (when (receiverObjects.size) {
-                    0 -> { // This will lead to NPE at runtime: treat like a throw operator.
-                        // TODO: this will lead to a segfault actually, so may be just treat this like unreachable code?
-                        (data.tryBlock?.let { tryBlocksThrowGraphs[it]!! } ?: returnTargetResults[function.symbol]!!.graphBuilder)
-                                .merge(this)
+                    0 -> { // This is either unreachable or will lead to a segfault at runtime.
                         unreachable()
                     }
                     1 -> {
@@ -1419,11 +1419,7 @@ internal object ControlFlowSensibleEscapeAnalysis {
                     }
 
                     if (receiverObjects.isEmpty()) {
-                        // This will lead to NPE at runtime: treat like a throw operator.
-                        // TODO: this will lead to a segfault actually, so may be just treat this like unreachable code?
-                        (data.tryBlock?.let { tryBlocksThrowGraphs[it]!! } ?: returnTargetResults[function.symbol]!!.graphBuilder)
-                                .merge(this)
-
+                        // This is either unreachable or will lead to a segfault at runtime.
                         unreachable()
                     } else {
                         receiverObjects.forEach { receiverObject ->
@@ -1474,17 +1470,23 @@ internal object ControlFlowSensibleEscapeAnalysis {
 
             override fun visitContainerExpression(expression: IrContainerExpression, data: BuilderState): Node {
                 val returnableBlockSymbol = (expression as? IrReturnableBlock)?.symbol
-                returnableBlockSymbol?.let {
-                    returnTargetResults[it] = MultipleExpressionResult(BitSet(), forest.GraphBuilder(function))
+                if (returnableBlockSymbol == null) {
+                    expression.statements.forEachIndexed { index, statement ->
+                        val statementNode = statement.accept(this, data)
+                        if (statementNode == Node.Nothing)
+                            return data.graph.unreachable()
+                        if (index == expression.statements.size - 1)
+                            return statementNode
+                    }
+                    return Node.Unit
                 }
-                expression.statements.forEachIndexed { index, statement ->
-                    val result = statement.accept(this, data)
-                    if (index == expression.statements.size - 1 && returnableBlockSymbol == null)
-                        return result
+                val returnableBlockResult = MultipleExpressionResult(BitSet(), forest.GraphBuilder(function))
+                returnTargetResults[returnableBlockSymbol] = returnableBlockResult
+                for (statement in expression.statements) {
+                    val statementNode = statement.accept(this, data)
+                    if (statementNode == Node.Nothing) break
                 }
-                return returnableBlockSymbol?.let {
-                    controlFlowMergePoint(data.graph, data.toNodeContext(expression), expression.type, returnTargetResults[it]!!)
-                } ?: Node.Unit
+                return controlFlowMergePoint(data.graph, data.toNodeContext(expression), expression.type, returnableBlockResult)
             }
 
             override fun visitWhen(expression: IrWhen, data: BuilderState): Node {
@@ -1493,8 +1495,9 @@ internal object ControlFlowSensibleEscapeAnalysis {
                     data.graph.logDigraph()
                 }
                 val branchResults = mutableListOf<ExpressionResult>()
-                expression.branches.forEach { branch ->
-                    branch.condition.accept(this, data)
+                for (branch in expression.branches) {
+                    val conditionNode = branch.condition.accept(this, data)
+                    if (conditionNode == Node.Nothing) break
                     val branchGraph = data.graph.clone()
                     val branchState = BuilderState(branchGraph, data.level, data.anchorIds, data.loop, data.tryBlock)
                     branchResults.add(ExpressionResult(branch.result.accept(this, branchState), branchGraph))
@@ -1739,12 +1742,6 @@ internal object ControlFlowSensibleEscapeAnalysis {
                     return state.graph.unreachable()
                 }
 
-                if (argumentNodeIds.any { it == Node.NOTHING_ID }
-                        || argumentNodeIds.any { it >= state.graph.nodes.size || state.graph.nodes[it] == null }) {
-                    context.log { "Unreachable code - skipping call to ${callee.render()}" }
-                    return state.graph.unreachable()
-                }
-
                 debug {
                     context.log { "before calling ${callee.render()}" }
                     state.graph.logDigraph()
@@ -1962,6 +1959,7 @@ internal object ControlFlowSensibleEscapeAnalysis {
                     return returnValue
 
                 // The callee always throws an exception.
+                // TODO: This is not always true - the function call might not return (an infinite loop inside).
                 (state.tryBlock?.let { tryBlocksThrowGraphs[it]!! } ?: returnTargetResults[function.symbol]!!.graphBuilder)
                         .merge(state.graph)
                 return state.graph.unreachable()
@@ -2007,12 +2005,24 @@ internal object ControlFlowSensibleEscapeAnalysis {
                     thisNode: Node,
                     callSite: IrFunctionAccessExpression,
                     state: BuilderState
-            ) {
+            ): Node {
                 val arguments = callSite.getArgumentsWithIr()
-                val argumentNodeIds = listOf(thisNode.id) + arguments.map { it.second.accept(this, state).id }
+                val argumentNodeIds = mutableListOf(thisNode.id)
+                for (argument in arguments) {
+                    val argumentNode = argument.second.accept(this, state)
+                    argumentNodeIds.add(argumentNode.id)
+                    if (argumentNode == Node.Nothing) break
+                }
+                if (argumentNodeIds.any { it == Node.NOTHING_ID }
+                        || argumentNodeIds.any { it >= state.graph.nodes.size || state.graph.nodes[it] == null }) {
+                    context.log { "Unreachable code - skipping call to ${callee.render()}" }
+                    return state.graph.unreachable()
+                }
+
                 val calleeEscapeAnalysisResult = escapeAnalysisResults[callee.symbol]
                         ?: getExternalFunctionEAResult(callee)
                 processCall(state, callSite, callee, argumentNodeIds, calleeEscapeAnalysisResult)
+                return Node.Unit
             }
 
             fun BuilderState.allocObjectNode(expression: IrFunctionAccessExpression, irClass: IrClass) =
@@ -2022,10 +2032,10 @@ internal object ControlFlowSensibleEscapeAnalysis {
 
             override fun visitConstructorCall(expression: IrConstructorCall, data: BuilderState): Node {
                 val thisObject = data.allocObjectNode(expression, expression.symbol.owner.constructedClass)
-                processConstructorCall(expression.symbol.owner, thisObject, expression, data)
-                return if (data.graph.forest.totalNodes > maxAllowedGraphSize
+                val callResult = processConstructorCall(expression.symbol.owner, thisObject, expression, data)
+                return if (callResult == Node.Nothing || data.graph.forest.totalNodes > maxAllowedGraphSize
                         || thisObject.id >= data.graph.nodes.size || data.graph.nodes[thisObject.id] == null)
-                    Node.Nothing
+                    data.graph.unreachable()
                 else
                     data.graph.nodes[thisObject.id]!!
             }
@@ -2034,8 +2044,7 @@ internal object ControlFlowSensibleEscapeAnalysis {
                 val constructor = expression.symbol.owner
                 val thisReceiver = (function as IrConstructor).constructedClass.thisReceiver!!
                 val irThis = IrGetValueImpl(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, thisReceiver.type, thisReceiver.symbol)
-                processConstructorCall(constructor, irThis.accept(this, data), expression, data)
-                return Node.Unit
+                return processConstructorCall(constructor, irThis.accept(this, data), expression, data)
             }
 
             val createUninitializedInstanceSymbol = context.ir.symbols.createUninitializedInstance
@@ -2053,7 +2062,6 @@ internal object ControlFlowSensibleEscapeAnalysis {
                     val thisNode = irThis.accept(this, data)
                     val irInitializer = expression.getValueArgument(1) as IrConstructorCall
                     processConstructorCall(irInitializer.symbol.owner, thisNode, irInitializer, data)
-                    Node.Unit
                 }
                 reinterpretSymbol -> {
                     expression.extensionReceiver!!.accept(this, data)
@@ -2062,47 +2070,60 @@ internal object ControlFlowSensibleEscapeAnalysis {
 //                    TODO()
 //                }
                 else -> {
-                    val arguments = expression.getArgumentsWithIr()
-                    val argumentNodeIds = arguments.map { it.second.accept(this, data).id }
                     val actualCallee = expression.actualCallee
-                    if (!expression.isVirtualCall) {
-                        val calleeEscapeAnalysisResult = escapeAnalysisResults[actualCallee.symbol]
-                                ?: getExternalFunctionEAResult(actualCallee)
-                        processCall(data, expression, actualCallee, argumentNodeIds, calleeEscapeAnalysisResult)
+                    val arguments = expression.getArgumentsWithIr()
+                    val argumentNodeIds = mutableListOf<Int>()
+                    for (argument in arguments) {
+                        val argumentNode = argument.second.accept(this, data)
+                        argumentNodeIds.add(argumentNode.id)
+                        if (argumentNode == Node.Nothing)
+                            break
+                    }
+                    if (argumentNodeIds.any { it == Node.NOTHING_ID }
+                            || argumentNodeIds.any { it >= data.graph.nodes.size || data.graph.nodes[it] == null }) {
+                        context.log { "Unreachable code - skipping call to ${actualCallee.render()}" }
+                        data.graph.unreachable()
                     } else {
-                        val devirtualizedCallSite = devirtualizedCallSites[expression]
-                        if (devirtualizedCallSite == null) {
-                            // Non-devirtualized call.
-                            processCall(data, expression, expression.actualCallee, argumentNodeIds,
-                                    EscapeAnalysisResult.pessimistic(actualCallee))
-                        } else when (devirtualizedCallSite.size) {
-                            0 -> { // TODO: This looks like unreachable code, doesn't it? Should we return here Nothing then?
-                                processCall(data, expression, actualCallee, argumentNodeIds,
-                                        EscapeAnalysisResult.optimistic(actualCallee))
-                            }
-                            1 -> {
-                                processCall(data, expression, actualCallee, argumentNodeIds,
-                                        escapeAnalysisResults[devirtualizedCallSite[0]] ?: getExternalFunctionEAResult(devirtualizedCallSite[0].owner))
-                            }
-                            else -> {
-                                // Multiple possible callees - model this as a when clause.
-                                val fictitiousCallSites = devirtualizedFictitiousCallSites.getOrPut(expression) {
-                                    // Don't bother with the arguments - it is only used as a key.
-                                    devirtualizedCallSite.map { irBuilder.irCall(it) }
+                        if (!expression.isVirtualCall) {
+                            val calleeEscapeAnalysisResult = escapeAnalysisResults[actualCallee.symbol]
+                                    ?: getExternalFunctionEAResult(actualCallee)
+                            processCall(data, expression, actualCallee, argumentNodeIds, calleeEscapeAnalysisResult)
+                        } else {
+                            val devirtualizedCallSite = devirtualizedCallSites[expression]
+                            if (devirtualizedCallSite == null) {
+                                // Non-devirtualized call.
+                                processCall(data, expression, expression.actualCallee, argumentNodeIds,
+                                        EscapeAnalysisResult.pessimistic(actualCallee))
+                            } else when (devirtualizedCallSite.size) {
+                                0 -> { // TODO: This looks like unreachable code, doesn't it? Should we return here Nothing then?
+                                    processCall(data, expression, actualCallee, argumentNodeIds,
+                                            EscapeAnalysisResult.optimistic(actualCallee))
                                 }
-                                val clonedGraphs = devirtualizedCallSite.indices.map { data.graph.clone() }
-                                val callResults = devirtualizedCallSite.mapIndexed { index, calleeSymbol ->
-                                    val callSite = fictitiousCallSites[index]
-                                    val clonedGraph = clonedGraphs[index]
-                                    val callee = calleeSymbol.owner
-                                    val resultNode = processCall(
-                                            BuilderState(clonedGraph, data.level, data.anchorIds, data.loop, data.tryBlock),
-                                            callSite, callee,
-                                            argumentNodeIds,
-                                            escapeAnalysisResults[calleeSymbol] ?: getExternalFunctionEAResult(callee))
-                                    ExpressionResult(resultNode, clonedGraph)
+                                1 -> {
+                                    processCall(data, expression, actualCallee, argumentNodeIds,
+                                            escapeAnalysisResults[devirtualizedCallSite[0]]
+                                                    ?: getExternalFunctionEAResult(devirtualizedCallSite[0].owner))
                                 }
-                                controlFlowMergePoint(data.graph, data.toNodeContext(expression), expression.type, callResults)
+                                else -> {
+                                    // Multiple possible callees - model this as a when clause.
+                                    val fictitiousCallSites = devirtualizedFictitiousCallSites.getOrPut(expression) {
+                                        // Don't bother with the arguments - it is only used as a key.
+                                        devirtualizedCallSite.map { irBuilder.irCall(it) }
+                                    }
+                                    val clonedGraphs = devirtualizedCallSite.indices.map { data.graph.clone() }
+                                    val callResults = devirtualizedCallSite.mapIndexed { index, calleeSymbol ->
+                                        val callSite = fictitiousCallSites[index]
+                                        val clonedGraph = clonedGraphs[index]
+                                        val callee = calleeSymbol.owner
+                                        val resultNode = processCall(
+                                                BuilderState(clonedGraph, data.level, data.anchorIds, data.loop, data.tryBlock),
+                                                callSite, callee,
+                                                argumentNodeIds,
+                                                escapeAnalysisResults[calleeSymbol] ?: getExternalFunctionEAResult(callee))
+                                        ExpressionResult(resultNode, clonedGraph)
+                                    }
+                                    controlFlowMergePoint(data.graph, data.toNodeContext(expression), expression.type, callResults)
+                                }
                             }
                         }
                     }
