@@ -137,7 +137,7 @@ object FirKotlinToJvmBytecodeCompiler {
         performanceManager?.notifyAnalysisStarted()
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
 
-        if (!checkKotlinPackageUsage(moduleConfiguration, allSources)) return null
+        if (!checkKotlinPackageUsageForPsi(moduleConfiguration, allSources)) return null
 
         val renderDiagnosticNames = moduleConfiguration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
 

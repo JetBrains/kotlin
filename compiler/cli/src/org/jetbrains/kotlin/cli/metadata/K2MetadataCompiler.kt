@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.codegen.CompilationException
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.Services
-import org.jetbrains.kotlin.config.getModuleNameForSource
 import org.jetbrains.kotlin.metadata.builtins.BuiltInsBinaryVersion
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
@@ -115,7 +114,7 @@ class K2MetadataCompiler : CLICompiler<K2MetadataCompilerArguments>() {
             return ExitCode.COMPILATION_ERROR
         }
 
-        checkKotlinPackageUsage(environment.configuration, environment.getSourceFiles())
+        checkKotlinPackageUsageForPsi(environment.configuration, environment.getSourceFiles())
 
         try {
             val useFir = configuration.getBoolean(CommonConfigurationKeys.USE_FIR)

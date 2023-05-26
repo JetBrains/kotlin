@@ -208,7 +208,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
         Disposer.register(rootDisposable, zipAccessor)
         configurationJs.put(JSConfigurationKeys.ZIP_FILE_SYSTEM_ACCESSOR, zipAccessor)
 
-        if (!checkKotlinPackageUsage(environmentForJS.configuration, sourcesFiles)) return COMPILATION_ERROR
+        if (!checkKotlinPackageUsageForPsi(environmentForJS.configuration, sourcesFiles)) return COMPILATION_ERROR
 
         val outputDirPath = arguments.outputDir
         val outputName = arguments.moduleName

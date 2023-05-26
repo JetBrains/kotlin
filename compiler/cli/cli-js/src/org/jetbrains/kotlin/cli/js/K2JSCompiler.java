@@ -220,7 +220,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
         environmentForJS.getConfiguration().put(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME, arguments.getRenderInternalDiagnosticNames());
 
 
-        if (!UtilsKt.checkKotlinPackageUsage(environmentForJS.getConfiguration(), sourcesFiles)) return ExitCode.COMPILATION_ERROR;
+        if (!HelpersKt.checkKotlinPackageUsageForPsi(environmentForJS.getConfiguration(), sourcesFiles)) return ExitCode.COMPILATION_ERROR;
 
         if (arguments.getOutputFile() == null) {
             messageCollector.report(ERROR, "Specify output file via -output", null);

@@ -117,6 +117,10 @@ fun compileModulesUsingFrontendIrAndLightTree(
             performanceManager
         )
 
+        if (!checkKotlinPackageUsageForLightTree(moduleConfiguration, analysisResults.outputs.flatMap { it.fir })) {
+            return false
+        }
+
         performanceManager?.notifyAnalysisFinished()
 
         // TODO: consider what to do if many modules has main classes
