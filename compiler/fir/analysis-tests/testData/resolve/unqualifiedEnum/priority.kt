@@ -1,3 +1,4 @@
+// LANGUAGE: +ContextSensitiveEnumResolutionInWhen
 // FILE: first.kt
 
 package first
