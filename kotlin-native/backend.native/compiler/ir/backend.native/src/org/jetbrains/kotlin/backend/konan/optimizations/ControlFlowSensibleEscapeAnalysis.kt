@@ -387,8 +387,7 @@ internal object ControlFlowSensibleEscapeAnalysis {
 
             companion object {
                 fun optimistic(function: IrFunction): EscapeAnalysisResult {
-                    val pointsToGraph = PointsToGraph(PointsToGraphForest())
-                    function.allParameters.forEachIndexed { index, parameter -> pointsToGraph.addParameter(parameter, index) }
+                    val pointsToGraph = PointsToGraph(PointsToGraphForest(function), function)
                     val returnValue = with(pointsToGraph) {
                         when {
                             function.returnType.isNothing() -> Node.Nothing
@@ -560,7 +559,9 @@ internal object ControlFlowSensibleEscapeAnalysis {
             }
         }
 
-        private class PointsToGraphForest(startNodeId: Int = Node.LOWEST_NODE_ID) {
+        private class PointsToGraphForest(startNodeId: Int) {
+            constructor(function: IrFunction) : this(Node.LOWEST_NODE_ID + function.allParametersCount)
+
             private var currentNodeId = startNodeId
             fun nextNodeId() = currentNodeId++
             val totalNodes get() = currentNodeId
@@ -598,13 +599,24 @@ internal object ControlFlowSensibleEscapeAnalysis {
                 return PointsToGraph(this, newNodes, parameterNodes, variableNodes)
             }
 
-            inner class GraphBuilder(startEdgesCount: Int = 10) {
+            inner class GraphBuilder(function: IrFunction, startEdgesCount: Int = 10) {
                 val nodes = ArrayList<Node?>(totalNodes).also {
                     it.addAll(arrayOf(Node.Nothing, Node.Null, Node.Unit, Node.Object(Node.GLOBAL_ID, Levels.GLOBAL, null, "G")))
                     it.ensureSize(totalNodes)
                 }
                 val parameterNodes = mutableMapOf<IrValueParameter, Node.Parameter>()
                 val variableNodes = mutableMapOf<IrVariable, Node.Variable>()
+
+                // TODO: Merge somehow with the same code from PointsToGraph.
+                init {
+                    function.allParameters.forEachIndexed { index, parameter ->
+                        val id = Node.LOWEST_NODE_ID + index
+                        require(id < totalNodes)
+                        val parameterNode = Node.Parameter(id, index, parameter)
+                        parameterNodes[parameter] = parameterNode
+                        nodes[id] = parameterNode
+                    }
+                }
 
                 var edgesCount = 0
                 var bagOfEdges = LongArray(makePrime(5 * startEdgesCount))
@@ -795,13 +807,21 @@ internal object ControlFlowSensibleEscapeAnalysis {
                 val parameterNodes: MutableMap<IrValueParameter, Node.Parameter>,
                 val variableNodes: MutableMap<IrVariable, Node.Variable>
         ) : NodeFactory {
-            constructor(forest: PointsToGraphForest)
+            constructor(forest: PointsToGraphForest, function: IrFunction)
                     : this(forest,
                     mutableListOf(
                             Node.Nothing, Node.Null, Node.Unit, Node.Object(Node.GLOBAL_ID, Levels.GLOBAL, null, "G")
                     ),
                     mutableMapOf(), mutableMapOf()
-            )
+            ) {
+                function.allParameters.forEachIndexed { index, parameter ->
+                    val id = Node.LOWEST_NODE_ID + index
+                    require(id < forest.totalNodes)
+                    val parameterNode = Node.Parameter(id, index, parameter)
+                    parameterNodes[parameter] = parameterNode
+                    nodes.add(parameterNode)
+                }
+            }
 
             private inline fun <reified T : Node> getOrPutNodeAt(id: Int, nodeBuilder: (Int) -> T): T {
                 nodes.ensureSize(id + 1)
@@ -851,10 +871,10 @@ internal object ControlFlowSensibleEscapeAnalysis {
                 }
             }
 
-            fun addParameter(parameter: IrValueParameter, index: Int) = putNewNodeAt(forest.nextNodeId()) { id ->
-                Node.Parameter(id, index, parameter).also { parameterNodes[parameter] = it }
-            }
-
+//            fun addParameter(parameter: IrValueParameter, index: Int) = putNewNodeAt(forest.nextNodeId()) { id ->
+//                Node.Parameter(id, index, parameter).also { parameterNodes[parameter] = it }
+//            }
+//
             fun getOrAddVariable(irVariable: IrVariable, level: Int) = variableNodes.getOrPut(irVariable) {
                 putNewNodeAt(forest.getAssociatedId(0, irVariable)) { Node.Variable(it, level, irVariable) }
             }
@@ -1116,9 +1136,8 @@ internal object ControlFlowSensibleEscapeAnalysis {
                 require(Node.Nothing.fields.isEmpty())
                 require(Node.Null.fields.isEmpty())
                 require(Node.Unit.fields.isEmpty())
-                val pointsToGraph = PointsToGraph(forest)
-                function.allParameters.forEachIndexed { index, parameter -> pointsToGraph.addParameter(parameter, index) }
-                val functionResult = MultipleExpressionResult(BitSet(), forest.GraphBuilder())
+                val pointsToGraph = PointsToGraph(forest, function)
+                val functionResult = MultipleExpressionResult(BitSet(), forest.GraphBuilder(function))
                 returnTargetResults[function.symbol] = functionResult
                 val state = BuilderState(pointsToGraph, Levels.FUNCTION, false, null, null)
                 (function.body as IrBlockBody).statements.forEach { it.accept(this, state) }
@@ -1456,7 +1475,7 @@ internal object ControlFlowSensibleEscapeAnalysis {
             override fun visitContainerExpression(expression: IrContainerExpression, data: BuilderState): Node {
                 val returnableBlockSymbol = (expression as? IrReturnableBlock)?.symbol
                 returnableBlockSymbol?.let {
-                    returnTargetResults[it] = MultipleExpressionResult(BitSet(), forest.GraphBuilder())
+                    returnTargetResults[it] = MultipleExpressionResult(BitSet(), forest.GraphBuilder(function))
                 }
                 expression.statements.forEachIndexed { index, statement ->
                     val result = statement.accept(this, data)
@@ -1553,7 +1572,7 @@ internal object ControlFlowSensibleEscapeAnalysis {
                     data.graph.logDigraph()
                 }
 
-                val tryBlockThrowGraph = forest.GraphBuilder()
+                val tryBlockThrowGraph = forest.GraphBuilder(function)
                 tryBlocksThrowGraphs[aTry] = tryBlockThrowGraph
                 val tryGraph = data.graph.clone()
                 val tryResult = aTry.tryResult.accept(this, BuilderState(tryGraph, data.level, true, data.loop, aTry))
@@ -1628,7 +1647,7 @@ internal object ControlFlowSensibleEscapeAnalysis {
                 }
 
                 var graph = data.graph
-                val loopGraph = forest.GraphBuilder()
+                val loopGraph = forest.GraphBuilder(function)
                 if (loop is IrWhileLoop) {
                     loop.condition.accept(this, BuilderState(graph, data.level + 1, true, loop, data.tryBlock))
                     // A while loop might not execute even a single iteration.
@@ -1652,7 +1671,7 @@ internal object ControlFlowSensibleEscapeAnalysis {
                     }
                     ++iteration
 
-                    val continueGraphBuilder = forest.GraphBuilder()
+                    val continueGraphBuilder = forest.GraphBuilder(function)
                     loopsContinueGraphs[loop] = continueGraphBuilder
                     val modCountsSum = 0 +
                             returnTargetResults.values.sumOf {
@@ -2127,7 +2146,7 @@ internal object ControlFlowSensibleEscapeAnalysis {
                 devirtualizedCallSites.remove(it)
             }
 
-            val forest = PointsToGraphForest()
+            val forest = PointsToGraphForest(function)
             val (functionResult, allocations) = PointsToGraphBuilder(
                     function, forest, escapeAnalysisResults, devirtualizedCallSites,
                     maxAllowedGraphSize, needDebug(function)
@@ -2188,7 +2207,7 @@ internal object ControlFlowSensibleEscapeAnalysis {
             optimizedFunctionResult.logDigraph(context)
 
             val escapeAnalysisResult = EscapeAnalysisResult(
-                    PointsToGraph(PointsToGraphForest(optimizedFunctionResult.graph.nodes.size))
+                    PointsToGraph(PointsToGraphForest(optimizedFunctionResult.graph.nodes.size), function)
                             .apply { copyFrom(optimizedFunctionResult.graph) },
                     optimizedFunctionResult.returnValue,
                     optimizedFunctionResult.objectsReferencedFromThrown
