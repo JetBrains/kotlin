@@ -28294,6 +28294,18 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("closeInvokesFarVariable.kt")
+                public void testCloseInvokesFarVariable() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/resolve/invoke/closeInvokesFarVariable.kt");
+                }
+
+                @Test
+                @TestMetadata("closerVariableMatterMore.kt")
+                public void testCloserVariableMatterMore() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/resolve/invoke/closerVariableMatterMore.kt");
+                }
+
+                @Test
                 @TestMetadata("completePropertyBeforeInvoke.kt")
                 public void testCompletePropertyBeforeInvoke() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/resolve/invoke/completePropertyBeforeInvoke.kt");
@@ -28309,6 +28321,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 @TestMetadata("functionExpectedWhenSeveralInvokesExist.kt")
                 public void testFunctionExpectedWhenSeveralInvokesExist() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/resolve/invoke/functionExpectedWhenSeveralInvokesExist.kt");
+                }
+
+                @Test
+                @TestMetadata("implicitAndInvokeExtensionPriority.kt")
+                public void testImplicitAndInvokeExtensionPriority() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/resolve/invoke/implicitAndInvokeExtensionPriority.kt");
                 }
 
                 @Test
