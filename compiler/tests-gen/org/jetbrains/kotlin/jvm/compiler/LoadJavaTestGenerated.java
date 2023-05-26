@@ -1764,6 +1764,11 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                 runTest("compiler/testData/loadJava/compiledKotlin/annotations/PrimitiveArrayArguments.kt");
             }
 
+            @TestMetadata("SelfReferentialAnnotation.kt")
+            public void testSelfReferentialAnnotation() throws Exception {
+                runTest("compiler/testData/loadJava/compiledKotlin/annotations/SelfReferentialAnnotation.kt");
+            }
+
             @TestMetadata("SimpleAnnotation.kt")
             public void testSimpleAnnotation() throws Exception {
                 runTest("compiler/testData/loadJava/compiledKotlin/annotations/SimpleAnnotation.kt");

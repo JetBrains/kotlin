@@ -73,6 +73,11 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
             runTest("compiler/testData/codegen/box/annotations/resolveWithLowPriorityAnnotation.kt");
         }
 
+        @TestMetadata("selfReferentialAnnotation.kt")
+        public void testSelfReferentialAnnotation() throws Exception {
+            runTest("compiler/testData/codegen/box/annotations/selfReferentialAnnotation.kt");
+        }
+
         @TestMetadata("compiler/testData/codegen/box/annotations/annotatedLambda")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

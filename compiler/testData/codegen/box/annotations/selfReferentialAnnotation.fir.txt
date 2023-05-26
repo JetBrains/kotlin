@@ -1,0 +1,43 @@
+FILE: selfReferentialAnnotation.kt
+    public final annotation class Ann : R|kotlin/Annotation| {
+        public constructor(@R|Ann|(e = Int(1)) e: R|kotlin/Int|): R|Ann| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val e: R|kotlin/Int| = R|<local>/e|
+            public get(): R|kotlin/Int|
+
+    }
+    @R|MyRequiresOptIn|(a = String(), b = Q|MyRequiresOptIn.MyLevel|.R|/MyRequiresOptIn.MyLevel.ERROR|) public final annotation class MyRequiresOptIn : R|kotlin/Annotation| {
+        public constructor(a: R|kotlin/String| = String(), @R|MyRequiresOptIn|(a = String(), b = Q|MyRequiresOptIn.MyLevel|.R|/MyRequiresOptIn.MyLevel.WARNING|) b: R|MyRequiresOptIn.MyLevel| = Q|MyRequiresOptIn.MyLevel|.R|/MyRequiresOptIn.MyLevel.ERROR|): R|MyRequiresOptIn| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val a: R|kotlin/String| = R|<local>/a|
+            public get(): R|kotlin/String|
+
+        public final val b: R|MyRequiresOptIn.MyLevel| = R|<local>/b|
+            public get(): R|MyRequiresOptIn.MyLevel|
+
+        public final enum class MyLevel : R|kotlin/Enum<MyRequiresOptIn.MyLevel>| {
+            private constructor(): R|MyRequiresOptIn.MyLevel| {
+                super<R|kotlin/Enum<MyRequiresOptIn.MyLevel>|>()
+            }
+
+            public final static enum entry WARNING: R|MyRequiresOptIn.MyLevel|
+            public final static enum entry ERROR: R|MyRequiresOptIn.MyLevel|
+            public final static fun values(): R|kotlin/Array<MyRequiresOptIn.MyLevel>| {
+            }
+
+            public final static fun valueOf(value: R|kotlin/String|): R|MyRequiresOptIn.MyLevel| {
+            }
+
+            public final static val entries: R|kotlin/enums/EnumEntries<MyRequiresOptIn.MyLevel>|
+                public get(): R|kotlin/enums/EnumEntries<MyRequiresOptIn.MyLevel>|
+
+        }
+
+    }
+    public final fun box(): R|kotlin/String| {
+        ^box String(OK)
+    }

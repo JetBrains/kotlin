@@ -288,6 +288,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/annotations/retentionInJava.kt");
         }
 
+        @TestMetadata("selfReferentialAnnotation.kt")
+        public void testSelfReferentialAnnotation() throws Exception {
+            runTest("compiler/testData/codegen/box/annotations/selfReferentialAnnotation.kt");
+        }
+
         @TestMetadata("singleAssignmentToVarargInAnnotation.kt")
         public void testSingleAssignmentToVarargInAnnotation() throws Exception {
             runTest("compiler/testData/codegen/box/annotations/singleAssignmentToVarargInAnnotation.kt");

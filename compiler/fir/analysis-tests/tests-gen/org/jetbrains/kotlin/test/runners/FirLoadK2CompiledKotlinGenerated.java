@@ -79,6 +79,12 @@ public class FirLoadK2CompiledKotlinGenerated extends AbstractFirLoadK2CompiledK
             }
 
             @Test
+            @TestMetadata("SelfReferentialAnnotation.kt")
+            public void testSelfReferentialAnnotation() throws Exception {
+                runTest("compiler/testData/loadJava/compiledKotlin/annotations/SelfReferentialAnnotation.kt");
+            }
+
+            @Test
             @TestMetadata("SimpleAnnotation.kt")
             public void testSimpleAnnotation() throws Exception {
                 runTest("compiler/testData/loadJava/compiledKotlin/annotations/SimpleAnnotation.kt");

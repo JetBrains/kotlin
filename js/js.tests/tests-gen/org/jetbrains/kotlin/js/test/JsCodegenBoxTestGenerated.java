@@ -71,6 +71,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             runTest("compiler/testData/codegen/box/annotations/resolveWithLowPriorityAnnotation.kt");
         }
 
+        @Test
+        @TestMetadata("selfReferentialAnnotation.kt")
+        public void testSelfReferentialAnnotation() throws Exception {
+            runTest("compiler/testData/codegen/box/annotations/selfReferentialAnnotation.kt");
+        }
+
         @Nested
         @TestMetadata("compiler/testData/codegen/box/annotations/annotatedLambda")
         @TestDataPath("$PROJECT_ROOT")

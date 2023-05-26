@@ -1,0 +1,34 @@
+public final annotation class Ann : R|kotlin/Annotation| {
+    public final val e: R|kotlin/Int|
+        public get(): R|kotlin/Int|
+
+    public constructor(e: R|kotlin/Int|): R|test/Ann|
+
+}
+
+@R|test/MyRequiresOptIn|(a = String(), b = R|test/MyRequiresOptIn.MyLevel.ERROR|) public final annotation class MyRequiresOptIn : R|kotlin/Annotation| {
+    public final val a: R|kotlin/String| = String()
+        public get(): R|kotlin/String|
+
+    public final val b: R|test/MyRequiresOptIn.MyLevel| = test/MyRequiresOptIn.MyLevel.ERROR
+        public get(): R|test/MyRequiresOptIn.MyLevel|
+
+    public constructor(a: R|kotlin/String| = STUB, b: R|test/MyRequiresOptIn.MyLevel| = STUB): R|test/MyRequiresOptIn|
+
+    public final enum class MyLevel : R|kotlin/Enum<test/MyRequiresOptIn.MyLevel>| {
+        private constructor(): R|test/MyRequiresOptIn.MyLevel|
+
+        public final static enum entry WARNING: R|test/MyRequiresOptIn.MyLevel|
+        public final static enum entry ERROR: R|test/MyRequiresOptIn.MyLevel|
+        public final static fun values(): R|kotlin/Array<test/MyRequiresOptIn.MyLevel>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|test/MyRequiresOptIn.MyLevel| {
+        }
+
+        public final static val entries: R|kotlin/enums/EnumEntries<test/MyRequiresOptIn.MyLevel>|
+            public get(): R|kotlin/enums/EnumEntries<test/MyRequiresOptIn.MyLevel>|
+
+    }
+
+}

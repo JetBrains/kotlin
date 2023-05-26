@@ -378,6 +378,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
         }
 
         @Test
+        @TestMetadata("selfReferentialAnnotation.kt")
+        public void testSelfReferentialAnnotation() throws Exception {
+            runTest("compiler/testData/codegen/box/annotations/selfReferentialAnnotation.kt");
+        }
+
+        @Test
         @TestMetadata("singleAssignmentToVarargInAnnotation.kt")
         public void testSingleAssignmentToVarargInAnnotation() throws Exception {
             runTest("compiler/testData/codegen/box/annotations/singleAssignmentToVarargInAnnotation.kt");

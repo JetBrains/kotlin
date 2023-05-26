@@ -661,7 +661,7 @@ class Fir2IrDeclarationStorage(
                 signatureComposer.composeSignature(constructor, forceTopLevelPrivate = forceTopLevelPrivate)
             }
         val visibility = if (irParent.isAnonymousObject) Visibilities.Public else constructor.visibility
-        val created = constructor.convertWithOffsets { startOffset, endOffset ->
+        return constructor.convertWithOffsets { startOffset, endOffset ->
             declareIrConstructor(signature) { symbol ->
                 classifierStorage.preCacheTypeParameters(constructor, symbol)
                 irFactory.createConstructor(
@@ -671,14 +671,15 @@ class Fir2IrDeclarationStorage(
                     isInline = false, isExternal = false, isPrimary = isPrimary, isExpect = constructor.isExpect
                 ).apply {
                     metadata = FirMetadataSource.Function(constructor)
+                    // Add to cache before generating parameters to prevent an infinite loop when an annotation value parameter is annotated
+                    // with the annotation itself.
+                    constructorCache[constructor] = this
                     enterScope(this)
                     bindAndDeclareParameters(constructor, irParent, isStatic = false, forSetter = false)
                     leaveScope(this)
                 }
             }
         }
-        constructorCache[constructor] = created
-        return created
     }
 
     fun getOrCreateIrConstructor(

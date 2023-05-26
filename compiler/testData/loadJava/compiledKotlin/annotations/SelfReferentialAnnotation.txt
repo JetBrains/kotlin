@@ -1,0 +1,37 @@
+package test
+
+public final annotation class Ann : kotlin.Annotation {
+    /*primary*/ public constructor Ann(/*0*/ e: kotlin.Int)
+    public final val e: kotlin.Int
+        public final fun `<get-e>`(): kotlin.Int
+}
+
+@test.MyRequiresOptIn(a = "", b = MyLevel.ERROR) public final annotation class MyRequiresOptIn : kotlin.Annotation {
+    /*primary*/ public constructor MyRequiresOptIn(/*0*/ a: kotlin.String = ..., /*1*/ b: test.MyRequiresOptIn.MyLevel = ...)
+    public final val a: kotlin.String = ""
+        public final fun `<get-a>`(): kotlin.String
+    public final val b: test.MyRequiresOptIn.MyLevel = MyLevel.ERROR
+        public final fun `<get-b>`(): test.MyRequiresOptIn.MyLevel
+
+    public final enum class MyLevel : kotlin.Enum<test.MyRequiresOptIn.MyLevel> {
+        enum entry WARNING
+
+        enum entry ERROR
+
+        /*primary*/ private constructor MyLevel()
+        @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
+            public final override /*1*/ /*fake_override*/ fun `<get-name>`(): kotlin.String
+        public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
+            public final override /*1*/ /*fake_override*/ fun `<get-ordinal>`(): kotlin.Int
+        protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
+        public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.MyRequiresOptIn.MyLevel): kotlin.Int
+        protected/*protected and package*/ final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun finalize(): kotlin.Unit
+        public final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun getDeclaringClass(): java.lang.Class<test.MyRequiresOptIn.MyLevel!>!
+
+        // Static members
+        public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<test.MyRequiresOptIn.MyLevel>
+            public final /*synthesized*/ fun `<get-entries>`(): kotlin.enums.EnumEntries<test.MyRequiresOptIn.MyLevel>
+        public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): test.MyRequiresOptIn.MyLevel
+        public final /*synthesized*/ fun values(): kotlin.Array<test.MyRequiresOptIn.MyLevel>
+    }
+}
