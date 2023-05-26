@@ -28505,6 +28505,12 @@ public class FirLightTreeBlackBoxCodegenTestGenerated extends AbstractFirLightTr
             }
 
             @Test
+            @TestMetadata("enumNameWithInit.kt")
+            public void testEnumNameWithInit() throws Exception {
+                runTest("compiler/testData/codegen/box/involvesIrInterpreter/intrinsicConst/enumNameWithInit.kt");
+            }
+
+            @Test
             @TestMetadata("equals_after.kt")
             public void testEquals_after() throws Exception {
                 runTest("compiler/testData/codegen/box/involvesIrInterpreter/intrinsicConst/equals_after.kt");
