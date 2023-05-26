@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.runner.TestRunChecks
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.Binaries
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.CacheMode
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.KotlinNativeTargets
+import org.jetbrains.kotlin.konan.blackboxtest.support.settings.PipelineType
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.Timeouts
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.*
 import org.jetbrains.kotlin.test.Directives
@@ -36,7 +37,7 @@ import org.jetbrains.kotlin.compatibility.binary.TestModule as TModule
 abstract class AbstractNativeKlibEvolutionTest : AbstractNativeSimpleTest() {
     // Const evaluation tests muted for FIR because FIR does const propagation.
     private fun isIgnoredTest(filePath: String): Boolean {
-        if (!this::class.java.simpleName.startsWith("Fir"))
+        if (testRunSettings.get<PipelineType>() != PipelineType.K2)
             return false
 
         val fileName = filePath.substringAfterLast('/')

@@ -1,0 +1,42 @@
+MODULE_FRAGMENT name:<enum.kt>
+  FILE fqName:test fileName:enum.kt
+    CLASS ENUM_CLASS name:Color modality:FINAL visibility:public superTypes:[<unbound IrClassPublicSymbolImpl><test.Color>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.Color
+      CONSTRUCTOR visibility:private <> (rgb:<unbound IrClassPublicSymbolImpl>) returnType:test.Color [primary]
+        VALUE_PARAMETER name:rgb index:0 type:<unbound IrClassPublicSymbolImpl>
+        BLOCK_BODY
+          ENUM_CONSTRUCTOR_CALL 'UNBOUND IrConstructorPublicSymbolImpl'
+            <1>: test.Color
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:Color modality:FINAL visibility:public superTypes:[<unbound IrClassPublicSymbolImpl><test.Color>]'
+      PROPERTY name:rgb visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:rgb type:<unbound IrClassPublicSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'rgb: <unbound IrClassPublicSymbolImpl> declared in test.Color.<init>' type=<unbound IrClassPublicSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-rgb> visibility:public modality:FINAL <> ($this:test.Color) returnType:<unbound IrClassPublicSymbolImpl>
+          correspondingProperty: PROPERTY name:rgb visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:test.Color
+          BLOCK_BODY
+            RETURN type=<unbound IrClassPublicSymbolImpl> from='public final fun <get-rgb> (): <unbound IrClassPublicSymbolImpl> declared in test.Color'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:rgb type:<unbound IrClassPublicSymbolImpl> visibility:private [final]' type=<unbound IrClassPublicSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: test.Color declared in test.Color.<get-rgb>' type=test.Color origin=null
+      ENUM_ENTRY name:RED
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> (rgb: <unbound IrClassPublicSymbolImpl>) [primary] declared in test.Color'
+            rgb: CONST Int type=<unbound IrClassPublicSymbolImpl> value=16711680
+      ENUM_ENTRY name:GREEN
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> (rgb: <unbound IrClassPublicSymbolImpl>) [primary] declared in test.Color'
+            rgb: CONST Int type=<unbound IrClassPublicSymbolImpl> value=65280
+      ENUM_ENTRY name:BLUE
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> (rgb: <unbound IrClassPublicSymbolImpl>) [primary] declared in test.Color'
+            rgb: CONST Int type=<unbound IrClassPublicSymbolImpl> value=255
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:values visibility:public modality:FINAL <> () returnType:<unbound IrClassPublicSymbolImpl><test.Color>
+        SYNTHETIC_BODY kind=ENUM_VALUES
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf visibility:public modality:FINAL <> (value:<unbound IrClassPublicSymbolImpl>) returnType:test.Color
+        VALUE_PARAMETER name:value index:0 type:<unbound IrClassPublicSymbolImpl>
+        SYNTHETIC_BODY kind=ENUM_VALUEOF
+      PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries visibility:public modality:FINAL [val]
+        FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> visibility:public modality:FINAL <> () returnType:<unbound IrClassPublicSymbolImpl><test.Color>
+          correspondingProperty: PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries visibility:public modality:FINAL [val]
+          SYNTHETIC_BODY kind=ENUM_ENTRIES

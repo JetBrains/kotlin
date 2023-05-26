@@ -52,6 +52,7 @@ fun IrFile.dumpTreesFromLineNumber(lineNumber: Int, options: DumpIrTreeOptions =
  * the file facade class (see [IrDeclarationOrigin.FILE_CLASS])
  * @property printFlagsInDeclarationReferences If `false`, flags like `fake_override`, `inline` etc. are not printed in rendered declaration
  * references.
+ * @property printSignatures Whether to print signatures for nodes that have public signatures
  */
 data class DumpIrTreeOptions(
     val normalizeNames: Boolean = false,
@@ -59,6 +60,7 @@ data class DumpIrTreeOptions(
     val verboseErrorTypes: Boolean = true,
     val printFacadeClassInFqNames: Boolean = true,
     val printFlagsInDeclarationReferences: Boolean = true,
+    val printSignatures: Boolean = false,
 )
 
 private fun IrFile.shouldSkipDump(): Boolean {

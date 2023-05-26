@@ -6,7 +6,16 @@
 package org.jetbrains.kotlin.cli.klib
 
 // TODO: Extract `library` package as a shared jar?
+import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSupportForLinker
+import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideBuilder
+import org.jetbrains.kotlin.backend.common.serialization.BasicIrModuleDeserializer
+import org.jetbrains.kotlin.backend.common.serialization.DeserializationStrategy
+import org.jetbrains.kotlin.backend.common.serialization.IrModuleDeserializer
+import org.jetbrains.kotlin.backend.common.serialization.KotlinIrLinker
 import org.jetbrains.kotlin.backend.common.serialization.metadata.DynamicTypeDeserializer
+import org.jetbrains.kotlin.backend.konan.serialization.KonanIdSignaturer
+import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerDesc
+import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerIr
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.LanguageVersion
@@ -14,19 +23,29 @@ import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.descriptors.konan.isNativeStdlib
+import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
+import org.jetbrains.kotlin.ir.builders.TranslationPluginContext
+import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
+import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
+import org.jetbrains.kotlin.ir.util.DumpIrTreeOptions
+import org.jetbrains.kotlin.ir.util.IrMessageLogger
+import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.konan.library.resolverByName
 import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.target.PlatformManager
 import org.jetbrains.kotlin.konan.util.DependencyDirectories
-import org.jetbrains.kotlin.konan.util.DependencyProcessor
 import org.jetbrains.kotlin.konan.util.KonanHomeProvider
-import org.jetbrains.kotlin.library.KLIB_FILE_EXTENSION_WITH_DOT
+import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.library.metadata.KlibMetadataFactories
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
+import org.jetbrains.kotlin.library.metadata.kotlinLibrary
 import org.jetbrains.kotlin.library.metadata.parseModuleHeader
-import org.jetbrains.kotlin.library.unpackZippedKonanLibraryTo
+import org.jetbrains.kotlin.psi2ir.descriptors.IrBuiltInsOverDescriptors
+import org.jetbrains.kotlin.psi2ir.generators.TypeTranslatorImpl
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.util.Logger
 import org.jetbrains.kotlin.util.removeSuffixIfPresent
@@ -39,13 +58,14 @@ fun printUsage() {
     println("where the commands are:")
     println("\tinfo\tgeneral information about the library")
     println("\tinstall\tinstall the library to the local repository")
+    println("\tdump-ir\tprint out the intermediate representation (IR) for the library (to be used for debugging purposes only)")
     println("\tcontents\tlist contents of the library")
     println("\tsignatures\tlist of ID signatures in the library")
     println("\tremove\tremove the library from the local repository")
     println("and the options are:")
     println("\t-repository <path>\twork with the specified repository")
     println("\t-target <name>\tinspect specifics of the given target")
-    println("\t-print-signatures [true|false]\tprint ID signature for every declaration (only for \"contents\" command)")
+    println("\t-print-signatures [true|false]\tprint ID signature for every declaration (only for \"contents\" and \"dump-ir\" commands)")
 }
 
 private fun parseArgs(args: Array<String>): Map<String, List<String>> {
@@ -86,11 +106,18 @@ fun error(text: String): Nothing {
     kotlin.error("error: $text")
 }
 
-object KlibToolLogger : Logger {
-    override fun warning(message: String) = org.jetbrains.kotlin.cli.klib.warn(message)
-    override fun error(message: String) = org.jetbrains.kotlin.cli.klib.warn(message)
+object KlibToolLogger : Logger, IrMessageLogger {
+    override fun warning(message: String) = warn(message)
+    override fun error(message: String) = warn(message)
     override fun fatal(message: String) = org.jetbrains.kotlin.cli.klib.error(message)
     override fun log(message: String) = println(message)
+    override fun report(severity: IrMessageLogger.Severity, message: String, location: IrMessageLogger.Location?) {
+        when (severity) {
+            IrMessageLogger.Severity.INFO -> log(message)
+            IrMessageLogger.Severity.WARNING -> warning(message)
+            IrMessageLogger.Severity.ERROR -> error(message)
+        }
+    }
 }
 
 // TODO(Dmitrii Krasnov): I'm not sure that we should put konan distribution dir here
@@ -165,6 +192,61 @@ class Library(val libraryNameOrPath: String, val requestedRepository: String?, v
         library?.libraryFile?.deleteRecursively()
     }
 
+    class KlibToolLinker(
+        module: ModuleDescriptor, irBuiltIns: IrBuiltIns, symbolTable: SymbolTable
+    ) : KotlinIrLinker(module, KlibToolLogger, irBuiltIns, symbolTable, emptyList()) {
+        override val fakeOverrideBuilder = FakeOverrideBuilder(
+            linker = this,
+            symbolTable = symbolTable,
+            mangler = KonanManglerIr,
+            typeSystem = IrTypeSystemContextImpl(builtIns),
+            friendModules = emptyMap(),
+            partialLinkageSupport = PartialLinkageSupportForLinker.DISABLED,
+        )
+        override val translationPluginContext: TranslationPluginContext
+            get() = TODO("Not needed for ir dumping")
+
+        override fun createModuleDeserializer(moduleDescriptor: ModuleDescriptor, klib: KotlinLibrary?, strategyResolver: (String) -> DeserializationStrategy): IrModuleDeserializer {
+            return KlibToolModuleDeserializer(moduleDescriptor, klib ?: error("Expecting kotlin library for $moduleDescriptor"), strategyResolver)
+        }
+
+        override fun isBuiltInModule(moduleDescriptor: ModuleDescriptor): Boolean {
+            return false
+        }
+
+        inner class KlibToolModuleDeserializer(
+                module: ModuleDescriptor,
+                klib: KotlinLibrary,
+                strategyResolver: (String) -> DeserializationStrategy
+        ) : BasicIrModuleDeserializer(
+                this,
+                module,
+                klib,
+                strategyResolver,
+                klib.versions.abiVersion ?: KotlinAbiVersion.CURRENT
+        )
+    }
+
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
+    fun ir(output: Appendable, printSignatures: Boolean) {
+        val module = loadModule()
+        if (module.kotlinLibrary.isInterop) error("Deserializing IR from IR-less libraries is not supported yet")
+        val versionSpec = LanguageVersionSettingsImpl(currentLanguageVersion, currentApiVersion)
+        val idSignaturer = KonanIdSignaturer(KonanManglerDesc)
+        val symbolTable = SymbolTable(idSignaturer, IrFactoryImpl)
+        val typeTranslator = TypeTranslatorImpl(symbolTable, versionSpec, module)
+        val irBuiltIns = IrBuiltInsOverDescriptors(module.builtIns, typeTranslator, symbolTable)
+        val linker = KlibToolLinker(module, irBuiltIns, symbolTable)
+        module.allDependencyModules.forEach {
+            linker.deserializeOnlyHeaderModule(it, it.kotlinLibrary)
+            linker.resolveModuleDeserializer(it, null).init()
+        }
+        val irFragment = linker.deserializeFullModule(module, module.kotlinLibrary)
+        linker.resolveModuleDeserializer(module, null).init()
+        linker.modulesWithReachableTopLevels.forEach(IrModuleDeserializer::deserializeReachableDeclarations)
+        output.append(irFragment.dump(DumpIrTreeOptions(printSignatures = printSignatures)))
+    }
+
     fun contents(output: Appendable, printSignatures: Boolean) {
         val module = loadModule()
         val signatureRenderer = if (printSignatures) DefaultKlibSignatureRenderer("// ID signature: ") else KlibSignatureRenderer.NO_SIGNATURE
@@ -231,6 +313,7 @@ fun main(args: Array<String>) {
     val library = Library(command.library, repository, target)
 
     when (command.verb) {
+        "dump-ir" -> library.ir(System.out, printSignatures)
         "contents" -> library.contents(System.out, printSignatures)
         "signatures" -> library.signatures(System.out)
         "info" -> library.info()

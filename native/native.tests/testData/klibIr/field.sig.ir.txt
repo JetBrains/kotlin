@@ -1,0 +1,38 @@
+MODULE_FRAGMENT name:<field.kt>
+  FILE fqName:test fileName:field.kt
+    CLASS CLASS name:A signature:test/A|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassPublicSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.A
+      CONSTRUCTOR signature:test/A.<init>|<init>(){}[0] visibility:public <> () returnType:test.A [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorPublicSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A signature:test/A|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassPublicSymbolImpl>]'
+      PROPERTY name:x signature:test/A.x|{}x[0] visibility:public modality:FINAL [var]
+        FIELD PROPERTY_BACKING_FIELD name:x signature:[ test/A.x|{}x[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private] ] type:<unbound IrClassPublicSymbolImpl> visibility:private
+          EXPRESSION_BODY
+            CONST Int type=<unbound IrClassPublicSymbolImpl> value=5
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> signature:test/A.x.<get-x>|<get-x>(){}[0] visibility:public modality:FINAL <> ($this:test.A) returnType:<unbound IrClassPublicSymbolImpl>
+          correspondingProperty: PROPERTY name:x signature:test/A.x|{}x[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:test.A
+          BLOCK_BODY
+            RETURN type=<unbound IrClassPublicSymbolImpl> from='public final fun <get-x> (): <unbound IrClassPublicSymbolImpl> declared in test.A'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x signature:[ test/A.x|{}x[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private] ] type:<unbound IrClassPublicSymbolImpl> visibility:private' type=<unbound IrClassPublicSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: test.A declared in test.A.<get-x>' type=test.A origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-x> signature:test/A.x.<set-x>|<set-x>(kotlin.Int){}[0] visibility:public modality:FINAL <> ($this:test.A, <set-?>:<unbound IrClassPublicSymbolImpl>) returnType:<unbound IrClassPublicSymbolImpl>
+          correspondingProperty: PROPERTY name:x signature:test/A.x|{}x[0] visibility:public modality:FINAL [var]
+          $this: VALUE_PARAMETER name:<this> type:test.A
+          VALUE_PARAMETER name:<set-?> index:0 type:<unbound IrClassPublicSymbolImpl>
+          BLOCK_BODY
+            SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x signature:[ test/A.x|{}x[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private] ] type:<unbound IrClassPublicSymbolImpl> visibility:private' type=<unbound IrClassPublicSymbolImpl> origin=null
+              receiver: GET_VAR '<this>: test.A declared in test.A.<set-x>' type=test.A origin=null
+              value: GET_VAR '<set-?>: <unbound IrClassPublicSymbolImpl> declared in test.A.<set-x>' type=<unbound IrClassPublicSymbolImpl> origin=null
+      PROPERTY name:y signature:test/A.y|{}y[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:y signature:[ test/A.y|{}y[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private] ] type:<unbound IrClassPublicSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            CONST Int type=<unbound IrClassPublicSymbolImpl> value=10
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-y> signature:test/A.y.<get-y>|<get-y>(){}[0] visibility:public modality:FINAL <> ($this:test.A) returnType:<unbound IrClassPublicSymbolImpl>
+          correspondingProperty: PROPERTY name:y signature:test/A.y|{}y[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:test.A
+          BLOCK_BODY
+            RETURN type=<unbound IrClassPublicSymbolImpl> from='public final fun <get-y> (): <unbound IrClassPublicSymbolImpl> declared in test.A'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:y signature:[ test/A.y|{}y[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private] ] type:<unbound IrClassPublicSymbolImpl> visibility:private [final]' type=<unbound IrClassPublicSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: test.A declared in test.A.<get-y>' type=test.A origin=null

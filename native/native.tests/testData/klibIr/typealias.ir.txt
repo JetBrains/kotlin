@@ -1,0 +1,11 @@
+MODULE_FRAGMENT name:<typealias.kt>
+  FILE fqName:test fileName:typealias.kt
+    CLASS CLASS name:ClassName modality:FINAL visibility:public superTypes:[<unbound IrClassPublicSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.ClassName
+      CONSTRUCTOR visibility:public <> () returnType:test.ClassName [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorPublicSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:ClassName modality:FINAL visibility:public superTypes:[<unbound IrClassPublicSymbolImpl>]'
+    TYPEALIAS name:PublicTypeAlias visibility:public expandedType:test.ClassName
+    TYPEALIAS name:InternalTypeAlias visibility:internal expandedType:test.ClassName
+    TYPEALIAS name:PrivateTypeAlias visibility:private expandedType:test.ClassName

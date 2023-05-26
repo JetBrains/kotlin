@@ -140,6 +140,10 @@ internal object TestDirectives : SimpleDirectivesContainer() {
         Usage: // MUTED_WHEN: [K1, K2]
         In native simple tests, specify the pipeline types to mute the test""".trimIndent(),
     )
+
+    val FIR_IDENTICAL by directive(
+        description = "Test behavior should be identical for FIR testing"
+    )
 }
 
 internal enum class TestKind {

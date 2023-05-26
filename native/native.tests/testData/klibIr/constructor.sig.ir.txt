@@ -1,0 +1,35 @@
+MODULE_FRAGMENT name:<constructor.kt>
+  FILE fqName:test fileName:constructor.kt
+    CLASS CLASS name:A signature:test/A|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassPublicSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.A
+      CONSTRUCTOR signature:test/A.<init>|<init>(kotlin.Int){}[0] visibility:public <> (x:<unbound IrClassPublicSymbolImpl>) returnType:test.A [primary]
+        VALUE_PARAMETER name:x index:0 type:<unbound IrClassPublicSymbolImpl>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorPublicSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A signature:test/A|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassPublicSymbolImpl>]'
+      PROPERTY name:x signature:test/A.x|{}x[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:x signature:[ test/A.x|{}x[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassPublicSymbolImpl> visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'x: <unbound IrClassPublicSymbolImpl> declared in test.A.<init>' type=<unbound IrClassPublicSymbolImpl> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> signature:test/A.x.<get-x>|<get-x>(){}[0] visibility:public modality:FINAL <> ($this:test.A) returnType:<unbound IrClassPublicSymbolImpl>
+          correspondingProperty: PROPERTY name:x signature:test/A.x|{}x[0] visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:test.A
+          BLOCK_BODY
+            RETURN type=<unbound IrClassPublicSymbolImpl> from='public final fun <get-x> (): <unbound IrClassPublicSymbolImpl> declared in test.A'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x signature:[ test/A.x|{}x[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassPublicSymbolImpl> visibility:private [final]' type=<unbound IrClassPublicSymbolImpl> origin=null
+                receiver: GET_VAR '<this>: test.A declared in test.A.<get-x>' type=test.A origin=null
+      CLASS OBJECT name:Companion signature:test/A.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<unbound IrClassPublicSymbolImpl>]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.A.Companion
+        CONSTRUCTOR signature:test/A.Companion.<init>|<init>(){}[0] visibility:private <> () returnType:test.A.Companion [primary]
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorPublicSymbolImpl'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Companion signature:test/A.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<unbound IrClassPublicSymbolImpl>]'
+        FUN name:create signature:test/A.Companion.create|create(kotlin.Int){}[0] visibility:public modality:FINAL <> ($this:test.A.Companion, x:<unbound IrClassPublicSymbolImpl>) returnType:test.A
+          $this: VALUE_PARAMETER name:<this> type:test.A.Companion
+          VALUE_PARAMETER name:x index:0 type:<unbound IrClassPublicSymbolImpl>
+          BLOCK_BODY
+            RETURN type=<unbound IrClassPublicSymbolImpl> from='public final fun create (x: <unbound IrClassPublicSymbolImpl>): test.A declared in test.A.Companion'
+              CONSTRUCTOR_CALL 'public constructor <init> (x: <unbound IrClassPublicSymbolImpl>) [primary] declared in test.A' type=test.A origin=null
+                x: CALL 'UNBOUND IrSimpleFunctionPublicSymbolImpl' type=<unbound IrClassPublicSymbolImpl> origin=MUL
+                  $this: GET_VAR 'x: <unbound IrClassPublicSymbolImpl> declared in test.A.Companion.create' type=<unbound IrClassPublicSymbolImpl> origin=null
+                  1: CONST Int type=<unbound IrClassPublicSymbolImpl> value=2
