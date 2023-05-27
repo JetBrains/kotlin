@@ -186,6 +186,7 @@ internal class WasmUsefulDeclarationProcessor(
             processIrFunction(irConstructor)
         }
 
+        // Primitive constructors has no body, since that such constructors implicitly initialize all fields, so we have to preserve them
         if (irConstructor.hasWasmPrimitiveConstructorAnnotation()) {
             constructedClass.declarations.forEach { declaration ->
                 if (declaration is IrField) {
