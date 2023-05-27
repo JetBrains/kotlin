@@ -46,7 +46,7 @@ class IrBuiltInsOverFir(
     private val tryLoadBuiltInsFirst: Boolean = false
 ) : IrBuiltIns() {
 
-    override val irFactory: IrFactory = components.symbolTable.irFactory
+    override val irFactory: IrFactory = components.irFactory
 
     private val kotlinPackage = StandardClassIds.BASE_KOTLIN_PACKAGE
     private val kotlinInternalPackage = StandardClassIds.BASE_INTERNAL_PACKAGE
