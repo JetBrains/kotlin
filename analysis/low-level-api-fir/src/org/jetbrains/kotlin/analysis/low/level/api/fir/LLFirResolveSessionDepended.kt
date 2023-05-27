@@ -60,7 +60,7 @@ internal class LLFirResolveSessionDepended(
 
     override fun getOrBuildFirFor(element: KtElement): FirElement? {
         val psi = FirElementBuilder.getPsiAsFirElementSource(element) ?: return null
-        ktToFirMapping?.getFirOfClosestParent(psi, this)?.let { return it }
+        ktToFirMapping?.getFirOfClosestParent(psi)?.let { return it }
         return originalFirResolveSession.getOrBuildFirFor(element = element)
     }
 

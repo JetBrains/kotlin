@@ -84,7 +84,7 @@ internal class FirElementBuilder(
         val structureElement = fileStructure.getStructureElementFor(element)
         val psi = getPsiAsFirElementSource(element) ?: return null
         val mappings = structureElement.mappings
-        return mappings.getFirOfClosestParent(psi, firResolveSession)
+        return mappings.getFirOfClosestParent(psi)
             ?: firResolveSession.getOrBuildFirFile(firFile)
     }
 

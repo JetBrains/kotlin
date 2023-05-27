@@ -1979,6 +1979,17 @@ open class RawFirBuilder(
                         FirErrorTypeRefBuilder().apply {
                             this.source = source
                             diagnostic = ConeSyntaxDiagnostic("Incomplete user type")
+
+                            val qualifier = unwrappedElement.qualifier
+                            val reference = qualifier?.referenceExpression
+                            if (qualifier != null && reference != null) {
+                                partiallyResolvedTypeRef = convertKtTypeElement(
+                                    qualifier.toFirSourceElement(),
+                                    isNullable = false,
+                                    qualifier,
+                                    reference
+                                ).build()
+                            }
                         }
                     }
                 }

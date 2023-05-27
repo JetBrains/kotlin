@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.resolve.typeResolver
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.builder.buildUserTypeRef
 
 class FirSpecificTypeResolverTransformer(
     override val session: FirSession,
@@ -82,7 +83,7 @@ class FirSpecificTypeResolverTransformer(
             typeRef.transformChildren(this, data)
         }
         val (resolvedType, diagnostic) = resolveType(typeRef, data)
-        return transformType(typeRef, resolvedType, diagnostic)
+        return transformType(typeRef, resolvedType, diagnostic, data)
     }
 
     @OptIn(PrivateForInline::class)
@@ -135,6 +136,7 @@ class FirSpecificTypeResolverTransformer(
         typeRef: FirTypeRef,
         resolvedType: ConeKotlinType,
         diagnostic: ConeDiagnostic?,
+        scopeClassDeclaration: ScopeClassDeclaration,
     ): FirResolvedTypeRef {
         return when {
             resolvedType is ConeErrorType -> {
@@ -154,6 +156,7 @@ class FirSpecificTypeResolverTransformer(
 
                     delegatedTypeRef = typeRef
                     type = resolvedType
+                    partiallyResolvedTypeRef = tryCalculatingPartiallyResolvedTypeRef(typeRef, scopeClassDeclaration)
 
                     this.diagnostic = resolvedType.diagnostic
                 }
@@ -164,6 +167,7 @@ class FirSpecificTypeResolverTransformer(
                     this.diagnostic = diagnostic
                     type = resolvedType
                     delegatedTypeRef = typeRef
+                    partiallyResolvedTypeRef = tryCalculatingPartiallyResolvedTypeRef(typeRef, scopeClassDeclaration)
                 }
             }
             else -> {
@@ -175,6 +179,41 @@ class FirSpecificTypeResolverTransformer(
                 }
             }
         }
+    }
+
+    /**
+     * Tries to calculate a partially resolved type reference for a type reference which was resolved to an error type.
+     * It will attempt to resolve the type with a decreasing number of qualifiers until it succeeds, allowing
+     * partial resolution in case of errors in the type reference.
+     *
+     * This is useful for providing better IDE support when resolving partially incorrect types.
+     *
+     * @param typeRef The type reference for which to try to calculate a partially resolved type reference.
+     * @param data The scope class declaration containing relevant information for resolving the reference.
+     * @return A partially resolved type reference if it was resolved, or `null` otherwise.
+     */
+    private fun tryCalculatingPartiallyResolvedTypeRef(typeRef: FirTypeRef, data: ScopeClassDeclaration): FirTypeRef? {
+        if (typeRef !is FirUserTypeRef) return null
+        val qualifiers = typeRef.qualifier
+        if (qualifiers.size <= 1) {
+            return null
+        }
+        val qualifiersToTry = qualifiers.toMutableList()
+        while (qualifiersToTry.size > 1) {
+            qualifiersToTry.removeLast()
+            val typeRefToTry = buildUserTypeRef {
+                qualifier += qualifiersToTry
+                isMarkedNullable = false
+            }
+            val (resolvedType, diagnostic) = resolveType(typeRefToTry, data)
+            if (resolvedType is ConeErrorType || diagnostic != null) continue
+            return buildResolvedTypeRef {
+                source = qualifiersToTry.last().source
+                type = resolvedType
+                delegatedTypeRef = typeRefToTry
+            }
+        }
+        return null
     }
 
     private fun ConeKotlinType.takeIfAcceptable(): ConeKotlinType? = this.takeUnless {

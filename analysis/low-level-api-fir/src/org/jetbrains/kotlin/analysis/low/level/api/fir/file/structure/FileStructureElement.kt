@@ -8,13 +8,17 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.*
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignation
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignationWithFile
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.collectDesignation
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.ClassDiagnosticRetriever
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.FileDiagnosticRetriever
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.FileStructureElementDiagnostics
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.SingleNonLocalDeclarationDiagnosticRetriever
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.RawFirNonLocalDeclarationBuilder
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.correspondingProperty
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.FirBackingFieldBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.FirFunctionBuilder
@@ -26,7 +30,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.psi.*
 import java.util.concurrent.ConcurrentHashMap
-import org.jetbrains.kotlin.fir.correspondingProperty
 
 internal sealed class FileStructureElement(val firFile: FirFile, protected val moduleComponents: LLFirModuleResolveComponents) {
     abstract val psi: KtAnnotated
@@ -36,31 +39,16 @@ internal sealed class FileStructureElement(val firFile: FirFile, protected val m
 
 internal class KtToFirMapping(firElement: FirElement, recorder: FirElementsRecorder) {
     private val mapping = FirElementsRecorder.recordElementsFrom(firElement, recorder)
-    private val userTypeMapping = ConcurrentHashMap<KtUserType, FirElement>()
 
-    fun getElement(ktElement: KtElement, firResolveSession: LLFirResolveSession): FirElement? {
-        mapping[ktElement]?.let { return it }
-
-        val userType = when (ktElement) {
-            is KtUserType -> ktElement
-            is KtNameReferenceExpression -> ktElement.parent as? KtUserType
-            else -> null
-        } ?: return null
-
-        //This is for not inner KtUserType
-        if (userType.parent is KtTypeReference) return null
-
-        return userTypeMapping.getOrPut(userType) {
-            val typeReference = KtPsiFactory(ktElement.project).createType(userType.text)
-            LowLevelFirApiFacadeForResolveOnAir.onAirResolveTypeInPlace(ktElement, typeReference, firResolveSession)
-        }
+    fun getElement(ktElement: KtElement): FirElement? {
+        return mapping[ktElement]
     }
 
-    fun getFirOfClosestParent(element: KtElement, firResolveSession: LLFirResolveSession): FirElement? {
+    fun getFirOfClosestParent(element: KtElement): FirElement? {
         var current: PsiElement? = element
         while (current != null && current !is KtFile) {
             if (current is KtElement) {
-                getElement(current, firResolveSession)?.let { return it }
+                getElement(current)?.let { return it }
             }
             current = current.parent
         }

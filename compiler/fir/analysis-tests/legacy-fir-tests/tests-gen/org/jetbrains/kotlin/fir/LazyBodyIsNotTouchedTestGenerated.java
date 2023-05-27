@@ -3326,6 +3326,16 @@ public class LazyBodyIsNotTouchedTestGenerated extends AbstractLazyBodyIsNotTouc
             runTest("compiler/fir/analysis-tests/testData/resolve/problems/inaccessibleJavaGetter.kt");
         }
 
+        @TestMetadata("incompleteUserType.kt")
+        public void testIncompleteUserType() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/problems/incompleteUserType.kt");
+        }
+
+        @TestMetadata("incompleteUserTypeWithUnresovledTypeArgument.kt")
+        public void testIncompleteUserTypeWithUnresovledTypeArgument() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/problems/incompleteUserTypeWithUnresovledTypeArgument.kt");
+        }
+
         @TestMetadata("innerClassHierarchy.kt")
         public void testInnerClassHierarchy() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/problems/innerClassHierarchy.kt");

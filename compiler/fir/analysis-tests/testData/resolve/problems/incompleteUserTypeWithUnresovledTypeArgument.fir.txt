@@ -1,0 +1,9 @@
+FILE: incompleteUserTypeWithUnresovledTypeArgument.kt
+    public final class A<T> : R|kotlin/Any| {
+        public constructor<T>(): R|A<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final fun foo(a: <ERROR TYPE REF: Incomplete user type>): R|kotlin/Unit| {
+    }

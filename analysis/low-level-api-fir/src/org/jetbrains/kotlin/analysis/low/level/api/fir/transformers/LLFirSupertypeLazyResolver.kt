@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirTowerDataCo
 import org.jetbrains.kotlin.fir.resolve.transformers.platformSupertypeUpdater
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.name.ClassId
 
 internal object LLFirSupertypeLazyResolver : LLFirLazyResolver(FirResolvePhase.SUPER_TYPES) {
     override fun resolve(

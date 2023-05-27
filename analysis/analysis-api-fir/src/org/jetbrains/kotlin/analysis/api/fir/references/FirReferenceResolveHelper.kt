@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.references
 
+import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
@@ -15,9 +16,12 @@ import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirPackageSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirSafe
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.throwUnexpectedFirElementError
+import org.jetbrains.kotlin.analysis.utils.errors.unexpectedElementError
 import org.jetbrains.kotlin.fir.FirPackageDirective
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.ROOT_PREFIX_FOR_IDE_RESOLUTION_MODE
+import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildImport
 import org.jetbrains.kotlin.fir.declarations.utils.classId
@@ -28,10 +32,9 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.expressions.unwrapSmartcastExpression
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnmatchedTypeArgumentsError
-import org.jetbrains.kotlin.fir.resolve.scope
 import org.jetbrains.kotlin.fir.resolve.providers.toSymbol
+import org.jetbrains.kotlin.fir.resolve.scope
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.FirImportResolveTransformer
 import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
@@ -39,6 +42,7 @@ import org.jetbrains.kotlin.fir.scopes.impl.FirExplicitSimpleImportingScope
 import org.jetbrains.kotlin.fir.scopes.processClassifiersByName
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.ClassId
@@ -48,6 +52,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 
 internal object FirReferenceResolveHelper {
     fun FirResolvedTypeRef.toTargetSymbol(session: FirSession, symbolBuilder: KtSymbolByFirBuilder): KtSymbol? {
@@ -471,14 +476,62 @@ internal object FirReferenceResolveHelper {
         session: FirSession,
         symbolBuilder: KtSymbolByFirBuilder,
     ): Collection<KtSymbol> {
+        if (!expression.isPartOfUserTypeRefQualifier()) {
+            return listOfNotNull(fir.toTargetSymbol(session, symbolBuilder))
+        }
 
-        val isPossiblyPackage = fir is FirErrorTypeRef && expression.isPartOfUserTypeRefQualifier()
+        if (fir is FirErrorTypeRef) {
+            tryGettingSymbolFromPartiallyResolvedType(fir, expression, session, symbolBuilder).ifNotEmpty { return this }
+            return listOfNotNull(getPackageSymbolFor(expression, symbolBuilder, forQualifiedType = true))
+        }
 
-        val resultSymbol =
-            if (isPossiblyPackage) getPackageSymbolFor(expression, symbolBuilder, forQualifiedType = true)
-            else fir.toTargetSymbol(session, symbolBuilder)
+        fun unwrapType(type: PsiElement?): KtTypeElement = when (type) {
+            is KtTypeReference -> unwrapType(type.typeElement)
+            is KtNullableType -> type.innerType
+            is KtTypeElement -> type
+            is KtNameReferenceExpression -> unwrapType(type.parent)
+            else -> unexpectedElementError<PsiElement>(type)
+        } ?: unexpectedElementError<PsiElement>(type)
 
-        return listOfNotNull(resultSymbol)
+        val ktTypeElementFromFirType = unwrapType(fir.psi)
+
+        val classifiersToSkip = expression.parents.takeWhile { it != ktTypeElementFromFirType }.count()
+        var classifier: FirClassLikeSymbol<*>? = fir.type.toRegularClassSymbol(session)
+        repeat(classifiersToSkip) {
+            classifier = classifier?.getContainingClassSymbol(session)
+        }
+
+        val firClassSymbol = classifier
+            ?: return listOfNotNull(getPackageSymbolFor(expression, symbolBuilder, forQualifiedType = true))
+        return listOf(symbolBuilder.classifierBuilder.buildClassifierSymbol(firClassSymbol))
+    }
+
+    private tailrec fun tryGettingSymbolFromPartiallyResolvedType(
+        typeRef: FirTypeRef?,
+        expression: KtSimpleNameExpression,
+        session: FirSession,
+        symbolBuilder: KtSymbolByFirBuilder,
+    ): Collection<KtSymbol> {
+        return when (typeRef) {
+            null -> emptyList()
+            is FirErrorTypeRef -> {
+                tryGettingSymbolFromPartiallyResolvedType(
+                    typeRef.partiallyResolvedTypeRef,
+                    expression,
+                    session,
+                    symbolBuilder,
+                )
+            }
+            is FirResolvedTypeRef -> {
+                return getSymbolsForResolvedTypeRef(typeRef, expression, session, symbolBuilder)
+            }
+            else -> throwUnexpectedFirElementError(
+                typeRef,
+                ktElement = null,
+                FirErrorTypeRef::class,
+                FirResolvedTypeRef::class
+            )
+        }
     }
 
     private fun getSymbolsForResolvedQualifier(

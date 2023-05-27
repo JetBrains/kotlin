@@ -2168,11 +2168,21 @@ class DeclarationsConverter(
             }
         }
 
-        if (identifier == null)
+        if (identifier == null) {
             return buildErrorTypeRef {
                 source = typeRefSource
                 diagnostic = ConeSyntaxDiagnostic("Incomplete user type")
+                simpleFirUserType?.let { qualifierPart ->
+                    if (qualifierPart.qualifier.isNotEmpty()) {
+                        partiallyResolvedTypeRef = buildUserTypeRef {
+                            source = qualifierPart.qualifier.last().source
+                            isMarkedNullable = false
+                            this.qualifier.addAll(qualifierPart.qualifier)
+                        }
+                    }
+                }
             }
+        }
 
         val qualifierPart = FirQualifierPartImpl(
             identifierSource!!,

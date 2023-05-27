@@ -3782,6 +3782,18 @@ public class FirPsiDiagnosticTestGenerated extends AbstractFirPsiDiagnosticTest 
             }
 
             @Test
+            @TestMetadata("incompleteUserType.kt")
+            public void testIncompleteUserType() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/problems/incompleteUserType.kt");
+            }
+
+            @Test
+            @TestMetadata("incompleteUserTypeWithUnresovledTypeArgument.kt")
+            public void testIncompleteUserTypeWithUnresovledTypeArgument() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/problems/incompleteUserTypeWithUnresovledTypeArgument.kt");
+            }
+
+            @Test
             @TestMetadata("innerClassHierarchy.kt")
             public void testInnerClassHierarchy() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/problems/innerClassHierarchy.kt");

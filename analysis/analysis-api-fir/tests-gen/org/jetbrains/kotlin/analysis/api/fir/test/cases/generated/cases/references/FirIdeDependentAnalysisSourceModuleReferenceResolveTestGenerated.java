@@ -2158,5 +2158,75 @@ public class FirIdeDependentAnalysisSourceModuleReferenceResolveTestGenerated ex
         public void testWrongNumberOfTypeArgumentsInSupertype() throws Exception {
             runTest("analysis/analysis-api/testData/referenceResolve/withErrors/WrongNumberOfTypeArgumentsInSupertype.kt");
         }
+
+        @Nested
+        @TestMetadata("analysis/analysis-api/testData/referenceResolve/withErrors/partiallyUnresolvedTypeQualifier")
+        @TestDataPath("$PROJECT_ROOT")
+        public class PartiallyUnresolvedTypeQualifier {
+            @Test
+            public void testAllFilesPresentInPartiallyUnresolvedTypeQualifier() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/withErrors/partiallyUnresolvedTypeQualifier"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+            }
+
+            @Test
+            @TestMetadata("ClassNameBeforeOneUnsresolvedClass.kt")
+            public void testClassNameBeforeOneUnsresolvedClass() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/withErrors/partiallyUnresolvedTypeQualifier/ClassNameBeforeOneUnsresolvedClass.kt");
+            }
+
+            @Test
+            @TestMetadata("ClassNameBeforeOneUnsresolvedClassWithDot.kt")
+            public void testClassNameBeforeOneUnsresolvedClassWithDot() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/withErrors/partiallyUnresolvedTypeQualifier/ClassNameBeforeOneUnsresolvedClassWithDot.kt");
+            }
+
+            @Test
+            @TestMetadata("ClassNameBeforeOneUnsresolvedClassWithTwoResolved.kt")
+            public void testClassNameBeforeOneUnsresolvedClassWithTwoResolved() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/withErrors/partiallyUnresolvedTypeQualifier/ClassNameBeforeOneUnsresolvedClassWithTwoResolved.kt");
+            }
+
+            @Test
+            @TestMetadata("ClassNameBeforeOneUnsresolvedClassWithTwoResolvedWithDot.kt")
+            public void testClassNameBeforeOneUnsresolvedClassWithTwoResolvedWithDot() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/withErrors/partiallyUnresolvedTypeQualifier/ClassNameBeforeOneUnsresolvedClassWithTwoResolvedWithDot.kt");
+            }
+
+            @Test
+            @TestMetadata("ClassNameBeforeTwoUnsresolvedClasses.kt")
+            public void testClassNameBeforeTwoUnsresolvedClasses() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/withErrors/partiallyUnresolvedTypeQualifier/ClassNameBeforeTwoUnsresolvedClasses.kt");
+            }
+
+            @Test
+            @TestMetadata("ClassNameBeforeTwoUnsresolvedClassesTwoResolved.kt")
+            public void testClassNameBeforeTwoUnsresolvedClassesTwoResolved() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/withErrors/partiallyUnresolvedTypeQualifier/ClassNameBeforeTwoUnsresolvedClassesTwoResolved.kt");
+            }
+
+            @Test
+            @TestMetadata("ClassNameBeforeTwoUnsresolvedClassesWithDot.kt")
+            public void testClassNameBeforeTwoUnsresolvedClassesWithDot() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/withErrors/partiallyUnresolvedTypeQualifier/ClassNameBeforeTwoUnsresolvedClassesWithDot.kt");
+            }
+
+            @Test
+            @TestMetadata("ClassNameSecondQualifierBeforeOneUnsresolvedClass.kt")
+            public void testClassNameSecondQualifierBeforeOneUnsresolvedClass() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/withErrors/partiallyUnresolvedTypeQualifier/ClassNameSecondQualifierBeforeOneUnsresolvedClass.kt");
+            }
+
+            @Test
+            @TestMetadata("ClassNameSecondQualifierBeforeOneUnsresolvedClassWithDot.kt")
+            public void testClassNameSecondQualifierBeforeOneUnsresolvedClassWithDot() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/withErrors/partiallyUnresolvedTypeQualifier/ClassNameSecondQualifierBeforeOneUnsresolvedClassWithDot.kt");
+            }
+
+            @Test
+            @TestMetadata("ClassNameSecondQualifierBeforeOneUnsresolvedClassWithTwoResolvedWithDot.kt")
+            public void testClassNameSecondQualifierBeforeOneUnsresolvedClassWithTwoResolvedWithDot() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/withErrors/partiallyUnresolvedTypeQualifier/ClassNameSecondQualifierBeforeOneUnsresolvedClassWithTwoResolvedWithDot.kt");
+            }
+        }
     }
 }

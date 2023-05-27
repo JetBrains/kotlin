@@ -105,11 +105,13 @@ internal open class FirElementsRecorder : FirVisitor<Unit, MutableMap<KtElement,
 
     override fun visitErrorTypeRef(errorTypeRef: FirErrorTypeRef, data: MutableMap<KtElement, FirElement>) {
         super.visitResolvedTypeRef(errorTypeRef, data)
+        recordTypeQualifiers(errorTypeRef, data)
         errorTypeRef.delegatedTypeRef?.accept(this, data)
     }
 
     override fun visitResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef, data: MutableMap<KtElement, FirElement>) {
         super.visitResolvedTypeRef(resolvedTypeRef, data)
+        recordTypeQualifiers(resolvedTypeRef, data)
         resolvedTypeRef.delegatedTypeRef?.accept(this, data)
     }
 
@@ -216,6 +218,17 @@ internal open class FirElementsRecorder : FirVisitor<Unit, MutableMap<KtElement,
             convertedValue as T
         ).also {
             it.replaceTypeRef(original.typeRef)
+        }
+    }
+
+    private fun recordTypeQualifiers(resolvedTypeRef: FirResolvedTypeRef, data: MutableMap<KtElement, FirElement>) {
+        val userTypeRef = resolvedTypeRef.delegatedTypeRef as? FirUserTypeRef ?: return
+        val qualifiers = userTypeRef.qualifier
+        if (qualifiers.size <= 1) return
+        qualifiers.forEachIndexed { index, qualifierPart ->
+            if (index == qualifiers.lastIndex) return@forEachIndexed
+            val source = qualifierPart.source?.psi as? KtElement ?: return@forEachIndexed
+            cache(source, resolvedTypeRef, data)
         }
     }
 
