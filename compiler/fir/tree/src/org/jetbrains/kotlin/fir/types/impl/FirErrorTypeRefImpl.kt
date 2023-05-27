@@ -13,29 +13,35 @@ import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.fir.visitors.FirTransformer
+import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import org.jetbrains.kotlin.fir.visitors.transformInplace
 
 internal class FirErrorTypeRefImpl(
     override val source: KtSourceElement?,
     override val type: ConeKotlinType,
     override var delegatedTypeRef: FirTypeRef?,
     override val diagnostic: ConeDiagnostic,
-    override val isFromStubType: Boolean = false
+    override val isFromStubType: Boolean = false,
+    override var partiallyResolvedTypeRef: FirTypeRef? = null,
 ) : FirErrorTypeRef() {
-    constructor(source: KtSourceElement?, delegatedTypeRef: FirTypeRef?, diagnostic: ConeDiagnostic,
-        isFromStubType: Boolean = false
+    constructor(
+        source: KtSourceElement?, delegatedTypeRef: FirTypeRef?, diagnostic: ConeDiagnostic,
+        isFromStubType: Boolean = false, partiallyResolvedTypeRef: FirTypeRef? = null,
     ) : this(
         source,
         ConeErrorType(diagnostic),
         delegatedTypeRef,
         diagnostic,
-        isFromStubType
+        isFromStubType,
+        partiallyResolvedTypeRef,
     )
 
     override val annotations: MutableOrEmptyList<FirAnnotation> = MutableOrEmptyList.empty()
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }
+        partiallyResolvedTypeRef?.accept(visitor, data)
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirErrorTypeRefImpl {
@@ -49,6 +55,11 @@ internal class FirErrorTypeRefImpl(
 
     override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirErrorTypeRefImpl {
         annotations.transformInplace(transformer, data)
+        return this
+    }
+
+    override fun <D> transformPartiallyResolvedTypeRef(transformer: FirTransformer<D>, data: D): FirErrorTypeRef {
+        partiallyResolvedTypeRef = partiallyResolvedTypeRef?.transform(transformer, data)
         return this
     }
 }

@@ -5,18 +5,17 @@
 
 package org.jetbrains.kotlin.fir.types.builder
 
-import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirErrorTypeRefImpl
-import org.jetbrains.kotlin.fir.visitors.*
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 
 /*
  * This file was generated automatically
@@ -28,6 +27,8 @@ class FirErrorTypeRefBuilder : FirAnnotationContainerBuilder {
     override var source: KtSourceElement? = null
     var type: ConeKotlinType? = null
     var delegatedTypeRef: FirTypeRef? = null
+    var partiallyResolvedTypeRef: FirTypeRef? = null
+
     lateinit var diagnostic: ConeDiagnostic
 
     override fun build(): FirErrorTypeRef {
@@ -37,13 +38,15 @@ class FirErrorTypeRefBuilder : FirAnnotationContainerBuilder {
                 source,
                 type,
                 delegatedTypeRef,
-                diagnostic
+                diagnostic,
+                partiallyResolvedTypeRef = partiallyResolvedTypeRef,
             )
         } else {
             FirErrorTypeRefImpl(
                 source,
                 delegatedTypeRef,
                 diagnostic,
+                partiallyResolvedTypeRef = partiallyResolvedTypeRef,
             )
         }
     }

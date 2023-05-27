@@ -181,6 +181,11 @@ class FirSpecificTypeResolverTransformer(
         return resolvedTypeRef
     }
 
+    override fun transformErrorTypeRef(errorTypeRef: FirErrorTypeRef, data: ScopeClassDeclaration): FirTypeRef {
+        errorTypeRef.transformPartiallyResolvedTypeRef(this, data)
+        return errorTypeRef
+    }
+
     override fun transformImplicitTypeRef(implicitTypeRef: FirImplicitTypeRef, data: ScopeClassDeclaration): FirTypeRef {
         return implicitTypeRef
     }
