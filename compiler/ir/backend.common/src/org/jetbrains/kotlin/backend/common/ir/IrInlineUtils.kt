@@ -127,31 +127,6 @@ fun IrInlinable.inline(target: IrDeclarationParent, arguments: List<IrValueDecla
         }
     }
 
-val IrInlinedFunctionBlock.inlineDeclaration: IrDeclaration
-    get() = when (val element = inlinedElement) {
-        is IrFunction -> element
-        is IrFunctionExpression -> element.function
-        is IrFunctionReference -> element.symbol.owner
-        is IrPropertyReference -> element.symbol.owner
-        else -> throw AssertionError("Not supported ir element for inlining ${element.dump()}")
-    }
-
-private val IrInlinedFunctionBlock.inlineFunction: IrFunction?
-    get() = when (val element = inlinedElement) {
-        is IrFunction -> element
-        is IrFunctionExpression -> element.function
-        is IrFunctionReference -> element.symbol.owner.takeIf { it.isInline }
-        else -> null
-    }
-
-fun IrInlinedFunctionBlock.isFunctionInlining(): Boolean {
-    return this.inlinedElement is IrFunction
-}
-
-fun IrInlinedFunctionBlock.isLambdaInlining(): Boolean {
-    return !isFunctionInlining()
-}
-
 fun IrInlinedFunctionBlock.getAdditionalStatementsFromInlinedBlock(): List<IrStatement> {
     return this.statements
         .filterIsInstance<IrComposite>()
@@ -198,11 +173,3 @@ fun IrInlinedFunctionBlock.putStatementsInFrontOfInlinedFunction(statements: Lis
     this.statements.addAll(if (insertAfter == -1) 0 else insertAfter + 1, statements)
 }
 
-val IrContainerExpression.innerInlinedBlockOrThis: IrContainerExpression
-    get() = (this as? IrReturnableBlock)?.statements?.singleOrNull() as? IrInlinedFunctionBlock ?: this
-
-val IrReturnableBlock.inlineFunction: IrFunction?
-    get() = (this.statements.singleOrNull() as? IrInlinedFunctionBlock)?.inlineFunction
-
-val IrReturnableBlock.sourceFileSymbol: IrFileSymbol?
-    get() = inlineFunction?.fileOrNull?.symbol

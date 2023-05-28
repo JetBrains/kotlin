@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.dump
+import org.jetbrains.kotlin.ir.util.inlineFunction
 import org.jetbrains.kotlin.ir.util.statements
 
 fun IrReturnTarget.returnType(context: CommonBackendContext) =
