@@ -175,7 +175,7 @@ internal expect inline fun <K, V> buildMapInternal(builderAction: MutableMap<K, 
  *
  * @throws IllegalArgumentException if the given [capacity] is negative.
  *
- * @sample samples.collections.Builders.Maps.buildMapSample
+ * @sample samples.collections.Builders.Maps.buildMapSampleWithCapacity
  */
 @SinceKotlin("1.6")
 @kotlin.internal.InlineOnly
