@@ -9,7 +9,7 @@ class Builders {
         fun buildListSample() {
             val x = listOf('b', 'c')
 
-            val y = buildList() {
+            val y = buildList {
                 add('a')
                 addAll(x)
                 add('d')
@@ -37,6 +37,19 @@ class Builders {
         fun buildSetSample() {
             val x = setOf('a', 'b')
 
+            val y = buildSet {
+                add('b')
+                addAll(x)
+                add('c')
+            }
+
+            assertPrints(y, "[b, a, c]")
+        }
+
+        @Sample
+        fun buildSetSampleWithCapacity() {
+            val x = setOf('a', 'b')
+
             val y = buildSet(x.size + 2) {
                 add('b')
                 addAll(x)
@@ -50,6 +63,20 @@ class Builders {
     class Maps {
         @Sample
         fun buildMapSample() {
+            val x = mapOf('b' to 2, 'c' to 3)
+
+            val y = buildMap<Char, Int> {
+                put('a', 1)
+                put('c', 0)
+                putAll(x)
+                put('d', 4)
+            }
+
+            assertPrints(y, "{a=1, c=3, b=2, d=4}")
+        }
+
+        @Sample
+        fun buildMapSampleWithCapacity() {
             val x = mapOf('b' to 2, 'c' to 3)
 
             val y = buildMap<Char, Int>(x.size + 2) {
