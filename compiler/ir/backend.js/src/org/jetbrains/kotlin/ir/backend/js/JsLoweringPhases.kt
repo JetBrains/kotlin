@@ -26,6 +26,8 @@ import org.jetbrains.kotlin.ir.backend.js.lower.inline.*
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsGenerationGranularity
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.interpreter.IrInterpreterConfiguration
+import org.jetbrains.kotlin.platform.js.JsPlatforms
 
 private fun DeclarationContainerLoweringPass.runOnFilesPostfix(files: Iterable<IrFile>) = files.forEach { runOnFilePostfix(it) }
 
@@ -470,19 +472,6 @@ private val booleanPropertyInExternalLowering = makeBodyLoweringPhase(
     description = "Lowering which wrap boolean in external declarations with Boolean() call and add diagnostic for such cases"
 )
 
-private val foldConstantLoweringPhase = makeBodyLoweringPhase(
-    { FoldConstantLowering(it, true) },
-    name = "FoldConstantLowering",
-    description = "[Optimization] Constant Folding",
-    prerequisite = setOf(propertyAccessorInlinerLoweringPhase)
-)
-
-private val computeStringTrimPhase = makeJsModulePhase(
-    ::StringTrimLowering,
-    name = "StringTrimLowering",
-    description = "Compute trimIndent and trimMargin operations on constant strings"
-).toModuleLowering()
-
 private val localDelegatedPropertiesLoweringPhase = makeBodyLoweringPhase(
     { LocalDelegatedPropertiesLowering() },
     name = "LocalDelegatedPropertiesLowering",
@@ -846,6 +835,17 @@ private val jsSuspendArityStorePhase = makeDeclarationTransformerPhase(
     description = "Store arity for suspend functions to not remove it during DCE"
 )
 
+val constEvaluationPhase = makeJsModulePhase(
+    {
+        ConstEvaluationLowering(
+            it,
+            configuration = IrInterpreterConfiguration(printOnlyExceptionMessage = true, platform = JsPlatforms.defaultJsPlatform)
+        )
+    },
+    name = "ConstEvaluationLowering",
+    description = "Evaluate functions that are marked as `IntrinsicConstEvaluation`",
+).toModuleLowering()
+
 val loweringList = listOf<Lowering>(
     scriptRemoveReceiverLowering,
     validateIrBeforeLowering,
@@ -868,6 +868,7 @@ val loweringList = listOf<Lowering>(
     wrapInlineDeclarationsWithReifiedTypeParametersLowering,
     saveInlineFunctionsBeforeInlining,
     functionInliningPhase,
+    constEvaluationPhase,
     copyInlineFunctionBodyLoweringPhase,
     removeInlineDeclarationsWithReifiedTypeParametersLoweringPhase,
     createScriptFunctionsPhase,
@@ -917,8 +918,6 @@ val loweringList = listOf<Lowering>(
     propertyAccessorInlinerLoweringPhase,
     copyPropertyAccessorBodiesLoweringPass,
     booleanPropertyInExternalLowering,
-    foldConstantLoweringPhase,
-    computeStringTrimPhase,
     privateMembersLoweringPhase,
     privateMemberUsagesLoweringPhase,
     defaultArgumentStubGeneratorPhase,

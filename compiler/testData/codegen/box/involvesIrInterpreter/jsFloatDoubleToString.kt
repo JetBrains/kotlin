@@ -1,7 +1,6 @@
 // TARGET_BACKEND: JS_IR
 // IGNORE_BACKEND_K1: JS_IR, JS_IR_ES6
-// IGNORE_BACKEND_K2: JS_IR, JS_IR_ES6
-// TODO enable for K2 when const lowering is applied for js 
+
 fun <T> T.id() = this
 
 const val toStringDouble1 = 1.0.<!EVALUATED("1")!>toString()<!>

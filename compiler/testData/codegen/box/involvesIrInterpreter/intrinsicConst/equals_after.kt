@@ -1,5 +1,7 @@
 // !LANGUAGE: +IntrinsicConstEvaluation
 // TARGET_BACKEND: JVM_IR
+// TARGET_BACKEND: JS_IR
+
 fun <T> T.id() = this
 
 const val trueVal = <!EVALUATED("true")!>true<!>

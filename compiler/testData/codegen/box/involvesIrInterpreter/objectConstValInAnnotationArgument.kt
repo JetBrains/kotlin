@@ -1,4 +1,5 @@
 // TARGET_BACKEND: JVM_IR
+// TARGET_BACKEND: JS_IR
 annotation class Key(val value: String)
 
 object Messanger {

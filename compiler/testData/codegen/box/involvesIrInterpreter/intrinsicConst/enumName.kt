@@ -1,6 +1,7 @@
 // !LANGUAGE: +IntrinsicConstEvaluation
 // TARGET_BACKEND: JVM_IR
-// IGNORE_BACKEND_K1: JVM_IR
+// TARGET_BACKEND: JS_IR
+// IGNORE_BACKEND_K1: JVM_IR, JS_IR, JS_IR_ES6
 fun <T> T.id() = this
 
 enum class EnumClass {
