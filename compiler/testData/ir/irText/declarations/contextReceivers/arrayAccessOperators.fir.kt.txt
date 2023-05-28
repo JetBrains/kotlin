@@ -37,7 +37,7 @@ data class MyContainer {
   }
 
   override fun toString(): String {
-    return "MyContainer(s=" + <this>.#s + ")"
+    return "MyContainer(" + "s=" + <this>.#s + ")"
   }
 
 }

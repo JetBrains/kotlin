@@ -13,7 +13,9 @@ FILE fqName:<root> fileName:/timesInBuilder.kt
                   $receiver: CALL 'public final fun lessEq <T> (t: T of <root>.lessEq): <root>.Expression declared in <root>' type=<root>.Expression origin=null
                     <T>: kotlin.Int
                     $receiver: CALL 'public final fun <get-spentTime> (): <root>.Column declared in <root>' type=<root>.Column origin=GET_PROPERTY
-                    t: CONST Int type=kotlin.Int value=120
+                    t: CALL 'public final fun times (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=MUL
+                      $this: CONST Int type=kotlin.Int value=2
+                      other: CONST Int type=kotlin.Int value=60
                 CALL 'public final fun unaryPlus (): kotlin.Unit declared in <root>.ArgumentsBuilder' type=kotlin.Unit origin=null
                   $this: GET_VAR '$this$countIssues: <root>.ArgumentsBuilder declared in <root>.test.<anonymous>' type=<root>.ArgumentsBuilder origin=null
                   $receiver: CALL 'public final fun lessEq <T> (t: T of <root>.lessEq): <root>.Expression declared in <root>' type=<root>.Expression origin=null
@@ -21,13 +23,18 @@ FILE fqName:<root> fileName:/timesInBuilder.kt
                     $receiver: CALL 'public final fun <get-spentTime> (): <root>.Column declared in <root>' type=<root>.Column origin=GET_PROPERTY
                     t: CALL 'public final fun id <I> (arg: I of <root>.id): I of <root>.id declared in <root>' type=kotlin.Int origin=null
                       <I>: kotlin.Int
-                      arg: CONST Int type=kotlin.Int value=120
+                      arg: CALL 'public final fun times (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=MUL
+                        $this: CONST Int type=kotlin.Int value=2
+                        other: CONST Int type=kotlin.Int value=60
                 CALL 'public final fun unaryPlus (): kotlin.Unit declared in <root>.ArgumentsBuilder' type=kotlin.Unit origin=null
                   $this: GET_VAR '$this$countIssues: <root>.ArgumentsBuilder declared in <root>.test.<anonymous>' type=<root>.ArgumentsBuilder origin=null
                   $receiver: CALL 'public final fun select <T> (t: T of <root>.select, r: T of <root>.select): <root>.Expression declared in <root>' type=<root>.Expression origin=null
                     <T>: kotlin.Long
                     $receiver: CALL 'public final fun <get-spentTime> (): <root>.Column declared in <root>' type=<root>.Column origin=GET_PROPERTY
-                    t: CONST Long type=kotlin.Long value=120
+                    t: CALL 'public open fun toLong (): kotlin.Long declared in kotlin.Int' type=kotlin.Long origin=null
+                      $this: CALL 'public final fun times (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=MUL
+                        $this: CONST Int type=kotlin.Int value=2
+                        other: CONST Int type=kotlin.Int value=60
                     r: GET_VAR 'x: kotlin.Long declared in <root>.test' type=kotlin.Long origin=null
   PROPERTY name:spentTime visibility:public modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:spentTime type:<root>.Column visibility:private [final,static]

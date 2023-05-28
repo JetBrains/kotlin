@@ -37,7 +37,7 @@ data class Counter {
   }
 
   override fun toString(): String {
-    return "Counter(i=" + <this>.#i + ")"
+    return "Counter(" + "i=" + <this>.#i + ")"
   }
 
 }
@@ -80,7 +80,7 @@ data class CounterConfig {
   }
 
   override fun toString(): String {
-    return "CounterConfig(max=" + <this>.#max + ")"
+    return "CounterConfig(" + "max=" + <this>.#max + ")"
   }
 
 }

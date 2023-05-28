@@ -1,8 +1,8 @@
 private fun test(x: Long) {
   return countIssues(restrictionsBuilder = local fun ArgumentsBuilder.<anonymous>() {
-    ($this$countIssues, <get-spentTime>().lessEq<Int>(t = 120)).unaryPlus()
-    ($this$countIssues, <get-spentTime>().lessEq<Int>(t = id<Int>(arg = 120))).unaryPlus()
-    ($this$countIssues, <get-spentTime>().select<Long>(t = 120L, r = x)).unaryPlus()
+    ($this$countIssues, <get-spentTime>().lessEq<Int>(t = 2.times(other = 60))).unaryPlus()
+    ($this$countIssues, <get-spentTime>().lessEq<Int>(t = id<Int>(arg = 2.times(other = 60)))).unaryPlus()
+    ($this$countIssues, <get-spentTime>().select<Long>(t = 2.times(other = 60).toLong(), r = x)).unaryPlus()
   }
 )
 }

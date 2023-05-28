@@ -24182,12 +24182,6 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
             }
 
             @Test
-            @TestMetadata("thisPlusString.kt")
-            public void testThisPlusString() throws Exception {
-                runTest("compiler/testData/codegen/box/involvesIrInterpreter/thisPlusString.kt");
-            }
-
-            @Test
             @TestMetadata("unsignedConst.kt")
             public void testUnsignedConst() throws Exception {
                 runTest("compiler/testData/codegen/box/involvesIrInterpreter/unsignedConst.kt");

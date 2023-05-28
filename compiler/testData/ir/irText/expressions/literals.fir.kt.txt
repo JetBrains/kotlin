@@ -1,0 +1,67 @@
+val test1: Int
+  field = 1
+  get
+
+val test2: Int
+  field = -1
+  get
+
+val test3: Boolean
+  field = true
+  get
+
+val test4: Boolean
+  field = false
+  get
+
+val test5: String
+  field = "abc"
+  get
+
+val test6: Nothing?
+  field = null
+  get
+
+val test7: Long
+  field = 1L
+  get
+
+val test8: Long
+  field = 1L.unaryMinus()
+  get
+
+val test9: Double
+  field = 1.0
+  get
+
+val test10: Double
+  field = 1.0.unaryMinus()
+  get
+
+val test11: Float
+  field = 1.0F
+  get
+
+val test12: Float
+  field = 1.0F.unaryMinus()
+  get
+
+val test13: Char
+  field = 'a'
+  get
+
+val testB: Byte
+  field = 1B
+  get
+
+val testS: Short
+  field = 1S
+  get
+
+val testI: Int
+  field = 1
+  get
+
+val testL: Long
+  field = 1L
+  get

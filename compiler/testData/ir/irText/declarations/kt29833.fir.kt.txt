@@ -12,7 +12,7 @@ object Definitions {
     get
 
   val ktValue: String
-    field = "constant"
+    field = #CONSTANT
     get
 
 }

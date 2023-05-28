@@ -36,7 +36,7 @@ data class Result {
   }
 
   override fun toString(): String {
-    return "Result(i=" + <this>.#i + ")"
+    return "Result(" + "i=" + <this>.#i + ")"
   }
 
 }

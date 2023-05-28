@@ -33,24 +33,51 @@ fun IrFile.transformConst(
     onError: (IrFile, IrElement, IrErrorExpression) -> Unit = { _, _, _ -> },
     suppressExceptions: Boolean = false,
 ) {
+    val preprocessedFile = this.preprocessForConstTransformer(interpreter, mode)
+
+    val checker = IrInterpreterCommonChecker()
+    val irConstExpressionTransformer = IrConstOnlyNecessaryTransformer(
+        interpreter, preprocessedFile, mode, checker, evaluatedConstTracker, inlineConstTracker, onWarning, onError, suppressExceptions
+    )
+    preprocessedFile.transform(irConstExpressionTransformer, null)
+
+    val irConstDeclarationAnnotationTransformer = IrConstDeclarationAnnotationTransformer(
+        interpreter, preprocessedFile, mode, checker, evaluatedConstTracker, inlineConstTracker, onWarning, onError, suppressExceptions
+    )
+    preprocessedFile.transform(irConstDeclarationAnnotationTransformer, null)
+
+    val irConstTypeAnnotationTransformer = IrConstTypeAnnotationTransformer(
+        interpreter, preprocessedFile, mode, checker, evaluatedConstTracker, inlineConstTracker, onWarning, onError, suppressExceptions
+    )
+    preprocessedFile.transform(irConstTypeAnnotationTransformer, null)
+}
+
+fun IrFile.runConstOptimizations(
+    interpreter: IrInterpreter,
+    mode: EvaluationMode,
+    evaluatedConstTracker: EvaluatedConstTracker? = null,
+    inlineConstTracker: InlineConstTracker? = null,
+    onWarning: (IrFile, IrElement, IrErrorExpression) -> Unit = { _, _, _ -> },
+    onError: (IrFile, IrElement, IrErrorExpression) -> Unit = { _, _, _ -> },
+    suppressExceptions: Boolean = false,
+) {
+    val preprocessedFile = this.preprocessForConstTransformer(interpreter, mode)
+    val checker = IrInterpreterCommonChecker()
+    val irConstExpressionTransformer = IrConstAllTransformer(
+        interpreter, preprocessedFile, mode, checker, evaluatedConstTracker, inlineConstTracker, onWarning, onError, suppressExceptions
+    )
+    preprocessedFile.transform(irConstExpressionTransformer, null)
+}
+
+fun IrFile.preprocessForConstTransformer(
+    interpreter: IrInterpreter,
+    mode: EvaluationMode,
+): IrFile {
     val preprocessors = setOf(IrInterpreterKCallableNamePreprocessor())
     val preprocessedFile = preprocessors.fold(this) { file, preprocessor ->
         preprocessor.preprocess(file, IrInterpreterPreprocessorData(mode, interpreter.irBuiltIns))
     }
-
-    val checker = IrInterpreterCommonChecker()
-    val irConstExpressionTransformer = IrConstExpressionTransformer(
-        interpreter, preprocessedFile, mode, checker, evaluatedConstTracker, inlineConstTracker, onWarning, onError, suppressExceptions
-    )
-    val irConstDeclarationAnnotationTransformer = IrConstDeclarationAnnotationTransformer(
-        interpreter, preprocessedFile, mode, checker, evaluatedConstTracker, inlineConstTracker, onWarning, onError, suppressExceptions
-    )
-    val irConstTypeAnnotationTransformer = IrConstTypeAnnotationTransformer(
-        interpreter, preprocessedFile, mode, checker, evaluatedConstTracker, inlineConstTracker, onWarning, onError, suppressExceptions
-    )
-    preprocessedFile.transform(irConstExpressionTransformer, null)
-    preprocessedFile.transform(irConstDeclarationAnnotationTransformer, null)
-    preprocessedFile.transform(irConstTypeAnnotationTransformer, null)
+    return preprocessedFile
 }
 
 // Note: We are using `IrElementTransformer` here instead of `IrElementTransformerVoid` to avoid conflicts with `IrTypeVisitorVoid`

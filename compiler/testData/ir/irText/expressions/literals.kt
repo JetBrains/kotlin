@@ -1,5 +1,3 @@
-// FIR_IDENTICAL
-// IGNORE_BACKEND_K2: JS_IR
 val test1 = 1
 val test2 = -1
 val test3 = true

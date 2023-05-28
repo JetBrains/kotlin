@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.backend.common.lower
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.expressions.IrErrorExpression
@@ -15,7 +17,8 @@ import org.jetbrains.kotlin.ir.interpreter.IrInterpreter
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreterConfiguration
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreterEnvironment
 import org.jetbrains.kotlin.ir.interpreter.checker.EvaluationMode
-import org.jetbrains.kotlin.ir.interpreter.transformer.transformConst
+import org.jetbrains.kotlin.ir.interpreter.transformer.preprocessForConstTransformer
+import org.jetbrains.kotlin.ir.interpreter.transformer.runConstOptimizations
 
 class ConstEvaluationLowering(
     val context: CommonBackendContext,
@@ -27,13 +30,11 @@ class ConstEvaluationLowering(
     private val interpreter = IrInterpreter(IrInterpreterEnvironment(context.irBuiltIns, configuration), emptyMap())
     private val evaluatedConstTracker = context.configuration[CommonConfigurationKeys.EVALUATED_CONST_TRACKER]
     private val inlineConstTracker = context.configuration[CommonConfigurationKeys.INLINE_CONST_TRACKER]
+    private val mode = EvaluationMode.ONLY_INTRINSIC_CONST
 
     override fun lower(irFile: IrFile) {
-        irFile.transformConst(
-            interpreter,
-            mode = EvaluationMode.ONLY_INTRINSIC_CONST,
-            evaluatedConstTracker, inlineConstTracker,
-            onWarning, onError, suppressErrors
+        irFile.runConstOptimizations(
+            interpreter, mode, evaluatedConstTracker, inlineConstTracker, onWarning, onError, suppressErrors
         )
     }
 }

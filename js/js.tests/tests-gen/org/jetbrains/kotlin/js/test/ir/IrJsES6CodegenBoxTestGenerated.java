@@ -21272,12 +21272,6 @@ public class IrJsES6CodegenBoxTestGenerated extends AbstractIrJsES6CodegenBoxTes
         }
 
         @Test
-        @TestMetadata("thisPlusString.kt")
-        public void testThisPlusString() throws Exception {
-            runTest("compiler/testData/codegen/box/involvesIrInterpreter/thisPlusString.kt");
-        }
-
-        @Test
         @TestMetadata("unsignedConst.kt")
         public void testUnsignedConst() throws Exception {
             runTest("compiler/testData/codegen/box/involvesIrInterpreter/unsignedConst.kt");

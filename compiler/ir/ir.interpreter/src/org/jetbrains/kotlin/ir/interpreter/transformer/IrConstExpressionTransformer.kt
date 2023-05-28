@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.ir.interpreter.createGetField
 import kotlin.math.max
 import kotlin.math.min
 
-internal class IrConstExpressionTransformer(
+internal abstract class IrConstExpressionTransformer(
     interpreter: IrInterpreter,
     irFile: IrFile,
     mode: EvaluationMode,
@@ -32,7 +32,7 @@ internal class IrConstExpressionTransformer(
     onError: (IrFile, IrElement, IrErrorExpression) -> Unit,
     suppressExceptions: Boolean,
 ) : IrConstTransformer(interpreter, irFile, mode, checker, evaluatedConstTracker, inlineConstTracker, onWarning, onError, suppressExceptions) {
-    private var inAnnotation: Boolean = false
+    protected var inAnnotation: Boolean = false
 
     private inline fun <T> visitAnnotationClass(crossinline block: () -> T): T {
         val oldInAnnotation = inAnnotation
@@ -67,10 +67,8 @@ internal class IrConstExpressionTransformer(
     override fun visitField(declaration: IrField, data: Nothing?): IrStatement {
         val initializer = declaration.initializer
         val expression = initializer?.expression ?: return declaration
-        val isConst = declaration.correspondingPropertySymbol?.owner?.isConst == true
-        if (!isConst) return super.visitField(declaration, data)
-
         val getField = declaration.createGetField()
+
         if (getField.canBeInterpreted()) {
             initializer.expression = expression.interpret(failAsError = true)
         }
