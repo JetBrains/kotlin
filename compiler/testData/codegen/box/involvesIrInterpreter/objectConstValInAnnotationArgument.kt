@@ -1,5 +1,6 @@
 // TARGET_BACKEND: JVM_IR
 // TARGET_BACKEND: JS_IR
+// TARGET_BACKEND: NATIVE
 annotation class Key(val value: String)
 
 object Messanger {

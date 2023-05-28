@@ -1,6 +1,7 @@
 // !LANGUAGE: +IntrinsicConstEvaluation
 // TARGET_BACKEND: JVM_IR
 // TARGET_BACKEND: JS_IR
+// TARGET_BACKEND: NATIVE
 
 fun <T> T.id() = this
 

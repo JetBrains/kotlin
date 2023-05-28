@@ -23700,6 +23700,12 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             }
 
             @Test
+            @TestMetadata("objectConstValInAnnotationArgument.kt")
+            public void testObjectConstValInAnnotationArgument() throws Exception {
+                runTest("compiler/testData/codegen/box/involvesIrInterpreter/objectConstValInAnnotationArgument.kt");
+            }
+
+            @Test
             @TestMetadata("shortOperations.kt")
             public void testShortOperations() throws Exception {
                 runTest("compiler/testData/codegen/box/involvesIrInterpreter/shortOperations.kt");
@@ -23730,9 +23736,27 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             }
 
             @Test
+            @TestMetadata("thisPlusString.kt")
+            public void testThisPlusString() throws Exception {
+                runTest("compiler/testData/codegen/box/involvesIrInterpreter/thisPlusString.kt");
+            }
+
+            @Test
+            @TestMetadata("thisPlusStringWithObject.kt")
+            public void testThisPlusStringWithObject() throws Exception {
+                runTest("compiler/testData/codegen/box/involvesIrInterpreter/thisPlusStringWithObject.kt");
+            }
+
+            @Test
             @TestMetadata("unsignedConst.kt")
             public void testUnsignedConst() throws Exception {
                 runTest("compiler/testData/codegen/box/involvesIrInterpreter/unsignedConst.kt");
+            }
+
+            @Test
+            @TestMetadata("useCorrectToString.kt")
+            public void testUseCorrectToString() throws Exception {
+                runTest("compiler/testData/codegen/box/involvesIrInterpreter/useCorrectToString.kt");
             }
 
             @Nested
@@ -23747,9 +23771,63 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 }
 
                 @Test
+                @TestMetadata("constTrimIndent.kt")
+                public void testConstTrimIndent() throws Exception {
+                    runTest("compiler/testData/codegen/box/involvesIrInterpreter/intrinsicConst/constTrimIndent.kt");
+                }
+
+                @Test
+                @TestMetadata("constTrimMargin.kt")
+                public void testConstTrimMargin() throws Exception {
+                    runTest("compiler/testData/codegen/box/involvesIrInterpreter/intrinsicConst/constTrimMargin.kt");
+                }
+
+                @Test
+                @TestMetadata("enumName.kt")
+                public void testEnumName() throws Exception {
+                    runTest("compiler/testData/codegen/box/involvesIrInterpreter/intrinsicConst/enumName.kt");
+                }
+
+                @Test
+                @TestMetadata("enumNameWithInit.kt")
+                public void testEnumNameWithInit() throws Exception {
+                    runTest("compiler/testData/codegen/box/involvesIrInterpreter/intrinsicConst/enumNameWithInit.kt");
+                }
+
+                @Test
+                @TestMetadata("equals_after.kt")
+                public void testEquals_after() throws Exception {
+                    runTest("compiler/testData/codegen/box/involvesIrInterpreter/intrinsicConst/equals_after.kt");
+                }
+
+                @Test
                 @TestMetadata("ifConstVal.kt")
                 public void testIfConstVal() throws Exception {
                     runTest("compiler/testData/codegen/box/involvesIrInterpreter/intrinsicConst/ifConstVal.kt");
+                }
+
+                @Test
+                @TestMetadata("kCallableName.kt")
+                public void testKCallableName() throws Exception {
+                    runTest("compiler/testData/codegen/box/involvesIrInterpreter/intrinsicConst/kCallableName.kt");
+                }
+
+                @Test
+                @TestMetadata("kCallableNameWithSideEffect.kt")
+                public void testKCallableNameWithSideEffect() throws Exception {
+                    runTest("compiler/testData/codegen/box/involvesIrInterpreter/intrinsicConst/kCallableNameWithSideEffect.kt");
+                }
+
+                @Test
+                @TestMetadata("kt53272.kt")
+                public void testKt53272() throws Exception {
+                    runTest("compiler/testData/codegen/box/involvesIrInterpreter/intrinsicConst/kt53272.kt");
+                }
+
+                @Test
+                @TestMetadata("kt58717.kt")
+                public void testKt58717() throws Exception {
+                    runTest("compiler/testData/codegen/box/involvesIrInterpreter/intrinsicConst/kt58717.kt");
                 }
             }
 

@@ -434,19 +434,6 @@ private val ifNullExpressionsFusionPhase = createFileLoweringPhase(
         description = "Simplify '?.' and '?:' operator chains"
 )
 
-private val foldConstantLoweringPhase = createFileLoweringPhase(
-        { context, irFile -> FoldConstantLowering(context).lower(irFile) },
-        name = "FoldConstantLowering",
-        description = "Constant Folding",
-        prerequisite = setOf(flattenStringConcatenationPhase)
-)
-
-private val computeStringTrimPhase = createFileLoweringPhase(
-        ::StringTrimLowering,
-        name = "StringTrimLowering",
-        description = "Compute trimIndent and trimMargin operations on constant strings"
-)
-
 private val exportInternalAbiPhase = createFileLoweringPhase(
         ::ExportCachesAbiVisitor,
         name = "ExportInternalAbi",
@@ -506,6 +493,13 @@ private val objectClassesPhase = createFileLoweringPhase(
         description = "Object classes lowering"
 )
 
+private val constEvaluationPhase = createFileLoweringPhase(
+        lowering = ::ConstEvaluationLowering,
+        name = "ConstEvaluationLowering",
+        description = "Evaluate functions that are marked as `IntrinsicConstEvaluation`",
+        prerequisite = setOf(inlinePhase)
+)
+
 private fun PhaseEngine<NativeGenerationState>.getAllLowerings() = listOfNotNull<AbstractNamedCompilerPhase<NativeGenerationState, IrFile, IrFile>>(
         removeExpectDeclarationsPhase,
         stripTypeAliasDeclarationsPhase,
@@ -518,6 +512,7 @@ private fun PhaseEngine<NativeGenerationState>.getAllLowerings() = listOfNotNull
         extractLocalClassesFromInlineBodies,
         wrapInlineDeclarationsWithReifiedTypeParametersLowering,
         inlinePhase,
+        constEvaluationPhase,
         provisionalFunctionExpressionPhase,
         postInlinePhase,
         contractsDslRemovePhase,
@@ -525,8 +520,6 @@ private fun PhaseEngine<NativeGenerationState>.getAllLowerings() = listOfNotNull
         rangeContainsLoweringPhase,
         forLoopsPhase,
         flattenStringConcatenationPhase,
-        foldConstantLoweringPhase,
-        computeStringTrimPhase,
         stringConcatenationPhase,
         stringConcatenationTypeNarrowingPhase.takeIf { context.config.optimizationsEnabled },
         enumConstructorsPhase,
