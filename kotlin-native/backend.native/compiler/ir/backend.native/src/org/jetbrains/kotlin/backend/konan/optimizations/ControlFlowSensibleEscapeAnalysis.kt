@@ -2095,11 +2095,9 @@ internal object ControlFlowSensibleEscapeAnalysis {
                                 processCall(data, expression, expression.actualCallee, argumentNodeIds,
                                         EscapeAnalysisResult.pessimistic(actualCallee))
                             } else when (devirtualizedCallSite.size) {
-                                0 -> { // TODO: This looks like unreachable code, doesn't it? Should we return here Nothing then?
+                                0 -> {
                                     // No actual callees - this call site bound to be unreachable.
                                     data.graph.unreachable()
-//                                    processCall(data, expression, actualCallee, argumentNodeIds,
-//                                            EscapeAnalysisResult.optimistic(actualCallee))
                                 }
                                 1 -> {
                                     processCall(data, expression, actualCallee, argumentNodeIds,
