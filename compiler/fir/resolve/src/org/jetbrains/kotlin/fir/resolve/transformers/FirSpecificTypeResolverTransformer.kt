@@ -81,15 +81,7 @@ class FirSpecificTypeResolverTransformer(
         withBareTypes(allowed = false) {
             typeRef.transformChildren(this, data)
         }
-        val (resolvedType, diagnostic) = typeResolver.resolveType(
-            typeRef,
-            data,
-            areBareTypesAllowed,
-            isOperandOfIsOperator,
-            resolveDeprecations,
-            currentFile,
-            supertypeSupplier
-        )
+        val (resolvedType, diagnostic) = resolveType(typeRef, data)
         return transformType(typeRef, resolvedType, diagnostic)
     }
 
@@ -101,15 +93,7 @@ class FirSpecificTypeResolverTransformer(
         functionTypeRef.transformChildren(this, data)
         val scopeOwnerLookupNames = data.scopes.flatMap { it.scopeOwnerLookupNames }
         session.lookupTracker?.recordTypeLookup(functionTypeRef, scopeOwnerLookupNames, currentFile?.source)
-        val resolvedTypeWithDiagnostic = typeResolver.resolveType(
-            functionTypeRef,
-            data,
-            areBareTypesAllowed,
-            isOperandOfIsOperator,
-            resolveDeprecations,
-            currentFile,
-            supertypeSupplier
-        )
+        val resolvedTypeWithDiagnostic = resolveType(functionTypeRef, data)
         val resolvedType = resolvedTypeWithDiagnostic.first.takeIfAcceptable()
         val diagnostic = resolvedTypeWithDiagnostic.second
         return if (resolvedType != null && resolvedType !is ConeErrorType && diagnostic == null) {
@@ -131,7 +115,27 @@ class FirSpecificTypeResolverTransformer(
         }
     }
 
-    private fun transformType(typeRef: FirTypeRef, resolvedType: ConeKotlinType, diagnostic: ConeDiagnostic?): FirResolvedTypeRef {
+    @OptIn(PrivateForInline::class)
+    private fun FirSpecificTypeResolverTransformer.resolveType(
+        typeRef: FirTypeRef,
+        scopeClassDeclaration: ScopeClassDeclaration,
+    ): Pair<ConeKotlinType, ConeDiagnostic?> {
+        return typeResolver.resolveType(
+            typeRef,
+            scopeClassDeclaration,
+            areBareTypesAllowed,
+            isOperandOfIsOperator,
+            resolveDeprecations,
+            currentFile,
+            supertypeSupplier
+        )
+    }
+
+    private fun transformType(
+        typeRef: FirTypeRef,
+        resolvedType: ConeKotlinType,
+        diagnostic: ConeDiagnostic?,
+    ): FirResolvedTypeRef {
         return when {
             resolvedType is ConeErrorType -> {
                 buildErrorTypeRef {
