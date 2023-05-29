@@ -34,7 +34,8 @@ import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.util.profile
 import org.jetbrains.kotlin.utils.KotlinPaths
-import java.nio.file.Files
+import java.util.*
+
 
 private class K2NativeCompilerPerformanceManager: CommonCompilerPerformanceManager("Kotlin to Native Compiler")
 
@@ -82,9 +83,11 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
             // For the first stage, use "-p library" produce mode
             firstStageConfiguration.put(KonanConfigKeys.PRODUCE, CompilerOutputKind.LIBRARY)
             // For the first stage, construct a temporary file name for an intermediate KLib
-            val originalOutput = firstStageConfiguration.get(KonanConfigKeys.OUTPUT)
-            val intermediateKLib = Files.createTempFile(File(originalOutput ?: "intermediate").name, ".klib").toString()
-            firstStageConfiguration.put(KonanConfigKeys.OUTPUT, intermediateKLib)
+            val intermediateKLib = File(System.getProperty("java.io.tmpdir"), "${UUID.randomUUID()}.klib").also {
+                require(!it.exists) { "Collision writing intermediate KLib $it"}
+                it.deleteOnExit()
+            }
+            firstStageConfiguration.put(KonanConfigKeys.OUTPUT, intermediateKLib.absolutePath)
 
             val firstStageExitCode = executeStage(firstStageConfiguration, arguments, rootDisposable)
             if (firstStageExitCode != ExitCode.OK)
@@ -93,7 +96,8 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
             // For the second stage, remove already compiled source files from the configuration
             configuration.put(CLIConfigurationKeys.CONTENT_ROOTS, listOf())
             // For the second stage, provide just compiled intermediate KLib as "-Xinclude=" param
-            configuration.put(KonanConfigKeys.INCLUDED_LIBRARIES, listOf(intermediateKLib))
+            require(intermediateKLib.exists) { "Intermediate KLib $intermediateKLib must have been created by successful first compilation stage" }
+            configuration.put(KonanConfigKeys.INCLUDED_LIBRARIES, listOf(intermediateKLib.absolutePath))
             // Now, `configuration` param is prepared for the second stage of compilation, and `arguments` param does not need changes, as noted above.
         }
         return executeStage(configuration, arguments, rootDisposable)

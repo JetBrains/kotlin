@@ -85,7 +85,7 @@ internal inline fun <F> PhaseContext.firFrontend(
 
     return if (syntaxErrors || diagnosticsReporter.hasErrors) {
         FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(diagnosticsReporter, messageCollector, renderDiagnosticNames)
-        FirOutput.ShouldNotGenerateCode
+        throw KonanCompilationException("Compilation failed: there were frontend errors")
     } else {
         FirOutput.Full(FirResult(outputs))
     }
