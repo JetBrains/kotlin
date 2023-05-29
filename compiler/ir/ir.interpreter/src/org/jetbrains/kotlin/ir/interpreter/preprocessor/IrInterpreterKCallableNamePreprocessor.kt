@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.interpreter.preprocessor
 
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -16,6 +17,11 @@ import org.jetbrains.kotlin.ir.expressions.IrGetEnumValue
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.interpreter.property
+import org.jetbrains.kotlin.ir.types.IrSimpleType
+import org.jetbrains.kotlin.ir.types.classFqName
+import org.jetbrains.kotlin.ir.types.typeOrNull
+import org.jetbrains.kotlin.ir.types.typeWith
+import org.jetbrains.kotlin.ir.util.isKFunction
 import org.jetbrains.kotlin.ir.util.isSubclassOf
 import org.jetbrains.kotlin.name.SpecialNames
 
@@ -23,13 +29,19 @@ import org.jetbrains.kotlin.name.SpecialNames
 // This code will be optimized but not completely turned into "ab" result.
 class IrInterpreterKCallableNamePreprocessor : IrInterpreterPreprocessor {
     override fun visitCall(expression: IrCall, data: IrInterpreterPreprocessorData): IrElement {
-        if (!data.mode.canEvaluateFunction(expression.symbol.owner)) return super.visitCall(expression, data)
         if (!expression.isKCallableNameCall(data.irBuiltIns)) return super.visitCall(expression, data)
 
         val callableReference = expression.dispatchReceiver as? IrCallableReference<*> ?: return super.visitCall(expression, data)
 
         // receiver is needed for bound callable reference
         val receiver = callableReference.dispatchReceiver ?: callableReference.extensionReceiver ?: return expression
+
+        val typeArguments = (callableReference.type as IrSimpleType).arguments.map { it.typeOrNull!! }
+        if (callableReference.type.isKFunction()) {
+            val kFunction = data.irBuiltIns.kFunctionN(typeArguments.size)
+            val newType = kFunction.typeWith(receiver.type, *typeArguments.toTypedArray())
+            callableReference.type = newType
+        }
 
         callableReference.dispatchReceiver = null
         callableReference.extensionReceiver = null

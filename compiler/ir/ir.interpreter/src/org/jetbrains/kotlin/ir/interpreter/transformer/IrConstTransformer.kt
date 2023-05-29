@@ -61,12 +61,11 @@ fun IrFile.runConstOptimizations(
     onError: (IrFile, IrElement, IrErrorExpression) -> Unit = { _, _, _ -> },
     suppressExceptions: Boolean = false,
 ) {
-    val preprocessedFile = this.preprocessForConstTransformer(interpreter, mode)
     val checker = IrInterpreterCommonChecker()
     val irConstExpressionTransformer = IrConstAllTransformer(
-        interpreter, preprocessedFile, mode, checker, evaluatedConstTracker, inlineConstTracker, onWarning, onError, suppressExceptions
+        interpreter, this, mode, checker, evaluatedConstTracker, inlineConstTracker, onWarning, onError, suppressExceptions
     )
-    preprocessedFile.transform(irConstExpressionTransformer, null)
+    this.transform(irConstExpressionTransformer, null)
 }
 
 fun IrFile.preprocessForConstTransformer(

@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.ir.interpreter.IrInterpreterEnvironment
 import org.jetbrains.kotlin.ir.interpreter.checker.EvaluationMode
 import org.jetbrains.kotlin.ir.interpreter.transformer.preprocessForConstTransformer
 import org.jetbrains.kotlin.ir.interpreter.transformer.runConstOptimizations
+import org.jetbrains.kotlin.ir.interpreter.transformer.transformConst
 
 class ConstEvaluationLowering(
     val context: CommonBackendContext,
@@ -33,7 +34,9 @@ class ConstEvaluationLowering(
     private val mode = EvaluationMode.ONLY_INTRINSIC_CONST
 
     override fun lower(irFile: IrFile) {
-        irFile.runConstOptimizations(
+        val useFir = context.configuration[CommonConfigurationKeys.USE_FIR] == true
+        val preprocessedFile = if (useFir) irFile else irFile.preprocessForConstTransformer(interpreter, mode)
+        preprocessedFile.runConstOptimizations(
             interpreter, mode, evaluatedConstTracker, inlineConstTracker, onWarning, onError, suppressErrors
         )
     }
