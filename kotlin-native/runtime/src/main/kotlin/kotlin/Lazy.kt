@@ -6,7 +6,6 @@
 package kotlin
 
 import kotlin.native.concurrent.*
-import kotlin.native.internal.FixmeConcurrency
 import kotlin.reflect.KProperty
 import kotlin.native.isExperimentalMM
 
@@ -37,7 +36,6 @@ public actual fun <T> lazy(initializer: () -> T): Lazy<T> =
  * to synchronize on. Do not synchronize from external code on the returned instance as it may cause accidental deadlock.
  * Also this behavior can be changed in the future.
  */
-@FixmeConcurrency
 @OptIn(kotlin.ExperimentalStdlibApi::class, FreezingIsDeprecated::class)
 public actual fun <T> lazy(mode: LazyThreadSafetyMode, initializer: () -> T): Lazy<T> =
         when (mode) {
@@ -57,6 +55,5 @@ public actual fun <T> lazy(mode: LazyThreadSafetyMode, initializer: () -> T): La
  * in this case do not synchronize from external code on the returned instance as it may cause accidental deadlock.
  * Also this behavior can be changed in the future.
  */
-@FixmeConcurrency
 @Suppress("UNUSED_PARAMETER")
 public actual fun <T> lazy(lock: Any?, initializer: () -> T): Lazy<T> = throw UnsupportedOperationException()

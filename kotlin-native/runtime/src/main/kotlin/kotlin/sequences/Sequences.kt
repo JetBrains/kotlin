@@ -6,9 +6,7 @@
 package kotlin.sequences
 
 import kotlin.comparisons.*
-import kotlin.native.internal.FixmeConcurrency
 
-@FixmeConcurrency
 internal actual class ConstrainedOnceSequence<T> actual constructor(sequence: Sequence<T>) : Sequence<T> {
     // TODO: not MT friendly.
     private var sequenceRef : Sequence<T>? = sequence
