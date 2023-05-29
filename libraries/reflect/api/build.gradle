@@ -65,7 +65,7 @@ jar {
     manifestAttributes(manifest, project, "internal")
 }
 
-task java9Jar(type: Jar) {
+tasks.register("java9Jar", Jar) {
     archiveClassifier.set("java9")
     if (includeJava9) {
         from sourceSets.java9.output

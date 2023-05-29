@@ -88,7 +88,7 @@ subprojects { proj ->
 
 def rootBuildDirectory = projectDir.parentFile
 
-task buildAnalyzer(type: GradleBuild) {
+tasks.register("buildAnalyzer", GradleBuild) {
     buildFile = "../tools/benchmarksAnalyzer/build.gradle"
     tasks = [":${getAnalyzerTargetName()}Binaries".toString()]
     startParameter.setProjectProperties(this.project.gradle.startParameter.projectProperties)
@@ -235,7 +235,7 @@ task registerExternalBenchmarks {
     }
 }
 
-task registerBuild(type: BuildRegister) {
+tasks.register("registerBuild", BuildRegister) {
     onlyBranch = project.findProperty('kotlin.register.branch')
     def uploadedFile = getUploadedFile(nativeJson)
     if (uploadedFile != null) {
@@ -252,7 +252,7 @@ task registerBuild(type: BuildRegister) {
     buildNumberSuffix = project.findProperty('buildNumberSuffix')
 }
 
-task registerExternalBuild(type: BuildRegister) {
+tasks.register("registerExternalBuild", BuildRegister) {
     onlyBranch = project.findProperty('kotlin.register.branch')
     def uploadedFile = getUploadedFile(externalBenchmarksReport)
     if (uploadedFile != null) {

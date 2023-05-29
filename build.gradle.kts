@@ -863,7 +863,7 @@ tasks {
     }
 }
 
-val zipCompiler by task<Zip> {
+val zipCompiler by tasks.registering(Zip::class) {
     dependsOn(dist)
     destinationDirectory.set(file(distDir))
     archiveFileName.set("kotlin-compiler-$kotlinVersion.zip")
@@ -879,10 +879,9 @@ val zipCompiler by task<Zip> {
 fun Project.secureZipTask(zipTask: TaskProvider<Zip>): RegisteringDomainObjectDelegateProviderWithAction<out TaskContainer, Task> {
     val checkSumTask = tasks.register("${zipTask.name}Checksum", Checksum::class) {
         dependsOn(zipTask)
-        val compilerFile = zipTask.get().outputs.files.singleFile
-        files = files(compilerFile)
-        outputDir = compilerFile.parentFile
-        algorithm = Checksum.Algorithm.SHA256
+        inputFiles.setFrom(zipTask.map { it.outputs.files.singleFile })
+        outputDirectory.fileProvider(zipTask.map { it.outputs.files.singleFile.parentFile })
+        checksumAlgorithm.set(Checksum.Algorithm.SHA256)
     }
 
     val signTask = tasks.register("${zipTask.name}Sign", Sign::class) {

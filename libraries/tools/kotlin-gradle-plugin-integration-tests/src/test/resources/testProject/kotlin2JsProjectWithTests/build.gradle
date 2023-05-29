@@ -20,7 +20,7 @@ dependencies {
     testImplementation"org.jetbrains.kotlin:kotlin-test-js:$kotlin_version"
 }
 
-task jarSources(type: Jar) {
+tasks.register("jarSources", Jar) {
     from sourceSets.main.allSource
     archiveClassifier = 'source'
 }

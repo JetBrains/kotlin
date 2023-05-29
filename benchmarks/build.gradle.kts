@@ -65,15 +65,13 @@ benchmark {
     }
 }
 
-tasks.matching { it is Zip && it.name == "mainBenchmarkJar" }.configureEach {
-    this as Zip
+tasks.withType<Zip>().matching { it.name == "mainBenchmarkJar" }.configureEach {
     isZip64 = true
     archiveFileName.set("benchmarks.jar")
 }
 
 val benchmarkTasks = listOf("mainBenchmark", "mainFirBenchmark", "mainNiBenchmark")
-tasks.matching { it is JavaExec && it.name in benchmarkTasks }.configureEach {
-    this as JavaExec
+tasks.withType<JavaExec>().matching { it.name in benchmarkTasks }.configureEach {
     dependsOn(":createIdeaHomeForTests")
     systemProperty("idea.home.path", ideaHomePathForTests().canonicalPath)
     systemProperty("idea.use.native.fs.for.win", false)

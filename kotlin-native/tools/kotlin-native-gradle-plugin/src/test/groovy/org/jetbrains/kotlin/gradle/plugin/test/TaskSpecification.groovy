@@ -29,8 +29,8 @@ class TaskSpecification extends BaseKonanSpecification {
         when:
         def project = KonanProject.createWithInterop(projectDirectory, ArtifactType.LIBRARY)
         project.buildFile.append("""
-            task beforeInterop(type: DefaultTask) { doLast { println("Before Interop") } }
-            task beforeCompilation(type: DefaultTask) { doLast { println("Before compilation") } }
+            tasks.register("beforeInterop", DefaultTask) { doLast { println("Before Interop") } }
+            tasks.register("beforeCompilation", DefaultTask) { doLast { println("Before compilation") } }
         """.stripIndent())
         project.addSetting(KonanProject.DEFAULT_INTEROP_NAME,"dependsOn", "beforeInterop")
         project.addSetting("dependsOn", "beforeCompilation")
@@ -147,7 +147,7 @@ class TaskSpecification extends BaseKonanSpecification {
 
     BuildResult failOnPropertyAccess(KonanProject project, String property) {
          project.buildFile.append("""
-            task testTask(type: DefaultTask) {
+            tasks.register("testTask", DefaultTask) {
                 doLast {
                     println(${project.defaultInteropConfig()}.$property)
                 }
@@ -158,7 +158,7 @@ class TaskSpecification extends BaseKonanSpecification {
 
     BuildResult failOnTaskAccess(KonanProject project, String task) {
         project.buildFile.append("""
-            task testTask(type: DefaultTask) {
+            tasks.register("testTask", DefaultTask) {
                 dependsOn $task
             }
         """.stripIndent())

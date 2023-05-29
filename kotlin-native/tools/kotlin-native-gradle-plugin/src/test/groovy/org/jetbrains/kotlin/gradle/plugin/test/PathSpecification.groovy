@@ -46,7 +46,7 @@ class PathSpecification extends BaseKonanSpecification {
                     dynamic('dynamic')
                 }
 
-                task checkArtifacts(type: DefaultTask) {
+                tasks.register("checkArtifacts", DefaultTask) {
                     dependsOn(':build')
                     doLast {
                         for(artifact in konanArtifacts) {

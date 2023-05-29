@@ -40,7 +40,7 @@ tasks.withType(org.jetbrains.kotlin.gradle.dsl.KotlinJsCompile) {
     kotlinOptions.freeCompilerArgs += "-Xforce-deprecated-legacy-compiler-usage"
 }
 
-task runRhino(type: JavaExec) {
+tasks.register("runRhino", JavaExec) {
     dependsOn(tasks.named('processDceBrowserKotlinJs'))
     classpath = kotlin.targets.browser.compilations.main.runtimeDependencyFiles
     workingDir = "${buildDir}"

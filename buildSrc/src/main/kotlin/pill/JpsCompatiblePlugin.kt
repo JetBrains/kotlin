@@ -19,7 +19,7 @@ class JpsCompatiblePlugin : Plugin<Project> {
         project.configurations.create("jpsTest")
 
         if (project == project.rootProject) {
-            project.tasks.create("pill") {
+            project.tasks.register("pill") {
                 dependsOn(":pill:pill-importer:pill")
 
                 if (System.getProperty("pill.android.tests", "false") == "true") {
@@ -28,7 +28,7 @@ class JpsCompatiblePlugin : Plugin<Project> {
                 }
             }
 
-            project.tasks.create("unpill") {
+            project.tasks.register("unpill") {
                 dependsOn(":pill:pill-importer:unpill")
             }
         }

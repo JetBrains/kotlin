@@ -193,7 +193,7 @@ def getMingwPath() {
     return directory
 }
 
-task assembleWeb(type: Sync) {
+tasks.register("assembleWeb", Sync) {
     def runtimeDependencies = kotlin.targets.js.compilations.main.runtimeDependencyFiles
     from(files {
         runtimeDependencies.collect { File file ->

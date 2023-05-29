@@ -224,7 +224,8 @@ compileLongRunningTestKotlin {
 
 configureFrontendIr(project)
 
-task longRunningTest(type: Test, dependsOn: longRunningTestClasses) {
+tasks.register("longRunningTest", Test) {
+    dependsOn(longRunningTestClasses)
     group = "verification"
     testClassesDirs = sourceSets.longRunningTest.output.classesDirs
     classpath = sourceSets.longRunningTest.runtimeClasspath
