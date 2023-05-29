@@ -1599,6 +1599,11 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/metadata/kotlinPackageWithFir.args");
         }
 
+        @TestMetadata("kt58139.args")
+        public void testKt58139() throws Exception {
+            runTest("compiler/testData/cli/metadata/kt58139.args");
+        }
+
         @TestMetadata("lambdaWithReceiver.args")
         public void testLambdaWithReceiver() throws Exception {
             runTest("compiler/testData/cli/metadata/lambdaWithReceiver.args");

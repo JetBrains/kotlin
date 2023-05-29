@@ -5,18 +5,22 @@
 
 package org.jetbrains.kotlin.fir.serialization.constant
 
+import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.constant.AnnotationValue
 import org.jetbrains.kotlin.constant.ConstantValue
+import org.jetbrains.kotlin.constant.ErrorValue
 import org.jetbrains.kotlin.constant.KClassValue
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 internal fun Map<Name, FirExpression>.convertToConstantValues(
     session: FirSession,
@@ -25,6 +29,9 @@ internal fun Map<Name, FirExpression>.convertToConstantValues(
     return this.map { (name, firExpression) ->
         val constantValue = constValueProvider?.findConstantValueFor(firExpression)
             ?: firExpression.toConstantValue(session, constValueProvider)
+            ?: runIf(session.languageVersionSettings.getFlag(AnalysisFlags.metadataCompilation)) {
+                ErrorValue.ErrorValueWithMessage("Constant conversion can be ignored in metadata compilation mode")
+            }
             ?: error("Cannot convert expression ${firExpression.render()} to constant")
         name to constantValue
     }.toMap()

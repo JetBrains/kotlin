@@ -5,10 +5,13 @@
 
 package org.jetbrains.kotlin.fir.serialization
 
+import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.constant.AnnotationValue
 import org.jetbrains.kotlin.constant.ConstantValue
+import org.jetbrains.kotlin.constant.ErrorValue
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.serialization.constant.ConstValueProvider
@@ -50,7 +53,17 @@ class FirAnnotationSerializer(
             }
 
             for ((name, argument) in argumentsMapping) {
-                addArgument(argument, name)
+                if (argument !is ErrorValue) {
+                    addArgument(argument, name)
+                    continue
+                }
+
+                if (!session.languageVersionSettings.getFlag(AnalysisFlags.metadataCompilation)) {
+                    error(
+                        (argument as? ErrorValue.ErrorValueWithMessage)?.message
+                            ?: "Error value after conversion of expression of $name argument"
+                    )
+                }
             }
         }.build()
     }
