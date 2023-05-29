@@ -246,33 +246,6 @@ internal object ControlFlowSensibleEscapeAnalysis {
             if (failedToConverge) {
                 /*pointsToGraphs = */analyzePessimistically(multiNode, escapeAnalysisResults, lifetimes, allocationToFunction)
             }
-
-            // TODO: fill lifetimes map.
-//            val nodes = multiNode.nodes.toList()
-//
-//            if (nodes.size != 1)
-//                return // TODO
-//
-//            if (callGraph.directEdges[nodes[0]]?.symbol?.irFunction?.fileOrNull?.name?.endsWith("z.kt") != true) return
-//
-//            context.logMultiple {
-//                +"Analyzing multiNode:\n    ${nodes.joinToString("\n   ") { it.toString() }}"
-//                nodes.forEach { from ->
-//                    +"IR"
-//                    +(from.irFunction?.dump() ?: "")
-//                    callGraph.directEdges[from]!!.callSites.forEach { to ->
-//                        +"CALL"
-//                        +"   from $from"
-//                        +"   to ${to.actualCallee}"
-//                    }
-//                }
-//            }
-//
-//            if (nodes.size == 1)
-//                intraproceduralAnalysis(callGraph.directEdges[nodes[0]] ?: return, escapeAnalysisResults, Int.MAX_VALUE)
-//            else {
-//                TODO()
-//            }
         }
 
         private fun analyzePessimistically(
@@ -476,9 +449,6 @@ internal object ControlFlowSensibleEscapeAnalysis {
         }
 
         private sealed class Node(var id: Int, val level: Int) {
-//            @Suppress("LeakingThis")
-//            var mirroredNode = this
-
             abstract fun shallowCopy(): Node
 
             var actualLevel = level
@@ -871,10 +841,6 @@ internal object ControlFlowSensibleEscapeAnalysis {
                 }
             }
 
-//            fun addParameter(parameter: IrValueParameter, index: Int) = putNewNodeAt(forest.nextNodeId()) { id ->
-//                Node.Parameter(id, index, parameter).also { parameterNodes[parameter] = it }
-//            }
-//
             fun getOrAddVariable(irVariable: IrVariable, level: Int) = variableNodes.getOrPut(irVariable) {
                 putNewNodeAt(forest.getAssociatedId(0, irVariable)) { Node.Variable(it, level, irVariable) }
             }
@@ -1448,11 +1414,6 @@ internal object ControlFlowSensibleEscapeAnalysis {
 
             override fun visitReturn(expression: IrReturn, data: BuilderState): Node {
                 val result = expression.value.accept(this, data)
-//                // TODO: Looks clumsy.
-//                val list = mutableListOf(result)
-//                val clone = data.graph.clone(list)
-//                (returnTargetsResults[expression.returnTargetSymbol] ?: error("Unknown return target: ${expression.render()}"))
-//                        .add(ExpressionResult(list[0], clone))
                 val returnResult = returnTargetResults[expression.returnTargetSymbol]
                         ?: error("Unknown return target: ${expression.render()}")
                 if (result != Node.Nothing) {
@@ -1658,11 +1619,6 @@ internal object ControlFlowSensibleEscapeAnalysis {
                 }
                 loopsBreakGraphs[loop] = loopGraph
 
-//                val returnTargetsResultsSizes = returnTargetResults.entries.associate { it.key to it.value.size }
-//                val tryBlocksThrowGraphsSizes = tryBlocksThrowGraphs.entries.associate { it.key to it.value.size }
-//                val loopsContinueResultsSizes = loopsContinueResults.entries.associate { it.key to it.value.size }
-//                val loopsBreakResultsSizes = loopsBreakResults.entries.associate { it.key to it.value.size }
-//                val savedObjectsReferencedFromThrown = objectsReferencedFromThrown.copy()
                 var iteration = 0
                 do {
                     debug {
@@ -1685,28 +1641,10 @@ internal object ControlFlowSensibleEscapeAnalysis {
                             loopsBreakGraphs.values.sumOf { it.modCount } +
                             objectsReferencedFromThrown.cardinality()
 
-//                    returnTargetsResultsSizes.forEach { (key, size) -> returnTargetResults[key]!!.trimSize(size) }
-//                    tryBlocksThrowGraphsSizes.forEach { (key, size) -> tryBlocksThrowGraphs[key]!!.trimSize(size) }
-//                    topLevelThrowGraph.trimSize(topLevelThrowGraphsSize)
-//                    loopsContinueResultsSizes.forEach { (key, size) -> loopsContinueResults[key]!!.trimSize(size) }
-//                    loopsBreakResultsSizes.forEach { (key, size) -> loopsBreakResults[key]!!.trimSize(size) }
-//                    objectsReferencedFromThrown.clear()
-//                    objectsReferencedFromThrown.or(savedObjectsReferencedFromThrown)
-
                     loop.body?.accept(this, BuilderState(graph, data.level + 1, true, loop, data.tryBlock))
                     continueGraphBuilder.merge(graph)
-//                    continueResults.add(ExpressionResult(Node.Unit, curGraph))
-//                    val nextGraph = PointsToGraph(forest)
-//                    controlFlowMergePoint(nextGraph, null, null, context.irBuiltIns.unitType, continueResults)
                     graph = continueGraphBuilder.build()
                     loop.condition.accept(this, BuilderState(graph, data.level + 1, true, loop, data.tryBlock))
-
-//                    graph = nextGraph
-//                    breakResults.add(ExpressionResult(Node.Unit, prevGraph))
-//                    // TODO: Merge in-place.
-//                    val prevLoopGraph = loopGraph.clone()
-//                    loopGraph = prevGraph.forest.mergeGraphs(listOf(loopGraph) + breakResults.map { it.graph }, mutableListOf())
-//                    val graphHasChanged = !PointsToGraphForest.graphsAreEqual(prevLoopGraph, loopGraph)
                     loopGraph.merge(graph)
                     loopsContinueGraphs.remove(loop)
 
