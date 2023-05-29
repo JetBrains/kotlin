@@ -84,6 +84,8 @@ public inline fun error(message: kotlin.Any): kotlin.Nothing
 
 public fun <T> lazy(initializer: () -> T): kotlin.Lazy<T>
 
+@kotlin.Deprecated(message = "Synchronization on Any? object is not supported.", replaceWith = kotlin.ReplaceWith(expression = "lazy(initializer)", imports = {}))
+@kotlin.DeprecatedSinceKotlin(warningSince = "1.9")
 public fun <T> lazy(lock: kotlin.Any?, initializer: () -> T): kotlin.Lazy<T>
 
 public fun <T> lazy(mode: kotlin.LazyThreadSafetyMode, initializer: () -> T): kotlin.Lazy<T>

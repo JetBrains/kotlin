@@ -21,4 +21,6 @@ public actual fun <T> lazy(mode: LazyThreadSafetyMode, initializer: () -> T): La
  *
  * The [lock] parameter is ignored.
  */
+@Deprecated("Synchronization on Any? object is not supported.", ReplaceWith("lazy(initializer)"))
+@DeprecatedSinceKotlin(warningSince = "1.9")
 public actual fun <T> lazy(lock: Any?, initializer: () -> T): Lazy<T> = UnsafeLazyImpl(initializer)

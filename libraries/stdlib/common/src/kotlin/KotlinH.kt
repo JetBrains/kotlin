@@ -73,4 +73,6 @@ public expect fun <T> lazy(mode: LazyThreadSafetyMode, initializer: () -> T): La
  *
  * The [lock] parameter is ignored.
  */
+@Deprecated("Synchronization on Any? object is supported only in Kotlin/JVM.", ReplaceWith("lazy(initializer)"))
+@DeprecatedSinceKotlin(warningSince = "1.9")
 public expect fun <T> lazy(lock: Any?, initializer: () -> T): Lazy<T>
