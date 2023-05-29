@@ -115,25 +115,22 @@ internal abstract class IrConstExpressionTransformer(
                         folded += next
                         buildersList.add(StringBuilder(next.getConstStringOrEmpty()))
                     } else {
+                        buildersList.last().append(nextAsConst.value.toString())
                         folded[folded.size - 1] = IrConstImpl.string(
                             // Inlined strings may have `last.startOffset > next.endOffset`
-                            min(last.startOffset, next.startOffset), max(last.endOffset, next.endOffset), expression.type, ""
+                            min(last.startOffset, next.startOffset), max(last.endOffset, next.endOffset),
+                            expression.type, buildersList.last().toString()
                         )
-                        buildersList.last().append(nextAsConst.value.toString())
                     }
                 }
             }
         }
 
         val foldedConst = folded.singleOrNull() as? IrConst<*>
-        if (foldedConst != null) {
+        if (foldedConst != null && foldedConst.value is String) {
             return IrConstImpl.string(expression.startOffset, expression.endOffset, expression.type, buildersList.single().toString())
         }
 
-        folded.zip(buildersList).forEach {
-            @Suppress("UNCHECKED_CAST")
-            (it.first as? IrConst<String>)?.value = it.second.toString()
-        }
         return IrStringConcatenationImpl(expression.startOffset, expression.endOffset, expression.type, folded)
     }
 }
