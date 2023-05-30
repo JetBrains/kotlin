@@ -40,13 +40,13 @@ actual class ArrayList<E> private constructor(
     override actual fun isEmpty(): Boolean = length == 0
 
     override actual fun get(index: Int): E {
-        checkElementIndex(index)
+        AbstractList.checkElementIndex(index, length)
         return backingArray[offset + index]
     }
 
     override actual operator fun set(index: Int, element: E): E {
         checkIsMutable()
-        checkElementIndex(index)
+        AbstractList.checkElementIndex(index, length)
         val old = backingArray[offset + index]
         backingArray[offset + index] = element
         return old
@@ -74,7 +74,7 @@ actual class ArrayList<E> private constructor(
     override actual fun listIterator(): MutableListIterator<E> = Itr(this, 0)
 
     override actual fun listIterator(index: Int): MutableListIterator<E> {
-        checkPositionIndex(index)
+        AbstractList.checkPositionIndex(index, length)
         return Itr(this, index)
     }
 
@@ -86,7 +86,7 @@ actual class ArrayList<E> private constructor(
 
     override actual fun add(index: Int, element: E) {
         checkIsMutable()
-        checkPositionIndex(index)
+        AbstractList.checkPositionIndex(index, length)
         addAtInternal(offset + index, element)
     }
 
@@ -99,7 +99,7 @@ actual class ArrayList<E> private constructor(
 
     override actual fun addAll(index: Int, elements: Collection<E>): Boolean {
         checkIsMutable()
-        checkPositionIndex(index)
+        AbstractList.checkPositionIndex(index, length)
         val n = elements.size
         addAllInternal(offset + index, elements, n)
         return n > 0
@@ -112,7 +112,7 @@ actual class ArrayList<E> private constructor(
 
     override actual fun removeAt(index: Int): E {
         checkIsMutable()
-        checkElementIndex(index)
+        AbstractList.checkElementIndex(index, length)
         return removeAtInternal(offset + index)
     }
 
@@ -134,7 +134,7 @@ actual class ArrayList<E> private constructor(
     }
 
     override actual fun subList(fromIndex: Int, toIndex: Int): MutableList<E> {
-        checkRangeIndexes(fromIndex, toIndex)
+        AbstractList.checkRangeIndexes(fromIndex, toIndex, length)
         return ArrayList(backingArray, offset + fromIndex, toIndex - fromIndex, isReadOnly, this, root ?: this)
     }
 
@@ -184,27 +184,6 @@ actual class ArrayList<E> private constructor(
     }
 
     // ---------------------------- private ----------------------------
-
-    private fun checkElementIndex(index: Int) {
-        if (index < 0 || index >= length) {
-            throw IndexOutOfBoundsException("index: $index, size: $length")
-        }
-    }
-
-    private fun checkPositionIndex(index: Int) {
-        if (index < 0 || index > length) {
-            throw IndexOutOfBoundsException("index: $index, size: $length")
-        }
-    }
-
-    private fun checkRangeIndexes(fromIndex: Int, toIndex: Int) {
-        if (fromIndex < 0 || toIndex > length) {
-            throw IndexOutOfBoundsException("fromIndex: $fromIndex, toIndex: $toIndex, size: $length")
-        }
-        if (fromIndex > toIndex) {
-            throw IllegalArgumentException("fromIndex: $fromIndex > toIndex: $toIndex")
-        }
-    }
 
     private fun checkIsMutable() {
         if (isReadOnly || root != null && root.isReadOnly) throw UnsupportedOperationException()

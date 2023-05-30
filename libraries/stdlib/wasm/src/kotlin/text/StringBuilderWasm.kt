@@ -24,12 +24,3 @@ internal fun insertInt(array: CharArray, start: Int, value: Int): Int {
     insertString(array, start, valueString, 0, length)
     return length
 }
-
-internal fun checkBoundsIndexes(startIndex: Int, endIndex: Int, size: Int) {
-    if (startIndex < 0 || endIndex > size) {
-        throw IndexOutOfBoundsException("startIndex: $startIndex, endIndex: $endIndex, size: $size")
-    }
-    if (startIndex > endIndex) {
-        throw IllegalArgumentException("startIndex: $startIndex > endIndex: $endIndex")
-    }
-}

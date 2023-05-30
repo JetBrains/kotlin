@@ -358,17 +358,8 @@ public actual fun CharArray.concatToString(): String = unsafeStringFromCharArray
 @SinceKotlin("1.3")
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun CharArray.concatToString(startIndex: Int = 0, endIndex: Int = this.size): String {
-    checkBoundsIndexes(startIndex, endIndex, size)
+    AbstractList.checkBoundsIndexes(startIndex, endIndex, size)
     return unsafeStringFromCharArray(this, startIndex, endIndex - startIndex)
-}
-
-internal fun checkBoundsIndexes(startIndex: Int, endIndex: Int, size: Int) {
-    if (startIndex < 0 || endIndex > size) {
-        throw IndexOutOfBoundsException("startIndex: $startIndex, endIndex: $endIndex, size: $size")
-    }
-    if (startIndex > endIndex) {
-        throw IllegalArgumentException("startIndex: $startIndex > endIndex: $endIndex")
-    }
 }
 
 @GCUnsafeCall("Kotlin_String_unsafeStringFromCharArray")
@@ -386,7 +377,7 @@ internal external fun unsafeStringFromCharArray(array: CharArray, start: Int, si
 @SinceKotlin("1.3")
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun String.toCharArray(startIndex: Int = 0, endIndex: Int = this.length): CharArray {
-    checkBoundsIndexes(startIndex, endIndex, length)
+    AbstractList.checkBoundsIndexes(startIndex, endIndex, length)
     return toCharArray(this, startIndex, endIndex - startIndex)
 }
 
@@ -412,7 +403,7 @@ public actual fun ByteArray.decodeToString(): String = unsafeStringFromUtf8(0, s
 @SinceKotlin("1.3")
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun ByteArray.decodeToString(startIndex: Int = 0, endIndex: Int = this.size, throwOnInvalidSequence: Boolean = false): String {
-    checkBoundsIndexes(startIndex, endIndex, size)
+    AbstractList.checkBoundsIndexes(startIndex, endIndex, size)
     return if (throwOnInvalidSequence)
         unsafeStringFromUtf8OrThrow(startIndex, endIndex - startIndex)
     else
@@ -441,7 +432,7 @@ public actual fun String.encodeToByteArray(): ByteArray = unsafeStringToUtf8(0, 
 @SinceKotlin("1.3")
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun String.encodeToByteArray(startIndex: Int = 0, endIndex: Int = this.length, throwOnInvalidSequence: Boolean = false): ByteArray {
-    checkBoundsIndexes(startIndex, endIndex, length)
+    AbstractList.checkBoundsIndexes(startIndex, endIndex, length)
     return if (throwOnInvalidSequence)
         unsafeStringToUtf8OrThrow(startIndex, endIndex - startIndex)
     else
