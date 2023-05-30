@@ -96,4 +96,13 @@ class EnumEntriesListTest {
         assertFalse(E2.A.hashCode() == E2.A.ordinal && E2.B.hashCode() == E2.B.ordinal)
         assertNotEquals(E1.A.hashCode(), E2.A.ordinal)
     }
+
+    @Test
+    fun enumValueOf() {
+        assertSame(E1.A, E1.valueOf("A"))
+        assertSame(E1.A, enumValueOf<E1>("A"))
+
+        assertFailsWith<IllegalArgumentException> { E1.valueOf("B") }
+        assertFailsWith<IllegalArgumentException> { enumValueOf<E1>("B") }
+    }
 }
