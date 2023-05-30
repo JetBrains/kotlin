@@ -3,7 +3,6 @@
 // LANGUAGE: +ValueClasses
 // TARGET_BACKEND: JVM_IR
 // WORKS_WHEN_VALUE_CLASS
-// LANGUAGE: +ValueClasses
 
 import kotlin.reflect.KVisibility
 

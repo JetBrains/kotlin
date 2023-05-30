@@ -2,7 +2,6 @@
 // LANGUAGE: +ValueClasses
 // TARGET_BACKEND: JVM_IR
 // WORKS_WHEN_VALUE_CLASS
-// LANGUAGE: +ValueClasses
 
 OPTIONAL_JVM_INLINE_ANNOTATION
 value class Z(val x: Int, val y: Int) {
