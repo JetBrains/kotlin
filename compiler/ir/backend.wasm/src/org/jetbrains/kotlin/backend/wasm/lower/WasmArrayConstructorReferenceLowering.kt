@@ -34,7 +34,7 @@ private class WasmArrayConstructorReferenceTransformer(val context: WasmBackendC
         val creator = when (target.valueParameters.size) {
             2 -> context.wasmSymbols.primitiveTypeToCreateTypedArray[target.constructedClass.symbol]
             else -> null
-        } ?: return super.visitFunctionReference(expression)
+        } ?: return expression
 
         return IrFunctionReferenceImpl(
             startOffset = expression.startOffset,

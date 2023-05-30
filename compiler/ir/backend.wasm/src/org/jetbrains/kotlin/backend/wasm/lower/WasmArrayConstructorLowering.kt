@@ -32,13 +32,13 @@ private class WasmArrayConstructorTransformer(
     override fun visitConstructorCall(expression: IrConstructorCall): IrExpression {
         val target = expression.symbol.owner
 
+        expression.transformChildrenVoid()
+
         // Array(size, init) -> create###Array(size, init)
         val creator = when (target.valueParameters.size) {
             2 -> context.wasmSymbols.primitiveTypeToCreateTypedArray[target.constructedClass.symbol]
             else -> null
-        } ?: return super.visitConstructorCall(expression)
-
-        expression.transformChildrenVoid()
+        } ?: return expression
 
         val scope = (currentScope ?: createScope(container)).scope
         return context.createIrBuilder(scope.scopeOwnerSymbol).irBlock(expression.startOffset, expression.endOffset) {
