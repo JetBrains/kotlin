@@ -1060,11 +1060,11 @@ private class ElementsToShortenCollector(
 }
 
 private class ShortenCommandImpl(
-    private val targetFile: SmartPsiElementPointer<KtFile>,
-    private val importsToAdd: List<FqName>,
-    private val starImportsToAdd: List<FqName>,
-    private val typesToShorten: List<SmartPsiElementPointer<KtUserType>>,
-    private val qualifiersToShorten: List<SmartPsiElementPointer<KtDotQualifiedExpression>>,
+    override val targetFile: SmartPsiElementPointer<KtFile>,
+    override val importsToAdd: List<FqName>,
+    override val starImportsToAdd: List<FqName>,
+    override val typesToShorten: List<SmartPsiElementPointer<KtUserType>>,
+    override val qualifiersToShorten: List<SmartPsiElementPointer<KtDotQualifiedExpression>>,
 ) : ShortenCommand {
 
     override fun invokeShortening(): List<KtElement> {
@@ -1095,12 +1095,6 @@ private class ShortenCommandImpl(
 //        }
         return shorteningResults
     }
-
-    override val isEmpty: Boolean get() = typesToShorten.isEmpty() && qualifiersToShorten.isEmpty()
-
-    override fun getTypesToShorten(): List<SmartPsiElementPointer<KtUserType>> = typesToShorten
-
-    override fun getQualifiersToShorten(): List<SmartPsiElementPointer<KtDotQualifiedExpression>> = qualifiersToShorten
 }
 
 private fun KtUserType.hasFakeRootPrefix(): Boolean =

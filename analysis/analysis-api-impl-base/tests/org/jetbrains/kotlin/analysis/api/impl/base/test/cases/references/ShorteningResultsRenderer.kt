@@ -14,12 +14,12 @@ internal object ShorteningResultsRenderer {
             return
         }
 
-        shortening.getTypesToShorten().forEach { userType ->
+        shortening.typesToShorten.forEach { userType ->
             userType.element?.text?.let {
                 appendLine("[type] $it")
             }
         }
-        shortening.getQualifiersToShorten().forEach { qualifier ->
+        shortening.qualifiersToShorten.forEach { qualifier ->
             qualifier.element?.text?.let {
                 appendLine("[qualifier] $it")
             }
