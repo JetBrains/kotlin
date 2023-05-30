@@ -172,11 +172,6 @@ internal class WasmUsefulDeclarationProcessor(
     override fun processSimpleFunction(irFunction: IrSimpleFunction) {
         super.processSimpleFunction(irFunction)
         irFunction.enqueueParentClass()
-        if (irFunction.isFakeOverride) {
-            irFunction.overriddenSymbols.forEach { overridden ->
-                overridden.owner.enqueue(irFunction, "original for fake-override")
-            }
-        }
         processIrFunction(irFunction)
     }
 

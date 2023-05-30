@@ -257,7 +257,14 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
     }
 
     private fun IrClass.shouldCopyFrom(): Boolean {
-        return isInterface && !isEffectivelyExternal()
+        if (!isInterface || isEffectivelyExternal()) {
+            return false
+        }
+
+        // Do not copy an interface method if the interface is already a parent of the base class,
+        // as the method will already be copied from the interface into the base class
+        val superIrClass = baseClass?.classOrNull?.owner ?: return true
+        return !superIrClass.isSubclassOf(this)
     }
 
     private fun generateMemberFunction(declaration: IrSimpleFunction): Pair<JsName, JsFunction?> {

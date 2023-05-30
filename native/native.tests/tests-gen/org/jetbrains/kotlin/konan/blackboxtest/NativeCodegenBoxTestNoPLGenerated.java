@@ -16565,6 +16565,18 @@ public class NativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenBoxT
             }
 
             @Test
+            @TestMetadata("overrideDefaultProperty.kt")
+            public void testOverrideDefaultProperty() throws Exception {
+                runTest("compiler/testData/codegen/box/inference/overrideDefaultProperty.kt");
+            }
+
+            @Test
+            @TestMetadata("overrideGenericDefaultMethod.kt")
+            public void testOverrideGenericDefaultMethod() throws Exception {
+                runTest("compiler/testData/codegen/box/inference/overrideGenericDefaultMethod.kt");
+            }
+
+            @Test
             @TestMetadata("plusAssignInsideLambda.kt")
             public void testPlusAssignInsideLambda() throws Exception {
                 runTest("compiler/testData/codegen/box/inference/plusAssignInsideLambda.kt");

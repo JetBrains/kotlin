@@ -1170,6 +1170,16 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
     }
 
     @Nested
+    @TestMetadata("js/js.translator/testData/box/dce")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Dce {
+        @Test
+        public void testAllFilesPresentInDce() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/dce"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS, true);
+        }
+    }
+
+    @Nested
     @TestMetadata("js/js.translator/testData/box/defaultArguments")
     @TestDataPath("$PROJECT_ROOT")
     public class DefaultArguments {
