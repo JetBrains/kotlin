@@ -30,7 +30,7 @@ class TryK2IT : KGPBaseTest() {
 
             build("--dry-run") {
                 assertOutputContainsExactTimes(EXPERIMENTAL_TRY_K2_WARNING_MESSAGE, 1)
-                assertOutputContains("No Kotlin compilation tasks have run")
+                assertOutputContains("No Kotlin compilation tasks have been run")
             }
         }
     }
@@ -88,7 +88,7 @@ class TryK2IT : KGPBaseTest() {
                     |##### 'kotlin.experimental.tryK2' results (Kotlin/Native not checked) #####
                     |:lib:compileKotlin: 2.0 language version
                     |:app:compileKotlin: 2.0 language version
-                    |##### 100% (2/2) tasks have compiled with Kotlin 2 #####
+                    |##### 100% (2/2) tasks have been compiled with Kotlin 2.0 #####
                     """.trimMargin().normalizeLineEndings()
                 )
             }
@@ -119,7 +119,7 @@ class TryK2IT : KGPBaseTest() {
                     |##### 'kotlin.experimental.tryK2' results (Kotlin/Native not checked) #####
                     |:lib:compileKotlin: 2.0 language version
                     |:app:compileKotlin: 2.0 language version
-                    |##### 100% (2/2) tasks have compiled with Kotlin 2 #####
+                    |##### 100% (2/2) tasks have been compiled with Kotlin 2.0 #####
                     """.trimMargin().normalizeLineEndings()
                 )
             }

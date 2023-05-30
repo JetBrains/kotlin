@@ -243,7 +243,7 @@ class BuildReportsService {
             }
         log.warn("##### 'kotlin.experimental.tryK2' results (Kotlin/Native not checked) #####")
         if (tasksData.isEmpty()) {
-            log.warn("No Kotlin compilation tasks have run")
+            log.warn("No Kotlin compilation tasks have been run")
             log.warn("#####")
         } else {
             val tasksCountWithKotlin2 = tasksData.count {
@@ -254,7 +254,9 @@ class BuildReportsService {
             statsData.forEach { record ->
                 log.warn("${record.first}: ${record.second} language version")
             }
-            log.warn("##### $taskWithK2Percent% ($tasksCountWithKotlin2/${tasksData.count()}) tasks have compiled with Kotlin 2 #####")
+            log.warn(
+                "##### $taskWithK2Percent% ($tasksCountWithKotlin2/${tasksData.count()}) tasks have been compiled with Kotlin 2.0 #####"
+            )
         }
     }
 
