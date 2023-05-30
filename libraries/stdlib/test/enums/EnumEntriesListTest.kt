@@ -89,4 +89,11 @@ class EnumEntriesListTest {
         assertFalse(enumList.contains(E2.A))
         assertFalse(enumList.contains(E2.B))
     }
+
+    // should be identity hash code
+    @Test
+    fun entryHashCode() {
+        assertFalse(E2.A.hashCode() == E2.A.ordinal && E2.B.hashCode() == E2.B.ordinal)
+        assertNotEquals(E1.A.hashCode(), E2.A.ordinal)
+    }
 }
