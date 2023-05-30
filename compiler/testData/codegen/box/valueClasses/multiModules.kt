@@ -4,6 +4,7 @@
 // CHECK_BYTECODE_LISTING
 
 // MODULE: dependency
+// FILE: dependency.kt
 
 package dependency
 
@@ -16,8 +17,8 @@ inline fun inlined() = dependency.DPoint(1.0, 2.0)
 fun id(x: dependency.DPoint) = x
 inline fun idInlined(x: dependency.DPoint) = x
 
-
 // MODULE: main(dependency)
+// FILE: main.kt
 
 package main
 

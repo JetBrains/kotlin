@@ -5,6 +5,8 @@
 // LANGUAGE: +ValueClasses
 
 // MODULE: dependency
+// FILE: dependency.kt
+
 @JvmInline
 value class MfvcDependency(val x: Int, val y: Int) {
     val z: Int
@@ -61,6 +63,7 @@ class RegularDependency {
 }
 
 // MODULE: main(dependency)
+// FILE: main.kt
 
 @JvmInline
 value class Public(val x: Int, val y: Int) {

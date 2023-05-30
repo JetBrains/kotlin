@@ -2,6 +2,8 @@
 // ISSUE: KT-57876
 
 // MODULE: lib
+// FILE: lib.kt
+
 interface EnvironmentKeyProvider {
     interface NestedInterface : @EnvironmentKeyDescription Some
 
@@ -12,5 +14,7 @@ interface EnvironmentKeyProvider {
 }
 
 // MODULE: main(lib)
+// FILE: main.kt
+
 fun bar(arg: EnvironmentKeyProvider.NestedInterface) {}
 fun box() = "OK"

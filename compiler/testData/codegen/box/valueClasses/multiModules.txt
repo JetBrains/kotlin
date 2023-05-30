@@ -2,7 +2,7 @@ Module: dependency
 @kotlin.jvm.JvmInline
 @kotlin.Metadata
 public final class dependency/DPoint {
-    // source: 'module_dependency_multiModules.kt'
+    // source: 'dependency.kt'
     private final field x: double
     private final field y: double
     private synthetic method <init>(p0: double, p1: double): void
@@ -22,8 +22,8 @@ public final class dependency/DPoint {
 }
 
 @kotlin.Metadata
-public final class dependency/Module_dependency_multiModulesKt {
-    // source: 'module_dependency_multiModules.kt'
+public final class dependency/DependencyKt {
+    // source: 'dependency.kt'
     public final static @org.jetbrains.annotations.NotNull method f(): dependency.DPoint
     public final static @org.jetbrains.annotations.NotNull method id-ggqRWaI(p0: double, p1: double): dependency.DPoint
     public final static @org.jetbrains.annotations.NotNull method idInlined-ggqRWaI(p0: double, p1: double): dependency.DPoint
@@ -31,8 +31,8 @@ public final class dependency/Module_dependency_multiModulesKt {
 }
 Module: main
 @kotlin.Metadata
-public final class main/Module_main_multiModulesKt {
-    // source: 'module_main_multiModules.kt'
+public final class main/MainKt {
+    // source: 'main.kt'
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     public final static @org.jetbrains.annotations.NotNull method f(): dependency.DPoint
     public final static @org.jetbrains.annotations.NotNull method id-ggqRWaI(p0: double, p1: double): dependency.DPoint

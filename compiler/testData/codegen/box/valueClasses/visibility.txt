@@ -1,7 +1,7 @@
 Module: dependency
 @kotlin.Metadata
 public final class MfvcDependency$Companion {
-    // source: 'module_dependency_visibility.kt'
+    // source: 'dependency.kt'
     private method <init>(): void
     public synthetic method <init>(p0: kotlin.jvm.internal.DefaultConstructorMarker): void
     public final @org.jetbrains.annotations.NotNull method getT(): MfvcDependency
@@ -34,7 +34,7 @@ public final class MfvcDependency$Companion {
 @kotlin.jvm.JvmInline
 @kotlin.Metadata
 public final class MfvcDependency {
-    // source: 'module_dependency_visibility.kt'
+    // source: 'dependency.kt'
     public final static @org.jetbrains.annotations.NotNull field Companion: MfvcDependency$Companion
     private final field x$1: int
     private static field x: int
@@ -84,7 +84,7 @@ public final class MfvcDependency {
 
 @kotlin.Metadata
 public final class RegularDependency$Companion {
-    // source: 'module_dependency_visibility.kt'
+    // source: 'dependency.kt'
     private method <init>(): void
     public synthetic method <init>(p0: kotlin.jvm.internal.DefaultConstructorMarker): void
     public final @org.jetbrains.annotations.NotNull method getT(): MfvcDependency
@@ -116,7 +116,7 @@ public final class RegularDependency$Companion {
 
 @kotlin.Metadata
 public final class RegularDependency {
-    // source: 'module_dependency_visibility.kt'
+    // source: 'dependency.kt'
     public final static @org.jetbrains.annotations.NotNull field Companion: RegularDependency$Companion
     private field x$1: int
     private static field x: int
@@ -162,7 +162,7 @@ public final class RegularDependency {
 Module: main
 @kotlin.Metadata
 public final class Internal$Companion {
-    // source: 'module_main_visibility.kt'
+    // source: 'main.kt'
     private method <init>(): void
     public synthetic method <init>(p0: kotlin.jvm.internal.DefaultConstructorMarker): void
     public synthetic deprecated static @kotlin.jvm.JvmStatic method getT$annotations(): void
@@ -184,7 +184,7 @@ public final class Internal$Companion {
 @kotlin.jvm.JvmInline
 @kotlin.Metadata
 public final class Internal {
-    // source: 'module_main_visibility.kt'
+    // source: 'main.kt'
     public final static @org.jetbrains.annotations.NotNull field Companion: Internal$Companion
     private final field x$1: int
     private static field x: int
@@ -222,7 +222,7 @@ public final class Internal {
 @kotlin.jvm.JvmInline
 @kotlin.Metadata
 public final class InternalInternal {
-    // source: 'module_main_visibility.kt'
+    // source: 'main.kt'
     private final field value-x: int
     private final field value-y: int
     private synthetic method <init>(p0: int, p1: int): void
@@ -244,7 +244,7 @@ public final class InternalInternal {
 @kotlin.jvm.JvmInline
 @kotlin.Metadata
 public final class InternalPrivate {
-    // source: 'module_main_visibility.kt'
+    // source: 'main.kt'
     private final field value-x: int
     private final field value-y: int
     private synthetic method <init>(p0: int, p1: int): void
@@ -266,7 +266,7 @@ public final class InternalPrivate {
 @kotlin.jvm.JvmInline
 @kotlin.Metadata
 public final class InternalPublic {
-    // source: 'module_main_visibility.kt'
+    // source: 'main.kt'
     private final field value-x: int
     private final field value-y: int
     private synthetic method <init>(p0: int, p1: int): void
@@ -286,8 +286,8 @@ public final class InternalPublic {
 }
 
 @kotlin.Metadata
-public final class Module_main_visibilityKt {
-    // source: 'module_main_visibility.kt'
+public final class MainKt {
+    // source: 'main.kt'
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     public final inner class MfvcDependency$Companion
     public final inner class Regular$Companion
@@ -297,7 +297,7 @@ public final class Module_main_visibilityKt {
 @kotlin.jvm.JvmInline
 @kotlin.Metadata
 public final class Private {
-    // source: 'module_main_visibility.kt'
+    // source: 'main.kt'
     private final field x: int
     private final field y: int
     private synthetic method <init>(p0: int, p1: int): void
@@ -317,7 +317,7 @@ public final class Private {
 @kotlin.jvm.JvmInline
 @kotlin.Metadata
 public final class PrivateInternal {
-    // source: 'module_main_visibility.kt'
+    // source: 'main.kt'
     private final field value-x: int
     private final field value-y: int
     private synthetic method <init>(p0: int, p1: int): void
@@ -339,7 +339,7 @@ public final class PrivateInternal {
 @kotlin.jvm.JvmInline
 @kotlin.Metadata
 public final class PrivatePrivate {
-    // source: 'module_main_visibility.kt'
+    // source: 'main.kt'
     private final field value-x: int
     private final field value-y: int
     private synthetic method <init>(p0: int, p1: int): void
@@ -361,7 +361,7 @@ public final class PrivatePrivate {
 @kotlin.jvm.JvmInline
 @kotlin.Metadata
 public final class PrivatePublic {
-    // source: 'module_main_visibility.kt'
+    // source: 'main.kt'
     private final field value-x: int
     private final field value-y: int
     private synthetic method <init>(p0: int, p1: int): void
@@ -382,7 +382,7 @@ public final class PrivatePublic {
 
 @kotlin.Metadata
 public final class Public$Companion {
-    // source: 'module_main_visibility.kt'
+    // source: 'main.kt'
     private method <init>(): void
     public synthetic method <init>(p0: kotlin.jvm.internal.DefaultConstructorMarker): void
     public final @org.jetbrains.annotations.NotNull method getT(): Public
@@ -401,7 +401,7 @@ public final class Public$Companion {
 @kotlin.jvm.JvmInline
 @kotlin.Metadata
 public final class Public {
-    // source: 'module_main_visibility.kt'
+    // source: 'main.kt'
     public final static @org.jetbrains.annotations.NotNull field Companion: Public$Companion
     private final field x$1: int
     private static field x: int
@@ -435,7 +435,7 @@ public final class Public {
 @kotlin.jvm.JvmInline
 @kotlin.Metadata
 public final class PublicInternal {
-    // source: 'module_main_visibility.kt'
+    // source: 'main.kt'
     private final field value-x: int
     private final field value-y: int
     private synthetic method <init>(p0: int, p1: int): void
@@ -457,7 +457,7 @@ public final class PublicInternal {
 @kotlin.jvm.JvmInline
 @kotlin.Metadata
 public final class PublicPrivate {
-    // source: 'module_main_visibility.kt'
+    // source: 'main.kt'
     private final field value-x: int
     private final field value-y: int
     private synthetic method <init>(p0: int, p1: int): void
@@ -479,7 +479,7 @@ public final class PublicPrivate {
 @kotlin.jvm.JvmInline
 @kotlin.Metadata
 public final class PublicPublic {
-    // source: 'module_main_visibility.kt'
+    // source: 'main.kt'
     private final field value-x: int
     private final field value-y: int
     private synthetic method <init>(p0: int, p1: int): void
@@ -500,7 +500,7 @@ public final class PublicPublic {
 
 @kotlin.Metadata
 public final class Regular$Companion {
-    // source: 'module_main_visibility.kt'
+    // source: 'main.kt'
     private method <init>(): void
     public synthetic method <init>(p0: kotlin.jvm.internal.DefaultConstructorMarker): void
     public synthetic final static method access$getJvmStaticX3(p0: Regular$Companion): Public
@@ -682,7 +682,7 @@ public final class Regular$Companion {
 
 @kotlin.Metadata
 public final class Regular {
-    // source: 'module_main_visibility.kt'
+    // source: 'main.kt'
     public final static @org.jetbrains.annotations.NotNull field Companion: Regular$Companion
     private static field jvmStaticX1-x: int
     private static field jvmStaticX1-y: int
