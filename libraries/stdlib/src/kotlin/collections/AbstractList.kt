@@ -133,6 +133,19 @@ public abstract class AbstractList<out E> protected constructor() : AbstractColl
             }
         }
 
+        private const val maxArraySize = Int.MAX_VALUE - 8
+
+        /** [oldCapacity] and [minCapacity] must be non-negative. */
+        internal fun newCapacity(oldCapacity: Int, minCapacity: Int): Int {
+            // overflow-conscious
+            var newCapacity = oldCapacity + (oldCapacity shr 1)
+            if (newCapacity - minCapacity < 0)
+                newCapacity = minCapacity
+            if (newCapacity - maxArraySize > 0)
+                newCapacity = if (minCapacity > maxArraySize) Int.MAX_VALUE else maxArraySize
+            return newCapacity
+        }
+
         internal fun orderedHashCode(c: Collection<*>): Int {
             var hashCode = 1
             for (e in c) {

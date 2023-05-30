@@ -148,7 +148,7 @@ actual class ArrayList<E> private constructor(
         if (backingList != null) throw IllegalStateException() // just in case somebody casts subList to ArrayList
         if (minCapacity < 0) throw OutOfMemoryError()    // overflow
         if (minCapacity > backingArray.size) {
-            val newSize = ArrayDeque.newCapacity(backingArray.size, minCapacity)
+            val newSize = AbstractList.newCapacity(backingArray.size, minCapacity)
             backingArray = backingArray.copyOfUninitializedElements(newSize)
         }
     }

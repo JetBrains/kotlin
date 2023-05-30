@@ -63,7 +63,7 @@ public class ArrayDeque<E> : AbstractMutableList<E> {
             return
         }
 
-        val newCapacity = newCapacity(elementData.size, minCapacity)
+        val newCapacity = AbstractList.newCapacity(elementData.size, minCapacity)
         copyElements(newCapacity)
     }
 
@@ -560,18 +560,7 @@ public class ArrayDeque<E> : AbstractMutableList<E> {
 
     internal companion object {
         private val emptyElementData = emptyArray<Any?>()
-        private const val maxArraySize = Int.MAX_VALUE - 8
         private const val defaultMinCapacity = 10
-
-        internal fun newCapacity(oldCapacity: Int, minCapacity: Int): Int {
-            // overflow-conscious
-            var newCapacity = oldCapacity + (oldCapacity shr 1)
-            if (newCapacity - minCapacity < 0)
-                newCapacity = minCapacity
-            if (newCapacity - maxArraySize > 0)
-                newCapacity = if (minCapacity > maxArraySize) Int.MAX_VALUE else maxArraySize
-            return newCapacity
-        }
     }
 
     // For testing only
