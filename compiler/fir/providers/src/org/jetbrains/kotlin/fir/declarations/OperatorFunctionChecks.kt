@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
+import org.jetbrains.kotlin.fir.declarations.utils.isSuspend
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.defaultType
@@ -54,19 +55,22 @@ object OperatorFunctionChecks {
             OperatorNameConventions.GET_VALUE,
             Checks.memberOrExtension,
             Checks.noDefaultAndVarargs, Checks.ValueParametersCount.atLeast(2),
-            Checks.isKProperty
+            Checks.isKProperty,
+            Checks.nonSuspend,
         )
         checkFor(
             OperatorNameConventions.SET_VALUE,
             Checks.memberOrExtension,
             Checks.noDefaultAndVarargs, Checks.ValueParametersCount.atLeast(3),
-            Checks.isKProperty
+            Checks.isKProperty,
+            Checks.nonSuspend,
         )
         checkFor(
             OperatorNameConventions.PROVIDE_DELEGATE,
             Checks.memberOrExtension,
             Checks.noDefaultAndVarargs, Checks.ValueParametersCount.exactly(2),
-            Checks.isKProperty
+            Checks.isKProperty,
+            Checks.nonSuspend,
         )
         checkFor(OperatorNameConventions.INVOKE, Checks.memberOrExtension)
         checkFor(
@@ -173,6 +177,10 @@ private object Checks {
 
     val member = simple("must be a member function") {
         it.dispatchReceiverType != null
+    }
+
+    val nonSuspend = simple("must not be suspend") {
+        !it.isSuspend
     }
 
     object ValueParametersCount {
