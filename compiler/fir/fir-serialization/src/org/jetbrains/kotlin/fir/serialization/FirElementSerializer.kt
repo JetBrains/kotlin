@@ -129,7 +129,7 @@ class FirElementSerializer private constructor(
 
         val hasEnumEntries = klass.classKind == ClassKind.ENUM_CLASS && languageVersionSettings.supportsFeature(LanguageFeature.EnumEntries)
         val flags = Flags.getClassFlags(
-            klass.nonSourceAnnotations(session).isNotEmpty(),
+            klass.nonSourceAnnotations(session).isNotEmpty() || extension.hasAdditionalAnnotations(klass),
             ProtoEnumFlags.visibility(regularClass?.let { normalizeVisibility(it) } ?: Visibilities.Local),
             ProtoEnumFlags.modality(modality),
             ProtoEnumFlags.classKind(klass.classKind, regularClass?.isCompanion == true),
@@ -377,6 +377,8 @@ class FirElementSerializer private constructor(
 
         val hasAnnotations = property.nonSourceAnnotations(session).isNotEmpty()
                 || property.backingField?.nonSourceAnnotations(session)?.isNotEmpty() == true
+                || extension.hasAdditionalAnnotations(property)
+                || property.backingField?.let { extension.hasAdditionalAnnotations(it) } == true
 
         val modality = property.modality!!
         val defaultAccessorFlags = Flags.getAccessorFlags(
@@ -499,7 +501,7 @@ class FirElementSerializer private constructor(
         val local = createChildSerializer(function)
 
         val flags = Flags.getFunctionFlags(
-            function.nonSourceAnnotations(session).isNotEmpty(),
+            function.nonSourceAnnotations(session).isNotEmpty() || extension.hasAdditionalAnnotations(function),
             ProtoEnumFlags.visibility(simpleFunction?.let { normalizeVisibility(it) } ?: Visibilities.Local),
             ProtoEnumFlags.modality(simpleFunction?.modality ?: Modality.FINAL),
             if (function.origin == FirDeclarationOrigin.Delegated) ProtoBuf.MemberKind.DELEGATION else ProtoBuf.MemberKind.DECLARATION,
@@ -603,7 +605,7 @@ class FirElementSerializer private constructor(
         val local = createChildSerializer(typeAlias)
 
         val flags = Flags.getTypeAliasFlags(
-            typeAlias.nonSourceAnnotations(session).isNotEmpty(),
+            typeAlias.nonSourceAnnotations(session).isNotEmpty() || extension.hasAdditionalAnnotations(typeAlias),
             ProtoEnumFlags.visibility(normalizeVisibility(typeAlias))
         )
         if (flags != builder.flags) {
@@ -657,7 +659,7 @@ class FirElementSerializer private constructor(
         val local = createChildSerializer(constructor)
 
         val flags = Flags.getConstructorFlags(
-            constructor.nonSourceAnnotations(session).isNotEmpty(),
+            constructor.nonSourceAnnotations(session).isNotEmpty() || extension.hasAdditionalAnnotations(constructor),
             ProtoEnumFlags.visibility(normalizeVisibility(constructor)),
             !constructor.isPrimary,
             shouldSetStableParameterNames(constructor)
@@ -703,7 +705,9 @@ class FirElementSerializer private constructor(
                 function.symbol.getSingleExpectForActualOrNull(compatibleOnly = true).containsDefaultValue(index)
 
         val flags = Flags.getValueParameterFlags(
-            additionalAnnotations.isNotEmpty() || parameter.nonSourceAnnotations(session).isNotEmpty(),
+            additionalAnnotations.isNotEmpty()
+                    || parameter.nonSourceAnnotations(session).isNotEmpty()
+                    || extension.hasAdditionalAnnotations(parameter),
             declaresDefaultValue,
             parameter.isCrossinline,
             parameter.isNoinline
@@ -1026,15 +1030,15 @@ class FirElementSerializer private constructor(
     private fun getAccessorFlags(accessor: FirPropertyAccessor, property: FirProperty): Int {
         // [FirDefaultPropertyAccessor]---a property accessor without body---can still hold other information, such as annotations,
         // user-contributed visibility, and modifiers, such as `external` or `inline`.
-        val nonSourceAnnotations = accessor.nonSourceAnnotations(session)
+        val hasAnnotations = accessor.nonSourceAnnotations(session).isNotEmpty() || extension.hasAdditionalAnnotations(accessor)
         val isDefault = property.isLocal ||
                 (accessor is FirDefaultPropertyAccessor &&
-                        nonSourceAnnotations.isEmpty() &&
+                        !hasAnnotations &&
                         accessor.visibility == property.visibility &&
                         !accessor.isExternal &&
                         !accessor.isInline)
         return Flags.getAccessorFlags(
-            nonSourceAnnotations.isNotEmpty(),
+            hasAnnotations,
             ProtoEnumFlags.visibility(normalizeVisibility(accessor)),
             // non-default accessor modality is always final, so we check property.modality instead
             ProtoEnumFlags.modality(property.modality!!),

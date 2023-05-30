@@ -1,13 +1,13 @@
-@R|org/jetbrains/kotlin/fir/plugin/AddAnnotations|() public final class Some : R|kotlin/Any| {
-    public final fun foo(): R|kotlin/Unit|
+@R|org/jetbrains/kotlin/fir/plugin/AddAnnotations|() @R|org/jetbrains/kotlin/fir/plugin/AnnotationToAdd|() @R|org/jetbrains/kotlin/fir/plugin/AnnotationToAdd|() public final class Some : R|kotlin/Any| {
+    @R|org/jetbrains/kotlin/fir/plugin/AnnotationToAdd|() @R|org/jetbrains/kotlin/fir/plugin/AnnotationToAdd|() public final fun foo(): R|kotlin/Unit|
 
-    public final val x: R|kotlin/Int|
-        public get(): R|kotlin/Int|
+    @PROPERTY:R|org/jetbrains/kotlin/fir/plugin/AnnotationToAdd|() @PROPERTY:R|org/jetbrains/kotlin/fir/plugin/AnnotationToAdd|() @PROPERTY:R|org/jetbrains/kotlin/fir/plugin/AnnotationToAdd|() @PROPERTY:R|org/jetbrains/kotlin/fir/plugin/AnnotationToAdd|() @PROPERTY:R|org/jetbrains/kotlin/fir/plugin/AnnotationToAdd|() public final val x: R|kotlin/Int|
+        @PROPERTY_GETTER:R|org/jetbrains/kotlin/fir/plugin/AnnotationToAdd|() @PROPERTY_GETTER:R|org/jetbrains/kotlin/fir/plugin/AnnotationToAdd|() @PROPERTY_GETTER:R|org/jetbrains/kotlin/fir/plugin/AnnotationToAdd|() @PROPERTY_GETTER:R|org/jetbrains/kotlin/fir/plugin/AnnotationToAdd|() @PROPERTY_GETTER:R|org/jetbrains/kotlin/fir/plugin/AnnotationToAdd|() public get(): R|kotlin/Int|
 
-    public constructor(x: R|kotlin/Int|): R|test/Some|
+    @R|org/jetbrains/kotlin/fir/plugin/AnnotationToAdd|() public constructor(@R|org/jetbrains/kotlin/fir/plugin/AnnotationToAdd|() @R|org/jetbrains/kotlin/fir/plugin/AnnotationToAdd|() @R|org/jetbrains/kotlin/fir/plugin/AnnotationToAdd|() @R|org/jetbrains/kotlin/fir/plugin/AnnotationToAdd|() @R|org/jetbrains/kotlin/fir/plugin/AnnotationToAdd|() x: R|kotlin/Int|): R|test/Some|
 
-    public final class Derived : R|kotlin/Any| {
-        public constructor(): R|test/Some.Derived|
+    @R|org/jetbrains/kotlin/fir/plugin/AnnotationToAdd|() @R|org/jetbrains/kotlin/fir/plugin/AnnotationToAdd|() @R|org/jetbrains/kotlin/fir/plugin/AnnotationToAdd|() public final class Derived : R|kotlin/Any| {
+        @R|org/jetbrains/kotlin/fir/plugin/AnnotationToAdd|() @R|org/jetbrains/kotlin/fir/plugin/AnnotationToAdd|() @R|org/jetbrains/kotlin/fir/plugin/AnnotationToAdd|() public constructor(): R|test/Some.Derived|
 
     }
 

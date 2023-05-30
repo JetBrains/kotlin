@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.backend
 
 import org.jetbrains.kotlin.backend.common.extensions.FirIncompatiblePluginAPI
+import org.jetbrains.kotlin.backend.common.extensions.IrAnnotationsFromPluginRegistrar
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.ir.BuiltinSymbolsBase
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -71,6 +72,9 @@ class Fir2IrPluginContext(
 
     private val symbolProvider: FirSymbolProvider
         get() = components.session.symbolProvider
+
+    override val annotationsRegistrar: Fir2IrAnnotationsFromPluginRegistrar
+        get() = components.annotationsFromPluginRegistrar
 
     override fun referenceClass(classId: ClassId): IrClassSymbol? {
         val firSymbol = symbolProvider.getClassLikeSymbolByClassId(classId) as? FirClassSymbol<*> ?: return null

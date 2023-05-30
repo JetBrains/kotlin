@@ -61,6 +61,7 @@ class FirJvmSerializerExtension(
     private val jvmDefaultMode: JvmDefaultMode,
     override val stringTable: FirElementAwareStringTable,
     override val constValueProvider: ConstValueProvider?,
+    override val additionalAnnotationsProvider: FirAdditionalMetadataAnnotationsProvider?,
 ) : FirSerializerExtension() {
 
     constructor(
@@ -77,6 +78,7 @@ class FirJvmSerializerExtension(
         state.globalSerializationBindings, state.useTypeTableInSerializer, state.moduleName, state.classBuilderMode,
         state.isParamAssertionsDisabled, state.unifiedNullChecks, state.metadataVersion, state.jvmDefaultMode,
         FirJvmElementAwareStringTable(typeMapper, components), ConstValueProviderImpl(components),
+        components.annotationsFromPluginRegistrar.createMetadataAnnotationsProvider()
     )
 
     override fun shouldUseTypeTable(): Boolean = useTypeTable

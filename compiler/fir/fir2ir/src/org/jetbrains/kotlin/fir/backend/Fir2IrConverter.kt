@@ -481,6 +481,7 @@ class Fir2IrConverter(
             components.fakeOverrideGenerator = FakeOverrideGenerator(components, conversionScope)
             components.callGenerator = CallAndReferenceGenerator(components, fir2irVisitor, conversionScope)
             components.irProviders = listOf(FirIrProvider(components))
+            components.annotationsFromPluginRegistrar = Fir2IrAnnotationsFromPluginRegistrar(components)
 
             fir2IrExtensions.registerDeclarations(commonMemberStorage.symbolTable)
 

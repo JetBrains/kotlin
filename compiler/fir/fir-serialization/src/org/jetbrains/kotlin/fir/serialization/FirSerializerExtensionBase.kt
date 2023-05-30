@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.serialization
 import org.jetbrains.kotlin.constant.ConstantValue
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.serialization.constant.toConstantValue
@@ -63,7 +64,7 @@ abstract class FirSerializerExtensionBase(
         val fieldPropertyAnnotations = mutableListOf<FirAnnotation>()
         val delegatePropertyAnnotations = mutableListOf<FirAnnotation>()
 
-        for (annotation in property.backingField?.nonSourceAnnotations(session).orEmpty()) {
+        for (annotation in property.backingField?.allRequiredAnnotations(session).orEmpty()) {
             val destination = when (annotation.useSiteTarget) {
                 AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD -> delegatePropertyAnnotations
                 else -> fieldPropertyAnnotations
@@ -71,7 +72,7 @@ abstract class FirSerializerExtensionBase(
             destination += annotation
         }
 
-        property.nonSourceAnnotations(session).serializeAnnotations(proto, protocol.propertyAnnotation)
+        property.allRequiredAnnotations(session).serializeAnnotations(proto, protocol.propertyAnnotation)
         fieldPropertyAnnotations.serializeAnnotations(proto, protocol.propertyBackingFieldAnnotation)
         delegatePropertyAnnotations.serializeAnnotations(proto, protocol.propertyDelegatedFieldAnnotation)
 
@@ -110,7 +111,7 @@ abstract class FirSerializerExtensionBase(
         extension: GeneratedMessageLite.GeneratedExtension<MessageType, List<ProtoBuf.Annotation>>?
     ) {
         if (extension == null) return
-        this.nonSourceAnnotations(session).serializeAnnotations(proto, extension)
+        this.allRequiredAnnotations(session).serializeAnnotations(proto, extension)
     }
 
     @Suppress("Reformat")
@@ -138,6 +139,16 @@ abstract class FirSerializerExtensionBase(
     ) {
         if (value != null) {
             addExtension(extension, value)
+        }
+    }
+
+    private fun FirAnnotationContainer.allRequiredAnnotations(session: FirSession): List<FirAnnotation> {
+        val nonSourceAnnotations = nonSourceAnnotations(session)
+        val additionalMetadataAnnotationsProvider = additionalAnnotationsProvider
+        return if (this is FirDeclaration && additionalMetadataAnnotationsProvider != null) {
+            nonSourceAnnotations + additionalMetadataAnnotationsProvider.findGeneratedAnnotationsFor(this)
+        } else {
+            nonSourceAnnotations
         }
     }
 }

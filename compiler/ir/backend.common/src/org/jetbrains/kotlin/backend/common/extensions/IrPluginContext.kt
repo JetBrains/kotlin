@@ -57,6 +57,12 @@ interface IrPluginContext : IrGeneratorContext {
     val platform: TargetPlatform?
 
     /**
+     * Use this service to add annotations to declarations if those annotations should be saved into metadata
+     * This service properly works only in K2 compiler
+     */
+    val annotationsRegistrar: IrAnnotationsFromPluginRegistrar
+
+    /**
      * Returns a logger instance to post diagnostic messages from plugin
      *
      * @param pluginId the unique plugin ID to make it easy to distinguish in log

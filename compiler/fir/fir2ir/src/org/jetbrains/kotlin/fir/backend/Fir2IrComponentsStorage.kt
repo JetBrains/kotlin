@@ -44,6 +44,8 @@ class Fir2IrComponentsStorage(
     override lateinit var fakeOverrideGenerator: FakeOverrideGenerator
     override lateinit var delegatedMemberGenerator: DelegatedMemberGenerator
 
+    override lateinit var annotationsFromPluginRegistrar: Fir2IrAnnotationsFromPluginRegistrar
+
     override val lock: IrLock
         get() = symbolTable.lock
 }

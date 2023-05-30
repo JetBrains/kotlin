@@ -67,7 +67,7 @@ class TransformerForAddingAnnotations(val context: IrPluginContext) : IrElementV
                 type = annotationClass.defaultType,
                 constructorSymbol = annotationConstructor.symbol
             )
-            declaration.annotations += annotationCall
+            context.annotationsRegistrar.addMetadataVisibleAnnotationsToElement(declaration, annotationCall)
         }
     }
 }

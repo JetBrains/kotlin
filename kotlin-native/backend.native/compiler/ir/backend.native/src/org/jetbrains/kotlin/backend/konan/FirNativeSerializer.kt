@@ -85,7 +85,9 @@ internal fun PhaseContext.firSerializerBase(
                         fir2IrInput?.let {
                             ConstValueProviderImpl(fir2IrInput.components)
                         },
-                        allowErrorTypes = false, exportKDoc = shouldExportKDoc()
+                        allowErrorTypes = false,
+                        exportKDoc = shouldExportKDoc(),
+                        additionalAnnotationsProvider = fir2IrInput?.components?.annotationsFromPluginRegistrar?.createMetadataAnnotationsProvider()
                 ),
                 configuration.languageVersionSettings,
         )

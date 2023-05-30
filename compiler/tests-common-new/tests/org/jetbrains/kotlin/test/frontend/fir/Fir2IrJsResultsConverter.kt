@@ -146,7 +146,8 @@ class Fir2IrJsResultsConverter(
                 FirKLibSerializerExtension(
                     components.session, metadataVersion,
                     ConstValueProviderImpl(components),
-                    allowErrorTypes = false, exportKDoc = false
+                    allowErrorTypes = false, exportKDoc = false,
+                    components.annotationsFromPluginRegistrar.createMetadataAnnotationsProvider()
                 ),
                 configuration.languageVersionSettings,
             )

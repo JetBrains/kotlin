@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.linkage.IrDeserializer
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.util.IdSignature
@@ -50,6 +52,9 @@ open class IrPluginContextImpl constructor(
     override val moduleDescriptor: ModuleDescriptor = module
 
     override val symbolTable: ReferenceSymbolTable = st
+
+    final override val annotationsRegistrar: IrAnnotationsFromPluginRegistrar
+        get() = DummyIrAnnotationsFromPluginRegistrar
 
     private fun resolveMemberScope(fqName: FqName): MemberScope? {
         val pkg = module.getPackage(fqName)
@@ -124,7 +129,6 @@ open class IrPluginContextImpl constructor(
 
     @OptIn(FirIncompatiblePluginAPI::class)
     override fun referenceConstructors(classFqn: FqName): Collection<IrConstructorSymbol> {
-        @Suppress("DEPRECATION")
         val classSymbol = referenceClass(classFqn) ?: error("Cannot find class $classFqn")
         return classSymbol.owner.declarations.filterIsInstance<IrConstructor>().map { it.symbol }
     }
@@ -175,5 +179,11 @@ open class IrPluginContextImpl constructor(
         val symbol = linker.resolveBySignatureInModule(signature, kind, moduleDescriptor.name)
         linker.postProcess(inOrAfterLinkageStep = false)
         return symbol
+    }
+
+    private object DummyIrAnnotationsFromPluginRegistrar : IrAnnotationsFromPluginRegistrar() {
+        override fun addMetadataVisibleAnnotationsToElement(declaration: IrDeclaration, annotations: List<IrConstructorCall>) {
+            declaration.annotations += annotations
+        }
     }
 }
