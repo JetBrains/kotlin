@@ -196,11 +196,10 @@ internal class MapBuilder<K, V> private constructor(
                 && gaps >= this.capacity / 4                // at least 25% of current capacity is occupied by gaps
     }
 
-    private fun ensureCapacity(capacity: Int) {
-        if (capacity < 0) throw OutOfMemoryError()    // overflow
-        if (capacity > this.capacity) {
-            var newSize = this.capacity * 3 / 2
-            if (capacity > newSize) newSize = capacity
+    private fun ensureCapacity(minCapacity: Int) {
+        if (minCapacity < 0) throw OutOfMemoryError()    // overflow
+        if (minCapacity > this.capacity) {
+            val newSize = AbstractList.newCapacity(this.capacity, minCapacity)
             keysArray = keysArray.copyOfUninitializedElements(newSize)
             valuesArray = valuesArray?.copyOfUninitializedElements(newSize)
             presenceArray = presenceArray.copyOf(newSize)
