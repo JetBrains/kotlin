@@ -179,15 +179,6 @@ internal class ListBuilder<E> private constructor(
 
     // ---------------------------- private ----------------------------
 
-    private fun ensureCapacity(minCapacity: Int) {
-        if (backing != null) throw IllegalStateException() // just in case somebody casts subList to ListBuilder
-        if (minCapacity < 0) throw OutOfMemoryError()    // overflow
-        if (minCapacity > array.size) {
-            val newSize = AbstractList.newCapacity(array.size, minCapacity)
-            array = array.copyOfUninitializedElements(newSize)
-        }
-    }
-
     private fun checkIsMutable() {
         if (isEffectivelyReadOnly) throw UnsupportedOperationException()
     }
@@ -196,7 +187,15 @@ internal class ListBuilder<E> private constructor(
         get() = isReadOnly || root != null && root.isReadOnly
 
     private fun ensureExtraCapacity(n: Int) {
-        ensureCapacity(length + n)
+        ensureCapacityInternal(length + n)
+    }
+
+    private fun ensureCapacityInternal(minCapacity: Int) {
+        if (minCapacity < 0) throw OutOfMemoryError()    // overflow
+        if (minCapacity > array.size) {
+            val newSize = AbstractList.newCapacity(array.size, minCapacity)
+            array = array.copyOfUninitializedElements(newSize)
+        }
     }
 
     private fun contentEquals(other: List<*>): Boolean {

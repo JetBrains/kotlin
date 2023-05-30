@@ -1256,4 +1256,9 @@ class CollectionTest {
         val arr2: Array<String> = coll.toArray(Array(coll.size + 1) { "" })
         assertEquals(data + listOf(null), arr2.asList())
     }
+
+    @Test
+    fun ensureCapacity() {
+        ArrayList<String>().ensureCapacity(-1) // negative argument is ignored
+    }
 }

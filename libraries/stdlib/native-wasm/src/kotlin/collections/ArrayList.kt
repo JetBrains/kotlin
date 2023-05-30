@@ -146,11 +146,8 @@ actual class ArrayList<E> private constructor(
 
     final actual fun ensureCapacity(minCapacity: Int) {
         if (backingList != null) throw IllegalStateException() // just in case somebody casts subList to ArrayList
-        if (minCapacity < 0) throw OutOfMemoryError()    // overflow
-        if (minCapacity > backingArray.size) {
-            val newSize = AbstractList.newCapacity(backingArray.size, minCapacity)
-            backingArray = backingArray.copyOfUninitializedElements(newSize)
-        }
+        if (minCapacity <= backingArray.size) return
+        ensureCapacityInternal(minCapacity)
     }
 
     override fun equals(other: Any?): Boolean {
@@ -214,7 +211,15 @@ actual class ArrayList<E> private constructor(
     }
 
     private fun ensureExtraCapacity(n: Int) {
-        ensureCapacity(length + n)
+        ensureCapacityInternal(length + n)
+    }
+
+    private fun ensureCapacityInternal(minCapacity: Int) {
+        if (minCapacity < 0) throw OutOfMemoryError()    // overflow
+        if (minCapacity > backingArray.size) {
+            val newSize = AbstractList.newCapacity(backingArray.size, minCapacity)
+            backingArray = backingArray.copyOfUninitializedElements(newSize)
+        }
     }
 
     private fun contentEquals(other: List<*>): Boolean {
