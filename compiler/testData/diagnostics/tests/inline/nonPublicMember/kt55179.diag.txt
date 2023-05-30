@@ -1,0 +1,6 @@
+/kt55179.kt:16:5: error: non-private inline function cannot access members of private classes: 'public constructor Foo() defined in Foo'
+    Foo()
+    ^
+/kt55179.kt:17:9: error: non-private inline function cannot access members of private classes: 'public companion object defined in Foo'
+    Foo.Companion
+        ^

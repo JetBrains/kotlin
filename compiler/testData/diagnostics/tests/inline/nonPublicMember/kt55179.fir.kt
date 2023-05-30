@@ -1,5 +1,6 @@
 // ISSUE: KT-55179
 // SKIP_TXT
+// !RENDER_DIAGNOSTICS_FULL_TEXT
 
 private class Foo {
     companion object {
