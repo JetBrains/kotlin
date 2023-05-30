@@ -8,5 +8,12 @@ repositories {
 }
 
 kotlin {
-    iosSimulatorArm64()
+    iosSimulatorArm64() {
+        compilations.all() {
+            compilerOptions.options.apply {
+                optIn.add("kotlinx.cinterop.ExperimentalForeignApi")
+            }
+        }
+    }
+
 }
