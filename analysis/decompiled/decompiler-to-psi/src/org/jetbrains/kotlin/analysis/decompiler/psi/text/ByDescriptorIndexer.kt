@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.psi.psiUtil.hasSuspendModifier
 import org.jetbrains.kotlin.psi.psiUtil.unwrapNullability
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
+import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.types.AbbreviatedType
@@ -57,6 +58,10 @@ object ByDescriptorIndexer {
             return getDeclarationForDescriptor(original.containingDeclaration, file)
         }
 
+        if (original is FakeCallableDescriptorForObject) {
+            return getDeclarationForDescriptor(original.classDescriptor, file)
+        }
+        
         if (original is MemberDescriptor) {
             val declarationContainer: KtDeclarationContainer? = when {
                 DescriptorUtils.isTopLevelDeclaration(original) -> file
