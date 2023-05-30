@@ -197,7 +197,6 @@ public class org/jetbrains/kotlin/gradle/plugin/mpp/external/DecoratedExternalKo
 	public fun getAttributes ()Lorg/gradle/api/attributes/AttributeContainer;
 	public fun getCompilations ()Lorg/gradle/api/NamedDomainObjectContainer;
 	public fun getComponents ()Ljava/util/Set;
-	public fun getDefaultConfigurationName ()Ljava/lang/String;
 	public fun getDisambiguationClassifier ()Ljava/lang/String;
 	public synthetic fun getExtras ()Lorg/jetbrains/kotlin/tooling/core/Extras;
 	public fun getExtras ()Lorg/jetbrains/kotlin/tooling/core/MutableExtras;
