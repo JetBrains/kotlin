@@ -178,7 +178,7 @@ OBJ_GETTER(Kotlin_String_plusImpl, KString thiz, KString other) {
   // Since thiz and other sizes are bounded by int32_t max value, their sum cannot exceed uint32_t max value - 1.
   uint32_t result_length = thiz->count_ + other->count_;
   if (result_length > static_cast<uint32_t>(std::numeric_limits<int32_t>::max())) {
-    ThrowArrayIndexOutOfBoundsException();
+    ThrowOutOfMemoryError();
   }
   ArrayHeader* result = AllocArrayInstance(theStringTypeInfo, result_length, OBJ_RESULT)->array();
   memcpy(
