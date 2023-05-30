@@ -2,9 +2,6 @@
 // TARGET_BACKEND: JVM
 // SKIP_KT_DUMP
 
-// MUTE_SIGNATURE_COMPARISON_K2: ANY
-// ^ KT-57433
-
 // FILE: box.kt
 
 package k

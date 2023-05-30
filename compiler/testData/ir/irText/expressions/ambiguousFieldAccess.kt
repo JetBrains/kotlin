@@ -2,9 +2,6 @@
 // SKIP_KLIB_TEST
 // Related to KT-49507
 
-// MUTE_SIGNATURE_COMPARISON_K2: ANY
-// ^ KT-57433
-
 // FILE: A.java
 public class A {
     protected String x = "1";

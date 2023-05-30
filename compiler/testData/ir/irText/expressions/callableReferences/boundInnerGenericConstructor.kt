@@ -1,7 +1,7 @@
 // FIR_IDENTICAL
 
 // MUTE_SIGNATURE_COMPARISON_K2: JVM_IR
-// ^ KT-57433, KT-57429
+// ^ KT-57429
 
 package test
 
