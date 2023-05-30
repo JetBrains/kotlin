@@ -272,10 +272,32 @@ class StringBuilderTest {
             repeat(Random.nextInt(35, 62)) { sb.insert(0, "s") }
             sb.ensureCapacity(1)
             assertTrue(sb.capacity() >= sb.length)
+            sb.ensureCapacity(-1) // negative argument is ignored
+            assertTrue(sb.capacity() >= sb.length)
             sb.ensureCapacity(sb.length * 10)
             testExceptOn(TestPlatform.Js) {
                 assertTrue(sb.capacity() >= sb.length * 10) // not implemented in JS
             }
+        }
+    }
+
+    @Test
+    fun overflow() = testExceptOn(TestPlatform.Js) {
+        class CharSeq(override val length: Int) : CharSequence {
+            override fun get(index: Int): Char =
+                throw IllegalStateException("Not expected to be called")
+
+            override fun subSequence(startIndex: Int, endIndex: Int): CharSequence =
+                throw IllegalStateException("Not expected to be called")
+        }
+
+        val initialContent = "a".repeat(20)
+        val bigCharSeq = CharSeq(Int.MAX_VALUE - initialContent.length + 1)
+        assertFailsWith<Error> { // OutOfMemoryError
+            StringBuilder(initialContent).append(bigCharSeq)
+        }
+        assertFailsWith<Error> { // OutOfMemoryError
+            StringBuilder(initialContent).insert(5, bigCharSeq)
         }
     }
 

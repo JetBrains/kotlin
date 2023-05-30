@@ -199,12 +199,8 @@ actual class StringBuilder private constructor (
      * Otherwise, this method takes no action and simply returns.
      */
     actual fun ensureCapacity(minimumCapacity: Int) {
-        if (minimumCapacity > array.size) {
-            var newSize = array.size * 2 + 2
-            if (minimumCapacity > newSize)
-                newSize = minimumCapacity
-            array = array.copyOf(newSize)
-        }
+        if (minimumCapacity <= array.size) return
+        ensureCapacityInternal(minimumCapacity)
     }
 
     /**
@@ -612,7 +608,15 @@ actual class StringBuilder private constructor (
     // ---------------------------- private ----------------------------
 
     private fun ensureExtraCapacity(n: Int) {
-        ensureCapacity(_length + n)
+        ensureCapacityInternal(_length + n)
+    }
+
+    private fun ensureCapacityInternal(minCapacity: Int) {
+        if (minCapacity < 0) throw OutOfMemoryError()    // overflow
+        if (minCapacity > array.size) {
+            val newSize = AbstractList.newCapacity(array.size, minCapacity)
+            array = array.copyOf(newSize)
+        }
     }
 
     private fun checkIndex(index: Int) {
