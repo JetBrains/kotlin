@@ -1,5 +1,5 @@
 // TARGET_BACKEND: JVM_IR
-// FILE: Jaba.java
+// FILE: base/Jaba.java
 
 package base;
 

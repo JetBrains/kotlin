@@ -4,7 +4,7 @@
 // JVM_TARGET: 1.8
 // WITH_STDLIB
 
-// FILE: Foo.java
+// FILE: org/example/foo/Foo.java
 package org.example.foo;
 public interface Foo {
     String foo(String s);

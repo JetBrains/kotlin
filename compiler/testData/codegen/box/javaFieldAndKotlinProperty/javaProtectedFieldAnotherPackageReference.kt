@@ -1,6 +1,5 @@
 // TARGET_BACKEND: JVM_IR
-
-// FILE: BaseJava.java
+// FILE: base/BaseJava.java
 
 package base;
 
