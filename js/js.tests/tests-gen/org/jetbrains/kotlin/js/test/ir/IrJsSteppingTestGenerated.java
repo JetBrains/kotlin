@@ -392,12 +392,6 @@ public class IrJsSteppingTestGenerated extends AbstractIrJsSteppingTest {
     }
 
     @Test
-    @TestMetadata("noLinenumberInInvokeOfSuspendLambda.kt")
-    public void testNoLinenumberInInvokeOfSuspendLambda() throws Exception {
-        runTest("compiler/testData/debug/stepping/noLinenumberInInvokeOfSuspendLambda.kt");
-    }
-
-    @Test
     @TestMetadata("noParametersArgumentCallInExpression.kt")
     public void testNoParametersArgumentCallInExpression() throws Exception {
         runTest("compiler/testData/debug/stepping/noParametersArgumentCallInExpression.kt");
