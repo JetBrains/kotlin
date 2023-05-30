@@ -1,8 +1,6 @@
 // WITH_STDLIB
 // !LANGUAGE: +ImplicitSignedToUnsignedIntegerConversion
 // IGNORE_BACKEND_K1: JVM
-// dedicated hack to avoid unmuting this test in light analysis, see comments in AbstractLightAnalysisModeTest
-// FAIL_IN_LIGHT_ANALYSIS
 // FILE: signedToUnsignedConversions_annotation.kt
 
 package kotlin.internal
