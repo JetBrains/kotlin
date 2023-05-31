@@ -5,28 +5,24 @@
 
 package org.jetbrains.kotlin.generators.interpreter
 
-import org.jetbrains.kotlin.backend.jvm.serialization.DisabledIdSignatureDescriptor
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.PrimitiveType
-import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
-import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.generators.util.GeneratorsFileUtil
 import org.jetbrains.kotlin.ir.BuiltInOperatorNames
-import org.jetbrains.kotlin.ir.IrBuiltIns
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
-import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
-import org.jetbrains.kotlin.ir.types.impl.originalKotlinType
-import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi2ir.descriptors.IrBuiltInsOverDescriptors
-import org.jetbrains.kotlin.psi2ir.generators.TypeTranslatorImpl
-import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.utils.Printer
 import java.io.File
 
 val DESTINATION = File("compiler/ir/ir.interpreter/src/org/jetbrains/kotlin/ir/interpreter/builtins/IrBuiltInsMapGenerated.kt")
+
+private val integerTypes = listOf(PrimitiveType.BYTE, PrimitiveType.SHORT, PrimitiveType.INT, PrimitiveType.LONG).map { it.typeName.asString() }
+private val fpTypes = listOf(PrimitiveType.FLOAT, PrimitiveType.DOUBLE).map { it.typeName.asString() }
+private val numericTypes = PrimitiveType.NUMBER_TYPES.map { it.typeName.asString() }
 
 fun main() {
     GeneratorsFileUtil.writeFileIfContentChanged(DESTINATION, generateMap())
@@ -37,8 +33,6 @@ fun generateMap(): String {
     val p = Printer(sb)
     printPreamble(p)
 
-    val irBuiltIns = getIrBuiltIns()
-
     val unaryOperations = getOperationMap(1).apply {
         this += Operation(BuiltInOperatorNames.CHECK_NOT_NULL, listOf("T0?"), customExpression = "a!!")
         this += Operation("toString", listOf("Any?"), customExpression = "a?.toString() ?: \"null\"")
@@ -47,7 +41,7 @@ fun generateMap(): String {
         this += Operation("toString", listOf("Unit"), customExpression = "Unit.toString()")
     }
 
-    val binaryOperations = getOperationMap(2) + getBinaryIrOperationMap(irBuiltIns) + getExtensionOperationMap()
+    val binaryOperations = getOperationMap(2) + getBinaryIrOperationMap() + getExtensionOperationMap()
 
     val ternaryOperations = getOperationMap(3)
 
@@ -152,19 +146,6 @@ private fun generateInterpretTernaryFunction(p: Printer, ternaryOperations: List
     p.println()
 }
 
-private fun castValue(name: String, type: String): String = when (type) {
-    "Any?", "T" -> name
-    "Array" -> "$name as Array<Any?>"
-    "Comparable" -> "$name as Comparable<Any?>"
-    else -> "$name as $type"
-}
-
-private fun castValueParenthesized(name: String, type: String): String =
-    if (type == "Any?") name else "(${castValue(name, type)})"
-
-private fun String.addKotlinPackage(): String =
-    if (this == "T" || this == "T0?") this else "kotlin.$this"
-
 private data class Operation(
     val name: String,
     private val parameterTypes: List<String>,
@@ -179,9 +160,17 @@ private data class Operation(
         get() {
             val receiver = castValueParenthesized("a", parameterTypes[0])
             return when {
-                name == BuiltInOperatorNames.EQEQEQ && parameterTypes.all { it == "Any?" } ->
-                    "if (a is Proxy && b is Proxy) a.state === b.state else a === b"
+                name == BuiltInOperatorNames.EQEQEQ -> "if (a is Proxy && b is Proxy) a.state === b.state else a === b"
                 customExpression != null -> customExpression
+                getIrMethodSymbolByName(name) != null -> {
+                    buildString {
+                        append(castValueParenthesized("a", parameterTypes[0]))
+                        append(" ")
+                        append(getIrMethodSymbolByName(name))
+                        append(" ")
+                        append(castValueParenthesized("b", parameterTypes[0]))
+                    }
+                }
                 else -> buildString {
                     append(receiver)
                     append(".")
@@ -194,6 +183,34 @@ private data class Operation(
                 }
             }
         }
+
+    private fun getIrMethodSymbolByName(methodName: String): String? {
+        return when (methodName) {
+            BuiltInOperatorNames.LESS -> "<"
+            BuiltInOperatorNames.LESS_OR_EQUAL -> "<="
+            BuiltInOperatorNames.GREATER -> ">"
+            BuiltInOperatorNames.GREATER_OR_EQUAL -> ">="
+            BuiltInOperatorNames.EQEQ -> "=="
+            BuiltInOperatorNames.EQEQEQ -> "==="
+            BuiltInOperatorNames.IEEE754_EQUALS -> "=="
+            BuiltInOperatorNames.ANDAND -> "&&"
+            BuiltInOperatorNames.OROR -> "||"
+            else -> null
+        }
+    }
+
+    private fun String.addKotlinPackage(): String =
+        if (this == "T" || this == "T0?") this else "kotlin.$this"
+
+    private fun castValue(name: String, type: String): String = when (type) {
+        "Any?", "T" -> name
+        "Array" -> "$name as Array<Any?>"
+        "Comparable" -> "$name as Comparable<Any?>"
+        else -> "$name as $type"
+    }
+
+    private fun castValueParenthesized(name: String, type: String): String =
+        if (type == "Any?") name else "(${castValue(name, type)})"
 }
 
 private fun getOperationMap(argumentsCount: Int): MutableList<Operation> {
@@ -229,27 +246,32 @@ private fun getOperationMap(argumentsCount: Int): MutableList<Operation> {
     return operationMap
 }
 
-private fun getBinaryIrOperationMap(irBuiltIns: IrBuiltIns): List<Operation> {
+private fun getBinaryIrOperationMap(): List<Operation> {
     val operationMap = mutableListOf<Operation>()
-    val irFunSymbols =
-        (irBuiltIns.lessFunByOperandType.values + irBuiltIns.lessOrEqualFunByOperandType.values +
-                irBuiltIns.greaterFunByOperandType.values + irBuiltIns.greaterOrEqualFunByOperandType.values +
-                irBuiltIns.eqeqSymbol + irBuiltIns.eqeqeqSymbol + irBuiltIns.ieee754equalsFunByOperandType.values +
-                irBuiltIns.andandSymbol + irBuiltIns.ororSymbol)
-            .map { it.owner }
 
-    for (function in irFunSymbols) {
-        val parametersTypes = function.valueParameters.map { it.type.originalKotlinType!!.toString() }
+    fun addOperation(function: String, type: String) {
+        operationMap.add(Operation(function, listOf(type, type)))
+    }
 
-        check(parametersTypes.size == 2) { "Couldn't add following method from ir builtins to operations map: ${function.name}" }
-        operationMap.add(
-            Operation(
-                function.name.asString(), parametersTypes,
-                customExpression = castValueParenthesized("a", parametersTypes[0]) + " " +
-                        getIrMethodSymbolByName(function.name.asString()) + " " +
-                        castValueParenthesized("b", parametersTypes[1])
-            )
-        )
+    val compareFunction = setOf(
+        BuiltInOperatorNames.LESS, BuiltInOperatorNames.LESS_OR_EQUAL, BuiltInOperatorNames.GREATER, BuiltInOperatorNames.GREATER_OR_EQUAL
+    )
+
+    for (function in compareFunction) {
+        for (type in numericTypes) {
+            addOperation(function, type)
+        }
+    }
+
+    addOperation(BuiltInOperatorNames.EQEQ, "Any?")
+    addOperation(BuiltInOperatorNames.EQEQEQ, "Any?")
+
+    for (type in fpTypes) {
+        addOperation(BuiltInOperatorNames.IEEE754_EQUALS, "$type?")
+    }
+
+    for (function in setOf(BuiltInOperatorNames.ANDAND, BuiltInOperatorNames.OROR)) {
+        addOperation(function, PrimitiveType.BOOLEAN.typeName.asString())
     }
 
     return operationMap
@@ -258,44 +280,19 @@ private fun getBinaryIrOperationMap(irBuiltIns: IrBuiltIns): List<Operation> {
 // TODO can be drop after serialization introduction
 private fun getExtensionOperationMap(): List<Operation> {
     val operationMap = mutableListOf<Operation>()
-    val integerTypes = listOf(PrimitiveType.BYTE, PrimitiveType.SHORT, PrimitiveType.INT, PrimitiveType.LONG).map { it.typeName.asString() }
-    val fpTypes = listOf(PrimitiveType.FLOAT, PrimitiveType.DOUBLE).map { it.typeName.asString() }
 
     for (type in integerTypes) {
         for (otherType in integerTypes) {
-            operationMap.add(Operation("mod", listOf(type, otherType), isFunction = true))
-            operationMap.add(Operation("floorDiv", listOf(type, otherType), isFunction = true))
+            operationMap.add(Operation("mod", listOf(type, otherType)))
+            operationMap.add(Operation("floorDiv", listOf(type, otherType)))
         }
     }
 
     for (type in fpTypes) {
         for (otherType in fpTypes) {
-            operationMap.add(Operation("mod", listOf(type, otherType), isFunction = true))
+            operationMap.add(Operation("mod", listOf(type, otherType)))
         }
     }
 
     return operationMap
-}
-
-private fun getIrMethodSymbolByName(methodName: String): String {
-    return when (methodName) {
-        BuiltInOperatorNames.LESS -> "<"
-        BuiltInOperatorNames.LESS_OR_EQUAL -> "<="
-        BuiltInOperatorNames.GREATER -> ">"
-        BuiltInOperatorNames.GREATER_OR_EQUAL -> ">="
-        BuiltInOperatorNames.EQEQ -> "=="
-        BuiltInOperatorNames.EQEQEQ -> "==="
-        BuiltInOperatorNames.IEEE754_EQUALS -> "=="
-        BuiltInOperatorNames.ANDAND -> "&&"
-        BuiltInOperatorNames.OROR -> "||"
-        else -> throw UnsupportedOperationException("Unknown ir operation \"$methodName\"")
-    }
-}
-
-@OptIn(ObsoleteDescriptorBasedAPI::class)
-private fun getIrBuiltIns(): IrBuiltIns {
-    val moduleDescriptor = ModuleDescriptorImpl(Name.special("<test-module>"), LockBasedStorageManager(""), DefaultBuiltIns.Instance)
-    val symbolTable = SymbolTable(DisabledIdSignatureDescriptor, IrFactoryImpl)
-    val typeTranslator = TypeTranslatorImpl(symbolTable, LanguageVersionSettingsImpl.DEFAULT, moduleDescriptor)
-    return IrBuiltInsOverDescriptors(moduleDescriptor.builtIns, typeTranslator, symbolTable)
 }

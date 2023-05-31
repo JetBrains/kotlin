@@ -44,8 +44,6 @@ dependencies {
     wasmApi(project(":wasm:wasm.ir"))
     wasmApi(kotlinStdlib())
     interpreterApi(project(":compiler:ir.tree"))
-    interpreterApi(project(":compiler:ir.psi2ir"))
-    interpreterApi(project(":compiler:ir.serialization.jvm"))
     protobufApi(kotlinStdlib())
     protobufCompareApi(projectTests(":kotlin-build-common"))
     nativeInteropRuntimeApi(kotlinStdlib())
