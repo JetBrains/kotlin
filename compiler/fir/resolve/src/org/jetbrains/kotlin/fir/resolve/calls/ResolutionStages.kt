@@ -25,7 +25,10 @@ import org.jetbrains.kotlin.fir.resolve.inference.csBuilder
 import org.jetbrains.kotlin.fir.resolve.inference.hasBuilderInferenceAnnotation
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeExplicitTypeParameterConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.scopes.*
+import org.jetbrains.kotlin.fir.scopes.FirTypeScope
+import org.jetbrains.kotlin.fir.scopes.FirUnstableSmartcastTypeScope
+import org.jetbrains.kotlin.fir.scopes.ProcessorAction
+import org.jetbrains.kotlin.fir.scopes.processOverriddenFunctions
 import org.jetbrains.kotlin.fir.symbols.SyntheticSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
@@ -39,7 +42,8 @@ import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind.*
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.DYNAMIC_EXTENSION_FQ_NAME
-import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.AbstractNullabilityChecker
+import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 abstract class ResolutionStage {
@@ -669,7 +673,18 @@ internal object CheckDeprecatedSinceKotlin : ResolutionStage() {
         if (symbol.fir.isHiddenEverywhereBesideSuperCalls == true) return true
 
         val scope = candidate.originScope as? FirTypeScope ?: return false
-        return scope.getDirectOverriddenFunctions(symbol).any { it.fir.isHiddenEverywhereBesideSuperCalls == true }
+
+        var result = false
+        scope.processOverriddenFunctions(symbol) {
+            if (it.fir.isHiddenEverywhereBesideSuperCalls == true) {
+                result = true
+                ProcessorAction.STOP
+            } else {
+                ProcessorAction.NEXT
+            }
+        }
+
+        return result
     }
 
     private fun FirElement.isSuperCall(): Boolean =
