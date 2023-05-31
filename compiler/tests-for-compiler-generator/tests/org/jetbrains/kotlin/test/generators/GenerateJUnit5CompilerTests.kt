@@ -265,12 +265,12 @@ fun generateJUnit5CompilerTests(args: Array<String>) {
         }
 
         testGroup("compiler/fir/analysis-tests/tests-gen", "compiler/testData") {
-            testClass<AbstractFirLoadK1CompiledKotlin> {
+            testClass<AbstractFirLoadK1CompiledJvmKotlinTest> {
                 model("loadJava/compiledKotlin", extension = "kt")
                 model("loadJava/compiledKotlinWithStdlib", extension = "kt")
             }
 
-            testClass<AbstractFirLoadK2CompiledKotlin> {
+            testClass<AbstractFirLoadK2CompiledJvmKotlinTest> {
                 model("loadJava/compiledKotlin", extension = "kt")
                 model("loadJava/compiledKotlinWithStdlib", extension = "kt")
             }

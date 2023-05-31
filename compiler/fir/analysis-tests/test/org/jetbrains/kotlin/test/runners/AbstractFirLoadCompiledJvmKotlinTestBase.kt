@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.runners.codegen.commonConfigurationForTest
 
-abstract class AbstractFirLoadCompiledKotlinTestBase<F : ResultingArtifact.FrontendOutput<F>> :
+abstract class AbstractFirLoadCompiledJvmKotlinTestBase<F : ResultingArtifact.FrontendOutput<F>> :
     AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.JVM_IR)
 {
     protected abstract val frontendKind: FrontendKind<F>
@@ -50,7 +50,7 @@ abstract class AbstractFirLoadCompiledKotlinTestBase<F : ResultingArtifact.Front
     }
 }
 
-open class AbstractFirLoadK1CompiledKotlin : AbstractFirLoadCompiledKotlinTestBase<ClassicFrontendOutputArtifact>() {
+open class AbstractFirLoadK1CompiledJvmKotlinTest : AbstractFirLoadCompiledJvmKotlinTestBase<ClassicFrontendOutputArtifact>() {
     override val frontendKind: FrontendKind<ClassicFrontendOutputArtifact>
         get() = FrontendKinds.ClassicFrontend
     override val frontendFacade: Constructor<FrontendFacade<ClassicFrontendOutputArtifact>>
@@ -59,7 +59,7 @@ open class AbstractFirLoadK1CompiledKotlin : AbstractFirLoadCompiledKotlinTestBa
         get() = ::ClassicFrontend2IrConverter
 }
 
-open class AbstractFirLoadK2CompiledKotlin : AbstractFirLoadCompiledKotlinTestBase<FirOutputArtifact>() {
+open class AbstractFirLoadK2CompiledJvmKotlinTest : AbstractFirLoadCompiledJvmKotlinTestBase<FirOutputArtifact>() {
     override val frontendKind: FrontendKind<FirOutputArtifact>
         get() = FrontendKinds.FIR
     override val frontendFacade: Constructor<FrontendFacade<FirOutputArtifact>>

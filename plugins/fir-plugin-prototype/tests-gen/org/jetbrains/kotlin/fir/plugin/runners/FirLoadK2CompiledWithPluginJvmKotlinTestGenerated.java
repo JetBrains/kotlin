@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("plugins/fir-plugin-prototype/testData/firLoadK2Compiled")
 @TestDataPath("$PROJECT_ROOT")
-public class FirLoadK2CompiledKotlinWithPluginTestGenerated extends AbstractFirLoadK2CompiledKotlinWithPluginTest {
+public class FirLoadK2CompiledWithPluginJvmKotlinTestGenerated extends AbstractFirLoadK2CompiledWithPluginJvmKotlinTest {
     @Test
     public void testAllFilesPresentInFirLoadK2Compiled() throws Exception {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/fir-plugin-prototype/testData/firLoadK2Compiled"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);

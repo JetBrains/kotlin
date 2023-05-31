@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.assignment.plugin.AbstractFirLightTreeBlackBoxCodege
 import org.jetbrains.kotlin.assignment.plugin.AbstractFirPsiAssignmentPluginDiagnosticTest
 import org.jetbrains.kotlin.assignment.plugin.AbstractIrBlackBoxCodegenTestAssignmentPlugin
 import org.jetbrains.kotlin.fir.plugin.runners.AbstractFirLightTreePluginBlackBoxCodegenTest
-import org.jetbrains.kotlin.fir.plugin.runners.AbstractFirLoadK2CompiledKotlinWithPluginTest
+import org.jetbrains.kotlin.fir.plugin.runners.AbstractFirLoadK2CompiledWithPluginJvmKotlinTest
 import org.jetbrains.kotlin.fir.plugin.runners.AbstractFirPsiPluginDiagnosticTest
 import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.generators.impl.generateTestGroupSuite
@@ -262,7 +262,7 @@ fun main(args: Array<String>) {
                 model("box")
             }
 
-            testClass<AbstractFirLoadK2CompiledKotlinWithPluginTest> {
+            testClass<AbstractFirLoadK2CompiledWithPluginJvmKotlinTest> {
                 model("firLoadK2Compiled")
             }
         }
