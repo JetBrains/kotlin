@@ -462,7 +462,7 @@ class IrBuiltInsOverFir(
                 }
 
                 createFunction(
-                    "CHECK_NOT_NULL",
+                    BuiltInOperatorNames.CHECK_NOT_NULL,
                     IrSimpleTypeImpl(typeParameter.symbol, SimpleTypeNullability.DEFINITELY_NOT_NULL, emptyList(), emptyList()),
                     arrayOf("" to IrSimpleTypeImpl(typeParameter.symbol, hasQuestionMark = true, emptyList(), emptyList())),
                     typeParameters = listOf(typeParameter),

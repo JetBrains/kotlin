@@ -201,4 +201,5 @@ object BuiltInOperatorNames {
     const val ILLEGAL_ARGUMENT_EXCEPTION = "illegalArgumentException"
     const val ANDAND = "ANDAND"
     const val OROR = "OROR"
+    const val CHECK_NOT_NULL = "CHECK_NOT_NULL"
 }

@@ -148,7 +148,7 @@ class IrBuiltInsOverDescriptors(
     }
 
     private fun defineCheckNotNullOperator(): IrSimpleFunctionSymbol {
-        val name = Name.identifier("CHECK_NOT_NULL")
+        val name = Name.identifier(BuiltInOperatorNames.CHECK_NOT_NULL)
         val typeParameterDescriptor: TypeParameterDescriptor
         val valueParameterDescriptor: ValueParameterDescriptor
 
