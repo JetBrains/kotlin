@@ -1209,6 +1209,22 @@ internal object ControlFlowSensibleEscapeAnalysis {
                 }
             }
 
+            inline fun <T : IrElement> checkGraphSizeAndVisit(element: T, state: BuilderState, visit: () -> Node): Node {
+                if (state.graph.forest.totalNodes > maxAllowedGraphSize) {
+                    context.log { "The graph is bigger than expected - skipping ${element.render()}" }
+                    return state.graph.unreachable()
+                }
+                return visit()
+            }
+
+            inline fun <T : IrElement> PointsToGraph.checkSizeAndVisit(element: T, visit: PointsToGraph.() -> Node): Node {
+                if (forest.totalNodes > maxAllowedGraphSize) {
+                    context.log { "The graph is bigger than expected - skipping ${element.render()}" }
+                    return unreachable()
+                }
+                return visit()
+            }
+
             override fun visitElement(element: IrElement, data: BuilderState): Node = TODO(element.render())
             override fun visitExpression(expression: IrExpression, data: BuilderState): Node = TODO(expression.render())
             override fun visitDeclaration(declaration: IrDeclarationBase, data: BuilderState): Node = TODO(declaration.render())
@@ -1224,9 +1240,9 @@ internal object ControlFlowSensibleEscapeAnalysis {
 
             override fun visitInstanceInitializerCall(expression: IrInstanceInitializerCall, data: BuilderState) = Node.Unit
 
-            override fun visitTypeOperator(expression: IrTypeOperatorCall, data: BuilderState): Node {
+            override fun visitTypeOperator(expression: IrTypeOperatorCall, data: BuilderState) = checkGraphSizeAndVisit(expression, data) {
                 val argResult = expression.argument.accept(this, data)
-                return when (expression.operator) {
+                when (expression.operator) {
                     IrTypeOperator.CAST, IrTypeOperator.IMPLICIT_CAST, IrTypeOperator.SAFE_CAST -> argResult
                     IrTypeOperator.IMPLICIT_COERCION_TO_UNIT -> Node.Unit
                     IrTypeOperator.INSTANCEOF, IrTypeOperator.NOT_INSTANCEOF -> data.constObjectNode(expression)
@@ -1234,10 +1250,12 @@ internal object ControlFlowSensibleEscapeAnalysis {
                 }
             }
 
-            override fun visitGetValue(expression: IrGetValue, data: BuilderState) = when (val owner = expression.symbol.owner) {
-                is IrValueParameter -> data.graph.parameterNodes[owner] ?: error("Unknown value parameter: ${owner.render()}")
-                is IrVariable -> data.graph.variableNodes[owner] ?: error("Unknown variable: ${owner.render()}")
-                else -> error("Unknown value declaration: ${owner.render()}")
+            override fun visitGetValue(expression: IrGetValue, data: BuilderState) = checkGraphSizeAndVisit(expression, data) {
+                when (val owner = expression.symbol.owner) {
+                    is IrValueParameter -> data.graph.parameterNodes[owner] ?: error("Unknown value parameter: ${owner.render()}")
+                    is IrVariable -> data.graph.variableNodes[owner] ?: error("Unknown variable: ${owner.render()}")
+                    else -> error("Unknown value declaration: ${owner.render()}")
+                }
             }
 
             fun PointsToGraph.eraseValue(reference: Node.Reference, nodeContext: NodeContext, anchorNodeId: Int = 0) {
@@ -1247,7 +1265,7 @@ internal object ControlFlowSensibleEscapeAnalysis {
                     reference.assignedWith.clear()
             }
 
-            override fun visitSetValue(expression: IrSetValue, data: BuilderState): Node = with(data.graph) {
+            override fun visitSetValue(expression: IrSetValue, data: BuilderState) = data.graph.checkSizeAndVisit(expression) {
                 debug {
                     context.log { "before ${expression.dump()}" }
                     logDigraph()
@@ -1277,7 +1295,7 @@ internal object ControlFlowSensibleEscapeAnalysis {
                 }
             }
 
-            override fun visitVariable(declaration: IrVariable, data: BuilderState): Node = with(data.graph) {
+            override fun visitVariable(declaration: IrVariable, data: BuilderState) = data.graph.checkSizeAndVisit(declaration) {
                 debug {
                     context.log { "before ${declaration.dump()}" }
                     logDigraph()
@@ -1318,7 +1336,7 @@ internal object ControlFlowSensibleEscapeAnalysis {
                 }
             }
 
-            override fun visitGetField(expression: IrGetField, data: BuilderState): Node = with(data.graph) {
+            override fun visitGetField(expression: IrGetField, data: BuilderState) = data.graph.checkSizeAndVisit(expression) {
                 debug {
                     context.log { "before ${expression.dump()}" }
                     logDigraph()
@@ -1359,7 +1377,7 @@ internal object ControlFlowSensibleEscapeAnalysis {
                 }
             }
 
-            override fun visitSetField(expression: IrSetField, data: BuilderState): Node = with(data.graph) {
+            override fun visitSetField(expression: IrSetField, data: BuilderState) = data.graph.checkSizeAndVisit(expression) {
                 debug {
                     context.log { "before ${expression.dump()}" }
                     logDigraph()
@@ -1418,7 +1436,7 @@ internal object ControlFlowSensibleEscapeAnalysis {
                 }
             }
 
-            override fun visitReturn(expression: IrReturn, data: BuilderState): Node {
+            override fun visitReturn(expression: IrReturn, data: BuilderState) = checkGraphSizeAndVisit(expression, data) {
                 val result = expression.value.accept(this, data)
                 val returnResult = returnTargetResults[expression.returnTargetSymbol]
                         ?: error("Unknown return target: ${expression.render()}")
@@ -1435,31 +1453,32 @@ internal object ControlFlowSensibleEscapeAnalysis {
                         returnResult.graphBuilder.build().logDigraph(context) { markedNodes.or(returnResult.valueIds) }
                     }
                 }
-                return data.graph.unreachable()
+                data.graph.unreachable()
             }
 
-            override fun visitContainerExpression(expression: IrContainerExpression, data: BuilderState): Node {
+            override fun visitContainerExpression(expression: IrContainerExpression, data: BuilderState) = checkGraphSizeAndVisit(expression, data) {
                 val returnableBlockSymbol = (expression as? IrReturnableBlock)?.symbol
                 if (returnableBlockSymbol == null) {
                     expression.statements.forEachIndexed { index, statement ->
                         val statementNode = statement.accept(this, data)
                         if (statementNode == Node.Nothing)
-                            return data.graph.unreachable()
+                            return@checkGraphSizeAndVisit data.graph.unreachable()
                         if (index == expression.statements.size - 1)
-                            return statementNode
+                            return@checkGraphSizeAndVisit statementNode
                     }
-                    return Node.Unit
+                    Node.Unit
+                } else {
+                    val returnableBlockResult = MultipleExpressionResult(BitSet(), forest.GraphBuilder(function))
+                    returnTargetResults[returnableBlockSymbol] = returnableBlockResult
+                    for (statement in expression.statements) {
+                        val statementNode = statement.accept(this, data)
+                        if (statementNode == Node.Nothing) break
+                    }
+                    controlFlowMergePoint(data.graph, data.toNodeContext(expression), expression.type, returnableBlockResult)
                 }
-                val returnableBlockResult = MultipleExpressionResult(BitSet(), forest.GraphBuilder(function))
-                returnTargetResults[returnableBlockSymbol] = returnableBlockResult
-                for (statement in expression.statements) {
-                    val statementNode = statement.accept(this, data)
-                    if (statementNode == Node.Nothing) break
-                }
-                return controlFlowMergePoint(data.graph, data.toNodeContext(expression), expression.type, returnableBlockResult)
             }
 
-            override fun visitWhen(expression: IrWhen, data: BuilderState): Node {
+            override fun visitWhen(expression: IrWhen, data: BuilderState) = checkGraphSizeAndVisit(expression, data) {
                 debug {
                     context.log { "before ${expression.dump()}" }
                     data.graph.logDigraph()
@@ -1478,7 +1497,7 @@ internal object ControlFlowSensibleEscapeAnalysis {
                     // Reflecting the case when none of the clauses have been executed.
                     branchResults.add(ExpressionResult(Node.Unit, data.graph.clone()))
                 }
-                return controlFlowMergePoint(data.graph, data.toNodeContext(expression), expression.type, branchResults).also {
+                controlFlowMergePoint(data.graph, data.toNodeContext(expression), expression.type, branchResults).also {
                     debug {
                         context.log { "after ${expression.dump()}" }
                         data.graph.logDigraph()
@@ -1486,7 +1505,7 @@ internal object ControlFlowSensibleEscapeAnalysis {
                 }
             }
 
-            override fun visitThrow(expression: IrThrow, data: BuilderState) = with(data.graph) {
+            override fun visitThrow(expression: IrThrow, data: BuilderState) = data.graph.checkSizeAndVisit(expression) {
                 debug {
                     context.log { "before ${expression.dump()}" }
                     data.graph.logDigraph()
@@ -1518,12 +1537,12 @@ internal object ControlFlowSensibleEscapeAnalysis {
                 data.graph.unreachable()
             }
 
-            override fun visitCatch(aCatch: IrCatch, data: BuilderState): Node {
+            override fun visitCatch(aCatch: IrCatch, data: BuilderState) = checkGraphSizeAndVisit(aCatch, data) {
                 require(aCatch.catchParameter.initializer == null) {
                     "Non-null initializer of a catch parameter: ${aCatch.catchParameter.render()}"
                 }
                 data.graph.getOrAddVariable(aCatch.catchParameter, data.level)
-                return aCatch.result.accept(this, data)
+                aCatch.result.accept(this, data)
             }
 
             /*
@@ -1538,7 +1557,7 @@ internal object ControlFlowSensibleEscapeAnalysis {
               TODO | And even more precise way if we distinguish between different exception types.
               TODO | (And save the graphs for all types as well). But it looks overkillish to me.
              */
-            override fun visitTry(aTry: IrTry, data: BuilderState): Node {
+            override fun visitTry(aTry: IrTry, data: BuilderState) = checkGraphSizeAndVisit(aTry, data) {
                 require(aTry.finallyExpression == null) { "All finally clauses should've been lowered out" }
                 debug {
                     context.log { "before ${aTry.dump()}" }
@@ -1570,7 +1589,7 @@ internal object ControlFlowSensibleEscapeAnalysis {
                    Here after the try block b.a gets rewritten but now we conservatively assume all the possible values,
                    because the catch clause result isn't Nothing.
                  */
-                return if (catchesResults.all { it.value == Node.Nothing }) {
+                if (catchesResults.all { it.value == Node.Nothing }) {
                     // We can get here only if no exception has been thrown at the try block
                     // (otherwise, it either would've been caught by one of the catch blocks or
                     // would've been thrown to upper scope and, since they all return nothing,
@@ -1587,13 +1606,13 @@ internal object ControlFlowSensibleEscapeAnalysis {
                 }
             }
 
-            override fun visitSuspensionPoint(expression: IrSuspensionPoint, data: BuilderState): Node {
+            override fun visitSuspensionPoint(expression: IrSuspensionPoint, data: BuilderState) = checkGraphSizeAndVisit(expression, data) {
                 expression.suspensionPointIdParameter.accept(this, data)
                 val normalResultGraph = data.graph.clone()
                 val normalResult = expression.result.accept(this, BuilderState(normalResultGraph, data.level, data.anchorIds, data.loop, data.tryBlock))
                 val resumeResultGraph = data.graph.clone()
                 val resumeResult = expression.resumeResult.accept(this, BuilderState(resumeResultGraph, data.level, data.anchorIds, data.loop, data.tryBlock))
-                return controlFlowMergePoint(data.graph, data.toNodeContext(expression), expression.type,
+                controlFlowMergePoint(data.graph, data.toNodeContext(expression), expression.type,
                         listOf(ExpressionResult(normalResult, normalResultGraph), ExpressionResult(resumeResult, resumeResultGraph))
                 )
             }
@@ -1613,7 +1632,7 @@ internal object ControlFlowSensibleEscapeAnalysis {
                 return data.graph.unreachable()
             }
 
-            override fun visitLoop(loop: IrLoop, data: BuilderState): Node {
+            override fun visitLoop(loop: IrLoop, data: BuilderState) = checkGraphSizeAndVisit(loop, data) {
                 debug {
                     context.log { "before ${loop.dump()}" }
                     data.graph.logDigraph()
@@ -1674,7 +1693,8 @@ internal object ControlFlowSensibleEscapeAnalysis {
                     context.log { "after ${loop.dump()}" }
                     data.graph.logDigraph()
                 }
-                return Node.Unit
+
+                Node.Unit
             }
 
             fun processCall(
@@ -1977,17 +1997,17 @@ internal object ControlFlowSensibleEscapeAnalysis {
                         allocations[expression] = it.id
                     }
 
-            override fun visitConstructorCall(expression: IrConstructorCall, data: BuilderState): Node {
+            override fun visitConstructorCall(expression: IrConstructorCall, data: BuilderState) = checkGraphSizeAndVisit(expression, data) {
                 val thisObject = data.allocObjectNode(expression, expression.symbol.owner.constructedClass)
                 val callResult = processConstructorCall(expression.symbol.owner, thisObject, expression, data)
-                return if (callResult == Node.Nothing || data.graph.forest.totalNodes > maxAllowedGraphSize
+                if (callResult == Node.Nothing || data.graph.forest.totalNodes > maxAllowedGraphSize
                         || thisObject.id >= data.graph.nodes.size || data.graph.nodes[thisObject.id] == null)
                     data.graph.unreachable()
                 else
                     data.graph.nodes[thisObject.id]!!
             }
 
-            override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall, data: BuilderState): Node {
+            override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall, data: BuilderState) = checkGraphSizeAndVisit(expression, data) {
                 val constructor = expression.symbol.owner
                 val thisReceiver = (function as IrConstructor).constructedClass.thisReceiver!!
                 val irThis = IrGetValueImpl(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, thisReceiver.type, thisReceiver.symbol)
