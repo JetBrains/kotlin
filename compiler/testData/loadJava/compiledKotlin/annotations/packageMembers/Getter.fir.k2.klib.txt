@@ -1,0 +1,7 @@
+public final val property: R|kotlin/Int|
+    @PROPERTY_GETTER:R|test/Anno|() public get(): R|kotlin/Int|
+
+public final annotation class Anno : R|kotlin/Annotation| {
+    public constructor(): R|test/Anno|
+
+}

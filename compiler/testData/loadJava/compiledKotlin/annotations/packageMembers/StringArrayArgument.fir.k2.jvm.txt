@@ -1,0 +1,15 @@
+field:@FIELD:R|test/Anno|(t = <implicitArrayOf>(String(prosper))) public final val bar: R|kotlin/Int|
+    public get(): R|kotlin/Int|
+
+@R|test/Anno|(t = <implicitArrayOf>()) public final fun baz(): R|kotlin/Unit|
+
+@R|test/Anno|(t = <implicitArrayOf>(String(live), String(long))) public final fun foo(): R|kotlin/Unit|
+
+public final annotation class Anno : R|kotlin/Annotation| {
+    public final val t: R|kotlin/Array<out kotlin/String>|
+        public get(): R|kotlin/Array<out kotlin/String>|
+
+    public constructor(vararg t: R|kotlin/Array<out kotlin/String>|): R|test/Anno|
+
+}
+

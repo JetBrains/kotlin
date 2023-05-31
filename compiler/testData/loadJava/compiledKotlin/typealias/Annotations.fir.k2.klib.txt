@@ -1,0 +1,11 @@
+@R|test/Ann|() public final typealias A1 = R|kotlin/String|
+
+@R|test/Ann|(value = String(OK)) public final typealias A2 = R|kotlin/String|
+
+@R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(R|kotlin/annotation/AnnotationTarget.TYPEALIAS|)) public final annotation class Ann : R|kotlin/Annotation| {
+    public final val value: R|kotlin/String|
+        public get(): R|kotlin/String|
+
+    public constructor(value: R|kotlin/String| = STUB): R|test/Ann|
+
+}

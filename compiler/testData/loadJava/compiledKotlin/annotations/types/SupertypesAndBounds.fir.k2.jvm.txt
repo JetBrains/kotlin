@@ -1,0 +1,9 @@
+@R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(R|kotlin/annotation/AnnotationTarget.TYPE|)) public final annotation class A : R|kotlin/Annotation| {
+    public constructor(): R|test/A|
+
+}
+
+public abstract interface Foo<T : R|@R|test/A|()  kotlin/Number|> : R|@R|test/A|()  java/io/Serializable| {
+    public abstract fun <E, F : R|E|> bar(): R|kotlin/Unit|
+
+}
