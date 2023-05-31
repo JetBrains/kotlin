@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.renderer
 
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.declarations.ResolveStateAccess
+import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticPropertyAccessor
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 
 class FirResolvePhaseRenderer {
@@ -14,8 +15,14 @@ class FirResolvePhaseRenderer {
     private val printer get() = components.printer
 
     fun render(element: FirElementWithResolveState) {
-        @OptIn(ResolveStateAccess::class)
-        printer.print("[${element.resolveState}] ")
+        val text = if (element is FirSyntheticPropertyAccessor) {
+            "[<synthetic>] "
+        } else {
+            @OptIn(ResolveStateAccess::class)
+            "[${element.resolveState}] "
+        }
+
+        printer.print(text)
     }
 
     fun render(element: FirAnnotationCall) {
