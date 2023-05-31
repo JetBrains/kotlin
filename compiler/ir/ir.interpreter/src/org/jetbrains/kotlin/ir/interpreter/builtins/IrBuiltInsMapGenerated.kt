@@ -15,179 +15,179 @@ import org.jetbrains.kotlin.ir.interpreter.proxy.Proxy
 internal fun interpretUnaryFunction(name: String, type: String, a: Any?): Any? {
     when (name) {
         "hashCode" -> when (type) {
-            "Boolean" -> return (a as Boolean).hashCode()
-            "Char" -> return (a as Char).hashCode()
-            "Byte" -> return (a as Byte).hashCode()
-            "Short" -> return (a as Short).hashCode()
-            "Int" -> return (a as Int).hashCode()
-            "Float" -> return (a as Float).hashCode()
-            "Long" -> return (a as Long).hashCode()
-            "Double" -> return (a as Double).hashCode()
-            "String" -> return (a as String).hashCode()
-            "Any" -> return (a as Any).hashCode()
+            "kotlin.Boolean" -> return (a as Boolean).hashCode()
+            "kotlin.Char" -> return (a as Char).hashCode()
+            "kotlin.Byte" -> return (a as Byte).hashCode()
+            "kotlin.Short" -> return (a as Short).hashCode()
+            "kotlin.Int" -> return (a as Int).hashCode()
+            "kotlin.Float" -> return (a as Float).hashCode()
+            "kotlin.Long" -> return (a as Long).hashCode()
+            "kotlin.Double" -> return (a as Double).hashCode()
+            "kotlin.String" -> return (a as String).hashCode()
+            "kotlin.Any" -> return (a as Any).hashCode()
         }
         "not" -> when (type) {
-            "Boolean" -> return (a as Boolean).not()
+            "kotlin.Boolean" -> return (a as Boolean).not()
         }
         "toString" -> when (type) {
-            "Boolean" -> return (a as Boolean).toString()
-            "Char" -> return (a as Char).toString()
-            "Byte" -> return (a as Byte).toString()
-            "Short" -> return (a as Short).toString()
-            "Int" -> return (a as Int).toString()
-            "Float" -> return (a as Float).toString()
-            "Long" -> return (a as Long).toString()
-            "Double" -> return (a as Double).toString()
-            "String" -> return (a as String).toString()
-            "Any" -> return (a as Any).toString()
-            "Any?" -> return a?.toString() ?: "null"
-            "Unit" -> return Unit.toString()
+            "kotlin.Boolean" -> return (a as Boolean).toString()
+            "kotlin.Char" -> return (a as Char).toString()
+            "kotlin.Byte" -> return (a as Byte).toString()
+            "kotlin.Short" -> return (a as Short).toString()
+            "kotlin.Int" -> return (a as Int).toString()
+            "kotlin.Float" -> return (a as Float).toString()
+            "kotlin.Long" -> return (a as Long).toString()
+            "kotlin.Double" -> return (a as Double).toString()
+            "kotlin.String" -> return (a as String).toString()
+            "kotlin.Any" -> return (a as Any).toString()
+            "kotlin.Any?" -> return a?.toString() ?: "null"
+            "kotlin.Unit" -> return Unit.toString()
         }
         "dec" -> when (type) {
-            "Char" -> return (a as Char).dec()
-            "Byte" -> return (a as Byte).dec()
-            "Short" -> return (a as Short).dec()
-            "Int" -> return (a as Int).dec()
-            "Float" -> return (a as Float).dec()
-            "Long" -> return (a as Long).dec()
-            "Double" -> return (a as Double).dec()
+            "kotlin.Char" -> return (a as Char).dec()
+            "kotlin.Byte" -> return (a as Byte).dec()
+            "kotlin.Short" -> return (a as Short).dec()
+            "kotlin.Int" -> return (a as Int).dec()
+            "kotlin.Float" -> return (a as Float).dec()
+            "kotlin.Long" -> return (a as Long).dec()
+            "kotlin.Double" -> return (a as Double).dec()
         }
         "inc" -> when (type) {
-            "Char" -> return (a as Char).inc()
-            "Byte" -> return (a as Byte).inc()
-            "Short" -> return (a as Short).inc()
-            "Int" -> return (a as Int).inc()
-            "Float" -> return (a as Float).inc()
-            "Long" -> return (a as Long).inc()
-            "Double" -> return (a as Double).inc()
+            "kotlin.Char" -> return (a as Char).inc()
+            "kotlin.Byte" -> return (a as Byte).inc()
+            "kotlin.Short" -> return (a as Short).inc()
+            "kotlin.Int" -> return (a as Int).inc()
+            "kotlin.Float" -> return (a as Float).inc()
+            "kotlin.Long" -> return (a as Long).inc()
+            "kotlin.Double" -> return (a as Double).inc()
         }
         "toByte" -> when (type) {
-            "Char" -> return (a as Char).toByte()
-            "Byte" -> return (a as Byte).toByte()
-            "Short" -> return (a as Short).toByte()
-            "Int" -> return (a as Int).toByte()
-            "Float" -> return (a as Float).toByte()
-            "Long" -> return (a as Long).toByte()
-            "Double" -> return (a as Double).toByte()
-            "Number" -> return (a as Number).toByte()
+            "kotlin.Char" -> return (a as Char).toByte()
+            "kotlin.Byte" -> return (a as Byte).toByte()
+            "kotlin.Short" -> return (a as Short).toByte()
+            "kotlin.Int" -> return (a as Int).toByte()
+            "kotlin.Float" -> return (a as Float).toByte()
+            "kotlin.Long" -> return (a as Long).toByte()
+            "kotlin.Double" -> return (a as Double).toByte()
+            "kotlin.Number" -> return (a as Number).toByte()
         }
         "toChar" -> when (type) {
-            "Char" -> return (a as Char).toChar()
-            "Byte" -> return (a as Byte).toChar()
-            "Short" -> return (a as Short).toChar()
-            "Int" -> return (a as Int).toChar()
-            "Float" -> return (a as Float).toChar()
-            "Long" -> return (a as Long).toChar()
-            "Double" -> return (a as Double).toChar()
-            "Number" -> return (a as Number).toChar()
+            "kotlin.Char" -> return (a as Char).toChar()
+            "kotlin.Byte" -> return (a as Byte).toChar()
+            "kotlin.Short" -> return (a as Short).toChar()
+            "kotlin.Int" -> return (a as Int).toChar()
+            "kotlin.Float" -> return (a as Float).toChar()
+            "kotlin.Long" -> return (a as Long).toChar()
+            "kotlin.Double" -> return (a as Double).toChar()
+            "kotlin.Number" -> return (a as Number).toChar()
         }
         "toDouble" -> when (type) {
-            "Char" -> return (a as Char).toDouble()
-            "Byte" -> return (a as Byte).toDouble()
-            "Short" -> return (a as Short).toDouble()
-            "Int" -> return (a as Int).toDouble()
-            "Float" -> return (a as Float).toDouble()
-            "Long" -> return (a as Long).toDouble()
-            "Double" -> return (a as Double).toDouble()
-            "Number" -> return (a as Number).toDouble()
+            "kotlin.Char" -> return (a as Char).toDouble()
+            "kotlin.Byte" -> return (a as Byte).toDouble()
+            "kotlin.Short" -> return (a as Short).toDouble()
+            "kotlin.Int" -> return (a as Int).toDouble()
+            "kotlin.Float" -> return (a as Float).toDouble()
+            "kotlin.Long" -> return (a as Long).toDouble()
+            "kotlin.Double" -> return (a as Double).toDouble()
+            "kotlin.Number" -> return (a as Number).toDouble()
         }
         "toFloat" -> when (type) {
-            "Char" -> return (a as Char).toFloat()
-            "Byte" -> return (a as Byte).toFloat()
-            "Short" -> return (a as Short).toFloat()
-            "Int" -> return (a as Int).toFloat()
-            "Float" -> return (a as Float).toFloat()
-            "Long" -> return (a as Long).toFloat()
-            "Double" -> return (a as Double).toFloat()
-            "Number" -> return (a as Number).toFloat()
+            "kotlin.Char" -> return (a as Char).toFloat()
+            "kotlin.Byte" -> return (a as Byte).toFloat()
+            "kotlin.Short" -> return (a as Short).toFloat()
+            "kotlin.Int" -> return (a as Int).toFloat()
+            "kotlin.Float" -> return (a as Float).toFloat()
+            "kotlin.Long" -> return (a as Long).toFloat()
+            "kotlin.Double" -> return (a as Double).toFloat()
+            "kotlin.Number" -> return (a as Number).toFloat()
         }
         "toInt" -> when (type) {
-            "Char" -> return (a as Char).toInt()
-            "Byte" -> return (a as Byte).toInt()
-            "Short" -> return (a as Short).toInt()
-            "Int" -> return (a as Int).toInt()
-            "Float" -> return (a as Float).toInt()
-            "Long" -> return (a as Long).toInt()
-            "Double" -> return (a as Double).toInt()
-            "Number" -> return (a as Number).toInt()
+            "kotlin.Char" -> return (a as Char).toInt()
+            "kotlin.Byte" -> return (a as Byte).toInt()
+            "kotlin.Short" -> return (a as Short).toInt()
+            "kotlin.Int" -> return (a as Int).toInt()
+            "kotlin.Float" -> return (a as Float).toInt()
+            "kotlin.Long" -> return (a as Long).toInt()
+            "kotlin.Double" -> return (a as Double).toInt()
+            "kotlin.Number" -> return (a as Number).toInt()
         }
         "toLong" -> when (type) {
-            "Char" -> return (a as Char).toLong()
-            "Byte" -> return (a as Byte).toLong()
-            "Short" -> return (a as Short).toLong()
-            "Int" -> return (a as Int).toLong()
-            "Float" -> return (a as Float).toLong()
-            "Long" -> return (a as Long).toLong()
-            "Double" -> return (a as Double).toLong()
-            "Number" -> return (a as Number).toLong()
+            "kotlin.Char" -> return (a as Char).toLong()
+            "kotlin.Byte" -> return (a as Byte).toLong()
+            "kotlin.Short" -> return (a as Short).toLong()
+            "kotlin.Int" -> return (a as Int).toLong()
+            "kotlin.Float" -> return (a as Float).toLong()
+            "kotlin.Long" -> return (a as Long).toLong()
+            "kotlin.Double" -> return (a as Double).toLong()
+            "kotlin.Number" -> return (a as Number).toLong()
         }
         "toShort" -> when (type) {
-            "Char" -> return (a as Char).toShort()
-            "Byte" -> return (a as Byte).toShort()
-            "Short" -> return (a as Short).toShort()
-            "Int" -> return (a as Int).toShort()
-            "Float" -> return (a as Float).toShort()
-            "Long" -> return (a as Long).toShort()
-            "Double" -> return (a as Double).toShort()
-            "Number" -> return (a as Number).toShort()
+            "kotlin.Char" -> return (a as Char).toShort()
+            "kotlin.Byte" -> return (a as Byte).toShort()
+            "kotlin.Short" -> return (a as Short).toShort()
+            "kotlin.Int" -> return (a as Int).toShort()
+            "kotlin.Float" -> return (a as Float).toShort()
+            "kotlin.Long" -> return (a as Long).toShort()
+            "kotlin.Double" -> return (a as Double).toShort()
+            "kotlin.Number" -> return (a as Number).toShort()
         }
         "unaryMinus" -> when (type) {
-            "Byte" -> return (a as Byte).unaryMinus()
-            "Short" -> return (a as Short).unaryMinus()
-            "Int" -> return (a as Int).unaryMinus()
-            "Float" -> return (a as Float).unaryMinus()
-            "Long" -> return (a as Long).unaryMinus()
-            "Double" -> return (a as Double).unaryMinus()
+            "kotlin.Byte" -> return (a as Byte).unaryMinus()
+            "kotlin.Short" -> return (a as Short).unaryMinus()
+            "kotlin.Int" -> return (a as Int).unaryMinus()
+            "kotlin.Float" -> return (a as Float).unaryMinus()
+            "kotlin.Long" -> return (a as Long).unaryMinus()
+            "kotlin.Double" -> return (a as Double).unaryMinus()
         }
         "unaryPlus" -> when (type) {
-            "Byte" -> return (a as Byte).unaryPlus()
-            "Short" -> return (a as Short).unaryPlus()
-            "Int" -> return (a as Int).unaryPlus()
-            "Float" -> return (a as Float).unaryPlus()
-            "Long" -> return (a as Long).unaryPlus()
-            "Double" -> return (a as Double).unaryPlus()
+            "kotlin.Byte" -> return (a as Byte).unaryPlus()
+            "kotlin.Short" -> return (a as Short).unaryPlus()
+            "kotlin.Int" -> return (a as Int).unaryPlus()
+            "kotlin.Float" -> return (a as Float).unaryPlus()
+            "kotlin.Long" -> return (a as Long).unaryPlus()
+            "kotlin.Double" -> return (a as Double).unaryPlus()
         }
         "inv" -> when (type) {
-            "Int" -> return (a as Int).inv()
-            "Long" -> return (a as Long).inv()
+            "kotlin.Int" -> return (a as Int).inv()
+            "kotlin.Long" -> return (a as Long).inv()
         }
         "length" -> when (type) {
-            "String" -> return (a as String).length
-            "CharSequence" -> return (a as CharSequence).length
+            "kotlin.String" -> return (a as String).length
+            "kotlin.CharSequence" -> return (a as CharSequence).length
         }
         "cause" -> when (type) {
-            "Throwable" -> return (a as Throwable).cause
+            "kotlin.Throwable" -> return (a as Throwable).cause
         }
         "message" -> when (type) {
-            "Throwable" -> return (a as Throwable).message
+            "kotlin.Throwable" -> return (a as Throwable).message
         }
         "size" -> when (type) {
-            "BooleanArray" -> return (a as BooleanArray).size
-            "CharArray" -> return (a as CharArray).size
-            "ByteArray" -> return (a as ByteArray).size
-            "ShortArray" -> return (a as ShortArray).size
-            "IntArray" -> return (a as IntArray).size
-            "FloatArray" -> return (a as FloatArray).size
-            "LongArray" -> return (a as LongArray).size
-            "DoubleArray" -> return (a as DoubleArray).size
-            "Array" -> return (a as Array<Any?>).size
+            "kotlin.BooleanArray" -> return (a as BooleanArray).size
+            "kotlin.CharArray" -> return (a as CharArray).size
+            "kotlin.ByteArray" -> return (a as ByteArray).size
+            "kotlin.ShortArray" -> return (a as ShortArray).size
+            "kotlin.IntArray" -> return (a as IntArray).size
+            "kotlin.FloatArray" -> return (a as FloatArray).size
+            "kotlin.LongArray" -> return (a as LongArray).size
+            "kotlin.DoubleArray" -> return (a as DoubleArray).size
+            "kotlin.Array" -> return (a as Array<Any?>).size
         }
         "iterator" -> when (type) {
-            "BooleanArray" -> return (a as BooleanArray).iterator()
-            "CharArray" -> return (a as CharArray).iterator()
-            "ByteArray" -> return (a as ByteArray).iterator()
-            "ShortArray" -> return (a as ShortArray).iterator()
-            "IntArray" -> return (a as IntArray).iterator()
-            "FloatArray" -> return (a as FloatArray).iterator()
-            "LongArray" -> return (a as LongArray).iterator()
-            "DoubleArray" -> return (a as DoubleArray).iterator()
-            "Array" -> return (a as Array<Any?>).iterator()
+            "kotlin.BooleanArray" -> return (a as BooleanArray).iterator()
+            "kotlin.CharArray" -> return (a as CharArray).iterator()
+            "kotlin.ByteArray" -> return (a as ByteArray).iterator()
+            "kotlin.ShortArray" -> return (a as ShortArray).iterator()
+            "kotlin.IntArray" -> return (a as IntArray).iterator()
+            "kotlin.FloatArray" -> return (a as FloatArray).iterator()
+            "kotlin.LongArray" -> return (a as LongArray).iterator()
+            "kotlin.DoubleArray" -> return (a as DoubleArray).iterator()
+            "kotlin.Array" -> return (a as Array<Any?>).iterator()
         }
         "CHECK_NOT_NULL" -> when (type) {
             "T0?" -> return a!!
         }
         "code" -> when (type) {
-            "Char" -> return (a as Char).code
+            "kotlin.Char" -> return (a as Char).code
         }
     }
     throw InterpreterMethodNotFoundError("Unknown function: $name($type)")
@@ -196,528 +196,504 @@ internal fun interpretUnaryFunction(name: String, type: String, a: Any?): Any? {
 internal fun interpretBinaryFunction(name: String, typeA: String, typeB: String, a: Any?, b: Any?): Any? {
     when (name) {
         "and" -> when (typeA) {
-            "Boolean" -> if (typeB == "Boolean") return (a as Boolean).and(b as Boolean)
-            "Int" -> if (typeB == "Int") return (a as Int).and(b as Int)
-            "Long" -> if (typeB == "Long") return (a as Long).and(b as Long)
+            "kotlin.Boolean" -> if (typeB == "kotlin.Boolean") return (a as Boolean).and(b as Boolean)
+            "kotlin.Int" -> if (typeB == "kotlin.Int") return (a as Int).and(b as Int)
+            "kotlin.Long" -> if (typeB == "kotlin.Long") return (a as Long).and(b as Long)
         }
         "compareTo" -> when (typeA) {
-            "Boolean" -> if (typeB == "Boolean") return (a as Boolean).compareTo(b as Boolean)
-            "Char" -> if (typeB == "Char") return (a as Char).compareTo(b as Char)
-            "Byte" -> when (typeB) {
-                "Byte" -> return (a as Byte).compareTo(b as Byte)
-                "Double" -> return (a as Byte).compareTo(b as Double)
-                "Float" -> return (a as Byte).compareTo(b as Float)
-                "Int" -> return (a as Byte).compareTo(b as Int)
-                "Long" -> return (a as Byte).compareTo(b as Long)
-                "Short" -> return (a as Byte).compareTo(b as Short)
+            "kotlin.Boolean" -> if (typeB == "kotlin.Boolean") return (a as Boolean).compareTo(b as Boolean)
+            "kotlin.Char" -> if (typeB == "kotlin.Char") return (a as Char).compareTo(b as Char)
+            "kotlin.Byte" -> when (typeB) {
+                "kotlin.Byte" -> return (a as Byte).compareTo(b as Byte)
+                "kotlin.Double" -> return (a as Byte).compareTo(b as Double)
+                "kotlin.Float" -> return (a as Byte).compareTo(b as Float)
+                "kotlin.Int" -> return (a as Byte).compareTo(b as Int)
+                "kotlin.Long" -> return (a as Byte).compareTo(b as Long)
+                "kotlin.Short" -> return (a as Byte).compareTo(b as Short)
             }
-            "Short" -> when (typeB) {
-                "Byte" -> return (a as Short).compareTo(b as Byte)
-                "Double" -> return (a as Short).compareTo(b as Double)
-                "Float" -> return (a as Short).compareTo(b as Float)
-                "Int" -> return (a as Short).compareTo(b as Int)
-                "Long" -> return (a as Short).compareTo(b as Long)
-                "Short" -> return (a as Short).compareTo(b as Short)
+            "kotlin.Short" -> when (typeB) {
+                "kotlin.Byte" -> return (a as Short).compareTo(b as Byte)
+                "kotlin.Double" -> return (a as Short).compareTo(b as Double)
+                "kotlin.Float" -> return (a as Short).compareTo(b as Float)
+                "kotlin.Int" -> return (a as Short).compareTo(b as Int)
+                "kotlin.Long" -> return (a as Short).compareTo(b as Long)
+                "kotlin.Short" -> return (a as Short).compareTo(b as Short)
             }
-            "Int" -> when (typeB) {
-                "Byte" -> return (a as Int).compareTo(b as Byte)
-                "Double" -> return (a as Int).compareTo(b as Double)
-                "Float" -> return (a as Int).compareTo(b as Float)
-                "Int" -> return (a as Int).compareTo(b as Int)
-                "Long" -> return (a as Int).compareTo(b as Long)
-                "Short" -> return (a as Int).compareTo(b as Short)
+            "kotlin.Int" -> when (typeB) {
+                "kotlin.Byte" -> return (a as Int).compareTo(b as Byte)
+                "kotlin.Double" -> return (a as Int).compareTo(b as Double)
+                "kotlin.Float" -> return (a as Int).compareTo(b as Float)
+                "kotlin.Int" -> return (a as Int).compareTo(b as Int)
+                "kotlin.Long" -> return (a as Int).compareTo(b as Long)
+                "kotlin.Short" -> return (a as Int).compareTo(b as Short)
             }
-            "Float" -> when (typeB) {
-                "Byte" -> return (a as Float).compareTo(b as Byte)
-                "Double" -> return (a as Float).compareTo(b as Double)
-                "Float" -> return (a as Float).compareTo(b as Float)
-                "Int" -> return (a as Float).compareTo(b as Int)
-                "Long" -> return (a as Float).compareTo(b as Long)
-                "Short" -> return (a as Float).compareTo(b as Short)
+            "kotlin.Float" -> when (typeB) {
+                "kotlin.Byte" -> return (a as Float).compareTo(b as Byte)
+                "kotlin.Double" -> return (a as Float).compareTo(b as Double)
+                "kotlin.Float" -> return (a as Float).compareTo(b as Float)
+                "kotlin.Int" -> return (a as Float).compareTo(b as Int)
+                "kotlin.Long" -> return (a as Float).compareTo(b as Long)
+                "kotlin.Short" -> return (a as Float).compareTo(b as Short)
             }
-            "Long" -> when (typeB) {
-                "Byte" -> return (a as Long).compareTo(b as Byte)
-                "Double" -> return (a as Long).compareTo(b as Double)
-                "Float" -> return (a as Long).compareTo(b as Float)
-                "Int" -> return (a as Long).compareTo(b as Int)
-                "Long" -> return (a as Long).compareTo(b as Long)
-                "Short" -> return (a as Long).compareTo(b as Short)
+            "kotlin.Long" -> when (typeB) {
+                "kotlin.Byte" -> return (a as Long).compareTo(b as Byte)
+                "kotlin.Double" -> return (a as Long).compareTo(b as Double)
+                "kotlin.Float" -> return (a as Long).compareTo(b as Float)
+                "kotlin.Int" -> return (a as Long).compareTo(b as Int)
+                "kotlin.Long" -> return (a as Long).compareTo(b as Long)
+                "kotlin.Short" -> return (a as Long).compareTo(b as Short)
             }
-            "Double" -> when (typeB) {
-                "Byte" -> return (a as Double).compareTo(b as Byte)
-                "Double" -> return (a as Double).compareTo(b as Double)
-                "Float" -> return (a as Double).compareTo(b as Float)
-                "Int" -> return (a as Double).compareTo(b as Int)
-                "Long" -> return (a as Double).compareTo(b as Long)
-                "Short" -> return (a as Double).compareTo(b as Short)
+            "kotlin.Double" -> when (typeB) {
+                "kotlin.Byte" -> return (a as Double).compareTo(b as Byte)
+                "kotlin.Double" -> return (a as Double).compareTo(b as Double)
+                "kotlin.Float" -> return (a as Double).compareTo(b as Float)
+                "kotlin.Int" -> return (a as Double).compareTo(b as Int)
+                "kotlin.Long" -> return (a as Double).compareTo(b as Long)
+                "kotlin.Short" -> return (a as Double).compareTo(b as Short)
             }
-            "String" -> if (typeB == "String") return (a as String).compareTo(b as String)
-            "Comparable" -> if (typeB == "T") return (a as Comparable<Any?>).compareTo(b)
+            "kotlin.String" -> if (typeB == "kotlin.String") return (a as String).compareTo(b as String)
+            "kotlin.Comparable" -> if (typeB == "T") return (a as Comparable<Any?>).compareTo(b)
         }
         "equals" -> when (typeA) {
-            "Boolean" -> when (typeB) {
-                "Any?" -> return (a as Boolean).equals(b)
-                "Boolean" -> return (a as Boolean).equals(b as Boolean)
-            }
-            "Char" -> when (typeB) {
-                "Any?" -> return (a as Char).equals(b)
-                "Char" -> return (a as Char).equals(b as Char)
-            }
-            "Byte" -> when (typeB) {
-                "Any?" -> return (a as Byte).equals(b)
-                "Byte" -> return (a as Byte).equals(b as Byte)
-            }
-            "Short" -> when (typeB) {
-                "Any?" -> return (a as Short).equals(b)
-                "Short" -> return (a as Short).equals(b as Short)
-            }
-            "Int" -> when (typeB) {
-                "Any?" -> return (a as Int).equals(b)
-                "Int" -> return (a as Int).equals(b as Int)
-            }
-            "Float" -> when (typeB) {
-                "Any?" -> return (a as Float).equals(b)
-                "Float" -> return (a as Float).equals(b as Float)
-            }
-            "Long" -> when (typeB) {
-                "Any?" -> return (a as Long).equals(b)
-                "Long" -> return (a as Long).equals(b as Long)
-            }
-            "Double" -> when (typeB) {
-                "Any?" -> return (a as Double).equals(b)
-                "Double" -> return (a as Double).equals(b as Double)
-            }
-            "String" -> if (typeB == "Any?") return (a as String).equals(b)
-            "Any" -> if (typeB == "Any?") return (a as Any).equals(b)
+            "kotlin.Boolean" -> if (typeB == "kotlin.Any?") return (a as Boolean).equals(b)
+            "kotlin.Char" -> if (typeB == "kotlin.Any?") return (a as Char).equals(b)
+            "kotlin.Byte" -> if (typeB == "kotlin.Any?") return (a as Byte).equals(b)
+            "kotlin.Short" -> if (typeB == "kotlin.Any?") return (a as Short).equals(b)
+            "kotlin.Int" -> if (typeB == "kotlin.Any?") return (a as Int).equals(b)
+            "kotlin.Float" -> if (typeB == "kotlin.Any?") return (a as Float).equals(b)
+            "kotlin.Long" -> if (typeB == "kotlin.Any?") return (a as Long).equals(b)
+            "kotlin.Double" -> if (typeB == "kotlin.Any?") return (a as Double).equals(b)
+            "kotlin.String" -> if (typeB == "kotlin.Any?") return (a as String).equals(b)
+            "kotlin.Any" -> if (typeB == "kotlin.Any?") return (a as Any).equals(b)
         }
         "or" -> when (typeA) {
-            "Boolean" -> if (typeB == "Boolean") return (a as Boolean).or(b as Boolean)
-            "Int" -> if (typeB == "Int") return (a as Int).or(b as Int)
-            "Long" -> if (typeB == "Long") return (a as Long).or(b as Long)
+            "kotlin.Boolean" -> if (typeB == "kotlin.Boolean") return (a as Boolean).or(b as Boolean)
+            "kotlin.Int" -> if (typeB == "kotlin.Int") return (a as Int).or(b as Int)
+            "kotlin.Long" -> if (typeB == "kotlin.Long") return (a as Long).or(b as Long)
         }
         "xor" -> when (typeA) {
-            "Boolean" -> if (typeB == "Boolean") return (a as Boolean).xor(b as Boolean)
-            "Int" -> if (typeB == "Int") return (a as Int).xor(b as Int)
-            "Long" -> if (typeB == "Long") return (a as Long).xor(b as Long)
+            "kotlin.Boolean" -> if (typeB == "kotlin.Boolean") return (a as Boolean).xor(b as Boolean)
+            "kotlin.Int" -> if (typeB == "kotlin.Int") return (a as Int).xor(b as Int)
+            "kotlin.Long" -> if (typeB == "kotlin.Long") return (a as Long).xor(b as Long)
         }
         "minus" -> when (typeA) {
-            "Char" -> when (typeB) {
-                "Char" -> return (a as Char).minus(b as Char)
-                "Int" -> return (a as Char).minus(b as Int)
+            "kotlin.Char" -> when (typeB) {
+                "kotlin.Char" -> return (a as Char).minus(b as Char)
+                "kotlin.Int" -> return (a as Char).minus(b as Int)
             }
-            "Byte" -> when (typeB) {
-                "Byte" -> return (a as Byte).minus(b as Byte)
-                "Double" -> return (a as Byte).minus(b as Double)
-                "Float" -> return (a as Byte).minus(b as Float)
-                "Int" -> return (a as Byte).minus(b as Int)
-                "Long" -> return (a as Byte).minus(b as Long)
-                "Short" -> return (a as Byte).minus(b as Short)
+            "kotlin.Byte" -> when (typeB) {
+                "kotlin.Byte" -> return (a as Byte).minus(b as Byte)
+                "kotlin.Double" -> return (a as Byte).minus(b as Double)
+                "kotlin.Float" -> return (a as Byte).minus(b as Float)
+                "kotlin.Int" -> return (a as Byte).minus(b as Int)
+                "kotlin.Long" -> return (a as Byte).minus(b as Long)
+                "kotlin.Short" -> return (a as Byte).minus(b as Short)
             }
-            "Short" -> when (typeB) {
-                "Byte" -> return (a as Short).minus(b as Byte)
-                "Double" -> return (a as Short).minus(b as Double)
-                "Float" -> return (a as Short).minus(b as Float)
-                "Int" -> return (a as Short).minus(b as Int)
-                "Long" -> return (a as Short).minus(b as Long)
-                "Short" -> return (a as Short).minus(b as Short)
+            "kotlin.Short" -> when (typeB) {
+                "kotlin.Byte" -> return (a as Short).minus(b as Byte)
+                "kotlin.Double" -> return (a as Short).minus(b as Double)
+                "kotlin.Float" -> return (a as Short).minus(b as Float)
+                "kotlin.Int" -> return (a as Short).minus(b as Int)
+                "kotlin.Long" -> return (a as Short).minus(b as Long)
+                "kotlin.Short" -> return (a as Short).minus(b as Short)
             }
-            "Int" -> when (typeB) {
-                "Byte" -> return (a as Int).minus(b as Byte)
-                "Double" -> return (a as Int).minus(b as Double)
-                "Float" -> return (a as Int).minus(b as Float)
-                "Int" -> return (a as Int).minus(b as Int)
-                "Long" -> return (a as Int).minus(b as Long)
-                "Short" -> return (a as Int).minus(b as Short)
+            "kotlin.Int" -> when (typeB) {
+                "kotlin.Byte" -> return (a as Int).minus(b as Byte)
+                "kotlin.Double" -> return (a as Int).minus(b as Double)
+                "kotlin.Float" -> return (a as Int).minus(b as Float)
+                "kotlin.Int" -> return (a as Int).minus(b as Int)
+                "kotlin.Long" -> return (a as Int).minus(b as Long)
+                "kotlin.Short" -> return (a as Int).minus(b as Short)
             }
-            "Float" -> when (typeB) {
-                "Byte" -> return (a as Float).minus(b as Byte)
-                "Double" -> return (a as Float).minus(b as Double)
-                "Float" -> return (a as Float).minus(b as Float)
-                "Int" -> return (a as Float).minus(b as Int)
-                "Long" -> return (a as Float).minus(b as Long)
-                "Short" -> return (a as Float).minus(b as Short)
+            "kotlin.Float" -> when (typeB) {
+                "kotlin.Byte" -> return (a as Float).minus(b as Byte)
+                "kotlin.Double" -> return (a as Float).minus(b as Double)
+                "kotlin.Float" -> return (a as Float).minus(b as Float)
+                "kotlin.Int" -> return (a as Float).minus(b as Int)
+                "kotlin.Long" -> return (a as Float).minus(b as Long)
+                "kotlin.Short" -> return (a as Float).minus(b as Short)
             }
-            "Long" -> when (typeB) {
-                "Byte" -> return (a as Long).minus(b as Byte)
-                "Double" -> return (a as Long).minus(b as Double)
-                "Float" -> return (a as Long).minus(b as Float)
-                "Int" -> return (a as Long).minus(b as Int)
-                "Long" -> return (a as Long).minus(b as Long)
-                "Short" -> return (a as Long).minus(b as Short)
+            "kotlin.Long" -> when (typeB) {
+                "kotlin.Byte" -> return (a as Long).minus(b as Byte)
+                "kotlin.Double" -> return (a as Long).minus(b as Double)
+                "kotlin.Float" -> return (a as Long).minus(b as Float)
+                "kotlin.Int" -> return (a as Long).minus(b as Int)
+                "kotlin.Long" -> return (a as Long).minus(b as Long)
+                "kotlin.Short" -> return (a as Long).minus(b as Short)
             }
-            "Double" -> when (typeB) {
-                "Byte" -> return (a as Double).minus(b as Byte)
-                "Double" -> return (a as Double).minus(b as Double)
-                "Float" -> return (a as Double).minus(b as Float)
-                "Int" -> return (a as Double).minus(b as Int)
-                "Long" -> return (a as Double).minus(b as Long)
-                "Short" -> return (a as Double).minus(b as Short)
+            "kotlin.Double" -> when (typeB) {
+                "kotlin.Byte" -> return (a as Double).minus(b as Byte)
+                "kotlin.Double" -> return (a as Double).minus(b as Double)
+                "kotlin.Float" -> return (a as Double).minus(b as Float)
+                "kotlin.Int" -> return (a as Double).minus(b as Int)
+                "kotlin.Long" -> return (a as Double).minus(b as Long)
+                "kotlin.Short" -> return (a as Double).minus(b as Short)
             }
         }
         "plus" -> when (typeA) {
-            "Char" -> if (typeB == "Int") return (a as Char).plus(b as Int)
-            "Byte" -> when (typeB) {
-                "Byte" -> return (a as Byte).plus(b as Byte)
-                "Double" -> return (a as Byte).plus(b as Double)
-                "Float" -> return (a as Byte).plus(b as Float)
-                "Int" -> return (a as Byte).plus(b as Int)
-                "Long" -> return (a as Byte).plus(b as Long)
-                "Short" -> return (a as Byte).plus(b as Short)
+            "kotlin.Char" -> if (typeB == "kotlin.Int") return (a as Char).plus(b as Int)
+            "kotlin.Byte" -> when (typeB) {
+                "kotlin.Byte" -> return (a as Byte).plus(b as Byte)
+                "kotlin.Double" -> return (a as Byte).plus(b as Double)
+                "kotlin.Float" -> return (a as Byte).plus(b as Float)
+                "kotlin.Int" -> return (a as Byte).plus(b as Int)
+                "kotlin.Long" -> return (a as Byte).plus(b as Long)
+                "kotlin.Short" -> return (a as Byte).plus(b as Short)
             }
-            "Short" -> when (typeB) {
-                "Byte" -> return (a as Short).plus(b as Byte)
-                "Double" -> return (a as Short).plus(b as Double)
-                "Float" -> return (a as Short).plus(b as Float)
-                "Int" -> return (a as Short).plus(b as Int)
-                "Long" -> return (a as Short).plus(b as Long)
-                "Short" -> return (a as Short).plus(b as Short)
+            "kotlin.Short" -> when (typeB) {
+                "kotlin.Byte" -> return (a as Short).plus(b as Byte)
+                "kotlin.Double" -> return (a as Short).plus(b as Double)
+                "kotlin.Float" -> return (a as Short).plus(b as Float)
+                "kotlin.Int" -> return (a as Short).plus(b as Int)
+                "kotlin.Long" -> return (a as Short).plus(b as Long)
+                "kotlin.Short" -> return (a as Short).plus(b as Short)
             }
-            "Int" -> when (typeB) {
-                "Byte" -> return (a as Int).plus(b as Byte)
-                "Double" -> return (a as Int).plus(b as Double)
-                "Float" -> return (a as Int).plus(b as Float)
-                "Int" -> return (a as Int).plus(b as Int)
-                "Long" -> return (a as Int).plus(b as Long)
-                "Short" -> return (a as Int).plus(b as Short)
+            "kotlin.Int" -> when (typeB) {
+                "kotlin.Byte" -> return (a as Int).plus(b as Byte)
+                "kotlin.Double" -> return (a as Int).plus(b as Double)
+                "kotlin.Float" -> return (a as Int).plus(b as Float)
+                "kotlin.Int" -> return (a as Int).plus(b as Int)
+                "kotlin.Long" -> return (a as Int).plus(b as Long)
+                "kotlin.Short" -> return (a as Int).plus(b as Short)
             }
-            "Float" -> when (typeB) {
-                "Byte" -> return (a as Float).plus(b as Byte)
-                "Double" -> return (a as Float).plus(b as Double)
-                "Float" -> return (a as Float).plus(b as Float)
-                "Int" -> return (a as Float).plus(b as Int)
-                "Long" -> return (a as Float).plus(b as Long)
-                "Short" -> return (a as Float).plus(b as Short)
+            "kotlin.Float" -> when (typeB) {
+                "kotlin.Byte" -> return (a as Float).plus(b as Byte)
+                "kotlin.Double" -> return (a as Float).plus(b as Double)
+                "kotlin.Float" -> return (a as Float).plus(b as Float)
+                "kotlin.Int" -> return (a as Float).plus(b as Int)
+                "kotlin.Long" -> return (a as Float).plus(b as Long)
+                "kotlin.Short" -> return (a as Float).plus(b as Short)
             }
-            "Long" -> when (typeB) {
-                "Byte" -> return (a as Long).plus(b as Byte)
-                "Double" -> return (a as Long).plus(b as Double)
-                "Float" -> return (a as Long).plus(b as Float)
-                "Int" -> return (a as Long).plus(b as Int)
-                "Long" -> return (a as Long).plus(b as Long)
-                "Short" -> return (a as Long).plus(b as Short)
+            "kotlin.Long" -> when (typeB) {
+                "kotlin.Byte" -> return (a as Long).plus(b as Byte)
+                "kotlin.Double" -> return (a as Long).plus(b as Double)
+                "kotlin.Float" -> return (a as Long).plus(b as Float)
+                "kotlin.Int" -> return (a as Long).plus(b as Int)
+                "kotlin.Long" -> return (a as Long).plus(b as Long)
+                "kotlin.Short" -> return (a as Long).plus(b as Short)
             }
-            "Double" -> when (typeB) {
-                "Byte" -> return (a as Double).plus(b as Byte)
-                "Double" -> return (a as Double).plus(b as Double)
-                "Float" -> return (a as Double).plus(b as Float)
-                "Int" -> return (a as Double).plus(b as Int)
-                "Long" -> return (a as Double).plus(b as Long)
-                "Short" -> return (a as Double).plus(b as Short)
+            "kotlin.Double" -> when (typeB) {
+                "kotlin.Byte" -> return (a as Double).plus(b as Byte)
+                "kotlin.Double" -> return (a as Double).plus(b as Double)
+                "kotlin.Float" -> return (a as Double).plus(b as Float)
+                "kotlin.Int" -> return (a as Double).plus(b as Int)
+                "kotlin.Long" -> return (a as Double).plus(b as Long)
+                "kotlin.Short" -> return (a as Double).plus(b as Short)
             }
-            "String" -> if (typeB == "Any?") return (a as String).plus(b)
+            "kotlin.String" -> if (typeB == "kotlin.Any?") return (a as String).plus(b)
         }
         "rangeTo" -> when (typeA) {
-            "Char" -> if (typeB == "Char") return (a as Char).rangeTo(b as Char)
-            "Byte" -> when (typeB) {
-                "Byte" -> return (a as Byte).rangeTo(b as Byte)
-                "Int" -> return (a as Byte).rangeTo(b as Int)
-                "Long" -> return (a as Byte).rangeTo(b as Long)
-                "Short" -> return (a as Byte).rangeTo(b as Short)
+            "kotlin.Char" -> if (typeB == "kotlin.Char") return (a as Char).rangeTo(b as Char)
+            "kotlin.Byte" -> when (typeB) {
+                "kotlin.Byte" -> return (a as Byte).rangeTo(b as Byte)
+                "kotlin.Int" -> return (a as Byte).rangeTo(b as Int)
+                "kotlin.Long" -> return (a as Byte).rangeTo(b as Long)
+                "kotlin.Short" -> return (a as Byte).rangeTo(b as Short)
             }
-            "Short" -> when (typeB) {
-                "Byte" -> return (a as Short).rangeTo(b as Byte)
-                "Int" -> return (a as Short).rangeTo(b as Int)
-                "Long" -> return (a as Short).rangeTo(b as Long)
-                "Short" -> return (a as Short).rangeTo(b as Short)
+            "kotlin.Short" -> when (typeB) {
+                "kotlin.Byte" -> return (a as Short).rangeTo(b as Byte)
+                "kotlin.Int" -> return (a as Short).rangeTo(b as Int)
+                "kotlin.Long" -> return (a as Short).rangeTo(b as Long)
+                "kotlin.Short" -> return (a as Short).rangeTo(b as Short)
             }
-            "Int" -> when (typeB) {
-                "Byte" -> return (a as Int).rangeTo(b as Byte)
-                "Int" -> return (a as Int).rangeTo(b as Int)
-                "Long" -> return (a as Int).rangeTo(b as Long)
-                "Short" -> return (a as Int).rangeTo(b as Short)
+            "kotlin.Int" -> when (typeB) {
+                "kotlin.Byte" -> return (a as Int).rangeTo(b as Byte)
+                "kotlin.Int" -> return (a as Int).rangeTo(b as Int)
+                "kotlin.Long" -> return (a as Int).rangeTo(b as Long)
+                "kotlin.Short" -> return (a as Int).rangeTo(b as Short)
             }
-            "Long" -> when (typeB) {
-                "Byte" -> return (a as Long).rangeTo(b as Byte)
-                "Int" -> return (a as Long).rangeTo(b as Int)
-                "Long" -> return (a as Long).rangeTo(b as Long)
-                "Short" -> return (a as Long).rangeTo(b as Short)
+            "kotlin.Long" -> when (typeB) {
+                "kotlin.Byte" -> return (a as Long).rangeTo(b as Byte)
+                "kotlin.Int" -> return (a as Long).rangeTo(b as Int)
+                "kotlin.Long" -> return (a as Long).rangeTo(b as Long)
+                "kotlin.Short" -> return (a as Long).rangeTo(b as Short)
             }
         }
         "div" -> when (typeA) {
-            "Byte" -> when (typeB) {
-                "Byte" -> return (a as Byte).div(b as Byte)
-                "Double" -> return (a as Byte).div(b as Double)
-                "Float" -> return (a as Byte).div(b as Float)
-                "Int" -> return (a as Byte).div(b as Int)
-                "Long" -> return (a as Byte).div(b as Long)
-                "Short" -> return (a as Byte).div(b as Short)
+            "kotlin.Byte" -> when (typeB) {
+                "kotlin.Byte" -> return (a as Byte).div(b as Byte)
+                "kotlin.Double" -> return (a as Byte).div(b as Double)
+                "kotlin.Float" -> return (a as Byte).div(b as Float)
+                "kotlin.Int" -> return (a as Byte).div(b as Int)
+                "kotlin.Long" -> return (a as Byte).div(b as Long)
+                "kotlin.Short" -> return (a as Byte).div(b as Short)
             }
-            "Short" -> when (typeB) {
-                "Byte" -> return (a as Short).div(b as Byte)
-                "Double" -> return (a as Short).div(b as Double)
-                "Float" -> return (a as Short).div(b as Float)
-                "Int" -> return (a as Short).div(b as Int)
-                "Long" -> return (a as Short).div(b as Long)
-                "Short" -> return (a as Short).div(b as Short)
+            "kotlin.Short" -> when (typeB) {
+                "kotlin.Byte" -> return (a as Short).div(b as Byte)
+                "kotlin.Double" -> return (a as Short).div(b as Double)
+                "kotlin.Float" -> return (a as Short).div(b as Float)
+                "kotlin.Int" -> return (a as Short).div(b as Int)
+                "kotlin.Long" -> return (a as Short).div(b as Long)
+                "kotlin.Short" -> return (a as Short).div(b as Short)
             }
-            "Int" -> when (typeB) {
-                "Byte" -> return (a as Int).div(b as Byte)
-                "Double" -> return (a as Int).div(b as Double)
-                "Float" -> return (a as Int).div(b as Float)
-                "Int" -> return (a as Int).div(b as Int)
-                "Long" -> return (a as Int).div(b as Long)
-                "Short" -> return (a as Int).div(b as Short)
+            "kotlin.Int" -> when (typeB) {
+                "kotlin.Byte" -> return (a as Int).div(b as Byte)
+                "kotlin.Double" -> return (a as Int).div(b as Double)
+                "kotlin.Float" -> return (a as Int).div(b as Float)
+                "kotlin.Int" -> return (a as Int).div(b as Int)
+                "kotlin.Long" -> return (a as Int).div(b as Long)
+                "kotlin.Short" -> return (a as Int).div(b as Short)
             }
-            "Float" -> when (typeB) {
-                "Byte" -> return (a as Float).div(b as Byte)
-                "Double" -> return (a as Float).div(b as Double)
-                "Float" -> return (a as Float).div(b as Float)
-                "Int" -> return (a as Float).div(b as Int)
-                "Long" -> return (a as Float).div(b as Long)
-                "Short" -> return (a as Float).div(b as Short)
+            "kotlin.Float" -> when (typeB) {
+                "kotlin.Byte" -> return (a as Float).div(b as Byte)
+                "kotlin.Double" -> return (a as Float).div(b as Double)
+                "kotlin.Float" -> return (a as Float).div(b as Float)
+                "kotlin.Int" -> return (a as Float).div(b as Int)
+                "kotlin.Long" -> return (a as Float).div(b as Long)
+                "kotlin.Short" -> return (a as Float).div(b as Short)
             }
-            "Long" -> when (typeB) {
-                "Byte" -> return (a as Long).div(b as Byte)
-                "Double" -> return (a as Long).div(b as Double)
-                "Float" -> return (a as Long).div(b as Float)
-                "Int" -> return (a as Long).div(b as Int)
-                "Long" -> return (a as Long).div(b as Long)
-                "Short" -> return (a as Long).div(b as Short)
+            "kotlin.Long" -> when (typeB) {
+                "kotlin.Byte" -> return (a as Long).div(b as Byte)
+                "kotlin.Double" -> return (a as Long).div(b as Double)
+                "kotlin.Float" -> return (a as Long).div(b as Float)
+                "kotlin.Int" -> return (a as Long).div(b as Int)
+                "kotlin.Long" -> return (a as Long).div(b as Long)
+                "kotlin.Short" -> return (a as Long).div(b as Short)
             }
-            "Double" -> when (typeB) {
-                "Byte" -> return (a as Double).div(b as Byte)
-                "Double" -> return (a as Double).div(b as Double)
-                "Float" -> return (a as Double).div(b as Float)
-                "Int" -> return (a as Double).div(b as Int)
-                "Long" -> return (a as Double).div(b as Long)
-                "Short" -> return (a as Double).div(b as Short)
+            "kotlin.Double" -> when (typeB) {
+                "kotlin.Byte" -> return (a as Double).div(b as Byte)
+                "kotlin.Double" -> return (a as Double).div(b as Double)
+                "kotlin.Float" -> return (a as Double).div(b as Float)
+                "kotlin.Int" -> return (a as Double).div(b as Int)
+                "kotlin.Long" -> return (a as Double).div(b as Long)
+                "kotlin.Short" -> return (a as Double).div(b as Short)
             }
         }
         "rem" -> when (typeA) {
-            "Byte" -> when (typeB) {
-                "Byte" -> return (a as Byte).rem(b as Byte)
-                "Double" -> return (a as Byte).rem(b as Double)
-                "Float" -> return (a as Byte).rem(b as Float)
-                "Int" -> return (a as Byte).rem(b as Int)
-                "Long" -> return (a as Byte).rem(b as Long)
-                "Short" -> return (a as Byte).rem(b as Short)
+            "kotlin.Byte" -> when (typeB) {
+                "kotlin.Byte" -> return (a as Byte).rem(b as Byte)
+                "kotlin.Double" -> return (a as Byte).rem(b as Double)
+                "kotlin.Float" -> return (a as Byte).rem(b as Float)
+                "kotlin.Int" -> return (a as Byte).rem(b as Int)
+                "kotlin.Long" -> return (a as Byte).rem(b as Long)
+                "kotlin.Short" -> return (a as Byte).rem(b as Short)
             }
-            "Short" -> when (typeB) {
-                "Byte" -> return (a as Short).rem(b as Byte)
-                "Double" -> return (a as Short).rem(b as Double)
-                "Float" -> return (a as Short).rem(b as Float)
-                "Int" -> return (a as Short).rem(b as Int)
-                "Long" -> return (a as Short).rem(b as Long)
-                "Short" -> return (a as Short).rem(b as Short)
+            "kotlin.Short" -> when (typeB) {
+                "kotlin.Byte" -> return (a as Short).rem(b as Byte)
+                "kotlin.Double" -> return (a as Short).rem(b as Double)
+                "kotlin.Float" -> return (a as Short).rem(b as Float)
+                "kotlin.Int" -> return (a as Short).rem(b as Int)
+                "kotlin.Long" -> return (a as Short).rem(b as Long)
+                "kotlin.Short" -> return (a as Short).rem(b as Short)
             }
-            "Int" -> when (typeB) {
-                "Byte" -> return (a as Int).rem(b as Byte)
-                "Double" -> return (a as Int).rem(b as Double)
-                "Float" -> return (a as Int).rem(b as Float)
-                "Int" -> return (a as Int).rem(b as Int)
-                "Long" -> return (a as Int).rem(b as Long)
-                "Short" -> return (a as Int).rem(b as Short)
+            "kotlin.Int" -> when (typeB) {
+                "kotlin.Byte" -> return (a as Int).rem(b as Byte)
+                "kotlin.Double" -> return (a as Int).rem(b as Double)
+                "kotlin.Float" -> return (a as Int).rem(b as Float)
+                "kotlin.Int" -> return (a as Int).rem(b as Int)
+                "kotlin.Long" -> return (a as Int).rem(b as Long)
+                "kotlin.Short" -> return (a as Int).rem(b as Short)
             }
-            "Float" -> when (typeB) {
-                "Byte" -> return (a as Float).rem(b as Byte)
-                "Double" -> return (a as Float).rem(b as Double)
-                "Float" -> return (a as Float).rem(b as Float)
-                "Int" -> return (a as Float).rem(b as Int)
-                "Long" -> return (a as Float).rem(b as Long)
-                "Short" -> return (a as Float).rem(b as Short)
+            "kotlin.Float" -> when (typeB) {
+                "kotlin.Byte" -> return (a as Float).rem(b as Byte)
+                "kotlin.Double" -> return (a as Float).rem(b as Double)
+                "kotlin.Float" -> return (a as Float).rem(b as Float)
+                "kotlin.Int" -> return (a as Float).rem(b as Int)
+                "kotlin.Long" -> return (a as Float).rem(b as Long)
+                "kotlin.Short" -> return (a as Float).rem(b as Short)
             }
-            "Long" -> when (typeB) {
-                "Byte" -> return (a as Long).rem(b as Byte)
-                "Double" -> return (a as Long).rem(b as Double)
-                "Float" -> return (a as Long).rem(b as Float)
-                "Int" -> return (a as Long).rem(b as Int)
-                "Long" -> return (a as Long).rem(b as Long)
-                "Short" -> return (a as Long).rem(b as Short)
+            "kotlin.Long" -> when (typeB) {
+                "kotlin.Byte" -> return (a as Long).rem(b as Byte)
+                "kotlin.Double" -> return (a as Long).rem(b as Double)
+                "kotlin.Float" -> return (a as Long).rem(b as Float)
+                "kotlin.Int" -> return (a as Long).rem(b as Int)
+                "kotlin.Long" -> return (a as Long).rem(b as Long)
+                "kotlin.Short" -> return (a as Long).rem(b as Short)
             }
-            "Double" -> when (typeB) {
-                "Byte" -> return (a as Double).rem(b as Byte)
-                "Double" -> return (a as Double).rem(b as Double)
-                "Float" -> return (a as Double).rem(b as Float)
-                "Int" -> return (a as Double).rem(b as Int)
-                "Long" -> return (a as Double).rem(b as Long)
-                "Short" -> return (a as Double).rem(b as Short)
+            "kotlin.Double" -> when (typeB) {
+                "kotlin.Byte" -> return (a as Double).rem(b as Byte)
+                "kotlin.Double" -> return (a as Double).rem(b as Double)
+                "kotlin.Float" -> return (a as Double).rem(b as Float)
+                "kotlin.Int" -> return (a as Double).rem(b as Int)
+                "kotlin.Long" -> return (a as Double).rem(b as Long)
+                "kotlin.Short" -> return (a as Double).rem(b as Short)
             }
         }
         "times" -> when (typeA) {
-            "Byte" -> when (typeB) {
-                "Byte" -> return (a as Byte).times(b as Byte)
-                "Double" -> return (a as Byte).times(b as Double)
-                "Float" -> return (a as Byte).times(b as Float)
-                "Int" -> return (a as Byte).times(b as Int)
-                "Long" -> return (a as Byte).times(b as Long)
-                "Short" -> return (a as Byte).times(b as Short)
+            "kotlin.Byte" -> when (typeB) {
+                "kotlin.Byte" -> return (a as Byte).times(b as Byte)
+                "kotlin.Double" -> return (a as Byte).times(b as Double)
+                "kotlin.Float" -> return (a as Byte).times(b as Float)
+                "kotlin.Int" -> return (a as Byte).times(b as Int)
+                "kotlin.Long" -> return (a as Byte).times(b as Long)
+                "kotlin.Short" -> return (a as Byte).times(b as Short)
             }
-            "Short" -> when (typeB) {
-                "Byte" -> return (a as Short).times(b as Byte)
-                "Double" -> return (a as Short).times(b as Double)
-                "Float" -> return (a as Short).times(b as Float)
-                "Int" -> return (a as Short).times(b as Int)
-                "Long" -> return (a as Short).times(b as Long)
-                "Short" -> return (a as Short).times(b as Short)
+            "kotlin.Short" -> when (typeB) {
+                "kotlin.Byte" -> return (a as Short).times(b as Byte)
+                "kotlin.Double" -> return (a as Short).times(b as Double)
+                "kotlin.Float" -> return (a as Short).times(b as Float)
+                "kotlin.Int" -> return (a as Short).times(b as Int)
+                "kotlin.Long" -> return (a as Short).times(b as Long)
+                "kotlin.Short" -> return (a as Short).times(b as Short)
             }
-            "Int" -> when (typeB) {
-                "Byte" -> return (a as Int).times(b as Byte)
-                "Double" -> return (a as Int).times(b as Double)
-                "Float" -> return (a as Int).times(b as Float)
-                "Int" -> return (a as Int).times(b as Int)
-                "Long" -> return (a as Int).times(b as Long)
-                "Short" -> return (a as Int).times(b as Short)
+            "kotlin.Int" -> when (typeB) {
+                "kotlin.Byte" -> return (a as Int).times(b as Byte)
+                "kotlin.Double" -> return (a as Int).times(b as Double)
+                "kotlin.Float" -> return (a as Int).times(b as Float)
+                "kotlin.Int" -> return (a as Int).times(b as Int)
+                "kotlin.Long" -> return (a as Int).times(b as Long)
+                "kotlin.Short" -> return (a as Int).times(b as Short)
             }
-            "Float" -> when (typeB) {
-                "Byte" -> return (a as Float).times(b as Byte)
-                "Double" -> return (a as Float).times(b as Double)
-                "Float" -> return (a as Float).times(b as Float)
-                "Int" -> return (a as Float).times(b as Int)
-                "Long" -> return (a as Float).times(b as Long)
-                "Short" -> return (a as Float).times(b as Short)
+            "kotlin.Float" -> when (typeB) {
+                "kotlin.Byte" -> return (a as Float).times(b as Byte)
+                "kotlin.Double" -> return (a as Float).times(b as Double)
+                "kotlin.Float" -> return (a as Float).times(b as Float)
+                "kotlin.Int" -> return (a as Float).times(b as Int)
+                "kotlin.Long" -> return (a as Float).times(b as Long)
+                "kotlin.Short" -> return (a as Float).times(b as Short)
             }
-            "Long" -> when (typeB) {
-                "Byte" -> return (a as Long).times(b as Byte)
-                "Double" -> return (a as Long).times(b as Double)
-                "Float" -> return (a as Long).times(b as Float)
-                "Int" -> return (a as Long).times(b as Int)
-                "Long" -> return (a as Long).times(b as Long)
-                "Short" -> return (a as Long).times(b as Short)
+            "kotlin.Long" -> when (typeB) {
+                "kotlin.Byte" -> return (a as Long).times(b as Byte)
+                "kotlin.Double" -> return (a as Long).times(b as Double)
+                "kotlin.Float" -> return (a as Long).times(b as Float)
+                "kotlin.Int" -> return (a as Long).times(b as Int)
+                "kotlin.Long" -> return (a as Long).times(b as Long)
+                "kotlin.Short" -> return (a as Long).times(b as Short)
             }
-            "Double" -> when (typeB) {
-                "Byte" -> return (a as Double).times(b as Byte)
-                "Double" -> return (a as Double).times(b as Double)
-                "Float" -> return (a as Double).times(b as Float)
-                "Int" -> return (a as Double).times(b as Int)
-                "Long" -> return (a as Double).times(b as Long)
-                "Short" -> return (a as Double).times(b as Short)
+            "kotlin.Double" -> when (typeB) {
+                "kotlin.Byte" -> return (a as Double).times(b as Byte)
+                "kotlin.Double" -> return (a as Double).times(b as Double)
+                "kotlin.Float" -> return (a as Double).times(b as Float)
+                "kotlin.Int" -> return (a as Double).times(b as Int)
+                "kotlin.Long" -> return (a as Double).times(b as Long)
+                "kotlin.Short" -> return (a as Double).times(b as Short)
             }
         }
         "shl" -> when (typeA) {
-            "Int" -> if (typeB == "Int") return (a as Int).shl(b as Int)
-            "Long" -> if (typeB == "Int") return (a as Long).shl(b as Int)
+            "kotlin.Int" -> if (typeB == "kotlin.Int") return (a as Int).shl(b as Int)
+            "kotlin.Long" -> if (typeB == "kotlin.Int") return (a as Long).shl(b as Int)
         }
         "shr" -> when (typeA) {
-            "Int" -> if (typeB == "Int") return (a as Int).shr(b as Int)
-            "Long" -> if (typeB == "Int") return (a as Long).shr(b as Int)
+            "kotlin.Int" -> if (typeB == "kotlin.Int") return (a as Int).shr(b as Int)
+            "kotlin.Long" -> if (typeB == "kotlin.Int") return (a as Long).shr(b as Int)
         }
         "ushr" -> when (typeA) {
-            "Int" -> if (typeB == "Int") return (a as Int).ushr(b as Int)
-            "Long" -> if (typeB == "Int") return (a as Long).ushr(b as Int)
+            "kotlin.Int" -> if (typeB == "kotlin.Int") return (a as Int).ushr(b as Int)
+            "kotlin.Long" -> if (typeB == "kotlin.Int") return (a as Long).ushr(b as Int)
         }
         "get" -> when (typeA) {
-            "String" -> if (typeB == "Int") return (a as String).get(b as Int)
-            "CharSequence" -> if (typeB == "Int") return (a as CharSequence).get(b as Int)
-            "BooleanArray" -> if (typeB == "Int") return (a as BooleanArray).get(b as Int)
-            "CharArray" -> if (typeB == "Int") return (a as CharArray).get(b as Int)
-            "ByteArray" -> if (typeB == "Int") return (a as ByteArray).get(b as Int)
-            "ShortArray" -> if (typeB == "Int") return (a as ShortArray).get(b as Int)
-            "IntArray" -> if (typeB == "Int") return (a as IntArray).get(b as Int)
-            "FloatArray" -> if (typeB == "Int") return (a as FloatArray).get(b as Int)
-            "LongArray" -> if (typeB == "Int") return (a as LongArray).get(b as Int)
-            "DoubleArray" -> if (typeB == "Int") return (a as DoubleArray).get(b as Int)
-            "Array" -> if (typeB == "Int") return (a as Array<Any?>).get(b as Int)
+            "kotlin.String" -> if (typeB == "kotlin.Int") return (a as String).get(b as Int)
+            "kotlin.CharSequence" -> if (typeB == "kotlin.Int") return (a as CharSequence).get(b as Int)
+            "kotlin.BooleanArray" -> if (typeB == "kotlin.Int") return (a as BooleanArray).get(b as Int)
+            "kotlin.CharArray" -> if (typeB == "kotlin.Int") return (a as CharArray).get(b as Int)
+            "kotlin.ByteArray" -> if (typeB == "kotlin.Int") return (a as ByteArray).get(b as Int)
+            "kotlin.ShortArray" -> if (typeB == "kotlin.Int") return (a as ShortArray).get(b as Int)
+            "kotlin.IntArray" -> if (typeB == "kotlin.Int") return (a as IntArray).get(b as Int)
+            "kotlin.FloatArray" -> if (typeB == "kotlin.Int") return (a as FloatArray).get(b as Int)
+            "kotlin.LongArray" -> if (typeB == "kotlin.Int") return (a as LongArray).get(b as Int)
+            "kotlin.DoubleArray" -> if (typeB == "kotlin.Int") return (a as DoubleArray).get(b as Int)
+            "kotlin.Array" -> if (typeB == "kotlin.Int") return (a as Array<Any?>).get(b as Int)
         }
         "less" -> when (typeA) {
-            "Char" -> if (typeB == "Char") return (a as Char) < (b as Char)
-            "Byte" -> if (typeB == "Byte") return (a as Byte) < (b as Byte)
-            "Short" -> if (typeB == "Short") return (a as Short) < (b as Short)
-            "Int" -> if (typeB == "Int") return (a as Int) < (b as Int)
-            "Float" -> if (typeB == "Float") return (a as Float) < (b as Float)
-            "Long" -> if (typeB == "Long") return (a as Long) < (b as Long)
-            "Double" -> if (typeB == "Double") return (a as Double) < (b as Double)
+            "kotlin.Char" -> if (typeB == "kotlin.Char") return (a as Char) < (b as Char)
+            "kotlin.Byte" -> if (typeB == "kotlin.Byte") return (a as Byte) < (b as Byte)
+            "kotlin.Short" -> if (typeB == "kotlin.Short") return (a as Short) < (b as Short)
+            "kotlin.Int" -> if (typeB == "kotlin.Int") return (a as Int) < (b as Int)
+            "kotlin.Float" -> if (typeB == "kotlin.Float") return (a as Float) < (b as Float)
+            "kotlin.Long" -> if (typeB == "kotlin.Long") return (a as Long) < (b as Long)
+            "kotlin.Double" -> if (typeB == "kotlin.Double") return (a as Double) < (b as Double)
         }
         "lessOrEqual" -> when (typeA) {
-            "Char" -> if (typeB == "Char") return (a as Char) <= (b as Char)
-            "Byte" -> if (typeB == "Byte") return (a as Byte) <= (b as Byte)
-            "Short" -> if (typeB == "Short") return (a as Short) <= (b as Short)
-            "Int" -> if (typeB == "Int") return (a as Int) <= (b as Int)
-            "Float" -> if (typeB == "Float") return (a as Float) <= (b as Float)
-            "Long" -> if (typeB == "Long") return (a as Long) <= (b as Long)
-            "Double" -> if (typeB == "Double") return (a as Double) <= (b as Double)
+            "kotlin.Char" -> if (typeB == "kotlin.Char") return (a as Char) <= (b as Char)
+            "kotlin.Byte" -> if (typeB == "kotlin.Byte") return (a as Byte) <= (b as Byte)
+            "kotlin.Short" -> if (typeB == "kotlin.Short") return (a as Short) <= (b as Short)
+            "kotlin.Int" -> if (typeB == "kotlin.Int") return (a as Int) <= (b as Int)
+            "kotlin.Float" -> if (typeB == "kotlin.Float") return (a as Float) <= (b as Float)
+            "kotlin.Long" -> if (typeB == "kotlin.Long") return (a as Long) <= (b as Long)
+            "kotlin.Double" -> if (typeB == "kotlin.Double") return (a as Double) <= (b as Double)
         }
         "greater" -> when (typeA) {
-            "Char" -> if (typeB == "Char") return (a as Char) > (b as Char)
-            "Byte" -> if (typeB == "Byte") return (a as Byte) > (b as Byte)
-            "Short" -> if (typeB == "Short") return (a as Short) > (b as Short)
-            "Int" -> if (typeB == "Int") return (a as Int) > (b as Int)
-            "Float" -> if (typeB == "Float") return (a as Float) > (b as Float)
-            "Long" -> if (typeB == "Long") return (a as Long) > (b as Long)
-            "Double" -> if (typeB == "Double") return (a as Double) > (b as Double)
+            "kotlin.Char" -> if (typeB == "kotlin.Char") return (a as Char) > (b as Char)
+            "kotlin.Byte" -> if (typeB == "kotlin.Byte") return (a as Byte) > (b as Byte)
+            "kotlin.Short" -> if (typeB == "kotlin.Short") return (a as Short) > (b as Short)
+            "kotlin.Int" -> if (typeB == "kotlin.Int") return (a as Int) > (b as Int)
+            "kotlin.Float" -> if (typeB == "kotlin.Float") return (a as Float) > (b as Float)
+            "kotlin.Long" -> if (typeB == "kotlin.Long") return (a as Long) > (b as Long)
+            "kotlin.Double" -> if (typeB == "kotlin.Double") return (a as Double) > (b as Double)
         }
         "greaterOrEqual" -> when (typeA) {
-            "Char" -> if (typeB == "Char") return (a as Char) >= (b as Char)
-            "Byte" -> if (typeB == "Byte") return (a as Byte) >= (b as Byte)
-            "Short" -> if (typeB == "Short") return (a as Short) >= (b as Short)
-            "Int" -> if (typeB == "Int") return (a as Int) >= (b as Int)
-            "Float" -> if (typeB == "Float") return (a as Float) >= (b as Float)
-            "Long" -> if (typeB == "Long") return (a as Long) >= (b as Long)
-            "Double" -> if (typeB == "Double") return (a as Double) >= (b as Double)
+            "kotlin.Char" -> if (typeB == "kotlin.Char") return (a as Char) >= (b as Char)
+            "kotlin.Byte" -> if (typeB == "kotlin.Byte") return (a as Byte) >= (b as Byte)
+            "kotlin.Short" -> if (typeB == "kotlin.Short") return (a as Short) >= (b as Short)
+            "kotlin.Int" -> if (typeB == "kotlin.Int") return (a as Int) >= (b as Int)
+            "kotlin.Float" -> if (typeB == "kotlin.Float") return (a as Float) >= (b as Float)
+            "kotlin.Long" -> if (typeB == "kotlin.Long") return (a as Long) >= (b as Long)
+            "kotlin.Double" -> if (typeB == "kotlin.Double") return (a as Double) >= (b as Double)
         }
         "EQEQ" -> when (typeA) {
-            "Any?" -> if (typeB == "Any?") return a == b
+            "kotlin.Any?" -> if (typeB == "kotlin.Any?") return a == b
         }
         "EQEQEQ" -> when (typeA) {
-            "Any?" -> if (typeB == "Any?") return if (a is Proxy && b is Proxy) a.state === b.state else a === b
+            "kotlin.Any?" -> if (typeB == "kotlin.Any?") return if (a is Proxy && b is Proxy) a.state === b.state else a === b
         }
         "ieee754equals" -> when (typeA) {
-            "Float?" -> if (typeB == "Float?") return (a as Float?) == (b as Float?)
-            "Double?" -> if (typeB == "Double?") return (a as Double?) == (b as Double?)
+            "kotlin.Float?" -> if (typeB == "kotlin.Float?") return (a as Float?) == (b as Float?)
+            "kotlin.Double?" -> if (typeB == "kotlin.Double?") return (a as Double?) == (b as Double?)
         }
         "ANDAND" -> when (typeA) {
-            "Boolean" -> if (typeB == "Boolean") return (a as Boolean) && (b as Boolean)
+            "kotlin.Boolean" -> if (typeB == "kotlin.Boolean") return (a as Boolean) && (b as Boolean)
         }
         "OROR" -> when (typeA) {
-            "Boolean" -> if (typeB == "Boolean") return (a as Boolean) || (b as Boolean)
+            "kotlin.Boolean" -> if (typeB == "kotlin.Boolean") return (a as Boolean) || (b as Boolean)
         }
         "mod" -> when (typeA) {
-            "Byte" -> when (typeB) {
-                "Byte" -> return (a as Byte).mod(b as Byte)
-                "Short" -> return (a as Byte).mod(b as Short)
-                "Int" -> return (a as Byte).mod(b as Int)
-                "Long" -> return (a as Byte).mod(b as Long)
+            "kotlin.Byte" -> when (typeB) {
+                "kotlin.Byte" -> return (a as Byte).mod(b as Byte)
+                "kotlin.Short" -> return (a as Byte).mod(b as Short)
+                "kotlin.Int" -> return (a as Byte).mod(b as Int)
+                "kotlin.Long" -> return (a as Byte).mod(b as Long)
             }
-            "Short" -> when (typeB) {
-                "Byte" -> return (a as Short).mod(b as Byte)
-                "Short" -> return (a as Short).mod(b as Short)
-                "Int" -> return (a as Short).mod(b as Int)
-                "Long" -> return (a as Short).mod(b as Long)
+            "kotlin.Short" -> when (typeB) {
+                "kotlin.Byte" -> return (a as Short).mod(b as Byte)
+                "kotlin.Short" -> return (a as Short).mod(b as Short)
+                "kotlin.Int" -> return (a as Short).mod(b as Int)
+                "kotlin.Long" -> return (a as Short).mod(b as Long)
             }
-            "Int" -> when (typeB) {
-                "Byte" -> return (a as Int).mod(b as Byte)
-                "Short" -> return (a as Int).mod(b as Short)
-                "Int" -> return (a as Int).mod(b as Int)
-                "Long" -> return (a as Int).mod(b as Long)
+            "kotlin.Int" -> when (typeB) {
+                "kotlin.Byte" -> return (a as Int).mod(b as Byte)
+                "kotlin.Short" -> return (a as Int).mod(b as Short)
+                "kotlin.Int" -> return (a as Int).mod(b as Int)
+                "kotlin.Long" -> return (a as Int).mod(b as Long)
             }
-            "Long" -> when (typeB) {
-                "Byte" -> return (a as Long).mod(b as Byte)
-                "Short" -> return (a as Long).mod(b as Short)
-                "Int" -> return (a as Long).mod(b as Int)
-                "Long" -> return (a as Long).mod(b as Long)
+            "kotlin.Long" -> when (typeB) {
+                "kotlin.Byte" -> return (a as Long).mod(b as Byte)
+                "kotlin.Short" -> return (a as Long).mod(b as Short)
+                "kotlin.Int" -> return (a as Long).mod(b as Int)
+                "kotlin.Long" -> return (a as Long).mod(b as Long)
             }
-            "Float" -> when (typeB) {
-                "Float" -> return (a as Float).mod(b as Float)
-                "Double" -> return (a as Float).mod(b as Double)
+            "kotlin.Float" -> when (typeB) {
+                "kotlin.Float" -> return (a as Float).mod(b as Float)
+                "kotlin.Double" -> return (a as Float).mod(b as Double)
             }
-            "Double" -> when (typeB) {
-                "Float" -> return (a as Double).mod(b as Float)
-                "Double" -> return (a as Double).mod(b as Double)
+            "kotlin.Double" -> when (typeB) {
+                "kotlin.Float" -> return (a as Double).mod(b as Float)
+                "kotlin.Double" -> return (a as Double).mod(b as Double)
             }
         }
         "floorDiv" -> when (typeA) {
-            "Byte" -> when (typeB) {
-                "Byte" -> return (a as Byte).floorDiv(b as Byte)
-                "Short" -> return (a as Byte).floorDiv(b as Short)
-                "Int" -> return (a as Byte).floorDiv(b as Int)
-                "Long" -> return (a as Byte).floorDiv(b as Long)
+            "kotlin.Byte" -> when (typeB) {
+                "kotlin.Byte" -> return (a as Byte).floorDiv(b as Byte)
+                "kotlin.Short" -> return (a as Byte).floorDiv(b as Short)
+                "kotlin.Int" -> return (a as Byte).floorDiv(b as Int)
+                "kotlin.Long" -> return (a as Byte).floorDiv(b as Long)
             }
-            "Short" -> when (typeB) {
-                "Byte" -> return (a as Short).floorDiv(b as Byte)
-                "Short" -> return (a as Short).floorDiv(b as Short)
-                "Int" -> return (a as Short).floorDiv(b as Int)
-                "Long" -> return (a as Short).floorDiv(b as Long)
+            "kotlin.Short" -> when (typeB) {
+                "kotlin.Byte" -> return (a as Short).floorDiv(b as Byte)
+                "kotlin.Short" -> return (a as Short).floorDiv(b as Short)
+                "kotlin.Int" -> return (a as Short).floorDiv(b as Int)
+                "kotlin.Long" -> return (a as Short).floorDiv(b as Long)
             }
-            "Int" -> when (typeB) {
-                "Byte" -> return (a as Int).floorDiv(b as Byte)
-                "Short" -> return (a as Int).floorDiv(b as Short)
-                "Int" -> return (a as Int).floorDiv(b as Int)
-                "Long" -> return (a as Int).floorDiv(b as Long)
+            "kotlin.Int" -> when (typeB) {
+                "kotlin.Byte" -> return (a as Int).floorDiv(b as Byte)
+                "kotlin.Short" -> return (a as Int).floorDiv(b as Short)
+                "kotlin.Int" -> return (a as Int).floorDiv(b as Int)
+                "kotlin.Long" -> return (a as Int).floorDiv(b as Long)
             }
-            "Long" -> when (typeB) {
-                "Byte" -> return (a as Long).floorDiv(b as Byte)
-                "Short" -> return (a as Long).floorDiv(b as Short)
-                "Int" -> return (a as Long).floorDiv(b as Int)
-                "Long" -> return (a as Long).floorDiv(b as Long)
+            "kotlin.Long" -> when (typeB) {
+                "kotlin.Byte" -> return (a as Long).floorDiv(b as Byte)
+                "kotlin.Short" -> return (a as Long).floorDiv(b as Short)
+                "kotlin.Int" -> return (a as Long).floorDiv(b as Int)
+                "kotlin.Long" -> return (a as Long).floorDiv(b as Long)
             }
         }
     }
@@ -727,19 +703,19 @@ internal fun interpretBinaryFunction(name: String, typeA: String, typeB: String,
 internal fun interpretTernaryFunction(name: String, typeA: String, typeB: String, typeC: String, a: Any?, b: Any?, c: Any?): Any {
     when (name) {
         "subSequence" -> when (typeA) {
-            "String" -> if (typeB == "Int" && typeC == "Int") return (a as String).subSequence(b as Int, c as Int)
-            "CharSequence" -> if (typeB == "Int" && typeC == "Int") return (a as CharSequence).subSequence(b as Int, c as Int)
+            "kotlin.String" -> if (typeB == "kotlin.Int" && typeC == "kotlin.Int") return (a as String).subSequence(b as Int, c as Int)
+            "kotlin.CharSequence" -> if (typeB == "kotlin.Int" && typeC == "kotlin.Int") return (a as CharSequence).subSequence(b as Int, c as Int)
         }
         "set" -> when (typeA) {
-            "BooleanArray" -> if (typeB == "Int" && typeC == "Boolean") return (a as BooleanArray).set(b as Int, c as Boolean)
-            "CharArray" -> if (typeB == "Int" && typeC == "Char") return (a as CharArray).set(b as Int, c as Char)
-            "ByteArray" -> if (typeB == "Int" && typeC == "Byte") return (a as ByteArray).set(b as Int, c as Byte)
-            "ShortArray" -> if (typeB == "Int" && typeC == "Short") return (a as ShortArray).set(b as Int, c as Short)
-            "IntArray" -> if (typeB == "Int" && typeC == "Int") return (a as IntArray).set(b as Int, c as Int)
-            "FloatArray" -> if (typeB == "Int" && typeC == "Float") return (a as FloatArray).set(b as Int, c as Float)
-            "LongArray" -> if (typeB == "Int" && typeC == "Long") return (a as LongArray).set(b as Int, c as Long)
-            "DoubleArray" -> if (typeB == "Int" && typeC == "Double") return (a as DoubleArray).set(b as Int, c as Double)
-            "Array" -> if (typeB == "Int" && typeC == "T") return (a as Array<Any?>).set(b as Int, c)
+            "kotlin.BooleanArray" -> if (typeB == "kotlin.Int" && typeC == "kotlin.Boolean") return (a as BooleanArray).set(b as Int, c as Boolean)
+            "kotlin.CharArray" -> if (typeB == "kotlin.Int" && typeC == "kotlin.Char") return (a as CharArray).set(b as Int, c as Char)
+            "kotlin.ByteArray" -> if (typeB == "kotlin.Int" && typeC == "kotlin.Byte") return (a as ByteArray).set(b as Int, c as Byte)
+            "kotlin.ShortArray" -> if (typeB == "kotlin.Int" && typeC == "kotlin.Short") return (a as ShortArray).set(b as Int, c as Short)
+            "kotlin.IntArray" -> if (typeB == "kotlin.Int" && typeC == "kotlin.Int") return (a as IntArray).set(b as Int, c as Int)
+            "kotlin.FloatArray" -> if (typeB == "kotlin.Int" && typeC == "kotlin.Float") return (a as FloatArray).set(b as Int, c as Float)
+            "kotlin.LongArray" -> if (typeB == "kotlin.Int" && typeC == "kotlin.Long") return (a as LongArray).set(b as Int, c as Long)
+            "kotlin.DoubleArray" -> if (typeB == "kotlin.Int" && typeC == "kotlin.Double") return (a as DoubleArray).set(b as Int, c as Double)
+            "kotlin.Array" -> if (typeB == "kotlin.Int" && typeC == "T") return (a as Array<Any?>).set(b as Int, c)
         }
     }
     throw InterpreterMethodNotFoundError("Unknown function: $name($typeA, $typeB, $typeC)")

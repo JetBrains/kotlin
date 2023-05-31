@@ -155,7 +155,7 @@ internal class DefaultCallInterceptor(override val interpreter: IrInterpreter) :
         }
 
         val receiverType = irFunction.dispatchReceiverParameter?.type ?: irFunction.extensionReceiverParameter?.type
-        val argsType = (listOfNotNull(receiverType) + irFunction.valueParameters.map { it.type }).map { it.getOnlyName() }
+        val argsType = (listOfNotNull(receiverType) + irFunction.valueParameters.map { it.type }).map { it.fqNameWithNullability() }
         val argsValues = args.wrap(this, irFunction)
 
         withExceptionHandler(environment) {
@@ -170,8 +170,8 @@ internal class DefaultCallInterceptor(override val interpreter: IrInterpreter) :
         if (environment.configuration.platform.isJs()) {
             if (signature.name == "toString") return signature.args[0].value.specialToStringForJs()
             if (signature.name == "toFloat") signature.name = "toDouble"
-            signature.args.filter { it.type == "Float" }.forEach {
-                it.type = "Double"
+            signature.args.filter { it.type == "kotlin.Float" }.forEach {
+                it.type = "kotlin.Double"
                 it.value = it.value.toString().toDouble()
             }
         }
