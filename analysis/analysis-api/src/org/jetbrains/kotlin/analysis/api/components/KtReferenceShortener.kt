@@ -127,6 +127,4 @@ public interface ShortenCommand {
 
     public val isEmpty: Boolean
         get() = typesToShorten.isEmpty() && qualifiersToShorten.isEmpty()
-
-    public fun invokeShortening(): List<KtElement>
 }

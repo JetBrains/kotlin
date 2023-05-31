@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassLikeSymbol
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
-import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtUserType
 
@@ -46,8 +45,6 @@ internal class KtFe10ReferenceShortener(
             override val qualifiersToShorten: List<SmartPsiElementPointer<KtDotQualifiedExpression>> get() = emptyList()
 
             override val isEmpty: Boolean get() = true
-
-            override fun invokeShortening(): List<KtElement> = emptyList()
         }
     }
 }
