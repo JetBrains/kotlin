@@ -47,7 +47,7 @@ projectTest(parallel = true, jUnitMode = JUnitMode.JUnit4, maxHeapSizeMb = 3072)
     workingDir = rootDir
     useJUnitPlatform()
     dependsOn(":plugins:fir-plugin-prototype:jar")
-    dependsOn(":plugins:fir-plugin-prototype:plugin-annotations:jar")
+    dependsOn(":plugins:fir-plugin-prototype:plugin-annotations:distAnnotations")
 }
 
 testsJar()

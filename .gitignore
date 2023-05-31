@@ -62,6 +62,7 @@ build/
 .idea/artifacts/kotlin_test_wasm_*
 .idea/artifacts/kotlinx_atomicfu_runtime_*
 .idea/artifacts/kotlinx_cli_jvm_*
+.idea/artifacts/plugin_annotations_*.xml
 .idea/jarRepositories.xml
 .idea/csv-plugin.xml
 .idea/libraries-with-intellij-classes.xml

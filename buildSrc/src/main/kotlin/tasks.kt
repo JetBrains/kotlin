@@ -12,6 +12,7 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ProjectDependency
+import org.gradle.api.attributes.Usage
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.FileSystemOperations
 import org.gradle.api.internal.tasks.testing.filter.DefaultTestFilter
@@ -19,6 +20,8 @@ import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.*
 import org.gradle.kotlin.dsl.support.serviceOf
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import java.io.File
 import java.lang.Character.isLowerCase
 import java.lang.Character.isUpperCase
@@ -374,17 +377,26 @@ fun Task.acceptAndroidSdkLicenses() {
 }
 
 fun Project.confugureFirPluginAnnotationsDependency(testTask: TaskProvider<Test>) {
-    val firPluginAnnotations: Configuration by configurations.creating
+    val firPluginJvmAnnotations: Configuration by configurations.creating
+    val firPluginJsAnnotations: Configuration by configurations.creating {
+        attributes {
+            attribute(Usage.USAGE_ATTRIBUTE, objects.named(org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages.KOTLIN_RUNTIME))
+            attribute(org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType.attribute, org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType.js)
+        }
+    }
 
     dependencies {
-        firPluginAnnotations(project(":plugins:fir-plugin-prototype:plugin-annotations")) { isTransitive = false }
+        firPluginJvmAnnotations(project(":plugins:fir-plugin-prototype:plugin-annotations")) { isTransitive = false }
+        firPluginJsAnnotations(project(":plugins:fir-plugin-prototype:plugin-annotations")) { isTransitive = false }
     }
 
     testTask.configure {
-        dependsOn(firPluginAnnotations)
-        val localFirPluginAnnotations: FileCollection = firPluginAnnotations
+        dependsOn(firPluginJvmAnnotations, firPluginJsAnnotations)
+        val localFirPluginJvmAnnotations: FileCollection = firPluginJvmAnnotations
+        val localFirPluginJsAnnotations: FileCollection = firPluginJsAnnotations
         doFirst {
-            systemProperty("firPluginAnnotations.path", localFirPluginAnnotations.singleFile.canonicalPath)
+            systemProperty("firPluginAnnotations.jvm.path", localFirPluginJvmAnnotations.singleFile.canonicalPath)
+            systemProperty("firPluginAnnotations.js.path", localFirPluginJsAnnotations.singleFile.canonicalPath)
         }
     }
 }
