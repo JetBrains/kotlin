@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.fir.SessionConfiguration
 import org.jetbrains.kotlin.fir.analysis.extensions.FirAdditionalCheckersExtension
 import org.jetbrains.kotlin.fir.builder.FirScriptConfiguratorExtension
 import org.jetbrains.kotlin.fir.resolve.FirSamConversionTransformerExtension
-import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.reflect.KClass
 
 abstract class FirExtensionRegistrar : FirExtensionRegistrarAdapter() {
@@ -184,25 +183,35 @@ abstract class FirExtensionRegistrar : FirExtensionRegistrarAdapter() {
 
     @OptIn(PluginServicesInitialization::class)
     fun configure(): BunchOfRegisteredExtensions {
-        if (isInitialized.compareAndSet(false, true)) {
-            // Extension registrars can survive FirSession recreation in IDE mode, but we don't want to
-            // call `configurePlugin` more than once, because it will lead to registering all plugins twice.
-            // Please see KT-51444 for the details.
+        return BunchOfRegisteredExtensions(configuredExtensionFactories)
+    }
 
-            ExtensionRegistrarContext().configurePlugin()
+    private val extensionFactories: Map<KClass<out FirExtension>, MutableList<FirExtension.Factory<FirExtension>>> =
+        AVAILABLE_EXTENSIONS.associateWith {
+            mutableListOf()
         }
 
-        return BunchOfRegisteredExtensions(map)
-    }
+    /**
+     * A lazy property which returns the [extensionFactories] map, but calls
+     * [configurePlugin] to make sure that it's correctly configured.
+     *
+     * Extension registrars can survive FirSession recreation in IDE mode, but we don't want to
+     * call [configurePlugin] more than once, because it will lead to registering all plugins twice.
+     * That's why we don't want to call [configurePlugin] directly from the [configure].
+     *
+     * Instead, we use [lazy] to ensure that initialization happens only once, and that the
+     * resulting [extensionFactories] map is visible to all possible callers, so no races occur.
+     */
+    private val configuredExtensionFactories: Map<KClass<out FirExtension>, List<FirExtension.Factory<FirExtension>>> by lazy(
+        LazyThreadSafetyMode.SYNCHRONIZED
+    ) {
+        ExtensionRegistrarContext().configurePlugin()
 
-    private val map: Map<KClass<out FirExtension>, MutableList<FirExtension.Factory<FirExtension>>> = AVAILABLE_EXTENSIONS.associateWith {
-        mutableListOf()
+        extensionFactories
     }
-
-    private var isInitialized: AtomicBoolean = AtomicBoolean(false)
 
     private fun <P : FirExtension> registerExtension(kClass: KClass<out P>, factory: FirExtension.Factory<P>) {
-        val registeredExtensions = map.getValue(kClass)
+        val registeredExtensions = extensionFactories.getValue(kClass)
         registeredExtensions += factory
     }
 }
