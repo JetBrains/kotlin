@@ -19,13 +19,13 @@ package org.jetbrains.kotlin.konan.library.impl
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.*
 import org.jetbrains.kotlin.konan.properties.Properties
-import org.jetbrains.kotlin.konan.properties.loadProperties
 import org.jetbrains.kotlin.konan.properties.propertyList
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.util.defaultTargetSubstitutions
 import org.jetbrains.kotlin.konan.util.substitute
 import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.library.impl.*
+import java.nio.file.Paths
 
 open class TargetedLibraryImpl(
     private val access: TargetedLibraryAccess<TargetedKotlinLibraryLayout>,
@@ -81,11 +81,13 @@ class KonanLibraryImpl(
 
 
 fun createKonanLibrary(
-    libraryFile: File,
+    libraryFilePossiblyDenormalized: File,
     component: String,
     target: KonanTarget? = null,
     isDefault: Boolean = false
 ): KonanLibrary {
+    // KT-58979: The following access classes need normalized klib path to correctly provide symbols from resolved klibs
+    val libraryFile = Paths.get(libraryFilePossiblyDenormalized.absolutePath).normalize().File()
     val baseAccess = BaseLibraryAccess<KotlinLibraryLayout>(libraryFile, component)
     val targetedAccess = TargetedLibraryAccess<TargetedKotlinLibraryLayout>(libraryFile, component, target)
     val metadataAccess = MetadataLibraryAccess<MetadataKotlinLibraryLayout>(libraryFile, component)

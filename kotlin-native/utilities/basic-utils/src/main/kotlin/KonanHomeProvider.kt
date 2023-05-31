@@ -14,7 +14,7 @@ object KonanHomeProvider {
     /**
      * Determines a path to the current Kotlin/Native distribution.
      *
-     *  - If the system property "konan.home" is set, the method returns its value.
+     *  - If the system property "konan.home" is set, the method returns its normalized value.
      *  - Otherwise, it determines a path to a jar containing this class. If this path corresponds to the jar path
      *    inside a distribution, the method calculates the path to the distribution on the basis of this jar path.
      *    Otherwise an IllegalStateException is thrown.
@@ -22,7 +22,9 @@ object KonanHomeProvider {
     fun determineKonanHome(): String {
         val propertyValue = kotlinNativeHome
         return if (propertyValue != null) {
-            File(propertyValue).absolutePath
+            // KT-58979: KonanLibraryImpl needs normalized klib paths to correctly provide symbols from resolved klibs
+            // For extra safety, path to "konan.home" is also normalized here
+            Paths.get(File(propertyValue).absolutePath).normalize().toString()
         } else {
             val jarPath = PathUtil.getResourcePathForClass(this::class.java)
 
