@@ -1064,7 +1064,13 @@ internal object ControlFlowSensibleEscapeAnalysis {
         }
 
         private class ExpressionResult(val value: Node, val graph: PointsToGraph)
-        private class MultipleExpressionResult(val valueIds: BitSet, val graphBuilder: PointsToGraphForest.GraphBuilder)
+        private class MultipleExpressionResult(val valueIds: BitSet, val graphBuilder: PointsToGraphForest.GraphBuilder) {
+            fun merge(value: Node, graph: PointsToGraph) {
+                if (value == Node.Nothing) return
+                valueIds.set(value.id)
+                graphBuilder.merge(graph)
+            }
+        }
 
         private data class BuilderState(val graph: PointsToGraph, val level: Int, val anchorIds: Boolean, val loop: IrLoop?, val tryBlock: IrTry?) {
             fun toNodeContext(element: IrElement?) = NodeContext(level, anchorIds, loop, element)
@@ -1417,14 +1423,17 @@ internal object ControlFlowSensibleEscapeAnalysis {
                 val returnResult = returnTargetResults[expression.returnTargetSymbol]
                         ?: error("Unknown return target: ${expression.render()}")
                 if (result != Node.Nothing) {
-                    context.log { "Merging to return of ${expression.returnTargetSymbol.owner.render()}" }
-                    data.graph.logDigraph(result)
+                    debug {
+                        context.log { "Merging to return of ${expression.returnTargetSymbol.owner.render()}" }
+                        data.graph.logDigraph(result)
+                    }
 
-                    returnResult.valueIds.set(result.id)
-                    returnResult.graphBuilder.merge(data.graph)
+                    returnResult.merge(result, data.graph)
 
-                    context.log { "After merging:" }
-                    returnResult.graphBuilder.build().logDigraph(context) { markedNodes.or(returnResult.valueIds) }
+                    debug {
+                        context.log { "After merging:" }
+                        returnResult.graphBuilder.build().logDigraph(context) { markedNodes.or(returnResult.valueIds) }
+                    }
                 }
                 return data.graph.unreachable()
             }
