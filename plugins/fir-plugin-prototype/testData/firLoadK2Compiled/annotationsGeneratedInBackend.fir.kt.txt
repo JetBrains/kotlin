@@ -1,0 +1,35 @@
+package test
+
+@AddAnnotations
+@AnnotationToAdd
+class Some {
+  @AnnotationToAdd
+  constructor(@AnnotationToAdd x: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  @AnnotationToAdd
+  val x: Int
+    field = x
+    @AnnotationToAdd
+    get
+
+  @AnnotationToAdd
+  fun foo() {
+  }
+
+  @AnnotationToAdd
+  class Derived {
+    @AnnotationToAdd
+    constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+  }
+
+}
+

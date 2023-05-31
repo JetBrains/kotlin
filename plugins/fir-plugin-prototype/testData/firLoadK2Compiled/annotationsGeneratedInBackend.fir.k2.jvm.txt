@@ -1,0 +1,14 @@
+@R|org/jetbrains/kotlin/fir/plugin/AddAnnotations|() @R|org/jetbrains/kotlin/fir/plugin/AnnotationToAdd|() public final class Some : R|kotlin/Any| {
+    @R|org/jetbrains/kotlin/fir/plugin/AnnotationToAdd|() public final fun foo(): R|kotlin/Unit|
+
+    @PROPERTY:R|org/jetbrains/kotlin/fir/plugin/AnnotationToAdd|() field:@FIELD:R|org/jetbrains/kotlin/fir/plugin/AnnotationToAdd|() public final val x: R|kotlin/Int|
+        @R|org/jetbrains/kotlin/fir/plugin/AnnotationToAdd|() public get(): R|kotlin/Int|
+
+    @R|org/jetbrains/kotlin/fir/plugin/AnnotationToAdd|() public constructor(@R|org/jetbrains/kotlin/fir/plugin/AnnotationToAdd|() x: R|kotlin/Int|): R|test/Some|
+
+    @R|org/jetbrains/kotlin/fir/plugin/AnnotationToAdd|() public final class Derived : R|kotlin/Any| {
+        @R|org/jetbrains/kotlin/fir/plugin/AnnotationToAdd|() public constructor(): R|test/Some.Derived|
+
+    }
+
+}

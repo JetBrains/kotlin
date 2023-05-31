@@ -39,3 +39,7 @@ annotation class MetaSupertype
 annotation class MyComposable
 
 annotation class AllPropertiesConstructor
+
+annotation class AddAnnotations
+
+annotation class AnnotationToAdd
