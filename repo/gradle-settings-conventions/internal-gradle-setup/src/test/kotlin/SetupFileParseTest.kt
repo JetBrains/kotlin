@@ -29,6 +29,7 @@ class SetupFileParseTest {
             parseSetupFile(it)
         }
         assertSampleSetupFileIsParsedCorrectly(setupFile)
+        assertNull(setupFile.consentDetailsLink)
     }
 
     @Test
@@ -37,5 +38,15 @@ class SetupFileParseTest {
             parseSetupFile(it)
         }
         assertSampleSetupFileIsParsedCorrectly(setupFile)
+        assertNull(setupFile.consentDetailsLink)
+    }
+
+    @Test
+    fun testParsingWithConsentDetailsLink() {
+        val setupFile = openPropertiesJsonStream("properties-with-consent-details").use {
+            parseSetupFile(it)
+        }
+        assertSampleSetupFileIsParsedCorrectly(setupFile)
+        assertEquals(setupFile.consentDetailsLink, "https://example.org")
     }
 }

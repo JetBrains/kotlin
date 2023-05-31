@@ -53,23 +53,41 @@ class ConsentManagerTest {
     fun testConsentRequestAgree() = testUserDecision("yes", true, USER_CONSENT_MARKER)
 
     @Test
+    fun testConsentRequestAgreeWithDetailsLink() = testUserDecision(
+        "yes",
+        true,
+        USER_CONSENT_MARKER_WITH_DETAILS_LINK.formatWithLink("https://example.org"),
+        consentDetailsLink = "https://example.org"
+    )
+
+    @Test
     fun testConsentRequestRefusal() = testUserDecision("no", false, USER_REFUSAL_MARKER)
 
     @Test
     fun testConsentRequestAnswerAfterBadInput() = testUserDecision("\nasdasd\nno", false, USER_REFUSAL_MARKER, 3)
 
-    private fun testUserDecision(prompt: String, expectedDecision: Boolean, expectedLine: String, promptCount: Int = 1) {
+    private fun testUserDecision(
+        prompt: String,
+        expectedDecision: Boolean,
+        expectedLine: String,
+        promptCount: Int = 1,
+        consentDetailsLink: String? = null,
+    ) {
         StringInputStream(prompt).bufferedReader().use { input ->
             val outputStream = ByteArrayOutputStream(255)
             PrintStream(outputStream).use { printStream ->
                 val consentManager = ConsentManager(modifier, input, printStream)
-                val userDecision = consentManager.askForConsent()
+                val userDecision = consentManager.askForConsent(consentDetailsLink)
                 assertEquals(expectedDecision, userDecision)
                 val content = Files.readAllLines(localPropertiesFile)
                 assertTrue(content.contains(expectedLine))
                 val output = String(outputStream.toByteArray())
                 assertContainsExactTimes(output, USER_CONSENT_REQUEST, 1)
                 assertContainsExactTimes(output, PROMPT_REQUEST, promptCount)
+
+                if (consentDetailsLink != null) {
+                    assertContainsExactTimes(output, USER_CONSENT_DETAILS_LINK_TEMPLATE.formatWithLink(consentDetailsLink), 1)
+                }
             }
         }
     }

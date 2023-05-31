@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlin.build
 
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonNamingStrategy
 import java.io.BufferedReader
 import java.io.InputStream
 import java.io.InputStreamReader
@@ -16,9 +18,14 @@ import kotlin.streams.asSequence
 @Serializable
 internal data class SetupFile(
     val properties: Map<String, String>,
+    val consentDetailsLink: String? = null,
 )
 
-private val json = Json { ignoreUnknownKeys = true }
+@OptIn(ExperimentalSerializationApi::class)
+private val json = Json {
+    ignoreUnknownKeys = true
+    namingStrategy = JsonNamingStrategy.SnakeCase
+}
 
 // can't use decodeFromStream: https://github.com/Kotlin/kotlinx.serialization/issues/2218
 internal fun parseSetupFile(inputStream: InputStream): SetupFile =
