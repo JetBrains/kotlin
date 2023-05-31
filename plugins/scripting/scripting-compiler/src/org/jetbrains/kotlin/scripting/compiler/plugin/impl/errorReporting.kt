@@ -17,8 +17,8 @@ import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.diagnostics.rendering.RootDiagnosticRendererFactory
 import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.scripting.definitions.MessageReporter
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import kotlin.reflect.KMutableProperty1
+import kotlin.reflect.jvm.javaField
 import kotlin.script.experimental.api.ResultWithDiagnostics
 import kotlin.script.experimental.api.ScriptDiagnostic
 import kotlin.script.experimental.api.SourceCode
@@ -194,7 +194,7 @@ private fun reportInvalidArguments(
 ): Boolean {
     val invalidArgKeys = toIgnore.mapNotNull { argProperty ->
         if (argProperty.get(arguments) != argProperty.get(reportingState.currentArguments)) {
-            argProperty.annotations.firstIsInstanceOrNull<Argument>()?.value
+            argProperty.javaField?.getAnnotation(Argument::class.java)?.value
                 ?: throw IllegalStateException("unknown compiler argument property: $argProperty: no Argument annotation found")
         } else null
     }

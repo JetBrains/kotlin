@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.dsl.kotlinJvmExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.CreateCompilerArgumentsContext
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.ArgumentType.PluginClasspath
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.ArgumentType.Primitive
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext.Companion.lenient
@@ -28,7 +27,7 @@ import org.jetbrains.kotlin.gradle.util.assertNotNull
 import org.jetbrains.kotlin.gradle.util.buildProjectWithJvm
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.main
-import kotlin.reflect.full.findAnnotation
+import kotlin.reflect.jvm.javaField
 import kotlin.test.*
 
 
@@ -78,7 +77,7 @@ class KotlinCompileArgumentsTest {
         val arguments = mainCompilationTask.createCompilerArguments(lenient)
 
         val argumentsString = ArgumentUtils.convertArgumentsToStringList(arguments)
-        val jvmTargetArgument = K2JVMCompilerArguments::jvmTarget.findAnnotation<Argument>()!!.value
+        val jvmTargetArgument = K2JVMCompilerArguments::jvmTarget.javaField!!.getAnnotation(Argument::class.java)!!.value
         if (jvmTargetArgument !in argumentsString) fail("Missing '$jvmTargetArgument' in argument list")
         val indexOfJvmTargetArgument = argumentsString.indexOf(jvmTargetArgument)
         val jvmTargetTargetArgumentValue = argumentsString.getOrNull(indexOfJvmTargetArgument + 1)

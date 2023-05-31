@@ -12,8 +12,8 @@ import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments
 import org.jetbrains.kotlin.cli.common.arguments.isAdvanced
 import org.jetbrains.kotlin.cli.common.arguments.resolvedDelimiter
 import kotlin.reflect.KClass
-import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.memberProperties
+import kotlin.reflect.jvm.javaField
 
 @Suppress("UNCHECKED_CAST")
 @JvmOverloads
@@ -33,7 +33,7 @@ internal fun <T : CommonToolArguments> toArgumentStrings(
 ): List<String> = ArrayList<String>().apply {
     val defaultArguments = type.newArgumentsInstance()
     type.memberProperties.forEach { property ->
-        val argumentAnnotation = property.findAnnotation<Argument>() ?: return@forEach
+        val argumentAnnotation = property.javaField?.getAnnotation(Argument::class.java) ?: return@forEach
         val rawPropertyValue = property.get(thisArguments)
         val rawDefaultValue = property.get(defaultArguments)
 

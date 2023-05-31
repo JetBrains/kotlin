@@ -9,6 +9,7 @@ import kotlin.reflect.KClass
 import kotlin.reflect.KProperty1
 import kotlin.reflect.KType
 import kotlin.reflect.full.memberProperties
+import kotlin.reflect.jvm.javaField
 
 object CompilerArgumentsContentProspector {
     private val argumentPropertiesCache: MutableMap<KClass<out CommonToolArguments>, Collection<KProperty1<out CommonToolArguments, *>>> =
@@ -24,7 +25,7 @@ object CompilerArgumentsContentProspector {
         mutableMapOf()
 
     private fun getCompilerArgumentsProperties(kClass: KClass<out CommonToolArguments>) = argumentPropertiesCache.getOrPut(kClass) {
-        kClass.memberProperties.filter { prop -> prop.annotations.any { it is Argument } }
+        kClass.memberProperties.filter { prop -> prop.javaField?.getAnnotation(Argument::class.java) != null }
     }
 
     private inline fun <reified R : Any?> Collection<KProperty1<out CommonToolArguments, *>>.filterByReturnType(predicate: (KType?) -> Boolean) =

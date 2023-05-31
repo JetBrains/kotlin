@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.cli.common;
 
 import com.intellij.openapi.util.SystemInfo;
-import com.intellij.util.containers.ContainerUtil;
 import kotlin.jvm.JvmClassMappingKt;
 import kotlin.reflect.KCallable;
 import kotlin.reflect.KClass;
@@ -75,7 +74,7 @@ public class Usage {
 
     private static void propertyUsage(@NotNull StringBuilder sb, @NotNull KProperty1<?, ?> property, boolean extraHelp) {
         Field field = ReflectJvmMapping.getJavaField(property);
-        Argument argument = ContainerUtil.findInstance(field.getAnnotations(), Argument.class);
+        Argument argument = field.getAnnotation(Argument.class);
         if (argument == null) return;
 
         if (extraHelp != ParseCommandLineArgumentsKt.isAdvanced(argument)) return;

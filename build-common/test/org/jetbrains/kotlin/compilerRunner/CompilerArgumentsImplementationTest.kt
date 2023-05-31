@@ -11,8 +11,8 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
 import kotlin.reflect.KClass
 import kotlin.reflect.KVisibility
-import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.memberProperties
+import kotlin.reflect.jvm.javaField
 import kotlin.test.fail
 
 
@@ -22,7 +22,7 @@ class CompilerArgumentsImplementationTest {
     @MethodSource("implementations")
     fun `test - all properties with Argument annotation - are public`(implementation: KClass<out CommonToolArguments>) {
         implementation.memberProperties.forEach { property ->
-            if (property.findAnnotation<Argument>() != null) {
+            if (property.javaField?.getAnnotation(Argument::class.java) != null) {
                 if (property.visibility != KVisibility.PUBLIC) {
                     fail(
                         "Property '${property.name}: ${property.returnType}' " +
