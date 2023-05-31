@@ -18,10 +18,12 @@ dependencies {
     implementation(kotlinxCollectionsImmutable())
 
     testImplementation(project(":analysis:decompiled:decompiler-to-file-stubs"))
+    testImplementation(projectTests(":analysis:analysis-test-framework"))
     testImplementation(projectTests(":analysis:decompiled:decompiler-to-file-stubs"))
     testImplementation(projectTests(":analysis:analysis-api-impl-base"))
     testImplementation(projectTests(":analysis:analysis-api-fir"))
     testImplementation(projectTests(":compiler:tests-common-new"))
+    testImplementation(projectTests(":analysis:low-level-api-fir"))
 }
 
 sourceSets {

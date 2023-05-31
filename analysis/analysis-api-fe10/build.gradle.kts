@@ -19,9 +19,10 @@ dependencies {
 
     testApiJUnit5()
     testImplementation(project(":analysis:analysis-api-providers"))
+    testImplementation(project(":analysis:analysis-api-standalone:analysis-api-standalone-base"))
     testImplementation(projectTests(":compiler:tests-common"))
-    testImplementation(projectTests(":compiler:test-infrastructure-utils"))
-    testImplementation(projectTests(":compiler:test-infrastructure"))
+    testApi(projectTests(":compiler:test-infrastructure-utils"))
+    testApi(projectTests(":compiler:test-infrastructure"))
     testImplementation(projectTests(":compiler:tests-common-new"))
     testImplementation(projectTests(":analysis:analysis-api-impl-barebone"))
     testImplementation(projectTests(":analysis:analysis-api-impl-base"))

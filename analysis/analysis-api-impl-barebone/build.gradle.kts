@@ -10,11 +10,11 @@ dependencies {
     api(intellijCore())
 
     testApiJUnit5()
-    testApi(project(":kotlin-test:kotlin-test-junit"))
-    testApi(projectTests(":compiler:tests-common"))
+    testImplementation(project(":kotlin-test:kotlin-test-junit"))
+    testImplementation(projectTests(":compiler:tests-common"))
     testApi(projectTests(":compiler:test-infrastructure-utils"))
     testApi(projectTests(":compiler:test-infrastructure"))
-    testApi(projectTests(":compiler:tests-common-new"))
+    testImplementation(projectTests(":compiler:tests-common-new"))
 }
 
 sourceSets {

@@ -4,20 +4,22 @@ plugins {
 }
 
 dependencies {
-    testApi(kotlinStdlib())
-    testApi(intellijCore())
+    testImplementation(kotlinStdlib())
+    testImplementation(intellijCore())
     testApiJUnit5()
 
-    testApi(project(":kotlin-test:kotlin-test-junit"))
+    testImplementation(project(":kotlin-test:kotlin-test-junit"))
     testImplementation(project(":analysis:analysis-internal-utils"))
-    testApi(project(":compiler:psi"))
-    testApi(project(":analysis:kt-references"))
+    testImplementation(project(":compiler:psi"))
+    testImplementation(project(":analysis:kt-references"))
     testApi(projectTests(":compiler:tests-common-new"))
-    testApi(project(":analysis:analysis-api-providers"))
-    testApi(project(":analysis:analysis-api"))
+    testApi(projectTests(":compiler:tests-common"))
+    testImplementation(project(":analysis:analysis-api-providers"))
+    testImplementation(project(":analysis:analysis-api"))
     testApi(project(":analysis:analysis-api-standalone:analysis-api-standalone-base"))
-    testApi(project(":analysis:analysis-api-impl-barebone"))
-    testApi(project(":analysis:analysis-api-impl-base"))
+    testApi(project(":analysis:analysis-api-standalone:analysis-api-fir-standalone-base"))
+    testImplementation(project(":analysis:analysis-api-impl-barebone"))
+    testImplementation(project(":analysis:analysis-api-impl-base"))
 }
 
 sourceSets {
