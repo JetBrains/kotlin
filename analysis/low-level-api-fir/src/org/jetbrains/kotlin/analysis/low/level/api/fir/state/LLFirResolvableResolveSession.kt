@@ -12,10 +12,8 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveCompone
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getModule
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.FirTowerContextProvider
-import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.canBePartOfParentDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLocalContainingOrThisDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.retryOnInvalidSession
-import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.FirElementsRecorder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirResolvableModuleSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionCache
@@ -61,16 +59,20 @@ internal abstract class LLFirResolvableResolveSession(
         get() = useSiteFirSessionCached.value
 
     override fun getSessionFor(module: KtModule): LLFirSession {
+        return getSession(module, preferBinary = true)
+    }
+
+    private fun getResolvableSessionFor(module: KtModule): LLFirResolvableModuleSession {
+        return getSession(module, preferBinary = false) as LLFirResolvableModuleSession
+    }
+
+    private fun getSession(module: KtModule, preferBinary: Boolean): LLFirSession {
         if (module == useSiteFirSession.ktModule) {
             return useSiteFirSession
         }
 
         val cache = LLFirSessionCache.getInstance(module.project)
-        return cache.getSession(module, preferBinary = true)
-    }
-
-    protected open fun getResolvableSessionFor(module: KtModule): LLFirResolvableModuleSession {
-        return getSessionFor(module) as LLFirResolvableModuleSession
+        return cache.getSession(module, preferBinary)
     }
 
     override fun getScopeSessionFor(firSession: FirSession): ScopeSession {
