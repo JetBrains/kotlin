@@ -19,22 +19,22 @@ typealias ExpectForActualData = Map<ExpectActualCompatibility<FirBasedSymbol<*>>
 @SymbolInternals
 var FirDeclaration.expectForActual: ExpectForActualData? by FirDeclarationDataRegistry.data(ExpectForActualAttributeKey)
 
-fun FirFunctionSymbol<*>.getSingleCompatibleExpectForActualOrNull() =
-    (this as FirBasedSymbol<*>).getSingleCompatibleExpectForActualOrNull() as? FirFunctionSymbol<*>
+fun FirFunctionSymbol<*>.getSingleExpectForActualOrNull(compatibleOnly: Boolean = false) =
+    (this as FirBasedSymbol<*>).getSingleExpectForActualOrNull(compatibleOnly) as? FirFunctionSymbol<*>
 
-fun FirBasedSymbol<*>.getSingleCompatibleExpectForActualOrNull(): FirBasedSymbol<*>? {
+fun FirBasedSymbol<*>.getSingleExpectForActualOrNull(compatibleOnly: Boolean = false): FirBasedSymbol<*>? {
     val expectForActual = expectForActual ?: return null
-    var compatibleActuals: List<FirBasedSymbol<*>>? = null
+    var actuals: List<FirBasedSymbol<*>>? = null
     for ((key, item) in expectForActual) {
-        if (key.compatible) {
-            if (compatibleActuals == null) {
-                compatibleActuals = item
+        if (!compatibleOnly || key.compatible) {
+            if (actuals == null) {
+                actuals = item
             } else {
-                return null // Exit if there are more than one list with compatible actuals
+                return null // Exit if there are more than one list with actuals
             }
         }
     }
-    return compatibleActuals?.singleOrNull()
+    return actuals?.singleOrNull()
 }
 
 val FirBasedSymbol<*>.expectForActual: ExpectForActualData?

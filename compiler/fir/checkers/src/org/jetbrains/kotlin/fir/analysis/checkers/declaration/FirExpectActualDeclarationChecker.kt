@@ -180,7 +180,7 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker() {
                 }
             }
         }
-        val expectedSingleCandidate = compatibilityToMembersMap.values.singleOrNull()?.firstOrNull()
+        val expectedSingleCandidate = symbol.getSingleExpectForActualOrNull()
         if (expectedSingleCandidate != null) {
             checkIfExpectHasDefaultArgumentsAndActualizedWithTypealias(
                 expectedSingleCandidate,

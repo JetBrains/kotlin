@@ -21,7 +21,7 @@ class FirDefaultParametersResolver : FirSessionComponent {
         originScope: FirScope?,
         index: Int,
     ): Boolean {
-        if (valueParameter.defaultValue != null || function.symbol.getSingleCompatibleExpectForActualOrNull().containsDefaultValue(index)) {
+        if (valueParameter.defaultValue != null || function.symbol.getSingleExpectForActualOrNull().containsDefaultValue(index)) {
             return true
         }
         if (function !is FirSimpleFunction) return false
@@ -45,7 +45,7 @@ class FirDefaultParametersResolver : FirSessionComponent {
 
         typeScope.processOverriddenFunctions(symbol) { overridden ->
             if (overridden.containsDefaultValue(index) ||
-                overridden.getSingleCompatibleExpectForActualOrNull().containsDefaultValue(index)
+                overridden.getSingleExpectForActualOrNull().containsDefaultValue(index)
             ) {
                 result = true
                 return@processOverriddenFunctions ProcessorAction.STOP
