@@ -22,11 +22,12 @@ import org.jetbrains.kotlin.fir.declarations.utils.isExternal
 import org.jetbrains.kotlin.fir.declarations.utils.isTailRec
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.scopes.collectAllFunctions
+import org.jetbrains.kotlin.fir.scopes.getDeclaredConstructors
+import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
-import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.toSymbol
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility
@@ -179,6 +180,15 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker() {
                 }
             }
         }
+        val expectedSingleCandidate = compatibilityToMembersMap.values.singleOrNull()?.firstOrNull()
+        if (expectedSingleCandidate != null) {
+            checkIfExpectHasDefaultArgumentsAndActualizedWithTypealias(
+                expectedSingleCandidate,
+                symbol,
+                context,
+                reporter,
+            )
+        }
     }
 
     @Suppress("UNUSED_PARAMETER")
@@ -239,6 +249,33 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker() {
                 context
             )
         }
+    }
+
+    private fun checkIfExpectHasDefaultArgumentsAndActualizedWithTypealias(
+        expectSymbol: FirBasedSymbol<*>,
+        actualSymbol: FirBasedSymbol<*>,
+        context: CheckerContext,
+        reporter: DiagnosticReporter,
+    ) {
+        if (expectSymbol !is FirClassSymbol ||
+            actualSymbol !is FirTypeAliasSymbol ||
+            expectSymbol.classKind == ClassKind.ANNOTATION_CLASS
+        ) return
+
+        val membersWithDefaultValueParameters =
+            expectSymbol.declaredMemberScope(expectSymbol.moduleData.session, memberRequiredPhase = null)
+                .run { collectAllFunctions() + getDeclaredConstructors() }
+                .filter { it.valueParameterSymbols.any(FirValueParameterSymbol::hasDefaultValue) }
+
+        if (membersWithDefaultValueParameters.isEmpty()) return
+
+        reporter.reportOn(
+            actualSymbol.source,
+            FirErrors.DEFAULT_ARGUMENTS_IN_EXPECT_WITH_ACTUAL_TYPEALIAS,
+            expectSymbol,
+            membersWithDefaultValueParameters,
+            context
+        )
     }
 
     fun Map<out ExpectActualCompatibility<*>, *>.allStrongIncompatibilities(): Boolean {

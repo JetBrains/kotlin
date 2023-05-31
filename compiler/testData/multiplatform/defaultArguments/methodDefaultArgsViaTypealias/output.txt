@@ -1,0 +1,14 @@
+-- Common --
+Exit code: OK
+Output:
+
+-- JVM --
+Exit code: COMPILATION_ERROR
+Output:
+compiler/testData/multiplatform/defaultArguments/methodDefaultArgsViaTypealias/jvm.kt:8:1: error: default argument values inside expect declaration 'A' are not allowed if it is actualized via typealias. Possible fix is to remove default argument values in members:
+    public constructor A(p: String = ...)
+
+    public final expect fun foo(p: String = ...): Unit
+
+actual typealias A = AImpl
+^

@@ -5631,18 +5631,6 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             }
 
             @Test
-            @TestMetadata("expectClassActualTypeAlias.kt")
-            public void testExpectClassActualTypeAlias() throws Exception {
-                runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/expectClassActualTypeAlias.kt");
-            }
-
-            @Test
-            @TestMetadata("expectClassActualTypeAlias2.kt")
-            public void testExpectClassActualTypeAlias2() throws Exception {
-                runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/expectClassActualTypeAlias2.kt");
-            }
-
-            @Test
             @TestMetadata("genericSetter.kt")
             public void testGenericSetter() throws Exception {
                 runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/genericSetter.kt");

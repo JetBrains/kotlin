@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.isPrimaryConstructorOfInlineC
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.multiplatform.*
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility.*
+import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
 import org.jetbrains.kotlin.resolve.source.PsiSourceFile
 import org.jetbrains.kotlin.types.KotlinType
@@ -203,6 +204,34 @@ class ExpectedActualDeclarationChecker(
         }
     }
 
+    private fun checkIfExpectHasDefaultArgumentsAndActualizedWithTypealias(
+        expectDescriptor: MemberDescriptor,
+        actualDeclaration: KtNamedDeclaration,
+        trace: BindingTrace,
+    ) {
+        if (expectDescriptor !is ClassDescriptor ||
+            actualDeclaration !is KtTypeAlias ||
+            expectDescriptor.kind == ClassKind.ANNOTATION_CLASS
+        ) return
+
+        val members = expectDescriptor.constructors + expectDescriptor.unsubstitutedMemberScope
+            .getContributedDescriptors(DescriptorKindFilter.FUNCTIONS)
+            .filterIsInstance<FunctionDescriptor>()
+
+        val membersWithDefaultValueParameters = members
+            .filter { it.valueParameters.any { p -> p.declaresDefaultValue() }}
+
+        if (membersWithDefaultValueParameters.isEmpty()) return
+
+        trace.report(
+            Errors.DEFAULT_ARGUMENTS_IN_EXPECT_WITH_ACTUAL_TYPEALIAS.on(
+                actualDeclaration,
+                expectDescriptor,
+                membersWithDefaultValueParameters
+            )
+        )
+    }
+
     private fun MemberDescriptor.hasNoActualWithDiagnostic(
         compatibility: Map<ExpectActualCompatibility<MemberDescriptor>, List<MemberDescriptor>>
     ): Boolean {
@@ -306,6 +335,10 @@ class ExpectedActualDeclarationChecker(
                     checkAnnotationConstructors(expectedConstructor, actualConstructor, trace, reportOn)
                 }
             }
+        }
+        val expectSingleCandidate = compatibility.values.singleOrNull()?.firstOrNull()
+        if (expectSingleCandidate != null) {
+            checkIfExpectHasDefaultArgumentsAndActualizedWithTypealias(expectSingleCandidate, reportOn, trace)
         }
     }
 

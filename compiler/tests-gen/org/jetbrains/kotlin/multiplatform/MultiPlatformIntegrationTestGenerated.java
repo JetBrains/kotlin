@@ -365,9 +365,27 @@ public class MultiPlatformIntegrationTestGenerated extends AbstractMultiPlatform
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform/defaultArguments"), Pattern.compile("^([^\\.]+)$"), null, true);
         }
 
+        @TestMetadata("methodDefaultArgsViaTypealias")
+        public void testMethodDefaultArgsViaTypealias() throws Exception {
+            runTest("compiler/testData/multiplatform/defaultArguments/methodDefaultArgsViaTypealias/");
+        }
+
         @TestMetadata("useDefaultArgumentsInDependency")
         public void testUseDefaultArgumentsInDependency() throws Exception {
             runTest("compiler/testData/multiplatform/defaultArguments/useDefaultArgumentsInDependency/");
+        }
+
+        @TestMetadata("compiler/testData/multiplatform/defaultArguments/methodDefaultArgsViaTypealias")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class MethodDefaultArgsViaTypealias extends AbstractMultiPlatformIntegrationTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInMethodDefaultArgsViaTypealias() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform/defaultArguments/methodDefaultArgsViaTypealias"), Pattern.compile("^([^\\.]+)$"), null, true);
+            }
         }
 
         @TestMetadata("compiler/testData/multiplatform/defaultArguments/useDefaultArgumentsInDependency")

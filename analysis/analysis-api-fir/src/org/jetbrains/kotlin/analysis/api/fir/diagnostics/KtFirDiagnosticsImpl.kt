@@ -2808,6 +2808,13 @@ internal class ActualFunctionWithDefaultArgumentsImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.ActualFunctionWithDefaultArguments
 
+internal class DefaultArgumentsInExpectWithActualTypealiasImpl(
+    override val expectClassSymbol: KtClassLikeSymbol,
+    override val members: List<KtCallableSymbol>,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<KtTypeAlias>(firDiagnostic, token), KtFirDiagnostic.DefaultArgumentsInExpectWithActualTypealias
+
 internal class ActualAnnotationConflictingDefaultArgumentValueImpl(
     override val parameter: KtVariableLikeSymbol,
     firDiagnostic: KtPsiDiagnostic,

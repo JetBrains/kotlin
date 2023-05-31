@@ -7242,18 +7242,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
 
         @Test
-        @TestMetadata("expectClassActualTypeAlias.kt")
-        public void testExpectClassActualTypeAlias() throws Exception {
-            runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/expectClassActualTypeAlias.kt");
-        }
-
-        @Test
-        @TestMetadata("expectClassActualTypeAlias2.kt")
-        public void testExpectClassActualTypeAlias2() throws Exception {
-            runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/expectClassActualTypeAlias2.kt");
-        }
-
-        @Test
         @TestMetadata("fakeOverridesForIntersectionTypes.kt")
         public void testFakeOverridesForIntersectionTypes() throws Exception {
             runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/fakeOverridesForIntersectionTypes.kt");

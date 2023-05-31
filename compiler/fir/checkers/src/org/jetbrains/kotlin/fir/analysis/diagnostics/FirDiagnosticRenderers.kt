@@ -45,6 +45,19 @@ object FirDiagnosticRenderers {
 
     val SYMBOLS = KtDiagnosticRenderers.COLLECTION(SYMBOL)
 
+    val SYMBOLS_ON_NEWLINE_WITH_INDENT = object : ContextIndependentParameterRenderer<Collection<FirCallableSymbol<*>>> {
+        private val mode = MultiplatformDiagnosticRenderingMode()
+
+        override fun render(obj: Collection<FirCallableSymbol<*>>): String {
+            return buildString {
+                for (symbol in obj) {
+                    mode.newLine(this)
+                    mode.renderSymbol(this, symbol, "")
+                }
+            }
+        }
+    }
+
     val RENDER_COLLECTION_OF_TYPES = Renderer { types: Collection<ConeKotlinType> ->
         types.joinToString(separator = ", ") { type ->
             RENDER_TYPE.render(type)

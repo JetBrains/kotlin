@@ -50,8 +50,6 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.utils.IDEAPlatforms
 import org.jetbrains.kotlin.utils.IDEAPluginsCompatibilityAPI
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
-import java.io.PrintWriter
-import java.io.StringWriter
 
 object Renderers {
 
@@ -716,6 +714,20 @@ object Renderers {
         receiverAfterName = false
         propertyAccessorRenderingPolicy = PropertyAccessorRenderingPolicy.PRETTY
     }.asRenderer()
+
+    @JvmField
+    val DESCRIPTORS_ON_NEWLINE_WITH_INDENT = object : DiagnosticParameterRenderer<Collection<DeclarationDescriptor>> {
+        private val mode = MultiplatformDiagnosticRenderingMode()
+
+        override fun render(obj: Collection<DeclarationDescriptor>, renderingContext: RenderingContext): String {
+            return buildString {
+                for (descriptor in obj) {
+                    mode.newLine(this)
+                    mode.renderDescriptor(this, descriptor, renderingContext, "")
+                }
+            }
+        }
+    }
 
     fun renderExpressionType(type: KotlinType?, dataFlowTypes: Set<KotlinType>?): String {
         if (type == null)
