@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.name.JvmNames.MULTIFILE_PART_NAME_DELIMITER
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
+import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedMemberDescriptor
 
 object JvmFileClassUtil {
@@ -35,20 +36,29 @@ object JvmFileClassUtil {
     fun getFacadeClassInternalName(file: KtFile): String =
         getFileClassInfoNoResolve(file).facadeClassFqName.internalNameWithoutInnerClasses
 
-    private fun manglePartName(facadeName: String, fileName: String): String =
-        "$facadeName$MULTIFILE_PART_NAME_DELIMITER${PackagePartClassUtils.getFilePartShortName(fileName)}"
+    private fun manglePartName(facadeName: String, packagePartName: String): String =
+        "$facadeName$MULTIFILE_PART_NAME_DELIMITER$packagePartName"
 
     @JvmStatic
     fun getFileClassInfoNoResolve(file: KtFile): JvmFileClassInfo {
         val parsedAnnotations = parseJvmNameOnFileNoResolve(file)
         val packageFqName = parsedAnnotations?.jvmPackageName ?: file.packageFqName
+
+        val virtualFile = file.virtualFile
+
+        val packagePartName = when {
+            virtualFile?.extension == BuiltInSerializerProtocol.BUILTINS_FILE_EXTENSION -> BuiltInSerializerProtocol.BUILTINS_FILE_EXTENSION
+            file.isCompiled -> virtualFile?.nameWithoutExtension ?: file.name.substringBeforeLast('.')
+            else -> PackagePartClassUtils.getFilePartShortName(file.name)
+        }
+
         return when {
             parsedAnnotations != null -> {
-                val simpleName = parsedAnnotations.jvmName ?: PackagePartClassUtils.getFilePartShortName(file.name)
+                val simpleName = parsedAnnotations.jvmName ?: packagePartName
                 val facadeClassFqName = packageFqName.child(Name.identifier(simpleName))
                 when {
                     parsedAnnotations.isMultifileClass -> JvmMultifileClassPartInfo(
-                        fileClassFqName = packageFqName.child(Name.identifier(manglePartName(simpleName, file.name))),
+                        fileClassFqName = packageFqName.child(Name.identifier(manglePartName(simpleName, packagePartName))),
                         facadeClassFqName = facadeClassFqName
                     )
 
@@ -56,7 +66,10 @@ object JvmFileClassUtil {
                 }
             }
 
-            else -> JvmSimpleFileClassInfo(PackagePartClassUtils.getPackagePartFqName(packageFqName, file.name), false)
+            else -> {
+                val packagePartFqName = packageFqName.child(Name.identifier(packagePartName))
+                JvmSimpleFileClassInfo(packagePartFqName, false)
+            }
         }
     }
 
