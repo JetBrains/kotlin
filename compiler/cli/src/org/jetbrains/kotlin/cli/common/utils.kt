@@ -85,18 +85,18 @@ fun checkKotlinPackageUsageForLightTree(configuration: CompilerConfiguration, fi
 
 private fun KtSourceElement.getLocationWithin(file: FirFile): CompilerMessageLocationWithRange? {
     val sourceFile = file.sourceFile ?: return null
-    val (startLine, startOffset) = file.getLineAndOffsetStartingWithOnesAt(startOffset) ?: return null
-    val (endLine, endOffset) = file.getLineAndOffsetStartingWithOnesAt(endOffset) ?: return null
-    return CompilerMessageLocationWithRange.create(sourceFile.path, startLine, startOffset, endLine, endOffset, text?.toString())
+    val (startLine, startColumn) = file.getLineAndColumnStartingWithOnesAt(startOffset) ?: return null
+    val (endLine, endColumn) = file.getLineAndColumnStartingWithOnesAt(endOffset) ?: return null
+    return CompilerMessageLocationWithRange.create(sourceFile.path, startLine, startColumn, endLine, endColumn, text?.toString())
 }
 
-private fun FirFile.getLineAndOffsetStartingWithOnesAt(offset: Int?): Pair<Int, Int>? {
+private fun FirFile.getLineAndColumnStartingWithOnesAt(offset: Int?): Pair<Int, Int>? {
     return offset?.let { sourceFileLinesMapping?.getLineAndColumnByOffsetStartingWithOnes(it) }
 }
 
 private fun KtSourceFileLinesMapping.getLineAndColumnByOffsetStartingWithOnes(startOffset: Int): Pair<Int, Int> {
-    val (line, offset) = getLineAndColumnByOffset(startOffset)
-    return line + 1 to offset + 1
+    val (line, column) = getLineAndColumnByOffset(startOffset)
+    return line + 1 to column + 1
 }
 
 fun <PathProvider : Any> getLibraryFromHome(
