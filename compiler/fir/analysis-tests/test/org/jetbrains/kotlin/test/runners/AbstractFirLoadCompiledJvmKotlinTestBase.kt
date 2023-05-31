@@ -37,7 +37,7 @@ abstract class AbstractFirLoadCompiledJvmKotlinTestBase<F : ResultingArtifact.Fr
         )
 
         configureJvmArtifactsHandlersStep {
-            useHandlers(::LoadedMetadataDumpHandler)
+            useHandlers(::JvmLoadedMetadataDumpHandler)
         }
 
         forTestsMatching("compiler/testData/loadJava/compiledKotlinWithStdlib/*") {

@@ -24,6 +24,9 @@ object FrontendKinds {
     }
 }
 
+val FrontendKind<*>.isFir: Boolean
+    get() = this == FrontendKinds.FIR
+
 object BackendKinds {
     object ClassicBackend : BackendKind<ClassicBackendInput>("ClassicBackend")
     object IrBackend : BackendKind<IrBackendInput>("IrBackend")
