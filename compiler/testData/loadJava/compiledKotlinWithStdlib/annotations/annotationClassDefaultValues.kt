@@ -1,3 +1,4 @@
+// TARGET_BACKEND: JVM
 // NO_CHECK_SOURCE_VS_BINARY
 //^ While compiling source with K1, we do not store annotation default values, but we load them when reading compiled files both in K1 and K2
 // This test verifies exactly loading of default values

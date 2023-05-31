@@ -1,3 +1,4 @@
+// TARGET_BACKEND: JVM
 package test
 
 var Long.date1: Any get() = java.util.Date()
