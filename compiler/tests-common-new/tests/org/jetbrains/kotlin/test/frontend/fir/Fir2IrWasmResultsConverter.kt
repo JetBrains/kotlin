@@ -167,6 +167,7 @@ fun ModuleCompilerAnalyzedOutput.convertToWasmIr(
         evaluatedConstTracker = configuration
             .putIfAbsent(CommonConfigurationKeys.EVALUATED_CONST_TRACKER, EvaluatedConstTracker.create()),
         inlineConstTracker = null,
+        allowNonCachedDeclarations = false
     )
 
     return convertToIr(
