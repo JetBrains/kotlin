@@ -30,7 +30,7 @@ import org.jetbrains.org.objectweb.asm.Opcodes
 
 // TODO: unify with KDocCommentKeeper
 context(Kapt4ContextForStubGeneration)
-class Kapt4KDocCommentKeeper(private val analysisSession: KtAnalysisSession) {
+class Kapt4KDocCommentKeeper {
     private val docCommentTable = Kapt4DocCommentTable()
 
     fun getDocTable(file: JCTree.JCCompilationUnit): DocCommentTable {

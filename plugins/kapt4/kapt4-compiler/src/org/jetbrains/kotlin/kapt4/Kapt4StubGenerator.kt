@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.isOneSegmentFQN
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.resolve.ArrayFqNames
 import org.jetbrains.kotlin.resolve.calls.util.getCalleeExpressionIfAny
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
@@ -71,18 +70,12 @@ class Kapt4StubGenerator(private val analysisSession: KtAnalysisSession) {
 
         private val KOTLIN_METADATA_ANNOTATION = Metadata::class.java.name
 
-        private val NON_EXISTENT_CLASS_NAME = FqName("error.NonExistentClass")
-
         private val JAVA_KEYWORD_FILTER_REGEX = "[a-z]+".toRegex()
 
         @Suppress("UselessCallOnNotNull") // nullable toString(), KT-27724
         private val JAVA_KEYWORDS = Tokens.TokenKind.values()
             .filter { JAVA_KEYWORD_FILTER_REGEX.matches(it.toString().orEmpty()) }
             .mapTo(hashSetOf(), Any::toString)
-
-        private val KOTLIN_PACKAGE = FqName("kotlin")
-
-        private val ARRAY_OF_FUNCTIONS = (ArrayFqNames.PRIMITIVE_TYPE_TO_ARRAY.values + ArrayFqNames.ARRAY_OF_FUNCTION).toSet()
 
         private val kotlin2JvmTargetMap = mapOf(
             AnnotationTarget.CLASS to ElementType.TYPE,
@@ -103,7 +96,7 @@ class Kapt4StubGenerator(private val analysisSession: KtAnalysisSession) {
     private val stripMetadata = options[KaptFlag.STRIP_METADATA]
     private val keepKdocComments = options[KaptFlag.KEEP_KDOC_COMMENTS_IN_STUBS]
 
-    private val kdocCommentKeeper = runIf(keepKdocComments) { Kapt4KDocCommentKeeper(analysisSession) }
+    private val kdocCommentKeeper = runIf(keepKdocComments) { Kapt4KDocCommentKeeper() }
 
     fun generateStubs(): Map<KtLightClass, KaptStub?> {
         return classes.associateWith { convertTopLevelClass(it) }
@@ -155,10 +148,6 @@ class Kapt4StubGenerator(private val analysisSession: KtAnalysisSession) {
         val parentClass = lightClass.parent as? PsiClass
         // Java supports only public nested classes inside interfaces and annotations
         if ((parentClass?.isInterface == true || parentClass?.isAnnotationType == true) && !lightClass.isPublic) return null
-
-        val isInnerOrNested = parentClass != null
-        val isNested = isInnerOrNested && lightClass.isStatic
-        val isInner = isInnerOrNested && !isNested
 
         val flags = lightClass.accessFlags
 
@@ -237,7 +226,7 @@ class Kapt4StubGenerator(private val analysisSession: KtAnalysisSession) {
                 return@mapJList null
             }
 
-            convertMethod(method, lightClass, lineMappings, packageFqName, isInner)?.also {
+            convertMethod(method, lightClass, lineMappings, packageFqName)?.also {
                 methodsPositions[it] = MemberData(method.name, method.signature, lineMappings.getPosition(lightClass, method))
             }
         }
@@ -714,7 +703,6 @@ class Kapt4StubGenerator(private val analysisSession: KtAnalysisSession) {
         containingClass: PsiClass,
         lineMappings: Kapt4LineMappingCollector,
         packageFqName: String,
-        isInner: Boolean
     ): JCMethodDecl? {
         if (isIgnored(method.annotations.asList())) return null
 
@@ -745,9 +733,7 @@ class Kapt4StubGenerator(private val analysisSession: KtAnalysisSession) {
             modifiers.flags = modifiers.flags or Flags.DEFAULT
         }
 
-
-
-        val parametersInfo = method.getParametersInfo(containingClass, isInner)
+        val parametersInfo = method.getParametersInfo()
 
         if (!checkIfValidTypeName(containingClass, returnType)
             || parametersInfo.any { !checkIfValidTypeName(containingClass, it.type) }

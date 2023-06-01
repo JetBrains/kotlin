@@ -5,29 +5,15 @@
 
 package org.jetbrains.kotlin.kapt4
 
-import com.sun.tools.javac.main.Option
 import com.sun.tools.javac.tree.JCTree
 import com.sun.tools.javac.tree.TreeMaker
 import com.sun.tools.javac.util.List
-import com.sun.tools.javac.util.Options
-import org.jetbrains.kotlin.kapt3.base.plus
 
 private fun getJavaVersion(): Int =
     System.getProperty("java.specification.version")?.substringAfter('.')?.toIntOrNull() ?: 6
 
 fun isJava9OrLater() = getJavaVersion() >= 9
-fun isJava11OrLater() = getJavaVersion() >= 11
-fun isJava17OrLater() = getJavaVersion() >= 17
 
-fun Options.putJavacOption(jdk8Name: String, jdk9Name: String, value: String) {
-    val option = if (isJava9OrLater()) {
-        Option.valueOf(jdk9Name)
-    } else {
-        Option.valueOf(jdk8Name)
-    }
-
-    put(option, value)
-}
 
 @Suppress("FunctionName")
 fun TreeMaker.TopLevelJava9Aware(packageClause: JCTree.JCExpression?, declarations: List<JCTree>): JCTree.JCCompilationUnit {

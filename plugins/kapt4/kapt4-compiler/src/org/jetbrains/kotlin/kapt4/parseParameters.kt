@@ -21,63 +21,14 @@ import com.intellij.psi.*
 internal class ParameterInfo(
     val flags: Long,
     val name: String,
-    val parameter: PsiParameter,
     val type: PsiType,
     val visibleAnnotations: List<PsiAnnotation>,
     val invisibleAnnotations: List<PsiAnnotation>
 )
 
-@Suppress("UNUSED_PARAMETER")
-internal fun PsiMethod.getParametersInfo(
-    containingClass: PsiClass,
-    isInnerClassMember: Boolean
-): List<ParameterInfo> {
+internal fun PsiMethod.getParametersInfo(): List<ParameterInfo> {
     val typeConverter = JvmPsiConversionHelper.getInstance(project)
     return this.parameterList.parameters.map {
-        ParameterInfo(0, it.name, it, typeConverter.convertType(it.type), it.annotations.asList(), emptyList())
+        ParameterInfo(0, it.name, typeConverter.convertType(it.type), it.annotations.asList(), emptyList())
     }
-//    val localVariables = this.localVariables ?: emptyList()
-//    val parameters = this.parameters ?: emptyList()
-//    val isStatic = isStatic(access)
-//    val isJvmOverloads = false // this.isJvmOverloadsGenerated()
-//
-//
-//
-//    // First and second parameters in enum constructors are synthetic, we should ignore them
-//    val isEnumConstructor = (name == "<init>") && containingClass.isEnum()
-//    val startParameterIndex =
-//        if (isEnumConstructor) 2 else
-//            if (isInnerClassMember && name == "<init>") 1 else 0
-//
-//    val parameterTypes = Type.getArgumentTypes(desc)
-//
-//    val parameterInfos = ArrayList<ParameterInfo>(parameterTypes.size - startParameterIndex)
-//    for (index in startParameterIndex..parameterTypes.lastIndex) {
-//        val type = parameterTypes[index]
-//
-//        // Use parameters only in case of the abstract methods (it hasn't local variables table)
-//        var name: String? = if (isAbstract(this.access) && this.name != "<init>")
-//            parameters.getOrNull(index - startParameterIndex)?.name
-//        else
-//            null
-//
-//        val localVariableIndexOffset = when {
-//            isStatic -> 0
-//            isJvmOverloads -> 0
-//            else -> 1
-//        }
-//
-//        // @JvmOverloads constructors and ordinary methods don't have "this" local variable
-//        name = name ?: localVariables.getOrNull(index + localVariableIndexOffset)?.name
-//                ?: originalDescriptor.valueParameters.getOrNull(index)?.name?.identifierOrNullIfSpecial
-//        if (name == null || name.startsWith("<") && name.endsWith(">")) {
-//            name = "p${index - startParameterIndex}"
-//        }
-//
-//        val indexForAnnotation = index - startParameterIndex
-//        val visibleAnnotations = visibleParameterAnnotations?.get(indexForAnnotation)
-//        val invisibleAnnotations = invisibleParameterAnnotations?.get(indexForAnnotation)
-//        parameterInfos += ParameterInfo(0, name, type, visibleAnnotations, invisibleAnnotations)
-//    }
-//    return parameterInfos
 }
