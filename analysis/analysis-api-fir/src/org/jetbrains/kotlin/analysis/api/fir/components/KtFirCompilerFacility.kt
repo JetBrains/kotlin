@@ -90,7 +90,8 @@ internal class KtFirCompilerFacility(
             diagnosticsReporter,
             linkViaSignatures = false,
             effectiveConfiguration[CommonConfigurationKeys.EVALUATED_CONST_TRACKER] ?: EvaluatedConstTracker.create(),
-            effectiveConfiguration[CommonConfigurationKeys.INLINE_CONST_TRACKER]
+            effectiveConfiguration[CommonConfigurationKeys.INLINE_CONST_TRACKER],
+            allowNonCachedDeclarations = true
         )
 
         val fir2IrResult = Fir2IrConverter.createModuleFragmentWithSignaturesIfNeeded(
