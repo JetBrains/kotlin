@@ -7,10 +7,8 @@ package org.jetbrains.kotlin.fir.backend
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.builtins.StandardNames.BUILT_INS_PACKAGE_FQ_NAMES
-import org.jetbrains.kotlin.descriptors.DescriptorVisibility
-import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
@@ -44,9 +42,7 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.UNDEFINED_PARAMETER_INDEX
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.GeneratedByPlugin
-import org.jetbrains.kotlin.ir.declarations.impl.IrScriptImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
-import org.jetbrains.kotlin.ir.declarations.impl.SCRIPT_K2_ORIGIN
+import org.jetbrains.kotlin.ir.declarations.impl.*
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyClass
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrSyntheticBodyKind
@@ -57,10 +53,15 @@ import org.jetbrains.kotlin.ir.types.IrErrorType
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.load.kotlin.FacadeClassSource
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NameUtils
 import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.resolve.jvm.JvmClassName
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerAbiStability
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 import org.jetbrains.kotlin.utils.threadLocal
@@ -278,23 +279,94 @@ class Fir2IrDeclarationStorage(
         firBasedSymbol: FirBasedSymbol<*>,
         firOrigin: FirDeclarationOrigin
     ): IrDeclarationParent? {
-        return if (parentLookupTag != null) {
-            classifierStorage.findIrClass(parentLookupTag)
-        } else {
-            val containerFile = when (firBasedSymbol) {
-                is FirCallableSymbol -> firProvider.getFirCallableContainerFile(firBasedSymbol)
-                is FirClassLikeSymbol -> firProvider.getFirClassifierContainerFileIfAny(firBasedSymbol)
-                else -> error("Unknown symbol: $firBasedSymbol")
-            }
+        if (parentLookupTag != null) {
+            return classifierStorage.findIrClass(parentLookupTag)
+        }
 
-            when {
-                containerFile != null -> fileCache[containerFile]
-                firBasedSymbol is FirCallableSymbol -> getIrExternalPackageFragment(packageFqName, firOrigin)
+        val parentPackage = when (firBasedSymbol) {
+            is FirCallableSymbol<*> -> {
+                getIrExternalPackageFragment(packageFqName, firOrigin)
+            }
+            else -> {
                 // TODO: All classes from BUILT_INS_PACKAGE_FQ_NAMES are considered built-ins now,
                 // which is not exact and can lead to some problems
-                else -> getIrExternalOrBuiltInsPackageFragment(packageFqName, firOrigin)
+                getIrExternalOrBuiltInsPackageFragment(packageFqName, firOrigin)
             }
         }
+
+        val firProviderForSymbol = firBasedSymbol.moduleData.session.firProvider
+        val containerFile = when (firBasedSymbol) {
+            is FirCallableSymbol -> firProviderForSymbol.getFirCallableContainerFile(firBasedSymbol)
+            is FirClassLikeSymbol -> firProviderForSymbol.getFirClassifierContainerFileIfAny(firBasedSymbol)
+            else -> error("Unknown symbol: $firBasedSymbol")
+        }
+
+        if (containerFile != null) {
+            val existingFile = fileCache[containerFile]
+            if (existingFile != null) {
+                return existingFile
+            }
+
+            // Sudden declarations do not go through IR lowering process,
+            // so the parent file isn't replaced with a facade class, as in 'FileClassLowering'.
+            if (configuration.allowNonCachedDeclarations && firBasedSymbol is FirCallableSymbol<*>) {
+                val psiFile = containerFile.psi?.containingFile
+                if (psiFile is KtFile) {
+                    val fileClassInfo = JvmFileClassUtil.getFileClassInfoNoResolve(psiFile)
+                    val className = JvmClassName.byFqNameWithoutInnerClasses(fileClassInfo.fileClassFqName)
+
+                    val facadeClassName: JvmClassName?
+                    val declarationOrigin: IrDeclarationOrigin
+
+                    if (fileClassInfo.withJvmMultifileClass) {
+                        facadeClassName = JvmClassName.byFqNameWithoutInnerClasses(fileClassInfo.facadeClassFqName)
+                        declarationOrigin = IrDeclarationOrigin.JVM_MULTIFILE_CLASS
+                    } else {
+                        facadeClassName = null
+                        declarationOrigin = IrDeclarationOrigin.FILE_CLASS
+                    }
+
+                    val facadeShortName = className.fqNameForClassNameWithoutDollars.shortName()
+                    val containerSource = SuddenFacadeContainerSource(className, facadeClassName)
+                    return SuddenFileFacadeClass(declarationOrigin, facadeShortName, containerSource).apply {
+                        parent = parentPackage
+                        createParameterDeclarations()
+                    }
+                }
+            }
+        }
+
+        return parentPackage
+    }
+
+    private class SuddenFileFacadeClass(
+        origin: IrDeclarationOrigin,
+        name: Name,
+        source: SourceElement,
+    ) : IrClassImpl(
+        UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, IrClassSymbolImpl(), name,
+        ClassKind.CLASS, DescriptorVisibilities.PUBLIC, Modality.FINAL,
+        source = source
+    )
+
+    private class SuddenFacadeContainerSource(
+        override val className: JvmClassName,
+        override val facadeClassName: JvmClassName?
+    ) : DeserializedContainerSource, FacadeClassSource {
+        override val incompatibility get() = null
+        override val isPreReleaseInvisible get() = false
+        override val abiStability get() = DeserializedContainerAbiStability.STABLE
+        override val presentableString get() = className.internalName
+
+        override fun getContainingFile(): SourceFile = SourceFile.NO_SOURCE_FILE
+    }
+
+    private fun computeThisReceiverOwner(parent: IrDeclarationParent?): IrClass? {
+        if (parent is IrClass && parent !is SuddenFileFacadeClass) {
+            return parent
+        }
+
+        return null
     }
 
     internal fun findIrParent(callableDeclaration: FirCallableDeclaration): IrDeclarationParent? {
@@ -439,7 +511,7 @@ class Fir2IrDeclarationStorage(
     private fun <T : IrFunction> T.bindAndDeclareParameters(
         function: FirFunction?,
         irParent: IrDeclarationParent?,
-        thisReceiverOwner: IrClass? = irParent as? IrClass,
+        thisReceiverOwner: IrClass?,
         isStatic: Boolean,
         forSetter: Boolean,
         parentPropertyReceiver: FirReceiverParameter? = null
@@ -519,7 +591,7 @@ class Fir2IrDeclarationStorage(
     fun createIrFunction(
         function: FirFunction,
         irParent: IrDeclarationParent?,
-        thisReceiverOwner: IrClass? = irParent as? IrClass,
+        thisReceiverOwner: IrClass? = computeThisReceiverOwner(irParent),
         predefinedOrigin: IrDeclarationOrigin? = null,
         isLocal: Boolean = false,
         fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag? = null,
@@ -682,7 +754,7 @@ class Fir2IrDeclarationStorage(
                     // with the annotation itself.
                     constructorCache[constructor] = this
                     enterScope(this)
-                    bindAndDeclareParameters(constructor, irParent, isStatic = false, forSetter = false)
+                    bindAndDeclareParameters(constructor, irParent, irParent, isStatic = false, forSetter = false)
                     leaveScope(this)
                 }
             }
@@ -715,7 +787,7 @@ class Fir2IrDeclarationStorage(
         correspondingProperty: IrDeclarationWithName,
         propertyType: IrType,
         irParent: IrDeclarationParent?,
-        thisReceiverOwner: IrClass? = irParent as? IrClass,
+        thisReceiverOwner: IrClass? = computeThisReceiverOwner(irParent),
         isSetter: Boolean,
         origin: IrDeclarationOrigin,
         startOffset: Int,
@@ -895,7 +967,7 @@ class Fir2IrDeclarationStorage(
     fun createIrProperty(
         property: FirProperty,
         irParent: IrDeclarationParent?,
-        thisReceiverOwner: IrClass? = irParent as? IrClass,
+        thisReceiverOwner: IrClass? = computeThisReceiverOwner(irParent),
         predefinedOrigin: IrDeclarationOrigin? = null,
         isLocal: Boolean = false,
         fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag? = (irParent as? IrClass)?.classId?.toLookupTag(),
