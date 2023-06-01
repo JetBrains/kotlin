@@ -272,7 +272,9 @@ private fun IrBlockBodyBuilder.buildTypeSafeBarrier(function: IrFunction,
         // But let's keep it simple here for now; JVM backend doesn't do this anyway.
 
         if (!type.isNullableAny()) {
-            +returnIfBadType(irGet(valueParameters[i]), type,
+            // Here, we can't trust value parameter type until we check it, because of @UnsafeVariance
+            // So we add implicit cast to avoid type check optimization
+            +returnIfBadType(irImplicitCast(irGet(valueParameters[i]), context.irBuiltIns.anyNType), type,
                     if (typeSafeBarrierDescription == SpecialGenericSignatures.TypeSafeBarrierDescription.MAP_GET_OR_DEFAULT)
                         irGet(valueParameters[2])
                     else irConst(typeSafeBarrierDescription.defaultValue)
