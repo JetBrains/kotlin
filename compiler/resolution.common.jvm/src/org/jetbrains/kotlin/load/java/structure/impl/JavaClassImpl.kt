@@ -26,11 +26,16 @@ import org.jetbrains.kotlin.asJava.isSyntheticValuesOrValueOfMethod
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.load.java.structure.impl.source.JavaElementPsiSource
+import org.jetbrains.kotlin.load.java.structure.impl.source.JavaElementSourceFactory
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtPsiUtil
 
 class JavaClassImpl(psiClassSource: JavaElementPsiSource<PsiClass>) : JavaClassifierImpl<PsiClass>(psiClassSource), VirtualFileBoundJavaClass, JavaAnnotationOwnerImpl, JavaModifierListOwnerImpl {
+
+    @SuppressWarnings("unused") // used in KSP
+    constructor(psiClass: PsiClass) : this(JavaElementSourceFactory.getInstance(psiClass.project).createPsiSource(psiClass))
+
     init {
         assert(psiClassSource.psi !is PsiTypeParameter) { "PsiTypeParameter should be wrapped in JavaTypeParameter, not JavaClass: use JavaClassifier.create()" }
     }

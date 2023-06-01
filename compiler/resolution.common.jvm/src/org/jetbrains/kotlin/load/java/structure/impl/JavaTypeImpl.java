@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.load.java.structure.JavaAnnotation;
 import org.jetbrains.kotlin.load.java.structure.JavaType;
 import org.jetbrains.kotlin.load.java.structure.impl.source.JavaElementSourceFactory;
 import org.jetbrains.kotlin.load.java.structure.impl.source.JavaElementTypeSource;
+import org.jetbrains.kotlin.load.java.structure.impl.source.JavaFixedElementSourceFactory;
 import org.jetbrains.kotlin.load.java.structure.impl.source.JavaSourceFactoryOwner;
 import org.jetbrains.kotlin.name.FqName;
 
@@ -58,6 +59,18 @@ public abstract class JavaTypeImpl<Psi extends PsiType> implements JavaType, Jav
     public static JavaTypeImpl<?> create(JavaElementTypeSource<? extends PsiType> psiTypeSource) {
         return create(psiTypeSource.getType(), psiTypeSource);
     }
+
+    /**
+     * @deprecated used only for a source/binary compatibility with existing 3rd party tools. Should not be used from Analysis API, Kotlin compiler, or from any other place in the Kotlin repository.
+     */
+    @NotNull
+    @Deprecated
+    public static JavaTypeImpl<?> create(PsiType psiType) {
+        // The JavaFixedElementSourceFactory is directly created here.
+        // Instead, the `JavaElementSourceFactory.getInstance(project)` should be called, but in order to do this we need a `com.intellij.openapi.project.Project` instance
+        return create(new JavaFixedElementSourceFactory().createTypeSource(psiType));
+    }
+
 
     @NotNull
     public static JavaTypeImpl<?> create(@NotNull PsiType psiType, JavaElementTypeSource<? extends PsiType> psiTypeSource) {
