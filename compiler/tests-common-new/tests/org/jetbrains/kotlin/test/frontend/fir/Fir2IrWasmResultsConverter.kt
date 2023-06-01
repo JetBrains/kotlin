@@ -177,6 +177,7 @@ fun AbstractFirAnalyzerFacade.convertToWasmIr(
         evaluatedConstTracker = configuration
             .putIfAbsent(CommonConfigurationKeys.EVALUATED_CONST_TRACKER, EvaluatedConstTracker.create()),
         inlineConstTracker = null,
+        allowNonCachedDeclarations = false
     )
     return Fir2IrConverter.createModuleFragmentWithSignaturesIfNeeded(
         session, scopeSession, firFiles.toList(),
