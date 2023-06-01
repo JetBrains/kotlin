@@ -68,13 +68,13 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
     override val pluginVersion: String = getKotlinPluginVersion(logger)
 
     override fun apply(project: Project) {
+        checkGradleCompatibility()
 
+        project.registerDefaultVariantImplementations()
         KotlinBuildStatsService.getOrCreateInstance(project)?.apply {
             report(StringMetrics.KOTLIN_COMPILER_VERSION, pluginVersion)
         }
         BuildFlowService.registerIfAbsent(project)
-
-        checkGradleCompatibility()
 
         project.gradle.projectsEvaluated {
             whenBuildEvaluated(project)
@@ -82,7 +82,6 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
 
         addKotlinCompilerConfiguration(project)
 
-        project.registerDefaultVariantImplementations()
 
         project.configurations.maybeCreate(PLUGIN_CLASSPATH_CONFIGURATION_NAME).apply {
             isVisible = false
