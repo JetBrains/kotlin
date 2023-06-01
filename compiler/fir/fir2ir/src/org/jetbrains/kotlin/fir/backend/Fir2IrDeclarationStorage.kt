@@ -73,8 +73,6 @@ class Fir2IrDeclarationStorage(
     commonMemberStorage: Fir2IrCommonMemberStorage
 ) : Fir2IrComponents by components {
 
-    private val firProvider = session.firProvider
-
     private val fragmentCache: ConcurrentHashMap<FqName, IrExternalPackageFragment> = ConcurrentHashMap()
 
     private val builtInsFragmentCache: ConcurrentHashMap<FqName, IrExternalPackageFragment> = ConcurrentHashMap()
@@ -1812,8 +1810,11 @@ class Fir2IrDeclarationStorage(
         return when (val firDeclaration = firVariableSymbol.fir) {
             is FirEnumEntry -> {
                 classifierStorage.getCachedIrEnumEntry(firDeclaration)?.let { return it.symbol }
-                val containingFile = firProvider.getFirCallableContainerFile(firVariableSymbol)
                 val irParentClass = firDeclaration.containingClassLookupTag()?.let { classifierStorage.findIrClass(it) }
+
+                val firProviderForSymbol = firVariableSymbol.moduleData.session.firProvider
+                val containingFile = firProviderForSymbol.getFirCallableContainerFile(firVariableSymbol)
+
                 classifierStorage.createIrEnumEntry(
                     firDeclaration,
                     irParent = irParentClass,
