@@ -20,8 +20,7 @@ dependencies {
         exclude("org.jetbrains.kotlin", "kotlin-stdlib-common")
     }
 
-    compileOnly(project(":kotlin-annotation-processing"))
-    embedded(project(":kotlin-annotation-processing")) { isTransitive = false }
+    implementation(project(":kotlin-annotation-processing"))
 
     embedded(project(":kotlin-annotation-processing-base")) { isTransitive = false }
     testImplementation(project(":kotlin-annotation-processing-cli"))
