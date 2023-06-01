@@ -208,7 +208,8 @@ private class FunctionClsStubBuilder(
             mayHaveContract = hasContract,
             runIf(hasContract) {
                 ClsContractBuilder(c, typeStubBuilder).loadContract(functionProto)
-            }
+            },
+            origin = createStubOrigin(protoContainer)
         )
     }
 }
@@ -280,7 +281,8 @@ private class PropertyClsStubBuilder(
             isExtension = propertyProto.hasReceiver(),
             hasReturnTypeRef = true,
             fqName = c.containerFqName.child(callableName),
-            initializer
+            initializer,
+            origin = createStubOrigin(protoContainer)
         )
     }
 

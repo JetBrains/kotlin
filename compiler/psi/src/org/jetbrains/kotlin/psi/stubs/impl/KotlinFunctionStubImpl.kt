@@ -38,7 +38,8 @@ class KotlinFunctionStubImpl(
     private val hasBody: Boolean,
     private val hasTypeParameterListBeforeFunctionName: Boolean,
     private val mayHaveContract: Boolean,
-    val contract: List<KtContractDescriptionElement<KotlinTypeBean, Nothing?>>?
+    val contract: List<KtContractDescriptionElement<KotlinTypeBean, Nothing?>>?,
+    val origin: KotlinStubOrigin?
 ) : KotlinStubBaseImpl<KtNamedFunction>(parent, KtStubElementTypes.FUNCTION), KotlinFunctionStub {
     init {
         if (isTopLevel && fqName == null) {

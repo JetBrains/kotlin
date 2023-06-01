@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserialization
 
 import org.jetbrains.kotlin.descriptors.SourceFile
-import org.jetbrains.kotlin.load.kotlin.FacadeClassSource
-import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErrorData
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerAbiStability
@@ -17,20 +14,20 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 
 //required for LLFirDependenciesSymbolProvider#jvmClassName, to resolve ambiguities
 //todo check if moving builtins to stubs would solve the issue
-internal class JvmFromStubDecompilerSource(
-    override val className: JvmClassName,
-    override val facadeClassName: JvmClassName? = null,
-    override val incompatibility: IncompatibleVersionErrorData<JvmMetadataVersion>? = null,
-    override val isPreReleaseInvisible: Boolean = false,
-    override val abiStability: DeserializedContainerAbiStability = DeserializedContainerAbiStability.STABLE,
-) : DeserializedContainerSource, FacadeClassSource {
-    constructor(packageName: FqName) :
-            this(JvmClassName.byClassId(ClassId.topLevel(JvmClassName.byInternalName(packageName.asString()).fqNameForTopLevelClassMaybeWithDollars)))
+internal class JvmStubDeserializedContainerSource(classId: ClassId) : DeserializedContainerSource {
+    private val className = JvmClassName.byClassId(classId)
 
-    override fun getContainingFile(): SourceFile {
-        return SourceFile.NO_SOURCE_FILE
-    }
+    override val incompatibility: IncompatibleVersionErrorData<*>?
+        get() = null
+
+    override val isPreReleaseInvisible: Boolean
+        get() = false
+
+    override val abiStability: DeserializedContainerAbiStability
+        get() = DeserializedContainerAbiStability.STABLE
 
     override val presentableString: String
         get() = className.internalName
+
+    override fun getContainingFile(): SourceFile = SourceFile.NO_SOURCE_FILE
 }
