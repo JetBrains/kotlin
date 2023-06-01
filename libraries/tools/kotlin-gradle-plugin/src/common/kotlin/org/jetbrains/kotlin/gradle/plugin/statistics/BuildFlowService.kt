@@ -18,6 +18,7 @@ import org.gradle.tooling.events.task.TaskFinishEvent
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.BuildEventsListenerRegistryHolder
 import org.jetbrains.kotlin.gradle.plugin.StatisticsBuildFlowManager
+import org.jetbrains.kotlin.gradle.plugin.internal.isProjectIsolationEnabled
 import org.jetbrains.kotlin.gradle.utils.isConfigurationCacheAvailable
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import org.jetbrains.kotlin.statistics.metrics.IStatisticsValuesConsumer
@@ -55,6 +56,11 @@ internal abstract class BuildFlowService : BuildService<BuildFlowService.Paramet
             }
 
             val fusStatisticsAvailable = fusStatisticsAvailable(project.gradle)
+
+            //Workaround for known issues for Gradle 8+: https://github.com/gradle/gradle/issues/24887:
+            // when this OperationCompletionListener is called services can be already closed for Gradle 8,
+            // so there is a change that no VariantImplementationFactory will be found
+            val isProjectIsolationEnabled = project.isProjectIsolationEnabled
             return project.gradle.sharedServices.registerIfAbsent(serviceName, BuildFlowService::class.java) { spec ->
                 if (fusStatisticsAvailable) {
                     KotlinBuildStatsService.applyIfInitialised {
@@ -63,7 +69,7 @@ internal abstract class BuildFlowService : BuildService<BuildFlowService.Paramet
                 }
 
                 spec.parameters.configurationMetrics.set(project.provider {
-                    KotlinBuildStatsService.getInstance()?.collectStartMetrics(project)
+                    KotlinBuildStatsService.getInstance()?.collectStartMetrics(project, isProjectIsolationEnabled)
                 })
                 spec.parameters.fusStatisticsAvailable.set(fusStatisticsAvailable)
             }.also { buildService ->
