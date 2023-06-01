@@ -398,14 +398,20 @@ KInt Kotlin_String_indexOfString(KString thiz, KString other, KInt fromIndex) {
   if (other->count_ == 0) {
     return fromIndex;
   }
-  const KChar* thizRaw = CharArrayAddressOfElementAt(thiz, fromIndex);
+  const KChar* thizRaw = CharArrayAddressOfElementAt(thiz, 0);
   const KChar* otherRaw = CharArrayAddressOfElementAt(other, 0);
-  void* result = konan::memmem(thizRaw, (thiz->count_ - fromIndex) * sizeof(KChar),
-                               otherRaw, other->count_ * sizeof(KChar));
-  if (result == nullptr) return -1;
-
-  return (reinterpret_cast<intptr_t>(result) - reinterpret_cast<intptr_t>(
-      CharArrayAddressOfElementAt(thiz, 0))) / sizeof(KChar);
+  const auto otherSize = other->count_ * sizeof(KChar);
+  while (true) {
+    void* result = konan::memmem(thizRaw + fromIndex, (thiz->count_ - fromIndex) * sizeof(KChar),
+                                 otherRaw, otherSize);
+    if (result == nullptr) return -1;
+    auto byteIndex = reinterpret_cast<intptr_t>(result) - reinterpret_cast<intptr_t>(thizRaw);
+    if (byteIndex % sizeof(KChar) == 0) {
+      return byteIndex / sizeof(KChar);
+    } else {
+      fromIndex = byteIndex / sizeof(KChar) + 1;
+    }
+  }
 }
 
 KInt Kotlin_String_lastIndexOfString(KString thiz, KString other, KInt fromIndex) {

@@ -1856,4 +1856,17 @@ ${"    "}
         assertTrue(null.contentEquals(null, ignoreCase = true))
         assertTrue(null.contentEquals(null, ignoreCase = false))
     }
+
+    @Test
+    fun indexOfRespectsCharBoundary() {
+        withOneCharSequenceArg("\u003a\u3b3c\u003d") { input ->
+            assertEquals(-1, input.indexOf("\u3c00"))
+            assertEquals(-1, input.indexOf("\u3d3b"))
+            assertEquals(-1, input.indexOf("\u3c00\u3d3b"))
+        }
+
+        // KT-56637
+        assertEquals("買っ", "買っ".replace("掌", "X"))
+        assertEquals("買", "買".replace("掌", "X"))
+    }
 }
