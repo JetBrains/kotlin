@@ -129,14 +129,12 @@ internal class FunctionGenerator(declarationGenerator: DeclarationGenerator) : D
                 irAccessor, ktAccessor ?: ktProperty, ktProperty.receiverTypeReference,
                 ktProperty.contextReceivers.mapNotNull { it.typeReference() }
             )
-            if (context.configuration.generateBodies) {
-                val ktBodyExpression = ktAccessor?.bodyExpression
-                irAccessor.body =
-                    if (ktBodyExpression != null)
-                        createBodyGenerator(irAccessor.symbol).generateFunctionBody(ktBodyExpression)
-                    else
-                        generateDefaultAccessorBody(descriptor, irAccessor)
-            }
+            val ktBodyExpression = ktAccessor?.bodyExpression
+            irAccessor.body =
+                if (ktBodyExpression != null)
+                    createBodyGenerator(irAccessor.symbol).generateFunctionBody(ktBodyExpression)
+                else
+                    generateDefaultAccessorBody(descriptor, irAccessor)
         }
 
     fun generateDefaultAccessorForPrimaryConstructorParameter(
@@ -154,7 +152,7 @@ internal class FunctionGenerator(declarationGenerator: DeclarationGenerator) : D
         accessor: PropertyAccessorDescriptor,
         irAccessor: IrSimpleFunction
     ): IrBlockBody? =
-        if (accessor.modality == Modality.ABSTRACT || accessor.correspondingProperty.isExpect)
+        if (accessor.modality == Modality.ABSTRACT || accessor.correspondingProperty.isExpect || context.configuration.skipBodies)
             null
         else
             when (accessor) {
