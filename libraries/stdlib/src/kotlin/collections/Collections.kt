@@ -479,6 +479,40 @@ internal fun throwIndexOverflow() { throw ArithmeticException("Index overflow ha
 @SinceKotlin("1.3")
 internal fun throwCountOverflow() { throw ArithmeticException("Count overflow has happened.") }
 
+
+internal fun collectionToArrayCommonImpl(collection: Collection<*>): Array<Any?> {
+    if (collection.isEmpty()) return emptyArray<Any?>()
+
+    val destination = arrayOfNulls<Any>(collection.size)
+
+    val iterator = collection.iterator()
+    var index = 0
+    while (iterator.hasNext()) {
+        destination[index++] = iterator.next()
+    }
+
+    return destination
+}
+
+internal fun <T> collectionToArrayCommonImpl(collection: Collection<*>, array: Array<T>): Array<T> {
+    if (collection.isEmpty()) return terminateCollectionToArray(0, array)
+
+    val destination = if (array.size < collection.size) {
+        arrayOfNulls(array, collection.size)
+    } else {
+        array
+    }
+
+    val iterator = collection.iterator()
+    var index = 0
+    while (iterator.hasNext()) {
+        @Suppress("UNCHECKED_CAST")
+        destination[index++] = iterator.next() as T
+    }
+
+    return terminateCollectionToArray(collection.size, destination)
+}
+
 /**
  * In JVM if the size of [array] is bigger than [collectionSize], sets `array[collectionSize] = null`.
  * In other platforms does nothing.

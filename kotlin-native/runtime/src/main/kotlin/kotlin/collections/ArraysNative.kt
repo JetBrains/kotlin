@@ -19,16 +19,3 @@ public actual inline fun <reified T> Collection<T>.toTypedArray(): Array<T> {
     @Suppress("UNCHECKED_CAST")
     return result as Array<T>
 }
-
-@Suppress("UNCHECKED_CAST")
-internal actual fun <T> copyToArrayImpl(collection: Collection<*>, array: Array<T>): Array<T> {
-    if (array.size < collection.size)
-        return copyToArrayImpl(collection) as Array<T>
-
-    val iterator = collection.iterator()
-    var index = 0
-    while (iterator.hasNext()) {
-        array[index++] = iterator.next() as T
-    }
-    return terminateCollectionToArray(collection.size, array)
-}

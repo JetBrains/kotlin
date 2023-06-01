@@ -84,14 +84,9 @@ internal fun <T> Array<out T>?.contentDeepHashCodeImpl(): Int {
 @Suppress("UNCHECKED_CAST")
 internal actual fun <T> arrayOfNulls(reference: Array<T>, size: Int): Array<T> = arrayOfNulls<Any>(size) as Array<T>
 
-internal actual fun copyToArrayImpl(collection: Collection<*>): Array<Any?> {
-    val array = arrayOfUninitializedElements<Any?>(collection.size)
-    val iterator = collection.iterator()
-    var index = 0
-    while (iterator.hasNext())
-        array[index++] = iterator.next()
-    return array
-}
+internal actual fun copyToArrayImpl(collection: Collection<*>): Array<Any?> = collectionToArrayCommonImpl(collection)
+
+internal actual fun <T> copyToArrayImpl(collection: Collection<*>, array: Array<T>): Array<T> = collectionToArrayCommonImpl(collection, array)
 
 internal actual fun <T> terminateCollectionToArray(collectionSize: Int, array: Array<T>): Array<T> = array
 

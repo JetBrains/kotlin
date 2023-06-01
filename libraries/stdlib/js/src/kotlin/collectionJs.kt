@@ -36,26 +36,10 @@ internal fun <T> copyToArray(collection: Collection<T>): Array<T> {
 }
 
 @JsName("copyToArrayImpl")
-internal actual fun copyToArrayImpl(collection: Collection<*>): Array<Any?> {
-    val array = emptyArray<Any?>()
-    val iterator = collection.iterator()
-    while (iterator.hasNext())
-        array.asDynamic().push(iterator.next())
-    return array
-}
+internal actual fun copyToArrayImpl(collection: Collection<*>): Array<Any?> = collectionToArrayCommonImpl(collection)
 
 @JsName("copyToExistingArrayImpl")
-internal actual fun <T> copyToArrayImpl(collection: Collection<*>, array: Array<T>): Array<T> {
-    if (array.size < collection.size)
-        return copyToArrayImpl(collection).unsafeCast<Array<T>>()
-
-    val iterator = collection.iterator()
-    var index = 0
-    while (iterator.hasNext()) {
-        array[index++] = iterator.next().unsafeCast<T>()
-    }
-    return terminateCollectionToArray(collection.size, array)
-}
+internal actual fun <T> copyToArrayImpl(collection: Collection<*>, array: Array<T>): Array<T> = collectionToArrayCommonImpl(collection, array)
 
 internal actual fun <T> terminateCollectionToArray(collectionSize: Int, array: Array<T>): Array<T> = array
 
