@@ -82,7 +82,7 @@ internal fun PsiMethod.isGetterFor(field: PsiField): Boolean {
 }
 
 internal fun PsiMethod.isSetterFor(field: PsiField): Boolean {
-    return parameterList.getParameter(0)?.type == field.type
+    return parameterList.getParameter(0)?.type == field.type && parameterList.getParametersCount() == 1
 }
 
 internal fun Visibility.isPublicAPI() = when(this) {
