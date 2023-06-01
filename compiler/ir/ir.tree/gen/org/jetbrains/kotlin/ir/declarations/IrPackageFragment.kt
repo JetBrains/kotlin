@@ -26,4 +26,15 @@ abstract class IrPackageFragment : IrElementBase(), IrDeclarationContainer, IrSy
     abstract val packageFragmentDescriptor: PackageFragmentDescriptor
 
     abstract var packageFqName: FqName
+
+    @Deprecated(
+        message = "Please use `packageFqName` instead",
+        replaceWith = ReplaceWith("packageFqName"),
+        level = DeprecationLevel.ERROR,
+    )
+    var fqName: FqName
+        get() = packageFqName
+        set(value) {
+            packageFqName = value
+        }
 }
