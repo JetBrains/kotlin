@@ -319,6 +319,7 @@ open class FirFrontendFacade(
                 evaluatedConstTracker = compilerConfiguration
                     .putIfAbsent(CommonConfigurationKeys.EVALUATED_CONST_TRACKER, EvaluatedConstTracker.create()),
                 inlineConstTracker = compilerConfiguration[CommonConfigurationKeys.INLINE_CONST_TRACKER],
+                allowNonCachedDeclarations = false,
             ),
             ktFiles,
             lightTreeFiles,

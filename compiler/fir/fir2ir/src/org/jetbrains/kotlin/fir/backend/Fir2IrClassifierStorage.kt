@@ -667,10 +667,35 @@ class Fir2IrClassifierStorage(
         typeOrigin: ConversionTypeOrigin
     ): IrTypeParameterSymbol {
         val firTypeParameter = firTypeParameterSymbol.fir
-        return getCachedIrTypeParameter(firTypeParameter, typeOrigin)?.symbol
+
         // We can try to use default cache because setter can use parent type parameters
+        val cachedSymbol = getCachedIrTypeParameter(firTypeParameter, typeOrigin)?.symbol
             ?: typeParameterCache[firTypeParameter]?.symbol
-            ?: error("Cannot find cached type parameter by FIR symbol: ${firTypeParameterSymbol.name} of the owner: ${firTypeParameter.containingDeclarationSymbol}")
+
+        if (cachedSymbol != null) {
+            return cachedSymbol
+        }
+
+        if (components.configuration.allowNonCachedDeclarations) {
+            val firTypeParameterOwnerSymbol = firTypeParameter.containingDeclarationSymbol.fir
+            val firTypeParameterOwner = firTypeParameterOwnerSymbol as FirTypeParametersOwner
+            val index = firTypeParameterOwner.typeParameters.indexOf(firTypeParameter).also { check(it >= 0) }
+
+            with(firTypeParameter) {
+                val symbol = IrTypeParameterSymbolImpl()
+                convertWithOffsets { startOffset, endOffset ->
+                    irFactory.createTypeParameter(
+                        startOffset, endOffset, firTypeParameter.computeIrOrigin(), symbol,
+                        name, if (index < 0) 0 else index,
+                        isReified,
+                        variance
+                    )
+                }
+                return symbol
+            }
+        }
+
+        error("Cannot find cached type parameter by FIR symbol: ${firTypeParameterSymbol.name} of the owner: ${firTypeParameter.containingDeclarationSymbol}")
     }
 
     private val temporaryParent by lazy {
