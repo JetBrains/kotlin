@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: JS_IR
-// IGNORE_BACKEND: JS_IR_ES6
 interface CPointed
 
 inline fun <reified T : CPointed> CPointed.reinterpret(): T = TODO()

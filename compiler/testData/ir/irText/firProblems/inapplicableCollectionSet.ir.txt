@@ -20,7 +20,7 @@ FILE fqName:<root> fileName:/inapplicableCollectionSet.kt
     PROPERTY name:INSTANCES visibility:private modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:INSTANCES type:kotlin.collections.MutableMap<kotlin.String, <root>.Flaf> visibility:private [final]
         EXPRESSION_BODY
-          CALL 'public final fun mutableMapOf <K, V> (): kotlin.collections.MutableMap<K of kotlin.collections.MapsKt.mutableMapOf, V of kotlin.collections.MapsKt.mutableMapOf> declared in kotlin.collections.MapsKt' type=kotlin.collections.MutableMap<kotlin.String, <root>.Flaf> origin=null
+          CALL 'public final fun mutableMapOf <K, V> (): kotlin.collections.MutableMap<K of kotlin.collections.mutableMapOf, V of kotlin.collections.mutableMapOf> declared in kotlin.collections' type=kotlin.collections.MutableMap<kotlin.String, <root>.Flaf> origin=null
             <K>: kotlin.String
             <V>: <root>.Flaf
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-INSTANCES> visibility:private modality:FINAL <> ($this:<root>.Flaf) returnType:kotlin.collections.MutableMap<kotlin.String, <root>.Flaf>
@@ -61,7 +61,7 @@ FILE fqName:<root> fileName:/inapplicableCollectionSet.kt
                     SET_VAR 'var result: <root>.Flaf? declared in <root>.Flaf.forJavaName' type=kotlin.Unit origin=EQ
                       CONSTRUCTOR_CALL 'public constructor <init> (javaName: kotlin.String) declared in <root>.Flaf' type=<root>.Flaf origin=null
                         javaName: GET_VAR 'javaName: kotlin.String declared in <root>.Flaf.forJavaName' type=kotlin.String origin=null
-              CALL 'public final fun set <K, V> (key: K of kotlin.collections.MapsKt.set, value: V of kotlin.collections.MapsKt.set): kotlin.Unit declared in kotlin.collections.MapsKt' type=kotlin.Unit origin=EQ
+              CALL 'public final fun set <K, V> (key: K of kotlin.collections.set, value: V of kotlin.collections.set): kotlin.Unit declared in kotlin.collections' type=kotlin.Unit origin=EQ
                 <K>: kotlin.String
                 <V>: <root>.Flaf
                 $receiver: CALL 'private final fun <get-INSTANCES> (): kotlin.collections.MutableMap<kotlin.String, <root>.Flaf> declared in <root>.Flaf' type=kotlin.collections.MutableMap<kotlin.String, <root>.Flaf> origin=GET_PROPERTY

@@ -3,9 +3,9 @@ FILE fqName:<root> fileName:/kt49526.kt
     BLOCK_BODY
       VAR name:ref type:kotlin.reflect.KFunction1<kotlin.Nothing, kotlin.Boolean> [val]
         FUNCTION_REFERENCE 'public abstract fun contains (element: E of kotlin.collections.List): kotlin.Boolean declared in kotlin.collections.List' type=kotlin.reflect.KFunction1<kotlin.Any, kotlin.Boolean> origin=null reflectionTarget=<same>
-          $this: CALL 'public final fun plus <T> (element: T of kotlin.collections.CollectionsKt.plus): kotlin.collections.List<T of kotlin.collections.CollectionsKt.plus> declared in kotlin.collections.CollectionsKt' type=kotlin.collections.List<kotlin.Any> origin=PLUS
+          $this: CALL 'public final fun plus <T> (element: T of kotlin.collections.plus): kotlin.collections.List<T of kotlin.collections.plus> declared in kotlin.collections' type=kotlin.collections.List<kotlin.Any> origin=PLUS
             <T>: kotlin.Comparable<kotlin.Nothing>
-            $receiver: CALL 'public final fun listOf <T> (element: T of kotlin.collections.CollectionsKt.listOf): kotlin.collections.List<T of kotlin.collections.CollectionsKt.listOf> declared in kotlin.collections.CollectionsKt' type=kotlin.collections.List<kotlin.Char> origin=null
+            $receiver: CALL 'public final fun listOf <T> (element: T of kotlin.collections.listOf): kotlin.collections.List<T of kotlin.collections.listOf> declared in kotlin.collections' type=kotlin.collections.List<kotlin.Char> origin=null
               <T>: kotlin.Char
               element: CONST Char type=kotlin.Char value='a'
             element: CONST String type=kotlin.String value="-"

@@ -168,7 +168,7 @@ FILE fqName:<root> fileName:/ImplicitReceiverStack.kt
       VALUE_PARAMETER name:name index:0 type:kotlin.String?
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun get (name: kotlin.String?): <root>.ImplicitReceiverValue<*>? declared in <root>.PersistentImplicitReceiverStack'
-          CALL 'public final fun lastOrNull <T> (): T of kotlin.collections.CollectionsKt.lastOrNull? declared in kotlin.collections.CollectionsKt' type=<root>.ImplicitReceiverValue<*>? origin=null
+          CALL 'public final fun lastOrNull <T> (): T of kotlin.collections.lastOrNull? declared in kotlin.collections' type=<root>.ImplicitReceiverValue<*>? origin=null
             <T>: <root>.ImplicitReceiverValue<*>
             $receiver: CALL 'private final fun <get-stack> (): kotlin.collections.List<<root>.ImplicitReceiverValue<*>> declared in <root>.PersistentImplicitReceiverStack' type=kotlin.collections.List<<root>.ImplicitReceiverValue<*>> origin=GET_PROPERTY
               $this: GET_VAR '<this>: <root>.PersistentImplicitReceiverStack declared in <root>.PersistentImplicitReceiverStack.get' type=<root>.PersistentImplicitReceiverStack origin=null
@@ -205,7 +205,7 @@ FILE fqName:<root> fileName:/ImplicitReceiverStack.kt
   FUN name:foo visibility:public modality:FINAL <> (stack:<root>.PersistentImplicitReceiverStack) returnType:kotlin.Unit
     VALUE_PARAMETER name:stack index:0 type:<root>.PersistentImplicitReceiverStack
     BLOCK_BODY
-      CALL 'public final fun forEach <T> (action: kotlin.Function1<T of kotlin.collections.CollectionsKt.forEach, kotlin.Unit>): kotlin.Unit declared in kotlin.collections.CollectionsKt' type=kotlin.Unit origin=null
+      CALL 'public final fun forEach <T> (action: kotlin.Function1<T of kotlin.collections.forEach, kotlin.Unit>): kotlin.Unit declared in kotlin.collections' type=kotlin.Unit origin=null
         <T>: <root>.ImplicitReceiverValue<*>
         $receiver: GET_VAR 'stack: <root>.PersistentImplicitReceiverStack declared in <root>.foo' type=<root>.PersistentImplicitReceiverStack origin=null
         action: FUN_EXPR type=kotlin.Function1<<root>.ImplicitReceiverValue<*>, kotlin.Unit> origin=LAMBDA
@@ -222,7 +222,7 @@ FILE fqName:<root> fileName:/ImplicitReceiverStack.kt
     BLOCK_BODY
       VAR name:stack type:<root>.PersistentImplicitReceiverStack [val]
         CONSTRUCTOR_CALL 'public constructor <init> (stack: kotlin.collections.List<<root>.ImplicitReceiverValue<*>>) declared in <root>.PersistentImplicitReceiverStack' type=<root>.PersistentImplicitReceiverStack origin=null
-          stack: CALL 'public final fun listOf <T> (vararg elements: T of kotlin.collections.CollectionsKt.listOf): kotlin.collections.List<T of kotlin.collections.CollectionsKt.listOf> declared in kotlin.collections.CollectionsKt' type=kotlin.collections.List<<root>.ImplicitReceiverValue<kotlin.Nothing>> origin=null
+          stack: CALL 'public final fun listOf <T> (vararg elements: T of kotlin.collections.listOf): kotlin.collections.List<T of kotlin.collections.listOf> declared in kotlin.collections' type=kotlin.collections.List<<root>.ImplicitReceiverValue<kotlin.Nothing>> origin=null
             <T>: <root>.ImplicitReceiverValue<kotlin.Nothing>
             elements: VARARG type=kotlin.Array<out <root>.ImplicitReceiverValue<kotlin.Nothing>> varargElementType=<root>.ImplicitReceiverValue<kotlin.Nothing>
               CONSTRUCTOR_CALL 'public constructor <init> (boundSymbol: S of <root>.ImplicitReceiverValue?, type: kotlin.String) declared in <root>.ImplicitReceiverValue' type=<root>.ImplicitReceiverValue<kotlin.Nothing> origin=null
@@ -238,7 +238,7 @@ FILE fqName:<root> fileName:/ImplicitReceiverStack.kt
       RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
         CALL 'public final fun plus (other: kotlin.Any?): kotlin.String declared in kotlin.String' type=kotlin.String origin=PLUS
           $this: CALL 'public open fun <get-type> (): kotlin.String declared in <root>.ImplicitReceiverValue' type=kotlin.String origin=GET_PROPERTY
-            $this: CALL 'public final fun first <T> (): T of kotlin.collections.CollectionsKt.first declared in kotlin.collections.CollectionsKt' type=<root>.ImplicitReceiverValue<*> origin=null
+            $this: CALL 'public final fun first <T> (): T of kotlin.collections.first declared in kotlin.collections' type=<root>.ImplicitReceiverValue<*> origin=null
               <T>: <root>.ImplicitReceiverValue<*>
               $receiver: GET_VAR 'val stack: <root>.PersistentImplicitReceiverStack declared in <root>.box' type=<root>.PersistentImplicitReceiverStack origin=null
           other: BLOCK type=kotlin.String? origin=SAFE_CALL

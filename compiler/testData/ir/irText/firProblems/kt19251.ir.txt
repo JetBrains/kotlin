@@ -2,7 +2,7 @@ FILE fqName:<root> fileName:/test.kt
   FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
     BLOCK_BODY
       VAR name:map type:kotlin.collections.MutableMap<<root>.Fun, kotlin.String> [val]
-        CALL 'public final fun mutableMapOf <K, V> (): kotlin.collections.MutableMap<K of kotlin.collections.MapsKt.mutableMapOf, V of kotlin.collections.MapsKt.mutableMapOf> declared in kotlin.collections.MapsKt' type=kotlin.collections.MutableMap<<root>.Fun, kotlin.String> origin=null
+        CALL 'public final fun mutableMapOf <K, V> (): kotlin.collections.MutableMap<K of kotlin.collections.mutableMapOf, V of kotlin.collections.mutableMapOf> declared in kotlin.collections' type=kotlin.collections.MutableMap<<root>.Fun, kotlin.String> origin=null
           <K>: <root>.Fun
           <V>: kotlin.String
       VAR name:fn type:<root>.Fun [val]
@@ -12,7 +12,7 @@ FILE fqName:<root> fileName:/test.kt
               VALUE_PARAMETER name:it index:0 type:@[FlexibleNullability] kotlin.String?
               BLOCK_BODY
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: @[FlexibleNullability] kotlin.String?): @[FlexibleNullability] kotlin.String? declared in <root>.box'
-                  CALL 'public final fun TODO (): kotlin.Nothing declared in kotlin.StandardKt' type=kotlin.Nothing origin=null
+                  CALL 'public final fun TODO (): kotlin.Nothing declared in kotlin' type=kotlin.Nothing origin=null
       RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
         TYPE_OP type=kotlin.String origin=IMPLICIT_NOTNULL typeOperand=kotlin.String
           CALL 'public open fun computeIfAbsent (p0: @[EnhancedNullability] K of kotlin.collections.MutableMap, p1: @[EnhancedNullability] java.util.function.Function<in @[EnhancedNullability] K of kotlin.collections.MutableMap, out @[EnhancedNullability] V of kotlin.collections.MutableMap>): @[EnhancedNullability] V of kotlin.collections.MutableMap declared in kotlin.collections.MutableMap' type=@[EnhancedNullability] kotlin.String origin=null

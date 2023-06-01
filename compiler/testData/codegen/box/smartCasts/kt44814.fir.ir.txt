@@ -205,7 +205,7 @@ FILE fqName:<root> fileName:/kt44814.kt
     CONSTRUCTOR visibility:public <> (_children:kotlin.collections.List<<root>.LighterASTNode?>) returnType:<root>.LighterASTNode [primary]
       VALUE_PARAMETER name:_children index:0 type:kotlin.collections.List<<root>.LighterASTNode?>
         EXPRESSION_BODY
-          CALL 'public final fun emptyList <T> (): kotlin.collections.List<T of kotlin.collections.CollectionsKt.emptyList> declared in kotlin.collections.CollectionsKt' type=kotlin.collections.List<<root>.LighterASTNode?> origin=null
+          CALL 'public final fun emptyList <T> (): kotlin.collections.List<T of kotlin.collections.emptyList> declared in kotlin.collections' type=kotlin.collections.List<<root>.LighterASTNode?> origin=null
             <T>: <root>.LighterASTNode?
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
@@ -521,7 +521,7 @@ FILE fqName:<root> fileName:/kt44814.kt
     PROPERTY name:modifiers visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:modifiers type:kotlin.collections.List<<root>.FirModifier<*>> visibility:private [final]
         EXPRESSION_BODY
-          CALL 'public final fun emptyList <T> (): kotlin.collections.List<T of kotlin.collections.CollectionsKt.emptyList> declared in kotlin.collections.CollectionsKt' type=kotlin.collections.List<<root>.FirModifier<*>> origin=null
+          CALL 'public final fun emptyList <T> (): kotlin.collections.List<T of kotlin.collections.emptyList> declared in kotlin.collections' type=kotlin.collections.List<<root>.FirModifier<*>> origin=null
             <T>: <root>.FirModifier<*>
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-modifiers> visibility:public modality:FINAL <> ($this:<root>.FirModifierList) returnType:kotlin.collections.List<<root>.FirModifier<*>>
         correspondingProperty: PROPERTY name:modifiers visibility:public modality:FINAL [val]
@@ -669,7 +669,7 @@ FILE fqName:<root> fileName:/kt44814.kt
                         then: CONST Null type=kotlin.Nothing? value=null
                       BRANCH
                         if: CONST Boolean type=kotlin.Boolean value=true
-                        then: CALL 'public final fun let <T, R> (block: kotlin.Function1<T of kotlin.StandardKt.let, R of kotlin.StandardKt.let>): R of kotlin.StandardKt.let declared in kotlin.StandardKt' type=<root>.FirModifierList.FirPsiModifierList origin=null
+                        then: CALL 'public final fun let <T, R> (block: kotlin.Function1<T of kotlin.let, R of kotlin.let>): R of kotlin.let declared in kotlin' type=<root>.FirModifierList.FirPsiModifierList origin=null
                           <T>: <root>.KtModifierList
                           <R>: <root>.FirModifierList.FirPsiModifierList
                           $receiver: GET_VAR 'val tmp_1: <root>.KtModifierList? declared in <root>.FirModifierList.Companion.getModifierList' type=<root>.KtModifierList? origin=null
@@ -687,7 +687,7 @@ FILE fqName:<root> fileName:/kt44814.kt
                     VAR name:modifierListNode type:<root>.LighterASTNode [val]
                       BLOCK type=<root>.LighterASTNode origin=ELVIS
                         VAR IR_TEMPORARY_VARIABLE name:tmp_3 type:<root>.LighterASTNode? [val]
-                          CALL 'public final fun find <T> (predicate: kotlin.Function1<T of kotlin.collections.CollectionsKt.find, kotlin.Boolean>): T of kotlin.collections.CollectionsKt.find? declared in kotlin.collections.CollectionsKt' type=<root>.LighterASTNode? origin=null
+                          CALL 'public final fun find <T> (predicate: kotlin.Function1<T of kotlin.collections.find, kotlin.Boolean>): T of kotlin.collections.find? declared in kotlin.collections' type=<root>.LighterASTNode? origin=null
                             <T>: <root>.LighterASTNode?
                             $receiver: CALL 'public final fun getChildren (treeStructure: <root>.FlyweightCapableTreeStructure): kotlin.collections.List<<root>.LighterASTNode?> declared in <root>.LighterASTNode' type=kotlin.collections.List<<root>.LighterASTNode?> origin=null
                               $this: CALL 'public open fun <get-lighterASTNode> (): <root>.LighterASTNode declared in <root>.FirLightSourceElement' type=<root>.LighterASTNode origin=GET_PROPERTY
@@ -741,7 +741,7 @@ FILE fqName:<root> fileName:/kt44814.kt
           VAR name:sourceElement type:<root>.FirSourceElement? [val]
             CONSTRUCTOR_CALL 'public constructor <init> (lighterASTNode: <root>.LighterASTNode, treeStructure: <root>.FlyweightCapableTreeStructure) declared in <root>.FirLightSourceElement' type=<root>.FirLightSourceElement origin=null
               lighterASTNode: CONSTRUCTOR_CALL 'public constructor <init> (_children: kotlin.collections.List<<root>.LighterASTNode?>) declared in <root>.LighterASTNode' type=<root>.LighterASTNode origin=null
-                _children: CALL 'public final fun listOf <T> (element: T of kotlin.collections.CollectionsKt.listOf): kotlin.collections.List<T of kotlin.collections.CollectionsKt.listOf> declared in kotlin.collections.CollectionsKt' type=kotlin.collections.List<<root>.LighterASTNode> origin=null
+                _children: CALL 'public final fun listOf <T> (element: T of kotlin.collections.listOf): kotlin.collections.List<T of kotlin.collections.listOf> declared in kotlin.collections' type=kotlin.collections.List<<root>.LighterASTNode> origin=null
                   <T>: <root>.LighterASTNode
                   element: CONSTRUCTOR_CALL 'public constructor <init> (_children: kotlin.collections.List<<root>.LighterASTNode?>) declared in <root>.LighterASTNode' type=<root>.LighterASTNode origin=null
               treeStructure: CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.FlyweightCapableTreeStructure' type=<root>.FlyweightCapableTreeStructure origin=null

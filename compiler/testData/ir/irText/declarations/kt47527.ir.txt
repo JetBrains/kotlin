@@ -14,7 +14,7 @@ FILE fqName:<root> fileName:/kt47527.kt
               then: CONST Null type=kotlin.Nothing? value=null
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
-              then: CALL 'public final fun let <T, R> (block: kotlin.Function1<T of kotlin.StandardKt.let, R of kotlin.StandardKt.let>): R of kotlin.StandardKt.let declared in kotlin.StandardKt' type=kotlin.Nothing origin=null
+              then: CALL 'public final fun let <T, R> (block: kotlin.Function1<T of kotlin.let, R of kotlin.let>): R of kotlin.let declared in kotlin' type=kotlin.Nothing origin=null
                 <T>: kotlin.Any
                 <R>: kotlin.Nothing
                 $receiver: GET_VAR 'val tmp_0: kotlin.Any? declared in <root>.test_1' type=kotlin.Any? origin=null
@@ -28,7 +28,7 @@ FILE fqName:<root> fileName:/kt47527.kt
     VALUE_PARAMETER name:value index:0 type:kotlin.Any?
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test_2 (value: kotlin.Any?): kotlin.String? declared in <root>'
-        CALL 'public final fun run <R> (block: kotlin.Function0<R of kotlin.StandardKt.run>): R of kotlin.StandardKt.run declared in kotlin.StandardKt' type=kotlin.Nothing? origin=null
+        CALL 'public final fun run <R> (block: kotlin.Function0<R of kotlin.run>): R of kotlin.run declared in kotlin' type=kotlin.Nothing? origin=null
           <R>: kotlin.Nothing?
           block: FUN_EXPR type=kotlin.Function0<kotlin.Nothing?> origin=LAMBDA
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Nothing?
@@ -45,7 +45,7 @@ FILE fqName:<root> fileName:/kt47527.kt
                         then: CONST Null type=kotlin.Nothing? value=null
                       BRANCH
                         if: CONST Boolean type=kotlin.Boolean value=true
-                        then: CALL 'public final fun let <T, R> (block: kotlin.Function1<T of kotlin.StandardKt.let, R of kotlin.StandardKt.let>): R of kotlin.StandardKt.let declared in kotlin.StandardKt' type=kotlin.Nothing origin=null
+                        then: CALL 'public final fun let <T, R> (block: kotlin.Function1<T of kotlin.let, R of kotlin.let>): R of kotlin.let declared in kotlin' type=kotlin.Nothing origin=null
                           <T>: kotlin.Any
                           <R>: kotlin.Nothing
                           $receiver: GET_VAR 'val tmp_1: kotlin.Any? declared in <root>.test_2.<anonymous>' type=kotlin.Any? origin=null

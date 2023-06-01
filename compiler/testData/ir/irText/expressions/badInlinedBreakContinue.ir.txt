@@ -216,9 +216,9 @@ FILE fqName:<root> fileName:/badInlinedBreakContinue.kt
         body: BLOCK type=kotlin.Unit origin=null
   FUN name:test5 visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
-      CALL 'public final fun forEach <T> (action: kotlin.Function1<T of kotlin.collections.CollectionsKt.forEach, kotlin.Unit>): kotlin.Unit declared in kotlin.collections.CollectionsKt' type=kotlin.Unit origin=null
+      CALL 'public final fun forEach <T> (action: kotlin.Function1<T of kotlin.collections.forEach, kotlin.Unit>): kotlin.Unit declared in kotlin.collections' type=kotlin.Unit origin=null
         <T>: kotlin.Int
-        $receiver: CALL 'public final fun listOf <T> (vararg elements: T of kotlin.collections.CollectionsKt.listOf): kotlin.collections.List<T of kotlin.collections.CollectionsKt.listOf> declared in kotlin.collections.CollectionsKt' type=kotlin.collections.List<kotlin.Int> origin=null
+        $receiver: CALL 'public final fun listOf <T> (vararg elements: T of kotlin.collections.listOf): kotlin.collections.List<T of kotlin.collections.listOf> declared in kotlin.collections' type=kotlin.collections.List<kotlin.Int> origin=null
           <T>: kotlin.Int
           elements: VARARG type=kotlin.Array<out kotlin.Int> varargElementType=kotlin.Int
             CONST Int type=kotlin.Int value=1
@@ -234,9 +234,9 @@ FILE fqName:<root> fileName:/badInlinedBreakContinue.kt
                     arg0: GET_VAR 'i: kotlin.Int declared in <root>.test5.<anonymous>' type=kotlin.Int origin=null
                     arg1: CONST Int type=kotlin.Int value=2
                   then: ERROR_EXPR 'Loop not found for break expression: break' type=kotlin.Nothing
-      CALL 'public final fun forEach <T> (action: kotlin.Function1<T of kotlin.collections.CollectionsKt.forEach, kotlin.Unit>): kotlin.Unit declared in kotlin.collections.CollectionsKt' type=kotlin.Unit origin=null
+      CALL 'public final fun forEach <T> (action: kotlin.Function1<T of kotlin.collections.forEach, kotlin.Unit>): kotlin.Unit declared in kotlin.collections' type=kotlin.Unit origin=null
         <T>: kotlin.Int
-        $receiver: CALL 'public final fun listOf <T> (vararg elements: T of kotlin.collections.CollectionsKt.listOf): kotlin.collections.List<T of kotlin.collections.CollectionsKt.listOf> declared in kotlin.collections.CollectionsKt' type=kotlin.collections.List<kotlin.Int> origin=null
+        $receiver: CALL 'public final fun listOf <T> (vararg elements: T of kotlin.collections.listOf): kotlin.collections.List<T of kotlin.collections.listOf> declared in kotlin.collections' type=kotlin.collections.List<kotlin.Int> origin=null
           <T>: kotlin.Int
           elements: VARARG type=kotlin.Array<out kotlin.Int> varargElementType=kotlin.Int
             CONST Int type=kotlin.Int value=1
@@ -252,9 +252,9 @@ FILE fqName:<root> fileName:/badInlinedBreakContinue.kt
                     arg0: GET_VAR 'i: kotlin.Int declared in <root>.test5.<anonymous>' type=kotlin.Int origin=null
                     arg1: CONST Int type=kotlin.Int value=2
                   then: ERROR_EXPR 'Loop not found for continue expression: continue' type=kotlin.Nothing
-      CALL 'public final fun forEach <T> (action: kotlin.Function1<T of kotlin.collections.CollectionsKt.forEach, kotlin.Unit>): kotlin.Unit declared in kotlin.collections.CollectionsKt' type=kotlin.Unit origin=null
+      CALL 'public final fun forEach <T> (action: kotlin.Function1<T of kotlin.collections.forEach, kotlin.Unit>): kotlin.Unit declared in kotlin.collections' type=kotlin.Unit origin=null
         <T>: kotlin.Int
-        $receiver: CALL 'public final fun listOf <T> (vararg elements: T of kotlin.collections.CollectionsKt.listOf): kotlin.collections.List<T of kotlin.collections.CollectionsKt.listOf> declared in kotlin.collections.CollectionsKt' type=kotlin.collections.List<kotlin.Int> origin=null
+        $receiver: CALL 'public final fun listOf <T> (vararg elements: T of kotlin.collections.listOf): kotlin.collections.List<T of kotlin.collections.listOf> declared in kotlin.collections' type=kotlin.collections.List<kotlin.Int> origin=null
           <T>: kotlin.Int
           elements: VARARG type=kotlin.Array<out kotlin.Int> varargElementType=kotlin.Int
             CONST Int type=kotlin.Int value=1
@@ -270,9 +270,9 @@ FILE fqName:<root> fileName:/badInlinedBreakContinue.kt
                     arg0: GET_VAR 'i: kotlin.Int declared in <root>.test5.<no name provided>' type=kotlin.Int origin=null
                     arg1: CONST Int type=kotlin.Int value=2
                   then: ERROR_EXPR 'Loop not found for break expression: break' type=kotlin.Nothing
-      CALL 'public final fun forEach <T> (action: kotlin.Function1<T of kotlin.collections.CollectionsKt.forEach, kotlin.Unit>): kotlin.Unit declared in kotlin.collections.CollectionsKt' type=kotlin.Unit origin=null
+      CALL 'public final fun forEach <T> (action: kotlin.Function1<T of kotlin.collections.forEach, kotlin.Unit>): kotlin.Unit declared in kotlin.collections' type=kotlin.Unit origin=null
         <T>: kotlin.Int
-        $receiver: CALL 'public final fun listOf <T> (vararg elements: T of kotlin.collections.CollectionsKt.listOf): kotlin.collections.List<T of kotlin.collections.CollectionsKt.listOf> declared in kotlin.collections.CollectionsKt' type=kotlin.collections.List<kotlin.Int> origin=null
+        $receiver: CALL 'public final fun listOf <T> (vararg elements: T of kotlin.collections.listOf): kotlin.collections.List<T of kotlin.collections.listOf> declared in kotlin.collections' type=kotlin.collections.List<kotlin.Int> origin=null
           <T>: kotlin.Int
           elements: VARARG type=kotlin.Array<out kotlin.Int> varargElementType=kotlin.Int
             CONST Int type=kotlin.Int value=1

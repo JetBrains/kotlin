@@ -2,7 +2,7 @@ FILE fqName:<root> fileName:/typeParameterFromJavaClass.kt
   FUN name:foo visibility:public modality:FINAL <> (movedPaths:kotlin.collections.MutableList<<root>.Couple<<root>.FilePath>>) returnType:kotlin.Unit
     VALUE_PARAMETER name:movedPaths index:0 type:kotlin.collections.MutableList<<root>.Couple<<root>.FilePath>>
     BLOCK_BODY
-      CALL 'public final fun forEach <T> (action: kotlin.Function1<T of kotlin.collections.CollectionsKt.forEach, kotlin.Unit>): kotlin.Unit declared in kotlin.collections.CollectionsKt' type=kotlin.Unit origin=null
+      CALL 'public final fun forEach <T> (action: kotlin.Function1<T of kotlin.collections.forEach, kotlin.Unit>): kotlin.Unit declared in kotlin.collections' type=kotlin.Unit origin=null
         <T>: <root>.Couple<<root>.FilePath>
         $receiver: GET_VAR 'movedPaths: kotlin.collections.MutableList<<root>.Couple<<root>.FilePath>> declared in <root>.foo' type=kotlin.collections.MutableList<<root>.Couple<<root>.FilePath>> origin=null
         action: FUN_EXPR type=kotlin.Function1<<root>.Couple<<root>.FilePath>, kotlin.Unit> origin=LAMBDA

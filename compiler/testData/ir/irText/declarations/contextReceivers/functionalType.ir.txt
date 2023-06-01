@@ -164,7 +164,7 @@ FILE fqName:<root> fileName:/functionalType.kt
               TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
                 CALL 'public final fun <get-c> (): kotlin.Int declared in <root>.C' type=kotlin.Int origin=GET_PROPERTY
                   $this: GET_VAR '$context_receiver_0: <root>.C declared in <root>.test.<anonymous>' type=<root>.C origin=null
-      CALL 'public final fun with <T, R> (receiver: T of kotlin.StandardKt.with, block: @[ExtensionFunctionType] kotlin.Function1<T of kotlin.StandardKt.with, R of kotlin.StandardKt.with>): R of kotlin.StandardKt.with declared in kotlin.StandardKt' type=kotlin.Unit origin=null
+      CALL 'public final fun with <T, R> (receiver: T of kotlin.with, block: @[ExtensionFunctionType] kotlin.Function1<T of kotlin.with, R of kotlin.with>): R of kotlin.with declared in kotlin' type=kotlin.Unit origin=null
         <T>: <root>.C
         <R>: kotlin.Unit
         receiver: CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.C' type=<root>.C origin=null
@@ -172,7 +172,7 @@ FILE fqName:<root> fileName:/functionalType.kt
           FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.C) returnType:kotlin.Unit
             $receiver: VALUE_PARAMETER name:$this$with type:<root>.C
             BLOCK_BODY
-              CALL 'public final fun with <T, R> (receiver: T of kotlin.StandardKt.with, block: @[ExtensionFunctionType] kotlin.Function1<T of kotlin.StandardKt.with, R of kotlin.StandardKt.with>): R of kotlin.StandardKt.with declared in kotlin.StandardKt' type=kotlin.Unit origin=null
+              CALL 'public final fun with <T, R> (receiver: T of kotlin.with, block: @[ExtensionFunctionType] kotlin.Function1<T of kotlin.with, R of kotlin.with>): R of kotlin.with declared in kotlin' type=kotlin.Unit origin=null
                 <T>: <root>.R
                 <R>: kotlin.Unit
                 receiver: CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.R' type=<root>.R origin=null

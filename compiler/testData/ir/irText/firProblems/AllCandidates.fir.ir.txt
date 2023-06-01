@@ -55,7 +55,7 @@ FILE fqName:<root> fileName:/AllCandidates.kt
     VALUE_PARAMETER name:allCandidates index:0 type:kotlin.collections.Collection<<root>.MyCandidate>
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='private final fun allCandidatesResult <A> (allCandidates: kotlin.collections.Collection<<root>.MyCandidate>): @[FlexibleNullability] <root>.OverloadResolutionResultsImpl<@[FlexibleNullability] A of <root>.allCandidatesResult?>? declared in <root>'
-        CALL 'public final fun apply <T> (block: @[ExtensionFunctionType] kotlin.Function1<T of kotlin.StandardKt.apply, kotlin.Unit>): T of kotlin.StandardKt.apply declared in kotlin.StandardKt' type=@[FlexibleNullability] <root>.OverloadResolutionResultsImpl<@[FlexibleNullability] A of <root>.allCandidatesResult?>? origin=null
+        CALL 'public final fun apply <T> (block: @[ExtensionFunctionType] kotlin.Function1<T of kotlin.apply, kotlin.Unit>): T of kotlin.apply declared in kotlin' type=@[FlexibleNullability] <root>.OverloadResolutionResultsImpl<@[FlexibleNullability] A of <root>.allCandidatesResult?>? origin=null
           <T>: @[FlexibleNullability] <root>.OverloadResolutionResultsImpl<@[FlexibleNullability] A of <root>.allCandidatesResult?>?
           $receiver: CALL 'public open fun nameNotFound <R> (): @[FlexibleNullability] <root>.OverloadResolutionResultsImpl<@[FlexibleNullability] R of <root>.OverloadResolutionResultsImpl.nameNotFound?>? declared in <root>.OverloadResolutionResultsImpl' type=@[FlexibleNullability] <root>.OverloadResolutionResultsImpl<@[FlexibleNullability] A of <root>.allCandidatesResult?>? origin=null
             <R>: A of <root>.allCandidatesResult
@@ -65,7 +65,7 @@ FILE fqName:<root> fileName:/AllCandidates.kt
               BLOCK_BODY
                 CALL 'public open fun setAllCandidates (allCandidates: @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableCollection<@[FlexibleNullability] <root>.ResolvedCall<@[FlexibleNullability] D of <root>.OverloadResolutionResultsImpl?>?>?): kotlin.Unit declared in <root>.OverloadResolutionResultsImpl' type=kotlin.Unit origin=EQ
                   $this: GET_VAR '$this$apply: @[FlexibleNullability] <root>.OverloadResolutionResultsImpl<@[FlexibleNullability] A of <root>.allCandidatesResult?>? declared in <root>.allCandidatesResult.<anonymous>' type=@[FlexibleNullability] <root>.OverloadResolutionResultsImpl<@[FlexibleNullability] A of <root>.allCandidatesResult?>? origin=null
-                  allCandidates: CALL 'public final fun map <T, R> (transform: kotlin.Function1<T of kotlin.collections.CollectionsKt.map, R of kotlin.collections.CollectionsKt.map>): kotlin.collections.List<R of kotlin.collections.CollectionsKt.map> declared in kotlin.collections.CollectionsKt' type=kotlin.collections.List<<root>.ResolvedCall<A of <root>.allCandidatesResult>> origin=null
+                  allCandidates: CALL 'public final fun map <T, R> (transform: kotlin.Function1<T of kotlin.collections.map, R of kotlin.collections.map>): kotlin.collections.List<R of kotlin.collections.map> declared in kotlin.collections' type=kotlin.collections.List<<root>.ResolvedCall<A of <root>.allCandidatesResult>> origin=null
                     <T>: <root>.MyCandidate
                     <R>: <root>.ResolvedCall<A of <root>.allCandidatesResult>
                     $receiver: GET_VAR 'allCandidates: kotlin.collections.Collection<<root>.MyCandidate> declared in <root>.allCandidatesResult' type=kotlin.collections.Collection<<root>.MyCandidate> origin=null

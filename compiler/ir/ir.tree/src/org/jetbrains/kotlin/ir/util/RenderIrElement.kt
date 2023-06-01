@@ -578,7 +578,7 @@ private inline fun StringBuilder.appendDeclarationNameToFqName(
     options: DumpIrTreeOptions,
     fallback: () -> Unit
 ) {
-    if (declaration.origin != IrDeclarationOrigin.FILE_CLASS || options.printFacadeClassInFqNames) {
+    if (!declaration.isFileClass || options.printFacadeClassInFqNames) {
         append('.')
         if (declaration is IrDeclarationWithName) {
             append(declaration.name)

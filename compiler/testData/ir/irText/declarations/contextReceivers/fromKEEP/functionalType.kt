@@ -1,5 +1,4 @@
 // !LANGUAGE: +ContextReceivers
-// IGNORE_BACKEND: JS_IR
 
 class Param
 class O {

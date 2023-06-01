@@ -1,7 +1,5 @@
 // ISSUE: KT-47527
 // WITH_STDLIB
-// IGNORE_BACKEND: JS_IR
-// IGNORE_BACKEND: JS_IR_ES6
 
 fun test_1(value: Any?): String? = value?.let { return "O" }
 fun test_2(value: Any?): String? = run {

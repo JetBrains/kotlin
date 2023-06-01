@@ -35,7 +35,7 @@ FILE fqName:<root> fileName:/localDelegatedPropertiesWithAnnotations.kt
     BLOCK_BODY
       LOCAL_DELEGATED_PROPERTY name:test type:kotlin.Int flags:val
         VAR PROPERTY_DELEGATE name:test$delegate type:kotlin.Lazy<kotlin.Int> [val]
-          CALL 'public final fun lazy <T> (initializer: kotlin.Function0<T of kotlin.LazyKt.lazy>): kotlin.Lazy<T of kotlin.LazyKt.lazy> declared in kotlin.LazyKt' type=kotlin.Lazy<kotlin.Int> origin=null
+          CALL 'public final fun lazy <T> (initializer: kotlin.Function0<T of kotlin.lazy>): kotlin.Lazy<T of kotlin.lazy> declared in kotlin' type=kotlin.Lazy<kotlin.Int> origin=null
             <T>: kotlin.Int
             initializer: FUN_EXPR type=kotlin.Function0<kotlin.Int> origin=LAMBDA
               FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Int
@@ -45,7 +45,7 @@ FILE fqName:<root> fileName:/localDelegatedPropertiesWithAnnotations.kt
         FUN DELEGATED_PROPERTY_ACCESSOR name:<get-test> visibility:local modality:FINAL <> () returnType:kotlin.Int
           BLOCK_BODY
             RETURN type=kotlin.Nothing from='local final fun <get-test> (): kotlin.Int declared in <root>.foo'
-              CALL 'public final fun getValue <T> (thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): T of kotlin.LazyKt.getValue declared in kotlin.LazyKt' type=kotlin.Int origin=null
+              CALL 'public final fun getValue <T> (thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): T of kotlin.getValue declared in kotlin' type=kotlin.Int origin=null
                 <T>: kotlin.Int
                 $receiver: GET_VAR 'val test$delegate: kotlin.Lazy<kotlin.Int> declared in <root>.foo' type=kotlin.Lazy<kotlin.Int> origin=null
                 thisRef: CONST Null type=kotlin.Nothing? value=null

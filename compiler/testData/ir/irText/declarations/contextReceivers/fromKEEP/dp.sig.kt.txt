@@ -9,6 +9,9 @@ class View {
     // CHECK JVM_IR:
     //   Mangled name: View#<get-coefficient>(){}kotlin.Int
     //   Public signature: /View.coefficient.<get-coefficient>|2286291581442465794[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: View#<get-coefficient>(){}
+    //   Public signature: /View.coefficient.<get-coefficient>|5285326162631504309[0]
     get
 
   // CHECK:
@@ -21,6 +24,9 @@ class View {
 // CHECK JVM_IR:
 //   Mangled name: #box(){}kotlin.String
 //   Public signature: /box|-9347091776561469[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #box(){}
+//   Public signature: /box|2173511048851971368[0]
 fun box(): String
 
 // CHECK:
@@ -30,5 +36,8 @@ val Int.dp: Int
   // CHECK JVM_IR:
   //   Mangled name: #<get-dp>!View@kotlin.Int(){}kotlin.Int
   //   Public signature: /dp.<get-dp>|933397372434095199[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: #<get-dp>!View@kotlin.Int(){}
+  //   Public signature: /dp.<get-dp>|-92585254995500394[0]
   get($context_receiver_0: View): Int
 

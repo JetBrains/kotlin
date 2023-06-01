@@ -142,7 +142,7 @@ FILE fqName:<root> fileName:/monoidSum.kt
     VALUE_PARAMETER name:$context_receiver_0 index:0 type:<root>.Monoid<T of <root>.sum>
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun sum <T> ($context_receiver_0: <root>.Monoid<T of <root>.sum>): T of <root>.sum declared in <root>'
-        CALL 'public final fun fold <T, R> (initial: R of kotlin.collections.CollectionsKt.fold, operation: kotlin.Function2<R of kotlin.collections.CollectionsKt.fold, T of kotlin.collections.CollectionsKt.fold, R of kotlin.collections.CollectionsKt.fold>): R of kotlin.collections.CollectionsKt.fold declared in kotlin.collections.CollectionsKt' type=T of <root>.sum origin=null
+        CALL 'public final fun fold <T, R> (initial: R of kotlin.collections.fold, operation: kotlin.Function2<R of kotlin.collections.fold, T of kotlin.collections.fold, R of kotlin.collections.fold>): R of kotlin.collections.fold declared in kotlin.collections' type=T of <root>.sum origin=null
           <T>: T of <root>.sum
           <R>: T of <root>.sum
           $receiver: GET_VAR '<this>: kotlin.collections.List<T of <root>.sum> declared in <root>.sum' type=kotlin.collections.List<T of <root>.sum> origin=null
@@ -161,7 +161,7 @@ FILE fqName:<root> fileName:/monoidSum.kt
   FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
     BLOCK_BODY
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        CALL 'public final fun with <T, R> (receiver: T of kotlin.StandardKt.with, block: @[ExtensionFunctionType] kotlin.Function1<T of kotlin.StandardKt.with, R of kotlin.StandardKt.with>): R of kotlin.StandardKt.with declared in kotlin.StandardKt' type=kotlin.Int origin=null
+        CALL 'public final fun with <T, R> (receiver: T of kotlin.with, block: @[ExtensionFunctionType] kotlin.Function1<T of kotlin.with, R of kotlin.with>): R of kotlin.with declared in kotlin' type=kotlin.Int origin=null
           <T>: <root>.IntMonoid
           <R>: kotlin.Int
           receiver: GET_OBJECT 'CLASS OBJECT name:IntMonoid modality:FINAL visibility:public superTypes:[<root>.Monoid<kotlin.Int>]' type=<root>.IntMonoid
@@ -172,7 +172,7 @@ FILE fqName:<root> fileName:/monoidSum.kt
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Int declared in <root>.box'
                   CALL 'public final fun sum <T> ($context_receiver_0: <root>.Monoid<T of <root>.sum>): T of <root>.sum declared in <root>' type=kotlin.Int origin=null
                     <T>: kotlin.Int
-                    $receiver: CALL 'public final fun listOf <T> (vararg elements: T of kotlin.collections.CollectionsKt.listOf): kotlin.collections.List<T of kotlin.collections.CollectionsKt.listOf> declared in kotlin.collections.CollectionsKt' type=kotlin.collections.List<kotlin.Int> origin=null
+                    $receiver: CALL 'public final fun listOf <T> (vararg elements: T of kotlin.collections.listOf): kotlin.collections.List<T of kotlin.collections.listOf> declared in kotlin.collections' type=kotlin.collections.List<kotlin.Int> origin=null
                       <T>: kotlin.Int
                       elements: VARARG type=kotlin.Array<out kotlin.Int> varargElementType=kotlin.Int
                         CONST Int type=kotlin.Int value=1
@@ -180,7 +180,7 @@ FILE fqName:<root> fileName:/monoidSum.kt
                         CONST Int type=kotlin.Int value=3
                     $context_receiver_0: GET_VAR '$this$with: <root>.IntMonoid declared in <root>.box.<anonymous>' type=<root>.IntMonoid origin=null
       RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
-        CALL 'public final fun with <T, R> (receiver: T of kotlin.StandardKt.with, block: @[ExtensionFunctionType] kotlin.Function1<T of kotlin.StandardKt.with, R of kotlin.StandardKt.with>): R of kotlin.StandardKt.with declared in kotlin.StandardKt' type=kotlin.String origin=null
+        CALL 'public final fun with <T, R> (receiver: T of kotlin.with, block: @[ExtensionFunctionType] kotlin.Function1<T of kotlin.with, R of kotlin.with>): R of kotlin.with declared in kotlin' type=kotlin.String origin=null
           <T>: <root>.StringMonoid
           <R>: kotlin.String
           receiver: GET_OBJECT 'CLASS OBJECT name:StringMonoid modality:FINAL visibility:public superTypes:[<root>.Monoid<kotlin.String>]' type=<root>.StringMonoid
@@ -191,7 +191,7 @@ FILE fqName:<root> fileName:/monoidSum.kt
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.String declared in <root>.box'
                   CALL 'public final fun sum <T> ($context_receiver_0: <root>.Monoid<T of <root>.sum>): T of <root>.sum declared in <root>' type=kotlin.String origin=null
                     <T>: kotlin.String
-                    $receiver: CALL 'public final fun listOf <T> (vararg elements: T of kotlin.collections.CollectionsKt.listOf): kotlin.collections.List<T of kotlin.collections.CollectionsKt.listOf> declared in kotlin.collections.CollectionsKt' type=kotlin.collections.List<kotlin.String> origin=null
+                    $receiver: CALL 'public final fun listOf <T> (vararg elements: T of kotlin.collections.listOf): kotlin.collections.List<T of kotlin.collections.listOf> declared in kotlin.collections' type=kotlin.collections.List<kotlin.String> origin=null
                       <T>: kotlin.String
                       elements: VARARG type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String
                         CONST String type=kotlin.String value="O"

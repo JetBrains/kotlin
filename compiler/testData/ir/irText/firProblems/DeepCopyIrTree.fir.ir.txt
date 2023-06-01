@@ -143,7 +143,7 @@ FILE fqName:<root> fileName:/DeepCopyIrTree.kt
       BLOCK_BODY
         CALL 'public abstract fun <set-typeParameters> (<set-?>: kotlin.collections.List<<root>.IrTypeParameter>): kotlin.Unit declared in <root>.IrTypeParametersContainer' type=kotlin.Unit origin=EQ
           $this: GET_VAR '<this>: <root>.IrTypeParametersContainer declared in <root>.DeepCopyIrTreeWithSymbols.copyTypeParametersFrom' type=<root>.IrTypeParametersContainer origin=null
-          <set-?>: CALL 'public final fun map <T, R> (transform: kotlin.Function1<T of kotlin.collections.CollectionsKt.map, R of kotlin.collections.CollectionsKt.map>): kotlin.collections.List<R of kotlin.collections.CollectionsKt.map> declared in kotlin.collections.CollectionsKt' type=kotlin.collections.List<<root>.IrTypeParameter> origin=null
+          <set-?>: CALL 'public final fun map <T, R> (transform: kotlin.Function1<T of kotlin.collections.map, R of kotlin.collections.map>): kotlin.collections.List<R of kotlin.collections.map> declared in kotlin.collections' type=kotlin.collections.List<<root>.IrTypeParameter> origin=null
             <T>: <root>.IrTypeParameter
             <R>: <root>.IrTypeParameter
             $receiver: CALL 'public abstract fun <get-typeParameters> (): kotlin.collections.List<<root>.IrTypeParameter> declared in <root>.IrTypeParametersContainer' type=kotlin.collections.List<<root>.IrTypeParameter> origin=GET_PROPERTY
@@ -167,7 +167,7 @@ FILE fqName:<root> fileName:/DeepCopyIrTree.kt
                 BLOCK type=kotlin.Unit origin=FOR_LOOP
                   VAR FOR_LOOP_ITERATOR name:tmp_0 type:kotlin.collections.Iterator<kotlin.Pair<<root>.IrTypeParameter, <root>.IrTypeParameter>> [val]
                     CALL 'public abstract fun iterator (): kotlin.collections.Iterator<E of kotlin.collections.List> declared in kotlin.collections.List' type=kotlin.collections.Iterator<kotlin.Pair<<root>.IrTypeParameter, <root>.IrTypeParameter>> origin=FOR_LOOP_ITERATOR
-                      $this: CALL 'public final fun zip <T, R> (other: kotlin.collections.Iterable<R of kotlin.collections.CollectionsKt.zip>): kotlin.collections.List<kotlin.Pair<T of kotlin.collections.CollectionsKt.zip, R of kotlin.collections.CollectionsKt.zip>> declared in kotlin.collections.CollectionsKt' type=kotlin.collections.List<kotlin.Pair<<root>.IrTypeParameter, <root>.IrTypeParameter>> origin=null
+                      $this: CALL 'public final fun zip <T, R> (other: kotlin.collections.Iterable<R of kotlin.collections.zip>): kotlin.collections.List<kotlin.Pair<T of kotlin.collections.zip, R of kotlin.collections.zip>> declared in kotlin.collections' type=kotlin.collections.List<kotlin.Pair<<root>.IrTypeParameter, <root>.IrTypeParameter>> origin=null
                         <T>: <root>.IrTypeParameter
                         <R>: <root>.IrTypeParameter
                         $receiver: CALL 'public abstract fun <get-typeParameters> (): kotlin.collections.List<<root>.IrTypeParameter> declared in <root>.IrTypeParametersContainer' type=kotlin.collections.List<<root>.IrTypeParameter> origin=GET_PROPERTY
@@ -187,7 +187,7 @@ FILE fqName:<root> fileName:/DeepCopyIrTree.kt
                       VAR name:otherTypeParameter type:<root>.IrTypeParameter [val]
                         CALL 'public final fun component2 (): B of kotlin.Pair declared in kotlin.Pair' type=<root>.IrTypeParameter origin=COMPONENT_N(index=2)
                           $this: GET_VAR 'val tmp_1: kotlin.Pair<<root>.IrTypeParameter, <root>.IrTypeParameter> declared in <root>.DeepCopyIrTreeWithSymbols.copyTypeParametersFrom.<anonymous>' type=kotlin.Pair<<root>.IrTypeParameter, <root>.IrTypeParameter> origin=null
-                      CALL 'public final fun mapTo <T, R, C> (destination: C of kotlin.collections.CollectionsKt.mapTo, transform: kotlin.Function1<T of kotlin.collections.CollectionsKt.mapTo, R of kotlin.collections.CollectionsKt.mapTo>): C of kotlin.collections.CollectionsKt.mapTo declared in kotlin.collections.CollectionsKt' type=kotlin.collections.MutableList<<root>.IrType> origin=null
+                      CALL 'public final fun mapTo <T, R, C> (destination: C of kotlin.collections.mapTo, transform: kotlin.Function1<T of kotlin.collections.mapTo, R of kotlin.collections.mapTo>): C of kotlin.collections.mapTo declared in kotlin.collections' type=kotlin.collections.MutableList<<root>.IrType> origin=null
                         <T>: <root>.IrType
                         <R>: <root>.IrType
                         <C>: kotlin.collections.MutableList<<root>.IrType>

@@ -225,7 +225,7 @@ FILE fqName:<root> fileName:/compareTo.kt
                         other: CALL 'public open fun <get-length> (): kotlin.Int declared in kotlin.String' type=kotlin.Int origin=GET_PROPERTY
                           $this: GET_VAR 'b: @[FlexibleNullability] kotlin.String? declared in <root>.box.<anonymous>' type=@[FlexibleNullability] kotlin.String? origin=null
       RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
-        CALL 'public final fun with <T, R> (receiver: T of kotlin.StandardKt.with, block: @[ExtensionFunctionType] kotlin.Function1<T of kotlin.StandardKt.with, R of kotlin.StandardKt.with>): R of kotlin.StandardKt.with declared in kotlin.StandardKt' type=kotlin.String origin=null
+        CALL 'public final fun with <T, R> (receiver: T of kotlin.with, block: @[ExtensionFunctionType] kotlin.Function1<T of kotlin.with, R of kotlin.with>): R of kotlin.with declared in kotlin' type=kotlin.String origin=null
           <T>: java.util.Comparator<kotlin.String>
           <R>: kotlin.String
           receiver: GET_VAR 'val comparator: java.util.Comparator<kotlin.String> declared in <root>.box' type=java.util.Comparator<kotlin.String> origin=null

@@ -125,7 +125,7 @@ FILE fqName:<root> fileName:/ClashResolutionDescriptor.kt
   PROPERTY name:registrationMap visibility:private modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:registrationMap type:java.util.HashMap<java.lang.reflect.Type, kotlin.Any>{ kotlin.collections.HashMap<java.lang.reflect.Type, kotlin.Any> } visibility:private [final,static]
       EXPRESSION_BODY
-        CALL 'public final fun hashMapOf <K, V> (): java.util.HashMap<K of kotlin.collections.MapsKt.hashMapOf, V of kotlin.collections.MapsKt.hashMapOf>{ kotlin.collections.HashMap<K of kotlin.collections.MapsKt.hashMapOf, V of kotlin.collections.MapsKt.hashMapOf> } declared in kotlin.collections.MapsKt' type=java.util.HashMap<java.lang.reflect.Type, kotlin.Any>{ kotlin.collections.HashMap<java.lang.reflect.Type, kotlin.Any> } origin=null
+        CALL 'public final fun hashMapOf <K, V> (): java.util.HashMap<K of kotlin.collections.hashMapOf, V of kotlin.collections.hashMapOf>{ kotlin.collections.HashMap<K of kotlin.collections.hashMapOf, V of kotlin.collections.hashMapOf> } declared in kotlin.collections' type=java.util.HashMap<java.lang.reflect.Type, kotlin.Any>{ kotlin.collections.HashMap<java.lang.reflect.Type, kotlin.Any> } origin=null
           <K>: java.lang.reflect.Type
           <V>: kotlin.Any
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-registrationMap> visibility:private modality:FINAL <> () returnType:java.util.HashMap<java.lang.reflect.Type, kotlin.Any>{ kotlin.collections.HashMap<java.lang.reflect.Type, kotlin.Any> }
@@ -171,6 +171,6 @@ FILE fqName:<root> fileName:/ClashResolutionDescriptor.kt
                   <class: E>: <root>.PlatformSpecificExtension<out <root>.PlatformSpecificExtension<out <root>.PlatformSpecificExtension<out <root>.PlatformSpecificExtension<out <root>.PlatformSpecificExtension<out kotlin.Any?>>>>>
                   container: GET_VAR 'container: <root>.ComponentContainer declared in <root>.resolveClashesIfAny' type=<root>.ComponentContainer origin=null
                   resolver: GET_VAR 'val resolver: <root>.PlatformExtensionsClashResolver<*> declared in <root>.resolveClashesIfAny' type=<root>.PlatformExtensionsClashResolver<*> origin=null
-                  clashedComponents: CALL 'public final fun toList <T> (): kotlin.collections.List<T of kotlin.collections.CollectionsKt.toList> declared in kotlin.collections.CollectionsKt' type=kotlin.collections.List<<root>.ComponentDescriptor> origin=null
+                  clashedComponents: CALL 'public final fun toList <T> (): kotlin.collections.List<T of kotlin.collections.toList> declared in kotlin.collections' type=kotlin.collections.List<<root>.ComponentDescriptor> origin=null
                     <T>: <root>.ComponentDescriptor
                     $receiver: GET_VAR 'val clashedComponents: kotlin.collections.Collection<<root>.ComponentDescriptor> declared in <root>.resolveClashesIfAny' type=kotlin.collections.Collection<<root>.ComponentDescriptor> origin=null

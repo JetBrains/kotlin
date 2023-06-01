@@ -7,16 +7,16 @@ val test1: Int /* by */
     //   Mangled name (compatible mode: false): {}test1#<anonymous>#static(){}kotlin.Int
     //   Mangled name (compatible mode: true):  test1$delegate#<anonymous>#static(){}kotlin.Int
     // CHECK JS_IR NATIVE:
-    //   Mangled name: #<get-test1>(){}
-    //   Public signature: /test1.<get-test1>|-5735092642142423279[0]
+    //   Mangled name (compatible mode: false): {}test1#<anonymous>#static(){}
+    //   Mangled name (compatible mode: true):  test1$delegate#<anonymous>#static(){}
     local fun <anonymous>(): Int
 
   // CHECK JVM_IR:
   //   Mangled name: #<get-test1>(){}kotlin.Int
   //   Public signature: /test1.<get-test1>|3978508226793108919[0]
   // CHECK JS_IR NATIVE:
-  //   Mangled name (compatible mode: false): {}test1#<anonymous>#static(){}
-  //   Mangled name (compatible mode: true):  test1$delegate#<anonymous>#static(){}
+  //   Mangled name: #<get-test1>(){}
+  //   Public signature: /test1.<get-test1>|-5735092642142423279[0]
   get(): Int
 
 // CHECK:

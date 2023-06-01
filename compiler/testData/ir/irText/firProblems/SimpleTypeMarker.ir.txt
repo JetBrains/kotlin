@@ -44,7 +44,7 @@ FILE fqName:<root> fileName:/SimpleTypeMarker.kt
       $this: VALUE_PARAMETER name:<this> type:<root>.User
       $receiver: VALUE_PARAMETER name:<this> type:<root>.SimpleTypeMarker
       BLOCK_BODY
-        CALL 'public final fun require (value: kotlin.Boolean): kotlin.Unit declared in kotlin.PreconditionsKt' type=kotlin.Unit origin=null
+        CALL 'public final fun require (value: kotlin.Boolean): kotlin.Unit declared in kotlin' type=kotlin.Unit origin=null
           value: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=<root>.SimpleType
             GET_VAR '<this>: <root>.SimpleTypeMarker declared in <root>.User.bar' type=<root>.SimpleTypeMarker origin=null
         RETURN type=kotlin.Nothing from='public open fun bar (): kotlin.String declared in <root>.User'
@@ -74,7 +74,7 @@ FILE fqName:<root> fileName:/SimpleTypeMarker.kt
       $this: VALUE_PARAMETER name:<this> type:<root>.UserImpl
       $receiver: VALUE_PARAMETER name:<this> type:<root>.SimpleTypeMarker
       BLOCK_BODY
-        CALL 'public final fun require (value: kotlin.Boolean): kotlin.Unit declared in kotlin.PreconditionsKt' type=kotlin.Unit origin=null
+        CALL 'public final fun require (value: kotlin.Boolean): kotlin.Unit declared in kotlin' type=kotlin.Unit origin=null
           value: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=<root>.SimpleType
             GET_VAR '<this>: <root>.SimpleTypeMarker declared in <root>.UserImpl.bar' type=<root>.SimpleTypeMarker origin=null
         RETURN type=kotlin.Nothing from='public final fun bar (): kotlin.String declared in <root>.UserImpl'

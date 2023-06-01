@@ -44,7 +44,7 @@ FILE fqName:<root> fileName:/plusMatrix.kt
     VALUE_PARAMETER name:other index:1 type:<root>.Matrix
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun plus ($context_receiver_0: <root>.NumberOperations, other: <root>.Matrix): <root>.Matrix declared in <root>'
-        CALL 'public final fun TODO (): kotlin.Nothing declared in kotlin.StandardKt' type=kotlin.Nothing origin=null
+        CALL 'public final fun TODO (): kotlin.Nothing declared in kotlin' type=kotlin.Nothing origin=null
   FUN name:plusMatrix visibility:public modality:FINAL <> ($receiver:<root>.NumberOperations, m1:<root>.Matrix, m2:<root>.Matrix) returnType:kotlin.Unit
     $receiver: VALUE_PARAMETER name:<this> type:<root>.NumberOperations
     VALUE_PARAMETER name:m1 index:0 type:<root>.Matrix

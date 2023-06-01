@@ -4,7 +4,7 @@ FILE fqName:<root> fileName:/newInferenceFixationOrder1.kt
     TYPE_PARAMETER name:Y index:1 variance: superTypes:[kotlin.Any?] reified:false
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun foo <X, Y> (): kotlin.Function1<X of <root>.foo, Y of <root>.foo> declared in <root>'
-        CALL 'public final fun TODO (): kotlin.Nothing declared in kotlin.StandardKt' type=kotlin.Nothing origin=null
+        CALL 'public final fun TODO (): kotlin.Nothing declared in kotlin' type=kotlin.Nothing origin=null
   CLASS INTERFACE name:Inv2 modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Inv2<A of <root>.Inv2, B of <root>.Inv2>
     TYPE_PARAMETER name:A index:0 variance: superTypes:[kotlin.Any?] reified:false
@@ -30,7 +30,7 @@ FILE fqName:<root> fileName:/newInferenceFixationOrder1.kt
     VALUE_PARAMETER name:f index:2 type:kotlin.Function1<T of <root>.check, R of <root>.check>
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun check <T, R> (x: T of <root>.check, y: R of <root>.check, f: kotlin.Function1<T of <root>.check, R of <root>.check>): <root>.Inv2<T of <root>.check, R of <root>.check> declared in <root>'
-        CALL 'public final fun TODO (): kotlin.Nothing declared in kotlin.StandardKt' type=kotlin.Nothing origin=null
+        CALL 'public final fun TODO (): kotlin.Nothing declared in kotlin' type=kotlin.Nothing origin=null
   FUN name:test visibility:public modality:FINAL <> () returnType:<root>.Inv2<kotlin.String, kotlin.Int>
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test (): <root>.Inv2<kotlin.String, kotlin.Int> declared in <root>'

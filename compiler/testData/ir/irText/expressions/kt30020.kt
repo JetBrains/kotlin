@@ -1,6 +1,6 @@
 // WITH_STDLIB
-// IGNORE_BACKEND: JS_IR
-// IGNORE_BACKEND: JS_IR_ES6
+// IGNORE_BACKEND_K2: JS_IR
+// ^ the order of fake overrides is different on K2
 
 interface X {
     val xs: MutableList<Any>

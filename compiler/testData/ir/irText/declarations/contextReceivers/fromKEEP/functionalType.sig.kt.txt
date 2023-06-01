@@ -9,6 +9,9 @@ class K {
     // CHECK JVM_IR:
     //   Mangled name: K#<get-k>(){}kotlin.String
     //   Public signature: /K.k.<get-k>|-8248201737917988340[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: K#<get-k>(){}
+    //   Public signature: /K.k.<get-k>|2619553883593572199[0]
     get
 
   // CHECK:
@@ -29,6 +32,9 @@ class O {
     // CHECK JVM_IR:
     //   Mangled name: O#<get-o>(){}kotlin.String
     //   Public signature: /O.o.<get-o>|2606027183154875572[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: O#<get-o>(){}
+    //   Public signature: /O.o.<get-o>|-5005637647237604760[0]
     get
 
   // CHECK:
@@ -52,10 +58,16 @@ class Param {
 // CHECK JVM_IR:
 //   Mangled name: #box(){}kotlin.String
 //   Public signature: /box|-9347091776561469[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #box(){}
+//   Public signature: /box|2173511048851971368[0]
 fun box(): String
 
 // CHECK JVM_IR:
 //   Mangled name: #f!O@K(kotlin.Function3<O,K,Param,0:0>){0§<kotlin.Any?>}0:0
 //   Public signature: /f|-7653040485655702379[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #f!O@K(kotlin.Function3<O,K,Param,0:0>){0§<kotlin.Any?>}
+//   Public signature: /f|6244942347355309773[0]
 fun <T : Any?> K.f($context_receiver_0: O, g: @ExtensionFunctionType Function3<O, K, Param, T>): T
 

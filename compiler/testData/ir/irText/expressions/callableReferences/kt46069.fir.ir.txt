@@ -77,7 +77,7 @@ FILE fqName:<root> fileName:/kt46069.kt
               then: CONST Null type=kotlin.Nothing? value=null
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
-              then: CALL 'public final fun let <T, R> (block: kotlin.Function1<T of kotlin.StandardKt.let, R of kotlin.StandardKt.let>): R of kotlin.StandardKt.let declared in kotlin.StandardKt' type=<root>.ObjectAssert<T of <root>.assertNotNull?>? origin=null
+              then: CALL 'public final fun let <T, R> (block: kotlin.Function1<T of kotlin.let, R of kotlin.let>): R of kotlin.let declared in kotlin' type=<root>.ObjectAssert<T of <root>.assertNotNull?>? origin=null
                 <T>: kotlin.String
                 <R>: <root>.ObjectAssert<T of <root>.assertNotNull?>?
                 $receiver: GET_VAR 'val tmp_0: kotlin.String? declared in <root>.assertNotNull' type=kotlin.String? origin=null

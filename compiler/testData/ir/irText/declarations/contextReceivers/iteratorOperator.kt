@@ -1,5 +1,4 @@
 // !LANGUAGE: +ContextReceivers
-// IGNORE_BACKEND: JS_IR
 // WITH_STDLIB
 data class Counter(var i: Int = 0)
 
