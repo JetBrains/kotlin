@@ -64,21 +64,27 @@ fun <F> checkKotlinPackageUsage(
     return true
 }
 
-fun checkKotlinPackageUsageForPsi(configuration: CompilerConfiguration, files: Collection<KtFile>, messageCollector: MessageCollector) =
+private val CompilerConfiguration.messageCollector: MessageCollector
+    get() = get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE)
+
+fun checkKotlinPackageUsageForPsi(
+    configuration: CompilerConfiguration,
+    files: Collection<KtFile>,
+    messageCollector: MessageCollector = configuration.messageCollector,
+) =
     checkKotlinPackageUsage(
         configuration, files, messageCollector,
         getPackage = { it.packageFqName },
         getMessageLocation = { MessageUtil.psiElementToMessageLocation(it.packageDirective!!) },
     )
 
-fun checkKotlinPackageUsageForPsi(configuration: CompilerConfiguration, files: Collection<KtFile>): Boolean =
-    checkKotlinPackageUsageForPsi(
-        configuration, files, configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE)
-    )
-
-fun checkKotlinPackageUsageForLightTree(configuration: CompilerConfiguration, files: Collection<FirFile>): Boolean =
+fun checkKotlinPackageUsageForLightTree(
+    configuration: CompilerConfiguration,
+    files: Collection<FirFile>,
+    messageCollector: MessageCollector = configuration.messageCollector,
+) =
     checkKotlinPackageUsage(
-        configuration, files, configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE),
+        configuration, files, messageCollector,
         getPackage = { it.packageFqName },
         getMessageLocation = { it.packageDirective.source?.getLocationWithin(it) },
     )
