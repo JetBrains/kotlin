@@ -11,17 +11,13 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirDependenci
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirModuleWithDependenciesSymbolProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirJavaFacadeForBinaries
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
-import org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserialization.JvmStubBasedFirDeserializedSymbolProvider
 import org.jetbrains.kotlin.analysis.providers.createPackagePartProvider
 import org.jetbrains.kotlin.fir.BuiltinTypes
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.deserialization.SingleModuleDataProvider
-import org.jetbrains.kotlin.fir.java.deserialization.JvmClassFileBasedSymbolProvider
 import org.jetbrains.kotlin.fir.java.deserialization.OptionalAnnotationClassesProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.load.java.createJavaClassFinder
-import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 internal object LLFirLibraryProviderFactory {
@@ -36,12 +32,19 @@ internal object LLFirLibraryProviderFactory {
     ): LLFirModuleWithDependenciesSymbolProvider {
         return LLFirModuleWithDependenciesSymbolProvider(
             session,
-            providers = createLibraryProvidersForAllProjectLibraries(session, moduleData, kotlinScopeProvider, project, builtinTypes, scope),
+            providers = createProjectLibraryProvidersForScope(
+                session,
+                moduleData,
+                kotlinScopeProvider,
+                project,
+                builtinTypes,
+                scope
+            ),
             LLFirDependenciesSymbolProvider(session, listOf(builtinSymbolProvider)),
         )
     }
 
-    fun createLibraryProvidersForAllProjectLibraries(
+    fun createProjectLibraryProvidersForScope(
         session: LLFirSession,
         moduleData: LLFirModuleData,
         kotlinScopeProvider: FirKotlinScopeProvider,
@@ -66,7 +69,14 @@ internal object LLFirLibraryProviderFactory {
                     scope
                 )
             )
-            addIfNotNull(OptionalAnnotationClassesProvider.createIfNeeded(session, moduleDataProvider, kotlinScopeProvider, packagePartProvider))
+            addIfNotNull(
+                OptionalAnnotationClassesProvider.createIfNeeded(
+                    session,
+                    moduleDataProvider,
+                    kotlinScopeProvider,
+                    packagePartProvider
+                )
+            )
         }
     }
 }

@@ -348,7 +348,7 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
                     val librariesSearchScope = ProjectScope.getLibrariesScope(project)
                         .intersectWith(GlobalSearchScope.notScope(libraryModule.contentScope))
 
-                    val restLibrariesProvider = LLFirLibraryProviderFactory.createLibraryProvidersForAllProjectLibraries(
+                    val restLibrariesProvider = LLFirLibraryProviderFactory.createProjectLibraryProvidersForScope(
                         session, moduleData, scopeProvider,
                         project, builtinTypes, librariesSearchScope
                     )
