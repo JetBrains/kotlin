@@ -52,7 +52,7 @@ class StubBasedAnnotationDeserializer(
     fun loadConstant(property: KtProperty, callableId: CallableId): FirExpression? {
         if (!property.hasModifier(KtTokens.CONST_KEYWORD)) return null
         constantCache[callableId]?.let { return it }
-        val propertyStub = property.stub as? KotlinPropertyStubImpl ?: return null
+        val propertyStub = (property.stub ?: loadStubByElement(property)) as? KotlinPropertyStubImpl ?: return null
         val constantValue = propertyStub.constantInitializer ?: return null
         return resolveValue(property, constantValue)
     }
@@ -66,7 +66,7 @@ class StubBasedAnnotationDeserializer(
         return deserializeAnnotation(
             ktAnnotation,
             userType.classId(),
-            (ktAnnotation.stub as? KotlinAnnotationEntryStubImpl)?.valueArguments,
+            ((ktAnnotation.stub ?: loadStubByElement(ktAnnotation)) as? KotlinAnnotationEntryStubImpl)?.valueArguments,
             ktAnnotation.useSiteTarget?.getAnnotationUseSiteTarget()
         )
     }
