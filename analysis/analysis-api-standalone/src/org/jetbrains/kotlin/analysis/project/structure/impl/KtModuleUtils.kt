@@ -184,8 +184,11 @@ internal fun buildKtModuleProviderByCompilerConfiguration(
         }
     }
 
+    val configLanguageVersionSettings = compilerConfig[CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS]
+
     for (scriptFile in scriptFiles) {
         buildKtScriptModule {
+            configLanguageVersionSettings?.let { this.languageVersionSettings = it }
             this.project = project
             this.platform = platform
             this.file = scriptFile
@@ -195,6 +198,7 @@ internal fun buildKtModuleProviderByCompilerConfiguration(
     }
 
     buildKtSourceModule {
+        configLanguageVersionSettings?.let { this.languageVersionSettings = it }
         this.project = project
         this.platform = platform
         this.moduleName = compilerConfig.get(CommonConfigurationKeys.MODULE_NAME) ?: "<no module name provided>"
