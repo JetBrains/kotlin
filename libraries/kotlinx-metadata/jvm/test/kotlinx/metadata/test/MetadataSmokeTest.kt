@@ -223,4 +223,11 @@ class MetadataSmokeTest {
             .toKmClass()
         assertEquals(kmClassCopy.jvmFlags, jvmClassFlags)
     }
+
+    @Test
+    fun testCanRead20() {
+        val metadata = Metadata(metadataVersion = intArrayOf(2, 0, 0))
+        val kcm = KotlinClassMetadata.read(metadata)
+        assertNotNull(kcm)
+    }
 }

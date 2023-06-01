@@ -22,6 +22,8 @@ class JvmMetadataVersion(versionArray: IntArray, val isStrictSemantics: Boolean)
     }
 
     override fun isCompatibleWithCurrentCompilerVersion(): Boolean {
+        // Special case for bootstrap: 1.8 can read 2.0
+        if (major == 2 && minor == 0 && INSTANCE.major == 1 && INSTANCE.minor == 8) return true
         return isCompatibleInternal(INSTANCE_NEXT)
     }
 
