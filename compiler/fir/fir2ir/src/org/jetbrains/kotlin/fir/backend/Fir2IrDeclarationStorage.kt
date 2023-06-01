@@ -1693,7 +1693,7 @@ class Fir2IrDeclarationStorage(
             val declarationOrigin = computeDeclarationOrigin(firSymbol, parentOrigin)
             when (val parent = irParent) {
                 is Fir2IrLazyClass -> {
-                    assert(parentOrigin != IrDeclarationOrigin.DEFINED) {
+                    assert(parentOrigin != IrDeclarationOrigin.DEFINED || configuration.allowNonCachedDeclarations) {
                         "Should not have reference to public API uncached property from source code"
                     }
                     signature?.let {
