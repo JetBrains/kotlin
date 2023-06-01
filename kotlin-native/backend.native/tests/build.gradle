@@ -4993,7 +4993,7 @@ if (PlatformInfo.isAppleTarget(project)) {
         disabled = isK2(project) // KT-57504
         source = "interop/objc/tests/"
         interop = 'objcTests'
-        flags = ['-tr', '-e', 'main']
+        flags = ['-tr', '-e', 'main', '-opt-in=kotlin.native.internal.InternalForKotlinNative']
 
         if (isNoopGC) {
             def exclude = [

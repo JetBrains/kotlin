@@ -366,6 +366,19 @@ void Kotlin_objc_release(id ptr) {
   objc_release(ptr);
 }
 
+void Kotlin_objc_detachObjCObject(KRef ref) {
+  id associatedObject = GetAssociatedObject(ref);
+  while (true) {
+    if (associatedObject == nullptr) break;
+    id actualAssociatedObject = AtomicCompareAndSwapAssociatedObject(ref, associatedObject, nullptr);
+    if (actualAssociatedObject == associatedObject) {
+      Kotlin_ObjCExport_releaseAssociatedObject(associatedObject);
+      break;
+    }
+    associatedObject = actualAssociatedObject;
+  }
+}
+
 } // extern "C"
 
 #else  // KONAN_OBJC_INTEROP
@@ -394,6 +407,10 @@ void* Kotlin_objc_retain(void* ptr) {
 }
 
 void Kotlin_objc_release(void* ptr) {
+  RuntimeAssert(false, "Objective-C interop is disabled");
+}
+
+void Kotlin_objc_detachObjCObject(void* ref) {
   RuntimeAssert(false, "Objective-C interop is disabled");
 }
 
