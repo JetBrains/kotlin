@@ -1,0 +1,7 @@
+/incorrectUsage.fir.kt:(396,397): error:
+
+/incorrectUsage.fir.kt:(390,395): error: None of the following functions are applicable: [fun assign(v: String): Unit, fun assign(v: StringProperty): Unit]
+
+/incorrectUsage.fir.kt:(542,543): error:
+
+/incorrectUsage.fir.kt:(536,541): error: None of the following functions are applicable: [fun assign(v: String): Unit, fun assign(v: StringProperty): Unit]

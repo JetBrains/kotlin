@@ -1,0 +1,37 @@
+/otherOperators.fir.kt:(456,458): error: Unresolved reference: plusAssign
+
+/otherOperators.fir.kt:(502,504): error: Unresolved reference: plusAssign
+
+/otherOperators.fir.kt:(560,562): error: Unresolved reference: compareTo
+
+/otherOperators.fir.kt:(606,608): error: Unresolved reference: compareTo
+
+/otherOperators.fir.kt:(664,666): error: Unresolved reference: compareTo
+
+/otherOperators.fir.kt:(710,712): error: Unresolved reference: compareTo
+
+/otherOperators.fir.kt:(769,772): error: No set method providing array access
+
+/otherOperators.fir.kt:(817,820): error: No set method providing array access
+
+/otherOperators.fir.kt:(882,888): error: No set method providing array access
+
+/otherOperators.fir.kt:(933,939): error: No set method providing array access
+
+/otherOperators.fir.kt:(1003,1012): error: No set method providing array access
+
+/otherOperators.fir.kt:(1057,1066): error: No set method providing array access
+
+/otherOperators.fir.kt:(1131,1133): error: Unresolved reference: +=
+
+/otherOperators.fir.kt:(1180,1182): error: Unresolved reference: +=
+
+/otherOperators.fir.kt:(1325,1328): error: No set method providing array access
+
+/otherOperators.fir.kt:(1431,1437): error: Variable expected
+
+/otherOperators.fir.kt:(1477,1483): error: Variable expected
+
+/otherOperators.fir.kt:(1128,1129): error: Too many arguments for public final fun /StringProperty.get(): R|kotlin/String|
+
+/otherOperators.fir.kt:(1177,1178): error: Too many arguments for public final fun /StringProperty.get(): R|kotlin/String|

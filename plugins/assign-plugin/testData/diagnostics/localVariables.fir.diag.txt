@@ -1,0 +1,13 @@
+/localVariables.fir.kt:(401,409): error: Val cannot be reassigned
+
+/localVariables.fir.kt:(412,418): error: Assignment type mismatch: actual type is kotlin/String but StringProperty was expected
+
+/localVariables.fir.kt:(521,529): error: Val cannot be reassigned
+
+/localVariables.fir.kt:(673,679): error: Assignment type mismatch: actual type is kotlin/String but StringProperty was expected
+
+/localVariables.fir.kt:(917,925): error: Val cannot be reassigned
+
+/localVariables.fir.kt:(928,934): error: Assignment type mismatch: actual type is kotlin/String but StringProperty was expected
+
+/localVariables.fir.kt:(995,1003): error: Val cannot be reassigned

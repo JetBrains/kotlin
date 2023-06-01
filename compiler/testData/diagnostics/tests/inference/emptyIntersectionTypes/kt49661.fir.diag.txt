@@ -1,0 +1,1 @@
+/kt49661.kt:(251,252): warning: Type argument for a type parameter T can't be inferred because it has incompatible upper bounds: Foo, kotlin/Int (multiple incompatible classes). This will become an error in a future release

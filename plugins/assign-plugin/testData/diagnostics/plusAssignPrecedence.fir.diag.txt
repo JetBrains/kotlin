@@ -1,0 +1,5 @@
+/plusAssignPrecedence.fir.kt:(2202,2204): error: Unresolved reference: plusAssign
+
+/plusAssignPrecedence.fir.kt:(2227,2229): error: Unresolved reference: plusAssign
+
+/plusAssignPrecedence.fir.kt:(2308,2310): error: Ambiguity between assign operator candidates: [fun plus(v: String): StringPropertyWithPlusAndPlusAssign, fun plusAssign(v: String): Unit]

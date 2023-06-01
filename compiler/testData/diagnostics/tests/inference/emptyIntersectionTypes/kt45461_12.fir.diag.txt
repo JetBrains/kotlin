@@ -1,0 +1,1 @@
+/kt45461_12.kt:(296,303): warning: Type argument for a type parameter S can't be inferred because it has incompatible upper bounds: kotlin/String, K (multiple incompatible classes: kotlin/String, kotlin/Number). This will become an error in a future release

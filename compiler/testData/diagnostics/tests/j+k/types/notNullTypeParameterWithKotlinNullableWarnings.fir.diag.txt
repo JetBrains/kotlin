@@ -1,0 +1,3 @@
+/main.kt:(98,103): error: Argument type mismatch: actual type is V but @EnhancedNullability V & Any was expected
+
+/main.kt:(119,120): error: Argument type mismatch: actual type is kotlin/collections/List<V> but ft<@EnhancedNullability kotlin/collections/MutableList<@EnhancedNullability V & Any>, @EnhancedNullability kotlin/collections/List<@EnhancedNullability V & Any>> was expected

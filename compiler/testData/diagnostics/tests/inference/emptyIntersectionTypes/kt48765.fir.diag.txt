@@ -1,0 +1,5 @@
+/kt48765.kt:(282,285): warning: Type argument for a type parameter T can't be inferred because it has incompatible upper bounds: kotlin/String, kotlin/Number (multiple incompatible classes). This will become an error in a future release
+
+/kt48765.kt:(379,383): warning: Unchecked cast: kotlin/String to T
+
+/kt48765.kt:(345,351): warning: 'kotlin/String' is a final type, and thus a value of the type parameter is predetermined

@@ -1,0 +1,7 @@
+/exceptionFromInterpreter_ir.kt:(174,179): warning: Division by zero
+
+/exceptionFromInterpreter_ir.kt:(205,210): warning: Division by zero
+
+/exceptionFromInterpreter_ir.kt:(243,264): error: Const 'val' initializer should be a constant value
+
+/exceptionFromInterpreter_ir.kt:(313,318): warning: Division by zero

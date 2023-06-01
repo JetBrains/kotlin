@@ -1,0 +1,19 @@
+/noAnnotation.fir.kt:(424,429): error: Val cannot be reassigned
+
+/noAnnotation.fir.kt:(432,436): error: Assignment type mismatch: actual type is kotlin/String but StringProperty was expected
+
+/noAnnotation.fir.kt:(446,451): error: Val cannot be reassigned
+
+/noAnnotation.fir.kt:(500,505): error: Val cannot be reassigned
+
+/noAnnotation.fir.kt:(508,512): error: Assignment type mismatch: actual type is kotlin/String but StringProperty was expected
+
+/noAnnotation.fir.kt:(544,549): error: Val cannot be reassigned
+
+/noAnnotation.fir.kt:(588,593): error: Val cannot be reassigned
+
+/noAnnotation.fir.kt:(596,598): error: Assignment type mismatch: actual type is kotlin/Int but StringProperty was expected
+
+/noAnnotation.fir.kt:(624,629): error: Val cannot be reassigned
+
+/noAnnotation.fir.kt:(632,634): error: Assignment type mismatch: actual type is kotlin/Int but StringProperty was expected

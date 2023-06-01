@@ -1,0 +1,13 @@
+/methodDeclaration.fir.kt:(119,125): error:
+
+/methodDeclaration.fir.kt:(206,212): error:
+
+/methodDeclaration.fir.kt:(328,334): error:
+
+/methodDeclaration.fir.kt:(572,573): error:
+
+/methodDeclaration.fir.kt:(594,595): error:
+
+/methodDeclaration.fir.kt:(870,875): error: Val cannot be reassigned
+
+/methodDeclaration.fir.kt:(878,880): error: Assignment type mismatch: actual type is kotlin/Int but IntProperty was expected

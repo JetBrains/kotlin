@@ -1,0 +1,7 @@
+/labelClashes.fir.kt:(84,87): error: Unresolved reference: inc
+
+/labelClashes.fir.kt:(151,154): error: Unresolved reference: inc
+
+/labelClashes.fir.kt:(268,271): error: Unresolved reference: foo
+
+/labelClashes.fir.kt:(331,334): error: Unresolved reference: foo
