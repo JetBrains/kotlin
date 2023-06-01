@@ -1,10 +1,11 @@
 # kotlinx-metadata-jvm
 
-## 0.6.1
+## 0.6.2
 
 This release uses Kotlin 1.8.20 with metadata version 1.8, and as a special case, is able to read metadata of version 2.0. 
 This is done as an incentive to test K2 compiler and 2.0 language version. 
 No other changes were made and no migration is needed.
+Note: 0.6.1 was released with incorrect fix for this problem. Do not use 0.6.1.
 
 ## 0.6.0
 
