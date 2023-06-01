@@ -1,6 +1,5 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-import org.gradle.api.internal.project.ProjectInternal
-import org.gradle.api.plugins.internal.JavaConfigurationVariantMapping
+import org.gradle.kotlin.dsl.support.serviceOf
 
 plugins {
     kotlin("jvm")
@@ -18,6 +17,14 @@ idePluginDependency {
         }
     }
     val embedded by configurations
+    val backendNativeSourcesConfiguration by configurations.creating {
+        isCanBeResolved = true
+        isCanBeConsumed = false
+        attributes {
+            attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.DOCUMENTATION))
+            attribute(DocsType.DOCS_TYPE_ATTRIBUTE, objects.named(DocsType.SOURCES))
+        }
+    }
 
     dependencies {
         embedded(project(":kotlin-native:backend.native")) { isTransitive = false }
@@ -26,6 +33,7 @@ idePluginDependency {
         proguardLibraryJars(project(":kotlin-native:backend.native", "kotlin_stdlib_jar"))
         proguardLibraryJars(project(":kotlin-native:backend.native", "kotlin_reflect_jar"))
         proguardLibraryJars(project(":kotlin-native:backend.native", "cli_bcApiElements"))
+        backendNativeSourcesConfiguration(project(":kotlin-native:backend.native"))
     }
 
     noDefaultJar()
@@ -86,17 +94,11 @@ idePluginDependency {
 
     publish()
 
-    // includes more sources than left by proguard
-    // TODO is this still required and have to be done in such a hacky way?
-    val variant = org.gradle.api.plugins.internal.JvmPluginsHelper.createDocumentationVariantWithArtifact(
-        JavaPlugin.SOURCES_ELEMENTS_CONFIGURATION_NAME,
-        null,
-        DocsType.SOURCES,
-        listOf(),
-        "sourcesJar",
-        project(":kotlin-native:backend.native").sourceSets["cli_bc"].allSource +
-                project(":kotlin-native:backend.native").sourceSets["compiler"].allSource,
-        project as ProjectInternal
-    )
-    (components["kotlinLibrary"] as AdhocComponentWithVariants).addVariantsFromConfiguration(variant, JavaConfigurationVariantMapping("runtime", true))
+    sourcesJar {
+        val archiveOperations = serviceOf<ArchiveOperations>()
+        from(backendNativeSourcesConfiguration.map { archiveOperations.zipTree(it) })
+        // For some reason mapping operation leads to losing information about how dependencies are being built, and failures like "Cannot expand ZIP '...' as it does not exist."
+        // Therefore we have to declare dependency explicitly
+        dependsOn(backendNativeSourcesConfiguration)
+    }
 }
