@@ -109,7 +109,7 @@ class JavaTypeEnhancementStateParser(
         if (reportLevel == null) {
             collector.report(
                 CompilerMessageSeverity.ERROR,
-                "Unrecognized -Xjspecify-annotations option: $jspecifyState. Possible values are 'disable'/'warn'/'strict'"
+                "Unrecognized -Xjspecify-annotations option: $jspecifyState. Possible values are 'ignore'/'warn'/'strict'"
             )
             return getReportLevelForAnnotation(JSPECIFY_ANNOTATIONS_PACKAGE, nullabilityAnnotationReportLevels, kotlinVersion)
         }
