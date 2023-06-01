@@ -44,8 +44,6 @@ class Fir2IrClassifierStorage(
     private val components: Fir2IrComponents,
     commonMemberStorage: Fir2IrCommonMemberStorage
 ) : Fir2IrComponents by components {
-    private val firProvider = session.firProvider
-
     private val classCache: MutableMap<FirRegularClass, IrClass> = commonMemberStorage.classCache
 
     private val localClassesCreatedOnTheFly: MutableMap<FirClass, IrClass> = mutableMapOf()
@@ -237,7 +235,7 @@ class Fir2IrClassifierStorage(
         // finding the parent class that actually contains the [klass] in the tree - it is the root one that should be created on the fly
         val classOrLocalParent = generateSequence(klass) { c ->
             (c as? FirRegularClass)?.containingClassForLocalAttr?.let { lookupTag ->
-                (firProvider.symbolProvider.getSymbolByLookupTag(lookupTag)?.fir as? FirClass)?.takeIf {
+                (session.firProvider.symbolProvider.getSymbolByLookupTag(lookupTag)?.fir as? FirClass)?.takeIf {
                     it.declarations.contains(c)
                 }
             }
@@ -528,7 +526,9 @@ class Fir2IrClassifierStorage(
         predefinedOrigin: IrDeclarationOrigin? = null,
     ): IrEnumEntry {
         getCachedIrEnumEntry(enumEntry)?.let { return it }
-        val containingFile = firProvider.getFirCallableContainerFile(enumEntry.symbol)
+
+        val firProviderForEntry = enumEntry.moduleData.session.firProvider
+        val containingFile = firProviderForEntry.getFirCallableContainerFile(enumEntry.symbol)
 
         @Suppress("NAME_SHADOWING")
         val predefinedOrigin = predefinedOrigin ?: if (containingFile != null) {
@@ -618,7 +618,8 @@ class Fir2IrClassifierStorage(
         }
         val irClass = firClass.convertWithOffsets { startOffset, endOffset ->
             declareIrClass(signature) { irClassSymbol ->
-                Fir2IrLazyClass(components, startOffset, endOffset, firClass.irOrigin(firProvider), firClass, irClassSymbol).apply {
+                val firClassOrigin = firClass.irOrigin(session.firProvider)
+                Fir2IrLazyClass(components, startOffset, endOffset, firClassOrigin, firClass, irClassSymbol).apply {
                     parent = irParent
                 }
             }
