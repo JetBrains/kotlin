@@ -271,6 +271,12 @@ public class SymbolLightClassesByPsiForSourceTestGenerated extends AbstractSymbo
     }
 
     @Test
+    @TestMetadata("propertyAnnotations.kt")
+    public void testPropertyAnnotations() throws Exception {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/propertyAnnotations.kt");
+    }
+
+    @Test
     @TestMetadata("simpleFunctions.kt")
     public void testSimpleFunctions() throws Exception {
         runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/simpleFunctions.kt");

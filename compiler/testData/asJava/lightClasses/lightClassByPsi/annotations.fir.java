@@ -126,10 +126,6 @@ public final class F /* F*/ implements java.lang.Runnable {
   @Anno(p = "f")
   public final void f(@Anno() @org.jetbrains.annotations.NotNull() java.lang.String);//  f(java.lang.String)
 
-  @Anno(p = "p")
-  @java.lang.Deprecated()
-  public static void getProp$annotations();//  getProp$annotations()
-
   @org.jetbrains.annotations.NotNull()
   public final java.lang.String getProp();//  getProp()
 

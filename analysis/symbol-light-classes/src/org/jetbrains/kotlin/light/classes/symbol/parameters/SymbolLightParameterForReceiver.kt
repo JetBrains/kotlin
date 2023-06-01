@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.light.classes.symbol.parameters
 import com.intellij.psi.PsiIdentifier
 import com.intellij.psi.PsiModifierList
 import com.intellij.psi.PsiType
+import com.intellij.psi.util.TypeConversionUtil
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtReceiverParameterSymbol
@@ -26,6 +27,7 @@ internal class SymbolLightParameterForReceiver private constructor(
     private val receiverPointer: KtSymbolPointer<KtReceiverParameterSymbol>,
     methodName: String,
     method: SymbolLightMethodBase,
+    private val forPropertyAnnotations: Boolean
 ) : SymbolLightParameterBase(method) {
     private inline fun <T> withReceiverSymbol(crossinline action: context(KtAnalysisSession) (KtReceiverParameterSymbol) -> T): T =
         receiverPointer.withSymbol(ktModule, action)
@@ -33,7 +35,8 @@ internal class SymbolLightParameterForReceiver private constructor(
     companion object {
         fun tryGet(
             callableSymbolPointer: KtSymbolPointer<KtCallableSymbol>,
-            method: SymbolLightMethodBase
+            method: SymbolLightMethodBase,
+            forPropertyAnnotations: Boolean = false
         ): SymbolLightParameterForReceiver? = callableSymbolPointer.withSymbol(method.ktModule) { callableSymbol ->
             if (callableSymbol !is KtNamedSymbol) return@withSymbol null
             if (!callableSymbol.isExtension) return@withSymbol null
@@ -43,12 +46,13 @@ internal class SymbolLightParameterForReceiver private constructor(
                 receiverPointer = receiverSymbol.createPointer(),
                 methodName = callableSymbol.name.asString(),
                 method = method,
+                forPropertyAnnotations = forPropertyAnnotations,
             )
         }
     }
 
     private val _name: String by lazyPub {
-        AsmUtil.getLabeledThisName(methodName, AsmUtil.LABELED_THIS_PARAMETER, AsmUtil.RECEIVER_PARAMETER_NAME)
+        if (forPropertyAnnotations) "p0" else AsmUtil.getLabeledThisName(methodName, AsmUtil.LABELED_THIS_PARAMETER, AsmUtil.RECEIVER_PARAMETER_NAME)
     }
 
     override fun getNameIdentifier(): PsiIdentifier? = null
@@ -63,7 +67,9 @@ internal class SymbolLightParameterForReceiver private constructor(
     override fun getModifierList(): PsiModifierList = _modifierList
 
     private val _modifierList: PsiModifierList by lazyPub {
-        SymbolLightClassModifierList(
+        if (forPropertyAnnotations)
+            SymbolLightClassModifierList(containingDeclaration = this)
+        else SymbolLightClassModifierList(
             containingDeclaration = this,
             annotationsBox = GranularAnnotationsBox(
                 annotationsProvider = SymbolAnnotationsProvider(
@@ -83,9 +89,10 @@ internal class SymbolLightParameterForReceiver private constructor(
     private val _type: PsiType by lazyPub {
         withReceiverSymbol { receiver ->
             val ktType = receiver.type
-            ktType.asPsiTypeElement(this, allowErrorTypes = true)?.let {
+            val psiType = ktType.asPsiTypeElement(this, allowErrorTypes = true)?.let {
                 annotateByKtType(it.type, ktType, it, modifierList)
             }
+            if (forPropertyAnnotations) TypeConversionUtil.erasure(psiType) else psiType
         } ?: nonExistentType()
     }
 
@@ -94,6 +101,7 @@ internal class SymbolLightParameterForReceiver private constructor(
     override fun equals(other: Any?): Boolean = this === other ||
             other is SymbolLightParameterForReceiver &&
             ktModule == other.ktModule &&
+            forPropertyAnnotations == other.forPropertyAnnotations &&
             compareSymbolPointers(receiverPointer, other.receiverPointer)
 
     override fun hashCode(): Int = _name.hashCode()

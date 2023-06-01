@@ -1,4 +1,3 @@
-// !GENERATE_PROPERTY_ANNOTATIONS_METHODS
 import kotlin.reflect.KClass
 
 @Target(*[AnnotationTarget.CLASS, AnnotationTarget.FUNCTION, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.EXPRESSION])

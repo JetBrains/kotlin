@@ -21,12 +21,11 @@ import org.jetbrains.kotlin.light.classes.symbol.annotations.*
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.InitializedModifiersBox
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightMemberModifierList
+import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightParameterForReceiver
 import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightParameterList
-import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightTypeParameterList
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 
 internal class SymbolLightAnnotationsMethod private constructor(
     lightMemberOrigin: LightMemberOrigin?,
@@ -115,27 +114,20 @@ internal class SymbolLightAnnotationsMethod private constructor(
     }
 
     override fun hashCode(): Int = containingPropertyDeclaration.hashCode()
-
-    private val _typeParameterList: PsiTypeParameterList? by lazyPub {
-        hasTypeParameters().ifTrue {
-            SymbolLightTypeParameterList(
-                owner = this,
-                symbolWithTypeParameterPointer = containingPropertySymbolPointer,
-                ktModule = ktModule,
-                ktDeclaration = containingPropertyDeclaration,
-            )
-        }
-    }
-
-    override fun hasTypeParameters(): Boolean = hasTypeParameters(ktModule, containingPropertyDeclaration, containingPropertySymbolPointer)
-    override fun getTypeParameterList(): PsiTypeParameterList? = _typeParameterList
-    override fun getTypeParameters(): Array<PsiTypeParameter> = _typeParameterList?.typeParameters ?: PsiTypeParameter.EMPTY_ARRAY
+    override fun hasTypeParameters(): Boolean = false
+    override fun getTypeParameterList(): PsiTypeParameterList? = null
+    override fun getTypeParameters(): Array<PsiTypeParameter> = PsiTypeParameter.EMPTY_ARRAY
 
     private val _parametersList by lazyPub {
         SymbolLightParameterList(
             parent = this@SymbolLightAnnotationsMethod,
-            callableWithReceiverSymbolPointer = containingPropertySymbolPointer,
-            parameterPopulator = {},
+            parameterPopulator = { builder ->
+                SymbolLightParameterForReceiver.tryGet(
+                    callableSymbolPointer = containingPropertySymbolPointer,
+                    method = this@SymbolLightAnnotationsMethod,
+                    forPropertyAnnotations = true
+                )?.let(builder::addParameter)
+            },
         )
     }
 
