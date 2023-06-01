@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.builtins.StandardNames.BUILT_INS_PACKAGE_FQ_NAMES
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.expandedClass
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
@@ -1657,7 +1658,7 @@ class Fir2IrDeclarationStorage(
             // TODO: package fragment members (?)
             when (val parent = irParent) {
                 is Fir2IrLazyClass -> {
-                    assert(parentOrigin != IrDeclarationOrigin.DEFINED) {
+                    assert(parentOrigin != IrDeclarationOrigin.DEFINED || configuration.allowNonCachedDeclarations) {
                         "Should not have reference to public API uncached property from source code"
                     }
                     signature?.let {
