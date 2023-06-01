@@ -128,8 +128,8 @@ abstract class KonanTest : DefaultTask(), KonanTestExecutable {
 /**
  * Create a test task of the given type. Supports configuration with Closure passed form build.gradle file.
  */
-fun <T : KonanTestExecutable> Project.createTest(name: String, type: Class<T>, config: Closure<*>): TaskProvider<T> =
-        project.tasks.register(name, type) {
+fun <T : KonanTestExecutable> Project.createTest(name: String, type: Class<T>, config: Closure<*>): T =
+        project.tasks.create(name, type).apply {
             // Apply closure set in build.gradle to get all parameters.
             this.configure(config)
             if (enabled) {

@@ -224,7 +224,7 @@ boolean isExcluded(String dir) {
 /**
  * Creates a task for a standalone test. Configures runner and adds building task.
  */
-TaskProvider<KonanStandaloneTest> standaloneTest(String name, Closure configureClosure) {
+Task standaloneTest(String name, Closure configureClosure) {
     return KotlinNativeTestKt.createTest(project, name, KonanStandaloneTest) { task ->
         task.configure(configureClosure)
         if (task.enabled) {
@@ -243,7 +243,7 @@ TaskProvider<KonanStandaloneTest> standaloneTest(String name, Closure configureC
 /**
  * Creates a task for a linking test. Configures runner and adds library and test build tasks.
  */
-TaskProvider<KonanLinkTest> linkTest(String name, Closure<KonanLinkTest> configureClosure) {
+Task linkTest(String name, Closure<KonanLinkTest> configureClosure) {
     return KotlinNativeTestKt.createTest(project, name, KonanLinkTest) { task ->
         task.configure(configureClosure)
         if (task.enabled) {
@@ -277,7 +277,7 @@ TaskProvider<KonanLinkTest> linkTest(String name, Closure<KonanLinkTest> configu
 /**
  * Creates a task for a dynamic test. Configures runner and adds library and test build tasks.
  */
-TaskProvider<KonanDynamicTest> dynamicTest(String name, Closure<KonanDynamicTest> configureClosure) {
+Task dynamicTest(String name, Closure<KonanDynamicTest> configureClosure) {
     return KotlinNativeTestKt.createTest(project, name, KonanDynamicTest) { task ->
         task.configure(configureClosure)
         if (task.enabled) {
@@ -1326,17 +1326,17 @@ tasks.register("localClass_tryCatch", KonanLocalTest) {
     source = "codegen/localClass/tryCatch.kt"
 }
 
-task function_localFunction(type: KonanLocalTest) {
+tasks.register("function_localFunction", KonanLocalTest) {
     useGoldenData = true
     source = "codegen/function/localFunction.kt"
 }
 
-task function_localFunction2(type: KonanLocalTest) {
+tasks.register("function_localFunction2", KonanLocalTest) {
     useGoldenData = true
     source = "codegen/function/localFunction2.kt"
 }
 
-task function_localFunction3(type: KonanLocalTest) {
+tasks.register("function_localFunction3", KonanLocalTest) {
     useGoldenData = true
     source = "codegen/function/localFunction3.kt"
 }
@@ -4147,7 +4147,7 @@ createInterop("exceptions_cCallback") {
 /**
  * Creates a task for the interop test. Configures runner and adds library and test build tasks.
  */
-TaskProvider<KonanInteropTest> interopTestBase(String name, boolean multiFile, Closure<KonanInteropTest> configureClosure) {
+Task interopTestBase(String name, boolean multiFile, Closure<KonanInteropTest> configureClosure) {
     return KotlinNativeTestKt.createTest(project, name, KonanInteropTest) { task ->
         task.configure(configureClosure)
         if (task.enabled) {
@@ -4193,11 +4193,11 @@ TaskProvider<KonanInteropTest> interopTestBase(String name, boolean multiFile, C
     }
 }
 
-TaskProvider<KonanInteropTest> interopTest(String name, Closure<KonanInteropTest> configureClosure) {
+Task interopTest(String name, Closure<KonanInteropTest> configureClosure) {
     return interopTestBase(name, false, configureClosure)
 }
 
-TaskProvider<KonanInteropTest> interopTestMultifile(String name, Closure<KonanInteropTest> configureClosure) {
+Task interopTestMultifile(String name, Closure<KonanInteropTest> configureClosure) {
     return interopTestBase(name, true, configureClosure)
 }
 
@@ -5191,7 +5191,7 @@ linkTest("private_fake_overrides_1") {
     useGoldenData = true
 }
 
-TaskProvider<FrameworkTest> frameworkTest(String name, Closure<FrameworkTest> configurator) {
+Task frameworkTest(String name, Closure<FrameworkTest> configurator) {
     return KotlinNativeTestKt.createTest(project, name, FrameworkTest) { task ->
         configurator.delegate = task
         UtilsKt.dependsOnDist(task)
@@ -5228,7 +5228,7 @@ TaskProvider<FrameworkTest> frameworkTest(String name, Closure<FrameworkTest> co
     }
 }
 
-TaskProvider<FrameworkTest> objcExportTest(
+Task objcExportTest(
         Task allTask,
         String suffix,
         List<String> frameworkOpts,
@@ -5240,7 +5240,7 @@ TaskProvider<FrameworkTest> objcExportTest(
     final String name = "testObjCExport$suffix"
     final String frameworkName = "Kt$suffix"
     final String expectedLazyHeaderName = "expectedLazy${suffix}.h"
-    final TaskProvider<FrameworkTest> task = frameworkTest(name) {
+    final Task task = frameworkTest(name) {
         final String dir = "$testOutputFramework/$name"
         final File lazyHeader = file("$dir/$target-lazy.h")
         lazyHeader.delete()  // Clean up after previous runs
@@ -5837,8 +5837,8 @@ pluginTest("runtime_basic_init", "nopPlugin") {
 }
 
 
-TaskProvider<FileCheckTest> fileCheckTest(String name, Closure<FileCheckTest> configureClosure) {
-    return project.tasks.register(name, FileCheckTest) { task ->
+Task fileCheckTest(String name, Closure<FileCheckTest> configureClosure) {
+    return project.tasks.create(name, FileCheckTest) { task ->
         task.configure(configureClosure)
         task.llvmIr = project.file("$testOutputFileCheck/$name/$target/out.${task.phaseToCheck}.ll")
 
