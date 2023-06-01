@@ -4599,7 +4599,7 @@ if (PlatformInfo.isAppleTarget(project)) {
     interopTestMultifile("interop_objc_tests") {
         source = "interop/objc/tests/"
         interop = 'objcTests'
-        flags = ['-tr', '-e', 'main']
+        flags = ['-tr', '-e', 'main', '-opt-in=kotlin.native.internal.InternalForKotlinNative']
 
         if (isNoopGC) {
             def exclude = [
