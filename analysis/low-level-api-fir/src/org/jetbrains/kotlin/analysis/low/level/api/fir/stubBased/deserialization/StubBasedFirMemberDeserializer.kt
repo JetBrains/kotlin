@@ -142,19 +142,21 @@ internal class StubBasedFirDeserializationContext(
             callableId: CallableId,
             parameterListOwner: KtTypeParameterListOwner,
             symbol: FirBasedSymbol<*>,
-            initialOrigin: FirDeclarationOrigin
-        ): StubBasedFirDeserializationContext = createRootContext(
-            moduleData,
-            StubBasedAnnotationDeserializer(session),
-            callableId.packageName,
-            callableId.className,
-            parameterListOwner,
-            containerSource = if (initialOrigin == FirDeclarationOrigin.BuiltIns || callableId.packageName.isRoot)
-                null else JvmFromStubDecompilerSource(callableId.packageName),
-            outerClassSymbol = null,
-            symbol,
-            initialOrigin
-        )
+            initialOrigin: FirDeclarationOrigin,
+            containerSource: DeserializedContainerSource
+        ): StubBasedFirDeserializationContext {
+            return createRootContext(
+                moduleData,
+                StubBasedAnnotationDeserializer(session),
+                callableId.packageName,
+                callableId.className,
+                parameterListOwner,
+                containerSource = containerSource.takeIf { initialOrigin != FirDeclarationOrigin.BuiltIns },
+                outerClassSymbol = null,
+                symbol,
+                initialOrigin
+            )
+        }
     }
 }
 
