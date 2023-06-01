@@ -3635,11 +3635,6 @@ internal class InlineSuspendFunctionTypeUnsupportedImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<KtParameter>(firDiagnostic, token), KtFirDiagnostic.InlineSuspendFunctionTypeUnsupported
 
-internal class RedundantInlineSuspendFunctionTypeImpl(
-    firDiagnostic: KtPsiDiagnostic,
-    token: KtLifetimeToken,
-) : KtAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KtFirDiagnostic.RedundantInlineSuspendFunctionType
-
 internal class InefficientEqualsOverridingInValueClassImpl(
     override val type: KtType,
     firDiagnostic: KtPsiDiagnostic,
