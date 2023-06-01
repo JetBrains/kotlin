@@ -7,7 +7,6 @@
 package kotlinx.metadata.internal
 
 import kotlinx.metadata.*
-import kotlinx.metadata.Flags // Don't remove this import. See KT-45553
 import kotlinx.metadata.internal.extensions.MetadataExtensions
 import kotlinx.metadata.internal.IgnoreInApiDump
 import org.jetbrains.kotlin.metadata.ProtoBuf
@@ -344,7 +343,7 @@ private fun ProtoBuf.ValueParameter.accept(v: KmValueParameterVisitor, c: ReadCo
 }
 
 private inline fun ProtoBuf.TypeParameter.accept(
-    visit: (flags: Flags, name: String, id: Int, variance: KmVariance) -> KmTypeParameterVisitor?,
+    visit: (flags: Int, name: String, id: Int, variance: KmVariance) -> KmTypeParameterVisitor?,
     c: ReadContext
 ) {
     val variance = when (requireNotNull(variance)) {
@@ -514,18 +513,18 @@ private fun ProtoBuf.Expression.accept(v: KmEffectExpressionVisitor, c: ReadCont
     v.visitEnd()
 }
 
-private val ProtoBuf.Type.typeFlags: Flags
+private val ProtoBuf.Type.typeFlags: Int
     get() = (if (nullable) 1 shl 0 else 0) +
             (flags shl 1)
 
-private val ProtoBuf.TypeParameter.typeParameterFlags: Flags
+private val ProtoBuf.TypeParameter.typeParameterFlags: Int
     get() = if (reified) 1 else 0
 
-fun ProtoBuf.Property.getPropertyGetterFlags(): Flags =
+fun ProtoBuf.Property.getPropertyGetterFlags(): Int =
     if (hasGetterFlags()) getterFlags else getDefaultPropertyAccessorFlags(flags)
 
-fun ProtoBuf.Property.getPropertySetterFlags(): Flags =
+fun ProtoBuf.Property.getPropertySetterFlags(): Int =
     if (hasSetterFlags()) setterFlags else getDefaultPropertyAccessorFlags(flags)
 
-internal fun getDefaultPropertyAccessorFlags(flags: Flags): Flags =
+internal fun getDefaultPropertyAccessorFlags(flags: Int): Int =
     F.getAccessorFlags(F.HAS_ANNOTATIONS.get(flags), F.VISIBILITY.get(flags), F.MODALITY.get(flags), false, false, false)

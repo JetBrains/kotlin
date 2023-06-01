@@ -14,10 +14,10 @@ internal inline val KmClass.filteredSupertypes: List<KmType>
     get() = supertypes.takeUnless { it.singleOrNull()?.isAny == true } ?: emptyList()
 
 private inline val KmType.isNullableAny: Boolean
-    get() = (classifier as? KmClassifier.Class)?.name == ANY_CLASS_FULL_NAME && Flag.Type.IS_NULLABLE(flags)
+    get() = (classifier as? KmClassifier.Class)?.name == ANY_CLASS_FULL_NAME && this.isNullable
 
 private inline val KmType.isAny: Boolean
-    get() = (classifier as? KmClassifier.Class)?.name == ANY_CLASS_FULL_NAME && !Flag.Type.IS_NULLABLE(flags)
+    get() = (classifier as? KmClassifier.Class)?.name == ANY_CLASS_FULL_NAME && !this.isNullable
 
 
 

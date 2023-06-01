@@ -32,7 +32,7 @@ abstract class JvmDeclarationContainerExtensionVisitor @JvmOverloads constructor
      * @param setterFlags property accessor flags, consisting of [Flag.HAS_ANNOTATIONS], visibility flag, modality flag
      *   and [Flag.PropertyAccessor] flags
      */
-    open fun visitLocalDelegatedProperty(flags: Flags, name: String, getterFlags: Flags, setterFlags: Flags): KmPropertyVisitor? =
+    open fun visitLocalDelegatedProperty(flags: Int, name: String, getterFlags: Int, setterFlags: Int): KmPropertyVisitor? =
         delegate?.visitLocalDelegatedProperty(flags, name, getterFlags, setterFlags)
 
     /**
@@ -67,7 +67,7 @@ open class JvmClassExtensionVisitor @JvmOverloads constructor(
     /**
      * Visits the JVM-specific flags of the class, consisting of [JvmFlag.Class] flags.
      */
-    open fun visitJvmFlags(flags: Flags) {
+    open fun visitJvmFlags(flags: Int) {
         delegate?.visitJvmFlags(flags)
     }
 
@@ -189,7 +189,7 @@ open class JvmPropertyExtensionVisitor @JvmOverloads constructor(
      *                        Example: `JvmMethodSignature("setX", "(Ljava/lang/Object;)V")`
      */
     open fun visit(
-        jvmFlags: Flags,
+        jvmFlags: Int,
         fieldSignature: JvmFieldSignature?,
         getterSignature: JvmMethodSignature?,
         setterSignature: JvmMethodSignature?

@@ -36,9 +36,9 @@ internal class JvmClassExtension : JvmClassExtensionVisitor(), KmClassExtension 
     val localDelegatedProperties: MutableList<KmProperty> = ArrayList(0)
     var moduleName: String? = null
     var anonymousObjectOriginName: String? = null
-    var jvmFlags: Flags = 0
+    var jvmFlags: Int = 0
 
-    override fun visitLocalDelegatedProperty(flags: Flags, name: String, getterFlags: Flags, setterFlags: Flags): KmPropertyVisitor =
+    override fun visitLocalDelegatedProperty(flags: Int, name: String, getterFlags: Int, setterFlags: Int): KmPropertyVisitor =
         KmProperty(flags, name, getterFlags, setterFlags).also { localDelegatedProperties.add(it) }
 
     override fun visitModuleName(name: String) {
@@ -49,7 +49,7 @@ internal class JvmClassExtension : JvmClassExtensionVisitor(), KmClassExtension 
         this.anonymousObjectOriginName = internalName
     }
 
-    override fun visitJvmFlags(flags: Flags) {
+    override fun visitJvmFlags(flags: Int) {
         this.jvmFlags = flags
     }
 
@@ -70,7 +70,7 @@ internal class JvmPackageExtension : JvmPackageExtensionVisitor(), KmPackageExte
     val localDelegatedProperties: MutableList<KmProperty> = ArrayList(0)
     var moduleName: String? = null
 
-    override fun visitLocalDelegatedProperty(flags: Flags, name: String, getterFlags: Flags, setterFlags: Flags): KmPropertyVisitor =
+    override fun visitLocalDelegatedProperty(flags: Int, name: String, getterFlags: Int, setterFlags: Int): KmPropertyVisitor =
         KmProperty(flags, name, getterFlags, setterFlags).also { localDelegatedProperties.add(it) }
 
     override fun visitModuleName(name: String) {
@@ -109,7 +109,7 @@ internal class JvmFunctionExtension : JvmFunctionExtensionVisitor(), KmFunctionE
 }
 
 internal class JvmPropertyExtension : JvmPropertyExtensionVisitor(), KmPropertyExtension {
-    var jvmFlags: Flags = 0
+    var jvmFlags: Int = 0
     var fieldSignature: JvmFieldSignature? = null
     var getterSignature: JvmMethodSignature? = null
     var setterSignature: JvmMethodSignature? = null
@@ -117,7 +117,7 @@ internal class JvmPropertyExtension : JvmPropertyExtensionVisitor(), KmPropertyE
     var syntheticMethodForDelegate: JvmMethodSignature? = null
 
     override fun visit(
-        jvmFlags: Flags,
+        jvmFlags: Int,
         fieldSignature: JvmFieldSignature?,
         getterSignature: JvmMethodSignature?,
         setterSignature: JvmMethodSignature?

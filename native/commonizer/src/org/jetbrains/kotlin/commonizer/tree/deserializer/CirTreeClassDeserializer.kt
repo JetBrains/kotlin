@@ -5,8 +5,7 @@
 
 package org.jetbrains.kotlin.commonizer.tree.deserializer
 
-import kotlinx.metadata.Flag
-import kotlinx.metadata.KmClass
+import kotlinx.metadata.*
 import org.jetbrains.kotlin.commonizer.metadata.CirDeserializers
 import org.jetbrains.kotlin.commonizer.metadata.CirTypeResolver
 import org.jetbrains.kotlin.commonizer.tree.CirTreeClass
@@ -29,7 +28,7 @@ internal class CirTreeClassDeserializer(
         val cirClass = when (classEntry) {
             is ClassesToProcess.ClassEntry.RegularClassEntry -> {
                 clazz = classEntry.clazz
-                isEnumEntry = Flag.Class.IS_ENUM_ENTRY(clazz.flags)
+                isEnumEntry = clazz.kind == ClassKind.ENUM_ENTRY
                 CirDeserializers.clazz(className, clazz, classTypeResolver)
             }
             is ClassesToProcess.ClassEntry.EnumEntry -> {
@@ -40,7 +39,7 @@ internal class CirTreeClassDeserializer(
                     name = className,
                     annotations = classEntry.annotations,
                     enumClassId = classEntry.enumClassId,
-                    hasEnumEntries = Flag.Class.HAS_ENUM_ENTRIES(classEntry.enumClass.flags),
+                    hasEnumEntries = classEntry.enumClass.hasEnumEntries,
                     typeResolver = classTypeResolver
                 )
             }

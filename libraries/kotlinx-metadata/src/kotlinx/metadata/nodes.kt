@@ -39,7 +39,8 @@ class KmClass : KmClassVisitor(), KmDeclarationContainer {
     /**
      * Class flags, consisting of [Flag.HAS_ANNOTATIONS], visibility flag, modality flag and [Flag.Class] flags.
      */
-    var flags: Flags = flagsOf()
+    @Deprecated("$flagAccessPrefix KmClass, such as KmClass.visibility")
+    var flags: Int = 0
 
     /**
      * Name of the class.
@@ -121,33 +122,33 @@ class KmClass : KmClassVisitor(), KmDeclarationContainer {
         MetadataExtensions.INSTANCES.map(MetadataExtensions::createClassExtension)
 
     @Deprecated(VISITOR_API_MESSAGE)
-    override fun visit(flags: Flags, name: ClassName) {
+    override fun visit(flags: Int, name: ClassName) {
         this.flags = flags
         this.name = name
     }
 
     @Deprecated(VISITOR_API_MESSAGE)
-    override fun visitTypeParameter(flags: Flags, name: String, id: Int, variance: KmVariance): KmTypeParameterVisitor =
+    override fun visitTypeParameter(flags: Int, name: String, id: Int, variance: KmVariance): KmTypeParameterVisitor =
         KmTypeParameter(flags, name, id, variance).addTo(typeParameters)
 
     @Deprecated(VISITOR_API_MESSAGE)
-    override fun visitSupertype(flags: Flags): KmTypeVisitor =
+    override fun visitSupertype(flags: Int): KmTypeVisitor =
         KmType(flags).addTo(supertypes)
 
     @Deprecated(VISITOR_API_MESSAGE)
-    override fun visitFunction(flags: Flags, name: String): KmFunctionVisitor =
+    override fun visitFunction(flags: Int, name: String): KmFunctionVisitor =
         KmFunction(flags, name).addTo(functions)
 
     @Deprecated(VISITOR_API_MESSAGE)
-    override fun visitProperty(flags: Flags, name: String, getterFlags: Flags, setterFlags: Flags): KmPropertyVisitor =
+    override fun visitProperty(flags: Int, name: String, getterFlags: Int, setterFlags: Int): KmPropertyVisitor =
         KmProperty(flags, name, getterFlags, setterFlags).addTo(properties)
 
     @Deprecated(VISITOR_API_MESSAGE)
-    override fun visitTypeAlias(flags: Flags, name: String): KmTypeAliasVisitor =
+    override fun visitTypeAlias(flags: Int, name: String): KmTypeAliasVisitor =
         KmTypeAlias(flags, name).addTo(typeAliases)
 
     @Deprecated(VISITOR_API_MESSAGE)
-    override fun visitConstructor(flags: Flags): KmConstructorVisitor =
+    override fun visitConstructor(flags: Int): KmConstructorVisitor =
         KmConstructor(flags).addTo(constructors)
 
     @Deprecated(VISITOR_API_MESSAGE)
@@ -176,12 +177,12 @@ class KmClass : KmClassVisitor(), KmDeclarationContainer {
     }
 
     @Deprecated(VISITOR_API_MESSAGE)
-    override fun visitInlineClassUnderlyingType(flags: Flags): KmTypeVisitor =
+    override fun visitInlineClassUnderlyingType(flags: Int): KmTypeVisitor =
         KmType(flags).also { inlineClassUnderlyingType = it }
 
     @Deprecated(VISITOR_API_MESSAGE)
     @ExperimentalContextReceivers
-    override fun visitContextReceiverType(flags: Flags): KmTypeVisitor =
+    override fun visitContextReceiverType(flags: Int): KmTypeVisitor =
         KmType(flags).addTo(contextReceiverTypes)
 
     @Deprecated(VISITOR_API_MESSAGE)
@@ -244,15 +245,15 @@ class KmPackage : KmPackageVisitor(), KmDeclarationContainer {
         MetadataExtensions.INSTANCES.map(MetadataExtensions::createPackageExtension)
 
     @Deprecated(VISITOR_API_MESSAGE)
-    override fun visitFunction(flags: Flags, name: String): KmFunctionVisitor =
+    override fun visitFunction(flags: Int, name: String): KmFunctionVisitor =
         KmFunction(flags, name).addTo(functions)
 
     @Deprecated(VISITOR_API_MESSAGE)
-    override fun visitProperty(flags: Flags, name: String, getterFlags: Flags, setterFlags: Flags): KmPropertyVisitor =
+    override fun visitProperty(flags: Int, name: String, getterFlags: Int, setterFlags: Int): KmPropertyVisitor =
         KmProperty(flags, name, getterFlags, setterFlags).addTo(properties)
 
     @Deprecated(VISITOR_API_MESSAGE)
-    override fun visitTypeAlias(flags: Flags, name: String): KmTypeAliasVisitor =
+    override fun visitTypeAlias(flags: Int, name: String): KmTypeAliasVisitor =
         KmTypeAlias(flags, name).addTo(typeAliases)
 
     @Deprecated(VISITOR_API_MESSAGE)
@@ -330,7 +331,7 @@ class KmLambda : KmLambdaVisitor() {
     lateinit var function: KmFunction
 
     @Deprecated(VISITOR_API_MESSAGE)
-    override fun visitFunction(flags: Flags, name: String): KmFunctionVisitor =
+    override fun visitFunction(flags: Int, name: String): KmFunctionVisitor =
         KmFunction(flags, name).also { function = it }
 
     /**
@@ -351,7 +352,9 @@ class KmLambda : KmLambdaVisitor() {
  * @property flags constructor flags, consisting of [Flag.HAS_ANNOTATIONS], visibility flag and [Flag.Constructor] flags
  */
 @Suppress("DEPRECATION")
-class KmConstructor @Deprecated(FLAGS_CTOR_DEPRECATED) constructor(var flags: Flags) :
+class KmConstructor @Deprecated(flagsCtorDeprecated) constructor(
+    @Deprecated("$flagAccessPrefix KmConstructor, such as KmConstructor.visibility") var flags: Int,
+) :
     KmConstructorVisitor() {
     constructor() : this(0)
 
@@ -369,7 +372,7 @@ class KmConstructor @Deprecated(FLAGS_CTOR_DEPRECATED) constructor(var flags: Fl
         MetadataExtensions.INSTANCES.map(MetadataExtensions::createConstructorExtension)
 
     @Deprecated(VISITOR_API_MESSAGE)
-    override fun visitValueParameter(flags: Flags, name: String): KmValueParameterVisitor =
+    override fun visitValueParameter(flags: Int, name: String): KmValueParameterVisitor =
         KmValueParameter(flags, name).addTo(valueParameters)
 
     @Deprecated(VISITOR_API_MESSAGE)
@@ -401,8 +404,8 @@ class KmConstructor @Deprecated(FLAGS_CTOR_DEPRECATED) constructor(var flags: Fl
  * @property name the name of the function
  */
 @Suppress("DEPRECATION")
-class KmFunction @Deprecated(FLAGS_CTOR_DEPRECATED) constructor(
-    var flags: Flags,
+class KmFunction @Deprecated(flagsCtorDeprecated) constructor(
+    @Deprecated("$flagAccessPrefix KmFunction, such as KmFunction.visibility") var flags: Int,
     var name: String,
 ) : KmFunctionVisitor() {
 
@@ -449,24 +452,24 @@ class KmFunction @Deprecated(FLAGS_CTOR_DEPRECATED) constructor(
         MetadataExtensions.INSTANCES.map(MetadataExtensions::createFunctionExtension)
 
     @Deprecated(VISITOR_API_MESSAGE)
-    override fun visitTypeParameter(flags: Flags, name: String, id: Int, variance: KmVariance): KmTypeParameterVisitor =
+    override fun visitTypeParameter(flags: Int, name: String, id: Int, variance: KmVariance): KmTypeParameterVisitor =
         KmTypeParameter(flags, name, id, variance).addTo(typeParameters)
 
     @Deprecated(VISITOR_API_MESSAGE)
-    override fun visitReceiverParameterType(flags: Flags): KmTypeVisitor =
+    override fun visitReceiverParameterType(flags: Int): KmTypeVisitor =
         KmType(flags).also { receiverParameterType = it }
 
     @Deprecated(VISITOR_API_MESSAGE)
     @ExperimentalContextReceivers
-    override fun visitContextReceiverType(flags: Flags): KmTypeVisitor =
+    override fun visitContextReceiverType(flags: Int): KmTypeVisitor =
         KmType(flags).addTo(contextReceiverTypes)
 
     @Deprecated(VISITOR_API_MESSAGE)
-    override fun visitValueParameter(flags: Flags, name: String): KmValueParameterVisitor =
+    override fun visitValueParameter(flags: Int, name: String): KmValueParameterVisitor =
         KmValueParameter(flags, name).addTo(valueParameters)
 
     @Deprecated(VISITOR_API_MESSAGE)
-    override fun visitReturnType(flags: Flags): KmTypeVisitor =
+    override fun visitReturnType(flags: Int): KmTypeVisitor =
         KmType(flags).also { returnType = it }
 
     @Deprecated(VISITOR_API_MESSAGE)
@@ -507,7 +510,7 @@ class KmFunction @Deprecated(FLAGS_CTOR_DEPRECATED) constructor(
  * Does not contain meaningful information except attributes, such as visibility and modality.
  * Attributes can be read and written using extension functions, e.g. [KmPropertyAccessorAttributes.visibility] or [KmPropertyAccessorAttributes.isNotDefault].
  */
-public class KmPropertyAccessorAttributes internal constructor(internal var flags: Flags) {
+public class KmPropertyAccessorAttributes internal constructor(internal var flags: Int) {
     public constructor() : this(0)
 }
 
@@ -518,11 +521,11 @@ public class KmPropertyAccessorAttributes internal constructor(internal var flag
  * @property name the name of the property
  */
 @Suppress("DEPRECATION")
-class KmProperty @Deprecated(FLAGS_CTOR_DEPRECATED) constructor(
-    var flags: Flags,
+class KmProperty @Deprecated(flagsCtorDeprecated) constructor(
+    @Deprecated("$flagAccessPrefix KmProperty, such as KmProperty.visibility") var flags: Int,
     var name: String,
-    getterFlags: Flags,
-    setterFlags: Flags,
+    getterFlags: Int,
+    setterFlags: Int,
 ) : KmPropertyVisitor() {
 
     constructor(name: String) : this(0, name, 0, 0)
@@ -553,7 +556,8 @@ class KmProperty @Deprecated(FLAGS_CTOR_DEPRECATED) constructor(
      * Property accessor flags, consisting of [Flag.HAS_ANNOTATIONS], visibility flag, modality flag
      * and [Flag.PropertyAccessor] flags.
      */
-    var getterFlags: Flags
+    @Deprecated("$flagAccessPrefix KmProperty.getter, such as KmProperty.getter.isNotDefault")
+    var getterFlags: Int
         get() = getter.flags
         set(value) {
             getter.flags = value
@@ -573,7 +577,8 @@ class KmProperty @Deprecated(FLAGS_CTOR_DEPRECATED) constructor(
      * Setting this property when setter is absent changes the value, but does not create new [setter].
      * This behavior is for compatibility only and will be removed in future versions.
      */
-    var setterFlags: Flags = getDefaultPropertyAccessorFlags(flags)
+    @Deprecated("$flagAccessPrefix KmProperty.setter, such as KmProperty.setter.isNotDefault")
+    var setterFlags: Int = getDefaultPropertyAccessorFlags(flags)
         get() = setter?.flags ?: field
         set(value) {
             setter?.flags = value
@@ -623,24 +628,24 @@ class KmProperty @Deprecated(FLAGS_CTOR_DEPRECATED) constructor(
         MetadataExtensions.INSTANCES.map(MetadataExtensions::createPropertyExtension)
 
     @Deprecated(VISITOR_API_MESSAGE)
-    override fun visitTypeParameter(flags: Flags, name: String, id: Int, variance: KmVariance): KmTypeParameterVisitor =
+    override fun visitTypeParameter(flags: Int, name: String, id: Int, variance: KmVariance): KmTypeParameterVisitor =
         KmTypeParameter(flags, name, id, variance).addTo(typeParameters)
 
     @Deprecated(VISITOR_API_MESSAGE)
-    override fun visitReceiverParameterType(flags: Flags): KmTypeVisitor =
+    override fun visitReceiverParameterType(flags: Int): KmTypeVisitor =
         KmType(flags).also { receiverParameterType = it }
 
     @Deprecated(VISITOR_API_MESSAGE)
     @ExperimentalContextReceivers
-    override fun visitContextReceiverType(flags: Flags): KmTypeVisitor =
+    override fun visitContextReceiverType(flags: Int): KmTypeVisitor =
         KmType(flags).addTo(contextReceiverTypes)
 
     @Deprecated(VISITOR_API_MESSAGE)
-    override fun visitSetterParameter(flags: Flags, name: String): KmValueParameterVisitor =
+    override fun visitSetterParameter(flags: Int, name: String): KmValueParameterVisitor =
         KmValueParameter(flags, name).also { setterParameter = it }
 
     @Deprecated(VISITOR_API_MESSAGE)
-    override fun visitReturnType(flags: Flags): KmTypeVisitor =
+    override fun visitReturnType(flags: Int): KmTypeVisitor =
         KmType(flags).also { returnType = it }
 
     @Deprecated(VISITOR_API_MESSAGE)
@@ -677,8 +682,8 @@ class KmProperty @Deprecated(FLAGS_CTOR_DEPRECATED) constructor(
  * @property name the name of the type alias
  */
 @Suppress("DEPRECATION")
-class KmTypeAlias @Deprecated(FLAGS_CTOR_DEPRECATED) constructor(
-    var flags: Flags,
+class KmTypeAlias @Deprecated(flagsCtorDeprecated) constructor(
+    @Deprecated("$flagAccessPrefix KmTypeAlias, such as KmTypeAlias.visibility") var flags: Int,
     var name: String,
 ) : KmTypeAliasVisitor() {
 
@@ -714,15 +719,15 @@ class KmTypeAlias @Deprecated(FLAGS_CTOR_DEPRECATED) constructor(
         MetadataExtensions.INSTANCES.mapNotNull(MetadataExtensions::createTypeAliasExtension)
 
     @Deprecated(VISITOR_API_MESSAGE)
-    override fun visitTypeParameter(flags: Flags, name: String, id: Int, variance: KmVariance): KmTypeParameterVisitor =
+    override fun visitTypeParameter(flags: Int, name: String, id: Int, variance: KmVariance): KmTypeParameterVisitor =
         KmTypeParameter(flags, name, id, variance).addTo(typeParameters)
 
     @Deprecated(VISITOR_API_MESSAGE)
-    override fun visitUnderlyingType(flags: Flags): KmTypeVisitor =
+    override fun visitUnderlyingType(flags: Int): KmTypeVisitor =
         KmType(flags).also { underlyingType = it }
 
     @Deprecated(VISITOR_API_MESSAGE)
-    override fun visitExpandedType(flags: Flags): KmTypeVisitor =
+    override fun visitExpandedType(flags: Int): KmTypeVisitor =
         KmType(flags).also { expandedType = it }
 
     @Deprecated(VISITOR_API_MESSAGE)
@@ -762,8 +767,8 @@ class KmTypeAlias @Deprecated(FLAGS_CTOR_DEPRECATED) constructor(
  * @property name the name of the value parameter
  */
 @Suppress("DEPRECATION")
-class KmValueParameter @Deprecated(FLAGS_CTOR_DEPRECATED) constructor(
-    var flags: Flags,
+class KmValueParameter @Deprecated(flagsCtorDeprecated) constructor(
+    @Deprecated("$flagAccessPrefix KmValueParameter, such as KmValueParameter.declaresDefaultValue") var flags: Int,
     var name: String,
 ) : KmValueParameterVisitor() {
 
@@ -784,11 +789,11 @@ class KmValueParameter @Deprecated(FLAGS_CTOR_DEPRECATED) constructor(
         MetadataExtensions.INSTANCES.mapNotNull(MetadataExtensions::createValueParameterExtension)
 
     @Deprecated(VISITOR_API_MESSAGE)
-    override fun visitType(flags: Flags): KmTypeVisitor =
+    override fun visitType(flags: Int): KmTypeVisitor =
         KmType(flags).also { type = it }
 
     @Deprecated(VISITOR_API_MESSAGE)
-    override fun visitVarargElementType(flags: Flags): KmTypeVisitor =
+    override fun visitVarargElementType(flags: Int): KmTypeVisitor =
         KmType(flags).also { varargElementType = it }
 
     @Deprecated(VISITOR_API_MESSAGE)
@@ -819,8 +824,8 @@ class KmValueParameter @Deprecated(FLAGS_CTOR_DEPRECATED) constructor(
  * @property variance the declaration-site variance of the type parameter
  */
 @Suppress("DEPRECATION")
-class KmTypeParameter @Deprecated(FLAGS_CTOR_DEPRECATED) constructor(
-    var flags: Flags,
+class KmTypeParameter @Deprecated(flagsCtorDeprecated) constructor(
+    @Deprecated("$flagAccessPrefix KmTypeParameter, such as KmTypeParameter.isReified") var flags: Int,
     var name: String,
     var id: Int,
     var variance: KmVariance,
@@ -837,7 +842,7 @@ class KmTypeParameter @Deprecated(FLAGS_CTOR_DEPRECATED) constructor(
         MetadataExtensions.INSTANCES.map(MetadataExtensions::createTypeParameterExtension)
 
     @Deprecated(VISITOR_API_MESSAGE)
-    override fun visitUpperBound(flags: Flags): KmTypeVisitor =
+    override fun visitUpperBound(flags: Int): KmTypeVisitor =
         KmType(flags).addTo(upperBounds)
 
     @Deprecated(VISITOR_API_MESSAGE)
@@ -863,7 +868,9 @@ class KmTypeParameter @Deprecated(FLAGS_CTOR_DEPRECATED) constructor(
  * @property flags type flags, consisting of [Flag.Type] flags
  */
 @Suppress("DEPRECATION")
-class KmType @Deprecated(FLAGS_CTOR_DEPRECATED) constructor(var flags: Flags) : KmTypeVisitor() {
+class KmType @Deprecated(flagsCtorDeprecated) constructor(
+    @Deprecated("$flagAccessPrefix KmType, such as KmType.isNullable") var flags: Int
+) : KmTypeVisitor() {
 
     constructor() : this(0)
 
@@ -926,7 +933,7 @@ class KmType @Deprecated(FLAGS_CTOR_DEPRECATED) constructor(var flags: Flags) : 
     }
 
     @Deprecated(VISITOR_API_MESSAGE)
-    override fun visitArgument(flags: Flags, variance: KmVariance): KmTypeVisitor =
+    override fun visitArgument(flags: Int, variance: KmVariance): KmTypeVisitor =
         KmType(flags).also { arguments.add(KmTypeProjection(variance, it)) }
 
     @Deprecated(VISITOR_API_MESSAGE)
@@ -935,15 +942,15 @@ class KmType @Deprecated(FLAGS_CTOR_DEPRECATED) constructor(var flags: Flags) : 
     }
 
     @Deprecated(VISITOR_API_MESSAGE)
-    override fun visitAbbreviatedType(flags: Flags): KmTypeVisitor =
+    override fun visitAbbreviatedType(flags: Int): KmTypeVisitor =
         KmType(flags).also { abbreviatedType = it }
 
     @Deprecated(VISITOR_API_MESSAGE)
-    override fun visitOuterType(flags: Flags): KmTypeVisitor =
+    override fun visitOuterType(flags: Int): KmTypeVisitor =
         KmType(flags).also { outerType = it }
 
     @Deprecated(VISITOR_API_MESSAGE)
-    override fun visitFlexibleTypeUpperBound(flags: Flags, typeFlexibilityId: String?): KmTypeVisitor =
+    override fun visitFlexibleTypeUpperBound(flags: Int, typeFlexibilityId: String?): KmTypeVisitor =
         KmType(flags).also { flexibleTypeUpperBound = KmFlexibleTypeUpperBound(it, typeFlexibilityId) }
 
     @Deprecated(VISITOR_API_MESSAGE)
@@ -1129,7 +1136,8 @@ class KmEffectExpression : KmEffectExpressionVisitor() {
     /**
      * Effect expression flags, consisting of [Flag.EffectExpression] flags.
      */
-    var flags: Flags = flagsOf()
+    @Deprecated("$flagAccessPrefix KmEffectExpression, such as KmEffectExpression.isNegated")
+    var flags: Int = flagsOf()
 
     /**
      * Optional 1-based index of the value parameter of the function, for effects which assert something about
@@ -1160,7 +1168,7 @@ class KmEffectExpression : KmEffectExpressionVisitor() {
     val orArguments: MutableList<KmEffectExpression> = ArrayList(0)
 
     @Deprecated(VISITOR_API_MESSAGE)
-    override fun visit(flags: Flags, parameterIndex: Int?) {
+    override fun visit(flags: Int, parameterIndex: Int?) {
         this.flags = flags
         this.parameterIndex = parameterIndex
     }
@@ -1171,7 +1179,7 @@ class KmEffectExpression : KmEffectExpressionVisitor() {
     }
 
     @Deprecated(VISITOR_API_MESSAGE)
-    override fun visitIsInstanceType(flags: Flags): KmTypeVisitor =
+    override fun visitIsInstanceType(flags: Int): KmTypeVisitor =
         KmType(flags).also { isInstanceType = it }
 
     @Deprecated(VISITOR_API_MESSAGE)
@@ -1279,5 +1287,7 @@ internal fun <T> T.addTo(collection: MutableCollection<T>): T {
     return this
 }
 
-private const val FLAGS_CTOR_DEPRECATED =
+private const val flagsCtorDeprecated =
     "Constructor with flags is deprecated, use constructor without flags and assign them or corresponding extension properties directly."
+
+private const val flagAccessPrefix = "Flag API is deprecated. Please use corresponding member extensions on"

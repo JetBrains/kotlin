@@ -10,6 +10,7 @@ import org.junit.Test
 import kotlin.reflect.KMutableProperty0
 import kotlin.test.*
 
+@Suppress("DEPRECATION")
 class FlagDelegatesTest {
     private class Private
 
@@ -47,7 +48,7 @@ class FlagDelegatesTest {
     @Test
     fun testBooleanFlags() {
         val klass = Public::class.java.readKmClass()
-        fun doTest(prop: KMutableProperty0<Boolean>, flags: () -> Flags, rawFlag: Flag) {
+        fun doTest(prop: KMutableProperty0<Boolean>, flags: () -> Int, rawFlag: Flag) {
             assertFalse(prop.get())
             assertFalse(rawFlag(flags()))
 
