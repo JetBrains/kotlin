@@ -36,6 +36,14 @@ public abstract class AbstractCollection<out E> protected constructor() : Collec
     /**
      * Fills the provided [array] or creates new array of the same type
      * and fills it with the elements of this collection.
+     *
+     * If this collection doesn't fit in the provided [array],
+     * a new array is created with the same array type and the size of this collection,
+     * and filled with this collection elements.
+     * Otherwise, the specified [array] is filled starting from index 0.
+     * The value of the elements following the collection elements is unspecified.
+     *
+     * @return An array containing all elements of this collection.
      */
     protected open fun <T> toArray(array: Array<T>): Array<T> = copyToArrayImpl(this, array)
 }
