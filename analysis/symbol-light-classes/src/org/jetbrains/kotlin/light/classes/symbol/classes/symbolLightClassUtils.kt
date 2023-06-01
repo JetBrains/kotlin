@@ -35,18 +35,17 @@ import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.lexer.KtTokens.*
-import org.jetbrains.kotlin.light.classes.symbol.*
-import org.jetbrains.kotlin.light.classes.symbol.annotations.*
+import org.jetbrains.kotlin.light.classes.symbol.annotations.hasJvmOverloadsAnnotation
+import org.jetbrains.kotlin.light.classes.symbol.annotations.hasJvmStaticAnnotation
+import org.jetbrains.kotlin.light.classes.symbol.annotations.isHiddenOrSynthetic
+import org.jetbrains.kotlin.light.classes.symbol.annotations.toOptionalFilter
 import org.jetbrains.kotlin.light.classes.symbol.copy
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightField
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightFieldForEnumEntry
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightFieldForProperty
+import org.jetbrains.kotlin.light.classes.symbol.isJvmField
 import org.jetbrains.kotlin.light.classes.symbol.mapType
-import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightAccessorMethod
-import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightAnnotationsMethod
-import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightConstructor
-import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightNoArgConstructor
-import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightSimpleMethod
+import org.jetbrains.kotlin.light.classes.symbol.methods.*
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.*
@@ -391,6 +390,7 @@ internal fun SymbolLightClassBase.createField(
     isStatic: Boolean,
     result: MutableList<KtLightField>
 ) {
+    if (declaration.name.isSpecial) return
     if (!hasBackingField(declaration)) return
 
     val isDelegated = (declaration as? KtKotlinPropertySymbol)?.isDelegatedProperty == true
