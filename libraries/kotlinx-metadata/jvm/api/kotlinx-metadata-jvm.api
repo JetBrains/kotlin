@@ -4,6 +4,7 @@ public final class kotlinx/metadata/Attributes {
 	public static final fun getHasAnnotations (Lkotlinx/metadata/KmConstructor;)Z
 	public static final fun getHasAnnotations (Lkotlinx/metadata/KmFunction;)Z
 	public static final fun getHasAnnotations (Lkotlinx/metadata/KmProperty;)Z
+	public static final fun getHasAnnotations (Lkotlinx/metadata/KmPropertyAccessorAttributes;)Z
 	public static final fun getHasAnnotations (Lkotlinx/metadata/KmTypeAlias;)Z
 	public static final fun getHasAnnotations (Lkotlinx/metadata/KmValueParameter;)Z
 	public static final fun getHasConstant (Lkotlinx/metadata/KmProperty;)Z
@@ -68,11 +69,13 @@ public final class kotlinx/metadata/Attributes {
 	public static final fun setExternal (Lkotlinx/metadata/KmClass;Z)V
 	public static final fun setExternal (Lkotlinx/metadata/KmFunction;Z)V
 	public static final fun setExternal (Lkotlinx/metadata/KmProperty;Z)V
+	public static final fun setExternal (Lkotlinx/metadata/KmPropertyAccessorAttributes;Z)V
 	public static final fun setFunInterface (Lkotlinx/metadata/KmClass;Z)V
 	public static final fun setHasAnnotations (Lkotlinx/metadata/KmClass;Z)V
 	public static final fun setHasAnnotations (Lkotlinx/metadata/KmConstructor;Z)V
 	public static final fun setHasAnnotations (Lkotlinx/metadata/KmFunction;Z)V
 	public static final fun setHasAnnotations (Lkotlinx/metadata/KmProperty;Z)V
+	public static final fun setHasAnnotations (Lkotlinx/metadata/KmPropertyAccessorAttributes;Z)V
 	public static final fun setHasAnnotations (Lkotlinx/metadata/KmTypeAlias;Z)V
 	public static final fun setHasAnnotations (Lkotlinx/metadata/KmValueParameter;Z)V
 	public static final fun setHasConstant (Lkotlinx/metadata/KmProperty;Z)V
@@ -83,6 +86,7 @@ public final class kotlinx/metadata/Attributes {
 	public static final fun setHasSetter (Lkotlinx/metadata/KmProperty;Z)V
 	public static final fun setInfix (Lkotlinx/metadata/KmFunction;Z)V
 	public static final fun setInline (Lkotlinx/metadata/KmFunction;Z)V
+	public static final fun setInline (Lkotlinx/metadata/KmPropertyAccessorAttributes;Z)V
 	public static final fun setInner (Lkotlinx/metadata/KmClass;Z)V
 	public static final fun setKind (Lkotlinx/metadata/KmClass;Lkotlinx/metadata/ClassKind;)V
 	public static final fun setKind (Lkotlinx/metadata/KmFunction;Lkotlinx/metadata/MemberKind;)V
@@ -134,7 +138,7 @@ public final class kotlinx/metadata/ClassNameKt {
 public abstract interface annotation class kotlinx/metadata/ExperimentalContextReceivers : java/lang/annotation/Annotation {
 }
 
-public final class kotlinx/metadata/Flag {
+public abstract class kotlinx/metadata/Flag {
 	public static final field Common Lkotlinx/metadata/Flag$Common;
 	public static final field HAS_ANNOTATIONS Lkotlinx/metadata/Flag;
 	public static final field IS_ABSTRACT Lkotlinx/metadata/Flag;
@@ -147,8 +151,7 @@ public final class kotlinx/metadata/Flag {
 	public static final field IS_PROTECTED Lkotlinx/metadata/Flag;
 	public static final field IS_PUBLIC Lkotlinx/metadata/Flag;
 	public static final field IS_SEALED Lkotlinx/metadata/Flag;
-	public fun <init> (III)V
-	public final fun invoke (I)Z
+	public abstract fun invoke (I)Z
 }
 
 public final class kotlinx/metadata/Flag$Class {

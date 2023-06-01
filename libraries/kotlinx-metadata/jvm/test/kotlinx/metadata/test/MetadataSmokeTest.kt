@@ -48,7 +48,7 @@ class MetadataSmokeTest {
 
         val klass = KmClass().apply {
             name = "Hello"
-            flags = flagsOf(Flag.IS_PUBLIC)
+            visibility = Visibility.PUBLIC
             constructors += KmConstructor().apply {
                 visibility = Visibility.PUBLIC
                 signature = JvmMethodSignature("<init>", "()V")
@@ -56,7 +56,7 @@ class MetadataSmokeTest {
             functions += KmFunction("hello").apply {
                 visibility = Visibility.PUBLIC
                 kind = MemberKind.DECLARATION
-                returnType = KmType(flagsOf()).apply {
+                returnType = KmType().apply {
                     classifier = KmClassifier.Class("kotlin/String")
                 }
                 signature = JvmMethodSignature("hello", "()Ljava/lang/String;")
@@ -127,7 +127,7 @@ class MetadataSmokeTest {
         class ClassNameReader : KmClassVisitor() {
             lateinit var className: ClassName
 
-            override fun visit(flags: Flags, name: ClassName) {
+            override fun visit(flags: Int, name: ClassName) {
                 className = name
             }
         }
@@ -176,10 +176,10 @@ class MetadataSmokeTest {
             KmClass().apply {
                 classWithStableParameterNames.accept(
                     object : KmClassVisitor(this) {
-                        override fun visitConstructor(flags: Flags) =
+                        override fun visitConstructor(flags: Int) =
                             super.visitConstructor(flags + flagsOf(Flag.Constructor.HAS_NON_STABLE_PARAMETER_NAMES))
 
-                        override fun visitFunction(flags: Flags, name: String) =
+                        override fun visitFunction(flags: Int, name: String) =
                             super.visitFunction(flags + flagsOf(Flag.Function.HAS_NON_STABLE_PARAMETER_NAMES), name)
                     }
                 )
@@ -215,19 +215,19 @@ class MetadataSmokeTest {
         // exist are controlled by compiler options, so we have to manually create metadata with the
         // flags set. Since the current flags only apply to interfaces with default functions we modify
         // the metadata for the kotlin.coroutines.CoroutineContext interface.
-        val jvmClassFlags: Flags = flagsOf(
-            JvmFlag.Class.IS_COMPILED_IN_COMPATIBILITY_MODE,
-            JvmFlag.Class.HAS_METHOD_BODIES_IN_INTERFACE
-        )
 
         val metadata = CoroutineContext::class.java.getMetadata()
         val kmClass = metadata.readAsKmClass()
-        kmClass.jvmFlags = jvmClassFlags
+        assertFalse(kmClass.isCompiledInCompatibilityMode)
+        assertFalse(kmClass.hasMethodBodiesInInterface)
+        kmClass.isCompiledInCompatibilityMode = true
+        kmClass.hasMethodBodiesInInterface = true
 
         val kmClassCopy = KotlinClassMetadata
             .writeClass(kmClass, metadata.metadataVersion, metadata.extraInt)
             .readAsKmClass()
-        assertEquals(kmClassCopy.jvmFlags, jvmClassFlags)
+        assertTrue(kmClassCopy.isCompiledInCompatibilityMode)
+        assertTrue(kmClassCopy.hasMethodBodiesInInterface)
     }
 
     @Test

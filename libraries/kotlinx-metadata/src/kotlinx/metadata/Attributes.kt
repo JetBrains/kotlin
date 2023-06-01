@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:OptIn(ExperimentalStdlibApi::class)
+@file:Suppress("DEPRECATION")
 @file:JvmName("Attributes")
 
 package kotlinx.metadata
@@ -53,6 +53,15 @@ var KmFunction.hasAnnotations by annotationsOn(KmFunction::flags)
  * reading annotations from the class file (which can be slow) in case when a property has no annotations.
  */
 var KmProperty.hasAnnotations by annotationsOn(KmProperty::flags)
+
+/**
+ * Signifies that the corresponding property accessor has at least one annotation.
+ *
+ * This flag is useful for reading Kotlin metadata on JVM efficiently. On JVM, most of the annotations are written not to the Kotlin
+ * metadata, but directly on the corresponding declarations in the class file. This flag can be used as an optimization to avoid
+ * reading annotations from the class file (which can be slow) in case when a property accessor has no annotations.
+ */
+var KmPropertyAccessorAttributes.hasAnnotations by annotationsOn(KmPropertyAccessorAttributes::flags)
 
 /**
  * Signifies that the corresponding value parameter has at least one annotation.
@@ -293,30 +302,30 @@ var KmPropertyAccessorAttributes.isNotDefault: Boolean by propertyAccessorBoolea
 /**
  * Signifies that the corresponding property accessor is `external`.
  */
-val KmPropertyAccessorAttributes.isExternal: Boolean by propertyAccessorBooleanFlag(Flag(ProtoFlags.IS_EXTERNAL_ACCESSOR))
+var KmPropertyAccessorAttributes.isExternal: Boolean by propertyAccessorBooleanFlag(Flag(ProtoFlags.IS_EXTERNAL_ACCESSOR))
 
 /**
  * Signifies that the corresponding property accessor is `inline`.
  */
-val KmPropertyAccessorAttributes.isInline: Boolean by propertyAccessorBooleanFlag(Flag(ProtoFlags.IS_INLINE_ACCESSOR))
+var KmPropertyAccessorAttributes.isInline: Boolean by propertyAccessorBooleanFlag(Flag(ProtoFlags.IS_INLINE_ACCESSOR))
 
 // --- TYPE & TYPE_PARAM
 
 /**
  * Signifies that the corresponding type is marked as nullable, i.e. has a question mark at the end of its notation.
  */
-var KmType.isNullable: Boolean by typeBooleanFlag(Flag(0, 1, 1))
+var KmType.isNullable: Boolean by typeBooleanFlag(FlagImpl(0, 1, 1))
 
 /**
  * Signifies that the corresponding type is `suspend`.
  */
-var KmType.isSuspend: Boolean by typeBooleanFlag(Flag(ProtoFlags.SUSPEND_TYPE.offset + 1, ProtoFlags.SUSPEND_TYPE.bitWidth, 1))
+var KmType.isSuspend: Boolean by typeBooleanFlag(FlagImpl(ProtoFlags.SUSPEND_TYPE.offset + 1, ProtoFlags.SUSPEND_TYPE.bitWidth, 1))
 
 /**
  * Signifies that the corresponding type is [definitely non-null](https://kotlinlang.org/docs/whatsnew17.html#stable-definitely-non-nullable-types).
  */
 var KmType.isDefinitelyNonNull: Boolean by typeBooleanFlag(
-    Flag(
+    FlagImpl(
         ProtoFlags.DEFINITELY_NOT_NULL_TYPE.offset + 1,
         ProtoFlags.DEFINITELY_NOT_NULL_TYPE.bitWidth,
         1
@@ -327,7 +336,7 @@ var KmType.isDefinitelyNonNull: Boolean by typeBooleanFlag(
 /**
  * Signifies that the corresponding type parameter is `reified`.
  */
-var KmTypeParameter.isReified: Boolean by BooleanFlagDelegate(KmTypeParameter::flags, Flag(0, 1, 1))
+var KmTypeParameter.isReified: Boolean by BooleanFlagDelegate(KmTypeParameter::flags, FlagImpl(0, 1, 1))
 
 // --- TYPE ALIAS ---
 

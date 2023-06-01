@@ -127,7 +127,7 @@ internal class JvmMetadataExtensions : MetadataExtensions {
             }
 
             override fun visitLocalDelegatedProperty(
-                flags: Flags, name: String, getterFlags: Flags, setterFlags: Flags
+                flags: Int, name: String, getterFlags: Int, setterFlags: Int
             ): KmPropertyVisitor = writeProperty(c, flags, name, getterFlags, setterFlags) {
                 proto.addExtension(JvmProtoBuf.classLocalVariable, it.build())
             }
@@ -138,7 +138,7 @@ internal class JvmMetadataExtensions : MetadataExtensions {
                 }
             }
 
-            override fun visitJvmFlags(flags: Flags) {
+            override fun visitJvmFlags(flags: Int) {
                 if (flags != 0) {
                     proto.setExtension(JvmProtoBuf.jvmClassFlags, flags)
                 }
@@ -152,7 +152,7 @@ internal class JvmMetadataExtensions : MetadataExtensions {
         if (type != JvmPackageExtensionVisitor.TYPE) return null
         return object : JvmPackageExtensionVisitor() {
             override fun visitLocalDelegatedProperty(
-                flags: Flags, name: String, getterFlags: Flags, setterFlags: Flags
+                flags: Int, name: String, getterFlags: Int, setterFlags: Int
             ): KmPropertyVisitor = writeProperty(c, flags, name, getterFlags, setterFlags) {
                 proto.addExtension(JvmProtoBuf.packageLocalVariable, it.build())
             }
@@ -194,14 +194,14 @@ internal class JvmMetadataExtensions : MetadataExtensions {
     ): KmPropertyExtensionVisitor? {
         if (type != JvmPropertyExtensionVisitor.TYPE) return null
         return object : JvmPropertyExtensionVisitor() {
-            private var jvmFlags: Flags = ProtoBuf.Property.getDefaultInstance().getExtension(JvmProtoBuf.flags)
+            private var jvmFlags: Int = ProtoBuf.Property.getDefaultInstance().getExtension(JvmProtoBuf.flags)
             private var signatureOrNull: JvmProtoBuf.JvmPropertySignature.Builder? = null
 
             private val signature: JvmProtoBuf.JvmPropertySignature.Builder
                 get() = signatureOrNull ?: JvmProtoBuf.JvmPropertySignature.newBuilder().also { signatureOrNull = it }
 
             override fun visit(
-                jvmFlags: Flags,
+                jvmFlags: Int,
                 fieldSignature: JvmFieldSignature?,
                 getterSignature: JvmMethodSignature?,
                 setterSignature: JvmMethodSignature?

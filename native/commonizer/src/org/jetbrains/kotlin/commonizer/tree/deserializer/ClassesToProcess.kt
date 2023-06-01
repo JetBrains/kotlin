@@ -6,9 +6,7 @@
 package org.jetbrains.kotlin.commonizer.tree.deserializer
 
 import com.intellij.util.containers.FactoryMap
-import kotlinx.metadata.Flag
-import kotlinx.metadata.KmAnnotation
-import kotlinx.metadata.KmClass
+import kotlinx.metadata.*
 import kotlinx.metadata.internal.common.KmModuleFragment
 import kotlinx.metadata.klib.klibEnumEntries
 import org.jetbrains.kotlin.commonizer.cir.CirEntityId
@@ -44,7 +42,7 @@ internal class ClassesToProcess {
             val classId: CirEntityId = CirEntityId.create(clazz.name)
             val parentClassId: CirEntityId = classId.getParentEntityId() ?: NON_EXISTING_CLASSIFIER_ID
 
-            if (Flag.Class.IS_ENUM_CLASS(clazz.flags)) {
+            if (clazz.kind == ClassKind.ENUM_CLASS) {
                 clazz.klibEnumEntries.forEach { entry ->
                     val enumEntryId = classId.createNestedEntityId(CirName.create(entry.name))
                     klibEnumEntries[enumEntryId] = ClassEntry.EnumEntry(enumEntryId, entry.annotations, classId, clazz)

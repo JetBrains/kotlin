@@ -5,6 +5,7 @@
 
 package kotlinx.metadata
 
+import kotlinx.metadata.internal.Flag
 import org.jetbrains.kotlin.metadata.deserialization.Flags as ProtoFlags
 import org.jetbrains.kotlin.metadata.ProtoBuf.Class.Kind as ProtoClassKind
 import org.jetbrains.kotlin.metadata.ProtoBuf.Visibility as ProtoVisibility

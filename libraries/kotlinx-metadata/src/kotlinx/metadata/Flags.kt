@@ -7,11 +7,17 @@
 
 package kotlinx.metadata
 
+import kotlinx.metadata.internal.FlagImpl
+
 /**
  * Declaration flags are represented as bitmasks of this type.
  *
  * @see Flag
  */
+@Deprecated(
+    "Flags API is deprecated and this typealias will be removed. Use Int directly and then migrate to corresponding Km nodes extensions, e.g. KmClass.visibility",
+    ReplaceWith("Int")
+)
 typealias Flags = Int
 
 /**
@@ -21,5 +27,9 @@ typealias Flags = Int
  * hold the value of the latest flag. For example, `flagsOf(Flag.IS_PRIVATE, Flag.IS_PUBLIC, Flag.IS_INTERNAL)` is the same as
  * `flagsOf(Flag.IS_INTERNAL)`.
  */
-fun flagsOf(vararg flags: Flag): Flags =
-    flags.fold(0) { acc, flag -> flag + acc }
+@Suppress("DEPRECATION")
+@Deprecated(
+    "Flags API is deprecated and this function will be removed. Create Km nodes directly and then use corresponding Km nodes extensions, e.g. KmClass.visibility",
+)
+fun flagsOf(vararg flags: Flag): Int =
+    flags.fold(0) { acc, flag -> (flag as FlagImpl) + acc }

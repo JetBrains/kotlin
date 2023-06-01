@@ -3,6 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("DEPRECATION")
 @file:JvmName("JvmAttributes")
 
 package kotlinx.metadata.jvm
@@ -10,7 +11,8 @@ package kotlinx.metadata.jvm
 import kotlinx.metadata.KmClass
 import kotlinx.metadata.KmProperty
 import kotlinx.metadata.internal.BooleanFlagDelegate
-import kotlinx.metadata.jvm.JvmFlag.booleanFlag
+import kotlinx.metadata.internal.FlagImpl
+import org.jetbrains.kotlin.metadata.deserialization.Flags
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmFlags as JF
 
 /**
@@ -38,3 +40,6 @@ var KmClass.hasMethodBodiesInInterface by BooleanFlagDelegate(KmClass::jvmFlags,
  * clients compiled without all-compatibility.
  */
 var KmClass.isCompiledInCompatibilityMode by BooleanFlagDelegate(KmClass::jvmFlags, booleanFlag(JF.IS_COMPILED_IN_COMPATIBILITY_MODE))
+
+private fun booleanFlag(f: Flags.BooleanFlagField): FlagImpl =
+    FlagImpl(f.offset, f.bitWidth, 1)

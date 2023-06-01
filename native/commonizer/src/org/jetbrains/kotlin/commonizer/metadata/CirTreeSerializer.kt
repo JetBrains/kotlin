@@ -220,15 +220,15 @@ private class CirTreeSerializationVisitor(
             clazz: KmClass,
             classContext: CirTreeSerializationContext
         ) = logDeclaration(classContext.targetIndex) {
-            val declarationType = when {
-                Flag.Class.IS_ENUM_CLASS(clazz.flags) -> DeclarationType.ENUM_CLASS
-                Flag.Class.IS_ENUM_ENTRY(clazz.flags) -> DeclarationType.ENUM_ENTRY
-                Flag.Class.IS_INTERFACE(clazz.flags) -> when {
+            val declarationType = when (clazz.kind) {
+                ClassKind.ENUM_CLASS -> DeclarationType.ENUM_CLASS
+                ClassKind.ENUM_ENTRY -> DeclarationType.ENUM_ENTRY
+                ClassKind.INTERFACE -> when {
                     (classContext.currentPath as Path.Classifier).classifierId.isNestedEntity -> DeclarationType.NESTED_INTERFACE
                     else -> DeclarationType.TOP_LEVEL_INTERFACE
                 }
                 else -> when {
-                    Flag.Class.IS_COMPANION_OBJECT(clazz.flags) -> DeclarationType.COMPANION_OBJECT
+                    clazz.kind == ClassKind.COMPANION_OBJECT -> DeclarationType.COMPANION_OBJECT
                     (classContext.currentPath as Path.Classifier).classifierId.isNestedEntity -> DeclarationType.NESTED_CLASS
                     else -> DeclarationType.TOP_LEVEL_CLASS
                 }
@@ -435,7 +435,7 @@ internal class ClassConsumer {
 
     fun consume(clazz: KmClass) {
         _allClasses += clazz
-        if (Flag.Common.IS_SEALED(clazz.flags)) _sealedClasses += clazz
+        if (clazz.modality == Modality.SEALED) _sealedClasses += clazz
     }
 
     fun reset() {
