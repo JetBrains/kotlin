@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.analysis.decompiler.stub.flags.FlagsToModifiers
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
+import org.jetbrains.kotlin.load.kotlin.FacadeClassSource
 import org.jetbrains.kotlin.load.kotlin.JvmPackagePartSource
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
@@ -219,6 +220,23 @@ fun createTargetedAnnotationStubs(
         val typeReference = KotlinPlaceHolderStubImpl<KtTypeReference>(constructorCallee, KtStubElementTypes.TYPE_REFERENCE)
         createStubForTypeName(annotationWithArgs.classId, typeReference)
     }
+}
+
+internal fun createStubOrigin(protoContainer: ProtoContainer): KotlinStubOrigin? {
+    if (protoContainer is ProtoContainer.Package) {
+        val source = protoContainer.source
+        if (source is FacadeClassSource) {
+            val className = source.className.internalName
+            val facadeClassName = source.facadeClassName?.internalName
+            if (facadeClassName != null) {
+                return KotlinStubOrigin.MultiFileFacade(className, facadeClassName)
+            }
+
+            return KotlinStubOrigin.Facade(className)
+        }
+    }
+
+    return null
 }
 
 val MessageLite.annotatedCallableKind: AnnotatedCallableKind

@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserialization
 
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirKotlinSymbolProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLFirKotlinSymbolNamesProvider
@@ -27,6 +26,7 @@ import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.stubs.impl.*
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.serialization.deserialization.MetadataPackageFragment
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
@@ -124,11 +124,7 @@ internal open class JvmStubBasedFirDeserializedSymbolProvider(
                 StubBasedAnnotationDeserializer(session),
                 kotlinScopeProvider,
                 parentContext = context,
-                containerSource = if (initialOrigin == FirDeclarationOrigin.BuiltIns) null else JvmFromStubDecompilerSource(
-                    JvmClassName.byClassId(
-                        classId
-                    )
-                ),
+                containerSource = if (initialOrigin == FirDeclarationOrigin.BuiltIns) null else JvmStubDeserializedContainerSource(classId),
                 deserializeNestedClass = this::getClass,
                 initialOrigin = initialOrigin
             )
@@ -146,14 +142,20 @@ internal open class JvmStubBasedFirDeserializedSymbolProvider(
         return ArrayList<FirNamedFunctionSymbol>(topLevelFunctions.size).apply {
             for (function in topLevelFunctions) {
                 val file = function.containingKtFile
-                val virtualFile = file.virtualFile.takeIf { it.extension != MetadataPackageFragment.METADATA_FILE_EXTENSION } ?: continue
-                val facadeClassName = computeFacadeClassName(file, virtualFile)
+                if (file.virtualFile.extension == MetadataPackageFragment.METADATA_FILE_EXTENSION) {
+                    continue
+                }
 
-                if (initialOrigin != FirDeclarationOrigin.BuiltIns && facadeClassName.internalName in KotlinBuiltins) continue
+                val functionStub = function.stub as? KotlinFunctionStubImpl ?: loadStubByElement(function)
+                val containerSource = getFacadeContainerSource(function.containingKtFile, functionStub?.origin)
+
+                if (initialOrigin != FirDeclarationOrigin.BuiltIns && containerSource.className.internalName in KotlinBuiltins) {
+                    continue
+                }
 
                 val symbol = FirNamedFunctionSymbol(callableId)
                 val rootContext = StubBasedFirDeserializationContext
-                    .createRootContext(session, moduleData, callableId, function, symbol, initialOrigin)
+                    .createRootContext(session, moduleData, callableId, function, symbol, initialOrigin, containerSource)
 
                 add(rootContext.memberDeserializer.loadFunction(function, null, session, symbol).symbol)
             }
@@ -165,18 +167,36 @@ internal open class JvmStubBasedFirDeserializedSymbolProvider(
 
         return buildList {
             for (property in topLevelProperties) {
+                val propertyStub = property.stub as? KotlinPropertyStubImpl ?: loadStubByElement(property)
+                val containerSource = getFacadeContainerSource(property.containingKtFile, propertyStub?.origin)
+
                 val symbol = FirPropertySymbol(callableId)
                 val rootContext = StubBasedFirDeserializationContext
-                    .createRootContext(session, moduleData, callableId, property, symbol, initialOrigin)
+                    .createRootContext(session, moduleData, callableId, property, symbol, initialOrigin, containerSource)
 
                 add(rootContext.memberDeserializer.loadProperty(property, null, symbol).symbol)
             }
         }
     }
 
-    private fun computeFacadeClassName(file: KtFile, virtualFile: VirtualFile = file.virtualFile): JvmClassName {
-        val internalName = file.packageFqName.asString().replace(".", "/") + "/" + virtualFile.nameWithoutExtension
-        return JvmClassName.byInternalName(internalName)
+    private fun getFacadeContainerSource(file: KtFile, origin: KotlinStubOrigin?): JvmStubDeserializedFacadeContainerSource {
+        return when (origin) {
+            is KotlinStubOrigin.Facade -> {
+                val className = JvmClassName.byInternalName(origin.className)
+                JvmStubDeserializedFacadeContainerSource(className, facadeClassName = null)
+            }
+            is KotlinStubOrigin.MultiFileFacade -> {
+                val className = JvmClassName.byInternalName(origin.className)
+                val facadeClassName = JvmClassName.byInternalName(origin.className)
+                JvmStubDeserializedFacadeContainerSource(className, facadeClassName)
+            }
+            else -> {
+                val virtualFile = file.virtualFile
+                val classId = ClassId(file.packageFqName, Name.identifier(virtualFile.nameWithoutExtension))
+                val className = JvmClassName.byClassId(classId)
+                JvmStubDeserializedFacadeContainerSource(className, facadeClassName = null)
+            }
+        }
     }
 
     private fun getClass(

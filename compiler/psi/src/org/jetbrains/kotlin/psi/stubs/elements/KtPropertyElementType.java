@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 import org.jetbrains.kotlin.psi.stubs.KotlinPropertyStub;
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinConstantValueKt;
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinPropertyStubImpl;
+import org.jetbrains.kotlin.psi.stubs.impl.KotlinStubOrigin;
 
 import java.io.IOException;
 
@@ -50,7 +51,9 @@ public class KtPropertyElementType extends KtStubElementType<KotlinPropertyStub,
                 psi.isVar(), psi.isTopLevel(), psi.hasDelegate(),
                 psi.hasDelegateExpression(), psi.hasInitializer(),
                 psi.getReceiverTypeReference() != null, psi.getTypeReference() != null,
-                KtPsiUtilKt.safeFqNameForLazyResolve(psi), null
+                KtPsiUtilKt.safeFqNameForLazyResolve(psi),
+                /* constantInitializer = */ null,
+                /* origin = */ null
         );
     }
 
@@ -67,12 +70,18 @@ public class KtPropertyElementType extends KtStubElementType<KotlinPropertyStub,
 
         FqName fqName = stub.getFqName();
         dataStream.writeName(fqName != null ? fqName.asString() : null);
-        ConstantValue<?> constantInitializer = stub instanceof KotlinPropertyStubImpl ? ((KotlinPropertyStubImpl) stub).getConstantInitializer() : null;
-        if (constantInitializer != null) {
-            KotlinConstantValueKt.serialize(constantInitializer, dataStream);
-        }
-        else {
-            dataStream.writeInt(-1);
+
+        if (stub instanceof KotlinPropertyStubImpl) {
+            KotlinPropertyStubImpl stubImpl = (KotlinPropertyStubImpl) stub;
+
+            ConstantValue<?> constantInitializer = ((KotlinPropertyStubImpl) stub).getConstantInitializer();
+            if (constantInitializer != null) {
+                KotlinConstantValueKt.serialize(constantInitializer, dataStream);
+            } else {
+                dataStream.writeInt(-1);
+            }
+
+            KotlinStubOrigin.serialize(stubImpl.getOrigin(), dataStream);
         }
     }
 
@@ -93,7 +102,8 @@ public class KtPropertyElementType extends KtStubElementType<KotlinPropertyStub,
 
         return new KotlinPropertyStubImpl(
                 (StubElement<?>) parentStub, name, isVar, isTopLevel, hasDelegate, hasDelegateExpression, hasInitializer,
-                hasReceiverTypeRef, hasReturnTypeRef, fqName, KotlinConstantValueKt.createConstantValue(dataStream)
+                hasReceiverTypeRef, hasReturnTypeRef, fqName, KotlinConstantValueKt.createConstantValue(dataStream),
+                KotlinStubOrigin.deserialize(dataStream)
         );
     }
 
