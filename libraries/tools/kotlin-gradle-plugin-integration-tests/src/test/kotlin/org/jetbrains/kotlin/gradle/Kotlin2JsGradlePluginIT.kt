@@ -144,14 +144,45 @@ class Kotlin2JsIrGradlePluginIT : AbstractKotlin2JsGradlePluginIT(true) {
                     ?: error("Not found package $moduleName in $rootModulePath")
 
             build("build") {
-                val libDecamelizeVersion = moduleVersion("build/js/node_modules/lib2", "decamelize")
+                val libDecamelizeVersion = moduleVersion("build/js/node_modules/lib-lib-2", "decamelize")
                 assertEquals("1.1.1", libDecamelizeVersion)
 
-                val libAsyncVersion = moduleVersion("build/js/node_modules/lib2", "async")
+                val libAsyncVersion = moduleVersion("build/js/node_modules/lib-lib-2", "async")
                 assertEquals("2.6.2", libAsyncVersion)
 
                 val appNodeFetchVersion = moduleVersion("build/js/node_modules/js-composite-build", "node-fetch")
                 assertEquals("3.2.8", appNodeFetchVersion)
+            }
+        }
+    }
+
+    @DisplayName("js composite build works with yarn.lock persistence")
+    @GradleTest
+    @GradleTestVersions(minVersion = G_7_6)
+    fun testJsCompositeBuildWithUpgradeYarnLock(gradleVersion: GradleVersion) {
+        project("js-composite-build", gradleVersion) {
+            buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
+
+            subProject("lib").apply {
+                buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
+            }
+
+            subProject("base").apply {
+                buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
+            }
+
+            build("kotlinUpgradeYarnLock") {
+                assertTasksExecuted(":base:publicPackageJson")
+                assertTasksExecuted(":lib:lib-2:publicPackageJson")
+                assertTasksExecuted(":kotlinNpmInstall")
+                assertTasksExecuted(":kotlinUpgradeYarnLock")
+            }
+
+            build(":nodeTest") {
+                assertTasksUpToDate(":base:publicPackageJson")
+                assertTasksUpToDate(":lib:lib-2:publicPackageJson")
+                assertTasksUpToDate(":kotlinNpmInstall")
+                assertTasksExecuted(":kotlinStoreYarnLock")
             }
         }
     }
