@@ -103,7 +103,7 @@ internal class StubBasedFirTypeDeserializer(
 
     fun type(typeReference: KtTypeReference): ConeKotlinType {
         val annotations = annotationDeserializer.loadAnnotations(typeReference).toMutableList()
-        val parent = typeReference.stub?.parentStub
+        val parent = (typeReference.stub ?: loadStubByElement(typeReference))?.parentStub
         if (parent is KotlinParameterStubImpl) {
             (parent as? KotlinParameterStubImpl)?.functionTypeParameterName?.let { paramName ->
                 annotations += buildAnnotation {
@@ -163,7 +163,8 @@ internal class StubBasedFirTypeDeserializer(
     }
 
     private fun type(typeReference: KtTypeReference, attributes: ConeAttributes): ConeKotlinType {
-        val upperBoundType = ((typeReference.typeElement as? KtUserType)?.stub as? KotlinUserTypeStubImpl)?.upperBound
+        val userType = typeReference.typeElement as? KtUserType
+        val upperBoundType = (userType?.let { it.stub ?: loadStubByElement(it) } as? KotlinUserTypeStubImpl)?.upperBound
         if (upperBoundType != null) {
             val lowerBound = simpleType(typeReference, attributes)
             val upperBound = type(upperBoundType)
@@ -281,7 +282,7 @@ internal fun KtUserType.classId(): ClassId {
         val referenceExpression = type.referenceExpression as? KtNameReferenceExpression
         if (referenceExpression != null) {
             val referencedName = referenceExpression.getReferencedName()
-            val stub = referenceExpression.stub
+            val stub = referenceExpression.stub ?: loadStubByElement(referenceExpression)
             if (stub is KotlinNameReferenceExpressionStubImpl && stub.isClassRef) {
                 classFragments.add(referencedName)
             } else {
@@ -290,14 +291,6 @@ internal fun KtUserType.classId(): ClassId {
         }
     }
     collectFragments(this)
-    if (classFragments.isEmpty()) {
-        //stub is re-built from decompiled text and additional information is already missed
-        return ClassId(
-            FqName.fromSegments(packageFragments).parent(),
-            FqName(packageFragments.last()),
-            /* local = */ false
-        )
-    }
     return ClassId(
         FqName.fromSegments(packageFragments),
         FqName.fromSegments(classFragments),

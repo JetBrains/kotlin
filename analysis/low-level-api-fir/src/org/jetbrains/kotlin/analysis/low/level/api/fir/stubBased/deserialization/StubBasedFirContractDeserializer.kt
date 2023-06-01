@@ -14,14 +14,16 @@ import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.psi.KtNamedFunction
-import org.jetbrains.kotlin.psi.stubs.impl.*
+import org.jetbrains.kotlin.psi.stubs.impl.KotlinContractConstantValues
+import org.jetbrains.kotlin.psi.stubs.impl.KotlinFunctionStubImpl
+import org.jetbrains.kotlin.psi.stubs.impl.KotlinTypeBean
 
 internal class StubBasedFirContractDeserializer(
     private val simpleFunction: FirSimpleFunction,
-    private val typeDeserializer: StubBasedFirTypeDeserializer
+    private val typeDeserializer: StubBasedFirTypeDeserializer,
 ) {
     fun loadContract(function: KtNamedFunction): FirContractDescription? {
-        val functionStub = function.stub as? KotlinFunctionStubImpl ?: return null
+        val functionStub = function.stub as? KotlinFunctionStubImpl ?: loadStubByElement(function) ?: return null
         val effects = functionStub.contract?.map {
             it.accept(ContractDescriptionConvertingVisitor(), null)
         }
