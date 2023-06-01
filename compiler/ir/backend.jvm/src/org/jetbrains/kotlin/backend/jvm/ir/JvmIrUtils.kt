@@ -51,6 +51,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.load.kotlin.FacadeClassSource
 import org.jetbrains.kotlin.load.kotlin.JvmPackagePartSource
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.ClassId
@@ -468,8 +469,13 @@ fun IrConstructorCall.getValueArgument(name: Name): IrExpression? {
 }
 
 val IrMemberWithContainerSource.parentClassId: ClassId?
-    get() = ((this as? IrSimpleFunction)?.correspondingPropertySymbol?.owner ?: this).let { directMember ->
-        (directMember.containerSource as? JvmPackagePartSource)?.classId ?: (directMember.parent as? IrClass)?.classId
+    get() {
+        val directMember = (this as? IrSimpleFunction)?.correspondingPropertySymbol?.owner ?: this
+
+        return when (val containerSource = directMember.containerSource) {
+            is FacadeClassSource -> ClassId.topLevel(containerSource.className.fqNameForClassNameWithoutDollars)
+            else -> (directMember.parent as? IrClass)?.classId
+        }
     }
 
 // Translated into IR-based terms from classifierDescriptor?.classId
