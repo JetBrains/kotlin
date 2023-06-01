@@ -664,10 +664,42 @@ class Fir2IrClassifierStorage(
         typeOrigin: ConversionTypeOrigin
     ): IrTypeParameterSymbol {
         val firTypeParameter = firTypeParameterSymbol.fir
-        return getCachedIrTypeParameter(firTypeParameter, typeOrigin)?.symbol
+
         // We can try to use default cache because setter can use parent type parameters
+        val cachedSymbol = getCachedIrTypeParameter(firTypeParameter, typeOrigin)?.symbol
             ?: typeParameterCache[firTypeParameter]?.symbol
-            ?: error("Cannot find cached type parameter by FIR symbol: ${firTypeParameterSymbol.name} of the owner: ${firTypeParameter.containingDeclarationSymbol}")
+
+        if (cachedSymbol != null) {
+            return cachedSymbol
+        }
+
+        if (components.configuration.allowNonCachedDeclarations) {
+            val firTypeParameterOwnerSymbol = firTypeParameter.containingDeclarationSymbol
+
+            val firTypeParameterOwner = firTypeParameterOwnerSymbol.fir as FirTypeParameterRefsOwner
+            val index = firTypeParameterOwner.typeParameters.indexOf(firTypeParameter).also { check(it >= 0) }
+
+            with(firTypeParameter) {
+                val symbol = IrTypeParameterSymbolImpl()
+                convertWithOffsets { startOffset, endOffset ->
+                    irFactory.createTypeParameter(
+                        startOffset, endOffset,
+                        firTypeParameter.computeIrOrigin(),
+                        name,
+                        symbol,
+                        variance,
+                        if (index < 0) 0 else index,
+                        isReified
+                    ).apply {
+                        superTypes = firTypeParameter.bounds.map { it.toIrType(typeConverter) }
+                    }
+                }
+
+                return symbol
+            }
+        }
+
+        error("Cannot find cached type parameter by FIR symbol: ${firTypeParameterSymbol.name} of the owner: ${firTypeParameter.containingDeclarationSymbol}")
     }
 
     private val temporaryParent by lazy {
