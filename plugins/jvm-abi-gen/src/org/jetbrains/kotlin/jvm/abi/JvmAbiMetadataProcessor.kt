@@ -30,42 +30,49 @@ fun abiMetadataProcessor(annotationVisitor: AnnotationVisitor): AnnotationVisito
             major > 1 || major == 1 && minor >= 4
         } ?: intArrayOf(1, 4)
 
-        val newHeader = when (val metadata = KotlinClassMetadata.read(header)) {
-            is KotlinClassMetadata.Class -> {
-                val klass = metadata.toKmClass()
-                klass.removePrivateDeclarations()
-                KotlinClassMetadata.writeClass(klass, metadataVersion, header.extraInt).annotationData
-            }
-            is KotlinClassMetadata.FileFacade -> {
-                val pkg = metadata.toKmPackage()
-                pkg.removePrivateDeclarations()
-                KotlinClassMetadata.writeFileFacade(pkg, metadataVersion, header.extraInt).annotationData
-            }
-            is KotlinClassMetadata.MultiFileClassPart -> {
-                val pkg = metadata.toKmPackage()
-                pkg.removePrivateDeclarations()
-                KotlinClassMetadata.writeMultiFileClassPart(pkg, metadata.facadeClassName, metadataVersion, header.extraInt).annotationData
-            }
-            null -> {
-                // TODO: maybe jvm-abi-gen should throw this exception by default, and not only in tests.
-                if (System.getProperty("idea.is.unit.test").toBoolean()) {
-                    val actual = "${metadataVersion[0]}.${metadataVersion[1]}"
-                    val expected = KotlinClassMetadata.COMPATIBLE_METADATA_VERSION.let { "${it[0]}.${it[1]}" }
-                    throw AssertionError(
-                        "jvm-abi-gen can't process class file with the new metadata version because the version of kotlinx-metadata-jvm " +
-                                "it depends on is too old.\n" +
-                                "Class file has metadata version $actual, but default metadata version of kotlinx-metadata-jvm is " +
-                                "$expected, so it can process class files with metadata version up to +1 from that (because of " +
-                                "Kotlin/JVM's one-version forward compatibility policy).\n" +
-                                "To fix this error, ensure that jvm-abi-gen depends on the latest version of kotlinx-metadata-jvm.\n" +
-                                "If this happens during the update of the default language version in the project, make sure that " +
-                                "a version of kotlinx-metadata-jvm has been published that supports this version, and update " +
-                                "\"versions.kotlinx-metadata-jvm\" in `gradle/versions.properties`."
+        val newHeader = runCatching {
+            when (val metadata = KotlinClassMetadata.read(header)) {
+                is KotlinClassMetadata.Class -> {
+                    val klass = metadata.kmClass
+                    klass.removePrivateDeclarations()
+                    KotlinClassMetadata.writeClass(klass, metadataVersion, header.extraInt)
+                }
+                is KotlinClassMetadata.FileFacade -> {
+                    val pkg = metadata.kmPackage
+                    pkg.removePrivateDeclarations()
+                    KotlinClassMetadata.writeFileFacade(pkg, metadataVersion, header.extraInt)
+                }
+                is KotlinClassMetadata.MultiFileClassPart -> {
+                    val pkg = metadata.kmPackage
+                    pkg.removePrivateDeclarations()
+                    KotlinClassMetadata.writeMultiFileClassPart(
+                        pkg,
+                        metadata.facadeClassName,
+                        metadataVersion,
+                        header.extraInt
                     )
                 }
-                header
+                else -> header
             }
-            else -> header
+        }.getOrElse { cause ->
+            // TODO: maybe jvm-abi-gen should throw this exception by default, and not only in tests.
+            if (System.getProperty("idea.is.unit.test").toBoolean()) {
+                val actual = "${metadataVersion[0]}.${metadataVersion[1]}"
+                val expected = KotlinClassMetadata.COMPATIBLE_METADATA_VERSION.let { "${it[0]}.${it[1]}" }
+                throw AssertionError(
+                    "jvm-abi-gen can't process class file with the new metadata version because the version of kotlinx-metadata-jvm " +
+                            "it depends on is too old.\n" +
+                            "Class file has metadata version $actual, but default metadata version of kotlinx-metadata-jvm is " +
+                            "$expected, so it can process class files with metadata version up to +1 from that (because of " +
+                            "Kotlin/JVM's one-version forward compatibility policy).\n" +
+                            "To fix this error, ensure that jvm-abi-gen depends on the latest version of kotlinx-metadata-jvm.\n" +
+                            "If this happens during the update of the default language version in the project, make sure that " +
+                            "a version of kotlinx-metadata-jvm has been published that supports this version, and update " +
+                            "\"versions.kotlinx-metadata-jvm\" in `gradle/versions.properties`.",
+                    cause
+                )
+            }
+            header
         }
 
         // Write out the stripped annotation
