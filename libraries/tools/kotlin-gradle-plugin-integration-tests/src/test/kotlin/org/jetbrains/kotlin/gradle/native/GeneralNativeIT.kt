@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.gradle.internals.DISABLED_NATIVE_TARGETS_REPORTER_WA
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeOutputKind
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.testbase.TestVersions.Kotlin.NATIVE_STABLE_RELEASE
 import org.jetbrains.kotlin.gradle.util.modify
 import org.jetbrains.kotlin.gradle.util.runProcess
 import org.jetbrains.kotlin.gradle.utils.Xcode
@@ -940,34 +941,21 @@ class GeneralNativeIT : BaseGradleIT() {
                 assertNoDiagnostic(KotlinToolingDiagnostics.NativeStdlibIsMissingDiagnostic)
             }
 
-            build("tasks", "-Pkotlin.native.version=1.5.20") {
+
+            val platform = HostManager.platformName()
+            val version = NATIVE_STABLE_RELEASE
+            val escapedRegexVersion = Regex.escape(NATIVE_STABLE_RELEASE)
+            build("tasks", "-Pkotlin.native.version=$version") {
                 assertSuccessful()
-                assertContainsRegex(
-                    "Kotlin/Native distribution: .*kotlin-native-prebuilt-(macos|linux|windows)-1\\.5\\.20"
-                        .toRegex()
-                )
+                assertContainsRegex("Kotlin/Native distribution: .*kotlin-native-prebuilt-$platform-$escapedRegexVersion".toRegex())
                 assertNotContains("Project property 'org.jetbrains.kotlin.native.version' is deprecated")
             }
 
             // Deprecated property
-            build("tasks", "-Porg.jetbrains.kotlin.native.version=1.5.20") {
+            build("tasks", "-Porg.jetbrains.kotlin.native.version=$version") {
                 assertSuccessful()
-                assertContainsRegex(
-                    "Kotlin/Native distribution: .*kotlin-native-prebuilt-(macos|linux|windows)-1\\.5\\.20"
-                        .toRegex()
-                )
+                assertContainsRegex("Kotlin/Native distribution: .*kotlin-native-prebuilt-$platform-$escapedRegexVersion".toRegex())
                 assertContains("Project property 'org.jetbrains.kotlin.native.version' is deprecated")
-            }
-        }
-
-        // Gradle 5.0 introduced a new API for Ivy repository layouts.
-        // MPP plugin uses this API to download K/N if Gradle version is >= 5.0.
-        // Check this too (see KT-30258).
-        with(Project("native-libraries")) {
-            build("tasks", "-Pkotlin.native.version=1.3.50") {
-                assertSuccessful()
-                assertTrue(output.contains("Kotlin/Native distribution: "))
-                assertFalse(output.contains("Deprecated Gradle features were used in this build, making it incompatible with Gradle 6.0."))
             }
         }
     }
