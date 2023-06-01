@@ -171,11 +171,7 @@ public actual open class ArrayList<E> internal constructor(private var array: Ar
 
         (this.array as Array<T>).copyInto(array)
 
-        if (array.size > size) {
-            array[size] = null as T // null-terminate
-        }
-
-        return array
+        return terminateCollectionToArray(size, array)
     }
 
     override fun toArray(): Array<Any?> {

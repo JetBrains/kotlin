@@ -54,11 +54,10 @@ internal actual fun <T> copyToArrayImpl(collection: Collection<*>, array: Array<
     while (iterator.hasNext()) {
         array[index++] = iterator.next().unsafeCast<T>()
     }
-    if (index < array.size) {
-        array[index] = null.unsafeCast<T>()
-    }
-    return array
+    return terminateCollectionToArray(collection.size, array)
 }
+
+internal actual fun <T> terminateCollectionToArray(collectionSize: Int, array: Array<T>): Array<T> = array
 
 /**
  * Returns a new read-only list containing only the specified object [element].

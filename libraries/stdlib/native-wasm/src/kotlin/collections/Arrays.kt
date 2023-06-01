@@ -93,6 +93,8 @@ internal actual fun copyToArrayImpl(collection: Collection<*>): Array<Any?> {
     return array
 }
 
+internal actual fun <T> terminateCollectionToArray(collectionSize: Int, array: Array<T>): Array<T> = array
+
 /**
  * Returns a new array which is a copy of the original array with new elements filled with null values.
  */

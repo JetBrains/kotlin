@@ -85,6 +85,14 @@ internal actual inline fun copyToArrayImpl(collection: Collection<*>): Array<Any
 internal actual inline fun <T> copyToArrayImpl(collection: Collection<*>, array: Array<T>): Array<T> =
     kotlin.jvm.internal.collectionToArray(collection, array as Array<Any?>) as Array<T>
 
+internal actual fun <T> terminateCollectionToArray(collectionSize: Int, array: Array<T>): Array<T> {
+    if (collectionSize < array.size) {
+        @Suppress("UNCHECKED_CAST")
+        array[collectionSize] = null as T // null-terminate
+    }
+    return array
+}
+
 // copies typed varargs array to array of objects
 internal actual fun <T> Array<out T>.copyToArrayOfAny(isVarargs: Boolean): Array<out Any?> =
     if (isVarargs && this.javaClass == Array<Any?>::class.java)

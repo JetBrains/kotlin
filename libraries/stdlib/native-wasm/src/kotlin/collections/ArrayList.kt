@@ -221,11 +221,7 @@ actual class ArrayList<E> private constructor(
 
         (backingArray as Array<T>).copyInto(array, 0, startIndex = offset, endIndex = offset + length)
 
-        if (array.size > length) {
-            array[length] = null as T // null-terminate
-        }
-
-        return array
+        return terminateCollectionToArray(length, array)
     }
 
     override fun toArray(): Array<Any?> {

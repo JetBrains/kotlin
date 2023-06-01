@@ -30,8 +30,5 @@ internal actual fun <T> copyToArrayImpl(collection: Collection<*>, array: Array<
     while (iterator.hasNext()) {
         array[index++] = iterator.next() as T
     }
-    if (index < array.size) {
-        return array.copyOf(index) as Array<T>
-    }
-    return array
+    return terminateCollectionToArray(collection.size, array)
 }

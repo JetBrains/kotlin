@@ -176,12 +176,7 @@ internal class ListBuilder<E> private constructor(
         @Suppress("UNCHECKED_CAST")
         (array as Array<T>).copyInto(destination, 0, startIndex = offset, endIndex = offset + length)
 
-        if (destination.size > length) {
-            @Suppress("UNCHECKED_CAST")
-            destination[length] = null as T // null-terminate
-        }
-
-        return destination
+        return terminateCollectionToArray(length, destination)
     }
 
     override fun toArray(): Array<Any?> {

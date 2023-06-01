@@ -146,9 +146,8 @@ private class RingBuffer<T>(private val buffer: Array<Any?>, filledSize: Int) : 
             widx++
             idx++
         }
-        if (result.size > this.size) result[this.size] = null
 
-        return result as Array<T>
+        return terminateCollectionToArray(size, result) as Array<T>
     }
 
     override fun toArray(): Array<Any?> {

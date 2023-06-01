@@ -541,12 +541,9 @@ public class ArrayDeque<E> : AbstractMutableList<E> {
             elementData.copyInto(dest, destinationOffset = 0, startIndex = head, endIndex = elementData.size)
             elementData.copyInto(dest, destinationOffset = elementData.size - head, startIndex = 0, endIndex = tail)
         }
-        if (dest.size > size) {
-            dest[size] = null // null-terminate
-        }
 
         @Suppress("UNCHECKED_CAST")
-        return dest as Array<T>
+        return terminateCollectionToArray(size, dest) as Array<T>
     }
 
     @Suppress("NOTHING_TO_OVERRIDE")

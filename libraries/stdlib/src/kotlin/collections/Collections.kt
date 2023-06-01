@@ -479,3 +479,9 @@ internal fun throwIndexOverflow() { throw ArithmeticException("Index overflow ha
 @SinceKotlin("1.3")
 internal fun throwCountOverflow() { throw ArithmeticException("Count overflow has happened.") }
 
+/**
+ * In JVM if the size of [array] is bigger than [collectionSize], sets `array[collectionSize] = null`.
+ * In other platforms does nothing.
+ * Returns the given [array].
+ */
+internal expect fun <T> terminateCollectionToArray(collectionSize: Int, array: Array<T>): Array<T>
