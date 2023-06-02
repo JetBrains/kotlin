@@ -58,23 +58,9 @@ public actual abstract class AbstractMutableList<E> protected actual constructor
 
     override actual fun contains(element: E): Boolean = indexOf(element) >= 0
 
-    override actual fun indexOf(element: E): Int {
-        for (index in 0..lastIndex) {
-            if (get(index) == element) {
-                return index
-            }
-        }
-        return -1
-    }
+    override actual fun indexOf(element: E): Int = indexOfFirst { it == element }
 
-    override actual fun lastIndexOf(element: E): Int {
-        for (index in lastIndex downTo 0) {
-            if (get(index) == element) {
-                return index
-            }
-        }
-        return -1
-    }
+    override actual fun lastIndexOf(element: E): Int = indexOfLast { it == element }
 
     override actual fun listIterator(): MutableListIterator<E> = listIterator(0)
     override actual fun listIterator(index: Int): MutableListIterator<E> = ListIteratorImpl(index)
