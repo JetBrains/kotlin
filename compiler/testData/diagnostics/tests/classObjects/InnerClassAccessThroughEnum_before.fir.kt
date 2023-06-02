@@ -43,7 +43,7 @@ fun f() {
     C.O
     C.O.InO
     C.A()
-    C.<!RESOLUTION_TO_CLASSIFIER!>B<!>()
+    C.<!INNER_CLASS_CONSTRUCTOR_NO_RECEIVER!>B<!>()
 
     C.E3.<!UNRESOLVED_REFERENCE!>O_O<!>
     C.E3.<!UNRESOLVED_REFERENCE!>G<!>()

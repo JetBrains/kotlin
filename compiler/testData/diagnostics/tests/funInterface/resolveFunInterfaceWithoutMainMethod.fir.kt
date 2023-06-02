@@ -6,7 +6,7 @@ typealias FunAlias = IsolatedFunFace
 fun referIsolatedFunFace(iff: IsolatedFunFace) {}
 
 fun callIsolatedFunFace() {
-    referIsolatedFunFace(<!RESOLUTION_TO_CLASSIFIER!>IsolatedFunFace<!> {})
-    referIsolatedFunFace(<!RESOLUTION_TO_CLASSIFIER!>FunAlias<!> {})
+    referIsolatedFunFace(<!INTERFACE_AS_FUNCTION!>IsolatedFunFace<!> {})
+    referIsolatedFunFace(<!INTERFACE_AS_FUNCTION!>FunAlias<!> {})
     referIsolatedFunFace(<!ARGUMENT_TYPE_MISMATCH!>{}<!>)
 }

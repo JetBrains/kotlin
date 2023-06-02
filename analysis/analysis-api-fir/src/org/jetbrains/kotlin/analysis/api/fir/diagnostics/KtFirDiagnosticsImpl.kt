@@ -361,6 +361,24 @@ internal class FunctionExpectedImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.FunctionExpected
 
+internal class InterfaceAsFunctionImpl(
+    override val classSymbol: KtClassLikeSymbol,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.InterfaceAsFunction
+
+internal class ExpectClassAsFunctionImpl(
+    override val classSymbol: KtClassLikeSymbol,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.ExpectClassAsFunction
+
+internal class InnerClassConstructorNoReceiverImpl(
+    override val classSymbol: KtClassLikeSymbol,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.InnerClassConstructorNoReceiver
+
 internal class ResolutionToClassifierImpl(
     override val classSymbol: KtClassLikeSymbol,
     firDiagnostic: KtPsiDiagnostic,

@@ -36,7 +36,7 @@ public class F extends D {
 class X: D() {
     init {
         B_()
-        B.<!RESOLUTION_TO_CLASSIFIER!>B_<!>()
+        B.<!INNER_CLASS_CONSTRUCTOR_NO_RECEIVER!>B_<!>()
         C.<!UNRESOLVED_REFERENCE!>B_<!>()
         D.<!UNRESOLVED_REFERENCE!>B_<!>()
         X.<!UNRESOLVED_REFERENCE!>B_<!>()

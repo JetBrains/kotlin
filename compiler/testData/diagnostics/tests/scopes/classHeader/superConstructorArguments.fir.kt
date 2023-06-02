@@ -1,7 +1,5 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
-interface I
-
 open class S(
         n: A.Nested,
         n2: A.Nested,
@@ -12,18 +10,18 @@ open class S(
         ci: Int,
         t1: Int,
         t2: Int
-) : I
+)
 
-class A : I by S(
-        foo(),
-        Nested(),
-        <!RESOLUTION_TO_CLASSIFIER!>Inner<!>(),
-        CONST,
-        Companion.CONST,
-        Nested.CONST,
-        Interface.CONST,
-        <!UNRESOLVED_REFERENCE!>a<!>,
-        <!UNRESOLVED_REFERENCE!>b<!>()
+class A : S (
+    foo(),
+    Nested(),
+    <!INNER_CLASS_CONSTRUCTOR_NO_RECEIVER!>Inner<!>(),
+    CONST,
+    Companion.CONST,
+    Nested.CONST,
+    Interface.CONST,
+    <!UNRESOLVED_REFERENCE!>a<!>,
+    <!UNRESOLVED_REFERENCE!>b<!>()
 ) {
 
     class Nested {

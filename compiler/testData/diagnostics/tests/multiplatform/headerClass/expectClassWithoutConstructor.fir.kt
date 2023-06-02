@@ -9,7 +9,7 @@ expect class FooBar {
 }
 
 fun test() {
-    <!RESOLUTION_TO_CLASSIFIER!>Foo<!>()
+    <!EXPECT_CLASS_AS_FUNCTION!>Foo<!>()
     Bar()
     Baz()
     FooBar()

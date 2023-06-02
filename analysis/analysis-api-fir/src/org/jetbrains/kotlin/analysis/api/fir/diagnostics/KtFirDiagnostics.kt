@@ -313,6 +313,21 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         val type: KtType
     }
 
+    interface InterfaceAsFunction : KtFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = InterfaceAsFunction::class
+        val classSymbol: KtClassLikeSymbol
+    }
+
+    interface ExpectClassAsFunction : KtFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = ExpectClassAsFunction::class
+        val classSymbol: KtClassLikeSymbol
+    }
+
+    interface InnerClassConstructorNoReceiver : KtFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = InnerClassConstructorNoReceiver::class
+        val classSymbol: KtClassLikeSymbol
+    }
+
     interface ResolutionToClassifier : KtFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = ResolutionToClassifier::class
         val classSymbol: KtClassLikeSymbol
