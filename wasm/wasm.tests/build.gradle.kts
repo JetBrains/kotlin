@@ -67,6 +67,10 @@ dependencies {
     testApi(intellijCore())
 
     jsShell("org.mozilla:jsshell:$jsShellVersion:$jsShellSuffix@zip")
+
+    implicitDependencies("org.mozilla:jsshell:$jsShellVersion:win64@zip")
+    implicitDependencies("org.mozilla:jsshell:$jsShellVersion:linux-x86_64@zip")
+    implicitDependencies("org.mozilla:jsshell:$jsShellVersion:mac@zip")
 }
 
 val generationRoot = projectDir.resolve("tests-gen")
