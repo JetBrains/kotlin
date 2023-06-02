@@ -1,3 +1,5 @@
+// IGNORE_BACKEND_K2: JVM_IR
+
 var log = "begin"
 fun append(msg: String) {
     log = "$log;$msg"

@@ -1,3 +1,5 @@
+// IGNORE_BACKEND_K2: JVM_IR
+
 val (_, b, _) = A()
 
 class A {

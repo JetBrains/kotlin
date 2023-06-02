@@ -1,3 +1,5 @@
+// IGNORE_BACKEND_K2: JVM_IR
+
 enum class Build { Debug, Release }
 
 fun applySomething(build: Build) = when (build) {

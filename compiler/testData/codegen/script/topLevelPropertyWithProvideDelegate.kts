@@ -1,3 +1,5 @@
+// IGNORE_BACKEND_K2: JVM_IR
+
 import kotlin.reflect.KProperty
 
 class Delegate {

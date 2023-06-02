@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_K2: JVM_IR
 
 data class Pair(val first: Int, val second: Int)
 

@@ -348,6 +348,10 @@ fun generateJUnit5CompilerTests(args: Array<String>) {
             testClass<AbstractFirLightTreeBytecodeListingTest> {
                 model("codegen/bytecodeListing")
             }
+
+            testClass<AbstractFirScriptCodegenTest> {
+                model("codegen/script", pattern = "^(.*)\\.kts?$", excludedPattern = excludedCustomTestdataPattern)
+            }
         }
 
         testGroup("compiler/fir/analysis-tests/tests-gen", "compiler/fir/analysis-tests/testData") {

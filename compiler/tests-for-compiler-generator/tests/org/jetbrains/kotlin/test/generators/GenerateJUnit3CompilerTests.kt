@@ -46,9 +46,12 @@ import org.jetbrains.kotlin.resolve.AbstractResolveTest
 import org.jetbrains.kotlin.resolve.calls.AbstractResolvedCallsTest
 import org.jetbrains.kotlin.resolve.calls.AbstractResolvedConstructorDelegationCallsTests
 import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.test.utils.CUSTOM_TEST_DATA_EXTENSION_PATTERN
 import org.jetbrains.kotlin.types.AbstractTypeBindingTest
 
 fun generateJUnit3CompilerTests(args: Array<String>) {
+    val excludedCustomTestdataPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN
+
     generateTestGroupSuite(args) {
         testGroup("compiler/tests-gen", "compiler/testData") {
             testClass<AbstractDiagnosticsTestWithJsStdLibAndBackendCompilation> {
@@ -103,7 +106,7 @@ fun generateJUnit3CompilerTests(args: Array<String>) {
             }
 
             testClass<AbstractScriptCodegenTest> {
-                model("codegen/script", extension = "kts", targetBackend = TargetBackend.JVM)
+                model("codegen/script", extension = "kts", targetBackend = TargetBackend.JVM, excludedPattern = excludedCustomTestdataPattern)
             }
 
             testClass<AbstractCustomScriptCodegenTest> {
@@ -379,7 +382,7 @@ fun generateJUnit3CompilerTests(args: Array<String>) {
             }
 
             testClass<AbstractIrScriptCodegenTest> {
-                model("codegen/script", extension = "kts", targetBackend = TargetBackend.JVM_IR)
+                model("codegen/script", extension = "kts", targetBackend = TargetBackend.JVM_IR, excludedPattern = excludedCustomTestdataPattern)
             }
         }
 

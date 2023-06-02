@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_K2: JVM_IR
 
 val p = 0
 

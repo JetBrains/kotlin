@@ -1,3 +1,5 @@
+// IGNORE_BACKEND_K2: JVM_IR
+
 class SimpleClass(val s: String) {
     fun foo() = s
 }

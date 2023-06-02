@@ -282,7 +282,7 @@ open class JvmBoxRunner(testServices: TestServices) : JvmBinaryArtifactHandler(t
         classFileFactory: ClassFileFactory,
         reportProblems: Boolean
     ): GeneratedClassLoader {
-        val classLoader = createClassLoader(module, classFileFactory)
+        val classLoader = generatedTestClassLoader(testServices, module, classFileFactory)
         if (REQUIRES_SEPARATE_PROCESS !in module.directives && module.directives.singleOrZeroValue(JDK_KIND)?.requiresSeparateProcess != true) {
             val verificationSucceeded = CodegenTestUtil.verifyAllFilesWithAsm(classFileFactory, classLoader, reportProblems)
             if (!verificationSucceeded) {
@@ -290,41 +290,6 @@ open class JvmBoxRunner(testServices: TestServices) : JvmBinaryArtifactHandler(t
             }
         }
         return classLoader
-    }
-
-    private fun createClassLoader(module: TestModule, classFileFactory: ClassFileFactory): GeneratedClassLoader {
-        val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
-        val parentClassLoader = if (configuration[TEST_CONFIGURATION_KIND_KEY]?.withReflection == true) {
-            testServices.standardLibrariesPathProvider.getRuntimeAndReflectJarClassLoader()
-        } else {
-            testServices.standardLibrariesPathProvider.getRuntimeJarClassLoader()
-        }
-        val classpath = computeRuntimeClasspath(module)
-        return GeneratedClassLoader(classFileFactory, parentClassLoader, *classpath.map { it.toURI().toURL() }.toTypedArray())
-    }
-
-    private fun computeRuntimeClasspath(rootModule: TestModule): List<File> {
-        val visited = mutableSetOf<TestModule>()
-        val result = mutableListOf<File>()
-
-        fun computeClasspath(module: TestModule, isRoot: Boolean) {
-            if (!visited.add(module)) return
-
-            if (!isRoot) {
-                result.add(testServices.compiledClassesManager.getCompiledKotlinDirForModule(module))
-            }
-            result.addIfNotNull(testServices.compiledClassesManager.getCompiledJavaDirForModule(module))
-
-            for (dependency in module.allDependencies) {
-                if (dependency.kind == DependencyKind.Binary) {
-                    computeClasspath(testServices.dependencyProvider.getTestModule(dependency.moduleName), false)
-                }
-            }
-        }
-
-        computeClasspath(rootModule, true)
-        testServices.runtimeClasspathProviders.flatMapTo(result) { it.runtimeClassPaths(rootModule) }
-        return result
     }
 
     private fun KtFile.getFacadeFqName(): String? {
@@ -348,4 +313,43 @@ open class JvmBoxRunner(testServices: TestServices) : JvmBinaryArtifactHandler(t
             return null
         }
     }
+}
+
+internal fun generatedTestClassLoader(
+    testServices: TestServices,
+    module: TestModule,
+    classFileFactory: ClassFileFactory,
+): GeneratedClassLoader {
+    val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
+    val parentClassLoader = if (configuration[TEST_CONFIGURATION_KIND_KEY]?.withReflection == true) {
+        testServices.standardLibrariesPathProvider.getRuntimeAndReflectJarClassLoader()
+    } else {
+        testServices.standardLibrariesPathProvider.getRuntimeJarClassLoader()
+    }
+    val classpath = computeTestRuntimeClasspath(testServices, module)
+    return GeneratedClassLoader(classFileFactory, parentClassLoader, *classpath.map { it.toURI().toURL() }.toTypedArray())
+}
+
+private fun computeTestRuntimeClasspath(testServices: TestServices, rootModule: TestModule): MutableList<File> {
+    val visited = mutableSetOf<TestModule>()
+    val result = mutableListOf<File>()
+
+    fun computeClasspath(module: TestModule, isRoot: Boolean) {
+        if (!visited.add(module)) return
+
+        if (!isRoot) {
+            result.add(testServices.compiledClassesManager.getCompiledKotlinDirForModule(module))
+        }
+        result.addIfNotNull(testServices.compiledClassesManager.getCompiledJavaDirForModule(module))
+
+        for (dependency in module.allDependencies) {
+            if (dependency.kind == DependencyKind.Binary) {
+                computeClasspath(testServices.dependencyProvider.getTestModule(dependency.moduleName), false)
+            }
+        }
+    }
+
+    computeClasspath(rootModule, true)
+    testServices.runtimeClasspathProviders.flatMapTo(result) { it.runtimeClassPaths(rootModule) }
+    return result
 }
