@@ -425,6 +425,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/annotations/instances/nestedAnnotationInstances.kt");
             }
 
+            @TestMetadata("varargInAnnotationParameterInstantiation.kt")
+            public void ignoreVarargInAnnotationParameterInstantiation() throws Exception {
+                runTest("compiler/testData/codegen/box/annotations/instances/varargInAnnotationParameterInstantiation.kt");
+            }
+
             private void runTest(String testDataFilePath) throws Exception {
                 KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
             }
