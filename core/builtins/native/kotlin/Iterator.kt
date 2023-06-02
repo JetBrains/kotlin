@@ -23,6 +23,8 @@ package kotlin.collections
 public interface Iterator<out T> {
     /**
      * Returns the next element in the iteration.
+     *
+     * @throws NoSuchElementException if the iteration has no next element.
      */
     public operator fun next(): T
 
@@ -39,6 +41,9 @@ public interface Iterator<out T> {
 public interface MutableIterator<out T> : Iterator<T> {
     /**
      * Removes from the underlying collection the last element returned by this iterator.
+     *
+     * @throws IllegalStateException if [next] has not been called yet,
+     * or the most recent [next] call has already been followed by a [remove] call.
      */
     public fun remove(): Unit
 }
@@ -59,16 +64,22 @@ public interface ListIterator<out T> : Iterator<T> {
 
     /**
      * Returns the previous element in the iteration and moves the cursor position backwards.
+     *
+     * @throws NoSuchElementException if the iteration has no previous element.
      */
     public fun previous(): T
 
     /**
      * Returns the index of the element that would be returned by a subsequent call to [next].
+     *
+     * Returns collection size if the iteration is at the end of the collection.
      */
     public fun nextIndex(): Int
 
     /**
      * Returns the index of the element that would be returned by a subsequent call to [previous].
+     *
+     * Returns -1 if the iteration is at the beginning of the collection.
      */
     public fun previousIndex(): Int
 }
@@ -76,6 +87,7 @@ public interface ListIterator<out T> : Iterator<T> {
 /**
  * An iterator over a mutable collection that supports indexed access. Provides the ability
  * to add, modify and remove elements while iterating.
+ * @see MutableList.listIterator
  */
 public interface MutableListIterator<T> : ListIterator<T>, MutableIterator<T> {
     // Query Operations
@@ -83,10 +95,19 @@ public interface MutableListIterator<T> : ListIterator<T>, MutableIterator<T> {
     override fun hasNext(): Boolean
 
     // Modification Operations
+    /**
+     * Removes from the underlying collection the last element returned by this iterator.
+     *
+     * @throws IllegalStateException if neither [next] nor [previous] has not been called yet,
+     * or the most recent [next] or [previous] call has already been followed by a [remove] or [add] call.
+     */
     override fun remove(): Unit
 
     /**
      * Replaces the last element returned by [next] or [previous] with the specified element [element].
+     *
+     * @throws IllegalStateException if neither [next] nor [previous] has not been called yet,
+     * or the most recent [next] or [previous] call has already been followed by a [remove] or [add] call.
      */
     public fun set(element: T): Unit
 
