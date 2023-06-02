@@ -5,9 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers
 
-import org.gradle.api.artifacts.ArtifactView
-import org.gradle.api.artifacts.Configuration
-import org.gradle.api.artifacts.DependencySubstitutions
+import org.gradle.api.artifacts.*
 import org.gradle.api.artifacts.component.*
 import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.logging.Logger
@@ -24,6 +22,7 @@ import org.jetbrains.kotlin.gradle.plugin.ide.IdeDependencyResolver
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeDependencyResolver.Companion.gradleArtifact
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeaKotlinBinaryCoordinates
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeaKotlinProjectCoordinates
+import org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers.IdeBinaryDependencyResolver.ArtifactResolutionStrategy
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationConfigurationsContainer
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
@@ -34,7 +33,6 @@ import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.InternalKotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.utils.markResolvable
-import org.gradle.api.artifacts.ResolutionStrategy
 import org.jetbrains.kotlin.tooling.core.mutableExtrasOf
 
 /**
@@ -57,7 +55,7 @@ import org.jetbrains.kotlin.tooling.core.mutableExtrasOf
 @ExternalKotlinTargetApi
 class IdeBinaryDependencyResolver @JvmOverloads constructor(
     private val binaryType: String = IdeaKotlinBinaryDependency.KOTLIN_COMPILE_BINARY_TYPE,
-    private val artifactResolutionStrategy: ArtifactResolutionStrategy = ArtifactResolutionStrategy.Compilation()
+    private val artifactResolutionStrategy: ArtifactResolutionStrategy = ArtifactResolutionStrategy.Compilation(),
 ) : IdeDependencyResolver {
 
     @ExternalKotlinTargetApi
@@ -76,7 +74,7 @@ class IdeBinaryDependencyResolver @JvmOverloads constructor(
         class Compilation @JvmOverloads constructor(
             internal val compilationSelector: (KotlinSourceSet) -> KotlinCompilation<*>? = { sourceSet -> sourceSet.internal.compilations.singleOrNull { it.platformType != KotlinPlatformType.common } },
             internal val setupArtifactViewAttributes: AttributeContainer.(sourceSet: KotlinSourceSet) -> Unit = {},
-            internal val componentFilter: ((ComponentIdentifier) -> Boolean)? = null
+            internal val componentFilter: ((ComponentIdentifier) -> Boolean)? = null,
         ) : ArtifactResolutionStrategy()
 
         /**
@@ -89,7 +87,8 @@ class IdeBinaryDependencyResolver @JvmOverloads constructor(
         class ResolvableConfiguration @JvmOverloads constructor(
             internal val configurationSelector: (KotlinSourceSet) -> Configuration?,
             internal val setupArtifactViewAttributes: AttributeContainer.(sourceSet: KotlinSourceSet) -> Unit = {},
-            internal val componentFilter: ((ComponentIdentifier) -> Boolean)? = null
+            internal val componentFilter: ((ComponentIdentifier) -> Boolean)? = null,
+            internal val dependencyFilter: ((Dependency) -> Boolean)? = null,
         ) : ArtifactResolutionStrategy()
 
         /**
@@ -108,6 +107,7 @@ class IdeBinaryDependencyResolver @JvmOverloads constructor(
             internal val setupArtifactViewAttributes: AttributeContainer.(sourceSet: KotlinSourceSet) -> Unit = {},
             internal val componentFilter: ((ComponentIdentifier) -> Boolean)? = null,
             internal val dependencySubstitution: ((DependencySubstitutions) -> Unit)? = null,
+            internal val dependencyFilter: ((Dependency) -> Boolean)? = null,
         ) : ArtifactResolutionStrategy()
     }
 
@@ -205,13 +205,15 @@ class IdeBinaryDependencyResolver @JvmOverloads constructor(
 
     private fun ArtifactResolutionStrategy.ResolvableConfiguration.createArtifactView(sourceSet: InternalKotlinSourceSet): ArtifactView? {
         val configuration = configurationSelector(sourceSet) ?: return null
-        return configuration.incoming.artifactView { view ->
-            view.isLenient = true
-            view.attributes.setupArtifactViewAttributes(sourceSet)
-            if (componentFilter != null) {
-                view.componentFilter(componentFilter)
+        return configuration.incoming
+            .apply { if (dependencyFilter != null) dependencies.removeIf { dependency -> !dependencyFilter.invoke(dependency) } }
+            .artifactView { view ->
+                view.isLenient = true
+                view.attributes.setupArtifactViewAttributes(sourceSet)
+                if (componentFilter != null) {
+                    view.componentFilter(componentFilter)
+                }
             }
-        }
     }
 
     private fun ArtifactResolutionStrategy.PlatformLikeSourceSet.createArtifactView(sourceSet: InternalKotlinSourceSet): ArtifactView? {
@@ -227,13 +229,15 @@ class IdeBinaryDependencyResolver @JvmOverloads constructor(
             platformLikeCompileDependenciesConfiguration.resolutionStrategy.dependencySubstitution(dependencySubstitution)
         }
 
-        return platformLikeCompileDependenciesConfiguration.incoming.artifactView { view ->
-            view.isLenient = true
-            view.attributes.setupArtifactViewAttributes(sourceSet)
-            if (componentFilter != null) {
-                view.componentFilter(componentFilter)
+        return platformLikeCompileDependenciesConfiguration.incoming
+            .apply { if (dependencyFilter != null) dependencies.removeIf { dependency -> !dependencyFilter.invoke(dependency) } }
+            .artifactView { view ->
+                view.isLenient = true
+                view.attributes.setupArtifactViewAttributes(sourceSet)
+                if (componentFilter != null) {
+                    view.componentFilter(componentFilter)
+                }
             }
-        }
     }
 
     private companion object {

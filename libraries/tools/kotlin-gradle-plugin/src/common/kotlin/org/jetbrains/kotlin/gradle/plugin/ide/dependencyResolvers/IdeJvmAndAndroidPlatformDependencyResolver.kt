@@ -9,6 +9,7 @@ package org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.DependencySubstitutions
+import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.artifacts.component.ModuleComponentSelector
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.attributes.Category
@@ -44,7 +45,8 @@ internal fun IdeJvmAndAndroidPlatformBinaryDependencyResolver(project: Project):
             Otherwise we would match the -jvm.jar from the dependency project which will result in
             matching the jvmMain source set as well (which is undesired)
              */
-            componentFilter = { identifier -> identifier !is ProjectComponentIdentifier },
+            componentFilter = { identifier -> identifier !is ProjectComponentIdentifier }, // paranoia: Only dependencyFilter should be OK
+            dependencyFilter = { dependency -> dependency !is ProjectDependency },
             dependencySubstitution = ::substituteStdlibCommonWithAndroidJvm,
         )
     )

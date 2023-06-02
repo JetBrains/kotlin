@@ -113,6 +113,33 @@ class IdeJvmAndAndroidDependencyResolutionTest {
     }
 
     @Test
+    fun `test - KT-59020 - transitive project dependency to self`() {
+        val root = buildProject { setMultiplatformAndroidSourceSetLayoutVersion(2) }
+        val a = buildProject({ withParent(root).withName("a") }) { configureAndroidAndMultiplatform() }
+        val b = buildProject({ withParent(root).withName("b") }) { configureAndroidAndMultiplatform() }
+
+        b.multiplatformExtension.commonMain.dependencies {
+            api(project(":a"))
+        }
+
+        a.multiplatformExtension.commonTest.dependencies {
+            api(project(":b"))
+        }
+
+        root.evaluate()
+        a.evaluate()
+        b.evaluate()
+
+        a.kotlinIdeMultiplatformImport.resolveDependencies("jvmAndAndroidTest").assertMatches(
+            friendSourceDependency(":a/commonMain"),
+            friendSourceDependency(":a/jvmAndAndroidMain"),
+            dependsOnDependency(":a/commonTest"),
+            regularSourceDependency(":b/commonMain"),
+            regularSourceDependency(":b/jvmAndAndroidMain"),
+        )
+    }
+
+    @Test
     fun `test - default stdlib with no other dependencies`() {
         val project = buildProject { configureAndroidAndMultiplatform(enableDefaultStdlib = true) }
         project.evaluate()
