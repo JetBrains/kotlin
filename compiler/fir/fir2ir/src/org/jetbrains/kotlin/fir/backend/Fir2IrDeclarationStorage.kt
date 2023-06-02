@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.backend
 
+import com.intellij.openapi.progress.ProcessCanceledException
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.builtins.StandardNames.BUILT_INS_PACKAGE_FQ_NAMES
 import org.jetbrains.kotlin.descriptors.*
@@ -1800,6 +1801,8 @@ class Fir2IrDeclarationStorage(
     private inline fun <R> convertCatching(element: FirElement, block: () -> R): R {
         try {
             return block()
+        } catch (e: ProcessCanceledException) {
+            throw e
         } catch (e: Throwable) {
             throw KotlinExceptionWithAttachments("Exception was thrown during transformation of ${element.render()}", e)
         }
