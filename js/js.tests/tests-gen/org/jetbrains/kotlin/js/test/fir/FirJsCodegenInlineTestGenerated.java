@@ -3529,12 +3529,6 @@ public class FirJsCodegenInlineTestGenerated extends AbstractFirJsCodegenInlineT
         }
 
         @Test
-        @TestMetadata("kt15956.kt")
-        public void testKt15956() throws Exception {
-            runTest("compiler/testData/codegen/boxInline/reified/kt15956.kt");
-        }
-
-        @Test
         @TestMetadata("kt18977.kt")
         public void testKt18977() throws Exception {
             runTest("compiler/testData/codegen/boxInline/reified/kt18977.kt");

@@ -1,9 +1,6 @@
-// IGNORE_BACKEND: WASM
-// WASM_MUTE_REASON: IGNORED_IN_JS
+// TARGET_BACKEND: JVM
 // !LANGUAGE: -ProperIeee754Comparisons
-// IGNORE_BACKEND: NATIVE
-// DONT_TARGET_EXACT_BACKEND: JS_IR
-// DONT_TARGET_EXACT_BACKEND: JS_IR_ES6
+
 fun box(): String {
     val zero: Any = 0.0
     val floatZero: Any = -0.0F

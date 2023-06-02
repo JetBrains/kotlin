@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: NATIVE
 // WITH_STDLIB
 // WITH_COROUTINES
 import kotlin.contracts.*
