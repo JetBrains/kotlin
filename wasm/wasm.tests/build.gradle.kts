@@ -1,11 +1,63 @@
 import org.gradle.internal.os.OperatingSystem
-import de.undercouch.gradle.tasks.download.Download
+import java.net.URI
 import java.util.*
 
 plugins {
     kotlin("jvm")
     id("jps-compatible")
-    id("de.undercouch.download")
+}
+
+repositories {
+    ivy {
+        url = URI("https://archive.mozilla.org/pub/firefox/nightly/")
+        patternLayout {
+            artifact("2023/05/[revision]/[artifact]-[classifier].[ext]")
+        }
+        metadataSources { artifact() }
+        content { includeModule("org.mozilla", "jsshell") }
+    }
+}
+
+enum class OsName { WINDOWS, MAC, LINUX, UNKNOWN }
+enum class OsArch { X86_32, X86_64, ARM64, UNKNOWN }
+data class OsType(val name: OsName, val arch: OsArch)
+
+val currentOsType = run {
+    val gradleOs = OperatingSystem.current()
+    val osName = when {
+        gradleOs.isMacOsX -> OsName.MAC
+        gradleOs.isWindows -> OsName.WINDOWS
+        gradleOs.isLinux -> OsName.LINUX
+        else -> OsName.UNKNOWN
+    }
+
+    val osArch = when (providers.systemProperty("sun.arch.data.model").forUseAtConfigurationTime().get()) {
+        "32" -> OsArch.X86_32
+        "64" -> when (providers.systemProperty("os.arch").forUseAtConfigurationTime().get().toLowerCase()) {
+            "aarch64" -> OsArch.ARM64
+            else -> OsArch.X86_64
+        }
+        else -> OsArch.UNKNOWN
+    }
+
+    OsType(osName, osArch)
+}
+
+
+val jsShellVersion = "2023-05-12-09-49-14-mozilla-central"
+val jsShellSuffix = when (currentOsType) {
+    OsType(OsName.LINUX, OsArch.X86_32) -> "linux-i686"
+    OsType(OsName.LINUX, OsArch.X86_64) -> "linux-x86_64"
+    OsType(OsName.MAC, OsArch.X86_64),
+    OsType(OsName.MAC, OsArch.ARM64) -> "mac"
+    OsType(OsName.WINDOWS, OsArch.X86_32) -> "win32"
+    OsType(OsName.WINDOWS, OsArch.X86_64) -> "win64"
+    else -> error("unsupported os type $currentOsType")
+}
+
+val jsShell by configurations.creating {
+    isCanBeResolved = true
+    isCanBeConsumed = false
 }
 
 dependencies {
@@ -13,6 +65,8 @@ dependencies {
     testApi(projectTests(":compiler:tests-common"))
     testApi(projectTests(":compiler:tests-common-new"))
     testApi(intellijCore())
+
+    jsShell("org.mozilla:jsshell:$jsShellVersion:$jsShellSuffix@zip")
 }
 
 val generationRoot = projectDir.resolve("tests-gen")
@@ -52,55 +106,13 @@ fun Test.setupGradlePropertiesForwarding() {
     }
 }
 
-enum class OsName { WINDOWS, MAC, LINUX, UNKNOWN }
-enum class OsArch { X86_32, X86_64, ARM64, UNKNOWN }
-data class OsType(val name: OsName, val arch: OsArch)
-
-val currentOsType = run {
-    val gradleOs = OperatingSystem.current()
-    val osName = when {
-        gradleOs.isMacOsX -> OsName.MAC
-        gradleOs.isWindows -> OsName.WINDOWS
-        gradleOs.isLinux -> OsName.LINUX
-        else -> OsName.UNKNOWN
-    }
-
-    val osArch = when (providers.systemProperty("sun.arch.data.model").forUseAtConfigurationTime().get()) {
-        "32" -> OsArch.X86_32
-        "64" -> when (providers.systemProperty("os.arch").forUseAtConfigurationTime().get().toLowerCase()) {
-            "aarch64" -> OsArch.ARM64
-            else -> OsArch.X86_64
-        }
-        else -> OsArch.UNKNOWN
-    }
-
-    OsType(osName, osArch)
-}
-
-val jsShellVersion = "2023-05-12-09-49-14-mozilla-central"
-val jsShellDirectory = "https://archive.mozilla.org/pub/firefox/nightly/2023/05/$jsShellVersion"
-val jsShellSuffix = when (currentOsType) {
-    OsType(OsName.LINUX, OsArch.X86_32) -> "linux-i686"
-    OsType(OsName.LINUX, OsArch.X86_64) -> "linux-x86_64"
-    OsType(OsName.MAC, OsArch.X86_64),
-    OsType(OsName.MAC, OsArch.ARM64) -> "mac"
-    OsType(OsName.WINDOWS, OsArch.X86_32) -> "win32"
-    OsType(OsName.WINDOWS, OsArch.X86_64) -> "win64"
-    else -> error("unsupported os type $currentOsType")
-}
-val jsShellLocation = "$jsShellDirectory/jsshell-$jsShellSuffix.zip"
-
 val downloadedTools = File(buildDir, "tools")
 
-val downloadJsShell by task<Download> {
-    src(jsShellLocation)
-    dest(File(downloadedTools, "jsshell-$jsShellSuffix-$jsShellVersion.zip"))
-    overwrite(false)
-}
-
 val unzipJsShell by task<Copy> {
-    dependsOn(downloadJsShell)
-    from(zipTree(downloadJsShell.get().dest))
+    dependsOn(jsShell)
+    from {
+        zipTree(jsShell.singleFile)
+    }
     val unpackedDir = File(downloadedTools, "jsshell-$jsShellSuffix-$jsShellVersion")
     into(unpackedDir)
 }
