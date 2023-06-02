@@ -37986,6 +37986,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/smartCasts/smartCastInsideIf.kt");
         }
 
+        @TestMetadata("smartcastOnImplicitDispatchReceiver.kt")
+        public void testSmartcastOnImplicitDispatchReceiver() throws Exception {
+            runTest("compiler/testData/codegen/box/smartCasts/smartcastOnImplicitDispatchReceiver.kt");
+        }
+
         @TestMetadata("whenSmartCast.kt")
         public void testWhenSmartCast() throws Exception {
             runTest("compiler/testData/codegen/box/smartCasts/whenSmartCast.kt");

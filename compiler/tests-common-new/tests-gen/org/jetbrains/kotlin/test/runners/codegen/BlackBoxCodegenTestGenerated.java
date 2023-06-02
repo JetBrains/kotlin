@@ -46844,6 +46844,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
 
         @Test
+        @TestMetadata("smartcastOnImplicitDispatchReceiver.kt")
+        public void testSmartcastOnImplicitDispatchReceiver() throws Exception {
+            runTest("compiler/testData/codegen/box/smartCasts/smartcastOnImplicitDispatchReceiver.kt");
+        }
+
+        @Test
         @TestMetadata("whenSmartCast.kt")
         public void testWhenSmartCast() throws Exception {
             runTest("compiler/testData/codegen/box/smartCasts/whenSmartCast.kt");
