@@ -32,6 +32,12 @@ public class SerializationIrJsBoxTestGenerated extends AbstractSerializationIrJs
     }
 
     @Test
+    @TestMetadata("delegatedProperty.kt")
+    public void testDelegatedProperty() throws Exception {
+        runTest("plugins/kotlinx-serialization/testData/boxIr/delegatedProperty.kt");
+    }
+
+    @Test
     @TestMetadata("excludedFromExport.kt")
     public void testExcludedFromExport() throws Exception {
         runTest("plugins/kotlinx-serialization/testData/boxIr/excludedFromExport.kt");

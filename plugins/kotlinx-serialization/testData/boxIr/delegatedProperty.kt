@@ -1,5 +1,3 @@
-// TARGET_BACKEND: JVM_IR
-
 // WITH_STDLIB
 
 import kotlinx.serialization.*
@@ -69,6 +67,34 @@ class DelegatedByThis(val realProp: Int) {
     val delegatedProp by this
 }
 
+// delegating directly to another property
+@Serializable
+class DelegatedByDirectProperty(var targetProperty: Int = 5) {
+    var delegatingProperty: Int by ::targetProperty
+}
+
+// generic delegate
+@Serializable
+open class GenericDelegate<Target> {
+    private var target: Target? = null
+
+    operator fun getValue(thisRef: Any?, property: KProperty<*>): Target? = target
+
+    operator fun setValue(thisRef: Any?, property: KProperty<*>, value: Target?) {
+        target = value
+    }
+}
+
+@Serializable
+class GenericDelegateHolder(val id: String) {
+    private var _delegatingProperty = GenericDelegate<String>()
+    var delegatingProperty: String? by _delegatingProperty
+
+    constructor(id: String, delegatingProperty: String?) : this(id) {
+        this.delegatingProperty = delegatingProperty
+    }
+}
+
 fun box(): String {
     val simpleDTO = SimpleDTO(123)
     val simpleDTOJsonStr = Json.encodeToString(simpleDTO)
@@ -104,6 +130,22 @@ fun box(): String {
     if (byThisJsonStr != """{"realProp":123}""") return simpleDTOJsonStr
     if (byThisDecoded.delegatedProp != byThisExp.delegatedProp) return "DelegatedByThis Delegate is incorrect!"
     if (byThisDecoded.realProp !== 123) return "DelegatedByThis Deserialization failed"
+
+    for (original in listOf(
+        GenericDelegateHolder("#1", "stuff"),
+        GenericDelegateHolder("#2", null)
+    )) {
+        val json = Json.encodeToString(original)
+        val deserialized = Json.decodeFromString(GenericDelegateHolder.serializer(), json)
+        if (deserialized.delegatingProperty != original.delegatingProperty) return "Generic delegate fail: $json"
+    }
+
+    val byDirectPropertyExp = DelegatedByDirectProperty(123)
+    val byDirectPropertyJsonStr = Json.encodeToString(byDirectPropertyExp)
+    val byDirectPropertyDecoded = Json.decodeFromString<DelegatedByDirectProperty>(byDirectPropertyJsonStr)
+    if (byDirectPropertyJsonStr != """{"targetProperty":123}""") return simpleDTOJsonStr
+    if (byDirectPropertyDecoded.delegatingProperty != byDirectPropertyExp.delegatingProperty) return "Direct property delegation, delegatingProperty fail: $byDirectPropertyJsonStr"
+    if (byDirectPropertyDecoded.targetProperty !== 123) return "Direct property delegation, targetProperty fail: $byDirectPropertyJsonStr"
 
     return "OK"
 }
