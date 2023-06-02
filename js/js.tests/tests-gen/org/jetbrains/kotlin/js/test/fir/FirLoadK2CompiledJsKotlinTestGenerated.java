@@ -61,6 +61,12 @@ public class FirLoadK2CompiledJsKotlinTestGenerated extends AbstractFirLoadK2Com
             }
 
             @Test
+            @TestMetadata("AnnotationWithVarargParam.kt")
+            public void testAnnotationWithVarargParam() throws Exception {
+                runTest("compiler/testData/loadJava/compiledKotlin/annotations/AnnotationWithVarargParam.kt");
+            }
+
+            @Test
             @TestMetadata("ClassLiteralArguments.kt")
             public void testClassLiteralArguments() throws Exception {
                 runTest("compiler/testData/loadJava/compiledKotlin/annotations/ClassLiteralArguments.kt");

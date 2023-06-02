@@ -14,14 +14,15 @@ import org.jetbrains.kotlin.fir.declarations.FirEnumEntry
 import org.jetbrains.kotlin.fir.declarations.utils.isConst
 import org.jetbrains.kotlin.fir.declarations.utils.isFinal
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaField
+import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirArrayOfCallTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirArrayOfCallTransformer.Companion.isArrayOfCall
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.coneTypeUnsafe
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
 import org.jetbrains.kotlin.types.ConstantValueKind
 
@@ -49,6 +50,11 @@ internal data class FirToConstantValueTransformerData(
 internal abstract class FirToConstantValueTransformer(
     private val failOnNonConst: Boolean,
 ) : FirDefaultVisitor<ConstantValue<*>?, FirToConstantValueTransformerData>() {
+    private fun FirExpression.toConstantValue(data: FirToConstantValueTransformerData): ConstantValue<*>? {
+        return data.constValueProvider?.findConstantValueFor(this)
+            ?: accept(this@FirToConstantValueTransformer, data)
+    }
+
     override fun visitElement(
         element: FirElement,
         data: FirToConstantValueTransformerData
@@ -87,7 +93,7 @@ internal abstract class FirToConstantValueTransformer(
         stringConcatenationCall: FirStringConcatenationCall,
         data: FirToConstantValueTransformerData
     ): ConstantValue<*>? {
-        val strings = stringConcatenationCall.argumentList.arguments.map { it.accept(this, data) }
+        val strings = stringConcatenationCall.argumentList.arguments.map { it.toConstantValue(data) }
         if (strings.any { it == null || it !is StringValue }) return null
         return StringValue(strings.joinToString(separator = "") { (it as StringValue).value })
     }
@@ -96,7 +102,7 @@ internal abstract class FirToConstantValueTransformer(
         arrayOfCall: FirArrayOfCall,
         data: FirToConstantValueTransformerData
     ): ConstantValue<*> {
-        return ArrayValue(arrayOfCall.argumentList.arguments.mapNotNull { it.accept(this, data) })
+        return ArrayValue(arrayOfCall.argumentList.arguments.mapNotNull { it.toConstantValue(data) })
     }
 
     override fun visitAnnotation(
@@ -132,12 +138,12 @@ internal abstract class FirToConstantValueTransformer(
             }
 
             symbol is FirPropertySymbol -> {
-                if (symbol.fir.isConst) symbol.fir.initializer?.accept(this, data) else null
+                if (symbol.fir.isConst) symbol.fir.initializer?.toConstantValue(data) else null
             }
 
             fir is FirJavaField -> {
                 if (fir.isFinal) {
-                    fir.initializer?.accept(this, data)
+                    fir.initializer?.toConstantValue(data)
                 } else {
                     null
                 }
@@ -156,7 +162,7 @@ internal abstract class FirToConstantValueTransformer(
 
             symbol.callableId.packageName.asString() == "kotlin" -> {
                 val dispatchReceiver = qualifiedAccessExpression.dispatchReceiver
-                val dispatchReceiverValue by lazy { dispatchReceiver.accept(this, data) }
+                val dispatchReceiverValue by lazy { dispatchReceiver.toConstantValue(data) }
                 when (symbol.callableId.callableName.asString()) {
                     "toByte" -> ByteValue((dispatchReceiverValue!!.value as Number).toByte())
                     "toLong" -> LongValue((dispatchReceiverValue!!.value as Number).toLong())
@@ -201,16 +207,22 @@ internal abstract class FirToConstantValueTransformer(
 
     override fun visitVarargArgumentsExpression(
         varargArgumentsExpression: FirVarargArgumentsExpression,
-        data: FirToConstantValueTransformerData
+        data: FirToConstantValueTransformerData,
     ): ConstantValue<*> {
-        return ArrayValue(varargArgumentsExpression.arguments.mapNotNull { it.accept(this, data) })
+        val arguments = varargArgumentsExpression.arguments.let {
+            // Named, spread or array literal arguments for vararg parameters have the form Vararg(Named/Spread?(ArrayOfCall(..))).
+            // We need to extract the ArrayOfCall, otherwise we will get two nested ArrayValue as a result.
+            (it.singleOrNull()?.unwrapArgument() as? FirArrayOfCall)?.arguments ?: it
+        }
+
+        return ArrayValue(arguments.mapNotNull { it.toConstantValue(data) })
     }
 
-    override fun visitNamedArgumentExpression(
-        namedArgumentExpression: FirNamedArgumentExpression,
-        data: FirToConstantValueTransformerData
+    override fun visitWrappedArgumentExpression(
+        wrappedArgumentExpression: FirWrappedArgumentExpression,
+        data: FirToConstantValueTransformerData,
     ): ConstantValue<*>? {
-        return namedArgumentExpression.expression.accept(this, data)
+        return wrappedArgumentExpression.expression.toConstantValue(data)
     }
 }
 

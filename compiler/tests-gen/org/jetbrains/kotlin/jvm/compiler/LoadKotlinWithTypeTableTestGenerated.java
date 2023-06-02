@@ -61,6 +61,11 @@ public class LoadKotlinWithTypeTableTestGenerated extends AbstractLoadKotlinWith
             runTest("compiler/testData/loadJava/compiledKotlin/annotations/AnnotationOnTypeParameter.kt");
         }
 
+        @TestMetadata("AnnotationWithVarargParam.kt")
+        public void testAnnotationWithVarargParam() throws Exception {
+            runTest("compiler/testData/loadJava/compiledKotlin/annotations/AnnotationWithVarargParam.kt");
+        }
+
         @TestMetadata("ClassLiteralArguments.kt")
         public void testClassLiteralArguments() throws Exception {
             runTest("compiler/testData/loadJava/compiledKotlin/annotations/ClassLiteralArguments.kt");

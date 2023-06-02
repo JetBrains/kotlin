@@ -3,7 +3,7 @@ public final val bar: R|kotlin/Int|
 
 @R|test/Anno|() public final fun baz(): R|kotlin/Unit|
 
-@R|test/Anno|(t = String(live)) public final fun foo(): R|kotlin/Unit|
+@R|test/Anno|(t = <implicitArrayOf>(String(live), String(long))) public final fun foo(): R|kotlin/Unit|
 
 public final annotation class Anno : R|kotlin/Annotation| {
     public final val t: R|kotlin/Array<out kotlin/String>|

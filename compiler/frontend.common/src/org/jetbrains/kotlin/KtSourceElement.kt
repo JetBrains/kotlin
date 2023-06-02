@@ -422,7 +422,10 @@ class KtRealPsiSourceElement(psi: PsiElement) : KtPsiSourceElement(psi) {
     override val kind: KtSourceElementKind get() = KtRealSourceElementKind
 }
 
-class KtFakeSourceElement(psi: PsiElement, override val kind: KtFakeSourceElementKind) : KtPsiSourceElement(psi) {
+open class KtFakeSourceElement(
+    psi: PsiElement,
+    override val kind: KtFakeSourceElementKind,
+) : KtPsiSourceElement(psi) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
@@ -442,11 +445,49 @@ class KtFakeSourceElement(psi: PsiElement, override val kind: KtFakeSourceElemen
     }
 }
 
-fun KtSourceElement.fakeElement(newKind: KtFakeSourceElementKind): KtSourceElement {
+private class KtFakeSourceElementWithOffsets(
+    psi: PsiElement,
+    kind: KtFakeSourceElementKind,
+    override val startOffset: Int,
+    override val endOffset: Int,
+) : KtFakeSourceElement(psi, kind) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is KtFakeSourceElementWithOffsets) return false
+        if (!super.equals(other)) return false
+
+        if (kind != other.kind) return false
+        if (startOffset != other.startOffset) return false
+        return endOffset == other.endOffset
+    }
+
+    override fun hashCode(): Int {
+        var result = super.hashCode()
+        result = 31 * result + kind.hashCode()
+        result = 31 * result + startOffset
+        result = 31 * result + endOffset
+        return result
+    }
+}
+
+fun KtSourceElement.fakeElement(
+    newKind: KtFakeSourceElementKind,
+    startOffset: Int = -1,
+    endOffset: Int = -1,
+): KtSourceElement {
     if (kind == newKind) return this
     return when (this) {
-        is KtLightSourceElement -> KtLightSourceElement(lighterASTNode, startOffset, endOffset, treeStructure, newKind)
-        is KtPsiSourceElement -> KtFakeSourceElement(psi, newKind)
+        is KtLightSourceElement -> KtLightSourceElement(
+            lighterASTNode,
+            if (startOffset != -1) startOffset else this.startOffset,
+            if (endOffset != -1) endOffset else this.endOffset,
+            treeStructure,
+            newKind
+        )
+        is KtPsiSourceElement -> when {
+            startOffset != -1 && endOffset != -1 -> KtFakeSourceElementWithOffsets(psi, newKind, startOffset, endOffset)
+            else -> KtFakeSourceElement(psi, newKind)
+        }
     }
 }
 

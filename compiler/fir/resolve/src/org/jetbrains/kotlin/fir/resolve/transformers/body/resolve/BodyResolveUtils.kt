@@ -5,8 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 
-import org.jetbrains.kotlin.KtFakeSourceElementKind
-import org.jetbrains.kotlin.fakeElement
+import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
@@ -45,6 +44,10 @@ internal fun remapArgumentsWithVararg(
         //todo ideally we should use here a source from the use-site and not from the declaration-site
         this.varargElementType = varargParameterTypeRef.withReplacedConeType(varargElementType, KtFakeSourceElementKind.VarargArgument)
         this.typeRef = varargParameterTypeRef.withReplacedConeType(varargArrayType, KtFakeSourceElementKind.VarargArgument)
+        var startOffset = Int.MAX_VALUE
+        var endOffset = 0
+        var firstVarargElementSource: KtSourceElement? = null
+
         for ((i, arg) in argumentList.withIndex()) {
             val valueParameter = argumentMapping.getValue(arg)
             // Collect arguments if `arg` is a vararg argument of interest or other vararg arguments.
@@ -53,9 +56,9 @@ internal fun remapArgumentsWithVararg(
                 (valueParameter.isVararg && arg !is FirNamedArgumentExpression)
             ) {
                 arguments += arg
-                if (this.source == null) {
-                    this.source = arg.source?.fakeElement(KtFakeSourceElementKind.VarargArgument)
-                }
+                startOffset = minOf(startOffset, arg.source?.startOffset ?: Int.MAX_VALUE)
+                endOffset = maxOf(endOffset, arg.source?.endOffset ?: 0)
+                if (firstVarargElementSource == null) firstVarargElementSource = arg.source
             } else if (arguments.isEmpty()) {
                 // `arg` is BEFORE the vararg arguments.
                 newArgumentMapping[arg] = valueParameter
@@ -65,6 +68,8 @@ internal fun remapArgumentsWithVararg(
                 break
             }
         }
+
+        source = firstVarargElementSource?.fakeElement(KtFakeSourceElementKind.VarargArgument, startOffset, endOffset)
     }
     newArgumentMapping[varargArgument] = varargParameter
 

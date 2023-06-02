@@ -1,0 +1,42 @@
+public final annotation class A : R|kotlin/Annotation| {
+    public final val s: R|kotlin/Array<out kotlin/String>|
+        public get(): R|kotlin/Array<out kotlin/String>|
+
+    public constructor(vararg s: R|kotlin/Array<out kotlin/String>|): R|test/A|
+
+}
+
+@R|test/A|(s = <implicitArrayOf>(String(1), String(2))) public final class B : R|kotlin/Any| {
+    public constructor(): R|test/B|
+
+}
+
+@R|test/A|(s = <implicitArrayOf>(String(1), String(2))) public final class D : R|kotlin/Any| {
+    public constructor(): R|test/D|
+
+}
+
+@R|test/A|(s = <implicitArrayOf>(String(1), String(2))) public final class E : R|kotlin/Any| {
+    public constructor(): R|test/E|
+
+}
+
+@R|test/A|(s = <implicitArrayOf>(String(1), String(2))) public final class F : R|kotlin/Any| {
+    public constructor(): R|test/F|
+
+}
+
+@R|test/A|(s = <implicitArrayOf>(String(1), String(2))) public final class H : R|kotlin/Any| {
+    public constructor(): R|test/H|
+
+}
+
+@R|test/A|(s = <implicitArrayOf>(String(1), String(2))) public final class I : R|kotlin/Any| {
+    public constructor(): R|test/I|
+
+}
+
+@R|test/A|(s = <implicitArrayOf>(String(1), String(2))) public final class J : R|kotlin/Any| {
+    public constructor(): R|test/J|
+
+}
