@@ -10,12 +10,17 @@ import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
 import org.jetbrains.kotlin.backend.jvm.lower.JvmPropertiesLowering.Companion.createSyntheticMethodForPropertyDelegate
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.builders.irExprBody
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.IrConst
+import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrGetField
+import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.symbols.impl.IrAnonymousInitializerSymbolImpl
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.isFileClass
+import org.jetbrains.kotlin.ir.util.parentAsClass
+import org.jetbrains.kotlin.ir.util.remapReceiver
+import org.jetbrains.kotlin.ir.util.transformDeclarationsFlat
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 
 internal val singletonOrConstantDelegationPhase = makeIrFilePhase(
@@ -41,8 +46,7 @@ private class SingletonOrConstantDelegationTransformer(val context: JvmBackendCo
     }
 
     private fun IrProperty.transform(): List<IrDeclaration>? {
-        if (!isDelegated || isFakeOverride || backingField == null) return null
-        val delegate = backingField?.initializer?.expression?.takeIf { it.isInlineable() } ?: return null
+        val delegate = getSingletonOrConstantForOptimizableDelegatedProperty() ?: return null
         val originalThis = parentAsClass.thisReceiver
 
         class DelegateFieldAccessTransformer(val newReceiver: IrExpression) : IrElementTransformerVoid() {
@@ -73,21 +77,4 @@ private class SingletonOrConstantDelegationTransformer(val context: JvmBackendCo
 
         return listOfNotNull(this, initializerBlock, delegateMethod)
     }
-
-    private fun IrExpression.isInlineable(): Boolean =
-        when (this) {
-            is IrConst<*>, is IrGetSingletonValue -> true
-            is IrCall ->
-                dispatchReceiver?.isInlineable() != false
-                        && extensionReceiver?.isInlineable() != false
-                        && valueArgumentsCount == 0
-                        && symbol.owner.run {
-                    modality == Modality.FINAL
-                            && origin == IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
-                            && ((body?.statements?.singleOrNull() as? IrReturn)?.value as? IrGetField)?.symbol?.owner?.isFinal == true
-                }
-            is IrGetValue ->
-                symbol.owner.origin == IrDeclarationOrigin.INSTANCE_RECEIVER
-            else -> false
-        }
 }

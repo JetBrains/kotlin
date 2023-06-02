@@ -6,6 +6,7 @@
 package org.jetbrains.kotlinx.serialization.compiler.backend.ir
 
 import org.jetbrains.kotlin.backend.common.lower.irThrow
+import org.jetbrains.kotlin.backend.jvm.lower.isJvmOptimizableDelegate
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
@@ -21,6 +22,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.getOrPutNullable
 import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationPluginContext
@@ -82,8 +84,10 @@ class SerializableIrGenerator(
                     it is IrProperty && it.backingField != null -> {
                         if (it in serialDescs) {
                             current = it
-                        } else if (it.backingField?.initializer != null && !it.isDelegated) {
-                            // skip transient lateinit or deferred properties (with null initializer)
+                        } else if (it.backingField?.initializer != null &&
+                            !(it.isJvmOptimizableDelegate() && compilerContext.platform.isJvm())
+                        ) {
+                            // skip transient lateinit or deferred properties (with null initializer) and optimized delegations
                             val expression = initializerAdapter(it.backingField!!.initializer!!)
 
                             statementsAfterSerializableProperty.getOrPutNullable(current, { mutableListOf() })
