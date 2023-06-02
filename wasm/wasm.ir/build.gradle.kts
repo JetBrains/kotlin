@@ -1,8 +1,52 @@
+import java.net.URI
+
 plugins {
     kotlin("jvm")
     id("jps-compatible")
     kotlin("plugin.serialization")
-    id("de.undercouch.download")
+}
+
+repositories {
+    ivy {
+        url = URI("https://github.com/webassembly/testsuite/zipball/")
+        patternLayout {
+            artifact("[revision]")
+        }
+        metadataSources { artifact() }
+        content { includeModule("webassembly", "testsuite") }
+    }
+
+    ivy {
+        url = URI("https://github.com/webassembly/wabt/releases/download/")
+        patternLayout {
+            artifact("[revision]/[artifact]-[revision]-[classifier].[ext]")
+        }
+        metadataSources { artifact() }
+        content { includeModule("webassembly", "wabt") }
+    }
+}
+
+val wabtDir = File(buildDir, "wabt")
+val wabtVersion = "1.0.19"
+val testSuiteRevision = "18f8340"
+val testSuiteDir = File(buildDir, "testsuite")
+
+val gradleOs = org.gradle.internal.os.OperatingSystem.current()
+val wabtOS = when {
+    gradleOs.isMacOsX -> "macos"
+    gradleOs.isWindows -> "windows"
+    gradleOs.isLinux -> "ubuntu"
+    else -> error("Unsupported OS: $gradleOs")
+}
+
+val wabt by configurations.creating {
+    isCanBeResolved = true
+    isCanBeConsumed = false
+}
+
+val testSuite by configurations.creating {
+    isCanBeResolved = true
+    isCanBeConsumed = false
 }
 
 dependencies {
@@ -15,45 +59,28 @@ dependencies {
     testCompileOnly(project(":kotlin-test:kotlin-test-junit"))
     testImplementation(projectTests(":compiler:tests-common"))
     testImplementation(commonDependency("org.jetbrains.kotlinx", "kotlinx-serialization-json"))
-}
 
-
-val testSuiteRevision = "18f8340"
-val testSuiteDir = File(buildDir, "testsuite")
-val testSuiteZip = File(testSuiteDir, testSuiteRevision + ".zip")
-
-val downloadTestSuite by task<de.undercouch.gradle.tasks.download.Download> {
-    src("https://github.com/WebAssembly/testsuite/zipball/$testSuiteRevision")
-    dest(testSuiteZip)
-    overwrite(false)
+    testSuite("webassembly:testsuite:$testSuiteRevision@zip")
+    wabt("webassembly:wabt:$wabtVersion:$wabtOS@tar.gz")
 }
 
 val unzipTestSuite by task<Copy> {
-    dependsOn(downloadTestSuite)
-    from(zipTree(downloadTestSuite.get().dest))
+    dependsOn(testSuite)
+
+    from(provider {
+        zipTree(testSuite.singleFile)
+    })
+
     into(testSuiteDir)
 }
 
-val wabtDir = File(buildDir, "wabt")
-val wabtVersion = "1.0.19"
-
-val downloadWabt by task<de.undercouch.gradle.tasks.download.Download> {
-    val gradleOs = org.gradle.internal.os.OperatingSystem.current()
-    val os = when {
-        gradleOs.isMacOsX -> "macos"
-        gradleOs.isWindows -> "windows"
-        gradleOs.isLinux -> "ubuntu"
-        else -> error("Unsupported OS: $gradleOs")
-    }
-    val fileName = "wabt-$wabtVersion-$os.tar.gz"
-    src("https://github.com/WebAssembly/wabt/releases/download/$wabtVersion/$fileName")
-    dest(File(wabtDir, fileName))
-    overwrite(false)
-}
-
 val unzipWabt by task<Copy> {
-    dependsOn(downloadWabt)
-    from(tarTree(resources.gzip(downloadWabt.get().dest)))
+    dependsOn(wabt)
+
+    from(provider {
+        tarTree(resources.gzip(wabt.singleFile))
+    })
+
     into(wabtDir)
 }
 
