@@ -342,6 +342,9 @@ open class RawFirBuilder(
                         ownerClassBuilder.ownerRegularClassTypeParametersCount
                     )
                 }
+                is KtDestructuringDeclaration -> {
+                    buildErrorTopLevelDestructuringDeclaration(toFirSourceElement())
+                }
                 else -> convert()
             }
         }
