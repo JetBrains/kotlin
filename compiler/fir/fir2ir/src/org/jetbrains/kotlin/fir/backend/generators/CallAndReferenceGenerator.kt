@@ -1111,11 +1111,6 @@ class CallAndReferenceGenerator(
         return firReceiver.takeIf { it !is FirNoReceiverExpression }
             ?.let { visitor.convertToIrReceiverExpression(it, calleeReference, this as? FirCallableReferenceAccess) }
             ?: explicitReceiverExpression
-            ?: run {
-                if (this is FirCallableReferenceAccess) return null
-                val name = if (isDispatch) "Dispatch" else "Extension"
-                error("$name receiver expected: ${render()} to ${calleeReference.render()}")
-            }
     }
 
     private fun IrExpression.applyReceivers(
