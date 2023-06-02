@@ -14,6 +14,7 @@ import org.gradle.api.tasks.TaskProvider
 import org.gradle.jvm.tasks.Jar
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.dsl.explicitApiModeAsCompilerArg
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.internal.customizeKotlinDependencies
@@ -319,9 +320,28 @@ internal fun sourcesJarTaskNamed(
 }
 
 internal fun Project.setupGeneralKotlinExtensionParameters() {
+    val sourceSetsInMainCompilation by lazy {
+        kotlinExtension.sourceSets.filter { sourceSet ->
+            sourceSet.internal.compilations.any {
+                // kotlin main compilation
+                it.isMain()
+                        // android compilation which is NOT in tested variant
+                        || (it as? KotlinJvmAndroidCompilation)?.let { getTestedVariantData(it.androidVariant) == null } == true
+            }
+        }
+    }
+
     kotlinExtension.sourceSets.all { sourceSet ->
         (sourceSet.languageSettings as? DefaultLanguageSettingsBuilder)?.run {
 
+            explicitApi = project.providers.provider {
+                val explicitApiFlag = project.kotlinExtension.explicitApiModeAsCompilerArg()
+                if (explicitApiFlag != null && sourceSet in sourceSetsInMainCompilation) {
+                    explicitApiFlag
+                } else {
+                    null
+                }
+            }
             // Set ad-hoc free compiler args from the internal project property
             freeCompilerArgsProvider = project.provider {
                 val propertyValue = with(project.extensions.extraProperties) {

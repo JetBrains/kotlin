@@ -416,7 +416,7 @@ internal constructor(
     override val additionalCompilerOptions: Provider<Collection<String>>
         get() = compilerOptions
             .freeCompilerArgs
-            .map { it + (languageSettings as DefaultLanguageSettingsBuilder).freeCompilerArgs }
+            .map { it + (languageSettings as DefaultLanguageSettingsBuilder).freeCompilerArgsForNonImport }
 
     private val runnerSettings = KotlinNativeCompilerRunner.Settings.fromProject(project)
     private val isAllowCommonizer: Boolean by lazy { project.isAllowCommonizer() }

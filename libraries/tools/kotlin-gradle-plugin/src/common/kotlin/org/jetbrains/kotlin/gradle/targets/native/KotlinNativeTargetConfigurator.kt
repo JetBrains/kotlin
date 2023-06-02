@@ -93,9 +93,9 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
         tasks.named(binary.linkTaskName, KotlinNativeLink::class.java).configure {
             // We propagate compilation free args to the link task for now (see KT-33717).
             val defaultLanguageSettings = binary.compilation.defaultSourceSet.languageSettings as? DefaultLanguageSettingsBuilder
-            if (defaultLanguageSettings != null && defaultLanguageSettings.freeCompilerArgs.isNotEmpty()) {
+            if (defaultLanguageSettings != null && defaultLanguageSettings.freeCompilerArgsForNonImport.isNotEmpty()) {
                 it.toolOptions.freeCompilerArgs.addAll(
-                    defaultLanguageSettings.freeCompilerArgs
+                    defaultLanguageSettings.freeCompilerArgsForNonImport
                 )
             }
         }
