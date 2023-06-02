@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
 import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
 import org.jetbrains.kotlin.ir.backend.js.utils.Namer
 import org.jetbrains.kotlin.ir.backend.js.utils.getJsNameOrKotlinName
-import org.jetbrains.kotlin.ir.backend.js.utils.isUnitInstanceFunction
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.isString
@@ -130,6 +129,12 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
         }
         val fieldName = context.getNameForField(field)
         return jsElementAccess(fieldName, expression.receiver?.accept(this, context)).withSource(expression, context)
+            .apply {
+                if (field.origin == IrDeclarationOrigin.FIELD_FOR_OBJECT_INSTANCE && expression.origin == JsStatementOrigins.SYNTHESIZED_STATEMENT) {
+                    synthetic = true
+                    sideEffects = SideEffectKind.PURE
+                }
+            }
     }
 
     override fun visitGetValue(expression: IrGetValue, context: JsGenerationContext): JsExpression {

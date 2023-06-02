@@ -1,7 +1,7 @@
 // TARGET_BACKEND: JS_IR
 // TARGET_BACKEND: WASM
 
-// WASM_DCE_EXPECTED_OUTPUT_SIZE: wasm 13_005
+// WASM_DCE_EXPECTED_OUTPUT_SIZE: wasm 12_883
 
 interface I {
     fun foo() = "OK"

@@ -108,7 +108,7 @@ abstract class UsefulDeclarationProcessor(
             contagiousReachableDeclarations.add(this as IrOverridableDeclaration<*>)
         }
 
-        if (this !in result) {
+        if (!isReachable()) {
             result.add(this)
             queue.addLast(this)
 
@@ -181,7 +181,7 @@ abstract class UsefulDeclarationProcessor(
     }
 
     protected open fun processConstructedClassDeclaration(declaration: IrDeclaration) {
-        if (declaration in result) return
+        if (declaration.isReachable()) return
 
         fun IrOverridableDeclaration<*>.findOverriddenContagiousDeclaration(): IrOverridableDeclaration<*>? {
             for (overriddenSymbol in this.overriddenSymbols) {
@@ -287,6 +287,8 @@ abstract class UsefulDeclarationProcessor(
 
         return result
     }
+
+    protected fun IrDeclaration.isReachable(): Boolean = this in result
 }
 
 private data class ReachabilityInfo(

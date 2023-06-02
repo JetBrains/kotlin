@@ -255,7 +255,6 @@ internal annotation class WasmOp(val name: String) {
         const val BR_ON_CAST_FAIL = "BR_ON_CAST_FAIL"
         const val EXTERN_INTERNALIZE = "EXTERN_INTERNALIZE"
         const val EXTERN_EXTERNALIZE = "EXTERN_EXTERNALIZE"
-        const val GET_UNIT = "GET_UNIT"
         const val PSEUDO_COMMENT_PREVIOUS_INSTR = "PSEUDO_COMMENT_PREVIOUS_INSTR"
         const val PSEUDO_COMMENT_GROUP_START = "PSEUDO_COMMENT_GROUP_START"
         const val PSEUDO_COMMENT_GROUP_END = "PSEUDO_COMMENT_GROUP_END"

@@ -386,9 +386,6 @@ enum class WasmOp(
     EXTERN_EXTERNALIZE("extern.externalize", 0xfb71), // anyref -> externref
 
     // ============================================================
-    // Pseudo-instruction, just alias for a normal call. It's used to easily spot get_unit on the wasm level.
-    GET_UNIT("call", 0x10, FUNC_IDX),
-
     PSEUDO_COMMENT_PREVIOUS_INSTR("<comment-single>", WASM_OP_PSEUDO_OPCODE),
     PSEUDO_COMMENT_GROUP_START("<comment-group-start>", WASM_OP_PSEUDO_OPCODE),
     PSEUDO_COMMENT_GROUP_END("<comment-group-end>", WASM_OP_PSEUDO_OPCODE),

@@ -103,6 +103,9 @@ val IrType.classOrNull: IrClassSymbol?
             else -> null
         }
 
+val IrType.classOrFail: IrClassSymbol
+    get() = classOrNull ?: error("Expect type to be a class type")
+
 val IrType.classFqName: FqName?
     get() = classOrNull?.owner?.fqNameWhenAvailable
 

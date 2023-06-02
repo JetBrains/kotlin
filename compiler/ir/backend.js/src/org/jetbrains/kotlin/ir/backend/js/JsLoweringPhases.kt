@@ -1000,12 +1000,27 @@ private val es6PrimaryConstructorUsageOptimizationLowering = makeBodyLoweringPha
     prerequisite = setOf(es6BoxParameterOptimization, es6PrimaryConstructorOptimizationLowering)
 )
 
+private val purifyObjectInstanceGetters = makeDeclarationTransformerPhase(
+    ::PurifyObjectInstanceGettersLowering,
+    name = "PurifyObjectInstanceGettersLowering",
+    description = "[Optimization] Make object instance getter functions pure whenever it's possible",
+)
+
+private val inlineObjectsWithPureInitialization = makeBodyLoweringPhase(
+    ::InlineObjectsWithPureInitializationLowering,
+    name = "InlineObjectsWithPureInitializationLowering",
+    description = "[Optimization] Inline object instance fields getters whenever it's possible",
+    prerequisite = setOf(purifyObjectInstanceGetters)
+)
+
 val optimizationLoweringList = listOf<Lowering>(
     es6CollectConstructorsWhichNeedBoxParameterLowering,
     es6CollectPrimaryConstructorsWhichCouldBeOptimizedLowering,
     es6BoxParameterOptimization,
     es6PrimaryConstructorOptimizationLowering,
     es6PrimaryConstructorUsageOptimizationLowering,
+    purifyObjectInstanceGetters,
+    inlineObjectsWithPureInitialization
 )
 
 val jsOptimizationPhases = SameTypeNamedCompilerPhase(

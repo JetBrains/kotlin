@@ -245,6 +245,9 @@ private tailrec fun IrExpression.isGetUnit(irBuiltIns: IrBuiltIns): Boolean =
                 else -> false
             }
 
+        is IrConstructorCall ->
+            this.type == irBuiltIns.unitType
+
         is IrGetObjectValue ->
             this.symbol == irBuiltIns.unitClass
 

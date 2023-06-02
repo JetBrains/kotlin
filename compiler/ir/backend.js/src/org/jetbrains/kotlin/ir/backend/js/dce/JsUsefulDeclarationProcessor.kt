@@ -199,7 +199,7 @@ internal class JsUsefulDeclarationProcessor(
         !isExternal && !isExpect && !isBuiltInClass(this)
 
     override fun processConstructedClassDeclaration(declaration: IrDeclaration) {
-        if (declaration in result) return
+        if (declaration.isReachable()) return
 
         super.processConstructedClassDeclaration(declaration)
 

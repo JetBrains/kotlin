@@ -143,14 +143,22 @@ object JsIrBuilder {
     fun buildSetVariable(symbol: IrVariableSymbol, value: IrExpression, type: IrType) =
         IrSetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, symbol, value, JsStatementOrigins.SYNTHESIZED_STATEMENT)
 
-    fun buildGetField(symbol: IrFieldSymbol, receiver: IrExpression?, superQualifierSymbol: IrClassSymbol? = null, type: IrType? = null) =
+    fun buildGetField(
+        symbol: IrFieldSymbol,
+        receiver: IrExpression? = null,
+        superQualifierSymbol: IrClassSymbol? = null,
+        type: IrType? = null,
+        startOffset: Int = UNDEFINED_OFFSET,
+        endOffset: Int = UNDEFINED_OFFSET,
+        origin: IrStatementOrigin? = JsStatementOrigins.SYNTHESIZED_STATEMENT
+    ) =
         IrGetFieldImpl(
-            UNDEFINED_OFFSET,
-            UNDEFINED_OFFSET,
+            startOffset,
+            endOffset,
             symbol,
             type ?: symbol.owner.type,
             receiver,
-            JsStatementOrigins.SYNTHESIZED_STATEMENT,
+            origin,
             superQualifierSymbol
         )
 

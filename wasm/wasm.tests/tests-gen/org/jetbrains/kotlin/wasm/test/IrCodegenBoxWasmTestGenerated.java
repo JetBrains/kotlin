@@ -31450,6 +31450,11 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
             runTest("compiler/testData/codegen/box/size/helloWorldDOM.kt");
         }
 
+        @TestMetadata("objectsOptimization.kt")
+        public void testObjectsOptimization() throws Exception {
+            runTest("compiler/testData/codegen/box/size/objectsOptimization.kt");
+        }
+
         @TestMetadata("ok.kt")
         public void testOk() throws Exception {
             runTest("compiler/testData/codegen/box/size/ok.kt");

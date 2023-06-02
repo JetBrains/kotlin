@@ -329,6 +329,12 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
         }
 
         @Test
+        @TestMetadata("objectLazyInitialized.kt")
+        public void testObjectLazyInitialized() throws Exception {
+            runTest("js/js.translator/testData/box/classObject/objectLazyInitialized.kt");
+        }
+
+        @Test
         @TestMetadata("setVar.kt")
         public void testSetVar() throws Exception {
             runTest("js/js.translator/testData/box/classObject/setVar.kt");

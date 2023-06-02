@@ -107,6 +107,9 @@ fun IrBody.prependFunctionCall(
 fun JsCommonBackendContext.findUnitGetInstanceFunction(): IrSimpleFunction =
     mapping.objectToGetInstanceFunction[irBuiltIns.unitClass.owner]!!
 
+fun JsCommonBackendContext.findUnitInstanceField(): IrField =
+    mapping.objectToInstanceField[irBuiltIns.unitClass.owner]!!
+
 fun IrDeclaration.isImportedFromModuleOnly(): Boolean {
     return isTopLevel && isEffectivelyExternal() && (getJsModule() != null && !isJsNonModule() || (parent as? IrAnnotationContainer)?.getJsModule() != null)
 }

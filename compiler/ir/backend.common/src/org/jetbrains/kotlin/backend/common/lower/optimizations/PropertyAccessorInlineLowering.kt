@@ -43,7 +43,7 @@ open class PropertyAccessorInlineLowering(
         private fun canBeInlined(callee: IrSimpleFunction): Boolean {
             val property = callee.correspondingPropertySymbol?.owner ?: return false
 
-            // Some devirtualization required here
+            // Some de-virtualization required here
             if (!property.isSafeToInline(container)) return false
 
             val parent = property.parent

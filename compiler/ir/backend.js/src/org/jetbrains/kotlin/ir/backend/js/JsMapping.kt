@@ -35,6 +35,8 @@ class JsMapping : DefaultMapping() {
 
     val suspendArityStore = DefaultDelegateFactory.newDeclarationToDeclarationCollectionMapping<IrClass, Collection<IrSimpleFunction>>()
 
+    val objectsWithPureInitialization = DefaultDelegateFactory.newDeclarationToValueMapping<IrClass, Boolean>()
+
     val inlineFunctionsBeforeInlining = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrFunction, IrFunction>()
 
     // Wasm mappings

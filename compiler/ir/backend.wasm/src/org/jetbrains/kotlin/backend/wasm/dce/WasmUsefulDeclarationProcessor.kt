@@ -22,8 +22,6 @@ internal class WasmUsefulDeclarationProcessor(
     dumpReachabilityInfoToFile: String?
 ) : UsefulDeclarationProcessor(printReachabilityInfo, removeUnusedAssociatedObjects = false, dumpReachabilityInfoToFile) {
 
-    private val unitGetInstance: IrSimpleFunction = context.findUnitGetInstanceFunction()
-
     // The mapping from function for wrapping a kotlin closure/lambda with JS closure to function used to call a kotlin closure from JS side.
     private val kotlinClosureToJsClosureConvertFunToKotlinClosureCallFun =
         context.kotlinClosureToJsConverters.entries.associate { (k, v) -> v to context.closureCallExports[k] }
@@ -47,6 +45,22 @@ internal class WasmUsefulDeclarationProcessor(
                 .firstOrNull { it.hasWasmPrimitiveConstructorAnnotation() }
                 ?.enqueue(data, "implicit vararg constructor")
             super.visitVararg(expression, data)
+        }
+
+        override fun visitSetField(expression: IrSetField, data: IrDeclaration) {
+            if (!expression.symbol.owner.isObjectInstanceField()) {
+                super.visitSetField(expression, data)
+            }
+        }
+
+        override fun visitGetField(expression: IrGetField, data: IrDeclaration) {
+            val field = expression.symbol.owner
+
+            if (field.isObjectInstanceField()) {
+                field.type.classOrFail.owner.primaryConstructor?.enqueue(field, "object lazy initialization")
+            }
+
+            super.visitGetField(expression, data)
         }
 
         private fun tryToProcessIntrinsicCall(from: IrDeclaration, call: IrCall): Boolean = when (call.symbol) {
@@ -77,9 +91,6 @@ internal class WasmUsefulDeclarationProcessor(
             super.visitCall(expression, data)
 
             val function: IrFunction = expression.symbol.owner.realOverrideTarget
-            if (function.returnType == context.irBuiltIns.unitType) {
-                unitGetInstance.enqueue(data, "function Unit return type")
-            }
 
             if (tryToProcessIntrinsicCall(data, expression)) return
             if (function.hasWasmNoOpCastAnnotation()) return

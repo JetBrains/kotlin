@@ -10,8 +10,10 @@ import org.jetbrains.kotlin.backend.common.phaser.invokeToplevel
 import org.jetbrains.kotlin.ir.backend.js.dce.eliminateDeadDeclarations
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIrProgramFragment
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.js.backend.ast.JsClass
 import org.jetbrains.kotlin.js.backend.ast.JsFunction
 import org.jetbrains.kotlin.js.backend.ast.RecursiveJsVisitor
+import org.jetbrains.kotlin.js.inline.clean.ClassPostProcessor
 import org.jetbrains.kotlin.js.inline.clean.FunctionPostProcessor
 
 fun optimizeProgramByIr(
@@ -24,11 +26,20 @@ fun optimizeProgramByIr(
 }
 
 fun optimizeFragmentByJsAst(fragment: JsIrProgramFragment) {
-    fragment.declarations.statements.forEach {
-        it.accept(object : RecursiveJsVisitor() {
-            override fun visitFunction(x: JsFunction) {
-                FunctionPostProcessor(x).apply()
-            }
-        })
+    val optimizer = object : RecursiveJsVisitor() {
+        override fun visitFunction(x: JsFunction) {
+            FunctionPostProcessor(x).apply()
+        }
+
+        override fun visitClass(x: JsClass) {
+            super.visitClass(x)
+            ClassPostProcessor(x).apply()
+        }
+    }
+
+    fragment.declarations.statements.forEach { it.accept(optimizer) }
+    fragment.classes.values.forEach { klass ->
+        klass.postDeclarationBlock.statements.forEach { it.accept(optimizer)}
+        klass.preDeclarationBlock.statements.forEach { it.accept(optimizer)}
     }
 }

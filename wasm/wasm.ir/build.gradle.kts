@@ -6,6 +6,8 @@ plugins {
 }
 
 dependencies {
+    compileOnly(project(":core:util.runtime"))
+
     implementation(kotlinStdlib())
     implementation(kotlinxCollectionsImmutable())
     testImplementation(commonDependency("junit:junit"))

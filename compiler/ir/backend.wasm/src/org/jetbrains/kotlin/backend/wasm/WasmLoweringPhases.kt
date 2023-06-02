@@ -610,6 +610,20 @@ private val unitToVoidLowering = makeWasmModulePhase(
     description = "Replace some Unit's with Void's"
 )
 
+private val purifyObjectInstanceGettersLoweringPhase = makeWasmModulePhase(
+    ::PurifyObjectInstanceGettersLowering,
+    name = "PurifyObjectInstanceGettersLowering",
+    description = "[Optimization] Make object instance getter functions pure whenever it's possible",
+    prerequisite = setOf(objectDeclarationLoweringPhase, objectUsageLoweringPhase)
+)
+
+private val inlineObjectsWithPureInitializationLoweringPhase = makeWasmModulePhase(
+    ::InlineObjectsWithPureInitializationLowering,
+    name = "InlineObjectsWithPureInitializationLowering",
+    description = "[Optimization] Inline object instance fields getters whenever it's possible",
+    prerequisite = setOf(purifyObjectInstanceGettersLoweringPhase)
+)
+
 val wasmPhases = SameTypeNamedCompilerPhase(
     name = "IrModuleLowering",
     description = "IR module lowering",
@@ -707,7 +721,6 @@ val wasmPhases = SameTypeNamedCompilerPhase(
             associatedObjectsLowering then
 
             objectDeclarationLoweringPhase then
-            fieldInitializersLoweringPhase then
             genericReturnTypeLowering then
             unitToVoidLowering then
 
@@ -715,8 +728,12 @@ val wasmPhases = SameTypeNamedCompilerPhase(
             builtInsLoweringPhase0 then
 
             autoboxingTransformerPhase then
-            explicitlyCastExternalTypesPhase then
+
             objectUsageLoweringPhase then
+            purifyObjectInstanceGettersLoweringPhase then
+            fieldInitializersLoweringPhase then
+
+            explicitlyCastExternalTypesPhase then
             typeOperatorLoweringPhase then
 
             // Clean up built-ins after type operator lowering
@@ -724,5 +741,6 @@ val wasmPhases = SameTypeNamedCompilerPhase(
 
             virtualDispatchReceiverExtractionPhase then
             staticMembersLoweringPhase then
+            inlineObjectsWithPureInitializationLoweringPhase then
             validateIrAfterLowering
 )

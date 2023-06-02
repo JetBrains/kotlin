@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.wasm.ir
 
+import org.jetbrains.kotlin.utils.addToStdlib.trimToSize
 import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
 
 private fun WasmOp.isOutCfgNode() = when (this) {
@@ -18,7 +19,7 @@ private fun WasmOp.isInCfgNode() = when (this) {
 }
 
 private fun WasmOp.pureStacklessInstruction() = when (this) {
-    WasmOp.GET_UNIT, WasmOp.REF_NULL, WasmOp.I32_CONST, WasmOp.I64_CONST, WasmOp.F32_CONST, WasmOp.F64_CONST, WasmOp.LOCAL_GET, WasmOp.GLOBAL_GET -> true
+    WasmOp.REF_NULL, WasmOp.I32_CONST, WasmOp.I64_CONST, WasmOp.F32_CONST, WasmOp.F64_CONST, WasmOp.LOCAL_GET, WasmOp.GLOBAL_GET -> true
     else -> false
 }
 
@@ -30,13 +31,12 @@ class WasmIrExpressionBuilder(
     val expression: MutableList<WasmInstr>
 ) : WasmExpressionBuilder() {
 
-    private val lastInstr: WasmInstr?
-        get() = expression.lastOrNull()
     private var eatEverythingUntilLevel: Int? = null
+    private var lastInstructionIndex: Int = expression.indexOfLast { !it.operator.isPseudoInstruction }
 
     private fun addInstruction(op: WasmOp, location: SourceLocation, immediates: Array<out WasmImmediate>) {
-        val newInstruction = WasmInstrWithLocation(op, immediates.toList(), location)
-        expression.add(newInstruction)
+        expression += WasmInstrWithLocation(op, immediates.toList(), location)
+        if (!op.isPseudoInstruction) lastInstructionIndex = expression.lastIndex
     }
 
     private fun getCurrentEatLevel(op: WasmOp): Int? {
@@ -64,16 +64,17 @@ class WasmIrExpressionBuilder(
             }
         }
 
-        val lastInstruction = lastInstr
-        if (lastInstruction == null) {
+        if (lastInstructionIndex == -1) {
             addInstruction(op, location, immediates)
             return
         }
+
+        val lastInstruction = expression[lastInstructionIndex]
         val lastOperator = lastInstruction.operator
 
         // droppable instructions + drop/unreachable -> nothing
         if ((op == WasmOp.DROP || op == WasmOp.UNREACHABLE) && lastOperator.pureStacklessInstruction()) {
-            expression.removeLast()
+            trimInstructionsUntil(lastInstructionIndex)
             return
         }
 
@@ -83,7 +84,7 @@ class WasmIrExpressionBuilder(
             if (localSetNumber != null) {
                 val localGetNumber = (immediates.firstOrNull() as? WasmImmediate.LocalIdx)?.value
                 if (localGetNumber == localSetNumber) {
-                    expression.removeLast()
+                    trimInstructionsUntil(lastInstructionIndex)
                     addInstruction(WasmOp.LOCAL_TEE, location, immediates)
                     return
                 }
@@ -93,11 +94,19 @@ class WasmIrExpressionBuilder(
         addInstruction(op, location, immediates)
     }
 
+    private fun trimInstructionsUntil(index: Int) {
+        expression.trimToSize(index)
+        lastInstructionIndex = index - 1
+    }
+
     override var numberOfNestedBlocks: Int = 0
         set(value) {
             assert(value >= 0) { "end without matching block" }
             field = value
         }
+
+    private val WasmOp.isPseudoInstruction: Boolean
+        get() = opcode == WASM_OP_PSEUDO_OPCODE
 }
 
 inline fun buildWasmExpression(body: WasmExpressionBuilder.() -> Unit): MutableList<WasmInstr> {

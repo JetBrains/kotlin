@@ -14,10 +14,7 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.backend.js.lower.PrimaryConstructorLowering
-import org.jetbrains.kotlin.ir.backend.js.utils.erasedUpperBound
-import org.jetbrains.kotlin.ir.backend.js.utils.findUnitGetInstanceFunction
-import org.jetbrains.kotlin.ir.backend.js.utils.isDispatchReceiver
-import org.jetbrains.kotlin.ir.backend.js.utils.realOverrideTarget
+import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -34,7 +31,6 @@ class BodyGenerator(
     val context: WasmModuleCodegenContext,
     val functionContext: WasmFunctionCodegenContext,
     private val hierarchyDisjointUnions: DisjointUnions<IrClassSymbol>,
-    private val isGetUnitFunction: Boolean,
 ) : IrElementVisitorVoid {
     val body: WasmExpressionBuilder = functionContext.bodyGen
 
@@ -44,16 +40,13 @@ class BodyGenerator(
     private val irBuiltIns: IrBuiltIns = backendContext.irBuiltIns
 
     private val unitGetInstance by lazy { backendContext.findUnitGetInstanceFunction() }
-    fun WasmExpressionBuilder.buildGetUnit() {
-        buildInstr(
-            WasmOp.GET_UNIT,
-            SourceLocation.NoLocation("GET_UNIT"),
-            WasmImmediate.FuncIdx(context.referenceFunction(unitGetInstance.symbol))
-        )
-    }
+    private val unitInstanceField by lazy { backendContext.findUnitInstanceField() }
 
-    private val anyConstructor by lazy {
-        wasmSymbols.any.constructors.first { it.owner.valueParameters.isEmpty() }
+    fun WasmExpressionBuilder.buildGetUnit() {
+        buildGetGlobal(
+            context.referenceGlobalField(unitInstanceField.symbol),
+            SourceLocation.NoLocation("GET_UNIT")
+        )
     }
 
     // Generates code for the given IR element. Leaves something on the stack unless expression was of the type Void.
@@ -184,6 +177,7 @@ class BodyGenerator(
         val field: IrField = expression.symbol.owner
         val receiver: IrExpression? = expression.receiver
         val location = expression.getSourceLocation()
+
         if (receiver != null) {
             generateExpression(receiver)
             if (backendContext.inlineClassesUtils.isClassInlineLike(field.parentAsClass)) {
@@ -378,12 +372,6 @@ class BodyGenerator(
             return
         }
 
-        // Get unit is a special case because it is the only function which returns the real unit instance.
-        if (call.symbol == unitGetInstance.symbol) {
-            body.buildGetUnit()
-            return
-        }
-
         // Some intrinsics are a special case because we want to remove them completely, including their arguments.
         if (!backendContext.configuration.getNotNull(JSConfigurationKeys.WASM_ENABLE_ARRAY_RANGE_CHECKS)) {
             if (call.symbol == wasmSymbols.rangeCheck) {
@@ -473,8 +461,9 @@ class BodyGenerator(
         }
 
         // Unit types don't cross function boundaries
-        if (function.returnType.isUnit())
+        if (function.returnType.isUnit() && function !is IrConstructor) {
             body.buildGetUnit()
+        }
     }
 
     private fun generateRefNullCast(fromType: IrType, toType: IrType, location: SourceLocation) {
@@ -701,14 +690,12 @@ class BodyGenerator(
 
     private fun visitFunctionReturn(expression: IrReturn) {
         val returnType = expression.returnTargetSymbol.owner.returnType(backendContext)
-        if (returnType == irBuiltIns.unitType && expression.returnTargetSymbol.owner != unitGetInstance) {
-            generateAsStatement(expression.value)
-        } else {
-            if (isGetUnitFunction) {
-                generateExpression(expression.value)
-            } else {
-                generateWithExpectedType(expression.value, returnType)
-            }
+        val isGetUnitFunction = expression.returnTargetSymbol.owner == unitGetInstance
+
+        when {
+            isGetUnitFunction -> generateExpression(expression.value)
+            returnType == irBuiltIns.unitType -> generateAsStatement(expression.value)
+            else -> generateWithExpectedType(expression.value, returnType)
         }
 
         if (functionContext.irFunction is IrConstructor) {
@@ -839,11 +826,7 @@ class BodyGenerator(
         if (!seenElse && resultType != null) {
             assert(expression.type != irBuiltIns.nothingType)
             if (expression.type.isUnit()) {
-                if (isGetUnitFunction) {
-                    generateDefaultInitializerForType(resultType, body)
-                } else {
-                    body.buildGetUnit()
-                }
+                body.buildGetUnit()
             } else {
                 error("'When' without else branch and non Unit type: ${expression.type.dumpKotlinLike()}")
             }
