@@ -1,23 +1,17 @@
 plugins {
-    kotlin("js") version "<pluginMarkerVersion>"
+    kotlin("js")
 }
+
+group = "com.example"
 
 repositories {
     mavenLocal()
     mavenCentral()
 }
 
-kotlin {
-    js {
-        nodejs()
-        binaries.executable()
-    }
-}
-kotlin {
-    js {
-        browser()
-        binaries.executable()
-    }
+kotlin.js {
+    nodejs()
+    browser()
 }
 
 tasks.named("browserTest") {
@@ -40,7 +34,6 @@ rootProject.tasks
 
 dependencies {
     implementation(kotlin("stdlib-js"))
-    implementation("com.example:lib-2")
-    implementation(npm("node-fetch", "3.2.8"))
-    testImplementation(kotlin("test-js"))
+    implementation("com.example:base2")
+    implementation(npm("async", "2.6.2"))
 }
