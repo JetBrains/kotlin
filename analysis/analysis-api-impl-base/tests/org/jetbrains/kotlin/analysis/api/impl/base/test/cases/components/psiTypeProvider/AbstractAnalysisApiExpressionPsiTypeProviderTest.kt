@@ -34,11 +34,14 @@ abstract class AbstractAnalysisApiExpressionPsiTypeProviderTest : AbstractAnalys
             ?: error("Can't find psi context for $containingDeclaration")
         val actual = analyze(ktFile) {
             val returnType = declarationAtCaret.getKtType()
-                ?: error("Not a typable expression ${declarationAtCaret::class} ${declarationAtCaret.text}")
-            val psiType = returnType.asPsiType(psiContext, allowErrorTypes = false)
-            buildString {
-                appendLine("KtType: ${returnType.render(position = Variance.INVARIANT)}")
-                appendLine("PsiType: $psiType")
+            if (returnType != null) {
+                val psiType = returnType.asPsiType(psiContext, allowErrorTypes = false)
+                buildString {
+                    appendLine("KtType: ${returnType.render(position = Variance.INVARIANT)}")
+                    appendLine("PsiType: $psiType")
+                }
+            } else {
+                "null"
             }
         }
         testServices.assertions.assertEqualsToTestDataFileSibling(actual)

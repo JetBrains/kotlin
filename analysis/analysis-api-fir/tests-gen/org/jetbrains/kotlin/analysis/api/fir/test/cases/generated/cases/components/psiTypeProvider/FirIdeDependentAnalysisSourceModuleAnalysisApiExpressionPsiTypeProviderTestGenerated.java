@@ -47,6 +47,12 @@ public class FirIdeDependentAnalysisSourceModuleAnalysisApiExpressionPsiTypeProv
     }
 
     @Test
+    @TestMetadata("capturedBoundType.kt")
+    public void testCapturedBoundType() throws Exception {
+        runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forExpression/capturedBoundType.kt");
+    }
+
+    @Test
     @TestMetadata("class_object_call.kt")
     public void testClass_object_call() throws Exception {
         runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forExpression/class_object_call.kt");
@@ -56,6 +62,12 @@ public class FirIdeDependentAnalysisSourceModuleAnalysisApiExpressionPsiTypeProv
     @TestMetadata("class_object_constructor.kt")
     public void testClass_object_constructor() throws Exception {
         runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forExpression/class_object_constructor.kt");
+    }
+
+    @Test
+    @TestMetadata("KTIJ25461.kt")
+    public void testKTIJ25461() throws Exception {
+        runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forExpression/KTIJ25461.kt");
     }
 
     @Test

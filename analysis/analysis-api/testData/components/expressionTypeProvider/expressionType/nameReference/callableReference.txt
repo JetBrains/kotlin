@@ -1,0 +1,2 @@
+expression: myFun
+type: null

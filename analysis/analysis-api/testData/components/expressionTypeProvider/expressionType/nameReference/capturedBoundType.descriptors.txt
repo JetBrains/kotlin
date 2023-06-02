@@ -1,0 +1,2 @@
+expression: functionWithGeneric
+type: kotlin.Unit

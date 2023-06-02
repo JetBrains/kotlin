@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.analysis.api.fir.components
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.components.KtExpressionTypeProvider
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
-import org.jetbrains.kotlin.analysis.api.fir.utils.getReferencedElementType
 import org.jetbrains.kotlin.analysis.api.fir.utils.unwrap
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.types.KtErrorType
@@ -33,7 +32,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.psi.psiUtil.getOutermostParenthesizerOrThis
 
 internal class KtFirExpressionTypeProvider(
     override val analysisSession: KtFirAnalysisSession,
@@ -71,7 +70,7 @@ internal class KtFirExpressionTypeProvider(
                 }
             }
             is FirExpression -> fir.typeRef.coneType.asKtType()
-            is FirNamedReference -> fir.getReferencedElementType().asKtType()
+            is FirNamedReference -> fir.getCorrespondingTypeIfPossible()?.asKtType()
             is FirStatement -> with(analysisSession) { builtinTypes.UNIT }
             is FirTypeRef, is FirImport, is FirPackageDirective, is FirLabel, is FirTypeParameterRef -> null
 
@@ -91,6 +90,49 @@ internal class KtFirExpressionTypeProvider(
             // private var
             // ```
             // Volatile does not have corresponding element, so `FirFileImpl` is returned
+            else -> null
+        }
+    }
+
+    /**
+     * It only makes sense to provide type for the references which reference some actual properties/variables.
+     *
+     * In cases when the name reference references a function (a REAL function, not a functional type variable), it does not
+     * make sense to provide any type for it.
+     *
+     * ---
+     *
+     * Why not just always provide null for name references? In such case, the following case would be a problem:
+     *
+     * ```kt
+     * fun usage(action: String.(Int) -> String) {
+     *   "hello".<expr>action</expr>(10)
+     * }
+     * ```
+     *
+     * The user might want to know the type of the `action` callback. If we always return null for the named references,
+     * we won't be able to handle this request, and just return null. So the user will only be able to see the type
+     * of the whole expression instead, and that is not what he wants.
+     */
+    private fun FirNamedReference.getCorrespondingTypeIfPossible(): ConeKotlinType? =
+        findOuterPropertyAccessExpression()?.typeRef?.coneType
+
+    /**
+     * Finds an outer expression for [this] named reference in cases when it is a part of a property access.
+     *
+     * Otherwise, return null.
+     */
+    private fun FirNamedReference.findOuterPropertyAccessExpression(): FirExpression? {
+        val referenceExpression = psi as? KtExpression ?: return null
+        val outerExpression = referenceExpression.getOutermostParenthesizerOrThis().parent as? KtElement ?: return null
+
+        return when (val outerFirElement = outerExpression.getOrBuildFir(firResolveSession)) {
+            is FirVariableAssignment -> outerFirElement.lValue
+            is FirPropertyAccessExpression -> outerFirElement
+            is FirImplicitInvokeCall -> outerFirElement.explicitReceiver
+            is FirSafeCallExpression -> {
+                if (outerFirElement.selector is FirPropertyAccessExpression) outerFirElement else null
+            }
             else -> null
         }
     }

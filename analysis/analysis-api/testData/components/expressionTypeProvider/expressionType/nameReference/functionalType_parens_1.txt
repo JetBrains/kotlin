@@ -1,0 +1,2 @@
+expression: lambda
+type: (kotlin.Int) -> kotlin.String

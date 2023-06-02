@@ -301,4 +301,146 @@ public class Fe10IdeNormalAnalysisSourceModuleHLExpressionTypeTestGenerated exte
             runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/assignment/readArrayElement.kt");
         }
     }
+
+    @Nested
+    @TestMetadata("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/nameReference")
+    @TestDataPath("$PROJECT_ROOT")
+    public class NameReference {
+        @Test
+        public void testAllFilesPresentInNameReference() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/nameReference"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("assignment.kt")
+        public void testAssignment() throws Exception {
+            runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/nameReference/assignment.kt");
+        }
+
+        @Test
+        @TestMetadata("assignment_qualified.kt")
+        public void testAssignment_qualified() throws Exception {
+            runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/nameReference/assignment_qualified.kt");
+        }
+
+        @Test
+        @TestMetadata("callableReference.kt")
+        public void testCallableReference() throws Exception {
+            runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/nameReference/callableReference.kt");
+        }
+
+        @Test
+        @TestMetadata("capturedBoundType.kt")
+        public void testCapturedBoundType() throws Exception {
+            runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/nameReference/capturedBoundType.kt");
+        }
+
+        @Test
+        @TestMetadata("functionCall.kt")
+        public void testFunctionCall() throws Exception {
+            runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/nameReference/functionCall.kt");
+        }
+
+        @Test
+        @TestMetadata("functionCall_invalid.kt")
+        public void testFunctionCall_invalid() throws Exception {
+            runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/nameReference/functionCall_invalid.kt");
+        }
+
+        @Test
+        @TestMetadata("functionCall_safeAccess.kt")
+        public void testFunctionCall_safeAccess() throws Exception {
+            runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/nameReference/functionCall_safeAccess.kt");
+        }
+
+        @Test
+        @TestMetadata("functionalType.kt")
+        public void testFunctionalType() throws Exception {
+            runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/nameReference/functionalType.kt");
+        }
+
+        @Test
+        @TestMetadata("functionalType_parens_1.kt")
+        public void testFunctionalType_parens_1() throws Exception {
+            runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/nameReference/functionalType_parens_1.kt");
+        }
+
+        @Test
+        @TestMetadata("functionalType_parens_2.kt")
+        public void testFunctionalType_parens_2() throws Exception {
+            runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/nameReference/functionalType_parens_2.kt");
+        }
+
+        @Test
+        @TestMetadata("functionalType_withReceiver.kt")
+        public void testFunctionalType_withReceiver() throws Exception {
+            runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/nameReference/functionalType_withReceiver.kt");
+        }
+
+        @Test
+        @TestMetadata("innerType_constructor.kt")
+        public void testInnerType_constructor() throws Exception {
+            runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/nameReference/innerType_constructor.kt");
+        }
+
+        @Test
+        @TestMetadata("innerType_constructor_invalid.kt")
+        public void testInnerType_constructor_invalid() throws Exception {
+            runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/nameReference/innerType_constructor_invalid.kt");
+        }
+
+        @Test
+        @TestMetadata("invokeCallOnObject1.kt")
+        public void testInvokeCallOnObject1() throws Exception {
+            runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/nameReference/invokeCallOnObject1.kt");
+        }
+
+        @Test
+        @TestMetadata("invokeCallOnObject2.kt")
+        public void testInvokeCallOnObject2() throws Exception {
+            runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/nameReference/invokeCallOnObject2.kt");
+        }
+
+        @Test
+        @TestMetadata("nestedType_constructor.kt")
+        public void testNestedType_constructor() throws Exception {
+            runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/nameReference/nestedType_constructor.kt");
+        }
+
+        @Test
+        @TestMetadata("nestedType_constructor_invalid.kt")
+        public void testNestedType_constructor_invalid() throws Exception {
+            runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/nameReference/nestedType_constructor_invalid.kt");
+        }
+
+        @Test
+        @TestMetadata("nestedType_object.kt")
+        public void testNestedType_object() throws Exception {
+            runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/nameReference/nestedType_object.kt");
+        }
+
+        @Test
+        @TestMetadata("nestedType_object_extensionInvoke.kt")
+        public void testNestedType_object_extensionInvoke() throws Exception {
+            runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/nameReference/nestedType_object_extensionInvoke.kt");
+        }
+
+        @Test
+        @TestMetadata("propertyCall.kt")
+        public void testPropertyCall() throws Exception {
+            runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/nameReference/propertyCall.kt");
+        }
+
+        @Test
+        @TestMetadata("propertyCall_genericExtension.kt")
+        public void testPropertyCall_genericExtension() throws Exception {
+            runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/nameReference/propertyCall_genericExtension.kt");
+        }
+
+        @Test
+        @TestMetadata("propertyCall_safeAccess.kt")
+        public void testPropertyCall_safeAccess() throws Exception {
+            runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/nameReference/propertyCall_safeAccess.kt");
+        }
+    }
 }
