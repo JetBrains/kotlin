@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.expression.ExpressionCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirFunctionCallChecker
 import org.jetbrains.kotlin.fir.analysis.extensions.FirAdditionalCheckersExtension
 import org.jetbrains.kotlin.fir.dataframe.InterpretationErrorReporter
+import org.jetbrains.kotlin.fir.dataframe.flatten
 import org.jetbrains.kotlin.fir.dataframe.pluginDataFrameSchema
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
@@ -31,12 +32,6 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlinx.dataframe.KotlinTypeFacadeImpl
-import org.jetbrains.kotlinx.dataframe.plugin.ColumnPathApproximation
-import org.jetbrains.kotlinx.dataframe.plugin.ColumnWithPathApproximation
-import org.jetbrains.kotlinx.dataframe.plugin.PluginDataFrameSchema
-import org.jetbrains.kotlinx.dataframe.plugin.SimpleCol
-import org.jetbrains.kotlinx.dataframe.plugin.SimpleColumnGroup
-import org.jetbrains.kotlinx.dataframe.plugin.SimpleFrameColumn
 
 class ExpressionAnalysisAdditionalChecker(session: FirSession) : FirAdditionalCheckersExtension(session) {
     override val expressionCheckers: ExpressionCheckers = object : ExpressionCheckers() {
@@ -83,8 +78,8 @@ private class Checker : FirFunctionCallChecker() {
             val targetProjection = expression.typeArguments[0] as? FirTypeProjectionWithVariance ?: return
             val targetType = targetProjection.typeRef.coneType as? ConeClassLikeType ?: return
             val target = pluginDataFrameSchema(targetType)
-            val sourceColumns = flatten(source)
-            val targetColumns = flatten(target)
+            val sourceColumns = source.flatten()
+            val targetColumns = target.flatten()
             val sourceMap = sourceColumns.associate { it.path.path to it.column }
             val missingColumns = mutableListOf<String>()
             var valid = true
@@ -106,33 +101,6 @@ private class Checker : FirFunctionCallChecker() {
             }
             if (!valid) {
                 reporter.reportOn(expression.source, CAST_ERROR, "Cast cannot succeed \n ${missingColumns.joinToString("\n")}", context)
-            }
-        }
-    }
-
-
-    private fun flatten(schema: PluginDataFrameSchema): List<ColumnWithPathApproximation> {
-        if (schema.columns().isEmpty()) return emptyList()
-        val columns = mutableListOf<ColumnWithPathApproximation>()
-        flattenImpl(schema.columns(), emptyList(), columns)
-        return columns
-    }
-
-    private fun flattenImpl(columns: List<SimpleCol>, path: List<String>, flatList: MutableList<ColumnWithPathApproximation>) {
-        columns.forEach { column ->
-            val fullPath = path + listOf(column.name)
-            when (column) {
-                is SimpleColumnGroup -> {
-                    flatList.add(ColumnWithPathApproximation(ColumnPathApproximation(fullPath), column))
-                    flattenImpl(column.columns(), fullPath, flatList)
-                }
-                is SimpleFrameColumn -> {
-                    flatList.add(ColumnWithPathApproximation(ColumnPathApproximation(fullPath), column))
-                    flattenImpl(column.columns(), fullPath, flatList)
-                }
-                else -> {
-                    flatList.add(ColumnWithPathApproximation(ColumnPathApproximation(fullPath), column))
-                }
             }
         }
     }

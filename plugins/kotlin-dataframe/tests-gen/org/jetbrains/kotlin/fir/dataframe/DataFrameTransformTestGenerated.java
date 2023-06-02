@@ -22,6 +22,24 @@ public class DataFrameTransformTestGenerated extends AbstractDataFrameTransformT
     }
 
     @Test
+    @TestMetadata("explodeDataFrame.kt")
+    public void testExplodeDataFrame() throws Exception {
+        runTest("testData/transform/explodeDataFrame.kt");
+    }
+
+    @Test
+    @TestMetadata("main.kt")
+    public void testMain() throws Exception {
+        runTest("testData/transform/main.kt");
+    }
+
+    @Test
+    @TestMetadata("parametrizedDataFrame.kt")
+    public void testParametrizedDataFrame() throws Exception {
+        runTest("testData/transform/parametrizedDataFrame.kt");
+    }
+
+    @Test
     @TestMetadata("transformReplaceFunctionCall.kt")
     public void testTransformReplaceFunctionCall() throws Exception {
         runTest("testData/transform/transformReplaceFunctionCall.kt");
