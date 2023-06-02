@@ -115,7 +115,7 @@ object ComposeErrors {
     // annotations with the descriptor. This is important to use for errors where the
     // only difference is whether or not it is annotated with @Composable or not.
     @JvmField
-    var CONFLICTING_OVERLOADS: DiagnosticFactory1<PsiElement, Collection<DeclarationDescriptor>> =
+    val CONFLICTING_OVERLOADS: DiagnosticFactory1<PsiElement, Collection<DeclarationDescriptor>> =
         DiagnosticFactory1.create(
             Severity.ERROR,
             DECLARATION_SIGNATURE_OR_DEFAULT
