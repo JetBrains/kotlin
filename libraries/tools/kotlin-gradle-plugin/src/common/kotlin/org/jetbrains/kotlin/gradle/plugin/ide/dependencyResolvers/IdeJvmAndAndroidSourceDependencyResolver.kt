@@ -29,6 +29,10 @@ internal object IdeJvmAndAndroidSourceDependencyResolver : IdeDependencyResolver
         if (!isJvmAndAndroid(sourceSet)) return emptySet()
         if (sourceSet !is DefaultKotlinSourceSet) return emptySet()
         return sourceSet.resolveMetadata<MetadataDependencyResolution.ChooseVisibleSourceSets>()
+            /**
+             * See [IdeVisibleMultiplatformSourceDependencyResolver] on why this could happen
+             */
+            .filter { chooseVisibleSourceSets -> chooseVisibleSourceSets.projectDependency(sourceSet.project) != sourceSet.project }
             .flatMap { chooseVisibleSourceSets ->
                 val projectDependency = chooseVisibleSourceSets.projectDependency(sourceSet.project)
                     ?: return@flatMap emptyList<IdeaKotlinDependency>()

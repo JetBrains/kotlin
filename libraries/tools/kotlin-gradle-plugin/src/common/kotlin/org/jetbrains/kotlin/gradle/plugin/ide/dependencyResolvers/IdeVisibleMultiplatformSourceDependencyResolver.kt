@@ -13,18 +13,28 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeDependencyResolver
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeaKotlinProjectCoordinates
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution
+import org.jetbrains.kotlin.gradle.plugin.mpp.projectDependency
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 
 internal object IdeVisibleMultiplatformSourceDependencyResolver : IdeDependencyResolver {
     override fun resolve(sourceSet: KotlinSourceSet): Set<IdeaKotlinDependency> {
         if (sourceSet !is DefaultKotlinSourceSet) return emptySet()
         return sourceSet.resolveMetadata<MetadataDependencyResolution.ChooseVisibleSourceSets>()
+            /*
+            Check if resolved dependency is pointing to the project that contains the Source Set
+            Such 'loop' or 'self' dependencies can happen when e.g.
+            1) 'project A' depends on 'project B'
+            2) 'project B / test' depends on project A
+
+            In this case project B tests will get a project dependency pointing to project B's main variant
+            */
+            .filter { resolution -> resolution.projectDependency(sourceSet.project) != sourceSet.project }
             .flatMap { resolution -> resolveSourceDependencies(resolution) }
             .toSet()
     }
 
     private fun resolveSourceDependencies(
-        resolution: MetadataDependencyResolution.ChooseVisibleSourceSets
+        resolution: MetadataDependencyResolution.ChooseVisibleSourceSets,
     ): Iterable<IdeaKotlinDependency> {
         val projectComponentIdentifier = resolution.dependency.id as? ProjectComponentIdentifier ?: return emptyList()
         return resolution.allVisibleSourceSetNames.map { visibleSourceSetName ->
