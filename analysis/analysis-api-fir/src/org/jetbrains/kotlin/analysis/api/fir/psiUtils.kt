@@ -34,7 +34,7 @@ fun FirElement.findPsi(): PsiElement? =
     getAllowedPsi()
 
 fun FirBasedSymbol<*>.findPsi(): PsiElement? =
-    fir.findPsi()
+    fir.findPsi() ?: FirSyntheticFunctionInterfaceSourceProvider.findPsi(fir)
 
 /**
  * Finds [PsiElement] which will be used as go-to referenced element for [KtPsiReference]
@@ -42,5 +42,5 @@ fun FirBasedSymbol<*>.findPsi(): PsiElement? =
  * Otherwise, behaves the same way as [findPsi] returns exact PSI declaration corresponding to passed [FirDeclaration]
  */
 fun FirDeclaration.findReferencePsi(): PsiElement? {
-    return psi
+    return psi ?: FirSyntheticFunctionInterfaceSourceProvider.findPsi(this)
 }
