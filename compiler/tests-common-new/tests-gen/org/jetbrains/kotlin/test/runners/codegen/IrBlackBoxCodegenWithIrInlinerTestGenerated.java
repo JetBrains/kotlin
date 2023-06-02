@@ -605,6 +605,12 @@ public class IrBlackBoxCodegenWithIrInlinerTestGenerated extends AbstractIrBlack
             public void testNestedAnnotationInstances() throws Exception {
                 runTest("compiler/testData/codegen/box/annotations/instances/nestedAnnotationInstances.kt");
             }
+
+            @Test
+            @TestMetadata("varargInAnnotationParameterInstantiation.kt")
+            public void testVarargInAnnotationParameterInstantiation() throws Exception {
+                runTest("compiler/testData/codegen/box/annotations/instances/varargInAnnotationParameterInstantiation.kt");
+            }
         }
 
         @Nested

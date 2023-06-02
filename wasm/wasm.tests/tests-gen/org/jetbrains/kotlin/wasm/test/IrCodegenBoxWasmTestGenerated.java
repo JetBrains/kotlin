@@ -157,6 +157,11 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
             public void testNestedAnnotationInstances() throws Exception {
                 runTest("compiler/testData/codegen/box/annotations/instances/nestedAnnotationInstances.kt");
             }
+
+            @TestMetadata("varargInAnnotationParameterInstantiation.kt")
+            public void testVarargInAnnotationParameterInstantiation() throws Exception {
+                runTest("compiler/testData/codegen/box/annotations/instances/varargInAnnotationParameterInstantiation.kt");
+            }
         }
 
         @TestMetadata("compiler/testData/codegen/box/annotations/kClassMapping")
