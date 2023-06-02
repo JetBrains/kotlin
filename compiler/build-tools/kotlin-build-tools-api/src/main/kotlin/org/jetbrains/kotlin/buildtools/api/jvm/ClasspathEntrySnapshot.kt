@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.buildtools.api.jvm
 
+import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
 import java.io.File
 
 /**
@@ -12,6 +13,7 @@ import java.io.File
  *
  * This interface is not intended to be implemented by the API consumers.
  */
+@ExperimentalBuildToolsApi
 public interface ClasspathEntrySnapshot {
     public val classSnapshots: LinkedHashMap<String, ClassSnapshot>
 
@@ -23,6 +25,7 @@ public interface ClasspathEntrySnapshot {
  *
  * This interface is not intended to be implemented by the API consumers.
  */
+@ExperimentalBuildToolsApi
 public interface ClassSnapshot {
     // ... TODO: KT-57565, it will expose some part of org.jetbrains.kotlin.incremental.classpathDiff.ClassSnapshot hierarchy
 }

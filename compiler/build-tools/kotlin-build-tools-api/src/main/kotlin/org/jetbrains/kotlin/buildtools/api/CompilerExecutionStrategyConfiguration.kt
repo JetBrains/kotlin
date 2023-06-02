@@ -12,6 +12,7 @@ import java.io.File
  *
  * This interface is not intended to be implemented by the API consumers.
  */
+@ExperimentalBuildToolsApi
 public interface CompilerExecutionStrategyConfiguration {
     /**
      * Marks the compilation to be run inside the same JVM as the caller.

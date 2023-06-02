@@ -12,12 +12,14 @@ import org.gradle.workers.WorkAction
 import org.gradle.workers.WorkParameters
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
 import org.jetbrains.kotlin.buildtools.api.CompilationService
+import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.SharedApiClassesClassLoader
 import org.jetbrains.kotlin.compilerRunner.GradleKotlinCompilerWorkArguments
 import org.jetbrains.kotlin.gradle.internal.ClassLoadersCachingBuildService
 import org.jetbrains.kotlin.gradle.internal.ParentClassLoaderProvider
 import java.io.File
 
+@OptIn(ExperimentalBuildToolsApi::class)
 internal abstract class BuildToolsApiCompilationWork : WorkAction<BuildToolsApiCompilationWork.BuildToolsApiCompilationParameters> {
     internal interface BuildToolsApiCompilationParameters : WorkParameters {
         val classLoadersCachingService: Property<ClassLoadersCachingBuildService>
@@ -48,6 +50,7 @@ internal abstract class BuildToolsApiCompilationWork : WorkAction<BuildToolsApiC
     }
 }
 
+@OptIn(ExperimentalBuildToolsApi::class)
 private object SharedApiClassesClassLoaderProvider : ParentClassLoaderProvider {
     override fun getClassLoader() = SharedApiClassesClassLoader()
 

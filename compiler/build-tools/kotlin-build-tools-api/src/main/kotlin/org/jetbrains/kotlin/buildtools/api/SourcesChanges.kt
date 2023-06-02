@@ -10,6 +10,7 @@ import java.io.File
 /**
  * A hierarchy representing source files changes for incremental compilation
  */
+@ExperimentalBuildToolsApi
 public sealed interface SourcesChanges {
     /**
      * A marker object stating that the API consumer cannot calculate changes (either because it's an initial build or for some other reason).

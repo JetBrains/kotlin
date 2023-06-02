@@ -16,6 +16,9 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/CompilerExec
 	public abstract fun useInProcessStrategy ()Lorg/jetbrains/kotlin/buildtools/api/CompilerExecutionStrategyConfiguration;
 }
 
+public abstract interface annotation class org/jetbrains/kotlin/buildtools/api/ExperimentalBuildToolsApi : java/lang/annotation/Annotation {
+}
+
 public abstract interface class org/jetbrains/kotlin/buildtools/api/KotlinLogger {
 	public abstract fun debug (Ljava/lang/String;)V
 	public abstract fun error (Ljava/lang/String;Ljava/lang/Throwable;)V

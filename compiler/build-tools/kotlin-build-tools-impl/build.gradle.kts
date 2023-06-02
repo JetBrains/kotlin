@@ -11,3 +11,9 @@ dependencies {
 publish()
 
 standardPublicJars()
+
+kotlin {
+    compilerOptions {
+        optIn.add("org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi")
+    }
+}
