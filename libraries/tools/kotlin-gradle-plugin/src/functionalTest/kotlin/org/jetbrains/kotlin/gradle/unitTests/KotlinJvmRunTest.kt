@@ -7,6 +7,7 @@
 
 package org.jetbrains.kotlin.gradle.unitTests
 
+import org.gradle.api.JavaVersion
 import org.gradle.api.tasks.JavaExec
 import org.jetbrains.kotlin.gradle.dependencyResolutionTests.mavenCentralCacheRedirector
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
@@ -14,6 +15,8 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.ReadyForEx
 import org.jetbrains.kotlin.gradle.plugin.await
 import org.jetbrains.kotlin.gradle.plugin.launch
 import org.jetbrains.kotlin.gradle.util.*
+import org.jetbrains.kotlin.konan.target.HostManager
+import org.junit.Assume
 import kotlin.test.*
 
 class KotlinJvmRunTest {
@@ -160,5 +163,24 @@ class KotlinJvmRunTest {
         ReadyForExecution.await()
     }
 
+    @Test
+    fun `test - jvmRun task is using kotlin configured toolchain - jvm 11`() = buildProjectWithMPP().runLifecycleAwareTest {
+        Assume.assumeFalse("https://github.com/gradle/native-platform/issues/274", HostManager.hostIsMingw)
+        val kotlin = multiplatformExtension
+        kotlin.jvmToolchain(11)
+        kotlin.jvm()
+        ReadyForExecution.await()
+        assertEquals(JavaVersion.VERSION_11, assertNotNull(kotlin.jvm().mainRun.await()).task.get().javaVersion)
+    }
+
+    @Test
+    fun `test - jvmRun task is using kotlin configured toolchain - jvm 17`() = buildProjectWithMPP().runLifecycleAwareTest {
+        Assume.assumeFalse("https://github.com/gradle/native-platform/issues/274", HostManager.hostIsMingw)
+        val kotlin = multiplatformExtension
+        kotlin.jvmToolchain(17)
+        kotlin.jvm()
+        ReadyForExecution.await()
+        assertEquals(JavaVersion.VERSION_17, assertNotNull(kotlin.jvm().mainRun.await()).task.get().javaVersion)
+    }
 }
 
