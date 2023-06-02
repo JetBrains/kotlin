@@ -7,6 +7,7 @@
 
 package org.jetbrains.kotlin.gradle.unitTests
 
+import org.gradle.api.JavaVersion
 import org.gradle.api.tasks.JavaExec
 import org.jetbrains.kotlin.gradle.dependencyResolutionTests.mavenCentralCacheRedirector
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
@@ -161,5 +162,22 @@ class KotlinJvmRunTest {
         checkDiagnostics("jvmRunTask-conflict")
     }
 
+    @Test
+    fun `test - jvmRun task is using kotlin configured toolchain - jvm 11`() = buildProjectWithMPP().runLifecycleAwareTest {
+        val kotlin = multiplatformExtension
+        kotlin.jvmToolchain(11)
+        kotlin.jvm()
+        configurationResult.await()
+        assertEquals(JavaVersion.VERSION_11, assertNotNull(kotlin.jvm().mainRun.await()).task.get().javaVersion)
+    }
+
+    @Test
+    fun `test - jvmRun task is using kotlin configured toolchain - jvm 17`() = buildProjectWithMPP().runLifecycleAwareTest {
+        val kotlin = multiplatformExtension
+        kotlin.jvmToolchain(17)
+        kotlin.jvm()
+        configurationResult.await()
+        assertEquals(JavaVersion.VERSION_17, assertNotNull(kotlin.jvm().mainRun.await()).task.get().javaVersion)
+    }
 }
 
