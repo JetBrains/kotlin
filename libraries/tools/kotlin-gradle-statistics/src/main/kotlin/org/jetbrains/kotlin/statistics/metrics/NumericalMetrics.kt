@@ -62,5 +62,9 @@ enum class NumericalMetrics(val type: NumberOverridePolicy, val anonymization: N
     // User scenarios
 
     // this value is not reported, only time intervals from the previous build are used
-    BUILD_FINISH_TIME(OVERRIDE, SAFE)
+    BUILD_FINISH_TIME(OVERRIDE, SAFE);
+
+    companion object {
+        const val VERSION = 1
+    }
 }

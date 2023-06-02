@@ -88,5 +88,9 @@ enum class StringMetrics(val type: StringOverridePolicy, val anonymization: Stri
     USE_OLD_BACKEND(CONCAT, AllowedListAnonymizer(listOf("true", "false"))),
     USE_FIR(CONCAT, AllowedListAnonymizer(listOf("true", "false"))),
 
-    JS_PROPERTY_LAZY_INITIALIZATION(CONCAT, AllowedListAnonymizer(listOf("true", "false"))),
+    JS_PROPERTY_LAZY_INITIALIZATION(CONCAT, AllowedListAnonymizer(listOf("true", "false")));
+
+    companion object {
+        const val VERSION = 1
+    }
 }
