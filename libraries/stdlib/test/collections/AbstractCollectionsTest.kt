@@ -74,6 +74,9 @@ class AbstractCollectionsTest {
         compare(map.toMap(), map) {
             mapBehavior()
         }
+
+        // values collection does not provide equals implementation
+        assertNotEquals(map.values, ReadOnlyMap().values)
     }
 
     class MutColl(val storage: MutableCollection<String> = mutableListOf()) : AbstractMutableCollection<String>() {
@@ -165,5 +168,8 @@ class AbstractCollectionsTest {
         compare(map.storage, map) {
             mapBehavior()
         }
+
+        // values collection does not provide equals implementation
+        assertNotEquals(map.values, MutMap(map).values)
     }
 }
