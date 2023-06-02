@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.fileParentOrNull
 import org.jetbrains.kotlin.backend.jvm.lower.JvmPropertiesLowering.Companion.createSyntheticMethodForPropertyDelegate
-import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
@@ -78,16 +77,6 @@ private class PropertyReferenceDelegationTransformer(val context: JvmBackendCont
             irExprBody(access)
         }
 
-    private val IrSimpleFunction.returnsResultOfStdlibCall: Boolean
-        get() = when (val body = body) {
-            is IrExpressionBody -> body.expression.isStdlibCall
-            is IrBlockBody -> body.statements.singleOrNull()?.let { it.isStdlibCall || (it is IrReturn && it.value.isStdlibCall) } == true
-            else -> false
-        }
-
-    private val IrStatement.isStdlibCall: Boolean
-        get() = this is IrCall && symbol.owner.getPackageFragment().packageFqName == StandardNames.BUILT_INS_PACKAGE_FQ_NAME
-
     // Some receivers don't need to be stored in fields and can be reevaluated every time an accessor is called:
     private fun IrExpression.canInline(visibleScopes: Set<IrDeclarationParent>): Boolean = when (this) {
         is IrGetValue -> {
@@ -128,14 +117,8 @@ private class PropertyReferenceDelegationTransformer(val context: JvmBackendCont
     }
 
     private fun IrProperty.transform(): List<IrDeclaration>? {
-        if (!isDelegated || isFakeOverride) return null
-
-        val oldField = backingField
-        val delegate = oldField?.initializer?.expression
-        if (delegate !is IrPropertyReference ||
-            getter?.returnsResultOfStdlibCall == false ||
-            setter?.returnsResultOfStdlibCall == false
-        ) return null
+        val delegate = getPropertyReferenceForOptimizableDelegatedProperty() ?: return null
+        val oldField = backingField ?: return null
 
         val receiver = (delegate.dispatchReceiver ?: delegate.extensionReceiver)
             ?.transform(this@PropertyReferenceDelegationTransformer, null)
