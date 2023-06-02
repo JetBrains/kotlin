@@ -113,6 +113,7 @@ internal class KtFirMetadataCalculator(
             metadataVersion = session.languageVersionSettings.languageVersion.toMetadataVersion(),
             jvmDefaultMode = JvmDefaultMode.ENABLE,
             stringTable,
+            null,
             null
         )
         return FirElementSerializer.createTopLevel(

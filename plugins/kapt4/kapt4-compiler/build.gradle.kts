@@ -15,16 +15,18 @@ dependencies {
     api(project(":compiler:frontend.java"))
     api(project(":compiler:plugin-api"))
 
+    implementation(project(":analysis:analysis-api-standalone"))
     embedded(project(":analysis:analysis-api-standalone")) {
         exclude("org.jetbrains.kotlin", "kotlin-stdlib")
         exclude("org.jetbrains.kotlin", "kotlin-stdlib-common")
     }
 
     implementation(project(":kotlin-annotation-processing"))
+    embedded(project(":kotlin-annotation-processing")) {
+        exclude("org.jetbrains.kotlin", "kotlin-stdlib")
+        exclude("org.jetbrains.kotlin", "kotlin-stdlib-common")
+    }
 
-    embedded(project(":kotlin-annotation-processing-base")) { isTransitive = false }
-    testImplementation(project(":kotlin-annotation-processing-cli"))
-    embedded(project(":kotlin-annotation-processing-runtime")){ isTransitive = false }
     implementation(project(":compiler:backend.jvm.entrypoint"))
 
     compileOnly(toolsJarApi())
