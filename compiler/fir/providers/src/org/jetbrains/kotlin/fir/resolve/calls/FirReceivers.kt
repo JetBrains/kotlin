@@ -97,7 +97,7 @@ open class ExpressionReceiverValue(
 sealed class ImplicitReceiverValue<S : FirBasedSymbol<*>>(
     val boundSymbol: S,
     type: ConeKotlinType,
-    protected val useSiteSession: FirSession,
+    val useSiteSession: FirSession,
     protected val scopeSession: ScopeSession,
     private val mutable: Boolean,
     val contextReceiverNumber: Int = -1,
@@ -109,8 +109,6 @@ sealed class ImplicitReceiverValue<S : FirBasedSymbol<*>>(
     abstract val isContextReceiver: Boolean
 
     val originalType: ConeKotlinType = type
-
-    val expandedType: ConeKotlinType = type.applyIf(type is ConeClassLikeType) { fullyExpandedType(useSiteSession) }
 
     var implicitScope: FirTypeScope? =
         type.scope(

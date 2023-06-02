@@ -276,7 +276,7 @@ class FirTowerDataElement(
     }
 
     private fun ImplicitReceiverValue<*>.getImplicitScope(): FirScope {
-        return when (expandedType) {
+        return when (type.fullyExpandedType(useSiteSession)) {
             is ConeErrorType,
             is ConeStubType -> FirTypeScope.Empty
             else -> implicitScope ?: error("Scope for type ${type::class.simpleName} is null.")
