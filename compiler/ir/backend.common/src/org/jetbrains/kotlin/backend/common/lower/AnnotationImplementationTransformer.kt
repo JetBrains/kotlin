@@ -17,12 +17,12 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildClass
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.classOrNull
-import org.jetbrains.kotlin.ir.types.isArray
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
@@ -105,6 +105,27 @@ abstract class AnnotationImplementationTransformer(val context: BackendContext, 
 
         destination.symbol.owner.valueParameters.forEachIndexed { index, parameter ->
             val valueArg = argumentsByName[parameter.name]
+
+            // if parameter is vararg, put an empty array as argument
+            if (valueArg == null && (parameter.type.isBoxedArray || parameter.type.isPrimitiveArray())) {
+                val arrayType = parameter.type
+
+                val arrayConstructorCall =
+                    if (arrayType.isBoxedArray) {
+                        val arrayFunction = context.ir.symbols.arrayOfNulls
+                        IrCallImpl.fromSymbolOwner(source.startOffset, source.endOffset, arrayType, arrayFunction)
+                    } else {
+                        val arrayConstructor = arrayType.classOrNull!!.constructors.single { it.owner.valueParameters.size == 1 }
+                        IrConstructorCallImpl.fromSymbolOwner(source.startOffset, source.endOffset, arrayType, arrayConstructor)
+                    }
+                arrayConstructorCall.putValueArgument(
+                    0,
+                    IrConstImpl.int(source.startOffset, source.endOffset, context.irBuiltIns.intType, 0)
+                )
+                destination.putValueArgument(index, arrayConstructorCall)
+                return
+            }
+
             if (parameter.defaultValue == null && valueArg == null)
                 error(
                     "Usage of default value argument for this annotation is not yet possible.\n" +

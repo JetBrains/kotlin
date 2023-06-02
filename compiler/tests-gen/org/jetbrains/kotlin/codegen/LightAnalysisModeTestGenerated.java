@@ -323,6 +323,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/annotations/varargInAnnotationParameter.kt");
         }
 
+        @TestMetadata("varargInAnnotationParameterInstantiation.kt")
+        public void testVarargInAnnotationParameterInstantiation() throws Exception {
+            runTest("compiler/testData/codegen/box/annotations/varargInAnnotationParameterInstantiation.kt");
+        }
+
         @TestMetadata("compiler/testData/codegen/box/annotations/annotatedLambda")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

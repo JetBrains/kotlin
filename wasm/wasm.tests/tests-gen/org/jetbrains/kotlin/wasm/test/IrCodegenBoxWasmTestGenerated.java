@@ -78,6 +78,11 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
             runTest("compiler/testData/codegen/box/annotations/selfReferentialAnnotation.kt");
         }
 
+        @TestMetadata("varargInAnnotationParameterInstantiation.kt")
+        public void testVarargInAnnotationParameterInstantiation() throws Exception {
+            runTest("compiler/testData/codegen/box/annotations/varargInAnnotationParameterInstantiation.kt");
+        }
+
         @TestMetadata("compiler/testData/codegen/box/annotations/annotatedLambda")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

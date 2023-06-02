@@ -77,6 +77,12 @@ public class FirJsCodegenBoxTestGenerated extends AbstractFirJsCodegenBoxTest {
             runTest("compiler/testData/codegen/box/annotations/selfReferentialAnnotation.kt");
         }
 
+        @Test
+        @TestMetadata("varargInAnnotationParameterInstantiation.kt")
+        public void testVarargInAnnotationParameterInstantiation() throws Exception {
+            runTest("compiler/testData/codegen/box/annotations/varargInAnnotationParameterInstantiation.kt");
+        }
+
         @Nested
         @TestMetadata("compiler/testData/codegen/box/annotations/annotatedLambda")
         @TestDataPath("$PROJECT_ROOT")
