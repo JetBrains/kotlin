@@ -330,4 +330,20 @@ object KotlinToolingDiagnostics {
             """.trimIndent()
         )
     }
+
+    object KotlinSourceSetTreeDependsOnMismatch : ToolingDiagnosticFactory(ERROR) {
+        operator fun invoke(dependeeName: String, dependencyName: String) = build(
+            """
+                KotlinSourceSets '${dependeeName}' can't depend on '${dependencyName}'
+                as they belong to different KotlinSourceSet trees. Please remove this dependency.
+            """.trimIndent()
+        )
+
+        operator fun invoke(dependeeAName: String, dependeeBName: String, dependencyName: String) = build(
+            """
+                KotlinSourceSets '${dependeeAName}' and '${dependeeBName}' can't both depend on '${dependencyName}'
+                as they belong to different KotlinSourceSet trees. Please remove one of the dependencies.
+            """.trimIndent()
+        )
+    }
 }

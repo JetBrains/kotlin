@@ -106,7 +106,8 @@ internal interface KotlinGradleProjectChecker {
             DisabledNativeTargetsChecker,
             JsEnvironmentChecker,
             PreHmppDependenciesUsageChecker,
-            ExperimentalK2UsageChecker
+            ExperimentalK2UsageChecker,
+            KotlinSourceSetTreeDependsOnMismatchChecker,
         )
     }
 }
