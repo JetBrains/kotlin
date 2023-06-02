@@ -62,6 +62,10 @@ dependencies {
 
     testSuite("webassembly:testsuite:$testSuiteRevision@zip")
     wabt("webassembly:wabt:$wabtVersion:$wabtOS@tar.gz")
+
+    implicitDependencies("webassembly:wabt:$wabtVersion:windows@tar.gz")
+    implicitDependencies("webassembly:wabt:$wabtVersion:ubuntu@tar.gz")
+    implicitDependencies("webassembly:wabt:$wabtVersion:macos@tar.gz")
 }
 
 val unzipTestSuite by task<Copy> {
