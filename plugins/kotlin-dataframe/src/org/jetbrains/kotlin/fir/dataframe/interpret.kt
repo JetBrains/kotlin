@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.dataframe.extensions.Arguments
 import org.jetbrains.kotlin.fir.dataframe.extensions.RefinedArgument
 import org.jetbrains.kotlin.fir.declarations.findArgumentByName
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
+import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.fir.references.FirResolvedCallableReference
@@ -238,13 +239,17 @@ fun <T> KotlinTypeFacade.interpret(
 }
 
 internal fun KotlinTypeFacade.pluginDataFrameSchema(coneClassLikeType: ConeClassLikeType): PluginDataFrameSchema {
-    val declarationSymbols =
-        (coneClassLikeType.toSymbol(session) as FirRegularClassSymbol)
-            .declaredMemberScope(session)
-            .let { scope ->
-                val names = scope.getCallableNames()
-                names.flatMap { scope.getProperties(it) }
-            }
+    val symbol = coneClassLikeType.toSymbol(session) as FirRegularClassSymbol
+    val declarationSymbols = if (symbol.isLocal && symbol.resolvedSuperTypes.isNotEmpty()) {
+        val rootSchemaSymbol = symbol.resolvedSuperTypes.first().toSymbol(session) as FirRegularClassSymbol
+        rootSchemaSymbol.declaredMemberScope(session)
+    } else {
+        symbol.declaredMemberScope(session)
+    }.let { scope ->
+        val names = scope.getCallableNames()
+        names.flatMap { scope.getProperties(it) }
+    }
+
     val columns = declarationSymbols.filterIsInstance<FirPropertySymbol>().map { propertySymbol ->
         columnOf(propertySymbol)
     }

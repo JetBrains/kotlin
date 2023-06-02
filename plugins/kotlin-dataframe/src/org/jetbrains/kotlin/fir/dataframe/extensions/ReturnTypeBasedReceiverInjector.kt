@@ -16,7 +16,10 @@ class ReturnTypeBasedReceiverInjector(session: FirSession) : FirExpressionResolu
     override fun addNewImplicitReceivers(functionCall: FirFunctionCall): List<ConeKotlinType> {
         val token = generatedTokenOrNull(functionCall) ?: return emptyList()
         val symbol = token.toSymbol(session)!! as FirRegularClassSymbol
-        return symbol.declarationSymbols.filterIsInstance<FirPropertySymbol>().map { it.resolvedReturnType }
+        return symbol.declarationSymbols
+            .filterIsInstance<FirPropertySymbol>()
+            .filter { it.resolvedReturnType.classId?.shortClassName?.asString()?.startsWith("Scope") ?: false }
+            .map { it.resolvedReturnType }
     }
 
     private fun generatedTokenOrNull(call: FirFunctionCall): ConeClassLikeType? {

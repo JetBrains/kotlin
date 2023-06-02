@@ -4,7 +4,9 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.dataframe.FirMetaContext
 import org.jetbrains.kotlin.fir.dataframe.InterpretationErrorReporter
+import org.jetbrains.kotlin.fir.dataframe.flatten
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
+import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirStatement
@@ -15,29 +17,119 @@ import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.classId
+import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.isNullable
+import org.jetbrains.kotlin.fir.types.toSymbol
+import org.jetbrains.kotlin.fir.types.type
 import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitorVoid
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlinx.dataframe.KotlinTypeFacade
+import org.jetbrains.kotlinx.dataframe.annotations.TypeApproximation
+import org.jetbrains.kotlinx.dataframe.plugin.SimpleCol
+import org.jetbrains.kotlinx.dataframe.plugin.SimpleColumnGroup
+import org.jetbrains.kotlinx.dataframe.plugin.SimpleColumnKind
+import org.jetbrains.kotlinx.dataframe.plugin.SimpleFrameColumn
+import java.util.concurrent.atomic.AtomicInteger
 
 class FunctionTransformer(
     session: FirSession,
     private val context: FirMetaContext,
     val refinedToOriginal: MutableMap<Name, FirBasedSymbol<*>>,
 ) : FirFunctionTransformerExtension(session), KotlinTypeFacade {
+
+    companion object {
+        const val rootToken = "DataFrameType1"
+    }
+
+    private var counter = AtomicInteger(0)
+
+    private val DataRow = org.jetbrains.kotlinx.dataframe.DataRow::class.simpleName!!
+    private val ColumnsContainer = org.jetbrains.kotlinx.dataframe.ColumnsContainer::class.simpleName!!
+    private val DataFrame = org.jetbrains.kotlinx.dataframe.DataFrame::class.simpleName!!
+    private val DataColumn = org.jetbrains.kotlinx.dataframe.DataColumn::class.simpleName!!
+    private val ColumnGroup = org.jetbrains.kotlinx.dataframe.columns.ColumnGroup::class.simpleName!!
+
+    fun renderNullability(nullable: Boolean) = if (nullable) "?" else ""
+
+    fun renderStringLiteral(name: String) = name
+        .replace("\\", "\\\\")
+        .replace("$", "\\\$")
+        .replace("\"", "\\\"")
+
     @OptIn(SymbolInternals::class)
     override fun transform(call: FirFunctionCall): FirFunctionCall = with (context) {
         val (token, dataFrameSchema) =
             analyzeRefinedCallShape(call, InterpretationErrorReporter.DEFAULT) ?: return call
 
+        val names = mutableMapOf<SimpleCol, String>()
+        val columns = dataFrameSchema.columns()
+
+        val declarations = StringBuilder()
+
+        fun appendSchemaDeclarations(tokenName: String, cols: List<SimpleCol>, scopeName: String) {
+            declarations.appendLine("""
+                abstract class $tokenName {
+                    ${cols.joinToString("\n") { it.property(names) }}
+                }
+                
+                class $scopeName {
+                    ${cols.joinToString("\n") { it.extensions(tokenName, names) }}
+                }
+            """.trimIndent())
+        }
+
+        class SchemaDeclaration(val proposedName: String, val column: SimpleCol?, val columns: List<SimpleCol>)
+        val schemas = mutableListOf<SchemaDeclaration>()
+
+
+        schemas.add(SchemaDeclaration(rootToken, null, columns))
+
+        dataFrameSchema.flatten().distinctBy { it.column }.forEach {
+            names[it.column] = it.path.path.last()
+        }
+
+        dataFrameSchema.flatten().mapNotNullTo(schemas) { (path, column) ->
+            when (column) {
+                is SimpleColumnGroup -> {
+                    SchemaDeclaration(path.path.lastOrNull()!!, column, column.columns())
+                }
+                is SimpleFrameColumn -> {
+                    SchemaDeclaration(path.path.lastOrNull()!!, column, column.columns())
+                }
+                is SimpleCol -> null
+                else -> error(column::class.java)
+            }
+        }
+
+
+        val distinctBy = schemas.distinctBy { it.columns }
+        distinctBy.asReversed().forEachIndexed { i, declaration ->
+            appendSchemaDeclarations(declaration.proposedName, declaration.columns, """Scope$i""")
+        }
+
+
+        val name = token.type.classId?.shortClassName?.identifierOrNullIfSpecial!!
+        val scopes = buildString {
+            distinctBy.forEachIndexed { index, schemaDeclaration ->
+                appendLine("""abstract val scope$index: Scope$index""")
+            }
+        }
+        declarations.appendLine("""
+            abstract class $name : $rootToken() {
+                $scopes
+            }
+        """.trimIndent())
+
         call.transformCalleeReference(object : FirTransformer<Nothing?>() {
             override fun <E : FirElement> transformElement(element: E, data: Nothing?): E {
                 return if (element is FirResolvedNamedReference) {
                     buildResolvedNamedReference {
-                        name = element.name
+                        this.name = element.name
                         val refinedName = call.calleeReference.toResolvedCallableSymbol()?.callableId?.callableName!!
                         resolvedSymbol = refinedToOriginal[refinedName]!!
                     } as E
@@ -46,28 +138,30 @@ class FunctionTransformer(
                 }
             }
         }, null)
-        val name = token.type.classId?.shortClassName?.identifierOrNullIfSpecial!!
+
+        val receiver = buildString {
+            append(call.explicitReceiver?.typeRef?.coneType?.classId?.asFqNameString()!!)
+            if (call.explicitReceiver!!.typeRef.coneType.typeArguments.isNotEmpty()) {
+                if ((call.explicitReceiver!!.typeRef.coneType.typeArguments[0].type?.toSymbol(session)!! as FirRegularClassSymbol).isLocal) {
+                    append("<*>")
+                } else {
+                    append("<")
+                    append(call.explicitReceiver!!.typeRef.coneType.typeArguments.joinToString { it.type?.classId?.asFqNameString()!! })
+                    append(">")
+                }
+            }
+        }
+
         val newCall = compile<FirFunctionCall>(
             """
             package org.jetbrains.kotlinx.dataframe                    
 
-            import org.jetbrains.kotlinx.dataframe.DataFrame
+            import org.jetbrains.kotlinx.dataframe.*
+            import org.jetbrains.kotlinx.dataframe.columns.*
         
-            fun test(df1: DataFrame<*>) {
+            fun test${counter.getAndIncrement()}(df1: $receiver) {
                 df1.let { 
-                    
-                    open class _DataFrameType1
-                    
-                    class Scope1 {
-                        val ColumnsContainer<_DataFrameType1>.col1: DataColumn<Int> get() = this["col1"] as DataColumn<Int>
-                        val DataRow<_DataFrameType1>.col1: Int get() = this["col1"] as Int
-                    }
-                    
-                    class $name : _DataFrameType1() {
-                        val scope1: Scope1 = TODO()
-                    }
-                    
-                    
+                    $declarations
                     it as DataFrame<$name>
                 }
             }
@@ -97,6 +191,98 @@ class FunctionTransformer(
             }
         })
         return newCall
+    }
+
+    private fun SimpleCol.extensions(markerName: String, names: MutableMap<SimpleCol, String>): String {
+        val getter = "this[\"${renderStringLiteral(name())}\"]"
+        val name = name()
+
+
+
+        val fieldType = when (kind()) {
+            SimpleColumnKind.VALUE ->
+                type.renderType()
+
+            SimpleColumnKind.GROUP ->
+                "${DataRow}<${names[this]!!}>"
+
+            SimpleColumnKind.FRAME ->
+                "${DataFrame}<${names[this]!!}>${renderNullability(type.type().isNullable)}"
+        }
+
+        val columnType = when (kind()) {
+            SimpleColumnKind.VALUE ->
+                "${DataColumn}<${type.renderType()}>"
+
+            SimpleColumnKind.GROUP ->
+                "${ColumnGroup}<${names[this]!!}>"
+
+            SimpleColumnKind.FRAME -> {
+                "${DataColumn}<${DataFrame}<${names[this]!!}>${renderNullability((this as SimpleFrameColumn).nullable)}>"
+            }
+        }
+
+        val dfTypename = "${ColumnsContainer}<${markerName}>"
+        val rowTypename = "${DataRow}<${markerName}>"
+
+        return generatePropertyCode(
+            shortMarkerName = markerName,
+            typeName = dfTypename,
+            name = name,
+            propertyType = columnType,
+            getter = getter,
+        ) + "\n" +
+            generatePropertyCode(
+                shortMarkerName = markerName,
+                typeName = rowTypename,
+                name = name,
+                propertyType = fieldType,
+                getter = getter,
+            )
+    }
+
+    fun TypeApproximation.renderType(): String {
+        val type1 = type()
+        val type = type1.classId!!.asFqNameString()
+        val nullability = renderNullability(type1.isNullable)
+        return buildString {
+            append(type)
+            if (type1.typeArguments.isNotEmpty()) {
+                append("<")
+                append(type1.typeArguments.joinToString { it.type?.classId?.asFqNameString()!! })
+                append(">")
+            }
+            append(nullability)
+        }
+    }
+
+    private fun generatePropertyCode(
+        shortMarkerName: String,
+        typeName: String,
+        name: String,
+        propertyType: String,
+        getter: String,
+    ): String {
+        // jvm name is required to prevent signature clash like this:
+        // val DataRow<Type>.name: String
+        // val DataRow<Repo>.name: String
+        val jvmName = "${shortMarkerName}_${name}"
+        return "val $typeName.$name: $propertyType @JvmName(\"${renderStringLiteral(jvmName)}\") get() = $getter as $propertyType"
+    }
+
+    private fun SimpleCol.property(names: MutableMap<SimpleCol, String>): String {
+        return when (kind()) {
+            SimpleColumnKind.VALUE -> "abstract val $name: ${type.renderType()}"
+            SimpleColumnKind.GROUP -> {
+                val token = names[this]!!
+                "abstract val $name: ${type.type().classId!!.asFqNameString()}<$token>"
+            }
+
+            SimpleColumnKind.FRAME -> {
+                val token = names[this]!!
+                "abstract val $name: ${type.type().classId!!.asFqNameString()}<$token>"
+            }
+        }
     }
 
     private class InsertOriginalCall(val call: FirFunctionCall) :  FirDefaultTransformer<Nothing?>() {
