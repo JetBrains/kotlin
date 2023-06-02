@@ -374,6 +374,10 @@ public class DefaultErrorMessages {
 
         MAP.put(NO_ACTUAL_FOR_EXPECT, "Expected {0} has no actual declaration in module {1}{2}", DECLARATION_NAME_WITH_KIND,
                 MODULE_WITH_PLATFORM, adaptGenerics1(PlatformIncompatibilityDiagnosticRenderer.TEXT));
+        MAP.put(IMPLICIT_JVM_ACTUALIZATION, "Expected {0} is implicitly actualized by Java declaration in module {1}. " +
+                                            "Please migrate to explicit ''actual typealias''. See: https://youtrack.jetbrains.com/issue/KT-58545",
+                DECLARATION_NAME_WITH_KIND,
+                MODULE_WITH_PLATFORM);
         MAP.put(ACTUAL_WITHOUT_EXPECT, "{0} has no corresponding expected declaration{1}", CAPITALIZED_DECLARATION_NAME_WITH_KIND_AND_PLATFORM,
                 adaptGenerics1(PlatformIncompatibilityDiagnosticRenderer.TEXT));
         MAP.put(AMBIGUOUS_ACTUALS, "{0} has several compatible actual declarations in modules {1}", CAPITALIZED_DECLARATION_NAME_WITH_KIND_AND_PLATFORM, CommonRenderers.commaSeparated(

@@ -879,6 +879,24 @@ public class FirOldFrontendMPPDiagnosticsWithLightTreeTestGenerated extends Abst
         }
 
         @Test
+        @TestMetadata("implicitJavaActualizationAllowed.kt")
+        public void testImplicitJavaActualizationAllowed() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/java/implicitJavaActualizationAllowed.kt");
+        }
+
+        @Test
+        @TestMetadata("implicitJavaActualizationDisallowed.kt")
+        public void testImplicitJavaActualizationDisallowed() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/java/implicitJavaActualizationDisallowed.kt");
+        }
+
+        @Test
+        @TestMetadata("implicitJavaActualization_multipleActuals.kt")
+        public void testImplicitJavaActualization_multipleActuals() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/java/implicitJavaActualization_multipleActuals.kt");
+        }
+
+        @Test
         @TestMetadata("inheritedJavaMembers.kt")
         public void testInheritedJavaMembers() throws Exception {
             runTest("compiler/testData/diagnostics/tests/multiplatform/java/inheritedJavaMembers.kt");

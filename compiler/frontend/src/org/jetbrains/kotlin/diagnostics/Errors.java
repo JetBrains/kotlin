@@ -817,6 +817,8 @@ public interface Errors {
     DiagnosticFactory3<KtNamedDeclaration, MemberDescriptor, ModuleDescriptor,
             Map<Incompatible<MemberDescriptor>, Collection<MemberDescriptor>>> NO_ACTUAL_FOR_EXPECT =
             DiagnosticFactory3.create(ERROR, INCOMPATIBLE_DECLARATION);
+    DiagnosticFactory2<KtNamedDeclaration, MemberDescriptor, ModuleDescriptor> IMPLICIT_JVM_ACTUALIZATION =
+            DiagnosticFactory2.create(ERROR, INCOMPATIBLE_DECLARATION);
     DiagnosticFactory2<KtNamedDeclaration, MemberDescriptor,
             Map<Incompatible<MemberDescriptor>, Collection<MemberDescriptor>>> ACTUAL_WITHOUT_EXPECT =
             DiagnosticFactory2.create(ERROR, INCOMPATIBLE_DECLARATION);

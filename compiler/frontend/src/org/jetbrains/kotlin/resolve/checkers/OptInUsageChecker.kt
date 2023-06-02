@@ -343,7 +343,7 @@ class OptInUsageChecker(project: Project) : CallChecker {
             }
         }
 
-        private fun PsiElement.isDeclarationAnnotatedWith(annotationFqName: FqName, bindingContext: BindingContext): Boolean {
+        internal fun PsiElement.isDeclarationAnnotatedWith(annotationFqName: FqName, bindingContext: BindingContext): Boolean {
             if (this !is KtDeclaration) return false
 
             val descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, this)

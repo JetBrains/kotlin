@@ -98,6 +98,29 @@ public actual annotation class JvmSynthetic
 @Retention(AnnotationRetention.SOURCE)
 public annotation class Throws(vararg val exceptionClasses: KClass<out Throwable>)
 
+/**
+ * This annotation marks Kotlin `expect` declarations that are implicitly actualized by Java.
+ *
+ * # Safety Risks
+ *
+ * Implicit actualization bypasses safety features, potentially leading to errors or unexpected behavior. If you use this annotation, some
+ * of the expect-actual invariants are not checked.
+ *
+ * Use this annotation only as a last resort. The annotation might stop working in future Kotlin versions without prior notice.
+ *
+ * If you use this annotation, consider describing your use cases in [KT-58545](https://youtrack.jetbrains.com/issue/KT-58545) comments.
+ *
+ * # Migration
+ *
+ * Rewrite the code using explicit `actual typealias`. Unfortunately, it requires you to move your expect declarations into another
+ * package. Refer to [KT-58545](https://youtrack.jetbrains.com/issue/KT-58545) for more detailed migration example.
+ */
+@Retention(AnnotationRetention.BINARY)
+@Target(AnnotationTarget.CLASS)
+@ExperimentalMultiplatform
+@MustBeDocumented
+@SinceKotlin("1.9")
+public actual annotation class ImplicitlyActualizedByJvmDeclaration
 
 /**
  * Instructs the Kotlin compiler not to generate getters/setters for this property and expose it as a field.
