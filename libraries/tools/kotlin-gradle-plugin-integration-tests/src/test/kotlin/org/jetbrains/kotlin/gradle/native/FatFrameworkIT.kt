@@ -26,7 +26,7 @@ class FatFrameworkIT : KGPBaseTest() {
     fun smokeIos(gradleVersion: GradleVersion) {
         nativeProject("native-fat-framework/smoke", gradleVersion) {
             checkSmokeBuild(
-                archs = listOf("x64", "arm64", "arm32"),
+                archs = listOf("x64", "arm64"),
                 targetPrefix = "ios",
                 expectedPlistPlatform = "iPhoneOS"
             )
@@ -35,7 +35,6 @@ class FatFrameworkIT : KGPBaseTest() {
             assertProcessRunResult(runProcess(listOf("file", binary), projectPath.toFile())) {
                 assertTrue(isSuccessful)
                 assertTrue(output.contains("\\(for architecture x86_64\\):\\s+Mach-O 64-bit dynamically linked shared library x86_64".toRegex()))
-                assertTrue(output.contains("\\(for architecture armv7\\):\\s+Mach-O dynamically linked shared library arm_v7".toRegex()))
                 assertTrue(output.contains("\\(for architecture arm64\\):\\s+Mach-O 64-bit dynamically linked shared library arm64".toRegex()))
             }
         }
@@ -49,12 +48,11 @@ class FatFrameworkIT : KGPBaseTest() {
             gradleVersion,
         ) {
             buildGradleKts.modify {
-                it.checkedReplace("iosArm32()", "watchosArm32()")
-                    .checkedReplace("iosArm64()", "watchosArm64(); watchosDeviceArm64()")
+                it.checkedReplace("iosArm64()", "watchosArm64(); watchosDeviceArm64()")
                     .checkedReplace("iosX64()", "watchosX64()")
             }
             checkSmokeBuild(
-                archs = listOf("x64", "arm64", "arm32", "deviceArm64"),
+                archs = listOf("x64", "arm64", "deviceArm64"),
                 targetPrefix = "watchos",
                 expectedPlistPlatform = "WatchOS"
             )
@@ -62,7 +60,6 @@ class FatFrameworkIT : KGPBaseTest() {
             assertProcessRunResult(runProcess(listOf("file", binary), projectPath.toFile())) {
                 assertTrue(isSuccessful)
                 assertTrue(output.contains("\\(for architecture x86_64\\):\\s+Mach-O 64-bit dynamically linked shared library x86_64".toRegex()))
-                assertTrue(output.contains("\\(for architecture armv7k\\):\\s+Mach-O dynamically linked shared library arm_v7k".toRegex()))
                 assertTrue(output.contains("\\(for architecture arm64_32\\):\\s+Mach-O dynamically linked shared library arm64_32_v8".toRegex()))
                 assertTrue(output.contains("\\(for architecture arm64\\):\\s+Mach-O 64-bit dynamically linked shared library arm64".toRegex()))
             }
@@ -77,8 +74,7 @@ class FatFrameworkIT : KGPBaseTest() {
             gradleVersion
         ) {
             buildGradleKts.modify {
-                it.checkedReplace("iosArm32()", "")
-                    .checkedReplace("iosArm64()", "macosArm64()")
+                it.checkedReplace("iosArm64()", "macosArm64()")
                     .checkedReplace("iosX64()", "macosX64()")
             }
             checkSmokeBuild(
@@ -197,9 +193,8 @@ class FatFrameworkIT : KGPBaseTest() {
     fun testDifferentTypes(gradleVersion: GradleVersion) {
         nativeProject("native-fat-framework/smoke", gradleVersion) {
             buildGradleKts.modify {
-                it.checkedReplace("iosArm32()", "iosArm32{binaries.framework {isStatic = true}}")
-                    .checkedReplace("iosArm64()", "iosArm64{binaries.framework {isStatic = false}}")
-                    .checkedReplace("iosX64()", "iosX64{binaries.framework {isStatic = false}}")
+                it.checkedReplace("iosArm64()", "iosArm64{binaries.framework {isStatic = false}}")
+                    .checkedReplace("iosX64()", "iosX64{binaries.framework {isStatic = true}}")
                     .addBeforeSubstring("//", "binaries.framework(listOf(DEBUG))")
             }
             buildAndFail("fat") {
@@ -213,8 +208,7 @@ class FatFrameworkIT : KGPBaseTest() {
     fun testAllStatic(gradleVersion: GradleVersion) {
         nativeProject("native-fat-framework/smoke", gradleVersion) {
             buildGradleKts.modify {
-                it.checkedReplace("iosArm32()", "iosArm32{binaries.framework {isStatic = true}}")
-                    .checkedReplace("iosArm64()", "iosArm64{binaries.framework {isStatic = true}}")
+                it.checkedReplace("iosArm64()", "iosArm64{binaries.framework {isStatic = true}}")
                     .checkedReplace("iosX64()", "iosX64{binaries.framework {isStatic = true}}")
                     .addBeforeSubstring("//", "binaries.framework(listOf(DEBUG))")
             }
