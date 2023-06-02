@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.backend.generators
 
+import com.intellij.openapi.progress.ProcessCanceledException
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -485,6 +486,8 @@ class CallAndReferenceGenerator(
                 }
             }.applyTypeArguments(qualifiedAccess).applyReceivers(qualifiedAccess, convertedExplicitReceiver)
                 .applyCallArguments(qualifiedAccess)
+        } catch (e: ProcessCanceledException) {
+            throw e
         } catch (e: Throwable) {
             throw IllegalStateException(
                 "Error while translating ${qualifiedAccess.render()} " +
@@ -637,6 +640,8 @@ class CallAndReferenceGenerator(
                     else -> generateErrorCallExpression(startOffset, endOffset, calleeReference)
                 }
             }.applyTypeArguments(lValue).applyReceivers(lValue, explicitReceiverExpression)
+        } catch (e: ProcessCanceledException) {
+            throw e
         } catch (e: Throwable) {
             throw IllegalStateException(
                 "Error while translating ${variableAssignment.render()} " +
