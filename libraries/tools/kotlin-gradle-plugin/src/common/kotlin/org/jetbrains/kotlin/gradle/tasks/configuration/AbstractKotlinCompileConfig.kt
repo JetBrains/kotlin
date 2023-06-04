@@ -56,9 +56,6 @@ internal abstract class AbstractKotlinCompileConfig<TASK : AbstractKotlinCompile
                     applyLanguageSettingsToCompilerOptions(
                         languageSettings.get(),
                         (it as org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask<*>).compilerOptions,
-                        // KotlinJsIrTarget and KotlinJsIrTargetConfigurator add additional freeCompilerArgs essentially
-                        // always overwriting convention value
-                        addFreeCompilerArgsAsConvention = it !is Kotlin2JsCompile
                     )
                 }
             }

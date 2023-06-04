@@ -118,7 +118,6 @@ internal class DefaultLanguageSettingsBuilder : LanguageSettingsBuilder {
 internal fun applyLanguageSettingsToCompilerOptions(
     languageSettingsBuilder: LanguageSettings,
     compilerOptions: KotlinCommonCompilerOptions,
-    addFreeCompilerArgsAsConvention: Boolean = true,
 ) = with(compilerOptions) {
     val languageSettingsBuilderDefault = languageSettingsBuilder as DefaultLanguageSettingsBuilder
     languageSettingsBuilderDefault.languageVersion?.let {
@@ -139,11 +138,7 @@ internal fun applyLanguageSettingsToCompilerOptions(
     freeArgs.addAll(languageSettingsBuilderDefault.freeCompilerArgsForNonImport)
 
     if (freeArgs.isNotEmpty()) {
-        if (addFreeCompilerArgsAsConvention) {
-            freeCompilerArgs.convention(freeArgs)
-        } else {
-            freeCompilerArgs.addAll(freeArgs)
-        }
+        freeCompilerArgs.addAll(freeArgs)
     }
 }
 

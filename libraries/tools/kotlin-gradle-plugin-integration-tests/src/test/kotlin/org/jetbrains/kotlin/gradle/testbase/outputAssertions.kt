@@ -253,6 +253,27 @@ fun BuildResult.assertCompilerArgument(
     }
 }
 
+fun BuildResult.assertCompilerArguments(
+    taskPath: String,
+    vararg expectedArguments: String,
+) {
+    val taskOutput = getOutputForTask(taskPath)
+    val compilerArguments = taskOutput.lines().first {
+        it.contains("Kotlin compiler args:")
+    }.substringAfter("Kotlin compiler args:")
+
+    val nonExistingArguments = expectedArguments
+        .filter {
+            !compilerArguments.contains(it)
+        }
+
+    assert(nonExistingArguments.isEmpty()) {
+        printBuildOutput()
+
+        "$taskPath task compiler arguments don't contain ${nonExistingArguments.joinToString()}. Actual content: $compilerArguments"
+    }
+}
+
 fun BuildResult.assertNoCompilerArgument(
     taskPath: String,
     notExpectedArgument: String,
