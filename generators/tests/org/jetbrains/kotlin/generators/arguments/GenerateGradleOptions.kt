@@ -720,9 +720,24 @@ private fun Printer.generateCompilerOptionsHelper(
         }
         println(") {")
         withIndent {
+            val multiValuesReturnTypes = setOf(
+                "org.gradle.api.provider.ListProperty",
+                "org.gradle.api.provider.SetProperty",
+            )
             if (parentHelperName != null) println("$parentHelperName.syncOptionsAsConvention(from, into)")
             for (property in properties) {
-                println("into.${property.name}.convention(from.${property.name})")
+
+                // Behaviour of ListProperty, SetProperty, MapProperty append operators in regard to convention value
+                // is confusing for users: https://github.com/gradle/gradle/issues/18352
+                // To make it less confusing for such types instead of wiring them via ".convention()" we updating
+                // current value
+                val gradleLazyReturnType = property.gradleLazyReturnType
+                val mapper = when {
+                    multiValuesReturnTypes.any { gradleLazyReturnType.startsWith(it) } -> "addAll"
+                    gradleLazyReturnType.startsWith("org.gradle.api.provider.MapProperty") -> "putAll"
+                    else -> "convention"
+                }
+                println("into.${property.name}.$mapper(from.${property.name})")
             }
         }
         println("}")

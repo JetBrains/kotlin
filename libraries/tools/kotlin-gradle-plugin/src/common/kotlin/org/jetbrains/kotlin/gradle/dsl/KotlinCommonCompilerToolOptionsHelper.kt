@@ -24,6 +24,6 @@ internal object KotlinCommonCompilerToolOptionsHelper {
         into.allWarningsAsErrors.convention(from.allWarningsAsErrors)
         into.suppressWarnings.convention(from.suppressWarnings)
         into.verbose.convention(from.verbose)
-        into.freeCompilerArgs.convention(from.freeCompilerArgs)
+        into.freeCompilerArgs.addAll(from.freeCompilerArgs)
     }
 }

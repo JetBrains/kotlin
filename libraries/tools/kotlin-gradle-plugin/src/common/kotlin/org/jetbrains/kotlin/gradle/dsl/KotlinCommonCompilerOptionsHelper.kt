@@ -26,7 +26,7 @@ internal object KotlinCommonCompilerOptionsHelper {
         org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerToolOptionsHelper.syncOptionsAsConvention(from, into)
         into.apiVersion.convention(from.apiVersion)
         into.languageVersion.convention(from.languageVersion)
-        into.optIn.convention(from.optIn)
+        into.optIn.addAll(from.optIn)
         into.progressiveMode.convention(from.progressiveMode)
         into.useK2.convention(from.useK2)
     }
