@@ -150,6 +150,10 @@ private fun genBoolean(): String = """
   return "c";
 }
 
+- (CFTypeID)_cfTypeID {
+  return CFBooleanGetTypeID();
+}
+
 -(ObjHeader*)toKotlin:(ObjHeader**)OBJ_RESULT {
   RETURN_RESULT_OF(Kotlin_boxBoolean, value_);
 }
@@ -308,6 +312,10 @@ ${if (cType != "double") """
 
 - (const char *)objCType {
   return "c";
+}
+
+- (CFTypeID)_cfTypeID {
+  return CFBooleanGetTypeID();
 }
 
 -(ObjHeader*)toKotlin:(ObjHeader**)OBJ_RESULT {

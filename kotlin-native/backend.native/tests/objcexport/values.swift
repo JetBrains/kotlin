@@ -85,6 +85,7 @@ func testNumbers() throws {
     try assertEquals(actual: KotlinBoolean(value: false).intValue, expected: 0)
     try assertEquals(actual: KotlinBoolean(value: true), expected: true)
     try assertFalse(KotlinBoolean(value: false) as! Bool)
+    try assertTrue(CFGetTypeID(KotlinBoolean(value: true)) == CFBooleanGetTypeID())
 
     try assertEquals(actual: KotlinByte(value: -1).int8Value, expected: -1)
     try assertEquals(actual: KotlinByte(value: -1).int32Value, expected: -1)
