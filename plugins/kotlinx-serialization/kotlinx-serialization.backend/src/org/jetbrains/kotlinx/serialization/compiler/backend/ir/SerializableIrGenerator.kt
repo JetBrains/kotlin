@@ -5,16 +5,18 @@
 
 package org.jetbrains.kotlinx.serialization.compiler.backend.ir
 
+import org.jetbrains.kotlin.backend.common.ir.isJvmOptimizableDelegate
 import org.jetbrains.kotlin.backend.common.lower.irThrow
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.deepCopyWithVariables
-import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
+import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
@@ -82,7 +84,9 @@ class SerializableIrGenerator(
                     it is IrProperty && it.backingField != null -> {
                         if (it in serialDescs) {
                             current = it
-                        } else if (it.backingField?.initializer != null && !it.usesOptimizedDelegation()) {
+                        } else if (it.backingField?.initializer != null &&
+                            !(it.isJvmOptimizableDelegate() && compilerContext.platform.isJvm())
+                        ) {
                             // skip transient lateinit or deferred properties (with null initializer) and optimized delegations
                             val expression = initializerAdapter(it.backingField!!.initializer!!)
 
@@ -187,30 +191,6 @@ class SerializableIrGenerator(
                     )
                 }
         }
-
-    private fun IrExpression.isInlineable(): Boolean =
-        when (this) {
-            is IrConst<*>, is IrGetSingletonValue -> true
-            is IrCall ->
-                dispatchReceiver?.isInlineable() != false
-                        && extensionReceiver?.isInlineable() != false
-                        && valueArgumentsCount == 0
-                        && symbol.owner.run {
-                    modality == Modality.FINAL
-                            && origin == IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
-                            && ((body?.statements?.singleOrNull() as? IrReturn)?.value as? IrGetField)?.symbol?.owner?.isFinal == true
-                }
-            is IrGetValue ->
-                symbol.owner.origin == IrDeclarationOrigin.INSTANCE_RECEIVER
-            else -> false
-        }
-
-    /** Returns true if a delegate was optimized, omitting a `$delegate` auxiliary property */
-    private fun IrProperty.usesOptimizedDelegation(): Boolean {
-        if (!isDelegated || isFakeOverride || backingField == null) return false
-        if (!compilerContext.platform.isJvm()) return false
-        return backingField?.initializer?.expression?.isInlineable() ?: false
-    }
 
     private fun IrBlockBodyBuilder.getStaticSerialDescriptorExpr(): IrExpression {
         val serializerIrClass = irClass.classSerializer(compilerContext)!!.owner

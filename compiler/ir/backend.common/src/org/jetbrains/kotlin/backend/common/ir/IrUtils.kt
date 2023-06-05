@@ -7,6 +7,9 @@ package org.jetbrains.kotlin.backend.common.ir
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.descriptors.synthesizedName
+import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.declarations.IrValueParameterBuilder
 import org.jetbrains.kotlin.ir.builders.declarations.buildValueParameter
 import org.jetbrains.kotlin.ir.declarations.*
@@ -17,6 +20,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.dump
+import org.jetbrains.kotlin.ir.util.getPackageFragment
 import org.jetbrains.kotlin.ir.util.statements
 
 fun IrReturnTarget.returnType(context: CommonBackendContext) =
@@ -146,3 +150,57 @@ fun IrFunction.getAdapteeFromAdaptedForReferenceFunction() : IrFunction? {
 }
 
 fun IrBranch.isUnconditional(): Boolean = (condition as? IrConst<*>)?.value == true
+
+val IrSimpleFunction.returnsResultOfStdlibCall: Boolean
+    get() {
+        fun IrStatement.isStdlibCall() =
+            this is IrCall && symbol.owner.getPackageFragment().fqName == StandardNames.BUILT_INS_PACKAGE_FQ_NAME
+
+        return when (val body = body) {
+            is IrExpressionBody -> body.expression.isStdlibCall()
+            is IrBlockBody -> body.statements.singleOrNull()
+                ?.let { it.isStdlibCall() || (it is IrReturn && it.value.isStdlibCall()) } == true
+            else -> false
+        }
+    }
+
+// Criteria for delegate optimizations on the JVM.
+// All cases must be reflected in isJvmOptimizableDelegate() to inform the serialization plugin.
+fun IrProperty.jvmOptimizablePropertyReferenceDelegate(): IrPropertyReference? {
+    if (!isDelegated || isFakeOverride || backingField == null) return null
+
+    val delegate = backingField?.initializer?.expression
+    if (delegate !is IrPropertyReference ||
+        getter?.returnsResultOfStdlibCall == false ||
+        setter?.returnsResultOfStdlibCall == false
+    ) return null
+
+    return delegate
+}
+
+fun IrProperty.jvmOptimizableSingletonOrConstantDelegate(): IrExpression? {
+    fun IrExpression.isInlineable(): Boolean =
+        when (this) {
+            is IrConst<*>, is IrGetSingletonValue -> true
+            is IrCall ->
+                dispatchReceiver?.isInlineable() != false
+                        && extensionReceiver?.isInlineable() != false
+                        && valueArgumentsCount == 0
+                        && symbol.owner.run {
+                    modality == Modality.FINAL
+                            && origin == IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
+                            && ((body?.statements?.singleOrNull() as? IrReturn)?.value as? IrGetField)?.symbol?.owner?.isFinal == true
+                }
+            is IrGetValue ->
+                symbol.owner.origin == IrDeclarationOrigin.INSTANCE_RECEIVER
+            else -> false
+        }
+
+    if (!isDelegated || isFakeOverride || backingField == null) return null
+    return backingField?.initializer?.expression?.takeIf { it.isInlineable() }
+}
+
+/** Returns true if a delegate is optimizable on the JVM, omitting a `$delegate` auxiliary property */
+fun IrProperty.isJvmOptimizableDelegate(): Boolean =
+    isDelegated && !isFakeOverride && backingField != null && // fast path
+            (jvmOptimizablePropertyReferenceDelegate() != null || jvmOptimizableSingletonOrConstantDelegate() != null)

@@ -67,6 +67,12 @@ class DelegatedByThis(val realProp: Int) {
     val delegatedProp by this
 }
 
+// delegating directly to another property
+@Serializable
+class DelegatedByDirectProperty(var targetProperty: Int = 5) {
+    var delegatingProperty: Int by ::targetProperty
+}
+
 // generic delegate
 @Serializable
 open class GenericDelegate<Target> {
@@ -133,6 +139,13 @@ fun box(): String {
         val deserialized = Json.decodeFromString(GenericDelegateHolder.serializer(), json)
         if (deserialized.delegatingProperty != original.delegatingProperty) return "Generic delegate fail: $json"
     }
+
+    val byDirectPropertyExp = DelegatedByDirectProperty(123)
+    val byDirectPropertyJsonStr = Json.encodeToString(byDirectPropertyExp)
+    val byDirectPropertyDecoded = Json.decodeFromString<DelegatedByDirectProperty>(byDirectPropertyJsonStr)
+    if (byDirectPropertyJsonStr != """{"targetProperty":123}""") return simpleDTOJsonStr
+    if (byDirectPropertyDecoded.delegatingProperty != byDirectPropertyExp.delegatingProperty) return "Direct property delegation, delegatingProperty fail: $byDirectPropertyJsonStr"
+    if (byDirectPropertyDecoded.targetProperty !== 123) return "Direct property delegation, targetProperty fail: $byDirectPropertyJsonStr"
 
     return "OK"
 }
