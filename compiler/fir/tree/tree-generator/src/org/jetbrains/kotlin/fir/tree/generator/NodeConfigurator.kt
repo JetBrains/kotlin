@@ -495,6 +495,12 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +fieldList(contextReceiver, useMutableOrEmpty = true)
         }
 
+        codeFragment.configure {
+            +fieldList(import).withTransform()
+            +symbol("FirCodeFragmentSymbol")
+            +field("codeBlock", block, nullable = false).withTransform()
+        }
+
         packageDirective.configure {
             +field("packageFqName", fqNameType)
         }

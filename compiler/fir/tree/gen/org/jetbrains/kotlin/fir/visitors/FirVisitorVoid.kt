@@ -48,6 +48,7 @@ import org.jetbrains.kotlin.fir.declarations.FirBackingField
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirScript
+import org.jetbrains.kotlin.fir.declarations.FirCodeFragment
 import org.jetbrains.kotlin.fir.FirPackageDirective
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousFunctionExpression
@@ -332,6 +333,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     open fun visitScript(script: FirScript) {
         visitElement(script)
+    }
+
+    open fun visitCodeFragment(codeFragment: FirCodeFragment) {
+        visitElement(codeFragment)
     }
 
     open fun visitPackageDirective(packageDirective: FirPackageDirective) {
@@ -940,6 +945,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     final override fun visitScript(script: FirScript, data: Nothing?) {
         visitScript(script)
+    }
+
+    final override fun visitCodeFragment(codeFragment: FirCodeFragment, data: Nothing?) {
+        visitCodeFragment(codeFragment)
     }
 
     final override fun visitPackageDirective(packageDirective: FirPackageDirective, data: Nothing?) {

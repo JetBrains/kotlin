@@ -235,6 +235,17 @@ abstract class FirDataFlowAnalyzer(
         return graph
     }
 
+    // ----------------------------------- Code Fragment ------------------------------------------
+
+    fun enterCodeFragment(codeFragment: FirCodeFragment) {
+        graphBuilder.enterCodeFragment(codeFragment).mergeIncomingFlow()
+    }
+
+    fun exitCodeFragment(): ControlFlowGraph {
+        val (node, graph) = graphBuilder.exitCodeFragment()
+        node.mergeIncomingFlow()
+        return graph
+    }
     // ----------------------------------- Value parameters (and it's defaults) -----------------------------------
 
     fun enterValueParameter(valueParameter: FirValueParameter) {

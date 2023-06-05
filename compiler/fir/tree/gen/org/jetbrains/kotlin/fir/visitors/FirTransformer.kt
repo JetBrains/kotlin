@@ -48,6 +48,7 @@ import org.jetbrains.kotlin.fir.declarations.FirBackingField
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirScript
+import org.jetbrains.kotlin.fir.declarations.FirCodeFragment
 import org.jetbrains.kotlin.fir.FirPackageDirective
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousFunctionExpression
@@ -333,6 +334,10 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
 
     open fun transformScript(script: FirScript, data: D): FirScript {
         return transformElement(script, data)
+    }
+
+    open fun transformCodeFragment(codeFragment: FirCodeFragment, data: D): FirCodeFragment {
+        return transformElement(codeFragment, data)
     }
 
     open fun transformPackageDirective(packageDirective: FirPackageDirective, data: D): FirPackageDirective {
@@ -941,6 +946,10 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
 
     final override fun visitScript(script: FirScript, data: D): FirScript {
         return transformScript(script, data)
+    }
+
+    final override fun visitCodeFragment(codeFragment: FirCodeFragment, data: D): FirCodeFragment {
+        return transformCodeFragment(codeFragment, data)
     }
 
     final override fun visitPackageDirective(packageDirective: FirPackageDirective, data: D): FirPackageDirective {
