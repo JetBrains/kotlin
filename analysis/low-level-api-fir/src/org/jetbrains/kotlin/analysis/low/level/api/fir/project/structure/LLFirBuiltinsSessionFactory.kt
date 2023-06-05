@@ -68,6 +68,10 @@ class LLFirBuiltinsSessionFactory(private val project: Project) {
 
     @TestOnly
     fun clearForTheNextTest() {
+        invalidateBuiltinSessions()
+    }
+
+    fun invalidateBuiltinSessions() {
         builtinsModules.clear()
         builtinsAndCloneableSessions.clear()
     }
