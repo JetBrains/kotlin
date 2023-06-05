@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.gradle.testbase.TestVersions.Gradle.G_7_1
 import org.jetbrains.kotlin.gradle.testbase.TestVersions.Gradle.G_7_2
 import org.jetbrains.kotlin.gradle.tooling.BuildKotlinToolingMetadataTask
 import org.jetbrains.kotlin.gradle.util.AGPVersion
+import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.gradle.util.testResolveAllConfigurations
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.io.TempDir
@@ -1017,6 +1018,32 @@ class KotlinAndroidMppIT : KGPBaseTest() {
             build("assembleDebug") {
                 output.assertNoDiagnostic(KotlinToolingDiagnostics.UnusedSourceSetsWarning)
             }
+        }
+    }
+
+    @GradleAndroidTest
+    fun smokeTestWithIcerockMobileMultiplatformGradlePlugin(
+        gradleVersion: GradleVersion,
+        agpVersion: String,
+        jdkVersion: JdkVersions.ProvidedJdk
+    ) {
+        project(
+            "kgp-with-icerock-mobile-multiplatform", gradleVersion,
+            defaultBuildOptions.copy(androidVersion = agpVersion),
+            buildJdk = jdkVersion.location
+        ) {
+            settingsGradleKts.replaceText(
+                "resolutionStrategy {",
+                """
+                    resolutionStrategy {
+                        eachPlugin {
+                            if (requested.id.id.startsWith("dev.icerock.mobile.multiplatform")) {
+                                useModule("dev.icerock:mobile-multiplatform:0.14.2")
+                            }
+                        }
+                """.trimIndent()
+            )
+            build("assemble")
         }
     }
 }
