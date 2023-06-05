@@ -19,10 +19,7 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
-import org.jetbrains.kotlin.ir.util.SYNTHETIC_OFFSET
-import org.jetbrains.kotlin.ir.util.hasAnnotation
-import org.jetbrains.kotlin.ir.util.hasNonConstInitializer
-import org.jetbrains.kotlin.ir.util.simpleFunctions
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -96,18 +93,22 @@ internal class StaticInitializersLowering(val context: Context) : FileLoweringPa
                     )
                 else null
 
+        fun IrFunction.addInitializersCall() {
+            val body = body ?: return
+            val statements = (body as IrBlockBody).statements
+            context.createIrBuilder(symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).run {
+                // The order of calling initializers: first global, then thread-local.
+                // It is ok for a thread local top level property to reference a global, but not vice versa.
+                threadLocalInitFunction?.let { statements.add(0, irCallFileInitializer(it.symbol)) }
+                globalInitFunction?.let { statements.add(0, irCallFileInitializer(it.symbol)) }
+            }
+        }
+
         container.simpleFunctions()
+                .filter { it.dispatchReceiverParameter == null }
                 .filterNot { it.origin == DECLARATION_ORIGIN_ENTRY_POINT }
-                .forEach {
-                    val body = it.body ?: return@forEach
-                    val statements = (body as IrBlockBody).statements
-                    context.createIrBuilder(it.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).run {
-                        // The order of calling initializers: first global, then thread-local.
-                        // It is ok for a thread local top level property to reference a global, but not vice versa.
-                        threadLocalInitFunction?.let { statements.add(0, irCallFileInitializer(it.symbol)) }
-                        globalInitFunction?.let { statements.add(0, irCallFileInitializer(it.symbol)) }
-                    }
-                }
+                .forEach { it.addInitializersCall() }
+        (container as? IrClass)?.constructors?.forEach { it.addInitializersCall() }
     }
 
     private fun buildInitFileFunction(container: IrDeclarationContainer, name: String, origin: IrDeclarationOrigin) = context.irFactory.buildFun {

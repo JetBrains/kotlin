@@ -1,7 +1,5 @@
 // IGNORE_BACKEND: WASM
 // WASM_MUTE_REASON: IGNORED_IN_JS
-// KT-59058
-// IGNORE_BACKEND: NATIVE
 var global = "A"
 
 class C {

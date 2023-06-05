@@ -18,14 +18,6 @@ fun getStackTrace() : List<String> {
 
 open class Foo {
     open fun foo(): List<String> { return emptyList() }
-
-    companion object {
-        var trace: List<String> = emptyList()
-
-        init {
-            trace = getStackTrace()
-        }
-    }
 }
 
 private class Bar : Foo() {
@@ -37,6 +29,16 @@ object Object {
 
     init {
         trace = getStackTrace()
+    }
+}
+
+class WithCompanion {
+    companion object {
+        var trace: List<String> = emptyList()
+
+        init {
+            trace = getStackTrace()
+        }
     }
 }
 
