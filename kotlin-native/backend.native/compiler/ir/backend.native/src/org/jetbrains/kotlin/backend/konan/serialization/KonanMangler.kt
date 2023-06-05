@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.serialization.mangle.ir.IrExportCheck
 import org.jetbrains.kotlin.backend.common.serialization.mangle.ir.IrMangleComputer
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.hasAnnotation
@@ -147,6 +148,8 @@ abstract class AbstractKonanDescriptorMangler : DescriptorBasedKotlinManglerImpl
         return false
     }
 
+
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
     private class KonanDescriptorMangleComputer(builder: StringBuilder, mode: MangleMode) : DescriptorMangleComputer(builder, mode) {
         override fun copy(newMode: MangleMode): DescriptorMangleComputer = KonanDescriptorMangleComputer(builder, newMode)
 

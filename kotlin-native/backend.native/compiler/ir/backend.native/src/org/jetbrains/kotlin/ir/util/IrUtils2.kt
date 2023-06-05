@@ -15,10 +15,7 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
-import org.jetbrains.kotlin.ir.IrBuiltIns
-import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.IrFileEntry
-import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFieldImpl
@@ -124,22 +121,6 @@ tailrec fun IrDeclaration.getContainingFile(): IrFile? {
     }
 }
 
-internal fun ErrorReportingContext.report(declaration: IrDeclaration, message: String, isError: Boolean) {
-    val irFile = declaration.getContainingFile()
-    this.report(
-            declaration,
-            irFile,
-            if (irFile != null) {
-                message
-            } else {
-                val renderer = org.jetbrains.kotlin.renderer.DescriptorRenderer.COMPACT_WITH_SHORT_TYPES
-                "$message\n${renderer.render(declaration.descriptor)}"
-            },
-            isError
-    )
-    if (isError) throw KonanCompilationException()
-}
-
 fun IrFunctionAccessExpression.addArguments(args: Map<IrValueParameter, IrExpression>) {
     val unhandledParameters = args.keys.toMutableSet()
     fun getArg(parameter: IrValueParameter) = args[parameter]?.also { unhandledParameters -= parameter }
@@ -209,7 +190,7 @@ fun IrBuilderWithScope.irCall(irFunction: IrFunction, typeArguments: List<IrType
         irCall(irFunction.symbol, typeArguments)
 
 internal fun irCall(startOffset: Int, endOffset: Int, irFunction: IrSimpleFunction, typeArguments: List<IrType>): IrCall =
-        IrCallImpl.fromSymbolDescriptor(
+        IrCallImpl.fromSymbolOwner(
                 startOffset, endOffset, irFunction.substitutedReturnType(typeArguments),
                 irFunction.symbol, typeArguments.size, irFunction.valueParameters.size
         ).apply {
@@ -279,17 +260,6 @@ fun IrMemberAccessExpression<*>.getArgumentsWithIr(): List<Pair<IrValueParameter
     return res
 }
 
-fun ReferenceSymbolTable.translateErased(type: KotlinType): IrSimpleType {
-    val descriptor = TypeUtils.getClassDescriptor(type)
-    if (descriptor == null) return translateErased(type.immediateSupertypes().first())
-    val classSymbol = this.referenceClass(descriptor)
-
-    val nullable = type.isMarkedNullable
-    val arguments = type.arguments.map { IrStarProjectionImpl }
-
-    return classSymbol.createType(nullable, arguments)
-}
-
 fun CommonBackendContext.createArrayOfExpression(
         startOffset: Int, endOffset: Int,
         arrayElementType: IrType,
@@ -347,6 +317,7 @@ fun IrValueParameter.copy(newDescriptor: ParameterDescriptor): IrValueParameter 
 fun IrClass.defaultOrNullableType(hasQuestionMark: Boolean) =
         if (hasQuestionMark) this.defaultType.makeNullable() else this.defaultType
 
+@OptIn(ObsoleteDescriptorBasedAPI::class)
 fun IrFunction.isRestrictedSuspendFunction(): Boolean =
         this.descriptor.extensionReceiverParameter?.type?.isRestrictsSuspensionReceiver() == true
 

@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.llvm.LlvmCallable
 import org.jetbrains.kotlin.backend.konan.reportCompilationError
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
@@ -72,6 +73,7 @@ internal class CoverageManager(val generationState: NativeGenerationState) {
         coveredLibs + coveredSources
     }
 
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
     private fun fileCoverageFilter(file: IrFile) =
             file.packageFragmentDescriptor.module in coveredModules
 

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.konan.ir.interop.DescriptorToIrTranslationMi
 import org.jetbrains.kotlin.backend.konan.ir.interop.irInstanceInitializer
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.declarations.buildValueParameter
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
 
+@OptIn(ObsoleteDescriptorBasedAPI::class)
 internal class CStructVarClassGenerator(
         context: GeneratorContext,
         private val companionGenerator: CStructVarCompanionGenerator,

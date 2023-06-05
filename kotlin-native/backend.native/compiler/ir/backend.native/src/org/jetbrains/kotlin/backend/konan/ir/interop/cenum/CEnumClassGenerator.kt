@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -40,6 +41,7 @@ private val cEnumEntryValueTypes = setOf(
         "UByte", "UShort", "UInt", "ULong"
 )
 
+@OptIn(ObsoleteDescriptorBasedAPI::class)
 internal class CEnumClassGenerator(
         val context: GeneratorContext,
         private val cEnumCompanionGenerator: CEnumCompanionGenerator,

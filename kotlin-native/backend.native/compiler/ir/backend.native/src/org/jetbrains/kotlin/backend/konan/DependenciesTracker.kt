@@ -6,11 +6,12 @@
 package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.backend.common.atMostOne
-import org.jetbrains.kotlin.backend.konan.descriptors.isFromInteropLibrary
 import org.jetbrains.kotlin.backend.konan.descriptors.isInteropLibrary
+import org.jetbrains.kotlin.backend.konan.ir.isFromInteropLibrary
 import org.jetbrains.kotlin.backend.konan.llvm.FunctionOrigin
 import org.jetbrains.kotlin.backend.konan.llvm.llvmSymbolOrigin
 import org.jetbrains.kotlin.backend.konan.llvm.standardLlvmSymbolsOrigin
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.getPackageFragment
 import org.jetbrains.kotlin.konan.library.KonanLibrary
@@ -116,13 +117,13 @@ internal class DependenciesTrackerImpl(
         return if (packageFragment.isFunctionInterfaceFile)
             FileOrigin.StdlibKFunctionImpl
         else {
-            val library = when (val origin = packageFragment.packageFragmentDescriptor.llvmSymbolOrigin) {
+            val library = when (val origin = packageFragment.llvmSymbolOrigin) {
                 CurrentKlibModuleOrigin -> config.libraryToCache?.klib?.takeIf { config.producePerFileCache }
                 else -> (origin as DeserializedKlibModuleOrigin).library
             }
             when {
                 library == null -> FileOrigin.CurrentFile
-                packageFragment.packageFragmentDescriptor.containingDeclaration.isFromInteropLibrary() ->
+                packageFragment.isFromInteropLibrary() ->
                     FileOrigin.EntireModule(library)
                 else -> FileOrigin.CertainFile(library, packageFragment.packageFqName.asString(), filePathGetter())
             }

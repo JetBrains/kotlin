@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.backend.konan.llvm.tryGetIntrinsicType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
@@ -142,9 +143,9 @@ private class BackendChecker(
     }
 
     private fun IrConstructor.overridesConstructor(other: IrConstructor) =
-            this.descriptor.valueParameters.size == other.descriptor.valueParameters.size &&
-                    this.descriptor.valueParameters.all {
-                        val otherParameter = other.descriptor.valueParameters[it.index]
+            this.valueParameters.size == other.valueParameters.size &&
+                    this.valueParameters.all {
+                        val otherParameter = other.valueParameters[it.index]
                         it.name == otherParameter.name && it.type == otherParameter.type
                     }
 
@@ -156,7 +157,7 @@ private class BackendChecker(
         }
 
         function.valueParameters.forEach {
-            val kotlinType = it.descriptor.type
+            val kotlinType = it.type
             if (!kotlinType.isObjCObjectType())
                 reportError(it, "Unexpected $action method parameter type: ${it.type.classFqName}\n" +
                         "Only Objective-C object types are supported here")
@@ -170,19 +171,19 @@ private class BackendChecker(
         checkCanGenerateFunctionImp(function)
     }
 
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
     private fun checkCanGenerateOutletSetterImp(property: IrProperty) {
-        val descriptor = property.descriptor
 
         val outlet = "@${InteropFqNames.objCOutlet}"
 
-        if (!descriptor.isVar)
+        if (!property.isVar)
             reportError(property, "$outlet property must be var")
 
         property.getter?.extensionReceiverParameter?.let {
             reportError(it, "$outlet must not have extension receiver")
         }
 
-        val type = descriptor.type
+        val type = property.descriptor.type
         if (!type.isObjCObjectType())
             reportError(property, "Unexpected $outlet type: ${property.getter?.returnType?.classFqName}\n" +
                     "Only Objective-C object types are supported here")
@@ -225,11 +226,11 @@ private class BackendChecker(
             }
         }
 
-        val kind = irClass.descriptor.kind
+        val kind = irClass.kind
         if (kind != ClassKind.CLASS && kind != ClassKind.OBJECT)
             reportError(irClass, "Only classes are supported as subtypes of Objective-C types")
 
-        if (!irClass.descriptor.isFinalClass)
+        if (!irClass.isFinalClass)
             reportError(irClass, "Non-final Kotlin subclasses of Objective-C classes are not yet supported")
 
         irClass.companionObject()?.let {
@@ -242,12 +243,12 @@ private class BackendChecker(
         }
 
         var hasObjCClassSupertype = false
-        irClass.descriptor.defaultType.constructor.supertypes.forEach {
-            val descriptor = it.constructor.declarationDescriptor as ClassDescriptor
-            if (!descriptor.isObjCClass())
+        irClass.defaultType.superTypes().forEach {
+            val clazz = it.classOrFail.owner
+            if (!clazz.isObjCClass())
                 reportError(irClass, "Mixing Kotlin and Objective-C supertypes is not supported")
 
-            if (descriptor.kind == ClassKind.CLASS)
+            if (clazz.kind == ClassKind.CLASS)
                 hasObjCClassSupertype = true
         }
 
@@ -269,10 +270,9 @@ private class BackendChecker(
                     else -> "corresponding Objective-C method"
                 }
 
-                context.report(
+                reportError(
                         method,
                         "can't override '${method.name}', override $correspondingObjCMethod instead",
-                        isError = true
                 )
             }
         }
@@ -412,10 +412,10 @@ private class BackendChecker(
                 val signatureTypes = target.allParameters.map { it.type } + target.returnType
 
                 callee.typeParameters.indices.forEach { index ->
-                    val typeArgument = expression.getTypeArgument(index)!!.toKotlinType()
-                    val signatureType = signatureTypes[index].toKotlinType()
-                    if (typeArgument.constructor != signatureType.constructor ||
-                            typeArgument.isMarkedNullable != signatureType.isMarkedNullable
+                    val typeArgument = expression.getTypeArgument(index)!!
+                    val signatureType = signatureTypes[index]
+                    if (typeArgument.classifierOrNull != signatureType.classifierOrNull ||
+                            typeArgument.isMarkedNullable() != signatureType.isMarkedNullable()
                     ) {
                         reportError(expression, "C function signature element mismatch: " +
                                 "expected '${signatureTypes[index].classFqName}', got '${expression.getTypeArgument(index)!!.classFqName}'")
@@ -541,7 +541,7 @@ private class BackendChecker(
 
     private fun getUnboundReferencedFunction(expression: IrExpression) = when (expression) {
         is IrFunctionReference -> {
-            val arguments = expression.getArguments()
+            val arguments = expression.getArgumentsWithIr()
             val capturedVariables = captures(expression.symbol.owner)
             ReferencedFunctionWithCapture(
                     expression.symbol.owner.takeIf { arguments.isEmpty() && capturedVariables.isEmpty() },

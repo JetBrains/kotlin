@@ -169,11 +169,6 @@ fun IrMemberAccessExpression<*>.addArguments(args: Map<ParameterDescriptor, IrEx
     }
 }
 
-@ObsoleteDescriptorBasedAPI
-@Suppress("unused") // Used in kotlin-native
-fun IrMemberAccessExpression<*>.addArguments(args: List<Pair<ParameterDescriptor, IrExpression>>) =
-    this.addArguments(args.toMap())
-
 fun IrExpression.isNullConst() = this is IrConst<*> && this.kind == IrConstKind.Null
 
 fun IrExpression.isTrueConst() = this is IrConst<*> && this.kind == IrConstKind.Boolean && this.value == true

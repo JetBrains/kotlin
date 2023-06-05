@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.backend.konan.llvm.*
 
@@ -187,7 +186,7 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                     "Class constructor has empty body"
                 }
                 context.logMultiple {
-                    +"Analysing function ${declaration.descriptor}"
+                    +"Analysing function ${declaration.render()}"
                     +"IR: ${ir2stringWhole(declaration)}"
                 }
                 analyze(declaration, body)
@@ -200,7 +199,7 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                     symbolTable.mapFunction(declaration)
                 } else {
                     context.logMultiple {
-                        +"Analysing function ${declaration.descriptor}"
+                        +"Analysing function ${declaration.render()}"
                         +"IR: ${ir2stringWhole(declaration)}"
                     }
                     analyze(declaration, body)
@@ -211,7 +210,7 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                 if (declaration.isStatic)
                     declaration.initializer?.let {
                         context.logMultiple {
-                            +"Analysing global field ${declaration.descriptor}"
+                            +"Analysing global field ${declaration.render()}"
                             +"IR: ${ir2stringWhole(declaration)}"
                         }
                         analyze(declaration, IrSetFieldImpl(it.startOffset, it.endOffset, declaration.symbol, null,
@@ -262,7 +261,7 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
         context.logMultiple {
             +"SYMBOL TABLE:"
             symbolTable.classMap.forEach { (irClass, type) ->
-                +"    DESCRIPTOR: ${irClass.descriptor}"
+                +"    IR CLASS: ${irClass.render()}"
                 +"    TYPE: $type"
                 if (type !is DataFlowIR.Type.Declared)
                     return@forEach
@@ -323,7 +322,7 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                 }
                 if (expression.symbol == executeImplSymbol) {
                     // Producer and job of executeImpl are called externally, we need to reflect this somehow.
-                    val producerInvocation = IrCallImpl.fromSymbolDescriptor(expression.startOffset, expression.endOffset,
+                    val producerInvocation = IrCallImpl.fromSymbolOwner(expression.startOffset, expression.endOffset,
                             executeImplProducerInvoke.returnType,
                             executeImplProducerInvoke.symbol,
                             executeImplProducerInvoke.symbol.owner.typeParameters.size,
@@ -335,7 +334,7 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
 
                     val jobFunctionReference = expression.getValueArgument(3) as? IrFunctionReference
                             ?: error("A function reference expected")
-                    val jobInvocation = IrCallImpl.fromSymbolDescriptor(expression.startOffset, expression.endOffset,
+                    val jobInvocation = IrCallImpl.fromSymbolOwner(expression.startOffset, expression.endOffset,
                             jobFunctionReference.symbol.owner.returnType,
                             jobFunctionReference.symbol as IrSimpleFunctionSymbol,
                             jobFunctionReference.symbol.owner.typeParameters.size,
@@ -372,7 +371,7 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
             // See ObjC instanceOf code generation for details.
             if (expression is IrTypeOperatorCall && expression.operator.callsInstanceOf()
                     && expression.typeOperand.isObjCObjectType()) {
-                val objcObjGetter = IrCallImpl.fromSymbolDescriptor(expression.startOffset, expression.endOffset,
+                val objcObjGetter = IrCallImpl.fromSymbolOwner(expression.startOffset, expression.endOffset,
                         objCObjectRawValueGetter.owner.returnType,
                         objCObjectRawValueGetter,
                         objCObjectRawValueGetter.owner.typeParameters.size,
@@ -717,7 +716,7 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
 
                             is IrConstructorCall -> {
                                 val callee = value.symbol.owner
-                                val arguments = value.getArguments().map { expressionToEdge(it.second) }
+                                val arguments = value.getArgumentsWithIr().map { expressionToEdge(it.second) }
                                 DataFlowIR.Node.NewObject(
                                         symbolTable.mapFunction(callee),
                                         arguments,
@@ -758,7 +757,7 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                                 initInstanceSymbol -> {
                                     val thiz = expressionToEdge(value.getValueArgument(0)!!)
                                     val initializer = value.getValueArgument(1) as IrConstructorCall
-                                    val arguments = listOf(thiz) + initializer.getArguments().map { expressionToEdge(it.second) }
+                                    val arguments = listOf(thiz) + initializer.getArgumentsWithIr().map { expressionToEdge(it.second) }
                                     val callee = initializer.symbol.owner
                                     DataFlowIR.Node.StaticCall(
                                             symbolTable.mapFunction(callee),
@@ -771,7 +770,7 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
 
                                 else -> {
                                     val callee = value.symbol.owner
-                                    val arguments = value.getArguments()
+                                    val arguments = value.getArgumentsWithIr()
                                             .map { expressionToEdge(it.second) }
 
                                     if (value.isVirtualCall) {
@@ -784,12 +783,7 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                                                         || !callee.isReal /* Could be a bridge. */)
                                                     symbolTable.mapClassReferenceType(owner)
                                                 else {
-                                                    val actualClassAtCallsite =
-                                                            (actualReceiverClassifier as IrClassSymbol).descriptor
-//                                                        assert (DescriptorUtils.isSubclass(actualClassAtCallsite, owner.descriptor)) {
-//                                                            "Expected an inheritor of ${owner.descriptor}, but was $actualClassAtCallsite"
-//                                                        }
-                                                    if (DescriptorUtils.isSubclass(actualClassAtCallsite, owner.descriptor)) {
+                                                    if ((actualReceiverClassifier as IrClassSymbol).owner.isSubclassOf(owner)) {
                                                         symbolTable.mapClassReferenceType(actualReceiverClassifier.owner) // Box if inline class.
                                                     } else {
                                                         symbolTable.mapClassReferenceType(owner)
@@ -839,7 +833,7 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                                 val thisReceiver = (declaration as IrConstructor).constructedClass.thisReceiver!!
                                 val thiz = IrGetValueImpl(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, thisReceiver.type,
                                         thisReceiver.symbol)
-                                val arguments = listOf(thiz) + value.getArguments().map { it.second }
+                                val arguments = listOf(thiz) + value.getArgumentsWithIr().map { it.second }
                                 DataFlowIR.Node.StaticCall(
                                         symbolTable.mapFunction(value.symbol.owner),
                                         arguments.map { expressionToEdge(it) },

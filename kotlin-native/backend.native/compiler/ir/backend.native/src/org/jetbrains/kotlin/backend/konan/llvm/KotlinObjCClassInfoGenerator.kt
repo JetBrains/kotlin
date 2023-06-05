@@ -27,7 +27,7 @@ internal class KotlinObjCClassInfoGenerator(override val generationState: Native
 
         val superclassName = irClass.getSuperClassNotAny()!!.let {
             llvm.dependenciesTracker.add(it)
-            it.descriptor.getExternalObjCClassBinaryName()
+            it.getExternalObjCClassBinaryName()
         }
         val protocolNames = irClass.getSuperInterfaces().map {
             llvm.dependenciesTracker.add(it)

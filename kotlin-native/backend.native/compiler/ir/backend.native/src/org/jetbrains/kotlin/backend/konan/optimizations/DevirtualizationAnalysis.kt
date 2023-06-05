@@ -1325,15 +1325,15 @@ internal object DevirtualizationAnalysis {
             if (coercion == null)
                 value
             else irCall(coercion).apply {
-                addArguments(listOf(coercion.descriptor.explicitParameters.single() to value))
+                require(coercion.owner.dispatchReceiverParameter == null &&
+                        coercion.owner.extensionReceiverParameter == null &&
+                        coercion.owner.valueParameters.size == 1
+                ) { "Coercion function must be static with one value parameter" }
+                putValueArgument(0, value)
             }
 
     private fun IrBuilderWithScope.irCoerce(value: IrExpression, coercion: DataFlowIR.FunctionSymbol.Declared?) =
-            if (coercion == null)
-                value
-            else irCall(coercion.irFunction!!).apply {
-                putValueArgument(0, value)
-            }
+            irCoerce(value, coercion?.let { it.irFunction?.symbol!! })
 
     sealed class PossiblyCoercedValue(private val coercion: IrFunctionSymbol?) {
         abstract fun getValue(irBuilder: IrBuilderWithScope): IrExpression
@@ -1537,17 +1537,17 @@ internal object DevirtualizationAnalysis {
 
                         optimize && possibleCallees.size == 1 -> { // Monomorphic callsite.
                             irBlock(expression) {
-                                val parameters = expression.getArgumentsWithSymbols().map { arg ->
+                                val parameters = expression.getArgumentsWithIr().map { arg ->
                                     // Temporary val is not required here for a parameter, since each one is used for only one devirtualized callsite
-                                    irSplitCoercion(caller, arg.second, tempName = null, arg.first.owner.type)
+                                    irSplitCoercion(caller, arg.second, tempName = null, arg.first.type)
                                 }
                                 +irDevirtualizedCall(expression, type, possibleCallees[0].first, parameters)
                             }
                         }
 
                         else -> irBlock(expression) {
-                            val arguments = expression.getArgumentsWithSymbols().mapIndexed { index, arg ->
-                                irSplitCoercion(caller, arg.second, "arg$index", arg.first.owner.type)
+                            val arguments = expression.getArgumentsWithIr().mapIndexed { index, arg ->
+                                irSplitCoercion(caller, arg.second, "arg$index", arg.first.type)
                             }
                             val receiver = irTemporary(arguments[0].getFullValue(this@irBlock))
                             val typeInfo by lazy {

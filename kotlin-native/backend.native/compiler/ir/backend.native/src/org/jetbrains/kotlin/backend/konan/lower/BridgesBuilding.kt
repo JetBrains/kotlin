@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.backend.konan.llvm.computeFunctionName
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
@@ -35,6 +36,9 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature
 import org.jetbrains.kotlin.load.java.SpecialGenericSignatures
+
+@OptIn(ObsoleteDescriptorBasedAPI::class)
+internal fun IrFunction.getDefaultValueForOverriddenBuiltinFunction() = BuiltinMethodsWithSpecialGenericSignature.getDefaultValueForOverriddenBuiltinFunction(descriptor)
 
 internal class BridgesSupport(mapping: NativeMapping, val irBuiltIns: IrBuiltIns, val irFactory: IrFactory) {
     private val bridges = mapping.bridges
@@ -207,8 +211,7 @@ internal class BridgesBuilding(val context: Context) : ClassLoweringPass {
 
                 val body = declaration.body ?: return declaration
 
-                val descriptor = declaration.descriptor
-                val typeSafeBarrierDescription = BuiltinMethodsWithSpecialGenericSignature.getDefaultValueForOverriddenBuiltinFunction(descriptor)
+                val typeSafeBarrierDescription = declaration.getDefaultValueForOverriddenBuiltinFunction()
                 if (typeSafeBarrierDescription == null || builtBridges.contains(declaration))
                     return declaration
 
@@ -295,7 +298,7 @@ private fun Context.buildBridge(startOffset: Int, endOffset: Int,
 
     val irBuilder = createIrBuilder(bridge.symbol, startOffset, endOffset)
     bridge.body = irBuilder.irBlockBody(bridge) {
-        val typeSafeBarrierDescription = BuiltinMethodsWithSpecialGenericSignature.getDefaultValueForOverriddenBuiltinFunction(overriddenFunction.overriddenFunction.descriptor)
+        val typeSafeBarrierDescription = overriddenFunction.overriddenFunction.getDefaultValueForOverriddenBuiltinFunction()
         typeSafeBarrierDescription?.let { buildTypeSafeBarrier(bridge, overriddenFunction.function, it) }
 
         val delegatingCall = IrCallImpl.fromSymbolOwner(

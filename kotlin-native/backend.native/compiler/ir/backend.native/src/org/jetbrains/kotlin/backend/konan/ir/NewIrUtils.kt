@@ -8,14 +8,15 @@ package org.jetbrains.kotlin.backend.konan.ir
 import org.jetbrains.kotlin.backend.common.atMostOne
 import org.jetbrains.kotlin.backend.konan.DECLARATION_ORIGIN_INLINE_CLASS_SPECIAL_FUNCTION
 import org.jetbrains.kotlin.backend.konan.descriptors.allOverriddenFunctions
+import org.jetbrains.kotlin.backend.konan.descriptors.isFromInteropLibrary
 import org.jetbrains.kotlin.backend.konan.descriptors.isInteropLibrary
 import org.jetbrains.kotlin.backend.konan.llvm.KonanMetadata
 import org.jetbrains.kotlin.backend.konan.serialization.KonanFileMetadataSource
 import org.jetbrains.kotlin.backend.konan.serialization.KonanIrModuleFragmentImpl
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyDeclarationBase
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
@@ -46,10 +47,6 @@ fun IrClass.isAny() = this.isClassTypeWithSignature(IdSignatureValues.any)
 fun IrClass.isNothing() = this.isClassTypeWithSignature(IdSignatureValues.nothing)
 
 fun IrClass.getSuperInterfaces() = this.superClasses.map { it.owner }.filter { it.isInterface }
-
-// Note: psi2ir doesn't set `origin = FAKE_OVERRIDE` for fields and properties yet.
-val IrProperty.isReal: Boolean get() = this.descriptor.kind.isReal
-val IrField.isReal: Boolean get() = this.descriptor.kind.isReal
 
 fun IrClass.isSpecialClassWithNoSupertypes() = this.isAny() || this.isNothing()
 
@@ -105,22 +102,30 @@ private fun IrClass.getOverridingOf(function: IrFunction) = (function as? IrSimp
 val ModuleDescriptor.konanLibrary get() = (this.klibModuleOrigin as? DeserializedKlibModuleOrigin)?.library
 val IrModuleFragment.konanLibrary
     get() = (this as? KonanIrModuleFragmentImpl)?.konanLibrary ?: descriptor.konanLibrary
-val IrPackageFragment.konanLibrary
-    get() = if (this is IrFile)
-        this.konanLibrary
-    else
-        this.packageFragmentDescriptor.containingDeclaration.konanLibrary
-val IrFile.konanLibrary
-    get() = (metadata as? KonanFileMetadataSource)?.module?.konanLibrary ?: packageFragmentDescriptor.containingDeclaration.konanLibrary
+@OptIn(ObsoleteDescriptorBasedAPI::class)
+val IrPackageFragment.konanLibrary : KotlinLibrary?
+    get() {
+        if (this is IrFile) {
+            (metadata as? KonanFileMetadataSource)?.module?.konanLibrary?.let { return it }
+        }
+        return this.packageFragmentDescriptor.containingDeclaration.konanLibrary
+    }
 val IrDeclaration.konanLibrary: KotlinLibrary?
     get() {
         ((this as? IrMetadataSourceOwner)?.metadata as? KonanMetadata)?.let { return it.konanLibrary }
         return when (val parent = parent) {
-            is IrFile -> parent.konanLibrary
-            is IrPackageFragment -> parent.packageFragmentDescriptor.containingDeclaration.konanLibrary
+            is IrPackageFragment -> parent.konanLibrary
             is IrDeclaration -> parent.konanLibrary
             else -> TODO("Unexpected declaration parent: $parent")
         }
     }
 
 fun IrDeclaration.isFromInteropLibrary() = konanLibrary?.isInteropLibrary() == true
+fun IrPackageFragment.isFromInteropLibrary() = konanLibrary?.isInteropLibrary() == true
+
+/**
+ * This function should be equivalent to [IrDeclaration.isFromInteropLibrary], but in fact it is not for declarations
+ * from Fir modules. This should be fixed in the future.
+ */
+@ObsoleteDescriptorBasedAPI
+fun IrDeclaration.isFromInteropLibraryByDescriptor() = descriptor.isFromInteropLibrary()

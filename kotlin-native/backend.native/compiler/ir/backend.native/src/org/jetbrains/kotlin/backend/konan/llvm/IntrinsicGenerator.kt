@@ -416,8 +416,7 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
     }
 
     private fun FunctionGenerationContext.emitCreateUninitializedInstance(callSite: IrCall, resultSlot: LLVMValueRef?): LLVMValueRef {
-        val typeParameterT = context.ir.symbols.createUninitializedInstance.descriptor.typeParameters[0]
-        val enumClass = callSite.getTypeArgument(typeParameterT.index)!!
+        val enumClass = callSite.getTypeArgument(0)!!
         val enumIrClass = enumClass.getClass()!!
         return allocInstance(enumIrClass, environment.calculateLifetime(callSite), resultSlot)
     }

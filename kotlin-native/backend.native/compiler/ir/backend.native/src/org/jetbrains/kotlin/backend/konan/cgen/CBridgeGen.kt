@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext.getClassFqNameUnsafe
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 internal interface KotlinStubs {
@@ -417,8 +416,7 @@ internal fun KotlinStubs.generateObjCCall(
 }
 
 internal fun IrBuilderWithScope.getObjCClass(symbols: KonanSymbols, symbol: IrClassSymbol): IrExpression {
-    val classDescriptor = symbol.descriptor
-    require(!classDescriptor.isObjCMetaClass())
+    require(!symbol.owner.isObjCMetaClass())
     return irCall(symbols.interopGetObjCClass, symbols.nativePtrType, listOf(symbol.starProjectedType))
 }
 
@@ -553,7 +551,7 @@ internal fun KotlinStubs.generateCFunctionPointer(
     )
     addKotlin(fakeFunction)
 
-    return IrFunctionReferenceImpl.fromSymbolDescriptor(
+    return IrFunctionReferenceImpl.fromSymbolOwner(
             expression.startOffset,
             expression.endOffset,
             expression.type,

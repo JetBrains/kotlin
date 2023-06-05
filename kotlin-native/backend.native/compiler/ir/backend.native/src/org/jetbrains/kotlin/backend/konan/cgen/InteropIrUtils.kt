@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.konan.KonanFqNames
 import org.jetbrains.kotlin.backend.konan.RuntimeNames
 import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
@@ -32,6 +33,7 @@ internal fun IrType.isCEnumType(): Boolean {
 private val cCall = RuntimeNames.cCall
 
 // Make sure external stubs always get proper annotaions.
+@OptIn(ObsoleteDescriptorBasedAPI::class)
 fun IrDeclaration.hasCCallAnnotation(name: String): Boolean =
         this.annotations.hasAnnotation(cCall.child(Name.identifier(name)))
                 // LazyIr doesn't pass annotations from descriptor to IrValueParameter.

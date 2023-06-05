@@ -8,6 +8,7 @@ import org.jetbrains.kotlin.backend.konan.InteropFqNames
 import org.jetbrains.kotlin.backend.konan.RuntimeNames
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.builders.IrBuilder
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
@@ -30,6 +31,7 @@ internal inline fun <reified T: DeclarationDescriptor> ClassDescriptor.findDecla
  * Provides a set of functions and properties that helps
  * to translate descriptor declarations to corresponding IR.
  */
+@OptIn(ObsoleteDescriptorBasedAPI::class)
 internal interface DescriptorToIrTranslationMixin {
 
     val symbolTable: SymbolTable
@@ -161,6 +163,7 @@ internal fun ClassDescriptor.inheritsFromCStructVar(): Boolean =
  * This function checks that given symbol located in subtree of
  * CEnum inheritor.
  */
+@OptIn(ObsoleteDescriptorBasedAPI::class)
 internal fun IrSymbol.findCEnumDescriptor(): ClassDescriptor? =
         descriptor.findCEnumDescriptor()
 
@@ -172,6 +175,7 @@ internal fun DeclarationDescriptor.findCEnumDescriptor(): ClassDescriptor? =
  * This function checks that given symbol located in subtree of
  * CStructVar inheritor.
  */
+@OptIn(ObsoleteDescriptorBasedAPI::class)
 internal fun IrSymbol.findCStructDescriptor(): ClassDescriptor? =
         descriptor.findCStructDescriptor()
 

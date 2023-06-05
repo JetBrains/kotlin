@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.builders.TranslationPluginContext
 import org.jetbrains.kotlin.ir.linkage.IrDeserializer
 import org.jetbrains.kotlin.ir.linkage.partial.partialLinkageConfig
@@ -46,6 +47,7 @@ object KonanStubGeneratorExtensions : StubGeneratorExtensions() {
     }
 }
 
+@OptIn(ObsoleteDescriptorBasedAPI::class)
 internal fun PsiToIrContext.psiToIr(
         input: PsiToIrInput,
         useLinkerWhenProducingLibrary: Boolean

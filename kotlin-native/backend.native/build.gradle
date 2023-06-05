@@ -36,7 +36,6 @@ compileCompilerKotlin {
     kotlinOptions.jvmTarget = "1.8"
     kotlinOptions.freeCompilerArgs += [
             '-opt-in=kotlin.RequiresOptIn',
-            '-opt-in=org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI',
             "-opt-in=kotlinx.cinterop.BetaInteropApi",
             "-opt-in=kotlinx.cinterop.ExperimentalForeignApi",
             '-Xskip-prerelease-check']

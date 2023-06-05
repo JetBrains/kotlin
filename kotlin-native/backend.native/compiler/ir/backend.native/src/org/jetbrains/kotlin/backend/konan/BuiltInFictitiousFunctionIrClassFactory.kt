@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.*
 import org.jetbrains.kotlin.ir.descriptors.IrAbstractDescriptorBasedFunctionFactory
@@ -34,10 +35,12 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 
 internal object DECLARATION_ORIGIN_FUNCTION_CLASS : IrDeclarationOriginImpl("DECLARATION_ORIGIN_FUNCTION_CLASS")
 
+@OptIn(ObsoleteDescriptorBasedAPI::class)
 val IrPackageFragment.isFunctionInterfaceFile get() = packageFragmentDescriptor is FunctionInterfacePackageFragment
 
 abstract class KonanIrAbstractDescriptorBasedFunctionFactory : IrProvider, IrAbstractDescriptorBasedFunctionFactory()
 
+@OptIn(ObsoleteDescriptorBasedAPI::class)
 internal class LazyIrFunctionFactory(
         private val symbolTable: SymbolTable,
         private val stubGenerator: DeclarationStubGenerator,
@@ -90,6 +93,7 @@ internal class LazyIrFunctionFactory(
             builtClassesMap.getOrPut(descriptor) { createClass(descriptor, declarator) }
 }
 
+@OptIn(ObsoleteDescriptorBasedAPI::class)
 internal class BuiltInFictitiousFunctionIrClassFactory(
         private val symbolTable: SymbolTable,
         private val irBuiltIns: IrBuiltInsOverDescriptors,

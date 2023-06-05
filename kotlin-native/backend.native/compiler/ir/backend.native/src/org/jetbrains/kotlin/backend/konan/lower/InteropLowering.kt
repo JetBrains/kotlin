@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
@@ -64,6 +65,7 @@ internal class InteropLowering(generationState: NativeGenerationState) : FileLow
     }
 }
 
+@OptIn(ObsoleteDescriptorBasedAPI::class)
 private abstract class BaseInteropIrTransformer(
         private val generationState: NativeGenerationState
 ) : IrBuildingTransformer(generationState.context) {
@@ -136,6 +138,7 @@ private abstract class BaseInteropIrTransformer(
     protected abstract fun addTopLevel(declaration: IrDeclaration)
 }
 
+@OptIn(ObsoleteDescriptorBasedAPI::class)
 private class InteropLoweringPart1(val generationState: NativeGenerationState) : BaseInteropIrTransformer(generationState), FileLoweringPass {
     private val context = generationState.context
 
@@ -778,6 +781,7 @@ private class InteropLoweringPart2(val generationState: NativeGenerationState) :
     }
 }
 
+@OptIn(ObsoleteDescriptorBasedAPI::class)
 private class InteropTransformer(
         val generationState: NativeGenerationState,
         override val irFile: IrFile

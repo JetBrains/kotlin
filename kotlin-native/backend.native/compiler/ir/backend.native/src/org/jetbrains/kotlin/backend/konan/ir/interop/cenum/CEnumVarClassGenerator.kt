@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.konan.ir.interop.irInstanceInitializer
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.builders.irBlockBody
 import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.builders.irInt
@@ -29,6 +30,7 @@ import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
 
 private val typeSizeAnnotation = FqName("kotlinx.cinterop.internal.CEnumVarTypeSize")
 
+@OptIn(ObsoleteDescriptorBasedAPI::class)
 internal class CEnumVarClassGenerator(
         context: GeneratorContext,
         private val symbols: KonanSymbols

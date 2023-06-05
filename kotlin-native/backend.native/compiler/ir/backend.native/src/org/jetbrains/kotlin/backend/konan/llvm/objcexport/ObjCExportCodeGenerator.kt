@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.backend.konan.serialization.resolveFakeOverrideMaybe
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrClassReference
 import org.jetbrains.kotlin.ir.expressions.IrVararg
@@ -803,6 +804,7 @@ private fun ObjCExportCodeGenerator.generateUnitContinuationToRetainedCompletion
 }
 
 // TODO: find out what to use instead here and in the dependent code
+@OptIn(ObsoleteDescriptorBasedAPI::class)
 private val ObjCExportBlockCodeGenerator.mappedFunctionNClasses get() =
     // failed attempt to migrate to descriptor-less IrBuiltIns
     ((context.irBuiltIns as IrBuiltInsOverDescriptors).functionFactory as BuiltInFictitiousFunctionIrClassFactory).builtFunctionNClasses

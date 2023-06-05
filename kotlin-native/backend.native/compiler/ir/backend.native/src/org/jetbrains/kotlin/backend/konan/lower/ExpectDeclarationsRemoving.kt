@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.konan.descriptors.propertyIfAccessor
 import org.jetbrains.kotlin.backend.konan.ir.ModuleIndex
 import org.jetbrains.kotlin.descriptors.MemberDescriptor
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBodyImpl
@@ -42,6 +43,7 @@ internal class ExpectDeclarationsRemoving(val context: Context) : FileLoweringPa
     }
 }
 
+@OptIn(ObsoleteDescriptorBasedAPI::class)
 internal class ExpectToActualDefaultValueCopier(private val irModule: IrModuleFragment) {
 
     // Note: local declarations aren't required here; TODO: use more lightweight index.

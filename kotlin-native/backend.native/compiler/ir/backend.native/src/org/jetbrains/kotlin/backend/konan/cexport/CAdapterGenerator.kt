@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys.USE_FIR
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.util.referenceFunction
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -119,6 +120,7 @@ internal class ExportedElementScope(val kind: ScopeKind, val name: String) {
     }
 }
 
+@OptIn(ObsoleteDescriptorBasedAPI::class)
 internal class ExportedElement(
         val kind: ElementKind,
         val scope: ExportedElementScope,

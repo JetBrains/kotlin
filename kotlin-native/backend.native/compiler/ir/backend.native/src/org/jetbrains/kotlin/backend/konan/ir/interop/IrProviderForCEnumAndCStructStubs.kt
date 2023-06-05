@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.backend.konan.ir.interop.cenum.CEnumVarClassGenerato
 import org.jetbrains.kotlin.backend.konan.ir.interop.cstruct.CStructVarClassGenerator
 import org.jetbrains.kotlin.backend.konan.ir.interop.cstruct.CStructVarCompanionGenerator
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.util.*
@@ -31,6 +32,7 @@ import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
  * 2. It is an easier and more obvious approach. Since implementation of metadata-based
  *  libraries generation already took too much time we take an easier approach here.
  */
+@OptIn(ObsoleteDescriptorBasedAPI::class)
 internal class IrProviderForCEnumAndCStructStubs(
         context: GeneratorContext,
         symbols: KonanSymbols

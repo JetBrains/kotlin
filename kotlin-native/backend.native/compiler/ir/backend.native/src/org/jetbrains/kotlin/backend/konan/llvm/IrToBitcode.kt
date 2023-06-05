@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.backend.konan.llvm.coverage.LLVMCoverageInstrumentat
 import org.jetbrains.kotlin.backend.konan.lower.*
 import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
@@ -860,7 +859,7 @@ internal class CodeGeneratorVisitor(
         }
 
         if (context.shouldVerifyBitCode())
-            verifyModule(llvm.module, "${declaration.descriptor.containingDeclaration}::${ir2string(declaration)}")
+            verifyModule(llvm.module, "${ir2string(declaration.parent)}::${ir2string(declaration)}")
     }
 
     private fun IrFunction.location(start: Boolean) =
@@ -898,7 +897,7 @@ internal class CodeGeneratorVisitor(
     }
 
     private fun needGlobalInit(field: IrField): Boolean {
-        if (field.descriptor.containingDeclaration !is PackageFragmentDescriptor) return field.isStatic
+        if (field.parent !is IrPackageFragment) return field.isStatic
         // TODO: add some smartness here. Maybe if package of the field is in never accessed
         // assume its global init can be actually omitted.
         return true
@@ -1181,7 +1180,7 @@ internal class CodeGeneratorVisitor(
                     }
                 }
 
-                if (catch.catchParameter.descriptor.type == context.builtIns.throwable.defaultType) {
+                if (catch.catchParameter.type == context.irBuiltIns.throwableType) {
                     genCatchBlock()
                     return      // Remaining catch clauses are unreachable.
                 } else {
@@ -1482,7 +1481,7 @@ internal class CodeGeneratorVisitor(
     }
 
     private fun IrType.isUnsignedInteger(): Boolean = !isNullable() &&
-                    UnsignedType.values().any { it.classId == this.getClass()?.descriptor?.classId }
+                    UnsignedType.values().any { it.classId == this.getClass()?.classId }
 
     private fun evaluateIntegerCoercion(value: IrTypeOperatorCall): LLVMValueRef {
         context.log{"evaluateIntegerCoercion        : ${ir2string(value)}"}
@@ -2349,11 +2348,11 @@ internal class CodeGeneratorVisitor(
 
     private fun evaluateFunctionReference(expression: IrFunctionReference): LLVMValueRef {
         // TODO: consider creating separate IR element for pointer to function.
-        assert (expression.type.getClass()?.descriptor?.fqNameUnsafe == InteropFqNames.cPointer) {
-            "assert: ${expression.type.getClass()?.descriptor?.fqNameUnsafe} == ${InteropFqNames.cPointer}"
+        assert (expression.type.getClass()?.symbol?.hasEqualFqName(InteropFqNames.cPointer.toSafe()) == true) {
+            "assert: should be ${InteropFqNames.cPointer}, ${expression.type.render()} found"
         }
 
-        assert (expression.getArguments().isEmpty())
+        assert (expression.getArgumentsWithIr().isEmpty())
 
         val function = expression.symbol.owner
         assert (function.dispatchReceiverParameter == null)
@@ -2965,7 +2964,6 @@ private val doubleUnderscoreThisName = Name.identifier("__this")
  *   2. this is reserved name and compiled in special way.
  */
 private fun IrValueDeclaration.debugNameConversion(): Name {
-    val name = descriptor.name
     if (name == thisName) {
         return when (origin) {
             IrDeclarationOrigin.IR_TEMPORARY_VARIABLE_FOR_INLINED_EXTENSION_RECEIVER -> doubleUnderscoreThisName

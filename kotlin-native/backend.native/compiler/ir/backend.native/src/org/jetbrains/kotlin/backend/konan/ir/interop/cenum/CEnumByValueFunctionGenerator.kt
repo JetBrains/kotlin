@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.konan.ir.interop.DescriptorToIrTranslationMi
 import org.jetbrains.kotlin.backend.konan.ir.interop.findDeclarationByName
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 /**
  * Generate IR for function that returns appropriate enum entry for the provided integral value.
  */
+@OptIn(ObsoleteDescriptorBasedAPI::class)
 internal class CEnumByValueFunctionGenerator(
         context: GeneratorContext,
         private val symbols: KonanSymbols

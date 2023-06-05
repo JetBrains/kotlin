@@ -370,7 +370,7 @@ internal class ClassLayoutBuilder(val irClass: IrClass, val context: Context) {
     fun vtableIndex(function: IrSimpleFunction): Int {
         val bridgeDirections = function.target.bridgeDirectionsTo(function)
         val index = vtableEntries.indexOfFirst { it.function == function && it.bridgeDirections == bridgeDirections }
-        if (index < 0) throw Error(function.render() + " $function " + " (${function.symbol.descriptor}) not in vtable of " + irClass.render())
+        require(index >= 0) { "${function.render()} is not found in vtable of ${irClass.render()}" }
         return index
     }
 

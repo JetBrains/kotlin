@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.konan.ir.parentDeclarationsWithSelf
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.IrBasedClassConstructorDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
@@ -180,7 +181,7 @@ private fun IrSimpleFunction.getObjCMethodInfo(onlyExternal: Boolean): ObjCMetho
     }
 
     return overriddenSymbols.firstNotNullOfOrNull {
-        assert(it.owner != this) { "Function ${it.owner.descriptor.fqNameSafe}() is wrongly contained in its own overriddenSymbols"}
+        assert(it.owner != this) { "Function ${it.owner.fqNameWhenAvailable}() is wrongly contained in its own overriddenSymbols"}
         it.owner.getObjCMethodInfo(onlyExternal)
     }
 }
@@ -290,6 +291,7 @@ fun IrConstructor.getObjCInitMethod(): IrSimpleFunction? {
     }
 }
 
+@ObsoleteDescriptorBasedAPI
 fun ConstructorDescriptor.getObjCInitMethod(): FunctionDescriptor? {
     if (this is IrBasedClassConstructorDescriptor) {
         // E.g. in case of K2.
@@ -341,13 +343,13 @@ fun inferObjCSelector(descriptor: FunctionDescriptor): String = if (descriptor.v
     }
 }
 
-fun ClassDescriptor.getExternalObjCClassBinaryName(): String =
+fun IrClass.getExternalObjCClassBinaryName(): String =
         this.getExplicitExternalObjCClassBinaryName()
                 ?: this.name.asString()
 
-fun ClassDescriptor.getExternalObjCMetaClassBinaryName(): String =
+fun IrClass.getExternalObjCMetaClassBinaryName(): String =
         this.getExplicitExternalObjCClassBinaryName()
                 ?: this.name.asString().removeSuffix("Meta")
 
-private fun ClassDescriptor.getExplicitExternalObjCClassBinaryName() =
-        this.annotations.findAnnotation(externalObjCClassFqName)!!.getStringValueOrNull("binaryName")
+private fun IrClass.getExplicitExternalObjCClassBinaryName() =
+        this.annotations.findAnnotation(externalObjCClassFqName)!!.getAnnotationValueOrNull<String>("binaryName")

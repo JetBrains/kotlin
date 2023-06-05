@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
@@ -678,6 +679,7 @@ internal class TestProcessor (val context: Context) {
     }
     // endregion
 
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
     private fun shouldProcessFile(irFile: IrFile): Boolean = irFile.packageFragmentDescriptor.module.let {
         // Process test annotations in source libraries too.
         it in context.sourcesModules

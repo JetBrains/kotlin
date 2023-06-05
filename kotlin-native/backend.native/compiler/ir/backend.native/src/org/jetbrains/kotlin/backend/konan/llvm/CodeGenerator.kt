@@ -1294,7 +1294,7 @@ internal abstract class FunctionGenerationContext(
         return if (irClass.isExternalObjCClass()) {
             generationState.dependenciesTracker.add(irClass)
             if (irClass.isObjCMetaClass()) {
-                val name = irClass.descriptor.getExternalObjCMetaClassBinaryName()
+                val name = irClass.getExternalObjCMetaClassBinaryName()
                 val objCClass = getObjCClass(name)
 
                 val getClass = llvm.externalNativeRuntimeFunction(
@@ -1304,7 +1304,7 @@ internal abstract class FunctionGenerationContext(
                 )
                 call(getClass, listOf(objCClass), exceptionHandler = exceptionHandler)
             } else {
-                getObjCClass(irClass.descriptor.getExternalObjCClassBinaryName())
+                getObjCClass(irClass.getExternalObjCClassBinaryName())
             }
         } else {
             if (irClass.isObjCMetaClass()) {

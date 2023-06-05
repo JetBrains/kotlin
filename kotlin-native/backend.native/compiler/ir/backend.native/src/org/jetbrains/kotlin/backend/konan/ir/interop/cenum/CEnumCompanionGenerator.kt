@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.konan.ir.interop.irInstanceInitializer
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.builders.irBlockBody
 import org.jetbrains.kotlin.ir.builders.irReturn
 import org.jetbrains.kotlin.ir.declarations.*
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 
 private val cEnumEntryAliasAnnonation = FqName("kotlinx.cinterop.internal.CEnumEntryAlias")
 
+@OptIn(ObsoleteDescriptorBasedAPI::class)
 internal class CEnumCompanionGenerator(
         context: GeneratorContext,
         private val cEnumByValueFunctionGenerator: CEnumByValueFunctionGenerator

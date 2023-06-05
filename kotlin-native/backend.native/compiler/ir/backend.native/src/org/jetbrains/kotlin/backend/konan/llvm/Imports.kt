@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.backend.konan.llvm
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.descriptors.isExpectMember
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
+import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
 import org.jetbrains.kotlin.library.metadata.CompiledKlibModuleOrigin
 import org.jetbrains.kotlin.library.metadata.SyntheticModulesOrigin
 import org.jetbrains.kotlin.library.metadata.klibModuleOrigin
@@ -26,3 +28,7 @@ internal val DeclarationDescriptor.llvmSymbolOrigin: CompiledKlibModuleOrigin
     }
 
 internal val Context.standardLlvmSymbolsOrigin: CompiledKlibModuleOrigin get() = this.stdlibModule.llvmSymbolOrigin
+
+@OptIn(ObsoleteDescriptorBasedAPI::class)
+internal val IrPackageFragment.llvmSymbolOrigin
+    get() = packageFragmentDescriptor.llvmSymbolOrigin
