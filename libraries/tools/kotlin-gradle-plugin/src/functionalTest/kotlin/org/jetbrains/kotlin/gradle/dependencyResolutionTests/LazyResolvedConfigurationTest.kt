@@ -9,7 +9,9 @@ package org.jetbrains.kotlin.gradle.dependencyResolutionTests
 
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.component.ModuleComponentIdentifier
+import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.internal.component.external.model.DefaultModuleComponentSelector
+import org.gradle.kotlin.dsl.project
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.kotlinToolingVersion
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
@@ -145,5 +147,29 @@ class LazyResolvedConfigurationTest {
         assertEquals("dependency", moduleIdentifier.name)
 
         if (lazyConfiguration.allResolvedDependencies.isNotEmpty()) fail("Expected no resolved dependencies")
+    }
+
+    @Test
+    fun `test - circular dependency handling`() {
+        val project = buildProject()
+        val configuration = project.configurations.create("forTest")
+        configuration.isCanBeConsumed = true
+        // add dependency to itself
+        project.dependencies.add(configuration.name, project.dependencies.project(":", configuration = configuration.name))
+        project.artifacts.add(configuration.name, project.file("artifact.tmp"))
+
+        val lazyConfiguration = LazyResolvedConfiguration(configuration)
+
+        val dependency = lazyConfiguration.allResolvedDependencies.singleOrNull() ?: fail("Expected to have single dependency")
+        val id = dependency.resolvedVariant.owner
+        if (id !is ProjectComponentIdentifier || id.projectPath != ":") fail("Expected project(:) dependency")
+
+        val artifactName = lazyConfiguration
+            .resolvedArtifacts
+            .map { it.file.name }
+            .singleOrNull()
+            ?: fail("Expected to have single artifact")
+
+        assertEquals("artifact.tmp", artifactName)
     }
 }
