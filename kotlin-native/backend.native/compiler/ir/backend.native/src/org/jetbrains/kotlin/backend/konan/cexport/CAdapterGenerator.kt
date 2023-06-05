@@ -485,19 +485,18 @@ internal class CAdapterGenerator(
             it.module in moduleDescriptors }
         visitChildren(fragments)
 
-        if (configuration.get(USE_FIR) == true) {
-            // K2 does not serialize empty package fragments, thus breaking the scope chain.
-            // The following traverse definitely reaches every subpackage fragment.
-            scopes.push(getPackageScope(FqName.ROOT))
-            val subfragments = descriptor.module.getSubPackagesOf(FqName.ROOT) { true }
-                    .flatMap {
-                        descriptor.module.getPackage(it).fragments.filter {
-                            it.module in moduleDescriptors
-                        }
+        // K2 does not serialize empty package fragments, thus breaking the scope chain.
+        // The following traverse definitely reaches every subpackage fragment.
+        scopes.push(getPackageScope(FqName.ROOT))
+        val subfragments = descriptor.module.getSubPackagesOf(FqName.ROOT) { true }
+                .flatMap {
+                    descriptor.module.getPackage(it).fragments.filter {
+                        it.module in moduleDescriptors
                     }
-            visitChildren(subfragments)
-            scopes.pop()
-        }
+                }
+        visitChildren(subfragments)
+        scopes.pop()
+
         return true
     }
 

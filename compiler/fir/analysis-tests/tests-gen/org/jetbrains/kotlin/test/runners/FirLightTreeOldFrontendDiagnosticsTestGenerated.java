@@ -6037,6 +6037,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
             public void testTwoSecondaryConstructors() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/constructorConsistency/twoSecondaryConstructors.kt");
             }
+
+            @Test
+            @TestMetadata("twoSuperTypeCalls.kt")
+            public void testTwoSuperTypeCalls() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/constructorConsistency/twoSuperTypeCalls.kt");
+            }
         }
 
         @Nested

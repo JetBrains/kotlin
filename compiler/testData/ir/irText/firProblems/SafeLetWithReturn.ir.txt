@@ -14,7 +14,7 @@ FILE fqName:<root> fileName:/SafeLetWithReturn.kt
               then: CONST Null type=kotlin.Nothing? value=null
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
-              then: CALL 'public final fun let <T, R> (block: kotlin.Function1<T of kotlin.StandardKt.let, R of kotlin.StandardKt.let>): R of kotlin.StandardKt.let declared in kotlin.StandardKt' type=kotlin.Nothing origin=null
+              then: CALL 'public final fun let <T, R> (block: kotlin.Function1<T of kotlin.let, R of kotlin.let>): R of kotlin.let declared in kotlin' type=kotlin.Nothing origin=null
                 <T>: kotlin.String
                 <R>: kotlin.Nothing
                 $receiver: GET_VAR 'val tmp_0: kotlin.String? declared in <root>.foo' type=kotlin.String? origin=null
@@ -42,7 +42,7 @@ FILE fqName:<root> fileName:/SafeLetWithReturn.kt
               then: CONST Null type=kotlin.Nothing? value=null
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
-              then: CALL 'public final fun let <T, R> (block: kotlin.Function1<T of kotlin.StandardKt.let, R of kotlin.StandardKt.let>): R of kotlin.StandardKt.let declared in kotlin.StandardKt' type=kotlin.Nothing? origin=null
+              then: CALL 'public final fun let <T, R> (block: kotlin.Function1<T of kotlin.let, R of kotlin.let>): R of kotlin.let declared in kotlin' type=kotlin.Nothing? origin=null
                 <T>: kotlin.String
                 <R>: kotlin.Nothing?
                 $receiver: GET_VAR 'val tmp_1: kotlin.String? declared in <root>.bar' type=kotlin.String? origin=null
@@ -62,7 +62,7 @@ FILE fqName:<root> fileName:/SafeLetWithReturn.kt
                               then: CONST Null type=kotlin.Nothing? value=null
                             BRANCH
                               if: CONST Boolean type=kotlin.Boolean value=true
-                              then: CALL 'public final fun let <T, R> (block: kotlin.Function1<T of kotlin.StandardKt.let, R of kotlin.StandardKt.let>): R of kotlin.StandardKt.let declared in kotlin.StandardKt' type=kotlin.Nothing origin=null
+                              then: CALL 'public final fun let <T, R> (block: kotlin.Function1<T of kotlin.let, R of kotlin.let>): R of kotlin.let declared in kotlin' type=kotlin.Nothing origin=null
                                 <T>: kotlin.String
                                 <R>: kotlin.Nothing
                                 $receiver: GET_VAR 'val tmp_2: kotlin.String? declared in <root>.bar.<anonymous>' type=kotlin.String? origin=null
@@ -91,7 +91,7 @@ FILE fqName:<root> fileName:/SafeLetWithReturn.kt
                 then: CONST Null type=kotlin.Nothing? value=null
               BRANCH
                 if: CONST Boolean type=kotlin.Boolean value=true
-                then: CALL 'public final fun let <T, R> (block: kotlin.Function1<T of kotlin.StandardKt.let, R of kotlin.StandardKt.let>): R of kotlin.StandardKt.let declared in kotlin.StandardKt' type=kotlin.Nothing origin=null
+                then: CALL 'public final fun let <T, R> (block: kotlin.Function1<T of kotlin.let, R of kotlin.let>): R of kotlin.let declared in kotlin' type=kotlin.Nothing origin=null
                   <T>: kotlin.String
                   <R>: kotlin.Nothing
                   $receiver: GET_VAR 'val tmp_3: kotlin.String? declared in <root>.<get-baz>' type=kotlin.String? origin=null

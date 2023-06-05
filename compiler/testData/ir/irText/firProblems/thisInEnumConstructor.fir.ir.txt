@@ -4,7 +4,7 @@ FILE fqName:<root> fileName:/thisInEnumConstructor.kt
     CONSTRUCTOR visibility:private <> (myName:kotlin.String) returnType:<root>.EE [primary]
       VALUE_PARAMETER name:myName index:0 type:kotlin.String
         EXPRESSION_BODY
-          CALL 'public final fun lowercase (): kotlin.String declared in kotlin.text.StringsKt' type=kotlin.String origin=null
+          CALL 'public final fun lowercase (): kotlin.String declared in kotlin.text' type=kotlin.String origin=null
             $receiver: CALL 'public open fun toString (): kotlin.String declared in kotlin.Enum.Companion' type=kotlin.String origin=null
               $this: GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[kotlin.Any]' type=kotlin.Enum.Companion
       BLOCK_BODY

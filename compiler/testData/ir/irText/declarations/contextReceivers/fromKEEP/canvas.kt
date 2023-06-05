@@ -1,6 +1,5 @@
 // FIR_IDENTICAL
 // !LANGUAGE: +ContextReceivers
-// IGNORE_BACKEND: JS_IR
 
 interface Canvas {
     val suffix: String

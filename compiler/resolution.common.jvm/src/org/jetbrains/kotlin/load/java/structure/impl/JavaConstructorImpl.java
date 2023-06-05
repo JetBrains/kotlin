@@ -16,12 +16,14 @@
 
 package org.jetbrains.kotlin.load.java.structure.impl;
 
+import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiMethod;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.load.java.structure.JavaConstructor;
 import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter;
 import org.jetbrains.kotlin.load.java.structure.JavaValueParameter;
 import org.jetbrains.kotlin.load.java.structure.impl.source.JavaElementPsiSource;
+import org.jetbrains.kotlin.load.java.structure.impl.source.JavaElementSourceFactory;
 
 import java.util.List;
 
@@ -36,6 +38,12 @@ public class JavaConstructorImpl extends JavaMemberImpl<PsiMethod> implements Ja
                 "PsiMethod which is not a constructor should not be wrapped in JavaConstructorImpl: " +
                 psiMethod.getName() + " " + psiMethod.getClass().getName();
     }
+
+    @SuppressWarnings("unused") // used in KSP
+    public JavaConstructorImpl(PsiMethod psiMethod) {
+        this(JavaElementSourceFactory.getInstance(psiMethod.getProject()).createPsiSource(psiMethod));
+    }
+
 
     @NotNull
     @Override

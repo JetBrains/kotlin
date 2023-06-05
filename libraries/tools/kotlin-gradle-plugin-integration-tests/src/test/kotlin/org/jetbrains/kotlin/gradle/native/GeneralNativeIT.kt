@@ -1189,6 +1189,17 @@ class GeneralNativeIT : BaseGradleIT() {
         }
     }
 
+
+    // KT-58537
+    @Test
+    @Ignore("Requires update to the newer version with changes")
+    fun testProjectNameWithSpaces() = with(transformNativeTestProjectWithPluginDsl("native-root-project-name-with-space")) {
+        build("assemble") {
+            assertNotContains("Could not find \"Contains\" in")
+            assertSuccessful()
+        }
+    }
+
     companion object {
         fun List<String>.containsSequentially(vararg elements: String): Boolean {
             check(elements.isNotEmpty())

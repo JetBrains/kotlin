@@ -9,6 +9,9 @@ class A<T : Any?> {
     // CHECK JVM_IR:
     //   Mangled name: A#<get-a>(){}1:0
     //   Public signature: /A.a.<get-a>|5765441560292063424[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: A#<get-a>(){}
+    //   Public signature: /A.a.<get-a>|6785176174175479410[0]
     get
 
   // CHECK:
@@ -29,6 +32,9 @@ class B {
     // CHECK JVM_IR:
     //   Mangled name: B#<get-b>(){}kotlin.Any
     //   Public signature: /B.b.<get-b>|4768115582956424363[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: B#<get-b>(){}
+    //   Public signature: /B.b.<get-b>|812004636995167743[0]
     get
 
   // CHECK:
@@ -49,6 +55,9 @@ class C {
     // CHECK JVM_IR:
     //   Mangled name: C#<get-c>(){}kotlin.Any
     //   Public signature: /C.c.<get-c>|-7073232512849879703[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: C#<get-c>(){}
+    //   Public signature: /C.c.<get-c>|2368736057102379596[0]
     get
 
   // CHECK:
@@ -70,5 +79,8 @@ val C.p: Int
   // CHECK JVM_IR:
   //   Mangled name: #<get-p>!A<kotlin.Int>!A<kotlin.String>!B@C(){}kotlin.Int
   //   Public signature: /p.<get-p>|-7725362510645392909[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: #<get-p>!A<kotlin.Int>!A<kotlin.String>!B@C(){}
+  //   Public signature: /p.<get-p>|-2698360468898936971[0]
   get($context_receiver_0: A<Int>, $context_receiver_1: A<String>, $context_receiver_2: B): Int
 

@@ -41,12 +41,12 @@ fun IrClassifierSymbol.isKSuspendFunction(): Boolean = this.isClassWithNamePrefi
 
 private fun IrClassifierSymbol.isClassWithName(name: String, packageFqName: FqName): Boolean {
     val declaration = owner as IrDeclarationWithName
-    return name == declaration.name.asString() && (declaration.parent as? IrPackageFragment)?.fqName == packageFqName
+    return name == declaration.name.asString() && (declaration.parent as? IrPackageFragment)?.packageFqName == packageFqName
 }
 
 private fun IrClassifierSymbol.isClassWithNamePrefix(prefix: String, packageFqName: FqName): Boolean {
     val declaration = owner as IrDeclarationWithName
-    return declaration.name.asString().startsWith(prefix) && (declaration.parent as? IrPackageFragment)?.fqName == packageFqName
+    return declaration.name.asString().startsWith(prefix) && (declaration.parent as? IrPackageFragment)?.packageFqName == packageFqName
 }
 
 fun IrType.superTypes(): List<IrType> = classifierOrNull?.superTypes() ?: emptyList()
@@ -77,7 +77,7 @@ private inline fun IrType.isTypeFromKotlinPackage(namePredicate: (Name) -> Boole
         val classClassifier = classifier as? IrClassSymbol ?: return false
         if (!namePredicate(classClassifier.owner.name)) return false
         val parent = classClassifier.owner.parent as? IrPackageFragment ?: return false
-        return parent.fqName == kotlinPackageFqn
+        return parent.packageFqName == kotlinPackageFqn
     } else return false
 }
 

@@ -36,7 +36,7 @@ FILE fqName:<root> fileName:/kt51036.kt
         RETURN type=kotlin.Nothing from='public final fun close (): kotlin.Unit declared in <root>.A'
           CALL 'public final fun invoke (): kotlin.Unit declared in <root>.A' type=kotlin.Unit origin=null
             $this: GET_VAR '<this>: <root>.A declared in <root>.A.close' type=<root>.A origin=null
-            $receiver: CALL 'public final fun run <R> (block: kotlin.Function0<R of kotlin.StandardKt.run>): R of kotlin.StandardKt.run declared in kotlin.StandardKt' type=kotlin.String origin=null
+            $receiver: CALL 'public final fun run <R> (block: kotlin.Function0<R of kotlin.run>): R of kotlin.run declared in kotlin' type=kotlin.String origin=null
               <R>: kotlin.String
               block: FUN_EXPR type=kotlin.Function0<kotlin.String> origin=LAMBDA
                 FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.String

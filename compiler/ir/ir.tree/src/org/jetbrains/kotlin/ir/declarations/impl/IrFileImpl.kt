@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.name.FqName
 class IrFileImpl(
     override var fileEntry: IrFileEntry,
     override val symbol: IrFileSymbol,
-    override var fqName: FqName
+    override var packageFqName: FqName
 ) : IrFile() {
     constructor(
         fileEntry: IrFileEntry,

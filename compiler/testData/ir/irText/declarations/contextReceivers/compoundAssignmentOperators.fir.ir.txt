@@ -251,7 +251,7 @@ FILE fqName:<root> fileName:/compoundAssignmentOperators.kt
       VAR name:result type:<root>.Result [val]
         CONSTRUCTOR_CALL 'public constructor <init> (i: kotlin.Int) declared in <root>.Result' type=<root>.Result origin=null
           i: CONST Int type=kotlin.Int value=0
-      CALL 'public final fun with <T, R> (receiver: T of kotlin.StandardKt.with, block: @[ExtensionFunctionType] kotlin.Function1<T of kotlin.StandardKt.with, R of kotlin.StandardKt.with>): R of kotlin.StandardKt.with declared in kotlin.StandardKt' type=kotlin.Unit origin=null
+      CALL 'public final fun with <T, R> (receiver: T of kotlin.with, block: @[ExtensionFunctionType] kotlin.Function1<T of kotlin.with, R of kotlin.with>): R of kotlin.with declared in kotlin' type=kotlin.Unit origin=null
         <T>: kotlin.Int
         <R>: kotlin.Unit
         receiver: CONST Int type=kotlin.Int value=1

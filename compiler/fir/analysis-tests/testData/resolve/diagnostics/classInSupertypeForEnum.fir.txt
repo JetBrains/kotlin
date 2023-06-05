@@ -9,6 +9,7 @@ FILE: classInSupertypeForEnum.kt
     }
     public final enum class B : R|C|, R|A|, R|kotlin/Any| {
         private constructor(): R|B| {
+            super<R|A|>()
             super<R|kotlin/Any|>()
         }
 

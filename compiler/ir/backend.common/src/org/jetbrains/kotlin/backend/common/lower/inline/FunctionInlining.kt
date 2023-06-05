@@ -51,7 +51,7 @@ fun IrFunction.isTopLevelInPackage(name: String, packageName: String): Boolean {
     if (name != this.name.asString()) return false
 
     val containingDeclaration = parent as? IrPackageFragment ?: return false
-    val packageFqName = containingDeclaration.fqName.asString()
+    val packageFqName = containingDeclaration.packageFqName.asString()
     return packageName == packageFqName
 }
 

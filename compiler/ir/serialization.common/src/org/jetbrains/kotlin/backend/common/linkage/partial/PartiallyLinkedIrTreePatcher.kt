@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import org.jetbrains.kotlin.utils.compact
@@ -688,7 +689,8 @@ internal class PartiallyLinkedIrTreePatcher(
         }
 
         protected inline fun IrMemberAccessExpression<IrFunctionSymbol>.checkArgumentsAndValueParameters(
-            usedDefaultArgumentsConsumer: (IrExpressionBody) -> Unit = {}
+            checkDefaultArgument: (index: Int, defaultArgumentExpressionBody: IrExpressionBody?) -> Boolean =
+                { _, defaultArgumentExpressionBody -> defaultArgumentExpressionBody != null }
         ): PartialLinkageCase? {
             val function = symbol.owner
 
@@ -795,9 +797,9 @@ internal class PartiallyLinkedIrTreePatcher(
                 val defaultArgumentExpressionBody = functionsToCheckDefaultValues.firstNotNullOfOrNull {
                     it.valueParameters.getOrNull(index)?.defaultValue
                 }
-                defaultArgumentExpressionBody?.let(usedDefaultArgumentsConsumer)
 
-                return@count defaultArgumentExpressionBody != null || function.valueParameters.getOrNull(index)?.isVararg == true
+                return@count checkDefaultArgument(index, defaultArgumentExpressionBody)
+                        || function.valueParameters.getOrNull(index)?.isVararg == true
             }
             val functionValueParameterCount = function.valueParameters.size
 
@@ -904,9 +906,14 @@ internal class PartiallyLinkedIrTreePatcher(
             } ?: run {
                 val annotationFile by lazy { PLFile.determineFileFor(symbol.owner) }
 
-                checkArgumentsAndValueParameters { defaultArgumentExpressionBody ->
-                    val defaultArgument = defaultArgumentExpressionBody.expression
+                checkArgumentsAndValueParameters { index, defaultArgumentExpressionBody ->
+                    val defaultArgument = defaultArgumentExpressionBody?.expression
                     when {
+                        defaultArgument == null -> {
+                            // A workaround for KT-59030. See also KT-58651.
+                            val valueParameter = symbol.owner.valueParameters.getOrNull(index)
+                            return@checkArgumentsAndValueParameters valueParameter?.hasEqualFqName(REPLACE_WITH_CONSTRUCTOR_EXPRESSION_FIELD_FQN) == true
+                        }
                         defaultArgument is IrConst<*> -> {
                             // Nothing can be unlinked here.
                         }
@@ -928,6 +935,7 @@ internal class PartiallyLinkedIrTreePatcher(
                             }
                         }
                     }
+                    true // Count the current default value as non-missing.
                 }
             }
     }
@@ -1136,5 +1144,7 @@ internal class PartiallyLinkedIrTreePatcher(
             is IrWhen, is IrLoop, is IrTry, is IrSuspensionPoint, is IrSuspendableExpression -> true
             else -> false
         }
+
+        private val REPLACE_WITH_CONSTRUCTOR_EXPRESSION_FIELD_FQN = FqName("kotlin.ReplaceWith.<init>.expression")
     }
 }

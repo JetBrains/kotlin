@@ -595,7 +595,7 @@ internal class RTTIGenerator(
             null
         }
 
-        val packageName: String = reflectionPackageName ?: packageFragment.fqName.asString() // Compute and store package name in TypeInfo anyways.
+        val packageName: String = reflectionPackageName ?: packageFragment.packageFqName.asString() // Compute and store package name in TypeInfo anyways.
         val relativeName: String?
         val flags: Int
 

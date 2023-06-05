@@ -10,6 +10,9 @@ class Circle : Shape {
   // CHECK JVM_IR:
   //   Mangled name: Circle#draw!Canvas(){}kotlin.String
   //   Public signature: /Circle.draw|-6733499063990640842[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: Circle#draw!Canvas(){}
+  //   Public signature: /Circle.draw|4876755509620013985[0]
   override fun draw($context_receiver_0: Canvas): String
 
 }
@@ -26,6 +29,9 @@ interface Canvas {
     // CHECK JVM_IR:
     //   Mangled name: Canvas#<get-suffix>(){}kotlin.String
     //   Public signature: /Canvas.suffix.<get-suffix>|8958072538558116778[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: Canvas#<get-suffix>(){}
+    //   Public signature: /Canvas.suffix.<get-suffix>|-7634976832113083262[0]
     abstract get
 
 }
@@ -38,6 +44,9 @@ interface Shape {
   // CHECK JVM_IR:
   //   Mangled name: Shape#draw!Canvas(){}kotlin.String
   //   Public signature: /Shape.draw|-6733499063990640842[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: Shape#draw!Canvas(){}
+  //   Public signature: /Shape.draw|4876755509620013985[0]
   abstract fun draw($context_receiver_0: Canvas): String
 
 }
@@ -53,6 +62,9 @@ object MyCanvas : Canvas {
     // CHECK JVM_IR:
     //   Mangled name: MyCanvas#<get-suffix>(){}kotlin.String
     //   Public signature: /MyCanvas.suffix.<get-suffix>|8958072538558116778[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: MyCanvas#<get-suffix>(){}
+    //   Public signature: /MyCanvas.suffix.<get-suffix>|-7634976832113083262[0]
     override get
 
   // CHECK:
@@ -65,5 +77,8 @@ object MyCanvas : Canvas {
 // CHECK JVM_IR:
 //   Mangled name: #box(){}kotlin.String
 //   Public signature: /box|-9347091776561469[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #box(){}
+//   Public signature: /box|2173511048851971368[0]
 fun box(): String
 

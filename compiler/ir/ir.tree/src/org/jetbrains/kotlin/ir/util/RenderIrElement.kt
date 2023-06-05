@@ -214,7 +214,7 @@ class RenderIrElementVisitor(private val options: DumpIrTreeOptions = DumpIrTree
             }
             when (parent) {
                 is IrPackageFragment -> {
-                    val fqn = parent.fqName.asString()
+                    val fqn = parent.packageFqName.asString()
                     append(fqn.ifEmpty { "<root>" })
                 }
                 is IrDeclaration -> {
@@ -245,10 +245,10 @@ class RenderIrElementVisitor(private val options: DumpIrTreeOptions = DumpIrTree
         "MODULE_FRAGMENT name:${declaration.name}"
 
     override fun visitExternalPackageFragment(declaration: IrExternalPackageFragment, data: Nothing?): String =
-        "EXTERNAL_PACKAGE_FRAGMENT fqName:${declaration.fqName}"
+        "EXTERNAL_PACKAGE_FRAGMENT fqName:${declaration.packageFqName}"
 
     override fun visitFile(declaration: IrFile, data: Nothing?): String =
-        "FILE fqName:${declaration.fqName} fileName:${declaration.path}"
+        "FILE fqName:${declaration.packageFqName} fileName:${declaration.path}"
 
     override fun visitFunction(declaration: IrFunction, data: Nothing?): String =
         declaration.runTrimEnd {
@@ -578,7 +578,7 @@ private inline fun StringBuilder.appendDeclarationNameToFqName(
     options: DumpIrTreeOptions,
     fallback: () -> Unit
 ) {
-    if (declaration.origin != IrDeclarationOrigin.FILE_CLASS || options.printFacadeClassInFqNames) {
+    if (!declaration.isFileClass || options.printFacadeClassInFqNames) {
         append('.')
         if (declaration is IrDeclarationWithName) {
             append(declaration.name)
@@ -601,7 +601,7 @@ private fun IrDeclaration.renderDeclarationParentFqn(sb: StringBuilder, options:
         if (parent is IrDeclaration) {
             parent.renderDeclarationFqn(sb, options)
         } else if (parent is IrPackageFragment) {
-            sb.append(parent.fqName.toString())
+            sb.append(parent.packageFqName.toString())
         }
     } catch (e: UninitializedPropertyAccessException) {
         sb.append("<uninitialized parent>")

@@ -178,7 +178,7 @@ internal class TestProcessor (val context: Context) {
 
         val topLevelFunctions = mutableListOf<TestFunction>()
         val topLevelSuiteClassId: ClassId by lazy {
-            ClassId(irFile.fqName, PackagePartClassUtils.getFilePartShortName(irFile.fileName).let(Name::identifier))
+            ClassId(irFile.packageFqName, PackagePartClassUtils.getFilePartShortName(irFile.fileName).let(Name::identifier))
         }
         val topLevelSuiteName: String get() = topLevelSuiteClassId.asFqNameString()
 
@@ -546,7 +546,7 @@ internal class TestProcessor (val context: Context) {
     /** Check if this fqName already used or not. */
     private fun checkTopLevelSuiteName(irFile: IrFile, topLevelSuiteName: String): Boolean {
         if (topLevelSuiteNames.contains(topLevelSuiteName)) {
-            context.reportCompilationError("Package '${irFile.fqName}' has top-level test " +
+            context.reportCompilationError("Package '${irFile.packageFqName}' has top-level test " +
                     "functions in several files with the same name: '${irFile.fileName}'")
         }
         topLevelSuiteNames.add(topLevelSuiteName)

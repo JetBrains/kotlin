@@ -86,7 +86,7 @@ FILE fqName:<root> fileName:/multipleImplicitReceivers.kt
     VALUE_PARAMETER name:invokeImpl index:1 type:<root>.IInvoke
     BLOCK_BODY
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        CALL 'public final fun with <T, R> (receiver: T of kotlin.StandardKt.with, block: @[ExtensionFunctionType] kotlin.Function1<T of kotlin.StandardKt.with, R of kotlin.StandardKt.with>): R of kotlin.StandardKt.with declared in kotlin.StandardKt' type=kotlin.Int origin=null
+        CALL 'public final fun with <T, R> (receiver: T of kotlin.with, block: @[ExtensionFunctionType] kotlin.Function1<T of kotlin.with, R of kotlin.with>): R of kotlin.with declared in kotlin' type=kotlin.Int origin=null
           <T>: <root>.A
           <R>: kotlin.Int
           receiver: GET_OBJECT 'CLASS OBJECT name:A modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.A
@@ -95,7 +95,7 @@ FILE fqName:<root> fileName:/multipleImplicitReceivers.kt
               $receiver: VALUE_PARAMETER name:$this$with type:<root>.A
               BLOCK_BODY
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Int declared in <root>.test'
-                  CALL 'public final fun with <T, R> (receiver: T of kotlin.StandardKt.with, block: @[ExtensionFunctionType] kotlin.Function1<T of kotlin.StandardKt.with, R of kotlin.StandardKt.with>): R of kotlin.StandardKt.with declared in kotlin.StandardKt' type=kotlin.Int origin=null
+                  CALL 'public final fun with <T, R> (receiver: T of kotlin.with, block: @[ExtensionFunctionType] kotlin.Function1<T of kotlin.with, R of kotlin.with>): R of kotlin.with declared in kotlin' type=kotlin.Int origin=null
                     <T>: <root>.IFoo
                     <R>: kotlin.Int
                     receiver: GET_VAR 'fooImpl: <root>.IFoo declared in <root>.test' type=<root>.IFoo origin=null
@@ -104,7 +104,7 @@ FILE fqName:<root> fileName:/multipleImplicitReceivers.kt
                         $receiver: VALUE_PARAMETER name:$this$with type:<root>.IFoo
                         BLOCK_BODY
                           RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Int declared in <root>.test.<anonymous>'
-                            CALL 'public final fun with <T, R> (receiver: T of kotlin.StandardKt.with, block: @[ExtensionFunctionType] kotlin.Function1<T of kotlin.StandardKt.with, R of kotlin.StandardKt.with>): R of kotlin.StandardKt.with declared in kotlin.StandardKt' type=kotlin.Int origin=null
+                            CALL 'public final fun with <T, R> (receiver: T of kotlin.with, block: @[ExtensionFunctionType] kotlin.Function1<T of kotlin.with, R of kotlin.with>): R of kotlin.with declared in kotlin' type=kotlin.Int origin=null
                               <T>: <root>.IInvoke
                               <R>: kotlin.Int
                               receiver: GET_VAR 'invokeImpl: <root>.IInvoke declared in <root>.test' type=<root>.IInvoke origin=null

@@ -55,8 +55,8 @@ class TestGenerator(val context: JsCommonBackendContext, val groupByPackage: Boo
 
     private val packageSuites = hashMapOf<FqName, IrSimpleFunction>()
 
-    private fun suiteForPackage(irFile: IrFile) = packageSuites.getOrPut(irFile.fqName) {
-        context.suiteFun!!.createInvocation(irFile.fqName.asString(), context.createTestContainerFun(irFile))
+    private fun suiteForPackage(irFile: IrFile) = packageSuites.getOrPut(irFile.packageFqName) {
+        context.suiteFun!!.createInvocation(irFile.packageFqName.asString(), context.createTestContainerFun(irFile))
     }
 
     private fun IrSimpleFunctionSymbol.createInvocation(

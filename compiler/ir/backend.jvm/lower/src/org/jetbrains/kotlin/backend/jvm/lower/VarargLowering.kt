@@ -105,7 +105,7 @@ internal fun IrFunction.isArrayOf(): Boolean {
         is IrPackageFragment -> directParent
         else -> return false
     }
-    return parent.fqName == StandardNames.BUILT_INS_PACKAGE_FQ_NAME &&
+    return parent.packageFqName == StandardNames.BUILT_INS_PACKAGE_FQ_NAME &&
             name.asString().let { it in PRIMITIVE_ARRAY_OF_NAMES || it == ARRAY_OF_NAME } &&
             extensionReceiverParameter == null &&
             dispatchReceiverParameter == null &&
@@ -115,4 +115,4 @@ internal fun IrFunction.isArrayOf(): Boolean {
 
 internal fun IrFunction.isEmptyArray(): Boolean =
     name.asString() == "emptyArray" &&
-            (parent as? IrPackageFragment)?.fqName == StandardNames.BUILT_INS_PACKAGE_FQ_NAME
+            (parent as? IrPackageFragment)?.packageFqName == StandardNames.BUILT_INS_PACKAGE_FQ_NAME

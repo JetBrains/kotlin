@@ -19,7 +19,7 @@ FILE fqName:<root> fileName:/integerCoercionToT.kt
     $receiver: VALUE_PARAMETER name:<this> type:<root>.CPointed
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun reinterpret <T> (): T of <root>.reinterpret declared in <root>'
-        CALL 'public final fun TODO (): kotlin.Nothing declared in kotlin.StandardKt' type=kotlin.Nothing origin=null
+        CALL 'public final fun TODO (): kotlin.Nothing declared in kotlin' type=kotlin.Nothing origin=null
   CLASS CLASS name:CInt32VarX modality:FINAL visibility:public superTypes:[<root>.CPointed]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.CInt32VarX<T of <root>.CInt32VarX>
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
@@ -48,7 +48,7 @@ FILE fqName:<root> fileName:/integerCoercionToT.kt
       $receiver: VALUE_PARAMETER name:<this> type:<root>.CInt32VarX<T_INT of <root>.<get-value>>
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-value> <T_INT> (): T_INT of <root>.<get-value> declared in <root>'
-          CALL 'public final fun TODO (): kotlin.Nothing declared in kotlin.StandardKt' type=kotlin.Nothing origin=null
+          CALL 'public final fun TODO (): kotlin.Nothing declared in kotlin' type=kotlin.Nothing origin=null
     FUN name:<set-value> visibility:public modality:FINAL <T_INT> ($receiver:<root>.CInt32VarX<T_INT of <root>.<set-value>>, value:T_INT of <root>.<set-value>) returnType:kotlin.Unit
       correspondingProperty: PROPERTY name:value visibility:public modality:FINAL [var]
       TYPE_PARAMETER name:T_INT index:0 variance: superTypes:[kotlin.Int] reified:false

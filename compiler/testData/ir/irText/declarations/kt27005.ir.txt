@@ -12,4 +12,4 @@ FILE fqName:<root> fileName:/kt27005.kt
   FUN name:baz visibility:public modality:FINAL <T> () returnType:T of <root>.baz [suspend]
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
     BLOCK_BODY
-      CALL 'public final fun TODO (): kotlin.Nothing declared in kotlin.StandardKt' type=kotlin.Nothing origin=null
+      CALL 'public final fun TODO (): kotlin.Nothing declared in kotlin' type=kotlin.Nothing origin=null

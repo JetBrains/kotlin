@@ -1992,6 +1992,12 @@ public class FirStandaloneNormalAnalysisSourceModuleReferenceResolveTestGenerate
         }
 
         @Test
+        @TestMetadata("ClassWithMultipleSuperTypeCalls.kt")
+        public void testClassWithMultipleSuperTypeCalls() throws Exception {
+            runTest("analysis/analysis-api/testData/referenceResolve/withErrors/ClassWithMultipleSuperTypeCalls.kt");
+        }
+
+        @Test
         @TestMetadata("CollectionLiteralLeft.kt")
         public void testCollectionLiteralLeft() throws Exception {
             runTest("analysis/analysis-api/testData/referenceResolve/withErrors/CollectionLiteralLeft.kt");

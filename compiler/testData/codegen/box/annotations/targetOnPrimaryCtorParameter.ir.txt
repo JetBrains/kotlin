@@ -176,16 +176,16 @@ FILE fqName:<root> fileName:/targetOnPrimaryCtorParameter.kt
       VAR name:clazz type:kotlin.reflect.KClass<<root>.Foo> [val]
         CLASS_REFERENCE 'CLASS CLASS name:Foo modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.reflect.KClass<<root>.Foo>
       VAR name:parameterAnnotations type:kotlin.collections.Set<kotlin.String> [val]
-        CALL 'public final fun toSet <T> (): kotlin.collections.Set<T of kotlin.collections.CollectionsKt.toSet> declared in kotlin.collections.CollectionsKt' type=kotlin.collections.Set<kotlin.String> origin=null
+        CALL 'public final fun toSet <T> (): kotlin.collections.Set<T of kotlin.collections.toSet> declared in kotlin.collections' type=kotlin.collections.Set<kotlin.String> origin=null
           <T>: kotlin.String
-          $receiver: CALL 'public final fun map <T, R> (transform: kotlin.Function1<T of kotlin.collections.CollectionsKt.map, R of kotlin.collections.CollectionsKt.map>): kotlin.collections.List<R of kotlin.collections.CollectionsKt.map> declared in kotlin.collections.CollectionsKt' type=kotlin.collections.List<kotlin.String> origin=null
+          $receiver: CALL 'public final fun map <T, R> (transform: kotlin.Function1<T of kotlin.collections.map, R of kotlin.collections.map>): kotlin.collections.List<R of kotlin.collections.map> declared in kotlin.collections' type=kotlin.collections.List<kotlin.String> origin=null
             <T>: kotlin.Annotation
             <R>: kotlin.String
             $receiver: CALL 'public abstract fun <get-annotations> (): kotlin.collections.List<kotlin.Annotation> declared in kotlin.reflect.KParameter' type=kotlin.collections.List<kotlin.Annotation> origin=GET_PROPERTY
-              $this: CALL 'public final fun single <T> (): T of kotlin.collections.CollectionsKt.single declared in kotlin.collections.CollectionsKt' type=kotlin.reflect.KParameter origin=null
+              $this: CALL 'public final fun single <T> (): T of kotlin.collections.single declared in kotlin.collections' type=kotlin.reflect.KParameter origin=null
                 <T>: kotlin.reflect.KParameter
                 $receiver: CALL 'public abstract fun <get-parameters> (): kotlin.collections.List<kotlin.reflect.KParameter> declared in kotlin.reflect.KFunction' type=kotlin.collections.List<kotlin.reflect.KParameter> origin=GET_PROPERTY
-                  $this: CALL 'public final fun single <T> (): T of kotlin.collections.CollectionsKt.single declared in kotlin.collections.CollectionsKt' type=kotlin.reflect.KFunction<<root>.Foo> origin=null
+                  $this: CALL 'public final fun single <T> (): T of kotlin.collections.single declared in kotlin.collections' type=kotlin.reflect.KFunction<<root>.Foo> origin=null
                     <T>: kotlin.reflect.KFunction<<root>.Foo>
                     $receiver: CALL 'public abstract fun <get-constructors> (): kotlin.collections.Collection<kotlin.reflect.KFunction<T of kotlin.reflect.KClass>> declared in kotlin.reflect.KClass' type=kotlin.collections.Collection<kotlin.reflect.KFunction<<root>.Foo>> origin=GET_PROPERTY
                       $this: GET_VAR 'val clazz: kotlin.reflect.KClass<<root>.Foo> declared in <root>.box' type=kotlin.reflect.KClass<<root>.Foo> origin=null
@@ -210,13 +210,13 @@ FILE fqName:<root> fileName:/targetOnPrimaryCtorParameter.kt
                           if: CONST Boolean type=kotlin.Boolean value=true
                           then: GET_VAR 'val tmp_0: kotlin.String? declared in <root>.box.<anonymous>' type=kotlin.String? origin=null
       VAR name:propertyAnnotations type:kotlin.collections.Set<kotlin.String> [val]
-        CALL 'public final fun toSet <T> (): kotlin.collections.Set<T of kotlin.collections.CollectionsKt.toSet> declared in kotlin.collections.CollectionsKt' type=kotlin.collections.Set<kotlin.String> origin=null
+        CALL 'public final fun toSet <T> (): kotlin.collections.Set<T of kotlin.collections.toSet> declared in kotlin.collections' type=kotlin.collections.Set<kotlin.String> origin=null
           <T>: kotlin.String
-          $receiver: CALL 'public final fun map <T, R> (transform: kotlin.Function1<T of kotlin.collections.CollectionsKt.map, R of kotlin.collections.CollectionsKt.map>): kotlin.collections.List<R of kotlin.collections.CollectionsKt.map> declared in kotlin.collections.CollectionsKt' type=kotlin.collections.List<kotlin.String> origin=null
+          $receiver: CALL 'public final fun map <T, R> (transform: kotlin.Function1<T of kotlin.collections.map, R of kotlin.collections.map>): kotlin.collections.List<R of kotlin.collections.map> declared in kotlin.collections' type=kotlin.collections.List<kotlin.String> origin=null
             <T>: kotlin.Annotation
             <R>: kotlin.String
             $receiver: CALL 'public abstract fun <get-annotations> (): kotlin.collections.List<kotlin.Annotation> declared in kotlin.reflect.KProperty1' type=kotlin.collections.List<kotlin.Annotation> origin=GET_PROPERTY
-              $this: CALL 'public final fun single <T> (): T of kotlin.collections.CollectionsKt.single declared in kotlin.collections.CollectionsKt' type=kotlin.reflect.KProperty1<<root>.Foo, *> origin=null
+              $this: CALL 'public final fun single <T> (): T of kotlin.collections.single declared in kotlin.collections' type=kotlin.reflect.KProperty1<<root>.Foo, *> origin=null
                 <T>: kotlin.reflect.KProperty1<<root>.Foo, *>
                 $receiver: CALL 'public final fun <get-declaredMemberProperties> <T> (): kotlin.collections.Collection<kotlin.reflect.KProperty1<T of kotlin.reflect.full.<get-declaredMemberProperties>, *>> declared in kotlin.reflect.full' type=kotlin.collections.Collection<kotlin.reflect.KProperty1<<root>.Foo, *>> origin=GET_PROPERTY
                   <T>: <root>.Foo
@@ -242,9 +242,9 @@ FILE fqName:<root> fileName:/targetOnPrimaryCtorParameter.kt
                           if: CONST Boolean type=kotlin.Boolean value=true
                           then: GET_VAR 'val tmp_1: kotlin.String? declared in <root>.box.<anonymous>' type=kotlin.String? origin=null
       VAR name:fieldAnnotations type:kotlin.collections.Set<kotlin.String> [val]
-        CALL 'public final fun toSet <T> (): kotlin.collections.Set<T of kotlin.collections.CollectionsKt.toSet> declared in kotlin.collections.CollectionsKt' type=kotlin.collections.Set<kotlin.String> origin=null
+        CALL 'public final fun toSet <T> (): kotlin.collections.Set<T of kotlin.collections.toSet> declared in kotlin.collections' type=kotlin.collections.Set<kotlin.String> origin=null
           <T>: kotlin.String
-          $receiver: CALL 'public final fun map <T, R> (transform: kotlin.Function1<T of kotlin.collections.ArraysKt.map, R of kotlin.collections.ArraysKt.map>): kotlin.collections.List<R of kotlin.collections.ArraysKt.map> declared in kotlin.collections.ArraysKt' type=kotlin.collections.List<kotlin.String> origin=null
+          $receiver: CALL 'public final fun map <T, R> (transform: kotlin.Function1<T of kotlin.collections.map, R of kotlin.collections.map>): kotlin.collections.List<R of kotlin.collections.map> declared in kotlin.collections' type=kotlin.collections.List<kotlin.String> origin=null
             <T>: @[FlexibleNullability] kotlin.Annotation?
             <R>: kotlin.String
             $receiver: TYPE_OP type=kotlin.Array<out @[FlexibleNullability] kotlin.Annotation?> origin=IMPLICIT_NOTNULL typeOperand=kotlin.Array<out @[FlexibleNullability] kotlin.Annotation?>
@@ -280,7 +280,7 @@ FILE fqName:<root> fileName:/targetOnPrimaryCtorParameter.kt
           if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
             $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
               arg0: GET_VAR 'val parameterAnnotations: kotlin.collections.Set<kotlin.String> declared in <root>.box' type=kotlin.collections.Set<kotlin.String> origin=null
-              arg1: CALL 'public final fun setOf <T> (vararg elements: T of kotlin.collections.SetsKt.setOf): kotlin.collections.Set<T of kotlin.collections.SetsKt.setOf> declared in kotlin.collections.SetsKt' type=kotlin.collections.Set<kotlin.String> origin=null
+              arg1: CALL 'public final fun setOf <T> (vararg elements: T of kotlin.collections.setOf): kotlin.collections.Set<T of kotlin.collections.setOf> declared in kotlin.collections' type=kotlin.collections.Set<kotlin.String> origin=null
                 <T>: kotlin.String
                 elements: VARARG type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String
                   CONST String type=kotlin.String value="NoTarget"
@@ -289,7 +289,7 @@ FILE fqName:<root> fileName:/targetOnPrimaryCtorParameter.kt
           then: RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
             CALL 'public final fun plus (other: kotlin.Any?): kotlin.String declared in kotlin.String' type=kotlin.String origin=PLUS
               $this: CONST String type=kotlin.String value="Parameters:"
-              other: CALL 'public final fun joinToString <T> (separator: kotlin.CharSequence, prefix: kotlin.CharSequence, postfix: kotlin.CharSequence, limit: kotlin.Int, truncated: kotlin.CharSequence, transform: kotlin.Function1<T of kotlin.collections.CollectionsKt.joinToString, kotlin.CharSequence>?): kotlin.String declared in kotlin.collections.CollectionsKt' type=kotlin.String origin=null
+              other: CALL 'public final fun joinToString <T> (separator: kotlin.CharSequence, prefix: kotlin.CharSequence, postfix: kotlin.CharSequence, limit: kotlin.Int, truncated: kotlin.CharSequence, transform: kotlin.Function1<T of kotlin.collections.joinToString, kotlin.CharSequence>?): kotlin.String declared in kotlin.collections' type=kotlin.String origin=null
                 <T>: kotlin.String
                 $receiver: GET_VAR 'val parameterAnnotations: kotlin.collections.Set<kotlin.String> declared in <root>.box' type=kotlin.collections.Set<kotlin.String> origin=null
       WHEN type=kotlin.Unit origin=IF
@@ -297,7 +297,7 @@ FILE fqName:<root> fileName:/targetOnPrimaryCtorParameter.kt
           if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
             $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
               arg0: GET_VAR 'val propertyAnnotations: kotlin.collections.Set<kotlin.String> declared in <root>.box' type=kotlin.collections.Set<kotlin.String> origin=null
-              arg1: CALL 'public final fun setOf <T> (vararg elements: T of kotlin.collections.SetsKt.setOf): kotlin.collections.Set<T of kotlin.collections.SetsKt.setOf> declared in kotlin.collections.SetsKt' type=kotlin.collections.Set<kotlin.String> origin=null
+              arg1: CALL 'public final fun setOf <T> (vararg elements: T of kotlin.collections.setOf): kotlin.collections.Set<T of kotlin.collections.setOf> declared in kotlin.collections' type=kotlin.collections.Set<kotlin.String> origin=null
                 <T>: kotlin.String
                 elements: VARARG type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String
                   CONST String type=kotlin.String value="PropertyOnly"
@@ -305,7 +305,7 @@ FILE fqName:<root> fileName:/targetOnPrimaryCtorParameter.kt
           then: RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
             CALL 'public final fun plus (other: kotlin.Any?): kotlin.String declared in kotlin.String' type=kotlin.String origin=PLUS
               $this: CONST String type=kotlin.String value="Property:"
-              other: CALL 'public final fun joinToString <T> (separator: kotlin.CharSequence, prefix: kotlin.CharSequence, postfix: kotlin.CharSequence, limit: kotlin.Int, truncated: kotlin.CharSequence, transform: kotlin.Function1<T of kotlin.collections.CollectionsKt.joinToString, kotlin.CharSequence>?): kotlin.String declared in kotlin.collections.CollectionsKt' type=kotlin.String origin=null
+              other: CALL 'public final fun joinToString <T> (separator: kotlin.CharSequence, prefix: kotlin.CharSequence, postfix: kotlin.CharSequence, limit: kotlin.Int, truncated: kotlin.CharSequence, transform: kotlin.Function1<T of kotlin.collections.joinToString, kotlin.CharSequence>?): kotlin.String declared in kotlin.collections' type=kotlin.String origin=null
                 <T>: kotlin.String
                 $receiver: GET_VAR 'val propertyAnnotations: kotlin.collections.Set<kotlin.String> declared in <root>.box' type=kotlin.collections.Set<kotlin.String> origin=null
       WHEN type=kotlin.Unit origin=IF
@@ -313,13 +313,13 @@ FILE fqName:<root> fileName:/targetOnPrimaryCtorParameter.kt
           if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
             $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
               arg0: GET_VAR 'val fieldAnnotations: kotlin.collections.Set<kotlin.String> declared in <root>.box' type=kotlin.collections.Set<kotlin.String> origin=null
-              arg1: CALL 'public final fun setOf <T> (element: T of kotlin.collections.SetsKt.setOf): kotlin.collections.Set<T of kotlin.collections.SetsKt.setOf> declared in kotlin.collections.SetsKt' type=kotlin.collections.Set<kotlin.String> origin=null
+              arg1: CALL 'public final fun setOf <T> (element: T of kotlin.collections.setOf): kotlin.collections.Set<T of kotlin.collections.setOf> declared in kotlin.collections' type=kotlin.collections.Set<kotlin.String> origin=null
                 <T>: kotlin.String
                 element: CONST String type=kotlin.String value="FieldOnly"
           then: RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
             CALL 'public final fun plus (other: kotlin.Any?): kotlin.String declared in kotlin.String' type=kotlin.String origin=PLUS
               $this: CONST String type=kotlin.String value="Field:"
-              other: CALL 'public final fun joinToString <T> (separator: kotlin.CharSequence, prefix: kotlin.CharSequence, postfix: kotlin.CharSequence, limit: kotlin.Int, truncated: kotlin.CharSequence, transform: kotlin.Function1<T of kotlin.collections.CollectionsKt.joinToString, kotlin.CharSequence>?): kotlin.String declared in kotlin.collections.CollectionsKt' type=kotlin.String origin=null
+              other: CALL 'public final fun joinToString <T> (separator: kotlin.CharSequence, prefix: kotlin.CharSequence, postfix: kotlin.CharSequence, limit: kotlin.Int, truncated: kotlin.CharSequence, transform: kotlin.Function1<T of kotlin.collections.joinToString, kotlin.CharSequence>?): kotlin.String declared in kotlin.collections' type=kotlin.String origin=null
                 <T>: kotlin.String
                 $receiver: GET_VAR 'val fieldAnnotations: kotlin.collections.Set<kotlin.String> declared in <root>.box' type=kotlin.collections.Set<kotlin.String> origin=null
       RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'

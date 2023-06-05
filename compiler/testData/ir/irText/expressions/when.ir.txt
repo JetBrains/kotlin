@@ -46,9 +46,9 @@ FILE fqName:<root> fileName:/when.kt
                   GET_VAR 'val tmp_0: kotlin.Any? declared in <root>.testWithSubject' type=kotlin.Any? origin=null
               then: CONST String type=kotlin.String value="!Number"
             BRANCH
-              if: CALL 'public final fun contains <T> (element: T of kotlin.collections.CollectionsKt.contains): kotlin.Boolean declared in kotlin.collections.CollectionsKt' type=kotlin.Boolean origin=IN
+              if: CALL 'public final fun contains <T> (element: T of kotlin.collections.contains): kotlin.Boolean declared in kotlin.collections' type=kotlin.Boolean origin=IN
                 <T>: kotlin.Number
-                $receiver: CALL 'public final fun setOf <T> (): kotlin.collections.Set<T of kotlin.collections.SetsKt.setOf> declared in kotlin.collections.SetsKt' type=kotlin.collections.Set<kotlin.Nothing> origin=null
+                $receiver: CALL 'public final fun setOf <T> (): kotlin.collections.Set<T of kotlin.collections.setOf> declared in kotlin.collections' type=kotlin.collections.Set<kotlin.Nothing> origin=null
                   <T>: kotlin.Nothing
                 element: TYPE_OP type=kotlin.Number origin=IMPLICIT_CAST typeOperand=kotlin.Number
                   GET_VAR 'val tmp_0: kotlin.Any? declared in <root>.testWithSubject' type=kotlin.Any? origin=null
@@ -80,9 +80,9 @@ FILE fqName:<root> fileName:/when.kt
               GET_VAR 'x: kotlin.Any? declared in <root>.test' type=kotlin.Any? origin=null
             then: CONST String type=kotlin.String value="!Number"
           BRANCH
-            if: CALL 'public final fun contains <T> (element: T of kotlin.collections.CollectionsKt.contains): kotlin.Boolean declared in kotlin.collections.CollectionsKt' type=kotlin.Boolean origin=IN
+            if: CALL 'public final fun contains <T> (element: T of kotlin.collections.contains): kotlin.Boolean declared in kotlin.collections' type=kotlin.Boolean origin=IN
               <T>: kotlin.Number
-              $receiver: CALL 'public final fun setOf <T> (): kotlin.collections.Set<T of kotlin.collections.SetsKt.setOf> declared in kotlin.collections.SetsKt' type=kotlin.collections.Set<kotlin.Nothing> origin=null
+              $receiver: CALL 'public final fun setOf <T> (): kotlin.collections.Set<T of kotlin.collections.setOf> declared in kotlin.collections' type=kotlin.collections.Set<kotlin.Nothing> origin=null
                 <T>: kotlin.Nothing
               element: TYPE_OP type=kotlin.Number origin=IMPLICIT_CAST typeOperand=kotlin.Number
                 GET_VAR 'x: kotlin.Any? declared in <root>.test' type=kotlin.Any? origin=null

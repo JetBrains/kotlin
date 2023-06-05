@@ -62,7 +62,7 @@ class BaseWriterImpl(
             // make sure there are no leftovers from the .def file.
             return
         } else {
-            val newValue = libraries.joinToString(" ") { it.uniqueName }
+            val newValue = libraries.map { it.uniqueName }.toSpaceSeparatedString()
             manifestProperties.setProperty(KLIB_PROPERTY_DEPENDS, newValue)
             libraries.forEach { it ->
                 if (it.versions.libraryVersion != null) {
@@ -182,4 +182,8 @@ enum class BuiltInsPlatform {
     companion object {
         fun parseFromString(name: String): BuiltInsPlatform? = values().firstOrNull { it.name == name }
     }
+}
+
+fun List<String>.toSpaceSeparatedString(): String = joinToString(separator = " ") {
+    if (it.contains(" ")) "\"$it\"" else it
 }

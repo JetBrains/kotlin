@@ -5,15 +5,12 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.yarn
 
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.PlatformHelper
 import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.internal.ConfigurationPhaseAware
 import org.jetbrains.kotlin.gradle.logging.kotlinInfo
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
-import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
-import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.implementing
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.Platform
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.RootPackageJsonTask
 import org.jetbrains.kotlin.gradle.tasks.internal.CleanableStore
 import java.io.File
@@ -58,6 +55,8 @@ open class YarnRootExtension(
             .withType(RootPackageJsonTask::class.java)
             .named(RootPackageJsonTask.NAME)
 
+    internal val platform: org.gradle.api.provider.Property<Platform> = project.objects.property(Platform::class.java)
+
     var resolutions: MutableList<YarnResolution> by Property(mutableListOf())
 
     fun resolution(path: String, configure: Action<YarnResolution>) {
@@ -76,7 +75,7 @@ open class YarnRootExtension(
     override fun finalizeConfiguration(): YarnEnv {
         val cleanableStore = CleanableStore[installationDir.path]
 
-        val isWindows = PlatformHelper.isWindows
+        val isWindows = platform.get().isWindows()
 
         val home = cleanableStore["yarn-v$version"].use()
 

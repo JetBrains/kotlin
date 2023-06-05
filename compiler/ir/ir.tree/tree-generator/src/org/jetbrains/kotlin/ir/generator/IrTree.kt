@@ -535,7 +535,19 @@ object IrTree : AbstractTreeBuilder() {
 
         +symbol(packageFragmentSymbolType)
         +field("packageFragmentDescriptor", type(Packages.descriptors, "PackageFragmentDescriptor"), mutable = false)
-        +field("fqName", type<FqName>())
+        +field("packageFqName", type<FqName>())
+        +field("fqName", type<FqName>()) {
+            baseGetter = code("packageFqName")
+            generationCallback = {
+                val deprecatedAnnotation = AnnotationSpec.builder(Deprecated::class)
+                    .addMember(code("message = \"Please use `packageFqName` instead\""))
+                    .addMember(code("replaceWith = ReplaceWith(\"packageFqName\")"))
+                    .addMember(code("level = DeprecationLevel.ERROR"))
+                    .build()
+                addAnnotation(deprecatedAnnotation)
+                setter(FunSpec.setterBuilder().addParameter("value", FqName::class).addCode(code("packageFqName = value")).build())
+            }
+        }
     }
     val externalPackageFragment: ElementConfig by element(Declaration) {
         visitorParent = packageFragment

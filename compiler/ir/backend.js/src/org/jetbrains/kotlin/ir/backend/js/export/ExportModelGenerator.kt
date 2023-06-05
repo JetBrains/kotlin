@@ -32,7 +32,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
     private val transitiveExportCollector = TransitiveExportCollector(context)
 
     fun generateExport(file: IrPackageFragment): List<ExportedDeclaration> {
-        val namespaceFqName = file.fqName
+        val namespaceFqName = file.packageFqName
         val exports = file.declarations.memoryOptimizedFlatMap { declaration -> listOfNotNull(exportDeclaration(declaration)) }
         return when {
             exports.isEmpty() -> emptyList()

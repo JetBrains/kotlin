@@ -51,7 +51,7 @@ private val JsPackage = FqName("kotlin.js")
 private val JsIntrinsicFqName = FqName("kotlin.js.JsIntrinsic")
 
 private fun IrDeclaration.isPlacedInsideInternalPackage() =
-    (parent as? IrPackageFragment)?.fqName == JsPackage
+    (parent as? IrPackageFragment)?.packageFqName == JsPackage
 
 private fun isIntrinsic(declaration: IrDeclaration): Boolean =
     declaration is IrSimpleFunction && declaration.isPlacedInsideInternalPackage() &&
@@ -73,7 +73,7 @@ class MoveBodilessDeclarationsToSeparatePlaceLowering(private val context: JsIrB
 
         val externalPackageFragment by lazy(LazyThreadSafetyMode.NONE) {
             context.externalPackageFragment.getOrPut(irFile.symbol) {
-                IrFileImpl(fileEntry = irFile.fileEntry, fqName = irFile.fqName, symbol = IrFileSymbolImpl(), module = irFile.module).also {
+                IrFileImpl(fileEntry = irFile.fileEntry, fqName = irFile.packageFqName, symbol = IrFileSymbolImpl(), module = irFile.module).also {
                     it.annotations = it.annotations memoryOptimizedPlus irFile.annotations
                 }
             }

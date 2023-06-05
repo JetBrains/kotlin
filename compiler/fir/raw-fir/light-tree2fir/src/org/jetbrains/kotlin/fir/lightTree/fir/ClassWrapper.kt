@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.lightTree.fir
 
+import org.jetbrains.kotlin.KtLightSourceElement
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -26,7 +27,7 @@ class ClassWrapper(
     val hasDefaultConstructor: Boolean,
     val delegatedSelfTypeRef: FirTypeRef,
     val delegatedSuperTypeRef: FirTypeRef,
-    val superTypeCallEntry: List<FirExpression>,
+    val delegatedSuperCalls: List<DelegatedConstructorWrapper>,
 ) {
     fun isObjectLiteral(): Boolean {
         return className == SpecialNames.NO_NAME_PROVIDED && isObject()
@@ -69,3 +70,9 @@ class ClassWrapper(
         }
     }
 }
+
+data class DelegatedConstructorWrapper(
+    val delegatedSuperTypeRef: FirTypeRef,
+    val arguments: List<FirExpression>,
+    val source: KtLightSourceElement?,
+)

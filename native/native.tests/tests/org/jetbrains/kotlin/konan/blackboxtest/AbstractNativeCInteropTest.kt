@@ -72,14 +72,13 @@ abstract class AbstractNativeCInteropTest : AbstractNativeCInteropBaseTest() {
             getBuiltinsGoldenFile(testPathFull)
         else
             getGoldenFile(testPathFull)
-        val fmodulesArgs = if (fmodules) listOf("-compiler-option", "-fmodules") else listOf()
+        val fmodulesArgs = if (fmodules) TestCompilerArgs("-compiler-option", "-fmodules") else TestCompilerArgs.EMPTY
         val includeArgs = if (testDataDir.name.startsWith("framework"))
-            listOf("-compiler-option", "-F${testDataDir.canonicalPath}")
+            TestCompilerArgs("-compiler-option", "-F${testDataDir.canonicalPath}")
         else
-            listOf("-compiler-option", "-I${includeFolder.canonicalPath}")
+            TestCompilerArgs("-compiler-option", "-I${includeFolder.canonicalPath}")
 
-        val testCase: TestCase = generateCInteropTestCaseWithSingleDef(defFile, includeArgs + fmodulesArgs)
-        val testCompilationResult = testCase.cinteropToLibrary()
+        val testCompilationResult = cinteropToLibrary(targets, defFile, buildDir, includeArgs + fmodulesArgs)
         // If we are running fmodules-specific test without -fmodules then we want to be sure that cinterop fails the way we want it to.
         if (!fmodules && testPath.endsWith("FModules/")) {
             val loggedData = (testCompilationResult as TestCompilationResult.CompilationToolFailure).loggedData

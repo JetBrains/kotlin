@@ -73,7 +73,7 @@ fun IrConstructor.hasStrictSignature(context: JsIrBackendContext): Boolean {
 }
 
 private fun getKotlinOrJsQualifier(parent: IrPackageFragment, shouldIncludePackage: Boolean): FqName? {
-    return (parent as? IrFile)?.getJsQualifier()?.let { FqName(it) } ?: parent.fqName.takeIf { shouldIncludePackage }
+    return (parent as? IrFile)?.getJsQualifier()?.let { FqName(it) } ?: parent.packageFqName.takeIf { shouldIncludePackage }
 }
 
 val IrFunctionAccessExpression.typeArguments: List<IrType?>

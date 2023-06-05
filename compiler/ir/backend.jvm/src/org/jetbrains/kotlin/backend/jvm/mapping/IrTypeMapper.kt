@@ -65,7 +65,7 @@ open class IrTypeMapper(private val context: JvmBackendContext) : KotlinTypeMapp
         when (val parent = irClass.parent) {
             is IrPackageFragment ->
                 return StringBuilder().apply {
-                    val fqName = parent.fqName
+                    val fqName = parent.packageFqName
                     if (!fqName.isRoot) {
                         append(fqName.asString().replace('.', '/')).append("/")
                     }

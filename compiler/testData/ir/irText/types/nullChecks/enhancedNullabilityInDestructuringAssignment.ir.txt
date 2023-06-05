@@ -188,9 +188,9 @@ FILE fqName:<root> fileName:/enhancedNullabilityInDestructuringAssignment.kt
     BLOCK_BODY
       COMPOSITE type=kotlin.Unit origin=DESTRUCTURING_DECLARATION
         VAR IR_TEMPORARY_VARIABLE name:tmp_3 type:kotlin.collections.IndexedValue<@[NotNull(value = <null>)] @[EnhancedNullability] <root>.P> [val]
-          CALL 'public final fun first <T> (): T of kotlin.collections.CollectionsKt.first declared in kotlin.collections.CollectionsKt' type=kotlin.collections.IndexedValue<@[NotNull(value = <null>)] @[EnhancedNullability] <root>.P> origin=null
+          CALL 'public final fun first <T> (): T of kotlin.collections.first declared in kotlin.collections' type=kotlin.collections.IndexedValue<@[NotNull(value = <null>)] @[EnhancedNullability] <root>.P> origin=null
             <T>: kotlin.collections.IndexedValue<@[NotNull(value = <null>)] @[EnhancedNullability] <root>.P>
-            $receiver: CALL 'public final fun withIndex <T> (): kotlin.collections.Iterable<kotlin.collections.IndexedValue<T of kotlin.collections.CollectionsKt.withIndex>> declared in kotlin.collections.CollectionsKt' type=kotlin.collections.Iterable<kotlin.collections.IndexedValue<@[NotNull(value = <null>)] @[EnhancedNullability] <root>.P>> origin=null
+            $receiver: CALL 'public final fun withIndex <T> (): kotlin.collections.Iterable<kotlin.collections.IndexedValue<T of kotlin.collections.withIndex>> declared in kotlin.collections' type=kotlin.collections.Iterable<kotlin.collections.IndexedValue<@[NotNull(value = <null>)] @[EnhancedNullability] <root>.P>> origin=null
               <T>: @[NotNull(value = <null>)] @[EnhancedNullability] <root>.P
               $receiver: TYPE_OP type=kotlin.collections.List<@[NotNull(value = <null>)] @[EnhancedNullability] <root>.P> origin=IMPLICIT_NOTNULL typeOperand=kotlin.collections.List<@[NotNull(value = <null>)] @[EnhancedNullability] <root>.P>
                 CALL 'public open fun listOfNotNull (): @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableList<@[NotNull(value = <null>)] @[EnhancedNullability] <root>.P>? declared in <root>.J' type=@[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableList<@[NotNull(value = <null>)] @[EnhancedNullability] <root>.P>? origin=null

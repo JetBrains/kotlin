@@ -17,6 +17,9 @@ interface NumberOperations {
   // CHECK JVM_IR:
   //   Mangled name: NumberOperations#plus@kotlin.Number(kotlin.Number){}kotlin.Number
   //   Public signature: /NumberOperations.plus|-6518987633126930952[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: NumberOperations#plus@kotlin.Number(kotlin.Number){}
+  //   Public signature: /NumberOperations.plus|-1680445349837757562[0]
   abstract fun Number.plus(other: Number): Number
 
 }
@@ -24,6 +27,9 @@ interface NumberOperations {
 // CHECK JVM_IR:
 //   Mangled name: #plus!NumberOperations@Matrix(Matrix){}Matrix
 //   Public signature: /plus|1303343764214809933[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #plus!NumberOperations@Matrix(Matrix){}
+//   Public signature: /plus|-2670469522083122958[0]
 fun Matrix.plus($context_receiver_0: NumberOperations, other: Matrix): Matrix
 
 // CHECK:

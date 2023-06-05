@@ -21,10 +21,11 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.RootPackageJsonTask
 import org.jetbrains.kotlin.gradle.targets.js.yarn.Yarn
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnLockCopyTask
 import org.jetbrains.kotlin.gradle.tasks.internal.CleanableStore
+import org.jetbrains.kotlin.gradle.utils.property
 import java.io.File
 
 open class NodeJsRootExtension(
-    val project: Project
+    val project: Project,
 ) : ConfigurationPhaseAware<NodeJsEnv>() {
 
     init {
@@ -81,17 +82,18 @@ open class NodeJsRootExtension(
     val nodeModulesGradleCacheDir: File
         get() = rootPackageDir.resolve("packages_imported")
 
+    internal val platform: org.gradle.api.provider.Property<Platform> = project.objects.property<Platform>()
+
     val versions = NpmVersions()
 
     override fun finalizeConfiguration(): NodeJsEnv {
-        val platformHelper = PlatformHelper
-        val platform = platformHelper.osName
-        val architecture = platformHelper.osArch
+        val name = platform.get().name
+        val architecture = platform.get().arch
 
-        val nodeDirName = "node-v$nodeVersion-$platform-$architecture"
+        val nodeDirName = "node-v$nodeVersion-$name-$architecture"
         val cleanableStore = CleanableStore[installationDir.absolutePath]
         val nodeDir = cleanableStore[nodeDirName].use()
-        val isWindows = platformHelper.isWindows
+        val isWindows = platform.get().isWindows()
         val nodeBinDir = if (isWindows) nodeDir else nodeDir.resolve("bin")
 
         fun getExecutable(command: String, customCommand: String, windowsExtension: String): String {
@@ -101,7 +103,7 @@ open class NodeJsRootExtension(
 
         fun getIvyDependency(): String {
             val type = if (isWindows) "zip" else "tar.gz"
-            return "org.nodejs:node:$nodeVersion:$platform-$architecture@$type"
+            return "org.nodejs:node:$nodeVersion:$name-$architecture@$type"
         }
 
         return NodeJsEnv(
@@ -110,7 +112,7 @@ open class NodeJsRootExtension(
             nodeDir = nodeDir,
             nodeBinDir = nodeBinDir,
             nodeExecutable = getExecutable("node", nodeCommand, "exe"),
-            platformName = platform,
+            platformName = name,
             architectureName = architecture,
             ivyDependency = getIvyDependency(),
             downloadBaseUrl = nodeDownloadBaseUrl,

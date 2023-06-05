@@ -18,11 +18,13 @@ package org.jetbrains.kotlin.load.java.structure.impl;
 
 import com.intellij.psi.PsiAnnotationMemberValue;
 import com.intellij.psi.PsiAnnotationMethod;
+import com.intellij.psi.PsiField;
 import com.intellij.psi.PsiMethod;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.load.java.structure.*;
 import org.jetbrains.kotlin.load.java.structure.impl.source.JavaElementPsiSource;
+import org.jetbrains.kotlin.load.java.structure.impl.source.JavaElementSourceFactory;
 import org.jetbrains.kotlin.name.Name;
 
 import java.util.List;
@@ -37,6 +39,11 @@ public class JavaMethodImpl extends JavaMemberImpl<PsiMethod> implements JavaMet
         PsiMethod method = psiMethodSource.getPsi();
         assert !method.isConstructor() :
                 "PsiMethod which is a constructor should be wrapped in JavaConstructorImpl: " + method.getName();
+    }
+
+    @SuppressWarnings("unused") // used in KSP
+    public JavaMethodImpl(PsiMethod psiMethod) {
+        this(JavaElementSourceFactory.getInstance(psiMethod.getProject()).createPsiSource(psiMethod));
     }
 
     @NotNull

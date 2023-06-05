@@ -617,7 +617,7 @@ FILE fqName:<root> fileName:/typeVariableAfterBuildMap.kt
     PROPERTY name:ORDERED_VISIBILITIES visibility:private modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:ORDERED_VISIBILITIES type:kotlin.collections.Map<<root>.Visibility, kotlin.Int> visibility:private [final]
         EXPRESSION_BODY
-          CALL 'public final fun buildMap <K, V> (builderAction: @[ExtensionFunctionType] kotlin.Function1<kotlin.collections.MutableMap<K of kotlin.collections.MapsKt.buildMap, V of kotlin.collections.MapsKt.buildMap>, kotlin.Unit>): kotlin.collections.Map<K of kotlin.collections.MapsKt.buildMap, V of kotlin.collections.MapsKt.buildMap> declared in kotlin.collections.MapsKt' type=kotlin.collections.Map<<root>.Visibility, kotlin.Int> origin=null
+          CALL 'public final fun buildMap <K, V> (builderAction: @[ExtensionFunctionType] kotlin.Function1<kotlin.collections.MutableMap<K of kotlin.collections.buildMap, V of kotlin.collections.buildMap>, kotlin.Unit>): kotlin.collections.Map<K of kotlin.collections.buildMap, V of kotlin.collections.buildMap> declared in kotlin.collections' type=kotlin.collections.Map<<root>.Visibility, kotlin.Int> origin=null
             <K>: <root>.Visibility
             <V>: kotlin.Int
             builderAction: FUN_EXPR type=@[ExtensionFunctionType] kotlin.Function1<kotlin.collections.MutableMap<<root>.Visibility, kotlin.Int>, kotlin.Unit> origin=LAMBDA

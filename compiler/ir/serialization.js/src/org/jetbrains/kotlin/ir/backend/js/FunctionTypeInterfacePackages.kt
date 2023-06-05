@@ -34,8 +34,8 @@ class FunctionTypeInterfacePackages {
             it.fileEntry.name.endsWith(fileWithRequiredPackage) && it.fileEntry.name.contains(FUNCTION_TYPE_INTERFACE_DIR)
         } ?: error("can not find a functional interface file for $packageFqName package")
 
-        check(packageFragmentDescriptor.fqName == packageFile.fqName) {
-            "unexpected package in file ${packageFile.fileEntry.name}; expected $packageFqName, got ${packageFile.fqName}"
+        check(packageFragmentDescriptor.fqName == packageFile.packageFqName) {
+            "unexpected package in file ${packageFile.fileEntry.name}; expected $packageFqName, got ${packageFile.packageFqName}"
         }
 
         functionTypeInterfacePackageFiles += packageFile

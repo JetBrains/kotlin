@@ -44,11 +44,11 @@ FILE fqName:<root> fileName:/dontLeaveStubTypesInSetter.kt
     VALUE_PARAMETER name:x index:0 type:kotlin.collections.MutableList<K of <root>.foo>
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun foo <K> (x: kotlin.collections.MutableList<K of <root>.foo>): <root>.Foo<K of <root>.foo> declared in <root>'
-        CALL 'public final fun TODO (): kotlin.Nothing declared in kotlin.StandardKt' type=kotlin.Nothing origin=null
+        CALL 'public final fun TODO (): kotlin.Nothing declared in kotlin' type=kotlin.Nothing origin=null
   FUN name:main visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       VAR name:x type:kotlin.collections.List<kotlin.String> [val]
-        CALL 'public final fun buildList <E> (builderAction: @[ExtensionFunctionType] kotlin.Function1<kotlin.collections.MutableList<E of kotlin.collections.CollectionsKt.buildList>, kotlin.Unit>): kotlin.collections.List<E of kotlin.collections.CollectionsKt.buildList> declared in kotlin.collections.CollectionsKt' type=kotlin.collections.List<kotlin.String> origin=null
+        CALL 'public final fun buildList <E> (builderAction: @[ExtensionFunctionType] kotlin.Function1<kotlin.collections.MutableList<E of kotlin.collections.buildList>, kotlin.Unit>): kotlin.collections.List<E of kotlin.collections.buildList> declared in kotlin.collections' type=kotlin.collections.List<kotlin.String> origin=null
           <E>: kotlin.String
           builderAction: FUN_EXPR type=@[ExtensionFunctionType] kotlin.Function1<kotlin.collections.MutableList<kotlin.String>, kotlin.Unit> origin=LAMBDA
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:kotlin.collections.MutableList<kotlin.String>) returnType:kotlin.Unit

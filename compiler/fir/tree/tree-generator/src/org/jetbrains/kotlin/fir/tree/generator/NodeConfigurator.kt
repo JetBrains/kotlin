@@ -418,6 +418,10 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             generateBooleanFields("this", "super")
         }
 
+        multiDelegatedConstructorCall.configure {
+            +fieldList("delegatedConstructorCalls", delegatedConstructorCall, withReplace = true).withTransform()
+        }
+
         valueParameter.configure {
             +symbol("FirValueParameterSymbol")
             +field("defaultValue", expression, nullable = true, withReplace = true)

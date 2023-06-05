@@ -1,7 +1,5 @@
 // WITH_STDLIB
 // FULL_JDK
-// IGNORE_BACKEND: JS_IR
-// IGNORE_BACKEND: JS_IR_ES6
 
 class Flaf(val javaName: String) {
 

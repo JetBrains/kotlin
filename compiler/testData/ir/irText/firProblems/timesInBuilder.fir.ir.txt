@@ -112,7 +112,7 @@ FILE fqName:<root> fileName:/timesInBuilder.kt
     PROPERTY name:arguments visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:arguments type:kotlin.collections.MutableList<<root>.Expression> visibility:private [final]
         EXPRESSION_BODY
-          CALL 'public final fun mutableListOf <T> (): kotlin.collections.MutableList<T of kotlin.collections.CollectionsKt.mutableListOf> declared in kotlin.collections.CollectionsKt' type=kotlin.collections.MutableList<<root>.Expression> origin=null
+          CALL 'public final fun mutableListOf <T> (): kotlin.collections.MutableList<T of kotlin.collections.mutableListOf> declared in kotlin.collections' type=kotlin.collections.MutableList<<root>.Expression> origin=null
             <T>: <root>.Expression
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-arguments> visibility:public modality:FINAL <> ($this:<root>.ArgumentsBuilder) returnType:kotlin.collections.MutableList<<root>.Expression>
         correspondingProperty: PROPERTY name:arguments visibility:public modality:FINAL [val]

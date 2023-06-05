@@ -1,7 +1,4 @@
 // SKIP_KT_DUMP
-// IGNORE_BACKEND: JS_IR
-// IGNORE_BACKEND: JS_IR_ES6
-
 class ObjectAssert<ACTUAL> {
     fun describedAs(description: String?, vararg args: Any?): ObjectAssert<ACTUAL>? = null
 }

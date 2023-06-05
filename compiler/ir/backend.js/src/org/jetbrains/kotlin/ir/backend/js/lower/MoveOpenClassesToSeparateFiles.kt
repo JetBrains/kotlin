@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.ir.util.transformFlat
 
 fun moveOpenClassesToSeparateFiles(moduleFragment: IrModuleFragment) {
     fun createFile(file: IrFile, klass: IrClass): IrFile =
-        IrFileImpl(fileEntry = file.fileEntry, fqName = file.fqName, symbol = IrFileSymbolImpl(), module = file.module).also {
+        IrFileImpl(fileEntry = file.fileEntry, fqName = file.packageFqName, symbol = IrFileSymbolImpl(), module = file.module).also {
             it.annotations = it.annotations memoryOptimizedPlus file.annotations
             it.declarations += klass
             klass.parent = it

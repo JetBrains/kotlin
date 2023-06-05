@@ -14,7 +14,7 @@ FILE fqName:<root> fileName:/coercionToUnitForNestedWhen.kt
       RETURN type=kotlin.Nothing from='private final fun nextChar (): kotlin.Char? declared in <root>'
         BLOCK type=kotlin.Char? origin=SAFE_CALL
           VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:kotlin.Int? [val]
-            CALL 'public final fun takeUnless <T> (predicate: kotlin.Function1<T of kotlin.StandardKt.takeUnless, kotlin.Boolean>): T of kotlin.StandardKt.takeUnless? declared in kotlin.StandardKt' type=kotlin.Int? origin=null
+            CALL 'public final fun takeUnless <T> (predicate: kotlin.Function1<T of kotlin.takeUnless, kotlin.Boolean>): T of kotlin.takeUnless? declared in kotlin' type=kotlin.Int? origin=null
               <T>: kotlin.Int
               $receiver: CALL 'public open fun read (): kotlin.Int declared in java.io.Reader' type=kotlin.Int origin=null
                 $this: GET_VAR '<this>: java.io.Reader declared in <root>.nextChar' type=java.io.Reader origin=null
@@ -77,7 +77,7 @@ FILE fqName:<root> fileName:/coercionToUnitForNestedWhen.kt
                       then: CONST Null type=kotlin.Nothing? value=null
                     BRANCH
                       if: CONST Boolean type=kotlin.Boolean value=true
-                      then: CALL 'public final fun let <T, R> (block: kotlin.Function1<T of kotlin.StandardKt.let, R of kotlin.StandardKt.let>): R of kotlin.StandardKt.let declared in kotlin.StandardKt' type=@[FlexibleNullability] java.lang.StringBuilder? origin=null
+                      then: CALL 'public final fun let <T, R> (block: kotlin.Function1<T of kotlin.let, R of kotlin.let>): R of kotlin.let declared in kotlin' type=@[FlexibleNullability] java.lang.StringBuilder? origin=null
                         <T>: kotlin.Char
                         <R>: @[FlexibleNullability] java.lang.StringBuilder?
                         $receiver: GET_VAR 'val tmp_1: kotlin.Char? declared in <root>.consumeRestOfQuotedSequence' type=kotlin.Char? origin=null

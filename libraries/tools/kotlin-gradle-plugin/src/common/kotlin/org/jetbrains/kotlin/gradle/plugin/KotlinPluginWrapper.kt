@@ -45,6 +45,8 @@ import org.jetbrains.kotlin.gradle.report.BuildMetricsService
 import org.jetbrains.kotlin.gradle.plugin.statistics.BuildFlowService
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsPlugin
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.DefaultUnameExecutorVariantFactory
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.UnameExecutor
 import org.jetbrains.kotlin.gradle.targets.js.npm.addNpmDependencyExtension
 import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropKlibLibraryElements
@@ -66,13 +68,13 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
     override val pluginVersion: String = getKotlinPluginVersion(logger)
 
     override fun apply(project: Project) {
+        checkGradleCompatibility()
 
+        project.registerDefaultVariantImplementations()
         KotlinBuildStatsService.getOrCreateInstance(project)?.apply {
             report(StringMetrics.KOTLIN_COMPILER_VERSION, pluginVersion)
         }
         BuildFlowService.registerIfAbsent(project)
-
-        checkGradleCompatibility()
 
         project.gradle.projectsEvaluated {
             whenBuildEvaluated(project)
@@ -80,7 +82,6 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
 
         addKotlinCompilerConfiguration(project)
 
-        project.registerDefaultVariantImplementations()
 
         project.configurations.maybeCreate(PLUGIN_CLASSPATH_CONFIGURATION_NAME).apply {
             isVisible = false
@@ -184,6 +185,11 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
         factories.putIfAbsent(
             CompatibilityConventionRegistrar.Factory::class,
             DefaultCompatibilityConventionRegistrar.Factory()
+        )
+
+        factories.putIfAbsent(
+            UnameExecutor.UnameExecutorVariantFactory::class,
+            DefaultUnameExecutorVariantFactory()
         )
     }
 

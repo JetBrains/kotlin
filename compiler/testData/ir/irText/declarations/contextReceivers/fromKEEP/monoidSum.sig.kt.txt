@@ -5,6 +5,9 @@ interface Monoid<T : Any?> : Semigroup<T> {
   // CHECK JVM_IR:
   //   Mangled name: Monoid#combine@1:0(1:0){}1:0
   //   Public signature: /Monoid.combine|-3517256775590682507[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: Monoid#combine@1:0(1:0){}
+  //   Public signature: /Monoid.combine|8412967464389689937[0]
   abstract /* fake */ override infix fun T.combine(other: T): T
 
   // CHECK:
@@ -14,6 +17,9 @@ interface Monoid<T : Any?> : Semigroup<T> {
     // CHECK JVM_IR:
     //   Mangled name: Monoid#<get-unit>(){}1:0
     //   Public signature: /Monoid.unit.<get-unit>|-2842189358620964971[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: Monoid#<get-unit>(){}
+    //   Public signature: /Monoid.unit.<get-unit>|1530864625432111105[0]
     abstract get
 
 }
@@ -26,6 +32,9 @@ interface Semigroup<T : Any?> {
   // CHECK JVM_IR:
   //   Mangled name: Semigroup#combine@1:0(1:0){}1:0
   //   Public signature: /Semigroup.combine|-3517256775590682507[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: Semigroup#combine@1:0(1:0){}
+  //   Public signature: /Semigroup.combine|8412967464389689937[0]
   abstract infix fun T.combine(other: T): T
 
 }
@@ -41,6 +50,9 @@ object IntMonoid : Monoid<Int> {
     // CHECK JVM_IR:
     //   Mangled name: IntMonoid#<get-unit>(){}kotlin.Int
     //   Public signature: /IntMonoid.unit.<get-unit>|3772729924213749256[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: IntMonoid#<get-unit>(){}
+    //   Public signature: /IntMonoid.unit.<get-unit>|1530864625432111105[0]
     override get
 
   // CHECK:
@@ -51,6 +63,9 @@ object IntMonoid : Monoid<Int> {
   // CHECK JVM_IR:
   //   Mangled name: IntMonoid#combine@kotlin.Int(kotlin.Int){}kotlin.Int
   //   Public signature: /IntMonoid.combine|4765448259581317405[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: IntMonoid#combine@kotlin.Int(kotlin.Int){}
+  //   Public signature: /IntMonoid.combine|4429091503069708823[0]
   override infix fun Int.combine(other: Int): Int
 
 }
@@ -66,6 +81,9 @@ object StringMonoid : Monoid<String> {
     // CHECK JVM_IR:
     //   Mangled name: StringMonoid#<get-unit>(){}kotlin.String
     //   Public signature: /StringMonoid.unit.<get-unit>|4504480110251605077[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: StringMonoid#<get-unit>(){}
+    //   Public signature: /StringMonoid.unit.<get-unit>|1530864625432111105[0]
     override get
 
   // CHECK:
@@ -76,6 +94,9 @@ object StringMonoid : Monoid<String> {
   // CHECK JVM_IR:
   //   Mangled name: StringMonoid#combine@kotlin.String(kotlin.String){}kotlin.String
   //   Public signature: /StringMonoid.combine|-5815259829474546918[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: StringMonoid#combine@kotlin.String(kotlin.String){}
+  //   Public signature: /StringMonoid.combine|-2748332935123183663[0]
   override infix fun String.combine(other: String): String
 
 }
@@ -83,10 +104,16 @@ object StringMonoid : Monoid<String> {
 // CHECK JVM_IR:
 //   Mangled name: #box(){}kotlin.String
 //   Public signature: /box|-9347091776561469[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #box(){}
+//   Public signature: /box|2173511048851971368[0]
 fun box(): String
 
 // CHECK JVM_IR:
 //   Mangled name: #sum!Monoid<0:0>@kotlin.collections.List<0:0>(){0§<kotlin.Any?>}0:0
 //   Public signature: /sum|7635142307973834922[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #sum!Monoid<0:0>@kotlin.collections.List<0:0>(){0§<kotlin.Any?>}
+//   Public signature: /sum|6490726678726957775[0]
 fun <T : Any?> List<T>.sum($context_receiver_0: Monoid<T>): T
 

@@ -9,6 +9,9 @@ class C {
     // CHECK JVM_IR:
     //   Mangled name: C#<get-c>(){}kotlin.Int
     //   Public signature: /C.c.<get-c>|-2440337234483931882[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: C#<get-c>(){}
+    //   Public signature: /C.c.<get-c>|2368736057102379596[0]
     get
 
   // CHECK:
@@ -40,6 +43,9 @@ class R {
     // CHECK JVM_IR:
     //   Mangled name: R#<get-r>(){}kotlin.Int
     //   Public signature: /R.r.<get-r>|4210912234201800356[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: R#<get-r>(){}
+    //   Public signature: /R.r.<get-r>|-7424184448774736572[0]
     get
 
   // CHECK:

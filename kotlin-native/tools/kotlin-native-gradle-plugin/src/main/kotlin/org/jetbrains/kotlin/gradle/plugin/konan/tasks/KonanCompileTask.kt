@@ -149,10 +149,10 @@ abstract class KonanCompileTask: KonanBuildingTask(), KonanCompileSpec {
         .excludeFlags("-Xcoverage")
         .excludeArguments("-Xcoverage-file", "-Xlibrary-to-cover", "-Xpartial-linkage", "-Xpartial-linkage-loglevel")
 
-    // Don't include the -Xemit-lazy-objc-header flag into
+    // Don't include the -Xemit-lazy-objc-header and -language-version flags into
     // the second stage because this stage have no sources.
     private fun secondStageExtraOpts() = extraOpts
-        .excludeArguments("-Xemit-lazy-objc-header")
+        .excludeArguments("-Xemit-lazy-objc-header", "-language-version")
 
     /** Args passed to the compiler at the first stage of two-stage compilation (klib building). */
     protected fun buildFirstStageArgs(klibPath: String) = mutableListOf<String>().apply {

@@ -204,9 +204,9 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
             val parent = owner.parent
             val ownerFqName = when {
                 parent is IrClass && parent.isFileClass ->
-                    (parent.parent as IrPackageFragment).fqName
+                    (parent.parent as IrPackageFragment).packageFqName
                 parent is IrClass -> parent.fqNameWhenAvailable ?: return null
-                parent is IrPackageFragment -> parent.fqName
+                parent is IrPackageFragment -> parent.packageFqName
                 else -> return null
             }
             return Key(

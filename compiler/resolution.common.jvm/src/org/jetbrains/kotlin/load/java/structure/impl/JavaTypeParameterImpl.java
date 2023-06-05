@@ -17,12 +17,14 @@
 package org.jetbrains.kotlin.load.java.structure.impl;
 
 import com.intellij.psi.PsiAnnotationOwner;
+import com.intellij.psi.PsiField;
 import com.intellij.psi.PsiTypeParameter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.load.java.structure.JavaClassifierType;
 import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter;
 import org.jetbrains.kotlin.load.java.structure.impl.source.JavaElementPsiSource;
+import org.jetbrains.kotlin.load.java.structure.impl.source.JavaElementSourceFactory;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.name.SpecialNames;
 
@@ -33,6 +35,11 @@ import static org.jetbrains.kotlin.load.java.structure.impl.JavaElementCollectio
 public class JavaTypeParameterImpl extends JavaClassifierImpl<PsiTypeParameter> implements JavaTypeParameter {
     public JavaTypeParameterImpl(@NotNull JavaElementPsiSource<PsiTypeParameter> psiTypeParameterSource) {
         super(psiTypeParameterSource);
+    }
+
+    @SuppressWarnings("unused") // used in KSP
+    public JavaTypeParameterImpl(PsiTypeParameter psiTypeParameter) {
+        this(JavaElementSourceFactory.getInstance(psiTypeParameter.getProject()).createPsiSource(psiTypeParameter));
     }
 
     @NotNull

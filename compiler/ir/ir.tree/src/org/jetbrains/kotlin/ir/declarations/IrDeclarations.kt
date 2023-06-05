@@ -38,7 +38,7 @@ fun IrClass.addAll(members: List<IrDeclaration>) {
 
 val IrFile.path: String get() = fileEntry.name
 val IrFile.name: String get() = File(path).name
-val IrFile.nameWithPackage: String get() = fqName.child(Name.identifier(name)).asString()
+val IrFile.nameWithPackage: String get() = packageFqName.child(Name.identifier(name)).asString()
 
 @ObsoleteDescriptorBasedAPI
 fun IrFunction.getIrValueParameter(parameter: ValueParameterDescriptor): IrValueParameter =

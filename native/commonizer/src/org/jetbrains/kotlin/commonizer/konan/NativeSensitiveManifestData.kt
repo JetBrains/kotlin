@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.commonizer.*
 import org.jetbrains.kotlin.konan.properties.propertyList
 import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.library.impl.BaseWriterImpl
+import org.jetbrains.kotlin.library.impl.toSpaceSeparatedString
 
 /**
  * The set of properties in manifest of Kotlin/Native library that should be
@@ -53,7 +54,7 @@ fun BaseWriterImpl.addManifest(manifest: NativeSensitiveManifestData) {
     // Make sure all the lists are sorted for reproducible output
 
     addOptionalProperty(KLIB_PROPERTY_DEPENDS, manifest.dependencies.isNotEmpty()) {
-        manifest.dependencies.sorted().joinToString(separator = " ")
+        manifest.dependencies.sorted().toSpaceSeparatedString()
     }
     addOptionalProperty(KLIB_PROPERTY_INTEROP, manifest.isInterop) { "true" }
     addOptionalProperty(KLIB_PROPERTY_PACKAGE, manifest.packageFqName != null) { manifest.packageFqName!! }

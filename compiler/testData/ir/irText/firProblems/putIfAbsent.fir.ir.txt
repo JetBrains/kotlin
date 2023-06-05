@@ -12,7 +12,7 @@ FILE fqName:<root> fileName:/putIfAbsent.kt
       VALUE_PARAMETER name:y index:1 type:T of <root>.Owner.foo
       BLOCK_BODY
         VAR name:map type:kotlin.collections.MutableMap<T of <root>.Owner.foo, T of <root>.Owner.foo> [val]
-          CALL 'public final fun mutableMapOf <K, V> (): kotlin.collections.MutableMap<K of kotlin.collections.MapsKt.mutableMapOf, V of kotlin.collections.MapsKt.mutableMapOf> declared in kotlin.collections.MapsKt' type=kotlin.collections.MutableMap<T of <root>.Owner.foo, T of <root>.Owner.foo> origin=null
+          CALL 'public final fun mutableMapOf <K, V> (): kotlin.collections.MutableMap<K of kotlin.collections.mutableMapOf, V of kotlin.collections.mutableMapOf> declared in kotlin.collections' type=kotlin.collections.MutableMap<T of <root>.Owner.foo, T of <root>.Owner.foo> origin=null
             <K>: T of <root>.Owner.foo
             <V>: T of <root>.Owner.foo
         TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit

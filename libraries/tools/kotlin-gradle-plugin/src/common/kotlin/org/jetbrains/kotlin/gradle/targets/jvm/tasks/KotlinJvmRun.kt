@@ -1,10 +1,12 @@
 package org.jetbrains.kotlin.gradle.targets.jvm.tasks
 
 import org.gradle.api.file.FileCollection
+import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.JavaExec
 import org.gradle.api.tasks.TaskProvider
+import org.gradle.jvm.toolchain.JavaToolchainService
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
@@ -17,6 +19,7 @@ import org.jetbrains.kotlin.gradle.plugin.internal.usedAtConfigurationTime
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
+import org.jetbrains.kotlin.gradle.utils.getByType
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.gradle.utils.property
 import org.jetbrains.kotlin.tooling.core.UnsafeApi
@@ -118,6 +121,11 @@ private fun KotlinJvmTarget.registerKotlinJvmRun(taskName: String, compilation: 
                 .orElse(project.providers.systemProperty("mainClass").usedAtConfigurationTime())
                 .orElse(mainClass).usedAtConfigurationTime()
         )
+
+        project.extensions.findByType(JavaToolchainService::class.java)?.let { toolchainService ->
+            val toolchain = project.extensions.getByType(JavaPluginExtension::class.java).toolchain
+            task.javaLauncher.convention(toolchainService.launcherFor(toolchain))
+        }
     }
 
     @OptIn(UnsafeApi::class)

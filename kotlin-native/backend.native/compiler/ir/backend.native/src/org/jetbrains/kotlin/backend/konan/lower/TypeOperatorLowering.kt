@@ -55,37 +55,10 @@ internal class TypeOperatorLowering(val context: CommonBackendContext) : FileLow
     private fun lowerCast(expression: IrTypeOperatorCall): IrExpression {
         builder.at(expression)
         val typeOperand = expression.typeOperand.erasure()
-
-//        assert (!TypeUtils.hasNullableSuperType(typeOperand)) // So that `isNullable()` <=> `isMarkedNullable`.
-
-        // TODO: consider the case when expression type is wrong e.g. due to generics-related unchecked casts.
-
-        return when {
-            expression.argument.type.isSubtypeOf(typeOperand, context.typeSystem) -> expression.argument
-
-            expression.argument.type.isNullable() -> {
-                with(builder) {
-                    irLetS(expression.argument) { argument ->
-                        irIfThenElse(
-                                type = expression.type,
-                                condition = irEqeqeq(irGet(argument.owner), irNull()),
-
-                                thenPart = if (typeOperand.isNullable())
-                                    irNull()
-                                else
-                                    irCall(this@TypeOperatorLowering.context.ir.symbols.throwNullPointerException.owner),
-
-                                elsePart = irAs(irGet(argument.owner), typeOperand.makeNotNull())
-                        )
-                    }
-                }
-            }
-
-            typeOperand.isMarkedNullable() -> builder.irAs(expression.argument, typeOperand.makeNotNull())
-
-            typeOperand == expression.typeOperand -> expression
-
-            else -> builder.irAs(expression.argument, typeOperand)
+        return if (typeOperand == expression.typeOperand) {
+            expression
+        } else {
+            builder.irAs(expression.argument, typeOperand)
         }
     }
 

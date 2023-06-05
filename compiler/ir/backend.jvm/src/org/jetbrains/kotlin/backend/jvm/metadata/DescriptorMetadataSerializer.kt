@@ -71,7 +71,7 @@ class DescriptorMetadataSerializer(
             is DescriptorMetadataSource.Class -> serializer!!.classProto(metadata.descriptor).build()
             is DescriptorMetadataSource.Script -> serializer!!.classProto(metadata.descriptor).build()
             is DescriptorMetadataSource.File ->
-                serializer!!.packagePartProto(irClass.getPackageFragment().fqName, metadata.descriptors).apply {
+                serializer!!.packagePartProto(irClass.getPackageFragment().packageFqName, metadata.descriptors).apply {
                     serializerExtension.serializeJvmPackage(this, type)
                 }.build()
             is DescriptorMetadataSource.Function -> {

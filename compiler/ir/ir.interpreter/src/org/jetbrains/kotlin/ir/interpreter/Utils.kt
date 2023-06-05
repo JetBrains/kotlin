@@ -158,7 +158,7 @@ internal fun IrClass.internalName(): String {
         .forEach {
             when (it) {
                 is IrClass -> internalName.insert(0, it.name.asString() + "$")
-                is IrPackageFragment -> it.fqName.asString().takeIf { it.isNotEmpty() }?.let { internalName.insert(0, "$it.") }
+                is IrPackageFragment -> it.packageFqName.asString().takeIf { it.isNotEmpty() }?.let { internalName.insert(0, "$it.") }
             }
         }
     return internalName.toString()

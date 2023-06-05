@@ -437,7 +437,7 @@ FILE fqName:<root> fileName:/ArrayMap.kt
             then: BLOCK type=kotlin.Unit origin=null
               CALL 'private final fun <set-data> (<set-?>: kotlin.Array<kotlin.Any?>): kotlin.Unit declared in <root>.ArrayMapImpl' type=kotlin.Unit origin=EQ
                 $this: GET_VAR '<this>: <root>.ArrayMapImpl<T of <root>.ArrayMapImpl> declared in <root>.ArrayMapImpl.ensureCapacity' type=<root>.ArrayMapImpl<T of <root>.ArrayMapImpl> origin=null
-                <set-?>: CALL 'public final fun copyOf <T> (newSize: kotlin.Int): kotlin.Array<T of kotlin.collections.ArraysKt.copyOf?> declared in kotlin.collections.ArraysKt' type=kotlin.Array<kotlin.Any?> origin=null
+                <set-?>: CALL 'public final fun copyOf <T> (newSize: kotlin.Int): kotlin.Array<T of kotlin.collections.copyOf?> declared in kotlin.collections' type=kotlin.Array<kotlin.Any?> origin=null
                   <T>: kotlin.Any?
                   $receiver: CALL 'private final fun <get-data> (): kotlin.Array<kotlin.Any?> declared in <root>.ArrayMapImpl' type=kotlin.Array<kotlin.Any?> origin=GET_PROPERTY
                     $this: GET_VAR '<this>: <root>.ArrayMapImpl<T of <root>.ArrayMapImpl> declared in <root>.ArrayMapImpl.ensureCapacity' type=<root>.ArrayMapImpl<T of <root>.ArrayMapImpl> origin=null
@@ -492,7 +492,7 @@ FILE fqName:<root> fileName:/ArrayMap.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun get (index: kotlin.Int): T of <root>.ArrayMapImpl? declared in <root>.ArrayMapImpl'
           TYPE_OP type=T of <root>.ArrayMapImpl? origin=CAST typeOperand=T of <root>.ArrayMapImpl?
-            CALL 'public final fun getOrNull <T> (index: kotlin.Int): T of kotlin.collections.ArraysKt.getOrNull? declared in kotlin.collections.ArraysKt' type=kotlin.Any? origin=null
+            CALL 'public final fun getOrNull <T> (index: kotlin.Int): T of kotlin.collections.getOrNull? declared in kotlin.collections' type=kotlin.Any? origin=null
               <T>: kotlin.Any?
               $receiver: CALL 'private final fun <get-data> (): kotlin.Array<kotlin.Any?> declared in <root>.ArrayMapImpl' type=kotlin.Array<kotlin.Any?> origin=GET_PROPERTY
                 $this: GET_VAR '<this>: <root>.ArrayMapImpl<T of <root>.ArrayMapImpl> declared in <root>.ArrayMapImpl.get' type=<root>.ArrayMapImpl<T of <root>.ArrayMapImpl> origin=null
@@ -505,7 +505,7 @@ FILE fqName:<root> fileName:/ArrayMap.kt
         RETURN type=kotlin.Nothing from='public open fun copy (): <root>.ArrayMap<T of <root>.ArrayMapImpl> declared in <root>.ArrayMapImpl'
           CONSTRUCTOR_CALL 'private constructor <init> (data: kotlin.Array<kotlin.Any?>) declared in <root>.ArrayMapImpl' type=<root>.ArrayMapImpl<T of <root>.ArrayMapImpl> origin=null
             <class: T>: T of <root>.ArrayMapImpl
-            data: CALL 'public final fun copyOf <T> (): kotlin.Array<T of kotlin.collections.ArraysKt.copyOf> declared in kotlin.collections.ArraysKt' type=kotlin.Array<kotlin.Any?> origin=null
+            data: CALL 'public final fun copyOf <T> (): kotlin.Array<T of kotlin.collections.copyOf> declared in kotlin.collections' type=kotlin.Array<kotlin.Any?> origin=null
               <T>: kotlin.Any?
               $receiver: CALL 'private final fun <get-data> (): kotlin.Array<kotlin.Any?> declared in <root>.ArrayMapImpl' type=kotlin.Array<kotlin.Any?> origin=GET_PROPERTY
                 $this: GET_VAR '<this>: <root>.ArrayMapImpl<T of <root>.ArrayMapImpl> declared in <root>.ArrayMapImpl.copy' type=<root>.ArrayMapImpl<T of <root>.ArrayMapImpl> origin=null
@@ -670,7 +670,7 @@ FILE fqName:<root> fileName:/ArrayMap.kt
       $this: VALUE_PARAMETER name:<this> type:<root>.ArrayMapImpl<T of <root>.ArrayMapImpl>
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun entries (): kotlin.collections.List<<root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl>> declared in <root>.ArrayMapImpl'
-          CALL 'public final fun mapIndexedNotNull <T, R> (transform: kotlin.Function2<@[ParameterName(name = 'index')] kotlin.Int, T of kotlin.collections.ArraysKt.mapIndexedNotNull, R of kotlin.collections.ArraysKt.mapIndexedNotNull?>): kotlin.collections.List<R of kotlin.collections.ArraysKt.mapIndexedNotNull> declared in kotlin.collections.ArraysKt' type=kotlin.collections.List<<root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl>> origin=null
+          CALL 'public final fun mapIndexedNotNull <T, R> (transform: kotlin.Function2<@[ParameterName(name = 'index')] kotlin.Int, T of kotlin.collections.mapIndexedNotNull, R of kotlin.collections.mapIndexedNotNull?>): kotlin.collections.List<R of kotlin.collections.mapIndexedNotNull> declared in kotlin.collections' type=kotlin.collections.List<<root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl>> origin=null
             <T>: kotlin.Any?
             <R>: <root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl>
             $receiver: CALL 'private final fun <get-data> (): kotlin.Array<kotlin.Any?> declared in <root>.ArrayMapImpl' type=kotlin.Array<kotlin.Any?> origin=GET_PROPERTY

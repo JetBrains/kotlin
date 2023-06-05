@@ -65,7 +65,7 @@ FILE fqName:<root> fileName:/class.kt
     VALUE_PARAMETER name:outer index:0 type:<root>.Outer
     BLOCK_BODY
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        CALL 'public final fun with <T, R> (receiver: T of kotlin.StandardKt.with, block: @[ExtensionFunctionType] kotlin.Function1<T of kotlin.StandardKt.with, R of kotlin.StandardKt.with>): R of kotlin.StandardKt.with declared in kotlin.StandardKt' type=<root>.Inner origin=null
+        CALL 'public final fun with <T, R> (receiver: T of kotlin.with, block: @[ExtensionFunctionType] kotlin.Function1<T of kotlin.with, R of kotlin.with>): R of kotlin.with declared in kotlin' type=<root>.Inner origin=null
           <T>: <root>.Outer
           <R>: <root>.Inner
           receiver: GET_VAR 'outer: <root>.Outer declared in <root>.f' type=<root>.Outer origin=null

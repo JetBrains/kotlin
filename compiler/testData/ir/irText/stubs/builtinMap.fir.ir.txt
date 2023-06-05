@@ -10,13 +10,13 @@ FILE fqName:<root> fileName:/builtinMap.kt
           BRANCH
             if: CALL 'public abstract fun isEmpty (): kotlin.Boolean declared in kotlin.collections.Map' type=kotlin.Boolean origin=null
               $this: GET_VAR '<this>: kotlin.collections.Map<out K1 of <root>.plus, V1 of <root>.plus> declared in <root>.plus' type=kotlin.collections.Map<out K1 of <root>.plus, V1 of <root>.plus> origin=null
-            then: CALL 'public final fun mapOf <K, V> (pair: kotlin.Pair<K of kotlin.collections.MapsKt.mapOf, V of kotlin.collections.MapsKt.mapOf>): kotlin.collections.Map<K of kotlin.collections.MapsKt.mapOf, V of kotlin.collections.MapsKt.mapOf> declared in kotlin.collections.MapsKt' type=kotlin.collections.Map<K1 of <root>.plus, V1 of <root>.plus> origin=null
+            then: CALL 'public final fun mapOf <K, V> (pair: kotlin.Pair<K of kotlin.collections.mapOf, V of kotlin.collections.mapOf>): kotlin.collections.Map<K of kotlin.collections.mapOf, V of kotlin.collections.mapOf> declared in kotlin.collections' type=kotlin.collections.Map<K1 of <root>.plus, V1 of <root>.plus> origin=null
               <K>: K1 of <root>.plus
               <V>: V1 of <root>.plus
               pair: GET_VAR 'pair: kotlin.Pair<K1 of <root>.plus, V1 of <root>.plus> declared in <root>.plus' type=kotlin.Pair<K1 of <root>.plus, V1 of <root>.plus> origin=null
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
-            then: CALL 'public final fun apply <T> (block: @[ExtensionFunctionType] kotlin.Function1<T of kotlin.StandardKt.apply, kotlin.Unit>): T of kotlin.StandardKt.apply declared in kotlin.StandardKt' type=java.util.LinkedHashMap<@[FlexibleNullability] K1 of <root>.plus?, @[FlexibleNullability] V1 of <root>.plus?> origin=null
+            then: CALL 'public final fun apply <T> (block: @[ExtensionFunctionType] kotlin.Function1<T of kotlin.apply, kotlin.Unit>): T of kotlin.apply declared in kotlin' type=java.util.LinkedHashMap<@[FlexibleNullability] K1 of <root>.plus?, @[FlexibleNullability] V1 of <root>.plus?> origin=null
               <T>: java.util.LinkedHashMap<@[FlexibleNullability] K1 of <root>.plus?, @[FlexibleNullability] V1 of <root>.plus?>
               $receiver: CONSTRUCTOR_CALL 'public constructor <init> (p0: @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableMap<out @[FlexibleNullability] K of java.util.LinkedHashMap?, out @[FlexibleNullability] V of java.util.LinkedHashMap?>?) declared in java.util.LinkedHashMap' type=java.util.LinkedHashMap<@[FlexibleNullability] K1 of <root>.plus?, @[FlexibleNullability] V1 of <root>.plus?> origin=null
                 <class: K>: @[FlexibleNullability] K1 of <root>.plus?

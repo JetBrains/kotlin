@@ -28,7 +28,7 @@ FILE fqName:<root> fileName:/AbstractMutableMap.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.MyMap<K of <root>.MyMap, V of <root>.MyMap>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public open fun <get-entries> (): kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<K of <root>.MyMap, V of <root>.MyMap>> declared in <root>.MyMap'
-            CALL 'public final fun mutableSetOf <T> (): kotlin.collections.MutableSet<T of kotlin.collections.SetsKt.mutableSetOf> declared in kotlin.collections.SetsKt' type=kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<K of <root>.MyMap, V of <root>.MyMap>> origin=null
+            CALL 'public final fun mutableSetOf <T> (): kotlin.collections.MutableSet<T of kotlin.collections.mutableSetOf> declared in kotlin.collections' type=kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<K of <root>.MyMap, V of <root>.MyMap>> origin=null
               <T>: kotlin.collections.MutableMap.MutableEntry<K of <root>.MyMap, V of <root>.MyMap>
     PROPERTY FAKE_OVERRIDE name:keys visibility:public modality:OPEN [fake_override,val]
       overridden:

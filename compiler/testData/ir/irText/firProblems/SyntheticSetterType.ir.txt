@@ -4,5 +4,5 @@ FILE fqName:<root> fileName:/SyntheticSetterType.kt
     BLOCK_BODY
       CALL 'public open fun setOverriddenDescriptors (overriddenDescriptors: @[EnhancedNullability] @[FlexibleMutability] kotlin.collections.MutableCollection<out @[FlexibleNullability] <root>.CallableMemberDescriptor?>): kotlin.Unit declared in <root>.PropertyDescriptorImpl' type=kotlin.Unit origin=EQ
         $this: GET_VAR 'descriptor: <root>.PropertyDescriptorImpl declared in <root>.foo' type=<root>.PropertyDescriptorImpl origin=null
-        overriddenDescriptors: CALL 'public final fun emptyList <T> (): kotlin.collections.List<T of kotlin.collections.CollectionsKt.emptyList> declared in kotlin.collections.CollectionsKt' type=kotlin.collections.List<@[FlexibleNullability] <root>.PropertyDescriptor?> origin=null
+        overriddenDescriptors: CALL 'public final fun emptyList <T> (): kotlin.collections.List<T of kotlin.collections.emptyList> declared in kotlin.collections' type=kotlin.collections.List<@[FlexibleNullability] <root>.PropertyDescriptor?> origin=null
           <T>: @[FlexibleNullability] <root>.PropertyDescriptor?
