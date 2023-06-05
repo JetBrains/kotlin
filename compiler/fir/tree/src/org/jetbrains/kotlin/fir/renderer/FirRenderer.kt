@@ -726,6 +726,18 @@ class FirRenderer(
             }
         }
 
+        override fun visitMultiDelegatedConstructorCall(multiDelegatedConstructorCall: FirMultiDelegatedConstructorCall) {
+            var first = true
+            for (delegatedConstructorCall in multiDelegatedConstructorCall.delegatedConstructorCalls) {
+                if (first) {
+                    first = false
+                } else {
+                    printer.println()
+                }
+                visitDelegatedConstructorCall(delegatedConstructorCall)
+            }
+        }
+
         override fun visitTypeRef(typeRef: FirTypeRef) {
             annotationRenderer?.render(typeRef)
             visitElement(typeRef)

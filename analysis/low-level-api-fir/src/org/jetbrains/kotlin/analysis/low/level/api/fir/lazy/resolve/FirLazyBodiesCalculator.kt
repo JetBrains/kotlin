@@ -189,8 +189,20 @@ private fun calculateLazyBodyForAnonymousInitializer(designation: FirDesignation
     }
 }
 
-private fun needCalculatingLazyBodyForConstructor(firConstructor: FirConstructor): Boolean =
-    needCalculatingLazyBodyForFunction(firConstructor) || firConstructor.delegatedConstructor is FirLazyDelegatedConstructorCall
+private fun needCalculatingLazyBodyForConstructor(firConstructor: FirConstructor): Boolean {
+    if (needCalculatingLazyBodyForFunction(firConstructor) || firConstructor.delegatedConstructor is FirLazyDelegatedConstructorCall) {
+        return true
+    }
+    val deleatedConstructor = firConstructor.delegatedConstructor
+    if (deleatedConstructor is FirMultiDelegatedConstructorCall) {
+        for (delegated in deleatedConstructor.delegatedConstructorCalls) {
+            if (delegated is FirLazyDelegatedConstructorCall) {
+                return true
+            }
+        }
+    }
+    return false
+}
 
 private fun calculateLazyBodiesForField(designation: FirDesignation) {
     val field = designation.target as FirField

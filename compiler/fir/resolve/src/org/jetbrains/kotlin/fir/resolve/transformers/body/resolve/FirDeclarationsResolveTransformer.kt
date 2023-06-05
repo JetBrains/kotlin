@@ -700,6 +700,14 @@ open class FirDeclarationsResolveTransformer(
         return constructor
     }
 
+    override fun transformMultiDelegatedConstructorCall(
+        multiDelegatedConstructorCall: FirMultiDelegatedConstructorCall,
+        data: ResolutionMode,
+    ): FirStatement {
+        multiDelegatedConstructorCall.transformChildren(this, data)
+        return super.transformMultiDelegatedConstructorCall(multiDelegatedConstructorCall, data)
+    }
+
     override fun transformAnonymousInitializer(
         anonymousInitializer: FirAnonymousInitializer,
         data: ResolutionMode
