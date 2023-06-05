@@ -17,7 +17,11 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.group.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.group.DisabledTestsIfProperty
 import org.jetbrains.kotlin.konan.blackboxtest.support.group.FirPipeline
 import org.jetbrains.kotlin.konan.blackboxtest.support.group.UsePartialLinkage
+import org.jetbrains.kotlin.konan.diagnostics.AbstractDiagnosticsNativeTest
+import org.jetbrains.kotlin.konan.diagnostics.AbstractFirLightTreeNativeDiagnosticsTest
+import org.jetbrains.kotlin.konan.diagnostics.AbstractFirPsiNativeDiagnosticsTest
 import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.test.utils.CUSTOM_TEST_DATA_EXTENSION_PATTERN
 import org.junit.jupiter.api.Tag
 
 fun main() {
@@ -214,6 +218,27 @@ fun main() {
                 )
             ) {
                 model("lldb")
+            }
+        }
+
+        // New frontend test infrastructure tests
+        testGroup(testsRoot = "native/native.tests/tests-gen", testDataRoot = "compiler/testData") {
+            testClass<AbstractDiagnosticsNativeTest> {
+                model("diagnostics/nativeTests", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
+            }
+
+            testClass<AbstractFirPsiNativeDiagnosticsTest>(
+                suiteTestClassName = "FirPsiOldFrontendNativeDiagnosticsTestGenerated",
+                annotations = listOf(*frontendFir()),
+            ) {
+                model("diagnostics/nativeTests", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
+            }
+
+            testClass<AbstractFirLightTreeNativeDiagnosticsTest>(
+                suiteTestClassName = "FirLightTreeOldFrontendNativeDiagnosticsTestGenerated",
+                annotations = listOf(*frontendFir()),
+            ) {
+                model("diagnostics/nativeTests", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
             }
         }
     }
