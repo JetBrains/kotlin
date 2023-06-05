@@ -212,7 +212,7 @@ class CocoaPodsGitIT : KGPBaseTest() {
             val anotherPodName = "Alamofire"
             val anotherPodRepo = "https://github.com/Alamofire/Alamofire"
             buildGradleKts.addPod(anotherPodName, produceGitBlock(anotherPodRepo))
-            testImport(listOf(defaultPodRepo, anotherPodRepo)) {
+            testImport(repos = listOf(defaultPodRepo, anotherPodRepo)) {
 
                 assertTasksExecuted(
                     podspecTaskName,
@@ -312,7 +312,7 @@ class CocoaPodsGitIT : KGPBaseTest() {
         }
     }
 
-    @DisplayName("Pod Build UTD after clean")
+    @DisplayName("Pod Build is not UTD after clean")
     @GradleTest
     fun testPodBuildUTDClean(gradleVersion: GradleVersion) {
         nativeProjectWithCocoapodsAndIosAppPodFile(gradleVersion = gradleVersion) {
@@ -403,7 +403,74 @@ class CocoaPodsGitIT : KGPBaseTest() {
                 assertTasksUpToDate(defaultPodGenTaskName)
             }
         }
+    }
 
+    @DisplayName("UTD for spec repos")
+    @GradleTest
+    fun testSpecReposUTD(gradleVersion: GradleVersion) {
+        nativeProjectWithCocoapodsAndIosAppPodFile(gradleVersion = gradleVersion) {
+
+            buildGradleKts.addPod("AFNetworking")
+            build(defaultPodGenTaskName) {
+                assertTasksExecuted(defaultPodGenTaskName)
+            }
+
+            buildGradleKts.addSpecRepo("https://github.com/alozhkin/spec_repo_example.git")
+            build(defaultPodGenTaskName) {
+                assertTasksExecuted(defaultPodGenTaskName)
+            }
+
+            build(defaultPodGenTaskName) {
+                assertTasksUpToDate(defaultPodGenTaskName)
+            }
+        }
+    }
+
+    @DisplayName("Import subspecs")
+    @GradleTest
+    fun testImportSubspecs(gradleVersion: GradleVersion) {
+        nativeProjectWithCocoapodsAndIosAppPodFile(gradleVersion = gradleVersion) {
+            buildGradleKts.addPod("SDWebImage/Core")
+            buildGradleKts.addPod("SDWebImage/MapKit")
+            testImport()
+        }
+    }
+
+    @DisplayName("Checking useLibraries mode")
+    @GradleTest
+    fun testUseLibrariesMode(gradleVersion: GradleVersion) {
+        nativeProjectWithCocoapodsAndIosAppPodFile(gradleVersion = gradleVersion) {
+            buildGradleKts.addCocoapodsBlock("useLibraries()")
+            buildGradleKts.addPod("AFNetworking", configuration = "headers = \"AFNetworking/AFNetworking.h\"")
+            testImport()
+        }
+    }
+
+    @DisplayName("Checking that useLibraries mode warns when pod is added without headers specified")
+    @GradleTest
+    fun testUseLibrariesModeWarnsWhenPodIsAddedWithoutHeadersSpecified(gradleVersion: GradleVersion) {
+        nativeProjectWithCocoapodsAndIosAppPodFile(gradleVersion = gradleVersion) {
+            buildGradleKts.addCocoapodsBlock("useLibraries()")
+            buildGradleKts.addPod("AFNetworking")
+            testImport {
+                assertOutputContains("w: Pod 'AFNetworking' should have 'headers' property specified when using 'useLibraries()'")
+            }
+        }
+    }
+
+    @DisplayName("Spec repos import")
+    @GradleTest
+    fun testSpecReposImport(gradleVersion: GradleVersion) {
+        val podName = "example"
+        val podRepo = "https://github.com/alozhkin/spec_repo"
+        nativeProjectWithCocoapodsAndIosAppPodFile(gradleVersion = gradleVersion) {
+            buildGradleKts.addPod(podName)
+            buildGradleKts.addSpecRepo(podRepo)
+
+            testImport(repos = listOf(podRepo)) {
+                podImportAsserts(buildGradleKts)
+            }
+        }
     }
 
     private fun doTestGit(
@@ -423,7 +490,7 @@ class CocoaPodsGitIT : KGPBaseTest() {
             val buildScript = if (isGradleBuildScript) buildGradle else buildGradleKts
             buildScript.addPod(pod, produceGitBlock(repo, branch, commit, tag))
 
-            testImport(listOf(repo)) {
+            testImport(repos = listOf(repo)) {
                 podImportAsserts(buildScript)
                 testImportAssertions()
             }
@@ -493,6 +560,7 @@ class CocoaPodsGitIT : KGPBaseTest() {
     }
 
     private fun TestProject.testImport(
+        taskName: String = podImportTaskName,
         repos: List<String> = listOf(defaultPodRepo),
         vararg args: String,
         assertions: BuildResult.() -> Unit = {},
@@ -500,10 +568,8 @@ class CocoaPodsGitIT : KGPBaseTest() {
 
         isRepoAvailable(repos)
 
-        build(podImportTaskName, *args) {
+        build(taskName, *args) {
             assertions()
         }
     }
-
-
 }

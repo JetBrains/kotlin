@@ -6,12 +6,10 @@
 package org.jetbrains.kotlin.gradle.native
 
 import org.jetbrains.kotlin.gradle.*
+import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.DUMMY_FRAMEWORK_TASK_NAME
-import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.POD_BUILD_TASK_NAME
-import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.POD_GEN_TASK_NAME
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.POD_IMPORT_TASK_NAME
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.POD_INSTALL_TASK_NAME
-import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.POD_SETUP_BUILD_TASK_NAME
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.POD_SPEC_TASK_NAME
 import org.jetbrains.kotlin.gradle.testbase.ImportMode
 import org.jetbrains.kotlin.gradle.testbase.cocoaPodsEnvironmentVariables
@@ -54,18 +52,11 @@ class CocoaPodsIT : BaseGradleIT() {
 
     private val dummyTaskName = ":$DUMMY_FRAMEWORK_TASK_NAME"
     private val podspecTaskName = ":$POD_SPEC_TASK_NAME"
-    private val podGenTaskName = ":$POD_GEN_TASK_NAME"
     private val podImportTaskName = ":$POD_IMPORT_TASK_NAME"
     private val podInstallTaskName = ":$POD_INSTALL_TASK_NAME"
 
-    private val defaultPodRepo = "https://github.com/AFNetworking/AFNetworking"
     private val defaultPodName = "AFNetworking"
-    private val defaultFamily = "ios"
-    private val defaultPodGenTaskName = podGenFullTaskName()
     private val defaultPodInstallSyntheticTaskName = ":podInstallSyntheticIos"
-
-    private fun podGenFullTaskName(familyName: String = defaultFamily) =
-        podGenTaskName + familyName.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
 
     private lateinit var hooks: CustomHooks
     private lateinit var project: BaseGradleIT.Project
@@ -109,17 +100,6 @@ class CocoaPodsIT : BaseGradleIT() {
             podImportAsserts("second-library")
         }
         project.testSynthetic(":second-library:podImport")
-    }
-
-    @Test
-    fun testSpecReposImport() {
-        val podName = "example"
-        val podRepo = "https://github.com/alozhkin/spec_repo"
-        with(project.gradleBuildScript()) {
-            addPod(podName)
-            addSpecRepo(podRepo)
-        }
-        project.testImportWithAsserts(listOf(podRepo))
     }
 
     @Test
@@ -251,6 +231,7 @@ class CocoaPodsIT : BaseGradleIT() {
         project.testImport()
     }
 
+
     @Test
     fun testChangeFrameworkTypeUTD() {
         project.gradleBuildScript().appendToCocoapodsBlock(
@@ -290,26 +271,6 @@ class CocoaPodsIT : BaseGradleIT() {
         project.testImport()
     }
 
-
-    @Test
-    fun testSpecReposUTD() {
-        with(project.gradleBuildScript()) {
-            addPod("AFNetworking")
-        }
-        hooks.addHook {
-            assertTasksExecuted(defaultPodGenTaskName)
-        }
-        project.testSynthetic(defaultPodGenTaskName)
-        with(project.gradleBuildScript()) {
-            addSpecRepo("https://github.com/alozhkin/spec_repo_example.git")
-        }
-        project.testSynthetic(defaultPodGenTaskName)
-        hooks.rewriteHooks {
-            assertTasksUpToDate(defaultPodGenTaskName)
-        }
-        project.testSynthetic(defaultPodGenTaskName)
-    }
-
     @Test
     fun testPodInstallInvalidatesUTD() {
         with(project.gradleBuildScript()) {
@@ -326,15 +287,6 @@ class CocoaPodsIT : BaseGradleIT() {
             assertTasksExecuted(defaultPodInstallSyntheticTaskName)
         }
         project.testSynthetic(defaultPodInstallSyntheticTaskName)
-    }
-
-    @Test
-    fun testImportSubspecs() {
-        with(project.gradleBuildScript()) {
-            addPod("SDWebImage/Core")
-            addPod("SDWebImage/MapKit")
-        }
-        project.testImport(listOf(defaultPodRepo))
     }
 
     @Test
@@ -378,9 +330,6 @@ class CocoaPodsIT : BaseGradleIT() {
         project.testSynthetic(podInstallTaskName)
     }
 
-
-    // other tests
-
     @Test
     fun supportPodsWithDependencies() {
         with(project.gradleBuildScript()) {
@@ -419,31 +368,6 @@ class CocoaPodsIT : BaseGradleIT() {
             testWithWrapper("cinteropAFNetworkingIOS")
         }
     }
-
-    @Test
-    fun testUseLibrariesMode() {
-        with(project) {
-            gradleBuildScript().appendToCocoapodsBlock("useLibraries()")
-            gradleBuildScript().addPod("AFNetworking", configuration = "headers = \"AFNetworking/AFNetworking.h\"")
-            testImport()
-        }
-    }
-
-
-    @Test
-    fun testUseLibrariesModeWarnWhenPodIsAddedWithoutHeadersSpecified() {
-        with(project) {
-            gradleBuildScript().appendToCocoapodsBlock("useLibraries()")
-            gradleBuildScript().addPod("AFNetworking")
-
-            hooks.addHook {
-                assertContains("w: Pod 'AFNetworking' should have 'headers' property specified when using 'useLibraries()'")
-            }
-
-            testImport()
-        }
-    }
-
 
     @Test
     fun testCocoapodsWithRegularFrameworkDefinition() {
@@ -906,7 +830,6 @@ class CocoaPodsIT : BaseGradleIT() {
         }
     }
 
-
     private fun Project.testImportWithAsserts(
         repos: List<String> = listOf(),
         vararg args: String,
@@ -965,7 +888,6 @@ class CocoaPodsIT : BaseGradleIT() {
         appendToCocoapodsBlock(podBlock)
     }
 
-    private fun File.addSpecRepo(specRepo: String) = appendToCocoapodsBlock("url(\"$specRepo\")".wrap("specRepos"))
 
     private fun File.appendToKotlinBlock(str: String) = appendLine(str.wrap("kotlin"))
 
@@ -980,8 +902,6 @@ class CocoaPodsIT : BaseGradleIT() {
     """.trimMargin()
 
     private fun File.appendLine(s: String) = appendText("\n$s")
-
-
     // proposition phase
 
     private fun isRepoAvailable(repo: String): Boolean {
@@ -1022,12 +942,12 @@ class CocoaPodsIT : BaseGradleIT() {
         } else {
             assertTasksSkipped("$taskPrefix:$podInstall")
         }
-        assertTasksRegisteredByPrefix(listOf("$taskPrefix:$POD_GEN_TASK_NAME"))
+        assertTasksRegisteredByPrefix(listOf("$taskPrefix:${KotlinCocoapodsPlugin.POD_GEN_TASK_NAME}"))
         if (buildScriptText.matches("pod\\(.*\\)".toRegex())) {
-            assertTasksExecutedByPrefix(listOf("$taskPrefix:$POD_GEN_TASK_NAME"))
+            assertTasksExecutedByPrefix(listOf("$taskPrefix:${KotlinCocoapodsPlugin.POD_GEN_TASK_NAME}"))
         }
 
-        with(listOf(POD_SETUP_BUILD_TASK_NAME, POD_BUILD_TASK_NAME).map { "$taskPrefix:$it" }) {
+        with(listOf(KotlinCocoapodsPlugin.POD_SETUP_BUILD_TASK_NAME, KotlinCocoapodsPlugin.POD_BUILD_TASK_NAME).map { "$taskPrefix:$it" }) {
             if (buildScriptText.matches("pod\\(.*\\)".toRegex())) {
                 assertTasksRegisteredByPrefix(this)
                 assertTasksExecutedByPrefix(this)
