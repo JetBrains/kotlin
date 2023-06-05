@@ -53,6 +53,8 @@ class KotlinKarma(
     private val project: Project = compilation.target.project
     private val npmProject = compilation.npmProject
 
+    private val platformType = compilation.platformType
+
     @Transient
     private val nodeJs = project.rootProject.kotlinNodeJsExtension
     private val nodeRootPackageDir by lazy { nodeJs.rootPackageDir }
@@ -333,7 +335,7 @@ class KotlinKarma(
 
         config.files.add(npmProject.require("kotlin-test-js-runner/kotlin-test-karma-runner.js"))
         if (!debug) {
-            if (compilation.platformType == KotlinPlatformType.wasm) {
+            if (platformType == KotlinPlatformType.wasm) {
                 val wasmFile = file.parentFile.resolve("${file.nameWithoutExtension}.wasm")
                 val wasmFileString = wasmFile.normalize().absolutePath
                 config.files.add(

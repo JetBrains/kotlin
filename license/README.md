@@ -233,6 +233,10 @@ any distributions of the tools or libraries:
       - License: Eclipse Public License v1.0 ([license/third_party/testdata/eclipse_license.txt][eclipse])
              and Eclipse Distribution License - v1.0 ([license/third_party/testdata/eclipse_distribution_license.txt][eclipse-distribution])
       - Origin: javax.persistence, Copyright (c) 2008, 2017 Sun Microsystems, Oracle Corporation.
+
+ - Path: libraries/tools/kotlin-gradle-plugin/src/common/kotlin/org/jetbrains/kotlin/gradle/targets/js/nodejs/Platform.kt
+      - License: Apache License 2.0 ([license/third_party/gradle-node-plugin_LICENSE.txt](third_party/gradle-node-plugin_LICENSE.txt))
+      - Origin: Copyright (c) 2013 node-gradle/gradle-node-plugin
       
  - Path: libraries/tools/kotlin-test-js-runner/karma-kotlin-reporter.js
       - License: MIT ([license/third_party/karma_LICENSE.txt](third_party/karma_LICENSE.txt)
