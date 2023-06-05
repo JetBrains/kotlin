@@ -20,8 +20,6 @@ import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.junit.jupiter.api.Assumptions
 import java.io.File
 
-private val DEFAULT_EXTRAS = TestCase.WithTestRunnerExtras(TestRunnerType.DEFAULT)
-
 internal abstract class ArtifactBuilder<T>(
     val test: AbstractNativeSimpleTest,
     val rootDir: File,
@@ -100,6 +98,7 @@ internal class ExecutableBuilder(
 }
 
 internal val AbstractNativeSimpleTest.buildDir: File get() = testRunSettings.get<Binaries>().testBinariesDir
+internal val AbstractNativeSimpleTest.targets: KotlinNativeTargets get() = testRunSettings.get()
 
 internal fun TestCompilationArtifact.KLIB.asLibraryDependency() =
     ExistingDependency(this, TestCompilationDependencyType.Library)
@@ -128,6 +127,22 @@ internal fun AbstractNativeSimpleTest.compileToLibrary(
     val testCase: TestCase = generateTestCaseWithSingleModule(sourcesDir, freeCompilerArgs)
     val compilationResult = compileToLibrary(testCase, outputDir, dependencies.map { it.asLibraryDependency() })
     return compilationResult.resultingArtifact
+}
+
+internal fun AbstractNativeSimpleTest.cinteropToLibrary(
+    targets: KotlinNativeTargets,
+    defFile: File,
+    outputDir: File,
+    freeCompilerArgs: TestCompilerArgs
+): TestCompilationResult<out TestCompilationArtifact.KLIB> {
+    val testCase: TestCase = generateCInteropTestCaseFromSingleDefFile(defFile, freeCompilerArgs)
+    return CInteropCompilation(
+        classLoader = testRunSettings.get(),
+        targets = targets,
+        freeCompilerArgs = freeCompilerArgs,
+        defFile = testCase.modules.single().files.single().location,
+        expectedArtifact = getLibraryArtifact(testCase, outputDir)
+    ).result
 }
 
 internal class CompiledExecutable(
@@ -191,7 +206,51 @@ internal fun AbstractNativeSimpleTest.generateTestCaseWithSingleModule(
         freeCompilerArgs = freeCompilerArgs,
         nominalPackageName = PackageName.EMPTY,
         checks = TestRunChecks.Default(testRunSettings.get<Timeouts>().executionTimeout),
-        extras = DEFAULT_EXTRAS
+        extras = TestCase.WithTestRunnerExtras(TestRunnerType.DEFAULT)
+    ).apply {
+        initialize(null, null)
+    }
+}
+
+internal fun AbstractNativeSimpleTest.generateTestCaseWithSingleFile(
+    sourceFile: File,
+    freeCompilerArgs: TestCompilerArgs = TestCompilerArgs.EMPTY,
+    testKind: TestKind = TestKind.STANDALONE,
+    extras: TestCase.Extras = TestCase.WithTestRunnerExtras(TestRunnerType.DEFAULT)
+): TestCase {
+    val moduleName: String = sourceFile.name ?: LAUNCHER_MODULE_NAME
+    val module = TestModule.Exclusive(moduleName, emptySet(), emptySet(), emptySet())
+    module.files += TestFile.createCommitted(sourceFile, module)
+
+    return TestCase(
+        id = TestCaseId.Named(moduleName),
+        kind = testKind,
+        modules = setOf(module),
+        freeCompilerArgs = freeCompilerArgs,
+        nominalPackageName = PackageName.EMPTY,
+        checks = TestRunChecks.Default(testRunSettings.get<Timeouts>().executionTimeout),
+        extras = extras
+    ).apply {
+        initialize(null, null)
+    }
+}
+
+internal fun AbstractNativeSimpleTest.generateCInteropTestCaseFromSingleDefFile(
+    defFile: File,
+    freeCompilerArgs: TestCompilerArgs,
+): TestCase {
+    val moduleName: String = defFile.name
+    val module = TestModule.Exclusive(moduleName, emptySet(), emptySet(), emptySet())
+    module.files += TestFile.createCommitted(defFile, module)
+
+    return TestCase(
+        id = TestCaseId.Named(moduleName),
+        kind = TestKind.STANDALONE,
+        modules = setOf(module),
+        freeCompilerArgs = freeCompilerArgs,
+        nominalPackageName = PackageName.EMPTY,
+        checks = TestRunChecks.Default(testRunSettings.get<Timeouts>().executionTimeout),
+        extras = TestCase.WithTestRunnerExtras(TestRunnerType.DEFAULT)
     ).apply {
         initialize(null, null)
     }
@@ -220,7 +279,7 @@ private fun AbstractNativeSimpleTest.compileToExecutable(
         settings = testRunSettings,
         freeCompilerArgs = testCase.freeCompilerArgs,
         sourceModules = testCase.modules,
-        extras = DEFAULT_EXTRAS,
+        extras = testCase.extras,
         dependencies = dependencies,
         expectedArtifact = getExecutableArtifact()
     )
