@@ -30,10 +30,10 @@ class Candidate(
     // - in case a use-site receiver is explicit
     // - in some cases with static entities, no matter is a use-site receiver explicit or not
     // OR we may have here a kind of ImplicitReceiverValue (non-statics only)
-    override var dispatchReceiverValue: ReceiverValue?,
+    override var dispatchReceiver: FirExpression?,
     // In most cases, it contains zero or single element
     // More than one, only in case of context receiver group
-    val givenExtensionReceiverOptions: List<ReceiverValue>,
+    val givenExtensionReceiverOptions: List<FirExpression>,
     override val explicitReceiverKind: ExplicitReceiverKind,
     private val constraintSystemFactory: InferenceComponents.ConstraintSystemFactory,
     private val baseSystem: ConstraintStorage,
@@ -44,7 +44,7 @@ class Candidate(
     val isFromOriginalTypeInPresenceOfSmartCast: Boolean = false,
 ) : AbstractCandidate() {
 
-    var systemInitialized: Boolean = false
+    private var systemInitialized: Boolean = false
     val system: NewConstraintSystemImpl by lazy(LazyThreadSafetyMode.NONE) {
         val system = constraintSystemFactory.createConstraintSystem()
         system.addOtherSystem(baseSystem)
@@ -80,7 +80,7 @@ class Candidate(
     var currentApplicability = CandidateApplicability.RESOLVED
         private set
 
-    override var chosenExtensionReceiverValue: ReceiverValue? = givenExtensionReceiverOptions.singleOrNull()
+    override var chosenExtensionReceiver: FirExpression? = givenExtensionReceiverOptions.singleOrNull()
 
     var contextReceiverArguments: List<FirExpression>? = null
 
@@ -103,11 +103,13 @@ class Candidate(
 
     var passedStages: Int = 0
 
+    // FirExpressionStub can be located here in case of callable reference resolution
     fun dispatchReceiverExpression(): FirExpression =
-        dispatchReceiverValue?.receiverExpression?.takeIf { it !is FirExpressionStub } ?: FirNoReceiverExpression
+        dispatchReceiver?.takeIf { it !is FirExpressionStub } ?: FirNoReceiverExpression
 
+    // FirExpressionStub can be located here in case of callable reference resolution
     fun chosenExtensionReceiverExpression(): FirExpression =
-        chosenExtensionReceiverValue?.receiverExpression?.takeIf { it !is FirExpressionStub } ?: FirNoReceiverExpression
+        chosenExtensionReceiver?.takeIf { it !is FirExpressionStub } ?: FirNoReceiverExpression
 
     fun contextReceiverArguments(): List<FirExpression> =
         contextReceiverArguments ?: emptyList()

@@ -23,6 +23,7 @@ internal class FirImplicitThisReference(
 ) : FirThisReference() {
     override val source: KtSourceElement? get() = null
     override val labelName: String? get() = null
+    override val isImplicit: Boolean = true
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}
 

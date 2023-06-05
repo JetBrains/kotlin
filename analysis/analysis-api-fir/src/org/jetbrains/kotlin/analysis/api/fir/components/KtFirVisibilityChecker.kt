@@ -57,9 +57,7 @@ internal class KtFirVisibilityChecker(
 
         val dispatchReceiverCanBeExplicit = candidateSymbol is KtCallableSymbol && !candidateSymbol.isExtension
         val explicitDispatchReceiver = runIf(dispatchReceiverCanBeExplicit) {
-            receiverExpression
-                ?.getOrBuildFirSafe<FirExpression>(analysisSession.firResolveSession)
-                ?.let { ExpressionReceiverValue(it) }
+            receiverExpression?.getOrBuildFirSafe<FirExpression>(analysisSession.firResolveSession)
         }
 
         val candidateFirSymbol = candidateSymbol.firSymbol.fir as FirMemberDeclaration

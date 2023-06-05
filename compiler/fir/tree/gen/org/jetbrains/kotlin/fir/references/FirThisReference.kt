@@ -20,6 +20,7 @@ abstract class FirThisReference : FirReference() {
     abstract val labelName: String?
     abstract val boundSymbol: FirBasedSymbol<*>?
     abstract val contextReceiverNumber: Int
+    abstract val isImplicit: Boolean
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitThisReference(this, data)
 

@@ -23,6 +23,7 @@ internal class FirExplicitThisReference(
     override var contextReceiverNumber: Int,
 ) : FirThisReference() {
     override var boundSymbol: FirBasedSymbol<*>? = null
+    override val isImplicit: Boolean = false
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}
 

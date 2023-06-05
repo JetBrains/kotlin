@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.originalForSubstitutionOverride
 import org.jetbrains.kotlin.fir.references.*
-import org.jetbrains.kotlin.fir.resolve.calls.ExpressionReceiverValue
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeDiagnosticWithCandidates
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
@@ -51,7 +50,7 @@ object FirReassignmentAndInvisibleSetterChecker : FirVariableAssignmentChecker()
                     context.session,
                     context.findClosest()!!,
                     context.containingDeclarations,
-                    ExpressionReceiverValue(expression.dispatchReceiver),
+                    expression.dispatchReceiver,
                 )
             }
 

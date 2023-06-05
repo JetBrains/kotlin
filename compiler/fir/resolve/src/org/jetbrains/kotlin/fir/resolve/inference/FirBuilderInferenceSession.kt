@@ -10,14 +10,16 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
-import org.jetbrains.kotlin.fir.expressions.FirResolvable
-import org.jetbrains.kotlin.fir.expressions.FirStatement
+import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitExtensionReceiverValue
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
+import org.jetbrains.kotlin.fir.resolve.calls.candidate
 import org.jetbrains.kotlin.fir.resolve.substitution.ChainedSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.replaceStubsAndTypeVariablesToErrors
+import org.jetbrains.kotlin.fir.resolve.transformers.FirCallCompletionResultsWriterTransformer
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
 import org.jetbrains.kotlin.fir.visitors.transformSingle
@@ -72,12 +74,12 @@ class FirBuilderInferenceSession(
     }
 
     private fun Candidate.isSuitableForBuilderInference(): Boolean {
-        val extensionReceiver = chosenExtensionReceiverValue
-        val dispatchReceiver = dispatchReceiverValue
+        val extensionReceiver = chosenExtensionReceiver
+        val dispatchReceiver = dispatchReceiver
         return when {
             extensionReceiver == null && dispatchReceiver == null -> false
-            dispatchReceiver?.type?.containsStubType() == true -> true
-            extensionReceiver?.type?.containsStubType() == true -> symbol.fir.hasBuilderInferenceAnnotation(session)
+            dispatchReceiver?.typeRef?.coneType?.containsStubType() == true -> true
+            extensionReceiver?.typeRef?.coneType?.containsStubType() == true -> symbol.fir.hasBuilderInferenceAnnotation(session)
             else -> false
         }
     }
@@ -251,7 +253,6 @@ class FirBuilderInferenceSession(
         }
 
         // TODO: support diagnostics, see [CoroutineInferenceSession#updateCalls]
-
         val completionResultsWriter = components.callCompleter.createCompletionResultsWriter(substitutor)
         for ((call, _) in partiallyResolvedCalls) {
             call.transformSingle(completionResultsWriter, null)
@@ -260,19 +261,32 @@ class FirBuilderInferenceSession(
     }
 }
 
-class FirStubTypeTransformer(
-    private val substitutor: ConeSubstitutor
-) : FirDefaultTransformer<Nothing?>() {
+class FirStubTypeTransformer(private val substitutor: ConeSubstitutor) : FirDefaultTransformer<Nothing?>() {
 
     override fun <E : FirElement> transformElement(element: E, data: Nothing?): E {
+        // All resolvable nodes should be implemented separately to cover substitution of receivers in the candidate
+        if (element is FirResolvable) {
+            element.candidate()?.let { processCandidate(it) }
+        }
         @Suppress("UNCHECKED_CAST")
-        return (element.transformChildren(this, data) as E)
+        return element.transformChildren(this, data = null) as E
     }
 
     override fun transformResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef, data: Nothing?): FirTypeRef =
         substitutor.substituteOrNull(resolvedTypeRef.type)?.let {
             resolvedTypeRef.withReplacedConeType(it)
         } ?: resolvedTypeRef
+
+    /*
+     * We should manually update all receivers in the all not completed candidates, because not all calls with candidates
+     *   contained in partiallyResolvedCalls and candidate stores not receiver values, which are updated, (TODO: remove this comment after removal of updating values)
+     *   and receivers of candidates are not direct FIR children of calls, so they won't be visited during regular transformChildren
+     */
+    private fun processCandidate(candidate: Candidate) {
+        candidate.dispatchReceiver = candidate.dispatchReceiver?.transform(this, data = null)
+        candidate.chosenExtensionReceiver = candidate.chosenExtensionReceiver?.transform(this, data = null)
+        candidate.contextReceiverArguments = candidate.contextReceiverArguments?.map { it.transform(this, data = null) }
+    }
 }
 
 private val BUILDER_INFERENCE_ANNOTATION_CLASS_ID: ClassId = ClassId.topLevel(BUILDER_INFERENCE_ANNOTATION_FQ_NAME)

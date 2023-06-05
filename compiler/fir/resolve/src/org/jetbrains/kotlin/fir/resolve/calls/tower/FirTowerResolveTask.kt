@@ -90,11 +90,13 @@ internal abstract class FirBaseTowerResolveTask(
         includeInnerConstructors: Boolean = extensionReceiver != null,
         contextReceiverGroup: ContextReceiverGroup? = null,
         dispatchReceiverForStatics: ExpressionReceiverValue? = null
-    ): ScopeTowerLevel = ScopeTowerLevel(
-        components, this,
-        givenExtensionReceiverOptions = contextReceiverGroup ?: listOfNotNull(extensionReceiver),
-        withHideMembersOnly, includeInnerConstructors, dispatchReceiverForStatics
-    )
+    ): ScopeTowerLevel {
+        return ScopeTowerLevel(
+            components, this,
+            givenExtensionReceiverOptions = createExtensionReceiverOptions(contextReceiverGroup, extensionReceiver),
+            withHideMembersOnly, includeInnerConstructors, dispatchReceiverForStatics
+        )
+    }
 
     protected fun FirScope.toScopeTowerLevelForStaticWithImplicitDispatchReceiver(
         staticOwnerOwnerSymbol: FirRegularClassSymbol? = null,
@@ -123,7 +125,7 @@ internal abstract class FirBaseTowerResolveTask(
         skipSynthetics: Boolean = false,
     ) = MemberScopeTowerLevel(
         components, this,
-        givenExtensionReceiverOptions = contextReceiverGroup ?: listOfNotNull(extensionReceiver),
+        givenExtensionReceiverOptions = createExtensionReceiverOptions(contextReceiverGroup, extensionReceiver),
         skipSynthetics = skipSynthetics,
     )
 
@@ -132,8 +134,19 @@ internal abstract class FirBaseTowerResolveTask(
         otherContextReceiverGroup: ContextReceiverGroup? = null,
     ) = ContextReceiverGroupMemberScopeTowerLevel(
         components, this,
-        givenExtensionReceiverOptions = otherContextReceiverGroup ?: listOfNotNull(extensionReceiver),
+        givenExtensionReceiverOptions = createExtensionReceiverOptions(otherContextReceiverGroup, extensionReceiver),
     )
+
+    private fun createExtensionReceiverOptions(
+        contextReceiverGroup: ContextReceiverGroup?,
+        extensionReceiverValue: ReceiverValue?,
+    ): List<FirExpression> {
+        return when {
+            contextReceiverGroup != null -> contextReceiverGroup.map { it.receiverExpression }
+            extensionReceiverValue != null -> listOf(extensionReceiverValue.receiverExpression)
+            else -> emptyList()
+        }
+    }
 
     protected inline fun enumerateTowerLevels(
         parentGroup: TowerGroup = TowerGroup.EmptyRoot,

@@ -72,8 +72,8 @@ class FirDelegatedPropertyInferenceSession(
         if (callee.candidate.system.hasContradiction) return true
 
         val hasStubType =
-            callee.candidate.chosenExtensionReceiverValue?.type?.containsStubType() ?: false
-                    || callee.candidate.dispatchReceiverValue?.type?.containsStubType() ?: false
+            callee.candidate.chosenExtensionReceiver?.typeRef?.coneType?.containsStubType() ?: false
+                    || callee.candidate.dispatchReceiver?.typeRef?.coneType?.containsStubType() ?: false
 
         if (!hasStubType) {
             return true
@@ -165,7 +165,6 @@ class FirDelegatedPropertyInferenceSession(
     fun completeCandidates(): List<FirResolvable> {
         val commonSystem = components.session.inferenceComponents.createConstraintSystem()
 
-        @Suppress("UNCHECKED_CAST")
         val notCompletedCalls = partiallyResolvedCalls.mapNotNull { partiallyResolvedCall ->
             partiallyResolvedCall.first.takeIf { resolvable ->
                 resolvable.candidate() != null

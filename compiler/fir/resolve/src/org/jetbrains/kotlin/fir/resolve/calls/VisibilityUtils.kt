@@ -13,10 +13,9 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.getExplicitBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
-import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
-import org.jetbrains.kotlin.fir.expressions.FirSmartCastExpression
-import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildSmartCastExpression
+import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousObjectSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
@@ -30,14 +29,18 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 fun FirVisibilityChecker.isVisible(
     declaration: FirMemberDeclaration,
     callInfo: CallInfo,
-    dispatchReceiverValue: ReceiverValue?
+    dispatchReceiver: FirExpression?
 ): Boolean {
-    val staticQualifierForCallable = runIf(declaration is FirCallableDeclaration && declaration.isStatic) {
-        val explicitReceiver = (dispatchReceiverValue as? ExpressionReceiverValue)?.explicitReceiver
-        when (val classLikeSymbol = (explicitReceiver as? FirResolvedQualifier)?.symbol) {
+    val staticQualifierForCallable = runIf(
+        declaration is FirCallableDeclaration &&
+                declaration.isStatic &&
+                isExplicitReceiverExpression(dispatchReceiver)
+    ) {
+        when (val classLikeSymbol = (dispatchReceiver as? FirResolvedQualifier)?.symbol) {
             is FirRegularClassSymbol -> classLikeSymbol.fir
             is FirTypeAliasSymbol -> classLikeSymbol.fullyExpandedClass(callInfo.session)?.fir
-            is FirAnonymousObjectSymbol, null -> null
+            is FirAnonymousObjectSymbol,
+            null -> null
         }
     }
     return isVisible(
@@ -45,7 +48,7 @@ fun FirVisibilityChecker.isVisible(
         callInfo.session,
         callInfo.containingFile,
         callInfo.containingDeclarations,
-        dispatchReceiverValue,
+        dispatchReceiver,
         staticQualifierClassForCallable = staticQualifierForCallable,
         isCallToPropertySetter = callInfo.callSite is FirVariableAssignment
     )
@@ -57,28 +60,29 @@ fun FirVisibilityChecker.isVisible(
 ): Boolean {
     val callInfo = candidate.callInfo
 
-    if (!isVisible(declaration, callInfo, candidate.dispatchReceiverValue)) {
+    if (!isVisible(declaration, callInfo, candidate.dispatchReceiver)) {
         val dispatchReceiverWithoutSmartCastType =
-            removeSmartCastTypeForAttemptToFitVisibility(candidate.dispatchReceiverValue, candidate.callInfo.session) ?: return false
+            removeSmartCastTypeForAttemptToFitVisibility(candidate.dispatchReceiver, candidate.callInfo.session) ?: return false
 
         if (!isVisible(declaration, callInfo, dispatchReceiverWithoutSmartCastType)) return false
 
-        candidate.dispatchReceiverValue = dispatchReceiverWithoutSmartCastType
+        candidate.dispatchReceiver = dispatchReceiverWithoutSmartCastType
     }
 
     val backingField = declaration.getBackingFieldIfApplicable()
     if (backingField != null) {
-        candidate.hasVisibleBackingField = isVisible(backingField, callInfo, candidate.dispatchReceiverValue)
+        candidate.hasVisibleBackingField = isVisible(backingField, callInfo, candidate.dispatchReceiver)
     }
 
     return true
 }
 
-private fun removeSmartCastTypeForAttemptToFitVisibility(dispatchReceiverValue: ReceiverValue?, session: FirSession): ReceiverValue? {
+private fun removeSmartCastTypeForAttemptToFitVisibility(dispatchReceiver: FirExpression?, session: FirSession): FirExpression? {
     val expressionWithSmartcastIfStable =
-        (dispatchReceiverValue?.receiverExpression as? FirSmartCastExpression)?.takeIf { it.isStable } ?: return null
+        (dispatchReceiver as? FirSmartCastExpression)?.takeIf { it.isStable } ?: return null
 
-    if (dispatchReceiverValue.type.isNullableNothing) return null
+    val receiverType = dispatchReceiver.typeRef.coneType
+    if (receiverType.isNullableNothing) return null
 
     val originalExpression = expressionWithSmartcastIfStable.originalExpression
     val originalType = originalExpression.typeRef.coneType
@@ -87,11 +91,11 @@ private fun removeSmartCastTypeForAttemptToFitVisibility(dispatchReceiverValue: 
 
     // Basically, this `if` is just for sake of optimizaton
     // We have only nullability enhancement, here, so return initial smart cast receiver value
-    if (originalTypeNotNullable == dispatchReceiverValue.type) return null
+    if (originalTypeNotNullable == receiverType) return null
 
     val expressionForReceiver = with(session.typeContext) {
         when {
-            originalType.isNullableType() && !dispatchReceiverValue.type.isNullableType() ->
+            originalType.isNullableType() && !receiverType.isNullableType() ->
                 buildSmartCastExpression {
                     source = originalExpression.source?.fakeElement(KtFakeSourceElementKind.SmartCastExpression)
                     this.originalExpression = originalExpression
@@ -107,7 +111,7 @@ private fun removeSmartCastTypeForAttemptToFitVisibility(dispatchReceiverValue: 
         }
     }
 
-    return ExpressionReceiverValue(expressionForReceiver)
+    return expressionForReceiver
 
 }
 
@@ -122,4 +126,11 @@ private fun FirMemberDeclaration.getBackingFieldIfApplicable(): FirBackingField?
         Visibilities.Internal -> field
         else -> null
     }
+}
+
+private fun isExplicitReceiverExpression(receiverExpression: FirExpression?): Boolean {
+    if (receiverExpression == null) return false
+    // Only FirThisReference may be a reference in implicit receiver
+    val thisReference = receiverExpression.toReference() as? FirThisReference ?: return true
+    return !thisReference.isImplicit
 }

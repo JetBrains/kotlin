@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls.tower
 
+import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -78,11 +79,11 @@ private class TowerScopeLevelProcessor(
 ) : TowerScopeLevel.TowerScopeLevelProcessor<FirBasedSymbol<*>> {
     override fun consumeCandidate(
         symbol: FirBasedSymbol<*>,
-        dispatchReceiverValue: ReceiverValue?,
-        givenExtensionReceiverOptions: List<ReceiverValue>,
+        dispatchReceiver: FirExpression?,
+        givenExtensionReceiverOptions: List<FirExpression>,
         scope: FirScope,
         objectsByName: Boolean,
-        isFromOriginalTypeInPresenceOfSmartCast: Boolean
+        isFromOriginalTypeInPresenceOfSmartCast: Boolean,
     ) {
         resultCollector.consumeCandidate(
             group, candidateFactory.createCandidate(
@@ -90,7 +91,7 @@ private class TowerScopeLevelProcessor(
                 symbol,
                 explicitReceiverKind,
                 scope,
-                dispatchReceiverValue,
+                dispatchReceiver,
                 givenExtensionReceiverOptions,
                 objectsByName,
                 isFromOriginalTypeInPresenceOfSmartCast

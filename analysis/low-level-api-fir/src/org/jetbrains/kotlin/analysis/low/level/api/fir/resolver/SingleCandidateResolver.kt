@@ -53,12 +53,12 @@ class SingleCandidateResolver(
             callInfo,
             resolutionParameters.callableSymbol,
             explicitReceiverKind = explicitReceiverKind,
-            dispatchReceiverValue = dispatchReceiverValue,
+            dispatchReceiver = dispatchReceiverValue?.receiverExpression,
             givenExtensionReceiverOptions = listOfNotNull(
                 if (explicitReceiverKind.isExtensionReceiver)
-                    callInfo.explicitReceiver?.let { ExpressionReceiverValue(it) }
+                    callInfo.explicitReceiver
                 else
-                    implicitExtensionReceiverValue
+                    implicitExtensionReceiverValue?.receiverExpression
             ),
             scope = null,
         )
