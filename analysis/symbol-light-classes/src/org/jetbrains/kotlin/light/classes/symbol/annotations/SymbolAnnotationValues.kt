@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.light.classes.symbol.annotations
 import com.intellij.openapi.util.Key
 import com.intellij.psi.*
 import com.intellij.psi.impl.light.LightTypeElement
+import org.jetbrains.kotlin.asJava.classes.cannotModify
 import org.jetbrains.kotlin.asJava.elements.KtLightElementBase
 import org.jetbrains.kotlin.light.classes.symbol.toArrayIfNotEmptyOrDefault
 import org.jetbrains.kotlin.psi.KtElement
@@ -80,9 +81,9 @@ private class LightTypeElementWithParent(private val lightParent: PsiElement, ty
 internal class SymbolPsiReference(
     override val kotlinOrigin: KtElement?,
     lightParent: PsiElement,
-    private val psiReference: PsiJavaCodeReferenceElement,
+    private val psiReference: PsiReferenceExpression,
 ) : SymbolPsiAnnotationMemberValue(kotlinOrigin, lightParent),
-    PsiJavaCodeReferenceElement, PsiJavaReference by psiReference {
+    PsiReferenceExpression, PsiJavaReference by psiReference {
     override fun getText(): String = psiReference.text
 
     override fun getReferenceNameElement(): PsiElement? = psiReference.referenceNameElement
@@ -94,6 +95,15 @@ internal class SymbolPsiReference(
     override fun getReferenceName(): String? = psiReference.referenceName
     override fun <T> getCopyableUserData(key: Key<T>): T? = null
     override fun <T> putCopyableUserData(key: Key<T>, value: T?) {}
+    override fun getQualifierExpression(): PsiExpression? = psiReference.qualifierExpression
+    override fun bindToElementViaStaticImport(qualifierClass: PsiClass): PsiElement =
+        cannotModify()
+
+    override fun setQualifierExpression(newQualifier: PsiExpression?) {
+        cannotModify()
+    }
+
+    override fun getType(): PsiType? = psiReference.type
 }
 
 internal class SymbolPsiLiteral(
