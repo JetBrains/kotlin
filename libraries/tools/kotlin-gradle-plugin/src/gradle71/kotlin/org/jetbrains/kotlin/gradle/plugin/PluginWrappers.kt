@@ -15,6 +15,7 @@ import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.jetbrains.kotlin.gradle.plugin.internal.*
 import org.jetbrains.kotlin.gradle.plugin.internal.ConfigurationTimePropertiesAccessorG71
 import org.jetbrains.kotlin.gradle.plugin.internal.IdeaSyncDetectorG71
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.UnameExecutor
 import javax.inject.Inject
 
 private const val PLUGIN_VARIANT_NAME = "gradle71"
@@ -164,4 +165,6 @@ private fun Project.registerVariantImplementations() {
         ProjectIsolationStartParameterAccessorG71.Factory()
     factories[CompatibilityConventionRegistrar.Factory::class] =
         CompatibilityConventionRegistrarG71.Factory()
+    factories[UnameExecutor.UnameExecutorVariantFactory::class] =
+        UnameExecutorG71.UnameExecutorVariantFactoryG71()
 }
