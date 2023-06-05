@@ -1,8 +1,5 @@
 // !LANGUAGE: +InlineClasses
 
-// MUTE_SIGNATURE_COMPARISON_K2: JVM_IR
-// ^ KT-57429
-
 class C<T>(val t: T) {
     override fun hashCode(): Int = t as Int
 }

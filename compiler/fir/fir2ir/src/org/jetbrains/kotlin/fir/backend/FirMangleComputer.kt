@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.backend.common.serialization.mangle.collectForMangle
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticPropertyAccessor
-import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
@@ -108,8 +107,17 @@ open class FirMangleComputer(
     override fun isUnit(type: ConeKotlinType) = type.isUnit
 
     @OptIn(SymbolInternals::class)
-    override fun getEffectiveParent(typeParameter: ConeTypeParameterLookupTag): FirMemberDeclaration = typeParameter.symbol.fir.run {
-        this.containingDeclarationSymbol.fir as FirMemberDeclaration
+    override fun getEffectiveParent(typeParameter: ConeTypeParameterLookupTag): FirMemberDeclaration =
+        typeParameter.symbol.containingDeclarationSymbol.fir as FirMemberDeclaration
+
+    override fun getContainerIndex(parent: FirMemberDeclaration): Int {
+        // If a type parameter is declared in a java method, typeParameterContainers will contain the enhanced declaration,
+        // but parent will be the non-enhanced version.
+        // To work around this, we additionally compare declarations using their callable IDs.
+        val callableId = (parent as? FirCallableDeclaration)?.symbol?.callableId
+        return typeParameterContainers.indexOfFirst {
+            it == parent || it is FirCallableDeclaration && it.symbol.callableId == callableId
+        }
     }
 
     override fun renderDeclaration(declaration: FirDeclaration) = declaration.render()

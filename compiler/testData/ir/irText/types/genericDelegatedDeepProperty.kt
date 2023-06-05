@@ -1,8 +1,5 @@
 // !LANGUAGE: -ForbidUsingExtensionPropertyTypeParameterInDelegate
 
-// MUTE_SIGNATURE_COMPARISON_K2: JVM_IR
-// ^ KT-57429
-
 import kotlin.reflect.KProperty1
 import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.KProperty

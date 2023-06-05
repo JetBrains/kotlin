@@ -1,7 +1,7 @@
 // WITH_STDLIB
 
 // MUTE_SIGNATURE_COMPARISON_K2: ANY
-// ^ KT-57429, KT-57778
+// ^ KT-57778
 
 import kotlin.experimental.ExperimentalTypeInference
 

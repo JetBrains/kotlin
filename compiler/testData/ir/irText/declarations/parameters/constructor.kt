@@ -1,6 +1,3 @@
-// MUTE_SIGNATURE_COMPARISON_K2: JVM_IR
-// ^ KT-57429
-
 class Test1<T1, T2>(val x: T1, val y: T2)
 
 class Test2(x: Int, val y: String) {

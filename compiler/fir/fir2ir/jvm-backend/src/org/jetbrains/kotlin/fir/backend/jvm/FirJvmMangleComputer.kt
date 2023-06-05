@@ -33,28 +33,6 @@ class FirJvmMangleComputer(
     override fun copy(newMode: MangleMode): FirJvmMangleComputer =
         FirJvmMangleComputer(builder, newMode)
 
-    // FIXME this implementation causes the mangler to deliver different result than IR mangler. Consider using base method instead
-    override fun getEffectiveParent(typeParameter: ConeTypeParameterLookupTag): FirMemberDeclaration = typeParameter.symbol.fir.run {
-
-        fun FirTypeParameter.sameAs(other: FirTypeParameter) =
-            this === other ||
-                    (name == other.name && bounds.size == other.bounds.size &&
-                            bounds.zip(other.bounds).all { it.first.coneType == it.second.coneType })
-
-        for (parent in typeParameterContainers) {
-            if (parent.typeParameters.any { this.sameAs(it.symbol.fir) }) {
-                return parent
-            }
-            if (parent is FirCallableDeclaration) {
-                val overriddenFir = parent.originalForSubstitutionOverride
-                if (overriddenFir is FirTypeParametersOwner && overriddenFir.typeParameters.any { this.sameAs(it) }) {
-                    return parent
-                }
-            }
-        }
-        throw IllegalStateException("Should not be here!")
-    }
-
     private inner class JvmVisitor : Visitor() {
         override fun visitField(field: FirField) {
             if (field is FirJavaField) {

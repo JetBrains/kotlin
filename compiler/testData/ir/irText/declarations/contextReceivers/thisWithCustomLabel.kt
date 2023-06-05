@@ -1,9 +1,6 @@
 // FIR_IDENTICAL
 // !LANGUAGE: +ContextReceivers
 
-// MUTE_SIGNATURE_COMPARISON_K2: JVM_IR
-// ^ KT-57429
-
 class A<T>(val a: T)
 class B(val b: Any)
 class C(val c: Any)

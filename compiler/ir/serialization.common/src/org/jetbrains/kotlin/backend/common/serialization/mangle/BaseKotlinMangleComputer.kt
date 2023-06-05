@@ -219,7 +219,7 @@ abstract class BaseKotlinMangleComputer<Declaration, Type, TypeParameter, ValueP
 
     protected fun StringBuilder.mangleTypeParameterReference(typeParameter: TypeParameter) {
         val parent = getEffectiveParent(typeParameter)
-        val containerIndex = typeParameterContainers.indexOf(parent)
+        val containerIndex = getContainerIndex(parent)
         require(allowOutOfScopeTypeParameters || containerIndex >= 0) {
             "No container found for type parameter '${getTypeParameterName(typeParameter)}' of '${renderDeclaration(parent)}'"
         }
@@ -228,6 +228,9 @@ abstract class BaseKotlinMangleComputer<Declaration, Type, TypeParameter, ValueP
         appendSignature(getIndexOfTypeParameter(typeParameter, parent))
     }
 
+    protected open fun getContainerIndex(parent: TypeParameterContainer): Int {
+        return typeParameterContainers.indexOf(parent)
+    }
 
     protected fun mangleTypeParameter(
         tpBuilder: StringBuilder,

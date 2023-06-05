@@ -1,6 +1,3 @@
-// MUTE_SIGNATURE_COMPARISON_K2: JVM_IR
-// ^ KT-57429
-
 open class Cell<T>(val value: T)
 
 typealias CT<T> = Cell<T>

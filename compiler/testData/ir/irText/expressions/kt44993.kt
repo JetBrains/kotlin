@@ -3,9 +3,6 @@
 // WITH_STDLIB
 // SKIP_KT_DUMP
 
-// MUTE_SIGNATURE_COMPARISON_K2: ANY
-// ^ KT-57429
-
 // FILE: kt44993.kt
 fun f(r: KotlinBox<JavaBox>): String =
     r?.data?.element!!

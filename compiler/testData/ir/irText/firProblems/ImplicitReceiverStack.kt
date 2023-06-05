@@ -5,7 +5,7 @@
 // IGNORE_BACKEND: JS_IR_ES6
 
 // MUTE_SIGNATURE_COMPARISON_K2: ANY
-// ^ KT-57429, KT-57788
+// ^ KT-57788
 
 interface SymbolOwner<E : SymbolOwner<E>>
 

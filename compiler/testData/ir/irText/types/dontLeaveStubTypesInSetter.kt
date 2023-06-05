@@ -2,7 +2,7 @@
 // WITH_STDLIB
 
 // MUTE_SIGNATURE_COMPARISON_K2: JVM_IR
-// ^ KT-57429, KT-57755
+// ^KT-57755
 
 class Foo<T>(var x: T)
 
