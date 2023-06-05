@@ -154,7 +154,7 @@ fun IrBranch.isUnconditional(): Boolean = (condition as? IrConst<*>)?.value == t
 val IrSimpleFunction.returnsResultOfStdlibCall: Boolean
     get() {
         fun IrStatement.isStdlibCall() =
-            this is IrCall && symbol.owner.getPackageFragment().fqName == StandardNames.BUILT_INS_PACKAGE_FQ_NAME
+            this is IrCall && symbol.owner.getPackageFragment().packageFqName == StandardNames.BUILT_INS_PACKAGE_FQ_NAME
 
         return when (val body = body) {
             is IrExpressionBody -> body.expression.isStdlibCall()
