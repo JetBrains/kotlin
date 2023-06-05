@@ -9,6 +9,9 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.ModificationTracker
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.DelegatingGlobalSearchScope
+import com.intellij.psi.util.CachedValue
+import com.intellij.psi.util.CachedValueProvider
+import com.intellij.psi.util.CachedValuesManager
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirBuiltinsAndCloneableSessionProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirBuiltinsAndCloneableSession
@@ -53,7 +56,7 @@ class LLFirBuiltinsSessionFactory(private val project: Project) {
 
     private val builtinsModules = ConcurrentHashMap<TargetPlatform, KtBuiltinsModule>()
 
-    private val builtinsAndCloneableSessions = ConcurrentHashMap<TargetPlatform, LLFirBuiltinsAndCloneableSession>()
+    private val builtinsAndCloneableSessions = ConcurrentHashMap<TargetPlatform, CachedValue<LLFirBuiltinsAndCloneableSession>>()
 
     /**
      * Returns the [platform]'s [KtBuiltinsModule]. [getBuiltinsModule] should be used instead of [getBuiltinsSession] when a
@@ -64,7 +67,12 @@ class LLFirBuiltinsSessionFactory(private val project: Project) {
         builtinsModules.getOrPut(platform) { KtBuiltinsModule(platform, platform.getAnalyzerServices(), project) }
 
     fun getBuiltinsSession(platform: TargetPlatform): LLFirBuiltinsAndCloneableSession =
-        builtinsAndCloneableSessions.getOrPut(platform) { createBuiltinsAndCloneableSession(platform) }
+        builtinsAndCloneableSessions.getOrPut(platform) {
+            CachedValuesManager.getManager(project).createCachedValue {
+                val session = createBuiltinsAndCloneableSession(platform)
+                CachedValueProvider.Result(session, session.modificationTracker)
+            }
+        }.value
 
     @TestOnly
     fun clearForTheNextTest() {
