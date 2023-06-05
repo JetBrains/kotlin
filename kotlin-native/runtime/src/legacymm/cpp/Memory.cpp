@@ -3085,7 +3085,9 @@ void ObjHeader::destroyMetaObject(ObjHeader* object) {
   }
 
 #ifdef KONAN_OBJC_INTEROP
-  Kotlin_ObjCExport_releaseAssociatedObject(meta->associatedObject_);
+  if (void* associatedObject = meta->associatedObject_) {
+    Kotlin_ObjCExport_releaseAssociatedObject(associatedObject);
+  }
 #endif
 
   std_support::allocator_delete(objectAllocator, meta);

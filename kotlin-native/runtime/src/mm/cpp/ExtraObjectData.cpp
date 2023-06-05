@@ -60,14 +60,16 @@ void mm::ExtraObjectData::Uninstall() noexcept {
             this);
 
 #ifdef KONAN_OBJC_INTEROP
-    if (getFlag(FLAGS_RELEASE_ON_MAIN_QUEUE) && isMainQueueProcessorAvailable()) {
-        runOnMainQueue(associatedObject_, [](void* obj) {
-            Kotlin_ObjCExport_releaseAssociatedObject(obj);
-        });
-    } else {
-        Kotlin_ObjCExport_releaseAssociatedObject(associatedObject_);
+    if (void* associatedObject = associatedObject_) {
+        if (getFlag(FLAGS_RELEASE_ON_MAIN_QUEUE) && isMainQueueProcessorAvailable()) {
+            runOnMainQueue(associatedObject, [](void* obj) {
+                Kotlin_ObjCExport_releaseAssociatedObject(obj);
+            });
+        } else {
+            Kotlin_ObjCExport_releaseAssociatedObject(associatedObject);
+        }
+        associatedObject_ = nullptr;
     }
-    associatedObject_ = nullptr;
 #endif
 }
 

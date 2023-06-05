@@ -107,11 +107,10 @@ ALWAYS_INLINE void send_releaseAsAssociatedObject(void* associatedObject) {
 } // namespace
 
 extern "C" ALWAYS_INLINE void Kotlin_ObjCExport_releaseAssociatedObject(void* associatedObject) {
-  if (associatedObject != nullptr) {
-    // May already be in the native state if was scheduled on the main queue.
-    NativeOrUnregisteredThreadGuard guard(/*reentrant=*/ true);
-    send_releaseAsAssociatedObject(associatedObject);
-  }
+  RuntimeAssert(associatedObject != nullptr, "Kotlin_ObjCExport_releaseAssociatedObject(nullptr)");
+  // May already be in the native state if was scheduled on the main queue.
+  NativeOrUnregisteredThreadGuard guard(/*reentrant=*/ true);
+  send_releaseAsAssociatedObject(associatedObject);
 }
 
 extern "C" id Kotlin_ObjCExport_convertUnitToRetained(ObjHeader* unitInstance) {
