@@ -81,7 +81,7 @@ internal open class JvmStubBasedFirDeserializedSymbolProvider(
         context: StubBasedFirDeserializationContext?,
     ): Pair<FirTypeAliasSymbol?, DeserializedTypeAliasPostProcessor?> {
         val classLikeDeclaration =
-            (context?.classLikeDeclaration ?: declarationProvider.getClassLikeDeclarationByClassId(classId))?.originalElement
+            (context?.classLikeDeclaration ?: declarationProvider.getClassLikeDeclarationByClassId(classId))
         if (classLikeDeclaration is KtTypeAlias) {
             val symbol = FirTypeAliasSymbol(classId)
             val postProcessor: DeserializedTypeAliasPostProcessor = {
@@ -106,9 +106,9 @@ internal open class JvmStubBasedFirDeserializedSymbolProvider(
     ): FirRegularClassSymbol? {
         val (classLikeDeclaration, context) =
             if (parentContext?.classLikeDeclaration != null) {
-                parentContext.classLikeDeclaration.originalElement to null
+                parentContext.classLikeDeclaration to null
             } else {
-                (declarationProvider.getClassLikeDeclarationByClassId(classId)?.originalElement ?: return null) to parentContext
+                (declarationProvider.getClassLikeDeclarationByClassId(classId) ?: return null) to parentContext
             }
 
         val symbol = FirRegularClassSymbol(classId)
@@ -140,12 +140,9 @@ internal open class JvmStubBasedFirDeserializedSymbolProvider(
         foundFunctions: Collection<KtNamedFunction>?,
     ): List<FirNamedFunctionSymbol> {
         val topLevelFunctions = foundFunctions ?: declarationProvider.getTopLevelFunctions(callableId)
-        val origins = if (topLevelFunctions.size > 1) mutableSetOf<KtNamedFunction>() else null
         return topLevelFunctions
             .mapNotNull { function ->
-                val original = function.originalElement as? KtNamedFunction ?: return@mapNotNull null
-                if (origins != null && !origins.add(original)) return@mapNotNull null
-                val file = original.containingKtFile
+                val file = function.containingKtFile
                 val virtualFile = file.virtualFile
                 if (virtualFile.extension == MetadataPackageFragment.METADATA_FILE_EXTENSION) return@mapNotNull null
                 if (initialOrigin != FirDeclarationOrigin.BuiltIns && file.packageFqName.asString()
@@ -153,22 +150,19 @@ internal open class JvmStubBasedFirDeserializedSymbolProvider(
                 ) return@mapNotNull null
                 val symbol = FirNamedFunctionSymbol(callableId)
                 val rootContext =
-                    StubBasedFirDeserializationContext.createRootContext(session, moduleData, callableId, original, symbol, initialOrigin)
-                rootContext.memberDeserializer.loadFunction(original, null, session, symbol).symbol
+                    StubBasedFirDeserializationContext.createRootContext(session, moduleData, callableId, function, symbol, initialOrigin)
+                rootContext.memberDeserializer.loadFunction(function, null, session, symbol).symbol
             }
     }
 
     private fun loadPropertiesByCallableId(callableId: CallableId, foundProperties: Collection<KtProperty>?): List<FirPropertySymbol> {
         val topLevelProperties = foundProperties ?: declarationProvider.getTopLevelProperties(callableId)
-        val origins = if (topLevelProperties.size > 1) mutableSetOf<KtProperty>() else null
         return topLevelProperties
-            .mapNotNull { property ->
-                val original = property.originalElement as? KtProperty ?: return@mapNotNull null
-                if (origins != null && !origins.add(original)) return@mapNotNull null
+            .map { property ->
                 val symbol = FirPropertySymbol(callableId)
                 val rootContext =
-                    StubBasedFirDeserializationContext.createRootContext(session, moduleData, callableId, original, symbol, initialOrigin)
-                rootContext.memberDeserializer.loadProperty(original, null, symbol).symbol
+                    StubBasedFirDeserializationContext.createRootContext(session, moduleData, callableId, property, symbol, initialOrigin)
+                rootContext.memberDeserializer.loadProperty(property, null, symbol).symbol
             }
     }
 
