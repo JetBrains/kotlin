@@ -226,7 +226,7 @@ internal class ObjCFrameworkCompilation(
     sanitizer = settings.get(),
     gcType = settings.get(),
     gcScheduler = settings.get(),
-    pipelineType = settings.get(),
+    pipelineType = settings.getStageDependentPipelineType(),
     freeCompilerArgs = freeCompilerArgs,
     sourceModules = sourceModules,
     dependencies = CategorizedDependencies(dependencies),
@@ -310,7 +310,7 @@ internal class ExecutableCompilation(
     sanitizer = settings.get(),
     gcType = settings.get(),
     gcScheduler = settings.get(),
-    pipelineType = settings.get(),
+    pipelineType = settings.getStageDependentPipelineType(),
     freeCompilerArgs = freeCompilerArgs,
     sourceModules = sourceModules,
     dependencies = CategorizedDependencies(dependencies),
@@ -506,3 +506,9 @@ private object BinaryOptions {
         fun chooseFor(cacheMode: CacheMode) = if (cacheMode.useStaticCacheForDistributionLibraries) forUseWithCache else defaultForTesting
     }
 }
+
+internal fun Settings.getStageDependentPipelineType(): PipelineType =
+    when (get<TestMode>()) {
+        TestMode.ONE_STAGE_MULTI_MODULE -> get<PipelineType>()
+        TestMode.TWO_STAGE_MULTI_MODULE -> PipelineType.K1  // Don't pass "-language_version 2.0" to the second stage
+    }
