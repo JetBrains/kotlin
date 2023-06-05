@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.java.FirJavaFacade
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
 import org.jetbrains.kotlin.fir.languageVersionSettings
+import org.jetbrains.kotlin.fir.resolve.transformers.setLazyPublishedVisibility
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.load.kotlin.*
@@ -27,6 +28,7 @@ import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErrorData
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
@@ -159,9 +161,13 @@ class JvmClassFileBasedSymbolProvider(
         symbol: FirRegularClassSymbol
     ) {
         val annotations = mutableListOf<FirAnnotation>()
+        var hasPublishedApi = false
         kotlinClass.kotlinJvmBinaryClass.loadClassAnnotations(
             object : KotlinJvmBinaryClass.AnnotationVisitor {
                 override fun visitAnnotation(classId: ClassId, source: SourceElement): KotlinJvmBinaryClass.AnnotationArgumentVisitor? {
+                    if (classId == StandardClassIds.Annotations.PublishedApi) {
+                        hasPublishedApi = true
+                    }
                     return annotationsLoader.loadAnnotationIfNotSpecial(classId, annotations)
                 }
 
@@ -170,8 +176,11 @@ class JvmClassFileBasedSymbolProvider(
             },
             kotlinClass.byteContent,
         )
-        symbol.fir.replaceAnnotations(annotations.toMutableOrEmpty())
-        symbol.fir.replaceDeprecationsProvider(symbol.fir.getDeprecationsProvider(session))
+        symbol.fir.run {
+            replaceAnnotations(annotations.toMutableOrEmpty())
+            replaceDeprecationsProvider(symbol.fir.getDeprecationsProvider(session))
+            setLazyPublishedVisibility(hasPublishedApi, null, session)
+        }
     }
 
     private fun String?.toPath(): Path? {

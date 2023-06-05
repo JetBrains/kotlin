@@ -1,0 +1,92 @@
+@R|kotlin/PublishedApi|() internal final [LazyPublishedApiEffectiveVisibilityKey=public] fun method(): R|kotlin/Unit|
+
+@PROPERTY:R|kotlin/PublishedApi|() internal final [LazyPublishedApiEffectiveVisibilityKey=public] val prop: R|kotlin/Int|
+    internal [LazyPublishedApiEffectiveVisibilityKey=public] get(): R|kotlin/Int|
+
+@PROPERTY:R|kotlin/PublishedApi|() internal final [LazyPublishedApiEffectiveVisibilityKey=public] val prop2: R|kotlin/Int|
+    internal [LazyPublishedApiEffectiveVisibilityKey=public] get(): R|kotlin/Int|
+
+@PROPERTY:R|kotlin/PublishedApi|() internal final [LazyPublishedApiEffectiveVisibilityKey=public] var prop3: R|kotlin/Int|
+    internal [LazyPublishedApiEffectiveVisibilityKey=public] get(): R|kotlin/Int|
+    internal [LazyPublishedApiEffectiveVisibilityKey=public] set(value: R|kotlin/Int|): R|kotlin/Unit|
+
+internal final [HasNoEnumEntriesKey=true, IsNewPlaceForBodyGeneration=false] class Internal : R|kotlin/Any| {
+    @R|kotlin/PublishedApi|() internal final [LazyPublishedApiEffectiveVisibilityKey=internal] fun method(): R|kotlin/Unit|
+
+    public final val foo: R|kotlin/String|
+        public [ContainingClassKey=Internal] get(): R|kotlin/String|
+
+    @PROPERTY:R|kotlin/PublishedApi|() internal final [LazyPublishedApiEffectiveVisibilityKey=internal] val prop: R|kotlin/Int|
+        internal [ContainingClassKey=Internal, LazyPublishedApiEffectiveVisibilityKey=internal] get(): R|kotlin/Int|
+
+    @PROPERTY:R|kotlin/PublishedApi|() internal final [LazyPublishedApiEffectiveVisibilityKey=internal] val prop2: R|kotlin/Int|
+        internal [ContainingClassKey=Internal, LazyPublishedApiEffectiveVisibilityKey=internal] get(): R|kotlin/Int|
+
+    @PROPERTY:R|kotlin/PublishedApi|() internal final [LazyPublishedApiEffectiveVisibilityKey=internal] var prop3: R|kotlin/Int|
+        internal [ContainingClassKey=Internal, LazyPublishedApiEffectiveVisibilityKey=internal] get(): R|kotlin/Int|
+        internal [ContainingClassKey=Internal, LazyPublishedApiEffectiveVisibilityKey=internal] set(value: R|kotlin/Int|): R|kotlin/Unit|
+
+    @R|kotlin/PublishedApi|() internal [ContainingClassKey=Internal, LazyPublishedApiEffectiveVisibilityKey=internal] constructor(foo: R|kotlin/String|): R|test/Internal|
+
+    @R|kotlin/PublishedApi|() internal [ContainingClassKey=Internal, LazyPublishedApiEffectiveVisibilityKey=internal] constructor(): R|test/Internal|
+
+    @R|kotlin/PublishedApi|() internal final [HasNoEnumEntriesKey=true, IsNewPlaceForBodyGeneration=false, LazyPublishedApiEffectiveVisibilityKey=internal] class Nested : R|kotlin/Any| {
+        public [ContainingClassKey=Nested] constructor(): R|test/Internal.Nested|
+
+    }
+
+}
+
+public final [HasNoEnumEntriesKey=true, IsNewPlaceForBodyGeneration=false] class Public : R|kotlin/Any| {
+    @R|kotlin/PublishedApi|() internal final [LazyPublishedApiEffectiveVisibilityKey=public] fun method(): R|kotlin/Unit|
+
+    public final val foo: R|kotlin/String|
+        public [ContainingClassKey=Public] get(): R|kotlin/String|
+
+    @PROPERTY:R|kotlin/PublishedApi|() internal final [LazyPublishedApiEffectiveVisibilityKey=public] val prop: R|kotlin/Int|
+        internal [ContainingClassKey=Public, LazyPublishedApiEffectiveVisibilityKey=public] get(): R|kotlin/Int|
+
+    @PROPERTY:R|kotlin/PublishedApi|() internal final [LazyPublishedApiEffectiveVisibilityKey=public] val prop2: R|kotlin/Int|
+        internal [ContainingClassKey=Public, LazyPublishedApiEffectiveVisibilityKey=public] get(): R|kotlin/Int|
+
+    @PROPERTY:R|kotlin/PublishedApi|() internal final [LazyPublishedApiEffectiveVisibilityKey=public] var prop3: R|kotlin/Int|
+        internal [ContainingClassKey=Public, LazyPublishedApiEffectiveVisibilityKey=public] get(): R|kotlin/Int|
+        internal [ContainingClassKey=Public, LazyPublishedApiEffectiveVisibilityKey=public] set(value: R|kotlin/Int|): R|kotlin/Unit|
+
+    @R|kotlin/PublishedApi|() internal [ContainingClassKey=Public, LazyPublishedApiEffectiveVisibilityKey=public] constructor(foo: R|kotlin/String|): R|test/Public|
+
+    @R|kotlin/PublishedApi|() internal [ContainingClassKey=Public, LazyPublishedApiEffectiveVisibilityKey=public] constructor(): R|test/Public|
+
+    @R|kotlin/PublishedApi|() internal final [HasNoEnumEntriesKey=true, IsNewPlaceForBodyGeneration=false, LazyPublishedApiEffectiveVisibilityKey=public] class Nested : R|kotlin/Any| {
+        public [ContainingClassKey=Nested] constructor(): R|test/Public.Nested|
+
+    }
+
+}
+
+@R|kotlin/PublishedApi|() internal final [HasNoEnumEntriesKey=true, IsNewPlaceForBodyGeneration=false, LazyPublishedApiEffectiveVisibilityKey=public] class Published : R|kotlin/Any| {
+    @R|kotlin/PublishedApi|() internal final [LazyPublishedApiEffectiveVisibilityKey=public] fun method(): R|kotlin/Unit|
+
+    public final val foo: R|kotlin/String|
+        public [ContainingClassKey=Published] get(): R|kotlin/String|
+
+    @PROPERTY:R|kotlin/PublishedApi|() internal final [LazyPublishedApiEffectiveVisibilityKey=public] val prop: R|kotlin/Int|
+        internal [ContainingClassKey=Published, LazyPublishedApiEffectiveVisibilityKey=public] get(): R|kotlin/Int|
+
+    @PROPERTY:R|kotlin/PublishedApi|() internal final [LazyPublishedApiEffectiveVisibilityKey=public] val prop2: R|kotlin/Int|
+        internal [ContainingClassKey=Published, LazyPublishedApiEffectiveVisibilityKey=public] get(): R|kotlin/Int|
+
+    @PROPERTY:R|kotlin/PublishedApi|() internal final [LazyPublishedApiEffectiveVisibilityKey=public] var prop3: R|kotlin/Int|
+        internal [ContainingClassKey=Published, LazyPublishedApiEffectiveVisibilityKey=public] get(): R|kotlin/Int|
+        internal [ContainingClassKey=Published, LazyPublishedApiEffectiveVisibilityKey=public] set(value: R|kotlin/Int|): R|kotlin/Unit|
+
+    @R|kotlin/PublishedApi|() internal [ContainingClassKey=Published, LazyPublishedApiEffectiveVisibilityKey=public] constructor(foo: R|kotlin/String|): R|test/Published|
+
+    @R|kotlin/PublishedApi|() internal [ContainingClassKey=Published, LazyPublishedApiEffectiveVisibilityKey=public] constructor(): R|test/Published|
+
+    @R|kotlin/PublishedApi|() internal final [HasNoEnumEntriesKey=true, IsNewPlaceForBodyGeneration=false, LazyPublishedApiEffectiveVisibilityKey=public] class Nested : R|kotlin/Any| {
+        public [ContainingClassKey=Nested] constructor(): R|test/Published.Nested|
+
+    }
+
+}

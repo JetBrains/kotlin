@@ -26,9 +26,7 @@ import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.toEffectiveVisibility
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visibilityChecker
-import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 class FirStatusResolver(
     val session: FirSession,
@@ -290,28 +288,23 @@ class FirStatusResolver(
         )
         val effectiveVisibility = parentEffectiveVisibility.lowerBound(selfEffectiveVisibility, session.typeContext)
         val annotations = (containingProperty ?: declaration).annotations
-
-        val hasPublishedApiAnnotation = annotations.any {
-            it.typeRef.coneTypeSafe<ConeClassLikeType>()?.lookupTag?.classId == StandardClassIds.Annotations.PublishedApi
-        }
-
-        var selfPublishedEffectiveVisibility = runIf(hasPublishedApiAnnotation) {
-            visibility.toEffectiveVisibility(
-                containingClass?.symbol?.toLookupTag(), forClass = declaration is FirClass, ownerIsPublishedApi = true
-            )
-        }
-        var parentPublishedEffectiveVisibility = when {
+        val parentPublishedEffectiveVisibility = when {
             containingProperty != null -> containingProperty.publishedApiEffectiveVisibility
             containingClass is FirRegularClass -> containingClass.publishedApiEffectiveVisibility
             else -> null
         }
-        if (selfPublishedEffectiveVisibility != null || parentPublishedEffectiveVisibility != null) {
-            selfPublishedEffectiveVisibility = selfPublishedEffectiveVisibility ?: selfEffectiveVisibility
-            parentPublishedEffectiveVisibility = parentPublishedEffectiveVisibility ?: parentEffectiveVisibility
-            declaration.publishedApiEffectiveVisibility = parentPublishedEffectiveVisibility.lowerBound(
-                selfPublishedEffectiveVisibility,
-                session.typeContext
-            )
+
+        computePublishedApiEffectiveVisibility(
+            annotations,
+            visibility,
+            selfEffectiveVisibility,
+            containingClass?.symbol,
+            parentEffectiveVisibility,
+            parentPublishedEffectiveVisibility,
+            declaration is FirClass,
+            session
+        )?.let {
+            declaration.nonLazyPublishedApiEffectiveVisibility = it
         }
 
         if (containingClass is FirRegularClass && containingClass.isExpect) {

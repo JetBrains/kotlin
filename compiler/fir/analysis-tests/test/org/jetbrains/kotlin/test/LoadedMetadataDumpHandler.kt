@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.fir.DependencyListForCliModule
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.utils.nameOrSpecialName
+import org.jetbrains.kotlin.fir.renderer.FirDeclarationRenderer
+import org.jetbrains.kotlin.fir.renderer.FirDeclarationRendererWithFilteredAttributes
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
@@ -175,8 +177,9 @@ abstract class AbstractLoadedMetadataDumpHandler<A : ResultingArtifact.Binary<A>
         ).single().session
 
         val packageFqName = FqName("test")
+        val printAttributes = FirDiagnosticsDirectives.RENDER_FIR_DECLARATION_ATTRIBUTES in module.directives
         dumper.builderForModule(module)
-            .append(collectPackageContent(session, packageFqName, extractNames(module, packageFqName)))
+            .append(collectPackageContent(session, packageFqName, extractNames(module, packageFqName), printAttributes))
     }
 
     protected abstract val targetPlatform: TargetPlatform
@@ -296,11 +299,18 @@ abstract class AbstractLoadedMetadataDumpHandler<A : ResultingArtifact.Binary<A>
         }
     }
 
-    private fun collectPackageContent(session: FirSession, packageFqName: FqName, declarationNames: Collection<Name>): String {
+    private fun collectPackageContent(session: FirSession, packageFqName: FqName, declarationNames: Collection<Name>, printAttributes: Boolean): String {
         val provider = session.symbolProvider
 
         val builder = StringBuilder()
-        val firRenderer = FirRenderer(builder)
+        val firRenderer = FirRenderer(
+            builder,
+            declarationRenderer = if (printAttributes) {
+                FirDeclarationRendererWithFilteredAttributes()
+            } else {
+                FirDeclarationRenderer()
+            }
+        )
 
         for (name in declarationNames) {
             for (symbol in provider.getTopLevelCallableSymbols(packageFqName, name)) {

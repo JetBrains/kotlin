@@ -37388,6 +37388,12 @@ public class FirLightTreeBlackBoxCodegenTestGenerated extends AbstractFirLightTr
         }
 
         @Test
+        @TestMetadata("inlineFromFriendModule.kt")
+        public void testInlineFromFriendModule() throws Exception {
+            runTest("compiler/testData/codegen/box/publishedApi/inlineFromFriendModule.kt");
+        }
+
+        @Test
         @TestMetadata("noMangling.kt")
         public void testNoMangling() throws Exception {
             runTest("compiler/testData/codegen/box/publishedApi/noMangling.kt");

@@ -4554,6 +4554,11 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                 runTest("compiler/testData/loadJava/compiledKotlin/visibility/PropertyInConstructorExplicitVisibility.kt");
             }
 
+            @TestMetadata("PublishedApi.kt")
+            public void testPublishedApi() throws Exception {
+                runTest("compiler/testData/loadJava/compiledKotlin/visibility/PublishedApi.kt");
+            }
+
             @TestMetadata("TopLevelVarWithPrivateSetter.kt")
             public void testTopLevelVarWithPrivateSetter() throws Exception {
                 runTest("compiler/testData/loadJava/compiledKotlin/visibility/TopLevelVarWithPrivateSetter.kt");

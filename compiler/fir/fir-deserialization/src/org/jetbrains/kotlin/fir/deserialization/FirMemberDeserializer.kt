@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildExpressionStub
 import org.jetbrains.kotlin.fir.resolve.defaultType
+import org.jetbrains.kotlin.fir.resolve.transformers.setLazyPublishedVisibility
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.toEffectiveVisibility
@@ -467,6 +468,9 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
             proto.contextReceiverTypes(c.typeTable).mapTo(contextReceivers, ::loadContextReceiver)
         }.apply {
             versionRequirementsTable = c.versionRequirementTable
+            setLazyPublishedVisibility(c.session)
+            getter?.setLazyPublishedVisibility(annotations, this, c.session)
+            setter?.setLazyPublishedVisibility(annotations, this, c.session)
         }
     }
 
@@ -552,6 +556,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
             proto.contextReceiverTypes(c.typeTable).mapTo(contextReceivers, ::loadContextReceiver)
         }.apply {
             versionRequirementsTable = c.versionRequirementTable
+            setLazyPublishedVisibility(c.session)
         }
         if (proto.hasContract()) {
             val contractDeserializer = if (proto.typeParameterList.isEmpty()) this.contractDeserializer else FirContractDeserializer(local)
@@ -635,6 +640,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
         }.build().apply {
             containingClassForStaticMemberAttr = c.dispatchReceiver!!.lookupTag
             versionRequirementsTable = c.versionRequirementTable
+            setLazyPublishedVisibility(c.session)
         }
     }
 

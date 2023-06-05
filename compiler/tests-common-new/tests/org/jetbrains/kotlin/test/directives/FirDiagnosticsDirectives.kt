@@ -88,6 +88,12 @@ object FirDiagnosticsDirectives : SimpleDirectivesContainer() {
             See AbstractLoadedMetadataDumpHandler
         """
     )
+
+    val RENDER_FIR_DECLARATION_ATTRIBUTES by directive(
+        description = """
+            Prints declaration attributes to dumps in load compiled kotlin tests
+        """
+    )
 }
 
 fun TestConfigurationBuilder.configureFirParser(parser: FirParser) {

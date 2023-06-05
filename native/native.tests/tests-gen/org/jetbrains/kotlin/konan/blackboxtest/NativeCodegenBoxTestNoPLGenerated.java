@@ -29868,6 +29868,12 @@ public class NativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenBoxT
             }
 
             @Test
+            @TestMetadata("inlineFromFriendModule.kt")
+            public void testInlineFromFriendModule() throws Exception {
+                runTest("compiler/testData/codegen/box/publishedApi/inlineFromFriendModule.kt");
+            }
+
+            @Test
             @TestMetadata("simple.kt")
             public void testSimple() throws Exception {
                 runTest("compiler/testData/codegen/box/publishedApi/simple.kt");

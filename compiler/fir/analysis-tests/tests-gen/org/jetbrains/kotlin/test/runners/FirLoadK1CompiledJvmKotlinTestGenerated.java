@@ -3203,6 +3203,12 @@ public class FirLoadK1CompiledJvmKotlinTestGenerated extends AbstractFirLoadK1Co
             }
 
             @Test
+            @TestMetadata("PublishedApi.kt")
+            public void testPublishedApi() throws Exception {
+                runTest("compiler/testData/loadJava/compiledKotlin/visibility/PublishedApi.kt");
+            }
+
+            @Test
             @TestMetadata("TopLevelVarWithPrivateSetter.kt")
             public void testTopLevelVarWithPrivateSetter() throws Exception {
                 runTest("compiler/testData/loadJava/compiledKotlin/visibility/TopLevelVarWithPrivateSetter.kt");

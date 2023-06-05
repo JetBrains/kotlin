@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.moduleName
 import org.jetbrains.kotlin.fir.declarations.utils.sourceElement
 import org.jetbrains.kotlin.fir.resolve.providers.getRegularClassSymbolByClassId
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
+import org.jetbrains.kotlin.fir.resolve.transformers.setLazyPublishedVisibility
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
@@ -114,6 +115,7 @@ fun deserializeClassToSymbol(
             context.annotationDeserializer.inheritAnnotationInfo(it.annotationDeserializer)
         }
     }
+
     buildRegularClass {
         this.moduleData = moduleData
         this.origin = origin
@@ -242,6 +244,8 @@ fun deserializeClassToSymbol(
         if (!Flags.HAS_ENUM_ENTRIES.get(flags)) {
             hasNoEnumEntriesAttr = true
         }
+
+        setLazyPublishedVisibility(session)
     }
 }
 
