@@ -106,6 +106,9 @@ internal fun TestCompilationArtifact.KLIB.asLibraryDependency() =
 internal fun TestCompilationArtifact.KLIB.asIncludedLibraryDependency() =
     ExistingDependency(this, TestCompilationDependencyType.IncludedLibrary)
 
+internal fun TestCompilationArtifact.KLIBStaticCache.asStaticCacheDependency() =
+    ExistingDependency(this, TestCompilationDependencyType.LibraryStaticCache)
+
 internal fun AbstractNativeSimpleTest.compileToLibrary(sourcesDir: File, vararg dependencies: TestCompilationArtifact.KLIB) =
     compileToLibrary(sourcesDir, buildDir, *dependencies)
 
@@ -176,16 +179,20 @@ internal fun AbstractNativeSimpleTest.compileToExecutable(testCase: TestCase, va
 internal fun AbstractNativeSimpleTest.compileToStaticCache(
     klib: TestCompilationArtifact.KLIB,
     cacheDir: File,
-): TestCompilationResult<out TestCompilationArtifact.KLIBStaticCache> {
+    vararg dependencies: TestCompilationArtifact.KLIBStaticCache
+): TestCompilationArtifact.KLIBStaticCache {
     val compilation = StaticCacheCompilation(
         settings = testRunSettings,
         freeCompilerArgs = TestCompilerArgs.EMPTY,
         StaticCacheCompilation.Options.Regular,
         pipelineType = testRunSettings.get(),
-        dependencies = listOf(klib.asLibraryDependency()),
+        dependencies = buildList {
+            this += klib.asLibraryDependency()
+            dependencies.mapTo(this) { it.asStaticCacheDependency() }
+        },
         expectedArtifact = TestCompilationArtifact.KLIBStaticCache(cacheDir, klib)
     )
-    return compilation.result
+    return compilation.result.assertSuccess().resultingArtifact
 }
 
 internal fun AbstractNativeSimpleTest.generateTestCaseWithSingleModule(
@@ -258,7 +265,7 @@ internal fun AbstractNativeSimpleTest.generateCInteropTestCaseFromSingleDefFile(
 
 private fun AbstractNativeSimpleTest.compileToLibrary(
     testCase: TestCase,
-    dir: File,
+    outputDir: File,
     dependencies: List<TestCompilationDependency<*>>
 ): TestCompilationResult.Success<out TestCompilationArtifact.KLIB> {
     val compilation = LibraryCompilation(
@@ -266,7 +273,7 @@ private fun AbstractNativeSimpleTest.compileToLibrary(
         freeCompilerArgs = testCase.freeCompilerArgs,
         sourceModules = testCase.modules,
         dependencies = dependencies,
-        expectedArtifact = getLibraryArtifact(testCase, dir)
+        expectedArtifact = getLibraryArtifact(testCase, outputDir)
     )
     return compilation.result.assertSuccess()
 }
@@ -286,8 +293,8 @@ private fun AbstractNativeSimpleTest.compileToExecutable(
     return compilation.result
 }
 
-internal fun getLibraryArtifact(testCase: TestCase, dir: File) =
-    TestCompilationArtifact.KLIB(dir.resolve(testCase.modules.first().name + ".klib"))
+internal fun getLibraryArtifact(testCase: TestCase, outputDir: File) =
+    TestCompilationArtifact.KLIB(outputDir.resolve(testCase.modules.first().name + ".klib"))
 
 private fun AbstractNativeSimpleTest.getExecutableArtifact() =
     TestCompilationArtifact.Executable(buildDir.resolve("app." + testRunSettings.get<KotlinNativeTargets>().testTarget.family.exeSuffix))

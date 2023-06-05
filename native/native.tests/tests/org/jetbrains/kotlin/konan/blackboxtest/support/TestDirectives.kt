@@ -161,9 +161,14 @@ internal enum class MutedOption {
 }
 
 internal class TestCompilerArgs(val compilerArgs: List<String>) {
+    constructor(vararg compilerArgs: String) : this(compilerArgs.asList())
+
     private val uniqueCompilerArgs = compilerArgs.toSet()
     override fun hashCode() = uniqueCompilerArgs.hashCode()
     override fun equals(other: Any?) = (other as? TestCompilerArgs)?.uniqueCompilerArgs == uniqueCompilerArgs
+
+    operator fun plus(otherCompilerArgs: TestCompilerArgs): TestCompilerArgs = this + otherCompilerArgs.compilerArgs
+    operator fun plus(otherCompilerArgs: List<String>): TestCompilerArgs = TestCompilerArgs(compilerArgs + otherCompilerArgs)
 
     companion object {
         val EMPTY = TestCompilerArgs(emptyList())
