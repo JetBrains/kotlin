@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.config.AnalysisFlags.allowFullyQualifiedNameInKClass
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.config.LanguageVersion
-import org.jetbrains.kotlin.platform.CommonPlatforms
+import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.WITH_STDLIB
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
@@ -43,13 +43,11 @@ class CommonEnvironmentConfigurator(testServices: TestServices) : EnvironmentCon
             configuration.put(key as CompilerConfigurationKey<Any>, value)
         }
 
-        if (module.targetPlatform in CommonPlatforms.allDefaultTargetPlatforms) {
-            if (WITH_STDLIB in module.directives) {
-                configuration.add(
-                    CLIConfigurationKeys.CONTENT_ROOTS,
-                    JvmClasspathRoot(ForTestCompileRuntime.stdlibCommonForTests())
-                )
-            }
+        if (module.targetPlatform.isCommon() && WITH_STDLIB in module.directives) {
+            configuration.add(
+                CLIConfigurationKeys.CONTENT_ROOTS,
+                JvmClasspathRoot(ForTestCompileRuntime.stdlibCommonForTests())
+            )
         }
     }
 }
