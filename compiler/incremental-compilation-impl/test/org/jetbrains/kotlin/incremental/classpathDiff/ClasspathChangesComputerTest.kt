@@ -261,7 +261,7 @@ class KotlinOnlyClasspathChangesComputerTest : ClasspathChangesComputerTest() {
     fun testRenameFileFacade() {
         // Check that classpath changes computation doesn't fail.
         // Ideally, the returned changes should be empty (renaming a file facade alone shouldn't cause any `LookupSymbol`s to change), but
-        // it is currently not the case. However, this is just a small efficiency, not a serious bug.
+        // it is currently not the case. However, this is just a small inefficiency, not an IC-correctness bug.
         val changes = computeClasspathChanges(File(testDataDir, "KotlinOnly/testRenameFileFacade/src"), tmpDir)
         Changes(
             lookupSymbols = setOf(
@@ -275,6 +275,10 @@ class KotlinOnlyClasspathChangesComputerTest : ClasspathChangesComputerTest() {
     /** Regression test for KT-58289.*/
     @Test
     fun testChangedAnnotations() {
+        // Note: Currently we detect changes to annotations on Kotlin classes, but not annotations on properties and functions, so the
+        // following changes are missing: `SomeClass.propertyWithChangedAnnotation` and `SomeClass.functionWithChangedAnnotation`.
+        // Once all annotations are added to Kotlin metadata (KT-57919), we should be able to detect changes to them (i.e., we'll need to
+        // update this test assertion then).
         val changes = computeClasspathChanges(File(testDataDir, "KotlinOnly/testChangedAnnotations/src"), tmpDir)
         Changes(
             lookupSymbols = setOf(

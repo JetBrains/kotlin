@@ -248,17 +248,20 @@ object ClasspathChangesComputer {
 
         // IncrementalJvmCache currently doesn't use the `KotlinClassInfo.extraInfo.classSnapshotExcludingMembers` info when comparing
         // classes, so we need to do it here.
-        // TODO(KT-58289): Ensure IncrementalJvmCache uses that info when comparing classes.
+        // TODO(KT-59292): Ensure IncrementalJvmCache uses that info when comparing classes, so we can remove this code.
         val currentClassSnapshotsExcludingMembers = currentClassSnapshots
             .associate { it.classId to it.classMemberLevelSnapshot!!.extraInfo.classSnapshotExcludingMembers }
             .filter { it.value != null }
-        val previousClassSnapshotsExcludingMembers = previousClassSnapshots
-            .associate { it.classId to it.classMemberLevelSnapshot!!.extraInfo.classSnapshotExcludingMembers }
-            .filter { it.value != null }
-        previousClassSnapshotsExcludingMembers.keys.intersect(currentClassSnapshotsExcludingMembers.keys).forEach {
-            if (previousClassSnapshotsExcludingMembers[it]!! != currentClassSnapshotsExcludingMembers[it]!!) {
+        previousClassSnapshots.forEach { previousClassSnapshot ->
+            val classId = previousClassSnapshot.classId
+            val currentClassSnapshotExcludingMember = currentClassSnapshotsExcludingMembers[classId]
+            val previousClassSnapshotExcludingMembers =
+                previousClassSnapshot.classMemberLevelSnapshot!!.extraInfo.classSnapshotExcludingMembers
+            if (currentClassSnapshotExcludingMember != null && previousClassSnapshotExcludingMembers != null
+                && currentClassSnapshotExcludingMember != previousClassSnapshotExcludingMembers
+            ) {
                 // `areSubclassesAffected = false` as we don't need to compute impacted symbols at this step
-                changesCollector.collectSignature(fqName = it.asSingleFqName(), areSubclassesAffected = false)
+                changesCollector.collectSignature(fqName = classId.asSingleFqName(), areSubclassesAffected = false)
             }
         }
 

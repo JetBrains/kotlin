@@ -138,6 +138,8 @@ abstract class ClasspathSnapshotTestCommon {
                 "-classpath", (listOf(srcDir) + classpath).joinToString(File.pathSeparator) { it.path }
             )
             runCommandInNewProcess(commandAndArgs)
+
+            classesDir.resolve("META-INF").deleteRecursively()
         }
 
         private fun compileJava(srcDir: File, classesDir: File, classpath: List<File>): List<ClassFile> {

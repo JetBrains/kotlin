@@ -177,7 +177,7 @@ internal object KotlinClassInfoExternalizer : DataExternalizer<KotlinClassInfo> 
     }
 }
 
-internal object ExtraInfoExternalizer : DataExternalizer<KotlinClassInfo.ExtraInfo> {
+private object ExtraInfoExternalizer : DataExternalizer<KotlinClassInfo.ExtraInfo> {
 
     override fun save(output: DataOutput, info: KotlinClassInfo.ExtraInfo) {
         NullableValueExternalizer(LongExternalizer).save(output, info.classSnapshotExcludingMembers)

@@ -42,5 +42,7 @@ class ClassFileWithContents(
     @Suppress("unused") val classFile: ClassFile,
     val contents: ByteArray
 ) {
-    val classInfo: BasicClassInfo = BasicClassInfo.compute(contents)
+    val classInfo: BasicClassInfo by lazy {
+        BasicClassInfo.compute(contents)
+    }
 }
