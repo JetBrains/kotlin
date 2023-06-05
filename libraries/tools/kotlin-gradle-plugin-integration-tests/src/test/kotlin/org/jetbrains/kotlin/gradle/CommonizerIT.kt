@@ -9,7 +9,6 @@ import groovy.json.StringEscapeUtils
 import org.gradle.api.logging.LogLevel.INFO
 import org.gradle.internal.os.OperatingSystem
 import org.jetbrains.kotlin.commonizer.CommonizerTarget
-import org.jetbrains.kotlin.gradle.testbase.TestVersions
 import org.jetbrains.kotlin.gradle.util.reportSourceSetCommonizerDependencies
 import org.jetbrains.kotlin.incremental.testingUtils.assertEqualDirectories
 import org.jetbrains.kotlin.konan.target.HostManager
@@ -765,7 +764,7 @@ private object CommonizableTargets {
     val targetB = when {
         os.isMacOsX -> TargetSubstitution("linuxX64", isCompilable = true, isExecutable = false)
         os.isLinux -> TargetSubstitution("linuxArm64", isCompilable = true, isExecutable = false)
-        os.isWindows -> TargetSubstitution("mingwX86", isCompilable = true, isExecutable = false)
+        os.isWindows -> TargetSubstitution("mingwX64", isCompilable = true, isExecutable = false)
         else -> fail("Unsupported os: ${os.name}")
     }
 }
