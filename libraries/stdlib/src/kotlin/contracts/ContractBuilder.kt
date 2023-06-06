@@ -71,7 +71,7 @@ public interface ContractBuilder {
      * This contract specifies that:
      * 1. the function [lambda] can only be invoked during the call of the owner function,
      *  and it won't be invoked after that owner function call is completed;
-     * 2. _(optionally)_ the function [lambda] is invoked the amount of times specified by the [kind] parameter,
+     * 2. _(optionally)_ the function [lambda] is invoked the number of times specified by the [kind] parameter,
      *  see the [InvocationKind] enum for possible values.
      *
      * A function declaring the `callsInPlace` effect must be _inline_.
