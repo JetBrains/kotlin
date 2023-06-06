@@ -435,7 +435,7 @@ actual class StringBuilder private constructor (
 
         val coercedEndIndex = endIndex.coerceAtMost(_length)
         val lengthDiff = value.length - (coercedEndIndex - startIndex)
-        ensureExtraCapacity(_length + lengthDiff)
+        ensureExtraCapacity(lengthDiff)
         array.copyInto(array, startIndex = coercedEndIndex, endIndex = _length, destinationOffset = startIndex + value.length)
         var replaceIndex = startIndex
         for (index in 0 until value.length) array[replaceIndex++] = value[index] // optimize
