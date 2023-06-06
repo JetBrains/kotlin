@@ -19,7 +19,7 @@ inline fun <T> bar(x: T?, f: Boolean): Any {
     }
 }
 
-// CHECK-LABEL: define i64 @"kfun:#callBar(kotlin.Boolean){}kotlin.ULong"(i1 zeroext %0)
+// CHECK-LABEL: define i64 @"kfun:#callBar(kotlin.Boolean){}kotlin.ULong
 fun callBar(f: Boolean): ULong {
     // CHECK: @LONG_CACHE
     val data: Map<String, Any> = mapOf()
