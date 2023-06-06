@@ -1,4 +1,7 @@
-compiler/testData/cli/jvm/jspecifyUsage.kt:2:11: error: null can not be a value of a non-null type String
+compiler/testData/cli/jvm/jspecifyUsage.kt:2:11: warning: type mismatch: inferred type is Nothing? but String was expected
     a.foo(null)
           ^
-COMPILATION_ERROR
+compiler/testData/cli/jvm/jspecifyUsage.kt:3:5: warning: unsafe use of a nullable receiver of type String?
+    a.bar().hashCode()
+    ^
+OK
