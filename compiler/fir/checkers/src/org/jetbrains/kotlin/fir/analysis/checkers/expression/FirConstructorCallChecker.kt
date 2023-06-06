@@ -25,9 +25,6 @@ object FirConstructorCallChecker : FirFunctionCallChecker() {
         val declarationClass = constructorSymbol.resolvedReturnTypeRef.coneType.toRegularClassSymbol(context.session)
 
         if (declarationClass != null) {
-            if (declarationClass.isAbstract && declarationClass.classKind == ClassKind.CLASS) {
-                reporter.reportOn(expression.source, FirErrors.CREATING_AN_INSTANCE_OF_ABSTRACT_CLASS, context)
-            }
             if (declarationClass.classKind == ClassKind.ANNOTATION_CLASS &&
                 context.qualifiedAccessOrAssignmentsOrAnnotationCalls.all { call ->
                     call !is FirAnnotation
