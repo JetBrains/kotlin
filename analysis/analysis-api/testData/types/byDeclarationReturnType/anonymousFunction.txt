@@ -1,0 +1,11 @@
+annotationsList: []
+classId: kotlin/Unit
+classSymbol: KtNamedClassOrObjectSymbol(kotlin/Unit)
+nullability: NON_NULLABLE
+ownTypeArguments: []
+qualifiers: [
+  qualifier:
+    name: Unit
+    symbol: KtNamedClassOrObjectSymbol(kotlin/Unit)
+    typeArguments: []
+]

@@ -73,7 +73,7 @@ internal fun KtElement.findSourceByTraversingWholeTree(
     val isDeclaration = this is KtDeclaration
     return FirElementFinder.findElementIn(
         firFile,
-        canGoInside = { it is FirRegularClass || it is FirScript || it is FirFunction },
+        canGoInside = { it is FirRegularClass || it is FirScript || it is FirFunction || it is FirProperty },
         predicate = { firDeclaration ->
             firDeclaration.psi == this || isDeclaration && firDeclaration.psi == originalDeclaration
         }
