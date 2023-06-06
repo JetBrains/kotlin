@@ -4,7 +4,7 @@ This folder contains compiler plugin counterpart to [kotlinx.serialization](http
 source code for all compiler-related plugin parts, including code resolution, code generation, diagnostics, and tests.
 Gradle and Maven plugins can be found in the `libraries` folder.
 The IntelliJ IDEA part (which contains only specific inspections and quickfixes) is located
-[inside the Kotlin IDEA plugin in the IntelliJ Community monorepo](https://github.com/JetBrains/intellij-community/tree/master/plugins/kotlin/compiler-plugins/kotlinx-serialization).
+[inside the IntelliJ IDEA Kotlin plugin in the IntelliJ Community monorepo](https://github.com/JetBrains/intellij-community/tree/master/plugins/kotlin/compiler-plugins/kotlinx-serialization).
 
 ## Brief overview
 

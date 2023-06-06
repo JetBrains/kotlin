@@ -30,7 +30,7 @@
 
 /.space/ "Kotlin Build Infrastructure"
 
-/analysis/ "Kotlin IDE"
+/analysis/ "IntelliJ Kotlin Plugin"
 /analysis/light-classes-base/ Dmitry.Gridin
 /analysis/symbol-light-classes/ Dmitry.Gridin
 /analysis/analysis-api-fir/src/org/jetbrains/kotlin/analysis/api/fir/diagnostics/KtFirDiagnostics.kt "Kotlin Compiler Core"
@@ -83,7 +83,7 @@
 /compiler/ir/serialization.js/ "Kotlin JS"
 /compiler/ir/serialization.jvm/ "Kotlin JVM"
 /compiler/javac-wrapper/ "Kotlin Compiler Core"
-/compiler/light-classes/ "Kotlin IDE"
+/compiler/light-classes/ "IntelliJ Kotlin Plugin"
 /compiler/plugin-api/ "Kotlin Compiler Core"
 /compiler/preloader/ "Kotlin Compiler Core"
 /compiler/psi/ "Kotlin Compiler Core"
@@ -95,7 +95,7 @@
 /compiler/test-infrastructure-utils/ "Kotlin Compiler Core"
 
 /compiler/testData/asJava/findClasses/ "Kotlin Compiler Core"
-/compiler/testData/asJava/lightClasses/ "Kotlin IDE"
+/compiler/testData/asJava/lightClasses/ "IntelliJ Kotlin Plugin"
 /compiler/testData/binaryCompatibility/klibEvolution/ "Kotlin Native"
 /compiler/testData/builtin-classes/ "Kotlin Libraries"
 /compiler/testData/capturedTypeApproximation/ "Kotlin Compiler Core"
@@ -230,7 +230,7 @@
 
 # UNKNOWN: /docs/
 
-/generators/analysis-api-generator/ "Kotlin IDE"
+/generators/analysis-api-generator/ "IntelliJ Kotlin Plugin"
 /generators/builtins/ A.Qurbonzoda Vsevolod.Tolstopyato Ilya.Gorbunov
 /generators/evaluate/ "Kotlin Compiler Core"
 /generators/ide-iml-to-gradle-generator/ "Kotlin Build Infrastructure"
@@ -384,7 +384,7 @@
 /wasm/ "Kotlin Wasm"
 
 # Generated files (no review required)
-*Generated.java "Kotlin" "Kotlin IDE"
+*Generated.java "Kotlin" "IntelliJ Kotlin Plugin"
 
 # Singular files
 /.gitattributes "Kotlin Build Infrastructure"
