@@ -28,6 +28,6 @@ fun <F> main(x: F, y: F, z: F, w: F, m: F) {
     w1.foo()
     w2.foo()
 
-    expectNN(m)
+    expectNN(<!ARGUMENT_TYPE_MISMATCH!>m<!>)
     expectNN(m!!)
 }

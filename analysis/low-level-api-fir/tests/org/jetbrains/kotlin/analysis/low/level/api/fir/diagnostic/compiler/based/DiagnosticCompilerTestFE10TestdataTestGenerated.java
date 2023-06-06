@@ -15157,6 +15157,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
             }
 
             @Test
+            @TestMetadata("nullableArgumentForDnn.kt")
+            public void testNullableArgumentForDnn() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/nullableArgumentForDnn.kt");
+            }
+
+            @Test
             @TestMetadata("nullableTypeArgumentWithNotNullUpperBound.kt")
             public void testNullableTypeArgumentWithNotNullUpperBound() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inference/nullableTypeArgumentWithNotNullUpperBound.kt");
@@ -19932,6 +19938,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
             @TestMetadata("mutableIterator.kt")
             public void testMutableIterator() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/j+k/mutableIterator.kt");
+            }
+
+            @Test
+            @TestMetadata("nullForOptionalOf.kt")
+            public void testNullForOptionalOf() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/j+k/nullForOptionalOf.kt");
             }
 
             @Test

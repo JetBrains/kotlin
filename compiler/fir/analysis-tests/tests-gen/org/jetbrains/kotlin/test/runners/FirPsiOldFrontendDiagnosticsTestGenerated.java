@@ -15163,6 +15163,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
             }
 
             @Test
+            @TestMetadata("nullableArgumentForDnn.kt")
+            public void testNullableArgumentForDnn() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/nullableArgumentForDnn.kt");
+            }
+
+            @Test
             @TestMetadata("nullableTypeArgumentWithNotNullUpperBound.kt")
             public void testNullableTypeArgumentWithNotNullUpperBound() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inference/nullableTypeArgumentWithNotNullUpperBound.kt");
@@ -19938,6 +19944,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
             @TestMetadata("mutableIterator.kt")
             public void testMutableIterator() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/j+k/mutableIterator.kt");
+            }
+
+            @Test
+            @TestMetadata("nullForOptionalOf.kt")
+            public void testNullForOptionalOf() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/j+k/nullForOptionalOf.kt");
             }
 
             @Test
