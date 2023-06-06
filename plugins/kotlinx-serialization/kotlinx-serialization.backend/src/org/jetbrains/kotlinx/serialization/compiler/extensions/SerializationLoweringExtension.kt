@@ -71,8 +71,11 @@ class SerializationPluginContext(baseContext: IrPluginContext, val metadataPlugi
     internal val lazyModeClass = referenceClass(ClassId.topLevel(SerializationDependencies.LAZY_MODE_FQ))!!.owner
     internal val lazyModePublicationEnumEntry =
         lazyModeClass.enumEntries().single { it.name == SerializationDependencies.LAZY_PUBLICATION_MODE_NAME }
+    // There can be several transitive dependencies on kotlin-stdlib in IDE sources,
+    // as well as several definitions of stdlib functions, including `kotlin.lazy`;
+    // in that case `referenceFunctions` might return more than one valid definition of the same function.
     internal val lazyFunctionSymbol =
-        referenceFunctions(CallableId(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, Name.identifier("lazy"))).single {
+        referenceFunctions(CallableId(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, Name.identifier("lazy"))).first {
             it.owner.valueParameters.size == 2 && it.owner.valueParameters[0].type == lazyModeClass.defaultType
         }
     internal val lazyClass = referenceClass(ClassId.topLevel(SerializationDependencies.LAZY_FQ))!!.owner
