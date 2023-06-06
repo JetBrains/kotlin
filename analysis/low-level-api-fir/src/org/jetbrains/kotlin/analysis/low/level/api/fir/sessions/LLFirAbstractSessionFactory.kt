@@ -503,7 +503,7 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
         destination: MutableList<FirSymbolProvider>,
     ) {
         mergeInto(destination) {
-            merge<LLFirProvider.SymbolProvider> { LLFirCombinedKotlinSymbolProvider.merge(session, project, it) }
+            merge<LLFirKotlinSymbolProvider> { LLFirCombinedKotlinSymbolProvider.merge(session, project, it) }
             merge<JavaSymbolProvider> { LLFirCombinedJavaSymbolProvider.merge(session, project, it) }
             merge<FirExtensionSyntheticFunctionInterfaceProvider> { LLFirCombinedSyntheticFunctionSymbolProvider.merge(session, it) }
         }
