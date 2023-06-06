@@ -52326,6 +52326,12 @@ public class IrBlackBoxCodegenWithIrInlinerTestGenerated extends AbstractIrBlack
         }
 
         @Test
+        @TestMetadata("kt59079.kt")
+        public void testKt59079() throws Exception {
+            runTest("compiler/testData/codegen/box/valueClasses/kt59079.kt");
+        }
+
+        @Test
         @TestMetadata("mfvcAndIcInsideConstructorsOfEachOther.kt")
         public void testMfvcAndIcInsideConstructorsOfEachOther() throws Exception {
             runTest("compiler/testData/codegen/box/valueClasses/mfvcAndIcInsideConstructorsOfEachOther.kt");
