@@ -732,7 +732,7 @@ class Kapt4StubGenerator(private val analysisSession: KtAnalysisSession) {
         )
 
         if (containingClass.isInterface && !method.isAbstract && !method.isStatic) {
-            modifiers.flags = modifiers.flags or Flags.DEFAULT
+            modifiers.flags = modifiers.flags or Flags.ABSTRACT.toLong()
         }
 
         val parametersInfo = method.getParametersInfo()
@@ -775,7 +775,7 @@ class Kapt4StubGenerator(private val analysisSession: KtAnalysisSession) {
 
         val body = if (defaultValue != null) {
             null
-        } else if (method.isAbstract) {
+        } else if (method.isAbstract or (modifiers.flags and Flags.ABSTRACT.toLong() != 0L)) {
             null
         } else if (isConstructor && containingClass.isEnum) {
             treeMaker.Block(0, JavacList.nil())
