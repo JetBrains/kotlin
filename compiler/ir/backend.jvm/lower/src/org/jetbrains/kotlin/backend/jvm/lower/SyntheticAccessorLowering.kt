@@ -276,14 +276,12 @@ private class SyntheticAccessorTransformer(
                 accessorGenerator.isOrShouldBeHiddenAsSealedClassConstructor(function) -> accessorGenerator.getSyntheticConstructorOfSealedClass(function)
                 else -> return super.visitFunctionReference(expression)
             }
-            generatedAccessor.symbol.save().owner.let { accessor ->
-                expression.transformChildrenVoid()
-                return IrFunctionReferenceImpl(
-                    expression.startOffset, expression.endOffset, expression.type,
-                    accessor.symbol, accessor.typeParameters.size,
-                    accessor.valueParameters.size, accessor.symbol, expression.origin
-                )
-            }
+            expression.transformChildrenVoid()
+            return IrFunctionReferenceImpl(
+                expression.startOffset, expression.endOffset, expression.type,
+                generatedAccessor.symbol, generatedAccessor.typeParameters.size,
+                generatedAccessor.valueParameters.size, generatedAccessor.symbol, expression.origin
+            )
         }
 
         return super.visitFunctionReference(expression)
