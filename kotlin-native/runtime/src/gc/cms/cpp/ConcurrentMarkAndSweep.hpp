@@ -66,10 +66,9 @@ public:
         Allocator CreateAllocator() noexcept { return Allocator(gc::Allocator(), *this); }
 
         bool tryLockRootSet();
-        bool rootSetLocked() const;
         void beginCooperation();
         bool cooperative() const;
-        void publish(); // TODO make publish
+        void publish();
         bool published() const;
         void clearMarkFlags();
 
@@ -112,7 +111,7 @@ private:
     void mainGCThreadBody();
     void auxiliaryGCThreadBody();
     // Returns `true` if GC has happened, and `false` if not (because someone else has suspended the threads).
-    bool PerformFullGC(int64_t epoch, mark::MarkDispatcher::MarkJob& markContext) noexcept;
+    bool PerformFullGC(int64_t epoch) noexcept;
 
 #ifndef CUSTOM_ALLOCATOR
     mm::ObjectFactory<ConcurrentMarkAndSweep>& objectFactory_;
@@ -128,7 +127,7 @@ private:
     std_support::unique_ptr<alloc::CustomFinalizerProcessor> finalizerProcessor_;
 #endif
 
-    mark::MarkDispatcher markDispatcher_;
+    mark::ParallelMark markDispatcher_;
     ScopedThread mainThread_;
     std_support::vector<ScopedThread> auxThreads_;
 };

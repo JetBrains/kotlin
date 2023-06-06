@@ -13,27 +13,6 @@ using namespace kotlin;
 
 namespace {
 
-template<typename Iterable, typename Pred>
-std::size_t count(Iterable&& iterable, Pred&& pred) {
-    std::size_t size = 0;
-    for (auto& i: iterable) {
-        if (pred(i)) {
-            size += 1;
-        }
-    }
-    return size;
-}
-
-template<typename Iterable>
-std::size_t count(Iterable&& iterable) {
-    std::size_t size = 0;
-    for (const auto& i: iterable) {
-        std::ignore = i;
-        size += 1;
-    }
-    return size;
-}
-
 template<typename Cond>
 void spinWait(Cond&& until) {
     while (!until()) {
@@ -42,52 +21,6 @@ void spinWait(Cond&& until) {
 }
 
 } // namespace
-
-void gc::mark::MarkPacer::beginEpoch(uint64_t epoch) {
-    epoch_ = epoch;
-    begin(Phase::kReady);
-    GCLogDebug(epoch_.load(), "Mark is ready to recruit workers in a new epoch.");
-}
-
-void gc::mark::MarkPacer::waitNewEpochReadyOrShutdown() const {
-    std::unique_lock lock(mutex_);
-    cond_.wait(lock, [this]() { return (phase_.load(std::memory_order_relaxed) >= Phase::kReady); });
-}
-
-bool gc::mark::MarkPacer::isRecruiting() const {
-    return is(Phase::kReady) || is(Phase::kParallelMark);
-}
-
-void gc::mark::MarkPacer::waitForParallelMark() const {
-    if (is(Phase::kParallelMark)) return;
-    std::unique_lock lock(mutex_);
-    cond_.wait(lock, [this]() { return is(Phase::kParallelMark); });
-}
-
-void gc::mark::MarkPacer::requestParallelMark() {
-    RuntimeAssert(is(Phase::kReady), "Must prepare first");
-    begin(Phase::kParallelMark);
-    GCLogDebug(epoch_.load(), "Parallel mark has begun.");
-}
-
-void gc::mark::MarkPacer::reset() {
-    begin(Phase::kIdle);
-}
-
-void gc::mark::MarkPacer::waitEpochFinished(uint64_t currentEpoch) const {
-    std::unique_lock lock(mutex_);
-    cond_.wait(lock, [this, currentEpoch]() {
-        return is(Phase::kIdle) || shutdownRequested() || epoch_.load(std::memory_order_relaxed) > currentEpoch;
-    });
-}
-
-void gc::mark::MarkPacer::requestShutdown() {
-    begin(Phase::kShutdown);
-}
-
-bool gc::mark::MarkPacer::shutdownRequested() const {
-    return is(Phase::kShutdown);
-}
 
 bool gc::mark::MarkPacer::is(gc::mark::MarkPacer::Phase phase) const {
     return phase_.load(std::memory_order_relaxed) == phase;
@@ -101,129 +34,57 @@ void gc::mark::MarkPacer::begin(gc::mark::MarkPacer::Phase phase) {
     cond_.notify_all();
 }
 
-gc::mark::MarkDispatcher::MarkJob::MarkJob(gc::mark::MarkDispatcher& dispatcher) : dispatcher_(dispatcher) {}
+void gc::mark::MarkPacer::wait(gc::mark::MarkPacer::Phase phase) {
+    if (phase_ >= phase) return;
+    std::unique_lock lock(mutex_);
+    cond_.wait(lock, [=]() { return phase_ >= phase; });
+}
 
-void gc::mark::MarkDispatcher::MarkJob::runMainInSTW() {
-    RuntimeAssert(dispatcher_.activeWorkers_ > 0, "Main worker must always be \"active\"");
-    ParallelProcessor::Worker parallelWorker(*dispatcher_.parallelProcessor_);
+void gc::mark::MarkPacer::beginEpoch(uint64_t epoch) {
+    epoch_ = epoch;
+    begin(Phase::kReady);
+    GCLogDebug(epoch_.load(), "Mark is ready to recruit workers in a new epoch.");
+}
 
-    dispatcher_.pacer_.requestParallelMark();
-    completeMutatorsRootSet(parallelWorker.workList());
-    spinWait([&] {
-        return dispatcher_.allMutators([](mm::ThreadData& mut) { return mut.gc().impl().gc().published(); });
+void gc::mark::MarkPacer::waitNewEpochReadyOrShutdown() const {
+    std::unique_lock lock(mutex_);
+    cond_.wait(lock, [this]() { return (phase_.load(std::memory_order_relaxed) >= Phase::kReady); });
+}
+
+void gc::mark::MarkPacer::waitEpochFinished(uint64_t currentEpoch) const {
+    std::unique_lock lock(mutex_);
+    cond_.wait(lock, [this, currentEpoch]() {
+        return is(Phase::kIdle) || is(Phase::kShutdown) || epoch_.load(std::memory_order_relaxed) > currentEpoch;
     });
-    // global root set must be collected after all the mutator's global data have been published
-    collectRootSetGlobals<MarkTraits>(dispatcher_.gcHandle(), parallelWorker.workList());
-    dispatcher_.allCooperativeMutatorsAreRegistered();
-    parallelMark(parallelWorker);
 }
 
-void gc::mark::MarkDispatcher::MarkJob::runOnMutator(mm::ThreadData& mutatorThread) {
-    if (compiler::gcMarkSingleThreaded() || !dispatcher_.mutatorsCooperate_) return;
-    if (!dispatcher_.authorizeNewWorkerCreation()) return;
-    ParallelProcessor::Worker parallelWorker(*dispatcher_.parallelProcessor_);
-
-    auto& gcData = mutatorThread.gc().impl().gc();
-    gcData.beginCooperation();
-
-    // It's possible that some other worker has already acquired this thread's root set.
-    // e.g. if the thread was in native context during workers awakening
-    // but then has returned from native and arrived ad a safe point
-    if (gcData.tryLockRootSet()) {
-        auto epoch = dispatcher_.gcHandle().getEpoch();
-        GCLogDebug(epoch, "Mutator thread %d takes part in marking", konan::currentThreadId());
-
-        collectRootSet(mutatorThread, parallelWorker.workList());
-    }
-
-    dispatcher_.pacer_.waitForParallelMark();
-    completeMutatorsRootSet(parallelWorker.workList());
-    parallelMark(parallelWorker);
+bool gc::mark::MarkPacer::acceptingNewWorkers() const {
+    return Phase::kReady <= phase_ && phase_ < Phase::kParallelMark;
 }
 
-void gc::mark::MarkDispatcher::MarkJob::runAuxiliary() {
-    dispatcher_.pacer_.waitNewEpochReadyOrShutdown();
-    if (dispatcher_.pacer_.shutdownRequested()) return;
 
-    auto curEpoch = dispatcher_.gcHandle().getEpoch();
-    if (dispatcher_.authorizeNewWorkerCreation()) {
-        // no additional synchronization/pacing needed, because the auxiliary workers are always "expected",
-        // so the parallel mark would wait
-        ParallelProcessor::Worker parallelWorker(*dispatcher_.parallelProcessor_);
-        dispatcher_.pacer_.waitForParallelMark();
-        completeMutatorsRootSet(parallelWorker.workList());
-        parallelMark(parallelWorker);
-    } else {
-        RuntimeAssert(dispatcher_.activeWorkers_ == dispatcher_.parallelProcessor_->expectedWorkers(), "Must not decline workers that might be expected");
-    }
-
-    dispatcher_.pacer_.waitEpochFinished(curEpoch);
-}
-
-void gc::mark::MarkDispatcher::MarkJob::completeMutatorsRootSet(MarkTraits::MarkQueue& markQueue) {
-    // workers compete for mutators to collect their root set
-    for (auto& thread: *dispatcher_.lockedMutatorsList_) {
-        auto& gcData = thread.gc().impl().gc();
-        if (gcData.tryLockRootSet()) {
-            collectRootSet(thread, markQueue);
-        }
-    }
-}
-
-void gc::mark::MarkDispatcher::MarkJob::collectRootSet(mm::ThreadData& thread, MarkTraits::MarkQueue& markQueue) {
-    GCLogDebug(dispatcher_.gcHandle().getEpoch(), "Root set collection on thread %d for thread %d",
-               konan::currentThreadId(), thread.threadId());
-    auto& gcData = thread.gc().impl().gc();
-    gcData.publish();
-    bool markItself = konan::currentThreadId() == thread.threadId();
-    RuntimeAssert(markItself == gcData.cooperative(), "A mutator can mark it's own root set iff the mutator cooperate");
-    collectRootSetForThread<MarkTraits>(dispatcher_.gcHandle(), markQueue, thread);
-}
-
-// Parallel mark
-
-void gc::mark::MarkDispatcher::MarkJob::parallelMark(ParallelProcessor::Worker& worker) {
-    GCLogDebug(dispatcher_.gcHandle().getEpoch(), "Mark task has begun on thread %d", konan::currentThreadId());
-    {
-        auto markHandle = dispatcher_.gcHandle().mark();
-        worker.performWork([&markHandle, this](MarkTraits::MarkQueue& markStack) {
-            GCLogDebug(dispatcher_.gcHandle().getEpoch(),"Mark task begins to mark a new portion of objects");
-            Mark<MarkTraits>(markHandle, markStack);
-        });
-    }
-    // wait for other threads to collect statistics
-    worker.waitEveryWorkerTermination();
-}
-
-// dispatcher
-
-gc::mark::MarkDispatcher::MarkDispatcher(std::size_t gcWorkerPoolSize, bool mutatorsCooperate) {
+gc::mark::ParallelMark::ParallelMark(bool mutatorsCooperate) {
     std::size_t maxParallelism = std::thread::hardware_concurrency();
     if (maxParallelism == 0) {
         maxParallelism = std::numeric_limits<std::size_t>::max();
     }
-    setParallelismLevel(maxParallelism, mutatorsCooperate, gcWorkerPoolSize);
+    setParallelismLevel(maxParallelism, mutatorsCooperate);
 }
 
-void gc::mark::MarkDispatcher::beginMarkingEpoch(gc::GCHandle gcHandle) {
+void gc::mark::ParallelMark::beginMarkingEpoch(gc::GCHandle gcHandle) {
     gcHandle_ = gcHandle;
 
     lockedMutatorsList_ = mm::ThreadRegistry::Instance().LockForIter();
-    activeWorkers_ = 1; // main worker is always active
 
-    // initially expect all the mark tasks possible:
-    // one for each mutator existing at the moment and one for each gc thread
-    auto maxPossibleMutators = mutatorsCooperate_ ? count(*lockedMutatorsList_) : 0;
-    auto maxExpectedJobs = maxPossibleMutators + gcWorkerPoolSize_;
-    maxExpectedJobs = std::min({maxExpectedJobs, maxParallelism_, kMaxWorkers});
-    GCLogDebug(gcHandle.getEpoch(), "Expecting at most %zu markers", maxExpectedJobs);
+    // main worker is always accounted, so others would not be able to exhaust all the parallelism before main is instantiated
+    workersCount_ = 1;
 
-    parallelProcessor_.construct(maxExpectedJobs);
+    parallelProcessor_.construct();
 
     pacer_.beginEpoch(gcHandle.getEpoch());
 }
 
-void gc::mark::MarkDispatcher::waitForThreadsPauseMutation() noexcept {
+void gc::mark::ParallelMark::waitForThreadsPauseMutation() noexcept {
     RuntimeAssert(!kotlin::mm::IsCurrentThreadRegistered(), "Dispatcher thread must not be registered");
     spinWait([this] {
         return allMutators([](mm::ThreadData& mut) {
@@ -232,77 +93,145 @@ void gc::mark::MarkDispatcher::waitForThreadsPauseMutation() noexcept {
     });
 }
 
-void gc::mark::MarkDispatcher::endMarkingEpoch() {
-    pacer_.reset();
+void gc::mark::ParallelMark::endMarkingEpoch() {
+    pacer_.begin(MarkPacer::Phase::kIdle);
     parallelProcessor_.destroy();
     resetMutatorFlags();
     lockedMutatorsList_ = std::nullopt;
 }
 
-void gc::mark::MarkDispatcher::requestShutdown() {
-    pacer_.requestShutdown();
+void gc::mark::ParallelMark::runMainInSTW() {
+    RuntimeAssert(workersCount_ > 0, "Main worker must always be accounted");
+    ParallelProcessor::Worker mainWorker(*parallelProcessor_);
+
+    if (compiler::gcMarkSingleThreaded()) {
+        gc::collectRootSet<MarkTraits>(gcHandle(), mainWorker, [] (mm::ThreadData&) { return true; });
+        gc::Mark<MarkTraits>(gcHandle(), mainWorker);
+    } else {
+        pacer_.begin(MarkPacer::Phase::kRootSet);
+        completeMutatorsRootSet(mainWorker);
+        spinWait([&] {
+            return allMutators([](mm::ThreadData& mut) { return mut.gc().impl().gc().published(); });
+        });
+        // global root set must be collected after all the mutator's global data have been published
+        collectRootSetGlobals<MarkTraits>(gcHandle(), mainWorker);
+
+        std::unique_lock guard(workerCreationMutex_);
+        GCLogInfo(gcHandle().getEpoch(), "Exactly %zu workers participate in mark (%s)", workersCount_.load(std::memory_order_relaxed),
+                  mutatorsCooperate_ ? "including cooperative mutators" : "mutators cooperation was not requested"
+        );
+        pacer_.begin(MarkPacer::Phase::kParallelMark);
+        parallelMark(mainWorker);
+    }
 }
 
-bool gc::mark::MarkDispatcher::shutdownRequested() const {
-    return pacer_.shutdownRequested();
+void gc::mark::ParallelMark::runOnMutator(mm::ThreadData& mutatorThread) {
+    if (compiler::gcMarkSingleThreaded() || !mutatorsCooperate_) return;
+
+    auto epoch = gcHandle().getEpoch();
+    auto parallelWorker = createWorker();
+    if (parallelWorker) {
+        auto& gcData = mutatorThread.gc().impl().gc();
+        gcData.beginCooperation();
+        GCLogDebug(epoch, "Mutator thread %d takes part in marking", konan::currentThreadId());
+
+        tryCollectRootSet(mutatorThread, *parallelWorker);
+
+        completeRootSetAndMark(*parallelWorker);
+    }
 }
 
-gc::GCHandle& gc::mark::MarkDispatcher::gcHandle() {
+void gc::mark::ParallelMark::runAuxiliary() {
+    RuntimeAssert(!compiler::gcMarkSingleThreaded(), "Should not reach here during single threaded mark");
+
+    pacer_.waitNewEpochReadyOrShutdown();
+    if (pacer_.is(MarkPacer::Phase::kShutdown)) return;
+
+    auto curEpoch = gcHandle().getEpoch();
+    auto parallelWorker = createWorker();
+    if (parallelWorker) {
+        completeRootSetAndMark(*parallelWorker);
+    }
+
+    pacer_.waitEpochFinished(curEpoch);
+}
+
+void gc::mark::ParallelMark::requestShutdown() {
+    pacer_.begin(MarkPacer::Phase::kShutdown);
+}
+
+bool gc::mark::ParallelMark::shutdownRequested() const {
+    return pacer_.is(MarkPacer::Phase::kShutdown);
+}
+
+
+gc::GCHandle& gc::mark::ParallelMark::gcHandle() {
     RuntimeAssert(gcHandle_.isValid(), "GCHandle must be initialized");
     return gcHandle_;
 }
 
-void gc::mark::MarkDispatcher::setParallelismLevel(size_t maxParallelism, bool mutatorsCooperate, size_t gcWorkerPoolSize) {
-    if (compiler::gcMarkSingleThreaded()) {
-        RuntimeCheck(!mutatorsCooperate && gcWorkerPoolSize == 1, "Single threaded mark does not support additional mark workers");
-    }
+void gc::mark::ParallelMark::setParallelismLevel(size_t maxParallelism, bool mutatorsCooperate) {
     RuntimeCheck(maxParallelism > 0, "Parallelism level can't be 0");
-    RuntimeLogInfo({kTagGC},
-                   "Setting up parallel mark with maxParallelism = %zu, gcWorkerPoolSize = %zu and %s" "cooperative mutators",
-                   maxParallelism, gcWorkerPoolSize, (mutatorsCooperate ? "" : "non-"));
-    maxParallelism_ = maxParallelism;
+    maxParallelism_ = std::min(maxParallelism, kMaxWorkers);
     mutatorsCooperate_ = mutatorsCooperate;
-    gcWorkerPoolSize_ = gcWorkerPoolSize;
+    RuntimeLogInfo({kTagGC},
+                   "Set up parallel mark with maxParallelism = %zu and %s" "cooperative mutators",
+                   maxParallelism_, (mutatorsCooperate_ ? "" : "non-"));
 }
 
-bool gc::mark::MarkDispatcher::authorizeNewWorkerCreation() {
-    if (!pacer_.isRecruiting()) return false;
-    auto activeWorkers = activeWorkers_.load(std::memory_order_relaxed);
-    while (activeWorkers < maxParallelism_ && activeWorkers < parallelProcessor_->expectedWorkers()) {
-        if (activeWorkers_.compare_exchange_weak(activeWorkers,
-                                                 activeWorkers + 1,
-                                                 std::memory_order_relaxed)) {
-            return true;
-        }
+void gc::mark::ParallelMark::completeRootSetAndMark(ParallelProcessor::Worker& parallelWorker) {
+    pacer_.wait(MarkPacer::Phase::kRootSet);
+    completeMutatorsRootSet(parallelWorker);
+    pacer_.wait(MarkPacer::Phase::kParallelMark);
+    parallelMark(parallelWorker);
+}
+
+void gc::mark::ParallelMark::completeMutatorsRootSet(MarkTraits::MarkQueue& markQueue) {
+    // workers compete for mutators to collect their root set
+    for (auto& thread: *lockedMutatorsList_) {
+        tryCollectRootSet(thread, markQueue);
     }
-    return false;
 }
 
-void gc::mark::MarkDispatcher::resetMutatorFlags() {
+void gc::mark::ParallelMark::tryCollectRootSet(mm::ThreadData& thread, MarkTraits::MarkQueue& markQueue) {
+    auto& gcData = thread.gc().impl().gc();
+    if (!gcData.tryLockRootSet()) return;
+
+    GCLogDebug(gcHandle().getEpoch(), "Root set collection on thread %d for thread %d",
+               konan::currentThreadId(), thread.threadId());
+    gcData.publish();
+    bool markItself = konan::currentThreadId() == thread.threadId();
+    RuntimeAssert(markItself == gcData.cooperative(), "A mutator can mark it's own root set iff the mutator cooperate");
+    collectRootSetForThread<MarkTraits>(gcHandle(), markQueue, thread);
+}
+
+void gc::mark::ParallelMark::parallelMark(ParallelProcessor::Worker& worker) {
+    GCLogDebug(gcHandle().getEpoch(), "Mark task has begun on thread %d", konan::currentThreadId());
+    Mark<MarkTraits>(gcHandle(), worker);
+    waitEveryWorkerTermination();
+}
+
+std::optional<gc::mark::ParallelMark::ParallelProcessor::Worker> gc::mark::ParallelMark::createWorker() {
+    std::unique_lock guard(workerCreationMutex_);
+    if (!pacer_.acceptingNewWorkers() || workersCount_.load(std::memory_order_relaxed) >= maxParallelism_) return std::nullopt;
+
+    workersCount_.store(workersCount_.load(std::memory_order_relaxed) + 1, std::memory_order_relaxed);
+    return std::make_optional<ParallelProcessor::Worker>(*parallelProcessor_);
+}
+
+void gc::mark::ParallelMark::waitEveryWorkerTermination() {
+    auto curEpoch = gcHandle().getEpoch();
+    --workersCount_;
+    spinWait([=]() { return curEpoch != gcHandle().getEpoch() || workersCount_.load(std::memory_order_relaxed) == 0; });
+}
+
+void gc::mark::ParallelMark::resetMutatorFlags() {
     for (auto& mut: *lockedMutatorsList_) {
         auto& gcData = mut.gc().impl().gc();
-        RuntimeAssert(gcData.rootSetLocked(), "Must have been locked during mark");
-        RuntimeAssert(gcData.published(), "Must have been published during mark");
+        if (!compiler::gcMarkSingleThreaded()) {
+            // single threaded mark do not use this flag
+            RuntimeAssert(gcData.published(), "Must have been published during mark");
+        }
         gcData.clearMarkFlags();
     }
-}
-
-void gc::mark::MarkDispatcher::allCooperativeMutatorsAreRegistered() {
-    if (mutatorsCooperate_) {
-        // now that we know the exact number of cooperative mutators,
-        // calculate expectedTasks_'s precise value
-        RuntimeAssert(allMutators(
-                [](mm::ThreadData& mut) { return mut.gc().impl().gc().rootSetLocked(); }),
-                      "All the mutators must be either cooperative or locked by other marker");
-
-        auto exactExpectedJobs = count(*lockedMutatorsList_,
-                                       [](mm::ThreadData& mut) { return mut.gc().impl().gc().cooperative(); })
-                + gcWorkerPoolSize_;
-        exactExpectedJobs = std::min(exactExpectedJobs, parallelProcessor_->expectedWorkers());
-        parallelProcessor_->lowerExpectations(exactExpectedJobs);
-    }
-    const auto coopMutatorsDescr = mutatorsCooperate_
-                                          ? "including cooperative mutators"
-                                          : "mutators cooperation will not be requested";
-    GCLogInfo(gcHandle().getEpoch(), "Expecting exactly %zu markers (%s)", parallelProcessor_->expectedWorkers(), coopMutatorsDescr);
 }

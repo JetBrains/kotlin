@@ -10,7 +10,6 @@
 
 #include "../IntrusiveList.hpp"
 
-#include "CooperativeWorkLists.hpp"
 #include "ParallelProcessor.hpp"
 
 #include "std_support/Vector.hpp"
@@ -20,26 +19,24 @@
 using ::testing::_;
 using namespace kotlin;
 
-template <typename T>
-class ParallelProcessorTest : public testing::Test {};
-
-constexpr auto kMaxWorkers = kDefaultThreadCount * 2;
+namespace {
 
 struct Task {
-    template<typename WorkList>
-    static void workLoop(WorkList& workList, std::atomic<std::size_t>& counter) {
+    template <typename WorkList>
+    static void workLoop(WorkList& workList) {
         while (Task* task = workList.tryPop()) {
             RuntimeAssert(!task->done_.load(), "Tasks are not idempotent");
             task->done_ = true;
-            ++counter;
         }
     }
 
     Task* next() const noexcept { return next_; }
+
     void setNext(Task* next) noexcept {
         RuntimeAssert(next, "next cannot be nullptr");
         next_ = next;
     }
+
     bool trySetNext(Task* next) noexcept {
         RuntimeAssert(next, "next cannot be nullptr");
         if (next_ == nullptr) {
@@ -53,43 +50,33 @@ struct Task {
     Task* next_ = nullptr;
 };
 
-using ListImpl = intrusive_forward_list<Task>;
-
-struct NonSharingTest {
-    template<typename PP> using CWL = NonSharing<PP, ListImpl>;
-    using Processor = ParallelProcessor<kMaxWorkers, CWL>;
-    static constexpr const char* name = "NonSharing";
-};
-
-struct SharedGlobalQueueTest {
-    template<typename PP> using CWL = SharedGlobalQueue<PP, ListImpl, 256>;
-    using Processor = ParallelProcessor<kMaxWorkers, CWL>;
-    static constexpr const char* name = "SharedGlobalQueue";
-};
-
-struct SharableQueuePerWorkerTest {
-    template<typename PP> using CWL = SharableQueuePerWorker<PP, ListImpl, 256>;
-    using Processor = ParallelProcessor<kMaxWorkers, CWL>;
-    static constexpr const char* name = "SharableQueuePerWorker";
-};
-
-using ParallelProcessorKinds = testing::Types<NonSharingTest, SharedGlobalQueueTest, SharableQueuePerWorkerTest>;
-
-class ParallelProcessorKindNames {
-public:
-    template <typename T>
-    static std::string GetName(int) {
-        return T::name;
+auto workBatch(std::size_t size) {
+    std::list<Task> batch;
+    for (size_t i = 0; i < size; ++i) {
+        batch.emplace_back();
     }
-};
+    return batch;
+}
 
-TYPED_TEST_SUITE(ParallelProcessorTest, ParallelProcessorKinds, ParallelProcessorKindNames);
+template <typename WorkList, typename Iterable>
+void offerWork(WorkList& wl, Iterable& batch) {
+    for (auto& task: batch) {
+        bool accepted = wl.tryPush(task);
+        RuntimeAssert(accepted, "Must be accepted");
+    }
+}
 
-TYPED_TEST(ParallelProcessorTest, ContededRegistration) {
-    using ParallelProcessor = typename TypeParam::Processor;
-    using Worker = typename ParallelProcessor::Worker;
+constexpr auto kMaxWorkers = kDefaultThreadCount * 2;
+using ListImpl = intrusive_forward_list<Task>;
+static constexpr auto kMinSizeToShare = 256;
+using Processor = ParallelProcessor<kMaxWorkers, ListImpl, kMinSizeToShare>;
+using Worker = typename Processor::Worker;
 
-    ParallelProcessor processor(kDefaultThreadCount);
+} // namespace
+
+
+TEST(ParallelProcessorTest, ContededRegistration) {
+    Processor processor;
     std::vector<std::unique_ptr<Worker>> workers(kDefaultThreadCount);
 
     std::atomic<bool> start = false;
@@ -112,67 +99,34 @@ TYPED_TEST(ParallelProcessorTest, ContededRegistration) {
     workers.clear();
 }
 
-TYPED_TEST(ParallelProcessorTest, Latecomers) {
-    using ParallelProcessor = typename TypeParam::Processor;
-    using Worker = typename ParallelProcessor::Worker;
+TEST(ParallelProcessorTest, UncontendedStealing) {
+    Processor processor;
+    Worker giver(processor);
+    Worker taker(processor);
 
-    ParallelProcessor processor(kMaxWorkers);
+    auto work = workBatch(kMinSizeToShare * 2);
+    offerWork(giver, work);
 
-    const auto kTasksPerWorker = 1000;
-    std::vector<Task> tasks(kMaxWorkers * kTasksPerWorker);
-    std::atomic<std::size_t> counter = 0;
+    EXPECT_TRUE(taker.empty());
 
-    std::vector<std::unique_ptr<Worker>> workers;
-    for (int i = 0; i < kMaxWorkers; ++i) {
-        workers.emplace_back(std::make_unique<Worker>(processor));
-    }
+    // have to steal from giver
+    EXPECT_NE(taker.tryPop(), nullptr);
 
-    std::atomic<bool> firstHalfStart = false;
-    std::list<ScopedThread> firstHalf;
-    for (int workerIdx = 0; workerIdx < kDefaultThreadCount; ++workerIdx) {
-        firstHalf.emplace_back([&, workerIdx] {
-            auto& worker = *workers[workerIdx];
-            for (int taskIdx = 0; taskIdx < kTasksPerWorker; ++taskIdx) {
-                bool pushed = worker.workList().tryPush(tasks[workerIdx * kTasksPerWorker + taskIdx]);
-                RuntimeAssert(pushed, "Must push");
-            }
-            while (!firstHalfStart.load()) {}
-            worker.performWork([&](auto& workList) { Task::workLoop(workList, counter); });
-        });
-    }
+    EXPECT_FALSE(taker.empty());
+}
 
-    firstHalfStart = true;
+TEST(ParallelProcessorTest, ShareOnPop) {
+    using ShareOnPopProcessor = ParallelProcessor<kMaxWorkers, ListImpl, kMinSizeToShare, kMinSizeToShare / 2, kotlin::internal::ShareOn::kPop>;
+    ShareOnPopProcessor processor;
+    ShareOnPopProcessor::Worker giver(processor);
+    ShareOnPopProcessor::Worker taker(processor);
 
-    while (counter < kDefaultThreadCount * kTasksPerWorker) {
-        std::this_thread::yield();
-    }
+    auto work = workBatch(kMinSizeToShare * 2);
+    offerWork(giver, work);
 
-    std::atomic<bool> secondHalfStart = false;
-    std::list<ScopedThread> secondHalf;
-    for (int workerIdx = kDefaultThreadCount; workerIdx < kDefaultThreadCount * 2; ++workerIdx) {
-        secondHalf.emplace_back([&, workerIdx] {
-            auto& worker = *workers[workerIdx];
-            for (int taskIdx = 0; taskIdx < kTasksPerWorker; ++taskIdx) {
-                bool pushed = worker.workList().tryPush(tasks[workerIdx * kTasksPerWorker + taskIdx]);
-                RuntimeAssert(pushed, "Must push");
-            }
-            while (!firstHalfStart.load()) {}
-            worker.performWork([&](auto& workList) { Task::workLoop(workList, counter); });
-        });
-    }
+    // triggers sharing
+    EXPECT_NE(giver.tryPop(), nullptr);
 
-    secondHalfStart = true;
-
-    for (auto& t : firstHalf) {
-        t.join();
-    }
-
-    for (auto& t : secondHalf) {
-        t.join();
-    }
-
-    EXPECT_THAT(counter.load(), tasks.size());
-    EXPECT_TRUE(std::all_of(tasks.begin(), tasks.end(), [](Task& task) { return task.done_.load(); }));
-
-    workers.clear();
+    // steals
+    EXPECT_NE(taker.tryPop(), nullptr);
 }
