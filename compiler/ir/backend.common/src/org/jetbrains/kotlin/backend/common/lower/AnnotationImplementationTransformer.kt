@@ -108,6 +108,7 @@ abstract class AnnotationImplementationTransformer(val context: BackendContext, 
 
             if (parameter.defaultValue == null && valueArg == null) {
                 // if parameter is vararg, put an empty array as argument
+                // The vararg is already lowered to array, so `isVararg` is false.
                 if (parameter.type.isBoxedArray || parameter.type.isPrimitiveArray() || parameter.type.isUnsignedArray()) {
                     val arrayType = parameter.type
 

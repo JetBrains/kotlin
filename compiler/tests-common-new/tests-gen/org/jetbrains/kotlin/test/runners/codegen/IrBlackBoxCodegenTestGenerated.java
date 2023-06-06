@@ -437,12 +437,6 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             runTest("compiler/testData/codegen/box/annotations/varargInAnnotationParameter.kt");
         }
 
-        @Test
-        @TestMetadata("varargInAnnotationParameterInstantiation.kt")
-        public void testVarargInAnnotationParameterInstantiation() throws Exception {
-            runTest("compiler/testData/codegen/box/annotations/varargInAnnotationParameterInstantiation.kt");
-        }
-
         @Nested
         @TestMetadata("compiler/testData/codegen/box/annotations/annotatedLambda")
         @TestDataPath("$PROJECT_ROOT")
@@ -610,6 +604,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             @TestMetadata("nestedAnnotationInstances.kt")
             public void testNestedAnnotationInstances() throws Exception {
                 runTest("compiler/testData/codegen/box/annotations/instances/nestedAnnotationInstances.kt");
+            }
+
+            @Test
+            @TestMetadata("varargInAnnotationParameterInstantiation.kt")
+            public void testVarargInAnnotationParameterInstantiation() throws Exception {
+                runTest("compiler/testData/codegen/box/annotations/instances/varargInAnnotationParameterInstantiation.kt");
             }
         }
 

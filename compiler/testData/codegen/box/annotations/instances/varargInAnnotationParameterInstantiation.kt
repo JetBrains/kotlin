@@ -1,5 +1,7 @@
 // WITH_STDLIB
 // IGNORE_BACKEND: JVM
+// UIntArray parameters do not work on WASM
+// IGNORE_BACKEND: WASM
 
 annotation class KotlinAnn(vararg val foo: String)
 

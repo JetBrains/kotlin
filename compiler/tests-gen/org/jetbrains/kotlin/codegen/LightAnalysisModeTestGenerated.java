@@ -50,11 +50,6 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/annotations/noTypeUseIfFlagIsSpecified.kt");
         }
 
-        @TestMetadata("varargInAnnotationParameterInstantiation.kt")
-        public void ignoreVarargInAnnotationParameterInstantiation() throws Exception {
-            runTest("compiler/testData/codegen/box/annotations/varargInAnnotationParameterInstantiation.kt");
-        }
-
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
         }
@@ -428,6 +423,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             @TestMetadata("nestedAnnotationInstances.kt")
             public void ignoreNestedAnnotationInstances() throws Exception {
                 runTest("compiler/testData/codegen/box/annotations/instances/nestedAnnotationInstances.kt");
+            }
+
+            @TestMetadata("varargInAnnotationParameterInstantiation.kt")
+            public void ignoreVarargInAnnotationParameterInstantiation() throws Exception {
+                runTest("compiler/testData/codegen/box/annotations/instances/varargInAnnotationParameterInstantiation.kt");
             }
 
             private void runTest(String testDataFilePath) throws Exception {

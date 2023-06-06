@@ -77,12 +77,6 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             runTest("compiler/testData/codegen/box/annotations/selfReferentialAnnotation.kt");
         }
 
-        @Test
-        @TestMetadata("varargInAnnotationParameterInstantiation.kt")
-        public void testVarargInAnnotationParameterInstantiation() throws Exception {
-            runTest("compiler/testData/codegen/box/annotations/varargInAnnotationParameterInstantiation.kt");
-        }
-
         @Nested
         @TestMetadata("compiler/testData/codegen/box/annotations/annotatedLambda")
         @TestDataPath("$PROJECT_ROOT")
@@ -112,6 +106,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             @TestMetadata("multiplatformInstantiation.kt")
             public void testMultiplatformInstantiation() throws Exception {
                 runTest("compiler/testData/codegen/box/annotations/instances/multiplatformInstantiation.kt");
+            }
+
+            @Test
+            @TestMetadata("varargInAnnotationParameterInstantiation.kt")
+            public void testVarargInAnnotationParameterInstantiation() throws Exception {
+                runTest("compiler/testData/codegen/box/annotations/instances/varargInAnnotationParameterInstantiation.kt");
             }
         }
 
