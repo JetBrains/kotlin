@@ -19,8 +19,7 @@ publishing {
 }
 
 kotlin {
-    @Suppress("DEPRECATION_ERROR")
-    linuxArm32Hfp()
+    mingwX64()
     val targetsWithInterop = listOf(linuxX64(), linuxArm64())
 
     targets.withType<KotlinNativeTarget>().forEach { target ->
