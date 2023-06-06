@@ -45,12 +45,12 @@ val NULLABILITY_ANNOTATION_SETTINGS: NullabilityAnnotationStates<JavaNullability
         FqName("lombok") to JavaNullabilityAnnotationsStatus.DEFAULT,
         JSPECIFY_OLD_ANNOTATIONS_PACKAGE to JavaNullabilityAnnotationsStatus(
             reportLevelBefore = ReportLevel.WARN,
-            sinceVersion = KotlinVersion(1, 9),
+            sinceVersion = KotlinVersion(2, 0),
             reportLevelAfter = ReportLevel.STRICT
         ),
         JSPECIFY_ANNOTATIONS_PACKAGE to JavaNullabilityAnnotationsStatus(
             reportLevelBefore = ReportLevel.WARN,
-            sinceVersion = KotlinVersion(1, 9),
+            sinceVersion = KotlinVersion(2, 0),
             reportLevelAfter = ReportLevel.STRICT
         ),
         RXJAVA3_ANNOTATIONS_PACKAGE to JavaNullabilityAnnotationsStatus(
