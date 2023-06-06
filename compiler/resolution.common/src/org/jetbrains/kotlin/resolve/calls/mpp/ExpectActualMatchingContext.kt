@@ -36,6 +36,9 @@ interface ExpectActualMatchingContext<T : DeclarationSymbolMarker> : TypeSystemC
     val innerClassesCapturesOuterTypeParameters: Boolean
         get() = true
 
+    val enumConstructorsAreAlwaysCompatible: Boolean
+        get() = false
+
     val RegularClassSymbolMarker.classId: ClassId
     val TypeAliasSymbolMarker.classId: ClassId
     val CallableSymbolMarker.callableId: CallableId

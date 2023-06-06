@@ -37,6 +37,9 @@ class FirExpectActualMatchingContext(
     override val shouldCheckReturnTypesOfCallables: Boolean
         get() = false
 
+    override val enumConstructorsAreAlwaysCompatible: Boolean
+        get() = true
+
     private fun CallableSymbolMarker.asSymbol(): FirCallableSymbol<*> = this as FirCallableSymbol<*>
     private fun FunctionSymbolMarker.asSymbol(): FirFunctionSymbol<*> = this as FirFunctionSymbol<*>
     private fun PropertySymbolMarker.asSymbol(): FirPropertySymbol = this as FirPropertySymbol
@@ -260,14 +263,7 @@ class FirExpectActualMatchingContext(
     override fun CallableSymbolMarker.shouldSkipMatching(containingExpectClass: RegularClassSymbolMarker): Boolean {
         val symbol = asSymbol()
         val classSymbol = containingExpectClass.asSymbol()
-        val isConstructor = symbol is FirConstructorSymbol
-        if (isConstructor && classSymbol.classKind.isEnumClass) {
-            /*
-             * Expect enums in FIR have (expect) constructors, but actually there is no need to map them
-             */
-            return true
-        }
-        if (!isConstructor && symbol.dispatchReceiverType?.classId != classSymbol.classId) {
+        if (symbol !is FirConstructorSymbol && symbol.dispatchReceiverType?.classId != classSymbol.classId) {
             // Skip fake overrides
             return true
         }

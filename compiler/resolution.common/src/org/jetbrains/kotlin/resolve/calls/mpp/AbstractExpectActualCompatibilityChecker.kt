@@ -256,6 +256,16 @@ object AbstractExpectActualCompatibilityChecker {
             return Incompatible.CallableKind
         }
 
+        if (
+            enumConstructorsAreAlwaysCompatible &&
+            expectContainingClass?.classKind == ClassKind.ENUM_CLASS &&
+            actualContainingClass?.classKind == ClassKind.ENUM_CLASS &&
+            expectDeclaration is ConstructorSymbolMarker &&
+            actualDeclaration is ConstructorSymbolMarker
+        ) {
+            return ExpectActualCompatibility.Compatible
+        }
+
         val expectedReceiverType = expectDeclaration.extensionReceiverType
         val actualReceiverType = actualDeclaration.extensionReceiverType
         if ((expectedReceiverType != null) != (actualReceiverType != null)) {

@@ -77,6 +77,9 @@ internal abstract class IrExpectActualMatchingContext(
     override val innerClassesCapturesOuterTypeParameters: Boolean
         get() = false
 
+    override val enumConstructorsAreAlwaysCompatible: Boolean
+        get() = true
+
     override val RegularClassSymbolMarker.classId: ClassId
         get() = asIr().classIdOrFail
 
