@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.backend.jvm
 
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.functions.BuiltInFunctionArity
+import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
@@ -175,8 +176,9 @@ class FirJvmTypeMapper(val session: FirSession) : FirSessionComponent {
             val parameters = classifier?.typeParameters.orEmpty().map { it.symbol }
             val arguments = type.arguments
 
-            if ((defaultType.isBasicFunctionType(session) && arguments.size > BuiltInFunctionArity.BIG_ARITY)
-                || defaultType.isReflectFunctionType(session)
+            if ((defaultType.functionTypeKind(session).let { it == FunctionTypeKind.Function || it == FunctionTypeKind.SuspendFunction } &&
+                        (arguments.size > BuiltInFunctionArity.BIG_ARITY)) ||
+                defaultType.isReflectFunctionType(session)
             ) {
                 writeGenericArguments(sw, listOf(arguments.last()), listOf(parameters.last()), mode)
                 return
