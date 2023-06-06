@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.isOneSegmentFQN
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.resolve.calls.util.getCalleeExpressionIfAny
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
@@ -95,6 +96,7 @@ class Kapt4StubGenerator(private val analysisSession: KtAnalysisSession) {
     private val strictMode = options[KaptFlag.STRICT]
     private val stripMetadata = options[KaptFlag.STRIP_METADATA]
     private val keepKdocComments = options[KaptFlag.KEEP_KDOC_COMMENTS_IN_STUBS]
+    private val dumpDefaultParameterValues = options[KaptFlag.DUMP_DEFAULT_PARAMETER_VALUES]
 
     private val kdocCommentKeeper = runIf(keepKdocComments) { Kapt4KDocCommentKeeper() }
 
@@ -565,8 +567,8 @@ class Kapt4StubGenerator(private val analysisSession: KtAnalysisSession) {
         }
 
         lineMappings.registerField(containingClass, field)
-
-        val initializer = explicitInitializer ?: convertPropertyInitializer(field.initializer, field.type, field.isFinal)
+        val skip = field.navigationElement is KtParameter && !dumpDefaultParameterValues
+        val initializer = explicitInitializer ?: convertPropertyInitializer(if (skip) null else field.initializer, field.type, field.isFinal)
         return treeMaker.VarDef(modifiers, treeMaker.name(name), typeExpression, initializer).keepKdocCommentsIfNecessary(field)
     }
 
