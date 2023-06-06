@@ -328,26 +328,4 @@ object LowLevelFirApiFacadeForResolveOnAir {
             else -> error("Not supported type ${ktDeclaration::class.simpleName}")
         }
     }
-
-    fun onAirResolveTypeInPlace(
-        place: KtElement,
-        typeReference: KtTypeReference,
-        firResolveSession: LLFirResolveSession,
-    ): FirResolvedTypeRef {
-        val context = firResolveSession.getTowerContextProvider(place.containingKtFile).getClosestAvailableParentContext(place)
-            ?: error("TowerContext not found for ${place.getElementTextInContext()}")
-
-        val session = firResolveSession.useSiteFirSession
-        val firTypeReference = buildFirUserTypeRef(
-            typeReference = typeReference,
-            session = session,
-            baseScopeProvider = session.kotlinScopeProvider
-        )
-
-        return FirTypeResolveTransformer(
-            session = session,
-            scopeSession = ScopeSession(),
-            initialScopes = context.towerDataElements.asReversed().mapNotNull { it.scope }
-        ).transformTypeRef(firTypeReference, null)
-    }
 }
