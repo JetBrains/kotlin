@@ -26,7 +26,6 @@ import org.junit.jupiter.api.Tag
 
 fun main() {
     System.setProperty("java.awt.headless", "true")
-    val excludedCustomTestdataPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN
 
     generateTestGroupSuiteWithJUnit5 {
         // Codegen box tests.
@@ -224,24 +223,22 @@ fun main() {
 
         // New frontend test infrastructure tests
         testGroup(testsRoot = "native/native.tests/tests-gen", testDataRoot = "compiler/testData") {
-            testClass<AbstractDiagnosticsNativeTest>(
-                annotations = listOf(*frontendFir()),
-            ) {
-                model("diagnostics/nativeTests", excludedPattern = excludedCustomTestdataPattern)
+            testClass<AbstractDiagnosticsNativeTest> {
+                model("diagnostics/nativeTests", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
             }
 
             testClass<AbstractFirPsiNativeDiagnosticsTest>(
                 suiteTestClassName = "FirPsiOldFrontendNativeDiagnosticsTestGenerated",
                 annotations = listOf(*frontendFir()),
             ) {
-                model("diagnostics/nativeTests", excludedPattern = excludedCustomTestdataPattern)
+                model("diagnostics/nativeTests", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
             }
 
             testClass<AbstractFirLightTreeNativeDiagnosticsTest>(
                 suiteTestClassName = "FirLightTreeOldFrontendNativeDiagnosticsTestGenerated",
                 annotations = listOf(*frontendFir()),
             ) {
-                model("diagnostics/nativeTests", excludedPattern = excludedCustomTestdataPattern)
+                model("diagnostics/nativeTests", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
             }
         }
     }
