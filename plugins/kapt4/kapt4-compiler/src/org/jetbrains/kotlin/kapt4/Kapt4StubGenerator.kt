@@ -469,11 +469,13 @@ class Kapt4StubGenerator(private val analysisSession: KtAnalysisSession) {
         excludeNullabilityAnnotations: Boolean = false
     ): JCModifiers {
         var seenOverride = false
+        var seenDeprecated = false
         fun convertAndAdd(list: JavacList<JCAnnotation>, annotation: PsiAnnotation): JavacList<JCAnnotation> {
             if (annotation.hasQualifiedName("java.lang.Override")) {
                 if (seenOverride) return list  // KT-34569: skip duplicate @Override annotations
                 seenOverride = true
             }
+            seenDeprecated = seenDeprecated or annotation.hasQualifiedName("java.lang.Deprecated")
             if (excludeNullabilityAnnotations &&
                 (annotation.hasQualifiedName("org.jetbrains.annotations.NotNull") || annotation.hasQualifiedName("org.jetbrains.annotations.Nullable"))) return list
             val annotationTree = convertAnnotation(containingClass, annotation, packageFqName) ?: return list
@@ -482,7 +484,7 @@ class Kapt4StubGenerator(private val analysisSession: KtAnalysisSession) {
 
         var annotations = allAnnotations.fold(JavacList.nil(), ::convertAndAdd)
 
-        if (isDeprecated(access)) {
+        if (!seenDeprecated && isDeprecated(access)) {
             val type = treeMaker.RawType(Type.getType(java.lang.Deprecated::class.java))
             annotations = annotations.append(treeMaker.Annotation(type, JavacList.nil()))
         }
