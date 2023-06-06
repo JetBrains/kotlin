@@ -26,11 +26,9 @@ class KotlinTargetHierarchyDslTest {
 
 
     @Test
-    @Suppress("DEPRECATION_ERROR") // deprecated K/N targets
     fun `test - hierarchy default - targets from all families`() {
         kotlin.apply {
             targetHierarchy.default()
-            iosArm32()
             iosArm64()
             iosX64()
             iosSimulatorArm64()
@@ -45,10 +43,8 @@ class KotlinTargetHierarchyDslTest {
             macosArm64()
 
             linuxX64()
-            linuxArm32Hfp()
 
             mingwX64()
-            mingwX86()
 
             androidNativeArm32()
             androidNativeArm64()
@@ -60,7 +56,8 @@ class KotlinTargetHierarchyDslTest {
         )
 
         assertEquals(
-            stringSetOf("nativeTest"), kotlin.dependingSourceSetNames("commonTest")
+            stringSetOf("nativeTest"),
+            kotlin.dependingSourceSetNames("commonTest")
         )
 
         assertEquals(
@@ -84,12 +81,12 @@ class KotlinTargetHierarchyDslTest {
         )
 
         assertEquals(
-            stringSetOf("iosArm32Main", "iosArm64Main", "iosSimulatorArm64Main", "iosX64Main"),
+            stringSetOf("iosArm64Main", "iosSimulatorArm64Main", "iosX64Main"),
             kotlin.dependingSourceSetNames("iosMain")
         )
 
         assertEquals(
-            stringSetOf("iosArm32Test", "iosArm64Test", "iosSimulatorArm64Test", "iosX64Test"),
+            stringSetOf("iosArm64Test", "iosSimulatorArm64Test", "iosX64Test"),
             kotlin.dependingSourceSetNames("iosTest")
         )
 
@@ -114,13 +111,43 @@ class KotlinTargetHierarchyDslTest {
         )
 
         assertEquals(
-            stringSetOf("linuxArm32HfpMain", "linuxX64Main"),
+            stringSetOf("linuxX64Main"),
             kotlin.dependingSourceSetNames("linuxMain")
         )
 
         assertEquals(
-            stringSetOf("linuxArm32HfpTest", "linuxX64Test"),
+            stringSetOf("linuxX64Test"),
             kotlin.dependingSourceSetNames("linuxTest")
+        )
+
+        assertEquals(
+            stringSetOf("macosArm64Main", "macosX64Main"),
+            kotlin.dependingSourceSetNames("macosMain")
+        )
+
+        assertEquals(
+            stringSetOf("macosArm64Test", "macosX64Test"),
+            kotlin.dependingSourceSetNames("macosTest")
+        )
+
+        assertEquals(
+            stringSetOf("mingwX64Main"),
+            kotlin.dependingSourceSetNames("mingwMain")
+        )
+
+        assertEquals(
+            stringSetOf("mingwX64Test"),
+            kotlin.dependingSourceSetNames("mingwTest")
+        )
+
+        assertEquals(
+            stringSetOf("androidNativeArm32Main", "androidNativeArm64Main"),
+            kotlin.dependingSourceSetNames("androidNativeMain")
+        )
+
+        assertEquals(
+            stringSetOf("androidNativeArm32Test", "androidNativeArm64Test"),
+            kotlin.dependingSourceSetNames("androidNativeTest")
         )
     }
 
