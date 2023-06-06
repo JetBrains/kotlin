@@ -72,7 +72,7 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
 
         val MAIN_KAPT_CONFIGURATION_NAME = "kapt"
 
-        const val KAPT_ARTIFACT_NAME = "kotlin-annotation-processing-embeddable"
+        const val KAPT_ARTIFACT_NAME = "kotlin-annotation-processing-gradle"
         val KAPT_SUBPLUGIN_ID = "org.jetbrains.kotlin.kapt3"
 
         fun getKaptConfigurationName(sourceSetName: String): String {
