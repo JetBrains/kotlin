@@ -20,15 +20,13 @@ import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodForScr
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.InitializedModifiersBox
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassModifierList
 import org.jetbrains.kotlin.light.classes.symbol.withSymbol
-import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
-import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtScript
 
 internal class SymbolLightClassForScript private constructor(
-    private val script: KtScript,
+    override val script: KtScript,
     private val symbolPointer: KtSymbolPointer<KtScriptSymbol>,
     ktModule: KtModule,
-) : SymbolLightClassBase(ktModule, script.manager) {
+) : KtLightClassForScript, SymbolLightClassBase(ktModule, script.manager) {
 
     internal constructor(
         script: KtScript,
@@ -174,7 +172,4 @@ internal class SymbolLightClassForScript private constructor(
 
     override fun isInheritorDeep(baseClass: PsiClass?, classToByPass: PsiClass?): Boolean = false
 
-    override val kotlinOrigin: KtClassOrObject? = null
-
-    override val originKind: LightClassOriginKind = LightClassOriginKind.SOURCE
 }

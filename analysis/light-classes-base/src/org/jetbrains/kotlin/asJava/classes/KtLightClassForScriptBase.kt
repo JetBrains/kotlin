@@ -13,13 +13,13 @@ import com.intellij.util.IncorrectOperationException
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.asJava.elements.FakeFileForLightClass
 import org.jetbrains.kotlin.idea.KotlinLanguage
-import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtScript
 import javax.swing.Icon
 
-abstract class KtLightClassForScriptBase(val script: KtScript) : KtLightClassBase(script.manager) {
+abstract class KtLightClassForScriptBase(
+    override val script: KtScript
+) : KtLightClassForScript, KtLightClassBase(script.manager) {
     private val modifierList: PsiModifierList = LightModifierList(
         manager,
         KotlinLanguage.INSTANCE,
@@ -41,8 +41,6 @@ abstract class KtLightClassForScriptBase(val script: KtScript) : KtLightClassBas
             packageFqName = fqName.parent(),
         )
     }
-
-    override val kotlinOrigin: KtClassOrObject? get() = null
 
     val fqName: FqName get() = script.fqName
 
@@ -96,8 +94,6 @@ abstract class KtLightClassForScriptBase(val script: KtScript) : KtLightClassBas
 
     override fun getElementIcon(flags: Int): Icon? =
         throw UnsupportedOperationException("This should be done by KotlinIconProvider")
-
-    override val originKind: LightClassOriginKind get() = LightClassOriginKind.SOURCE
 
     override fun getLBrace(): PsiElement? = null
 
