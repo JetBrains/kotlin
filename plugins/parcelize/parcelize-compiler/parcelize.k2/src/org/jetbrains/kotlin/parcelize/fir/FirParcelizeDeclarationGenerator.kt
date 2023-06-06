@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.fir.plugin.createConeType
 import org.jetbrains.kotlin.fir.plugin.createMemberFunction
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
-import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.CallableId
@@ -104,15 +103,14 @@ class FirParcelizeDeclarationGenerator(session: FirSession) : FirDeclarationGene
         }
     }
 
-    @OptIn(SymbolInternals::class)
     override fun getCallableNamesForClass(classSymbol: FirClassSymbol<*>, context: MemberGenerationContext): Set<Name> {
         return when {
-            classSymbol.fir.modality == Modality.ABSTRACT -> emptySet()
-            classSymbol in matchedClasses && classSymbol.fir.modality != Modality.SEALED -> parcelizeMethodsNames
+            classSymbol.rawStatus.modality == Modality.ABSTRACT || classSymbol.rawStatus.modality == Modality.SEALED -> emptySet()
+            classSymbol in matchedClasses && classSymbol.rawStatus.modality != Modality.SEALED -> parcelizeMethodsNames
             else -> {
                 val hasAnnotatedSealedSuperType = classSymbol.resolvedSuperTypeRefs.any {
                     val superSymbol = it.type.fullyExpandedType(session).toRegularClassSymbol(session) ?: return@any false
-                    superSymbol.fir.modality == Modality.SEALED && superSymbol in matchedClasses
+                    superSymbol.rawStatus.modality == Modality.SEALED && superSymbol in matchedClasses
                 }
                 if (hasAnnotatedSealedSuperType) {
                     parcelizeMethodsNames
