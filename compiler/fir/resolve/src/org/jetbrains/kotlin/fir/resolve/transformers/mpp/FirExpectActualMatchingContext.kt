@@ -79,8 +79,13 @@ class FirExpectActualMatchingContext(
         get() = asSymbol().resolvedStatus.isInline
     override val RegularClassSymbolMarker.isValue: Boolean
         get() = asSymbol().resolvedStatus.isInline
+
+    /*
+     * In this context java interfaces should be considered as not fun interface, so they will be later checked by [isNotSamInterface] function
+     */
     override val RegularClassSymbolMarker.isFun: Boolean
-        get() = asSymbol().resolvedStatus.isFun
+        get() = asSymbol().takeUnless { it.origin is FirDeclarationOrigin.Java }?.resolvedStatus?.isFun ?: false
+
     override val ClassLikeSymbolMarker.typeParameters: List<TypeParameterSymbolMarker>
         get() = asSymbol().typeParameterSymbols
 

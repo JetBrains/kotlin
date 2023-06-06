@@ -367,7 +367,12 @@ internal abstract class IrExpectActualMatchingContext(
     }
 
     override fun RegularClassSymbolMarker.isNotSamInterface(): Boolean {
-        // TODO: is it correct for java classes?
+        /*
+         * This is incorrect for java classes (because all java interfaces are considered as fun interfaces),
+         *   but it's fine to not to check if some java interfaces is really SAM or not, because if one
+         *   tries to actualize `expect fun interface` with typealias to non-SAM java interface, frontend
+         *   will report an error and IR matching won't be invoked
+         */
         return !asIr().isFun
     }
 

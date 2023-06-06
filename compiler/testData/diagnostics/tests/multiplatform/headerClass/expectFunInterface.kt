@@ -25,8 +25,19 @@ expect fun interface F6 {
     fun run()
 }
 
+expect fun interface F7 {
+    fun run()
+}
+
 // MODULE: m2-jvm()()(m1-common)
 
+// FILE: NotSam.java
+public interface NotSam {
+    void run();
+    void somehtingElse();
+}
+
+// FILE: main.kt
 actual fun interface F1 {
     actual fun run()
 }
@@ -52,3 +63,5 @@ interface F6Typealias {
 }
 
 <!ACTUAL_WITHOUT_EXPECT!>actual<!> typealias F6 = F6Typealias
+
+<!ACTUAL_WITHOUT_EXPECT!>actual<!> typealias F7 = NotSam
