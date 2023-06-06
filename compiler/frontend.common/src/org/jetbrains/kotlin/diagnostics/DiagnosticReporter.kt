@@ -70,6 +70,13 @@ open class KtDiagnosticReporterWithContext(
             }
         }
 
+        fun <A : Any, B : Any, C : Any> report(factory: KtDiagnosticFactory3<A, B, C>, a: A, b: B, c: C) {
+            sourceElement?.let {
+                reportOn(it, factory, a, b, c, this)
+                checkAndCommitReportsOn(it, this)
+            }
+        }
+
         override fun equals(other: Any?): Boolean {
             if (this === other) return true
             if (other !is DiagnosticContextImpl) return false

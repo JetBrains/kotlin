@@ -13,182 +13,89 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.declarations.buildProperty
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
-import org.jetbrains.kotlin.ir.types.IrDynamicType
-import org.jetbrains.kotlin.ir.types.classifierOrFail
-import org.jetbrains.kotlin.ir.types.isNullable
+import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.resolve.calls.mpp.AbstractExpectActualCompatibilityChecker
+import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility
 import org.jetbrains.kotlin.resolve.multiplatform.OptionalAnnotationUtil
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
+import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
-private val FLEXIBLE_NULLABILITY_ANNOTATION_FQ_NAME = StandardClassIds.Annotations.FlexibleNullability.asSingleFqName()
+internal fun collectActualCallablesMatchingToSpecificExpect(
+    expectSymbol: IrSymbol,
+    actualSymbols: List<IrSymbol>,
+    expectToActualClassMap: Map<ClassId, IrClassSymbol>,
+    typeSystemContext: IrTypeSystemContext,
+): List<IrSymbol> {
+    val baseExpectSymbol = expectSymbol
+    val matchingActuals = mutableListOf<IrSymbol>()
+    val context = object : IrExpectActualMatchingContext(typeSystemContext, expectToActualClassMap) {
+        override fun onMatchedClasses(expectClassSymbol: IrClassSymbol, actualClassSymbol: IrClassSymbol) {
+            shouldNotBeCalled()
+        }
 
-internal fun Map<String, List<IrDeclaration>>.getMatches(
-    expectDeclaration: IrDeclaration,
-    expectActualTypesMap: Map<IrSymbol, IrSymbol>,
-    expectActualTypeAliasMap: Map<FqName, FqName>
-): List<IrDeclaration> =
-    getMatches(generateIrElementFullNameFromExpect(expectDeclaration, expectActualTypeAliasMap), expectDeclaration, expectActualTypesMap)
-
-internal fun Map<String, List<IrDeclaration>>.getMatches(
-    mainSignature: String,
-    expectDeclaration: IrDeclaration,
-    expectActualTypesMap: Map<IrSymbol, IrSymbol>
-): List<IrDeclaration> {
-    val members = this[mainSignature] ?: return emptyList()
-    return when (expectDeclaration) {
-        is IrFunction -> members.getMatches(expectDeclaration, expectActualTypesMap) { it as IrFunction }
-        is IrProperty -> members.getMatches(expectDeclaration, expectActualTypesMap) { (it as IrProperty).getter!! }
-        else -> members
+        override fun onMatchedCallables(expectSymbol: IrSymbol, actualSymbol: IrSymbol) {
+            require(expectSymbol == baseExpectSymbol)
+            matchingActuals += actualSymbol
+        }
     }
+    AbstractExpectActualCompatibilityChecker.matchSingleExpectTopLevelDeclarationAgainstPotentialActuals(
+        expectSymbol,
+        actualSymbols,
+        context
+    )
+    return matchingActuals
 }
 
-private inline fun List<IrDeclaration>.getMatches(
-    expect: IrDeclaration,
-    expectActualTypesMap: Map<IrSymbol, IrSymbol>,
-    functionExtractor: (IrDeclaration) -> IrFunction
-): List<IrDeclaration> {
-    val expectFunction = functionExtractor(expect)
-    return filter { expectFunction.match(functionExtractor(it), expectActualTypesMap) }
-}
-
-private fun IrFunction.match(actualFunction: IrFunction, expectActualTypesMap: Map<IrSymbol, IrSymbol>): Boolean {
-    fun getActualizedTypeClassifierSymbol(
-        expectParameter: IrValueParameter,
-        localTypeParametersMap: Map<IrTypeParameterSymbol, IrTypeParameterSymbol>? = null
-    ): IrSymbol {
-        return expectParameter.type.classifierOrFail.let {
-            val localMappedSymbol = if (localTypeParametersMap != null && it is IrTypeParameterSymbol) {
-                localTypeParametersMap[it]
-            } else {
-                null
-            }
-            localMappedSymbol ?: expectActualTypesMap[it] ?: it
-        }
-    }
-
-    fun checkParameter(
-        expectParameter: IrValueParameter?,
-        actualParameter: IrValueParameter?,
-        localTypeParametersMap: Map<IrTypeParameterSymbol, IrTypeParameterSymbol>
-    ): Boolean {
-        if (expectParameter == null) {
-            return actualParameter == null
-        }
-        if (actualParameter == null) {
-            return false
-        }
-
-        if (expectParameter.type is IrDynamicType || actualParameter.type is IrDynamicType) {
-            return true
-        }
-
-        if (expectParameter.type.isNullable() != actualParameter.type.isNullable() &&
-            !expectParameter.type.annotations.hasAnnotation(FLEXIBLE_NULLABILITY_ANNOTATION_FQ_NAME) &&
-            !actualParameter.type.annotations.hasAnnotation(FLEXIBLE_NULLABILITY_ANNOTATION_FQ_NAME)
-        ) {
-            return false
-        }
-
-        if (getActualizedTypeClassifierSymbol(expectParameter, localTypeParametersMap) !=
-            getActualizedTypeClassifierSymbol(actualParameter)
-        ) {
-            return false
-        }
-
-        return true
-    }
-
-    if (valueParameters.size != actualFunction.valueParameters.size || typeParameters.size != actualFunction.typeParameters.size) {
-        return false
-    }
-
-    val localTypeParametersMap = mutableMapOf<IrTypeParameterSymbol, IrTypeParameterSymbol>()
-    for ((expectTypeParameter, actualTypeParameter) in typeParameters.zip(actualFunction.typeParameters)) {
-        if (expectTypeParameter.name != actualTypeParameter.name) {
-            return false
-        }
-        localTypeParametersMap[expectTypeParameter.symbol] = actualTypeParameter.symbol
-    }
-
-    if (!checkParameter(extensionReceiverParameter, actualFunction.extensionReceiverParameter, localTypeParametersMap)) {
-        return false
-    }
-
-    for ((expectParameter, actualParameter) in valueParameters.zip(actualFunction.valueParameters)) {
-        if (!checkParameter(expectParameter, actualParameter, localTypeParametersMap)) {
-            return false
-        }
-    }
-
-    return true
-}
-
-internal fun generateActualIrClassOrTypeAliasFullName(declaration: IrElement) = generateIrElementFullNameFromExpect(declaration, emptyMap())
-
-internal fun generateIrElementFullNameFromExpect(
-    declaration: IrElement,
-    expectActualTypeAliasMap: Map<FqName, FqName>
-): String {
-    return buildString { appendElementFullName(declaration, this, expectActualTypeAliasMap) }
-}
-
-private fun appendElementFullName(
-    declaration: IrElement,
-    result: StringBuilder,
-    expectActualTypeAliasMap: Map<FqName, FqName>
+internal fun recordActualForExpectDeclaration(
+    expectSymbol: IrSymbol,
+    actualSymbol: IrSymbol,
+    destination: MutableMap<IrSymbol, IrSymbol>,
 ) {
-    if (declaration !is IrDeclarationBase) return
-
-    val parents = mutableListOf<String>()
-    var parent: IrDeclarationParent? = declaration.parent
-    while (parent != null) {
-        if (parent is IrDeclarationWithName) {
-            val parentParent = parent.parent
-            if (parentParent is IrClass) {
-                parents.add(parent.name.asString())
-                parent = parentParent
-                continue
-            }
+    val expectDeclaration = expectSymbol.owner as IrDeclarationBase
+    val actualDeclaration = actualSymbol.owner as IrDeclaration
+    val registeredActual = destination.put(expectSymbol, actualSymbol)
+    require(registeredActual == null || registeredActual == actualSymbol) {
+        """
+            Expect symbol already has registered mapping
+            
+            Expect declaration: ${expectDeclaration.render()}
+            Actual declaration: ${actualDeclaration.render()}
+            Already registered: ${registeredActual!!.owner.render()}
+        """.trimIndent()
+    }
+    if (expectDeclaration is IrTypeParametersContainer) {
+        recordTypeParametersMapping(destination, expectDeclaration, actualDeclaration as IrTypeParametersContainer)
+    }
+    if (expectDeclaration is IrProperty) {
+        val actualProperty = actualDeclaration as IrProperty
+        expectDeclaration.getter!!.let {
+            val getter = actualProperty.getter!!
+            destination[it.symbol] = getter.symbol
+            recordTypeParametersMapping(destination, it, getter)
         }
-        val parentString = parent.kotlinFqName.let { (expectActualTypeAliasMap[it] ?: it).asString() }
-        if (parentString.isNotEmpty()) {
-            parents.add(parentString)
-        }
-        parent = null
-    }
-
-    if (parents.isNotEmpty()) {
-        result.append(parents.asReversed().joinToString(separator = "."))
-        result.append('.')
-    }
-
-    if (declaration is IrDeclarationWithName) {
-        result.append(declaration.name)
-    }
-
-    if (declaration is IrFunction) {
-        result.append("()")
+        expectDeclaration.setter?.symbol?.let { destination[it] = actualProperty.setter!!.symbol }
     }
 }
 
-internal fun MutableMap<IrSymbol, IrSymbol>.addLink(expectMember: IrDeclarationBase, actualMember: IrDeclaration) {
-    this[expectMember.symbol] = actualMember.symbol
-    if (expectMember is IrProperty) {
-        val actualProperty = actualMember as IrProperty
-        expectMember.getter!!.let {
-            val getter = actualProperty.getter!!
-            this[it.symbol] = getter.symbol
-            this.appendTypeParametersMap(it, getter)
+private fun recordTypeParametersMapping(
+    destination: MutableMap<IrSymbol, IrSymbol>,
+    expectTypeParametersContainer: IrTypeParametersContainer,
+    actualTypeParametersContainer: IrTypeParametersContainer
+) {
+    expectTypeParametersContainer.typeParameters
+        .zip(actualTypeParametersContainer.typeParameters)
+        .forEach { (expectTypeParameter, actualTypeParameter) ->
+            destination[expectTypeParameter.symbol] = actualTypeParameter.symbol
         }
-        expectMember.setter?.symbol?.let { this[it] = actualProperty.setter!!.symbol }
-    } else if (expectMember is IrFunction) {
-        this.appendTypeParametersMap(expectMember, actualMember as IrFunction)
-    }
+}
+
+internal fun KtDiagnosticReporterWithImplicitIrBasedContext.reportMissingActual(expectSymbol: IrSymbol) {
+    reportMissingActual(expectSymbol.owner as IrDeclaration)
 }
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
@@ -197,6 +104,21 @@ internal fun KtDiagnosticReporterWithImplicitIrBasedContext.reportMissingActual(
         CommonBackendErrors.NO_ACTUAL_FOR_EXPECT,
         (irDeclaration as? IrDeclarationWithName)?.name?.asString().orEmpty(),
         irDeclaration.module
+    )
+}
+
+internal fun KtDiagnosticReporterWithImplicitIrBasedContext.reportIncompatibleExpectActual(
+    expectSymbol: IrSymbol,
+    actualSymbol: IrSymbol,
+    incompatibility: ExpectActualCompatibility.Incompatible<*>
+) {
+    val expectDeclaration = expectSymbol.owner as IrDeclaration
+    val actualDeclaration = actualSymbol.owner as IrDeclaration
+    at(expectDeclaration).report(
+        CommonBackendErrors.INCOMPATIBLE_MATCHING,
+        expectDeclaration.getNameWithAssert().asString(),
+        actualDeclaration.getNameWithAssert().asString(),
+        incompatibility
     )
 }
 

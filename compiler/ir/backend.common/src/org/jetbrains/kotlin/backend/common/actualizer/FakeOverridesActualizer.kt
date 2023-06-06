@@ -47,7 +47,7 @@ internal class FakeOverridesActualizer(private val expectActualMap: MutableMap<I
             val actualizedOverrides = overriddenSymbols.map { (it.owner as IrDeclaration).actualize() }
             val actualFakeOverride = createFakeOverrideMember(actualizedOverrides, parent as IrClass)
 
-            expectActualMap.addLink(this as IrDeclarationBase, actualFakeOverride)
+            recordActualForExpectDeclaration(this.symbol, actualFakeOverride.symbol, expectActualMap)
 
             return actualFakeOverride
         }

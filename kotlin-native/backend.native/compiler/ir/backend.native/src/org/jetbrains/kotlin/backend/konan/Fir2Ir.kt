@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.fir.signaturer.Ir2FirManglerAdapter
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrExternalPackageFragment
+import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.library.metadata.KlibMetadataFactories
@@ -87,6 +88,7 @@ internal fun PhaseContext.fir2Ir(
             visibilityConverter = Fir2IrVisibilityConverter.Default,
             diagnosticReporter = diagnosticsReporter,
             kotlinBuiltIns = builtInsModule ?: DefaultBuiltIns.Instance,
+            actualizerTypeContextProvider = ::IrTypeSystemContextImpl,
             fir2IrResultPostCompute = {
                 // it's important to compare manglers before actualization, since IR will be actualized, while FIR won't
                 irModuleFragment.acceptVoid(

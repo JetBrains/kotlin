@@ -17,9 +17,9 @@ expect class WithDefaultArgFromSuper : I {
     override fun methodWithDefaultArg(s: String)
 }
 
-expect open class WithIncompatibility {
+<!INCOMPATIBLE_MATCHING{JVM}!>expect open class WithIncompatibility {
     fun foo(p: String = "common")
-}
+}<!>
 
 // MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt

@@ -17,6 +17,8 @@ interface ConstructorSymbolMarker : FunctionSymbolMarker
 interface SimpleFunctionSymbolMarker : FunctionSymbolMarker
 interface PropertySymbolMarker : CallableSymbolMarker
 interface ValueParameterSymbolMarker : CallableSymbolMarker
+interface FieldSymbolMarker : CallableSymbolMarker
+interface EnumEntrySymbolMarker : CallableSymbolMarker
 
 interface ClassifierSymbolMarker : DeclarationSymbolMarker
 interface TypeParameterSymbolMarker : ClassifierSymbolMarker

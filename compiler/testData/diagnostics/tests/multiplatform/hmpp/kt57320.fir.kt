@@ -26,7 +26,7 @@ interface KotlinXStringDemoInterface {
     val value: String
 }
 
-expect fun StringDemoInterface.plusK(): String
+<!INCOMPATIBLE_MATCHING{JS}!>expect fun StringDemoInterface.plusK(): String<!>
 
 // MODULE: js()()(common, intermediate)
 // TARGET_PLATFORM: JS
@@ -34,7 +34,7 @@ expect fun StringDemoInterface.plusK(): String
 // FILE: StringDemoInterface.kt
 actual typealias StringDemoInterface = KotlinXStringDemoInterface
 
-<!ACTUAL_WITHOUT_EXPECT("actual  fun StringDemoInterface.plusK(): <ERROR TYPE REF: Unresolved name: value>; The following declaration is incompatible:    expect fun StringDemoInterface.plusK(): String")!>actual fun StringDemoInterface.plusK() = <!RESOLUTION_TO_CLASSIFIER!>StringValue<!>(value).plus("K").<!UNRESOLVED_REFERENCE!>value<!><!>
+<!ACTUAL_WITHOUT_EXPECT("actual  fun StringDemoInterface.plusK(): <ERROR TYPE REF: Unresolved name: value>; The following declaration is incompatible:    expect fun StringDemoInterface.plusK(): String")!>actual fun StringDemoIn<!INCOMPATIBLE_MATCHING!>terface.plusK() = <!RESOLUTION_TO_CLASSIFIER!>StringValue<!>(value).plus("K")<!>.<!UNRESOLVED_REFERENCE!>value<!><!>
 
 // FILE: main.kt
 class StringDemo(override val value: String) : StringDemoInterface

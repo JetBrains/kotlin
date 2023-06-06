@@ -15,10 +15,7 @@ import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrClassPublicSymbolImpl
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.utils.filterIsInstanceAnd
 import java.io.File
@@ -57,10 +54,47 @@ val IrDeclarationParent.kotlinFqName: FqName
     }
 
 val IrClass.classId: ClassId?
+    get() = classIdImpl
+
+val IrTypeAlias.classId: ClassId?
+    get() = classIdImpl
+
+private val IrDeclarationWithName.classIdImpl: ClassId?
     get() = when (val parent = this.parent) {
         is IrClass -> parent.classId?.createNestedClassId(this.name)
         is IrPackageFragment -> ClassId.topLevel(parent.packageFqName.child(this.name))
         else -> null
+    }
+
+val IrClass.classIdOrFail: ClassId
+    get() = classIdOrFailImpl
+
+val IrTypeAlias.classIdOrFail: ClassId
+    get() = classIdOrFailImpl
+
+private val IrDeclarationWithName.classIdOrFailImpl: ClassId
+    get() = classIdImpl ?: error("No classId for $this")
+
+val IrFunction.callableId: CallableId
+    get() = callableIdImpl
+
+val IrProperty.callableId: CallableId
+    get() = callableIdImpl
+
+val IrField.callableId: CallableId
+    get() = callableIdImpl
+
+val IrEnumEntry.callableId: CallableId
+    get() = callableIdImpl
+
+private val IrDeclarationWithName.callableIdImpl: CallableId
+    get() {
+        if (this.symbol is IrClassifierSymbol) error("Classifiers can not have callableId. Got $this")
+        return when (val parent = this.parent) {
+            is IrClass -> parent.classId?.let { CallableId(it, name) }
+            is IrPackageFragment -> CallableId(parent.packageFqName, name)
+            else -> null
+        } ?: error("$this has no callableId")
     }
 
 @Suppress("unused")

@@ -3,8 +3,8 @@
 // FILE: common.kt
 
 expect class C1
-expect interface C2<A>
-expect interface C3<B>
+<!INCOMPATIBLE_MATCHING{JVM}!>expect interface C2<A><!>
+<!INCOMPATIBLE_MATCHING{JVM}!>expect interface C3<B><!>
 expect interface C4<D, E>
 expect interface C5<F, G>
 expect interface C6<H>

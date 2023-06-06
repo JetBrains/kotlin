@@ -1,11 +1,11 @@
 // MODULE: m1-common
 // FILE: common.kt
 
-expect enum class Foo {
+<!INCOMPATIBLE_MATCHING{JVM}, INCOMPATIBLE_MATCHING{JVM}!>expect enum class Foo {
     ENTRY1,
     ENTRY2,
     ENTRY3;
-}
+}<!>
 
 // MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt

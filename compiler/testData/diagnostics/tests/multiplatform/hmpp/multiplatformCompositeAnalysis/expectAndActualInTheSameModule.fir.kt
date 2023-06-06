@@ -3,10 +3,10 @@
 // TARGET_PLATFORM: Common
 
 <!NO_ACTUAL_FOR_EXPECT{JVM}!>expect class CommonClass {
-    <!NO_ACTUAL_FOR_EXPECT{JVM}!>fun memberFun()<!>
-    <!NO_ACTUAL_FOR_EXPECT{JVM}!>val memberProp: Int<!>
-    <!NO_ACTUAL_FOR_EXPECT{JVM}!>class Nested<!>
-    <!NO_ACTUAL_FOR_EXPECT{JVM}!>inner class Inner<!>
+    fun memberFun()
+    val memberProp: Int
+    class Nested
+    inner class Inner
 }<!>
 <!ACTUAL_WITHOUT_EXPECT!>actual class CommonClass {
     <!ACTUAL_WITHOUT_EXPECT!>actual fun memberFun() {}<!>

@@ -5,9 +5,9 @@ expect fun interface F1 {
     fun run()
 }
 
-expect fun interface F2 {
+<!INCOMPATIBLE_MATCHING{JVM}!>expect fun interface F2 {
     fun run()
-}
+}<!>
 
 expect fun interface F3 {
     fun run()
@@ -21,9 +21,9 @@ expect fun interface F5 {
     fun run()
 }
 
-expect fun interface F6 {
+<!INCOMPATIBLE_MATCHING{JVM}!>expect fun interface F6 {
     fun run()
-}
+}<!>
 
 // MODULE: m2-jvm()()(m1-common)
 

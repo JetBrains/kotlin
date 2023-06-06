@@ -8,13 +8,18 @@ package org.jetbrains.kotlin.backend.common.actualizer
 import org.jetbrains.kotlin.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.backend.common.CommonBackendErrors
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.Name
 
 /**
  * It adds fake overrides to non-expect classes inside common or multi-platform module,
@@ -27,9 +32,11 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
  */
 internal class ActualFakeOverridesAdder(
     private val expectActualMap: Map<IrSymbol, IrSymbol>,
-    private val diagnosticsReporter: KtDiagnosticReporterWithImplicitIrBasedContext
+    private val expectToActualClassMap: Map<ClassId, IrClassSymbol>,
+    private val diagnosticsReporter: KtDiagnosticReporterWithImplicitIrBasedContext,
+    private val typeSystemContext: IrTypeSystemContext
 ) : IrElementVisitorVoid {
-    private val missingActualMembersMap = mutableMapOf<IrClass, MutableMap<String, MutableList<IrDeclaration>>>()
+    private val missingActualMembersMap = mutableMapOf<IrClass, FakeOverrideInfo>()
 
     override fun visitClass(declaration: IrClass) {
         extractMissingActualMembersFromSupertypes(declaration)
@@ -40,20 +47,20 @@ internal class ActualFakeOverridesAdder(
         element.acceptChildrenVoid(this)
     }
 
-    private fun extractMissingActualMembersFromSupertypes(klass: IrClass): Map<String, MutableList<IrDeclaration>> {
+    private fun extractMissingActualMembersFromSupertypes(klass: IrClass): FakeOverrideInfo {
         missingActualMembersMap[klass]?.let { return it }
 
-        val missingActualMembers = mutableMapOf<String, MutableList<IrDeclaration>>()
+        val missingActualMembers = FakeOverrideInfo()
         missingActualMembersMap[klass] = missingActualMembers
 
         // New members from supertypes are only relevant for not expect (ordinary) classes
         // New members from the current class are only relevant for actualized expect classes
 
-        val processedMembers = mutableMapOf<String, MutableList<IrDeclaration>>()
+        val processedMembers = FakeOverrideInfo()
         for (superType in klass.superTypes) {
             val membersFromSupertype = extractMissingActualMembersFromSupertypes(superType.classifierOrFail.owner as IrClass)
             if (!klass.isExpect) {
-                missingActualMembers.appendMissingMembersToNotExpectClass(klass, membersFromSupertype, processedMembers)
+                appendMissingMembersToNotExpectClass(missingActualMembers, klass, membersFromSupertype.allSymbols(), processedMembers)
             }
         }
 
@@ -64,22 +71,35 @@ internal class ActualFakeOverridesAdder(
         return missingActualMembers
     }
 
-    private fun MutableMap<String, MutableList<IrDeclaration>>.appendMissingMembersToNotExpectClass(
+    private fun appendMissingMembersToNotExpectClass(
+        fakeOverrideInfo: FakeOverrideInfo,
         klass: IrClass,
-        membersFromSupertype: Map<String, MutableList<IrDeclaration>>,
-        processedMembers: MutableMap<String, MutableList<IrDeclaration>>
+        membersFromSupertype: List<IrSymbol>,
+        processedMembers: FakeOverrideInfo
     ) {
-        for (memberFromSupertype in membersFromSupertype.flatMap { it.value }) {
+        for (symbolFromSupertype in membersFromSupertype) {
+            val memberFromSupertype = symbolFromSupertype.owner as IrDeclaration
             val newMember = createFakeOverrideMember(listOf(memberFromSupertype), klass)
-            val name = newMember.getFunctionOrPropertyName()
-            if (getMatches(name, newMember, expectActualMap).isEmpty()) {
+            val matchingFakeOverrides = collectActualCallablesMatchingToSpecificExpect(
+                newMember.symbol,
+                fakeOverrideInfo.getMembersForActual(newMember),
+                expectToActualClassMap,
+                typeSystemContext
+            )
+            if (matchingFakeOverrides.isEmpty()) {
                 processedMembers.addMember(memberFromSupertype as IrOverridableDeclaration<*>)
-                addMember(newMember)
+                fakeOverrideInfo.addMember(newMember)
                 klass.addMember(newMember)
             } else {
-                val baseMember = processedMembers.getMatches(name, newMember, expectActualMap).single()
+                val baseMembers = collectActualCallablesMatchingToSpecificExpect(
+                    newMember.symbol,
+                    processedMembers.getMembersForActual(newMember),
+                    expectToActualClassMap,
+                    typeSystemContext
+                )
+
                 val errorFactory =
-                    if ((baseMember.parent as IrClass).isInterface && (memberFromSupertype.parent as IrClass).isInterface)
+                    if (baseMembers.all { ((it.owner as IrDeclaration).parent as IrClass).isInterface } && (memberFromSupertype.parent as IrClass).isInterface)
                         CommonBackendErrors.MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED
                     else
                         CommonBackendErrors.MANY_IMPL_MEMBER_NOT_IMPLEMENTED
@@ -92,7 +112,7 @@ internal class ActualFakeOverridesAdder(
         }
     }
 
-    private fun MutableMap<String, MutableList<IrDeclaration>>.appendMissingMembersFromActualizedExpectClass(
+    private fun FakeOverrideInfo.appendMissingMembersFromActualizedExpectClass(
         expectClass: IrClass,
         actualClass: IrClass,
     ) {
@@ -110,11 +130,31 @@ internal class ActualFakeOverridesAdder(
         }
     }
 
-    private fun MutableMap<String, MutableList<IrDeclaration>>.addMember(member: IrOverridableDeclaration<*>) {
-        getOrPut(member.getFunctionOrPropertyName()) { mutableListOf() }.add(member)
-    }
+    private class FakeOverrideInfo {
+        val functionsByName: MutableMap<Name, MutableList<IrSymbol>> = mutableMapOf()
+        val propertiesByName: MutableMap<Name, MutableList<IrSymbol>> = mutableMapOf()
 
-    private fun IrOverridableDeclaration<*>.getFunctionOrPropertyName(): String {
-        return (this as IrDeclarationWithName).name.asString() + (if (this is IrSimpleFunction) "()" else "")
+        fun allSymbols(): List<IrSymbol> {
+            return buildList {
+                functionsByName.values.flatMapTo(this) { it }
+                propertiesByName.values.flatMapTo(this) { it }
+            }
+        }
+
+        private fun getCorrespondingMap(member: IrOverridableDeclaration<*>): MutableMap<Name, MutableList<IrSymbol>> {
+            return when (member) {
+                is IrFunction -> functionsByName
+                is IrProperty -> propertiesByName
+                else -> error("Unsupported declaration type: $member")
+            }
+        }
+
+        fun addMember(member: IrOverridableDeclaration<*>) {
+            getCorrespondingMap(member).getOrPut(member.name) { mutableListOf() } += member.symbol
+        }
+
+        fun getMembersForActual(actualMember: IrOverridableDeclaration<*>): List<IrSymbol> {
+            return getCorrespondingMap(actualMember)[actualMember.name].orEmpty()
+        }
     }
 }

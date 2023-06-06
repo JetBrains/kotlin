@@ -1,20 +1,20 @@
 // MODULE: m1-common
 // FILE: common.kt
-expect var v1: Boolean
+<!INCOMPATIBLE_MATCHING{JVM}!>expect var v1: Boolean<!>
 
 expect var v2: Boolean
     internal set
 
-expect var v3: Boolean
-    internal set
+<!INCOMPATIBLE_MATCHING{JVM}!>expect var v3: Boolean
+    internal set<!>
 
-expect open class C {
-    var foo: Boolean
-}
+<!INCOMPATIBLE_MATCHING{JVM}!>expect open class C {
+    <!INCOMPATIBLE_MATCHING{JVM}!>var foo: Boolean<!>
+}<!>
 
-expect open class C2 {
-    var foo: Boolean
-}
+<!INCOMPATIBLE_MATCHING{JVM}!>expect open class C2 {
+    <!INCOMPATIBLE_MATCHING{JVM}!>var foo: Boolean<!>
+}<!>
 
 // MODULE: m1-jvm()()(m1-common)
 // FILE: jvm.kt

@@ -169,7 +169,7 @@ val IrClassifierSymbol.defaultType: IrType
         is IrScriptSymbol -> unexpectedSymbolKind<IrClassifierSymbol>()
     }
 
-val IrTypeParameter.defaultType: IrType
+val IrTypeParameter.defaultType: IrSimpleType
     get() = IrSimpleTypeImpl(
         symbol,
         SimpleTypeNullability.NOT_SPECIFIED,

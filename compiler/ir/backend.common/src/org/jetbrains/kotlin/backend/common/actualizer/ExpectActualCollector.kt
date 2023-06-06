@@ -8,66 +8,97 @@ package org.jetbrains.kotlin.backend.common.actualizer
 import org.jetbrains.kotlin.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.types.classifierOrFail
-import org.jetbrains.kotlin.ir.util.isFakeOverride
-import org.jetbrains.kotlin.ir.util.kotlinFqName
+import org.jetbrains.kotlin.ir.util.callableId
+import org.jetbrains.kotlin.ir.util.classIdOrFail
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
-import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.mpp.DeclarationSymbolMarker
+import org.jetbrains.kotlin.name.CallableId
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.resolve.calls.mpp.AbstractExpectActualCompatibilityChecker
+import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility
 
+/**
+ * This class is used to collect mapping between all expect and actuals declarations, which are declared in passed module fragments
+ * It does not process any declarations which may appear after actualization of supertypes (like fake-overrides in classes with
+ *   expect supertypes)
+ *
+ * The main method of this class, `collect` returns a pair of two values:
+ * - `expectToActualMap` is the main storage of all mapped declarations. Key is symbol of expect declaration and the value is symbol of
+ *     corresponding actual declaration
+ * - `classActualizationInfo` is a storage which keeps information about types (class) actualization, which can be used later for type
+ *     refinement if needed
+ *
+ * If some declarations didn't match (or there was missing/actual) then corresponding declarations won't be stored in `expectToActualMap`.
+ *   Instead of that an error will be reported to `diagnosticReporter`
+ */
 internal class ExpectActualCollector(
     private val mainFragment: IrModuleFragment,
     private val dependentFragments: List<IrModuleFragment>,
-    private val diagnosticsReporter: KtDiagnosticReporterWithImplicitIrBasedContext
+    private val typeSystemContext: IrTypeSystemContext,
+    private val diagnosticsReporter: KtDiagnosticReporterWithImplicitIrBasedContext,
 ) {
-    fun collect(): MutableMap<IrSymbol, IrSymbol> {
+    data class Result(val expectToActualMap: MutableMap<IrSymbol, IrSymbol>, val classActualizationInfo: ClassActualizationInfo)
+
+    fun collect(): Result {
         val result = mutableMapOf<IrSymbol, IrSymbol>()
         // Collect and link classes at first to make it possible to expand type aliases on the members linking
-        val (actualMembers, expectActualTypeAliasMap) = result.appendExpectActualClassMap()
-        result.appendExpectActualMemberMap(actualMembers, expectActualTypeAliasMap)
-        return result
+        val actualDeclarations = collectActualDeclarations()
+        matchAllExpectDeclarations(result, actualDeclarations)
+        return Result(result, actualDeclarations)
     }
 
-    private fun MutableMap<IrSymbol, IrSymbol>.appendExpectActualClassMap(): Pair<List<IrDeclarationBase>, Map<FqName, FqName>> {
-        val actualClasses = mutableMapOf<String, IrClassSymbol>()
-        // There is no list for builtins declarations; that's why they are being collected from typealiases
-        val actualMembers = mutableListOf<IrDeclarationBase>()
-        val expectActualTypeAliasMap = mutableMapOf<FqName, FqName>() // It's used to link members from expect class that have typealias actual
-
+    private fun collectActualDeclarations(): ClassActualizationInfo {
         val fragmentsWithActuals = dependentFragments.drop(1) + mainFragment
-        val actualClassesAndMembersCollector = ActualClassesAndMembersCollector(actualClasses, actualMembers, expectActualTypeAliasMap)
-        fragmentsWithActuals.forEach { actualClassesAndMembersCollector.collect(it) }
-
-        val linkCollector = ClassLinksCollector(this, actualClasses, expectActualTypeAliasMap, diagnosticsReporter)
-        dependentFragments.forEach { linkCollector.visitModuleFragment(it) }
-
-        return actualMembers to expectActualTypeAliasMap
+        return ActualDeclarationsCollector.collectActualsFromFragments(fragmentsWithActuals)
     }
 
-    private fun MutableMap<IrSymbol, IrSymbol>.appendExpectActualMemberMap(
-        actualMembers: List<IrDeclarationBase>,
-        expectActualTypeAliasMap: Map<FqName, FqName>
+    private fun matchAllExpectDeclarations(
+        destination: MutableMap<IrSymbol, IrSymbol>,
+        classActualizationInfo: ClassActualizationInfo,
     ) {
-        val actualMembersMap = mutableMapOf<String, MutableList<IrDeclarationBase>>()
-        for (actualMember in actualMembers) {
-            actualMembersMap.getOrPut(generateIrElementFullNameFromExpect(actualMember, expectActualTypeAliasMap)) { mutableListOf() }
-                .add(actualMember)
-        }
-        val collector = MemberLinksCollector(this, actualMembersMap, expectActualTypeAliasMap, diagnosticsReporter)
-        dependentFragments.forEach { collector.visitModuleFragment(it) }
+        val linkCollector = ExpectActualLinkCollector(destination, classActualizationInfo, typeSystemContext, diagnosticsReporter)
+        dependentFragments.forEach { linkCollector.visitModuleFragment(it) }
     }
 }
 
-private class ActualClassesAndMembersCollector(
-    private val actualClasses: MutableMap<String, IrClassSymbol>,
-    private val actualMembers: MutableList<IrDeclarationBase>,
-    private val expectActualTypeAliasMap: MutableMap<FqName, FqName>
+internal data class ClassActualizationInfo(
+    // mapping from classId of actual class/typealias to itself/typealias expansion
+    val actualClasses: Map<ClassId, IrClassSymbol>,
+    // mapping from classId to actual typealias
+    val actualTypeAliases: Map<ClassId, IrTypeAliasSymbol>,
+    val actualTopLevels: Map<CallableId, List<IrDeclarationWithName>>,
 ) {
+    fun getActualWithoutExpansion(classId: ClassId): IrSymbol? {
+        return actualTypeAliases[classId] ?: actualClasses[classId]
+    }
+}
+
+private class ActualDeclarationsCollector {
+    companion object {
+        fun collectActualsFromFragments(fragments: List<IrModuleFragment>): ClassActualizationInfo {
+            val collector = ActualDeclarationsCollector()
+            for (fragment in fragments) {
+                collector.collect(fragment)
+            }
+            return ClassActualizationInfo(
+                collector.actualClasses,
+                collector.actualTypeAliasesWithoutExpansion,
+                collector.actualTopLevels
+            )
+        }
+    }
+
+    private val actualClasses: MutableMap<ClassId, IrClassSymbol> = mutableMapOf()
+    private val actualTypeAliasesWithoutExpansion: MutableMap<ClassId, IrTypeAliasSymbol> = mutableMapOf()
+    private val actualTopLevels: MutableMap<CallableId, MutableList<IrDeclarationWithName>> = mutableMapOf()
+
     private val visitedActualClasses = mutableSetOf<IrClass>()
 
-    fun collect(element: IrElement) {
+    private fun collect(element: IrElement) {
         when (element) {
             is IrModuleFragment -> {
                 for (file in element.files) {
@@ -77,16 +108,18 @@ private class ActualClassesAndMembersCollector(
             is IrTypeAlias -> {
                 if (!element.isActual) return
 
+                val classId = element.classIdOrFail
                 val expandedTypeSymbol = element.expandedType.classifierOrFail as IrClassSymbol
-                addActualClass(element, expandedTypeSymbol)
-                collect(expandedTypeSymbol.owner)
 
-                expectActualTypeAliasMap[element.kotlinFqName] = expandedTypeSymbol.owner.kotlinFqName
+                actualClasses[classId] = expandedTypeSymbol
+                actualTypeAliasesWithoutExpansion[classId] = element.symbol
+
+                collect(expandedTypeSymbol.owner)
             }
             is IrClass -> {
                 if (element.isExpect || !visitedActualClasses.add(element)) return
 
-                addActualClass(element, element.symbol)
+                actualClasses[element.classIdOrFail] = element.symbol
                 for (declaration in element.declarations) {
                     collect(declaration)
                 }
@@ -97,101 +130,99 @@ private class ActualClassesAndMembersCollector(
                 }
             }
             is IrEnumEntry -> {
-                actualMembers.add(element) // If enum entry is located inside expect enum, then this code is not executed
+                recordActualCallable(element, element.callableId) // If enum entry is located inside expect enum, then this code is not executed
             }
             is IrProperty -> {
                 if (element.isExpect) return
-                actualMembers.add(element)
+                recordActualCallable(element, element.callableId)
             }
             is IrFunction -> {
                 if (element.isExpect) return
-                actualMembers.add(element)
+                recordActualCallable(element, element.callableId)
             }
         }
     }
 
-    private fun addActualClass(classOrTypeAlias: IrElement, classSymbol: IrClassSymbol) {
-        actualClasses[generateActualIrClassOrTypeAliasFullName(classOrTypeAlias)] = classSymbol
+    private fun recordActualCallable(callableDeclaration: IrDeclarationWithName, callableId: CallableId) {
+        if (callableId.classId == null) {
+            actualTopLevels
+                .getOrPut(callableId) { mutableListOf() }
+                .add(callableDeclaration)
+        }
     }
 }
 
-private class ClassLinksCollector(
-    private val expectActualMap: MutableMap<IrSymbol, IrSymbol>,
-    private val actualClasses: Map<String, IrClassSymbol>,
-    private val expectActualTypeAliasMap: Map<FqName, FqName>,
-    private val diagnosticsReporter: KtDiagnosticReporterWithImplicitIrBasedContext
+private class ExpectActualLinkCollector(
+    private val destination: MutableMap<IrSymbol, IrSymbol>,
+    private val classActualizationInfo: ClassActualizationInfo,
+    typeSystemContext: IrTypeSystemContext,
+    private val diagnosticsReporter: KtDiagnosticReporterWithImplicitIrBasedContext,
 ) : IrElementVisitorVoid {
+    private val context = MatchingContext(typeSystemContext)
+
+    override fun visitFunction(declaration: IrFunction) {
+        if (declaration.isExpect) {
+            matchExpectCallable(declaration, declaration.callableId)
+        }
+    }
+
+    override fun visitProperty(declaration: IrProperty) {
+        if (declaration.isExpect) {
+            matchExpectCallable(declaration, declaration.callableId)
+        }
+    }
+
+    private fun matchExpectCallable(declaration: IrDeclarationWithName, callableId: CallableId) {
+        val actualSymbols = classActualizationInfo.actualTopLevels[callableId]?.map { it.symbol }.orEmpty()
+        matchExpectDeclaration(declaration.symbol, actualSymbols)
+    }
+
     override fun visitClass(declaration: IrClass) {
         if (!declaration.isExpect) return
+        val classId = declaration.classIdOrFail
+        val expectClassSymbol = declaration.symbol
+        val actualClassLikeSymbol = classActualizationInfo.getActualWithoutExpansion(classId)
+        matchExpectDeclaration(expectClassSymbol, listOfNotNull(actualClassLikeSymbol))
+    }
 
-        val actualClassSymbol = actualClasses[generateIrElementFullNameFromExpect(declaration, expectActualTypeAliasMap)]
-        if (actualClassSymbol != null) {
-            expectActualMap[declaration.symbol] = actualClassSymbol
-            expectActualMap.appendTypeParametersMap(declaration, actualClassSymbol.owner)
-        } else if (!declaration.containsOptionalExpectation()) {
-            diagnosticsReporter.reportMissingActual(declaration)
-        }
-
-        visitElement(declaration)
+    private fun matchExpectDeclaration(expectSymbol: IrSymbol, actualSymbols: List<IrSymbol>) {
+        AbstractExpectActualCompatibilityChecker.matchSingleExpectTopLevelDeclarationAgainstPotentialActuals(
+            expectSymbol,
+            actualSymbols,
+            context
+        )
     }
 
     override fun visitElement(element: IrElement) {
         element.acceptChildrenVoid(this)
     }
-}
 
-private class MemberLinksCollector(
-    private val expectActualMap: MutableMap<IrSymbol, IrSymbol>,
-    private val actualMembers: Map<String, List<IrDeclarationBase>>,
-    private val typeAliasMap: Map<FqName, FqName>,
-    private val diagnosticsReporter: KtDiagnosticReporterWithImplicitIrBasedContext
-) : IrElementVisitorVoid {
-    override fun visitFunction(declaration: IrFunction) {
-        if (declaration.isExpect) addLink(declaration)
-    }
+    private inner class MatchingContext(
+        typeSystemContext: IrTypeSystemContext,
+    ) : IrExpectActualMatchingContext(typeSystemContext, classActualizationInfo.actualClasses) {
+        override fun onMatchedClasses(expectClassSymbol: IrClassSymbol, actualClassSymbol: IrClassSymbol) {
+            destination[expectClassSymbol] = actualClassSymbol
+            recordActualForExpectDeclaration(expectClassSymbol, actualClassSymbol, destination)
+        }
 
-    override fun visitProperty(declaration: IrProperty) {
-        if (declaration.isExpect) addLink(declaration)
-    }
+        override fun onMatchedCallables(expectSymbol: IrSymbol, actualSymbol: IrSymbol) {
+            recordActualForExpectDeclaration(expectSymbol, actualSymbol, destination)
+        }
 
-    override fun visitEnumEntry(declaration: IrEnumEntry) {
-        if ((declaration.parent as IrClass).isExpect) addLink(declaration)
-    }
-
-    private fun addLink(expectDeclaration: IrDeclarationBase) {
-        val actualMemberMatches = actualMembers.getMatches(expectDeclaration, expectActualMap, typeAliasMap)
-        when {
-            actualMemberMatches.size == 1 -> {
-                expectActualMap.addLink(expectDeclaration, actualMemberMatches.single())
+        override fun onMismatchedMembersFromClassScope(
+            expectSymbol: DeclarationSymbolMarker,
+            actualSymbolsByIncompatibility: Map<ExpectActualCompatibility.Incompatible<*>, List<DeclarationSymbolMarker>>,
+        ) {
+            require(expectSymbol is IrSymbol)
+            if (actualSymbolsByIncompatibility.isEmpty() && !expectSymbol.owner.containsOptionalExpectation()) {
+                diagnosticsReporter.reportMissingActual(expectSymbol)
             }
-            actualMemberMatches.size > 1 -> {
-                // TODO: report AMBIGUOUS_ACTUALS here, see KT-57932
-            }
-            (expectDeclaration.parent as? IrClass)?.isExpect == false && expectDeclaration.isFakeOverride -> {
-                // Remaining expect fake override members from not expect classes will be actualized in FakeOverridesTransformer
-                // It occurs in a separated step because they require filled expectActualMap for members from expect classes
-            }
-            else -> {
-                if (shouldReportMissingActual(expectDeclaration)) {
-                    diagnosticsReporter.reportMissingActual(expectDeclaration)
+            for ((incompatibility, actualMemberSymbols) in actualSymbolsByIncompatibility) {
+                for (actualSymbol in actualMemberSymbols) {
+                    require(actualSymbol is IrSymbol)
+                    diagnosticsReporter.reportIncompatibleExpectActual(expectSymbol, actualSymbol, incompatibility)
                 }
             }
         }
     }
-
-    private fun shouldReportMissingActual(declaration: IrDeclarationBase): Boolean {
-        return !declaration.parent.containsOptionalExpectation() && !(declaration is IrConstructor && declaration.isPrimary)
-    }
-
-    override fun visitElement(element: IrElement) {
-        element.acceptChildrenVoid(this)
-    }
-}
-
-fun MutableMap<IrSymbol, IrSymbol>.appendTypeParametersMap(
-    expectTypeParametersContainer: IrTypeParametersContainer,
-    actualTypeParametersContainer: IrTypeParametersContainer
-) {
-    expectTypeParametersContainer.typeParameters.zip(actualTypeParametersContainer.typeParameters)
-        .forEach { (expectTypeParameter, actualTypeParameter) -> this[expectTypeParameter.symbol] = actualTypeParameter.symbol }
 }

@@ -2,20 +2,20 @@
 // MODULE: m1-common
 // FILE: common.kt
 
-expect open class Container {
+<!INCOMPATIBLE_MATCHING{JVM}!>expect open class Container {
     fun publicFun()
 
     internal fun internalFun1()
     internal fun internalFun2()
-    internal fun internalFun3()
+    <!INCOMPATIBLE_MATCHING{JVM}!>internal fun internalFun3()<!>
 
     protected fun protectedFun1()
     protected fun protectedFun2()
-    protected fun protectedFun3()
+    <!INCOMPATIBLE_MATCHING{JVM}!>protected fun protectedFun3()<!>
 
-    open internal fun openInternalFun()
-    open fun openPublicFun()
-}
+    <!INCOMPATIBLE_MATCHING{JVM}!>open internal fun openInternalFun()<!>
+    <!INCOMPATIBLE_MATCHING{JVM}!>open fun openPublicFun()<!>
+}<!>
 
 // MODULE: m2-jvm()()(m1-common)
 

@@ -8,12 +8,14 @@ package org.jetbrains.kotlin.test.backend.ir
 import org.jetbrains.kotlin.KtPsiSourceFile
 import org.jetbrains.kotlin.backend.common.BackendException
 import org.jetbrains.kotlin.backend.common.actualizer.IrActualizer
+import org.jetbrains.kotlin.backend.jvm.JvmIrTypeSystemContext
 import org.jetbrains.kotlin.backend.jvm.MultifileFacadeFileEntry
 import org.jetbrains.kotlin.backend.jvm.lower.getFileClassInfoFromIrFile
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.ir.PsiIrFileEntry
 import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.ir.util.NaiveSourceBasedFileEntryImpl
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.backend.classic.JavaCompilerFacade
@@ -40,6 +42,7 @@ class JvmIrBackendFacade(
                 inputArtifact.irModuleFragment,
                 inputArtifact.dependentIrModuleFragments,
                 inputArtifact.state.diagnosticReporter,
+                JvmIrTypeSystemContext(inputArtifact.irModuleFragment.irBuiltins),
                 inputArtifact.state.languageVersionSettings
             )
         }

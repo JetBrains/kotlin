@@ -13,8 +13,11 @@ import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.model.TypeSubstitutorMarker
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
 
+abstract class AbstractIrTypeSubstitutor : TypeSubstitutorMarker {
+    abstract fun substitute(type: IrType): IrType
+}
 
-abstract class AbstractIrTypeSubstitutor(private val irBuiltIns: IrBuiltIns) : TypeSubstitutorMarker {
+abstract class BaseIrTypeSubstitutor(private val irBuiltIns: IrBuiltIns) : AbstractIrTypeSubstitutor() {
 
     private fun IrType.typeParameterConstructor(): IrTypeParameterSymbol? {
         return if (this is IrSimpleType) classifier as? IrTypeParameterSymbol
@@ -25,7 +28,7 @@ abstract class AbstractIrTypeSubstitutor(private val irBuiltIns: IrBuiltIns) : T
 
     abstract fun isEmptySubstitution(): Boolean
 
-    fun substitute(type: IrType): IrType {
+    final override fun substitute(type: IrType): IrType {
         if (isEmptySubstitution()) return type
         return substituteType(type)
     }
@@ -63,8 +66,9 @@ abstract class AbstractIrTypeSubstitutor(private val irBuiltIns: IrBuiltIns) : T
 class IrTypeSubstitutor(
     typeParameters: List<IrTypeParameterSymbol>,
     typeArguments: List<IrTypeArgument>,
-    irBuiltIns: IrBuiltIns
-) : AbstractIrTypeSubstitutor(irBuiltIns) {
+    irBuiltIns: IrBuiltIns,
+    private val allowEmptySubstitution: Boolean = false
+) : BaseIrTypeSubstitutor(irBuiltIns) {
 
     init {
         assert(typeParameters.size == typeArguments.size) {
@@ -80,7 +84,8 @@ class IrTypeSubstitutor(
 
     override fun getSubstitutionArgument(typeParameter: IrTypeParameterSymbol): IrTypeArgument =
         substitution[typeParameter]
-            ?: throw AssertionError("Unsubstituted type parameter: ${typeParameter.owner.render()}")
+            ?: typeParameter.takeIf { allowEmptySubstitution }?.owner?.defaultType
+            ?: error("Unsubstituted type parameter: ${typeParameter.owner.render()}")
 
     override fun isEmptySubstitution(): Boolean = substitution.isEmpty()
 }
@@ -90,7 +95,7 @@ class IrCapturedTypeSubstitutor(
     typeArguments: List<IrTypeArgument>,
     capturedTypes: List<IrCapturedType?>,
     irBuiltIns: IrBuiltIns
-) : AbstractIrTypeSubstitutor(irBuiltIns) {
+) : BaseIrTypeSubstitutor(irBuiltIns) {
 
     init {
         assert(typeArguments.size == typeParameters.size)
@@ -107,4 +112,11 @@ class IrCapturedTypeSubstitutor(
     }
 
     override fun isEmptySubstitution(): Boolean = oldSubstitution.isEmpty()
+}
+
+class IrChainedSubstitutor(val first: AbstractIrTypeSubstitutor, val second: AbstractIrTypeSubstitutor) : AbstractIrTypeSubstitutor() {
+    override fun substitute(type: IrType): IrType {
+        val firstResult = first.substitute(type)
+        return second.substitute(firstResult)
+    }
 }

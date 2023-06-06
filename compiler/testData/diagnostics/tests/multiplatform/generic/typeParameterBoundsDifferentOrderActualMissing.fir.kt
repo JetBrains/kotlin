@@ -4,7 +4,7 @@
 interface A
 interface B
 
-expect fun <T> List<T>.foo() where T : A, T : B
+<!INCOMPATIBLE_MATCHING{JVM}!>expect fun <T> List<T>.foo() where T : A, T : B<!>
 
 // MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt

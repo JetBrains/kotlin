@@ -1,9 +1,9 @@
 // MODULE: m1-common
 // FILE: common.kt
 
-expect enum class Foo {
+<!INCOMPATIBLE_MATCHING{JVM}, INCOMPATIBLE_MATCHING{JVM}!>expect enum class Foo {
     ENTRY
-}
+}<!>
 
 expect enum class _TimeUnit
 

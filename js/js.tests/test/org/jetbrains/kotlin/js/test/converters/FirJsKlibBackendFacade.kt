@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.ir.backend.js.JsFactories
 import org.jetbrains.kotlin.ir.backend.js.resolverLogger
 import org.jetbrains.kotlin.ir.backend.js.serializeModuleIntoKlib
+import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.ir.util.IrMessageLogger
 import org.jetbrains.kotlin.js.test.utils.JsIrIncrementalDataProvider
 import org.jetbrains.kotlin.js.test.utils.jsIrIncrementalDataProvider
@@ -71,6 +72,7 @@ class FirJsKlibBackendFacade(
                         inputArtifact.irModuleFragment,
                         inputArtifact.dependentIrModuleFragments,
                         diagnosticReporter,
+                        IrTypeSystemContextImpl(inputArtifact.irModuleFragment.irBuiltins),
                         configuration.languageVersionSettings
                     )
                 } else {

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.util.DeepCopyTypeRemapper
 
 data class IrActualizedResult(val actualizedExpectDeclarations: List<IrDeclaration>)
@@ -19,15 +20,17 @@ object IrActualizer {
         mainFragment: IrModuleFragment,
         dependentFragments: List<IrModuleFragment>,
         diagnosticReporter: DiagnosticReporter,
+        typeSystemContext: IrTypeSystemContext,
         languageVersionSettings: LanguageVersionSettings
     ): IrActualizedResult {
         val ktDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(diagnosticReporter, languageVersionSettings)
 
         // The ir modules processing is performed phase-to-phase:
         //   1. Collect expect-actual links for classes and their members from dependent fragments
-        val expectActualMap = ExpectActualCollector(
+        val (expectActualMap, actualDeclarations) = ExpectActualCollector(
             mainFragment,
             dependentFragments,
+            typeSystemContext,
             ktDiagnosticReporter
         ).collect()
 
@@ -44,7 +47,9 @@ object IrActualizer {
         //      taken from these non-expect classes actualized super classes.
         ActualFakeOverridesAdder(
             expectActualMap,
-            ktDiagnosticReporter
+            actualDeclarations.actualClasses,
+            ktDiagnosticReporter,
+            typeSystemContext
         ).apply { dependentFragments.forEach { visitModuleFragment(it) } }
 
         //   5. Copy and actualize function parameter default values from expect functions

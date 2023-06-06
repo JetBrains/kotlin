@@ -1,7 +1,7 @@
 // MODULE: m1-common
 // FILE: common.kt
 
-inline expect fun inlineFun()
+<!INCOMPATIBLE_MATCHING{JVM}!>inline expect fun inlineFun()<!>
 expect fun nonInlineFun()
 
 // MODULE: m2-jvm()()(m1-common)
