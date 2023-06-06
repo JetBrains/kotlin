@@ -31,10 +31,7 @@ actual class StringBuilder private constructor (
 
     // Of CharSequence.
     private var _length: Int = 0
-        set(capacity) {
-            ensureCapacity(capacity)
-            field = capacity
-        }
+
     actual override val length: Int
         get() = _length
 
@@ -373,6 +370,7 @@ actual class StringBuilder private constructor (
         if (newLength > _length) {
             array.fill('\u0000', _length, newLength.coerceAtMost(array.size))
         }
+        ensureCapacity(newLength)
         _length = newLength
     }
 
