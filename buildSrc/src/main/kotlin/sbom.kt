@@ -3,6 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+import org.gradle.api.NamedDomainObjectProvider
 import org.gradle.api.Project
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
@@ -18,7 +19,8 @@ import java.util.*
 fun Project.configureSbom(
     target: String? = null,
     documentName: String? = null,
-    gradleConfigurations: Iterable<String> = setOf("runtimeClasspath")
+    gradleConfigurations: Iterable<String> = setOf("runtimeClasspath"),
+    publication: NamedDomainObjectProvider<MavenPublication>? = null
 ): TaskProvider<SpdxSbomTask> {
     val project = this
     val targetName = target ?: "${mainPublicationName}Publication"
@@ -62,6 +64,12 @@ fun Project.configureSbom(
         pluginManager.withPlugin("kotlin-build-publishing") {
             val mainPublication = the<PublishingExtension>().publications[mainPublicationName] as MavenPublication
             mainPublication.artifact(sbomArtifact)
+        }
+    } else if (publication != null) {
+        pluginManager.withPlugin("kotlin-build-publishing") {
+            publication.configure {
+                artifact(sbomArtifact)
+            }
         }
     }
 

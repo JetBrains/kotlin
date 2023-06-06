@@ -199,7 +199,7 @@ internal class KaptWithoutKotlincConfig : KaptConfig<KaptWithoutKotlincTask> {
         project.configurations.findByName(Kapt3GradleSubplugin.KAPT_WORKER_DEPENDENCIES_CONFIGURATION_NAME)
             ?: project.configurations.create(Kapt3GradleSubplugin.KAPT_WORKER_DEPENDENCIES_CONFIGURATION_NAME).apply {
                 dependencies.addAllLater(project.listProperty {
-                    val kaptDependency = "org.jetbrains.kotlin:kotlin-annotation-processing-embeddable:${project.getKotlinPluginVersion()}"
+                    val kaptDependency = "org.jetbrains.kotlin:kotlin-annotation-processing-gradle:${project.getKotlinPluginVersion()}"
                     listOf(
                         project.dependencies.create(kaptDependency),
                         project.dependencies.kotlinDependency(

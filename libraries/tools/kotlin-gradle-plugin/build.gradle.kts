@@ -104,7 +104,6 @@ dependencies {
     commonImplementation(project(":compiler:build-tools:kotlin-build-tools-api"))
 
     commonRuntimeOnly(project(":kotlin-compiler-embeddable"))
-    commonRuntimeOnly(project(":kotlin-annotation-processing-embeddable"))
     commonRuntimeOnly(project(":kotlin-android-extensions"))
     commonRuntimeOnly(project(":kotlin-compiler-runner")) {
         // Excluding dependency with not-relocated 'com.intellij' types
