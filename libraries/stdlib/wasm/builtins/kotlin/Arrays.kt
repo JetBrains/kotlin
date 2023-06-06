@@ -16,7 +16,12 @@ package kotlin
 import kotlin.wasm.internal.*
 
 public class ByteArray(size: Int) {
-    internal val storage = WasmByteArray(size)
+    internal val storage: WasmByteArray
+
+    init {
+        if (size < 0) throw IllegalArgumentException("Negative array size")
+        storage = WasmByteArray(size)
+    }
 
     @WasmPrimitiveConstructor
     internal constructor(storage: WasmByteArray)
@@ -46,13 +51,19 @@ internal fun byteArrayIterator(array: ByteArray) = object : ByteIterator() {
 }
 
 internal inline fun createByteArray(size: Int, init: (Int) -> Byte): ByteArray {
+    if (size < 0) throw IllegalArgumentException("Negative array size")
     val result = WasmByteArray(size)
     result.fill(size, init)
     return ByteArray(result)
 }
 
 public class CharArray(size: Int) {
-    internal val storage = WasmCharArray(size)
+    internal val storage: WasmCharArray
+
+    init {
+        if (size < 0) throw IllegalArgumentException("Negative array size")
+        storage = WasmCharArray(size)
+    }
 
     @WasmPrimitiveConstructor
     internal constructor(storage: WasmCharArray)
@@ -83,13 +94,19 @@ internal fun charArrayIterator(array: CharArray) = object : CharIterator() {
 }
 
 internal inline fun createCharArray(size: Int, init: (Int) -> Char): CharArray {
+    if (size < 0) throw IllegalArgumentException("Negative array size")
     val result = WasmCharArray(size)
     result.fill(size, init)
     return CharArray(result)
 }
 
 public class ShortArray(size: Int) {
-    internal val storage = WasmShortArray(size)
+    internal val storage: WasmShortArray
+
+    init {
+        if (size < 0) throw IllegalArgumentException("Negative array size")
+        storage = WasmShortArray(size)
+    }
 
     @WasmPrimitiveConstructor
     internal constructor(storage: WasmShortArray)
@@ -120,13 +137,19 @@ internal fun shortArrayIterator(array: ShortArray) = object : ShortIterator() {
 }
 
 internal inline fun createShortArray(size: Int, init: (Int) -> Short): ShortArray {
+    if (size < 0) throw IllegalArgumentException("Negative array size")
     val result = WasmShortArray(size)
     result.fill(size, init)
     return ShortArray(result)
 }
 
 public class IntArray(size: Int) {
-    internal val storage = WasmIntArray(size)
+    internal val storage: WasmIntArray
+
+    init {
+        if (size < 0) throw IllegalArgumentException("Negative array size")
+        storage = WasmIntArray(size)
+    }
 
     @WasmPrimitiveConstructor
     internal constructor(storage: WasmIntArray)
@@ -157,13 +180,19 @@ internal fun intArrayIterator(array: IntArray) = object : IntIterator() {
 }
 
 internal inline fun createIntArray(size: Int, init: (Int) -> Int): IntArray {
+    if (size < 0) throw IllegalArgumentException("Negative array size")
     val result = WasmIntArray(size)
     result.fill(size, init)
     return IntArray(result)
 }
 
 public class LongArray(size: Int) {
-    internal val storage = WasmLongArray (size)
+    internal val storage: WasmLongArray
+
+    init {
+        if (size < 0) throw IllegalArgumentException("Negative array size")
+        storage = WasmLongArray(size)
+    }
 
     @WasmPrimitiveConstructor
     internal constructor(storage: WasmLongArray)
@@ -193,13 +222,19 @@ internal fun longArrayIterator(array: LongArray) = object : LongIterator() {
 }
 
 internal inline fun createLongArray(size: Int, init: (Int) -> Long): LongArray {
+    if (size < 0) throw IllegalArgumentException("Negative array size")
     val result = WasmLongArray(size)
     result.fill(size, init)
     return LongArray(result)
 }
 
 public class FloatArray(size: Int) {
-    internal val storage = WasmFloatArray(size)
+    internal val storage: WasmFloatArray
+
+    init {
+        if (size < 0) throw IllegalArgumentException("Negative array size")
+        storage = WasmFloatArray(size)
+    }
 
     @WasmPrimitiveConstructor
     internal constructor(storage: WasmFloatArray)
@@ -229,13 +264,19 @@ internal fun floatArrayIterator(array: FloatArray) = object : FloatIterator() {
 }
 
 internal inline fun createFloatArray(size: Int, init: (Int) -> Float): FloatArray {
+    if (size < 0) throw IllegalArgumentException("Negative array size")
     val result = WasmFloatArray(size)
     result.fill(size, init)
     return FloatArray(result)
 }
 
 public class DoubleArray(size: Int) {
-    internal val storage = WasmDoubleArray(size)
+    internal val storage: WasmDoubleArray
+
+    init {
+        if (size < 0) throw IllegalArgumentException("Negative array size")
+        storage = WasmDoubleArray(size)
+    }
 
     @WasmPrimitiveConstructor
     internal constructor(storage: WasmDoubleArray)
@@ -265,13 +306,19 @@ internal fun doubleArrayIterator(array: DoubleArray) = object : DoubleIterator()
 }
 
 internal inline fun createDoubleArray(size: Int, init: (Int) -> Double): DoubleArray {
+    if (size < 0) throw IllegalArgumentException("Negative array size")
     val result = WasmDoubleArray(size)
     result.fill(size, init)
     return DoubleArray(result)
 }
 
 public class BooleanArray(size: Int) {
-    internal val storage = WasmByteArray(size)
+    internal val storage: WasmByteArray
+
+    init {
+        if (size < 0) throw IllegalArgumentException("Negative array size")
+        storage = WasmByteArray(size)
+    }
 
     @WasmPrimitiveConstructor
     internal constructor(storage: WasmByteArray)
@@ -305,6 +352,7 @@ private fun Boolean.reinterpretAsByte(): Byte =
     implementedAsIntrinsic
 
 internal inline fun createBooleanArray(size: Int, init: (Int) -> Boolean): BooleanArray {
+    if (size < 0) throw IllegalArgumentException("Negative array size")
     val result = WasmByteArray(size)
     result.fill(size) {
         init(it).reinterpretAsByte()
