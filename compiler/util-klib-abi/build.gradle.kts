@@ -1,0 +1,38 @@
+plugins {
+    kotlin("jvm")
+    id("jps-compatible")
+}
+
+dependencies {
+    api(kotlinStdlib())
+    implementation(project(":kotlin-util-klib"))
+    implementation(project(":core:compiler.common"))
+    implementation(project(":compiler:ir.serialization.common"))
+    compileOnly(commonDependency("org.jetbrains.intellij.deps.fastutil:intellij-deps-fastutil"))
+    testApiJUnit5()
+    testImplementation(intellijCore())
+    testImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
+    testImplementation(projectTests(":compiler:tests-common-new"))
+    testImplementation(projectTests(":generators:test-generator"))
+}
+
+sourceSets {
+    "main" { projectDefault() }
+    "test" {
+        projectDefault()
+        generatedTestDir()
+    }
+}
+
+val testDataDir = projectDir.resolve("testData")
+
+projectTest(jUnitMode = JUnitMode.JUnit5) {
+    inputs.dir(testDataDir)
+    outputs.dir("$buildDir/t")
+
+    dependsOn(":dist")
+    workingDir = rootDir
+    useJUnitPlatform()
+}
+
+val generateTests by generator("org.jetbrains.kotlin.library.abi.GenerateLibraryAbiReaderTestsKt")

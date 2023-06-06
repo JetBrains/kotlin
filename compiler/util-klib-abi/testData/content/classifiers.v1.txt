@@ -1,0 +1,103 @@
+// Rendering settings:
+// - Signature version: 1
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <testClassifiers>
+open annotation class classifiers.test/AnnotationClass : kotlin/Annotation { // classifiers.test/AnnotationClass|null[0]
+    final val property // classifiers.test/AnnotationClass.property|4634558160746314112[0]
+        final fun <get-property>(): kotlin/String // classifiers.test/AnnotationClass.property.<get-property>|4838831487146901942[0]
+    constructor <init>(kotlin/String) // classifiers.test/AnnotationClass.<init>|1280618353163213788[0]
+}
+final class classifiers.test/CompanionHolder1 { // classifiers.test/CompanionHolder1|null[0]
+    constructor <init>() // classifiers.test/CompanionHolder1.<init>|-5645683436151566731[0]
+    final object Companion // classifiers.test/CompanionHolder1.Companion|null[0]
+}
+final class classifiers.test/CompanionHolder2 { // classifiers.test/CompanionHolder2|null[0]
+    constructor <init>() // classifiers.test/CompanionHolder2.<init>|-5645683436151566731[0]
+    final object Companion // classifiers.test/CompanionHolder2.Companion|null[0]
+}
+final class classifiers.test/CompanionHolder3 { // classifiers.test/CompanionHolder3|null[0]
+    constructor <init>() // classifiers.test/CompanionHolder3.<init>|-5645683436151566731[0]
+    final object DEFAULT // classifiers.test/CompanionHolder3.DEFAULT|null[0]
+}
+final class classifiers.test/CompanionHolder4 { // classifiers.test/CompanionHolder4|null[0]
+    constructor <init>() // classifiers.test/CompanionHolder4.<init>|-5645683436151566731[0]
+    final object Object // classifiers.test/CompanionHolder4.Object|null[0]
+}
+final class classifiers.test/DataClass { // classifiers.test/DataClass|null[0]
+    final val property // classifiers.test/DataClass.property|4634558160746314112[0]
+        final fun <get-property>(): kotlin/String // classifiers.test/DataClass.property.<get-property>|4838831487146901942[0]
+    constructor <init>(kotlin/String) // classifiers.test/DataClass.<init>|1280618353163213788[0]
+    final fun component1(): kotlin/String // classifiers.test/DataClass.component1|162597135895221648[0]
+    final fun copy(kotlin/String =...): classifiers.test/DataClass // classifiers.test/DataClass.copy|-8298725480798151031[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // classifiers.test/DataClass.equals|4638265728071529943[0]
+    final fun function(): kotlin/String // classifiers.test/DataClass.function|-3322893411126713785[0]
+    final fun hashCode(): kotlin/Int // classifiers.test/DataClass.hashCode|3409210261493131192[0]
+    final fun toString(): kotlin/String // classifiers.test/DataClass.toString|-1522858123163872138[0]
+}
+open enum class classifiers.test/EnumClassWithEntryClasses : kotlin/Enum<classifiers.test/EnumClassWithEntryClasses> { // classifiers.test/EnumClassWithEntryClasses|null[0]
+    final val entries // classifiers.test/EnumClassWithEntryClasses.entries|-5134227801081826149[0]
+        final fun <get-entries>(): kotlin.enums/EnumEntries<classifiers.test/EnumClassWithEntryClasses> // classifiers.test/EnumClassWithEntryClasses.entries.<get-entries>|-6068527377476727729[0]
+    open fun function(): kotlin/String // classifiers.test/EnumClassWithEntryClasses.function|-3322893411126713785[0]
+    final fun valueOf(kotlin/String): classifiers.test/EnumClassWithEntryClasses // classifiers.test/EnumClassWithEntryClasses.valueOf|-4683474617854611729[0]
+    final fun values(): kotlin/Array<classifiers.test/EnumClassWithEntryClasses> // classifiers.test/EnumClassWithEntryClasses.values|-8715569000920726747[0]
+    enum entry BAR_NO_CLASS // classifiers.test/EnumClassWithEntryClasses.BAR_NO_CLASS|null[0]
+    enum entry BAZ_HAS_CLASS // classifiers.test/EnumClassWithEntryClasses.BAZ_HAS_CLASS|null[0]
+    enum entry FOO_HAS_CLASS // classifiers.test/EnumClassWithEntryClasses.FOO_HAS_CLASS|null[0]
+}
+final enum class classifiers.test/EnumClassWithoutEntryClasses : kotlin/Enum<classifiers.test/EnumClassWithoutEntryClasses> { // classifiers.test/EnumClassWithoutEntryClasses|null[0]
+    final val entries // classifiers.test/EnumClassWithoutEntryClasses.entries|-5134227801081826149[0]
+        final fun <get-entries>(): kotlin.enums/EnumEntries<classifiers.test/EnumClassWithoutEntryClasses> // classifiers.test/EnumClassWithoutEntryClasses.entries.<get-entries>|-6068527377476727729[0]
+    final fun valueOf(kotlin/String): classifiers.test/EnumClassWithoutEntryClasses // classifiers.test/EnumClassWithoutEntryClasses.valueOf|-4683474617854611729[0]
+    final fun values(): kotlin/Array<classifiers.test/EnumClassWithoutEntryClasses> // classifiers.test/EnumClassWithoutEntryClasses.values|-8715569000920726747[0]
+    enum entry BAR_NO_CLASS // classifiers.test/EnumClassWithoutEntryClasses.BAR_NO_CLASS|null[0]
+    enum entry BAZ_NO_CLASS // classifiers.test/EnumClassWithoutEntryClasses.BAZ_NO_CLASS|null[0]
+    enum entry FOO_NO_CLASS // classifiers.test/EnumClassWithoutEntryClasses.FOO_NO_CLASS|null[0]
+}
+abstract fun interface classifiers.test/FunctionInterface { // classifiers.test/FunctionInterface|null[0]
+    abstract fun function(): kotlin/String // classifiers.test/FunctionInterface.function|-3322893411126713785[0]
+}
+abstract interface classifiers.test/Interface { // classifiers.test/Interface|null[0]
+    abstract val property // classifiers.test/Interface.property|4634558160746314112[0]
+        abstract fun <get-property>(): kotlin/String // classifiers.test/Interface.property.<get-property>|4838831487146901942[0]
+    abstract fun function(): kotlin/String // classifiers.test/Interface.function|-3322893411126713785[0]
+}
+final object classifiers.test/Object { // classifiers.test/Object|null[0]
+    final val property // classifiers.test/Object.property|4634558160746314112[0]
+        final fun <get-property>(): kotlin/String // classifiers.test/Object.property.<get-property>|4838831487146901942[0]
+    final fun function(): kotlin/String // classifiers.test/Object.function|-3322893411126713785[0]
+}
+final class classifiers.test/RegularClass { // classifiers.test/RegularClass|null[0]
+    final val property // classifiers.test/RegularClass.property|4634558160746314112[0]
+        final fun <get-property>(): kotlin/String // classifiers.test/RegularClass.property.<get-property>|4838831487146901942[0]
+    constructor <init>(kotlin/String) // classifiers.test/RegularClass.<init>|1280618353163213788[0]
+    final fun function(): kotlin/String // classifiers.test/RegularClass.function|-3322893411126713785[0]
+}
+final class classifiers.test/TopLevelClass { // classifiers.test/TopLevelClass|null[0]
+    constructor <init>() // classifiers.test/TopLevelClass.<init>|-5645683436151566731[0]
+    final inner class Inner { // classifiers.test/TopLevelClass.Inner|null[0]
+        constructor <init>() // classifiers.test/TopLevelClass.Inner.<init>|-5645683436151566731[0]
+        final inner class Inner { // classifiers.test/TopLevelClass.Inner.Inner|null[0]
+            constructor <init>() // classifiers.test/TopLevelClass.Inner.Inner.<init>|-5645683436151566731[0]
+        }
+    }
+    final class Nested { // classifiers.test/TopLevelClass.Nested|null[0]
+        constructor <init>() // classifiers.test/TopLevelClass.Nested.<init>|-5645683436151566731[0]
+        final inner class Inner { // classifiers.test/TopLevelClass.Nested.Inner|null[0]
+            constructor <init>() // classifiers.test/TopLevelClass.Nested.Inner.<init>|-5645683436151566731[0]
+        }
+        final class Nested { // classifiers.test/TopLevelClass.Nested.Nested|null[0]
+            constructor <init>() // classifiers.test/TopLevelClass.Nested.Nested.<init>|-5645683436151566731[0]
+        }
+    }
+}
+final value class classifiers.test/ValueClass { // classifiers.test/ValueClass|null[0]
+    final val property // classifiers.test/ValueClass.property|4634558160746314112[0]
+        final fun <get-property>(): kotlin/String // classifiers.test/ValueClass.property.<get-property>|4838831487146901942[0]
+    constructor <init>(kotlin/String) // classifiers.test/ValueClass.<init>|1280618353163213788[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // classifiers.test/ValueClass.equals|4638265728071529943[0]
+    final fun function(): kotlin/String // classifiers.test/ValueClass.function|-3322893411126713785[0]
+    final fun hashCode(): kotlin/Int // classifiers.test/ValueClass.hashCode|3409210261493131192[0]
+    final fun toString(): kotlin/String // classifiers.test/ValueClass.toString|-1522858123163872138[0]
+}

@@ -1,0 +1,176 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <testWith_non_public_markers_2>
+final object /Another { // /Another|null[0]
+    open annotation class Bar : kotlin/Annotation { // /Another.Bar|null[0]
+        constructor <init>() // /Another.Bar.<init>|<init>(){}[0]
+    }
+    open annotation class Foo : kotlin/Annotation { // /Another.Foo|null[0]
+        constructor <init>() // /Another.Foo.<init>|<init>(){}[0]
+    }
+}
+open annotation class /Bar : kotlin/Annotation { // /Bar|null[0]
+    constructor <init>() // /Bar.<init>|<init>(){}[0]
+}
+final class /ClassMarkedWithAnotherBar { // /ClassMarkedWithAnotherBar|null[0]
+    constructor <init>() // /ClassMarkedWithAnotherBar.<init>|<init>(){}[0]
+    final class ClassMarkedWithAnotherBar { // /ClassMarkedWithAnotherBar.ClassMarkedWithAnotherBar|null[0]
+        constructor <init>() // /ClassMarkedWithAnotherBar.ClassMarkedWithAnotherBar.<init>|<init>(){}[0]
+    }
+    final class ClassMarkedWithAnotherFoo { // /ClassMarkedWithAnotherBar.ClassMarkedWithAnotherFoo|null[0]
+        constructor <init>() // /ClassMarkedWithAnotherBar.ClassMarkedWithAnotherFoo.<init>|<init>(){}[0]
+    }
+    final class ClassMarkedWithBar { // /ClassMarkedWithAnotherBar.ClassMarkedWithBar|null[0]
+        constructor <init>() // /ClassMarkedWithAnotherBar.ClassMarkedWithBar.<init>|<init>(){}[0]
+    }
+    final class NonMarkedClass { // /ClassMarkedWithAnotherBar.NonMarkedClass|null[0]
+        constructor <init>() // /ClassMarkedWithAnotherBar.NonMarkedClass.<init>|<init>(){}[0]
+        final class ClassMarkedWithAnotherBar { // /ClassMarkedWithAnotherBar.NonMarkedClass.ClassMarkedWithAnotherBar|null[0]
+            constructor <init>() // /ClassMarkedWithAnotherBar.NonMarkedClass.ClassMarkedWithAnotherBar.<init>|<init>(){}[0]
+        }
+        final class ClassMarkedWithAnotherFoo { // /ClassMarkedWithAnotherBar.NonMarkedClass.ClassMarkedWithAnotherFoo|null[0]
+            constructor <init>() // /ClassMarkedWithAnotherBar.NonMarkedClass.ClassMarkedWithAnotherFoo.<init>|<init>(){}[0]
+        }
+        final class ClassMarkedWithBar { // /ClassMarkedWithAnotherBar.NonMarkedClass.ClassMarkedWithBar|null[0]
+            constructor <init>() // /ClassMarkedWithAnotherBar.NonMarkedClass.ClassMarkedWithBar.<init>|<init>(){}[0]
+        }
+        final class NonMarkedClass { // /ClassMarkedWithAnotherBar.NonMarkedClass.NonMarkedClass|null[0]
+            constructor <init>() // /ClassMarkedWithAnotherBar.NonMarkedClass.NonMarkedClass.<init>|<init>(){}[0]
+        }
+    }
+}
+final class /ClassMarkedWithAnotherFoo { // /ClassMarkedWithAnotherFoo|null[0]
+    constructor <init>() // /ClassMarkedWithAnotherFoo.<init>|<init>(){}[0]
+    final class ClassMarkedWithAnotherBar { // /ClassMarkedWithAnotherFoo.ClassMarkedWithAnotherBar|null[0]
+        constructor <init>() // /ClassMarkedWithAnotherFoo.ClassMarkedWithAnotherBar.<init>|<init>(){}[0]
+    }
+    final class ClassMarkedWithAnotherFoo { // /ClassMarkedWithAnotherFoo.ClassMarkedWithAnotherFoo|null[0]
+        constructor <init>() // /ClassMarkedWithAnotherFoo.ClassMarkedWithAnotherFoo.<init>|<init>(){}[0]
+    }
+    final class ClassMarkedWithBar { // /ClassMarkedWithAnotherFoo.ClassMarkedWithBar|null[0]
+        constructor <init>() // /ClassMarkedWithAnotherFoo.ClassMarkedWithBar.<init>|<init>(){}[0]
+    }
+    final class NonMarkedClass { // /ClassMarkedWithAnotherFoo.NonMarkedClass|null[0]
+        constructor <init>() // /ClassMarkedWithAnotherFoo.NonMarkedClass.<init>|<init>(){}[0]
+        final class ClassMarkedWithAnotherBar { // /ClassMarkedWithAnotherFoo.NonMarkedClass.ClassMarkedWithAnotherBar|null[0]
+            constructor <init>() // /ClassMarkedWithAnotherFoo.NonMarkedClass.ClassMarkedWithAnotherBar.<init>|<init>(){}[0]
+        }
+        final class ClassMarkedWithAnotherFoo { // /ClassMarkedWithAnotherFoo.NonMarkedClass.ClassMarkedWithAnotherFoo|null[0]
+            constructor <init>() // /ClassMarkedWithAnotherFoo.NonMarkedClass.ClassMarkedWithAnotherFoo.<init>|<init>(){}[0]
+        }
+        final class ClassMarkedWithBar { // /ClassMarkedWithAnotherFoo.NonMarkedClass.ClassMarkedWithBar|null[0]
+            constructor <init>() // /ClassMarkedWithAnotherFoo.NonMarkedClass.ClassMarkedWithBar.<init>|<init>(){}[0]
+        }
+        final class NonMarkedClass { // /ClassMarkedWithAnotherFoo.NonMarkedClass.NonMarkedClass|null[0]
+            constructor <init>() // /ClassMarkedWithAnotherFoo.NonMarkedClass.NonMarkedClass.<init>|<init>(){}[0]
+        }
+    }
+}
+final class /ClassMarkedWithBar { // /ClassMarkedWithBar|null[0]
+    constructor <init>() // /ClassMarkedWithBar.<init>|<init>(){}[0]
+    final class ClassMarkedWithAnotherBar { // /ClassMarkedWithBar.ClassMarkedWithAnotherBar|null[0]
+        constructor <init>() // /ClassMarkedWithBar.ClassMarkedWithAnotherBar.<init>|<init>(){}[0]
+    }
+    final class ClassMarkedWithAnotherFoo { // /ClassMarkedWithBar.ClassMarkedWithAnotherFoo|null[0]
+        constructor <init>() // /ClassMarkedWithBar.ClassMarkedWithAnotherFoo.<init>|<init>(){}[0]
+    }
+    final class ClassMarkedWithBar { // /ClassMarkedWithBar.ClassMarkedWithBar|null[0]
+        constructor <init>() // /ClassMarkedWithBar.ClassMarkedWithBar.<init>|<init>(){}[0]
+    }
+    final class NonMarkedClass { // /ClassMarkedWithBar.NonMarkedClass|null[0]
+        constructor <init>() // /ClassMarkedWithBar.NonMarkedClass.<init>|<init>(){}[0]
+        final class ClassMarkedWithAnotherBar { // /ClassMarkedWithBar.NonMarkedClass.ClassMarkedWithAnotherBar|null[0]
+            constructor <init>() // /ClassMarkedWithBar.NonMarkedClass.ClassMarkedWithAnotherBar.<init>|<init>(){}[0]
+        }
+        final class ClassMarkedWithAnotherFoo { // /ClassMarkedWithBar.NonMarkedClass.ClassMarkedWithAnotherFoo|null[0]
+            constructor <init>() // /ClassMarkedWithBar.NonMarkedClass.ClassMarkedWithAnotherFoo.<init>|<init>(){}[0]
+        }
+        final class ClassMarkedWithBar { // /ClassMarkedWithBar.NonMarkedClass.ClassMarkedWithBar|null[0]
+            constructor <init>() // /ClassMarkedWithBar.NonMarkedClass.ClassMarkedWithBar.<init>|<init>(){}[0]
+        }
+        final class NonMarkedClass { // /ClassMarkedWithBar.NonMarkedClass.NonMarkedClass|null[0]
+            constructor <init>() // /ClassMarkedWithBar.NonMarkedClass.NonMarkedClass.<init>|<init>(){}[0]
+        }
+    }
+}
+final class /ClassWithConstructorMarkedWithAnotherBar { // /ClassWithConstructorMarkedWithAnotherBar|null[0]
+    constructor <init>() // /ClassWithConstructorMarkedWithAnotherBar.<init>|<init>(){}[0]
+}
+final class /ClassWithConstructorMarkedWithAnotherFoo { // /ClassWithConstructorMarkedWithAnotherFoo|null[0]
+    constructor <init>() // /ClassWithConstructorMarkedWithAnotherFoo.<init>|<init>(){}[0]
+}
+final class /ClassWithConstructorMarkedWithBar { // /ClassWithConstructorMarkedWithBar|null[0]
+    constructor <init>() // /ClassWithConstructorMarkedWithBar.<init>|<init>(){}[0]
+}
+final class /ClassWithConstructorMarkedWithFoo // /ClassWithConstructorMarkedWithFoo|null[0]
+open annotation class /Foo : kotlin/Annotation { // /Foo|null[0]
+    constructor <init>() // /Foo.<init>|<init>(){}[0]
+}
+final class /NonMarkedClass { // /NonMarkedClass|null[0]
+    constructor <init>() // /NonMarkedClass.<init>|<init>(){}[0]
+    final class ClassMarkedWithAnotherBar { // /NonMarkedClass.ClassMarkedWithAnotherBar|null[0]
+        constructor <init>() // /NonMarkedClass.ClassMarkedWithAnotherBar.<init>|<init>(){}[0]
+    }
+    final class ClassMarkedWithAnotherFoo { // /NonMarkedClass.ClassMarkedWithAnotherFoo|null[0]
+        constructor <init>() // /NonMarkedClass.ClassMarkedWithAnotherFoo.<init>|<init>(){}[0]
+    }
+    final class ClassMarkedWithBar { // /NonMarkedClass.ClassMarkedWithBar|null[0]
+        constructor <init>() // /NonMarkedClass.ClassMarkedWithBar.<init>|<init>(){}[0]
+    }
+    final class NonMarkedClass { // /NonMarkedClass.NonMarkedClass|null[0]
+        constructor <init>() // /NonMarkedClass.NonMarkedClass.<init>|<init>(){}[0]
+        final class ClassMarkedWithAnotherBar { // /NonMarkedClass.NonMarkedClass.ClassMarkedWithAnotherBar|null[0]
+            constructor <init>() // /NonMarkedClass.NonMarkedClass.ClassMarkedWithAnotherBar.<init>|<init>(){}[0]
+        }
+        final class ClassMarkedWithAnotherFoo { // /NonMarkedClass.NonMarkedClass.ClassMarkedWithAnotherFoo|null[0]
+            constructor <init>() // /NonMarkedClass.NonMarkedClass.ClassMarkedWithAnotherFoo.<init>|<init>(){}[0]
+        }
+        final class ClassMarkedWithBar { // /NonMarkedClass.NonMarkedClass.ClassMarkedWithBar|null[0]
+            constructor <init>() // /NonMarkedClass.NonMarkedClass.ClassMarkedWithBar.<init>|<init>(){}[0]
+        }
+        final class NonMarkedClass { // /NonMarkedClass.NonMarkedClass.NonMarkedClass|null[0]
+            constructor <init>() // /NonMarkedClass.NonMarkedClass.NonMarkedClass.<init>|<init>(){}[0]
+        }
+    }
+}
+final var /nonMarkedProperty // /nonMarkedProperty|{}nonMarkedProperty[0]
+    final fun <get-nonMarkedProperty>(): kotlin/String // /nonMarkedProperty.<get-nonMarkedProperty>|<get-nonMarkedProperty>(){}[0]
+    final fun <set-nonMarkedProperty>(kotlin/String) // /nonMarkedProperty.<set-nonMarkedProperty>|<set-nonMarkedProperty>(kotlin.String){}[0]
+final var /propertyGetterMarkedWithAnotherBar // /propertyGetterMarkedWithAnotherBar|{}propertyGetterMarkedWithAnotherBar[0]
+    final fun <get-propertyGetterMarkedWithAnotherBar>(): kotlin/String // /propertyGetterMarkedWithAnotherBar.<get-propertyGetterMarkedWithAnotherBar>|<get-propertyGetterMarkedWithAnotherBar>(){}[0]
+    final fun <set-propertyGetterMarkedWithAnotherBar>(kotlin/String) // /propertyGetterMarkedWithAnotherBar.<set-propertyGetterMarkedWithAnotherBar>|<set-propertyGetterMarkedWithAnotherBar>(kotlin.String){}[0]
+final var /propertyGetterMarkedWithAnotherFoo // /propertyGetterMarkedWithAnotherFoo|{}propertyGetterMarkedWithAnotherFoo[0]
+    final fun <get-propertyGetterMarkedWithAnotherFoo>(): kotlin/String // /propertyGetterMarkedWithAnotherFoo.<get-propertyGetterMarkedWithAnotherFoo>|<get-propertyGetterMarkedWithAnotherFoo>(){}[0]
+    final fun <set-propertyGetterMarkedWithAnotherFoo>(kotlin/String) // /propertyGetterMarkedWithAnotherFoo.<set-propertyGetterMarkedWithAnotherFoo>|<set-propertyGetterMarkedWithAnotherFoo>(kotlin.String){}[0]
+final var /propertyGetterMarkedWithBar // /propertyGetterMarkedWithBar|{}propertyGetterMarkedWithBar[0]
+    final fun <get-propertyGetterMarkedWithBar>(): kotlin/String // /propertyGetterMarkedWithBar.<get-propertyGetterMarkedWithBar>|<get-propertyGetterMarkedWithBar>(){}[0]
+    final fun <set-propertyGetterMarkedWithBar>(kotlin/String) // /propertyGetterMarkedWithBar.<set-propertyGetterMarkedWithBar>|<set-propertyGetterMarkedWithBar>(kotlin.String){}[0]
+final var /propertyGetterMarkedWithFoo // /propertyGetterMarkedWithFoo|{}propertyGetterMarkedWithFoo[0]
+    final fun <set-propertyGetterMarkedWithFoo>(kotlin/String) // /propertyGetterMarkedWithFoo.<set-propertyGetterMarkedWithFoo>|<set-propertyGetterMarkedWithFoo>(kotlin.String){}[0]
+final var /propertySetterMarkedWithAnotherBar // /propertySetterMarkedWithAnotherBar|{}propertySetterMarkedWithAnotherBar[0]
+    final fun <get-propertySetterMarkedWithAnotherBar>(): kotlin/String // /propertySetterMarkedWithAnotherBar.<get-propertySetterMarkedWithAnotherBar>|<get-propertySetterMarkedWithAnotherBar>(){}[0]
+    final fun <set-propertySetterMarkedWithAnotherBar>(kotlin/String) // /propertySetterMarkedWithAnotherBar.<set-propertySetterMarkedWithAnotherBar>|<set-propertySetterMarkedWithAnotherBar>(kotlin.String){}[0]
+final var /propertySetterMarkedWithAnotherFoo // /propertySetterMarkedWithAnotherFoo|{}propertySetterMarkedWithAnotherFoo[0]
+    final fun <get-propertySetterMarkedWithAnotherFoo>(): kotlin/String // /propertySetterMarkedWithAnotherFoo.<get-propertySetterMarkedWithAnotherFoo>|<get-propertySetterMarkedWithAnotherFoo>(){}[0]
+    final fun <set-propertySetterMarkedWithAnotherFoo>(kotlin/String) // /propertySetterMarkedWithAnotherFoo.<set-propertySetterMarkedWithAnotherFoo>|<set-propertySetterMarkedWithAnotherFoo>(kotlin.String){}[0]
+final var /propertySetterMarkedWithBar // /propertySetterMarkedWithBar|{}propertySetterMarkedWithBar[0]
+    final fun <get-propertySetterMarkedWithBar>(): kotlin/String // /propertySetterMarkedWithBar.<get-propertySetterMarkedWithBar>|<get-propertySetterMarkedWithBar>(){}[0]
+    final fun <set-propertySetterMarkedWithBar>(kotlin/String) // /propertySetterMarkedWithBar.<set-propertySetterMarkedWithBar>|<set-propertySetterMarkedWithBar>(kotlin.String){}[0]
+final var /propertySetterMarkedWithFoo // /propertySetterMarkedWithFoo|{}propertySetterMarkedWithFoo[0]
+    final fun <get-propertySetterMarkedWithFoo>(): kotlin/String // /propertySetterMarkedWithFoo.<get-propertySetterMarkedWithFoo>|<get-propertySetterMarkedWithFoo>(){}[0]
+final var /propertyWholeMarkedWithAnotherBar // /propertyWholeMarkedWithAnotherBar|{}propertyWholeMarkedWithAnotherBar[0]
+    final fun <get-propertyWholeMarkedWithAnotherBar>(): kotlin/String // /propertyWholeMarkedWithAnotherBar.<get-propertyWholeMarkedWithAnotherBar>|<get-propertyWholeMarkedWithAnotherBar>(){}[0]
+    final fun <set-propertyWholeMarkedWithAnotherBar>(kotlin/String) // /propertyWholeMarkedWithAnotherBar.<set-propertyWholeMarkedWithAnotherBar>|<set-propertyWholeMarkedWithAnotherBar>(kotlin.String){}[0]
+final var /propertyWholeMarkedWithAnotherFoo // /propertyWholeMarkedWithAnotherFoo|{}propertyWholeMarkedWithAnotherFoo[0]
+    final fun <get-propertyWholeMarkedWithAnotherFoo>(): kotlin/String // /propertyWholeMarkedWithAnotherFoo.<get-propertyWholeMarkedWithAnotherFoo>|<get-propertyWholeMarkedWithAnotherFoo>(){}[0]
+    final fun <set-propertyWholeMarkedWithAnotherFoo>(kotlin/String) // /propertyWholeMarkedWithAnotherFoo.<set-propertyWholeMarkedWithAnotherFoo>|<set-propertyWholeMarkedWithAnotherFoo>(kotlin.String){}[0]
+final var /propertyWholeMarkedWithBar // /propertyWholeMarkedWithBar|{}propertyWholeMarkedWithBar[0]
+    final fun <get-propertyWholeMarkedWithBar>(): kotlin/String // /propertyWholeMarkedWithBar.<get-propertyWholeMarkedWithBar>|<get-propertyWholeMarkedWithBar>(){}[0]
+    final fun <set-propertyWholeMarkedWithBar>(kotlin/String) // /propertyWholeMarkedWithBar.<set-propertyWholeMarkedWithBar>|<set-propertyWholeMarkedWithBar>(kotlin.String){}[0]
+final fun /functionMarkedWithAnotherBar(): kotlin/String // /functionMarkedWithAnotherBar|functionMarkedWithAnotherBar(){}[0]
+final fun /functionMarkedWithAnotherFoo(): kotlin/String // /functionMarkedWithAnotherFoo|functionMarkedWithAnotherFoo(){}[0]
+final fun /functionMarkedWithBar(): kotlin/String // /functionMarkedWithBar|functionMarkedWithBar(){}[0]
+final fun /nonMarkedFunction(): kotlin/String // /nonMarkedFunction|nonMarkedFunction(){}[0]

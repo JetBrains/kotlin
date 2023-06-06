@@ -1,0 +1,14 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <testValue_parameters>
+final fun value_parameters.test/funWithDefaultArgs(kotlin/Int =..., kotlin/Long, kotlin/String =...): kotlin/String // value_parameters.test/funWithDefaultArgs|funWithDefaultArgs(kotlin.Int;kotlin.Long;kotlin.String){}[0]
+final fun context(kotlin/Int, kotlin/Long) value_parameters.test/funWithDefaultArgs(kotlin/Int =..., kotlin/Long, kotlin/String =...): kotlin/String // value_parameters.test/funWithDefaultArgs|funWithDefaultArgs!kotlin.Int!kotlin.Long(kotlin.Int;kotlin.Long;kotlin.String){}[0]
+final inline fun value_parameters.test/funWithInlineParameters1(kotlin/Function1<kotlin/Int, kotlin/String>, noinline kotlin/Function1<kotlin/Int, kotlin/String>, crossinline kotlin/Function1<kotlin/Int, kotlin/String>): kotlin/String // value_parameters.test/funWithInlineParameters1|funWithInlineParameters1(kotlin.Function1<kotlin.Int,kotlin.String>;kotlin.Function1<kotlin.Int,kotlin.String>;kotlin.Function1<kotlin.Int,kotlin.String>){}[0]
+final inline fun value_parameters.test/funWithInlineParameters2(kotlin/Function1<kotlin/Int, kotlin/String>, noinline kotlin/Function1<kotlin/Int, kotlin/String>, crossinline kotlin/Function1<kotlin/Int, kotlin/String>): kotlin/String // value_parameters.test/funWithInlineParameters2|funWithInlineParameters2(kotlin.Function1<kotlin.Int,kotlin.String>;kotlin.Function1<kotlin.Int,kotlin.String>;kotlin.Function1<kotlin.Int,kotlin.String>){}[0]
+final inline fun value_parameters.test/funWithMixedStuff(crossinline kotlin/Function1<kotlin/Int, kotlin/String> =...): kotlin/String // value_parameters.test/funWithMixedStuff|funWithMixedStuff(kotlin.Function1<kotlin.Int,kotlin.String>){}[0]
+final fun value_parameters.test/funWithVararg(kotlin/Array<out kotlin/Any?>...): kotlin/String // value_parameters.test/funWithVararg|funWithVararg(kotlin.Array<out|kotlin.Any?>...){}[0]
+final fun value_parameters.test/funWithVarargAndDefaultArg(kotlin/Array<out kotlin/Any?>... =...): kotlin/String // value_parameters.test/funWithVarargAndDefaultArg|funWithVarargAndDefaultArg(kotlin.Array<out|kotlin.Any?>...){}[0]
+final fun value_parameters.test/funWithVarargAndDefaultArg(kotlin/LongArray... =...): kotlin/String // value_parameters.test/funWithVarargAndDefaultArg|funWithVarargAndDefaultArg(kotlin.LongArray...){}[0]

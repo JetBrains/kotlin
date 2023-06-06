@@ -1,0 +1,12 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <testExcluded_packages_unspecified>
+final class /Class { // /Class|null[0]
+    constructor <init>() // /Class.<init>|<init>(){}[0]
+}
+final val /property // /property|{}property[0]
+    final fun <get-property>(): kotlin/String // /property.<get-property>|<get-property>(){}[0]
+final fun /function(): kotlin/String // /function|function(){}[0]

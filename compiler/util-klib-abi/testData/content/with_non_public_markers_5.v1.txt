@@ -1,0 +1,123 @@
+// Rendering settings:
+// - Signature version: 1
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <testWith_non_public_markers_5>
+final object non_public_markers.test/Another { // non_public_markers.test/Another|null[0]
+    open annotation class Bar : kotlin/Annotation { // non_public_markers.test/Another.Bar|null[0]
+        constructor <init>() // non_public_markers.test/Another.Bar.<init>|-5645683436151566731[0]
+    }
+    open annotation class Foo : kotlin/Annotation { // non_public_markers.test/Another.Foo|null[0]
+        constructor <init>() // non_public_markers.test/Another.Foo.<init>|-5645683436151566731[0]
+    }
+}
+open annotation class non_public_markers.test/Bar : kotlin/Annotation { // non_public_markers.test/Bar|null[0]
+    constructor <init>() // non_public_markers.test/Bar.<init>|-5645683436151566731[0]
+}
+final class non_public_markers.test/ClassMarkedWithAnotherFoo { // non_public_markers.test/ClassMarkedWithAnotherFoo|null[0]
+    constructor <init>() // non_public_markers.test/ClassMarkedWithAnotherFoo.<init>|-5645683436151566731[0]
+    final class ClassMarkedWithAnotherFoo { // non_public_markers.test/ClassMarkedWithAnotherFoo.ClassMarkedWithAnotherFoo|null[0]
+        constructor <init>() // non_public_markers.test/ClassMarkedWithAnotherFoo.ClassMarkedWithAnotherFoo.<init>|-5645683436151566731[0]
+    }
+    final class ClassMarkedWithBar { // non_public_markers.test/ClassMarkedWithAnotherFoo.ClassMarkedWithBar|null[0]
+        constructor <init>() // non_public_markers.test/ClassMarkedWithAnotherFoo.ClassMarkedWithBar.<init>|-5645683436151566731[0]
+    }
+    final class NonMarkedClass { // non_public_markers.test/ClassMarkedWithAnotherFoo.NonMarkedClass|null[0]
+        constructor <init>() // non_public_markers.test/ClassMarkedWithAnotherFoo.NonMarkedClass.<init>|-5645683436151566731[0]
+        final class ClassMarkedWithAnotherFoo { // non_public_markers.test/ClassMarkedWithAnotherFoo.NonMarkedClass.ClassMarkedWithAnotherFoo|null[0]
+            constructor <init>() // non_public_markers.test/ClassMarkedWithAnotherFoo.NonMarkedClass.ClassMarkedWithAnotherFoo.<init>|-5645683436151566731[0]
+        }
+        final class ClassMarkedWithBar { // non_public_markers.test/ClassMarkedWithAnotherFoo.NonMarkedClass.ClassMarkedWithBar|null[0]
+            constructor <init>() // non_public_markers.test/ClassMarkedWithAnotherFoo.NonMarkedClass.ClassMarkedWithBar.<init>|-5645683436151566731[0]
+        }
+        final class NonMarkedClass { // non_public_markers.test/ClassMarkedWithAnotherFoo.NonMarkedClass.NonMarkedClass|null[0]
+            constructor <init>() // non_public_markers.test/ClassMarkedWithAnotherFoo.NonMarkedClass.NonMarkedClass.<init>|-5645683436151566731[0]
+        }
+    }
+}
+final class non_public_markers.test/ClassMarkedWithBar { // non_public_markers.test/ClassMarkedWithBar|null[0]
+    constructor <init>() // non_public_markers.test/ClassMarkedWithBar.<init>|-5645683436151566731[0]
+    final class ClassMarkedWithAnotherFoo { // non_public_markers.test/ClassMarkedWithBar.ClassMarkedWithAnotherFoo|null[0]
+        constructor <init>() // non_public_markers.test/ClassMarkedWithBar.ClassMarkedWithAnotherFoo.<init>|-5645683436151566731[0]
+    }
+    final class ClassMarkedWithBar { // non_public_markers.test/ClassMarkedWithBar.ClassMarkedWithBar|null[0]
+        constructor <init>() // non_public_markers.test/ClassMarkedWithBar.ClassMarkedWithBar.<init>|-5645683436151566731[0]
+    }
+    final class NonMarkedClass { // non_public_markers.test/ClassMarkedWithBar.NonMarkedClass|null[0]
+        constructor <init>() // non_public_markers.test/ClassMarkedWithBar.NonMarkedClass.<init>|-5645683436151566731[0]
+        final class ClassMarkedWithAnotherFoo { // non_public_markers.test/ClassMarkedWithBar.NonMarkedClass.ClassMarkedWithAnotherFoo|null[0]
+            constructor <init>() // non_public_markers.test/ClassMarkedWithBar.NonMarkedClass.ClassMarkedWithAnotherFoo.<init>|-5645683436151566731[0]
+        }
+        final class ClassMarkedWithBar { // non_public_markers.test/ClassMarkedWithBar.NonMarkedClass.ClassMarkedWithBar|null[0]
+            constructor <init>() // non_public_markers.test/ClassMarkedWithBar.NonMarkedClass.ClassMarkedWithBar.<init>|-5645683436151566731[0]
+        }
+        final class NonMarkedClass { // non_public_markers.test/ClassMarkedWithBar.NonMarkedClass.NonMarkedClass|null[0]
+            constructor <init>() // non_public_markers.test/ClassMarkedWithBar.NonMarkedClass.NonMarkedClass.<init>|-5645683436151566731[0]
+        }
+    }
+}
+final class non_public_markers.test/ClassWithConstructorMarkedWithAnotherBar // non_public_markers.test/ClassWithConstructorMarkedWithAnotherBar|null[0]
+final class non_public_markers.test/ClassWithConstructorMarkedWithAnotherFoo { // non_public_markers.test/ClassWithConstructorMarkedWithAnotherFoo|null[0]
+    constructor <init>() // non_public_markers.test/ClassWithConstructorMarkedWithAnotherFoo.<init>|-5645683436151566731[0]
+}
+final class non_public_markers.test/ClassWithConstructorMarkedWithBar { // non_public_markers.test/ClassWithConstructorMarkedWithBar|null[0]
+    constructor <init>() // non_public_markers.test/ClassWithConstructorMarkedWithBar.<init>|-5645683436151566731[0]
+}
+final class non_public_markers.test/ClassWithConstructorMarkedWithFoo // non_public_markers.test/ClassWithConstructorMarkedWithFoo|null[0]
+open annotation class non_public_markers.test/Foo : kotlin/Annotation { // non_public_markers.test/Foo|null[0]
+    constructor <init>() // non_public_markers.test/Foo.<init>|-5645683436151566731[0]
+}
+final class non_public_markers.test/NonMarkedClass { // non_public_markers.test/NonMarkedClass|null[0]
+    constructor <init>() // non_public_markers.test/NonMarkedClass.<init>|-5645683436151566731[0]
+    final class ClassMarkedWithAnotherFoo { // non_public_markers.test/NonMarkedClass.ClassMarkedWithAnotherFoo|null[0]
+        constructor <init>() // non_public_markers.test/NonMarkedClass.ClassMarkedWithAnotherFoo.<init>|-5645683436151566731[0]
+    }
+    final class ClassMarkedWithBar { // non_public_markers.test/NonMarkedClass.ClassMarkedWithBar|null[0]
+        constructor <init>() // non_public_markers.test/NonMarkedClass.ClassMarkedWithBar.<init>|-5645683436151566731[0]
+    }
+    final class NonMarkedClass { // non_public_markers.test/NonMarkedClass.NonMarkedClass|null[0]
+        constructor <init>() // non_public_markers.test/NonMarkedClass.NonMarkedClass.<init>|-5645683436151566731[0]
+        final class ClassMarkedWithAnotherFoo { // non_public_markers.test/NonMarkedClass.NonMarkedClass.ClassMarkedWithAnotherFoo|null[0]
+            constructor <init>() // non_public_markers.test/NonMarkedClass.NonMarkedClass.ClassMarkedWithAnotherFoo.<init>|-5645683436151566731[0]
+        }
+        final class ClassMarkedWithBar { // non_public_markers.test/NonMarkedClass.NonMarkedClass.ClassMarkedWithBar|null[0]
+            constructor <init>() // non_public_markers.test/NonMarkedClass.NonMarkedClass.ClassMarkedWithBar.<init>|-5645683436151566731[0]
+        }
+        final class NonMarkedClass { // non_public_markers.test/NonMarkedClass.NonMarkedClass.NonMarkedClass|null[0]
+            constructor <init>() // non_public_markers.test/NonMarkedClass.NonMarkedClass.NonMarkedClass.<init>|-5645683436151566731[0]
+        }
+    }
+}
+final var non_public_markers.test/nonMarkedProperty // non_public_markers.test/nonMarkedProperty|2555039021383536112[0]
+    final fun <get-nonMarkedProperty>(): kotlin/String // non_public_markers.test/nonMarkedProperty.<get-nonMarkedProperty>|3521952790317234139[0]
+    final fun <set-nonMarkedProperty>(kotlin/String) // non_public_markers.test/nonMarkedProperty.<set-nonMarkedProperty>|-1967656686156177486[0]
+final var non_public_markers.test/propertyGetterMarkedWithAnotherBar // non_public_markers.test/propertyGetterMarkedWithAnotherBar|-8321084504405299502[0]
+    final fun <set-propertyGetterMarkedWithAnotherBar>(kotlin/String) // non_public_markers.test/propertyGetterMarkedWithAnotherBar.<set-propertyGetterMarkedWithAnotherBar>|1952287206559835979[0]
+final var non_public_markers.test/propertyGetterMarkedWithAnotherFoo // non_public_markers.test/propertyGetterMarkedWithAnotherFoo|839569568647204104[0]
+    final fun <get-propertyGetterMarkedWithAnotherFoo>(): kotlin/String // non_public_markers.test/propertyGetterMarkedWithAnotherFoo.<get-propertyGetterMarkedWithAnotherFoo>|1487266266209481670[0]
+    final fun <set-propertyGetterMarkedWithAnotherFoo>(kotlin/String) // non_public_markers.test/propertyGetterMarkedWithAnotherFoo.<set-propertyGetterMarkedWithAnotherFoo>|-8358141007331692807[0]
+final var non_public_markers.test/propertyGetterMarkedWithBar // non_public_markers.test/propertyGetterMarkedWithBar|-1638684334333087309[0]
+    final fun <get-propertyGetterMarkedWithBar>(): kotlin/String // non_public_markers.test/propertyGetterMarkedWithBar.<get-propertyGetterMarkedWithBar>|6425367069051405147[0]
+    final fun <set-propertyGetterMarkedWithBar>(kotlin/String) // non_public_markers.test/propertyGetterMarkedWithBar.<set-propertyGetterMarkedWithBar>|-7277763711448582747[0]
+final var non_public_markers.test/propertyGetterMarkedWithFoo // non_public_markers.test/propertyGetterMarkedWithFoo|-1600129117215170169[0]
+    final fun <set-propertyGetterMarkedWithFoo>(kotlin/String) // non_public_markers.test/propertyGetterMarkedWithFoo.<set-propertyGetterMarkedWithFoo>|6101825374130458315[0]
+final var non_public_markers.test/propertySetterMarkedWithAnotherBar // non_public_markers.test/propertySetterMarkedWithAnotherBar|5611678287610594662[0]
+    final fun <get-propertySetterMarkedWithAnotherBar>(): kotlin/String // non_public_markers.test/propertySetterMarkedWithAnotherBar.<get-propertySetterMarkedWithAnotherBar>|-2853824538371026163[0]
+final var non_public_markers.test/propertySetterMarkedWithAnotherFoo // non_public_markers.test/propertySetterMarkedWithAnotherFoo|-6739876303163327450[0]
+    final fun <get-propertySetterMarkedWithAnotherFoo>(): kotlin/String // non_public_markers.test/propertySetterMarkedWithAnotherFoo.<get-propertySetterMarkedWithAnotherFoo>|6152184411550223957[0]
+    final fun <set-propertySetterMarkedWithAnotherFoo>(kotlin/String) // non_public_markers.test/propertySetterMarkedWithAnotherFoo.<set-propertySetterMarkedWithAnotherFoo>|5641698148509098165[0]
+final var non_public_markers.test/propertySetterMarkedWithBar // non_public_markers.test/propertySetterMarkedWithBar|-1734653558734028189[0]
+    final fun <get-propertySetterMarkedWithBar>(): kotlin/String // non_public_markers.test/propertySetterMarkedWithBar.<get-propertySetterMarkedWithBar>|8631669627377921573[0]
+    final fun <set-propertySetterMarkedWithBar>(kotlin/String) // non_public_markers.test/propertySetterMarkedWithBar.<set-propertySetterMarkedWithBar>|7103802845088436414[0]
+final var non_public_markers.test/propertySetterMarkedWithFoo // non_public_markers.test/propertySetterMarkedWithFoo|1014214022435246726[0]
+    final fun <get-propertySetterMarkedWithFoo>(): kotlin/String // non_public_markers.test/propertySetterMarkedWithFoo.<get-propertySetterMarkedWithFoo>|-717220786783485579[0]
+final var non_public_markers.test/propertyWholeMarkedWithAnotherFoo // non_public_markers.test/propertyWholeMarkedWithAnotherFoo|7767984100232675887[0]
+    final fun <get-propertyWholeMarkedWithAnotherFoo>(): kotlin/String // non_public_markers.test/propertyWholeMarkedWithAnotherFoo.<get-propertyWholeMarkedWithAnotherFoo>|7102392919901087513[0]
+    final fun <set-propertyWholeMarkedWithAnotherFoo>(kotlin/String) // non_public_markers.test/propertyWholeMarkedWithAnotherFoo.<set-propertyWholeMarkedWithAnotherFoo>|3373183467277540973[0]
+final var non_public_markers.test/propertyWholeMarkedWithBar // non_public_markers.test/propertyWholeMarkedWithBar|-119318583651089964[0]
+    final fun <get-propertyWholeMarkedWithBar>(): kotlin/String // non_public_markers.test/propertyWholeMarkedWithBar.<get-propertyWholeMarkedWithBar>|5964037984201295529[0]
+    final fun <set-propertyWholeMarkedWithBar>(kotlin/String) // non_public_markers.test/propertyWholeMarkedWithBar.<set-propertyWholeMarkedWithBar>|-2146460773497366334[0]
+final fun non_public_markers.test/functionMarkedWithAnotherFoo(): kotlin/String // non_public_markers.test/functionMarkedWithAnotherFoo|-5357424157245366714[0]
+final fun non_public_markers.test/functionMarkedWithBar(): kotlin/String // non_public_markers.test/functionMarkedWithBar|-4713248467320396269[0]
+final fun non_public_markers.test/nonMarkedFunction(): kotlin/String // non_public_markers.test/nonMarkedFunction|463145417007613104[0]
