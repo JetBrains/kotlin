@@ -1,0 +1,32 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+
+// Library unique name: <testExcluded_classes_1>
+final class excluded_classes.test/Bar { // excluded_classes.test/Bar|null[0]
+    constructor excluded_classes.test/Bar.<init>() // excluded_classes.test/Bar.<init>|<init>(){}[0]
+    final class excluded_classes.test/Bar.Nested { // excluded_classes.test/Bar.Nested|null[0]
+        constructor excluded_classes.test/Bar.Nested.<init>() // excluded_classes.test/Bar.Nested.<init>|<init>(){}[0]
+        final class excluded_classes.test/Bar.Nested.Nested { // excluded_classes.test/Bar.Nested.Nested|null[0]
+            constructor excluded_classes.test/Bar.Nested.Nested.<init>() // excluded_classes.test/Bar.Nested.Nested.<init>|<init>(){}[0]
+        }
+    }
+}
+final class excluded_classes.test/Baz { // excluded_classes.test/Baz|null[0]
+    constructor excluded_classes.test/Baz.<init>() // excluded_classes.test/Baz.<init>|<init>(){}[0]
+    final class excluded_classes.test/Baz.Nested { // excluded_classes.test/Baz.Nested|null[0]
+        constructor excluded_classes.test/Baz.Nested.<init>() // excluded_classes.test/Baz.Nested.<init>|<init>(){}[0]
+        final class excluded_classes.test/Baz.Nested.Nested { // excluded_classes.test/Baz.Nested.Nested|null[0]
+            constructor excluded_classes.test/Baz.Nested.Nested.<init>() // excluded_classes.test/Baz.Nested.Nested.<init>|<init>(){}[0]
+        }
+    }
+}
+final class excluded_classes.test/Foo { // excluded_classes.test/Foo|null[0]
+    constructor excluded_classes.test/Foo.<init>() // excluded_classes.test/Foo.<init>|<init>(){}[0]
+    final class excluded_classes.test/Foo.Nested { // excluded_classes.test/Foo.Nested|null[0]
+        constructor excluded_classes.test/Foo.Nested.<init>() // excluded_classes.test/Foo.Nested.<init>|<init>(){}[0]
+        final class excluded_classes.test/Foo.Nested.Nested { // excluded_classes.test/Foo.Nested.Nested|null[0]
+            constructor excluded_classes.test/Foo.Nested.Nested.<init>() // excluded_classes.test/Foo.Nested.Nested.<init>|<init>(){}[0]
+        }
+    }
+}

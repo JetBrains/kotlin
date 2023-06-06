@@ -1,0 +1,102 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+
+// Library unique name: <testClassifiers>
+open annotation class classifiers.test/AnnotationClass : kotlin/Annotation { // classifiers.test/AnnotationClass|null[0]
+    final val classifiers.test/AnnotationClass.property // classifiers.test/AnnotationClass.property|{}property[0]
+        final fun classifiers.test/AnnotationClass.property.<get-property>(): kotlin/String // classifiers.test/AnnotationClass.property.<get-property>|<get-property>(){}[0]
+    constructor classifiers.test/AnnotationClass.<init>(kotlin/String) // classifiers.test/AnnotationClass.<init>|<init>(kotlin.String){}[0]
+}
+final class classifiers.test/CompanionHolder1 { // classifiers.test/CompanionHolder1|null[0]
+    constructor classifiers.test/CompanionHolder1.<init>() // classifiers.test/CompanionHolder1.<init>|<init>(){}[0]
+    final object classifiers.test/CompanionHolder1.Companion // classifiers.test/CompanionHolder1.Companion|null[0]
+}
+final class classifiers.test/CompanionHolder2 { // classifiers.test/CompanionHolder2|null[0]
+    constructor classifiers.test/CompanionHolder2.<init>() // classifiers.test/CompanionHolder2.<init>|<init>(){}[0]
+    final object classifiers.test/CompanionHolder2.Companion // classifiers.test/CompanionHolder2.Companion|null[0]
+}
+final class classifiers.test/CompanionHolder3 { // classifiers.test/CompanionHolder3|null[0]
+    constructor classifiers.test/CompanionHolder3.<init>() // classifiers.test/CompanionHolder3.<init>|<init>(){}[0]
+    final object classifiers.test/CompanionHolder3.DEFAULT // classifiers.test/CompanionHolder3.DEFAULT|null[0]
+}
+final class classifiers.test/CompanionHolder4 { // classifiers.test/CompanionHolder4|null[0]
+    constructor classifiers.test/CompanionHolder4.<init>() // classifiers.test/CompanionHolder4.<init>|<init>(){}[0]
+    final object classifiers.test/CompanionHolder4.Object // classifiers.test/CompanionHolder4.Object|null[0]
+}
+final class classifiers.test/DataClass { // classifiers.test/DataClass|null[0]
+    final val classifiers.test/DataClass.property // classifiers.test/DataClass.property|{}property[0]
+        final fun classifiers.test/DataClass.property.<get-property>(): kotlin/String // classifiers.test/DataClass.property.<get-property>|<get-property>(){}[0]
+    constructor classifiers.test/DataClass.<init>(kotlin/String) // classifiers.test/DataClass.<init>|<init>(kotlin.String){}[0]
+    final fun classifiers.test/DataClass.component1(): kotlin/String // classifiers.test/DataClass.component1|component1(){}[0]
+    final fun classifiers.test/DataClass.copy(kotlin/String =...): classifiers.test/DataClass // classifiers.test/DataClass.copy|copy(kotlin.String){}[0]
+    final fun classifiers.test/DataClass.equals(kotlin/Any?): kotlin/Boolean // classifiers.test/DataClass.equals|equals(kotlin.Any?){}[0]
+    final fun classifiers.test/DataClass.function(): kotlin/String // classifiers.test/DataClass.function|function(){}[0]
+    final fun classifiers.test/DataClass.hashCode(): kotlin/Int // classifiers.test/DataClass.hashCode|hashCode(){}[0]
+    final fun classifiers.test/DataClass.toString(): kotlin/String // classifiers.test/DataClass.toString|toString(){}[0]
+}
+open enum class classifiers.test/EnumClassWithEntryClasses : kotlin/Enum<classifiers.test/EnumClassWithEntryClasses> { // classifiers.test/EnumClassWithEntryClasses|null[0]
+    final val classifiers.test/EnumClassWithEntryClasses.entries // classifiers.test/EnumClassWithEntryClasses.entries|#static{}entries[0]
+        final fun classifiers.test/EnumClassWithEntryClasses.entries.<get-entries>(): kotlin.enums/EnumEntries<classifiers.test/EnumClassWithEntryClasses> // classifiers.test/EnumClassWithEntryClasses.entries.<get-entries>|<get-entries>#static(){}[0]
+    open fun classifiers.test/EnumClassWithEntryClasses.function(): kotlin/String // classifiers.test/EnumClassWithEntryClasses.function|function(){}[0]
+    final fun classifiers.test/EnumClassWithEntryClasses.valueOf(kotlin/String): classifiers.test/EnumClassWithEntryClasses // classifiers.test/EnumClassWithEntryClasses.valueOf|valueOf#static(kotlin.String){}[0]
+    final fun classifiers.test/EnumClassWithEntryClasses.values(): kotlin/Array<classifiers.test/EnumClassWithEntryClasses> // classifiers.test/EnumClassWithEntryClasses.values|values#static(){}[0]
+    enum entry classifiers.test/EnumClassWithEntryClasses.BAR_NO_CLASS // classifiers.test/EnumClassWithEntryClasses.BAR_NO_CLASS|null[0]
+    enum entry classifiers.test/EnumClassWithEntryClasses.BAZ_HAZ_CLASS // classifiers.test/EnumClassWithEntryClasses.BAZ_HAZ_CLASS|null[0]
+    enum entry classifiers.test/EnumClassWithEntryClasses.FOO_HAS_CLASS // classifiers.test/EnumClassWithEntryClasses.FOO_HAS_CLASS|null[0]
+}
+final enum class classifiers.test/EnumClassWithoutEntryClasses : kotlin/Enum<classifiers.test/EnumClassWithoutEntryClasses> { // classifiers.test/EnumClassWithoutEntryClasses|null[0]
+    final val classifiers.test/EnumClassWithoutEntryClasses.entries // classifiers.test/EnumClassWithoutEntryClasses.entries|#static{}entries[0]
+        final fun classifiers.test/EnumClassWithoutEntryClasses.entries.<get-entries>(): kotlin.enums/EnumEntries<classifiers.test/EnumClassWithoutEntryClasses> // classifiers.test/EnumClassWithoutEntryClasses.entries.<get-entries>|<get-entries>#static(){}[0]
+    final fun classifiers.test/EnumClassWithoutEntryClasses.valueOf(kotlin/String): classifiers.test/EnumClassWithoutEntryClasses // classifiers.test/EnumClassWithoutEntryClasses.valueOf|valueOf#static(kotlin.String){}[0]
+    final fun classifiers.test/EnumClassWithoutEntryClasses.values(): kotlin/Array<classifiers.test/EnumClassWithoutEntryClasses> // classifiers.test/EnumClassWithoutEntryClasses.values|values#static(){}[0]
+    enum entry classifiers.test/EnumClassWithoutEntryClasses.BAR_NO_CLASS // classifiers.test/EnumClassWithoutEntryClasses.BAR_NO_CLASS|null[0]
+    enum entry classifiers.test/EnumClassWithoutEntryClasses.BAZ_NO_CLASS // classifiers.test/EnumClassWithoutEntryClasses.BAZ_NO_CLASS|null[0]
+    enum entry classifiers.test/EnumClassWithoutEntryClasses.FOO_NO_CLASS // classifiers.test/EnumClassWithoutEntryClasses.FOO_NO_CLASS|null[0]
+}
+abstract fun interface classifiers.test/FunctionInterface { // classifiers.test/FunctionInterface|null[0]
+    abstract fun classifiers.test/FunctionInterface.function(): kotlin/String // classifiers.test/FunctionInterface.function|function(){}[0]
+}
+abstract interface classifiers.test/Interface { // classifiers.test/Interface|null[0]
+    abstract val classifiers.test/Interface.property // classifiers.test/Interface.property|{}property[0]
+        abstract fun classifiers.test/Interface.property.<get-property>(): kotlin/String // classifiers.test/Interface.property.<get-property>|<get-property>(){}[0]
+    abstract fun classifiers.test/Interface.function(): kotlin/String // classifiers.test/Interface.function|function(){}[0]
+}
+final object classifiers.test/Object { // classifiers.test/Object|null[0]
+    final val classifiers.test/Object.property // classifiers.test/Object.property|{}property[0]
+        final fun classifiers.test/Object.property.<get-property>(): kotlin/String // classifiers.test/Object.property.<get-property>|<get-property>(){}[0]
+    final fun classifiers.test/Object.function(): kotlin/String // classifiers.test/Object.function|function(){}[0]
+}
+final class classifiers.test/RegularClass { // classifiers.test/RegularClass|null[0]
+    final val classifiers.test/RegularClass.property // classifiers.test/RegularClass.property|{}property[0]
+        final fun classifiers.test/RegularClass.property.<get-property>(): kotlin/String // classifiers.test/RegularClass.property.<get-property>|<get-property>(){}[0]
+    constructor classifiers.test/RegularClass.<init>(kotlin/String) // classifiers.test/RegularClass.<init>|<init>(kotlin.String){}[0]
+    final fun classifiers.test/RegularClass.function(): kotlin/String // classifiers.test/RegularClass.function|function(){}[0]
+}
+final class classifiers.test/TopLevelClass { // classifiers.test/TopLevelClass|null[0]
+    constructor classifiers.test/TopLevelClass.<init>() // classifiers.test/TopLevelClass.<init>|<init>(){}[0]
+    final inner class classifiers.test/TopLevelClass.Inner { // classifiers.test/TopLevelClass.Inner|null[0]
+        constructor classifiers.test/TopLevelClass.Inner.<init>() // classifiers.test/TopLevelClass.Inner.<init>|<init>(){}[0]
+        final inner class classifiers.test/TopLevelClass.Inner.Inner { // classifiers.test/TopLevelClass.Inner.Inner|null[0]
+            constructor classifiers.test/TopLevelClass.Inner.Inner.<init>() // classifiers.test/TopLevelClass.Inner.Inner.<init>|<init>(){}[0]
+        }
+    }
+    final class classifiers.test/TopLevelClass.Nested { // classifiers.test/TopLevelClass.Nested|null[0]
+        constructor classifiers.test/TopLevelClass.Nested.<init>() // classifiers.test/TopLevelClass.Nested.<init>|<init>(){}[0]
+        final inner class classifiers.test/TopLevelClass.Nested.Inner { // classifiers.test/TopLevelClass.Nested.Inner|null[0]
+            constructor classifiers.test/TopLevelClass.Nested.Inner.<init>() // classifiers.test/TopLevelClass.Nested.Inner.<init>|<init>(){}[0]
+        }
+        final class classifiers.test/TopLevelClass.Nested.Nested { // classifiers.test/TopLevelClass.Nested.Nested|null[0]
+            constructor classifiers.test/TopLevelClass.Nested.Nested.<init>() // classifiers.test/TopLevelClass.Nested.Nested.<init>|<init>(){}[0]
+        }
+    }
+}
+final value class classifiers.test/ValueClass { // classifiers.test/ValueClass|null[0]
+    final val classifiers.test/ValueClass.property // classifiers.test/ValueClass.property|{}property[0]
+        final fun classifiers.test/ValueClass.property.<get-property>(): kotlin/String // classifiers.test/ValueClass.property.<get-property>|<get-property>(){}[0]
+    constructor classifiers.test/ValueClass.<init>(kotlin/String) // classifiers.test/ValueClass.<init>|<init>(kotlin.String){}[0]
+    final fun classifiers.test/ValueClass.equals(kotlin/Any?): kotlin/Boolean // classifiers.test/ValueClass.equals|equals(kotlin.Any?){}[0]
+    final fun classifiers.test/ValueClass.function(): kotlin/String // classifiers.test/ValueClass.function|function(){}[0]
+    final fun classifiers.test/ValueClass.hashCode(): kotlin/Int // classifiers.test/ValueClass.hashCode|hashCode(){}[0]
+    final fun classifiers.test/ValueClass.toString(): kotlin/String // classifiers.test/ValueClass.toString|toString(){}[0]
+}

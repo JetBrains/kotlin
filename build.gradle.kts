@@ -195,6 +195,7 @@ val fe10CompilerModules = arrayOf(
     ":kotlin-util-io",
     ":kotlin-util-klib",
     ":kotlin-util-klib-metadata",
+    ":kotlin-util-klib-abi",
     ":compiler:backend-common",
     ":compiler:backend",
     ":compiler:plugin-api",
@@ -743,6 +744,7 @@ tasks {
         dependsOn(":core:descriptors.runtime:test")
         dependsOn(":kotlin-util-io:test")
         dependsOn(":kotlin-util-klib:test")
+        dependsOn(":kotlin-util-klib-abi:test")
         dependsOn(":generators:test")
     }
 

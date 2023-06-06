@@ -1,0 +1,241 @@
+/*
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.kotlin.library.abi
+
+/**
+ * The result of reading ABI from KLIB.
+ *
+ * @property manifest Information from manifest that might be useful.
+ * @property uniqueName Library unique name that is a part of library ABI.
+ *   Corresponds to `unique_name` manifest property.
+ * @property signatureVersions The versions of signatures supported by the KLIB. Note that not every [AbiSignatureVersion]
+ *   which is supported by a KLIB is also supported by the ABI reader. To check this please use
+ *   [AbiSignatureVersion.isSupportedByAbiReader]. An attempt to obtain a signature of unsupported version will result
+ *   in an exception. See also [AbiSignatures.get].
+ * @property topLevelDeclarations Top-level declarations.
+ */
+@ExperimentalLibraryAbiReader
+class LibraryAbi(
+    val manifest: LibraryManifest,
+    val uniqueName: String,
+    val signatureVersions: Set<AbiSignatureVersion>,
+    val topLevelDeclarations: AbiTopLevelDeclarations
+)
+
+/**
+ * The representation of the version of IR signatures supported by a KLIB.
+ *
+ * @property versionNumber The unique version number of the IR signature.
+ * @property isSupportedByAbiReader Whether this IR signature version is supported by the current implementation of
+ *   the ABI reader. If it's not supported then such signatures can't be read by the ABI reader, and the version itself
+ *   just serves for information purposes.
+ * @property description Brief description of the IR signature version, if available.
+ */
+@ExperimentalLibraryAbiReader
+interface AbiSignatureVersion {
+    val versionNumber: Int
+    val isSupportedByAbiReader: Boolean
+    val description: String?
+}
+
+@ExperimentalLibraryAbiReader
+interface AbiSignatures {
+    /**
+     * Returns the signature of the specified [AbiSignatureVersion].
+     *
+     * - If the signature version is not supported by the ABI reader (according to [AbiSignatureVersion.isSupportedByAbiReader])
+     *   then throw an exception.
+     * - If the signature version is supported by the ABI reader, but the signature is unavailable for some other reason
+     *   (e.g. a particular type of declaration misses a signature of a particular version), then return `null`.
+     **/
+    operator fun get(signatureVersion: AbiSignatureVersion): String?
+}
+
+/**
+ * Compound name. An equivalent of one or more simple names which are concatenated with dots.
+ * Examples: "TopLevelClass", "topLevelFun", "List", "CharRange.Companion.EMPTY".
+ */
+@ExperimentalLibraryAbiReader
+@JvmInline
+value class AbiCompoundName(val value: String) : Comparable<AbiCompoundName> {
+    init {
+        require(AbiQualifiedName.SEPARATOR !in value) { "Compound name contains illegal characters: $value" }
+    }
+
+    override fun compareTo(other: AbiCompoundName) = value.compareTo(other.value)
+    override fun toString() = value
+
+    infix fun isContainerOf(member: AbiCompoundName): Boolean {
+        val containerName = value
+        return when (val containerNameLength = containerName.length) {
+            0 -> true
+            else -> {
+                val memberName = member.value
+                val memberNameLength = memberName.length
+                memberNameLength > containerNameLength + 1 && memberName.startsWith(containerName) && memberName[containerNameLength] == SEPARATOR
+            }
+        }
+    }
+
+    companion object {
+        const val SEPARATOR = '.'
+    }
+}
+
+/**
+ * Fully qualified name.
+ * Examples: "/TopLevelClass", "/topLevelFun", "kotlin.collections/List", "kotlin.ranges/CharRange.Companion.EMPTY".
+ */
+@ExperimentalLibraryAbiReader
+data class AbiQualifiedName(val packageName: AbiCompoundName, val relativeName: AbiCompoundName) : Comparable<AbiQualifiedName> {
+    init {
+        require(relativeName.value.isNotEmpty()) { "Empty relative name" }
+    }
+
+    override fun compareTo(other: AbiQualifiedName): Int {
+        val diff = packageName.compareTo(other.packageName)
+        return if (diff != 0) diff else relativeName.compareTo(other.relativeName)
+    }
+
+    override fun toString() = "$packageName$SEPARATOR$relativeName"
+
+    companion object {
+        const val SEPARATOR = '/'
+    }
+}
+
+@ExperimentalLibraryAbiReader
+sealed interface AbiDeclaration {
+    val qualifiedName: AbiQualifiedName
+    val signatures: AbiSignatures
+
+    /**
+     * Annotations are not a part of ABI. But sometimes it is  useful to have an ability to check if some declaration
+     * has a specific annotation. See [AbiReadingFilter.NonPublicMarkerAnnotations] as an example.
+     */
+    fun hasAnnotation(annotationClassName: AbiQualifiedName): Boolean
+}
+
+@ExperimentalLibraryAbiReader
+sealed interface AbiDeclarationWithModality : AbiDeclaration {
+    val modality: AbiModality
+}
+
+@ExperimentalLibraryAbiReader
+enum class AbiModality {
+    FINAL, OPEN, ABSTRACT, SEALED
+}
+
+/**
+ * Important: The order of [declarations] is preserved exactly as in serialized IR.
+ */
+@ExperimentalLibraryAbiReader
+interface AbiDeclarationContainer {
+    val declarations: List<AbiDeclaration>
+}
+
+@ExperimentalLibraryAbiReader
+interface AbiTopLevelDeclarations : AbiDeclarationContainer
+
+/**
+ * Important: The order of [superTypes] is preserved exactly as in serialized IR.
+ */
+@ExperimentalLibraryAbiReader
+interface AbiClass : AbiDeclarationWithModality, AbiDeclarationContainer {
+    val kind: AbiClassKind
+    val isInner: Boolean
+    val isValue: Boolean
+    val isFunction: Boolean
+
+    /** The set of non-trivial supertypes (i.e. excluding [kotlin.Any]). */
+    val superTypes: List<AbiType>
+}
+
+@ExperimentalLibraryAbiReader
+enum class AbiClassKind {
+    CLASS, INTERFACE, OBJECT, ENUM_CLASS, ANNOTATION_CLASS
+}
+
+@ExperimentalLibraryAbiReader
+interface AbiEnumEntry : AbiDeclaration
+
+/**
+ * Important: All value parameters of the function are stored in the single place, in the [valueParameters] list in
+ * a well-defined order. First, unless [hasExtensionReceiverParameter] is false, goes the extension receiver parameter.
+ * It is followed by [contextReceiverParametersCount] context receiver parameters. The remainder are the regular
+ * value parameters of the function.
+ */
+@ExperimentalLibraryAbiReader
+interface AbiFunction : AbiDeclarationWithModality {
+    val isConstructor: Boolean
+    val isInline: Boolean
+    val isSuspend: Boolean
+    val hasExtensionReceiverParameter: Boolean
+    val contextReceiverParametersCount: Int
+    val valueParameters: List<AbiValueParameter>
+    val returnType: AbiType?
+}
+
+@ExperimentalLibraryAbiReader
+interface AbiValueParameter {
+    val type: AbiType
+    val isVararg: Boolean
+    val hasDefaultArg: Boolean
+    val isNoinline: Boolean
+    val isCrossinline: Boolean
+}
+
+@ExperimentalLibraryAbiReader
+interface AbiProperty : AbiDeclarationWithModality {
+    val kind: AbiPropertyKind
+    val getter: AbiFunction?
+    val setter: AbiFunction?
+}
+
+@ExperimentalLibraryAbiReader
+enum class AbiPropertyKind { VAL, CONST_VAL, VAR }
+
+@ExperimentalLibraryAbiReader
+sealed interface AbiType {
+    interface Dynamic : AbiType
+    interface Error : AbiType
+    interface Simple : AbiType {
+        val classifier: AbiClassifier
+        val arguments: List<AbiTypeArgument>
+        val nullability: AbiTypeNullability
+    }
+}
+
+@ExperimentalLibraryAbiReader
+sealed interface AbiTypeArgument {
+    interface StarProjection : AbiTypeArgument
+    interface RegularProjection : AbiTypeArgument {
+        val type: AbiType
+        val projectionKind: AbiVariance
+    }
+}
+
+@ExperimentalLibraryAbiReader
+sealed interface AbiClassifier {
+    interface Class : AbiClassifier {
+        val className: AbiQualifiedName
+    }
+
+    interface TypeParameter : AbiClassifier {
+        val declaringClassName: AbiQualifiedName
+        val index: Int
+    }
+}
+
+@ExperimentalLibraryAbiReader
+enum class AbiTypeNullability {
+    MARKED_NULLABLE, NOT_SPECIFIED, DEFINITELY_NOT_NULL
+}
+
+@ExperimentalLibraryAbiReader
+enum class AbiVariance {
+    INVARIANT, IN_VARIANCE, OUT_VARIANCE
+}

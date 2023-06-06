@@ -1,0 +1,5 @@
+// Rendering settings:
+// - Signature version: 1
+// - Show manifest properties: false
+
+// Library unique name: <testExcluded_packages_non_root_1>
