@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirOfType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirSafe
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbolOfTypeSafe
 import org.jetbrains.kotlin.analysis.utils.errors.unexpectedElementError
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
@@ -34,6 +35,8 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 
 internal class KtFirExpressionTypeProvider(
     override val analysisSession: KtFirAnalysisSession,
@@ -120,10 +123,19 @@ internal class KtFirExpressionTypeProvider(
     }
 
     override fun getReturnTypeForKtDeclaration(declaration: KtDeclaration): KtType {
-        val firDeclaration = if (isAnonymousFunction(declaration))
-            declaration.toFirAnonymousFunction()
-        else
-            declaration.getOrBuildFir(firResolveSession)
+        val firDeclaration = when {
+            isAnonymousFunction(declaration) ->
+                declaration.toFirAnonymousFunction()
+            declaration is KtParameter && declaration.ownerFunction != null ->
+                declaration.resolveToFirSymbolOfTypeSafe<FirValueParameterSymbol>(
+                    firResolveSession, FirResolvePhase.TYPES
+                )?.fir
+            declaration is KtNamedFunction || declaration is KtProperty ->
+                declaration.resolveToFirSymbolOfTypeSafe<FirCallableSymbol<*>>(
+                    firResolveSession, FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE
+                )?.fir
+            else -> declaration.getOrBuildFir(firResolveSession)
+        }
         return when (firDeclaration) {
             is FirCallableDeclaration -> firDeclaration.returnTypeRef.coneType.asKtType()
             is FirFunctionTypeParameter -> firDeclaration.returnTypeRef.coneType.asKtType()
