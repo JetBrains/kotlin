@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtScript
 import javax.swing.Icon
 
-abstract class KtLightClassForScript(val script: KtScript) : KtLightClassBase(script.manager) {
+abstract class KtLightClassForScriptBase(val script: KtScript) : KtLightClassBase(script.manager) {
     private val modifierList: PsiModifierList = LightModifierList(
         manager,
         KotlinLanguage.INSTANCE,
@@ -92,7 +92,7 @@ abstract class KtLightClassForScript(val script: KtScript) : KtLightClassBase(sc
 
     override fun isEquivalentTo(another: PsiElement?): Boolean =
         equals(another) ||
-                (another is KtLightClassForScript && fqName == another.fqName)
+                (another is KtLightClassForScriptBase && fqName == another.fqName)
 
     override fun getElementIcon(flags: Int): Icon? =
         throw UnsupportedOperationException("This should be done by KotlinIconProvider")
@@ -138,7 +138,7 @@ abstract class KtLightClassForScript(val script: KtScript) : KtLightClassBase(sc
             return false
         }
 
-        val lightClass = other as? KtLightClassForScript ?: return false
+        val lightClass = other as? KtLightClassForScriptBase ?: return false
         if (this === other) return true
 
         if (script != lightClass.script) return false
@@ -146,5 +146,5 @@ abstract class KtLightClassForScript(val script: KtScript) : KtLightClassBase(sc
         return true
     }
 
-    override fun toString() = "${KtLightClassForScript::class.java.simpleName}:${script.fqName}"
+    override fun toString() = "${KtLightClassForScriptBase::class.java.simpleName}:${script.fqName}"
 }
