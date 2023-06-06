@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.psi.KtScript
 class KtUltraLightClassForScript(
     script: KtScript,
     private val support: KtUltraLightSupport,
-) : KtLightClassForScript(script) {
+) : KtLightClassForScriptBase(script) {
     private val membersBuilder by lazyPub {
         UltraLightMembersCreator(
             containingClass = this,
@@ -129,7 +129,7 @@ class KtUltraLightClassForScript(
 
     override fun getOwnFields(): List<KtLightField> = _ownFields
 
-    override fun copy(): KtLightClassForScript = KtUltraLightClassForScript(script, support)
+    override fun copy(): KtUltraLightClassForScript = KtUltraLightClassForScript(script, support)
 
     override fun getOwnInnerClasses(): List<PsiClass> {
         return script.declarations.filterIsInstance<KtClassOrObject>()
