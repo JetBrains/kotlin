@@ -82,7 +82,7 @@ def platformManager = rootProject.project(":kotlin-native").ext.platformManager
 platformManager.enabled.each { target ->
     def loader = platformManager.loader(target)
 
-    task "${target}Dependencies"(type: NativeDep) {
+    tasks.register("${target}Dependencies", NativeDep) {
         konanPropertiesLoader = loader
     }
 
@@ -107,13 +107,13 @@ platformManager.enabled.each { target ->
     }
 }
 
-task update {
+tasks.register("update") {
     dependsOn tasks.withType(NativeDep)
     mustRunAfter(tasks.withType(NativeDep))
 }
 rootProject.project(":kotlin-native").ext.nativeDependencies = tasks.withType(NativeDep)
 
-task rmDotKonan(type: Delete) {
+tasks.register("rmDotKonan", Delete) {
     def dir = System.getenv("KONAN_DATA_DIR") ?: "${System.getProperty("user.home")}/.konan"
     delete dir
 }

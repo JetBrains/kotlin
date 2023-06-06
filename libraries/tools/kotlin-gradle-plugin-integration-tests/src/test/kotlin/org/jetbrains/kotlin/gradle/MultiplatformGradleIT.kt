@@ -219,7 +219,7 @@ class MultiplatformGradleIT : BaseGradleIT() {
         gradleBuildScript("libJvm").appendText(
             """
             ${'\n'}
-            task printCompileConfiguration(type: DefaultTask) {
+            tasks.register("printCompileConfiguration", DefaultTask) {
                 doFirst {
                     configurations.getByName("api").dependencies.each {
                         println("Dependency: '" + it.name + "'")

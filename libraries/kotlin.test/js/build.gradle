@@ -44,14 +44,16 @@ jar {
     enabled false
 }
 
-task libraryJarWithoutIr(type: Jar, dependsOn: compileKotlin2Js) {
+tasks.register("libraryJarWithoutIr", Jar) {
+    dependsOn(compileKotlin2Js)
     archiveClassifier.set(null)
     destinationDirectory = file("$buildDir/lib/dist")
     from("$buildDir/classes/main")
     manifestAttributes(manifest, project, 'Test')
 }
 
-task libraryJarWithIr(type: Zip, dependsOn: libraryJarWithoutIr) {
+tasks.register("libraryJarWithIr", Zip) {
+    dependsOn(libraryJarWithoutIr)
     archiveExtension = "jar"
     destinationDirectory = file("$buildDir/libs")
 
@@ -69,7 +71,8 @@ task libraryJarWithIr(type: Zip, dependsOn: libraryJarWithoutIr) {
 
 jar.dependsOn(libraryJarWithIr)
 
-task sourcesJar(type: Jar, dependsOn: classes) {
+tasks.register("sourcesJar", Jar) {
+  dependsOn(classes)
     archiveClassifier.set('sources')
     from (sourceSets.main.allSource)
 }

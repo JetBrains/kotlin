@@ -33,7 +33,7 @@ dependencies {
     implementation "org.mozilla:rhino:1.7.7.1"
 }
 
-task runRhino(type: JavaExec) {
+tasks.register("runRhino", JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     workingDir = "${buildDir}/kotlin2js/main/"
     mainClass = 'org.mozilla.javascript.tools.shell.Main'

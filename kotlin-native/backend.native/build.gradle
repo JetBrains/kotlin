@@ -184,7 +184,7 @@ dependencies {
 
 classes.dependsOn 'compilerClasses', 'cli_bcClasses'
 
-jar {
+tasks.named("jar") {
     from sourceSets.cli_bc.output,
             sourceSets.compiler.output,
             sourceSets.filesInteropStubs.output,
@@ -196,8 +196,8 @@ jar {
 
 def externalJars = ['compiler', 'stdlib', 'reflect', 'script_runtime']
 
-task trove4jCopy(type: Copy) {
-    from configurations.getByName("trove4j_jar") {
+tasks.register("trove4jCopy", Copy) {
+    from configurations.named("trove4j_jar") {
         include "trove4j*.jar"
         rename "trove4j(.*).jar", "trove4j.jar"
 
@@ -207,9 +207,9 @@ task trove4jCopy(type: Copy) {
 
 externalJars.each { arg ->
     def jar = arg.replace('_', '-') // :(
-    task("${arg}Copy", type: Copy) {
+    tasks.register("${arg}Copy", Copy) {
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-        from configurations.getByName("kotlin_${arg}_jar") {
+        from configurations.named("kotlin_${arg}_jar") {
             include "kotlin-${jar}*.jar"
             rename "kotlin-${jar}(.*).jar", "kotlin-${jar}.jar"
 
@@ -218,12 +218,12 @@ externalJars.each { arg ->
     }
 }
 
-task external_jars(type: Copy) {
+tasks.register("external_jars", Copy) {
     dependsOn externalJars.collect { "${it}Copy" }
     dependsOn trove4jCopy
 }
 
-task debugCompiler(type: JavaExec) {
+tasks.register("debugCompiler", JavaExec) {
     dependsOn ':dist'
     mainClass = 'org.jetbrains.kotlin.cli.bc.K2NativeKt'
     classpath = project.fileTree("${distDir.canonicalPath}/konan/lib/") {

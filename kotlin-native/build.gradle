@@ -179,22 +179,30 @@ apply plugin: GitClangFormatPlugin
 apply plugin: 'maven-publish'
 apply plugin: BasePlugin
 
-task dist_compiler(dependsOn: "distCompiler")
-task dist_runtime(dependsOn: "distRuntime")
-task cross_dist(dependsOn: "crossDist")
-task list_dist(dependsOn: "listDist")
+tasks.register("dist_compiler") {
+    dependsOn("distCompiler")
+}
+tasks.register("dist_runtime") {
+    dependsOn("distRuntime")
+}
+tasks.register("cross_dist") {
+    dependsOn("crossDist")
+}
+tasks.register("list_dist") {
+    dependsOn("listDist")
+}
 
 tasks.named("build") {
     dependsOn 'dist', 'distPlatformLibs'
 }
 
-task distCommonSources(type: CopyCommonSources) {
+tasks.register("distCommonSources", CopyCommonSources) {
     outputDir "$distDir/sources"
     sourcePaths configurations.commonSources
     zipSources true
 }
 
-task distNativeSources(type: Zip) {
+tasks.register("distNativeSources", Zip) {
     destinationDirectory = file("$distDir/sources")
     archiveFileName = "kotlin-stdlib-native-sources.zip"
 
@@ -210,12 +218,12 @@ task distNativeSources(type: Zip) {
     }
 }
 
-task distSources {
+tasks.register("distSources") {
     dependsOn(distCommonSources)
     dependsOn(distNativeSources)
 }
 
-task shadowJar(type: ShadowJar) {
+tasks.register("shadowJar", ShadowJar) {
     mergeServiceFiles()
     destinationDirectory.set(file("$distDir/konan/lib"))
     archiveBaseName.set("kotlin-native")
@@ -230,7 +238,7 @@ task shadowJar(type: ShadowJar) {
     }
 }
 
-task distCompiler(type: Copy) {
+tasks.register("distCompiler", Copy) {
     // Workaround: make distCompiler no-op if we are using custom dist:
     // the dist is already in place and has the compiler, so we don't have to
     // build and copy the compiler to dist.
@@ -319,7 +327,7 @@ task distCompiler(type: Copy) {
     }
 }
 
-task distDef(type: Copy) {
+tasks.register("distDef", Copy) {
     destinationDir project.file("$distDir/konan/platformDef/")
 
     platformManager.targetValues.each { target ->
@@ -333,15 +341,15 @@ task distDef(type: Copy) {
     }
 }
 
-task listDist(type: Exec) {
+tasks.register("listDist", Exec) {
     commandLine 'find', distDir
 }
 
-task distRuntime(type: Copy) {
+tasks.register("distRuntime", Copy) {
     dependsOn "${hostName}CrossDistRuntime"
 }
 
-task distStdlibCache {
+tasks.register("distStdlibCache") {
     if (hostName in cacheableTargetNames) {
         dependsOn("${hostName}StdlibCache")
     }
@@ -350,24 +358,24 @@ task distStdlibCache {
 def stdlib = 'klib/common/stdlib'
 def stdlibDefaultComponent = "$stdlib/default"
 
-task crossDistRuntime {
+tasks.register("crossDistRuntime") {
     dependsOn.addAll(targetList.collect { "${it}CrossDistRuntime" })
 }
 
-task crossDistPlatformLibs {
+tasks.register("crossDistPlatformLibs") {
     dependsOn.addAll(targetList.collect { "${it}PlatformLibs" })
 }
 
-task crossDistStdlib {
+tasks.register("crossDistStdlib") {
     dependsOn.addAll(targetList.collect { "${it}CrossDistStdlib" })
 }
 
-task crossDistStdlibCache {
+tasks.register("crossDistStdlibCache") {
     dependsOn.addAll(targetList.findAll { it in cacheableTargetNames }.collect { "${it}StdlibCache" })
 }
 
 targetList.each { target ->
-    task("${target}CrossDistStdlib", type: Copy) {
+    tasks.register("${target}CrossDistStdlib", Copy) {
         dependsOn ":kotlin-native:runtime:${target}Stdlib"
         // TODO: add explicit dependency on host task with IR klib stdlib parts
         // As for now it is possibly to build up distribution from the tc-dist to crossdist
@@ -403,7 +411,7 @@ targetList.each { target ->
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     }
 
-    task("${target}CrossDistBitcodeCopy", type: Copy) {
+    tasks.register("${target}CrossDistBitcodeCopy", Copy) {
         def bitcodeFiles = configurations.runtimeBitcode.incoming.artifactView {
             attributes {
                 attribute(TargetWithSanitizer.TARGET_ATTRIBUTE, new TargetWithSanitizer(platformManager.targetByName(target), null))
@@ -419,7 +427,7 @@ targetList.each { target ->
         }
     }
 
-    task("${target}CrossDistRuntime", type: Copy) {
+    tasks.register("${target}CrossDistRuntime", Copy) {
         dependsOn ":kotlin-native:${target}CrossDistStdlib"
         dependsOn "${target}CrossDistBitcodeCopy"
 
@@ -434,7 +442,7 @@ targetList.each { target ->
         }
     }
 
-    task("${target}PlatformLibs") {
+    tasks.register("${target}PlatformLibs") {
         dependsOn ":kotlin-native:platformLibs:${target}Install"
         if (target in cacheableTargetNames) {
             dependsOn(":kotlin-native:platformLibs:${target}Cache")
@@ -442,7 +450,7 @@ targetList.each { target ->
     }
 
     if (target in cacheableTargetNames) {
-        task ("${target}StdlibCache", type: Copy) {
+        tasks.register("${target}StdlibCache", Copy) {
             dependsOn "${target}CrossDistStdlib"
             dependsOn ":kotlin-native:runtime:${target}StdlibCache"
 
@@ -454,7 +462,7 @@ targetList.each { target ->
         }
     }
 
-    task("${target}CrossDist") {
+    tasks.register("${target}CrossDist") {
         dependsOn "${target}CrossDistRuntime", "distCompiler"
         if (target in cacheableTargetNames) {
             dependsOn "${target}StdlibCache"
@@ -462,19 +470,19 @@ targetList.each { target ->
     }
 }
 
-task distPlatformLibs {
+tasks.register("distPlatformLibs") {
     dependsOn ':kotlin-native:platformLibs:hostInstall'
     dependsOn ':kotlin-native:platformLibs:hostCache'
 }
 
-task dist {
+tasks.register("dist") {
     dependsOn "distCompiler",
             "distRuntime",
             "distDef",
             "distStdlibCache"
 }
 
-task crossDist {
+tasks.register("crossDist") {
     dependsOn "distCompiler",
             "crossDistRuntime",
             "distDef",
@@ -482,11 +490,11 @@ task crossDist {
             "crossDistStdlibCache"
 }
 
-task bundle {
+tasks.register("bundle") {
     dependsOn 'bundleRegular', 'bundlePrebuilt'
 }
 
-task bundleRegular(type: (isWindows()) ? Zip : Tar) {
+tasks.register("bundleRegular", (isWindows()) ? Zip : Tar) {
     def simpleOsName = HostManager.platformName()
     archiveBaseName.set("kotlin-native-$simpleOsName")
     archiveVersion.set(kotlinVersion)
@@ -502,7 +510,7 @@ task bundleRegular(type: (isWindows()) ? Zip : Tar) {
     }
 }
 
-task bundlePrebuilt(type: (isWindows()) ? Zip : Tar) {
+tasks.register("bundlePrebuilt", (isWindows()) ? Zip : Tar) {
     dependsOn("crossDistPlatformLibs")
     def simpleOsName = HostManager.platformName()
     archiveBaseName.set("kotlin-native-prebuilt-$simpleOsName")
@@ -532,8 +540,12 @@ void configurePackingLicensesToBundle(AbstractArchiveTask task, boolean contains
     }
 }
 
-configurePackingLicensesToBundle(bundleRegular, /* containsPlatformLibraries = */ false)
-configurePackingLicensesToBundle(bundlePrebuilt, /* containsPlatformLibraries = */ true)
+tasks.named("bundleRegular").configure {
+    configurePackingLicensesToBundle(it, /* containsPlatformLibraries = */ false)
+}
+tasks.named("bundlePrebuilt").configure {
+    configurePackingLicensesToBundle(it, /* containsPlatformLibraries = */ true)
+}
 
 configure([bundleRegular, bundlePrebuilt]) {
     dependsOn("crossDist")
@@ -555,7 +567,7 @@ configure([bundleRegular, bundlePrebuilt]) {
     }
 }
 
-task 'tc-dist'(type: (isWindows()) ? Zip : Tar) {
+tasks.register("tc-dist", (isWindows()) ? Zip : Tar) {
     dependsOn('dist')
     dependsOn('distSources')
     def simpleOsName = HostManager.platformName()
@@ -577,12 +589,12 @@ task 'tc-dist'(type: (isWindows()) ? Zip : Tar) {
     }
 }
 
-task samples {
+tasks.register("samples") {
     dependsOn 'samplesZip', 'samplesTar'
 }
 
-task samplesZip(type: Zip)
-task samplesTar(type: Tar) {
+tasks.register("samplesZip", Zip)
+tasks.register("samplesTar", Tar) {
     archiveExtension = 'tar.gz'
     compression = Compression.GZIP
 }
@@ -616,10 +628,10 @@ configure([samplesZip, samplesTar]) {
     exclude '**/*.kt.bc-build/'
 }
 
-project.tasks.register("copy_samples") {
+tasks.register("copy_samples") {
     dependsOn 'copySamples'
 }
-project.tasks.register("copySamples", CopySamples) {
+tasks.register("copySamples", CopySamples) {
     destinationDir file('build/samples-under-test')
 }
 
@@ -638,7 +650,7 @@ tasks.register("compdb", Copy) {
 }
 
 targetList.each { targetName ->
-    task "${targetName}CheckPlatformAbiCompatibility"(type: CompareDistributionSignatures) {
+    tasks.register("${targetName}CheckPlatformAbiCompatibility", CompareDistributionSignatures) {
         dependsOn "${targetName}PlatformLibs"
 
         libraries = new CompareDistributionSignatures.Libraries.Platform(targetName)
@@ -649,7 +661,7 @@ targetList.each { targetName ->
     }
 }
 
-task "checkStdlibAbiCompatibility"(type: CompareDistributionSignatures) {
+tasks.register("checkStdlibAbiCompatibility", CompareDistributionSignatures) {
     dependsOn "distRuntime"
 
     libraries = CompareDistributionSignatures.Libraries.Standard.INSTANCE

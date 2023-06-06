@@ -85,7 +85,7 @@ kotlin {
     }
 }
 
-task resolveRuntimeDependencies(type: DefaultTask) {
+tasks.register("resolveRuntimeDependencies", DefaultTask) {
     doFirst { 
         // KT-26301
         def configName = kotlin.targets.jvm6.compilations.main.runtimeDependencyConfigurationName

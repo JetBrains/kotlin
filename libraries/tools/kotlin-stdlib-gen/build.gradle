@@ -18,7 +18,7 @@ compileKotlin {
     }
 }
 
-task copyCopyrightProfile(type: Copy) {
+tasks.register("copyCopyrightProfile", Copy) {
     from "$rootDir/.idea/copyright"
     into "$buildDir/copyright"
     include 'apache.xml'
@@ -28,7 +28,7 @@ processResources {
     dependsOn(copyCopyrightProfile)
 }
 
-task run(type: JavaExec) {
+tasks.register("run", JavaExec) {
     group 'application'
     mainClass = 'generators.GenerateStandardLibKt'
     classpath sourceSets.main.runtimeClasspath
@@ -36,7 +36,7 @@ task run(type: JavaExec) {
     systemProperty 'line.separator', '\n'
 }
 
-task generateStdlibTests(type: JavaExec) {
+tasks.register("generateStdlibTests", JavaExec) {
     group 'application'
     mainClass = 'generators.GenerateStandardLibTestsKt'
     classpath sourceSets.main.runtimeClasspath
@@ -44,7 +44,7 @@ task generateStdlibTests(type: JavaExec) {
     systemProperty 'line.separator', '\n'
 }
 
-task generateUnicodeData(type: JavaExec) {
+tasks.register("generateUnicodeData", JavaExec) {
     group 'application'
     mainClass = 'generators.unicode.GenerateUnicodeDataKt'
     classpath sourceSets.main.runtimeClasspath

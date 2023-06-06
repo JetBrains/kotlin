@@ -26,7 +26,7 @@ dependencies {
 }
 
 final File dokkaHome = new File(buildDir, "dokka-home")
-task setupDokka(type: Sync) {
+tasks.register("setupDokka", Sync) {
     from configurations.dokka
     into dokkaHome
 }
@@ -41,7 +41,8 @@ task setupCallDokka() {
     dependsOn project('kotlin_big').tasks.getByName('extractLibs')
 }
 
-task callDokka(type: Exec, dependsOn: setupCallDokka) {
+tasks.register("callDokka", Exec) {
+    dependsOn(setupCallDokka)
     workingDir = projectDir
     // -agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005
     environment("ANT_OPTS", "-Xmx3G")

@@ -6,6 +6,7 @@
 import org.jetbrains.kotlin.tools.lib
 import org.jetbrains.kotlin.tools.solib
 import org.jetbrains.kotlin.*
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.konan.target.ClangArgs
 import org.jetbrains.kotlin.konan.target.Family.*
@@ -144,7 +145,7 @@ dependencies {
     testImplementation(kotlin("test-junit"))
 }
 
-val nativelibs = project.tasks.create<Copy>("nativelibs") {
+val nativelibs = project.tasks.register<Copy>("nativelibs") {
     val clangstubsSolib = solib("clangstubs")
     dependsOn(clangstubsSolib)
 
@@ -161,9 +162,8 @@ kotlinNativeInterop {
         genTask.inputs.dir(libclangextDir)
     }
 }
-val compileKotlin: org.jetbrains.kotlin.gradle.tasks.KotlinCompile by tasks
 
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+tasks.withType<KotlinCompile>().configureEach {
     kotlinOptions {
         freeCompilerArgs += listOf(
                 "-Xskip-prerelease-check",
@@ -195,14 +195,9 @@ tasks.withType<Test>().configureEach {
     systemProperty("kotlin.native.interop.indexer.temp", File(buildDir, "testTemp"))
 }
 
-tasks.matching { it.name == "linkClangstubsSharedLibrary" }.all {
-    dependsOn(libclangextTask)
-    inputs.dir(libclangextDir)
-}
-
 // Please note that list of headers should be fixed manually.
 // See KT-46231 for details.
-tasks.create("updatePrebuilt") {
+tasks.register("updatePrebuilt") {
     dependsOn("genClangInteropStubs")
 
     doLast {

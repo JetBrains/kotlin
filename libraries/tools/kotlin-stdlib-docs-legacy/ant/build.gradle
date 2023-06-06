@@ -15,13 +15,14 @@ final File antHome = new File(buildDir, "ant-home")
 final File antZip = new File(buildDir, "apache-ant-$antVersion-bin.zip")
 final File antExe = new File(antHome, "apache-ant-$antVersion/bin/ant$ext")
 
-task downloadAnt(type: Download) {
+tasks.register("downloadAnt", Download) {
     src antURL
     dest antZip
     overwrite false
 }
 
-task extractAnt(type: Sync, dependsOn: downloadAnt) {
+tasks.register("extractAnt", Sync) {
+    dependsOn(downloadAnt)
     from zipTree(antZip)
     into antHome
 }

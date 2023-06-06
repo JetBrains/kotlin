@@ -21,7 +21,8 @@ configurations {
     }
 }
 
-task obfuscate(type: proguard.gradle.ProGuardTask, dependsOn: jar) {
+tasks.register("obfuscate", proguard.gradle.ProGuardTask) {
+    dependsOn(jar)
     injars "${jar.archivePath}"
     outjars "$buildDir/proguard/out.jar"
 
