@@ -7,6 +7,7 @@ plugins {
     kotlin("jvm")
     id("jps-compatible")
     id("org.jetbrains.kotlinx.binary-compatibility-validator")
+    id("org.jetbrains.dokka")
 }
 
 /*
@@ -71,6 +72,32 @@ apiValidation {
             "kotlinx.metadata.jvm.internal.IgnoreInApiDump"
         )
     )
+}
+
+tasks.dokkaHtml.configure {
+    outputDirectory.set(buildDir.resolve("dokka"))
+    pluginsMapConfiguration.set(
+        mapOf(
+            "org.jetbrains.dokka.base.DokkaBase"
+                    to """{ "templatesDir": "${projectDir.toString().replace('\\', '/')}/dokka-templates" }"""
+        )
+    )
+
+    dokkaSourceSets.configureEach {
+        includes.from(project.file("dokka/moduledoc.md").path)
+
+        sourceRoots.from(project(":kotlinx-metadata").getSources())
+
+        skipDeprecated.set(true)
+        reportUndocumented.set(true)
+        failOnWarning.set(true)
+
+        perPackageOption {
+            matchingRegex.set("kotlinx\\.metadata\\.internal(\$|\\.).*")
+            suppress.set(true)
+            reportUndocumented.set(false)
+        }
+    }
 }
 
 sourcesJar()

@@ -131,6 +131,7 @@ public final class kotlinx/metadata/KmAnnotation {
 }
 
 public abstract class kotlinx/metadata/KmAnnotationArgument {
+	public abstract fun toString ()Ljava/lang/String;
 }
 
 public final class kotlinx/metadata/KmAnnotationArgument$AnnotationValue : kotlinx/metadata/KmAnnotationArgument {

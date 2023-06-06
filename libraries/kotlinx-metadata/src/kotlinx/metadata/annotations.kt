@@ -46,6 +46,11 @@ class KmAnnotation(val className: ClassName, val arguments: Map<String, KmAnnota
  */
 @Suppress("IncorrectFormatting") // one-line KDoc
 sealed class KmAnnotationArgument {
+
+    // Avoid triggering Dokka configured for failing on undocumented functions
+    /** @suppress */
+    abstract override fun toString(): String
+
     /**
      * A kind of annotation argument, whose value is directly accessible via [value].
      * This is possible for annotation arguments of primitive types, unsigned types, and strings.
