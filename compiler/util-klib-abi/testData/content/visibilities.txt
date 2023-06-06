@@ -1,0 +1,66 @@
+final class visibilities.test/InternalPAClass|null[0] {
+    final val visibilities.test/InternalPAClass.property|4634558160746314112[0]
+        final fun visibilities.test/InternalPAClass.property.<get-property>|4838831487146901942[0]
+    constructor visibilities.test/InternalPAClass.<init>|1280618353163213788[0]
+    final fun visibilities.test/InternalPAClass.function|-3322893411126713785[0]
+    final class visibilities.test/InternalPAClass.NestedClass|null[0] {
+        constructor visibilities.test/InternalPAClass.NestedClass.<init>|-5645683436151566731[0]
+    }
+}
+final class visibilities.test/InternalPAClassInternalMembers|null[0]
+final class visibilities.test/InternalPAClassInternalPAMembers|null[0] {
+    final val visibilities.test/InternalPAClassInternalPAMembers.property|4634558160746314112[0]
+        final fun visibilities.test/InternalPAClassInternalPAMembers.property.<get-property>|4838831487146901942[0]
+    constructor visibilities.test/InternalPAClassInternalPAMembers.<init>|1280618353163213788[0]
+    final fun visibilities.test/InternalPAClassInternalPAMembers.function|-3322893411126713785[0]
+    final class visibilities.test/InternalPAClassInternalPAMembers.NestedClass|null[0] {
+        constructor visibilities.test/InternalPAClassInternalPAMembers.NestedClass.<init>|-5645683436151566731[0]
+    }
+}
+final class visibilities.test/PublicClass|null[0] {
+    final val visibilities.test/PublicClass.property|4634558160746314112[0]
+        final fun visibilities.test/PublicClass.property.<get-property>|4838831487146901942[0]
+    constructor visibilities.test/PublicClass.<init>|1280618353163213788[0]
+    final fun visibilities.test/PublicClass.function|-3322893411126713785[0]
+    final class visibilities.test/PublicClass.NestedClass|null[0] {
+        constructor visibilities.test/PublicClass.NestedClass.<init>|-5645683436151566731[0]
+    }
+}
+final class visibilities.test/PublicClassInternalMembers|null[0]
+final class visibilities.test/PublicClassInternalPAMembers|null[0] {
+    final val visibilities.test/PublicClassInternalPAMembers.property|4634558160746314112[0]
+        final fun visibilities.test/PublicClassInternalPAMembers.property.<get-property>|4838831487146901942[0]
+    constructor visibilities.test/PublicClassInternalPAMembers.<init>|1280618353163213788[0]
+    final fun visibilities.test/PublicClassInternalPAMembers.function|-3322893411126713785[0]
+    final class visibilities.test/PublicClassInternalPAMembers.NestedClass|null[0] {
+        constructor visibilities.test/PublicClassInternalPAMembers.NestedClass.<init>|-5645683436151566731[0]
+    }
+}
+final class visibilities.test/PublicClassPrivateMembers|null[0]
+final class visibilities.test/PublicClassProtectedMembers|null[0] {
+    final val visibilities.test/PublicClassProtectedMembers.property|4634558160746314112[0]
+        final fun visibilities.test/PublicClassProtectedMembers.property.<get-property>|4838831487146901942[0]
+    constructor visibilities.test/PublicClassProtectedMembers.<init>|1280618353163213788[0]
+    final fun visibilities.test/PublicClassProtectedMembers.function|-3322893411126713785[0]
+    final class visibilities.test/PublicClassProtectedMembers.NestedClass|null[0] {
+        constructor visibilities.test/PublicClassProtectedMembers.NestedClass.<init>|-5645683436151566731[0]
+    }
+}
+final val visibilities.test/internalPAVal|-6296713716360945427[0]
+    final fun visibilities.test/internalPAVal.<get-internalPAVal>|-2220884681594955448[0]
+final var visibilities.test/internalPAVarInternalSetter|8606185858874286601[0]
+    final fun visibilities.test/internalPAVarInternalSetter.<get-internalPAVarInternalSetter>|-2165138686967166236[0]
+    final fun visibilities.test/internalPAVarInternalSetter.<set-internalPAVarInternalSetter>|4268094736790597293[0]
+final var visibilities.test/internalPAVarPrivateSetter|5404459463495216914[0]
+    final fun visibilities.test/internalPAVarPrivateSetter.<get-internalPAVarPrivateSetter>|7858377503331561427[0]
+final val visibilities.test/publicVal|7143563926198876043[0]
+    final fun visibilities.test/publicVal.<get-publicVal>|1629535235632860507[0]
+final var visibilities.test/publicVarInternalSetter|-2855768891968336973[0]
+    final fun visibilities.test/publicVarInternalSetter.<get-publicVarInternalSetter>|-5725447636241167149[0]
+final var visibilities.test/publicVarPrivateSetter|8666989530943431000[0]
+    final fun visibilities.test/publicVarPrivateSetter.<get-publicVarPrivateSetter>|4875313296516845411[0]
+final var visibilities.test/publicVarPublicSetter|2172609198358158808[0]
+    final fun visibilities.test/publicVarPublicSetter.<get-publicVarPublicSetter>|3106038528912026803[0]
+    final fun visibilities.test/publicVarPublicSetter.<set-publicVarPublicSetter>|7158661382309278782[0]
+final fun visibilities.test/internalPAFun|6209200454159161588[0]
+final fun visibilities.test/publicFun|-6665644650067461598[0]

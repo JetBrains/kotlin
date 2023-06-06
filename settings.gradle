@@ -34,6 +34,7 @@ include ":benchmarks",
         ":kotlin-util-io",
         ":kotlin-util-klib",
         ":kotlin-util-klib-metadata",
+        ":kotlin-util-klib-abi",
         ":daemon-common",
         ":kotlin-daemon",
         ":kotlin-daemon-client",
@@ -665,6 +666,7 @@ project(':compiler:ir.interpreter').projectDir = "$rootDir/compiler/ir/ir.interp
 project(':kotlin-util-io').projectDir = "$rootDir/compiler/util-io" as File
 project(':kotlin-util-klib').projectDir = "$rootDir/compiler/util-klib" as File
 project(':kotlin-util-klib-metadata').projectDir = "$rootDir/compiler/util-klib-metadata" as File
+project(':kotlin-util-klib-abi').projectDir = "$rootDir/compiler/util-klib-abi" as File
 project(':native:kotlin-native-utils').projectDir = "$rootDir/native/utils" as File
 project(':native:frontend.native').projectDir = "$rootDir/native/frontend" as File
 project(':native:kotlin-klib-commonizer').projectDir = "$rootDir/native/commonizer" as File

@@ -198,6 +198,7 @@ val fe10CompilerModules = arrayOf(
     ":kotlin-util-io",
     ":kotlin-util-klib",
     ":kotlin-util-klib-metadata",
+    ":kotlin-util-klib-abi",
     ":compiler:backend-common",
     ":compiler:backend",
     ":compiler:plugin-api",
@@ -267,6 +268,7 @@ extra["kotlinJpsPluginMavenDependencies"] = listOf(
     ":kotlin-util-io",
     ":kotlin-util-klib",
     ":kotlin-util-klib-metadata",
+    ":kotlin-util-klib-abi",
     ":native:kotlin-native-utils",
     ":compiler:build-tools:kotlin-build-tools-api",
 )
@@ -752,6 +754,7 @@ tasks {
         dependsOn(":core:descriptors.runtime:test")
         dependsOn(":kotlin-util-io:test")
         dependsOn(":kotlin-util-klib:test")
+        dependsOn(":kotlin-util-klib-abi:test")
         dependsOn(":generators:test")
     }
 

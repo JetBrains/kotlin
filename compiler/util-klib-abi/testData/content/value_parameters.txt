@@ -1,0 +1,5 @@
+final fun[0:default_arg 2:default_arg] value_parameters.test/funWithDefaultArgs|-1283395221811731897[0]
+final fun[0:default_arg 2:default_arg] value_parameters.test/funWithDefaultArgs|-2013334893880470152[0]
+final inline fun[1:noinline 2:crossinline] value_parameters.test/funWithInlineParameters1|8789385144825475619[0]
+final inline fun[1:noinline 2:crossinline] value_parameters.test/funWithInlineParameters2|-8517782923091139351[0]
+final inline fun[0:default_arg,crossinline] value_parameters.test/funWithMixedStuff|6465248722251168090[0]

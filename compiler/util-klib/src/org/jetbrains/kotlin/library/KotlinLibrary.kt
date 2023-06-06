@@ -22,6 +22,7 @@ const val KLIB_PROPERTY_DEPENDS = "depends"
 const val KLIB_PROPERTY_PACKAGE = "package"
 const val KLIB_PROPERTY_BUILTINS_PLATFORM = "builtins_platform"
 const val KLIB_PROPERTY_CONTAINS_ERROR_CODE = "contains_error_code"
+const val KLIB_PROPERTY_SIGNATURE_VERSIONS = "ir_signature_versions"
 
 // Native-specific:
 const val KLIB_PROPERTY_INTEROP = "interop"
@@ -123,6 +124,9 @@ val BaseKotlinLibrary.nativeTargets: List<String>
 
 val KotlinLibrary.containsErrorCode: Boolean
     get() = manifestProperties.getProperty(KLIB_PROPERTY_CONTAINS_ERROR_CODE) == "true"
+
+val BaseKotlinLibrary.signatureVersions: List<String>
+    get() = manifestProperties.propertyList(KLIB_PROPERTY_SIGNATURE_VERSIONS)
 
 val KotlinLibrary.commonizerTarget: String?
     get() = manifestProperties.getProperty(KLIB_PROPERTY_COMMONIZER_TARGET)
