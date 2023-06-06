@@ -35,6 +35,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
         }
 
         @Test
+        @TestMetadata("abstractClassReference.kt")
+        public void testAbstractClassReference() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/abstractClassReference.kt");
+        }
+
+        @Test
         @TestMetadata("AbstractInAbstractClass.kt")
         public void testAbstractInAbstractClass() throws Exception {
             runTest("compiler/testData/diagnostics/tests/AbstractInAbstractClass.kt");
