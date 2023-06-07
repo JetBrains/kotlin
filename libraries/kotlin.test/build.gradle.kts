@@ -39,7 +39,7 @@ val jvmRuntime by configurations.creating {
 }
 
 val jsApiVariant by configurations.creating {
-    isCanBeConsumed = true
+    isCanBeConsumed = false
     isCanBeResolved = false
     attributes {
         attribute(Usage.USAGE_ATTRIBUTE, objects.named("kotlin-api"))
@@ -47,7 +47,7 @@ val jsApiVariant by configurations.creating {
     }
 }
 val jsRuntimeVariant by configurations.creating {
-    isCanBeConsumed = true
+    isCanBeConsumed = false
     isCanBeResolved = false
     attributes {
         attribute(Usage.USAGE_ATTRIBUTE, objects.named("kotlin-runtime"))
@@ -57,7 +57,7 @@ val jsRuntimeVariant by configurations.creating {
 }
 
 val wasmApiVariant by configurations.creating {
-    isCanBeConsumed = true
+    isCanBeConsumed = false
     isCanBeResolved = false
     attributes {
         attribute(Usage.USAGE_ATTRIBUTE, objects.named("kotlin-api"))
@@ -65,7 +65,7 @@ val wasmApiVariant by configurations.creating {
     }
 }
 val wasmRuntimeVariant by configurations.creating {
-    isCanBeConsumed = true
+    isCanBeConsumed = false
     isCanBeResolved = false
     attributes {
         attribute(Usage.USAGE_ATTRIBUTE, objects.named("kotlin-runtime"))
@@ -75,7 +75,7 @@ val wasmRuntimeVariant by configurations.creating {
 }
 
 val nativeApiVariant by configurations.creating {
-    isCanBeConsumed = true
+    isCanBeConsumed = false
     isCanBeResolved = false
     attributes {
         attribute(Usage.USAGE_ATTRIBUTE, objects.named("kotlin-api"))
@@ -84,7 +84,7 @@ val nativeApiVariant by configurations.creating {
 }
 
 val commonVariant by configurations.creating {
-    isCanBeConsumed = true
+    isCanBeConsumed = false
     isCanBeResolved = false
     attributes {
         attribute(Usage.USAGE_ATTRIBUTE, objects.named("kotlin-api"))
@@ -320,7 +320,7 @@ val wasmComponent = componentFactory.adhoc("wasm").apply {
 }
 
 val commonMetadata by configurations.creating {
-    isCanBeConsumed = true
+    isCanBeConsumed = false
     isCanBeResolved = false
     attributes {
         attribute(Usage.USAGE_ATTRIBUTE, objects.named("kotlin-api"))
@@ -328,7 +328,7 @@ val commonMetadata by configurations.creating {
     }
 }
 val annotationsMetadata by configurations.creating {
-    isCanBeConsumed = true
+    isCanBeConsumed = false
     isCanBeResolved = false
     attributes {
         attribute(Usage.USAGE_ATTRIBUTE, objects.named("kotlin-api"))
