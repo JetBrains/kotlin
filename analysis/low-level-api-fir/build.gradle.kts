@@ -30,6 +30,7 @@ dependencies {
     implementation(project(":analysis:analysis-api-standalone:analysis-api-standalone-base"))
     implementation(project(":kotlin-scripting-compiler"))
     implementation(project(":kotlin-scripting-common"))
+    implementation(project(":compiler:backend.jvm.entrypoint"))
 
     // We cannot use the latest version `3.1.5` because it doesn't support Java 8.
     implementation("com.github.ben-manes.caffeine:caffeine:2.9.3")
