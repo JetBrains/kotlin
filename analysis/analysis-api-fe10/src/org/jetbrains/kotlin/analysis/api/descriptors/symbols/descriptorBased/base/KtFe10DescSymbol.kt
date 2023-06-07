@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithSource
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.references.fe10.base.KtFe10ReferenceResolutionHelper
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
 
 internal interface KtFe10DescSymbol<T : DeclarationDescriptor> : KtFe10Symbol, KtFe10AnnotatedSymbol {
@@ -28,7 +29,11 @@ internal interface KtFe10DescSymbol<T : DeclarationDescriptor> : KtFe10Symbol, K
         }
 
     override val psi: PsiElement?
-        get() = withValidityAssertion { (source as? PsiSourceElement)?.psi }
+        get() = withValidityAssertion {
+            (source as? PsiSourceElement)?.psi
+                ?: KtFe10ReferenceResolutionHelper.getInstance()
+                    ?.findDecompiledDeclaration(analysisContext.resolveSession.project, descriptor, null)
+        }
 
     override val origin: KtSymbolOrigin
         get() = withValidityAssertion { descriptor.getSymbolOrigin(analysisContext) }
