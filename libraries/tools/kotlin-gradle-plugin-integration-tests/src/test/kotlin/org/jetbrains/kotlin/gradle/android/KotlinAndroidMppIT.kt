@@ -22,10 +22,7 @@ import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
 import java.util.zip.ZipFile
-import kotlin.io.path.appendText
-import kotlin.io.path.extension
-import kotlin.io.path.readText
-import kotlin.io.path.writeText
+import kotlin.io.path.*
 import kotlin.streams.toList
 import kotlin.test.*
 
