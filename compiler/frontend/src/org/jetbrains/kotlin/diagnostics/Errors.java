@@ -78,6 +78,7 @@ public interface Errors {
     DiagnosticFactory0<KtElement> EXPLICIT_BACKING_FIELDS_UNSUPPORTED = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory1<PsiElement, String> UNSUPPORTED_INHERITANCE_FROM_JAVA_MEMBER_REFERENCING_KOTLIN_FUNCTION = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory0<PsiElement> UNSUPPORTED_SEALED_WHEN = DiagnosticFactory0.create(ERROR);
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

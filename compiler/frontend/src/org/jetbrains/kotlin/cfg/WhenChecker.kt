@@ -480,7 +480,7 @@ object WhenChecker {
 
     fun checkSealedWhenIsReserved(sink: DiagnosticSink, element: PsiElement) {
         KtPsiUtil.getPreviousWord(element, "sealed")?.let {
-            sink.report(Errors.UNSUPPORTED.on(it, "sealed when"))
+            sink.report(Errors.UNSUPPORTED_SEALED_WHEN.on(it))
         }
     }
 }
