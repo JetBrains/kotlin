@@ -43,10 +43,10 @@ class TooManyArguments(
 ) : ResolutionDiagnostic(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR)
 
 class NamedArgumentNotAllowed(
-    override val argument: FirExpression,
+    val argument: FirExpression,
     val function: FirFunction,
     val forbiddenNamedArgumentsTarget: ForbiddenNamedArgumentsTarget
-) : InapplicableArgumentDiagnostic()
+) : ResolutionDiagnostic(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR)
 
 class ArgumentPassedTwice(
     override val argument: FirExpression,
