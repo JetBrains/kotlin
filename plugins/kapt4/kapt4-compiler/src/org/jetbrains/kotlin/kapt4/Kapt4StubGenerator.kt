@@ -138,8 +138,8 @@ class Kapt4StubGenerator(private val analysisSession: KtAnalysisSession) {
         return KaptStub(topLevel, lineMappings.serialize())
     }
 
-    // TODO: convert to context after fix of KT-54197
-    private fun UnresolvedQualifiersRecorder.convertClass(
+    context(UnresolvedQualifiersRecorder)
+    private fun convertClass(
         lightClass: PsiClass,
         lineMappings: Kapt4LineMappingCollector,
         packageFqName: String,
@@ -363,8 +363,8 @@ class Kapt4StubGenerator(private val analysisSession: KtAnalysisSession) {
         return treeMaker.Annotation(treeMaker.FqName(Metadata::class.java.canonicalName), JavacList.from(arguments))
     }
 
-    // TODO: convert to context after fix of KT-54197
-    private fun UnresolvedQualifiersRecorder.convertAnnotation(
+    context(UnresolvedQualifiersRecorder)
+    private fun convertAnnotation(
         containingClass: PsiClass,
         annotation: PsiAnnotation,
         packageFqName: String? = "",
@@ -377,7 +377,7 @@ class Kapt4StubGenerator(private val analysisSession: KtAnalysisSession) {
             if (stripMetadata && fqName == KOTLIN_METADATA_ANNOTATION) return null
         }
 
-        val annotationFqName = annotation.resolveAnnotationType()?.defaultType.convertAndRecordErrors(this) {
+        val annotationFqName = annotation.resolveAnnotationType()?.defaultType.convertAndRecordErrors() {
             val useSimpleName = '.' in fqName && fqName.substringBeforeLast('.', "") == packageFqName
 
             when {
@@ -396,8 +396,8 @@ class Kapt4StubGenerator(private val analysisSession: KtAnalysisSession) {
         return treeMaker.Annotation(annotationFqName, values)
     }
 
-    // TODO: convert to context after fix of KT-54197
-    private fun UnresolvedQualifiersRecorder.convertPsiAnnotationMemberValue(
+    context(UnresolvedQualifiersRecorder)
+    private fun convertPsiAnnotationMemberValue(
         containingClass: PsiClass,
         value: PsiAnnotationMemberValue,
         packageFqName: String? = "",
@@ -522,8 +522,8 @@ class Kapt4StubGenerator(private val analysisSession: KtAnalysisSession) {
         }
     }
 
-    // TODO: convert to context after fix of KT-54197
-    private fun UnresolvedQualifiersRecorder.convertField(
+    context(UnresolvedQualifiersRecorder)
+    private fun convertField(
         field: PsiField,
         containingClass: PsiClass,
         lineMappings: Kapt4LineMappingCollector,
@@ -563,7 +563,7 @@ class Kapt4StubGenerator(private val analysisSession: KtAnalysisSession) {
         val typeExpression = if (isEnum(access)) {
             treeMaker.SimpleName(treeMaker.getQualifiedName(type).substringAfterLast('.'))
         } else {
-            type.convertAndRecordErrors(this)
+            type.convertAndRecordErrors()
         }
 
         lineMappings.registerField(containingClass, field)
@@ -701,8 +701,8 @@ class Kapt4StubGenerator(private val analysisSession: KtAnalysisSession) {
         return convertedValue
     }
 
-    // TODO: convert to context after fix of KT-54197
-    private fun UnresolvedQualifiersRecorder.convertMethod(
+    context(UnresolvedQualifiersRecorder)
+    private fun convertMethod(
         method: PsiMethod,
         containingClass: PsiClass,
         lineMappings: Kapt4LineMappingCollector,
@@ -762,13 +762,13 @@ class Kapt4StubGenerator(private val analysisSession: KtAnalysisSession) {
 
             val name = info.name.takeIf { isValidIdentifier(it) } ?: if (method.isPropertySetter) "p0" else "p${index}_${info.name.hashCode().ushr(1)}"
 
-            val type = info.type.convertAndRecordErrors(this)
+            val type = info.type.convertAndRecordErrors()
             treeMaker.VarDef(modifiers, treeMaker.name(name), type, null)
         }
         val jTypeParameters = mapJList(method.typeParameters) { convertTypeParameter(it) }
         val jExceptionTypes = mapJList(method.throwsTypes) { treeMaker.TypeWithArguments(it as PsiType) }
         val jReturnType = runUnless(isConstructor) {
-            returnType.convertAndRecordErrors(this)
+            returnType.convertAndRecordErrors()
         }
 
         val defaultValue = (method as? PsiAnnotationMethod)?.defaultValue?.let {
@@ -824,8 +824,8 @@ class Kapt4StubGenerator(private val analysisSession: KtAnalysisSession) {
         return annotations?.any { it.hasQualifiedName(kaptIgnoredAnnotationFqName) } ?: false
     }
 
-    // TODO: convert to context after fix of KT-54197
-    private tailrec fun UnresolvedQualifiersRecorder.checkIfValidTypeName(
+    context(UnresolvedQualifiersRecorder)
+    private fun checkIfValidTypeName(
         containingClass: PsiClass,
         type: PsiType
     ): Boolean {
@@ -888,8 +888,8 @@ class Kapt4StubGenerator(private val analysisSession: KtAnalysisSession) {
         return doesInnerClassNameConflictWithOuter(clazz, containingClassForOuterClass)
     }
 
-    // TODO: convert to context after fix of KT-54197
-    private fun UnresolvedQualifiersRecorder.reportIfIllegalTypeUsage(
+    context(UnresolvedQualifiersRecorder)
+    private fun reportIfIllegalTypeUsage(
         containingClass: PsiClass,
         type: PsiType
     ) {
@@ -901,31 +901,30 @@ class Kapt4StubGenerator(private val analysisSession: KtAnalysisSession) {
         }
     }
 
+    context(UnresolvedQualifiersRecorder)
     @OptIn(ExperimentalContracts::class)
     private inline fun PsiType?.convertAndRecordErrors(
-        recorder: UnresolvedQualifiersRecorder, // TODO: convert to context after fix of KT-54197
         ifNonError: () -> JCExpression = { treeMaker.TypeWithArguments(this) }
     ): JCExpression {
         contract {
             callsInPlace(ifNonError, InvocationKind.EXACTLY_ONCE)
         }
-        this?.recordErrorTypes(recorder)
+        this?.recordErrorTypes()
         return ifNonError()
     }
 
-    private fun PsiType.recordErrorTypes(
-        recorder: UnresolvedQualifiersRecorder  // TODO: convert to context after fix of KT-54197
-    ) {
+    context(UnresolvedQualifiersRecorder)
+    private fun PsiType.recordErrorTypes() {
         if (this is PsiEllipsisType) {
-            this.componentType.recordErrorTypes(recorder)
+            this.componentType.recordErrorTypes()
             return
         }
         if (qualifiedNameOrNull == null) {
-            recorder.recordUnresolvedQualifier(qualifiedName)
+            recordUnresolvedQualifier(qualifiedName)
         }
         when (this) {
-            is PsiClassType -> typeArguments().forEach { (it as? PsiType)?.recordErrorTypes(recorder) }
-            is PsiArrayType -> componentType.recordErrorTypes(recorder)
+            is PsiClassType -> typeArguments().forEach { (it as? PsiType)?.recordErrorTypes() }
+            is PsiArrayType -> componentType.recordErrorTypes()
         }
     }
 
@@ -1015,8 +1014,8 @@ class Kapt4StubGenerator(private val analysisSession: KtAnalysisSession) {
         val superClassIsObject: Boolean
     )
 
-    // TODO: convert to context after fix of KT-54197
-    private fun UnresolvedQualifiersRecorder.parseClassSignature(psiClass: PsiClass): ClassGenericSignature {
+    context(UnresolvedQualifiersRecorder)
+    private fun parseClassSignature(psiClass: PsiClass): ClassGenericSignature {
         val superClasses = mutableListOf<JCExpression>()
         val superInterfaces = mutableListOf<JCExpression>()
 
@@ -1025,7 +1024,7 @@ class Kapt4StubGenerator(private val analysisSession: KtAnalysisSession) {
 
         fun addSuperType(superType: PsiClassType, destination: MutableList<JCExpression>) {
             if (psiClass.isAnnotationType && superType.qualifiedName == "java.lang.annotation.Annotation") return
-            destination += superType.convertAndRecordErrors(this)
+            destination += superType.convertAndRecordErrors()
         }
 
         var superClassIsObject = false
@@ -1051,15 +1050,15 @@ class Kapt4StubGenerator(private val analysisSession: KtAnalysisSession) {
         return treeMaker.FqName("java.lang.Object")
     }
 
-    // TODO: convert to context after fix of KT-54197
-    private fun UnresolvedQualifiersRecorder.convertTypeParameter(typeParameter: PsiTypeParameter): JCTypeParameter {
+    context(UnresolvedQualifiersRecorder)
+    private fun convertTypeParameter(typeParameter: PsiTypeParameter): JCTypeParameter {
         val classBounds = mutableListOf<JCExpression>()
         val interfaceBounds = mutableListOf<JCExpression>()
 
         val bounds = typeParameter.bounds
         for (bound in bounds) {
             val boundType = bound as? PsiType ?: continue
-            val jBound = boundType.convertAndRecordErrors(this)
+            val jBound = boundType.convertAndRecordErrors()
             if (boundType.resolvedClass?.isInterface == false) {
                 classBounds += jBound
             } else {
