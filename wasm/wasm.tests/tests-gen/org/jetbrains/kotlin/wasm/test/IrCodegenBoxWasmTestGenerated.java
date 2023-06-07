@@ -31,11 +31,6 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true, "compileKotlinAgainstKotlin");
     }
 
-    @TestMetadata("kt-57353.kt")
-    public void testKt_57353() throws Exception {
-        runTest("compiler/testData/codegen/box/kt-57353.kt");
-    }
-
     @TestMetadata("compiler/testData/codegen/box/annotations")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -22199,6 +22194,11 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
         @TestMetadata("invokespecial.kt")
         public void testInvokespecial() throws Exception {
             runTest("compiler/testData/codegen/box/package/invokespecial.kt");
+        }
+
+        @TestMetadata("kt57353.kt")
+        public void testKt57353() throws Exception {
+            runTest("compiler/testData/codegen/box/package/kt57353.kt");
         }
 
         @TestMetadata("nullablePrimitiveNoFieldInitializer.kt")

@@ -26,12 +26,6 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS, true, "compileKotlinAgainstKotlin");
     }
 
-    @Test
-    @TestMetadata("kt-57353.kt")
-    public void testKt_57353() throws Exception {
-        runTest("compiler/testData/codegen/box/kt-57353.kt");
-    }
-
     @Nested
     @TestMetadata("compiler/testData/codegen/box/annotations")
     @TestDataPath("$PROJECT_ROOT")
@@ -24773,6 +24767,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         @TestMetadata("invokespecial.kt")
         public void testInvokespecial() throws Exception {
             runTest("compiler/testData/codegen/box/package/invokespecial.kt");
+        }
+
+        @Test
+        @TestMetadata("kt57353.kt")
+        public void testKt57353() throws Exception {
+            runTest("compiler/testData/codegen/box/package/kt57353.kt");
         }
 
         @Test
