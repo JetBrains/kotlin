@@ -303,14 +303,14 @@ fun BodyResolveComponents.typeFromCallee(access: FirElement, calleeReference: Fi
                 diagnostic = ConeStubDiagnostic(calleeReference.diagnostic)
             }
         is FirNamedReferenceWithCandidate -> {
-            typeFromSymbol(calleeReference.candidateSymbol, false)
+            typeFromSymbol(calleeReference.candidateSymbol)
         }
         is FirPropertyWithExplicitBackingFieldResolvedNamedReference -> {
             val symbol = calleeReference.getNarrowedDownSymbol(session)
-            typeFromSymbol(symbol, false)
+            typeFromSymbol(symbol)
         }
         is FirResolvedNamedReference -> {
-            typeFromSymbol(calleeReference.resolvedSymbol, false)
+            typeFromSymbol(calleeReference.resolvedSymbol)
         }
         is FirThisReference -> {
             val labelName = calleeReference.labelName
@@ -342,18 +342,11 @@ fun BodyResolveComponents.typeFromCallee(access: FirElement, calleeReference: Fi
     }
 }
 
-private fun BodyResolveComponents.typeFromSymbol(symbol: FirBasedSymbol<*>, makeNullable: Boolean): FirResolvedTypeRef {
+private fun BodyResolveComponents.typeFromSymbol(symbol: FirBasedSymbol<*>): FirResolvedTypeRef {
     return when (symbol) {
         is FirCallableSymbol<*> -> {
             val returnTypeRef = returnTypeCalculator.tryCalculateReturnType(symbol.fir)
-            if (makeNullable) {
-                returnTypeRef.withReplacedConeType(
-                    returnTypeRef.type.withNullability(ConeNullability.NULLABLE, session.typeContext),
-                    KtFakeSourceElementKind.ImplicitTypeRef
-                )
-            } else {
-                returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.ImplicitTypeRef)
-            }
+            returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.ImplicitTypeRef)
         }
         is FirClassifierSymbol<*> -> {
             // TODO: unhack
@@ -362,7 +355,7 @@ private fun BodyResolveComponents.typeFromSymbol(symbol: FirBasedSymbol<*>, make
                 type = symbol.constructType(emptyArray(), isNullable = false)
             }
         }
-        else -> error("WTF ! $symbol")
+        else -> error("Failed to extract type from symbol: $symbol")
     }
 }
 
@@ -533,7 +526,7 @@ fun FirAnnotation.getCorrespondingClassSymbolOrNull(session: FirSession): FirReg
 }
 
 fun BodyResolveComponents.initialTypeOfCandidate(candidate: Candidate): ConeKotlinType {
-    val typeRef = typeFromSymbol(candidate.symbol, makeNullable = false)
+    val typeRef = typeFromSymbol(candidate.symbol)
     return typeRef.initialTypeOfCandidate(candidate)
 }
 
