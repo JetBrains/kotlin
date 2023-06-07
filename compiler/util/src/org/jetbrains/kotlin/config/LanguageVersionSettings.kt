@@ -332,6 +332,11 @@ enum class LanguageFeature(
     // When this feature is enabled, no such errors are reported.
     NoAdditionalErrorsInK1DiagnosticReporter(sinceVersion = null, kind = OTHER),
 
+    // top-level script inner classes never made any sense, but used for some time to overcome the capturing logic limitations
+    // Now capturing logic works properly, therefore the warning is reported in K2
+    // this feature will eventually switch this warning to an error
+    ProhibitScriptTopLevelInnerClasses(sinceVersion = null, kind = OTHER),
+
     // Experimental features
 
     BreakContinueInInlineLambdas(null), // KT-1436

@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.config.LanguageFeature.ProhibitCyclesInAnnotations
 import org.jetbrains.kotlin.config.LanguageFeature.ProhibitImplementingVarByInheritedVal
 import org.jetbrains.kotlin.config.LanguageFeature.ProhibitInvisibleAbstractMethodsInSuperclasses
 import org.jetbrains.kotlin.config.LanguageFeature.ProhibitNonReifiedArraysAsReifiedTypeArguments
+import org.jetbrains.kotlin.config.LanguageFeature.ProhibitScriptTopLevelInnerClasses
 import org.jetbrains.kotlin.config.LanguageFeature.ProhibitUseSiteTargetAnnotationsOnSuperTypes
 import org.jetbrains.kotlin.config.LanguageFeature.RestrictRetentionForExpressionAnnotations
 import org.jetbrains.kotlin.config.LanguageFeature.RestrictionOfValReassignmentViaBackingField
@@ -146,6 +147,7 @@ object FirErrors {
     val VAL_OR_VAR_ON_CATCH_PARAMETER by error1<KtParameter, KtKeywordToken>(SourceElementPositioningStrategies.VAL_OR_VAR_NODE)
     val VAL_OR_VAR_ON_SECONDARY_CONSTRUCTOR_PARAMETER by error1<KtParameter, KtKeywordToken>(SourceElementPositioningStrategies.VAL_OR_VAR_NODE)
     val INVISIBLE_SETTER by error3<PsiElement, FirPropertySymbol, Visibility, CallableId>(SourceElementPositioningStrategies.SELECTOR_BY_QUALIFIED)
+    val INNER_ON_TOP_LEVEL_SCRIPT_CLASS by deprecationError0<PsiElement>(ProhibitScriptTopLevelInnerClasses)
 
     // Unresolved
     val INVISIBLE_REFERENCE by error3<PsiElement, FirBasedSymbol<*>, Visibility, ClassId?>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)

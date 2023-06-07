@@ -246,6 +246,16 @@ internal class InvisibleSetterImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.InvisibleSetter
 
+internal class InnerOnTopLevelScriptClassErrorImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.InnerOnTopLevelScriptClassError
+
+internal class InnerOnTopLevelScriptClassWarningImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.InnerOnTopLevelScriptClassWarning
+
 internal class InvisibleReferenceImpl(
     override val reference: KtSymbol,
     override val visible: Visibility,

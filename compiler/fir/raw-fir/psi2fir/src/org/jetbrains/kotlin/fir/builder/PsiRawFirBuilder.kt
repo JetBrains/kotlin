@@ -1023,7 +1023,7 @@ open class PsiRawFirBuilder(
             val status = FirDeclarationStatusImpl(explicitVisibility ?: defaultVisibility(), Modality.FINAL).apply {
                 isExpect = this@toFirConstructor?.hasExpectModifier() == true || this@PsiRawFirBuilder.context.containerIsExpect
                 isActual = this@toFirConstructor?.hasActualModifier() == true
-                isInner = owner.hasModifier(INNER_KEYWORD)
+                isInner = owner.parent.parent !is KtScript && owner.hasModifier(INNER_KEYWORD) // a warning about inner script class is reported on the class itself
                 isFromSealedClass = owner.hasModifier(SEALED_KEYWORD) && explicitVisibility !== Visibilities.Private
                 isFromEnumClass = owner.hasModifier(ENUM_KEYWORD)
             }
@@ -1244,6 +1244,7 @@ open class PsiRawFirBuilder(
             // NB: enum entry nested classes are considered local by FIR design (see discussion in KT-45115)
             val isLocal = classOrObject.isLocal || classOrObject.getStrictParentOfType<KtEnumEntry>() != null
             val classIsExpect = classOrObject.hasExpectModifier() || context.containerIsExpect
+            val sourceElement = classOrObject.toFirSourceElement()
             return withChildClassName(
                 classOrObject.nameAsSafeName,
                 isExpect = classIsExpect,
@@ -1265,7 +1266,7 @@ open class PsiRawFirBuilder(
                 ).apply {
                     isExpect = classIsExpect
                     isActual = classOrObject.hasActualModifier()
-                    isInner = classOrObject.hasModifier(INNER_KEYWORD)
+                    isInner = classOrObject.hasModifier(INNER_KEYWORD) && classOrObject.parent.parent !is KtScript
                     isCompanion = (classOrObject as? KtObjectDeclaration)?.isCompanion() == true
                     isData = classOrObject.hasModifier(DATA_KEYWORD)
                     isInline = classOrObject.hasModifier(INLINE_KEYWORD) || classOrObject.hasModifier(VALUE_KEYWORD)
@@ -1273,10 +1274,10 @@ open class PsiRawFirBuilder(
                     isExternal = classOrObject.hasModifier(EXTERNAL_KEYWORD)
                 }
 
-                withCapturedTypeParameters(status.isInner || isLocal, classOrObject.toFirSourceElement(), listOf()) {
+                withCapturedTypeParameters(status.isInner || isLocal, sourceElement, listOf()) {
                     var delegatedFieldsMap: Map<Int, FirFieldSymbol>?
                     buildRegularClass {
-                        source = classOrObject.toFirSourceElement()
+                        source = sourceElement
                         moduleData = baseModuleData
                         origin = FirDeclarationOrigin.Source
                         name = classOrObject.nameAsSafeName

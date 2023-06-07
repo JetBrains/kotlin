@@ -253,6 +253,18 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.INNER_ON_TOP_LEVEL_SCRIPT_CLASS.errorFactory) { firDiagnostic ->
+        InnerOnTopLevelScriptClassErrorImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.INNER_ON_TOP_LEVEL_SCRIPT_CLASS.warningFactory) { firDiagnostic ->
+        InnerOnTopLevelScriptClassWarningImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.INVISIBLE_REFERENCE) { firDiagnostic ->
         InvisibleReferenceImpl(
             firSymbolBuilder.buildSymbol(firDiagnostic.a),

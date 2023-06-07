@@ -301,6 +301,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INLINE_SUSPEND_FU
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INNER_CLASS_CONSTRUCTOR_NO_RECEIVER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INNER_CLASS_INSIDE_VALUE_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INNER_CLASS_OF_GENERIC_THROWABLE_SUBCLASS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INNER_ON_TOP_LEVEL_SCRIPT_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INSTANCE_ACCESS_BEFORE_SUPER_CALL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INTERFACE_AS_FUNCTION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INTERFACE_WITH_SUPERCLASS
@@ -714,6 +715,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             VISIBILITY,
             NAME_OF_CONTAINING_DECLARATION_OR_FILE
         )
+        map.put(INNER_ON_TOP_LEVEL_SCRIPT_CLASS, "Top level script class cannot be inner.")
         map.put(UNRESOLVED_REFERENCE, "Unresolved reference: {0}", NULLABLE_STRING)
         map.put(UNRESOLVED_IMPORT, "Unresolved reference: {0}", NULLABLE_STRING) // &
         map.put(UNRESOLVED_LABEL, "Unresolved label")

@@ -10,7 +10,7 @@ class Nested {
 }
 
 
-<!WRONG_MODIFIER_CONTAINING_DECLARATION!>inner<!> class Inner {
+<!INNER_ON_TOP_LEVEL_SCRIPT_CLASS_WARNING!>inner<!> class Inner {
     fun innerFun() = function()
     val innerProp = property
     fun innerThisFun() = this<!UNRESOLVED_LABEL!>@NestedInnerClass<!>.function()

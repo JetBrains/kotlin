@@ -29135,6 +29135,18 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
             }
 
             @Test
+            @TestMetadata("innerClassError.kts")
+            public void testInnerClassError() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/script/innerClassError.kts");
+            }
+
+            @Test
+            @TestMetadata("innerClassWarning.kts")
+            public void testInnerClassWarning() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/script/innerClassWarning.kts");
+            }
+
+            @Test
             @TestMetadata("LateInit.kts")
             public void testLateInit() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/script/LateInit.kts");
