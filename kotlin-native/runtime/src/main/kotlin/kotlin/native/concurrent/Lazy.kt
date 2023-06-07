@@ -12,68 +12,6 @@ import kotlin.native.internal.Frozen
 import kotlin.concurrent.AtomicReference
 import kotlinx.cinterop.ExperimentalForeignApi
 
-@FreezingIsDeprecated
-
-internal class FreezeAwareLazyImpl<out T>(initializer: () -> T) : Lazy<T> {
-    private val value_ = FreezableAtomicReference<Any?>(UNINITIALIZED)
-    // This cannot be made atomic because of the legacy MM. See https://github.com/JetBrains/kotlin-native/pull/3944
-    // So it must be protected by the lock below.
-    private var initializer_: (() -> T)? = initializer
-    private val lock_ = Lock()
-
-    private fun getOrInit(doFreeze: Boolean): T {
-        var result = value_.value
-        if (result !== UNINITIALIZED) {
-            if (result === INITIALIZING) {
-                value_.value = UNINITIALIZED
-                throw IllegalStateException("Recursive lazy computation")
-            }
-            @Suppress("UNCHECKED_CAST")
-            return result as T
-        }
-        // Set value_ to INITIALIZING.
-        value_.value = INITIALIZING
-        try {
-            result = initializer_!!()
-            if (doFreeze) result.freeze()
-        } catch (throwable: Throwable) {
-            value_.value = UNINITIALIZED
-            throw throwable
-        }
-        if (!doFreeze) {
-            if (this.isFrozen) {
-                value_.value = UNINITIALIZED
-                throw InvalidMutabilityException("Frozen during lazy computation")
-            }
-            // Clear initializer.
-            initializer_ = null
-        }
-        // Set value_ to actual one.
-        value_.value = result
-        return result
-    }
-
-    override val value: T
-        get() {
-            return if (isShareable()) {
-                // TODO: This is probably a big performance problem for lazy with the new MM. Address it.
-                locked(lock_) {
-                    getOrInit(isFrozen)
-                }
-            } else {
-                getOrInit(false)
-            }
-        }
-
-    /**
-     * This operation on shared objects may return value which is no longer reflect the current state of lazy.
-     */
-    override fun isInitialized(): Boolean = (value_.value !== UNINITIALIZED) && (value_.value !== INITIALIZING)
-
-    override fun toString(): String = if (isInitialized())
-        value.toString() else "Lazy value not initialized yet"
-}
-
 @OptIn(FreezingIsDeprecated::class)
 internal object UNINITIALIZED {
     // So that single-threaded configs can use those as well.
@@ -137,8 +75,8 @@ public fun <T> atomicLazy(initializer: () -> T): Lazy<T> = AtomicLazyImpl(initia
 @Suppress("UNCHECKED_CAST")
 @OptIn(FreezingIsDeprecated::class)
 internal class SynchronizedLazyImpl<out T>(initializer: () -> T) : Lazy<T> {
-    private var initializer = FreezableAtomicReference<(() -> T)?>(initializer)
-    private var valueRef = FreezableAtomicReference<Any?>(UNINITIALIZED)
+    private var initializer = AtomicReference<(() -> T)?>(initializer)
+    private var valueRef = AtomicReference<Any?>(UNINITIALIZED)
     private val lock = Lock()
 
     override val value: T
@@ -151,14 +89,7 @@ internal class SynchronizedLazyImpl<out T>(initializer: () -> T) : Lazy<T> {
             return locked(lock) {
                 val _v2 = valueRef.value
                 if (_v2 === UNINITIALIZED) {
-                    val wasFrozen = this.isFrozen
                     val typedValue = initializer.value!!()
-                    if (this.isFrozen) {
-                        if (!wasFrozen) {
-                            throw InvalidMutabilityException("Frozen during lazy computation")
-                        }
-                        typedValue.freeze()
-                    }
                     valueRef.value = typedValue
                     initializer.value = null
                     typedValue
@@ -175,10 +106,9 @@ internal class SynchronizedLazyImpl<out T>(initializer: () -> T) : Lazy<T> {
 
 
 @Suppress("UNCHECKED_CAST")
-@OptIn(FreezingIsDeprecated::class)
 internal class SafePublicationLazyImpl<out T>(initializer: () -> T) : Lazy<T> {
-    private var initializer = FreezableAtomicReference<(() -> T)?>(initializer)
-    private var valueRef = FreezableAtomicReference<Any?>(UNINITIALIZED)
+    private var initializer = AtomicReference<(() -> T)?>(initializer)
+    private var valueRef = AtomicReference<Any?>(UNINITIALIZED)
 
     override val value: T
         get() {
@@ -190,14 +120,7 @@ internal class SafePublicationLazyImpl<out T>(initializer: () -> T) : Lazy<T> {
             val initializerValue = initializer.value
             // if we see null in initializer here, it means that the value is already set by another thread
             if (initializerValue != null) {
-                val wasFrozen = this.isFrozen
                 val newValue = initializerValue()
-                if (this.isFrozen) {
-                    if (!wasFrozen) {
-                        throw InvalidMutabilityException("Frozen during lazy computation")
-                    }
-                    newValue.freeze()
-                }
                 if (valueRef.compareAndSet(UNINITIALIZED, newValue)) {
                     initializer.value = null
                     return newValue

@@ -19,11 +19,7 @@ import kotlin.native.isExperimentalMM
  * the returned instance as it may cause accidental deadlock. Also this behavior can be changed in the future.
  */
 @OptIn(kotlin.ExperimentalStdlibApi::class, FreezingIsDeprecated::class)
-public actual fun <T> lazy(initializer: () -> T): Lazy<T> =
-        if (isExperimentalMM())
-            SynchronizedLazyImpl(initializer)
-        else
-            FreezeAwareLazyImpl(initializer)
+public actual fun <T> lazy(initializer: () -> T): Lazy<T> = SynchronizedLazyImpl(initializer)
 
 
 /**
@@ -39,8 +35,8 @@ public actual fun <T> lazy(initializer: () -> T): Lazy<T> =
 @OptIn(kotlin.ExperimentalStdlibApi::class, FreezingIsDeprecated::class)
 public actual fun <T> lazy(mode: LazyThreadSafetyMode, initializer: () -> T): Lazy<T> =
         when (mode) {
-            LazyThreadSafetyMode.SYNCHRONIZED -> if (isExperimentalMM()) SynchronizedLazyImpl(initializer) else throw UnsupportedOperationException()
-            LazyThreadSafetyMode.PUBLICATION -> if (isExperimentalMM()) SafePublicationLazyImpl(initializer) else FreezeAwareLazyImpl(initializer)
+            LazyThreadSafetyMode.SYNCHRONIZED -> SynchronizedLazyImpl(initializer)
+            LazyThreadSafetyMode.PUBLICATION -> SafePublicationLazyImpl(initializer)
             LazyThreadSafetyMode.NONE -> UnsafeLazyImpl(initializer)
         }
 

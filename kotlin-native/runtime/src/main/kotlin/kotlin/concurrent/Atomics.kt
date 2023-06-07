@@ -15,13 +15,7 @@ import kotlin.native.concurrent.*
 /**
  * An [Int] value that is always updated atomically.
  * For additional details about atomicity guarantees for reads and writes see [kotlin.concurrent.Volatile].
- *
- * Legacy MM: Atomic values and freezing: this type is unique with regard to freezing.
- * Namely, it provides mutating operations, while can participate in frozen subgraphs.
- * So shared frozen objects can have mutable fields of [AtomicInt] type.
  */
-@Frozen
-@OptIn(FreezingIsDeprecated::class, ExperimentalStdlibApi::class)
 @SinceKotlin("1.9")
 public class AtomicInt(@Volatile public var value: Int) {
     /**
@@ -103,12 +97,7 @@ public class AtomicInt(@Volatile public var value: Int) {
  * A [Long] value that is always updated atomically.
  * For additional details about atomicity guarantees for reads and writes see [kotlin.concurrent.Volatile].
  *
- * Legacy MM: Atomic values and freezing: this type is unique with regard to freezing.
- * Namely, it provides mutating operations, while can participate in frozen subgraphs.
- * So shared frozen objects can have mutable fields of [AtomicLong] type.
  */
-@Frozen
-@OptIn(FreezingIsDeprecated::class, ExperimentalStdlibApi::class)
 @SinceKotlin("1.9")
 public class AtomicLong(@Volatile public var value: Long)  {
     /**
@@ -194,64 +183,15 @@ public class AtomicLong(@Volatile public var value: Long)  {
 
 /**
  * An object reference that is always updated atomically.
- *
- * Legacy MM: An atomic reference to a frozen Kotlin object. Can be used in concurrent scenarious
- * but frequently shall be of nullable type and be zeroed out once no longer needed.
- * Otherwise memory leak could happen. To detect such leaks [kotlin.native.internal.GC.detectCycles]
- * in debug mode could be helpful.
  */
-@FrozenLegacyMM
-@LeakDetectorCandidate
-@NoReorderFields
 @OptIn(FreezingIsDeprecated::class)
 @SinceKotlin("1.9")
-public class AtomicReference<T> {
-    private var value_: T
-
-    // A spinlock to fix potential ARC race.
-    private var lock: Int = 0
-
-    // Optimization for speeding up access.
-    private var cookie: Int = 0
-
-    /**
-     * Creates a new atomic reference pointing to the [given value][value].
-     *
-     * @throws InvalidMutabilityException with legacy MM if reference is not frozen.
-     */
-    constructor(value: T) {
-        if (this.isFrozen) {
-            checkIfFrozen(value)
-        }
-        value_ = value
-    }
-
-    /**
-     * The current value.
-     * Gets the current value or sets to the given [new value][newValue].
-     *
-     * Legacy MM: if the [new value][newValue] value is not null, it must be frozen or permanent object.
-     *
-     * @throws InvalidMutabilityException with legacy MM if the value is not frozen or a permanent object
-     */
-    public var value: T
-        get() = @Suppress("UNCHECKED_CAST")(getImpl() as T)
-        set(newValue) = setImpl(newValue)
+public class AtomicReference<T>(public @Volatile var value: T) {
 
     /**
      * Atomically sets the value to the given [new value][newValue] and returns the old value.
      */
-    public fun getAndSet(newValue: T): T {
-        while (true) {
-            val old = value
-            if (old === newValue) {
-                return old
-            }
-            if (compareAndSet(old, newValue)) {
-                return old
-            }
-        }
-    }
+    public fun getAndSet(newValue: T): T = this::value.getAndSetField(newValue)
 
     /**
      * Atomically sets the value to the given [new value][newValue] if the current value equals the [expected value][expected],
@@ -261,8 +201,7 @@ public class AtomicReference<T> {
      *
      * Comparison of values is done by reference.
      */
-    @GCUnsafeCall("Kotlin_AtomicReference_compareAndSet")
-    external public fun compareAndSet(expected: T, newValue: T): Boolean
+    public fun compareAndSet(expected: T, newValue: T): Boolean = this::value.compareAndSetField(expected, newValue)
 
     /**
      * Atomically sets the value to the given [new value][newValue] if the current value equals the [expected value][expected]
@@ -271,26 +210,14 @@ public class AtomicReference<T> {
      * Provides sequential consistent ordering guarantees and cannot fail spuriously.
      *
      * Comparison of values is done by reference.
-     *
-     * Legacy MM: if the [new value][newValue] value is not null, it must be frozen or permanent object.
-     *
-     * @throws InvalidMutabilityException with legacy MM if the value is not frozen or a permanent object
      */
-    @GCUnsafeCall("Kotlin_AtomicReference_compareAndSwap")
-    external public fun compareAndExchange(expected: T, newValue: T): T
+    public fun compareAndExchange(expected: T, newValue: T): T = this::value.compareAndExchangeField(expected, newValue)
 
     /**
      * Returns the string representation of the current [value].
      */
     public override fun toString(): String =
             "${debugString(this)} -> ${debugString(value)}"
-
-    // Implementation details.
-    @GCUnsafeCall("Kotlin_AtomicReference_set")
-    private external fun setImpl(newValue: Any?): Unit
-
-    @GCUnsafeCall("Kotlin_AtomicReference_get")
-    private external fun getImpl(): Any?
 }
 
 /**
@@ -299,13 +226,7 @@ public class AtomicReference<T> {
  *
  * [kotlinx.cinterop.NativePtr] is a value type, hence it is stored in [AtomicNativePtr] without boxing
  * and [compareAndSet], [compareAndExchange] operations perform comparison by value.
- *
- * Legacy MM: Atomic values and freezing: this type is unique with regard to freezing.
- * Namely, it provides mutating operations, while can participate in frozen subgraphs.
- * So shared frozen objects can have mutable fields of [AtomicNativePtr] type.
  */
-@Frozen
-@OptIn(FreezingIsDeprecated::class, ExperimentalStdlibApi::class)
 @SinceKotlin("1.9")
 @ExperimentalForeignApi
 public class AtomicNativePtr(@Volatile public var value: NativePtr) {
@@ -376,7 +297,6 @@ private fun debugString(value: Any?): String {
  *
  * Returns true if the actual field value matched [expectedValue]
  *
- * Legacy MM: if [this] is a reference for a non-value represented field, [IllegalArgumentException] would be thrown.
  */
 @PublishedApi
 @TypedIntrinsic(IntrinsicType.COMPARE_AND_SET_FIELD)
@@ -398,7 +318,6 @@ internal external fun <T> KMutableProperty0<T>.compareAndSetField(expectedValue:
  *
  * Returns the field value before operation.
  *
- * Legacy MM: if [this] is a reference for a non-value represented field, [IllegalArgumentException] would be thrown.
  */
 @PublishedApi
 @TypedIntrinsic(IntrinsicType.COMPARE_AND_EXCHANGE_FIELD)
@@ -414,8 +333,6 @@ internal external fun <T> KMutableProperty0<T>.compareAndExchangeField(expectedV
  * would be thrown.
  *
  * If property referenced by [this] has nontrivial setter it will not be called.
- *
- * Legacy MM: if [this] is a reference for a non-value represented field, [IllegalArgumentException] would be thrown.
  */
 @PublishedApi
 @TypedIntrinsic(IntrinsicType.GET_AND_SET_FIELD)
@@ -432,8 +349,6 @@ internal external fun <T> KMutableProperty0<T>.getAndSetField(newValue: T): T
  * would be thrown.
  *
  * If property referenced by [this] has nontrivial setter it will not be called.
- *
- * Legacy MM: if [this] is a reference for a non-value represented field, [IllegalArgumentException] would be thrown.
  */
 @PublishedApi
 @TypedIntrinsic(IntrinsicType.GET_AND_ADD_FIELD)
@@ -449,8 +364,6 @@ internal external fun KMutableProperty0<Short>.getAndAddField(delta: Short): Sho
  * would be thrown.
  *
  * If property referenced by [this] has nontrivial setter it will not be called.
- *
- * Legacy MM: if [this] is a reference for a non-value represented field, [IllegalArgumentException] would be thrown.
  */
 @PublishedApi
 @TypedIntrinsic(IntrinsicType.GET_AND_ADD_FIELD)
@@ -466,8 +379,6 @@ internal external fun KMutableProperty0<Int>.getAndAddField(newValue: Int): Int
  * would be thrown.
  *
  * If property referenced by [this] has nontrivial setter it will not be called.
- *
- * Legacy MM: if [this] is a reference for a non-value represented field, [IllegalArgumentException] would be thrown.
  */
 @PublishedApi
 @TypedIntrinsic(IntrinsicType.GET_AND_ADD_FIELD)
@@ -483,8 +394,6 @@ internal external fun KMutableProperty0<Long>.getAndAddField(newValue: Long): Lo
  * would be thrown.
  *
  * If property referenced by [this] has nontrivial setter it will not be called.
- *
- * Legacy MM: if [this] is a reference for a non-value represented field, [IllegalArgumentException] would be thrown.
  */
 @PublishedApi
 @TypedIntrinsic(IntrinsicType.GET_AND_ADD_FIELD)

@@ -10,9 +10,8 @@ package kotlin.native.internal
 import kotlin.experimental.ExperimentalNativeApi
 import kotlin.internal.getProgressionLastElement
 import kotlin.reflect.KClass
-import kotlin.native.concurrent.freeze
+import kotlin.concurrent.AtomicReference
 import kotlinx.cinterop.*
-import kotlin.native.concurrent.FreezableAtomicReference
 
 @ExportForCppRuntime
 @PublishedApi
@@ -158,12 +157,7 @@ internal fun ReportUnhandledException(throwable: Throwable) {
 // to throw an exception during it's initialization before this hook would've been initialized.
 @OptIn(FreezingIsDeprecated::class, ExperimentalNativeApi::class)
 internal object UnhandledExceptionHookHolder {
-    internal val hook: FreezableAtomicReference<ReportUnhandledExceptionHook?> =
-        if (Platform.memoryModel == MemoryModel.EXPERIMENTAL) {
-            FreezableAtomicReference<ReportUnhandledExceptionHook?>(null)
-        } else {
-            FreezableAtomicReference<ReportUnhandledExceptionHook?>(null).freeze()
-        }
+    internal val hook: AtomicReference<ReportUnhandledExceptionHook?> = AtomicReference<ReportUnhandledExceptionHook?>(null)
 }
 
 // TODO: Can be removed only when native-mt coroutines stop using it.

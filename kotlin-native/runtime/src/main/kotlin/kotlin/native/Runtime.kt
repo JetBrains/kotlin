@@ -61,7 +61,7 @@ public typealias ReportUnhandledExceptionHook = Function1<Throwable, Unit>
 @OptIn(FreezingIsDeprecated::class)
 public fun setUnhandledExceptionHook(hook: ReportUnhandledExceptionHook?): ReportUnhandledExceptionHook? {
     try {
-        return UnhandledExceptionHookHolder.hook.swap(hook)
+        return UnhandledExceptionHookHolder.hook.getAndSet(hook)
     } catch (e: InvalidMutabilityException) {
         throw InvalidMutabilityException("Unhandled exception hook must be frozen")
     }
@@ -72,7 +72,7 @@ public fun setUnhandledExceptionHook(hook: ReportUnhandledExceptionHook?): Repor
 @OptIn(FreezingIsDeprecated::class, ExperimentalNativeApi::class)
 public fun setUnhandledExceptionHook(hook: ReportUnhandledExceptionHook): ReportUnhandledExceptionHook? {
     try {
-        return UnhandledExceptionHookHolder.hook.swap(hook)
+        return UnhandledExceptionHookHolder.hook.getAndSet(hook)
     } catch (e: InvalidMutabilityException) {
         throw InvalidMutabilityException("Unhandled exception hook must be frozen")
     }
