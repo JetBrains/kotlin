@@ -70,7 +70,7 @@ private fun collectDesignationPath(target: FirElementWithResolveState): List<Fir
 
             val containingClassId = target.containingClassLookupTag()?.classId ?: return emptyList()
 
-            if (target.origin == FirDeclarationOrigin.SubstitutionOverride) {
+            if (target.origin is FirDeclarationOrigin.SubstitutionOverride) {
                 val originalContainingClassId = target.originalForSubstitutionOverride?.containingClassLookupTag()?.classId
                 if (containingClassId == originalContainingClassId) {
                     // Ugly temporary hack for call-site substitution overrides (KTIJ-24004).

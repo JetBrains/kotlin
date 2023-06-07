@@ -24,7 +24,7 @@ internal class JavaClassDeclaredMembersEnhancementScope(
 ) : FirContainingNamesAwareScope() {
     private fun FirCallableDeclaration.isDeclared(): Boolean {
         return (this.dispatchReceiverType as? ConeLookupTagBasedType)?.lookupTag == owner.symbol.toLookupTag()
-                && this.origin != FirDeclarationOrigin.SubstitutionOverride
+                && this.origin !is FirDeclarationOrigin.SubstitutionOverride
                 && this.origin != FirDeclarationOrigin.IntersectionOverride
     }
 

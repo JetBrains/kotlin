@@ -37,6 +37,7 @@ object FirFakeOverrideGenerator {
         baseFunction: FirSimpleFunction,
         derivedClassLookupTag: ConeClassLikeLookupTag?,
         newDispatchReceiverType: ConeSimpleKotlinType?,
+        origin: FirDeclarationOrigin.SubstitutionOverride,
         newReceiverType: ConeKotlinType? = null,
         newContextReceiverTypes: List<ConeKotlinType?>? = null,
         newReturnType: ConeKotlinType? = null,
@@ -47,7 +48,7 @@ object FirFakeOverrideGenerator {
     ): FirNamedFunctionSymbol {
         createSubstitutionOverrideFunction(
             symbolForSubstitutionOverride, session, baseFunction, derivedClassLookupTag, newDispatchReceiverType, newReceiverType,
-            newContextReceiverTypes, newReturnType, newParameterTypes, newTypeParameters, isExpect, fakeOverrideSubstitution
+            newContextReceiverTypes, newReturnType, newParameterTypes, newTypeParameters, isExpect, fakeOverrideSubstitution, origin,
         )
         return symbolForSubstitutionOverride
     }
@@ -73,6 +74,7 @@ object FirFakeOverrideGenerator {
         newTypeParameters: List<FirTypeParameter>?,
         isExpect: Boolean = baseFunction.isExpect,
         fakeOverrideSubstitution: FakeOverrideSubstitution?,
+        origin: FirDeclarationOrigin.SubstitutionOverride,
     ): FirSimpleFunction {
         // TODO: consider using here some light-weight functions instead of pseudo-real FirMemberFunctionImpl
         // As second alternative, we can invent some light-weight kind of FirRegularClass
@@ -81,7 +83,7 @@ object FirFakeOverrideGenerator {
             baseFunction,
             derivedClassLookupTag = derivedClassLookupTag,
             session,
-            FirDeclarationOrigin.SubstitutionOverride,
+            origin,
             isExpect,
             newDispatchReceiverType,
             newParameterTypes,
@@ -210,13 +212,14 @@ object FirFakeOverrideGenerator {
                     newReceiverType,
                     newContextReceiverTypes,
                     newReturnType,
-                    fakeOverrideSubstitution
+                    fakeOverrideSubstitution,
+                    origin,
                 )
                 emptyList()
             }
             newTypeParameters == null -> {
                 val (copiedTypeParameters, substitutor) = createNewTypeParametersAndSubstitutor(
-                    useSiteSession, baseFunction, symbolForOverride, ConeSubstitutor.Empty
+                    useSiteSession, baseFunction, symbolForOverride, ConeSubstitutor.Empty, origin
                 )
                 val copiedParameterTypes = baseFunction.valueParameters.map {
                     substitutor.substituteOrNull(it.returnTypeRef.coneType)
@@ -236,7 +239,8 @@ object FirFakeOverrideGenerator {
                     copiedReceiverType,
                     copiedContextReceiverTypes,
                     copiedReturnType,
-                    newFakeOverrideSubstitution
+                    newFakeOverrideSubstitution,
+                    origin,
                 )
                 copiedTypeParameters
             }
@@ -248,7 +252,8 @@ object FirFakeOverrideGenerator {
                     newReceiverType,
                     newContextReceiverTypes,
                     newReturnType,
-                    fakeOverrideSubstitution
+                    fakeOverrideSubstitution,
+                    origin,
                 )
                 newTypeParameters
             }
@@ -263,6 +268,7 @@ object FirFakeOverrideGenerator {
         newContextReceiverTypes: List<ConeKotlinType?>?,
         newReturnType: ConeKotlinType?,
         fakeOverrideSubstitution: FakeOverrideSubstitution?,
+        origin: FirDeclarationOrigin,
     ) {
         annotations += baseFunction.annotations
 
@@ -289,7 +295,7 @@ object FirFakeOverrideGenerator {
             newParameterTypes ?: List(baseFunction.valueParameters.size) { null }
         ) { valueParameter, newType ->
             buildValueParameterCopy(valueParameter) {
-                origin = FirDeclarationOrigin.SubstitutionOverride
+                this.origin = origin
                 returnTypeRef = valueParameter.returnTypeRef.withReplacedConeType(newType)
                 symbol = FirValueParameterSymbol(valueParameter.name)
                 containingFunctionSymbol = fakeFunctionSymbol
@@ -313,6 +319,7 @@ object FirFakeOverrideGenerator {
         baseProperty: FirProperty,
         derivedClassLookupTag: ConeClassLikeLookupTag,
         newDispatchReceiverType: ConeSimpleKotlinType?,
+        origin: FirDeclarationOrigin.SubstitutionOverride,
         newReceiverType: ConeKotlinType? = null,
         newContextReceiverTypes: List<ConeKotlinType?>? = null,
         newReturnType: ConeKotlinType? = null,
@@ -321,7 +328,7 @@ object FirFakeOverrideGenerator {
         fakeOverrideSubstitution: FakeOverrideSubstitution? = null
     ): FirPropertySymbol {
         createCopyForFirProperty(
-            symbolForSubstitutionOverride, baseProperty, derivedClassLookupTag, session, FirDeclarationOrigin.SubstitutionOverride,
+            symbolForSubstitutionOverride, baseProperty, derivedClassLookupTag, session, origin,
             isExpect, newDispatchReceiverType, newTypeParameters, newReceiverType, newContextReceiverTypes, newReturnType,
             fakeOverrideSubstitution = fakeOverrideSubstitution
         ).apply {
@@ -481,7 +488,7 @@ object FirFakeOverrideGenerator {
     }.also { accessor ->
         when (accessor.origin) {
             FirDeclarationOrigin.IntersectionOverride -> accessor.originalForIntersectionOverrideAttr = this
-            FirDeclarationOrigin.SubstitutionOverride -> accessor.originalForSubstitutionOverrideAttr = this
+            is FirDeclarationOrigin.SubstitutionOverride -> accessor.originalForSubstitutionOverrideAttr = this
             else -> {}
         }
 
@@ -544,7 +551,7 @@ object FirFakeOverrideGenerator {
             }
             newTypeParameters == null -> {
                 val (copiedTypeParameters, substitutor) = createNewTypeParametersAndSubstitutor(
-                    useSiteSession, baseProperty, symbol, ConeSubstitutor.Empty
+                    useSiteSession, baseProperty, symbol, ConeSubstitutor.Empty, origin,
                 )
                 val (copiedReceiverType, copiedContextReceiverTypes, possibleReturnType) = substituteReceiverAndReturnType(
                     baseProperty, newReceiverType, newContextReceiverTypes, newReturnType, substitutor
@@ -642,13 +649,14 @@ object FirFakeOverrideGenerator {
         session: FirSession,
         baseField: FirField,
         derivedClassLookupTag: ConeClassLikeLookupTag,
-        newReturnType: ConeKotlinType?
+        newReturnType: ConeKotlinType?,
+        origin: FirDeclarationOrigin.SubstitutionOverride,
     ): FirFieldSymbol {
         val symbol = FirFieldSymbol(CallableId(derivedClassLookupTag.classId, baseField.name))
         buildField {
             moduleData = session.nullableModuleData ?: baseField.moduleData
             this.symbol = symbol
-            origin = FirDeclarationOrigin.SubstitutionOverride
+            this.origin = origin
             returnTypeRef = baseField.returnTypeRef.withReplacedConeType(newReturnType)
 
             source = baseField.source
@@ -673,6 +681,7 @@ object FirFakeOverrideGenerator {
         member: FirTypeParameterRefsOwner,
         symbolForOverride: FirBasedSymbol<*>,
         substitutor: ConeSubstitutor,
+        origin: FirDeclarationOrigin,
         forceTypeParametersRecreation: Boolean = true
     ): Pair<List<FirTypeParameterRef>, ConeSubstitutor> {
         if (member.typeParameters.isEmpty()) return Pair(member.typeParameters, substitutor)
@@ -681,7 +690,7 @@ object FirFakeOverrideGenerator {
             FirTypeParameterBuilder().apply {
                 source = typeParameter.source
                 moduleData = typeParameter.moduleData
-                origin = FirDeclarationOrigin.SubstitutionOverride
+                this.origin = origin
                 resolvePhase = FirResolvePhase.DECLARATIONS
                 name = typeParameter.name
                 symbol = FirTypeParameterSymbol()

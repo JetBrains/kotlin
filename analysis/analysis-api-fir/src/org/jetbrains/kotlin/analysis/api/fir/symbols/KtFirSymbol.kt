@@ -100,7 +100,7 @@ internal tailrec fun FirDeclaration.ktSymbolOrigin(): KtSymbolOrigin = when (ori
 
     is FirDeclarationOrigin.Plugin -> KtSymbolOrigin.PLUGIN
     FirDeclarationOrigin.RenamedForOverride -> KtSymbolOrigin.JAVA
-    FirDeclarationOrigin.SubstitutionOverride -> KtSymbolOrigin.SUBSTITUTION_OVERRIDE
+    is FirDeclarationOrigin.SubstitutionOverride -> KtSymbolOrigin.SUBSTITUTION_OVERRIDE
     FirDeclarationOrigin.DynamicScope -> buildErrorWithAttachment("Invalid FirDeclarationOrigin ${origin::class.simpleName}") {
         withFirEntry("firToGetOrigin", this@ktSymbolOrigin)
     }
