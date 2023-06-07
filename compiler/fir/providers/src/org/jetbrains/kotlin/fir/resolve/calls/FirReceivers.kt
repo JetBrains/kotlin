@@ -11,7 +11,11 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.copyWithNewSourceKind
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.diagnostics.ConeIntermediateDiagnostic
-import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.FirCheckNotNullCall
+import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirSmartCastExpression
+import org.jetbrains.kotlin.fir.expressions.arguments
+import org.jetbrains.kotlin.fir.expressions.builder.buildInaccessibleReceiverExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildSmartCastExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildThisReceiverExpression
 import org.jetbrains.kotlin.fir.references.builder.buildImplicitThisReference
@@ -97,6 +101,7 @@ sealed class ImplicitReceiverValue<S : FirBasedSymbol<*>>(
     protected val scopeSession: ScopeSession,
     private val mutable: Boolean,
     val contextReceiverNumber: Int = -1,
+    private val inaccessibleReceiver: Boolean = false
 ) : ReceiverValue {
     final override var type: ConeKotlinType = type
         private set
@@ -118,7 +123,8 @@ sealed class ImplicitReceiverValue<S : FirBasedSymbol<*>>(
 
     override fun scope(useSiteSession: FirSession, scopeSession: ScopeSession): FirTypeScope? = implicitScope
 
-    private val originalReceiverExpression: FirThisReceiverExpression = receiverExpression(boundSymbol, type, contextReceiverNumber)
+    private val originalReceiverExpression: FirExpression =
+        receiverExpression(boundSymbol, type, contextReceiverNumber, inaccessibleReceiver)
     final override var receiverExpression: FirExpression = originalReceiverExpression
         private set
 
@@ -128,7 +134,7 @@ sealed class ImplicitReceiverValue<S : FirBasedSymbol<*>>(
     @Deprecated(level = DeprecationLevel.ERROR, message = "Builder inference should not modify implicit receivers. KT-54708")
     fun updateTypeInBuilderInference(type: ConeKotlinType) {
         this.type = type
-        receiverExpression = receiverExpression(boundSymbol, type, contextReceiverNumber)
+        receiverExpression = receiverExpression(boundSymbol, type, contextReceiverNumber, inaccessibleReceiver)
         implicitScope = type.scope(
             useSiteSession = useSiteSession,
             scopeSession = scopeSession,
@@ -176,18 +182,28 @@ private fun receiverExpression(
     symbol: FirBasedSymbol<*>,
     type: ConeKotlinType,
     contextReceiverNumber: Int,
-): FirThisReceiverExpression =
-    buildThisReceiverExpression {
-        // NB: we can't use `symbol.fir.source` as the source of `this` receiver. For instance, if this is an implicit receiver for a class,
-        // the entire class itself will be set as a source. If combined with an implicit type operation, a certain assertion, like null
-        // check assertion, will retrieve source as an assertion message, which is literally the entire class (!).
-        calleeReference = buildImplicitThisReference {
-            boundSymbol = symbol
-            this.contextReceiverNumber = contextReceiverNumber
-        }
-        typeRef = type.toFirResolvedTypeRef()
-        isImplicit = true
+    inaccessibleReceiver: Boolean
+): FirExpression {
+    // NB: we can't use `symbol.fir.source` as the source of `this` receiver. For instance, if this is an implicit receiver for a class,
+    // the entire class itself will be set as a source. If combined with an implicit type operation, a certain assertion, like null
+    // check assertion, will retrieve source as an assertion message, which is literally the entire class (!).
+    val calleeReference = buildImplicitThisReference {
+        boundSymbol = symbol
+        this.contextReceiverNumber = contextReceiverNumber
     }
+    val typeRef = type.toFirResolvedTypeRef()
+    return when (inaccessibleReceiver) {
+        false -> buildThisReceiverExpression {
+            this.calleeReference = calleeReference
+            this.typeRef = typeRef
+            isImplicit = true
+        }
+        true -> buildInaccessibleReceiverExpression {
+            this.calleeReference = calleeReference
+            this.typeRef = typeRef
+        }
+    }
+}
 
 class ImplicitDispatchReceiverValue(
     boundSymbol: FirClassSymbol<*>,
@@ -233,7 +249,7 @@ class InaccessibleImplicitReceiverValue(
     useSiteSession: FirSession,
     scopeSession: ScopeSession,
     mutable: Boolean = true,
-) : ImplicitReceiverValue<FirClassSymbol<*>>(boundSymbol, type, useSiteSession, scopeSession, mutable) {
+) : ImplicitReceiverValue<FirClassSymbol<*>>(boundSymbol, type, useSiteSession, scopeSession, mutable, inaccessibleReceiver = true) {
     override fun createSnapshot(): ImplicitReceiverValue<FirClassSymbol<*>> {
         return InaccessibleImplicitReceiverValue(boundSymbol, type, useSiteSession, scopeSession, false)
     }

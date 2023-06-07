@@ -727,6 +727,10 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +booleanField("isImplicit")
         }
 
+        inaccessibleReceiverExpression.configure {
+            +field("calleeReference", thisReference)
+        }
+
         whenExpression.configure {
             +field("subject", expression, nullable = true).withTransform()
             +field("subjectVariable", variable.withArgs("E" to "*"), nullable = true)

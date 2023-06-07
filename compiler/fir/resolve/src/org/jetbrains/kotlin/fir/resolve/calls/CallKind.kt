@@ -24,7 +24,6 @@ sealed class CallKind(vararg resolutionSequence: ResolutionStage) {
         LowerPriorityIfDynamic,
         ConstraintSystemForks,
         CheckIncompatibleTypeVariableUpperBounds,
-        InaccessibleReceiverResolutionStage,
     )
 
     object SyntheticSelect : CallKind(
@@ -60,7 +59,6 @@ sealed class CallKind(vararg resolutionSequence: ResolutionStage) {
         LowerPriorityIfDynamic,
         ConstraintSystemForks,
         CheckIncompatibleTypeVariableUpperBounds,
-        InaccessibleReceiverResolutionStage,
     )
 
     object DelegatingConstructorCall : CallKind(
@@ -96,7 +94,6 @@ sealed class CallKind(vararg resolutionSequence: ResolutionStage) {
         CheckIncompatibleTypeVariableUpperBounds,
         ProcessDynamicExtensionAnnotation,
         LowerPriorityIfDynamic,
-        InaccessibleReceiverResolutionStage,
     )
 
     object SyntheticIdForCallableReferencesResolution : CallKind(

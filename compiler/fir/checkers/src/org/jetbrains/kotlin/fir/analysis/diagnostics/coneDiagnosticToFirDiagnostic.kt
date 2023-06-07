@@ -302,8 +302,6 @@ private fun mapInapplicableCandidateError(
                 isError = rootCause.isError
             )
 
-            is InaccessibleReceiver -> FirErrors.INSTANCE_ACCESS_BEFORE_SUPER_CALL.createOn(source, "<this>")
-
             else -> genericDiagnostic
         }
     }.distinct()

@@ -77,6 +77,8 @@ class ComposedExpressionCheckers : ExpressionCheckers() {
         get() = _arrayOfCallCheckers
     override val classReferenceExpressionCheckers: Set<FirClassReferenceExpressionChecker>
         get() = _classReferenceExpressionCheckers
+    override val inaccessibleReceiverCheckers: Set<FirInaccessibleReceiverChecker>
+        get() = _inaccessibleReceiverCheckers
 
     private val _basicExpressionCheckers: MutableSet<FirBasicExpressionChecker> = mutableSetOf()
     private val _qualifiedAccessExpressionCheckers: MutableSet<FirQualifiedAccessExpressionChecker> = mutableSetOf()
@@ -110,6 +112,7 @@ class ComposedExpressionCheckers : ExpressionCheckers() {
     private val _doWhileLoopCheckers: MutableSet<FirDoWhileLoopChecker> = mutableSetOf()
     private val _arrayOfCallCheckers: MutableSet<FirArrayOfCallChecker> = mutableSetOf()
     private val _classReferenceExpressionCheckers: MutableSet<FirClassReferenceExpressionChecker> = mutableSetOf()
+    private val _inaccessibleReceiverCheckers: MutableSet<FirInaccessibleReceiverChecker> = mutableSetOf()
 
     @CheckersComponentInternal
     fun register(checkers: ExpressionCheckers) {
@@ -145,5 +148,6 @@ class ComposedExpressionCheckers : ExpressionCheckers() {
         _doWhileLoopCheckers += checkers.doWhileLoopCheckers
         _arrayOfCallCheckers += checkers.arrayOfCallCheckers
         _classReferenceExpressionCheckers += checkers.classReferenceExpressionCheckers
+        _inaccessibleReceiverCheckers += checkers.inaccessibleReceiverCheckers
     }
 }

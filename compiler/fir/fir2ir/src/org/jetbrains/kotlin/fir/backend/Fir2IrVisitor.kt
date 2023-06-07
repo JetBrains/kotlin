@@ -632,6 +632,19 @@ class Fir2IrVisitor(
         return visitQualifiedAccessExpression(thisReceiverExpression, data)
     }
 
+    override fun visitInaccessibleReceiverExpression(
+        inaccessibleReceiverExpression: FirInaccessibleReceiverExpression,
+        data: Any?,
+    ): IrElement {
+        return inaccessibleReceiverExpression.convertWithOffsets { startOffset, endOffset ->
+            IrErrorExpressionImpl(
+                startOffset, endOffset,
+                inaccessibleReceiverExpression.typeRef.toIrType(),
+                "Receiver is inaccessible"
+            )
+        }
+    }
+
     override fun visitSmartCastExpression(smartCastExpression: FirSmartCastExpression, data: Any?): IrElement {
         // Generate the expression with the original type and then cast it to the smart cast type.
         val value = convertToIrExpression(smartCastExpression.originalExpression)

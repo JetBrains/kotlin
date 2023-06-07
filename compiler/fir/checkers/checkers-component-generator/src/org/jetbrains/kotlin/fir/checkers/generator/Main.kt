@@ -5,17 +5,17 @@
 
 package org.jetbrains.kotlin.fir.checkers.generator
 
+import org.jetbrains.kotlin.fir.builder.SYNTAX_DIAGNOSTIC_LIST
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.DIAGNOSTICS_LIST
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.JS_DIAGNOSTICS_LIST
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.JVM_DIAGNOSTICS_LIST
+import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.NATIVE_DIAGNOSTICS_LIST
+import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.ErrorListDiagnosticListRenderer
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.generateDiagnostics
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import java.io.File
-import org.jetbrains.kotlin.fir.builder.SYNTAX_DIAGNOSTIC_LIST
-import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.NATIVE_DIAGNOSTICS_LIST
-import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.ErrorListDiagnosticListRenderer
 
 fun main(args: Array<String>) {
     val arguments = args.toList()
@@ -62,6 +62,7 @@ fun main(args: Array<String>) {
         alias<FirDoWhileLoop>("DoWhileLoopChecker")
         alias<FirArrayOfCall>("ArrayOfCallChecker")
         alias<FirClassReferenceExpression>("ClassReferenceExpressionChecker")
+        alias<FirInaccessibleReceiverExpression>("InaccessibleReceiverChecker")
     }
 
     val declarationPackage = "$basePackage.checkers.declaration"

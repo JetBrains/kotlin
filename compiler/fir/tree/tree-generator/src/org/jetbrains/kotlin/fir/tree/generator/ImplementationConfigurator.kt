@@ -666,7 +666,8 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             "FirReceiverParameterImpl",
             "FirClassReferenceExpressionImpl",
             "FirGetClassCallImpl",
-            "FirSmartCastExpressionImpl"
+            "FirSmartCastExpressionImpl",
+            "FirInaccessibleReceiverExpressionImpl"
         )
         configureFieldInAllImplementations(
             field = "typeRef",

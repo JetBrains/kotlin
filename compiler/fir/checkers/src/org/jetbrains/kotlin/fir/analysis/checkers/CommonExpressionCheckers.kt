@@ -162,4 +162,9 @@ object CommonExpressionCheckers : ExpressionCheckers() {
         get() = setOf(
             FirUnsupportedArrayLiteralChecker
         )
+
+    override val inaccessibleReceiverCheckers: Set<FirInaccessibleReceiverChecker>
+        get() = setOf(
+            FirReceiverAccessBeforeSuperCallChecker,
+        )
 }

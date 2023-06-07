@@ -109,6 +109,7 @@ import org.jetbrains.kotlin.fir.expressions.FirMultiDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.expressions.FirComponentCall
 import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
 import org.jetbrains.kotlin.fir.expressions.FirThisReceiverExpression
+import org.jetbrains.kotlin.fir.expressions.FirInaccessibleReceiverExpression
 import org.jetbrains.kotlin.fir.expressions.FirSmartCastExpression
 import org.jetbrains.kotlin.fir.expressions.FirSafeCallExpression
 import org.jetbrains.kotlin.fir.expressions.FirCheckedSafeCallSubject
@@ -575,6 +576,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     open fun visitThisReceiverExpression(thisReceiverExpression: FirThisReceiverExpression) {
         visitElement(thisReceiverExpression)
+    }
+
+    open fun visitInaccessibleReceiverExpression(inaccessibleReceiverExpression: FirInaccessibleReceiverExpression) {
+        visitElement(inaccessibleReceiverExpression)
     }
 
     open fun visitSmartCastExpression(smartCastExpression: FirSmartCastExpression) {
@@ -1179,6 +1184,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     final override fun visitThisReceiverExpression(thisReceiverExpression: FirThisReceiverExpression, data: Nothing?) {
         visitThisReceiverExpression(thisReceiverExpression)
+    }
+
+    final override fun visitInaccessibleReceiverExpression(inaccessibleReceiverExpression: FirInaccessibleReceiverExpression, data: Nothing?) {
+        visitInaccessibleReceiverExpression(inaccessibleReceiverExpression)
     }
 
     final override fun visitSmartCastExpression(smartCastExpression: FirSmartCastExpression, data: Nothing?) {
