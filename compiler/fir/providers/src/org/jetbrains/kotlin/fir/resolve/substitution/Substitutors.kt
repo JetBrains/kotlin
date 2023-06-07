@@ -183,6 +183,10 @@ data class ChainedSubstitutor(private val first: ConeSubstitutor, private val se
         first.substituteOrNull(type)?.let { return second.substituteOrSelf(it) }
         return second.substituteOrNull(type)
     }
+
+    override fun toString(): String {
+        return "$first then $second"
+    }
 }
 
 fun ConeSubstitutor.chain(other: ConeSubstitutor): ConeSubstitutor {
@@ -220,6 +224,12 @@ class ConeSubstitutorByMap(
     }
 
     override fun hashCode() = hashCode
+
+    override fun toString(): String {
+        return substitution.entries.joinToString(prefix = "{", postfix = "}", separator = " | ") { (param, type) ->
+            "${param.name} -> ${type.renderForDebugging()}"
+        }
+    }
 }
 
 class ConeRawScopeSubstitutor(
@@ -292,6 +302,12 @@ internal class ConeTypeSubstitutorByTypeConstructor(
         val approximatedIntegerLiteralType = if (approximateIntegerLiterals) new.approximateIntegerLiteralType() else new
         return approximatedIntegerLiteralType.updateNullabilityIfNeeded(type)?.withCombinedAttributesFrom(type)
     }
+
+    override fun toString(): String {
+        return map.entries.joinToString(prefix = "{", postfix = "}", separator = " | ") { (constructor, type) ->
+            "$constructor -> ${type.renderForDebugging()}"
+        }
+    }
 }
 
 // Note: builder inference uses TypeSubstitutorByTypeConstructor for not fixed type substitution
@@ -303,6 +319,13 @@ class NotFixedTypeToVariableSubstitutorForDelegateInference(
         if (type !is ConeStubType) return null
         if (type.constructor.isTypeVariableInSubtyping) return null
         return bindings[type.constructor.variable].updateNullabilityIfNeeded(type)
+    }
+
+    override fun toString(): String {
+        return bindings.entries.joinToString(prefix = "{", postfix = "}", separator = " | ") { (variable, type) ->
+            require(variable is ConeTypeVariable)
+            "TV(${variable.typeConstructor.debugName}) -> ${type.renderForDebugging()}"
+        }
     }
 }
 
@@ -327,6 +350,10 @@ class ConeStubAndTypeVariableToErrorTypeSubstitutor(
             }
             else -> null
         }
+    }
+
+    override fun toString(): String {
+        return "{<Stub type> -> <Error type>}"
     }
 }
 

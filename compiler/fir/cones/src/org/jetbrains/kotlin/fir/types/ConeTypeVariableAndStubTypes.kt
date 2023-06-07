@@ -55,7 +55,11 @@ data class ConeStubTypeConstructor(
     val variable: ConeTypeVariable,
     val isTypeVariableInSubtyping: Boolean,
     val isForFixation: Boolean = false,
-) : TypeConstructorMarker
+) : TypeConstructorMarker {
+    override fun toString(): String {
+        return "Stub(${variable.typeConstructor.debugName})"
+    }
+}
 
 sealed class ConeStubType(val constructor: ConeStubTypeConstructor, override val nullability: ConeNullability) : StubTypeMarker,
     ConeSimpleKotlinType() {

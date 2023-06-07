@@ -30,4 +30,8 @@ private class TypeVariableTypeRemovingSubstitutor(typeContext: ConeTypeContext) 
         }
         return ConeErrorType(ConeUnknownLambdaParameterTypeDiagnostic())
     }
+
+    override fun toString(): String {
+        return "{<Type variable> -> <Error type>}"
+    }
 }
