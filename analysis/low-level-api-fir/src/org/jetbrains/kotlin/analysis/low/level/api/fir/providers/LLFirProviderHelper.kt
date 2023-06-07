@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.extensions.LLFirR
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.extensions.llResolveExtensionTool
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.FirElementFinder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLFirKotlinSymbolNamesProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.originalDeclaration
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.originalKtFile
 import org.jetbrains.kotlin.analysis.providers.KotlinDeclarationProvider
 import org.jetbrains.kotlin.analysis.providers.KotlinPackageProvider
 import org.jetbrains.kotlin.analysis.providers.impl.declarationProviders.CompositeKotlinDeclarationProvider
@@ -61,7 +63,9 @@ internal class LLFirProviderHelper(
 
     private val classifierByClassId =
         firSession.firCachesFactory.createCache<ClassId, FirClassLikeDeclaration?, KtClassLikeDeclaration?> { classId, context ->
-            val ktClass = context ?: declarationProvider.getClassLikeDeclarationByClassId(classId) ?: return@createCache null
+            val ktClass = (if (context == null || !context.isPhysical) declarationProvider.getClassLikeDeclarationByClassId(
+                classId
+            ) else context) ?: return@createCache null
 
             if (ktClass.getClassId() == null) return@createCache null
             val firFile = firFileBuilder.buildRawFirFileWithCaching(ktClass.containingKtFile)
@@ -71,7 +75,8 @@ internal class LLFirProviderHelper(
 
     private val callablesByCallableId =
         firSession.firCachesFactory.createCache<CallableId, List<FirCallableSymbol<*>>, Collection<KtFile>?> { callableId, context ->
-            val files = context ?: declarationProvider.getTopLevelCallableFiles(callableId).ifEmpty { return@createCache emptyList() }
+            val files = if (context == null || context.any { !it.isPhysical }) declarationProvider.getTopLevelCallableFiles(callableId)
+                .ifEmpty { return@createCache emptyList() } else context
             buildList {
                 files.forEach { ktFile ->
                     val firFile = firFileBuilder.buildRawFirFileWithCaching(ktFile)
