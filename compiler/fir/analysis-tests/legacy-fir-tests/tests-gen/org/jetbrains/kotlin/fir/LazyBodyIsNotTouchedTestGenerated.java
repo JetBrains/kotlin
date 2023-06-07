@@ -25,6 +25,11 @@ public class LazyBodyIsNotTouchedTestGenerated extends AbstractLazyBodyIsNotTouc
         KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
     }
 
+    @TestMetadata("accessJavaFromKotlinViaImport.kt")
+    public void testAccessJavaFromKotlinViaImport() throws Exception {
+        runTest("compiler/fir/analysis-tests/testData/resolve/accessJavaFromKotlinViaImport.kt");
+    }
+
     public void testAllFilesPresentInResolve() throws Exception {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
     }

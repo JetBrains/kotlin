@@ -1,0 +1,11 @@
+FILE: useSite.kt
+    public final fun foo(): R|kotlin/Unit| {
+        Q|InspectionProfileImpl|.R|/InspectionProfileImpl.INIT_INSPECTIONS| = Boolean(true)
+    }
+FILE: NewInspectionProfile.kt
+    public abstract class NewInspectionProfile : R|kotlin/Any| {
+        public constructor(): R|NewInspectionProfile| {
+            super<R|kotlin/Any|>()
+        }
+
+    }

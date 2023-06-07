@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.load.java.structure.impl;
 
 import com.intellij.psi.PsiAnnotationOwner;
+import com.intellij.psi.PsiClassType;
 import com.intellij.psi.PsiField;
 import com.intellij.psi.PsiTypeParameter;
 import org.jetbrains.annotations.NotNull;
@@ -25,10 +26,14 @@ import org.jetbrains.kotlin.load.java.structure.JavaClassifierType;
 import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter;
 import org.jetbrains.kotlin.load.java.structure.impl.source.JavaElementPsiSource;
 import org.jetbrains.kotlin.load.java.structure.impl.source.JavaElementSourceFactory;
+import org.jetbrains.kotlin.load.java.structure.impl.source.JavaElementTypeSource;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.name.SpecialNames;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 
 import static org.jetbrains.kotlin.load.java.structure.impl.JavaElementCollectionFromPsiArrayUtil.classifierTypes;
 
@@ -51,7 +56,16 @@ public class JavaTypeParameterImpl extends JavaClassifierImpl<PsiTypeParameter> 
     @Override
     @NotNull
     public Collection<JavaClassifierType> getUpperBounds() {
-        return classifierTypes(getPsi().getExtendsList().getReferencedTypes(), getSourceFactory());
+        PsiClassType[] referencedTypes = getPsi().getExtendsList().getReferencedTypes();
+        if (referencedTypes.length == 0) return Collections.emptyList();
+        Collection<JavaClassifierType> result = new ArrayList<>(referencedTypes.length);
+        JavaElementSourceFactory sourceFactory = getSourceFactory();
+        for (int boundIndex = 0; boundIndex < referencedTypes.length; boundIndex++) {
+            JavaElementTypeSource<PsiClassType> source =
+                    sourceFactory.createTypeParameterUpperBoundTypeSource(psiElementSource, boundIndex);
+            result.add(new JavaClassifierTypeImpl(source));
+        }
+        return result;
     }
 
     @Nullable

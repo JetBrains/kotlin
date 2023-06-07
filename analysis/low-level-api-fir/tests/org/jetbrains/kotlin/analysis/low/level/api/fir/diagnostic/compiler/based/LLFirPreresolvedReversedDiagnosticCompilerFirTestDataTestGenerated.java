@@ -22,6 +22,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
     @TestDataPath("$PROJECT_ROOT")
     public class Resolve {
         @Test
+        @TestMetadata("accessJavaFromKotlinViaImport.kt")
+        public void testAccessJavaFromKotlinViaImport() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/accessJavaFromKotlinViaImport.kt");
+        }
+
+        @Test
         public void testAllFilesPresentInResolve() throws Exception {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }

@@ -14,6 +14,11 @@ abstract class JavaElementSourceFactory {
     abstract fun <TYPE : PsiType> createVariableReturnTypeSource(psiVariableSource: JavaElementPsiSource<out PsiVariable>): JavaElementTypeSource<TYPE>
     abstract fun <TYPE : PsiType> createMethodReturnTypeSource(psiMethodSource: JavaElementPsiSource<out PsiMethod>): JavaElementTypeSource<TYPE>
 
+    abstract fun <TYPE : PsiType> createTypeParameterUpperBoundTypeSource(
+        psiTypeParameterSource: JavaElementPsiSource<out PsiTypeParameter>,
+        boundIndex: Int,
+    ): JavaElementTypeSource<TYPE>
+
     abstract fun <TYPE : PsiType> createExpressionTypeSource(psiExpressionSource: JavaElementPsiSource<out PsiExpression>): JavaElementTypeSource<TYPE>
 
     companion object {
@@ -36,6 +41,14 @@ class JavaFixedElementSourceFactory : JavaElementSourceFactory() {
     override fun <TYPE : PsiType> createVariableReturnTypeSource(psiVariableSource: JavaElementPsiSource<out PsiVariable>): JavaElementTypeSource<TYPE> {
         @Suppress("UNCHECKED_CAST")
         return createTypeSource(psiVariableSource.psi.type as TYPE)
+    }
+
+    override fun <TYPE : PsiType> createTypeParameterUpperBoundTypeSource(
+        psiTypeParameterSource: JavaElementPsiSource<out PsiTypeParameter>,
+        boundIndex: Int
+    ): JavaElementTypeSource<TYPE> {
+        @Suppress("UNCHECKED_CAST")
+        return createTypeSource(psiTypeParameterSource.psi.bounds[boundIndex] as TYPE)
     }
 
 
