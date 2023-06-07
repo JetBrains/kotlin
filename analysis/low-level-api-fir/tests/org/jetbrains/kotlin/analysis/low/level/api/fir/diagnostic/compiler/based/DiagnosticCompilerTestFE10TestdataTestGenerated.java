@@ -4580,6 +4580,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
                 }
 
                 @Test
+                @TestMetadata("classLiteralsWithEmptyLHS.kt")
+                public void testClassLiteralsWithEmptyLHS() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/callableReference/unsupported/classLiteralsWithEmptyLHS.kt");
+                }
+
+                @Test
                 @TestMetadata("javaOverridesKotlinProperty.kt")
                 public void testJavaOverridesKotlinProperty() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/callableReference/unsupported/javaOverridesKotlinProperty.kt");

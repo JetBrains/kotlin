@@ -106,7 +106,7 @@ class DoubleColonExpressionResolver(
     fun visitClassLiteralExpression(expression: KtClassLiteralExpression, c: ExpressionTypingContext): KotlinTypeInfo {
         if (expression.isEmptyLHS) {
             // "::class" will maybe mean "this::class", a class of "this" instance
-            c.trace.report(UNSUPPORTED.on(expression, "Class literals with empty left hand side are not yet supported"))
+            c.trace.report(UNSUPPORTED_CLASS_LITERALS_WITH_EMPTY_LHS.on(expression))
         } else {
             val result = resolveDoubleColonLHS(expression, c)
 

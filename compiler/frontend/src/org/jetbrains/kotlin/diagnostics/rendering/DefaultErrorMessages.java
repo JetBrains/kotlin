@@ -830,6 +830,7 @@ public class DefaultErrorMessages {
         MAP.put(UNSUPPORTED_SEALED_FUN_INTERFACE, "'sealed fun interface' is unsupported");
         MAP.put(UNSUPPORTED_SUSPEND_TEST, "'suspend' functions annotated with @kotlin.test.Test are unsupported");
         MAP.put(UNSUPPORTED_REFERENCES_TO_VARIABLES_AND_PARAMETERS, "References to variables and parameters are unsupported");
+         MAP.put(UNSUPPORTED_CLASS_LITERALS_WITH_EMPTY_LHS, "Class literals with empty left hand side are unsupported");
 
         MAP.put(EXCEPTION_FROM_ANALYZER, "Internal Error occurred while analyzing this expression:\n{0}", THROWABLE);
         MAP.put(MISSING_STDLIB, "{0}. Ensure you have the standard Kotlin library in dependencies", STRING);
