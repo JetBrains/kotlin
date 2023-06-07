@@ -342,7 +342,7 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
         if (DiagnosticsDirectives.RENDER_DIAGNOSTICS_FULL_TEXT !in module.directives) return
         if (diagnostics.isEmpty()) return
 
-        val reportedDiagnostics = diagnostics.map {
+        val reportedDiagnostics = diagnostics.sortedBy { it.textRanges.first().startOffset }.map {
             val severity = AnalyzerWithCompilerReport.convertSeverity(it.severity).toString().toLowerCaseAsciiOnly()
             val message = RootDiagnosticRendererFactory(it).render(it)
             "/${file.name}:${it.textRanges.first()}: $severity: $message"

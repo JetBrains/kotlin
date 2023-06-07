@@ -22,7 +22,11 @@
 
 /otherOperators.fir.kt:(1057,1066): error: No set method providing array access
 
+/otherOperators.fir.kt:(1128,1129): error: Too many arguments for public final fun /StringProperty.get(): R|kotlin/String|
+
 /otherOperators.fir.kt:(1131,1133): error: Unresolved reference: +=
+
+/otherOperators.fir.kt:(1177,1178): error: Too many arguments for public final fun /StringProperty.get(): R|kotlin/String|
 
 /otherOperators.fir.kt:(1180,1182): error: Unresolved reference: +=
 
@@ -31,7 +35,3 @@
 /otherOperators.fir.kt:(1431,1437): error: Variable expected
 
 /otherOperators.fir.kt:(1477,1483): error: Variable expected
-
-/otherOperators.fir.kt:(1128,1129): error: Too many arguments for public final fun /StringProperty.get(): R|kotlin/String|
-
-/otherOperators.fir.kt:(1177,1178): error: Too many arguments for public final fun /StringProperty.get(): R|kotlin/String|
