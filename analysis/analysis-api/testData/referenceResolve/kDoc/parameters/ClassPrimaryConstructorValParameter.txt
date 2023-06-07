@@ -1,3 +1,2 @@
 Resolved to:
-0: (in C) val aa: kotlin.Int
-1: aa: kotlin.Int
+0: aa: kotlin.Int

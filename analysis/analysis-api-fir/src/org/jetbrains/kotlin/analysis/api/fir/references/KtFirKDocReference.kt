@@ -6,18 +6,14 @@
 package org.jetbrains.kotlin.analysis.api.fir.references
 
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
-import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
 import org.jetbrains.kotlin.idea.references.KDocReference
 import org.jetbrains.kotlin.idea.references.KtFirReference
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
-import org.jetbrains.kotlin.psi.KtDeclaration
 
 
 internal class KtFirKDocReference(element: KDocName) : KDocReference(element), KtFirReference {
     override fun KtAnalysisSession.resolveToSymbols(): Collection<KtSymbol> {
-        val owner = element.parentOfType<KtDeclaration>()
-        return KDocReferenceResolver.resolveKdocFqName(element.getQualifiedNameAsFqName(), owner)
+        return KDocReferenceResolver.resolveKdocFqName(element.getQualifiedNameAsFqName(), element)
     }
 }
