@@ -68,7 +68,7 @@ internal fun KtElement.findSourceByTraversingWholeTree(
     val isDeclaration = this is KtDeclaration
     return FirElementFinder.findElementIn(
         firFile,
-        canGoInside = { it is FirRegularClass || it is FirScript },
+        canGoInside = { it is FirRegularClass || it is FirScript || it is FirFunction },
         predicate = { firDeclaration ->
             firDeclaration.psi == this || isDeclaration && firDeclaration.psi == originalDeclaration
         }
@@ -81,10 +81,14 @@ private fun KtDeclaration.findSourceNonLocalFirDeclarationByProvider(
     containerFirFile: FirFile?,
 ): FirDeclaration? {
     val candidate = when {
-        this is KtClassOrObject -> findFir(provider)
+        this is KtClassOrObject -> {
+            if (!isPhysical) return null
+            findFir(provider)
+        }
         this is KtNamedDeclaration && (this is KtProperty || this is KtNamedFunction) -> {
             val containerClass = containingClassOrObject
             val declarations = if (containerClass != null) {
+                if (!containerClass.isPhysical) return null
                 val containerClassFir = containerClass.findFir(provider) as? FirRegularClass
                 containerClassFir?.declarations
             } else {
@@ -97,27 +101,32 @@ private fun KtDeclaration.findSourceNonLocalFirDeclarationByProvider(
                     firFile.declarations
                 }
             }
-            val original = originalDeclaration
 
             /*
             It is possible that we will not be able to find needed declaration here when the code is invalid,
             e.g, we have two conflicting declarations with the same name and we are searching in the wrong one
              */
-            declarations?.firstOrNull { it.psi == this || it.psi == original }
+            declarations?.firstOrNull { it.psi == this }
         }
         this is KtConstructor<*> || this is KtClassInitializer -> {
             val containingClass = containingClassOrObject
                 ?: errorWithFirSpecificEntries("Container class should be not null for KtConstructor", psi = this)
+            if (!containingClass.isPhysical) return null
             val containerClassFir = containingClass.findFir(provider) as? FirRegularClass ?: return null
             containerClassFir.declarations.firstOrNull { it.psi === this }
         }
-        this is KtTypeAlias -> findFir(provider)
+        this is KtTypeAlias -> {
+            if (!isPhysical) return null
+            findFir(provider)
+        }
         this is KtDestructuringDeclaration -> {
             val firFile = containerFirFile ?: firFileBuilder.buildRawFirFileWithCaching(containingKtFile)
             firFile.declarations.firstOrNull { it.psi == this }
         }
         this is KtScript -> containerFirFile?.declarations?.singleOrNull { it is FirScript }
         this is KtPropertyAccessor -> {
+            if (!property.isPhysical) return null
+
             val firPropertyDeclaration = property.nonLocalFirDeclaration<FirVariable>(
                 firFileBuilder,
                 provider,
@@ -134,6 +143,8 @@ private fun KtDeclaration.findSourceNonLocalFirDeclarationByProvider(
             val ownerFunction = ownerFunction
                 ?: errorWithFirSpecificEntries("Containing function should be not null for KtParameter", psi = this)
 
+            if (!ownerFunction.isPhysical) return null
+
             val firFunctionDeclaration = ownerFunction.nonLocalFirDeclaration<FirFunction>(
                 firFileBuilder,
                 provider,
@@ -145,6 +156,8 @@ private fun KtDeclaration.findSourceNonLocalFirDeclarationByProvider(
         this is KtTypeParameter -> {
             val declaration = containingDeclaration
                 ?: errorWithFirSpecificEntries("Containing declaration should be not null for KtTypeParameter", psi = this)
+
+            if (!declaration.isPhysical) return null
 
             val firTypeParameterOwner = declaration.nonLocalFirDeclaration<FirTypeParameterRefsOwner>(
                 firFileBuilder,
