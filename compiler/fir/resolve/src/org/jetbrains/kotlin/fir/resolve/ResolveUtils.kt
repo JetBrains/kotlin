@@ -563,7 +563,7 @@ fun FirFunction.getAsForbiddenNamedArgumentsTarget(
         FirDeclarationOrigin.ImportedFromObjectOrStatic ->
             importedFromObjectOrStaticData?.original?.getAsForbiddenNamedArgumentsTarget(session)
 
-        FirDeclarationOrigin.IntersectionOverride, FirDeclarationOrigin.SubstitutionOverride, FirDeclarationOrigin.Delegated -> {
+        FirDeclarationOrigin.IntersectionOverride, is FirDeclarationOrigin.SubstitutionOverride, FirDeclarationOrigin.Delegated -> {
             var result: ForbiddenNamedArgumentsTarget? =
                 unwrapFakeOverridesOrDelegated().getAsForbiddenNamedArgumentsTarget(session) ?: return null
             originScope?.processOverriddenFunctions(symbol as FirNamedFunctionSymbol) {

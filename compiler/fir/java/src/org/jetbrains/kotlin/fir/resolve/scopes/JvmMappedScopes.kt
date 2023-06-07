@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.resolve.scopes
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirClass
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.utils.classId
@@ -91,7 +92,8 @@ private fun wrapSubstitutionScopeIfNeed(
             session, useSiteMemberScope, PLATFORM_TYPE_PARAMETERS_SUBSTITUTION_SCOPE_KEY, substitutor,
             dispatchReceiverTypeForSubstitutedMembers = derivedClass.defaultType(),
             skipPrivateMembers = true,
-            derivedClassLookupTag = derivedClass.symbol.toLookupTag()
+            derivedClassLookupTag = derivedClass.symbol.toLookupTag(),
+            origin = FirDeclarationOrigin.SubstitutionOverride.DeclarationSite
         )
     }
 }

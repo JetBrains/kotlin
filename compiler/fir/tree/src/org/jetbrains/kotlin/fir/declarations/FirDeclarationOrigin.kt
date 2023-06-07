@@ -27,7 +27,11 @@ sealed class FirDeclarationOrigin(
     object SamConstructor : FirDeclarationOrigin()
     object Enhancement : FirDeclarationOrigin()
     object ImportedFromObjectOrStatic : FirDeclarationOrigin()
-    object SubstitutionOverride : FirDeclarationOrigin(fromSupertypes = true)
+    sealed class SubstitutionOverride(displayName: String) : FirDeclarationOrigin(displayName, fromSupertypes = true) {
+        object DeclarationSite : SubstitutionOverride("SubstitutionOverride(DeclarationSite)")
+        object CallSite : SubstitutionOverride("SubstitutionOverride(CallSite)")
+    }
+
     object IntersectionOverride : FirDeclarationOrigin(fromSupertypes = true)
     object Delegated : FirDeclarationOrigin()
     object RenamedForOverride : FirDeclarationOrigin()
