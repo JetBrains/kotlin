@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.gradle
 
-import org.gradle.internal.os.OperatingSystem
 import org.jetbrains.kotlin.konan.file.File
+import org.jetbrains.kotlin.konan.target.HostManager
 import org.junit.Test
 
 open class CommonizerHierarchicalIT : BaseGradleIT() {
@@ -16,7 +16,7 @@ open class CommonizerHierarchicalIT : BaseGradleIT() {
     fun `test commonizeHierarchically metadata compilations`() {
 
         with(Project("commonizeHierarchically")) {
-            if (Os.canCompileApple) {
+            if (HostManager.hostIsMac) {
                 build(":p1:compileIosMainKotlinMetadata") {
                     assertSuccessful()
                     assertFileExists("p1/build/classes/kotlin/metadata/iosMain/klib/p1_iosMain.klib")
@@ -30,41 +30,33 @@ open class CommonizerHierarchicalIT : BaseGradleIT() {
                 }
             }
 
-            if (Os.canCompileLinux) {
-                build(":p1:compileLinuxMainKotlinMetadata") {
-                    assertSuccessful()
-                    assertFileExists("p1/build/classes/kotlin/metadata/linuxMain/klib/p1_linuxMain.klib")
-                    assertNoDuplicateLibraryWarning()
-                }
+            build(":p1:compileLinuxMainKotlinMetadata") {
+                assertSuccessful()
+                assertFileExists("p1/build/classes/kotlin/metadata/linuxMain/klib/p1_linuxMain.klib")
+                assertNoDuplicateLibraryWarning()
             }
 
-            if (Os.canCompileWindows) {
-                build(":p1:compileMingwMainKotlinMetadata") {
-                    assertSuccessful()
-                    assertFileExists("p1/build/classes/kotlin/metadata/mingwMain/klib/p1_mingwMain.klib")
-                }
+            build(":p1:compileMingwMainKotlinMetadata") {
+                assertSuccessful()
+                assertFileExists("p1/build/classes/kotlin/metadata/mingwMain/klib/p1_mingwMain.klib")
             }
 
-            if (Os.canCompileApple || Os.canCompileLinux) {
-                build(":p1:compileAppleAndLinuxMainKotlinMetadata") {
-                    assertSuccessful()
-                    assertFileExists("p1/build/classes/kotlin/metadata/appleAndLinuxMain/klib/p1_appleAndLinuxMain.klib")
-                    assertNoDuplicateLibraryWarning()
-                }
+            build(":p1:compileAppleAndLinuxMainKotlinMetadata") {
+                assertSuccessful()
+                assertFileExists("p1/build/classes/kotlin/metadata/appleAndLinuxMain/klib/p1_appleAndLinuxMain.klib")
+                assertNoDuplicateLibraryWarning()
             }
 
-            if (Os.canCompileApple || Os.canCompileLinux || Os.canCompileWindows) {
-                build(":p1:compileNativeMainKotlinMetadata") {
-                    assertSuccessful()
-                    assertFileExists("p1/build/classes/kotlin/metadata/nativeMain/klib/p1_nativeMain.klib")
-                    assertNoDuplicateLibraryWarning()
-                }
+            build(":p1:compileNativeMainKotlinMetadata") {
+                assertSuccessful()
+                assertFileExists("p1/build/classes/kotlin/metadata/nativeMain/klib/p1_nativeMain.klib")
+                assertNoDuplicateLibraryWarning()
+            }
 
-                build(":p1:compileConcurrentMainKotlinMetadata") {
-                    assertSuccessful()
-                    assertFileExists("p1/build/classes/kotlin/metadata/concurrentMain/default")
-                    assertNoDuplicateLibraryWarning()
-                }
+            build(":p1:compileConcurrentMainKotlinMetadata") {
+                assertSuccessful()
+                assertFileExists("p1/build/classes/kotlin/metadata/concurrentMain/default")
+                assertNoDuplicateLibraryWarning()
             }
         }
     }
@@ -72,7 +64,7 @@ open class CommonizerHierarchicalIT : BaseGradleIT() {
     @Test
     fun `test commonizeHierarchically Klibrary compilations`() {
         with(Project("commonizeHierarchically")) {
-            if (Os.canCompileApple) {
+            if (HostManager.hostIsMac) {
                 build(":p1:iosArm64MainKlibrary", ":p1:iosX64MainKlibrary", ":p1:macosX64MainKlibrary", ":p1:macosArm64MainKLibrary") {
                     assertSuccessful()
                     assertFileExists("p1/build/classes/kotlin/iosArm64/main/klib/p1.klib")
@@ -83,22 +75,18 @@ open class CommonizerHierarchicalIT : BaseGradleIT() {
                 }
             }
 
-            if (Os.canCompileLinux) {
-                build(":p1:linuxX64MainKlibrary", ":p1:linuxArm64MainKlibrary") {
-                    assertSuccessful()
-                    assertFileExists("p1/build/classes/kotlin/linuxX64/main/klib/p1.klib")
-                    assertFileExists("p1/build/classes/kotlin/linuxArm64/main/klib/p1.klib")
-                    assertNoDuplicateLibraryWarning()
-                }
+            build(":p1:linuxX64MainKlibrary", ":p1:linuxArm64MainKlibrary") {
+                assertSuccessful()
+                assertFileExists("p1/build/classes/kotlin/linuxX64/main/klib/p1.klib")
+                assertFileExists("p1/build/classes/kotlin/linuxArm64/main/klib/p1.klib")
+                assertNoDuplicateLibraryWarning()
             }
 
-            if (Os.canCompileWindows) {
-                build(":p1:mingwX64MainKlibrary", ":p1:mingwX86MainKlibrary") {
-                    assertSuccessful()
-                    assertFileExists("p1/build/classes/kotlin/mingwX64/main/klib/p1.klib")
-                    assertFileExists("p1/build/classes/kotlin/mingwX86/main/klib/p1.klib")
-                    assertNoDuplicateLibraryWarning()
-                }
+            build(":p1:mingwX64MainKlibrary", ":p1:mingwX86MainKlibrary") {
+                assertSuccessful()
+                assertFileExists("p1/build/classes/kotlin/mingwX64/main/klib/p1.klib")
+                assertFileExists("p1/build/classes/kotlin/mingwX86/main/klib/p1.klib")
+                assertNoDuplicateLibraryWarning()
             }
         }
     }
@@ -167,13 +155,6 @@ open class CommonizerHierarchicalIT : BaseGradleIT() {
                 assertSuccessful()
             }
         }
-    }
-
-    private object Os {
-        private val os = OperatingSystem.current()
-        val canCompileApple get() = os.isMacOsX
-        val canCompileLinux get() = os.isLinux || os.isMacOsX
-        val canCompileWindows get() = os.isWindows || os.isMacOsX
     }
 
     private fun CompiledProject.assertNoDuplicateLibraryWarning() = assertNotContains("library included more than once")
