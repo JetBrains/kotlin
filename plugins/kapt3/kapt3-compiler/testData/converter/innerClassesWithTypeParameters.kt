@@ -1,4 +1,3 @@
-// FIR_ALMOST_DONE
 class Test {
     private var a = FilterValueDelegate<Float>()
     private inner class FilterValueDelegate<T>

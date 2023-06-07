@@ -59,14 +59,7 @@ class Kapt4TreeMaker(
     fun TypeWithArguments(type: PsiType?): JCTree.JCExpression {
         return when (type) {
             is PsiArrayType -> TypeArray(TypeWithArguments(type.componentType))
-            is PsiClassType -> {
-                val rawBase = RawType(type)
-                val arguments = type.parameters.takeIf { it.isNotEmpty() } ?: return rawBase
-                val jArguments = mapJList(arguments) { TypeWithArguments(it) }
-
-                return TypeApply(rawBase, jArguments)
-            }
-
+            is PsiClassType -> FqName(type.canonicalText) // TODO: Produce a proper expression
             is PsiWildcardType -> {
                 val argumentType = type.bound?.let { TypeWithArguments(it) }
                 when {
