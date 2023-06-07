@@ -67,11 +67,11 @@ private object IsNewPlaceForBodyGeneration : FirDeclarationDataKey()
 var FirRegularClass.isNewPlaceForBodyGeneration: Boolean? by FirDeclarationDataRegistry.data(IsNewPlaceForBodyGeneration)
 
 val FirCallableDeclaration.isIntersectionOverride: Boolean get() = origin == FirDeclarationOrigin.IntersectionOverride
-val FirCallableDeclaration.isSubstitutionOverride: Boolean get() = origin == FirDeclarationOrigin.SubstitutionOverride
+val FirCallableDeclaration.isSubstitutionOverride: Boolean get() = origin is FirDeclarationOrigin.SubstitutionOverride
 val FirCallableDeclaration.isSubstitutionOrIntersectionOverride: Boolean get() = isSubstitutionOverride || isIntersectionOverride
 
 val FirCallableSymbol<*>.isIntersectionOverride: Boolean get() = origin == FirDeclarationOrigin.IntersectionOverride
-val FirCallableSymbol<*>.isSubstitutionOverride: Boolean get() = origin == FirDeclarationOrigin.SubstitutionOverride
+val FirCallableSymbol<*>.isSubstitutionOverride: Boolean get() = origin is FirDeclarationOrigin.SubstitutionOverride
 val FirCallableSymbol<*>.isSubstitutionOrIntersectionOverride: Boolean get() = isSubstitutionOverride || isIntersectionOverride
 
 inline val <reified D : FirCallableDeclaration> D.originalForSubstitutionOverride: D?
@@ -127,6 +127,16 @@ inline fun <reified D : FirCallableDeclaration> D.unwrapSubstitutionOverrides():
     var current = this
 
     do {
+        val next = current.originalForSubstitutionOverride ?: return current
+        current = next
+    } while (true)
+}
+
+inline fun <reified D : FirCallableDeclaration> D.unwrapUseSiteSubstitutionOverrides(): D {
+    var current = this
+
+    do {
+        if (current.origin != FirDeclarationOrigin.SubstitutionOverride.CallSite) return current
         val next = current.originalForSubstitutionOverride ?: return current
         current = next
     } while (true)

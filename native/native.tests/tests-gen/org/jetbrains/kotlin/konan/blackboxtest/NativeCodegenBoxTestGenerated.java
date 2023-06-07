@@ -24895,6 +24895,7 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 @Tag("codegen")
                 @Tag("k1Codegen")
                 @UseExtTestCaseGroupProvider()
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                 public class ExpressionAssertionMessages {
                     @Test
                     public void testAllFilesPresentInExpressionAssertionMessages() throws Exception {
