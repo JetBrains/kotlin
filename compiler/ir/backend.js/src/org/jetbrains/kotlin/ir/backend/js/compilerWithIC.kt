@@ -88,5 +88,5 @@ fun lowerPreservingTags(
         lowering.modulePhase.invoke(phaseConfig, phaserState, context, modules)
     }
 
-    controller.currentStage = pirLowerings.size + 1
+    controller.currentStage = loweringList.size + 1
 }
