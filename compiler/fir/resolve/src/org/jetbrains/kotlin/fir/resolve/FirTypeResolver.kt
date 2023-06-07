@@ -23,7 +23,12 @@ abstract class FirTypeResolver : FirSessionComponent {
         // Note: sometimes we don't have useSiteFile in IDE context
         useSiteFile: FirFile?,
         supertypeSupplier: SupertypeSupplier
-    ): Pair<ConeKotlinType, ConeDiagnostic?>
+    ): FirTypeResolutionResult
 }
+
+data class FirTypeResolutionResult(
+    val type: ConeKotlinType,
+    val diagnostic: ConeDiagnostic?,
+)
 
 val FirSession.typeResolver: FirTypeResolver by FirSession.sessionComponentAccessor()

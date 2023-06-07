@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeUnexpectedTypeArgumentsError
 import org.jetbrains.kotlin.fir.expressions.FirStatement
+import org.jetbrains.kotlin.fir.resolve.FirTypeResolutionResult
 import org.jetbrains.kotlin.fir.resolve.SupertypeSupplier
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnsupportedDefaultValueInFunctionType
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
@@ -95,8 +96,8 @@ class FirSpecificTypeResolverTransformer(
         val scopeOwnerLookupNames = data.scopes.flatMap { it.scopeOwnerLookupNames }
         session.lookupTracker?.recordTypeLookup(functionTypeRef, scopeOwnerLookupNames, currentFile?.source)
         val resolvedTypeWithDiagnostic = resolveType(functionTypeRef, data)
-        val resolvedType = resolvedTypeWithDiagnostic.first.takeIfAcceptable()
-        val diagnostic = resolvedTypeWithDiagnostic.second
+        val resolvedType = resolvedTypeWithDiagnostic.type.takeIfAcceptable()
+        val diagnostic = resolvedTypeWithDiagnostic.diagnostic
         return if (resolvedType != null && resolvedType !is ConeErrorType && diagnostic == null) {
             buildResolvedTypeRef {
                 source = functionTypeRef.source
@@ -120,7 +121,7 @@ class FirSpecificTypeResolverTransformer(
     private fun FirSpecificTypeResolverTransformer.resolveType(
         typeRef: FirTypeRef,
         scopeClassDeclaration: ScopeClassDeclaration,
-    ): Pair<ConeKotlinType, ConeDiagnostic?> {
+    ): FirTypeResolutionResult {
         return typeResolver.resolveType(
             typeRef,
             scopeClassDeclaration,
