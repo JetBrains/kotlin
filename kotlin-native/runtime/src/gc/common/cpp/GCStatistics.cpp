@@ -153,7 +153,8 @@ GCHandle GCHandle::create(uint64_t epoch) {
     current.epoch = static_cast<KLong>(epoch);
     current.startTime = static_cast<KLong>(konan::getTimeNanos());
     if (last.endTime) {
-        GCLogInfo(epoch, "Started. Time since last GC %" PRIu64 " microseconds.", *current.startTime - *last.endTime);
+        auto time = (*current.startTime - *last.endTime) / 1000;
+        GCLogInfo(epoch, "Started. Time since last GC %" PRIu64 " microseconds.", time);
     } else {
         GCLogInfo(epoch, "Started.");
     }
