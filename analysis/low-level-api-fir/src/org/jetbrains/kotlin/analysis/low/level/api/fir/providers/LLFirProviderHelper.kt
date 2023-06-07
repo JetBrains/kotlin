@@ -72,6 +72,7 @@ internal class LLFirProviderHelper(
 
     private val classifierByClassId =
         firSession.firCachesFactory.createCache<ClassId, FirClassLikeDeclaration?, KtClassLikeDeclaration?> { classId, context ->
+            require(context == null || context.isPhysical)
             val ktClass = context ?: declarationProvider.getClassLikeDeclarationByClassId(classId) ?: return@createCache null
 
             if (ktClass.getClassId() == null) return@createCache null
@@ -82,6 +83,7 @@ internal class LLFirProviderHelper(
 
     private val callablesByCallableId =
         firSession.firCachesFactory.createCache<CallableId, List<FirCallableSymbol<*>>, Collection<KtFile>?> { callableId, context ->
+            require(context == null || context.all { it.isPhysical })
             val files = context ?: declarationProvider.getTopLevelCallableFiles(callableId).ifEmpty { return@createCache emptyList() }
             buildList {
                 files.forEach { ktFile ->

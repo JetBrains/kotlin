@@ -32,7 +32,12 @@ internal fun KtDeclaration.findSourceNonLocalFirDeclaration(
     //TODO test what way faster
     findSourceNonLocalFirDeclarationByProvider(firFileBuilder, provider, containerFirFile)?.let { return it }
     findSourceByTraversingWholeTree(firFileBuilder, containerFirFile)?.let { return it }
-    errorWithFirSpecificEntries("No fir element was found for", psi = this)
+    errorWithFirSpecificEntries(
+        "No fir element was found for",
+        psi = this,
+        fir = containerFirFile ?: firFileBuilder.buildRawFirFileWithCaching(containingKtFile),
+        additionalInfos = { withEntry("isPhysical", isPhysical.toString()) }
+    )
 }
 
 internal fun KtDeclaration.findFirDeclarationForAnyFirSourceDeclaration(
@@ -68,7 +73,7 @@ internal fun KtElement.findSourceByTraversingWholeTree(
     val isDeclaration = this is KtDeclaration
     return FirElementFinder.findElementIn(
         firFile,
-        canGoInside = { it is FirRegularClass || it is FirScript },
+        canGoInside = { it is FirRegularClass || it is FirScript || it is FirFunction },
         predicate = { firDeclaration ->
             firDeclaration.psi == this || isDeclaration && firDeclaration.psi == originalDeclaration
         }
@@ -80,6 +85,11 @@ private fun KtDeclaration.findSourceNonLocalFirDeclarationByProvider(
     provider: FirProvider,
     containerFirFile: FirFile?,
 ): FirDeclaration? {
+    if (!isPhysical) {
+        //do not request providers with non-physical psi in order not to leak them there and 
+        //to avoid inconsistency between physical psi and its copy during completion
+        return null
+    }
     val candidate = when {
         this is KtClassOrObject -> findFir(provider)
         this is KtNamedDeclaration && (this is KtProperty || this is KtNamedFunction) -> {
@@ -97,19 +107,18 @@ private fun KtDeclaration.findSourceNonLocalFirDeclarationByProvider(
                     firFile.declarations
                 }
             }
-            val original = originalDeclaration
 
             /*
             It is possible that we will not be able to find needed declaration here when the code is invalid,
             e.g, we have two conflicting declarations with the same name and we are searching in the wrong one
              */
-            declarations?.firstOrNull { it.psi == this || it.psi == original }
+            declarations?.firstOrNull { it.psi == this }
         }
         this is KtConstructor<*> || this is KtClassInitializer -> {
             val containingClass = containingClassOrObject
                 ?: errorWithFirSpecificEntries("Container class should be not null for KtConstructor", psi = this)
             val containerClassFir = containingClass.findFir(provider) as? FirRegularClass ?: return null
-            containerClassFir.declarations.firstOrNull { it.psi === this }
+            containerClassFir.declarations.firstOrNull { it.psi == this }
         }
         this is KtTypeAlias -> findFir(provider)
         this is KtDestructuringDeclaration -> {
