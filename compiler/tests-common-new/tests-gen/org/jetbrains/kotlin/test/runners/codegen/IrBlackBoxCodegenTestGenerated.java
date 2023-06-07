@@ -18328,6 +18328,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("anonymousOverrideWithDefaultInLocalOverridden.kt")
+        public void testAnonymousOverrideWithDefaultInLocalOverridden() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/anonymousOverrideWithDefaultInLocalOverridden.kt");
+        }
+
+        @Test
+        @TestMetadata("anonymousOverrideWithDefaultInOverridden.kt")
+        public void testAnonymousOverrideWithDefaultInOverridden() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/anonymousOverrideWithDefaultInOverridden.kt");
+        }
+
+        @Test
         @TestMetadata("assertEqualsFakeOverride.kt")
         public void testAssertEqualsFakeOverride() throws Exception {
             runTest("compiler/testData/codegen/box/fir/assertEqualsFakeOverride.kt");
@@ -18511,6 +18523,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         @TestMetadata("linkViaSignatures.kt")
         public void testLinkViaSignatures() throws Exception {
             runTest("compiler/testData/codegen/box/fir/linkViaSignatures.kt");
+        }
+
+        @Test
+        @TestMetadata("localOverrideWithDefaultInLocalOverridden.kt")
+        public void testLocalOverrideWithDefaultInLocalOverridden() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/localOverrideWithDefaultInLocalOverridden.kt");
+        }
+
+        @Test
+        @TestMetadata("localOverrideWithDefaultInOverridden.kt")
+        public void testLocalOverrideWithDefaultInOverridden() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/localOverrideWithDefaultInOverridden.kt");
         }
 
         @Test

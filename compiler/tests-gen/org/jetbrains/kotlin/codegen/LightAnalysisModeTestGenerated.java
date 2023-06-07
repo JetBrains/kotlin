@@ -14608,6 +14608,16 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/fir"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
         }
 
+        @TestMetadata("anonymousOverrideWithDefaultInLocalOverridden.kt")
+        public void testAnonymousOverrideWithDefaultInLocalOverridden() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/anonymousOverrideWithDefaultInLocalOverridden.kt");
+        }
+
+        @TestMetadata("anonymousOverrideWithDefaultInOverridden.kt")
+        public void testAnonymousOverrideWithDefaultInOverridden() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/anonymousOverrideWithDefaultInOverridden.kt");
+        }
+
         @TestMetadata("ClassBuilder.kt")
         public void testClassBuilder() throws Exception {
             runTest("compiler/testData/codegen/box/fir/ClassBuilder.kt");
@@ -14666,6 +14676,16 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         @TestMetadata("KotlinDocumentationProvider.kt")
         public void testKotlinDocumentationProvider() throws Exception {
             runTest("compiler/testData/codegen/box/fir/KotlinDocumentationProvider.kt");
+        }
+
+        @TestMetadata("localOverrideWithDefaultInLocalOverridden.kt")
+        public void testLocalOverrideWithDefaultInLocalOverridden() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/localOverrideWithDefaultInLocalOverridden.kt");
+        }
+
+        @TestMetadata("localOverrideWithDefaultInOverridden.kt")
+        public void testLocalOverrideWithDefaultInOverridden() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/localOverrideWithDefaultInOverridden.kt");
         }
 
         @TestMetadata("LookupTags.kt")

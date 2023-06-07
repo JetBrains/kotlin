@@ -13732,6 +13732,18 @@ public class IrJsES6CodegenBoxTestGenerated extends AbstractIrJsES6CodegenBoxTes
         }
 
         @Test
+        @TestMetadata("anonymousOverrideWithDefaultInLocalOverridden.kt")
+        public void testAnonymousOverrideWithDefaultInLocalOverridden() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/anonymousOverrideWithDefaultInLocalOverridden.kt");
+        }
+
+        @Test
+        @TestMetadata("anonymousOverrideWithDefaultInOverridden.kt")
+        public void testAnonymousOverrideWithDefaultInOverridden() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/anonymousOverrideWithDefaultInOverridden.kt");
+        }
+
+        @Test
         @TestMetadata("classCanNotBeCastedToVoid.kt")
         public void testClassCanNotBeCastedToVoid() throws Exception {
             runTest("compiler/testData/codegen/box/fir/classCanNotBeCastedToVoid.kt");
@@ -13741,6 +13753,18 @@ public class IrJsES6CodegenBoxTestGenerated extends AbstractIrJsES6CodegenBoxTes
         @TestMetadata("falsePositiveBoundSmartcast.kt")
         public void testFalsePositiveBoundSmartcast() throws Exception {
             runTest("compiler/testData/codegen/box/fir/falsePositiveBoundSmartcast.kt");
+        }
+
+        @Test
+        @TestMetadata("localOverrideWithDefaultInLocalOverridden.kt")
+        public void testLocalOverrideWithDefaultInLocalOverridden() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/localOverrideWithDefaultInLocalOverridden.kt");
+        }
+
+        @Test
+        @TestMetadata("localOverrideWithDefaultInOverridden.kt")
+        public void testLocalOverrideWithDefaultInOverridden() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/localOverrideWithDefaultInOverridden.kt");
         }
 
         @Test

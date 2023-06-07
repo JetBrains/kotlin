@@ -84,7 +84,9 @@ internal class ClassMemberGenerator(
                         val irNestedClass = classifierStorage.getCachedIrClass(declaration)!!
                         irNestedClass.parent = irClass
                         conversionScope.withParent(irNestedClass) {
-                            convertClassContent(irNestedClass, declaration)
+                            conversionScope.withContainingFirClass(declaration) {
+                                convertClassContent(irNestedClass, declaration)
+                            }
                         }
                     }
                     else -> declaration.accept(visitor, null)

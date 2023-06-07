@@ -12183,6 +12183,16 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/fir"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
         }
 
+        @TestMetadata("anonymousOverrideWithDefaultInLocalOverridden.kt")
+        public void testAnonymousOverrideWithDefaultInLocalOverridden() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/anonymousOverrideWithDefaultInLocalOverridden.kt");
+        }
+
+        @TestMetadata("anonymousOverrideWithDefaultInOverridden.kt")
+        public void testAnonymousOverrideWithDefaultInOverridden() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/anonymousOverrideWithDefaultInOverridden.kt");
+        }
+
         @TestMetadata("classCanNotBeCastedToVoid.kt")
         public void testClassCanNotBeCastedToVoid() throws Exception {
             runTest("compiler/testData/codegen/box/fir/classCanNotBeCastedToVoid.kt");
@@ -12191,6 +12201,16 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
         @TestMetadata("falsePositiveBoundSmartcast.kt")
         public void testFalsePositiveBoundSmartcast() throws Exception {
             runTest("compiler/testData/codegen/box/fir/falsePositiveBoundSmartcast.kt");
+        }
+
+        @TestMetadata("localOverrideWithDefaultInLocalOverridden.kt")
+        public void testLocalOverrideWithDefaultInLocalOverridden() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/localOverrideWithDefaultInLocalOverridden.kt");
+        }
+
+        @TestMetadata("localOverrideWithDefaultInOverridden.kt")
+        public void testLocalOverrideWithDefaultInOverridden() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/localOverrideWithDefaultInOverridden.kt");
         }
 
         @TestMetadata("nestedClassTypeParameterDeserialization.kt")

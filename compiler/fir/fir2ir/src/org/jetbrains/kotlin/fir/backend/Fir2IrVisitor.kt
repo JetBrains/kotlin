@@ -192,7 +192,9 @@ class Fir2IrVisitor(
             val irClass = classifierStorage.getCachedIrClass(regularClass)?.apply { this.parent = irParent }
             if (irClass != null) {
                 return conversionScope.withParent(irClass) {
-                    memberGenerator.convertClassContent(irClass, regularClass)
+                    conversionScope.withContainingFirClass(regularClass) {
+                        memberGenerator.convertClassContent(irClass, regularClass)
+                    }
                 }
             }
             converter.processLocalClassAndNestedClasses(regularClass, irParent)

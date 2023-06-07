@@ -17590,6 +17590,18 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
 
         @Test
+        @TestMetadata("anonymousOverrideWithDefaultInLocalOverridden.kt")
+        public void testAnonymousOverrideWithDefaultInLocalOverridden() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/anonymousOverrideWithDefaultInLocalOverridden.kt");
+        }
+
+        @Test
+        @TestMetadata("anonymousOverrideWithDefaultInOverridden.kt")
+        public void testAnonymousOverrideWithDefaultInOverridden() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/anonymousOverrideWithDefaultInOverridden.kt");
+        }
+
+        @Test
         @TestMetadata("ClassBuilder.kt")
         public void testClassBuilder() throws Exception {
             runTest("compiler/testData/codegen/box/fir/ClassBuilder.kt");
@@ -17659,6 +17671,18 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("KotlinDocumentationProvider.kt")
         public void testKotlinDocumentationProvider() throws Exception {
             runTest("compiler/testData/codegen/box/fir/KotlinDocumentationProvider.kt");
+        }
+
+        @Test
+        @TestMetadata("localOverrideWithDefaultInLocalOverridden.kt")
+        public void testLocalOverrideWithDefaultInLocalOverridden() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/localOverrideWithDefaultInLocalOverridden.kt");
+        }
+
+        @Test
+        @TestMetadata("localOverrideWithDefaultInOverridden.kt")
+        public void testLocalOverrideWithDefaultInOverridden() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/localOverrideWithDefaultInOverridden.kt");
         }
 
         @Test
