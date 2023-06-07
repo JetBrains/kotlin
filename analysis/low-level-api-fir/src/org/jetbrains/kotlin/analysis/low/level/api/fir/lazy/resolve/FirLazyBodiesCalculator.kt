@@ -113,8 +113,23 @@ private fun replaceLazyContractDescription(target: FirContractDescriptionOwner, 
 }
 
 private fun replaceLazyDelegatedConstructor(target: FirConstructor, copy: FirConstructor) {
-    if (target.delegatedConstructor is FirLazyDelegatedConstructorCall) {
-        target.replaceDelegatedConstructor(copy.delegatedConstructor)
+    val targetCall = target.delegatedConstructor
+    val copyCall = copy.delegatedConstructor
+
+    when (targetCall) {
+        is FirLazyDelegatedConstructorCall -> {
+            require(copyCall !is FirMultiDelegatedConstructorCall)
+            target.replaceDelegatedConstructor(copyCall)
+        }
+        is FirMultiDelegatedConstructorCall -> {
+            require(copyCall is FirMultiDelegatedConstructorCall)
+            require(targetCall.delegatedConstructorCalls.size == copyCall.delegatedConstructorCalls.size)
+
+            val newCalls = targetCall.delegatedConstructorCalls.zip(copyCall.delegatedConstructorCalls)
+                .map { (target, copy) -> target.takeUnless { it is FirLazyDelegatedConstructorCall } ?: copy }
+
+            targetCall.replaceDelegatedConstructorCalls(newCalls)
+        }
     }
 }
 
@@ -205,9 +220,9 @@ private fun needCalculatingLazyBodyForConstructor(firConstructor: FirConstructor
     if (needCalculatingLazyBodyForFunction(firConstructor) || firConstructor.delegatedConstructor is FirLazyDelegatedConstructorCall) {
         return true
     }
-    val deleatedConstructor = firConstructor.delegatedConstructor
-    if (deleatedConstructor is FirMultiDelegatedConstructorCall) {
-        for (delegated in deleatedConstructor.delegatedConstructorCalls) {
+    val delegatedConstructor = firConstructor.delegatedConstructor
+    if (delegatedConstructor is FirMultiDelegatedConstructorCall) {
+        for (delegated in delegatedConstructor.delegatedConstructorCalls) {
             if (delegated is FirLazyDelegatedConstructorCall) {
                 return true
             }

@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.getExplicitBackingField
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildLazyDelegatedConstructorCall
+import org.jetbrains.kotlin.fir.expressions.builder.buildMultiDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.expressions.impl.FirContractCallBlock
 import org.jetbrains.kotlin.fir.expressions.impl.FirLazyDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
@@ -320,6 +321,12 @@ private val FirProperty.delegateIfUnresolved: FirWrappedDelegateExpression?
 private fun delegatedConstructorCallGuard(fir: FirDelegatedConstructorCall): FirDelegatedConstructorCall {
     if (fir is FirLazyDelegatedConstructorCall) {
         return fir
+    } else if (fir is FirMultiDelegatedConstructorCall) {
+        return buildMultiDelegatedConstructorCall {
+            for (delegatedConstructorCall in fir.delegatedConstructorCalls) {
+                delegatedConstructorCalls.add(delegatedConstructorCallGuard(delegatedConstructorCall))
+            }
+        }
     }
 
     return buildLazyDelegatedConstructorCall {
