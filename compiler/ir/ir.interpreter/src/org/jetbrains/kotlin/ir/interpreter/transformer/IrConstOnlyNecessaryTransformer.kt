@@ -34,33 +34,33 @@ internal class IrConstOnlyNecessaryTransformer(
 ) : IrConstExpressionTransformer(
     interpreter, irFile, mode, checker, evaluatedConstTracker, inlineConstTracker, onWarning, onError, suppressExceptions
 ) {
-    override fun visitCall(expression: IrCall, data: Nothing?): IrElement {
+    override fun visitCall(expression: IrCall, data: Data): IrElement {
         val isConstGetter = (expression.symbol.owner as? IrSimpleFunction)?.correspondingPropertySymbol?.owner?.isConst == true
-        if (!inAnnotation && !isConstGetter) {
-            expression.transformChildren(this, null)
+        if (!data.inAnnotation && !isConstGetter) {
+            expression.transformChildren(this, data)
             return expression
         }
         return super.visitCall(expression, data)
     }
 
-    override fun visitGetField(expression: IrGetField, data: Nothing?): IrExpression {
+    override fun visitGetField(expression: IrGetField, data: Data): IrExpression {
         val isConst = expression.symbol.owner.correspondingPropertySymbol?.owner?.isConst == true
-        if (!inAnnotation && !isConst) return expression
+        if (!data.inAnnotation && !isConst) return expression
         return super.visitGetField(expression, data)
     }
 
-    override fun visitStringConcatenation(expression: IrStringConcatenation, data: Nothing?): IrExpression {
-        if (!inAnnotation) {
-            expression.transformChildren(this, null)
+    override fun visitStringConcatenation(expression: IrStringConcatenation, data: Data): IrExpression {
+        if (!data.inAnnotation) {
+            expression.transformChildren(this, data)
             return expression
         }
         return super.visitStringConcatenation(expression, data)
     }
 
-    override fun visitField(declaration: IrField, data: Nothing?): IrStatement {
+    override fun visitField(declaration: IrField, data: Data): IrStatement {
         val isConst = declaration.correspondingPropertySymbol?.owner?.isConst == true
         if (!isConst) {
-            declaration.transformChildren(this, null)
+            declaration.transformChildren(this, data)
             return declaration
         }
 

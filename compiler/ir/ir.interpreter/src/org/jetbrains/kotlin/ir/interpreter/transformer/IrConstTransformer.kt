@@ -39,17 +39,17 @@ fun IrFile.transformConst(
     val irConstExpressionTransformer = IrConstOnlyNecessaryTransformer(
         interpreter, preprocessedFile, mode, checker, evaluatedConstTracker, inlineConstTracker, onWarning, onError, suppressExceptions
     )
-    preprocessedFile.transform(irConstExpressionTransformer, null)
+    preprocessedFile.transform(irConstExpressionTransformer, IrConstTransformer.Data())
 
     val irConstDeclarationAnnotationTransformer = IrConstDeclarationAnnotationTransformer(
         interpreter, preprocessedFile, mode, checker, evaluatedConstTracker, inlineConstTracker, onWarning, onError, suppressExceptions
     )
-    preprocessedFile.transform(irConstDeclarationAnnotationTransformer, null)
+    preprocessedFile.transform(irConstDeclarationAnnotationTransformer, IrConstTransformer.Data())
 
     val irConstTypeAnnotationTransformer = IrConstTypeAnnotationTransformer(
         interpreter, preprocessedFile, mode, checker, evaluatedConstTracker, inlineConstTracker, onWarning, onError, suppressExceptions
     )
-    preprocessedFile.transform(irConstTypeAnnotationTransformer, null)
+    preprocessedFile.transform(irConstTypeAnnotationTransformer, IrConstTransformer.Data())
 }
 
 fun IrFile.runConstOptimizations(
@@ -65,7 +65,7 @@ fun IrFile.runConstOptimizations(
     val irConstExpressionTransformer = IrConstAllTransformer(
         interpreter, this, mode, checker, evaluatedConstTracker, inlineConstTracker, onWarning, onError, suppressExceptions
     )
-    this.transform(irConstExpressionTransformer, null)
+    this.transform(irConstExpressionTransformer, IrConstTransformer.Data())
 }
 
 fun IrFile.preprocessForConstTransformer(
@@ -91,7 +91,9 @@ internal abstract class IrConstTransformer(
     private val onWarning: (IrFile, IrElement, IrErrorExpression) -> Unit,
     private val onError: (IrFile, IrElement, IrErrorExpression) -> Unit,
     private val suppressExceptions: Boolean,
-) : IrElementTransformer<Nothing?> {
+) : IrElementTransformer<IrConstTransformer.Data> {
+    internal data class Data(val inAnnotation: Boolean = false)
+
     private fun IrExpression.warningIfError(original: IrExpression): IrExpression {
         if (this is IrErrorExpression) {
             onWarning(irFile, original, this)

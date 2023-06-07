@@ -28,10 +28,11 @@ internal class IrConstTypeAnnotationTransformer(
     onWarning: (IrFile, IrElement, IrErrorExpression) -> Unit,
     onError: (IrFile, IrElement, IrErrorExpression) -> Unit,
     suppressExceptions: Boolean,
-) : IrConstAnnotationTransformer(interpreter, irFile, mode, checker, evaluatedConstTracker, inlineConstTracker, onWarning, onError, suppressExceptions),
-    IrTypeTransformerVoid<Nothing?> {
+) : IrConstAnnotationTransformer(
+    interpreter, irFile, mode, checker, evaluatedConstTracker, inlineConstTracker, onWarning, onError, suppressExceptions
+), IrTypeTransformerVoid<IrConstTransformer.Data> {
 
-    override fun <Type : IrType?> transformType(container: IrElement, type: Type, data: Nothing?): Type {
+    override fun <Type : IrType?> transformType(container: IrElement, type: Type, data: Data): Type {
         if (type == null) return type
 
         transformAnnotations(type)

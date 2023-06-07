@@ -31,40 +31,30 @@ internal abstract class IrConstExpressionTransformer(
     onWarning: (IrFile, IrElement, IrErrorExpression) -> Unit,
     onError: (IrFile, IrElement, IrErrorExpression) -> Unit,
     suppressExceptions: Boolean,
-) : IrConstTransformer(interpreter, irFile, mode, checker, evaluatedConstTracker, inlineConstTracker, onWarning, onError, suppressExceptions) {
-    protected var inAnnotation: Boolean = false
-
-    private inline fun <T> visitAnnotationClass(crossinline block: () -> T): T {
-        val oldInAnnotation = inAnnotation
-        inAnnotation = true
-        try {
-            return block()
-        } finally {
-            inAnnotation = oldInAnnotation
-        }
-    }
-
-    override fun visitFunction(declaration: IrFunction, data: Nothing?): IrStatement {
+) : IrConstTransformer(
+    interpreter, irFile, mode, checker, evaluatedConstTracker, inlineConstTracker, onWarning, onError, suppressExceptions
+) {
+    override fun visitFunction(declaration: IrFunction, data: Data): IrStatement {
         // It is useless to visit default accessor and if we do that we could render excess information for `IrGetField`
         if (declaration.origin == IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR) return declaration
         return super.visitFunction(declaration, data)
     }
 
-    override fun visitClass(declaration: IrClass, data: Nothing?): IrStatement {
+    override fun visitClass(declaration: IrClass, data: Data): IrStatement {
         if (declaration.kind == ClassKind.ANNOTATION_CLASS) {
-            return visitAnnotationClass { super.visitClass(declaration, data) }
+            return super.visitClass(declaration, data.copy(inAnnotation = true))
         }
         return super.visitClass(declaration, data)
     }
 
-    override fun visitCall(expression: IrCall, data: Nothing?): IrElement {
+    override fun visitCall(expression: IrCall, data: Data): IrElement {
         if (expression.canBeInterpreted()) {
-            return expression.interpret(failAsError = inAnnotation)
+            return expression.interpret(failAsError = data.inAnnotation)
         }
         return super.visitCall(expression, data)
     }
 
-    override fun visitField(declaration: IrField, data: Nothing?): IrStatement {
+    override fun visitField(declaration: IrField, data: Data): IrStatement {
         val initializer = declaration.initializer
         val expression = initializer?.expression ?: return declaration
         val getField = declaration.createGetField()
@@ -76,19 +66,19 @@ internal abstract class IrConstExpressionTransformer(
         return super.visitField(declaration, data)
     }
 
-    override fun visitGetField(expression: IrGetField, data: Nothing?): IrExpression {
+    override fun visitGetField(expression: IrGetField, data: Data): IrExpression {
         if (expression.canBeInterpreted()) {
-            return expression.interpret(failAsError = inAnnotation)
+            return expression.interpret(failAsError = data.inAnnotation)
         }
         return super.visitGetField(expression, data)
     }
 
-    override fun visitStringConcatenation(expression: IrStringConcatenation, data: Nothing?): IrExpression {
+    override fun visitStringConcatenation(expression: IrStringConcatenation, data: Data): IrExpression {
         fun IrExpression.wrapInStringConcat(): IrExpression = IrStringConcatenationImpl(
             this.startOffset, this.endOffset, expression.type, listOf(this@wrapInStringConcat)
         )
 
-        fun IrExpression.wrapInToStringConcatAndInterpret(): IrExpression = wrapInStringConcat().interpret(failAsError = inAnnotation)
+        fun IrExpression.wrapInToStringConcatAndInterpret(): IrExpression = wrapInStringConcat().interpret(failAsError = data.inAnnotation)
         fun IrExpression.getConstStringOrEmpty(): String = if (this is IrConst<*>) value.toString() else ""
 
         // If we have some complex expression in arguments (like some `IrComposite`) we will skip it,

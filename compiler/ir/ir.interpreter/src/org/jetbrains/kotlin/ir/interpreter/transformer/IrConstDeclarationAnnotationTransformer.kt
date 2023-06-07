@@ -26,13 +26,15 @@ internal class IrConstDeclarationAnnotationTransformer(
     onWarning: (IrFile, IrElement, IrErrorExpression) -> Unit,
     onError: (IrFile, IrElement, IrErrorExpression) -> Unit,
     suppressExceptions: Boolean,
-) : IrConstAnnotationTransformer(interpreter, irFile, mode, checker, evaluatedConstTracker, inlineConstTracker, onWarning, onError, suppressExceptions) {
-    override fun visitFile(declaration: IrFile, data: Nothing?): IrFile {
+) : IrConstAnnotationTransformer(
+    interpreter, irFile, mode, checker, evaluatedConstTracker, inlineConstTracker, onWarning, onError, suppressExceptions
+) {
+    override fun visitFile(declaration: IrFile, data: Data): IrFile {
         transformAnnotations(declaration)
         return super.visitFile(declaration, data)
     }
 
-    override fun visitDeclaration(declaration: IrDeclarationBase, data: Nothing?): IrStatement {
+    override fun visitDeclaration(declaration: IrDeclarationBase, data: Data): IrStatement {
         transformAnnotations(declaration)
         return super.visitDeclaration(declaration, data)
     }
