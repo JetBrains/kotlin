@@ -81,6 +81,7 @@ public interface Errors {
     DiagnosticFactory0<PsiElement> UNSUPPORTED_SEALED_WHEN = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> UNSUPPORTED_SEALED_FUN_INTERFACE = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> UNSUPPORTED_SUSPEND_TEST = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<PsiElement> UNSUPPORTED_REFERENCES_TO_VARIABLES_AND_PARAMETERS = DiagnosticFactory0.create(ERROR);
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

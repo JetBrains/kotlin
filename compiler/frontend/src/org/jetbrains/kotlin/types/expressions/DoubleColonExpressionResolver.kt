@@ -614,7 +614,7 @@ class DoubleColonExpressionResolver(
             trace.report(EXTENSION_IN_CLASS_REFERENCE_NOT_ALLOWED.on(simpleName, descriptor))
         }
         if (descriptor is VariableDescriptor && descriptor !is PropertyDescriptor) {
-            trace.report(UNSUPPORTED.on(simpleName, "References to variables aren't supported yet"))
+            trace.report(UNSUPPORTED_REFERENCES_TO_VARIABLES_AND_PARAMETERS.on(simpleName))
         }
     }
 
