@@ -43,6 +43,7 @@ native {
         OSX -> {
             cxxflags += "-DKONAN_MACOS=1"
         }
+        else -> Unit
     }
     suffixes {
         (".cpp" to ".$obj") {

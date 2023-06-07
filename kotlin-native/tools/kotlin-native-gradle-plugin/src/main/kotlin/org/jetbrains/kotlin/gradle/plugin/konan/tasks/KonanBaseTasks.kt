@@ -25,11 +25,11 @@ import org.gradle.api.attributes.Attribute
 import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.attributes.Usage
 import org.gradle.api.capabilities.Capability
+import org.gradle.api.internal.component.DefaultSoftwareComponentVariant
 import org.gradle.api.internal.component.UsageContext
 import org.gradle.api.internal.tasks.DefaultTaskDependency
 import org.gradle.api.tasks.*
 import org.gradle.language.cpp.CppBinary
-import org.gradle.language.cpp.internal.DefaultUsageContext
 import org.gradle.nativeplatform.Linkage
 import org.jetbrains.kotlin.gradle.plugin.experimental.internal.compatibleVariantIdentity
 import org.jetbrains.kotlin.gradle.plugin.konan.*
@@ -119,17 +119,15 @@ abstract class KonanArtifactTask: KonanTargetableTask(), KonanArtifactSpec {
             val linkUsage = objectFactory.named(Usage::class.java, Usage.NATIVE_LINK)
             val konanSoftwareComponent = config.mainVariant
             val variantName = "${artifactNameWithoutSuffix}_${target.name}"
-            val context = DefaultUsageContext(object:UsageContext {
-                @Suppress("OVERRIDE_DEPRECATION")
-                override fun getUsage(): Usage = linkUsage
-                override fun getName(): String = "${variantName}Link"
-                override fun getCapabilities(): MutableSet<out Capability> = mutableSetOf()
-                override fun getDependencies(): MutableSet<out ModuleDependency> = mutableSetOf()
-                override fun getDependencyConstraints(): MutableSet<out DependencyConstraint> = mutableSetOf()
-                override fun getArtifacts(): MutableSet<out PublishArtifact> = platformConfiguration.allArtifacts
-                override fun getAttributes(): AttributeContainer = platformConfiguration.attributes
-                override fun getGlobalExcludes(): Set<ExcludeRule> = emptySet()
-            }, platformConfiguration.allArtifacts, platformConfiguration)
+            val context = DefaultSoftwareComponentVariant(
+                    "${variantName}Link",
+                    platformConfiguration.attributes,
+                    platformConfiguration.allArtifacts,
+                    mutableSetOf(),
+                    mutableSetOf(),
+                    mutableSetOf(),
+                    emptySet(),
+            )
             konanSoftwareComponent.addVariant(
                 compatibleVariantIdentity(
                     project,

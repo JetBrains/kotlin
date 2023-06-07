@@ -14,6 +14,7 @@ import org.gradle.api.tasks.bundling.AbstractArchiveTask
 import org.gradle.kotlin.dsl.*
 import proguard.gradle.ProGuardTask
 import java.io.File
+import java.util.*
 import java.util.concurrent.Callable
 
 inline fun <reified T : Task> Project.task(noinline configuration: T.() -> Unit) = tasks.registering(T::class, configuration)
@@ -92,3 +93,7 @@ val Project.isIdeaActive
 
 val Project.intellijCommunityDir: File
     get() = rootDir.resolve("intellij/community").takeIf { it.isDirectory } ?: rootDir.resolve("intellij")
+
+fun String.capitalize(): String = capitalize(Locale.ROOT)
+
+fun String.capitalize(locale: Locale): String = replaceFirstChar { if (it.isLowerCase()) it.titlecase(locale) else it.toString() }
