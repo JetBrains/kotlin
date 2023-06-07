@@ -741,7 +741,7 @@ val CheckerContext.closestNonLocal get() = containingDeclarations.takeWhile { it
 fun CheckerContext.closestNonLocalWith(declaration: FirDeclaration) =
     (containingDeclarations + declaration).takeWhile { it.isNonLocal }.lastOrNull()
 
-val CheckerContext.isTopLevel get() = containingDeclarations.lastOrNull() is FirFile
+val CheckerContext.isTopLevel get() = containingDeclarations.lastOrNull().let { it is FirFile || it is FirScript }
 
 fun FirBasedSymbol<*>.hasAnnotationOrInsideAnnotatedClass(classId: ClassId, session: FirSession): Boolean {
     if (hasAnnotation(classId, session)) return true

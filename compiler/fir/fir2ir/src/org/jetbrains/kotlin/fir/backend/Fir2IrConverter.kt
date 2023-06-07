@@ -359,15 +359,19 @@ class Fir2IrConverter(
                 processRegularClassMembers(declaration)
             }
             is FirScript -> {
-                assert(parent is IrFile)
+                parent as IrFile
                 declarationStorage.getOrCreateIrScript(declaration).also { irScript ->
                     declarationStorage.enterScope(irScript)
                     irScript.parent = parent
                     for (scriptStatement in declaration.statements) {
                         if (scriptStatement is FirDeclaration) {
-                            if (scriptStatement is FirRegularClass) {
-                                registerClassAndNestedClasses(scriptStatement, irScript)
-                                processClassAndNestedClassHeaders(scriptStatement)
+                            when (scriptStatement) {
+                                is FirRegularClass -> {
+                                    registerClassAndNestedClasses(scriptStatement, irScript)
+                                    processClassAndNestedClassHeaders(scriptStatement)
+                                }
+                                is FirTypeAlias -> classifierStorage.registerTypeAlias(scriptStatement, irScript)
+                                else -> {}
                             }
 
                         }

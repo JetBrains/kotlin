@@ -304,7 +304,7 @@ class Fir2IrClassifierStorage(
 
     fun registerTypeAlias(
         typeAlias: FirTypeAlias,
-        parent: IrFile
+        parent: IrDeclarationParent
     ): IrTypeAlias {
         val signature = signatureComposer.composeSignature(typeAlias)
         return typeAlias.convertWithOffsets { startOffset, endOffset ->
@@ -322,7 +322,9 @@ class Fir2IrClassifierStorage(
                 ).apply {
                     this.parent = parent
                     setTypeParameters(typeAlias)
-                    parent.declarations += this
+                    if (parent is IrFile) {
+                        parent.declarations += this
+                    }
                 }
                 typeAliasCache[typeAlias] = irTypeAlias
                 irTypeAlias
