@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.test.configurators
 
-import org.jetbrains.kotlin.analysis.api.fir.test.configurators.library.AnalysisApiFirLibraryBinaryTestConfigurator
+import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirLibraryBinaryTestConfigurator
 import org.jetbrains.kotlin.analysis.api.fir.test.configurators.library.AnalysisApiFirLibrarySourceTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.*

@@ -65,7 +65,7 @@ internal fun <S, T> loadStubByElement(ktElement: T): S? where T : StubBasedPsiEl
     val virtualFile = PsiUtilCore.getVirtualFile(ktFile) ?: return null
     var stubList = ktFile.getUserData(STUBS_KEY)?.get()
     if (stubList == null) {
-        val stubTree = StubTreeLoader.getInstance().readFromVFile(ktElement.project, virtualFile)
+        val stubTree = StubTreeLoader.getInstance().readOrBuild(ktElement.project, virtualFile, null)
         stubList = stubTree?.plainList ?: emptyList()
         ktFile.putUserData(STUBS_KEY, WeakReference(stubList))
     }

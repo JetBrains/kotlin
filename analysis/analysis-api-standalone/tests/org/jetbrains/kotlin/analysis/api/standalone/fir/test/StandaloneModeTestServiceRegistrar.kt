@@ -35,7 +35,6 @@ public object StandaloneModeTestServiceRegistrar : AnalysisApiTestServiceRegistr
                 ?: emptyList()
         val projectEnvironment = testServices.environmentManager.getProjectEnvironment()
         project.apply {
-            registerService(ClsJavaStubByVirtualFileCache::class.java, ClsJavaStubByVirtualFileCache())
             registerService(
                 KotlinPsiDeclarationProviderFactory::class.java,
                 KotlinStaticPsiDeclarationProviderFactory(

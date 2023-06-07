@@ -1,0 +1,8 @@
+KT element: KtEnumEntry
+KT element text:
+Baz;
+FIR element: FirEnumEntryImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+public final static [ResolvedTo(BODY_RESOLVE)] enum entry Baz: R|FooBar|

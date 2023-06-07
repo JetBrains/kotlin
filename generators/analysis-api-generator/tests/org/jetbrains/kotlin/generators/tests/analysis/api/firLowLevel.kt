@@ -92,6 +92,14 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
             model("getOrBuildFir")
         }
 
+        testClass<AbstractLibraryGetOrBuildFirTest> {
+            model("getOrBuildFirBinary")
+        }
+
+        testClass<AbstractStdLibBasedGetOrBuildFirTest> {
+            model("getOrBuildFirForStdLib")
+        }
+
         testClass<AbstractFileBasedKotlinDeclarationProviderTest> {
             model("fileBasedDeclarationProvider", pattern = TestGeneratorUtil.KT_OR_KTS)
         }

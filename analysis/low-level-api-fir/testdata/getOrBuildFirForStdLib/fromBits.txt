@@ -1,0 +1,6 @@
+KT element: KtNamedFunction
+FIR element: FirSimpleFunctionImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+@R|kotlin/SinceKotlin|(version = String(1.2)) @R|kotlin/internal/InlineOnly|() public final inline [ResolvedTo(BODY_RESOLVE)] fun @RECEIVER:R|kotlin/SinceKotlin|(version = String(1.2)) @RECEIVER:R|kotlin/internal/InlineOnly|() R|kotlin/Double.Companion|.fromBits([ResolvedTo(BODY_RESOLVE)] bits: R|kotlin/Long|): R|kotlin/Double|

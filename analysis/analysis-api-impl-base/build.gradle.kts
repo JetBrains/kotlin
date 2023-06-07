@@ -24,6 +24,7 @@ dependencies {
     testImplementation(project(":analysis:symbol-light-classes"))
     testImplementation(projectTests(":analysis:decompiled:decompiler-to-file-stubs"))
     testImplementation(project(":analysis:decompiled:decompiler-to-file-stubs"))
+    testImplementation(project(":analysis:decompiled:light-classes-for-decompiled"))
     testImplementation(project(":analysis:decompiled:decompiler-to-psi"))
     testImplementation(projectTests(":analysis:analysis-test-framework"))
     testImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }

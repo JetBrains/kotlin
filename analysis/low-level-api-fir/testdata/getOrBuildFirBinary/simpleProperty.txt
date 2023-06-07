@@ -1,0 +1,8 @@
+KT element: KtProperty
+KT element text:
+public final val p: kotlin.String /* compiled code */
+FIR element: FirPropertyImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+public final [ResolvedTo(BODY_RESOLVE)] val p: R|kotlin/String|

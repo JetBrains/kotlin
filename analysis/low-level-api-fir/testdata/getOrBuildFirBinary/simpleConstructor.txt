@@ -1,0 +1,8 @@
+KT element: KtPrimaryConstructor
+KT element text:
+public constructor(p: kotlin.String)
+FIR element: FirPrimaryConstructor
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+public [ResolvedTo(BODY_RESOLVE)] constructor([ResolvedTo(BODY_RESOLVE)] p: R|kotlin/String|): R|FooBar|
