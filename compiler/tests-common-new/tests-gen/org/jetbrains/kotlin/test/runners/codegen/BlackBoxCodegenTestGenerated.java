@@ -43453,6 +43453,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             }
 
             @Test
+            @TestMetadata("interfaceDelegation.kt")
+            public void testInterfaceDelegation() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/properties/interfaceDelegation.kt");
+            }
+
+            @Test
             @TestMetadata("invokeKProperty.kt")
             public void testInvokeKProperty() throws Exception {
                 runTest("compiler/testData/codegen/box/reflection/properties/invokeKProperty.kt");
