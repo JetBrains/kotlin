@@ -18,7 +18,7 @@ object SealedInterfaceAllowedChecker : DeclarationChecker {
         val keyword = declaration.modifierList?.getModifier(KtTokens.SEALED_KEYWORD) ?: return
         val diagnostic = if (context.languageVersionSettings.supportsFeature(LanguageFeature.SealedInterfaces)) {
             if (descriptor.isFun) {
-                Errors.UNSUPPORTED.on(keyword, "sealed fun interfaces")
+                Errors.UNSUPPORTED_SEALED_FUN_INTERFACE.on(keyword)
             } else return
         } else {
             Errors.UNSUPPORTED_FEATURE.on(keyword, LanguageFeature.SealedInterfaces to context.languageVersionSettings)
