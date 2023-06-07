@@ -1628,7 +1628,8 @@ internal class CodeGeneratorVisitor(
                 positionAtEnd(bbExit)
                 appendingTo(resultInstanceOfBB) { br(bbExit) }
                 appendingTo(resultNullBB) { br(bbExit) }
-                val result = phi(value.type.toLLVMType(llvm))
+                require(resultNull.type == resultInstanceOf.type)
+                val result = phi(resultNull.type)
                 addPhiIncoming(result, resultNullBB to resultNull, resultInstanceOfBB to resultInstanceOf)
                 result
             }

@@ -3684,6 +3684,12 @@ public class NativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenBoxT
             }
 
             @Test
+            @TestMetadata("toNativePointers.kt")
+            public void testToNativePointers() throws Exception {
+                runTest("compiler/testData/codegen/box/casts/toNativePointers.kt");
+            }
+
+            @Test
             @TestMetadata("unitAsAny.kt")
             public void testUnitAsAny() throws Exception {
                 runTest("compiler/testData/codegen/box/casts/unitAsAny.kt");
