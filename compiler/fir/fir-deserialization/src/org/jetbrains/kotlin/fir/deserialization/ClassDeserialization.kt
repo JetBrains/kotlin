@@ -13,12 +13,13 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.*
-import org.jetbrains.kotlin.fir.declarations.comparators.FirMemberDeclarationComparator
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.utils.addDeclarations
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 import org.jetbrains.kotlin.fir.declarations.utils.moduleName
 import org.jetbrains.kotlin.fir.declarations.utils.sourceElement
+import org.jetbrains.kotlin.fir.resolve.providers.getRegularClassSymbolByClassId
+import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
@@ -199,7 +200,7 @@ fun deserializeClassToSymbol(
             generateEntriesGetter(moduleData, classId.packageFqName, classId.relativeClassName)
         }
 
-        addCloneForArrayIfNeeded(classId, context.dispatchReceiver)
+        addCloneForArrayIfNeeded(classId, context.dispatchReceiver, session)
         session.deserializedClassConfigurator?.run {
             configure(classId)
         }
@@ -270,9 +271,10 @@ private fun FirRegularClassBuilder.addSerializableIfNeeded(classId: ClassId) {
     }
 }
 
-fun FirRegularClassBuilder.addCloneForArrayIfNeeded(classId: ClassId, dispatchReceiver: ConeClassLikeType?) {
+fun FirRegularClassBuilder.addCloneForArrayIfNeeded(classId: ClassId, dispatchReceiver: ConeClassLikeType?, session: FirSession) {
     if (classId.packageFqName != StandardClassIds.BASE_KOTLIN_PACKAGE) return
     if (classId.shortClassName !in ARRAY_CLASSES) return
+    if (session.symbolProvider.getRegularClassSymbolByClassId(StandardClassIds.Cloneable) == null) return
     superTypeRefs += buildResolvedTypeRef {
         type = ConeClassLikeTypeImpl(
             StandardClassIds.Cloneable.toLookupTag(),

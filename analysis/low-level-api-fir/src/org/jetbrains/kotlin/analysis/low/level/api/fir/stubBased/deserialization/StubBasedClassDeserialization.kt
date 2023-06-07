@@ -211,7 +211,7 @@ internal fun deserializeClassToSymbol(
             )
         }
 
-        addCloneForArrayIfNeeded(classId, context.dispatchReceiver)
+        addCloneForArrayIfNeeded(classId, context.dispatchReceiver, session)
         session.deserializedClassConfigurator?.run {
             configure(classId)
         }
