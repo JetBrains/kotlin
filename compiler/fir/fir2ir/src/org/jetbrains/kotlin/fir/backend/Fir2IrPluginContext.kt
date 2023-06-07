@@ -46,7 +46,7 @@ class Fir2IrPluginContext(
     @ObsoleteDescriptorBasedAPI
     @FirIncompatiblePluginAPI
     override val bindingContext: BindingContext
-        get() = error(ERROR_MESSAGE)
+        get() = BindingContext.EMPTY
 
     @ObsoleteDescriptorBasedAPI
     @FirIncompatiblePluginAPI
@@ -151,27 +151,27 @@ class Fir2IrPluginContext(
 
     @FirIncompatiblePluginAPI
     override fun referenceClass(fqName: FqName): IrClassSymbol? {
-        error(ERROR_MESSAGE)
+        return referenceClass(ClassId.topLevel(fqName))
     }
 
     @FirIncompatiblePluginAPI
     override fun referenceTypeAlias(fqName: FqName): IrTypeAliasSymbol? {
-        error(ERROR_MESSAGE)
+        return referenceTypeAlias(ClassId.topLevel(fqName))
     }
 
     @FirIncompatiblePluginAPI
     override fun referenceConstructors(classFqn: FqName): Collection<IrConstructorSymbol> {
-        error(ERROR_MESSAGE)
+        return referenceConstructors(ClassId.topLevel(classFqn))
     }
 
     @FirIncompatiblePluginAPI
     override fun referenceFunctions(fqName: FqName): Collection<IrSimpleFunctionSymbol> {
-        error(ERROR_MESSAGE)
+        return referenceFunctions(CallableId(fqName.parent(), null, fqName.shortName()))
     }
 
     @FirIncompatiblePluginAPI
     override fun referenceProperties(fqName: FqName): Collection<IrPropertySymbol> {
-        error(ERROR_MESSAGE)
+        return referenceProperties(CallableId(fqName.parent(), null, fqName.shortName()))
     }
 
     override fun referenceTopLevel(
