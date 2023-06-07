@@ -114,6 +114,7 @@ open class DeepCopyIrTreeWithSymbols(
             symbolRenamer.getFileName(declaration.symbol),
             transformedModule ?: declaration.module
         ).apply {
+            metadata = declaration.metadata
             transformAnnotations(declaration)
             declaration.transformDeclarationsTo(this)
         }
@@ -129,6 +130,7 @@ open class DeepCopyIrTreeWithSymbols(
             declaration.startOffset,
             declaration.endOffset
         ).also { scriptCopy ->
+            scriptCopy.metadata = declaration.metadata
             scriptCopy.thisReceiver = declaration.thisReceiver?.transform()
             declaration.statements.mapTo(scriptCopy.statements) { it.transform() }
             scriptCopy.earlierScripts = declaration.earlierScripts
@@ -157,6 +159,7 @@ open class DeepCopyIrTreeWithSymbols(
             isExpect = declaration.isExpect,
             isFun = declaration.isFun,
         ).apply {
+            metadata = declaration.metadata
             transformAnnotations(declaration)
             copyTypeParametersFrom(declaration)
             superTypes = declaration.superTypes.memoryOptimizedMap {
@@ -190,6 +193,7 @@ open class DeepCopyIrTreeWithSymbols(
             containerSource = declaration.containerSource,
             isFakeOverride = declaration.isFakeOverride,
         ).apply {
+            metadata = declaration.metadata
             overriddenSymbols = declaration.overriddenSymbols.memoryOptimizedMap {
                 symbolRemapper.getReferencedFunction(it) as IrSimpleFunctionSymbol
             }
@@ -213,6 +217,7 @@ open class DeepCopyIrTreeWithSymbols(
             isExternal = declaration.isExternal,
             containerSource = declaration.containerSource,
         ).apply {
+            metadata = declaration.metadata
             transformFunctionChildren(declaration)
         }
 
@@ -250,6 +255,7 @@ open class DeepCopyIrTreeWithSymbols(
             containerSource = declaration.containerSource,
             isExpect = declaration.isExpect,
         ).apply {
+            metadata = declaration.metadata
             transformAnnotations(declaration)
             copyAttributes(declaration)
             this.backingField = declaration.backingField?.transform()?.also {
@@ -279,6 +285,7 @@ open class DeepCopyIrTreeWithSymbols(
             isStatic = declaration.isStatic,
             isExternal = declaration.isExternal,
         ).apply {
+            metadata = declaration.metadata
             transformAnnotations(declaration)
             initializer = declaration.initializer?.transform()
         }
@@ -293,6 +300,7 @@ open class DeepCopyIrTreeWithSymbols(
             type = declaration.type.remapType(),
             isVar = declaration.isVar,
         ).apply {
+            metadata = declaration.metadata
             transformAnnotations(declaration)
             delegate = declaration.delegate.transform()
             getter = declaration.getter.transform()
