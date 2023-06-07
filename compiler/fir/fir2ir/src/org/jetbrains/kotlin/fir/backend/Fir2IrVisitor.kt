@@ -142,9 +142,7 @@ class Fir2IrVisitor(
             converter.processAnonymousObjectMembers(anonymousObject, correspondingClass, processHeaders = true)
             converter.bindFakeOverridesInClass(correspondingClass)
             conversionScope.withParent(correspondingClass) {
-                conversionScope.withContainingFirClass(anonymousObject) {
-                    memberGenerator.convertClassContent(correspondingClass, anonymousObject)
-                }
+                memberGenerator.convertClassContent(correspondingClass, anonymousObject)
                 val constructor = correspondingClass.constructors.first()
                 irEnumEntry.initializerExpression = irFactory.createExpressionBody(
                     IrEnumConstructorCallImpl(
@@ -192,9 +190,7 @@ class Fir2IrVisitor(
             val irClass = classifierStorage.getCachedIrClass(regularClass)?.apply { this.parent = irParent }
             if (irClass != null) {
                 return conversionScope.withParent(irClass) {
-                    conversionScope.withContainingFirClass(regularClass) {
-                        memberGenerator.convertClassContent(irClass, regularClass)
-                    }
+                    memberGenerator.convertClassContent(irClass, regularClass)
                 }
             }
             converter.processLocalClassAndNestedClasses(regularClass, irParent)
@@ -204,9 +200,7 @@ class Fir2IrVisitor(
             irClass.sealedSubclasses = regularClass.getIrSymbolsForSealedSubclasses()
         }
         return conversionScope.withParent(irClass) {
-            conversionScope.withContainingFirClass(regularClass) {
-                memberGenerator.convertClassContent(irClass, regularClass)
-            }
+            memberGenerator.convertClassContent(irClass, regularClass)
         }
     }
 
@@ -245,9 +239,7 @@ class Fir2IrVisitor(
             ?: converter.processLocalClassAndNestedClasses(anonymousObject, irParent)
 
         conversionScope.withParent(irAnonymousObject) {
-            conversionScope.withContainingFirClass(anonymousObject) {
-                memberGenerator.convertClassContent(irAnonymousObject, anonymousObject)
-            }
+            memberGenerator.convertClassContent(irAnonymousObject, anonymousObject)
         }
         val anonymousClassType = irAnonymousObject.thisReceiver!!.type
         return anonymousObject.convertWithOffsets { startOffset, endOffset ->

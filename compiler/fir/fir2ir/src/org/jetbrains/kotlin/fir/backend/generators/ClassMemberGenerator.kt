@@ -53,7 +53,7 @@ internal class ClassMemberGenerator(
 
     private fun <T : IrDeclaration> applyParentFromStackTo(declaration: T): T = conversionScope.applyParentFromStackTo(declaration)
 
-    fun convertClassContent(irClass: IrClass, klass: FirClass) {
+    fun convertClassContent(irClass: IrClass, klass: FirClass): Unit = conversionScope.withContainingFirClass(klass) {
         declarationStorage.enterScope(irClass)
         conversionScope.withClass(irClass) {
             val allDeclarations = buildList {
@@ -84,9 +84,7 @@ internal class ClassMemberGenerator(
                         val irNestedClass = classifierStorage.getCachedIrClass(declaration)!!
                         irNestedClass.parent = irClass
                         conversionScope.withParent(irNestedClass) {
-                            conversionScope.withContainingFirClass(declaration) {
-                                convertClassContent(irNestedClass, declaration)
-                            }
+                            convertClassContent(irNestedClass, declaration)
                         }
                     }
                     else -> declaration.accept(visitor, null)
