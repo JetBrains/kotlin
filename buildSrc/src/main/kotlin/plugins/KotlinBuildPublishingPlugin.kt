@@ -5,6 +5,7 @@
 
 package plugins
 
+import capitalize
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.attributes.Usage
