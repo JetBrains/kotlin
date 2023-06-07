@@ -26,10 +26,7 @@ import org.jetbrains.kotlin.fir.resolve.toFirRegularClass
 import org.jetbrains.kotlin.fir.serialization.FirElementAwareStringTable
 import org.jetbrains.kotlin.fir.serialization.FirElementSerializer
 import org.jetbrains.kotlin.fir.serialization.TypeApproximatorForMetadataSerializer
-import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirDelegateFieldSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
@@ -219,6 +216,7 @@ private fun FirFunction.copyToFreeAnonymousFunction(approximator: AbstractTypeAp
         hasExplicitParameterList = (function as? FirAnonymousFunction)?.hasExplicitParameterList == true
         valueParameters.addAll(function.valueParameters.map {
             buildValueParameterCopy(it) {
+                symbol = FirValueParameterSymbol(it.name)
                 returnTypeRef = it.returnTypeRef.approximated(approximator, typeParameterSet, toSuper = false)
             }
         })
@@ -243,6 +241,7 @@ private fun FirPropertyAccessor.copyToFreeAccessor(
         status = accessor.status
         accessor.valueParameters.mapTo(valueParameters) {
             buildValueParameterCopy(it) {
+                symbol = FirValueParameterSymbol(it.name)
                 returnTypeRef = it.returnTypeRef.approximated(approximator, typeParameterSet, toSuper = false)
             }
         }
