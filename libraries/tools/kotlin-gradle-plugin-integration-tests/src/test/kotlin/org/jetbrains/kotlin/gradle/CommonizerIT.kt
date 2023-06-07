@@ -633,7 +633,7 @@ open class CommonizerIT : BaseGradleIT() {
                 val nativeMain = getCommonizerDependencies("nativeMain")
                 nativeMain.withoutNativeDistributionDependencies().assertDependencyFilesMatches(".*cinterop-dummy")
                 nativeMain.onlyNativeDistributionDependencies().assertNotEmpty()
-                nativeMain.assertTargetOnAllDependencies(CommonizerTarget(LINUX_X64, LINUX_ARM64, LINUX_ARM32_HFP))
+                nativeMain.assertTargetOnAllDependencies(CommonizerTarget(LINUX_X64, LINUX_ARM64, MINGW_X64))
 
                 val nativeTest = getCommonizerDependencies("nativeTest")
                 nativeTest.onlyNativeDistributionDependencies().assertNotEmpty()
