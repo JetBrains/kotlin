@@ -80,6 +80,7 @@ public interface Errors {
     DiagnosticFactory1<PsiElement, String> UNSUPPORTED_INHERITANCE_FROM_JAVA_MEMBER_REFERENCING_KOTLIN_FUNCTION = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory0<PsiElement> UNSUPPORTED_SEALED_WHEN = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> UNSUPPORTED_SEALED_FUN_INTERFACE = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<PsiElement> UNSUPPORTED_SUSPEND_TEST = DiagnosticFactory0.create(ERROR);
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

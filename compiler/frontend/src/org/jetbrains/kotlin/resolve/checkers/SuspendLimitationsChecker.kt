@@ -46,7 +46,7 @@ object SuspendLimitationsChecker : DeclarationChecker {
 
         if (descriptor.annotations.any(AnnotationDescriptor::isKotlinTestAnnotation)) {
             declaration.modifierList?.getModifier(KtTokens.SUSPEND_KEYWORD)?.let {
-                context.trace.report(Errors.UNSUPPORTED.on(it, "suspend test functions"))
+                context.trace.report(Errors.UNSUPPORTED_SUSPEND_TEST.on(it))
             }
         }
     }
