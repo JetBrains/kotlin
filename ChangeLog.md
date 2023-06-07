@@ -1,3 +1,10 @@
+## 1.8.22
+
+### Tools. Gradle
+
+- [`KT-58280`](https://youtrack.jetbrains.com/issue/KT-58280) org.jetbrains.kotlin.jvm Gradle plugin contributes build directories to the test compile classpath
+
+
 ## 1.8.21
 
 ### Compiler
