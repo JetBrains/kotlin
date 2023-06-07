@@ -173,17 +173,24 @@ fun FirReference.toSymbolForCall(
     explicitReceiver: FirExpression?,
     preferGetter: Boolean = true,
     isDelegate: Boolean = false,
-    isReference: Boolean = false
+    isReference: Boolean = false,
 ): IrSymbol? {
     return when (this) {
-        is FirResolvedNamedReference ->
-            resolvedSymbol.toSymbolForCall(
+        is FirResolvedNamedReference -> {
+            var symbol = resolvedSymbol
+
+            if (symbol is FirCallableSymbol<*> && symbol.origin == FirDeclarationOrigin.SubstitutionOverride.CallSite) {
+                symbol = symbol.fir.unwrapUseSiteSubstitutionOverrides<FirCallableDeclaration>().symbol
+            }
+
+            symbol.toSymbolForCall(
                 dispatchReceiver,
                 preferGetter,
                 explicitReceiver,
                 isDelegate,
                 isReference
             )
+        }
 
         is FirThisReference -> {
             when (val boundSymbol = boundSymbol) {
