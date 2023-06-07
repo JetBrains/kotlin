@@ -35,7 +35,7 @@ dependencies {
     compileOnly project(':dependencies:intellij-core')
 }
 
-GradleCommonKt.configureCommonPublicationSettingsForGradle(project, false)
+GradleCommonKt.configureCommonPublicationSettingsForGradle(project, false, false)
 GradleCommonKt.configureKotlinCompileTasksGradleCompatibility(project)
 GradleCommonKt.excludeGradleCommonDependencies(project, sourceSets.main)
 TasksKt.optInToExperimentalCompilerApi(project)

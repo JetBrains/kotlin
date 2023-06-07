@@ -26,7 +26,7 @@ dependencies {
     }
 }
 
-configureCommonPublicationSettingsForGradle(signLibraryPublication)
+configureCommonPublicationSettingsForGradle(signLibraryPublication, sbom = false)
 
 publishing {
     publications {
