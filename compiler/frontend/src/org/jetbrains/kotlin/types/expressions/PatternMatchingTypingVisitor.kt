@@ -177,7 +177,7 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
     ): KotlinTypeInfo {
         val trace = contextWithExpectedType.trace
         WhenChecker.checkDeprecatedWhenSyntax(trace, expression)
-        WhenChecker.checkReservedPrefix(trace, expression)
+        WhenChecker.checkSealedWhenIsReserved(trace, expression.whenKeyword)
 
         components.dataFlowAnalyzer.recordExpectedType(trace, expression, contextWithExpectedType.expectedType)
 

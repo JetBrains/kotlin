@@ -23,12 +23,12 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.WhenMissingCase
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.checkReservedPrefixWord
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingContext.SMARTCAST
 import org.jetbrains.kotlin.resolve.BindingContext.VARIABLE
@@ -44,7 +44,6 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
-import java.util.*
 
 
 val List<WhenMissingCase>.hasUnknown: Boolean
@@ -479,7 +478,9 @@ object WhenChecker {
         }
     }
 
-    fun checkReservedPrefix(trace: BindingTrace, expression: KtWhenExpression) {
-        checkReservedPrefixWord(trace, expression.whenKeyword, "sealed", "sealed when")
+    fun checkSealedWhenIsReserved(sink: DiagnosticSink, element: PsiElement) {
+        KtPsiUtil.getPreviousWord(element, "sealed")?.let {
+            sink.report(Errors.UNSUPPORTED.on(it, "sealed when"))
+        }
     }
 }

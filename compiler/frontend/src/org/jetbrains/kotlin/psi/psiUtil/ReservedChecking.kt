@@ -12,12 +12,6 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtPsiUtil
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 
-fun checkReservedPrefixWord(sink: DiagnosticSink, element: PsiElement, word: String, message: String) {
-    KtPsiUtil.getPreviousWord(element, word)?.let {
-        sink.report(Errors.UNSUPPORTED.on(it, message))
-    }
-}
-
 fun checkReservedYield(expression: KtSimpleNameExpression?, sink: DiagnosticSink) {
     // do not force identifier calculation for elements from stubs.
     if (expression?.getReferencedName() != "yield") return
