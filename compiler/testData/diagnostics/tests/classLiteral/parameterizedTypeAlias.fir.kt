@@ -26,7 +26,7 @@ fun test() {
 
     Some::class
     SomeAlias::class
-    <!CLASS_LITERAL_LHS_NOT_A_CLASS!>SomeAlias<String>::class<!>
+    SomeAlias<String>::class
 
     MyPair::class
     <!CLASS_LITERAL_LHS_NOT_A_CLASS!>MyPair<Int, Int>::class<!>
@@ -50,12 +50,12 @@ fun test() {
     <!CLASS_LITERAL_LHS_NOT_A_CLASS!>Array<*>::class<!>
 
     SimpleArrayAlias::class
-    <!CLASS_LITERAL_LHS_NOT_A_CLASS!>SimpleArrayAlias<Int>::class<!>
+    SimpleArrayAlias<Int>::class
     <!CLASS_LITERAL_LHS_NOT_A_CLASS!>SimpleArrayAlias<*>::class<!>
 
     SpecificArrayAlias::class
 
     UnusedArrayAlias::class
-    <!CLASS_LITERAL_LHS_NOT_A_CLASS!>UnusedArrayAlias<Int>::class<!>
-    <!CLASS_LITERAL_LHS_NOT_A_CLASS!>UnusedArrayAlias<*>::class<!>
+    UnusedArrayAlias<Int>::class
+    UnusedArrayAlias<*>::class
 }

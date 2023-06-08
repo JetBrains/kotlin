@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRefsOwner
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.toResolvedTypeParameterSymbol
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.scopes.impl.toConeType
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
@@ -73,7 +74,7 @@ object FirClassLiteralChecker : FirGetClassCallChecker() {
 
         if (argument !is FirResolvedQualifier) return
         // TODO: differentiate RESERVED_SYNTAX_IN_CALLABLE_REFERENCE_LHS
-        if (argument.typeArguments.isNotEmpty() && !argument.typeRef.coneType.isAllowedInClassLiteral(context)) {
+        if (argument.typeArguments.isNotEmpty() && !argument.typeRef.coneType.fullyExpandedType(context.session).isAllowedInClassLiteral(context)) {
             val symbol = argument.symbol
             symbol?.lazyResolveToPhase(FirResolvePhase.TYPES)
             @OptIn(SymbolInternals::class)
@@ -81,7 +82,9 @@ object FirClassLiteralChecker : FirGetClassCallChecker() {
             // Among type parameter references, only count actual type parameter while discarding [FirOuterClassTypeParameterRef]
             val expectedTypeArgumentSize = typeParameters?.count { it is FirTypeParameter } ?: 0
             if (expectedTypeArgumentSize != argument.typeArguments.size) {
-                // Will be reported as WRONG_NUMBER_OF_TYPE_ARGUMENTS
+                if (symbol != null) {
+                    reporter.reportOn(argument.source, FirErrors.WRONG_NUMBER_OF_TYPE_ARGUMENTS, expectedTypeArgumentSize, symbol, context)
+                }
                 return
             }
             reporter.reportOn(source, FirErrors.CLASS_LITERAL_LHS_NOT_A_CLASS, context)
