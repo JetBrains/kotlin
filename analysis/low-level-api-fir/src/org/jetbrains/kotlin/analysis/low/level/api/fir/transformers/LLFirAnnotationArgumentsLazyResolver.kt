@@ -166,6 +166,11 @@ internal abstract class AbstractAnnotationStateKeepers {
                 super.visitAnnotation(annotation)
             }
 
+            override fun visitAnnotationCall(annotationCall: FirAnnotationCall) {
+                visitAnnotation(annotationCall)
+                super.visitAnnotationCall(annotationCall)
+            }
+
             override fun visitStatement(statement: FirStatement) {}
             override fun visitExpression(expression: FirExpression) {}
         }
