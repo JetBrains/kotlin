@@ -3323,6 +3323,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
             }
 
             @Test
+            @TestMetadata("genericTypealiasInLhs.kt")
+            public void testGenericTypealiasInLhs() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/callableReference/genericTypealiasInLhs.kt");
+            }
+
+            @Test
             @TestMetadata("kt15439_completeCall.kt")
             public void testKt15439_completeCall() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/callableReference/kt15439_completeCall.kt");
@@ -4040,6 +4046,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
                 }
 
                 @Test
+                @TestMetadata("boundViolated.kt")
+                public void testBoundViolated() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/callableReference/generic/boundViolated.kt");
+                }
+
+                @Test
                 @TestMetadata("dependOnArgumentType.kt")
                 public void testDependOnArgumentType() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/callableReference/generic/dependOnArgumentType.kt");
@@ -4067,6 +4079,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
                 @TestMetadata("genericFunctionsWithNullableTypes.kt")
                 public void testGenericFunctionsWithNullableTypes() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/callableReference/generic/genericFunctionsWithNullableTypes.kt");
+                }
+
+                @Test
+                @TestMetadata("incorrectNumberOfTypeArguments.kt")
+                public void testIncorrectNumberOfTypeArguments() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/callableReference/generic/incorrectNumberOfTypeArguments.kt");
                 }
 
                 @Test
@@ -5372,6 +5390,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
             @TestMetadata("nonClassesOnLHS.kt")
             public void testNonClassesOnLHS() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/classLiteral/nonClassesOnLHS.kt");
+            }
+
+            @Test
+            @TestMetadata("parameterizedTypeAlias.kt")
+            public void testParameterizedTypeAlias() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/classLiteral/parameterizedTypeAlias.kt");
             }
 
             @Test

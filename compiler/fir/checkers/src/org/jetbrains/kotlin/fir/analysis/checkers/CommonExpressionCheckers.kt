@@ -168,4 +168,9 @@ object CommonExpressionCheckers : ExpressionCheckers() {
         get() = setOf(
             FirReceiverAccessBeforeSuperCallChecker,
         )
+
+    override val callableReferenceAccessCheckers: Set<FirCallableReferenceAccessChecker>
+        get() = setOf(
+            FirTypeArgumentsOfQualifierOfCallableReferenceChecker,
+        )
 }
