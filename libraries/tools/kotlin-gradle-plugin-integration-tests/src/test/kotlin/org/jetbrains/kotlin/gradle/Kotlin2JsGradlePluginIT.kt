@@ -650,6 +650,16 @@ class Kotlin2JsIrGradlePluginIT : AbstractKotlin2JsGradlePluginIT(true) {
             }
         }
     }
+
+    @DisplayName("Custom plugin applying Kotlin/JS plugin")
+    @GradleTest
+    fun customPluginApplyingKotlinJsPlugin(gradleVersion: GradleVersion) {
+        project("js-custom-build-src-plugin", gradleVersion) {
+            build("checkConfigurationsResolve") {
+                assertTasksExecuted(":checkConfigurationsResolve")
+            }
+        }
+    }
 }
 
 @JsGradlePluginTests

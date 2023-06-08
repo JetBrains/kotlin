@@ -54,8 +54,8 @@ open class KotlinJsCompilation @Inject internal constructor(
     override val processResourcesTaskName: String
         get() = disambiguateName("processResources")
 
-    val npmConfigurationName
-        get() = compilation.disambiguateName("npm")
+    val npmAggregatedConfigurationName
+        get() = compilation.disambiguateName("npmAggregated")
 
     val publicPackageJsonConfigurationName
         get() = compilation.disambiguateName("publicPackageJsonConfiguration")
@@ -63,7 +63,7 @@ open class KotlinJsCompilation @Inject internal constructor(
     @Deprecated("Scheduled for removal with Kotlin 2.0")
     @Suppress("DEPRECATION")
     override val relatedConfigurationNames: List<String>
-        get() = super.relatedConfigurationNames + npmConfigurationName + publicPackageJsonConfigurationName
+        get() = super.relatedConfigurationNames + npmAggregatedConfigurationName + publicPackageJsonConfigurationName
 
     override fun getAttributes(): AttributeContainer {
         return compilation.attributes
