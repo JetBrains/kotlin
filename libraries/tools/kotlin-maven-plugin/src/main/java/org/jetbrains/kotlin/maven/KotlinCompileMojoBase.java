@@ -292,7 +292,8 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
         List<File> files = new ArrayList<>();
 
         ArtifactRepository localRepo = session == null ? null : session.getLocalRepository();
-        List<ArtifactRepository> remoteRepos = session == null ? null : session.getRequest().getRemoteRepositories();
+        List<ArtifactRepository> remoteRepos = session == null ? null : session.getCurrentProject().getPluginArtifactRepositories();
+
         for (Dependency dependency : mojoExecution.getPlugin().getDependencies()) {
             Artifact artifact = system.createDependencyArtifact(dependency);
 
