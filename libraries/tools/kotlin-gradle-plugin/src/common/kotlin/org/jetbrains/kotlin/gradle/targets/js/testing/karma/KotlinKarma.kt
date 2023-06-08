@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSetti
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutor
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.internal.MppTestReportHelper
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
@@ -31,13 +30,11 @@ import org.jetbrains.kotlin.gradle.targets.js.appendConfigsFromDir
 import org.jetbrains.kotlin.gradle.targets.js.dsl.WebpackRulesDsl.Companion.webpackRulesContainer
 import org.jetbrains.kotlin.gradle.targets.js.internal.parseNodeJsStackTraceAsJvm
 import org.jetbrains.kotlin.gradle.targets.js.jsQuoted
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsExtension
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.testing.*
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 import org.jetbrains.kotlin.gradle.tasks.KotlinTest
-import org.jetbrains.kotlin.gradle.testing.internal.reportsDir
 import org.jetbrains.kotlin.gradle.utils.appendLine
 import org.jetbrains.kotlin.gradle.utils.property
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
@@ -47,7 +44,7 @@ import java.io.File
 class KotlinKarma(
     @Transient override val compilation: KotlinJsCompilation,
     private val services: () -> ServiceRegistry,
-    private val basePath: String
+    private val basePath: String,
 ) : KotlinJsTestFramework {
     @Transient
     private val project: Project = compilation.target.project
@@ -328,7 +325,7 @@ class KotlinKarma(
         task: KotlinJsTest,
         forkOptions: ProcessForkOptions,
         nodeJsArgs: MutableList<String>,
-        debug: Boolean
+        debug: Boolean,
     ): TCServiceMessagesTestExecutionSpec {
         val file = task.inputFileProperty.get().asFile
         val fileString = file.toString()
@@ -347,7 +344,7 @@ class KotlinKarma(
                     )
                 )
                 config.files.add(
-                    createLoadWasm(file).normalize().absolutePath
+                    createLoadWasm(npmProject.dir, file).normalize().absolutePath
                 )
 
                 config.proxies["/${wasmFile.name}"] = wasmFileString
@@ -591,27 +588,6 @@ class KotlinKarma(
         return adapterJs
     }
 
-    private fun createLoadWasm(file: File): File {
-        val static = npmProject.dir.resolve("static").also {
-            it.mkdirs()
-        }
-        val loadJs = static.resolve("load.js")
-        loadJs.printWriter().use { writer ->
-            val relativePath = file.toRelativeString(static)
-            writer.println(
-                """
-                import exports from "$relativePath";
-
-                exports.startUnitTests();
-
-                window.__karma__.loaded();
-                """.trimIndent()
-            )
-        }
-
-        return loadJs
-    }
-
     private fun Appendable.appendFromConfigDir() {
         if (!configDirectory.isDirectory) {
             return
@@ -621,6 +597,27 @@ class KotlinKarma(
         appendConfigsFromDir(configDirectory)
         appendLine()
     }
+}
+
+internal fun createLoadWasm(npmProjectDir: File, file: File): File {
+    val static = npmProjectDir.resolve("static").also {
+        it.mkdirs()
+    }
+    val loadJs = static.resolve("load.js")
+    loadJs.printWriter().use { writer ->
+        val relativePath = file.relativeTo(static).invariantSeparatorsPath
+        writer.println(
+            """
+                import exports from "$relativePath";
+
+                exports.startUnitTests();
+
+                window.__karma__.loaded();
+            """.trimIndent()
+        )
+    }
+
+    return loadJs
 }
 
 private val KARMA_MESSAGE = "^.*\\d{2} \\d{2} \\d{4,} \\d{2}:\\d{2}:\\d{2}.\\d{3}:(ERROR|WARN|INFO|DEBUG|LOG) \\[.*]: ([\\w\\W]*)\$"
