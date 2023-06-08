@@ -211,7 +211,7 @@ public actual open class LinkedHashMap<K, V> : HashMap<K, V>, MutableMap<K, V> {
      *
      * @throws IllegalArgumentException if [initialCapacity] is negative.
      */
-    actual constructor(initialCapacity: Int) : this(initialCapacity, 0.0f)
+    actual constructor(initialCapacity: Int) : this(initialCapacity, 1.0f)
 
     /**
      * Creates a new [LinkedHashMap] filled with the contents of the specified [original] map.

@@ -1261,4 +1261,47 @@ class CollectionTest {
     fun ensureCapacity() {
         ArrayList<String>().ensureCapacity(-1) // negative argument is ignored
     }
+
+    @Test
+    fun constructorWithCapacity() {
+        assertFailsWith<IllegalArgumentException> {
+            ArrayList<String>(/*initialCapacity = */-1)
+        }
+        assertEquals(0, ArrayList<String>(/*initialCapacity = */0).size)
+        assertEquals(0, ArrayList<String>(/*initialCapacity = */10).size)
+
+        assertFailsWith<IllegalArgumentException> {
+            HashSet<String>(/*initialCapacity = */-1)
+        }
+        assertFailsWith<IllegalArgumentException> {
+            HashSet<String>(/*initialCapacity = */-1, /*loadFactor = */0.5f)
+        }
+        assertFailsWith<IllegalArgumentException> {
+            HashSet<String>(/*initialCapacity = */10, /*loadFactor = */0.0f)
+        }
+        assertFailsWith<IllegalArgumentException> {
+            HashSet<String>(/*initialCapacity = */10, /*loadFactor = */Float.NaN)
+        }
+        assertEquals(0, HashSet<String>(/*initialCapacity = */0).size)
+        assertEquals(0, HashSet<String>(/*initialCapacity = */10).size)
+        assertEquals(0, HashSet<String>(/*initialCapacity = */0, /*loadFactor = */0.5f).size)
+        assertEquals(0, HashSet<String>(/*initialCapacity = */10, /*loadFactor = */1.5f).size)
+
+        assertFailsWith<IllegalArgumentException> {
+            LinkedHashSet<String>(/*initialCapacity = */-1)
+        }
+        assertFailsWith<IllegalArgumentException> {
+            LinkedHashSet<String>(/*initialCapacity = */-1, /*loadFactor = */0.5f)
+        }
+        assertFailsWith<IllegalArgumentException> {
+            LinkedHashSet<String>(/*initialCapacity = */10, /*loadFactor = */0.0f)
+        }
+        assertFailsWith<IllegalArgumentException> {
+            LinkedHashSet<String>(/*initialCapacity = */10, /*loadFactor = */Float.NaN)
+        }
+        assertEquals(0, LinkedHashSet<String>(/*initialCapacity = */0).size)
+        assertEquals(0, LinkedHashSet<String>(/*initialCapacity = */10).size)
+        assertEquals(0, LinkedHashSet<String>(/*initialCapacity = */0, /*loadFactor = */0.5f).size)
+        assertEquals(0, LinkedHashSet<String>(/*initialCapacity = */10, /*loadFactor = */1.5f).size)
+    }
 }

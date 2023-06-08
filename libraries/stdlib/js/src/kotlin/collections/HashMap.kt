@@ -93,7 +93,7 @@ public actual open class HashMap<K, V> : AbstractMutableMap<K, V>, MutableMap<K,
      *
      * @throws IllegalArgumentException if [initialCapacity] is negative.
      */
-    actual constructor(initialCapacity: Int) : this(initialCapacity, 0.0f)
+    actual constructor(initialCapacity: Int) : this(initialCapacity, 1.0f)
 
 
     /**

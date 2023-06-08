@@ -63,7 +63,7 @@ public actual open class HashSet<E> : AbstractMutableSet<E>, MutableSet<E> {
      *
      * @throws IllegalArgumentException if [initialCapacity] is negative.
      */
-    actual constructor(initialCapacity: Int) : this(initialCapacity, 0.0f)
+    actual constructor(initialCapacity: Int) : this(initialCapacity, 1.0f)
 
     /**
      * Protected constructor to specify the underlying map. This is used by

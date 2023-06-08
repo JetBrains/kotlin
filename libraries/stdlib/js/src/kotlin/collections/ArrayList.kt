@@ -36,7 +36,9 @@ public actual open class ArrayList<E> internal constructor(private var array: Ar
      *
      * @throws IllegalArgumentException if [initialCapacity] is negative.
      */
-    public actual constructor(initialCapacity: Int) : this(emptyArray()) {}
+    public actual constructor(initialCapacity: Int) : this(emptyArray()) {
+        require(initialCapacity >= 0) { "Negative initial capacity: $initialCapacity" }
+    }
 
     /**
      * Creates a new [ArrayList] filled with the elements of the specified collection.

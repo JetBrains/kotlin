@@ -77,7 +77,9 @@ actual class HashMap<K, V> private constructor(
      *
      * @throws IllegalArgumentException if [initialCapacity] is negative or [loadFactor] is non-positive.
      */
-    actual constructor(initialCapacity: Int, loadFactor: Float) : this(initialCapacity)
+    actual constructor(initialCapacity: Int, loadFactor: Float) : this(initialCapacity) {
+        require(loadFactor > 0) { "Non-positive load factor: $loadFactor" }
+    }
 
     @PublishedApi
     internal fun build(): Map<K, V> {

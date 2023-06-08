@@ -52,7 +52,7 @@ actual class HashSet<E> internal constructor(
      *
      * @throws IllegalArgumentException if [initialCapacity] is negative or [loadFactor] is non-positive.
      */
-    actual constructor(initialCapacity: Int, loadFactor: Float) : this(initialCapacity)
+    actual constructor(initialCapacity: Int, loadFactor: Float) : this(HashMap<E, Nothing>(initialCapacity, loadFactor))
 
     @PublishedApi
     internal fun build(): Set<E> {

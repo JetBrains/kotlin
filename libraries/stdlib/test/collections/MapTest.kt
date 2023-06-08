@@ -766,4 +766,41 @@ class MapTest {
         assertFailsWith<NoSuchElementException> { empty.minOfWith(naturalOrder()) { it.toString() } }
         assertFailsWith<NoSuchElementException> { empty.maxOfWith(naturalOrder()) { it.toString() } }
     }
+
+    @Test
+    fun constructorWithCapacity() {
+        assertFailsWith<IllegalArgumentException> {
+            HashMap<String, String>(/*initialCapacity = */-1)
+        }
+        assertFailsWith<IllegalArgumentException> {
+            HashMap<String, String>(/*initialCapacity = */-1, /*loadFactor = */0.5f)
+        }
+        assertFailsWith<IllegalArgumentException> {
+            HashMap<String, String>(/*initialCapacity = */10, /*loadFactor = */0.0f)
+        }
+        assertFailsWith<IllegalArgumentException> {
+            HashMap<String, String>(/*initialCapacity = */10, /*loadFactor = */Float.NaN)
+        }
+        assertEquals(0, HashMap<String, String>(/*initialCapacity = */0).size)
+        assertEquals(0, HashMap<String, String>(/*initialCapacity = */10).size)
+        assertEquals(0, HashMap<String, String>(/*initialCapacity = */0, /*loadFactor = */0.5f).size)
+        assertEquals(0, HashMap<String, String>(/*initialCapacity = */10, /*loadFactor = */1.5f).size)
+
+        assertFailsWith<IllegalArgumentException> {
+            LinkedHashMap<String, String>(/*initialCapacity = */-1)
+        }
+        assertFailsWith<IllegalArgumentException> {
+            LinkedHashMap<String, String>(/*initialCapacity = */-1, /*loadFactor = */0.5f)
+        }
+        assertFailsWith<IllegalArgumentException> {
+            LinkedHashMap<String, String>(/*initialCapacity = */10, /*loadFactor = */0.0f)
+        }
+        assertFailsWith<IllegalArgumentException> {
+            LinkedHashMap<String, String>(/*initialCapacity = */10, /*loadFactor = */Float.NaN)
+        }
+        assertEquals(0, LinkedHashMap<String, String>(/*initialCapacity = */0).size)
+        assertEquals(0, LinkedHashMap<String, String>(/*initialCapacity = */10).size)
+        assertEquals(0, LinkedHashMap<String, String>(/*initialCapacity = */0, /*loadFactor = */0.5f).size)
+        assertEquals(0, LinkedHashMap<String, String>(/*initialCapacity = */10, /*loadFactor = */1.5f).size)
+    }
 }
