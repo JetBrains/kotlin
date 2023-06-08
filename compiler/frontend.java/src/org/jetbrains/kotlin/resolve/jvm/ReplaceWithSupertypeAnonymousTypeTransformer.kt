@@ -1,17 +1,26 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.kapt3.util
+package org.jetbrains.kotlin.resolve.jvm
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
+import org.jetbrains.kotlin.resolve.DeclarationSignatureAnonymousTypeTransformer
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeProjectionImpl
 import org.jetbrains.kotlin.types.replace
 import org.jetbrains.kotlin.types.typeUtil.builtIns
+
+open class ReplaceWithSupertypeAnonymousTypeTransformer : DeclarationSignatureAnonymousTypeTransformer {
+    override fun transformAnonymousType(descriptor: DeclarationDescriptorWithVisibility, type: KotlinType): KotlinType? =
+        if (!DescriptorUtils.isLocal(descriptor))
+            replaceAnonymousTypeWithSuperType(type)
+        else type
+}
 
 fun replaceAnonymousTypeWithSuperType(type: KotlinType): KotlinType {
     val declaration = type.constructor.declarationDescriptor as? ClassDescriptor ?: return type

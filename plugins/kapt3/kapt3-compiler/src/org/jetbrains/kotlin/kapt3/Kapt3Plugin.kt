@@ -35,21 +35,24 @@ import org.jetbrains.kotlin.container.ComponentProvider
 import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.useInstance
 import org.jetbrains.kotlin.context.ProjectContext
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
 import org.jetbrains.kotlin.kapt.cli.KaptCliOption
-import org.jetbrains.kotlin.kapt.cli.KaptCliOption.Companion.ANNOTATION_PROCESSING_COMPILER_PLUGIN_ID
 import org.jetbrains.kotlin.kapt.cli.KaptCliOption.*
+import org.jetbrains.kotlin.kapt.cli.KaptCliOption.Companion.ANNOTATION_PROCESSING_COMPILER_PLUGIN_ID
 import org.jetbrains.kotlin.kapt3.base.Kapt
 import org.jetbrains.kotlin.kapt3.base.util.KaptLogger
 import org.jetbrains.kotlin.kapt3.util.MessageCollectorBackedKaptLogger
 import org.jetbrains.kotlin.kapt3.util.doOpenInternalPackagesIfRequired
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.isJvm
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.resolve.BindingTrace
+import org.jetbrains.kotlin.resolve.jvm.ReplaceWithSupertypeAnonymousTypeTransformer
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension
 import org.jetbrains.kotlin.resolve.jvm.extensions.PartialAnalysisHandlerExtension
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.decodePluginOptions
 import java.io.ByteArrayInputStream
 import java.io.File
@@ -261,7 +264,12 @@ class Kapt3ComponentRegistrar : ComponentRegistrar {
             moduleDescriptor: ModuleDescriptor
         ) {
             if (!platform.isJvm()) return
-            container.useInstance(KaptAnonymousTypeTransformer(analysisExtension))
+            container.useInstance(object : ReplaceWithSupertypeAnonymousTypeTransformer() {
+                override fun transformAnonymousType(descriptor: DeclarationDescriptorWithVisibility, type: KotlinType): KotlinType? {
+                    if (!analysisExtension.analyzePartially) return null
+                    return super.transformAnonymousType(descriptor, type)
+                }
+            })
         }
     }
 
