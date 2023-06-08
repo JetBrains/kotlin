@@ -7,12 +7,18 @@ package org.jetbrains.kotlin.codegen
 
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.container.StorageComponentContainer
+import org.jetbrains.kotlin.container.useInstance
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader.Kind
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.Flags
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
+import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
+import org.jetbrains.kotlin.resolve.jvm.ReplaceWithSupertypeAnonymousTypeTransformer
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension
 import org.jetbrains.kotlin.resolve.jvm.extensions.PartialAnalysisHandlerExtension
 import org.jetbrains.kotlin.test.util.KtTestUtil.getAnnotationsJar
@@ -63,6 +69,16 @@ abstract class AbstractLightAnalysisModeTest : CodegenTestCase() {
         )
         val environment = KotlinCoreEnvironment.createForTests(testRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
         AnalysisHandlerExtension.registerExtension(environment.project, PartialAnalysisHandlerExtension())
+        StorageComponentContainerContributor.registerExtension(
+            environment.project,
+            object : StorageComponentContainerContributor {
+                override fun registerModuleComponents(
+                    container: StorageComponentContainer, platform: TargetPlatform, moduleDescriptor: ModuleDescriptor
+                ) {
+                    container.useInstance(ReplaceWithSupertypeAnonymousTypeTransformer())
+                }
+            }
+        )
 
         val testFiles = loadMultiFiles(files, environment.project)
         val classFileFactory = GenerationUtils.compileFiles(testFiles.psiFiles, environment, TEST_LIGHT_ANALYSIS).factory
@@ -112,5 +128,8 @@ abstract class AbstractLightAnalysisModeTest : CodegenTestCase() {
 
         override fun shouldWriteInnerClass(name: String, outerName: String?, innerName: String?) =
             outerName != null && innerName != null
+
+        override val shouldTransformAnonymousTypes: Boolean
+            get() = true
     }
 }

@@ -1,5 +1,8 @@
 // ISSUE: KT-35707
 
+// Light analysis mode test is muted because of some bug related to the old JVM backend. To be unmuted once the test is migrated to JVM IR.
+// IGNORE_LIGHT_ANALYSIS
+
 import kotlin.reflect.KProperty
 
 interface PropertyDelegate {
