@@ -43,19 +43,25 @@ internal const val kotlinInProcessOOMHelperMessage = "Not enough memory to run c
 
 internal const val kotlinOutOfProcessOOMHelperMessage = "Not enough memory to run compilation."
 
+private const val kotlinDaemonCrashedMessage =
+    "Connection to the Kotlin daemon has been unexpectedly lost. This might be caused by the daemon being killed by another process or the operating system, or by JVM crash."
+
 internal fun Throwable.hasOOMCause(): Boolean = when (cause) {
     is OutOfMemoryError -> true
     else -> cause?.hasOOMCause() ?: false
 }
 
 /** Exception thrown when [ExitCode] != [ExitCode.OK]. */
-internal open class FailedCompilationException(message: String) : RuntimeException(message)
+internal open class FailedCompilationException(message: String, cause: Throwable? = null) : RuntimeException(message, cause)
 
 /** Exception thrown when [ExitCode] == [ExitCode.COMPILATION_ERROR]. */
 internal class CompilationErrorException(message: String) : FailedCompilationException(message)
 
 /** Exception thrown when [ExitCode] == [ExitCode.OOM_ERROR]. */
 internal class OOMErrorException(message: String) : FailedCompilationException(message)
+
+/** Exception thrown when during the compilation [java.rmi.RemoteException] is caught */
+internal class DaemonCrashedException(cause: Throwable) : FailedCompilationException(kotlinDaemonCrashedMessage, cause)
 
 internal fun TaskWithLocalState.cleanOutputsAndLocalState(reason: String? = null) {
     val log = GradleKotlinLogger(logger)

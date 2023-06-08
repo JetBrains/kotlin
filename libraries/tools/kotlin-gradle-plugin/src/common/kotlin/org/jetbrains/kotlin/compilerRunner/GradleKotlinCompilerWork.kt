@@ -245,6 +245,8 @@ internal class GradleKotlinCompilerWork @Inject constructor(
             }
             bufferingMessageCollector.flush(messageCollector)
             exitCodeFromProcessExitCode(log, res.get())
+        } catch (e: RemoteException) {
+            throw DaemonCrashedException(e)
         } catch (e: Throwable) {
             bufferingMessageCollector.flush(messageCollector)
             if (e is OutOfMemoryError || e.hasOOMCause()) {
@@ -253,7 +255,7 @@ internal class GradleKotlinCompilerWork @Inject constructor(
                 throw e
             }
         } finally {
-            val memoryUsageAfterBuild = daemon.getUsedMemory(withGC = false).takeIf { it.isGood }?.get()
+            val memoryUsageAfterBuild = runCatching { daemon.getUsedMemory(withGC = false).takeIf { it.isGood }?.get() }.getOrNull()
 
             if (memoryUsageAfterBuild == null || memoryUsageBeforeBuild == null) {
                 log.debug("Unable to calculate memory usage")
