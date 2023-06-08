@@ -4,6 +4,7 @@
  */
 
 @file:Suppress("unused")
+@file:JvmName("JvmExtensionsKt") // for stability. Probably we should drop Kt ending for easier calls from Java
 
 package kotlinx.metadata.jvm
 
