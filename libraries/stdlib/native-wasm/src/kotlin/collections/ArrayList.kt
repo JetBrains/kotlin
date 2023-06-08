@@ -17,11 +17,31 @@ actual class ArrayList<E> private constructor(
         private val Empty = ArrayList<Nothing>(0).also { it.isReadOnly = true }
     }
 
+    /**
+     * Creates a new empty [ArrayList].
+     */
     actual constructor() : this(10)
 
+    /**
+     * Creates a new empty [ArrayList] with the specified initial capacity.
+     *
+     * Capacity is the maximum number of elements the list is able to store in current backing storage.
+     * When the list gets full and a new element can't be added, its capacity is expanded,
+     * which usually leads to creation of a bigger backing storage.
+     *
+     * @param initialCapacity the initial capacity of the created list.
+     *   Note that the argument is just a hint for the implementation and can be ignored.
+     *
+     * @throws IllegalArgumentException if [initialCapacity] is negative.
+     */
     actual constructor(initialCapacity: Int) : this(
             arrayOfUninitializedElements(initialCapacity), 0, 0, false, null, null)
 
+    /**
+     * Creates a new [ArrayList] filled with the elements of the specified collection.
+     *
+     * The iteration order of elements in the created list is the same as in the specified collection.
+     */
     actual constructor(elements: Collection<E>) : this(elements.size) {
         addAll(elements)
     }

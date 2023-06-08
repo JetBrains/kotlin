@@ -31,8 +31,23 @@ actual class HashMap<K, V> private constructor(
 
     // ---------------------------- functions ----------------------------
 
+    /**
+     * Creates a new empty [HashMap].
+     */
     actual constructor() : this(INITIAL_CAPACITY)
 
+    /**
+     * Creates a new empty [HashMap] with the specified initial capacity.
+     *
+     * Capacity is the maximum number of entries the map is able to store in current internal data structure.
+     * When the map gets full by a certain default load factor, its capacity is expanded,
+     * which usually leads to rebuild of the internal data structure.
+     *
+     * @param initialCapacity the initial capacity of the created map.
+     *   Note that the argument is just a hint for the implementation and can be ignored.
+     *
+     * @throws IllegalArgumentException if [initialCapacity] is negative.
+     */
     actual constructor(initialCapacity: Int) : this(
             arrayOfUninitializedElements(initialCapacity),
             null,
@@ -41,11 +56,27 @@ actual class HashMap<K, V> private constructor(
             INITIAL_MAX_PROBE_DISTANCE,
             0)
 
+    /**
+     * Creates a new [HashMap] filled with the contents of the specified [original] map.
+     */
     actual constructor(original: Map<out K, V>) : this(original.size) {
         putAll(original)
     }
 
-    // This implementation doesn't use a loadFactor, this constructor is used for compatibility with common stdlib
+    /**
+     * Creates a new empty [HashMap] with the specified initial capacity and load factor.
+     *
+     * Capacity is the maximum number of entries the map is able to store in current internal data structure.
+     * Load factor is the measure of how full the map is allowed to get in relation to
+     * its capacity before the capacity is expanded, which usually leads to rebuild of the internal data structure.
+     *
+     * @param initialCapacity the initial capacity of the created map.
+     *   Note that the argument is just a hint for the implementation and can be ignored.
+     * @param loadFactor the load factor of the created map.
+     *   Note that the argument is just a hint for the implementation and can be ignored.
+     *
+     * @throws IllegalArgumentException if [initialCapacity] is negative or [loadFactor] is non-positive.
+     */
     actual constructor(initialCapacity: Int, loadFactor: Float) : this(initialCapacity)
 
     @PublishedApi

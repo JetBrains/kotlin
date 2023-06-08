@@ -6,8 +6,31 @@
 package kotlin.collections
 
 expect class ArrayList<E> : MutableList<E>, RandomAccess {
+
+    /**
+     * Creates a new empty [ArrayList].
+     */
     constructor()
+
+    /**
+     * Creates a new empty [ArrayList] with the specified initial capacity.
+     *
+     * Capacity is the maximum number of elements the list is able to store in current backing storage.
+     * When the list gets full and a new element can't be added, its capacity is expanded,
+     * which usually leads to creation of a bigger backing storage.
+     *
+     * @param initialCapacity the initial capacity of the created list.
+     *   Note that the argument is just a hint for the implementation and can be ignored.
+     *
+     * @throws IllegalArgumentException if [initialCapacity] is negative.
+     */
     constructor(initialCapacity: Int)
+
+    /**
+     * Creates a new [ArrayList] filled with the elements of the specified collection.
+     *
+     * The iteration order of elements in the created list is the same as in the specified collection.
+     */
     constructor(elements: Collection<E>)
 
     fun trimToSize()

@@ -12,15 +12,46 @@ actual class HashSet<E> internal constructor(
         private val Empty = HashSet(HashMap.EmptyHolder.value<Nothing, Nothing>())
     }
 
+    /**
+     * Creates a new empty [HashSet].
+     */
     actual constructor() : this(HashMap<E, Nothing>())
 
+    /**
+     * Creates a new empty [HashSet] with the specified initial capacity.
+     *
+     * Capacity is the maximum number of elements the set is able to store in current internal data structure.
+     * When the set gets full by a certain default load factor, its capacity is expanded,
+     * which usually leads to rebuild of the internal data structure.
+     *
+     * @param initialCapacity the initial capacity of the created set.
+     *   Note that the argument is just a hint for the implementation and can be ignored.
+     *
+     * @throws IllegalArgumentException if [initialCapacity] is negative.
+     */
     actual constructor(initialCapacity: Int) : this(HashMap<E, Nothing>(initialCapacity))
 
+    /**
+     * Creates a new [HashSet] filled with the elements of the specified collection.
+     */
     actual constructor(elements: Collection<E>) : this(elements.size) {
         addAll(elements)
     }
 
-    // This implementation doesn't use a loadFactor
+    /**
+     * Creates a new empty [HashSet] with the specified initial capacity and load factor.
+     *
+     * Capacity is the maximum number of elements the set is able to store in current internal data structure.
+     * Load factor is the measure of how full the set is allowed to get in relation to
+     * its capacity before the capacity is expanded, which usually leads to rebuild of the internal data structure.
+     *
+     * @param initialCapacity the initial capacity of the created set.
+     *   Note that the argument is just a hint for the implementation and can be ignored.
+     * @param loadFactor the load factor of the created set.
+     *   Note that the argument is just a hint for the implementation and can be ignored.
+     *
+     * @throws IllegalArgumentException if [initialCapacity] is negative or [loadFactor] is non-positive.
+     */
     actual constructor(initialCapacity: Int, loadFactor: Float) : this(initialCapacity)
 
     @PublishedApi

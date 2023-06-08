@@ -6,9 +6,44 @@
 package kotlin.collections
 
 expect class HashSet<E> : MutableSet<E> {
+    /**
+     * Creates a new empty [HashSet].
+     */
     constructor()
+
+    /**
+     * Creates a new empty [HashSet] with the specified initial capacity.
+     *
+     * Capacity is the maximum number of elements the set is able to store in current internal data structure.
+     * When the set gets full by a certain default load factor, its capacity is expanded,
+     * which usually leads to rebuild of the internal data structure.
+     *
+     * @param initialCapacity the initial capacity of the created set.
+     *   Note that the argument is just a hint for the implementation and can be ignored.
+     *
+     * @throws IllegalArgumentException if [initialCapacity] is negative.
+     */
     constructor(initialCapacity: Int)
+
+    /**
+     * Creates a new empty [HashSet] with the specified initial capacity and load factor.
+     *
+     * Capacity is the maximum number of elements the set is able to store in current internal data structure.
+     * Load factor is the measure of how full the set is allowed to get in relation to
+     * its capacity before the capacity is expanded, which usually leads to rebuild of the internal data structure.
+     *
+     * @param initialCapacity the initial capacity of the created set.
+     *   Note that the argument is just a hint for the implementation and can be ignored.
+     * @param loadFactor the load factor of the created set.
+     *   Note that the argument is just a hint for the implementation and can be ignored.
+     *
+     * @throws IllegalArgumentException if [initialCapacity] is negative or [loadFactor] is non-positive.
+     */
     constructor(initialCapacity: Int, loadFactor: Float)
+
+    /**
+     * Creates a new [HashSet] filled with the elements of the specified collection.
+     */
     constructor(elements: Collection<E>)
 
     // From Set

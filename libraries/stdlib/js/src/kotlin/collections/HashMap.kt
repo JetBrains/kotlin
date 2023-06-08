@@ -57,29 +57,47 @@ public actual open class HashMap<K, V> : AbstractMutableMap<K, V>, MutableMap<K,
     }
 
     /**
-     * Constructs an empty [HashMap] instance.
+     * Creates a new empty [HashMap].
      */
     actual constructor() : this(InternalHashCodeMap(EqualityComparator.HashCode))
 
     /**
-     * Constructs an empty [HashMap] instance.
+     * Creates a new empty [HashMap] with the specified initial capacity and load factor.
      *
-     * @param  initialCapacity the initial capacity (ignored)
-     * @param  loadFactor      the load factor (ignored)
+     * Capacity is the maximum number of entries the map is able to store in current internal data structure.
+     * Load factor is the measure of how full the map is allowed to get in relation to
+     * its capacity before the capacity is expanded, which usually leads to rebuild of the internal data structure.
      *
-     * @throws IllegalArgumentException if the initial capacity or load factor are negative
+     * @param initialCapacity the initial capacity of the created map.
+     *   Note that the argument is just a hint for the implementation and can be ignored.
+     * @param loadFactor the load factor of the created map.
+     *   Note that the argument is just a hint for the implementation and can be ignored.
+     *
+     * @throws IllegalArgumentException if [initialCapacity] is negative or [loadFactor] is non-positive.
      */
     actual constructor(initialCapacity: Int, loadFactor: Float) : this() {
         // This implementation of HashMap has no need of load factors or capacities.
         require(initialCapacity >= 0) { "Negative initial capacity: $initialCapacity" }
-        require(loadFactor >= 0) { "Non-positive load factor: $loadFactor" }
+        require(loadFactor > 0) { "Non-positive load factor: $loadFactor" }
     }
 
+    /**
+     * Creates a new empty [HashMap] with the specified initial capacity.
+     *
+     * Capacity is the maximum number of entries the map is able to store in current internal data structure.
+     * When the map gets full by a certain default load factor, its capacity is expanded,
+     * which usually leads to rebuild of the internal data structure.
+     *
+     * @param initialCapacity the initial capacity of the created map.
+     *   Note that the argument is just a hint for the implementation and can be ignored.
+     *
+     * @throws IllegalArgumentException if [initialCapacity] is negative.
+     */
     actual constructor(initialCapacity: Int) : this(initialCapacity, 0.0f)
 
 
     /**
-     * Constructs an instance of [HashMap] filled with the contents of the specified [original] map.
+     * Creates a new [HashMap] filled with the contents of the specified [original] map.
      */
     actual constructor(original: Map<out K, V>) : this() {
         this.putAll(original)

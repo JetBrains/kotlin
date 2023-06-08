@@ -24,27 +24,47 @@ public actual open class LinkedHashSet<E> : HashSet<E>, MutableSet<E> {
     internal constructor(map: LinkedHashMap<E, Any>) : super(map)
 
     /**
-     * Constructs a new empty [LinkedHashSet].
+     * Creates a new empty [LinkedHashSet].
      */
     actual constructor() : super(LinkedHashMap<E, Any>())
 
     /**
-     * Constructs a new [LinkedHashSet] filled with the elements of the specified collection.
+     * Creates a new [LinkedHashSet] filled with the elements of the specified collection.
+     *
+     * The iteration order of elements in the created set is the same as in the specified collection.
      */
     actual constructor(elements: Collection<E>) : super(LinkedHashMap<E, Any>()) {
         addAll(elements)
     }
 
     /**
-     * Constructs a new empty [LinkedHashSet].
+     * Creates a new empty [LinkedHashSet] with the specified initial capacity and load factor.
      *
-     * @param  initialCapacity the initial capacity (ignored)
-     * @param  loadFactor      the load factor (ignored)
+     * Capacity is the maximum number of elements the set is able to store in current internal data structure.
+     * Load factor is the measure of how full the set is allowed to get in relation to
+     * its capacity before the capacity is expanded, which usually leads to rebuild of the internal data structure.
      *
-     * @throws IllegalArgumentException if the initial capacity or load factor are negative
+     * @param initialCapacity the initial capacity of the created set.
+     *   Note that the argument is just a hint for the implementation and can be ignored.
+     * @param loadFactor the load factor of the created set.
+     *   Note that the argument is just a hint for the implementation and can be ignored.
+     *
+     * @throws IllegalArgumentException if [initialCapacity] is negative or [loadFactor] is non-positive.
      */
     actual constructor(initialCapacity: Int, loadFactor: Float) : super(LinkedHashMap<E, Any>(initialCapacity, loadFactor))
 
+    /**
+     * Creates a new empty [LinkedHashSet] with the specified initial capacity.
+     *
+     * Capacity is the maximum number of elements the set is able to store in current internal data structure.
+     * When the set gets full by a certain default load factor, its capacity is expanded,
+     * which usually leads to rebuild of the internal data structure.
+     *
+     * @param initialCapacity the initial capacity of the created set.
+     *   Note that the argument is just a hint for the implementation and can be ignored.
+     *
+     * @throws IllegalArgumentException if [initialCapacity] is negative.
+     */
     actual constructor(initialCapacity: Int) : this(initialCapacity, 0.0f)
 
     @PublishedApi
