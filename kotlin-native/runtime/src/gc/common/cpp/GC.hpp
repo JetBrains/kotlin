@@ -5,11 +5,16 @@
 
 #pragma once
 
+#include "ExtraObjectData.hpp"
 #include "GCScheduler.hpp"
 #include "Memory.h"
 #include "Types.h"
 #include "Utils.hpp"
 #include "std_support/Memory.hpp"
+
+#ifdef CUSTOM_ALLOCATOR
+#include "CustomAllocator.hpp"
+#endif
 
 namespace kotlin {
 
@@ -45,6 +50,10 @@ public:
         ObjHeader* CreateObject(const TypeInfo* typeInfo) noexcept;
         ArrayHeader* CreateArray(const TypeInfo* typeInfo, uint32_t elements) noexcept;
 
+#ifdef CUSTOM_ALLOCATOR
+        alloc::CustomAllocator& Allocator() noexcept;
+#endif
+
         void OnStoppedForGC() noexcept;
         void OnSuspendForGC() noexcept;
 
@@ -72,6 +81,9 @@ public:
     static void processObjectInMark(void* state, ObjHeader* object) noexcept;
     static void processArrayInMark(void* state, ArrayHeader* array) noexcept;
     static void processFieldInMark(void* state, ObjHeader* field) noexcept;
+
+    static const size_t objectDataSize;
+    static bool SweepObject(void* objectData) noexcept;
 
 private:
     std_support::unique_ptr<Impl> impl_;

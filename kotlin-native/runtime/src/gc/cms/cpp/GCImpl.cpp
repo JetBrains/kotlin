@@ -5,6 +5,8 @@
 
 #include "GCImpl.hpp"
 
+#include "Common.h"
+#include "ConcurrentMarkAndSweep.hpp"
 #include "GC.hpp"
 #include "GCStatistics.hpp"
 #include "MarkAndSweepUtils.hpp"
@@ -74,6 +76,12 @@ ALWAYS_INLINE ArrayHeader* gc::GC::ThreadData::CreateArray(const TypeInfo* typeI
 #endif
 }
 
+#ifdef CUSTOM_ALLOCATOR
+alloc::CustomAllocator& gc::GC::ThreadData::Allocator() noexcept {
+    return impl_->alloc();
+}
+#endif
+
 void gc::GC::ThreadData::OnStoppedForGC() noexcept {
     impl_->gcScheduler().OnStoppedForGC();
 }
@@ -136,4 +144,12 @@ ALWAYS_INLINE void gc::GC::processArrayInMark(void* state, ArrayHeader* array) n
 // static
 ALWAYS_INLINE void gc::GC::processFieldInMark(void* state, ObjHeader* field) noexcept {
     gc::internal::processFieldInMark<gc::internal::MarkTraits>(state, field);
+}
+
+// static
+const size_t gc::GC::objectDataSize = sizeof(ConcurrentMarkAndSweep::ObjectData);
+
+// static
+ALWAYS_INLINE bool gc::GC::SweepObject(void *objectData) noexcept {
+    return reinterpret_cast<ConcurrentMarkAndSweep::ObjectData*>(objectData)->tryResetMark();
 }

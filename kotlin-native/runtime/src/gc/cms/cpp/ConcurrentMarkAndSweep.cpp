@@ -173,6 +173,10 @@ bool gc::ConcurrentMarkAndSweep::PerformFullGC(int64_t epoch) noexcept {
     gcHandle.threadsAreSuspended();
 
 #ifdef CUSTOM_ALLOCATOR
+    // This should really be done by each individual thread while waiting
+    for (auto& thread : kotlin::mm::ThreadRegistry::Instance().LockForIter()) {
+        thread.gc().Allocator().PrepareForGC();
+    }
     heap_.PrepareForGC();
 #endif
 
@@ -211,6 +215,9 @@ bool gc::ConcurrentMarkAndSweep::PerformFullGC(int64_t epoch) noexcept {
 
     // also sweeps extraObjects
     auto finalizerQueue = heap_.Sweep(gcHandle);
+    for (auto& thread : kotlin::mm::ThreadRegistry::Instance().LockForIter()) {
+        finalizerQueue.TransferAllFrom(thread.gc().Allocator().ExtractFinalizerQueue());
+    }
 #endif
     state_.finish(epoch);
     gcHandle.finalizersScheduled(finalizerQueue.size());

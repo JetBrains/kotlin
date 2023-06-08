@@ -14,6 +14,10 @@
 #include "Utils.hpp"
 #include "Types.h"
 
+#ifdef CUSTOM_ALLOCATOR
+#include "Heap.hpp"
+#endif
+
 namespace kotlin {
 
 namespace mm {
@@ -51,16 +55,27 @@ public:
 
     private:
     };
-
+#ifndef CUSTOM_ALLOCATOR
     NoOpGC(mm::ObjectFactory<NoOpGC>&, GCScheduler&) noexcept {
+#else
+    NoOpGC(GCScheduler& gcScheduler_) noexcept {
+        gcScheduler_.SetScheduleGC([](){});
+#endif
         RuntimeLogDebug({kTagGC}, "No-op GC initialized");
     }
     ~NoOpGC() = default;
 
     GCScheduler& scheduler() noexcept { return scheduler_; }
 
+#ifdef CUSTOM_ALLOCATOR
+    alloc::Heap& heap() noexcept { return heap_; }
+#endif
+
 private:
     GCScheduler scheduler_;
+#ifdef CUSTOM_ALLOCATOR
+    alloc::Heap heap_;
+#endif
 };
 
 } // namespace gc

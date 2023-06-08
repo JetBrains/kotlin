@@ -158,7 +158,7 @@ bitcode {
         }
 
         module("custom_alloc") {
-            headersDirs.from(files("src/main/cpp", "src/mm/cpp", "src/gc/common/cpp", "src/gc/cms/cpp"))
+            headersDirs.from(files("src/main/cpp", "src/mm/cpp", "src/gc/common/cpp"))
             sourceSets {
                 main {}
                 test {}
@@ -292,6 +292,17 @@ bitcode {
             }
         }
 
+        module("noop_gc_custom") {
+            srcRoot.set(layout.projectDirectory.dir("src/gc/noop"))
+            headersDirs.from(files("src/gc/noop/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/main/cpp", "src/custom_alloc/cpp"))
+            sourceSets {
+                main {}
+                testFixtures {}
+            }
+
+            compilerArgs.add("-DCUSTOM_ALLOCATOR")
+        }
+
         module("same_thread_ms_gc") {
             srcRoot.set(layout.projectDirectory.dir("src/gc/stms"))
             headersDirs.from(files("src/gc/stms/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/main/cpp"))
@@ -300,6 +311,18 @@ bitcode {
                 testFixtures {}
                 test {}
             }
+        }
+
+        module("same_thread_ms_gc_custom") {
+            srcRoot.set(layout.projectDirectory.dir("src/gc/stms"))
+            headersDirs.from(files("src/gc/stms/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/main/cpp", "src/custom_alloc/cpp"))
+            sourceSets {
+                main {}
+                testFixtures {}
+                test {}
+            }
+
+            compilerArgs.add("-DCUSTOM_ALLOCATOR")
         }
 
         module("concurrent_ms_gc") {

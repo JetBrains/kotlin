@@ -24,9 +24,7 @@ public:
     Impl() noexcept : gc_(gcScheduler_) {}
 #else
     Impl() noexcept : gc_(objectFactory_, gcScheduler_) {}
-#endif
 
-#ifndef CUSTOM_ALLOCATOR
     mm::ObjectFactory<gc::GCImpl>& objectFactory() noexcept { return objectFactory_; }
 #endif
     GCScheduler& gcScheduler() noexcept { return gcScheduler_; }

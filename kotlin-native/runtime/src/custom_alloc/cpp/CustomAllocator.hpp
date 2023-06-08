@@ -29,8 +29,8 @@ public:
 
     mm::ExtraObjectData* CreateExtraObject() noexcept;
 
-    static mm::ExtraObjectData& CreateExtraObjectDataForObject(
-            mm::ThreadData* threadData, ObjHeader* baseObject, const TypeInfo* info) noexcept;
+    mm::ExtraObjectData& CreateExtraObjectDataForObject(
+            ObjHeader* baseObject, const TypeInfo* info) noexcept;
 
     void PrepareForGC() noexcept;
 

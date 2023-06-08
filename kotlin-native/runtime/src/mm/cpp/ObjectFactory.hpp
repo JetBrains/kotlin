@@ -442,6 +442,7 @@ class ObjectFactory : private Pinned {
     using Allocator = typename Traits::Allocator;
 
     struct HeapObjHeader {
+        [[no_unique_address]]  // to account for GCs with empty ObjectData
         ObjectData gcData;
         alignas(kObjectAlignment) ObjHeader object;
     };
@@ -449,6 +450,7 @@ class ObjectFactory : private Pinned {
     // Needs to be kept compatible with `HeapObjHeader` just like `ArrayHeader` is compatible
     // with `ObjHeader`: the former can always be casted to the other.
     struct HeapArrayHeader {
+        [[no_unique_address]]
         ObjectData gcData;
         alignas(kObjectAlignment) ArrayHeader array;
     };

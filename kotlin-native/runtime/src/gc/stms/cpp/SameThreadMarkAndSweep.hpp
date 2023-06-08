@@ -15,6 +15,13 @@
 #include "Types.h"
 #include "Utils.hpp"
 
+#ifdef CUSTOM_ALLOCATOR
+#include "CustomAllocator.hpp"
+#include "Heap.hpp"
+#include "ExtraObjectPage.hpp"
+#include "GCApi.hpp"
+#endif
+
 namespace kotlin {
 
 namespace mm {
@@ -35,7 +42,10 @@ public:
     class ObjectData {
     public:
         bool tryMark() noexcept {
-            return trySetNext(reinterpret_cast<ObjectData*>(1));
+            printf("WTF?!?!?\n"); fflush(stdout);
+            bool result = trySetNext(reinterpret_cast<ObjectData*>(1));
+            RuntimeLogDebug({"gc"}, "tryMark %p = %d", this, result);
+            return result;
         }
 
         bool marked() const noexcept { return next_ != nullptr; }
@@ -96,8 +106,16 @@ public:
 
     using Allocator = ThreadData::Allocator;
 
+#ifndef CUSTOM_ALLOCATOR
     SameThreadMarkAndSweep(mm::ObjectFactory<SameThreadMarkAndSweep>& objectFactory, GCScheduler& gcScheduler) noexcept;
+#else
+    explicit SameThreadMarkAndSweep(GCScheduler& gcScheduler) noexcept;
+#endif
     ~SameThreadMarkAndSweep() = default;
+
+#ifdef CUSTOM_ALLOCATOR
+    alloc::Heap& heap() noexcept { return heap_; }
+#endif
 
 private:
     // Returns `true` if GC has happened, and `false` if not (because someone else has suspended the threads).
@@ -105,7 +123,11 @@ private:
 
     uint64_t epoch_ = 0;
 
+#ifndef CUSTOM_ALLOCATOR
     mm::ObjectFactory<SameThreadMarkAndSweep>& objectFactory_;
+#else
+    alloc::Heap heap_;
+#endif
     GCScheduler& gcScheduler_;
 
     MarkQueue markQueue_;

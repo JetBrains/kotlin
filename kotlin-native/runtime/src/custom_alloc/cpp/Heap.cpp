@@ -16,16 +16,11 @@
 #include "CustomLogging.hpp"
 #include "ExtraObjectPage.hpp"
 #include "ThreadRegistry.hpp"
-#include "GCImpl.hpp"
 
 namespace kotlin::alloc {
 
 void Heap::PrepareForGC() noexcept {
     CustomAllocDebug("Heap::PrepareForGC()");
-    for (auto& thread : kotlin::mm::ThreadRegistry::Instance().LockForIter()) {
-        thread.gc().impl().alloc().PrepareForGC();
-    }
-
     nextFitPages_.PrepareForGC();
     singleObjectPages_.PrepareForGC();
     for (int blockSize = 0; blockSize <= FIXED_BLOCK_PAGE_MAX_BLOCK_SIZE; ++blockSize) {
@@ -48,9 +43,6 @@ FinalizerQueue Heap::Sweep(gc::GCHandle gcHandle) noexcept {
     {
         auto sweepHandle = gcHandle.sweepExtraObjects();
         extraObjectPages_.Sweep(sweepHandle, finalizerQueue);
-    }
-    for (auto& thread : kotlin::mm::ThreadRegistry::Instance().LockForIter()) {
-        finalizerQueue.TransferAllFrom(thread.gc().impl().alloc().ExtractFinalizerQueue());
     }
     CustomAllocDebug("Heap::Sweep done");
     return finalizerQueue;

@@ -7,6 +7,7 @@
 
 #include "GC.hpp"
 #include "MarkAndSweepUtils.hpp"
+#include "SameThreadMarkAndSweep.hpp"
 #include "std_support/Memory.hpp"
 #include "GlobalData.hpp"
 #include "GCStatistics.hpp"
@@ -50,20 +51,38 @@ void gc::GC::ThreadData::ScheduleAndWaitFullGCWithFinalizers() noexcept {
 }
 
 void gc::GC::ThreadData::Publish() noexcept {
+#ifndef CUSTOM_ALLOCATOR
     impl_->objectFactoryThreadQueue().Publish();
+#endif
 }
 
 void gc::GC::ThreadData::ClearForTests() noexcept {
+#ifndef CUSTOM_ALLOCATOR
     impl_->objectFactoryThreadQueue().ClearForTests();
+#endif
 }
 
 ALWAYS_INLINE ObjHeader* gc::GC::ThreadData::CreateObject(const TypeInfo* typeInfo) noexcept {
+#ifndef CUSTOM_ALLOCATOR
     return impl_->objectFactoryThreadQueue().CreateObject(typeInfo);
+#else
+    return impl_->alloc().CreateObject(typeInfo);
+#endif
 }
 
 ALWAYS_INLINE ArrayHeader* gc::GC::ThreadData::CreateArray(const TypeInfo* typeInfo, uint32_t elements) noexcept {
+#ifndef CUSTOM_ALLOCATOR
     return impl_->objectFactoryThreadQueue().CreateArray(typeInfo, elements);
+#else
+    return impl_->alloc().CreateArray(typeInfo, elements);
+#endif
 }
+
+#ifdef CUSTOM_ALLOCATOR
+alloc::CustomAllocator& gc::GC::ThreadData::Allocator() noexcept {
+    return impl_->alloc();
+}
+#endif
 
 void gc::GC::ThreadData::OnStoppedForGC() noexcept {
     impl_->gcScheduler().OnStoppedForGC();
@@ -77,7 +96,11 @@ gc::GC::~GC() = default;
 
 // static
 size_t gc::GC::GetAllocatedHeapSize(ObjHeader* object) noexcept {
+#ifndef CUSTOM_ALLOCATOR
     return mm::ObjectFactory<GCImpl>::GetAllocatedHeapSize(object);
+#else
+    return alloc::CustomAllocator::GetAllocatedHeapSize(object);
+#endif
 }
 
 size_t gc::GC::GetTotalHeapObjectsSizeBytes() const noexcept {
@@ -89,7 +112,9 @@ gc::GCSchedulerConfig& gc::GC::gcSchedulerConfig() noexcept {
 }
 
 void gc::GC::ClearForTests() noexcept {
+#ifndef CUSTOM_ALLOCATOR
     impl_->objectFactory().ClearForTests();
+#endif
     GCHandle::ClearForTests();
 }
 
@@ -114,4 +139,12 @@ ALWAYS_INLINE void gc::GC::processArrayInMark(void* state, ArrayHeader* array) n
 // static
 ALWAYS_INLINE void gc::GC::processFieldInMark(void* state, ObjHeader* field) noexcept {
     gc::internal::processFieldInMark<gc::internal::MarkTraits>(state, field);
+}
+
+// static
+const size_t gc::GC::objectDataSize = sizeof(SameThreadMarkAndSweep::ObjectData);
+
+// static
+ALWAYS_INLINE bool gc::GC::SweepObject(void *objectData) noexcept {
+    return reinterpret_cast<SameThreadMarkAndSweep::ObjectData*>(objectData)->tryResetMark();
 }
