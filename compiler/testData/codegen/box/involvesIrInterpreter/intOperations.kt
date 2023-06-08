@@ -1,7 +1,6 @@
 // TARGET_BACKEND: JVM_IR
 // TARGET_BACKEND: NATIVE
 // TARGET_BACKEND: JS_IR
-// IGNORE_BACKEND_K1: NATIVE
 fun <T> T.id() = this
 
 const val minusOneVal = <!EVALUATED("-1")!>-1<!>

@@ -1,8 +1,6 @@
 // TARGET_BACKEND: JVM_IR
 // TARGET_BACKEND: NATIVE
 // TARGET_BACKEND: JS_IR
-// `Char.equals(Char)` will not be evaluated in K1
-// IGNORE_BACKEND_K1: NATIVE
 // WITH_STDLIB
 fun <T> T.id() = this
 
