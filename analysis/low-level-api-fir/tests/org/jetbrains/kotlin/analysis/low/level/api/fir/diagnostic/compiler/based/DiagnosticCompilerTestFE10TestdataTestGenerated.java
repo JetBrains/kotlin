@@ -7073,6 +7073,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
             }
 
             @Test
+            @TestMetadata("forWithIncorrectTypeSpecializer.kt")
+            public void testForWithIncorrectTypeSpecializer() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/controlStructures/forWithIncorrectTypeSpecializer.kt");
+            }
+
+            @Test
             @TestMetadata("forWithNullableIterator.kt")
             public void testForWithNullableIterator() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/controlStructures/forWithNullableIterator.kt");

@@ -7079,6 +7079,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("forWithIncorrectTypeSpecializer.kt")
+            public void testForWithIncorrectTypeSpecializer() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/controlStructures/forWithIncorrectTypeSpecializer.kt");
+            }
+
+            @Test
             @TestMetadata("forWithNullableIterator.kt")
             public void testForWithNullableIterator() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/controlStructures/forWithNullableIterator.kt");

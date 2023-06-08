@@ -2142,7 +2142,7 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         val usedTypeParameter: KtTypeParameterSymbol
     }
 
-    interface InitializerTypeMismatch : KtFirDiagnostic<KtProperty> {
+    interface InitializerTypeMismatch : KtFirDiagnostic<KtNamedDeclaration> {
         override val diagnosticClass get() = InitializerTypeMismatch::class
         val expectedType: KtType
         val actualType: KtType

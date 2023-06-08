@@ -2583,7 +2583,7 @@ internal class InitializerTypeMismatchImpl(
     override val isMismatchDueToNullability: Boolean,
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,
-) : KtAbstractFirDiagnostic<KtProperty>(firDiagnostic, token), KtFirDiagnostic.InitializerTypeMismatch
+) : KtAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KtFirDiagnostic.InitializerTypeMismatch
 
 internal class GetterVisibilityDiffersFromPropertyVisibilityImpl(
     firDiagnostic: KtPsiDiagnostic,

@@ -1055,7 +1055,8 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         ) {
             parameter<FirTypeParameterSymbol>("usedTypeParameter")
         }
-        val INITIALIZER_TYPE_MISMATCH by error<KtProperty>(PositioningStrategy.PROPERTY_INITIALIZER) {
+        // Type parameter is KtNamedDeclaration because PSI of FirProperty can be KtParameter in for loop
+        val INITIALIZER_TYPE_MISMATCH by error<KtNamedDeclaration>(PositioningStrategy.PROPERTY_INITIALIZER) {
             parameter<ConeKotlinType>("expectedType")
             parameter<ConeKotlinType>("actualType")
             parameter<Boolean>("isMismatchDueToNullability")

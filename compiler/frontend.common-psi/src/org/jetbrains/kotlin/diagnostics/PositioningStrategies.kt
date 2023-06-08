@@ -929,9 +929,13 @@ object PositioningStrategies {
     val REIFIED_MODIFIER: PositioningStrategy<KtModifierListOwner> =
         ModifierSetBasedPositioningStrategy(KtTokens.REIFIED_KEYWORD)
 
-    val PROPERTY_INITIALIZER: PositioningStrategy<KtProperty> = object : PositioningStrategy<KtProperty>() {
-        override fun mark(element: KtProperty): List<TextRange> {
-            return markElement(element.initializer ?: element)
+    val PROPERTY_INITIALIZER: PositioningStrategy<KtNamedDeclaration> = object : PositioningStrategy<KtNamedDeclaration>() {
+        override fun mark(element: KtNamedDeclaration): List<TextRange> {
+            return markElement(when (element) {
+                is KtProperty -> element.initializer ?: element
+                is KtParameter -> element.typeReference ?: element
+                else -> element
+            })
         }
     }
 
