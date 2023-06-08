@@ -85,4 +85,4 @@ private object AnnotationArgumentMappingStateKeepers : AbstractAnnotationStateKe
 }
 
 private val FirAnnotation.typeArgumentsCopied: List<FirTypeProjection>
-    get() = ArrayList(typeArguments)
+    get() = if (typeArguments.isEmpty()) emptyList() else ArrayList(typeArguments)
