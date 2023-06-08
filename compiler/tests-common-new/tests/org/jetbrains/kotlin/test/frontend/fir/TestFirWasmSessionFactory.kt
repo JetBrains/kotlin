@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.test.frontend.fir
 
-import org.jetbrains.kotlin.backend.common.CommonJsKLibResolver
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.fir.FirModuleData
@@ -37,9 +36,7 @@ object TestFirWasmSessionFactory {
         languageVersionSettings: LanguageVersionSettings,
         registerExtraComponents: ((FirSession) -> Unit),
     ): FirSession {
-        val logger = configuration.resolverLogger
-        val libraries = getAllWasmDependenciesPaths(module, testServices)
-        val resolvedLibraries = CommonJsKLibResolver.resolve(libraries, logger).getFullResolvedList()
+        val resolvedLibraries = resolveLibraries(configuration, getAllWasmDependenciesPaths(module, testServices))
 
         return FirWasmSessionFactory.createLibrarySession(
             mainModuleName,
@@ -75,9 +72,7 @@ fun resolveWasmLibraries(
     testServices: TestServices,
     configuration: CompilerConfiguration
 ): List<KotlinResolvedLibrary> {
-    val paths = getAllJsDependenciesPaths(module, testServices)
-    val logger = configuration.resolverLogger
-    return CommonJsKLibResolver.resolve(paths, logger).getFullResolvedList()
+    return resolveLibraries(configuration, getAllWasmDependenciesPaths(module, testServices))
 }
 
 fun getAllWasmDependenciesPaths(module: TestModule, testServices: TestServices): List<String> {

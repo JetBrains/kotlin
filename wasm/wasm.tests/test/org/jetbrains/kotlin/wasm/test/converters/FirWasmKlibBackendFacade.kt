@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.wasm.test.converters
 
-import org.jetbrains.kotlin.backend.common.CommonJsKLibResolver
+import org.jetbrains.kotlin.backend.common.CommonKLibResolver
 import org.jetbrains.kotlin.backend.common.actualizer.IrActualizer
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.frontend.classic.ModuleDescriptorProvider
 import org.jetbrains.kotlin.test.frontend.classic.moduleDescriptorProvider
 import org.jetbrains.kotlin.test.frontend.fir.getAllWasmDependenciesPaths
-import org.jetbrains.kotlin.test.frontend.fir.resolveWasmLibraries
+import org.jetbrains.kotlin.test.frontend.fir.resolveLibraries
 import org.jetbrains.kotlin.test.model.ArtifactKinds
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.FrontendKinds
@@ -56,7 +56,7 @@ class FirWasmKlibBackendFacade(
         val outputFile = WasmEnvironmentConfigurator.getWasmKlibArtifactPath(testServices, module.name)
 
         // TODO: consider avoiding repeated libraries resolution
-        val libraries = resolveWasmLibraries(module, testServices, configuration)
+        val libraries = resolveLibraries(configuration, getAllWasmDependenciesPaths(module, testServices))
 
         // TODO: find out how to pass diagnostics to the test infra in this case
         val diagnosticReporter = DiagnosticReporterFactory.createReporter()
@@ -95,7 +95,7 @@ class FirWasmKlibBackendFacade(
         }
 
         // TODO: consider avoiding repeated libraries resolution
-        val lib = CommonJsKLibResolver.resolve(
+        val lib = CommonKLibResolver.resolve(
             getAllWasmDependenciesPaths(module, testServices) + listOf(outputFile),
             configuration.resolverLogger
         ).getFullResolvedList().last().library
