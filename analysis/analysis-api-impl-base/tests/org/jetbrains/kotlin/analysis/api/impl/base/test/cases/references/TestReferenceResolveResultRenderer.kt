@@ -18,15 +18,17 @@ object TestReferenceResolveResultRenderer {
     fun KtAnalysisSession.renderResolvedTo(
         symbols: List<KtSymbol>,
         renderer: KtDeclarationRenderer = KtDeclarationRendererForDebug.WITH_QUALIFIED_NAMES,
+        additionalInfo: KtAnalysisSession.(KtSymbol) -> String? = { null }
     ) =
-        symbols.map { renderResolveResult(it, renderer) }
+        symbols.map { renderResolveResult(it, renderer, additionalInfo) }
             .sorted()
             .withIndex()
             .joinToString(separator = "\n") { "${it.index}: ${it.value}" }
 
     private fun KtAnalysisSession.renderResolveResult(
         symbol: KtSymbol,
-        renderer: KtDeclarationRenderer
+        renderer: KtDeclarationRenderer,
+        additionalInfo: KtAnalysisSession.(KtSymbol) -> String?
     ): String {
         return buildString {
             symbolContainerFqName(symbol)?.let { fqName ->
@@ -41,6 +43,7 @@ object TestReferenceResolveResultRenderer {
                 }
                 else -> error("Unexpected symbol ${symbol::class}")
             }
+            additionalInfo(symbol)?.let { append(" [$it]") }
         }
     }
 
