@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.internal.customizeKotlinDependencies
 import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.KotlinTargetHierarchy.SourceSetTree
 import org.jetbrains.kotlin.gradle.plugin.ide.kotlinIdeMultiplatformImport
 import org.jetbrains.kotlin.gradle.plugin.ide.locateOrRegisterIdeResolveDependenciesTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMultiplatformPlugin.Companion.sourceSetFreeCompilerArgsPropertyName
@@ -27,6 +28,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.internal.runDeprecationDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.copyAttributes
 import org.jetbrains.kotlin.gradle.plugin.mpp.targetHierarchy.orNull
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultLanguageSettingsBuilder
+import org.jetbrains.kotlin.gradle.plugin.sources.awaitPlatformCompilations
 import org.jetbrains.kotlin.gradle.plugin.sources.checkSourceSetVisibilityRequirements
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
@@ -181,7 +183,7 @@ class KotlinMultiplatformPlugin : Plugin<Project> {
                 if (project.multiplatformExtension.internalKotlinTargetHierarchy.appliedDescriptors.isNotEmpty()) return@launchInStage
 
                 target.compilations.forEach { compilation ->
-                    val sourceSetTree = KotlinTargetHierarchy.SourceSetTree.orNull(compilation) ?: return@forEach
+                    val sourceSetTree = SourceSetTree.orNull(compilation) ?: return@forEach
                     val commonSourceSet = sourceSets.findByName(lowerCamelCaseName("common", sourceSetTree.name)) ?: return@forEach
                     compilation.defaultSourceSet.dependsOn(commonSourceSet)
                 }
@@ -320,30 +322,22 @@ internal fun sourcesJarTaskNamed(
 }
 
 internal fun Project.setupGeneralKotlinExtensionParameters() {
-    val sourceSetsInMainCompilation by lazy {
-        kotlinExtension.sourceSets.filter { sourceSet ->
-            sourceSet.internal.compilations.any {
-                // kotlin main compilation
-                it.isMain()
-                        // android compilation which is NOT in tested variant
-                        || (it as? KotlinJvmAndroidCompilation)?.let { getTestedVariantData(it.androidVariant) == null } == true
-            }
-        }
-    }
+    project.launch {
+        for (sourceSet in kotlinExtension.awaitSourceSets()) {
+            val languageSettings = sourceSet.languageSettings
+            if (languageSettings !is DefaultLanguageSettingsBuilder) continue
 
-    kotlinExtension.sourceSets.all { sourceSet ->
-        (sourceSet.languageSettings as? DefaultLanguageSettingsBuilder)?.run {
+            val isMainSourceSet = sourceSet
+                .internal
+                .awaitPlatformCompilations()
+                .any { SourceSetTree.orNull(it) == SourceSetTree.main }
 
-            explicitApi = project.providers.provider {
+            languageSettings.explicitApi = project.providers.provider {
                 val explicitApiFlag = project.kotlinExtension.explicitApiModeAsCompilerArg()
-                if (explicitApiFlag != null && sourceSet in sourceSetsInMainCompilation) {
-                    explicitApiFlag
-                } else {
-                    null
-                }
+                explicitApiFlag.takeIf { isMainSourceSet }
             }
-            // Set ad-hoc free compiler args from the internal project property
-            freeCompilerArgsProvider = project.provider {
+
+            languageSettings.freeCompilerArgsProvider = project.provider {
                 val propertyValue = with(project.extensions.extraProperties) {
                     val sourceSetFreeCompilerArgsPropertyName = sourceSetFreeCompilerArgsPropertyName(sourceSet.name)
                     if (has(sourceSetFreeCompilerArgsPropertyName)) {
