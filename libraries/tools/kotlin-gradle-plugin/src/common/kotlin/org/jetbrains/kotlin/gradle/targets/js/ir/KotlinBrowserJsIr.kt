@@ -153,10 +153,12 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
 
                     task.doNotTrackStateCompat("Tracked by external webpack tool")
 
+                    task.dependsOn(binary.linkSyncTask)
+
                     task.commonConfigure(
                         binary = binary,
                         mode = mode,
-                        inputFilesDirectory = binary.linkSyncTask.flatMap { it.destinationDirectory },
+                        inputFilesDirectory = task.project.provider { binary.linkSyncTask.get().destinationDirectory.get() },
                         entryModuleName = binary.linkTask.flatMap { it.compilerOptions.moduleName },
                         configurationActions = runTaskConfigurations,
                         nodeJs = nodeJs,
@@ -236,7 +238,7 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
                     task.commonConfigure(
                         binary = binary,
                         mode = mode,
-                        inputFilesDirectory = binary.linkSyncTask.flatMap { it.destinationDirectory },
+                        inputFilesDirectory = task.project.provider { binary.linkSyncTask.get().destinationDirectory.get() },
                         entryModuleName = binary.linkTask.flatMap { it.compilerOptions.moduleName },
                         configurationActions = webpackTaskConfigurations,
                         nodeJs = nodeJs,
