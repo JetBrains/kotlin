@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 
 import com.intellij.openapi.util.registry.Registry
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
-import java.util.concurrent.atomic.AtomicBoolean
 
 @DslMarker
 internal annotation class StateKeeperDsl
@@ -151,16 +150,24 @@ internal fun <Owner : Any> stateKeeper(block: context(StateKeeperBuilder) StateK
         block(builder, scope, owner)
 
         object : PreservedState {
-            private val postProcessed = AtomicBoolean(false)
-            private val isRestored = AtomicBoolean(false)
+            private var isPostProcessed = false
+            private var isRestored = false
 
             override fun postProcess() {
-                if (!postProcessed.compareAndSet(false, true)) return
+                if (isPostProcessed) {
+                    return
+                }
+
+                isPostProcessed = true
                 states.forEach { it.postProcess() }
             }
 
             override fun restore() {
-                if (!isRestored.compareAndSet(false, true)) return
+                if (isRestored) {
+                    return
+                }
+
+                isRestored = true
                 states.forEach { it.restore() }
             }
         }
