@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.analysis.api.components.ShortenCommand
 import org.jetbrains.kotlin.analysis.api.components.ShortenOption
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.components.ElementsToShortenCollector.PartialOrderOfScope.Companion.toPartialOrder
+import org.jetbrains.kotlin.analysis.api.fir.utils.FirBodyReanalyzingVisitorVoid
 import org.jetbrains.kotlin.analysis.api.fir.utils.computeImportableName
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
@@ -53,7 +54,6 @@ import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
@@ -312,7 +312,7 @@ private class ElementsToShortenCollector(
     private val callableShortenOption: (FirCallableSymbol<*>) -> ShortenOption,
     private val firResolveSession: LLFirResolveSession,
 ) :
-    FirVisitorVoid() {
+    FirBodyReanalyzingVisitorVoid(firResolveSession) {
     val typesToShorten: MutableList<ShortenType> = mutableListOf()
     val qualifiersToShorten: MutableList<ShortenQualifier> = mutableListOf()
     private val visitedProperty = mutableSetOf<FirProperty>()
@@ -322,11 +322,8 @@ private class ElementsToShortenCollector(
         valueParameter.correspondingProperty?.let { visitProperty(it) }
     }
 
-    override fun visitProperty(property: FirProperty) {
-        if (visitedProperty.add(property)) {
-            super.visitProperty(property)
-        }
-    }
+    override fun skipProperty(property: FirProperty): Boolean =
+        !visitedProperty.add(property)
 
     override fun visitElement(element: FirElement) {
         element.acceptChildren(this)
