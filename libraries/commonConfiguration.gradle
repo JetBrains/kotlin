@@ -38,7 +38,7 @@ task preparePublication {
 
     project.ext.isDeployStagingRepoGenerationRequired = project.ext.isSonatypeRelease && deployUrlFromParameters == null
 
-    ext.repoUrl = deployUrlFromParameters ?: "file://${rootProject.buildDir}/repo"
+    ext.repoUrl = deployUrlFromParameters ?: "file://${rootProject.buildDir}/repo".toString()
     logger.info("Deployment repository preliminary url: ${ext.repoUrl} ($repoProvider)")
 
     ext.username = properties["deployRepoUsername"] ?: properties["kotlin.${repoProvider}.user"]
