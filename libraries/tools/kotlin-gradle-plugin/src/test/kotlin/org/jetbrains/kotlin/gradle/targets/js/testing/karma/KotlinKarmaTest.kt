@@ -18,17 +18,19 @@ class KotlinKarmaTest {
         val loadWasm = createLoadWasm(npmProjectDir.toFile(), executableFile.toFile())
 
         assertEquals(
-            "static/load.js",
+            "static/load.mjs",
             loadWasm.relativeTo(npmProjectDir.toFile()).invariantSeparatorsPath
         )
 
         assertEquals(
             """
-            import exports from "../kotlin/main.mjs";
-            
-            exports.startUnitTests();
-            
-            window.__karma__.loaded();
+            import( /* webpackMode: "eager" */ "../kotlin/main.mjs")
+                .then((exports) => {
+                    exports.default.startUnitTests();
+                    window.__karma__.loaded();
+                }, (reason) => {
+                    window.__karma__.error("Problem with loading", void 0, void 0, void 0, reason)
+                })
             """.trimIndent(),
             loadWasm.readText().trimIndent()
         )

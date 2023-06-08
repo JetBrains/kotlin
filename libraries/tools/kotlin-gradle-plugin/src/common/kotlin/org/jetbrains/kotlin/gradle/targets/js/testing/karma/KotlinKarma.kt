@@ -603,16 +603,18 @@ internal fun createLoadWasm(npmProjectDir: File, file: File): File {
     val static = npmProjectDir.resolve("static").also {
         it.mkdirs()
     }
-    val loadJs = static.resolve("load.js")
+    val loadJs = static.resolve("load.mjs")
     loadJs.printWriter().use { writer ->
         val relativePath = file.relativeTo(static).invariantSeparatorsPath
         writer.println(
             """
-                import exports from "$relativePath";
-
-                exports.startUnitTests();
-
-                window.__karma__.loaded();
+                import( /* webpackMode: "eager" */ "$relativePath")
+                    .then((exports) => {
+                        exports.default.startUnitTests();
+                        window.__karma__.loaded();
+                    }, (reason) => {
+                        window.__karma__.error("Problem with loading", void 0, void 0, void 0, reason)
+                    })
             """.trimIndent()
         )
     }
