@@ -22,8 +22,61 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtClassOrObjectSymbol
 
 internal object KDocReferenceResolver {
 
+    /**
+     * Resolves the [selectedFqName] of KDoc
+     *
+     * To properly resolve qualifier parts in the middle,
+     * we need to resolve the whole qualifier to understand which parts of the qualifier are package or class qualifiers.
+     * And then we will be able to resolve the qualifier selected by the user to the proper class, package or callable.
+     *
+     * It's possible that the whole qualifier is invalid, in this case we still want to resolve our [selectedFqName].
+     * To do this, we are trying to resolve the whole qualifier until we succeed.
+     *
+     * @param selectedFqName the selected fully qualified name of the KDoc
+     * @param fullFqName the whole fully qualified name of the KDoc
+     * @param contextElement the context element in which the KDoc is defined
+     *
+     * @return the collection of KtSymbol(s) resolved from the fully qualified name
+     *         based on the selected FqName and context element
+     */
     context(KtAnalysisSession)
-    internal fun resolveKdocFqName(fqName: FqName, contextElement: KtElement): Collection<KtSymbol> {
+    internal fun resolveKdocFqName(selectedFqName: FqName, fullFqName: FqName, contextElement: KtElement): Collection<KtSymbol> {
+        val fullSymbolsResolved = resolveKdocFqName(fullFqName, contextElement)
+        if (selectedFqName == fullFqName) return fullSymbolsResolved
+        if (fullSymbolsResolved.isEmpty()) {
+            val parent = fullFqName.parent()
+            return resolveKdocFqName(selectedFqName = selectedFqName, fullFqName = parent, contextElement = contextElement)
+        }
+        val goBackSteps = fullFqName.pathSegments().size - selectedFqName.pathSegments().size
+        check(goBackSteps > 0) {
+            "Selected FqName ($selectedFqName) should be smaller than the whole FqName ($fullFqName)"
+        }
+        return fullSymbolsResolved.mapNotNullTo(mutableSetOf()) { findParentSymbol(it, goBackSteps, selectedFqName) }
+    }
+
+
+    /**
+     * Finds the parent symbol of the given KtSymbol by traversing back up the symbol hierarchy a certain number of steps,
+     * or until the containing class or object symbol is found.
+     *
+     * @param symbol The KtSymbol whose parent symbol needs to be found.
+     * @param goBackSteps The number of steps to go back up the symbol hierarchy.
+     * @param selectedFqName The fully qualified name of the selected package.
+     * @return The [goBackSteps]-th parent [KtSymbol]
+     */
+    context(KtAnalysisSession)
+    private fun findParentSymbol(symbol: KtSymbol, goBackSteps: Int, selectedFqName: FqName): KtSymbol? {
+        if (symbol !is KtDeclarationSymbol) return null
+        var currentSymbol: KtDeclarationSymbol? = symbol
+        repeat(goBackSteps) {
+            currentSymbol = currentSymbol?.getContainingSymbol() as? KtClassOrObjectSymbol
+        }
+        currentSymbol?.let { return it }
+        return getPackageSymbolIfPackageExists(selectedFqName)
+    }
+
+    context(KtAnalysisSession)
+    private fun resolveKdocFqName(fqName: FqName, contextElement: KtElement): Collection<KtSymbol> {
         getSymbolsFromParentMemberScopes(fqName, contextElement).ifNotEmpty { return this }
         val importScopeContext = contextElement.containingKtFile.getImportingScopeContext()
         getSymbolsFromImportingScope(importScopeContext, fqName, KtScopeKind.ExplicitSimpleImportingScope::class).ifNotEmpty { return this }

@@ -1409,6 +1409,22 @@ public class FirStandaloneNormalAnalysisSourceModuleReferenceResolveTestGenerate
             }
 
             @Nested
+            @TestMetadata("analysis/analysis-api/testData/referenceResolve/kDoc/qualified/conflictResolution")
+            @TestDataPath("$PROJECT_ROOT")
+            public class ConflictResolution {
+                @Test
+                public void testAllFilesPresentInConflictResolution() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/kDoc/qualified/conflictResolution"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+                }
+
+                @Test
+                @TestMetadata("resolveToPackage.kt")
+                public void testResolveToPackage() throws Exception {
+                    runTest("analysis/analysis-api/testData/referenceResolve/kDoc/qualified/conflictResolution/resolveToPackage.kt");
+                }
+            }
+
+            @Nested
             @TestMetadata("analysis/analysis-api/testData/referenceResolve/kDoc/qualified/fromOtherFile")
             @TestDataPath("$PROJECT_ROOT")
             public class FromOtherFile {
@@ -1510,6 +1526,22 @@ public class FirStandaloneNormalAnalysisSourceModuleReferenceResolveTestGenerate
                 public void testTopLevelFunctionFromStdlibByShortName() throws Exception {
                     runTest("analysis/analysis-api/testData/referenceResolve/kDoc/qualified/stdlib/TopLevelFunctionFromStdlibByShortName.kt");
                 }
+            }
+        }
+
+        @Nested
+        @TestMetadata("analysis/analysis-api/testData/referenceResolve/kDoc/withErrors")
+        @TestDataPath("$PROJECT_ROOT")
+        public class WithErrors {
+            @Test
+            public void testAllFilesPresentInWithErrors() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/kDoc/withErrors"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+            }
+
+            @Test
+            @TestMetadata("errorInLatestQualifer.kt")
+            public void testErrorInLatestQualifer() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/kDoc/withErrors/errorInLatestQualifer.kt");
             }
         }
     }
