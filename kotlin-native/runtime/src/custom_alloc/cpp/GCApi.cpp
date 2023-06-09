@@ -38,7 +38,8 @@ bool SweepObject(uint8_t* object, FinalizerQueue& finalizerQueue, gc::GCHandle::
         gcHandle.addKeptObject();
         return true;
     }
-    auto* extraObject = mm::ExtraObjectData::Get(&objHeader->object);
+    auto* baseObject = &objHeader->object;
+    auto* extraObject = mm::ExtraObjectData::Get(baseObject);
     if (extraObject) {
         if (!extraObject->getFlag(mm::ExtraObjectData::FLAGS_IN_FINALIZER_QUEUE)) {
             CustomAllocDebug("SweepObject(%p): needs to be finalized, extraObject at %p", object, extraObject);
@@ -49,11 +50,13 @@ bool SweepObject(uint8_t* object, FinalizerQueue& finalizerQueue, gc::GCHandle::
             gcHandle.addMarkedObject();
             return true;
         }
-        if (!extraObject->getFlag(mm::ExtraObjectData::FLAGS_SWEEPABLE)) {
+        if (!extraObject->getFlag(mm::ExtraObjectData::FLAGS_FINALIZED)) {
             CustomAllocDebug("SweepObject(%p): already waiting to be finalized", object);
             gcHandle.addMarkedObject();
             return true;
         }
+        extraObject->UnlinkFromBaseObject();
+        extraObject->setFlag(mm::ExtraObjectData::FLAGS_SWEEPABLE);
     }
     CustomAllocDebug("SweepObject(%p): can be reclaimed", object);
     gcHandle.addSweptObject();

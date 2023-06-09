@@ -52,13 +52,15 @@ mm::ExtraObjectData& mm::ExtraObjectData::Install(ObjHeader* object) noexcept {
     return data;
 }
 
-void mm::ExtraObjectData::Uninstall() noexcept {
+void mm::ExtraObjectData::UnlinkFromBaseObject() noexcept {
     auto *object = GetBaseObject();
     atomicSetRelease(const_cast<const TypeInfo**>(&object->typeInfoOrMeta_), typeInfo_);
     RuntimeAssert(
             !object->has_meta_object(), "Object %p has metaobject %p after removing metaobject %p", object, object->meta_object_or_null(),
             this);
+}
 
+void mm::ExtraObjectData::ReleaseAssociatedObject() noexcept {
 #ifdef KONAN_OBJC_INTEROP
     if (void* associatedObject = associatedObject_) {
         if (getFlag(FLAGS_RELEASE_ON_MAIN_QUEUE) && isMainQueueProcessorAvailable()) {
@@ -71,6 +73,11 @@ void mm::ExtraObjectData::Uninstall() noexcept {
         associatedObject_ = nullptr;
     }
 #endif
+}
+
+void mm::ExtraObjectData::Uninstall() noexcept {
+    UnlinkFromBaseObject();
+    ReleaseAssociatedObject();
 }
 
 bool mm::ExtraObjectData::HasAssociatedObject() noexcept {
