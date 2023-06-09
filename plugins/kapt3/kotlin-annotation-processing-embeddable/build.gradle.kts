@@ -1,6 +1,7 @@
 import org.gradle.api.publish.internal.PublicationInternal
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import plugins.KotlinBuildPublishingPlugin.Companion.ADHOC_COMPONENT_NAME
+import plugins.configureKotlinPomAttributes
 
 description = "Annotation Processor for Kotlin (for using with embeddable compiler)"
 
@@ -23,6 +24,7 @@ val gradleCompatPublication = publications.register<MavenPublication>("gradleCom
 
     // Workaround for https://github.com/gradle/gradle/issues/12324
     (this as PublicationInternal<*>).isAlias = true
+    configureKotlinPomAttributes(project)
 }
 val targetName = "${gradleCompatPublication.name.capitalizeAsciiOnly()}Publication"
 configureSbom(
