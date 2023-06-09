@@ -1,6 +1,6 @@
 // !WITH_NEW_INFERENCE
 val (a1, a2) = A()
-val (b1: Int, b2: Int) = A()
+val (b1: Int, b2: Int) = <!COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH!>A()<!>
 val (c1) = <!COMPONENT_FUNCTION_MISSING, UNRESOLVED_REFERENCE!>unresolved<!>
 
 <!WRONG_MODIFIER_TARGET!>private<!> val (d1) = A()
