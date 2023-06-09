@@ -24,8 +24,6 @@ kotlin {
     linuxX64()
     ios()
     mingwX64("windowsX64")
-    @Suppress("DEPRECATION_ERROR")
-    mingwX86("windowsX86")
 
     val commonMain by sourceSets.getting
     val commonTest by sourceSets.getting
@@ -40,12 +38,8 @@ kotlin {
     val linuxX64Test by sourceSets.getting
     val iosMain by sourceSets.getting
     val iosTest by sourceSets.getting
-    val windowsMain by sourceSets.creating
-    val windowsTest by sourceSets.creating
     val windowsX64Main by sourceSets.getting
     val windowsX64Test by sourceSets.getting
-    val windowsX86Main by sourceSets.getting
-    val windowsX86Test by sourceSets.getting
 
     commonMain {
         -jvmMain
@@ -68,13 +62,8 @@ kotlin {
             Expected to see p1:nativeMain cinterops
             */
             -windowsAndLinuxMain {
-                -windowsMain
-                -linuxX64Main
-            }
-
-            -windowsMain {
                 -windowsX64Main
-                -windowsX86Main
+                -linuxX64Main
             }
         }
     }
@@ -87,13 +76,8 @@ kotlin {
             }
 
             -windowsAndLinuxTest {
-                -windowsTest
-                -linuxX64Test
-            }
-
-            -windowsTest {
                 -windowsX64Test
-                -windowsX86Test
+                -linuxX64Test
             }
         }
     }

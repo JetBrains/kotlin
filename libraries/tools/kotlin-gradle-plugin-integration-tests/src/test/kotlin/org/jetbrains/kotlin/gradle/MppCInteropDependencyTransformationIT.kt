@@ -25,10 +25,6 @@ import org.junit.Test
  */
 abstract class MppCInteropDependencyTransformationIT : BaseGradleIT() {
 
-    enum class DependencyMode {
-        Project, Repository
-    }
-
     override fun defaultBuildOptions(): BuildOptions = super.defaultBuildOptions().run {
         copy(
             forceOutputToStdout = true,
@@ -85,8 +81,8 @@ abstract class MppCInteropDependencyTransformationIT : BaseGradleIT() {
                 }
 
                 if (HostManager.hostIsMingw || HostManager.hostIsMac) {
-                    assertTasksExecuted(":p2:compileWindowsMainKotlinMetadata")
-                    assertTasksExecuted(":p3:compileWindowsMainKotlinMetadata")
+                    assertTasksExecuted(":p2:compileKotlinWindowsX64")
+                    assertTasksExecuted(":p3:compileKotlinWindowsX64")
                 }
 
                 /* Assert p2 & p3 transformed cinterop dependencies */
@@ -143,7 +139,7 @@ abstract class MppCInteropDependencyTransformationIT : BaseGradleIT() {
                 getCommonizerDependencies(sourceSetName).withoutNativeDistributionDependencies()
                     .assertDependencyFilesMatches(".*cinterop-simple.*", ".*cinterop-withPosix.*")
                     .assertTargetOnAllDependencies(
-                        CommonizerTarget(LINUX_ARM64, LINUX_X64, IOS_ARM64, IOS_X64, MACOS_X64, MINGW_X64, MINGW_X86)
+                        CommonizerTarget(LINUX_ARM64, LINUX_X64, IOS_ARM64, IOS_X64, MACOS_X64, MINGW_X64)
                     )
             }
 
@@ -167,18 +163,10 @@ abstract class MppCInteropDependencyTransformationIT : BaseGradleIT() {
                 }
             }
 
-            if (HostManager.hostIsMingw || HostManager.hostIsMac) {
-                listOf("windowsMain", "windowsTest").forEach { sourceSetName ->
-                    getCommonizerDependencies(sourceSetName).withoutNativeDistributionDependencies()
-                        .assertDependencyFilesMatches(".*cinterop-simple.*", ".*cinterop-withPosix.*")
-                        .assertTargetOnAllDependencies(CommonizerTarget(MINGW_X64, MINGW_X86))
-                }
-
-                listOf("linuxMain", "linuxTest").forEach { sourceSetName ->
-                    getCommonizerDependencies(sourceSetName).withoutNativeDistributionDependencies()
-                        .assertDependencyFilesMatches(".*cinterop-simple.*", ".*cinterop-withPosix.*")
-                        .assertTargetOnAllDependencies(CommonizerTarget(LINUX_ARM64, LINUX_X64))
-                }
+            listOf("linuxMain", "linuxTest").forEach { sourceSetName ->
+                getCommonizerDependencies(sourceSetName).withoutNativeDistributionDependencies()
+                    .assertDependencyFilesMatches(".*cinterop-simple.*", ".*cinterop-withPosix.*")
+                    .assertTargetOnAllDependencies(CommonizerTarget(LINUX_ARM64, LINUX_X64))
             }
         }
 
@@ -191,7 +179,7 @@ abstract class MppCInteropDependencyTransformationIT : BaseGradleIT() {
                 getCommonizerDependencies(sourceSetName).withoutNativeDistributionDependencies()
                     .assertDependencyFilesMatches(".*cinterop-simple.*", ".*cinterop-withPosix.*")
                     .assertTargetOnAllDependencies(
-                        CommonizerTarget(LINUX_ARM64, LINUX_X64, IOS_ARM64, IOS_X64, MACOS_X64, MINGW_X64, MINGW_X86)
+                        CommonizerTarget(LINUX_ARM64, LINUX_X64, IOS_ARM64, IOS_X64, MACOS_X64, MINGW_X64)
                     )
             }
 
@@ -206,14 +194,6 @@ abstract class MppCInteropDependencyTransformationIT : BaseGradleIT() {
                     getCommonizerDependencies(sourceSetName).withoutNativeDistributionDependencies()
                         .assertDependencyFilesMatches(".*cinterop-simple.*", ".*cinterop-withPosix.*")
                         .assertTargetOnAllDependencies(CommonizerTarget(IOS_ARM64, IOS_X64))
-                }
-            }
-
-            if (HostManager.hostIsMingw || HostManager.hostIsMac) {
-                listOf("windowsMain", "windowsTest").forEach { sourceSetName ->
-                    getCommonizerDependencies(sourceSetName).withoutNativeDistributionDependencies()
-                        .assertDependencyFilesMatches(".*cinterop-simple.*", ".*cinterop-withPosix.*")
-                        .assertTargetOnAllDependencies(CommonizerTarget(MINGW_X64, MINGW_X86))
                 }
             }
         }
