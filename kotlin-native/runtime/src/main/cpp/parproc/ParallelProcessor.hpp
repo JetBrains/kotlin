@@ -41,21 +41,29 @@ public:
             dispatcher_.registerWorker(*this);
         }
 
-        bool empty() const noexcept {
+        ALWAYS_INLINE bool empty() const noexcept {
             return list_.localEmpty() && list_.sharedEmpty();
         }
 
-        bool tryPush(typename ListImpl::reference value) noexcept {
-            bool pushed = list_.tryPushLocal(value);
+        ALWAYS_INLINE bool tryPushLocal(typename ListImpl::reference value) noexcept {
+            return list_.tryPushLocal(value);
+        }
+
+        ALWAYS_INLINE bool tryPush(typename ListImpl::reference value) noexcept {
+            bool pushed = tryPushLocal(value);
             if (pushed && kShareOn == internal::ShareOn::kPush) {
                 shareAll();
             }
             return pushed;
         }
 
-        typename ListImpl::pointer tryPop() noexcept {
+        ALWAYS_INLINE typename ListImpl::pointer tryPopLocal() noexcept {
+            return list_.tryPopLocal();
+        }
+
+        ALWAYS_INLINE typename ListImpl::pointer tryPop() noexcept {
             while (true) {
-                if (auto popped = list_.tryPopLocal()) {
+                if (auto popped = tryPopLocal()) {
                     if (kShareOn == internal::ShareOn::kPop) {
                         shareAll();
                     }

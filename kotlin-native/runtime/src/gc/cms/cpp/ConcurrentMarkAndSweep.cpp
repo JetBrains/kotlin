@@ -169,7 +169,7 @@ gc::ConcurrentMarkAndSweep::ConcurrentMarkAndSweep(GCScheduler& gcScheduler,
         GCHandle::getByEpoch(epoch).finalizersDone();
         state_.finalized(epoch);
     })),
-    markDispatcher_(mutatorsCooperate),
+    markDispatcher_(mutatorsCooperate, auxGCThreads),
     mainThread_(createGCThread("Main GC thread", [this] { mainGCThreadBody(); }))
 {
     gcScheduler_.SetScheduleGC([this]() NO_INLINE {
@@ -295,7 +295,7 @@ void gc::ConcurrentMarkAndSweep::reconfigure(std::size_t maxParallelism, bool mu
         return;
     }
     std::unique_lock mainGCLock(gcMutex);
-    markDispatcher_.reset(maxParallelism, mutatorsCooperate, [this] { auxThreads_.clear(); });
+    markDispatcher_.reset(maxParallelism, mutatorsCooperate, [this] { auxThreads_.clear(); }, auxGCThreads);
     for (std::size_t i = 0; i < auxGCThreads; ++i) {
         auxThreads_.emplace_back(createGCThread("Auxiliary GC thread", [this] { auxiliaryGCThreadBody(); }));
     }

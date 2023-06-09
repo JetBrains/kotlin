@@ -84,32 +84,33 @@ public:
             RuntimeAssert(queue.empty(), "Mark queue must be empty");
         }
 
-        static ObjHeader* tryDequeue(MarkQueue& queue) noexcept {
-            if (auto* obj = queue.tryPop()) {
+        static ALWAYS_INLINE ObjHeader* tryDequeue(MarkQueue& queue) noexcept {
+            auto* obj = compiler::gcMarkSingleThreaded() ? queue.tryPopLocal() : queue.tryPop();
+            if (obj) {
                 auto node = ObjectFactory::NodeRef::From(*obj);
                 return node->GetObjHeader();
             }
             return nullptr;
         }
 
-        static bool tryEnqueue(MarkQueue& queue, ObjHeader* object) noexcept {
+        static ALWAYS_INLINE bool tryEnqueue(MarkQueue& queue, ObjHeader* object) noexcept {
             auto& objectData = ObjectFactory::NodeRef::From(object).ObjectData();
-            return queue.tryPush(objectData);
+            return compiler::gcMarkSingleThreaded() ? queue.tryPushLocal(objectData) : queue.tryPush(objectData);
         }
 
-        static bool tryMark(ObjHeader* object) noexcept {
+        static ALWAYS_INLINE bool tryMark(ObjHeader* object) noexcept {
             auto& objectData = ObjectFactory::NodeRef::From(object).ObjectData();
             return objectData.tryMark();
         }
 
-        static void processInMark(MarkQueue& markQueue, ObjHeader* object) noexcept {
+        static ALWAYS_INLINE void processInMark(MarkQueue& markQueue, ObjHeader* object) noexcept {
             auto process = object->type_info()->processObjectInMark;
             RuntimeAssert(process != nullptr, "Got null processObjectInMark for object %p", object);
             process(static_cast<void*>(&markQueue), object);
         }
     };
 
-    ParallelMark(bool mutatorsCooperate);
+    ParallelMark(bool mutatorsCooperate, std::size_t auxWorkersPoolSize);
 
     void beginMarkingEpoch(gc::GCHandle gcHandle);
     void waitForThreadsPauseMutation() noexcept;
@@ -134,17 +135,17 @@ public:
     bool shutdownRequested() const;
 
     template<typename Pred>
-    void reset(std::size_t maxParallelism, bool mutatorsCooperate, Pred waitForWorkersToFinish) {
+    void reset(std::size_t maxParallelism, bool mutatorsCooperate, Pred waitForWorkersToFinish, std::size_t auxWorkersPoolSize) {
         pacer_.begin(MarkPacer::Phase::kShutdown);
         waitForWorkersToFinish();
         pacer_.begin(MarkPacer::Phase::kIdle);
-        setParallelismLevel(maxParallelism, mutatorsCooperate);
+        setParallelismLevel(maxParallelism, mutatorsCooperate, auxWorkersPoolSize);
     }
 
 private:
     GCHandle& gcHandle();
 
-    void setParallelismLevel(size_t maxParallelism, bool mutatorsCooperate);
+    void setParallelismLevel(size_t maxParallelism, bool mutatorsCooperate, std::size_t auxWorkersPoolSize);
 
     template <typename Pred>
     bool allMutators(Pred predicate) noexcept {
@@ -168,12 +169,16 @@ private:
     std::size_t maxParallelism_ = 1;
     bool mutatorsCooperate_ = false;
 
+    // additional sync step to give auxiliary workers a chance to participate mark
+    std::size_t auxWorkersPoolSize_ = 0;
+    std::atomic<std::size_t> auxWorkersCount_ = 0;
+
     GCHandle gcHandle_ = GCHandle::invalid();
     MarkPacer pacer_;
     std::optional<mm::ThreadRegistry::Iterable> lockedMutatorsList_;
     ManuallyScoped<ParallelProcessor> parallelProcessor_;
     std::mutex workerCreationMutex_;
-    std::atomic<std::size_t> workersCount_ = 0;
+    std::atomic<std::size_t> activeWorkersCount_ = 0;
 };
 
 } // namespace kotlin::gc::mark
