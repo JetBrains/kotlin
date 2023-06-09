@@ -24,6 +24,10 @@ public abstract class Enum<E: Enum<E>>(@kotlin.internal.IntrinsicConstEvaluation
         return this === other
     }
 
+    public override final fun hashCode(): Int {
+        return ordinal
+    }
+
     public override fun toString(): String {
         return name
     }
