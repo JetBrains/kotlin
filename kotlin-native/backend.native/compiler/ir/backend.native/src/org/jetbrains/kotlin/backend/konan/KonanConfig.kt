@@ -189,7 +189,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     val auxGCThreads: UInt by lazy {
         val auxGCThreads = configuration.get(BinaryOptions.auxGCThreads)
         if (gcMarkSingleThreaded) {
-            if (auxGCThreads != 0U) {
+            if (auxGCThreads != null && auxGCThreads != 0U) {
                 configuration.report(CompilerMessageSeverity.STRONG_WARNING,
                         "Auxiliary GC workers are not supported during single threaded mark")
             }
