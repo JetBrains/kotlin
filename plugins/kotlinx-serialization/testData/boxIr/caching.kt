@@ -32,6 +32,18 @@ sealed class SealedListGeneric {
     var holder = GenericHolder<GenericHolder<List<SealedListGeneric>>>()
 }
 
+@Serializable
+class AccessFromCompanion(@Contextual val category: Any) {
+    companion object {
+        init {
+            serializer().descriptor.getElementDescriptor(0).isNullable
+        }
+        var isNullable = serializer().descriptor.getElementDescriptor(0).isNullable
+        val isNullable2 = serializer<AccessFromCompanion>().descriptor.getElementDescriptor(0).isNullable
+    }
+}
+
+
 fun box(): String {
     // A correctly cached class must be initialized correctly in order to exclude cyclic nesting of caches
     Plain.serializer()
@@ -40,6 +52,7 @@ fun box(): String {
     Abstract.serializer()
     SealedGeneric.serializer()
     SealedListGeneric.serializer()
+    AccessFromCompanion("any")
 
     return "OK"
 }
