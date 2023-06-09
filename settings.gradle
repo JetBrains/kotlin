@@ -318,7 +318,8 @@ include ":kotlin-scripting-ide-services-unshaded",
 
 include ":compiler:test-infrastructure",
         ":compiler:test-infrastructure-utils",
-        ":compiler:tests-common-new"
+        ":compiler:tests-common-new",
+        ":compiler:k2-differences"
 
 include ":plugins:parcelize:parcelize-compiler",
         ":plugins:parcelize:parcelize-compiler:parcelize.common",
