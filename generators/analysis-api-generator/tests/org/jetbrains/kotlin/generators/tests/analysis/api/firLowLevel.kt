@@ -44,6 +44,10 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
             model("lazyResolve")
         }
 
+        testClass<AbstractStdLibSourcesLazyDeclarationResolveTest> {
+            model("lazyResolveStdlibSources")
+        }
+
         testClass<AbstractFirOutOfContentRootLazyDeclarationResolveTest> {
             model("lazyResolve")
         }
