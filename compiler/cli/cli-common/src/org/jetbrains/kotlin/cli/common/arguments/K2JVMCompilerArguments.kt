@@ -817,7 +817,8 @@ Also sets `-jvm-target` value equal to the selected JDK version"""
 
     @Argument(
         value = "-Xuse-old-innerclasses-logic",
-        description = "Use old logic for generation of InnerClasses attributes"
+        description = "Use old logic for generation of InnerClasses attributes.\n" +
+                "This option is deprecated and will be deleted in future versions."
     )
     var oldInnerClassesLogic = false
         set(value) {
@@ -908,6 +909,12 @@ Also sets `-jvm-target` value equal to the selected JDK version"""
                 CompilerMessageSeverity.ERROR,
                 "Old JVM backend does not support language version 1.6 or above. " +
                         "Please use language version 1.5 or below, or remove -Xuse-old-backend"
+            )
+        }
+        if (oldInnerClassesLogic) {
+            collector.report(
+                CompilerMessageSeverity.WARNING,
+                "The -Xuse-old-innerclasses-logic option is deprecated and will be deleted in future versions."
             )
         }
     }

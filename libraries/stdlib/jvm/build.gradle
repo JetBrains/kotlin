@@ -154,7 +154,6 @@ compileKotlin {
                 "-Xbuiltins-from-sources",
                 "-XXLanguage:+RangeUntilOperator",
                 "-Xno-new-java-annotation-targets",
-                "-Xuse-old-innerclasses-logic",
         ]
         moduleName = "kotlin-stdlib"
     }
