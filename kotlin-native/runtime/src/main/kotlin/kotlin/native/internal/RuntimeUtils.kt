@@ -206,7 +206,7 @@ internal fun <T: Enum<T>> valueOfForEnum(name: String, values: Array<T>) : T {
             else -> return values[middle]
         }
     }
-    throw IllegalArgumentException("Invalid enum value name: $name")
+    throw Exception("Invalid enum value name: $name")
 }
 
 @PublishedApi
