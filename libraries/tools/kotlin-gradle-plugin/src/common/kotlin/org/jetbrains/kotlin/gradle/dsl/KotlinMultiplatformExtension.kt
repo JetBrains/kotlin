@@ -16,16 +16,11 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.targetHierarchy.KotlinTargetHierarchyDslImpl
 import javax.inject.Inject
 
-interface KotlinTargetContainerWithPresetFunctions :
-    KotlinTargetContainerWithJvmPresetFunctions,
-    KotlinTargetContainerWithAndroidPresetFunctions,
-    KotlinTargetContainerWithNativePresetFunctions,
-    KotlinTargetContainerWithJsPresetFunctions,
-    KotlinTargetContainerWithWasmPresetFunctions
-
 abstract class KotlinMultiplatformExtension(project: Project) :
     KotlinProjectExtension(project),
     KotlinTargetContainerWithPresetFunctions,
+    KotlinTargetContainerWithJsPresetFunctions,
+    KotlinTargetContainerWithWasmPresetFunctions,
     KotlinTargetContainerWithNativeShortcuts {
     override val presets: NamedDomainObjectCollection<KotlinTargetPreset<*>> = project.container(KotlinTargetPreset::class.java)
 

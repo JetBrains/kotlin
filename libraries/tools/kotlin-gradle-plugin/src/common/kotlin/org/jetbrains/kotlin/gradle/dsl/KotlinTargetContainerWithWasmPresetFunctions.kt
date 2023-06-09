@@ -6,13 +6,12 @@
 package org.jetbrains.kotlin.gradle.dsl
 
 import org.gradle.api.Action
-import org.jetbrains.kotlin.gradle.plugin.KotlinTargetsContainerWithPresets
 import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWasmTargetDsl
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinWasmTargetPreset
 
-interface KotlinTargetContainerWithWasmPresetFunctions : KotlinTargetsContainerWithPresets {
+interface KotlinTargetContainerWithWasmPresetFunctions : KotlinTargetContainerWithPresetFunctions {
     @ExperimentalWasmDsl
     fun wasm(
         name: String = "wasm",
