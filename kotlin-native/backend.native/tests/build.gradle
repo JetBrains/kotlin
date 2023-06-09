@@ -91,9 +91,9 @@ tasks.withType(KonanCompileNativeBinary.class).configureEach {
     enableTwoStageCompilation = twoStageEnabled
 }
 
-ext.isNoopGC = project.globalTestArgs.contains("-Xgc=noop")
+ext.isNoopGC = project.globalTestArgs.contains("-Xbinary=gc=noop") || project.globalTestArgs.contains("-Xgc=noop")
+ext.isSTWMSGC = project.globalTestArgs.contains("-Xbinary=gc=stwms") || project.globalTestArgs.contains("-Xgc=stms")
 ext.isAggressiveGC = project.globalTestArgs.contains("-Xbinary=gcSchedulerType=aggressive")
-ext.isCmsGC = project.globalTestArgs.contains("-Xgc=cms") || !project.globalTestArgs.any { it.startsWith("-Xgc=") }
 ext.runtimeAssertionsPanic = false
 
 // TODO: It also makes sense to test -g without asserts, and also to test -opt with asserts.
@@ -5927,7 +5927,7 @@ if (HostManager.@Companion.hostIsMac) {
 }
 
 fileCheckTest("filecheck_redundant_safepoints_removal") {
-    enabled = isCmsGC &&
+    enabled = !isNoopGC && !isSTWMSGC &&
             project.globalTestArgs.contains("-opt") &&
             !needSmallBinary(project)
     annotatedSource = project.file('filecheck/redundant_safepoints.kt')

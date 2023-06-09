@@ -210,16 +210,32 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
             null
         }
     })
-    putIfNotNull(GARBAGE_COLLECTOR, when (arguments.gc) {
+
+    val gcFromArgument = when (arguments.gc) {
         null -> null
         "noop" -> GC.NOOP
-        "stms" -> GC.SAME_THREAD_MARK_AND_SWEEP
-        "cms" -> GC.CONCURRENT_MARK_AND_SWEEP
+        "stms" -> GC.STOP_THE_WORLD_MARK_AND_SWEEP
+        "cms" -> GC.PARALLEL_MARK_CONCURRENT_SWEEP
         else -> {
-            report(ERROR, "Unsupported GC ${arguments.gc}")
+            val validValues = enumValues<GC>().map {
+                val fullName = "$it".lowercase()
+                it.shortcut?.let { short ->
+                    "$fullName (or: $short)"
+                } ?: fullName
+            }.joinToString("|")
+            report(ERROR, "Unsupported argument -Xgc=${arguments.gc}. Use -Xbinary=gc= with values ${validValues}")
             null
         }
-    })
+    }
+    if (gcFromArgument != null) {
+        val newValue = gcFromArgument.shortcut ?: "$gcFromArgument".lowercase()
+        report(WARNING, "-Xgc=${arguments.gc} compiler argument is deprecated. Use -Xbinary=gc=${newValue} instead")
+    }
+    // TODO: revise priority and/or report conflicting values.
+    if (get(BinaryOptions.gc) == null) {
+        putIfNotNull(BinaryOptions.gc, gcFromArgument)
+    }
+
     putIfNotNull(PROPERTY_LAZY_INITIALIZATION, when (arguments.propertyLazyInitialization) {
         null -> null
         "enable" -> true
@@ -302,7 +318,7 @@ internal fun CompilerConfiguration.setupCommonOptionsForCaches(konanConfig: Kona
     put(PROPERTY_LAZY_INITIALIZATION, konanConfig.propertyLazyInitialization)
     put(BinaryOptions.stripDebugInfoFromNativeLibs, !konanConfig.useDebugInfoInNativeLibs)
     put(ALLOCATION_MODE, konanConfig.allocationMode)
-    put(GARBAGE_COLLECTOR, konanConfig.gc)
+    put(BinaryOptions.gc, konanConfig.gc)
     put(BinaryOptions.gcSchedulerType, konanConfig.gcSchedulerType)
     put(BinaryOptions.runtimeAssertionsMode, konanConfig.runtimeAssertsMode)
     put(LAZY_IR_FOR_CACHES, konanConfig.lazyIrForCaches)
