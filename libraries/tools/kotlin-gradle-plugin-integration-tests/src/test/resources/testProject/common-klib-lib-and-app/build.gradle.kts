@@ -18,34 +18,31 @@ kotlin {
 	linuxX64()
 	linuxArm64()
 
-	// Linux-specific targets – embedded:
-	@Suppress("DEPRECATION_ERROR")
-	linuxMips32()
-	@Suppress("DEPRECATION_ERROR")
-	linuxMipsel32()
-
 	// macOS-specific targets - created by the ios() shortcut:
 	ios()
 
-	// Windows-specific targets:
 	mingwX64()
-	@Suppress("DEPRECATION_ERROR")
-	mingwX86()
 
 	sourceSets {
-		val commonMain by getting {
-			dependencies {
-				implementation(kotlin("stdlib-common"))
-			}
+		val commonMain by getting
+
+		val windowsAndLinuxMain by creating {
+			dependsOn(commonMain)
 		}
 
 		val linuxMain by creating {
 			dependsOn(commonMain)
 		}
 
-
-		configure(listOf(linuxX64(), linuxArm64())) {
-			compilations["main"].defaultSourceSet.dependsOn(linuxMain)
+		val mingwX64Main by getting {
+			dependsOn(windowsAndLinuxMain)
+		}
+		val linuxX64Main by getting {
+			dependsOn(linuxMain)
+			dependsOn(windowsAndLinuxMain)
+		}
+		val linuxArm64Main by getting {
+			dependsOn(linuxMain)
 		}
 
 		val jvmAndJsMain by creating {
@@ -53,35 +50,11 @@ kotlin {
 		}
 
 		val jvmMain by getting {
-			dependsOn(jvmAndJsMain) 
-			dependencies {
-				implementation(kotlin("stdlib-jdk8"))
-			}
+			dependsOn(jvmAndJsMain)
 		}
 
 		val jsMain by getting {
-			dependsOn(jvmAndJsMain) 
-			dependencies {
-				implementation(kotlin("stdlib-js"))
-			}
-		}
-
-		val embeddedMain by creating {
-			dependsOn(commonMain)
-		}
-
-		@Suppress("DEPRECATION_ERROR")
-		configure(listOf(linuxMips32(), linuxMipsel32())) {
-			compilations["main"].defaultSourceSet.dependsOn(embeddedMain)
-		}
-
-		val windowsMain by creating {
-			dependsOn(commonMain)
-		}
-
-		@Suppress("DEPRECATION_ERROR")
-		configure(listOf(mingwX64(), mingwX86())) {
-			compilations["main"].defaultSourceSet.dependsOn(windowsMain)
+			dependsOn(jvmAndJsMain)
 		}
 
 		all {
