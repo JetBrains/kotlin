@@ -558,6 +558,15 @@ open class FirDeclarationsResolveTransformer(
         return result
     }
 
+    override fun transformCodeFragment(codeFragment: FirCodeFragment, data: ResolutionMode): FirCodeFragment {
+        dataFlowAnalyzer.enterCodeFragment(codeFragment)
+        context.withScopesForCodeFragment(codeFragment, components) {
+            transformBlock(codeFragment.codeBlock, data)
+        }
+        dataFlowAnalyzer.exitCodeFragment()
+        return codeFragment
+    }
+
     override fun transformTypeAlias(typeAlias: FirTypeAlias, data: ResolutionMode): FirTypeAlias = whileAnalysing(session, typeAlias) {
         if (typeAlias.isLocal && typeAlias !in context.targetedLocalClasses) {
             return typeAlias.runAllPhasesForLocalClass(transformer, components, data, transformer.firTowerDataContextCollector)

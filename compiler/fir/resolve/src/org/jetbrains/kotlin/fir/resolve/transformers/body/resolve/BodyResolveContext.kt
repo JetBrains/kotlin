@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.fir.resolve.inference.FirBuilderInferenceSession
 import org.jetbrains.kotlin.fir.resolve.inference.FirCallCompleter
 import org.jetbrains.kotlin.fir.resolve.inference.FirDelegatedPropertyInferenceSession
 import org.jetbrains.kotlin.fir.resolve.inference.FirInferenceSession
+import org.jetbrains.kotlin.fir.resolve.outerContextCodeFragmentResolveService
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.resolve.transformers.withScopeCleanup
 import org.jetbrains.kotlin.fir.scopes.FirScope
@@ -528,6 +529,36 @@ class BodyResolveContext(
         )
 
         return withTowerDataContexts(newContexts) {
+            f()
+        }
+    }
+
+    fun <T> withScopesForCodeFragment(
+        owner: FirCodeFragment,
+        holder: SessionHolder,
+        f: () -> T,
+    ): T {
+        val towerElementsForCodeFrament = holder.collectTowerDataElementsForCodeFragment(owner)
+        val outerContextForCodeFragmentService = holder.session.outerContextCodeFragmentResolveService
+        val base = towerDataContext.addNonLocalTowerDataElements(outerContextForCodeFragmentService.nonLocalTowerDataElements)
+        base.implicitReceiverStack.addAll(towerDataContext.implicitReceiverStack.map { it })
+
+        val baseWithLocalScope = outerContextForCodeFragmentService.localScopes.fold(base) { acc, scope ->
+            acc.addLocalScope(scope)
+        }
+        val statics = baseWithLocalScope
+            .addNonLocalScopeIfNotNull(towerElementsForCodeFrament.staticScope)
+        val newContext = FirRegularTowerDataContexts(
+            regular = baseWithLocalScope,
+            forClassHeaderAnnotations = baseWithLocalScope,
+            forNestedClasses = baseWithLocalScope,
+            forCompanionObject = statics,
+            forConstructorHeaders = null,
+            forEnumEntries = null,
+            primaryConstructorPureParametersScope = null,
+            primaryConstructorAllParametersScope = null
+        )
+        return withTowerDataContexts(newContext) {
             f()
         }
     }

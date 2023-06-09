@@ -107,6 +107,10 @@ class DeclarationCheckersDiagnosticComponent(
         checkers.allBasicDeclarationCheckers.check(script, data)
     }
 
+    override fun visitCodeFragment(codeFragment: FirCodeFragment, data: CheckerContext) {
+        checkers.allBasicDeclarationCheckers.check(codeFragment, data)
+    }
+
     private fun <D : FirDeclaration> Collection<FirDeclarationChecker<D>>.check(
         declaration: D,
         context: CheckerContext
