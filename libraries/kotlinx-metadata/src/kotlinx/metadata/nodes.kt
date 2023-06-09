@@ -304,7 +304,7 @@ class KmLambda : KmLambdaVisitor() {
 /**
  * Represents a constructor of a Kotlin class.
  *
- * @property flags constructor flags, consisting of [Flag.HAS_ANNOTATIONS], visibility flag and [Flag.Constructor] flags
+ * @property flags constructor flags, consisting of [Flag.HAS_ANNOTATIONS], a visibility flag and [Flag.Constructor] flags
  */
 @Suppress("DEPRECATION")
 class KmConstructor(var flags: Flags) : KmConstructorVisitor() {
@@ -574,7 +574,7 @@ class KmTypeAlias(
 
     /**
      * Expanded type of the type alias, i.e. the full expansion of the underlying type, where all type aliases are substituted
-     * with their expanded types. If no type aliases are used in the underlying type, expanded type is equal to the underlying type.
+     * with their expanded types. If no type aliases are used in the underlying type, the expanded type is equal to the underlying type.
      */
     lateinit var expandedType: KmType
 
@@ -690,7 +690,7 @@ class KmValueParameter(
  * @property flags type parameter flags, consisting of [Flag.TypeParameter] flags
  * @property name the name of the type parameter
  * @property id the id of the type parameter, useful to be able to uniquely identify the type parameter in different contexts where
- *           the name isn't enough (e.g. `class A<T> { fun <T> foo(t: T) }`)
+ *           the name is not enough (e.g. `class A<T> { fun <T> foo(t: T) }`)
  * @property variance the declaration-site variance of the type parameter
  */
 @Suppress("DEPRECATION")
@@ -853,7 +853,7 @@ class KmType(var flags: Flags) : KmTypeVisitor() {
  * Represents a version requirement on a Kotlin declaration.
  *
  * Version requirement is an internal feature of the Kotlin compiler and the standard Kotlin library,
- * enabled for example with the internal [kotlin.internal.RequireKotlin] annotation.
+ * enabled, for example, with the internal [kotlin.internal.RequireKotlin] annotation.
  */
 @Suppress("DEPRECATION")
 class KmVersionRequirement : KmVersionRequirementVisitor() {
@@ -1002,7 +1002,7 @@ class  KmEffectExpression : KmEffectExpressionVisitor() {
 
     /**
      * Optional 1-based index of the value parameter of the function, for effects which assert something about
-     * the function parameters. The index 0 means the extension receiver parameter.
+     * the function parameters. Index 0 means the extension receiver parameter.
      */
     var parameterIndex: Int? = null
 
@@ -1068,7 +1068,7 @@ class  KmEffectExpression : KmEffectExpressionVisitor() {
 }
 
 /**
- * Represents a classifier of a Kotlin type. A classifier is a class, type parameter or type alias.
+ * Represents a classifier of a Kotlin type. A classifier is a class, type parameter, or type alias.
  * For example, in `MutableMap<in String?, *>`, `MutableMap` is the classifier.
  */
 sealed class KmClassifier {
@@ -1103,6 +1103,9 @@ sealed class KmClassifier {
  * @property type the projected type, or `null` if this is a star projection
  */
 data class KmTypeProjection(var variance: KmVariance?, var type: KmType?) {
+    /**
+     * Contains default instance for star projection: [KmTypeProjection.STAR].
+     */
     companion object {
         /**
          * Star projection (`*`).
@@ -1130,6 +1133,10 @@ data class KmFlexibleTypeUpperBound(var type: KmType, var typeFlexibilityId: Str
  * @property patch the patch component of the version (e.g. "3" in "1.2.3")
  */
 data class KmVersion(val major: Int, val minor: Int, val patch: Int) {
+
+    /**
+     * Returns a string representation of this version in "$major.$minor.$patch" form.
+     */
     override fun toString(): String = "$major.$minor.$patch"
 }
 

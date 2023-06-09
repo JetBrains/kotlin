@@ -15,4 +15,5 @@ package kotlinx.metadata
     "The API is related to the experimental feature \"context receivers\" (see KEEP-259) and may be changed or removed in any future release.",
     RequiresOptIn.Level.ERROR
 )
+@MustBeDocumented
 annotation class ExperimentalContextReceivers

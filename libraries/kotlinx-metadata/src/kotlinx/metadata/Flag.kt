@@ -54,6 +54,7 @@ class Flag(private val offset: Int, private val bitWidth: Int, private val value
     operator fun invoke(flags: Flags): Boolean =
         (flags ushr offset) and ((1 shl bitWidth) - 1) == value
 
+    /** @suppress deprecated in another PR */
     companion object Common {
         /**
          * Signifies that the corresponding declaration has at least one annotation.

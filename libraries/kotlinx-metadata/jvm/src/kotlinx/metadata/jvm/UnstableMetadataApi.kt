@@ -6,7 +6,7 @@
 package kotlinx.metadata.jvm
 
 /**
- * Annotation marks an API that is still in development and not feature-complete or finalized.
+ * Marks an API that is still in development and not feature-complete or finalized.
  * Such an API does not provide compatibility guarantees.
  * It can be changed in future releases without migration aids or removed without replacement.
  */
@@ -14,4 +14,5 @@ package kotlinx.metadata.jvm
     "This part of API is not yet finished, does not provide any compatibility guarantees and can be changed in the future without notice",
     level = RequiresOptIn.Level.WARNING
 )
+@MustBeDocumented
 annotation class UnstableMetadataApi

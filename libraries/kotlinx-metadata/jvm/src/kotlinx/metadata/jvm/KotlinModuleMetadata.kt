@@ -104,7 +104,7 @@ class KotlinModuleMetadata private constructor(
     }
 
     /**
-     * Makes the given visitor visit metadata of this module file.
+     * Makes the given visitor visit the metadata of this module file.
      *
      * @param v the visitor that must visit this module file
      */
@@ -128,13 +128,16 @@ class KotlinModuleMetadata private constructor(
         v.visitEnd()
     }
 
+    /**
+     * Collection of methods for reading and writing [KotlinModuleMetadata].
+     */
     companion object {
         /**
          * Parses the given byte array with the .kotlin_module file content and returns the [KotlinModuleMetadata] instance,
          * or `null` if this byte array encodes a module with an unsupported metadata version.
          *
          * @throws IllegalArgumentException if an error happened while parsing the given byte array,
-         * which means that it's either not the content of a `.kotlin_module` file, or it has been corrupted.
+         * which means that it is either not the content of a `.kotlin_module` file, or it has been corrupted.
          */
         @JvmStatic
         @UnstableMetadataApi

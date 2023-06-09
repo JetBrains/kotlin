@@ -28,7 +28,7 @@ val ClassName.jvmInternalName: String get() = toJvmInternalName()
 
 /**
  * Helper function to instantiate [Metadata].
- * In contrary to direct constructor call, this one accept nullable parameters to substitute nulls with default values.
+ * Contrary to a direct constructor call, this one accepts nullable parameters to substitute nulls with default values.
  * Also, this one does not accept [Metadata.bytecodeVersion] as it is deprecated.
  */
 fun Metadata(

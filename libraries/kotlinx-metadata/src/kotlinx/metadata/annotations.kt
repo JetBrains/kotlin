@@ -12,17 +12,29 @@ package kotlinx.metadata
  * On JVM, only annotations on type parameters and types are serialized to the Kotlin metadata
  * (see `KmType.annotations` and `KmTypeParameter.annotations` JVM extensions)
  *
- * @param className the fully qualified name of the annotation class
- * @param arguments explicitly specified arguments to the annotation; does not include default values for annotation parameters
- *                  (specified in the annotation class declaration)
+ * @property className The fully qualified name of the annotation class
+ * @property arguments Explicitly specified arguments to the annotation; does not include default values for annotation parameters
+ * (specified in the annotation class declaration)
  */
 class KmAnnotation(val className: ClassName, val arguments: Map<String, KmAnnotationArgument>) {
+
+    /**
+     * Checks if this KmAnnotation is equal to the [other].
+     * Instances of KmAnnotation are equal if they have same [className] and [arguments].
+     */
     override fun equals(other: Any?): Boolean =
         this === other || other is KmAnnotation && className == other.className && arguments == other.arguments
 
 
+    /**
+     * Returns hash code of this instance.
+     * Hash code is computed based on [className] and [arguments].
+     */
     override fun hashCode(): Int = 31 * className.hashCode() + arguments.hashCode()
 
+    /**
+     * Returns string representation of this instance with `@` sign, [className], and [arguments] in parenthesis.
+     */
     override fun toString(): String {
         val args = arguments.toList().joinToString { (k, v) -> "$k = $v" }
         return "@$className($args)"
@@ -119,7 +131,7 @@ sealed class KmAnnotationArgument {
     }
 
     /**
-     * An annotation argument with an array type, i.e. several values of one arbitrary type.
+     * An annotation argument with an array type, i.e., several values of one arbitrary type.
      *
      * For example, in `@Foo(["a", "b", "c"])` argument of `Foo` is an `ArrayValue` with [elements]
      * being a list of three [StringValue] elements: "a", "b", and "c" (without quotes).

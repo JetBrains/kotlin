@@ -897,8 +897,26 @@ enum class KmVariance {
  */
 @ExperimentalContracts
 enum class KmEffectType {
+    /**
+     * Represents `returns(value)` contract effect:
+     * a situation when a function returns normally with the specified return value.
+     * Return value is stored in the [KmEffect.constructorArguments].
+     */
     RETURNS_CONSTANT,
+
+    /**
+     * Represents `callsInPlace` contract effect:
+     * A situation when the referenced lambda is invoked in place (optionally) specified number of times.
+     *
+     * Referenced lambda is stored in the [KmEffect.constructorArguments].
+     * Number of invocations, if specified, is stored in [KmEffect.invocationKind].
+     */
     CALLS,
+
+    /**
+     * Represents `returnsNotNull` contract effect:
+     * a situation when a function returns normally with any value that is not null.
+     */
     RETURNS_NOT_NULL,
 }
 
@@ -910,8 +928,19 @@ enum class KmEffectType {
  */
 @ExperimentalContracts
 enum class KmEffectInvocationKind {
+    /**
+     * A function parameter will be invoked one time or not invoked at all.
+     */
     AT_MOST_ONCE,
+
+    /**
+     * A function parameter will be invoked exactly one time.
+     */
     EXACTLY_ONCE,
+
+    /**
+     * A function parameter will be invoked one or more times.
+     */
     AT_LEAST_ONCE,
 }
 
@@ -919,8 +948,19 @@ enum class KmEffectInvocationKind {
  * Severity of the diagnostic reported by the compiler when a version requirement is not satisfied.
  */
 enum class KmVersionRequirementLevel {
+    /**
+     * Represents a diagnostic with 'WARNING' severity.
+     */
     WARNING,
+
+    /**
+     * Represents a diagnostic with 'ERROR' severity.
+     */
     ERROR,
+
+    /**
+     * Excludes the declaration from the resolution process completely when the version requirement is not satisfied.
+     */
     HIDDEN,
 }
 
@@ -928,7 +968,18 @@ enum class KmVersionRequirementLevel {
  * The kind of the version that is required by a version requirement.
  */
 enum class KmVersionRequirementVersionKind {
+    /**
+     * Indicates that certain language version is required.
+     */
     LANGUAGE_VERSION,
+
+    /**
+     * Indicates that certain compiler version is required.
+     */
     COMPILER_VERSION,
+
+    /**
+     * Indicates that certain API version is required.
+     */
     API_VERSION,
 }
