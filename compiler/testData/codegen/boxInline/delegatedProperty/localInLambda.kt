@@ -1,4 +1,3 @@
-// IGNORE_INLINER_K2: IR
 // FILE: 1.kt
 package test
 
