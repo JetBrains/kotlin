@@ -1,0 +1,984 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] TypeReference.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    @SinceKotlin[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] class TypeReference : KType {
+        @SinceKotlin[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeReference] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.classifier] classifier: KClassifier, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.arguments] arguments: List<KTypeProjection>, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.platformTypeUpperBound] @SinceKotlin[Unresolved](LAZY_EXPRESSION) platformTypeUpperBound: KType?, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.flags] @SinceKotlin[Unresolved](LAZY_EXPRESSION) flags: Int): R|kotlin/jvm/internal/TypeReference| {
+            LAZY_super<<implicit>>
+        }
+
+        public? open? override [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val classifier: KClassifier = R|<local>/classifier|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeReference] get(): KClassifier
+
+        public? open? override [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val arguments: List<KTypeProjection> = R|<local>/arguments|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeReference] get(): List<KTypeProjection>
+
+        @SinceKotlin[Unresolved](LAZY_EXPRESSION) internal final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val platformTypeUpperBound: KType? = R|<local>/platformTypeUpperBound|
+            internal [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeReference] get(): KType?
+
+        @SinceKotlin[Unresolved](LAZY_EXPRESSION) internal final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val flags: Int = R|<local>/flags|
+            internal [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeReference] get(): Int
+
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeReference] constructor([ResolvedTo(RAW_FIR)] classifier: KClassifier, [ResolvedTo(RAW_FIR)] arguments: List<KTypeProjection>, [ResolvedTo(RAW_FIR)] isMarkedNullable: Boolean): R|kotlin/jvm/internal/TypeReference| {
+            LAZY_this<R|kotlin/jvm/internal/TypeReference|>
+        }
+
+        public? open? override [ResolvedTo(RAW_FIR)] val annotations: List<Annotation>
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeReference] get(): List<Annotation> { LAZY_BLOCK }
+
+        public? open? override [ResolvedTo(RAW_FIR)] val isMarkedNullable: Boolean
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeReference] get(): Boolean { LAZY_BLOCK }
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun equals([ResolvedTo(RAW_FIR)] other: Any?): Boolean { LAZY_BLOCK }
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun hashCode(): Int { LAZY_BLOCK }
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun toString(): String { LAZY_BLOCK }
+
+        private final? [ResolvedTo(RAW_FIR)] fun asString([ResolvedTo(RAW_FIR)] convertPrimitiveToWrapper: Boolean): String { LAZY_BLOCK }
+
+        private final? [ResolvedTo(RAW_FIR)] val Class<*>.arrayClassName: <implicit>
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeReference] get(): <implicit> { LAZY_BLOCK }
+
+        private final? [ResolvedTo(RAW_FIR)] fun KTypeProjection.asString(): String { LAZY_BLOCK }
+
+        internal final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|kotlin/jvm/internal/TypeReference.Companion| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            internal final? const [ResolvedTo(RAW_FIR)] val IS_MARKED_NULLABLE: <implicit> = LAZY_EXPRESSION
+                internal [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): <implicit>
+
+            internal final? const [ResolvedTo(RAW_FIR)] val IS_MUTABLE_COLLECTION_TYPE: <implicit> = LAZY_EXPRESSION
+                internal [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): <implicit>
+
+            internal final? const [ResolvedTo(RAW_FIR)] val IS_NOTHING_TYPE: <implicit> = LAZY_EXPRESSION
+                internal [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): <implicit>
+
+        }
+
+    }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] TypeReference.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    @SinceKotlin[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] class TypeReference : KType {
+        @SinceKotlin[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeReference] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.classifier] classifier: KClassifier, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.arguments] arguments: List<KTypeProjection>, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.platformTypeUpperBound] @SinceKotlin[Unresolved](LAZY_EXPRESSION) platformTypeUpperBound: KType?, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.flags] @SinceKotlin[Unresolved](LAZY_EXPRESSION) flags: Int): R|kotlin/jvm/internal/TypeReference| {
+            LAZY_super<<implicit>>
+        }
+
+        public? open? override [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val classifier: KClassifier = R|<local>/classifier|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeReference] get(): KClassifier
+
+        public? open? override [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val arguments: List<KTypeProjection> = R|<local>/arguments|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeReference] get(): List<KTypeProjection>
+
+        @SinceKotlin[Unresolved](LAZY_EXPRESSION) internal final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val platformTypeUpperBound: KType? = R|<local>/platformTypeUpperBound|
+            internal [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeReference] get(): KType?
+
+        @SinceKotlin[Unresolved](LAZY_EXPRESSION) internal final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val flags: Int = R|<local>/flags|
+            internal [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeReference] get(): Int
+
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeReference] constructor([ResolvedTo(RAW_FIR)] classifier: KClassifier, [ResolvedTo(RAW_FIR)] arguments: List<KTypeProjection>, [ResolvedTo(RAW_FIR)] isMarkedNullable: Boolean): R|kotlin/jvm/internal/TypeReference| {
+            LAZY_this<R|kotlin/jvm/internal/TypeReference|>
+        }
+
+        public? open? override [ResolvedTo(RAW_FIR)] val annotations: List<Annotation>
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeReference] get(): List<Annotation> { LAZY_BLOCK }
+
+        public? open? override [ResolvedTo(RAW_FIR)] val isMarkedNullable: Boolean
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeReference] get(): Boolean { LAZY_BLOCK }
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun equals([ResolvedTo(RAW_FIR)] other: Any?): Boolean { LAZY_BLOCK }
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun hashCode(): Int { LAZY_BLOCK }
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun toString(): String { LAZY_BLOCK }
+
+        private final? [ResolvedTo(RAW_FIR)] fun asString([ResolvedTo(RAW_FIR)] convertPrimitiveToWrapper: Boolean): String { LAZY_BLOCK }
+
+        private final? [ResolvedTo(RAW_FIR)] val Class<*>.arrayClassName: <implicit>
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeReference] get(): <implicit> { LAZY_BLOCK }
+
+        private final? [ResolvedTo(RAW_FIR)] fun KTypeProjection.asString(): String { LAZY_BLOCK }
+
+        internal final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|kotlin/jvm/internal/TypeReference.Companion| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            internal final? const [ResolvedTo(RAW_FIR)] val IS_MARKED_NULLABLE: <implicit> = LAZY_EXPRESSION
+                internal [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): <implicit>
+
+            internal final? const [ResolvedTo(RAW_FIR)] val IS_MUTABLE_COLLECTION_TYPE: <implicit> = LAZY_EXPRESSION
+                internal [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): <implicit>
+
+            internal final? const [ResolvedTo(RAW_FIR)] val IS_NOTHING_TYPE: <implicit> = LAZY_EXPRESSION
+                internal [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): <implicit>
+
+        }
+
+    }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] TypeReference.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    @SinceKotlin[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] class TypeReference : KType {
+        @SinceKotlin[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeReference] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.classifier] classifier: KClassifier, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.arguments] arguments: List<KTypeProjection>, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.platformTypeUpperBound] @SinceKotlin[Unresolved](LAZY_EXPRESSION) platformTypeUpperBound: KType?, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.flags] @SinceKotlin[Unresolved](LAZY_EXPRESSION) flags: Int): R|kotlin/jvm/internal/TypeReference| {
+            LAZY_super<<implicit>>
+        }
+
+        public? open? override [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val classifier: KClassifier = R|<local>/classifier|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeReference] get(): KClassifier
+
+        public? open? override [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val arguments: List<KTypeProjection> = R|<local>/arguments|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeReference] get(): List<KTypeProjection>
+
+        @SinceKotlin[Unresolved](LAZY_EXPRESSION) internal final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val platformTypeUpperBound: KType? = R|<local>/platformTypeUpperBound|
+            internal [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeReference] get(): KType?
+
+        @SinceKotlin[Unresolved](LAZY_EXPRESSION) internal final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val flags: Int = R|<local>/flags|
+            internal [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeReference] get(): Int
+
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeReference] constructor([ResolvedTo(RAW_FIR)] classifier: KClassifier, [ResolvedTo(RAW_FIR)] arguments: List<KTypeProjection>, [ResolvedTo(RAW_FIR)] isMarkedNullable: Boolean): R|kotlin/jvm/internal/TypeReference| {
+            LAZY_this<R|kotlin/jvm/internal/TypeReference|>
+        }
+
+        public? open? override [ResolvedTo(RAW_FIR)] val annotations: List<Annotation>
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeReference] get(): List<Annotation> { LAZY_BLOCK }
+
+        public? open? override [ResolvedTo(RAW_FIR)] val isMarkedNullable: Boolean
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeReference] get(): Boolean { LAZY_BLOCK }
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun equals([ResolvedTo(RAW_FIR)] other: Any?): Boolean { LAZY_BLOCK }
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun hashCode(): Int { LAZY_BLOCK }
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun toString(): String { LAZY_BLOCK }
+
+        private final? [ResolvedTo(RAW_FIR)] fun asString([ResolvedTo(RAW_FIR)] convertPrimitiveToWrapper: Boolean): String { LAZY_BLOCK }
+
+        private final? [ResolvedTo(RAW_FIR)] val Class<*>.arrayClassName: <implicit>
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeReference] get(): <implicit> { LAZY_BLOCK }
+
+        private final? [ResolvedTo(RAW_FIR)] fun KTypeProjection.asString(): String { LAZY_BLOCK }
+
+        internal final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|kotlin/jvm/internal/TypeReference.Companion| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            internal final? const [ResolvedTo(RAW_FIR)] val IS_MARKED_NULLABLE: <implicit> = LAZY_EXPRESSION
+                internal [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): <implicit>
+
+            internal final? const [ResolvedTo(RAW_FIR)] val IS_MUTABLE_COLLECTION_TYPE: <implicit> = LAZY_EXPRESSION
+                internal [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): <implicit>
+
+            internal final? const [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] val IS_NOTHING_TYPE: <implicit> = LAZY_EXPRESSION
+                internal [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingClassKey=Companion] get(): <implicit>
+
+        }
+
+    }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] TypeReference.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    @SinceKotlin[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] class TypeReference : KType {
+        @SinceKotlin[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeReference] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.classifier] classifier: KClassifier, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.arguments] arguments: List<KTypeProjection>, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.platformTypeUpperBound] @SinceKotlin[Unresolved](LAZY_EXPRESSION) platformTypeUpperBound: KType?, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.flags] @SinceKotlin[Unresolved](LAZY_EXPRESSION) flags: Int): R|kotlin/jvm/internal/TypeReference| {
+            LAZY_super<<implicit>>
+        }
+
+        public? open? override [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val classifier: KClassifier = R|<local>/classifier|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeReference] get(): KClassifier
+
+        public? open? override [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val arguments: List<KTypeProjection> = R|<local>/arguments|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeReference] get(): List<KTypeProjection>
+
+        @SinceKotlin[Unresolved](LAZY_EXPRESSION) internal final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val platformTypeUpperBound: KType? = R|<local>/platformTypeUpperBound|
+            internal [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeReference] get(): KType?
+
+        @SinceKotlin[Unresolved](LAZY_EXPRESSION) internal final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val flags: Int = R|<local>/flags|
+            internal [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeReference] get(): Int
+
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeReference] constructor([ResolvedTo(RAW_FIR)] classifier: KClassifier, [ResolvedTo(RAW_FIR)] arguments: List<KTypeProjection>, [ResolvedTo(RAW_FIR)] isMarkedNullable: Boolean): R|kotlin/jvm/internal/TypeReference| {
+            LAZY_this<R|kotlin/jvm/internal/TypeReference|>
+        }
+
+        public? open? override [ResolvedTo(RAW_FIR)] val annotations: List<Annotation>
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeReference] get(): List<Annotation> { LAZY_BLOCK }
+
+        public? open? override [ResolvedTo(RAW_FIR)] val isMarkedNullable: Boolean
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeReference] get(): Boolean { LAZY_BLOCK }
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun equals([ResolvedTo(RAW_FIR)] other: Any?): Boolean { LAZY_BLOCK }
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun hashCode(): Int { LAZY_BLOCK }
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun toString(): String { LAZY_BLOCK }
+
+        private final? [ResolvedTo(RAW_FIR)] fun asString([ResolvedTo(RAW_FIR)] convertPrimitiveToWrapper: Boolean): String { LAZY_BLOCK }
+
+        private final? [ResolvedTo(RAW_FIR)] val Class<*>.arrayClassName: <implicit>
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeReference] get(): <implicit> { LAZY_BLOCK }
+
+        private final? [ResolvedTo(RAW_FIR)] fun KTypeProjection.asString(): String { LAZY_BLOCK }
+
+        internal final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|kotlin/jvm/internal/TypeReference.Companion| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            internal final? const [ResolvedTo(RAW_FIR)] val IS_MARKED_NULLABLE: <implicit> = LAZY_EXPRESSION
+                internal [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): <implicit>
+
+            internal final? const [ResolvedTo(RAW_FIR)] val IS_MUTABLE_COLLECTION_TYPE: <implicit> = LAZY_EXPRESSION
+                internal [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): <implicit>
+
+            internal final? const [ResolvedTo(COMPANION_GENERATION)] val IS_NOTHING_TYPE: <implicit> = LAZY_EXPRESSION
+                internal [ResolvedTo(COMPANION_GENERATION)] [ContainingClassKey=Companion] get(): <implicit>
+
+        }
+
+    }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] TypeReference.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    @R|kotlin/SinceKotlin|[CompilerRequiredAnnotations](String(1.4)) public final? [ResolvedTo(SUPER_TYPES)] class TypeReference : R|kotlin/reflect/KType| {
+        @SinceKotlin[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeReference] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.classifier] classifier: KClassifier, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.arguments] arguments: List<KTypeProjection>, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.platformTypeUpperBound] @SinceKotlin[Unresolved](LAZY_EXPRESSION) platformTypeUpperBound: KType?, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.flags] @SinceKotlin[Unresolved](LAZY_EXPRESSION) flags: Int): R|kotlin/jvm/internal/TypeReference| {
+            LAZY_super<<implicit>>
+        }
+
+        public? open? override [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val classifier: KClassifier = R|<local>/classifier|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeReference] get(): KClassifier
+
+        public? open? override [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val arguments: List<KTypeProjection> = R|<local>/arguments|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeReference] get(): List<KTypeProjection>
+
+        @SinceKotlin[Unresolved](LAZY_EXPRESSION) internal final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val platformTypeUpperBound: KType? = R|<local>/platformTypeUpperBound|
+            internal [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeReference] get(): KType?
+
+        @SinceKotlin[Unresolved](LAZY_EXPRESSION) internal final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val flags: Int = R|<local>/flags|
+            internal [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeReference] get(): Int
+
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeReference] constructor([ResolvedTo(RAW_FIR)] classifier: KClassifier, [ResolvedTo(RAW_FIR)] arguments: List<KTypeProjection>, [ResolvedTo(RAW_FIR)] isMarkedNullable: Boolean): R|kotlin/jvm/internal/TypeReference| {
+            LAZY_this<R|kotlin/jvm/internal/TypeReference|>
+        }
+
+        public? open? override [ResolvedTo(RAW_FIR)] val annotations: List<Annotation>
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeReference] get(): List<Annotation> { LAZY_BLOCK }
+
+        public? open? override [ResolvedTo(RAW_FIR)] val isMarkedNullable: Boolean
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeReference] get(): Boolean { LAZY_BLOCK }
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun equals([ResolvedTo(RAW_FIR)] other: Any?): Boolean { LAZY_BLOCK }
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun hashCode(): Int { LAZY_BLOCK }
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun toString(): String { LAZY_BLOCK }
+
+        private final? [ResolvedTo(RAW_FIR)] fun asString([ResolvedTo(RAW_FIR)] convertPrimitiveToWrapper: Boolean): String { LAZY_BLOCK }
+
+        private final? [ResolvedTo(RAW_FIR)] val Class<*>.arrayClassName: <implicit>
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeReference] get(): <implicit> { LAZY_BLOCK }
+
+        private final? [ResolvedTo(RAW_FIR)] fun KTypeProjection.asString(): String { LAZY_BLOCK }
+
+        internal final? companion [ResolvedTo(SUPER_TYPES)] object Companion : R|kotlin/Any| {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|kotlin/jvm/internal/TypeReference.Companion| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            internal final? const [ResolvedTo(RAW_FIR)] val IS_MARKED_NULLABLE: <implicit> = LAZY_EXPRESSION
+                internal [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): <implicit>
+
+            internal final? const [ResolvedTo(RAW_FIR)] val IS_MUTABLE_COLLECTION_TYPE: <implicit> = LAZY_EXPRESSION
+                internal [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): <implicit>
+
+            internal final? const [ResolvedTo(SUPER_TYPES)] val IS_NOTHING_TYPE: <implicit> = LAZY_EXPRESSION
+                internal [ResolvedTo(SUPER_TYPES)] [ContainingClassKey=Companion] get(): <implicit>
+
+        }
+
+    }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] TypeReference.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    @R|kotlin/SinceKotlin|[Types](String(1.4)) public final? [ResolvedTo(TYPES)] class TypeReference : R|kotlin/reflect/KType| {
+        @SinceKotlin[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeReference] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.classifier] classifier: KClassifier, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.arguments] arguments: List<KTypeProjection>, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.platformTypeUpperBound] @SinceKotlin[Unresolved](LAZY_EXPRESSION) platformTypeUpperBound: KType?, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.flags] @SinceKotlin[Unresolved](LAZY_EXPRESSION) flags: Int): R|kotlin/jvm/internal/TypeReference| {
+            LAZY_super<<implicit>>
+        }
+
+        public? open? override [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val classifier: KClassifier = R|<local>/classifier|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeReference] get(): KClassifier
+
+        public? open? override [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val arguments: List<KTypeProjection> = R|<local>/arguments|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeReference] get(): List<KTypeProjection>
+
+        @SinceKotlin[Unresolved](LAZY_EXPRESSION) internal final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val platformTypeUpperBound: KType? = R|<local>/platformTypeUpperBound|
+            internal [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeReference] get(): KType?
+
+        @SinceKotlin[Unresolved](LAZY_EXPRESSION) internal final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val flags: Int = R|<local>/flags|
+            internal [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeReference] get(): Int
+
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeReference] constructor([ResolvedTo(RAW_FIR)] classifier: KClassifier, [ResolvedTo(RAW_FIR)] arguments: List<KTypeProjection>, [ResolvedTo(RAW_FIR)] isMarkedNullable: Boolean): R|kotlin/jvm/internal/TypeReference| {
+            LAZY_this<R|kotlin/jvm/internal/TypeReference|>
+        }
+
+        public? open? override [ResolvedTo(RAW_FIR)] val annotations: List<Annotation>
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeReference] get(): List<Annotation> { LAZY_BLOCK }
+
+        public? open? override [ResolvedTo(RAW_FIR)] val isMarkedNullable: Boolean
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeReference] get(): Boolean { LAZY_BLOCK }
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun equals([ResolvedTo(RAW_FIR)] other: Any?): Boolean { LAZY_BLOCK }
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun hashCode(): Int { LAZY_BLOCK }
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun toString(): String { LAZY_BLOCK }
+
+        private final? [ResolvedTo(RAW_FIR)] fun asString([ResolvedTo(RAW_FIR)] convertPrimitiveToWrapper: Boolean): String { LAZY_BLOCK }
+
+        private final? [ResolvedTo(RAW_FIR)] val Class<*>.arrayClassName: <implicit>
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeReference] get(): <implicit> { LAZY_BLOCK }
+
+        private final? [ResolvedTo(RAW_FIR)] fun KTypeProjection.asString(): String { LAZY_BLOCK }
+
+        internal final? companion [ResolvedTo(TYPES)] object Companion : R|kotlin/Any| {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|kotlin/jvm/internal/TypeReference.Companion| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            internal final? const [ResolvedTo(RAW_FIR)] val IS_MARKED_NULLABLE: <implicit> = LAZY_EXPRESSION
+                internal [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): <implicit>
+
+            internal final? const [ResolvedTo(RAW_FIR)] val IS_MUTABLE_COLLECTION_TYPE: <implicit> = LAZY_EXPRESSION
+                internal [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): <implicit>
+
+            internal final? const [ResolvedTo(TYPES)] val IS_NOTHING_TYPE: <implicit> = LAZY_EXPRESSION
+                internal [ResolvedTo(TYPES)] [ContainingClassKey=Companion] get(): <implicit>
+
+        }
+
+    }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] TypeReference.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    @R|kotlin/SinceKotlin|[Types](String(1.4)) public final [ResolvedTo(STATUS)] class TypeReference : R|kotlin/reflect/KType| {
+        @R|kotlin/SinceKotlin|[Types](String(1.6)) public [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.classifier] classifier: R|kotlin/reflect/KClassifier|, [ResolvedTo(STATUS)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.arguments] arguments: R|kotlin/collections/List<kotlin/reflect/KTypeProjection>|, [ResolvedTo(STATUS)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.platformTypeUpperBound] platformTypeUpperBound: R|kotlin/reflect/KType?|, [ResolvedTo(STATUS)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.flags] flags: R|kotlin/Int|): R|kotlin/jvm/internal/TypeReference| {
+            LAZY_super<<implicit>>
+        }
+
+        public open override [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val classifier: R|kotlin/reflect/KClassifier| = R|<local>/classifier|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] get(): R|kotlin/reflect/KClassifier|
+
+        public open override [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val arguments: R|kotlin/collections/List<kotlin/reflect/KTypeProjection>| = R|<local>/arguments|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] get(): R|kotlin/collections/List<kotlin/reflect/KTypeProjection>|
+
+        @R|kotlin/SinceKotlin|[Types](String(1.6)) internal final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val platformTypeUpperBound: R|kotlin/reflect/KType?| = R|<local>/platformTypeUpperBound|
+            internal [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] get(): R|kotlin/reflect/KType?|
+
+        @R|kotlin/SinceKotlin|[Types](String(1.6)) internal final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val flags: R|kotlin/Int| = R|<local>/flags|
+            internal [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] get(): R|kotlin/Int|
+
+        public [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] constructor([ResolvedTo(STATUS)] classifier: R|kotlin/reflect/KClassifier|, [ResolvedTo(STATUS)] arguments: R|kotlin/collections/List<kotlin/reflect/KTypeProjection>|, [ResolvedTo(STATUS)] isMarkedNullable: R|kotlin/Boolean|): R|kotlin/jvm/internal/TypeReference| {
+            LAZY_this<R|kotlin/jvm/internal/TypeReference|>
+        }
+
+        public open override [ResolvedTo(STATUS)] val annotations: R|kotlin/collections/List<kotlin/Annotation>|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] get(): R|kotlin/collections/List<kotlin/Annotation>| { LAZY_BLOCK }
+
+        public open override [ResolvedTo(STATUS)] val isMarkedNullable: R|kotlin/Boolean|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] get(): R|kotlin/Boolean| { LAZY_BLOCK }
+
+        public open override operator [ResolvedTo(STATUS)] fun equals([ResolvedTo(STATUS)] other: R|kotlin/Any?|): R|kotlin/Boolean| { LAZY_BLOCK }
+
+        public open override [ResolvedTo(STATUS)] fun hashCode(): R|kotlin/Int| { LAZY_BLOCK }
+
+        public open override [ResolvedTo(STATUS)] fun toString(): R|kotlin/String| { LAZY_BLOCK }
+
+        private final [ResolvedTo(STATUS)] fun asString([ResolvedTo(STATUS)] convertPrimitiveToWrapper: R|kotlin/Boolean|): R|kotlin/String| { LAZY_BLOCK }
+
+        private final [ResolvedTo(STATUS)] val R|java/lang/Class<*>|.arrayClassName: <implicit>
+            private [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] get(): <implicit> { LAZY_BLOCK }
+
+        private final [ResolvedTo(STATUS)] fun R|kotlin/reflect/KTypeProjection|.asString(): R|kotlin/String| { LAZY_BLOCK }
+
+        internal final companion [ResolvedTo(STATUS)] object Companion : R|kotlin/Any| {
+            private [ResolvedTo(STATUS)] [ContainingClassKey=Companion] constructor(): R|kotlin/jvm/internal/TypeReference.Companion| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            internal final const [ResolvedTo(STATUS)] val IS_MARKED_NULLABLE: <implicit> = LAZY_EXPRESSION
+                internal [ResolvedTo(STATUS)] [ContainingClassKey=Companion] get(): <implicit>
+
+            internal final const [ResolvedTo(STATUS)] val IS_MUTABLE_COLLECTION_TYPE: <implicit> = LAZY_EXPRESSION
+                internal [ResolvedTo(STATUS)] [ContainingClassKey=Companion] get(): <implicit>
+
+            internal final const [ResolvedTo(STATUS)] val IS_NOTHING_TYPE: <implicit> = LAZY_EXPRESSION
+                internal [ResolvedTo(STATUS)] [ContainingClassKey=Companion] get(): <implicit>
+
+        }
+
+    }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] TypeReference.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    @R|kotlin/SinceKotlin|[Types](String(1.4)) public final [ResolvedTo(STATUS)] class TypeReference : R|kotlin/reflect/KType| {
+        @R|kotlin/SinceKotlin|[Types](String(1.6)) public [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.classifier] classifier: R|kotlin/reflect/KClassifier|, [ResolvedTo(STATUS)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.arguments] arguments: R|kotlin/collections/List<kotlin/reflect/KTypeProjection>|, [ResolvedTo(STATUS)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.platformTypeUpperBound] platformTypeUpperBound: R|kotlin/reflect/KType?|, [ResolvedTo(STATUS)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.flags] flags: R|kotlin/Int|): R|kotlin/jvm/internal/TypeReference| {
+            LAZY_super<<implicit>>
+        }
+
+        public open override [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val classifier: R|kotlin/reflect/KClassifier| = R|<local>/classifier|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] get(): R|kotlin/reflect/KClassifier|
+
+        public open override [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val arguments: R|kotlin/collections/List<kotlin/reflect/KTypeProjection>| = R|<local>/arguments|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] get(): R|kotlin/collections/List<kotlin/reflect/KTypeProjection>|
+
+        @R|kotlin/SinceKotlin|[Types](String(1.6)) internal final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val platformTypeUpperBound: R|kotlin/reflect/KType?| = R|<local>/platformTypeUpperBound|
+            internal [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] get(): R|kotlin/reflect/KType?|
+
+        @R|kotlin/SinceKotlin|[Types](String(1.6)) internal final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val flags: R|kotlin/Int| = R|<local>/flags|
+            internal [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] get(): R|kotlin/Int|
+
+        public [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] constructor([ResolvedTo(STATUS)] classifier: R|kotlin/reflect/KClassifier|, [ResolvedTo(STATUS)] arguments: R|kotlin/collections/List<kotlin/reflect/KTypeProjection>|, [ResolvedTo(STATUS)] isMarkedNullable: R|kotlin/Boolean|): R|kotlin/jvm/internal/TypeReference| {
+            LAZY_this<R|kotlin/jvm/internal/TypeReference|>
+        }
+
+        public open override [ResolvedTo(STATUS)] val annotations: R|kotlin/collections/List<kotlin/Annotation>|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] get(): R|kotlin/collections/List<kotlin/Annotation>| { LAZY_BLOCK }
+
+        public open override [ResolvedTo(STATUS)] val isMarkedNullable: R|kotlin/Boolean|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] get(): R|kotlin/Boolean| { LAZY_BLOCK }
+
+        public open override operator [ResolvedTo(STATUS)] fun equals([ResolvedTo(STATUS)] other: R|kotlin/Any?|): R|kotlin/Boolean| { LAZY_BLOCK }
+
+        public open override [ResolvedTo(STATUS)] fun hashCode(): R|kotlin/Int| { LAZY_BLOCK }
+
+        public open override [ResolvedTo(STATUS)] fun toString(): R|kotlin/String| { LAZY_BLOCK }
+
+        private final [ResolvedTo(STATUS)] fun asString([ResolvedTo(STATUS)] convertPrimitiveToWrapper: R|kotlin/Boolean|): R|kotlin/String| { LAZY_BLOCK }
+
+        private final [ResolvedTo(STATUS)] val R|java/lang/Class<*>|.arrayClassName: <implicit>
+            private [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] get(): <implicit> { LAZY_BLOCK }
+
+        private final [ResolvedTo(STATUS)] fun R|kotlin/reflect/KTypeProjection|.asString(): R|kotlin/String| { LAZY_BLOCK }
+
+        internal final companion [ResolvedTo(STATUS)] object Companion : R|kotlin/Any| {
+            private [ResolvedTo(STATUS)] [ContainingClassKey=Companion] constructor(): R|kotlin/jvm/internal/TypeReference.Companion| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            internal final const [ResolvedTo(STATUS)] val IS_MARKED_NULLABLE: <implicit> = LAZY_EXPRESSION
+                internal [ResolvedTo(STATUS)] [ContainingClassKey=Companion] get(): <implicit>
+
+            internal final const [ResolvedTo(STATUS)] val IS_MUTABLE_COLLECTION_TYPE: <implicit> = LAZY_EXPRESSION
+                internal [ResolvedTo(STATUS)] [ContainingClassKey=Companion] get(): <implicit>
+
+            internal final const [ResolvedTo(EXPECT_ACTUAL_MATCHING)] val IS_NOTHING_TYPE: <implicit> = LAZY_EXPRESSION
+                internal [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=Companion] get(): <implicit>
+
+        }
+
+    }
+
+ARGUMENTS_OF_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] TypeReference.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    @R|kotlin/SinceKotlin|[Types](String(1.4)) public final [ResolvedTo(STATUS)] class TypeReference : R|kotlin/reflect/KType| {
+        @R|kotlin/SinceKotlin|[Types](String(1.6)) public [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.classifier] classifier: R|kotlin/reflect/KClassifier|, [ResolvedTo(STATUS)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.arguments] arguments: R|kotlin/collections/List<kotlin/reflect/KTypeProjection>|, [ResolvedTo(STATUS)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.platformTypeUpperBound] platformTypeUpperBound: R|kotlin/reflect/KType?|, [ResolvedTo(STATUS)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.flags] flags: R|kotlin/Int|): R|kotlin/jvm/internal/TypeReference| {
+            LAZY_super<<implicit>>
+        }
+
+        public open override [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val classifier: R|kotlin/reflect/KClassifier| = R|<local>/classifier|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] get(): R|kotlin/reflect/KClassifier|
+
+        public open override [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val arguments: R|kotlin/collections/List<kotlin/reflect/KTypeProjection>| = R|<local>/arguments|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] get(): R|kotlin/collections/List<kotlin/reflect/KTypeProjection>|
+
+        @R|kotlin/SinceKotlin|[Types](String(1.6)) internal final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val platformTypeUpperBound: R|kotlin/reflect/KType?| = R|<local>/platformTypeUpperBound|
+            internal [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] get(): R|kotlin/reflect/KType?|
+
+        @R|kotlin/SinceKotlin|[Types](String(1.6)) internal final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val flags: R|kotlin/Int| = R|<local>/flags|
+            internal [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] get(): R|kotlin/Int|
+
+        public [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] constructor([ResolvedTo(STATUS)] classifier: R|kotlin/reflect/KClassifier|, [ResolvedTo(STATUS)] arguments: R|kotlin/collections/List<kotlin/reflect/KTypeProjection>|, [ResolvedTo(STATUS)] isMarkedNullable: R|kotlin/Boolean|): R|kotlin/jvm/internal/TypeReference| {
+            LAZY_this<R|kotlin/jvm/internal/TypeReference|>
+        }
+
+        public open override [ResolvedTo(STATUS)] val annotations: R|kotlin/collections/List<kotlin/Annotation>|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] get(): R|kotlin/collections/List<kotlin/Annotation>| { LAZY_BLOCK }
+
+        public open override [ResolvedTo(STATUS)] val isMarkedNullable: R|kotlin/Boolean|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] get(): R|kotlin/Boolean| { LAZY_BLOCK }
+
+        public open override operator [ResolvedTo(STATUS)] fun equals([ResolvedTo(STATUS)] other: R|kotlin/Any?|): R|kotlin/Boolean| { LAZY_BLOCK }
+
+        public open override [ResolvedTo(STATUS)] fun hashCode(): R|kotlin/Int| { LAZY_BLOCK }
+
+        public open override [ResolvedTo(STATUS)] fun toString(): R|kotlin/String| { LAZY_BLOCK }
+
+        private final [ResolvedTo(STATUS)] fun asString([ResolvedTo(STATUS)] convertPrimitiveToWrapper: R|kotlin/Boolean|): R|kotlin/String| { LAZY_BLOCK }
+
+        private final [ResolvedTo(STATUS)] val R|java/lang/Class<*>|.arrayClassName: <implicit>
+            private [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] get(): <implicit> { LAZY_BLOCK }
+
+        private final [ResolvedTo(STATUS)] fun R|kotlin/reflect/KTypeProjection|.asString(): R|kotlin/String| { LAZY_BLOCK }
+
+        internal final companion [ResolvedTo(STATUS)] object Companion : R|kotlin/Any| {
+            private [ResolvedTo(STATUS)] [ContainingClassKey=Companion] constructor(): R|kotlin/jvm/internal/TypeReference.Companion| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            internal final const [ResolvedTo(STATUS)] val IS_MARKED_NULLABLE: <implicit> = LAZY_EXPRESSION
+                internal [ResolvedTo(STATUS)] [ContainingClassKey=Companion] get(): <implicit>
+
+            internal final const [ResolvedTo(STATUS)] val IS_MUTABLE_COLLECTION_TYPE: <implicit> = LAZY_EXPRESSION
+                internal [ResolvedTo(STATUS)] [ContainingClassKey=Companion] get(): <implicit>
+
+            internal final const [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] val IS_NOTHING_TYPE: <implicit> = LAZY_EXPRESSION
+                internal [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] [ContainingClassKey=Companion] get(): <implicit>
+
+        }
+
+    }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] TypeReference.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    @R|kotlin/SinceKotlin|[Types](String(1.4)) public final [ResolvedTo(STATUS)] class TypeReference : R|kotlin/reflect/KType| {
+        @R|kotlin/SinceKotlin|[Types](String(1.6)) public [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.classifier] classifier: R|kotlin/reflect/KClassifier|, [ResolvedTo(STATUS)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.arguments] arguments: R|kotlin/collections/List<kotlin/reflect/KTypeProjection>|, [ResolvedTo(STATUS)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.platformTypeUpperBound] platformTypeUpperBound: R|kotlin/reflect/KType?|, [ResolvedTo(STATUS)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.flags] flags: R|kotlin/Int|): R|kotlin/jvm/internal/TypeReference| {
+            LAZY_super<<implicit>>
+        }
+
+        public open override [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val classifier: R|kotlin/reflect/KClassifier| = R|<local>/classifier|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] get(): R|kotlin/reflect/KClassifier|
+
+        public open override [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val arguments: R|kotlin/collections/List<kotlin/reflect/KTypeProjection>| = R|<local>/arguments|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] get(): R|kotlin/collections/List<kotlin/reflect/KTypeProjection>|
+
+        @R|kotlin/SinceKotlin|[Types](String(1.6)) internal final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val platformTypeUpperBound: R|kotlin/reflect/KType?| = R|<local>/platformTypeUpperBound|
+            internal [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] get(): R|kotlin/reflect/KType?|
+
+        @R|kotlin/SinceKotlin|[Types](String(1.6)) internal final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val flags: R|kotlin/Int| = R|<local>/flags|
+            internal [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] get(): R|kotlin/Int|
+
+        public [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] constructor([ResolvedTo(STATUS)] classifier: R|kotlin/reflect/KClassifier|, [ResolvedTo(STATUS)] arguments: R|kotlin/collections/List<kotlin/reflect/KTypeProjection>|, [ResolvedTo(STATUS)] isMarkedNullable: R|kotlin/Boolean|): R|kotlin/jvm/internal/TypeReference| {
+            LAZY_this<R|kotlin/jvm/internal/TypeReference|>
+        }
+
+        public open override [ResolvedTo(STATUS)] val annotations: R|kotlin/collections/List<kotlin/Annotation>|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] get(): R|kotlin/collections/List<kotlin/Annotation>| { LAZY_BLOCK }
+
+        public open override [ResolvedTo(STATUS)] val isMarkedNullable: R|kotlin/Boolean|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] get(): R|kotlin/Boolean| { LAZY_BLOCK }
+
+        public open override operator [ResolvedTo(STATUS)] fun equals([ResolvedTo(STATUS)] other: R|kotlin/Any?|): R|kotlin/Boolean| { LAZY_BLOCK }
+
+        public open override [ResolvedTo(STATUS)] fun hashCode(): R|kotlin/Int| { LAZY_BLOCK }
+
+        public open override [ResolvedTo(STATUS)] fun toString(): R|kotlin/String| { LAZY_BLOCK }
+
+        private final [ResolvedTo(STATUS)] fun asString([ResolvedTo(STATUS)] convertPrimitiveToWrapper: R|kotlin/Boolean|): R|kotlin/String| { LAZY_BLOCK }
+
+        private final [ResolvedTo(STATUS)] val R|java/lang/Class<*>|.arrayClassName: <implicit>
+            private [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] get(): <implicit> { LAZY_BLOCK }
+
+        private final [ResolvedTo(STATUS)] fun R|kotlin/reflect/KTypeProjection|.asString(): R|kotlin/String| { LAZY_BLOCK }
+
+        internal final companion [ResolvedTo(STATUS)] object Companion : R|kotlin/Any| {
+            private [ResolvedTo(STATUS)] [ContainingClassKey=Companion] constructor(): R|kotlin/jvm/internal/TypeReference.Companion| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            internal final const [ResolvedTo(STATUS)] val IS_MARKED_NULLABLE: <implicit> = LAZY_EXPRESSION
+                internal [ResolvedTo(STATUS)] [ContainingClassKey=Companion] get(): <implicit>
+
+            internal final const [ResolvedTo(STATUS)] val IS_MUTABLE_COLLECTION_TYPE: <implicit> = LAZY_EXPRESSION
+                internal [ResolvedTo(STATUS)] [ContainingClassKey=Companion] get(): <implicit>
+
+            internal final const [ResolvedTo(CONTRACTS)] val IS_NOTHING_TYPE: <implicit> = IntegerLiteral(1).shl#(IntegerLiteral(2))
+                internal [ResolvedTo(CONTRACTS)] [ContainingClassKey=Companion] get(): <implicit>
+
+        }
+
+    }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] TypeReference.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    @R|kotlin/SinceKotlin|[Types](String(1.4)) public final [ResolvedTo(STATUS)] class TypeReference : R|kotlin/reflect/KType| {
+        @R|kotlin/SinceKotlin|[Types](String(1.6)) public [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.classifier] classifier: R|kotlin/reflect/KClassifier|, [ResolvedTo(STATUS)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.arguments] arguments: R|kotlin/collections/List<kotlin/reflect/KTypeProjection>|, [ResolvedTo(STATUS)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.platformTypeUpperBound] platformTypeUpperBound: R|kotlin/reflect/KType?|, [ResolvedTo(STATUS)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.flags] flags: R|kotlin/Int|): R|kotlin/jvm/internal/TypeReference| {
+            LAZY_super<<implicit>>
+        }
+
+        public open override [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val classifier: R|kotlin/reflect/KClassifier| = R|<local>/classifier|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] get(): R|kotlin/reflect/KClassifier|
+
+        public open override [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val arguments: R|kotlin/collections/List<kotlin/reflect/KTypeProjection>| = R|<local>/arguments|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] get(): R|kotlin/collections/List<kotlin/reflect/KTypeProjection>|
+
+        @R|kotlin/SinceKotlin|[Types](String(1.6)) internal final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val platformTypeUpperBound: R|kotlin/reflect/KType?| = R|<local>/platformTypeUpperBound|
+            internal [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] get(): R|kotlin/reflect/KType?|
+
+        @R|kotlin/SinceKotlin|[Types](String(1.6)) internal final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val flags: R|kotlin/Int| = R|<local>/flags|
+            internal [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] get(): R|kotlin/Int|
+
+        public [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] constructor([ResolvedTo(STATUS)] classifier: R|kotlin/reflect/KClassifier|, [ResolvedTo(STATUS)] arguments: R|kotlin/collections/List<kotlin/reflect/KTypeProjection>|, [ResolvedTo(STATUS)] isMarkedNullable: R|kotlin/Boolean|): R|kotlin/jvm/internal/TypeReference| {
+            LAZY_this<R|kotlin/jvm/internal/TypeReference|>
+        }
+
+        public open override [ResolvedTo(STATUS)] val annotations: R|kotlin/collections/List<kotlin/Annotation>|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] get(): R|kotlin/collections/List<kotlin/Annotation>| { LAZY_BLOCK }
+
+        public open override [ResolvedTo(STATUS)] val isMarkedNullable: R|kotlin/Boolean|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] get(): R|kotlin/Boolean| { LAZY_BLOCK }
+
+        public open override operator [ResolvedTo(STATUS)] fun equals([ResolvedTo(STATUS)] other: R|kotlin/Any?|): R|kotlin/Boolean| { LAZY_BLOCK }
+
+        public open override [ResolvedTo(STATUS)] fun hashCode(): R|kotlin/Int| { LAZY_BLOCK }
+
+        public open override [ResolvedTo(STATUS)] fun toString(): R|kotlin/String| { LAZY_BLOCK }
+
+        private final [ResolvedTo(STATUS)] fun asString([ResolvedTo(STATUS)] convertPrimitiveToWrapper: R|kotlin/Boolean|): R|kotlin/String| { LAZY_BLOCK }
+
+        private final [ResolvedTo(STATUS)] val R|java/lang/Class<*>|.arrayClassName: <implicit>
+            private [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] get(): <implicit> { LAZY_BLOCK }
+
+        private final [ResolvedTo(STATUS)] fun R|kotlin/reflect/KTypeProjection|.asString(): R|kotlin/String| { LAZY_BLOCK }
+
+        internal final companion [ResolvedTo(STATUS)] object Companion : R|kotlin/Any| {
+            private [ResolvedTo(STATUS)] [ContainingClassKey=Companion] constructor(): R|kotlin/jvm/internal/TypeReference.Companion| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            internal final const [ResolvedTo(STATUS)] val IS_MARKED_NULLABLE: <implicit> = LAZY_EXPRESSION
+                internal [ResolvedTo(STATUS)] [ContainingClassKey=Companion] get(): <implicit>
+
+            internal final const [ResolvedTo(STATUS)] val IS_MUTABLE_COLLECTION_TYPE: <implicit> = LAZY_EXPRESSION
+                internal [ResolvedTo(STATUS)] [ContainingClassKey=Companion] get(): <implicit>
+
+            internal final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val IS_NOTHING_TYPE: R|kotlin/Int| = Int(1).R|kotlin/Int.shl|(Int(2))
+                internal [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=Companion] get(): R|kotlin/Int|
+
+        }
+
+    }
+
+ANNOTATIONS_ARGUMENTS_MAPPING:
+FILE: [ResolvedTo(IMPORTS)] TypeReference.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    @R|kotlin/SinceKotlin|[Types](String(1.4)) public final [ResolvedTo(STATUS)] class TypeReference : R|kotlin/reflect/KType| {
+        @R|kotlin/SinceKotlin|[Types](String(1.6)) public [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.classifier] classifier: R|kotlin/reflect/KClassifier|, [ResolvedTo(STATUS)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.arguments] arguments: R|kotlin/collections/List<kotlin/reflect/KTypeProjection>|, [ResolvedTo(STATUS)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.platformTypeUpperBound] platformTypeUpperBound: R|kotlin/reflect/KType?|, [ResolvedTo(STATUS)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.flags] flags: R|kotlin/Int|): R|kotlin/jvm/internal/TypeReference| {
+            LAZY_super<<implicit>>
+        }
+
+        public open override [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val classifier: R|kotlin/reflect/KClassifier| = R|<local>/classifier|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] get(): R|kotlin/reflect/KClassifier|
+
+        public open override [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val arguments: R|kotlin/collections/List<kotlin/reflect/KTypeProjection>| = R|<local>/arguments|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] get(): R|kotlin/collections/List<kotlin/reflect/KTypeProjection>|
+
+        @R|kotlin/SinceKotlin|[Types](String(1.6)) internal final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val platformTypeUpperBound: R|kotlin/reflect/KType?| = R|<local>/platformTypeUpperBound|
+            internal [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] get(): R|kotlin/reflect/KType?|
+
+        @R|kotlin/SinceKotlin|[Types](String(1.6)) internal final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val flags: R|kotlin/Int| = R|<local>/flags|
+            internal [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] get(): R|kotlin/Int|
+
+        public [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] constructor([ResolvedTo(STATUS)] classifier: R|kotlin/reflect/KClassifier|, [ResolvedTo(STATUS)] arguments: R|kotlin/collections/List<kotlin/reflect/KTypeProjection>|, [ResolvedTo(STATUS)] isMarkedNullable: R|kotlin/Boolean|): R|kotlin/jvm/internal/TypeReference| {
+            LAZY_this<R|kotlin/jvm/internal/TypeReference|>
+        }
+
+        public open override [ResolvedTo(STATUS)] val annotations: R|kotlin/collections/List<kotlin/Annotation>|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] get(): R|kotlin/collections/List<kotlin/Annotation>| { LAZY_BLOCK }
+
+        public open override [ResolvedTo(STATUS)] val isMarkedNullable: R|kotlin/Boolean|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] get(): R|kotlin/Boolean| { LAZY_BLOCK }
+
+        public open override operator [ResolvedTo(STATUS)] fun equals([ResolvedTo(STATUS)] other: R|kotlin/Any?|): R|kotlin/Boolean| { LAZY_BLOCK }
+
+        public open override [ResolvedTo(STATUS)] fun hashCode(): R|kotlin/Int| { LAZY_BLOCK }
+
+        public open override [ResolvedTo(STATUS)] fun toString(): R|kotlin/String| { LAZY_BLOCK }
+
+        private final [ResolvedTo(STATUS)] fun asString([ResolvedTo(STATUS)] convertPrimitiveToWrapper: R|kotlin/Boolean|): R|kotlin/String| { LAZY_BLOCK }
+
+        private final [ResolvedTo(STATUS)] val R|java/lang/Class<*>|.arrayClassName: <implicit>
+            private [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] get(): <implicit> { LAZY_BLOCK }
+
+        private final [ResolvedTo(STATUS)] fun R|kotlin/reflect/KTypeProjection|.asString(): R|kotlin/String| { LAZY_BLOCK }
+
+        internal final companion [ResolvedTo(STATUS)] object Companion : R|kotlin/Any| {
+            private [ResolvedTo(STATUS)] [ContainingClassKey=Companion] constructor(): R|kotlin/jvm/internal/TypeReference.Companion| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            internal final const [ResolvedTo(STATUS)] val IS_MARKED_NULLABLE: <implicit> = LAZY_EXPRESSION
+                internal [ResolvedTo(STATUS)] [ContainingClassKey=Companion] get(): <implicit>
+
+            internal final const [ResolvedTo(STATUS)] val IS_MUTABLE_COLLECTION_TYPE: <implicit> = LAZY_EXPRESSION
+                internal [ResolvedTo(STATUS)] [ContainingClassKey=Companion] get(): <implicit>
+
+            internal final const [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] val IS_NOTHING_TYPE: R|kotlin/Int| = Int(1).R|kotlin/Int.shl|(Int(2))
+                internal [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] [ContainingClassKey=Companion] get(): R|kotlin/Int|
+
+        }
+
+    }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] TypeReference.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    @R|kotlin/SinceKotlin|[Types](String(1.4)) public final [ResolvedTo(STATUS)] class TypeReference : R|kotlin/reflect/KType| {
+        @R|kotlin/SinceKotlin|[Types](String(1.6)) public [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.classifier] classifier: R|kotlin/reflect/KClassifier|, [ResolvedTo(STATUS)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.arguments] arguments: R|kotlin/collections/List<kotlin/reflect/KTypeProjection>|, [ResolvedTo(STATUS)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.platformTypeUpperBound] platformTypeUpperBound: R|kotlin/reflect/KType?|, [ResolvedTo(STATUS)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.flags] flags: R|kotlin/Int|): R|kotlin/jvm/internal/TypeReference| {
+            LAZY_super<<implicit>>
+        }
+
+        public open override [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val classifier: R|kotlin/reflect/KClassifier| = R|<local>/classifier|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] get(): R|kotlin/reflect/KClassifier|
+
+        public open override [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val arguments: R|kotlin/collections/List<kotlin/reflect/KTypeProjection>| = R|<local>/arguments|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] get(): R|kotlin/collections/List<kotlin/reflect/KTypeProjection>|
+
+        @R|kotlin/SinceKotlin|[Types](String(1.6)) internal final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val platformTypeUpperBound: R|kotlin/reflect/KType?| = R|<local>/platformTypeUpperBound|
+            internal [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] get(): R|kotlin/reflect/KType?|
+
+        @R|kotlin/SinceKotlin|[Types](String(1.6)) internal final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val flags: R|kotlin/Int| = R|<local>/flags|
+            internal [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] get(): R|kotlin/Int|
+
+        public [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] constructor([ResolvedTo(STATUS)] classifier: R|kotlin/reflect/KClassifier|, [ResolvedTo(STATUS)] arguments: R|kotlin/collections/List<kotlin/reflect/KTypeProjection>|, [ResolvedTo(STATUS)] isMarkedNullable: R|kotlin/Boolean|): R|kotlin/jvm/internal/TypeReference| {
+            LAZY_this<R|kotlin/jvm/internal/TypeReference|>
+        }
+
+        public open override [ResolvedTo(STATUS)] val annotations: R|kotlin/collections/List<kotlin/Annotation>|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] get(): R|kotlin/collections/List<kotlin/Annotation>| { LAZY_BLOCK }
+
+        public open override [ResolvedTo(STATUS)] val isMarkedNullable: R|kotlin/Boolean|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] get(): R|kotlin/Boolean| { LAZY_BLOCK }
+
+        public open override operator [ResolvedTo(STATUS)] fun equals([ResolvedTo(STATUS)] other: R|kotlin/Any?|): R|kotlin/Boolean| { LAZY_BLOCK }
+
+        public open override [ResolvedTo(STATUS)] fun hashCode(): R|kotlin/Int| { LAZY_BLOCK }
+
+        public open override [ResolvedTo(STATUS)] fun toString(): R|kotlin/String| { LAZY_BLOCK }
+
+        private final [ResolvedTo(STATUS)] fun asString([ResolvedTo(STATUS)] convertPrimitiveToWrapper: R|kotlin/Boolean|): R|kotlin/String| { LAZY_BLOCK }
+
+        private final [ResolvedTo(STATUS)] val R|java/lang/Class<*>|.arrayClassName: <implicit>
+            private [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] get(): <implicit> { LAZY_BLOCK }
+
+        private final [ResolvedTo(STATUS)] fun R|kotlin/reflect/KTypeProjection|.asString(): R|kotlin/String| { LAZY_BLOCK }
+
+        internal final companion [ResolvedTo(STATUS)] object Companion : R|kotlin/Any| {
+            private [ResolvedTo(STATUS)] [ContainingClassKey=Companion] constructor(): R|kotlin/jvm/internal/TypeReference.Companion| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            internal final const [ResolvedTo(STATUS)] val IS_MARKED_NULLABLE: <implicit> = LAZY_EXPRESSION
+                internal [ResolvedTo(STATUS)] [ContainingClassKey=Companion] get(): <implicit>
+
+            internal final const [ResolvedTo(STATUS)] val IS_MUTABLE_COLLECTION_TYPE: <implicit> = LAZY_EXPRESSION
+                internal [ResolvedTo(STATUS)] [ContainingClassKey=Companion] get(): <implicit>
+
+            internal final const [ResolvedTo(BODY_RESOLVE)] val IS_NOTHING_TYPE: R|kotlin/Int| = Int(1).R|kotlin/Int.shl|(Int(2))
+                internal [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] get(): R|kotlin/Int|
+
+        }
+
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(IMPORTS)] TypeReference.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    @R|kotlin/SinceKotlin|[Types](version = String(1.4)) public final [ResolvedTo(BODY_RESOLVE)] class TypeReference : R|kotlin/reflect/KType| {
+        @R|kotlin/SinceKotlin|[Types](version = String(1.6)) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TypeReference] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.classifier] classifier: R|kotlin/reflect/KClassifier|, [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.arguments] arguments: R|kotlin/collections/List<kotlin/reflect/KTypeProjection>|, [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.platformTypeUpperBound] platformTypeUpperBound: R|kotlin/reflect/KType?|, [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.flags] flags: R|kotlin/Int|): R|kotlin/jvm/internal/TypeReference| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open override [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val classifier: R|kotlin/reflect/KClassifier| = R|<local>/classifier|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TypeReference] get(): R|kotlin/reflect/KClassifier|
+
+        public open override [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val arguments: R|kotlin/collections/List<kotlin/reflect/KTypeProjection>| = R|<local>/arguments|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TypeReference] get(): R|kotlin/collections/List<kotlin/reflect/KTypeProjection>|
+
+        @R|kotlin/SinceKotlin|[Types](version = String(1.6)) internal final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val platformTypeUpperBound: R|kotlin/reflect/KType?| = R|<local>/platformTypeUpperBound|
+            internal [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TypeReference] get(): R|kotlin/reflect/KType?|
+
+        @R|kotlin/SinceKotlin|[Types](version = String(1.6)) internal final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val flags: R|kotlin/Int| = R|<local>/flags|
+            internal [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TypeReference] get(): R|kotlin/Int|
+
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TypeReference] constructor([ResolvedTo(BODY_RESOLVE)] classifier: R|kotlin/reflect/KClassifier|, [ResolvedTo(BODY_RESOLVE)] arguments: R|kotlin/collections/List<kotlin/reflect/KTypeProjection>|, [ResolvedTo(BODY_RESOLVE)] isMarkedNullable: R|kotlin/Boolean|): R|kotlin/jvm/internal/TypeReference| {
+            this<R|kotlin/jvm/internal/TypeReference|>(R|<local>/classifier|, R|<local>/arguments|, Null(null), when () {
+                R|<local>/isMarkedNullable| ->  {
+                    this@R|kotlin/jvm/internal/TypeReference.Companion|.R|kotlin/jvm/internal/TypeReference.Companion.IS_MARKED_NULLABLE|
+                }
+                else ->  {
+                    Int(0)
+                }
+            }
+            )
+        }
+
+        public open override [ResolvedTo(BODY_RESOLVE)] val annotations: R|kotlin/collections/List<kotlin/Annotation>|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TypeReference] get(): R|kotlin/collections/List<kotlin/Annotation>| {
+                ^ <Unresolved name: emptyList>#()
+            }
+
+        public open override [ResolvedTo(BODY_RESOLVE)] val isMarkedNullable: R|kotlin/Boolean|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TypeReference] get(): R|kotlin/Boolean| {
+                ^ !=(this@R|kotlin/jvm/internal/TypeReference|.R|kotlin/jvm/internal/TypeReference.flags|.R|kotlin/Int.and|(this@R|kotlin/jvm/internal/TypeReference.Companion|.R|kotlin/jvm/internal/TypeReference.Companion.IS_MARKED_NULLABLE|), Int(0))
+            }
+
+        public open override operator [ResolvedTo(BODY_RESOLVE)] fun equals([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Any?|): R|kotlin/Boolean| {
+            ^equals (R|<local>/other| is R|kotlin/jvm/internal/TypeReference|) && ==(this@R|kotlin/jvm/internal/TypeReference|.R|kotlin/jvm/internal/TypeReference.classifier|, R|<local>/other|.R|kotlin/jvm/internal/TypeReference.classifier|) && ==(this@R|kotlin/jvm/internal/TypeReference|.R|kotlin/jvm/internal/TypeReference.arguments|, R|<local>/other|.R|kotlin/jvm/internal/TypeReference.arguments|) && ==(this@R|kotlin/jvm/internal/TypeReference|.R|kotlin/jvm/internal/TypeReference.platformTypeUpperBound|, R|<local>/other|.R|kotlin/jvm/internal/TypeReference.platformTypeUpperBound|) && ==(this@R|kotlin/jvm/internal/TypeReference|.R|kotlin/jvm/internal/TypeReference.flags|, R|<local>/other|.R|kotlin/jvm/internal/TypeReference.flags|)
+        }
+
+        public open override [ResolvedTo(BODY_RESOLVE)] fun hashCode(): R|kotlin/Int| {
+            ^hashCode this@R|kotlin/jvm/internal/TypeReference|.R|kotlin/jvm/internal/TypeReference.classifier|.R|kotlin/Any.hashCode|().R|kotlin/Int.times|(Int(31)).R|kotlin/Int.plus|(this@R|kotlin/jvm/internal/TypeReference|.R|kotlin/jvm/internal/TypeReference.arguments|.R|kotlin/Any.hashCode|()).R|kotlin/Int.times|(Int(31)).R|kotlin/Int.plus|(this@R|kotlin/jvm/internal/TypeReference|.R|kotlin/jvm/internal/TypeReference.flags|.R|kotlin/Any.hashCode|())
+        }
+
+        public open override [ResolvedTo(BODY_RESOLVE)] fun toString(): R|kotlin/String| {
+            ^toString this@R|kotlin/jvm/internal/TypeReference|.R|kotlin/jvm/internal/TypeReference.asString|(Boolean(false)).R|kotlin/String.plus|(Q|kotlin/jvm/internal/Reflection|.R|kotlin/jvm/internal/Reflection.REFLECTION_NOT_AVAILABLE|)
+        }
+
+        private final [ResolvedTo(BODY_RESOLVE)] fun asString([ResolvedTo(BODY_RESOLVE)] convertPrimitiveToWrapper: R|kotlin/Boolean|): R|kotlin/String| {
+            [ResolvedTo(BODY_RESOLVE)] lval javaClass: <ERROR TYPE REF: Unresolved name: java> = (this@R|kotlin/jvm/internal/TypeReference|.R|kotlin/jvm/internal/TypeReference.classifier| as? R|kotlin/reflect/KClass<*>|)?.{ $subj$.<Unresolved name: java># }
+            [ResolvedTo(BODY_RESOLVE)] lval klass: R|kotlin/String| = when () {
+                ==(R|<local>/javaClass|, Null(null)) ->  {
+                    this@R|kotlin/jvm/internal/TypeReference|.R|kotlin/jvm/internal/TypeReference.classifier|.R|kotlin/Any.toString|()
+                }
+                !=(this@R|kotlin/jvm/internal/TypeReference|.R|kotlin/jvm/internal/TypeReference.flags|.R|kotlin/Int.and|(this@R|kotlin/jvm/internal/TypeReference.Companion|.R|kotlin/jvm/internal/TypeReference.Companion.IS_NOTHING_TYPE|), Int(0)) ->  {
+                    String(kotlin.Nothing)
+                }
+                R|<local>/javaClass|.<Unresolved name: isArray># ->  {
+                    (this@R|kotlin/jvm/internal/TypeReference|, R|<local>/javaClass|).R|kotlin/jvm/internal/TypeReference.arrayClassName<None of the following candidates is applicable because of receiver type mismatch: [kotlin/jvm/internal/TypeReference.arrayClassName]>#|
+                }
+                R|<local>/convertPrimitiveToWrapper| && R|<local>/javaClass|.<Unresolved name: isPrimitive># ->  {
+                    (this@R|kotlin/jvm/internal/TypeReference|.R|kotlin/jvm/internal/TypeReference.classifier| as R|kotlin/reflect/KClass<*>|).<Unresolved name: javaObjectType>#.<Unresolved name: name>#
+                }
+                else ->  {
+                    R|<local>/javaClass|.<Unresolved name: name>#
+                }
+            }
+
+            [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/String| = when () {
+                this@R|kotlin/jvm/internal/TypeReference|.R|kotlin/jvm/internal/TypeReference.arguments|.R|SubstitutionOverride<kotlin/collections/List.isEmpty: R|kotlin/Boolean|>|() ->  {
+                    String()
+                }
+                else ->  {
+                    this@R|kotlin/jvm/internal/TypeReference|.R|kotlin/jvm/internal/TypeReference.arguments|.<Unresolved name: joinToString>#(String(, ), String(<), String(>), <L> = [ResolvedTo(BODY_RESOLVE)] joinToString@fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
+                        ^ (this@R|kotlin/jvm/internal/TypeReference|, <Unresolved name: it>#).R|kotlin/jvm/internal/TypeReference.asString|()
+                    }
+                    )
+                }
+            }
+
+            [ResolvedTo(BODY_RESOLVE)] lval nullable: R|kotlin/String| = when () {
+                this@R|kotlin/jvm/internal/TypeReference|.R|kotlin/jvm/internal/TypeReference.isMarkedNullable| ->  {
+                    String(?)
+                }
+                else ->  {
+                    String()
+                }
+            }
+
+            [ResolvedTo(BODY_RESOLVE)] lval result: R|kotlin/String| = R|<local>/klass|.R|kotlin/String.plus|(R|<local>/args|).R|kotlin/String.plus|(R|<local>/nullable|)
+            ^asString when ([ResolvedTo(BODY_RESOLVE)] lval upper: R|kotlin/reflect/KType?| = this@R|kotlin/jvm/internal/TypeReference|.R|kotlin/jvm/internal/TypeReference.platformTypeUpperBound|) {
+                ($subj$ is R|kotlin/jvm/internal/TypeReference|) ->  {
+                    when ([ResolvedTo(BODY_RESOLVE)] lval renderedUpper: R|kotlin/String| = R|<local>/upper|.R|kotlin/jvm/internal/TypeReference.asString|(Boolean(true))) {
+                        ==($subj$, R|<local>/result|) ->  {
+                            R|<local>/result|
+                        }
+                        ==($subj$, <strcat>(R|<local>/result|, String(?))) ->  {
+                            <strcat>(R|<local>/result|, String(!))
+                        }
+                        else ->  {
+                            <strcat>(String((), R|<local>/result|, String(..), R|<local>/renderedUpper|, String()))
+                        }
+                    }
+
+                }
+                else ->  {
+                    R|<local>/result|
+                }
+            }
+
+        }
+
+        private final [ResolvedTo(BODY_RESOLVE)] val R|java/lang/Class<*>|.arrayClassName: R|kotlin/String|
+            private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TypeReference] get(): R|kotlin/String| {
+                ^ when (this@R|kotlin/jvm/internal/TypeReference.arrayClassName|) {
+                    ==($subj$, <getClass>(Q|kotlin/BooleanArray|).<Unresolved name: java>#) ->  {
+                        String(kotlin.BooleanArray)
+                    }
+                    ==($subj$, <getClass>(Q|kotlin/CharArray|).<Unresolved name: java>#) ->  {
+                        String(kotlin.CharArray)
+                    }
+                    ==($subj$, <getClass>(Q|kotlin/ByteArray|).<Unresolved name: java>#) ->  {
+                        String(kotlin.ByteArray)
+                    }
+                    ==($subj$, <getClass>(Q|kotlin/ShortArray|).<Unresolved name: java>#) ->  {
+                        String(kotlin.ShortArray)
+                    }
+                    ==($subj$, <getClass>(Q|kotlin/IntArray|).<Unresolved name: java>#) ->  {
+                        String(kotlin.IntArray)
+                    }
+                    ==($subj$, <getClass>(Q|kotlin/FloatArray|).<Unresolved name: java>#) ->  {
+                        String(kotlin.FloatArray)
+                    }
+                    ==($subj$, <getClass>(Q|kotlin/LongArray|).<Unresolved name: java>#) ->  {
+                        String(kotlin.LongArray)
+                    }
+                    ==($subj$, <getClass>(Q|kotlin/DoubleArray|).<Unresolved name: java>#) ->  {
+                        String(kotlin.DoubleArray)
+                    }
+                    else ->  {
+                        String(kotlin.Array)
+                    }
+                }
+
+            }
+
+        private final [ResolvedTo(BODY_RESOLVE)] fun R|kotlin/reflect/KTypeProjection|.asString(): R|kotlin/String| {
+            when () {
+                ==(this@R|kotlin/jvm/internal/TypeReference.asString|.R|kotlin/reflect/KTypeProjection.variance|, Null(null)) ->  {
+                    ^asString String(*)
+                }
+            }
+
+            [ResolvedTo(BODY_RESOLVE)] lval typeString: R|kotlin/String| = (this@R|kotlin/jvm/internal/TypeReference.asString|.R|kotlin/reflect/KTypeProjection.type| as? R|kotlin/jvm/internal/TypeReference|)?.{ $subj$.R|kotlin/jvm/internal/TypeReference.asString|(Boolean(true)) } ?: this@R|kotlin/jvm/internal/TypeReference.asString|.R|kotlin/reflect/KTypeProjection.type|.R|kotlin/toString|()
+            ^asString when (this@R|kotlin/jvm/internal/TypeReference.asString|.R|kotlin/reflect/KTypeProjection.variance|) {
+                ==($subj$, Q|kotlin/reflect/KVariance|.R|kotlin/reflect/KVariance.INVARIANT|) ->  {
+                    R|<local>/typeString|
+                }
+                ==($subj$, Q|kotlin/reflect/KVariance|.R|kotlin/reflect/KVariance.IN|) ->  {
+                    <strcat>(String(in ), R|<local>/typeString|)
+                }
+                ==($subj$, Q|kotlin/reflect/KVariance|.R|kotlin/reflect/KVariance.OUT|) ->  {
+                    <strcat>(String(out ), R|<local>/typeString|)
+                }
+            }
+
+        }
+
+        internal final companion [ResolvedTo(BODY_RESOLVE)] object Companion : R|kotlin/Any| {
+            private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] constructor(): R|kotlin/jvm/internal/TypeReference.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            internal final const [ResolvedTo(BODY_RESOLVE)] val IS_MARKED_NULLABLE: R|kotlin/Int| = Int(1).R|kotlin/Int.shl|(Int(0))
+                internal [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] get(): R|kotlin/Int|
+
+            internal final const [ResolvedTo(BODY_RESOLVE)] val IS_MUTABLE_COLLECTION_TYPE: R|kotlin/Int| = Int(1).R|kotlin/Int.shl|(Int(1))
+                internal [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] get(): R|kotlin/Int|
+
+            internal final const [ResolvedTo(BODY_RESOLVE)] val IS_NOTHING_TYPE: R|kotlin/Int| = Int(1).R|kotlin/Int.shl|(Int(2))
+                internal [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] get(): R|kotlin/Int|
+
+        }
+
+    }

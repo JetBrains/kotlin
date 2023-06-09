@@ -40,7 +40,7 @@ class FirIntegerConstantOperatorScope(
             session,
             scopeSession,
             FakeOverrideTypeCalculator.DoNothing,
-            requiredMembersPhase = null,
+            requiredMembersPhase = FirResolvePhase.STATUS,
         ) ?: error("Scope for $baseType not found")
     }
 
@@ -81,7 +81,6 @@ class FirIntegerConstantOperatorScope(
             returnTypeRef = buildResolvedTypeRef {
                 type = ConeIntegerConstantOperatorTypeImpl(isUnsigned, ConeNullability.NOT_NULL)
             }
-
         }.also {
             it.originalForWrappedIntegerOperator = originalSymbol
             it.isUnsignedWrappedIntegerOperator = isUnsigned

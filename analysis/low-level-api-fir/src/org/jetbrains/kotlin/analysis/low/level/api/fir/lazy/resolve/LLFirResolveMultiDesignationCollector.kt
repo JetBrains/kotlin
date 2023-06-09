@@ -66,7 +66,9 @@ internal object LLFirResolveMultiDesignationCollector {
         is FirDeclarationOrigin.Synthetic,
         is FirDeclarationOrigin.SubstitutionOverride,
         is FirDeclarationOrigin.SamConstructor,
-        is FirDeclarationOrigin.IntersectionOverride -> {
+        is FirDeclarationOrigin.WrappedIntegerOperator,
+        is FirDeclarationOrigin.IntersectionOverride,
+        -> {
             when (this) {
                 is FirFile -> true
                 is FirSyntheticProperty -> false
@@ -76,7 +78,8 @@ internal object LLFirResolveMultiDesignationCollector {
                 is FirPropertyAccessor,
                 is FirField,
                 is FirTypeAlias,
-                is FirConstructor -> true
+                is FirConstructor,
+                -> true
                 else -> true
             }
         }
