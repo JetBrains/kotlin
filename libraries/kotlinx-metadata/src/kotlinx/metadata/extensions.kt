@@ -18,7 +18,7 @@ import kotlin.reflect.KClass
  * The client code is supposed to return the extension visitor corresponding to the given type, or to return `null` if the type is
  * of no interest to that code. Each platform-specific extension visitor has a [KmExtensionType] instance declared in the `TYPE` property
  * its companion object. For example, to load JVM extensions on a function, one could do:
- *
+ * ```
  *     override fun visitExtensions(type: KmExtensionType): KmFunctionExtensionVisitor? {
  *         if (type != JvmFunctionExtensionVisitor.TYPE) return null
  *
@@ -26,9 +26,10 @@ import kotlin.reflect.KClass
  *             ...
  *         }
  *     }
- *
+ * ```
  * In case an extension visitor of an unrelated type is returned, the code using the visitor API must ignore that visitor.
  */
+@Deprecated(VISITOR_API_MESSAGE)
 class KmExtensionType(private val klass: KClass<out KmExtensionVisitor>) {
     override fun equals(other: Any?): Boolean =
         other is KmExtensionType && klass == other.klass

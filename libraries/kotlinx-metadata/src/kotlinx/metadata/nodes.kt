@@ -1141,6 +1141,7 @@ data class KmVersion(val major: Int, val minor: Int, val patch: Int) {
  *
  * @property value the constant value. May be `true`, `false` or `null`
  */
+@ExperimentalContracts
 data class KmConstantValue(val value: Any?)
 
 internal fun <T> T.addTo(collection: MutableCollection<T>): T {
