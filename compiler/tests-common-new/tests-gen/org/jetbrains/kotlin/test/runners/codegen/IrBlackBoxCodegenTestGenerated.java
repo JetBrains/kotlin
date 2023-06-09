@@ -16704,6 +16704,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("enumEntryHashCode.kt")
+        public void testEnumEntryHashCode() throws Exception {
+            runTest("compiler/testData/codegen/box/enum/enumEntryHashCode.kt");
+        }
+
+        @Test
         @TestMetadata("enumEntryMembers.kt")
         public void testEnumEntryMembers() throws Exception {
             runTest("compiler/testData/codegen/box/enum/enumEntryMembers.kt");
