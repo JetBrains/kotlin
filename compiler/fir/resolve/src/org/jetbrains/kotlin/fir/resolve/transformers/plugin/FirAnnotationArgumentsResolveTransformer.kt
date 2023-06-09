@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.BodyResolveCon
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformerDispatcher
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirDeclarationsResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirExpressionsResolveTransformer
-import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeAmbiguouslyResolvedAnnotationArgument
 import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
@@ -294,41 +293,50 @@ private class FirExpressionsResolveTransformerForSpecificAnnotations(transformer
         qualifiedAccessExpression: FirQualifiedAccessExpression,
         data: ResolutionMode
     ): FirStatement {
-        val calleeReference = qualifiedAccessExpression.calleeReference
-        if (calleeReference is FirResolvedNamedReference &&
-            calleeReference.resolvedSymbol.let { it is FirEnumEntrySymbol && it.containingClassLookupTag()?.classId in classIdsToCheck } &&
-            qualifiedAccessExpression is FirPropertyAccessExpression
-        ) {
-            val symbolFromCompilerPhase = calleeReference.resolvedSymbol
-
-            (qualifiedAccessExpression.explicitReceiver as? FirResolvedQualifier)?.let {
-                qualifiedAccessExpression.replaceResolvedQualifierReceiver(it)
-            }
-            qualifiedAccessExpression.replaceDispatchReceiver(FirNoReceiverExpression)
-            qualifiedAccessExpression.replaceTypeRef(noExpectedType)
-            qualifiedAccessExpression.replaceCalleeReference(buildSimpleNamedReference {
-                source = calleeReference.source
-                name = calleeReference.name
-            })
-
-            val resolved = super.transformQualifiedAccessExpression(qualifiedAccessExpression, data)
-
-            if (resolved is FirQualifiedAccessExpression) {
-                // The initial resolution must have been to an enum entry. Report ambiguity if symbolFromArgumentsPhase is different to
-                // original symbol including null (meaning we would resolve to something other than an enum entry).
-                val symbolFromArgumentsPhase = resolved.calleeReference.toResolvedBaseSymbol()
-                if (symbolFromCompilerPhase != symbolFromArgumentsPhase) {
-                    resolved.replaceCalleeReference(buildErrorNamedReference {
-                        source = resolved.calleeReference.source
-                        diagnostic = ConeAmbiguouslyResolvedAnnotationArgument(symbolFromCompilerPhase, symbolFromArgumentsPhase)
-                    })
+        if (qualifiedAccessExpression is FirPropertyAccessExpression) {
+            val calleeReference = qualifiedAccessExpression.calleeReference
+            if (calleeReference is FirResolvedNamedReference) {
+                val resolvedSymbol = calleeReference.resolvedSymbol
+                if (resolvedSymbol is FirEnumEntrySymbol && resolvedSymbol.containingClassLookupTag()?.classId in classIdsToCheck) {
+                    resolveSpecialPropertyAccess(qualifiedAccessExpression, calleeReference, resolvedSymbol, data)
                 }
             }
-
-            return resolved
         }
 
         return super.transformQualifiedAccessExpression(qualifiedAccessExpression, data)
+    }
+
+    private fun resolveSpecialPropertyAccess(
+        qualifiedAccessExpression: FirPropertyAccessExpression,
+        calleeReference: FirResolvedNamedReference,
+        resolvedSymbol: FirEnumEntrySymbol,
+        data: ResolutionMode,
+    ): FirStatement {
+        (qualifiedAccessExpression.explicitReceiver as? FirResolvedQualifier)?.let {
+            qualifiedAccessExpression.replaceResolvedQualifierReceiver(it)
+        }
+        qualifiedAccessExpression.replaceDispatchReceiver(FirNoReceiverExpression)
+        qualifiedAccessExpression.replaceTypeRef(noExpectedType)
+        qualifiedAccessExpression.replaceCalleeReference(buildSimpleNamedReference {
+            source = calleeReference.source
+            name = calleeReference.name
+        })
+
+        val resolved = super.transformQualifiedAccessExpression(qualifiedAccessExpression, data)
+
+        if (resolved is FirQualifiedAccessExpression) {
+            // The initial resolution must have been to an enum entry. Report ambiguity if symbolFromArgumentsPhase is different to
+            // original symbol including null (meaning we would resolve to something other than an enum entry).
+            val symbolFromArgumentsPhase = resolved.calleeReference.toResolvedBaseSymbol()
+            if (resolvedSymbol != symbolFromArgumentsPhase) {
+                resolved.replaceCalleeReference(buildErrorNamedReference {
+                    source = resolved.calleeReference.source
+                    diagnostic = ConeAmbiguouslyResolvedAnnotationArgument(resolvedSymbol, symbolFromArgumentsPhase)
+                })
+            }
+        }
+
+        return resolved
     }
 
     private fun FirQualifiedAccessExpression.replaceResolvedQualifierReceiver(receiver: FirResolvedQualifier) {
