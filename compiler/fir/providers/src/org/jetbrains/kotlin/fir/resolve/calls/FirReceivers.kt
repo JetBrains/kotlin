@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.fir.expressions.builder.buildThisReceiverExpression
 import org.jetbrains.kotlin.fir.references.builder.buildImplicitThisReference
 import org.jetbrains.kotlin.fir.renderWithType
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.scope
 import org.jetbrains.kotlin.fir.resolve.smartcastScope
 import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
@@ -34,14 +33,13 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.SmartcastStability
-import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 
-interface ReceiverValue {
-    val type: ConeKotlinType
+abstract class ReceiverValue {
+    abstract val type: ConeKotlinType
 
-    val receiverExpression: FirExpression
+    abstract val receiverExpression: FirExpression
 
-    fun scope(useSiteSession: FirSession, scopeSession: ScopeSession): FirTypeScope? = type.scope(
+    open fun scope(useSiteSession: FirSession, scopeSession: ScopeSession): FirTypeScope? = type.scope(
         useSiteSession = useSiteSession,
         scopeSession = scopeSession,
         fakeOverrideTypeCalculator = FakeOverrideTypeCalculator.DoNothing,
@@ -49,23 +47,12 @@ interface ReceiverValue {
     )
 }
 
-abstract class AbstractExplicitReceiver<E : FirExpression> {
-    abstract val explicitReceiver: FirExpression
-}
-
-abstract class AbstractExplicitReceiverValue<E : FirExpression> : AbstractExplicitReceiver<E>(), ReceiverValue {
+class ExpressionReceiverValue(override val receiverExpression: FirExpression) : ReceiverValue() {
     override val type: ConeKotlinType
         // NB: safe cast is necessary here
-        get() = explicitReceiver.typeRef.coneTypeSafe()
-            ?: ConeErrorType(ConeIntermediateDiagnostic("No type calculated for: ${explicitReceiver.renderWithType()}")) // TODO: assert here
+        get() = receiverExpression.typeRef.coneTypeSafe()
+            ?: ConeErrorType(ConeIntermediateDiagnostic("No type calculated for: ${receiverExpression.renderWithType()}")) // TODO: assert here
 
-    final override val receiverExpression: FirExpression
-        get() = explicitReceiver
-}
-
-class ExpressionReceiverValue(
-    override val explicitReceiver: FirExpression
-) : AbstractExplicitReceiverValue<FirExpression>(), ReceiverValue {
     override fun scope(useSiteSession: FirSession, scopeSession: ScopeSession): FirTypeScope? {
         var receiverExpr: FirExpression? = receiverExpression
         // Unwrap `x!!` to `x` and use the resulted expression to derive receiver type. This is necessary so that smartcast types inside
@@ -99,7 +86,7 @@ sealed class ImplicitReceiverValue<S : FirBasedSymbol<*>>(
     private val mutable: Boolean,
     val contextReceiverNumber: Int = -1,
     private val inaccessibleReceiver: Boolean = false
-) : ReceiverValue {
+) : ReceiverValue() {
     final override var type: ConeKotlinType = type
         private set
 

@@ -41,9 +41,7 @@ fun createQualifierReceiver(
     }
 }
 
-abstract class QualifierReceiver(
-    final override val explicitReceiver: FirResolvedQualifier
-) : AbstractExplicitReceiver<FirResolvedQualifier>() {
+abstract class QualifierReceiver(val explicitReceiver: FirResolvedQualifier) {
     abstract fun classifierScope(): FirScope?
     abstract fun callableScope(): FirScope?
 }

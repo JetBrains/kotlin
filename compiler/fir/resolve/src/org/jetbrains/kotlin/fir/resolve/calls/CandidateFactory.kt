@@ -116,11 +116,6 @@ class CandidateFactory private constructor(
         }
     }
 
-    private fun ReceiverValue?.isCandidateFromCompanionObjectTypeScope(): Boolean {
-        val expressionReceiverValue = this as? ExpressionReceiverValue ?: return false
-        return expressionReceiverValue.explicitReceiver.isCandidateFromCompanionObjectTypeScope()
-    }
-
     private fun FirExpression?.isCandidateFromCompanionObjectTypeScope(): Boolean {
         val resolvedQualifier = this as? FirResolvedQualifier ?: return false
         val originClassOfCandidate = this.typeRef.coneType.classId ?: return false
