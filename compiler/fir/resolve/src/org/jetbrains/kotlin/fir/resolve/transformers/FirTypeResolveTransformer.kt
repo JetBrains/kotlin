@@ -289,8 +289,14 @@ open class FirTypeResolveTransformer(
         if (visited.isNotEmpty() && currentTypeParameter == typeParameter) return true
         if (!visited.add(currentTypeParameter)) return false
 
+        fun ConeKotlinType.toNextTypeParameter(): FirTypeParameter? = when (this) {
+            is ConeTypeParameterType -> lookupTag.typeParameterSymbol.fir
+            is ConeDefinitelyNotNullType -> original.toNextTypeParameter()
+            else -> null
+        }
+
         return currentTypeParameter.bounds.any {
-            val nextTypeParameter = it.coneTypeSafe<ConeTypeParameterType>()?.lookupTag?.typeParameterSymbol?.fir ?: return@any false
+            val nextTypeParameter = it.coneTypeOrNull?.toNextTypeParameter() ?: return@any false
 
             hasSupertypePathToParameter(nextTypeParameter, typeParameter, visited)
         }
