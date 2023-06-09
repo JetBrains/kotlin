@@ -11,14 +11,18 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyBodie
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.LLFirPhaseUpdater
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkAnnotationArgumentsMappingIsResolved
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkPhase
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.expressionGuard
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.builder.buildArgumentList
+import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
+import org.jetbrains.kotlin.fir.references.isError
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirTowerDataContextCollector
 import org.jetbrains.kotlin.fir.resolve.transformers.plugin.FirAnnotationArgumentsMappingTransformer
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
+import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 
 internal object LLFirAnnotationArgumentMappingLazyResolver : LLFirLazyResolver(FirResolvePhase.ANNOTATIONS_ARGUMENTS_MAPPING) {
     override fun resolve(
@@ -73,15 +77,58 @@ private class LLFirAnnotationArgumentsMappingTargetResolver(
     }
 }
 
-private object AnnotationArgumentMappingStateKeepers : AbstractAnnotationStateKeepers() {
-    override val ANNOTATION: StateKeeper<FirAnnotation> = stateKeeper {
+internal object AnnotationArgumentMappingStateKeepers {
+    private val ANNOTATION: StateKeeper<FirAnnotation> = stateKeeper {
         add(ANNOTATION_BASE)
         add(FirAnnotation::argumentMapping, FirAnnotation::replaceArgumentMapping)
         add(FirAnnotation::typeArgumentsCopied, FirAnnotation::replaceTypeArguments)
     }
 
-    val DECLARATION: StateKeeper<FirElementWithResolveState>
-        get() = DECLARATION_BASE
+    private val ANNOTATION_BASE: StateKeeper<FirAnnotation> = stateKeeper { annotation ->
+        add(FirAnnotation::typeRef, FirAnnotation::replaceTypeRef)
+        add(FirAnnotation::annotationTypeRef, FirAnnotation::replaceAnnotationTypeRef)
+
+        if (annotation is FirAnnotationCall) {
+            entity(annotation, ANNOTATION_CALL)
+        }
+    }
+
+    private val ANNOTATION_CALL: StateKeeper<FirAnnotationCall> = stateKeeper { annotationCall ->
+        add(FirAnnotationCall::calleeReference, FirAnnotationCall::replaceCalleeReference)
+        add(FirAnnotationCall::annotationResolvePhase, FirAnnotationCall::replaceAnnotationResolvePhase)
+
+        val argumentList = annotationCall.argumentList
+        if (argumentList !is FirResolvedArgumentList && argumentList !is FirEmptyArgumentList) {
+            add(FirAnnotationCall::argumentList, FirAnnotationCall::replaceArgumentList) { oldList ->
+                buildArgumentList {
+                    source = oldList.source
+                    for (argument in oldList.arguments) {
+                        val replacement = when {
+                            argument is FirPropertyAccessExpression && argument.calleeReference.isError() -> argument
+                            else -> expressionGuard(argument)
+                        }
+                        arguments.add(replacement)
+                    }
+                }
+            }
+        }
+    }
+
+    val DECLARATION: StateKeeper<FirElementWithResolveState> = stateKeeper { target ->
+        val visitor = object : FirVisitorVoid() {
+            override fun visitElement(element: FirElement) {
+                when (element) {
+                    is FirDeclaration -> if (element !== target) return // Avoid nested declarations
+                    is FirAnnotation -> entity(element, ANNOTATION)
+                    is FirStatement -> return
+                }
+
+                element.acceptChildren(this)
+            }
+        }
+
+        target.accept(visitor)
+    }
 }
 
 private val FirAnnotation.typeArgumentsCopied: List<FirTypeProjection>
