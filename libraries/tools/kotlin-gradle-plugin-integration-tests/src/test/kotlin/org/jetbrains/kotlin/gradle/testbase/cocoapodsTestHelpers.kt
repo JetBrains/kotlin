@@ -5,15 +5,21 @@
 
 package org.jetbrains.kotlin.gradle.testbase
 
+import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.BaseGradleIT
+import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin
+import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.POD_BUILD_TASK_NAME
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.POD_INSTALL_TASK_NAME
+import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.POD_SETUP_BUILD_TASK_NAME
+import org.jetbrains.kotlin.gradle.util.assertProcessRunResult
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.gradle.util.runProcess
 import java.io.File
 import java.io.IOException
 import java.nio.file.Path
 import kotlin.io.path.*
+import kotlin.test.assertTrue
 import kotlin.test.fail
 
 val String.normalizeCocoapadsFrameworkName: String
@@ -204,7 +210,36 @@ fun KGPBaseTest.nativeProjectWithCocoapodsAndIosAppPodFile(
     }
 }
 
+fun BuildResult.podImportAsserts(
+    buildScript: Path,
+    projectName: String? = null,
+) {
+
+    val buildScriptText = buildScript.readText()
+    val taskPrefix = projectName?.let { ":$it" } ?: ""
+    val podspec = "podspec"
+
+    if ("noPodspec()" in buildScriptText) {
+        assertTasksSkipped("$taskPrefix:$podspec")
+    }
+
+    if ("podfile" in buildScriptText) {
+        assertTasksExecuted("$taskPrefix$podInstallTaskName")
+    } else {
+        assertTasksSkipped("$taskPrefix$podInstallTaskName")
+    }
+    if (buildScriptText.matches("pod\\(.*\\)".toRegex())) {
+        assertTasksExecuted(listOf("$taskPrefix:${KotlinCocoapodsPlugin.POD_GEN_TASK_NAME}"))
+    }
+
+    if (buildScriptText.matches("pod\\(.*\\)".toRegex())) {
+        assertTasksExecuted("$taskPrefix:$POD_SETUP_BUILD_TASK_NAME", "$taskPrefix:$POD_BUILD_TASK_NAME")
+    }
+}
+
 private val templateProjectName = "native-cocoapods-template"
+
+private val podInstallTaskName = ":$POD_INSTALL_TASK_NAME"
 
 private val shouldInstallLocalCocoapods: Boolean = System.getProperty("installCocoapods").toBoolean()
 private val cocoapodsInstallationRoot: Path by lazy { createTempDirectory("cocoapods") }
@@ -228,8 +263,12 @@ private fun gem(vararg args: String): String {
     val command = listOf("gem", *args)
     println("Run command: ${command.joinToString(separator = " ")}")
     val result = runProcess(command, File("."), options = BaseGradleIT.BuildOptions(forceOutputToStdout = true))
-    check(result.isSuccessful) {
-        "Process 'gem ${args.joinToString(separator = " ")}' exited with error code ${result.exitCode}. See log for details."
+
+    assertProcessRunResult(result) {
+        assertTrue(
+            result.isSuccessful,
+            "Process 'gem ${args.joinToString(separator = " ")}' exited with error code ${result.exitCode}. See log for details."
+        )
     }
     return result.output
 }

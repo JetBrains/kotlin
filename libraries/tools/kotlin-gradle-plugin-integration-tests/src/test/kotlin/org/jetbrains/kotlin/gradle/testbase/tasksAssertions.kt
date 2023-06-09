@@ -168,9 +168,10 @@ fun BuildResult.assertNativeTasksClasspath(
 fun TestProject.buildAndAssertAllTasks(
     registeredTasks: List<String> = emptyList(),
     notRegisteredTasks: List<String> = emptyList(),
+    buildOptions: BuildOptions = this.buildOptions,
     environmentVariables: EnvironmentalVariables = EnvironmentalVariables()
 ) {
-    build("tasks", "--all", environmentVariables = environmentVariables) {
+    build("tasks", "--all", buildOptions = buildOptions, environmentVariables = environmentVariables) {
         assertTasksInBuildOutput(registeredTasks, notRegisteredTasks)
     }
 }

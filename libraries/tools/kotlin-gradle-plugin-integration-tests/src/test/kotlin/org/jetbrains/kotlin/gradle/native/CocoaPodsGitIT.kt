@@ -19,7 +19,6 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.POD_BUILD_TASK_NAME
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.POD_GEN_TASK_NAME
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.POD_IMPORT_TASK_NAME
-import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.POD_INSTALL_TASK_NAME
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.POD_SETUP_BUILD_TASK_NAME
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.POD_SPEC_TASK_NAME
 import org.jetbrains.kotlin.gradle.testbase.*
@@ -31,10 +30,8 @@ import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
-import java.nio.file.Path
 import java.util.*
 import kotlin.io.path.absolutePathString
-import kotlin.io.path.readText
 import kotlin.test.assertTrue
 
 @OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
@@ -66,7 +63,6 @@ class CocoaPodsGitIT : KGPBaseTest() {
     private val podGenTaskName = ":$POD_GEN_TASK_NAME"
     private val podSetupBuildTaskName = ":$POD_SETUP_BUILD_TASK_NAME"
     private val podBuildTaskName = ":$POD_BUILD_TASK_NAME"
-    private val podInstallTaskName = ":$POD_INSTALL_TASK_NAME"
 
     private val defaultPodInstallSyntheticTaskName = ":podInstallSyntheticIos"
     private val defaultPodGenTaskName = podGenFullTaskName()
@@ -516,34 +512,6 @@ class CocoaPodsGitIT : KGPBaseTest() {
                     """.trimMargin()
     }
 
-    private fun BuildResult.podImportAsserts(
-        buildScript: Path,
-        projectName: String? = null,
-    ) {
-
-        val buildScriptText = buildScript.readText()
-        val taskPrefix = projectName?.let { ":$it" } ?: ""
-        val podspec = "podspec"
-
-        if ("noPodspec()" in buildScriptText) {
-            assertTasksSkipped("$taskPrefix:$podspec")
-        }
-
-        if ("podfile" in buildScriptText) {
-            assertTasksExecuted("$taskPrefix$podInstallTaskName")
-        } else {
-            assertTasksSkipped("$taskPrefix$podInstallTaskName")
-        }
-        if (buildScriptText.matches("pod\\(.*\\)".toRegex())) {
-            assertTasksExecuted(listOf("$taskPrefix:$POD_GEN_TASK_NAME"))
-        }
-
-        with(listOf(POD_SETUP_BUILD_TASK_NAME, POD_BUILD_TASK_NAME).map { "$taskPrefix:$it" }) {
-            if (buildScriptText.matches("pod\\(.*\\)".toRegex())) {
-                assertTasksExecuted(this)
-            }
-        }
-    }
 
     private fun isRepoAvailable(repos: List<String>) = runBlocking {
         HttpClient(CIO).use { client ->

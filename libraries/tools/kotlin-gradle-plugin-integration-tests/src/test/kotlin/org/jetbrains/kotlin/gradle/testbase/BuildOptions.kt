@@ -76,6 +76,7 @@ data class BuildOptions(
         val platformLibrariesMode: String? = null,
         val reinstall: Boolean? = null,
         val restrictedDistribution: Boolean? = null,
+        val useXcodeMessageStyle: Boolean? = null,
         val version: String? = null,
     )
 
@@ -226,6 +227,9 @@ data class BuildOptions(
         }
         nativeOptions.restrictedDistribution?.let {
             arguments.add("-Pkotlin.native.restrictedDistribution=${it}")
+        }
+        nativeOptions.useXcodeMessageStyle?.let {
+            arguments.add("-Pkotlin.native.useXcodeMessageStyle=${it}")
         }
         nativeOptions.version?.let {
             arguments.add("-Pkotlin.native.version=${it}")
