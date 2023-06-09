@@ -8975,9 +8975,21 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
             }
 
             @Test
+            @TestMetadata("noInferenceFromGetValueThroughSetValue.kt")
+            public void testNoInferenceFromGetValueThroughSetValue() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/delegatedProperty/noInferenceFromGetValueThroughSetValue.kt");
+            }
+
+            @Test
             @TestMetadata("noInferenceFromWrappedDelegate.kt")
             public void testNoInferenceFromWrappedDelegate() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/delegatedProperty/noInferenceFromWrappedDelegate.kt");
+            }
+
+            @Test
+            @TestMetadata("noPreliminarySetterInferenceForImplicitlyTypedVar.kt")
+            public void testNoPreliminarySetterInferenceForImplicitlyTypedVar() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/delegatedProperty/noPreliminarySetterInferenceForImplicitlyTypedVar.kt");
             }
 
             @Test

@@ -181,7 +181,9 @@ open class FirDeclarationsResolveTransformer(
                     val propertyTypeIsKnown = propertyTypeRefAfterResolve is FirResolvedTypeRef
                     val mayResolveGetter = mayResolveSetter || !propertyTypeIsKnown
                     if (mayResolveGetter) {
-                        property.transformAccessors(mayResolveSetter)
+                        property.transformAccessors(
+                            if (mayResolveSetter) SetterResolutionMode.FULLY_RESOLVE else SetterResolutionMode.ONLY_IMPLICIT_PARAMETER_TYPE
+                        )
                         property.replaceBodyResolveState(
                             if (mayResolveSetter) FirPropertyBodyResolveState.EVERYTHING_RESOLVED
                             else FirPropertyBodyResolveState.INITIALIZER_AND_GETTER_RESOLVED
@@ -277,6 +279,8 @@ open class FirDeclarationsResolveTransformer(
     }
 
     private fun transformPropertyAccessorsWithDelegate(property: FirProperty, delegate: FirExpression) {
+        val isImplicitTypedProperty = property.returnTypeRef is FirImplicitTypeRef
+
         context.forPropertyDelegateAccessors(property, resolutionContext, callCompleter) {
             dataFlowAnalyzer.enterDelegateExpression()
             // Resolve delegate expression, after that, delegate will contain either expr.provideDelegate or expr
@@ -288,7 +292,12 @@ open class FirDeclarationsResolveTransformer(
                 }
             }
 
-            property.transformAccessors()
+            // We don't use inference from setValue calls (i.e. don't resolve setters until the delegate inference is completed),
+            // when property doesn't have explicit type.
+            // It's necessary because we need to supply the property type as the 3rd argument for `setValue` and there might be uninferred
+            // variables from `getValue`.
+            // The same logic was used at K1 (see org.jetbrains.kotlin.resolve.DelegatedPropertyResolver.inferDelegateTypeFromGetSetValueMethods)
+            property.transformAccessors(if (isImplicitTypedProperty) SetterResolutionMode.SKIP else SetterResolutionMode.FULLY_RESOLVE)
             val completedCalls = completeCandidates()
 
             val finalSubstitutor = createFinalSubstitutor()
@@ -310,10 +319,14 @@ open class FirDeclarationsResolveTransformer(
             completedCalls.forEach {
                 it.transformSingle(callCompletionResultsWriter, null)
             }
-
-            dataFlowAnalyzer.exitDelegateExpression(delegate)
-            property
         }
+
+        // `isImplicitTypedProperty` means we haven't run setter resolution yet (see its second usage)
+        if (isImplicitTypedProperty) {
+            property.resolveSetter(property.returnTypeRef, mayResolveSetterBody = true)
+        }
+
+        dataFlowAnalyzer.exitDelegateExpression(delegate)
     }
 
     override fun transformPropertyAccessor(propertyAccessor: FirPropertyAccessor, data: ResolutionMode): FirStatement {
@@ -420,7 +433,17 @@ open class FirDeclarationsResolveTransformer(
         return variable
     }
 
-    private fun FirProperty.transformAccessors(mayResolveSetter: Boolean = true) {
+    // TODO: This enum might actually be a boolean (resolve setter/don't resolve setter)
+    // But for some reason, in IDE there's a need to resolve setter's parameter types on the implicit-resolution stage
+    // See ad183434137939a0c9eeea2f7df9ef522672a18e commit.
+    // But for delegate inference case, we don't need both body of the setter and its parameter resolved (SKIP mode)
+    private enum class SetterResolutionMode {
+        FULLY_RESOLVE, ONLY_IMPLICIT_PARAMETER_TYPE, SKIP
+    }
+
+    private fun FirProperty.transformAccessors(
+        setterResolutionMode: SetterResolutionMode = SetterResolutionMode.FULLY_RESOLVE
+    ) {
         var enhancedTypeRef = returnTypeRef
         if (bodyResolveState < FirPropertyBodyResolveState.INITIALIZER_AND_GETTER_RESOLVED) {
             getter?.let {
@@ -433,10 +456,20 @@ open class FirDeclarationsResolveTransformer(
             // We need update type of getter for case when its type was approximated
             getter?.transformTypeWithPropertyType(enhancedTypeRef, forceUpdateForNonImplicitTypes = true)
         }
+
+        if (setterResolutionMode != SetterResolutionMode.SKIP) {
+            resolveSetter(enhancedTypeRef, mayResolveSetterBody = setterResolutionMode == SetterResolutionMode.FULLY_RESOLVE)
+        }
+    }
+
+    private fun FirProperty.resolveSetter(
+        enhancedTypeRef: FirTypeRef,
+        mayResolveSetterBody: Boolean,
+    ) {
         setter?.let {
             it.transformTypeWithPropertyType(enhancedTypeRef)
 
-            if (mayResolveSetter) {
+            if (mayResolveSetterBody) {
                 transformAccessor(it, enhancedTypeRef, this)
             }
         }
