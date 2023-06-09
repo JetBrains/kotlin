@@ -245,12 +245,12 @@ internal class GradleKotlinCompilerWork @Inject constructor(
             }
             bufferingMessageCollector.flush(messageCollector)
             exitCodeFromProcessExitCode(log, res.get())
-        } catch (e: RemoteException) {
-            throw DaemonCrashedException(e)
         } catch (e: Throwable) {
             bufferingMessageCollector.flush(messageCollector)
             if (e is OutOfMemoryError || e.hasOOMCause()) {
                 throw OOMErrorException(kotlinDaemonOOMHelperMessage)
+            } else if (e is RemoteException) {
+                throw DaemonCrashedException(e)
             } else {
                 throw e
             }
