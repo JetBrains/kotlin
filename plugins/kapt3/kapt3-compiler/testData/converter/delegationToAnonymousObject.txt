@@ -1,0 +1,14 @@
+@kotlin.Metadata()
+public final class C implements I {
+
+    public C() {
+        super();
+    }
+}
+
+////////////////////
+
+
+@kotlin.Metadata()
+public abstract interface I {
+}

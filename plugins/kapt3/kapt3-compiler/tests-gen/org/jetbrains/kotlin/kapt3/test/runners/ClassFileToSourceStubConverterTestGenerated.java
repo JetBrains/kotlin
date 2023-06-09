@@ -176,6 +176,12 @@ public class ClassFileToSourceStubConverterTestGenerated extends AbstractClassFi
     }
 
     @Test
+    @TestMetadata("delegationToAnonymousObject.kt")
+    public void testDelegationToAnonymousObject() throws Exception {
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/delegationToAnonymousObject.kt");
+    }
+
+    @Test
     @TestMetadata("deprecated.kt")
     public void testDeprecated() throws Exception {
         runTest("plugins/kapt3/kapt3-compiler/testData/converter/deprecated.kt");

@@ -204,7 +204,9 @@ internal class ClassGenerator(
         val delegateType = if (context.configuration.generateBodies) {
             getTypeInferredByFrontendOrFail(ktDelegateExpression)
         } else {
-            getTypeInferredByFrontend(ktDelegateExpression) ?: createErrorType(ErrorTypeKind.UNRESOLVED_TYPE, ktDelegateExpression.text)
+            getTypeInferredByFrontend(ktDelegateExpression).takeUnless {
+                it?.constructor?.declarationDescriptor?.let(DescriptorUtils::isLocal) == true
+            } ?: createErrorType(ErrorTypeKind.UNRESOLVED_TYPE, ktDelegateExpression.text)
         }
         val superType = getOrFail(BindingContext.TYPE, ktEntry.typeReference!!)
 
