@@ -262,6 +262,10 @@ internal class SymbolLightAccessorMethod private constructor(
 
     override fun getReturnType(): PsiType = _returnedType
 
+    override fun isEquivalentTo(another: PsiElement?): Boolean {
+        return super.isEquivalentTo(another) || basicIsEquivalentTo(this, another as? PsiField)
+    }
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is SymbolLightAccessorMethod ||

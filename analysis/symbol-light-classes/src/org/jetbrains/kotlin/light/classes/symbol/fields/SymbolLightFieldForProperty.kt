@@ -89,7 +89,9 @@ internal class SymbolLightFieldForProperty private constructor(
     }
 
     override fun isEquivalentTo(another: PsiElement?): Boolean {
-        return super.isEquivalentTo(another) || isOriginEquivalentTo(another)
+        return super.isEquivalentTo(another) ||
+                basicIsEquivalentTo(this, another as? PsiMethod) ||
+                isOriginEquivalentTo(another)
     }
 
     override fun isDeprecated(): Boolean = _isDeprecated

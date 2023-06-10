@@ -24,6 +24,15 @@ abstract class AbstractSymbolLightClassesEquivalentTest : AbstractAnalysisApiBas
         val declaration = testServices.expressionMarkerProvider.getElementOfTypeAtCaret<KtDeclaration>(ktFile)
         val lightElements = declaration.toLightElements()
         testServices.assertions.assertFalse(lightElements.isEmpty())
+        if (lightElements.size > 1) {
+            for (lightElement in lightElements) {
+                for (other in lightElements) {
+                    testServices.assertions.assertTrue(lightElement.isEquivalentTo(other)) {
+                        "Light elements are not equivalent: $lightElement and $other"
+                    }
+                }
+            }
+        }
         val lightElement = lightElements.find { it.javaClass.name == lightQName }
         testServices.assertions.assertNotNull(lightElement) { "Expected $lightQName, got: " + lightElements.joinToString { it::class.java.name } }
         testServices.assertions.assertTrue(lightElement!!.isEquivalentTo(declaration)) { "Light element is not equivalent to the corresponding ktElement" }

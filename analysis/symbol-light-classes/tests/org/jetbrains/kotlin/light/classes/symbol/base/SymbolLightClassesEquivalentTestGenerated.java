@@ -37,6 +37,12 @@ public class SymbolLightClassesEquivalentTestGenerated extends AbstractSymbolLig
     }
 
     @Test
+    @TestMetadata("ClassPropertyWithAccessor.kt")
+    public void testClassPropertyWithAccessor() throws Exception {
+        runTest("analysis/symbol-light-classes/testData/equivalentTo/ClassPropertyWithAccessor.kt");
+    }
+
+    @Test
     @TestMetadata("CompanionProperty.kt")
     public void testCompanionProperty() throws Exception {
         runTest("analysis/symbol-light-classes/testData/equivalentTo/CompanionProperty.kt");
