@@ -206,6 +206,9 @@ abstract class Symbols(
     open val throwISE: IrSimpleFunctionSymbol
         get() = error("throwISE is not implemented")
 
+    open val throwIAE: IrSimpleFunctionSymbol
+        get() = error("throwIAE is not implemented")
+
     abstract val stringBuilder: IrClassSymbol
 
     abstract val defaultConstructorMarker: IrClassSymbol
