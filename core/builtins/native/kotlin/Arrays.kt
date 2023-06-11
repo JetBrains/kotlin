@@ -10,6 +10,7 @@ package kotlin
 /**
  * An array of bytes. When targeting the JVM, instances of this class are represented as `byte[]`.
  * @constructor Creates a new array of the specified [size], with all elements initialized to zero.
+ * @throws RuntimeException if the specified [size] is negative.
  */
 public class ByteArray(size: Int) {
     /**
@@ -18,6 +19,8 @@ public class ByteArray(size: Int) {
      *
      * The function [init] is called for each array element sequentially starting from the first one.
      * It should return the value for an array element given its index.
+     *
+     * @throws RuntimeException if the specified [size] is negative.
      */
     public inline constructor(size: Int, init: (Int) -> Byte)
 
@@ -47,6 +50,7 @@ public class ByteArray(size: Int) {
 /**
  * An array of chars. When targeting the JVM, instances of this class are represented as `char[]`.
  * @constructor Creates a new array of the specified [size], with all elements initialized to null char (`\u0000').
+ * @throws RuntimeException if the specified [size] is negative.
  */
 public class CharArray(size: Int) {
     /**
@@ -55,6 +59,8 @@ public class CharArray(size: Int) {
      *
      * The function [init] is called for each array element sequentially starting from the first one.
      * It should return the value for an array element given its index.
+     *
+     * @throws RuntimeException if the specified [size] is negative.
      */
     public inline constructor(size: Int, init: (Int) -> Char)
 
@@ -84,6 +90,7 @@ public class CharArray(size: Int) {
 /**
  * An array of shorts. When targeting the JVM, instances of this class are represented as `short[]`.
  * @constructor Creates a new array of the specified [size], with all elements initialized to zero.
+ * @throws RuntimeException if the specified [size] is negative.
  */
 public class ShortArray(size: Int) {
     /**
@@ -92,6 +99,8 @@ public class ShortArray(size: Int) {
      *
      * The function [init] is called for each array element sequentially starting from the first one.
      * It should return the value for an array element given its index.
+     *
+     * @throws RuntimeException if the specified [size] is negative.
      */
     public inline constructor(size: Int, init: (Int) -> Short)
 
@@ -121,6 +130,7 @@ public class ShortArray(size: Int) {
 /**
  * An array of ints. When targeting the JVM, instances of this class are represented as `int[]`.
  * @constructor Creates a new array of the specified [size], with all elements initialized to zero.
+ * @throws RuntimeException if the specified [size] is negative.
  */
 public class IntArray(size: Int) {
     /**
@@ -129,6 +139,8 @@ public class IntArray(size: Int) {
      *
      * The function [init] is called for each array element sequentially starting from the first one.
      * It should return the value for an array element given its index.
+     *
+     * @throws RuntimeException if the specified [size] is negative.
      */
     public inline constructor(size: Int, init: (Int) -> Int)
 
@@ -158,6 +170,7 @@ public class IntArray(size: Int) {
 /**
  * An array of longs. When targeting the JVM, instances of this class are represented as `long[]`.
  * @constructor Creates a new array of the specified [size], with all elements initialized to zero.
+ * @throws RuntimeException if the specified [size] is negative.
  */
 public class LongArray(size: Int) {
     /**
@@ -166,6 +179,8 @@ public class LongArray(size: Int) {
      *
      * The function [init] is called for each array element sequentially starting from the first one.
      * It should return the value for an array element given its index.
+     *
+     * @throws RuntimeException if the specified [size] is negative.
      */
     public inline constructor(size: Int, init: (Int) -> Long)
 
@@ -195,6 +210,7 @@ public class LongArray(size: Int) {
 /**
  * An array of floats. When targeting the JVM, instances of this class are represented as `float[]`.
  * @constructor Creates a new array of the specified [size], with all elements initialized to zero.
+ * @throws RuntimeException if the specified [size] is negative.
  */
 public class FloatArray(size: Int) {
     /**
@@ -203,6 +219,8 @@ public class FloatArray(size: Int) {
      *
      * The function [init] is called for each array element sequentially starting from the first one.
      * It should return the value for an array element given its index.
+     *
+     * @throws RuntimeException if the specified [size] is negative.
      */
     public inline constructor(size: Int, init: (Int) -> Float)
 
@@ -232,6 +250,7 @@ public class FloatArray(size: Int) {
 /**
  * An array of doubles. When targeting the JVM, instances of this class are represented as `double[]`.
  * @constructor Creates a new array of the specified [size], with all elements initialized to zero.
+ * @throws RuntimeException if the specified [size] is negative.
  */
 public class DoubleArray(size: Int) {
     /**
@@ -240,6 +259,8 @@ public class DoubleArray(size: Int) {
      *
      * The function [init] is called for each array element sequentially starting from the first one.
      * It should return the value for an array element given its index.
+     *
+     * @throws RuntimeException if the specified [size] is negative.
      */
     public inline constructor(size: Int, init: (Int) -> Double)
 
@@ -269,6 +290,7 @@ public class DoubleArray(size: Int) {
 /**
  * An array of booleans. When targeting the JVM, instances of this class are represented as `boolean[]`.
  * @constructor Creates a new array of the specified [size], with all elements initialized to `false`.
+ * @throws RuntimeException if the specified [size] is negative.
  */
 public class BooleanArray(size: Int) {
     /**
@@ -277,6 +299,8 @@ public class BooleanArray(size: Int) {
      *
      * The function [init] is called for each array element sequentially starting from the first one.
      * It should return the value for an array element given its index.
+     *
+     * @throws RuntimeException if the specified [size] is negative.
      */
     public inline constructor(size: Int, init: (Int) -> Boolean)
 
