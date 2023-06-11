@@ -11,6 +11,7 @@ import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.ProjectLayout
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.MapProperty
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode
 import org.jetbrains.kotlin.gradle.targets.native.tasks.buildKotlinNativeBinaryLinkerArgs
 import org.jetbrains.kotlin.gradle.tasks.KotlinToolTask
+import org.jetbrains.kotlin.gradle.utils.XcodeUtils
 import org.jetbrains.kotlin.gradle.utils.newInstance
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -73,6 +75,7 @@ abstract class KotlinNativeLinkArtifactTask @Inject constructor(
     abstract val staticFramework: Property<Boolean>
 
     @get:Input
+    @get:Optional
     abstract val embedBitcode: Property<BitcodeEmbeddingMode>
 
     @get:Classpath
@@ -89,6 +92,10 @@ abstract class KotlinNativeLinkArtifactTask @Inject constructor(
 
     @get:Input
     abstract val binaryOptions: MapProperty<String, String>
+
+    @get:Optional
+    @get:InputFile
+    abstract val xcodeVersion: RegularFileProperty
 
     private val nativeBinaryOptions = PropertiesProvider(project).nativeBinaryOptions
 
@@ -163,7 +170,6 @@ abstract class KotlinNativeLinkArtifactTask @Inject constructor(
         enableEndorsedLibs.value(false).finalizeValue()
         processTests.convention(false)
         staticFramework.convention(false)
-        embedBitcode.convention(BitcodeEmbeddingMode.DISABLE)
         destinationDir.convention(debuggable.flatMap {
             val kind = outputKind.visibleName
             val target = konanTarget.visibleName
@@ -191,7 +197,7 @@ abstract class KotlinNativeLinkArtifactTask @Inject constructor(
             compilerPlugins = emptyList(),//CompilerPlugins aren't needed here because it's no compilation but linking
             processTests = processTests.get(),
             entryPoint = entryPoint.getOrNull(),
-            embedBitcode = embedBitcode.get(),
+            embedBitcode = bitcodeEmbeddingMode(),
             linkerOpts = linkerOptions.get(),
             binaryOptions = allBinaryOptions.get(),
             isStaticFramework = staticFramework.get(),
@@ -204,5 +210,9 @@ abstract class KotlinNativeLinkArtifactTask @Inject constructor(
             settings = runnerSettings,
             executionContext = KotlinToolRunner.GradleExecutionContext.fromTaskContext(objectFactory, execOperations, logger)
         ).run(buildArgs)
+    }
+
+    private fun bitcodeEmbeddingMode(): BitcodeEmbeddingMode {
+        return XcodeUtils.bitcodeEmbeddingMode(outputKind, embedBitcode.orNull, xcodeVersion, konanTarget, debuggable.get())
     }
 }

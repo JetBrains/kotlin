@@ -8,6 +8,7 @@
 package org.jetbrains.kotlin.gradle.targets.native.tasks
 
 import org.gradle.api.file.ProjectLayout
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
@@ -15,8 +16,9 @@ import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension.*
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.cocoapodsBuildDirs
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.platformLiteral
-import org.jetbrains.kotlin.gradle.utils.XcodeVersion
+import org.jetbrains.kotlin.gradle.utils.parse
 import org.jetbrains.kotlin.konan.target.Family
+import org.jetbrains.kotlin.konan.target.XcodeVersion
 import java.io.File
 import javax.inject.Inject
 
@@ -52,8 +54,9 @@ abstract class PodGenTask @Inject constructor(projectLayout: ProjectLayout) : Co
     @get:Nested
     internal abstract val pods: ListProperty<CocoapodsDependency>
 
-    @get:Input
-    internal abstract val xcodeVersion: Property<XcodeVersion>
+    @get:Optional
+    @get:InputFile
+    internal abstract val xcodeVersion: RegularFileProperty
 
     @get:OutputFile
     val podfile: Provider<File> = projectLayout.cocoapodsBuildDirs.synthetic(family).map { it.file("Podfile").asFile }
@@ -123,7 +126,7 @@ abstract class PodGenTask @Inject constructor(projectLayout: ProjectLayout) : Co
         }
 
     private fun insertXcode143DeploymentTargetWorkarounds(family: Family): String {
-        if (xcodeVersion.get() < XcodeVersion(14, 3)) {
+        if (XcodeVersion.parse(xcodeVersion) < XcodeVersion(14, 3)) {
             return ""
         }
 

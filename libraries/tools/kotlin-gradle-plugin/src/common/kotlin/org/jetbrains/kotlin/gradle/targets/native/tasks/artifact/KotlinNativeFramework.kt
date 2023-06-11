@@ -15,10 +15,11 @@ import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeOutputKind
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XcodeVersionTask
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.version
 import org.jetbrains.kotlin.gradle.plugin.mpp.enabledOnCurrentHost
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.registerTask
-import org.jetbrains.kotlin.gradle.utils.Xcode
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.presetName
@@ -109,6 +110,7 @@ internal fun KotlinNativeArtifact.registerLinkFrameworkTask(
 ): TaskProvider<KotlinNativeLinkArtifactTask> {
     val kind = NativeOutputKind.FRAMEWORK
     val destinationDir = project.buildDir.resolve("$outDirName/${target.visibleName}/${buildType.visibleName}")
+    val xcodeVersionTask = XcodeVersionTask.locateOrRegister(project)
     val resultTask = project.registerTask<KotlinNativeLinkArtifactTask>(
         lowerCamelCaseName("assemble", name, buildType.visibleName, kind.taskNameClassifier, target.presetName, taskNameSuffix),
         listOf(target, kind.compilerOutputKind)
@@ -121,11 +123,10 @@ internal fun KotlinNativeArtifact.registerLinkFrameworkTask(
         task.debuggable.set(buildType.debuggable)
         task.linkerOptions.set(linkerOptions)
         task.binaryOptions.set(binaryOptions)
+        task.xcodeVersion.set(xcodeVersionTask.version)
         task.staticFramework.set(isStatic)
         if (embedBitcode != null) {
             task.embedBitcode.set(embedBitcode)
-        } else if (Xcode != null) {
-            task.embedBitcode.set(project.provider { Xcode.defaultBitcodeEmbeddingMode(target, buildType) })
         }
         task.libraries.setFrom(project.configurations.getByName(librariesConfigurationName))
         task.exportLibraries.setFrom(project.configurations.getByName(exportConfigurationName))

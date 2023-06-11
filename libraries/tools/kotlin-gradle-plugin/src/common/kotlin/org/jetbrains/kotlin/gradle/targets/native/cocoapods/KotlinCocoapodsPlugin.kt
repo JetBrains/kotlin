@@ -48,7 +48,6 @@ import org.jetbrains.kotlin.utils.addToStdlib.cast
 import java.io.File
 
 
-
 internal val ProjectLayout.cocoapodsBuildDirs: CocoapodsBuildDirs
     get() = CocoapodsBuildDirs(this)
 
@@ -515,6 +514,8 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
                 else -> error("Unknown cocoapods platform: $family")
             }
 
+            val xcodeVersionTask = XcodeVersionTask.locateOrRegister(project)
+
             val podGenTask = project.registerTask<PodGenTask>(family.toPodGenTaskName) { task ->
                 task.description = "Сreates a synthetic Xcode project to retrieve CocoaPods dependencies"
                 task.podspec.set(podspecTaskProvider.map { it.outputFile })
@@ -524,7 +525,7 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
                 task.family.set(family)
                 task.platformSettings.set(platformSettings)
                 task.pods.set(cocoapodsExtension.pods)
-                task.xcodeVersion.set(Xcode?.currentVersion)
+                task.xcodeVersion.set(xcodeVersionTask.version)
             }
 
             project.registerTask<PodInstallSyntheticTask>(family.toPodInstallSyntheticTaskName) { task ->

@@ -14,10 +14,10 @@ import org.jetbrains.kotlin.gradle.testbase.extractNativeCompilerCommandLineArgu
 import org.jetbrains.kotlin.gradle.transformProjectWithPluginsDsl
 import org.jetbrains.kotlin.gradle.util.modify
 import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
-import org.jetbrains.kotlin.gradle.utils.Xcode
-import org.jetbrains.kotlin.gradle.utils.XcodeVersion
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.konan.target.Xcode
+import org.jetbrains.kotlin.konan.target.XcodeVersion
 import org.jetbrains.kotlin.konan.target.presetName
 import org.jetbrains.kotlin.konan.util.DependencyDirectories
 import org.junit.Assume
@@ -244,7 +244,7 @@ class NativeDownloadAndPlatformLibsIT : BaseGradleIT() {
 
         if (HostManager.hostIsMac) {
             // Building platform libs require Xcode 14.1
-            Assume.assumeTrue(Xcode!!.currentVersion >= XcodeVersion(14, 1))
+            Assume.assumeTrue(Xcode.findCurrent().version >= XcodeVersion(14, 1))
         }
 
         with(transformNativeTestProjectWithPluginDsl("native-download-maven")) {

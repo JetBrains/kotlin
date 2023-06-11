@@ -25,7 +25,7 @@ import kotlin.io.path.*
 import kotlin.test.*
 
 @OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
-@DisplayName("K/N cocoapods tests")
+@DisplayName("CocoaPods plugin tests")
 @NativeGradlePluginTests
 @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_0)
 @OptIn(EnvironmentalVariablesOverride::class)
@@ -771,16 +771,8 @@ class CocoaPodsIT : KGPBaseTest() {
         }
     }
 
-    @DisplayName("Configuration cache works in a complex scenario with Gradle 8_1")
-    @GradleTest
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_8_1)
-    @Disabled // will be fixed in the next step
-    fun testConfigurationCacheWorksInAComplexScenarioWithGradle8_1(gradleVersion: GradleVersion) {
-        testConfigurationCacheWorksInAComplexScenario(gradleVersion)
-    }
-
     @DisplayName("Configuration cache works in a complex scenario")
-    @GradleTestVersions(minVersion = TestVersions.Gradle.MAX_SUPPORTED)
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_6, maxVersion = TestVersions.Gradle.G_8_1)
     @GradleTest
     fun testConfigurationCacheWorksInAComplexScenario(gradleVersion: GradleVersion) {
         val buildOptions = defaultBuildOptions.copy(

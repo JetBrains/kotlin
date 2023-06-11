@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.enabledOnCurrentHost
 import org.jetbrains.kotlin.gradle.tasks.FatFrameworkTask
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
+import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.gradle.utils.mapToFile
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -247,7 +248,7 @@ internal abstract class FrameworkCopy : DefaultTask() {
 
     private fun copy(sourceProvider: Provider<File>) {
         val source = sourceProvider.get()
-        val destination = destinationDirectory.asFile.get()
+        val destination = destinationDirectory.getFile()
 
         val destinationFile = File(destination, source.name)
         if (destinationFile.exists()) {

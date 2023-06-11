@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.konan.target
 import org.jetbrains.kotlin.konan.properties.KonanPropertiesLoader
 import org.jetbrains.kotlin.konan.properties.Properties
 import org.jetbrains.kotlin.konan.util.InternalServer
-import kotlin.math.max
 
 class AppleConfigurablesImpl(
         target: KonanTarget,
@@ -58,7 +57,7 @@ class AppleConfigurablesImpl(
             val xcode = Xcode.findCurrent()
 
             if (properties.getProperty("ignoreXcodeVersionCheck") != "true") {
-                properties.getProperty("minimalXcodeVersion")?.let { minimalXcodeVersion ->
+                properties.getProperty("minimalXcodeVersion")?.let(XcodeVersion::parse)?.let { minimalXcodeVersion ->
                     val currentXcodeVersion = xcode.version
                     checkXcodeVersion(minimalXcodeVersion, currentXcodeVersion)
                 }
@@ -68,22 +67,9 @@ class AppleConfigurablesImpl(
         }
     }
 
-    private fun checkXcodeVersion(minimalVersion: String, currentVersion: String) {
-        // Xcode versions contain only numbers (even betas).
-        // But we still split by '-' and whitespaces to take into account versions like 11.2-beta.
-        val minimalVersionParts = minimalVersion.split("(\\s+|\\.|-)".toRegex()).map { it.toIntOrNull() ?: 0 }
-        val currentVersionParts = currentVersion.split("(\\s+|\\.|-)".toRegex()).map { it.toIntOrNull() ?: 0 }
-        val size = max(minimalVersionParts.size, currentVersionParts.size)
-
-        for (i in 0 until size) {
-            val currentPart = currentVersionParts.getOrElse(i) { 0 }
-            val minimalPart = minimalVersionParts.getOrElse(i) { 0 }
-
-            when {
-                currentPart > minimalPart -> return
-                currentPart < minimalPart ->
-                    error("Unsupported Xcode version $currentVersion, minimal supported version is $minimalVersion.")
-            }
+    private fun checkXcodeVersion(minimalVersion: XcodeVersion, currentVersion: XcodeVersion) {
+        if (currentVersion < minimalVersion) {
+            error("Unsupported Xcode version $currentVersion, minimal supported version is $minimalVersion.")
         }
     }
 

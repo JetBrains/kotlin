@@ -21,12 +21,35 @@ import org.jetbrains.kotlin.konan.MissingXcodeException
 import org.jetbrains.kotlin.konan.exec.Command
 import org.jetbrains.kotlin.konan.file.File
 
+data class XcodeVersion(val major: Int, val minor: Int) : Comparable<XcodeVersion> {
+    override fun compareTo(other: XcodeVersion): Int {
+        return when (val majorComparison = major.compareTo(other.major)) {
+            0 -> minor.compareTo(other.minor)
+            else -> majorComparison
+        }
+    }
+
+    override fun toString(): String {
+        return "$major.$minor"
+    }
+
+    companion object {
+        fun parse(version: String): XcodeVersion? {
+            val split = version.split("(\\s+|\\.|-)".toRegex())
+            return XcodeVersion(
+                major = split[0].toIntOrNull() ?: return null,
+                minor = split.getOrNull(1)?.toIntOrNull() ?: return null,
+            )
+        }
+    }
+}
+
 interface Xcode {
     val toolchain: String
     val macosxSdk: String
     val iphoneosSdk: String
     val iphonesimulatorSdk: String
-    val version: String
+    val version: XcodeVersion
     val appletvosSdk: String
     val appletvsimulatorSdk: String
     val watchosSdk: String
@@ -87,12 +110,14 @@ internal class CurrentXcode : Xcode {
     override val watchosSdk: String by lazy { getSdkPath("watchos") }
     override val watchsimulatorSdk: String by lazy { getSdkPath("watchsimulator") }
 
-    internal val xcodebuildVersion: String
+    internal val xcodebuildVersion: XcodeVersion
         get() = xcrun("xcodebuild", "-version")
-                .removePrefix("Xcode ")
+            .removePrefix("Xcode ")
+            .parseXcodeVersion()
 
-    internal val bundleVersion: String
+    internal val bundleVersion: XcodeVersion
         get() = bash("""/usr/libexec/PlistBuddy "$(xcode-select -print-path)/../Info.plist" -c "Print :CFBundleShortVersionString"""")
+            .parseXcodeVersion()
 
     override val version by lazy {
         try {
@@ -119,4 +144,8 @@ internal class CurrentXcode : Xcode {
     private fun bash(command: String): String = Command("/bin/bash", "-c", command).getOutputLines().joinToString("\n")
 
     private fun getSdkPath(sdk: String) = xcrun("--sdk", sdk, "--show-sdk-path")
+
+    private fun String.parseXcodeVersion(): XcodeVersion {
+        return XcodeVersion.parse(this) ?: throw MissingXcodeException("Couldn't parse Xcode version from '$this'")
+    }
 }
