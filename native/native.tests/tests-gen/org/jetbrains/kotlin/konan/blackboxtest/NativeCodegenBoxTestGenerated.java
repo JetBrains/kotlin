@@ -28012,6 +28012,12 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             }
 
             @Test
+            @TestMetadata("booleanHashCode.kt")
+            public void testBooleanHashCode() throws Exception {
+                runTest("compiler/testData/codegen/box/primitiveTypes/booleanHashCode.kt");
+            }
+
+            @Test
             @TestMetadata("comparisonWithNullCallsFun.kt")
             public void testComparisonWithNullCallsFun() throws Exception {
                 runTest("compiler/testData/codegen/box/primitiveTypes/comparisonWithNullCallsFun.kt");

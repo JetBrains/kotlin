@@ -35554,6 +35554,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
         }
 
         @Test
+        @TestMetadata("booleanHashCode.kt")
+        public void testBooleanHashCode() throws Exception {
+            runTest("compiler/testData/codegen/box/primitiveTypes/booleanHashCode.kt");
+        }
+
+        @Test
         @TestMetadata("comparisonWithNaN.kt")
         public void testComparisonWithNaN() throws Exception {
             runTest("compiler/testData/codegen/box/primitiveTypes/comparisonWithNaN.kt");

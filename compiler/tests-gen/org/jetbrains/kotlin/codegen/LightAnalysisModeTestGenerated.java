@@ -29023,6 +29023,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/primitiveTypes"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
         }
 
+        @TestMetadata("booleanHashCode.kt")
+        public void testBooleanHashCode() throws Exception {
+            runTest("compiler/testData/codegen/box/primitiveTypes/booleanHashCode.kt");
+        }
+
         @TestMetadata("comparisonWithNaN.kt")
         public void testComparisonWithNaN() throws Exception {
             runTest("compiler/testData/codegen/box/primitiveTypes/comparisonWithNaN.kt");

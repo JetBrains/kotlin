@@ -22396,6 +22396,11 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/primitiveTypes"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
         }
 
+        @TestMetadata("booleanHashCode.kt")
+        public void testBooleanHashCode() throws Exception {
+            runTest("compiler/testData/codegen/box/primitiveTypes/booleanHashCode.kt");
+        }
+
         @TestMetadata("comparisonWithNullCallsFun.kt")
         public void testComparisonWithNullCallsFun() throws Exception {
             runTest("compiler/testData/codegen/box/primitiveTypes/comparisonWithNullCallsFun.kt");
