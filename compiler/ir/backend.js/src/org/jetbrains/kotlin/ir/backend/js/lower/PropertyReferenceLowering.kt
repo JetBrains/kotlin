@@ -32,7 +32,7 @@ class PropertyReferenceLowering(private val context: JsIrBackendContext) : BodyL
     private val localDelegateBuilderSymbol = context.klocalDelegateBuilder
     private val jsClassSymbol = context.intrinsics.jsClass
 
-    private val throwISE = context.throwISEsymbol
+    private val throwISE = context.ir.symbols.throwISE
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         val currentParent = container as? IrDeclarationParent ?: container.parent

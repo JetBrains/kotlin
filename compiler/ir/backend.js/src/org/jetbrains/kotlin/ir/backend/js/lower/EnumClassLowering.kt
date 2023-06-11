@@ -501,7 +501,7 @@ class EnumSyntheticFunctionsAndPropertiesLowering(
         return null
     }
 
-    private val throwISESymbol = context.ir.symbols.throwISE
+    private val throwIAESymbol = context.ir.symbols.throwIAE
 
     private fun createEnumEntriesBody(entriesGetter: IrFunction, enumClass: IrClass): IrBlockBody {
         val entriesField = enumClass.buildEntriesField()
@@ -548,7 +548,9 @@ class EnumSyntheticFunctionsAndPropertiesLowering(
                         )
                     } memoryOptimizedPlus irElseBranch(irBlock {
                         +irCall(irClass.initEntryInstancesFun!!)
-                        +irCall(throwISESymbol)
+                        +irCall(throwIAESymbol).apply {
+                            putValueArgument(0, irString("No enum constant ${nameParameter.name.identifier}."))
+                        }
                     })
                 )
             }
