@@ -42,10 +42,10 @@ import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.KonanTarget.*
+import org.jetbrains.kotlin.konan.target.Xcode
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 import java.io.File
-
 
 
 internal val ProjectLayout.cocoapodsBuildDirs: CocoapodsBuildDirs
@@ -535,7 +535,7 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
                 task.family.set(family)
                 task.platformSettings.set(platformSettings)
                 task.pods.set(cocoapodsExtension.pods)
-                task.xcodeVersion.set(Xcode?.currentVersion)
+                task.xcodeVersion.set(project.provider { Xcode.findCurrent().version })
             }
 
             project.registerTask<PodInstallSyntheticTask>(family.toPodInstallSyntheticTaskName) { task ->

@@ -15,8 +15,8 @@ import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension.*
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.cocoapodsBuildDirs
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.platformLiteral
-import org.jetbrains.kotlin.gradle.utils.XcodeVersion
 import org.jetbrains.kotlin.konan.target.Family
+import org.jetbrains.kotlin.konan.target.XcodeVersion
 import java.io.File
 import javax.inject.Inject
 

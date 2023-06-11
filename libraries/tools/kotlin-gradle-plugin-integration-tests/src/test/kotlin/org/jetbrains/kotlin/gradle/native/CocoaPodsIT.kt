@@ -1228,7 +1228,6 @@ class CocoaPodsIT : BaseGradleIT() {
     }
 
     @Test
-    @Ignore // will be fixed in the next step
     fun `test configuration cache works in a complex scenario with Gradle 8_1`() {
         project = transformProjectWithPluginsDsl(templateProjectName, GradleVersionRequired.Exact(G_8_1)).apply {
             preparePodfile("ios-app", ImportMode.FRAMEWORKS)
