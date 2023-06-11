@@ -366,6 +366,7 @@ object FirErrors {
     val RESULT_TYPE_MISMATCH by error2<KtExpression, ConeKotlinType, ConeKotlinType>()
     val MANY_LAMBDA_EXPRESSION_ARGUMENTS by error0<KtValueArgument>()
     val NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER by error1<KtElement, String>()
+    val IMPLICITLY_GENERIC_CALLABLE_REFERENCE by error3<KtExpression, String, Pair<ConeKotlinType, Collection<String>>, String>()
     val SPREAD_OF_NULLABLE by error0<PsiElement>(SourceElementPositioningStrategies.SPREAD_OPERATOR)
     val ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_FUNCTION by deprecationError1<KtExpression, ConeKotlinType>(ProhibitAssigningSingleElementsToVarargsInNamedForm)
     val ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_ANNOTATION by deprecationError0<KtExpression>(ProhibitAssigningSingleElementsToVarargsInNamedForm)

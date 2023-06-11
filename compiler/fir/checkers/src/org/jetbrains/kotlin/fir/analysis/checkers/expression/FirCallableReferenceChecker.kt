@@ -15,39 +15,62 @@ import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.diagnostics.ConeCannotInferTypeParameterType
 import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.references.resolved
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
+import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.text
+import java.lang.StringBuilder
 
 object FirCallableReferenceChecker : FirQualifiedAccessExpressionChecker() {
     override fun check(expression: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
         if (expression !is FirCallableReferenceAccess) return
 
-        checkReferenceIsToAllowedMember(expression, context, reporter)
-    }
-
-    // See FE 1.0 [DoubleColonExpressionResolver#checkReferenceIsToAllowedMember]
-    private fun checkReferenceIsToAllowedMember(
-        callableReferenceAccess: FirCallableReferenceAccess,
-        context: CheckerContext,
-        reporter: DiagnosticReporter
-    ) {
-        // UNRESOLVED_REFERENCE will be reported separately.
-        val reference = callableReferenceAccess.calleeReference.resolved ?: return
+        // UNRESOLVED_REFERENCE will be reported separately
+        val reference = expression.calleeReference.resolved ?: return
 
         val source = reference.source ?: return
         if (source.kind is KtFakeSourceElementKind) return
 
-        val referredSymbol = reference.resolvedSymbol
+        val referredSymbol = reference.resolvedSymbol as? FirCallableSymbol<*> ?: return
+
+        // See FE 1.0 [DoubleColonExpressionResolver#checkReferenceIsToAllowedMember]
         if (referredSymbol is FirConstructorSymbol && referredSymbol.getContainingClassSymbol(context.session)?.classKind == ClassKind.ANNOTATION_CLASS) {
             reporter.reportOn(source, FirErrors.CALLABLE_REFERENCE_TO_ANNOTATION_CONSTRUCTOR, context)
         }
-        if ((referredSymbol as? FirCallableSymbol<*>)?.isExtensionMember == true &&
-            !referredSymbol.isLocalMember
-        ) {
+        if (referredSymbol.isExtensionMember && !referredSymbol.isLocalMember) {
             reporter.reportOn(source, FirErrors.EXTENSION_IN_CLASS_REFERENCE_NOT_ALLOWED, referredSymbol, context)
+        }
+
+        val freeTypeVariables = expression.typeArguments
+            .asSequence()
+            .map(FirTypeProjection::toConeTypeProjection)
+            .filterIsInstance<ConeErrorType>()
+            .map(ConeErrorType::diagnostic)
+            .filterIsInstance<ConeCannotInferTypeParameterType>()
+            .map(ConeCannotInferTypeParameterType::typeParameter)
+            .toList()
+        if (freeTypeVariables.isNotEmpty()) {
+            for (freeTypeVariable in freeTypeVariables) {
+                reporter.reportOn(
+                    source,
+                    FirErrors.NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER,
+                    freeTypeVariable.name.asString(),
+                    context
+                )
+            }
+            val freeTypeVariablesNames = freeTypeVariables.map { freeTypeVariable -> freeTypeVariable.name.asString() }
+            reporter.reportOn(
+                source,
+                FirErrors.IMPLICITLY_GENERIC_CALLABLE_REFERENCE,
+                freeTypeVariablesNames.joinToString(),
+                expression.typeRef.coneType to freeTypeVariablesNames,
+                StringBuilder(expression.source.text).toString(),
+                context
+            )
         }
     }
 }

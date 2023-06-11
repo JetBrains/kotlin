@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.REND
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.RENDER_CLASS_OR_OBJECT_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.RENDER_COLLECTION_OF_TYPES
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.RENDER_TYPE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.RENDER_UNIVERSALLY_QUANTIFIED_TYPE_AS_CORRECT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.SYMBOL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.SYMBOLS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.VARIABLE_NAME
@@ -258,6 +259,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ILLEGAL_SUSPEND_F
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ILLEGAL_SUSPEND_PROPERTY_ACCESS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ILLEGAL_UNDERSCORE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IMPLEMENTATION_BY_DELEGATION_IN_EXPECT_CLASS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IMPLICITLY_GENERIC_CALLABLE_REFERENCE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IMPLICIT_BOXING_IN_IDENTITY_EQUALS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IMPLICIT_NOTHING_PROPERTY_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IMPLICIT_NOTHING_RETURN_TYPE
@@ -1045,7 +1047,18 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(NAME_FOR_AMBIGUOUS_PARAMETER, "Named argument is not allowed for a parameter with an ambiguous name")
 
         map.put(MANY_LAMBDA_EXPRESSION_ARGUMENTS, "Only one lambda expression is allowed outside a parenthesized argument list")
-        map.put(NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, "Not enough information to infer type variable {0}", STRING)
+        map.put(NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, "There is not enough information to infer type variable {0}", STRING)
+        map.put(
+            IMPLICITLY_GENERIC_CALLABLE_REFERENCE,
+            "Callable reference effectively has a generic type ''{1}'' with type parameter(s) {0}; this is not supported. " +
+                    "As a workaround, you can create an explicitly generic declaration like this one: " +
+                    "''fun <{0}> foo(): {1} = {2}''. " +
+                    "If you would like to fix this error by providing explicit type information, you can do it like this: " +
+                    "''val intermediateValue: {1} = {2}'' (replace type variables in intermediateValue''s type with concrete types)",
+            STRING,
+            RENDER_UNIVERSALLY_QUANTIFIED_TYPE_AS_CORRECT,
+            STRING
+        )
         map.put(SPREAD_OF_NULLABLE, "The spread operator (*foo) may not be applied to an argument of nullable type")
         map.put(
             ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_FUNCTION,

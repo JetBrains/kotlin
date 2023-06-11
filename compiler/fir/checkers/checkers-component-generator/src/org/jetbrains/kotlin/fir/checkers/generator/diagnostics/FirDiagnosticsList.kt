@@ -560,6 +560,12 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<String>("name")
         }
 
+        val IMPLICITLY_GENERIC_CALLABLE_REFERENCE by error<KtExpression> {
+            parameter<String>("freeTypeVariables")
+            parameter<Pair<ConeKotlinType, Collection<String>>>("universallyQuantifiedCalleeType")
+            parameter<String>("referenceExpression")
+        }
+
         val SPREAD_OF_NULLABLE by error<PsiElement>(PositioningStrategy.SPREAD_OPERATOR)
 
         val ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_FUNCTION by deprecationError<KtExpression>(LanguageFeature.ProhibitAssigningSingleElementsToVarargsInNamedForm) {

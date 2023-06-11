@@ -1764,6 +1764,17 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.IMPLICITLY_GENERIC_CALLABLE_REFERENCE) { firDiagnostic ->
+        ImplicitlyGenericCallableReferenceImpl(
+            firDiagnostic.a,
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.b.first) to firDiagnostic.b.second.map { string ->
+                string
+            },
+            firDiagnostic.c,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.SPREAD_OF_NULLABLE) { firDiagnostic ->
         SpreadOfNullableImpl(
             firDiagnostic as KtPsiDiagnostic,

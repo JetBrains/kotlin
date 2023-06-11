@@ -1519,6 +1519,14 @@ internal class NewInferenceNoInformationForParameterImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KtFirDiagnostic.NewInferenceNoInformationForParameter
 
+internal class ImplicitlyGenericCallableReferenceImpl(
+    override val freeTypeVariables: String,
+    override val universallyQuantifiedCalleeType: Pair<KtType, List<String>>,
+    override val referenceExpression: String,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KtFirDiagnostic.ImplicitlyGenericCallableReference
+
 internal class SpreadOfNullableImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,

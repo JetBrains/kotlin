@@ -125,6 +125,15 @@ object FirDiagnosticRenderers {
         ).renderElementAsString(symbol.fir, trim = true)
     }
 
+    val RENDER_UNIVERSALLY_QUANTIFIED_TYPE_AS_CORRECT = Renderer { (baseType, freeTypeVariables): Pair<ConeKotlinType, Collection<String>> ->
+        val replacements = freeTypeVariables.map { freeTypeVariable ->
+            freeTypeVariable to Regex("ERROR CLASS:.*$freeTypeVariable")
+        }
+        replacements.fold(baseType.renderReadableWithFqNames()) { prevRender, (replacement, regex) ->
+            prevRender.replace(regex, replacement)
+        }
+    }
+
     val AMBIGUOUS_CALLS = Renderer { candidates: Collection<FirBasedSymbol<*>> ->
         candidates.joinToString(separator = "\n", prefix = "\n") { symbol ->
             SYMBOL.render(symbol)

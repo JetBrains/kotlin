@@ -1266,6 +1266,13 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         val name: String
     }
 
+    interface ImplicitlyGenericCallableReference : KtFirDiagnostic<KtExpression> {
+        override val diagnosticClass get() = ImplicitlyGenericCallableReference::class
+        val freeTypeVariables: String
+        val universallyQuantifiedCalleeType: Pair<KtType, List<String>>
+        val referenceExpression: String
+    }
+
     interface SpreadOfNullable : KtFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = SpreadOfNullable::class
     }
