@@ -44,26 +44,9 @@ class SafeguardTest : TestCase() {
 
 class ApiTest : KotlinTestWithEnvironment() {
 
-    fun testStdlib() {
-        stdlibModuleApi.markUniqueLinesComparedTo(irStdlibModuleApi).checkRecursively("libraries/stdlib/api/js-v1")
-    }
-
     fun testIrStdlib() {
-        irStdlibModuleApi.markUniqueLinesComparedTo(stdlibModuleApi).checkRecursively("libraries/stdlib/api/js")
+        irStdlibModuleApi.checkRecursively("libraries/stdlib/api/js")
     }
-
-    private val stdlibModuleApi: Map<FqName, String>
-        get() {
-            val project = environment.project
-            val configuration = environment.configuration
-
-            configuration.put(CommonConfigurationKeys.MODULE_NAME, "test")
-            configuration.put(JSConfigurationKeys.LIBRARIES, JsConfig.JS_STDLIB)
-
-            val config = JsConfig(project, configuration, CompilerEnvironment)
-
-            return config.moduleDescriptors.single().packagesSerialized()
-        }
 
     private val irStdlibModuleApi: Map<FqName, String>
         get() {
@@ -86,67 +69,6 @@ class ApiTest : KotlinTestWithEnvironment() {
                 verifySignatures = true
             ).module.descriptor.packagesSerialized()
         }
-
-    private fun Map<FqName, String>.markUniqueLinesComparedTo(other: Map<FqName, String>): Map<FqName, String> {
-        return entries.map { (fqName, api) ->
-            val otherApiLines = other[fqName]?.lines() ?: emptyList()
-            val augmentedApi = diff(api.lines(), otherApiLines)
-
-            fqName to augmentedApi
-        }.toMap()
-    }
-
-    private fun diff(aLines: List<String>, bLines: List<String>): String {
-        val d = Array(aLines.size + 1) { ByteArray(bLines.size + 1) }
-        val c = Array(aLines.size + 1) { ShortArray(bLines.size + 1) }
-
-        val DX = 1.toByte()
-        val DY = 2.toByte()
-        val DXY = 3.toByte()
-
-        for (i in 0..aLines.size) {
-            c[i][0] = i.toShort()
-            d[i][0] = DX
-        }
-        for (j in 0..bLines.size) {
-            c[0][j] = j.toShort()
-            d[0][j] = DY
-        }
-        for (i in 1..aLines.size) {
-            for (j in 1..bLines.size) {
-                if (c[i - 1][j] <= c[i][j - 1]) {
-                    c[i][j] = (c[i - 1][j] + 1).toShort()
-                    d[i][j] = DX
-                } else {
-                    c[i][j] = (c[i][j - 1] + 1).toShort()
-                    d[i][j] = DY
-                }
-                if (aLines[i - 1] == bLines[j - 1] && c[i - 1][j - 1] < c[i][j]) {
-                    c[i][j] = c[i - 1][j - 1]
-                    d[i][j] = DXY
-                }
-            }
-        }
-
-        val result = mutableListOf<String>()
-
-        var x = aLines.size
-        var y = bLines.size
-
-        while (x != 0 || y != 0) {
-            val tdx = if ((d[x][y].toInt() and DX.toInt()) == 0) 0 else -1
-            val tdy = if ((d[x][y].toInt() and DY.toInt()) == 0) 0 else -1
-
-            if (tdx != 0) {
-                result += (if (tdy == 0) "/*∆*/ " else "") + aLines[x - 1]
-            }
-
-            x += tdx
-            y += tdy
-        }
-
-        return result.reversed().joinToString("\n")
-    }
 
     private fun String.listFiles(): Array<File> {
         val dirFile = File(this)

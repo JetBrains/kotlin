@@ -387,7 +387,6 @@ projectTest("jsStdlibApiTest", parallel = true, maxHeapSizeMb = 4096) {
 
     include("org/jetbrains/kotlin/js/testOld/api/*")
     inputs.dir(rootDir.resolve("libraries/stdlib/api/js"))
-    inputs.dir(rootDir.resolve("libraries/stdlib/api/js-v1"))
 
     dependsOn(":kotlin-stdlib-js-ir:compileKotlinJs")
     systemProperty("kotlin.js.full.stdlib.path", "libraries/stdlib/js-ir/build/classes/kotlin/js/main")
