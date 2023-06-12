@@ -42,3 +42,7 @@ fun FirSessionConfigurator.registerNativeCheckers() {
     useCheckers(NativeDeclarationCheckers)
     useCheckers(NativeExpressionCheckers)
 }
+
+fun FirSessionConfigurator.registerWasmCheckers() {
+    // TODO: Implement Wasm checkers (KT-56849)
+}
