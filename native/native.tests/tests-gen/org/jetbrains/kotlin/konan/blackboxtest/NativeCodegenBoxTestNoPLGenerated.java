@@ -1963,6 +1963,12 @@ public class NativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenBoxT
                 public void testHashSet() throws Exception {
                     runTest("compiler/testData/codegen/box/builtinStubMethods/extendJavaClasses/hashSet.kt");
                 }
+
+                @Test
+                @TestMetadata("overrideAbstractSetMethod.kt")
+                public void testOverrideAbstractSetMethod() throws Exception {
+                    runTest("compiler/testData/codegen/box/builtinStubMethods/extendJavaClasses/overrideAbstractSetMethod.kt");
+                }
             }
 
             @Nested

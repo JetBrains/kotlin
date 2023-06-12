@@ -2466,12 +2466,6 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             public void testSmartCastInFunction() throws Exception {
                 runTest("js/js.translator/testData/box/expression/cast/smartCastInFunction.kt");
             }
-
-            @Test
-            @TestMetadata("unsafeVarianceCast.kt")
-            public void testUnsafeVarianceCast() throws Exception {
-                runTest("js/js.translator/testData/box/expression/cast/unsafeVarianceCast.kt");
-            }
         }
 
         @Nested

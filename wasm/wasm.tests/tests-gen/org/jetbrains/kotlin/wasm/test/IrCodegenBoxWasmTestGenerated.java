@@ -1682,6 +1682,11 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
             public void testHashSet() throws Exception {
                 runTest("compiler/testData/codegen/box/builtinStubMethods/extendJavaClasses/hashSet.kt");
             }
+
+            @TestMetadata("overrideAbstractSetMethod.kt")
+            public void testOverrideAbstractSetMethod() throws Exception {
+                runTest("compiler/testData/codegen/box/builtinStubMethods/extendJavaClasses/overrideAbstractSetMethod.kt");
+            }
         }
 
         @TestMetadata("compiler/testData/codegen/box/builtinStubMethods/mapGetOrDefault")

@@ -2943,6 +2943,12 @@ public class IrBlackBoxCodegenWithIrInlinerTestGenerated extends AbstractIrBlack
             }
 
             @Test
+            @TestMetadata("overrideAbstractSetMethod.kt")
+            public void testOverrideAbstractSetMethod() throws Exception {
+                runTest("compiler/testData/codegen/box/builtinStubMethods/extendJavaClasses/overrideAbstractSetMethod.kt");
+            }
+
+            @Test
             @TestMetadata("removeAtBridgeToJavaClass.kt")
             public void testRemoveAtBridgeToJavaClass() throws Exception {
                 runTest("compiler/testData/codegen/box/builtinStubMethods/extendJavaClasses/removeAtBridgeToJavaClass.kt");

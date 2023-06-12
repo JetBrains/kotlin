@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerIr
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
@@ -115,6 +116,13 @@ fun Int.toJsIdentifier(): String {
     }
 }
 
+private fun List<IrType>.joinTypes(): String {
+    if (isEmpty()) {
+        return ""
+    }
+    return joinToString("$", "$") { superType -> superType.asString() }
+}
+
 fun calculateJsFunctionSignature(declaration: IrFunction, context: JsIrBackendContext): String {
     val declarationName = declaration.nameIfPropertyAccessor() ?: declaration.getJsNameOrKotlinName().asString()
 
@@ -125,20 +133,18 @@ fun calculateJsFunctionSignature(declaration: IrFunction, context: JsIrBackendCo
     declaration.typeParameters.ifNotEmpty {
         nameBuilder.append("_\$t")
         forEach { typeParam ->
-            nameBuilder.append("_").append(typeParam.name.asString())
-            typeParam.superTypes.ifNotEmpty {
-                nameBuilder.append("$")
-                joinTo(nameBuilder, "") { type -> type.asString() }
-            }
+            nameBuilder.append("_").append(typeParam.name.asString()).append(typeParam.superTypes.joinTypes())
         }
     }
     declaration.extensionReceiverParameter?.let {
-        nameBuilder.append("_r$${it.type.asString()}")
+        val superTypes = it.type.superTypes().joinTypes()
+        nameBuilder.append("_r$${it.type.asString()}$superTypes")
     }
     declaration.valueParameters.ifNotEmpty {
         joinTo(nameBuilder, "") {
             val defaultValueSign = if (it.origin == JsLoweredDeclarationOrigin.JS_SHADOWED_DEFAULT_PARAMETER) "?" else ""
-            "_${it.type.asString()}$defaultValueSign"
+            val superTypes = it.type.superTypes().joinTypes()
+            "_${it.type.asString()}$superTypes$defaultValueSign"
         }
     }
     declaration.returnType.let {

@@ -2438,6 +2438,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/builtinStubMethods/extendJavaClasses/numberMixedHierarchy.kt");
             }
 
+            @TestMetadata("overrideAbstractSetMethod.kt")
+            public void testOverrideAbstractSetMethod() throws Exception {
+                runTest("compiler/testData/codegen/box/builtinStubMethods/extendJavaClasses/overrideAbstractSetMethod.kt");
+            }
+
             @TestMetadata("removeAtBridgeToJavaClass.kt")
             public void testRemoveAtBridgeToJavaClass() throws Exception {
                 runTest("compiler/testData/codegen/box/builtinStubMethods/extendJavaClasses/removeAtBridgeToJavaClass.kt");
