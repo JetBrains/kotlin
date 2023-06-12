@@ -1,12 +1,13 @@
 @kotlin.Metadata
 public final class ArithmeticTest {
     // source: 'ArithmeticTest.kt'
-    private final static @org.jetbrains.annotations.NotNull field local$FU: java.util.concurrent.atomic.AtomicIntegerFieldUpdater
-    private volatile @kotlin.jvm.Volatile field local: int
+    private final static @org.jetbrains.annotations.NotNull field local$volatile$FU: java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+    private volatile field local$volatile: int
     static method <clinit>(): void
     public method <init>(): void
-    public final static @org.jetbrains.annotations.NotNull method getLocal$FU(): java.util.concurrent.atomic.AtomicIntegerFieldUpdater
-    public final method getLocal(): int
+    public final static @org.jetbrains.annotations.NotNull method getLocal$volatile$FU(): java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+    public final method getLocal$volatile(): int
+    public final method setLocal$volatile(p0: int): void
     public final method testAtomicCallPlaces(): boolean
     public final method testBoolean(): void
     public final method testGetValue(): void
@@ -24,80 +25,90 @@ public final class ArithmeticTestKt {
 @kotlin.Metadata
 public final class BooleanArithmetic {
     // source: 'ArithmeticTest.kt'
-    private final static @org.jetbrains.annotations.NotNull field _x$FU: java.util.concurrent.atomic.AtomicIntegerFieldUpdater
-    private volatile @kotlin.jvm.Volatile field _x: int
+    private final static @org.jetbrains.annotations.NotNull field _x$volatile$FU: java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+    private volatile field _x$volatile: int
     static method <clinit>(): void
     public method <init>(): void
     public final method getX(): boolean
-    public final static @org.jetbrains.annotations.NotNull method get_x$FU(): java.util.concurrent.atomic.AtomicIntegerFieldUpdater
-    public final method get_x(): int
+    public final static @org.jetbrains.annotations.NotNull method get_x$volatile$FU(): java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+    public final method get_x$volatile(): int
+    public final method set_x$volatile(p0: int): void
 }
 
 @kotlin.Metadata
 public final class IntArithmetic {
     // source: 'ArithmeticTest.kt'
-    private final static @org.jetbrains.annotations.NotNull field _x$FU: java.util.concurrent.atomic.AtomicIntegerFieldUpdater
-    private volatile @kotlin.jvm.Volatile field _x: int
+    private final static @org.jetbrains.annotations.NotNull field _x$volatile$FU: java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+    private volatile field _x$volatile: int
     static method <clinit>(): void
     public method <init>(): void
     public final method getX(): int
-    public final static @org.jetbrains.annotations.NotNull method get_x$FU(): java.util.concurrent.atomic.AtomicIntegerFieldUpdater
-    public final method get_x(): int
+    public final static @org.jetbrains.annotations.NotNull method get_x$volatile$FU(): java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+    public final method get_x$volatile(): int
+    public final method set_x$volatile(p0: int): void
 }
 
 @kotlin.Metadata
 public final class LongArithmetic {
     // source: 'ArithmeticTest.kt'
-    private final static @org.jetbrains.annotations.NotNull field _x$FU: java.util.concurrent.atomic.AtomicLongFieldUpdater
-    private volatile @kotlin.jvm.Volatile field _x: long
-    private final static @org.jetbrains.annotations.NotNull field max$FU: java.util.concurrent.atomic.AtomicLongFieldUpdater
-    private volatile @kotlin.jvm.Volatile field max: long
-    private final static @org.jetbrains.annotations.NotNull field y$FU: java.util.concurrent.atomic.AtomicLongFieldUpdater
-    private volatile @kotlin.jvm.Volatile field y: long
-    private final static @org.jetbrains.annotations.NotNull field z$FU: java.util.concurrent.atomic.AtomicLongFieldUpdater
-    private volatile @kotlin.jvm.Volatile field z: long
+    private final static @org.jetbrains.annotations.NotNull field _x$volatile$FU: java.util.concurrent.atomic.AtomicLongFieldUpdater
+    private volatile field _x$volatile: long
+    private final static @org.jetbrains.annotations.NotNull field max$volatile$FU: java.util.concurrent.atomic.AtomicLongFieldUpdater
+    private volatile field max$volatile: long
+    private final static @org.jetbrains.annotations.NotNull field y$volatile$FU: java.util.concurrent.atomic.AtomicLongFieldUpdater
+    private volatile field y$volatile: long
+    private final static @org.jetbrains.annotations.NotNull field z$volatile$FU: java.util.concurrent.atomic.AtomicLongFieldUpdater
+    private volatile field z$volatile: long
     static method <clinit>(): void
     public method <init>(): void
-    public final static @org.jetbrains.annotations.NotNull method getMax$FU(): java.util.concurrent.atomic.AtomicLongFieldUpdater
-    public final method getMax(): long
+    public final static @org.jetbrains.annotations.NotNull method getMax$volatile$FU(): java.util.concurrent.atomic.AtomicLongFieldUpdater
+    public final method getMax$volatile(): long
     public final method getX(): long
-    public final static @org.jetbrains.annotations.NotNull method getY$FU(): java.util.concurrent.atomic.AtomicLongFieldUpdater
-    public final method getY(): long
-    public final static @org.jetbrains.annotations.NotNull method getZ$FU(): java.util.concurrent.atomic.AtomicLongFieldUpdater
-    public final method getZ(): long
-    public final static @org.jetbrains.annotations.NotNull method get_x$FU(): java.util.concurrent.atomic.AtomicLongFieldUpdater
-    public final method get_x(): long
+    public final static @org.jetbrains.annotations.NotNull method getY$volatile$FU(): java.util.concurrent.atomic.AtomicLongFieldUpdater
+    public final method getY$volatile(): long
+    public final static @org.jetbrains.annotations.NotNull method getZ$volatile$FU(): java.util.concurrent.atomic.AtomicLongFieldUpdater
+    public final method getZ$volatile(): long
+    public final static @org.jetbrains.annotations.NotNull method get_x$volatile$FU(): java.util.concurrent.atomic.AtomicLongFieldUpdater
+    public final method get_x$volatile(): long
+    public final method setMax$volatile(p0: long): void
+    public final method setY$volatile(p0: long): void
+    public final method setZ$volatile(p0: long): void
+    public final method set_x$volatile(p0: long): void
 }
 
 @kotlin.Metadata
 public final class ReferenceArithmetic {
     // source: 'ArithmeticTest.kt'
-    private final static @org.jetbrains.annotations.NotNull field _x$FU: java.util.concurrent.atomic.AtomicReferenceFieldUpdater
-    private volatile @kotlin.jvm.Volatile @org.jetbrains.annotations.Nullable field _x: java.lang.Object
+    private final static @org.jetbrains.annotations.NotNull field _x$volatile$FU: java.util.concurrent.atomic.AtomicReferenceFieldUpdater
+    private volatile @org.jetbrains.annotations.Nullable field _x$volatile: java.lang.Object
     static method <clinit>(): void
     public method <init>(): void
-    public final static @org.jetbrains.annotations.NotNull method get_x$FU(): java.util.concurrent.atomic.AtomicReferenceFieldUpdater
-    public final @org.jetbrains.annotations.Nullable method get_x(): java.lang.Object
+    public final static @org.jetbrains.annotations.NotNull method get_x$volatile$FU(): java.util.concurrent.atomic.AtomicReferenceFieldUpdater
+    public final @org.jetbrains.annotations.Nullable method get_x$volatile(): java.lang.Object
+    public final method set_x$volatile(@org.jetbrains.annotations.Nullable p0: java.lang.Object): void
 }
 
 @kotlin.Metadata
 public final class VisibilitiesTest {
     // source: 'ArithmeticTest.kt'
-    private final static @org.jetbrains.annotations.NotNull field a$FU: java.util.concurrent.atomic.AtomicIntegerFieldUpdater
-    private volatile @kotlin.jvm.Volatile field a: int
-    private final static @org.jetbrains.annotations.NotNull field b$FU: java.util.concurrent.atomic.AtomicIntegerFieldUpdater
-    private volatile @kotlin.jvm.Volatile field b: int
-    private final static @org.jetbrains.annotations.NotNull field c$FU: java.util.concurrent.atomic.AtomicIntegerFieldUpdater
-    private volatile @kotlin.jvm.Volatile field c: int
-    private final static @org.jetbrains.annotations.NotNull field d$FU: java.util.concurrent.atomic.AtomicIntegerFieldUpdater
-    private volatile @kotlin.jvm.Volatile field d: int
+    private final static @org.jetbrains.annotations.NotNull field a$volatile$FU: java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+    private volatile field a$volatile: int
+    private final static @org.jetbrains.annotations.NotNull field b$volatile$FU: java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+    private volatile field b$volatile: int
+    private final static @org.jetbrains.annotations.NotNull field c$volatile$FU: java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+    private volatile field c$volatile: int
+    private final static @org.jetbrains.annotations.NotNull field d$volatile$FU: java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+    private volatile field d$volatile: int
     static method <clinit>(): void
     public method <init>(): void
-    public final static @org.jetbrains.annotations.NotNull method getA$FU(): java.util.concurrent.atomic.AtomicIntegerFieldUpdater
-    public final method getA(): int
-    public final static @org.jetbrains.annotations.NotNull method getB$FU(): java.util.concurrent.atomic.AtomicIntegerFieldUpdater
-    public final method getB(): int
-    public final static @org.jetbrains.annotations.NotNull method getD$FU$main(): java.util.concurrent.atomic.AtomicIntegerFieldUpdater
-    public final method getD$main(): int
+    public final static @org.jetbrains.annotations.NotNull method getA$volatile$FU(): java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+    public final method getA$volatile(): int
+    public final static @org.jetbrains.annotations.NotNull method getB$volatile$FU(): java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+    public final method getB$volatile(): int
+    public final static @org.jetbrains.annotations.NotNull method getD$volatile$FU$main(): java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+    public final method getD$volatile$main(): int
+    public final method setA$volatile(p0: int): void
+    public final method setB$volatile(p0: int): void
+    public final method setD$volatile$main(p0: int): void
     public final method test(): void
 }

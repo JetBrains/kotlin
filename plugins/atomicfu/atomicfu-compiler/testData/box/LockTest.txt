@@ -1,8 +1,8 @@
 @kotlin.Metadata
 public final class LockTest {
     // source: 'LockTest.kt'
-    private final static @org.jetbrains.annotations.NotNull field inProgressLock$FU: java.util.concurrent.atomic.AtomicIntegerFieldUpdater
-    private volatile @kotlin.jvm.Volatile field inProgressLock: int
+    private final static @org.jetbrains.annotations.NotNull field inProgressLock$volatile$FU: java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+    private volatile field inProgressLock$volatile: int
     static method <clinit>(): void
     public method <init>(): void
     public final method testLock(): void

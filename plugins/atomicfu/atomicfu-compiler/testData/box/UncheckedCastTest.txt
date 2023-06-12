@@ -1,15 +1,4 @@
 @kotlin.Metadata
-final class TopLevelS$UncheckedCastTest$VolatileWrapper {
-    // source: 'UncheckedCastTest.kt'
-    private final static @org.jetbrains.annotations.NotNull field topLevelS$FU: java.util.concurrent.atomic.AtomicReferenceFieldUpdater
-    private volatile @kotlin.jvm.Volatile @org.jetbrains.annotations.Nullable field topLevelS: java.lang.Object
-    static method <clinit>(): void
-    private method <init>(): void
-    public synthetic method <init>(p0: kotlin.jvm.internal.DefaultConstructorMarker): void
-    public synthetic final static method access$getTopLevelS$FU$p(): java.util.concurrent.atomic.AtomicReferenceFieldUpdater
-}
-
-@kotlin.Metadata
 final class UncheckedCastTest$Box {
     // source: 'UncheckedCastTest.kt'
     private final field b: int
@@ -25,13 +14,24 @@ final class UncheckedCastTest$Box {
 }
 
 @kotlin.Metadata
+final class UncheckedCastTest$VolatileWrapper$atomicfu {
+    // source: 'UncheckedCastTest.kt'
+    private final static @org.jetbrains.annotations.NotNull field topLevelS$volatile$FU: java.util.concurrent.atomic.AtomicReferenceFieldUpdater
+    private volatile @org.jetbrains.annotations.Nullable field topLevelS$volatile: java.lang.Object
+    static method <clinit>(): void
+    private method <init>(): void
+    public synthetic method <init>(p0: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public synthetic final static method access$getTopLevelS$volatile$FU$p(): java.util.concurrent.atomic.AtomicReferenceFieldUpdater
+}
+
+@kotlin.Metadata
 public final class UncheckedCastTest {
     // source: 'UncheckedCastTest.kt'
     private final @org.jetbrains.annotations.NotNull field a: java.util.concurrent.atomic.AtomicReferenceArray
-    private final static @org.jetbrains.annotations.NotNull field bs$FU: java.util.concurrent.atomic.AtomicReferenceFieldUpdater
-    private volatile @kotlin.jvm.Volatile @org.jetbrains.annotations.Nullable field bs: java.lang.Object
-    private final static @org.jetbrains.annotations.NotNull field s$FU: java.util.concurrent.atomic.AtomicReferenceFieldUpdater
-    private volatile @kotlin.jvm.Volatile @org.jetbrains.annotations.Nullable field s: java.lang.Object
+    private final static @org.jetbrains.annotations.NotNull field bs$volatile$FU: java.util.concurrent.atomic.AtomicReferenceFieldUpdater
+    private volatile @org.jetbrains.annotations.Nullable field bs$volatile: java.lang.Object
+    private final static @org.jetbrains.annotations.NotNull field s$volatile$FU: java.util.concurrent.atomic.AtomicReferenceFieldUpdater
+    private volatile @org.jetbrains.annotations.Nullable field s$volatile: java.lang.Object
     static method <clinit>(): void
     public method <init>(): void
     private final method getString$atomicfu$array(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicReferenceArray, p2: int): java.lang.String
@@ -47,8 +47,8 @@ public final class UncheckedCastTest {
 @kotlin.Metadata
 public final class UncheckedCastTestKt {
     // source: 'UncheckedCastTest.kt'
-    private final static @org.jetbrains.annotations.NotNull field topLevelS$UncheckedCastTest$VolatileWrapper: TopLevelS$UncheckedCastTest$VolatileWrapper
+    private final static @org.jetbrains.annotations.NotNull field uncheckedCastTest$VolatileWrapper$atomicfu: UncheckedCastTest$VolatileWrapper$atomicfu
     static method <clinit>(): void
-    public synthetic final static method access$getTopLevelS$UncheckedCastTest$VolatileWrapper$p(): TopLevelS$UncheckedCastTest$VolatileWrapper
+    public synthetic final static method access$getUncheckedCastTest$VolatileWrapper$atomicfu$p(): UncheckedCastTest$VolatileWrapper$atomicfu
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

@@ -1,8 +1,8 @@
 @kotlin.Metadata
 public final class ParameterizedInlineFunExtensionTest {
     // source: 'ParameterizedInlineFunExtensionTest.kt'
-    private final static @org.jetbrains.annotations.NotNull field tail$FU: java.util.concurrent.atomic.AtomicReferenceFieldUpdater
-    private volatile @kotlin.jvm.Volatile @org.jetbrains.annotations.Nullable field tail: java.lang.Object
+    private final static @org.jetbrains.annotations.NotNull field tail$volatile$FU: java.util.concurrent.atomic.AtomicReferenceFieldUpdater
+    private volatile @org.jetbrains.annotations.Nullable field tail$volatile: java.lang.Object
     static method <clinit>(): void
     public method <init>(): void
     private final method bar$atomicfu$array(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicReferenceArray, p2: int, p3: java.lang.Object, p4: java.lang.Object): java.lang.Object

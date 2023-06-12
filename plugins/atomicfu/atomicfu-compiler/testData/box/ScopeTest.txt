@@ -15,12 +15,13 @@ public final class AA {
 @kotlin.Metadata
 public final class AtomicState {
     // source: 'ScopeTest.kt'
-    private final static @org.jetbrains.annotations.NotNull field state$FU: java.util.concurrent.atomic.AtomicReferenceFieldUpdater
-    private volatile @kotlin.jvm.Volatile @org.jetbrains.annotations.Nullable field state: java.lang.Object
+    private final static @org.jetbrains.annotations.NotNull field state$volatile$FU: java.util.concurrent.atomic.AtomicReferenceFieldUpdater
+    private volatile @org.jetbrains.annotations.Nullable field state$volatile: java.lang.Object
     static method <clinit>(): void
     public method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.Object): void
-    public final static @org.jetbrains.annotations.NotNull method getState$FU(): java.util.concurrent.atomic.AtomicReferenceFieldUpdater
-    public final @org.jetbrains.annotations.Nullable method getState(): java.lang.Object
+    public final static @org.jetbrains.annotations.NotNull method getState$volatile$FU(): java.util.concurrent.atomic.AtomicReferenceFieldUpdater
+    public final @org.jetbrains.annotations.Nullable method getState$volatile(): java.lang.Object
+    public final method setState$volatile(@org.jetbrains.annotations.Nullable p0: java.lang.Object): void
 }
 
 @kotlin.Metadata

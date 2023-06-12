@@ -1,8 +1,8 @@
 @kotlin.Metadata
 public final class SimpleLock {
     // source: 'SimpleLockTest.kt'
-    private final static @org.jetbrains.annotations.NotNull field _locked$FU: java.util.concurrent.atomic.AtomicIntegerFieldUpdater
-    private volatile @kotlin.jvm.Volatile field _locked: int
+    private final static @org.jetbrains.annotations.NotNull field _locked$volatile$FU: java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+    private volatile field _locked$volatile: int
     static method <clinit>(): void
     public method <init>(): void
     private final method loop$atomicfu(p0: java.util.concurrent.atomic.AtomicIntegerFieldUpdater, p1: kotlin.jvm.functions.Function1, p2: java.lang.Object): void

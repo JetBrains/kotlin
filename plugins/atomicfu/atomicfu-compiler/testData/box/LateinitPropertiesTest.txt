@@ -10,12 +10,12 @@ final class LateinitPropertiesTest$Data {
 @kotlin.Metadata
 public final class LateinitPropertiesTest {
     // source: 'LateinitPropertiesTest.kt'
-    private final static @org.jetbrains.annotations.NotNull field a$FU: java.util.concurrent.atomic.AtomicIntegerFieldUpdater
-    private volatile @kotlin.jvm.Volatile field a: int
-    private final static @org.jetbrains.annotations.NotNull field dataRef$FU: java.util.concurrent.atomic.AtomicReferenceFieldUpdater
-    private volatile @kotlin.jvm.Volatile @org.jetbrains.annotations.Nullable field dataRef: java.lang.Object
-    private final static @org.jetbrains.annotations.NotNull field head$FU: java.util.concurrent.atomic.AtomicReferenceFieldUpdater
-    private volatile @kotlin.jvm.Volatile @org.jetbrains.annotations.Nullable field head: java.lang.Object
+    private final static @org.jetbrains.annotations.NotNull field a$volatile$FU: java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+    private volatile field a$volatile: int
+    private final static @org.jetbrains.annotations.NotNull field dataRef$volatile$FU: java.util.concurrent.atomic.AtomicReferenceFieldUpdater
+    private volatile @org.jetbrains.annotations.Nullable field dataRef$volatile: java.lang.Object
+    private final static @org.jetbrains.annotations.NotNull field head$volatile$FU: java.util.concurrent.atomic.AtomicReferenceFieldUpdater
+    private volatile @org.jetbrains.annotations.Nullable field head$volatile: java.lang.Object
     private final @org.jetbrains.annotations.NotNull field lateIntArr: java.util.concurrent.atomic.AtomicIntegerArray
     private final @org.jetbrains.annotations.NotNull field lateRefArr: java.util.concurrent.atomic.AtomicReferenceArray
     static method <clinit>(): void

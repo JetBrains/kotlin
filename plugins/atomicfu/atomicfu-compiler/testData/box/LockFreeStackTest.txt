@@ -12,8 +12,8 @@ final class LockFreeStack$Node {
 @kotlin.Metadata
 public final class LockFreeStack {
     // source: 'LockFreeStackTest.kt'
-    private final static @org.jetbrains.annotations.NotNull field top$FU: java.util.concurrent.atomic.AtomicReferenceFieldUpdater
-    private volatile @kotlin.jvm.Volatile @org.jetbrains.annotations.Nullable field top: java.lang.Object
+    private final static @org.jetbrains.annotations.NotNull field top$volatile$FU: java.util.concurrent.atomic.AtomicReferenceFieldUpdater
+    private volatile @org.jetbrains.annotations.Nullable field top$volatile: java.lang.Object
     static method <clinit>(): void
     public method <init>(): void
     public final method clear(): void

@@ -15,8 +15,8 @@ public final class ARef {
 @kotlin.Metadata
 public final class AtomicArrayClass {
     // source: 'AtomicArrayTest.kt'
-    private final static @org.jetbrains.annotations.NotNull field a$FU: java.util.concurrent.atomic.AtomicReferenceFieldUpdater
-    private volatile @kotlin.jvm.Volatile @org.jetbrains.annotations.Nullable field a: java.lang.Object
+    private final static @org.jetbrains.annotations.NotNull field a$volatile$FU: java.util.concurrent.atomic.AtomicReferenceFieldUpdater
+    private volatile @org.jetbrains.annotations.Nullable field a$volatile: java.lang.Object
     private final @org.jetbrains.annotations.NotNull field anyArr: java.util.concurrent.atomic.AtomicReferenceArray
     private final @org.jetbrains.annotations.NotNull field booleanArr: java.util.concurrent.atomic.AtomicIntegerArray
     private final @org.jetbrains.annotations.NotNull field intArr: java.util.concurrent.atomic.AtomicIntegerArray
@@ -24,13 +24,14 @@ public final class AtomicArrayClass {
     private final @org.jetbrains.annotations.NotNull field refArr: java.util.concurrent.atomic.AtomicReferenceArray
     static method <clinit>(): void
     public method <init>(): void
-    public final static @org.jetbrains.annotations.NotNull method getA$FU(): java.util.concurrent.atomic.AtomicReferenceFieldUpdater
-    public final @org.jetbrains.annotations.Nullable method getA(): java.lang.Object
+    public final static @org.jetbrains.annotations.NotNull method getA$volatile$FU(): java.util.concurrent.atomic.AtomicReferenceFieldUpdater
+    public final @org.jetbrains.annotations.Nullable method getA$volatile(): java.lang.Object
     public final @org.jetbrains.annotations.NotNull method getAnyArr(): java.util.concurrent.atomic.AtomicReferenceArray
     public final @org.jetbrains.annotations.NotNull method getBooleanArr(): java.util.concurrent.atomic.AtomicIntegerArray
     public final @org.jetbrains.annotations.NotNull method getIntArr(): java.util.concurrent.atomic.AtomicIntegerArray
     public final @org.jetbrains.annotations.NotNull method getLongArr(): java.util.concurrent.atomic.AtomicLongArray
     public final @org.jetbrains.annotations.NotNull method getRefArr(): java.util.concurrent.atomic.AtomicReferenceArray
+    public final method setA$volatile(@org.jetbrains.annotations.Nullable p0: java.lang.Object): void
 }
 
 @kotlin.Metadata

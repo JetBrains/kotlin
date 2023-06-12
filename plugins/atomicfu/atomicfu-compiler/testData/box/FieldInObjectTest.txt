@@ -1,32 +1,33 @@
 @kotlin.Metadata
-public final class DelegatedProvider$_a$DelegatedProvider$VolatileWrapper {
+final class DelegatedProvider$DelegatedProvider$VolatileWrapper$atomicfu {
     // source: 'FieldInObjectTest.kt'
-    private final static @org.jetbrains.annotations.NotNull field _a$FU: java.util.concurrent.atomic.AtomicIntegerFieldUpdater
-    private volatile @kotlin.jvm.Volatile field _a: int
+    private final static @org.jetbrains.annotations.NotNull field _a$volatile$FU: java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+    private volatile field _a$volatile: int
     static method <clinit>(): void
     private method <init>(): void
     public synthetic method <init>(p0: kotlin.jvm.internal.DefaultConstructorMarker): void
-    public synthetic final static method access$get_a$p(p0: DelegatedProvider$_a$DelegatedProvider$VolatileWrapper): int
-    public synthetic final static method access$set_a$p(p0: DelegatedProvider$_a$DelegatedProvider$VolatileWrapper, p1: int): void
-    public final static @org.jetbrains.annotations.NotNull method get_a$FU(): java.util.concurrent.atomic.AtomicIntegerFieldUpdater
-    public final method get_a(): int
-    public final inner class DelegatedProvider$_a$DelegatedProvider$VolatileWrapper
+    public synthetic final static method access$get_a$volatile$p(p0: DelegatedProvider$DelegatedProvider$VolatileWrapper$atomicfu): int
+    public synthetic final static method access$set_a$volatile$p(p0: DelegatedProvider$DelegatedProvider$VolatileWrapper$atomicfu, p1: int): void
+    public final static @org.jetbrains.annotations.NotNull method get_a$volatile$FU(): java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+    public final method get_a$volatile(): int
+    public final method set_a$volatile(p0: int): void
+    private final inner class DelegatedProvider$DelegatedProvider$VolatileWrapper$atomicfu
 }
 
 @kotlin.Metadata
 public final class DelegatedProvider {
     // source: 'FieldInObjectTest.kt'
     public final static @org.jetbrains.annotations.NotNull field INSTANCE: DelegatedProvider
-    private final static @org.jetbrains.annotations.NotNull field _a$DelegatedProvider$VolatileWrapper: DelegatedProvider$_a$DelegatedProvider$VolatileWrapper
-    private volatile @kotlin.jvm.Volatile field vInt: int
+    private final static @org.jetbrains.annotations.NotNull field delegatedProvider$VolatileWrapper$atomicfu: DelegatedProvider$DelegatedProvider$VolatileWrapper$atomicfu
+    private volatile field vInt$volatile: int
     static method <clinit>(): void
     private method <init>(): void
+    public synthetic final static method access$getDelegatedProvider$VolatileWrapper$atomicfu$p(): DelegatedProvider$DelegatedProvider$VolatileWrapper$atomicfu
     public final method getA(): int
     public final method getVInt(): int
-    public final static @org.jetbrains.annotations.NotNull method get_a$DelegatedProvider$VolatileWrapper(): DelegatedProvider$_a$DelegatedProvider$VolatileWrapper
     public final method setA(p0: int): void
     public final method setVInt(p0: int): void
-    public final inner class DelegatedProvider$_a$DelegatedProvider$VolatileWrapper
+    private final inner class DelegatedProvider$DelegatedProvider$VolatileWrapper$atomicfu
 }
 
 @kotlin.Metadata
@@ -35,84 +36,51 @@ public final class FieldInObjectTestKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     private final static method testDelegatedPropertiesInObject(): void
     private final static method testFieldInObject(): void
-    public final inner class DelegatedProvider$_a$DelegatedProvider$VolatileWrapper
-    public final inner class Provider$_ref$Provider$VolatileWrapper
-    public final inner class Provider$_x$Provider$VolatileWrapper
+    private final inner class DelegatedProvider$DelegatedProvider$VolatileWrapper$atomicfu
+    private final inner class Provider$Provider$VolatileWrapper$atomicfu
 }
 
 @kotlin.Metadata
-final class Provider$Port$Provider$VolatileWrapper {
+final class Provider$Provider$VolatileWrapper$atomicfu {
     // source: 'FieldInObjectTest.kt'
-    private final static @org.jetbrains.annotations.NotNull field port$FU: java.util.concurrent.atomic.AtomicIntegerFieldUpdater
-    private volatile @kotlin.jvm.Volatile field port: int
+    private final static @org.jetbrains.annotations.NotNull field _l$volatile$FU: java.util.concurrent.atomic.AtomicLongFieldUpdater
+    private volatile field _l$volatile: long
+    private final static @org.jetbrains.annotations.NotNull field _ref$volatile$FU: java.util.concurrent.atomic.AtomicReferenceFieldUpdater
+    private volatile @org.jetbrains.annotations.Nullable field _ref$volatile: java.lang.Object
+    private final static @org.jetbrains.annotations.NotNull field _x$volatile$FU: java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+    private volatile field _x$volatile: int
+    private final static @org.jetbrains.annotations.NotNull field port$volatile$FU: java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+    private volatile field port$volatile: int
     static method <clinit>(): void
     private method <init>(): void
     public synthetic method <init>(p0: kotlin.jvm.internal.DefaultConstructorMarker): void
-    public synthetic final static method access$getPort$FU$p(): java.util.concurrent.atomic.AtomicIntegerFieldUpdater
-    private final inner class Provider$Port$Provider$VolatileWrapper
+    public synthetic final static method access$getPort$volatile$FU$p(): java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+    public synthetic final static method access$get_l$volatile$FU$p(): java.util.concurrent.atomic.AtomicLongFieldUpdater
+    public final static @org.jetbrains.annotations.NotNull method get_ref$volatile$FU(): java.util.concurrent.atomic.AtomicReferenceFieldUpdater
+    public final @org.jetbrains.annotations.Nullable method get_ref$volatile(): java.lang.Object
+    public final static @org.jetbrains.annotations.NotNull method get_x$volatile$FU(): java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+    public final method get_x$volatile(): int
+    public final method set_ref$volatile(@org.jetbrains.annotations.Nullable p0: java.lang.Object): void
+    public final method set_x$volatile(p0: int): void
+    private final inner class Provider$Provider$VolatileWrapper$atomicfu
     public final inner class kotlin/random/Random$Default
-}
-
-@kotlin.Metadata
-final class Provider$_l$Provider$VolatileWrapper {
-    // source: 'FieldInObjectTest.kt'
-    private final static @org.jetbrains.annotations.NotNull field _l$FU: java.util.concurrent.atomic.AtomicLongFieldUpdater
-    private volatile @kotlin.jvm.Volatile field _l: long
-    static method <clinit>(): void
-    private method <init>(): void
-    public synthetic method <init>(p0: kotlin.jvm.internal.DefaultConstructorMarker): void
-    public synthetic final static method access$get_l$FU$p(): java.util.concurrent.atomic.AtomicLongFieldUpdater
-    private final inner class Provider$_l$Provider$VolatileWrapper
-}
-
-@kotlin.Metadata
-public final class Provider$_ref$Provider$VolatileWrapper {
-    // source: 'FieldInObjectTest.kt'
-    private final static @org.jetbrains.annotations.NotNull field _ref$FU: java.util.concurrent.atomic.AtomicReferenceFieldUpdater
-    private volatile @kotlin.jvm.Volatile @org.jetbrains.annotations.Nullable field _ref: java.lang.Object
-    static method <clinit>(): void
-    private method <init>(): void
-    public synthetic method <init>(p0: kotlin.jvm.internal.DefaultConstructorMarker): void
-    public final static @org.jetbrains.annotations.NotNull method get_ref$FU(): java.util.concurrent.atomic.AtomicReferenceFieldUpdater
-    public final @org.jetbrains.annotations.Nullable method get_ref(): java.lang.Object
-    public final inner class Provider$_ref$Provider$VolatileWrapper
-}
-
-@kotlin.Metadata
-public final class Provider$_x$Provider$VolatileWrapper {
-    // source: 'FieldInObjectTest.kt'
-    private final static @org.jetbrains.annotations.NotNull field _x$FU: java.util.concurrent.atomic.AtomicIntegerFieldUpdater
-    private volatile @kotlin.jvm.Volatile field _x: int
-    static method <clinit>(): void
-    private method <init>(): void
-    public synthetic method <init>(p0: kotlin.jvm.internal.DefaultConstructorMarker): void
-    public final static @org.jetbrains.annotations.NotNull method get_x$FU(): java.util.concurrent.atomic.AtomicIntegerFieldUpdater
-    public final method get_x(): int
-    public final inner class Provider$_x$Provider$VolatileWrapper
 }
 
 @kotlin.Metadata
 public final class Provider {
     // source: 'FieldInObjectTest.kt'
     public final static @org.jetbrains.annotations.NotNull field INSTANCE: Provider
-    private final static @org.jetbrains.annotations.NotNull field _l$Provider$VolatileWrapper: Provider$_l$Provider$VolatileWrapper
-    private final static @org.jetbrains.annotations.NotNull field _ref$Provider$VolatileWrapper: Provider$_ref$Provider$VolatileWrapper
-    private final static @org.jetbrains.annotations.NotNull field _x$Provider$VolatileWrapper: Provider$_x$Provider$VolatileWrapper
     private final static @org.jetbrains.annotations.NotNull field intArr: java.util.concurrent.atomic.AtomicIntegerArray
     private final static @org.jetbrains.annotations.NotNull field longArr: java.util.concurrent.atomic.AtomicLongArray
-    private final static @org.jetbrains.annotations.NotNull field port$Provider$VolatileWrapper: Provider$Port$Provider$VolatileWrapper
+    private final static @org.jetbrains.annotations.NotNull field provider$VolatileWrapper$atomicfu: Provider$Provider$VolatileWrapper$atomicfu
     private final static @org.jetbrains.annotations.NotNull field refArr: java.util.concurrent.atomic.AtomicReferenceArray
     static method <clinit>(): void
     private method <init>(): void
-    public final static @org.jetbrains.annotations.NotNull method getIntArr(): java.util.concurrent.atomic.AtomicIntegerArray
+    public synthetic final static method access$getProvider$VolatileWrapper$atomicfu$p(): Provider$Provider$VolatileWrapper$atomicfu
+    public final @org.jetbrains.annotations.NotNull method getIntArr(): java.util.concurrent.atomic.AtomicIntegerArray
     public final method getL(): long
-    public final static @org.jetbrains.annotations.NotNull method getLongArr(): java.util.concurrent.atomic.AtomicLongArray
-    public final static @org.jetbrains.annotations.NotNull method getRefArr(): java.util.concurrent.atomic.AtomicReferenceArray
-    public final static @org.jetbrains.annotations.NotNull method get_ref$Provider$VolatileWrapper(): Provider$_ref$Provider$VolatileWrapper
-    public final static @org.jetbrains.annotations.NotNull method get_x$Provider$VolatileWrapper(): Provider$_x$Provider$VolatileWrapper
+    public final @org.jetbrains.annotations.NotNull method getLongArr(): java.util.concurrent.atomic.AtomicLongArray
+    public final @org.jetbrains.annotations.NotNull method getRefArr(): java.util.concurrent.atomic.AtomicReferenceArray
     public final method next(): int
-    private final inner class Provider$Port$Provider$VolatileWrapper
-    private final inner class Provider$_l$Provider$VolatileWrapper
-    public final inner class Provider$_ref$Provider$VolatileWrapper
-    public final inner class Provider$_x$Provider$VolatileWrapper
+    private final inner class Provider$Provider$VolatileWrapper$atomicfu
 }

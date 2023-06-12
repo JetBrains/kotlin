@@ -1,9 +1,9 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlinx.atomicfu.compiler.backend
+package org.jetbrains.kotlinx.atomicfu.compiler.backend.js
 
 import org.jetbrains.kotlin.backend.common.extensions.*
 import org.jetbrains.kotlin.descriptors.*
@@ -61,7 +61,7 @@ internal fun buildCall(
 internal fun IrFactory.buildBlockBody(statements: List<IrStatement>) =
     createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET, statements)
 
-internal fun buildSetField(
+internal fun IrPluginContext.buildSetField(
     symbol: IrFieldSymbol,
     receiver: IrExpression?,
     value: IrExpression,
@@ -73,7 +73,7 @@ internal fun buildSetField(
         symbol,
         receiver,
         value,
-        value.type,
+        irBuiltIns.unitType,
         IrStatementOrigin.GET_PROPERTY,
         superQualifierSymbol
     )
@@ -94,7 +94,7 @@ internal fun buildGetField(
         superQualifierSymbol
     )
 
-internal fun buildFunctionSimpleType(
+internal fun buildSimpleType(
     symbol: IrClassifierSymbol,
     typeParameters: List<IrType>
 ): IrSimpleType =
@@ -124,9 +124,6 @@ internal fun IrExpression.isConstNull() = this is IrConst<*> && this.kind.asStri
 internal fun IrField.getterName() = "<get-${name.asString()}>"
 internal fun IrField.setterName() = "<set-${name.asString()}>"
 
-internal fun String.getFieldName() = "<get-(\\w+)>".toRegex().find(this)?.groupValues?.get(1)
-    ?: error("Getter name $this does not match special name pattern <get-fieldName>")
-
 internal fun IrFunctionAccessExpression.getValueArguments() =
     (0 until valueArgumentsCount).map { i ->
         getValueArgument(i)
@@ -135,18 +132,18 @@ internal fun IrFunctionAccessExpression.getValueArguments() =
 internal fun IrValueParameter.capture() = buildGetValue(UNDEFINED_OFFSET, UNDEFINED_OFFSET, symbol)
 
 internal fun IrPluginContext.buildGetterType(valueType: IrType): IrSimpleType =
-    buildFunctionSimpleType(
+    buildSimpleType(
         irBuiltIns.functionN(0).symbol,
         listOf(valueType)
     )
 
 internal fun IrPluginContext.buildSetterType(valueType: IrType): IrSimpleType =
-    buildFunctionSimpleType(
+    buildSimpleType(
         irBuiltIns.functionN(1).symbol,
         listOf(valueType, irBuiltIns.unitType)
     )
 
-private fun buildSetField(backingField: IrField, ownerClass: IrExpression?, value: IrGetValue): IrSetField {
+private fun IrPluginContext.buildSetField(backingField: IrField, ownerClass: IrExpression?, value: IrGetValue): IrSetField {
     val receiver = if (ownerClass is IrTypeOperatorCall) ownerClass.argument as IrGetValue else ownerClass
     return buildSetField(
         symbol = backingField.symbol,
@@ -230,6 +227,7 @@ internal fun IrPluginContext.buildFieldAccessor(
     isSetter: Boolean
 ): IrExpression {
     val valueType = field.type
+    require(valueType.isPrimitiveType())
     val functionType = if (isSetter) buildSetterType(valueType) else buildGetterType(valueType)
     val returnType = if (isSetter) irBuiltIns.unitType else valueType
     val name = if (isSetter) field.setterName() else field.getterName()
@@ -259,10 +257,6 @@ internal fun IrCall.getBackingField(): IrField =
     symbol.owner.correspondingPropertySymbol?.let { propertySymbol ->
         propertySymbol.owner.backingField ?: error("Property expected to have backing field")
     } ?: error("Atomic property accessor ${this.render()} expected to have non-null correspondingPropertySymbol")
-
-internal fun IrCall.getCorrespondingProperty(): IrProperty =
-    symbol.owner.correspondingPropertySymbol?.owner
-        ?: error("Atomic property accessor ${this.render()} expected to have non-null correspondingPropertySymbol")
 
 @OptIn(FirIncompatiblePluginAPI::class)
 internal fun IrPluginContext.referencePackageFunction(
@@ -304,119 +298,6 @@ internal fun IrPluginContext.getArrayConstructorSymbol(
     }
 }
 
-internal fun IrPluginContext.buildPropertyForBackingField(
-    field: IrField,
-    parent: IrDeclarationContainer,
-    visibility: DescriptorVisibility,
-    isStatic: Boolean
-): IrProperty =
-    irFactory.buildProperty {
-        name = field.name
-        this.visibility = visibility // equal to the atomic property visibility
-    }.apply {
-        backingField = field
-        this.parent = parent
-        if (!isStatic) {
-            addDefaultGetter(this, field.parent as IrClass)
-        } else {
-            addStaticGetter(this)
-        }
-        parent.declarations.add(this)
-    }
-
-internal fun IrPluginContext.addDefaultGetter(property: IrProperty, parentClass: IrDeclarationContainer) {
-    val field = property.backingField!!
-    property.addGetter {
-        origin = IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
-        visibility = property.visibility
-        returnType = field.type
-    }.apply {
-        dispatchReceiverParameter = if (parentClass is IrClass && parentClass.kind == ClassKind.OBJECT) {
-            null
-        } else {
-            (parentClass as? IrClass)?.thisReceiver?.deepCopyWithSymbols(this)
-        }
-        body = factory.createBlockBody(
-            UNDEFINED_OFFSET, UNDEFINED_OFFSET, listOf(
-                IrReturnImpl(
-                    UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                    irBuiltIns.nothingType,
-                    symbol,
-                    IrGetFieldImpl(
-                        UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                        field.symbol,
-                        field.type,
-                        dispatchReceiverParameter?.let {
-                            IrGetValueImpl(
-                                UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                                it.type,
-                                it.symbol
-                            )
-                        }
-                    )
-                )
-            )
-        )
-    }
-}
-
-internal fun IrPluginContext.addStaticGetter(property: IrProperty) {
-    val field = property.backingField!!
-    property.addGetter {
-        origin = IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
-        visibility = property.visibility
-        returnType = field.type
-    }.apply {
-        dispatchReceiverParameter = null
-        body = factory.createBlockBody(
-            UNDEFINED_OFFSET, UNDEFINED_OFFSET, listOf(
-                IrReturnImpl(
-                    UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                    irBuiltIns.nothingType,
-                    symbol,
-                    IrGetFieldImpl(
-                        UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                        symbol = field.symbol,
-                        type = field.type,
-                        receiver = null
-                    )
-                )
-            )
-        )
-    }
-}
-
-internal fun IrPluginContext.buildClassInstance(
-    irClass: IrClass,
-    parent: IrDeclarationContainer,
-    visibility: DescriptorVisibility,
-    isStatic: Boolean
-): IrProperty =
-    buildPropertyForBackingField(
-        field = buildClassInstanceField(irClass, parent),
-        parent = parent,
-        visibility = visibility,
-        isStatic = isStatic
-    )
-
-private fun IrPluginContext.buildClassInstanceField(irClass: IrClass, parent: IrDeclarationContainer) =
-    // build a backing field for the wrapper class instance property
-    irFactory.buildField {
-        this.name = Name.identifier(irClass.name.asString().decapitalizeAsciiOnly())
-        type = irClass.defaultType
-        isFinal = true
-        isStatic = true
-        visibility = DescriptorVisibilities.PRIVATE
-    }.apply {
-        initializer = IrExpressionBodyImpl(
-            IrConstructorCallImpl.fromSymbolOwner(
-                irClass.defaultType,
-                irClass.primaryConstructor!!.symbol
-            )
-        )
-        this.parent = parent
-    }
-
 private fun IrSimpleType.getArrayClassFqName(): FqName =
     classifier.signature?.let { signature ->
         signature.getDeclarationNameBySignature().let { name ->
@@ -430,4 +311,3 @@ internal fun IdSignature.getDeclarationNameBySignature(): String? {
     val commonSignature = if (this is IdSignature.AccessorSignature) accessorSignature else asPublic()
     return commonSignature?.declarationFqName
 }
-

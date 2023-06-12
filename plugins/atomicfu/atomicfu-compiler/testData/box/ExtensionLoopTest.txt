@@ -1,7 +1,18 @@
 @kotlin.Metadata
+final class ExtensionLoopTest$VolatileWrapper$atomicfu {
+    // source: 'ExtensionLoopTest.kt'
+    private final static @org.jetbrains.annotations.NotNull field ref$volatile$FU: java.util.concurrent.atomic.AtomicReferenceFieldUpdater
+    private volatile @org.jetbrains.annotations.Nullable field ref$volatile: java.lang.Object
+    static method <clinit>(): void
+    private method <init>(): void
+    public synthetic method <init>(p0: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public synthetic final static method access$getRef$volatile$FU$p(): java.util.concurrent.atomic.AtomicReferenceFieldUpdater
+}
+
+@kotlin.Metadata
 public final class ExtensionLoopTestKt {
     // source: 'ExtensionLoopTest.kt'
-    private final static @org.jetbrains.annotations.NotNull field ref$ExtensionLoopTest$VolatileWrapper: Ref$ExtensionLoopTest$VolatileWrapper
+    private final static @org.jetbrains.annotations.NotNull field extensionLoopTest$VolatileWrapper$atomicfu: ExtensionLoopTest$VolatileWrapper$atomicfu
     static method <clinit>(): void
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     private final static method loop$atomicfu$array(p0: java.util.concurrent.atomic.AtomicReferenceArray, p1: int, p2: kotlin.jvm.functions.Function1): void
@@ -23,18 +34,18 @@ public final class LoopTest$A {
 @kotlin.Metadata
 public final class LoopTest {
     // source: 'ExtensionLoopTest.kt'
-    private final static @org.jetbrains.annotations.NotNull field a$FU: java.util.concurrent.atomic.AtomicIntegerFieldUpdater
-    private final static @org.jetbrains.annotations.NotNull field a1$FU: java.util.concurrent.atomic.AtomicIntegerFieldUpdater
-    private volatile @kotlin.jvm.Volatile field a1: int
-    private volatile @kotlin.jvm.Volatile field a: int
-    private final static @org.jetbrains.annotations.NotNull field b$FU: java.util.concurrent.atomic.AtomicIntegerFieldUpdater
-    private volatile @kotlin.jvm.Volatile field b: int
-    private final static @org.jetbrains.annotations.NotNull field l$FU: java.util.concurrent.atomic.AtomicLongFieldUpdater
-    private volatile @kotlin.jvm.Volatile field l: long
-    private final static @org.jetbrains.annotations.NotNull field r$FU: java.util.concurrent.atomic.AtomicReferenceFieldUpdater
-    private volatile @kotlin.jvm.Volatile @org.jetbrains.annotations.Nullable field r: java.lang.Object
-    private final static @org.jetbrains.annotations.NotNull field rs$FU: java.util.concurrent.atomic.AtomicReferenceFieldUpdater
-    private volatile @kotlin.jvm.Volatile @org.jetbrains.annotations.Nullable field rs: java.lang.Object
+    private final static @org.jetbrains.annotations.NotNull field a$volatile$FU: java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+    private volatile field a$volatile: int
+    private final static @org.jetbrains.annotations.NotNull field a1$volatile$FU: java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+    private volatile field a1$volatile: int
+    private final static @org.jetbrains.annotations.NotNull field b$volatile$FU: java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+    private volatile field b$volatile: int
+    private final static @org.jetbrains.annotations.NotNull field l$volatile$FU: java.util.concurrent.atomic.AtomicLongFieldUpdater
+    private volatile field l$volatile: long
+    private final static @org.jetbrains.annotations.NotNull field r$volatile$FU: java.util.concurrent.atomic.AtomicReferenceFieldUpdater
+    private volatile @org.jetbrains.annotations.Nullable field r$volatile: java.lang.Object
+    private final static @org.jetbrains.annotations.NotNull field rs$volatile$FU: java.util.concurrent.atomic.AtomicReferenceFieldUpdater
+    private volatile @org.jetbrains.annotations.Nullable field rs$volatile: java.lang.Object
     static method <clinit>(): void
     public method <init>(): void
     private final method bar$atomicfu$array(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicIntegerArray, p2: int, p3: int): int
@@ -51,31 +62,26 @@ public final class LoopTest {
     private final method extensionLoopRecursive$atomicfu(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicIntegerFieldUpdater, p2: int): int
     private final method foo$atomicfu$array(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicIntegerArray, p2: int, p3: int): int
     private final method foo$atomicfu(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicIntegerFieldUpdater, p2: int): int
-    public final static @org.jetbrains.annotations.NotNull method getA$FU(): java.util.concurrent.atomic.AtomicIntegerFieldUpdater
-    public final method getA(): int
-    public final static @org.jetbrains.annotations.NotNull method getA1$FU(): java.util.concurrent.atomic.AtomicIntegerFieldUpdater
-    public final method getA1(): int
-    public final static @org.jetbrains.annotations.NotNull method getB$FU(): java.util.concurrent.atomic.AtomicIntegerFieldUpdater
-    public final method getB(): int
-    public final static @org.jetbrains.annotations.NotNull method getL$FU(): java.util.concurrent.atomic.AtomicLongFieldUpdater
-    public final method getL(): long
-    public final static @org.jetbrains.annotations.NotNull method getR$FU(): java.util.concurrent.atomic.AtomicReferenceFieldUpdater
-    public final @org.jetbrains.annotations.Nullable method getR(): java.lang.Object
-    public final static @org.jetbrains.annotations.NotNull method getRs$FU(): java.util.concurrent.atomic.AtomicReferenceFieldUpdater
-    public final @org.jetbrains.annotations.Nullable method getRs(): java.lang.Object
+    public final static @org.jetbrains.annotations.NotNull method getA$volatile$FU(): java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+    public final method getA$volatile(): int
+    public final static @org.jetbrains.annotations.NotNull method getA1$volatile$FU(): java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+    public final method getA1$volatile(): int
+    public final static @org.jetbrains.annotations.NotNull method getB$volatile$FU(): java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+    public final method getB$volatile(): int
+    public final static @org.jetbrains.annotations.NotNull method getL$volatile$FU(): java.util.concurrent.atomic.AtomicLongFieldUpdater
+    public final method getL$volatile(): long
+    public final static @org.jetbrains.annotations.NotNull method getR$volatile$FU(): java.util.concurrent.atomic.AtomicReferenceFieldUpdater
+    public final @org.jetbrains.annotations.Nullable method getR$volatile(): java.lang.Object
+    public final static @org.jetbrains.annotations.NotNull method getRs$volatile$FU(): java.util.concurrent.atomic.AtomicReferenceFieldUpdater
+    public final @org.jetbrains.annotations.Nullable method getRs$volatile(): java.lang.Object
     private final method loop$atomicfu$array(p0: java.util.concurrent.atomic.AtomicIntegerArray, p1: int, p2: kotlin.jvm.functions.Function1): void
     private final method loop$atomicfu(p0: java.util.concurrent.atomic.AtomicIntegerFieldUpdater, p1: kotlin.jvm.functions.Function1, p2: java.lang.Object): void
+    public final method setA$volatile(p0: int): void
+    public final method setA1$volatile(p0: int): void
+    public final method setB$volatile(p0: int): void
+    public final method setL$volatile(p0: long): void
+    public final method setR$volatile(@org.jetbrains.annotations.Nullable p0: java.lang.Object): void
+    public final method setRs$volatile(@org.jetbrains.annotations.Nullable p0: java.lang.Object): void
     public final method testIntExtensionLoops(): void
     public final inner class LoopTest$A
-}
-
-@kotlin.Metadata
-final class Ref$ExtensionLoopTest$VolatileWrapper {
-    // source: 'ExtensionLoopTest.kt'
-    private final static @org.jetbrains.annotations.NotNull field ref$FU: java.util.concurrent.atomic.AtomicReferenceFieldUpdater
-    private volatile @kotlin.jvm.Volatile @org.jetbrains.annotations.Nullable field ref: java.lang.Object
-    static method <clinit>(): void
-    private method <init>(): void
-    public synthetic method <init>(p0: kotlin.jvm.internal.DefaultConstructorMarker): void
-    public synthetic final static method access$getRef$FU$p(): java.util.concurrent.atomic.AtomicReferenceFieldUpdater
 }
