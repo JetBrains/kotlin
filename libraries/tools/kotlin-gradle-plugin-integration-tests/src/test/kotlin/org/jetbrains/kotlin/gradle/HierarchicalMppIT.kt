@@ -276,6 +276,7 @@ open class HierarchicalMppIT : KGPBaseTest() {
                         "my-lib-foo-metadata-1.0-all.jar",
                         "my-lib-bar-metadata-1.0-all.jar",
                         "third-party-lib-metadata-1.0.jar",
+                        "kotlin-stdlib-${buildOptions.kotlinVersion}-all.jar",
                         "kotlin-test-js-${buildOptions.kotlinVersion}.jar",
                         "kotlin-dom-api-compat-${buildOptions.kotlinVersion}.klib"
                     ),
