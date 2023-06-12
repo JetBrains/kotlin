@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.test.directives.model.ValueDirective
 import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
+import org.junit.jupiter.api.Assumptions.assumeFalse
 
 class BlackBoxCodegenSuppressor(
     testServices: TestServices,
@@ -95,8 +96,8 @@ class BlackBoxCodegenSuppressor(
         }
 
         /**
-         * Returns `null` if [failed] is `true`, otherwise returns an [AssertionError] with a message reminding to remove [directive]
-         * from the test to unmute it.
+         * if [failed] is `true`, aborts the test by throwing TestAbortedException to report expected failure with "disabled" status
+         * otherwise returns an [AssertionError] with a message reminding to remove [directive] from the test to unmute it.
          */
         @PublishedApi
         internal fun processMutedTest(
@@ -104,7 +105,9 @@ class BlackBoxCodegenSuppressor(
             directive: ValueDirective<TargetBackend>,
             suppressionResult: SuppressionResult,
         ): AssertionError? {
-            if (failed) return null
+            assumeFalse(suppressionResult.testMuted && failed,
+                "Test failed, but backend ${suppressionResult.matchedBackend} is ignored with directive: $directive"
+            )
 
             val firstModule = testServices.moduleStructure.modules.first()
             val targetBackend = testServices.defaultsProvider.defaultTargetBackend ?: firstModule.targetBackend
