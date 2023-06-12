@@ -5,16 +5,14 @@
 
 package org.jetbrains.kotlin.gradle.utils
 
+import org.gradle.api.file.RegularFile
+import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode
-import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
+import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.konan.target.Architecture.ARM32
 import org.jetbrains.kotlin.konan.target.Architecture.ARM64
-import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.Family.*
-import org.jetbrains.kotlin.konan.target.HostManager
-import org.jetbrains.kotlin.konan.target.KonanTarget
-import org.jetbrains.kotlin.konan.target.Xcode
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toUpperCaseAsciiOnly
 
 @InternalKotlinGradlePluginApi
@@ -27,7 +25,29 @@ class XcodeUtils private constructor() {
         internal val INSTANCE: XcodeUtils? =
             if (HostManager.hostIsMac) XcodeUtils() else null
 
+        fun bitcodeEmbeddingMode(
+            outputKind: CompilerOutputKind,
+            userMode: BitcodeEmbeddingMode?,
+            xcodeVersion: Provider<RegularFile>,
+            target: KonanTarget,
+            debuggable: Boolean,
+        ): BitcodeEmbeddingMode {
+            return when {
+                outputKind != CompilerOutputKind.FRAMEWORK -> BitcodeEmbeddingMode.DISABLE
+                userMode != null -> userMode
+                bitcodeSupported(xcodeVersion, target) -> when (debuggable) {
+                    true -> BitcodeEmbeddingMode.MARKER
+                    false -> BitcodeEmbeddingMode.BITCODE
+                }
+                else -> BitcodeEmbeddingMode.DISABLE
+            }
+        }
 
+        private fun bitcodeSupported(xcodeVersion: Provider<RegularFile>, target: KonanTarget): Boolean {
+            return XcodeVersion.parse(xcodeVersion).major < 14
+                    && target.family in listOf(IOS, WATCHOS, TVOS)
+                    && target.architecture in listOf(ARM32, ARM64)
+        }
     }
 
     private val defaultTestDevices: Map<Family, String> by lazy {
@@ -63,15 +83,9 @@ class XcodeUtils private constructor() {
 
     fun getDefaultTestDeviceId(target: KonanTarget): String? = defaultTestDevices[target.family]
 
-    fun defaultBitcodeEmbeddingMode(target: KonanTarget, buildType: NativeBuildType): BitcodeEmbeddingMode {
-        if (Xcode.findCurrent().version.major < 14) {
-            if (target.family in listOf(IOS, WATCHOS, TVOS) && target.architecture in listOf(ARM32, ARM64)) {
-                when (buildType) {
-                    NativeBuildType.RELEASE -> return BitcodeEmbeddingMode.BITCODE
-                    NativeBuildType.DEBUG -> return BitcodeEmbeddingMode.MARKER
-                }
-            }
-        }
-        return BitcodeEmbeddingMode.DISABLE
-    }
+}
+
+internal fun XcodeVersion.Companion.parse(file: Provider<RegularFile>): XcodeVersion {
+    val version = file.getAsFile().readText()
+    return parse(version) ?: error("Couldn't parse Xcode version from '$version'")
 }

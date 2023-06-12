@@ -525,7 +525,7 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
                 else -> error("Unknown cocoapods platform: $family")
             }
 
-            val xcodeVersionTask = project.registerTask<XcodeVersionTask>("xcodeVersion")
+            val xcodeVersionTask = XcodeVersionTask.locateOrRegister(project)
 
             val podGenTask = project.registerTask<PodGenTask>(family.toPodGenTaskName) { task ->
                 task.description = "Сreates a synthetic Xcode project to retrieve CocoaPods dependencies"

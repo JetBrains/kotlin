@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.ReadyForEx
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.KOTLIN_NATIVE_IGNORE_INCORRECT_DEPENDENCIES
 import org.jetbrains.kotlin.gradle.plugin.internal.artifactTypeAttribute
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XcodeVersionTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.registerEmbedAndSignAppleFrameworkTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmVariant
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.copyAttributes
@@ -63,6 +64,7 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
         // this afterEvaluate comes from NativeCompilerOptions
         val compilationCompilerOptions = binary.compilation.compilerOptions
         val konanPropertiesBuildService = KonanPropertiesBuildService.registerIfAbsent(project)
+        val xcodeVersionTask = XcodeVersionTask.locateOrRegister(project)
         val linkTask = registerTask<KotlinNativeLink>(
             binary.linkTaskName, listOf(binary)
         ) {
@@ -75,6 +77,8 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
             it.toolOptions.freeCompilerArgs.value(compilationCompilerOptions.options.freeCompilerArgs)
             it.toolOptions.freeCompilerArgs.addAll(providers.provider { PropertiesProvider(project).nativeLinkArgs })
             it.runViaBuildToolsApi.value(false).disallowChanges() // K/N is not yet supported
+            it.xcodeVersion.set(xcodeVersionTask.flatMap(XcodeVersionTask::outputFile))
+            it.dependsOn(xcodeVersionTask)
         }
 
 

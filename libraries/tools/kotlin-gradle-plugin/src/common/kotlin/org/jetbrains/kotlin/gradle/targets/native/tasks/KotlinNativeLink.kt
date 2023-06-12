@@ -183,11 +183,17 @@ constructor(
         get() = embedBitcodeMode.get()
 
     @get:Input
+    @get:Optional
     val embedBitcodeMode: Provider<BitcodeEmbeddingMode> =
-        (binary as? Framework)?.embedBitcodeMode ?: project.provider { BitcodeEmbeddingMode.DISABLE }
+        (binary as? Framework)?.embedBitcodeMode ?: objectFactory.property()
 
     @get:Internal
     val apiFiles = project.files(project.configurations.getByName(compilation.apiConfigurationName)).filterKlibsPassedToCompiler()
+
+    @get:Optional
+    @get:InputFile
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    internal val xcodeVersion = objectFactory.fileProperty()
 
     private val externalDependenciesArgs by lazy { ExternalDependenciesBuilder(project, compilation).buildCompilerArgs() }
 
@@ -224,10 +230,10 @@ constructor(
             args.generateTestRunner = processTests
             args.mainPackage = entryPoint
 
-            when (embedBitcodeMode.get()) {
+            when (bitcodeEmbeddingMode()) {
                 BitcodeEmbeddingMode.BITCODE -> args.embedBitcode = true
                 BitcodeEmbeddingMode.MARKER -> args.embedBitcodeMarker = true
-                null, BitcodeEmbeddingMode.DISABLE -> Unit
+                BitcodeEmbeddingMode.DISABLE -> Unit
             }
 
             args.singleLinkerArguments = (linkerOpts + additionalLinkerOpts).toTypedArray()
@@ -390,5 +396,9 @@ constructor(
 
     private inline fun <reified T : Any> lazyConvention(noinline lazyConventionValue: () -> T): Provider<T> {
         return objectFactory.providerWithLazyConvention(lazyConventionValue)
+    }
+
+    private fun bitcodeEmbeddingMode(): BitcodeEmbeddingMode {
+        return XcodeUtils.bitcodeEmbeddingMode(outputKind, embedBitcodeMode.orNull, xcodeVersion, konanTarget, debuggable)
     }
 }
