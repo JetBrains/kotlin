@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.ir.backend.js.JsFactories
 import org.jetbrains.kotlin.ir.backend.js.resolverLogger
 import org.jetbrains.kotlin.ir.backend.js.serializeModuleIntoKlib
+import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.ir.util.IrMessageLogger
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
@@ -68,6 +69,7 @@ class FirWasmKlibBackendFacade(
                         inputArtifact.irModuleFragment,
                         inputArtifact.dependentIrModuleFragments,
                         diagnosticReporter,
+                        IrTypeSystemContextImpl(inputArtifact.irModuleFragment.irBuiltins),
                         configuration.languageVersionSettings
                     )
                 } else {
