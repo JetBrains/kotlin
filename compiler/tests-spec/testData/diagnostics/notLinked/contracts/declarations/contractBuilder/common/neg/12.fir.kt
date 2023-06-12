@@ -1,5 +1,14 @@
 // !OPT_IN: kotlin.contracts.ExperimentalContracts
 
+/*
+ * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (NEGATIVE)
+ *
+ * SECTIONS: contracts, declarations, contractBuilder, common
+ * NUMBER: 12
+ * DESCRIPTION: Functions with contracts and external effect builder.
+ * ISSUES: KT-26186
+ */
+
 // FILE: builder.kt
 
 package builder

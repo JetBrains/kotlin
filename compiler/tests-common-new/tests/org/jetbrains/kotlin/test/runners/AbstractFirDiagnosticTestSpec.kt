@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.test.bind
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.AdditionalFilesDirectives.SPEC_HELPERS
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.WITH_STDLIB
+import org.jetbrains.kotlin.test.frontend.classic.handlers.FirTestDataConsistencyHandler
 import org.jetbrains.kotlin.test.frontend.fir.FirFailingTestSuppressor
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirIdenticalChecker
 import org.jetbrains.kotlin.test.services.fir.FirOldFrontendMetaConfigurator
@@ -36,6 +37,7 @@ fun TestConfigurationBuilder.baseFirSpecDiagnosticTestConfiguration(baseDir: Str
 
     useAfterAnalysisCheckers(
         ::FirIdenticalChecker,
+        ::FirTestDataConsistencyHandler,
         ::FirFailingTestSuppressor,
     )
 

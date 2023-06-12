@@ -1,3 +1,12 @@
+/*
+ * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
+ *
+ * SPEC VERSION: 0.1-100
+ * MAIN LINK: expressions, constant-literals, real-literals -> paragraph 3 -> sentence 1
+ * NUMBER: 5
+ * DESCRIPTION: Real literals suffixed by f/F (float suffix) with omitted a whole-number part and an exponent mark.
+ */
+
 // TESTCASE NUMBER: 1
 val value_1 = .0e0f
 

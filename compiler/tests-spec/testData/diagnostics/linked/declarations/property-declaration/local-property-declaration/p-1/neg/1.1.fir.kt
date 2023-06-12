@@ -1,6 +1,15 @@
 // !DIAGNOSTICS: -UNREACHABLE_CODE -UNUSED_VARIABLE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -UNUSED_PARAMETER -UNUSED_EXPRESSION
 // SKIP_TXT
 
+/*
+ * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
+ *
+ * SPEC VERSION: 0.1-218
+ * MAIN LINK: declarations, property-declaration, local-property-declaration -> paragraph 1 -> sentence 1
+ * PRIMARY LINKS:  declarations, property-declaration, property-initialization -> paragraph 1 -> sentence 1
+ * NUMBER: 1
+ * DESCRIPTION: All non-abstract properties must be definitely initialized before their first use.
+ */
 
 /*
  * TESTCASE NUMBER: 1

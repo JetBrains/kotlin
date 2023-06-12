@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !DIAGNOSTICS: -UNUSED_VARIABLE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -UNUSED_PARAMETER -UNUSED_EXPRESSION
 // SKIP_TXT
 
@@ -30,7 +31,7 @@ interface Foo {
 fun <T> bar(f: KFunction2<T, String, String>) {}
 
 fun <T : Foo> main() {
-    bar<T>(Foo::resolve) // OK
+    bar<T>(Foo::resolve) // OK in OI, Ambiguity in NI
     bar<Foo>(Foo::resolve) // OK
     bar(Foo::resolve) // OK
 }

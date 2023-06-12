@@ -1,5 +1,15 @@
 // SKIP_TXT
 
+/*
+ * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
+ *
+ * SPEC VERSION: 0.1-100
+ * MAIN LINK: expressions, constant-literals, the-types-for-integer-literals -> paragraph 1 -> sentence 2
+ * NUMBER: 4
+ * DESCRIPTION: Type checking (comparison with invalid types) of too a big integers.
+ * HELPERS: checkType
+ */
+
 // TESTCASE NUMBER: 1
 fun case_1() {
     checkSubtype<Long>(<!OVERLOAD_RESOLUTION_AMBIGUITY!>-<!><!INT_LITERAL_OUT_OF_RANGE!>9223372036854775808L<!>)

@@ -2,6 +2,15 @@
 // SKIP_TXT
 // WITH_EXTENDED_CHECKERS
 
+/*
+ * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (NEGATIVE)
+ *
+ * SECTIONS: dfa
+ * NUMBER: 3
+ * DESCRIPTION: Raw data flow analysis test
+ * HELPERS: classes, objects, typealiases, enumClasses, interfaces, sealedClasses
+ */
+
 // TESTCASE NUMBER: 1
 fun case_1(x: Nothing?) {
     if (x is Int) {

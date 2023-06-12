@@ -1,4 +1,14 @@
+// LANGUAGE: +WarnAboutNonExhaustiveWhenOnAlgebraicTypes
 // !OPT_IN: kotlin.contracts.ExperimentalContracts
+
+/*
+ * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (POSITIVE)
+ *
+ * SECTIONS: contracts, analysis, smartcasts
+ * NUMBER: 8
+ * DESCRIPTION: Smartcasts using some Returns effects.
+ * HELPERS: contractFunctions
+ */
 
 // FILE: contracts.kt
 
@@ -104,7 +114,7 @@ fun case_4(value_1: Number, value_2: (() -> Unit)?) {
  * ISSUES: KT-26612
  */
 fun case_5(value_1: Number?, value_2: String?) {
-    <!NO_ELSE_IN_WHEN!>when<!> (value_2.case_5(value_1)) {
+    when (value_2.case_5(value_1)) {
         true -> {
             println(value_2.length)
             println(value_1.toByte())
@@ -113,6 +123,7 @@ fun case_5(value_1: Number?, value_2: String?) {
             println(value_2.length)
             println(value_1.inv())
         }
+        else -> {}
     }
 }
 

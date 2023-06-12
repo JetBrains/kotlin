@@ -1,6 +1,16 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -UNUSED_PARAMETER -UNUSED_EXPRESSION
 // SKIP_TXT
 
+/*
+ * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
+ *
+ * SPEC VERSION: 0.1-464
+ * MAIN LINK: type-system, subtyping, subtyping-for-intersection-types -> paragraph 1 -> sentence 1
+ * PRIMARY LINKS: type-system, subtyping, subtyping-for-intersection-types -> paragraph 2 -> sentence 3
+ * NUMBER: 1
+ * DESCRIPTION: intersection type inferred for enum classes
+ * HELPERS: checkType, functions
+ */
 
 /*
  * TESTCASE NUMBER: 1

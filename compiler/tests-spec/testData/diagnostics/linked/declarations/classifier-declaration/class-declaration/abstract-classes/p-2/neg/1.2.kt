@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !DIAGNOSTICS: -UNUSED_VARIABLE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -UNUSED_PARAMETER -UNUSED_EXPRESSION
 // SKIP_TXT
 
@@ -46,7 +47,6 @@ fun case1() {
     }
 }
 
-
 // FILE: TestCase2.kt
 /*
  * TESTCASE NUMBER: 2
@@ -64,8 +64,6 @@ private abstract class Base {
     abstract fun foo()
     internal abstract fun boo(): Any
 }
-
-
 
 fun case2() {
     val impl = <!ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED!>object<!> : Base() {

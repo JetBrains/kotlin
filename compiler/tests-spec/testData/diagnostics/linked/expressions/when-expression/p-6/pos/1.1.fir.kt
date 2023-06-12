@@ -1,5 +1,15 @@
 // SKIP_TXT
 
+/*
+ * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
+ *
+ * SPEC VERSION: 0.1-296
+ * MAIN LINK: expressions, when-expression -> paragraph 6 -> sentence 1
+ * NUMBER: 1
+ * DESCRIPTION: 'When' with bound value and type test condition.
+ * HELPERS: classes, objects
+ */
+
 // TESTCASE NUMBER: 1
 fun case_1(value_1: Any): String {
     when (value_1) {

@@ -1,6 +1,15 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE
 // SKIP_TXT
 
+/*
+ * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
+ *
+ * SPEC VERSION: 0.1-100
+ * MAIN LINK: type-system, introduction-1 -> paragraph 6 -> sentence 2
+ * NUMBER: 2
+ * DESCRIPTION: The use of Boolean literals as the identifier (with backtick) in the class.
+ */
+
 // TESTCASE NUMBER: 1
 fun case_1(x: Int = null) {
     println(x)

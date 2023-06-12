@@ -1,5 +1,14 @@
 // !OPT_IN: kotlin.contracts.ExperimentalContracts
 
+/*
+ * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (NEGATIVE)
+ *
+ * SECTIONS: contracts, declarations, contractBuilder, effects, returns
+ * NUMBER: 4
+ * DESCRIPTION: Using equality with literals in implies.
+ * ISSUES: KT-26178
+ */
+
 import kotlin.contracts.*
 
 // TESTCASE NUMBER: 1

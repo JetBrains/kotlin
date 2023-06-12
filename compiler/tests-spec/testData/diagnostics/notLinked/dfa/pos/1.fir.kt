@@ -217,17 +217,17 @@ fun case_11(x: TypealiasNullableStringIndirect?, y: TypealiasNullableStringIndir
 // TESTCASE NUMBER: 12
 fun case_12(x: TypealiasNullableStringIndirect, y: TypealiasNullableStringIndirect) =
     if (x == null) "1"
-else if (y === null) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect & kotlin.String")!>x<!>
-else if (<!SENSELESS_COMPARISON!>y === null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect & kotlin.String")!>x<!>.equals(null)
-else if (<!SENSELESS_COMPARISON!>y === null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect & kotlin.String")!>x<!>.propT
-else if (<!SENSELESS_COMPARISON!>y === null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect & kotlin.String")!>x<!>.propAny
-else if (<!SENSELESS_COMPARISON!>y === null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect & kotlin.String")!>x<!>.propNullableT
-else if (<!SENSELESS_COMPARISON!>y === null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect & kotlin.String")!>x<!>.propNullableAny
-else if (<!SENSELESS_COMPARISON!>y === null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect & kotlin.String")!>x<!>.funT()
-else if (<!SENSELESS_COMPARISON!>y === null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect & kotlin.String")!>x<!>.funAny()
-else if (<!SENSELESS_COMPARISON!>y === null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect & kotlin.String")!>x<!>.funNullableT()
-else if (<!SENSELESS_COMPARISON!>y === null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect & kotlin.String")!>x<!>.funNullableAny()
-else "-1"
+    else if (y === null) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect & kotlin.String")!>x<!>
+    else if (<!SENSELESS_COMPARISON!>y === null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect & kotlin.String")!>x<!>.equals(null)
+    else if (<!SENSELESS_COMPARISON!>y === null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect & kotlin.String")!>x<!>.propT
+    else if (<!SENSELESS_COMPARISON!>y === null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect & kotlin.String")!>x<!>.propAny
+    else if (<!SENSELESS_COMPARISON!>y === null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect & kotlin.String")!>x<!>.propNullableT
+    else if (<!SENSELESS_COMPARISON!>y === null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect & kotlin.String")!>x<!>.propNullableAny
+    else if (<!SENSELESS_COMPARISON!>y === null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect & kotlin.String")!>x<!>.funT()
+    else if (<!SENSELESS_COMPARISON!>y === null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect & kotlin.String")!>x<!>.funAny()
+    else if (<!SENSELESS_COMPARISON!>y === null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect & kotlin.String")!>x<!>.funNullableT()
+    else if (<!SENSELESS_COMPARISON!>y === null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect & kotlin.String")!>x<!>.funNullableAny()
+    else "-1"
 
 // TESTCASE NUMBER: 13
 fun case_13(x: otherpackage.Case13?) =
@@ -260,43 +260,43 @@ fun case_14() {
     if (a.x != null) {
         if (<!SENSELESS_COMPARISON!>a.x != null<!>) {
             if (<!SENSELESS_COMPARISON!>a.x !== null<!>) {
-            if (<!SENSELESS_COMPARISON!>a.x != null<!>) {
-            if (<!SENSELESS_COMPARISON!>a.x != null<!>) {
-            if (<!SENSELESS_COMPARISON!>a.x != null<!>) {
-            if (<!SENSELESS_COMPARISON!>a.x !== null<!>) {
-            if (<!SENSELESS_COMPARISON!>a.x != null<!>) {
-            if (<!SENSELESS_COMPARISON!>a.x != null<!>) {
-            if (<!SENSELESS_COMPARISON!>a.x !== null<!>) {
-            if (<!SENSELESS_COMPARISON!>a.x != null<!>) {
-            if (<!SENSELESS_COMPARISON!>a.x != null<!>) {
-            if (<!SENSELESS_COMPARISON!>a.x != null<!>) {
-            if (<!SENSELESS_COMPARISON!>a.x !== null<!>) {
-            if (<!SENSELESS_COMPARISON!>a.x != null<!>) {
-            if (<!SENSELESS_COMPARISON!>a.x !== null<!>) {
-            a.x
-            a.x.equals(null)
-            a.x.propT
-            a.x.propAny
-            a.x.propNullableT
-            a.x.propNullableAny
-            a.x.funT()
-            a.x.funAny()
-            a.x.funNullableT()
-            a.x.funNullableAny()
-        }
-        }
-        }
-        }
-        }
-        }
-        }
-        }
-        }
-        }
-        }
-        }
-        }
-        }
+                if (<!SENSELESS_COMPARISON!>a.x != null<!>) {
+                    if (<!SENSELESS_COMPARISON!>a.x != null<!>) {
+                        if (<!SENSELESS_COMPARISON!>a.x != null<!>) {
+                            if (<!SENSELESS_COMPARISON!>a.x !== null<!>) {
+                                if (<!SENSELESS_COMPARISON!>a.x != null<!>) {
+                                    if (<!SENSELESS_COMPARISON!>a.x != null<!>) {
+                                        if (<!SENSELESS_COMPARISON!>a.x !== null<!>) {
+                                            if (<!SENSELESS_COMPARISON!>a.x != null<!>) {
+                                                if (<!SENSELESS_COMPARISON!>a.x != null<!>) {
+                                                    if (<!SENSELESS_COMPARISON!>a.x != null<!>) {
+                                                        if (<!SENSELESS_COMPARISON!>a.x !== null<!>) {
+                                                            if (<!SENSELESS_COMPARISON!>a.x != null<!>) {
+                                                                if (<!SENSELESS_COMPARISON!>a.x !== null<!>) {
+                                                                    a.x
+                                                                    a.x.equals(null)
+                                                                    a.x.propT
+                                                                    a.x.propAny
+                                                                    a.x.propNullableT
+                                                                    a.x.propNullableAny
+                                                                    a.x.funT()
+                                                                    a.x.funAny()
+                                                                    a.x.funNullableT()
+                                                                    a.x.funNullableAny()
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }

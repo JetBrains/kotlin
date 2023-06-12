@@ -1,5 +1,15 @@
 // !OPT_IN: kotlin.contracts.ExperimentalContracts
 
+/*
+ * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (POSITIVE)
+ *
+ * SECTIONS: contracts, analysis, smartcasts
+ * NUMBER: 14
+ * DESCRIPTION: Check smartcast with non-null assertion for a contract function.
+ * UNEXPECTED BEHAVIOUR
+ * ISSUES: KT-26856
+ */
+
 // FILE: contracts.kt
 
 package contracts

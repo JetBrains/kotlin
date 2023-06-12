@@ -1,6 +1,16 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 // !OPT_IN: kotlin.contracts.ExperimentalContracts
 
+/*
+ * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (POSITIVE)
+ *
+ * SECTIONS: contracts, analysis, smartcasts
+ * NUMBER: 10
+ * DESCRIPTION: Smartcasts with correspond contract function with default value in last parameter.
+ * ISSUES: KT-26444
+ * HELPERS: contractFunctions
+ */
+
 // FILE: contracts.kt
 
 package contracts

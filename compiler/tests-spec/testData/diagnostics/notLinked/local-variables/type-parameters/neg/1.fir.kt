@@ -1,6 +1,16 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE
 // SKIP_TXT
 
+/*
+ * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (NEGATIVE)
+ *
+ * SECTIONS: local-variables, type-parameters
+ * NUMBER: 1
+ * DESCRIPTION: Local variables with forbidden type parameters.
+ * UNEXPECTED BEHAVIOUR
+ * ISSUES: KT-8341
+ */
+
 // TESTCASE NUMBER: 1
 fun case_1() {
     val <!LOCAL_VARIABLE_WITH_TYPE_PARAMETERS!><T><!> x1 = 1

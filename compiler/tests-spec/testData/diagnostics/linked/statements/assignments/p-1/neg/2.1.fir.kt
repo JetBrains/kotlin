@@ -2,6 +2,16 @@
 // SKIP_TXT
 
 /*
+ * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
+ *
+ * SPEC VERSION: 0.1-222
+ * MAIN LINK: statements, assignments -> paragraph 1 -> sentence 2
+ * NUMBER: 1
+ * DESCRIPTION: Both left-hand and right-hand sides of an assignment must be expressions
+ */
+
+
+/*
  * TESTCASE NUMBER: 1
  * NOTE: right-hand side of an assignment must be expression
  */

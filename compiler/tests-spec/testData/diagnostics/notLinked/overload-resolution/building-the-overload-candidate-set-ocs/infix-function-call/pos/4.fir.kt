@@ -1,6 +1,17 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
 // SKIP_TXT
 
+/*
+ * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (POSITIVE)
+ *
+ * SECTIONS: overload-resolution, building-the-overload-candidate-set-ocs, infix-function-call
+ * NUMBER: 4
+ * DESCRIPTION: Local extension infix extension callables
+ * UNEXPECTED BEHAVIOUR
+ * ISSUES: KT-36786
+ */
+
+
 // TESTCASE NUMBER: 1, 2
 // FILE: infixLib.kt
 package libPackage

@@ -18,16 +18,16 @@ class C() {
 // TESTCASE NUMBER: 1
 fun case1() {
     val b: B = B(C())
-    b <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>memberVal<!> 1           //nok UNRESOLVED_REFERENCE_WRONG_RECEIVER
-    b.memberVal.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>invoke<!>(2)   //nok UNRESOLVED_REFERENCE_WRONG_RECEIVER
-    b.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>memberVal<!>(1)          //nok UNRESOLVED_REFERENCE_WRONG_RECEIVER
+    b <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>memberVal<!> 1
+    b.memberVal.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>invoke<!>(2)
+    b.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>memberVal<!>(1)
 
     if (b.memberVal is C) {
 
-        b <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>memberVal<!> 1           //nok UNRESOLVED_REFERENCE_WRONG_RECEIVER !!!!
-        <!DEBUG_INFO_SMARTCAST!>b.memberVal<!>.invoke(1)   //ok
+        b <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>memberVal<!> 1
+        <!DEBUG_INFO_SMARTCAST!>b.memberVal<!>.invoke(1)
 
-        b.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>memberVal<!>(1)          //nok UNRESOLVED_REFERENCE_WRONG_RECEIVER  !!!
-        <!DEBUG_INFO_SMARTCAST!>(b.memberVal)<!>(1)        //ok
+        b.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>memberVal<!>(1)
+        <!DEBUG_INFO_SMARTCAST!>(b.memberVal)<!>(1)
     }
 }

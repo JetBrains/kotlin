@@ -1,5 +1,13 @@
 // !OPT_IN: kotlin.contracts.ExperimentalContracts
 
+/*
+ * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (POSITIVE)
+ *
+ * SECTIONS: contracts, analysis, common
+ * NUMBER: 1
+ * DESCRIPTION: Analysis by contracts with mixed CallsInPlace and Returns effects.
+ */
+
 // FILE: contracts.kt
 
 package contracts

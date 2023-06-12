@@ -1,5 +1,15 @@
+// LANGUAGE: +WarnAboutNonExhaustiveWhenOnAlgebraicTypes
 // !DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_VARIABLE -UNUSED_VALUE -VARIABLE_WITH_REDUNDANT_INITIALIZER
 // SKIP_TXT
+
+/*
+ * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (POSITIVE)
+ *
+ * SECTIONS: dfa
+ * NUMBER: 54
+ * DESCRIPTION: Raw data flow analysis test
+ * HELPERS: classes, objects, typealiases, functions, enumClasses, interfaces, sealedClasses
+ */
 
 /*
  * TESTCASE NUMBER: 1
@@ -136,8 +146,9 @@ fun case_7() {
         var b = a
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String")!>b<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String")!>b<!>.length
-        <!NO_ELSE_IN_WHEN!>when<!> (true) {
+        when (true) {
             true -> b = a
+            else -> {}
         }
 
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String")!>b<!>

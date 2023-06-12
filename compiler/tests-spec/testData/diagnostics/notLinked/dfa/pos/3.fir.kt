@@ -1,6 +1,15 @@
-// !DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_VARIABLE
+// !DIAGNOSTICS: -UNUSED_EXPRESSION
 // SKIP_TXT
 // WITH_EXTENDED_CHECKERS
+
+/*
+ * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (POSITIVE)
+ *
+ * SECTIONS: dfa
+ * NUMBER: 3
+ * DESCRIPTION: Raw data flow analysis test
+ * HELPERS: objects, enumClasses, classes, properties, typealiases
+ */
 
 // FILE: other_package.kt
 
@@ -171,7 +180,7 @@ fun case_14() {
 
 // TESTCASE NUMBER: 15
 fun case_15(x: TypealiasNullableString) {
-    val t = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>if (x != null) "" else {
+    val <!UNUSED_VARIABLE!>t<!> = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>if (x != null) "" else {
         <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString & kotlin.Nothing?")!>x<!>
     }<!>
 }

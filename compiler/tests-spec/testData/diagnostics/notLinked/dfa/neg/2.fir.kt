@@ -1,6 +1,14 @@
 // !DIAGNOSTICS: -UNUSED_EXPRESSION
 // SKIP_TXT
 
+/*
+ * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (NEGATIVE)
+ *
+ * SECTIONS: dfa
+ * NUMBER: 2
+ * DESCRIPTION: Raw data flow analysis test
+ */
+
 // TESTCASE NUMBER: 1
 fun case_1(x: Any?) {
     if (x is Nothing) {

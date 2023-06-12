@@ -2,6 +2,15 @@
 // SKIP_TXT
 
 /*
+ * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (POSITIVE)
+ *
+ * SECTIONS: dfa
+ * NUMBER: 49
+ * DESCRIPTION: Raw data flow analysis test
+ * HELPERS: annotations, classes, objects, typealiases, functions, enumClasses, interfaces, sealedClasses
+ */
+
+/*
  * TESTCASE NUMBER: 1
  * UNEXPECTED BEHAVIOUR
  * ISSUES: KT-29935

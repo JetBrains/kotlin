@@ -1,6 +1,17 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -UNUSED_PARAMETER
 // SKIP_TXT
 
+/*
+ * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
+ *
+ * SPEC VERSION: 0.1-296
+ * MAIN LINK: type-system, introduction-1 -> paragraph 8 -> sentence 1
+ * PRIMARY LINKS: type-system, type-kinds, built-in-types, kotlin.any -> paragraph 1 -> sentence 1
+ * NUMBER: 1
+ * DESCRIPTION: The use of Boolean literals as the identifier (with backtick) in the class.
+ * HELPERS: checkType
+ */
+
 // TESTCASE NUMBER: 1
 fun case_1() {
     checkSubtype<Any?>(10)

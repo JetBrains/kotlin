@@ -1,6 +1,18 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE -UNREACHABLE_CODE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -UNUSED_PARAMETER -UNUSED_EXPRESSION -IMPLICIT_NOTHING_RETURN_TYPE -DEBUG_INFO_LEAKING_THIS -EXTENSION_SHADOWED_BY_MEMBER
 // SKIP_TXT
 
+/*
+ * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
+ *
+ * SPEC VERSION: 0.1-280
+ * MAIN LINK: overload-resolution, building-the-overload-candidate-set-ocs, call-with-named-parameters -> paragraph 1 -> sentence 2
+ * PRIMARY LINKS: overload-resolution, building-the-overload-candidate-set-ocs, call-with-named-parameters -> paragraph 3 -> sentence 1
+ * overload-resolution, building-the-overload-candidate-set-ocs, call-with-named-parameters -> paragraph 2 -> sentence 1
+ * overload-resolution, building-the-overload-candidate-set-ocs, call-with-named-parameters -> paragraph 4 -> sentence 1
+ * NUMBER: 1
+ * DESCRIPTION: Implicit receiver: sets of non-extension member callables, local, explicitly imported, declared in the package scope and star-imported extension callables
+ */
+
 // TESTCASE NUMBER: 1, 2, 3, 4, 5
 
 // FILE: Marker.kt

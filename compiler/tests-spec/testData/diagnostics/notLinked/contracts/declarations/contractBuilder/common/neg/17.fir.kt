@@ -1,6 +1,16 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER -UNREACHABLE_CODE -UNUSED_EXPRESSION
 // !OPT_IN: kotlin.contracts.ExperimentalContracts
 
+/*
+ * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (NEGATIVE)
+ *
+ * SECTIONS: contracts, declarations, contractBuilder, common
+ * NUMBER: 17
+ * DESCRIPTION: contracts with Nothing expressions in implies.
+ * DISCUSSION
+ * ISSUES: KT-25948
+ */
+
 import kotlin.contracts.*
 
 // TESTCASE NUMBER: 1

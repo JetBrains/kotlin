@@ -1,6 +1,15 @@
 // !DIAGNOSTICS: -UNUSED_EXPRESSION
 // SKIP_TXT
 
+/*
+ * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (POSITIVE)
+ *
+ * SECTIONS: dfa
+ * NUMBER: 18
+ * DESCRIPTION: Raw data flow analysis test
+ * HELPERS: objects, properties, classes, functions
+ */
+
 // TESTCASE NUMBER: 1
 fun case_1(x: Int?) {
     while (true) {

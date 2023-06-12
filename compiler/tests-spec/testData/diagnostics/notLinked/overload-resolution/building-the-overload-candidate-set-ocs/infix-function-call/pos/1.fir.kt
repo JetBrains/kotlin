@@ -1,6 +1,16 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
 // SKIP_TXT
 
+/*
+ * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (POSITIVE)
+ *
+ * SECTIONS: overload-resolution, building-the-overload-candidate-set-ocs, infix-function-call
+ * NUMBER: 1
+ * DESCRIPTION: Not null Smartcast doesn't work in case of property infix call
+ * UNEXPECTED BEHAVIOUR
+ * ISSUES: KT-36786
+ */
+
 class C() {
     infix operator fun invoke(i: Int) { } //(1)
 }

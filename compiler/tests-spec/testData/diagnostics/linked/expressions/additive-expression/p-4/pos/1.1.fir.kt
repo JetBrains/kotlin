@@ -1,6 +1,18 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -UNUSED_PARAMETER -UNUSED_EXPRESSION
 // SKIP_TXT
 
+/*
+ * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
+ *
+ * SPEC VERSION: 0.1-218
+ * MAIN LINK: expressions, additive-expression -> paragraph 4 -> sentence 1
+ * PRIMARY LINKS: expressions, additive-expression -> paragraph 4 -> sentence 2
+ * overloadable-operators -> paragraph 4 -> sentence 1
+ * NUMBER: 1
+ * DESCRIPTION: The return type of these functions is not restricted.
+ * HELPERS: checkType
+ */
+
 // TESTCASE NUMBER: 1
 class Case1(var a: Int) {
     operator fun minus(o: Int): Case1 { TODO() }

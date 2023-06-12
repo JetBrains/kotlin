@@ -11,7 +11,6 @@
  * DESCRIPTION: check unsafe prefix increment expression call for an assignable expression
  */
 
-
 // FILE: TestCase1.kt
 // TESTCASE NUMBER: 1
 package testPackCase1

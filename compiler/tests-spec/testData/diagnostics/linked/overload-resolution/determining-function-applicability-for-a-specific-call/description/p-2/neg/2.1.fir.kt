@@ -1,6 +1,16 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -UNUSED_PARAMETER -UNUSED_EXPRESSION
 // SKIP_TXT
 
+/*
+ * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
+ *
+ * SPEC VERSION: 0.1-448
+ * MAIN LINK: overload-resolution, determining-function-applicability-for-a-specific-call, description -> paragraph 2 -> sentence 2
+ * PRIMARY LINKS: overload-resolution, determining-function-applicability-for-a-specific-call, description -> paragraph 4 -> sentence 3
+ * SECONDARY LINKS: overload-resolution, determining-function-applicability-for-a-specific-call, description -> paragraph 5 -> sentence 1
+ * NUMBER: 1
+ * DESCRIPTION: explicit receiver with lambda
+ */
 
 // FILE: TestCase1.kt
 /*

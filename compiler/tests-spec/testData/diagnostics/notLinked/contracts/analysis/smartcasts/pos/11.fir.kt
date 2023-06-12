@@ -1,5 +1,15 @@
 // !OPT_IN: kotlin.contracts.ExperimentalContracts
 
+/*
+ * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (POSITIVE)
+ *
+ * SECTIONS: contracts, analysis, smartcasts
+ * NUMBER: 11
+ * DESCRIPTION: Check smartcasts with passing same fields of instances of the same class in contract function with conjunction not-null condition.
+ * ISSUES: KT-26300
+ * HELPERS: contractFunctions
+ */
+
 // FILE: contracts.kt
 
 package contracts

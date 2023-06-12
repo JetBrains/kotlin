@@ -1,5 +1,13 @@
 // !OPT_IN: kotlin.contracts.ExperimentalContracts
 
+/*
+ * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (POSITIVE)
+ *
+ * SECTIONS: contracts, analysis, controlFlow, initialization
+ * NUMBER: 5
+ * DESCRIPTION: Smart initialization with correspond contract function with default value before lambda.
+ * ISSUES: KT-26444
+ */
 
 // FILE: contracts.kt
 

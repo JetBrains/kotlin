@@ -26,7 +26,6 @@ open class A<T>(var data: T) {
 
 class B<T>(data: T) : A<T>(data)
 
-
 fun case1() {
     val tryVal: B<String> =
     try <!TYPE_MISMATCH!>{

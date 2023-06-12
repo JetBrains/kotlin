@@ -1,6 +1,16 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE -UNREACHABLE_CODE
 // SKIP_TXT
 
+/*
+ * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
+ *
+ * SPEC VERSION: 0.1-100
+ * MAIN LINK: type-system, introduction-1 -> paragraph 8 -> sentence 2
+ * NUMBER: 1
+ * DESCRIPTION: The use of Boolean literals as the identifier (with backtick) in the class.
+ * HELPERS: checkType
+ */
+
 // TESTCASE NUMBER: 1
 fun case_1() {
     checkSubtype<Any?>(return)

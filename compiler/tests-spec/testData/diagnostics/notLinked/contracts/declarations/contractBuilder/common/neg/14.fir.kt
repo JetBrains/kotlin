@@ -1,6 +1,16 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE
 // !OPT_IN: kotlin.contracts.ExperimentalContracts
 
+/*
+ * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (NEGATIVE)
+ *
+ * SECTIONS: contracts, declarations, contractBuilder, common
+ * NUMBER: 14
+ * DESCRIPTION: Contract is first statement in control flow terms, but not in tokens order terms.
+ * ISSUES: KT-26153
+ * HELPERS: functions
+ */
+
 import kotlin.contracts.*
 
 // TESTCASE NUMBER: 1

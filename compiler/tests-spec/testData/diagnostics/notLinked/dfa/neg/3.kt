@@ -1,5 +1,6 @@
-// !DIAGNOSTICS: -UNUSED_EXPRESSION
+// !DIAGNOSTICS: -UNUSED_EXPRESSION -UNREACHABLE_CODE
 // SKIP_TXT
+// WITH_EXTENDED_CHECKERS
 
 /*
  * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (NEGATIVE)
@@ -20,10 +21,10 @@ fun case_1(x: Nothing?) {
 
 // TESTCASE NUMBER: 2
 fun case_2(x: Nothing) {
-    if (<!USELESS_IS_CHECK!>x <!UNREACHABLE_CODE!>is Unit<!><!>) <!UNREACHABLE_CODE!>{
+    if (<!USELESS_IS_CHECK!>x is Unit<!>) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>x<!>.<!MISSING_DEPENDENCY_CLASS!>inv<!>()
-    }<!>
+    }
 }
 
 // TESTCASE NUMBER: 3
@@ -36,10 +37,10 @@ fun case_3(x: Nothing?) {
 
 // TESTCASE NUMBER: 4
 fun case_4(x: Nothing) {
-    if (<!USELESS_IS_CHECK!>x <!UNREACHABLE_CODE!>!is EnumClass<!><!>) else <!UNREACHABLE_CODE!>{
+    if (<!USELESS_IS_CHECK!>x !is EnumClass<!>) else {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>x<!>.<!UNRESOLVED_REFERENCE!>fun_1<!>()
-    }<!>
+    }
 }
 
 // TESTCASE NUMBER: 5
@@ -60,10 +61,10 @@ fun case_6(x: Nothing?) {
 
 // TESTCASE NUMBER: 7
 fun case_7(x: Nothing) {
-    if (<!UNREACHABLE_CODE!>!(<!><!USELESS_IS_CHECK!>x is DeepObject.A.B.C.D.E.F.G.J<!><!UNREACHABLE_CODE!>)<!>) else <!UNREACHABLE_CODE!>{
+    if (!(<!USELESS_IS_CHECK!>x is DeepObject.A.B.C.D.E.F.G.J<!>)) else {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>x<!>.<!UNRESOLVED_REFERENCE!>prop_1<!>
-    }<!>
+    }
 }
 
 // TESTCASE NUMBER: 8

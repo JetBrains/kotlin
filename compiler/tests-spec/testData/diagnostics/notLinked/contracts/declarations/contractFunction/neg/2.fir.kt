@@ -1,6 +1,16 @@
 // !LANGUAGE: +AllowContractsForNonOverridableMembers +AllowReifiedGenericsInContracts
 // !OPT_IN: kotlin.contracts.ExperimentalContracts
 
+/*
+ * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (NEGATIVE)
+ *
+ * SECTIONS: contracts, declarations, contractFunction
+ * NUMBER: 2
+ * DESCRIPTION: Check report about use contracts in literal functions, lambdas or not top-level functions.
+ * ISSUES: KT-26149
+ * HELPERS: classes
+ */
+
 import kotlin.contracts.*
 
 // TESTCASE NUMBER: 1

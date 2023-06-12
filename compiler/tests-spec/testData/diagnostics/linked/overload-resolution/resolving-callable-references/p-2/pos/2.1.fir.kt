@@ -1,6 +1,14 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -UNUSED_PARAMETER -UNUSED_EXPRESSION
 // SKIP_TXT
 
+/*
+ * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
+ *
+ * SPEC VERSION: 0.1-401
+ * MAIN LINK: overload-resolution, resolving-callable-references -> paragraph 2 -> sentence 2
+ * NUMBER: 1
+ * DESCRIPTION: the case of a call with a callable reference as a not parameter
+ */
 
 // FILE: TestCase1.kt
 // TESTCASE NUMBER: 1

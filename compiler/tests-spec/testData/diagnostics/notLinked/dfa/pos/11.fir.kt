@@ -1,6 +1,15 @@
 // !DIAGNOSTICS: -UNUSED_EXPRESSION
 // SKIP_TXT
 
+/*
+ * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (POSITIVE)
+ *
+ * SECTIONS: dfa
+ * NUMBER: 11
+ * DESCRIPTION: Raw data flow analysis test
+ * HELPERS: classes, functions, interfaces, properties
+ */
+
 // TESTCASE NUMBER: 1
 fun <A, B : Inv<A>, C: Out<A?>> case_1(a: C, b: B) = select(a.x, b.x)
 

@@ -1,6 +1,16 @@
 // !DIAGNOSTICS: -UNUSED_EXPRESSION
 // SKIP_TXT
 
+/*
+ * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
+ *
+ * SPEC VERSION: 0.1-313
+ * MAIN LINK: expressions, when-expression -> paragraph 5 -> sentence 1
+ * NUMBER: 1
+ * DESCRIPTION: 'When' with bound value and with different variants of expressions in the control structure body.
+ * HELPERS: typesProvider, classes, functions
+ */
+
 // TESTCASE NUMBER: 5
 fun case_5(value_1: Int, value_2: Int, value_3: Boolean?) {
     when (value_1) {

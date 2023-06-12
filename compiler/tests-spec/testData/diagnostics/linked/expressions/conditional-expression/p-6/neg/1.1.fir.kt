@@ -2,6 +2,16 @@
 // SKIP_TXT
 // FULL_JDK
 
+/*
+ * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
+ *
+ * SPEC VERSION: 0.1-313
+ * MAIN LINK: expressions, conditional-expression -> paragraph 6 -> sentence 1
+ * NUMBER: 1
+ * DESCRIPTION: The type of the condition expression must be a subtype of kotlin.Boolean
+ * HELPERS: checkType
+ */
+
 // MODULE: libModule
 // FILE: libModule/JavaContainer.java
 package libModule;

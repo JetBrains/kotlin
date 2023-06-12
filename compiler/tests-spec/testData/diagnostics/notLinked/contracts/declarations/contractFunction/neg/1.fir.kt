@@ -1,5 +1,13 @@
 // !OPT_IN: kotlin.contracts.ExperimentalContracts
 
+/*
+ * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (NEGATIVE)
+ *
+ * SECTIONS: contracts, declarations, contractFunction
+ * NUMBER: 1
+ * DESCRIPTION: Check that recursion isn't allowed in contract functions with CallsInPlace effect.
+ */
+
 import kotlin.contracts.*
 
 // TESTCASE NUMBER: 1

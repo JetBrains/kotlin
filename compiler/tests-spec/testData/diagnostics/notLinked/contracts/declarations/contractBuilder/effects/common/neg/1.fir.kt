@@ -1,6 +1,15 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE
 // !OPT_IN: kotlin.contracts.ExperimentalContracts
 
+/*
+ * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (NEGATIVE)
+ *
+ * SECTIONS: contracts, declarations, contractBuilder, effects, common
+ * NUMBER: 1
+ * DESCRIPTION: Indirect effect functions call.
+ * ISSUES: KT-26175
+ */
+
 import kotlin.contracts.*
 
 // TESTCASE NUMBER: 1

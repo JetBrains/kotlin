@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !DIAGNOSTICS: -UNUSED_VARIABLE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -UNUSED_PARAMETER -UNUSED_EXPRESSION
 // SKIP_TXT
 
@@ -11,7 +12,7 @@
  */
 
 // FILE: TestCase1.kt
-// TESTCASE NUMBER:1
+// TESTCASE NUMBER: 1
 package testPackCase1
 <!REDUNDANT_MODIFIER!>open<!> abstract class Base {
 
@@ -24,6 +25,7 @@ package testPackCase1
     abstract fun foo()
     internal abstract fun boo(): Any
 }
+
 fun case1() {
     val impl = BaseImplCase1(1, "1", 1.0)
 }
@@ -133,7 +135,6 @@ package testPackCase4
     abstract fun foo()
     internal abstract fun boo(): Any
 }
-
 
 fun case4() {
     ImplBaseCase4()

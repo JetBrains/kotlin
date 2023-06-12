@@ -1,6 +1,15 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -UNUSED_PARAMETER -UNUSED_EXPRESSION
 // SKIP_TXT
 
+/*
+ * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
+ *
+ * SPEC VERSION: 0.1-268
+ * MAIN LINK: overload-resolution, building-the-overload-candidate-set-ocs, operator-call -> paragraph 4 -> sentence 1
+ * NUMBER: 1
+ * DESCRIPTION: properties available through the invoke convention are non-eligible for operator calls
+ */
+
 // FILE: TestCase1.kt
 /*
  * TESTCASE NUMBER: 1

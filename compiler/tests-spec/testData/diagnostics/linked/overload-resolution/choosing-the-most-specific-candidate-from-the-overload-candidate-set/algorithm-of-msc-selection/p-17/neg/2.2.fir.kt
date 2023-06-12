@@ -1,6 +1,14 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -UNUSED_PARAMETER -UNUSED_EXPRESSION
 // SKIP_TXT
 
+/*
+ * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
+ *
+ * SPEC VERSION: 0.1-387
+ * MAIN LINK: overload-resolution, choosing-the-most-specific-candidate-from-the-overload-candidate-set, algorithm-of-msc-selection -> paragraph 17 -> sentence 2
+ * NUMBER: 2
+ * DESCRIPTION: If several properties are equally applicable, this is an overload ambiguity as usual (both are parametrized)
+ */
 // FILE: TestCase1.kt
 /*
  * TESTCASE NUMBER: 1

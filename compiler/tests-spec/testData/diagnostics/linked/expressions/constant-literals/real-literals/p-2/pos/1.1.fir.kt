@@ -1,3 +1,12 @@
+/*
+ * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
+ *
+ * SPEC VERSION: 0.1-435
+ * MAIN LINK: expressions, constant-literals, real-literals -> paragraph 2 -> sentence 1
+ * NUMBER: 1
+ * DESCRIPTION: Simple real literals with an exponent mark.
+ */
+
 // TESTCASE NUMBER: 1
 val value_1 = 0.0e0
 

@@ -1,6 +1,15 @@
 // !DIAGNOSTICS: -UNUSED_EXPRESSION, -NAME_SHADOWING, -UNUSED_VARIABLE
 // SKIP_TXT
 
+/*
+ * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (POSITIVE)
+ *
+ * SECTIONS: dfa
+ * NUMBER: 16
+ * DESCRIPTION: Raw data flow analysis test
+ * HELPERS: objects, properties, classes, functions
+ */
+
 // TESTCASE NUMBER: 1
 fun case_1(x: Int?) {
     if (x == null) return

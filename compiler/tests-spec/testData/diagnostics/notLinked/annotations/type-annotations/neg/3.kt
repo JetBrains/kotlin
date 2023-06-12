@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
 /*
@@ -11,6 +12,8 @@
  */
 
 // TESTCASE NUMBER: 1, 2, 3
+package sometest
+
 @Target(AnnotationTarget.TYPE)
 annotation class Ann(val x: Int)
 

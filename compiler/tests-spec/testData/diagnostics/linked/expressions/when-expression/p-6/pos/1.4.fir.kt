@@ -1,5 +1,15 @@
 // SKIP_TXT
 
+/*
+ * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
+ *
+ * SPEC VERSION: 0.1-296
+ * MAIN LINK: expressions, when-expression -> paragraph 6 -> sentence 1
+ * NUMBER: 4
+ * DESCRIPTION: 'When' with bound value and enumaration of type test conditions (with invert type checking operator).
+ * HELPERS: sealedClasses
+ */
+
 // TESTCASE NUMBER: 1
 fun case_1(value_1: SealedClass): String = when (value_1) {
     is SealedChild1, !is SealedChild3 -> ""

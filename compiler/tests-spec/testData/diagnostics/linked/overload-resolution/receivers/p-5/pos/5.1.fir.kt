@@ -1,6 +1,17 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -UNUSED_PARAMETER -UNUSED_EXPRESSION
 // SKIP_TXT
 
+/*
+ * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
+ *
+ * SPEC VERSION: 0.1-278
+ * MAIN LINK: overload-resolution, receivers -> paragraph 5 -> sentence 5
+ * PRIMARY LINKS: overload-resolution, receivers -> paragraph 5 -> sentence 4
+ * overload-resolution, building-the-overload-candidate-set-ocs, call-without-an-explicit-receiver -> paragraph 5 -> sentence 2
+ * NUMBER: 1
+ * DESCRIPTION: Superclass companion object receivers are prioritized according to the inheritance order
+ */
+
 // FILE: TestCase1.kt
 // TESTCASE NUMBER: 1
 package testsCase1

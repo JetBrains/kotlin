@@ -1,6 +1,15 @@
 // !OPT_IN: kotlin.contracts.ExperimentalContracts
 // SKIP_TXT
 
+/*
+ * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (POSITIVE)
+ *
+ * SECTIONS: contracts, analysis, controlFlow, initialization
+ * NUMBER: 4
+ * DESCRIPTION: CallsInPlace contract functions with name shadowing
+ * HELPERS: contractFunctions
+ */
+
 // TESTCASE NUMBER: 1
 fun case_1() {
     val value_1: Int

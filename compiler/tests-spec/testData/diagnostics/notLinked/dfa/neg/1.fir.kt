@@ -1,6 +1,15 @@
-// !DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_VARIABLE
+// !DIAGNOSTICS: -UNUSED_EXPRESSION
 // SKIP_TXT
 // WITH_EXTENDED_CHECKERS
+
+/*
+ * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (NEGATIVE)
+ *
+ * SECTIONS: dfa
+ * NUMBER: 1
+ * DESCRIPTION: Raw data flow analysis test
+ * HELPERS: classes, objects, functions, typealiases, properties, enumClasses, interfaces, sealedClasses
+ */
 
 // TESTCASE NUMBER: 1
 fun case_1(x: Any?) {
@@ -237,7 +246,7 @@ fun case_14() {
 
 // TESTCASE NUMBER: 15
 fun case_15(x: EmptyObject) {
-    val t = if (<!FORBIDDEN_IDENTITY_EQUALS!>x === <!USELESS_IS_CHECK!><!USELESS_IS_CHECK!>null is Boolean is Boolean<!> is Boolean<!><!>) "" else {
+    val <!UNUSED_VARIABLE!>t<!> = if (<!FORBIDDEN_IDENTITY_EQUALS!>x === <!USELESS_IS_CHECK!><!USELESS_IS_CHECK!>null is Boolean is Boolean<!> is Boolean<!><!>) "" else {
         <!DEBUG_INFO_EXPRESSION_TYPE("EmptyObject")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("EmptyObject")!>x<!>.equals(null)
         <!DEBUG_INFO_EXPRESSION_TYPE("EmptyObject")!>x<!>.propT

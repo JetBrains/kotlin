@@ -1,6 +1,16 @@
-// !DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_VARIABLE -UNREACHABLE_CODE -CAN_BE_VAL
+// !DIAGNOSTICS: -UNUSED_EXPRESSION
 // SKIP_TXT
 // WITH_EXTENDED_CHECKERS
+
+/*
+ * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (POSITIVE)
+ *
+ * SECTIONS: dfa
+ * NUMBER: 7
+ * DESCRIPTION: Raw data flow analysis test
+ * UNEXPECTED BEHAVIOUR
+ * HELPERS: classes, enumClasses, objects, typealiases, properties, functions
+ */
 
 // FILE: other_package.kt
 
@@ -38,7 +48,7 @@ fun case_1(x: Any?) {
  * ISSUES: KT-28159
  */
 fun case_2(x: Nothing?) {
-    if (<!SENSELESS_COMPARISON!>x !== null<!> && <!SENSELESS_COMPARISON!>x !== null<!>) {
+    if (<!SENSELESS_COMPARISON!>x !== null<!> && <!SENSELESS_COMPARISON!>x <!UNREACHABLE_CODE!>!== null<!><!>) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing?")!>x<!>
     }
 }
@@ -80,7 +90,7 @@ fun case_4(x: Char?) {
 fun case_5() {
     val x: Unit? = null
 
-    if (x !== null || <!SENSELESS_COMPARISON!>x !== null<!> && <!SENSELESS_COMPARISON!>x !== null<!> || <!SENSELESS_COMPARISON!>x !== null<!> && <!SENSELESS_COMPARISON!>x !== null<!>) {
+    if (x !== null || <!SENSELESS_COMPARISON!>x !== null<!> && <!SENSELESS_COMPARISON!>x <!UNREACHABLE_CODE!>!== null<!><!> || <!SENSELESS_COMPARISON!>x !== null<!> && <!SENSELESS_COMPARISON!>x <!UNREACHABLE_CODE!>!== null<!><!>) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit?")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit?")!>x<!><!UNSAFE_CALL!>.<!>equals(null)
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit?")!>x<!>.propT
@@ -263,8 +273,8 @@ fun case_14() {
 
 // TESTCASE NUMBER: 15
 fun case_15(x: TypealiasString?) {
-    var y = null
-    val t = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>if (x === null || <!SENSELESS_COMPARISON!>x == y<!> && <!SENSELESS_COMPARISON!>x === y<!>) "" else {
+    <!CAN_BE_VAL!>var<!> y = null
+    val <!UNUSED_VARIABLE!>t<!> = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>if (x === null || <!SENSELESS_COMPARISON!>x == y<!> && <!SENSELESS_COMPARISON!>x <!UNREACHABLE_CODE!>=== y<!><!>) "" else {
         <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasString? & kotlin.String")!>x<!>.equals(null)
         <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasString? & kotlin.String")!>x<!>.propT
         <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasString? & kotlin.String")!>x<!>.propAny
@@ -285,7 +295,7 @@ fun case_16() {
 
     if (<!SENSELESS_COMPARISON!>x != null<!> || <!SENSELESS_COMPARISON!>x !== null<!> || <!SENSELESS_COMPARISON!>x != y<!>) {
         <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNothing? & kotlin.Nothing")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNothing? & kotlin.Nothing")!>x<!>.hashCode()
+        <!UNREACHABLE_CODE!><!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNothing? & kotlin.Nothing")!>x<!>.hashCode()<!>
     }
 }
 
@@ -404,7 +414,7 @@ fun case_21() {
 
 // TESTCASE NUMBER: 22
 fun case_22(a: (() -> Unit)?) {
-    var y = null
+    <!CAN_BE_VAL!>var<!> y = null
     if (a != null || <!SENSELESS_COMPARISON!>y != a<!>) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit")!>a()<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function0<kotlin.Unit>? & kotlin.Function0<kotlin.Unit>")!>a<!>.equals(null)
@@ -495,7 +505,7 @@ fun case_25(b: Boolean) {
 
 // TESTCASE NUMBER: 26
 fun case_26(a: ((Float) -> Int?)?, b: Float?) {
-    var c: Nothing? = null
+    <!CAN_BE_VAL!>var<!> c: Nothing? = null
 
     if (a != null == true && b != null == true || c != a == true && b != c == true) {
         val x = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>a(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float? & kotlin.Float")!>b<!>)<!>

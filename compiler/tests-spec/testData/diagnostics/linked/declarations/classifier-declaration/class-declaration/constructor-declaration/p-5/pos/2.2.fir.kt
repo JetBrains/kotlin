@@ -1,6 +1,21 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER -UNRESOLVED_REFERENCE -UNREACHABLE_CODE
 // SKIP_TXT
 
+/*
+ * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
+ *
+ * SPEC VERSION: 0.1-544
+ * MAIN LINK: declarations, classifier-declaration, class-declaration, constructor-declaration -> paragraph 5 -> sentence 2
+ * PRIMARY LINKS: declarations, classifier-declaration, class-declaration, constructor-declaration -> paragraph 4 -> sentence 1
+ * declarations, classifier-declaration, class-declaration -> paragraph 1 -> sentence 1
+ * declarations, classifier-declaration, class-declaration, constructor-declaration -> paragraph 2 -> sentence 1
+ * declarations, classifier-declaration, class-declaration, constructor-declaration -> paragraph 6 -> sentence 1
+ * SECONDARY LINKS: declarations, classifier-declaration, class-declaration -> paragraph 2 -> sentence 2
+ * declarations, classifier-declaration, class-declaration -> paragraph 2 -> sentence 6
+ * NUMBER: 2
+ * DESCRIPTION: Primary constructor for nested class with read-only property constructor parameter
+ * HELPERS: checkType
+ */
 
 // TESTCASE NUMBER: 1
 class Case1 {

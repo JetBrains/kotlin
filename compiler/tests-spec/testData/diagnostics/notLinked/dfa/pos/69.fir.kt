@@ -1,6 +1,17 @@
 // !DIAGNOSTICS: -UNUSED_EXPRESSION
 // SKIP_TXT
 
+/*
+ * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (POSITIVE)
+ *
+ * SECTIONS: dfa
+ * NUMBER: 69
+ * DESCRIPTION: Raw data flow analysis test
+ * HELPERS: classes, objects, typealiases, functions, enumClasses, interfaces, sealedClasses
+ * UNEXPECTED BEHAVIOUR
+ * ISSUES: KT-29083
+ */
+
 // TESTCASE NUMBER: 1
 fun test1(x: ClassLevel1?) {
     if (x!! is ClassLevel2) {

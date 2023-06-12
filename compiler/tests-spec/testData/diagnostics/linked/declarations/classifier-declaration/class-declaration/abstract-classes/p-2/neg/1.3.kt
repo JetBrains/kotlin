@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !DIAGNOSTICS: -UNUSED_VARIABLE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -UNUSED_PARAMETER -UNUSED_EXPRESSION
 // SKIP_TXT
 
@@ -33,8 +34,6 @@ class Case1 : Base() {
     set(value)
     {}
 }
-
-
 
 // FILE: TestCase2.kt
 // TESTCASE NUMBER: 2
@@ -76,5 +75,3 @@ class MainClass {
     }
 
 }
-
-

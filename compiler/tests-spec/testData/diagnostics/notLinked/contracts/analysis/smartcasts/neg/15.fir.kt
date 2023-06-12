@@ -1,5 +1,15 @@
 // !OPT_IN: kotlin.contracts.ExperimentalContracts
 
+/*
+ * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (NEGATIVE)
+ *
+ * SECTIONS: contracts, analysis, smartcasts
+ * NUMBER: 15
+ * DESCRIPTION: Check smartcasts working if type checking for contract function is used
+ * ISSUES: KT-27241
+ * HELPERS: contractFunctions
+ */
+
 // FILE: contracts.kt
 
 package contracts

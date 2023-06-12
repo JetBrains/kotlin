@@ -1,5 +1,16 @@
+// LANGUAGE: +WarnAboutNonExhaustiveWhenOnAlgebraicTypes
 // !DIAGNOSTICS: -UNUSED_EXPRESSION
 // SKIP_TXT
+
+/*
+ * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
+ *
+ * SPEC VERSION: 0.1-313
+ * MAIN LINK: expressions, when-expression -> paragraph 5 -> sentence 1
+ * NUMBER: 1
+ * DESCRIPTION: 'When' with bound value and with different variants of expressions in the control structure body.
+ * HELPERS: typesProvider, classes, functions
+ */
 
 // TESTCASE NUMBER: 1
 fun case_1(value_1: Int) {
@@ -46,8 +57,12 @@ fun case_4(value_1: Int, value_2: String, value_3: String) {
 // TESTCASE NUMBER: 5
 fun case_5(value_1: Int, value_2: Int, value_3: Boolean?) {
     when (value_1) {
-        1 -> "3"
-        2 -> ""
+        1 -> when (value_3) {
+            else -> "3"
+        }
+        2 -> when (value_3) {
+            else -> ""
+        }
         3 -> when (value_3) {
             else -> ""
         }
@@ -55,7 +70,6 @@ fun case_5(value_1: Int, value_2: Int, value_3: Boolean?) {
             true -> "1"
             false -> "2"
             null -> "3"
-            else -> ""
         }
         5 -> when (value_3) {
             true -> "1"
@@ -70,7 +84,9 @@ fun case_5(value_1: Int, value_2: Int, value_3: Boolean?) {
 
 // TESTCASE NUMBER: 6
 fun case_6(value_1: Int, value_2: Int, value_3: Boolean?) = when (value_1) {
-    1 -> 3
+    1 -> when (value_3) {
+        else -> 3
+    }
     else -> when (value_3) {
         true -> 1
         false -> 2
@@ -104,7 +120,6 @@ fun case_8(value_1: Int, value_2: Int) = when (value_1) {
 
 /*
  * TESTCASE NUMBER: 9
- * UNEXPECTED BEHAVIOUR
  * ISSUES: KT-37249
  */
 fun case_9(value_1: Int, value_2: String, value_3: String): Any {

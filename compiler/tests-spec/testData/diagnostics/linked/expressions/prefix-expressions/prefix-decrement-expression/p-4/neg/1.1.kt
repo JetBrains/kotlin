@@ -11,7 +11,6 @@
  * DESCRIPTION: check unsafe prefix decrement expression call for an assignable expression
  */
 
-
 // TESTCASE NUMBER: 1
 
 fun case1() {

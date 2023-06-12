@@ -1,6 +1,17 @@
 // !DIAGNOSTICS: -UNUSED_EXPRESSION
 // SKIP_TXT
 
+/*
+ * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (NEGATIVE)
+ *
+ * SECTIONS: dfa
+ * NUMBER: 13
+ * DESCRIPTION: Raw data flow analysis test
+ * HELPERS: classes, objects, typealiases, functions, enumClasses, interfaces, sealedClasses
+ * UNEXPECTED BEHAVIOUR
+ * ISSUES: KT-30507
+ */
+
 // TESTCASE NUMBER: 1
 fun case_1(x: Class?) {
     x!!

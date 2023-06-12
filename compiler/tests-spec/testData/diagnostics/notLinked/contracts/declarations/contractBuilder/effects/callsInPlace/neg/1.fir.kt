@@ -1,5 +1,14 @@
 // !OPT_IN: kotlin.contracts.ExperimentalContracts
 
+/*
+ * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (NEGATIVE)
+ *
+ * SECTIONS: contracts, declarations, contractBuilder, effects, callsInPlace
+ * NUMBER: 1
+ * DESCRIPTION: contract functions with CallsInPlace with dynamic InvocationKind.
+ * ISSUES: KT-26152
+ */
+
 import kotlin.contracts.*
 
 // TESTCASE NUMBER: 1, 2, 3, 4

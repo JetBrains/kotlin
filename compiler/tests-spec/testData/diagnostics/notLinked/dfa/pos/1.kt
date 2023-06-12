@@ -1,5 +1,6 @@
 // !DIAGNOSTICS: -UNUSED_EXPRESSION
 // SKIP_TXT
+// TODO: https://youtrack.jetbrains.com/issue/KT-49862
 
 /*
  * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (POSITIVE)
@@ -55,18 +56,18 @@ fun case_2(x: Nothing?) {
 // TESTCASE NUMBER: 3
 fun case_3() {
     if (Object.prop_1 == null)
-        else {
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number & kotlin.Number?")!>Object.prop_1<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number"), DEBUG_INFO_SMARTCAST!>Object.prop_1<!>.equals(null)
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number"), DEBUG_INFO_SMARTCAST!>Object.prop_1<!>.propT
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number"), DEBUG_INFO_SMARTCAST!>Object.prop_1<!>.propAny
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number & kotlin.Number?")!>Object.prop_1<!>.propNullableT
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number & kotlin.Number?")!>Object.prop_1<!>.propNullableAny
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number"), DEBUG_INFO_SMARTCAST!>Object.prop_1<!>.funT()
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number"), DEBUG_INFO_SMARTCAST!>Object.prop_1<!>.funAny()
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number & kotlin.Number?")!>Object.prop_1<!>.funNullableT()
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number & kotlin.Number?")!>Object.prop_1<!>.funNullableAny()
-        }
+    else {
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number & kotlin.Number?")!>Object.prop_1<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number"), DEBUG_INFO_SMARTCAST!>Object.prop_1<!>.equals(null)
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number"), DEBUG_INFO_SMARTCAST!>Object.prop_1<!>.propT
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number"), DEBUG_INFO_SMARTCAST!>Object.prop_1<!>.propAny
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number & kotlin.Number?")!>Object.prop_1<!>.propNullableT
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number & kotlin.Number?")!>Object.prop_1<!>.propNullableAny
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number"), DEBUG_INFO_SMARTCAST!>Object.prop_1<!>.funT()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number"), DEBUG_INFO_SMARTCAST!>Object.prop_1<!>.funAny()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number & kotlin.Number?")!>Object.prop_1<!>.funNullableT()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number & kotlin.Number?")!>Object.prop_1<!>.funNullableAny()
+    }
 }
 
 // TESTCASE NUMBER: 4
@@ -273,15 +274,15 @@ fun case_14() {
                                                             if (<!SENSELESS_COMPARISON!>a.x != null<!>) {
                                                                 if (<!SENSELESS_COMPARISON!>a.x !== null<!>) {
                                                                     <!DEBUG_INFO_EXPRESSION_TYPE("otherpackage.Case14 /* = kotlin.String */ & otherpackage.Case14? /* = kotlin.String? */")!>a.x<!>
-                                                                        <!DEBUG_INFO_EXPRESSION_TYPE("otherpackage.Case14 /* = kotlin.String */"), DEBUG_INFO_SMARTCAST!>a.x<!>.equals(null)
-                                                                        <!DEBUG_INFO_EXPRESSION_TYPE("otherpackage.Case14 /* = kotlin.String */"), DEBUG_INFO_SMARTCAST!>a.x<!>.propT
-                                                                        <!DEBUG_INFO_EXPRESSION_TYPE("otherpackage.Case14 /* = kotlin.String */"), DEBUG_INFO_SMARTCAST!>a.x<!>.propAny
-                                                                        <!DEBUG_INFO_EXPRESSION_TYPE("otherpackage.Case14 /* = kotlin.String */ & otherpackage.Case14? /* = kotlin.String? */")!>a.x<!>.propNullableT
-                                                                        <!DEBUG_INFO_EXPRESSION_TYPE("otherpackage.Case14 /* = kotlin.String */ & otherpackage.Case14? /* = kotlin.String? */")!>a.x<!>.propNullableAny
-                                                                        <!DEBUG_INFO_EXPRESSION_TYPE("otherpackage.Case14 /* = kotlin.String */"), DEBUG_INFO_SMARTCAST!>a.x<!>.funT()
-                                                                        <!DEBUG_INFO_EXPRESSION_TYPE("otherpackage.Case14 /* = kotlin.String */"), DEBUG_INFO_SMARTCAST!>a.x<!>.funAny()
-                                                                        <!DEBUG_INFO_EXPRESSION_TYPE("otherpackage.Case14 /* = kotlin.String */ & otherpackage.Case14? /* = kotlin.String? */")!>a.x<!>.funNullableT()
-                                                                        <!DEBUG_INFO_EXPRESSION_TYPE("otherpackage.Case14 /* = kotlin.String */ & otherpackage.Case14? /* = kotlin.String? */")!>a.x<!>.funNullableAny()
+                                                                    <!DEBUG_INFO_EXPRESSION_TYPE("otherpackage.Case14 /* = kotlin.String */"), DEBUG_INFO_SMARTCAST!>a.x<!>.equals(null)
+                                                                    <!DEBUG_INFO_EXPRESSION_TYPE("otherpackage.Case14 /* = kotlin.String */"), DEBUG_INFO_SMARTCAST!>a.x<!>.propT
+                                                                    <!DEBUG_INFO_EXPRESSION_TYPE("otherpackage.Case14 /* = kotlin.String */"), DEBUG_INFO_SMARTCAST!>a.x<!>.propAny
+                                                                    <!DEBUG_INFO_EXPRESSION_TYPE("otherpackage.Case14 /* = kotlin.String */ & otherpackage.Case14? /* = kotlin.String? */")!>a.x<!>.propNullableT
+                                                                    <!DEBUG_INFO_EXPRESSION_TYPE("otherpackage.Case14 /* = kotlin.String */ & otherpackage.Case14? /* = kotlin.String? */")!>a.x<!>.propNullableAny
+                                                                    <!DEBUG_INFO_EXPRESSION_TYPE("otherpackage.Case14 /* = kotlin.String */"), DEBUG_INFO_SMARTCAST!>a.x<!>.funT()
+                                                                    <!DEBUG_INFO_EXPRESSION_TYPE("otherpackage.Case14 /* = kotlin.String */"), DEBUG_INFO_SMARTCAST!>a.x<!>.funAny()
+                                                                    <!DEBUG_INFO_EXPRESSION_TYPE("otherpackage.Case14 /* = kotlin.String */ & otherpackage.Case14? /* = kotlin.String? */")!>a.x<!>.funNullableT()
+                                                                    <!DEBUG_INFO_EXPRESSION_TYPE("otherpackage.Case14 /* = kotlin.String */ & otherpackage.Case14? /* = kotlin.String? */")!>a.x<!>.funNullableAny()
                                                                 }
                                                             }
                                                         }

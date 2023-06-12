@@ -1,6 +1,16 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -UNUSED_PARAMETER -UNUSED_EXPRESSION
 // SKIP_TXT
 
+/*
+ * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
+ *
+ * SPEC VERSION: 0.1-218
+ * MAIN LINK: expressions, comparison-expressions -> paragraph 4 -> sentence 1
+ * PRIMARY LINKS: overloadable-operators -> paragraph 4 -> sentence 1
+ * NUMBER: 1
+ * DESCRIPTION: The compareTo operator function must have return type kotlin.Int
+ */
+
 // TESTCASE NUMBER: 1
 class Case1(val a: Int)  {
     var isCompared = false

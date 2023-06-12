@@ -1,6 +1,17 @@
 // !OPT_IN: kotlin.contracts.ExperimentalContracts
 // SKIP_TXT
 
+/*
+ * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (POSITIVE)
+ *
+ * SECTIONS: contracts, analysis, smartcasts
+ * NUMBER: 12
+ * DESCRIPTION: Smartcasts after non-null assertions or not-null value assignment in lambdas of contract function with 'exactly once' or 'at least once' CallsInPlace effects.
+ * UNEXPECTED BEHAVIOUR
+ * ISSUES: KT-26148
+ * HELPERS: contractFunctions
+ */
+
 // TESTCASE NUMBER: 1
 fun case_1(arg: Int?) {
     funWithExactlyOnceCallsInPlace { arg!! }
