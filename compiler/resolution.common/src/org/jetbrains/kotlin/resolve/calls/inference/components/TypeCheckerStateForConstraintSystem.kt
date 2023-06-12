@@ -218,12 +218,15 @@ abstract class TypeCheckerStateForConstraintSystem(
         subType: KotlinTypeMarker,
         isFromNullabilityConstraint: Boolean = false
     ): Boolean = with(extensionTypeContext) {
+        val subTypeConstructor = subType.typeConstructor()
         val lowerConstraint = when (typeVariable) {
             is SimpleTypeMarker ->
                 when {
                     // Foo? (any type which cannot be used as dispatch receiver because of nullability) <: T & Any => ERROR (for K2 only)
-                    isK2 && typeVariable.isDefinitelyNotNullType()
-                            && !AbstractNullabilityChecker.isSubtypeOfAny(extensionTypeContext, subType) -> return false
+                    isK2 && typeVariable.isDefinitelyNotNullType() && !subTypeConstructor.isTypeVariable() &&
+                            !AbstractNullabilityChecker.isSubtypeOfAny(extensionTypeContext, subType) -> {
+                        return false
+                    }
                     /*
                      * Foo <: T? (T is contained in invariant or contravariant positions of a return type) -- Foo <: T
                      *      Example:
@@ -236,7 +239,6 @@ abstract class TypeCheckerStateForConstraintSystem(
                     */
                     typeVariable.isMarkedNullable() -> {
                         val typeVariableTypeConstructor = typeVariable.typeConstructor()
-                        val subTypeConstructor = subType.typeConstructor()
                         val needToMakeDefNotNull = subTypeConstructor.isTypeVariable() ||
                                 typeVariableTypeConstructor !is TypeVariableTypeConstructorMarker ||
                                 !typeVariableTypeConstructor.isContainedInInvariantOrContravariantPositions()
