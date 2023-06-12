@@ -185,10 +185,8 @@ bitcode {
         }
 
         module("xctest") {
-            // Needs header XCTest.h from the framework
-            compilerArgs.set(listOfNotNull(
-                    "-iframework", developerFrameworks[target]?.let { it() }
-            ))
+            // TODO: Needs header XCTest.h from the framework, thus require Xcode to be present during the build
+            compilerArgs.set(listOfNotNull("-iframework", developerFrameworks[target]?.let { it() }))
             headersDirs.from(files("src/main/cpp"))
             sourceSets {
                 main {}

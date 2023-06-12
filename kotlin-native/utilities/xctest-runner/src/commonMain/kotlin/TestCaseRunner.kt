@@ -1,3 +1,5 @@
+@file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
+
 import kotlinx.cinterop.*
 
 import platform.Foundation.*
@@ -5,7 +7,6 @@ import platform.UniformTypeIdentifiers.UTTypeSourceCode
 import platform.XCTest.*
 import platform.objc.*
 
-import kotlin.native.internal.ExportForCppRuntime
 import kotlin.native.internal.test.GeneratedSuites
 import kotlin.native.internal.test.TestCase
 import kotlin.native.internal.test.TestSuite
@@ -209,7 +210,8 @@ class TestSuiteRunner(private val testSuite: TestSuite) : XCTestSuite(testSuite.
     }
 }
 
-@ExportForCppRuntime("Konan_create_testSuite")
+@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
+@kotlin.native.internal.ExportForCppRuntime("Konan_create_testSuite")
 fun defaultTestSuiteRunner(): XCTestSuite {
     XCTestObservationCenter.sharedTestObservationCenter.addTestObserver(XCSimpleTestListener())
     val nativeTestSuite = XCTestSuite.testSuiteWithName("Kotlin/Native test suite")
