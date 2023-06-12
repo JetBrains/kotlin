@@ -48,7 +48,7 @@ internal abstract class AbstractKotlinCompileConfig<TASK : AbstractKotlinCompile
 
     init {
         configureTaskProvider { taskProvider ->
-            project.runOnceAfterEvaluated("apply properties and language settings to ${taskProvider.name}") {
+            project.launchInStage(KotlinPluginLifecycle.Stage.AfterFinaliseCompilations) {
                 taskProvider.configure {
                     // KaptGenerateStubs will receive value from linked KotlinCompile task
                     if (it is KaptGenerateStubsTask) return@configure

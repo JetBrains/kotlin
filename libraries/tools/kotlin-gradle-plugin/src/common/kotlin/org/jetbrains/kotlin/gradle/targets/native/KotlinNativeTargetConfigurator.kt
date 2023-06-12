@@ -241,7 +241,7 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
                 project.syncLanguageSettingsToLinkTask(binary)
             }
         }
-        project.runOnceAfterEvaluated("Sync native compilation language settings to compiler options") {
+        project.launchInStage(KotlinPluginLifecycle.Stage.FinaliseCompilations) {
             target.compilations.all { compilation ->
                 compilation.compilerOptions.syncLanguageSettings(compilation.defaultSourceSet.languageSettings)
             }
