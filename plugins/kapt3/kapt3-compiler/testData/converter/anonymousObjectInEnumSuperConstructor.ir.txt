@@ -1,0 +1,29 @@
+@kotlin.Metadata()
+public abstract interface Callback {
+
+    @org.jetbrains.annotations.NotNull()
+    public abstract java.lang.String invoke();
+}
+
+////////////////////
+
+
+@kotlin.Metadata()
+public enum Foo {
+    /*public static final*/ FOO /* = new Foo() */;
+    @org.jetbrains.annotations.NotNull()
+    private final Callback callback = null;
+
+    Foo(Callback callback) {
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final Callback getCallback() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public static kotlin.enums.EnumEntries<Foo> getEntries() {
+        return null;
+    }
+}

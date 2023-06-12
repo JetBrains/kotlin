@@ -92,6 +92,12 @@ public class IrClassFileToSourceStubConverterTestGenerated extends AbstractIrCla
     }
 
     @Test
+    @TestMetadata("anonymousObjectInEnumSuperConstructor.kt")
+    public void testAnonymousObjectInEnumSuperConstructor() throws Exception {
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/anonymousObjectInEnumSuperConstructor.kt");
+    }
+
+    @Test
     @TestMetadata("comments.kt")
     public void testComments() throws Exception {
         runTest("plugins/kapt3/kapt3-compiler/testData/converter/comments.kt");

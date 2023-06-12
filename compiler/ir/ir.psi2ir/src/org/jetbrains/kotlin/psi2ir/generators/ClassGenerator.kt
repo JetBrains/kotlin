@@ -531,7 +531,7 @@ internal class ClassGenerator(
         ).buildWithScope { irEnumEntry ->
             irEnumEntry.parent = irEnumClass
 
-            if (!enumEntryDescriptor.isExpect) {
+            if (!enumEntryDescriptor.isExpect && context.configuration.generateBodies) {
                 irEnumEntry.initializerExpression =
                     context.irFactory.createExpressionBody(
                         createBodyGenerator(irEnumEntry.symbol)
