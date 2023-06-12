@@ -133,6 +133,9 @@ void gc::mark::ParallelMark::runMainInSTW() {
 void gc::mark::ParallelMark::runOnMutator(mm::ThreadData& mutatorThread) {
     if (compiler::gcMarkSingleThreaded() || !mutatorsCooperate_) return;
 
+    RuntimeAssert(mutatorThread.suspensionData().state() == ThreadState::kRunnable, "Must be kRunnable");
+    mutatorThread.suspensionData().setStateNoSuspend(ThreadState::kNative);
+
     auto epoch = gcHandle().getEpoch();
     auto parallelWorker = createWorker();
     if (parallelWorker) {
@@ -144,6 +147,8 @@ void gc::mark::ParallelMark::runOnMutator(mm::ThreadData& mutatorThread) {
 
         completeRootSetAndMark(*parallelWorker);
     }
+
+    mutatorThread.suspensionData().setStateNoSuspend(ThreadState::kRunnable);
 }
 
 void gc::mark::ParallelMark::runAuxiliary() {
@@ -207,8 +212,6 @@ void gc::mark::ParallelMark::tryCollectRootSet(mm::ThreadData& thread, MarkTrait
     GCLogDebug(gcHandle().getEpoch(), "Root set collection on thread %d for thread %d",
                konan::currentThreadId(), thread.threadId());
     gcData.publish();
-    bool markItself = konan::currentThreadId() == thread.threadId();
-    RuntimeAssert(markItself == gcData.cooperative(), "A mutator can mark it's own root set iff the mutator cooperate");
     collectRootSetForThread<MarkTraits>(gcHandle(), markQueue, thread);
 }
 

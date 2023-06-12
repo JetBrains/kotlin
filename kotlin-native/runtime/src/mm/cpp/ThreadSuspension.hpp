@@ -35,11 +35,16 @@ public:
     ThreadState state() noexcept { return state_; }
 
     ThreadState setState(ThreadState newState) noexcept {
-        ThreadState oldState = state_.exchange(newState);
+        ThreadState oldState = setStateNoSuspend(newState);
         if (oldState == ThreadState::kNative && newState == ThreadState::kRunnable) {
             suspendIfRequested();
         }
         return oldState;
+    }
+
+    // use only with great care
+    ThreadState setStateNoSuspend(ThreadState newState) noexcept {
+        return state_.exchange(newState);
     }
 
     bool suspended() noexcept { return suspended_; }
