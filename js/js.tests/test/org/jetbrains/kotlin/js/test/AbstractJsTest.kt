@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.js.test.converters.ClassicJsBackendFacade
 import org.jetbrains.kotlin.js.test.converters.incremental.RecompileModuleJsBackendFacade
 import org.jetbrains.kotlin.js.test.handlers.*
 import org.jetbrains.kotlin.js.test.ir.AbstractJsBlackBoxCodegenTestBase
+import org.jetbrains.kotlin.js.test.ir.AbstractJsIrTest
 import org.jetbrains.kotlin.js.test.utils.JsIncrementalEnvironmentConfigurator
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.TargetBackend
@@ -67,21 +68,6 @@ open class AbstractBoxJsTest : AbstractJsTest(pathToTestDir = "${JsEnvironmentCo
         with(builder) {
             defaultDirectives {
                 +JsEnvironmentConfigurationDirectives.RUN_MINIFIER_BY_DEFAULT
-            }
-        }
-    }
-}
-
-open class AbstractSourceMapGenerationSmokeTest : AbstractJsTest(
-    pathToTestDir = "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/sourcemap/",
-    testGroupOutputDirPrefix = "sourcemap/"
-) {
-    override fun configure(builder: TestConfigurationBuilder) {
-        super.configure(builder)
-        with(builder) {
-            defaultDirectives {
-                +JsEnvironmentConfigurationDirectives.GENERATE_SOURCE_MAP
-                -JsEnvironmentConfigurationDirectives.GENERATE_NODE_JS_RUNNER
             }
         }
     }
