@@ -95,12 +95,6 @@ fun main(args: Array<String>) {
                 )
             )
 
-            testClass<AbstractIncrementalJsCompilerRunnerTest> {
-                model("incremental/pureKotlin", extension = null, recursive = false, excludedPattern = ".*SinceK2")
-                model("incremental/classHierarchyAffected", extension = null, recursive = false)
-                model("incremental/js", extension = null, excludeParentDirs = true)
-            }
-
             testClass<AbstractIncrementalJsKlibCompilerRunnerTest>() {
                 // IC of sealed interfaces are not supported in JS
                 model("incremental/pureKotlin", extension = null, recursive = false, excludedPattern = "(^sealed.*)|(.*SinceK2)")
@@ -108,18 +102,8 @@ fun main(args: Array<String>) {
                 model("incremental/js", extension = null, excludeParentDirs = true)
             }
 
-            testClass<AbstractIncrementalMultiModuleJsCompilerRunnerTest> {
-                model("incremental/multiModule/common", extension = null, excludeParentDirs = true)
-            }
-
             testClass<AbstractIncrementalMultiModuleJsKlibCompilerRunnerTest> {
                 model("incremental/multiModule/common", extension = null, excludeParentDirs = true)
-            }
-
-            testClass<AbstractIncrementalJsCompilerRunnerWithMetadataOnlyTest> {
-                model("incremental/pureKotlin", extension = null, recursive = false, excludedPattern = ".*SinceK2")
-                model("incremental/classHierarchyAffected", extension = null, recursive = false)
-                model("incremental/js", extension = null, excludeParentDirs = true)
             }
 
             testClass<AbstractIncrementalJsKlibCompilerWithScopeExpansionRunnerTest> {
