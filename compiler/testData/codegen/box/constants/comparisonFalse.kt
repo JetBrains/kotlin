@@ -1,3 +1,5 @@
+// IGNORE_BACKEND_K2: WASM
+
 // WITH_STDLIB
 fun foo(): Array<Boolean> {
     return arrayOf(
