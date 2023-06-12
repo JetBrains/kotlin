@@ -240,7 +240,10 @@ open class HierarchicalMppIT : KGPBaseTest() {
         ).run {
             build("publish") {
                 assertEquals(
-                    setOf("third-party-lib-metadata-1.0.jar"),
+                    setOf(
+                        "third-party-lib-metadata-1.0.jar",
+                        "kotlin-stdlib-${buildOptions.kotlinVersion}-all.jar",
+                    ),
                     transformedArtifacts()
                 )
             }
@@ -256,7 +259,8 @@ open class HierarchicalMppIT : KGPBaseTest() {
                 assertEquals(
                     setOf(
                         "my-lib-foo-metadata-1.0-all.jar",
-                        "third-party-lib-metadata-1.0.jar"
+                        "third-party-lib-metadata-1.0.jar",
+                        "kotlin-stdlib-${buildOptions.kotlinVersion}-all.jar",
                     ),
                     transformedArtifacts()
                 )
