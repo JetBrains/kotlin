@@ -37,7 +37,8 @@ class AtomicfuKotlinGradleSubplugin :
         val project = kotlinCompilation.target.project
         val config = project.extensions.getByType(AtomicfuKotlinGradleExtension::class.java)
         return (config.isJsIrTransformationEnabled && kotlinCompilation.target.isJs()) ||
-                (config.isJvmIrTransformationEnabled && kotlinCompilation.target.isJvm())
+                (config.isJvmIrTransformationEnabled && kotlinCompilation.target.isJvm()) ||
+                (config.isNativeIrTransformationEnabled && kotlinCompilation.target.isNative())
     }
 
     override fun applyToCompilation(
@@ -48,6 +49,7 @@ class AtomicfuKotlinGradleSubplugin :
     open class AtomicfuKotlinGradleExtension {
         var isJsIrTransformationEnabled = false
         var isJvmIrTransformationEnabled = false
+        var isNativeIrTransformationEnabled = false
     }
 
     override fun getPluginArtifact(): SubpluginArtifact =
@@ -58,4 +60,6 @@ class AtomicfuKotlinGradleSubplugin :
     private fun KotlinTarget.isJs() = platformType == KotlinPlatformType.js
 
     private fun KotlinTarget.isJvm() = platformType == KotlinPlatformType.jvm || platformType == KotlinPlatformType.androidJvm
+
+    private fun KotlinTarget.isNative() = platformType == KotlinPlatformType.native // todo wasm?
 }

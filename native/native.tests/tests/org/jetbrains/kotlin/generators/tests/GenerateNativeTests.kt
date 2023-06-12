@@ -241,6 +241,16 @@ fun main() {
                 model("diagnostics/nativeTests", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
             }
         }
+
+        // Atomicfu compiler plugin native tests. // TODO: to delete
+        testGroup("plugins/atomicfu/atomicfu-compiler/test", "plugins/atomicfu/atomicfu-compiler/testData") {
+            testClass<AbstractNativeBlackBoxTest>(
+                suiteTestClassName = "AtomicfuNativeTestGenerated",
+                annotations = listOf(atomicfu(), provider<UseStandardTestCaseGroupProvider>())
+            ) {
+                model("nativeBox")
+            }
+        }
     }
 }
 
@@ -280,3 +290,6 @@ private fun frontendFir() = arrayOf(
 
 private fun debugger() = annotation(Tag::class.java, "debugger")
 private fun infrastructure() = annotation(Tag::class.java, "infrastructure")
+private fun k1libContents() = annotation(Tag::class.java, "k1libContents")
+private fun k2libContents() = annotation(Tag::class.java, "k2libContents")
+private fun atomicfu() = annotation(Tag::class.java, "atomicfu")

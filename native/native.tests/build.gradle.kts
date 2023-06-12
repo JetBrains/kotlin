@@ -38,6 +38,8 @@ sourceSets {
     }
 }
 
+testsJar {}
+
 if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
     apply(plugin = "idea")
     idea {
