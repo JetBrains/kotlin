@@ -32,6 +32,12 @@ inline fun <Psi, Java> Array<Psi>.convert(factory: (Psi) -> Java): List<Java> =
             else -> map(factory)
         }
 
+inline fun <Psi, Java> Array<Psi>.convertIndexed(factory: (Int, Psi) -> Java): List<Java> = when (size) {
+    0 -> emptyList()
+    1 -> listOf(factory(0, first()))
+    else -> mapIndexed(factory)
+}
+
 fun <Psi, Java> Collection<Psi>.convert(factory: (Psi) -> Java): List<Java> =
         when (size) {
             0 -> emptyList()

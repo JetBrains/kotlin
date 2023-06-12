@@ -28,6 +28,18 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
         }
 
         @Test
+        @TestMetadata("accessJavaFromKotlinViaStaticImport.kt")
+        public void testAccessJavaFromKotlinViaStaticImport() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/accessJavaFromKotlinViaStaticImport.kt");
+        }
+
+        @Test
+        @TestMetadata("accessJavaFromKotlinViaStaticImport2.kt")
+        public void testAccessJavaFromKotlinViaStaticImport2() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/accessJavaFromKotlinViaStaticImport2.kt");
+        }
+
+        @Test
         public void testAllFilesPresentInResolve() throws Exception {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }

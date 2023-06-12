@@ -60,3 +60,11 @@ internal class JavaElementDelegatingTypeParameterBoundTypeSourceWithSmartPointer
         return psi.bounds[boundIndex] as TYPE
     }
 }
+
+internal class JavaElementDelegatingSuperTypeSourceWithSmartPointer(
+    override val psiPointer: SmartPsiElementPointer<out PsiClass>,
+    private val superTypeIndex: Int,
+    override val factory: JavaElementSourceFactory,
+) : JavaElementDelegatingTypeSourceWithSmartPointer<PsiClass, PsiClassType>() {
+    override fun getType(psi: PsiClass): PsiClassType = psi.superTypes[superTypeIndex]
+}

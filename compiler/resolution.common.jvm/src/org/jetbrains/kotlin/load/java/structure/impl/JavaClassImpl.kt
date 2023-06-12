@@ -84,7 +84,9 @@ class JavaClassImpl(psiClassSource: JavaElementPsiSource<PsiClass>) : JavaClassi
         get() = typeParameters(psi.typeParameters, sourceFactory)
 
     override val supertypes: Collection<JavaClassifierType>
-        get() = classifierTypes(psi.superTypes, sourceFactory)
+        get() = psi.superTypes.convertIndexed { index, _ ->
+            JavaClassifierTypeImpl(sourceFactory.createSuperTypeSource(psiElementSource, index))
+        }
 
     override val methods: Collection<JavaMethod>
         get() {

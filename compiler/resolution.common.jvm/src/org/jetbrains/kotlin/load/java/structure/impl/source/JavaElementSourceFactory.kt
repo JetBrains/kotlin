@@ -19,6 +19,11 @@ abstract class JavaElementSourceFactory {
         boundIndex: Int,
     ): JavaElementTypeSource<TYPE>
 
+    abstract fun createSuperTypeSource(
+        psiTypeParameterSource: JavaElementPsiSource<out PsiClass>,
+        superTypeIndex: Int,
+    ): JavaElementTypeSource<PsiClassType>
+
     abstract fun <TYPE : PsiType> createExpressionTypeSource(psiExpressionSource: JavaElementPsiSource<out PsiExpression>): JavaElementTypeSource<TYPE>
 
     companion object {
@@ -51,6 +56,12 @@ class JavaFixedElementSourceFactory : JavaElementSourceFactory() {
         return createTypeSource(psiTypeParameterSource.psi.bounds[boundIndex] as TYPE)
     }
 
+    override fun createSuperTypeSource(
+        psiTypeParameterSource: JavaElementPsiSource<out PsiClass>,
+        superTypeIndex: Int,
+    ): JavaElementTypeSource<PsiClassType> {
+        return createTypeSource(psiTypeParameterSource.psi.superTypes[superTypeIndex])
+    }
 
     override fun <TYPE : PsiType> createExpressionTypeSource(psiExpressionSource: JavaElementPsiSource<out PsiExpression>): JavaElementTypeSource<TYPE> {
         @Suppress("UNCHECKED_CAST")
