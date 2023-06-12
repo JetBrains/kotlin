@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.test.builders.CompilerStepsNames.JS_ARTIFACTS_HANDLE
 import org.jetbrains.kotlin.test.builders.CompilerStepsNames.JVM_ARTIFACTS_HANDLERS_STEP_NAME
 import org.jetbrains.kotlin.test.builders.CompilerStepsNames.KLIB_ARTIFACTS_HANDLERS_STEP_NAME
 import org.jetbrains.kotlin.test.builders.CompilerStepsNames.RAW_IR_HANDLERS_STEP_NAME
+import org.jetbrains.kotlin.test.builders.CompilerStepsNames.WASM_ARTIFACTS_HANDLERS_STEP_NAME
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontend2ClassicBackendConverter
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontend2IrConverter
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendFacade
@@ -38,6 +39,7 @@ object CompilerStepsNames {
     const val JVM_BACKEND_STEP_NAME = "jvm backend"
     const val JVM_ARTIFACTS_HANDLERS_STEP_NAME = "jvm artifacts handlers"
     const val JS_ARTIFACTS_HANDLERS_STEP_NAME = "js artifacts handlers"
+    const val WASM_ARTIFACTS_HANDLERS_STEP_NAME = "wasm artifacts handlers"
     const val KLIB_ARTIFACTS_HANDLERS_STEP_NAME = "klib artifacts handlers"
 
 }
@@ -105,6 +107,12 @@ inline fun TestConfigurationBuilder.jsArtifactsHandlersStep(
     namedHandlersStep(JS_ARTIFACTS_HANDLERS_STEP_NAME, ArtifactKinds.Js, init)
 }
 
+inline fun TestConfigurationBuilder.wasmArtifactsHandlersStep(
+    init: HandlersStepBuilder<BinaryArtifacts.Wasm>.() -> Unit = {}
+) {
+    namedHandlersStep(WASM_ARTIFACTS_HANDLERS_STEP_NAME, ArtifactKinds.Wasm, init)
+}
+
 inline fun TestConfigurationBuilder.klibArtifactsHandlersStep(
     init: HandlersStepBuilder<BinaryArtifacts.KLib>.() -> Unit = {}
 ) {
@@ -140,6 +148,12 @@ inline fun TestConfigurationBuilder.configureJsArtifactsHandlersStep(
     init: HandlersStepBuilder<BinaryArtifacts.Js>.() -> Unit = {}
 ) {
     configureNamedHandlersStep(JS_ARTIFACTS_HANDLERS_STEP_NAME, ArtifactKinds.Js, init)
+}
+
+inline fun TestConfigurationBuilder.configureWasmArtifactsHandlersStep(
+    init: HandlersStepBuilder<BinaryArtifacts.Wasm>.() -> Unit = {}
+) {
+    configureNamedHandlersStep(WASM_ARTIFACTS_HANDLERS_STEP_NAME, ArtifactKinds.Wasm, init)
 }
 
 inline fun TestConfigurationBuilder.configureKlibArtifactsHandlersStep(
