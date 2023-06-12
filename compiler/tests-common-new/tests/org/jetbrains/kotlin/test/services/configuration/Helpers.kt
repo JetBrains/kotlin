@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.test.model.DependencyRelation
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.dependencyProvider
-import org.jetbrains.kotlin.test.services.jsLibraryProvider
+import org.jetbrains.kotlin.test.services.libraryProvider
 import java.io.File
 
 fun getKlibDependencies(module: TestModule, testServices: TestServices, kind: DependencyRelation): List<File> {
@@ -39,5 +39,5 @@ fun getKlibDependencies(module: TestModule, testServices: TestServices, kind: De
 
 fun getDependencies(module: TestModule, testServices: TestServices, kind: DependencyRelation): List<ModuleDescriptor> {
     return getKlibDependencies(module, testServices, kind)
-        .map { testServices.jsLibraryProvider.getDescriptorByPath(it.absolutePath) }
+        .map { testServices.libraryProvider.getDescriptorByPath(it.absolutePath) }
 }
