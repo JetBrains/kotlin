@@ -128,10 +128,13 @@ fun Project.configureKotlinCompilationOptions() {
                 }
 
             // Workaround to avoid remote build cache misses due to absolute paths in relativePathBaseArg
-            doFirst {
-                if (relativePathBaseArg != null) {
-                    @Suppress("DEPRECATION")
-                    kotlinOptions.freeCompilerArgs += relativePathBaseArg
+            if (project.path != ":kotlin-native:utilities:xctest-runner") {
+                // In xctest-runner project
+                doFirst {
+                    if (relativePathBaseArg != null) {
+                        @Suppress("DEPRECATION")
+                        kotlinOptions.freeCompilerArgs += relativePathBaseArg
+                    }
                 }
             }
         }
