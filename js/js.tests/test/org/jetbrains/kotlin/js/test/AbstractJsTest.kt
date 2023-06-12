@@ -72,30 +72,6 @@ open class AbstractBoxJsTest : AbstractJsTest(pathToTestDir = "${JsEnvironmentCo
     }
 }
 
-open class AbstractJsCodegenBoxTest : AbstractJsTest(
-    pathToTestDir = "compiler/testData/codegen/box/",
-    testGroupOutputDirPrefix = "codegen/box/"
-)
-
-open class AbstractJsCodegenInlineTest : AbstractJsTest(
-    pathToTestDir = "compiler/testData/codegen/boxInline",
-    testGroupOutputDirPrefix = "codegen/boxInline"
-)
-
-open class AbstractJsLegacyPrimitiveArraysBoxTest : AbstractJsTest(
-    pathToTestDir = "compiler/testData/codegen/box/arrays/",
-    testGroupOutputDirPrefix = "codegen/box/arrays-legacy-primitivearrays/"
-) {
-    override fun configure(builder: TestConfigurationBuilder) {
-        super.configure(builder)
-        with(builder) {
-            defaultDirectives {
-                -JsEnvironmentConfigurationDirectives.TYPED_ARRAYS
-            }
-        }
-    }
-}
-
 open class AbstractSourceMapGenerationSmokeTest : AbstractJsTest(
     pathToTestDir = "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/sourcemap/",
     testGroupOutputDirPrefix = "sourcemap/"

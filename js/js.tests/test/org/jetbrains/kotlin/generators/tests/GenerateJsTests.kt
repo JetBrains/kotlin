@@ -146,17 +146,6 @@ fun main(args: Array<String>) {
         }
 
         testGroup("js/js.tests/tests-gen", "compiler/testData", testRunnerMethodName = "runTest0") {
-            testClass<AbstractJsCodegenBoxTest> {
-                model("codegen/box", excludeDirs = jvmOnlyBoxTests)
-            }
-
-            testClass<AbstractJsCodegenInlineTest> {
-                model("codegen/boxInline")
-            }
-
-            testClass<AbstractJsLegacyPrimitiveArraysBoxTest> {
-                model("codegen/box/arrays")
-            }
 
             testClass<AbstractIrJsCodegenBoxTest> {
                 model("codegen/box", excludeDirs = jvmOnlyBoxTests)
