@@ -40,6 +40,11 @@ public class LazyBodyIsNotTouchedTestGenerated extends AbstractLazyBodyIsNotTouc
         runTest("compiler/fir/analysis-tests/testData/resolve/accessJavaFromKotlinViaStaticImport2.kt");
     }
 
+    @TestMetadata("accessJavaFromKotlinViaStaticImportAndPermits.kt")
+    public void testAccessJavaFromKotlinViaStaticImportAndPermits() throws Exception {
+        runTest("compiler/fir/analysis-tests/testData/resolve/accessJavaFromKotlinViaStaticImportAndPermits.kt");
+    }
+
     public void testAllFilesPresentInResolve() throws Exception {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
     }

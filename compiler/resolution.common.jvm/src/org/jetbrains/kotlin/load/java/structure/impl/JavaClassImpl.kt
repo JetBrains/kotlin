@@ -69,7 +69,9 @@ class JavaClassImpl(psiClassSource: JavaElementPsiSource<PsiClass>) : JavaClassi
         get() = JavaElementUtil.isSealed(this)
 
     override val permittedTypes: Collection<JavaClassifierType>
-        get() = classifierTypes(psi.permitsListTypes, sourceFactory)
+        get() = psi.permitsListTypes.convertIndexed { index, _ ->
+            JavaClassifierTypeImpl(sourceFactory.createPermittedTypeSource(psiElementSource, index))
+        }
 
     override val isRecord: Boolean
         get() = psi.isRecord

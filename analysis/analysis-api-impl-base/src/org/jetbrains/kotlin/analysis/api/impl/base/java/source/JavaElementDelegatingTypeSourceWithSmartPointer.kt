@@ -48,7 +48,6 @@ internal class JavaElementDelegatingExpressionTypeSourceWithSmartPointer<TYPE : 
     }
 }
 
-
 internal class JavaElementDelegatingTypeParameterBoundTypeSourceWithSmartPointer<TYPE : PsiType>(
     override val psiPointer: SmartPsiElementPointer<out PsiTypeParameter>,
     private val boundIndex: Int,
@@ -67,4 +66,12 @@ internal class JavaElementDelegatingSuperTypeSourceWithSmartPointer(
     override val factory: JavaElementSourceFactory,
 ) : JavaElementDelegatingTypeSourceWithSmartPointer<PsiClass, PsiClassType>() {
     override fun getType(psi: PsiClass): PsiClassType = psi.superTypes[superTypeIndex]
+}
+
+internal class JavaElementDelegatingPermittedTypeSourceWithSmartPointer(
+    override val psiPointer: SmartPsiElementPointer<out PsiClass>,
+    private val permittedTypeIndex: Int,
+    override val factory: JavaElementSourceFactory,
+) : JavaElementDelegatingTypeSourceWithSmartPointer<PsiClass, PsiClassType>() {
+    override fun getType(psi: PsiClass): PsiClassType = psi.permitsListTypes[permittedTypeIndex]
 }

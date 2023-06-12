@@ -381,11 +381,13 @@ abstract class FirJavaFacade(
             }
         }.apply {
             if (modality == Modality.SEALED) {
-                val inheritors = javaClass.permittedTypes.mapNotNull { classifierType ->
-                    val classifier = classifierType.classifier as? JavaClass
-                    classifier?.let { JavaToKotlinClassMap.mapJavaToKotlin(it.fqName!!) }
+                val permittedTypes = javaClass.permittedTypes
+                setSealedClassInheritors {
+                    permittedTypes.mapNotNull { classifierType ->
+                        val classifier = classifierType.classifier as? JavaClass
+                        classifier?.let { JavaToKotlinClassMap.mapJavaToKotlin(it.fqName!!) }
+                    }
                 }
-                setSealedClassInheritors(inheritors)
             }
 
             if (classIsAnnotation) {

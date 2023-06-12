@@ -23,7 +23,7 @@ private val FirSession.sealedClassInheritorsProvider: SealedClassInheritorsProvi
 object SealedClassInheritorsProviderImpl : SealedClassInheritorsProvider() {
     @OptIn(SealedClassInheritorsProviderInternals::class)
     override fun getSealedClassInheritors(firClass: FirRegularClass): List<ClassId> {
-        return firClass.sealedInheritorsAttr ?: emptyList()
+        return firClass.sealedInheritorsAttr?.value ?: emptyList()
     }
 }
 
@@ -36,11 +36,17 @@ fun FirRegularClass.getSealedClassInheritors(session: FirSession): List<ClassId>
 @OptIn(SealedClassInheritorsProviderInternals::class)
 fun FirRegularClass.setSealedClassInheritors(inheritors: List<ClassId>) {
     require(this.isSealed)
-    sealedInheritorsAttr = inheritors.sortedBy { it.asFqNameString() }
+    sealedInheritorsAttr = lazyOf(inheritors.sortedBy { it.asFqNameString() })
+}
+
+@OptIn(SealedClassInheritorsProviderInternals::class)
+fun FirRegularClass.setSealedClassInheritors(inheritorComputer: () -> List<ClassId>) {
+    require(this.isSealed)
+    sealedInheritorsAttr = lazy { inheritorComputer().sortedBy { it.asFqNameString() } }
 }
 
 private object SealedClassInheritorsKey : FirDeclarationDataKey()
 
 @SealedClassInheritorsProviderInternals
-var FirRegularClass.sealedInheritorsAttr: List<ClassId>? by FirDeclarationDataRegistry.data(SealedClassInheritorsKey)
+var FirRegularClass.sealedInheritorsAttr: Lazy<List<ClassId>>? by FirDeclarationDataRegistry.data(SealedClassInheritorsKey)
     private set

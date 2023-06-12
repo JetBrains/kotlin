@@ -26,6 +26,14 @@ abstract class JavaElementSourceFactory {
 
     abstract fun <TYPE : PsiType> createExpressionTypeSource(psiExpressionSource: JavaElementPsiSource<out PsiExpression>): JavaElementTypeSource<TYPE>
 
+    /**
+     * @see com.intellij.psi.PsiClass.getPermitsListTypes
+     */
+    abstract fun createPermittedTypeSource(
+        psiTypeParameterSource: JavaElementPsiSource<out PsiClass>,
+        permittedTypeIndex: Int,
+    ): JavaElementTypeSource<PsiClassType>
+
     companion object {
         @JvmStatic
         fun getInstance(project: Project): JavaElementSourceFactory {
@@ -61,6 +69,13 @@ class JavaFixedElementSourceFactory : JavaElementSourceFactory() {
         superTypeIndex: Int,
     ): JavaElementTypeSource<PsiClassType> {
         return createTypeSource(psiTypeParameterSource.psi.superTypes[superTypeIndex])
+    }
+
+    override fun createPermittedTypeSource(
+        psiTypeParameterSource: JavaElementPsiSource<out PsiClass>,
+        permittedTypeIndex: Int
+    ): JavaElementTypeSource<PsiClassType> {
+        return createTypeSource(psiTypeParameterSource.psi.permitsListTypes[permittedTypeIndex])
     }
 
     override fun <TYPE : PsiType> createExpressionTypeSource(psiExpressionSource: JavaElementPsiSource<out PsiExpression>): JavaElementTypeSource<TYPE> {

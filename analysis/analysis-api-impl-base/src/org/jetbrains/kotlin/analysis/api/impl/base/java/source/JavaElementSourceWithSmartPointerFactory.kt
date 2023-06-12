@@ -61,4 +61,16 @@ class JavaElementSourceWithSmartPointerFactory(project: Project) : JavaElementSo
         require(psiExpressionSource is JavaElementPsiSourceWithSmartPointer)
         return JavaElementDelegatingExpressionTypeSourceWithSmartPointer(psiExpressionSource.pointer, psiExpressionSource.factory)
     }
+
+    override fun createPermittedTypeSource(
+        psiTypeParameterSource: JavaElementPsiSource<out PsiClass>,
+        permittedTypeIndex: Int
+    ): JavaElementTypeSource<PsiClassType> {
+        require(psiTypeParameterSource is JavaElementPsiSourceWithSmartPointer)
+        return JavaElementDelegatingPermittedTypeSourceWithSmartPointer(
+            psiTypeParameterSource.pointer,
+            permittedTypeIndex,
+            psiTypeParameterSource.factory,
+        )
+    }
 }
