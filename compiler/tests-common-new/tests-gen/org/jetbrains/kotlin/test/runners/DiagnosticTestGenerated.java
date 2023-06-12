@@ -19739,6 +19739,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("literalInCompletedGeneric.kt")
+            public void testLiteralInCompletedGeneric() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/integerLiterals/literalInCompletedGeneric.kt");
+            }
+
+            @Test
             @TestMetadata("literalsInInference.kt")
             public void testLiteralsInInference() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/integerLiterals/literalsInInference.kt");
