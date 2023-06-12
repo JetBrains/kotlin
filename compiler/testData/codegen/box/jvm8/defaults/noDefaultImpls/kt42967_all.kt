@@ -1,8 +1,8 @@
 // !JVM_DEFAULT_MODE: all
 // TARGET_BACKEND: JVM
 // IGNORE_BACKEND: JVM
-// IGNORE_LIGHT_ANALYSIS
 // JVM_TARGET: 1.8
+
 // FILE: Kotlin.kt
 interface Foo<T> {
     fun foo(p: T): T = p

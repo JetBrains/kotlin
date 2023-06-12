@@ -3,7 +3,6 @@
 // WITH_COROUTINES
 // IGNORE_BACKEND: JVM, JS, JS_IR
 // IGNORE_BACKEND: JS_IR_ES6
-// IGNORE_LIGHT_ANALYSIS
 
 import helpers.*
 import kotlin.coroutines.*

@@ -1,6 +1,5 @@
 // TARGET_BACKEND: JVM
 // IGNORE_BACKEND: JVM
-// IGNORE_LIGHT_ANALYSIS
 // JVM_TARGET: 1.8
 // SAM_CONVERSIONS: INDY
 
@@ -35,4 +34,3 @@ fun box(): String {
 
     return "OK"
 }
-

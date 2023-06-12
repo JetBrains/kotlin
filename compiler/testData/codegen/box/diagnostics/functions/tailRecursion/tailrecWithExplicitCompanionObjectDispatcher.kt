@@ -4,9 +4,6 @@
 // IGNORE_BACKEND: JVM
 // IGNORE_FIR_DIAGNOSTICS_DIFF
 
-// Light analysis thinks this test passes but it doesn't because JVM backend does not compile this into a tailrec function.
-// IGNORE_LIGHT_ANALYSIS
-
 class C {
     companion object {
         <!NO_TAIL_CALLS_FOUND!>tailrec<!> fun rec(i: Int) {
