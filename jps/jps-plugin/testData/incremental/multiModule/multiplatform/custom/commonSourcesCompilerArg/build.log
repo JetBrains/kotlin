@@ -1,31 +1,6 @@
-================ Step #1 use @Optional in JS =================
+================ Step #1 use @Optional in JVM =================
 
 Building c
-Building pJs
-Compiling files:
-  pJs/src/c.kt
-End of files
-Exit code: ABORT
-------------------------------------------
-COMPILATION FAILED
-Declaration annotated with '@OptionalExpectation' can only be used in common module sources
-
-================ Step #2 remove @Optional from JS =================
-
-Building c
-Building pJs
-Exit code: NOTHING_DONE
-------------------------------------------
-Building pJvm
-Exit code: NOTHING_DONE
-------------------------------------------
-
-================ Step #3 use @Optional in JVM =================
-
-Building c
-Building pJs
-Exit code: NOTHING_DONE
-------------------------------------------
 Building pJvm
 Compiling files:
   pJvm/src/c.kt
@@ -33,27 +8,17 @@ End of files
 Exit code: ABORT
 ------------------------------------------
 COMPILATION FAILED
-Declaration annotated with '@OptionalExpectation' can only be used in common module sources
 
-================ Step #4 remove @Optional from JVM =================
+================ Step #2 remove @Optional from JVM =================
 
 Building c
-Building pJs
-Exit code: NOTHING_DONE
-------------------------------------------
 Building pJvm
 Exit code: NOTHING_DONE
 ------------------------------------------
 
-================ Step #5 add another @Optional in Common module =================
+================ Step #3 add another @Optional in Common module =================
 
 Building c
-Building pJs
-Compiling files:
-  c/src/b.kt
-End of files
-Exit code: OK
-------------------------------------------
 Building pJvm
 Compiling files:
   c/src/b.kt
