@@ -1,0 +1,16 @@
+class XAlign {
+  constructor(bits: Long) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  val bits: Long
+    field = bits
+    get
+
+  constructor() {
+    this/*XAlign*/(bits = 2L)
+  }
+
+}

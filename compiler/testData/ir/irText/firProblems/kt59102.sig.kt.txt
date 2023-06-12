@@ -1,0 +1,26 @@
+// CHECK:
+//   Mangled name: XAlign
+//   Public signature: /XAlign|null[0]
+class XAlign {
+  // CHECK:
+  //   Mangled name: XAlign{}bits
+  //   Public signature: /XAlign.bits|-2314303284935245061[0]
+  val bits: Long
+    // CHECK JVM_IR:
+    //   Mangled name: XAlign#<get-bits>(){}kotlin.Long
+    //   Public signature: /XAlign.bits.<get-bits>|-8015099027032327963[0]
+    // CHECK JS_IR:
+    //   Mangled name: XAlign#<get-bits>(){}
+    //   Public signature: /XAlign.bits.<get-bits>|-3920031234897259044[0]
+    get
+
+  // CHECK:
+  //   Mangled name: XAlign#<init>(){}
+  //   Public signature: /XAlign.<init>|-5645683436151566731[0]
+  constructor()
+  // CHECK:
+  //   Mangled name: XAlign#<init>(kotlin.Long){}
+  //   Public signature: /XAlign.<init>|5217973964116651322[0]
+  constructor(bits: Long) /* primary */
+
+}

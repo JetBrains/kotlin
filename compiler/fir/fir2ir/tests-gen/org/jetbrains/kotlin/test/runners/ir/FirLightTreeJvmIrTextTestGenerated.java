@@ -2739,6 +2739,12 @@ public class FirLightTreeJvmIrTextTestGenerated extends AbstractFirLightTreeJvmI
         }
 
         @Test
+        @TestMetadata("kt59102.kt")
+        public void testKt59102() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/kt59102.kt");
+        }
+
+        @Test
         @TestMetadata("lambdaInEnumEntryConstructorCall.kt")
         public void testLambdaInEnumEntryConstructorCall() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/lambdaInEnumEntryConstructorCall.kt");
