@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmSymbols
 import org.jetbrains.kotlin.backend.jvm.ir.hasPlatformDependent
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.fir.backend.FirMetadataSource
 import org.jetbrains.kotlin.fir.signaturer.FirMangler
 import org.jetbrains.kotlin.ir.IrBuiltIns
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
+import org.jetbrains.kotlin.load.java.lazy.descriptors.isJavaField
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.test.TargetBackend
@@ -174,13 +176,25 @@ class IrMangledNameAndSignatureDumpHandler(testServices: TestServices) : Abstrac
         private val IrDeclaration.isMainFunction: Boolean
             get() = isTopLevel && this is IrSimpleFunction && name.asString() == "main"
 
+        @ObsoleteDescriptorBasedAPI
         private val IrDeclaration.potentiallyHasDifferentMangledNamesDependingOnBackend: Boolean
             get() = isMainFunction ||
                     isFunctionWithNonUnitReturnType ||
+                    (symbol.descriptor as? PropertyDescriptor)?.isJavaField == true ||
                     parent.let { it is IrDeclaration && it.potentiallyHasDifferentMangledNamesDependingOnBackend }
 
         private fun IrSimpleFunction.isHiddenEnumMethod() = allOverridden(includeSelf = true).any {
             it.dispatchReceiverParameter?.type?.classOrNull == irBuiltIns.enumClass && it.name in HIDDEN_ENUM_METHOD_NAMES
+        }
+
+        private fun Printer.printCheckMarkerForNewDeclaration() {
+            printlnCheckMarker(
+                when (targetBackend) {
+                    // In most cases the mangled names and signatures generated for JS are the same as for Native.
+                    TargetBackend.JS_IR, TargetBackend.NATIVE -> listOf(TargetBackend.JS_IR, TargetBackend.NATIVE)
+                    else -> listOf(targetBackend)
+                }
+            )
         }
 
         @OptIn(ObsoleteDescriptorBasedAPI::class)
@@ -224,8 +238,9 @@ class IrMangledNameAndSignatureDumpHandler(testServices: TestServices) : Abstrac
                         checkBlock.expectations.forEach(this::println)
                     }
                 }
+                // No `// CHECK` block found for the current backend.
                 if (!printedActualMangledNameAndSignature) {
-                    printlnCheckMarker(listOf(targetBackend))
+                    printCheckMarkerForNewDeclaration()
                     printActualMangledNamesAndSignatures()
                 }
             } else {
@@ -233,7 +248,7 @@ class IrMangledNameAndSignatureDumpHandler(testServices: TestServices) : Abstrac
                     // This is a heuristic to print `// CHECK <backend>:` instead of just `// CHECK:` for new declarations
                     // for which the difference between backend-specific manglers is known to take place.
                     // This is purely for convenience when adding a new test.
-                    printlnCheckMarker(listOf(targetBackend))
+                    printCheckMarkerForNewDeclaration()
                 } else {
                     printlnCheckMarker(emptyList())
                 }
