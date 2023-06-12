@@ -133,11 +133,11 @@ private enum class ImportKind {
     /** Explicitly imported by user. */
     EXPLICIT,
 
-    /** Explicitly imported by Kotlin default. For example, `kotlin.String`. */
-    DEFAULT_EXPLICIT,
-
     /** Implicitly imported from package. */
     PACKAGE,
+
+    /** Explicitly imported by Kotlin default. For example, `kotlin.String`. */
+    DEFAULT_EXPLICIT,
 
     /** Star imported (star import) by user. */
     STAR,
@@ -157,6 +157,12 @@ private enum class ImportKind {
                 is FirAbstractSimpleImportingScope -> EXPLICIT
                 else -> LOCAL
             }
+        }
+
+        fun fromShortenOption(option: ShortenOption): ImportKind? = when (option) {
+            ShortenOption.SHORTEN_AND_IMPORT -> EXPLICIT
+            ShortenOption.SHORTEN_AND_STAR_IMPORT -> STAR
+            else -> null
         }
     }
 }
@@ -974,10 +980,12 @@ private class ElementsToShortenCollector(
         val nameToImport = shorteningContext.convertToImportableName(calledSymbol)
 
         val (matchedCallables, otherCallables) = availableCallables.partition { it.symbol.callableId == calledSymbol.callableId }
+
+        val importKindFromOption = ImportKind.fromShortenOption(option)
+        val importKind = matchedCallables.minOfOrNull { it.importKind } ?: importKindFromOption ?: return
+
         val callToShorten = when {
-            // TODO: instead of allowing import only if the other callables are all with kind `DEFAULT_STAR`, we should allow import if
-            //  the requested import kind has higher priority than the available symbols.
-            otherCallables.all { it.importKind == ImportKind.DEFAULT_STAR } -> {
+            otherCallables.all { importKind.hasHigherPriorityThan(it.importKind) } -> {
                 when {
                     matchedCallables.isEmpty() -> {
                         if (nameToImport == null || option == ShortenOption.SHORTEN_IF_ALREADY_IMPORTED) return

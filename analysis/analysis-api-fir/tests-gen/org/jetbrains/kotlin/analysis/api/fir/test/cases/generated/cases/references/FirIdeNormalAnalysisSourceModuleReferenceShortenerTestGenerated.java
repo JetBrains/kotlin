@@ -53,6 +53,24 @@ public class FirIdeNormalAnalysisSourceModuleReferenceShortenerTestGenerated ext
     }
 
     @Test
+    @TestMetadata("callableFromDefaultImport.kt")
+    public void testCallableFromDefaultImport() throws Exception {
+        runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/callableFromDefaultImport.kt");
+    }
+
+    @Test
+    @TestMetadata("callableFromDefaultImport2.kt")
+    public void testCallableFromDefaultImport2() throws Exception {
+        runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/callableFromDefaultImport2.kt");
+    }
+
+    @Test
+    @TestMetadata("callableFromExplicitImport.kt")
+    public void testCallableFromExplicitImport() throws Exception {
+        runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/callableFromExplicitImport.kt");
+    }
+
+    @Test
     @TestMetadata("classScopes.kt")
     public void testClassScopes() throws Exception {
         runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/classScopes.kt");
