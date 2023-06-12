@@ -35,7 +35,7 @@ internal const val KOTLIN_STDLIB_JDK7_MODULE_NAME = "kotlin-stdlib-jdk7"
 internal const val KOTLIN_STDLIB_JDK8_MODULE_NAME = "kotlin-stdlib-jdk8"
 internal const val KOTLIN_STDLIB_JS_MODULE_NAME = "kotlin-stdlib-js"
 internal const val KOTLIN_STDLIB_WASM_MODULE_NAME = "kotlin-stdlib-wasm"
-internal const val KOTLIN_ANDROID_JVM_STDLIB_MODULE_NAME = KOTLIN_STDLIB_JDK8_MODULE_NAME
+internal const val KOTLIN_ANDROID_JVM_STDLIB_MODULE_NAME = KOTLIN_STDLIB_MODULE_NAME
 
 internal fun Project.configureStdlibDefaultDependency(
     topLevelExtension: KotlinTopLevelExtension,
@@ -111,18 +111,18 @@ private fun addStdlibToKpmProject(
     project.pm20Extension.modules.named(GradleKpmModule.MAIN_MODULE_NAME) { main ->
         main.fragments.named(GradleKpmFragment.COMMON_FRAGMENT_NAME) { common ->
             common.dependencies {
-                api(project.dependencies.kotlinDependency(KOTLIN_STDLIB_COMMON_MODULE_NAME, coreLibrariesVersion.get()))
+                api(project.dependencies.kotlinDependency(KOTLIN_STDLIB_MODULE_NAME, coreLibrariesVersion.get()))
             }
         }
         main.variants.configureEach { variant ->
             val dependencyHandler = project.dependencies
             val stdlibModule = when (variant.platformType) {
                 KotlinPlatformType.common -> error("variants are not expected to be common")
-                KotlinPlatformType.jvm -> KOTLIN_STDLIB_JDK8_MODULE_NAME
-                KotlinPlatformType.js -> KOTLIN_STDLIB_JS_MODULE_NAME
+                KotlinPlatformType.jvm -> KOTLIN_STDLIB_MODULE_NAME
+                KotlinPlatformType.js -> KOTLIN_STDLIB_MODULE_NAME
                 KotlinPlatformType.wasm -> KOTLIN_STDLIB_WASM_MODULE_NAME
                 KotlinPlatformType.androidJvm -> null // TODO: expect support on the AGP side?
-                KotlinPlatformType.native -> null
+                KotlinPlatformType.native -> KOTLIN_STDLIB_MODULE_NAME
             }
             if (stdlibModule != null) {
                 variant.dependencies {
@@ -203,7 +203,7 @@ internal fun KotlinPlatformType.stdlibPlatformType(
     kotlinTarget: KotlinTarget,
     kotlinSourceSet: KotlinSourceSet
 ): String? = when (this) {
-    KotlinPlatformType.jvm -> KOTLIN_STDLIB_JDK8_MODULE_NAME
+    KotlinPlatformType.jvm -> KOTLIN_STDLIB_MODULE_NAME
     KotlinPlatformType.androidJvm -> {
         if (kotlinTarget is KotlinAndroidTarget &&
             kotlinSourceSet.androidSourceSetInfoOrNull?.androidSourceSetName == AndroidBaseSourceSetName.Main.name
@@ -214,11 +214,11 @@ internal fun KotlinPlatformType.stdlibPlatformType(
         }
     }
 
-    KotlinPlatformType.js -> KOTLIN_STDLIB_JS_MODULE_NAME
+    KotlinPlatformType.js -> KOTLIN_STDLIB_MODULE_NAME
     KotlinPlatformType.wasm -> KOTLIN_STDLIB_WASM_MODULE_NAME
     KotlinPlatformType.native -> null
     KotlinPlatformType.common -> // there's no platform compilation that the source set is default for
-        KOTLIN_STDLIB_COMMON_MODULE_NAME
+        KOTLIN_STDLIB_MODULE_NAME
 }
 
 private val androidTestVariants = setOf(AndroidVariantType.UnitTest, AndroidVariantType.InstrumentedTest)

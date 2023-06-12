@@ -36,8 +36,8 @@ class IdeStdlibResolutionTest {
 
         project.evaluate()
 
-        project.assertStdlibDependencies(kotlin.sourceSets.getByName("commonMain"), jvmStdlibDependencies(kotlin))
-        project.assertStdlibDependencies(kotlin.sourceSets.getByName("commonTest"), jvmStdlibDependencies(kotlin))
+        project.assertStdlibDependencies(kotlin.sourceSets.getByName("commonMain"), jvmStdlibDependencies(kotlin) + commonStdlibDependency(kotlin))
+        project.assertStdlibDependencies(kotlin.sourceSets.getByName("commonTest"), jvmStdlibDependencies(kotlin) + commonStdlibDependency(kotlin))
         project.assertStdlibDependencies(kotlin.sourceSets.getByName("jvmMain"), jvmStdlibDependencies(kotlin))
         project.assertStdlibDependencies(kotlin.sourceSets.getByName("jvmTest"), jvmStdlibDependencies(kotlin))
     }
@@ -66,8 +66,8 @@ class IdeStdlibResolutionTest {
 
         project.evaluate()
 
-        project.assertStdlibDependencies(kotlin.sourceSets.getByName("commonMain"), jsStdlibDependency(kotlin))
-        project.assertStdlibDependencies(kotlin.sourceSets.getByName("commonTest"), jsStdlibDependency(kotlin))
+        project.assertStdlibDependencies(kotlin.sourceSets.getByName("commonMain"), listOf(commonStdlibDependency(kotlin), jsStdlibDependency(kotlin)))
+        project.assertStdlibDependencies(kotlin.sourceSets.getByName("commonTest"), listOf(commonStdlibDependency(kotlin), jsStdlibDependency(kotlin)))
         project.assertStdlibDependencies(kotlin.sourceSets.getByName("jsMain"), jsStdlibDependency(kotlin))
         project.assertStdlibDependencies(kotlin.sourceSets.getByName("jsTest"), jsStdlibDependency(kotlin))
     }
@@ -116,8 +116,8 @@ class IdeStdlibResolutionTest {
 
         project.assertStdlibDependencies(commonMain, commonStdlibDependency(kotlin))
         project.assertStdlibDependencies(commonTest, commonStdlibDependency(kotlin))
-        project.assertStdlibDependencies(jvmIntermediateMain, jvmStdlibDependencies(kotlin))
-        project.assertStdlibDependencies(jvmIntermediateTest, jvmStdlibDependencies(kotlin))
+        project.assertStdlibDependencies(jvmIntermediateMain, jvmStdlibDependencies(kotlin) + commonStdlibDependency(kotlin))
+        project.assertStdlibDependencies(jvmIntermediateTest, jvmStdlibDependencies(kotlin) + commonStdlibDependency(kotlin))
     }
 
     @Test
@@ -235,11 +235,11 @@ class IdeStdlibResolutionTest {
     }
 
     private fun commonStdlibDependency(kotlin: KotlinMultiplatformExtension) =
-        binaryCoordinates("org.jetbrains.kotlin:kotlin-stdlib-common:${kotlin.coreLibrariesVersion}")
+        binaryCoordinates("org.jetbrains.kotlin:kotlin-stdlib:${kotlin.coreLibrariesVersion}:commonMain")
 
     private fun jvmStdlibDependencies(kotlin: KotlinMultiplatformExtension) = listOf(
-        binaryCoordinates("org.jetbrains.kotlin:kotlin-stdlib-jdk8:${kotlin.coreLibrariesVersion}"),
-        binaryCoordinates("org.jetbrains.kotlin:kotlin-stdlib-jdk7:${kotlin.coreLibrariesVersion}"),
+//        binaryCoordinates("org.jetbrains.kotlin:kotlin-stdlib-jdk8:${kotlin.coreLibrariesVersion}"),
+//        binaryCoordinates("org.jetbrains.kotlin:kotlin-stdlib-jdk7:${kotlin.coreLibrariesVersion}"),
         binaryCoordinates("org.jetbrains.kotlin:kotlin-stdlib:${kotlin.coreLibrariesVersion}"),
     )
 
