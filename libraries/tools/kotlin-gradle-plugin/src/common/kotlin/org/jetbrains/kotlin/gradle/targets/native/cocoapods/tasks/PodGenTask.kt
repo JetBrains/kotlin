@@ -8,6 +8,7 @@
 package org.jetbrains.kotlin.gradle.targets.native.tasks
 
 import org.gradle.api.file.ProjectLayout
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
@@ -52,8 +53,8 @@ abstract class PodGenTask @Inject constructor(projectLayout: ProjectLayout) : Co
     @get:Nested
     internal abstract val pods: ListProperty<CocoapodsDependency>
 
-    @get:Input
-    internal abstract val xcodeVersion: Property<XcodeVersion>
+    @get:InputFile
+    internal abstract val xcodeVersion: RegularFileProperty
 
     @get:OutputFile
     val podfile: Provider<File> = projectLayout.cocoapodsBuildDirs.synthetic(family).map { it.file("Podfile").asFile }
@@ -123,7 +124,7 @@ abstract class PodGenTask @Inject constructor(projectLayout: ProjectLayout) : Co
         }
 
     private fun insertXcode143DeploymentTargetWorkarounds(family: Family): String {
-        if (xcodeVersion.get() < XcodeVersion(14, 3)) {
+        if (XcodeVersion.parse(xcodeVersion.get().asFile.readText())!! < XcodeVersion(14, 3)) {
             return ""
         }
 

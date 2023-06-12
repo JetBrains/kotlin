@@ -42,7 +42,6 @@ import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.KonanTarget.*
-import org.jetbrains.kotlin.konan.target.Xcode
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 import java.io.File
@@ -526,6 +525,8 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
                 else -> error("Unknown cocoapods platform: $family")
             }
 
+            val xcodeVersionTask = project.registerTask<XcodeVersionTask>("xcodeVersion")
+
             val podGenTask = project.registerTask<PodGenTask>(family.toPodGenTaskName) { task ->
                 task.description = "Сreates a synthetic Xcode project to retrieve CocoaPods dependencies"
                 task.podspec.set(podspecTaskProvider.map { it.outputFile })
@@ -535,7 +536,9 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
                 task.family.set(family)
                 task.platformSettings.set(platformSettings)
                 task.pods.set(cocoapodsExtension.pods)
-                task.xcodeVersion.set(project.provider { Xcode.findCurrent().version })
+                task.xcodeVersion.set(xcodeVersionTask.flatMap { it.outputFile })
+
+                task.dependsOn(xcodeVersionTask)
             }
 
             project.registerTask<PodInstallSyntheticTask>(family.toPodInstallSyntheticTaskName) { task ->
