@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.gradle.native
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.runProcess
-import org.jetbrains.kotlin.gradle.utils.Xcode
+import org.jetbrains.kotlin.gradle.utils.XcodeUtils
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.DisplayName
@@ -21,8 +21,7 @@ import kotlin.test.assertEquals
 @OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
 class NativeXcodeSimulatorTestsIT : KGPBaseTest() {
     private val defaultIosSimulator by lazy {
-        val xcode = Xcode ?: error("XCode is expected to be defined")
-        xcode.getDefaultTestDeviceId(KonanTarget.IOS_SIMULATOR_ARM64) ?: error("No simulator found for iOS ARM64")
+        XcodeUtils.getDefaultTestDeviceId(KonanTarget.IOS_SIMULATOR_ARM64) ?: error("No simulator found for iOS ARM64")
     }
 
     @DisplayName("A user-friendly error message is produced when the standalone mode is disabled and no simulator has booted")
