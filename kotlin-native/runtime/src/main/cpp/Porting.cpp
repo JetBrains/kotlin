@@ -76,7 +76,7 @@ void consoleWriteUtf8(const char* utf8, uint32_t sizeBytes) {
 #endif
 }
 
-NO_EXTERNAL_CALLS_CHECK void consoleErrorUtf8(const char* utf8, uint32_t sizeBytes) {
+void consoleErrorUtf8(const char* utf8, uint32_t sizeBytes) {
 #ifdef KONAN_ANDROID
   if (kotlin::compiler::printToAndroidLogcat()) {
     // TODO: use sizeBytes!

@@ -50,7 +50,7 @@ public open class Throwable(open val message: String?, open val cause: Throwable
             (0 until stackTrace.size).map { index -> stackTrace[index].toLong() }
 
     /**
-     * Prints the [detailed description][Throwable.stackTraceToString] of this throwable to the standard output.
+     * Prints the [detailed description][Throwable.stackTraceToString] of this throwable to the standard error output.
      *
      * Note that the format of the output is not stable and may change in the future.
      */
@@ -75,7 +75,7 @@ public open class Throwable(open val message: String?, open val cause: Throwable
 
         private fun StringBuilder.endln() {
             if (printOut) {
-                println(this)
+                printlnToStdErr(this.toString())
                 clear()
             } else {
                 appendLine()
@@ -169,7 +169,7 @@ private external fun getStackTraceStrings(stackTrace: NativePtrArray): Array<Str
 public actual fun Throwable.stackTraceToString(): String = dumpStackTrace()
 
 /**
- * Prints the [detailed description][Throwable.stackTraceToString] of this throwable to the standard output.
+ * Prints the [detailed description][Throwable.stackTraceToString] of this throwable to the standard error output.
  *
  * Note that the format of the output is not stable and may change in the future.
  */

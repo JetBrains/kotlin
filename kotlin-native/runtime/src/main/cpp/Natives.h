@@ -87,6 +87,7 @@ extern "C" {
 
 OBJ_GETTER0(TheEmptyString);
 void Kotlin_io_Console_println0();
+void Kotlin_io_Console_println0ToStdErr();
 void Kotlin_NativePtrArray_set(KRef thiz, KInt index, KNativePtr value);
 KNativePtr Kotlin_NativePtrArray_get(KConstRef thiz, KInt index);
 

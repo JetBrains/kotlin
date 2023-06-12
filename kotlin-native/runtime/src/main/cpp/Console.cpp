@@ -32,22 +32,38 @@
 
 using namespace kotlin;
 
-extern "C" {
+namespace {
 
-// io/Console.kt
-void Kotlin_io_Console_print(KString message) {
+std_support::string kStringToUtf8(KString message) {
     if (message->type_info() != theStringTypeInfo) {
         ThrowClassCastException(message->obj(), theStringTypeInfo);
     }
-    // TODO: system stdout must be aware about UTF-8.
     const KChar* utf16 = CharArrayAddressOfElementAt(message, 0);
     std_support::string utf8;
     utf8.reserve(message->count_);
     // Replace incorrect sequences with a default codepoint (see utf8::with_replacement::default_replacement)
     utf8::with_replacement::utf16to8(utf16, utf16 + message->count_, back_inserter(utf8));
 
+    return utf8;
+}
+
+} // namespace
+
+extern "C" {
+
+// io/Console.kt
+void Kotlin_io_Console_print(KString message) {
+    // TODO: system stdout must be aware about UTF-8.
+    auto utf8 = kStringToUtf8(message);
     kotlin::ThreadStateGuard guard(kotlin::ThreadState::kNative);
     konan::consoleWriteUtf8(utf8.c_str(), utf8.size());
+}
+
+void Kotlin_io_Console_printToStdErr(KString message) {
+    // TODO: system stderr must be aware about UTF-8.
+    auto utf8 = kStringToUtf8(message);
+    kotlin::ThreadStateGuard guard(kotlin::ThreadState::kNative);
+    konan::consoleErrorUtf8(utf8.c_str(), utf8.size());
 }
 
 void Kotlin_io_Console_println(KString message) {
@@ -62,9 +78,26 @@ void Kotlin_io_Console_println(KString message) {
 #endif
 }
 
+void Kotlin_io_Console_printlnToStdErr(KString message) {
+    Kotlin_io_Console_printToStdErr(message);
+#ifndef KONAN_ANDROID
+    Kotlin_io_Console_println0ToStdErr();
+#else
+    // On Android single print produces logcat entry, so no need in linefeed.
+    if (!kotlin::compiler::printToAndroidLogcat()) {
+        Kotlin_io_Console_println0ToStdErr();
+    }
+#endif
+}
+
 void Kotlin_io_Console_println0() {
     kotlin::ThreadStateGuard guard(kotlin::ThreadState::kNative);
     konan::consoleWriteUtf8("\n", 1);
+}
+
+void Kotlin_io_Console_println0ToStdErr() {
+    kotlin::ThreadStateGuard guard(kotlin::ThreadState::kNative);
+    konan::consoleErrorUtf8("\n", 1);
 }
 
 OBJ_GETTER0(Kotlin_io_Console_readLine) {
