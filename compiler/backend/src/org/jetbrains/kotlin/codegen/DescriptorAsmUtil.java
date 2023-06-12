@@ -588,14 +588,6 @@ public class DescriptorAsmUtil {
         else if (type.getSort() == Type.OBJECT) {
             iv.invokevirtual("java/lang/Object", "hashCode", "()I", false);
         }
-        else if (type.getSort() == Type.BOOLEAN) {
-            Label end = new Label();
-            iv.dup();
-            iv.ifeq(end);
-            iv.pop();
-            iv.iconst(1);
-            iv.mark(end);
-        }
         else {
             HashCode.Companion.invokeHashCode(iv, type);
         }
