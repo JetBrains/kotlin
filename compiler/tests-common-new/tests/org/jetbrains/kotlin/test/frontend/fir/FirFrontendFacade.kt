@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.platform.isJs
+import org.jetbrains.kotlin.platform.isWasm
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.platform.konan.isNative
 import org.jetbrains.kotlin.psi.KtFile
@@ -55,6 +56,7 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.runners.lightTreeSyntaxDiagnosticsReporterHolder
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigurator
 import java.nio.file.Paths
 
 open class FirFrontendFacade(
@@ -240,6 +242,20 @@ open class FirFrontendFacade(
                     registerExtraComponents = ::registerExtraComponents,
                 )
             }
+            module.targetPlatform.isWasm() -> {
+                projectEnvironment = null
+                TestFirWasmSessionFactory.createLibrarySession(
+                    moduleName,
+                    sessionProvider,
+                    moduleDataProvider,
+                    module,
+                    testServices,
+                    configuration,
+                    extensionRegistrars,
+                    languageVersionSettings,
+                    registerExtraComponents = ::registerExtraComponents,
+                )
+            }
             else -> error("Unsupported")
         }
         return projectEnvironment
@@ -380,6 +396,17 @@ open class FirFrontendFacade(
                     init = sessionConfigurator
                 )
             }
+            targetPlatform.isWasm() -> {
+                TestFirWasmSessionFactory.createModuleBasedSession(
+                    moduleData,
+                    sessionProvider,
+                    extensionRegistrars,
+                    languageVersionSettings,
+                    null,
+                    registerExtraComponents = ::registerExtraComponents,
+                    sessionConfigurator,
+                )
+            }
             else -> error("Unsupported")
         }
     }
@@ -408,6 +435,13 @@ open class FirFrontendFacade(
                     }
                     targetPlatform.isNative() -> {
                         val runtimeKlibsPaths = NativeEnvironmentConfigurator.getRuntimePathsForModule(mainModule, testServices)
+                        val (transitiveLibraries, friendLibraries) = getTransitivesAndFriends(mainModule, testServices)
+                        dependencies(runtimeKlibsPaths.map { Paths.get(it).toAbsolutePath() })
+                        dependencies(transitiveLibraries.map { it.toPath().toAbsolutePath() })
+                        friendDependencies(friendLibraries.map { it.toPath().toAbsolutePath() })
+                    }
+                    targetPlatform.isWasm() -> {
+                        val runtimeKlibsPaths = WasmEnvironmentConfigurator.getRuntimePathsForModule()
                         val (transitiveLibraries, friendLibraries) = getTransitivesAndFriends(mainModule, testServices)
                         dependencies(runtimeKlibsPaths.map { Paths.get(it).toAbsolutePath() })
                         dependencies(transitiveLibraries.map { it.toPath().toAbsolutePath() })

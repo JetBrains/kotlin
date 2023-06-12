@@ -97,6 +97,14 @@ class JsIrInterpreterDumpHandler(testServices: TestServices) : IrInterpreterDump
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {}
 }
 
+class WasmIrInterpreterDumpHandler(testServices: TestServices) : IrInterpreterDumpHandler, WasmBinaryArtifactHandler(testServices) {
+    override fun processModule(module: TestModule, info: BinaryArtifacts.Wasm) {
+        processModule(module)
+    }
+
+    override fun processAfterAllModules(someAssertionWasFailed: Boolean) {}
+}
+
 class KlibInterpreterDumpHandler(testServices: TestServices) : IrInterpreterDumpHandler, KlibArtifactHandler(testServices) {
     override fun processModule(module: TestModule, info: BinaryArtifacts.KLib) {
         if (JsEnvironmentConfigurator.isMainModule(module, testServices)) return
