@@ -24752,6 +24752,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
                 public void testSubstitutionInSuperType() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/platformTypes/notNullTypeParameter/substitutionInSuperType.kt");
                 }
+
+                @Test
+                @TestMetadata("supplier.kt")
+                public void testSupplier() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/platformTypes/notNullTypeParameter/supplier.kt");
+                }
             }
 
             @Nested

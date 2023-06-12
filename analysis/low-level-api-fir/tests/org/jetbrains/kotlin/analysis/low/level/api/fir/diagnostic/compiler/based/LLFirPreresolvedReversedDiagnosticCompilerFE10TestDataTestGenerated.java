@@ -24752,6 +24752,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
                 public void testSubstitutionInSuperType() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/platformTypes/notNullTypeParameter/substitutionInSuperType.kt");
                 }
+
+                @Test
+                @TestMetadata("supplier.kt")
+                public void testSupplier() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/platformTypes/notNullTypeParameter/supplier.kt");
+                }
             }
 
             @Nested
