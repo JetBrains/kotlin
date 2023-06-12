@@ -52954,6 +52954,12 @@ public class IrBlackBoxCodegenWithIrInlinerTestGenerated extends AbstractIrBlack
         }
 
         @Test
+        @TestMetadata("integralWhenWithNoInlinedConstants2.kt")
+        public void testIntegralWhenWithNoInlinedConstants2() throws Exception {
+            runTest("compiler/testData/codegen/box/when/integralWhenWithNoInlinedConstants2.kt");
+        }
+
+        @Test
         @TestMetadata("is.kt")
         public void testIs() throws Exception {
             runTest("compiler/testData/codegen/box/when/is.kt");

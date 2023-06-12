@@ -1,4 +1,5 @@
 // IGNORE_BACKEND: WASM
+// https://youtrack.jetbrains.com/issue/KT-44571/Segfault-on-unnecessary-int-unboxing
 // IGNORE_BACKEND: NATIVE
 // NO_CHECK_LAMBDA_INLINING
 // FILE: 1.kt

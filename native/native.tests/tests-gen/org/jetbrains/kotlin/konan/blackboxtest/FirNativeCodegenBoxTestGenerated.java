@@ -40540,9 +40540,9 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
             }
 
             @Test
-            @TestMetadata("integralWhenWithNoInlinedConstants.kt")
-            public void testIntegralWhenWithNoInlinedConstants() throws Exception {
-                runTest("compiler/testData/codegen/box/when/integralWhenWithNoInlinedConstants.kt");
+            @TestMetadata("integralWhenWithNoInlinedConstants2.kt")
+            public void testIntegralWhenWithNoInlinedConstants2() throws Exception {
+                runTest("compiler/testData/codegen/box/when/integralWhenWithNoInlinedConstants2.kt");
             }
 
             @Test

@@ -36868,9 +36868,9 @@ public class IrJsES6CodegenBoxTestGenerated extends AbstractIrJsES6CodegenBoxTes
         }
 
         @Test
-        @TestMetadata("integralWhenWithNoInlinedConstants.kt")
-        public void testIntegralWhenWithNoInlinedConstants() throws Exception {
-            runTest("compiler/testData/codegen/box/when/integralWhenWithNoInlinedConstants.kt");
+        @TestMetadata("integralWhenWithNoInlinedConstants2.kt")
+        public void testIntegralWhenWithNoInlinedConstants2() throws Exception {
+            runTest("compiler/testData/codegen/box/when/integralWhenWithNoInlinedConstants2.kt");
         }
 
         @Test
