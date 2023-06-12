@@ -56,6 +56,7 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.runners.lightTreeSyntaxDiagnosticsReporterHolder
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigurator
 import java.nio.file.Paths
 
 open class FirFrontendFacade(
@@ -433,6 +434,13 @@ open class FirFrontendFacade(
                     }
                     targetPlatform.isNative() -> {
                         val runtimeKlibsPaths = NativeEnvironmentConfigurator.getRuntimePathsForModule(mainModule, testServices)
+                        val (transitiveLibraries, friendLibraries) = getTransitivesAndFriends(mainModule, testServices)
+                        dependencies(runtimeKlibsPaths.map { Paths.get(it).toAbsolutePath() })
+                        dependencies(transitiveLibraries.map { it.toPath().toAbsolutePath() })
+                        friendDependencies(friendLibraries.map { it.toPath().toAbsolutePath() })
+                    }
+                    targetPlatform.isWasm() -> {
+                        val runtimeKlibsPaths = WasmEnvironmentConfigurator.getRuntimePathsForModule()
                         val (transitiveLibraries, friendLibraries) = getTransitivesAndFriends(mainModule, testServices)
                         dependencies(runtimeKlibsPaths.map { Paths.get(it).toAbsolutePath() })
                         dependencies(transitiveLibraries.map { it.toPath().toAbsolutePath() })
