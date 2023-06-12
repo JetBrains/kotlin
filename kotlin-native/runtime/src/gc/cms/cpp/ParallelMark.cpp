@@ -215,6 +215,9 @@ void gc::mark::ParallelMark::tryCollectRootSet(mm::ThreadData& thread, MarkTrait
 void gc::mark::ParallelMark::parallelMark(ParallelProcessor::Worker& worker) {
     GCLogDebug(gcHandle().getEpoch(), "Mark task has begun on thread %d", konan::currentThreadId());
     Mark<MarkTraits>(gcHandle(), worker);
+    // We must now wait for every worker to finish the Mark procedure:
+    // wake up from possible waiting, publish statistics, etc.
+    // Only then it's safe to destroy the parallelProcessor and proceed to other GC tasks such as sweep.
     waitEveryWorkerTermination();
 }
 

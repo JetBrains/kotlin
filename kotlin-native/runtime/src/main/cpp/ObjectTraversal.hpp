@@ -38,9 +38,14 @@ void traverseObjectFields(ObjHeader* object, F process) noexcept(noexcept(proces
     const TypeInfo* typeInfo = object->type_info();
     // Only consider arrays of objects, not arrays of primitives.
     if (typeInfo != theArrayTypeInfo) {
-        traverseClassObjectFields(object, process);
+        for (int index = 0; index < typeInfo->objOffsetsCount_; index++) {
+            process(reinterpret_cast<ObjHeader**>(reinterpret_cast<uintptr_t>(object) + typeInfo->objOffsets_[index]));
+        }
     } else {
-        traverseArrayOfObjectsElements(object->array(), process);
+        ArrayHeader* array = object->array();
+        for (uint32_t index = 0; index < array->count_; index++) {
+            process(ArrayAddressOfElementAt(array, index));
+        }
     }
 }
 
