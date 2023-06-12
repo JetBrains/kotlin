@@ -10381,25 +10381,6 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
                 }
 
                 @Nested
-                @TestMetadata("compiler/testData/codegen/box/coroutines/localFunctions/anonymous")
-                @TestDataPath("$PROJECT_ROOT")
-                @Tag("frontend-fir")
-                @FirPipeline()
-                @UseExtTestCaseGroupProvider()
-                public class Anonymous {
-                    @Test
-                    public void testAllFilesPresentInAnonymous() throws Exception {
-                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/localFunctions/anonymous"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
-                    }
-
-                    @Test
-                    @TestMetadata("simple.kt")
-                    public void testSimple() throws Exception {
-                        runTest("compiler/testData/codegen/box/coroutines/localFunctions/anonymous/simple.kt");
-                    }
-                }
-
-                @Nested
                 @TestMetadata("compiler/testData/codegen/box/coroutines/localFunctions/named")
                 @TestDataPath("$PROJECT_ROOT")
                 @Tag("frontend-fir")
