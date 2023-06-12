@@ -48,9 +48,13 @@ internal fun hashCode(obj: dynamic): Int {
         "object" -> if ("function" === jsTypeOf(obj.hashCode)) (obj.hashCode)() else getObjectHashCode(obj)
         "function" -> getObjectHashCode(obj)
         "number" -> getNumberHashCode(obj)
-        "boolean" -> if(obj.unsafeCast<Boolean>()) 1 else 0
+        "boolean" -> getBooleanHashCode(obj.unsafeCast<Boolean>())
         else -> getStringHashCode(js("String")(obj))
     }
+}
+
+internal fun getBooleanHashCode(value: Boolean): Int {
+    return if (value) 1231 else 1237
 }
 
 private const val POW_2_32 = 4294967296.0

@@ -79,7 +79,7 @@ return (obj) => {
         case "number":
             return numberHashCode(obj);
         case "boolean":
-            return obj;
+            return obj ? 1231 : 1237;
         default:
             return getStringHashCode(String(obj)); 
     }

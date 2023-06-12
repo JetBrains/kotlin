@@ -57,7 +57,7 @@ class NumberOperatorCallsTransformer(context: JsIrBackendContext) : CallsTransfo
 
             add(it, OperatorNames.NOT, intrinsics.jsNot)
 
-            add(it, HASH_CODE_NAME) { call -> toInt32(call.dispatchReceiver!!) }
+            add(it, HASH_CODE_NAME, intrinsics.jsGetBooleanHashCode)
         }
 
         for (type in primitiveNumbers) {

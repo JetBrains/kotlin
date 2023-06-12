@@ -42,7 +42,7 @@ Kotlin.hashCode = function (obj) {
         return Kotlin.numberHashCode(obj);
     }
     if ("boolean" === objType) {
-        return Number(obj)
+        return obj ? 1231 : 1237;
     }
 
     var str = String(obj);

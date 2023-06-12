@@ -62,5 +62,5 @@ public class Boolean private constructor() : Comparable<Boolean> {
     @kotlin.internal.IntrinsicConstEvaluation
     public override fun toString() = if (this) "true" else "false"
 
-    public override fun hashCode() = if (this) 1 else 0
+    public override fun hashCode() = if (this) 1231 else 1237
 }
