@@ -18628,6 +18628,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
         }
 
         @Test
+        @TestMetadata("typeParameterInClashingAccessor.kt")
+        public void testTypeParameterInClashingAccessor() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/typeParameterInClashingAccessor.kt");
+        }
+
+        @Test
         @TestMetadata("TypeParameterInNestedClass.kt")
         public void testTypeParameterInNestedClass() throws Exception {
             runTest("compiler/testData/codegen/box/fir/TypeParameterInNestedClass.kt");

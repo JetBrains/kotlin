@@ -195,8 +195,13 @@ class JavaClassUseSiteMemberScope(
             val candidateReturnType = candidate.returnTypeRef.toConeKotlinTypeProbablyFlexible(session, typeParameterStack)
 
             candidateSymbol.takeIf {
-                // TODO: Decide something for the case when property type is not computed yet
-                expectedReturnType == null || AbstractTypeChecker.isSubtypeOf(session.typeContext, candidateReturnType, expectedReturnType)
+                when {
+                    candidate.isJavaOrEnhancement ->
+                        // TODO: Decide something for the case when property type is not computed yet
+                        expectedReturnType == null ||
+                                AbstractTypeChecker.isSubtypeOf(session.typeContext, candidateReturnType, expectedReturnType)
+                    else -> false
+                }
             }
         }
     }
@@ -215,7 +220,7 @@ class JavaClassUseSiteMemberScope(
                 candidate.valueParameters.single().returnTypeRef.toConeKotlinTypeProbablyFlexible(session, typeParameterStack)
 
             candidateSymbol.takeIf {
-                AbstractTypeChecker.equalTypes(session.typeContext, parameterType, propertyType)
+                candidate.isJavaOrEnhancement && AbstractTypeChecker.equalTypes(session.typeContext, parameterType, propertyType)
             }
         }
     }

@@ -1,0 +1,7 @@
+FILE: test.kt
+    public final fun bar(some: R|Some|): R|kotlin/Unit| {
+        lval foo: <ERROR TYPE REF: Unresolved name: foo> = R|<local>/some|.<Unresolved name: foo>#
+        lval baz: <ERROR TYPE REF: Unresolved name: foo> = R|<local>/some|.<Unresolved name: foo>#<R|kotlin/String|>
+        lval getFoo: <ERROR TYPE REF: Cannot infer argument for type parameter T> = R|<local>/some|.R|/Some.getFoo<CS errors: /Some.getFoo>#|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>()
+        lval getBaz: R|kotlin/String!| = R|<local>/some|.R|/Some.getFoo|<R|kotlin/String|>()
+    }

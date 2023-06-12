@@ -2883,6 +2883,12 @@ public class ClassicJvmIrTextTestGenerated extends AbstractClassicJvmIrTextTest 
         }
 
         @Test
+        @TestMetadata("TypeParameterInClashingAccessor.kt")
+        public void testTypeParameterInClashingAccessor() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/TypeParameterInClashingAccessor.kt");
+        }
+
+        @Test
         @TestMetadata("TypeParameterInNestedClass.kt")
         public void testTypeParameterInNestedClass() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/TypeParameterInNestedClass.kt");

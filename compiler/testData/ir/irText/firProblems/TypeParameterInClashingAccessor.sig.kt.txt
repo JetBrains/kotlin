@@ -1,0 +1,52 @@
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
+open class A {
+  // CHECK:
+  //   Mangled name: A#<init>(){}
+  //   Public signature: /A.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: B
+//   Public signature: /B|null[0]
+open class B {
+  // CHECK:
+  //   Mangled name: B{}a
+  //   Public signature: /B.a|-1200697420457237799[0]
+  private val a: A
+    // CHECK JVM_IR:
+    //   Mangled name: B#<get-a>(){}A
+    //   Public signature: /B.a.<get-a>|736568356921033436[0]
+    private get
+
+  // CHECK:
+  //   Mangled name: B#<init>(A){}
+  //   Public signature: /B.<init>|-3166999336802030902[0]
+  constructor(a: A) /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#getA(){0§<A>}0:0
+  //   Public signature: /B.getA|6265629995120627543[0]
+  open fun <T : A> getA(): T
+
+}
+
+// CHECK:
+//   Mangled name: D
+//   Public signature: [ File '<unknown>' <- /D|null[0] ]
+private class D : C {
+  // CHECK:
+  //   Mangled name: D#<init>(A){}
+  //   Public signature: /D.<init>|-3166999336802030902[0]
+  constructor(a: A) /* primary */
+
+  // CHECK:
+  //   Mangled name: D#getA(){0§<A>}0:0
+  //   Public signature: /D.getA|6265629995120627543[0]
+  /* fake */ override fun <T : A> getA(): T
+
+}
+

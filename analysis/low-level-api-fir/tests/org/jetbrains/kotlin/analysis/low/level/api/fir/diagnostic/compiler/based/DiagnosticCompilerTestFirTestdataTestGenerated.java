@@ -6494,6 +6494,24 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
             }
 
             @Test
+            @TestMetadata("genericGetterForJavaOverriddenProperty.kt")
+            public void testGenericGetterForJavaOverriddenProperty() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/genericGetterForJavaOverriddenProperty.kt");
+            }
+
+            @Test
+            @TestMetadata("genericGetterForJavaOverriddenProperty2.kt")
+            public void testGenericGetterForJavaOverriddenProperty2() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/genericGetterForJavaOverriddenProperty2.kt");
+            }
+
+            @Test
+            @TestMetadata("genericGetterForSyntheticProperty.kt")
+            public void testGenericGetterForSyntheticProperty() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/genericGetterForSyntheticProperty.kt");
+            }
+
+            @Test
             @TestMetadata("IntersectionTypesProblem.kt")
             public void testIntersectionTypesProblem() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/IntersectionTypesProblem.kt");
