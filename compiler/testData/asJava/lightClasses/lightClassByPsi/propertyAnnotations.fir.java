@@ -35,6 +35,24 @@ public static final class Companion /* C.Companion*/ {
   public final int getY();//  getY()
 }
 
+public class O /* O*/ {
+  private final int protectedProperty = 1 /* initializer type: int */;
+
+  @Anno(p = "private")
+  @java.lang.Deprecated()
+  private static void getPrivateProperty$annotations();//  getPrivateProperty$annotations()
+
+  @Anno(p = "protected")
+  @java.lang.Deprecated()
+  protected static void getProtectedProperty$annotations();//  getProtectedProperty$annotations()
+
+  private final int getPrivateProperty();//  getPrivateProperty()
+
+  protected final int getProtectedProperty();//  getProtectedProperty()
+
+  public  O();//  .ctor()
+}
+
 public final class PropertyAnnotationsKt /* PropertyAnnotationsKt*/ {
   @kotlin.jvm.Transient()
   @kotlin.jvm.Volatile()

@@ -26,6 +26,16 @@ public static final class Companion /* C.Companion*/ {
   public final int getY();//  getY()
 }
 
+public class O /* O*/ {
+  private final int protectedProperty;
+
+  private final int getPrivateProperty();//  getPrivateProperty()
+
+  protected final int getProtectedProperty();//  getProtectedProperty()
+
+  public  O();//  .ctor()
+}
+
 public final class PropertyAnnotationsKt /* PropertyAnnotationsKt*/ {
   @kotlin.jvm.Transient()
   @kotlin.jvm.Volatile()

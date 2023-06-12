@@ -30,3 +30,11 @@ val nullable: String? = null
 
 @Anno("nonNullable")
 val nonNullable: String = ""
+
+open class O {
+    @Anno("private")
+    private val privateProperty: Int get() = 1
+
+    @Anno("protected")
+    protected val protectedProperty = 1
+}

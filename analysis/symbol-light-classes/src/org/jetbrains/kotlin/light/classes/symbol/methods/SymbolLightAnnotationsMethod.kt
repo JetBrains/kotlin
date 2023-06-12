@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.light.classes.symbol.*
 import org.jetbrains.kotlin.light.classes.symbol.annotations.*
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
-import org.jetbrains.kotlin.light.classes.symbol.modifierLists.InitializedModifiersBox
+import org.jetbrains.kotlin.light.classes.symbol.modifierLists.GranularModifiersBox
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightMemberModifierList
 import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightParameterForReceiver
 import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightParameterList
@@ -80,7 +80,15 @@ internal class SymbolLightAnnotationsMethod private constructor(
         return@lazyPub containingPropertySymbolPointer.withSymbol(ktModule) { propertySymbol ->
             SymbolLightMemberModifierList(
                 containingDeclaration = this@SymbolLightAnnotationsMethod,
-                modifiersBox = InitializedModifiersBox(PsiModifier.PUBLIC, PsiModifier.STATIC),
+                modifiersBox = GranularModifiersBox(mapOf(PsiModifier.STATIC to true)) { modifier ->
+                    when (modifier) {
+                        in GranularModifiersBox.VISIBILITY_MODIFIERS -> GranularModifiersBox.computeVisibilityForMember(
+                            ktModule,
+                            containingPropertySymbolPointer,
+                        )
+                        else -> null
+                    }
+                },
                 annotationsBox = GranularAnnotationsBox(
                     annotationsProvider = SymbolAnnotationsProvider(
                         ktModule = ktModule,
