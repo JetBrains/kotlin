@@ -29,15 +29,17 @@ bool gc::mark::MarkPacer::is(gc::mark::MarkPacer::Phase phase) const {
 void gc::mark::MarkPacer::begin(gc::mark::MarkPacer::Phase phase) {
     {
         std::unique_lock lock(mutex_);
+        GCLogDebug(epoch_.load(), "Phase #%d begins", phase); // FIXME
         phase_.store(phase, std::memory_order_release);
     }
     cond_.notify_all();
 }
 
 void gc::mark::MarkPacer::wait(gc::mark::MarkPacer::Phase phase) {
-    if (phase_ >= phase) return;
+    if (phase_.load(std::memory_order_relaxed) >= phase) return;
     std::unique_lock lock(mutex_);
-    cond_.wait(lock, [=]() { return phase_ >= phase; });
+    GCLogDebug(epoch_.load(), "Waiting for phase #%d", phase); // FIXME
+    cond_.wait(lock, [this, phase]() { return phase_.load(std::memory_order_relaxed) >= phase; });
 }
 
 void gc::mark::MarkPacer::beginEpoch(uint64_t epoch) {
