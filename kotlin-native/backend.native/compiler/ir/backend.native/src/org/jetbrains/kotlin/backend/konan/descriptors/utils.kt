@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.descriptors.IrBasedDeclarationDescriptor
 import org.jetbrains.kotlin.konan.library.KLIB_INTEROP_IR_PROVIDER_IDENTIFIER
 import org.jetbrains.kotlin.library.BaseKotlinLibrary
+import org.jetbrains.kotlin.library.KLIB_PROPERTY_IR_PROVIDER
 import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
 import org.jetbrains.kotlin.library.metadata.KlibDeserializedContainerSource
 import org.jetbrains.kotlin.library.metadata.klibModuleOrigin
@@ -53,7 +54,7 @@ val ModuleDescriptor.isForwardDeclarationModule: Boolean
     }
 
 fun BaseKotlinLibrary.isInteropLibrary() =
-        manifestProperties["ir_provider"] == KLIB_INTEROP_IR_PROVIDER_IDENTIFIER
+        manifestProperties[KLIB_PROPERTY_IR_PROVIDER] == KLIB_INTEROP_IR_PROVIDER_IDENTIFIER
 
 fun DeclarationDescriptor.isFromInteropLibrary(): Boolean =
         this.isFromFirDeserializedInteropLibrary() || this.module.isFromInteropLibrary()

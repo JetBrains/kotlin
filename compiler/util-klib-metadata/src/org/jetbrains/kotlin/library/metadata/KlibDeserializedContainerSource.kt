@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.library.metadata
 
 import org.jetbrains.kotlin.descriptors.SourceFile
 import org.jetbrains.kotlin.konan.library.KLIB_INTEROP_IR_PROVIDER_IDENTIFIER
+import org.jetbrains.kotlin.library.KLIB_PROPERTY_IR_PROVIDER
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.Header
 import org.jetbrains.kotlin.name.FqName
@@ -44,4 +45,4 @@ class KlibDeserializedContainerSource(
 }
 
 private fun KotlinLibrary.isInteropLibrary() =
-    manifestProperties["ir_provider"] == KLIB_INTEROP_IR_PROVIDER_IDENTIFIER
+    manifestProperties[KLIB_PROPERTY_IR_PROVIDER] == KLIB_INTEROP_IR_PROVIDER_IDENTIFIER
