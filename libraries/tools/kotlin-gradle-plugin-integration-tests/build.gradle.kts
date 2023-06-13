@@ -127,7 +127,7 @@ fun Test.includeMppAndAndroid(include: Boolean) = includeTestsWithPattern(includ
 }
 
 fun Test.includeNative(include: Boolean) = includeTestsWithPattern(include) {
-    addAll(listOf("org.jetbrains.kotlin.gradle.native.*", "*Commonizer*"))
+    addAll(listOf("org.jetbrains.kotlin.gradle.native.*", "*Commonizer*", "KlibBasedMppIT*"))
 }
 
 fun Test.includeTestsWithPattern(include: Boolean, patterns: (MutableSet<String>).() -> Unit) {
