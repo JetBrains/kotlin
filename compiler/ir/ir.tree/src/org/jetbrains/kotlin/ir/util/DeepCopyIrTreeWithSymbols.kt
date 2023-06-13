@@ -171,23 +171,24 @@ open class DeepCopyIrTreeWithSymbols(
         }.copyAttributes(declaration)
 
     override fun visitSimpleFunction(declaration: IrSimpleFunction): IrSimpleFunction =
-        declaration.factory.createFunction(
-            declaration.startOffset, declaration.endOffset,
-            mapDeclarationOrigin(declaration.origin),
-            symbolRemapper.getDeclaredFunction(declaration.symbol),
-            symbolRenamer.getFunctionName(declaration.symbol),
-            declaration.visibility,
-            declaration.modality,
-            declaration.returnType,
+        declaration.factory.createSimpleFunction(
+            startOffset = declaration.startOffset,
+            endOffset = declaration.endOffset,
+            origin = mapDeclarationOrigin(declaration.origin),
+            name = symbolRenamer.getFunctionName(declaration.symbol),
+            visibility = declaration.visibility,
             isInline = declaration.isInline,
-            isExternal = declaration.isExternal,
+            isExpect = declaration.isExpect,
+            returnType = declaration.returnType,
+            modality = declaration.modality,
+            symbol = symbolRemapper.getDeclaredFunction(declaration.symbol),
             isTailrec = declaration.isTailrec,
             isSuspend = declaration.isSuspend,
             isOperator = declaration.isOperator,
             isInfix = declaration.isInfix,
-            isExpect = declaration.isExpect,
-            isFakeOverride = declaration.isFakeOverride,
+            isExternal = declaration.isExternal,
             containerSource = declaration.containerSource,
+            isFakeOverride = declaration.isFakeOverride,
         ).apply {
             overriddenSymbols = declaration.overriddenSymbols.memoryOptimizedMap {
                 symbolRemapper.getReferencedFunction(it) as IrSimpleFunctionSymbol

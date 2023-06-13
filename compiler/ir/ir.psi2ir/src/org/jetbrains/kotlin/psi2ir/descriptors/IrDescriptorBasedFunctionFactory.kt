@@ -282,16 +282,22 @@ class IrDescriptorBasedFunctionFactory(
                     buildSimpleType()
                 }
 
-                irFactory.createFunction(
-                    offset, offset, memberOrigin, it, Name.identifier("invoke"), DescriptorVisibilities.PUBLIC, Modality.ABSTRACT,
-                    returnType,
+                irFactory.createSimpleFunction(
+                    startOffset = offset,
+                    endOffset = offset,
+                    origin = memberOrigin,
+                    name = Name.identifier("invoke"),
+                    visibility = DescriptorVisibilities.PUBLIC,
                     isInline = false,
-                    isExternal = false,
+                    isExpect = false,
+                    returnType = returnType,
+                    modality = Modality.ABSTRACT,
+                    symbol = it,
                     isTailrec = false,
                     isSuspend = isSuspend,
                     isOperator = true,
                     isInfix = false,
-                    isExpect = false,
+                    isExternal = false,
                     isFakeOverride = false
                 )
             }
@@ -364,9 +370,23 @@ class IrDescriptorBasedFunctionFactory(
             val returnType = descriptor.returnType?.let { toIrType(it) } ?: error("No return type for $descriptor")
             val newFunction = symbolTable.declareSimpleFunction(descriptor) {
                 descriptor.run {
-                    irFactory.createFunction(
-                        offset, offset, memberOrigin, it, name, visibility, modality, returnType,
-                        isInline, isEffectivelyExternal(), isTailrec, isSuspend, isOperator, isInfix, isExpect, true
+                    irFactory.createSimpleFunction(
+                        startOffset = offset,
+                        endOffset = offset,
+                        origin = memberOrigin,
+                        name = name,
+                        visibility = visibility,
+                        isInline = isInline,
+                        isExpect = isExpect,
+                        returnType = returnType,
+                        modality = modality,
+                        symbol = it,
+                        isTailrec = isTailrec,
+                        isSuspend = isSuspend,
+                        isOperator = isOperator,
+                        isInfix = isInfix,
+                        isExternal = isEffectivelyExternal(),
+                        isFakeOverride = true,
                     )
                 }
             }

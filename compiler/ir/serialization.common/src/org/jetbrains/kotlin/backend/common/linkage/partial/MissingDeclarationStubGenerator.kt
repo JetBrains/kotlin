@@ -81,22 +81,22 @@ internal class MissingDeclarationStubGenerator(private val builtIns: IrBuiltIns)
     }
 
     private fun generateSimpleFunction(symbol: IrSimpleFunctionSymbol): IrSimpleFunction {
-        return builtIns.irFactory.createFunction(
+        return builtIns.irFactory.createSimpleFunction(
             startOffset = UNDEFINED_OFFSET,
             endOffset = UNDEFINED_OFFSET,
             origin = PartiallyLinkedDeclarationOrigin.MISSING_DECLARATION,
-            symbol = symbol,
             name = symbol.guessName(),
             visibility = DescriptorVisibilities.DEFAULT_VISIBILITY,
-            modality = Modality.FINAL,
-            returnType = builtIns.nothingType,
             isInline = false,
-            isExternal = false,
+            isExpect = false,
+            returnType = builtIns.nothingType,
+            modality = Modality.FINAL,
+            symbol = symbol,
             isTailrec = false,
             isSuspend = false,
             isOperator = false,
             isInfix = false,
-            isExpect = false
+            isExternal = false
         ).setCommonParent()
     }
 

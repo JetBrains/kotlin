@@ -29,22 +29,22 @@ internal class FunctionsWithoutBoundCheckGenerator(val context: KonanBackendCont
     private val symbols = context.ir.symbols
 
     private fun generateFunction(baseFunction: IrSimpleFunction, delegatingToFunction: IrSimpleFunction?, functionName: Name) =
-            context.irFactory.createFunction(
-                    baseFunction.startOffset, baseFunction.endOffset,
-                    IrDeclarationOrigin.GENERATED_SETTER_GETTER,
-                    IrSimpleFunctionSymbolImpl(),
-                    functionName,
-                    DescriptorVisibilities.PUBLIC,
-                    Modality.FINAL,
-                    baseFunction.returnType,
+            context.irFactory.createSimpleFunction(
+                    startOffset = baseFunction.startOffset,
+                    endOffset = baseFunction.endOffset,
+                    origin = IrDeclarationOrigin.GENERATED_SETTER_GETTER,
+                    name = functionName,
+                    visibility = DescriptorVisibilities.PUBLIC,
                     isInline = false,
-                    isExternal = true,
+                    isExpect = false,
+                    returnType = baseFunction.returnType,
+                    modality = Modality.FINAL,
+                    symbol = IrSimpleFunctionSymbolImpl(),
                     isTailrec = false,
                     isSuspend = false,
-                    isExpect = false,
-                    isFakeOverride = false,
                     isOperator = false,
-                    isInfix = false
+                    isInfix = false,
+                    isExternal = true,
             ).also { function ->
                 function.parent = baseFunction.parent
                 function.createDispatchReceiverParameter()

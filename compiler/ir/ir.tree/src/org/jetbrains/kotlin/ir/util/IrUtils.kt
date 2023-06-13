@@ -1188,23 +1188,24 @@ fun IrFactory.createStaticFunctionWithReceivers(
     typeParametersFromContext: List<IrTypeParameter> = listOf(),
     remapMultiFieldValueClassStructure: (IrFunction, IrFunction, Map<IrValueParameter, IrValueParameter>?) -> Unit
 ): IrSimpleFunction {
-    return createFunction(
-        oldFunction.startOffset, oldFunction.endOffset,
-        origin,
-        IrSimpleFunctionSymbolImpl(),
-        name,
-        visibility,
-        modality,
-        oldFunction.returnType,
+    return createSimpleFunction(
+        startOffset = oldFunction.startOffset,
+        endOffset = oldFunction.endOffset,
+        origin = origin,
+        name = name,
+        visibility = visibility,
         isInline = oldFunction.isInline,
-        isExternal = false,
+        isExpect = oldFunction.isExpect,
+        returnType = oldFunction.returnType,
+        modality = modality,
+        symbol = IrSimpleFunctionSymbolImpl(),
         isTailrec = false,
         isSuspend = oldFunction.isSuspend,
-        isExpect = oldFunction.isExpect,
-        isFakeOverride = isFakeOverride,
         isOperator = oldFunction is IrSimpleFunction && oldFunction.isOperator,
         isInfix = oldFunction is IrSimpleFunction && oldFunction.isInfix,
+        isExternal = false,
         containerSource = oldFunction.containerSource,
+        isFakeOverride = isFakeOverride,
     ).apply {
         parent = irParent
 

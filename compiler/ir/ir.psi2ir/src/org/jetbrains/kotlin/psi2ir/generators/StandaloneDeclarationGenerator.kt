@@ -201,9 +201,22 @@ internal class StandaloneDeclarationGenerator(private val context: GeneratorCont
         defaultArgumentFactory: IrFunction.(IrValueParameter) -> IrExpressionBody? = { null }
     ): IrSimpleFunction {
         val irFunction = with(descriptor) {
-            irFactory.createFunction(
-                startOffset, endOffset, origin, symbol, name, visibility, modality, IrUninitializedType,
-                isInline, isEffectivelyExternal(), isTailrec, isSuspend, isOperator, isInfix, isExpect
+            irFactory.createSimpleFunction(
+                startOffset = startOffset,
+                endOffset = endOffset,
+                origin = origin,
+                name = name,
+                visibility = visibility,
+                isInline = isInline,
+                isExpect = isExpect,
+                returnType = IrUninitializedType,
+                modality = modality,
+                symbol = symbol,
+                isTailrec = isTailrec,
+                isSuspend = isSuspend,
+                isOperator = isOperator,
+                isInfix = isInfix,
+                isExternal = isEffectivelyExternal(),
             )
         }
         irFunction.metadata = DescriptorMetadataSource.Function(descriptor)

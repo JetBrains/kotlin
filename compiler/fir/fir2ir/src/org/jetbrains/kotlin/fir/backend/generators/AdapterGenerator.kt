@@ -204,22 +204,22 @@ internal class AdapterGenerator(
         val returnType = type.arguments.last().typeOrNull!!
         val parameterTypes = type.arguments.dropLast(1).map { it.typeOrNull!! }
         val firMemberAdaptee = firAdaptee as FirMemberDeclaration
-        return irFactory.createFunction(
-            startOffset, endOffset,
-            IrDeclarationOrigin.ADAPTER_FOR_CALLABLE_REFERENCE,
-            IrSimpleFunctionSymbolImpl(),
-            adaptee.name,
-            DescriptorVisibilities.LOCAL,
-            Modality.FINAL,
-            returnType,
+        return irFactory.createSimpleFunction(
+            startOffset = startOffset,
+            endOffset = endOffset,
+            origin = IrDeclarationOrigin.ADAPTER_FOR_CALLABLE_REFERENCE,
+            name = adaptee.name,
+            visibility = DescriptorVisibilities.LOCAL,
             isInline = firMemberAdaptee.isInline,
-            isExternal = false,
+            isExpect = false,
+            returnType = returnType,
+            modality = Modality.FINAL,
+            symbol = IrSimpleFunctionSymbolImpl(),
             isTailrec = false,
             isSuspend = firMemberAdaptee.isSuspend || type.isSuspendFunction(),
             isOperator = firMemberAdaptee.isOperator,
             isInfix = firMemberAdaptee.isInfix,
-            isExpect = false,
-            isFakeOverride = false
+            isExternal = false,
         ).also { irAdapterFunction ->
             symbolTable.enterScope(irAdapterFunction)
             irAdapterFunction.dispatchReceiverParameter = null
@@ -649,23 +649,23 @@ internal class AdapterGenerator(
     ): IrSimpleFunction {
         val returnType = type.arguments.last().typeOrNull!!
         val parameterTypes = type.arguments.dropLast(1).map { it.typeOrNull!! }
-        return irFactory.createFunction(
-            startOffset, endOffset,
-            IrDeclarationOrigin.ADAPTER_FOR_SUSPEND_CONVERSION,
-            IrSimpleFunctionSymbolImpl(),
+        return irFactory.createSimpleFunction(
+            startOffset = startOffset,
+            endOffset = endOffset,
+            origin = IrDeclarationOrigin.ADAPTER_FOR_SUSPEND_CONVERSION,
             // TODO: need a better way to avoid name clash
-            Name.identifier("suspendConversion"),
-            DescriptorVisibilities.LOCAL,
-            Modality.FINAL,
-            returnType,
+            name = Name.identifier("suspendConversion"),
+            visibility = DescriptorVisibilities.LOCAL,
             isInline = false,
-            isExternal = false,
+            isExpect = false,
+            returnType = returnType,
+            modality = Modality.FINAL,
+            symbol = IrSimpleFunctionSymbolImpl(),
             isTailrec = false,
             isSuspend = true,
             isOperator = false,
             isInfix = false,
-            isExpect = false,
-            isFakeOverride = false
+            isExternal = false,
         ).also { irAdapterFunction ->
             symbolTable.enterScope(irAdapterFunction)
             irAdapterFunction.extensionReceiverParameter = createAdapterParameter(
@@ -773,22 +773,22 @@ internal class AdapterGenerator(
         val functionParameter = callableSymbol.valueParameterSymbols.singleOrNull()
             ?: throw AssertionError("Single value parameter expected: ${callableSymbol.valueParameterSymbols}")
 
-        return irFactory.createFunction(
-            startOffset, endOffset,
-            IrDeclarationOrigin.ADAPTER_FOR_FUN_INTERFACE_CONSTRUCTOR,
-            IrSimpleFunctionSymbolImpl(),
-            callableSymbol.name,
-            DescriptorVisibilities.LOCAL,
-            Modality.FINAL,
-            irSamType,
+        return irFactory.createSimpleFunction(
+            startOffset = startOffset,
+            endOffset = endOffset,
+            origin = IrDeclarationOrigin.ADAPTER_FOR_FUN_INTERFACE_CONSTRUCTOR,
+            name = callableSymbol.name,
+            visibility = DescriptorVisibilities.LOCAL,
             isInline = false,
-            isExternal = false,
+            isExpect = false,
+            returnType = irSamType,
+            modality = Modality.FINAL,
+            symbol = IrSimpleFunctionSymbolImpl(),
             isTailrec = false,
             isSuspend = false,
             isOperator = false,
             isInfix = false,
-            isExpect = false,
-            isFakeOverride = false
+            isExternal = false,
         ).also { irAdapterFunction ->
             symbolTable.enterScope(irAdapterFunction)
             irAdapterFunction.dispatchReceiverParameter = null

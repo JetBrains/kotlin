@@ -88,24 +88,24 @@ interface IrFactory {
         isExternal: Boolean,
     ): IrField
 
-    fun createFunction(
+    fun createSimpleFunction(
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
-        symbol: IrSimpleFunctionSymbol,
         name: Name,
         visibility: DescriptorVisibility,
-        modality: Modality,
-        returnType: IrType,
         isInline: Boolean,
-        isExternal: Boolean,
+        isExpect: Boolean,
+        returnType: IrType,
+        modality: Modality,
+        symbol: IrSimpleFunctionSymbol,
         isTailrec: Boolean,
         isSuspend: Boolean,
         isOperator: Boolean,
         isInfix: Boolean,
-        isExpect: Boolean,
-        isFakeOverride: Boolean = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
+        isExternal: Boolean,
         containerSource: DeserializedContainerSource? = null,
+        isFakeOverride: Boolean = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
     ): IrSimpleFunction
 
     fun createFunctionWithLateBinding(
