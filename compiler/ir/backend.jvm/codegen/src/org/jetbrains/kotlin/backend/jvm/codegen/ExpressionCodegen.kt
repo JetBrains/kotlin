@@ -8,8 +8,6 @@ package org.jetbrains.kotlin.backend.jvm.codegen
 import org.jetbrains.kotlin.backend.common.ir.*
 import org.jetbrains.kotlin.backend.common.lower.BOUND_RECEIVER_PARAMETER
 import org.jetbrains.kotlin.backend.common.lower.LoweredStatementOrigins
-import org.jetbrains.kotlin.backend.common.lower.inline.INLINED_FUNCTION_ARGUMENTS
-import org.jetbrains.kotlin.backend.common.lower.inline.INLINED_FUNCTION_DEFAULT_ARGUMENTS
 import org.jetbrains.kotlin.backend.jvm.*
 import org.jetbrains.kotlin.backend.jvm.intrinsics.IntrinsicMethod
 import org.jetbrains.kotlin.backend.jvm.intrinsics.JavaClassProperty
@@ -33,7 +31,6 @@ import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.diagnostics.BackendErrors
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
 import org.jetbrains.kotlin.ir.descriptors.toIrBasedKotlinType
@@ -487,21 +484,6 @@ class ExpressionCodegen(
         val callee = inlinedBlock.inlineDeclaration as? IrFunction
         val callLineNumber = lineNumberMapper.getLineNumberForOffset(inlineCall.startOffset)
 
-        fun IrStatement.isInlinedFunctionArgumentBlock() =
-            this is IrComposite && (origin == INLINED_FUNCTION_ARGUMENTS || origin == INLINED_FUNCTION_DEFAULT_ARGUMENTS)
-
-        // 0. MFVC lowering may produce variables declared before the arguments block and referenced in it.
-        // We should visit them first.
-        val visitedVariables = mutableSetOf<IrVariable>()
-
-        if (inlinedBlock.statements.any { it.isInlinedFunctionArgumentBlock() }) {
-            inlinedBlock.statements.takeWhile { !it.isInlinedFunctionArgumentBlock() }.forEach {
-                require(it is IrVariable)
-                it.accept(this, data)
-                visitedVariables.add(it)
-            }
-        }
-
         // 1. Evaluate NON DEFAULT arguments from inline function call
         inlinedBlock.getNonDefaultAdditionalStatementsFromInlinedBlock().forEach { exp ->
             exp.accept(this, data).discard()
@@ -533,10 +515,10 @@ class ExpressionCodegen(
                 lastLineNumber = -1
             }
 
-            // 3. Evaluate statements from inline function body, ignore variables that have already been visited
+            // 3. Evaluate statements from inline function body
             val result = inlinedBlock.getOriginalStatementsFromInlinedBlock().fold(unitValue) { prev, exp ->
                 prev.discard()
-                if (visitedVariables.contains(exp)) unitValue else exp.accept(this, data)
+                exp.accept(this, data)
             }
 
             if (callee != null && (inlinedBlock.inlinedElement !is IrCallableReference<*> || callee.isInline)) {
