@@ -715,9 +715,16 @@ open class SymbolTable(
         visibility: DescriptorVisibility? = null,
         fieldFactory: (IrFieldSymbol) -> IrField = {
             irFactory.createField(
-                startOffset, endOffset, origin, it, nameProvider.nameForDeclaration(descriptor), type,
-                visibility ?: it.descriptor.visibility, !it.descriptor.isVar, it.descriptor.isEffectivelyExternal(),
-                it.descriptor.dispatchReceiverParameter == null
+                startOffset = startOffset,
+                endOffset = endOffset,
+                origin = origin,
+                name = nameProvider.nameForDeclaration(descriptor),
+                visibility = visibility ?: it.descriptor.visibility,
+                symbol = it,
+                type = type,
+                isFinal = !it.descriptor.isVar,
+                isStatic = it.descriptor.dispatchReceiverParameter == null,
+                isExternal = it.descriptor.isEffectivelyExternal(),
             ).apply {
                 metadata = DescriptorMetadataSource.Property(it.descriptor)
             }

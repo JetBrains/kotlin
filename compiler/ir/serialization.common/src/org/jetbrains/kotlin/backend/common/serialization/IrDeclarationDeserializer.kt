@@ -690,14 +690,16 @@ class IrDeclarationDeserializer(
 
             val field = symbolTable.declareField(uniqId, { symbol.checkSymbolType(FIELD_SYMBOL) }) {
                 irFactory.createField(
-                    startOffset, endOffset, origin,
-                    it,
-                    deserializeName(nameType.nameIndex),
-                    type,
-                    flags.visibility,
-                    flags.isFinal,
-                    flags.isExternal || isEffectivelyExternal,
-                    flags.isStatic,
+                    startOffset = startOffset,
+                    endOffset = endOffset,
+                    origin = origin,
+                    name = deserializeName(nameType.nameIndex),
+                    visibility = flags.visibility,
+                    symbol = it,
+                    type = type,
+                    isFinal = flags.isFinal,
+                    isStatic = flags.isStatic,
+                    isExternal = flags.isExternal || isEffectivelyExternal,
                 )
             }
 

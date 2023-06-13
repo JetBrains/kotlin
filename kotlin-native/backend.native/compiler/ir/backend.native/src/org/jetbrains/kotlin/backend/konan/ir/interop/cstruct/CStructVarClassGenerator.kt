@@ -167,16 +167,16 @@ internal class CStructVarClassGenerator(
                 }
 
         val cleanerField = irFactory.createField(
-                SYNTHETIC_OFFSET,
-                SYNTHETIC_OFFSET,
-                IrDeclarationOrigin.DEFINED,
-                IrFieldSymbolImpl(),
-                Name.identifier("cleaner"),
-                symbols.createCleaner.owner.returnType,
-                DescriptorVisibilities.PRIVATE,
+                startOffset = SYNTHETIC_OFFSET,
+                endOffset = SYNTHETIC_OFFSET,
+                origin = IrDeclarationOrigin.DEFINED,
+                name = Name.identifier("cleaner"),
+                visibility = DescriptorVisibilities.PRIVATE,
+                symbol = IrFieldSymbolImpl(),
+                type = symbols.createCleaner.owner.returnType,
                 isFinal = true,
+                isStatic = false,
                 isExternal = false,
-                isStatic = false
         ).also { field ->
             field.parent = irClass
             field.initializer = irBuilder(irBuiltIns, field.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).run {

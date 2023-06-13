@@ -79,13 +79,13 @@ interface IrFactory {
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
-        symbol: IrFieldSymbol,
         name: Name,
-        type: IrType,
         visibility: DescriptorVisibility,
+        symbol: IrFieldSymbol,
+        type: IrType,
         isFinal: Boolean,
-        isExternal: Boolean,
         isStatic: Boolean,
+        isExternal: Boolean,
     ): IrField
 
     fun createFunction(

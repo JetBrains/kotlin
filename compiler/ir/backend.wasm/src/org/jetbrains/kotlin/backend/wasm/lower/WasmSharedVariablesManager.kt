@@ -172,16 +172,16 @@ class WasmSharedVariablesManager(val context: JsCommonBackendContext, val builtI
         val symbol = IrFieldSymbolImpl()
         val fieldName = Name.identifier("v")
         return context.irFactory.createField(
-            UNDEFINED_OFFSET,
-            UNDEFINED_OFFSET,
-            IrDeclarationOrigin.FIELD_FOR_OUTER_THIS,
-            symbol,
-            fieldName,
-            builtIns.anyNType,
-            DescriptorVisibilities.PUBLIC,
+            startOffset = UNDEFINED_OFFSET,
+            endOffset = UNDEFINED_OFFSET,
+            origin = IrDeclarationOrigin.FIELD_FOR_OUTER_THIS,
+            name = fieldName,
+            visibility = DescriptorVisibilities.PUBLIC,
+            symbol = symbol,
+            type = builtIns.anyNType,
             isFinal = false,
-            isExternal = false,
             isStatic = false,
+            isExternal = false,
         ).also {
             it.parent = closureBoxClassDeclaration
             closureBoxClassDeclaration.declarations += it

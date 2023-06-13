@@ -149,15 +149,16 @@ class Fir2IrClassifierStorage(
         val contextReceiverFields = mutableListOf<IrField>()
         for ((index, contextReceiver) in klass.contextReceivers.withIndex()) {
             val irField = components.irFactory.createField(
-                UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                IrDeclarationOrigin.FIELD_FOR_CLASS_CONTEXT_RECEIVER,
-                IrFieldSymbolImpl(),
-                Name.identifier("contextReceiverField$index"),
-                contextReceiver.typeRef.toIrType(),
-                DescriptorVisibilities.PRIVATE,
+                startOffset = UNDEFINED_OFFSET,
+                endOffset = UNDEFINED_OFFSET,
+                origin = IrDeclarationOrigin.FIELD_FOR_CLASS_CONTEXT_RECEIVER,
+                name = Name.identifier("contextReceiverField$index"),
+                visibility = DescriptorVisibilities.PRIVATE,
+                symbol = IrFieldSymbolImpl(),
+                type = contextReceiver.typeRef.toIrType(),
                 isFinal = true,
+                isStatic = false,
                 isExternal = false,
-                isStatic = false
             )
             irField.parent = this@createContextReceiverFields
             contextReceiverFields.add(irField)

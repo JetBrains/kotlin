@@ -97,13 +97,13 @@ abstract class AbstractIrFactoryImpl : IrFactory {
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
-        symbol: IrFieldSymbol,
         name: Name,
-        type: IrType,
         visibility: DescriptorVisibility,
+        symbol: IrFieldSymbol,
+        type: IrType,
         isFinal: Boolean,
-        isExternal: Boolean,
         isStatic: Boolean,
+        isExternal: Boolean,
     ): IrField =
         IrFieldImpl(startOffset, endOffset, origin, symbol, name, type, visibility, isFinal, isExternal, isStatic, factory = this)
 

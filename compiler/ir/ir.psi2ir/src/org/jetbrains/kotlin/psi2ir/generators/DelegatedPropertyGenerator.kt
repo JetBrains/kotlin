@@ -143,8 +143,16 @@ internal class DelegatedPropertyGenerator(
                 startOffset, endOffset, origin, delegateDescriptor, type
             ) {
                 context.irFactory.createField(
-                    startOffset, endOffset, origin, it, delegateDescriptor.name, type, delegateDescriptor.visibility,
-                    !delegateDescriptor.isVar, false, delegateDescriptor.dispatchReceiverParameter == null
+                    startOffset = startOffset,
+                    endOffset = endOffset,
+                    origin = origin,
+                    name = delegateDescriptor.name,
+                    visibility = delegateDescriptor.visibility,
+                    symbol = it,
+                    type = type,
+                    isFinal = !delegateDescriptor.isVar,
+                    isStatic = delegateDescriptor.dispatchReceiverParameter == null,
+                    isExternal = false
                 ).apply {
                     metadata = DescriptorMetadataSource.Property(propertyDescriptor)
                 }

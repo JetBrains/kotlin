@@ -451,15 +451,16 @@ internal class ClassGenerator(
     private fun generateFieldsForContextReceivers(irClass: IrClass, classDescriptor: ClassDescriptor) {
         for ((fieldIndex, receiverDescriptor) in classDescriptor.contextReceivers.withIndex()) {
             val irField = context.irFactory.createField(
-                UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                IrDeclarationOrigin.FIELD_FOR_CLASS_CONTEXT_RECEIVER,
-                IrFieldSymbolImpl(),
-                Name.identifier("contextReceiverField$fieldIndex"),
-                receiverDescriptor.type.toIrType(),
-                DescriptorVisibilities.PRIVATE,
+                startOffset = UNDEFINED_OFFSET,
+                endOffset = UNDEFINED_OFFSET,
+                origin = IrDeclarationOrigin.FIELD_FOR_CLASS_CONTEXT_RECEIVER,
+                name = Name.identifier("contextReceiverField$fieldIndex"),
+                visibility = DescriptorVisibilities.PRIVATE,
+                symbol = IrFieldSymbolImpl(),
+                type = receiverDescriptor.type.toIrType(),
                 isFinal = true,
+                isStatic = false,
                 isExternal = false,
-                isStatic = false
             )
             context.additionalDescriptorStorage.put(receiverDescriptor.value, irField)
             irClass.addMember(irField)

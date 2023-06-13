@@ -173,9 +173,16 @@ private class ScriptsToClassesLowering(val context: JvmBackendContext, val inner
 
         val earlierScriptField = irScript.earlierScriptsParameter?.let { earlierScriptsParameter ->
             irScriptClass.factory.createField(
-                UNDEFINED_OFFSET, UNDEFINED_OFFSET, IrDeclarationOrigin.SCRIPT_EARLIER_SCRIPTS,
-                IrFieldSymbolImpl(), Name.identifier("\$\$earlierScripts"), earlierScriptsParameter.type,
-                DescriptorVisibilities.PRIVATE, isFinal = true, isExternal = false, isStatic = false
+                startOffset = UNDEFINED_OFFSET,
+                endOffset = UNDEFINED_OFFSET,
+                origin = IrDeclarationOrigin.SCRIPT_EARLIER_SCRIPTS,
+                name = Name.identifier("\$\$earlierScripts"),
+                visibility = DescriptorVisibilities.PRIVATE,
+                symbol = IrFieldSymbolImpl(),
+                type = earlierScriptsParameter.type,
+                isFinal = true,
+                isStatic = false,
+                isExternal = false,
             )
         }?.also {
             it.parent = irScriptClass
@@ -185,10 +192,16 @@ private class ScriptsToClassesLowering(val context: JvmBackendContext, val inner
         val implicitReceiversFieldsWithParameters = arrayListOf<Pair<IrField, IrValueParameter>>().apply {
             irScript.implicitReceiversParameters.forEach { param ->
                 val field = irScriptClass.factory.createField(
-                    UNDEFINED_OFFSET, UNDEFINED_OFFSET, IrDeclarationOrigin.SCRIPT_IMPLICIT_RECEIVER,
-                    IrFieldSymbolImpl(), Name.identifier("\$\$implicitReceiver_${param.type.classFqName?.shortName()?.asString()!!}"),
-                    typeRemapper.remapType(param.type),
-                    DescriptorVisibilities.PRIVATE, isFinal = true, isExternal = false, isStatic = false
+                    startOffset = UNDEFINED_OFFSET,
+                    endOffset = UNDEFINED_OFFSET,
+                    origin = IrDeclarationOrigin.SCRIPT_IMPLICIT_RECEIVER,
+                    name = Name.identifier("\$\$implicitReceiver_${param.type.classFqName?.shortName()?.asString()!!}"),
+                    visibility = DescriptorVisibilities.PRIVATE,
+                    symbol = IrFieldSymbolImpl(),
+                    type = typeRemapper.remapType(param.type),
+                    isFinal = true,
+                    isStatic = false,
+                    isExternal = false
                 )
                 field.parent = irScriptClass
                 irScriptClass.declarations.add(field)

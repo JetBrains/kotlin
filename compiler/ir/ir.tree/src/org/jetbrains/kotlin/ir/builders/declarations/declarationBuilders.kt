@@ -43,9 +43,16 @@ inline fun IrFactory.buildClass(builder: IrClassBuilder.() -> Unit) =
 @PublishedApi
 internal fun IrFactory.buildField(builder: IrFieldBuilder): IrField = with(builder) {
     createField(
-        startOffset, endOffset, origin,
-        IrFieldSymbolImpl(),
-        name, type, visibility, isFinal, isExternal, isStatic,
+        startOffset = startOffset,
+        endOffset = endOffset,
+        origin = origin,
+        name = name,
+        visibility = visibility,
+        symbol = IrFieldSymbolImpl(),
+        type = type,
+        isFinal = isFinal,
+        isStatic = isStatic,
+        isExternal = isExternal,
     ).also {
         it.metadata = metadata
     }

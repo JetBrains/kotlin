@@ -81,17 +81,17 @@ class LazyIrFactory(
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
-        symbol: IrFieldSymbol,
         name: Name,
-        type: IrType,
         visibility: DescriptorVisibility,
+        symbol: IrFieldSymbol,
+        type: IrType,
         isFinal: Boolean,
-        isExternal: Boolean,
-        isStatic: Boolean
+        isStatic: Boolean,
+        isExternal: Boolean
     ): IrField = if (symbol.isBound)
         symbol.owner
     else
-        delegate.createField(startOffset, endOffset, origin, symbol, name, type, visibility, isFinal, isExternal, isStatic)
+        delegate.createField(startOffset, endOffset, origin, name, visibility, symbol, type, isFinal, isStatic, isExternal)
 
     override fun createFunction(
         startOffset: Int,

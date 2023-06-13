@@ -136,9 +136,16 @@ fun AndroidIrBuilder.getParcelableCreator(irClass: IrClass): IrExpression {
     // field access.
     val creatorType = androidSymbols.androidOsParcelableCreator.typeWith(irClass.symbol.starProjectedType)
     val creatorField = irClass.factory.createField(
-        UNDEFINED_OFFSET, UNDEFINED_OFFSET, IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB,
-        IrFieldSymbolImpl(), CREATOR_NAME, creatorType, DescriptorVisibilities.PUBLIC,
-        isFinal = true, isExternal = false, isStatic = true,
+        startOffset = UNDEFINED_OFFSET,
+        endOffset = UNDEFINED_OFFSET,
+        origin = IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB,
+        name = CREATOR_NAME,
+        visibility = DescriptorVisibilities.PUBLIC,
+        symbol = IrFieldSymbolImpl(),
+        type = creatorType,
+        isFinal = true,
+        isStatic = true,
+        isExternal = false,
     ).also { it.parent = irClass }
 
     return irGetField(null, creatorField)

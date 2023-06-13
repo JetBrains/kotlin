@@ -798,11 +798,16 @@ class Fir2IrDeclarationStorage(
         val inferredType = type ?: firInitializerExpression!!.typeRef.toIrType()
         return declareIrField { symbol ->
             irFactory.createField(
-                startOffset, endOffset, origin, symbol,
-                name, inferredType,
-                visibility, isFinal = isFinal,
-                isExternal = property.isExternal,
+                startOffset = startOffset,
+                endOffset = endOffset,
+                origin = origin,
+                name = name,
+                visibility = visibility,
+                symbol = symbol,
+                type = inferredType,
+                isFinal = isFinal,
                 isStatic = property.isStatic || !(parent is IrClass || parent is IrScript),
+                isExternal = property.isExternal,
             ).also {
                 it.correspondingPropertySymbol = this@createBackingField.symbol
             }.apply {
@@ -1122,20 +1127,30 @@ class Fir2IrDeclarationStorage(
                     signature, symbolFactory = { IrFieldPublicSymbolImpl(signature) }
                 ) { symbol ->
                     irFactory.createField(
-                        startOffset, endOffset, origin, symbol,
-                        field.name, type, components.visibilityConverter.convertToDescriptorVisibility(field.visibility),
+                        startOffset = startOffset,
+                        endOffset = endOffset,
+                        origin = origin,
+                        name = field.name,
+                        visibility = components.visibilityConverter.convertToDescriptorVisibility(field.visibility),
+                        symbol = symbol,
+                        type = type,
                         isFinal = field.modality == Modality.FINAL,
-                        isExternal = false,
-                        isStatic = field.isStatic
+                        isStatic = field.isStatic,
+                        isExternal = false
                     )
                 }
             } else {
                 irFactory.createField(
-                    startOffset, endOffset, origin, IrFieldSymbolImpl(),
-                    field.name, type, components.visibilityConverter.convertToDescriptorVisibility(field.visibility),
+                    startOffset = startOffset,
+                    endOffset = endOffset,
+                    origin = origin,
+                    name = field.name,
+                    visibility = components.visibilityConverter.convertToDescriptorVisibility(field.visibility),
+                    symbol = IrFieldSymbolImpl(),
+                    type = type,
                     isFinal = field.modality == Modality.FINAL,
-                    isExternal = false,
-                    isStatic = field.isStatic
+                    isStatic = field.isStatic,
+                    isExternal = false
                 )
             }.apply {
                 val staticFakeOverrideKey = getFieldStaticFakeOverrideKey(field, containingClassLookupTag)

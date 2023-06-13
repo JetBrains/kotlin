@@ -138,25 +138,25 @@ class IrFactoryImplForJsIC(override val stageController: StageController) : Abst
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
-        symbol: IrFieldSymbol,
         name: Name,
-        type: IrType,
         visibility: DescriptorVisibility,
+        symbol: IrFieldSymbol,
+        type: IrType,
         isFinal: Boolean,
-        isExternal: Boolean,
-        isStatic: Boolean
+        isStatic: Boolean,
+        isExternal: Boolean
     ): IrField {
         return super.createField(
             startOffset,
             endOffset,
             origin,
-            symbol,
             name,
-            type,
             visibility,
+            symbol,
+            type,
             isFinal,
-            isExternal,
             isStatic,
+            isExternal,
         ).register()
     }
 

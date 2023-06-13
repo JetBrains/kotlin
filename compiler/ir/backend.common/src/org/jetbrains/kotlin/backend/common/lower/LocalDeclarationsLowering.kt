@@ -856,14 +856,16 @@ class LocalDeclarationsLowering(
                 else
                     DECLARATION_ORIGIN_FIELD_FOR_CAPTURED_VALUE
                 context.irFactory.createField(
-                    classDeclaration.startOffset,
-                    classDeclaration.endOffset,
-                    origin,
-                    symbol,
-                    suggestNameForCapturedValue(capturedValue, generatedNames),
-                    capturedValue.type,
-                    visibilityPolicy.forCapturedField(capturedValue.symbol),
-                    isFinal = true, isExternal = false, isStatic = false,
+                    startOffset = classDeclaration.startOffset,
+                    endOffset = classDeclaration.endOffset,
+                    origin = origin,
+                    name = suggestNameForCapturedValue(capturedValue, generatedNames),
+                    visibility = visibilityPolicy.forCapturedField(capturedValue.symbol),
+                    symbol = symbol,
+                    type = capturedValue.type,
+                    isFinal = true,
+                    isStatic = false,
+                    isExternal = false,
                 ).also {
                     it.parent = classDeclaration
                 }

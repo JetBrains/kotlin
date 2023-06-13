@@ -101,15 +101,16 @@ internal class WasmPropertyReferenceLowering(val context: WasmBackendContext) : 
 
         val kPropertiesField =
             context.irFactory.createField(
-                SYNTHETIC_OFFSET, SYNTHETIC_OFFSET,
-                DECLARATION_ORIGIN_KPROPERTIES_FOR_DELEGATION,
-                IrFieldSymbolImpl(),
-                Name.identifier("\$KPROPERTIES"),
-                kPropertiesFieldType,
-                DescriptorVisibilities.PRIVATE,
+                startOffset = SYNTHETIC_OFFSET,
+                endOffset = SYNTHETIC_OFFSET,
+                origin = DECLARATION_ORIGIN_KPROPERTIES_FOR_DELEGATION,
+                name = Name.identifier("\$KPROPERTIES"),
+                visibility = DescriptorVisibilities.PRIVATE,
+                symbol = IrFieldSymbolImpl(),
+                type = kPropertiesFieldType,
                 isFinal = true,
-                isExternal = false,
                 isStatic = true,
+                isExternal = false,
             ).apply {
                 parent = irFile
             }
