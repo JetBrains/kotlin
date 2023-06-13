@@ -524,8 +524,7 @@ class CocoaPodsIT : BaseGradleIT() {
                 """
                     |
                     |kotlin {
-                    |    iosArm64()
-                    |    iosArm32()
+                    |    iosSimulatorArm64()
                     |    cocoapods {
                     |       framework {
                     |           baseName = "$frameworkName"
@@ -540,15 +539,15 @@ class CocoaPodsIT : BaseGradleIT() {
                 with(runProcess(listOf("file", framework.absolutePath), projectDir)) {
                     assertTrue(isSuccessful)
                     assertTrue(output.contains("universal binary with 2 architectures"))
-                    assertTrue(output.contains("(for architecture armv7)"))
+                    assertTrue(output.contains("(for architecture x86_64)"))
                     assertTrue(output.contains("(for architecture arm64)"))
                 }
             }
 
             test(
                 "syncFramework",
-                "-Pkotlin.native.cocoapods.platform=iphoneos",
-                "-Pkotlin.native.cocoapods.archs=arm64 armv7",
+                "-Pkotlin.native.cocoapods.platform=iphonesimulator",
+                "-Pkotlin.native.cocoapods.archs=arm64 x86_64",
                 "-Pkotlin.native.cocoapods.configuration=Debug",
                 "-Pkotlin.native.cocoapods.generate.wrapper=true"
             )
