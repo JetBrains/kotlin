@@ -13,9 +13,9 @@ import kotlin.native.internal.test.TestSuite
 
 @ExportObjCClass(name = "Kotlin/Native::Test")
 class TestCaseRunner(
-        invocation: NSInvocation,
-        private val testName: String,
-        private val testCase: TestCase
+    invocation: NSInvocation,
+    private val testName: String,
+    private val testCase: TestCase
 ) : XCTestCase(invocation) {
     // Sets XCTest to continue running after failure to match Kotlin Test
     override fun continueAfterFailure(): Boolean = true
@@ -25,10 +25,14 @@ class TestCaseRunner(
     @ObjCAction
     fun run() {
         if (ignored) {
-            // TODO: XCTSkip() should be used instead, but https://youtrack.jetbrains.com/issue/KT-43719
+            // It is not possible to use XCTSkip() due to KT-43719 and not implemented exception propagation
             //  just skip it for now as no one catches the _XCTSkipFailureException
             //  023-01-02 20:06:56.016 xctest[76004:10364894] *** Terminating app due to uncaught exception '_XCTSkipFailureException', reason: 'Test skipped'
-//            _XCTSkipHandler(testName, 0, "Test $testName is ignored")
+
+            // TODO: Probably it's better to inherit from the proxy class with run method
+            //  that will use XCTSkip or this handler if the return value != 0
+            //  But this can affect createRunMethod as it will be virtual (need to check that)
+//            _XCTSkipHandler(testName, 0U, "Test $testName is ignored")
             return
         }
         try {
@@ -43,7 +47,7 @@ class TestCaseRunner(
                 // try to filter out kotlin.Exceptions and kotlin.test.Assertion inits
                 !it.contains("kfun:kotlin.")
             }
-            // Find path and line number
+            // Find path and line number to create source location
             val matchResult = Regex("^\\d+ +.* \\((.*):(\\d+):.*\\)$").find(failedStackLine)
             val sourceLocation = if (matchResult != null) {
                 val (file, line) = matchResult.destructured
@@ -54,24 +58,24 @@ class TestCaseRunner(
 
             @Suppress("CAST_NEVER_SUCCEEDS")
             val stackAsPayload = (stackTrace.joinToString("\n") as? NSString)
-                    ?.dataUsingEncoding(NSUTF8StringEncoding)
+                ?.dataUsingEncoding(NSUTF8StringEncoding)
             val stackTraceAttachment = XCTAttachment.attachmentWithUniformTypeIdentifier(
-                    identifier = UTTypeSourceCode.identifier,
-                    name = "Kotlin stacktrace (full)",
-                    payload = stackAsPayload,
-                    userInfo = null
+                identifier = UTTypeSourceCode.identifier,
+                name = "Kotlin stacktrace (full)",
+                payload = stackAsPayload,
+                userInfo = null
             )
 
             val issue = XCTIssue(
-                    type = type,
-                    compactDescription = "$throwable in $testName",
-                    detailedDescription = "Caught exception $throwable in $testName (caused by ${throwable.cause})",
-                    sourceCodeContext = XCTSourceCodeContext(
-                            callStackAddresses = throwable.getStackTraceAddresses(),
-                            location = sourceLocation
-                    ),
-                    associatedError = null,
-                    attachments = listOf(stackTraceAttachment)
+                type = type,
+                compactDescription = "$throwable in $testName",
+                detailedDescription = "Caught exception $throwable in $testName (caused by ${throwable.cause})",
+                sourceCodeContext = XCTSourceCodeContext(
+                    callStackAddresses = throwable.getStackTraceAddresses(),
+                    location = sourceLocation
+                ),
+                associatedError = null,
+                attachments = listOf(stackTraceAttachment)
             )
             testRun?.recordIssue(issue) ?: error("TestRun for the test $testName not found")
         }
@@ -94,40 +98,16 @@ class TestCaseRunner(
 
     // TODO: file an issue for null in this::class.simpleName
     //  "${this::class.simpleName}::$testName" leads to "null::$testName"
-    // TODO: should the name be "-[$className $testName]" or not?
     override fun name() = testName
 
-    companion object : XCTestCaseMeta(), XCTestSuiteExtensionsProtocolMeta {
-        //region: XCTestSuiteExtensionsProtocolMeta extensions
-        /**
-         * These are from the XCTestCase extension and are not available by default.
-         * See `@interface XCTestCase (XCTestSuiteExtensions)` in `XCTestCase.h` header file.
-         * Issue: https://youtrack.jetbrains.com/issue/KT-40426
-         */
-
-        override fun defaultTestSuite(): XCTestSuite? = defaultTestSuite
-
-        // TODO: setUp() and tearDown() methods are required for tests with @Before/AfterClass annotations
-        //  testSuites should be generated one-to-one with each suite run by the own TestCaseRunner
-        override fun setUp() {
-            println("setUp method from $this")
-            Throwable().printStackTrace()
-        }
-
-        override fun tearDown() {
-            // FIXME: it looks like it's never invoked and hence methods aren't disposed
-            //  do we need to dispose them at all or just check that we don't add them twice
-            println("tearDown after all")
-            disposeRunMethods()
-        }
-        //endregion
-
+    companion object : XCTestCaseMeta(){
         /**
          * Used if the test suite is generated as a default one from methods extracted by the XCTest from the
          * runner that extends XCTestCase and is exported to ObjC.
          */
         override fun testCaseWithInvocation(invocation: NSInvocation?): XCTestCase {
-            error("""
+            error(
+                """
                 This should not happen by default.
                 Got invocation: ${invocation?.description}
                 with selector @sel(${NSStringFromSelector(invocation?.selector)})
@@ -136,27 +116,36 @@ class TestCaseRunner(
         }
 
         // region: Dynamic run methods creation
+
+        /**
+         * TODO: describe what happens here
+         */
+
         private fun createRunMethod(selector: SEL) {
             // Note: must be disposed off with imp_removeBlock
             val result = class_addMethod(
-                    cls = this.`class`(),
-                    name = selector,
-                    imp = imp_implementationWithBlock(this::runner),
-                    types = "v@:" // replace with method_getTypeEncoding()
+                cls = this.`class`(),
+                name = selector,
+                imp = imp_implementationWithBlock(this::runner),
+                types = "v@:" // See ObjC' type encodings: v (returns void), @ (id - self), : (SEL _cmd)
             )
             check(result) {
-                "Was unable to add method with selector $selector"
+                "Internal error: was unable to add method with selector $selector"
             }
         }
 
         private fun dispose(selector: SEL) {
             val imp = class_getMethodImplementation(
-                    cls = this.`class`(),
-                    name = selector
+                cls = this.`class`(),
+                name = selector
             )
-            imp_removeBlock(imp)
+            val result = imp_removeBlock(imp)
+            check(result) {
+                "Internal error: was unable to remove block for $selector"
+            }
         }
 
+        // TODO: need to clean up those methods. When/where should this be invoked?
         private fun disposeRunMethods() {
             createTestMethodsNames().forEach {
                 val selector = NSSelectorFromString(it)
@@ -165,20 +154,19 @@ class TestCaseRunner(
         }
 
         @Suppress("UNUSED_PARAMETER")
-        private fun runner(runner: TestCaseRunner, _sel: SEL) {
+        private fun runner(runner: TestCaseRunner, cmd: SEL) {
             runner.run()
         }
         //endregion
 
         @OptIn(ExperimentalStdlibApi::class)
-        private fun createTestMethodsNames(): List<String> = GeneratedSuites.suites
-                .flatMap { testSuite ->
-                    testSuite.testCases.values
-                            .map { "$testSuite.${it.name}" }
-                }
+        private fun createTestMethodsNames(): List<String> =
+            GeneratedSuites.suites.flatMap { testSuite ->
+                testSuite.testCases.values.map { "$testSuite.${it.name}" }
+            }
 
         /**
-         * Create Test invocations for each test method to make them resolvable by the XCTest's
+         * Create Test invocations for each test method to make them resolvable by the XCTest's machinery
          * @see NSInvocation
          */
         override fun testInvocations(): List<NSInvocation> = createTestMethodsNames().map {
@@ -212,13 +200,14 @@ class TestSuiteRunner(private val testSuite: TestSuite) : XCTestSuite(testSuite.
 
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.native.internal.ExportForCppRuntime("Konan_create_testSuite")
-fun defaultTestSuiteRunner(): XCTestSuite {
+fun defaultTestSuiteFactory(): XCTestSuite {
     XCTestObservationCenter.sharedTestObservationCenter.addTestObserver(XCSimpleTestListener())
     val nativeTestSuite = XCTestSuite.testSuiteWithName("Kotlin/Native test suite")
 
-    println("Main bundle is: ${NSBundle.mainBundle}")
+    println(":::: Query bundle principal classes ::::")
+    println("* Main bundle is: ${NSBundle.mainBundle}")
     NSBundle.allBundles.forEach {
-        println("Bundle: $it with principal = ${(it as? NSBundle)?.principalClass()}")
+        println("* Bundle: $it with principal = ${(it as? NSBundle)?.principalClass()}")
         println((it as? NSBundle)?.infoDictionary?.get("TestKeyToBundle") ?: "Dictionary is null")
     }
 
@@ -227,10 +216,11 @@ fun defaultTestSuiteRunner(): XCTestSuite {
         println("* Suite '${it.name}' with tests: " + it.tests().joinToString(", ", "[", "]"))
         nativeTestSuite.addTest(it)
     }
-    println(":::: Tests created ::::")
+
+    println(":::: Tests created (self-check) ::::")
     @Suppress("UNCHECKED_CAST")
     (nativeTestSuite.tests as List<XCTest>).forEach {
-        println("* Suite '${it.name}' with ${it.testCaseCount} test cases")
+        println("* Suite '${it.name}' with ${it.testCaseCount} test cases was created successfully")
     }
     return nativeTestSuite
 }
@@ -238,24 +228,19 @@ fun defaultTestSuiteRunner(): XCTestSuite {
 @OptIn(ExperimentalStdlibApi::class)
 internal fun createTestSuites(): List<XCTestSuite> {
     val testInvocations = TestCaseRunner.testInvocations()
-    return GeneratedSuites.suites
-            .map {
-                val suite = TestSuiteRunner(it)
-                it.testCases.values.map { testCase ->
-                    testInvocations
-                            .filter { nsInvocation ->
-                                NSStringFromSelector(nsInvocation.selector) == "${it.name}.${testCase.name}"
-                            }
-                            .map { inv ->
-                                TestCaseRunner(
-                                        invocation = inv,
-                                        testName = "${it.name}.${testCase.name}",
-                                        testCase = testCase
-                                )
-                            }.single()
-                }.forEach { t ->
-                    suite.addTest(t)
-                }
-                suite
-            }
+    return GeneratedSuites.suites.map {
+        val suite = TestSuiteRunner(it)
+        it.testCases.values.map { testCase ->
+            testInvocations.filter { nsInvocation ->
+                NSStringFromSelector(nsInvocation.selector) == "${it.name}.${testCase.name}"
+            }.map { inv ->
+                TestCaseRunner(
+                    invocation = inv, testName = "${it.name}.${testCase.name}", testCase = testCase
+                )
+            }.single()
+        }.forEach { t ->
+            suite.addTest(t)
+        }
+        suite
+    }
 }
