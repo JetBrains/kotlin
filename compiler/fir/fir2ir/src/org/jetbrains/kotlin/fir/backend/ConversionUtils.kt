@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.backend
 
 import com.intellij.psi.PsiCompiledElement
+import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.backend.common.actualizer.IrActualizedResult
@@ -55,6 +56,7 @@ import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.startOffsetSkippingComments
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.Variance
@@ -76,7 +78,7 @@ internal inline fun <T : IrElement> KtSourceElement?.convertWithOffsets(f: (star
     val startOffset: Int
     val endOffset: Int
 
-    if (psi is PsiCompiledElement) {
+    if (isCompiledElement(psi)) {
         startOffset = UNDEFINED_OFFSET
         endOffset = UNDEFINED_OFFSET
     } else {
@@ -101,7 +103,7 @@ internal inline fun <T : IrElement> FirStatement.convertWithOffsets(
 ): T {
     val startOffset: Int
     val endOffset: Int
-    if (psi is PsiCompiledElement) {
+    if (isCompiledElement(psi)) {
         startOffset = UNDEFINED_OFFSET
         endOffset = UNDEFINED_OFFSET
     } else {
@@ -109,6 +111,19 @@ internal inline fun <T : IrElement> FirStatement.convertWithOffsets(
         endOffset = source?.endOffset ?: UNDEFINED_OFFSET
     }
     return f(startOffset, endOffset)
+}
+
+private fun isCompiledElement(element: PsiElement?): Boolean {
+    if (element == null) {
+        return false
+    }
+
+    if (element is PsiCompiledElement) {
+        return true
+    }
+
+    val containingFile = element.containingFile
+    return containingFile !is KtFile || containingFile.isCompiled
 }
 
 internal fun createErrorType(): IrErrorType = IrErrorTypeImpl(null, emptyList(), Variance.INVARIANT)
