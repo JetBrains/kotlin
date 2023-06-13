@@ -62,36 +62,6 @@ abstract class AbstractJsTest(
     }
 }
 
-open class AbstractBoxJsTest : AbstractJsTest(pathToTestDir = "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/box/", testGroupOutputDirPrefix = "box/") {
-    override fun configure(builder: TestConfigurationBuilder) {
-        super.configure(builder)
-        with(builder) {
-            defaultDirectives {
-                +JsEnvironmentConfigurationDirectives.RUN_MINIFIER_BY_DEFAULT
-            }
-        }
-    }
-}
-
-open class AbstractOutputPrefixPostfixTest : AbstractJsTest(
-    pathToTestDir = "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/outputPrefixPostfix/",
-    testGroupOutputDirPrefix = "outputPrefixPostfix/"
-) {
-    override fun configure(builder: TestConfigurationBuilder) {
-        super.configure(builder)
-        with(builder) {
-            defaultDirectives {
-                -JsEnvironmentConfigurationDirectives.GENERATE_NODE_JS_RUNNER
-            }
-            configureJsArtifactsHandlersStep {
-                useHandlers(
-                    ::JsPrefixPostfixHandler
-                )
-            }
-        }
-    }
-}
-
 open class AbstractMultiModuleOrderTest : AbstractJsTest(
     pathToTestDir = "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/multiModuleOrder/",
     testGroupOutputDirPrefix = "multiModuleOrder/"

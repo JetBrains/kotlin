@@ -9,15 +9,14 @@ import org.jetbrains.kotlin.js.test.JsSteppingTestAdditionalSourceProvider
 import org.jetbrains.kotlin.js.test.converters.JsIrBackendFacade
 import org.jetbrains.kotlin.js.test.converters.JsKlibBackendFacade
 import org.jetbrains.kotlin.js.test.converters.incremental.RecompileModuleJsIrBackendFacade
-import org.jetbrains.kotlin.js.test.handlers.JsDebugRunner
-import org.jetbrains.kotlin.js.test.handlers.JsDtsHandler
-import org.jetbrains.kotlin.js.test.handlers.JsIrRecompiledArtifactsIdentityHandler
-import org.jetbrains.kotlin.js.test.handlers.JsLineNumberHandler
+import org.jetbrains.kotlin.js.test.handlers.*
 import org.jetbrains.kotlin.parsing.parseBoolean
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
-import org.jetbrains.kotlin.test.builders.*
+import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.builders.configureJsArtifactsHandlersStep
+import org.jetbrains.kotlin.test.builders.jsArtifactsHandlersStep
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontend2IrConverter
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendFacade
@@ -29,7 +28,7 @@ import java.lang.Boolean.getBoolean
 abstract class AbstractJsIrTest(
     pathToTestDir: String,
     testGroupOutputDirPrefix: String,
-    targetBackend: TargetBackend = TargetBackend.JS_IR
+    targetBackend: TargetBackend = TargetBackend.JS_IR,
 ) : AbstractJsBlackBoxCodegenTestBase<ClassicFrontendOutputArtifact, IrBackendInput, BinaryArtifacts.KLib>(
     FrontendKinds.ClassicFrontend, targetBackend, pathToTestDir, testGroupOutputDirPrefix, skipMinification = true
 ) {

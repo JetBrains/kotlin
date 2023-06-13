@@ -90,16 +90,9 @@ fun main(args: Array<String>) {
         }
 
         testGroup("js/js.tests/tests-gen", "js/js.translator/testData", testRunnerMethodName = "runTest0") {
-            testClass<AbstractBoxJsTest> {
-                model("box/", pattern = "^([^_](.+))\\.kt$", excludeDirs = listOf("closure/inlineAnonymousFunctions", "es6classes"))
-            }
 
             testClass<AbstractSourceMapGenerationSmokeTest> {
                 model("sourcemap/")
-            }
-
-            testClass<AbstractOutputPrefixPostfixTest> {
-                model("outputPrefixPostfix/")
             }
 
             testClass<AbstractMultiModuleOrderTest> {
