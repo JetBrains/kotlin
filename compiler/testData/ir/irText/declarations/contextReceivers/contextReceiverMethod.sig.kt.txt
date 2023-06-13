@@ -10,7 +10,7 @@ class Context {
   // CHECK JVM_IR:
   //   Mangled name: Context#foo(){}kotlin.Int
   //   Public signature: /Context.foo|-1256155405684507276[0]
-  // CHECK JS_IR:
+  // CHECK JS_IR NATIVE:
   //   Mangled name: Context#foo(){}
   //   Public signature: /Context.foo|-1041209573719867811[0]
   fun foo(): Int
@@ -41,7 +41,7 @@ class Test {
   // CHECK JVM_IR:
   //   Mangled name: Test#foo(){}kotlin.Int
   //   Public signature: /Test.foo|-1256155405684507276[0]
-  // CHECK JS_IR:
+  // CHECK JS_IR NATIVE:
   //   Mangled name: Test#foo(){}
   //   Public signature: /Test.foo|-1041209573719867811[0]
   fun foo(): Int

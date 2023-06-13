@@ -9,7 +9,7 @@ class XAlign {
     // CHECK JVM_IR:
     //   Mangled name: XAlign#<get-bits>(){}kotlin.Long
     //   Public signature: /XAlign.bits.<get-bits>|-8015099027032327963[0]
-    // CHECK JS_IR:
+    // CHECK JS_IR NATIVE:
     //   Mangled name: XAlign#<get-bits>(){}
     //   Public signature: /XAlign.bits.<get-bits>|-3920031234897259044[0]
     get
