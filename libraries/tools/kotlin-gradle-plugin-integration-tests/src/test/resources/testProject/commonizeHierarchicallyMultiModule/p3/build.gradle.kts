@@ -25,8 +25,6 @@ kotlin {
     ios()
 
     mingwX64("windowsX64")
-    @Suppress("DEPRECATION_ERROR")
-    mingwX86("windowsX86")
 
     val commonMain by sourceSets.getting
     val concurrentMain by sourceSets.creating
@@ -40,9 +38,7 @@ kotlin {
     val appleMain by sourceSets.creating
     val macosMain by sourceSets.getting
     val iosMain by sourceSets.getting
-    val windowsMain by sourceSets.creating
     val windowsX64Main by sourceSets.getting
-    val windowsX86Main by sourceSets.getting
 
     commonMain {
         -jsMain
@@ -59,10 +55,7 @@ kotlin {
                         -linuxX64Main
                     }
                 }
-                -windowsMain {
-                    -windowsX64Main
-                    -windowsX86Main
-                }
+                -windowsX64Main
             }
         }
     }
