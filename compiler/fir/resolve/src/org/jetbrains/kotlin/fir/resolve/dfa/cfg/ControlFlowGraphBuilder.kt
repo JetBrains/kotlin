@@ -558,6 +558,16 @@ class ControlFlowGraphBuilder {
         return exitGraph()
     }
 
+    fun enterCodeFragment(script: FirCodeFragment): CodeFragmentEnterNode {
+        return enterGraph(script, "CODE_FRAGMENT_GRAPH", ControlFlowGraph.Kind.Function) {
+            createCodeFragmentEnterNode(it) to createCodeFragmentExitNode(it)
+        }
+    }
+
+    fun exitCodeFragment(): Pair<CodeFragmentExitNode, ControlFlowGraph> {
+        return exitGraph()
+    }
+
     // ----------------------------------- Value parameters (and it's defaults) -----------------------------------
 
     fun enterValueParameter(valueParameter: FirValueParameter): Pair<EnterValueParameterNode, EnterDefaultArgumentsNode>? {
