@@ -327,6 +327,14 @@ internal object ControlFlowSensibleEscapeAnalysis {
         }
 
         private class EscapeAnalysisResult(val graph: PointsToGraph, val returnValue: Node, val objectsReferencedFromThrown: BitSet) {
+            override fun equals(other: Any?): Boolean {
+                if (this === other) return true
+                if (other !is EscapeAnalysisResult) return false
+                return returnValue.id == other.returnValue.id
+                        && objectsReferencedFromThrown == other.objectsReferencedFromThrown
+                        && PointsToGraphForest.graphsAreEqual(graph, other.graph)
+            }
+
             fun logDigraph(context: Context) {
                 graph.logDigraph(context) {
                     thrownNodes = objectsReferencedFromThrown
@@ -2276,6 +2284,7 @@ internal object ControlFlowSensibleEscapeAnalysis {
             }
         }
 
+        // TODO: Rethink.
         private fun EscapeAnalysisResult.removeRedundantNodesPart1() {
             val visited = BitSet(graph.forest.totalNodes)
 
@@ -2299,9 +2308,35 @@ internal object ControlFlowSensibleEscapeAnalysis {
                     findReachable(it)
             }
             val reachableFromParameters = visited.copy()
+            val reachableFromGlobalAndParameters = reachableFromParameters.copy().also { it.and(reachableFromGlobal) }
+
+            reachableFromGlobal.forEachBit { id ->
+                val node = graph.nodes[id]!!
+                if (id == Node.GLOBAL_ID || reachableFromParameters.get(id) || node !is Node.Reference)
+                    return@forEachBit
+                val indices = IntArray(node.assignedWith.size)
+                for (i in node.assignedWith.indices) {
+                    val pointee = node.assignedWith[i]
+                    if (!reachableFromParameters.get(pointee.id)) continue
+                    var count = 0
+                    for (j in i until node.assignedWith.size)
+                        if (node.assignedWith[j] == pointee) {
+                            indices[count++] = j
+                            node.assignedWith[j] = graph.globalNode
+                        }
+                    visited.clear()
+                    findReachable(graph.globalNode)
+                    if (visited.get(pointee.id)) {
+                        (pointee as? Node.Reference)?.assignedTo?.removeAll(node)
+                    } else {
+                        for (j in 0 until count)
+                            node.assignedWith[indices[j]] = pointee
+                    }
+                }
+                node.assignedWith.removeAll(graph.globalNode)
+            }
 
             val removed = BitSet(graph.nodes.size)
-            val reachableFromGlobalAndParameters = reachableFromParameters.copy().also { it.and(reachableFromGlobal) }
             reachableFromGlobal.forEachBit { id ->
                 if (id == Node.GLOBAL_ID || reachableFromParameters.get(id))
                     return@forEachBit
