@@ -14,6 +14,7 @@ import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.mock.MockApplication
 import com.intellij.mock.MockProject
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.extensions.PluginDescriptor
 import com.intellij.openapi.roots.PackageIndex
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
@@ -54,6 +55,7 @@ import org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.popLast
+import org.picocontainer.PicoContainer
 import java.nio.file.Path
 
 object StandaloneProjectFactory {
@@ -61,6 +63,7 @@ object StandaloneProjectFactory {
         projectDisposable: Disposable,
         applicationDisposable: Disposable,
         compilerConfiguration: CompilerConfiguration = CompilerConfiguration(),
+        classLoader: ClassLoader = MockProject::class.java.classLoader
     ): KotlinCoreProjectEnvironment {
         val applicationEnvironment =
             KotlinCoreEnvironment.getOrCreateApplicationEnvironmentForTests(applicationDisposable, compilerConfiguration)
@@ -68,9 +71,21 @@ object StandaloneProjectFactory {
 
         registerApplicationServices(applicationEnvironment.application)
 
-        return KotlinCoreProjectEnvironment(projectDisposable, applicationEnvironment).apply {
-            registerProjectServices(project)
-            registerJavaPsiFacade(project)
+        return object : KotlinCoreProjectEnvironment(projectDisposable, applicationEnvironment) {
+            init {
+                registerProjectServices(project)
+                registerJavaPsiFacade(project)
+            }
+
+            override fun createProject(parent: PicoContainer, parentDisposable: Disposable): MockProject {
+                return object : MockProject(parent, parentDisposable) {
+                    @Throws(ClassNotFoundException::class)
+                    override fun <T> loadClass(className: String, pluginDescriptor: PluginDescriptor): Class<T> {
+                        @Suppress("UNCHECKED_CAST")
+                        return Class.forName(className, true, classLoader) as Class<T>
+                    }
+                }
+            }
         }
     }
 
