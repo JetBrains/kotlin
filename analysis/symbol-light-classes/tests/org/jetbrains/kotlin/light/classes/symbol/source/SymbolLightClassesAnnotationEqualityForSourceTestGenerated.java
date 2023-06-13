@@ -31,6 +31,12 @@ public class SymbolLightClassesAnnotationEqualityForSourceTestGenerated extends 
     }
 
     @Test
+    @TestMetadata("EnumConstantNameInQuotes.kt")
+    public void testEnumConstantNameInQuotes() throws Exception {
+        runTest("analysis/symbol-light-classes/testData/annotationsEquality/EnumConstantNameInQuotes.kt");
+    }
+
+    @Test
     @TestMetadata("ExplicitRetension.kt")
     public void testExplicitRetension() throws Exception {
         runTest("analysis/symbol-light-classes/testData/annotationsEquality/ExplicitRetension.kt");
