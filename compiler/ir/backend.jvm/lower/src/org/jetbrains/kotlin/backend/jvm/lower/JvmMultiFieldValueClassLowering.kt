@@ -1423,6 +1423,9 @@ private fun findNearestBlocksForVariables(variables: Set<IrVariable>, body: Bloc
         }
 
         override fun visitBlock(expression: IrBlock) {
+            if (expression is IrInlinedFunctionBlock) {
+                return super.visitBlock(expression)
+            }
             currentStackElement()?.let { childrenBlocks.getOrPut(it) { mutableListOf() }.add(Block(expression)) }
             stack.add(Block(expression))
             super.visitBlock(expression)
