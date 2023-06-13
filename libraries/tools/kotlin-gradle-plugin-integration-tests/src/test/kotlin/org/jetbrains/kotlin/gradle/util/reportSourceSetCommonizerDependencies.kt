@@ -5,30 +5,34 @@
 
 package org.jetbrains.kotlin.gradle.util
 
+import org.gradle.testkit.runner.BuildResult
 import org.intellij.lang.annotations.Language
 import org.intellij.lang.annotations.RegExp
 import org.jetbrains.kotlin.commonizer.CommonizerTarget
 import org.jetbrains.kotlin.commonizer.SharedCommonizerTarget
 import org.jetbrains.kotlin.commonizer.parseCommonizerTarget
 import org.jetbrains.kotlin.gradle.BaseGradleIT
-import org.jetbrains.kotlin.gradle.BaseGradleIT.CompiledProject
+import org.jetbrains.kotlin.gradle.testbase.BuildOptions
+import org.jetbrains.kotlin.gradle.testbase.TestProject
+import org.jetbrains.kotlin.gradle.testbase.build
 import org.jetbrains.kotlin.library.ToolingSingleFileKlibResolveStrategy
 import org.jetbrains.kotlin.library.commonizerTarget
 import org.jetbrains.kotlin.library.resolveSingleFileKlib
 import org.jetbrains.kotlin.tooling.core.linearClosure
 import java.io.File
 import javax.annotation.RegEx
+import kotlin.io.path.appendText
 import kotlin.test.fail
 
 data class SourceSetCommonizerDependency(
     val sourceSetName: String,
     val target: CommonizerTarget,
-    val file: File
+    val file: File,
 )
 
 data class SourceSetCommonizerDependencies(
     val sourceSetName: String,
-    val dependencies: Set<SourceSetCommonizerDependency>
+    val dependencies: Set<SourceSetCommonizerDependency>,
 ) {
 
     fun withoutNativeDistributionDependencies(): SourceSetCommonizerDependencies {
@@ -77,10 +81,6 @@ data class SourceSetCommonizerDependencies(
         assertDependencyFilesMatches(fileMatchers.filterNotNull().map(::Regex).toSet())
     }
 
-    fun assertDependencyFilesMatches(vararg fileMatchers: Regex?) = apply {
-        assertDependencyFilesMatches(fileMatchers.filterNotNull().toSet())
-    }
-
     fun assertDependencyFilesMatches(fileMatchers: Set<Regex>) = apply {
         val unmatchedDependencies = dependencies.filter { dependency ->
             fileMatchers.none { matcher -> dependency.file.absolutePath.matches(matcher) }
@@ -120,7 +120,7 @@ fun BaseGradleIT.reportSourceSetCommonizerDependencies(
     project: BaseGradleIT.Project,
     subproject: String? = null,
     options: BaseGradleIT.BuildOptions = defaultBuildOptions(),
-    test: WithSourceSetCommonizerDependencies.(compiledProject: CompiledProject) -> Unit
+    test: WithSourceSetCommonizerDependencies.(compiledProject: BaseGradleIT.CompiledProject) -> Unit
 ) = with(project) {
 
     if (!projectDir.exists()) {
@@ -140,6 +140,40 @@ fun BaseGradleIT.reportSourceSetCommonizerDependencies(
 
     build(taskName, options = options) {
         assertSuccessful()
+
+        val dependencyReports = output.lineSequence().filter { line -> line.contains("SourceSetCommonizerDependencyReport") }.toList()
+
+        val withSourceSetCommonizerDependencies = WithSourceSetCommonizerDependencies { sourceSetName ->
+            val reportMarker = "Report[$sourceSetName]"
+
+            val reportForSourceSet = dependencyReports.firstOrNull { line -> line.contains(reportMarker) }
+                ?: fail("Missing dependency report for $sourceSetName")
+
+            val files = reportForSourceSet.split(reportMarker, limit = 2).last().split("|#+#|")
+                .map(String::trim).filter(String::isNotEmpty).map(::File)
+
+            val dependencies = files.mapNotNull { file -> createSourceSetCommonizerDependencyOrNull(sourceSetName, file) }.toSet()
+            SourceSetCommonizerDependencies(sourceSetName, dependencies)
+        }
+
+        withSourceSetCommonizerDependencies.test(this)
+    }
+}
+
+fun TestProject.reportSourceSetCommonizerDependencies(
+    subproject: String? = null,
+    options: BuildOptions = this.buildOptions,
+    test: WithSourceSetCommonizerDependencies.(compiledProject: BuildResult) -> Unit,
+) {
+
+    buildGradleKts.appendText("\n\n$taskSourceCode\n\n")
+
+    val taskName = buildString {
+        if (subproject != null) append(":$subproject")
+        append(":reportCommonizerSourceSetDependencies")
+    }
+
+    build(taskName, buildOptions = options) {
 
         val dependencyReports = output.lineSequence().filter { line -> line.contains("SourceSetCommonizerDependencyReport") }.toList()
 

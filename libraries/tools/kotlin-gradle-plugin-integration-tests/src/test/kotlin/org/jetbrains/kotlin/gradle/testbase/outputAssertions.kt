@@ -22,7 +22,7 @@ fun BuildResult.assertOutputContains(
 }
 
 /**
- * Asserts Gradle output contains any of [expectedSubString] strings.
+ * Asserts Gradle output contains any of [expectedSubStrings] strings.
  */
 fun BuildResult.assertOutputContainsAny(
     vararg expectedSubStrings: String,
@@ -103,11 +103,12 @@ fun BuildResult.assertOutputDoesNotContain(
  */
 fun BuildResult.assertOutputContains(
     expected: Regex,
+    message: String = "Build output does not contain any line matching '$expected' regex.",
 ) {
     assert(output.contains(expected)) {
         printBuildOutput()
 
-        "Build output does not contain any line matching '$expected' regex."
+        message
     }
 }
 

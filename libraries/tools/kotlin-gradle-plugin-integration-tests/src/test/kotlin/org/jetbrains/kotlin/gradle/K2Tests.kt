@@ -28,9 +28,9 @@ class K2NewMultiplatformIT : NewMultiplatformIT() {
     override fun defaultBuildOptions(): BuildOptions = super.defaultBuildOptions().copy(languageVersion = "2.0")
 }
 
-@Ignore
+@Disabled("Used for local testing only")
 class K2CommonizerIT : CommonizerIT() {
-    override fun defaultBuildOptions(): BuildOptions = super.defaultBuildOptions().copy(languageVersion = "2.0")
+    override val defaultBuildOptions: BuildOptions get() = super.defaultBuildOptions.copy(languageVersion = "2.0")
 }
 
 @Ignore
@@ -89,7 +89,13 @@ class CustomK2Tests : KGPBaseTest() {
     @GradleTest
     @DisplayName("Compiling shared native source with FirFakeOverrideGenerator referencing a common entity. KT-58145")
     fun kt581450MppNativeSharedCrash(gradleVersion: GradleVersion) {
-        with(project("kt-581450-mpp-native-shared-crash", gradleVersion, buildOptions = defaultBuildOptions.copy(languageVersion = "2.0"))) {
+        with(
+            project(
+                "kt-581450-mpp-native-shared-crash",
+                gradleVersion,
+                buildOptions = defaultBuildOptions.copy(languageVersion = "2.0")
+            )
+        ) {
             val taskToExecute = ":compileNativeMainKotlinMetadata"
             build(taskToExecute) {
                 assertTasksExecuted(taskToExecute)

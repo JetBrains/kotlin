@@ -21,7 +21,7 @@ import kotlin.test.asserter
  * Asserts file under [file] path exists and is a regular file.
  */
 fun assertFileExists(
-    file: Path
+    file: Path,
 ) {
     assert(Files.exists(file)) {
         "File '${file}' does not exist!"
@@ -36,14 +36,14 @@ fun assertFileExists(
  * Asserts file under [pathToFile] relative to the test project exists and is a regular file.
  */
 fun GradleProject.assertFileInProjectExists(
-    pathToFile: String
+    pathToFile: String,
 ) {
     assertFileExists(projectPath.resolve(pathToFile))
 }
 
 fun assertFileExistsInTree(
     pathToTreeRoot: Path,
-    fileName: String
+    fileName: String,
 ) {
     val foundFile = pathToTreeRoot
         .toFile()
@@ -61,22 +61,23 @@ fun assertFileExistsInTree(
  * Asserts file under [pathToFile] relative to the test project does not exist.
  */
 fun GradleProject.assertFileInProjectNotExists(
-    pathToFile: String
+    pathToFile: String,
 ) {
     assertFileNotExists(projectPath.resolve(pathToFile))
 }
 
 fun assertFileNotExists(
-    pathToFile: Path
+    pathToFile: Path,
+    message: String = "File '${pathToFile}' exists!"
 ) {
     assert(!Files.exists(pathToFile)) {
-        "File '${pathToFile}' exists!"
+        message
     }
 }
 
 fun assertFileNotExistsInTree(
     pathToTreeRoot: Path,
-    fileName: String
+    fileName: String,
 ) {
     val foundFile = pathToTreeRoot
         .toFile()
@@ -92,7 +93,7 @@ fun assertFileNotExistsInTree(
 
 fun GradleProject.assertFileNotExistsInTree(
     pathToTreeRoot: String,
-    fileName: String
+    fileName: String,
 ) {
     assertFileNotExistsInTree(projectPath.resolve(pathToTreeRoot), fileName)
 }
@@ -101,7 +102,7 @@ fun GradleProject.assertFileNotExistsInTree(
  * Asserts symlink under [path] exists and is a symlink
  */
 fun assertSymlinkExists(
-    path: Path
+    path: Path,
 ) {
     assert(Files.exists(path)) {
         "Symlink '${path}' does not exist!"
@@ -116,7 +117,7 @@ fun assertSymlinkExists(
  * Asserts symlink under [pathToFile] relative to the test project exists and is a symlink.
  */
 fun TestProject.assertSymlinkInProjectExists(
-    pathToFile: String
+    pathToFile: String,
 ) {
     assertSymlinkExists(projectPath.resolve(pathToFile))
 }
@@ -125,24 +126,26 @@ fun TestProject.assertSymlinkInProjectExists(
  * Asserts directory under [pathToDir] relative to the test project exists and is a directory.
  */
 fun GradleProject.assertDirectoryInProjectExists(
-    pathToDir: String
+    pathToDir: String,
 ) = assertDirectoryExists(projectPath.resolve(pathToDir))
 
 /**
  * Asserts directory under [dirPath] exists and is a directory.
  */
 fun assertDirectoryExists(
-    dirPath: Path
-) = assertDirectoriesExist(dirPath)
+    dirPath: Path,
+    message: String? = null,
+) = assertDirectoriesExist(dirPath, message = message)
 
 fun assertDirectoriesExist(
-    vararg dirPaths: Path
+    vararg dirPaths: Path,
+    message: String? = null,
 ) {
     val (exist, notExist) = dirPaths.partition { it.exists() }
     val notDirectories = exist.filterNot { it.isDirectory() }
 
     assert(notExist.isEmpty() && notDirectories.isEmpty()) {
-        buildString {
+        message ?: buildString {
             if (notExist.isNotEmpty()) {
                 appendLine("Following directories does not exist:")
                 appendLine(notExist.joinToString(separator = "\n"))
@@ -160,7 +163,7 @@ fun assertDirectoriesExist(
  */
 fun GradleProject.assertFileInProjectContains(
     pathToFile: String,
-    vararg expectedText: String
+    vararg expectedText: String,
 ) {
     assertFileContains(projectPath.resolve(pathToFile), *expectedText)
 }
@@ -170,7 +173,7 @@ fun GradleProject.assertFileInProjectContains(
  */
 fun GradleProject.assertFileInProjectDoesNotContain(
     pathToFile: String,
-    vararg unexpectedText: String
+    vararg unexpectedText: String,
 ) {
     assertFileDoesNotContain(projectPath.resolve(pathToFile), *unexpectedText)
 }
@@ -180,7 +183,7 @@ fun GradleProject.assertFileInProjectDoesNotContain(
  */
 fun assertFileContains(
     file: Path,
-    vararg expectedText: String
+    vararg expectedText: String,
 ) {
     assertFileExists(file)
     val text = file.readText()
@@ -202,7 +205,7 @@ fun assertFileContains(
  */
 fun assertFileDoesNotContain(
     file: Path,
-    vararg unexpectedText: String
+    vararg unexpectedText: String,
 ) {
     assertFileExists(file)
     val text = file.readText()
@@ -258,7 +261,7 @@ fun assertFilesContentEquals(expected: Path, actual: Path) {
 }
 
 class GradleVariantAssertions(
-    val variantJson: JsonObject
+    val variantJson: JsonObject,
 ) {
     fun assertAttributesEquals(expected: Map<String, String>) {
         val attributesJson = variantJson.getAsJsonObject("attributes")

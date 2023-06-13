@@ -240,12 +240,14 @@ internal inline fun <reified T> TestProject.getModels(
 fun TestProject.enableLocalBuildCache(
     buildCacheLocation: Path,
 ) {
-    // language=Groovy
-    settingsGradle.append(
+
+    val settingsFile = if (Files.exists(settingsGradle)) settingsGradle else settingsGradleKts
+
+    settingsFile.append(
         """
         buildCache {
             local {
-                directory = '${buildCacheLocation.toUri()}'
+                directory = "${buildCacheLocation.toUri()}"
             }
         }
         """.trimIndent()
