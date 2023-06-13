@@ -22584,6 +22584,18 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
         @TestDataPath("$PROJECT_ROOT")
         public class Multiplatform {
             @Test
+            @TestMetadata("actualFakeOverride.kt")
+            public void testActualFakeOverride() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/multiplatform/actualFakeOverride.kt");
+            }
+
+            @Test
+            @TestMetadata("actualFakeOverrideVirtual.kt")
+            public void testActualFakeOverrideVirtual() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/multiplatform/actualFakeOverrideVirtual.kt");
+            }
+
+            @Test
             @TestMetadata("actualTypealiasToSpecialAnnotation.kt")
             public void testActualTypealiasToSpecialAnnotation() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/multiplatform/actualTypealiasToSpecialAnnotation.kt");
@@ -22664,6 +22676,18 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             @TestMetadata("implFakeOverride.kt")
             public void testImplFakeOverride() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/multiplatform/implFakeOverride.kt");
+            }
+
+            @Test
+            @TestMetadata("implicitActualFakeOverride_AbstractMap.kt")
+            public void testImplicitActualFakeOverride_AbstractMap() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/multiplatform/implicitActualFakeOverride_AbstractMap.kt");
+            }
+
+            @Test
+            @TestMetadata("implicitActualFakeOverride_simple.kt")
+            public void testImplicitActualFakeOverride_simple() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/multiplatform/implicitActualFakeOverride_simple.kt");
             }
 
             @Test
