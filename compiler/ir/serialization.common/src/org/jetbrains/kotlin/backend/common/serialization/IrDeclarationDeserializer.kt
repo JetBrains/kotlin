@@ -668,15 +668,17 @@ class IrDeclarationDeserializer(
             val nameType = BinaryNameAndType.decode(proto.base.nameType)
             symbolTable.declareConstructor(idSig, { symbol }) {
                 irFactory.createConstructor(
-                    startOffset, endOffset, origin,
-                    it,
-                    deserializeName(nameType.nameIndex),
-                    flags.visibility,
-                    IrUninitializedType,
-                    flags.isInline,
-                    flags.isExternal || isEffectivelyExternal,
-                    flags.isPrimary,
-                    flags.isExpect
+                    startOffset = startOffset,
+                    endOffset = endOffset,
+                    origin = origin,
+                    name = deserializeName(nameType.nameIndex),
+                    visibility = flags.visibility,
+                    isInline = flags.isInline,
+                    isExpect = flags.isExpect,
+                    returnType = IrUninitializedType,
+                    symbol = it,
+                    isPrimary = flags.isPrimary,
+                    isExternal = flags.isExternal || isEffectivelyExternal,
                 )
             }
         }

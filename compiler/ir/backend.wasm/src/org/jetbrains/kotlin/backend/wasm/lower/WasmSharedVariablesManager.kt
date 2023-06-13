@@ -192,9 +192,17 @@ class WasmSharedVariablesManager(val context: JsCommonBackendContext, val builtI
         val symbol = IrConstructorSymbolImpl()
 
         val declaration = context.irFactory.createConstructor(
-            UNDEFINED_OFFSET, UNDEFINED_OFFSET, JsLoweredDeclarationOrigin.JS_CLOSURE_BOX_CLASS_DECLARATION, symbol,
-            SpecialNames.INIT, DescriptorVisibilities.PUBLIC, closureBoxClassDeclaration.defaultType,
-            isInline = false, isExternal = false, isPrimary = true, isExpect = false
+            startOffset = UNDEFINED_OFFSET,
+            endOffset = UNDEFINED_OFFSET,
+            origin = JsLoweredDeclarationOrigin.JS_CLOSURE_BOX_CLASS_DECLARATION,
+            name = SpecialNames.INIT,
+            visibility = DescriptorVisibilities.PUBLIC,
+            isInline = false,
+            isExpect = false,
+            returnType = closureBoxClassDeclaration.defaultType,
+            symbol = symbol,
+            isPrimary = true,
+            isExternal = false,
         )
 
         declaration.parent = closureBoxClassDeclaration

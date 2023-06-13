@@ -156,11 +156,17 @@ internal class ScriptGenerator(declarationGenerator: DeclarationGenerator) : Dec
                 returnType = irScript.thisReceiver!!.type as IrSimpleType
             }) {
                 irScript.factory.createConstructor(
-                    startOffset, endOffset, origin,
-                    context.symbolTable.referenceConstructor(descriptor.unsubstitutedPrimaryConstructor),
-                    SpecialNames.INIT,
-                    visibility, returnType,
-                    isInline = isInline, isExternal = isExternal, isPrimary = isPrimary, isExpect = isExpect,
+                    startOffset = startOffset,
+                    endOffset = endOffset,
+                    origin = origin,
+                    name = SpecialNames.INIT,
+                    visibility = visibility,
+                    isInline = isInline,
+                    isExpect = isExpect,
+                    returnType = returnType,
+                    symbol = context.symbolTable.referenceConstructor(descriptor.unsubstitutedPrimaryConstructor),
+                    isPrimary = isPrimary,
+                    isExternal = isExternal,
                     containerSource = containerSource
                 )
             }.also { irConstructor ->

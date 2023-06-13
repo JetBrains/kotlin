@@ -284,8 +284,17 @@ internal class FunctionGenerator(declarationGenerator: DeclarationGenerator) : D
         return context.symbolTable.declareConstructor(constructorDescriptor) {
             with(constructorDescriptor) {
                 context.irFactory.createConstructor(
-                    startOffset, endOffset, origin, it, context.symbolTable.nameProvider.nameForDeclaration(this),
-                    visibility, IrUninitializedType, isInline, isEffectivelyExternal(), isPrimary, isExpect
+                    startOffset = startOffset,
+                    endOffset = endOffset,
+                    origin = origin,
+                    name = context.symbolTable.nameProvider.nameForDeclaration(this),
+                    visibility = visibility,
+                    isInline = isInline,
+                    isExpect = isExpect,
+                    returnType = IrUninitializedType,
+                    symbol = it,
+                    isPrimary = isPrimary,
+                    isExternal = isEffectivelyExternal(),
                 )
             }.apply {
                 metadata = DescriptorMetadataSource.Function(it.descriptor)

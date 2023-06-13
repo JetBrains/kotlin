@@ -173,12 +173,18 @@ internal fun IrFactory.buildFunction(builder: IrFunctionBuilder): IrSimpleFuncti
 @PublishedApi
 internal fun IrFactory.buildConstructor(builder: IrFunctionBuilder): IrConstructor = with(builder) {
     return createConstructor(
-        startOffset, endOffset, origin,
-        IrConstructorSymbolImpl(),
-        SpecialNames.INIT,
-        visibility, returnType,
-        isInline = isInline, isExternal = isExternal, isPrimary = isPrimary, isExpect = isExpect,
-        containerSource = containerSource
+        startOffset = startOffset,
+        endOffset = endOffset,
+        origin = origin,
+        name = SpecialNames.INIT,
+        visibility = visibility,
+        isInline = isInline,
+        isExpect = isExpect,
+        returnType = returnType,
+        symbol = IrConstructorSymbolImpl(),
+        isPrimary = isPrimary,
+        isExternal = isExternal,
+        containerSource = containerSource,
     )
 }
 

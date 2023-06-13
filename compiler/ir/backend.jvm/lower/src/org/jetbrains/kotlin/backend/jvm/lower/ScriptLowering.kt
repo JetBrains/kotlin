@@ -334,12 +334,18 @@ private class ScriptsToClassesLowering(val context: JvmBackendContext, val inner
             returnType = irScriptClass.thisReceiver!!.type as IrSimpleType
         }) {
             irScriptClass.factory.createConstructor(
-                startOffset, endOffset, origin,
-                IrConstructorSymbolImpl(),
-                SpecialNames.INIT,
-                visibility, returnType,
-                isInline = isInline, isExternal = isExternal, isPrimary = isPrimary, isExpect = isExpect,
-                containerSource = containerSource
+                startOffset = startOffset,
+                endOffset = endOffset,
+                origin = origin,
+                name = SpecialNames.INIT,
+                visibility = visibility,
+                isInline = isInline,
+                isExpect = isExpect,
+                returnType = returnType,
+                symbol = IrConstructorSymbolImpl(),
+                isPrimary = isPrimary,
+                isExternal = isExternal,
+                containerSource = containerSource,
             )
         }.also { irConstructor ->
             irConstructor.valueParameters = buildList {

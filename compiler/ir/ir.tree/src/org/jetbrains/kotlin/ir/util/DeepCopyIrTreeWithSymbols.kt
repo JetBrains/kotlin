@@ -198,16 +198,17 @@ open class DeepCopyIrTreeWithSymbols(
 
     override fun visitConstructor(declaration: IrConstructor): IrConstructor =
         declaration.factory.createConstructor(
-            declaration.startOffset, declaration.endOffset,
-            mapDeclarationOrigin(declaration.origin),
-            symbolRemapper.getDeclaredConstructor(declaration.symbol),
-            declaration.name,
-            declaration.visibility,
-            declaration.returnType,
+            startOffset = declaration.startOffset,
+            endOffset = declaration.endOffset,
+            origin = mapDeclarationOrigin(declaration.origin),
+            name = declaration.name,
+            visibility = declaration.visibility,
             isInline = declaration.isInline,
-            isExternal = declaration.isExternal,
-            isPrimary = declaration.isPrimary,
             isExpect = declaration.isExpect,
+            returnType = declaration.returnType,
+            symbol = symbolRemapper.getDeclaredConstructor(declaration.symbol),
+            isPrimary = declaration.isPrimary,
+            isExternal = declaration.isExternal,
             containerSource = declaration.containerSource,
         ).apply {
             transformFunctionChildren(declaration)

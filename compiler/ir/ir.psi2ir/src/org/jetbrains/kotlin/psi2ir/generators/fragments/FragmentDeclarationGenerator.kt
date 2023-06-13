@@ -11,14 +11,10 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorPublicSymbolImpl
-import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtBlockCodeFragment
-import org.jetbrains.kotlin.psi.psiUtil.pureEndOffset
-import org.jetbrains.kotlin.psi.psiUtil.pureStartOffset
 import org.jetbrains.kotlin.psi2ir.generators.Generator
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
 import org.jetbrains.kotlin.psi2ir.generators.createBodyGenerator
@@ -66,14 +62,14 @@ open class FragmentDeclarationGenerator(
             startOffset = UNDEFINED_OFFSET,
             endOffset = UNDEFINED_OFFSET,
             origin = IrDeclarationOrigin.DEFINED,
-            symbol = IrConstructorPublicSymbolImpl(context.symbolTable.signaturer.composeSignature(irClass.descriptor)!!),
-            Name.special("<init>"),
-            irClass.visibility,
-            irClass.defaultType,
+            name = Name.special("<init>"),
+            visibility = irClass.visibility,
             isInline = false,
-            isExternal = false,
+            isExpect = false,
+            returnType = irClass.defaultType,
+            symbol = IrConstructorPublicSymbolImpl(context.symbolTable.signaturer.composeSignature(irClass.descriptor)!!),
             isPrimary = true,
-            isExpect = false
+            isExternal = false
         )
         constructor.parent = irClass
         constructor.body = context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET).apply {

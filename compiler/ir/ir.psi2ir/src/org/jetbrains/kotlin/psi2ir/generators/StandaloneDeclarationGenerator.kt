@@ -167,8 +167,17 @@ internal class StandaloneDeclarationGenerator(private val context: GeneratorCont
     ): IrConstructor {
         val irConstructor = with(descriptor) {
             irFactory.createConstructor(
-                startOffset, endOffset, origin, symbol, name, visibility, IrUninitializedType, isInline,
-                isEffectivelyExternal(), isPrimary, isExpect
+                startOffset = startOffset,
+                endOffset = endOffset,
+                origin = origin,
+                name = name,
+                visibility = visibility,
+                isInline = isInline,
+                isExpect = isExpect,
+                returnType = IrUninitializedType,
+                symbol = symbol,
+                isPrimary = isPrimary,
+                isExternal = isEffectivelyExternal(),
             )
         }
         irConstructor.metadata = DescriptorMetadataSource.Function(descriptor)

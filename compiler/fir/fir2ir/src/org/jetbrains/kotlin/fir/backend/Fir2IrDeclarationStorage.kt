@@ -665,10 +665,17 @@ class Fir2IrDeclarationStorage(
             declareIrConstructor(signature) { symbol ->
                 classifierStorage.preCacheTypeParameters(constructor, symbol)
                 irFactory.createConstructor(
-                    startOffset, endOffset, origin, symbol,
-                    SpecialNames.INIT, components.visibilityConverter.convertToDescriptorVisibility(visibility),
-                    constructor.returnTypeRef.toIrType(),
-                    isInline = false, isExternal = false, isPrimary = isPrimary, isExpect = constructor.isExpect
+                    startOffset = startOffset,
+                    endOffset = endOffset,
+                    origin = origin,
+                    name = SpecialNames.INIT,
+                    visibility = components.visibilityConverter.convertToDescriptorVisibility(visibility),
+                    isInline = false,
+                    isExpect = constructor.isExpect,
+                    returnType = constructor.returnTypeRef.toIrType(),
+                    symbol = symbol,
+                    isPrimary = isPrimary,
+                    isExternal = false,
                 ).apply {
                     metadata = FirMetadataSource.Function(constructor)
                     // Add to cache before generating parameters to prevent an infinite loop when an annotation value parameter is annotated
