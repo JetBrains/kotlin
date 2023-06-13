@@ -19,10 +19,6 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
-import org.jetbrains.kotlin.ir.interpreter.state.Complex
-import org.jetbrains.kotlin.ir.interpreter.state.ExceptionState
-import org.jetbrains.kotlin.ir.interpreter.state.Primitive
-import org.jetbrains.kotlin.ir.interpreter.state.State
 import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
@@ -108,8 +104,14 @@ internal fun createTempFunction(
 
 internal fun createTempClass(name: Name, origin: IrDeclarationOrigin = TEMP_CLASS_FOR_INTERPRETER): IrClass {
     return IrFactoryImpl.createClass(
-        SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, origin, IrClassSymbolImpl(), name,
-        ClassKind.CLASS, DescriptorVisibilities.PRIVATE, Modality.FINAL
+        startOffset = SYNTHETIC_OFFSET,
+        endOffset = SYNTHETIC_OFFSET,
+        origin = origin,
+        name = name,
+        visibility = DescriptorVisibilities.PRIVATE,
+        symbol = IrClassSymbolImpl(),
+        kind = ClassKind.CLASS,
+        modality = Modality.FINAL,
     )
 }
 

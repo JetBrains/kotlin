@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.backend
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fir.containingClassForLocalAttr
-import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousObjectExpression
@@ -352,18 +351,18 @@ class Fir2IrClassifierStorage(
         val irClass = regularClass.convertWithOffsets { startOffset, endOffset ->
             declareIrClass(signature) { symbol ->
                 irFactory.createClass(
-                    startOffset,
-                    endOffset,
-                    regularClass.computeIrOrigin(predefinedOrigin),
-                    symbol,
-                    regularClass.name,
-                    regularClass.classKind,
-                    components.visibilityConverter.convertToDescriptorVisibility(visibility),
-                    modality,
+                    startOffset = startOffset,
+                    endOffset = endOffset,
+                    origin = regularClass.computeIrOrigin(predefinedOrigin),
+                    name = regularClass.name,
+                    visibility = components.visibilityConverter.convertToDescriptorVisibility(visibility),
+                    symbol = symbol,
+                    kind = regularClass.classKind,
+                    modality = modality,
+                    isExternal = regularClass.isExternal,
                     isCompanion = regularClass.isCompanion,
                     isInner = regularClass.isInner,
                     isData = regularClass.isData,
-                    isExternal = regularClass.isExternal,
                     isValue = regularClass.isInline,
                     isExpect = regularClass.isExpect,
                     isFun = regularClass.isFun
@@ -391,10 +390,15 @@ class Fir2IrClassifierStorage(
         val modality = Modality.FINAL
         val irAnonymousObject = anonymousObject.convertWithOffsets { startOffset, endOffset ->
             irFactory.createClass(
-                startOffset, endOffset, origin, IrClassSymbolImpl(), name,
+                startOffset = startOffset,
+                endOffset = endOffset,
+                origin = origin,
+                name = name,
+                visibility = components.visibilityConverter.convertToDescriptorVisibility(visibility),
+                symbol = IrClassSymbolImpl(),
                 // NB: for unknown reason, IR uses 'CLASS' kind for simple anonymous objects
-                anonymousObject.classKind.takeIf { it == ClassKind.ENUM_ENTRY } ?: ClassKind.CLASS,
-                components.visibilityConverter.convertToDescriptorVisibility(visibility), modality
+                kind = anonymousObject.classKind.takeIf { it == ClassKind.ENUM_ENTRY } ?: ClassKind.CLASS,
+                modality = modality,
             ).apply {
                 metadata = FirMetadataSource.Class(anonymousObject)
             }
@@ -634,8 +638,14 @@ class Fir2IrClassifierStorage(
 
         return symbolTable.referenceClass(signature, { Fir2IrClassSymbol(signature) }) {
             irFactory.createClass(
-                UNDEFINED_OFFSET, UNDEFINED_OFFSET, IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB, it, classId.shortClassName,
-                ClassKind.CLASS, DescriptorVisibilities.DEFAULT_VISIBILITY, Modality.FINAL,
+                startOffset = UNDEFINED_OFFSET,
+                endOffset = UNDEFINED_OFFSET,
+                origin = IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB,
+                name = classId.shortClassName,
+                visibility = DescriptorVisibilities.DEFAULT_VISIBILITY,
+                symbol = it,
+                kind = ClassKind.CLASS,
+                modality = Modality.FINAL,
             ).apply {
                 parent = irParent
             }

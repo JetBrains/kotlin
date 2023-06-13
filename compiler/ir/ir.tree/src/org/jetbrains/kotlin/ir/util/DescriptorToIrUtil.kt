@@ -37,7 +37,20 @@ fun IrFactory.createIrClassFromDescriptor(
         visibility: DescriptorVisibility = descriptor.visibility,
         modality: Modality = descriptor.modality
 ): IrClass = createClass(
-    startOffset, endOffset, origin, symbol, name, descriptor.kind, visibility, modality,
-    descriptor.isCompanionObject, descriptor.isInner, descriptor.isData, descriptor.isEffectivelyExternal(),
-    descriptor.isValueClass(), descriptor.isExpect, descriptor.isFun, descriptor.source
+    startOffset = startOffset,
+    endOffset = endOffset,
+    origin = origin,
+    name = name,
+    visibility = visibility,
+    symbol = symbol,
+    kind = descriptor.kind,
+    modality = modality,
+    isExternal = descriptor.isEffectivelyExternal(),
+    isCompanion = descriptor.isCompanionObject,
+    isInner = descriptor.isInner,
+    isData = descriptor.isData,
+    isValue = descriptor.isValueClass(),
+    isExpect = descriptor.isExpect,
+    isFun = descriptor.isFun,
+    source = descriptor.source,
 )

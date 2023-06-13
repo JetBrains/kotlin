@@ -27,10 +27,21 @@ import org.jetbrains.kotlin.types.Variance
 @PublishedApi
 internal fun IrFactory.buildClass(builder: IrClassBuilder): IrClass = with(builder) {
     createClass(
-        startOffset, endOffset, origin,
-        IrClassSymbolImpl(),
-        name, kind, visibility, modality,
-        isCompanion, isInner, isData, isExternal, isValue, isExpect, isFun
+        startOffset = startOffset,
+        endOffset = endOffset,
+        origin = origin,
+        name = name,
+        visibility = visibility,
+        symbol = IrClassSymbolImpl(),
+        kind = kind,
+        modality = modality,
+        isExternal = isExternal,
+        isCompanion = isCompanion,
+        isInner = isInner,
+        isData = isData,
+        isValue = isValue,
+        isExpect = isExpect,
+        isFun = isFun,
     )
 }
 

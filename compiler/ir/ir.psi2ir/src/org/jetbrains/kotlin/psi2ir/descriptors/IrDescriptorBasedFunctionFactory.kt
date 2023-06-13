@@ -433,7 +433,14 @@ class IrDescriptorBasedFunctionFactory(
         val name = functionClassName(isK, isSuspend, n)
         if (symbol.isBound) return symbol.owner
         val klass = irFactory.createClass(
-            offset, offset, classOrigin, symbol, Name.identifier(name), ClassKind.INTERFACE, DescriptorVisibilities.PUBLIC, Modality.ABSTRACT
+            startOffset = offset,
+            endOffset = offset,
+            origin = classOrigin,
+            name = Name.identifier(name),
+            visibility = DescriptorVisibilities.PUBLIC,
+            symbol = symbol,
+            kind = ClassKind.INTERFACE,
+            modality = Modality.ABSTRACT,
         )
 
         val r = klass.createTypeParameters(n, descriptorFactory)

@@ -357,19 +357,21 @@ class IrDeclarationDeserializer(
             }
             symbolTable.declareClass(signature, { symbol.checkSymbolType(CLASS_SYMBOL) }) {
                 irFactory.createClass(
-                    startOffset, endOffset, origin,
-                    it,
-                    deserializeName(proto.name),
-                    flags.kind,
-                    flags.visibility,
-                    effectiveModality,
-                    flags.isCompanion,
-                    flags.isInner,
-                    flags.isData,
-                    flags.isExternal || isEffectivelyExternal,
-                    flags.isValue,
-                    flags.isExpect,
-                    flags.isFun,
+                    startOffset = startOffset,
+                    endOffset = endOffset,
+                    origin = origin,
+                    name = deserializeName(proto.name),
+                    visibility = flags.visibility,
+                    symbol = it,
+                    kind = flags.kind,
+                    modality = effectiveModality,
+                    isExternal = flags.isExternal || isEffectivelyExternal,
+                    isCompanion = flags.isCompanion,
+                    isInner = flags.isInner,
+                    isData = flags.isData,
+                    isValue = flags.isValue,
+                    isExpect = flags.isExpect,
+                    isFun = flags.isFun,
                 )
             }.usingParent {
                 typeParameters = deserializeTypeParameters(proto.typeParameterList, true)

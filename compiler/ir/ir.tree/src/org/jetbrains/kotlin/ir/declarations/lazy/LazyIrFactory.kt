@@ -24,15 +24,15 @@ class LazyIrFactory(
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
-        symbol: IrClassSymbol,
         name: Name,
-        kind: ClassKind,
         visibility: DescriptorVisibility,
+        symbol: IrClassSymbol,
+        kind: ClassKind,
         modality: Modality,
+        isExternal: Boolean,
         isCompanion: Boolean,
         isInner: Boolean,
         isData: Boolean,
-        isExternal: Boolean,
         isValue: Boolean,
         isExpect: Boolean,
         isFun: Boolean,
@@ -41,8 +41,22 @@ class LazyIrFactory(
         symbol.owner
     else
         delegate.createClass(
-            startOffset, endOffset, origin, symbol, name, kind, visibility, modality,
-            isCompanion, isInner, isData, isExternal, isValue, isExpect, isFun, source
+            startOffset,
+            endOffset,
+            origin,
+            name,
+            visibility,
+            symbol,
+            kind,
+            modality,
+            isExternal,
+            isCompanion,
+            isInner,
+            isData,
+            isValue,
+            isExpect,
+            isFun,
+            source,
         )
 
     override fun createConstructor(

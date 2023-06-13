@@ -141,20 +141,21 @@ open class DeepCopyIrTreeWithSymbols(
 
     override fun visitClass(declaration: IrClass): IrClass =
         declaration.factory.createClass(
-            declaration.startOffset, declaration.endOffset,
-            mapDeclarationOrigin(declaration.origin),
-            symbolRemapper.getDeclaredClass(declaration.symbol),
-            symbolRenamer.getClassName(declaration.symbol),
-            declaration.kind,
-            declaration.visibility,
-            declaration.modality,
+            startOffset = declaration.startOffset,
+            endOffset = declaration.endOffset,
+            origin = mapDeclarationOrigin(declaration.origin),
+            name = symbolRenamer.getClassName(declaration.symbol),
+            visibility = declaration.visibility,
+            symbol = symbolRemapper.getDeclaredClass(declaration.symbol),
+            kind = declaration.kind,
+            modality = declaration.modality,
+            isExternal = declaration.isExternal,
             isCompanion = declaration.isCompanion,
             isInner = declaration.isInner,
             isData = declaration.isData,
-            isExternal = declaration.isExternal,
             isValue = declaration.isValue,
             isExpect = declaration.isExpect,
-            isFun = declaration.isFun
+            isFun = declaration.isFun,
         ).apply {
             transformAnnotations(declaration)
             copyTypeParametersFrom(declaration)
