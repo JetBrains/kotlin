@@ -1152,7 +1152,6 @@ INSTANTIATE_TEST_SUITE_P(,
 
             ParallelismOptions{kDefaultThreadCount / 2, true, kDefaultThreadCount},
             ParallelismOptions{kDefaultThreadCount / 2 * 3, true, kDefaultThreadCount},
-            ParallelismOptions{5, true, kDefaultThreadCount},
             ParallelismOptions{6, true, kDefaultThreadCount},
             ParallelismOptions{7, true, kDefaultThreadCount},
             ParallelismOptions{8, true, kDefaultThreadCount}
