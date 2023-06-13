@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.test.runners
 
 import org.jetbrains.kotlin.platform.js.JsPlatforms
+import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.classicFrontendHandlersStep
 import org.jetbrains.kotlin.test.builders.classicFrontendStep
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.test.frontend.classic.handlers.DynamicCallsDumpHandl
 import org.jetbrains.kotlin.test.frontend.classic.handlers.OldNewInferenceMetaInfoProcessor
 import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.FrontendKinds
+import org.jetbrains.kotlin.test.services.JsLibraryProvider
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
@@ -27,12 +29,15 @@ abstract class AbstractDiagnosticsTestWithJsStdLib : AbstractKotlinCompilerTest(
         globalDefaults {
             frontend = FrontendKinds.ClassicFrontend
             targetPlatform = JsPlatforms.defaultJsPlatform
+            targetBackend = TargetBackend.JS_IR
             dependencyKind = DependencyKind.Source
         }
 
         defaultDirectives {
             +JvmEnvironmentConfigurationDirectives.USE_PSI_CLASS_FILES_READING
         }
+
+        useAdditionalService(::JsLibraryProvider)
 
         enableMetaInfoHandler()
 
