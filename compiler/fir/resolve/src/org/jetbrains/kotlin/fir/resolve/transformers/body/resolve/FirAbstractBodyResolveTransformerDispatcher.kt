@@ -64,6 +64,10 @@ abstract class FirAbstractBodyResolveTransformerDispatcher(
         return declarationsTransformer.transformScript(script, data)
     }
 
+    override fun transformCodeFragment(codeFragment: FirCodeFragment, data: ResolutionMode): FirCodeFragment {
+        return declarationsTransformer.transformCodeFragment(codeFragment, data)
+    }
+
     override fun <E : FirElement> transformElement(element: E, data: ResolutionMode): E {
         @Suppress("UNCHECKED_CAST")
         return (element.transformChildren(this, data) as E)
