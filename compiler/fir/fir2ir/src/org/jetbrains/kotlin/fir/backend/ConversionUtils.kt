@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.backend
 
 import com.intellij.psi.PsiCompiledElement
+import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.backend.common.actualizer.IrActualizedResult
@@ -55,6 +56,7 @@ import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.startOffsetSkippingComments
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.Variance
@@ -78,7 +80,7 @@ internal fun <T : IrElement> FirElement.convertWithOffsets(
 internal fun <T : IrElement> KtSourceElement?.convertWithOffsets(
     f: (startOffset: Int, endOffset: Int) -> T
 ): T {
-    if (psi is PsiCompiledElement) return f(UNDEFINED_OFFSET, UNDEFINED_OFFSET)
+    if (isCompiledElement(psi)) return f(UNDEFINED_OFFSET, UNDEFINED_OFFSET)
     val startOffset = this?.startOffsetSkippingComments() ?: this?.startOffset ?: UNDEFINED_OFFSET
     val endOffset = this?.endOffset ?: UNDEFINED_OFFSET
     return f(startOffset, endOffset)
@@ -100,10 +102,23 @@ internal fun <T : IrElement> FirStatement.convertWithOffsets(
     calleeReference: FirReference,
     f: (startOffset: Int, endOffset: Int) -> T
 ): T {
-    if (psi is PsiCompiledElement) return f(UNDEFINED_OFFSET, UNDEFINED_OFFSET)
+    if (isCompiledElement(psi)) return f(UNDEFINED_OFFSET, UNDEFINED_OFFSET)
     val startOffset = calleeReference.source?.startOffsetSkippingComments() ?: calleeReference.source?.startOffset ?: UNDEFINED_OFFSET
     val endOffset = source?.endOffset ?: UNDEFINED_OFFSET
     return f(startOffset, endOffset)
+}
+
+private fun isCompiledElement(element: PsiElement?): Boolean {
+    if (element == null) {
+        return false
+    }
+
+    if (element is PsiCompiledElement) {
+        return true
+    }
+
+    val containingFile = element.containingFile
+    return containingFile !is KtFile || containingFile.isCompiled
 }
 
 internal fun createErrorType(): IrErrorType = IrErrorTypeImpl(null, emptyList(), Variance.INVARIANT)
