@@ -200,7 +200,7 @@ internal fun KtAnnotationValue.toAnnotationMemberValue(parent: PsiElement): PsiA
 private fun KtEnumEntryAnnotationValue.asPsiReferenceExpression(parent: PsiElement): SymbolPsiReference? {
     val fqName = this.callableId?.asSingleFqName()?.asString() ?: return null
     val psiReference = parent.project.withElementFactorySafe {
-        createExpressionFromText(fqName, parent) as PsiReferenceExpression
+        createExpressionFromText(fqName, parent) as? PsiReferenceExpression
     } ?: return null
 
     return SymbolPsiReference(sourcePsi, parent, psiReference)
