@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.library.impl.IrMemoryArrayWriter
 import org.jetbrains.kotlin.library.impl.IrMemoryDeclarationWriter
 import org.jetbrains.kotlin.library.impl.IrMemoryStringWriter
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyPrivateApi
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyPublicApi
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.filterIsInstanceAnd
@@ -190,7 +189,11 @@ open class IrFileSerializer(
     private fun serializeIrStatementOrigin(origin: IrStatementOrigin): Int =
         serializeString((origin as? IrStatementOriginImpl)?.debugName ?: error("Unable to serialize origin ${origin.javaClass.name}"))
 
-    private fun serializeCoordinates(start: Int, end: Int): Long = BinaryCoordinates.encode(start, end)
+    private fun serializeCoordinates(start: Int, end: Int): Long = if (skipPrivateApi) {
+        0L
+    } else {
+        BinaryCoordinates.encode(start, end)
+    }
 
     /* ------- Strings ---------------------------------------------------------- */
 
@@ -1358,6 +1361,8 @@ open class IrFileSerializer(
     open fun backendSpecificSerializeAllMembers(irClass: IrClass) = false
     open fun backendSpecificMetadata(irFile: IrFile): FileBackendSpecificMetadata? = null
 
+    private fun skipIfPrivate(declaration: DeclarationDescriptor) = skipPrivateApi && declaration is DeclarationDescriptorWithVisibility && !declaration.isEffectivelyPublicApi
+
     open fun memberNeedsSerialization(member: IrDeclaration): Boolean {
         val parent = member.parent
         require(parent is IrClass)
@@ -1365,7 +1370,7 @@ open class IrFileSerializer(
         if (bodiesOnlyForInlines && member is IrAnonymousInitializer && parent.visibility != DescriptorVisibilities.LOCAL)
             return false
         val descriptor = member.descriptor
-        if (skipPrivateApi && descriptor is DeclarationDescriptorWithVisibility && !descriptor.isEffectivelyPublicApi) {
+        if (skipPrivateApi && descriptor is DeclarationDescriptorWithVisibility && !descriptor.visibility.isPublicAPI) {
             return false
         }
 
@@ -1431,8 +1436,8 @@ open class IrFileSerializer(
 
         file.declarations.forEach {
             val descriptor = it.descriptor
-            if (skipPrivateApi && descriptor is DeclarationDescriptorWithVisibility && !descriptor.isEffectivelyPublicApi) {
-                topLevelDeclarations.add(SkippedDeclaration)
+            if (skipIfPrivate(descriptor)) {
+                // Skip the declaration if producing header klib and the declaration is not public.
                 return@forEach
             }
             if (it.descriptor.isExpectMember && !it.descriptor.isSerializableExpectClass) {
@@ -1457,7 +1462,7 @@ open class IrFileSerializer(
 
         // Make sure that all top level properties are initialized on library's load.
         file.declarations
-            .filterIsInstanceAnd<IrProperty> { it.backingField?.initializer != null && keepOrderOfProperties(it) }
+            .filterIsInstanceAnd<IrProperty> { it.backingField?.initializer != null && keepOrderOfProperties(it) && !skipIfPrivate(it.descriptor) }
             .forEach {
                 val fieldSymbol = it.backingField?.symbol ?: error("Not found ID ${it.render()}")
                 proto.addExplicitlyExportedToCompiler(serializeIrSymbol(fieldSymbol))

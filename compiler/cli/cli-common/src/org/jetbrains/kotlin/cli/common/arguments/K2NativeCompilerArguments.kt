@@ -373,8 +373,7 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     var metadataKlib: Boolean = false
 
     @Argument(
-        value = "-Xheader-klib",
-        valueDescription = "<path>",
+        value = "-Xheader-klib-path",
         description = "Save a klib that only contains the public abi to the given path"
     )
     var headerKlib: String? = null

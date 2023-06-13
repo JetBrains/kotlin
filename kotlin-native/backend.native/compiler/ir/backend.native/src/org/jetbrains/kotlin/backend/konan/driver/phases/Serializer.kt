@@ -56,11 +56,11 @@ internal val SerializerPhase = createSimpleNamedCompilerPhase<PhaseContext, Seri
     }
 
     val serializer = KlibMetadataMonolithicSerializer(
-            config.configuration.languageVersionSettings,
-            config.configuration.get(CommonConfigurationKeys.METADATA_VERSION)!!,
-            config.project,
-            exportKDoc = context.shouldExportKDoc(),
-            !expectActualLinker, includeOnlyModuleContent = true, headerKlib = input.headerKlib)
+        config.configuration.languageVersionSettings,
+        config.configuration.get(CommonConfigurationKeys.METADATA_VERSION)!!,
+        config.project,
+        exportKDoc = context.shouldExportKDoc(),
+        !expectActualLinker, includeOnlyModuleContent = true, produceHeaderKlib = input.headerKlib)
     val serializedMetadata = serializer.serializeModule(input.moduleDescriptor)
     val neededLibraries = config.librariesWithDependencies()
     SerializerOutput(serializedMetadata, serializedIr, null, neededLibraries)

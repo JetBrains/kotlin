@@ -59,7 +59,7 @@ internal class K2MetadataKlibSerializer(
             exportKDoc = false,
             skipExpects = false,
             includeOnlyModuleContent = true,
-            headerKlib = false,
+            produceHeaderKlib = false,
         ).serializeModule(module)
 
         buildKotlinMetadataLibrary(configuration, serializedMetadata, destDir)

@@ -96,7 +96,7 @@ abstract class KlibMetadataSerializer(
     // TODO: we filter out expects with present actuals.
     // This is done because deserialized member scope doesn't give us actuals
     // when it has a choice
-    private fun List<DeclarationDescriptor>.filterOutExpectsWithActuals(): List<DeclarationDescriptor> {
+    private fun Sequence<DeclarationDescriptor>.filterOutExpectsWithActuals(): Sequence<DeclarationDescriptor> {
         val actualClassIds = this.filter{ !it.isExpectMember }.map { ClassId.topLevel(it.fqNameSafe) }
         return this.filterNot {
             // TODO: this only filters classes for now.
@@ -105,16 +105,19 @@ abstract class KlibMetadataSerializer(
         }
     }
 
-    protected fun List<DeclarationDescriptor>.filterOutExpects(): List<DeclarationDescriptor> =
+    private fun Sequence<DeclarationDescriptor>.filterOutExpects(): Sequence<DeclarationDescriptor> =
         if (skipExpects)
             this.filterNot { it.isExpectMember && !it.isSerializableExpectClass }
         else
             this.filterOutExpectsWithActuals()
 
-    protected fun List<DeclarationDescriptor>.filterPrivate(): List<DeclarationDescriptor> =
-        if (headerKlib)
-            this.filterNot { it is DeclarationDescriptorWithVisibility && it.isEffectivelyPrivateApi }
-        else this
+    private fun Sequence<DeclarationDescriptor>.filterPrivate(): Sequence<DeclarationDescriptor> =
+        if (headerKlib) {
+            // We keep all interfaces since publicly accessible classes can inherit from private interfaces.
+            this.filter {
+                it is ClassDescriptor && it.kind.isInterface || it is DeclarationDescriptorWithVisibility && it.effectiveVisibility().publicApi
+            }
+        } else this
 
     private fun serializeClasses(packageName: FqName,
                                  //builder: ProtoBuf.PackageFragment.Builder,
@@ -138,8 +141,8 @@ abstract class KlibMetadataSerializer(
         allTopLevelDescriptors: List<DeclarationDescriptor>
     ): List<ProtoBuf.PackageFragment> {
 
-        val classifierDescriptors = allClassifierDescriptors.filterOutExpects().filterPrivate()
-        val topLevelDescriptors = allTopLevelDescriptors.filterOutExpects().filterPrivate()
+        val classifierDescriptors = allClassifierDescriptors.asSequence().filterOutExpects().filterPrivate().toList()
+        val topLevelDescriptors = allTopLevelDescriptors.asSequence().filterOutExpects().filterPrivate().toList()
 
         if (TOP_LEVEL_CLASS_DECLARATION_COUNT_PER_FILE == null &&
             TOP_LEVEL_DECLARATION_COUNT_PER_FILE == null) {

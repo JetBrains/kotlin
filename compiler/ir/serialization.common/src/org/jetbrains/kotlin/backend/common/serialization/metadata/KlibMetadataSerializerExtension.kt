@@ -43,7 +43,7 @@ class KlibMetadataSerializerExtension(
                         DescriptorUtils.getAllDescriptors(classDescriptor.defaultType.memberScope)
                             .filterIsInstance<CallableMemberDescriptor>()
                             .filter { it.kind != CallableMemberDescriptor.Kind.FAKE_OVERRIDE }
-                            .filter { it.isEffectivelyPublicApi }
+                            .filter { it.visibility.isPublicAPI }
                     )
             }
         else super.customClassMembersProducer
