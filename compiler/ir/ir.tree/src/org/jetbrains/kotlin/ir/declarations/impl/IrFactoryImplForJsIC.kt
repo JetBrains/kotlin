@@ -118,15 +118,15 @@ class IrFactoryImplForJsIC(override val stageController: StageController) : Abst
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
-        symbol: IrEnumEntrySymbol,
-        name: Name
+        name: Name,
+        symbol: IrEnumEntrySymbol
     ): IrEnumEntry {
         return super.createEnumEntry(
             startOffset,
             endOffset,
             origin,
-            symbol,
             name,
+            symbol,
         ).register()
     }
 

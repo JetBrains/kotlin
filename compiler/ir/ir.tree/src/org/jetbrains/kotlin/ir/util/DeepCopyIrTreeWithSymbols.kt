@@ -295,10 +295,11 @@ open class DeepCopyIrTreeWithSymbols(
 
     override fun visitEnumEntry(declaration: IrEnumEntry): IrEnumEntry =
         declaration.factory.createEnumEntry(
-            declaration.startOffset, declaration.endOffset,
-            mapDeclarationOrigin(declaration.origin),
-            symbolRemapper.getDeclaredEnumEntry(declaration.symbol),
-            symbolRenamer.getEnumEntryName(declaration.symbol)
+            startOffset = declaration.startOffset,
+            endOffset = declaration.endOffset,
+            origin = mapDeclarationOrigin(declaration.origin),
+            name = symbolRenamer.getEnumEntryName(declaration.symbol),
+            symbol = symbolRemapper.getDeclaredEnumEntry(declaration.symbol),
         ).apply {
             transformAnnotations(declaration)
             correspondingClass = declaration.correspondingClass?.transform()

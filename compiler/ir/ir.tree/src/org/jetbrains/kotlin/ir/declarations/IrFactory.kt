@@ -65,8 +65,8 @@ interface IrFactory {
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
-        symbol: IrEnumEntrySymbol,
         name: Name,
+        symbol: IrEnumEntrySymbol,
     ): IrEnumEntry
 
     fun createErrorDeclaration(

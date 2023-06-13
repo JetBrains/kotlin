@@ -629,7 +629,7 @@ class IrDeclarationDeserializer(
     private fun deserializeIrEnumEntry(proto: ProtoEnumEntry, setParent: Boolean = true): IrEnumEntry =
         withDeserializedIrDeclarationBase(proto.base, setParent) { symbol, uniqId, startOffset, endOffset, origin, _ ->
             symbolTable.declareEnumEntry(uniqId, { symbol.checkSymbolType(ENUM_ENTRY_SYMBOL) }) {
-                irFactory.createEnumEntry(startOffset, endOffset, origin, it, deserializeName(proto.name))
+                irFactory.createEnumEntry(startOffset, endOffset, origin, deserializeName(proto.name), it)
             }.apply {
                 if (proto.hasCorrespondingClass())
                     correspondingClass = deserializeIrClass(proto.correspondingClass)

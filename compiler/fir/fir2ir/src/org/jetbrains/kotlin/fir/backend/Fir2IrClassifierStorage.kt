@@ -553,7 +553,11 @@ class Fir2IrClassifierStorage(
             val result = declareIrEnumEntry(signature) { symbol ->
                 val origin = enumEntry.computeIrOrigin(predefinedOrigin)
                 irFactory.createEnumEntry(
-                    startOffset, endOffset, origin, symbol, enumEntry.name
+                    startOffset = startOffset,
+                    endOffset = endOffset,
+                    origin = origin,
+                    name = enumEntry.name,
+                    symbol = symbol,
                 ).apply {
                     declarationStorage.enterScope(this)
                     if (irParent != null) {

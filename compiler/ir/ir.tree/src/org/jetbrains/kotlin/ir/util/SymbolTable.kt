@@ -654,7 +654,7 @@ open class SymbolTable(
     fun declareEnumEntry(
         startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, descriptor: ClassDescriptor,
         factory: (IrEnumEntrySymbol) -> IrEnumEntry = {
-            irFactory.createEnumEntry(startOffset, endOffset, origin, it, nameProvider.nameForDeclaration(descriptor))
+            irFactory.createEnumEntry(startOffset, endOffset, origin, nameProvider.nameForDeclaration(descriptor), it)
         }
     ): IrEnumEntry =
         enumEntrySymbolTable.declare(

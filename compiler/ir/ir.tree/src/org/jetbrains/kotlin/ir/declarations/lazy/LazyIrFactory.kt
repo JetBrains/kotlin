@@ -70,12 +70,12 @@ class LazyIrFactory(
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
-        symbol: IrEnumEntrySymbol,
-        name: Name
+        name: Name,
+        symbol: IrEnumEntrySymbol
     ): IrEnumEntry = if (symbol.isBound)
         symbol.owner
     else
-        delegate.createEnumEntry(startOffset, endOffset, origin, symbol, name)
+        delegate.createEnumEntry(startOffset, endOffset, origin, name, symbol)
 
     override fun createField(
         startOffset: Int,

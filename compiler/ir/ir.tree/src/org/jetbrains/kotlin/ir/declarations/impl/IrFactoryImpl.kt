@@ -81,8 +81,8 @@ abstract class AbstractIrFactoryImpl : IrFactory {
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
-        symbol: IrEnumEntrySymbol,
         name: Name,
+        symbol: IrEnumEntrySymbol,
     ): IrEnumEntry =
         IrEnumEntryImpl(startOffset, endOffset, origin, symbol, name, factory = this)
 

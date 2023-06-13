@@ -107,7 +107,7 @@ internal class StandaloneDeclarationGenerator(private val context: GeneratorCont
         startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, descriptor: ClassDescriptor, symbol: IrEnumEntrySymbol
     ): IrEnumEntry {
         // TODO: corresponging class?
-        val irEntry = irFactory.createEnumEntry(startOffset, endOffset, origin, symbol, descriptor.name)
+        val irEntry = irFactory.createEnumEntry(startOffset, endOffset, origin, descriptor.name, symbol)
 
         return irEntry
     }

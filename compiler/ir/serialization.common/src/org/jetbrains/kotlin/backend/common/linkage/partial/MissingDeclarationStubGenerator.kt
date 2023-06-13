@@ -139,8 +139,8 @@ internal class MissingDeclarationStubGenerator(private val builtIns: IrBuiltIns)
             startOffset = UNDEFINED_OFFSET,
             endOffset = UNDEFINED_OFFSET,
             origin = PartiallyLinkedDeclarationOrigin.MISSING_DECLARATION,
+            name = symbol.guessName(),
             symbol = symbol,
-            name = symbol.guessName()
         ).setCommonParent()
     }
 
