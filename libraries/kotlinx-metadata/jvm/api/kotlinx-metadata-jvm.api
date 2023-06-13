@@ -1254,30 +1254,30 @@ public abstract class kotlinx/metadata/jvm/KotlinClassMetadata {
 	public static final field MULTI_FILE_CLASS_PART_KIND I
 	public static final field SYNTHETIC_CLASS_KIND I
 	public synthetic fun <init> (Lkotlin/Metadata;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun getAnnotationData ()Lkotlin/Metadata;
 	public static final fun read (Lkotlin/Metadata;)Lkotlinx/metadata/jvm/KotlinClassMetadata;
-	public static final fun writeClass (Lkotlinx/metadata/KmClass;)Lkotlinx/metadata/jvm/KotlinClassMetadata$Class;
-	public static final fun writeClass (Lkotlinx/metadata/KmClass;[I)Lkotlinx/metadata/jvm/KotlinClassMetadata$Class;
-	public static final fun writeClass (Lkotlinx/metadata/KmClass;[II)Lkotlinx/metadata/jvm/KotlinClassMetadata$Class;
-	public static final fun writeFileFacade (Lkotlinx/metadata/KmPackage;)Lkotlinx/metadata/jvm/KotlinClassMetadata$FileFacade;
-	public static final fun writeFileFacade (Lkotlinx/metadata/KmPackage;[I)Lkotlinx/metadata/jvm/KotlinClassMetadata$FileFacade;
-	public static final fun writeFileFacade (Lkotlinx/metadata/KmPackage;[II)Lkotlinx/metadata/jvm/KotlinClassMetadata$FileFacade;
-	public static final fun writeLambda (Lkotlinx/metadata/KmLambda;)Lkotlinx/metadata/jvm/KotlinClassMetadata$SyntheticClass;
-	public static final fun writeLambda (Lkotlinx/metadata/KmLambda;[I)Lkotlinx/metadata/jvm/KotlinClassMetadata$SyntheticClass;
-	public static final fun writeLambda (Lkotlinx/metadata/KmLambda;[II)Lkotlinx/metadata/jvm/KotlinClassMetadata$SyntheticClass;
-	public static final fun writeMultiFileClassFacade (Ljava/util/List;)Lkotlinx/metadata/jvm/KotlinClassMetadata$MultiFileClassFacade;
-	public static final fun writeMultiFileClassFacade (Ljava/util/List;[I)Lkotlinx/metadata/jvm/KotlinClassMetadata$MultiFileClassFacade;
-	public static final fun writeMultiFileClassFacade (Ljava/util/List;[II)Lkotlinx/metadata/jvm/KotlinClassMetadata$MultiFileClassFacade;
-	public static final fun writeMultiFileClassPart (Lkotlinx/metadata/KmPackage;Ljava/lang/String;)Lkotlinx/metadata/jvm/KotlinClassMetadata$MultiFileClassPart;
-	public static final fun writeMultiFileClassPart (Lkotlinx/metadata/KmPackage;Ljava/lang/String;[I)Lkotlinx/metadata/jvm/KotlinClassMetadata$MultiFileClassPart;
-	public static final fun writeMultiFileClassPart (Lkotlinx/metadata/KmPackage;Ljava/lang/String;[II)Lkotlinx/metadata/jvm/KotlinClassMetadata$MultiFileClassPart;
-	public static final fun writeSyntheticClass ()Lkotlinx/metadata/jvm/KotlinClassMetadata$SyntheticClass;
-	public static final fun writeSyntheticClass ([I)Lkotlinx/metadata/jvm/KotlinClassMetadata$SyntheticClass;
-	public static final fun writeSyntheticClass ([II)Lkotlinx/metadata/jvm/KotlinClassMetadata$SyntheticClass;
+	public static final fun writeClass (Lkotlinx/metadata/KmClass;)Lkotlin/Metadata;
+	public static final fun writeClass (Lkotlinx/metadata/KmClass;[I)Lkotlin/Metadata;
+	public static final fun writeClass (Lkotlinx/metadata/KmClass;[II)Lkotlin/Metadata;
+	public static final fun writeFileFacade (Lkotlinx/metadata/KmPackage;)Lkotlin/Metadata;
+	public static final fun writeFileFacade (Lkotlinx/metadata/KmPackage;[I)Lkotlin/Metadata;
+	public static final fun writeFileFacade (Lkotlinx/metadata/KmPackage;[II)Lkotlin/Metadata;
+	public static final fun writeLambda (Lkotlinx/metadata/KmLambda;)Lkotlin/Metadata;
+	public static final fun writeLambda (Lkotlinx/metadata/KmLambda;[I)Lkotlin/Metadata;
+	public static final fun writeLambda (Lkotlinx/metadata/KmLambda;[II)Lkotlin/Metadata;
+	public static final fun writeMultiFileClassFacade (Ljava/util/List;)Lkotlin/Metadata;
+	public static final fun writeMultiFileClassFacade (Ljava/util/List;[I)Lkotlin/Metadata;
+	public static final fun writeMultiFileClassFacade (Ljava/util/List;[II)Lkotlin/Metadata;
+	public static final fun writeMultiFileClassPart (Lkotlinx/metadata/KmPackage;Ljava/lang/String;)Lkotlin/Metadata;
+	public static final fun writeMultiFileClassPart (Lkotlinx/metadata/KmPackage;Ljava/lang/String;[I)Lkotlin/Metadata;
+	public static final fun writeMultiFileClassPart (Lkotlinx/metadata/KmPackage;Ljava/lang/String;[II)Lkotlin/Metadata;
+	public static final fun writeSyntheticClass ()Lkotlin/Metadata;
+	public static final fun writeSyntheticClass ([I)Lkotlin/Metadata;
+	public static final fun writeSyntheticClass ([II)Lkotlin/Metadata;
 }
 
 public final class kotlinx/metadata/jvm/KotlinClassMetadata$Class : kotlinx/metadata/jvm/KotlinClassMetadata {
 	public final fun accept (Lkotlinx/metadata/KmClassVisitor;)V
+	public final fun getKmClass ()Lkotlinx/metadata/KmClass;
 	public final fun toKmClass ()Lkotlinx/metadata/KmClass;
 }
 
@@ -1291,34 +1291,35 @@ public final class kotlinx/metadata/jvm/KotlinClassMetadata$Class$Writer : kotli
 
 public final class kotlinx/metadata/jvm/KotlinClassMetadata$Companion {
 	public final fun read (Lkotlin/Metadata;)Lkotlinx/metadata/jvm/KotlinClassMetadata;
-	public final fun writeClass (Lkotlinx/metadata/KmClass;)Lkotlinx/metadata/jvm/KotlinClassMetadata$Class;
-	public final fun writeClass (Lkotlinx/metadata/KmClass;[I)Lkotlinx/metadata/jvm/KotlinClassMetadata$Class;
-	public final fun writeClass (Lkotlinx/metadata/KmClass;[II)Lkotlinx/metadata/jvm/KotlinClassMetadata$Class;
-	public static synthetic fun writeClass$default (Lkotlinx/metadata/jvm/KotlinClassMetadata$Companion;Lkotlinx/metadata/KmClass;[IIILjava/lang/Object;)Lkotlinx/metadata/jvm/KotlinClassMetadata$Class;
-	public final fun writeFileFacade (Lkotlinx/metadata/KmPackage;)Lkotlinx/metadata/jvm/KotlinClassMetadata$FileFacade;
-	public final fun writeFileFacade (Lkotlinx/metadata/KmPackage;[I)Lkotlinx/metadata/jvm/KotlinClassMetadata$FileFacade;
-	public final fun writeFileFacade (Lkotlinx/metadata/KmPackage;[II)Lkotlinx/metadata/jvm/KotlinClassMetadata$FileFacade;
-	public static synthetic fun writeFileFacade$default (Lkotlinx/metadata/jvm/KotlinClassMetadata$Companion;Lkotlinx/metadata/KmPackage;[IIILjava/lang/Object;)Lkotlinx/metadata/jvm/KotlinClassMetadata$FileFacade;
-	public final fun writeLambda (Lkotlinx/metadata/KmLambda;)Lkotlinx/metadata/jvm/KotlinClassMetadata$SyntheticClass;
-	public final fun writeLambda (Lkotlinx/metadata/KmLambda;[I)Lkotlinx/metadata/jvm/KotlinClassMetadata$SyntheticClass;
-	public final fun writeLambda (Lkotlinx/metadata/KmLambda;[II)Lkotlinx/metadata/jvm/KotlinClassMetadata$SyntheticClass;
-	public static synthetic fun writeLambda$default (Lkotlinx/metadata/jvm/KotlinClassMetadata$Companion;Lkotlinx/metadata/KmLambda;[IIILjava/lang/Object;)Lkotlinx/metadata/jvm/KotlinClassMetadata$SyntheticClass;
-	public final fun writeMultiFileClassFacade (Ljava/util/List;)Lkotlinx/metadata/jvm/KotlinClassMetadata$MultiFileClassFacade;
-	public final fun writeMultiFileClassFacade (Ljava/util/List;[I)Lkotlinx/metadata/jvm/KotlinClassMetadata$MultiFileClassFacade;
-	public final fun writeMultiFileClassFacade (Ljava/util/List;[II)Lkotlinx/metadata/jvm/KotlinClassMetadata$MultiFileClassFacade;
-	public static synthetic fun writeMultiFileClassFacade$default (Lkotlinx/metadata/jvm/KotlinClassMetadata$Companion;Ljava/util/List;[IIILjava/lang/Object;)Lkotlinx/metadata/jvm/KotlinClassMetadata$MultiFileClassFacade;
-	public final fun writeMultiFileClassPart (Lkotlinx/metadata/KmPackage;Ljava/lang/String;)Lkotlinx/metadata/jvm/KotlinClassMetadata$MultiFileClassPart;
-	public final fun writeMultiFileClassPart (Lkotlinx/metadata/KmPackage;Ljava/lang/String;[I)Lkotlinx/metadata/jvm/KotlinClassMetadata$MultiFileClassPart;
-	public final fun writeMultiFileClassPart (Lkotlinx/metadata/KmPackage;Ljava/lang/String;[II)Lkotlinx/metadata/jvm/KotlinClassMetadata$MultiFileClassPart;
-	public static synthetic fun writeMultiFileClassPart$default (Lkotlinx/metadata/jvm/KotlinClassMetadata$Companion;Lkotlinx/metadata/KmPackage;Ljava/lang/String;[IIILjava/lang/Object;)Lkotlinx/metadata/jvm/KotlinClassMetadata$MultiFileClassPart;
-	public final fun writeSyntheticClass ()Lkotlinx/metadata/jvm/KotlinClassMetadata$SyntheticClass;
-	public final fun writeSyntheticClass ([I)Lkotlinx/metadata/jvm/KotlinClassMetadata$SyntheticClass;
-	public final fun writeSyntheticClass ([II)Lkotlinx/metadata/jvm/KotlinClassMetadata$SyntheticClass;
-	public static synthetic fun writeSyntheticClass$default (Lkotlinx/metadata/jvm/KotlinClassMetadata$Companion;[IIILjava/lang/Object;)Lkotlinx/metadata/jvm/KotlinClassMetadata$SyntheticClass;
+	public final fun writeClass (Lkotlinx/metadata/KmClass;)Lkotlin/Metadata;
+	public final fun writeClass (Lkotlinx/metadata/KmClass;[I)Lkotlin/Metadata;
+	public final fun writeClass (Lkotlinx/metadata/KmClass;[II)Lkotlin/Metadata;
+	public static synthetic fun writeClass$default (Lkotlinx/metadata/jvm/KotlinClassMetadata$Companion;Lkotlinx/metadata/KmClass;[IIILjava/lang/Object;)Lkotlin/Metadata;
+	public final fun writeFileFacade (Lkotlinx/metadata/KmPackage;)Lkotlin/Metadata;
+	public final fun writeFileFacade (Lkotlinx/metadata/KmPackage;[I)Lkotlin/Metadata;
+	public final fun writeFileFacade (Lkotlinx/metadata/KmPackage;[II)Lkotlin/Metadata;
+	public static synthetic fun writeFileFacade$default (Lkotlinx/metadata/jvm/KotlinClassMetadata$Companion;Lkotlinx/metadata/KmPackage;[IIILjava/lang/Object;)Lkotlin/Metadata;
+	public final fun writeLambda (Lkotlinx/metadata/KmLambda;)Lkotlin/Metadata;
+	public final fun writeLambda (Lkotlinx/metadata/KmLambda;[I)Lkotlin/Metadata;
+	public final fun writeLambda (Lkotlinx/metadata/KmLambda;[II)Lkotlin/Metadata;
+	public static synthetic fun writeLambda$default (Lkotlinx/metadata/jvm/KotlinClassMetadata$Companion;Lkotlinx/metadata/KmLambda;[IIILjava/lang/Object;)Lkotlin/Metadata;
+	public final fun writeMultiFileClassFacade (Ljava/util/List;)Lkotlin/Metadata;
+	public final fun writeMultiFileClassFacade (Ljava/util/List;[I)Lkotlin/Metadata;
+	public final fun writeMultiFileClassFacade (Ljava/util/List;[II)Lkotlin/Metadata;
+	public static synthetic fun writeMultiFileClassFacade$default (Lkotlinx/metadata/jvm/KotlinClassMetadata$Companion;Ljava/util/List;[IIILjava/lang/Object;)Lkotlin/Metadata;
+	public final fun writeMultiFileClassPart (Lkotlinx/metadata/KmPackage;Ljava/lang/String;)Lkotlin/Metadata;
+	public final fun writeMultiFileClassPart (Lkotlinx/metadata/KmPackage;Ljava/lang/String;[I)Lkotlin/Metadata;
+	public final fun writeMultiFileClassPart (Lkotlinx/metadata/KmPackage;Ljava/lang/String;[II)Lkotlin/Metadata;
+	public static synthetic fun writeMultiFileClassPart$default (Lkotlinx/metadata/jvm/KotlinClassMetadata$Companion;Lkotlinx/metadata/KmPackage;Ljava/lang/String;[IIILjava/lang/Object;)Lkotlin/Metadata;
+	public final fun writeSyntheticClass ()Lkotlin/Metadata;
+	public final fun writeSyntheticClass ([I)Lkotlin/Metadata;
+	public final fun writeSyntheticClass ([II)Lkotlin/Metadata;
+	public static synthetic fun writeSyntheticClass$default (Lkotlinx/metadata/jvm/KotlinClassMetadata$Companion;[IIILjava/lang/Object;)Lkotlin/Metadata;
 }
 
 public final class kotlinx/metadata/jvm/KotlinClassMetadata$FileFacade : kotlinx/metadata/jvm/KotlinClassMetadata {
 	public final fun accept (Lkotlinx/metadata/KmPackageVisitor;)V
+	public final fun getKmPackage ()Lkotlinx/metadata/KmPackage;
 	public final fun toKmPackage ()Lkotlinx/metadata/KmPackage;
 }
 
@@ -1345,6 +1346,7 @@ public final class kotlinx/metadata/jvm/KotlinClassMetadata$MultiFileClassFacade
 public final class kotlinx/metadata/jvm/KotlinClassMetadata$MultiFileClassPart : kotlinx/metadata/jvm/KotlinClassMetadata {
 	public final fun accept (Lkotlinx/metadata/KmPackageVisitor;)V
 	public final fun getFacadeClassName ()Ljava/lang/String;
+	public final fun getKmPackage ()Lkotlinx/metadata/KmPackage;
 	public final fun toKmPackage ()Lkotlinx/metadata/KmPackage;
 }
 
@@ -1358,6 +1360,7 @@ public final class kotlinx/metadata/jvm/KotlinClassMetadata$MultiFileClassPart$W
 
 public final class kotlinx/metadata/jvm/KotlinClassMetadata$SyntheticClass : kotlinx/metadata/jvm/KotlinClassMetadata {
 	public final fun accept (Lkotlinx/metadata/KmLambdaVisitor;)V
+	public final fun getKmLambda ()Lkotlinx/metadata/KmLambda;
 	public final fun isLambda ()Z
 	public final fun toKmLambda ()Lkotlinx/metadata/KmLambda;
 }
@@ -1371,24 +1374,28 @@ public final class kotlinx/metadata/jvm/KotlinClassMetadata$SyntheticClass$Write
 }
 
 public final class kotlinx/metadata/jvm/KotlinClassMetadata$Unknown : kotlinx/metadata/jvm/KotlinClassMetadata {
+	public static final field INSTANCE Lkotlinx/metadata/jvm/KotlinClassMetadata$Unknown;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class kotlinx/metadata/jvm/KotlinModuleMetadata {
 	public static final field Companion Lkotlinx/metadata/jvm/KotlinModuleMetadata$Companion;
 	public synthetic fun <init> ([BLkotlinx/metadata/internal/metadata/jvm/deserialization/ModuleMapping;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun accept (Lkotlinx/metadata/jvm/KmModuleVisitor;)V
-	public final fun getBytes ()[B
+	public final fun getKmModule ()Lkotlinx/metadata/jvm/KmModule;
 	public static final fun read ([B)Lkotlinx/metadata/jvm/KotlinModuleMetadata;
 	public final fun toKmModule ()Lkotlinx/metadata/jvm/KmModule;
-	public static final fun write (Lkotlinx/metadata/jvm/KmModule;)Lkotlinx/metadata/jvm/KotlinModuleMetadata;
-	public static final fun write (Lkotlinx/metadata/jvm/KmModule;[I)Lkotlinx/metadata/jvm/KotlinModuleMetadata;
+	public static final fun write (Lkotlinx/metadata/jvm/KmModule;)[B
+	public static final fun write (Lkotlinx/metadata/jvm/KmModule;[I)[B
 }
 
 public final class kotlinx/metadata/jvm/KotlinModuleMetadata$Companion {
 	public final fun read ([B)Lkotlinx/metadata/jvm/KotlinModuleMetadata;
-	public final fun write (Lkotlinx/metadata/jvm/KmModule;)Lkotlinx/metadata/jvm/KotlinModuleMetadata;
-	public final fun write (Lkotlinx/metadata/jvm/KmModule;[I)Lkotlinx/metadata/jvm/KotlinModuleMetadata;
-	public static synthetic fun write$default (Lkotlinx/metadata/jvm/KotlinModuleMetadata$Companion;Lkotlinx/metadata/jvm/KmModule;[IILjava/lang/Object;)Lkotlinx/metadata/jvm/KotlinModuleMetadata;
+	public final fun write (Lkotlinx/metadata/jvm/KmModule;)[B
+	public final fun write (Lkotlinx/metadata/jvm/KmModule;[I)[B
+	public static synthetic fun write$default (Lkotlinx/metadata/jvm/KotlinModuleMetadata$Companion;Lkotlinx/metadata/jvm/KmModule;[IILjava/lang/Object;)[B
 }
 
 public final class kotlinx/metadata/jvm/KotlinModuleMetadata$Writer : kotlinx/metadata/jvm/KmModuleVisitor {
@@ -1396,8 +1403,8 @@ public final class kotlinx/metadata/jvm/KotlinModuleMetadata$Writer : kotlinx/me
 	public fun visitAnnotation (Lkotlinx/metadata/KmAnnotation;)V
 	public fun visitOptionalAnnotationClass ()Lkotlinx/metadata/KmClassVisitor;
 	public fun visitPackageParts (Ljava/lang/String;Ljava/util/List;Ljava/util/Map;)V
-	public final fun write ([I)Lkotlinx/metadata/jvm/KotlinModuleMetadata;
-	public static synthetic fun write$default (Lkotlinx/metadata/jvm/KotlinModuleMetadata$Writer;[IILjava/lang/Object;)Lkotlinx/metadata/jvm/KotlinModuleMetadata;
+	public final fun write ([I)[B
+	public static synthetic fun write$default (Lkotlinx/metadata/jvm/KotlinModuleMetadata$Writer;[IILjava/lang/Object;)[B
 }
 
 public abstract interface annotation class kotlinx/metadata/jvm/UnstableMetadataApi : java/lang/annotation/Annotation {

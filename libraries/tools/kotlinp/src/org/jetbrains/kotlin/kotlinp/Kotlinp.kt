@@ -11,7 +11,7 @@ import kotlinx.metadata.jvm.UnstableMetadataApi
 import java.io.File
 
 class Kotlinp(private val settings: KotlinpSettings) {
-    internal fun renderClassFile(classFile: KotlinClassMetadata?): String =
+    internal fun renderClassFile(classFile: KotlinClassMetadata): String =
         when (classFile) {
             is KotlinClassMetadata.Class -> ClassPrinter(settings).print(classFile)
             is KotlinClassMetadata.FileFacade -> FileFacadePrinter(settings).print(classFile)
@@ -21,14 +21,17 @@ class Kotlinp(private val settings: KotlinpSettings) {
             }
             is KotlinClassMetadata.MultiFileClassFacade -> MultiFileClassFacadePrinter().print(classFile)
             is KotlinClassMetadata.MultiFileClassPart -> MultiFileClassPartPrinter(settings).print(classFile)
-            is KotlinClassMetadata.Unknown -> buildString { appendLine("unknown file (k=${classFile.annotationData.kind})") }
-            null -> buildString { appendLine("unsupported file") }
+            is KotlinClassMetadata.Unknown -> buildString { appendLine("unknown file") }
         }
 
-    internal fun readClassFile(file: File): KotlinClassMetadata? {
-        val header = file.readKotlinClassHeader() ?: throw KotlinpException("file is not a Kotlin class file: $file")
+
+    internal fun readClassFile(file: File): Metadata {
+        return file.readKotlinClassHeader() ?: throw KotlinpException("file is not a Kotlin class file: $file")
+    }
+
+    internal fun readMetadata(metadata: Metadata): KotlinClassMetadata {
         return try {
-            KotlinClassMetadata.read(header)
+            KotlinClassMetadata.read(metadata)
         } catch (e: IllegalArgumentException) {
             throw KotlinpException("inconsistent Kotlin metadata: ${e.message}")
         }

@@ -21,17 +21,17 @@ public class JavaUsageTest {
     @Test
     public void testKotlinClassHeader() {
         Metadata m = MetadataSmokeTest.class.getAnnotation(Metadata.class);
-        KmClass clazz1 = ((KotlinClassMetadata.Class) Objects.requireNonNull(KotlinClassMetadata.read(m))).toKmClass();
+        KmClass clazz1 = ((KotlinClassMetadata.Class) Objects.requireNonNull(KotlinClassMetadata.read(m))).getKmClass();
         KotlinClassHeader kh = new KotlinClassHeader(m.k(), m.mv(), m.d1(), m.d2(), m.xs(), m.pn(), m.xi());
-        KmClass clazz2 = ((KotlinClassMetadata.Class) Objects.requireNonNull(KotlinClassMetadata.read(kh))).toKmClass();
+        KmClass clazz2 = ((KotlinClassMetadata.Class) Objects.requireNonNull(KotlinClassMetadata.read(kh))).getKmClass();
         assertEquals(clazz1.getName(), clazz2.getName());
     }
 
     @Test
     public void testWritingBackWithDefaults() {
         Metadata m = MetadataSmokeTest.class.getAnnotation(Metadata.class);
-        KmClass clazz1 = ((KotlinClassMetadata.Class) Objects.requireNonNull(KotlinClassMetadata.read(m))).toKmClass();
-        Metadata written = KotlinClassMetadata.writeClass(clazz1).getAnnotationData();
+        KmClass clazz1 = ((KotlinClassMetadata.Class) Objects.requireNonNull(KotlinClassMetadata.read(m))).getKmClass();
+        Metadata written = KotlinClassMetadata.writeClass(clazz1);
         assertArrayEquals(written.mv(), KotlinClassMetadata.COMPATIBLE_METADATA_VERSION);
         assertEquals(0, written.xi());
     }

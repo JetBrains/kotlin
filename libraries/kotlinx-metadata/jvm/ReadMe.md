@@ -62,10 +62,10 @@ when (metadata) {
 ```
 
 Let's assume we've obtained an instance of `KotlinClassMetadata.Class`; other kinds of classes are handled similarly, except some of them have metadata in a slightly different form.
-The main way to make sense of the underlying metadata is to invoke `toKmClass()`, which returns an instance of `KmClass` (`Km` is a shorthand for “Kotlin metadata”):
+The main way to make sense of the underlying metadata is to access the `kmClass` property, which returns an instance of `KmClass` (`Km` is a shorthand for “Kotlin metadata”):
 
 ```kotlin
-val klass = metadata.toKmClass()
+val klass = metadata.kmClass
 println(klass.functions.map { it.name })
 println(klass.properties.map { it.name })
 ```
@@ -92,7 +92,7 @@ if (Flag.Function.IS_SUSPEND(function.flags)) {
 ## Writing metadata
 
 To create metadata of a Kotlin class file from scratch, construct an instance of `KmClass`/`KmPackage`/`KmLambda`, fill it with the data and call corresponding `KotlinClassMetadata.write` function.
-Resulting `KotlinClassMetadata.annotationData` can be used to write `kotlin.Metadata` annotation on a class file.
+Resulting `kotlin.Metadata` annotation can be written to a class file.
 
 When using metadata writers from Kotlin source code, it's very convenient to use Kotlin scoping functions such as `apply` to reduce boilerplate:
 
@@ -113,7 +113,7 @@ val klass = KmClass().apply {
     ...
 }
 
-val annotation = KotlinClassMetadata.writeClass(klass).annotationData
+val annotation = KotlinClassMetadata.writeClass(klass)
 
 // Write annotation directly or use annotation.kind, annotation.data1, annotation.data2, etc.
 ```
@@ -131,29 +131,10 @@ The only difference is that the source for the reader (and the result of the wri
 // Read the module metadata
 val bytes = File("META-INF/main.kotlin_module").readBytes()
 val metadata = KotlinModuleMetadata.read(bytes)
-val module = metadata.toKmModule()
+val module = metadata.kmModule
 ...
 
 // Write the module metadata
-val bytes = KotlinModuleMetadata.write(module).bytes
+val bytes = KotlinModuleMetadata.write(module)
 File("META-INF/main.kotlin_module").writeBytes(bytes)
 ```
-
-## Laziness
-
-Note that until you load the actual underlying data of a `KotlinClassMetadata` or `KotlinModuleMetadata` instance by invoking one of the `toKm...` methods,
-the data is not completely parsed and verified. If you need to check if the data is not horribly corrupted before proceeding, ensure that either of those is called:
-
-```kotlin
-val metadata: KotlinClassMetadata.Class = ...
-
-try {
-    // Guarantees eager parsing of the underlying data
-    metadata.toKmClass()
-} catch (e: Exception) {
-    System.err.println("Metadata is corrupted!")
-}
-```
-
-
-

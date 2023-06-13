@@ -49,8 +49,8 @@ fun compileAndPrintAllFiles(
         when (outputFile.extension) {
             "kotlin_module" -> {
                 val moduleFile = kotlinp.readModuleFile(outputFile)!!
-                val transformedWithVisitors = transformModuleFileWithReadWriteVisitors(moduleFile)
-                val transformedWithNodes = transformModuleFileWithNodes(moduleFile)
+                val transformedWithVisitors = KotlinModuleMetadata.read(transformModuleFileWithReadWriteVisitors(moduleFile))
+                val transformedWithNodes = KotlinModuleMetadata.read(transformModuleFileWithNodes(moduleFile))
 
                 for ((sb, moduleFileToRender) in listOf(
                     main to moduleFile, afterVisitors to transformedWithVisitors, afterNodes to transformedWithNodes
@@ -60,9 +60,10 @@ fun compileAndPrintAllFiles(
                 }
             }
             "class" -> {
-                val classFile = kotlinp.readClassFile(outputFile)!!
+                val metadata = kotlinp.readClassFile(outputFile)
+                val classFile = kotlinp.readMetadata(metadata)
                 val classFile2 = transformClassFileWithReadWriteVisitors(classFile)
-                val classFile3 = transformClassFileWithNodes(classFile)
+                val classFile3 = KotlinClassMetadata.read(transformClassFileWithNodes(metadata, classFile))
 
                 for ((sb, classFileToRender) in listOf(
                     main to classFile, afterVisitors to classFile2, afterNodes to classFile3
@@ -130,24 +131,25 @@ private fun transformClassFileWithReadWriteVisitors(classFile: KotlinClassMetada
     }
 
 // Reads the class file and writes it back with KmClass/KmFunction/... elements.
-private fun transformClassFileWithNodes(classFile: KotlinClassMetadata): KotlinClassMetadata =
+private fun transformClassFileWithNodes(metadata: Metadata, classFile: KotlinClassMetadata): Metadata =
     when (classFile) {
         is KotlinClassMetadata.Class ->
-            KotlinClassMetadata.writeClass(classFile.toKmClass())
+            KotlinClassMetadata.writeClass(classFile.kmClass)
         is KotlinClassMetadata.FileFacade ->
-            KotlinClassMetadata.writeFileFacade(classFile.toKmPackage())
+            KotlinClassMetadata.writeFileFacade(classFile.kmPackage)
         is KotlinClassMetadata.SyntheticClass ->
-            classFile.toKmLambda()?.let { KotlinClassMetadata.writeLambda(it) } ?: KotlinClassMetadata.writeSyntheticClass()
+            classFile.kmLambda?.let { KotlinClassMetadata.writeLambda(it) } ?: KotlinClassMetadata.writeSyntheticClass()
         is KotlinClassMetadata.MultiFileClassPart ->
-            KotlinClassMetadata.writeMultiFileClassPart(classFile.toKmPackage(), classFile.facadeClassName)
-        else -> classFile
+            KotlinClassMetadata.writeMultiFileClassPart(classFile.kmPackage, classFile.facadeClassName)
+        is KotlinClassMetadata.MultiFileClassFacade -> KotlinClassMetadata.writeMultiFileClassFacade(classFile.partClassNames)
+        is KotlinClassMetadata.Unknown -> metadata
     }
 
 @Suppress("DEPRECATION") // We're testing that reading/writing with KmNodes is identical to direct
 @OptIn(UnstableMetadataApi::class)
-private fun transformModuleFileWithReadWriteVisitors(moduleFile: KotlinModuleMetadata): KotlinModuleMetadata =
+private fun transformModuleFileWithReadWriteVisitors(moduleFile: KotlinModuleMetadata): ByteArray =
     KotlinModuleMetadata.Writer().apply(moduleFile::accept).write()
 
 @OptIn(UnstableMetadataApi::class)
-private fun transformModuleFileWithNodes(moduleFile: KotlinModuleMetadata): KotlinModuleMetadata =
-    KotlinModuleMetadata.write(moduleFile.toKmModule())
+private fun transformModuleFileWithNodes(moduleFile: KotlinModuleMetadata): ByteArray =
+    KotlinModuleMetadata.write(moduleFile.kmModule)

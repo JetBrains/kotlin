@@ -38,17 +38,27 @@ import org.jetbrains.kotlin.metadata.jvm.deserialization.serializeToByteArray
  */
 @UnstableMetadataApi
 class KotlinModuleMetadata private constructor(
-    @Suppress("MemberVisibilityCanBePrivate") val bytes: ByteArray,
-    @get:IgnoreInApiDump internal val data: ModuleMapping
+    private val bytes: ByteArray,
+    private val data: ModuleMapping,
 ) {
+
+    /**
+     * Returns the [KmModule] representation of this metadata.
+     *
+     * Returns the same (mutable) [KmModule] instance every time.
+     */
+    public val kmModule: KmModule = KmModule().apply(this::accept)
+
     /**
      * Visits metadata of this module with a new [KmModule] instance and returns that instance.
-     *
-     * @throws IllegalArgumentException if parsed metadata is inconsistent and can't be transformed into [KmModule].
      */
-    fun toKmModule(): KmModule = wrapIntoMetadataExceptionWhenNeeded {
-        KmModule().apply(this::accept)
-    }
+    @Deprecated(
+        "To avoid excessive copying, use .kmModule property instead. Note that it returns a view and not a copy.",
+        ReplaceWith("kmModule"),
+        DeprecationLevel.WARNING
+    )
+    fun toKmModule(): KmModule = KmModule().apply(kmModule::accept)
+
 
     /**
      * A [KmModuleVisitor] that generates the metadata of a Kotlin JVM module file.
@@ -97,9 +107,8 @@ class KotlinModuleMetadata private constructor(
          *   [KotlinClassMetadata.COMPATIBLE_METADATA_VERSION] by default
          */
         @Deprecated("Writer API is deprecated as excessive and cumbersome. Please use KotlinModuleMetadata.write(kmModule, metadataVersion)")
-        fun write(metadataVersion: IntArray = COMPATIBLE_METADATA_VERSION): KotlinModuleMetadata {
-            val bytes = b.build().serializeToByteArray(JvmMetadataVersion(*metadataVersion), 0)
-            return KotlinModuleMetadata(bytes, dataFromBytes(bytes))
+        fun write(metadataVersion: IntArray = COMPATIBLE_METADATA_VERSION): ByteArray {
+            return b.build().serializeToByteArray(JvmMetadataVersion(*metadataVersion), 0)
         }
     }
 
@@ -158,12 +167,12 @@ class KotlinModuleMetadata private constructor(
          * @param metadataVersion metadata version to be written to the metadata (see [Metadata.metadataVersion]),
          *   [KotlinClassMetadata.COMPATIBLE_METADATA_VERSION] by default
          *
-         * @throws IllegalArgumentException if [kmModule] is not correct and can't be written or if [metadataVersion] is not supported for writing.
+         * @throws IllegalArgumentException if [kmModule] is not correct and cannot be written or if [metadataVersion] is not supported for writing.
          */
         @UnstableMetadataApi
         @JvmStatic
         @JvmOverloads
-        fun write(kmModule: KmModule, metadataVersion: IntArray = COMPATIBLE_METADATA_VERSION): KotlinModuleMetadata = wrapWriteIntoIAE {
+        fun write(kmModule: KmModule, metadataVersion: IntArray = COMPATIBLE_METADATA_VERSION): ByteArray = wrapWriteIntoIAE {
             Writer().also { kmModule.accept(it) }.write(metadataVersion)
         }
 

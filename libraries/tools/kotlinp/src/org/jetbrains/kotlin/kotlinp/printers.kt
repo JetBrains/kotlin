@@ -567,7 +567,7 @@ class ClassPrinter(private val settings: KotlinpSettings) : AbstractPrinter<Kotl
         }
     }
 
-    override fun print(klass: KotlinClassMetadata.Class): String = print(klass.toKmClass())
+    override fun print(klass: KotlinClassMetadata.Class): String = print(klass.kmClass)
 
     @OptIn(ExperimentalContextReceivers::class)
     fun print(kmClass: KmClass): String {
@@ -625,7 +625,7 @@ abstract class PackagePrinter(private val settings: KotlinpSettings) {
 
 class FileFacadePrinter(settings: KotlinpSettings) : PackagePrinter(settings), AbstractPrinter<KotlinClassMetadata.FileFacade> {
     override fun print(klass: KotlinClassMetadata.FileFacade): String {
-        print(klass.toKmPackage())
+        print(klass.kmPackage)
         return sb.toString()
     }
 }
@@ -635,7 +635,7 @@ class LambdaPrinter(private val settings: KotlinpSettings) : AbstractPrinter<Kot
         val sb = StringBuilder().apply {
             appendLine("lambda {")
         }
-        val kLambda = klass.toKmLambda() ?: throw KotlinpException("Synthetic class $klass is not a lambda")
+        val kLambda = klass.kmLambda ?: throw KotlinpException("Synthetic class $klass is not a lambda")
         visitFunction(kLambda.function, settings, sb)
         sb.appendLine("}")
         return sb.toString()
@@ -647,7 +647,7 @@ class MultiFileClassPartPrinter(
 ) : PackagePrinter(settings), AbstractPrinter<KotlinClassMetadata.MultiFileClassPart> {
     override fun print(klass: KotlinClassMetadata.MultiFileClassPart): String {
         sb.appendLine("  // facade: ${klass.facadeClassName}")
-        print(klass.toKmPackage())
+        print(klass.kmPackage)
         return sb.toString()
     }
 }
@@ -696,7 +696,7 @@ class ModuleFilePrinter(private val settings: KotlinpSettings) {
 
     @UnstableMetadataApi
     fun print(metadata: KotlinModuleMetadata): String {
-        val kmModule = metadata.toKmModule()
+        val kmModule = metadata.kmModule
         kmModule.packageParts.forEach { (fqName, kmPackageParts) ->
             visitPackageParts(fqName, kmPackageParts.fileFacades, kmPackageParts.multiFileClassParts)
         }

@@ -43,7 +43,7 @@ object Main {
 
             val text = try {
                 when (file.extension) {
-                    "class" -> kotlinp.renderClassFile(kotlinp.readClassFile(file))
+                    "class" -> kotlinp.renderClassFile(kotlinp.readMetadata(kotlinp.readClassFile(file)))
                     "kotlin_module" -> @OptIn(UnstableMetadataApi::class) kotlinp.renderModuleFile(kotlinp.readModuleFile(file))
                     else -> throw KotlinpException("only .class and .kotlin_module files are supported")
                 }

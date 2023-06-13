@@ -60,7 +60,7 @@ class MetadataSmokeTest {
             }
         }
 
-        val annotationData = KotlinClassMetadata.writeClass(klass).annotationData
+        val annotationData = KotlinClassMetadata.writeClass(klass)
 
         // Then, produce the bytecode of a .class file with ASM
 
@@ -180,7 +180,7 @@ class MetadataSmokeTest {
             }
         )
 
-        val classWithUnstableParameterNames = newMetadata.toKmClass()
+        val classWithUnstableParameterNames = newMetadata.readAsKmClass()
 
         classWithUnstableParameterNames.constructors.forEach { assertTrue(Flag.Constructor.HAS_NON_STABLE_PARAMETER_NAMES(it.flags)) }
         classWithUnstableParameterNames.functions.forEach { assertTrue(Flag.Function.HAS_NON_STABLE_PARAMETER_NAMES(it.flags)) }
@@ -217,7 +217,27 @@ class MetadataSmokeTest {
 
         val kmClassCopy = KotlinClassMetadata
             .writeClass(kmClass, metadata.metadataVersion, metadata.extraInt)
-            .toKmClass()
+            .readAsKmClass()
         assertEquals(kmClassCopy.jvmFlags, jvmClassFlags)
     }
+
+    @Test
+    fun testDisplayNameSample() {
+        class A {}
+
+        val b: (Int) -> Int = fun(x: Int) = x
+
+        assertEquals("Class .kotlinx/metadata/test/MetadataSmokeTest\$testDisplayNameSample\$A", displayName(A::class.java.getMetadata()))
+        assertEquals("Lambda <no name provided>", displayName(b::class.java.getMetadata()))
+    }
+
+    fun displayName(metadata: Metadata): String = when (val kcm = KotlinClassMetadata.read(metadata)) {
+        is KotlinClassMetadata.Class -> "Class ${kcm.kmClass.name}"
+        is KotlinClassMetadata.FileFacade -> "File facade with functions: ${kcm.kmPackage.functions.joinToString { it.name }}"
+        is KotlinClassMetadata.SyntheticClass -> kcm.kmLambda?.function?.name?.let { "Lambda $it" } ?: "Synthetic class"
+        is KotlinClassMetadata.MultiFileClassFacade -> "Multifile class facade with parts: ${kcm.partClassNames.joinToString()}"
+        is KotlinClassMetadata.MultiFileClassPart -> "Multifile class part ${kcm.facadeClassName}"
+        is KotlinClassMetadata.Unknown -> "Unknown metadata"
+    }
+
 }

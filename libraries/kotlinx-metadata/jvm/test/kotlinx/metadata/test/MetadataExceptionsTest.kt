@@ -20,7 +20,7 @@ class MetadataExceptionsTest {
         val malformedMetadata =
             Metadata(KotlinClassMetadata.CLASS_KIND, KotlinClassMetadata.COMPATIBLE_METADATA_VERSION, arrayOf(malformedInput))
         val e = assertFailsWith<IllegalArgumentException> {
-            (KotlinClassMetadata.read(malformedMetadata) as KotlinClassMetadata.Class).toKmClass()
+            (KotlinClassMetadata.read(malformedMetadata) as KotlinClassMetadata.Class)
         }
         assertIs<InvalidProtocolBufferException>(e.cause)
     }
