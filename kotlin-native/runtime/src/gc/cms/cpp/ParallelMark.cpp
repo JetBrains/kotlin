@@ -104,6 +104,7 @@ void gc::mark::ParallelMark::endMarkingEpoch() {
 void gc::mark::ParallelMark::runMainInSTW() {
     RuntimeAssert(activeWorkersCount_ > 0, "Main worker must always be accounted");
     ParallelProcessor::Worker mainWorker(*parallelProcessor_);
+    GCLogDebug(gcHandle().getEpoch(), "Creating main mark worker");
 
     if (compiler::gcMarkSingleThreaded()) {
         gc::collectRootSet<MarkTraits>(gcHandle(), mainWorker, [] (mm::ThreadData&) { return true; });
@@ -141,7 +142,7 @@ void gc::mark::ParallelMark::runOnMutator(mm::ThreadData& mutatorThread) {
     if (parallelWorker) {
         auto& gcData = mutatorThread.gc().impl().gc();
         gcData.beginCooperation();
-        GCLogDebug(epoch, "Mutator thread %d takes part in marking", konan::currentThreadId());
+        GCLogDebug(epoch, "Mutator thread cooperates in marking");
 
         tryCollectRootSet(mutatorThread, *parallelWorker);
 
@@ -160,7 +161,8 @@ void gc::mark::ParallelMark::runAuxiliary() {
     auto curEpoch = gcHandle().getEpoch();
     auto parallelWorker = createWorker();
     if (parallelWorker) {
-        auxWorkersCount_.fetch_add(1, std::memory_order_relaxed);
+        auto workerNum = auxWorkersCount_.fetch_add(1, std::memory_order_relaxed);
+        GCLogDebug(gcHandle().getEpoch(), "Aux worker %zu starts", workerNum);
         completeRootSetAndMark(*parallelWorker);
     }
 
@@ -209,14 +211,13 @@ void gc::mark::ParallelMark::tryCollectRootSet(mm::ThreadData& thread, MarkTrait
     auto& gcData = thread.gc().impl().gc();
     if (!gcData.tryLockRootSet()) return;
 
-    GCLogDebug(gcHandle().getEpoch(), "Root set collection on thread %d for thread %d",
-               konan::currentThreadId(), thread.threadId());
+    GCLogDebug(gcHandle().getEpoch(), "Root set collection for thread %d", thread.threadId());
     gcData.publish();
     collectRootSetForThread<MarkTraits>(gcHandle(), markQueue, thread);
 }
 
 void gc::mark::ParallelMark::parallelMark(ParallelProcessor::Worker& worker) {
-    GCLogDebug(gcHandle().getEpoch(), "Mark task has begun on thread %d", konan::currentThreadId());
+    GCLogDebug(gcHandle().getEpoch(), "Mark task has begun");
     Mark<MarkTraits>(gcHandle(), worker);
     // We must now wait for every worker to finish the Mark procedure:
     // wake up from possible waiting, publish statistics, etc.
@@ -228,6 +229,7 @@ std::optional<gc::mark::ParallelMark::ParallelProcessor::Worker> gc::mark::Paral
     std::unique_lock guard(workerCreationMutex_);
     if (!pacer_.acceptingNewWorkers() || activeWorkersCount_.load(std::memory_order_relaxed) >= maxParallelism_) return std::nullopt;
 
+    GCLogDebug(gcHandle().getEpoch(), "Creating %zu'th mark worker", activeWorkersCount_.load(std::memory_order_relaxed));
     activeWorkersCount_.store(activeWorkersCount_.load(std::memory_order_relaxed) + 1, std::memory_order_relaxed);
     return std::make_optional<ParallelProcessor::Worker>(*parallelProcessor_);
 }
