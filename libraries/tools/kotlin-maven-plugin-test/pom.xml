@@ -211,13 +211,7 @@
                                         <pomExclude>test-enable-extensions/pom.xml</pomExclude>
                                         <pomExclude>test-kapt-allopen/pom.xml</pomExclude>
                                         <pomExclude>test-lombok-with-kapt/pom.xml</pomExclude>
-                                        <!-- exclude js and mpp -->
-                                        <pomExclude>test-js-moduleKind/pom.xml</pomExclude>
-                                        <pomExclude>test-js-accessToInternal/pom.xml</pomExclude>
-                                        <pomExclude>test-js-suppressWarnings/pom.xml</pomExclude>
-                                        <pomExclude>test-js-sourceMap/pom.xml</pomExclude>
-                                        <pomExclude>test-js-extraArguments/pom.xml</pomExclude>
-                                        <pomExclude>test-js-sourceMapEmbedSources/pom.xml</pomExclude>
+                                        <!-- exclude mpp -->
                                         <pomExclude>test-multiplatform/pom.xml</pomExclude>
                                         <!-- exclude kts -->
                                         <pomExclude>test-helloworld-kts/pom.xml</pomExclude>
