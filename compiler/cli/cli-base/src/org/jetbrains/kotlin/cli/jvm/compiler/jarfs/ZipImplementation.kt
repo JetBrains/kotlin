@@ -53,6 +53,7 @@ fun MappedByteBuffer.contentsToByteArray(
             val result = ByteArray(zipEntryDescription.uncompressedSize)
 
             inflater.inflate(result)
+            inflater.end()
 
             result
         }
