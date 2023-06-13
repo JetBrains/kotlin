@@ -4,3 +4,15 @@ FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
 R|A|
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] superType.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    public abstract [ResolvedTo(STATUS)] interface A : R|kotlin/Any| {
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] class C : R|A| {
+        public [ResolvedTo(BODY_RESOLVE)] constructor(): R|C| {
+            super<R|kotlin/Any|>()
+        }
+
+    }

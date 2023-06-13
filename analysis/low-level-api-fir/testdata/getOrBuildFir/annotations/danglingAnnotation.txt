@@ -4,3 +4,8 @@ FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
 @R|kotlin/Suppress|[Types](names = vararg(String()))
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] danglingAnnotation.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    @R|kotlin/Suppress|[Types](names = vararg(String())) @R|kotlin/annotation/MustBeDocumented|[Types]() <DANGLING MODIFIER: Top level declaration expected>

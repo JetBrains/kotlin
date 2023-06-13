@@ -7,3 +7,11 @@ public final [ResolvedTo(BODY_RESOLVE)] fun x(): R|kotlin/Unit| {
     local final [ResolvedTo(BODY_RESOLVE)] fun y(): R|kotlin/String|
 
 }
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] topLevelFunction.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    public final [ResolvedTo(BODY_RESOLVE)] fun x(): R|kotlin/Unit| {
+        local final [ResolvedTo(BODY_RESOLVE)] fun y(): R|kotlin/String|
+
+    }

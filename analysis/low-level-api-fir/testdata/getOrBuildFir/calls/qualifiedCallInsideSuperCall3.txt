@@ -9,3 +9,28 @@ public final [ResolvedTo(BODY_RESOLVE)] object C : R|A| {
     }
 
 }
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] qualifiedCallInsideSuperCall3.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    public open [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
+        public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] constructor([ResolvedTo(EXPECT_ACTUAL_MATCHING)] init: R|A.() -> kotlin/Unit|): R|A| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] val prop: R|kotlin/String| = LAZY_EXPRESSION
+            public [ResolvedTo(STATUS)] get(): R|kotlin/String|
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] object B : A {
+        private [ResolvedTo(RAW_FIR)] constructor(): R|B| {
+            LAZY_super<A>
+        }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] object C : R|A| {
+        public [ResolvedTo(BODY_RESOLVE)] constructor(): R|C| {
+            super<R|A|>()
+        }
+
+    }

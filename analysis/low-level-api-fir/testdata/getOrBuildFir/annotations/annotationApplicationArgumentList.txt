@@ -4,3 +4,18 @@ FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
 String(y)
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] annotationApplicationArgumentList.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    public final [ResolvedTo(STATUS)] annotation class Annotation : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] constructor([ResolvedTo(STATUS)] name: R|kotlin/String|): R|Annotation| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] val name: R|kotlin/String| = R|<local>/name|
+            public [ResolvedTo(STATUS)] get(): R|kotlin/String|
+
+    }
+    @R|Annotation|[Types](name = String(y)) public final [ResolvedTo(BODY_RESOLVE)] fun x(): R|kotlin/Unit| {
+    }

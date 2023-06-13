@@ -4,3 +4,17 @@ FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
 this<R|A|>(Int(1))
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] constructorDelegationThisCall.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] constructor([ResolvedTo(STATUS)] x: R|kotlin/Int|): R|A| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public [ResolvedTo(BODY_RESOLVE)] constructor([ResolvedTo(BODY_RESOLVE)] y: R|kotlin/String|): R|A| {
+            this<R|A|>(Int(1))
+        }
+
+    }

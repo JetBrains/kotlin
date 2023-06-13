@@ -9,3 +9,15 @@ object : R|kotlin/Any| {
     }
 
 }
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] objectLiteralExpression.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    public final [ResolvedTo(BODY_RESOLVE)] val x: R|kotlin/Any| = object : R|kotlin/Any| {
+        private [ResolvedTo(BODY_RESOLVE)] constructor(): R|<anonymous>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Any|

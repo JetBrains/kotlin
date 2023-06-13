@@ -6,3 +6,13 @@ FIR element rendered:
 local final [ResolvedTo(BODY_RESOLVE)] fun x(): R|kotlin/String| {
     ^x String()
 }
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] localFunction.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    public final [ResolvedTo(BODY_RESOLVE)] fun y(): R|kotlin/Unit| {
+        local final [ResolvedTo(BODY_RESOLVE)] fun x(): R|kotlin/String| {
+            ^x String()
+        }
+
+    }

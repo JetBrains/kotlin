@@ -7,3 +7,14 @@ FIR element rendered:
     ^ Int(1)
 }
 )
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] propertyDelegate.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    public final [ResolvedTo(BODY_RESOLVE)] val x: <ERROR TYPE REF: Unresolved name: getValue>by <Unresolved name: lazy>#(<L> = [ResolvedTo(RAW_FIR)] lazy@fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
+        ^ Int(1)
+    }
+    )
+        public [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Unresolved name: getValue> {
+            ^ D|/x|.<Unresolved name: getValue>#(Null(null), ::R|/x|)
+        }

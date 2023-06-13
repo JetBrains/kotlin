@@ -4,3 +4,12 @@ FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
 Int(1)
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] callArgument.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    public final [ResolvedTo(CONTRACTS)] fun y([ResolvedTo(CONTRACTS)] a: R|kotlin/Int|): R|kotlin/Unit| {
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] fun x(): R|kotlin/Unit| {
+        R|/y|(Int(1))
+    }

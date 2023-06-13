@@ -10,3 +10,17 @@ catch ([ResolvedTo(BODY_RESOLVE)] e: R|kotlin/Throwable|) {
 }
 finally {
 }
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] tryExpression.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    public final [ResolvedTo(BODY_RESOLVE)] fun x(): R|kotlin/Unit| {
+        try {
+            Int(1)
+        }
+        catch ([ResolvedTo(BODY_RESOLVE)] e: R|kotlin/Throwable|) {
+        }
+        finally {
+        }
+
+    }

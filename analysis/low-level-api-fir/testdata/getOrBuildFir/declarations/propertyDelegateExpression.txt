@@ -7,3 +7,14 @@ R|kotlin/lazy|<R|kotlin/Int|>(<L> = [ResolvedTo(RAW_FIR)] lazy@fun <anonymous>()
     ^ Int(1)
 }
 )
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] propertyDelegateExpression.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    public final [ResolvedTo(BODY_RESOLVE)] val x: R|kotlin/Int|by R|kotlin/lazy|<R|kotlin/Int|>(<L> = [ResolvedTo(RAW_FIR)] lazy@fun <anonymous>(): R|kotlin/Int| <inline=NoInline>  {
+        ^ Int(1)
+    }
+    )
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int| {
+            ^ D|/x|.R|kotlin/getValue|<R|kotlin/Int|>(Null(null), ::R|/x|)
+        }

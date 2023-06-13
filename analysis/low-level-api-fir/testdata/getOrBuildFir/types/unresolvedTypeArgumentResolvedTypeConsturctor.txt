@@ -4,3 +4,10 @@ FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
 R|kotlin/collections/List<ERROR CLASS: Symbol not found for UNRESOVLED>|
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] unresolvedTypeArgumentResolvedTypeConsturctor.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    public final [ResolvedTo(BODY_RESOLVE)] fun x(): R|kotlin/collections/List<ERROR CLASS: Symbol not found for UNRESOVLED>| {
+        ^x Int(1)
+    }

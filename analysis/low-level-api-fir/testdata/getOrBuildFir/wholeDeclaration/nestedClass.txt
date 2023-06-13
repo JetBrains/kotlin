@@ -11,3 +11,22 @@ public final [ResolvedTo(BODY_RESOLVE)] class X : R|kotlin/Any| {
     public final [ResolvedTo(BODY_RESOLVE)] fun y(): R|kotlin/String|
 
 }
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] nestedClass.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    public final [ResolvedTo(STATUS)] class Y : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] constructor(): R|Y| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] class X : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] constructor(): R|Y.X| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] fun y(): R|kotlin/String|
+
+        }
+
+    }

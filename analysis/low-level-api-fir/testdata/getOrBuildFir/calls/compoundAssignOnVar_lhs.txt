@@ -4,3 +4,11 @@ FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
 R|<local>/i| = R|<local>/i|.R|kotlin/Int.plus|(Int(1))
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] compoundAssignOnVar_lhs.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    public final [ResolvedTo(BODY_RESOLVE)] fun test(): R|kotlin/Unit| {
+        [ResolvedTo(BODY_RESOLVE)] lvar i: R|kotlin/Int| = Int(1)
+        R|<local>/i| = R|<local>/i|.R|kotlin/Int.plus|(Int(1))
+    }

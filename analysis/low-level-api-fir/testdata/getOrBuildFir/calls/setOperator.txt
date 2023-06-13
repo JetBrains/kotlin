@@ -4,3 +4,35 @@ FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
 R|test/B.set|
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] setOperator.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    package test
+
+    public final [ResolvedTo(STATUS)] class B : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] constructor([ResolvedTo(STATUS)] n: R|kotlin/Int|): R|test/B| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] val n: R|kotlin/Int| = R|<local>/n|
+            public [ResolvedTo(STATUS)] get(): R|kotlin/Int|
+
+        public final operator [ResolvedTo(CONTRACTS)] fun set([ResolvedTo(CONTRACTS)] i: R|kotlin/Int|, [ResolvedTo(CONTRACTS)] a: R|test/B|): R|kotlin/Unit| {
+        }
+
+        public final operator [ResolvedTo(CONTRACTS)] fun get([ResolvedTo(CONTRACTS)] i: R|kotlin/Int|): R|test/B| {
+        }
+
+        public final operator [ResolvedTo(CONTRACTS)] fun inc(): R|test/B| {
+        }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] fun test(): R|kotlin/Unit| {
+        [ResolvedTo(BODY_RESOLVE)] lvar a: R|test/B| = R|test/B.B|(Int(1))
+        [ResolvedTo(BODY_RESOLVE)] lval <array>: R|test/B| = R|<local>/a|
+        [ResolvedTo(BODY_RESOLVE)] lval <index_0>: R|kotlin/Int| = Int(2)
+        [ResolvedTo(BODY_RESOLVE)] lval <unary>: R|test/B| = R|<local>/<array>|.R|test/B.get|(R|<local>/<index_0>|)
+        R|<local>/<array>|.R|test/B.set|(R|<local>/<index_0>|, R|<local>/<unary>|.R|test/B.inc|())
+        R|<local>/<unary>|
+    }

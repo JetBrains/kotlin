@@ -1,1 +1,1 @@
-fun x(): <expr>List<Int, String></expr> = TODO()
+fun x(): <expr>List<Int, String></expr> = 1

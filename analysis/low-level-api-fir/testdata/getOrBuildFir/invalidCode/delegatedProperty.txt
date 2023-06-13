@@ -7,3 +7,11 @@ public final [ResolvedTo(BODY_RESOLVE)] val p: R|kotlin/String|by ERROR_EXPR(Sho
     public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String| {
         ^ D|/p|.<Unresolved name: getValue>#(Null(null), ::R|/p|)
     }
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] delegatedProperty.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    public final [ResolvedTo(BODY_RESOLVE)] val p: R|kotlin/String|by ERROR_EXPR(Should have delegate)
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String| {
+            ^ D|/p|.<Unresolved name: getValue>#(Null(null), ::R|/p|)
+        }

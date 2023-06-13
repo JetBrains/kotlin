@@ -1,1 +1,1 @@
-fun x(): UNRESOLVED<String, List< <expr> Int </expr> >> = TODO()
+fun x(): UNRESOLVED<String, List< <expr> Int </expr> >> = 1

@@ -15,3 +15,40 @@ public final [ResolvedTo(BODY_RESOLVE)] class G : R|A| {
     }
 
 }
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] qualifiedCallInsideSuperCall4.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    public open [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] constructor([ResolvedTo(STATUS)] init: R|A.() -> kotlin/Unit|): R|A| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(CONTRACTS)] val prop: R|kotlin/String| = String()
+            public [ResolvedTo(CONTRACTS)] get(): R|kotlin/String|
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] object B : A {
+        private [ResolvedTo(RAW_FIR)] constructor(): R|B| {
+            LAZY_super<A>
+        }
+
+    }
+    public final [ResolvedTo(STATUS)] object C : R|A| {
+        private [ResolvedTo(STATUS)] constructor(): R|C| {
+            LAZY_super<R|A|>
+        }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] class G : R|A| {
+        public [ResolvedTo(BODY_RESOLVE)] constructor(): R|G| {
+            super<R|A|>([ResolvedTo(RAW_FIR)] fun R|A|.<anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+                local final [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/String| {
+                    ^foo Q|C|.R|/A.prop|.R|kotlin/String.toString|()
+                }
+
+            }
+            )
+        }
+
+    }

@@ -4,3 +4,14 @@ FIR source kind: DesugaredCompoundAssignment
 
 FIR element rendered:
 R|<local>/l|.R|/A.plusAssign|(Int(1))
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] compoundAssignOnVal.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    public abstract [ResolvedTo(STATUS)] interface A : R|kotlin/Any| {
+        public abstract operator [ResolvedTo(CONTRACTS)] fun plusAssign([ResolvedTo(CONTRACTS)] i: R|kotlin/Int|): R|kotlin/Unit|
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] fun test([ResolvedTo(BODY_RESOLVE)] l: R|A|): R|kotlin/Unit| {
+        R|<local>/l|.R|/A.plusAssign|(Int(1))
+    }

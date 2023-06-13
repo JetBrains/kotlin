@@ -1,1 +1,1 @@
-fun x(): <expr>List<UNRESOVLED></expr> = TODO()
+fun x(): <expr>List<UNRESOVLED></expr> = 1

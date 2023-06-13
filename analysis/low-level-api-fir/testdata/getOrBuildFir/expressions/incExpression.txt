@@ -4,3 +4,16 @@ FIR source kind: DesugaredIncrementOrDecrement
 
 FIR element rendered:
 R|<local>/nextUnnamedLibraryIndex| = R|<local>/<unary>|.R|kotlin/Int.inc|()
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] incExpression.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    public final [ResolvedTo(BODY_RESOLVE)] fun main([ResolvedTo(BODY_RESOLVE)] args: R|kotlin/Array<kotlin/String>|): R|kotlin/Unit| {
+        [ResolvedTo(BODY_RESOLVE)] lvar nextUnnamedLibraryIndex: R|kotlin/Int| = Int(1)
+        [ResolvedTo(BODY_RESOLVE)] lval originalName: R|kotlin/String| = <strcat>( {
+            [ResolvedTo(BODY_RESOLVE)] lval <unary>: R|kotlin/Int| = R|<local>/nextUnnamedLibraryIndex|
+            R|<local>/nextUnnamedLibraryIndex| = R|<local>/<unary>|.R|kotlin/Int.inc|()
+            R|<local>/<unary>|
+        }
+        )
+    }

@@ -1,1 +1,1 @@
-fun x(): Map<String, List< <expr> Int </expr> >> = TODO()
+fun x(): Map<String, List< <expr> Int </expr> >> = 1

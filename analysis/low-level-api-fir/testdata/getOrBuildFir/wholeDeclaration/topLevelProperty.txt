@@ -5,3 +5,9 @@ FIR source kind: KtRealSourceElementKind
 FIR element rendered:
 public final [ResolvedTo(BODY_RESOLVE)] val x: R|kotlin/Int| = Int(1)
     public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] topLevelProperty.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    public final [ResolvedTo(BODY_RESOLVE)] val x: R|kotlin/Int| = Int(1)
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|

@@ -4,3 +4,10 @@ FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
 <ERROR TYPE REF: Wrong number of type arguments>
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] invalidTypeArgumentsCount.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    public final [ResolvedTo(BODY_RESOLVE)] fun x(): <ERROR TYPE REF: Wrong number of type arguments> {
+        ^x Int(1)
+    }

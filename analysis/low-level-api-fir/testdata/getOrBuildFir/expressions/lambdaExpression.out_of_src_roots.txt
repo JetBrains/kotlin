@@ -6,3 +6,12 @@ FIR element rendered:
 [ResolvedTo(BODY_RESOLVE)] run@fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
     ^ Int(1)
 }
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] lambdaExpression.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    public final [ResolvedTo(BODY_RESOLVE)] val x: <ERROR TYPE REF: Unresolved name: run> = <Unresolved name: run>#(<L> = [ResolvedTo(BODY_RESOLVE)] run@fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
+        ^ Int(1)
+    }
+    )
+        public [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Unresolved name: run>

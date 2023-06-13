@@ -11,3 +11,15 @@ public final [ResolvedTo(BODY_RESOLVE)] class X : R|kotlin/Any| {
     public final [ResolvedTo(BODY_RESOLVE)] fun y(): R|kotlin/String|
 
 }
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] topLevelClass.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    public final [ResolvedTo(BODY_RESOLVE)] class X : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] constructor(): R|X| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] fun y(): R|kotlin/String|
+
+    }

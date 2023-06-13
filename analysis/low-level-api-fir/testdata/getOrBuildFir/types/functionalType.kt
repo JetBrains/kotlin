@@ -1,2 +1,2 @@
 
-fun x(): <expr>(Int) -> String</expr> = TODO()
+fun x(): <expr>(Int) -> String</expr> = { "" }

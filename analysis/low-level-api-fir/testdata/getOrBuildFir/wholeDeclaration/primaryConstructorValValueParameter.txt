@@ -4,3 +4,16 @@ FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
 [ResolvedTo(BODY_RESOLVE)] x: R|kotlin/Int|
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] primaryConstructorValValueParameter.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    public final [ResolvedTo(STATUS)] class X : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] constructor([ResolvedTo(BODY_RESOLVE)] x: R|kotlin/Int|): R|X| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] val x: R|kotlin/Int| = R|<local>/x|
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+
+    }

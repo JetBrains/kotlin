@@ -1,0 +1,19 @@
+KT element: KtConstantExpression
+FIR element: FirConstExpressionImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+Int(0)
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] arrayIndexExpressionWithInc.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    public final [ResolvedTo(BODY_RESOLVE)] fun main([ResolvedTo(BODY_RESOLVE)] args: R|kotlin/Array<kotlin/String>|): R|kotlin/Unit| {
+        [ResolvedTo(BODY_RESOLVE)] lval a: <ERROR TYPE REF: Unresolved name: ArrayList> = <Unresolved name: ArrayList>#<R|kotlin/String|>()
+        R|<local>/a|.<Unresolved name: add>#(String())
+        [ResolvedTo(BODY_RESOLVE)] lval <array>: <ERROR TYPE REF: Unresolved name: ArrayList> = R|<local>/a|
+        [ResolvedTo(BODY_RESOLVE)] lval <index_0>: R|kotlin/Int| = Int(0)
+        [ResolvedTo(BODY_RESOLVE)] lval <unary>: <ERROR TYPE REF: Unresolved name: get> = R|<local>/<array>|.<Unresolved name: get>#(R|<local>/<index_0>|)
+        R|<local>/<array>|.<Unresolved name: set>#(R|<local>/<index_0>|, R|<local>/<unary>|.<Unresolved name: inc>#())
+        R|<local>/<unary>|
+    }

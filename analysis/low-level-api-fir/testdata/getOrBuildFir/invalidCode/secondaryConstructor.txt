@@ -4,3 +4,21 @@ FIR source kind: DanglingModifierList
 
 FIR element rendered:
 <DANGLING MODIFIER: Top level declaration expected>
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] secondaryConstructor.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    public final [ResolvedTo(BODY_RESOLVE)] annotation class JsQualifier : R|kotlin/Annotation|, R|kotlin/Annotation| {
+        public [ResolvedTo(BODY_RESOLVE)] constructor(): R|JsQualifier| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] val value: R|kotlin/String|
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
+
+        public final [ResolvedTo(BODY_RESOLVE)] fun <no name provided>(): R|kotlin/Unit| {
+            <Unresolved name: get>#
+        }
+
+        <DANGLING MODIFIER: Top level declaration expected>
+    }

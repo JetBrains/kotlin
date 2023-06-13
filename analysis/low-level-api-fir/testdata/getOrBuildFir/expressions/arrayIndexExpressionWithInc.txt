@@ -4,3 +4,16 @@ FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
 Int(0)
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] arrayIndexExpressionWithInc.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    public final [ResolvedTo(BODY_RESOLVE)] fun main([ResolvedTo(BODY_RESOLVE)] args: R|kotlin/Array<kotlin/String>|): R|kotlin/Unit| {
+        [ResolvedTo(BODY_RESOLVE)] lval a: R|java/util/ArrayList<kotlin/String>| = R|java/util/ArrayList.ArrayList|<R|kotlin/String|>()
+        R|<local>/a|.R|SubstitutionOverride<java/util/ArrayList.add: R|kotlin/Boolean|>|(String())
+        [ResolvedTo(BODY_RESOLVE)] lval <array>: R|java/util/ArrayList<kotlin/String>| = R|<local>/a|
+        [ResolvedTo(BODY_RESOLVE)] lval <index_0>: R|kotlin/Int| = Int(0)
+        [ResolvedTo(BODY_RESOLVE)] lval <unary>: R|kotlin/String| = R|<local>/<array>|.R|SubstitutionOverride<java/util/ArrayList.get: R|@EnhancedNullability kotlin/String|>|(R|<local>/<index_0>|)
+        R|<local>/<array>|.R|SubstitutionOverride<java/util/ArrayList.set: R|@EnhancedNullability kotlin/String|>|(R|<local>/<index_0>|, R|<local>/<unary>|.<Unresolved name: inc>#())
+        R|<local>/<unary>|
+    }

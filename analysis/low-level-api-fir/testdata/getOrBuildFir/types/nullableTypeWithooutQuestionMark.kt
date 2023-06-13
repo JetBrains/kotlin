@@ -1,2 +1,2 @@
 
-fun x(): <expr>Int</expr>? = TODO()
+fun x(): <expr>Int</expr>? = 1
