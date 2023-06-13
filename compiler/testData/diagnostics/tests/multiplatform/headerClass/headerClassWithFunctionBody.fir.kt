@@ -1,7 +1,7 @@
 // IGNORE_REVERSED_RESOLVE
 // MODULE: m1-common
 // FILE: common.kt
-expect class Foo(
+<!NO_ACTUAL_FOR_EXPECT!>expect class Foo(
         val constructorProperty: String,
         constructorParameter: String
 ) {
@@ -24,4 +24,4 @@ expect class Foo(
     <!EXPECTED_DECLARATION_WITH_BODY!>fun functionWithBody(x: Int): Int<!> {
         return x + 1
     }
-}
+}<!>

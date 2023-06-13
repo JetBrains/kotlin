@@ -1,7 +1,7 @@
 // MODULE: m1-common
 // FILE: common.kt
 
-expect class Foo {
+<!NO_ACTUAL_FOR_EXPECT!>expect class Foo {
     val justVal: String
     var justVar: String
 
@@ -25,6 +25,6 @@ expect class Foo {
     <!EXPECTED_LATEINIT_PROPERTY!>lateinit<!> var lateinitVar: String
 
     val delegated: String by <!EXPECTED_DELEGATED_PROPERTY!>Delegate<!>
-}
+}<!>
 
 object Delegate { operator fun getValue(x: Any?, y: Any?): String = "" }

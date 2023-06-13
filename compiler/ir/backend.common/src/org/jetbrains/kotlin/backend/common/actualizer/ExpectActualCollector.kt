@@ -62,6 +62,10 @@ internal class ExpectActualCollector(
     ) {
         val linkCollector = ExpectActualLinkCollector(destination, classActualizationInfo, typeSystemContext, diagnosticsReporter)
         dependentFragments.forEach { linkCollector.visitModuleFragment(it) }
+        // It doesn't make sense to link expects from the last module because actuals always should be located in another module
+        // Thus relevant actuals are always missing for the last module
+        // But the collector should be run anyway to detect and report "hanging" expect declarations
+        linkCollector.visitModuleFragment(mainFragment)
     }
 }
 
@@ -76,6 +80,8 @@ internal data class ClassActualizationInfo(
         return actualTypeAliases[classId] ?: actualClasses[classId]
     }
 }
+
+
 
 private class ActualDeclarationsCollector {
     companion object {

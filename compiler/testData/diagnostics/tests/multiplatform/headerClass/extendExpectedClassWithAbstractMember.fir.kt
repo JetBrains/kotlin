@@ -1,10 +1,10 @@
 // MODULE: m1-common
 // FILE: common.kt
 
-expect abstract class BaseA() {
+<!NO_ACTUAL_FOR_EXPECT!>expect abstract class BaseA() {
     abstract fun foo()
-}
-expect open class BaseAImpl() : BaseA
+}<!>
+<!NO_ACTUAL_FOR_EXPECT!>expect open class BaseAImpl() : BaseA<!>
 
 class DerivedA1 : BaseAImpl()
 class DerivedA2 : BaseAImpl() {
@@ -13,10 +13,10 @@ class DerivedA2 : BaseAImpl() {
 
 
 
-expect interface BaseB {
+<!NO_ACTUAL_FOR_EXPECT!>expect interface BaseB {
     fun foo()
-}
-expect open class BaseBImpl() : BaseB
+}<!>
+<!NO_ACTUAL_FOR_EXPECT!>expect open class BaseBImpl() : BaseB<!>
 
 class DerivedB1 : BaseBImpl()
 class DerivedB2 : BaseBImpl() {
@@ -25,10 +25,10 @@ class DerivedB2 : BaseBImpl() {
 
 
 
-expect interface BaseC {
+<!NO_ACTUAL_FOR_EXPECT!>expect interface BaseC {
     fun foo()
-}
-expect abstract class BaseCImpl() : BaseC
+}<!>
+<!NO_ACTUAL_FOR_EXPECT!>expect abstract class BaseCImpl() : BaseC<!>
 
 class DerivedC1 : BaseCImpl()
 class DerivedC2 : BaseCImpl() {
@@ -37,25 +37,25 @@ class DerivedC2 : BaseCImpl() {
 
 
 
-expect interface BaseD {
+<!NO_ACTUAL_FOR_EXPECT!>expect interface BaseD {
     fun foo()
-}
+}<!>
 abstract class BaseDImpl() : BaseD {
     fun bar() = super.<!ABSTRACT_SUPER_CALL!>foo<!>()
 }
 
 
 
-expect interface BaseE {
+<!NO_ACTUAL_FOR_EXPECT!>expect interface BaseE {
     fun foo()
-}
+}<!>
 sealed class BaseEImpl() : BaseE {
     fun bar() = super.<!ABSTRACT_SUPER_CALL!>foo<!>()
 }
 
 
 
-expect interface BaseF {
+<!NO_ACTUAL_FOR_EXPECT!>expect interface BaseF {
     fun foo()
-}
-expect class BaseFImpl() : BaseF
+}<!>
+<!NO_ACTUAL_FOR_EXPECT!>expect class BaseFImpl() : BaseF<!>

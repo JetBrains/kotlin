@@ -22535,6 +22535,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("checkNoActualForExpectInLastModule.kt")
+            public void testCheckNoActualForExpectInLastModule() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/multiplatform/checkNoActualForExpectInLastModule.kt");
+            }
+
+            @Test
             @TestMetadata("expectAbstractToString.kt")
             public void testExpectAbstractToString() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/multiplatform/expectAbstractToString.kt");

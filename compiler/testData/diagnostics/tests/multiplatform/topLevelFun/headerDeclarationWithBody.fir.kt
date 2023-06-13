@@ -1,0 +1,8 @@
+// MODULE: m1-common
+// FILE: common.kt
+
+<!CONFLICTING_OVERLOADS, NO_ACTUAL_FOR_EXPECT!>expect fun foo()<!>
+
+<!NO_ACTUAL_FOR_EXPECT!><!CONFLICTING_OVERLOADS, EXPECTED_DECLARATION_WITH_BODY!>expect fun foo()<!> {}<!>
+
+<!NO_ACTUAL_FOR_EXPECT!><!EXPECTED_DECLARATION_WITH_BODY!>expect fun bar()<!> {}<!>
