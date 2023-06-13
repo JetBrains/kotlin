@@ -14435,6 +14435,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
             }
 
             @Test
+            @TestMetadata("kt59041.kt")
+            public void testKt59041() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/incompleteCode/kt59041.kt");
+            }
+
+            @Test
             @TestMetadata("NoSenselessComparisonForErrorType.kt")
             public void testNoSenselessComparisonForErrorType() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/incompleteCode/NoSenselessComparisonForErrorType.kt");
