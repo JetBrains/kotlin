@@ -6,18 +6,16 @@
 package org.jetbrains.kotlin.analysis.api.fir.utils
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
-import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirSafe
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
+import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
-import org.jetbrains.kotlin.psi.KtFunction
-import org.jetbrains.kotlin.psi.KtProperty
-import org.jetbrains.kotlin.psi.KtPropertyAccessor
+import org.jetbrains.kotlin.psi.*
 
 /**
  * A hacky visitor which forces the resolve of declarations' bodies.
@@ -79,7 +77,7 @@ internal abstract class FirBodyReanalyzingVisitorVoid(private val firResolveSess
         valueParameters.forEach { it.accept(thisVisitor) }
 
         val simpleFunctionPsi = psi as? KtFunction
-        simpleFunctionPsi?.bodyExpression?.getOrBuildFir(firResolveSession)?.accept(thisVisitor)
+        reanalyzePsiBody(simpleFunctionPsi)?.accept(thisVisitor)
 
         contractDescription.accept(thisVisitor)
         annotations.forEach { it.accept(thisVisitor) }
@@ -97,7 +95,7 @@ internal abstract class FirBodyReanalyzingVisitorVoid(private val firResolveSess
         receiverParameter?.accept(thisVisitor)
 
         val propertyPsi = psi as? KtProperty
-        propertyPsi?.initializer?.getOrBuildFir(firResolveSession)?.accept(thisVisitor)
+        reanalyzePsiInitializer(propertyPsi)?.accept(thisVisitor)
         reanalyzePsiAccessorOrUseDefault(propertyPsi?.getter, getter)?.accept(thisVisitor)
         reanalyzePsiAccessorOrUseDefault(propertyPsi?.setter, setter)?.accept(thisVisitor)
 
@@ -113,12 +111,27 @@ internal abstract class FirBodyReanalyzingVisitorVoid(private val firResolveSess
      * If there are default accessor present, we want to correctly visit it, because it can contain important
      * information (annotations, for example).
      */
-    private fun reanalyzePsiAccessorOrUseDefault(psiAccessor: KtPropertyAccessor?, firAccessor: FirPropertyAccessor?): FirElement? =
+    private fun reanalyzePsiAccessorOrUseDefault(
+        psiAccessor: KtPropertyAccessor?,
+        firAccessor: FirPropertyAccessor?,
+    ): FirPropertyAccessor? =
         if (psiAccessor == null) {
             firAccessor as? FirDefaultPropertyAccessor
         } else {
-            psiAccessor.getOrBuildFir(firResolveSession)
+            // we want only FirPropertyAccessors and nothing else, see KTIJ-25823
+            psiAccessor.getOrBuildFirSafe<FirPropertyAccessor>(firResolveSession)
         }
+
+    /**
+     * N.B. Reanalysing single-expression body returns a [FirExpression], not
+     * [org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock].
+     */
+    private fun reanalyzePsiBody(declaration: KtDeclarationWithBody?): FirExpression? =
+        declaration?.bodyExpression?.getOrBuildFirSafe<FirExpression>(firResolveSession)
+
+    private fun reanalyzePsiInitializer(declaration: KtDeclarationWithInitializer?): FirExpression? =
+        declaration?.initializer?.getOrBuildFirSafe<FirExpression>(firResolveSession)
+
 
     private fun FirPropertyAccessor.acceptChildrenAndForceBodyReanalysis() {
         status.accept(thisVisitor)
@@ -128,7 +141,7 @@ internal abstract class FirBodyReanalyzingVisitorVoid(private val firResolveSess
         valueParameters.forEach { it.accept(thisVisitor) }
 
         val propertyAccessorPsi = psi as? KtPropertyAccessor
-        propertyAccessorPsi?.bodyExpression?.getOrBuildFir(firResolveSession)?.accept(thisVisitor)
+        reanalyzePsiBody(propertyAccessorPsi)?.accept(thisVisitor)
 
         contractDescription.accept(thisVisitor)
         annotations.forEach { it.accept(thisVisitor) }
