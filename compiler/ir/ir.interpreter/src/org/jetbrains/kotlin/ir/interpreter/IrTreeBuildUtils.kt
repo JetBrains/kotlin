@@ -96,9 +96,22 @@ internal fun createTempFunction(
     origin: IrDeclarationOrigin = TEMP_FUNCTION_FOR_INTERPRETER,
     visibility: DescriptorVisibility = DescriptorVisibilities.PUBLIC
 ): IrSimpleFunction {
-    return IrFactoryImpl.createFunction(
-        SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, origin, IrSimpleFunctionSymbolImpl(), name, visibility, Modality.FINAL, type,
-        isInline = false, isExternal = false, isTailrec = false, isSuspend = false, isOperator = true, isInfix = false, isExpect = false
+    return IrFactoryImpl.createSimpleFunction(
+        startOffset = SYNTHETIC_OFFSET,
+        endOffset = SYNTHETIC_OFFSET,
+        origin = origin,
+        name = name,
+        visibility = visibility,
+        isInline = false,
+        isExpect = false,
+        returnType = type,
+        modality = Modality.FINAL,
+        symbol = IrSimpleFunctionSymbolImpl(),
+        isTailrec = false,
+        isSuspend = false,
+        isOperator = true,
+        isInfix = false,
+        isExternal = false,
     )
 }
 

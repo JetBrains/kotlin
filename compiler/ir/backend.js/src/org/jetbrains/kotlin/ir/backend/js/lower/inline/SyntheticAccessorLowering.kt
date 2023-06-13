@@ -88,23 +88,24 @@ class SyntheticAccessorLowering(private val context: CommonBackendContext) : Bod
         private val copier = object : DeepCopyIrTreeWithSymbols(symbolRemapper, typeRemapper) {
             override fun visitSimpleFunction(declaration: IrSimpleFunction): IrSimpleFunction {
                 val newName = Name.identifier("${declaration.name.asString()}\$accessor\$$fileHash")
-                return declaration.factory.createFunction(
-                    declaration.startOffset, declaration.endOffset,
-                    mapDeclarationOrigin(declaration.origin),
-                    symbolRemapper.getDeclaredFunction(declaration.symbol),
-                    newName,
-                    DescriptorVisibilities.INTERNAL,
-                    declaration.modality,
-                    IrUninitializedType,
+                return declaration.factory.createSimpleFunction(
+                    startOffset = declaration.startOffset,
+                    endOffset = declaration.endOffset,
+                    origin = mapDeclarationOrigin(declaration.origin),
+                    name = newName,
+                    visibility = DescriptorVisibilities.INTERNAL,
                     isInline = declaration.isInline,
-                    isExternal = declaration.isExternal,
+                    isExpect = declaration.isExpect,
+                    returnType = IrUninitializedType,
+                    modality = declaration.modality,
+                    symbol = symbolRemapper.getDeclaredFunction(declaration.symbol),
                     isTailrec = declaration.isTailrec,
                     isSuspend = declaration.isSuspend,
                     isOperator = declaration.isOperator,
                     isInfix = declaration.isInfix,
-                    isExpect = declaration.isExpect,
-                    isFakeOverride = declaration.isFakeOverride,
+                    isExternal = declaration.isExternal,
                     containerSource = declaration.containerSource,
+                    isFakeOverride = declaration.isFakeOverride,
                 ).apply {
                     assert(declaration.overriddenSymbols.isEmpty()) { "Top level function overrides nothing" }
                     transformFunctionChildren(declaration)

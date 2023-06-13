@@ -943,12 +943,24 @@ class IrBuiltInsOverFir(
             this.isOperator = isOperator
             this.isInfix = isInfix
             build()
-            irFactory.createFunction(
-                startOffset, endOffset, this.origin,
-                symbol,
-                this.name, visibility, this.modality, this.returnType,
-                isInline, isExternal, isTailrec, isSuspend, this.isOperator, this.isInfix, isExpect, isFakeOverride,
-                containerSource,
+            irFactory.createSimpleFunction(
+                startOffset = startOffset,
+                endOffset = endOffset,
+                origin = this.origin,
+                name = this.name,
+                visibility = visibility,
+                isInline = isInline,
+                isExpect = isExpect,
+                returnType = this.returnType,
+                modality = this.modality,
+                symbol = symbol,
+                isTailrec = isTailrec,
+                isSuspend = isSuspend,
+                isOperator = this.isOperator,
+                isInfix = this.isInfix,
+                isExternal = isExternal,
+                containerSource = containerSource,
+                isFakeOverride = isFakeOverride,
             )
         }.also { fn ->
             valueParameterTypes.forEachIndexed { index, (pName, irType) ->

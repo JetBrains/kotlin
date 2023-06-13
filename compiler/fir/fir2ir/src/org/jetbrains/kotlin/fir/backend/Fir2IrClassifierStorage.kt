@@ -679,12 +679,22 @@ class Fir2IrClassifierStorage(
     }
 
     private val temporaryParent by lazy {
-        irFactory.createFunction(
-            startOffset = UNDEFINED_OFFSET, endOffset = UNDEFINED_OFFSET,
-            IrDeclarationOrigin.DEFINED, IrSimpleFunctionSymbolImpl(),
-            Name.special("<stub>"), DescriptorVisibilities.PRIVATE, Modality.FINAL, irBuiltIns.unitType,
-            isInline = false, isExternal = false, isTailrec = false,
-            isSuspend = false, isOperator = false, isInfix = false, isExpect = false
+        irFactory.createSimpleFunction(
+            startOffset = UNDEFINED_OFFSET,
+            endOffset = UNDEFINED_OFFSET,
+            origin = IrDeclarationOrigin.DEFINED,
+            name = Name.special("<stub>"),
+            visibility = DescriptorVisibilities.PRIVATE,
+            isInline = false,
+            isExpect = false,
+            returnType = irBuiltIns.unitType,
+            modality = Modality.FINAL,
+            symbol = IrSimpleFunctionSymbolImpl(),
+            isTailrec = false,
+            isSuspend = false,
+            isOperator = false,
+            isInfix = false,
+            isExternal = false,
         ).apply {
             parent = IrExternalPackageFragmentImpl(IrExternalPackageFragmentSymbolImpl(), FqName.ROOT)
         }

@@ -568,21 +568,22 @@ class Fir2IrDeclarationStorage(
         val created = function.convertWithOffsets { startOffset, endOffset ->
             val result = declareIrSimpleFunction(signature) { symbol ->
                 classifierStorage.preCacheTypeParameters(function, symbol)
-                irFactory.createFunction(
-                    if (updatedOrigin == IrDeclarationOrigin.DELEGATED_MEMBER) SYNTHETIC_OFFSET else startOffset,
-                    if (updatedOrigin == IrDeclarationOrigin.DELEGATED_MEMBER) SYNTHETIC_OFFSET else endOffset,
-                    updatedOrigin, symbol,
-                    name, components.visibilityConverter.convertToDescriptorVisibility(visibility),
-                    simpleFunction?.modality ?: Modality.FINAL,
-                    function.returnTypeRef.toIrType(),
+                irFactory.createSimpleFunction(
+                    startOffset = if (updatedOrigin == IrDeclarationOrigin.DELEGATED_MEMBER) SYNTHETIC_OFFSET else startOffset,
+                    endOffset = if (updatedOrigin == IrDeclarationOrigin.DELEGATED_MEMBER) SYNTHETIC_OFFSET else endOffset,
+                    origin = updatedOrigin,
+                    name = name,
+                    visibility = components.visibilityConverter.convertToDescriptorVisibility(visibility),
                     isInline = simpleFunction?.isInline == true,
-                    isExternal = simpleFunction?.isExternal == true,
+                    isExpect = simpleFunction?.isExpect == true,
+                    returnType = function.returnTypeRef.toIrType(),
+                    modality = simpleFunction?.modality ?: Modality.FINAL,
+                    symbol = symbol,
                     isTailrec = simpleFunction?.isTailRec == true,
                     isSuspend = isSuspend,
-                    isExpect = simpleFunction?.isExpect == true,
-                    isFakeOverride = updatedOrigin == IrDeclarationOrigin.FAKE_OVERRIDE,
                     isOperator = simpleFunction?.isOperator == true,
                     isInfix = simpleFunction?.isInfix == true,
+                    isExternal = simpleFunction?.isExternal == true,
                     containerSource = simpleFunction?.containerSource,
                 ).apply {
                     metadata = FirMetadataSource.Function(function)
@@ -738,16 +739,22 @@ class Fir2IrDeclarationStorage(
             val visibility = propertyAccessor?.visibility?.let {
                 components.visibilityConverter.convertToDescriptorVisibility(it)
             }
-            irFactory.createFunction(
-                startOffset, endOffset, origin, symbol,
-                Name.special("<$prefix-${correspondingProperty.name}>"),
-                visibility ?: (correspondingProperty as IrDeclarationWithVisibility).visibility,
-                (correspondingProperty as? IrOverridableMember)?.modality ?: Modality.FINAL, accessorReturnType,
+            irFactory.createSimpleFunction(
+                startOffset = startOffset,
+                endOffset = endOffset,
+                origin = origin,
+                name = Name.special("<$prefix-${correspondingProperty.name}>"),
+                visibility = visibility ?: (correspondingProperty as IrDeclarationWithVisibility).visibility,
                 isInline = propertyAccessor?.isInline == true,
-                isExternal = propertyAccessor?.isExternal == true,
-                isTailrec = false, isSuspend = false, isOperator = false,
+                isExpect = false,
+                returnType = accessorReturnType,
+                modality = (correspondingProperty as? IrOverridableMember)?.modality ?: Modality.FINAL,
+                symbol = symbol,
+                isTailrec = false,
+                isSuspend = false,
+                isOperator = false,
                 isInfix = false,
-                isExpect = false, isFakeOverride = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
+                isExternal = propertyAccessor?.isExternal == true,
                 containerSource = containerSource,
             ).apply {
                 correspondingPropertySymbol = (correspondingProperty as? IrProperty)?.symbol

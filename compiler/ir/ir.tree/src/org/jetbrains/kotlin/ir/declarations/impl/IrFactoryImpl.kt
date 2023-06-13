@@ -107,24 +107,24 @@ abstract class AbstractIrFactoryImpl : IrFactory {
     ): IrField =
         IrFieldImpl(startOffset, endOffset, origin, symbol, name, type, visibility, isFinal, isExternal, isStatic, factory = this)
 
-    override fun createFunction(
+    override fun createSimpleFunction(
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
-        symbol: IrSimpleFunctionSymbol,
         name: Name,
         visibility: DescriptorVisibility,
-        modality: Modality,
-        returnType: IrType,
         isInline: Boolean,
-        isExternal: Boolean,
+        isExpect: Boolean,
+        returnType: IrType,
+        modality: Modality,
+        symbol: IrSimpleFunctionSymbol,
         isTailrec: Boolean,
         isSuspend: Boolean,
         isOperator: Boolean,
         isInfix: Boolean,
-        isExpect: Boolean,
-        isFakeOverride: Boolean,
+        isExternal: Boolean,
         containerSource: DeserializedContainerSource?,
+        isFakeOverride: Boolean,
     ): IrSimpleFunction =
         IrFunctionImpl(
             startOffset, endOffset, origin, symbol, name, visibility, modality, returnType,

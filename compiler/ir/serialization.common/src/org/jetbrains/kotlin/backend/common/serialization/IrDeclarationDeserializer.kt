@@ -599,21 +599,23 @@ class IrDeclarationDeserializer(
             val flags = FunctionFlags.decode(fcode)
             symbolTable.declareSimpleFunction(idSig, { symbol }) {
                 val nameType = BinaryNameAndType.decode(proto.base.nameType)
-                irFactory.createFunction(
-                    startOffset, endOffset, origin,
-                    it,
-                    deserializeName(nameType.nameIndex),
-                    flags.visibility,
-                    flags.modality,
-                    IrUninitializedType,
-                    flags.isInline,
-                    flags.isExternal || isEffectivelyExternal,
-                    flags.isTailrec,
-                    flags.isSuspend,
-                    flags.isOperator,
-                    flags.isInfix,
-                    flags.isExpect,
-                    flags.isFakeOverride
+                irFactory.createSimpleFunction(
+                    startOffset = startOffset,
+                    endOffset = endOffset,
+                    origin = origin,
+                    name = deserializeName(nameType.nameIndex),
+                    visibility = flags.visibility,
+                    isInline = flags.isInline,
+                    isExpect = flags.isExpect,
+                    returnType = IrUninitializedType,
+                    modality = flags.modality,
+                    symbol = it,
+                    isTailrec = flags.isTailrec,
+                    isSuspend = flags.isSuspend,
+                    isOperator = flags.isOperator,
+                    isInfix = flags.isInfix,
+                    isExternal = flags.isExternal || isEffectivelyExternal,
+                    isFakeOverride = flags.isFakeOverride,
                 )
             }.apply {
                 overriddenSymbols = proto.overriddenList.memoryOptimizedMap { deserializeIrSymbolAndRemap(it).checkSymbolType(FUNCTION_SYMBOL) }

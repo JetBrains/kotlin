@@ -117,30 +117,30 @@ class LazyIrFactory(
     else
         delegate.createField(startOffset, endOffset, origin, name, visibility, symbol, type, isFinal, isStatic, isExternal)
 
-    override fun createFunction(
+    override fun createSimpleFunction(
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
-        symbol: IrSimpleFunctionSymbol,
         name: Name,
         visibility: DescriptorVisibility,
-        modality: Modality,
-        returnType: IrType,
         isInline: Boolean,
-        isExternal: Boolean,
+        isExpect: Boolean,
+        returnType: IrType,
+        modality: Modality,
+        symbol: IrSimpleFunctionSymbol,
         isTailrec: Boolean,
         isSuspend: Boolean,
         isOperator: Boolean,
         isInfix: Boolean,
-        isExpect: Boolean,
-        isFakeOverride: Boolean,
-        containerSource: DeserializedContainerSource?
+        isExternal: Boolean,
+        containerSource: DeserializedContainerSource?,
+        isFakeOverride: Boolean
     ): IrSimpleFunction = if (symbol.isBound)
         symbol.owner
     else
-        delegate.createFunction(
-            startOffset, endOffset, origin, symbol, name, visibility, modality, returnType,
-            isInline, isExternal, isTailrec, isSuspend, isOperator, isInfix, isExpect, isFakeOverride, containerSource
+        delegate.createSimpleFunction(
+            startOffset, endOffset, origin, name, visibility, isInline, isExpect, returnType,
+            modality, symbol, isTailrec, isSuspend, isOperator, isInfix, isExternal, containerSource, isFakeOverride
         )
 
     override fun createProperty(

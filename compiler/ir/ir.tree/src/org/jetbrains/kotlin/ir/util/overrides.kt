@@ -24,18 +24,22 @@ fun SymbolTable.declareSimpleFunctionWithOverrides(
 ) =
     declareSimpleFunction(descriptor) {
         with(descriptor) {
-            irFactory.createFunction(
-                startOffset, endOffset, origin, it, nameProvider.nameForDeclaration(this),
-                visibility,
-                modality,
-                IrUninitializedType,
-                isInline,
-                isEffectivelyExternal(),
-                isTailrec,
-                isSuspend,
-                isOperator,
-                isInfix,
-                isExpect,
+            irFactory.createSimpleFunction(
+                startOffset = startOffset,
+                endOffset = endOffset,
+                origin = origin,
+                name = nameProvider.nameForDeclaration(this),
+                visibility = visibility,
+                isInline = isInline,
+                isExpect = isExpect,
+                returnType = IrUninitializedType,
+                modality = modality,
+                symbol = it,
+                isTailrec = isTailrec,
+                isSuspend = isSuspend,
+                isOperator = isOperator,
+                isInfix = isInfix,
+                isExternal = isEffectivelyExternal(),
                 isFakeOverride = descriptor.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE
             ).also { declaration ->
                 declaration.metadata = DescriptorMetadataSource.Function(this)
