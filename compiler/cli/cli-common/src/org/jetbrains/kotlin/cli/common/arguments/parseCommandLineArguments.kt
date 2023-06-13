@@ -153,7 +153,7 @@ private fun <A : CommonToolArguments> parsePreprocessedCommandLineArguments(
         }
 
         if (argument.value == arg) {
-            if (argument.isAdvanced && getter.returnType != Boolean::class.java) {
+            if (argument.isAdvanced && getter.returnType.kotlin != Boolean::class) {
                 errors.value.extraArgumentsPassedInObsoleteForm.add(arg)
             }
             return true
@@ -211,7 +211,7 @@ private fun <A : CommonToolArguments> parsePreprocessedCommandLineArguments(
 
         val (getter, setter, argument) = argumentField
         val value: Any = when {
-            getter.returnType == Boolean::class.java -> {
+            getter.returnType.kotlin == Boolean::class -> {
                 if (arg.startsWith(argument.value + "=")) {
                     // Can't use toBooleanStrict yet because this part of the compiler is used in Gradle and needs API version 1.4.
                     when (arg.substring(argument.value.length + 1)) {
@@ -272,9 +272,9 @@ private fun <A : CommonToolArguments> updateField(
     delimiter: String?,
     overrideArguments: Boolean
 ) {
-    when (getter.returnType) {
-        Boolean::class.java, String::class.java -> setter(result, value)
-        Array<String>::class.java -> {
+    when (getter.returnType.kotlin) {
+        Boolean::class, String::class -> setter(result, value)
+        Array<String>::class -> {
             val newElements = if (delimiter.isNullOrEmpty()) {
                 arrayOf(value as String)
             } else {
