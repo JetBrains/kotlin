@@ -169,10 +169,6 @@ class Kapt4StubGenerator(private val analysisSession: KtAnalysisSession) {
             }
         }
 
-        val javaRetentionAnnotation = runIf(lightClass.isAnnotationType) {
-            lightClass.getAnnotation("kotlin.annotation.Target")?.let { createJavaTargetAnnotation(it) }
-        }
-
         val isEnum = lightClass.isEnum
         val modifiers = convertModifiers(
             lightClass,
@@ -181,7 +177,6 @@ class Kapt4StubGenerator(private val analysisSession: KtAnalysisSession) {
             packageFqName,
             lightClass.annotations.toList(),
             metadata,
-            javaRetentionAnnotation?.let { JavacList.of(javaRetentionAnnotation) } ?: JavacList.nil()
         )
 
         // TODO: check
@@ -453,9 +448,8 @@ class Kapt4StubGenerator(private val analysisSession: KtAnalysisSession) {
         packageFqName: String,
         allAnnotations: List<PsiAnnotation>,
         metadata: Metadata?,
-        additionalAnnotations: JavacList<JCAnnotation> = JavacList.nil()
     ): JCModifiers {
-        return convertModifiers(containingClass, access.toLong(), kind, packageFqName, allAnnotations, metadata, additionalAnnotations)
+        return convertModifiers(containingClass, access.toLong(), kind, packageFqName, allAnnotations, metadata)
     }
 
     context(UnresolvedQualifiersRecorder)
@@ -467,7 +461,6 @@ class Kapt4StubGenerator(private val analysisSession: KtAnalysisSession) {
         packageFqName: String,
         allAnnotations: List<PsiAnnotation>,
         metadata: Metadata?,
-        additionalAnnotations: JavacList<JCAnnotation> = JavacList.nil(),
         excludeNullabilityAnnotations: Boolean = false
     ): JCModifiers {
         var seenOverride = false
@@ -490,7 +483,6 @@ class Kapt4StubGenerator(private val analysisSession: KtAnalysisSession) {
             val type = treeMaker.RawType(Type.getType(java.lang.Deprecated::class.java))
             annotations = annotations.append(treeMaker.Annotation(type, JavacList.nil()))
         }
-        annotations = annotations.prependList(additionalAnnotations)
         if (metadata != null) {
             annotations = annotations.prepend(convertMetadataAnnotation(metadata))
         }
