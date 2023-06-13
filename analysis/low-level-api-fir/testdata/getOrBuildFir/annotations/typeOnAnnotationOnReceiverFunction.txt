@@ -8,7 +8,7 @@ FIR element rendered:
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] typeOnAnnotationOnReceiverFunction.kt
     [ResolvedTo(BODY_RESOLVE)] annotations container
-    public final [ResolvedTo(BODY_RESOLVE)] fun R|@R|Anno|(s = String(ab))  kotlin/Int|.check(): R|kotlin/Int| {
+    public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun R|@R|Anno|(s = String(ab))  kotlin/Int|.check(): R|kotlin/Int| {
         ^check Int(1)
     }
     @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {

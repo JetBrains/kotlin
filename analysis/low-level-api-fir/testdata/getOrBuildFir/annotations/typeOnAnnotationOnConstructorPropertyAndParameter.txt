@@ -9,13 +9,13 @@ FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] typeOnAnnotationOnConstructorPropertyAndParameter.kt
     [ResolvedTo(BODY_RESOLVE)] annotations container
     public final [ResolvedTo(STATUS)] class ResolveMe : R|A| {
-        public [ResolvedTo(BODY_RESOLVE)] constructor([ResolvedTo(BODY_RESOLVE)] addCommaWarning: R|@R|Anno|()  kotlin/Boolean| = Boolean(false), [ResolvedTo(BODY_RESOLVE)] second: R|@R|Anno|()  kotlin/Boolean| = Boolean(false)): R|ResolveMe| {
+        public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] constructor([ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] addCommaWarning: R|@R|Anno|()  kotlin/Boolean| = Boolean(false), [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] second: R|@R|Anno|()  kotlin/Boolean| = Boolean(false)): R|ResolveMe| {
             super<R|A|>()
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] var addCommaWarning: R|@R|Anno|()  kotlin/Boolean| = R|<local>/addCommaWarning|
-            public [ResolvedTo(BODY_RESOLVE)] get(): R|@R|Anno|()  kotlin/Boolean|
-            public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] value: R|@R|Anno|()  kotlin/Boolean|): R|kotlin/Unit|
+        public final [ResolvedTo(STATUS)] var addCommaWarning: R|@R|Anno|()  kotlin/Boolean| = R|<local>/addCommaWarning|
+            public [ResolvedTo(STATUS)] get(): R|@R|Anno|()  kotlin/Boolean|
+            public [ResolvedTo(STATUS)] set([ResolvedTo(STATUS)] value: R|@R|Anno|()  kotlin/Boolean|): R|kotlin/Unit|
 
     }
     public open [ResolvedTo(STATUS)] class A : R|kotlin/Any| {

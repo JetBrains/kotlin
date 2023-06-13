@@ -15,12 +15,12 @@ FILE: [ResolvedTo(IMPORTS)] param.kt
 
     }
     public final [ResolvedTo(STATUS)] class X : R|kotlin/Any| {
-        public [ResolvedTo(BODY_RESOLVE)] constructor([ResolvedTo(BODY_RESOLVE)] @CONSTRUCTOR_PARAMETER:R|Ann|[Types]() x: R|kotlin/Int|): R|X| {
+        public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] constructor([ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] @CONSTRUCTOR_PARAMETER:R|Ann|[Types]() x: R|kotlin/Int|): R|X| {
             super<R|kotlin/Any|>()
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] var x: R|kotlin/Int| = R|<local>/x|
-            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
-            public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/Int|): R|kotlin/Unit|
+        public final [ResolvedTo(STATUS)] var x: R|kotlin/Int| = R|<local>/x|
+            public [ResolvedTo(STATUS)] get(): R|kotlin/Int|
+            public [ResolvedTo(STATUS)] set([ResolvedTo(STATUS)] value: R|kotlin/Int|): R|kotlin/Unit|
 
     }

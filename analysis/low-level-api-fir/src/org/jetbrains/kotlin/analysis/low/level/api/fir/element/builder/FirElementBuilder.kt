@@ -11,12 +11,30 @@ import org.jetbrains.kotlin.analysis.api.impl.barebone.annotations.ThreadSafe
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.FileStructureElement
+import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.FirElementsRecorder
+import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.KtToFirMapping
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.declarationCanBeLazilyResolved
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.findSourceNonLocalFirDeclaration
 import org.jetbrains.kotlin.analysis.utils.printer.getElementTextInContext
+import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
+import org.jetbrains.kotlin.analysis.utils.printer.parentsOfType
+import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.correspondingProperty
+import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.declarations.FirProperty
+import org.jetbrains.kotlin.fir.declarations.FirReceiverParameter
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
+import org.jetbrains.kotlin.fir.declarations.FirValueParameter
+import org.jetbrains.kotlin.fir.declarations.utils.correspondingValueParameterFromPrimaryConstructor
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
+import org.jetbrains.kotlin.fir.psi
+import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
+import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.kotlin.psi.psiUtil.isObjectLiteral
@@ -78,15 +96,133 @@ internal class FirElementBuilder(
             return null
         }
 
+        getOrBuildFirForElementInsideAnnotations(element, firResolveSession)?.let { return it }
+        getOrBuildFirForElementInsideTypes(element, firResolveSession)?.let { return it }
+
+        val psi = getPsiAsFirElementSource(element) ?: return null
         val firFile = element.containingKtFile
         val fileStructure = moduleComponents.fileStructureCache.getFileStructure(firFile)
 
         val structureElement = fileStructure.getStructureElementFor(element)
-        val psi = getPsiAsFirElementSource(element) ?: return null
         val mappings = structureElement.mappings
-        return mappings.getFirOfClosestParent(psi)
-            ?: firResolveSession.getOrBuildFirFile(firFile)
+        return mappings.getFirOfClosestParent(psi) ?: firResolveSession.getOrBuildFirFile(firFile)
     }
+
+    private inline fun <T : KtElement> getOrBuildFirForNonBodyElement(
+        element: KtElement,
+        firResolveSession: LLFirResolveSession,
+        anchorElementProvider: (KtElement) -> T?,
+        declarationProvider: (T) -> KtDeclaration?,
+        resolveAndFindFirForAnchor: (FirDeclaration, T) -> FirElement?,
+    ): FirElement? {
+        val anchorElement = anchorElementProvider(element) ?: return null
+        val declaration = declarationProvider(anchorElement) ?: return null
+        val nonLocalDeclaration = declaration.getNonLocalContainingOrThisDeclaration()
+        if (declaration != nonLocalDeclaration) return null
+
+        val firDeclaration = nonLocalDeclaration.findSourceNonLocalFirDeclaration(
+            firFileBuilder = moduleComponents.firFileBuilder,
+            provider = firResolveSession.useSiteFirSession.firProvider,
+        )
+
+        val anchorFir = resolveAndFindFirForAnchor(firDeclaration, anchorElement) ?: return null
+        // We use identity comparison here intentionally to check that it is exactly the object we want to find
+        if (element === anchorElement) return anchorFir
+
+        return findElementInside(firElement = anchorFir, element = element, stopAt = anchorElement)
+    }
+
+    private fun KtAnnotationEntry.owner(): KtDeclaration? {
+        val parent = parent
+        val modifierList = parent as? KtModifierList ?: (parent as? KtAnnotation)?.parent as? KtModifierList ?: return null
+        return modifierList.owner as? KtDeclaration
+    }
+
+    private fun getOrBuildFirForElementInsideAnnotations(
+        element: KtElement,
+        firResolveSession: LLFirResolveSession,
+    ): FirElement? = getOrBuildFirForNonBodyElement(
+        element = element,
+        firResolveSession = firResolveSession,
+        anchorElementProvider = { it.parentOfType<KtAnnotationEntry>(withSelf = true) },
+        declarationProvider = { it.owner() },
+        resolveAndFindFirForAnchor = { declaration, anchor -> declaration.resolveAndFindAnnotation(anchor, goDeep = true) },
+    )
+
+    private fun getOrBuildFirForElementInsideTypes(
+        element: KtElement,
+        firResolveSession: LLFirResolveSession,
+    ): FirElement? = getOrBuildFirForNonBodyElement(
+        element = element,
+        firResolveSession = firResolveSession,
+        anchorElementProvider = { it.parentsOfType<KtTypeReference>(withSelf = true).lastOrNull() },
+        declarationProvider = { it.parent as? KtDeclaration },
+        resolveAndFindFirForAnchor = { declaration, anchor -> declaration.resolveAndFindTypeRefAnchor(anchor) },
+    )?.let { firElement ->
+        if (firElement is FirReceiverParameter) {
+            firElement.typeRef
+        } else {
+            firElement
+        }
+    }
+
+    private fun findElementInside(firElement: FirElement, element: KtElement, stopAt: PsiElement): FirElement? {
+        val elementToSearch = getPsiAsFirElementSource(element) ?: return null
+        val mapping = FirElementsRecorder.recordElementsFrom(firElement, FirElementsRecorder())
+
+        var current: PsiElement? = elementToSearch
+        while (current != null && current != stopAt && current !is KtFile) {
+            if (current is KtElement) {
+                mapping[current]?.let { return it }
+            }
+
+            current = current.parent
+        }
+
+        return firElement
+    }
+
+    private fun FirDeclaration.resolveAndFindTypeRefAnchor(typeReference: KtTypeReference): FirElement? {
+        lazyResolveToPhase(FirResolvePhase.ANNOTATIONS_ARGUMENTS_MAPPING)
+
+        if (this is FirCallableDeclaration) {
+            returnTypeRef.takeIf { it.psi == typeReference }?.let { return it }
+            receiverParameter?.takeIf { it.typeRef.psi == typeReference }?.let { return it }
+        }
+
+        if (this is FirTypeParameter) {
+            for (typeRef in bounds) {
+                if (typeRef.psi == typeReference) {
+                    return typeRef
+                }
+            }
+        }
+
+        return null
+    }
+
+    private fun FirDeclaration.resolveAndFindAnnotation(annotationEntry: KtAnnotationEntry, goDeep: Boolean = false): FirAnnotation? {
+        lazyResolveToPhase(FirResolvePhase.ANNOTATIONS_ARGUMENTS_MAPPING)
+        findAnnotation(annotationEntry)?.let { return it }
+
+        if (this is FirProperty) {
+            backingField?.findAnnotation(annotationEntry)?.let { return it }
+            getter?.findAnnotation(annotationEntry)?.let { return it }
+            setter?.findAnnotation(annotationEntry)?.let { return it }
+            setter?.valueParameters?.first()?.findAnnotation(annotationEntry)?.let { return it }
+        }
+
+        return when {
+            !goDeep -> null
+            this is FirProperty -> correspondingValueParameterFromPrimaryConstructor?.fir?.resolveAndFindAnnotation(annotationEntry)
+            this is FirValueParameter -> correspondingProperty?.resolveAndFindAnnotation(annotationEntry)
+            else -> null
+        }
+    }
+
+    private fun FirAnnotationContainer.findAnnotation(
+        annotationEntry: KtAnnotationEntry,
+    ): FirAnnotation? = annotations.find { it.psi == annotationEntry }
 
     @TestOnly
     fun getStructureElementFor(element: KtElement): FileStructureElement {

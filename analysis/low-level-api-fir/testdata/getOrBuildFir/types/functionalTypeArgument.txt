@@ -8,8 +8,8 @@ R|kotlin/Int|
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] functionalTypeArgument.kt
     [ResolvedTo(BODY_RESOLVE)] annotations container
-    public final [ResolvedTo(BODY_RESOLVE)] fun x(): R|(kotlin/Int) -> kotlin/String| {
-        ^x [ResolvedTo(BODY_RESOLVE)] fun <anonymous>([ResolvedTo(BODY_RESOLVE)] it: R|kotlin/Int|): R|kotlin/Unit| <inline=Unknown>  {
+    public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun x(): R|(kotlin/Int) -> kotlin/String| {
+        ^x [ResolvedTo(RAW_FIR)] fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
             ^ Unit
         }
 

@@ -17,5 +17,5 @@ FILE: [ResolvedTo(IMPORTS)] annotationApplicationArgument.kt
             public [ResolvedTo(STATUS)] get(): R|kotlin/String|
 
     }
-    @R|Annotation|[Types](name = String(y)) public final [ResolvedTo(BODY_RESOLVE)] fun x(): R|kotlin/Unit| {
+    @R|Annotation|[Types](name = String(y)) public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun x(): R|kotlin/Unit| {
     }

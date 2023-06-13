@@ -12,9 +12,9 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideAnnotationCall.kt
     }
     @R|one/Anno|[Types](s = [ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
     }
-    .R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()) public final [ResolvedTo(BODY_RESOLVE)] class TopLevelClass : R|kotlin/Any| {
-        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
-            super<R|kotlin/Any|>()
+    .R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()) public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] class TopLevelClass : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
+            LAZY_super<R|kotlin/Any|>
         }
 
     }
@@ -33,9 +33,9 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideAnnotationCall.kt
     }
     @R|one/Anno|[Types](s = [ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
     }
-    .R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()) public final [ResolvedTo(BODY_RESOLVE)] class TopLevelClass : R|kotlin/Any| {
-        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
-            super<R|kotlin/Any|>()
+    .R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()) public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] class TopLevelClass : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
+            LAZY_super<R|kotlin/Any|>
         }
 
     }
@@ -54,9 +54,9 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideAnnotationCall.kt
     }
     @R|one/Anno|[Types](s = [ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
     }
-    .R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()) public final [ResolvedTo(BODY_RESOLVE)] class TopLevelClass : R|kotlin/Any| {
-        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
-            super<R|kotlin/Any|>()
+    .R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()) public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] class TopLevelClass : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
+            LAZY_super<R|kotlin/Any|>
         }
 
     }
@@ -75,9 +75,9 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideAnnotationCall.kt
     }
     @R|one/Anno|[Types](s = [ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
     }
-    .R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()) public final [ResolvedTo(BODY_RESOLVE)] class TopLevelClass : R|kotlin/Any| {
-        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
-            super<R|kotlin/Any|>()
+    .R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()) public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] class TopLevelClass : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
+            LAZY_super<R|kotlin/Any|>
         }
 
     }
@@ -96,9 +96,9 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideAnnotationCall.kt
     }
     @R|one/Anno|[Types](s = [ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
     }
-    .R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()) public final [ResolvedTo(BODY_RESOLVE)] class TopLevelClass : R|kotlin/Any| {
-        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
-            super<R|kotlin/Any|>()
+    .R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()) public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] class TopLevelClass : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
+            LAZY_super<R|kotlin/Any|>
         }
 
     }
@@ -117,9 +117,9 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideAnnotationCall.kt
     }
     @R|one/Anno|[Types](s = [ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
     }
-    .R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()) public final [ResolvedTo(BODY_RESOLVE)] class TopLevelClass : R|kotlin/Any| {
-        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
-            super<R|kotlin/Any|>()
+    .R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()) public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] class TopLevelClass : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
+            LAZY_super<R|kotlin/Any|>
         }
 
     }
@@ -138,9 +138,9 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideAnnotationCall.kt
     }
     @R|one/Anno|[Types](s = [ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
     }
-    .R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()) public final [ResolvedTo(BODY_RESOLVE)] class TopLevelClass : R|kotlin/Any| {
-        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
-            super<R|kotlin/Any|>()
+    .R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()) public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] class TopLevelClass : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
+            LAZY_super<R|kotlin/Any|>
         }
 
     }
@@ -159,9 +159,9 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideAnnotationCall.kt
     }
     @R|one/Anno|[Types](s = [ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
     }
-    .R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()) public final [ResolvedTo(BODY_RESOLVE)] class TopLevelClass : R|kotlin/Any| {
-        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
-            super<R|kotlin/Any|>()
+    .R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()) public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] class TopLevelClass : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
+            LAZY_super<R|kotlin/Any|>
         }
 
     }
@@ -180,9 +180,9 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideAnnotationCall.kt
     }
     @R|one/Anno|[Types](s = [ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
     }
-    .R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()) public final [ResolvedTo(BODY_RESOLVE)] class TopLevelClass : R|kotlin/Any| {
-        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
-            super<R|kotlin/Any|>()
+    .R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()) public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] class TopLevelClass : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
+            LAZY_super<R|kotlin/Any|>
         }
 
     }
@@ -201,9 +201,9 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideAnnotationCall.kt
     }
     @R|one/Anno|[Types](s = [ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
     }
-    .R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()) public final [ResolvedTo(BODY_RESOLVE)] class TopLevelClass : R|kotlin/Any| {
-        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
-            super<R|kotlin/Any|>()
+    .R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()) public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] class TopLevelClass : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
+            LAZY_super<R|kotlin/Any|>
         }
 
     }
@@ -222,9 +222,9 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideAnnotationCall.kt
     }
     @R|one/Anno|[Types](s = [ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
     }
-    .R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()) public final [ResolvedTo(BODY_RESOLVE)] class TopLevelClass : R|kotlin/Any| {
-        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
-            super<R|kotlin/Any|>()
+    .R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()) public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] class TopLevelClass : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
+            LAZY_super<R|kotlin/Any|>
         }
 
     }
@@ -243,9 +243,9 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideAnnotationCall.kt
     }
     @R|one/Anno|[Types](s = [ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
     }
-    .R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()) public final [ResolvedTo(BODY_RESOLVE)] class TopLevelClass : R|kotlin/Any| {
-        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
-            super<R|kotlin/Any|>()
+    .R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()) public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] class TopLevelClass : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
+            LAZY_super<R|kotlin/Any|>
         }
 
     }
@@ -264,9 +264,9 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideAnnotationCall.kt
     }
     @R|one/Anno|[Types](s = [ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
     }
-    .R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()) public final [ResolvedTo(BODY_RESOLVE)] class TopLevelClass : R|kotlin/Any| {
-        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
-            super<R|kotlin/Any|>()
+    .R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()) public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] class TopLevelClass : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
+            LAZY_super<R|kotlin/Any|>
         }
 
     }

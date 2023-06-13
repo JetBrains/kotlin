@@ -9,7 +9,7 @@ FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] typeOnAnnotationOnConstructorParameter.kt
     [ResolvedTo(BODY_RESOLVE)] annotations container
     public final [ResolvedTo(STATUS)] class ResolveMe : R|A| {
-        public [ResolvedTo(BODY_RESOLVE)] constructor([ResolvedTo(BODY_RESOLVE)] addCommaWarning: R|@R|Anno|()  kotlin/Boolean| = Boolean(false)): R|ResolveMe| {
+        public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] constructor([ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] addCommaWarning: R|@R|Anno|()  kotlin/Boolean| = Boolean(false)): R|ResolveMe| {
             super<R|A|>()
         }
 

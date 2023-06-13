@@ -38,9 +38,11 @@ abstract class LLFirResolveSession {
     abstract fun getScopeSessionFor(firSession: FirSession): ScopeSession
 
     /**
-     * Build fully resolved FIR node for requested element.
-     * This operation could be performance affective because it create FIleStructureElement and resolve non-local declaration into BODY phase, use
-     * @see tryGetCachedFirFile to get [FirFile] in undefined phase
+     * Build fully resolved FIR node for a requested element.
+     * This operation could be time-consuming because it creates FileStructureElement
+     * and resolves non-local declaration into BODY phase.
+     * Please use [getOrBuildFirFile] to get [FirFile] in undefined phase
+     * @see getOrBuildFirFile
      */
     internal abstract fun getOrBuildFirFor(element: KtElement): FirElement?
 
