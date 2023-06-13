@@ -425,9 +425,7 @@ open class CommonizerIT : BaseGradleIT() {
     private fun `test multiple cinterops with test source sets and compilations`(testSourceSetsDependingOnMain: Boolean) {
         with(Project("commonizeMultipleCInteropsWithTests", minLogLevel = INFO)) {
 
-            val isUnix = HostManager.hostIsMac || HostManager.hostIsLinux
             val isMac = HostManager.hostIsMac
-            val isWindows = HostManager.hostIsMingw
 
             fun CompiledProject.assertTestSourceSetsDependingOnMainParameter() {
                 val message = "testSourceSetsDependingOnMain is set"
@@ -447,43 +445,41 @@ open class CommonizerIT : BaseGradleIT() {
                 getCommonizerDependencies("nativeMain").withoutNativeDistributionDependencies().apply {
                     assertDependencyFilesMatches(".*nativeHelper")
                     assertTargetOnAllDependencies(
-                        CommonizerTarget(IOS_X64, IOS_ARM64, LINUX_X64, LINUX_ARM64, MACOS_X64, MINGW_X64, MINGW_X86)
+                        CommonizerTarget(IOS_X64, IOS_ARM64, LINUX_X64, LINUX_ARM64, MACOS_X64, MINGW_X64)
                     )
                 }
 
                 getCommonizerDependencies("nativeTest").withoutNativeDistributionDependencies().apply {
                     assertDependencyFilesMatches(".*nativeHelper", ".*nativeTestHelper")
                     assertTargetOnAllDependencies(
-                        CommonizerTarget(IOS_X64, IOS_ARM64, LINUX_X64, LINUX_ARM64, MACOS_X64, MINGW_X64, MINGW_X86)
+                        CommonizerTarget(IOS_X64, IOS_ARM64, LINUX_X64, LINUX_ARM64, MACOS_X64, MINGW_X64)
                     )
                 }
 
-                if (isUnix) {
-                    getCommonizerDependencies("unixMain").withoutNativeDistributionDependencies().apply {
-                        assertDependencyFilesMatches(".*nativeHelper", ".*unixHelper")
-                        assertTargetOnAllDependencies(CommonizerTarget(IOS_X64, IOS_ARM64, LINUX_X64, LINUX_ARM64, MACOS_X64))
-                    }
-
-                    getCommonizerDependencies("unixTest").withoutNativeDistributionDependencies().apply {
-                        assertDependencyFilesMatches(".*nativeHelper", ".*unixHelper", ".*nativeTestHelper")
-                        assertTargetOnAllDependencies(CommonizerTarget(IOS_X64, IOS_ARM64, LINUX_X64, LINUX_ARM64, MACOS_X64))
-                    }
-
-                    getCommonizerDependencies("linuxMain").withoutNativeDistributionDependencies().apply {
-                        assertDependencyFilesMatches(".*nativeHelper", ".*unixHelper")
-                        assertTargetOnAllDependencies(CommonizerTarget(LINUX_X64, LINUX_ARM64))
-                    }
-
-                    getCommonizerDependencies("linuxTest").withoutNativeDistributionDependencies().apply {
-                        assertDependencyFilesMatches(".*nativeHelper", ".*unixHelper", ".*nativeTestHelper")
-                        assertTargetOnAllDependencies(CommonizerTarget(LINUX_X64, LINUX_ARM64))
-                    }
-
-                    getCommonizerDependencies("linuxX64Main").assertEmpty()
-                    getCommonizerDependencies("linuxArm64Main").assertEmpty()
-                    getCommonizerDependencies("linuxX64Test").assertEmpty()
-                    getCommonizerDependencies("linuxArm64Test").assertEmpty()
+                getCommonizerDependencies("unixMain").withoutNativeDistributionDependencies().apply {
+                    assertDependencyFilesMatches(".*nativeHelper", ".*unixHelper")
+                    assertTargetOnAllDependencies(CommonizerTarget(IOS_X64, IOS_ARM64, LINUX_X64, LINUX_ARM64, MACOS_X64))
                 }
+
+                getCommonizerDependencies("unixTest").withoutNativeDistributionDependencies().apply {
+                    assertDependencyFilesMatches(".*nativeHelper", ".*unixHelper", ".*nativeTestHelper")
+                    assertTargetOnAllDependencies(CommonizerTarget(IOS_X64, IOS_ARM64, LINUX_X64, LINUX_ARM64, MACOS_X64))
+                }
+
+                getCommonizerDependencies("linuxMain").withoutNativeDistributionDependencies().apply {
+                    assertDependencyFilesMatches(".*nativeHelper", ".*unixHelper")
+                    assertTargetOnAllDependencies(CommonizerTarget(LINUX_X64, LINUX_ARM64))
+                }
+
+                getCommonizerDependencies("linuxTest").withoutNativeDistributionDependencies().apply {
+                    assertDependencyFilesMatches(".*nativeHelper", ".*unixHelper", ".*nativeTestHelper")
+                    assertTargetOnAllDependencies(CommonizerTarget(LINUX_X64, LINUX_ARM64))
+                }
+
+                getCommonizerDependencies("linuxX64Main").assertEmpty()
+                getCommonizerDependencies("linuxArm64Main").assertEmpty()
+                getCommonizerDependencies("linuxX64Test").assertEmpty()
+                getCommonizerDependencies("linuxArm64Test").assertEmpty()
 
                 if (isMac) {
                     getCommonizerDependencies("appleMain").withoutNativeDistributionDependencies().apply {
@@ -516,22 +512,8 @@ open class CommonizerIT : BaseGradleIT() {
                     getCommonizerDependencies("iosArm64Test").assertEmpty()
                 }
 
-                if (isWindows) {
-                    getCommonizerDependencies("windowsMain").withoutNativeDistributionDependencies().apply {
-                        assertDependencyFilesMatches(".*nativeHelper", ".*windowsHelper")
-                        assertTargetOnAllDependencies(CommonizerTarget(MINGW_X86, MINGW_X64))
-                    }
-
-                    getCommonizerDependencies("windowsTest").withoutNativeDistributionDependencies().apply {
-                        assertDependencyFilesMatches(".*nativeHelper", ".*windowsHelper", ".*nativeTestHelper")
-                        assertTargetOnAllDependencies(CommonizerTarget(MINGW_X86, MINGW_X64))
-                    }
-
-                    getCommonizerDependencies("windowsX64Main").assertEmpty()
-                    getCommonizerDependencies("windowsX64Test").assertEmpty()
-                    getCommonizerDependencies("windowsX86Main").assertEmpty()
-                    getCommonizerDependencies("windowsX86Test").assertEmpty()
-                }
+                getCommonizerDependencies("windowsX64Main").assertEmpty()
+                getCommonizerDependencies("windowsX64Test").assertEmpty()
             }
 
             build(":assemble", options = testSourceSetsDependingOnMainParameterOption) {
@@ -547,16 +529,14 @@ open class CommonizerIT : BaseGradleIT() {
                 assertSuccessful()
             }
 
-            if (isUnix) {
-                build(":compileUnixMainKotlinMetadata", options = testSourceSetsDependingOnMainParameterOption) {
-                    assertTestSourceSetsDependingOnMainParameter()
-                    assertSuccessful()
-                }
+            build(":compileUnixMainKotlinMetadata", options = testSourceSetsDependingOnMainParameterOption) {
+                assertTestSourceSetsDependingOnMainParameter()
+                assertSuccessful()
+            }
 
-                build(":compileLinuxMainKotlinMetadata", options = testSourceSetsDependingOnMainParameterOption) {
-                    assertTestSourceSetsDependingOnMainParameter()
-                    assertSuccessful()
-                }
+            build(":compileLinuxMainKotlinMetadata", options = testSourceSetsDependingOnMainParameterOption) {
+                assertTestSourceSetsDependingOnMainParameter()
+                assertSuccessful()
             }
 
             if (isMac) {
@@ -566,13 +546,6 @@ open class CommonizerIT : BaseGradleIT() {
                 }
 
                 build(":compileIosMainKotlinMetadata", options = testSourceSetsDependingOnMainParameterOption) {
-                    assertTestSourceSetsDependingOnMainParameter()
-                    assertSuccessful()
-                }
-            }
-
-            if (isWindows) {
-                build(":compileWindowsMainKotlinMetadata", options = testSourceSetsDependingOnMainParameterOption) {
                     assertTestSourceSetsDependingOnMainParameter()
                     assertSuccessful()
                 }
