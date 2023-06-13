@@ -87,3 +87,7 @@ var FirConstructor.originalConstructorIfTypeAlias: FirConstructor? by FirDeclara
 
 val FirConstructorSymbol.isTypeAliasedConstructor: Boolean
     get() = fir.originalConstructorIfTypeAlias != null
+
+private object CodeFragmentTowerDataContext : FirDeclarationDataKey()
+
+var FirCodeFragment.towerDataContext: FirTowerDataContext? by FirDeclarationDataRegistry.data(CodeFragmentTowerDataContext)
