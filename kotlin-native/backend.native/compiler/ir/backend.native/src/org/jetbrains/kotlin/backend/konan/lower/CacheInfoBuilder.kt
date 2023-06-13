@@ -93,7 +93,7 @@ internal class CacheInfoBuilder(
             }
 
             private fun processFunction(function: IrFunction) {
-                if (function.getPackageFragment() !is IrExternalPackageFragment) {
+                if (generationState.context.irLinker.getCachedDeclarationModuleDeserializer(function) == null) {
                     generationState.calledFromExportedInlineFunctions.add(function)
                     (function as? IrConstructor)?.constructedClass?.let {
                         generationState.constructedFromExportedInlineFunctions.add(it)

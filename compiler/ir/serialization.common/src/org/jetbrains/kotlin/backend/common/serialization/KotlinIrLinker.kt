@@ -102,7 +102,7 @@ abstract class KotlinIrLinker(
 
     protected abstract fun isBuiltInModule(moduleDescriptor: ModuleDescriptor): Boolean
 
-    private fun deserializeAllReachableTopLevels() {
+    fun deserializeAllReachableTopLevels() {
         while (modulesWithReachableTopLevels.isNotEmpty()) {
             val moduleDeserializer = modulesWithReachableTopLevels.first()
             modulesWithReachableTopLevels.remove(moduleDeserializer)

@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.backend.konan.llvm.computeFunctionName
 import org.jetbrains.kotlin.backend.konan.llvm.toLLVMType
 import org.jetbrains.kotlin.backend.konan.llvm.localHash
 import org.jetbrains.kotlin.backend.konan.lower.bridgeTarget
+import org.jetbrains.kotlin.backend.konan.serialization.KonanIrLinker
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
@@ -507,17 +508,10 @@ internal class ClassLayoutBuilder(val irClass: IrClass, val context: Context) {
         val outerThisField = if (irClass.isInner)
             context.innerClassesSupport.getOuterThisField(irClass)
         else null
-        val packageFragment = irClass.getPackageFragment()
-        if (packageFragment is IrExternalPackageFragment) {
-            val moduleDescriptor = packageFragment.packageFragmentDescriptor.containingDeclaration
-            if (moduleDescriptor.isFromInteropLibrary()) return emptyList()
-            val moduleDeserializer = context.irLinker.moduleDeserializers[moduleDescriptor]
-                    ?: error("No module deserializer for ${irClass.render()}")
-            require(context.config.cachedLibraries.isLibraryCached(moduleDeserializer.klib)) {
-                "No IR and no cache for ${irClass.render()}"
-            }
+
+        val moduleDeserializer = context.irLinker.getCachedDeclarationModuleDeserializer(irClass)
+        if (moduleDeserializer != null)
             return moduleDeserializer.deserializeClassFields(irClass, outerThisField?.toFieldInfo(llvm))
-        }
 
         val declarations = irClass.declarations.toMutableList()
         outerThisField?.let {

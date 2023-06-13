@@ -577,6 +577,16 @@ class IrDeclarationDeserializer(
         }
     }
 
+    fun <T : IrFunction> T.withDeserializeBodies(block: T.() -> Unit) {
+        val oldBodiesPolicy = deserializeBodies
+        try {
+            deserializeBodies = true
+            usingParent { block() }
+        } finally {
+            deserializeBodies = oldBodiesPolicy
+        }
+    }
+
     internal fun deserializeIrFunction(proto: ProtoFunction, setParent: Boolean = true): IrSimpleFunction =
         withDeserializedIrFunctionBase<IrSimpleFunctionSymbol, IrSimpleFunction>(
             proto.base,
