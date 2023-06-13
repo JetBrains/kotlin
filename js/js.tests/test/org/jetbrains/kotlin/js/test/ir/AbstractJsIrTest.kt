@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.js.test.ir
 
-import org.jetbrains.kotlin.js.test.AbstractJsTest
 import org.jetbrains.kotlin.js.test.JsSteppingTestAdditionalSourceProvider
 import org.jetbrains.kotlin.js.test.converters.JsIrBackendFacade
 import org.jetbrains.kotlin.js.test.converters.JsKlibBackendFacade
@@ -158,6 +157,26 @@ open class AbstractMultiModuleOrderTest : AbstractJsIrTest(
                 useHandlers(
                     ::JsWrongModuleHandler
                 )
+            }
+        }
+    }
+}
+
+open class AbstractWebDemoExamplesTest : AbstractJsIrTest(
+    pathToTestDir = "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/webDemoExamples/",
+    testGroupOutputDirPrefix = "webDemoExamples/"
+) {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        with(builder) {
+            defaultDirectives {
+                +JsEnvironmentConfigurationDirectives.KJS_WITH_FULL_RUNTIME
+                -JsEnvironmentConfigurationDirectives.GENERATE_NODE_JS_RUNNER
+                JsEnvironmentConfigurationDirectives.DONT_RUN_GENERATED_CODE.with("JS_IR")
+            }
+
+            configureJsArtifactsHandlersStep {
+                useHandlers(::MainCallWithArgumentsHandler)
             }
         }
     }

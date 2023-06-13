@@ -173,8 +173,11 @@ class JsEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigu
         }
 
         fun getMainCallParametersForModule(module: TestModule): MainCallParameters {
-            return when (JsEnvironmentConfigurationDirectives.CALL_MAIN) {
-                in module.directives -> MainCallParameters.mainWithArguments(listOf())
+            return when {
+                JsEnvironmentConfigurationDirectives.CALL_MAIN in module.directives -> MainCallParameters.mainWithArguments(listOf())
+                JsEnvironmentConfigurationDirectives.MAIN_ARGS in module.directives -> {
+                    MainCallParameters.mainWithArguments(module.directives[JsEnvironmentConfigurationDirectives.MAIN_ARGS].single())
+                }
                 else -> MainCallParameters.noCall()
             }
         }

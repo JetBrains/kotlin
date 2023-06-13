@@ -10,7 +10,10 @@ import org.jetbrains.kotlin.js.engine.ScriptEngine
 import org.jetbrains.kotlin.js.engine.ScriptEngineNashorn
 import org.jetbrains.kotlin.js.engine.ScriptEngineV8
 import org.jetbrains.kotlin.js.engine.loadFiles
+import org.jetbrains.kotlin.test.utils.withExtension
+import org.jetbrains.kotlin.test.utils.withSuffixAndExtension
 import org.junit.Assert
+import java.io.File
 
 internal const val TEST_DATA_DIR_PATH = "js/js.translator/testData/"
 private const val DIST_DIR_JS_PATH = "dist/js/"
@@ -104,7 +107,20 @@ abstract class AbstractJsTestChecker {
     }
 
     fun checkStdout(files: List<String>, expectedResult: String) {
-        run(files) {
+        val newFiles = files
+            .mapIndexed { index, s ->
+                if (index == files.size - 1) {
+                    val file = File(s)
+                    val lines = file.readText().lines().toMutableList()
+                    lines.add(lines.size - 6, JS_IR_OUTPUT_REWRITE)
+                    val newFile = file.withSuffixAndExtension("_modified", "js")
+                    newFile.writeText(lines.joinToString("\n"))
+                    newFile.absolutePath
+                } else {
+                    s
+                }
+            }
+        run(newFiles) {
             val actualResult = eval(GET_KOTLIN_OUTPUT)
             Assert.assertEquals(expectedResult, actualResult.normalize())
             ""
@@ -165,7 +181,12 @@ abstract class AbstractNashornJsTestChecker : AbstractJsTestChecker() {
 }
 
 const val SETUP_KOTLIN_OUTPUT = "kotlin.kotlin.io.output = new kotlin.kotlin.io.BufferedOutput();"
-const val GET_KOTLIN_OUTPUT = "kotlin.kotlin.io.output.buffer;"
+const val GET_KOTLIN_OUTPUT = "main.get_output().buffer_1"
+
+private val JS_IR_OUTPUT_REWRITE = """
+    set_output(new BufferedOutput())
+    _.get_output = get_output
+""".trimIndent()
 
 object NashornJsTestChecker : AbstractNashornJsTestChecker() {
 
