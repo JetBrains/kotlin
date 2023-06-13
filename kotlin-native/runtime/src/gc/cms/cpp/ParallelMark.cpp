@@ -39,7 +39,11 @@ void gc::mark::MarkPacer::wait(gc::mark::MarkPacer::Phase phase) {
     if (phase_.load(std::memory_order_relaxed) >= phase) return;
     std::unique_lock lock(mutex_);
     GCLogDebug(epoch_.load(), "Waiting for phase #%d", phase); // FIXME
-    cond_.wait(lock, [this, phase]() { return phase_.load(std::memory_order_relaxed) >= phase; });
+    cond_.wait(lock, [this, phase]() {
+        Phase ph = phase_.load(std::memory_order_relaxed);
+        GCLogDebug(epoch_.load(), "Woke up and seen phase #%d", ph); // FIXME
+        return ph >= phase;
+    });
 }
 
 void gc::mark::MarkPacer::beginEpoch(uint64_t epoch) {
