@@ -16,8 +16,11 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.isPrivateOrPrivateToThis
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
+import org.jetbrains.kotlin.config.JvmAnalysisFlags
+import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.light.classes.symbol.cachedValue
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
@@ -66,9 +69,15 @@ internal open class SymbolLightClassForInterface : SymbolLightClassForInterfaceO
         }
     }
 
+    private val jvmDefaultMode =
+        (ktModule as? KtSourceModule)
+            ?.languageVersionSettings
+            ?.getFlag(JvmAnalysisFlags.jvmDefaultMode)
+            ?: JvmDefaultMode.DEFAULT
+
     context(KtAnalysisSession)
     protected open fun acceptCallableSymbol(symbol: KtCallableSymbol): Boolean =
-        !(symbol is KtFunctionSymbol && symbol.visibility.isPrivateOrPrivateToThis() || symbol.hasTypeForValueClassInSignature())
+        !(symbol is KtFunctionSymbol && symbol.visibility.isPrivateOrPrivateToThis() && !jvmDefaultMode.isEnabled || symbol.hasTypeForValueClassInSignature())
 
     override fun copy(): SymbolLightClassForInterface =
         SymbolLightClassForInterface(classOrObjectDeclaration, classOrObjectSymbolPointer, ktModule, manager)

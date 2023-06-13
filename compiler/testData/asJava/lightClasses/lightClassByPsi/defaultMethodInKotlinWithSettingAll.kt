@@ -1,4 +1,5 @@
 // COMPILER_ARGUMENTS: -Xjvm-default=all
+// !JVM_DEFAULT_MODE: all
 
 interface KtInterface {
     fun defaultFun() {
@@ -6,5 +7,7 @@ interface KtInterface {
     }
 
     fun withoutBody()
+
+    private fun privateFun() {}
 }
 
