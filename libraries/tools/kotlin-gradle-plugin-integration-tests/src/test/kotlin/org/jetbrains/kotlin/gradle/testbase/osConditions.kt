@@ -28,9 +28,8 @@ import java.util.*
  * For example, if you have this annotation on both the class level and method level,
  * the method level annotation can only narrow the scope of the class level annotation.
  *
- * Exception: When used in a superclass declaration,
- * this declaration does not compete with other declaration levels.
- * It works only if it is the only declaration present for the superclass.
+ * Exception: If the annotation is present on both the class and superclass,
+ * the class-level annotation takes priority.
  */
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.RUNTIME)
