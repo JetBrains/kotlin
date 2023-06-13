@@ -103,10 +103,6 @@ fun main(args: Array<String>) {
                 model("webDemoExamples/")
             }
 
-            testClass<AbstractJsLineNumberTest> {
-                model("lineNumbers/")
-            }
-
             testClass<AbstractIrBoxJsTest> {
                 model("box/", pattern = "^([^_](.+))\\.kt$", excludeDirs = listOf("es6classes"))
             }
