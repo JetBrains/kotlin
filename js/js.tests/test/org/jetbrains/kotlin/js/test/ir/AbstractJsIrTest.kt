@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.js.test.ir
 
+import org.jetbrains.kotlin.js.test.AbstractJsTest
 import org.jetbrains.kotlin.js.test.JsSteppingTestAdditionalSourceProvider
 import org.jetbrains.kotlin.js.test.converters.JsIrBackendFacade
 import org.jetbrains.kotlin.js.test.converters.JsKlibBackendFacade
@@ -141,6 +142,22 @@ open class AbstractSourceMapGenerationSmokeTest : AbstractJsIrTest(
             defaultDirectives {
                 +JsEnvironmentConfigurationDirectives.GENERATE_SOURCE_MAP
                 -JsEnvironmentConfigurationDirectives.GENERATE_NODE_JS_RUNNER
+            }
+        }
+    }
+}
+
+open class AbstractMultiModuleOrderTest : AbstractJsIrTest(
+    pathToTestDir = "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/multiModuleOrder/",
+    testGroupOutputDirPrefix = "multiModuleOrder/"
+) {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        with(builder) {
+            configureJsArtifactsHandlersStep {
+                useHandlers(
+                    ::JsWrongModuleHandler
+                )
             }
         }
     }

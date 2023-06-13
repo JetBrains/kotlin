@@ -1,3 +1,4 @@
+// SPLIT_PER_MODULE
 // MODULE: lib
 // MODULE_KIND: UMD
 // FILE: lib.kt

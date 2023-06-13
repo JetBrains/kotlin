@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.js.test.ir.*
 import org.jetbrains.kotlin.js.testOld.AbstractDceTest
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.js.test.fir.AbstractFirLightTreeJsIrTextTest
+import org.jetbrains.kotlin.js.test.ir.AbstractMultiModuleOrderTest
 import org.jetbrains.kotlin.js.testOld.klib.AbstractClassicJsKlibEvolutionTest
 import org.jetbrains.kotlin.js.testOld.klib.AbstractFirJsKlibEvolutionTest
 

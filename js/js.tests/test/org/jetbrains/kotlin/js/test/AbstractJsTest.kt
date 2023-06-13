@@ -62,22 +62,6 @@ abstract class AbstractJsTest(
     }
 }
 
-open class AbstractMultiModuleOrderTest : AbstractJsTest(
-    pathToTestDir = "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/multiModuleOrder/",
-    testGroupOutputDirPrefix = "multiModuleOrder/"
-) {
-    override fun configure(builder: TestConfigurationBuilder) {
-        super.configure(builder)
-        with(builder) {
-            configureJsArtifactsHandlersStep {
-                useHandlers(
-                    ::JsWrongModuleHandler
-                )
-            }
-        }
-    }
-}
-
 open class AbstractWebDemoExamplesTest : AbstractJsTest(
     pathToTestDir = "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/webDemoExamples/",
     testGroupOutputDirPrefix = "webDemoExamples/"
