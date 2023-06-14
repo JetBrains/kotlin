@@ -36,11 +36,6 @@ open class CommonizerHierarchicalIT : BaseGradleIT() {
                 assertNoDuplicateLibraryWarning()
             }
 
-            build(":p1:compileMingwMainKotlinMetadata") {
-                assertSuccessful()
-                assertFileExists("p1/build/classes/kotlin/metadata/mingwMain/klib/p1_mingwMain.klib")
-            }
-
             build(":p1:compileAppleAndLinuxMainKotlinMetadata") {
                 assertSuccessful()
                 assertFileExists("p1/build/classes/kotlin/metadata/appleAndLinuxMain/klib/p1_appleAndLinuxMain.klib")
@@ -82,10 +77,9 @@ open class CommonizerHierarchicalIT : BaseGradleIT() {
                 assertNoDuplicateLibraryWarning()
             }
 
-            build(":p1:mingwX64MainKlibrary", ":p1:mingwX86MainKlibrary") {
+            build(":p1:mingwX64MainKlibrary") {
                 assertSuccessful()
                 assertFileExists("p1/build/classes/kotlin/mingwX64/main/klib/p1.klib")
-                assertFileExists("p1/build/classes/kotlin/mingwX86/main/klib/p1.klib")
                 assertNoDuplicateLibraryWarning()
             }
         }
