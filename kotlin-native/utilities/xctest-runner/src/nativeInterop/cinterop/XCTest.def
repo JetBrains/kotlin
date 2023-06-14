@@ -1,4 +1,4 @@
-depends = AppKit ApplicationServices Carbon CoreServices ImageIO IOKit Foundation CoreFoundation CoreGraphics UIKit darwin posix
+depends = CoreServices Foundation CoreFoundation CoreGraphics UIKit darwin posix
 language = Objective-C
 package = platform.XCTest
 modules = XCTest

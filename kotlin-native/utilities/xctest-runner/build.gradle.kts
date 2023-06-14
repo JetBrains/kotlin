@@ -74,11 +74,23 @@ val developerFrameworks: Map<KonanTarget, () -> String> by lazy {
 fun getDeveloperFramework(target: KonanTarget): String = developerFrameworks[target]?.let { it() } ?: error("Not supported target $target")
 
 kotlin {
-    macosX64(KonanTarget.MACOS_X64.name)
-    macosArm64(KonanTarget.MACOS_ARM64.name)
-    iosX64(KonanTarget.IOS_X64.name)
-    iosArm64(KonanTarget.IOS_ARM64.name)
-    iosSimulatorArm64(KonanTarget.IOS_SIMULATOR_ARM64.name)
+    val nativeTargets = listOf(
+        macosX64(KonanTarget.MACOS_X64.name),
+        macosArm64(KonanTarget.MACOS_ARM64.name),
+        iosX64(KonanTarget.IOS_X64.name),
+        iosArm64(KonanTarget.IOS_ARM64.name),
+        iosSimulatorArm64(KonanTarget.IOS_SIMULATOR_ARM64.name)
+    )
+
+    nativeTargets.forEach {
+        it.compilations.all {
+            cinterops {
+                create("XCTest") {
+                    compilerOpts("-iframework", getDeveloperFramework(konanTarget))
+                }
+            }
+        }
+    }
 
     sourceSets {
         all {
@@ -98,23 +110,20 @@ bitcode {
         .map { it.withSanitizer() }
         .forEach { targetWithSanitizer ->
             target(targetWithSanitizer) {
-                if (target.family.isAppleFamily) {
-                    module("xctest") {
-                        compilerArgs.set(
-                            listOf("-iframework", getDeveloperFramework(target))
-                        )
-                        headersDirs.from(project(":kotlin-native:runtime").files("src/main/cpp"))
+                module("xctest") {
+                    compilerArgs.set(
+                        listOf("-iframework", getDeveloperFramework(target))
+                    )
+                    headersDirs.from(project(":kotlin-native:runtime").files("src/main/cpp"))
 
-                        sourceSets {
-                            main {}
-                        }
-                        onlyIf { target.family.isAppleFamily }
+                    sourceSets {
+                        main {}
                     }
+                    onlyIf { target.family.isAppleFamily }
                 }
             }
         }
 }
-
 
 /*
 0. gradle :kotlin-native:dist

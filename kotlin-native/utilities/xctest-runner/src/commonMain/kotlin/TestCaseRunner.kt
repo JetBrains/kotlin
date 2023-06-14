@@ -1,4 +1,7 @@
-@file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
+/*
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
 
 import kotlinx.cinterop.*
 
@@ -127,7 +130,7 @@ class TestCaseRunner(
                 cls = this.`class`(),
                 name = selector,
                 imp = imp_implementationWithBlock(this::runner),
-                types = "v@:" // See ObjC' type encodings: v (returns void), @ (id - self), : (SEL _cmd)
+                types = "v@:" // See ObjC' type encodings: v (returns void), @ (id self), : (SEL _cmd)
             )
             check(result) {
                 "Internal error: was unable to add method with selector $selector"
