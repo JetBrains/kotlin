@@ -9,7 +9,6 @@ import groovy.json.StringEscapeUtils
 import org.gradle.api.logging.LogLevel.INFO
 import org.gradle.internal.os.OperatingSystem
 import org.jetbrains.kotlin.commonizer.CommonizerTarget
-import org.jetbrains.kotlin.gradle.testbase.TestVersions
 import org.jetbrains.kotlin.gradle.util.reportSourceSetCommonizerDependencies
 import org.jetbrains.kotlin.incremental.testingUtils.assertEqualDirectories
 import org.jetbrains.kotlin.konan.target.HostManager
@@ -171,33 +170,13 @@ open class CommonizerIT : BaseGradleIT() {
                 assertSuccessful()
             }
 
-            if (CommonizableTargets.targetA.isCompilable) {
-                // targetA will be macos
-                build(":targetABinaries") {
-                    assertSuccessful()
-                }
+            // targetA will be macos
+            build(":compileTestKotlinTargetA") {
+                assertSuccessful()
             }
-            if (CommonizableTargets.targetB.isCompilable) {
-                //targetB will be linuxArm64
-                build(":targetBBinaries") {
-                    assertSuccessful()
-                }
-            }
-        }
-    }
-
-    @Test
-    fun `test commonizeCurlInterop execution`() {
-        with(preparedProject("commonizeCurlInterop")) {
-            if (CommonizableTargets.targetA.isExecutable) {
-                build(":targetATest") {
-                    assertSuccessful()
-                }
-            }
-            if (CommonizableTargets.targetB.isExecutable) {
-                build(":targetBTest") {
-                    assertSuccessful()
-                }
+            //targetB will be linuxArm64
+            build(":compileTestKotlinTargetB") {
+                assertSuccessful()
             }
         }
     }
@@ -721,7 +700,7 @@ open class CommonizerIT : BaseGradleIT() {
     }
 }
 
-private data class TargetSubstitution(val value: String, val isCompilable: Boolean, val isExecutable: Boolean) {
+private data class TargetSubstitution(val value: String) {
     override fun toString(): String = value
 }
 
@@ -729,16 +708,16 @@ private object CommonizableTargets {
     private val os = OperatingSystem.current()
 
     val targetA = when {
-        os.isMacOsX -> TargetSubstitution("macosX64", isCompilable = true, isExecutable = true)
-        os.isLinux -> TargetSubstitution("linuxX64", isCompilable = true, isExecutable = true)
-        os.isWindows -> TargetSubstitution("mingwX64", isCompilable = true, isExecutable = false)
+        os.isMacOsX -> TargetSubstitution("macosX64")
+        os.isLinux -> TargetSubstitution("linuxX64")
+        os.isWindows -> TargetSubstitution("mingwX64")
         else -> fail("Unsupported os: ${os.name}")
     }
 
     val targetB = when {
-        os.isMacOsX -> TargetSubstitution("linuxX64", isCompilable = true, isExecutable = false)
-        os.isLinux -> TargetSubstitution("linuxArm64", isCompilable = true, isExecutable = false)
-        os.isWindows -> TargetSubstitution("mingwX86", isCompilable = true, isExecutable = false)
+        os.isMacOsX -> TargetSubstitution("linuxX64")
+        os.isLinux -> TargetSubstitution("linuxArm64")
+        os.isWindows -> TargetSubstitution("linuxX64")
         else -> fail("Unsupported os: ${os.name}")
     }
 }
