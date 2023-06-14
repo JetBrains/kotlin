@@ -64,7 +64,7 @@ internal object PersistenceContextCollector {
             is FirCallableDeclaration -> declaration.symbol.callableId.isLocal
             is FirDanglingModifierList -> declaration.containingClass()?.classId?.isLocal == true
             is FirAnonymousInitializer -> declaration.containingClass().classId.isLocal
-            is FirScript -> false
+            is FirScript, is FirCodeFragment -> false
             else -> error("Unsupported declaration ${declaration.renderWithType()}")
         }
 
