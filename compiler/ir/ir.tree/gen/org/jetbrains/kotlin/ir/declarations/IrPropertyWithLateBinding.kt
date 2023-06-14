@@ -8,7 +8,6 @@
 
 package org.jetbrains.kotlin.ir.declarations
 
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 
 /**
@@ -16,16 +15,8 @@ import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
  *
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.propertyWithLateBinding]
  */
-interface IrPropertyWithLateBinding : IrDeclaration {
-    override val symbol: IrPropertySymbol
+abstract class IrPropertyWithLateBinding : IrProperty() {
+    abstract val isBound: Boolean
 
-    var modality: Modality
-
-    var getter: IrSimpleFunction?
-
-    var setter: IrSimpleFunction?
-
-    val isBound: Boolean
-
-    fun acquireSymbol(symbol: IrPropertySymbol): IrProperty
+    abstract fun acquireSymbol(symbol: IrPropertySymbol): IrPropertyWithLateBinding
 }

@@ -37,6 +37,14 @@ class ElementConfig(
 
     var ownsChildren = true // If false, acceptChildren/transformChildren will NOT be generated.
 
+    /**
+     * Set this to `true` if the element should be a leaf semantically, but technically it's not.
+     *
+     * For example, we only generate [IrFactory] methods for leaf elements. If we want to generate a method for this element, but it has
+     * subclasses, it can be done by setting this property to `true`.
+     */
+    var isForcedLeaf = false
+
     var typeKind: TypeKind? = null
 
     var generationCallback: (TypeSpec.Builder.() -> Unit)? = null

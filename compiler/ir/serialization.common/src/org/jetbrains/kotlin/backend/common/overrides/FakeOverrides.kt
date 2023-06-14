@@ -218,7 +218,6 @@ class FakeOverrideBuilder(
         property: IrPropertyWithLateBinding,
         manglerCompatibleMode: Boolean
     ): Pair<IdSignature, IrPropertySymbol> {
-        require(property is IrProperty) { "Unexpected fake override property: $property" }
         val parent = property.parentAsClass
 
         val signature = composeSignature(property, manglerCompatibleMode)

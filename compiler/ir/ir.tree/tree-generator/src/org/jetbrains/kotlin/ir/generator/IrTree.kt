@@ -368,21 +368,17 @@ object IrTree : AbstractTreeBuilder() {
         }
     }
     val propertyWithLateBinding: ElementConfig by element(Declaration) {
-        typeKind = TypeKind.Interface
+        typeKind = TypeKind.Class
 
-        parent(declaration)
+        parent(property)
 
-        +symbol(propertySymbolType)
-        +field("modality", type<Modality>())
-        +field("getter", simpleFunction, nullable = true)
-        +field("setter", simpleFunction, nullable = true)
         +field("isBound", boolean, mutable = false)
         generationCallback = {
             addFunction(
                 FunSpec.builder("acquireSymbol")
                     .addModifiers(KModifier.ABSTRACT)
                     .addParameter("symbol", propertySymbolType.toPoet())
-                    .returns(property.toPoet())
+                    .returns(this@element.toPoet())
                     .build()
             )
         }
@@ -439,6 +435,7 @@ object IrTree : AbstractTreeBuilder() {
     }
     val property: ElementConfig by element(Declaration) {
         visitorParent = declarationBase
+        isForcedLeaf = true
 
         parent(declarationBase)
         parent(possiblyExternalDeclaration)

@@ -141,7 +141,9 @@ private fun markLeaves(elements: List<Element>) {
 
     for (el in elements) {
         for (parent in el.elementParents) {
-            leaves.remove(parent.element)
+            if (!parent.element.isLeaf) {
+                leaves.remove(parent.element)
+            }
         }
     }
 
