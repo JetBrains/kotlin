@@ -43,16 +43,35 @@ fun getNonErrorFromFieldValue(value: Any?): String? {
     }
 }
 
-fun collectNonErrorsFromFieldsOf(klassWithErrors: KClass<*>, instance: Any?): List<String> {
+fun getErrorFromFieldValue(value: Any?): String? {
+    return when (value) {
+        is AbstractKtDiagnosticFactory -> when (value.severity) {
+            Severity.ERROR -> value.name
+            else -> null
+        }
+        is KtDiagnosticFactoryForDeprecation<*> -> value.errorFactory.name
+        is DiagnosticFactoryWithPsiElement<*, *> -> when (value.severity) {
+            Severity.ERROR -> value.name
+            else -> null
+        }
+        is DummyDelegate<*> -> getErrorFromFieldValue(value.value)
+        else -> null
+    }
+}
+
+inline fun collectFromFieldsOf(klassWithErrors: KClass<*>, instance: Any?, collector: (Any?) -> String?): List<String> {
     // NB: trying to use `kotlin.reflect.full.memberProperties`
     // fails with `Built-in class kotlin.Any is not found`,
     // and I'm not sure why
     return klassWithErrors.java.declaredFields.mapNotNull { field ->
         // Otherwise can't access kotlin objects
         field.isAccessible = true
-        getNonErrorFromFieldValue(field.get(instance))
+        collector(field.get(instance))
     }
 }
+
+fun collectNonErrorsFromFieldsOf(klassWithErrors: KClass<*>, instance: Any?) =
+    collectFromFieldsOf(klassWithErrors, instance, ::getNonErrorFromFieldValue)
 
 fun collectAllK1NonErrors(): Set<String> {
     val diagnosticsFromInterfaces = listOf(

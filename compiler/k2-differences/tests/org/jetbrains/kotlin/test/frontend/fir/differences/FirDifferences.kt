@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.codeMetaInfo.clearTextFromDiagnosticMarkup
 import org.jetbrains.kotlin.codeMetaInfo.model.ParsedCodeMetaInfo
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersion
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 import org.jetbrains.kotlin.test.util.LANGUAGE_FEATURE_PATTERN
 import java.io.File
 import java.io.Writer
@@ -22,9 +23,16 @@ val equivalentDiagnostics = listOf(
         "RETURN_TYPE_MISMATCH",
         "ASSIGNMENT_TYPE_MISMATCH",
         "INITIALIZER_TYPE_MISMATCH",
+        "NULL_FOR_NONNULL_TYPE",
+        "TYPE_MISMATCH_IN_FOR_LOOP",
+        "TYPE_MISMATCH_IN_RANGE",
         "CONSTANT_EXPECTED_TYPE_MISMATCH",
         "HAS_NEXT_FUNCTION_TYPE_MISMATCH",
         "CONDITION_TYPE_MISMATCH",
+        "EXPECTED_TYPE_MISMATCH",
+        "EXPECTED_PARAMETERS_NUMBER_MISMATCH",
+        "TYPE_MISMATCH_DUE_TO_EQUALS_LAMBDA_IN_FUN",
+        "SIGNED_CONSTANT_CONVERTED_TO_UNSIGNED",
         "UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION",
         "UPPER_BOUND_VIOLATED_BASED_ON_JAVA_ANNOTATIONS",
         "UPPER_BOUND_VIOLATED",
@@ -37,6 +45,9 @@ val equivalentDiagnostics = listOf(
         "UNRESOLVED_REFERENCE",
         "UNRESOLVED_MEMBER",
         "UNRESOLVED_IMPORT",
+        "UNRESOLVED_LABEL",
+        "NO_THIS",
+        "TOO_MANY_ARGUMENTS",
         "CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY",
         "DEPRECATION_ERROR",
         "OVERLOAD_RESOLUTION_AMBIGUITY",
@@ -44,6 +55,7 @@ val equivalentDiagnostics = listOf(
         "NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE",
         "RESOLUTION_TO_CLASSIFIER",
         "FUNCTION_EXPECTED",
+        "ENUM_ENTRY_AS_TYPE",
         "RECURSIVE_TYPEALIAS_EXPANSION",
         "MISSING_DEPENDENCY_CLASS",
 //    ),
@@ -74,6 +86,22 @@ val equivalentDiagnostics = listOf(
     listOf(
         "SMARTCAST_IMPOSSIBLE",
         "UNSAFE_CALL",
+    ),
+    listOf(
+        "ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED",
+        "ABSTRACT_MEMBER_NOT_IMPLEMENTED",
+    ),
+    listOf(
+        "RETURN_NOT_ALLOWED",
+        "NOT_A_FUNCTION_LABEL",
+    ),
+    listOf(
+        "NO_ACTUAL_FOR_EXPECT",
+        "INCOMPATIBLE_MATCHING",
+    ),
+    listOf(
+        "UNINITIALIZED_VARIABLE",
+        "UNINITIALIZED_ENUM_COMPANION",
     ),
 )
 
@@ -170,6 +198,8 @@ val MAGIC_DIAGNOSTICS_THRESHOLD = 80
 val k1DefinitelyNonErrors = collectAllK1NonErrors()
 val k2DefinitelyNonErrors = collectAllK2NonErrors()
 
+val k1JvmDefinitelyNonErrors = collectFromFieldsOf(ErrorsJvm::class, instance = null, collector = ::getErrorFromFieldValue)
+
 val ParsedCodeMetaInfo.isProbablyK1Error get() = !tag.startsWith("DEBUG_INFO_") && tag !in k1DefinitelyNonErrors
 val ParsedCodeMetaInfo.isProbablyK2Error get() = !tag.startsWith("DEBUG_INFO_") && tag !in k2DefinitelyNonErrors
 
@@ -204,13 +234,45 @@ val String.lineStartOffsets: IntArray
         return buffer.toIntArray()
     }
 
-fun hasNonIdenticalButEquivalentResults(
-    alongsideNonIdenticalTest: File,
-    differencesReportWriter: Writer,
-    k1Text: String,
+class EquivalenceTestResult(
+    val significantK1MetaInfo: Collection<ParsedCodeMetaInfo>,
+    val significantK2MetaInfo: Collection<ParsedCodeMetaInfo>,
+)
+
+fun EquivalenceTestResult.ifTests(
+    testFile: File,
+    areNonEquivalent: (EquivalenceTestResult) -> Unit,
+    containObsoleteFeatures: () -> Unit,
+    checkJvmDiagnosticButAreNotJvmTests: (List<String>) -> Unit,
+    collectObsoleteFeatures: () -> List<String>,
+) {
+    val areEquivalent = significantK1MetaInfo.isEmpty() && significantK2MetaInfo.isEmpty()
+
+    if (!areEquivalent) {
+        val obsoleteFeatures = collectObsoleteFeatures()
+
+        if (obsoleteFeatures.isNotEmpty()) {
+            containObsoleteFeatures()
+            return
+        }
+
+        if (
+            !"testsWithJvmBackend".substring.matches(testFile.path) &&
+            significantK1MetaInfo.isNotEmpty() &&
+            significantK1MetaInfo.all { it.tag in k1JvmDefinitelyNonErrors }
+        ) {
+            checkJvmDiagnosticButAreNotJvmTests(significantK1MetaInfo.map { it.tag })
+            return
+        }
+
+        areNonEquivalent(this)
+    }
+}
+
+fun analyseEquivalencesAmong(
     allK1MetaInfos: List<ParsedCodeMetaInfo>,
     allK2MetaInfos: List<ParsedCodeMetaInfo>,
-): Boolean {
+): EquivalenceTestResult {
     val (significantK1MetaInfo, significantK2MetaInfo) = when {
         allK1MetaInfos.size + allK2MetaInfos.size <= MAGIC_DIAGNOSTICS_THRESHOLD -> {
             extractSignificantMetaInfosSlow(allK1MetaInfos, allK2MetaInfos)
@@ -220,32 +282,7 @@ fun hasNonIdenticalButEquivalentResults(
         }
     }
 
-    val areEquivalent = significantK1MetaInfo.isEmpty() && significantK2MetaInfo.isEmpty()
-
-    if (!areEquivalent) {
-        val projectDirectory = System.getProperty("user.dir")
-        val relativeTestPath = alongsideNonIdenticalTest.path.removePrefix(projectDirectory)
-        val obsoleteFeatures = collectObsoleteDisabledLanguageFeatures(k1Text, relativeTestPath)
-
-        if (obsoleteFeatures.isNotEmpty()) {
-            differencesReportWriter.write("The `${relativeTestPath}` tests are not really equivalent, but they disable the `$obsoleteFeatures` features which K2 is not expected to support anyway, because they become stable before 2.0.\n\n")
-            return true
-        }
-
-        differencesReportWriter.write("The `${relativeTestPath}` test:\n\n")
-
-        for (it in significantK1MetaInfo) {
-            differencesReportWriter.write("- `#potential-feature`: `${it.tag}` was in K1 at `(${it.start}..${it.end})`, but disappeared\n")
-        }
-
-        for (it in significantK2MetaInfo) {
-            differencesReportWriter.write("- `#potential-breaking-change`: `${it.tag}` was introduced in K2 at `(${it.start}..${it.end})`\n")
-        }
-
-        differencesReportWriter.write("\n")
-    }
-
-    return areEquivalent
+    return EquivalenceTestResult(significantK1MetaInfo, significantK2MetaInfo)
 }
 
 fun collectObsoleteDisabledLanguageFeatures(
@@ -308,6 +345,32 @@ fun fixMissingTestSpecComments(
     status.done("$missingCommentsCount fir files had missing TEST SPEC comments")
 }
 
+class DiagnosticsStatistics(
+    val disappearedDiagnosticToFilesCount: MutableMap<String, Int> = mutableMapOf(),
+    val introducedDiagnosticToFilesCount: MutableMap<String, Int> = mutableMapOf(),
+)
+
+fun DiagnosticsStatistics.recordDiagnosticsStatistics(result: EquivalenceTestResult) {
+    for (it in result.significantK1MetaInfo) {
+        val disappearedCount = disappearedDiagnosticToFilesCount.getOrDefault(it.tag, 0)
+        disappearedDiagnosticToFilesCount.put(it.tag, disappearedCount + 1)
+    }
+
+    for (it in result.significantK2MetaInfo) {
+        val introducedCount = introducedDiagnosticToFilesCount.getOrDefault(it.tag, 0)
+        introducedDiagnosticToFilesCount.put(it.tag, introducedCount + 1)
+    }
+}
+
+fun printDiagnosticsStatistics(title: String, diagnostics: Map<String, Int>, writer: Writer) {
+    writer.write("$title\n\n")
+    val sorted = diagnostics.entries.sortedByDescending { it.value }
+
+    for (it in sorted) {
+        writer.write("- `${it.key}`: ${it.value} files\n")
+    }
+}
+
 fun main() {
     val projectDirectory = File(System.getProperty("user.dir"))
     val build = projectDirectory.child("compiler").child("k2-differences").child("build")
@@ -319,39 +382,131 @@ fun main() {
     fixMissingTestSpecComments(tests.alongsideNonIdenticalTests)
     val status = StatusPrinter()
 
+    fun Int.outOfAllAlongsideTests(): Int = this * 100 / (tests.alongsideNonIdenticalTests.size + tests.alongsideIdenticalTests.size)
+
+    status.done("${tests.alongsideNonIdenticalTests.size} tests are non-identical among the total of ${tests.alongsideNonIdenticalTests.size + tests.alongsideIdenticalTests.size} alongside tests (~${tests.alongsideNonIdenticalTests.size.outOfAllAlongsideTests()}%)")
+
     var alongsideNonEquivalentTestsCount = 0
     var alongsideNonSimilarTestsCount = 0
 
+    val diagnosticsStatistics = DiagnosticsStatistics()
+
+    fun reportEquivalenceDifference(
+        writer: Writer,
+        result: EquivalenceTestResult,
+        relativeTestPath: String,
+    ) {
+        writer.write("The `${relativeTestPath}` test:\n\n")
+
+        for (it in result.significantK1MetaInfo) {
+            writer.write("- `#potential-feature`: `${it.tag}` was in K1 at `(${it.start}..${it.end})`, but disappeared\n")
+        }
+
+        for (it in result.significantK2MetaInfo) {
+            writer.write("- `#potential-breaking-change`: `${it.tag}` was introduced in K2 at `(${it.start}..${it.end})`\n")
+        }
+
+        writer.write("\n")
+    }
+
+    fun reportObsoleteFeatures(
+        writer: Writer,
+        obsoleteFeatures: List<String>,
+        relativeTestPath: String,
+    ) {
+        writer.write("The `${relativeTestPath}` tests are not really equivalent, but they disable the `$obsoleteFeatures` features which K2 is not expected to support anyway, because they become stable before 2.0.\n\n")
+    }
+
+    fun reportJvmDiagnosticsInNonJvmTest(
+        writer: Writer,
+        jvmErrors: List<String>,
+        relativeTestPath: String,
+    ) {
+        writer.write("The `${relativeTestPath}` tests are not really equivalent, but the K1 file only contains JVM-specific errors (`${jvmErrors}`), and this test is not placed in the correct folder for jvm-specific tests\n\n")
+    }
+
+    fun checkTest(
+        testPath: String,
+        equivalence: Writer,
+        similarity: Writer,
+    ) {
+        status.loading("Checking $testPath", probability = 0.01)
+        val relativeTestPath = testPath.removePrefix(projectDirectory.path)
+        val test = File(testPath)
+
+        val k1Text = test.readText()
+        val k2Text = test.analogousK2File.readText()
+
+        val obsoleteFeatures by lazy {
+            collectObsoleteDisabledLanguageFeatures(k1Text, relativeTestPath)
+        }
+
+        val allK1MetaInfos = CodeMetaInfoParser.getCodeMetaInfoFromText(k1Text).filter { it.isProbablyK1Error }
+        val allK2MetaInfos = CodeMetaInfoParser.getCodeMetaInfoFromText(k2Text).filter { it.isProbablyK2Error }
+
+        analyseEquivalencesAmong(allK1MetaInfos, allK2MetaInfos).ifTests(
+            test,
+            areNonEquivalent = { result ->
+                alongsideNonEquivalentTestsCount++
+                reportEquivalenceDifference(equivalence, result, relativeTestPath)
+            },
+            containObsoleteFeatures = {
+                reportObsoleteFeatures(equivalence, obsoleteFeatures, relativeTestPath)
+            },
+            checkJvmDiagnosticButAreNotJvmTests = { jvmErrors ->
+                reportJvmDiagnosticsInNonJvmTest(equivalence, jvmErrors, relativeTestPath)
+            },
+            collectObsoleteFeatures = { obsoleteFeatures },
+        )
+
+        val k1LineStartOffsets = clearTextFromDiagnosticMarkup(k1Text).lineStartOffsets
+        val k2LineStartOffsets = clearTextFromDiagnosticMarkup(k2Text).lineStartOffsets
+
+        val allK1LineMetaInfos = allK1MetaInfos.map { it.replaceOffsetsWithLineNumbersWithin(k1LineStartOffsets) }
+        val allK2LineMetaInfos = allK2MetaInfos.map { it.replaceOffsetsWithLineNumbersWithin(k2LineStartOffsets) }
+
+        analyseEquivalencesAmong(allK1LineMetaInfos, allK2LineMetaInfos).ifTests(
+            test,
+            areNonEquivalent = { result ->
+                alongsideNonSimilarTestsCount++
+                reportEquivalenceDifference(similarity, result, relativeTestPath)
+                diagnosticsStatistics.recordDiagnosticsStatistics(result)
+            },
+            containObsoleteFeatures = {
+                reportObsoleteFeatures(similarity, obsoleteFeatures, relativeTestPath)
+            },
+            checkJvmDiagnosticButAreNotJvmTests = { jvmErrors ->
+                reportJvmDiagnosticsInNonJvmTest(similarity, jvmErrors, relativeTestPath)
+            },
+            collectObsoleteFeatures = { obsoleteFeatures },
+        )
+    }
+
     build.child("similarity-report.md").bufferedWriter().use { similarity ->
         build.child("equivalence-report.md").bufferedWriter().use { equivalence ->
-            for (it in tests.alongsideNonIdenticalTests) {
-                status.loading("Checking $it", probability = 0.01)
-                val test = File(it)
-
-                val k1Text = test.readText()
-                val k2Text = test.analogousK2File.readText()
-
-                val allK1MetaInfos = CodeMetaInfoParser.getCodeMetaInfoFromText(k1Text).filter { it.isProbablyK1Error }
-                val allK2MetaInfos = CodeMetaInfoParser.getCodeMetaInfoFromText(k2Text).filter { it.isProbablyK2Error }
-
-                if (!hasNonIdenticalButEquivalentResults(test, equivalence, k1Text, allK1MetaInfos, allK2MetaInfos)) {
-                    alongsideNonEquivalentTestsCount++
-                }
-
-                val k1LineStartOffsets = clearTextFromDiagnosticMarkup(k1Text).lineStartOffsets
-                val k2LineStartOffsets = clearTextFromDiagnosticMarkup(k2Text).lineStartOffsets
-
-                val allK1LineMetaInfos = allK1MetaInfos.map { it.replaceOffsetsWithLineNumbersWithin(k1LineStartOffsets) }
-                val allK2LineMetaInfos = allK2MetaInfos.map { it.replaceOffsetsWithLineNumbersWithin(k2LineStartOffsets) }
-
-                if (!hasNonIdenticalButEquivalentResults(test, similarity, k1Text, allK1LineMetaInfos, allK2LineMetaInfos)) {
-                    alongsideNonSimilarTestsCount++
-                }
+            for (testPath in tests.alongsideNonIdenticalTests) {
+                checkTest(testPath, equivalence, similarity)
             }
         }
     }
 
-    status.done("Found $alongsideNonEquivalentTestsCount non-equivalences among alongside tests")
-    status.done("Found $alongsideNonSimilarTestsCount non-similarities among alongside tests")
-    print("")
+    status.done("Found $alongsideNonEquivalentTestsCount non-equivalences among alongside tests (~${alongsideNonEquivalentTestsCount.outOfAllAlongsideTests()}% of all alongside tests). That is ${tests.alongsideNonIdenticalTests.size - alongsideNonEquivalentTestsCount} tests are equivalent (~${(tests.alongsideNonIdenticalTests.size - alongsideNonEquivalentTestsCount).outOfAllAlongsideTests()}% of all alongside tests)")
+    status.done("Found $alongsideNonSimilarTestsCount non-similarities among alongside tests (~${alongsideNonSimilarTestsCount.outOfAllAlongsideTests()}% of all alongside tests). That is ${tests.alongsideNonIdenticalTests.size - alongsideNonSimilarTestsCount} tests are similar (~${(tests.alongsideNonIdenticalTests.size - alongsideNonSimilarTestsCount).outOfAllAlongsideTests()}% of all alongside tests)")
+
+    build.child("diagnostics-stats.md").bufferedWriter().use { writer ->
+        printDiagnosticsStatistics(
+            "Most common reasons of potential features (by the number of files) include:",
+            diagnosticsStatistics.disappearedDiagnosticToFilesCount,
+            writer,
+        )
+        writer.write("\n")
+        printDiagnosticsStatistics(
+            "Most common reasons of breaking changes (by the number of files) include:",
+            diagnosticsStatistics.introducedDiagnosticToFilesCount,
+            writer,
+        )
+    }
+
+    val a = 10 + 1
+    println("")
 }
