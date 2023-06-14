@@ -190,13 +190,11 @@ class TestSuiteRunner(private val testSuite: TestSuite) : XCTestSuite(testSuite.
         get() = testSuite.ignored || testSuite.testCases.all { it.value.ignored }
 
     override fun setUp() {
-        super.setUp()
         if (!ignoredSuite) testSuite.doBeforeClass()
     }
 
     override fun tearDown() {
         if (!ignoredSuite) testSuite.doAfterClass()
-        super.tearDown()
     }
 }
 
