@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+
 plugins {
     kotlin("multiplatform")
 }
@@ -27,4 +29,10 @@ kotlin {
 
     targetA.compilations.getByName("main").cinterops.create("curl")
     targetB.compilations.getByName("main").cinterops.create("curl")
+
+    targets.withType<KotlinNativeTarget>().configureEach {
+        binaries.all {
+            linkerOpts(projectDir.resolve("libcurl.tbd").path)
+        }
+    }
 }

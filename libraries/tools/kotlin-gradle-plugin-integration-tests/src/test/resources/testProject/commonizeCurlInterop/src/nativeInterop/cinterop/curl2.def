@@ -1,6 +1,3 @@
 headers = curl/curl.h
 headerFilter = curl/*
 compilerOpts = -Ilibs/include
-
-linkerOpts.osx = -L/opt/local/lib -L/usr/local/opt/curl/lib -lcurl
-linkerOpts.linux = -L/usr/lib/x86_64-linux-gnu -L/usr/lib64 -lcurl

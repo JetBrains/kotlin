@@ -9,7 +9,6 @@ import groovy.json.StringEscapeUtils
 import org.gradle.api.logging.LogLevel.INFO
 import org.gradle.internal.os.OperatingSystem
 import org.jetbrains.kotlin.commonizer.CommonizerTarget
-import org.jetbrains.kotlin.gradle.testbase.TestVersions
 import org.jetbrains.kotlin.gradle.util.reportSourceSetCommonizerDependencies
 import org.jetbrains.kotlin.incremental.testingUtils.assertEqualDirectories
 import org.jetbrains.kotlin.konan.target.HostManager
@@ -187,15 +186,17 @@ open class CommonizerIT : BaseGradleIT() {
     }
 
     @Test
-    fun `test commonizeCurlInterop execution`() {
+    fun `test commonizeCurlInterop linking`() {
         with(preparedProject("commonizeCurlInterop")) {
-            if (CommonizableTargets.targetA.isExecutable) {
-                build(":targetATest") {
+            if (CommonizableTargets.targetA.isLinkable) {
+                build(":linkTargetA") {
+                    assertFileExists("build/bin/targetA/debugTest/test.kexe")
                     assertSuccessful()
                 }
             }
-            if (CommonizableTargets.targetB.isExecutable) {
-                build(":targetBTest") {
+            if (CommonizableTargets.targetB.isLinkable) {
+                build(":linkTargetB") {
+                    assertFileExists("build/bin/targetB/debugTest/test.kexe")
                     assertSuccessful()
                 }
             }
@@ -721,7 +722,7 @@ open class CommonizerIT : BaseGradleIT() {
     }
 }
 
-private data class TargetSubstitution(val value: String, val isCompilable: Boolean, val isExecutable: Boolean) {
+private data class TargetSubstitution(val value: String, val isCompilable: Boolean, val isLinkable: Boolean) {
     override fun toString(): String = value
 }
 
@@ -729,16 +730,16 @@ private object CommonizableTargets {
     private val os = OperatingSystem.current()
 
     val targetA = when {
-        os.isMacOsX -> TargetSubstitution("macosX64", isCompilable = true, isExecutable = true)
-        os.isLinux -> TargetSubstitution("linuxX64", isCompilable = true, isExecutable = true)
-        os.isWindows -> TargetSubstitution("mingwX64", isCompilable = true, isExecutable = false)
+        os.isMacOsX -> TargetSubstitution("macosX64", isCompilable = true, isLinkable = true)
+        os.isLinux -> TargetSubstitution("linuxX64", isCompilable = true, isLinkable = true)
+        os.isWindows -> TargetSubstitution("mingwX64", isCompilable = true, isLinkable = true)
         else -> fail("Unsupported os: ${os.name}")
     }
 
     val targetB = when {
-        os.isMacOsX -> TargetSubstitution("linuxX64", isCompilable = true, isExecutable = false)
-        os.isLinux -> TargetSubstitution("linuxArm64", isCompilable = true, isExecutable = false)
-        os.isWindows -> TargetSubstitution("mingwX86", isCompilable = true, isExecutable = false)
+        os.isMacOsX -> TargetSubstitution("linuxX64", isCompilable = true, isLinkable = false)
+        os.isLinux -> TargetSubstitution("linuxArm64", isCompilable = true, isLinkable = false)
+        os.isWindows -> TargetSubstitution("linuxX64", isCompilable = true, isLinkable = false)
         else -> fail("Unsupported os: ${os.name}")
     }
 }

@@ -1,0 +1,35 @@
+--- !tapi-tbd
+tbd-version:     4
+targets:         [ arm64, x86_64 ]
+install-name:    'fake_path'
+current-version: 1
+compatibility-version: 1
+exports:
+  - targets:         [ arm64, x86_64 ]
+    symbols:         [ _curl_easy_cleanup, _curl_easy_duphandle, _curl_easy_escape,
+                       _curl_easy_getinfo, _curl_easy_header, _curl_easy_init, _curl_easy_nextheader,
+                       _curl_easy_option_by_id, _curl_easy_option_by_name, _curl_easy_option_next,
+                       _curl_easy_pause, _curl_easy_perform, _curl_easy_recv, _curl_easy_reset,
+                       _curl_easy_send, _curl_easy_setopt, _curl_easy_strerror, _curl_easy_unescape,
+                       _curl_easy_upkeep, _curl_escape, _curl_formadd, _curl_formfree,
+                       _curl_formget, _curl_free, _curl_getdate, _curl_getenv, _curl_global_cleanup,
+                       _curl_global_init, _curl_global_init_mem, _curl_global_sslset,
+                       _curl_maprintf, _curl_mfprintf, _curl_mime_addpart, _curl_mime_data,
+                       _curl_mime_data_cb, _curl_mime_encoder, _curl_mime_filedata,
+                       _curl_mime_filename, _curl_mime_free, _curl_mime_headers,
+                       _curl_mime_init, _curl_mime_name, _curl_mime_subparts, _curl_mime_type,
+                       _curl_mprintf, _curl_msnprintf, _curl_msprintf, _curl_multi_add_handle,
+                       _curl_multi_assign, _curl_multi_cleanup, _curl_multi_fdset,
+                       _curl_multi_info_read, _curl_multi_init, _curl_multi_perform,
+                       _curl_multi_poll, _curl_multi_remove_handle, _curl_multi_setopt,
+                       _curl_multi_socket, _curl_multi_socket_action, _curl_multi_socket_all,
+                       _curl_multi_strerror, _curl_multi_timeout, _curl_multi_wait,
+                       _curl_multi_wakeup, _curl_mvaprintf, _curl_mvfprintf, _curl_mvprintf,
+                       _curl_mvsnprintf, _curl_mvsprintf, _curl_pushheader_byname,
+                       _curl_pushheader_bynum, _curl_share_cleanup, _curl_share_init,
+                       _curl_share_setopt, _curl_share_strerror, _curl_slist_append,
+                       _curl_slist_free_all, _curl_strequal, _curl_strnequal, _curl_unescape,
+                       _curl_url, _curl_url_cleanup, _curl_url_dup, _curl_url_get,
+                       _curl_url_set, _curl_url_strerror, _curl_version, _curl_version_info,
+                       _curl_ws_meta, _curl_ws_recv, _curl_ws_send ]
+...
