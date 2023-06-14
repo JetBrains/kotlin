@@ -9,6 +9,9 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiErrorElement
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignation
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignationWithFile
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.collectDesignation
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.ClassDiagnosticRetriever
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.FileDiagnosticRetriever
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.FileStructureElementDiagnostics
@@ -20,7 +23,9 @@ import org.jetbrains.kotlin.fir.correspondingProperty
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirErrorConstructor
 import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
+import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirCodeFragmentSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
@@ -106,12 +111,12 @@ internal class KtToFirMapping(firElement: FirElement, recorder: FirElementsRecor
     }
 }
 
-internal sealed class ReanalyzableStructureElement<KT : KtDeclaration, S : FirBasedSymbol<*>>(
+internal sealed class ReanalyzableStructureElement<KT : KtAnnotated, S : FirBasedSymbol<*>>(
     firFile: FirFile,
     val firSymbol: S,
     moduleComponents: LLFirModuleResolveComponents,
 ) : FileStructureElement(firFile, moduleComponents) {
-    abstract override val psi: KtDeclaration
+    abstract override val psi: KtAnnotated
     abstract val timestamp: Long
 
     /**
@@ -129,6 +134,45 @@ internal sealed class ReanalyzableStructureElement<KT : KtDeclaration, S : FirBa
 
     companion object {
         val recorder = FirElementsRecorder()
+    }
+}
+
+internal class ReanalyzableCodeFragmentStructureElement(
+    firFile: FirFile,
+    override val psi: KtCodeFragment,
+    firSymbol: FirCodeFragmentSymbol,
+    override val timestamp: Long,
+    moduleComponents: LLFirModuleResolveComponents,
+) : ReanalyzableStructureElement<KtCodeFragment, FirCodeFragmentSymbol>(firFile, firSymbol, moduleComponents) {
+    override val mappings = KtToFirMapping(firSymbol.fir, recorder)
+
+    override fun reanalyze(): ReanalyzableStructureElement<KtCodeFragment, FirCodeFragmentSymbol> {
+        val originalCodeFragment = firSymbol.fir
+        val originalDesignation = originalCodeFragment.collectDesignation()
+
+        firFile.transformDeclarations(object : FirTransformer<Nothing?>() {
+            override fun <E : FirElement> transformElement(element: E, data: Nothing?): E = element
+
+            override fun transformCodeFragment(codeFragment: FirCodeFragment, data: Nothing?): FirCodeFragment {
+                return RawFirNonLocalDeclarationBuilder.build(
+                    session = originalCodeFragment.moduleData.session,
+                    scopeProvider = originalCodeFragment.moduleData.session.kotlinScopeProvider,
+                    designation = originalDesignation,
+                    rootNonLocalDeclaration = psi,
+                ) as FirCodeFragment
+            }
+        }, null)
+
+        val newCodeFragment = firFile.codeFragment
+        newCodeFragment.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
+
+        return ReanalyzableCodeFragmentStructureElement(
+            firFile,
+            psi,
+            newCodeFragment.symbol,
+            psi.modificationStamp,
+            moduleComponents
+        )
     }
 }
 

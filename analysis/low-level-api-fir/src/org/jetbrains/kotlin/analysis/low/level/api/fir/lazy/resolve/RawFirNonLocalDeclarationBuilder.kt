@@ -36,7 +36,7 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
     session: FirSession,
     baseScopeProvider: FirScopeProvider,
     private val originalDeclaration: FirDeclaration,
-    private val declarationToBuild: KtDeclaration,
+    private val declarationToBuild: KtElement,
     private val functionsToRebind: Set<FirFunction>? = null,
     private val replacementApplier: RawFirReplacement.Applier? = null,
 ) : PsiRawFirBuilder(session, baseScopeProvider, bodyBuildingMode = BodyBuildingMode.NORMAL) {
@@ -58,24 +58,16 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
             replacement: RawFirReplacement?,
         ): FirDeclaration {
             val replacementApplier = replacement?.Applier()
-            val builder = RawFirNonLocalDeclarationBuilder(
-                session = session,
-                baseScopeProvider = scopeProvider,
-                originalDeclaration = designation.target as FirDeclaration,
-                declarationToBuild = rootNonLocalDeclaration,
-                replacementApplier = replacementApplier
-            )
-            builder.context.packageFqName = rootNonLocalDeclaration.containingKtFile.packageFqName
-            return builder.moveNext(designation.path.iterator(), containingClass = null).also {
-                replacementApplier?.ensureApplied()
-            }
+            val result = build(session, scopeProvider, designation, rootNonLocalDeclaration, replacementApplier = replacementApplier)
+            replacementApplier?.ensureApplied()
+            return result
         }
 
         fun buildWithFunctionSymbolRebind(
             session: FirSession,
             scopeProvider: FirScopeProvider,
             designation: FirDesignation,
-            rootNonLocalDeclaration: KtDeclaration,
+            rootNonLocalDeclaration: KtElement,
         ): FirDeclaration {
             val functionsToRebind = when (val originalDeclaration = designation.target) {
                 is FirFunction -> setOf(originalDeclaration)
@@ -83,12 +75,26 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
                 else -> null
             }
 
+            return build(session, scopeProvider, designation, rootNonLocalDeclaration, functionsToRebind)
+        }
+
+        fun build(
+            session: FirSession,
+            scopeProvider: FirScopeProvider,
+            designation: FirDesignation,
+            rootNonLocalDeclaration: KtElement,
+            functionsToRebind: Set<FirFunction>? = null,
+            replacementApplier: RawFirReplacement.Applier? = null
+        ): FirDeclaration {
+            check(rootNonLocalDeclaration is KtDeclaration || rootNonLocalDeclaration is KtCodeFragment)
+
             val builder = RawFirNonLocalDeclarationBuilder(
                 session = session,
                 baseScopeProvider = scopeProvider,
                 originalDeclaration = designation.target as FirDeclaration,
                 declarationToBuild = rootNonLocalDeclaration,
                 functionsToRebind = functionsToRebind,
+                replacementApplier = replacementApplier
             )
             builder.context.packageFqName = rootNonLocalDeclaration.containingKtFile.packageFqName
             return builder.moveNext(designation.path.iterator(), containingClass = null)
