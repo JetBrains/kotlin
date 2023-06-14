@@ -165,8 +165,13 @@ fun ensureCocoapodsInstalled() {
         val installDir = cocoapodsInstallationRoot.absolutePathString()
         println("Installing CocoaPods...")
 
-        //https://github.com/ffi/ffi/issues/864#issuecomment-875242776
-        gem("install", "--install-dir", installDir, "ffi", "-v", "1.15.5", "--", "--enable-libffi-alloc")
+        try {
+            //https://github.com/ffi/ffi/issues/864#issuecomment-875242776
+            gem("install", "--install-dir", installDir, "ffi", "-v", "1.15.5", "--", "--enable-libffi-alloc")
+        } catch (e: Exception) {
+            System.err.println("ffi installation with '--enable-libffi-alloc' has failed but we'll try to continue with a default ffi")
+            System.err.println(e.toString())
+        }
 
         gem("install", "--install-dir", installDir, "cocoapods", "-v", TestVersions.COCOAPODS.VERSION)
     } else if (!isCocoapodsInstalled()) {
