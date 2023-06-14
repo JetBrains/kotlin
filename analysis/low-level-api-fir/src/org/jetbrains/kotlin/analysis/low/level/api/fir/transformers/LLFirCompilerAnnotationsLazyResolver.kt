@@ -113,7 +113,7 @@ private class LLFirCompilerRequiredAnnotationsTargetResolver(
     }
 
     override fun doResolveWithoutLock(target: FirElementWithResolveState): Boolean {
-        if (target !is FirRegularClass && !target.isRegularDeclarationWithAnnotation) {
+        if (target !is FirRegularClass && !target.isRegularDeclarationWithAnnotation && target !is FirCodeFragment) {
             throwUnexpectedFirElementError(target)
         }
 

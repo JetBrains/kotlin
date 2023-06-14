@@ -5,10 +5,19 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 
+import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignationWithFile
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveTarget
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirWholeFileResolveTarget
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.asResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.throwUnexpectedFirElementError
+import org.jetbrains.kotlin.analysis.low.level.api.fir.compile.codeFragmentScopeProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLocalContainingOrThisDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.LLFirPhaseUpdater
+import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.llFirModuleData
+import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLFirResolvableResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkDelegatedConstructorIsResolved
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.*
 import org.jetbrains.kotlin.analysis.utils.errors.buildErrorWithAttachment
@@ -23,19 +32,27 @@ import org.jetbrains.kotlin.fir.expressions.builder.buildLazyDelegatedConstructo
 import org.jetbrains.kotlin.fir.expressions.builder.buildMultiDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.expressions.impl.FirContractCallBlock
 import org.jetbrains.kotlin.fir.expressions.impl.FirLazyDelegatedConstructorCall
+import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.references.builder.buildExplicitSuperReference
 import org.jetbrains.kotlin.fir.references.builder.buildExplicitThisReference
+import org.jetbrains.kotlin.fir.resolve.FirCodeFragmentContext
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.dfa.FirControlFlowGraphReferenceImpl
+import org.jetbrains.kotlin.fir.resolve.codeFragmentContext
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirResolveContextCollector
 import org.jetbrains.kotlin.fir.resolve.transformers.contracts.FirContractsDslNames
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.isUsedInControlFlowGraphBuilderForClass
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.psi.KtCodeFragment
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 
 internal object LLFirBodyLazyResolver : LLFirLazyResolver(FirResolvePhase.BODY_RESOLVE) {
     override fun resolve(
@@ -105,6 +122,14 @@ private class LLFirBodyTargetResolver(
 
                 return true
             }
+            is FirCodeFragment -> {
+                resolveCodeFragmentContext(target)
+                performCustomResolveUnderLock(target) {
+                    resolve(target, BodyStateKeepers.CODE_FRAGMENT)
+                }
+
+                return true
+            }
         }
 
         return false
@@ -139,9 +164,57 @@ private class LLFirBodyTargetResolver(
         }
     }
 
+    private fun resolveCodeFragmentContext(firCodeFragment: FirCodeFragment) {
+        val ktCodeFragment = firCodeFragment.psi as? KtCodeFragment
+            ?: buildErrorWithAttachment("Code fragment source not found") {
+                withFirEntry("firCodeFragment", firCodeFragment)
+            }
+
+        val module = firCodeFragment.llFirModuleData.ktModule
+        val resolveSession = module.getFirResolveSession(ktCodeFragment.project) as LLFirResolvableResolveSession
+
+        val contextPsiElement = ktCodeFragment.context
+        val contextKtFile = contextPsiElement?.containingFile as? KtFile
+
+        firCodeFragment.codeFragmentContext = if (contextKtFile != null) {
+            val contextFirFile = resolveSession.getOrBuildFirFile(contextKtFile)
+            val target = computeCodeFragmentContextResolveTarget(contextFirFile, contextPsiElement)
+
+            val contextParentKtElements = contextPsiElement.parentsWithSelf.toSet()
+
+            val contextProvider = ContextCollector.process(target, transformer.components) { candidate ->
+                when (candidate) {
+                    contextPsiElement -> ContextCollector.FilterResponse.STOP
+                    in contextParentKtElements -> ContextCollector.FilterResponse.CONTINUE
+                    else -> ContextCollector.FilterResponse.SKIP
+                }
+            }
+
+            val elementContext = contextProvider[contextPsiElement, ContextCollector.ContextKind.BODY]
+                ?: contextParentKtElements.firstNotNullOf { contextProvider[it, ContextCollector.ContextKind.SELF] }
+
+            LLFirCodeFragmentContext(elementContext.towerDataContext, elementContext.smartCasts)
+        } else {
+            val towerDataContext = FirTowerDataContext()
+            LLFirCodeFragmentContext(towerDataContext, emptyMap())
+        }
+    }
+
+    private fun computeCodeFragmentContextResolveTarget(contextFirFile: FirFile, contextPsiElement: PsiElement): LLFirResolveTarget {
+        val contextKtDeclaration = contextPsiElement.getNonLocalContainingOrThisDeclaration()
+        if (contextKtDeclaration != null) {
+            val designationPath = FirElementFinder.collectDesignationPath(contextFirFile, contextKtDeclaration)
+            if (designationPath != null) {
+                return FirDesignationWithFile(designationPath.path, designationPath.target, contextFirFile).asResolveTarget()
+            }
+        }
+
+        return LLFirWholeFileResolveTarget(contextFirFile)
+    }
+
     override fun doLazyResolveUnderLock(target: FirElementWithResolveState) {
         when (target) {
-            is FirRegularClass -> error("Should have been resolved in ${::doResolveWithoutLock.name}")
+            is FirRegularClass, is FirCodeFragment -> error("Should have been resolved in ${::doResolveWithoutLock.name}")
             is FirConstructor -> resolve(target, BodyStateKeepers.CONSTRUCTOR)
             is FirFunction -> resolve(target, BodyStateKeepers.FUNCTION)
             is FirProperty -> resolve(target, BodyStateKeepers.PROPERTY)
@@ -162,6 +235,10 @@ private class LLFirBodyTargetResolver(
 internal object BodyStateKeepers {
     val SCRIPT: StateKeeper<FirScript> = stateKeeper {
         // TODO Lazy body is not supported for scripts yet
+    }
+
+    val CODE_FRAGMENT: StateKeeper<FirCodeFragment> = stateKeeper {
+        add(FirCodeFragment::block, FirCodeFragment::replaceBlock, ::blockGuard)
     }
 
     val ANONYMOUS_INITIALIZER: StateKeeper<FirAnonymousInitializer> = stateKeeper {
@@ -338,3 +415,8 @@ private fun delegatedConstructorCallGuard(fir: FirDelegatedConstructorCall): Fir
         }
     }
 }
+
+private class LLFirCodeFragmentContext(
+    override val towerDataContext: FirTowerDataContext,
+    override val variables: Map<FirBasedSymbol<*>, Set<ConeKotlinType>>
+) : FirCodeFragmentContext

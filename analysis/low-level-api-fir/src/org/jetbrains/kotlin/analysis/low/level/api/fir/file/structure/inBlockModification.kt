@@ -37,6 +37,7 @@ fun invalidateAfterInBlockModification(declaration: KtDeclaration) {
         is FirSimpleFunction -> firDeclaration.inBodyInvalidation()
         is FirPropertyAccessor -> firDeclaration.inBodyInvalidation()
         is FirProperty -> firDeclaration.inBodyInvalidation()
+        is FirCodeFragment -> firDeclaration.inBodyInvalidation()
         else -> errorWithFirSpecificEntries("Unknown declaration with body", fir = firDeclaration, psi = declaration)
     }
 }
@@ -127,6 +128,15 @@ private fun FirPropertyAccessor.inBodyInvalidation() {
     }
 
     property.replaceBodyResolveState(minOf(property.bodyResolveState, newPropertyResolveState))
+}
+
+private fun FirCodeFragment.inBodyInvalidation() {
+    if (block is FirLazyBlock) {
+        return
+    }
+
+    decreasePhase(FirResolvePhase.BODY_RESOLVE.previous)
+    replaceBlock(buildLazyBlock())
 }
 
 private fun FirProperty.invalidateInitializer(): Boolean = replaceWithLazyExpressionIfNeeded(::initializer, ::replaceInitializer)
