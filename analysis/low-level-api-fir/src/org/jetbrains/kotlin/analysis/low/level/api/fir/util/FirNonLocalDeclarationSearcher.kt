@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.analysis.utils.errors.requireWithAttachmentBuilder
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.classId
+import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.packageFqName
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
@@ -58,12 +59,16 @@ object FirElementFinder {
             val currentClassSegment = classIdPathSegment[classIdPathIndex]
 
             for (subDeclaration in declarations) {
-                if (subDeclaration is FirScript) {
-                    val scriptDeclarations = subDeclaration.statements.asSequence().filterIsInstance<FirDeclaration>()
-                    if (find(scriptDeclarations.asIterable(), classIdPathIndex)) {
-                        return true
-                    }
+                fun findSpecialFileDeclaration(statements: List<FirStatement>): Boolean {
+                    val subDeclarations = statements.asSequence().filterIsInstance<FirDeclaration>()
+                    return find(subDeclarations.asIterable(), classIdPathIndex)
+                }
 
+                if (subDeclaration is FirScript) {
+                    if (findSpecialFileDeclaration(subDeclaration.statements)) return true
+                    continue
+                } else if (subDeclaration is FirCodeFragment) {
+                    if (findSpecialFileDeclaration(subDeclaration.block.statements)) return true
                     continue
                 }
 

@@ -131,7 +131,7 @@ private class LLFirTypeTargetResolver(
             is FirRegularClass -> {
                 resolveClassTypes(target)
             }
-            is FirAnonymousInitializer -> {}
+            is FirAnonymousInitializer, is FirCodeFragment -> {}
             else -> error("Unknown declaration ${target::class.java}")
         }
     }
