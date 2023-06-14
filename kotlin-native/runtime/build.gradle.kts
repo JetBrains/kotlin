@@ -328,17 +328,9 @@ bitcode {
             onlyIf { target.supportsThreads() }
         }
 
-        testsGroup("std_alloc_runtime_tests") {
-            testedModules.addAll("main", "legacy_memory_manager", "strict", "std_alloc", "objc")
-        }
-
         testsGroup("custom_alloc_runtime_tests") {
             testedModules.addAll("custom_alloc")
             testSupportModules.addAll("main", "experimental_memory_manager", "common_gc", "concurrent_ms_gc", "objc")
-        }
-
-        testsGroup("mimalloc_runtime_tests") {
-            testedModules.addAll("main", "legacy_memory_manager", "strict", "mimalloc", "opt_alloc", "objc")
         }
 
         testsGroup("experimentalMM_mimalloc_runtime_tests") {
