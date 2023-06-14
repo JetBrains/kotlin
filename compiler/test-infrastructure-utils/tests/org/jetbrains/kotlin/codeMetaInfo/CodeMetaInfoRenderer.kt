@@ -61,6 +61,12 @@ object CodeMetaInfoRenderer {
 
             while (current != null) {
                 val next: CodeMetaInfo? = if (iterator.hasNext()) iterator.next() else null
+                val outer = opened.lastOrNull()
+                if (outer != null) {
+                    require(current.end <= outer.end) {
+                        "The outer diagnostic ${outer.tag} at ${outer.start} ends at ${outer.end}, but the supposedly inner ${current?.tag} starting at ${current?.start} ends at ${current?.end}. Rendered so far:\n$builder"
+                    }
+                }
                 opened.push(current)
                 builder.append(current.asString())
                 when {
