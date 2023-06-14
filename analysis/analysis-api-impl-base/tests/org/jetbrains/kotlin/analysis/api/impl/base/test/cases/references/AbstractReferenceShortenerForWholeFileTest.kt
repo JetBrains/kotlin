@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references
 
+import org.jetbrains.kotlin.analysis.api.components.ShortenOption
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references.ShorteningResultsRenderer.renderShorteningResults
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedSingleModuleTest
 import org.jetbrains.kotlin.analysis.test.framework.utils.executeOnPooledThreadInReadAction
@@ -17,14 +18,22 @@ abstract class AbstractReferenceShortenerForWholeFileTest : AbstractAnalysisApiB
     override fun doTestByFileStructure(ktFiles: List<KtFile>, module: TestModule, testServices: TestServices) {
         val file = ktFiles.first()
 
-        val shortening = executeOnPooledThreadInReadAction {
+        val shortenings = executeOnPooledThreadInReadAction {
             analyseForTest(file) {
-                collectPossibleReferenceShortenings(file)
+                ShortenOption.values().map { option ->
+                    val shorteningsForOption = collectPossibleReferenceShortenings(file, file.textRange, { option }, { option })
+
+                    Pair(option.name, shorteningsForOption)
+                }
             }
         }
 
         val actual = buildString {
-            renderShorteningResults(shortening)
+            shortenings.forEach { (name, shortening) ->
+                appendLine("with ${name}:")
+                if (shortening.isEmpty) return@forEach
+                renderShorteningResults(shortening)
+            }
         }
         testServices.assertions.assertEqualsToTestDataFileSibling(actual)
     }

@@ -1,2 +1,10 @@
+with DO_NOT_SHORTEN:
+with SHORTEN_IF_ALREADY_IMPORTED:
+[type] A.B
+[qualifier] C.D.Companion.foo()
+with SHORTEN_AND_IMPORT:
+[type] A.B
+[qualifier] C.D.Companion.foo()
+with SHORTEN_AND_STAR_IMPORT:
 [type] A.B
 [qualifier] C.D.Companion.foo()
