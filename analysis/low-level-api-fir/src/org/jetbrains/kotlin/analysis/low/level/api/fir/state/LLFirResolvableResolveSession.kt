@@ -101,7 +101,7 @@ internal abstract class LLFirResolvableResolveSession(
         ktDeclaration: KtDeclaration,
         phase: FirResolvePhase
     ): FirBasedSymbol<*> {
-        val module = getModule(ktDeclaration)
+        val module = getModule(ktDeclaration.originalDeclaration ?: ktDeclaration)
         retryOnInvalidSession {
             return when (getModuleKind(module)) {
                 ModuleKind.RESOLVABLE_MODULE -> findSourceFirSymbol(ktDeclaration, module).also { resolveFirToPhase(it.fir, phase) }
