@@ -1144,7 +1144,13 @@ open class SymbolTable(
         type: IrType,
         factory: (IrLocalDelegatedPropertySymbol) -> IrLocalDelegatedProperty = {
             irFactory.createLocalDelegatedProperty(
-                startOffset, endOffset, origin, it, nameProvider.nameForDeclaration(descriptor), type, descriptor.isVar
+                startOffset = startOffset,
+                endOffset = endOffset,
+                origin = origin,
+                name = nameProvider.nameForDeclaration(descriptor),
+                symbol = it,
+                type = type,
+                isVar = descriptor.isVar
             )
         }
     ): IrLocalDelegatedProperty =

@@ -158,8 +158,8 @@ abstract class AbstractIrFactoryImpl : IrFactory {
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
-        symbol: IrLocalDelegatedPropertySymbol,
         name: Name,
+        symbol: IrLocalDelegatedPropertySymbol,
         type: IrType,
         isVar: Boolean,
     ): IrLocalDelegatedProperty =

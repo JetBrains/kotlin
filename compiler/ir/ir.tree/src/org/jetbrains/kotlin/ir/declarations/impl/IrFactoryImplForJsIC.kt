@@ -238,8 +238,8 @@ class IrFactoryImplForJsIC(override val stageController: StageController) : Abst
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
-        symbol: IrLocalDelegatedPropertySymbol,
         name: Name,
+        symbol: IrLocalDelegatedPropertySymbol,
         type: IrType,
         isVar: Boolean
     ): IrLocalDelegatedProperty {
@@ -247,8 +247,8 @@ class IrFactoryImplForJsIC(override val stageController: StageController) : Abst
             startOffset,
             endOffset,
             origin,
-            symbol,
             name,
+            symbol,
             type,
             isVar,
         ).register()

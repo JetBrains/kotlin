@@ -283,12 +283,13 @@ open class DeepCopyIrTreeWithSymbols(
 
     override fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty): IrLocalDelegatedProperty =
         declaration.factory.createLocalDelegatedProperty(
-            declaration.startOffset, declaration.endOffset,
-            mapDeclarationOrigin(declaration.origin),
-            symbolRemapper.getDeclaredLocalDelegatedProperty(declaration.symbol),
-            declaration.name,
-            declaration.type.remapType(),
-            declaration.isVar
+            startOffset = declaration.startOffset,
+            endOffset = declaration.endOffset,
+            origin = mapDeclarationOrigin(declaration.origin),
+            name = declaration.name,
+            symbol = symbolRemapper.getDeclaredLocalDelegatedProperty(declaration.symbol),
+            type = declaration.type.remapType(),
+            isVar = declaration.isVar,
         ).apply {
             transformAnnotations(declaration)
             delegate = declaration.delegate.transform()

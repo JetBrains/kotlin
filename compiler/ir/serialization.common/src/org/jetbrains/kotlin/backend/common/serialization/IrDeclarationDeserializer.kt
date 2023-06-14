@@ -728,11 +728,13 @@ class IrDeclarationDeserializer(
             val nameAndType = BinaryNameAndType.decode(proto.nameType)
 
             val prop = irFactory.createLocalDelegatedProperty(
-                startOffset, endOffset, origin,
-                symbol.checkSymbolType(fallbackSymbolKind = null),
-                deserializeName(nameAndType.nameIndex),
-                deserializeIrType(nameAndType.typeIndex),
-                flags.isVar
+                startOffset = startOffset,
+                endOffset = endOffset,
+                origin = origin,
+                name = deserializeName(nameAndType.nameIndex),
+                symbol = symbol.checkSymbolType(fallbackSymbolKind = null),
+                type = deserializeIrType(nameAndType.typeIndex),
+                isVar = flags.isVar,
             )
 
             prop.apply {

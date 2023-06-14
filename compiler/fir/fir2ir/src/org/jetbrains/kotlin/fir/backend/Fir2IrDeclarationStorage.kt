@@ -1293,13 +1293,13 @@ class Fir2IrDeclarationStorage(
         val origin = IrDeclarationOrigin.DEFINED
         val irProperty = property.convertWithOffsets { startOffset, endOffset ->
             irFactory.createLocalDelegatedProperty(
-                startOffset,
-                endOffset,
-                origin,
-                IrLocalDelegatedPropertySymbolImpl(),
-                property.name,
-                type,
-                property.isVar
+                startOffset = startOffset,
+                endOffset = endOffset,
+                origin = origin,
+                name = property.name,
+                symbol = IrLocalDelegatedPropertySymbolImpl(),
+                type = type,
+                isVar = property.isVar
             )
         }.apply {
             parent = irParent
