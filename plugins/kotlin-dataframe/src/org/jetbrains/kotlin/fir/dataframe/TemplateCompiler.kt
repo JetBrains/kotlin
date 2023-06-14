@@ -274,6 +274,9 @@ class FirResult(
 class TemplateCompiler(
 //  val projectConfiguration: CompilerConfiguration
 ) {
+  private companion object {
+      private val lock = Any()
+  }
 
   private var counter = AtomicInteger(0)
 
@@ -281,8 +284,10 @@ class TemplateCompiler(
   val templatesFolder = File(File("."), "/build/meta/templates")
 
   init {
+    synchronized(lock) {
+      if (!templatesFolder.exists()) templatesFolder.createDirectory()
+    }
 
-    if (!templatesFolder.exists()) templatesFolder.createDirectory()
     templatesFolder.deleteOnExit()
 
     chunk = listOfNotNull(
