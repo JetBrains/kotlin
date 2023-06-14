@@ -252,7 +252,7 @@ object LowLevelFirApiFacadeForResolveOnAir {
      *
      * @see requiredResolvePhase
      */
-    private fun runBodyResolveOnAir(
+    internal fun runBodyResolveOnAir(
         firResolveSession: LLFirResolvableResolveSession,
         originalPlace: KtElement,
         replacementElement: KtElement,

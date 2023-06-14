@@ -105,6 +105,15 @@ internal object FirElementFinder {
                         continue
                     }
 
+                    subDeclaration is FirCodeFragment -> {
+                        val codeFragmentDeclarations = subDeclaration.block.statements.asSequence().filterIsInstance<FirDeclaration>()
+                        if (find(codeFragmentDeclarations.asIterable(), classIdPathIndex)) {
+                            return true
+                        }
+
+                        continue
+                    }
+
                     subDeclaration is FirRegularClass && currentClassSegment == subDeclaration.symbol.name -> {
                         path += subDeclaration
                         if (find(subDeclaration.declarations, classIdPathIndex + 1)) {
