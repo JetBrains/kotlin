@@ -27,7 +27,7 @@ public interface TestCase {
     val ignored: Boolean
 
     /**
-     * Test Suite the test belong to.
+     * Test Suite the test belongs to.
      */
     val suite: TestSuite
 
