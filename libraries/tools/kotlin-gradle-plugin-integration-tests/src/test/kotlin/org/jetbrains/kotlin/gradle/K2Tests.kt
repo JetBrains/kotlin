@@ -35,7 +35,7 @@ class K2CommonizerIT : CommonizerIT() {
 
 @Ignore
 class K2CommonizerHierarchicalIT : CommonizerHierarchicalIT() {
-    override fun defaultBuildOptions(): BuildOptions = super.defaultBuildOptions().copy(languageVersion = "2.0")
+    override val defaultBuildOptions: BuildOptions = super.defaultBuildOptions.copy(languageVersion = "2.0")
 }
 
 @MppGradlePluginTests
