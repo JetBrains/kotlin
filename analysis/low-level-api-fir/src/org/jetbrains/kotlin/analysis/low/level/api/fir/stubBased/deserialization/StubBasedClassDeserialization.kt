@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.deserialization.*
 import org.jetbrains.kotlin.fir.resolve.transformers.setLazyPublishedVisibility
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.*
@@ -179,6 +180,9 @@ internal fun deserializeClassToSymbol(
                         classId.createNestedClassId(Name.identifier(declaration.name ?: error("Class doesn't have name $declaration")))
                     deserializeNestedClass(nestedClassId, context)?.fir?.let { addDeclaration(it) }
                 }
+                is KtTypeAlias -> addDeclaration(
+                    memberDeserializer.loadTypeAlias(declaration, FirTypeAliasSymbol(classId))
+                )
             }
         }
 
