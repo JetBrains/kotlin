@@ -16,9 +16,9 @@ import kotlin.native.internal.test.TestSuite
 
 @ExportObjCClass(name = "Kotlin/Native::Test")
 class TestCaseRunner(
-    invocation: NSInvocation,
-    private val testName: String,
-    private val testCase: TestCase
+        invocation: NSInvocation,
+        private val testName: String,
+        private val testCase: TestCase
 ) : XCTestCase(invocation) {
     // Sets XCTest to continue running after failure to match Kotlin Test
     override fun continueAfterFailure(): Boolean = true
@@ -61,24 +61,24 @@ class TestCaseRunner(
 
             @Suppress("CAST_NEVER_SUCCEEDS")
             val stackAsPayload = (stackTrace.joinToString("\n") as? NSString)
-                ?.dataUsingEncoding(NSUTF8StringEncoding)
+                    ?.dataUsingEncoding(NSUTF8StringEncoding)
             val stackTraceAttachment = XCTAttachment.attachmentWithUniformTypeIdentifier(
-                identifier = UTTypeSourceCode.identifier,
-                name = "Kotlin stacktrace (full)",
-                payload = stackAsPayload,
-                userInfo = null
+                    identifier = UTTypeSourceCode.identifier,
+                    name = "Kotlin stacktrace (full)",
+                    payload = stackAsPayload,
+                    userInfo = null
             )
 
             val issue = XCTIssue(
-                type = type,
-                compactDescription = "$throwable in $testName",
-                detailedDescription = "Caught exception $throwable in $testName (caused by ${throwable.cause})",
-                sourceCodeContext = XCTSourceCodeContext(
-                    callStackAddresses = throwable.getStackTraceAddresses(),
-                    location = sourceLocation
-                ),
-                associatedError = null,
-                attachments = listOf(stackTraceAttachment)
+                    type = type,
+                    compactDescription = "$throwable in $testName",
+                    detailedDescription = "Caught exception $throwable in $testName (caused by ${throwable.cause})",
+                    sourceCodeContext = XCTSourceCodeContext(
+                            callStackAddresses = throwable.getStackTraceAddresses(),
+                            location = sourceLocation
+                    ),
+                    associatedError = null,
+                    attachments = listOf(stackTraceAttachment)
             )
             testRun?.recordIssue(issue) ?: error("TestRun for the test $testName not found")
         }
@@ -103,14 +103,13 @@ class TestCaseRunner(
     //  "${this::class.simpleName}::$testName" leads to "null::$testName"
     override fun name() = testName
 
-    companion object : XCTestCaseMeta(){
+    companion object : XCTestCaseMeta() {
         /**
          * Used if the test suite is generated as a default one from methods extracted by the XCTest from the
          * runner that extends XCTestCase and is exported to ObjC.
          */
         override fun testCaseWithInvocation(invocation: NSInvocation?): XCTestCase {
-            error(
-                """
+            error("""
                 This should not happen by default.
                 Got invocation: ${invocation?.description}
                 with selector @sel(${NSStringFromSelector(invocation?.selector)})
@@ -127,10 +126,10 @@ class TestCaseRunner(
         private fun createRunMethod(selector: SEL) {
             // Note: must be disposed off with imp_removeBlock
             val result = class_addMethod(
-                cls = this.`class`(),
-                name = selector,
-                imp = imp_implementationWithBlock(this::runner),
-                types = "v@:" // See ObjC' type encodings: v (returns void), @ (id self), : (SEL _cmd)
+                    cls = this.`class`(),
+                    name = selector,
+                    imp = imp_implementationWithBlock(this::runner),
+                    types = "v@:" // See ObjC' type encodings: v (returns void), @ (id self), : (SEL _cmd)
             )
             check(result) {
                 "Internal error: was unable to add method with selector $selector"
@@ -139,8 +138,8 @@ class TestCaseRunner(
 
         private fun dispose(selector: SEL) {
             val imp = class_getMethodImplementation(
-                cls = this.`class`(),
-                name = selector
+                    cls = this.`class`(),
+                    name = selector
             )
             val result = imp_removeBlock(imp)
             check(result) {
@@ -164,9 +163,9 @@ class TestCaseRunner(
 
         @OptIn(ExperimentalStdlibApi::class)
         private fun createTestMethodsNames(): List<String> =
-            GeneratedSuites.suites.flatMap { testSuite ->
-                testSuite.testCases.values.map { "$testSuite.${it.name}" }
-            }
+                GeneratedSuites.suites.flatMap { testSuite ->
+                    testSuite.testCases.values.map { "$testSuite.${it.name}" }
+                }
 
         /**
          * Create Test invocations for each test method to make them resolvable by the XCTest's machinery
@@ -238,7 +237,9 @@ internal fun createTestSuites(): List<XCTestSuite> {
                 NSStringFromSelector(nsInvocation.selector) == "${it.name}.${testCase.name}"
             }.map { inv ->
                 TestCaseRunner(
-                    invocation = inv, testName = "${it.name}.${testCase.name}", testCase = testCase
+                        invocation = inv,
+                        testName = "${it.name}.${testCase.name}",
+                        testCase = testCase
                 )
             }.single()
         }.forEach { t ->
