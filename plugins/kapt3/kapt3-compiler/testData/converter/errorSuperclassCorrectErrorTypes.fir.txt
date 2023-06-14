@@ -1,7 +1,7 @@
 package test;
 
 @kotlin.Metadata()
-public final class Child extends kotlin.collections.AbstractList<java.lang.String> implements test.Parent<java.lang.String, java.lang.Integer>, java.util.List<java.lang.String> {
+public final class Child extends kotlin.collections.AbstractList<java.lang.String> implements test.Parent<java.lang.String, java.lang.Integer>, java.util.List<java.lang.String>, kotlin.jvm.internal.markers.KMappedMarker {
 
     public Child() {
         super();
@@ -69,7 +69,7 @@ public abstract interface Intf {
 package test;
 
 @kotlin.Metadata()
-public final class MappedList<R extends java.lang.Object> extends kotlin.collections.AbstractList<R> implements java.util.List<R> {
+public final class MappedList<R extends java.lang.Object> extends kotlin.collections.AbstractList<R> implements java.util.List<R>, kotlin.jvm.internal.markers.KMappedMarker {
 
     public MappedList() {
         super();
@@ -125,12 +125,15 @@ package test;
 
 @kotlin.Metadata()
 public final class TFooBar extends Foo implements Bar, test.Intf {
+    @org.jetbrains.annotations.NotNull()
     private final X a = null;
 
-    public TFooBar(X a) {
+    public TFooBar(@org.jetbrains.annotations.NotNull()
+    X a) {
         super();
     }
 
+    @org.jetbrains.annotations.NotNull()
     public final X getA() {
         return null;
     }
@@ -142,12 +145,15 @@ package test;
 
 @kotlin.Metadata()
 public final class TFooBar2 implements Foo, Bar {
+    @org.jetbrains.annotations.NotNull()
     private final X a = null;
 
-    public TFooBar2(X a) {
+    public TFooBar2(@org.jetbrains.annotations.NotNull()
+    X a) {
         super();
     }
 
+    @org.jetbrains.annotations.NotNull()
     public final X getA() {
         return null;
     }

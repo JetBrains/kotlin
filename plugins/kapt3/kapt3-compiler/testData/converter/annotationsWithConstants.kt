@@ -1,4 +1,3 @@
-// FIR_ALMOST_DONE
 // EXPECTED_ERROR: class B is public, should be declared in a file named B.java
 // EXPECTED_ERROR: class R is public, should be declared in a file named R.java
 // EXPECTED_ERROR: class R is public, should be declared in a file named R.java

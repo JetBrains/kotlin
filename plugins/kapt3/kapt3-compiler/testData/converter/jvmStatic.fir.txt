@@ -43,7 +43,7 @@ public final class JvmStaticTest {
         super();
     }
 
-    public static int getOne() {
+    public static final int getOne() {
         return 0;
     }
 
@@ -58,8 +58,8 @@ public final class JvmStaticTest {
             return 0;
         }
 
-        @kotlin.jvm.JvmStatic()
         @java.lang.Deprecated()
+        @kotlin.jvm.JvmStatic()
         public static void getOne$annotations() {
         }
     }

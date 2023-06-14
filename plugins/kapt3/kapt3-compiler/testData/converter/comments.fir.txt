@@ -90,6 +90,11 @@ public final class Test {
         return null;
     }
 
+    @java.lang.Deprecated()
+    @Anno()
+    public static void getProp2$annotations() {
+    }
+
     /**
      * get.
      */
@@ -103,14 +108,6 @@ public final class Test {
      */
     public final void setProp3(@org.jetbrains.annotations.NotNull()
     java.lang.String v) {
-    }
-
-    /**
-     * prop2.
-     */
-    @Anno()
-    @java.lang.Deprecated()
-    public static void getProp2$annotations() {
     }
 }
 

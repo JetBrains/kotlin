@@ -1,0 +1,106 @@
+@kotlin.Metadata()
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+public abstract @interface Anno {
+}
+
+////////////////////
+
+
+@kotlin.Metadata()
+public final class Bar {
+    @org.jetbrains.annotations.NotNull()
+    @FieldAnno()
+    private final java.lang.String a = "";
+
+    public Bar() {
+        super();
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String getA() {
+        return null;
+    }
+
+    @java.lang.Deprecated()
+    @Anno()
+    @PropertyAnno()
+    public static void getA$annotations() {
+    }
+}
+
+////////////////////
+
+
+@kotlin.Metadata()
+public final class Baz {
+    @org.jetbrains.annotations.NotNull()
+    @kotlin.jvm.JvmField()
+    @FieldAnno()
+    public final java.lang.String a = "";
+
+    public Baz() {
+        super();
+    }
+
+    @java.lang.Deprecated()
+    @Anno()
+    public static void getA$annotations() {
+    }
+}
+
+////////////////////
+
+
+@kotlin.Metadata()
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+@java.lang.annotation.Target(value = {java.lang.annotation.ElementType.FIELD})
+@kotlin.annotation.Target(allowedTargets = {kotlin.annotation.AnnotationTarget.FIELD})
+public abstract @interface FieldAnno {
+}
+
+////////////////////
+
+
+@kotlin.Metadata()
+public final class Foo {
+    @org.jetbrains.annotations.NotNull()
+    @FieldAnno()
+    private final java.lang.String a = null;
+
+    public Foo(@org.jetbrains.annotations.NotNull()
+    @Anno()
+    @ParameterAnno()
+    java.lang.String a) {
+        super();
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String getA() {
+        return null;
+    }
+
+    @java.lang.Deprecated()
+    @PropertyAnno()
+    public static void getA$annotations() {
+    }
+}
+
+////////////////////
+
+
+@kotlin.Metadata()
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+@java.lang.annotation.Target(value = {java.lang.annotation.ElementType.PARAMETER})
+@kotlin.annotation.Target(allowedTargets = {kotlin.annotation.AnnotationTarget.VALUE_PARAMETER})
+public abstract @interface ParameterAnno {
+}
+
+////////////////////
+
+
+@kotlin.Metadata()
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+@java.lang.annotation.Target(value = {})
+@kotlin.annotation.Target(allowedTargets = {kotlin.annotation.AnnotationTarget.PROPERTY})
+public abstract @interface PropertyAnno {
+}

@@ -17,33 +17,33 @@ public enum Em {
 
 @kotlin.Metadata()
 public final class Foo {
-    private final boolean z = true;
-    private final byte b = (byte)0;
-    private final char c = 'c';
-    private final char c2 = '\n';
-    private final short sh = (short)10;
-    private final int i = 10;
-    private final long l = -10L;
-    private final float f = 1.0F;
-    private final double d = -1.0;
+    private final boolean z = false;
+    private final byte b = 0;
+    private final char c = '\u0000';
+    private final char c2 = '\u0000';
+    private final short sh = 0;
+    private final int i = 0;
+    private final long l = 0L;
+    private final float f = 0.0F;
+    private final double d = 0.0;
     @org.jetbrains.annotations.NotNull()
-    private final java.lang.String s = "foo";
+    private final java.lang.String s = null;
     @org.jetbrains.annotations.NotNull()
-    private final int[] iarr = {1, 2, 3};
+    private final int[] iarr = null;
     @org.jetbrains.annotations.NotNull()
-    private final long[] larr = {-1L, 0L, 1L};
+    private final long[] larr = null;
     @org.jetbrains.annotations.NotNull()
-    private final double[] darr = {7.3};
+    private final double[] darr = null;
     @org.jetbrains.annotations.NotNull()
-    private final java.lang.String[] sarr = {"a", "bc"};
+    private final java.lang.String[] sarr = null;
     @org.jetbrains.annotations.NotNull()
     private final java.lang.Class<?> cl = null;
     @org.jetbrains.annotations.NotNull()
     private final java.lang.Class<?>[] clarr = null;
     @org.jetbrains.annotations.NotNull()
-    private final Em em = Em.BAR;
+    private final Em em = null;
     @org.jetbrains.annotations.NotNull()
-    private final Em[] emarr = {Em.FOO, Em.BAR};
+    private final Em[] emarr = null;
 
     public Foo() {
         super();

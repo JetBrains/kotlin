@@ -115,8 +115,8 @@ public final class TestAnno2 {
         return null;
     }
 
-    @Anno3(value = "property")
     @java.lang.Deprecated()
+    @Anno3(value = "property")
     public static void getB$annotations() {
     }
 

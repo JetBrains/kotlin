@@ -1,4 +1,3 @@
-// FIR_BLOCKED: KT-54804
 @file:kotlin.jvm.JvmName("AnnotationsTest")
 package test
 

@@ -1,5 +1,3 @@
-// FIR_BLOCKED: KT-54804
-
 annotation class Anno1
 enum class Colors { WHITE, BLACK }
 annotation class Anno2(

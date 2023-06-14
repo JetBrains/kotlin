@@ -3,7 +3,6 @@ public final class Test {
     @org.jetbrains.annotations.NotNull()
     public static final Test.A A = null;
     @org.jetbrains.annotations.NotNull()
-    @kotlin.jvm.JvmStatic()
     private static final java.lang.String test = "";
 
     public Test() {
@@ -27,8 +26,8 @@ public final class Test {
             return null;
         }
 
-        @kotlin.jvm.JvmStatic()
         @java.lang.Deprecated()
+        @kotlin.jvm.JvmStatic()
         public static void getTest$annotations() {
         }
     }

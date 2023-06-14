@@ -152,6 +152,12 @@ public class KotlinKapt4ContextTestGenerated extends AbstractKotlinKapt4ContextT
     }
 
     @Test
+    @TestMetadata("delegateToList.kt")
+    public void testDelegateToList() throws Exception {
+        runTest("plugins/kapt4/kapt4-compiler/testData/../../../kapt3/kapt3-compiler/testData/converter/delegateToList.kt");
+    }
+
+    @Test
     @TestMetadata("delegatedProperties.kt")
     public void testDelegatedProperties() throws Exception {
         runTest("plugins/kapt4/kapt4-compiler/testData/../../../kapt3/kapt3-compiler/testData/converter/delegatedProperties.kt");
@@ -647,12 +653,6 @@ public class KotlinKapt4ContextTestGenerated extends AbstractKotlinKapt4ContextT
     @TestMetadata("unresolvedDelegateExpression.kt")
     public void testUnresolvedDelegateExpression() throws Exception {
         runTest("plugins/kapt4/kapt4-compiler/testData/../../../kapt3/kapt3-compiler/testData/converter/unresolvedDelegateExpression.kt");
-    }
-
-    @Test
-    @TestMetadata("unresolvedDelegateExpression.kt")
-    public void testUnresolvedDelegateExpression() throws Exception {
-        runTest("plugins/kapt3/kapt3-compiler/testData/converter/unresolvedDelegateExpression.kt");
     }
 
     @Test

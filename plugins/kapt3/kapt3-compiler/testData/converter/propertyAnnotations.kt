@@ -1,5 +1,3 @@
-// FIR_BLOCKED: KT-54804
-
 annotation class Anno
 
 @Target(AnnotationTarget.PROPERTY, AnnotationTarget.CLASS)

@@ -172,10 +172,10 @@ public final class Test {
         return null;
     }
 
+    @java.lang.Deprecated()
     @lib.Anno(value = "3", construct = {"C"})
     @lib.Anno(value = "2", construct = {"A", "B"})
     @lib.Anno(value = "1")
-    @java.lang.Deprecated()
     public static void getValue$annotations() {
     }
 }

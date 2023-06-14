@@ -2,6 +2,7 @@ package test;
 
 @kotlin.Metadata()
 public final class A {
+    @org.jetbrains.annotations.NotNull()
     private final kotlin.Lazy<error.NonExistentClass> x$delegate = null;
     @org.jetbrains.annotations.NotNull()
     private final test.C<java.lang.String> z$delegate = null;
@@ -20,8 +21,8 @@ public final class A {
         return null;
     }
 
-    @kotlin.Suppress(names = {"UNRESOLVED_REFERENCE"})
     @java.lang.Deprecated()
+    @kotlin.Suppress(names = {"UNRESOLVED_REFERENCE"})
     public static void getX$annotations() {
     }
 

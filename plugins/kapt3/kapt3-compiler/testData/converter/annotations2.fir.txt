@@ -20,21 +20,21 @@ public final class AnnotationsTest {
         super();
     }
 
-    @Anno(value = "top-level-fun")
-    public static final void topLevelFun(@org.jetbrains.annotations.NotNull()
-    @Anno(value = "top-level-fun-receiver")
-    java.lang.String $this$topLevelFun) {
-    }
-
-    @Anno(value = "top-level-val")
-    @java.lang.Deprecated()
-    public static void getTopLevelVal$annotations(int p0) {
-    }
-
     @org.jetbrains.annotations.NotNull()
     public static final java.lang.String getTopLevelVal(@Anno(value = "top-level-val-receiver")
     int $this$topLevelVal) {
         return null;
+    }
+
+    @java.lang.Deprecated()
+    @Anno(value = "top-level-val")
+    public static void getTopLevelVal$annotations(int p0) {
+    }
+
+    @Anno(value = "top-level-fun")
+    public static final void topLevelFun(@org.jetbrains.annotations.NotNull()
+    @Anno(value = "top-level-fun-receiver")
+    java.lang.String $this$topLevelFun) {
     }
 }
 
@@ -89,8 +89,8 @@ public abstract class Test {
         return null;
     }
 
-    @Anno(value = "v-property")
     @java.lang.Deprecated()
+    @Anno(value = "v-property")
     public static void getV$annotations() {
     }
 
@@ -107,8 +107,8 @@ public abstract class Test {
     @org.jetbrains.annotations.NotNull()
     public abstract java.lang.String getAbstractVal();
 
-    @Anno(value = "abstract-val")
     @java.lang.Deprecated()
+    @Anno(value = "abstract-val")
     public static void getAbstractVal$annotations() {
     }
 }

@@ -1,5 +1,3 @@
-// FIR_BLOCKED: KT-54804
-
 /** Test. */
 class Test {
     /** method(). */

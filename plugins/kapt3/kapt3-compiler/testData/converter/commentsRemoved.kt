@@ -1,4 +1,3 @@
-// FIR_BLOCKED: KT-54804
 // DISABLED_FLAGS: KEEP_KDOC_COMMENTS_IN_STUBS
 /** Test. */
 class Test {

@@ -1,4 +1,3 @@
-// FIR_ALMOST_DONE
 // FILE: lib/Anno.java
 package lib;
 public @interface Anno {

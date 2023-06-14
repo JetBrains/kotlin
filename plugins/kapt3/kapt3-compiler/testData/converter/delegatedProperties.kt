@@ -1,4 +1,3 @@
-// FIR_BLOCKED: KT-54804
 package test
 
 open class C<T>(v: T) {

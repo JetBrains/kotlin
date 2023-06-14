@@ -30,9 +30,9 @@ public final class Test {
         return null;
     }
 
+    @java.lang.Deprecated()
     @Anno2()
     @Anno()
-    @java.lang.Deprecated()
     public static void getProp$annotations() {
     }
 }
