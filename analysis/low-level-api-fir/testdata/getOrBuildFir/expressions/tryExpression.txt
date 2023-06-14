@@ -6,7 +6,7 @@ FIR element rendered:
 try {
     Int(1)
 }
-catch ([ResolvedTo(BODY_RESOLVE)] e: R|kotlin/Throwable|) {
+catch ([ResolvedTo(BODY_RESOLVE)] [IsCatchParameterProperty=true] e: R|kotlin/Throwable|) {
 }
 finally {
 }
@@ -18,7 +18,7 @@ FILE: [ResolvedTo(IMPORTS)] tryExpression.kt
         try {
             Int(1)
         }
-        catch ([ResolvedTo(BODY_RESOLVE)] e: R|kotlin/Throwable|) {
+        catch ([ResolvedTo(BODY_RESOLVE)] [IsCatchParameterProperty=true] e: R|kotlin/Throwable|) {
         }
         finally {
         }

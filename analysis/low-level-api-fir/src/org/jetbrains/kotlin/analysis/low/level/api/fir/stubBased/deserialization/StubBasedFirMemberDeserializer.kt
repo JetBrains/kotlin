@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusIm
 import org.jetbrains.kotlin.fir.declarations.utils.sourceElement
 import org.jetbrains.kotlin.fir.expressions.builder.buildExpressionStub
 import org.jetbrains.kotlin.fir.resolve.defaultType
+import org.jetbrains.kotlin.fir.resolve.transformers.setLazyPublishedVisibility
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.toEffectiveVisibility
@@ -345,6 +346,10 @@ internal class StubBasedFirMemberDeserializer(
             deprecationsProvider = annotations.getDeprecationsProviderFromAnnotations(c.session, fromJava = false)
 
             property.contextReceivers.mapNotNull { it.typeReference() }.mapTo(contextReceivers, ::loadContextReceiver)
+        }.apply {
+            setLazyPublishedVisibility(c.session)
+            this.getter?.setLazyPublishedVisibility(annotations, this, c.session)
+            this.setter?.setLazyPublishedVisibility(annotations, this, c.session)
         }
     }
 
@@ -423,6 +428,8 @@ internal class StubBasedFirMemberDeserializer(
             this.containerSource = c.containerSource
 
             function.contextReceivers.mapNotNull { it.typeReference() }.mapTo(contextReceivers, ::loadContextReceiver)
+        }.apply {
+            setLazyPublishedVisibility(c.session)
         }
         if (function.mayHaveContract()) {
             val resolvedDescription = StubBasedFirContractDeserializer(simpleFunction, local.typeDeserializer).loadContract(function)
@@ -499,6 +506,7 @@ internal class StubBasedFirMemberDeserializer(
             contextReceivers.addAll(createContextReceiversForClass(classOrObject))
         }.build().apply {
             containingClassForStaticMemberAttr = c.dispatchReceiver!!.lookupTag
+            setLazyPublishedVisibility(c.session)
         }
     }
 

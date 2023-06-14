@@ -9,17 +9,17 @@ FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] typeOnAnnotationOnConstructorParameterExpression.kt
     [ResolvedTo(BODY_RESOLVE)] annotations container
     public final [ResolvedTo(STATUS)] class ResolveMe : R|kotlin/Any| {
-        public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] constructor([ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] addCommaWarning: R|@R|Anno|(s = String(abc))  kotlin/Boolean| = Boolean(false)): R|ResolveMe| {
+        public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] [ContainingClassKey=ResolveMe] constructor([ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] addCommaWarning: R|@R|Anno|(s = String(abc))  kotlin/Boolean| = Boolean(false)): R|ResolveMe| {
             super<R|kotlin/Any|>()
         }
 
     }
     @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] constructor([ResolvedTo(STATUS)] s: R|kotlin/String|): R|Anno| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(STATUS)] val s: R|kotlin/String| = R|<local>/s|
-            public [ResolvedTo(STATUS)] get(): R|kotlin/String|
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
 
     }

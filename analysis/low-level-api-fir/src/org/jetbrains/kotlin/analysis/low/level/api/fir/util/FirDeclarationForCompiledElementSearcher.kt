@@ -39,6 +39,7 @@ internal class FirDeclarationForCompiledElementSearcher(private val symbolProvid
             is KtNamedFunction -> findNonLocalFunction(ktDeclaration)
             is KtProperty -> findNonLocalProperty(ktDeclaration)
             is KtParameter -> findParameter(ktDeclaration)
+            is KtPropertyAccessor -> findNonLocalPropertyAccessor(ktDeclaration)
 
             else -> errorWithFirSpecificEntries("Unsupported compiled declaration of type", psi = ktDeclaration)
         }
@@ -138,6 +139,13 @@ internal class FirDeclarationForCompiledElementSearcher(private val symbolProvid
                 }
 
         return propertyCandidate.fir
+    }
+
+    private fun findNonLocalPropertyAccessor(declaration: KtPropertyAccessor): FirPropertyAccessor {
+        val firProperty = findNonLocalProperty(declaration.property)
+
+        return (if (declaration.isGetter) firProperty.getter else firProperty.setter)
+            ?: errorWithFirSpecificEntries("We should be able to find a symbol for property accessor", psi = declaration)
     }
 
 }

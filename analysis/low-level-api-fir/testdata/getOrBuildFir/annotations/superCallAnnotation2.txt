@@ -9,7 +9,7 @@ FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] superCallAnnotation2.kt
     [ResolvedTo(BODY_RESOLVE)] annotations container
     @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] constructor(): R|Anno| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor(): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
 
@@ -17,7 +17,7 @@ FILE: [ResolvedTo(IMPORTS)] superCallAnnotation2.kt
     public abstract [ResolvedTo(STATUS)] interface A : R|kotlin/Any| {
     }
     public final [ResolvedTo(BODY_RESOLVE)] class B : R|@R|Anno|()  A| {
-        public [ResolvedTo(BODY_RESOLVE)] constructor(): R|B| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=B] constructor(): R|B| {
             super<R|kotlin/Any|>()
         }
 

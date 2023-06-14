@@ -11,7 +11,7 @@ FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] memberFunction.kt
     [ResolvedTo(BODY_RESOLVE)] annotations container
     public final [ResolvedTo(STATUS)] class Y : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] constructor(): R|Y| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Y] constructor(): R|Y| {
             LAZY_super<R|kotlin/Any|>
         }
 

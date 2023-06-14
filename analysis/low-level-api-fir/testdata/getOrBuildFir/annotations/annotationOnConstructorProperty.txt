@@ -9,12 +9,12 @@ FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] annotationOnConstructorProperty.kt
     [ResolvedTo(BODY_RESOLVE)] annotations container
     public final [ResolvedTo(STATUS)] class Abc : R|kotlin/Any| {
-        public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] constructor([ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] @<ERROR TYPE REF: Symbol not found for Anno>[Types]() i: R|kotlin/Int|): R|Abc| {
+        public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] [ContainingClassKey=Abc] constructor([ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] [CorrespondingProperty=/Abc.i] @<ERROR TYPE REF: Symbol not found for Anno>[Types]() i: R|kotlin/Int|): R|Abc| {
             super<R|kotlin/Any|>()
         }
 
-        public final [ResolvedTo(STATUS)] var i: R|kotlin/Int| = R|<local>/i|
-            public [ResolvedTo(STATUS)] get(): R|kotlin/Int|
-            public [ResolvedTo(STATUS)] set([ResolvedTo(STATUS)] value: R|kotlin/Int|): R|kotlin/Unit|
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] var i: R|kotlin/Int| = R|<local>/i|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Abc] get(): R|kotlin/Int|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Abc] set([ResolvedTo(STATUS)] value: R|kotlin/Int|): R|kotlin/Unit|
 
     }

@@ -3,7 +3,7 @@ FIR element: FirFunctionCallImpl
 FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
-R|kotlin/lazy|<R|kotlin/Int|>(<L> = [ResolvedTo(RAW_FIR)] lazy@fun <anonymous>(): R|kotlin/Int| <inline=NoInline>  {
+R|kotlin/lazy|<R|kotlin/Int|>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function0<T>] lazy@fun <anonymous>(): R|kotlin/Int| <inline=NoInline>  {
     ^ Int(1)
 }
 )
@@ -11,7 +11,7 @@ R|kotlin/lazy|<R|kotlin/Int|>(<L> = [ResolvedTo(RAW_FIR)] lazy@fun <anonymous>()
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] propertyDelegateExpression.kt
     [ResolvedTo(BODY_RESOLVE)] annotations container
-    public final [ResolvedTo(BODY_RESOLVE)] val x: R|kotlin/Int|by R|kotlin/lazy|<R|kotlin/Int|>(<L> = [ResolvedTo(RAW_FIR)] lazy@fun <anonymous>(): R|kotlin/Int| <inline=NoInline>  {
+    public final [ResolvedTo(BODY_RESOLVE)] val x: R|kotlin/Int|by R|kotlin/lazy|<R|kotlin/Int|>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function0<T>] lazy@fun <anonymous>(): R|kotlin/Int| <inline=NoInline>  {
         ^ Int(1)
     }
     )

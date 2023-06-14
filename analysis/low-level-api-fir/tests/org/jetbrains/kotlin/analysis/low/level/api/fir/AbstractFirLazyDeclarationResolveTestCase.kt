@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AbstractLowLevelApiSingleFileTest
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.renderer.FirDeclarationRendererWithAttributes
+import org.jetbrains.kotlin.fir.renderer.FirDeclarationRendererWithFilteredAttributes
 import org.jetbrains.kotlin.fir.renderer.FirErrorExpressionExtendedRenderer
 import org.jetbrains.kotlin.fir.renderer.FirFileAnnotationsContainerRenderer
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
@@ -40,7 +40,7 @@ abstract class AbstractFirLazyDeclarationResolveTestCase : AbstractLowLevelApiSi
         val resultBuilder = StringBuilder()
         val renderer = FirRenderer(
             builder = resultBuilder,
-            declarationRenderer = FirDeclarationRendererWithAttributes(),
+            declarationRenderer = FirDeclarationRendererWithFilteredAttributes(),
             resolvePhaseRenderer = FirResolvePhaseRenderer(),
             errorExpressionRenderer = FirErrorExpressionExtendedRenderer(),
             fileAnnotationsContainerRenderer = FirFileAnnotationsContainerRenderer(),

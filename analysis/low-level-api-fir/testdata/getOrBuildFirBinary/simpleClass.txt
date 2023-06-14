@@ -10,6 +10,6 @@ FIR element rendered:
 public final [ResolvedTo(BODY_RESOLVE)] class FooBar : R|kotlin/Any| {
     public final [ResolvedTo(BODY_RESOLVE)] fun doSmth(): R|kotlin/Unit|
 
-    public [ResolvedTo(BODY_RESOLVE)] constructor(): R|FooBar|
+    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=FooBar] constructor(): R|FooBar|
 
 }

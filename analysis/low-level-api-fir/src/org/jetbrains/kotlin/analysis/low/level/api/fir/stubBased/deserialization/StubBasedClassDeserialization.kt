@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.declarations.comparators.FirMemberDeclarationCom
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.deserialization.*
+import org.jetbrains.kotlin.fir.resolve.transformers.setLazyPublishedVisibility
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -236,7 +237,6 @@ internal fun deserializeClassToSymbol(
             context.annotationDeserializer.loadAnnotations(classOrObject)
         )
 
-
         sourceElement = containerSource
 
         replaceDeprecationsProvider(getDeprecationsProvider(session))
@@ -244,5 +244,11 @@ internal fun deserializeClassToSymbol(
         session.deserializedClassConfigurator?.run {
             configure(classId)
         }
+
+        setLazyPublishedVisibility(
+            hasPublishedApi = classOrObject.annotationEntries.any { context.annotationDeserializer.getAnnotationClassId(it) == StandardClassIds.Annotations.PublishedApi },
+            parentProperty = null,
+            session
+        )
     }
 }

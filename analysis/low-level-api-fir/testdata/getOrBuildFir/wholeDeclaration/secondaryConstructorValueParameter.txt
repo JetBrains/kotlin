@@ -9,11 +9,11 @@ FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] secondaryConstructorValueParameter.kt
     [ResolvedTo(BODY_RESOLVE)] annotations container
     public final [ResolvedTo(STATUS)] class X : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] constructor([ResolvedTo(STATUS)] x: R|kotlin/Int|): R|X| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=X] constructor([ResolvedTo(STATUS)] x: R|kotlin/Int|): R|X| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public [ResolvedTo(BODY_RESOLVE)] constructor([ResolvedTo(BODY_RESOLVE)] y: R|kotlin/String|): R|X| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=X] constructor([ResolvedTo(BODY_RESOLVE)] y: R|kotlin/String|): R|X| {
             this<R|X|>(Int(1))
         }
 

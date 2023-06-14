@@ -10,16 +10,16 @@ FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] duplicatedClasses.kt
     [ResolvedTo(BODY_RESOLVE)] annotations container
     public final [ResolvedTo(STATUS)] class SomeClass : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] constructor(): R|SomeClass| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=SomeClass] constructor(): R|SomeClass| {
             LAZY_super<R|kotlin/Any|>
         }
 
         public final [ResolvedTo(STATUS)] val prop: <implicit> = LAZY_EXPRESSION
-            public [ResolvedTo(STATUS)] get(): <implicit>
+            public [ResolvedTo(STATUS)] [ContainingClassKey=SomeClass] get(): <implicit>
 
     }
     public final [ResolvedTo(STATUS)] class SomeClass : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] constructor(): R|SomeClass| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=SomeClass] constructor(): R|SomeClass| {
             LAZY_super<R|kotlin/Any|>
         }
 

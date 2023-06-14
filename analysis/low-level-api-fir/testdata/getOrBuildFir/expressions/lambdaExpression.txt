@@ -3,14 +3,14 @@ FIR element: FirAnonymousFunctionExpressionImpl
 FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
-[ResolvedTo(BODY_RESOLVE)] run@fun <anonymous>(): R|kotlin/Int| <inline=Inline, kind=EXACTLY_ONCE>  {
+[ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/Function0<R>] run@fun <anonymous>(): R|kotlin/Int| <inline=Inline, kind=EXACTLY_ONCE>  {
     ^ Int(1)
 }
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] lambdaExpression.kt
     [ResolvedTo(BODY_RESOLVE)] annotations container
-    public final [ResolvedTo(BODY_RESOLVE)] val x: R|kotlin/Int| = R|kotlin/run|<R|kotlin/Int|>(<L> = [ResolvedTo(BODY_RESOLVE)] run@fun <anonymous>(): R|kotlin/Int| <inline=Inline, kind=EXACTLY_ONCE>  {
+    public final [ResolvedTo(BODY_RESOLVE)] val x: R|kotlin/Int| = R|kotlin/run|<R|kotlin/Int|>(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/Function0<R>] run@fun <anonymous>(): R|kotlin/Int| <inline=Inline, kind=EXACTLY_ONCE>  {
         ^ Int(1)
     }
     )

@@ -60,15 +60,19 @@ class StubBasedAnnotationDeserializer(
     private fun deserializeAnnotation(
         ktAnnotation: KtAnnotationEntry
     ): FirAnnotation {
-        val userType =
-            ktAnnotation.getStubOrPsiChild(KtStubElementTypes.CONSTRUCTOR_CALLEE)?.getStubOrPsiChild(KtStubElementTypes.TYPE_REFERENCE)
-                ?.getStubOrPsiChild(KtStubElementTypes.USER_TYPE)!!
         return deserializeAnnotation(
             ktAnnotation,
-            userType.classId(),
+            getAnnotationClassId(ktAnnotation),
             ((ktAnnotation.stub ?: loadStubByElement(ktAnnotation)) as? KotlinAnnotationEntryStubImpl)?.valueArguments,
             ktAnnotation.useSiteTarget?.getAnnotationUseSiteTarget()
         )
+    }
+
+    fun getAnnotationClassId(ktAnnotation: KtAnnotationEntry): ClassId {
+        val userType = ktAnnotation.getStubOrPsiChild(KtStubElementTypes.CONSTRUCTOR_CALLEE)
+            ?.getStubOrPsiChild(KtStubElementTypes.TYPE_REFERENCE)
+            ?.getStubOrPsiChild(KtStubElementTypes.USER_TYPE)!!
+        return userType.classId()
     }
 
     private fun deserializeAnnotation(

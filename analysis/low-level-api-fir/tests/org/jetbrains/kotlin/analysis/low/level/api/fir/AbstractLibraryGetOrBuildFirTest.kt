@@ -44,13 +44,13 @@ abstract class AbstractLibraryGetOrBuildFirTest : AbstractLowLevelApiSingleFileT
     private fun getElementToSearch(ktFile: KtFile, moduleStructure: TestModuleStructure): KtDeclaration {
         val expectedType = moduleStructure.allDirectives[Directives.DECLARATION_TYPE].firstOrNull()
             ?: error("Compiled code should have element type specified")
-        @Suppress("UNCHECKED_CAST") val expectedClass = Class.forName(expectedType) as Class<PsiElement>
+        @Suppress("UNCHECKED_CAST") val expectedClass = Class.forName(expectedType) as Class<out PsiElement>
         return findFirstDeclaration(ktFile.declarations, expectedClass)!!
     }
 
     private fun findFirstDeclaration(
         declarations: List<KtDeclaration>,
-        expectedClass: Class<PsiElement>
+        expectedClass: Class<out PsiElement>
     ): KtDeclaration? {
         declarations.filterIsInstance(expectedClass).firstOrNull()?.let { return it as KtDeclaration }
         declarations.forEach { decl ->
@@ -60,7 +60,10 @@ abstract class AbstractLibraryGetOrBuildFirTest : AbstractLowLevelApiSingleFileT
             if (decl is KtFunction) {
                 findFirstDeclaration(decl.valueParameters, expectedClass)?.let { return it }
             }
-            if (decl is KtClass && expectedClass == KtConstructor::class.java) {
+            if (decl is KtProperty) {
+                findFirstDeclaration(decl.accessors, expectedClass)?.let { return it }
+            }
+            if (decl is KtClass && KtConstructor::class.java.isAssignableFrom(expectedClass)) {
                 decl.primaryConstructor?.let { return it }
             }
         }

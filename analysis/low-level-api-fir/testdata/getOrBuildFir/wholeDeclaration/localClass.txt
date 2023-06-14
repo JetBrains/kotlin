@@ -4,7 +4,7 @@ FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
 local final [ResolvedTo(BODY_RESOLVE)] class X : R|kotlin/Any| {
-    public [ResolvedTo(BODY_RESOLVE)] constructor(): R|X| {
+    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=X] constructor(): R|X| {
         super<R|kotlin/Any|>()
     }
 
@@ -17,7 +17,7 @@ FILE: [ResolvedTo(IMPORTS)] localClass.kt
     [ResolvedTo(BODY_RESOLVE)] annotations container
     public final [ResolvedTo(BODY_RESOLVE)] fun y(): R|kotlin/Unit| {
         local final [ResolvedTo(BODY_RESOLVE)] class X : R|kotlin/Any| {
-            public [ResolvedTo(BODY_RESOLVE)] constructor(): R|X| {
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=X] constructor(): R|X| {
                 super<R|kotlin/Any|>()
             }
 

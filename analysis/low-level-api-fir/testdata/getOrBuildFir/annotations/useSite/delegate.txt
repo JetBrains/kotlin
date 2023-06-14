@@ -9,13 +9,13 @@ FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] delegate.kt
     [ResolvedTo(BODY_RESOLVE)] annotations container
     public final [ResolvedTo(STATUS)] annotation class Ann : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] constructor(): R|Ann| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Ann] constructor(): R|Ann| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
     public final [ResolvedTo(STATUS)] class X : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] constructor(): R|X| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=X] constructor(): R|X| {
             LAZY_super<R|kotlin/Any|>
         }
 
@@ -23,7 +23,7 @@ FILE: [ResolvedTo(IMPORTS)] delegate.kt
             ^ Int(1)
         }
         )
-            public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] get(): <ERROR TYPE REF: Unresolved name: getValue> {
+            public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] [ContainingClassKey=X] get(): <ERROR TYPE REF: Unresolved name: getValue> {
                 ^ this@R|/X|.D|/X.a|.<Unresolved name: getValue>#(this@R|/X|, ::R|/X.a|)
             }
 

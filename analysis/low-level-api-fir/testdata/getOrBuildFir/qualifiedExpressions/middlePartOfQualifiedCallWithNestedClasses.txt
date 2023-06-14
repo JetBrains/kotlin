@@ -9,22 +9,22 @@ FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] middlePartOfQualifiedCallWithNestedClasses.kt
     [ResolvedTo(BODY_RESOLVE)] annotations container
     public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] constructor(): R|A| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
 
         public final [ResolvedTo(STATUS)] class B : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] constructor(): R|A.B| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=B] constructor(): R|A.B| {
                 LAZY_super<R|kotlin/Any|>
             }
 
             public final [ResolvedTo(STATUS)] class C : R|kotlin/Any| {
-                public [ResolvedTo(STATUS)] constructor(): R|A.B.C| {
+                public [ResolvedTo(STATUS)] [ContainingClassKey=C] constructor(): R|A.B.C| {
                     LAZY_super<R|kotlin/Any|>
                 }
 
                 public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val x: R|kotlin/Int| = Int(10)
-                    public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
+                    public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=C] get(): R|kotlin/Int|
 
             }
 

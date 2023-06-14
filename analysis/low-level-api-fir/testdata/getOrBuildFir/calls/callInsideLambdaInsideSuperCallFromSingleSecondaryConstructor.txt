@@ -9,13 +9,13 @@ FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] callInsideLambdaInsideSuperCallFromSingleSecondaryConstructor.kt
     [ResolvedTo(BODY_RESOLVE)] annotations container
     public open [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] constructor([ResolvedTo(STATUS)] x: R|() -> kotlin/Unit|): R|A| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor([ResolvedTo(STATUS)] x: R|() -> kotlin/Unit|): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
     public final [ResolvedTo(STATUS)] class B : R|A| {
-        public [ResolvedTo(BODY_RESOLVE)] constructor([ResolvedTo(BODY_RESOLVE)] i: R|kotlin/Int|): R|B| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=B] constructor([ResolvedTo(BODY_RESOLVE)] i: R|kotlin/Int|): R|B| {
             super<R|A|>([ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
                 R|/foo|(R|<local>/i|)
             }

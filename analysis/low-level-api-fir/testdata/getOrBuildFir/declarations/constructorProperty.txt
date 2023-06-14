@@ -3,17 +3,17 @@ FIR element: FirValueParameterImpl
 FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
-[ResolvedTo(BODY_RESOLVE)] i: R|kotlin/Int| = Int(4)
+[ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/Abc.i] i: R|kotlin/Int| = Int(4)
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] constructorProperty.kt
     [ResolvedTo(BODY_RESOLVE)] annotations container
     public final [ResolvedTo(STATUS)] class Abc : R|kotlin/Any| {
-        public [ResolvedTo(BODY_RESOLVE)] constructor([ResolvedTo(BODY_RESOLVE)] i: R|kotlin/Int| = Int(4)): R|Abc| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Abc] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/Abc.i] i: R|kotlin/Int| = Int(4)): R|Abc| {
             super<R|kotlin/Any|>()
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] val i: R|kotlin/Int| = R|<local>/i|
-            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Abc] get(): R|kotlin/Int|
 
     }

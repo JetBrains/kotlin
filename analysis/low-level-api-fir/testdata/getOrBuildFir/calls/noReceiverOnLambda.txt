@@ -9,7 +9,7 @@ FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] noReceiverOnLambda.kt
     [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(RAW_FIR)] class SomeTest : R|kotlin/Any| {
-        public? [ResolvedTo(RAW_FIR)] constructor(): R|SomeTest| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=SomeTest] constructor(): R|SomeTest| {
             LAZY_super<R|kotlin/Any|>
         }
 

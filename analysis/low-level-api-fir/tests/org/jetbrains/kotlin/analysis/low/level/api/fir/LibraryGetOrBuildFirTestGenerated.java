@@ -77,4 +77,56 @@ public class LibraryGetOrBuildFirTestGenerated extends AbstractLibraryGetOrBuild
     public void testTopLevelFunction() throws Exception {
         runTest("analysis/low-level-api-fir/testdata/getOrBuildFirBinary/topLevelFunction.kt");
     }
+
+    @Nested
+    @TestMetadata("analysis/low-level-api-fir/testdata/getOrBuildFirBinary/publishedApi")
+    @TestDataPath("$PROJECT_ROOT")
+    public class PublishedApi {
+        @Test
+        public void testAllFilesPresentInPublishedApi() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testdata/getOrBuildFirBinary/publishedApi"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("publishedApiClass.kt")
+        public void testPublishedApiClass() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFirBinary/publishedApi/publishedApiClass.kt");
+        }
+
+        @Test
+        @TestMetadata("publishedApiConstructor.kt")
+        public void testPublishedApiConstructor() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFirBinary/publishedApi/publishedApiConstructor.kt");
+        }
+
+        @Test
+        @TestMetadata("publishedApiFunction.kt")
+        public void testPublishedApiFunction() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFirBinary/publishedApi/publishedApiFunction.kt");
+        }
+
+        @Test
+        @TestMetadata("publishedApiPrimaryConstructor.kt")
+        public void testPublishedApiPrimaryConstructor() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFirBinary/publishedApi/publishedApiPrimaryConstructor.kt");
+        }
+
+        @Test
+        @TestMetadata("publishedApiProperty.kt")
+        public void testPublishedApiProperty() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFirBinary/publishedApi/publishedApiProperty.kt");
+        }
+
+        @Test
+        @TestMetadata("publishedApiPropertyGetter.kt")
+        public void testPublishedApiPropertyGetter() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFirBinary/publishedApi/publishedApiPropertyGetter.kt");
+        }
+
+        @Test
+        @TestMetadata("publishedApiPropertySetter.kt")
+        public void testPublishedApiPropertySetter() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFirBinary/publishedApi/publishedApiPropertySetter.kt");
+        }
+    }
 }

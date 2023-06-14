@@ -11,13 +11,13 @@ FILE: [ResolvedTo(IMPORTS)] typeOnAnnotationOnFunctionParameter.kt
     public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun t([ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] addCommaWarning: R|@R|Anno|()  kotlin/Boolean|): R|kotlin/Unit| {
     }
     public? open [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
-        public? [ResolvedTo(RAW_FIR)] constructor(): R|A| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
     @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] constructor(): R|Anno| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor(): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
 

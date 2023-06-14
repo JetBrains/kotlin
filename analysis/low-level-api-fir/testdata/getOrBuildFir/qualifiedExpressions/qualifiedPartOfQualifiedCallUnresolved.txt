@@ -9,7 +9,7 @@ FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] qualifiedPartOfQualifiedCallUnresolved.kt
     [ResolvedTo(BODY_RESOLVE)] annotations container
     public final [ResolvedTo(STATUS)] class FF : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] constructor(): R|FF| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=FF] constructor(): R|FF| {
             LAZY_super<R|kotlin/Any|>
         }
 

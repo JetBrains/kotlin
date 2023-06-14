@@ -11,12 +11,12 @@ FILE: [ResolvedTo(IMPORTS)] setOperator.kt
     package test
 
     public final [ResolvedTo(STATUS)] class B : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] constructor([ResolvedTo(STATUS)] n: R|kotlin/Int|): R|test/B| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=B] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=test/B.n] n: R|kotlin/Int|): R|test/B| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(STATUS)] val n: R|kotlin/Int| = R|<local>/n|
-            public [ResolvedTo(STATUS)] get(): R|kotlin/Int|
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val n: R|kotlin/Int| = R|<local>/n|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=B] get(): R|kotlin/Int|
 
         public final operator [ResolvedTo(CONTRACTS)] fun set([ResolvedTo(CONTRACTS)] i: R|kotlin/Int|, [ResolvedTo(CONTRACTS)] a: R|test/B|): R|kotlin/Unit| {
         }

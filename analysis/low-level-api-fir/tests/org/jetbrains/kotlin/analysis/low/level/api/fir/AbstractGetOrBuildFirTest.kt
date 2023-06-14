@@ -14,10 +14,7 @@ import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerPro
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirImport
-import org.jetbrains.kotlin.fir.renderer.FirFileAnnotationsContainerRenderer
-import org.jetbrains.kotlin.fir.renderer.FirPackageDirectiveRenderer
-import org.jetbrains.kotlin.fir.renderer.FirRenderer
-import org.jetbrains.kotlin.fir.renderer.FirResolvePhaseRenderer
+import org.jetbrains.kotlin.fir.renderer.*
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.services.TestModuleStructure
@@ -61,6 +58,7 @@ private fun render(firElement: FirElement?): String = when (firElement) {
         fileAnnotationsContainerRenderer = FirFileAnnotationsContainerRenderer(),
         packageDirectiveRenderer = FirPackageDirectiveRenderer(),
         resolvePhaseRenderer = FirResolvePhaseRenderer(),
+        declarationRenderer = FirDeclarationRendererWithFilteredAttributes(),
     ).renderElementAsString(firElement)
 }
 

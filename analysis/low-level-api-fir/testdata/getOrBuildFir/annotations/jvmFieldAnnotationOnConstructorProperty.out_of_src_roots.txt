@@ -9,17 +9,17 @@ FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] jvmFieldAnnotationOnConstructorProperty.kt
     [ResolvedTo(BODY_RESOLVE)] annotations container
     public final [ResolvedTo(STATUS)] class MyClass : R|A| {
-        public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] constructor([ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] @<ERROR TYPE REF: Symbol not found for JvmField>[Types]() addCommaWarning: R|kotlin/Boolean| = Boolean(false)): R|MyClass| {
+        public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] [ContainingClassKey=MyClass] constructor([ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] [CorrespondingProperty=/MyClass.addCommaWarning] @<ERROR TYPE REF: Symbol not found for JvmField>[Types]() addCommaWarning: R|kotlin/Boolean| = Boolean(false)): R|MyClass| {
             super<R|A|>()
         }
 
-        public final [ResolvedTo(STATUS)] var addCommaWarning: R|kotlin/Boolean| = R|<local>/addCommaWarning|
-            public [ResolvedTo(STATUS)] get(): R|kotlin/Boolean|
-            public [ResolvedTo(STATUS)] set([ResolvedTo(STATUS)] value: R|kotlin/Boolean|): R|kotlin/Unit|
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] var addCommaWarning: R|kotlin/Boolean| = R|<local>/addCommaWarning|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] get(): R|kotlin/Boolean|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] set([ResolvedTo(STATUS)] value: R|kotlin/Boolean|): R|kotlin/Unit|
 
     }
     public open [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] constructor(): R|A| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
 

@@ -9,23 +9,23 @@ FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] typeOnAnnotationOnConstructorProperty.kt
     [ResolvedTo(BODY_RESOLVE)] annotations container
     public final [ResolvedTo(STATUS)] class ResolveMe : R|A| {
-        public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] constructor([ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] addCommaWarning: R|@R|Anno|()  kotlin/Boolean| = Boolean(false)): R|ResolveMe| {
+        public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] [ContainingClassKey=ResolveMe] constructor([ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] [CorrespondingProperty=/ResolveMe.addCommaWarning] addCommaWarning: R|@R|Anno|()  kotlin/Boolean| = Boolean(false)): R|ResolveMe| {
             super<R|A|>()
         }
 
-        public final [ResolvedTo(STATUS)] var addCommaWarning: R|@R|Anno|()  kotlin/Boolean| = R|<local>/addCommaWarning|
-            public [ResolvedTo(STATUS)] get(): R|@R|Anno|()  kotlin/Boolean|
-            public [ResolvedTo(STATUS)] set([ResolvedTo(STATUS)] value: R|@R|Anno|()  kotlin/Boolean|): R|kotlin/Unit|
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] var addCommaWarning: R|@R|Anno|()  kotlin/Boolean| = R|<local>/addCommaWarning|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=ResolveMe] get(): R|@R|Anno|()  kotlin/Boolean|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=ResolveMe] set([ResolvedTo(STATUS)] value: R|@R|Anno|()  kotlin/Boolean|): R|kotlin/Unit|
 
     }
     public open [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] constructor(): R|A| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
     @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] constructor(): R|Anno| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor(): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
 
