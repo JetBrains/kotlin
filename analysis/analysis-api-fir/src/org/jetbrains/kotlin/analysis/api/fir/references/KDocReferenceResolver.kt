@@ -77,6 +77,13 @@ internal object KDocReferenceResolver {
 
     context(KtAnalysisSession)
     private fun resolveKdocFqName(fqName: FqName, contextElement: KtElement): Collection<KtSymbol> {
+        (getSymbolsFromScopes(fqName, contextElement) + listOfNotNull(getPackageSymbolIfPackageExists(fqName))).ifNotEmpty { return this }
+        getNonImportedSymbolsByFullyQualifiedName(fqName).ifNotEmpty { return this }
+        return emptyList()
+    }
+
+    context(KtAnalysisSession)
+    private fun getSymbolsFromScopes(fqName: FqName, contextElement: KtElement): Collection<KtSymbol> {
         getSymbolsFromParentMemberScopes(fqName, contextElement).ifNotEmpty { return this }
         val importScopeContext = contextElement.containingKtFile.getImportingScopeContext()
         getSymbolsFromImportingScope(importScopeContext, fqName, KtScopeKind.ExplicitSimpleImportingScope::class).ifNotEmpty { return this }
@@ -84,7 +91,6 @@ internal object KDocReferenceResolver {
         getSymbolsFromImportingScope(importScopeContext, fqName, KtScopeKind.DefaultSimpleImportingScope::class).ifNotEmpty { return this }
         getSymbolsFromImportingScope(importScopeContext, fqName, KtScopeKind.ExplicitStarImportingScope::class).ifNotEmpty { return this }
         getSymbolsFromImportingScope(importScopeContext, fqName, KtScopeKind.DefaultStarImportingScope::class).ifNotEmpty { return this }
-        getNonImportedSymbolsByFullyQualifiedName(fqName).ifNotEmpty { return this }
         return emptyList()
     }
 
