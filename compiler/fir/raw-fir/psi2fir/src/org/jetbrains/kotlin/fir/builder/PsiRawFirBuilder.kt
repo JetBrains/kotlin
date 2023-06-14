@@ -1088,23 +1088,28 @@ open class PsiRawFirBuilder(
                         aliasSource = importDirective.alias?.nameIdentifier?.toFirSourceElement()
                     }
                 }
-                for (declaration in file.declarations) {
-                    declarations += when (declaration) {
-                        is KtScript -> {
-                            require(file.declarations.size == 1) { "Expect the script to be the only declaration in the file $name" }
-                            convertScript(declaration, this.name) {
-                                for (configurator in baseSession.extensionService.scriptConfigurators) {
-                                    with(configurator) { configure(this@buildFile) }
+
+                if (file is KtCodeFragment) {
+                    declarations += convertCodeFragment(file)
+                } else {
+                    for (declaration in file.declarations) {
+                        declarations += when (declaration) {
+                            is KtScript -> {
+                                require(file.declarations.size == 1) { "Expect the script to be the only declaration in the file $name" }
+                                convertScript(declaration, this.name) {
+                                    for (configurator in baseSession.extensionService.scriptConfigurators) {
+                                        with(configurator) { configure(this@buildFile) }
+                                    }
                                 }
                             }
+                            is KtDestructuringDeclaration -> buildErrorTopLevelDestructuringDeclaration(declaration.toFirSourceElement())
+                            else -> declaration.convert()
                         }
-                        is KtDestructuringDeclaration -> buildErrorTopLevelDestructuringDeclaration(declaration.toFirSourceElement())
-                        else -> declaration.convert()
                     }
-                }
 
-                for (danglingModifierList in file.danglingModifierLists) {
-                    declarations += buildErrorTopLevelDeclarationForDanglingModifierList(danglingModifierList)
+                    for (danglingModifierList in file.danglingModifierLists) {
+                        declarations += buildErrorTopLevelDeclarationForDanglingModifierList(danglingModifierList)
+                    }
                 }
             }
         }
@@ -1154,6 +1159,20 @@ open class PsiRawFirBuilder(
                     }
                 }
                 setup()
+            }
+        }
+
+        private fun convertCodeFragment(file: KtCodeFragment): FirCodeFragment {
+            return buildCodeFragment {
+                source = file.toFirSourceElement()
+                moduleData = baseModuleData
+                origin = FirDeclarationOrigin.Source
+                symbol = FirCodeFragmentSymbol()
+                block = when (file) {
+                    is KtExpressionCodeFragment -> file.getContentElement()?.toFirBlock() ?: buildEmptyExpressionBlock()
+                    is KtBlockCodeFragment -> configureBlockWithoutBuilding(file.getContentElement()).build()
+                    else -> error("Unexpected code fragment type: " + file::class.java)
+                }
             }
         }
 
