@@ -1,0 +1,32 @@
+KT element: KtTypeReference
+FIR element: FirResolvedTypeRefImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+R|Foo.Nested|
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] nestedClassType.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    public open [ResolvedTo(STATUS)] class Foo : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] constructor(): R|Foo| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] class Nested : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] constructor(): R|Foo.Nested| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+        }
+
+    }
+    public final [ResolvedTo(STATUS)] class Bar : R|Foo| {
+        public [ResolvedTo(STATUS)] constructor(): R|Bar| {
+            LAZY_super<R|Foo|>
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] fun create(): R|Foo.Nested| {
+        }
+
+    }

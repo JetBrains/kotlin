@@ -1,0 +1,18 @@
+KT element: KtNameReferenceExpression
+FIR element: FirResolvedTypeRefImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+R|T|
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] receiverType.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    public final [ResolvedTo(BODY_RESOLVE)] fun <@R|A|[Types]() [ResolvedTo(BODY_RESOLVE)] T> R|T|.test(): R|kotlin/Unit| {
+    }
+    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|) public final [ResolvedTo(STATUS)] annotation class A : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] constructor(): R|A| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }

@@ -1,0 +1,12 @@
+KT element: KtTypeReference
+FIR element: FirResolvedTypeRefImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+R|kotlin/Number|
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] typeParameterBound.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    public final [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] T : R|kotlin/Number|> check([ResolvedTo(BODY_RESOLVE)] t: R|T|): R|kotlin/Unit| {
+    }
