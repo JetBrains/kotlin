@@ -1,15 +1,12 @@
-// TARGET_BACKEND: JVM
-// TARGET_BACKEND: JVM_IR
-
 // WITH_STDLIB
 
 import kotlin.test.assertEquals
 
 inline fun <R, T> foo(x : R, y : R, block : (R) -> T) : T {
     val a = x is Number
-    val b = x is Object
+    val b = x is Any
 
-    val b1 = x as Object
+    val b1 = x as Any
 
     if (a && b) {
         return block(x)

@@ -1,5 +1,5 @@
-// TARGET_BACKEND: JVM
-// TARGET_BACKEND: JVM_IR
+// DONT_TARGET_EXACT_BACKEND: JVM
+// DONT_TARGET_EXACT_BACKEND: JVM_IR
 
 // WITH_STDLIB
 // WITH_REFLECT
@@ -22,7 +22,7 @@ inline fun <reified T, reified R> check(f: (T) -> R, g: (T) -> R, tType: String,
 fun box(): String {
     check("", 1, ::foo, "String", "Int")
     check("", 1, ::fooReturnInt, "String", "Int")
-    check("", "", ::fooReturnInt, "String", "Any")  // Non-JVM backends have not "Any", but "Comparable" as common parent for Int and String
+    check("", "", ::fooReturnInt, "String", "Comparable")  // JVM backends have not "Comparable", but "Any" as common parent for Int and String
 
     check(Int::toString, ::foo, "Int", "String")
 

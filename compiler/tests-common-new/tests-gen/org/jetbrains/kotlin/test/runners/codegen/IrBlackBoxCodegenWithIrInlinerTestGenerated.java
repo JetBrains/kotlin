@@ -1970,6 +1970,12 @@ public class IrBlackBoxCodegenWithIrInlinerTestGenerated extends AbstractIrBlack
         }
 
         @Test
+        @TestMetadata("checkcastAndInstanceOf2.kt")
+        public void testCheckcastAndInstanceOf2() throws Exception {
+            runTest("compiler/testData/codegen/box/boxingOptimization/checkcastAndInstanceOf2.kt");
+        }
+
+        @Test
         @TestMetadata("explicitEqualsOnDouble.kt")
         public void testExplicitEqualsOnDouble() throws Exception {
             runTest("compiler/testData/codegen/box/boxingOptimization/explicitEqualsOnDouble.kt");
@@ -5058,6 +5064,18 @@ public class IrBlackBoxCodegenWithIrInlinerTestGenerated extends AbstractIrBlack
             @TestMetadata("isFunKSmall.kt")
             public void testIsFunKSmall() throws Exception {
                 runTest("compiler/testData/codegen/box/casts/functions/isFunKSmall.kt");
+            }
+
+            @Test
+            @TestMetadata("isFunKSmallJVM.kt")
+            public void testIsFunKSmallJVM() throws Exception {
+                runTest("compiler/testData/codegen/box/casts/functions/isFunKSmallJVM.kt");
+            }
+
+            @Test
+            @TestMetadata("isFunKSmallNonJS.kt")
+            public void testIsFunKSmallNonJS() throws Exception {
+                runTest("compiler/testData/codegen/box/casts/functions/isFunKSmallNonJS.kt");
             }
 
             @Test
@@ -14881,12 +14899,6 @@ public class IrBlackBoxCodegenWithIrInlinerTestGenerated extends AbstractIrBlack
         @TestMetadata("genericDelegateUncheckedCast1.kt")
         public void testGenericDelegateUncheckedCast1() throws Exception {
             runTest("compiler/testData/codegen/box/delegatedProperty/genericDelegateUncheckedCast1.kt");
-        }
-
-        @Test
-        @TestMetadata("genericDelegateUncheckedCast2.kt")
-        public void testGenericDelegateUncheckedCast2() throws Exception {
-            runTest("compiler/testData/codegen/box/delegatedProperty/genericDelegateUncheckedCast2.kt");
         }
 
         @Test
@@ -34278,6 +34290,12 @@ public class IrBlackBoxCodegenWithIrInlinerTestGenerated extends AbstractIrBlack
         }
 
         @Test
+        @TestMetadata("kt1047a.kt")
+        public void testKt1047a() throws Exception {
+            runTest("compiler/testData/codegen/box/objects/kt1047a.kt");
+        }
+
+        @Test
         @TestMetadata("kt11117.kt")
         public void testKt11117() throws Exception {
             runTest("compiler/testData/codegen/box/objects/kt11117.kt");
@@ -48954,6 +48972,12 @@ public class IrBlackBoxCodegenWithIrInlinerTestGenerated extends AbstractIrBlack
             @TestMetadata("sameWrapperClass.kt")
             public void testSameWrapperClass() throws Exception {
                 runTest("compiler/testData/codegen/box/sam/constructors/sameWrapperClass.kt");
+            }
+
+            @Test
+            @TestMetadata("sameWrapperClass2.kt")
+            public void testSameWrapperClass2() throws Exception {
+                runTest("compiler/testData/codegen/box/sam/constructors/sameWrapperClass2.kt");
             }
 
             @Test

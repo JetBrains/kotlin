@@ -62,24 +62,6 @@ public class JsLegacyPrimitiveArraysBoxTestGenerated extends AbstractJsLegacyPri
     }
 
     @Test
-    @TestMetadata("arraysAreCloneable.kt")
-    public void testArraysAreCloneable() throws Exception {
-        runTest("compiler/testData/codegen/box/arrays/arraysAreCloneable.kt");
-    }
-
-    @Test
-    @TestMetadata("cloneArray.kt")
-    public void testCloneArray() throws Exception {
-        runTest("compiler/testData/codegen/box/arrays/cloneArray.kt");
-    }
-
-    @Test
-    @TestMetadata("clonePrimitiveArrays.kt")
-    public void testClonePrimitiveArrays() throws Exception {
-        runTest("compiler/testData/codegen/box/arrays/clonePrimitiveArrays.kt");
-    }
-
-    @Test
     @TestMetadata("collectionAssignGetMultiIndex.kt")
     public void testCollectionAssignGetMultiIndex() throws Exception {
         runTest("compiler/testData/codegen/box/arrays/collectionAssignGetMultiIndex.kt");

@@ -1,4 +1,5 @@
-// IGNORE_BACKEND: JS, NATIVE
+// JS error: org.jetbrains.kotlin.js.facade.exceptions.TranslationRuntimeException: Unexpected error occurred compiling the following fragment: 'foo.s = "oops"' at (20,5) in /kt49316.kt
+// IGNORE_BACKEND: JS
 // IGNORE_BACKEND_K2: ANY
 // FIR_STATUS: KT-35565
 //  java.lang.AssertionError
