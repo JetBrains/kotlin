@@ -18,6 +18,29 @@ import java.util.concurrent.TimeUnit
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 
 
+internal fun transformOperationRecordsToCompileStatisticsData(
+    buildOperationRecords: Collection<BuildOperationRecord>,
+    parameters: BuildReportParameters,
+    onlyKotlinTask: Boolean,
+    buildUuid: String,
+    metricsToShow: Set<String>? = null
+) = buildOperationRecords.mapNotNull {
+    prepareData(
+        taskResult = null,
+        it.path,
+        it.startTimeMs,
+        it.totalTimeMs + it.startTimeMs,
+        parameters.projectName,
+        buildUuid,
+        parameters.label,
+        parameters.kotlinVersion,
+        it,
+        onlyKotlinTask = onlyKotlinTask,
+        parameters.additionalTags,
+        metricsToShow = metricsToShow
+    )
+}
+
 internal fun getTaskResult(event: TaskFinishEvent) = when (val result = event.result) {
     is TaskSuccessResult -> when {
         result.isFromCache -> TaskExecutionState.FROM_CACHE
@@ -43,8 +66,10 @@ internal fun prepareData(
 ): CompileStatisticsData? {
     val result = event.result
     val taskPath = event.descriptor.taskPath
-    return prepareData(getTaskResult(event), taskPath, result.startTime, result.endTime - result.startTime, projectName, uuid,
-                       label, kotlinVersion, buildOperationRecord, onlyKotlinTask, additionalTags, metricsToShow)
+    return prepareData(
+        getTaskResult(event), taskPath, result.startTime, result.endTime - result.startTime, projectName, uuid,
+        label, kotlinVersion, buildOperationRecord, onlyKotlinTask, additionalTags, metricsToShow
+    )
 }
 
 internal fun prepareData(
@@ -135,6 +160,7 @@ private fun collectBuildPerformanceMetrics(
         }
         ?: emptyMap()
 }
+
 private fun collectBuildMetrics(
     buildMetrics: BuildMetrics?,
     gradleTaskStartTime: Long? = null,

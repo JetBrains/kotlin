@@ -94,7 +94,7 @@ internal abstract class BuildFlowService : BuildService<BuildFlowService.Paramet
     }
 
     override fun close() {
-        if (parameters.fusStatisticsAvailable.get()) {
+        if (parameters.fusStatisticsAvailable.get() && GradleVersion.current().baseVersion < GradleVersion.version("8.1")) {
             recordBuildFinished(null, buildFailed)
         }
         KotlinBuildStatsService.applyIfInitialised {

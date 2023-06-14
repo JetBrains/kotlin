@@ -41,7 +41,7 @@ class FusStatisticsIT : KGPDaemonsBaseTest() {
             gradleVersion,
         ) {
             applyDokka()
-            build("compileKotlin", "dokkaHtml", "-Pkotlin.session.logger.root.path=$projectPath") {
+            build("compileKotlin", "dokkaHtml", "-Pkotlin.session.logger.root.path=$projectPath", enableGradleDebug = true) {
                 assertFileContains(
                     fusStatisticsPath,
                     "ENABLED_DOKKA",

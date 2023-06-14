@@ -12,15 +12,20 @@ import org.jetbrains.kotlin.gradle.internal.build.metrics.GradleBuildMetricsData
 import org.jetbrains.kotlin.gradle.internal.build.metrics.BuildOperationData
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.report.data.BuildExecutionData
+import org.jetbrains.kotlin.gradle.report.data.BuildOperationRecord
 import java.io.File
 import java.io.ObjectOutputStream
 import java.io.Serializable
 
 internal class MetricsWriter(
     private val outputFile: File,
-): Serializable {
-    fun process(build: BuildExecutionData, log: Logger) {
-        if (build.failureMessages.isNotEmpty()) return
+) : Serializable {
+    fun process(
+        buildOperationRecords: Collection<BuildOperationRecord>,
+        failureMessages: List<String>,
+        log: Logger
+    ) {
+        if (failureMessages.isNotEmpty()) return
 
         try {
             outputFile.parentFile?.apply { mkdirs() }
@@ -33,7 +38,7 @@ internal class MetricsWriter(
                 buildMetricsData.buildAttributeKind[attr.name] = attr.kind.name
             }
 
-            for (data in build.buildOperationRecord) {
+            for (data in buildOperationRecords) {
                 buildMetricsData.buildOperationData[data.path] =
                     BuildOperationData(
                         path = data.path,

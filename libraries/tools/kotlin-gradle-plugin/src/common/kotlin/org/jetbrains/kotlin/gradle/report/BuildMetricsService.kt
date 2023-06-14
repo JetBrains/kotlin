@@ -17,7 +17,6 @@ import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
 import org.gradle.api.tasks.Internal
 import org.gradle.tooling.events.FailureResult
-import org.gradle.tooling.events.FinishEvent
 import org.gradle.tooling.events.OperationCompletionListener
 import org.gradle.tooling.events.task.TaskExecutionResult
 import org.gradle.tooling.events.task.TaskFailureResult
@@ -28,12 +27,13 @@ import org.jetbrains.kotlin.build.report.metrics.BuildMetrics
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
 import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
 import org.jetbrains.kotlin.build.report.metrics.BuildTime
+import org.jetbrains.kotlin.build.report.statistics.BuildStartParameters
 import org.jetbrains.kotlin.build.report.statistics.HttpReportService
+import org.jetbrains.kotlin.build.report.statistics.StatTag
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.plugin.BuildEventsListenerRegistryHolder
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskExecutionResults
-import org.jetbrains.kotlin.build.report.statistics.BuildStartParameters
-import org.jetbrains.kotlin.build.report.statistics.StatTag
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.report.BuildReportsService.Companion.getStartParameters
 import org.jetbrains.kotlin.gradle.report.data.BuildOperationRecord
@@ -43,17 +43,16 @@ import org.jetbrains.kotlin.gradle.utils.isConfigurationCacheAvailable
 import org.jetbrains.kotlin.incremental.ChangedFiles
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import org.jetbrains.kotlin.statistics.metrics.NumericalMetrics
+import java.lang.management.ManagementFactory
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentLinkedQueue
-import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
-import java.lang.management.ManagementFactory
 
 internal interface UsesBuildMetricsService : Task {
     @get:Internal
     val buildMetricsService: Property<BuildMetricsService?>
 }
 
-abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters>, AutoCloseable, OperationCompletionListener {
+abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters>, AutoCloseable {
 
     //Part of BuildReportService
     interface Parameters : BuildServiceParameters {
@@ -163,15 +162,11 @@ abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters
     }
 
     override fun close() {
-        buildReportService.close(buildOperationRecords, failureMessages.toList(), parameters.toBuildReportParameters())
-    }
-
-    override fun onFinish(event: FinishEvent?) {
-        if (event is TaskFinishEvent) {
-            val buildOperation = updateBuildOperationRecord(event)
-            val buildParameters = parameters.toBuildReportParameters()
-            buildReportService.onFinish(event, buildOperation, buildParameters)
-        }
+        buildReportService.close(
+            buildOperationRecords.sortedBy { it.startTimeMs },
+            failureMessages.toList(),
+            parameters.toBuildReportParameters()
+        )
     }
 
     companion object {
@@ -236,35 +231,33 @@ abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters
             val buildScan = buildScanExtension?.let { BuildScanExtensionHolder(it) }
             val buildMetricService = buildMetricServiceProvider.get()
             val buildScanReportSettings = buildMetricService.parameters.reportingSettings.orNull?.buildScanReportSettings
-            val gradle80withBuildScanReport =
-                GradleVersion.current().baseVersion == GradleVersion.version("8.0") && buildScanReportSettings != null && buildScan != null
 
-            if (!gradle80withBuildScanReport) {
-                BuildEventsListenerRegistryHolder.getInstance(project).listenerRegistry.onTaskCompletion(buildMetricServiceProvider)
-            }
+            BuildEventsListenerRegistryHolder.getInstance(project).listenerRegistry.onTaskCompletion(
+                project.provider {
+                    OperationCompletionListener { event ->
+                        if (event is TaskFinishEvent) {
+                            val buildOperation = buildMetricService.updateBuildOperationRecord(event)
+                            val buildParameters = buildMetricService.parameters.toBuildReportParameters()
+
+                            buildMetricService.buildReportService.onFinish(event, buildOperation, buildParameters, buildScan)
+                        }
+                    }
+                }
+            )
 
             if (buildScanReportSettings != null) {
                 buildScan?.also { buildScanHolder ->
                     when {
                         GradleVersion.current().baseVersion < GradleVersion.version("8.0") -> {
                             buildScanHolder.buildScan.buildFinished {
-                                buildMetricServiceProvider.map {it.addBuildScanReport(buildScan)}.get()
+                                buildMetricServiceProvider.map { it.addBuildScanReport(buildScan) }.get()
                             }
                         }
                         GradleVersion.current().baseVersion < GradleVersion.version("8.1") -> {
-                            buildMetricService.buildReportService.initBuildScanTags(buildScan, buildMetricService.parameters.label.orNull)
-                            BuildEventsListenerRegistryHolder.getInstance(project).listenerRegistry.onTaskCompletion(project.provider {
-                                OperationCompletionListener { event ->
-                                    if (event is TaskFinishEvent) {
-                                        val buildOperation = buildMetricService.updateBuildOperationRecord(event)
-                                        val buildParameters = buildMetricService.parameters.toBuildReportParameters()
-                                        val buildReportService = buildMetricServiceProvider.map { it.buildReportService }.get()
-                                        buildReportService.addBuildScanReport(event, buildOperation, buildParameters, buildScanHolder)
-                                        buildReportService.onFinish(event, buildOperation, buildParameters)
-                                    }
-                                }
-
-                            })
+                            buildMetricService.buildReportService.buildScanReporter.initBuildScanTags(
+                                buildScan,
+                                buildMetricService.parameters.label.orNull
+                            )
                         }
                         else -> {}//do nothing, BuildScanFlowAction is used
                     }
@@ -298,10 +291,11 @@ abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters
 
     internal fun addBuildScanReport(buildScan: BuildScanExtensionHolder?) {
         if (buildScan == null) return
-        buildReportService.initBuildScanTags(buildScan, parameters.label.orNull)
-        buildReportService.addBuildScanReport(buildOperationRecords, parameters.toBuildReportParameters(), buildScan)
-        parameters.buildConfigurationTags.orNull?.forEach { buildScan.buildScan.tag(it.readableString) }
-        buildReportService.addCollectedTags(buildScan)
+        buildReportService.buildScanReporter.close(
+            buildOperationRecords,
+            parameters.toBuildReportParameters(),
+            buildScan
+        )
     }
 }
 
