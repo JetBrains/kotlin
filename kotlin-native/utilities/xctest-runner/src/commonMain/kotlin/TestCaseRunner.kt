@@ -28,14 +28,10 @@ class TestCaseRunner(
     @ObjCAction
     fun run() {
         if (ignored) {
-            // It is not possible to use XCTSkip() due to KT-43719 and not implemented exception propagation
-            //  just skip it for now as no one catches the _XCTSkipFailureException
-            //  023-01-02 20:06:56.016 xctest[76004:10364894] *** Terminating app due to uncaught exception '_XCTSkipFailureException', reason: 'Test skipped'
-
-            // TODO: Probably it's better to inherit from the proxy class with run method
-            //  that will use XCTSkip or this handler if the return value != 0
-            //  But this can affect createRunMethod as it will be virtual (need to check that)
-//            _XCTSkipHandler(testName, 0U, "Test $testName is ignored")
+            // It is not possible to use XCTSkip() due to KT-43719 and not implemented exception importing.
+            // Using `_XCTSkipHandler(...)` fails with
+            // Uncaught Kotlin exception: kotlinx.cinterop.ForeignException: _XCTSkipFailureException:: Test skipped
+            // _XCTSkipHandler(testName, 0U, "Test $testName is ignored")
             return
         }
         try {
