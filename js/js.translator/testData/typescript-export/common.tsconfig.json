@@ -2,7 +2,6 @@
   "compilerOptions": {
     "target": "es5",
     "strict": true,
-    "incremental": true,
     "newLine": "lf"
   }
 }

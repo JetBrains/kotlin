@@ -109,8 +109,10 @@ val testDataDir = project(":js:js.translator").projectDir.resolve("testData")
 val typescriptTestsDir = testDataDir.resolve("typescript-export")
 
 val installTsDependencies = task<NpmTask>("installTsDependencies") {
+    val packageLockFile = testDataDir.resolve("package-lock.json")
     inputs.file(testDataDir.resolve("package.json"))
-    outputs.file(testDataDir.resolve("package-lock.json"))
+    outputs.file(packageLockFile)
+    outputs.upToDateWhen { packageLockFile.exists() }
 
     workingDir.set(testDataDir)
     args.set(listOf("install"))
@@ -172,17 +174,26 @@ fun generateJsExportOnFileTestFor(dir: String): Task = task<Copy>("generate-js-e
 }
 
 fun generateTypeScriptTestFor(dir: String): Task = task<NpmTask>("generate-ts-for-$dir") {
-    val baseDir = fileTree(typescriptTestsDir.resolve(dir))
+    val baseDir = typescriptTestsDir.resolve(dir)
+    val mainTsFile = fileTree(baseDir).files.find { it.name.endsWith("__main.ts") } ?: return@task
+    val mainJsFile = baseDir.resolve("${mainTsFile.nameWithoutExtension}.js")
 
     workingDir.set(testDataDir)
-    inputs.files(baseDir.include("*.ts"))
-    outputs.files(baseDir.include("*.js"))
+
+    inputs.file(mainTsFile)
+    outputs.file(mainJsFile)
+    outputs.upToDateWhen { mainJsFile.exists() }
+
     args.set(listOf("run", "generateTypeScriptTests", "--", "./typescript-export/$dir/tsconfig.json"))
 }
 
 val generateTypeScriptTests by parallel(
     beforeAll = installTsDependencies,
-    tasksToRun = typescriptTestsDir.listFiles { it: File -> it.isDirectory }
+    tasksToRun = typescriptTestsDir.listFiles { it: File ->
+        it.isDirectory &&
+                !it.path.endsWith("module-systems") &&
+                !it.path.endsWith("module-systems-in-exported-file")
+    }
         .map { generateTypeScriptTestFor(it.name) }
 )
 
@@ -409,8 +420,11 @@ val prepareNpmTestData by task<Copy> {
 }
 
 val npmInstall by tasks.getting(NpmTask::class) {
+    val packageLockFile = testDataDir.resolve("package-lock.json")
+
     inputs.file(nodeDir.resolve("package.json"))
-    outputs.file(testDataDir.resolve("package-lock.json"))
+    outputs.file(packageLockFile)
+    outputs.upToDateWhen { packageLockFile.exists() }
 
     workingDir.set(nodeDir)
     dependsOn(prepareNpmTestData)
