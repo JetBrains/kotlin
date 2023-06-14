@@ -1,4 +1,4 @@
 FILE: main.kt
     public final fun main(): R|kotlin/Unit| {
-        lval b: R|B!| = Q|B|.R|/B.VALUE|
+        lval b: R|B!| = Q|B|.R|/B.VALUE*s|
     }

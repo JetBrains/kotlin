@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.extensions.generatedNestedClassifiers
 import org.jetbrains.kotlin.fir.renderer.FirClassMemberRenderer
 import org.jetbrains.kotlin.fir.renderer.FirPackageDirectiveRenderer
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
+import org.jetbrains.kotlin.fir.renderer.FirSymbolRendererWithStaticFlag
 import org.jetbrains.kotlin.fir.symbols.lazyDeclarationResolver
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
@@ -47,7 +48,8 @@ class FirDumpHandler(
             val renderer = FirRenderer(
                 builder = builderForModule,
                 packageDirectiveRenderer = FirPackageDirectiveRenderer(),
-                classMemberRenderer = FirClassMemberRendererWithGeneratedDeclarations(part.session)
+                classMemberRenderer = FirClassMemberRendererWithGeneratedDeclarations(part.session),
+                referencedSymbolRenderer = FirSymbolRendererWithStaticFlag()
             )
             allFiles.forEach {
                 renderer.renderElementAsString(it)

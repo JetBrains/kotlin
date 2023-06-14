@@ -1,5 +1,5 @@
 FILE: main.kt
     public final fun main(x: R|kotlin/collections/MutableCollection<kotlin/collections/Set<kotlin/String>>|): R|kotlin/Unit| {
-        lval y: R|ft<kotlin/collections/MutableList<kotlin/String!>, kotlin/collections/List<kotlin/String!>?>| = Q|ContainerUtil|.R|/ContainerUtil.flatten|<R|kotlin/String!|>(R|<local>/x|)
+        lval y: R|ft<kotlin/collections/MutableList<kotlin/String!>, kotlin/collections/List<kotlin/String!>?>| = Q|ContainerUtil|.R|/ContainerUtil.flatten*s|<R|kotlin/String!|>(R|<local>/x|)
         R|<local>/y|.R|SubstitutionOverride<kotlin/collections/MutableList.get: R|kotlin/String!|>|(Int(0)).R|kotlin/String.length|
     }

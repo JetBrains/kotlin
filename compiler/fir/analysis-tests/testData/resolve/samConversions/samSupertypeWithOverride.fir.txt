@@ -2,11 +2,11 @@ FILE: main.kt
     public final fun foo(m: R|MyRunnable|): R|kotlin/Unit| {
     }
     public final fun main(): R|kotlin/Unit| {
-        Q|JavaUsage|.R|/JavaUsage.foo|(<L> = foo@fun <anonymous>(x: R|kotlin/Int|): R|kotlin/Boolean!| <inline=NoInline>  {
+        Q|JavaUsage|.R|/JavaUsage.foo*s|(<L> = foo@fun <anonymous>(x: R|kotlin/Int|): R|kotlin/Boolean!| <inline=NoInline>  {
             ^ CMP(>, R|<local>/x|.R|kotlin/Int.compareTo|(Int(1)))
         }
         )
-        Q|JavaUsage|.R|/JavaUsage.foo|(foo@fun <anonymous>(it: R|kotlin/Int|): R|kotlin/Boolean!| <inline=NoInline>  {
+        Q|JavaUsage|.R|/JavaUsage.foo*s|(foo@fun <anonymous>(it: R|kotlin/Int|): R|kotlin/Boolean!| <inline=NoInline>  {
             ^ CMP(>, R|<local>/it|.R|kotlin/Int.compareTo|(Int(1)))
         }
         )
@@ -14,5 +14,5 @@ FILE: main.kt
             ^ CMP(>, R|<local>/x|.R|kotlin/Int.compareTo|(Int(1)))
         }
 
-        Q|JavaUsage|.R|/JavaUsage.foo|(R|<local>/x|)
+        Q|JavaUsage|.R|/JavaUsage.foo*s|(R|<local>/x|)
     }

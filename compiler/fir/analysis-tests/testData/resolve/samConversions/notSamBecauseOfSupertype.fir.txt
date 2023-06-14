@@ -2,11 +2,11 @@ FILE: main.kt
     public final fun foo(m: R|MyRunnable|): R|kotlin/Unit| {
     }
     public final fun main(): R|kotlin/Unit| {
-        Q|JavaUsage|.R|/JavaUsage.foo<Inapplicable(INAPPLICABLE): /JavaUsage.foo>#|(<L> = foo@fun <anonymous>(x: R|kotlin/Nothing|): R|kotlin/Boolean| <inline=Unknown>  {
+        Q|JavaUsage|.R|/JavaUsage.foo*s<Inapplicable(INAPPLICABLE): /JavaUsage.foo>#|(<L> = foo@fun <anonymous>(x: R|kotlin/Nothing|): R|kotlin/Boolean| <inline=Unknown>  {
             ^ CMP(>, R|<local>/x|.<Unresolved name: compareTo>#(Int(1)))
         }
         )
-        Q|JavaUsage|.R|/JavaUsage.foo<Inapplicable(INAPPLICABLE): /JavaUsage.foo>#|(foo@fun <anonymous>(): R|kotlin/Boolean| <inline=Unknown>  {
+        Q|JavaUsage|.R|/JavaUsage.foo*s<Inapplicable(INAPPLICABLE): /JavaUsage.foo>#|(foo@fun <anonymous>(): R|kotlin/Boolean| <inline=Unknown>  {
             ^ CMP(>, <Unresolved name: it>#.<Unresolved name: compareTo>#(Int(1)))
         }
         )
@@ -14,5 +14,5 @@ FILE: main.kt
             ^ CMP(>, R|<local>/x|.R|kotlin/Int.compareTo|(Int(1)))
         }
 
-        Q|JavaUsage|.R|/JavaUsage.foo<Inapplicable(INAPPLICABLE): /JavaUsage.foo>#|(R|<local>/x|)
+        Q|JavaUsage|.R|/JavaUsage.foo*s<Inapplicable(INAPPLICABLE): /JavaUsage.foo>#|(R|<local>/x|)
     }

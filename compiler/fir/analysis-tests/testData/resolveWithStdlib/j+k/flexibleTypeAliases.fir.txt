@@ -4,5 +4,5 @@ FILE: main.kt
     public final typealias ImmutableLinkedHashSet<E> = R|imm/LinkedHashSet<E>|
     private final typealias ImmutableMultimap<K, V> = R|ImmutableMap<K, ImmutableSet<V>>|
     private final fun <K, V> R|ImmutableMultimap<K, V>|.put(key: R|K|, value: R|V|): R|kotlin/Unit| {
-        this@R|/put|.R|SubstitutionOverride<imm/Map.get: R|ft<imm/Option<ft<ImmutableSet<V>, ImmutableSet<V>?>>, imm/Option<ft<ImmutableSet<V>, ImmutableSet<V>?>>?>|>|(R|<local>/key|).R|SubstitutionOverride<imm/Option.getOrElse: R|ft<ImmutableSet<V>, ImmutableSet<V>?>|>|(Q|ImmutableLinkedHashSet|.R|imm/LinkedHashSet.empty|<R|V|>())
+        this@R|/put|.R|SubstitutionOverride<imm/Map.get: R|ft<imm/Option<ft<ImmutableSet<V>, ImmutableSet<V>?>>, imm/Option<ft<ImmutableSet<V>, ImmutableSet<V>?>>?>|>|(R|<local>/key|).R|SubstitutionOverride<imm/Option.getOrElse: R|ft<ImmutableSet<V>, ImmutableSet<V>?>|>|(Q|ImmutableLinkedHashSet|.R|imm/LinkedHashSet.empty*s|<R|V|>())
     }

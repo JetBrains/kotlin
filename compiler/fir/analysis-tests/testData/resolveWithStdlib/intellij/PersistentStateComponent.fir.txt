@@ -7,7 +7,7 @@ FILE: use.kt
     }
     public abstract interface PersistentStateComponent<T> : R|kotlin/Any| {
     }
-    public final fun <T> deserializeAndLoadState(component: R|PersistentStateComponent<T>|, clazz: R|java/lang/Class<T>| = Q|ComponentSerializationUtil|.R|/ComponentSerializationUtil.getStateClass|<R|ft<T & Any, T?>|>(<getClass>(R|<local>/component|).R|kotlin/jvm/java|<R|CapturedType(out PersistentStateComponent<T>)|>)): R|kotlin/Unit| {
+    public final fun <T> deserializeAndLoadState(component: R|PersistentStateComponent<T>|, clazz: R|java/lang/Class<T>| = Q|ComponentSerializationUtil|.R|/ComponentSerializationUtil.getStateClass*s|<R|ft<T & Any, T?>|>(<getClass>(R|<local>/component|).R|kotlin/jvm/java|<R|CapturedType(out PersistentStateComponent<T>)|>)): R|kotlin/Unit| {
     }
     public final fun use(beforeRunTask: R|BeforeRunTask<*>|): R|kotlin/Unit| {
         when () {

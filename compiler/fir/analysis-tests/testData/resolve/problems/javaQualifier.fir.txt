@@ -1,6 +1,6 @@
 FILE: main.kt
     public final fun main(): R|kotlin/Unit| {
-        Q|W|.R|/W.E|().R|kotlin/String.length|
+        Q|W|.R|/W.E*s|().R|kotlin/String.length|
         Q|W.E|.<Unresolved name: length>#
-        Q|W.E|.R|/W.E.w|
+        Q|W.E|.R|/W.E.w*s|
     }

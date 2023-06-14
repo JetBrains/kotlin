@@ -1,14 +1,14 @@
 FILE: main.kt
     public final fun main(): R|kotlin/Unit| {
-        Q|JavaClass|.R|/JavaClass.foo1|(<L> = foo1@fun <anonymous>(): R|kotlin/Int!| <inline=NoInline>  {
+        Q|JavaClass|.R|/JavaClass.foo1*s|(<L> = foo1@fun <anonymous>(): R|kotlin/Int!| <inline=NoInline>  {
             ^ Int(123)
         }
         )
-        Q|JavaClass|.R|/JavaClass.foo2|(<L> = foo2@fun <anonymous>(it: R|kotlin/Int!|): R|kotlin/String!| <inline=NoInline>  {
+        Q|JavaClass|.R|/JavaClass.foo2*s|(<L> = foo2@fun <anonymous>(it: R|kotlin/Int!|): R|kotlin/String!| <inline=NoInline>  {
             ^ R|<local>/it|.R|kotlin/Int.plus|(Int(2)).R|kotlin/Int.toString|()
         }
         )
-        Q|JavaClass|.R|/JavaClass.foo2|(foo2@fun <anonymous>(it: R|kotlin/Int!|): R|kotlin/String!| <inline=NoInline>  {
+        Q|JavaClass|.R|/JavaClass.foo2*s|(foo2@fun <anonymous>(it: R|kotlin/Int!|): R|kotlin/String!| <inline=NoInline>  {
             ^ R|<local>/it|.R|kotlin/Int.plus|(Int(3)).R|kotlin/Int.toString|()
         }
         )
@@ -16,8 +16,8 @@ FILE: main.kt
             ^ R|<local>/x|.R|kotlin/Int.toString|()
         }
 
-        Q|JavaClass|.R|/JavaClass.foo2|(R|<local>/y|)
-        Q|JavaClass|.R|/JavaClass.foo3|<R|kotlin/Int!|>(foo3@fun <anonymous>(it: R|kotlin/Int!|): R|kotlin/String!| <inline=NoInline>  {
+        Q|JavaClass|.R|/JavaClass.foo2*s|(R|<local>/y|)
+        Q|JavaClass|.R|/JavaClass.foo3*s|<R|kotlin/Int!|>(foo3@fun <anonymous>(it: R|kotlin/Int!|): R|kotlin/String!| <inline=NoInline>  {
             ^ R|<local>/it|.R|kotlin/Int.plus|(Int(4)).R|kotlin/Int.toString|()
         }
         , Int(5))

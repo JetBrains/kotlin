@@ -22,7 +22,7 @@ FILE: enumValues.kt
 
     }
     public final fun foo(): R|kotlin/Unit| {
-        lval values: R|kotlin/Array<MyEnum>| = Q|MyEnum|.R|/MyEnum.values|()
+        lval values: R|kotlin/Array<MyEnum>| = Q|MyEnum|.R|/MyEnum.values*s|()
          {
             lval <iterator>: R|kotlin/collections/Iterator<MyEnum>| = R|<local>/values|.R|SubstitutionOverride<kotlin/Array.iterator: R|kotlin/collections/Iterator<MyEnum>|>|()
             while(R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.hasNext: R|kotlin/Boolean|>|()) {
@@ -35,6 +35,6 @@ FILE: enumValues.kt
 
         }
 
-        lval first: R|MyEnum| = Q|MyEnum|.R|/MyEnum.valueOf|(String(FIRST))
-        lval last: R|MyEnum| = Q|MyEnum|.R|/MyEnum.valueOf|(String(LAST))
+        lval first: R|MyEnum| = Q|MyEnum|.R|/MyEnum.valueOf*s|(String(FIRST))
+        lval last: R|MyEnum| = Q|MyEnum|.R|/MyEnum.valueOf*s|(String(LAST))
     }

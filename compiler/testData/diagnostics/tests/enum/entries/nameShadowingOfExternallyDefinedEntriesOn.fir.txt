@@ -9,7 +9,7 @@ FILE: nameShadowingOfExternallyDefinedEntriesOn.fir.kt
         }
 
         public final fun foo(): R|kotlin/Unit| {
-            R|pckg/E.entries|.<Unresolved name: length>#
+            R|pckg/E.entries*s|.<Unresolved name: length>#
             Q|pckg|.R|pckg/entries|.R|kotlin/String.length|
         }
 
@@ -39,7 +39,7 @@ FILE: nameShadowingOfExternallyDefinedEntriesOn.fir.kt
                 }
 
                 public final fun foo(): R|kotlin/Unit| {
-                    R|pckg/A.E.entries|.<Unresolved name: length>#
+                    R|pckg/A.E.entries*s|.<Unresolved name: length>#
                     Q|pckg|.R|pckg/entries|.R|kotlin/String.length|
                 }
 

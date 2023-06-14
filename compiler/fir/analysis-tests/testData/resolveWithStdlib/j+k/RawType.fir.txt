@@ -6,5 +6,5 @@ FILE: test.kt
 
     }
     public final fun test(list: R|kotlin/collections/ArrayList<Some>|): R|kotlin/Unit| {
-        Q|JavaClass|.R|/JavaClass.foo|(R|<local>/list|)
+        Q|JavaClass|.R|/JavaClass.foo*s|(R|<local>/list|)
     }

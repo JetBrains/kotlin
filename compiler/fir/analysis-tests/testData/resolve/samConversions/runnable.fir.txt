@@ -1,6 +1,6 @@
 FILE: main.kt
     public final fun main(): R|kotlin/Unit| {
-        Q|JavaClass|.R|/JavaClass.foo|(<L> = foo@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+        Q|JavaClass|.R|/JavaClass.foo*s|(<L> = foo@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             String()
         }
         )

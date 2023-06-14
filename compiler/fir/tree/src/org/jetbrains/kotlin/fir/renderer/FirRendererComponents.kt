@@ -22,6 +22,7 @@ internal interface FirRendererComponents {
     val propertyAccessorRenderer: FirPropertyAccessorRenderer?
     val resolvePhaseRenderer: FirResolvePhaseRenderer?
     val typeRenderer: ConeTypeRenderer
+    val referencedSymbolRenderer: FirSymbolRenderer
     val valueParameterRenderer: FirValueParameterRenderer?
     val errorExpressionRenderer: FirErrorExpressionRenderer?
     val fileAnnotationsContainerRenderer: FirFileAnnotationsContainerRenderer?

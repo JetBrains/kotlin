@@ -1,4 +1,4 @@
 FILE: FlexiblePrimitiveOverloading.kt
     public final fun foo(): R|kotlin/Unit| {
-        Q|java/lang/Integer|.R|java/lang/Integer.getInteger|(String(text), Int(239))
+        Q|java/lang/Integer|.R|java/lang/Integer.getInteger*s|(String(text), Int(239))
     }

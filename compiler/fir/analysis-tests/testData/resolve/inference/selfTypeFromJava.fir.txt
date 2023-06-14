@@ -1,6 +1,6 @@
 FILE: main.kt
     public final fun main(): R|kotlin/Unit| {
-        lval a: R|ft<Java<*, kotlin/String!>, Java<*, kotlin/String!>?>| = Q|Java|.R|/Java.factory|<R|kotlin/String!|>(String())
+        lval a: R|ft<Java<*, kotlin/String!>, Java<*, kotlin/String!>?>| = Q|Java|.R|/Java.factory*s|<R|kotlin/String!|>(String())
         lval b: R|ft<Java<*, kotlin/String!>, Java<*, kotlin/String!>?>| = R|<local>/a|.R|SubstitutionOverride</Java.produceSelf: R|ft<CapturedType(*) & Any, CapturedType(*)?>|>|()
         R|<local>/b|.R|SubstitutionOverride</Java.consumeElement: R|kotlin/Unit|>|(String(testing))
     }

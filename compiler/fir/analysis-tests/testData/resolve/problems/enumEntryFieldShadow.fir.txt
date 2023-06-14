@@ -8,7 +8,7 @@ FILE: DerivedEnum.kt
         public final fun foo(): R|kotlin/Unit| {
             R|/bar|(R|/DerivedEnum.x|)
             R|/baz|(<Unresolved name: y>#)
-            R|/baz|(Q|BaseJava|.R|/BaseJava.y|)
+            R|/baz|(Q|BaseJava|.R|/BaseJava.y*s|)
         }
 
         public final static fun values(): R|kotlin/Array<DerivedEnum>| {

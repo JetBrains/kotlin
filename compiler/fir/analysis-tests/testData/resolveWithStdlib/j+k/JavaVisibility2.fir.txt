@@ -6,18 +6,18 @@ FILE: k.kt
             super<R|kotlin/Any|>()
         }
 
-        public final val p1: R|kotlin/Int| = Q|j/JavaPackageLocal|.R|j/JavaPackageLocal.javaPPackage<HIDDEN: j/JavaPackageLocal.javaPPackage is invisible>#|
+        public final val p1: R|kotlin/Int| = Q|j/JavaPackageLocal|.R|j/JavaPackageLocal.javaPPackage*s<HIDDEN: j/JavaPackageLocal.javaPPackage is invisible>#|
             public get(): R|kotlin/Int|
 
-        public final val p2: R|kotlin/Int| = Q|j/JavaProtected|.R|j/JavaProtected.javaPProtectedStatic<HIDDEN: j/JavaProtected.javaPProtectedStatic is invisible>#|
+        public final val p2: R|kotlin/Int| = Q|j/JavaProtected|.R|j/JavaProtected.javaPProtectedStatic*s<HIDDEN: j/JavaProtected.javaPProtectedStatic is invisible>#|
             public get(): R|kotlin/Int|
 
         public final val p3: R|kotlin/Int| = R|j/JavaProtected.JavaProtected|().R|j/JavaProtected.javaPProtectedPackage<HIDDEN: j/JavaProtected.javaPProtectedPackage is invisible>#|
             public get(): R|kotlin/Int|
 
         public final fun test(): R|kotlin/Unit| {
-            Q|j/JavaProtected|.R|j/JavaProtected.javaMProtectedStatic<HIDDEN: j/JavaProtected.javaMProtectedStatic is invisible>#|()
-            Q|j/JavaPackageLocal|.R|j/JavaPackageLocal.javaMPackage<HIDDEN: j/JavaPackageLocal.javaMPackage is invisible>#|()
+            Q|j/JavaProtected|.R|j/JavaProtected.javaMProtectedStatic*s<HIDDEN: j/JavaProtected.javaMProtectedStatic is invisible>#|()
+            Q|j/JavaPackageLocal|.R|j/JavaPackageLocal.javaMPackage*s<HIDDEN: j/JavaPackageLocal.javaMPackage is invisible>#|()
         }
 
     }
@@ -26,18 +26,18 @@ FILE: k.kt
             super<R|j/JavaProtected|>()
         }
 
-        public final val p1: R|kotlin/Int| = Q|j/JavaPackageLocal|.R|j/JavaPackageLocal.javaPPackage<HIDDEN: j/JavaPackageLocal.javaPPackage is invisible>#|
+        public final val p1: R|kotlin/Int| = Q|j/JavaPackageLocal|.R|j/JavaPackageLocal.javaPPackage*s<HIDDEN: j/JavaPackageLocal.javaPPackage is invisible>#|
             public get(): R|kotlin/Int|
 
-        public final val p2: R|kotlin/Int| = Q|j/JavaProtected|.R|j/JavaProtected.javaPProtectedStatic|
+        public final val p2: R|kotlin/Int| = Q|j/JavaProtected|.R|j/JavaProtected.javaPProtectedStatic*s|
             public get(): R|kotlin/Int|
 
         public final val p3: R|kotlin/Int| = this@R|k/B|.R|j/JavaProtected.javaPProtectedPackage|
             public get(): R|kotlin/Int|
 
         public final fun test(): R|kotlin/Unit| {
-            Q|j/JavaProtected|.R|j/JavaProtected.javaMProtectedStatic|()
-            Q|j/JavaPackageLocal|.R|j/JavaPackageLocal.javaMPackage<HIDDEN: j/JavaPackageLocal.javaMPackage is invisible>#|()
+            Q|j/JavaProtected|.R|j/JavaProtected.javaMProtectedStatic*s|()
+            Q|j/JavaPackageLocal|.R|j/JavaPackageLocal.javaMPackage*s<HIDDEN: j/JavaPackageLocal.javaMPackage is invisible>#|()
         }
 
     }
@@ -49,19 +49,19 @@ FILE: j.kt
             super<R|kotlin/Any|>()
         }
 
-        public final val p1: R|kotlin/Int| = Q|j/JavaPackageLocal|.R|j/JavaPackageLocal.javaPPackage|
+        public final val p1: R|kotlin/Int| = Q|j/JavaPackageLocal|.R|j/JavaPackageLocal.javaPPackage*s|
             public get(): R|kotlin/Int|
 
-        public final val p2: R|kotlin/Int| = Q|j/JavaProtected|.R|j/JavaProtected.javaPProtectedStatic|
+        public final val p2: R|kotlin/Int| = Q|j/JavaProtected|.R|j/JavaProtected.javaPProtectedStatic*s|
             public get(): R|kotlin/Int|
 
         public final val p3: R|kotlin/Int| = R|j/JavaProtected.JavaProtected|().R|j/JavaProtected.javaPProtectedPackage|
             public get(): R|kotlin/Int|
 
         public final fun test(): R|kotlin/Unit| {
-            Q|j/JavaProtected|.R|j/JavaProtected.javaMProtectedStatic|()
-            Q|j/JavaProtected|.R|j/JavaProtected.javaMProtectedStatic|()
-            Q|j/JavaPackageLocal|.R|j/JavaPackageLocal.javaMPackage|()
+            Q|j/JavaProtected|.R|j/JavaProtected.javaMProtectedStatic*s|()
+            Q|j/JavaProtected|.R|j/JavaProtected.javaMProtectedStatic*s|()
+            Q|j/JavaPackageLocal|.R|j/JavaPackageLocal.javaMPackage*s|()
         }
 
     }

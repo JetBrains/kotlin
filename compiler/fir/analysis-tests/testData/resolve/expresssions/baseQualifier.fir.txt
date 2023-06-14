@@ -28,7 +28,7 @@ FILE: Test.kt
     public final fun test(): R|kotlin/Unit| {
         lval bbd: R|BB.D| = Q|BB.D|
         lval aac: R|AA.C| = Q|AA.C|
-        Q|JavaClass|.R|/JavaClass.bar|()
+        Q|JavaClass|.R|/JavaClass.bar*s|()
         lval errC: <ERROR TYPE REF: Unresolved name: C> = Q|BB|.<Unresolved name: C>#
         lval errBarViaBB: <ERROR TYPE REF: Unresolved name: bar> = Q|BB|.<Unresolved name: bar>#()
         lval errBarViaAA: <ERROR TYPE REF: Unresolved name: bar> = Q|AA|.<Unresolved name: bar>#()

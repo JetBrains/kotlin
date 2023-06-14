@@ -19,10 +19,7 @@ import org.jetbrains.kotlin.fir.expressions.impl.*
 import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -45,6 +42,7 @@ class FirRenderer(
     override val propertyAccessorRenderer: FirPropertyAccessorRenderer? = FirPropertyAccessorRenderer(),
     override val resolvePhaseRenderer: FirResolvePhaseRenderer? = null,
     override val typeRenderer: ConeTypeRenderer = ConeTypeRendererForDebugging(),
+    override val referencedSymbolRenderer: FirSymbolRenderer = FirSymbolRenderer(),
     override val valueParameterRenderer: FirValueParameterRenderer? = FirValueParameterRenderer(),
     override val errorExpressionRenderer: FirErrorExpressionRenderer? = FirErrorExpressionOnlyErrorRenderer(),
     override val fileAnnotationsContainerRenderer: FirFileAnnotationsContainerRenderer? = null,
@@ -84,6 +82,7 @@ class FirRenderer(
         resolvePhaseRenderer?.components = this
         typeRenderer.builder = builder
         typeRenderer.idRenderer = idRenderer
+        referencedSymbolRenderer.components = this
         valueParameterRenderer?.components = this
         errorExpressionRenderer?.components = this
         fileAnnotationsContainerRenderer?.components = this
@@ -842,20 +841,14 @@ class FirRenderer(
             print("*")
         }
 
-        private fun FirBasedSymbol<*>.render(): String {
-            return when (this) {
-                is FirCallableSymbol<*> -> callableId.toString()
-                is FirClassLikeSymbol<*> -> classId.toString()
-                else -> "?"
-            }
-        }
-
         override fun visitNamedReference(namedReference: FirNamedReference) {
             print("${namedReference.name}#")
         }
 
         override fun visitNamedReferenceWithCandidateBase(namedReferenceWithCandidateBase: FirNamedReferenceWithCandidateBase) {
-            print("R?C|${namedReferenceWithCandidateBase.candidateSymbol.render()}|")
+            print("R?C|")
+            referencedSymbolRenderer.printReference(namedReferenceWithCandidateBase.candidateSymbol)
+            print("|")
         }
 
         override fun visitErrorNamedReference(errorNamedReference: FirErrorNamedReference) {
@@ -883,7 +876,7 @@ class FirRenderer(
                 print("SubstitutionOverride<")
             }
 
-            print(symbol.unwrapIntersectionOverrides().render())
+            referencedSymbolRenderer.printReference(symbol.unwrapIntersectionOverrides())
 
             if (resolvedNamedReference is FirResolvedCallableReference) {
                 if (resolvedNamedReference.inferredTypeArguments.isNotEmpty()) {
@@ -935,7 +928,11 @@ class FirRenderer(
             val labelName = thisReference.labelName
             val symbol = thisReference.boundSymbol
             when {
-                symbol != null -> print("@R|${symbol.render()}|")
+                symbol != null -> {
+                    print("@R|")
+                    referencedSymbolRenderer.printReference(symbol)
+                    print("|")
+                }
                 labelName != null -> print("@$labelName#")
                 else -> print("#")
             }

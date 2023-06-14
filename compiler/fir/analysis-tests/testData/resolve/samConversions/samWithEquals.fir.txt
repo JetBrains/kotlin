@@ -5,7 +5,7 @@ FILE: main.kt
 
     }
     public final fun main(): R|kotlin/Unit| {
-        Q|OverridingUtil|.R|/OverridingUtil.createWithEqualityAxioms|(<L> = l1@fun <anonymous>(c1: R|TypeConstructor!|, c2: R|TypeConstructor!|): R|kotlin/Boolean| <inline=NoInline>  {
+        Q|OverridingUtil|.R|/OverridingUtil.createWithEqualityAxioms*s|(<L> = l1@fun <anonymous>(c1: R|TypeConstructor!|, c2: R|TypeConstructor!|): R|kotlin/Boolean| <inline=NoInline>  {
             when () {
                 ==(R|<local>/c1|.R|/TypeConstructor.x|, R|<local>/c2|.R|/TypeConstructor.x|) ->  {
                     ^@l1 Boolean(true)

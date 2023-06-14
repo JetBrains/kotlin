@@ -1,5 +1,5 @@
 FILE: main.kt
     public final fun test(): R|kotlin/Unit| {
-        lval project: R|kotlin/String| = Q|PlatformDataKeys|.R|/CommonDataKeys.PROJECT|
+        lval project: R|kotlin/String| = Q|PlatformDataKeys|.R|/CommonDataKeys.PROJECT*s|
         lval member: R|kotlin/String!| = R|/PlatformDataKeys.PlatformDataKeys|().R|/CommonDataKeys.MEMBER|
     }

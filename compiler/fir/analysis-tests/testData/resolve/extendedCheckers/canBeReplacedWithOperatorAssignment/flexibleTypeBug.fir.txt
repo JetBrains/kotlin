@@ -1,6 +1,6 @@
 FILE: flexibleTypeBug.kt
     public final fun foo(): R|kotlin/Unit| {
-        lvar list1: R|ft<kotlin/collections/MutableList<kotlin/String!>, kotlin/collections/List<kotlin/String!>?>| = Q|java/util/Collections|.R|java/util/Collections.emptyList|<R|kotlin/String|>()
+        lvar list1: R|ft<kotlin/collections/MutableList<kotlin/String!>, kotlin/collections/List<kotlin/String!>?>| = Q|java/util/Collections|.R|java/util/Collections.emptyList*s|<R|kotlin/String|>()
         lval list2: R|kotlin/collections/List<kotlin/String>| = R|kotlin/collections/listOf|<R|kotlin/String|>(String(b))
         R|<local>/list1| = R|<local>/list1|.R|kotlin/collections/plus|<R|kotlin/String!|>(R|<local>/list2|)
     }

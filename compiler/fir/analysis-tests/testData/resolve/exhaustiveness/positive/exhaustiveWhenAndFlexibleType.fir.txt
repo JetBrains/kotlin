@@ -18,7 +18,7 @@ FILE: main.kt
 
     }
     public final fun test_1(): R|kotlin/Unit| {
-        lval e: R|E!| = Q|Utils|.R|/Utils.getEnum|()
+        lval e: R|E!| = Q|Utils|.R|/Utils.getEnum*s|()
         lval s: R|kotlin/String| = when (R|<local>/e|) {
             ==($subj$, Null(null)) ->  {
                 ^test_1 Unit
@@ -37,7 +37,7 @@ FILE: main.kt
         R|<local>/s|.R|kotlin/String.length|
     }
     public final fun test_2(): R|kotlin/Unit| {
-        lval e: R|E!| = Q|Utils|.R|/Utils.getEnum|()
+        lval e: R|E!| = Q|Utils|.R|/Utils.getEnum*s|()
         lval s: R|kotlin/String| = when (R|<local>/e|) {
             ==($subj$, Q|E|.R|/E.A|) ->  {
                 String()
