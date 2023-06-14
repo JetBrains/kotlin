@@ -31,8 +31,9 @@ void gc::mark::MarkPacer::begin(gc::mark::MarkPacer::Phase phase) {
         std::unique_lock lock(mutex_);
         GCLogDebug(epoch_.load(), "Phase #%d begins", phase); // FIXME
         phase_.store(phase, std::memory_order_release);
+        // FIXME move out?
+        cond_.notify_all();
     }
-    cond_.notify_all();
 }
 
 void gc::mark::MarkPacer::wait(gc::mark::MarkPacer::Phase phase) {
