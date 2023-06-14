@@ -65,6 +65,12 @@ public class Fe10IdeNormalAnalysisSourceModuleAnalysisApiPsiTypeProviderTestGene
     }
 
     @Test
+    @TestMetadata("duplicatedClass_functionParameter.kt")
+    public void testDuplicatedClass_functionParameter() throws Exception {
+        runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration/duplicatedClass_functionParameter.kt");
+    }
+
+    @Test
     @TestMetadata("errorTypeInNestedTypeArgument.kt")
     public void testErrorTypeInNestedTypeArgument() throws Exception {
         runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration/errorTypeInNestedTypeArgument.kt");
