@@ -5,8 +5,22 @@
 
 package org.jetbrains.kotlin.ir.declarations
 
+import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 
 fun IrFactory.createExpressionBody(expression: IrExpression): IrExpressionBody =
     createExpressionBody(expression.startOffset, expression.endOffset, expression)
+
+fun IrFactory.createBlockBody(
+    startOffset: Int,
+    endOffset: Int,
+    initializer: IrBlockBody.() -> Unit,
+): IrBlockBody = createBlockBody(startOffset, endOffset).apply(initializer)
+
+fun IrFactory.createBlockBody(
+    startOffset: Int,
+    endOffset: Int,
+    statements: List<IrStatement>,
+): IrBlockBody = createBlockBody(startOffset, endOffset) { this.statements.addAll(statements) }

@@ -217,16 +217,4 @@ interface IrFactory {
         startOffset: Int,
         endOffset: Int,
     ): IrBlockBody
-
-    fun createBlockBody(
-        startOffset: Int,
-        endOffset: Int,
-        statements: List<IrStatement>,
-    ): IrBlockBody
-
-    fun createBlockBody(
-        startOffset: Int,
-        endOffset: Int,
-        initializer: IrBlockBody.() -> Unit,
-    ): IrBlockBody
 }

@@ -263,18 +263,4 @@ abstract class AbstractIrFactoryImpl : IrFactory {
         endOffset: Int,
     ): IrBlockBody =
         IrBlockBodyImpl(startOffset, endOffset)
-
-    override fun createBlockBody(
-        startOffset: Int,
-        endOffset: Int,
-        statements: List<IrStatement>,
-    ): IrBlockBody =
-        IrBlockBodyImpl(startOffset, endOffset, statements)
-
-    override fun createBlockBody(
-        startOffset: Int,
-        endOffset: Int,
-        initializer: IrBlockBody.() -> Unit,
-    ): IrBlockBody =
-        IrBlockBodyImpl(startOffset, endOffset, initializer)
 }
