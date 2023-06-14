@@ -47,6 +47,12 @@ public class FirStandaloneNormalAnalysisSourceModuleReferenceShortenerForWholeFi
     }
 
     @Test
+    @TestMetadata("fileWithKDoc.kt")
+    public void testFileWithKDoc() throws Exception {
+        runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortenerWholeFile/fileWithKDoc.kt");
+    }
+
+    @Test
     @TestMetadata("fileWithMultipleDeclarations.kt")
     public void testFileWithMultipleDeclarations() throws Exception {
         runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortenerWholeFile/fileWithMultipleDeclarations.kt");

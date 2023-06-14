@@ -114,17 +114,23 @@ internal class KtFirReferenceShortener(
         )
         firDeclaration.accept(collector)
 
+        val additionalImports = AdditionalImports(
+            collector.getNamesToImport(starImport = false).toSet(),
+            collector.getNamesToImport(starImport = true).toSet(),
+        )
+
         val kDocQualifiersToShorten = collectKDocQualifiersToShorten(
             file,
             selection,
+            additionalImports,
             classShortenOption = { minOf(classShortenOption(it), ShortenOption.SHORTEN_IF_ALREADY_IMPORTED) },
             callableShortenOption = { minOf(callableShortenOption(it), ShortenOption.SHORTEN_IF_ALREADY_IMPORTED) },
         )
 
         return ShortenCommandImpl(
             file.createSmartPointer(),
-            collector.getNamesToImport(starImport = false).toList(),
-            collector.getNamesToImport(starImport = true).toList(),
+            additionalImports.simpleImports,
+            additionalImports.starImports,
             collector.typesToShorten.map { it.element }.distinct().map { it.createSmartPointer() },
             collector.qualifiersToShorten.map { it.element }.distinct().map { it.createSmartPointer() },
             kDocQualifiersToShorten.map { it.element }.distinct().map { it.createSmartPointer() },
@@ -134,6 +140,7 @@ internal class KtFirReferenceShortener(
     private fun collectKDocQualifiersToShorten(
         file: KtFile,
         selection: TextRange,
+        additionalImports: AdditionalImports,
         classShortenOption: (KtClassLikeSymbol) -> ShortenOption,
         callableShortenOption: (KtCallableSymbol) -> ShortenOption,
     ): List<ShortenKDocQualifier> {
@@ -157,6 +164,7 @@ internal class KtFirReferenceShortener(
 
                 val shouldShortenKDocQualifier = shouldShortenKDocQualifier(
                     element,
+                    additionalImports,
                     classShortenOption = { classShortenOption(buildSymbol(it) as KtClassLikeSymbol) },
                     callableShortenOption = { callableShortenOption(buildSymbol(it) as KtCallableSymbol) },
                 )
@@ -177,10 +185,14 @@ internal class KtFirReferenceShortener(
 
     private fun shouldShortenKDocQualifier(
         kDocName: KDocName,
+        additionalImports: AdditionalImports,
         classShortenOption: (FirClassLikeSymbol<*>) -> ShortenOption,
         callableShortenOption: (FirCallableSymbol<*>) -> ShortenOption,
     ): Boolean {
         val fqName = kDocName.getQualifiedNameAsFqName().dropFakeRootPrefixIfPresent()
+
+        // KDocs are only shortened if they are available without imports, so `additionalImports` contain all the imports to add
+        if (fqName.isInNewImports(additionalImports)) return true
 
         val resolvedSymbols = with(analysisSession) {
             val shortFqName = FqName.topLevel(fqName.shortName())
@@ -200,6 +212,9 @@ internal class KtFirReferenceShortener(
         return false
     }
 
+    private fun FqName.isInNewImports(additionalImports: AdditionalImports): Boolean =
+        this in additionalImports.simpleImports || this.parent() in additionalImports.starImports
+
     private fun canShorten(fqNameToShorten: FqName, fqNameOfAvailableSymbol: FqName, getShortenOption: () -> ShortenOption): Boolean =
         fqNameToShorten == fqNameOfAvailableSymbol && getShortenOption() != ShortenOption.DO_NOT_SHORTEN
 
@@ -212,6 +227,8 @@ private fun FqName.dropFakeRootPrefixIfPresent(): FqName {
         FqName.fromSegments(pathSegments.drop(1).map { it.asString() })
     } else this
 }
+
+private data class AdditionalImports(val simpleImports: Set<FqName>, val starImports: Set<FqName>)
 
 private inline fun <reified T : KtElement> KtFile.findSmallestElementOfTypeContainingSelection(selection: TextRange): T? =
     findElementAt(selection.startOffset)

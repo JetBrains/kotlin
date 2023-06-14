@@ -1,0 +1,10 @@
+with DO_NOT_SHORTEN:
+with SHORTEN_IF_ALREADY_IMPORTED:
+with SHORTEN_AND_IMPORT:
+[type] a.b.c.dependency.Foo
+[kdoc] a.b.c.dependency.Foo
+[kdoc] a.b.c.dependency.Foo
+with SHORTEN_AND_STAR_IMPORT:
+[type] a.b.c.dependency.Foo
+[kdoc] a.b.c.dependency.Foo
+[kdoc] a.b.c.dependency.Foo
