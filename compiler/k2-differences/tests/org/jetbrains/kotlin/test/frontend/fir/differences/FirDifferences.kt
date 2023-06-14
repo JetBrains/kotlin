@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.test.frontend.fir.differences
 
 import org.jetbrains.kotlin.codeMetaInfo.CodeMetaInfoParser
+import org.jetbrains.kotlin.codeMetaInfo.clearTextFromDiagnosticMarkup
 import org.jetbrains.kotlin.codeMetaInfo.model.ParsedCodeMetaInfo
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersion
@@ -22,21 +23,58 @@ val equivalentDiagnostics = listOf(
         "ASSIGNMENT_TYPE_MISMATCH",
         "INITIALIZER_TYPE_MISMATCH",
         "CONSTANT_EXPECTED_TYPE_MISMATCH",
+        "HAS_NEXT_FUNCTION_TYPE_MISMATCH",
+        "CONDITION_TYPE_MISMATCH",
+        "UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION",
         "UPPER_BOUND_VIOLATED_BASED_ON_JAVA_ANNOTATIONS",
         "UPPER_BOUND_VIOLATED",
         "NEW_INFERENCE_ERROR",
-    ),
-    listOf(
+        "NO_VALUE_FOR_PARAMETER",
+        "NO_SET_METHOD",
+//    ),
+//    listOf(
         "UNRESOLVED_REFERENCE_WRONG_RECEIVER",
         "UNRESOLVED_REFERENCE",
         "UNRESOLVED_MEMBER",
+        "UNRESOLVED_IMPORT",
         "CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY",
         "DEPRECATION_ERROR",
         "OVERLOAD_RESOLUTION_AMBIGUITY",
+        "NO_COMPANION_OBJECT",
+        "NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE",
+        "RESOLUTION_TO_CLASSIFIER",
+        "FUNCTION_EXPECTED",
+        "RECURSIVE_TYPEALIAS_EXPANSION",
+        "MISSING_DEPENDENCY_CLASS",
+//    ),
+//    listOf(
+        "INVISIBLE_MEMBER",
+        "INVISIBLE_REFERENCE",
+//    ),
+//    listOf(
+        "WRONG_NUMBER_OF_TYPE_ARGUMENTS",
+        "NO_TYPE_ARGUMENTS_ON_RHS",
+        "CANNOT_CHECK_FOR_ERASED",
+        "TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED",
+        "INAPPLICABLE_CANDIDATE",
+//    ),
+//    listOf(
+        "VAL_REASSIGNMENT",
+        "NONE_APPLICABLE",
     ),
-    listOf("VAL_REASSIGNMENT", "NONE_APPLICABLE"),
-    listOf("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE"),
     listOf("DELEGATE_SPECIAL_FUNCTION_MISSING", "DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE"),
+    listOf(
+        "TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM_IN_AUGMENTED_ASSIGNMENT_ERROR",
+        "TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM",
+    ),
+    listOf(
+        "ASSIGNMENT_IN_EXPRESSION_CONTEXT",
+        "EXPRESSION_EXPECTED",
+    ),
+    listOf(
+        "SMARTCAST_IMPOSSIBLE",
+        "UNSAFE_CALL",
+    ),
 )
 
 val equivalentDiagnosticsLookup = buildMap {
@@ -135,23 +173,50 @@ val k2DefinitelyNonErrors = collectAllK2NonErrors()
 val ParsedCodeMetaInfo.isProbablyK1Error get() = !tag.startsWith("DEBUG_INFO_") && tag !in k1DefinitelyNonErrors
 val ParsedCodeMetaInfo.isProbablyK2Error get() = !tag.startsWith("DEBUG_INFO_") && tag !in k2DefinitelyNonErrors
 
+fun IntArray.getLineNumberForOffset(offset: Int): Int {
+    return indexOfLast { it <= offset } + 1
+}
+
+fun IntArray.getLineNumberForOffsetBinary(offset: Int): Int {
+    val index = binarySearch(offset)
+    return when (val isInsertionPoint = index < 0) {
+        isInsertionPoint -> -index - 1
+        else -> index + 1
+    }
+}
+
+fun ParsedCodeMetaInfo.replaceOffsetsWithLineNumbersWithin(lineStartOffsets: IntArray): ParsedCodeMetaInfo {
+    val lineIndex = lineStartOffsets.getLineNumberForOffset(start)
+    return ParsedCodeMetaInfo(lineIndex + 1, lineIndex + 1, attributes, tag, description)
+}
+
+val String.lineStartOffsets: IntArray
+    get() {
+        val buffer = mutableListOf<Int>()
+        var currentOffset = 0
+
+        split("\n").forEach { line ->
+            buffer.add(currentOffset)
+            currentOffset += line.length + 1
+        }
+
+        buffer.add(currentOffset)
+        return buffer.toIntArray()
+    }
+
 fun hasNonIdenticalButEquivalentResults(
     alongsideNonIdenticalTest: File,
     differencesReportWriter: Writer,
+    k1Text: String,
+    allK1MetaInfos: List<ParsedCodeMetaInfo>,
+    allK2MetaInfos: List<ParsedCodeMetaInfo>,
 ): Boolean {
-    val k1Text = alongsideNonIdenticalTest.readText()
-    val allK1MetaInfos = CodeMetaInfoParser.getCodeMetaInfoFromText(k1Text)
-    val allK2MetaInfos = CodeMetaInfoParser.getCodeMetaInfoFromText(alongsideNonIdenticalTest.analogousK2File.readText())
-
-    val erroneousK1MetaInfos = allK1MetaInfos.filter { it.isProbablyK1Error }
-    val erroneousK2MetaInfos = allK2MetaInfos.filter { it.isProbablyK2Error }
-
     val (significantK1MetaInfo, significantK2MetaInfo) = when {
         allK1MetaInfos.size + allK2MetaInfos.size <= MAGIC_DIAGNOSTICS_THRESHOLD -> {
-            extractSignificantMetaInfosSlow(erroneousK1MetaInfos, erroneousK2MetaInfos)
+            extractSignificantMetaInfosSlow(allK1MetaInfos, allK2MetaInfos)
         }
         else -> {
-            extractSignificantMetaInfos(erroneousK1MetaInfos, erroneousK2MetaInfos)
+            extractSignificantMetaInfos(allK1MetaInfos, allK2MetaInfos)
         }
     }
 
@@ -254,27 +319,39 @@ fun main() {
     fixMissingTestSpecComments(tests.alongsideNonIdenticalTests)
     val status = StatusPrinter()
 
-    val alongsideNonEquivalentTests = build.child("equivalence-report.md").bufferedWriter().use { writer ->
-        tests.alongsideNonIdenticalTests
-            .filterNot {
-                status.loading("Checking equivalence of $it", probability = 0.01)
-                hasNonIdenticalButEquivalentResults(File(it), writer)
+    var alongsideNonEquivalentTestsCount = 0
+    var alongsideNonSimilarTestsCount = 0
+
+    build.child("similarity-report.md").bufferedWriter().use { similarity ->
+        build.child("equivalence-report.md").bufferedWriter().use { equivalence ->
+            for (it in tests.alongsideNonIdenticalTests) {
+                status.loading("Checking $it", probability = 0.01)
+                val test = File(it)
+
+                val k1Text = test.readText()
+                val k2Text = test.analogousK2File.readText()
+
+                val allK1MetaInfos = CodeMetaInfoParser.getCodeMetaInfoFromText(k1Text).filter { it.isProbablyK1Error }
+                val allK2MetaInfos = CodeMetaInfoParser.getCodeMetaInfoFromText(k2Text).filter { it.isProbablyK2Error }
+
+                if (!hasNonIdenticalButEquivalentResults(test, equivalence, k1Text, allK1MetaInfos, allK2MetaInfos)) {
+                    alongsideNonEquivalentTestsCount++
+                }
+
+                val k1LineStartOffsets = clearTextFromDiagnosticMarkup(k1Text).lineStartOffsets
+                val k2LineStartOffsets = clearTextFromDiagnosticMarkup(k2Text).lineStartOffsets
+
+                val allK1LineMetaInfos = allK1MetaInfos.map { it.replaceOffsetsWithLineNumbersWithin(k1LineStartOffsets) }
+                val allK2LineMetaInfos = allK2MetaInfos.map { it.replaceOffsetsWithLineNumbersWithin(k2LineStartOffsets) }
+
+                if (!hasNonIdenticalButEquivalentResults(test, similarity, k1Text, allK1LineMetaInfos, allK2LineMetaInfos)) {
+                    alongsideNonSimilarTestsCount++
+                }
             }
+        }
     }
 
-    status.done("Found ${alongsideNonEquivalentTests.size} non-equivalences among alongside tests")
-
-//    val alongsideNonSimilarTests = build.child("similarity-report.md").bufferedWriter().use { writer ->
-//        tests.alongsideNonIdenticalTests
-//            .filterNot {
-//                status.loading("Checking similarity of $it", probability = 0.01)
-//                hasNonIdenticalButEquivalentResults(File(it), writer)
-//            }
-//    }
-//
-//    status.done("Found ${alongsideNonSimilarTests.size} non-similarities among alongside tests")
-    print("")
-
-    val a = 2 + 3
+    status.done("Found $alongsideNonEquivalentTestsCount non-equivalences among alongside tests")
+    status.done("Found $alongsideNonSimilarTestsCount non-similarities among alongside tests")
     print("")
 }
