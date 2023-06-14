@@ -368,29 +368,29 @@ class IrFactoryImplForJsIC(override val stageController: StageController) : Abst
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
-        symbol: IrValueParameterSymbol,
         name: Name,
-        index: Int,
         type: IrType,
+        isAssignable: Boolean,
+        symbol: IrValueParameterSymbol,
+        index: Int,
         varargElementType: IrType?,
         isCrossinline: Boolean,
         isNoinline: Boolean,
-        isHidden: Boolean,
-        isAssignable: Boolean
+        isHidden: Boolean
     ): IrValueParameter {
         return super.createValueParameter(
             startOffset,
             endOffset,
             origin,
-            symbol,
             name,
-            index,
             type,
+            isAssignable,
+            symbol,
+            index,
             varargElementType,
             isCrossinline,
             isNoinline,
             isHidden,
-            isAssignable,
         ).register()
     }
 }

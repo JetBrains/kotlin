@@ -127,8 +127,18 @@ class IrBuiltInsOverDescriptors(
                 val valueParameterDescriptor = operatorDescriptor.valueParameters[i]
                 val valueParameterSymbol = IrValueParameterSymbolImpl(valueParameterDescriptor)
                 irFactory.createValueParameter(
-                    UNDEFINED_OFFSET, UNDEFINED_OFFSET, BUILTIN_OPERATOR, valueParameterSymbol, Name.identifier("arg$i"), i,
-                    valueParameterType, null, isCrossinline = false, isNoinline = false, isHidden = false, isAssignable = false
+                    startOffset = UNDEFINED_OFFSET,
+                    endOffset = UNDEFINED_OFFSET,
+                    origin = BUILTIN_OPERATOR,
+                    name = Name.identifier("arg$i"),
+                    type = valueParameterType,
+                    isAssignable = false,
+                    symbol = valueParameterSymbol,
+                    index = i,
+                    varargElementType = null,
+                    isCrossinline = false,
+                    isNoinline = false,
+                    isHidden = false
                 ).apply {
                     parent = operator
                 }
@@ -232,8 +242,18 @@ class IrBuiltInsOverDescriptors(
 
                 val valueParameterSymbol = IrValueParameterSymbolImpl(valueParameterDescriptor)
                 val valueParameter = irFactory.createValueParameter(
-                    UNDEFINED_OFFSET, UNDEFINED_OFFSET, BUILTIN_OPERATOR, valueParameterSymbol, Name.identifier("arg0"), 0,
-                    valueIrType, null, isCrossinline = false, isNoinline = false, isHidden = false, isAssignable = false
+                    startOffset = UNDEFINED_OFFSET,
+                    endOffset = UNDEFINED_OFFSET,
+                    origin = BUILTIN_OPERATOR,
+                    name = Name.identifier("arg0"),
+                    type = valueIrType,
+                    isAssignable = false,
+                    symbol = valueParameterSymbol,
+                    index = 0,
+                    varargElementType = null,
+                    isCrossinline = false,
+                    isNoinline = false,
+                    isHidden = false,
                 )
 
                 valueParameter.parent = operator

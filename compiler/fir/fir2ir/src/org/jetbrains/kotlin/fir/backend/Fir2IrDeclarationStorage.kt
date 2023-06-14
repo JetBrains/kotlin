@@ -331,11 +331,18 @@ class Fir2IrDeclarationStorage(
         isNoinline: Boolean = false,
     ): IrValueParameter {
         return irFactory.createValueParameter(
-            startOffset, endOffset, IrDeclarationOrigin.DEFINED, IrValueParameterSymbolImpl(),
-            name ?: SpecialNames.IMPLICIT_SET_PARAMETER, parent.contextReceiverParametersCount, type,
+            startOffset = startOffset,
+            endOffset = endOffset,
+            origin = IrDeclarationOrigin.DEFINED,
+            name = name ?: SpecialNames.IMPLICIT_SET_PARAMETER,
+            type = type,
+            isAssignable = false,
+            symbol = IrValueParameterSymbolImpl(),
+            index = parent.contextReceiverParametersCount,
             varargElementType = null,
-            isCrossinline = isCrossinline, isNoinline = isNoinline,
-            isHidden = false, isAssignable = false
+            isCrossinline = isCrossinline,
+            isNoinline = isNoinline,
+            isHidden = false,
         ).apply {
             this.parent = parent
             if (firValueParameter != null) {
@@ -1208,12 +1215,20 @@ class Fir2IrDeclarationStorage(
         val type = valueParameter.returnTypeRef.toIrType(typeContext)
         val irParameter = valueParameter.convertWithOffsets { startOffset, endOffset ->
             irFactory.createValueParameter(
-                startOffset, endOffset, origin, IrValueParameterSymbolImpl(),
-                valueParameter.name, index, type,
-                if (!valueParameter.isVararg) null
-                else valueParameter.returnTypeRef.coneType.arrayElementType()?.toIrType(typeContext),
-                isCrossinline = valueParameter.isCrossinline, isNoinline = valueParameter.isNoinline,
-                isHidden = false, isAssignable = false
+                startOffset = startOffset,
+                endOffset = endOffset,
+                origin = origin,
+                name = valueParameter.name,
+                type = type,
+                isAssignable = false,
+                symbol = IrValueParameterSymbolImpl(),
+                index = index,
+                varargElementType =
+                    if (!valueParameter.isVararg) null
+                    else valueParameter.returnTypeRef.coneType.arrayElementType()?.toIrType(typeContext),
+                isCrossinline = valueParameter.isCrossinline,
+                isNoinline = valueParameter.isNoinline,
+                isHidden = false,
             ).apply {
                 if (!skipDefaultParameter && valueParameter.defaultValue.let {
                         it != null && (useStubForDefaultValueStub || it !is FirExpressionStub)
@@ -1240,11 +1255,18 @@ class Fir2IrDeclarationStorage(
         val type = contextReceiver.typeRef.toIrType()
         return contextReceiver.convertWithOffsets { startOffset, endOffset ->
             irFactory.createValueParameter(
-                startOffset, endOffset, IrDeclarationOrigin.DEFINED, IrValueParameterSymbolImpl(),
-                NameUtils.contextReceiverName(index), index, type,
-                null,
-                isCrossinline = false, isNoinline = false,
-                isHidden = false, isAssignable = false
+                startOffset = startOffset,
+                endOffset = endOffset,
+                origin = IrDeclarationOrigin.DEFINED,
+                name = NameUtils.contextReceiverName(index),
+                type = type,
+                isAssignable = false,
+                symbol = IrValueParameterSymbolImpl(),
+                index = index,
+                varargElementType = null,
+                isCrossinline = false,
+                isNoinline = false,
+                isHidden = false,
             )
         }
     }

@@ -549,10 +549,18 @@ private class ScriptToClassTransformer(
 
     private fun IrDeclarationParent.createThisReceiverParameter(origin: IrDeclarationOrigin, type: IrType): IrValueParameter =
         context.symbolTable.irFactory.createValueParameter(
-            startOffset, endOffset, origin, IrValueParameterSymbolImpl(),
-            SpecialNames.THIS, UNDEFINED_PARAMETER_INDEX, type,
-            varargElementType = null, isCrossinline = false, isNoinline = false,
-            isHidden = false, isAssignable = false
+            startOffset = startOffset,
+            endOffset = endOffset,
+            origin = origin,
+            name = SpecialNames.THIS,
+            type = type,
+            isAssignable = false,
+            symbol = IrValueParameterSymbolImpl(),
+            index = UNDEFINED_PARAMETER_INDEX,
+            varargElementType = null,
+            isCrossinline = false,
+            isNoinline = false,
+            isHidden = false,
         ).also {
             it.parent = this
         }

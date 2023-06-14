@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.IrFunctionBuilder
+import org.jetbrains.kotlin.ir.builders.declarations.UNDEFINED_PARAMETER_INDEX
 import org.jetbrains.kotlin.ir.declarations.DescriptorMetadataSource
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
@@ -62,12 +63,18 @@ internal class ScriptGenerator(declarationGenerator: DeclarationGenerator) : Dec
                     type
                 ) { symbol ->
                     context.irFactory.createValueParameter(
-                        UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                        origin, symbol, context.symbolTable.nameProvider.nameForDeclaration(descriptor),
-                        if (index != -1) index else descriptor.indexOrMinusOne,
-                        type, varargElementType,
-                        descriptor.isCrossinline, descriptor.isNoinline,
-                        isHidden = false, isAssignable = false
+                        startOffset = UNDEFINED_OFFSET,
+                        endOffset = UNDEFINED_OFFSET,
+                        origin = origin,
+                        name = context.symbolTable.nameProvider.nameForDeclaration(descriptor),
+                        type = type,
+                        isAssignable = false,
+                        symbol = symbol,
+                        index = if (index != UNDEFINED_PARAMETER_INDEX) index else descriptor.indexOrMinusOne,
+                        varargElementType = varargElementType,
+                        isCrossinline = descriptor.isCrossinline,
+                        isNoinline = descriptor.isNoinline,
+                        isHidden = false,
                     )
                 }.also { it.parent = irScript }
             }
@@ -92,12 +99,18 @@ internal class ScriptGenerator(declarationGenerator: DeclarationGenerator) : Dec
 
             fun createValueParameter(valueParameterDescriptor: ValueParameterDescriptor): IrValueParameter {
                 return context.irFactory.createValueParameter(
-                    UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                    IrDeclarationOrigin.SCRIPT_CALL_PARAMETER, IrValueParameterSymbolImpl(),
-                    valueParameterDescriptor.name, parametersIndex++,
-                    valueParameterDescriptor.type.toIrType(), valueParameterDescriptor.varargElementType?.toIrType(),
-                    valueParameterDescriptor.isCrossinline, valueParameterDescriptor.isNoinline,
-                    false, false
+                    startOffset = UNDEFINED_OFFSET,
+                    endOffset = UNDEFINED_OFFSET,
+                    origin = IrDeclarationOrigin.SCRIPT_CALL_PARAMETER,
+                    name = valueParameterDescriptor.name,
+                    type = valueParameterDescriptor.type.toIrType(),
+                    isAssignable = false,
+                    symbol = IrValueParameterSymbolImpl(),
+                    index = parametersIndex++,
+                    varargElementType = valueParameterDescriptor.varargElementType?.toIrType(),
+                    isCrossinline = valueParameterDescriptor.isCrossinline,
+                    isNoinline = valueParameterDescriptor.isNoinline,
+                    isHidden = false
                 ).also { it.parent = irScript }
             }
 
@@ -130,9 +143,18 @@ internal class ScriptGenerator(declarationGenerator: DeclarationGenerator) : Dec
                     IrDeclarationOrigin.SCRIPT_PROVIDED_PROPERTY, parameter, type
                 ) { symbol ->
                     context.irFactory.createValueParameter(
-                        UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                        IrDeclarationOrigin.SCRIPT_PROVIDED_PROPERTY, symbol, descriptor.name,
-                        parametersIndex, type, null, isCrossinline = false, isNoinline = false, isHidden = false, isAssignable = false
+                        startOffset = UNDEFINED_OFFSET,
+                        endOffset = UNDEFINED_OFFSET,
+                        origin = IrDeclarationOrigin.SCRIPT_PROVIDED_PROPERTY,
+                        name = descriptor.name,
+                        type = type,
+                        isAssignable = false,
+                        symbol = symbol,
+                        index = parametersIndex,
+                        varargElementType = null,
+                        isCrossinline = false,
+                        isNoinline = false,
+                        isHidden = false,
                     ).also { it.parent = irScript }
                 }
                 parametersIndex++

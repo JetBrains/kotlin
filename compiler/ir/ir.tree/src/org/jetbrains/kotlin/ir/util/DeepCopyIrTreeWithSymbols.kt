@@ -373,17 +373,18 @@ open class DeepCopyIrTreeWithSymbols(
 
     override fun visitValueParameter(declaration: IrValueParameter): IrValueParameter =
         declaration.factory.createValueParameter(
-            declaration.startOffset, declaration.endOffset,
-            mapDeclarationOrigin(declaration.origin),
-            symbolRemapper.getDeclaredValueParameter(declaration.symbol),
-            symbolRenamer.getValueParameterName(declaration.symbol),
-            declaration.index,
-            declaration.type.remapType(),
-            declaration.varargElementType?.remapType(),
-            declaration.isCrossinline,
-            declaration.isNoinline,
-            declaration.isHidden,
-            declaration.isAssignable
+            startOffset = declaration.startOffset,
+            endOffset = declaration.endOffset,
+            origin = mapDeclarationOrigin(declaration.origin),
+            name = symbolRenamer.getValueParameterName(declaration.symbol),
+            type = declaration.type.remapType(),
+            isAssignable = declaration.isAssignable,
+            symbol = symbolRemapper.getDeclaredValueParameter(declaration.symbol),
+            index = declaration.index,
+            varargElementType = declaration.varargElementType?.remapType(),
+            isCrossinline = declaration.isCrossinline,
+            isNoinline = declaration.isNoinline,
+            isHidden = declaration.isHidden,
         ).apply {
             transformAnnotations(declaration)
             defaultValue = declaration.defaultValue?.transform()

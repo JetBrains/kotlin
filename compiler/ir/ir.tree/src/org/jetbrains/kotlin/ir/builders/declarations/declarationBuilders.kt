@@ -291,10 +291,18 @@ fun <D> buildReceiverParameter(
 ): IrValueParameter
         where D : IrDeclaration, D : IrDeclarationParent =
     parent.factory.createValueParameter(
-        startOffset, endOffset, origin,
-        IrValueParameterSymbolImpl(),
-        SpecialNames.THIS, -1, type, null, isCrossinline = false, isNoinline = false,
-        isHidden = false, isAssignable = false
+        startOffset = startOffset,
+        endOffset = endOffset,
+        origin = origin,
+        name = SpecialNames.THIS,
+        type = type,
+        isAssignable = false,
+        symbol = IrValueParameterSymbolImpl(),
+        index = UNDEFINED_PARAMETER_INDEX,
+        varargElementType = null,
+        isCrossinline = false,
+        isNoinline = false,
+        isHidden = false,
     ).also {
         it.parent = parent
     }
@@ -302,9 +310,18 @@ fun <D> buildReceiverParameter(
 fun IrFactory.buildValueParameter(builder: IrValueParameterBuilder, parent: IrDeclarationParent): IrValueParameter =
     with(builder) {
         return createValueParameter(
-            startOffset, endOffset, origin,
-            IrValueParameterSymbolImpl(),
-            name, index, type, varargElementType, isCrossInline, isNoinline, isHidden, isAssignable
+            startOffset = startOffset,
+            endOffset = endOffset,
+            origin = origin,
+            name = name,
+            type = type,
+            isAssignable = isAssignable,
+            symbol = IrValueParameterSymbolImpl(),
+            index = index,
+            varargElementType = varargElementType,
+            isCrossinline = isCrossInline,
+            isNoinline = isNoinline,
+            isHidden = isHidden
         ).also {
             it.parent = parent
         }

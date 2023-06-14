@@ -449,9 +449,18 @@ private fun StatementGenerator.createFunctionForSuspendConversion(
 
     fun createValueParameter(name: String, index: Int, type: IrType): IrValueParameter =
         context.irFactory.createValueParameter(
-            startOffset, endOffset, IrDeclarationOrigin.ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION, IrValueParameterSymbolImpl(),
-            Name.identifier(name), index, type, varargElementType = null, isCrossinline = false, isNoinline = false,
-            isHidden = false, isAssignable = false
+            startOffset = startOffset,
+            endOffset = endOffset,
+            origin = IrDeclarationOrigin.ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION,
+            name = Name.identifier(name),
+            type = type,
+            isAssignable = false,
+            symbol = IrValueParameterSymbolImpl(),
+            index = index,
+            varargElementType = null,
+            isCrossinline = false,
+            isNoinline = false,
+            isHidden = false,
         )
 
     irAdapterFun.extensionReceiverParameter = createValueParameter("callee", -1, funType.toIrType())

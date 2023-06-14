@@ -43,9 +43,18 @@ interface IrLazyFunctionBase : IrLazyDeclarationBase, IrTypeParametersContainer 
             val result = arrayListOf<IrValueParameter>()
             descriptor.contextReceiverParameters.mapIndexedTo(result) { i, contextReceiverParameter ->
                 factory.createValueParameter(
-                    UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, IrValueParameterSymbolImpl(contextReceiverParameter),
-                    Name.identifier("contextReceiverParameter$i"), i, contextReceiverParameter.type.toIrType(),
-                    null, isCrossinline = false, isNoinline = false, isHidden = false, isAssignable = false
+                    startOffset = UNDEFINED_OFFSET,
+                    endOffset = UNDEFINED_OFFSET,
+                    origin = origin,
+                    name = Name.identifier("contextReceiverParameter$i"),
+                    type = contextReceiverParameter.type.toIrType(),
+                    isAssignable = false,
+                    symbol = IrValueParameterSymbolImpl(contextReceiverParameter),
+                    index = i,
+                    varargElementType = null,
+                    isCrossinline = false,
+                    isNoinline = false,
+                    isHidden = false,
                 ).apply { parent = this@IrLazyFunctionBase }
             }
             descriptor.valueParameters.mapTo(result) {

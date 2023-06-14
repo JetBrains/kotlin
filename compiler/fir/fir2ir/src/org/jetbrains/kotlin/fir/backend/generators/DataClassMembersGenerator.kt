@@ -277,8 +277,18 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) : Fir2IrCompon
 
         private fun createSyntheticIrParameter(irFunction: IrFunction, name: Name, type: IrType, index: Int = 0): IrValueParameter =
             components.irFactory.createValueParameter(
-                UNDEFINED_OFFSET, UNDEFINED_OFFSET, IrDeclarationOrigin.DEFINED, IrValueParameterSymbolImpl(), name, index, type, null,
-                isCrossinline = false, isNoinline = false, isHidden = false, isAssignable = false
+                startOffset = UNDEFINED_OFFSET,
+                endOffset = UNDEFINED_OFFSET,
+                origin = IrDeclarationOrigin.DEFINED,
+                name = name,
+                type = type,
+                isAssignable = false,
+                symbol = IrValueParameterSymbolImpl(),
+                index = index,
+                varargElementType = null,
+                isCrossinline = false,
+                isNoinline = false,
+                isHidden = false
             ).apply {
                 parent = irFunction
             }

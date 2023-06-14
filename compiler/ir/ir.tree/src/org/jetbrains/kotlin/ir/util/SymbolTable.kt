@@ -1065,9 +1065,18 @@ open class SymbolTable(
         isAssignable: Boolean = false,
         valueParameterFactory: (IrValueParameterSymbol) -> IrValueParameter = {
             irFactory.createValueParameter(
-                startOffset, endOffset, origin, it, name ?: nameProvider.nameForDeclaration(descriptor),
-                index ?: descriptor.indexOrMinusOne, type, varargElementType, descriptor.isCrossinline, descriptor.isNoinline,
-                isHidden = false, isAssignable = isAssignable
+                startOffset = startOffset,
+                endOffset = endOffset,
+                origin = origin,
+                name = name ?: nameProvider.nameForDeclaration(descriptor),
+                type = type,
+                isAssignable = isAssignable,
+                symbol = it,
+                index = index ?: descriptor.indexOrMinusOne,
+                varargElementType = varargElementType,
+                isCrossinline = descriptor.isCrossinline,
+                isNoinline = descriptor.isNoinline,
+                isHidden = false,
             )
         }
     ): IrValueParameter =

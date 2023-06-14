@@ -586,10 +586,18 @@ internal fun IrDeclarationParent.declareThisReceiverParameter(
     explicitReceiver: FirReceiverParameter? = null,
 ): IrValueParameter {
     return symbolTable.irFactory.createValueParameter(
-        startOffset, endOffset, thisOrigin, IrValueParameterSymbolImpl(),
-        name, UNDEFINED_PARAMETER_INDEX, thisType,
-        varargElementType = null, isCrossinline = false, isNoinline = false,
-        isHidden = false, isAssignable = false
+        startOffset = startOffset,
+        endOffset = endOffset,
+        origin = thisOrigin,
+        name = name,
+        type = thisType,
+        isAssignable = false,
+        symbol = IrValueParameterSymbolImpl(),
+        index = UNDEFINED_PARAMETER_INDEX,
+        varargElementType = null,
+        isCrossinline = false,
+        isNoinline = false,
+        isHidden = false,
     ).apply {
         this.parent = this@declareThisReceiverParameter
         explicitReceiver?.let { annotationGenerator.generate(this, it) }

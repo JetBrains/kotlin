@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.declarations.lazy
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.builders.declarations.UNDEFINED_PARAMETER_INDEX
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
@@ -30,9 +31,18 @@ interface IrLazyDeclarationBase : IrDeclaration {
 
     fun ReceiverParameterDescriptor.generateReceiverParameterStub(): IrValueParameter =
         factory.createValueParameter(
-            UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, IrValueParameterSymbolImpl(this),
-            name, -1, type.toIrType(), null, isCrossinline = false, isNoinline = false,
-            isHidden = false, isAssignable = false
+            startOffset = UNDEFINED_OFFSET,
+            endOffset = UNDEFINED_OFFSET,
+            origin = origin,
+            name = name,
+            type = type.toIrType(),
+            isAssignable = false,
+            symbol = IrValueParameterSymbolImpl(this),
+            index = UNDEFINED_PARAMETER_INDEX,
+            varargElementType = null,
+            isCrossinline = false,
+            isNoinline = false,
+            isHidden = false,
         )
 
     fun createLazyAnnotations(): ReadWriteProperty<Any?, List<IrConstructorCall>> = lazyVar(stubGenerator.lock) {

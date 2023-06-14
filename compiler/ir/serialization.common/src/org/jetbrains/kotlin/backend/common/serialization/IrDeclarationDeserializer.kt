@@ -329,16 +329,18 @@ class IrDeclarationDeserializer(
             val flags = ValueParameterFlags.decode(fcode)
             val nameAndType = BinaryNameAndType.decode(proto.nameType)
             irFactory.createValueParameter(
-                startOffset, endOffset, origin,
-                symbol.checkSymbolType(fallbackSymbolKind = null),
-                deserializeName(nameAndType.nameIndex),
-                index,
-                deserializeIrType(nameAndType.typeIndex),
-                if (proto.hasVarargElementType()) deserializeIrType(proto.varargElementType) else null,
-                flags.isCrossInline,
-                flags.isNoInline,
-                flags.isHidden,
-                flags.isAssignable
+                startOffset = startOffset,
+                endOffset = endOffset,
+                origin = origin,
+                name = deserializeName(nameAndType.nameIndex),
+                type = deserializeIrType(nameAndType.typeIndex),
+                isAssignable = flags.isAssignable,
+                symbol = symbol.checkSymbolType(fallbackSymbolKind = null),
+                index = index,
+                varargElementType = if (proto.hasVarargElementType()) deserializeIrType(proto.varargElementType) else null,
+                isCrossinline = flags.isCrossInline,
+                isNoinline = flags.isNoInline,
+                isHidden = flags.isHidden,
             ).apply {
                 if (proto.hasDefaultValue())
                     defaultValue = deserializeExpressionBody(proto.defaultValue)

@@ -262,18 +262,18 @@ internal class AdapterGenerator(
         origin: IrDeclarationOrigin
     ): IrValueParameter =
         irFactory.createValueParameter(
-            adapterFunction.startOffset,
-            adapterFunction.endOffset,
-            origin,
-            IrValueParameterSymbolImpl(),
-            name,
-            index,
-            type,
+            startOffset = adapterFunction.startOffset,
+            endOffset = adapterFunction.endOffset,
+            origin = origin,
+            name = name,
+            type = type,
+            isAssignable = false,
+            symbol = IrValueParameterSymbolImpl(),
+            index = index,
             varargElementType = null,
             isCrossinline = false,
             isNoinline = false,
-            isHidden = false,
-            isAssignable = false
+            isHidden = false
         ).also { irAdapterValueParameter ->
             irAdapterValueParameter.parent = adapterFunction
         }

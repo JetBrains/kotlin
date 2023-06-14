@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.utils.getJsNameOrKotlinName
 import org.jetbrains.kotlin.ir.backend.js.utils.realOverrideTarget
+import org.jetbrains.kotlin.ir.builders.declarations.UNDEFINED_PARAMETER_INDEX
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
@@ -55,17 +56,18 @@ class EscapedIdentifiersLowering(context: JsIrBackendContext) : BodyLoweringPass
 
         private val IrFunction.dummyDispatchReceiverParameter
             get() = context.irFactory.createValueParameter(
-                startOffset, endOffset,
-                origin,
-                IrValueParameterSymbolImpl(),
-                SpecialNames.THIS,
-                -1,
-                context.irBuiltIns.anyType,
-                null,
+                startOffset = startOffset,
+                endOffset = endOffset,
+                origin = origin,
+                name = SpecialNames.THIS,
+                type = context.irBuiltIns.anyType,
+                isAssignable = false,
+                symbol = IrValueParameterSymbolImpl(),
+                index = UNDEFINED_PARAMETER_INDEX,
+                varargElementType = null,
                 isCrossinline = false,
                 isNoinline = false,
                 isHidden = false,
-                isAssignable = false
             ).also { it.parent = this }
 
         override fun visitGetValue(expression: IrGetValue): IrExpression {

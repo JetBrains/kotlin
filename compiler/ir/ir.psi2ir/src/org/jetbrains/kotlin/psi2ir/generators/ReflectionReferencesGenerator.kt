@@ -497,13 +497,18 @@ internal class ReflectionReferencesGenerator(statementGenerator: StatementGenera
 
     private fun createAdapterParameter(startOffset: Int, endOffset: Int, name: Name, index: Int, type: KotlinType): IrValueParameter =
         context.irFactory.createValueParameter(
-            startOffset, endOffset,
-            IrDeclarationOrigin.ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE,
-            IrValueParameterSymbolImpl(),
-            name,
-            index,
-            type.toIrType(),
-            varargElementType = null, isCrossinline = false, isNoinline = false, isHidden = false, isAssignable = false
+            startOffset = startOffset,
+            endOffset = endOffset,
+            origin = IrDeclarationOrigin.ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE,
+            name = name,
+            type = type.toIrType(),
+            isAssignable = false,
+            symbol = IrValueParameterSymbolImpl(),
+            index = index,
+            varargElementType = null,
+            isCrossinline = false,
+            isNoinline = false,
+            isHidden = false,
         )
 
     fun generateCallableReference(
