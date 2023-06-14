@@ -127,11 +127,11 @@ private fun KtDeclaration.findSourceNonLocalFirDeclarationByProvider(
         }
         this is KtScript -> containerFirFile?.declarations?.singleOrNull { it is FirScript }
         this is KtPropertyAccessor -> {
-            val firPropertyDeclaration = property.nonLocalFirDeclaration<FirVariable>(
+            val firPropertyDeclaration = property.findSourceNonLocalFirDeclarationByProvider(
                 firFileBuilder,
                 provider,
                 containerFirFile,
-            )
+            ) as? FirVariable ?: return null
 
             if (isGetter) {
                 firPropertyDeclaration.getter
@@ -143,11 +143,11 @@ private fun KtDeclaration.findSourceNonLocalFirDeclarationByProvider(
             val ownerFunction = ownerFunction
                 ?: errorWithFirSpecificEntries("Containing function should be not null for KtParameter", psi = this)
 
-            val firFunctionDeclaration = ownerFunction.nonLocalFirDeclaration<FirFunction>(
+            val firFunctionDeclaration = ownerFunction.findSourceNonLocalFirDeclarationByProvider(
                 firFileBuilder,
                 provider,
                 containerFirFile,
-            )
+            ) as? FirFunction ?: return null
 
             firFunctionDeclaration.valueParameters[parameterIndex()]
         }
@@ -155,40 +155,17 @@ private fun KtDeclaration.findSourceNonLocalFirDeclarationByProvider(
             val declaration = containingDeclaration
                 ?: errorWithFirSpecificEntries("Containing declaration should be not null for KtTypeParameter", psi = this)
 
-            val firTypeParameterOwner = declaration.nonLocalFirDeclaration<FirTypeParameterRefsOwner>(
+            val firTypeParameterOwner = declaration.findSourceNonLocalFirDeclarationByProvider(
                 firFileBuilder,
                 provider,
                 containerFirFile,
-            )
+            ) as? FirTypeParameterRefsOwner ?: return null
 
-            val index = (parent as KtTypeParameterList).parameters.indexOf(this)
-            firTypeParameterOwner.typeParameters[index] as FirDeclaration
+            firTypeParameterOwner.typeParameters.firstOrNull { it.psi == this } as FirDeclaration
         }
         else -> errorWithFirSpecificEntries("Invalid container", psi = this)
     }
     return candidate?.takeIf { it.realPsi == this }
-}
-
-private inline fun <reified T> KtDeclaration.nonLocalFirDeclaration(
-    firFileBuilder: LLFirFileBuilder,
-    provider: FirProvider,
-    containerFirFile: FirFile?,
-): T {
-    val firResult = findSourceNonLocalFirDeclarationByProvider(
-        firFileBuilder,
-        provider,
-        containerFirFile,
-    )
-
-    if (firResult !is T) {
-        errorWithFirSpecificEntries(
-            "${T::class.simpleName} for ${this::class.simpleName} declaration is not found",
-            psi = this,
-            fir = firResult,
-        )
-    }
-
-    return firResult
 }
 
 fun FirAnonymousInitializer.containingClass(): FirRegularClass {

@@ -445,6 +445,12 @@ public class FirOutOfContentRootLazyDeclarationResolveTestGenerated extends Abst
     }
 
     @Test
+    @TestMetadata("typeParameterOfClass2.kt")
+    public void testTypeParameterOfClass2() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/lazyResolve/typeParameterOfClass2.kt");
+    }
+
+    @Test
     @TestMetadata("typeParameterOfNonLocalFunction.kt")
     public void testTypeParameterOfNonLocalFunction() throws Exception {
         runTest("analysis/low-level-api-fir/testdata/lazyResolve/typeParameterOfNonLocalFunction.kt");
