@@ -582,7 +582,6 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/CInteropSetti
 	public abstract fun defFile (Ljava/lang/Object;)V
 	public abstract fun extraOpts (Ljava/util/List;)V
 	public abstract fun extraOpts ([Ljava/lang/Object;)V
-	public abstract fun getDependencyConfigurationName ()Ljava/lang/String;
 	public abstract fun getDependencyFiles ()Lorg/gradle/api/file/FileCollection;
 	public abstract fun header (Ljava/lang/Object;)V
 	public abstract fun headers (Lorg/gradle/api/file/FileCollection;)V

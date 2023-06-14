@@ -69,13 +69,6 @@ abstract class DefaultCInteropSettings @Inject internal constructor(
 
     internal val identifier = params.identifier
 
-    @Deprecated(
-        "This configuration is no longer used by the plugin, the property shouldn't be accessed",
-        level = DeprecationLevel.ERROR
-    )
-    override val dependencyConfigurationName: String
-        get() = params.dependencyConfigurationName
-
     override var dependencyFiles: FileCollection = files()
 
     val interopProcessingTaskName get() = params.interopProcessingTaskName

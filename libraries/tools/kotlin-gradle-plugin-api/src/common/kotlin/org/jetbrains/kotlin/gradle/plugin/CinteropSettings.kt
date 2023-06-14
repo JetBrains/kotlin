@@ -21,11 +21,6 @@ interface CInteropSettings : Named {
         fun headerFilterOnly(includeDirs: Collection<Any>)
     }
 
-    @Deprecated(
-        "This configuration is no longer used by the plugin, the property shouldn't be accessed",
-        level = DeprecationLevel.ERROR
-    )
-    val dependencyConfigurationName: String
     var dependencyFiles: FileCollection
 
     // DSL.
