@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KtSubstitutor
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirSafe
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbolOfTypeSafe
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolver.AllCandidatesResolver
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withFirEntry
@@ -39,7 +39,6 @@ import org.jetbrains.kotlin.analysis.utils.errors.withPsiEntry
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
-import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
@@ -1039,12 +1038,10 @@ internal class KtFirCallResolver(
             }
         }
 
-        val derivedClass = findDerivedClass(psi)
-            ?.getOrBuildFirSafe<FirClass>(firResolveSession)
-            ?: return emptyList()
+        val derivedClass = findDerivedClass(psi)?.resolveToFirSymbolOfTypeSafe<FirClassSymbol<*>>(firResolveSession) ?: return emptyList()
 
         val candidates = AllCandidatesResolver(analysisSession.useSiteSession)
-            .getAllCandidatesForDelegatedConstructor(analysisSession.firResolveSession, this, derivedClass.symbol.toLookupTag(), psi)
+            .getAllCandidatesForDelegatedConstructor(analysisSession.firResolveSession, this, derivedClass.toLookupTag(), psi)
 
         return candidates.mapNotNull {
             convertToKtCallCandidateInfo(
