@@ -113,6 +113,12 @@ public class FirStandaloneNormalAnalysisSourceModuleCompileTimeConstantEvaluator
     }
 
     @Test
+    @TestMetadata("namedReference_userType.kt")
+    public void testNamedReference_userType() throws Exception {
+        runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/namedReference_userType.kt");
+    }
+
+    @Test
     @TestMetadata("namedReference_val.kt")
     public void testNamedReference_val() throws Exception {
         runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/namedReference_val.kt");

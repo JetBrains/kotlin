@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
 import org.jetbrains.kotlin.fir.expressions.FirWhenBranch
 import org.jetbrains.kotlin.fir.references.FirNamedReference
+import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.KtExpression
 
@@ -67,6 +68,7 @@ internal class KtFirCompileTimeConstantProvider(
             // case, we simply report null since FIR does not know about it.
             fir is FirWhenBranch -> null
             fir is FirVariableAssignment && fir.source?.kind == KtFakeSourceElementKind.DesugaredIncrementOrDecrement -> null
+            fir is FirTypeRef -> null
             else -> throwUnexpectedFirElementError(fir, sourcePsi)
         }
     }
