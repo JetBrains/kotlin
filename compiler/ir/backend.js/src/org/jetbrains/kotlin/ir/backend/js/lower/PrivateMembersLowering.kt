@@ -104,9 +104,11 @@ class PrivateMembersLowering(val context: JsIrBackendContext) : DeclarationTrans
 
             parameterMapping[it]?.apply {
                 it.defaultValue?.let { originalDefault ->
-                    defaultValue = context.irFactory.createExpressionBody(it.startOffset, it.endOffset) {
-                        expression = (originalDefault.copyWithParameters() as IrExpressionBody).expression
-                    }
+                    defaultValue = context.irFactory.createExpressionBody(
+                        startOffset = it.startOffset,
+                        endOffset = it.endOffset,
+                        expression = (originalDefault.copyWithParameters() as IrExpressionBody).expression,
+                    )
                 }
             }
         }
@@ -116,9 +118,11 @@ class PrivateMembersLowering(val context: JsIrBackendContext) : DeclarationTrans
                 is IrBlockBody -> context.irFactory.createBlockBody(it.startOffset, it.endOffset) {
                     statements += (it.copyWithParameters() as IrBlockBody).statements
                 }
-                is IrExpressionBody -> context.irFactory.createExpressionBody(it.startOffset, it.endOffset) {
-                    expression = (it.copyWithParameters() as IrExpressionBody).expression
-                }
+                is IrExpressionBody -> context.irFactory.createExpressionBody(
+                    startOffset = it.startOffset,
+                    endOffset = it.endOffset,
+                    expression = (it.copyWithParameters() as IrExpressionBody).expression,
+                )
                 is IrSyntheticBody -> it
                 else -> compilationException(
                     "Unexpected body kind",

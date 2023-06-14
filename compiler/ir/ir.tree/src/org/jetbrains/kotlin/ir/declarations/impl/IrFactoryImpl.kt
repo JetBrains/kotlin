@@ -254,21 +254,9 @@ abstract class AbstractIrFactoryImpl : IrFactory {
     override fun createExpressionBody(
         startOffset: Int,
         endOffset: Int,
-        initializer: IrExpressionBody.() -> Unit,
-    ): IrExpressionBody =
-        IrExpressionBodyImpl(startOffset, endOffset, initializer)
-
-    override fun createExpressionBody(
-        startOffset: Int,
-        endOffset: Int,
         expression: IrExpression,
     ): IrExpressionBody =
         IrExpressionBodyImpl(startOffset, endOffset, expression)
-
-    override fun createExpressionBody(
-        expression: IrExpression,
-    ): IrExpressionBody =
-        IrExpressionBodyImpl(expression)
 
     override fun createBlockBody(
         startOffset: Int,

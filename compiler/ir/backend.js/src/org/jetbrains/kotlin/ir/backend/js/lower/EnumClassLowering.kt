@@ -126,8 +126,11 @@ class EnumClassConstructorLowering(val context: JsCommonBackendContext) : Declar
                 old.valueParameter = new
 
                 old.defaultValue?.let { default ->
-                    new.defaultValue = context.irFactory.createExpressionBody(default.startOffset, default.endOffset) {
+                    new.defaultValue = context.irFactory.createExpressionBody(
+                        startOffset = default.startOffset,
+                        endOffset = default.endOffset,
                         expression = default.expression
+                    ).apply {
                         expression.patchDeclarationParents(newConstructor)
                         context.fixReferencesToConstructorParameters(enumClass, this)
                     }

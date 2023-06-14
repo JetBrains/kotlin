@@ -44,9 +44,11 @@ class InnerClassesLowering(val context: BackendContext, private val innerClasses
             val variableRemapper = VariableRemapper(oldConstructorParameterToNew)
             for ((oldParam, newParam) in oldConstructorParameterToNew.entries) {
                 newParam.defaultValue = oldParam.defaultValue?.let { oldDefault ->
-                    context.irFactory.createExpressionBody(oldDefault.startOffset, oldDefault.endOffset) {
-                        expression = oldDefault.expression.transform(variableRemapper, null).patchDeclarationParents(newConstructor)
-                    }
+                    context.irFactory.createExpressionBody(
+                        startOffset = oldDefault.startOffset,
+                        endOffset = oldDefault.endOffset,
+                        expression = oldDefault.expression.transform(variableRemapper, null).patchDeclarationParents(newConstructor),
+                    )
                 }
             }
 

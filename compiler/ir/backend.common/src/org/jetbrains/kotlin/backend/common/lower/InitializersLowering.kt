@@ -106,9 +106,11 @@ class InitializersCleanupLowering(
             } else {
                 declaration.initializer?.let {
                     declaration.initializer =
-                        context.irFactory.createExpressionBody(it.startOffset, it.endOffset) {
-                            expression = it.expression.deepCopyWithSymbols()
-                        }
+                        context.irFactory.createExpressionBody(
+                            startOffset = it.startOffset,
+                            endOffset = it.endOffset,
+                            expression = it.expression.deepCopyWithSymbols(),
+                        )
                 }
             }
         }

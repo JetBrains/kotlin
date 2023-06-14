@@ -26,9 +26,11 @@ class CopyAccessorBodyLowerings(private val context: CommonBackendContext) : Dec
 
         if (declaration is IrField) {
             declaration.initializer?.let { originalBody ->
-                declaration.initializer = context.irFactory.createExpressionBody(originalBody.startOffset, originalBody.endOffset) {
-                    this.expression = originalBody.expression.deepCopyWithSymbols(declaration)
-                }
+                declaration.initializer = context.irFactory.createExpressionBody(
+                    startOffset = originalBody.startOffset,
+                    endOffset = originalBody.endOffset,
+                    expression = originalBody.expression.deepCopyWithSymbols(declaration),
+                )
             }
         }
 

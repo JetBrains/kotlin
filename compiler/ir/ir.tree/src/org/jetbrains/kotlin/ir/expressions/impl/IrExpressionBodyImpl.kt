@@ -24,19 +24,10 @@ import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 class IrExpressionBodyImpl(
     override val startOffset: Int,
     override val endOffset: Int,
-    initializer: (IrExpressionBody.() -> Unit)? = null
+    override var expression: IrExpression,
 ) : IrExpressionBody() {
-    init {
-        initializer?.invoke(this)
-    }
-
-    constructor(startOffset: Int, endOffset: Int, expression: IrExpression) : this(startOffset, endOffset) {
-        this.expression = expression
-    }
 
     constructor(expression: IrExpression) : this(expression.startOffset, expression.endOffset, expression)
-
-    override lateinit var expression: IrExpression
 
     override val factory: IrFactory
         get() = IrFactoryImpl

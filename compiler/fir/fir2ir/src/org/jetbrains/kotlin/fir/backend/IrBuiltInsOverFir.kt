@@ -1036,9 +1036,11 @@ class IrBuiltInsOverFir(
                     this.isFinal = isConst
                 }.also {
                     if (fieldInit != null) {
-                        it.initializer = irFactory.createExpressionBody(0, 0) {
-                            expression = fieldInit
-                        }
+                        it.initializer = irFactory.createExpressionBody(
+                            startOffset = 0,
+                            endOffset = 0,
+                            expression = fieldInit,
+                        )
                     }
                 }
             }

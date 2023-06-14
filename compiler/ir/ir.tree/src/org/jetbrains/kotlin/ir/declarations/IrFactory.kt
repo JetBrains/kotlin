@@ -210,16 +210,6 @@ interface IrFactory {
     fun createExpressionBody(
         startOffset: Int,
         endOffset: Int,
-        initializer: IrExpressionBody.() -> Unit,
-    ): IrExpressionBody
-
-    fun createExpressionBody(
-        startOffset: Int,
-        endOffset: Int,
-        expression: IrExpression,
-    ): IrExpressionBody
-
-    fun createExpressionBody(
         expression: IrExpression,
     ): IrExpressionBody
 

@@ -790,10 +790,12 @@ fun IrValueParameter.copyTo(
 ): IrValueParameter {
     val symbol = IrValueParameterSymbolImpl()
     val defaultValueCopy = defaultValue?.let { originalDefault ->
-        factory.createExpressionBody(originalDefault.startOffset, originalDefault.endOffset) {
-            expression = originalDefault.expression.deepCopyWithVariables().also {
-                it.patchDeclarationParents(irFunction)
-            }
+        factory.createExpressionBody(
+            startOffset = originalDefault.startOffset,
+            endOffset = originalDefault.endOffset,
+            expression = originalDefault.expression.deepCopyWithVariables(),
+        ).apply {
+            expression.patchDeclarationParents(irFunction)
         }
     }
     return factory.createValueParameter(
