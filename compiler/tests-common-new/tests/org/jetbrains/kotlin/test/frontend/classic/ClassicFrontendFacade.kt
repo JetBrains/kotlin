@@ -319,22 +319,18 @@ class ClassicFrontendFacade(
         val friendLibraries = getDependencies(module, testServices, DependencyRelation.FriendDependency)
         val allDependencies = runtimeKlibs + dependencyDescriptors + friendLibraries + friendsDescriptors + transitiveLibraries
 
-        val analyzer = AnalyzerWithCompilerReport(configuration)
         val builtInModuleDescriptor = allDependencies.firstNotNullOfOrNull { it.builtIns }?.builtInsModule
-        analyzer.analyzeAndReport(files) {
-            TopDownAnalyzerFacadeForJSIR.analyzeFiles(
-                files,
-                project,
-                configuration,
-                allDependencies,
-                friendsDescriptors + friendLibraries,
-                compilerEnvironment,
-                thisIsBuiltInsModule = builtInModuleDescriptor == null,
-                customBuiltInsModule = builtInModuleDescriptor
-            )
-        }
 
-        return analyzer.analysisResult
+        return TopDownAnalyzerFacadeForJSIR.analyzeFiles(
+            files,
+            project,
+            configuration,
+            allDependencies,
+            friendsDescriptors + friendLibraries,
+            compilerEnvironment,
+            thisIsBuiltInsModule = builtInModuleDescriptor == null,
+            customBuiltInsModule = builtInModuleDescriptor
+        )
     }
 
     private fun performWasmModuleResolve(

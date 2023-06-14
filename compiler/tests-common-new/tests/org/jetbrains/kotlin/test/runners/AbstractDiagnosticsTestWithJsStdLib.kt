@@ -10,8 +10,9 @@ import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.classicFrontendHandlersStep
 import org.jetbrains.kotlin.test.builders.classicFrontendStep
+import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
+import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
-import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendFacade
 import org.jetbrains.kotlin.test.frontend.classic.handlers.ClassicDiagnosticsHandler
 import org.jetbrains.kotlin.test.frontend.classic.handlers.DeclarationsDumpHandler
 import org.jetbrains.kotlin.test.frontend.classic.handlers.DynamicCallsDumpHandler
@@ -34,6 +35,7 @@ abstract class AbstractDiagnosticsTestWithJsStdLib : AbstractKotlinCompilerTest(
         }
 
         defaultDirectives {
+            +ConfigurationDirectives.WITH_STDLIB
             +JvmEnvironmentConfigurationDirectives.USE_PSI_CLASS_FILES_READING
         }
 
