@@ -65,7 +65,6 @@ class Kapt4StubGenerator(private val analysisSession: KtAnalysisSession) {
         private const val PARAMETER_MODIFIERS = FIELD_MODIFIERS or Flags.PARAMETER or Flags.VARARGS or Opcodes.ACC_FINAL.toLong()
 
         private val BLACKLISTED_ANNOTATIONS = listOf(
-            "java.lang.Deprecated", "kotlin.Deprecated", // Deprecated annotations
             "java.lang.Synthetic",
             "synthetic.kotlin.jvm.GeneratedByJvmOverloads" // kapt3-related annotation for marking JvmOverloads-generated methods
         )
