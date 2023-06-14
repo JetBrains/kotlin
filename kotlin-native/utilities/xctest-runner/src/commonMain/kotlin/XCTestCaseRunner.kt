@@ -15,7 +15,7 @@ import kotlin.native.internal.test.TestCase
 import kotlin.native.internal.test.TestSuite
 
 @ExportObjCClass(name = "Kotlin/Native::Test")
-class TestCaseRunner(
+class XCTestCaseRunner(
         invocation: NSInvocation,
         private val testName: String,
         private val testCase: TestCase
@@ -81,13 +81,11 @@ class TestCaseRunner(
     }
 
     override fun setUp() {
-        super.setUp()
         if (!ignored) testCase.doBefore()
     }
 
     override fun tearDown() {
         if (!ignored) testCase.doAfter()
-        super.tearDown()
     }
 
     override fun description(): String = buildString {
@@ -152,7 +150,7 @@ class TestCaseRunner(
         }
 
         @Suppress("UNUSED_PARAMETER")
-        private fun runner(runner: TestCaseRunner, cmd: SEL) {
+        private fun runner(runner: XCTestCaseRunner, cmd: SEL) {
             runner.run()
         }
         //endregion
@@ -181,7 +179,7 @@ class TestCaseRunner(
 
 internal typealias SEL = COpaquePointer?
 
-class TestSuiteRunner(private val testSuite: TestSuite) : XCTestSuite(testSuite.name) {
+class XCTestSuiteRunner(private val testSuite: TestSuite) : XCTestSuite(testSuite.name) {
     private val ignoredSuite: Boolean
         get() = testSuite.ignored || testSuite.testCases.all { it.value.ignored }
 
@@ -196,7 +194,7 @@ class TestSuiteRunner(private val testSuite: TestSuite) : XCTestSuite(testSuite.
 
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.native.internal.ExportForCppRuntime("Konan_create_testSuite")
-fun defaultTestSuiteFactory(): XCTestSuite {
+internal fun setupXCTestSuite(): XCTestSuite {
     XCTestObservationCenter.sharedTestObservationCenter.addTestObserver(XCSimpleTestListener())
     val nativeTestSuite = XCTestSuite.testSuiteWithName("Kotlin/Native test suite")
 
@@ -223,14 +221,14 @@ fun defaultTestSuiteFactory(): XCTestSuite {
 
 @OptIn(ExperimentalStdlibApi::class)
 internal fun createTestSuites(): List<XCTestSuite> {
-    val testInvocations = TestCaseRunner.testInvocations()
+    val testInvocations = XCTestCaseRunner.testInvocations()
     return GeneratedSuites.suites.map {
-        val suite = TestSuiteRunner(it)
+        val suite = XCTestSuiteRunner(it)
         it.testCases.values.map { testCase ->
             testInvocations.filter { nsInvocation ->
                 NSStringFromSelector(nsInvocation.selector) == "${it.name}.${testCase.name}"
             }.map { inv ->
-                TestCaseRunner(
+                XCTestCaseRunner(
                         invocation = inv,
                         testName = "${it.name}.${testCase.name}",
                         testCase = testCase

@@ -53,8 +53,6 @@ public interface TestCase {
             doBefore()
             doRun()
         } finally {
-            // TODO: in case of an incorrect setup in doBefore() will doAfter() hide it by throwing a new exception
-            //  when it will try to cleanup something that wasn't initialized?
             doAfter()
         }
     }
