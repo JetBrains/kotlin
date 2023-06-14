@@ -249,7 +249,10 @@ class KmModule : KmModuleVisitor() {
 
     /**
      * Annotations on the module.
+     *
+     * Currently, Kotlin does not provide functionality to specify annotations on modules.
      */
+    @Deprecated("This list is always empty and will be removed", level = DeprecationLevel.WARNING)
     val annotations: MutableList<KmAnnotation> = ArrayList(0)
 
     /**
