@@ -753,18 +753,20 @@ class IrDeclarationDeserializer(
             val propertySymbol: IrPropertySymbol = symbol.checkSymbolType(PROPERTY_SYMBOL)
             val prop = symbolTable.declareProperty(uniqId, { propertySymbol }) {
                 irFactory.createProperty(
-                    startOffset, endOffset, origin,
-                    it,
-                    deserializeName(proto.name),
-                    flags.visibility,
-                    flags.modality,
-                    flags.isVar,
-                    flags.isConst,
-                    flags.isLateinit,
-                    flags.isDelegated,
-                    flags.isExternal || isEffectivelyExternal,
-                    flags.isExpect,
-                    flags.isFakeOverride
+                    startOffset = startOffset,
+                    endOffset = endOffset,
+                    origin = origin,
+                    name = deserializeName(proto.name),
+                    visibility = flags.visibility,
+                    modality = flags.modality,
+                    symbol = it,
+                    isVar = flags.isVar,
+                    isConst = flags.isConst,
+                    isLateinit = flags.isLateinit,
+                    isDelegated = flags.isDelegated,
+                    isExternal = flags.isExternal || isEffectivelyExternal,
+                    isExpect = flags.isExpect,
+                    isFakeOverride = flags.isFakeOverride,
                 )
             }
 

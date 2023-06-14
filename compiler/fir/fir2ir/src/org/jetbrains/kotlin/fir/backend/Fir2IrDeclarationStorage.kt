@@ -929,16 +929,20 @@ class Fir2IrDeclarationStorage(
             val result = declareIrProperty(signature) { symbol ->
                 classifierStorage.preCacheTypeParameters(property, symbol)
                 irFactory.createProperty(
-                    startOffset, endOffset, origin, symbol,
-                    property.name, components.visibilityConverter.convertToDescriptorVisibility(property.visibility), property.modality!!,
+                    startOffset = startOffset,
+                    endOffset = endOffset,
+                    origin = origin,
+                    name = property.name,
+                    visibility = components.visibilityConverter.convertToDescriptorVisibility(property.visibility),
+                    modality = property.modality!!,
+                    symbol = symbol,
                     isVar = property.isVar,
                     isConst = property.isConst,
                     isLateinit = property.isLateInit,
                     isDelegated = property.delegate != null,
                     isExternal = property.isExternal,
-                    isExpect = property.isExpect,
-                    isFakeOverride = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
                     containerSource = property.containerSource,
+                    isExpect = property.isExpect,
                 ).apply {
                     metadata = FirMetadataSource.Property(property)
                     convertAnnotationsForNonDeclaredMembers(property, origin)

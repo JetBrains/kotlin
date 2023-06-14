@@ -98,11 +98,21 @@ fun IrClass.addField(
 @PublishedApi
 internal fun IrFactory.buildProperty(builder: IrPropertyBuilder): IrProperty = with(builder) {
     createProperty(
-        startOffset, endOffset, origin,
-        IrPropertySymbolImpl(),
-        name, visibility, modality,
-        isVar, isConst, isLateinit, isDelegated, isExternal, isExpect, isFakeOverride,
-        containerSource,
+        startOffset = startOffset,
+        endOffset = endOffset,
+        origin = origin,
+        name = name,
+        visibility = visibility,
+        modality = modality,
+        symbol = IrPropertySymbolImpl(),
+        isVar = isVar,
+        isConst = isConst,
+        isLateinit = isLateinit,
+        isDelegated = isDelegated,
+        isExternal = isExternal,
+        containerSource = containerSource,
+        isExpect = isExpect,
+        isFakeOverride = isFakeOverride,
     )
 }
 

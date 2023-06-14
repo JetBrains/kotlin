@@ -147,24 +147,37 @@ class LazyIrFactory(
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
-        symbol: IrPropertySymbol,
         name: Name,
         visibility: DescriptorVisibility,
         modality: Modality,
+        symbol: IrPropertySymbol,
         isVar: Boolean,
         isConst: Boolean,
         isLateinit: Boolean,
         isDelegated: Boolean,
         isExternal: Boolean,
+        containerSource: DeserializedContainerSource?,
         isExpect: Boolean,
-        isFakeOverride: Boolean,
-        containerSource: DeserializedContainerSource?
+        isFakeOverride: Boolean
     ): IrProperty = if (symbol.isBound)
         symbol.owner
     else
         delegate.createProperty(
-            startOffset, endOffset, origin, symbol, name, visibility, modality,
-            isVar, isConst, isLateinit, isDelegated, isExternal, isExpect, isFakeOverride, containerSource
+            startOffset,
+            endOffset,
+            origin,
+            name,
+            visibility,
+            modality,
+            symbol,
+            isVar,
+            isConst,
+            isLateinit,
+            isDelegated,
+            isExternal,
+            containerSource,
+            isExpect,
+            isFakeOverride,
         )
 
     override fun createTypeAlias(

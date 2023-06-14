@@ -422,16 +422,19 @@ class IrDescriptorBasedFunctionFactory(
         fun createFakeOverrideProperty(descriptor: PropertyDescriptor): IrProperty {
             return symbolTable.declareProperty(offset, offset, memberOrigin, descriptor) {
                 irFactory.createProperty(
-                    offset, offset, memberOrigin, it,
+                    startOffset = offset,
+                    endOffset = offset,
+                    origin = memberOrigin,
                     name = descriptor.name,
                     visibility = descriptor.visibility,
                     modality = descriptor.modality,
+                    symbol = it,
                     isVar = descriptor.isVar,
                     isConst = descriptor.isConst,
                     isLateinit = descriptor.isLateInit,
                     isDelegated = descriptor.isDelegated,
                     isExternal = descriptor.isEffectivelyExternal(),
-                    isExpect = descriptor.isExpect
+                    isExpect = descriptor.isExpect,
                 ).apply {
                     parent = this@addFakeOverrides
                     getter = descriptor.getter?.let { g -> createFakeOverrideFunction(g, symbol) }

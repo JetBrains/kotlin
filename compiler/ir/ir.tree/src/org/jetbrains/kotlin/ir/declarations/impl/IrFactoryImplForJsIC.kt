@@ -258,35 +258,35 @@ class IrFactoryImplForJsIC(override val stageController: StageController) : Abst
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
-        symbol: IrPropertySymbol,
         name: Name,
         visibility: DescriptorVisibility,
         modality: Modality,
+        symbol: IrPropertySymbol,
         isVar: Boolean,
         isConst: Boolean,
         isLateinit: Boolean,
         isDelegated: Boolean,
         isExternal: Boolean,
+        containerSource: DeserializedContainerSource?,
         isExpect: Boolean,
-        isFakeOverride: Boolean,
-        containerSource: DeserializedContainerSource?
+        isFakeOverride: Boolean
     ): IrProperty {
         return super.createProperty(
             startOffset,
             endOffset,
             origin,
-            symbol,
             name,
             visibility,
             modality,
+            symbol,
             isVar,
             isConst,
             isLateinit,
             isDelegated,
             isExternal,
+            containerSource,
             isExpect,
             isFakeOverride,
-            containerSource,
         ).register()
     }
 

@@ -242,16 +242,19 @@ internal class StandaloneDeclarationGenerator(private val context: GeneratorCont
         startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, descriptor: PropertyDescriptor, symbol: IrPropertySymbol
     ): IrProperty {
         val irProperty = irFactory.createProperty(
-            startOffset, endOffset, origin, symbol,
+            startOffset = startOffset,
+            endOffset = endOffset,
+            origin = origin,
             name = descriptor.name,
             visibility = descriptor.visibility,
             modality = descriptor.modality,
+            symbol = symbol,
             isVar = descriptor.isVar,
             isConst = descriptor.isConst,
             isLateinit = descriptor.isLateInit,
             isDelegated = false,
             isExternal = descriptor.isEffectivelyExternal(),
-            isExpect = descriptor.isExpect
+            isExpect = descriptor.isExpect,
         )
 
         irProperty.metadata = DescriptorMetadataSource.Property(descriptor)

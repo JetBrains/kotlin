@@ -235,19 +235,20 @@ open class DeepCopyIrTreeWithSymbols(
 
     override fun visitProperty(declaration: IrProperty): IrProperty =
         declaration.factory.createProperty(
-            declaration.startOffset, declaration.endOffset,
-            mapDeclarationOrigin(declaration.origin),
-            symbolRemapper.getDeclaredProperty(declaration.symbol),
-            declaration.name,
-            declaration.visibility,
-            declaration.modality,
+            startOffset = declaration.startOffset,
+            endOffset = declaration.endOffset,
+            origin = mapDeclarationOrigin(declaration.origin),
+            name = declaration.name,
+            visibility = declaration.visibility,
+            modality = declaration.modality,
+            symbol = symbolRemapper.getDeclaredProperty(declaration.symbol),
             isVar = declaration.isVar,
             isConst = declaration.isConst,
             isLateinit = declaration.isLateinit,
             isDelegated = declaration.isDelegated,
             isExternal = declaration.isExternal,
-            isExpect = declaration.isExpect,
             containerSource = declaration.containerSource,
+            isExpect = declaration.isExpect,
         ).apply {
             transformAnnotations(declaration)
             copyAttributes(declaration)
