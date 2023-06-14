@@ -131,7 +131,7 @@ private class LLFirTypeTargetResolver(
             is FirRegularClass -> {
                 resolveClassTypes(target)
             }
-            is FirFile, is FirAnonymousInitializer -> {}
+            is FirFile, is FirAnonymousInitializer, is FirCodeFragment -> {}
             else -> errorWithAttachment("Unknown declaration ${target::class}") {
                 withFirEntry("declaration", target)
             }

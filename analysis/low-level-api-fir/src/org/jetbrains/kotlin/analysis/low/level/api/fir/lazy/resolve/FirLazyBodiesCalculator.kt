@@ -87,7 +87,7 @@ private inline fun <reified T : FirDeclaration> revive(
         session = session,
         scopeProvider = session.kotlinScopeProvider,
         designation = designation,
-        rootNonLocalDeclaration = psiFactory(designation) as KtDeclaration,
+        rootNonLocalDeclaration = psiFactory(designation) as KtElement,
     ) as T
 }
 
@@ -264,6 +264,14 @@ private fun needCalculatingLazyBodyForProperty(firProperty: FirProperty): Boolea
             || firProperty.initializer is FirLazyExpression
             || firProperty.delegate is FirLazyExpression
             || firProperty.getExplicitBackingField()?.initializer is FirLazyExpression
+
+private fun calculateLazyBodyForCodeFragment(designation: FirDesignation) {
+    val codeFragment = designation.target as FirCodeFragment
+    require(codeFragment.block is FirLazyBlock)
+
+    val newCodeFragment = revive<FirCodeFragment>(designation)
+    codeFragment.replaceBlock(newCodeFragment.block)
+}
 
 private enum class FirLazyAnnotationTransformerScope {
     ALL_ANNOTATIONS,
@@ -471,5 +479,14 @@ private abstract class FirLazyBodiesCalculatorTransformer : FirTransformer<Persi
         }
 
         return anonymousInitializer
+    }
+
+    override fun transformCodeFragment(codeFragment: FirCodeFragment, data: PersistentList<FirRegularClass>): FirCodeFragment {
+        if (codeFragment.block is FirLazyBlock) {
+            val designation = FirDesignation(data, codeFragment)
+            calculateLazyBodyForCodeFragment(designation)
+        }
+
+        return codeFragment
     }
 }
