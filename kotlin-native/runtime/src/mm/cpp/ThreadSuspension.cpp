@@ -10,6 +10,7 @@
 #include <thread>
 #include <mutex>
 
+#include "CallsChecker.hpp"
 #include "Logging.hpp"
 #include "StackTrace.hpp"
 
@@ -50,7 +51,9 @@ THREAD_LOCAL_VARIABLE bool gSuspensionRequestedByCurrentThread = false;
 
 std::atomic<bool> kotlin::mm::internal::gSuspensionRequested = false;
 
-NO_EXTERNAL_CALLS_CHECK void kotlin::mm::ThreadSuspensionData::suspendIfRequestedSlowPath() noexcept {
+void kotlin::mm::ThreadSuspensionData::suspendIfRequestedSlowPath() noexcept {
+    CallsCheckerIgnoreGuard guard;
+
     if (IsThreadSuspensionRequested()) {
         threadData_.gc().OnSuspendForGC();
         std::unique_lock lock(gSuspensionMutex);
@@ -65,7 +68,9 @@ NO_EXTERNAL_CALLS_CHECK void kotlin::mm::ThreadSuspensionData::suspendIfRequeste
     }
 }
 
-NO_EXTERNAL_CALLS_CHECK bool kotlin::mm::RequestThreadsSuspension() noexcept {
+bool kotlin::mm::RequestThreadsSuspension() noexcept {
+    CallsCheckerIgnoreGuard guard;
+
     RuntimeAssert(gSuspensionRequestedByCurrentThread == false, "Current thread already suspended threads.");
     {
         std::unique_lock lock(gSuspensionMutex);

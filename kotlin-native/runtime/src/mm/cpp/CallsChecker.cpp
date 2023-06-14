@@ -3,6 +3,8 @@
  * that can be found in the LICENSE file.
  */
 
+#include "CallsChecker.hpp"
+
 #ifndef KONAN_NO_EXTERNAL_CALLS_CHECKER
 #include <string_view>
 #include <cstring>
@@ -10,6 +12,7 @@
 #include "KAssert.h"
 #include "Memory.h"
 #include "Porting.h"
+#include "StackTrace.hpp"
 #include "ThreadData.hpp"
 #include "ThreadRegistry.hpp"
 #include "ExecFormat.h"
@@ -321,6 +324,8 @@ private:
 constexpr int MSG_SEND_TO_NULL = -1;
 constexpr int CALLED_LLVM_BUILTIN = -2;
 
+thread_local size_t ignoreGuardsCount = 0;
+
 }
 
 /**
@@ -335,15 +340,10 @@ constexpr int CALLED_LLVM_BUILTIN = -2;
  */
 extern "C" RUNTIME_NOTHROW RUNTIME_NODEBUG void Kotlin_mm_checkStateAtExternalFunctionCall(const char* caller, const char *callee, const void *calleePtr) noexcept {
     if (reinterpret_cast<int64_t>(calleePtr) == MSG_SEND_TO_NULL) return; // objc_sendMsg called on nil, it does nothing, so it's ok
+    if (ignoreGuardsCount != 0) return;
     if (konan::isOnThreadExitNotSetOrAlreadyStarted()) return;
-    static thread_local bool recursiveCallGuard = false;
-    if (recursiveCallGuard) return;
     if (!mm::ThreadRegistry::Instance().IsCurrentThreadRegistered()) return;
-    struct unlockGuard {
-        unlockGuard() { recursiveCallGuard = true; }
-        ~unlockGuard() { recursiveCallGuard = false; }
-    } guard;
-
+    CallsCheckerIgnoreGuard recursiveGuard;
 
     auto actualState = GetThreadState();
     if (actualState == ThreadState::kNative) {
@@ -367,7 +367,14 @@ extern "C" RUNTIME_NOTHROW RUNTIME_NODEBUG void Kotlin_mm_checkStateAtExternalFu
         return;
     }
 
+    PrintStackTraceStderr();
     RuntimeFail("Expected kNative thread state at call of function %s by function %s", callee, caller);
 }
 
+CallsCheckerIgnoreGuard::CallsCheckerIgnoreGuard() noexcept { ++ignoreGuardsCount; }
+CallsCheckerIgnoreGuard::~CallsCheckerIgnoreGuard() { --ignoreGuardsCount; }
+
+#else
+kotlin::CallsCheckerIgnoreGuard::CallsCheckerIgnoreGuard() noexcept {}
+kotlin::CallsCheckerIgnoreGuard::~CallsCheckerIgnoreGuard() {}
 #endif // KONAN_NO_EXTERNAL_CALLS_CHECKER

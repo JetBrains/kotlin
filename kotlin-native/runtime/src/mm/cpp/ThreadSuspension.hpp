@@ -44,7 +44,7 @@ public:
 
     bool suspended() noexcept { return suspended_; }
 
-    NO_EXTERNAL_CALLS_CHECK void suspendIfRequested() noexcept {
+    void suspendIfRequested() noexcept {
         if (IsThreadSuspensionRequested()) {
             suspendIfRequestedSlowPath();
         }

@@ -8,6 +8,7 @@
 #include <array>
 #include <cinttypes>
 
+#include "CallsChecker.hpp"
 #include "Format.h"
 #include "KAssert.h"
 #include "Porting.h"
@@ -104,7 +105,7 @@ private:
 
 class StderrLogger : public logging::internal::Logger {
 public:
-    NO_EXTERNAL_CALLS_CHECK void Log(logging::Level level, std_support::span<const char* const> tags, std::string_view message) const noexcept override {
+    void Log(logging::Level level, std_support::span<const char* const> tags, std::string_view message) const noexcept override {
         konan::consoleErrorUtf8(message.data(), message.size());
     }
 };
@@ -204,6 +205,8 @@ void logging::Log(Level level, std::initializer_list<const char*> tags, const ch
 }
 
 void logging::VLog(Level level, std::initializer_list<const char*> tags, const char* format, std::va_list args) noexcept {
+    CallsCheckerIgnoreGuard guard;
+
     [[clang::no_destroy]] static DefaultLogContext ctx(compiler::runtimeLogs());
     RuntimeAssert(tags.size() > 0, "Cannot Log without tags");
     std_support::span<const char* const> tagsSpan(std::data(tags), std::size(tags));

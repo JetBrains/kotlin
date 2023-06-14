@@ -8,6 +8,7 @@
 #include <cinttypes>
 #include <optional>
 
+#include "CallsChecker.hpp"
 #include "CompilerConstants.hpp"
 #include "GlobalData.hpp"
 #include "GCImpl.hpp"
@@ -90,7 +91,9 @@ void gc::ConcurrentMarkAndSweep::ThreadData::OnOOM(size_t size) noexcept {
     ScheduleAndWaitFullGC();
 }
 
-NO_EXTERNAL_CALLS_CHECK void gc::ConcurrentMarkAndSweep::ThreadData::OnSuspendForGC() noexcept {
+void gc::ConcurrentMarkAndSweep::ThreadData::OnSuspendForGC() noexcept {
+    CallsCheckerIgnoreGuard guard;
+
     std::unique_lock lock(markingMutex);
     if (!markingRequested.load()) return;
     AutoReset scopedAssignMarking(&marking_, true);
@@ -259,7 +262,7 @@ void gc::ConcurrentMarkAndSweep::WaitForThreadsReadyToMark() noexcept {
     }
 }
 
-NO_EXTERNAL_CALLS_CHECK void gc::ConcurrentMarkAndSweep::CollectRootSetAndStartMarking(GCHandle gcHandle) noexcept {
+void gc::ConcurrentMarkAndSweep::CollectRootSetAndStartMarking(GCHandle gcHandle) noexcept {
         std::unique_lock lock(markingMutex);
         markingRequested = false;
         gc::collectRootSet<internal::MarkTraits>(
