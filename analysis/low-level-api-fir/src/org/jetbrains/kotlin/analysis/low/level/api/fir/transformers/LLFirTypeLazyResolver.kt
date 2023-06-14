@@ -129,7 +129,7 @@ private class LLFirTypeTargetResolver(
             is FirRegularClass -> {
                 resolveClassTypes(target)
             }
-            is FirAnonymousInitializer -> {}
+            is FirAnonymousInitializer, is FirCodeFragment -> {}
             else -> errorWithAttachment("Unknown declaration ${target::class}") {
                 withFirEntry("declaration", target)
             }

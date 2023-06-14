@@ -113,6 +113,8 @@ internal fun LLFirAbstractBodyTargetResolver.transformAnnotations(target: FirEle
             target.transformSingle(transformer, ResolutionMode.ContextIndependent)
         }
 
+        target is FirCodeFragment -> {}
+
         else -> throwUnexpectedFirElementError(target)
     }
 }

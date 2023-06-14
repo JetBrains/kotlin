@@ -264,7 +264,8 @@ internal fun PsiElement.getNonLocalContainingOrThisDeclaration(predicate: (KtDec
                 parent is KtClassInitializer ||
                 parent is KtObjectLiteralExpression ||
                 parent is KtCallElement ||
-                parent is KtScript
+                parent is KtScript ||
+                parent is KtCodeFragment
             ) {
                 // Candidate turned out to be local. Let's find another one.
                 candidate = null

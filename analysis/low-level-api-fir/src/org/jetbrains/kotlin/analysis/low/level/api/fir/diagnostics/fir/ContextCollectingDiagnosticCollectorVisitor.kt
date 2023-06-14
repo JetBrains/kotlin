@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.fir.analysis.collectors.AbstractDiagnosticCollectorV
 import org.jetbrains.kotlin.fir.containingClass
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.classId
-import org.jetbrains.kotlin.fir.renderWithType
 import org.jetbrains.kotlin.fir.resolve.SessionHolder
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
@@ -67,7 +66,7 @@ internal object PersistenceContextCollector {
             is FirCallableDeclaration -> declaration.symbol.callableId.isLocal
             is FirDanglingModifierList -> declaration.containingClass()?.classId?.isLocal == true
             is FirAnonymousInitializer -> declaration.containingClass().classId.isLocal
-            is FirScript -> false
+            is FirScript, is FirCodeFragment -> false
             else -> errorWithAttachment("Unsupported declaration ${declaration::class}") {
                 withFirEntry("declaration", declaration)
             }
