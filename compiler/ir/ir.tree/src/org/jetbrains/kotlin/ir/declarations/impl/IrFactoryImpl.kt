@@ -224,11 +224,11 @@ abstract class AbstractIrFactoryImpl : IrFactory {
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
-        symbol: IrTypeParameterSymbol,
         name: Name,
+        symbol: IrTypeParameterSymbol,
+        variance: Variance,
         index: Int,
         isReified: Boolean,
-        variance: Variance,
     ): IrTypeParameter =
         IrTypeParameterImpl(startOffset, endOffset, origin, symbol, name, index, isReified, variance, factory = this)
 

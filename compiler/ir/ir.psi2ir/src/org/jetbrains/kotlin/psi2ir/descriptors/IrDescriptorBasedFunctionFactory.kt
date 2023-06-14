@@ -219,7 +219,14 @@ class IrDescriptorBasedFunctionFactory(
 
             val pSymbol = descriptorFactory.typeParameterDescriptor(index) {
                 irFactory.createTypeParameter(
-                    offset, offset, classOrigin, it, pName, index++, false, Variance.IN_VARIANCE
+                    startOffset = offset,
+                    endOffset = offset,
+                    origin = classOrigin,
+                    name = pName,
+                    symbol = it,
+                    variance = Variance.IN_VARIANCE,
+                    index = index++,
+                    isReified = false
                 )
             }
             val pDeclaration = pSymbol.owner
@@ -231,7 +238,14 @@ class IrDescriptorBasedFunctionFactory(
 
         val rSymbol = descriptorFactory.typeParameterDescriptor(index) {
             irFactory.createTypeParameter(
-                offset, offset, classOrigin, it, Name.identifier("R"), index, false, Variance.OUT_VARIANCE
+                startOffset = offset,
+                endOffset = offset,
+                origin = classOrigin,
+                name = Name.identifier("R"),
+                symbol = it,
+                variance = Variance.OUT_VARIANCE,
+                index = index,
+                isReified = false
             )
         }
         val rDeclaration = rSymbol.owner

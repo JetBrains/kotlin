@@ -342,13 +342,14 @@ open class DeepCopyIrTreeWithSymbols(
 
     private fun copyTypeParameter(declaration: IrTypeParameter): IrTypeParameter =
         declaration.factory.createTypeParameter(
-            declaration.startOffset, declaration.endOffset,
-            mapDeclarationOrigin(declaration.origin),
-            symbolRemapper.getDeclaredTypeParameter(declaration.symbol),
-            symbolRenamer.getTypeParameterName(declaration.symbol),
-            declaration.index,
-            declaration.isReified,
-            declaration.variance
+            startOffset = declaration.startOffset,
+            endOffset = declaration.endOffset,
+            origin = mapDeclarationOrigin(declaration.origin),
+            name = symbolRenamer.getTypeParameterName(declaration.symbol),
+            symbol = symbolRemapper.getDeclaredTypeParameter(declaration.symbol),
+            variance = declaration.variance,
+            index = declaration.index,
+            isReified = declaration.isReified,
         ).apply {
             transformAnnotations(declaration)
         }

@@ -458,8 +458,14 @@ class IrBuiltInsOverFir(
 
             checkNotNullSymbol = run {
                 val typeParameter: IrTypeParameter = irFactory.createTypeParameter(
-                    UNDEFINED_OFFSET, UNDEFINED_OFFSET, BUILTIN_OPERATOR, IrTypeParameterSymbolImpl(), Name.identifier("T0"), 0, true,
-                    Variance.INVARIANT
+                    startOffset = UNDEFINED_OFFSET,
+                    endOffset = UNDEFINED_OFFSET,
+                    origin = BUILTIN_OPERATOR,
+                    name = Name.identifier("T0"),
+                    symbol = IrTypeParameterSymbolImpl(),
+                    variance = Variance.INVARIANT,
+                    index = 0,
+                    isReified = true
                 ).apply {
                     superTypes = listOf(anyType)
                 }

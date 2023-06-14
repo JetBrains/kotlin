@@ -346,21 +346,21 @@ class IrFactoryImplForJsIC(override val stageController: StageController) : Abst
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
-        symbol: IrTypeParameterSymbol,
         name: Name,
+        symbol: IrTypeParameterSymbol,
+        variance: Variance,
         index: Int,
-        isReified: Boolean,
-        variance: Variance
+        isReified: Boolean
     ): IrTypeParameter {
         return super.createTypeParameter(
             startOffset,
             endOffset,
             origin,
-            symbol,
             name,
+            symbol,
+            variance,
             index,
             isReified,
-            variance,
         ).register()
     }
 

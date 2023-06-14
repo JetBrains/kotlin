@@ -183,11 +183,11 @@ interface IrFactory {
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
-        symbol: IrTypeParameterSymbol,
         name: Name,
+        symbol: IrTypeParameterSymbol,
+        variance: Variance,
         index: Int,
         isReified: Boolean,
-        variance: Variance,
     ): IrTypeParameter
 
     fun createValueParameter(

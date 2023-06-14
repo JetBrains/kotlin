@@ -283,14 +283,14 @@ class IrDeclarationDeserializer(
 
         val factory = { symbol: IrTypeParameterSymbol ->
             irFactory.createTypeParameter(
-                coordinates.startOffset,
-                coordinates.endOffset,
-                deserializeIrDeclarationOrigin(proto.base.originName),
-                symbol,
-                name,
-                index,
-                flags.isReified,
-                flags.variance
+                startOffset = coordinates.startOffset,
+                endOffset = coordinates.endOffset,
+                origin = deserializeIrDeclarationOrigin(proto.base.originName),
+                name = name,
+                symbol = symbol,
+                variance = flags.variance,
+                index = index,
+                isReified = flags.isReified
             )
         }
 

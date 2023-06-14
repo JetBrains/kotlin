@@ -321,9 +321,14 @@ fun IrFunction.addValueParameter(name: Name, type: IrType, origin: IrDeclaration
 internal fun IrFactory.buildTypeParameter(builder: IrTypeParameterBuilder, parent: IrDeclarationParent): IrTypeParameter =
     with(builder) {
         createTypeParameter(
-            startOffset, endOffset, origin,
-            IrTypeParameterSymbolImpl(),
-            name, index, isReified, variance
+            startOffset = startOffset,
+            endOffset = endOffset,
+            origin = origin,
+            name = name,
+            symbol = IrTypeParameterSymbolImpl(),
+            variance = variance,
+            index = index,
+            isReified = isReified,
         ).also {
             it.superTypes = superTypes
             it.parent = parent

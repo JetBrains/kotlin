@@ -185,13 +185,13 @@ class LazyIrFactory(
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
-        symbol: IrTypeParameterSymbol,
         name: Name,
+        symbol: IrTypeParameterSymbol,
+        variance: Variance,
         index: Int,
-        isReified: Boolean,
-        variance: Variance
+        isReified: Boolean
     ): IrTypeParameter = if (symbol.isBound)
         symbol.owner
     else
-        delegate.createTypeParameter(startOffset, endOffset, origin, symbol, name, index, isReified, variance)
+        delegate.createTypeParameter(startOffset, endOffset, origin, name, symbol, variance, index, isReified)
 }
