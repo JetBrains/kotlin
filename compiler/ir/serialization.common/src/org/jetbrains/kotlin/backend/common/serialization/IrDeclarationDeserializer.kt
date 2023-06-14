@@ -433,13 +433,14 @@ class IrDeclarationDeserializer(
                 val flags = TypeAliasFlags.decode(fcode)
                 val nameType = BinaryNameAndType.decode(proto.nameType)
                 irFactory.createTypeAlias(
-                    startOffset, endOffset,
-                    it,
-                    deserializeName(nameType.nameIndex),
-                    flags.visibility,
-                    deserializeIrType(nameType.typeIndex),
-                    flags.isActual,
-                    origin
+                    startOffset = startOffset,
+                    endOffset = endOffset,
+                    origin = origin,
+                    name = deserializeName(nameType.nameIndex),
+                    visibility = flags.visibility,
+                    symbol = it,
+                    isActual = flags.isActual,
+                    expandedType = deserializeIrType(nameType.typeIndex),
                 )
             }.usingParent {
                 typeParameters = deserializeTypeParameters(proto.typeParameterList, true)

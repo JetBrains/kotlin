@@ -120,7 +120,14 @@ internal class StandaloneDeclarationGenerator(private val context: GeneratorCont
         symbol: IrTypeAliasSymbol
     ): IrTypeAlias = with(descriptor) {
         irFactory.createTypeAlias(
-            startOffset, endOffset, symbol, name, visibility, expandedType.toIrType(), isActual, origin
+            startOffset = startOffset,
+            endOffset = endOffset,
+            origin = origin,
+            name = name,
+            visibility = visibility,
+            symbol = symbol,
+            isActual = isActual,
+            expandedType = expandedType.toIrType()
         ).also {
             generateGlobalTypeParametersDeclarations(it, declaredTypeParameters)
         }

@@ -311,10 +311,14 @@ class Fir2IrClassifierStorage(
             declareIrTypeAlias(signature) { symbol ->
                 preCacheTypeParameters(typeAlias, symbol)
                 val irTypeAlias = irFactory.createTypeAlias(
-                    startOffset, endOffset, symbol,
-                    typeAlias.name, components.visibilityConverter.convertToDescriptorVisibility(typeAlias.visibility),
-                    typeAlias.expandedTypeRef.toIrType(),
-                    typeAlias.isActual, IrDeclarationOrigin.DEFINED
+                    startOffset = startOffset,
+                    endOffset = endOffset,
+                    origin = IrDeclarationOrigin.DEFINED,
+                    name = typeAlias.name,
+                    visibility = components.visibilityConverter.convertToDescriptorVisibility(typeAlias.visibility),
+                    symbol = symbol,
+                    isActual = typeAlias.isActual,
+                    expandedType = typeAlias.expandedTypeRef.toIrType(),
                 ).apply {
                     this.parent = parent
                     setTypeParameters(typeAlias)

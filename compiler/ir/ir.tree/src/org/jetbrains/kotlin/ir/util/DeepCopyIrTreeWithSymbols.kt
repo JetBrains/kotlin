@@ -387,13 +387,14 @@ open class DeepCopyIrTreeWithSymbols(
 
     override fun visitTypeAlias(declaration: IrTypeAlias): IrTypeAlias =
         declaration.factory.createTypeAlias(
-            declaration.startOffset, declaration.endOffset,
-            symbolRemapper.getDeclaredTypeAlias(declaration.symbol),
-            symbolRenamer.getTypeAliasName(declaration.symbol),
-            declaration.visibility,
-            declaration.expandedType.remapType(),
-            declaration.isActual,
-            mapDeclarationOrigin(declaration.origin)
+            startOffset = declaration.startOffset,
+            endOffset = declaration.endOffset,
+            origin = mapDeclarationOrigin(declaration.origin),
+            name = symbolRenamer.getTypeAliasName(declaration.symbol),
+            visibility = declaration.visibility,
+            symbol = symbolRemapper.getDeclaredTypeAlias(declaration.symbol),
+            isActual = declaration.isActual,
+            expandedType = declaration.expandedType.remapType(),
         ).apply {
             transformAnnotations(declaration)
             copyTypeParametersFrom(declaration)

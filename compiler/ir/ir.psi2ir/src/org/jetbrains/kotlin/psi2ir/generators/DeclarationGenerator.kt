@@ -111,8 +111,14 @@ class DeclarationGenerator(override val context: GeneratorContext) : Generator {
         with(getOrFail(BindingContext.TYPE_ALIAS, ktTypeAlias)) {
             context.symbolTable.declareTypeAlias(this) { symbol ->
                 context.irFactory.createTypeAlias(
-                    ktTypeAlias.startOffsetSkippingComments, ktTypeAlias.endOffset, symbol,
-                    name, visibility, expandedType.toIrType(), isActual, IrDeclarationOrigin.DEFINED
+                    startOffset = ktTypeAlias.startOffsetSkippingComments,
+                    endOffset = ktTypeAlias.endOffset,
+                    origin = IrDeclarationOrigin.DEFINED,
+                    name = name,
+                    visibility = visibility,
+                    symbol = symbol,
+                    isActual = isActual,
+                    expandedType = expandedType.toIrType()
                 )
             }.also {
                 generateGlobalTypeParametersDeclarations(it, declaredTypeParameters)
