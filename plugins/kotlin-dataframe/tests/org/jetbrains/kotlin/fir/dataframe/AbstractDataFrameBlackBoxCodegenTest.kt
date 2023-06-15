@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.dataframe
 
 import org.jetbrains.kotlin.fir.dataframe.services.BaseTestRunner
-import org.jetbrains.kotlin.fir.dataframe.services.ObsoleteExtensionRegistrarConfigurator
+import org.jetbrains.kotlin.fir.dataframe.services.ExperimentalExtensionRegistrarConfigurator
 import org.jetbrains.kotlin.fir.dataframe.services.classpath.classpathFromClassloader
 import org.jetbrains.kotlin.fir.dataframe.services.commonFirWithPluginFrontendConfiguration
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
@@ -55,7 +55,7 @@ open class AbstractDataFrameBlackBoxCodegenTest : BaseTestRunner()/*, RunnerWith
         facadeStep(::FirFrontendFacade)
         commonFirWithPluginFrontendConfiguration()
         useConfigurators(
-            ::ObsoleteExtensionRegistrarConfigurator
+            ::ExperimentalExtensionRegistrarConfigurator
         )
         firHandlersStep {
             useHandlers(
