@@ -223,7 +223,7 @@ private fun mapInapplicableCandidateError(
                 FirErrors.ARGUMENT_TYPE_MISMATCH.createOn(
                     rootCause.argument.source ?: source,
                     rootCause.expectedType.removeTypeVariableTypes(typeContext),
-                    rootCause.argument.typeRef.coneType.removeTypeVariableTypes(typeContext),
+                    rootCause.actualType.removeTypeVariableTypes(typeContext),
                     rootCause.isMismatchDueToNullability
                 )
             }
