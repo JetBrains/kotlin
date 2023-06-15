@@ -1097,11 +1097,31 @@ abstract class FirDataFlowAnalyzer(
             // If LHS is never null, then the edge from RHS is dead and this node's flow already contains
             // all statements from LHS unconditionally.
             if (isLhsNotNull) return@mergeIncomingFlow
+
+            val elvisVariable by lazy { variableStorage.createSynthetic(elvisExpression) }
+
+            // If (x ?: null) != null then x != null
+            if (elvisExpression.rhs.resultType.isNullableNothing) {
+                val lhsVariable = variableStorage.getOrCreateIfReal(flow, elvisExpression.lhs)
+                if (lhsVariable != null) {
+                    flow.addImplication((elvisVariable notEq null) implies (lhsVariable notEq null))
+                }
+            }
+
+            // If (null ?: x) != null then x != null
+            if (elvisExpression.lhs.resultType.isNullableNothing) {
+                val rhsVariable = variableStorage.getOrCreateIfReal(flow, elvisExpression.rhs)
+                if (rhsVariable != null) {
+                    flow.addImplication((elvisVariable notEq null) implies (rhsVariable notEq null))
+                }
+            }
+
             // For any predicate P(x), if P(v) != P(u ?: v) then u != null. In general this requires two levels of
             // implications, but for constant v the logic system can handle some basic cases of P(x).
-            val rhs = (elvisExpression.rhs as? FirConstExpression<*>)?.value as? Boolean ?: return@mergeIncomingFlow
-            val elvisVariable = variableStorage.createSynthetic(elvisExpression)
-            flow.addAllConditionally(elvisVariable eq !rhs, node.firstPreviousNode.flow)
+            val rhs = (elvisExpression.rhs as? FirConstExpression<*>)?.value as? Boolean
+            if (rhs != null) {
+                flow.addAllConditionally(elvisVariable eq !rhs, node.firstPreviousNode.flow)
+            }
         }
     }
 
