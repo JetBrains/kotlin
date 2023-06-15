@@ -39,11 +39,6 @@ kotlin {
         fromPreset(presets.mingwX64, 'mingw64')
         fromPreset(presets.macosX64, 'macos64')
 
-        // We use this library in the cinterop test which includes a Windows x86 target.
-        fromPreset(presets.mingwX86, 'mingw86')
-
-        fromPreset(presets.linuxMipsel32, 'linuxMipsel32')
-
         // Check the DSL constructs in the Groovy DSL:
         fromPreset(presets.jvm, 'jvm6') {
         	println "Configuring $targetName"

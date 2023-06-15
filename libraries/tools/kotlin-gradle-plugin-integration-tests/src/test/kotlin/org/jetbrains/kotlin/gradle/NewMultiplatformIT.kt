@@ -40,7 +40,6 @@ open class NewMultiplatformIT : BaseGradleIT() {
     private val gradleVersion = GradleVersionRequired.FOR_MPP_SUPPORT
 
     private val nativeHostTargetName = MPPNativeTargets.current
-    private val unsupportedNativeTargets = MPPNativeTargets.unsupported
 
     private fun Project.targetClassesDir(targetName: String, sourceSetName: String = "main") =
         classesDir(sourceSet = "$targetName/$sourceSetName")
@@ -48,7 +47,7 @@ open class NewMultiplatformIT : BaseGradleIT() {
     private data class HmppFlags(
         val hmppSupport: Boolean,
         val enableCompatibilityMetadataArtifact: Boolean,
-        val name: String
+        val name: String,
     ) {
         override fun toString() = name
     }
@@ -308,7 +307,7 @@ open class NewMultiplatformIT : BaseGradleIT() {
     private fun doTestLibAndAppJsBothCompilers(
         libProjectName: String,
         appProjectName: String,
-        jsCompilerType: KotlinJsCompilerType
+        jsCompilerType: KotlinJsCompilerType,
     ) {
         val libProject = transformProjectWithPluginsDsl(libProjectName, directoryPrefix = "both-js-lib-and-app")
         val appProject = transformProjectWithPluginsDsl(appProjectName, directoryPrefix = "both-js-lib-and-app")
@@ -883,7 +882,7 @@ open class NewMultiplatformIT : BaseGradleIT() {
         fun testMonotonousCheck(
             initialSetupForSourceSets: String?,
             sourceSetConfigurationChange: String,
-            expectedErrorHint: String
+            expectedErrorHint: String,
         ) {
             if (initialSetupForSourceSets != null) {
                 gradleBuildScript().appendText(
@@ -1119,14 +1118,19 @@ open class NewMultiplatformIT : BaseGradleIT() {
 
     @Test
     fun testPublishingOnlySupportedNativeTargets() = with(transformNativeTestProject("sample-lib", gradleVersion, "new-mpp-lib-and-app")) {
-        val publishedVariant = nativeHostTargetName
-        val nonPublishedVariant = unsupportedNativeTargets[0]
+        val publishedVariants = MPPNativeTargets.supported
+        val nonPublishedVariants = MPPNativeTargets.unsupported
 
         build("publish") {
             assertSuccessful()
 
-            assertFileExists("repo/com/example/sample-lib-$publishedVariant/1.0/sample-lib-$publishedVariant-1.0.klib")
-            assertNoSuchFile("repo/com/example/sample-lib-$nonPublishedVariant") // check that no artifacts are published for that variant
+            assertTrue(publishedVariants.isNotEmpty())
+            publishedVariants.forEach {
+                assertFileExists("repo/com/example/sample-lib-$it/1.0/sample-lib-$it-1.0.klib")
+            }
+            nonPublishedVariants.forEach {
+                assertNoSuchFile("repo/com/example/sample-lib-$it") // check that no artifacts are published for that variant
+            }
 
             // but check that the module metadata contains all variants:
             val gradleModuleMetadata = projectDir.resolve("repo/com/example/sample-lib/1.0/sample-lib-1.0.module").readText()
@@ -1566,7 +1570,7 @@ open class NewMultiplatformIT : BaseGradleIT() {
             }
 
             val expectedDefaultSourceSets = listOf(
-                "jvm6", "nodeJs", "mingw64", "mingw86", "linux64", "macos64", "linuxMipsel32", "wasm"
+                "jvm6", "nodeJs", "mingw64", "linux64", "macos64", "wasm"
             ).flatMapTo(mutableSetOf()) { target ->
                 listOf("main", "test").map { compilation ->
                     Triple(
