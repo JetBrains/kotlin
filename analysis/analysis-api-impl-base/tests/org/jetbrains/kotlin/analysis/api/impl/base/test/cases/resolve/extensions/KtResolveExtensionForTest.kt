@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.analysis.api.impl.base.test.util
+package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.resolve.extensions
 
 import com.intellij.mock.MockProject
 import com.intellij.openapi.util.ModificationTracker
@@ -19,45 +19,25 @@ import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.test.framework.services.environmentManager
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.test.services.PreAnalysisHandler
-import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 
-class KtSingleModuleResolveExtensionProviderForTest(
+class KtResolveExtensionProviderForTest(
     private val files: List<KtResolveExtensionFile>,
     private val packages: Set<FqName>,
     private val shadowedScope: GlobalSearchScope,
-) : KtResolveExtensionProvider() {
-    override fun provideExtensionsFor(module: KtModule): List<KtResolveExtension> {
-        return listOf(KtResolveExtensionForTest(files, packages, shadowedScope))
-    }
-}
-
-class KtMultiModuleResolveExtensionProviderForTest(
-    private val files: List<KtResolveExtensionFile>,
-    private val packages: Set<FqName>,
-    private val shadowedScope: GlobalSearchScope,
-    private val hasResolveExtension: (KtModule) -> Boolean,
+    private val hasResolveExtension: (KtModule) -> Boolean = { true }
 ) : KtResolveExtensionProvider() {
     override fun provideExtensionsFor(module: KtModule): List<KtResolveExtension> {
         if (!hasResolveExtension(module)) return emptyList()
         return listOf(KtResolveExtensionForTest(files, packages, shadowedScope))
     }
-}
 
-class KtResolveExtensionProviderForTestPreAnalysisHandler(
-    testServices: TestServices,
-    private val providers: List<KtResolveExtensionProvider>,
-) : PreAnalysisHandler(testServices) {
-    override fun preprocessModuleStructure(moduleStructure: TestModuleStructure) {
+    fun register(testServices: TestServices) {
         val project = testServices.environmentManager.getProject() as MockProject
-        val extensionPoint = project.extensionArea.getExtensionPoint(KtResolveExtensionProvider.EP_NAME)
-        for (provider in providers) {
-            extensionPoint.registerExtension(provider, project)
-        }
+        val extensionPoint = project.extensionArea.getExtensionPoint(EP_NAME)
+        extensionPoint.registerExtension(this, project)
     }
 }
-
 
 class KtResolveExtensionForTest(
     private val files: List<KtResolveExtensionFile>,
@@ -76,6 +56,7 @@ class KtResolveExtensionFileForTests(
     topLevelClassifiersNames: Set<String>,
     topLevelCallableNames: Set<String>,
     private val fileText: String,
+    private val psiTargetProvider: KtResolveExtensionReferencePsiTargetsProvider? = null
 ) : KtResolveExtensionFile() {
 
     private val topLevelClassifiersNames: Set<Name> = topLevelClassifiersNames.mapTo(mutableSetOf()) { Name.identifier(it) }
@@ -87,11 +68,12 @@ class KtResolveExtensionFileForTests(
 
     override fun buildFileText(): String = fileText
 
-    override fun createPsiTargetsProvider(): KtResolveExtensionReferencePsiTargetsProvider {
-        return object : KtResolveExtensionReferencePsiTargetsProvider() {
-            override fun KtAnalysisSession.getReferenceTargetsForSymbol(symbol: KtSymbol): Collection<PsiElement> {
-                return emptyList()
-            }
-        }
+    private object EmptyReferencePsiTargetsProvider : KtResolveExtensionReferencePsiTargetsProvider() {
+        override fun KtAnalysisSession.getReferenceTargetsForSymbol(symbol: KtSymbol): Collection<PsiElement> =
+            emptyList()
     }
+
+    override fun createPsiTargetsProvider(): KtResolveExtensionReferencePsiTargetsProvider =
+        psiTargetProvider ?: EmptyReferencePsiTargetsProvider
 }
+

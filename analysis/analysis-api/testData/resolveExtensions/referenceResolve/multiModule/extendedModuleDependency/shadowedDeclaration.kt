@@ -1,6 +1,10 @@
 // UNRESOLVED_REFERENCE
 
 // MODULE: extendedModule
+// WITH_RESOLVE_EXTENSION
+// RESOLVE_EXTENSION_PACKAGE: generated
+// RESOLVE_EXTENSION_SHADOWED: \.hidden\.kt$
+
 // FILE: declarations.hidden.kt
 package foo
 
