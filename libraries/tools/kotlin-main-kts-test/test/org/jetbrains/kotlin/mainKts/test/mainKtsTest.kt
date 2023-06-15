@@ -205,7 +205,7 @@ class MainKtsTest {
     }
 
     @Test
-    fun testScriptFileLocationWithImportedScript() = expectTestToFailOnK2 {
+    fun testScriptFileLocationWithImportedScript() {
         val resOk = evalFile(File("$TEST_DATA_ROOT/script-file-location-with-imported-file.main.kts"))
         assertSucceeded(resOk)
         val resultValue = resOk.valueOrThrow().returnValue
