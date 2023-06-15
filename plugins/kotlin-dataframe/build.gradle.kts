@@ -1,3 +1,5 @@
+import org.gradle.api.tasks.bundling.Jar
+
 plugins {
     id("java")
     kotlin("jvm") version "1.8.255-SNAPSHOT"
@@ -68,6 +70,13 @@ tasks.test {
         setLibraryProperty("org.jetbrains.kotlin.test.kotlin-script-runtime", "kotlin-script-runtime")
         setLibraryProperty("org.jetbrains.kotlin.test.kotlin-annotations-jvm", "kotlin-annotations-jvm")
     }
+}
+
+// i think template compiler is used only as POC,
+// so these classes are added as a temporary solution.
+// If it still be used later, then they should be copied from kotlin compiler jar
+tasks.named<Jar>("jar") {
+    from(file("lightTree"))
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
