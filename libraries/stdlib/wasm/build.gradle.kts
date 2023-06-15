@@ -161,6 +161,9 @@ publish(sbom = false) {
         extension = "klib"
     }
 }
+configureSbom(
+    gradleConfigurations = setOf(runtimeElements.name)
+)
 
 afterEvaluate {
     // cleanup default publications
