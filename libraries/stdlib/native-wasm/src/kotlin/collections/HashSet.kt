@@ -6,16 +6,16 @@
 package kotlin.collections
 
 actual class HashSet<E> internal constructor(
-        private val backing: HashMap<E, *>
+    private val backing: HashMapInternal<E, *>
 ) : MutableSet<E>, kotlin.native.internal.KonanSet<E>, AbstractMutableSet<E>() {
     private companion object {
-        private val Empty = HashSet(HashMap.EmptyHolder.value<Nothing, Nothing>())
+        private val Empty = HashSet(HashMapInternal.EmptyHolder.value)
     }
 
     /**
      * Creates a new empty [HashSet].
      */
-    actual constructor() : this(HashMap<E, Nothing>())
+    actual constructor() : this(HashMapInternal<E, Nothing>())
 
     /**
      * Creates a new empty [HashSet] with the specified initial capacity.
@@ -29,7 +29,7 @@ actual class HashSet<E> internal constructor(
      *
      * @throws IllegalArgumentException if [initialCapacity] is negative.
      */
-    actual constructor(initialCapacity: Int) : this(HashMap<E, Nothing>(initialCapacity))
+    actual constructor(initialCapacity: Int) : this(HashMapInternal<E, Nothing>(initialCapacity))
 
     /**
      * Creates a new [HashSet] filled with the elements of the specified collection.
@@ -52,7 +52,7 @@ actual class HashSet<E> internal constructor(
      *
      * @throws IllegalArgumentException if [initialCapacity] is negative or [loadFactor] is non-positive.
      */
-    actual constructor(initialCapacity: Int, loadFactor: Float) : this(HashMap<E, Nothing>(initialCapacity, loadFactor))
+    actual constructor(initialCapacity: Int, loadFactor: Float) : this(HashMapInternal<E, Nothing>(initialCapacity, loadFactor))
 
     @PublishedApi
     internal fun build(): Set<E> {
