@@ -126,7 +126,7 @@ private constructor(
 
     override val symbolProviderByJavaPsiImpl = KtFirSymbolProviderByJavaPsi(this)
 
-    override val resolveExtensionProviderImpl: KtSymbolFromResolveExtensionProvider = KtFirSymbolFromResolveExtensionProvider(this)
+    override val resolveExtensionInfoProviderImpl: KtResolveExtensionInfoProvider = KtFirResolveExtensionInfoProvider(this)
 
     @Suppress("AnalysisApiMissingLifetimeCheck")
     override fun createContextDependentCopy(originalKtFile: KtFile, elementToReanalyze: KtElement): KtAnalysisSession {

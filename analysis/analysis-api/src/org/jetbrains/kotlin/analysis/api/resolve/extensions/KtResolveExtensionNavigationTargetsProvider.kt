@@ -7,16 +7,16 @@ package org.jetbrains.kotlin.analysis.api.resolve.extensions
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
+import org.jetbrains.kotlin.psi.KtElement
 
-public abstract class KtResolveExtensionReferencePsiTargetsProvider {
+public abstract class KtResolveExtensionNavigationTargetsProvider {
     /**
-     * Provides a [PsiElement] where `reference.resolveTo` will lead for a [symbol]
+     * Provides a [PsiElement] which will be opened on a navigation request for [element].
      *
      * Usually returns a single result. Might return an empty collection if there is no navigation target.
      * Also, might multiple targets in a case of ambiguity or multiple targets for a [symbol]
      *
-     * Returned [PsiElement] will be used as a navigation target for a reference inside the IDE.
+     * Returned [PsiElement] will be used as a navigation target inside the IDE.
      */
-    public abstract fun KtAnalysisSession.getReferenceTargetsForSymbol(symbol: KtSymbol): Collection<PsiElement>
+    public abstract fun KtAnalysisSession.getNavigationTargets(element: KtElement): Collection<PsiElement>
 }
