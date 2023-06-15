@@ -27,10 +27,7 @@ import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrReturnTargetSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.classOrNull
-import org.jetbrains.kotlin.ir.types.isNothing
-import org.jetbrains.kotlin.ir.types.isUnit
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.FqName
@@ -1080,6 +1077,7 @@ internal object ControlFlowSensibleEscapeAnalysis {
             }
         }
 
+        // TODO: replace tryBlock with tryBlockThrowResult
         private data class BuilderState(val graph: PointsToGraph, val level: Int, val anchorIds: Boolean, val loop: IrLoop?, val tryBlock: IrTry?) {
             fun toNodeContext(element: IrElement?) = NodeContext(level, anchorIds, loop, element)
         }
@@ -1101,12 +1099,13 @@ internal object ControlFlowSensibleEscapeAnalysis {
             private inline fun debug(block: () -> Unit) =
                     if (needDebug) block() else Unit
 
+            val throwableType = context.ir.symbols.throwable.defaultType
             val irBuilder = context.createIrBuilder(function.symbol)
             val fictitiousVariableInitSetValues = mutableMapOf<IrVariable, IrSetValue>()
             val devirtualizedFictitiousCallSites = mutableMapOf<IrCall, List<IrFunctionAccessExpression>>()
 
             val returnTargetResults = mutableMapOf<IrReturnTargetSymbol, MultipleExpressionResult>()
-            val tryBlocksThrowGraphs = mutableMapOf<IrTry, PointsToGraphForest.GraphBuilder>()
+            val tryBlockThrowGraphs = mutableMapOf<IrTry, PointsToGraphForest.GraphBuilder>()
             val loopsContinueGraphs = mutableMapOf<IrLoop, PointsToGraphForest.GraphBuilder>()
             val loopsBreakGraphs = mutableMapOf<IrLoop, PointsToGraphForest.GraphBuilder>()
             val objectsReferencedFromThrown = BitSet()
@@ -1248,12 +1247,31 @@ internal object ControlFlowSensibleEscapeAnalysis {
 
             override fun visitInstanceInitializerCall(expression: IrInstanceInitializerCall, data: BuilderState) = Node.Unit
 
+            fun handleThrow(state: BuilderState, graph: PointsToGraph = state.graph) {
+                val throwGraph = state.tryBlock?.let { tryBlockThrowGraphs[it]!! } ?: returnTargetResults[function.symbol]!!.graphBuilder
+//                debug {
+//                    context.log { "Merging throw, before:" }
+//                    throwGraph.build().logDigraph()
+//                    context.log { "Merging:" }
+//                    graph.logDigraph()
+//                }
+                throwGraph.merge(graph)
+//                debug {
+//                    context.log { "After merging:" }
+//                    throwGraph.build().logDigraph()
+//                }
+            }
+
             override fun visitTypeOperator(expression: IrTypeOperatorCall, data: BuilderState) = checkGraphSizeAndVisit(expression, data) {
                 val argResult = expression.argument.accept(this, data)
                 when (expression.operator) {
-                    IrTypeOperator.CAST, IrTypeOperator.IMPLICIT_CAST, IrTypeOperator.SAFE_CAST -> argResult
+                    IrTypeOperator.IMPLICIT_CAST -> argResult
                     IrTypeOperator.IMPLICIT_COERCION_TO_UNIT -> Node.Unit
                     IrTypeOperator.INSTANCEOF, IrTypeOperator.NOT_INSTANCEOF -> data.constObjectNode(expression)
+                    IrTypeOperator.CAST -> {
+                        handleThrow(data) // A TypeCastException might be thrown here.
+                        argResult
+                    }
                     else -> error("Not expected: ${expression.operator}")
                 }
             }
@@ -1261,7 +1279,7 @@ internal object ControlFlowSensibleEscapeAnalysis {
             override fun visitGetValue(expression: IrGetValue, data: BuilderState) = checkGraphSizeAndVisit(expression, data) {
                 when (val owner = expression.symbol.owner) {
                     is IrValueParameter -> data.graph.parameterNodes[owner] ?: error("Unknown value parameter: ${owner.render()}")
-                    is IrVariable -> data.graph.variableNodes[owner] ?: error("Unknown variable: ${owner.render()}")
+                    is IrVariable -> data.graph.variableNodes[owner] ?: error("Unknown variable: ${owner.render()} ${function.file.path}")
                     else -> error("Unknown value declaration: ${owner.render()}")
                 }
             }
@@ -1290,8 +1308,7 @@ internal object ControlFlowSensibleEscapeAnalysis {
                 if (valueNode == Node.Nothing)
                     unreachable()
                 else {
-                    if (data.tryBlock == null)
-                        eraseValue(variableNode, data.toNodeContext(expression))
+                    eraseValue(variableNode, data.toNodeContext(expression))
                     variableNode.addEdge(valueNode)
 
                     Node.Unit
@@ -1330,8 +1347,7 @@ internal object ControlFlowSensibleEscapeAnalysis {
                         val fictitiousSetValue = fictitiousVariableInitSetValues.getOrPut(declaration) {
                             irBuilder.irSetVar(declaration, initializer)
                         }
-                        if (data.tryBlock == null)
-                            eraseValue(variableNode, data.toNodeContext(fictitiousSetValue))
+                        eraseValue(variableNode, data.toNodeContext(fictitiousSetValue))
                         variableNode.addEdge(it)
                     }
 
@@ -1427,7 +1443,7 @@ internal object ControlFlowSensibleEscapeAnalysis {
                                     // 'intestines' is not a single field but rather all internals of an object,
                                     // we don't know which actual field gets rewritten.
                                     && expression.symbol != intestinesField
-                                    && data.loop == receiverObjects[0].loop && data.tryBlock == null
+                                    && data.loop == receiverObjects[0].loop
                             ) {
                                 eraseValue(fieldNode, data.toNodeContext(expression))
                             }
@@ -1465,6 +1481,10 @@ internal object ControlFlowSensibleEscapeAnalysis {
             }
 
             override fun visitContainerExpression(expression: IrContainerExpression, data: BuilderState) = checkGraphSizeAndVisit(expression, data) {
+                debug {
+                    context.log { "before ${expression.dump()}" }
+                    data.graph.logDigraph()
+                }
                 val returnableBlockSymbol = (expression as? IrReturnableBlock)?.symbol
                 if (returnableBlockSymbol == null) {
                     expression.statements.forEachIndexed { index, statement ->
@@ -1483,6 +1503,11 @@ internal object ControlFlowSensibleEscapeAnalysis {
                         if (statementNode == Node.Nothing) break
                     }
                     controlFlowMergePoint(data.graph, data.toNodeContext(expression), expression.type, returnableBlockResult)
+                }.also {
+                    debug {
+                        context.log { "after ${expression.dump()}" }
+                        data.graph.logDigraph()
+                    }
                 }
             }
 
@@ -1539,8 +1564,7 @@ internal object ControlFlowSensibleEscapeAnalysis {
                     data.graph.logDigraph(context, newObjectsReferencedFromThrown)
                 }
 
-                (data.tryBlock?.let { tryBlocksThrowGraphs[it]!! } ?: returnTargetResults[function.symbol]!!.graphBuilder)
-                        .merge(data.graph)
+                handleThrow(data)
 
                 data.graph.unreachable()
             }
@@ -1553,60 +1577,35 @@ internal object ControlFlowSensibleEscapeAnalysis {
                 aCatch.result.accept(this, data)
             }
 
-            /*
-              TODO | A more precise way of handling try/catch/throw is to find all the points in the program
-              TODO | which can throw an exception (an explicit throw, an external function call, an instance method call,
-              TODO | or an instance field read/write), then connect all these points to the catch clauses.
-              TODO | We would probably need to save two graphs per function instead of one: usual return and failure.
-
-              TODO | A note: this probably can lead to automatic nounwind attribute evaluation as a side effect
-              TODO | (as long as all runtime functions are marked with annotation/attribute).
-
-              TODO | And even more precise way if we distinguish between different exception types.
-              TODO | (And save the graphs for all types as well). But it looks overkillish to me.
-             */
             override fun visitTry(aTry: IrTry, data: BuilderState) = checkGraphSizeAndVisit(aTry, data) {
                 require(aTry.finallyExpression == null) { "All finally clauses should've been lowered out" }
                 debug {
                     context.log { "before ${aTry.dump()}" }
                     data.graph.logDigraph()
                 }
-
                 val tryBlockThrowGraph = forest.GraphBuilder(function)
-                tryBlocksThrowGraphs[aTry] = tryBlockThrowGraph
-                val tryGraph = data.graph.clone()
-                val tryResult = aTry.tryResult.accept(this, BuilderState(tryGraph, data.level, true, data.loop, aTry))
-                val tryGraphWithThrows = if (tryBlockThrowGraph.isEmpty)
-                    tryGraph
-                else {
-                    tryBlockThrowGraph.merge(tryGraph)
-                    tryBlockThrowGraph.build()
-                }
-                val catchesResults = aTry.catches.map {
-                    val catchGraph = tryGraphWithThrows.clone()
-                    val catchResult = it.accept(this, BuilderState(catchGraph, data.level, data.anchorIds, data.loop, data.tryBlock))
-                    ExpressionResult(catchResult, catchGraph)
-                }
-
-                /* TODO: Optimize this case.
-                   b.a = A()
-                   try {
-                       if (f) throw ..
-                       b.a = A()
-                   } catch (..) { b.a = a }
-                   Here after the try block b.a gets rewritten but now we conservatively assume all the possible values,
-                   because the catch clause result isn't Nothing.
-                 */
-                if (catchesResults.all { it.value == Node.Nothing }) {
-                    // We can get here only if no exception has been thrown at the try block
-                    // (otherwise, it either would've been caught by one of the catch blocks or
-                    // would've been thrown to upper scope and, since they all return nothing,
-                    // the control flow wouldn't have gotten to this point).
-                    aTry.tryResult.accept(this, BuilderState(data.graph, data.level, true, data.loop, null))
+                tryBlockThrowGraphs[aTry] = tryBlockThrowGraph
+                val successResult = aTry.tryResult.accept(this, BuilderState(data.graph, data.level, data.anchorIds, data.loop, aTry))
+                val tryResult = MultipleExpressionResult(BitSet(), forest.GraphBuilder(function))
+                tryResult.merge(successResult, data.graph)
+                if (tryBlockThrowGraph.isEmpty) {
+                    context.log { "skipping catch blocks as no exception has been thrown at the try block" }
                 } else {
-                    controlFlowMergePoint(data.graph, data.toNodeContext(aTry), aTry.type,
-                            listOf(ExpressionResult(tryResult, tryGraph)) + catchesResults)
-                }.also {
+                    val failureGraph = tryBlockThrowGraph.build()
+                    var catchesThrowable = false
+                    aTry.catches.forEach { aCatch ->
+                        if (aCatch.catchParameter.type == throwableType)
+                            catchesThrowable = true
+                        val catchGraph = failureGraph.clone()
+                        val catchResult = aCatch.accept(this, BuilderState(catchGraph, data.level, data.anchorIds, data.loop, data.tryBlock))
+                        tryResult.merge(catchResult, catchGraph)
+                    }
+                    if (!catchesThrowable) {
+                        // The exception might not have been caught.
+                        handleThrow(data, failureGraph)
+                    }
+                }
+                controlFlowMergePoint(data.graph, data.toNodeContext(aTry), aTry.type, tryResult).also {
                     debug {
                         context.log { "after ${aTry.dump()}" }
                         data.graph.logDigraph(it)
@@ -1672,7 +1671,7 @@ internal object ControlFlowSensibleEscapeAnalysis {
                             returnTargetResults.values.sumOf {
                                 it.valueIds.cardinality() + it.graphBuilder.modCount
                             } +
-                            tryBlocksThrowGraphs.values.sumOf { it.modCount } +
+                            tryBlockThrowGraphs.values.sumOf { it.modCount } +
                             loopsContinueGraphs.values.sumOf { it.modCount } +
                             loopsBreakGraphs.values.sumOf { it.modCount } +
                             objectsReferencedFromThrown.cardinality()
@@ -1688,7 +1687,7 @@ internal object ControlFlowSensibleEscapeAnalysis {
                             returnTargetResults.values.sumOf {
                                 it.valueIds.cardinality() + it.graphBuilder.modCount
                             } +
-                            tryBlocksThrowGraphs.values.sumOf { it.modCount } +
+                            tryBlockThrowGraphs.values.sumOf { it.modCount } +
                             loopsContinueGraphs.values.sumOf { it.modCount } +
                             loopsBreakGraphs.values.sumOf { it.modCount } +
                             objectsReferencedFromThrown.cardinality()
@@ -1787,7 +1786,7 @@ internal object ControlFlowSensibleEscapeAnalysis {
                                 && inMirroredNodes[fieldPointee.id] == null // Skip cycles.
 
                         val mirroredNode = when {
-                            actualObjects.size == 1 && actualObjects[0].loop == state.loop && state.tryBlock == null -> {
+                            actualObjects.size == 1 && actualObjects[0].loop == state.loop -> {
                                 // Can reflect directly field value to field value.
                                 null
                             }
@@ -1850,7 +1849,7 @@ internal object ControlFlowSensibleEscapeAnalysis {
                                     // Same conditions as for IrSetField (see the comment there).
                                     if (actualObjects.size == 1
                                             && field != intestinesField
-                                            && state.loop == obj.loop && state.tryBlock == null
+                                            && state.loop == obj.loop
                                     ) {
                                         state.graph.eraseValue(objFieldValue, state.toNodeContext(callSite), fieldValue.id + 2 * calleeGraph.nodes.size)
                                     } else {
@@ -1930,14 +1929,13 @@ internal object ControlFlowSensibleEscapeAnalysis {
                     state.graph.logDigraph(returnValue)
                 }
 
-                if (returnValue != Node.Nothing)
-                    return returnValue
+                // Pessimistically assume, this function call might throw an exception.
+                handleThrow(state)
 
-                // The callee always throws an exception.
-                // TODO: This is not always true - the function call might not return (an infinite loop inside).
-                (state.tryBlock?.let { tryBlocksThrowGraphs[it]!! } ?: returnTargetResults[function.symbol]!!.graphBuilder)
-                        .merge(state.graph)
-                return state.graph.unreachable()
+                return if (returnValue == Node.Nothing)
+                    state.graph.unreachable()
+                else
+                    returnValue
             }
 
             // TODO: Move to KonanFqNames or something.
