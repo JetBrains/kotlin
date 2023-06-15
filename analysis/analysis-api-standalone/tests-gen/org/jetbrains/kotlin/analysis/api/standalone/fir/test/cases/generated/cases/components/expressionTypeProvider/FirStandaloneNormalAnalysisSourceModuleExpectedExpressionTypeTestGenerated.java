@@ -53,6 +53,12 @@ public class FirStandaloneNormalAnalysisSourceModuleExpectedExpressionTypeTestGe
     }
 
     @Test
+    @TestMetadata("annotationPositionalArgument.kt")
+    public void testAnnotationPositionalArgument() throws Exception {
+        runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/annotationPositionalArgument.kt");
+    }
+
+    @Test
     @TestMetadata("arrayAccessExpressionGet.kt")
     public void testArrayAccessExpressionGet() throws Exception {
         runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/arrayAccessExpressionGet.kt");
