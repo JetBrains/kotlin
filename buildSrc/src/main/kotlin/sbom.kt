@@ -20,8 +20,9 @@ fun Project.configureSbom(
     target: String? = null,
     documentName: String? = null,
     gradleConfigurations: Iterable<String> = setOf("runtimeClasspath"),
-    publication: NamedDomainObjectProvider<MavenPublication>? = null
+    publication: NamedDomainObjectProvider<MavenPublication>? = null,
 ): TaskProvider<SpdxSbomTask> {
+    assert(target == null && publication != null) { "provided publication will be ignored when target is null" }
     val project = this
     val targetName = target ?: "${mainPublicationName}Publication"
     apply<SpdxSbomPlugin>()
@@ -69,10 +70,8 @@ fun Project.configureSbom(
             mainPublication.artifact(sbomArtifact)
         }
     } else if (publication != null) {
-        pluginManager.withPlugin("kotlin-build-publishing") {
-            publication.configure {
-                artifact(sbomArtifact)
-            }
+        publication.configure {
+            artifact(sbomArtifact)
         }
     }
 
