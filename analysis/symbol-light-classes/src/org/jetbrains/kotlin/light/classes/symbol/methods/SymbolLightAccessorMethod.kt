@@ -211,7 +211,11 @@ internal class SymbolLightAccessorMethod private constructor(
 
                         if (nullabilityApplicable) {
                             withPropertySymbol { propertySymbol ->
-                                if (propertySymbol.isLateInit) NullabilityType.NotNull else getTypeNullability(propertySymbol.returnType)
+                                when {
+                                    propertySymbol.isLateInit -> NullabilityType.NotNull
+                                    forceBoxedReturnType(propertySymbol) -> NullabilityType.NotNull
+                                    else -> getTypeNullability(propertySymbol.returnType)
+                                }
                             }
                         } else {
                             NullabilityType.Unknown
@@ -238,18 +242,24 @@ internal class SymbolLightAccessorMethod private constructor(
 
     override fun getNameIdentifier(): PsiIdentifier = KtLightIdentifier(this, containingPropertyDeclaration)
 
+    context(KtAnalysisSession)
+    private fun forceBoxedReturnType(propertySymbol: KtPropertySymbol): Boolean {
+        return propertySymbol.returnType.isPrimitive &&
+                propertySymbol.getAllOverriddenSymbols().any { overriddenSymbol ->
+                    !overriddenSymbol.returnType.isPrimitive
+                }
+    }
+
     private val _returnedType: PsiType by lazyPub {
         if (!isGetter) return@lazyPub PsiType.VOID
 
         withPropertySymbol { propertySymbol ->
             val ktType = propertySymbol.returnType
 
-            val forceBoxedReturnType = ktType.isPrimitive &&
-                    propertySymbol.getAllOverriddenSymbols().any { overriddenSymbol ->
-                        !overriddenSymbol.returnType.isPrimitive
-                    }
-
-            val typeMappingMode = if (forceBoxedReturnType) KtTypeMappingMode.RETURN_TYPE_BOXED else KtTypeMappingMode.RETURN_TYPE
+            val typeMappingMode = if (forceBoxedReturnType(propertySymbol))
+                KtTypeMappingMode.RETURN_TYPE_BOXED
+            else
+                KtTypeMappingMode.RETURN_TYPE
 
             ktType.asPsiType(
                 this@SymbolLightAccessorMethod,

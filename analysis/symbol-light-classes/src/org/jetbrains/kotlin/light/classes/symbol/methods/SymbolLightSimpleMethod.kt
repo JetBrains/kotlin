@@ -154,11 +154,17 @@ internal class SymbolLightSimpleMethod(
                             NullabilityType.Unknown
                         } else {
                             withFunctionSymbol { functionSymbol ->
-                                if (functionSymbol.isSuspend) { // Any?
-                                    NullabilityType.Nullable
-                                } else {
-                                    val returnType = functionSymbol.returnType
-                                    if (returnType.isVoidType) NullabilityType.Unknown else getTypeNullability(returnType)
+                                when {
+                                    functionSymbol.isSuspend -> { // Any?
+                                        NullabilityType.Nullable
+                                    }
+                                    forceBoxedReturnType(functionSymbol) -> {
+                                        NullabilityType.NotNull
+                                    }
+                                    else -> {
+                                        val returnType = functionSymbol.returnType
+                                        if (returnType.isVoidType) NullabilityType.Unknown else getTypeNullability(returnType)
+                                    }
                                 }
                             }
                         }
@@ -180,19 +186,18 @@ internal class SymbolLightSimpleMethod(
     }
 
     // Inspired by KotlinTypeMapper#forceBoxedReturnType
-    private fun forceBoxedReturnType(): Boolean {
-        return withFunctionSymbol { functionSymbol ->
-            val returnType = functionSymbol.returnType
-            // 'invoke' methods for lambdas, function literals, and callable references
-            // implicitly override generic 'invoke' from a corresponding base class.
-            if (functionSymbol.isBuiltinFunctionInvoke && returnType.isInlineClassType)
-                return@withFunctionSymbol true
+    context(KtAnalysisSession)
+    private fun forceBoxedReturnType(functionSymbol: KtFunctionSymbol): Boolean {
+        val returnType = functionSymbol.returnType
+        // 'invoke' methods for lambdas, function literals, and callable references
+        // implicitly override generic 'invoke' from a corresponding base class.
+        if (functionSymbol.isBuiltinFunctionInvoke && returnType.isInlineClassType)
+            return true
 
-            returnType.isPrimitive &&
-                    functionSymbol.getAllOverriddenSymbols().any { overriddenSymbol ->
-                        !overriddenSymbol.returnType.isPrimitive
-                    }
-        }
+        return returnType.isPrimitive &&
+                functionSymbol.getAllOverriddenSymbols().any { overriddenSymbol ->
+                    !overriddenSymbol.returnType.isPrimitive
+                }
     }
 
     private val KtType.isInlineClassType: Boolean
@@ -208,7 +213,10 @@ internal class SymbolLightSimpleMethod(
                 functionSymbol.returnType.takeUnless { it.isVoidType } ?: return@withFunctionSymbol PsiType.VOID
             }
 
-            val typeMappingMode = if (forceBoxedReturnType()) KtTypeMappingMode.RETURN_TYPE_BOXED else KtTypeMappingMode.RETURN_TYPE
+            val typeMappingMode = if (forceBoxedReturnType(functionSymbol))
+                KtTypeMappingMode.RETURN_TYPE_BOXED
+            else
+                KtTypeMappingMode.RETURN_TYPE
 
             ktType.asPsiTypeElement(
                 this@SymbolLightSimpleMethod,
