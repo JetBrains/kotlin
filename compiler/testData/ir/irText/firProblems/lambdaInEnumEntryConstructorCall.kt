@@ -5,7 +5,7 @@
 // KT-50774
 
 // MUTE_SIGNATURE_COMPARISON_K2: ANY
-// ^ KT-57427, KT-57754
+// ^ KT-57427
 
 class Wrapper(var baseUrl: String)
 

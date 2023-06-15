@@ -1,6 +1,3 @@
-// MUTE_SIGNATURE_COMPARISON_K2: ANY
-// ^ KT-57754
-
 interface IBase {
     fun foo(x: Int, s: String)
     fun bar(): Int

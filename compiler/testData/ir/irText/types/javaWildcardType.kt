@@ -1,8 +1,5 @@
 // TARGET_BACKEND: JVM
 
-// MUTE_SIGNATURE_COMPARISON_K2: ANY
-// ^ KT-57754
-
 // FILE: javaWildcardType.kt
 interface K {
     fun kf1(): Collection<out CharSequence>
