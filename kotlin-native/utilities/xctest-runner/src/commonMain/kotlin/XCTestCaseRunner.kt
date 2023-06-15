@@ -143,29 +143,21 @@ class XCTestCaseRunner(
 
         // TODO: need to clean up those methods. When/where should this be invoked?
         private fun disposeRunMethods() {
-            createTestMethodsNames().forEach {
+            testMethodsNames.forEach {
                 val selector = NSSelectorFromString(it)
                 dispose(selector)
             }
         }
 
         @Suppress("UNUSED_PARAMETER")
-        private fun runner(runner: XCTestCaseRunner, cmd: SEL) {
-            runner.run()
-        }
+        private fun runner(runner: XCTestCaseRunner, cmd: SEL) = runner.run()
         //endregion
-
-        @OptIn(ExperimentalStdlibApi::class)
-        private fun createTestMethodsNames(): List<String> =
-                GeneratedSuites.suites.flatMap { testSuite ->
-                    testSuite.testCases.values.map { "$testSuite.${it.name}" }
-                }
 
         /**
          * Create Test invocations for each test method to make them resolvable by the XCTest's machinery
          * @see NSInvocation
          */
-        override fun testInvocations(): List<NSInvocation> = createTestMethodsNames().map {
+        override fun testInvocations(): List<NSInvocation> = testMethodsNames.map {
             val selector = NSSelectorFromString(it)
             createRunMethod(selector)
             this.instanceMethodSignatureForSelector(selector)?.let { signature ->
@@ -191,6 +183,11 @@ class XCTestSuiteRunner(private val testSuite: TestSuite) : XCTestSuite(testSuit
         if (!ignoredSuite) testSuite.doAfterClass()
     }
 }
+
+private val testMethodsNames: List<String> =
+        GeneratedSuites.suites.flatMap { testSuite ->
+            testSuite.testCases.values.map { "$testSuite.${it.name}" }
+        }
 
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.native.internal.ExportForCppRuntime("Konan_create_testSuite")
@@ -220,23 +217,23 @@ internal fun setupXCTestSuite(): XCTestSuite {
 }
 
 @OptIn(ExperimentalStdlibApi::class)
-internal fun createTestSuites(): List<XCTestSuite> {
+private fun createTestSuites(): List<XCTestSuite> {
     val testInvocations = XCTestCaseRunner.testInvocations()
-    return GeneratedSuites.suites.map {
-        val suite = XCTestSuiteRunner(it)
-        it.testCases.values.map { testCase ->
+    return GeneratedSuites.suites.map { suite ->
+        val xcSuite = XCTestSuiteRunner(suite)
+        suite.testCases.values.map { testCase ->
             testInvocations.filter { nsInvocation ->
-                NSStringFromSelector(nsInvocation.selector) == "${it.name}.${testCase.name}"
-            }.map { inv ->
+                NSStringFromSelector(nsInvocation.selector) == "${suite.name}.${testCase.name}"
+            }.map { invocation ->
                 XCTestCaseRunner(
-                        invocation = inv,
-                        testName = "${it.name}.${testCase.name}",
+                        invocation = invocation,
+                        testName = "${suite.name}.${testCase.name}",
                         testCase = testCase
                 )
             }.single()
-        }.forEach { t ->
-            suite.addTest(t)
+        }.forEach {
+            xcSuite.addTest(it)
         }
-        suite
+        xcSuite
     }
 }
