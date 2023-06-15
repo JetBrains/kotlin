@@ -110,10 +110,13 @@ internal class KtFirExpressionTypeProvider(
 
     private data class SubstitutedValueParameter(val parameter: FirValueParameter, val substitutedType: ConeKotlinType)
 
-    private fun FirFunctionCall.argumentsToSubstitutedValueParameters(
-        substituteWithErrorTypes: Boolean = true
+    private fun FirCall.argumentsToSubstitutedValueParameters(
+        substituteWithErrorTypes: Boolean = true,
     ): LinkedHashMap<FirExpression, SubstitutedValueParameter>? {
-        val substitutor = createConeSubstitutorFromTypeArguments(discardErrorTypes = !substituteWithErrorTypes) ?: ConeSubstitutor.Empty
+        val substitutor = (this as? FirQualifiedAccessExpression)
+            ?.createConeSubstitutorFromTypeArguments(discardErrorTypes = !substituteWithErrorTypes)
+            ?: ConeSubstitutor.Empty
+
         return resolvedArgumentMapping?.mapValuesTo(LinkedHashMap()) { (_, parameter) ->
             SubstitutedValueParameter(parameter, substitutor.substituteOrSelf(parameter.returnTypeRef.coneType))
         }
@@ -170,8 +173,8 @@ internal class KtFirExpressionTypeProvider(
     }
 
     private fun getExpectedTypeOfFunctionParameter(expression: PsiElement): KtType? {
-        val (ktCallExpression, argumentExpression) = expression.getFunctionCallAsWithThisAsParameter() ?: return null
-        val firCall = ktCallExpression.getOrBuildFirSafe<FirFunctionCall>(firResolveSession) ?: return null
+        val (ktCallElement, argumentExpression) = expression.getFunctionCallAsWithThisAsParameter() ?: return null
+        val firCall = ktCallElement.getOrBuildFirSafe<FirCall>(firResolveSession) ?: return null
 
         val callee = (firCall.calleeReference as? FirResolvedNamedReference)?.resolvedSymbol
         if (callee?.fir?.origin == FirDeclarationOrigin.SamConstructor) {
@@ -221,8 +224,8 @@ internal class KtFirExpressionTypeProvider(
             valueArg.getArgumentExpression()?.unwrap() == expr
         } ?: return null
         val callExpression =
-            (valueArgument.parent as? KtValueArgumentList)?.parent as? KtCallExpression
-                ?: valueArgument.parent as? KtCallExpression // KtLambdaArgument
+            (valueArgument.parent as? KtValueArgumentList)?.parent as? KtCallElement
+                ?: valueArgument.parent as? KtCallElement // KtLambdaArgument
                 ?: return null
         val argumentExpression = valueArgument.getArgumentExpression() ?: return null
         return KtCallWithArgument(callExpression, argumentExpression)
@@ -397,7 +400,7 @@ internal class KtFirExpressionTypeProvider(
     }
 }
 
-private data class KtCallWithArgument(val call: KtCallExpression, val argument: KtExpression)
+private data class KtCallWithArgument(val call: KtCallElement, val argument: KtExpression)
 
 private inline fun <reified R : Any> PsiElement.unwrapQualified(check: (R, PsiElement) -> Boolean): R? {
     val parent = nonContainerParent

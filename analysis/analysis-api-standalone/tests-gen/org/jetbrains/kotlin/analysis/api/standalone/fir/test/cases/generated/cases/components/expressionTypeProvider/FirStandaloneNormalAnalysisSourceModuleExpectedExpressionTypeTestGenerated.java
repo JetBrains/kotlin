@@ -53,6 +53,12 @@ public class FirStandaloneNormalAnalysisSourceModuleExpectedExpressionTypeTestGe
     }
 
     @Test
+    @TestMetadata("annotationPositionalArgument.kt")
+    public void testAnnotationPositionalArgument() throws Exception {
+        runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/annotationPositionalArgument.kt");
+    }
+
+    @Test
     @TestMetadata("arrayAccessExpressionGet.kt")
     public void testArrayAccessExpressionGet() throws Exception {
         runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/arrayAccessExpressionGet.kt");
@@ -86,6 +92,12 @@ public class FirStandaloneNormalAnalysisSourceModuleExpectedExpressionTypeTestGe
     @TestMetadata("conditionInWhenWithoutSubject.kt")
     public void testConditionInWhenWithoutSubject() throws Exception {
         runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/conditionInWhenWithoutSubject.kt");
+    }
+
+    @Test
+    @TestMetadata("delegatedConstructorCall.kt")
+    public void testDelegatedConstructorCall() throws Exception {
+        runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/delegatedConstructorCall.kt");
     }
 
     @Test
