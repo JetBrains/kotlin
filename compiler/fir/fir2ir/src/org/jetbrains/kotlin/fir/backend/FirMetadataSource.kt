@@ -40,5 +40,10 @@ sealed class FirMetadataSource : MetadataSource {
         override val isConst: Boolean get() = fir.isConst
     }
 
+    class Field(override val fir: FirField) : FirMetadataSource(), MetadataSource.Property {
+        override val isConst: Boolean
+            get() = fir.isConst
+    }
+
     class Script(override val fir: FirScript) : FirMetadataSource(), MetadataSource.Script
 }

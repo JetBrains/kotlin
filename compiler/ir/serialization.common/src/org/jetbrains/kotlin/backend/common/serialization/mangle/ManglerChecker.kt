@@ -54,6 +54,9 @@ class ManglerChecker(
         override fun visitProperty(declaration: IrProperty, data: Nothing?): Boolean = true
         override fun visitClass(declaration: IrClass, data: Nothing?): Boolean =
             declaration.name == SpecialNames.NO_NAME_PROVIDED || super.visitClass(declaration, data)
+
+        override fun visitField(declaration: IrField, data: Nothing?): Boolean =
+            declaration.origin == IrDeclarationOrigin.DELEGATE || super.visitField(declaration, data)
     }
 
     private fun IrDeclaration.shouldBeSkipped(): Boolean = accept(skipper, null)
