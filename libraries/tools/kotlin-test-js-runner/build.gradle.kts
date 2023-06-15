@@ -9,6 +9,16 @@ plugins {
 
 publish(sbom = false)
 
+val sbom by configurations.creating {
+    isCanBeResolved = true
+    extendsFrom(configurations.publishedRuntime.get())
+}
+
+configureSbom(
+    gradleConfigurations = setOf(sbom.name)
+)
+
+
 val default = configurations.getByName(Dependency.DEFAULT_CONFIGURATION)
 default.extendsFrom(configurations.publishedRuntime.get())
 
