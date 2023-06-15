@@ -1,10 +1,3 @@
-// IGNORE_BACKEND: WASM
-// WASM_MUTE_REASON: IGNORED_IN_JS
-// IGNORE_BACKEND: JS_IR
-// IGNORE_BACKEND: JS_IR_ES6
-// TODO: muted automatically, investigate should it be ran for JS or not
-// IGNORE_BACKEND: JS, NATIVE
-
 package kt606
 
 //KT-606 wrong resolved call
@@ -21,9 +14,11 @@ interface ChannelPipeline  {
   fun print(any: Any)
 }
 
+var result = "FAIL"
+
 class DefaultChannelPipeline : ChannelPipeline {
   override fun print(any: Any) {
-      System.out?.println(any)
+      result = any as String
   }
 
 }
@@ -34,5 +29,5 @@ interface ChannelPipelineFactory {
 
 fun box() : String {
     StandardPipelineFactory({ print("OK") }).getPipeline()
-    return "OK"
+    return result
 }
