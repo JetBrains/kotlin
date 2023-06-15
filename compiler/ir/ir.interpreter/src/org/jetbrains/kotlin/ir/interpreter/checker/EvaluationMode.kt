@@ -7,10 +7,14 @@ package org.jetbrains.kotlin.ir.interpreter.checker
 
 import org.jetbrains.kotlin.ir.BuiltInOperatorNames
 import org.jetbrains.kotlin.ir.IrBuiltIns
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrConstructor
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.interpreter.*
 import org.jetbrains.kotlin.ir.interpreter.hasAnnotation
+import org.jetbrains.kotlin.ir.interpreter.intrinsicConstEvaluationAnnotation
+import org.jetbrains.kotlin.ir.interpreter.property
 import org.jetbrains.kotlin.ir.types.isPrimitiveType
 import org.jetbrains.kotlin.ir.types.isString
 import org.jetbrains.kotlin.ir.types.isUnsignedType
@@ -74,7 +78,15 @@ enum class EvaluationMode {
         }
 
         override fun canEvaluateBlock(block: IrBlock): Boolean = block.statements.size == 1
-        override fun canEvaluateExpression(expression: IrExpression): Boolean = expression is IrCall
+        override fun canEvaluateExpression(expression: IrExpression): Boolean {
+            if (expression !is IrCall) return false
+
+            if (expression.getAllArgumentsWithIr().any { it.second?.type?.isUnsigned() == true }) {
+                return expression.symbol.owner.fqNameWhenAvailable?.asString() == "kotlin.String.plus"
+            }
+
+            return true
+        }
     },
 
     ONLY_INTRINSIC_CONST {
@@ -88,7 +100,10 @@ enum class EvaluationMode {
         }
 
         override fun canEvaluateBlock(block: IrBlock): Boolean = block.origin == IrStatementOrigin.WHEN || block.statements.size == 1
-        override fun canEvaluateExpression(expression: IrExpression): Boolean = expression is IrCall || expression is IrWhen
+
+        override fun canEvaluateExpression(expression: IrExpression): Boolean {
+            return ONLY_BUILTINS.canEvaluateExpression(expression) || expression is IrWhen
+        }
     };
 
     open fun canEvaluateFunction(function: IrFunction): Boolean = false
