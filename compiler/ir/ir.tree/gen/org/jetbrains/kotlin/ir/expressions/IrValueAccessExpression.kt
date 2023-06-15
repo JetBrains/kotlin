@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.valueAccessExpression]
  */
 abstract class IrValueAccessExpression : IrDeclarationReference() {
-    abstract override val symbol: IrValueSymbol
+    abstract override var symbol: IrValueSymbol
 
     abstract var origin: IrStatementOrigin?
 }

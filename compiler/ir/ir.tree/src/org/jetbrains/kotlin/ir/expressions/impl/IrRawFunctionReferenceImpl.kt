@@ -24,5 +24,5 @@ class IrRawFunctionReferenceImpl(
     override val startOffset: Int,
     override val endOffset: Int,
     override var type: IrType,
-    override val symbol: IrFunctionSymbol,
+    override var symbol: IrFunctionSymbol,
 ) : IrRawFunctionReference()

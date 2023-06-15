@@ -29,7 +29,7 @@ class IrEnumConstructorCallImpl(
     override val startOffset: Int,
     override val endOffset: Int,
     override var type: IrType,
-    override val symbol: IrConstructorSymbol,
+    override var symbol: IrConstructorSymbol,
     typeArgumentsCount: Int,
     valueArgumentsCount: Int
 ) : IrEnumConstructorCall() {

@@ -24,5 +24,5 @@ class IrGetEnumValueImpl(
     override val startOffset: Int,
     override val endOffset: Int,
     override var type: IrType,
-    override val symbol: IrEnumEntrySymbol,
+    override var symbol: IrEnumEntrySymbol,
 ) : IrGetEnumValue()

@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.enumConstructorCall]
  */
 abstract class IrEnumConstructorCall : IrFunctionAccessExpression() {
-    abstract override val symbol: IrConstructorSymbol
+    abstract override var symbol: IrConstructorSymbol
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitEnumConstructorCall(this, data)

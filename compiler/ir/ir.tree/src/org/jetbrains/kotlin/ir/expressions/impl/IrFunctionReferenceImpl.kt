@@ -29,7 +29,7 @@ class IrFunctionReferenceImpl(
     override val startOffset: Int,
     override val endOffset: Int,
     override var type: IrType,
-    override val symbol: IrFunctionSymbol,
+    override var symbol: IrFunctionSymbol,
     typeArgumentsCount: Int,
     valueArgumentsCount: Int,
     override var reflectionTarget: IrFunctionSymbol? = symbol,

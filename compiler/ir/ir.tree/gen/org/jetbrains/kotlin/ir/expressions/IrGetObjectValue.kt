@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.getObjectValue]
  */
 abstract class IrGetObjectValue : IrGetSingletonValue() {
-    abstract override val symbol: IrClassSymbol
+    abstract override var symbol: IrClassSymbol
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitGetObjectValue(this, data)

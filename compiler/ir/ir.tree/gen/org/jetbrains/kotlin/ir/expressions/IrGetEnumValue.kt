@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.getEnumValue]
  */
 abstract class IrGetEnumValue : IrGetSingletonValue() {
-    abstract override val symbol: IrEnumEntrySymbol
+    abstract override var symbol: IrEnumEntrySymbol
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitGetEnumValue(this, data)

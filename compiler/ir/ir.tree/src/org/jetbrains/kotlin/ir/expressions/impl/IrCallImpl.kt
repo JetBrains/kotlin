@@ -33,7 +33,7 @@ class IrCallImpl(
     override val startOffset: Int,
     override val endOffset: Int,
     override var type: IrType,
-    override val symbol: IrSimpleFunctionSymbol,
+    override var symbol: IrSimpleFunctionSymbol,
     typeArgumentsCount: Int,
     valueArgumentsCount: Int,
     override var origin: IrStatementOrigin? = null,

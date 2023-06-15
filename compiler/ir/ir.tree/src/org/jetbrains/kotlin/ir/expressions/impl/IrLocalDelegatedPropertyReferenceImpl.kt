@@ -30,7 +30,7 @@ class IrLocalDelegatedPropertyReferenceImpl(
     override val startOffset: Int,
     override val endOffset: Int,
     override var type: IrType,
-    override val symbol: IrLocalDelegatedPropertySymbol,
+    override var symbol: IrLocalDelegatedPropertySymbol,
     override var delegate: IrVariableSymbol,
     override var getter: IrSimpleFunctionSymbol,
     override var setter: IrSimpleFunctionSymbol?,

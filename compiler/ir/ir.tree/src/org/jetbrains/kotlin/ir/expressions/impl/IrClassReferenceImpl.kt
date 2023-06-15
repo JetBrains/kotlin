@@ -24,6 +24,6 @@ class IrClassReferenceImpl(
     override val startOffset: Int,
     override val endOffset: Int,
     override var type: IrType,
-    override val symbol: IrClassifierSymbol,
+    override var symbol: IrClassifierSymbol,
     override var classType: IrType
 ) : IrClassReference()
