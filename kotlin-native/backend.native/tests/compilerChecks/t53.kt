@@ -1,4 +1,4 @@
-import kotlin.native.internal.*
+import kotlin.native.ref.*
 
 class C(val x: Int) {
     fun bar(y: Int) = println(x + y)

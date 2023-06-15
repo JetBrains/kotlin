@@ -74,9 +74,9 @@ kotlin-native/backend.native/tests/compilerChecks/t35.kt:5:13: error: unable to 
 kotlin-native/backend.native/tests/compilerChecks/t36.kt
 kotlin-native/backend.native/tests/compilerChecks/t36.kt:4:13: error: native interop types constructors must not be called directly
 kotlin-native/backend.native/tests/compilerChecks/t37.kt
-kotlin-native/backend.native/tests/compilerChecks/t37.kt:5:5: error: subclasses of NativePointed cannot have properties with backing fields
+kotlin-native/backend.native/tests/compilerChecks/t37.kt:5:5: error: subclasses of kotlinx.cinterop.NativePointed cannot have properties with backing fields
 kotlin-native/backend.native/tests/compilerChecks/t38.kt
-kotlin-native/backend.native/tests/compilerChecks/t38.kt:5:5: error: subclasses of NativePointed cannot have properties with backing fields
+kotlin-native/backend.native/tests/compilerChecks/t38.kt:5:5: error: subclasses of kotlinx.cinterop.NativePointed cannot have properties with backing fields
 kotlin-native/backend.native/tests/compilerChecks/t4.kt
 kotlin-native/backend.native/tests/compilerChecks/t4.kt:4:21: error: callable references to variadic Objective-C methods are not supported
 kotlin-native/backend.native/tests/compilerChecks/t40.kt
@@ -106,20 +106,15 @@ kotlin-native/backend.native/tests/compilerChecks/t49.kt:5:12: error: kotlin.nat
 kotlin-native/backend.native/tests/compilerChecks/t5.kt
 kotlin-native/backend.native/tests/compilerChecks/t5.kt:4:83: error: passing String as variadic Objective-C argument is ambiguous; cast it to NSString or pass with '.cstr' as C string
 kotlin-native/backend.native/tests/compilerChecks/t50.kt
-kotlin-native/backend.native/tests/compilerChecks/t50.kt:10:16: error: kotlin.native.concurrent.Worker.execute must take an unbound, non-capturing function or lambda, but captures at:
-    kotlin-native/backend.native/tests/compilerChecks/t50.kt:10:54
+kotlin-native/backend.native/tests/compilerChecks/t50.kt:11:16: error: kotlin.native.concurrent.Worker.execute must take an unbound, non-capturing function or lambda, but captures at:
+    kotlin-native/backend.native/tests/compilerChecks/t50.kt:11:54
 kotlin-native/backend.native/tests/compilerChecks/t51.kt
   MISSING EXPECTED ERROR FOR kotlin-native/backend.native/tests/compilerChecks/t51.kt
 kotlin-native/backend.native/tests/compilerChecks/t52.kt
-kotlin-native/backend.native/tests/compilerChecks/t52.kt:5:5: warning: 'createCleaner(T, (T) -> Unit): Cleaner' is deprecated. Use kotlin.native.ref.createCleaner instead.
-    createCleaner(42) { println(x) }
-    ^
-  MISSING EXPECTED ERROR FOR kotlin-native/backend.native/tests/compilerChecks/t52.kt
+kotlin-native/backend.native/tests/compilerChecks/t52.kt:5:5: error: kotlin.native.ref.createCleaner must take an unbound, non-capturing function or lambda, but captures at:
+     kotlin-native/backend.native/tests/compilerChecks/t52.kt:5:33: x
 kotlin-native/backend.native/tests/compilerChecks/t53.kt
-kotlin-native/backend.native/tests/compilerChecks/t53.kt:9:5: warning: 'createCleaner(T, (T) -> Unit): Cleaner' is deprecated. Use kotlin.native.ref.createCleaner instead.
-    createCleaner(42, C(x)::bar)
-    ^
-  MISSING EXPECTED ERROR FOR kotlin-native/backend.native/tests/compilerChecks/t53.kt
+kotlin-native/backend.native/tests/compilerChecks/t53.kt:9:5: error: kotlin.native.ref.createCleaner must take an unbound, non-capturing function or lambda, but captures at:
 kotlin-native/backend.native/tests/compilerChecks/t54.kt
 kotlin-native/backend.native/tests/compilerChecks/t54.kt:1:44: error: no spread elements allowed here
 kotlin-native/backend.native/tests/compilerChecks/t55.kt
@@ -135,7 +130,7 @@ kotlin-native/backend.native/tests/compilerChecks/t59.kt:5:5: error: non-reified
 kotlin-native/backend.native/tests/compilerChecks/t6.kt
 kotlin-native/backend.native/tests/compilerChecks/t6.kt:4:97: error: when calling variadic Objective-C methods spread operator is supported only for *arrayOf(...)
 kotlin-native/backend.native/tests/compilerChecks/t60.kt
-kotlin-native/backend.native/tests/compilerChecks/t60.kt:4:5: error: subclasses of NativePointed cannot have properties with backing fields
+kotlin-native/backend.native/tests/compilerChecks/t60.kt:4:5: error: subclasses of kotlinx.cinterop.NativePointed cannot have properties with backing fields
 kotlin-native/backend.native/tests/compilerChecks/t61.kt
 kotlin-native/backend.native/tests/compilerChecks/t61.kt:8:5: error: only companion objects of subclasses of Objective-C classes can inherit from Objective-C metaclasses
 kotlin-native/backend.native/tests/compilerChecks/t62.kt

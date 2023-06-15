@@ -1,3 +1,4 @@
+@file:OptIn(ObsoleteWorkersApi::class)
 import kotlin.native.concurrent.*
 
 class Z(val x: Int) {

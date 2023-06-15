@@ -1,4 +1,4 @@
-import kotlin.native.internal.*
+import kotlin.native.ref.*
 
 @OptIn(kotlin.ExperimentalStdlibApi::class)
 fun foo(x: Int) {
