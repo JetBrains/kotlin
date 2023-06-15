@@ -7,12 +7,10 @@ package org.jetbrains.kotlin.fir.backend.jvm
 
 import org.jetbrains.kotlin.backend.common.serialization.mangle.MangleMode
 import org.jetbrains.kotlin.fir.backend.FirMangleComputer
-import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.java.declarations.FirJavaField
-import org.jetbrains.kotlin.fir.originalForSubstitutionOverride
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirFunction
+import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
-import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
-import org.jetbrains.kotlin.fir.types.coneType
 
 /**
  * JVM backend-specific mangle computer that generates a mangled name for a Kotlin declaration represented by [FirDeclaration].
@@ -21,7 +19,6 @@ class FirJvmMangleComputer(
     builder: StringBuilder,
     mode: MangleMode,
 ) : FirMangleComputer(builder, mode) {
-    override val visitor: Visitor = JvmVisitor()
 
     override fun FirFunction.platformSpecificSuffix(): String? =
         if (this is FirSimpleFunction && name.asString() == "main")
@@ -32,14 +29,4 @@ class FirJvmMangleComputer(
 
     override fun copy(newMode: MangleMode): FirJvmMangleComputer =
         FirJvmMangleComputer(builder, newMode)
-
-    private inner class JvmVisitor : Visitor() {
-        override fun visitField(field: FirField) {
-            if (field is FirJavaField || field.origin == FirDeclarationOrigin.ImportedFromObjectOrStatic) {
-                field.mangleSimpleDeclaration(field.name.asString())
-            } else {
-                visitVariable(field)
-            }
-        }
-    }
 }

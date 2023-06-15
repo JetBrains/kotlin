@@ -42,7 +42,7 @@ open class FirMangleComputer(
         /*FunctionDeclaration=*/FirFunction,
         /*Session=*/FirSession,
         >(builder, mode) {
-    protected open val visitor = Visitor()
+    private val visitor = Visitor()
 
     override fun copy(newMode: MangleMode): FirMangleComputer =
         FirMangleComputer(builder, newMode)
@@ -242,7 +242,7 @@ open class FirMangleComputer(
         }
 
         override fun visitField(field: FirField) {
-            visitVariable(field)
+            field.mangleSimpleDeclaration(field.name.asString())
         }
 
         override fun visitEnumEntry(enumEntry: FirEnumEntry) {

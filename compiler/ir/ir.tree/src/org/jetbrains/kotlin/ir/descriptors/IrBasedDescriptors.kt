@@ -1126,7 +1126,20 @@ open class IrBasedFieldDescriptor(owner: IrField) : PropertyDescriptor, IrBasedD
     override fun <V : Any?> getUserData(key: CallableDescriptor.UserDataKey<V>?): V? = null
 }
 
-fun IrField.toIrBasedDescriptor() = IrBasedFieldDescriptor(this)
+class IrBasedDelegateFieldDescriptor(owner: IrField) : IrBasedFieldDescriptor(owner), IrImplementingDelegateDescriptor {
+
+    override val correspondingSuperType: KotlinType
+        get() = TODO("not implemented")
+
+    override val isDelegated: Boolean
+        get() = true
+}
+
+fun IrField.toIrBasedDescriptor() = if (origin == IrDeclarationOrigin.DELEGATE) {
+    IrBasedDelegateFieldDescriptor(this)
+} else {
+    IrBasedFieldDescriptor(this)
+}
 
 class IrBasedErrorDescriptor(owner: IrErrorDeclaration) : IrBasedDeclarationDescriptor<IrErrorDeclaration>(owner) {
     override fun getName(): Name = error("IrBasedErrorDescriptor.getName: Should not be reached")
