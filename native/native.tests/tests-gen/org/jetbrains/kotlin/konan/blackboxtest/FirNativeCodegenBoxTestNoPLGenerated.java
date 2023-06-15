@@ -41622,6 +41622,18 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
             }
 
             @Test
+            @TestMetadata("kt55993.kt")
+            public void testKt55993() throws Exception {
+                runTest("compiler/testData/codegen/box/when/kt55993.kt");
+            }
+
+            @Test
+            @TestMetadata("kt59346.kt")
+            public void testKt59346() throws Exception {
+                runTest("compiler/testData/codegen/box/when/kt59346.kt");
+            }
+
+            @Test
             @TestMetadata("longInRange.kt")
             public void testLongInRange() throws Exception {
                 runTest("compiler/testData/codegen/box/when/longInRange.kt");

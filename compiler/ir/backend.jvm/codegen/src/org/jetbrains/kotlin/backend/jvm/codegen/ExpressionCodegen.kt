@@ -792,6 +792,7 @@ class ExpressionCodegen(
             declaration.markLineNumber(startOffset = true)
             mv.store(index, varType)
         } else if (declaration.isVisibleInLVT) {
+            declaration.markLineNumber(startOffset = true)
             pushDefaultValueOnStack(varType, mv)
             mv.store(index, varType)
         }
