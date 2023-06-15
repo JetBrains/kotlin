@@ -50,14 +50,10 @@ task preparePublication {
 }
 
 ext.configurePublishing = { Project project, configure = { } ->
-    ArtifactsKt.publish(project, false, false) { publication ->
+    ArtifactsKt.publish(project, false, true) { publication ->
         configure.delegate = publication
         configure()
     }
-}
-
-ext.configureSbom = { Project project, String target = null, String documentTitle = null,  Iterable<String> gradleConfigurations = ["runtimeClasspath"] ->
-    SbomKt.configureSbom(project, target, documentTitle, gradleConfigurations)
 }
 
 ext.configureFrontendIr = { Project project ->
