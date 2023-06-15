@@ -90,12 +90,8 @@ private fun AnalysisApiTestGroup.generateResolveExtensionsTests() {
                 frontendIs(FrontendKind.Fir) and
                 testModuleKindIs(TestModuleKind.Source)
     ) {
-        test(AbstractSingleModuleReferenceResolveWithResolveExtensionTest::class) {
+        test(AbstractReferenceResolveWithResolveExtensionTest::class) {
             model("referenceResolve")
-        }
-
-        test(AbstractMultiModuleReferenceResolveWithResolveExtensionTest::class) {
-            model("multiModule/referenceResolve")
         }
     }
 }
