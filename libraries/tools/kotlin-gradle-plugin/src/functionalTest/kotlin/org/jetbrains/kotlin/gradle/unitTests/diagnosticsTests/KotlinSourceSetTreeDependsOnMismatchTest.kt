@@ -28,7 +28,9 @@ class KotlinSourceSetTreeDependsOnMismatchTest {
             }
         }
         project.evaluate()
-        return project.kotlinToolingDiagnosticsCollector.getDiagnosticsForProject(project).toList()
+        return project.kotlinToolingDiagnosticsCollector
+            .getDiagnosticsForProject(project)
+            .filter { it.id == KotlinSourceSetTreeDependsOnMismatch.id } // ignore other diagnostics that can appear as well
     }
 
     private fun checkSingleBadSourceSetDependency(
@@ -55,9 +57,7 @@ class KotlinSourceSetTreeDependsOnMismatchTest {
     @Test
     fun `commonMain cant depend on commonTest`() = checkSingleBadSourceSetDependency(
         dependent = "commonMain",
-        dependency = "commonTest",
-        KotlinSourceSetTreeDependsOnMismatch("commonMain", "commonTest"),
-        CommonMainWithDependsOnDiagnostic()
+        dependency = "commonTest"
     )
 
     @Test
