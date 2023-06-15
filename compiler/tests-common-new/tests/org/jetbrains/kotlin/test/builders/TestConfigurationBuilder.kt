@@ -32,7 +32,7 @@ class TestConfigurationBuilder {
     private val preAnalysisHandlers: MutableList<Constructor<PreAnalysisHandler>> = mutableListOf()
 
     private val additionalSourceProviders: MutableList<Constructor<AdditionalSourceProvider>> = mutableListOf()
-    private val moduleStructureTransformers: MutableList<ModuleStructureTransformer> = mutableListOf()
+    private val moduleStructureTransformers: MutableList<Constructor<ModuleStructureTransformer>> = mutableListOf()
 
     private val metaTestConfigurators: MutableList<Constructor<MetaTestConfigurator>> = mutableListOf()
     private val afterAnalysisCheckers: MutableList<Constructor<AfterAnalysisChecker>> = mutableListOf()
@@ -180,6 +180,13 @@ class TestConfigurationBuilder {
 
     @TestInfrastructureInternals
     fun useModuleStructureTransformers(vararg transformers: ModuleStructureTransformer) {
+        for (transformer in transformers) {
+            moduleStructureTransformers += { _ -> transformer }
+        }
+    }
+
+    @TestInfrastructureInternals
+    fun useModuleStructureTransformers(vararg transformers: Constructor<ModuleStructureTransformer>) {
         moduleStructureTransformers += transformers
     }
 
@@ -265,7 +272,7 @@ class TestConfigurationBuilder {
             get() = builder.preAnalysisHandlers
         val additionalSourceProviders: List<Constructor<AdditionalSourceProvider>>
             get() = builder.additionalSourceProviders
-        val moduleStructureTransformers: List<ModuleStructureTransformer>
+        val moduleStructureTransformers: List<Constructor<ModuleStructureTransformer>>
             get() = builder.moduleStructureTransformers
         val metaTestConfigurators: List<Constructor<MetaTestConfigurator>>
             get() = builder.metaTestConfigurators
