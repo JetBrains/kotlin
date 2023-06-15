@@ -34,7 +34,7 @@ class TestConfigurationImpl(
 
     additionalSourceProviders: List<Constructor<AdditionalSourceProvider>>,
     preAnalysisHandlers: List<Constructor<PreAnalysisHandler>>,
-    moduleStructureTransformers: List<ModuleStructureTransformer>,
+    moduleStructureTransformers: List<Constructor<ModuleStructureTransformer>>,
     metaTestConfigurators: List<Constructor<MetaTestConfigurator>>,
     afterAnalysisCheckers: List<Constructor<AfterAnalysisChecker>>,
 
@@ -83,7 +83,7 @@ class TestConfigurationImpl(
         additionalSourceProviders
             .map { it.invoke(testServices) }
             .also { it.registerDirectivesAndServices() },
-        moduleStructureTransformers,
+        moduleStructureTransformers.map { it(testServices) },
         this.environmentConfigurators
     )
 
