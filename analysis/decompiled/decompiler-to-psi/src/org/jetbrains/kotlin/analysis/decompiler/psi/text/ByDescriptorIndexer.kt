@@ -61,13 +61,13 @@ object ByDescriptorIndexer {
         if (original is FakeCallableDescriptorForObject) {
             return getDeclarationForDescriptor(original.classDescriptor, file)
         }
-        
+
         if (original is MemberDescriptor) {
             val declarationContainer: KtDeclarationContainer? = when {
                 DescriptorUtils.isTopLevelDeclaration(original) -> file
                 original.containingDeclaration is ClassDescriptor ->
                     getDeclarationForDescriptor(original.containingDeclaration as ClassDescriptor, file) as? KtClassOrObject
-                else -> null
+                else -> error("Unexpected $original with container: ${original.containingDeclaration}")
             }
 
             if (declarationContainer != null) {
@@ -85,7 +85,7 @@ object ByDescriptorIndexer {
             }
         }
 
-        error("Should not be reachable")
+        error("Should not be reachable: $descriptor")
     }
 
     fun isSameCallable(
