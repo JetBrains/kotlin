@@ -250,7 +250,18 @@ class JavaOverrideChecker internal constructor(
             return false
         }
 
-        if (considerReturnTypeKinds && !doesReturnTypesHaveSameKind(overrideCandidate, baseDeclaration)) return false
+        if (overrideCandidate.origin == FirDeclarationOrigin.Java.Source && baseDeclaration.origin == FirDeclarationOrigin.Source) {
+            // For override from Java source against the Kotlin base the following check of return type kinds is not important
+            // From the other side, it can provoke problems in case baseDeclaration is from source and has an implicit return type
+            // which is not yet resolved (see KT-57044)
+            return true
+        }
+
+        // See test compiler/testData/compileKotlinAgainstCustomBinaries/incorrectJavaSignature
+        // and relevant commit message (360d6741)
+        if (considerReturnTypeKinds && !doesReturnTypesHaveSameKind(overrideCandidate, baseDeclaration)) {
+            return false
+        }
 
         return true
     }

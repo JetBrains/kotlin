@@ -1,0 +1,14 @@
+FILE: K.kt
+    public open class K : R|kotlin/Any| {
+        public constructor(): R|K| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open fun test(): R|kotlin/Unit| {
+            ^test Q|kotlin/Unit|
+        }
+
+    }
+    public final fun jk(): R|kotlin/Unit| {
+        R|/JK.JK|().R|/JK.test|()
+    }

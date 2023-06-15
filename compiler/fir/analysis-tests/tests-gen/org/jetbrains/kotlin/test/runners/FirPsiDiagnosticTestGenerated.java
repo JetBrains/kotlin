@@ -6970,6 +6970,18 @@ public class FirPsiDiagnosticTestGenerated extends AbstractFirPsiDiagnosticTest 
             }
 
             @Test
+            @TestMetadata("overriddenFunctionReturningUnit.kt")
+            public void testOverriddenFunctionReturningUnit() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/overriddenFunctionReturningUnit.kt");
+            }
+
+            @Test
+            @TestMetadata("overriddenFunctionReturningUnit2.kt")
+            public void testOverriddenFunctionReturningUnit2() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/overriddenFunctionReturningUnit2.kt");
+            }
+
+            @Test
             @TestMetadata("qualifierPriority.kt")
             public void testQualifierPriority() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/qualifierPriority.kt");
