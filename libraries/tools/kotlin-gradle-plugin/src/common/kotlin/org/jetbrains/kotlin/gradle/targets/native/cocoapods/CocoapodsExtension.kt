@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension.Cocoapods
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.POD_FRAMEWORK_PREFIX
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
+import org.jetbrains.kotlin.gradle.utils.getFile
 import java.io.File
 import java.net.URI
 import javax.inject.Inject
@@ -135,7 +136,7 @@ abstract class CocoapodsExtension @Inject constructor(private val project: Proje
     /**
      * Configure output directory for pod publishing
      */
-    var publishDir: File = CocoapodsBuildDirs(project).publish
+    var publishDir: File = CocoapodsBuildDirs(project.layout).publish.getFile()
 
     internal val specRepos = SpecRepos()
 
@@ -179,8 +180,8 @@ abstract class CocoapodsExtension @Inject constructor(private val project: Proje
                 val newContent = lineContent.replace(path.name, "")
                 """
                 |Deprecated DSL found on ${buildScript.absolutePath}${File.pathSeparator}${lineNumber + 1}:
-                |Found: "${lineContent}"
-                |Expected: "${newContent}"
+                |Found: "$lineContent"
+                |Expected: "$newContent"
                 |Please, change the path to avoid this warning.
                 |
             """.trimMargin()

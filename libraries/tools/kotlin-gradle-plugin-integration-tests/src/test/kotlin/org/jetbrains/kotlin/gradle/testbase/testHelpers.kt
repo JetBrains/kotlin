@@ -38,9 +38,10 @@ fun TestProject.makeSnapshotTo(destinationPath: String) {
     dest.resolve("run.sh").run {
         writeText(
             """
-                #!/usr/bin/env sh
-                ./gradlew ${buildOptions.toArguments(gradleVersion).joinToString(separator = " ")} ${'$'}@ 
-                """.trimIndent()
+            |#!/usr/bin/env sh
+            |${formatEnvironmentForScript(envCommand = "export")}
+            |./gradlew ${buildOptions.toArguments(gradleVersion).joinToString(separator = " ")} ${'$'}@ 
+            |""".trimMargin()
         )
 
         setPosixFilePermissions(
@@ -55,9 +56,10 @@ fun TestProject.makeSnapshotTo(destinationPath: String) {
     dest.resolve("run.bat").run {
         writeText(
             """
-                @rem Executing Gradle build
-                gradlew.bat ${buildOptions.toArguments(gradleVersion).joinToString(separator = " ")} %* 
-                """.trimIndent()
+            |@rem Executing Gradle build
+            |${formatEnvironmentForScript(envCommand = "set")}
+            |gradlew.bat ${buildOptions.toArguments(gradleVersion).joinToString(separator = " ")} %* 
+            |""".trimMargin()
         )
     }
 
@@ -77,6 +79,12 @@ fun TestProject.makeSnapshotTo(destinationPath: String) {
     }
     projectRoot.resolve("gradlew.bat").run {
         copyTo(dest.resolve(fileName))
+    }
+}
+
+private fun TestProject.formatEnvironmentForScript(envCommand: String): String {
+    return environmentVariables.environmentalVariables.asSequence().joinToString(separator = "\n|") { (key, value) ->
+        "$envCommand $key=\"$value\""
     }
 }
 

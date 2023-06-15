@@ -9,7 +9,6 @@ import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.jetbrains.kotlin.gradle.testbase.*
-import org.jetbrains.kotlin.konan.target.HostManager
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
@@ -75,53 +74,6 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
             testConfigurationCacheOf(
                 *(publishedTargets.map { ":publish${it.replaceFirstChar { it.uppercaseChar() }}PublicationToMavenRepository" }.toTypedArray()),
                 checkUpToDateOnRebuild = false
-            )
-        }
-    }
-
-    @NativeGradlePluginTests
-    @DisplayName("works with native tasks in complex project")
-    @GradleTestVersions(
-        minVersion = TestVersions.Gradle.G_7_4,
-        additionalVersions = [TestVersions.Gradle.G_7_6],
-        maxVersion = TestVersions.Gradle.G_8_1
-    )
-    @GradleTest
-    fun testNativeTasks(gradleVersion: GradleVersion) {
-        val expectedTasks = mutableListOf(
-            ":lib:cinteropMyCinteropLinuxX64",
-            ":lib:commonizeCInterop",
-            ":lib:compileKotlinLinuxX64",
-            ":lib:linkExecutableDebugExecutableLinuxX64",
-            ":lib:linkSharedDebugSharedLinuxX64",
-            ":lib:linkStaticDebugStaticLinuxX64",
-            ":lib:linkDebugTestLinuxX64",
-        )
-
-        if (HostManager.hostIsMac) {
-            expectedTasks += listOf(
-                ":lib:cinteropMyCinteropIosX64",
-                ":lib:compileKotlinIosX64",
-                ":lib:assembleMyframeDebugFrameworkIosArm64",
-                ":lib:assembleMyfatframeDebugFatFramework",
-                ":lib:assembleLibDebugXCFramework",
-                ":lib:compileTestKotlinIosX64",
-                ":lib:linkDebugTestIosX64",
-                ":lib:transformCommonMainDependenciesMetadata",
-                ":lib:transformCommonMainCInteropDependenciesMetadata",
-                ":lib:linkDebugFrameworkIosArm64",
-                ":lib:linkDebugFrameworkIosX64",
-                ":lib:linkDebugFrameworkIosFat",
-                ":lib:linkReleaseFrameworkIosArm64",
-                ":lib:linkReleaseFrameworkIosX64",
-                ":lib:linkReleaseFrameworkIosFat",
-            )
-        }
-
-        project("native-configuration-cache", gradleVersion) {
-            testConfigurationCacheOf(
-                "build",
-                executedTaskNames = expectedTasks,
             )
         }
     }

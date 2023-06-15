@@ -6,19 +6,13 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp.apple
 
 import org.gradle.api.DefaultTask
-import org.gradle.api.file.FileCollection
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.plugins.BasePlugin
-import org.gradle.api.tasks.Copy
-import org.gradle.api.tasks.IgnoreEmptyDirectories
-import org.gradle.api.tasks.InputFiles
-import org.gradle.api.tasks.OutputDirectory
-import org.gradle.api.tasks.PathSensitive
-import org.gradle.api.tasks.PathSensitivity
-import org.gradle.api.tasks.SkipWhenEmpty
-import org.gradle.api.tasks.TaskAction
-import org.gradle.api.tasks.TaskProvider
+import org.gradle.api.provider.Provider
+import org.gradle.api.tasks.*
+import org.gradle.process.ExecOperations
 import org.jetbrains.kotlin.gradle.dsl.KotlinNativeBinaryContainer
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
@@ -27,9 +21,11 @@ import org.jetbrains.kotlin.gradle.tasks.FatFrameworkTask
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
+import org.jetbrains.kotlin.gradle.utils.mapToFile
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import java.io.File
+import javax.inject.Inject
 
 internal object AppleXcodeTasks {
     const val embedAndSignTaskPrefix = "embedAndSign"
@@ -70,7 +66,7 @@ private object XcodeEnvironment {
         get() {
             val xcodeTargetBuildDir = System.getenv("TARGET_BUILD_DIR") ?: return null
             val xcodeFrameworksFolderPath = System.getenv("FRAMEWORKS_FOLDER_PATH") ?: return null
-            return File(xcodeTargetBuildDir, xcodeFrameworksFolderPath)
+            return File(xcodeTargetBuildDir, xcodeFrameworksFolderPath).absoluteFile
         }
 
     val sign: String? get() = System.getenv("EXPANDED_CODE_SIGN_IDENTITY")
@@ -135,9 +131,9 @@ private fun Project.registerAssembleAppleFrameworkTask(framework: Framework): Ta
         else -> registerTask<FrameworkCopy>(frameworkTaskName) { task ->
             task.description = "Packs $frameworkBuildType ${frameworkTarget.name} framework for Xcode"
             task.isEnabled = frameworkBuildType == envBuildType
-            task.dependsOn(framework.linkTaskName)
-            task.files = files({ framework.outputDirectory.listFiles() })
-            task.destDir = appleFrameworkDir(envFrameworkSearchDir)
+            task.sourceFramework.fileProvider(framework.linkTaskProvider.flatMap { it.outputFile })
+            task.dependsOn(framework.linkTaskProvider)
+            task.destinationDirectory.set(appleFrameworkDir(envFrameworkSearchDir))
         }
     }
 }
@@ -193,15 +189,16 @@ internal fun Project.registerEmbedAndSignAppleFrameworkTask(framework: Framework
     if (framework.buildType != envBuildType || !envTargets.contains(framework.konanTarget)) return
 
     embedAndSignTask.configure { task ->
+        val frameworkFile = framework.outputFile
         task.dependsOn(assembleTask)
-        task.files = files(File(appleFrameworkDir(envFrameworkSearchDir), framework.outputFile.name))
-        task.destDir = envEmbeddedFrameworksDir
+        task.sourceFramework.set(File(appleFrameworkDir(envFrameworkSearchDir), frameworkFile.name))
+        task.destinationDirectory.set(envEmbeddedFrameworksDir)
         if (envSign != null) {
             task.doLast {
                 val binary = envEmbeddedFrameworksDir
-                    .resolve(framework.outputFile.name)
-                    .resolve(framework.outputFile.nameWithoutExtension)
-                exec {
+                    .resolve(frameworkFile.name)
+                    .resolve(frameworkFile.nameWithoutExtension)
+                task.execOperations.exec {
                     it.commandLine("codesign", "--force", "--sign", envSign, "--", binary)
                 }
             }
@@ -224,26 +221,39 @@ private fun Project.appleFrameworkDir(frameworkSearchDir: File) =
  * To preserve these symlinks we are using the `cp` command instead.
  * See https://youtrack.jetbrains.com/issue/KT-48594.
  */
+@Suppress("LeakingThis") // Should be extended only by Gradle
 internal abstract class FrameworkCopy : DefaultTask() {
 
+    @get:Inject
+    abstract val execOperations: ExecOperations
+
+    @get:InputDirectory
+    abstract val sourceFramework: DirectoryProperty
+
     @get:InputFiles
-    @get:SkipWhenEmpty
     @get:IgnoreEmptyDirectories
-    @get:PathSensitive(PathSensitivity.ABSOLUTE)
-    abstract var files: FileCollection
+    protected val sourceDsym = sourceFramework.mapToFile().map { File(it.path + ".dSYM") }
 
     @get:OutputDirectory
-    abstract var destDir: File
+    abstract val destinationDirectory: DirectoryProperty
 
     @TaskAction
-    fun copy() {
-        destDir.mkdirs()
-        files.forEach { file ->
-            File(destDir, file.name).let destFile@{ destFile ->
-                if (!destFile.exists()) return@destFile
-                project.exec { it.commandLine("rm", "-r", destFile.absolutePath) }
-            }
-            project.exec { it.commandLine("cp", "-R", file.absolutePath, destDir.absolutePath) }
+    open fun copy() {
+        copy(sourceFramework.mapToFile())
+        if (sourceDsym.get().exists()) {
+            copy(sourceDsym)
         }
+    }
+
+    private fun copy(sourceProvider: Provider<File>) {
+        val source = sourceProvider.get()
+        val destination = destinationDirectory.asFile.get()
+
+        val destinationFile = File(destination, source.name)
+        if (destinationFile.exists()) {
+            execOperations.exec { it.commandLine("rm", "-r", destinationFile.absolutePath) }
+        }
+
+        execOperations.exec { it.commandLine("cp", "-R", source.absolutePath, destination.absolutePath) }
     }
 }

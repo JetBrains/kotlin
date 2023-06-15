@@ -53,6 +53,10 @@ data class PodBuildSettingsProperties(
         const val PUBLIC_HEADERS_FOLDER_PATH = "PUBLIC_HEADERS_FOLDER_PATH"
         const val FRAMEWORK_SEARCH_PATHS = "FRAMEWORK_SEARCH_PATHS"
 
+        internal fun readSettingsFromFile(file: File): PodBuildSettingsProperties {
+            return file.reader().use { readSettingsFromReader(it) }
+        }
+
         fun readSettingsFromReader(reader: Reader): PodBuildSettingsProperties {
             with(Properties()) {
                 load(reader)

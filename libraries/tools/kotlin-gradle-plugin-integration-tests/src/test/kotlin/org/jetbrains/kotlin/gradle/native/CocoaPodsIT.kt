@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Compan
 import org.jetbrains.kotlin.gradle.testbase.ImportMode
 import org.jetbrains.kotlin.gradle.testbase.cocoaPodsEnvironmentVariables
 import org.jetbrains.kotlin.gradle.testbase.ensureCocoapodsInstalled
+import org.jetbrains.kotlin.gradle.testbase.TestVersions.Gradle.G_8_1
+import org.jetbrains.kotlin.gradle.transformProjectWithPluginsDsl
 import org.jetbrains.kotlin.gradle.util.modify
 import org.jetbrains.kotlin.gradle.util.runProcess
 import org.jetbrains.kotlin.konan.target.HostManager
@@ -25,10 +27,7 @@ import java.io.File
 import java.util.*
 import java.util.concurrent.TimeUnit
 import java.util.zip.ZipFile
-import kotlin.test.assertContains
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
-import kotlin.test.fail
+import kotlin.test.*
 
 class CocoaPodsIT : BaseGradleIT() {
 
@@ -806,6 +805,72 @@ class CocoaPodsIT : BaseGradleIT() {
         ) {
             assertFailed()
             assertContains("Pod 'Foo' has an interop-binding dependency on itself")
+        }
+    }
+
+    @Test
+    @Ignore // will be fixed in the next step
+    fun `test configuration cache works in a complex scenario with Gradle 8_1`() {
+        project = transformProjectWithPluginsDsl(templateProjectName, GradleVersionRequired.Exact(G_8_1)).apply {
+            preparePodfile("ios-app", ImportMode.FRAMEWORKS)
+        }
+        `test configuration cache works in a complex scenario`()
+    }
+
+    @Test
+    fun `test configuration cache works in a complex scenario`() {
+        project.gradleBuildScript().appendToCocoapodsBlock("""pod("Base64", version = "1.1.2")""")
+
+        val tasks = arrayOf(
+            ":podspec",
+            ":podImport",
+            ":podPublishDebugXCFramework",
+            ":podPublishReleaseXCFramework",
+            ":syncFramework",
+        )
+
+        val executableTasks = listOf(
+            ":podspec",
+            ":podPublishDebugXCFramework",
+            ":podPublishReleaseXCFramework",
+            ":linkPodDebugFrameworkIOS",
+        )
+
+        fun build(vararg tasks: String, check: CompiledProject.() -> Unit) {
+            project.build(
+                *tasks,
+                "-Pkotlin.native.cocoapods.generate.wrapper=true",
+                "-Pkotlin.native.cocoapods.platform=iphonesimulator",
+                "-Pkotlin.native.cocoapods.archs=x86_64",
+                "-Pkotlin.native.cocoapods.configuration=Debug",
+                options = defaultBuildOptions().copy(configurationCache = true),
+                check = check,
+            )
+        }
+
+        build(*tasks) {
+            assertSuccessful()
+            assertTasksExecuted(executableTasks)
+
+            assertContains("Calculating task graph as no configuration cache is available for tasks")
+
+            assertContains("Configuration cache entry stored.")
+        }
+
+        build("clean") {
+            assertSuccessful()
+        }
+
+        build(*tasks) {
+            assertSuccessful()
+
+            assertContains("Reusing configuration cache.")
+        }
+
+        build(*tasks) {
+            assertSuccessful()
+
+            assertTasksUpToDate(executableTasks)
         }
     }
 

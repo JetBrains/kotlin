@@ -43,12 +43,14 @@ abstract class KotlinNativeLink
 @Inject
 constructor(
     @Internal
+    @Transient // This property can't be accessed in the execution phase
     val binary: NativeBinary,
     private val objectFactory: ObjectFactory,
-    private val execOperations: ExecOperations
+    private val execOperations: ExecOperations,
 ) : AbstractKotlinCompileTool<K2NativeCompilerArguments>(objectFactory),
     UsesKonanPropertiesBuildService,
     KotlinToolTask<KotlinCommonCompilerToolOptions> {
+
     @Deprecated("Visibility will be lifted to private in the future releases")
     @get:Internal
     val compilation: KotlinNativeCompilation
@@ -85,16 +87,19 @@ constructor(
     )
 
     @get:Input
-    val outputKind: CompilerOutputKind get() = binary.outputKind.compilerOutputKind
+    val outputKind: CompilerOutputKind by lazyConvention { binary.outputKind.compilerOutputKind }
 
     @get:Input
-    val optimized: Boolean get() = binary.optimized
+    val optimized: Boolean by lazyConvention { binary.optimized }
 
     @get:Input
-    val debuggable: Boolean get() = binary.debuggable
+    val debuggable: Boolean by lazyConvention { binary.debuggable }
 
     @get:Input
-    val baseName: String get() = binary.baseName
+    val baseName: String by lazyConvention { binary.baseName }
+
+    @get:Input
+    internal val binaryName: String by lazyConvention { binary.name }
 
     @Suppress("DEPRECATION")
     private val konanTarget = compilation.konanTarget
@@ -132,24 +137,29 @@ constructor(
     }
 
     fun kotlinOptions(fn: Closure<*>) {
-        @Suppress("DEPRECATION")
         fn.delegate = kotlinOptions
         fn.call()
     }
 
     // Binary-specific options.
-    @get:Input
-    @get:Optional
-    val entryPoint: String? get() = (binary as? Executable)?.entryPoint
+    private val _entryPoint: String by lazyConvention { (binary as? Executable)?.entryPoint.orEmpty() }
 
     @get:Input
-    val linkerOpts: List<String> get() = binary.linkerOpts
+    @get:Optional
+    val entryPoint: String?
+        get() = _entryPoint.ifEmpty { null }
+
+    @get:Input
+    val linkerOpts: List<String> by lazyConvention { binary.linkerOpts }
+
+    @get:Input
+    internal val additionalLinkerOpts: MutableList<String> = mutableListOf()
 
     @get:Input
     val binaryOptions: Map<String, String> by lazy { PropertiesProvider(project).nativeBinaryOptions + binary.binaryOptions }
 
     @get:Input
-    val processTests: Boolean get() = binary is TestExecutable
+    val processTests: Boolean by lazyConvention { binary is TestExecutable }
 
     @get:Classpath
     val exportLibraries: FileCollection get() = exportLibrariesResolvedConfiguration?.files ?: objectFactory.fileCollection()
@@ -161,8 +171,7 @@ constructor(
     }
 
     @get:Input
-    val isStaticFramework: Boolean
-        get() = binary.let { it is Framework && it.isStatic }
+    val isStaticFramework: Boolean by lazyConvention { binary.let { it is Framework && it.isStatic } }
 
     @Suppress("DEPRECATION")
     @get:Input
@@ -221,7 +230,7 @@ constructor(
                 null, BitcodeEmbeddingMode.DISABLE -> Unit
             }
 
-            args.singleLinkerArguments = linkerOpts.toTypedArray()
+            args.singleLinkerArguments = (linkerOpts + additionalLinkerOpts).toTypedArray()
             args.binaryOptions = binaryOptions.map { (key, value) -> "$key=$value" }.toTypedArray()
             args.staticFramework = isStaticFramework
 
@@ -269,7 +278,7 @@ constructor(
             }
 
             """
-                |Following dependencies exported in the ${binary.name} binary are not specified as API-dependencies of a corresponding source set:
+                |Following dependencies exported in the $binaryName binary are not specified as API-dependencies of a corresponding source set:
                 |
                 $failedDependenciesList
                 |
@@ -377,5 +386,9 @@ constructor(
             settings = runnerSettings,
             executionContext = executionContext
         ).run(buildArguments)
+    }
+
+    private inline fun <reified T : Any> lazyConvention(noinline lazyConventionValue: () -> T): Provider<T> {
+        return objectFactory.providerWithLazyConvention(lazyConventionValue)
     }
 }

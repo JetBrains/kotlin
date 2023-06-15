@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.gradle.utils
 
 import org.gradle.api.Project
+import org.gradle.api.file.Directory
 import org.gradle.api.file.RegularFile
+import org.gradle.api.provider.Provider
 import java.io.File
 import java.io.IOException
 import java.nio.file.Files
@@ -117,3 +119,13 @@ fun contentEquals(file1: File, file2: File): Boolean {
 }
 
 internal fun RegularFile.toUri() = asFile.toPath().toUri()
+
+internal fun Provider<RegularFile>.mapToFile(): Provider<File> = map { it.asFile }
+
+@JvmName("mapDirectoryToFile") // avoids jvm signature clash
+internal fun Provider<Directory>.mapToFile(): Provider<File> = map { it.asFile }
+
+internal fun Provider<RegularFile>.getFile(): File = get().asFile
+
+@JvmName("getDirectoryAsFile") // avoids jvm signature clash
+internal fun Provider<Directory>.getFile(): File = get().asFile
