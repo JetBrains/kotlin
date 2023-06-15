@@ -30447,6 +30447,26 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/polymorphicSignature/anonymousSubclass.kt");
         }
 
+        @TestMetadata("insideComplexExpression.kt")
+        public void testInsideComplexExpression() throws Exception {
+            runTest("compiler/testData/codegen/box/polymorphicSignature/insideComplexExpression.kt");
+        }
+
+        @TestMetadata("insideIf.kt")
+        public void testInsideIf() throws Exception {
+            runTest("compiler/testData/codegen/box/polymorphicSignature/insideIf.kt");
+        }
+
+        @TestMetadata("insideTry.kt")
+        public void testInsideTry() throws Exception {
+            runTest("compiler/testData/codegen/box/polymorphicSignature/insideTry.kt");
+        }
+
+        @TestMetadata("insideWhen.kt")
+        public void testInsideWhen() throws Exception {
+            runTest("compiler/testData/codegen/box/polymorphicSignature/insideWhen.kt");
+        }
+
         @TestMetadata("invoke.kt")
         public void testInvoke() throws Exception {
             runTest("compiler/testData/codegen/box/polymorphicSignature/invoke.kt");

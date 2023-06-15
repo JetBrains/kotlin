@@ -35,7 +35,7 @@ internal val removeDuplicatedInlinedLocalClasses = makeIrFilePhase(
     prerequisite = setOf(functionInliningPhase, localDeclarationsPhase)
 )
 
-data class Data(
+private data class Data(
     var classDeclaredOnCallSiteOrIsDefaultLambda: Boolean = false,
     var insideInlineBlock: Boolean = false,
     var modifyTree: Boolean = true,
@@ -48,7 +48,7 @@ data class Data(
 // This lambda will not exist after inline, so we copy declaration into new temporary inline call `singleArgumentInlineFunction`.
 // 3. MUST NOT BE created at all because will be created at callee site.
 // This lowering drops declarations that correspond to second and third type.
-class RemoveDuplicatedInlinedLocalClassesLowering(val context: JvmBackendContext) : IrElementTransformer<Data>, FileLoweringPass {
+private class RemoveDuplicatedInlinedLocalClassesLowering(val context: JvmBackendContext) : IrElementTransformer<Data>, FileLoweringPass {
     private val visited = mutableSetOf<IrElement>()
     private val capturedConstructors = context.mapping.capturedConstructors
 

@@ -35684,6 +35684,30 @@ public class IrBlackBoxCodegenWithIrInlinerTestGenerated extends AbstractIrBlack
         }
 
         @Test
+        @TestMetadata("insideComplexExpression.kt")
+        public void testInsideComplexExpression() throws Exception {
+            runTest("compiler/testData/codegen/box/polymorphicSignature/insideComplexExpression.kt");
+        }
+
+        @Test
+        @TestMetadata("insideIf.kt")
+        public void testInsideIf() throws Exception {
+            runTest("compiler/testData/codegen/box/polymorphicSignature/insideIf.kt");
+        }
+
+        @Test
+        @TestMetadata("insideTry.kt")
+        public void testInsideTry() throws Exception {
+            runTest("compiler/testData/codegen/box/polymorphicSignature/insideTry.kt");
+        }
+
+        @Test
+        @TestMetadata("insideWhen.kt")
+        public void testInsideWhen() throws Exception {
+            runTest("compiler/testData/codegen/box/polymorphicSignature/insideWhen.kt");
+        }
+
+        @Test
         @TestMetadata("invoke.kt")
         public void testInvoke() throws Exception {
             runTest("compiler/testData/codegen/box/polymorphicSignature/invoke.kt");
