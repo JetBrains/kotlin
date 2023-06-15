@@ -24,10 +24,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.*
 import org.jetbrains.kotlin.ir.descriptors.toIrBasedKotlinType
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrClassReferenceImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.interpreter.toIrConst
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrAnonymousInitializerSymbolImpl
@@ -75,7 +72,7 @@ private class ScriptsToClassesLowering(val context: JvmBackendContext, val inner
             }
         }
 
-        val symbolRemapper = ScriptsToClassesSymbolRemapper(scriptsToClasses)
+        val symbolRemapper = ScriptsToClassesSymbolRemapper()
 
         for ((irScript, irScriptClass) in scriptsToClasses) {
             finalizeScriptClass(irScriptClass, irScript, symbolRemapper)
@@ -237,7 +234,21 @@ private class ScriptsToClassesLowering(val context: JvmBackendContext, val inner
                 (this as? IrDeclaration)?.let { defaultContext.copy( topLevelDeclaration = it) } ?: defaultContext
             ).transform(lambdaPatcher, ScriptFixLambdasTransformerContext())
 
-        (irScript.constructor?.patchForClass() as? IrConstructor ?: createConstructor(irScriptClass, irScript)).also { constructor ->
+        val explicitParametersWithFields = irScript.explicitCallParameters.map { parameter ->
+            val field = irScriptClass.addField {
+                startOffset = parameter.startOffset
+                endOffset = parameter.endOffset
+                origin = IrDeclarationOrigin.SCRIPT_CALL_PARAMETER
+                name = parameter.name
+                type = parameter.type
+                visibility = DescriptorVisibilities.LOCAL
+                isFinal = true
+            }
+            parameter to field
+        }
+
+        (irScript.constructor?.patchForClass() as? IrConstructor
+            ?: createConstructor(irScriptClass, irScript, implicitReceiversFieldsWithParameters)).also { constructor ->
             val explicitParamsStartIndex = if (irScript.earlierScriptsParameter == null) 0 else 1
             val explicitParameters = constructor.valueParameters.subList(
                 explicitParamsStartIndex,
@@ -264,6 +275,12 @@ private class ScriptsToClassesLowering(val context: JvmBackendContext, val inner
                 }
                 if (earlierScriptField != null) {
                     +irSetField(irGet(irScriptClass.thisReceiver!!), earlierScriptField, irGet(irScript.earlierScriptsParameter!!))
+                }
+                explicitParametersWithFields.forEach { (parameter, field) ->
+                    +irSetField(
+                        irGet(irScriptClass.thisReceiver!!),
+                        field, irGet(parameter.type, explicitParameters.find { it.name == parameter.name }!!.symbol)
+                    )
                 }
                 implicitReceiversFieldsWithParameters.forEach { (field, correspondingParameter) ->
                     +irSetField(
@@ -328,7 +345,8 @@ private class ScriptsToClassesLowering(val context: JvmBackendContext, val inner
 
     private fun createConstructor(
         irScriptClass: IrClass,
-        irScript: IrScript
+        irScript: IrScript,
+        implicitReceiversFieldsWithParameters: ArrayList<Pair<IrField, IrValueParameter>>
     ): IrConstructor =
         with(IrFunctionBuilder().apply {
             isPrimary = true
@@ -349,18 +367,23 @@ private class ScriptsToClassesLowering(val context: JvmBackendContext, val inner
                 containerSource = containerSource,
             )
         }.also { irConstructor ->
+            var parametersIndex = 0
             irConstructor.valueParameters = buildList {
-                addIfNotNull(irScript.earlierScriptsParameter)
+                irScript.earlierScriptsParameter?.let {
+                    add(it)
+                    ++parametersIndex
+                }
                 addAll(irScript.explicitCallParameters.map {
                     IrValueParameterImpl(
                         it.startOffset, it.endOffset,
                         IrDeclarationOrigin.SCRIPT_CALL_PARAMETER, IrValueParameterSymbolImpl(),
-                        it.name, index = 0,
-                        type = it.type, varargElementType = null,
-                        isCrossinline = false, isNoinline = false, isHidden = false, isAssignable = false
+                        it.name, index = parametersIndex++, type = it.type,
+                        varargElementType = null, isCrossinline = false, isNoinline = false, isHidden = false, isAssignable = false
                     ).also { it.parent = irScript }
                 })
-                addAll(irScript.implicitReceiversParameters)
+                implicitReceiversFieldsWithParameters.forEach {(_, param) ->
+                    add(param)
+                }
                 addAll(irScript.providedPropertiesParameters)
             }
             irConstructor.parent = irScript
@@ -525,7 +548,7 @@ private class ScriptToClassTransformer(
                         createThisReceiverParameter(IrDeclarationOrigin.SCRIPT_THIS_RECEIVER, scriptClassReceiver.type)
                     } else null
                 }
-                val isInScriptConstructor = this@transformFunctionChildren is IrConstructor && parent == irScript
+                val isInScriptConstructor = this@transformFunctionChildren is IrConstructor && (parent == irScript || parent == irScriptClass)
                 val dataForChildren =
                     when {
                         newDispatchReceiverParameter == null -> data
@@ -842,25 +865,30 @@ private class ScriptToClassTransformer(
     }
 
     override fun visitGetValue(expression: IrGetValue, data: ScriptToClassTransformerContext): IrExpression {
-        val getVar = expression.symbol.owner as? IrVariable
-        if (getVar != null) {
-            if (irScript.explicitCallParameters.contains(getVar)) {
-                val correspondingParam = irScriptClass.constructors.single().valueParameters.find {
-                    it.origin == IrDeclarationOrigin.SCRIPT_CALL_PARAMETER && it.name == getVar.name
-                } ?: error("script explicit parameter ${getVar.name.asString()} not found")
+        val correspondingVariable = expression.symbol.owner as? IrVariable
+        val correspondingValueParameter = expression.symbol.owner as? IrValueParameter
+        when {
+            correspondingVariable != null && irScript.explicitCallParameters.contains(correspondingVariable) -> {
+                val builder = context.createIrBuilder(expression.symbol)
                 val newExpression =
-                    IrGetValueImpl(
-                        expression.startOffset, expression.endOffset,
-                        correspondingParam.type, correspondingParam.symbol,
-                        expression.origin
-                    )
+                    if (data.isInScriptConstructor) {
+                        val correspondingCtorParam = irScriptClass.constructors.single().valueParameters.find {
+                            it.origin == IrDeclarationOrigin.SCRIPT_CALL_PARAMETER && it.name == correspondingVariable.name
+                        } ?: error("script explicit parameter ${correspondingVariable.name.asString()} not found")
+                        builder.irGet(correspondingCtorParam.type, correspondingCtorParam.symbol)
+                    } else {
+                        val correspondingField = irScriptClass.declarations.find {
+                            it is IrField &&  it.origin == IrDeclarationOrigin.SCRIPT_CALL_PARAMETER && it.name == correspondingVariable.name
+                        } ?: error("script explicit parameter ${correspondingVariable.name.asString()} corresponding property not found")
+                        val scriptReceiver =
+                            getAccessCallForScriptInstance(data, expression.startOffset, expression.endOffset, expression.origin, null)
+                        builder.irGetField(scriptReceiver, correspondingField as IrField)
+                    }
                 return super.visitExpression(newExpression, data)
             }
-        } else if (irScript.needsReceiverProcessing) {
-            val getValueParameter = expression.symbol.owner as? IrValueParameter
-            if (getValueParameter != null && isValidNameForReceiver(getValueParameter.name)) {
+            correspondingValueParameter != null && irScript.needsReceiverProcessing && isValidNameForReceiver(correspondingValueParameter.name) -> {
                 val newExpression = getDispatchReceiverExpression(
-                    data, expression, getValueParameter.type, expression.origin, getValueParameter
+                    data, expression, correspondingValueParameter.type, expression.origin, correspondingValueParameter
                 )
                 if (newExpression != null) {
                     return super.visitExpression(newExpression, data)
@@ -945,11 +973,9 @@ private class ScriptFixLambdasTransformer(val irScriptClass: IrClass) : IrElemen
 }
 
 
-private class ScriptsToClassesSymbolRemapper(
-    val scriptsToClasses: Map<IrScript, IrClass>
-) : SymbolRemapper.Empty() {
+private class ScriptsToClassesSymbolRemapper : SymbolRemapper.Empty() {
     override fun getReferencedClassifier(symbol: IrClassifierSymbol): IrClassifierSymbol =
-        (symbol.owner as? IrScript)?.let { scriptsToClasses[it] }?.symbol ?: symbol
+        (symbol.owner as? IrScript)?.targetClass  ?: symbol
 }
 
 private inline fun IrClass.addAnonymousInitializer(builder: IrFunctionBuilder.() -> Unit = {}): IrAnonymousInitializer =
