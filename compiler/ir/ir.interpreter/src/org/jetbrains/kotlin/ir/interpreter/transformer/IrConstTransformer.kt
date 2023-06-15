@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreter
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreterConfiguration
 import org.jetbrains.kotlin.ir.interpreter.checker.*
+import org.jetbrains.kotlin.ir.interpreter.preprocessor.IrInterpreterConstGetterPreprocessor
 import org.jetbrains.kotlin.ir.interpreter.preprocessor.IrInterpreterKCallableNamePreprocessor
 import org.jetbrains.kotlin.ir.interpreter.preprocessor.IrInterpreterPreprocessorData
 import org.jetbrains.kotlin.ir.interpreter.property
@@ -72,7 +73,7 @@ fun IrFile.preprocessForConstTransformer(
     interpreter: IrInterpreter,
     mode: EvaluationMode,
 ): IrFile {
-    val preprocessors = setOf(IrInterpreterKCallableNamePreprocessor())
+    val preprocessors = setOf(IrInterpreterKCallableNamePreprocessor(), IrInterpreterConstGetterPreprocessor())
     val preprocessedFile = preprocessors.fold(this) { file, preprocessor ->
         preprocessor.preprocess(file, IrInterpreterPreprocessorData(mode, interpreter.irBuiltIns))
     }

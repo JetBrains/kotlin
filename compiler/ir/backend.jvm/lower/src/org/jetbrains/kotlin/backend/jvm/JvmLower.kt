@@ -369,7 +369,6 @@ private val jvmFilePhases = listOf(
     singletonOrConstantDelegationPhase,
     propertyReferencePhase,
     arrayConstructorPhase,
-    constPhase1,
 
     // TODO: merge the next three phases together, as visitors behave incorrectly between them
     //  (backing fields moved out of companion objects are reachable by two paths):
@@ -422,7 +421,6 @@ private val jvmFilePhases = listOf(
 
     tailCallOptimizationPhase,
     addContinuationPhase,
-    constPhase2, // handle const properties in default arguments of "original" suspend funs
 
     innerClassesPhase,
     innerClassesMemberBodyPhase,
