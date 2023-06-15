@@ -178,7 +178,7 @@ class FirDataFrameExtensionRegistrar(
 class FirDataFrameComponentRegistrar : CompilerPluginRegistrar() {
 
     override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
-        FirExtensionRegistrarAdapter.registerExtension(FirDataFrameExtensionRegistrar(configuration.get(PATH)))
+        FirExtensionRegistrarAdapter.registerExtension(FirDataFrameExtensionRegistrar(configuration.get(PATH), Mode.EXPERIMENTAL))
         IrGenerationExtension.registerExtension(IrBodyFiller())
     }
 
