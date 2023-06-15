@@ -12,13 +12,15 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.resolve.extensions.KtResolveExtension
 import org.jetbrains.kotlin.analysis.api.resolve.extensions.KtResolveExtensionFile
+import org.jetbrains.kotlin.analysis.api.resolve.extensions.KtResolveExtensionNavigationTargetsProvider
 import org.jetbrains.kotlin.analysis.api.resolve.extensions.KtResolveExtensionProvider
-import org.jetbrains.kotlin.analysis.api.resolve.extensions.KtResolveExtensionReferencePsiTargetsProvider
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.test.framework.services.environmentManager
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.test.services.TestServices
 
 class KtResolveExtensionProviderForTest(
@@ -56,7 +58,7 @@ class KtResolveExtensionFileForTests(
     topLevelClassifiersNames: Set<String>,
     topLevelCallableNames: Set<String>,
     private val fileText: String,
-    private val psiTargetProvider: KtResolveExtensionReferencePsiTargetsProvider? = null
+    private val navigationTargetsProvider: KtResolveExtensionNavigationTargetsProvider? = null
 ) : KtResolveExtensionFile() {
 
     private val topLevelClassifiersNames: Set<Name> = topLevelClassifiersNames.mapTo(mutableSetOf()) { Name.identifier(it) }
@@ -68,12 +70,27 @@ class KtResolveExtensionFileForTests(
 
     override fun buildFileText(): String = fileText
 
-    private object EmptyReferencePsiTargetsProvider : KtResolveExtensionReferencePsiTargetsProvider() {
-        override fun KtAnalysisSession.getReferenceTargetsForSymbol(symbol: KtSymbol): Collection<PsiElement> =
-            emptyList()
+    private object ResolveExtensionNavigationTargetProviderForTest : KtResolveExtensionNavigationTargetsProvider() {
+        override fun KtAnalysisSession.getNavigationTargets(element: KtElement): Collection<PsiElement> =
+            listOf(KtResolveExtensionNavigationTargetPsiElementForTest(element))
     }
 
-    override fun createPsiTargetsProvider(): KtResolveExtensionReferencePsiTargetsProvider =
-        psiTargetProvider ?: EmptyReferencePsiTargetsProvider
+    override fun createNavigationTargetsProvider(): KtResolveExtensionNavigationTargetsProvider =
+        navigationTargetsProvider ?: ResolveExtensionNavigationTargetProviderForTest
+}
+
+fun KtElement.getDescription(): String = buildString {
+    val declaration = when (this@getDescription) {
+        is KtDeclaration -> this@getDescription
+        else -> {
+            append("${this@getDescription.javaClass.simpleName} in ")
+            getStrictParentOfType<KtDeclaration>() ?: containingKtFile
+        }
+    }
+    append("${declaration.javaClass.simpleName} ${declaration.name}")
+}
+
+class KtResolveExtensionNavigationTargetPsiElementForTest(val originalElement: KtElement) : PsiElement by originalElement {
+    override fun toString() = "[Resolve extension navigation target for test for ${originalElement.getDescription()}]"
 }
 
