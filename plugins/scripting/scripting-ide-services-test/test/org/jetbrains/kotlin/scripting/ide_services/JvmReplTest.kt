@@ -367,7 +367,7 @@ class JvmIdeServicesTest : TestCase() {
     }
 }
 
-class LegacyReplTestLong : TestCase() {
+class LegacyReplTestLong1 : TestCase() {
     fun test256Evals() {
         JvmTestRepl()
             .use { repl ->
@@ -397,7 +397,9 @@ class LegacyReplTestLong : TestCase() {
                 assertEquals(evaluated.toString(), evals, (evaluated?.result as ResultValue.Value?)?.value)
             }
     }
+}
 
+class LegacyReplTestLong2 : TestCase() {
     fun testReplSlowdownKt22740() {
         JvmTestRepl()
             .use { repl ->
