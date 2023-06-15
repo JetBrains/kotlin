@@ -19,12 +19,7 @@ import org.jetbrains.kotlin.gradle.plugin.sources.internal
 
 internal object KotlinSourceSetTreeDependsOnMismatchChecker : KotlinGradleProjectChecker {
     override suspend fun KotlinGradleProjectCheckerContext.runChecks(collector: KotlinToolingDiagnosticsCollector) {
-        val sourceSets = this.multiplatformExtension
-            ?.awaitSourceSets()
-            // Android source sets are excluded from verification as they can cause unexpected results
-            // As well as in [UnusedSourceSetsChecker]
-            ?.filter { it.androidSourceSetInfoOrNull == null }
-            ?: return
+        val sourceSets = this.multiplatformExtension?.awaitSourceSets() ?: return
 
         // A "good" source set is part of only single Source Set Tree
         val goodSourceSets = mutableMapOf<KotlinSourceSet, SourceSetTree?>()

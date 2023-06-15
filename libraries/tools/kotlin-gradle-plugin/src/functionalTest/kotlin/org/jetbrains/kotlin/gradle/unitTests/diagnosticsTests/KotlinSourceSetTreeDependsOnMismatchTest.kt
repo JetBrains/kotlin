@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.unitTests.diagnosticsTests
 
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics.CommonMainWithDependsOnDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics.KotlinSourceSetTreeDependsOnMismatch
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.kotlinToolingDiagnosticsCollector
@@ -33,10 +34,10 @@ class KotlinSourceSetTreeDependsOnMismatchTest {
     private fun checkSingleBadSourceSetDependency(
         dependent: String,
         dependency: String,
-        expectedDiagnostic: ToolingDiagnostic = KotlinSourceSetTreeDependsOnMismatch(dependent, dependency)
+        vararg expectedDiagnostics: ToolingDiagnostic = arrayOf(KotlinSourceSetTreeDependsOnMismatch(dependent, dependency))
     ) = checkDiagnostics {
         sourceSets.getByName(dependent).dependsOn(sourceSets.getByName(dependency))
-    }.assertContainsDiagnostic(expectedDiagnostic)
+    }.assertDiagnostics(*expectedDiagnostics)
 
     @Test
     fun `no diagnostics should be reported for correctly configured project`() {
@@ -48,29 +49,15 @@ class KotlinSourceSetTreeDependsOnMismatchTest {
     @Test
     fun `commonTest cant depend on commonMain`() = checkSingleBadSourceSetDependency(
         dependent = "commonTest",
-        dependency = "commonMain",
-        // Since for given test project commonMain have only one dependent (nativeMain) it is
-        // impossible to figure out wrong dependency via "white crow" heuristic
-        expectedDiagnostic = KotlinSourceSetTreeDependsOnMismatch(
-            dependents = mapOf(
-                "test" to listOf("commonTest"),
-                "main" to listOf("nativeMain"),
-            ),
-            dependencyName = "commonMain"
-        )
+        dependency = "commonMain"
     )
 
     @Test
     fun `commonMain cant depend on commonTest`() = checkSingleBadSourceSetDependency(
         dependent = "commonMain",
         dependency = "commonTest",
-        expectedDiagnostic = KotlinSourceSetTreeDependsOnMismatch(
-            dependents = mapOf(
-                "main" to listOf("commonMain"),
-                "test" to listOf("nativeTest"),
-            ),
-            dependencyName = "commonTest"
-        )
+        KotlinSourceSetTreeDependsOnMismatch("commonMain", "commonTest"),
+        CommonMainWithDependsOnDiagnostic()
     )
 
     @Test
@@ -121,6 +108,33 @@ class KotlinSourceSetTreeDependsOnMismatchTest {
             ),
             dependencyName = "iosMain"
         )
+    )
+
+    @Test
+    fun `androidInstrumentedTest cant depend on commonMain`() = checkSingleBadSourceSetDependency(
+        dependent = "androidInstrumentedTest",
+        dependency = "commonMain"
+    )
+
+    @Test
+    fun `commonMain cant depend on androidInstrumentedTest`() = checkSingleBadSourceSetDependency(
+        dependent = "androidInstrumentedTest",
+        dependency = "commonMain"
+    )
+
+    @Test
+    fun `test multiple incorrect source set dependencies`() = checkDiagnostics {
+        sourceSets.getByName("iosX64Test").dependsOn(sourceSets.getByName("commonMain"))
+        sourceSets.getByName("androidInstrumentedTest").dependsOn(sourceSets.getByName("commonMain"))
+    }.assertDiagnostics(
+        KotlinSourceSetTreeDependsOnMismatch(
+            dependents = mapOf(
+                "main" to listOf("androidDebug", "androidMain", "androidRelease", "nativeMain"),
+                "instrumentedTest" to listOf("androidInstrumentedTest"),
+                "test" to listOf("iosX64Test")
+            ),
+            dependencyName = "commonMain"
+        ),
     )
 
     @Test

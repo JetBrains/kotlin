@@ -109,7 +109,7 @@ internal fun Collection<ToolingDiagnostic>.assertDiagnostics(vararg diagnostics:
         if (unexpectedDiagnostics.isNotEmpty()) {
             appendLine(unexpectedDiagnostics.joinToString(prefix = "Unexpected diagnostic\n", separator = "\n") { it.withIndent() })
         }
-        appendLine("in: \n${expectedDiagnostics.render().withIndent()}")
+        appendLine("in: \n${actualDiagnostic.render().withIndent()}")
     }
 
     fail(errorMessage)
