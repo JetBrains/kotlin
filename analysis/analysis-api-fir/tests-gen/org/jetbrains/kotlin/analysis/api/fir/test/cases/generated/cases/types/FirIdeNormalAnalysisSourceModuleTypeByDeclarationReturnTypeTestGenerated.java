@@ -47,6 +47,12 @@ public class FirIdeNormalAnalysisSourceModuleTypeByDeclarationReturnTypeTestGene
     }
 
     @Test
+    @TestMetadata("anonymousFunction.kt")
+    public void testAnonymousFunction() throws Exception {
+        runTest("analysis/analysis-api/testData/types/byDeclarationReturnType/anonymousFunction.kt");
+    }
+
+    @Test
     @TestMetadata("localClassType.kt")
     public void testLocalClassType() throws Exception {
         runTest("analysis/analysis-api/testData/types/byDeclarationReturnType/localClassType.kt");
