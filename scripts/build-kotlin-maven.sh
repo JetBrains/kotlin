@@ -51,7 +51,7 @@ cp -R build/repo/. build/repo-reproducible
 # maven-metadata contains lastUpdated section with the build time
 find build/repo-reproducible -name "maven-metadata.xml*" -exec rm -rf {} \;
 # spdx SBOM contains creationInfo with datetime
-find build/repo-reproducible -name "*.spdx.json" -exec rm -rf {} \;
+find build/repo-reproducible -name "*.spdx.json*" -exec rm -rf {} \;
 # Each file has own timestamp that would affect zip file hash if not aligned
 find build/repo-reproducible -exec touch -t "198001010000" {} \;
 cd build/repo-reproducible && find . -type f | sort | zip -X reproducible-maven-$DEPLOY_VERSION.zip -@ && cd -
