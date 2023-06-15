@@ -8,7 +8,6 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
-import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
@@ -18,8 +17,6 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.setValue]
  */
 abstract class IrSetValue : IrValueAccessExpression() {
-    abstract override val symbol: IrValueSymbol
-
     abstract var value: IrExpression
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =

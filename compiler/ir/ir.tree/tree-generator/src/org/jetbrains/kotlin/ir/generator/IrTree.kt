@@ -1141,7 +1141,6 @@ object IrTree : AbstractTreeBuilder() {
 
         parent(valueAccessExpression)
 
-        +symbol(valueSymbolType)
         +field("value", expression, isChild = true)
     }
     val varargElement: ElementConfig by element(Expression)
