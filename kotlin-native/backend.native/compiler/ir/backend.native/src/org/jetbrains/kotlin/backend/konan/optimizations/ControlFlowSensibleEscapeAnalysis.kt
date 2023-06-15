@@ -2075,7 +2075,7 @@ internal object ControlFlowSensibleEscapeAnalysis {
                                     data.graph.unreachable()
                                 }
                                 1 -> {
-                                    processCall(data, expression, actualCallee, argumentNodeIds,
+                                    processCall(data, expression, devirtualizedCallSite[0].owner, argumentNodeIds,
                                             escapeAnalysisResults[devirtualizedCallSite[0]]
                                                     ?: getExternalFunctionEAResult(devirtualizedCallSite[0].owner))
                                 }
