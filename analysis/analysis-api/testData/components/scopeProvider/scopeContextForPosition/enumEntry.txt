@@ -13,11 +13,20 @@ implicit receivers:
   owner symbol: KtFirNamedClassOrObjectSymbol
 
 scopes:
-  LocalScope, index = 0, empty
+  LocalScope, index = 0
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
 
-  LocalScope, index = 1, empty
+  LocalScope, index = 1
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
 
   TypeScope, index = 2
+    packages: 0
     classifiers: 1
       KtNamedClassOrObjectSymbol:
         annotationsList: []
@@ -455,8 +464,28 @@ scopes:
         typeParameters: []
         valueParameters: []
         visibility: ProtectedAndPackage
+    constructors: 1
+      KtConstructorSymbol:
+        annotationsList: []
+        callableIdIfNonLocal: null
+        containingClassIdIfNonLocal: null
+        contextReceivers: []
+        hasStableParameterNames: true
+        isExtension: false
+        isPrimary: true
+        origin: SOURCE_MEMBER_GENERATED
+        receiverParameter: null
+        returnType: KtUsualClassType:
+          annotationsList: []
+          ownTypeArguments: []
+          type: <anonymous>
+        symbolKind: CLASS_MEMBER
+        typeParameters: []
+        valueParameters: []
+        visibility: Private
 
   StaticMemberScope, index = 3
+    packages: 0
     classifiers: 0
     callables: 4
       KtEnumEntrySymbol:
@@ -614,8 +643,10 @@ scopes:
         symbolKind: CLASS_MEMBER
         typeParameters: []
         visibility: Public
+    constructors: 0
 
   StaticMemberScope, index = 4
+    packages: 0
     classifiers: 1
       KtNamedClassOrObjectSymbol:
         annotationsList: []
@@ -641,8 +672,10 @@ scopes:
         typeParameters: []
         visibility: Public
     callables: 0
+    constructors: 0
 
   TypeScope, index = 5
+    packages: 0
     classifiers: 0
     callables: 3
       KtFunctionSymbol:
@@ -747,10 +780,34 @@ scopes:
         typeParameters: []
         valueParameters: []
         visibility: Public
+    constructors: 0
 
-  ExplicitSimpleImportingScope, index = 6, empty
+  ExplicitSimpleImportingScope, index = 6
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
 
   PackageMemberScope, index = 7
+    packages: 6
+      KtPackageSymbol:
+        fqName: META-INF
+        origin: SOURCE
+      KtPackageSymbol:
+        fqName: java
+        origin: SOURCE
+      KtPackageSymbol:
+        fqName: javax
+        origin: SOURCE
+      KtPackageSymbol:
+        fqName: kotlin
+        origin: SOURCE
+      KtPackageSymbol:
+        fqName: org
+        origin: SOURCE
+      KtPackageSymbol:
+        fqName: sun
+        origin: SOURCE
     classifiers: 1
       KtNamedClassOrObjectSymbol:
         annotationsList: []
@@ -781,12 +838,17 @@ scopes:
         typeParameters: []
         visibility: Public
     callables: 0
+    constructors: 0
 
   DefaultSimpleImportingScope, index = 8
 
   DefaultSimpleImportingScope, index = 9
 
-  ExplicitStarImportingScope, index = 10, empty
+  ExplicitStarImportingScope, index = 10
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
 
   DefaultSimpleImportingScope, index = 11
 

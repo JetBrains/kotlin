@@ -5,10 +5,12 @@ scopes:
   DefaultSimpleImportingScope, index = 1
 
   ExplicitStarImportingScope, index = 2
+    packages: 0
     classifiers: 1
       class A
     callables: 1
       fun b()
+    constructors: 0
 
   DefaultSimpleImportingScope, index = 3
 
@@ -16,5 +18,9 @@ scopes:
 
   PackageMemberScope, index = 5
 
-  ExplicitSimpleImportingScope, index = 6, empty
+  ExplicitSimpleImportingScope, index = 6
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
 

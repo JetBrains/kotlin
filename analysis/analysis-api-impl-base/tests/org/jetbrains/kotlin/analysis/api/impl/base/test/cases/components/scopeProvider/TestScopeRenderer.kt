@@ -16,6 +16,8 @@ import org.jetbrains.kotlin.analysis.api.renderer.types.renderers.KtTypeErrorTyp
 import org.jetbrains.kotlin.analysis.api.scopes.KtScope
 import org.jetbrains.kotlin.analysis.api.symbols.DebugSymbolRenderer
 import org.jetbrains.kotlin.analysis.api.symbols.KtDeclarationSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KtPackageSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
@@ -44,6 +46,15 @@ internal object TestScopeRenderer {
         }
     }
 
+    context(KtAnalysisSession)
+    fun PrettyPrinter.renderForTests(
+        scope: KtScope,
+        printPretty: Boolean,
+        additionalSymbolInfo: KtAnalysisSession.(KtSymbol) -> String? = { null }
+    ) {
+        renderScopeMembers(scope, printPretty, additionalSymbolInfo)
+    }
+
     context (KtAnalysisSession)
     private fun renderType(
         type: KtType,
@@ -63,50 +74,70 @@ internal object TestScopeRenderer {
         fullyPrintScope: (KtScopeKind) -> Boolean,
     ) {
         for (scopeWithKind in scopeContext.scopes) {
-            appendLine(renderForTests(scopeWithKind.scope, scopeWithKind.kind, printPretty, fullyPrintScope))
+            renderForTests(scopeWithKind.scope, scopeWithKind.kind, printPretty, fullyPrintScope)
+            appendLine()
         }
     }
 
     context (KtAnalysisSession)
-    private fun renderForTests(
+    private fun PrettyPrinter.renderForTests(
         scope: KtScope,
         scopeKind: KtScopeKind,
         printPretty: Boolean,
         fullyPrintScope: (KtScopeKind) -> Boolean,
-    ): String = prettyPrint {
-        append("${scopeKind::class.simpleName}, index = ${scopeKind.indexInTower}")
+    ) {
+        appendLine("${scopeKind::class.simpleName}, index = ${scopeKind.indexInTower}")
 
         if (!fullyPrintScope(scopeKind)) {
-            appendLine()
-            return@prettyPrint
+            return
         }
 
-        renderScopeMembers(scope, printPretty)
+        withIndent {
+            renderScopeMembers(scope, printPretty) { null }
+        }
     }
 
     context (KtAnalysisSession)
-    private fun PrettyPrinter.renderScopeMembers(scope: KtScope, printPretty: Boolean) {
-        val callables = scope.getCallableSymbols().toList()
-        val classifiers = scope.getClassifierSymbols().toList()
-        val isEmpty = callables.isEmpty() && classifiers.isEmpty()
-        if (isEmpty) {
-            appendLine(", empty")
-        } else {
-            appendLine()
+    private fun PrettyPrinter.renderScopeMembers(
+        scope: KtScope,
+        printPretty: Boolean,
+        additionalSymbolInfo: KtAnalysisSession.(KtSymbol) -> String?,
+    ) {
+        fun <T : KtSymbol> List<T>.renderAll(
+            symbolKind: String,
+            renderPrettySymbol: KtAnalysisSession.(T) -> String,
+        ) {
+            appendLine("$symbolKind: $size")
             withIndent {
-                appendLine("classifiers: ${classifiers.size}")
-                withIndent { classifiers.forEach { appendLine(renderSymbol(it, printPretty)) } }
-                appendLine("callables: ${callables.size}")
-                withIndent { callables.forEach { appendLine(renderSymbol(it, printPretty)) } }
+                forEach {
+                    appendLine(
+                        if (printPretty) {
+                            this@KtAnalysisSession.renderPrettySymbol(it)
+                        } else {
+                            debugRenderer.render(it)
+                        }
+                    )
+                    this@KtAnalysisSession.additionalSymbolInfo(it)?.let {
+                        withIndent { appendLine(it) }
+                    }
+                }
             }
         }
+
+        scope.getPackageSymbols()
+            .toMutableList()
+            .apply { sortBy { it.fqName.asString() } }
+            .renderAll("packages") { prettyRenderPackage(it) }
+        scope.getClassifierSymbols().toList().renderAll("classifiers") { prettyRenderDeclaration(it) }
+        scope.getCallableSymbols().toList().renderAll("callables") { prettyRenderDeclaration(it) }
+        scope.getConstructors().toList().renderAll("constructors") { prettyRenderDeclaration(it) }
     }
 
-    context(KtAnalysisSession)
-    private fun renderSymbol(
-        symbol: KtDeclarationSymbol,
-        printPretty: Boolean
-    ): String = if (printPretty) symbol.render(prettyPrintSymbolRenderer) else debugRenderer.render(symbol)
+    private fun KtAnalysisSession.prettyRenderPackage(symbol: KtPackageSymbol): String =
+        symbol.fqName.asString()
+
+    private fun KtAnalysisSession.prettyRenderDeclaration(symbol: KtDeclarationSymbol): String =
+        symbol.render(prettyPrintSymbolRenderer)
 
     private val debugRenderer = DebugSymbolRenderer()
 
