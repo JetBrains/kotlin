@@ -170,6 +170,12 @@ public class FirOldFrontendMPPDiagnosticsWithLightTreeTestGenerated extends Abst
     }
 
     @Test
+    @TestMetadata("supertypeActualizationWithAny.kt")
+    public void testSupertypeActualizationWithAny() throws Exception {
+        runTest("compiler/testData/diagnostics/tests/multiplatform/supertypeActualizationWithAny.kt");
+    }
+
+    @Test
     @TestMetadata("varSetterVisibility.kt")
     public void testVarSetterVisibility() throws Exception {
         runTest("compiler/testData/diagnostics/tests/multiplatform/varSetterVisibility.kt");

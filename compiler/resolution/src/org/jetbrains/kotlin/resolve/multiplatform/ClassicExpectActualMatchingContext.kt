@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 import org.jetbrains.kotlin.utils.addToStdlib.UnsafeCastFunction
 import org.jetbrains.kotlin.utils.addToStdlib.castAll
+import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 import org.jetbrains.kotlin.utils.keysToMap
 
 class ClassicExpectActualMatchingContext(val platformModule: ModuleDescriptor) : ExpectActualMatchingContext<MemberDescriptor>,
@@ -210,6 +211,13 @@ class ClassicExpectActualMatchingContext(val platformModule: ModuleDescriptor) :
         } else {
             areCompatibleTypesViaTypeContext(expectType, actualType)
         }
+    }
+
+    override val RegularClassSymbolMarker.defaultType: KotlinTypeMarker
+        get() = asDescriptor().defaultType
+
+    override fun actualTypeIsSubtypeOfExpectType(expectType: KotlinTypeMarker, actualType: KotlinTypeMarker): Boolean {
+        shouldNotBeCalled("Checking for subtyping is used only in FIR and IR implementations")
     }
 
     @OptIn(TypeRefinement::class)

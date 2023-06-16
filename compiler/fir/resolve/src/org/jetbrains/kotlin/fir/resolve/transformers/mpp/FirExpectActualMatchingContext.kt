@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.mpp.ExpectActualMatchingContext
 import org.jetbrains.kotlin.types.AbstractTypeChecker
+import org.jetbrains.kotlin.types.TypeCheckerState
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -41,6 +42,9 @@ class FirExpectActualMatchingContext(
         get() = true
 
     override val allowClassActualizationWithWiderVisibility: Boolean
+        get() = true
+
+    override val allowTransitiveSupertypesActualization: Boolean
         get() = true
 
     private fun CallableSymbolMarker.asSymbol(): FirCallableSymbol<*> = this as FirCallableSymbol<*>
@@ -143,6 +147,9 @@ class FirExpectActualMatchingContext(
 
     override val RegularClassSymbolMarker.superTypes: List<KotlinTypeMarker>
         get() = asSymbol().resolvedSuperTypes
+
+    override val RegularClassSymbolMarker.defaultType: KotlinTypeMarker
+        get() = asSymbol().defaultType()
 
     override fun RegularClassSymbolMarker.collectAllMembers(isActualDeclaration: Boolean): List<FirBasedSymbol<*>> {
         val symbol = asSymbol()
@@ -256,10 +263,22 @@ class FirExpectActualMatchingContext(
         if (actualType == null) return false
 
         return AbstractTypeChecker.equalTypes(
-            actualSession.typeContext.newTypeCheckerState(errorTypesEqualToAnything = true, stubTypesEqualToAnything = false),
+            createTypeCheckerState(),
             expectType,
             actualType
         )
+    }
+
+    override fun actualTypeIsSubtypeOfExpectType(expectType: KotlinTypeMarker, actualType: KotlinTypeMarker): Boolean {
+        return AbstractTypeChecker.isSubtypeOf(
+            createTypeCheckerState(),
+            subType = actualType,
+            superType = expectType
+        )
+    }
+
+    private fun createTypeCheckerState(): TypeCheckerState {
+        return actualSession.typeContext.newTypeCheckerState(errorTypesEqualToAnything = true, stubTypesEqualToAnything = false)
     }
 
     override fun RegularClassSymbolMarker.isNotSamInterface(): Boolean {

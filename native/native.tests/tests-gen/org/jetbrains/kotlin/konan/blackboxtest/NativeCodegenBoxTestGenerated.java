@@ -26372,6 +26372,12 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                     }
 
                     @Test
+                    @TestMetadata("transitiveSuperclassActualization.kt")
+                    public void testTransitiveSuperclassActualization() throws Exception {
+                        runTest("compiler/testData/codegen/box/multiplatform/k2/basic/transitiveSuperclassActualization.kt");
+                    }
+
+                    @Test
                     @TestMetadata("widerVisibilityInActualClassifier.kt")
                     public void testWiderVisibilityInActualClassifier() throws Exception {
                         runTest("compiler/testData/codegen/box/multiplatform/k2/basic/widerVisibilityInActualClassifier.kt");

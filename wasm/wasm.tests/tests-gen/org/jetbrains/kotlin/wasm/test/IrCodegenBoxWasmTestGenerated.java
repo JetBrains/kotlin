@@ -20968,6 +20968,11 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
                     runTest("compiler/testData/codegen/box/multiplatform/k2/basic/removeExpectDeclarationsFromMetadata.kt");
                 }
 
+                @TestMetadata("transitiveSuperclassActualization.kt")
+                public void testTransitiveSuperclassActualization() throws Exception {
+                    runTest("compiler/testData/codegen/box/multiplatform/k2/basic/transitiveSuperclassActualization.kt");
+                }
+
                 @TestMetadata("widerVisibilityInActualClassifier.kt")
                 public void testWiderVisibilityInActualClassifier() throws Exception {
                     runTest("compiler/testData/codegen/box/multiplatform/k2/basic/widerVisibilityInActualClassifier.kt");

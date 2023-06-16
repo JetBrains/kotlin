@@ -33670,6 +33670,18 @@ public class FirLightTreeBlackBoxCodegenTestGenerated extends AbstractFirLightTr
                 }
 
                 @Test
+                @TestMetadata("transitiveSuperclassActualization.kt")
+                public void testTransitiveSuperclassActualization() throws Exception {
+                    runTest("compiler/testData/codegen/box/multiplatform/k2/basic/transitiveSuperclassActualization.kt");
+                }
+
+                @Test
+                @TestMetadata("transitiveSuperclassActualization_java.kt")
+                public void testTransitiveSuperclassActualization_java() throws Exception {
+                    runTest("compiler/testData/codegen/box/multiplatform/k2/basic/transitiveSuperclassActualization_java.kt");
+                }
+
+                @Test
                 @TestMetadata("valueClasses.kt")
                 public void testValueClasses() throws Exception {
                     runTest("compiler/testData/codegen/box/multiplatform/k2/basic/valueClasses.kt");

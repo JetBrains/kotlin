@@ -50,6 +50,14 @@ interface ExpectActualMatchingContext<T : DeclarationSymbolMarker> : TypeSystemC
     val allowClassActualizationWithWiderVisibility: Boolean
         get() = false
 
+    /**
+     * This flag determines strategy for matching supertypes between expect and actual class
+     *  - `false` means that expect and actual supertypes are matched one by one
+     *  - `true` means that type of actual class should be subtype of each expect supertype of the expect class
+     */
+    val allowTransitiveSupertypesActualization: Boolean
+        get() = false
+
     val RegularClassSymbolMarker.classId: ClassId
     val TypeAliasSymbolMarker.classId: ClassId
     val CallableSymbolMarker.callableId: CallableId
@@ -74,6 +82,7 @@ interface ExpectActualMatchingContext<T : DeclarationSymbolMarker> : TypeSystemC
     val CallableSymbolMarker.visibility: Visibility
 
     val RegularClassSymbolMarker.superTypes: List<KotlinTypeMarker>
+    val RegularClassSymbolMarker.defaultType: KotlinTypeMarker
 
     val CallableSymbolMarker.isExpect: Boolean
     val CallableSymbolMarker.isInline: Boolean
@@ -123,6 +132,11 @@ interface ExpectActualMatchingContext<T : DeclarationSymbolMarker> : TypeSystemC
     fun areCompatibleExpectActualTypes(
         expectType: KotlinTypeMarker?,
         actualType: KotlinTypeMarker?,
+    ): Boolean
+
+    fun actualTypeIsSubtypeOfExpectType(
+        expectType: KotlinTypeMarker,
+        actualType: KotlinTypeMarker
     ): Boolean
 
     fun RegularClassSymbolMarker.isNotSamInterface(): Boolean

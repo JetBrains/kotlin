@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.mpp.ExpectActualMatchingContext
 import org.jetbrains.kotlin.types.AbstractTypeChecker
+import org.jetbrains.kotlin.types.TypeCheckerState
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.utils.addToStdlib.UnsafeCastFunction
@@ -34,6 +35,9 @@ internal abstract class IrExpectActualMatchingContext(
     val expectToActualClassMap: Map<ClassId, IrClassSymbol>
 ) : ExpectActualMatchingContext<IrSymbol>, TypeSystemContext by typeContext {
     override val allowClassActualizationWithWiderVisibility: Boolean
+        get() = true
+
+    override val allowTransitiveSupertypesActualization: Boolean
         get() = true
 
     private inline fun <R> CallableSymbolMarker.processIr(
@@ -160,6 +164,9 @@ internal abstract class IrExpectActualMatchingContext(
 
     override val RegularClassSymbolMarker.superTypes: List<KotlinTypeMarker>
         get() = asIr().superTypes
+
+    override val RegularClassSymbolMarker.defaultType: KotlinTypeMarker
+        get() = asIr().defaultType
 
     override val CallableSymbolMarker.isExpect: Boolean
         get() = processIr(
@@ -312,13 +319,29 @@ internal abstract class IrExpectActualMatchingContext(
          * When we match return types of (1) and (2) they both will have original type `S`, but from
          *   perspective of module `platform` it should be replaced with `String`
          */
-        val actualizedExpectType = actualizingSubstitutor.substitute(expectType as IrType)
-        val actualizedActualType = actualizingSubstitutor.substitute(actualType as IrType)
+        val actualizedExpectType = expectType.actualize()
+        val actualizedActualType = actualType.actualize()
         return AbstractTypeChecker.equalTypes(
-            typeContext.newTypeCheckerState(errorTypesEqualToAnything = true, stubTypesEqualToAnything = false),
+            createTypeCheckerState(),
             actualizedExpectType,
             actualizedActualType
         )
+    }
+
+    private fun createTypeCheckerState(): TypeCheckerState {
+        return typeContext.newTypeCheckerState(errorTypesEqualToAnything = true, stubTypesEqualToAnything = false)
+    }
+
+    override fun actualTypeIsSubtypeOfExpectType(expectType: KotlinTypeMarker, actualType: KotlinTypeMarker): Boolean {
+        return AbstractTypeChecker.isSubtypeOf(
+            createTypeCheckerState(),
+            subType = actualType.actualize(),
+            superType = expectType.actualize()
+        )
+    }
+
+    private fun KotlinTypeMarker.actualize(): IrType {
+        return actualizingSubstitutor.substitute(this as IrType)
     }
 
     private val actualizingSubstitutor = ActualizingSubstitutor()
