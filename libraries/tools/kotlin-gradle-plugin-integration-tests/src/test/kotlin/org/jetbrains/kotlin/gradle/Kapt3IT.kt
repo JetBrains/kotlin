@@ -1271,4 +1271,15 @@ open class Kapt3IT : Kapt3BaseIT() {
             }
         }
     }
+
+    @DisplayName("KT-59256: kapt generated files are included into the test runtime classpath")
+    @GradleTest
+    @Disabled("The fix is not yet provided")
+    fun testKaptGeneratedInTestRuntimeClasspath(gradleVersion: GradleVersion) {
+        project("kapt-in-test-runtime-classpath".withPrefix, gradleVersion) {
+            build("test") {
+                assertFileInProjectExists("build/tmp/kapt3/classes/main/META-INF/services/com.example.SomeInterface")
+            }
+        }
+    }
 }
