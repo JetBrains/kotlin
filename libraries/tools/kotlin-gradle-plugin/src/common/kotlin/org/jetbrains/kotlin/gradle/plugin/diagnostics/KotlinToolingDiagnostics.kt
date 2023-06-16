@@ -349,7 +349,7 @@ object KotlinToolingDiagnostics {
 
         private fun renderSourceSetGroups(sourceSetGroups: Map<String, List<String>>) = buildString {
             for ((sourceSetTreeName, sourceSets) in sourceSetGroups) {
-                appendLine("Source Sets from '$sourceSetTreeName' Tree")
+                appendLine("Source Sets from '$sourceSetTreeName' Tree:")
                 appendLine(sourceSets.joinToString("\n") { "  * '$it'" })
             }
         }
