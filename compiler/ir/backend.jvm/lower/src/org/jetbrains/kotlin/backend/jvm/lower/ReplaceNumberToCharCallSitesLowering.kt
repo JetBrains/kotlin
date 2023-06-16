@@ -9,15 +9,13 @@ import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.functionByName
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.types.isNumber
-import org.jetbrains.kotlin.ir.util.irCall
 import org.jetbrains.kotlin.ir.util.resolveFakeOverride
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 
 internal val replaceNumberToCharCallSitesPhase = makeIrFilePhase(
@@ -33,22 +31,26 @@ internal val replaceNumberToCharCallSitesPhase = makeIrFilePhase(
 // This allows us to migrate usages of deprecated `Number.toChar` less painfully in order to remove it in the future (KT-56822).
 // Also, this allows to invoke `toChar` on `Number` subclasses declared in Java, which do not have it declared, even though the
 // compiler sees it there because `java.lang.Number` is mapped to `kotlin.Number`.
-class ReplaceNumberToCharCallSitesLowering(val context: JvmBackendContext) : FileLoweringPass, IrElementTransformerVoid() {
+class ReplaceNumberToCharCallSitesLowering(val context: JvmBackendContext) : FileLoweringPass, IrElementVisitorVoid {
     override fun lower(irFile: IrFile) {
-        irFile.transformChildrenVoid(this)
+        irFile.acceptChildren(this, null)
     }
 
-    override fun visitCall(expression: IrCall): IrExpression {
-        expression.transformChildrenVoid(this)
+    override fun visitElement(element: IrElement) {
+        element.acceptChildren(this, null)
+    }
+
+    override fun visitCall(expression: IrCall) {
+        expression.acceptChildren(this, null)
 
         val callee = expression.symbol.owner
-        if (callee.name != OperatorConventions.CHAR) return expression
+        if (callee.name != OperatorConventions.CHAR) return
 
         val declaration = callee.resolveFakeOverride() ?: callee
-        val declaringClassType = declaration.dispatchReceiverParameter?.type ?: return expression
-        if (!declaringClassType.isNumber()) return expression
+        val declaringClassType = declaration.dispatchReceiverParameter?.type ?: return
+        if (!declaringClassType.isNumber()) return
 
-        val dispatchReceiver = expression.dispatchReceiver ?: return expression
+        val dispatchReceiver = expression.dispatchReceiver ?: return
         expression.dispatchReceiver = IrCallImpl(
             dispatchReceiver.startOffset, dispatchReceiver.endOffset,
             context.irBuiltIns.intType, context.irBuiltIns.numberClass.functionByName("toInt"), 0, 0,
@@ -56,6 +58,6 @@ class ReplaceNumberToCharCallSitesLowering(val context: JvmBackendContext) : Fil
             toInt.dispatchReceiver = dispatchReceiver
         }
 
-        return irCall(expression, context.irBuiltIns.intClass.functionByName("toChar"))
+        expression.symbol = context.irBuiltIns.intClass.functionByName("toChar")
     }
 }
