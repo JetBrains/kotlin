@@ -36,6 +36,24 @@ object IrTree : AbstractTreeBuilder() {
     private fun descriptor(typeName: String): SimpleFieldConfig =
         field("descriptor", ClassRef<TypeParameterRef>(TypeKind.Interface, "org.jetbrains.kotlin.descriptors", typeName), mutable = false)
 
+    private fun declarationWithLateBinding(symbol: ClassRef<*>, initializer: ElementConfig.() -> Unit) = element(Declaration) {
+        initializer()
+
+        +field("isBound", boolean, mutable = false)
+
+        val oldCallback = generationCallback
+        generationCallback = {
+            oldCallback?.invoke(this)
+            addFunction(
+                FunSpec.builder("acquireSymbol")
+                    .addModifiers(KModifier.ABSTRACT)
+                    .addParameter("symbol", symbol.toPoet())
+                    .returns(this@element.toPoet())
+                    .build(),
+            )
+        }
+    }
+
     private val factory: SimpleFieldConfig = field("factory", type(Packages.declarations, "IrFactory"), mutable = false)
 
     override val rootElement: ElementConfig by element(Other, name = "element") {
@@ -349,39 +367,11 @@ object IrTree : AbstractTreeBuilder() {
             baseGetter = code("error(\"Should never be called\")")
         }
     }
-    val functionWithLateBinding: ElementConfig by element(Declaration) {
-        typeKind = TypeKind.Interface
-
-        parent(declaration)
-
-        +symbol(simpleFunctionSymbolType)
-        +field("modality", type<Modality>())
-        +field("isBound", boolean, mutable = false)
-        generationCallback = {
-            addFunction(
-                FunSpec.builder("acquireSymbol")
-                    .addModifiers(KModifier.ABSTRACT)
-                    .addParameter("symbol", simpleFunctionSymbolType.toPoet())
-                    .returns(simpleFunction.toPoet())
-                    .build()
-            )
-        }
+    val functionWithLateBinding: ElementConfig by declarationWithLateBinding(simpleFunctionSymbolType) {
+        parent(simpleFunction)
     }
-    val propertyWithLateBinding: ElementConfig by element(Declaration) {
-        typeKind = TypeKind.Class
-
+    val propertyWithLateBinding: ElementConfig by declarationWithLateBinding(propertySymbolType) {
         parent(property)
-
-        +field("isBound", boolean, mutable = false)
-        generationCallback = {
-            addFunction(
-                FunSpec.builder("acquireSymbol")
-                    .addModifiers(KModifier.ABSTRACT)
-                    .addParameter("symbol", propertySymbolType.toPoet())
-                    .returns(this@element.toPoet())
-                    .build()
-            )
-        }
     }
     val field: ElementConfig by element(Declaration) {
         visitorParent = declarationBase
@@ -485,6 +475,7 @@ object IrTree : AbstractTreeBuilder() {
     }
     val simpleFunction: ElementConfig by element(Declaration) {
         visitorParent = function
+        isForcedLeaf = true
 
         parent(function)
         parent(overridableDeclaration.withArgs("S" to simpleFunctionSymbolType))

@@ -183,7 +183,6 @@ class FakeOverrideBuilder(
         function: IrFunctionWithLateBinding,
         manglerCompatibleMode: Boolean
     ): Pair<IdSignature, IrSimpleFunctionSymbol> {
-        require(function is IrSimpleFunction) { "Unexpected fake override function: $function" }
         val parent = function.parentAsClass
 
         val signature = composeSignature(function, manglerCompatibleMode)

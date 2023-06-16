@@ -21,12 +21,14 @@ import org.jetbrains.kotlin.ir.types.impl.ReturnTypeIsNotInitializedException
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
-abstract class IrFunctionCommonImpl(
+class IrFunctionImpl(
     override val startOffset: Int,
     override val endOffset: Int,
     override var origin: IrDeclarationOrigin,
+    override val symbol: IrSimpleFunctionSymbol,
     override var name: Name,
     override var visibility: DescriptorVisibility,
+    override var modality: Modality,
     returnType: IrType,
     override var isInline: Boolean,
     override var isExternal: Boolean,
@@ -35,8 +37,17 @@ abstract class IrFunctionCommonImpl(
     override var isOperator: Boolean,
     override var isInfix: Boolean,
     override var isExpect: Boolean,
-    override var containerSource: DeserializedContainerSource?,
+    override var isFakeOverride: Boolean = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
+    override var containerSource: DeserializedContainerSource? = null,
+    override val factory: IrFactory = IrFactoryImpl,
 ) : IrSimpleFunction() {
+    @ObsoleteDescriptorBasedAPI
+    override val descriptor: FunctionDescriptor
+        get() = symbol.descriptor
+
+    init {
+        symbol.bind(this)
+    }
 
     override lateinit var parent: IrDeclarationParent
     override var annotations: List<IrConstructorCall> = emptyList()
@@ -62,68 +73,31 @@ abstract class IrFunctionCommonImpl(
 
     override var overriddenSymbols: List<IrSimpleFunctionSymbol> = emptyList()
 
-    @Suppress("LeakingThis")
     override var attributeOwnerId: IrAttributeContainer = this
     override var originalBeforeInline: IrAttributeContainer? = null
 
     override var correspondingPropertySymbol: IrPropertySymbol? = null
 }
 
-class IrFunctionImpl(
-    startOffset: Int,
-    endOffset: Int,
-    origin: IrDeclarationOrigin,
-    override val symbol: IrSimpleFunctionSymbol,
-    name: Name,
-    visibility: DescriptorVisibility,
-    override var modality: Modality,
-    returnType: IrType,
-    isInline: Boolean,
-    isExternal: Boolean,
-    isTailrec: Boolean,
-    isSuspend: Boolean,
-    isOperator: Boolean,
-    isInfix: Boolean,
-    isExpect: Boolean,
-    override var isFakeOverride: Boolean = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
-    containerSource: DeserializedContainerSource? = null,
-    override val factory: IrFactory = IrFactoryImpl,
-) : IrFunctionCommonImpl(
-    startOffset, endOffset, origin, name, visibility, returnType, isInline,
-    isExternal, isTailrec, isSuspend, isOperator, isInfix, isExpect,
-    containerSource,
-) {
-    @ObsoleteDescriptorBasedAPI
-    override val descriptor: FunctionDescriptor
-        get() = symbol.descriptor
-
-    init {
-        symbol.bind(this)
-    }
-}
-
 class IrFunctionWithLateBindingImpl(
-    startOffset: Int,
-    endOffset: Int,
-    origin: IrDeclarationOrigin,
-    name: Name,
-    visibility: DescriptorVisibility,
+    override val startOffset: Int,
+    override val endOffset: Int,
+    override var origin: IrDeclarationOrigin,
+    override var name: Name,
+    override var visibility: DescriptorVisibility,
     override var modality: Modality,
     returnType: IrType,
-    isInline: Boolean,
-    isExternal: Boolean,
-    isTailrec: Boolean,
-    isSuspend: Boolean,
-    isOperator: Boolean,
-    isInfix: Boolean,
-    isExpect: Boolean,
+    override var isInline: Boolean,
+    override var isExternal: Boolean,
+    override var isTailrec: Boolean,
+    override var isSuspend: Boolean,
+    override var isOperator: Boolean,
+    override var isInfix: Boolean,
+    override var isExpect: Boolean,
     override var isFakeOverride: Boolean = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
     override val factory: IrFactory = IrFactoryImpl
-) : IrFunctionCommonImpl(
-    startOffset, endOffset, origin, name, visibility, returnType, isInline,
-    isExternal, isTailrec, isSuspend, isOperator, isInfix, isExpect,
-    containerSource = null,
-), IrFunctionWithLateBinding {
+) : IrFunctionWithLateBinding() {
+
     private var _symbol: IrSimpleFunctionSymbol? = null
 
     override val symbol: IrSimpleFunctionSymbol
@@ -133,7 +107,7 @@ class IrFunctionWithLateBindingImpl(
     override val descriptor
         get() = _symbol?.descriptor ?: this.toIrBasedDescriptor()
 
-    override fun acquireSymbol(symbol: IrSimpleFunctionSymbol): IrSimpleFunction {
+    override fun acquireSymbol(symbol: IrSimpleFunctionSymbol): IrFunctionWithLateBinding {
         assert(_symbol == null) { "$this already has symbol _symbol" }
         _symbol = symbol
         symbol.bind(this)
@@ -142,4 +116,38 @@ class IrFunctionWithLateBindingImpl(
 
     override val isBound: Boolean
         get() = _symbol != null
+
+    override val containerSource: DeserializedContainerSource?
+        get() = null
+
+    override lateinit var parent: IrDeclarationParent
+
+    override var annotations: List<IrConstructorCall> = emptyList()
+
+    override var returnType: IrType = returnType
+        get() = if (field === IrUninitializedType) {
+            throw ReturnTypeIsNotInitializedException(this)
+        } else {
+            field
+        }
+
+    override var typeParameters: List<IrTypeParameter> = emptyList()
+
+    override var dispatchReceiverParameter: IrValueParameter? = null
+    override var extensionReceiverParameter: IrValueParameter? = null
+    override var valueParameters: List<IrValueParameter> = emptyList()
+
+    override var contextReceiverParametersCount: Int = 0
+
+    override var body: IrBody? = null
+
+    override var metadata: MetadataSource? = null
+
+    override var overriddenSymbols: List<IrSimpleFunctionSymbol> = emptyList()
+
+    override var attributeOwnerId: IrAttributeContainer = this
+
+    override var originalBeforeInline: IrAttributeContainer? = null
+
+    override var correspondingPropertySymbol: IrPropertySymbol? = null
 }
