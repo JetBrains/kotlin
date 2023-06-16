@@ -66,20 +66,21 @@ internal fun IrDeclaration.isJvmStaticInObject(): Boolean =
 private fun IrExpression.coerceToUnit(irBuiltIns: IrBuiltIns) =
     IrTypeOperatorCallImpl(startOffset, endOffset, irBuiltIns.unitType, IrTypeOperator.IMPLICIT_COERCION_TO_UNIT, irBuiltIns.unitType, this)
 
-private fun IrMemberAccessExpression<*>.makeStatic(irBuiltIns: IrBuiltIns, replaceCallee: IrSimpleFunction?) =
-    dispatchReceiver?.let { receiver ->
-        dispatchReceiver = null
-        val newCall = if (replaceCallee != null) irCall(this@makeStatic as IrCall, replaceCallee) else this@makeStatic
-        if (receiver.isTrivial()) {
-            // Receiver has no side effects (aside from maybe class initialization) so discard it.
-            newCall
-        } else {
-            IrBlockImpl(startOffset, endOffset, newCall.type).apply {
-                statements += receiver.coerceToUnit(irBuiltIns) // evaluate for side effects
-                statements += newCall
-            }
-        }
-    } ?: this
+private fun IrMemberAccessExpression<*>.makeStatic(irBuiltIns: IrBuiltIns, replaceCallee: IrSimpleFunction?): IrExpression {
+    val receiver = dispatchReceiver ?: return this
+    dispatchReceiver = null
+    if (replaceCallee != null) {
+        (this as IrCall).symbol = replaceCallee.symbol
+    }
+    if (receiver.isTrivial()) {
+        // Receiver has no side effects (aside from maybe class initialization) so discard it.
+        return this
+    }
+    return IrBlockImpl(startOffset, endOffset, type).apply {
+        statements += receiver.coerceToUnit(irBuiltIns) // evaluate for side effects
+        statements += this@makeStatic
+    }
+}
 
 class SingletonObjectJvmStaticTransformer(
     private val irBuiltIns: IrBuiltIns,
