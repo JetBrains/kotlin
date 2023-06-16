@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.builder.buildReceiverParameter
 import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.origin
+import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.extensions.FirExtension
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.defaultType
@@ -113,7 +114,11 @@ public fun FirExtension.createMemberFunction(
     config: SimpleFunctionBuildingContext.() -> Unit = {}
 ): FirSimpleFunction {
     val callableId = CallableId(owner.classId, name)
-    return SimpleFunctionBuildingContext(session, key, owner, callableId, returnTypeProvider).apply(config).build()
+    return SimpleFunctionBuildingContext(session, key, owner, callableId, returnTypeProvider).apply(config).apply {
+        status {
+            isExpect = owner.isExpect
+        }
+    }.build()
 }
 
 /**

@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildReceiverParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyBackingField
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
+import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.extensions.FirExtension
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.defaultType
@@ -156,7 +157,11 @@ public fun FirExtension.createMemberProperty(
     config: PropertyBuildingContext.() -> Unit = {}
 ): FirProperty {
     val callableId = CallableId(owner.classId, name)
-    return PropertyBuildingContext(session, key, owner, callableId, returnTypeProvider, isVal, hasBackingField).apply(config).build()
+    return PropertyBuildingContext(session, key, owner, callableId, returnTypeProvider, isVal, hasBackingField).apply(config).apply {
+        status {
+            isExpect = owner.isExpect
+        }
+    }.build()
 }
 
 /**
