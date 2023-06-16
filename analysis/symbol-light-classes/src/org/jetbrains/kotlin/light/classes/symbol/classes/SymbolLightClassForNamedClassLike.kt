@@ -142,7 +142,10 @@ abstract class SymbolLightClassForNamedClassLike : SymbolLightClassForClassLike<
             GranularModifiersBox.computeVisibilityForClass(ktModule, classOrObjectSymbolPointer, isTopLevel)
         }
 
-        in GranularModifiersBox.MODALITY_MODIFIERS -> GranularModifiersBox.computeSimpleModality(ktModule, classOrObjectSymbolPointer)
+        in GranularModifiersBox.MODALITY_MODIFIERS -> {
+            GranularModifiersBox.computeSimpleModality(ktModule, classOrObjectSymbolPointer)
+        }
+
         PsiModifier.STATIC -> {
             val isStatic = !isTopLevel && !isInner
             mapOf(modifier to isStatic)
