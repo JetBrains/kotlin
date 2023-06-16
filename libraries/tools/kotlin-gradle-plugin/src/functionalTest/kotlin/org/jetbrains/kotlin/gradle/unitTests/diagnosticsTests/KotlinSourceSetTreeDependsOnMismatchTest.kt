@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.gradle.unitTests.diagnosticsTests
 
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics.CommonMainWithDependsOnDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics.KotlinSourceSetTreeDependsOnMismatch
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.kotlinToolingDiagnosticsCollector
@@ -144,6 +143,17 @@ class KotlinSourceSetTreeDependsOnMismatchTest {
     }.assertDiagnostics(
         KotlinSourceSetTreeDependsOnMismatch(dependeeName = "iosMain", dependencyName = "iosTest")
     )
+
+    @Test
+    fun `test that cycles are reported from different diagnostic`() {
+        assertFails {
+            checkDiagnostics {
+                // introduce following cycle: appleMain -> iosTest -> appleTest -> iosMain -> appleMain
+                sourceSets.getByName("appleMain").dependsOn(sourceSets.getByName("iosTest"))
+                sourceSets.getByName("appleTest").dependsOn(sourceSets.getByName("iosMain"))
+            }
+        }
+    }
 
     @Test
     fun `test that only lowest source set edges are reported`() = checkDiagnostics {
