@@ -457,12 +457,23 @@ fun DiagnosticsStatistics.recordDiagnosticsStatistics(result: EquivalenceTestRes
     }
 }
 
-fun printDiagnosticsStatistics(title: String, diagnostics: Map<String, Int>, writer: Writer) {
-    writer.write("$title\n\n")
+fun printDiagnosticsStatistics(title: String? = null, diagnostics: Map<String, Int>, writer: Writer) {
+    if (title != null) {
+        writer.write("$title\n\n")
+    }
+
     val sorted = diagnostics.entries.sortedByDescending { it.value }
 
     for (it in sorted) {
-        writer.write("- `${it.key}`: ${it.value} files\n")
+        writer.write("- `${it.key}`: ${it.value} files")
+
+        val knownIssue = knownMissingDiagnostics[it.key]
+
+        if (knownIssue != null) {
+            writer.write(". The corresponding issue is KT-${knownIssue.numberInProject}\n")
+        } else {
+            writer.write("\n")
+        }
     }
 }
 
@@ -596,10 +607,18 @@ fun main() {
     build.child("containment-diagnostics-stats.md").renderDiagnosticsStatistics(containmentStatistics)
 
     build.child("k2-unimplemented-diagnostics.md").writer().use { writer ->
+        val missingDiagnostics = containmentStatistics.disappearedDiagnosticToFilesCount.filterKeys { it !in k2KnownErrors }
+        val (withKnownIssues, newDiagnostics) = missingDiagnostics.entries.partition { it.key in knownMissingDiagnostics }
+
         printDiagnosticsStatistics(
             "These diagnostics are present in K1 files, but are missing in K2 altogether:",
-            containmentStatistics.disappearedDiagnosticToFilesCount.filterKeys { it !in k2KnownErrors },
+            newDiagnostics.associate { it.key to it.value },
             writer,
+        )
+
+        printDiagnosticsStatistics(
+            diagnostics = withKnownIssues.associate { it.key to it.value },
+            writer = writer,
         )
     }
 
