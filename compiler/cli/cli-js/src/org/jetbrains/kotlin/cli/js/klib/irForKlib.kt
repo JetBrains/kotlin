@@ -115,9 +115,8 @@ fun generateIrForKlibSerialization(
     }
 
     if (configuration.get(CommonConfigurationKeys.EXPECT_ACTUAL_LINKER) != true) {
-        moduleFragment.transform(ExpectDeclarationRemover(psi2IrContext.symbolTable, false), null)
+        moduleFragment.accept(ExpectDeclarationRemover(psi2IrContext.symbolTable, false), null)
     }
 
     return moduleFragment to pluginContext
 }
-

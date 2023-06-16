@@ -9,13 +9,14 @@ import org.jetbrains.kotlin.backend.common.BackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.ir.ExpectSymbolTransformer
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
-import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.extractTypeParameters
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
@@ -27,8 +28,8 @@ import kotlin.collections.set
 
 // `doRemove` means should expect-declaration be removed from IR
 @OptIn(ObsoleteDescriptorBasedAPI::class)
-open class ExpectDeclarationRemover(val symbolTable: ReferenceSymbolTable, private val doRemove: Boolean)
-    : ExpectSymbolTransformer(), FileLoweringPass {
+open class ExpectDeclarationRemover(val symbolTable: ReferenceSymbolTable, private val doRemove: Boolean) : ExpectSymbolTransformer(),
+    FileLoweringPass {
 
     constructor(context: BackendContext) : this(context.ir.symbols.externalSymbolTable, true)
 
@@ -38,16 +39,16 @@ open class ExpectDeclarationRemover(val symbolTable: ReferenceSymbolTable, priva
         visitFile(irFile)
     }
 
-    override fun visitFile(declaration: IrFile): IrFile {
+    override fun visitFile(declaration: IrFile) {
         if (doRemove) {
             declaration.declarations.removeAll { shouldRemoveTopLevelDeclaration(it) }
         }
-        return super.visitFile(declaration)
+        super.visitFile(declaration)
     }
 
-    override fun visitValueParameter(declaration: IrValueParameter): IrStatement {
+    override fun visitValueParameter(declaration: IrValueParameter) {
         tryCopyDefaultArguments(declaration)
-        return super.visitValueParameter(declaration)
+        super.visitValueParameter(declaration)
     }
 
     fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
