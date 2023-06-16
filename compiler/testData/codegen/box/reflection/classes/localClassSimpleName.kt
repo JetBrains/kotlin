@@ -1,3 +1,4 @@
+// NATIVE error: name contains illegal characters: "$"
 // IGNORE_BACKEND: NATIVE
 // WITH_STDLIB
 
