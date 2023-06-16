@@ -8,21 +8,18 @@ package org.jetbrains.kotlin.backend.common.phaser
 import org.jetbrains.kotlin.backend.common.CodegenUtil
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
-import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapperPreservingSignatures
-import org.jetbrains.kotlin.ir.util.copyTypeAndValueArgumentsFrom
 import org.jetbrains.kotlin.ir.util.deepCopySavingMetadata
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicReference
@@ -135,7 +132,7 @@ private class PerformByIrFilePhase<Context : CommonBackendContext>(
             // and some entries in adjustDefaultArgumentStubs depend on those inserted by handleDeepCopy, so we need to repeat the call.
             adjustDefaultArgumentStubs(context, remappedFunctions)
 
-            input.transformChildrenVoid(CrossFileCallAdjuster(remappedFunctions))
+            input.acceptChildrenVoid(CrossFileCallAdjuster(remappedFunctions))
         }
 
         // TODO: no guarantee that module identity is preserved by `lower`
@@ -199,26 +196,20 @@ private fun adjustDefaultArgumentStubs(
 
 private class CrossFileCallAdjuster(
     val remappedFunctions: Map<IrSimpleFunctionSymbol, IrSimpleFunctionSymbol>
-) : IrElementTransformerVoid() {
-
-    override fun visitSimpleFunction(declaration: IrSimpleFunction): IrStatement {
-        declaration.overriddenSymbols = declaration.overriddenSymbols.map { remappedFunctions[it] ?: it }
-        return super.visitSimpleFunction(declaration)
+) : IrElementVisitorVoid {
+    override fun visitElement(element: IrElement) {
+        element.acceptChildren(this, null)
     }
 
-    override fun visitCall(expression: IrCall): IrExpression {
-        expression.transformChildrenVoid(this)
-        return remappedFunctions[expression.symbol]?.let { newSymbol ->
-            with(expression) {
-                IrCallImpl(
-                    startOffset, endOffset, type,
-                    newSymbol,
-                    typeArgumentsCount, valueArgumentsCount, origin,
-                    superQualifierSymbol // TODO
-                ).apply {
-                    copyTypeAndValueArgumentsFrom(expression)
-                }
-            }
-        } ?: expression
+    override fun visitSimpleFunction(declaration: IrSimpleFunction) {
+        declaration.overriddenSymbols = declaration.overriddenSymbols.map { remappedFunctions[it] ?: it }
+        declaration.acceptChildren(this, null)
+    }
+
+    override fun visitCall(expression: IrCall) {
+        expression.acceptChildren(this, null)
+        remappedFunctions[expression.symbol]?.let {
+            expression.symbol = it
+        }
     }
 }
