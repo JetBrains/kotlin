@@ -7,11 +7,20 @@ implicit receivers:
   owner symbol: KtFirNamedClassOrObjectSymbol
 
 scopes:
-  LocalScope, index = 0, empty
+  LocalScope, index = 0
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
 
-  LocalScope, index = 1, empty
+  LocalScope, index = 1
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
 
   TypeScope, index = 2
+    packages: 0
     classifiers: 1
       companion object
     callables: 11
@@ -26,39 +35,63 @@ scopes:
       val ordinal: kotlin.Int
       fun getDeclaringClass(): java.lang.Class<E?>?
       fun finalize()
+    constructors: 1
+      constructor()
 
   StaticMemberScope, index = 3
+    packages: 0
     classifiers: 0
     callables: 4
       A
       fun values(): kotlin.Array<E>
       fun valueOf(value: kotlin.String): E
       val entries: kotlin.enums.EnumEntries<E>
+    constructors: 0
 
   StaticMemberScope, index = 4
+    packages: 0
     classifiers: 1
       companion object
     callables: 0
+    constructors: 0
 
   TypeScope, index = 5
+    packages: 0
     classifiers: 0
     callables: 3
       fun equals(other: kotlin.Any?): kotlin.Boolean
       fun hashCode(): kotlin.Int
       fun toString(): kotlin.String
+    constructors: 0
 
-  ExplicitSimpleImportingScope, index = 6, empty
+  ExplicitSimpleImportingScope, index = 6
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
 
   PackageMemberScope, index = 7
+    packages: 6
+      META-INF
+      java
+      javax
+      kotlin
+      org
+      sun
     classifiers: 1
       enum class E
     callables: 0
+    constructors: 0
 
   DefaultSimpleImportingScope, index = 8
 
   DefaultSimpleImportingScope, index = 9
 
-  ExplicitStarImportingScope, index = 10, empty
+  ExplicitStarImportingScope, index = 10
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
 
   DefaultSimpleImportingScope, index = 11
 
