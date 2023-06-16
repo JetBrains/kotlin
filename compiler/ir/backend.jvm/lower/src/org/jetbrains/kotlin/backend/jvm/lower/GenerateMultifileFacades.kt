@@ -30,13 +30,12 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildProperty
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrClassReferenceImpl
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.name.JvmNames.JVM_SYNTHETIC_ANNOTATION_FQ_NAME
@@ -290,29 +289,24 @@ private class CorrespondingPropertyCache(private val context: JvmBackendContext,
 
 private class UpdateFunctionCallSites(
     private val functionDelegates: MutableMap<IrSimpleFunction, IrSimpleFunction>
-) : FileLoweringPass, IrElementTransformer<IrFunction?> {
+) : FileLoweringPass, IrElementVisitor<Unit, IrFunction?> {
     override fun lower(irFile: IrFile) {
-        irFile.transformChildren(this, null)
+        irFile.acceptChildren(this, null)
     }
 
-    override fun visitFunction(declaration: IrFunction, data: IrFunction?): IrStatement =
+    override fun visitElement(element: IrElement, data: IrFunction?) {
+        element.acceptChildren(this, data)
+    }
+
+    override fun visitFunction(declaration: IrFunction, data: IrFunction?): Unit =
         super.visitFunction(declaration, declaration)
 
-    override fun visitCall(expression: IrCall, data: IrFunction?): IrElement {
-        if (data != null && data.isMultifileBridge())
-            return super.visitCall(expression, data)
+    override fun visitCall(expression: IrCall, data: IrFunction?) {
+        expression.acceptChildren(this, data)
 
-        val newFunction = functionDelegates[expression.symbol.owner]
-            ?: return super.visitCall(expression, data)
-
-        return expression.run {
-            // TODO: deduplicate this with ReplaceKFunctionInvokeWithFunctionInvoke
-            IrCallImpl.fromSymbolOwner(startOffset, endOffset, type, newFunction.symbol).apply {
-                copyTypeArgumentsFrom(expression)
-                extensionReceiver = expression.extensionReceiver?.transform(this@UpdateFunctionCallSites, null)
-                for (i in 0 until valueArgumentsCount) {
-                    putValueArgument(i, expression.getValueArgument(i)?.transform(this@UpdateFunctionCallSites, null))
-                }
+        if (data == null || !data.isMultifileBridge()) {
+            functionDelegates[expression.symbol.owner]?.let {
+                expression.symbol = it.symbol
             }
         }
     }
