@@ -180,7 +180,7 @@ private fun getExtraInfo(classHeader: KotlinClassHeader, classContents: ByteArra
 
     val constantSnapshots: Map<String, Long> = classNode.fields.associate { fieldNode ->
         // Note: `fieldNode` is a constant because we kept only fields that are (non-private) constants in `classNode`
-        fieldNode.name to (fieldNode.value?.let { ConstantValueExternalizer.toByteArray(it).hashToLong() } ?: 0L)
+        fieldNode.name to ConstantValueExternalizer.toByteArray(fieldNode.value!!).hashToLong()
     }
 
     val inlineFunctionOrAccessorSnapshots: Map<InlineFunctionOrAccessor, Long> = classNode.methods.associate { methodNode ->
@@ -210,7 +210,11 @@ class SelectiveClassVisitor(
 ) : ClassVisitor(Opcodes.API_VERSION, cv) {
 
     override fun visitField(access: Int, name: String, desc: String, signature: String?, value: Any?): FieldVisitor? {
-        return if (shouldVisitField(JvmMemberSignature.Field(name, desc), access.isPrivate(), access.isStaticFinal())) {
+        // Note: A constant's value must be not-null. A static final field with a `null` value at the bytecode declaration is not a constant
+        // (whether the value is initialized later in the static initializer or not, it won't be inlined by the compiler).
+        val isConstant = access.isStaticFinal() && value != null
+
+        return if (shouldVisitField(JvmMemberSignature.Field(name, desc), access.isPrivate(), isConstant)) {
             cv.visitField(access, name, desc, signature, value)
         } else null
     }

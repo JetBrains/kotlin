@@ -290,6 +290,19 @@ class KotlinOnlyClasspathChangesComputerTest : ClasspathChangesComputerTest() {
         ).assertEquals(changes)
     }
 
+    /** Regression test for KT-58986.*/
+    @Test
+    fun testDelegatedProperties() {
+        // Check that classpath changes computation doesn't fail
+        val changes = computeClasspathChanges(File(testDataDir, "KotlinOnly/testDelegatedProperties/src"), tmpDir)
+        Changes(
+            lookupSymbols = setOf(
+                LookupSymbol(name = "delegatedProperty", scope = "com.example"),
+            ),
+            fqNames = setOf("com.example")
+        ).assertEquals(changes)
+    }
+
     /** Tests [SupertypesInheritorsImpact]. */
     @Test
     override fun testImpactComputation_SupertypesInheritors() {
