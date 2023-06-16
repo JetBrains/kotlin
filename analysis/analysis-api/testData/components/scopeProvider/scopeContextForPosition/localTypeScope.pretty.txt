@@ -5,13 +5,20 @@ implicit receivers:
 
 scopes:
   LocalScope, index = 0
+    packages: 0
     classifiers: 0
     callables: 1
       val localInX: kotlin.Int
+    constructors: 0
 
-  LocalScope, index = 1, empty
+  LocalScope, index = 1
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
 
   TypeScope, index = 2
+    packages: 0
     classifiers: 0
     callables: 5
       val propertyInY: kotlin.Int
@@ -19,27 +26,51 @@ scopes:
       fun equals(other: kotlin.Any?): kotlin.Boolean
       fun hashCode(): kotlin.Int
       fun toString(): kotlin.String
+    constructors: 1
+      constructor()
 
   LocalScope, index = 3
+    packages: 0
     classifiers: 1
       class Y
     callables: 1
       val localInZ: kotlin.Int
+    constructors: 0
 
-  LocalScope, index = 4, empty
+  LocalScope, index = 4
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
 
-  ExplicitSimpleImportingScope, index = 5, empty
+  ExplicitSimpleImportingScope, index = 5
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
 
   PackageMemberScope, index = 6
+    packages: 6
+      META-INF
+      java
+      javax
+      kotlin
+      org
+      sun
     classifiers: 0
     callables: 1
       fun z()
+    constructors: 0
 
   DefaultSimpleImportingScope, index = 7
 
   DefaultSimpleImportingScope, index = 8
 
-  ExplicitStarImportingScope, index = 9, empty
+  ExplicitStarImportingScope, index = 9
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
 
   DefaultSimpleImportingScope, index = 10
 

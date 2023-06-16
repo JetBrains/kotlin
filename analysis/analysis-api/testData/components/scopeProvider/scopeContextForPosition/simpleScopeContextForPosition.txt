@@ -20,6 +20,7 @@ implicit receivers:
 
 scopes:
   TypeScope, index = 0
+    packages: 0
     classifiers: 0
     callables: 4
       KtFunctionSymbol:
@@ -151,12 +152,40 @@ scopes:
         typeParameters: []
         valueParameters: []
         visibility: Public
+    constructors: 1
+      KtConstructorSymbol:
+        annotationsList: []
+        callableIdIfNonLocal: null
+        containingClassIdIfNonLocal: A
+        contextReceivers: []
+        hasStableParameterNames: true
+        isExtension: false
+        isPrimary: true
+        origin: SOURCE_MEMBER_GENERATED
+        receiverParameter: null
+        returnType: KtUsualClassType:
+          annotationsList: []
+          ownTypeArguments: []
+          type: A
+        symbolKind: CLASS_MEMBER
+        typeParameters: []
+        valueParameters: []
+        visibility: Public
 
-  LocalScope, index = 1, empty
+  LocalScope, index = 1
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
 
-  LocalScope, index = 2, empty
+  LocalScope, index = 2
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
 
   TypeScope, index = 3
+    packages: 0
     classifiers: 0
     callables: 4
       KtFunctionSymbol:
@@ -288,10 +317,34 @@ scopes:
         typeParameters: []
         valueParameters: []
         visibility: Public
+    constructors: 1
+      KtConstructorSymbol:
+        annotationsList: []
+        callableIdIfNonLocal: null
+        containingClassIdIfNonLocal: B
+        contextReceivers: []
+        hasStableParameterNames: true
+        isExtension: false
+        isPrimary: true
+        origin: SOURCE_MEMBER_GENERATED
+        receiverParameter: null
+        returnType: KtUsualClassType:
+          annotationsList: []
+          ownTypeArguments: []
+          type: B
+        symbolKind: CLASS_MEMBER
+        typeParameters: []
+        valueParameters: []
+        visibility: Public
 
-  LocalScope, index = 4, empty
+  LocalScope, index = 4
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
 
   LocalScope, index = 5
+    packages: 0
     classifiers: 0
     callables: 1
       KtLocalVariableSymbol:
@@ -309,8 +362,10 @@ scopes:
           type: kotlin/Int
         symbolKind: LOCAL
         typeParameters: []
+    constructors: 0
 
   LocalScope, index = 6
+    packages: 0
     classifiers: 0
     callables: 1
       KtValueParameterSymbol:
@@ -333,8 +388,10 @@ scopes:
           type: kotlin/String
         symbolKind: LOCAL
         typeParameters: []
+    constructors: 0
 
   LocalScope, index = 7
+    packages: 0
     classifiers: 0
     callables: 2
       KtLocalVariableSymbol:
@@ -379,8 +436,10 @@ scopes:
         typeParameters: []
         valueParameters: []
         visibility: Local
+    constructors: 0
 
   LocalScope, index = 8
+    packages: 0
     classifiers: 0
     callables: 1
       KtValueParameterSymbol:
@@ -403,8 +462,10 @@ scopes:
           type: kotlin/String?
         symbolKind: LOCAL
         typeParameters: []
+    constructors: 0
 
   TypeParameterScope, index = 9
+    packages: 0
     classifiers: 1
       KtTypeParameterSymbol:
         annotationsList: []
@@ -415,8 +476,10 @@ scopes:
         upperBounds: []
         variance: INVARIANT
     callables: 0
+    constructors: 0
 
   TypeScope, index = 10
+    packages: 0
     classifiers: 2
       KtNamedClassOrObjectSymbol:
         annotationsList: []
@@ -617,8 +680,28 @@ scopes:
         typeParameters: []
         valueParameters: []
         visibility: Public
+    constructors: 1
+      KtConstructorSymbol:
+        annotationsList: []
+        callableIdIfNonLocal: null
+        containingClassIdIfNonLocal: C
+        contextReceivers: []
+        hasStableParameterNames: true
+        isExtension: false
+        isPrimary: true
+        origin: SOURCE_MEMBER_GENERATED
+        receiverParameter: null
+        returnType: KtUsualClassType:
+          annotationsList: []
+          ownTypeArguments: []
+          type: C
+        symbolKind: CLASS_MEMBER
+        typeParameters: []
+        valueParameters: []
+        visibility: Public
 
   StaticMemberScope, index = 11
+    packages: 0
     classifiers: 1
       KtNamedClassOrObjectSymbol:
         annotationsList: []
@@ -644,8 +727,10 @@ scopes:
         typeParameters: []
         visibility: Public
     callables: 0
+    constructors: 0
 
   StaticMemberScope, index = 12
+    packages: 0
     classifiers: 1
       KtNamedClassOrObjectSymbol:
         annotationsList: []
@@ -671,10 +756,34 @@ scopes:
         typeParameters: []
         visibility: PackageVisibility
     callables: 0
+    constructors: 0
 
-  ExplicitSimpleImportingScope, index = 13, empty
+  ExplicitSimpleImportingScope, index = 13
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
 
   PackageMemberScope, index = 14
+    packages: 6
+      KtPackageSymbol:
+        fqName: META-INF
+        origin: SOURCE
+      KtPackageSymbol:
+        fqName: java
+        origin: SOURCE
+      KtPackageSymbol:
+        fqName: javax
+        origin: SOURCE
+      KtPackageSymbol:
+        fqName: kotlin
+        origin: SOURCE
+      KtPackageSymbol:
+        fqName: org
+        origin: SOURCE
+      KtPackageSymbol:
+        fqName: sun
+        origin: SOURCE
     classifiers: 3
       KtNamedClassOrObjectSymbol:
         annotationsList: []
@@ -944,12 +1053,17 @@ scopes:
         typeParameters: []
         valueParameters: []
         visibility: Public
+    constructors: 0
 
   DefaultSimpleImportingScope, index = 15
 
   DefaultSimpleImportingScope, index = 16
 
-  ExplicitStarImportingScope, index = 17, empty
+  ExplicitStarImportingScope, index = 17
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
 
   DefaultSimpleImportingScope, index = 18
 

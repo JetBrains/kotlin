@@ -7,9 +7,14 @@ implicit receivers:
   owner symbol: KtFirFunctionSymbol
 
 scopes:
-  LocalScope, index = 0, empty
+  LocalScope, index = 0
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
 
   TypeScope, index = 1
+    packages: 0
     classifiers: 0
     callables: 5
       KtFunctionSymbol:
@@ -188,12 +193,58 @@ scopes:
         symbolKind: CLASS_MEMBER
         typeParameters: []
         visibility: Public
+    constructors: 1
+      KtConstructorSymbol:
+        annotationsList: []
+        callableIdIfNonLocal: null
+        containingClassIdIfNonLocal: JavaClass
+        contextReceivers: []
+        hasStableParameterNames: false
+        isExtension: false
+        isPrimary: true
+        origin: JAVA
+        receiverParameter: null
+        returnType: KtUsualClassType:
+          annotationsList: []
+          ownTypeArguments: []
+          type: JavaClass
+        symbolKind: CLASS_MEMBER
+        typeParameters: []
+        valueParameters: []
+        visibility: Public
 
-  LocalScope, index = 2, empty
+  LocalScope, index = 2
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
 
-  ExplicitSimpleImportingScope, index = 3, empty
+  ExplicitSimpleImportingScope, index = 3
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
 
   PackageMemberScope, index = 4
+    packages: 6
+      KtPackageSymbol:
+        fqName: META-INF
+        origin: SOURCE
+      KtPackageSymbol:
+        fqName: java
+        origin: SOURCE
+      KtPackageSymbol:
+        fqName: javax
+        origin: SOURCE
+      KtPackageSymbol:
+        fqName: kotlin
+        origin: SOURCE
+      KtPackageSymbol:
+        fqName: org
+        origin: SOURCE
+      KtPackageSymbol:
+        fqName: sun
+        origin: SOURCE
     classifiers: 0
     callables: 1
       KtFunctionSymbol:
@@ -230,12 +281,17 @@ scopes:
         typeParameters: []
         valueParameters: []
         visibility: Public
+    constructors: 0
 
   DefaultSimpleImportingScope, index = 5
 
   DefaultSimpleImportingScope, index = 6
 
-  ExplicitStarImportingScope, index = 7, empty
+  ExplicitStarImportingScope, index = 7
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
 
   DefaultSimpleImportingScope, index = 8
 
