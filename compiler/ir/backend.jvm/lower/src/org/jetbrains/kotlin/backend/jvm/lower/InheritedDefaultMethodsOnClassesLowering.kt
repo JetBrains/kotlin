@@ -254,20 +254,28 @@ internal val interfaceObjectCallsPhase = makeIrFilePhase(
     description = "Resolve calls to Object methods on interface types to virtual methods"
 )
 
-private class InterfaceObjectCallsLowering(val context: JvmBackendContext) : IrElementTransformerVoid(), FileLoweringPass {
-    override fun lower(irFile: IrFile) = irFile.transformChildrenVoid(this)
+private class InterfaceObjectCallsLowering(val context: JvmBackendContext) : IrElementVisitorVoid, FileLoweringPass {
+    override fun lower(irFile: IrFile) = irFile.acceptChildren(this, null)
 
-    override fun visitCall(expression: IrCall): IrExpression {
-        if (expression.superQualifierSymbol != null && !expression.isSuperToAny())
-            return super.visitCall(expression)
+    override fun visitElement(element: IrElement) {
+        element.acceptChildren(this, null)
+    }
+
+    override fun visitCall(expression: IrCall) {
+        expression.acceptChildren(this, null)
+
+        if (expression.superQualifierSymbol != null && !expression.isSuperToAny()) return
+
         val callee = expression.symbol.owner
-        if (!callee.hasInterfaceParent() && expression.dispatchReceiver?.run { type.erasedUpperBound.isJvmInterface } != true)
-            return super.visitCall(expression)
+        if (!callee.hasInterfaceParent() && expression.dispatchReceiver?.run { type.erasedUpperBound.isJvmInterface } != true) return
+
         val resolved = callee.resolveFakeOverride()
-        if (resolved?.isMethodOfAny() != true)
-            return super.visitCall(expression)
-        val newSuperQualifierSymbol = context.irBuiltIns.anyClass.takeIf { expression.superQualifierSymbol != null }
-        return super.visitCall(irCall(expression, resolved, newSuperQualifierSymbol = newSuperQualifierSymbol))
+        if (resolved?.isMethodOfAny() != true) return
+
+        expression.symbol = resolved.symbol
+        if (expression.superQualifierSymbol != null) {
+            expression.superQualifierSymbol = context.irBuiltIns.anyClass
+        }
     }
 }
 
