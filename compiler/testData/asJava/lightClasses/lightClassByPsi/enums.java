@@ -43,7 +43,7 @@ public enum Direction /* Direction*/ {
   private  Direction();//  .ctor()
 }
 
-public enum IntArithmetics /* IntArithmetics*/ implements java.util.function.BinaryOperator<java.lang.Integer>, java.util.function.IntBinaryOperator {
+public abstract enum IntArithmetics /* IntArithmetics*/ implements java.util.function.BinaryOperator<java.lang.Integer>, java.util.function.IntBinaryOperator {
   PLUS {
    PLUS();//  .ctor()
 
@@ -79,7 +79,7 @@ public static final class PLUS /* IntArithmetics.PLUS*/ extends IntArithmetics {
   public java.lang.Integer apply(int, int);//  apply(int, int)
 }
 
-public enum ProtocolState /* ProtocolState*/ {
+public abstract enum ProtocolState /* ProtocolState*/ {
   WAITING {
    WAITING();//  .ctor()
 
