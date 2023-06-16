@@ -15,7 +15,7 @@ import kotlin.annotation.AnnotationTarget.*
  * This is an internal copy of the public K/N annotation.
  * It is used to [OptIn] experimental K/N API used in the shared native-wasm directory.
  */
-@RequiresOptIn(level = RequiresOptIn.Level.WARNING)
+@RequiresOptIn(level = RequiresOptIn.Level.ERROR)
 @Retention(AnnotationRetention.BINARY)
 @Target(
     AnnotationTarget.CLASS,

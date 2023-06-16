@@ -19,7 +19,7 @@ import kotlin.annotation.AnnotationTarget.*
  * annotating that usage with the [OptIn] annotation, e.g. `@OptIn(ExperimentalNativeApi::class)`,
  * or by using the compiler argument `-opt-in=kotlin.native.ExperimentalNativeApi`.
  */
-@RequiresOptIn(level = RequiresOptIn.Level.WARNING)
+@RequiresOptIn(level = RequiresOptIn.Level.ERROR)
 @Retention(AnnotationRetention.BINARY)
 @Target(
         AnnotationTarget.CLASS,
