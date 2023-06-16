@@ -119,7 +119,7 @@ internal abstract class IrConstTransformer(
         configuration: IrInterpreterConfiguration = interpreter.environment.configuration
     ): Boolean {
         return try {
-            this.accept(checker, IrInterpreterCheckerData(mode, interpreter.irBuiltIns, configuration))
+            this.accept(checker, IrInterpreterCheckerData(irFile, mode, interpreter.irBuiltIns, configuration))
         } catch (e: Throwable) {
             if (suppressExceptions) {
                 return false
