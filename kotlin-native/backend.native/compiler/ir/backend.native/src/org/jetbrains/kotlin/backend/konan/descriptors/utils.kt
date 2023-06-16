@@ -15,14 +15,13 @@ import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.descriptors.IrBasedDeclarationDescriptor
 import org.jetbrains.kotlin.konan.library.KLIB_INTEROP_IR_PROVIDER_IDENTIFIER
 import org.jetbrains.kotlin.library.BaseKotlinLibrary
-import org.jetbrains.kotlin.library.KLIB_PROPERTY_IR_PROVIDER
+import org.jetbrains.kotlin.library.irProviderName
 import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
 import org.jetbrains.kotlin.library.metadata.KlibDeserializedContainerSource
 import org.jetbrains.kotlin.library.metadata.klibModuleOrigin
 import org.jetbrains.kotlin.library.metadata.kotlinLibrary
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
 
 fun DeclarationDescriptor.deepPrint() {
     this.accept(DeepPrintVisitor(PrintVisitor()), 0)
@@ -53,8 +52,7 @@ val ModuleDescriptor.isForwardDeclarationModule: Boolean
         return name == Name.special("<forward declarations>")
     }
 
-fun BaseKotlinLibrary.isInteropLibrary() =
-        manifestProperties[KLIB_PROPERTY_IR_PROVIDER] == KLIB_INTEROP_IR_PROVIDER_IDENTIFIER
+fun BaseKotlinLibrary.isInteropLibrary() = irProviderName == KLIB_INTEROP_IR_PROVIDER_IDENTIFIER
 
 fun DeclarationDescriptor.isFromInteropLibrary(): Boolean =
         this.isFromFirDeserializedInteropLibrary() || this.module.isFromInteropLibrary()

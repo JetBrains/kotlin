@@ -115,6 +115,9 @@ val KotlinLibrary.exportForwardDeclarations: List<String>
 val KotlinLibrary.includedForwardDeclarations: List<String>
     get() = manifestProperties.propertyList(KLIB_PROPERTY_INCLUDED_FORWARD_DECLARATIONS, escapeInQuotes = true)
 
+val BaseKotlinLibrary.irProviderName: String?
+    get() = manifestProperties.getProperty(KLIB_PROPERTY_IR_PROVIDER)
+
 val BaseKotlinLibrary.nativeTargets: List<String>
     get() = manifestProperties.propertyList(KLIB_PROPERTY_NATIVE_TARGETS)
 
