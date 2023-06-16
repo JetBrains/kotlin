@@ -40,8 +40,13 @@ import java.nio.file.attribute.BasicFileAttributes
  * and the corresponding entry in the target subtree already exists and is also a directory, it does nothing.
  * Otherwise, [overwrite] determines whether to overwrite existing destination entries.
  * Attributes of a source entry, such as creation/modification date, are not copied.
- * [followLinks] determines whether to copy a symbolic link itself or its target.
- * Symbolic links in the target subtree are not followed.
+ *
+ * [followLinks] impacts only symbolic links in the source subtree and
+ * determines whether to copy a symbolic link itself or the entry it points to.
+ * Symbolic links in the target subtree are not followed, i.e.,
+ * no entry is copied to the location a symbolic link points to.
+ * If a copy destination is a symbolic link, it is overwritten or an exception is thrown depending on [overwrite].
+ * Note that symbolic links on the way to the roots of the source and target subtrees are always followed.
  *
  * To provide a custom logic for copying use the overload that takes a `copyAction` lambda.
  *
@@ -115,8 +120,13 @@ public fun Path.copyToRecursively(
  * and the corresponding entry in the target subtree already exists and is also a directory, it does nothing.
  * Otherwise, the entry is copied using `sourcePath.copyTo(destinationPath, *followLinksOption)`,
  * which doesn't copy attributes of the source entry and throws if the destination entry already exists.
- * [followLinks] determines whether to copy a symbolic link itself or its target.
- * Symbolic links in the target subtree are not followed.
+ *
+ * [followLinks] impacts only symbolic links in the source subtree and
+ * determines whether to copy a symbolic link itself or the entry it points to.
+ * Symbolic links in the target subtree are not followed, i.e.,
+ * no entry is copied to the location a symbolic link points to.
+ * If a copy destination is a symbolic link, an exception is thrown.
+ * Note that symbolic links on the way to the roots of the source and target subtrees are always followed.
  *
  * If a custom implementation of [copyAction] is provided, consider making it consistent with [followLinks] value.
  * See [CopyActionResult] for available options.
