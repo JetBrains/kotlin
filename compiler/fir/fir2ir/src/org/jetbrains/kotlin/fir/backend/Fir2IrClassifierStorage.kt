@@ -72,14 +72,16 @@ class Fir2IrClassifierStorage(
 
     fun preCacheBuiltinClasses() {
         for ((classId, irBuiltinSymbol) in typeConverter.classIdToSymbolMap) {
-            val firClass = classId.toSymbol(session)!!.fir as FirRegularClass
+            // toSymbol() can return null when using an old stdlib that's missing some types
+            val firClass = classId.toSymbol(session)?.fir as FirRegularClass? ?: continue
             val irClass = irBuiltinSymbol.owner
             classCache[firClass] = irClass
             processClassHeader(firClass, irClass)
             declarationStorage.preCacheBuiltinClassMembers(firClass, irClass)
         }
         for ((primitiveClassId, primitiveArrayId) in StandardClassIds.primitiveArrayTypeByElementType) {
-            val firClass = primitiveArrayId.toLookupTag().toSymbol(session)!!.fir as FirRegularClass
+            // toSymbol() can return null when using an old stdlib that's missing some types
+            val firClass = primitiveArrayId.toLookupTag().toSymbol(session)?.fir as FirRegularClass? ?: continue
             val irType = typeConverter.classIdToTypeMap[primitiveClassId]
             val irClass = irBuiltIns.primitiveArrayForType[irType]!!.owner
             classCache[firClass] = irClass
