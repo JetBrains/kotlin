@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.fir.declarations.UnresolvedDeprecationProvider
 import org.jetbrains.kotlin.fir.declarations.asResolveState
 import org.jetbrains.kotlin.fir.declarations.builder.FirVariableBuilder
 import org.jetbrains.kotlin.fir.declarations.impl.FirFieldImpl
+import org.jetbrains.kotlin.fir.declarations.resolvePhase
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
@@ -127,4 +128,31 @@ inline fun buildField(init: FirFieldBuilder.() -> Unit): FirField {
         callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
     }
     return FirFieldBuilder().apply(init).build()
+}
+
+@OptIn(ExperimentalContracts::class)
+inline fun buildFieldCopy(original: FirField, init: FirFieldBuilder.() -> Unit): FirField {
+    contract {
+        callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+    }
+    val copyBuilder = FirFieldBuilder()
+    copyBuilder.source = original.source
+    copyBuilder.resolvePhase = original.resolvePhase
+    copyBuilder.moduleData = original.moduleData
+    copyBuilder.origin = original.origin
+    copyBuilder.attributes = original.attributes.copy()
+    copyBuilder.typeParameters.addAll(original.typeParameters)
+    copyBuilder.status = original.status
+    copyBuilder.returnTypeRef = original.returnTypeRef
+    copyBuilder.deprecationsProvider = original.deprecationsProvider
+    copyBuilder.containerSource = original.containerSource
+    copyBuilder.dispatchReceiverType = original.dispatchReceiverType
+    copyBuilder.contextReceivers.addAll(original.contextReceivers)
+    copyBuilder.name = original.name
+    copyBuilder.initializer = original.initializer
+    copyBuilder.isVar = original.isVar
+    copyBuilder.backingField = original.backingField
+    copyBuilder.annotations.addAll(original.annotations)
+    copyBuilder.symbol = original.symbol
+    return copyBuilder.apply(init).build()
 }

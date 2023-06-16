@@ -18610,6 +18610,30 @@ public class FirLightTreeBlackBoxCodegenTestGenerated extends AbstractFirLightTr
         }
 
         @Test
+        @TestMetadata("staticImportFromEnum.kt")
+        public void testStaticImportFromEnum() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/staticImportFromEnum.kt");
+        }
+
+        @Test
+        @TestMetadata("staticImportFromEnumJava.kt")
+        public void testStaticImportFromEnumJava() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/staticImportFromEnumJava.kt");
+        }
+
+        @Test
+        @TestMetadata("staticImportFromObject.kt")
+        public void testStaticImportFromObject() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/staticImportFromObject.kt");
+        }
+
+        @Test
+        @TestMetadata("staticImportViaInheritance.kt")
+        public void testStaticImportViaInheritance() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/staticImportViaInheritance.kt");
+        }
+
+        @Test
         @TestMetadata("SuspendExtension.kt")
         public void testSuspendExtension() throws Exception {
             runTest("compiler/testData/codegen/box/fir/SuspendExtension.kt");

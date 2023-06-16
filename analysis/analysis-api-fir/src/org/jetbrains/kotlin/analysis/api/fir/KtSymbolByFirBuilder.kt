@@ -64,6 +64,7 @@ import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 import org.jetbrains.kotlin.analysis.api.fir.signatures.KtFirFunctionLikeSubstitutorBasedSignature
 import org.jetbrains.kotlin.analysis.api.fir.signatures.KtFirVariableLikeSubstitutorBasedSignature
+import org.jetbrains.kotlin.fir.scopes.impl.importedFromObjectOrStaticData
 
 /**
  * Maps FirElement to KtSymbol & ConeType to KtType, thread safe
@@ -334,6 +335,9 @@ internal class KtSymbolByFirBuilder constructor(
 
 
         fun buildFieldSymbol(firSymbol: FirFieldSymbol): KtFirJavaFieldSymbol {
+            if (firSymbol.origin == FirDeclarationOrigin.ImportedFromObjectOrStatic) {
+                return buildFieldSymbol(firSymbol.fir.importedFromObjectOrStaticData!!.original.symbol)
+            }
             checkRequirementForBuildingSymbol<KtFirJavaFieldSymbol>(firSymbol, firSymbol.fir.isJavaFieldOrSubstitutionOverrideOfJavaField())
             return symbolsCache.cache(firSymbol) { KtFirJavaFieldSymbol(firSymbol, analysisSession) }
         }

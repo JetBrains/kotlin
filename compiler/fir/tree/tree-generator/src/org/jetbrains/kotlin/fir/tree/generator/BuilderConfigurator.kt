@@ -239,6 +239,7 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
             parents += variableBuilder
             default("resolvePhase", "FirResolvePhase.DECLARATIONS")
             openBuilder()
+            withCopy()
         }
 
         builder(typeOperatorCall) {
