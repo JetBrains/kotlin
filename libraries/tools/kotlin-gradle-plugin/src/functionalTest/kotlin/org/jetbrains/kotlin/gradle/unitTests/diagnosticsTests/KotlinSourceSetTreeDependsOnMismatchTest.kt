@@ -140,8 +140,8 @@ class KotlinSourceSetTreeDependsOnMismatchTest {
 
     @Test
     fun `commonMain cant depend on androidInstrumentedTest`() = checkSingleBadSourceSetDependency(
-        dependent = "androidInstrumentedTest",
-        dependency = "commonMain"
+        dependent = "commonMain",
+        dependency = "androidInstrumentedTest"
     )
 
     @Test
