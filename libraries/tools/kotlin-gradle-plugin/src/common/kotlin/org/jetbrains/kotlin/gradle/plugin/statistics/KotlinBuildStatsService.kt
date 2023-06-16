@@ -128,14 +128,6 @@ internal abstract class KotlinBuildStatsService internal constructor() : IStatis
 
                             registerPre232IdeaStatsBean(mbs, gradle, log)
                         }
-
-                        BuildEventsListenerRegistryHolder.getInstance(project).listenerRegistry.onTaskCompletion(project.provider {
-                            OperationCompletionListener { event ->
-                                if (event is TaskFinishEvent) {
-                                    reportTaskIfNeed(event.descriptor.name)
-                                }
-                            }
-                        })
                     }
                     instance
                 }
@@ -150,24 +142,6 @@ internal abstract class KotlinBuildStatsService internal constructor() : IStatis
                 mbs.registerMBean(StandardMBean(newInstance, Pre232IdeaKotlinBuildStatsMXBean::class.java), beanName)
                 log.debug("Register JMX service for backward compatibility")
             }
-        }
-
-        protected fun reportTaskIfNeed(task: String) {
-            val metric = when (task.substringAfterLast(":")) {
-                "dokkaHtml" -> BooleanMetrics.ENABLED_DOKKA_HTML
-                "dokkaGfm" -> BooleanMetrics.ENABLED_DOKKA_GFM
-                "dokkaJavadoc" -> BooleanMetrics.ENABLED_DOKKA_JAVADOC
-                "dokkaJekyll" -> BooleanMetrics.ENABLED_DOKKA_JEKYLL
-                "dokkaHtmlMultiModule" -> BooleanMetrics.ENABLED_DOKKA_HTML_MULTI_MODULE
-                "dokkaGfmMultiModule" -> BooleanMetrics.ENABLED_DOKKA_GFM_MULTI_MODULE
-                "dokkaJekyllMultiModule" -> BooleanMetrics.ENABLED_DOKKA_JEKYLL_MULTI_MODULE
-                "dokkaHtmlCollector" -> BooleanMetrics.ENABLED_DOKKA_HTML_COLLECTOR
-                "dokkaGfmCollector" -> BooleanMetrics.ENABLED_DOKKA_GFM_COLLECTOR
-                "dokkaJavadocCollector" -> BooleanMetrics.ENABLED_DOKKA_JAVADOC_COLLECTOR
-                "dokkaJekyllCollector" -> BooleanMetrics.ENABLED_DOKKA_JEKYLL_COLLECTOR
-                else -> null
-            }
-            metric?.also { getInstance()?.report(it, true) }
         }
 
 
@@ -334,8 +308,7 @@ internal class DefaultKotlinBuildStatsService internal constructor(
 
     //only one jmx bean service should report global metrics
     override fun recordBuildFinish(action: String?, buildFailed: Boolean, configurationTimeMetrics: MetricContainer) {
-        KotlinBuildStatHandler().reportGlobalMetrics(sessionLogger)
-        KotlinBuildStatHandler().reportBuildFinished(sessionLogger, action, buildFailed, configurationTimeMetrics)
+        KotlinBuildStatHandler().reportGlobalMetricsAndBuildFinished(sessionLogger, action, buildFailed, configurationTimeMetrics)
     }
 
     override fun collectStartMetrics(project: Project, isProjectIsolationEnabled: Boolean) =

@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.gradle.plugin.statistics
 import org.gradle.api.Project
 import org.gradle.api.artifacts.DependencySet
 import org.gradle.api.logging.Logging
-import org.jetbrains.kotlin.gradle.plugin.internal.isProjectIsolationEnabled
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.statistics.BuildSessionLogger
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
@@ -58,27 +57,28 @@ class KotlinBuildStatHandler {
         }
     }
 
-    fun reportGlobalMetrics(
+    internal fun reportGlobalMetricsAndBuildFinished(
         sessionLogger: BuildSessionLogger,
-    ) {
-        runSafe("${KotlinBuildStatHandler::class.java}.reportGlobalMetrics") {
-            System.getProperty("os.name")?.also { sessionLogger.report(StringMetrics.OS_TYPE, System.getProperty("os.name")) }
-            sessionLogger.report(NumericalMetrics.CPU_NUMBER_OF_CORES, Runtime.getRuntime().availableProcessors().toLong())
-            sessionLogger.report(BooleanMetrics.EXECUTED_FROM_IDEA, System.getProperty("idea.active") != null)
-            sessionLogger.report(NumericalMetrics.GRADLE_DAEMON_HEAP_SIZE, Runtime.getRuntime().maxMemory())
-        }
-    }
-
-    internal fun reportBuildFinished(
-        sessionLogger: BuildSessionLogger,
-        action: String?,
+        action: String? = null,
         buildFailed: Boolean,
         configurationMetrics: MetricContainer,
     ) {
-        runSafe("${KotlinBuildStatHandler::class.java}.reportBuildFinish") {
-            configurationMetrics.report(sessionLogger)
-            sessionLogger.finishBuildSession(action, buildFailed)
+        runSafe("${KotlinBuildStatHandler::class.java}.reportGlobalMetrics") {
+            try {
+                reportGlobalMetrics(sessionLogger)
+                configurationMetrics.report(sessionLogger)
+            } finally {
+                sessionLogger.finishBuildSession(action, buildFailed)
+            }
         }
+    }
+
+    private fun reportGlobalMetrics(sessionLogger: BuildSessionLogger) {
+        System.getProperty("os.name")?.also { sessionLogger.report(StringMetrics.OS_TYPE, System.getProperty("os.name")) }
+
+        sessionLogger.report(NumericalMetrics.CPU_NUMBER_OF_CORES, Runtime.getRuntime().availableProcessors().toLong())
+        sessionLogger.report(BooleanMetrics.EXECUTED_FROM_IDEA, System.getProperty("idea.active") != null)
+        sessionLogger.report(NumericalMetrics.GRADLE_DAEMON_HEAP_SIZE, Runtime.getRuntime().maxMemory())
     }
 
     internal fun collectConfigurationTimeMetrics(

@@ -28,6 +28,7 @@ import java.io.Serializable
 
 internal abstract class BuildFlowService : BuildService<BuildFlowService.Parameters>, AutoCloseable, OperationCompletionListener {
     private var buildFailed: Boolean = false
+    private val executedTaskMetrics = HashSet<BooleanMetrics>()
 
     interface Parameters : BuildServiceParameters {
         val configurationMetrics: Property<MetricContainer>
@@ -74,10 +75,9 @@ internal abstract class BuildFlowService : BuildService<BuildFlowService.Paramet
                 spec.parameters.fusStatisticsAvailable.set(fusStatisticsAvailable)
             }.also { buildService ->
                 if (fusStatisticsAvailable) {
-                    when {
-                        GradleVersion.current().baseVersion < GradleVersion.version("8.1") ->
-                            BuildEventsListenerRegistryHolder.getInstance(project).listenerRegistry.onTaskCompletion(buildService)
-                        else -> StatisticsBuildFlowManager.getInstance(project).subscribeForBuildResult()
+                    BuildEventsListenerRegistryHolder.getInstance(project).listenerRegistry.onTaskCompletion(buildService)
+                    if (GradleVersion.current().baseVersion >= GradleVersion.version("8.1")) {
+                        StatisticsBuildFlowManager.getInstance(project).subscribeForBuildResult()
                     }
                 }
                 if (GradleVersion.current().baseVersion >= GradleVersion.version("8.1")) {
@@ -88,24 +88,44 @@ internal abstract class BuildFlowService : BuildService<BuildFlowService.Paramet
     }
 
     override fun onFinish(event: FinishEvent?) {
-        if ((event is TaskFinishEvent) && (event.result is TaskFailureResult)) {
-            buildFailed = true
+        if (event is TaskFinishEvent) {
+            getTaskMetric(event.descriptor.name)?.also { executedTaskMetrics.add(it) }
+            if (event.result is TaskFailureResult) {
+                buildFailed = true
+            }
         }
     }
 
     override fun close() {
-        if (parameters.fusStatisticsAvailable.get()) {
-            recordBuildFinished(null, buildFailed)
-        }
-        KotlinBuildStatsService.applyIfInitialised {
-            it.close()
+        KotlinBuildStatsService.applyIfInitialised { service ->
+            executedTaskMetrics.forEach { service.report(it, true) }
+            if (parameters.fusStatisticsAvailable.get() && GradleVersion.current().baseVersion < GradleVersion.version("8.1")) {
+                service.recordBuildFinish(null, buildFailed, parameters.configurationMetrics.orElse(MetricContainer()).get())
+            }
+            service.close()
         }
     }
 
     internal fun recordBuildFinished(action: String?, buildFailed: Boolean) {
-        KotlinBuildStatsService.applyIfInitialised {
-            it.recordBuildFinish(action, buildFailed, parameters.configurationMetrics.orElse(MetricContainer()).get())
+        KotlinBuildStatsService.applyIfInitialised { service ->
+            executedTaskMetrics.forEach { service.report(it, true) }
+            service.recordBuildFinish(action, buildFailed, parameters.configurationMetrics.orElse(MetricContainer()).get())
         }
+    }
+
+    private fun getTaskMetric(task: String) = when (task.substringAfterLast(":")) {
+        "dokkaHtml" -> BooleanMetrics.ENABLED_DOKKA_HTML
+        "dokkaGfm" -> BooleanMetrics.ENABLED_DOKKA_GFM
+        "dokkaJavadoc" -> BooleanMetrics.ENABLED_DOKKA_JAVADOC
+        "dokkaJekyll" -> BooleanMetrics.ENABLED_DOKKA_JEKYLL
+        "dokkaHtmlMultiModule" -> BooleanMetrics.ENABLED_DOKKA_HTML_MULTI_MODULE
+        "dokkaGfmMultiModule" -> BooleanMetrics.ENABLED_DOKKA_GFM_MULTI_MODULE
+        "dokkaJekyllMultiModule" -> BooleanMetrics.ENABLED_DOKKA_JEKYLL_MULTI_MODULE
+        "dokkaHtmlCollector" -> BooleanMetrics.ENABLED_DOKKA_HTML_COLLECTOR
+        "dokkaGfmCollector" -> BooleanMetrics.ENABLED_DOKKA_GFM_COLLECTOR
+        "dokkaJavadocCollector" -> BooleanMetrics.ENABLED_DOKKA_JAVADOC_COLLECTOR
+        "dokkaJekyllCollector" -> BooleanMetrics.ENABLED_DOKKA_JEKYLL_COLLECTOR
+        else -> null
     }
 }
 
