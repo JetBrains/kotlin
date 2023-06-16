@@ -19,12 +19,9 @@ import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
-import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.companionObject
-import org.jetbrains.kotlin.ir.util.copyTypeAndValueArgumentsFrom
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
@@ -51,18 +48,8 @@ class ParcelizeIrTransformer(
         // Replace the `parcelableCreator` intrinsic with a direct field access.
         moduleFragment.transformChildrenVoid(object : IrElementTransformerVoid() {
             override fun visitCall(expression: IrCall): IrExpression {
-                // Handle the `parcelableCreator` intrinsic
                 val callee = expression.symbol.owner
-                if (
-                    callee.dispatchReceiverParameter == null
-                    && callee.extensionReceiverParameter == null
-                    && callee.valueParameters.isEmpty()
-                    && callee.isInline
-                    && callee.fqNameWhenAvailable?.asString() == "kotlinx.parcelize.ParcelableCreatorKt.parcelableCreator"
-                    && callee.typeParameters.singleOrNull()?.let {
-                        it.isReified && it.superTypes.singleOrNull()?.classFqName == PARCELABLE_FQN
-                    } == true
-                ) {
+                if (callee.isParcelableCreatorIntrinsic()) {
                     expression.getTypeArgument(0)?.getClass()?.let { parcelableClass ->
                         androidSymbols.createBuilder(expression.symbol).apply {
                             return getParcelableCreator(parcelableClass)
@@ -71,30 +58,30 @@ class ParcelizeIrTransformer(
                 }
 
                 // Remap calls to `describeContents` and `writeToParcel`
-                val remappedSymbol = symbolMap[expression.symbol]
-                    ?: return super.visitCall(expression)
-                return IrCallImpl(
-                    expression.startOffset, expression.endOffset, expression.type, remappedSymbol,
-                    expression.typeArgumentsCount, expression.valueArgumentsCount, expression.origin,
-                    expression.superQualifierSymbol
-                ).apply {
-                    copyTypeAndValueArgumentsFrom(expression)
-                }
+                expression.transformChildren(this, null)
+                expression.symbol = symbolMap[expression.symbol] ?: return expression
+                return expression
             }
 
+            private fun IrSimpleFunction.isParcelableCreatorIntrinsic(): Boolean =
+                dispatchReceiverParameter == null
+                        && extensionReceiverParameter == null
+                        && valueParameters.isEmpty()
+                        && isInline
+                        && fqNameWhenAvailable?.asString() == "kotlinx.parcelize.ParcelableCreatorKt.parcelableCreator"
+                        && typeParameters.singleOrNull()?.let {
+                    it.isReified && it.superTypes.singleOrNull()?.classFqName == PARCELABLE_FQN
+                } == true
+
             override fun visitFunctionReference(expression: IrFunctionReference): IrExpression {
+                expression.transformChildren(this, null)
                 val remappedSymbol = symbolMap[expression.symbol]
                 val remappedReflectionTarget = expression.reflectionTarget?.let { symbolMap[it] }
-                if (remappedSymbol == null && remappedReflectionTarget == null)
-                    return super.visitFunctionReference(expression)
+                if (remappedSymbol == null && remappedReflectionTarget == null) return expression
 
-                return IrFunctionReferenceImpl(
-                    expression.startOffset, expression.endOffset, expression.type, remappedSymbol ?: expression.symbol,
-                    expression.typeArgumentsCount, expression.valueArgumentsCount, remappedReflectionTarget,
-                    expression.origin
-                ).apply {
-                    copyTypeAndValueArgumentsFrom(expression)
-                }
+                expression.symbol = remappedSymbol ?: expression.symbol
+                expression.reflectionTarget = remappedReflectionTarget
+                return expression
             }
 
             override fun visitSimpleFunction(declaration: IrSimpleFunction): IrStatement {
