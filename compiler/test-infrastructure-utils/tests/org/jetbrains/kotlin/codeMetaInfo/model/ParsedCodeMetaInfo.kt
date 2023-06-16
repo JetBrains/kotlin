@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.codeMetaInfo.model
 
 import org.jetbrains.kotlin.codeMetaInfo.renderConfigurations.ParsedCodeMetaInfoRenderConfiguration
 
-class ParsedCodeMetaInfo(
+open class ParsedCodeMetaInfo(
     override val start: Int,
     override val end: Int,
     override val attributes: MutableList<String>,

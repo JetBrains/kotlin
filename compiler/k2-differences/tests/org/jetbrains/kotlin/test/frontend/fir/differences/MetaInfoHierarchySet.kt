@@ -9,12 +9,6 @@ import org.jetbrains.kotlin.codeMetaInfo.model.ParsedCodeMetaInfo
 import java.util.*
 import kotlin.NoSuchElementException
 
-fun ParsedCodeMetaInfo.isInside(another: ParsedCodeMetaInfo) =
-    another.start <= start && end <= another.end
-
-fun ParsedCodeMetaInfo.intersectsWith(another: ParsedCodeMetaInfo) =
-    another.start < end && start < another.end
-
 class MetaInfoHierarchySet : AbstractMutableSet<ParsedCodeMetaInfo>() {
     open class NodeBase(
         val children: TreeMap<Int, Node>,

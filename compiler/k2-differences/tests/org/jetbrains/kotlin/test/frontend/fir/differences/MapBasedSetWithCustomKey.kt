@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.test.frontend.fir.differences
 
 class MapBasedSetWithCustomKey<K, E>(
-    protected val lookup: MutableMap<K, E> = mutableMapOf(),
+    private val lookup: MutableMap<K, E> = mutableMapOf(),
     private val toKey: (E) -> K,
 ) : AbstractMutableSet<E>() {
     override fun add(element: E): Boolean {

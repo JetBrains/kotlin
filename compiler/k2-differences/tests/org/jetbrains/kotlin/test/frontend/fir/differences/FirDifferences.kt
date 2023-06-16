@@ -39,6 +39,7 @@ val equivalentDiagnostics = listOf(
         "NEW_INFERENCE_ERROR",
         "NO_VALUE_FOR_PARAMETER",
         "NO_SET_METHOD",
+        "SETTER_PROJECTED_OUT",
 //    ),
 //    listOf(
         "UNRESOLVED_REFERENCE_WRONG_RECEIVER",
@@ -48,6 +49,8 @@ val equivalentDiagnostics = listOf(
         "UNRESOLVED_LABEL",
         "NO_THIS",
         "TOO_MANY_ARGUMENTS",
+        "UNEXPECTED_TRAILING_LAMBDA_ON_A_NEW_LINE",
+        "VARARG_OUTSIDE_PARENTHESES",
         "CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY",
         "DEPRECATION_ERROR",
         "OVERLOAD_RESOLUTION_AMBIGUITY",
@@ -86,6 +89,7 @@ val equivalentDiagnostics = listOf(
     listOf(
         "ASSIGNMENT_IN_EXPRESSION_CONTEXT",
         "EXPRESSION_EXPECTED",
+        "EXPRESSION_REQUIRED",
     ),
     listOf(
         "SMARTCAST_IMPOSSIBLE",
@@ -223,10 +227,25 @@ fun IntArray.getLineNumberForOffsetBinary(offset: Int): Int {
     }
 }
 
+class ModifiedParsedCodeMetaInfo(
+    start: Int,
+    end: Int,
+    attributes: MutableList<String>,
+    tag: String,
+    description: String?,
+    val original: ParsedCodeMetaInfo,
+) : ParsedCodeMetaInfo(start, end, attributes, tag, description)
+
 fun ParsedCodeMetaInfo.replaceOffsetsWithLineNumbersWithin(lineStartOffsets: IntArray): ParsedCodeMetaInfo {
     val lineIndex = lineStartOffsets.getLineNumberForOffset(start)
-    return ParsedCodeMetaInfo(lineIndex + 1, lineIndex + 1, attributes, tag, description)
+    return ModifiedParsedCodeMetaInfo(lineIndex + 1, lineIndex + 1, attributes, tag, description, this)
 }
+
+val ParsedCodeMetaInfo.originalOrSelf
+    get() = when (this) {
+        is ModifiedParsedCodeMetaInfo -> original
+        else -> this
+    }
 
 val String.lineStartOffsets: IntArray
     get() {
@@ -247,12 +266,30 @@ class EquivalenceTestResult(
     val significantK2MetaInfo: Collection<ParsedCodeMetaInfo>,
 )
 
-fun EquivalenceTestResult.ifTests(
+fun reportEquivalenceDifference(
+    writer: Writer,
+    result: EquivalenceTestResult,
+    relativeTestPath: String,
+) {
+    writer.write("The `${relativeTestPath}` test:\n\n")
+
+    for (it in result.significantK1MetaInfo) {
+        writer.write("- `#potential-feature`: `${it.tag}` was in K1 at `(${it.start}..${it.end})`, but disappeared\n")
+    }
+
+    for (it in result.significantK2MetaInfo) {
+        writer.write("- `#potential-breaking-change`: `${it.tag}` was introduced in K2 at `(${it.start}..${it.end})`\n")
+    }
+
+    writer.write("\n")
+}
+
+inline fun EquivalenceTestResult.ifTests(
     testFile: File,
+    writer: Writer,
+    relativeK1TestPath: String,
+    relativeK2TestPath: String,
     areNonEquivalent: (EquivalenceTestResult) -> Unit,
-    containObsoleteFeatures: () -> Unit,
-    containBrandNewFeatures: () -> Unit,
-    checkJvmDiagnosticButAreNotJvmTests: (List<String>) -> Unit,
     collectObsoleteFeatures: () -> List<String>,
     collectBrandNewFeatures: () -> List<String>,
 ) {
@@ -262,7 +299,7 @@ fun EquivalenceTestResult.ifTests(
         val obsoleteFeatures = collectObsoleteFeatures()
 
         if (obsoleteFeatures.isNotEmpty()) {
-            containObsoleteFeatures()
+            writer.write("The `${relativeK1TestPath}` tests are not really equivalent, but the K1 file disables the `$obsoleteFeatures` features which K2 is not expected to support anyway, because they become stable before 2.0.\n\n")
             return
         }
 
@@ -271,17 +308,19 @@ fun EquivalenceTestResult.ifTests(
             significantK1MetaInfo.isNotEmpty() &&
             significantK1MetaInfo.all { it.tag in k1JvmDefinitelyNonErrors }
         ) {
-            checkJvmDiagnosticButAreNotJvmTests(significantK1MetaInfo.map { it.tag })
+            val jvmErrors = significantK1MetaInfo.map { it.tag }
+            writer.write("The `${relativeK1TestPath}` tests are not really equivalent, but the K1 file only contains JVM-specific errors (`${jvmErrors}`), and this test is not placed in the correct folder for jvm-specific tests\n\n")
             return
         }
 
         val brandNewFeatures = collectBrandNewFeatures()
 
         if (brandNewFeatures.isNotEmpty()) {
-            containBrandNewFeatures()
+            writer.write("The `${relativeK2TestPath}` tests are not really equivalent, but the K2 file enables the `$brandNewFeatures` features which K1 is not expected to support.\n\n")
             return
         }
 
+        reportEquivalenceDifference(writer, this, relativeK1TestPath)
         areNonEquivalent(this)
     }
 }
@@ -461,52 +500,10 @@ fun main() {
     val alongsideNonEquivalentTests = mutableListOf<File>()
     val alongsideNonSimilarTests = mutableListOf<File>()
     val alongsideNonContainedTests = mutableListOf<File>()
-    val alongsideNonSimilarTestsWithIssues = mutableMapOf<File, String>()
+    val alongsideNonContainedTestsWithIssues = mutableMapOf<File, String>()
 
     val similarityStatistics = DiagnosticsStatistics()
     val containmentStatistics = DiagnosticsStatistics()
-
-    fun reportEquivalenceDifference(
-        writer: Writer,
-        result: EquivalenceTestResult,
-        relativeTestPath: String,
-    ) {
-        writer.write("The `${relativeTestPath}` test:\n\n")
-
-        for (it in result.significantK1MetaInfo) {
-            writer.write("- `#potential-feature`: `${it.tag}` was in K1 at `(${it.start}..${it.end})`, but disappeared\n")
-        }
-
-        for (it in result.significantK2MetaInfo) {
-            writer.write("- `#potential-breaking-change`: `${it.tag}` was introduced in K2 at `(${it.start}..${it.end})`\n")
-        }
-
-        writer.write("\n")
-    }
-
-    fun reportObsoleteFeatures(
-        writer: Writer,
-        obsoleteFeatures: List<String>,
-        relativeTestPath: String,
-    ) {
-        writer.write("The `${relativeTestPath}` tests are not really equivalent, but the K1 file disables the `$obsoleteFeatures` features which K2 is not expected to support anyway, because they become stable before 2.0.\n\n")
-    }
-
-    fun reportBrandNewFeatures(
-        writer: Writer,
-        brandNewFeatures: List<String>,
-        relativeTestPath: String,
-    ) {
-        writer.write("The `${relativeTestPath}` tests are not really equivalent, but the K2 file enables the `$brandNewFeatures` features which K1 is not expected to support.\n\n")
-    }
-
-    fun reportJvmDiagnosticsInNonJvmTest(
-        writer: Writer,
-        jvmErrors: List<String>,
-        relativeTestPath: String,
-    ) {
-        writer.write("The `${relativeTestPath}` tests are not really equivalent, but the K1 file only contains JVM-specific errors (`${jvmErrors}`), and this test is not placed in the correct folder for jvm-specific tests\n\n")
-    }
 
     fun checkTest(
         testPath: String,
@@ -533,24 +530,14 @@ fun main() {
         val allK1MetaInfos = CodeMetaInfoParser.getCodeMetaInfoFromText(k1Text).filter { it.isProbablyK1Error }
         val allK2MetaInfos = CodeMetaInfoParser.getCodeMetaInfoFromText(k2Text).filter { it.isProbablyK2Error }
 
-//        analyseEquivalencesAmong(allK1MetaInfos, allK2MetaInfos).ifTests(
-//            test,
-//            areNonEquivalent = { result ->
-//                alongsideNonEquivalentTests.add(test)
-//                reportEquivalenceDifference(equivalence, result, relativeK1TestPath)
-//            },
-//            containObsoleteFeatures = {
-//                reportObsoleteFeatures(equivalence, obsoleteFeatures, relativeK1TestPath)
-//            },
-//            containBrandNewFeatures = {
-//                reportBrandNewFeatures(equivalence, brandNewFeatures, relativeK2TestPath)
-//            },
-//            checkJvmDiagnosticButAreNotJvmTests = { jvmErrors ->
-//                reportJvmDiagnosticsInNonJvmTest(equivalence, jvmErrors, relativeK1TestPath)
-//            },
-//            collectObsoleteFeatures = { obsoleteFeatures },
-//            collectBrandNewFeatures = { brandNewFeatures },
-//        )
+        analyseEquivalencesAmong(allK1MetaInfos, allK2MetaInfos).ifTests(
+            test, equivalence, relativeK1TestPath, relativeK2TestPath,
+            areNonEquivalent = { _ ->
+                alongsideNonEquivalentTests.add(test)
+            },
+            collectObsoleteFeatures = { obsoleteFeatures },
+            collectBrandNewFeatures = { brandNewFeatures },
+        )
 
         val k1LineStartOffsets = clearTextFromDiagnosticMarkup(k1Text).lineStartOffsets
         val k2LineStartOffsets = clearTextFromDiagnosticMarkup(k2Text).lineStartOffsets
@@ -558,49 +545,30 @@ fun main() {
         val allK1LineMetaInfos = allK1MetaInfos.map { it.replaceOffsetsWithLineNumbersWithin(k1LineStartOffsets) }
         val allK2LineMetaInfos = allK2MetaInfos.map { it.replaceOffsetsWithLineNumbersWithin(k2LineStartOffsets) }
 
-        analyseEquivalencesAmong(allK1LineMetaInfos, allK2LineMetaInfos).ifTests(
-            test,
+        val similarityAnalysisResults = analyseEquivalencesAmong(allK1LineMetaInfos, allK2LineMetaInfos)
+
+        similarityAnalysisResults.ifTests(
+            test, similarity, relativeK1TestPath, relativeK2TestPath,
             areNonEquivalent = { result ->
                 alongsideNonSimilarTests.add(test)
-                reportEquivalenceDifference(similarity, result, relativeK1TestPath)
                 similarityStatistics.recordDiagnosticsStatistics(result)
-
-                KT_ISSUE_PATTERN.find(k2Text)?.groupValues?.first()?.let {
-                    alongsideNonSimilarTestsWithIssues[test] = it
-                }
-            },
-            containObsoleteFeatures = {
-                reportObsoleteFeatures(similarity, obsoleteFeatures, relativeK1TestPath)
-            },
-            containBrandNewFeatures = {
-                reportBrandNewFeatures(similarity, brandNewFeatures, relativeK2TestPath)
-            },
-            checkJvmDiagnosticButAreNotJvmTests = { jvmErrors ->
-                reportJvmDiagnosticsInNonJvmTest(similarity, jvmErrors, relativeK1TestPath)
             },
             collectObsoleteFeatures = { obsoleteFeatures },
             collectBrandNewFeatures = { brandNewFeatures },
         )
 
-        analyseEquivalencesAsHierarchyAmong(allK1MetaInfos, allK2MetaInfos).ifTests(
-            test,
+        val nonSimilarK1MetaInfos = similarityAnalysisResults.significantK1MetaInfo.map { it.originalOrSelf }
+        val nonSimilarK2MetaInfos = similarityAnalysisResults.significantK2MetaInfo.map { it.originalOrSelf }
+
+        analyseEquivalencesAsHierarchyAmong(nonSimilarK1MetaInfos, nonSimilarK2MetaInfos).ifTests(
+            test, containment, relativeK1TestPath, relativeK2TestPath,
             areNonEquivalent = { result ->
                 alongsideNonContainedTests.add(test)
-                reportEquivalenceDifference(containment, result, relativeK1TestPath)
                 containmentStatistics.recordDiagnosticsStatistics(result)
 
-//                KT_ISSUE_PATTERN.find(k2Text)?.groupValues?.first()?.let {
-//                    alongsideNonSimilarTestsWithIssues[test] = it
-//                }
-            },
-            containObsoleteFeatures = {
-                reportObsoleteFeatures(containment, obsoleteFeatures, relativeK1TestPath)
-            },
-            containBrandNewFeatures = {
-                reportBrandNewFeatures(containment, brandNewFeatures, relativeK2TestPath)
-            },
-            checkJvmDiagnosticButAreNotJvmTests = { jvmErrors ->
-                reportJvmDiagnosticsInNonJvmTest(containment, jvmErrors, relativeK1TestPath)
+                KT_ISSUE_PATTERN.find(k2Text)?.groupValues?.first()?.let {
+                    alongsideNonContainedTestsWithIssues[test] = it
+                }
             },
             collectObsoleteFeatures = { obsoleteFeatures },
             collectBrandNewFeatures = { brandNewFeatures },
@@ -620,7 +588,7 @@ fun main() {
     status.done("Found ${alongsideNonEquivalentTests.size} non-equivalences among alongside tests (~${alongsideNonEquivalentTests.size.outOfAllAlongsideTests()}% of all alongside tests). That is ${tests.alongsideNonIdenticalTests.size - alongsideNonEquivalentTests.size} tests are equivalent (~${(tests.alongsideNonIdenticalTests.size - alongsideNonEquivalentTests.size).outOfAllAlongsideTests()}% of all alongside tests)")
     status.done("Found ${alongsideNonSimilarTests.size} non-similarities among alongside tests (~${alongsideNonSimilarTests.size.outOfAllAlongsideTests()}% of all alongside tests). That is ${tests.alongsideNonIdenticalTests.size - alongsideNonSimilarTests.size} tests are similar (~${(tests.alongsideNonIdenticalTests.size - alongsideNonSimilarTests.size).outOfAllAlongsideTests()}% of all alongside tests)")
     status.done("Found ${alongsideNonContainedTests.size} non-containment-s among alongside tests (~${alongsideNonContainedTests.size.outOfAllAlongsideTests()}% of all alongside tests). That is ${tests.alongsideNonIdenticalTests.size - alongsideNonContainedTests.size} tests are similar (~${(tests.alongsideNonIdenticalTests.size - alongsideNonContainedTests.size).outOfAllAlongsideTests()}% of all alongside tests)")
-    status.done("Found ${alongsideNonSimilarTestsWithIssues.size} non-similar tests referencing some KT-XXXX tickets, but possibly not the ones describing the differences!")
+    status.done("Found ${alongsideNonContainedTestsWithIssues.size} non-contained tests referencing some KT-XXXX tickets, but possibly not the ones describing the differences!")
 
     build.child("similarity-diagnostics-stats.md").renderDiagnosticsStatistics(similarityStatistics)
     build.child("containment-diagnostics-stats.md").renderDiagnosticsStatistics(containmentStatistics)
