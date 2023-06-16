@@ -142,8 +142,17 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         } ?: arg
     }
 
-    val gcMarkSingleThreaded: Boolean
-        get() = configuration.get(BinaryOptions.gcMarkSingleThreaded) ?: false
+    val gcMarkSingleThreaded: Boolean by lazy {
+        val requestedSingleThreaded = configuration.get(BinaryOptions.gcMarkSingleThreaded)
+        if (!target.supportsParallelMark) {
+            if (requestedSingleThreaded == false) {
+                configuration.report(CompilerMessageSeverity.STRONG_WARNING, "Parallel mark is not supported on ${target.name}")
+            }
+            true
+        } else {
+            requestedSingleThreaded ?: false
+        }
+    }
 
     val gcMutatorsCooperate: Boolean by lazy {
         val mutatorsCooperate = configuration.get(BinaryOptions.gcMutatorsCooperate)
