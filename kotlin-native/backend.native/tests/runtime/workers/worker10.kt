@@ -19,7 +19,6 @@ var topStringVar = "string"
 val topSharedStringWithGetter: String
         get() = "top"
 val topData = Data(42)
-@SharedImmutable
 val topSharedData = Data(43)
 
 @Test fun runTest1() {
@@ -88,7 +87,6 @@ val topSharedData = Data(43)
 }
 
 val atomicRef = AtomicReference<Any?>(Any().freeze())
-@SharedImmutable
 val stableRef = StableRef.create(Any().freeze())
 val semaphore = AtomicInt(0)
 

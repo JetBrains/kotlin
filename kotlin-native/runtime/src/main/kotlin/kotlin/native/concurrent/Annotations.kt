@@ -31,6 +31,8 @@ public actual annotation class ThreadLocal
  * Since 1.7.20 usage of this annotation is deprecated.
  * See https://kotlinlang.org/docs/native-migration-guide.html for details.
  */
+@Deprecated("This annotation is redundant and has no effect")
+@DeprecatedSinceKotlin(warningSince = "1.9")
 @Target(AnnotationTarget.PROPERTY)
 @Retention(AnnotationRetention.BINARY)
 // Not @FreezingIsDeprecated: Lots of usages, only the doc updated.

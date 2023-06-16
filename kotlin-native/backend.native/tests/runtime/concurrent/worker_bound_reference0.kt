@@ -9,7 +9,6 @@ package runtime.concurrent.worker_bound_reference0
 import kotlin.test.*
 
 import kotlin.native.concurrent.*
-import kotlin.native.concurrent.SharedImmutable
 import kotlin.native.*
 import kotlin.native.ref.WeakReference
 import kotlin.native.runtime.GC
@@ -17,7 +16,6 @@ import kotlin.text.Regex
 
 class A(var a: Int)
 
-@SharedImmutable
 val global1: WorkerBoundReference<A> = WorkerBoundReference(A(3))
 
 @Test
@@ -36,7 +34,6 @@ fun testGlobal() {
     worker.requestTermination().result
 }
 
-@SharedImmutable
 val global2: WorkerBoundReference<A> = WorkerBoundReference(A(3))
 
 @Test
@@ -67,7 +64,6 @@ fun testGlobalAccessOnWorker() {
     worker.requestTermination().result
 }
 
-@SharedImmutable
 val global3: WorkerBoundReference<A> = WorkerBoundReference(A(3).freeze())
 
 @Test
@@ -85,7 +81,6 @@ fun testGlobalAccessOnWorkerFrozenInitially() {
     worker.requestTermination().result
 }
 
-@SharedImmutable
 val global4: WorkerBoundReference<A> = WorkerBoundReference(A(3))
 
 @Test
@@ -103,7 +98,6 @@ fun testGlobalAccessOnWorkerFrozenBeforePassing() {
     worker.requestTermination().result
 }
 
-@SharedImmutable
 val global5: WorkerBoundReference<A> = WorkerBoundReference(A(3))
 
 @Test
@@ -131,7 +125,6 @@ fun testGlobalAccessOnWorkerFrozenBeforeAccess() {
     worker.requestTermination().result
 }
 
-@SharedImmutable
 val global6: WorkerBoundReference<A> = WorkerBoundReference(A(3))
 
 @Test
@@ -159,7 +152,6 @@ fun testGlobalModification() {
     worker.requestTermination().result
 }
 
-@SharedImmutable
 val global7: WorkerBoundReference<A> = WorkerBoundReference(A(3))
 
 @Test

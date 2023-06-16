@@ -10,7 +10,6 @@ import test.*
 import test.collections.behaviors.iteratorBehavior
 import test.collections.compare
 import kotlin.math.sign
-import kotlin.native.concurrent.SharedImmutable
 import kotlin.random.Random
 
 
@@ -18,7 +17,6 @@ fun createString(content: String): CharSequence = content
 fun createStringBuilder(content: String): CharSequence = StringBuilder((content as Any).toString()) // required for Rhino JS
 
 
-@SharedImmutable
 val charSequenceBuilders = listOf(::createString, ::createStringBuilder)
 
 fun withOneCharSequenceArg(f: ((String) -> CharSequence) -> Unit) {

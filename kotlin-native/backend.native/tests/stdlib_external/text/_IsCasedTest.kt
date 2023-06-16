@@ -12,7 +12,6 @@ package test.text
 
 import kotlin.test.*
 
-@SharedImmutable
 private val casedRanges = arrayOf<IntRange>(
     0x0041..0x005a,
     0x0061..0x007a,

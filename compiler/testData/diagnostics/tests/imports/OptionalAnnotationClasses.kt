@@ -9,5 +9,5 @@ import kotlin.native.concurrent.*
 @JsName("")
 public fun test() {}
 
-@SharedImmutable
+@ThreadLocal
 private val EmptyArray: Array<Int> = arrayOf()

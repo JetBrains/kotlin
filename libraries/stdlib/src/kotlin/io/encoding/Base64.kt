@@ -5,8 +5,6 @@
 
 package kotlin.io.encoding
 
-import kotlin.native.concurrent.SharedImmutable
-
 // Benchmarks repository: https://github.com/qurbonzoda/KotlinBase64Benchmarks
 
 /**
@@ -568,7 +566,6 @@ public open class Base64 private constructor(
 
 
 // "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
-@SharedImmutable
 private val base64EncodeMap = byteArrayOf(
     65,  66,  67,  68,  69,  70,  71,  72,  73,  74,  75,  76,  77,  78,  79,  80,  /* 0 - 15 */
     81,  82,  83,  84,  85,  86,  87,  88,  89,  90,  97,  98,  99,  100, 101, 102, /* 16 - 31 */
@@ -577,7 +574,6 @@ private val base64EncodeMap = byteArrayOf(
 )
 
 @ExperimentalEncodingApi
-@SharedImmutable
 private val base64DecodeMap = IntArray(256).apply {
     this.fill(-1)
     this[Base64.padSymbol.toInt()] = -2
@@ -587,7 +583,6 @@ private val base64DecodeMap = IntArray(256).apply {
 }
 
 // "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_"
-@SharedImmutable
 private val base64UrlEncodeMap = byteArrayOf(
     65,  66,  67,  68,  69,  70,  71,  72,  73,  74,  75,  76,  77,  78,  79,  80,  /* 0 - 15 */
     81,  82,  83,  84,  85,  86,  87,  88,  89,  90,  97,  98,  99,  100, 101, 102, /* 16 - 31 */
@@ -596,7 +591,6 @@ private val base64UrlEncodeMap = byteArrayOf(
 )
 
 @ExperimentalEncodingApi
-@SharedImmutable
 private val base64UrlDecodeMap = IntArray(256).apply {
     this.fill(-1)
     this[Base64.padSymbol.toInt()] = -2

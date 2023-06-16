@@ -5,7 +5,6 @@
 
 package kotlin.text
 
-import kotlin.native.concurrent.SharedImmutable
 import kotlin.native.internal.GCUnsafeCall
 
 /**
@@ -505,7 +504,6 @@ public actual fun CharSequence?.contentEquals(other: CharSequence?, ignoreCase: 
         this.contentEqualsImpl(other)
 }
 
-@SharedImmutable
 private val STRING_CASE_INSENSITIVE_ORDER = Comparator<String> { a, b -> a.compareTo(b, ignoreCase = true) }
 
 public actual val String.Companion.CASE_INSENSITIVE_ORDER: Comparator<String>

@@ -51,7 +51,6 @@ fun initJobs(count: Int) = Array<Job?>(count) { i -> Job(i, i * 2, i)}
 
 val COUNT = 2
 
-@SharedImmutable
 val counters = Array(COUNT) { AtomicInt(0) }
 
 @Test fun runTest1() {

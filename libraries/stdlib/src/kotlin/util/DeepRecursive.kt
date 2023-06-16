@@ -7,7 +7,6 @@ package kotlin
 
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*
-import kotlin.native.concurrent.SharedImmutable
 
 /**
  * Defines deep recursive function that keeps its stack on the heap,
@@ -124,7 +123,6 @@ public sealed class DeepRecursiveScope<T, R> {
 
 private typealias DeepRecursiveFunctionBlock = suspend DeepRecursiveScope<*, *>.(Any?) -> Any?
 
-@SharedImmutable
 private val UNDEFINED_RESULT = Result.success(COROUTINE_SUSPENDED)
 
 @Suppress("UNCHECKED_CAST")
