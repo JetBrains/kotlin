@@ -1,0 +1,16 @@
+plugins {
+    id("org.jetbrains.kotlin.jvm")
+    id("org.jetbrains.kotlin.kapt")
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+dependencies {
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version")
+    implementation("com.google.auto.service:auto-service:1.0-rc3")
+    kapt("com.google.auto.service:auto-service:1.0-rc3")
+    testImplementation'junit:junit:4.13.2'
+}
