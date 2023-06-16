@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.contracts.description.ConeContractDescriptionElement
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnosticWithNullability
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnosticWithSource
 import org.jetbrains.kotlin.fir.expressions.FirConstExpression
 import org.jetbrains.kotlin.fir.expressions.FirOperation
@@ -58,7 +59,8 @@ class ConeUnresolvedSymbolError(val classId: ClassId) : ConeUnresolvedError {
     override val reason: String get() = "Symbol not found for $classId"
 }
 
-class ConeUnresolvedTypeQualifierError(val qualifiers: List<FirQualifierPart>, val isNullable: Boolean) : ConeUnresolvedError {
+class ConeUnresolvedTypeQualifierError(val qualifiers: List<FirQualifierPart>, override val isNullable: Boolean)
+    : ConeUnresolvedError, ConeDiagnosticWithNullability {
     override val qualifier: String get() = qualifiers.joinToString(separator = ".") { it.name.asString() }
     override val reason: String get() = "Symbol not found for $qualifier${if (isNullable) "?" else ""}"
 }

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.types
 
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnosticWithNullability
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeClassifierLookupTag
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
@@ -50,7 +51,9 @@ class ConeErrorType(
         get() = ConeClassLikeErrorLookupTag(ClassId.fromString("<error>"))
 
     override val nullability: ConeNullability
-        get() = ConeNullability.UNKNOWN
+        get() = if (diagnostic is ConeDiagnosticWithNullability) {
+            if (diagnostic.isNullable) ConeNullability.NULLABLE else ConeNullability.NOT_NULL
+        } else ConeNullability.UNKNOWN
 
     override fun equals(other: Any?) = this === other
     override fun hashCode(): Int = System.identityHashCode(this)

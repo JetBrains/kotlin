@@ -9,6 +9,10 @@ interface ConeDiagnostic {
     val reason: String
 }
 
+interface ConeDiagnosticWithNullability : ConeDiagnostic {
+    val isNullable: Boolean
+}
+
 class ConeStubDiagnostic(val original: ConeDiagnostic) : ConeDiagnostic {
     override val reason: String get() = original.reason
 }
