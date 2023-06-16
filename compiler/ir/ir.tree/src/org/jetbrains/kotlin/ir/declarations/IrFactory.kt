@@ -114,16 +114,17 @@ interface IrFactory {
         origin: IrDeclarationOrigin,
         name: Name,
         visibility: DescriptorVisibility,
-        modality: Modality,
-        returnType: IrType,
         isInline: Boolean,
-        isExternal: Boolean,
+        isExpect: Boolean,
+        returnType: IrType,
+        modality: Modality,
         isTailrec: Boolean,
         isSuspend: Boolean,
         isOperator: Boolean,
         isInfix: Boolean,
-        isExpect: Boolean,
-    ): IrSimpleFunction
+        isExternal: Boolean = false,
+        isFakeOverride: Boolean = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
+    ): IrFunctionWithLateBinding
 
     fun createLocalDelegatedProperty(
         startOffset: Int,
@@ -460,6 +461,61 @@ interface IrFactory {
         type,
         isFinal,
         isStatic,
+        isExternal,
+    )
+
+    @Deprecated(
+        message = "The method's parameters were reordered." +
+                " This variant of the method will be removed when the 2024.2 IntelliJ platform is shipped (see KTIJ-26314).",
+        replaceWith = ReplaceWith(
+            """createFunctionWithLateBinding(
+                startOffset = startOffset,
+                endOffset = endOffset,
+                origin = origin,
+                name = name,
+                visibility = visibility,
+                isInline = isInline,
+                isExpect = isExpect,
+                returnType = returnType,
+                modality = modality,
+                isTailrec = isTailrec,
+                isSuspend = isSuspend,
+                isOperator = isOperator,
+                isInfix = isInfix,
+                isExternal = isExternal,
+            )""",
+        ),
+        level = DeprecationLevel.HIDDEN,
+    )
+    fun createFunctionWithLateBinding(
+        startOffset: Int,
+        endOffset: Int,
+        origin: IrDeclarationOrigin,
+        name: Name,
+        visibility: DescriptorVisibility,
+        modality: Modality,
+        returnType: IrType,
+        isInline: Boolean,
+        isExternal: Boolean,
+        isTailrec: Boolean,
+        isSuspend: Boolean,
+        isOperator: Boolean,
+        isInfix: Boolean,
+        isExpect: Boolean,
+    ): IrSimpleFunction = createFunctionWithLateBinding(
+        startOffset,
+        endOffset,
+        origin,
+        name,
+        visibility,
+        isInline,
+        isExpect,
+        returnType,
+        modality,
+        isTailrec,
+        isSuspend,
+        isOperator,
+        isInfix,
         isExternal,
     )
 

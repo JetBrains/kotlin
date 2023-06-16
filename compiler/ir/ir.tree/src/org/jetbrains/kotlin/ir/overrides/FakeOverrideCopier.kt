@@ -22,19 +22,20 @@ class FakeOverrideCopier(
         val customization = unimplementedOverridesStrategy.computeCustomization(declaration, parent)
 
         return declaration.factory.createFunctionWithLateBinding(
-            declaration.startOffset, declaration.endOffset,
-            customization.origin ?: IrDeclarationOrigin.FAKE_OVERRIDE,
-            symbolRenamer.getFunctionName(declaration.symbol),
-            declaration.visibility,
-            customization.modality ?: declaration.modality,
-            declaration.returnType,
+            startOffset = declaration.startOffset,
+            endOffset = declaration.endOffset,
+            origin = customization.origin ?: IrDeclarationOrigin.FAKE_OVERRIDE,
+            name = symbolRenamer.getFunctionName(declaration.symbol),
+            visibility = declaration.visibility,
             isInline = declaration.isInline,
-            isExternal = makeExternal,
+            isExpect = declaration.isExpect,
+            returnType = declaration.returnType,
+            modality = customization.modality ?: declaration.modality,
             isTailrec = declaration.isTailrec,
             isSuspend = declaration.isSuspend,
-            isExpect = declaration.isExpect,
             isOperator = declaration.isOperator,
-            isInfix = declaration.isInfix
+            isInfix = declaration.isInfix,
+            isExternal = makeExternal,
         ).apply {
             transformAnnotations(declaration)
             copyTypeParametersFrom(declaration)

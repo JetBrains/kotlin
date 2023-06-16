@@ -206,31 +206,33 @@ class IrFactoryImplForJsIC(override val stageController: StageController) : Abst
         origin: IrDeclarationOrigin,
         name: Name,
         visibility: DescriptorVisibility,
-        modality: Modality,
-        returnType: IrType,
         isInline: Boolean,
-        isExternal: Boolean,
+        isExpect: Boolean,
+        returnType: IrType,
+        modality: Modality,
         isTailrec: Boolean,
         isSuspend: Boolean,
         isOperator: Boolean,
         isInfix: Boolean,
-        isExpect: Boolean
-    ): IrSimpleFunction {
+        isExternal: Boolean,
+        isFakeOverride: Boolean,
+    ): IrFunctionWithLateBinding {
         return super.createFunctionWithLateBinding(
             startOffset,
             endOffset,
             origin,
             name,
             visibility,
-            modality,
-            returnType,
             isInline,
-            isExternal,
+            isExpect,
+            returnType,
+            modality,
             isTailrec,
             isSuspend,
             isOperator,
             isInfix,
-            isExpect,
+            isExternal,
+            isFakeOverride,
         ).register()
     }
 
