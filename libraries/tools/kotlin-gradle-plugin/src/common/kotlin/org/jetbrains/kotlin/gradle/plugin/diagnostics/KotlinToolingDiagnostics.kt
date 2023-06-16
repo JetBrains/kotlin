@@ -354,6 +354,16 @@ object KotlinToolingDiagnostics {
             }
         }
     }
+
+    object KotlinSourceSetDependsOnDefaultCompilationSourceSet : ToolingDiagnosticFactory(WARNING) {
+        operator fun invoke(dependeeName: String, dependencyName: String) = build(
+            """
+                Kotlin Source Set '$dependeeName' can't depend on '$dependencyName' which is a default source set for compilation.
+                None of source sets can depend on the compilation default source sets.
+                Please remove this dependency edge.
+            """.trimIndent()
+        )
+    }
 }
 
 private fun String.indentLines(nSpaces: Int = 4, skipFirstLine: Boolean = true): String {

@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetHierarchy.SourceSetTree
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinGradleProjectChecker
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinGradleProjectCheckerContext
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics.KotlinSourceSetDependsOnDefaultCompilationSourceSet
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics.KotlinSourceSetTreeDependsOnMismatch
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsCollector
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataTarget
@@ -53,6 +54,8 @@ internal object KotlinSourceSetTreeDependsOnMismatchChecker : KotlinGradleProjec
             }
         }
 
+        reportAllDependentsOfLeafSourceSets(collector, leafSourceSets.keys, reverseSourceSetDependencies)
+
         for ((badSourceSet, _) in badSourceSets) {
             val dependents = reverseSourceSetDependencies[badSourceSet].orEmpty()
 
@@ -63,11 +66,8 @@ internal object KotlinSourceSetTreeDependsOnMismatchChecker : KotlinGradleProjec
             // until underlying dependent source sets relations are fixed
             if (dependents.any { it in badSourceSets }) continue
 
-            // If [badSourceSet] is also a leaf source set then all its dependents edges are incorrect
-            // Therefore report everything that depend on the leaf source set (i.e. iosX64Test -> iosX64Main)
-            // NB: Cyclic diagnostics such as iosX64Main -> commonMain -> iosX64Main is handled in [AbstractKotlinSourceSet::dependsOn]
             if (badSourceSet in leafSourceSets) {
-                dependents.forEach { collector.report(project, KotlinSourceSetTreeDependsOnMismatch(it.name, badSourceSet.name)) }
+                // It should be reported in [reportAllDependentsOfLeafSourceSets]
                 continue
             }
 
@@ -102,6 +102,22 @@ internal object KotlinSourceSetTreeDependsOnMismatchChecker : KotlinGradleProjec
             // If there are more than one Source Sets with different Source Set Trees then we can't
             // identify which group is incorrect, therefore we should report all of them
             reportAllIncorrectSourceSetEdges(collector, badSourceSet, dependentsBySourceSetTree)
+        }
+    }
+
+    private fun KotlinGradleProjectCheckerContext.reportAllDependentsOfLeafSourceSets(
+        collector: KotlinToolingDiagnosticsCollector,
+        leafSourceSets: Set<KotlinSourceSet>,
+        reverseSourceSetDependencies: Map<KotlinSourceSet, Set<KotlinSourceSet>>,
+    ) {
+        for (leafSourceSet in leafSourceSets) {
+            val dependents = reverseSourceSetDependencies[leafSourceSet].orEmpty()
+            for (dependent in dependents) {
+                collector.report(
+                    project,
+                    KotlinSourceSetDependsOnDefaultCompilationSourceSet(dependent.name, leafSourceSet.name)
+                )
+            }
         }
     }
 

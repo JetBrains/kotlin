@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.unitTests.diagnosticsTests
 
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics.KotlinSourceSetTreeDependsOnMismatch
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics.KotlinSourceSetDependsOnDefaultCompilationSourceSet
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.kotlinToolingDiagnosticsCollector
 import org.jetbrains.kotlin.gradle.util.*
@@ -27,9 +28,13 @@ class KotlinSourceSetTreeDependsOnMismatchTest {
             }
         }
         project.evaluate()
+        val expectedDiagnosticsIds = listOf(
+            KotlinSourceSetTreeDependsOnMismatch.id,
+            KotlinSourceSetDependsOnDefaultCompilationSourceSet.id
+        )
         return project.kotlinToolingDiagnosticsCollector
             .getDiagnosticsForProject(project)
-            .filter { it.id == KotlinSourceSetTreeDependsOnMismatch.id } // ignore other diagnostics that can appear as well
+            .filter { it.id in expectedDiagnosticsIds } // ignore other diagnostics that can appear as well
     }
 
     private fun checkSingleBadSourceSetDependency(
@@ -86,13 +91,31 @@ class KotlinSourceSetTreeDependsOnMismatchTest {
     @Test
     fun `iosX64Test cant depend on iosX64Main`() = checkSingleBadSourceSetDependency(
         dependent = "iosX64Test",
-        dependency = "iosX64Main"
+        dependency = "iosX64Main",
+        KotlinSourceSetDependsOnDefaultCompilationSourceSet(dependeeName = "iosX64Test", dependencyName = "iosX64Main")
     )
 
     @Test
     fun `iosX64Main cant depend on iosX64Test`() = checkSingleBadSourceSetDependency(
         dependent = "iosX64Main",
-        dependency = "iosX64Test"
+        dependency = "iosX64Test",
+        KotlinSourceSetDependsOnDefaultCompilationSourceSet(dependeeName = "iosX64Main", dependencyName = "iosX64Test")
+    )
+
+    @Test
+    fun `iosX64Main cant depend on iosArm64Main`() = checkSingleBadSourceSetDependency(
+        dependent = "iosX64Main",
+        dependency = "iosArm64Main",
+        KotlinSourceSetDependsOnDefaultCompilationSourceSet(dependeeName = "iosX64Main", dependencyName = "iosArm64Main")
+    )
+
+    @Test
+    fun `iosX64Main cant depend on iosArm64Main -- mixed scenario`() = checkDiagnostics {
+        sourceSets.getByName("iosX64Main").dependsOn(sourceSets.getByName("iosArm64Main"))
+        sourceSets.getByName("iosArm64Test").dependsOn(sourceSets.getByName("iosArm64Main"))
+    }.assertDiagnostics(
+        KotlinSourceSetDependsOnDefaultCompilationSourceSet(dependeeName = "iosArm64Test", dependencyName = "iosArm64Main"),
+        KotlinSourceSetDependsOnDefaultCompilationSourceSet(dependeeName = "iosX64Main", dependencyName = "iosArm64Main")
     )
 
     @Test
