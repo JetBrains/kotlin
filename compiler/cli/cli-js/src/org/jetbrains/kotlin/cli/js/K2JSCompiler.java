@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.cli.common.messages.MessageUtil;
 import org.jetbrains.kotlin.cli.common.output.OutputUtilsKt;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
+import org.jetbrains.kotlin.cli.wasm.K2WasmCompiler;
 import org.jetbrains.kotlin.config.*;
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker;
 import org.jetbrains.kotlin.incremental.components.LookupTracker;
@@ -80,6 +81,15 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
         if (irCompiler == null)
             irCompiler = new K2JsIrCompiler();
         return irCompiler;
+    }
+
+    private K2WasmCompiler wasmCompiler = null;
+
+    @NotNull
+    private K2WasmCompiler getWasmCompiler() {
+        if (wasmCompiler == null)
+            wasmCompiler = new K2WasmCompiler();
+        return wasmCompiler;
     }
 
     @Override
@@ -175,6 +185,15 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
         MessageCollector messageCollector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY);
 
         ExitCode exitCode = OK;
+
+        if (arguments.getWasm()) {
+            return getWasmCompiler().doExecute(
+                    WasmCliAdapterKt.convertJsCliArgumentsToWasmCliArguments(arguments),
+                    configuration.copy(),
+                    rootDisposable,
+                    paths
+            );
+        }
 
         boolean useFir = Boolean.TRUE.equals(configuration.get(CommonConfigurationKeys.USE_FIR));
         if (K2JSCompilerArgumentsKt.isIrBackendEnabled(arguments) || useFir) {
@@ -403,6 +422,15 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
             @NotNull CompilerConfiguration configuration, @NotNull K2JSCompilerArguments arguments,
             @NotNull Services services
     ) {
+        if (arguments.getWasm()) {
+            getWasmCompiler().setupPlatformSpecificArgumentsAndServices(
+                    configuration,
+                    WasmCliAdapterKt.convertJsCliArgumentsToWasmCliArguments(arguments),
+                    services
+            );
+            return;
+        }
+
         if (K2JSCompilerArgumentsKt.isIrBackendEnabled(arguments)) {
             getIrCompiler().setupPlatformSpecificArgumentsAndServices(configuration, arguments, services);
         }

@@ -38,6 +38,7 @@ dependencies {
     testApi(project(":compiler:cli-common"))
     testApi(project(":compiler:cli"))
     testApi(project(":compiler:cli-js"))
+    testApi(project(":compiler:cli-wasm"))
     testApi(project(":analysis:light-classes-base"))
     testApi(project(":compiler:serialization"))
     testApi(project(":kotlin-preloader"))

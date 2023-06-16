@@ -206,6 +206,7 @@ val fe10CompilerModules = arrayOf(
     ":compiler:cli-base",
     ":compiler:cli",
     ":compiler:cli-js",
+    ":compiler:cli-wasm",
     ":compiler:incremental-compilation-impl",
     ":compiler:compiler.version",
     ":js:js.ast",
