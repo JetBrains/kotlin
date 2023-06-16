@@ -18,7 +18,7 @@ import kotlin.annotation.AnnotationTarget.*
  * annotating that usage with the [OptIn] annotation, e.g. `@OptIn(NativeRuntimeApi::class)`,
  * or by using the compiler argument `-opt-in=kotlin.native.runtime.NativeRuntimeApi`.
  */
-@RequiresOptIn(level = RequiresOptIn.Level.WARNING)
+@RequiresOptIn(level = RequiresOptIn.Level.ERROR)
 @Retention(AnnotationRetention.BINARY)
 @Target(
         CLASS,
