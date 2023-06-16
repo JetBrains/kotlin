@@ -232,10 +232,7 @@ internal object BodyStateKeepers {
 
         entity(property.getterIfUnresolved, FUNCTION)
         entity(property.setterIfUnresolved, FUNCTION)
-
-        entity(property.backingFieldIfUnresolved) {
-            add(VARIABLE)
-        }
+        entity(property.backingFieldIfUnresolved, VARIABLE)
 
         entity(property.delegateIfUnresolved) {
             add(FirWrappedDelegateExpression::expression, FirWrappedDelegateExpression::replaceExpression, ::expressionGuard)
@@ -341,7 +338,7 @@ private fun delegatedConstructorCallGuard(fir: FirDelegatedConstructorCall): Fir
             is FirSuperReference -> {
                 isThis = false
                 calleeReference = buildExplicitSuperReference {
-                    source = null
+                    source = originalCalleeReference.source
                     superTypeRef = originalCalleeReference.superTypeRef
                 }
             }

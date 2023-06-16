@@ -85,7 +85,6 @@ internal object AnnotationArgumentMappingStateKeepers {
     }
 
     private val ANNOTATION_BASE: StateKeeper<FirAnnotation> = stateKeeper { annotation ->
-        add(FirAnnotation::typeRef, FirAnnotation::replaceTypeRef)
         add(FirAnnotation::annotationTypeRef, FirAnnotation::replaceAnnotationTypeRef)
 
         if (annotation is FirAnnotationCall) {
@@ -94,9 +93,6 @@ internal object AnnotationArgumentMappingStateKeepers {
     }
 
     private val ANNOTATION_CALL: StateKeeper<FirAnnotationCall> = stateKeeper { annotationCall ->
-        add(FirAnnotationCall::calleeReference, FirAnnotationCall::replaceCalleeReference)
-        add(FirAnnotationCall::annotationResolvePhase, FirAnnotationCall::replaceAnnotationResolvePhase)
-
         val argumentList = annotationCall.argumentList
         if (argumentList !is FirResolvedArgumentList && argumentList !is FirEmptyArgumentList) {
             add(FirAnnotationCall::argumentList, FirAnnotationCall::replaceArgumentList) { oldList ->
