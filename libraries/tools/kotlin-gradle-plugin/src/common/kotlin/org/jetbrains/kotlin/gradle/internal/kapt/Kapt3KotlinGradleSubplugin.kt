@@ -382,8 +382,7 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
             // Workaround for changes in Gradle 7.3 causing eager task realization
             // For details check `KotlinSourceSetProcessor.prepareKotlinCompileTask()`
             if (kotlinCompilation is KotlinWithJavaCompilation<*, *>) {
-                val kotlinSourceDirectorySet = kotlinCompilation.defaultSourceSet.kotlin
-                kotlinSourceDirectorySet.compiledBy(taskProvider, KaptTask::classesDir)
+                kotlinCompilation.output.classesDirs.from(classesOutputDir).builtBy(taskProvider)
             } else {
                 kotlinCompilation.output.classesDirs.from(taskProvider.flatMap { it.classesDir })
             }
