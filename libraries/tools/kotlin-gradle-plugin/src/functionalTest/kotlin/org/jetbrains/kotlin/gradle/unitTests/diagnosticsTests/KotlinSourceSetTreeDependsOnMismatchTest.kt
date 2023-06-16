@@ -138,6 +138,14 @@ class KotlinSourceSetTreeDependsOnMismatchTest {
     )
 
     @Test
+    fun `test long diamond source set dependencies`() = checkDiagnostics {
+        sourceSets.getByName("iosMain").dependsOn(sourceSets.getByName("iosTest"))
+        sourceSets.getByName("appleTest").dependsOn(sourceSets.getByName("appleMain"))
+    }.assertDiagnostics(
+        KotlinSourceSetTreeDependsOnMismatch(dependeeName = "iosMain", dependencyName = "iosTest")
+    )
+
+    @Test
     fun `test that only lowest source set edges are reported`() = checkDiagnostics {
         sourceSets.getByName("iosX64Test").dependsOn(sourceSets.getByName("iosMain"))
         sourceSets.getByName("iosArm64Test").dependsOn(sourceSets.getByName("nativeMain"))
