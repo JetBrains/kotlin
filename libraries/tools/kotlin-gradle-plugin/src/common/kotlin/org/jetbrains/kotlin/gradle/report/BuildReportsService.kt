@@ -33,7 +33,6 @@ class BuildReportsService {
             FileReporter(buildUuid),
             ConsoleReporter(),
             SingleFileReporter(),
-            TaskExecutedReporter()
         )
 
     init {

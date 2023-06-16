@@ -229,13 +229,12 @@ abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters
             // BuildScanExtension cant be parameter nor BuildService's field
             val buildScanExtension = project.rootProject.extensions.findByName("buildScan")
             val buildScan = buildScanExtension?.let { BuildScanExtensionHolder(it) }
-            val buildMetricService = buildMetricServiceProvider.get()
-            val buildScanReportSettings = buildMetricService.parameters.reportingSettings.orNull?.buildScanReportSettings
 
             BuildEventsListenerRegistryHolder.getInstance(project).listenerRegistry.onTaskCompletion(
                 project.provider {
                     OperationCompletionListener { event ->
                         if (event is TaskFinishEvent) {
+                            val buildMetricService = buildMetricServiceProvider.get()
                             val buildOperation = buildMetricService.updateBuildOperationRecord(event)
                             val buildParameters = buildMetricService.parameters.toBuildReportParameters()
 
@@ -245,17 +244,19 @@ abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters
                 }
             )
 
+            val buildMetricService = buildMetricServiceProvider.get()
+            val buildScanReportSettings = buildMetricService.parameters.reportingSettings.orNull?.buildScanReportSettings
             if (buildScanReportSettings != null) {
                 buildScan?.also { buildScanHolder ->
                     when {
                         GradleVersion.current().baseVersion < GradleVersion.version("8.0") -> {
-                            buildScanHolder.buildScan.buildFinished {
-                                buildMetricServiceProvider.map { it.addBuildScanReport(buildScan) }.get()
+                            buildScanHolder.buildScan?.buildFinished {
+                                buildMetricServiceProvider.map { it.addBuildScanReport(buildScanHolder) }.get()
                             }
                         }
                         GradleVersion.current().baseVersion < GradleVersion.version("8.1") -> {
                             buildMetricService.buildReportService.buildScanReporter.initBuildScanTags(
-                                buildScan,
+                                buildScanHolder,
                                 buildMetricService.parameters.label.orNull
                             )
                         }

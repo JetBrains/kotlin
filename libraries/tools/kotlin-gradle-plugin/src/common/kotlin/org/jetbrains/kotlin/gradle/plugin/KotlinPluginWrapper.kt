@@ -99,7 +99,7 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
             kotlinGradleBuildServices.detectKotlinPluginLoadedInMultipleProjects(project, pluginVersion)
         }
 
-        BuildMetricsService.registerIfAbsent(project)
+        BuildMetricsService.registerIfAbsent(project)?.get()
 
         project.warnExperimentalTryK2IsEnabled()
     }
