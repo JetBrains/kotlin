@@ -86,7 +86,7 @@ static final class PLUS /* IntArithmetics.PLUS*/ extends IntArithmetics {
   public int apply(int, int);//  apply(int, int)
 }
 
-public enum ProtocolState /* ProtocolState*/ {
+public abstract enum ProtocolState /* ProtocolState*/ {
   WAITING {
    WAITING();//  .ctor()
 

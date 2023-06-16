@@ -15,9 +15,7 @@ import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.annotations.*
 import org.jetbrains.kotlin.analysis.api.base.KtConstantValue
 import org.jetbrains.kotlin.analysis.api.components.DefaultTypeClassIds
-import org.jetbrains.kotlin.analysis.api.symbols.KtKotlinPropertySymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithModality
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithTypeParameters
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithVisibility
@@ -76,6 +74,24 @@ internal fun KtSymbolWithModality.computeSimpleModality(): String? = when (modal
     Modality.FINAL -> PsiModifier.FINAL
     Modality.ABSTRACT -> PsiModifier.ABSTRACT
     Modality.OPEN -> null
+}
+
+context(KtAnalysisSession)
+internal fun KtClassOrObjectSymbol.enumClassModality(): String? {
+    if (getMemberScope().getCallableSymbols().any { (it as? KtSymbolWithModality)?.modality == Modality.ABSTRACT }) {
+        return PsiModifier.ABSTRACT
+    }
+
+    if (getDeclaredMemberScope().getCallableSymbols().none { it is KtEnumEntrySymbol && it.requiresSubClass() }) {
+        return PsiModifier.FINAL
+    }
+
+    return null
+}
+
+context(KtAnalysisSession)
+private fun KtEnumEntrySymbol.requiresSubClass(): Boolean {
+    return getDeclaredMemberScope().getAllSymbols().any { it !is KtConstructorSymbol }
 }
 
 internal fun KtSymbolWithVisibility.toPsiVisibilityForMember(): String = visibility.toPsiVisibilityForMember()
