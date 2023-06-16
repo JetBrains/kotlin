@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.cli.common.messages.MessageUtil;
 import org.jetbrains.kotlin.cli.common.output.OutputUtilsKt;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
+import org.jetbrains.kotlin.cli.wasm.K2WasmCompiler;
 import org.jetbrains.kotlin.config.*;
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker;
 import org.jetbrains.kotlin.incremental.components.LookupTracker;
@@ -68,6 +69,7 @@ import static org.jetbrains.kotlin.cli.common.ExitCode.OK;
 import static org.jetbrains.kotlin.cli.common.UtilsKt.getLibraryFromHome;
 import static org.jetbrains.kotlin.cli.common.UtilsKt.incrementalCompilationIsEnabledForJs;
 import static org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*;
+import static org.jetbrains.kotlin.cli.common.web.SourceMapsUtils.calculateSourceMapSourceRoot;
 
 public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
     private static final Map<String, ModuleKind> moduleKindMap = new HashMap<>();
@@ -80,6 +82,15 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
         if (irCompiler == null)
             irCompiler = new K2JsIrCompiler();
         return irCompiler;
+    }
+
+    private K2WasmCompiler wasmCompiler = null;
+
+    @NotNull
+    private K2WasmCompiler getWasmCompiler() {
+        if (wasmCompiler == null)
+            wasmCompiler = new K2WasmCompiler();
+        return wasmCompiler;
     }
 
     @Override
@@ -175,6 +186,15 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
         MessageCollector messageCollector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY);
 
         ExitCode exitCode = OK;
+
+        if (arguments.getWasm()) {
+            return getWasmCompiler().doExecute(
+                    WasmCliAdapterKt.convertJsCliArgumentsToWasmCliArguments(arguments),
+                    configuration.copy(),
+                    rootDisposable,
+                    paths
+            );
+        }
 
         boolean useFir = Boolean.TRUE.equals(configuration.get(CommonConfigurationKeys.USE_FIR));
         if (K2JSCompilerArgumentsKt.isIrBackendEnabled(arguments) || useFir) {
@@ -403,6 +423,15 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
             @NotNull CompilerConfiguration configuration, @NotNull K2JSCompilerArguments arguments,
             @NotNull Services services
     ) {
+        if (arguments.getWasm()) {
+            getWasmCompiler().setupPlatformSpecificArgumentsAndServices(
+                    configuration,
+                    WasmCliAdapterKt.convertJsCliArgumentsToWasmCliArguments(arguments),
+                    services
+            );
+            return;
+        }
+
         if (K2JSCompilerArgumentsKt.isIrBackendEnabled(arguments)) {
             getIrCompiler().setupPlatformSpecificArgumentsAndServices(configuration, arguments, services);
         }
@@ -425,7 +454,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
 
             String sourceMapSourceRoots = arguments.getSourceMapBaseDirs();
             if (sourceMapSourceRoots == null && StringUtil.isNotEmpty(arguments.getSourceMapPrefix())) {
-                sourceMapSourceRoots = calculateSourceMapSourceRoot(messageCollector, arguments);
+                sourceMapSourceRoots = calculateSourceMapSourceRoot(messageCollector, arguments.getFreeArgs());
             }
 
             if (sourceMapSourceRoots != null) {
@@ -522,57 +551,6 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
             libraries.addAll(ArraysKt.filterNot(arguments.getLibraries().split(File.pathSeparator), String::isEmpty));
         }
         return libraries;
-    }
-
-    @NotNull
-    static String calculateSourceMapSourceRoot(
-            @NotNull MessageCollector messageCollector,
-            @NotNull K2JSCompilerArguments arguments
-    ) {
-        File commonPath = null;
-        List<File> pathToRoot = new ArrayList<>();
-        Map<File, Integer> pathToRootIndexes = new HashMap<>();
-
-        try {
-            for (String path : arguments.getFreeArgs()) {
-                File file = new File(path).getCanonicalFile();
-                if (commonPath == null) {
-                    commonPath = file;
-
-                    while (file != null) {
-                        pathToRoot.add(file);
-                        file = file.getParentFile();
-                    }
-                    Collections.reverse(pathToRoot);
-
-                    for (int i = 0; i < pathToRoot.size(); ++i) {
-                        pathToRootIndexes.put(pathToRoot.get(i), i);
-                    }
-                }
-                else {
-                    while (file != null) {
-                        Integer existingIndex = pathToRootIndexes.get(file);
-                        if (existingIndex != null) {
-                            existingIndex = Math.min(existingIndex, pathToRoot.size() - 1);
-                            pathToRoot.subList(existingIndex + 1, pathToRoot.size()).clear();
-                            commonPath = pathToRoot.get(pathToRoot.size() - 1);
-                            break;
-                        }
-                        file = file.getParentFile();
-                    }
-                    if (file == null) {
-                        break;
-                    }
-                }
-            }
-        }
-        catch (IOException e) {
-            String text = ExceptionUtil.getThrowableText(e);
-            messageCollector.report(CompilerMessageSeverity.ERROR, "IO error occurred calculating source root:\n" + text, null);
-            return ".";
-        }
-
-        return commonPath != null ? commonPath.getPath() : ".";
     }
 
     @NotNull
