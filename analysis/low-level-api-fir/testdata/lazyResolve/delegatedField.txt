@@ -232,7 +232,7 @@ FILE: [ResolvedTo(IMPORTS)] delegatedField.kt
             LAZY_super<<implicit>>
         }
 
-        private final [ResolvedTo(CONTRACTS)] field $$delegate_0: R|one/Foo| = prop#
+        private final [ResolvedTo(CONTRACTS)] field $$delegate_0: R|one/Foo| = LAZY_EXPRESSION
 
         public final [ResolvedTo(STATUS)] fun baz([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
 

@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirImplicitAwa
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirTowerDataContextCollector
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.ImplicitBodyResolveComputationSession
 import org.jetbrains.kotlin.fir.scopes.fakeOverrideSubstitution
-import org.jetbrains.kotlin.fir.visitors.transformSingle
 
 internal object LLFirImplicitTypesLazyResolver : LLFirLazyResolver(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE) {
     override fun resolve(
@@ -81,17 +80,15 @@ internal class LLFirImplicitBodyTargetResolver(
 
     override fun doLazyResolveUnderLock(target: FirElementWithResolveState) {
         when (target) {
-            is FirSimpleFunction -> resolve(target, BodyStateKeepers.FUNCTION)
+            is FirFunction -> resolve(target, BodyStateKeepers.FUNCTION)
             is FirProperty -> resolve(target, BodyStateKeepers.PROPERTY)
             is FirVariable -> resolve(target, BodyStateKeepers.VARIABLE)
-            is FirPropertyAccessor -> resolve(target.propertySymbol.fir, BodyStateKeepers.PROPERTY)
             is FirRegularClass,
             is FirTypeAlias,
-            is FirDanglingModifierList,
-            is FirFileAnnotationsContainer,
             is FirScript,
             is FirAnonymousInitializer,
-            is FirCallableDeclaration -> {
+            is FirDanglingModifierList,
+            is FirFileAnnotationsContainer -> {
                 // No implicit bodies here
             }
             else -> throwUnexpectedFirElementError(target)

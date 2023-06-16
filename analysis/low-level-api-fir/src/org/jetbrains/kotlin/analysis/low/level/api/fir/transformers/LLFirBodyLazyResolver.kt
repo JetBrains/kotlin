@@ -158,17 +158,15 @@ private class LLFirBodyTargetResolver(
 
         when (target) {
             is FirRegularClass -> error("Should have been resolved in ${::doResolveWithoutLock.name}")
-            is FirSimpleFunction -> resolve(target, BodyStateKeepers.FUNCTION)
             is FirConstructor -> resolve(target, BodyStateKeepers.CONSTRUCTOR)
+            is FirFunction -> resolve(target, BodyStateKeepers.FUNCTION)
             is FirProperty -> resolve(target, BodyStateKeepers.PROPERTY)
-            is FirPropertyAccessor -> resolve(target.propertySymbol.fir, BodyStateKeepers.PROPERTY)
             is FirVariable -> resolve(target, BodyStateKeepers.VARIABLE)
             is FirAnonymousInitializer -> resolve(target, BodyStateKeepers.ANONYMOUS_INITIALIZER)
             is FirScript -> resolve(target, BodyStateKeepers.SCRIPT)
             is FirDanglingModifierList,
             is FirFileAnnotationsContainer,
-            is FirTypeAlias,
-            is FirCallableDeclaration -> {
+            is FirTypeAlias -> {
                 // No bodies here
             }
             else -> throwUnexpectedFirElementError(target)
