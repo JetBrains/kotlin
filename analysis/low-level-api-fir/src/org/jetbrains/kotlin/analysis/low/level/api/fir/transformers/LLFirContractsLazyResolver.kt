@@ -17,11 +17,9 @@ import org.jetbrains.kotlin.fir.FirFileAnnotationsContainer
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.contracts.FirRawContractDescription
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirTowerDataContextCollector
 import org.jetbrains.kotlin.fir.resolve.transformers.contracts.FirContractResolveTransformer
-import org.jetbrains.kotlin.fir.visitors.transformSingle
 
 internal object LLFirContractsLazyResolver : LLFirLazyResolver(FirResolvePhase.CONTRACTS) {
     override fun resolve(
@@ -67,18 +65,16 @@ private class LLFirContractsTargetResolver(
             is FirConstructor -> resolve(target, ContractStateKeepers.CONSTRUCTOR)
             is FirProperty -> resolve(target, ContractStateKeepers.PROPERTY)
             is FirPropertyAccessor -> resolve(target, ContractStateKeepers.PROPERTY_ACCESSOR)
-            is FirVariable -> {
-                calculateLazyBodies(target)
-                rawResolve(target)
-            }
             is FirRegularClass,
-            is FirAnonymousInitializer,
-            is FirDanglingModifierList,
-            is FirFileAnnotationsContainer,
             is FirTypeAlias,
+            is FirVariable,
+            is FirFunction,
+            is FirAnonymousInitializer,
             is FirScript,
-            is FirCallableDeclaration -> {
+            is FirFileAnnotationsContainer,
+            is FirDanglingModifierList -> {
                 // No contracts here
+                check(target !is FirContractDescriptionOwner)
             }
             else -> throwUnexpectedFirElementError(target)
         }
