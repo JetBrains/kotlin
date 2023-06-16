@@ -40,6 +40,9 @@ class FirExpectActualMatchingContext(
     override val enumConstructorsAreAlwaysCompatible: Boolean
         get() = true
 
+    override val allowClassActualizationWithWiderVisibility: Boolean
+        get() = true
+
     private fun CallableSymbolMarker.asSymbol(): FirCallableSymbol<*> = this as FirCallableSymbol<*>
     private fun FunctionSymbolMarker.asSymbol(): FirFunctionSymbol<*> = this as FirFunctionSymbol<*>
     private fun PropertySymbolMarker.asSymbol(): FirPropertySymbol = this as FirPropertySymbol

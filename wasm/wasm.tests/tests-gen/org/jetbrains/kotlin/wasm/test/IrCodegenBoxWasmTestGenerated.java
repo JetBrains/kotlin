@@ -20962,6 +20962,11 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
                 public void testRemoveExpectDeclarationsFromMetadata() throws Exception {
                     runTest("compiler/testData/codegen/box/multiplatform/k2/basic/removeExpectDeclarationsFromMetadata.kt");
                 }
+
+                @TestMetadata("widerVisibilityInActualClassifier.kt")
+                public void testWiderVisibilityInActualClassifier() throws Exception {
+                    runTest("compiler/testData/codegen/box/multiplatform/k2/basic/widerVisibilityInActualClassifier.kt");
+                }
             }
 
             @TestMetadata("compiler/testData/codegen/box/multiplatform/k2/defaultArguments")

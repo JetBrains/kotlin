@@ -106,7 +106,7 @@ object AbstractExpectActualCompatibilityChecker {
             return Incompatible.Modality
         }
 
-        if (expectClassSymbol.visibility != actualClass.visibility) {
+        if (!areCompatibleClassVisibilities(expectClassSymbol, actualClass)) {
             return Incompatible.Visibility
         }
 
@@ -330,7 +330,7 @@ object AbstractExpectActualCompatibilityChecker {
             return Incompatible.Modality
         }
 
-        if (!areDeclarationsWithCompatibleVisibilities(expectDeclaration.visibility, expectModality, actualDeclaration.visibility)) {
+        if (!areCompatibleCallableVisibilities(expectDeclaration.visibility, expectModality, actualDeclaration.visibility)) {
             return Incompatible.Visibility
         }
 
@@ -436,7 +436,7 @@ object AbstractExpectActualCompatibilityChecker {
         Modality.SEALED to enumSetOf(Modality.SEALED),
     )
 
-    private fun areDeclarationsWithCompatibleVisibilities(
+    private fun areCompatibleCallableVisibilities(
         expectVisibility: Visibility,
         expectModality: Modality?,
         actualVisibility: Visibility,
@@ -449,6 +449,19 @@ object AbstractExpectActualCompatibilityChecker {
             // For non-overridable declarations actuals are allowed to have more permissive visibility
             compare != null && compare <= 0
         }
+    }
+
+    context(ExpectActualMatchingContext<*>)
+    private fun areCompatibleClassVisibilities(
+        expectClassSymbol: RegularClassSymbolMarker,
+        actualClassSymbol: RegularClassSymbolMarker,
+    ): Boolean {
+        val expectVisibility = expectClassSymbol.visibility
+        val actualVisibility = actualClassSymbol.visibility
+        if (expectVisibility == actualVisibility) return true
+        if (!allowClassActualizationWithWiderVisibility) return false
+        val result = Visibilities.compare(actualVisibility, expectVisibility)
+        return result != null && result > 0
     }
 
     context(ExpectActualMatchingContext<*>)
@@ -525,7 +538,7 @@ object AbstractExpectActualCompatibilityChecker {
     ): Boolean {
         val expectedSetter = expected.setter ?: return true
         val actualSetter = actual.setter ?: return true
-        return areDeclarationsWithCompatibleVisibilities(expectedSetter.visibility, expectedSetter.modality, actualSetter.visibility)
+        return areCompatibleCallableVisibilities(expectedSetter.visibility, expectedSetter.modality, actualSetter.visibility)
     }
 
     // ---------------------------------------- Utils ----------------------------------------

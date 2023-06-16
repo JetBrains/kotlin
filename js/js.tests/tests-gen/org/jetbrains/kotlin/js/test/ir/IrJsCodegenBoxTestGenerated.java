@@ -23594,6 +23594,12 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
                 public void testRemoveExpectDeclarationsFromMetadata() throws Exception {
                     runTest("compiler/testData/codegen/box/multiplatform/k2/basic/removeExpectDeclarationsFromMetadata.kt");
                 }
+
+                @Test
+                @TestMetadata("widerVisibilityInActualClassifier.kt")
+                public void testWiderVisibilityInActualClassifier() throws Exception {
+                    runTest("compiler/testData/codegen/box/multiplatform/k2/basic/widerVisibilityInActualClassifier.kt");
+                }
             }
 
             @Nested

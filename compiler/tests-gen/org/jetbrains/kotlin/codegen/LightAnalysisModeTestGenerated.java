@@ -27349,6 +27349,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 public void testNonExternalEquals() throws Exception {
                     runTest("compiler/testData/codegen/box/multiplatform/k2/basic/nonExternalEquals.kt");
                 }
+
+                @TestMetadata("widerVisibilityInActualClassifier.kt")
+                public void testWiderVisibilityInActualClassifier() throws Exception {
+                    runTest("compiler/testData/codegen/box/multiplatform/k2/basic/widerVisibilityInActualClassifier.kt");
+                }
             }
 
             @TestMetadata("compiler/testData/codegen/box/multiplatform/k2/defaultArguments")

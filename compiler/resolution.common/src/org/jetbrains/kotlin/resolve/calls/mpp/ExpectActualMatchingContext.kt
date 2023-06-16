@@ -39,6 +39,17 @@ interface ExpectActualMatchingContext<T : DeclarationSymbolMarker> : TypeSystemC
     val enumConstructorsAreAlwaysCompatible: Boolean
         get() = false
 
+    /**
+     * This flag determines, how visibilities for classes/typealiases will be matched
+     * - `false` means that visibilities should be identical
+     * - `true` means that visibility of actual class should be the same or wider comparing to expect visibility
+     *     this means that following actualizations will be additionally allowed:
+     *     - protected -> public
+     *     - internal -> public
+     */
+    val allowClassActualizationWithWiderVisibility: Boolean
+        get() = false
+
     val RegularClassSymbolMarker.classId: ClassId
     val TypeAliasSymbolMarker.classId: ClassId
     val CallableSymbolMarker.callableId: CallableId

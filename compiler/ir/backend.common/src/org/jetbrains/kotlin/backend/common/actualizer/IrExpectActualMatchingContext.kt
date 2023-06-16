@@ -33,6 +33,9 @@ internal abstract class IrExpectActualMatchingContext(
     val typeContext: IrTypeSystemContext,
     val expectToActualClassMap: Map<ClassId, IrClassSymbol>
 ) : ExpectActualMatchingContext<IrSymbol>, TypeSystemContext by typeContext {
+    override val allowClassActualizationWithWiderVisibility: Boolean
+        get() = true
+
     private inline fun <R> CallableSymbolMarker.processIr(
         onFunction: (IrFunction) -> R,
         onProperty: (IrProperty) -> R,

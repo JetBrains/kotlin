@@ -22486,6 +22486,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 runTest("compiler/testData/diagnostics/tests/multiplatform/varSetterVisibility.kt");
             }
 
+            @Test
+            @TestMetadata("widerVisibilityInActualClassifier.kt")
+            public void testWiderVisibilityInActualClassifier() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/multiplatform/widerVisibilityInActualClassifier.kt");
+            }
+
             @Nested
             @TestMetadata("compiler/testData/diagnostics/tests/multiplatform/defaultArguments")
             @TestDataPath("$PROJECT_ROOT")
