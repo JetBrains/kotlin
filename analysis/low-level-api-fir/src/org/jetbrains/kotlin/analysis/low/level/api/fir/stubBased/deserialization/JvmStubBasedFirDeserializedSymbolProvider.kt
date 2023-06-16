@@ -140,19 +140,21 @@ internal open class JvmStubBasedFirDeserializedSymbolProvider(
         foundFunctions: Collection<KtNamedFunction>?,
     ): List<FirNamedFunctionSymbol> {
         val topLevelFunctions = foundFunctions ?: declarationProvider.getTopLevelFunctions(callableId)
-        return topLevelFunctions
-            .mapNotNull { function ->
+        val result = ArrayList<FirNamedFunctionSymbol>(topLevelFunctions.size)
+        topLevelFunctions
+            .mapNotNullTo(result) { function ->
                 val file = function.containingKtFile
                 val virtualFile = file.virtualFile
-                if (virtualFile.extension == MetadataPackageFragment.METADATA_FILE_EXTENSION) return@mapNotNull null
+                if (virtualFile.extension == MetadataPackageFragment.METADATA_FILE_EXTENSION) return@mapNotNullTo null
                 if (initialOrigin != FirDeclarationOrigin.BuiltIns && file.packageFqName.asString()
                         .replace(".", "/") + "/" + virtualFile.nameWithoutExtension in KotlinBuiltins
-                ) return@mapNotNull null
+                ) return@mapNotNullTo null
                 val symbol = FirNamedFunctionSymbol(callableId)
                 val rootContext =
                     StubBasedFirDeserializationContext.createRootContext(session, moduleData, callableId, function, symbol, initialOrigin)
                 rootContext.memberDeserializer.loadFunction(function, null, session, symbol).symbol
             }
+        return result
     }
 
     private fun loadPropertiesByCallableId(callableId: CallableId, foundProperties: Collection<KtProperty>?): List<FirPropertySymbol> {
