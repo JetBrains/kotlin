@@ -181,6 +181,7 @@ internal object BodyStateKeepers {
 
     val ANONYMOUS_INITIALIZER: StateKeeper<FirAnonymousInitializer> = stateKeeper {
         add(FirAnonymousInitializer::body, FirAnonymousInitializer::replaceBody, ::blockGuard)
+        add(FirAnonymousInitializer::controlFlowGraphReference, FirAnonymousInitializer::replaceControlFlowGraphReference)
     }
 
     val FUNCTION: StateKeeper<FirFunction> = stateKeeper { function ->
@@ -236,6 +237,8 @@ internal object BodyStateKeepers {
             add(FirWrappedDelegateExpression::expression, FirWrappedDelegateExpression::replaceExpression, ::expressionGuard)
             add(FirWrappedDelegateExpression::delegateProvider, FirWrappedDelegateExpression::replaceDelegateProvider, ::expressionGuard)
         }
+
+        add(FirProperty::controlFlowGraphReference, FirProperty::replaceControlFlowGraphReference)
     }
 }
 
