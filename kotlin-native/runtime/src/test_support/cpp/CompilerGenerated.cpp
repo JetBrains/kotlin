@@ -75,7 +75,12 @@ extern const int32_t Kotlin_disableMmap = 0;
 #endif
 extern const char* const Kotlin_runtimeLogs = nullptr;
 extern const int32_t Kotlin_gcSchedulerType = static_cast<int32_t>(kotlin::compiler::GCSchedulerType::kDisabled);
+#if KONAN_WINDOWS
+// parallel mark tests hang on mingw due to (presumably) a bug in winpthread
+extern const int32_t Kotlin_gcMarkSingleThreaded = 1;
+#else
 extern const int32_t Kotlin_gcMarkSingleThreaded = 0;
+#endif
 extern const int32_t Kotlin_freezingChecksEnabled = 1;
 extern const int32_t Kotlin_freezingEnabled = 1;
 
