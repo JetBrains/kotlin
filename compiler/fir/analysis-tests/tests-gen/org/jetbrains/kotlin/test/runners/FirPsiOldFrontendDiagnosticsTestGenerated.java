@@ -20181,6 +20181,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
             }
 
             @Test
+            @TestMetadata("staticImportViaInheritance.kt")
+            public void testStaticImportViaInheritance() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/j+k/staticImportViaInheritance.kt");
+            }
+
+            @Test
             @TestMetadata("StaticMembersFromSuperclasses.kt")
             public void testStaticMembersFromSuperclasses() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/j+k/StaticMembersFromSuperclasses.kt");
