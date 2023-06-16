@@ -212,6 +212,8 @@ val k2DefinitelyNonErrors = collectAllK2NonErrors()
 
 val k1JvmDefinitelyNonErrors = collectFromFieldsOf(ErrorsJvm::class, instance = null, collector = ::getErrorFromFieldValue)
 
+val k2KnownErrors = collectAllK2Errors()
+
 val ParsedCodeMetaInfo.isProbablyK1Error get() = !tag.startsWith("DEBUG_INFO_") && tag !in k1DefinitelyNonErrors
 val ParsedCodeMetaInfo.isProbablyK2Error get() = !tag.startsWith("DEBUG_INFO_") && tag !in k2DefinitelyNonErrors
 
@@ -592,6 +594,14 @@ fun main() {
 
     build.child("similarity-diagnostics-stats.md").renderDiagnosticsStatistics(similarityStatistics)
     build.child("containment-diagnostics-stats.md").renderDiagnosticsStatistics(containmentStatistics)
+
+    build.child("k2-unimplemented-diagnostics.md").writer().use { writer ->
+        printDiagnosticsStatistics(
+            "These diagnostics are present in K1 files, but are missing in K2 altogether:",
+            containmentStatistics.disappearedDiagnosticToFilesCount.filterKeys { it !in k2KnownErrors },
+            writer,
+        )
+    }
 
     val a = 10 + 1
     println("")

@@ -87,12 +87,20 @@ fun collectAllK1NonErrors(): Set<String> {
     return diagnosticsFromInterfaces + diagnosticsFromObjects
 }
 
+val k2DiagnosticsLists = listOf(
+    FirErrors, FirJvmErrors, FirJsErrors, FirNativeErrors, FirSyntaxErrors,
+    KtErrorsParcelize, FirSerializationErrors, KtErrorsNoArg, FirErrorsAssignmentPlugin,
+    PluginErrors,
+)
+
 fun collectAllK2NonErrors(): Set<String> {
-    return listOf(
-        FirErrors, FirJvmErrors, FirJsErrors, FirNativeErrors, FirSyntaxErrors,
-        KtErrorsParcelize, FirSerializationErrors, KtErrorsNoArg, FirErrorsAssignmentPlugin,
-        PluginErrors,
-    ).flatMap {
+    return k2DiagnosticsLists.flatMap {
         collectNonErrorsFromFieldsOf(it::class, instance = it)
+    }.toSet()
+}
+
+fun collectAllK2Errors(): Set<String> {
+    return k2DiagnosticsLists.flatMap {
+        collectFromFieldsOf(it::class, instance = it, ::getErrorFromFieldValue)
     }.toSet()
 }
