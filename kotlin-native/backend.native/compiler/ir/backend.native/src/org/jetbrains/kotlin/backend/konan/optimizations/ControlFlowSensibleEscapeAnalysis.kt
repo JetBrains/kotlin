@@ -2181,7 +2181,6 @@ internal object ControlFlowSensibleEscapeAnalysis {
             context.log { "after removing redundant nodes (part 1):" }
             functionResult.logDigraph(context)
 
-            // TODO: Remove phi nodes with either one incoming or one outgoing edge.
             functionResult.bypassAndRemoveVariables()
             context.log { "after bypassing variables:" }
             functionResult.logDigraph(context)
@@ -2379,7 +2378,7 @@ internal object ControlFlowSensibleEscapeAnalysis {
 
             val leaves = mutableListOf<Node>()
             for (node in graph.nodes) {
-                require(node != null)
+                if (node == null) continue
                 when (node) {
                     is Node.Object -> node.fields.values.let { fieldValues ->
                         if (fieldValues.isEmpty())
