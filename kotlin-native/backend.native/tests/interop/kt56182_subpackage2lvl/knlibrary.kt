@@ -1,4 +1,5 @@
 // This test is similar to kt42397, just everything is in "package knlibrary.subpackage" instead of "package knlibrary"
+@file:OptIn(kotlin.experimental.ExperimentalNativeApi::class)
 package knlibrary.subpackage
 
 import kotlin.native.Platform

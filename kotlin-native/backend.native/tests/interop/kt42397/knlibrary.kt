@@ -1,3 +1,4 @@
+@file:OptIn(kotlin.experimental.ExperimentalNativeApi::class)
 package knlibrary
 
 import kotlin.native.Platform

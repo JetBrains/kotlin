@@ -1,3 +1,5 @@
+@file:OptIn(kotlin.experimental.ExperimentalNativeApi::class)
+
 import kotlin.test.*
 
 import kotlinx.cinterop.*

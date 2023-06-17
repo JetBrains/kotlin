@@ -1,4 +1,4 @@
-@file:OptIn(kotlin.native.runtime.NativeRuntimeApi::class)
+@file:OptIn(kotlin.experimental.ExperimentalNativeApi::class, kotlin.native.runtime.NativeRuntimeApi::class)
 
 import kotlin.native.ref.WeakReference
 import kotlinx.cinterop.*

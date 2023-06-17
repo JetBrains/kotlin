@@ -1,4 +1,4 @@
-@file:OptIn(FreezingIsDeprecated::class, ObsoleteWorkersApi::class)
+@file:OptIn(kotlin.experimental.ExperimentalNativeApi::class, FreezingIsDeprecated::class, ObsoleteWorkersApi::class)
 package runtime.workers.worker_exception_messages
 
 import kotlin.test.*

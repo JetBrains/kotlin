@@ -3,7 +3,7 @@
  * that can be found in the LICENSE file.
  */
 
-@file:OptIn(ObsoleteWorkersApi::class)
+@file:OptIn(kotlin.experimental.ExperimentalNativeApi::class, ObsoleteWorkersApi::class)
 import kotlin.native.concurrent.*
 import kotlin.native.Platform
 

@@ -1,3 +1,5 @@
+@file:OptIn(kotlin.experimental.ExperimentalNativeApi::class)
+
 import kotlin.system.exitProcess
 import kotlinx.cinterop.autoreleasepool
 import kotlin.native.internal.test.testLauncherEntryPoint

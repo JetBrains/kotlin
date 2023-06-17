@@ -1,6 +1,7 @@
 // This test is similar to kt42397, just everything is doubled: in "package knlibrary.subpackage" and the root package
 
 // FILE: FirstLevelPackage.kt
+@file:OptIn(kotlin.experimental.ExperimentalNativeApi::class)
 package knlibrary
 
 import kotlin.native.Platform
@@ -19,6 +20,8 @@ fun enableMemoryChecker() {
 }
 
 // FILE: rootPackage.kt
+@file:OptIn(kotlin.experimental.ExperimentalNativeApi::class)
+
 object A {}
 
 class B {

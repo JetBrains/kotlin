@@ -34,6 +34,7 @@ fun <T: Any> dsl(block: DslMain.() -> T): T = DslMain().block()
 
 class TestClass
 
+@OptIn(kotlin.experimental.ExperimentalNativeApi::class)
 class App(testQualified: Boolean) {
 
     var type = dsl {

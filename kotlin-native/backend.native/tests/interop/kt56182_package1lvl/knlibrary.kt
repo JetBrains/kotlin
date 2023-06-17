@@ -1,5 +1,6 @@
 // This test is similar to kt42397, just everything is doubled: in "package knlibrary" and the root package
 
+@file:OptIn(kotlin.experimental.ExperimentalNativeApi::class)
 package knlibrary
 
 import kotlin.native.Platform

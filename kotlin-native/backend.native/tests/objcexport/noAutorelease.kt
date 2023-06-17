@@ -6,6 +6,7 @@ import kotlin.native.internal.NativePtr
 import kotlin.native.ref.WeakReference
 import kotlin.test.*
 
+@OptIn(kotlin.experimental.ExperimentalNativeApi::class)
 class KotlinLivenessTracker {
     val weakRefs = mutableListOf<WeakReference<Any>>()
 

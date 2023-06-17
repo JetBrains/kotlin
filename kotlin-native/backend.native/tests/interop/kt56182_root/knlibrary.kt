@@ -1,5 +1,7 @@
 // This test is similar to kt42397, just everything is in root package instead of "package knlibrary"
 
+@file:OptIn(kotlin.experimental.ExperimentalNativeApi::class)
+
 import kotlin.native.Platform
 
 // The following 2 singletons are unused. However, since we are generating C bindings for them,

@@ -5,8 +5,6 @@
 
 package runtime.collections.hash_map1
 
-import kotlin.native.MemoryModel
-import kotlin.native.Platform
 import kotlin.test.*
 
 fun assertTrue(cond: Boolean) {

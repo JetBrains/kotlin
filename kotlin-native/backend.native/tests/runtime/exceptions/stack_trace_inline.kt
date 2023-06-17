@@ -1,3 +1,5 @@
+@file:OptIn(kotlin.experimental.ExperimentalNativeApi::class)
+
 import kotlin.text.Regex
 import kotlin.test.*
 
@@ -34,8 +36,8 @@ internal fun checkFrame(value:String) {
     val goldValues = arrayOf<Pair<String, Int>?>(
             *arrayOfNulls(expectedExceptionContrFrames),
             *arrayOfNulls(expectedInlinesCount),
-            "stack_trace_inline.kt" to 8,
-            "stack_trace_inline.kt" to 23)
+            "stack_trace_inline.kt" to 10,
+            "stack_trace_inline.kt" to 25)
     val (pos, file, line) = regex.find(value)!!.destructured
     goldValues[pos.toInt()]?.let {
         assertEquals(it.first, file)

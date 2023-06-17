@@ -1,3 +1,5 @@
+@file:OptIn(kotlin.experimental.ExperimentalNativeApi::class)
+
 import kotlin.text.Regex
 import kotlin.test.*
 

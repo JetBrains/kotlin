@@ -244,4 +244,5 @@ fun createCoroutineUninterceptedAndResume(fn: suspend () -> Any?, resultHolder: 
 fun createCoroutineUninterceptedAndResume(fn: suspend Any?.() -> Any?, receiver: Any?, resultHolder: ResultHolder<Any?>) =
         fn.createCoroutine(receiver, ResultHolderCompletion(resultHolder)).resume(Unit)
 
+@OptIn(kotlin.native.runtime.NativeRuntimeApi::class)
 fun gc() = kotlin.native.runtime.GC.collect()

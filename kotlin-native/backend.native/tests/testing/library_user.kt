@@ -1,3 +1,5 @@
+@file:OptIn(kotlin.experimental.ExperimentalNativeApi::class)
+
 import kotlin.native.internal.test.*
 import kotlin.test.*
 import library.*

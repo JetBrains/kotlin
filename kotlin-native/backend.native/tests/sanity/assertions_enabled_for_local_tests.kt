@@ -1,3 +1,4 @@
+@file:OptIn(kotlin.experimental.ExperimentalNativeApi::class)
 package sanity.assertions_enabled
 
 import kotlin.test.Test

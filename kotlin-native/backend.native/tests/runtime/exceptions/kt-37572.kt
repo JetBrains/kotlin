@@ -1,3 +1,5 @@
+@file:OptIn(kotlin.experimental.ExperimentalNativeApi::class)
+
 import kotlin.text.Regex
 import kotlin.test.*
 
@@ -44,14 +46,14 @@ internal val regex = Regex("^(\\d+)\\ +.*/(.*):(\\d+):.*$")
 internal fun checkFrame(value:String) {
     val goldValues = arrayOf<Pair<String, Int>?>(
             *arrayOfNulls(expectedExceptionContrFrames),
-            "kt-37572.kt" to 40,
-            "kt-37572.kt" to 31,
+            "kt-37572.kt" to 42,
+            "kt-37572.kt" to 33,
             *(if (expectedInlinesCount != 0) arrayOf(
-                    "kt-37572.kt" to 36,
-                    "kt-37572.kt" to 29,
+                    "kt-37572.kt" to 38,
+                    "kt-37572.kt" to 31,
             ) else emptyArray()),
-            "kt-37572.kt" to 19,
-            "kt-37572.kt" to 7)
+            "kt-37572.kt" to 21,
+            "kt-37572.kt" to 9)
 
     val (pos, file, line) = regex.find(value)!!.destructured
     goldValues[pos.toInt()]?.let {

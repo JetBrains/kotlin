@@ -2,6 +2,8 @@
 // "\tat 1   main.kexe\t\t 0x000000010d7cdb4c kfun:package.function(kotlin.Int) + 108 (/path/to/file/name.kt:10:27)\n"
 // If test is broken, org.jetbrains.kotlin.idea.filters.KotlinExceptionFilter (in main Kotlin repo) should be updated.
 
+@file:OptIn(kotlin.experimental.ExperimentalNativeApi::class)
+
 import kotlin.test.*
 import kotlin.text.Regex
 

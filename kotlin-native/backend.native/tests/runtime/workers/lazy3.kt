@@ -1,4 +1,4 @@
-@file:OptIn(FreezingIsDeprecated::class, kotlin.native.runtime.NativeRuntimeApi::class)
+@file:OptIn(kotlin.experimental.ExperimentalNativeApi::class, FreezingIsDeprecated::class, kotlin.native.runtime.NativeRuntimeApi::class)
 
 import kotlin.native.concurrent.*
 import kotlin.native.ref.*

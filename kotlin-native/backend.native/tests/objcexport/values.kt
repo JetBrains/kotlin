@@ -5,7 +5,7 @@
 
 // All classes and methods should be used in tests
 @file:Suppress("UNUSED")
-@file:OptIn(FreezingIsDeprecated::class, kotlin.native.runtime.NativeRuntimeApi::class)
+@file:OptIn(kotlin.experimental.ExperimentalNativeApi::class, FreezingIsDeprecated::class, kotlin.native.runtime.NativeRuntimeApi::class)
 
 package conversions
 
@@ -251,6 +251,7 @@ fun IC3.getValue3() = value
 fun IC3?.getValueOrNull3() = this?.value
 
 fun isFrozen(obj: Any): Boolean = obj.isFrozen
+@OptIn(kotlin.experimental.ExperimentalNativeApi::class)
 fun isFreezingEnabled() = Platform.isFreezingEnabled
 fun kotlinLambda(block: (Any) -> Any): Any = block
 

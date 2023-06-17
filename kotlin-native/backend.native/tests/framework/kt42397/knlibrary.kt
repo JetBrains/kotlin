@@ -1,3 +1,5 @@
+@file:OptIn(kotlin.experimental.ExperimentalNativeApi::class)
+
 import kotlin.native.Platform
 
 // The following 2 singletons are unused. However, since we are generating ObjC bindings for them,
