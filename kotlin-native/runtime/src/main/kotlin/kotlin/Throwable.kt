@@ -51,6 +51,8 @@ public open class Throwable(open val message: String?, open val cause: Throwable
 
     /**
      * Prints the [detailed description][Throwable.stackTraceToString] of this throwable to the standard output.
+     *
+     * Note that the format of the output is not stable and may change in the future.
      */
     public fun printStackTrace(): Unit = ExceptionTraceBuilder(this).print()
 
@@ -160,12 +162,16 @@ private external fun getStackTraceStrings(stackTrace: NativePtrArray): Array<Str
  * - the complete stack trace;
  * - detailed descriptions of the exceptions that were [suppressed][suppressedExceptions] in order to deliver this exception;
  * - the detailed description of each throwable in the [Throwable.cause] chain.
+ *
+ * Note that the description format is not stable and may change in the future.
  */
 @SinceKotlin("1.4")
 public actual fun Throwable.stackTraceToString(): String = dumpStackTrace()
 
 /**
  * Prints the [detailed description][Throwable.stackTraceToString] of this throwable to the standard output.
+ *
+ * Note that the format of the output is not stable and may change in the future.
  */
 @SinceKotlin("1.4")
 @Suppress("EXTENSION_SHADOWED_BY_MEMBER")
