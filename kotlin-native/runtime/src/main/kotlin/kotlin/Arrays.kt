@@ -585,6 +585,8 @@ private class BooleanIteratorImpl(val collection: BooleanArray) : BooleanIterato
 
 /**
  * Returns an array of objects of the given type with the given [size], initialized with null values.
+ *
+ * @throws RuntimeException if the specified [size] is negative.
  */
 public inline fun <reified @PureReifiable T> arrayOfNulls(size: Int): Array<T?> =
         @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
