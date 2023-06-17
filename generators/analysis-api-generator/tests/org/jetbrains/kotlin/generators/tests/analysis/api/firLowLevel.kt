@@ -111,6 +111,10 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
         testClass<AbstractFirNonLocalDeclarationAnchorTest> {
             model("nonLocalDeclarationAnchors")
         }
+
+        testClass<AbstractClassIdTest> {
+            model("classId")
+        }
     }
 
     testGroup(
