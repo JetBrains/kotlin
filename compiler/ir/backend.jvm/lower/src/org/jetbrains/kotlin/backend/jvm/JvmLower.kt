@@ -317,6 +317,16 @@ internal val functionInliningPhase = makeIrModulePhase(
     )
 )
 
+private val apiVersionIsAtLeastEvaluationPhase = makeIrModulePhase(
+    { context ->
+        if (!context.irInlinerIsEnabled()) return@makeIrModulePhase FileLoweringPass.Empty
+        ApiVersionIsAtLeastEvaluationLowering(context)
+    },
+    name = "ApiVersionIsAtLeastEvaluationLowering",
+    description = "Evaluate inlined invocations of `apiVersionIsAtLeast`",
+    prerequisite = setOf(functionInliningPhase)
+)
+
 private val constEvaluationPhase = makeIrModulePhase<JvmBackendContext>(
     {
         ConstEvaluationLowering(
@@ -457,7 +467,7 @@ val jvmLoweringPhases = buildJvmLoweringPhases("IrLowering", listOf("PerformByIr
 
 private fun buildJvmLoweringPhases(
     name: String,
-    phases: List<Pair<String, List<SameTypeNamedCompilerPhase<JvmBackendContext, IrFile>>>>
+    phases: List<Pair<String, List<SameTypeNamedCompilerPhase<JvmBackendContext, IrFile>>>>,
 ): SameTypeNamedCompilerPhase<JvmBackendContext, IrModuleFragment> {
     return SameTypeNamedCompilerPhase(
         name = name,
@@ -477,6 +487,7 @@ private fun buildJvmLoweringPhases(
                 repeatedAnnotationPhase then
 
                 functionInliningPhase then
+                apiVersionIsAtLeastEvaluationPhase then
                 createSeparateCallForInlinedLambdas then
                 markNecessaryInlinedClassesAsRegenerated then
 

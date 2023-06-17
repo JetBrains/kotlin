@@ -416,13 +416,15 @@ fun findSuperDeclaration(function: IrSimpleFunction, isSuperCall: Boolean, jvmDe
     return current
 }
 
+fun IrMemberAccessExpression<*>.getIntConstArgumentOrNull(i: Int) = getValueArgument(i)?.let {
+    if (it is IrConst<*> && it.kind == IrConstKind.Int)
+        it.value as Int
+    else
+        null
+}
+
 fun IrMemberAccessExpression<*>.getIntConstArgument(i: Int): Int =
-    getValueArgument(i)?.let {
-        if (it is IrConst<*> && it.kind == IrConstKind.Int)
-            it.value as Int
-        else
-            null
-    } ?: throw AssertionError("Value argument #$i should be an Int const: ${dump()}")
+    getIntConstArgumentOrNull(i) ?: throw AssertionError("Value argument #$i should be an Int const: ${dump()}")
 
 fun IrMemberAccessExpression<*>.getStringConstArgument(i: Int): String =
     getValueArgument(i)?.let {
