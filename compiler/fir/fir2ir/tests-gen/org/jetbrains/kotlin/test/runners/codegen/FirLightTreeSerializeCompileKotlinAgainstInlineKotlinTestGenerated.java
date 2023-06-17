@@ -1065,6 +1065,12 @@ public class FirLightTreeSerializeCompileKotlinAgainstInlineKotlinTestGenerated 
         public void testApiVersionAtLeast1() throws Exception {
             runTest("compiler/testData/codegen/boxInline/bytecodePreprocessing/apiVersionAtLeast1.kt");
         }
+
+        @Test
+        @TestMetadata("inlineApiVersionAtLeastInStdlibInlineFunction.kt")
+        public void testInlineApiVersionAtLeastInStdlibInlineFunction() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/bytecodePreprocessing/inlineApiVersionAtLeastInStdlibInlineFunction.kt");
+        }
     }
 
     @Nested

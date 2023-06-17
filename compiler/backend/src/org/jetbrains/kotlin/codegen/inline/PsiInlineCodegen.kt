@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.util.getResolvedCallWithAssert
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
@@ -185,6 +186,14 @@ class PsiInlineCodegen(
         putCapturedToLocalVal(stackValue, activeLambda!!.capturedVars[paramIndex], stackValue.kotlinType)
 
     override fun reorderArgumentsIfNeeded(actualArgsWithDeclIndex: List<ArgumentAndDeclIndex>, valueParameterTypes: List<Type>) = Unit
+
+    override fun isInlinedToInlineFunInKotlinRuntime(): Boolean {
+        val codegen = this.codegen as? ExpressionCodegen ?: return false
+        val caller = codegen.context.functionDescriptor
+        if (!caller.isInline) return false
+        val callerPackage = DescriptorUtils.getParentOfType(caller, PackageFragmentDescriptor::class.java) ?: return false
+        return callerPackage.fqName.asString().startsWith("kotlin.")
+    }
 }
 
 private val FunctionDescriptor.explicitParameters
