@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtFileSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithVisibility
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.collectDesignation
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirSafe
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbol
 import org.jetbrains.kotlin.analysis.utils.printer.parentsOfType
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
@@ -116,7 +115,8 @@ internal class KtFirVisibilityChecker(
 
     private fun collectContainingDeclarations(position: PsiElement): List<FirDeclaration> {
         val nonLocalContainer = findContainingNonLocalDeclaration(position)
-        val nonLocalContainerFir = nonLocalContainer?.resolveToFirSymbol(analysisSession.firResolveSession)?.fir ?: return emptyList()
+        val nonLocalContainerFir = nonLocalContainer?.getOrBuildFirSafe<FirDeclaration>(analysisSession.firResolveSession)
+            ?: return emptyList()
 
         val designation = nonLocalContainerFir.collectDesignation()
 
