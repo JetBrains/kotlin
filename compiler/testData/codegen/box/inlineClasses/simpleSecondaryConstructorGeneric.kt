@@ -1,5 +1,4 @@
-// TARGET_BACKEND: JVM
-// TARGET_BACKEND: JVM_IR
+// JVM runtime exception: java.lang.ClassCastException: kotlin.Unit cannot be cast to Foo
 // WITH_STDLIB
 // WORKS_WHEN_VALUE_CLASS
 // LANGUAGE: +ValueClasses, +GenericInlineClassParameter, +ValueClassesSecondaryConstructorWithBody
@@ -7,7 +6,7 @@
 OPTIONAL_JVM_INLINE_ANNOTATION
 value class Foo<T: String>(val x: T) {
     constructor(y: Int) : this("OK" as T) {
-        if (y == 0) return throw java.lang.IllegalArgumentException()
+        if (y == 0) throw IllegalArgumentException()
         if (y == 1) return
         return Unit
     }

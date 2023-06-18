@@ -1,9 +1,8 @@
-// TARGET_BACKEND: JVM
-// TARGET_BACKEND: JVM_IR
 // WITH_STDLIB
 // TODO: Fir2Ir generates overrides as finals.
+// WORKS_WHEN_VALUE_CLASS
 
-@JvmInline
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class Inlined(val value: Int)
 
 sealed interface A {

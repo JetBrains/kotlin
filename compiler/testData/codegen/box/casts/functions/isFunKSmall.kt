@@ -26,23 +26,18 @@ fun box(): String {
     val localFun0 = ::local0 as Any
     val localFun1 = ::local1 as Any
 
-    assertNonJVM(f0 is Function0<*>) { "Failed: f0 is Function0<*>" }
-    assertNonJVM(f1 is Function1<*, *>) { "Failed: f1 is Function1<*, *>" }
+    if (f0 !is Function0<*>) return "Failed: f0 is Function0<*>"
+    if (f1 !is Function1<*, *>) return "Failed: f1 is Function1<*, *>"
 
-    assertNonJVM(lambda0 is Function0<*>) { "Failed: lambda0 is Function0<*>" }
-    assertNonJVM(lambda1 is Function1<*, *>) { "Failed: lambda1 is Function1<*, *>" }
+    if (lambda0 !is Function0<*>) return "Failed: lambda0 is Function0<*>"
+    if (lambda1 !is Function1<*, *>) return "Failed: lambda1 is Function1<*, *>"
 
-    assertNonJVM(localFun0 is Function0<*>) { "Failed: localFun0 is Function0<*>" }
-    assertNonJVM(localFun1 is Function1<*, *>) { "Failed: localFun1 is Function1<*, *>" }
+    if (localFun0 !is Function0<*>) return "Failed: localFun0 is Function0<*>"
+    if (localFun1 !is Function1<*, *>) return "Failed: localFun1 is Function1<*, *>"
 
-    assertNonJVM(ef is Function1<*, *>) { "Failed: ef is Function1<*, *>" }
+    if (ef !is Function1<*, *>) return "Failed: ef is Function1<*, *>"
 
-    assertNonJVM(afoo is Function1<*, *>) { "afoo is Function1<*, *>" }
+    if (afoo !is Function1<*, *>) return "afoo is Function1<*, *>"
 
     return "OK"
-}
-
-fun assertNonJVM(value: Boolean, message: ()->String) {
-    if(!value)
-        throw Exception(message())
 }

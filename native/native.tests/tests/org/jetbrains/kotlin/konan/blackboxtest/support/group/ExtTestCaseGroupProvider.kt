@@ -538,6 +538,7 @@ private class ExtTestDataFile(
             "-ProhibitAssigningSingleElementsToVarargsInNamedForm", // Prohibit these assignments
             "-ProhibitDataClassesOverridingCopy",                   // Prohibit as no longer supported
             "-ProhibitOperatorMod",                                 // Prohibit as no longer supported
+            "-ProhibitIllegalValueParameterUsageInDefaultArguments",  // Allow only legal values
             "-UseBuilderInferenceOnlyIfNeeded",                     // Run only default one
             "-UseCorrectExecutionOrderForVarargArguments"           // Run only correct one
         )

@@ -11,8 +11,8 @@ fun box(): String {
     val epg = Any::extProp.getter
     val eps = Any::extProp.setter
 
-    assert(epg is Function1<*, *>) { "Failed: epg is Function1<*, *>"}
-    assert(eps is Function2<*, *, *>) { "Failed: eps is Function2<*, *, *>"}
+    if (epg !is Function1<*, *>) return "Failed: epg is Function1<*, *>"
+    if (eps !is Function2<*, *, *>) return "Failed: eps is Function2<*, *, *>"
 
     return "OK"
 }

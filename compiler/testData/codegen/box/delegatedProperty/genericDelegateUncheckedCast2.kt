@@ -1,5 +1,10 @@
 // related to KT-8135: ClassCastException is not thrown when using delegating properties with unchecked casts inside
-// IGNORE_BACKEND: NATIVE, JS, JS_IR, JS_IR_ES6, WASM
+// IGNORE_BACKEND: WASM
+// IGNORE_BACKEND: NATIVE
+// FIR status: not supported in JVM
+// IGNORE_BACKEND: JS_IR
+// IGNORE_BACKEND: JS_IR_ES6
+// IGNORE_BACKEND: JS
 
 import kotlin.reflect.KProperty
 
@@ -32,8 +37,8 @@ inline fun asFailsWithCCE(block: () -> Unit) {
 fun box(): String {
     val c = A().B()
 
-    (del as Delegate<Int>).inner = 10
-    asFailsWithCCE { c.prop }  // does not fail in JS due KT-8135.
+    (del as Delegate<String?>).inner = null
+    asFailsWithCCE { c.prop }
 
     return "OK"
 }
