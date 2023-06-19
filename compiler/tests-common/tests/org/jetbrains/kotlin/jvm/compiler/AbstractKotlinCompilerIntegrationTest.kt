@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.metadata.K2MetadataCompiler
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir
+import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 import java.util.jar.JarOutputStream
 import java.util.jar.Manifest
@@ -105,12 +106,12 @@ abstract class AbstractKotlinCompilerIntegrationTest : TestCaseWithTmpdir() {
         additionalOptions: List<String> = emptyList(),
         checkKotlinOutput: (String) -> Unit = { actual -> assertEquals(normalizeOutput("" to ExitCode.OK), actual) }
     ): File {
-        val destination = File(tmpdir, "$libraryName.js")
+        val destination = File(tmpdir, libraryName)
         val output = compileKotlin(
             libraryName, destination, compiler = K2JSCompiler(), additionalOptions = additionalOptions, expectedFileName = null
         )
         checkKotlinOutput(normalizeOutput(output))
-        return File(tmpdir, "$libraryName.meta.js")
+        return destination
     }
 
     /**
@@ -164,14 +165,14 @@ abstract class AbstractKotlinCompilerIntegrationTest : TestCaseWithTmpdir() {
         additionalSources.mapTo(args) { File(testDataDirectory, it).path }
 
         if (compiler is K2JSCompiler) {
-            if (classpath.isNotEmpty()) {
-                args.add("-libraries")
-                args.add(classpath.joinToString(File.pathSeparator))
-            }
-            args.add("-Xforce-deprecated-legacy-compiler-usage")
-            args.add("-output")
+            args.add("-libraries")
+            args.add((classpath + PathUtil.kotlinPathsForCompiler.jsStdLibJarPath).joinToString(File.pathSeparator))
+            args.add("-Xir-produce-klib-dir")
+            args.add("-Xir-only")
+            args.add("-ir-output-dir")
             args.add(output.path)
-            args.add("-meta-info")
+            args.add("-ir-output-name")
+            args.add("out")
         } else if (compiler is K2JVMCompiler || compiler is K2MetadataCompiler) {
             if (classpath.isNotEmpty()) {
                 args.add("-classpath")

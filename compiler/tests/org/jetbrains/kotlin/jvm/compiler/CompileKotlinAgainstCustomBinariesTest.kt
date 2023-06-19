@@ -101,17 +101,6 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
         compileKotlin("source.kt", tmpdir, listOf(library), K2JVMCompiler(), additionalOptions.toList())
     }
 
-    private fun doTestKotlinLibraryWithWrongMetadataVersionJs(libraryName: String, vararg additionalOptions: String) {
-        val library = compileJsLibrary(libraryName, additionalOptions = listOf("-Xmetadata-version=42.0.0"))
-        compileKotlin(
-            "source.kt",
-            File(tmpdir, "usage.js"),
-            listOf(library),
-            K2JSCompiler(),
-            additionalOptions.toList()
-        )
-    }
-
     private fun doTestPreReleaseKotlinLibrary(
         compiler: CLICompiler<*>,
         libraryName: String,
@@ -320,10 +309,6 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
         doTestKotlinLibraryWithWrongMetadataVersion("library", null)
     }
 
-    fun testWrongMetadataVersionJs() {
-        doTestKotlinLibraryWithWrongMetadataVersionJs("library")
-    }
-
     fun testWrongMetadataVersionBadMetadata() {
         doTestKotlinLibraryWithWrongMetadataVersion("library", { name, value ->
             if (JvmAnnotationNames.METADATA_DATA_FIELD_NAME == name) {
@@ -344,10 +329,6 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
 
     fun testWrongMetadataVersionSkipVersionCheck() {
         doTestKotlinLibraryWithWrongMetadataVersion("library", null, "-Xskip-metadata-version-check")
-    }
-
-    fun testWrongMetadataVersionJsSkipVersionCheck() {
-        doTestKotlinLibraryWithWrongMetadataVersionJs("library", "-Xskip-metadata-version-check")
     }
 
     fun testWrongMetadataVersionSkipPrereleaseCheckHasNoEffect() {
