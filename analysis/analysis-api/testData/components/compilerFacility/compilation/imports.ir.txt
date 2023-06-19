@@ -1,0 +1,8 @@
+MODULE_FRAGMENT name:<Sources of main>
+  FILE fqName:<root> fileName:/imports.kt
+    FUN name:main visibility:public modality:FINAL <> () returnType:kotlin.Unit
+      BLOCK_BODY
+        CALL 'public final fun writeText (text: kotlin.String, charset: java.nio.charset.Charset): kotlin.Unit declared in kotlin.io' type=kotlin.Unit origin=null
+          $receiver: CONSTRUCTOR_CALL 'public constructor <init> (p0: @[FlexibleNullability] kotlin.String?) declared in java.io.File' type=java.io.File origin=null
+            p0: CONST String type=kotlin.String value="foo"
+          text: CONST String type=kotlin.String value="Hello, world!"

@@ -1,0 +1,6 @@
+public final class CodeFragment {
+    // source: 'fragment.kt'
+    public method <init>(): void
+    public final static method generated_for_debugger_fun(p0: kotlin.jvm.internal.Ref$IntRef): void
+    public final inner class kotlin/jvm/internal/Ref$IntRef
+}
