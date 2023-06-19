@@ -1,0 +1,4 @@
+public final class CodeFragment {
+    public method <init>(): void
+    public final static method run(p0: Foo): kotlin.Unit
+}

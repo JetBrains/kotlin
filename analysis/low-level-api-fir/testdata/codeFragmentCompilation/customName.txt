@@ -1,0 +1,4 @@
+public final class MyCodeFragment {
+    public method <init>(): void
+    public final static method invoke(): java.lang.String
+}
