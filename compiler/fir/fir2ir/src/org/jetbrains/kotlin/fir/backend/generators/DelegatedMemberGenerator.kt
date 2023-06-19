@@ -53,7 +53,7 @@ class DelegatedMemberGenerator(private val components: Fir2IrComponents) : Fir2I
 
     fun generateBodies() {
         for ((declaration, irField, delegateToSymbol, delegateToLookupTag) in bodiesInfo) {
-            val callTypeCanBeNullable = Fir2IrImplicitCastInserter.typeCanBeEnhancedOrFlexibleNullable(delegateToSymbol.fir.returnTypeRef)
+            val callTypeCanBeNullable = Fir2IrImplicitCastInserter.typeCanBeEnhancedOrFlexibleNullable(delegateToSymbol.fir.returnTypeRef.coneType.fullyExpandedType(session))
             when (declaration) {
                 is IrSimpleFunction -> {
                     val member = declarationStorage.getIrFunctionSymbol(

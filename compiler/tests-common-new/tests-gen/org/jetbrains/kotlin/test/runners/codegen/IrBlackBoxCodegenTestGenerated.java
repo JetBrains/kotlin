@@ -18490,6 +18490,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("flexibleStaticConstantFromJava.kt")
+        public void testFlexibleStaticConstantFromJava() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/flexibleStaticConstantFromJava.kt");
+        }
+
+        @Test
         @TestMetadata("getOnNullableTypeAlias.kt")
         public void testGetOnNullableTypeAlias() throws Exception {
             runTest("compiler/testData/codegen/box/fir/getOnNullableTypeAlias.kt");

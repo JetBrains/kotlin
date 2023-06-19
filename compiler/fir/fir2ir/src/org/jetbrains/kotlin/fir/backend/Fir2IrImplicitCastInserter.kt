@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirUnitExpression
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
 import org.jetbrains.kotlin.ir.IrBuiltIns
@@ -197,7 +198,7 @@ class Fir2IrImplicitCastInserter(
 
     // ==================================================================================
 
-    internal fun IrExpression.cast(expression: FirExpression, valueType: FirTypeRef, expectedType: FirTypeRef): IrExpression {
+    internal fun IrExpression.cast(expression: FirExpression, valueTypeRef: FirTypeRef, expectedTypeRef: FirTypeRef): IrExpression {
         if (this is IrTypeOperatorCall) {
             return this
         }
@@ -206,12 +207,15 @@ class Fir2IrImplicitCastInserter(
             insertImplicitCasts()
         }
 
+        val valueType = valueTypeRef.coneTypeSafe<ConeKotlinType>()?.fullyExpandedType(session) ?: return this
+        val expectedType = expectedTypeRef.coneTypeSafe<ConeKotlinType>()?.fullyExpandedType(session) ?: return this
+
         return when {
             expectedType.isUnit -> {
                 coerceToUnitIfNeeded(this, irBuiltIns)
             }
-            valueType.coneTypeSafe<ConeDynamicType>() != null -> {
-                if (expectedType.coneType !is ConeDynamicType && !expectedType.isNullableAny) {
+            valueType is ConeDynamicType -> {
+                if (expectedType !is ConeDynamicType && !expectedType.isNullableAny) {
                     implicitCast(this, expectedType.toIrType(ConversionTypeContext.DEFAULT))
                 } else {
                     this
@@ -226,8 +230,9 @@ class Fir2IrImplicitCastInserter(
         }
     }
 
-    private fun FirTypeRef.acceptsNullValues(): Boolean =
-        canBeNull || hasEnhancedNullability()
+    private fun ConeKotlinType.acceptsNullValues(): Boolean {
+        return canBeNull || hasEnhancedNullability
+    }
 
     private fun IrExpression.insertImplicitNotNullCastIfNeeded(expression: FirExpression): IrExpression {
         if (this is IrGetEnumValue) return this
@@ -365,17 +370,18 @@ class Fir2IrImplicitCastInserter(
             )
         }
 
-        internal fun typeCanBeEnhancedOrFlexibleNullable(typeRef: FirTypeRef): Boolean {
+        internal fun typeCanBeEnhancedOrFlexibleNullable(type: ConeKotlinType): Boolean {
             return when {
-                typeRef.hasEnhancedNullability() -> true
-                typeRef.isNullabilityFlexible() && typeRef.canBeNull -> true
+                type.hasEnhancedNullability -> true
+                type.hasFlexibleNullability && type.canBeNull -> true
                 else -> false
             }
         }
 
-        private fun FirTypeRef.isNullabilityFlexible(): Boolean {
-            val flexibility = coneTypeSafe<ConeFlexibleType>() ?: return false
-            return flexibility.lowerBound.isMarkedNullable != flexibility.upperBound.isMarkedNullable
-        }
+        private val ConeKotlinType.hasFlexibleNullability: Boolean
+            get() {
+                if (this !is ConeFlexibleType) return false
+                return lowerBound.isMarkedNullable != upperBound.isMarkedNullable
+            }
     }
 }

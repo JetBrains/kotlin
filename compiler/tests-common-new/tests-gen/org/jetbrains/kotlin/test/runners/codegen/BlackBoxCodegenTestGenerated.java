@@ -17668,6 +17668,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
 
         @Test
+        @TestMetadata("flexibleStaticConstantFromJava.kt")
+        public void testFlexibleStaticConstantFromJava() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/flexibleStaticConstantFromJava.kt");
+        }
+
+        @Test
         @TestMetadata("incorrectBytecodeWithEnhancedNullability.kt")
         public void testIncorrectBytecodeWithEnhancedNullability() throws Exception {
             runTest("compiler/testData/codegen/box/fir/incorrectBytecodeWithEnhancedNullability.kt");

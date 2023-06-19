@@ -14673,6 +14673,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/fir/flexibleIntegerLiterals.kt");
         }
 
+        @TestMetadata("flexibleStaticConstantFromJava.kt")
+        public void testFlexibleStaticConstantFromJava() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/flexibleStaticConstantFromJava.kt");
+        }
+
         @TestMetadata("incorrectBytecodeWithEnhancedNullability.kt")
         public void testIncorrectBytecodeWithEnhancedNullability() throws Exception {
             runTest("compiler/testData/codegen/box/fir/incorrectBytecodeWithEnhancedNullability.kt");
