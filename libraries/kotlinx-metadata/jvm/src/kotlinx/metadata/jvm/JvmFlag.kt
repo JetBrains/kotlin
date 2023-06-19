@@ -62,7 +62,7 @@ object JvmFlag {
          * clients compiled without all-compatibility.
          */
         @JvmField
-        @Deprecated("$prefix KmProperty.isCompiledInCompatibilityMode")
+        @Deprecated("$prefix KmClass.isCompiledInCompatibilityMode")
         val IS_COMPILED_IN_COMPATIBILITY_MODE = booleanFlag(JF.IS_COMPILED_IN_COMPATIBILITY_MODE)
     }
 

@@ -12,10 +12,13 @@ import org.jetbrains.kotlin.metadata.ProtoBuf.Visibility as ProtoVisibility
 import org.jetbrains.kotlin.metadata.ProtoBuf.Modality as ProtoModality
 import org.jetbrains.kotlin.metadata.ProtoBuf.MemberKind as ProtoMemberKind
 
-// Do not reorder any enums in this file!
+// Pay attention to the order of enums in this file!
+// Order of enum values is directly linked to order of corresponding protobuf enums in org.jetbrains.kotlin.metadata.ProtoBuf.
+// Changes in the binary format should be reflected in the protobuf and therefore in enums in this file.
+// Arbitrary reordering of enum members here will likely break deserialization.
 
 /**
- * Represents visibility level (also known as access level) of a corresponding declaration.
+ * Represents visibility level (also known as access level) of the corresponding declaration.
  * Some of these visibilities may be non-denotable in Kotlin.
  */
 enum class Visibility(kind: Int) {
@@ -72,7 +75,9 @@ enum class Visibility(kind: Int) {
 }
 
 /**
- * Represents modality of a corresponding declaration.
+ * Represents modality of the corresponding declaration.
+ *
+ * Modality determines when and where it is possible to extend/override a class/member.
  */
 enum class Modality(kind: Int) {
     /**
@@ -93,8 +98,8 @@ enum class Modality(kind: Int) {
     /**
      * Signifies that the corresponding declaration is `sealed`.
      *
-     * Pay attention that this modality is not applicable to class' members.
-     * Setting it as a value for member modality leads to an undefined behaviour.
+     * Pay attention that this modality is not applicable to class members.
+     * Setting it as a value for member modality leads to an undefined behavior.
      */
     SEALED(ProtoModality.SEALED_VALUE)
     ;
@@ -103,11 +108,11 @@ enum class Modality(kind: Int) {
 }
 
 /**
- * Represents the nature of a corresponding class.
+ * Represents the kind of the corresponding class, i.e., the way it is declared in the source code.
  */
 enum class ClassKind(kind: Int) {
     /**
-     * Signifies that the corresponding class is a usual `class`.
+     * Signifies that the corresponding class is a usual or anonymous class.
      */
     CLASS(ProtoClassKind.CLASS_VALUE),
 
@@ -132,7 +137,7 @@ enum class ClassKind(kind: Int) {
     ANNOTATION_CLASS(ProtoClassKind.ANNOTATION_CLASS_VALUE),
 
     /**
-     * Signifies that the corresponding class is a non-companion `object`.
+     * Signifies that the corresponding class is a non-companion, singleton `object`.
      */
     OBJECT(ProtoClassKind.OBJECT_VALUE),
 
@@ -169,7 +174,7 @@ enum class MemberKind(kind: Int) {
      * Signifies that the corresponding function or property exists in the containing class because it has been produced
      * by interface delegation.
      *
-     * Do not confuse with property delegation which is denoted by [KmProperty.isDelegated].
+     * Not to be confused with property delegation which is denoted by [KmProperty.isDelegated].
      */
     DELEGATION(ProtoMemberKind.DELEGATION_VALUE),
 

@@ -33,6 +33,10 @@ interface KmDeclarationContainer {
 
 /**
  * Represents a Kotlin class.
+ *
+ * 'Class' here is used in a broad sense and includes interfaces, enum classes, companion objects, et cetera.
+ * Precise kind of the class can be obtained via [KmClass.kind].
+ * Various class attributes can be read and manipulated via extension properties, such as [KmClass.visibility] or [KmClass.isData].
  */
 @Suppress("DEPRECATION")
 class KmClass : KmClassVisitor(), KmDeclarationContainer {
@@ -306,7 +310,8 @@ class KmLambda : KmLambdaVisitor() {
 /**
  * Represents a constructor of a Kotlin class.
  *
- * @property flags constructor flags, consisting of [Flag.HAS_ANNOTATIONS], a visibility flag and [Flag.Constructor] flags
+ * Various constructor attributes can be read and manipulated via extension properties,
+ * such as [KmConstructor.visibility] or [KmConstructor.isSecondary].
  */
 @Suppress("DEPRECATION")
 class KmConstructor @Deprecated(flagsCtorDeprecated) constructor(
@@ -357,7 +362,9 @@ class KmConstructor @Deprecated(flagsCtorDeprecated) constructor(
 /**
  * Represents a Kotlin function declaration.
  *
- * @property flags function flags, consisting of [Flag.HAS_ANNOTATIONS], visibility flag, modality flag and [Flag.Function] flags
+ * Various function attributes can be read and manipulated via extension properties,
+ * such as [KmFunction.visibility] or [KmFunction.isSuspend].
+ *
  * @property name the name of the function
  */
 @Suppress("DEPRECATION")
@@ -464,8 +471,9 @@ class KmFunction @Deprecated(flagsCtorDeprecated) constructor(
 
 /**
  * Represents a Kotlin property accessor.
+ *
  * Does not contain meaningful information except attributes, such as visibility and modality.
- * Attributes can be read and written using extension functions, e.g. [KmPropertyAccessorAttributes.visibility] or [KmPropertyAccessorAttributes.isNotDefault].
+ * Attributes can be read and written using extension properties, e.g. [KmPropertyAccessorAttributes.visibility] or [KmPropertyAccessorAttributes.isNotDefault].
  */
 public class KmPropertyAccessorAttributes internal constructor(internal var flags: Int) {
     public constructor() : this(0)
@@ -474,7 +482,11 @@ public class KmPropertyAccessorAttributes internal constructor(internal var flag
 /**
  * Represents a Kotlin property declaration.
  *
- * @property flags property flags, consisting of [Flag.HAS_ANNOTATIONS], visibility flag, modality flag and [Flag.Property] flags
+ * Various property attributes can be read and manipulated via extension properties,
+ * such as [KmProperty.visibility] or [KmProperty.isVar].
+ *
+ * Getter and setter attributes are available separately via extensions on [KmProperty.getter] and [KmProperty.setter] correspondingly.
+ *
  * @property name the name of the property
  */
 @Suppress("DEPRECATION")
@@ -489,7 +501,7 @@ class KmProperty @Deprecated(flagsCtorDeprecated) constructor(
 
     /**
      * Attributes of the getter of this property.
-     * Attributes can be retrieved with extension functions, such as [KmPropertyAccessorAttributes.visibility] or [KmPropertyAccessorAttributes.isNotDefault].
+     * Attributes can be retrieved with extension properties, such as [KmPropertyAccessorAttributes.visibility] or [KmPropertyAccessorAttributes.isNotDefault].
      *
      * Getter for property is always present, hence return type of this function is non-nullable.
      */
@@ -497,7 +509,7 @@ class KmProperty @Deprecated(flagsCtorDeprecated) constructor(
 
     /**
      * Attributes of the setter of this property.
-     * Attributes can be retrieved with extension functions, such as [KmPropertyAccessorAttributes.visibility] or [KmPropertyAccessorAttributes.isNotDefault].
+     * Attributes can be retrieved with extension properties, such as [KmPropertyAccessorAttributes.visibility] or [KmPropertyAccessorAttributes.isNotDefault].
      *
      * Returns null if setter is absent, i.e. [KmProperty.isVar] is false.
      */
@@ -635,7 +647,9 @@ class KmProperty @Deprecated(flagsCtorDeprecated) constructor(
 /**
  * Represents a Kotlin type alias declaration.
  *
- * @property flags type alias flags, consisting of [Flag.HAS_ANNOTATIONS] and visibility flag
+ * Various type alias attributes can be read and manipulated via extension properties,
+ * such as [KmTypeAlias.visibility] or [KmTypeAlias.hasAnnotations].
+ *
  * @property name the name of the type alias
  */
 @Suppress("DEPRECATION")
@@ -720,7 +734,9 @@ class KmTypeAlias @Deprecated(flagsCtorDeprecated) constructor(
 /**
  * Represents a value parameter of a Kotlin constructor, function or property setter.
  *
- * @property flags value parameter flags, consisting of [Flag.ValueParameter] flags
+ * Various value parameter attributes can be read and manipulated via extension properties,
+ * such as [KmValueParameter.declaresDefaultValue].
+ *
  * @property name the name of the value parameter
  */
 @Suppress("DEPRECATION")
@@ -774,7 +790,9 @@ class KmValueParameter @Deprecated(flagsCtorDeprecated) constructor(
 /**
  * Represents a type parameter of a Kotlin class, function, property or type alias.
  *
- * @property flags type parameter flags, consisting of [Flag.TypeParameter] flags
+ * Various type parameter attributes can be read and manipulated via extension properties,
+ * such as [KmTypeParameter.isReified].
+ *
  * @property name the name of the type parameter
  * @property id the id of the type parameter, useful to be able to uniquely identify the type parameter in different contexts where
  *           the name is not enough (e.g. `class A<T> { fun <T> foo(t: T) }`)
@@ -822,7 +840,8 @@ class KmTypeParameter @Deprecated(flagsCtorDeprecated) constructor(
 /**
  * Represents a type.
  *
- * @property flags type flags, consisting of [Flag.Type] flags
+ * Various type attributes can be read and manipulated via extension properties,
+ * such as [KmType.isNullable].
  */
 @Suppress("DEPRECATION")
 class KmType @Deprecated(flagsCtorDeprecated) constructor(
@@ -1086,6 +1105,9 @@ class KmEffect(
  *
  * Contracts are an internal feature of the standard Kotlin library, and their behavior and/or binary format
  * may change in a subsequent release.
+ *
+ * Various effect expression attributes can be read and manipulated via extension properties,
+ * such as [KmEffectExpression.isNegated].
  */
 @ExperimentalContracts
 @Suppress("DEPRECATION")
