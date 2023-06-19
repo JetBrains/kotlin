@@ -111,6 +111,12 @@ val IrType.classFqName: FqName?
 
 val IrTypeArgument.typeOrNull: IrType? get() = (this as? IrTypeProjection)?.type
 
+val IrTypeArgument.typeOrFail: IrType
+    get() {
+        require(this is IrTypeProjection) { "Type argument should be of type `IrTypeProjection`, but was `${this::class}` instead" }
+        return this.type
+    }
+
 fun IrType.makeNotNull() = withNullability(false)
 
 fun IrType.makeNullable() = withNullability(true)

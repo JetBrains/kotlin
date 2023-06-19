@@ -6,7 +6,10 @@
 package org.jetbrains.kotlin.backend.common.lower.inline
 
 
-import org.jetbrains.kotlin.backend.common.*
+import org.jetbrains.kotlin.backend.common.BodyLoweringPass
+import org.jetbrains.kotlin.backend.common.CommonBackendContext
+import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
+import org.jetbrains.kotlin.backend.common.ScopeWithIr
 import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.common.ir.isPure
 import org.jetbrains.kotlin.backend.common.lower.InnerClassesSupport
@@ -403,13 +406,17 @@ class FunctionInlining(
                     typeParam.symbol to superType.arguments[typeParam.index].typeOrNull!!
                 }
 
+                require(superType.arguments.isNotEmpty()) { "type should have at least one type argument: ${superType.render()}" }
+                // This expression equals to return type of function reference with substituted type arguments
+                val functionReferenceReturnType = superType.arguments.last().typeOrFail
+
                 val immediateCall = when (inlinedFunction) {
                     is IrConstructor -> {
                         val classTypeParametersCount = inlinedFunction.parentAsClass.typeParameters.size
                         IrConstructorCallImpl.fromSymbolOwner(
                             if (inlineArgumentsWithTheirOriginalTypeAndOffset) irFunctionReference.startOffset else irCall.startOffset,
                             if (inlineArgumentsWithTheirOriginalTypeAndOffset) irFunctionReference.endOffset else irCall.endOffset,
-                            inlinedFunction.returnType,
+                            functionReferenceReturnType,
                             inlinedFunction.symbol,
                             classTypeParametersCount,
                             INLINED_FUNCTION_REFERENCE
@@ -419,7 +426,7 @@ class FunctionInlining(
                         IrCallImpl(
                             if (inlineArgumentsWithTheirOriginalTypeAndOffset) irFunctionReference.startOffset else irCall.startOffset,
                             if (inlineArgumentsWithTheirOriginalTypeAndOffset) irFunctionReference.endOffset else irCall.endOffset,
-                            inlinedFunction.returnType,
+                            functionReferenceReturnType,
                             inlinedFunction.symbol,
                             inlinedFunction.typeParameters.size,
                             inlinedFunction.valueParameters.size,
