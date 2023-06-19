@@ -12,11 +12,11 @@ internal class InternalHashMap<K, V> private constructor(
     private var hashArray: IntArray,
     private var maxProbeDistance: Int,
     private var length: Int,
-) {
+) : InternalMap<K, V> {
     private var hashShift: Int = computeShift(hashSize)
 
     private var _size: Int = 0
-    val size: Int
+    override val size: Int
         get() = _size
 
     private var keysView: HashMapKeys<K>? = null
@@ -89,13 +89,17 @@ internal class InternalHashMap<K, V> private constructor(
     fun containsKey(key: K): Boolean = findKey(key) >= 0
     fun containsValue(value: V): Boolean = findValue(value) >= 0
 
-    operator fun get(key: K): V? {
+    override operator fun get(key: K): V? {
         val index = findKey(key)
         if (index < 0) return null
         return valuesArray!![index]
     }
 
-    fun put(key: K, value: V): V? {
+    override fun contains(key: K): Boolean {
+        return containsKey(key)
+    }
+
+    override fun put(key: K, value: V): V? {
         checkIsMutable()
         val index = addKey(key)
         val valuesArray = allocateValuesArray()
@@ -114,7 +118,7 @@ internal class InternalHashMap<K, V> private constructor(
         putAllEntries(from.entries)
     }
 
-    fun remove(key: K): V? {
+    override fun remove(key: K): V? {
         val index = removeKey(key)  // mutability gets checked here
         if (index < 0) return null
         val valuesArray = valuesArray!!
@@ -123,7 +127,7 @@ internal class InternalHashMap<K, V> private constructor(
         return oldValue
     }
 
-    fun clear() {
+    override fun clear() {
         checkIsMutable()
         // O(length) implementation for hashArray cleanup
         for (i in 0..length - 1) {
@@ -137,6 +141,10 @@ internal class InternalHashMap<K, V> private constructor(
         valuesArray?.resetRange(0, length)
         _size = 0
         length = 0
+    }
+
+    override fun iterator(): MutableIterator<MutableMap.MutableEntry<K, V>> {
+        return entriesIterator()
     }
 
     val keys: MutableSet<K>
