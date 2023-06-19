@@ -1,0 +1,1 @@
+TreeSet(File("foo").readLines())

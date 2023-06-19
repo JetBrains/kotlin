@@ -1,0 +1,6 @@
+MODULE_FRAGMENT name:<Sources of main>
+  FILE fqName:<root> fileName:/simple.kt
+    FUN name:main visibility:public modality:FINAL <> () returnType:kotlin.Unit
+      BLOCK_BODY
+        CALL 'public final fun println (message: kotlin.Any?): kotlin.Unit [inline] declared in kotlin.io' type=kotlin.Unit origin=null
+          message: CONST String type=kotlin.String value="Hello, world!"
