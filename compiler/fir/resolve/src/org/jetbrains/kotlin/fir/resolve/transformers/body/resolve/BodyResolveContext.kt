@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.fir.resolve.inference.FirInferenceSession
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.resolve.transformers.withScopeCleanup
 import org.jetbrains.kotlin.fir.scopes.FirScope
+import org.jetbrains.kotlin.fir.scopes.computeImportingScopes
 import org.jetbrains.kotlin.fir.scopes.createImportingScopes
 import org.jetbrains.kotlin.fir.scopes.impl.FirLocalScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirMemberTypeParameterScope
@@ -529,9 +530,16 @@ class BodyResolveContext(
         }
     }
 
-    fun <T> withScopesForCodeFragment(codeFragment: FirCodeFragment, f: () -> T): T {
+    fun <T> withScopesForCodeFragment(codeFragment: FirCodeFragment, holder: SessionHolder, f: () -> T): T {
         val towerDataContext = codeFragment.towerDataContext ?: error("Context is not set for a code fragment")
-        val base = towerDataContext.addNonLocalTowerDataElements(towerDataContext.nonLocalTowerDataElements)
+
+        val fragmentImportTowerDataElements = computeImportingScopes(file, holder.session, holder.scopeSession)
+            .map { it.asTowerDataElement(isLocal = false) }
+
+        val base = towerDataContext
+            .addNonLocalTowerDataElements(towerDataContext.nonLocalTowerDataElements)
+            .addNonLocalTowerDataElements(fragmentImportTowerDataElements)
+
         val baseWithLocalScope = towerDataContext.localScopes.fold(base) { acc, scope -> acc.addLocalScope(scope) }
 
         val newContext = FirRegularTowerDataContexts(
