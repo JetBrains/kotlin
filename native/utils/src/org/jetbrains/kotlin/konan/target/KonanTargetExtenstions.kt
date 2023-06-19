@@ -178,10 +178,6 @@ val KonanTarget.supportsGrandCentralDispatch
         else -> false
     }
 
-// TODO: resolve the deadlock in parallel mark (probably in winpthread) and re-enable
-val KonanTarget.supportsParallelMark
-    get() = family != Family.MINGW
-
 // TODO: this is bad function. It should be replaced by capabilities functions like above
 // but two affected targets are too strange, so we postpone it
 fun KonanTarget.customArgsForKonanSources() = when (this) {

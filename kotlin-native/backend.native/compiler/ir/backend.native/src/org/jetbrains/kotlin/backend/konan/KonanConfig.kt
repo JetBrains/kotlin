@@ -142,16 +142,10 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         } ?: arg
     }
 
+    private val defaultGcMarkSingleThreaded get() = target.family == Family.MINGW
+
     val gcMarkSingleThreaded: Boolean by lazy {
-        val requestedSingleThreaded = configuration.get(BinaryOptions.gcMarkSingleThreaded)
-        if (!target.supportsParallelMark) {
-            if (requestedSingleThreaded == false) {
-                configuration.report(CompilerMessageSeverity.STRONG_WARNING, "Parallel mark is not supported on ${target.name}")
-            }
-            true
-        } else {
-            requestedSingleThreaded ?: false
-        }
+        configuration.get(BinaryOptions.gcMarkSingleThreaded) ?: defaultGcMarkSingleThreaded
     }
 
     val gcMutatorsCooperate: Boolean by lazy {
@@ -436,6 +430,8 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
             append("-runtime_asserts=${runtimeAssertsMode.name}")
         if (disableMmap != defaultDisableMmap)
             append("-disable_mmap=${disableMmap}")
+        if (gcMarkSingleThreaded != defaultGcMarkSingleThreaded)
+            append("-gc_mark_single_threaded=${gcMarkSingleThreaded}")
     }
 
     private val userCacheFlavorString = buildString {
