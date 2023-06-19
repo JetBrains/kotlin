@@ -264,8 +264,8 @@ internal class KtSymbolByFirBuilder constructor(
                 is FirFieldSymbol -> buildFieldSymbol(firSymbol)
                 is FirEnumEntrySymbol -> buildEnumEntrySymbol(firSymbol) // TODO enum entry should not be callable
                 is FirBackingFieldSymbol -> buildBackingFieldSymbol(firSymbol)
+                is FirErrorPropertySymbol -> buildErrorVariableSymbol(firSymbol)
 
-                is FirErrorPropertySymbol -> throwUnexpectedElementError(firSymbol)
                 is FirDelegateFieldSymbol -> throwUnexpectedElementError(firSymbol)
             }
         }

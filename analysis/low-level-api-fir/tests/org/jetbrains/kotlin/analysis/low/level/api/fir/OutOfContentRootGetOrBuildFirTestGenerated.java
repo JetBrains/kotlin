@@ -502,6 +502,12 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
         }
 
         @Test
+        @TestMetadata("ktij23263.kt")
+        public void testKtij23263() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/declarations/ktij23263.kt");
+        }
+
+        @Test
         @TestMetadata("objectLiteral.kt")
         public void testObjectLiteral() throws Exception {
             runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/declarations/objectLiteral.kt");

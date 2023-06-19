@@ -66,10 +66,7 @@ internal class KtFirCompileTimeConstantProvider(
             // ```
             // `false` does not have a corresponding elements on the FIR side and hence the containing `FirWhenBranch` is returned. In this
             // case, we simply report null since FIR does not know about it.
-            fir is FirWhenBranch -> null
-            fir is FirVariableAssignment && fir.source?.kind == KtFakeSourceElementKind.DesugaredIncrementOrDecrement -> null
-            fir is FirTypeRef -> null
-            else -> throwUnexpectedFirElementError(fir, sourcePsi)
+            else -> null
         }
     }
 

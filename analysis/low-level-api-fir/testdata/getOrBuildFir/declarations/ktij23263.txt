@@ -1,0 +1,18 @@
+KT element: KtStringTemplateExpression
+FIR element: FirErrorPropertyImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+<ERROR PROPERTY: Destructuring declarations are only allowed for local variables/values>
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] ktij23263.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    public? final? [ResolvedTo(RAW_FIR)] class InitOrderDemo : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] constructor([ResolvedTo(RAW_FIR)] name: String): R|InitOrderDemo| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        <ERROR PROPERTY: Destructuring declarations are only allowed for local variables/values>
+
+    }
