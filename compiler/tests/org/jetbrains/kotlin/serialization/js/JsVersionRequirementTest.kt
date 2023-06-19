@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.serialization.js
 
+import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.output.writeAllTo
+import org.jetbrains.kotlin.cli.js.klib.TopDownAnalyzerFacadeForJSIR
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.*
@@ -13,7 +15,9 @@ import org.jetbrains.kotlin.context.ContextForNewModule
 import org.jetbrains.kotlin.context.MutableModuleContext
 import org.jetbrains.kotlin.context.ProjectContext
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.ir.backend.js.prepareAnalyzedSourceModule
 import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS
+import org.jetbrains.kotlin.js.analyzer.JsAnalysisResult
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.js.facade.K2JSTranslator
@@ -47,13 +51,18 @@ class JsVersionRequirementTest : AbstractVersionRequirementTest() {
                 environment.project
             )
         }
-        val trace = BindingTraceContext()
-        val analysisResult = TopDownAnalyzerFacadeForJS.analyzeFilesWithGivenTrace(
-            ktFiles, trace, createModule(environment), environment.configuration, CompilerEnvironment, environment.project
+
+        val sourceModule = prepareAnalyzedSourceModule(
+            environment.project,
+            ktFiles,
+            environment.configuration,
+            environment.configuration[JSConfigurationKeys.LIBRARIES]!!.toList(),
+            emptyList(),
+            AnalyzerWithCompilerReport(environment.configuration),
+            analyzerFacade = TopDownAnalyzerFacadeForJSIR
         )
 
-        // There are INVISIBLE_REFERENCE errors on RequireKotlin and K2JSTranslator refuses to translate the code otherwise
-        trace.clearDiagnostics()
+        val analysisResult = sourceModule.jsFrontEndResult.jsAnalysisResult as JsAnalysisResult
 
         val result = K2JSTranslator(JsConfig(environment.project, environment.configuration, CompilerEnvironment)).translate(
             object : JsConfig.Reporter() {}, ktFiles, MainCallParameters.noCall(), analysisResult
