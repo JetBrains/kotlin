@@ -545,7 +545,7 @@ open class FirDeclarationsResolveTransformer(
 
     override fun transformCodeFragment(codeFragment: FirCodeFragment, data: ResolutionMode): FirCodeFragment {
         dataFlowAnalyzer.enterCodeFragment(codeFragment)
-        context.withScopesForCodeFragment(codeFragment) {
+        context.withScopesForCodeFragment(codeFragment, components) {
             transformBlock(codeFragment.block, data)
         }
         dataFlowAnalyzer.exitCodeFragment()
