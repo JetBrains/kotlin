@@ -440,6 +440,34 @@ fun fixMissingTestSpecComments(
     status.done("$missingCommentsCount fir files had missing TEST SPEC comments")
 }
 
+fun fixStupidEmptyLines(
+    alongsideNonIdenticalTests: List<String>,
+) {
+    val status = StatusPrinter()
+
+    val missingCommentsCount = alongsideNonIdenticalTests.count {
+        status.loading("Checking stupid empty lines in $it", probability = 0.001)
+        val k1FirstLine = File(it).readLines().firstOrNull() ?: return@count false
+        val k2File = File(it).analogousK2File
+        val k2Lines = k2File.readLines()
+        val k2FirstLine = k2File.readLines().firstOrNull() ?: return@count false
+
+        if (k1FirstLine.isNotBlank() && k2FirstLine.isBlank()) {
+            status.loading("Removing the stupid empty line in $it")
+
+            k2File.writeText(
+                k2Lines.drop(1).joinToString(System.lineSeparator())
+            )
+
+            true
+        } else {
+            false
+        }
+    }
+
+    status.done("$missingCommentsCount fir files had stupid empty lines")
+}
+
 class DiagnosticsStatistics(
     val disappearedDiagnosticToFilesCount: MutableMap<String, Int> = mutableMapOf(),
     val introducedDiagnosticToFilesCount: MutableMap<String, Int> = mutableMapOf(),
@@ -504,6 +532,7 @@ fun main() {
     }
 
     fixMissingTestSpecComments(tests.alongsideNonIdenticalTests)
+    fixStupidEmptyLines(tests.alongsideNonIdenticalTests)
     val status = StatusPrinter()
 
     fun Int.outOfAllAlongsideTests(): Int = this * 100 / (tests.alongsideNonIdenticalTests.size + tests.alongsideIdenticalTests.size)

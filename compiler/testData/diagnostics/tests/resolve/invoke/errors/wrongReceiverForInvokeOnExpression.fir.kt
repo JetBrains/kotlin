@@ -1,4 +1,3 @@
-
 fun test1() {
     1. <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>(fun String.(i: Int) = i )<!>(1)
     1.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>(label@ fun String.(i: Int) = i )<!>(1)

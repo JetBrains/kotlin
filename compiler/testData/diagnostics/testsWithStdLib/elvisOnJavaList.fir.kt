@@ -1,4 +1,3 @@
-
 // FILE: P.java
 
 import java.util.ArrayList;

@@ -1,4 +1,3 @@
-
 // FILE: J.java
 
 import kotlin.jvm.functions.Function1;

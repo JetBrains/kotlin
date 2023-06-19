@@ -1,4 +1,3 @@
-
 import kotlin.reflect.KClass
 
 open class A

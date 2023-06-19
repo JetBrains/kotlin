@@ -1,4 +1,3 @@
-
 class A {
     operator fun get(x: Int): Int = x
     fun set(x: Int, y: Int) {} // no `operator` modifier

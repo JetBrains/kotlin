@@ -1,4 +1,3 @@
-
 fun foo1() = <!EXPRESSION_EXPECTED!>while (b()) {}<!>
 
 fun foo2() = for (i in <!ITERATOR_MISSING!>10<!>) {}
