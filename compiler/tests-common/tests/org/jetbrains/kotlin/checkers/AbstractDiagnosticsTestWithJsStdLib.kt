@@ -7,7 +7,11 @@ package org.jetbrains.kotlin.checkers
 
 import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.ObsoleteTestInfrastructure
+import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
+import org.jetbrains.kotlin.cli.js.klib.TopDownAnalyzerFacadeForJSIR
+import org.jetbrains.kotlin.cli.js.klib.TopDownAnalyzerFacadeForWasm
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -15,6 +19,7 @@ import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
+import org.jetbrains.kotlin.ir.backend.js.prepareAnalyzedSourceModule
 import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS
 import org.jetbrains.kotlin.js.analyzer.JsAnalysisResult
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
@@ -56,31 +61,19 @@ abstract class AbstractDiagnosticsTestWithJsStdLib : AbstractDiagnosticsTest() {
         separateModules: Boolean,
         jvmTarget: JvmTarget
     ): JsAnalysisResult {
-        // TODO: support LANGUAGE directive in JS diagnostic tests
-        moduleTrace.record<ModuleDescriptor, ModuleKind>(MODULE_KIND, moduleContext.module, getModuleKind(files))
         config.configuration.languageVersionSettings = languageVersionSettings
-        return TopDownAnalyzerFacadeForJS.analyzeFilesWithGivenTrace(
-            files, moduleTrace, moduleContext, config.configuration, CompilerEnvironment, config.project
+
+        val sourceModule = prepareAnalyzedSourceModule(
+            config.project,
+            files,
+            config.configuration,
+            config.configuration[JSConfigurationKeys.LIBRARIES]!!.toList(),
+            emptyList(),
+            AnalyzerWithCompilerReport(config.configuration),
+            analyzerFacade = TopDownAnalyzerFacadeForJSIR
         )
-    }
 
-    private fun getModuleKind(ktFiles: List<KtFile>): ModuleKind {
-        var kind = ModuleKind.PLAIN
-        for (file in ktFiles) {
-            val text = file.text
-            for (textLine in StringUtil.splitByLines(text)) {
-                var line = textLine.trim { it <= ' ' }
-                if (!line.startsWith("//")) continue
-                line = line.substring(2).trim { it <= ' ' }
-                val parts = StringUtil.split(line, ":")
-                if (parts.size != 2) continue
-
-                if (parts[0].trim { it <= ' ' } != "MODULE_KIND") continue
-                kind = ModuleKind.valueOf(parts[1].trim { it <= ' ' })
-            }
-        }
-
-        return kind
+        return sourceModule.jsFrontEndResult.jsAnalysisResult as JsAnalysisResult
     }
 
     override fun getAdditionalDependencies(module: ModuleDescriptorImpl): List<ModuleDescriptorImpl> =
