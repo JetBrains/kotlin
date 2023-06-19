@@ -1689,7 +1689,7 @@ internal object EscapeAnalysis {
                             val itemSize = arrayItemSizeOf(irClass)
                             if (itemSize != null) {
                                 val sizeArgument = node.arguments.first().node
-                                val arrayLength = arrayLengthOf(sizeArgument)
+                                val arrayLength = arrayLengthOf(sizeArgument)?.takeIf { it >= 0 }
                                 val arraySize = arraySize(itemSize, arrayLength ?: Int.MAX_VALUE)
                                 if (arraySize <= allowedToAlloc) {
                                     stackArrayCandidates += ArrayStaticAllocation(ptgNode, irClass, arraySize.toInt())
