@@ -1,0 +1,47 @@
+plugins {
+    id "com.android.application"
+    id "org.jetbrains.kotlin.android"
+}
+
+repositories {
+    mavenLocal()
+    google()
+    mavenCentral()
+}
+
+android {
+    namespace = "com.example.android_many_source_dirs_app"
+    compileSdkVersion 33
+
+    defaultConfig {
+        applicationId "com.example"
+        minSdkVersion 24
+        targetSdkVersion 33
+        versionCode 1
+        versionName "1.0"
+    }
+
+    // Needed for older AGP. It can be removed when the lowest supported AGP version is 4.2.0 or newer.
+    compileOptions {
+        sourceCompatibility 1.8
+        targetCompatibility 1.8
+    }
+
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+
+    sourceSets.getByName("test").kotlin.srcDirs += 'src/test/reserveUnitTest'
+    sourceSets.getByName("androidTest").kotlin.srcDirs += 'src/androidTest/additionalTest'
+    sourceSets.getByName("main").kotlin.srcDirs += 'src/main/extraSources'
+
+}
+
+dependencies {
+    implementation "androidx.core:core-ktx:1.6.0"
+    implementation "com.google.android.material:material:1.6.0"
+    implementation "androidx.appcompat:appcompat:1.4.1"
+    testImplementation "junit:junit:4.13.2"
+    androidTestImplementation "androidx.test.ext:junit:1.1.5"
+    androidTestImplementation "androidx.test.espresso:espresso-core:3.5.1"
+}

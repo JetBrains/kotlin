@@ -189,4 +189,85 @@ class ExplicitApiIT : KGPBaseTest() {
             }
         }
     }
+
+    @DisplayName("Explicit api mode is enabled if added inside android extension")
+    @AndroidGradlePluginTests
+    @GradleAndroidTest
+    fun explicitApiInsideAndroidExtension(
+        gradleVersion: GradleVersion,
+        agpVersion: String,
+        jdkVersion: JdkVersions.ProvidedJdk
+    ) {
+        project(
+            "AndroidSimpleApp",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(
+                androidVersion = agpVersion,
+                logLevel = LogLevel.DEBUG,
+            ),
+            buildJdk = jdkVersion.location
+        ) {
+            buildGradle.modify {
+                it.replace(
+                    "kotlin {",
+                    """
+                    |kotlin {
+                    |       explicitApiWarning()
+                """.trimMargin()
+                )
+            }
+            build(":compileDebugKotlin") {
+                assertTasksExecuted(":compileDebugKotlin")
+                assertCompilerArgument(":compileDebugKotlin", "-Xexplicit-api=warning")
+            }
+            build(":compileDebugUnitTestKotlin") {
+                assertTasksExecuted(":compileDebugUnitTestKotlin")
+                assertNoCompilerArgument(":compileDebugUnitTestKotlin", "-Xexplicit-api=warning")
+            }
+        }
+    }
+
+    @DisplayName("Explicit api mode is enabled only for non-test variants in Android project in customized source directories")
+    @AndroidGradlePluginTests
+    @GradleAndroidTest
+    fun explicitApiCustomizedAndroidSourceSets(
+        gradleVersion: GradleVersion,
+        agpVersion: String,
+        jdkVersion: JdkVersions.ProvidedJdk
+    ) {
+        project(
+            "AndroidExtraSourceDirsApp",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(
+                androidVersion = agpVersion,
+                logLevel = LogLevel.DEBUG,
+            ),
+            buildJdk = jdkVersion.location
+        ) {
+            buildGradle.modify {
+                it.replace(
+                    "compileOptions {",
+                    """
+                    |kotlin {
+                    |       explicitApi = 'warning'
+                    |    }
+                    |    compileOptions {
+                """.trimMargin()
+                )
+            }
+            build(":compileDebugKotlin") {
+                assertTasksExecuted(":compileDebugKotlin")
+                assertCompilerArgument(":compileDebugKotlin", "-Xexplicit-api=warning")
+                assertOutputContains("Visibility must be specified in explicit API mode")
+            }
+            build(":compileDebugUnitTestKotlin") {
+                assertTasksExecuted(":compileDebugUnitTestKotlin")
+                assertNoCompilerArgument(":compileDebugUnitTestKotlin", "-Xexplicit-api=warning")
+            }
+            build(":compileDebugAndroidTestKotlin") {
+                assertTasksExecuted(":compileDebugAndroidTestKotlin")
+                assertNoCompilerArgument(":compileDebugAndroidTestKotlin", "-Xexplicit-api=warning")
+            }
+        }
+    }
 }
