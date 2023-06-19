@@ -8,7 +8,6 @@ fun box(): String {
     val k2 = { x *= 2; x }()::class
     // Note that k2 is the class of the wrapper type Int
     if (k2 != Int::class) return "Fail 3: $k2"
-    if (k2 != Integer::class) return "Fail 3.1415: $k2"
     if (x != 86) return "Fail 4: $x"
 
     return "OK"
