@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.util
 
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.throwUnexpectedFirElementError
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.containingDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLocalContainingOrThisDeclaration
@@ -197,3 +199,15 @@ private fun KtClassLikeDeclaration.findFir(provider: FirProvider): FirClassLikeD
 
 val FirDeclaration.isGeneratedDeclaration
     get() = realPsi == null
+
+internal val PsiElement.parentsWithSelfCodeFragmentAware: Sequence<PsiElement>
+    get() = generateSequence(this) { element ->
+        when (element) {
+            is KtCodeFragment -> element.context
+            is PsiFile -> null
+            else -> element.parent
+        }
+    }
+
+internal val PsiElement.parentsCodeFragmentAware: Sequence<PsiElement>
+    get() = parentsWithSelfCodeFragmentAware.drop(1)

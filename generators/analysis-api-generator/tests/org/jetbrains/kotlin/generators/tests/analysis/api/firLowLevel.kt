@@ -120,6 +120,14 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
         testClass<AbstractClassIdTest> {
             model("classId")
         }
+
+        testClass<AbstractCodeFragmentCompilationTest> {
+            model("codeFragmentCompilation", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
+        }
+
+        testClass<AbstractCodeFragmentCapturingTest> {
+            model("codeFragmentCompilation/capturing", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
+        }
     }
 
     testGroup(
