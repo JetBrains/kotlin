@@ -55,6 +55,7 @@ class IdSignatureDeserializer(
         val name = libraryFile.string(proto.name)
         val hash = proto.accessorHashId
         val mask = proto.flags
+        val description = if (proto.hasDebugInfo()) libraryFile.debugInfo(proto.debugInfo)?.let(internationService::string) else null
 
         val declarationFqName = internationService.string("${propertySignature.declarationFqName}.$name")
         val accessorSignature =
@@ -63,7 +64,7 @@ class IdSignatureDeserializer(
                 declarationFqName = declarationFqName,
                 id = hash,
                 mask = mask,
-                description = null, // TODO(KT-59486): Deserialize mangled name and save it here
+                description = description,
             )
 
         return IdSignature.AccessorSignature(propertySignature, accessorSignature)

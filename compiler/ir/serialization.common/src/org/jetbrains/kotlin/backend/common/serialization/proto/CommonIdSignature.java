@@ -107,7 +107,7 @@ public final class CommonIdSignature extends
           }
           case 40: {
             bitField0_ |= 0x00000004;
-            debugInfo_ = input.readInt64();
+            debugInfo_ = input.readInt32();
             break;
           }
         }
@@ -227,17 +227,17 @@ public final class CommonIdSignature extends
   }
 
   public static final int DEBUG_INFO_FIELD_NUMBER = 5;
-  private long debugInfo_;
+  private int debugInfo_;
   /**
-   * <code>optional int64 debug_info = 5;</code>
+   * <code>optional int32 debug_info = 5;</code>
    */
   public boolean hasDebugInfo() {
     return ((bitField0_ & 0x00000004) == 0x00000004);
   }
   /**
-   * <code>optional int64 debug_info = 5;</code>
+   * <code>optional int32 debug_info = 5;</code>
    */
-  public long getDebugInfo() {
+  public int getDebugInfo() {
     return debugInfo_;
   }
 
@@ -246,7 +246,7 @@ public final class CommonIdSignature extends
     declarationFqName_ = java.util.Collections.emptyList();
     memberUniqId_ = 0L;
     flags_ = 0L;
-    debugInfo_ = 0L;
+    debugInfo_ = 0;
   }
   private byte memoizedIsInitialized = -1;
   public final boolean isInitialized() {
@@ -282,7 +282,7 @@ public final class CommonIdSignature extends
       output.writeInt64(4, flags_);
     }
     if (((bitField0_ & 0x00000004) == 0x00000004)) {
-      output.writeInt64(5, debugInfo_);
+      output.writeInt32(5, debugInfo_);
     }
     output.writeRawBytes(unknownFields);
   }
@@ -331,7 +331,7 @@ public final class CommonIdSignature extends
     }
     if (((bitField0_ & 0x00000004) == 0x00000004)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeInt64Size(5, debugInfo_);
+        .computeInt32Size(5, debugInfo_);
     }
     size += unknownFields.size();
     memoizedSerializedSize = size;
@@ -435,7 +435,7 @@ public final class CommonIdSignature extends
       bitField0_ = (bitField0_ & ~0x00000004);
       flags_ = 0L;
       bitField0_ = (bitField0_ & ~0x00000008);
-      debugInfo_ = 0L;
+      debugInfo_ = 0;
       bitField0_ = (bitField0_ & ~0x00000010);
       return this;
     }
@@ -741,34 +741,34 @@ public final class CommonIdSignature extends
       return this;
     }
 
-    private long debugInfo_ ;
+    private int debugInfo_ ;
     /**
-     * <code>optional int64 debug_info = 5;</code>
+     * <code>optional int32 debug_info = 5;</code>
      */
     public boolean hasDebugInfo() {
       return ((bitField0_ & 0x00000010) == 0x00000010);
     }
     /**
-     * <code>optional int64 debug_info = 5;</code>
+     * <code>optional int32 debug_info = 5;</code>
      */
-    public long getDebugInfo() {
+    public int getDebugInfo() {
       return debugInfo_;
     }
     /**
-     * <code>optional int64 debug_info = 5;</code>
+     * <code>optional int32 debug_info = 5;</code>
      */
-    public Builder setDebugInfo(long value) {
+    public Builder setDebugInfo(int value) {
       bitField0_ |= 0x00000010;
       debugInfo_ = value;
       
       return this;
     }
     /**
-     * <code>optional int64 debug_info = 5;</code>
+     * <code>optional int32 debug_info = 5;</code>
      */
     public Builder clearDebugInfo() {
       bitField0_ = (bitField0_ & ~0x00000010);
-      debugInfo_ = 0L;
+      debugInfo_ = 0;
       
       return this;
     }

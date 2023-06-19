@@ -52,11 +52,11 @@ public interface CommonIdSignatureOrBuilder extends
   long getFlags();
 
   /**
-   * <code>optional int64 debug_info = 5;</code>
+   * <code>optional int32 debug_info = 5;</code>
    */
   boolean hasDebugInfo();
   /**
-   * <code>optional int64 debug_info = 5;</code>
+   * <code>optional int32 debug_info = 5;</code>
    */
-  long getDebugInfo();
+  int getDebugInfo();
 }
