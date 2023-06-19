@@ -2,9 +2,6 @@
 // ISSUE: KT-23447
 // WITH_STDLIB
 
-// IGNORE_BACKEND_K2: JVM_IR
-// Ignore reason: KT-57217
-
 // FILE: MyNumber.java
 
 public class MyNumber extends Number {

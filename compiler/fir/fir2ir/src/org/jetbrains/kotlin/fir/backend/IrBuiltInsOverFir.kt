@@ -77,9 +77,10 @@ class IrBuiltInsOverFir(
 
     private val number by createClass(kotlinIrPackage, IdSignatureValues.number, build = { modality = Modality.ABSTRACT }) {
         configureSuperTypes()
-        for (targetPrimitive in primitiveIrTypesWithComparisons) {
+        for (targetPrimitive in primitiveNumericIrTypes) {
             createMemberFunction("to${targetPrimitive.classFqName!!.shortName().asString()}", targetPrimitive, modality = Modality.ABSTRACT)
         }
+        createMemberFunction("toChar", charType, modality = Modality.OPEN)
         finalizeClassDefinition()
     }
     override val numberClass: IrClassSymbol get() = number.klass

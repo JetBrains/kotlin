@@ -22,7 +22,7 @@ CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Int modality:FINAL visibility:publ
     annotations:
       IntrinsicConstEvaluation
     overridden:
-      public abstract fun toChar (): kotlin.Char declared in kotlin.Number
+      public open fun toChar (): kotlin.Char declared in kotlin.Number
     $this: VALUE_PARAMETER name:$this type:kotlin.Int
   FUN BUILTIN_CLASS_METHOD name:toByte visibility:public modality:OPEN <> ($this:kotlin.Int) returnType:kotlin.Byte
     annotations:
