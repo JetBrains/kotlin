@@ -1,0 +1,7 @@
+public final class main/Main {
+    // source: 'main.kt'
+    public final static field INSTANCE: main.Main
+    static method <clinit>(): void
+    private method <init>(): void
+    public final static method main(p0: java.lang.String[]): void
+}

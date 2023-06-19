@@ -1,0 +1,1 @@
+callFoo(this@Foo) + callString(a) + callString(b)
