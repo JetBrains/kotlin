@@ -231,7 +231,13 @@ class IdSignatureSerializer(
 
     private fun composeContainerIdSignature(container: IrDeclarationParent, compatibleMode: Boolean): IdSignature =
         when (container) {
-            is IrPackageFragment -> IdSignature.CommonSignature(container.fqName.asString(), "", null, 0)
+            is IrPackageFragment -> IdSignature.CommonSignature(
+                packageFqName = container.fqName.asString(),
+                declarationFqName = "",
+                id = null,
+                mask = 0,
+                description = null,
+            )
             is IrDeclaration -> table.signatureByDeclaration(container, compatibleMode)
             else -> error("Unexpected container ${container.render()}")
         }

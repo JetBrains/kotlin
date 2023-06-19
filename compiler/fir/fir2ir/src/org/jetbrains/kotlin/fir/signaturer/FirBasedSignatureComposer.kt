@@ -126,13 +126,21 @@ class FirBasedSignatureComposer(override val mangler: FirMangler) : Fir2IrSignat
                 // TODO: private classes are probably not acceptable here too
                 val classId = declaration.classId
                 IdSignature.CommonSignature(
-                    classId.packageFqName.asString(), classId.relativeClassName.asString(), builder.hashId, builder.mask
+                    packageFqName = classId.packageFqName.asString(),
+                    declarationFqName = classId.relativeClassName.asString(),
+                    id = builder.hashId,
+                    mask = builder.mask,
+                    description = null, // TODO(KT-59486): Save mangled name here
                 )
             }
             is FirTypeAlias -> {
                 val classId = declaration.symbol.classId
                 IdSignature.CommonSignature(
-                    classId.packageFqName.asString(), classId.relativeClassName.asString(), builder.hashId, builder.mask
+                    packageFqName = classId.packageFqName.asString(),
+                    declarationFqName = classId.relativeClassName.asString(),
+                    id = builder.hashId,
+                    mask = builder.mask,
+                    description = null, // TODO(KT-59486): Save mangled name here
                 )
             }
             is FirCallableDeclaration -> {
@@ -141,16 +149,20 @@ class FirBasedSignatureComposer(override val mangler: FirMangler) : Fir2IrSignat
                 val callableName = declaration.irName
 
                 IdSignature.CommonSignature(
-                    packageName.asString(),
-                    classId?.relativeClassName?.child(callableName)?.asString() ?: callableName.asString(),
-                    builder.hashId, builder.mask
+                    packageFqName = packageName.asString(),
+                    declarationFqName = classId?.relativeClassName?.child(callableName)?.asString() ?: callableName.asString(),
+                    id = builder.hashId,
+                    mask = builder.mask,
+                    description = null, // TODO(KT-59486): Save mangled name here
                 )
             }
             is FirScript -> {
                 IdSignature.CommonSignature(
-                    declaration.name.asString(), // TODO: find package id
-                    declaration.name.asString(),
-                    builder.hashId, builder.mask
+                    packageFqName = declaration.name.asString(), // TODO: find package id
+                    declarationFqName = declaration.name.asString(),
+                    id = builder.hashId,
+                    mask = builder.mask,
+                    description = null, // TODO(KT-59486): Save mangled name here
                 )
             }
             else -> error("Unsupported FIR declaration in signature composer: ${declaration.render()}")
@@ -200,7 +212,13 @@ class FirBasedSignatureComposer(override val mangler: FirMangler) : Fir2IrSignat
         } else {
             propSig.declarationFqName + ".<get-${property.name.asString()}>"
         }
-        val commonSig = IdSignature.CommonSignature(propSig.packageFqName, accessorFqName, id, propSig.mask)
+        val commonSig = IdSignature.CommonSignature(
+            packageFqName = propSig.packageFqName,
+            declarationFqName = accessorFqName,
+            id = id,
+            mask = propSig.mask,
+            description = null, // TODO(KT-59486): Save mangled name here
+        )
         val accessorSig = IdSignature.AccessorSignature(propSig, commonSig)
         return if (fileSig != null) {
             IdSignature.CompositeSignature(fileSig, accessorSig)

@@ -611,7 +611,11 @@ class Fir2IrClassifierStorage(
     fun getIrClassSymbolForNotFoundClass(classLikeLookupTag: ConeClassLikeLookupTag): IrClassSymbol {
         val classId = classLikeLookupTag.classId
         val signature = IdSignature.CommonSignature(
-            classId.packageFqName.asString(), classId.relativeClassName.asString(), 0, 0,
+            packageFqName = classId.packageFqName.asString(),
+            declarationFqName = classId.relativeClassName.asString(),
+            id = 0,
+            mask = 0,
+            description = null,
         )
 
         val parentId = classId.outerClassId

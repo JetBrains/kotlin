@@ -39,8 +39,15 @@ class IdSignatureDeserializer(
         val pkg = internationService.string(libraryFile.deserializeFqName(proto.packageFqNameList))
         val cls = internationService.string(libraryFile.deserializeFqName(proto.declarationFqNameList))
         val memberId = if (proto.hasMemberUniqId()) proto.memberUniqId else null
+        val description = if (proto.hasDebugInfo()) libraryFile.debugInfo(proto.debugInfo)?.let(internationService::string) else null
 
-        return IdSignature.CommonSignature(pkg, cls, memberId, proto.flags)
+        return IdSignature.CommonSignature(
+            packageFqName = pkg,
+            declarationFqName = cls,
+            id = memberId,
+            mask = proto.flags,
+            description = description,
+        )
     }
 
     private fun deserializeAccessorIdSignature(proto: ProtoAccessorIdSignature): IdSignature.AccessorSignature {
@@ -49,10 +56,17 @@ class IdSignatureDeserializer(
         val name = libraryFile.string(proto.name)
         val hash = proto.accessorHashId
         val mask = proto.flags
+        val description = if (proto.hasDebugInfo()) libraryFile.debugInfo(proto.debugInfo)?.let(internationService::string) else null
 
         val declarationFqName = internationService.string("${propertySignature.declarationFqName}.$name")
         val accessorSignature =
-            IdSignature.CommonSignature(propertySignature.packageFqName, declarationFqName, hash, mask)
+            IdSignature.CommonSignature(
+                packageFqName = propertySignature.packageFqName,
+                declarationFqName = declarationFqName,
+                id = hash,
+                mask = mask,
+                description = description,
+            )
 
         return IdSignature.AccessorSignature(propertySignature, accessorSignature)
     }

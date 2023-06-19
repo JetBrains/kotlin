@@ -50,4 +50,13 @@ public interface CommonIdSignatureOrBuilder extends
    * <code>optional int64 flags = 4 [default = 0];</code>
    */
   long getFlags();
+
+  /**
+   * <code>optional int32 debug_info = 5;</code>
+   */
+  boolean hasDebugInfo();
+  /**
+   * <code>optional int32 debug_info = 5;</code>
+   */
+  int getDebugInfo();
 }

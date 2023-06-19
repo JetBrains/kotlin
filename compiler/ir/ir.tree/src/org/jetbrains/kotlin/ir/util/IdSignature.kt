@@ -266,8 +266,17 @@ sealed class IdSignature {
 
     /**
      * This signature corresponds to a publicly accessible Kotlin declaration.
+     *
+     * @property description This property does not affect linkage and is used only for showing humnan-readable error messages.
+     * Note: currently, we store here the mangled name from which [id] was computed. Later we can reconsider.
      */
-    class CommonSignature(val packageFqName: String, val declarationFqName: String, val id: Long?, val mask: Long) : IdSignature() {
+    class CommonSignature(
+        val packageFqName: String,
+        val declarationFqName: String,
+        val id: Long?,
+        val mask: Long,
+        val description: String?,
+    ) : IdSignature() {
         override val isPubliclyVisible: Boolean get() = true
 
         override fun packageFqName(): FqName = FqName(packageFqName)
@@ -295,7 +304,13 @@ sealed class IdSignature {
             val adaptedMask = adaptMask(mask)
             if (nameSegments.size == 1 && mask == adaptedMask) return this
 
-            return CommonSignature(packageFqName, nameSegments.first(), null, adaptedMask)
+            return CommonSignature(
+                packageFqName = packageFqName,
+                declarationFqName = nameSegments.first(),
+                id = null,
+                mask = adaptedMask,
+                description = null
+            )
         }
 
         override fun isPackageSignature(): Boolean = id == null && declarationFqName.isEmpty()
