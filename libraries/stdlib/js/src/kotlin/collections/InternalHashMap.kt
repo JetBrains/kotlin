@@ -5,22 +5,18 @@
 
 package kotlin.collections
 
-import kotlin.native.concurrent.isFrozen
-import kotlin.native.FreezingIsDeprecated
-
-@OptIn(FreezingIsDeprecated::class)
-actual class HashMap<K, V> private constructor(
-        private var keysArray: Array<K>,
-        private var valuesArray: Array<V>?, // allocated only when actually used, always null in pure HashSet
-        private var presenceArray: IntArray,
-        private var hashArray: IntArray,
-        private var maxProbeDistance: Int,
-        private var length: Int
-) : MutableMap<K, V> {
+internal class InternalHashMap<K, V> private constructor(
+    private var keysArray: Array<K>,
+    private var valuesArray: Array<V>?, // allocated only when actually used, always null in pure HashSet
+    private var presenceArray: IntArray,
+    private var hashArray: IntArray,
+    private var maxProbeDistance: Int,
+    private var length: Int,
+) {
     private var hashShift: Int = computeShift(hashSize)
 
     private var _size: Int = 0
-    override actual val size: Int
+    val size: Int
         get() = _size
 
     private var keysView: HashMapKeys<K>? = null
@@ -34,7 +30,7 @@ actual class HashMap<K, V> private constructor(
     /**
      * Creates a new empty [HashMap].
      */
-    actual constructor() : this(INITIAL_CAPACITY)
+    constructor() : this(INITIAL_CAPACITY)
 
     /**
      * Creates a new empty [HashMap] with the specified initial capacity.
@@ -48,18 +44,19 @@ actual class HashMap<K, V> private constructor(
      *
      * @throws IllegalArgumentException if [initialCapacity] is negative.
      */
-    actual constructor(initialCapacity: Int) : this(
-            arrayOfUninitializedElements(initialCapacity),
-            null,
-            IntArray(initialCapacity),
-            IntArray(computeHashSize(initialCapacity)),
-            INITIAL_MAX_PROBE_DISTANCE,
-            0)
+    constructor(initialCapacity: Int) : this(
+        arrayOfUninitializedElements(initialCapacity),
+        null,
+        IntArray(initialCapacity),
+        IntArray(computeHashSize(initialCapacity)),
+        INITIAL_MAX_PROBE_DISTANCE,
+        0
+    )
 
     /**
      * Creates a new [HashMap] filled with the contents of the specified [original] map.
      */
-    actual constructor(original: Map<out K, V>) : this(original.size) {
+    constructor(original: Map<out K, V>) : this(original.size) {
         putAll(original)
     }
 
@@ -77,28 +74,28 @@ actual class HashMap<K, V> private constructor(
      *
      * @throws IllegalArgumentException if [initialCapacity] is negative or [loadFactor] is non-positive.
      */
-    actual constructor(initialCapacity: Int, loadFactor: Float) : this(initialCapacity) {
+    constructor(initialCapacity: Int, loadFactor: Float) : this(initialCapacity) {
         require(loadFactor > 0) { "Non-positive load factor: $loadFactor" }
     }
 
     @PublishedApi
-    internal fun build(): Map<K, V> {
+    internal fun build(): InternalHashMap<K, V> {
         checkIsMutable()
         isReadOnly = true
         return if (size > 0) this else EmptyHolder.value()
     }
 
-    override actual fun isEmpty(): Boolean = _size == 0
-    override actual fun containsKey(key: K): Boolean = findKey(key) >= 0
-    override actual fun containsValue(value: V): Boolean = findValue(value) >= 0
+    fun isEmpty(): Boolean = _size == 0
+    fun containsKey(key: K): Boolean = findKey(key) >= 0
+    fun containsValue(value: V): Boolean = findValue(value) >= 0
 
-    override actual operator fun get(key: K): V? {
+    operator fun get(key: K): V? {
         val index = findKey(key)
         if (index < 0) return null
         return valuesArray!![index]
     }
 
-    override actual fun put(key: K, value: V): V? {
+    fun put(key: K, value: V): V? {
         checkIsMutable()
         val index = addKey(key)
         val valuesArray = allocateValuesArray()
@@ -112,12 +109,12 @@ actual class HashMap<K, V> private constructor(
         }
     }
 
-    override actual fun putAll(from: Map<out K, V>) {
+    fun putAll(from: Map<out K, V>) {
         checkIsMutable()
         putAllEntries(from.entries)
     }
 
-    override actual fun remove(key: K): V? {
+    fun remove(key: K): V? {
         val index = removeKey(key)  // mutability gets checked here
         if (index < 0) return null
         val valuesArray = valuesArray!!
@@ -126,7 +123,7 @@ actual class HashMap<K, V> private constructor(
         return oldValue
     }
 
-    override actual fun clear() {
+    fun clear() {
         checkIsMutable()
         // O(length) implementation for hashArray cleanup
         for (i in 0..length - 1) {
@@ -142,35 +139,35 @@ actual class HashMap<K, V> private constructor(
         length = 0
     }
 
-    override actual val keys: MutableSet<K> get() {
-        val cur = keysView
-        return if (cur == null) {
-            val new = HashMapKeys(this)
-            if (!isFrozen)
+    val keys: MutableSet<K>
+        get() {
+            val cur = keysView
+            return if (cur == null) {
+                val new = HashMapKeys(this)
                 keysView = new
-            new
-        } else cur
-    }
+                new
+            } else cur
+        }
 
-    override actual val values: MutableCollection<V> get() {
-        val cur = valuesView
-        return if (cur == null) {
-            val new = HashMapValues(this)
-            if (!isFrozen)
+    val values: MutableCollection<V>
+        get() {
+            val cur = valuesView
+            return if (cur == null) {
+                val new = HashMapValues(this)
                 valuesView = new
-            new
-        } else cur
-    }
+                new
+            } else cur
+        }
 
-    override actual val entries: MutableSet<MutableMap.MutableEntry<K, V>> get() {
-        val cur = entriesView
-        return if (cur == null) {
-            val new = HashMapEntrySet(this)
-            if (!isFrozen)
+    val entries: MutableSet<MutableMap.MutableEntry<K, V>>
+        get() {
+            val cur = entriesView
+            return if (cur == null) {
+                val new = HashMapEntrySet(this)
                 entriesView = new
-            new
-        } else cur
-    }
+                new
+            } else cur
+        }
 
     override fun equals(other: Any?): Boolean {
         return other === this ||
@@ -227,7 +224,7 @@ actual class HashMap<K, V> private constructor(
     }
 
     private fun ensureCapacity(minCapacity: Int) {
-        if (minCapacity < 0) throw OutOfMemoryError()    // overflow
+        if (minCapacity < 0) throw RuntimeException("too many elements")    // overflow
         if (minCapacity > this.capacity) {
             val newSize = AbstractList.newCapacity(this.capacity, minCapacity)
             keysArray = keysArray.copyOfUninitializedElements(newSize)
@@ -278,8 +275,9 @@ actual class HashMap<K, V> private constructor(
         var i = 0
         while (i < length) {
             if (!putRehash(i++)) {
-                throw IllegalStateException("This cannot happen with fixed magic multiplier and grow-only hash array. " +
-                        "Have object hashCodes changed?")
+                throw IllegalStateException(
+                    "This cannot happen with fixed magic multiplier and grow-only hash array. Have object hashCodes changed?"
+                )
             }
         }
     }
@@ -508,7 +506,6 @@ actual class HashMap<K, V> private constructor(
     internal fun valuesIterator() = ValuesItr(this)
     internal fun entriesIterator() = EntriesItr(this)
 
-    @kotlin.native.internal.CanBePrecreated
     private companion object {
         private const val MAGIC = -1640531527 // 2654435769L.toInt(), golden ratio
         private const val INITIAL_CAPACITY = 8
@@ -521,16 +518,16 @@ actual class HashMap<K, V> private constructor(
     }
 
     internal object EmptyHolder {
-        val value_ = HashMap<Nothing, Nothing>(0).also { it.isReadOnly = true }
+        val value_ = InternalHashMap<Nothing, Nothing>(0).also { it.isReadOnly = true }
 
-        fun <K, V> value(): HashMap<K, V> {
+        fun <K, V> value(): InternalHashMap<K, V> {
             @Suppress("UNCHECKED_CAST")
-            return value_ as HashMap<K, V>
+            return value_ as InternalHashMap<K, V>
         }
     }
 
     internal open class Itr<K, V>(
-            internal val map: HashMap<K, V>
+        internal val map: InternalHashMap<K, V>,
     ) {
         internal var index = 0
         internal var lastIndex: Int = -1
@@ -553,7 +550,7 @@ actual class HashMap<K, V> private constructor(
         }
     }
 
-    internal class KeysItr<K, V>(map: HashMap<K, V>) : Itr<K, V>(map), MutableIterator<K> {
+    internal class KeysItr<K, V>(map: InternalHashMap<K, V>) : Itr<K, V>(map), MutableIterator<K> {
         override fun next(): K {
             if (index >= map.length) throw NoSuchElementException()
             lastIndex = index++
@@ -564,7 +561,7 @@ actual class HashMap<K, V> private constructor(
 
     }
 
-    internal class ValuesItr<K, V>(map: HashMap<K, V>) : Itr<K, V>(map), MutableIterator<V> {
+    internal class ValuesItr<K, V>(map: InternalHashMap<K, V>) : Itr<K, V>(map), MutableIterator<V> {
         override fun next(): V {
             if (index >= map.length) throw NoSuchElementException()
             lastIndex = index++
@@ -574,8 +571,7 @@ actual class HashMap<K, V> private constructor(
         }
     }
 
-    internal class EntriesItr<K, V>(map: HashMap<K, V>) : Itr<K, V>(map),
-            MutableIterator<MutableMap.MutableEntry<K, V>> {
+    internal class EntriesItr<K, V>(map: InternalHashMap<K, V>) : Itr<K, V>(map), MutableIterator<MutableMap.MutableEntry<K, V>> {
         override fun next(): EntryRef<K, V> {
             if (index >= map.length) throw NoSuchElementException()
             lastIndex = index++
@@ -605,8 +601,8 @@ actual class HashMap<K, V> private constructor(
     }
 
     internal class EntryRef<K, V>(
-            private val map: HashMap<K, V>,
-            private val index: Int
+        private val map: InternalHashMap<K, V>,
+        private val index: Int,
     ) : MutableMap.MutableEntry<K, V> {
         override val key: K
             get() = map.keysArray[index]
@@ -623,9 +619,9 @@ actual class HashMap<K, V> private constructor(
         }
 
         override fun equals(other: Any?): Boolean =
-                other is Map.Entry<*, *> &&
-                        other.key == key &&
-                        other.value == value
+            other is Map.Entry<*, *> &&
+                    other.key == key &&
+                    other.value == value
 
         override fun hashCode(): Int = key.hashCode() xor value.hashCode()
 
@@ -634,13 +630,12 @@ actual class HashMap<K, V> private constructor(
 }
 
 internal class HashMapKeys<E> internal constructor(
-        private val backing: HashMap<E, *>
-) : MutableSet<E>, kotlin.native.internal.KonanSet<E>, AbstractMutableSet<E>() {
+    private val backing: InternalHashMap<E, *>,
+) : MutableSet<E>, AbstractMutableSet<E>() {
 
     override val size: Int get() = backing.size
     override fun isEmpty(): Boolean = backing.isEmpty()
     override fun contains(element: E): Boolean = backing.containsKey(element)
-    override fun getElement(element: E): E? = backing.getKey(element)
     override fun clear() = backing.clear()
     override fun add(element: E): Boolean = throw UnsupportedOperationException()
     override fun addAll(elements: Collection<E>): Boolean = throw UnsupportedOperationException()
@@ -659,7 +654,7 @@ internal class HashMapKeys<E> internal constructor(
 }
 
 internal class HashMapValues<V> internal constructor(
-        val backing: HashMap<*, V>
+    val backing: InternalHashMap<*, V>,
 ) : MutableCollection<V>, AbstractMutableCollection<V>() {
 
     override val size: Int get() = backing.size
@@ -697,13 +692,12 @@ internal class HashMapValues<V> internal constructor(
  * See also [KT-42248](https://youtrack.jetbrains.com/issue/KT-42428).
  */
 internal abstract class HashMapEntrySetBase<K, V, E : Map.Entry<K, V>> internal constructor(
-        val backing: HashMap<K, V>
-) : MutableSet<E>, kotlin.native.internal.KonanSet<E>, AbstractMutableSet<E>() {
+    val backing: InternalHashMap<K, V>,
+) : MutableSet<E>, AbstractMutableSet<E>() {
 
     override val size: Int get() = backing.size
     override fun isEmpty(): Boolean = backing.isEmpty()
     override fun contains(element: E): Boolean = backing.containsEntry(element)
-    override fun getElement(element: E): E? = getEntry(element)
     protected abstract fun getEntry(element: Map.Entry<K, V>): E?
     override fun clear() = backing.clear()
     override fun add(element: E): Boolean = throw UnsupportedOperationException()
@@ -723,13 +717,10 @@ internal abstract class HashMapEntrySetBase<K, V, E : Map.Entry<K, V>> internal 
 }
 
 internal class HashMapEntrySet<K, V> internal constructor(
-        backing: HashMap<K, V>
+    backing: InternalHashMap<K, V>,
 ) : HashMapEntrySetBase<K, V, MutableMap.MutableEntry<K, V>>(backing) {
 
     override fun getEntry(element: Map.Entry<K, V>): MutableMap.MutableEntry<K, V>? = backing.getEntry(element)
 
     override fun iterator(): MutableIterator<MutableMap.MutableEntry<K, V>> = backing.entriesIterator()
 }
-
-// This hash map keeps insertion order.
-actual typealias LinkedHashMap<K, V> = HashMap<K, V>
