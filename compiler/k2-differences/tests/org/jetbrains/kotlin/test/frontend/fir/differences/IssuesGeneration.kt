@@ -172,16 +172,31 @@ val knownMissingDiagnostics = mapOf(
     "STUB_TYPE_IN_RECEIVER_CAUSES_AMBIGUITY" to IssueInfo("25-4537024", 59439),
 )
 
+val obsoleteIssues = listOf(
+    "NON_VARARG_SPREAD_ERROR",
+    "PROTECTED_CONSTRUCTOR_CALL_FROM_PUBLIC_INLINE_ERROR",
+    "FORBIDDEN_BINARY_MOD_AS_REM",
+    "TYPE_MISMATCH_DUE_TO_TYPE_PROJECTIONS",
+    "EXPLICIT_BACKING_FIELDS_UNSUPPORTED",
+    "INACCESSIBLE_OUTER_CLASS_EXPRESSION",
+    "NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY_MIGRATION",
+    "SUPER_CANT_BE_EXTENSION_RECEIVER",
+)
+
+fun collectMissingDiagnostics(): List<Pair<String, String>> {
+    val projectDirectory = File(System.getProperty("user.dir"))
+    val build = projectDirectory.child("compiler").child("k2-differences").child("build")
+    val missingDiagnosticsText = build.child("k2-unimplemented-diagnostics.md").readText()
+
+    return MISSING_DIAGNOSTIC_PATTERN.findAll(missingDiagnosticsText)
+        .map { it.groupValues[1] to it.groupValues[2] }
+        .toList()
+}
+
 object MissingK2Diagnostics {
     @JvmStatic
     fun main(args: Array<String>) {
-        val projectDirectory = File(System.getProperty("user.dir"))
-        val build = projectDirectory.child("compiler").child("k2-differences").child("build")
-
-        val missingDiagnosticsText = build.child("k2-unimplemented-diagnostics.md").readText()
-        val missingDiagnostics = MISSING_DIAGNOSTIC_PATTERN.findAll(missingDiagnosticsText)
-            .map { it.groupValues[1] to it.groupValues[2] }
-            .toList()
+        val missingDiagnostics = collectMissingDiagnostics()
 
         for ((name, filesCount) in missingDiagnostics) {
             if (name in knownMissingDiagnostics) {
@@ -208,6 +223,25 @@ object MissingK2Diagnostics {
             )
 
             println(result)
+        }
+    }
+}
+
+object RedundantMissingK2Diagnostics {
+    @JvmStatic
+    fun main(args: Array<String>) {
+        val missingDiagnostics = collectMissingDiagnostics().map { it.first }.toSet()
+        var index = 0
+
+        for ((key, value) in knownMissingDiagnostics) {
+            if (key in obsoleteIssues) {
+                continue
+            }
+
+            if (key !in missingDiagnostics) {
+                index++
+                println("$index: The $key diagnostic is not present in the list of missing anymore, we can probably close $value")
+            }
         }
     }
 }

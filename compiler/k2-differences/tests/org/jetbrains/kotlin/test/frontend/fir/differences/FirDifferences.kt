@@ -33,13 +33,19 @@ val equivalentDiagnostics = listOf(
         "EXPECTED_PARAMETERS_NUMBER_MISMATCH",
         "TYPE_MISMATCH_DUE_TO_EQUALS_LAMBDA_IN_FUN",
         "SIGNED_CONSTANT_CONVERTED_TO_UNSIGNED",
+        "UNSUPPORTED_FEATURE",
+        "EXPLICIT_BACKING_FIELDS_UNSUPPORTED",
         "UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION",
         "UPPER_BOUND_VIOLATED_BASED_ON_JAVA_ANNOTATIONS",
         "UPPER_BOUND_VIOLATED",
         "NEW_INFERENCE_ERROR",
         "NO_VALUE_FOR_PARAMETER",
+        "SUPER_CANT_BE_EXTENSION_RECEIVER",
+        "ENUM_ENTRY_SHOULD_BE_INITIALIZED",
         "NO_SET_METHOD",
         "SETTER_PROJECTED_OUT",
+        "TYPE_MISMATCH_DUE_TO_TYPE_PROJECTIONS",
+        "AMBIGUOUS_ANNOTATION_ARGUMENT",
 //    ),
 //    listOf(
         "UNRESOLVED_REFERENCE_WRONG_RECEIVER",
@@ -57,13 +63,26 @@ val equivalentDiagnostics = listOf(
         "NO_COMPANION_OBJECT",
         "NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE",
         "RESOLUTION_TO_CLASSIFIER",
+        "INNER_CLASS_CONSTRUCTOR_NO_RECEIVER",
         "FUNCTION_EXPECTED",
+        "INTERFACE_AS_FUNCTION",
         "ENUM_ENTRY_AS_TYPE",
         "RECURSIVE_TYPEALIAS_EXPANSION",
         "MISSING_DEPENDENCY_CLASS",
         "CANNOT_INFER_PARAMETER_TYPE",
+        "COMPONENT_FUNCTION_MISSING",
         "NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER",
+        "FORBIDDEN_BINARY_MOD_AS_REM",
+        "API_NOT_AVAILABLE",
+        "NO_CONSTRUCTOR",
+        "ANNOTATION_ARGUMENT_MUST_BE_CONST",
+        "OPT_IN_USAGE_ERROR",
+        "EXPRESSION_EXPECTED_PACKAGE_FOUND",
 //    ),
+//    listOf(
+        "RETURN_NOT_ALLOWED",
+        "NOT_A_FUNCTION_LABEL",
+//    )
 //    listOf(
         "INVISIBLE_MEMBER",
         "INVISIBLE_REFERENCE",
@@ -74,34 +93,44 @@ val equivalentDiagnostics = listOf(
         "CANNOT_CHECK_FOR_ERASED",
         "TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED",
         "INAPPLICABLE_CANDIDATE",
+        "OUTER_CLASS_ARGUMENTS_REQUIRED",
+        "TYPE_ARGUMENTS_NOT_ALLOWED",
 //    ),
 //    listOf(
         "VAL_REASSIGNMENT",
+        "CAPTURED_MEMBER_VAL_INITIALIZATION",
         "NONE_APPLICABLE",
         "CAPTURED_VAL_INITIALIZATION",
-    ),
-    listOf("DELEGATE_SPECIAL_FUNCTION_MISSING", "DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE"),
-    listOf(
+        "VARIABLE_EXPECTED",
+        "INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION_WARNING",
+        "INITIALIZATION_BEFORE_DECLARATION",
+//    ),
+//    listOf(
+        "SMARTCAST_IMPOSSIBLE",
+        "ITERATOR_ON_NULLABLE",
+        "UNSAFE_CALL",
+        "UNSAFE_IMPLICIT_INVOKE_CALL",
+//    ),
+//    listOf(
+        "ASSIGNMENT_IN_EXPRESSION_CONTEXT",
+        "EXPRESSION_EXPECTED",
+        "EXPRESSION_REQUIRED",
+//    ),
+//    listOf(
         "TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM_IN_AUGMENTED_ASSIGNMENT_ERROR",
         "TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM",
         "TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM_ERROR",
     ),
     listOf(
-        "ASSIGNMENT_IN_EXPRESSION_CONTEXT",
-        "EXPRESSION_EXPECTED",
-        "EXPRESSION_REQUIRED",
-    ),
-    listOf(
-        "SMARTCAST_IMPOSSIBLE",
-        "UNSAFE_CALL",
+        "DELEGATE_SPECIAL_FUNCTION_MISSING",
+        "DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE",
+        "DELEGATE_SPECIAL_FUNCTION_RETURN_TYPE_MISMATCH",
     ),
     listOf(
         "ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED",
         "ABSTRACT_MEMBER_NOT_IMPLEMENTED",
-    ),
-    listOf(
-        "RETURN_NOT_ALLOWED",
-        "NOT_A_FUNCTION_LABEL",
+        "ABSTRACT_MEMBER_NOT_IMPLEMENTED_BY_ENUM_ENTRY",
+        "MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED",
     ),
     listOf(
         "NO_ACTUAL_FOR_EXPECT",
@@ -110,6 +139,76 @@ val equivalentDiagnostics = listOf(
     listOf(
         "UNINITIALIZED_VARIABLE",
         "UNINITIALIZED_ENUM_COMPANION",
+    ),
+    listOf(
+        "EQUALITY_NOT_APPLICABLE",
+        "FORBIDDEN_IDENTITY_EQUALS",
+    ),
+    listOf(
+        "NON_VARARG_SPREAD_ERROR", // a deprecation error in K1, a normal error in K2
+        "NON_VARARG_SPREAD",
+    ),
+    listOf(
+        "MODIFIER_LIST_NOT_ALLOWED",
+        "REPEATED_ANNOTATION",
+    ),
+    listOf(
+        "PROPERTY_TYPE_MISMATCH_ON_INHERITANCE",
+        "PROPERTY_TYPE_MISMATCH_BY_DELEGATION",
+    ),
+    listOf(
+        "PROTECTED_CONSTRUCTOR_CALL_FROM_PUBLIC_INLINE_ERROR",
+        "PROTECTED_CONSTRUCTOR_CALL_FROM_PUBLIC_INLINE",
+    ),
+    listOf(
+        "SUPER_CALL_FROM_PUBLIC_INLINE_ERROR",
+        "SUPER_CALL_FROM_PUBLIC_INLINE",
+    ),
+    listOf(
+        "CANNOT_OVERRIDE_INVISIBLE_MEMBER",
+        "NOTHING_TO_OVERRIDE",
+    ),
+    listOf(
+        "CYCLIC_INHERITANCE_HIERARCHY",
+        "EXPOSED_SUPER_INTERFACE",
+    ),
+    listOf(
+        "INACCESSIBLE_OUTER_CLASS_EXPRESSION",
+        "EXPLICIT_DELEGATION_CALL_REQUIRED",
+    ),
+    listOf(
+        "NOT_A_LOOP_LABEL",
+        "BREAK_OR_CONTINUE_OUTSIDE_A_LOOP",
+    ),
+    listOf(
+        "CONTRACT_NOT_ALLOWED",
+        "UNSUPPORTED",
+        "INAPPLICABLE_OPERATOR_MODIFIER",
+    ),
+    listOf(
+        "NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY_MIGRATION",
+        "NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY",
+    ),
+    listOf(
+        "MIXING_NAMED_AND_POSITIONED_ARGUMENTS",
+        "POSITIONED_VALUE_ARGUMENT_FOR_JAVA_ANNOTATION",
+    ),
+    listOf(
+        "NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION",
+        "CONST_VAL_WITH_NON_CONST_INITIALIZER",
+    ),
+    listOf(
+        "SEALED_SUPERTYPE",
+        "SEALED_SUPERTYPE_IN_LOCAL_CLASS",
+    ),
+    listOf(
+        "NESTED_CLASS_NOT_ALLOWED",
+        "LOCAL_OBJECT_NOT_ALLOWED",
+        "LOCAL_INTERFACE_NOT_ALLOWED",
+    ),
+    listOf(
+        "RETURN_TYPE_MISMATCH_ON_INHERITANCE",
+        "RETURN_TYPE_MISMATCH_BY_DELEGATION",
     ),
 )
 
@@ -485,6 +584,27 @@ fun DiagnosticsStatistics.recordDiagnosticsStatistics(result: EquivalenceTestRes
     }
 }
 
+fun logPossibleEquivalences(result: EquivalenceTestResult, writer: Writer) {
+    val positionToK1Diagnostics = mutableMapOf<Pair<Int, Int>, MutableList<String>>()
+
+    for (it in result.significantK1MetaInfo) {
+        positionToK1Diagnostics.getOrPut(it.start to it.end) { mutableListOf() }.add(it.tag)
+    }
+
+    val matchingDiagnostics = mutableMapOf<Pair<Int, Int>, Pair<MutableList<String>, MutableList<String>>>()
+
+    for (it in result.significantK2MetaInfo) {
+        val k1Diagnostics = positionToK1Diagnostics[it.start to it.end] ?: continue
+        val (_, k2Diagnostics) = matchingDiagnostics.getOrPut(it.start to it.end) { k1Diagnostics to mutableListOf() }
+        k2Diagnostics.add(it.tag)
+    }
+
+    for ((position, diagnostics) in matchingDiagnostics) {
+        val (k1Diagnostics, k2Diagnostics) = diagnostics
+        writer.write("At `(${position.first}..${position.second})` in the K1 file there are `${k1Diagnostics}`, and in the K2 file there are `${k2Diagnostics}`. Maybe some of them are equivalent?\n\n")
+    }
+}
+
 fun printDiagnosticsStatistics(title: String? = null, diagnostics: Map<String, Int>, writer: Writer) {
     if (title != null) {
         writer.write("$title\n\n")
@@ -607,6 +727,7 @@ fun main() {
             areNonEquivalent = { result ->
                 alongsideNonContainedTests.add(test)
                 containmentStatistics.recordDiagnosticsStatistics(result)
+                logPossibleEquivalences(result, containment)
 
                 KT_ISSUE_PATTERN.find(k2Text)?.groupValues?.first()?.let {
                     alongsideNonContainedTestsWithIssues[test] = it
