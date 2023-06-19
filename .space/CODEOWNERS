@@ -19,7 +19,7 @@
 # OWNER_LIST: Alexander.Udalov
 # OWNER_LIST: Zalim.Bashorov
 # OWNER_LIST: Ilya.Goncharov
-# OWNER_LIST: Alexander.Shabalin Aleksei.Glushko Svyatoslav.Scherbina
+# OWNER_LIST: Alexander.Shabalin Aleksei.Glushko Sergey.Bogolepov Svyatoslav.Scherbina
 # Kotlin Libraries
 # OWNER_LIST: A.Qurbonzoda Vsevolod.Tolstopyato Ilya.Gorbunov Sergey.Shanshin Leonid.Startsev
 
@@ -258,7 +258,7 @@
 /kotlin-native/common/ Alexander.Shabalin Aleksei.Glushko
 /kotlin-native/runtime/ Alexander.Shabalin Aleksei.Glushko
 /kotlin-native/runtime/src/main/kotlin/ "Kotlin Native" A.Qurbonzoda Vsevolod.Tolstopyato Ilya.Gorbunov
-/kotlin-native/runtime/**/*.mm Alexander.Shabalin Aleksei.Glushko Svyatoslav.Scherbina
+/kotlin-native/runtime/**/*.mm Alexander.Shabalin Aleksei.Glushko Sergey.Bogolepov Svyatoslav.Scherbina
 /kotlin-native/licenses/ "Kotlin Build Infrastructure"
 
 /libraries/examples/annotation-processor-example/ "Kotlin Compiler Core"
