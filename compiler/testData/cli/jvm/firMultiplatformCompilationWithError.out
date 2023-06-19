@@ -9,7 +9,7 @@ as no stability/compatibility guarantees are given on
 compiler or generated code. Use it at your own risk!
 
 warning: language version 2.0 is experimental, there are no backwards compatibility guarantees for new language and library features
-compiler/testData/cli/jvm/firMultiplatformCompilationWithError/jvm.kt:1:18: error: actual class 'actual  interface A : Any' has no corresponding members for expected class members:
+compiler/testData/cli/jvm/firMultiplatformCompilationWithError/jvm.kt:1:18: error: actual class 'actual interface A : Any' has no corresponding members for expected class members:
 
     expect fun foo(): Unit
 
