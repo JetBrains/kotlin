@@ -399,9 +399,10 @@ class CocoaPodsIT : KGPBaseTest() {
                 // Check that an output framework is a dynamic framework
                 val framework = projectPath.resolve("build/cocoapods/framework/$frameworkName.framework/$frameworkName")
                 assertProcessRunResult(runProcess(listOf("file", framework.absolutePathString()), projectPath.toFile())) {
-                    assertOutputContains("universal binary with 2 architectures")
-                    assertOutputContains("(for architecture x86_64)")
-                    assertOutputContains("(for architecture arm64)")
+                    assertTrue(isSuccessful)
+                    assertTrue(output.contains("universal binary with 2 architectures"))
+                    assertTrue(output.contains("(for architecture x86_64)"))
+                    assertTrue(output.contains("(for architecture arm64)"))
                 }
             }
         }
