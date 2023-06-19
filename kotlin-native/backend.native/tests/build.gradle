@@ -4478,6 +4478,10 @@ standaloneTest("isExperimentalMM") {
     flags = [ "-tr" ]
 }
 
+standaloneTest("simpleClassName") {
+    source = "interop/simpleName.kt"
+}
+
 interopTest("interop_cppClass") {
     disabled = isAppleTarget(project) // KT-58422
     source = "interop/cpp/cppClass.kt"
