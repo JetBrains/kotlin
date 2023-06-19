@@ -37,8 +37,10 @@ import org.jetbrains.kotlin.test.model.ResultingArtifact
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.impl.TemporaryDirectoryManagerImpl
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.TestInfo
+import java.io.IOException
 import java.nio.file.Path
 import java.nio.file.Paths
 import kotlin.io.path.exists
@@ -52,7 +54,13 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
     protected lateinit var testDataPath: Path
         private set
 
-    private lateinit var testServices: TestServices
+    private var _testServices: TestServices? = null
+
+    private var testServices: TestServices
+        get() = _testServices ?: error("`_testServices` has not been initialized")
+        set(value) {
+            _testServices = value
+        }
 
     protected open fun configureTest(builder: TestConfigurationBuilder) {
         configurator.configureTest(builder, disposable)
@@ -146,6 +154,15 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
         }
 
         doTestByModuleStructure(moduleStructure, testServices)
+    }
+
+    @AfterEach
+    fun cleanupTemporaryDirectories() {
+        try {
+            _testServices?.temporaryDirectoryManager?.cleanupTemporaryDirectories()
+        } catch (e: IOException) {
+            println("Failed to clean temporary directories: ${e.message}\n${e.stackTrace}")
+        }
     }
 
     private fun createTestConfiguration(): TestConfiguration {
