@@ -30,8 +30,8 @@ class TestRunner(private val testConfiguration: TestConfiguration) {
         } finally {
             try {
                 testConfiguration.testServices.temporaryDirectoryManager.cleanupTemporaryDirectories()
-            } catch (_: IOException) {
-                // ignored
+            } catch (e: IOException) {
+                println("Failed to clean temporary directories: ${e.message}\n${e.stackTrace}")
             }
             beforeDispose(testConfiguration)
             Disposer.dispose(testConfiguration.rootDisposable)

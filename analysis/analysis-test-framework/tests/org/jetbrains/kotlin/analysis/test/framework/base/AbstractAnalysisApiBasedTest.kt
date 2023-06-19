@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.impl.TemporaryDirectoryManagerImpl
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.TestInfo
+import java.io.IOException
 import java.nio.file.Path
 import java.nio.file.Paths
 import kotlin.io.path.exists
@@ -130,22 +131,31 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
         val moduleStructure = createModuleStructure(testConfiguration)
 
         try {
-            prepareToTheAnalysis(testConfiguration)
-        } catch (ignored: SkipTestException) {
-            return
-        }
+            try {
+                prepareToTheAnalysis(testConfiguration)
+            } catch (ignored: SkipTestException) {
+                return
+            }
 
-        if (configurator.analyseInDependentSession && isDependentModeDisabledForTheTest()) {
-            return
-        }
+            if (configurator.analyseInDependentSession && isDependentModeDisabledForTheTest()) {
+                return
+            }
 
-        if (configurator.frontendKind == FrontendKind.Fe10 && isFe10DisabledForTheTest() ||
-            configurator.frontendKind == FrontendKind.Fir && isFirDisabledForTheTest()
-        ) {
-            return
-        }
+            if (configurator.frontendKind == FrontendKind.Fe10 && isFe10DisabledForTheTest() ||
+                configurator.frontendKind == FrontendKind.Fir && isFirDisabledForTheTest()
+            ) {
+                return
+            }
 
-        doTestByModuleStructure(moduleStructure, testServices)
+            doTestByModuleStructure(moduleStructure, testServices)
+        } finally {
+            try {
+                testConfiguration.testServices.temporaryDirectoryManager.cleanupTemporaryDirectories()
+            } catch (e: IOException) {
+                println("Failed to clean temporary directories: ${e.message}\n${e.stackTrace}")
+            }
+            Disposer.dispose(testConfiguration.rootDisposable)
+        }
     }
 
     private fun createTestConfiguration(): TestConfiguration {
