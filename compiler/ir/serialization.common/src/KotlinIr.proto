@@ -30,6 +30,7 @@ message CommonIdSignature {
   repeated int32 declaration_fq_name = 2 [packed = true];
   optional int64 member_uniq_id = 3;
   optional int64 flags = 4 [default = 0];
+  optional int64 debug_info = 5;
 }
 
 message AccessorIdSignature {

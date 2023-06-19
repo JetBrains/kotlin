@@ -88,7 +88,13 @@ internal class IdSignatureSerialization(private val library: KotlinLibraryHeader
                         null
                     }
                     val mask = input.readInt64()
-                    return IdSignature.CommonSignature(packageFqName, declarationFqName, id, mask)
+                    return IdSignature.CommonSignature(
+                        packageFqName = packageFqName,
+                        declarationFqName = declarationFqName,
+                        id = id,
+                        mask = mask,
+                        description = null, // TODO(KT-59486): Deserialize mangled name and save it here
+                    )
                 }
                 IdSignatureProtoType.COMPOSITE_SIGNATURE.id -> {
                     val containerSignature = deserializeIdSignature(input)

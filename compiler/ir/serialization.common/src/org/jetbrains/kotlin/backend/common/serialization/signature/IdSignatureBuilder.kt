@@ -69,10 +69,22 @@ abstract class IdSignatureBuilder<D> {
             }
 
             hashIdAcc == null -> {
-                IdSignature.CommonSignature(packageFqName, classFqName, hashId, mask)
+                IdSignature.CommonSignature(
+                    packageFqName = packageFqName,
+                    declarationFqName = classFqName,
+                    id = hashId,
+                    mask = mask,
+                    description = null, // TODO(KT-59486): Save mangled name here
+                )
             }
             else -> {
-                val accessorSignature = IdSignature.CommonSignature(packageFqName, classFqName, hashIdAcc, mask)
+                val accessorSignature = IdSignature.CommonSignature(
+                    packageFqName = packageFqName,
+                    declarationFqName = classFqName,
+                    id = hashIdAcc,
+                    mask = mask,
+                    description = null, // TODO(KT-59486): Save mangled name here
+                )
                 hashIdAcc = null
                 classFqnSegments.run { removeAt(lastIndex) }
                 val propertySignature = build()

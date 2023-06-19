@@ -45,14 +45,26 @@ object IdSignatureValues {
     @JvmField val iterable = getPublicSignature(StandardNames.COLLECTIONS_PACKAGE_FQ_NAME, "Iterable")
     @JvmField val continuation = getPublicSignature(StandardNames.COROUTINES_PACKAGE_FQ_NAME, "Continuation")
     @JvmField val result = getPublicSignature(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, "Result")
-    @JvmField val sequence = IdSignature.CommonSignature("kotlin.sequences", "Sequence", null, 0)
+    @JvmField val sequence = IdSignature.CommonSignature(
+        packageFqName = "kotlin.sequences",
+        declarationFqName = "Sequence",
+        id = null,
+        mask = 0,
+        description = "kotlin.sequences.Sequence",
+    )
 }
 
 private fun IrType.isNotNullClassType(signature: IdSignature.CommonSignature) = isClassType(signature, nullable = false)
 private fun IrType.isNullableClassType(signature: IdSignature.CommonSignature) = isClassType(signature, nullable = true)
 
 fun getPublicSignature(packageFqName: FqName, name: String) =
-    IdSignature.CommonSignature(packageFqName.asString(), name, null, 0)
+    IdSignature.CommonSignature(
+        packageFqName = packageFqName.asString(),
+        declarationFqName = name,
+        id = null,
+        mask = 0,
+        description = packageFqName.child(Name.identifier(name)).asString(),
+    )
 
 private fun IrType.isClassType(signature: IdSignature.CommonSignature, nullable: Boolean? = null): Boolean {
     if (this !is IrSimpleType) return false
