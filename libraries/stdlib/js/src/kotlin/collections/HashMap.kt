@@ -30,7 +30,7 @@ public actual open class HashMap<K, V> : AbstractMutableMap<K, V>, MutableMap<K,
 
         override fun containsEntry(element: Map.Entry<K, V>): Boolean = this@HashMap.containsEntry(element)
 
-        override operator fun iterator(): MutableIterator<MutableEntry<K, V>> = internalMap.iterator()
+        override operator fun iterator(): MutableIterator<MutableEntry<K, V>> = internalMap.entriesIterator()
 
         override fun removeEntry(element: Map.Entry<K, V>): Boolean {
             if (contains(element)) {
@@ -107,7 +107,7 @@ public actual open class HashMap<K, V> : AbstractMutableMap<K, V>, MutableMap<K,
 
     actual override fun containsKey(key: K): Boolean = internalMap.contains(key)
 
-    actual override fun containsValue(value: V): Boolean = internalMap.any { it.value == value }
+    actual override fun containsValue(value: V): Boolean = internalMap.containsValue(value)
 
     private var _entries: MutableSet<MutableMap.MutableEntry<K, V>>? = null
     actual override val entries: MutableSet<MutableMap.MutableEntry<K, V>>

@@ -6,22 +6,35 @@
 package kotlin.collections
 
 /**
- * The common interface of [InternalStringMap] and [InternalHashCodeMap].
+ * The common interface of [InternalStringMap] and [InternalHashMap].
  */
-internal interface InternalMap<K, V> : MutableIterable<MutableMap.MutableEntry<K, V>> {
+internal interface InternalMap<K, V> {
     val size: Int
-    operator fun contains(key: K): Boolean
-    operator fun get(key: K): V?
 
     fun put(key: K, value: V): V?
-    fun remove(key: K): V?
-    fun clear(): Unit
+    fun putAll(from: Map<out K, V>)
 
-    fun createJsMap(): dynamic {
-        val result = js("Object.create(null)")
-        // force to switch object representation to dictionary mode
-        result["foo"] = 1
-        jsDeleteProperty(result, "foo")
-        return result
+    operator fun get(key: K): V?
+    fun getEntry(entry: Map.Entry<K, V>): MutableMap.MutableEntry<K, V>?
+
+    operator fun contains(key: K): Boolean
+    fun containsValue(value: V): Boolean
+    fun containsEntry(entry: Map.Entry<K, V>): Boolean
+    fun containsOtherEntry(entry: Map.Entry<*, *>): Boolean
+
+    fun remove(key: K): V?
+    fun removeValue(value: V): Boolean
+    fun removeEntry(entry: Map.Entry<K, V>): Boolean
+
+    fun clear()
+
+    fun keysIterator(): MutableIterator<K>
+    fun valuesIterator(): MutableIterator<V>
+    fun entriesIterator(): MutableIterator<MutableMap.MutableEntry<K, V>>
+
+    fun checkIsMutable() {}
+
+    fun containsAllEntries(m: Collection<Map.Entry<*, *>>): Boolean {
+        return m.all(this::containsOtherEntry)
     }
 }

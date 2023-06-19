@@ -87,7 +87,7 @@ internal class InternalHashMap<K, V> private constructor(
 
     fun isEmpty(): Boolean = _size == 0
     fun containsKey(key: K): Boolean = findKey(key) >= 0
-    fun containsValue(value: V): Boolean = findValue(value) >= 0
+    override fun containsValue(value: V): Boolean = findValue(value) >= 0
 
     override operator fun get(key: K): V? {
         val index = findKey(key)
@@ -113,7 +113,7 @@ internal class InternalHashMap<K, V> private constructor(
         }
     }
 
-    fun putAll(from: Map<out K, V>) {
+    override fun putAll(from: Map<out K, V>) {
         checkIsMutable()
         putAllEntries(from.entries)
     }
@@ -141,10 +141,6 @@ internal class InternalHashMap<K, V> private constructor(
         valuesArray?.resetRange(0, length)
         _size = 0
         length = 0
-    }
-
-    override fun iterator(): MutableIterator<MutableMap.MutableEntry<K, V>> {
-        return entriesIterator()
     }
 
     val keys: MutableSet<K>
@@ -211,7 +207,7 @@ internal class InternalHashMap<K, V> private constructor(
     private val capacity: Int get() = keysArray.size
     private val hashSize: Int get() = hashArray.size
 
-    internal fun checkIsMutable() {
+    override fun checkIsMutable() {
         if (isReadOnly) throw UnsupportedOperationException()
     }
 
@@ -425,13 +421,18 @@ internal class InternalHashMap<K, V> private constructor(
         }
     }
 
-    internal fun containsEntry(entry: Map.Entry<K, V>): Boolean {
+    override fun containsEntry(entry: Map.Entry<K, V>): Boolean {
         val index = findKey(entry.key)
         if (index < 0) return false
         return valuesArray!![index] == entry.value
     }
 
-    internal fun getEntry(entry: Map.Entry<K, V>): MutableMap.MutableEntry<K, V>? {
+    override fun containsOtherEntry(entry: Map.Entry<*, *>): Boolean {
+        @Suppress("UNCHECKED_CAST")
+        return containsEntry(entry as Map.Entry<K, V>)
+    }
+
+    override fun getEntry(entry: Map.Entry<K, V>): MutableMap.MutableEntry<K, V>? {
         val index = findKey(entry.key)
         return if (index < 0 || valuesArray!![index] != entry.value) {
             null
@@ -450,21 +451,6 @@ internal class InternalHashMap<K, V> private constructor(
     }
 
     private fun contentEquals(other: Map<*, *>): Boolean = _size == other.size && containsAllEntries(other.entries)
-
-    internal fun containsAllEntries(m: Collection<*>): Boolean {
-        val it = m.iterator()
-        while (it.hasNext()) {
-            val entry = it.next()
-            try {
-                @Suppress("UNCHECKED_CAST") // todo: get rid of unchecked cast here somehow
-                if (entry == null || !containsEntry(entry as Map.Entry<K, V>))
-                    return false
-            } catch (e: ClassCastException) {
-                return false
-            }
-        }
-        return true
-    }
 
     private fun putEntry(entry: Map.Entry<K, V>): Boolean {
         val index = addKey(entry.key)
@@ -493,7 +479,7 @@ internal class InternalHashMap<K, V> private constructor(
         return updated
     }
 
-    internal fun removeEntry(entry: Map.Entry<K, V>): Boolean {
+    override fun removeEntry(entry: Map.Entry<K, V>): Boolean {
         checkIsMutable()
         val index = findKey(entry.key)
         if (index < 0) return false
@@ -502,7 +488,7 @@ internal class InternalHashMap<K, V> private constructor(
         return true
     }
 
-    internal fun removeValue(element: V): Boolean {
+    override fun removeValue(element: V): Boolean {
         checkIsMutable()
         val index = findValue(element)
         if (index < 0) return false
@@ -510,9 +496,9 @@ internal class InternalHashMap<K, V> private constructor(
         return true
     }
 
-    internal fun keysIterator() = KeysItr(this)
-    internal fun valuesIterator() = ValuesItr(this)
-    internal fun entriesIterator() = EntriesItr(this)
+    override fun keysIterator() = KeysItr(this)
+    override fun valuesIterator() = ValuesItr(this)
+    override fun entriesIterator() = EntriesItr(this)
 
     private companion object {
         private const val MAGIC = -1640531527 // 2654435769L.toInt(), golden ratio
@@ -638,16 +624,16 @@ internal class InternalHashMap<K, V> private constructor(
 }
 
 internal class HashMapKeys<E> internal constructor(
-    private val backing: InternalHashMap<E, *>,
+    private val backing: InternalMap<E, *>,
 ) : MutableSet<E>, AbstractMutableSet<E>() {
 
     override val size: Int get() = backing.size
-    override fun isEmpty(): Boolean = backing.isEmpty()
-    override fun contains(element: E): Boolean = backing.containsKey(element)
+    override fun isEmpty(): Boolean = backing.size == 0
+    override fun contains(element: E): Boolean = backing.contains(element)
     override fun clear() = backing.clear()
     override fun add(element: E): Boolean = throw UnsupportedOperationException()
     override fun addAll(elements: Collection<E>): Boolean = throw UnsupportedOperationException()
-    override fun remove(element: E): Boolean = backing.removeKey(element) >= 0
+    override fun remove(element: E): Boolean = backing.remove(element) != null
     override fun iterator(): MutableIterator<E> = backing.keysIterator()
 
     override fun removeAll(elements: Collection<E>): Boolean {
@@ -662,11 +648,11 @@ internal class HashMapKeys<E> internal constructor(
 }
 
 internal class HashMapValues<V> internal constructor(
-    val backing: InternalHashMap<*, V>,
+    private val backing: InternalMap<*, V>,
 ) : MutableCollection<V>, AbstractMutableCollection<V>() {
 
     override val size: Int get() = backing.size
-    override fun isEmpty(): Boolean = backing.isEmpty()
+    override fun isEmpty(): Boolean = backing.size == 0
     override fun contains(element: V): Boolean = backing.containsValue(element)
     override fun add(element: V): Boolean = throw UnsupportedOperationException()
     override fun addAll(elements: Collection<V>): Boolean = throw UnsupportedOperationException()
@@ -700,11 +686,11 @@ internal class HashMapValues<V> internal constructor(
  * See also [KT-42248](https://youtrack.jetbrains.com/issue/KT-42428).
  */
 internal abstract class HashMapEntrySetBase<K, V, E : Map.Entry<K, V>> internal constructor(
-    val backing: InternalHashMap<K, V>,
+    val backing: InternalMap<K, V>,
 ) : MutableSet<E>, AbstractMutableSet<E>() {
 
     override val size: Int get() = backing.size
-    override fun isEmpty(): Boolean = backing.isEmpty()
+    override fun isEmpty(): Boolean = backing.size == 0
     override fun contains(element: E): Boolean = backing.containsEntry(element)
     protected abstract fun getEntry(element: Map.Entry<K, V>): E?
     override fun clear() = backing.clear()
@@ -725,7 +711,7 @@ internal abstract class HashMapEntrySetBase<K, V, E : Map.Entry<K, V>> internal 
 }
 
 internal class HashMapEntrySet<K, V> internal constructor(
-    backing: InternalHashMap<K, V>,
+    backing: InternalMap<K, V>,
 ) : HashMapEntrySetBase<K, V, MutableMap.MutableEntry<K, V>>(backing) {
 
     override fun getEntry(element: Map.Entry<K, V>): MutableMap.MutableEntry<K, V>? = backing.getEntry(element)
