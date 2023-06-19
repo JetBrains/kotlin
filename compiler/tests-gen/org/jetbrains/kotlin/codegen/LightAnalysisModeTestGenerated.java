@@ -2703,6 +2703,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/callableReference/arrayOf.kt");
         }
 
+        @TestMetadata("arrayOfNulls.kt")
+        public void testArrayOfNulls() throws Exception {
+            runTest("compiler/testData/codegen/box/callableReference/arrayOfNulls.kt");
+        }
+
         @TestMetadata("builtinFunctionReferenceOwner.kt")
         public void testBuiltinFunctionReferenceOwner() throws Exception {
             runTest("compiler/testData/codegen/box/callableReference/builtinFunctionReferenceOwner.kt");

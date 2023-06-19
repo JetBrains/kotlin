@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrReturnableBlockSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.name.Name
@@ -404,28 +405,38 @@ class FunctionInlining(
                     typeParam.symbol to superType.arguments[typeParam.index].typeOrNull!!
                 }
 
+                fun createTypeArgumentsSubstitutor(typeParameters: List<IrTypeParameter>): IrTypeSubstitutor {
+                    val typeArguments = typeParameters.withIndex().map { (index, param) ->
+                        makeTypeProjection(irFunctionReference.getTypeArgument(index)!!, param.variance)
+                    }
+                    return IrTypeSubstitutor(typeParameters.map { it.symbol }, typeArguments, context.irBuiltIns, true)
+                }
+
                 val immediateCall = when (inlinedFunction) {
                     is IrConstructor -> {
+                        val typeSubstitutor = createTypeArgumentsSubstitutor(inlinedFunction.classIfConstructor.typeParameters)
                         val classTypeParametersCount = inlinedFunction.parentAsClass.typeParameters.size
                         IrConstructorCallImpl.fromSymbolOwner(
                             if (inlineArgumentsWithTheirOriginalTypeAndOffset) irFunctionReference.startOffset else irCall.startOffset,
                             if (inlineArgumentsWithTheirOriginalTypeAndOffset) irFunctionReference.endOffset else irCall.endOffset,
-                            inlinedFunction.returnType,
+                            typeSubstitutor.substitute(inlinedFunction.returnType),
                             inlinedFunction.symbol,
                             classTypeParametersCount,
                             INLINED_FUNCTION_REFERENCE
                         )
                     }
-                    is IrSimpleFunction ->
+                    is IrSimpleFunction -> {
+                        val typeSubstitutor = createTypeArgumentsSubstitutor(inlinedFunction.typeParameters)
                         IrCallImpl(
                             if (inlineArgumentsWithTheirOriginalTypeAndOffset) irFunctionReference.startOffset else irCall.startOffset,
                             if (inlineArgumentsWithTheirOriginalTypeAndOffset) irFunctionReference.endOffset else irCall.endOffset,
-                            inlinedFunction.returnType,
+                            typeSubstitutor.substitute(inlinedFunction.returnType),
                             inlinedFunction.symbol,
                             inlinedFunction.typeParameters.size,
                             inlinedFunction.valueParameters.size,
                             INLINED_FUNCTION_REFERENCE
                         )
+                    }
                     else -> error("Unknown function kind : ${inlinedFunction.render()}")
                 }.apply {
                     for (parameter in functionParameters) {
