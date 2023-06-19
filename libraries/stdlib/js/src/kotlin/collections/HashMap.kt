@@ -56,7 +56,7 @@ public actual open class HashMap<K, V> : AbstractMutableMap<K, V>, MutableMap<K,
     /**
      * Creates a new empty [HashMap].
      */
-    actual constructor() : this(InternalHashCodeMap())
+    actual constructor() : this(InternalHashMap())
 
     /**
      * Creates a new empty [HashMap] with the specified initial capacity and load factor.
