@@ -24,18 +24,28 @@ sealed interface FailurePattern
 
 private typealias Block<T> = () -> T
 
-enum class TestMode(val isJs: Boolean = false, val isNative: Boolean = false, val hasCachesEnabled: Boolean = false) {
-    JS_NO_IC(isJs = true),
-    JS_WITH_IC(isJs = true),
-    NATIVE_CACHE_NO(isNative = true),
-    NATIVE_CACHE_STATIC_ONLY_DIST(isNative = true, hasCachesEnabled = true),
-    NATIVE_CACHE_STATIC_EVERYWHERE(isNative = true, hasCachesEnabled = true);
+data class TestMode(
+    val isJs: Boolean = false,
+    val isNative: Boolean = false,
+    val staticCache: Scope = Scope.NOWHERE,
+    val lazyIr: Scope = Scope.NOWHERE
+) {
+    enum class Scope {
+        NOWHERE, DISTRIBUTION, EVERYWHERE;
+
+        val notUsed: Boolean get() = this == NOWHERE
+        val onlyDistribution: Boolean get() = this == DISTRIBUTION
+        val usedEverywhere: Boolean get() = this == EVERYWHERE
+    }
 
     init {
         check(isJs xor isNative)
-        check(isNative || !hasCachesEnabled)
+        check(isNative || staticCache.notUsed)
+        check(isNative || lazyIr.notUsed)
     }
 }
+
+enum class LazyIrMode { NO, }
 
 fun abiTest(init: TestBuilder.() -> Unit): String {
     val builder = TestBuilderImpl()
@@ -49,7 +59,7 @@ fun abiTest(init: TestBuilder.() -> Unit): String {
 private const val OK_STATUS = "OK"
 
 private class TestBuilderImpl : TestBuilder {
-    override val testMode = TestMode.__UNKNOWN__
+    override val testMode = __UNKNOWN_TEST_MODE__
 
     private val tests = mutableListOf<Test>()
 

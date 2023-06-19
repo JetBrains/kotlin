@@ -34,14 +34,20 @@ abstract class AbstractNativePartialLinkageTest : AbstractNativeSimpleTest() {
         override val buildDir get() = this@AbstractNativePartialLinkageTest.buildDir
         override val stdlibFile get() = this@AbstractNativePartialLinkageTest.stdlibFile
 
-        override val testModeName = with(testRunSettings.get<CacheMode>()) {
-            val cacheModeAlias = when {
-                !useStaticCacheForDistributionLibraries -> CacheMode.Alias.NO
-                !useStaticCacheForUserLibraries -> CacheMode.Alias.STATIC_ONLY_DIST
-                else -> CacheMode.Alias.STATIC_EVERYWHERE
-            }
+        override val testModeConstructorParameters = buildMap {
+            this["isNative"] = "true"
 
-            "NATIVE_CACHE_${cacheModeAlias}"
+            val cacheMode = testRunSettings.get<CacheMode>()
+            when {
+                cacheMode.useStaticCacheForUserLibraries -> {
+                    this["staticCache"] = "TestMode.Scope.EVERYWHERE"
+                    this["lazyIr"] = "TestMode.Scope.NOWHERE" // by default LazyIR is disabled
+                }
+                cacheMode.useStaticCacheForDistributionLibraries -> {
+                    this["staticCache"] = "TestMode.Scope.DISTRIBUTION"
+                    this["lazyIr"] = "TestMode.Scope.NOWHERE" // by default LazyIR is disabled
+                }
+            }
         }
 
         override fun customizeModuleSources(moduleName: String, moduleSourceDir: File) {

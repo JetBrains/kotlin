@@ -1,6 +1,5 @@
 import abitestutils.abiTest
 import abitestutils.TestBuilder
-import abitestutils.TestMode.NATIVE_CACHE_STATIC_EVERYWHERE
 
 fun box() = abiTest {
     val c = Container()
@@ -124,7 +123,7 @@ private inline fun TestBuilder.unlinkedSymbol(signature: String, noinline block:
 }
 
 private inline fun TestBuilder.unlinkedTopLevelPrivateSymbol(signature: String, noinline block: () -> Unit) {
-    if (testMode == NATIVE_CACHE_STATIC_EVERYWHERE) {
+    if (testMode.lazyIr.usedEverywhere) {
         val accessorName = signature.removePrefix("/").split('.').takeLast(2).joinToString(".")
         expectFailure(linkage("Property accessor '$accessorName' can not be called: Private property accessor declared in module <lib1> can not be accessed in module <main>"), block)
     } else

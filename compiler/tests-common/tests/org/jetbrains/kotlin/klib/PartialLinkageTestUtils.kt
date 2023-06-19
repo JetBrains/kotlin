@@ -18,7 +18,7 @@ object PartialLinkageTestUtils {
         val testDir: File
         val buildDir: File
         val stdlibFile: File
-        val testModeName: String
+        val testModeConstructorParameters: Map<String, String>
 
         // Customize the source code of a module before compiling it to a KLIB.
         fun customizeModuleSources(moduleName: String, moduleSourceDir: File) = Unit
@@ -99,7 +99,14 @@ object PartialLinkageTestUtils {
                     KtUsefulTestCase.assertExists(utilsDir)
 
                     copySources(from = utilsDir, to = moduleBuildDirs.sourceDir) { contents ->
-                        contents.replace(TEST_MODE_PLACEHOLDER, testModeName)
+                        contents.replace(
+                            TEST_MODE_PLACEHOLDER,
+                            buildString {
+                                append("TestMode(")
+                                testModeConstructorParameters.entries.joinTo(this) { it.key + " = " + it.value }
+                                append(")")
+                            }
+                        )
                     }
                 }
 
@@ -203,5 +210,5 @@ object PartialLinkageTestUtils {
 
     const val MAIN_MODULE_NAME = "main"
     private const val PL_UTILS_DIR = "__utils__"
-    private const val TEST_MODE_PLACEHOLDER = "TestMode.__UNKNOWN__"
+    private const val TEST_MODE_PLACEHOLDER = "__UNKNOWN_TEST_MODE__"
 }

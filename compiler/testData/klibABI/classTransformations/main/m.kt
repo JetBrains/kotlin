@@ -1,5 +1,4 @@
 import abitestutils.abiTest
-import abitestutils.TestMode.NATIVE_CACHE_STATIC_EVERYWHERE
 
 fun box() = abiTest {
     /**
@@ -18,9 +17,9 @@ fun box() = abiTest {
      * The [adjustForLazyIr] function is used to adjust tested error messages depending on whether lazy IR is used or not.
      */
     fun adjustForLazyIr(declaration: String) =
-        if (testMode == NATIVE_CACHE_STATIC_EVERYWHERE) "Expression" else declaration
+        if (testMode.lazyIr.usedEverywhere) "Expression" else declaration
     fun adjustNoClassFoundForLazyIr(signature: String) =
-        if (testMode == NATIVE_CACHE_STATIC_EVERYWHERE) "Expression uses unlinked class symbol '$signature'" else "No class found for symbol '$signature'"
+        if (testMode.lazyIr.usedEverywhere) "Expression uses unlinked class symbol '$signature'" else "No class found for symbol '$signature'"
 
     expectFailure(linkage("Function 'getClassToEnumFoo' can not be called: ${adjustForLazyIr("Function")} uses unlinked class symbol '/ClassToEnum.Foo'")) { getClassToEnumFoo() }
     expectFailure(linkage("Function 'getClassToEnumFooInline' can not be called: ${adjustForLazyIr("Function")} uses unlinked class symbol '/ClassToEnum.Foo'")) { getClassToEnumFooInline() }

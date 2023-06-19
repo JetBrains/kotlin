@@ -8,7 +8,7 @@ private fun TestBuilder.pe(className: String) = linkage("Property accessor 'bar.
 fun box() = abiTest {
     // For now it's not working with caches, because of incorrect lazy-IR usage.
     // Check KT-54019 for details.
-    if (testMode.hasCachesEnabled) {
+    if (!testMode.lazyIr.usedEverywhere) {
         expectSuccess("OK") { "OK" }
         return@abiTest
     }
