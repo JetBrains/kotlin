@@ -1,21 +1,21 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.gradle.plugin.mpp.targetHierarchy
+package org.jetbrains.kotlin.gradle.plugin.hierarchy
 
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
-import org.jetbrains.kotlin.gradle.plugin.KotlinTargetHierarchy
+import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetTree
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.tooling.core.withClosure
 
-internal data class KotlinTargetHierarchyTree(
-    val node: Node, val children: Set<KotlinTargetHierarchyTree> = emptySet()
+internal data class KotlinHierarchy(
+    val node: Node, val children: Set<KotlinHierarchy> = emptySet(),
 ) {
 
-    val childrenClosure: Set<KotlinTargetHierarchyTree> =
-        children.withClosure<KotlinTargetHierarchyTree> { it.children }
+    val childrenClosure: Set<KotlinHierarchy> =
+        children.withClosure<KotlinHierarchy> { it.children }
 
     sealed class Node {
         abstract suspend fun sharedSourceSetName(compilation: KotlinCompilation<*>): String?
@@ -26,7 +26,7 @@ internal data class KotlinTargetHierarchyTree(
 
         data class Group(val name: String) : Node() {
             override suspend fun sharedSourceSetName(compilation: KotlinCompilation<*>): String? {
-                val sourceSetTree = KotlinTargetHierarchy.SourceSetTree.orNull(compilation)?.name ?: return null
+                val sourceSetTree = KotlinSourceSetTree.orNull(compilation)?.name ?: return null
                 return lowerCamelCaseName(name, sourceSetTree)
             }
         }

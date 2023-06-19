@@ -20,7 +20,7 @@ kotlin {
     linuxX64()
     linuxArm64()
 
-    targetHierarchy.custom {
+    applyHierarchyTemplate {
         group("nativeCommon") {
             withNative()
         }

@@ -10,13 +10,13 @@ package org.jetbrains.kotlin.gradle.unitTests
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
-import org.jetbrains.kotlin.gradle.plugin.KotlinTargetHierarchy.SourceSetTree
+import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetTree
+import org.jetbrains.kotlin.gradle.plugin.hierarchy.KotlinSourceSetTreeClassifier
+import org.jetbrains.kotlin.gradle.plugin.hierarchy.orNull
 import org.jetbrains.kotlin.gradle.plugin.launchInStage
 import org.jetbrains.kotlin.gradle.plugin.mpp.external.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.external.ExternalKotlinCompilationDescriptor.CompilationFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.external.ExternalKotlinTargetDescriptor.TargetFactory
-import org.jetbrains.kotlin.gradle.plugin.mpp.targetHierarchy.SourceSetTreeClassifier
-import org.jetbrains.kotlin.gradle.plugin.mpp.targetHierarchy.orNull
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.runLifecycleAwareTest
 import org.jetbrains.kotlin.gradle.utils.property
@@ -49,7 +49,7 @@ class ExternalKotlinTargetApiTests {
         val target = kotlin.createExternalKotlinTarget<FakeTarget> { defaults() }
         val compilation = target.createCompilation<FakeCompilation> { defaults() }
 
-        assertEquals(SourceSetTree("fake"), SourceSetTree.orNull(compilation))
+        assertEquals(KotlinSourceSetTree("fake"), KotlinSourceSetTree.orNull(compilation))
     }
 
     @Test
@@ -57,36 +57,36 @@ class ExternalKotlinTargetApiTests {
         val target = kotlin.createExternalKotlinTarget<FakeTarget> { defaults() }
         val compilation = target.createCompilation<FakeCompilation> {
             defaults()
-            sourceSetTreeClassifier = SourceSetTreeClassifier.Name("mySourceSetTree")
+            sourceSetTreeClassifierV2 = KotlinSourceSetTreeClassifier.Name("mySourceSetTree")
         }
 
-        assertEquals(SourceSetTree("mySourceSetTree"), SourceSetTree.orNull(compilation))
+        assertEquals(KotlinSourceSetTree("mySourceSetTree"), KotlinSourceSetTree.orNull(compilation))
     }
 
     @Test
     fun `test - sourceSetClassifier - custom property`() = buildProjectWithMPP().runLifecycleAwareTest {
-        val myProperty = project.objects.property<SourceSetTree>()
-        val nullProperty = project.objects.property<SourceSetTree>()
+        val myProperty = project.objects.property<KotlinSourceSetTree>()
+        val nullProperty = project.objects.property<KotlinSourceSetTree>()
 
         val target = kotlin.createExternalKotlinTarget<FakeTarget> { defaults() }
 
         val mainCompilation = target.createCompilation<FakeCompilation> {
             defaults()
-            sourceSetTreeClassifier = SourceSetTreeClassifier.Property(myProperty)
+            sourceSetTreeClassifierV2 = KotlinSourceSetTreeClassifier.Property(myProperty)
         }
 
         val auxCompilation = target.createCompilation<FakeCompilation>() {
             compilationName = "aux"
             compilationFactory = CompilationFactory(::FakeCompilation)
             defaultSourceSet = kotlin.sourceSets.create("aux")
-            sourceSetTreeClassifier = SourceSetTreeClassifier.Property(nullProperty)
+            sourceSetTreeClassifierV2 = KotlinSourceSetTreeClassifier.Property(nullProperty)
         }
 
         launchInStage(KotlinPluginLifecycle.Stage.FinaliseDsl) {
-            myProperty.set(SourceSetTree.main)
+            myProperty.set(KotlinSourceSetTree.main)
         }
 
-        assertEquals(SourceSetTree.main, SourceSetTree.orNull(mainCompilation))
-        assertNull(SourceSetTree.orNull(auxCompilation))
+        assertEquals(KotlinSourceSetTree.main, KotlinSourceSetTree.orNull(mainCompilation))
+        assertNull(KotlinSourceSetTree.orNull(auxCompilation))
     }
 }

@@ -19,14 +19,13 @@ import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.internal.customizeKotlinDependencies
 import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.gradle.plugin.KotlinTargetHierarchy.SourceSetTree
+import org.jetbrains.kotlin.gradle.plugin.hierarchy.orNull
 import org.jetbrains.kotlin.gradle.plugin.ide.kotlinIdeMultiplatformImport
 import org.jetbrains.kotlin.gradle.plugin.ide.locateOrRegisterIdeResolveDependenciesTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMultiplatformPlugin.Companion.sourceSetFreeCompilerArgsPropertyName
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.addBuildListenerForXcode
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal.runDeprecationDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.copyAttributes
-import org.jetbrains.kotlin.gradle.plugin.mpp.targetHierarchy.orNull
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultLanguageSettingsBuilder
 import org.jetbrains.kotlin.gradle.plugin.sources.awaitPlatformCompilations
 import org.jetbrains.kotlin.gradle.plugin.sources.checkSourceSetVisibilityRequirements
@@ -181,9 +180,10 @@ class KotlinMultiplatformPlugin : Plugin<Project> {
             project.launchInStage(KotlinPluginLifecycle.Stage.FinaliseRefinesEdges) {
                 /* Only setup default refines edges when no KotlinTargetHierarchy was applied */
                 if (project.multiplatformExtension.internalKotlinTargetHierarchy.appliedDescriptors.isNotEmpty()) return@launchInStage
+                if (project.multiplatformExtension.hierarchy.appliedTemplates.isNotEmpty()) return@launchInStage
 
                 target.compilations.forEach { compilation ->
-                    val sourceSetTree = SourceSetTree.orNull(compilation) ?: return@forEach
+                    val sourceSetTree = KotlinSourceSetTree.orNull(compilation) ?: return@forEach
                     val commonSourceSet = sourceSets.findByName(lowerCamelCaseName("common", sourceSetTree.name)) ?: return@forEach
                     compilation.defaultSourceSet.dependsOn(commonSourceSet)
                 }
@@ -330,7 +330,7 @@ internal fun Project.setupGeneralKotlinExtensionParameters() {
             val isMainSourceSet = sourceSet
                 .internal
                 .awaitPlatformCompilations()
-                .any { SourceSetTree.orNull(it) == SourceSetTree.main }
+                .any { KotlinSourceSetTree.orNull(it) == KotlinSourceSetTree.main }
 
             languageSettings.explicitApi = project.providers.provider {
                 val explicitApiFlag = project.kotlinExtension.explicitApiModeAsCompilerArg()

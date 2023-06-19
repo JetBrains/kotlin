@@ -19,7 +19,7 @@ kotlin {
     jvm()
     linuxX64()
     linuxArm64()
-    targetHierarchy.default()
+    applyDefaultHierarchyTemplate()
 
     sourceSets.commonMain.get().dependencies {
         api(project(":p1"))

@@ -18,7 +18,7 @@ class KotlinSourceSetTreeDependsOnMismatchTest {
     private fun checkDiagnostics(configure: KotlinMultiplatformExtension.() -> Unit): List<ToolingDiagnostic> {
         val project = buildProjectWithMPP {
             kotlin {
-                targetHierarchy.default()
+                applyDefaultHierarchyTemplate()
                 androidTarget()
                 project.androidApplication { compileSdk = 32 }
                 iosX64(); iosArm64(); iosSimulatorArm64()

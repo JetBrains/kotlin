@@ -3,15 +3,17 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("DEPRECATION")
+
 package org.jetbrains.kotlin.gradle.plugin.mpp.targetHierarchy
 
 import org.jetbrains.kotlin.gradle.ExternalKotlinTargetApi
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetTree
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetHierarchy
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetHierarchy.SourceSetTree
 import org.jetbrains.kotlin.gradle.plugin.awaitFinalValue
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilationFactory
-import org.jetbrains.kotlin.tooling.core.extrasLazyProperty
+import org.jetbrains.kotlin.gradle.plugin.hierarchy.KotlinSourceSetTreeClassifier
 
 /**
  * Classifier providing the corresponding [SourceSetTree] associated with any given [KotlinCompilation]
@@ -41,6 +43,10 @@ import org.jetbrains.kotlin.tooling.core.extrasLazyProperty
  * there will not be a dependsOn edge to 'commonTest', but (if present) 'commonUnitTest'
  */
 @ExternalKotlinTargetApi
+@Deprecated(
+    "Use org.jetbrains.kotlin.gradle.plugin.hierarchy.KotlinSourceSetTreeClassifier instead",
+    ReplaceWith("org.jetbrains.kotlin.gradle.plugin.hierarchy.KotlinSourceSetTreeClassifier"),
+)
 sealed class SourceSetTreeClassifier {
 
     /**
@@ -80,13 +86,13 @@ sealed class SourceSetTreeClassifier {
      * make the [SourceSetTree] configurable.
      */
     @ExternalKotlinTargetApi
-    class Property(val property: org.gradle.api.provider.Property<SourceSetTree>) : SourceSetTreeClassifier() {
+    class Property(val property: org.gradle.api.provider.Property<KotlinSourceSetTree>) : SourceSetTreeClassifier() {
         override fun toString(): String {
             return property.toString()
         }
     }
 
-    internal suspend fun classify(compilation: KotlinCompilation<*>): SourceSetTree? {
+    internal suspend fun classify(compilation: KotlinCompilation<*>): KotlinSourceSetTree? {
         return when (this) {
             is Default -> SourceSetTree(compilation.name)
             is Property -> property.awaitFinalValue()
@@ -96,25 +102,3 @@ sealed class SourceSetTreeClassifier {
         }
     }
 }
-
-/**
- * Returns the classifier configured for a given compilation.
- * This is writable, as Android requires overwriting of this default behaviour.
- *
- * - The KGP maintained target will set the classifier within the [KotlinJvmAndroidCompilationFactory]
- * - The external Android target will set this classifier within the 'createCompilation'
- *
- * It is therefore safe to access this value as soon as a compilation is provided
- */
-internal var KotlinCompilation<*>.sourceSetTreeClassifier: SourceSetTreeClassifier by extrasLazyProperty {
-    SourceSetTreeClassifier.Default
-}
-
-
-/**
- * Returns the [SourceSetTree] of a given [KotlinCompilation]:
- * Uses the [sourceSetTreeClassifier] under the hood.
- * See [SourceSetTreeClassifier]
- */
-internal suspend fun SourceSetTree.Companion.orNull(compilation: KotlinCompilation<*>) =
-    compilation.sourceSetTreeClassifier.classify(compilation)

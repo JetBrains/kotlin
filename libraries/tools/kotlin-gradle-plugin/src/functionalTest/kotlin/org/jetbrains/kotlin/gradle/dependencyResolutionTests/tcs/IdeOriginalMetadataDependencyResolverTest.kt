@@ -36,7 +36,7 @@ class IdeOriginalMetadataDependencyResolverTest {
         kotlin.linuxX64()
         kotlin.linuxArm64()
 
-        kotlin.targetHierarchy.default()
+        kotlin.applyDefaultHierarchyTemplate()
 
         project.evaluate()
 
@@ -64,7 +64,7 @@ class IdeOriginalMetadataDependencyResolverTest {
         kotlin.jvm()
         kotlin.linuxX64()
 
-        kotlin.targetHierarchy.default()
+        kotlin.applyDefaultHierarchyTemplate()
 
         val commonMain = kotlin.sourceSets.getByName("commonMain")
 

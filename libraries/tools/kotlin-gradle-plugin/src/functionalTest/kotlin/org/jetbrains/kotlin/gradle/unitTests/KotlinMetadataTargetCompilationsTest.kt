@@ -26,7 +26,7 @@ class KotlinMetadataTargetCompilationsTest {
         kotlin.jvm()
         kotlin.linuxX64()
         kotlin.linuxArm64()
-        kotlin.targetHierarchy.default()
+        kotlin.applyDefaultHierarchyTemplate()
 
         project.runLifecycleAwareTest {
             val target = kotlin.metadata() as KotlinMetadataTarget
@@ -46,7 +46,7 @@ class KotlinMetadataTargetCompilationsTest {
         val project = buildProjectWithMPP()
         val kotlin = project.multiplatformExtension
         kotlin.jvm()
-        kotlin.targetHierarchy.default()
+        kotlin.applyDefaultHierarchyTemplate()
 
         project.runLifecycleAwareTest {
             val target = kotlin.metadata() as KotlinMetadataTarget

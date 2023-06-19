@@ -58,7 +58,7 @@ class KotlinNativeCompilationModuleNameTest {
             }
         ) {
             with(multiplatformExtension) {
-                targetHierarchy.default()
+                applyDefaultHierarchyTemplate()
                 linuxX64()
                 linuxArm64()
             }

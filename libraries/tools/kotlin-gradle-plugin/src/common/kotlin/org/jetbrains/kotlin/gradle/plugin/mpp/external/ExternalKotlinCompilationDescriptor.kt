@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.gradle.ExternalKotlinTargetApi
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
+import org.jetbrains.kotlin.gradle.plugin.hierarchy.KotlinSourceSetTreeClassifier
 import org.jetbrains.kotlin.gradle.plugin.mpp.DecoratedKotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.external.ExternalKotlinCompilationDescriptor.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.targetHierarchy.SourceSetTreeClassifier
@@ -55,7 +56,12 @@ interface ExternalKotlinCompilationDescriptor<T : DecoratedExternalKotlinCompila
     val compilationFactory: CompilationFactory<T>
     val friendArtifactResolver: FriendArtifactResolver<T>?
     val compilationAssociator: CompilationAssociator<T>?
+
+    @Suppress("DEPRECATION")
+    @Deprecated("Use .sourceSetTreeClassifierV2 instead")
     val sourceSetTreeClassifier: SourceSetTreeClassifier
+    val sourceSetTreeClassifierV2: KotlinSourceSetTreeClassifier?
+
     val configure: ((T) -> Unit)?
 }
 
@@ -73,6 +79,7 @@ fun <T : DecoratedExternalKotlinCompilation> ExternalKotlinCompilationDescriptor
             friendArtifactResolver = friendArtifactResolver,
             compilationAssociator = compilationAssociator,
             sourceSetTreeClassifier = sourceSetTreeClassifier,
+            sourceSetTreeClassifierV2 = sourceSetTreeClassifierV2,
             configure = this.configure
         )
     }
@@ -87,7 +94,12 @@ class ExternalKotlinCompilationDescriptorBuilder<T : DecoratedExternalKotlinComp
     var compilationFactory: CompilationFactory<T> by Delegates.notNull()
     var friendArtifactResolver: FriendArtifactResolver<T>? = null
     var compilationAssociator: CompilationAssociator<T>? = null
+
+    @Suppress("DEPRECATION")
+    @Deprecated("Use sourceSetTreeClassifierV2 instead")
     var sourceSetTreeClassifier: SourceSetTreeClassifier = SourceSetTreeClassifier.Default
+    var sourceSetTreeClassifierV2: KotlinSourceSetTreeClassifier? = null
+
 
     internal var configure: ((T) -> Unit)? = null
 
@@ -106,6 +118,9 @@ private data class ExternalKotlinCompilationDescriptorImpl<T : DecoratedExternal
     override val compilationFactory: CompilationFactory<T>,
     override val friendArtifactResolver: FriendArtifactResolver<T>?,
     override val compilationAssociator: CompilationAssociator<T>?,
+    @Deprecated("Use .sourceSetTreeClassifierV2 instead")
+    @Suppress("DEPRECATION")
     override val sourceSetTreeClassifier: SourceSetTreeClassifier,
+    override val sourceSetTreeClassifierV2: KotlinSourceSetTreeClassifier?,
     override val configure: ((T) -> Unit)?,
 ) : ExternalKotlinCompilationDescriptor<T>

@@ -349,7 +349,7 @@ class IdeSourceSetConstraintTest {
         val project = buildMppProject()
         val kotlin = project.multiplatformExtension
 
-        kotlin.targetHierarchy.default()
+        kotlin.applyDefaultHierarchyTemplate()
 
         kotlin.jvm()
         kotlin.js(KotlinJsCompilerType.IR)

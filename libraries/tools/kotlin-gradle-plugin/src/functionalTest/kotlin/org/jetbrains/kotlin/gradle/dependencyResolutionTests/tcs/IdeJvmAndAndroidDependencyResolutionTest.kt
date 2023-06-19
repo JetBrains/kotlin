@@ -37,7 +37,7 @@ class IdeJvmAndAndroidDependencyResolutionTest {
         if (enableDefaultStdlib) repositories.mavenLocal()
         repositories.mavenCentralCacheRedirector()
 
-        project.multiplatformExtension.targetHierarchy.custom {
+        project.multiplatformExtension.applyHierarchyTemplate {
             common {
                 group("jvmAndAndroid") {
                     withJvm()

@@ -14,7 +14,7 @@ repositories {
 }
 
 kotlin {
-    targetHierarchy.default()
+    applyDefaultHierarchyTemplate()
     linuxX64()
     macosX64()
     macosArm64()

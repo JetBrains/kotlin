@@ -10,8 +10,9 @@ import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.AfterFinaliseDsl
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.hierarchy.KotlinHierarchyDslImpl
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.targetHierarchy.KotlinTargetHierarchyDslImpl
+import org.jetbrains.kotlin.gradle.plugin.hierarchy.default
 import javax.inject.Inject
 
 abstract class KotlinMultiplatformExtension(project: Project) :
@@ -19,7 +20,8 @@ abstract class KotlinMultiplatformExtension(project: Project) :
     KotlinTargetContainerWithPresetFunctions,
     KotlinTargetContainerWithJsPresetFunctions,
     KotlinTargetContainerWithWasmPresetFunctions,
-    KotlinTargetContainerWithNativeShortcuts {
+    KotlinTargetContainerWithNativeShortcuts,
+    KotlinHierarchyDsl {
     override val presets: NamedDomainObjectCollection<KotlinTargetPreset<*>> = project.container(KotlinTargetPreset::class.java)
 
     final override val targets: NamedDomainObjectCollection<KotlinTarget> = project.container(KotlinTarget::class.java)
@@ -45,12 +47,189 @@ abstract class KotlinMultiplatformExtension(project: Project) :
         configure(presetExtension)
     }
 
-    internal val internalKotlinTargetHierarchy by lazy {
-        KotlinTargetHierarchyDslImpl(targets, sourceSets)
+    internal val hierarchy by lazy { KotlinHierarchyDslImpl(targets, sourceSets) }
+
+    /**
+     * Set's up a 'natural'/'default' hierarchy withing [KotlinTarget]'s in the project.
+     *
+     * #### Example
+     *
+     * ```kotlin
+     * kotlin {
+     *     applyDefaultHierarchyTemplate() // <- position of this call is not relevant!
+     *
+     *     iosX64()
+     *     iosArm64()
+     *     linuxX64()
+     *     linuxArm64()
+     * }
+     * ```
+     *
+     * Will create the following SourceSets:
+     * `[iosMain, iosTest, appleMain, appleTest, linuxMain, linuxTest, nativeMain, nativeTest]
+     *
+     *
+     * Hierarchy:
+     * ```
+     *                                                                     common
+     *                                                                        |
+     *                                                      +-----------------+-------------------+
+     *                                                      |                                     |
+     *
+     *                                                    native                                 ...
+     *
+     *                                                     |
+     *                                                     |
+     *                                                     |
+     *         +----------------------+--------------------+-----------------------+
+     *         |                      |                    |                       |
+     *
+     *       apple                  linux                mingw              androidNative
+     *
+     *         |
+     *  +-----------+------------+------------+
+     *  |           |            |            |
+     *
+     * macos       ios         tvos        watchos
+     * ```
+     *
+     * @see KotlinHierarchyTemplate.extend
+     */
+    fun applyDefaultHierarchyTemplate() = applyHierarchyTemplate(KotlinHierarchyTemplate.default)
+
+    /**
+     * Will apply the given [template] to the project.
+     *
+     * ### Example: Manually apply the default hierarchy (see [applyDefaultHierarchyTemplate])
+     * ```kotlin
+     * kotlin {
+     *     applyHierarchyTemplate(KotlinHierarchyTemplate.default)
+     *     iosX64()
+     *     iosArm64()
+     *     iosSimulatorArm64()
+     *     linuxX64()
+     *     // ...
+     * }
+     * ```
+     */
+    @ExperimentalKotlinGradlePluginApi
+    override fun applyHierarchyTemplate(template: KotlinHierarchyTemplate) {
+        hierarchy.applyHierarchyTemplate(template)
     }
 
+    /**
+     * Similar to [applyDefaultHierarchyTemplate], but allows to extend the provided template
+     *
+     * #### Example 2: Adding custom groups (Experimental)
+     * Let's imagine we would additionally like to share code between linux and apple (unixLike)
+     *
+     * ```kotlin
+     * kotlin {
+     *     applyHierarchyTemplate(KotlinHierarchyTemplate.default) {
+     *         group("native") { // <- we can re-declare already existing groups and connect children to it!
+     *             group("unixLike") {
+     *                 withLinux()
+     *                 withApple()
+     *             }
+     *         }
+     *     }
+     * }
+     * ```
+     */
     @ExperimentalKotlinGradlePluginApi
-    val targetHierarchy: KotlinTargetHierarchyDsl get() = internalKotlinTargetHierarchy
+    override fun applyHierarchyTemplate(template: KotlinHierarchyTemplate, extension: KotlinHierarchyBuilder.Root.() -> Unit) {
+        hierarchy.applyHierarchyTemplate(template, extension)
+    }
+
+    /**
+     * Allows to create a fully custom hierarchy (no defaults applied)
+     * Note: Using the custom hierarchy will also require to set the edges to 'commonMain' and 'commonTest' SourceSets by
+     * using the `common` group.
+     *
+     * ####  Example 1:
+     * Sharing code between iOS and a jvmTarget:
+     * ```kotlin
+     * applyHierarchyTemplate {
+     *     common {
+     *         withJvm()
+     *         group("ios") {
+     *             withIos()
+     *         }
+     *     }
+     * }
+     * ```
+     *
+     * Will create two [KotlinSourceSetTree] using the 'common' and 'ios' groups, applied on the "test" and "main" compilations:
+     * When the following targets are specified:
+     * - jvm()
+     * - iosX64()
+     * - iosArm64()
+     * ```
+     *                    "main"                               "test"
+     *                  commonMain                           commonTest
+     *                      |                                    |
+     *                      |                                    |
+     *           +----------+----------+              +----------+----------+
+     *           |                     |              |                     |
+     *         iosMain               jvmMain        iosTest               jvmTest
+     *           |                                    |
+     *      +----+-----+                         +----+-----+
+     *      |          |                         |          |
+     * iosX64Main   iosArm64Main            iosX64Test   iosArm64Test
+     * ```
+     *
+     * #### Example 2: Creating a 'diamond structure'
+     * ```kotlin
+     * applyHierarchyTemplate {
+     *     common {
+     *         group("ios") {
+     *             withIos()
+     *         }
+     *
+     *         group("frontend") {
+     *             withJvm()
+     *             group("ios") // <- ! We can again reference the 'ios' group
+     *         }
+     *
+     *         group("apple") {
+     *             withMacos()
+     *             group("ios") // <- ! We can again reference the 'ios' group
+     *         }
+     *     }
+     * }
+     * ```
+     *
+     * In this case, the _group_ "ios" can be created with 'group("ios")' and later referenced with the same construction to build
+     * the tree. Applying the descriptor from the example to the following targets:
+     * - iosX64()
+     * - iosArm64()
+     * - macosX64()
+     * - jvm()
+     *
+     * will create the following 'main' KotlinSourceSetTree:
+     *
+     * ```
+     *                      commonMain
+     *                           |
+     *              +------------+----------+
+     *              |                       |
+     *          frontendMain            appleMain
+     *              |                        |
+     *    +---------+------------+-----------+----------+
+     *    |                      |                      |
+     * jvmMain                iosMain               macosX64Main
+     *                           |
+     *                           |
+     *                      +----+----+
+     *                      |         |
+     *                iosX64Main   iosArm64Main
+     * ```
+     */
+    @ExperimentalKotlinGradlePluginApi
+    override fun applyHierarchyTemplate(template: KotlinHierarchyBuilder.Root.() -> Unit) {
+        hierarchy.applyHierarchyTemplate(template)
+    }
+
 
     @Suppress("unused") // DSL
     val testableTargets: NamedDomainObjectCollection<KotlinTargetWithTests<*, *>>

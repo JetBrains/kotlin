@@ -5,7 +5,7 @@ plugins {
 }
 
 kotlin {
-    targetHierarchy.default()
+    applyDefaultHierarchyTemplate()
     jvm()
     linuxX64()
     linuxArm64()

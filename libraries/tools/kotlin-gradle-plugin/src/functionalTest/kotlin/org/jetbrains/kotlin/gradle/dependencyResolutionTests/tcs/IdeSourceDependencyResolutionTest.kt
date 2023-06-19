@@ -27,7 +27,7 @@ class IdeSourceDependencyResolutionTest {
             applyMultiplatformPlugin()
 
             multiplatformExtension.apply {
-                targetHierarchy.default()
+                applyDefaultHierarchyTemplate()
                 linuxX64()
                 linuxArm64()
                 jvm()
@@ -39,7 +39,7 @@ class IdeSourceDependencyResolutionTest {
             applyMultiplatformPlugin()
 
             multiplatformExtension.apply {
-                targetHierarchy.default()
+                applyDefaultHierarchyTemplate()
                 linuxX64()
                 linuxArm64()
                 jvm()
@@ -142,7 +142,7 @@ class IdeSourceDependencyResolutionTest {
             androidLibrary { compileSdk = 33 }
 
             multiplatformExtension.apply {
-                targetHierarchy.default()
+                applyDefaultHierarchyTemplate()
                 linuxX64()
                 linuxArm64()
                 jvm()

@@ -7,7 +7,7 @@ group = "test"
 version = "1.0"
 
 kotlin {
-    targetHierarchy.default()
+    applyDefaultHierarchyTemplate()
 
     jvm()
     linuxX64()

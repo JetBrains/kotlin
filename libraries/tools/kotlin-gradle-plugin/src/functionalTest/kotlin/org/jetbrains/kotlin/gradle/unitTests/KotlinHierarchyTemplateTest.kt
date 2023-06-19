@@ -8,25 +8,26 @@
 package org.jetbrains.kotlin.gradle.unitTests
 
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
-import org.jetbrains.kotlin.gradle.plugin.KotlinTargetHierarchyDescriptor
-import org.jetbrains.kotlin.gradle.plugin.mpp.targetHierarchy.CyclicKotlinTargetHierarchyException
-import org.jetbrains.kotlin.gradle.plugin.mpp.targetHierarchy.KotlinTargetHierarchyTree
-import org.jetbrains.kotlin.gradle.plugin.mpp.targetHierarchy.KotlinTargetHierarchyTree.Node
-import org.jetbrains.kotlin.gradle.plugin.mpp.targetHierarchy.buildKotlinTargetHierarchy
+import org.jetbrains.kotlin.gradle.plugin.KotlinHierarchyTemplate
+import org.jetbrains.kotlin.gradle.plugin.extend
+import org.jetbrains.kotlin.gradle.plugin.hierarchy.CyclicKotlinHierarchyException
+import org.jetbrains.kotlin.gradle.plugin.hierarchy.KotlinHierarchy
+import org.jetbrains.kotlin.gradle.plugin.hierarchy.KotlinHierarchy.Node
+import org.jetbrains.kotlin.gradle.plugin.hierarchy.buildHierarchy
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.runLifecycleAwareTest
 import org.jetbrains.kotlin.gradle.util.main
 import org.junit.Test
 import kotlin.test.*
 
-class KotlinTargetHierarchyDescriptorTest {
+class KotlinHierarchyTemplateTest {
 
     private val project = buildProjectWithMPP()
     private val kotlin = project.multiplatformExtension
 
     @Test
     fun `test - simple descriptor`() = project.runLifecycleAwareTest {
-        val descriptor = KotlinTargetHierarchyDescriptor {
+        val template = KotlinHierarchyTemplate {
             common {
                 group("groupA") { withCompilations { it.target.name == "a" } }
                 group("groupB") { withCompilations { it.target.name == "b" } }
@@ -43,7 +44,7 @@ class KotlinTargetHierarchyDescriptorTest {
                     group("groupA")
                 }
             },
-            descriptor.buildKotlinTargetHierarchy(targetA.compilations.main)
+            template.buildHierarchy(targetA.compilations.main)
         )
 
         assertEquals(
@@ -52,18 +53,18 @@ class KotlinTargetHierarchyDescriptorTest {
                     group("groupB")
                 }
             },
-            descriptor.buildKotlinTargetHierarchy(targetB.compilations.main)
+            template.buildHierarchy(targetB.compilations.main)
         )
 
         /* targetC is not mentioned in hierarchy description */
         assertNull(
-            descriptor.buildKotlinTargetHierarchy(targetC.compilations.main)
+            template.buildHierarchy(targetC.compilations.main)
         )
     }
 
     @Test
     fun `test - extend`() = project.runLifecycleAwareTest {
-        val descriptor = KotlinTargetHierarchyDescriptor { group("base") }.extend {
+        val template = KotlinHierarchyTemplate { group("base") }.extend {
             group("base") {
                 group("extension") {
                     withCompilations { true }
@@ -77,14 +78,14 @@ class KotlinTargetHierarchyDescriptorTest {
                     group("extension")
                 }
             },
-            descriptor.buildKotlinTargetHierarchy(kotlin.linuxX64().compilations.getByName("main"))
+            template.buildHierarchy(kotlin.linuxX64().compilations.getByName("main"))
         )
     }
 
 
     @Test
     fun `test - extend - with new root`() = project.runLifecycleAwareTest {
-        val descriptor = KotlinTargetHierarchyDescriptor { group("base") }.extend {
+        val template = KotlinHierarchyTemplate { group("base") }.extend {
             group("newRoot") {
                 group("base") {
                     group("extension") {
@@ -102,14 +103,14 @@ class KotlinTargetHierarchyDescriptorTest {
                     }
                 }
             },
-            descriptor.buildKotlinTargetHierarchy(kotlin.linuxX64().compilations.main)
+            template.buildHierarchy(kotlin.linuxX64().compilations.main)
         )
     }
 
 
     @Test
     fun `test - extend - with two new roots and two extensions`() = project.runLifecycleAwareTest {
-        val descriptor = KotlinTargetHierarchyDescriptor { group("base") }
+        val template = KotlinHierarchyTemplate { group("base") }
             .extend {
                 group("newRoot1") {
                     group("base") {
@@ -129,7 +130,7 @@ class KotlinTargetHierarchyDescriptorTest {
                 }
             }
 
-        val hierarchy = assertNotNull(descriptor.buildKotlinTargetHierarchy(kotlin.linuxX64().compilations.main))
+        val hierarchy = assertNotNull(template.buildHierarchy(kotlin.linuxX64().compilations.main))
 
         assertEquals(
             hierarchy {
@@ -149,7 +150,7 @@ class KotlinTargetHierarchyDescriptorTest {
             }, hierarchy
         )
 
-        fun KotlinTargetHierarchyTree.collectChildren(): List<KotlinTargetHierarchyTree> {
+        fun KotlinHierarchy.collectChildren(): List<KotlinHierarchy> {
             return children.toList() + children.flatMap { it.collectChildren() }
         }
 
@@ -165,7 +166,7 @@ class KotlinTargetHierarchyDescriptorTest {
 
     @Test
     fun `test - cycle`() = project.runLifecycleAwareTest {
-        val descriptor = KotlinTargetHierarchyDescriptor {
+        val template = KotlinHierarchyTemplate {
             group("x") { // decoy 1
                 group("a") {
                     group("xx") // decoy 2
@@ -183,8 +184,8 @@ class KotlinTargetHierarchyDescriptorTest {
             }
         }
 
-        val cycleStack = assertFailsWith<CyclicKotlinTargetHierarchyException> {
-            descriptor.buildKotlinTargetHierarchy(kotlin.linuxX64().compilations.main)
+        val cycleStack = assertFailsWith<CyclicKotlinHierarchyException> {
+            template.buildHierarchy(kotlin.linuxX64().compilations.main)
         }.cycle
 
         assertEquals(
@@ -196,7 +197,7 @@ class KotlinTargetHierarchyDescriptorTest {
     @Suppress("DEPRECATION")
     @Test
     fun `test - filterCompilations`() = project.runLifecycleAwareTest {
-        val descriptor = KotlinTargetHierarchyDescriptor {
+        val template = KotlinHierarchyTemplate {
             filterCompilations { it.name in setOf("a", "b") }
             common {
                 group("x") {
@@ -211,36 +212,36 @@ class KotlinTargetHierarchyDescriptorTest {
                     group("x")
                 }
             },
-            descriptor.buildKotlinTargetHierarchy(kotlin.linuxX64().compilations.maybeCreate("a"))
+            template.buildHierarchy(kotlin.linuxX64().compilations.maybeCreate("a"))
         )
 
         assertEquals(
-            descriptor.buildKotlinTargetHierarchy(kotlin.linuxX64().compilations.maybeCreate("a")),
-            descriptor.buildKotlinTargetHierarchy(kotlin.linuxX64().compilations.maybeCreate("b"))
+            template.buildHierarchy(kotlin.linuxX64().compilations.maybeCreate("a")),
+            template.buildHierarchy(kotlin.linuxX64().compilations.maybeCreate("b"))
         )
 
         assertNull(
-            descriptor.buildKotlinTargetHierarchy(kotlin.linuxX64().compilations.maybeCreate("c"))
+            template.buildHierarchy(kotlin.linuxX64().compilations.maybeCreate("c"))
         )
     }
 
     @Suppress("DEPRECATION")
     @Test
     fun `test - filterCompilations - include them again`() = project.runLifecycleAwareTest {
-        val descriptor = KotlinTargetHierarchyDescriptor {
+        val template = KotlinHierarchyTemplate {
             withCompilations { true }
             filterCompilations { it.name == "a" }
         }
 
-        assertNotNull(descriptor.buildKotlinTargetHierarchy(kotlin.linuxX64().compilations.maybeCreate("a")))
-        assertNull(descriptor.buildKotlinTargetHierarchy(kotlin.linuxX64().compilations.maybeCreate("b")))
+        assertNotNull(template.buildHierarchy(kotlin.linuxX64().compilations.maybeCreate("a")))
+        assertNull(template.buildHierarchy(kotlin.linuxX64().compilations.maybeCreate("b")))
 
-        val extended = descriptor.extend {
+        val extended = template.extend {
             withCompilations { true } // <- adds all compilations back again!
         }
 
-        assertNull(descriptor.buildKotlinTargetHierarchy(kotlin.linuxX64().compilations.maybeCreate("b")))
-        assertNotNull(extended.buildKotlinTargetHierarchy(kotlin.linuxX64().compilations.maybeCreate("b")))
+        assertNull(template.buildHierarchy(kotlin.linuxX64().compilations.maybeCreate("b")))
+        assertNotNull(extended.buildHierarchy(kotlin.linuxX64().compilations.maybeCreate("b")))
     }
 }
 
@@ -251,9 +252,9 @@ private class TestHierarchyBuilder(private val node: Node) {
         children.add(TestHierarchyBuilder(Node.Group(name)).also(builder))
     }
 
-    fun build(): KotlinTargetHierarchyTree = KotlinTargetHierarchyTree(node, children.map { it.build() }.toSet())
+    fun build(): KotlinHierarchy = KotlinHierarchy(node, children.map { it.build() }.toSet())
 }
 
-private fun hierarchy(build: TestHierarchyBuilder.() -> Unit): KotlinTargetHierarchyTree {
+private fun hierarchy(build: TestHierarchyBuilder.() -> Unit): KotlinHierarchy {
     return TestHierarchyBuilder(Node.Root).also(build).build()
 }

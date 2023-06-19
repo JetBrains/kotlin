@@ -38,7 +38,7 @@ class IdeSourcesAndDocumentationResolutionTest {
         }
 
         val kotlin = project.multiplatformExtension
-        kotlin.targetHierarchy.default()
+        kotlin.applyDefaultHierarchyTemplate()
         kotlin.jvm()
         kotlin.linuxX64()
         kotlin.linuxArm64()

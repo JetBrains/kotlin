@@ -8,7 +8,7 @@
 package org.jetbrains.kotlin.gradle.unitTests
 
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
-import org.jetbrains.kotlin.gradle.plugin.KotlinTargetHierarchyBuilder
+import org.jetbrains.kotlin.gradle.plugin.KotlinHierarchyBuilder
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsTargetPreset
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmWithJavaTargetPreset
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTargetPreset
@@ -18,11 +18,11 @@ import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import org.junit.Test
 import kotlin.test.fail
 
-class KotlinTargetHierarchyBuilderTest {
+class KotlinHierarchyBuilderTest {
 
     @Test
     fun `test - interface offers functions for known presets`() {
-        val kotlinTargetHierarchyBuilderInterface = KotlinTargetHierarchyBuilder::class.java
+        val kotlinTargetHierarchyBuilderInterface = KotlinHierarchyBuilder::class.java
 
         buildProjectWithMPP().multiplatformExtension.presets
 

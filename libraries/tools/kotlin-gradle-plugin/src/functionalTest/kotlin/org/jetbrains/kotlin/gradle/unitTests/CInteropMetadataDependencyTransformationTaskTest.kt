@@ -87,7 +87,7 @@ class CInteropMetadataDependencyTransformationTaskTest : MultiplatformExtensionT
     @Test
     fun `test task disabled for non shared-native source sets`() {
         project.enableCInteropCommonization(true)
-        kotlin.targetHierarchy.default()
+        kotlin.applyDefaultHierarchyTemplate()
         kotlin.linuxArm64()
         kotlin.linuxX64()
         kotlin.jvm()
@@ -131,7 +131,7 @@ class CInteropMetadataDependencyTransformationTaskTest : MultiplatformExtensionT
         ) {
             enableCInteropCommonization(true)
             kotlin {
-                targetHierarchy.default()
+                applyDefaultHierarchyTemplate()
                 linuxX64()
                 linuxArm64()
             }

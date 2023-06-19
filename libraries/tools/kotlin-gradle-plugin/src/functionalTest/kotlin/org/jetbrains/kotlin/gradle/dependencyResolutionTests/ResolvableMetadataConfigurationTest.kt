@@ -41,7 +41,8 @@ class ResolvableMetadataConfigurationTest {
         kotlin.jvm()
         kotlin.linuxArm64()
         kotlin.linuxX64()
-        kotlin.targetHierarchy.default()
+
+        kotlin.applyDefaultHierarchyTemplate()
 
         val commonMain = kotlin.sourceSets.getByName("commonMain")
         val nativeMain = kotlin.sourceSets.getByName("nativeMain")

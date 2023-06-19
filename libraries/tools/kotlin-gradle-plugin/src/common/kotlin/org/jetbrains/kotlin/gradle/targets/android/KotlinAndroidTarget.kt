@@ -39,7 +39,7 @@ abstract class KotlinAndroidTarget @Inject constructor(
 
     @ExperimentalKotlinGradlePluginApi
     val mainVariant: KotlinAndroidTargetVariantDsl = KotlinAndroidTargetVariantDslImpl(project.objects).apply {
-        sourceSetTree.convention(SourceSetTree.main)
+        sourceSetTree.convention(KotlinSourceSetTree.main)
     }
 
     @ExperimentalKotlinGradlePluginApi
@@ -54,7 +54,7 @@ abstract class KotlinAndroidTarget @Inject constructor(
 
     @ExperimentalKotlinGradlePluginApi
     val unitTestVariant: KotlinAndroidTargetVariantDsl = KotlinAndroidTargetVariantDslImpl(project.objects).apply {
-        sourceSetTree.convention(SourceSetTree.test)
+        sourceSetTree.convention(KotlinSourceSetTree.test)
     }
 
     @ExperimentalKotlinGradlePluginApi
@@ -69,7 +69,7 @@ abstract class KotlinAndroidTarget @Inject constructor(
 
     @ExperimentalKotlinGradlePluginApi
     val instrumentedTestVariant: KotlinAndroidTargetVariantDsl = KotlinAndroidTargetVariantDslImpl(project.objects).apply {
-        sourceSetTree.convention(SourceSetTree.instrumentedTest)
+        sourceSetTree.convention(KotlinSourceSetTree.instrumentedTest)
     }
 
     @ExperimentalKotlinGradlePluginApi

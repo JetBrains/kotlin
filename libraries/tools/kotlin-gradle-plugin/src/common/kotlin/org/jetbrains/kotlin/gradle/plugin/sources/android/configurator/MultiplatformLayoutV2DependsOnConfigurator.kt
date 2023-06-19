@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.gradle.plugin.sources.android.variantType
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 
 internal object MultiplatformLayoutV2DependsOnConfigurator : KotlinAndroidSourceSetConfigurator {
+    @Suppress("DEPRECATION")
     override fun configure(target: KotlinAndroidTarget, kotlinSourceSet: KotlinSourceSet, androidSourceSet: AndroidSourceSet) {
         val androidBaseSourceSetName = AndroidBaseSourceSetName.byName(androidSourceSet.name) ?: return
         setDefaultDependsOn(target, kotlinSourceSet, androidBaseSourceSetName.variantType)
@@ -32,8 +33,8 @@ internal object MultiplatformLayoutV2DependsOnConfigurator : KotlinAndroidSource
 
     private fun setDefaultDependsOn(target: KotlinAndroidTarget, kotlinSourceSet: KotlinSourceSet, variantType: AndroidVariantType) {
         target.project.launchInStage(KotlinPluginLifecycle.Stage.FinaliseRefinesEdges) {
-            /* Only setup default if not KotlinTargetHierarchy was applied */
-            if (target.project.multiplatformExtensionOrNull?.internalKotlinTargetHierarchy?.appliedDescriptors.orEmpty().isNotEmpty()) {
+            /* Only setup default if no hierarchy template was applied */
+            if (target.project.multiplatformExtensionOrNull?.hierarchy?.appliedTemplates.orEmpty().isNotEmpty()) {
                 return@launchInStage
             }
 

@@ -9,7 +9,7 @@ kotlin {
     macosX64()
     macosArm64()
 
-    targetHierarchy.default()
+    applyDefaultHierarchyTemplate()
 
     /* first cinterop commonizer group */
     listOf(macosX64(), macosArm64()).forEach { target ->

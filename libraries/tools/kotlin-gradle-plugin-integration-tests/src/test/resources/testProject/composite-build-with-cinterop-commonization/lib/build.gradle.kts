@@ -20,7 +20,7 @@ fun KotlinNativeTarget.cinterop(name: String = "a") {
 }
 
 kotlin {
-    targetHierarchy.default()
+    applyDefaultHierarchyTemplate()
 
     jvm()
 

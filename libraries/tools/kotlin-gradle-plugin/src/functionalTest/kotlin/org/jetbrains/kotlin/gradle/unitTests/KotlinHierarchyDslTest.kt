@@ -10,15 +10,15 @@ package org.jetbrains.kotlin.gradle.unitTests
 
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
+import org.jetbrains.kotlin.gradle.plugin.KotlinHierarchyTemplate
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
-import org.jetbrains.kotlin.gradle.plugin.KotlinTargetHierarchyDescriptor
-import org.jetbrains.kotlin.gradle.plugin.mpp.targetHierarchy.buildKotlinTargetHierarchy
-import org.jetbrains.kotlin.gradle.plugin.mpp.targetHierarchy.defaultKotlinTargetHierarchy
+import org.jetbrains.kotlin.gradle.plugin.hierarchy.buildHierarchy
+import org.jetbrains.kotlin.gradle.plugin.hierarchy.default
 import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.util.*
 import kotlin.test.*
 
-class KotlinTargetHierarchyDslTest {
+class KotlinHierarchyDslTest {
 
 
     private val project = buildProjectWithMPP()
@@ -28,7 +28,8 @@ class KotlinTargetHierarchyDslTest {
     @Test
     fun `test - hierarchy default - targets from all families`() {
         kotlin.apply {
-            targetHierarchy.default()
+            applyHierarchyTemplate(KotlinHierarchyTemplate.default)
+
             iosArm64()
             iosX64()
             iosSimulatorArm64()
@@ -154,7 +155,7 @@ class KotlinTargetHierarchyDslTest {
     @Test
     fun `test - hierarchy default - only linuxX64`() {
         kotlin.apply {
-            targetHierarchy.default()
+            applyDefaultHierarchyTemplate()
             kotlin.linuxX64()
         }
 
@@ -175,11 +176,12 @@ class KotlinTargetHierarchyDslTest {
 
     @Test
     fun `test - hierarchy default - is only applied to main and test compilations`() = project.runLifecycleAwareTest {
-        assertNotNull(defaultKotlinTargetHierarchy.buildKotlinTargetHierarchy(kotlin.linuxX64().compilations.main))
-        assertNotNull(defaultKotlinTargetHierarchy.buildKotlinTargetHierarchy(kotlin.linuxX64().compilations.test))
-        assertNull(defaultKotlinTargetHierarchy.buildKotlinTargetHierarchy(kotlin.linuxX64().compilations.maybeCreate("custom")))
+        assertNotNull(KotlinHierarchyTemplate.default.buildHierarchy(kotlin.linuxX64().compilations.main))
+        assertNotNull(KotlinHierarchyTemplate.default.buildHierarchy(kotlin.linuxX64().compilations.test))
+        assertNull(KotlinHierarchyTemplate.default.buildHierarchy(kotlin.linuxX64().compilations.maybeCreate("custom")))
 
-        kotlin.targetHierarchy.default()
+        kotlin.applyHierarchyTemplate(KotlinHierarchyTemplate.default)
+
         kotlin.linuxX64().compilations.maybeCreate("custom").defaultSourceSet.let { customSourceSet ->
             if (customSourceSet.dependsOn.isNotEmpty()) {
                 fail("Expected no dependsOn SourceSets for $customSourceSet (${customSourceSet.dependsOn})")
@@ -198,7 +200,7 @@ class KotlinTargetHierarchyDslTest {
         assertAndroidSdkAvailable()
         project.androidLibrary { compileSdk = 31 }
 
-        kotlin.targetHierarchy.default {
+        kotlin.applyHierarchyTemplate(KotlinHierarchyTemplate.default) {
             common {
                 group("jvmAndAndroid") {
                     withJvm()
@@ -243,14 +245,14 @@ class KotlinTargetHierarchyDslTest {
 
     @Test
     fun `test - hierarchy apply - extend`() {
-        val descriptor = KotlinTargetHierarchyDescriptor {
+        val descriptor = KotlinHierarchyTemplate {
             group("common") {
                 group("base")
             }
         }
 
         kotlin.apply {
-            targetHierarchy.apply(descriptor) {
+            applyHierarchyTemplate(descriptor) {
                 group("base") {
                     group("extension") {
                         withLinuxX64()
@@ -279,7 +281,7 @@ class KotlinTargetHierarchyDslTest {
 
     @Test
     fun `test - hierarchy custom`() {
-        kotlin.targetHierarchy.custom {
+        kotlin.applyHierarchyTemplate {
             common {
                 group("native") {
                     withNative()
@@ -314,7 +316,7 @@ class KotlinTargetHierarchyDslTest {
 
     @Test
     fun `test - hierarchy js and wasm`() {
-        kotlin.targetHierarchy.custom {
+        kotlin.applyHierarchyTemplate {
             common {
                 group("web") {
                     withJs()
@@ -339,7 +341,7 @@ class KotlinTargetHierarchyDslTest {
 
     @Test
     fun `test - hierarchy js and wasm split`() {
-        kotlin.targetHierarchy.custom {
+        kotlin.applyHierarchyTemplate {
             common {
                 group("jsAndJvm") {
                     withJs()
@@ -375,14 +377,14 @@ class KotlinTargetHierarchyDslTest {
 
     @Test
     fun `test - hierarchy set - extend - with new root`() {
-        val descriptor = KotlinTargetHierarchyDescriptor {
+        val descriptor = KotlinHierarchyTemplate {
             group("common") {
                 group("base")
             }
         }
 
         kotlin.apply {
-            targetHierarchy.apply(descriptor) {
+            applyHierarchyTemplate(descriptor) {
                 group("newRoot") {
                     group("base") {
                         group("extension") {
@@ -434,7 +436,7 @@ class KotlinTargetHierarchyDslTest {
      */
     @Test
     fun `test - diamond hierarchy from documentation example`() {
-        kotlin.targetHierarchy.custom {
+        kotlin.applyHierarchyTemplate {
             common {
                 group("ios") {
                     withIos()

@@ -21,7 +21,7 @@ class KotlinNativeCompileRefinesPathsTest {
     fun `test - shared linux - refinesPaths`() {
         val project = buildProjectWithMPP()
         val kotlin = project.multiplatformExtension
-        kotlin.targetHierarchy.default()
+        kotlin.applyDefaultHierarchyTemplate()
 
         kotlin.linuxX64()
         kotlin.linuxArm64()

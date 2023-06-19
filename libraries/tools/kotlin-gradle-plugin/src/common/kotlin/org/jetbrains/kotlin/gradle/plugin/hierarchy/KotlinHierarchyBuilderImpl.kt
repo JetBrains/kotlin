@@ -1,38 +1,37 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.gradle.plugin.mpp.targetHierarchy
+package org.jetbrains.kotlin.gradle.plugin.hierarchy
 
 import org.gradle.api.InvalidUserCodeException
 import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.konan.target.DEPRECATED_TARGET_MESSAGE
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.tooling.core.closure
 
-internal suspend fun KotlinTargetHierarchyDescriptor.buildKotlinTargetHierarchy(compilation: KotlinCompilation<*>): KotlinTargetHierarchyTree? {
-    val context = KotlinTargetHierarchyBuilderImplContext(compilation)
-    describe(context.root)
-    return context.build(KotlinTargetHierarchyTree.Node.Root)
+
+internal suspend fun KotlinHierarchyTemplate.buildHierarchy(compilation: KotlinCompilation<*>): KotlinHierarchy? {
+    val context = KotlinHierarchyBuilderImplContext(compilation)
+    context.root.applyHierarchyTemplate(this)
+    return context.build(KotlinHierarchy.Node.Root)
 }
 
-private class KotlinTargetHierarchyBuilderImplContext(private val compilation: KotlinCompilation<*>) {
-    val root by lazy { KotlinTargetHierarchyBuilderRootImpl(getOrCreateBuilder(KotlinTargetHierarchyTree.Node.Root)) }
+private class KotlinHierarchyBuilderImplContext(private val compilation: KotlinCompilation<*>) {
+    val root by lazy { KotlinHierarchyBuilderRootImpl(getOrCreateBuilder(KotlinHierarchy.Node.Root)) }
 
-    private val builders = hashMapOf<KotlinTargetHierarchyTree.Node, KotlinTargetHierarchyBuilderImpl>()
-    private val builtValues = hashMapOf<KotlinTargetHierarchyTree.Node, KotlinTargetHierarchyTree?>()
+    private val builders = hashMapOf<KotlinHierarchy.Node, KotlinHierarchyBuilderImpl>()
+    private val builtValues = hashMapOf<KotlinHierarchy.Node, KotlinHierarchy?>()
 
-    fun getOrCreateBuilder(node: KotlinTargetHierarchyTree.Node): KotlinTargetHierarchyBuilderImpl = builders.getOrPut(node) {
-        KotlinTargetHierarchyBuilderImpl(this, node)
+    fun getOrCreateBuilder(node: KotlinHierarchy.Node): KotlinHierarchyBuilderImpl = builders.getOrPut(node) {
+        KotlinHierarchyBuilderImpl(this, node)
     }
 
-    suspend fun build(node: KotlinTargetHierarchyTree.Node): KotlinTargetHierarchyTree? {
+    suspend fun build(node: KotlinHierarchy.Node): KotlinHierarchy? {
         return builtValues.getOrPut(node) {
             val builder = getOrCreateBuilder(node)
             if (!builder.contains(compilation)) return@getOrPut null
@@ -50,25 +49,25 @@ private class KotlinTargetHierarchyBuilderImplContext(private val compilation: K
             */
             val children = builder.children.mapNotNull { child -> build(child.node) }
             val directChildren = children.toSet() - children.flatMap { child -> child.childrenClosure }.toSet()
-            KotlinTargetHierarchyTree(node, directChildren)
+            KotlinHierarchy(node, directChildren)
         }
     }
 }
 
-private class KotlinTargetHierarchyBuilderRootImpl(
-    private val builder: KotlinTargetHierarchyBuilderImpl,
-) : KotlinTargetHierarchyBuilder.Root, KotlinTargetHierarchyBuilder by builder {
+private class KotlinHierarchyBuilderRootImpl(
+    private val builder: KotlinHierarchyBuilderImpl,
+) : KotlinHierarchyBuilder.Root, KotlinHierarchyBuilder by builder {
 
 
-    override fun sourceSetTrees(vararg tree: KotlinTargetHierarchy.SourceSetTree) {
+    override fun sourceSetTrees(vararg tree: KotlinSourceSetTree) {
         builder.sourceSetTrees = tree.toHashSet()
     }
 
-    override fun withSourceSetTree(vararg tree: KotlinTargetHierarchy.SourceSetTree) {
+    override fun withSourceSetTree(vararg tree: KotlinSourceSetTree) {
         builder.sourceSetTrees = builder.sourceSetTrees.orEmpty().plus(tree)
     }
 
-    override fun excludeSourceSetTree(vararg tree: KotlinTargetHierarchy.SourceSetTree) {
+    override fun excludeSourceSetTree(vararg tree:KotlinSourceSetTree) {
         val modules = tree.toHashSet()
         if (modules.isEmpty()) return
         builder.sourceSetTrees = builder.sourceSetTrees.orEmpty() - modules
@@ -76,15 +75,15 @@ private class KotlinTargetHierarchyBuilderRootImpl(
 }
 
 
-private class KotlinTargetHierarchyBuilderImpl(
-    val context: KotlinTargetHierarchyBuilderImplContext,
-    val node: KotlinTargetHierarchyTree.Node,
-) : KotlinTargetHierarchyBuilder {
+private class KotlinHierarchyBuilderImpl(
+    val context: KotlinHierarchyBuilderImplContext,
+    val node: KotlinHierarchy.Node,
+) : KotlinHierarchyBuilder {
 
-    val children = mutableSetOf<KotlinTargetHierarchyBuilderImpl>()
+    val children = mutableSetOf<KotlinHierarchyBuilderImpl>()
     val childrenClosure get() = closure { it.children }
 
-    var sourceSetTrees: Set<KotlinTargetHierarchy.SourceSetTree>? = null
+    var sourceSetTrees: Set<KotlinSourceSetTree>? = null
     private var includePredicate: ((KotlinCompilation<*>) -> Boolean) = { false }
     private var excludePredicate: ((KotlinCompilation<*>) -> Boolean) = { false }
 
@@ -105,7 +104,7 @@ private class KotlinTargetHierarchyBuilderImpl(
 
     suspend fun contains(compilation: KotlinCompilation<*>): Boolean {
         sourceSetTrees?.let { sourceSetTrees ->
-            val sourceSetTree = KotlinTargetHierarchy.SourceSetTree.orNull(compilation) ?: return false
+            val sourceSetTree = KotlinSourceSetTree.orNull(compilation) ?: return false
             if (sourceSetTree !in sourceSetTrees) return false
         }
 
@@ -121,8 +120,8 @@ private class KotlinTargetHierarchyBuilderImpl(
 
     private inline fun withTargets(crossinline predicate: (KotlinTarget) -> Boolean) = withCompilations { predicate(it.target) }
 
-    override fun group(name: String, build: KotlinTargetHierarchyBuilder.() -> Unit) {
-        val node = KotlinTargetHierarchyTree.Node.Group(name)
+    override fun group(name: String, build: KotlinHierarchyBuilder.() -> Unit) {
+        val node = KotlinHierarchy.Node.Group(name)
         val child = context.getOrCreateBuilder(node).also(build)
         children.add(child)
         checkCyclicHierarchy()
@@ -281,20 +280,20 @@ private class KotlinTargetHierarchyBuilderImpl(
     }
 
     override fun toString(): String {
-        return "KotlinTargetHierarchyBuilder($node)"
+        return "KotlinHierarchyBuilder($node)"
     }
 }
 
-/* Cycle Detection: Provide feedback for users when a KotlinTargetHierarchy cycle is declared */
+/* Cycle Detection: Provide feedback for users when a KotlinHierarchy cycle is declared */
 
-private fun KotlinTargetHierarchyBuilderImpl.checkCyclicHierarchy(): Nothing? {
+private fun KotlinHierarchyBuilderImpl.checkCyclicHierarchy(): Nothing? {
     val stack = mutableListOf(node)
-    val visited = hashSetOf<KotlinTargetHierarchyBuilderImpl>()
+    val visited = hashSetOf<KotlinHierarchyBuilderImpl>()
 
-    fun checkChild(child: KotlinTargetHierarchyBuilderImpl) {
+    fun checkChild(child: KotlinHierarchyBuilderImpl) {
         if (!visited.add(child)) return
         stack += child.node
-        if (this == child) throw CyclicKotlinTargetHierarchyException(stack)
+        if (this == child) throw CyclicKotlinHierarchyException(stack)
         child.children.forEach { next -> checkChild(next) }
         stack -= child.node
     }
@@ -303,6 +302,6 @@ private fun KotlinTargetHierarchyBuilderImpl.checkCyclicHierarchy(): Nothing? {
     return null
 }
 
-internal class CyclicKotlinTargetHierarchyException(val cycle: List<KotlinTargetHierarchyTree.Node>) : InvalidUserCodeException(
-    "KotlinTargetHierarchy cycle detected: ${cycle.joinToString(" -> ")}"
+internal class CyclicKotlinHierarchyException(val cycle: List<KotlinHierarchy.Node>) : InvalidUserCodeException(
+    "KotlinHierarchy cycle detected: ${cycle.joinToString(" -> ")}"
 )

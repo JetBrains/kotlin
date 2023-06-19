@@ -6,14 +6,14 @@
 package org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers
 
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
-import org.jetbrains.kotlin.gradle.plugin.KotlinTargetHierarchy.SourceSetTree
+import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetTree
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinGradleProjectChecker
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinGradleProjectCheckerContext
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics.KotlinSourceSetDependsOnDefaultCompilationSourceSet
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics.KotlinSourceSetTreeDependsOnMismatch
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsCollector
+import org.jetbrains.kotlin.gradle.plugin.hierarchy.orNull
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataTarget
-import org.jetbrains.kotlin.gradle.plugin.mpp.targetHierarchy.orNull
 import org.jetbrains.kotlin.gradle.plugin.sources.awaitPlatformCompilations
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 
@@ -22,14 +22,14 @@ internal object KotlinSourceSetTreeDependsOnMismatchChecker : KotlinGradleProjec
         val sourceSets = this.multiplatformExtension?.awaitSourceSets() ?: return
 
         // A "good" source set is part of only single Source Set Tree
-        val goodSourceSets = mutableMapOf<KotlinSourceSet, SourceSetTree?>()
+        val goodSourceSets = mutableMapOf<KotlinSourceSet, KotlinSourceSetTree?>()
         // A "bad" source set is part of >=2 Source Set Trees
-        val badSourceSets = mutableMapOf<KotlinSourceSet, Set<SourceSetTree?>>()
+        val badSourceSets = mutableMapOf<KotlinSourceSet, Set<KotlinSourceSetTree?>>()
         // A "leaf" source set is a source set with known Source Set Tree by default
         val leafSourceSets = multiplatformExtension
             .awaitTargets()
             .filter { it !is KotlinMetadataTarget }
-            .flatMap { target -> target.compilations.map { it.defaultSourceSet to SourceSetTree.orNull(it) } }
+            .flatMap { target -> target.compilations.map { it.defaultSourceSet to KotlinSourceSetTree.orNull(it) } }
             .toMap()
 
         val reverseSourceSetDependencies = mutableMapOf<KotlinSourceSet, MutableSet<KotlinSourceSet>>()
@@ -40,7 +40,7 @@ internal object KotlinSourceSetTreeDependsOnMismatchChecker : KotlinGradleProjec
             sourceSet.dependsOn.forEach { it.addReverseDependencyTo(sourceSet) }
 
             val platformCompilations = sourceSet.internal.awaitPlatformCompilations()
-            val distinctSourceSetTrees = platformCompilations.map { SourceSetTree.orNull(it) }.toSet()
+            val distinctSourceSetTrees = platformCompilations.map { KotlinSourceSetTree.orNull(it) }.toSet()
 
             val totalDistinctSourceSetTrees = distinctSourceSetTrees.size
 
@@ -124,7 +124,7 @@ internal object KotlinSourceSetTreeDependsOnMismatchChecker : KotlinGradleProjec
     private fun KotlinGradleProjectCheckerContext.reportSingleSourceSetWithDifferentSourceSetTree(
         collector: KotlinToolingDiagnosticsCollector,
         badSourceSet: KotlinSourceSet,
-        dependentsBySourceSetTree: Map<SourceSetTree?, List<KotlinSourceSet>>
+        dependentsBySourceSetTree: Map<KotlinSourceSetTree?, List<KotlinSourceSet>>
     ): Boolean {
         val singleDependee = dependentsBySourceSetTree
             .values
@@ -139,7 +139,7 @@ internal object KotlinSourceSetTreeDependsOnMismatchChecker : KotlinGradleProjec
     private fun KotlinGradleProjectCheckerContext.reportAllIncorrectSourceSetEdges(
         collector: KotlinToolingDiagnosticsCollector,
         badSourceSet: KotlinSourceSet,
-        dependentsBySourceSetTree: Map<SourceSetTree?, List<KotlinSourceSet>>,
+        dependentsBySourceSetTree: Map<KotlinSourceSetTree?, List<KotlinSourceSet>>,
     ) {
         val dependentsGroup = dependentsBySourceSetTree
             .mapKeys { it.key?.name ?: "null" }

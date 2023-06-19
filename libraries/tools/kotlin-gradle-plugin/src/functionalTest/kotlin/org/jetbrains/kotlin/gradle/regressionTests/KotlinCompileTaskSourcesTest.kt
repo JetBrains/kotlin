@@ -8,8 +8,10 @@
 package org.jetbrains.kotlin.gradle.regressionTests
 
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
+import org.jetbrains.kotlin.gradle.plugin.KotlinHierarchyTemplate
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinCommonCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinSharedNativeCompilation
+import org.jetbrains.kotlin.gradle.plugin.hierarchy.default
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompileCommon
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
@@ -23,7 +25,7 @@ class KotlinCompileTaskSourcesTest {
     fun `test - sources - shared native compile - KT-54995`() {
         val project = buildProjectWithMPP()
         val kotlin = project.multiplatformExtension
-        kotlin.targetHierarchy.default()
+        kotlin.applyDefaultHierarchyTemplate()
 
         kotlin.linuxX64()
         kotlin.linuxArm64()
@@ -63,7 +65,7 @@ class KotlinCompileTaskSourcesTest {
     fun `test - sources - linux and jvm`() {
         val project = buildProjectWithMPP()
         val kotlin = project.multiplatformExtension
-        kotlin.targetHierarchy.default {
+        kotlin.applyHierarchyTemplate(KotlinHierarchyTemplate.default) {
             common {
                 group("jvmAndLinux") {
                     withLinux()

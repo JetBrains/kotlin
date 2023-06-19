@@ -10,7 +10,7 @@ kotlin {
     macosX64()
     macosArm64()
 
-    targetHierarchy.default()
+    applyDefaultHierarchyTemplate()
 
     targets.withType<KotlinNativeTarget>().all {
         compilations.getByName("main").cinterops.create("libapp") {

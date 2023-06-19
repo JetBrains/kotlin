@@ -11,7 +11,7 @@ repositories {
 }
 
 kotlin {
-    targetHierarchy.default()
+    applyDefaultHierarchyTemplate()
 
     jvm()
     linuxX64()

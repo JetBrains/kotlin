@@ -7,14 +7,14 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import com.android.build.gradle.api.BaseVariant
+import org.jetbrains.kotlin.gradle.plugin.hierarchy.KotlinSourceSetTreeClassifier
+import org.jetbrains.kotlin.gradle.plugin.hierarchy.KotlinSourceSetTreeClassifier.Property
+import org.jetbrains.kotlin.gradle.plugin.hierarchy.sourceSetTreeClassifier
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.DefaultKotlinCompilationFriendPathsResolver
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinAndroidCompilationAssociator
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.AndroidCompilationSourceSetsContainerFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.KotlinCompilationImplFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.KotlinJvmCompilerOptionsFactory
-import org.jetbrains.kotlin.gradle.plugin.mpp.targetHierarchy.SourceSetTreeClassifier
-import org.jetbrains.kotlin.gradle.plugin.mpp.targetHierarchy.SourceSetTreeClassifier.Property
-import org.jetbrains.kotlin.gradle.plugin.mpp.targetHierarchy.sourceSetTreeClassifier
 import org.jetbrains.kotlin.gradle.plugin.sources.android.AndroidVariantType
 import org.jetbrains.kotlin.gradle.plugin.sources.android.type
 
@@ -49,7 +49,7 @@ class KotlinJvmAndroidCompilationFactory internal constructor(
             AndroidVariantType.Main -> Property(target.mainVariant.sourceSetTree)
             AndroidVariantType.UnitTest -> Property(target.unitTestVariant.sourceSetTree)
             AndroidVariantType.InstrumentedTest -> Property(target.instrumentedTestVariant.sourceSetTree)
-            AndroidVariantType.Unknown -> SourceSetTreeClassifier.None
+            AndroidVariantType.Unknown -> KotlinSourceSetTreeClassifier.None
         }
     }
 }
