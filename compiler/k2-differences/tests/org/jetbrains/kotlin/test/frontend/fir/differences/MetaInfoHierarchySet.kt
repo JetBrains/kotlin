@@ -126,7 +126,11 @@ class MetaInfoHierarchySet : AbstractMutableSet<ParsedCodeMetaInfo>() {
             return true
         }
 
-        val iterator = parents.last().children.iterator()
+        return parents.last().hasChildThatIsOverlappingEquivalentOf(element)
+    }
+
+    private fun NodeBase.hasChildThatIsOverlappingEquivalentOf(element: ParsedCodeMetaInfo): Boolean {
+        val iterator = children.iterator()
 
         while (iterator.hasNext()) {
             val next = iterator.next().value
@@ -139,7 +143,10 @@ class MetaInfoHierarchySet : AbstractMutableSet<ParsedCodeMetaInfo>() {
                 break
             }
 
-            if (next.metaInfo.equivalenceClass == element.equivalenceClass) {
+            if (
+                next.metaInfo.equivalenceClass == element.equivalenceClass ||
+                next.hasChildThatIsOverlappingEquivalentOf(element)
+            ) {
                 return true
             }
         }
