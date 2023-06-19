@@ -39,13 +39,14 @@ class IdSignatureDeserializer(
         val pkg = internationService.string(libraryFile.deserializeFqName(proto.packageFqNameList))
         val cls = internationService.string(libraryFile.deserializeFqName(proto.declarationFqNameList))
         val memberId = if (proto.hasMemberUniqId()) proto.memberUniqId else null
+        val description = if (proto.hasDebugInfo()) libraryFile.debugInfo(proto.debugInfo)?.let(internationService::string) else null
 
         return IdSignature.CommonSignature(
             packageFqName = pkg,
             declarationFqName = cls,
             id = memberId,
             mask = proto.flags,
-            description = null, // TODO(KT-59486): Deserialize mangled name and save it here
+            description = description,
         )
     }
 
