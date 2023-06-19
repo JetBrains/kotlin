@@ -49,17 +49,14 @@ public actual open class HashMap<K, V> : AbstractMutableMap<K, V>, MutableMap<K,
      */
     private val internalMap: InternalMap<K, V>
 
-    private val equality: EqualityComparator
-
     internal constructor(internalMap: InternalMap<K, V>) : super() {
         this.internalMap = internalMap
-        this.equality = internalMap.equality
     }
 
     /**
      * Creates a new empty [HashMap].
      */
-    actual constructor() : this(InternalHashCodeMap(EqualityComparator.HashCode))
+    actual constructor() : this(InternalHashCodeMap())
 
     /**
      * Creates a new empty [HashMap] with the specified initial capacity and load factor.
@@ -110,7 +107,7 @@ public actual open class HashMap<K, V> : AbstractMutableMap<K, V>, MutableMap<K,
 
     actual override fun containsKey(key: K): Boolean = internalMap.contains(key)
 
-    actual override fun containsValue(value: V): Boolean = internalMap.any { equality.equals(it.value, value) }
+    actual override fun containsValue(value: V): Boolean = internalMap.any { it.value == value }
 
     private var _entries: MutableSet<MutableMap.MutableEntry<K, V>>? = null
     actual override val entries: MutableSet<MutableMap.MutableEntry<K, V>>
@@ -138,5 +135,5 @@ public actual open class HashMap<K, V> : AbstractMutableMap<K, V>, MutableMap<K,
  * JS object without hashing them.
  */
 public fun <V> stringMapOf(vararg pairs: Pair<String, V>): HashMap<String, V> {
-    return HashMap<String, V>(InternalStringMap(EqualityComparator.HashCode)).apply { putAll(pairs) }
+    return HashMap<String, V>(InternalStringMap()).apply { putAll(pairs) }
 }

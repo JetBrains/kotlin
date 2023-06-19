@@ -24,14 +24,13 @@ import kotlin.collections.AbstractMutableMap.SimpleEntry
  * have the same hash, each value in hashCodeMap is actually an array containing all entries whose
  * keys share the same hash.
  */
-internal class InternalHashCodeMap<K, V>(override val equality: EqualityComparator) : InternalMap<K, V> {
-
+internal class InternalHashCodeMap<K, V> : InternalMap<K, V> {
     private var backingMap: dynamic = createJsMap()
     override var size: Int = 0
         private set
 
     override fun put(key: K, value: V): V? {
-        val hashCode = equality.getHashCode(key)
+        val hashCode = hash(key)
         val chainOrEntry = getChainOrEntryOrNull(hashCode)
         if (chainOrEntry == null) {
             // This is a new chain, put it to the map.
@@ -40,7 +39,7 @@ internal class InternalHashCodeMap<K, V>(override val equality: EqualityComparat
             if (chainOrEntry !is Array<*>) {
                 // It is an entry
                 val entry: SimpleEntry<K, V> = chainOrEntry
-                if (equality.equals(entry.key, key)) {
+                if (entry.key == key) {
                     return entry.setValue(value)
                 } else {
                     backingMap[hashCode] = arrayOf(entry, SimpleEntry(key, value))
@@ -63,11 +62,11 @@ internal class InternalHashCodeMap<K, V>(override val equality: EqualityComparat
     }
 
     override fun remove(key: K): V? {
-        val hashCode = equality.getHashCode(key)
+        val hashCode = hash(key)
         val chainOrEntry = getChainOrEntryOrNull(hashCode) ?: return null
         if (chainOrEntry !is Array<*>) {
             val entry: MutableEntry<K, V> = chainOrEntry
-            if (equality.equals(entry.key, key)) {
+            if (entry.key == key) {
                 jsDeleteProperty(backingMap, hashCode)
                 size--
                 return entry.value
@@ -78,7 +77,7 @@ internal class InternalHashCodeMap<K, V>(override val equality: EqualityComparat
             val chain: Array<MutableEntry<K, V>> = chainOrEntry
             for (index in chain.indices) {
                 val entry = chain[index]
-                if (equality.equals(key, entry.key)) {
+                if (key == entry.key) {
                     if (chain.size == 1) {
                         chain.asDynamic().length = 0
                         // remove the whole array
@@ -106,10 +105,10 @@ internal class InternalHashCodeMap<K, V>(override val equality: EqualityComparat
     override fun get(key: K): V? = getEntry(key)?.value
 
     private fun getEntry(key: K): MutableEntry<K, V>? {
-        val chainOrEntry = getChainOrEntryOrNull(equality.getHashCode(key)) ?: return null
+        val chainOrEntry = getChainOrEntryOrNull(hash(key)) ?: return null
         if (chainOrEntry !is Array<*>) {
             val entry: MutableEntry<K, V> = chainOrEntry
-            if (equality.equals(entry.key, key)) {
+            if (entry.key == key) {
                 return entry
             } else {
                 return null
@@ -121,7 +120,7 @@ internal class InternalHashCodeMap<K, V>(override val equality: EqualityComparat
     }
 
     private fun Array<MutableEntry<K, V>>.findEntryInChain(key: K): MutableEntry<K, V>? =
-        firstOrNull { entry -> equality.equals(entry.key, key) }
+        firstOrNull { entry -> entry.key == key }
 
     override fun iterator(): MutableIterator<MutableEntry<K, V>> {
 
@@ -187,4 +186,5 @@ internal class InternalHashCodeMap<K, V>(override val equality: EqualityComparat
         return if (chainOrEntry === undefined) null else chainOrEntry
     }
 
+    private fun hash(key: K) = key?.hashCode() ?: 0
 }

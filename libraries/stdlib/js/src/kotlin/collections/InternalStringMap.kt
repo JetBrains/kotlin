@@ -17,7 +17,7 @@ import kotlin.collections.MutableMap.MutableEntry
  * because we want to have it erased to Any? in order not to generate type-safe override bridges for
  * [get], [contains], [remove] etc, if they ever are generated.
  */
-internal class InternalStringMap<K, V>(override val equality: EqualityComparator) : InternalMap<K, V> {
+internal class InternalStringMap<K, V> : InternalMap<K, V> {
 
     private var backingMap: dynamic = createJsMap()
     override var size: Int = 0
