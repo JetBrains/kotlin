@@ -1,0 +1,22 @@
+MODULE_FRAGMENT name:<Sources of main>
+  FILE fqName:<root> fileName:/fragment.kt
+    CLASS CLASS name:CodeFragment modality:FINAL visibility:public superTypes:[kotlin.Any]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.CodeFragment
+      CONSTRUCTOR visibility:public <> () returnType:<root>.CodeFragment [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+      FUN name:run visibility:public modality:FINAL <> (p0:<root>.Foo, p1:<root>.Foo.Bar) returnType:kotlin.Int
+        VALUE_PARAMETER name:p0 index:0 type:<root>.Foo
+        VALUE_PARAMETER name:p1 index:1 type:<root>.Foo.Bar
+        EXPRESSION_BODY
+          BLOCK type=kotlin.Int origin=null
+            CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=PLUS
+              $this: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=PLUS
+                $this: CALL 'public final fun callFoo (foo: <root>.Foo): kotlin.Int declared in <root>.NestedOuterClassKt' type=kotlin.Int origin=null
+                  foo: GET_VAR 'p0: <root>.Foo declared in <root>.CodeFragment.run' type=<root>.Foo origin=null
+                other: CALL 'public final fun callString (string: kotlin.String): kotlin.Int declared in <root>.NestedOuterClassKt' type=kotlin.Int origin=null
+                  string: CALL 'private final fun <get-a> (): kotlin.String declared in <root>.Foo' type=kotlin.String origin=GET_PROPERTY
+                    $this: GET_VAR 'p0: <root>.Foo declared in <root>.CodeFragment.run' type=<root>.Foo origin=null
+              other: CALL 'public final fun callString (string: kotlin.String): kotlin.Int declared in <root>.NestedOuterClassKt' type=kotlin.Int origin=null
+                string: CALL 'private final fun <get-b> (): kotlin.String declared in <root>.Foo.Bar' type=kotlin.String origin=GET_PROPERTY
+                  $this: GET_VAR 'p1: <root>.Foo.Bar declared in <root>.CodeFragment.run' type=<root>.Foo.Bar origin=null

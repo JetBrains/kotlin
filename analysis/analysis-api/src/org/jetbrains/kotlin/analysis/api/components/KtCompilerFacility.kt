@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.components
 
 import org.jetbrains.kotlin.analysis.api.diagnostics.KtDiagnostic
+import org.jetbrains.kotlin.analysis.api.compile.CodeFragmentCapturedValue
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.codegen.ClassBuilderFactory
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -26,8 +27,12 @@ public sealed class KtCompilationResult {
      * Successful compilation result.
      *
      * @property output Output files produced by the compiler. For the JVM target, these are class files and '.kotlin_module'.
+     * @property capturedValues Context values captured by a [KtCodeFragment]. Empty for an ordinary [KtFile].
      */
-    public class Success(public val output: List<KtCompiledFile>) : KtCompilationResult()
+    public class Success(
+        public val output: List<KtCompiledFile>,
+        public val capturedValues: List<CodeFragmentCapturedValue>
+    ) : KtCompilationResult()
 
     /**
      * Failed compilation result.
@@ -69,6 +74,16 @@ public sealed class KtCompilerTarget {
 }
 
 public abstract class KtCompilerFacility : KtAnalysisSessionComponent() {
+    public companion object {
+        /** Simple class name for the code fragment facade class. */
+        public val CODE_FRAGMENT_CLASS_NAME: CompilerConfigurationKey<String> =
+            CompilerConfigurationKey<String>("code fragment class name")
+
+        /** Entry point method name for the code fragment. */
+        public val CODE_FRAGMENT_METHOD_NAME: CompilerConfigurationKey<String> =
+            CompilerConfigurationKey<String>("code fragment method name")
+    }
+
     public abstract fun compile(
         file: KtFile,
         configuration: CompilerConfiguration,
