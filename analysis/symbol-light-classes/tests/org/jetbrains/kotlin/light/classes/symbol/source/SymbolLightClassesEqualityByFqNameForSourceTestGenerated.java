@@ -376,6 +376,24 @@ public class SymbolLightClassesEqualityByFqNameForSourceTestGenerated extends Ab
         }
 
         @Test
+        @TestMetadata("FieldWithoutName.kt")
+        public void testFieldWithoutName() throws Exception {
+            runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/compilationErrors/FieldWithoutName.kt");
+        }
+
+        @Test
+        @TestMetadata("FieldWithoutName2.kt")
+        public void testFieldWithoutName2() throws Exception {
+            runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/compilationErrors/FieldWithoutName2.kt");
+        }
+
+        @Test
+        @TestMetadata("FieldWithoutName3.kt")
+        public void testFieldWithoutName3() throws Exception {
+            runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/compilationErrors/FieldWithoutName3.kt");
+        }
+
+        @Test
         @TestMetadata("FunctionWithoutName.kt")
         public void testFunctionWithoutName() throws Exception {
             runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/compilationErrors/FunctionWithoutName.kt");

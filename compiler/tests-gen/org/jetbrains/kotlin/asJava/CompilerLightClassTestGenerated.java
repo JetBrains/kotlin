@@ -326,6 +326,21 @@ public class CompilerLightClassTestGenerated extends AbstractCompilerLightClassT
             runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/compilationErrors/ExpectedNestedClassInObject.kt");
         }
 
+        @TestMetadata("FieldWithoutName.kt")
+        public void testFieldWithoutName() throws Exception {
+            runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/compilationErrors/FieldWithoutName.kt");
+        }
+
+        @TestMetadata("FieldWithoutName2.kt")
+        public void testFieldWithoutName2() throws Exception {
+            runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/compilationErrors/FieldWithoutName2.kt");
+        }
+
+        @TestMetadata("FieldWithoutName3.kt")
+        public void testFieldWithoutName3() throws Exception {
+            runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/compilationErrors/FieldWithoutName3.kt");
+        }
+
         @TestMetadata("FunctionWithoutName.kt")
         public void testFunctionWithoutName() throws Exception {
             runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/compilationErrors/FunctionWithoutName.kt");
