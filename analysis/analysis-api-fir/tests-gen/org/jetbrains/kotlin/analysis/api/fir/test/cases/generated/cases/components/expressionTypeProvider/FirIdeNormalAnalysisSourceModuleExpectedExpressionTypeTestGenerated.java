@@ -95,6 +95,12 @@ public class FirIdeNormalAnalysisSourceModuleExpectedExpressionTypeTestGenerated
     }
 
     @Test
+    @TestMetadata("delegatedConstructorCall.kt")
+    public void testDelegatedConstructorCall() throws Exception {
+        runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/delegatedConstructorCall.kt");
+    }
+
+    @Test
     @TestMetadata("elvisExpressionLeftOperand.kt")
     public void testElvisExpressionLeftOperand() throws Exception {
         runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/elvisExpressionLeftOperand.kt");
