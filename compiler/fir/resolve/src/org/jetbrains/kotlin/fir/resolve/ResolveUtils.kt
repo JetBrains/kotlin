@@ -21,10 +21,7 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirUnitExpression
 import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedErrorReference
-import org.jetbrains.kotlin.fir.resolve.calls.Candidate
-import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
-import org.jetbrains.kotlin.fir.resolve.calls.FirPropertyWithExplicitBackingFieldResolvedNamedReference
-import org.jetbrains.kotlin.fir.resolve.calls.ImplicitDispatchReceiverValue
+import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.dfa.PropertyStability
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
@@ -193,7 +190,7 @@ fun BodyResolveComponents.buildResolvedQualifierForClass(
     typeArgumentsForQualifier: List<FirTypeProjection> = emptyList(),
     diagnostic: ConeDiagnostic? = null,
     nonFatalDiagnostics: List<ConeDiagnostic> = emptyList(),
-    annotations: List<FirAnnotation> = emptyList()
+    annotations: List<FirAnnotation> = emptyList(),
 ): FirResolvedQualifier {
     val classId = regularClass.classId
 
@@ -370,7 +367,7 @@ private fun BodyResolveComponents.typeFromSymbol(symbol: FirBasedSymbol<*>, make
 }
 
 fun BodyResolveComponents.transformQualifiedAccessUsingSmartcastInfo(
-    qualifiedAccessExpression: FirQualifiedAccessExpression
+    qualifiedAccessExpression: FirQualifiedAccessExpression,
 ): FirExpression {
     val (stability, typesFromSmartCast) = dataFlowAnalyzer.getTypeUsingSmartcastInfo(qualifiedAccessExpression)
         ?: return qualifiedAccessExpression
@@ -379,7 +376,7 @@ fun BodyResolveComponents.transformQualifiedAccessUsingSmartcastInfo(
 }
 
 fun BodyResolveComponents.transformWhenSubjectExpressionUsingSmartcastInfo(
-    whenSubjectExpression: FirWhenSubjectExpression
+    whenSubjectExpression: FirWhenSubjectExpression,
 ): FirExpression {
     val (stability, typesFromSmartCast) = dataFlowAnalyzer.getTypeUsingSmartcastInfo(whenSubjectExpression)
         ?: return whenSubjectExpression
@@ -388,7 +385,7 @@ fun BodyResolveComponents.transformWhenSubjectExpressionUsingSmartcastInfo(
 }
 
 fun BodyResolveComponents.transformDesugaredAssignmentValueUsingSmartcastInfo(
-    expression: FirDesugaredAssignmentValueReferenceExpression
+    expression: FirDesugaredAssignmentValueReferenceExpression,
 ): FirExpression {
     val (stability, typesFromSmartCast) = dataFlowAnalyzer.getTypeUsingSmartcastInfo(expression.expressionRef.value)
         ?: return expression
@@ -410,7 +407,7 @@ private fun FirSmartCastExpressionBuilder.applyResultTypeRef() {
 private fun <T : FirExpression> BodyResolveComponents.transformExpressionUsingSmartcastInfo(
     expression: T,
     stability: PropertyStability,
-    typesFromSmartCast: MutableList<ConeKotlinType>
+    typesFromSmartCast: MutableList<ConeKotlinType>,
 ): FirSmartCastExpression? {
     val smartcastStability = stability.impliedSmartcastStability
         ?: if (dataFlowAnalyzer.isAccessToUnstableLocalVariable(expression)) {
@@ -477,7 +474,7 @@ private fun <T : FirExpression> BodyResolveComponents.transformExpressionUsingSm
 fun FirCheckedSafeCallSubject.propagateTypeFromOriginalReceiver(
     nullableReceiverExpression: FirExpression,
     session: FirSession,
-    file: FirFile
+    file: FirFile,
 ) {
     // If the receiver expression is smartcast to `null`, it would have `Nothing?` as its type, which may not have members called by user
     // code. Hence, we fallback to the type before intersecting with `Nothing?`.
@@ -555,7 +552,7 @@ fun FirFunction.getAsForbiddenNamedArgumentsTarget(
     session: FirSession,
     // NB: with originScope given this function will try to find overridden declaration with allowed parameter names
     // for intersection/substitution overrides
-    originScope: FirTypeScope? = null
+    originScope: FirTypeScope? = null,
 ): ForbiddenNamedArgumentsTarget? {
     if (hasStableParameterNames) return null
 
@@ -602,11 +599,36 @@ fun FirExpression?.isIntegerLiteralOrOperatorCall(): Boolean {
 
 fun createConeDiagnosticForCandidateWithError(
     applicability: CandidateApplicability,
-    candidate: Candidate
+    candidate: Candidate,
 ): ConeDiagnostic {
     return when (applicability) {
         CandidateApplicability.HIDDEN -> ConeHiddenCandidateError(candidate)
-        CandidateApplicability.K2_VISIBILITY_ERROR -> ConeVisibilityError(candidate.symbol)
+        CandidateApplicability.K2_VISIBILITY_ERROR -> {
+            val session = candidate.callInfo.session
+            val declaration = candidate.symbol.fir
+            if (declaration is FirMemberDeclaration &&
+                session.visibilityChecker.isVisible(declaration, candidate, skipCheckForContainingClassVisibility = true)
+            ) {
+                // We can have declarations that are visible by themselves, but some containing declaration is invisible.
+                // We report the nearest invisible containing declaration, otherwise we'll get a confusing diagnostic like
+                // Cannot access 'foo', it is public in 'Bar'.
+                declaration
+                    .parentDeclarationSequence(session, candidate.dispatchReceiver, candidate.callInfo.containingDeclarations)
+                    ?.firstOrNull {
+                        !session.visibilityChecker.isVisible(
+                            it,
+                            session,
+                            candidate.callInfo.containingFile,
+                            candidate.callInfo.containingDeclarations,
+                            dispatchReceiver = null,
+                            skipCheckForContainingClassVisibility = true,
+                        )
+                    }?.let {
+                        return ConeVisibilityError(it.symbol)
+                    }
+            }
+            ConeVisibilityError(candidate.symbol)
+        }
         CandidateApplicability.INAPPLICABLE_WRONG_RECEIVER -> ConeInapplicableWrongReceiver(listOf(candidate))
         CandidateApplicability.K2_NO_COMPANION_OBJECT -> ConeNoCompanionObject(candidate)
         else -> ConeInapplicableCandidateError(applicability, candidate)

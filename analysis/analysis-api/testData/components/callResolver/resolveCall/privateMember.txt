@@ -17,4 +17,4 @@ KtErrorCallInfo:
       typeArgumentsMapping = {}
       argumentMapping = {}
   ]
-  diagnostic = ERROR<INVISIBLE_REFERENCE: Symbol fun foo(): Unit is invisible>
+  diagnostic = ERROR<INVISIBLE_REFERENCE: Cannot access 'fun foo(): Unit': it is private in '/A'>

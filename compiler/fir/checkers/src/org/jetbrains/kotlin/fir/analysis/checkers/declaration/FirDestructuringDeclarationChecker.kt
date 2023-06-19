@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.analysis.diagnostics.toInvisibleReferenceDiagnostic
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
@@ -176,12 +177,7 @@ object FirDestructuringDeclarationChecker : FirPropertyChecker() {
                 }
             }
             is ConeVisibilityError -> {
-                reporter.reportOn(
-                    property.source,
-                    FirErrors.INVISIBLE_REFERENCE,
-                    diagnostic.symbol,
-                    context,
-                )
+                reporter.report(diagnostic.symbol.toInvisibleReferenceDiagnostic(property.source), context)
             }
             else -> error("Unhandled error during a component function call")
         }

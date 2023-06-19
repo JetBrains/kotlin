@@ -6,10 +6,9 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
-import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.diagnostics.toInvisibleReferenceDiagnostic
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.declarations.utils.expandedConeType
 import org.jetbrains.kotlin.fir.expressions.FirErrorResolvedQualifier
@@ -45,7 +44,7 @@ object FirVisibilityQualifierChecker : FirResolvedQualifierChecker() {
             )
         ) {
             if (expression !is FirErrorResolvedQualifier || expression.diagnostic !is ConeVisibilityError) {
-                reporter.reportOn(expression.source, FirErrors.INVISIBLE_REFERENCE, symbol, context)
+                reporter.report(symbol.toInvisibleReferenceDiagnostic(expression.source), context)
             }
 
             return

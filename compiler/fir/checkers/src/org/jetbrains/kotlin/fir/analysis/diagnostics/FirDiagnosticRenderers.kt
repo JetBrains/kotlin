@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.renderReadableWithFqNames
 import org.jetbrains.kotlin.name.CallableId
+import org.jetbrains.kotlin.name.ClassId
 
 object FirDiagnosticRenderers {
     @OptIn(SymbolInternals::class)
@@ -148,7 +149,10 @@ object FirDiagnosticRenderers {
     }
 
     val NAME_OF_CONTAINING_DECLARATION_OR_FILE = Renderer { symbol: CallableId ->
-        val classId = symbol.classId
+        NAME_OF_DECLARATION_OR_FILE.render(symbol.classId)
+    }
+
+    val NAME_OF_DECLARATION_OR_FILE = Renderer { classId: ClassId? ->
         if (classId == null) {
             "file"
         } else {

@@ -96,11 +96,11 @@ FILE: first.kt
         R|/Private.Private|().R|/Private.baz|()
         R|/Private.Private|().R|/Private.Inner.Inner|()
         R|/Private.Private|().R|/Private.bar<HIDDEN: /Private.bar is invisible>#|()
-        Q|Private|.R|/Private.Nested.Nested<HIDDEN: /Private.Nested.Nested is invisible>#|()
+        Q|Private|.R|/Private.Nested.Nested<HIDDEN: Private.Nested is invisible>#|()
         Q|Private|.R|/Private.Companion.fromCompanion<HIDDEN: /Private.Companion.fromCompanion is invisible>#|()
     }
 FILE: second.kt
     public final fun secondTest(): R|kotlin/Unit| {
         R|/foo<HIDDEN: /foo is invisible>#|()
-        R|/Private.Private<HIDDEN: /Private.Private is invisible>#|()
+        R|/Private.Private<HIDDEN: Private is invisible>#|()
     }

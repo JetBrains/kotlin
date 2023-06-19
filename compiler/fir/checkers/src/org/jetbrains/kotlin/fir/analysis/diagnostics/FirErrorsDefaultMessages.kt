@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.FUNC
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.SYMBOLS_ON_NEWLINE_WITH_INDENT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.MODULE_DATA
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.NAME_OF_CONTAINING_DECLARATION_OR_FILE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.NAME_OF_DECLARATION_OR_FILE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.RENDER_CLASS_OR_OBJECT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.RENDER_CLASS_OR_OBJECT_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.RENDER_COLLECTION_OF_TYPES
@@ -704,7 +705,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(NULL_FOR_NONNULL_TYPE, "Null can not be a value of a non-null type")
 
         // Unresolved
-        map.put(INVISIBLE_REFERENCE, "Symbol {0} is invisible", SYMBOL)
+        map.put(INVISIBLE_REFERENCE, "Cannot access ''{0}'': it is {1} in {2}", SYMBOL, VISIBILITY, NAME_OF_DECLARATION_OR_FILE)
         map.put(
             INVISIBLE_SETTER,
             "Cannot access ''{0}'': it is {1} in {2}",

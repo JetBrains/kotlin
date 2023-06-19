@@ -1,5 +1,5 @@
 KtInapplicableCallCandidateInfo:
-  diagnostic = ERROR<INVISIBLE_REFERENCE: Symbol fun foo(): Unit is invisible>
+  diagnostic = ERROR<INVISIBLE_REFERENCE: Cannot access 'fun foo(): Unit': it is private in '/A'>
   candidate = KtSimpleFunctionCall:
     isImplicitInvoke = false
     partiallyAppliedSymbol = KtPartiallyAppliedSymbol:

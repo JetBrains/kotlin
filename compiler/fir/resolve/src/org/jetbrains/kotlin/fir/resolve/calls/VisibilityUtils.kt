@@ -29,7 +29,8 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 fun FirVisibilityChecker.isVisible(
     declaration: FirMemberDeclaration,
     callInfo: CallInfo,
-    dispatchReceiver: FirExpression?
+    dispatchReceiver: FirExpression?,
+    skipCheckForContainingClassVisibility: Boolean = false,
 ): Boolean {
     val staticQualifierForCallable = runIf(
         declaration is FirCallableDeclaration &&
@@ -50,28 +51,30 @@ fun FirVisibilityChecker.isVisible(
         callInfo.containingDeclarations,
         dispatchReceiver,
         staticQualifierClassForCallable = staticQualifierForCallable,
-        isCallToPropertySetter = callInfo.callSite is FirVariableAssignment
+        isCallToPropertySetter = callInfo.callSite is FirVariableAssignment,
+        skipCheckForContainingClassVisibility = skipCheckForContainingClassVisibility,
     )
 }
 
 fun FirVisibilityChecker.isVisible(
     declaration: FirMemberDeclaration,
-    candidate: Candidate
+    candidate: Candidate,
+    skipCheckForContainingClassVisibility: Boolean = false,
 ): Boolean {
     val callInfo = candidate.callInfo
 
-    if (!isVisible(declaration, callInfo, candidate.dispatchReceiver)) {
+    if (!isVisible(declaration, callInfo, candidate.dispatchReceiver, skipCheckForContainingClassVisibility)) {
         val dispatchReceiverWithoutSmartCastType =
             removeSmartCastTypeForAttemptToFitVisibility(candidate.dispatchReceiver, candidate.callInfo.session) ?: return false
 
-        if (!isVisible(declaration, callInfo, dispatchReceiverWithoutSmartCastType)) return false
+        if (!isVisible(declaration, callInfo, dispatchReceiverWithoutSmartCastType, skipCheckForContainingClassVisibility)) return false
 
         candidate.dispatchReceiver = dispatchReceiverWithoutSmartCastType
     }
 
     val backingField = declaration.getBackingFieldIfApplicable()
     if (backingField != null) {
-        candidate.hasVisibleBackingField = isVisible(backingField, callInfo, candidate.dispatchReceiver)
+        candidate.hasVisibleBackingField = isVisible(backingField, callInfo, candidate.dispatchReceiver, skipCheckForContainingClassVisibility)
     }
 
     return true

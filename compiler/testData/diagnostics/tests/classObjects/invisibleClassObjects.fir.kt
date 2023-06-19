@@ -1,3 +1,4 @@
+// RENDER_DIAGNOSTICS_FULL_TEXT
 //FILE:a.kt
 package a
 
@@ -29,9 +30,13 @@ private class D {
 package b
 
 import a.A
+import a.A.Companion.foo
 import a.<!INVISIBLE_REFERENCE!>B<!>
+import a.<!INVISIBLE_REFERENCE!>B<!>.Companion.bar
 import a.C
+import a.C.<!INVISIBLE_REFERENCE!>Companion<!>.baz
 import a.<!INVISIBLE_REFERENCE!>D<!>
+import a.<!INVISIBLE_REFERENCE!>D<!>.<!INVISIBLE_REFERENCE!>Companion<!>.quux
 
 fun test() {
     f(A)

@@ -220,6 +220,8 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
     interface InvisibleReference : KtFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = InvisibleReference::class
         val reference: KtSymbol
+        val visible: Visibility
+        val containingDeclaration: ClassId?
     }
 
     interface UnresolvedReference : KtFirDiagnostic<PsiElement> {

@@ -16,7 +16,7 @@ KtInapplicableCallCandidateInfo:
   isInBestCandidates = false
 
 KtInapplicableCallCandidateInfo:
-  diagnostic = ERROR<INVISIBLE_REFERENCE: Symbol constructor(p: String): A is invisible>
+  diagnostic = ERROR<INVISIBLE_REFERENCE: Cannot access 'constructor(p: String): A': it is private in '/A'>
   candidate = KtDelegatedConstructorCall:
     kind = SUPER_CALL
     partiallyAppliedSymbol = KtPartiallyAppliedSymbol:

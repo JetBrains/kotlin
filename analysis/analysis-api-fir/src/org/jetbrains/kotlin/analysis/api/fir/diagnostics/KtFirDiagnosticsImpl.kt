@@ -248,6 +248,8 @@ internal class InvisibleSetterImpl(
 
 internal class InvisibleReferenceImpl(
     override val reference: KtSymbol,
+    override val visible: Visibility,
+    override val containingDeclaration: ClassId?,
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.InvisibleReference

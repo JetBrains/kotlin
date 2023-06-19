@@ -1,0 +1,46 @@
+/b.kt:34:10: error: cannot access 'B': it is private in file
+import a.B
+         ^
+/b.kt:35:10: error: cannot access 'B': it is private in file
+import a.B.Companion.bar
+         ^
+/b.kt:37:12: error: cannot access 'Companion': it is private in 'C'
+import a.C.Companion.baz
+           ^
+/b.kt:38:10: error: cannot access 'D': it is private in file
+import a.D
+         ^
+/b.kt:39:10: error: cannot access 'D': it is private in file
+import a.D.Companion.quux
+         ^
+/b.kt:39:12: error: cannot access 'Companion': it is private in 'D'
+import a.D.Companion.quux
+           ^
+/b.kt:43:7: error: cannot access 'B': it is private in file
+    f(B)
+      ^
+/b.kt:44:7: error: cannot access 'Companion': it is private in 'C'
+    f(C)
+      ^
+/b.kt:45:7: error: cannot access 'Companion': it is private in 'D'
+    f(D)
+      ^
+/b.kt:48:5: error: cannot access 'B': it is private in file
+    B.bar()
+    ^
+/b.kt:48:7: error: cannot access 'B': it is private in file
+    B.bar()
+      ^
+/b.kt:49:7: error: cannot access 'Companion': it is private in 'C'
+    C.baz()
+      ^
+/b.kt:50:5: error: cannot access 'D': it is private in file
+    D.quux()
+    ^
+/b.kt:50:7: error: cannot access 'Companion': it is private in 'D'
+    D.quux()
+      ^
+/b.kt:53:9: error: cannot access 'Companion': it is private in 'C'
+    a.C.baz()
+        ^
+
