@@ -210,7 +210,7 @@ object FirKotlinToJvmBytecodeCompiler {
         val rootModuleName = module.getModuleName()
         val libraryList = createLibraryListForJvm(rootModuleName, moduleConfiguration, module.getFriendPaths())
         val sessionsWithSources = prepareJvmSessions(
-            ktFiles, moduleConfiguration, projectEnvironment, Name.identifier(rootModuleName),
+            ktFiles, moduleConfiguration, projectEnvironment, Name.special("<$rootModuleName>"),
             extensionRegistrars, librariesScope, libraryList,
             isCommonSource = { it.isCommonSource == true },
             fileBelongsToModule = { file, moduleName -> file.hmppModuleName == moduleName },

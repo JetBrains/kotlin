@@ -280,7 +280,7 @@ fun compileModuleToAnalyzedFir(
     // TODO: handle friends paths
     val libraryList = createLibraryListForJvm(rootModuleName, moduleConfiguration, friendPaths = emptyList())
     val sessionWithSources = prepareJvmSessions(
-        allSources, moduleConfiguration, projectEnvironment, Name.identifier(rootModuleName),
+        allSources, moduleConfiguration, projectEnvironment, Name.special("<$rootModuleName>"),
         extensionRegistrars, librariesScope, libraryList,
         isCommonSource = input.groupedSources.isCommonSourceForLt,
         fileBelongsToModule = input.groupedSources.fileBelongsToModuleForLt,
