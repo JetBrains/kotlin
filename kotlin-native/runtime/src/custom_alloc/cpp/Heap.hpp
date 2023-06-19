@@ -13,6 +13,7 @@
 #include "CustomAllocConstants.hpp"
 #include "ExtraObjectPage.hpp"
 #include "GCStatistics.hpp"
+#include "Memory.h"
 #include "SingleObjectPage.hpp"
 #include "NextFitPage.hpp"
 #include "PageStore.hpp"
@@ -34,6 +35,10 @@ public:
     NextFitPage* GetNextFitPage(uint32_t cellCount, FinalizerQueue& finalizerQueue) noexcept;
     SingleObjectPage* GetSingleObjectPage(uint64_t cellCount, FinalizerQueue& finalizerQueue) noexcept;
     ExtraObjectPage* GetExtraObjectPage(FinalizerQueue& finalizerQueue) noexcept;
+
+    // Test method
+    std_support::vector<ObjHeader*> GetAllocatedObjects() noexcept;
+    void ClearForTests() noexcept;
 
 private:
     PageStore<FixedBlockPage> fixedBlockPages_[FIXED_BLOCK_PAGE_MAX_BLOCK_SIZE + 1];

@@ -12,6 +12,7 @@
 #include "AtomicStack.hpp"
 #include "ExtraObjectPage.hpp"
 #include "GCStatistics.hpp"
+#include "std_support/Vector.hpp"
 
 namespace kotlin::alloc {
 
@@ -42,6 +43,9 @@ public:
     uint8_t* TryAllocate() noexcept;
 
     bool Sweep(GCSweepScope& sweepHandle, FinalizerQueue& finalizerQueue) noexcept;
+
+    // Testing method
+    std_support::vector<uint8_t*> GetAllocatedBlocks() noexcept;
 
 private:
     explicit FixedBlockPage(uint32_t blockSize) noexcept;

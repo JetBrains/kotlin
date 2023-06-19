@@ -179,6 +179,9 @@ test_support::Object<Payload>& AllocateObjectWithFinalizer(mm::ThreadData& threa
 }
 
 std_support::vector<ObjHeader*> Alive(mm::ThreadData& threadData) {
+#ifdef CUSTOM_ALLOCATOR
+    return threadData.gc().impl().alloc().heap().GetAllocatedObjects();
+#else
     std_support::vector<ObjHeader*> objects;
     for (auto node : threadData.gc().impl().objectFactoryThreadQueue()) {
         objects.push_back(node.GetObjHeader());
@@ -187,6 +190,7 @@ std_support::vector<ObjHeader*> Alive(mm::ThreadData& threadData) {
         objects.push_back(node.GetObjHeader());
     }
     return objects;
+#endif
 }
 
 bool IsMarked(ObjHeader* objHeader) {
@@ -210,8 +214,12 @@ public:
     ~SameThreadMarkAndSweepTest() {
         mm::GlobalsRegistry::Instance().ClearForTests();
         mm::SpecialRefRegistry::instance().clearForTests();
+#ifndef CUSTOM_ALLOCATOR
         mm::GlobalData::Instance().extraObjectDataFactory().ClearForTests();
         mm::GlobalData::Instance().gc().impl().objectFactory().ClearForTests();
+#else
+        mm::GlobalData::Instance().gc().impl().gc().heap().ClearForTests();
+#endif
     }
 
     testing::MockFunction<void(ObjHeader*)>& finalizerHook() { return finalizerHooks_.finalizerHook(); }
@@ -996,6 +1004,8 @@ TEST_F(SameThreadMarkAndSweepTest, MultipleMutatorsWeaks) {
     }
 }
 
+// Custom allocator does not have a notion of objects alive only for some thread
+#ifndef CUSTOM_ALLOCATOR
 TEST_F(SameThreadMarkAndSweepTest, NewThreadsWhileRequestingCollection) {
     std_support::vector<Mutator> mutators(kDefaultThreadCount);
     std_support::vector<ObjHeader*> globals(2 * kDefaultThreadCount);
@@ -1076,6 +1086,7 @@ TEST_F(SameThreadMarkAndSweepTest, NewThreadsWhileRequestingCollection) {
         EXPECT_THAT(newMutators[i].Alive(), testing::UnorderedElementsAreArray(aliveForThisThread));
     }
 }
+#endif
 
 
 TEST_F(SameThreadMarkAndSweepTest, FreeObjectWithFreeWeakReversedOrder) {

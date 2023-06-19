@@ -26,8 +26,10 @@ auto collectCopy(T& iterable) {
 } // namespace
 
 void gc::AssertClear(GC& gc) noexcept {
-#ifndef CUSTOM_ALLOCATOR
+#ifdef CUSTOM_ALLOCATOR
+    auto objects = gc.impl().gc().heap().GetAllocatedObjects();
+#else
     auto objects = gc.impl().objectFactory().LockForIter();
-    EXPECT_THAT(collectCopy(objects), testing::UnorderedElementsAre());
 #endif
+    EXPECT_THAT(collectCopy(objects), testing::UnorderedElementsAre());
 }

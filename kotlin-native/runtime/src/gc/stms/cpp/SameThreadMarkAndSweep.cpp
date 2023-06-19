@@ -188,8 +188,7 @@ bool gc::SameThreadMarkAndSweep::PerformFullGC() noexcept {
 #ifndef CUSTOM_ALLOCATOR
     finalizerQueue.Finalize();
 #else
-    alloc::ExtraObjectCell* cell;
-    while ((cell = finalizerQueue.Pop())) {
+    while (alloc::ExtraObjectCell* cell = finalizerQueue.Pop()) {
         RunFinalizers(cell->Data()->GetBaseObject());
     }
 #endif

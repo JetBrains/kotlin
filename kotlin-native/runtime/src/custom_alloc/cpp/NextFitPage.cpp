@@ -11,6 +11,7 @@
 #include "CustomLogging.hpp"
 #include "CustomAllocConstants.hpp"
 #include "GCApi.hpp"
+#include "std_support/Vector.hpp"
 
 namespace kotlin::alloc {
 
@@ -102,6 +103,17 @@ bool NextFitPage::CheckInvariants() noexcept {
         if (cur->Next() > cells_ + NEXT_FIT_PAGE_CELL_COUNT) return false;
         if (cur->Next() == cells_ + NEXT_FIT_PAGE_CELL_COUNT) return true;
     }
+}
+
+std_support::vector<uint8_t*> NextFitPage::GetAllocatedBlocks() noexcept {
+    std_support::vector<uint8_t*> allocated;
+    Cell* end = cells_ + NEXT_FIT_PAGE_CELL_COUNT;
+    for (Cell* block = cells_ + 1; block != end; block = block->Next()) {
+        if (block->isAllocated_) {
+            allocated.push_back(block->data_);
+        }
+    }
+    return allocated;
 }
 
 } // namespace kotlin::alloc

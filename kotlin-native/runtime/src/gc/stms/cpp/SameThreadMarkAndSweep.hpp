@@ -42,7 +42,6 @@ public:
     class ObjectData {
     public:
         bool tryMark() noexcept {
-            printf("WTF?!?!?\n"); fflush(stdout);
             bool result = trySetNext(reinterpret_cast<ObjectData*>(1));
             RuntimeLogDebug({"gc"}, "tryMark %p = %d", this, result);
             return result;

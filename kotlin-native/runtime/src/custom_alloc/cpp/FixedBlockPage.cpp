@@ -86,4 +86,22 @@ bool FixedBlockPage::Sweep(GCSweepScope& sweepHandle, FinalizerQueue& finalizerQ
     return nextFree_.first > 0 || nextFree_.last < end_;
 }
 
+std_support::vector<uint8_t*> FixedBlockPage::GetAllocatedBlocks() noexcept {
+    std_support::vector<uint8_t*> allocated;
+    CustomAllocInfo("FixedBlockPage(%p)::Sweep()", this);
+    FixedCellRange nextFree = nextFree_; // Accessing the previous free list structure.
+    for (uint32_t cell = 0 ; cell < end_ ; cell += blockSize_) {
+        for (; cell < nextFree.first ; cell += blockSize_) {
+            allocated.push_back(cells_[cell].data);
+        }
+        if (nextFree.last >= end_) {
+            break;
+        }
+        cell = nextFree.last;
+        nextFree = cells_[cell].nextFree;
+    }
+    return allocated;
+}
+
+
 } // namespace kotlin::alloc

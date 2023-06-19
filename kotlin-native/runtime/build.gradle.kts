@@ -165,9 +165,6 @@ bitcode {
             }
 
             compilerArgs.add("-DCUSTOM_ALLOCATOR")
-
-            // Directly depends on cms which is only supported with threads.
-            onlyIf { target.supportsThreads() }
         }
 
         module("opt_alloc") {
@@ -196,6 +193,7 @@ bitcode {
 
             onlyIf { target.supportsCoreSymbolication() }
         }
+
         module("source_info_libbacktrace") {
             srcRoot.set(layout.projectDirectory.dir("src/source_info/libbacktrace"))
             headersDirs.from(files("src/main/cpp", "src/libbacktrace/c/include"))
@@ -372,6 +370,11 @@ bitcode {
             testedModules.addAll("main", "experimental_memory_manager", "common_gc", "same_thread_ms_gc", "std_alloc", "objc")
         }
 
+        testsGroup("experimentalMM_custom_alloc_runtime_tests") {
+            testedModules.addAll("experimental_memory_manager_custom", "same_thread_ms_gc_custom")
+            testSupportModules.addAll("main", "common_gc", "custom_alloc", "objc")
+        }
+
         testsGroup("experimentalMM_cms_mimalloc_runtime_tests") {
             testedModules.addAll("main", "experimental_memory_manager", "common_gc", "concurrent_ms_gc", "mimalloc", "opt_alloc", "objc")
         }
@@ -380,12 +383,22 @@ bitcode {
             testedModules.addAll("main", "experimental_memory_manager", "common_gc", "concurrent_ms_gc", "std_alloc", "objc")
         }
 
+        testsGroup("experimentalMM_cms_custom_alloc_runtime_tests") {
+            testedModules.addAll("experimental_memory_manager_custom", "concurrent_ms_gc_custom")
+            testSupportModules.addAll("main", "common_gc", "custom_alloc", "objc")
+        }
+
         testsGroup("experimentalMM_noop_mimalloc_runtime_tests") {
             testedModules.addAll("main", "experimental_memory_manager", "common_gc", "noop_gc", "mimalloc", "opt_alloc", "objc")
         }
 
         testsGroup("experimentalMM_noop_std_alloc_runtime_tests") {
             testedModules.addAll("main", "experimental_memory_manager", "common_gc", "noop_gc", "std_alloc", "objc")
+        }
+
+        testsGroup("experimentalMM_noop_custom_alloc_runtime_tests") {
+            testedModules.addAll("experimental_memory_manager_custom", "noop_gc_custom")
+            testSupportModules.addAll("main", "common_gc", "custom_alloc", "objc")
         }
     }
 }

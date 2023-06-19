@@ -27,7 +27,9 @@ public:
     ThreadRegistry& threadRegistry() noexcept { return threadRegistry_; }
     GlobalsRegistry& globalsRegistry() noexcept { return globalsRegistry_; }
     SpecialRefRegistry& specialRefRegistry() noexcept { return specialRefRegistry_; }
+#ifndef CUSTOM_ALLOCATOR
     ExtraObjectDataFactory& extraObjectDataFactory() noexcept { return extraObjectDataFactory_; }
+#endif
     gc::GC& gc() noexcept { return gc_; }
     AppStateTracking& appStateTracking() noexcept { return appStateTracking_; }
 
@@ -42,7 +44,9 @@ private:
     AppStateTracking appStateTracking_;
     GlobalsRegistry globalsRegistry_;
     SpecialRefRegistry specialRefRegistry_;
+#ifndef CUSTOM_ALLOCATOR
     ExtraObjectDataFactory extraObjectDataFactory_;
+#endif
     gc::GC gc_;
 };
 

@@ -37,6 +37,10 @@ public:
     FinalizerQueue ExtractFinalizerQueue() noexcept;
 
     static size_t GetAllocatedHeapSize(ObjHeader* object) noexcept;
+    
+    Heap& heap() noexcept {
+        return heap_;
+    }
 
 private:
     uint8_t* Allocate(uint64_t cellCount) noexcept;

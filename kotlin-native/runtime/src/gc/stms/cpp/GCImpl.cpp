@@ -59,6 +59,8 @@ void gc::GC::ThreadData::Publish() noexcept {
 void gc::GC::ThreadData::ClearForTests() noexcept {
 #ifndef CUSTOM_ALLOCATOR
     impl_->objectFactoryThreadQueue().ClearForTests();
+#else
+    impl_->alloc().PrepareForGC();
 #endif
 }
 
@@ -96,10 +98,10 @@ gc::GC::~GC() = default;
 
 // static
 size_t gc::GC::GetAllocatedHeapSize(ObjHeader* object) noexcept {
-#ifndef CUSTOM_ALLOCATOR
-    return mm::ObjectFactory<GCImpl>::GetAllocatedHeapSize(object);
-#else
+#ifdef CUSTOM_ALLOCATOR
     return alloc::CustomAllocator::GetAllocatedHeapSize(object);
+#else
+    return mm::ObjectFactory<GCImpl>::GetAllocatedHeapSize(object);
 #endif
 }
 
@@ -114,6 +116,8 @@ gc::GCSchedulerConfig& gc::GC::gcSchedulerConfig() noexcept {
 void gc::GC::ClearForTests() noexcept {
 #ifndef CUSTOM_ALLOCATOR
     impl_->objectFactory().ClearForTests();
+#else
+    impl_->gc().heap().ClearForTests();
 #endif
     GCHandle::ClearForTests();
 }

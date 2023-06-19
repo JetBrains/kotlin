@@ -34,7 +34,9 @@ public:
         threadId_(threadId),
         globalsThreadQueue_(GlobalsRegistry::Instance()),
         specialRefRegistry_(SpecialRefRegistry::instance()),
+#ifndef CUSTOM_ALLOCATOR
         extraObjectDataThreadQueue_(ExtraObjectDataFactory::Instance()),
+#endif
         gc_(GlobalData::Instance().gc(), *this),
         suspensionData_(ThreadState::kNative, *this) {}
 
@@ -48,7 +50,9 @@ public:
 
     SpecialRefRegistry::ThreadQueue& specialRefRegistry() noexcept { return specialRefRegistry_; }
 
+#ifndef CUSTOM_ALLOCATOR
     ExtraObjectDataFactory::ThreadQueue& extraObjectDataThreadQueue() noexcept { return extraObjectDataThreadQueue_; }
+#endif
 
     ThreadState state() noexcept { return suspensionData_.state(); }
 
@@ -66,14 +70,18 @@ public:
         // TODO: These use separate locks, which is inefficient.
         globalsThreadQueue_.Publish();
         specialRefRegistry_.publish();
+#ifndef CUSTOM_ALLOCATOR
         extraObjectDataThreadQueue_.Publish();
+#endif
         gc_.Publish();
     }
 
     void ClearForTests() noexcept {
         globalsThreadQueue_.ClearForTests();
         specialRefRegistry_.clearForTests();
+#ifndef CUSTOM_ALLOCATOR
         extraObjectDataThreadQueue_.ClearForTests();
+#endif
         gc_.ClearForTests();
     }
 
@@ -82,7 +90,9 @@ private:
     GlobalsRegistry::ThreadQueue globalsThreadQueue_;
     ThreadLocalStorage tls_;
     SpecialRefRegistry::ThreadQueue specialRefRegistry_;
+#ifndef CUSTOM_ALLOCATOR
     ExtraObjectDataFactory::ThreadQueue extraObjectDataThreadQueue_;
+#endif
     ShadowStack shadowStack_;
     gc::GC::ThreadData gc_;
     std_support::vector<std::pair<ObjHeader**, ObjHeader*>> initializingSingletons_;

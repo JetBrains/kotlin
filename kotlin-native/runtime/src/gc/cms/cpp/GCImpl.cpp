@@ -5,7 +5,6 @@
 
 #include "GCImpl.hpp"
 
-#include "Common.h"
 #include "ConcurrentMarkAndSweep.hpp"
 #include "GC.hpp"
 #include "GCStatistics.hpp"
@@ -57,6 +56,8 @@ void gc::GC::ThreadData::Publish() noexcept {
 void gc::GC::ThreadData::ClearForTests() noexcept {
 #ifndef CUSTOM_ALLOCATOR
     impl_->objectFactoryThreadQueue().ClearForTests();
+#else
+    impl_->alloc().PrepareForGC();
 #endif
 }
 
@@ -115,6 +116,8 @@ void gc::GC::ClearForTests() noexcept {
     impl_->gc().StopFinalizerThreadIfRunning();
 #ifndef CUSTOM_ALLOCATOR
     impl_->objectFactory().ClearForTests();
+#else
+    impl_->gc().heap().ClearForTests();
 #endif
     GCHandle::ClearForTests();
 }

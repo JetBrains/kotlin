@@ -109,9 +109,7 @@ TEST(CustomAllocTest, NextFitPageSweepReuse) {
         std::minstd_rand r(seed);
         NextFitPage* page = NextFitPage::Create(MIN_BLOCK_SIZE);
         int unmarked = 0;
-        while (true) {
-            uint8_t* ptr = alloc(page, MIN_BLOCK_SIZE);
-            if (ptr == nullptr) break;
+        while (uint8_t* ptr = alloc(page, MIN_BLOCK_SIZE)) {
             if (r() & 1) {
                 mark(ptr);
             } else {

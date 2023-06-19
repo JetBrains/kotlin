@@ -27,6 +27,8 @@ using namespace kotlin;
 
 // These tests can only work if `GC` is `ConcurrentMarkAndSweep`.
 
+// custom allocator uses its own finalizer processor
+#ifndef CUSTOM_ALLOCATOR
 namespace {
 
 struct Payload {
@@ -144,4 +146,4 @@ TEST_F(FinalizerProcessorTest, ScheduleTasksWhileFinalizing) {
         ASSERT_EQ(threadsCount(), 1);
     });
 }
-
+#endif // CUSTOM_ALLOCATOR

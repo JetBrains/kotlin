@@ -14,8 +14,12 @@
 #include "CustomAllocConstants.hpp"
 #include "AtomicStack.hpp"
 #include "CustomLogging.hpp"
+#include "ExtraObjectData.hpp"
 #include "ExtraObjectPage.hpp"
+#include "GCApi.hpp"
+#include "Memory.h"
 #include "ThreadRegistry.hpp"
+#include "std_support/Vector.hpp"
 
 namespace kotlin::alloc {
 
@@ -31,6 +35,7 @@ void Heap::PrepareForGC() noexcept {
 
 FinalizerQueue Heap::Sweep(gc::GCHandle gcHandle) noexcept {
     FinalizerQueue finalizerQueue;
+    CustomAllocDebug("Heap: before sweep FinalizerQueue size == %zu", finalizerQueue.size());
     CustomAllocDebug("Heap::Sweep()");
     {
         auto sweepHandle = gcHandle.sweep();
@@ -40,6 +45,7 @@ FinalizerQueue Heap::Sweep(gc::GCHandle gcHandle) noexcept {
         nextFitPages_.Sweep(sweepHandle, finalizerQueue);
         singleObjectPages_.SweepAndFree(sweepHandle, finalizerQueue);
     }
+    CustomAllocDebug("Heap: before extra sweep FinalizerQueue size == %zu", finalizerQueue.size());
     {
         auto sweepHandle = gcHandle.sweepExtraObjects();
         extraObjectPages_.Sweep(sweepHandle, finalizerQueue);
@@ -66,6 +72,43 @@ SingleObjectPage* Heap::GetSingleObjectPage(uint64_t cellCount, FinalizerQueue& 
 ExtraObjectPage* Heap::GetExtraObjectPage(FinalizerQueue& finalizerQueue) noexcept {
     CustomAllocInfo("CustomAllocator::GetExtraObjectPage()");
     return extraObjectPages_.GetPage(0, finalizerQueue);
+}
+
+std_support::vector<ObjHeader*> Heap::GetAllocatedObjects() noexcept {
+    std_support::vector<ObjHeader*> allocated;
+    for (int blockSize = 0; blockSize <= FIXED_BLOCK_PAGE_MAX_BLOCK_SIZE; ++blockSize) {
+        for (auto* page : fixedBlockPages_[blockSize].GetPages()) {
+            for (auto* block : page->GetAllocatedBlocks()) {
+                allocated.push_back(reinterpret_cast<ObjHeader*>(block + gcDataSize));
+            }
+        }
+    }
+    for (auto* page : nextFitPages_.GetPages()) {
+        for (auto* block : page->GetAllocatedBlocks()) {
+            allocated.push_back(reinterpret_cast<ObjHeader*>(block + gcDataSize));
+        }
+    }
+    for (auto* page : singleObjectPages_.GetPages()) {
+        for (auto* block : page->GetAllocatedBlocks()) {
+            allocated.push_back(reinterpret_cast<ObjHeader*>(block + gcDataSize));
+        }
+    }
+    std_support::vector<ObjHeader*> unfinalized;
+    for (auto* block: allocated) {
+        if (!block->has_meta_object() || !mm::ExtraObjectData::Get(block)->getFlag(mm::ExtraObjectData::FLAGS_FINALIZED)) {
+            unfinalized.push_back(block);
+        }
+    }
+    return unfinalized;
+}
+
+void Heap::ClearForTests() noexcept {
+    for (int blockSize = 0; blockSize <= FIXED_BLOCK_PAGE_MAX_BLOCK_SIZE; ++blockSize) {
+        fixedBlockPages_[blockSize].ClearForTests();
+    }
+    nextFitPages_.ClearForTests();
+    singleObjectPages_.ClearForTests();
+    extraObjectPages_.ClearForTests();
 }
 
 } // namespace kotlin::alloc

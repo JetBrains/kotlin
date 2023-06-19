@@ -178,6 +178,9 @@ test_support::Object<Payload>& AllocateObjectWithFinalizer(mm::ThreadData& threa
 }
 
 std_support::vector<ObjHeader*> Alive(mm::ThreadData& threadData) {
+#ifdef CUSTOM_ALLOCATOR
+    return threadData.gc().impl().alloc().heap().GetAllocatedObjects();
+#else
     std_support::vector<ObjHeader*> objects;
     for (auto node : threadData.gc().impl().objectFactoryThreadQueue()) {
         objects.push_back(node.GetObjHeader());
@@ -186,6 +189,7 @@ std_support::vector<ObjHeader*> Alive(mm::ThreadData& threadData) {
         objects.push_back(node.GetObjHeader());
     }
     return objects;
+#endif
 }
 
 bool IsMarked(ObjHeader* objHeader) {
@@ -214,7 +218,9 @@ public:
     ~ConcurrentMarkAndSweepTest() {
         mm::GlobalsRegistry::Instance().ClearForTests();
         mm::SpecialRefRegistry::instance().clearForTests();
+#ifndef CUSTOM_ALLOCATOR
         mm::GlobalData::Instance().extraObjectDataFactory().ClearForTests();
+#endif
         mm::GlobalData::Instance().gc().ClearForTests();
     }
 
@@ -1012,6 +1018,8 @@ TEST_P(ConcurrentMarkAndSweepTest, MultipleMutatorsWeaks) {
     }
 }
 
+// Custom allocator does not have a notion of objects alive only for some thread
+#ifndef CUSTOM_ALLOCATOR
 TEST_P(ConcurrentMarkAndSweepTest, NewThreadsWhileRequestingCollection) {
     std_support::vector<Mutator> mutators(kDefaultThreadCount);
     std_support::vector<ObjHeader*> globals(2 * kDefaultThreadCount);
@@ -1092,7 +1100,7 @@ TEST_P(ConcurrentMarkAndSweepTest, NewThreadsWhileRequestingCollection) {
         EXPECT_THAT(newMutators[i].Alive(), testing::UnorderedElementsAreArray(aliveForThisThread));
     }
 }
-
+#endif // CUSTOM_ALLOCATOR
 
 TEST_P(ConcurrentMarkAndSweepTest, FreeObjectWithFreeWeakReversedOrder) {
     std_support::vector<Mutator> mutators(2);
