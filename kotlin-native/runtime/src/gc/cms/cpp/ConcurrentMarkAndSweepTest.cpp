@@ -214,7 +214,17 @@ class ConcurrentMarkAndSweepTest : public testing::TestWithParam<ParallelismOpti
 public:
 
     ConcurrentMarkAndSweepTest() {
-        mm::GlobalData::Instance().gc().impl().gc().reconfigure(GetParam().maxParallelism, GetParam().cooperativeMutators, GetParam().auxGCThreads);
+        if (supportedConfiguration()) {
+            mm::GlobalData::Instance().gc().impl().gc().reconfigure(GetParam().maxParallelism,
+                                                                    GetParam().cooperativeMutators,
+                                                                    GetParam().auxGCThreads);
+        }
+    }
+
+    void SetUp() override {
+        if (!supportedConfiguration()) {
+            GTEST_SKIP() << "Unsupported parallelism configuration";
+        }
     }
 
     ~ConcurrentMarkAndSweepTest() {
@@ -227,6 +237,10 @@ public:
     testing::MockFunction<void(ObjHeader*)>& finalizerHook() { return finalizerHooks_.finalizerHook(); }
 
 private:
+    bool supportedConfiguration() const {
+        return !compiler::gcMarkSingleThreaded() || (!GetParam().cooperativeMutators && GetParam().auxGCThreads == 0);
+    }
+
     FinalizerHooksTestSupport finalizerHooks_;
 };
 
