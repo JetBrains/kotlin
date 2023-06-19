@@ -3042,6 +3042,13 @@ standaloneTest("codegen_escapeAnalysis_string") {
     source = "codegen/escapeAnalysis/string.kt"
 }
 
+standaloneTest("codegen_escapeAnalysis_negativeArraySize") {
+    disabled = (cacheTesting != null) || // Cache is not compatible with -opt.
+            project.globalTestArgs.contains('-g') // -g and -opt are incompatible
+    flags = ['-opt', '-tr', '-opt-in=kotlin.native.internal.InternalForKotlinNative']
+    source = "codegen/escapeAnalysis/negativeArraySize.kt"
+}
+
 tasks.register("memory_var1", KonanLocalTest) {
     source = "runtime/memory/var1.kt"
 }
