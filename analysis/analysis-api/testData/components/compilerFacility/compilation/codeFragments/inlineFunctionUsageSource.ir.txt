@@ -1,0 +1,32 @@
+MODULE_FRAGMENT name:<Sources of main>
+  FILE fqName:<root> fileName:/inlineFunctionUsageSource.kt
+    FUN name:call visibility:public modality:FINAL <> (block:kotlin.Function1<kotlin.Int, kotlin.Int>) returnType:kotlin.Unit [inline]
+      VALUE_PARAMETER name:block index:0 type:kotlin.Function1<kotlin.Int, kotlin.Int>
+      BLOCK_BODY
+        CALL 'public open fun println (p0: kotlin.Int): kotlin.Unit declared in java.io.PrintStream' type=kotlin.Unit origin=null
+          $this: GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:out type:@[FlexibleNullability] java.io.PrintStream? visibility:public [final,static]' type=@[FlexibleNullability] java.io.PrintStream? origin=GET_PROPERTY
+          p0: CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 [operator] declared in kotlin.Function1' type=kotlin.Int origin=INVOKE
+            $this: GET_VAR 'block: kotlin.Function1<kotlin.Int, kotlin.Int> declared in <root>.call' type=kotlin.Function1<kotlin.Int, kotlin.Int> origin=VARIABLE_AS_FUNCTION
+            p1: CONST Int type=kotlin.Int value=5
+    FUN name:test visibility:public modality:FINAL <> () returnType:kotlin.Unit
+      BLOCK_BODY
+        VAR name:x type:kotlin.Int [val]
+          CONST Int type=kotlin.Int value=0
+  FILE fqName:<root> fileName:/fragment.kt
+    CLASS CLASS name:CodeFragment modality:FINAL visibility:public superTypes:[kotlin.Any]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.CodeFragment
+      CONSTRUCTOR visibility:public <> () returnType:<root>.CodeFragment [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+      FUN name:run visibility:public modality:FINAL <> () returnType:kotlin.Unit
+        EXPRESSION_BODY
+          BLOCK type=kotlin.Unit origin=null
+            CALL 'public final fun call (block: kotlin.Function1<kotlin.Int, kotlin.Int>): kotlin.Unit [inline] declared in <root>' type=kotlin.Unit origin=null
+              block: FUN_EXPR type=kotlin.Function1<kotlin.Int, kotlin.Int> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:kotlin.Int) returnType:kotlin.Int
+                  VALUE_PARAMETER name:it index:0 type:kotlin.Int
+                  BLOCK_BODY
+                    RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: kotlin.Int): kotlin.Int declared in <root>.CodeFragment.run'
+                      CALL 'public final fun times (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=MUL
+                        $this: GET_VAR 'it: kotlin.Int declared in <root>.CodeFragment.run.<anonymous>' type=kotlin.Int origin=null
+                        other: CONST Int type=kotlin.Int value=2

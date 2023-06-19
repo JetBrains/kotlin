@@ -24,6 +24,7 @@ dependencies {
     implementation(project(":compiler:cli-base"))
     implementation(project(":compiler:backend"))
     implementation(project(":compiler:backend.jvm.entrypoint"))
+    implementation(project(":compiler:backend.jvm.lower"))
     implementation(project(":compiler:ir.backend.common"))
     implementation(project(":compiler:ir.serialization.jvm"))
     api(intellijCore())

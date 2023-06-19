@@ -1,0 +1,12 @@
+MODULE_FRAGMENT name:<Sources of main>
+  FILE fqName:<root> fileName:/fragment.kt
+    CLASS CLASS name:CodeFragment modality:FINAL visibility:public superTypes:[kotlin.Any]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.CodeFragment
+      CONSTRUCTOR visibility:public <> () returnType:<root>.CodeFragment [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+      FUN name:run visibility:public modality:FINAL <> (p0:kotlin.Int) returnType:kotlin.Int
+        VALUE_PARAMETER name:p0 index:0 type:kotlin.Int
+        EXPRESSION_BODY
+          BLOCK type=kotlin.Int origin=null
+            GET_VAR 'p0: kotlin.Int declared in <root>.CodeFragment.run' type=kotlin.Int origin=null

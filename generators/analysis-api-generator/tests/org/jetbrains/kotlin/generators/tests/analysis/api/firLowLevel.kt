@@ -181,6 +181,12 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
         }
     }
 
+    testGroup("analysis/low-level-api-fir/tests", "analysis/analysis-api/testData") {
+        testClass<AbstractCodeFragmentCapturingTest> {
+            model("components/compilerFacility/compilation/codeFragments/capturing", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
+        }
+    }
+
     testGroup(
         "analysis/low-level-api-fir/tests",
         "compiler/fir/analysis-tests/testData",

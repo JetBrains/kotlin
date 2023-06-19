@@ -1,0 +1,7 @@
+public final class CodeFragment {
+    // source: 'fragment.kt'
+    public method <init>(): void
+    public final static method run(): void
+}
+
+public final class InlineFunctionUsageSourceKt

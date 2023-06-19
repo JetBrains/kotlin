@@ -138,7 +138,7 @@ internal class KtFe10CompilerFacility(
             }
 
             val outputFiles = state.factory.asList().map(::KtCompiledFileForOutputFile)
-            return KtCompilationResult.Success(outputFiles)
+            return KtCompilationResult.Success(outputFiles, capturedValues = emptyList())
         } finally {
             state.destroy()
         }
