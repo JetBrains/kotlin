@@ -1,6 +1,8 @@
-description = 'Kotlin Standard Library for JVM'
+plugins {
+    id("kotlin-platform-jvm")
+}
 
-apply plugin: 'kotlin-platform-jvm'
+description = 'Kotlin Standard Library for JVM'
 
 archivesBaseName = 'kotlin-stdlib'
 
@@ -93,7 +95,7 @@ dependencies {
     builtins project(':core:builtins')
 }
 
-jar {
+tasks.named("jar", Jar) {
     dependsOn(configurations.builtins)
     manifestAttributes(manifest, project, 'Main', true)
     from {
@@ -104,7 +106,7 @@ jar {
     from sourceSets.java9.output
 }
 
-sourcesJar {
+tasks.named("sourcesJar", Jar) {
     from "${rootDir}/core/builtins/native"
     from(sourceSets.mainJdk7.allSource) {
         into 'jdk7'
@@ -114,7 +116,7 @@ sourcesJar {
     }
 }
 
-task distSourcesJar(type: Jar) {
+tasks.create("distSourcesJar", Jar) {
     dependsOn(sourcesJar, configurations.commonSources)
     destinationDirectory = file("$buildDir/lib/dist")
     archiveClassifier.set('sources')
@@ -136,7 +138,7 @@ artifacts {
 }
 
 DexMethodCountKt.dexMethodCount(project) { task ->
-    task.from(jar)
+    task.from(tasks.named("jar", Jar))
     task.ownPackages = ['kotlin']
 }
 

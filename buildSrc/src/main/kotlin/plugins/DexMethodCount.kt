@@ -3,19 +3,22 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-import com.jakewharton.dex.*
+import com.jakewharton.dex.DexMethod
 import com.jakewharton.dex.DexParser.Companion.toDexParser
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
+import org.gradle.api.file.ProjectLayout
 import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
 import org.gradle.jvm.tasks.Jar
-import java.io.File
+import org.gradle.kotlin.dsl.property
+import javax.inject.Inject
 
 @CacheableTask
-abstract class DexMethodCount : DefaultTask() {
+abstract class DexMethodCount @Inject constructor(objectFactory: ObjectFactory, layout: ProjectLayout) : DefaultTask() {
 
     data class Counts(
         val total: Int,
@@ -25,39 +28,33 @@ abstract class DexMethodCount : DefaultTask() {
         val byClass: Map<String, Int>
     )
 
-    @Classpath
-    lateinit var jarFile: File
+    @get:InputFile
+    @get:Classpath
+    abstract val jarFile: RegularFileProperty
 
     @get:Optional
     @get:Input
     abstract val ownPackages: ListProperty<String>
 
-    @Internal
-    var artifactName: String? = null
-
-    private val projectName = project.name
+    private val projectName: String = project.name
 
     @get:Input
-    val artifactOrArchiveName: String
-        get() = artifactName ?: projectName
+    val artifactOrArchiveName: Property<String> = objectFactory.property<String>().convention(projectName)
 
-    fun from(jar: Jar) {
-        jarFile = jar.archiveFile.get().asFile
-        artifactName = jar.archiveBaseName.orNull
-        dependsOn(jar)
+    fun from(jar: TaskProvider<Jar>) {
+        jarFile.set(jar.flatMap { it.archiveFile })
+        artifactOrArchiveName.set(jar.flatMap { it.archiveBaseName.orElse(projectName) })
     }
 
     @Internal // plain output properties are not supported, mark as internal to suppress warning from validatePlugins
     lateinit var counts: Counts
 
     @get:OutputFile
-    val detailOutputFile: File by lazy {
-        project.buildDir.resolve("$artifactOrArchiveName-method-count.txt")
-    }
+    val detailOutputFile: RegularFileProperty = objectFactory.fileProperty().value(artifactOrArchiveName.flatMap { layout.buildDirectory.file("$it-method-count.txt") })
 
     @TaskAction
     fun invoke() {
-        val methods = jarFile.toDexParser().listMethods()
+        val methods = jarFile.get().asFile.toDexParser().listMethods()
         val counts = methods.getCounts().also { this.counts = it }
         outputDetails(counts)
     }
@@ -83,7 +80,7 @@ abstract class DexMethodCount : DefaultTask() {
     }
 
     private fun outputDetails(counts: Counts) {
-        detailOutputFile.printWriter().use { writer ->
+        detailOutputFile.get().asFile.printWriter().use { writer ->
             writer.println("${counts.total.padRight()}\tTotal methods")
             ownPackages.orNull?.let { packages ->
                 writer.println("${counts.totalOwnPackages?.padRight()}\tTotal methods from packages ${packages.joinToString { "$it.*" }}")
@@ -150,9 +147,8 @@ abstract class DexMethodCountStats : DefaultTask() {
 
 fun Project.printStats(dexMethodCount: TaskProvider<DexMethodCount>) {
     val dexMethodCountStats = tasks.register("dexMethodCountStats", DexMethodCountStats::class.java) {
-        dependsOn(dexMethodCount)
-        inputFile.set(dexMethodCount.flatMap { objects.fileProperty().apply { set(it.detailOutputFile) } })
-        artifactOrArchiveName.set(dexMethodCount.map { it.artifactOrArchiveName })
+        inputFile.set(dexMethodCount.flatMap { it.detailOutputFile })
+        artifactOrArchiveName.set(dexMethodCount.flatMap { it.artifactOrArchiveName })
         ownPackages.set(dexMethodCount.flatMap { it.ownPackages })
     }
 

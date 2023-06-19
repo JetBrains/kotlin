@@ -244,15 +244,12 @@ val result by task<Jar> {
 javadocJar()
 
 dexMethodCount {
-    dependsOn(result)
-    jarFile = result.get().outputs.files.single()
+    jarFile.fileProvider(result.map { it.outputs.files.singleFile })
     ownPackages.set(listOf("kotlin.reflect"))
 }
 
 artifacts {
     listOf("archives", "runtimeElements").forEach { configurationName ->
-        add(configurationName, provider { result.get().outputs.files.singleFile }) {
-            builtBy(result)
-        }
+        add(configurationName, result.map { it.outputs.files.singleFile })
     }
 }
