@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirContractCallBlock
 import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
 import org.jetbrains.kotlin.fir.expressions.impl.FirUnitExpression
+import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.resolve.isIteratorNext
 import org.jetbrains.kotlin.fir.resolve.toSymbol
@@ -302,6 +303,11 @@ class Fir2IrVisitor(
                         statement.toIrStatement()
                     }
                     irScript.statements.add(irStatement!!)
+                }
+            }
+            for (configurator in session.extensionService.fir2IrScriptConfigurators) {
+                with(configurator) {
+                    irScript.configure(script) { declarationStorage.getCachedIrScript(it.fir)?.symbol }
                 }
             }
             declarationStorage.leaveScope(irScript)

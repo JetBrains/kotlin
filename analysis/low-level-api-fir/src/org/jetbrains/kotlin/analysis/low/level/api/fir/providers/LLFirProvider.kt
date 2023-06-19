@@ -89,6 +89,9 @@ internal class LLFirProvider(
         return moduleComponents.cache.getContainerFirFile(symbol.fir)
     }
 
+    // TODO: implement
+    override fun getFirScriptByFilePath(path: String): FirScriptSymbol? = null
+
     override fun getFirFilesByPackage(fqName: FqName): List<FirFile> = error("Should not be called in FIR IDE")
 
     override fun getClassNamesInPackage(fqName: FqName): Set<Name> = providerHelper.getTopLevelClassNamesInPackage(fqName)

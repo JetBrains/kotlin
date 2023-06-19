@@ -43,6 +43,8 @@ abstract class IrScript : IrDeclarationBase(), IrDeclarationWithName, IrDeclarat
 
     abstract var earlierScriptsParameter: IrValueParameter?
 
+    abstract var importedScripts: List<IrScriptSymbol>?
+
     abstract var earlierScripts: List<IrScriptSymbol>?
 
     abstract var targetClass: IrClassSymbol?

@@ -42,7 +42,7 @@ class CachingTest : TestCase() {
     }
 
     @Test
-    fun testSimpleImportWithMemoryCache() = expectTestToFailOnK2 {
+    fun testSimpleImportWithMemoryCache() {
         val cache = SimpleMemoryScriptsCache()
         checkWithCache(
             cache, scriptWithImport, scriptWithImportExpectedOutput,
@@ -62,7 +62,7 @@ class CachingTest : TestCase() {
     }
 
     @Test
-    fun testSimpleImportWithFileCache() = expectTestToFailOnK2 {
+    fun testSimpleImportWithFileCache() {
         withTempDir("scriptingTestCache") { cacheDir ->
             val cache = FileBasedScriptCache(cacheDir)
             Assert.assertEquals(true, cache.baseDir.listFiles()?.isEmpty())
@@ -89,7 +89,7 @@ class CachingTest : TestCase() {
     }
 
     @Test
-    fun testSimpleImportWithJarCache() = expectTestToFailOnK2 {
+    fun testSimpleImportWithJarCache() {
         withTempDir("scriptingTestJarCache") { cacheDir ->
             val cache = TestCompiledScriptJarsCache(cacheDir)
             Assert.assertTrue(cache.baseDir.listFiles()!!.isEmpty())

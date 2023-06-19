@@ -548,6 +548,7 @@ object IrTree : AbstractTreeBuilder() {
         +listField("providedPropertiesParameters", valueParameter, mutability = Var, isChild = true)
         +field("resultProperty", propertySymbolType, nullable = true)
         +field("earlierScriptsParameter", valueParameter, nullable = true, isChild = true)
+        +listField("importedScripts", scriptSymbolType, mutability = Var, nullable = true)
         +listField("earlierScripts", scriptSymbolType, mutability = Var, nullable = true)
         +field("targetClass", classSymbolType, nullable = true)
         +field("constructor", constructor, nullable = true) // K1
