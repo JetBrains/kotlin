@@ -65,6 +65,12 @@ public class FirIdeNormalAnalysisSourceModuleAnalysisApiImportOptimizerTestGener
     }
 
     @Test
+    @TestMetadata("unusedExtensionFunction_componentOperator.kt")
+    public void testUnusedExtensionFunction_componentOperator() throws Exception {
+        runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/unusedExtensionFunction_componentOperator.kt");
+    }
+
+    @Test
     @TestMetadata("unusedFunctionImportedFromObjectSuperClass.kt")
     public void testUnusedFunctionImportedFromObjectSuperClass() throws Exception {
         runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/unusedFunctionImportedFromObjectSuperClass.kt");
@@ -110,6 +116,12 @@ public class FirIdeNormalAnalysisSourceModuleAnalysisApiImportOptimizerTestGener
     @TestMetadata("usedExtensionFunctionFromObject_implicitReceiver.kt")
     public void testUsedExtensionFunctionFromObject_implicitReceiver() throws Exception {
         runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/usedExtensionFunctionFromObject_implicitReceiver.kt");
+    }
+
+    @Test
+    @TestMetadata("usedExtensionFunction_componentOperator.kt")
+    public void testUsedExtensionFunction_componentOperator() throws Exception {
+        runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/usedExtensionFunction_componentOperator.kt");
     }
 
     @Test

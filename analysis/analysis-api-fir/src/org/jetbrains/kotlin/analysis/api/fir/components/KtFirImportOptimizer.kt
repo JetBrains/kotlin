@@ -124,6 +124,11 @@ internal class KtFirImportOptimizer(
                 super.visitImplicitInvokeCall(implicitInvokeCall)
             }
 
+            override fun visitComponentCall(componentCall: FirComponentCall) {
+                processFunctionCall(componentCall)
+                super.visitComponentCall(componentCall)
+            }
+
             override fun visitPropertyAccessExpression(propertyAccessExpression: FirPropertyAccessExpression) {
                 processPropertyAccessExpression(propertyAccessExpression)
                 super.visitPropertyAccessExpression(propertyAccessExpression)
