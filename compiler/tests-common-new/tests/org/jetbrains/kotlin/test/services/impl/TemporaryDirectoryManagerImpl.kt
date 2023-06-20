@@ -5,12 +5,13 @@
 
 package org.jetbrains.kotlin.test.services.impl
 
-import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.util.io.NioFiles
 import org.jetbrains.kotlin.test.services.TemporaryDirectoryManager
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.testInfo
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
+import java.nio.file.Paths
 import java.util.*
 
 class TemporaryDirectoryManagerImpl(testServices: TestServices) : TemporaryDirectoryManager(testServices) {
@@ -42,7 +43,7 @@ class TemporaryDirectoryManagerImpl(testServices: TestServices) : TemporaryDirec
         cache.clear()
 
         if (rootTempDir.isInitialized()) {
-            FileUtil.delete(rootDir)
+            NioFiles.deleteRecursively(Paths.get(rootDir.path))
         }
     }
 
