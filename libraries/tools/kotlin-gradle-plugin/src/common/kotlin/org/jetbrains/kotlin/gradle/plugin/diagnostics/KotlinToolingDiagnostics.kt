@@ -506,6 +506,20 @@ object KotlinToolingDiagnostics {
         )
     }
 
+    object XCFrameworkDifferentInnerFrameworksName : ToolingDiagnosticFactory(WARNING) {
+        operator fun invoke(xcFramework: String, innerFrameworks: String) = build(
+            "Name of XCFramework '$xcFramework' differs from inner frameworks name '$innerFrameworks'! Framework renaming is not supported yet"
+        )
+    }
+
+    object UnknownAppleFrameworkBuildType : ToolingDiagnosticFactory(WARNING) {
+        operator fun invoke(envConfiguration: String) = build(
+            """
+                Unable to detect Kotlin framework build type for CONFIGURATION=$envConfiguration automatically.
+                Specify 'KOTLIN_FRAMEWORK_BUILD_TYPE' to 'debug' or 'release'
+            """.trimIndent()
+        )
+    }
 }
 
 private fun String.indentLines(nSpaces: Int = 4, skipFirstLine: Boolean = true): String {

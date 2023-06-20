@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.native
 
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.replaceFirst
 import org.jetbrains.kotlin.gradle.util.replaceText
@@ -69,7 +70,7 @@ class XCFrameworkIT : KGPBaseTest() {
                 assertTasksExecuted(":shared:assembleOtherDebugXCFramework")
                 assertDirectoryInProjectExists("shared/build/XCFrameworks/debug/other.xcframework")
                 assertDirectoryInProjectExists("shared/build/XCFrameworks/debug/other.xcframework/ios-arm64/dSYMs/shared.framework.dSYM")
-                assertOutputContains("Name of XCFramework 'other' differs from inner frameworks name 'shared'! Framework renaming is not supported yet")
+                assertHasDiagnostic(KotlinToolingDiagnostics.XCFrameworkDifferentInnerFrameworksName)
             }
         }
     }

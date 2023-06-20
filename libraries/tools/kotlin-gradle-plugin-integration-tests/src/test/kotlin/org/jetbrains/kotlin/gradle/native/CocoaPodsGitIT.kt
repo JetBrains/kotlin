@@ -10,7 +10,6 @@ import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.request.*
 import io.ktor.http.*
-import io.ktor.util.*
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
@@ -21,6 +20,7 @@ import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Compan
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.POD_IMPORT_TASK_NAME
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.POD_SETUP_BUILD_TASK_NAME
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.POD_SPEC_TASK_NAME
+import org.jetbrains.kotlin.gradle.targets.native.cocoapods.CocoapodsPluginDiagnostics
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.assertProcessRunResult
 import org.jetbrains.kotlin.gradle.util.capitalize
@@ -435,21 +435,11 @@ class CocoaPodsGitIT : KGPBaseTest() {
     @DisplayName("Checking useLibraries mode")
     @GradleTest
     fun testUseLibrariesMode(gradleVersion: GradleVersion) {
-        nativeProjectWithCocoapodsAndIosAppPodFile(gradleVersion = gradleVersion) {
-            buildGradleKts.addCocoapodsBlock("useLibraries()")
-            buildGradleKts.addPod("AFNetworking", configuration = "headers = \"AFNetworking/AFNetworking.h\"")
-            testImport()
-        }
-    }
-
-    @DisplayName("Checking that useLibraries mode warns when pod is added without headers specified")
-    @GradleTest
-    fun testUseLibrariesModeWarnsWhenPodIsAddedWithoutHeadersSpecified(gradleVersion: GradleVersion) {
-        nativeProjectWithCocoapodsAndIosAppPodFile(gradleVersion = gradleVersion) {
-            buildGradleKts.addCocoapodsBlock("useLibraries()")
-            buildGradleKts.addPod("AFNetworking")
+        nativeProjectWithCocoapodsAndIosAppPodFile(projectName = "native-cocoapods-template-groovy", gradleVersion = gradleVersion) {
+            buildGradle.addCocoapodsBlock("useLibraries()".trimIndent())
+            buildGradle.addPod("AFNetworking", configuration = "headers = \"AFNetworking/AFNetworking.h\"")
             testImport {
-                assertOutputContains("w: Pod 'AFNetworking' should have 'headers' property specified when using 'useLibraries()'")
+                assertHasDiagnostic(CocoapodsPluginDiagnostics.UseLibrariesUsed)
             }
         }
     }

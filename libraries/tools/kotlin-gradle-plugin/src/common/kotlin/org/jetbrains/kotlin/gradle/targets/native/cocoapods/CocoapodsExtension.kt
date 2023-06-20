@@ -14,8 +14,10 @@ import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension.CocoapodsDependency.PodLocation.*
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.POD_FRAMEWORK_PREFIX
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.kotlinToolingDiagnosticsCollector
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
+import org.jetbrains.kotlin.gradle.targets.native.cocoapods.CocoapodsPluginDiagnostics
 import org.jetbrains.kotlin.gradle.utils.getFile
 import java.io.File
 import java.net.URI
@@ -49,17 +51,11 @@ abstract class CocoapodsExtension @Inject constructor(private val project: Proje
 
     /**
      * Setup plugin to generate synthetic xcodeproj compatible with static libraries
-     *
-     * This option is not supported and scheduled to be removed. If you are using this please
-     * file an issue with your case to [https://kotl.in/issue](https://kotl.in/issue)
      */
-    @Suppress("DeprecatedCallableAddReplaceWith")
-    @Deprecated("This option is not supported and scheduled to be removed")
+    @Deprecated("'useLibraries' mode is removed", level = DeprecationLevel.ERROR)
     fun useLibraries() {
-        useLibraries = true
+        project.kotlinToolingDiagnosticsCollector.report(project, CocoapodsPluginDiagnostics.UseLibrariesUsed())
     }
-
-    internal var useLibraries: Boolean = false
 
     /**
      * Configure name of the pod built from this project.
@@ -169,31 +165,6 @@ abstract class CocoapodsExtension @Inject constructor(private val project: Proje
         // Empty string will lead to an attempt to create two podDownload tasks.
         // One is original podDownload and second is podDownload + pod.name
         require(name.isNotEmpty()) { "Please provide not empty pod name to avoid ambiguity" }
-        var podSource = path
-        if (path != null && !path.isDirectory) {
-            val pattern = "\\W*pod(.*\"${name}\".*)".toRegex()
-            val buildScript = project.buildFile
-            val lines = buildScript.readLines()
-            val lineNumber = lines.indexOfFirst { pattern.matches(it) }
-            val warnMessage = if (lineNumber != -1) run {
-                val lineContent = lines[lineNumber].trimIndent()
-                val newContent = lineContent.replace(path.name, "")
-                """
-                |Deprecated DSL found on ${buildScript.absolutePath}${File.pathSeparator}${lineNumber + 1}:
-                |Found: "$lineContent"
-                |Expected: "$newContent"
-                |Please, change the path to avoid this warning.
-                |
-            """.trimMargin()
-            } else
-                """
-                |Deprecated DSL is used for pod "$name".
-                |Please, change its path from ${path.path} to ${path.parentFile.path} 
-                |
-            """.trimMargin()
-            project.logger.warn(warnMessage)
-            podSource = path.parentFile
-        }
         addToPods(
             project.objects.newInstance(
                 CocoapodsDependency::class.java,
@@ -202,7 +173,7 @@ abstract class CocoapodsExtension @Inject constructor(private val project: Proje
             ).apply {
                 this.headers = headers
                 this.version = version
-                source = podSource?.let { Path(it) }
+                source = path?.let(::Path)
                 this.linkOnly = linkOnly
             }
         )

@@ -20,8 +20,7 @@ kotlin {
     cocoapods {
         summary = "CocoaPods test library"
         homepage = "https://github.com/JetBrains/kotlin"
-        // test warnIfDeprecatedPodspecPathIsUsed depends on deprecated api usage
-        pod("pod_dependency", "1.0", project.file("../pod_dependency/pod_dependency.podspec"))
+        pod("pod_dependency", "1.0", project.file("../pod_dependency"))
         pod("subspec_dependency/Core", "1.0", project.file("../subspec_dependency"))
         podfile = project.file("../ios-app/Podfile")
 

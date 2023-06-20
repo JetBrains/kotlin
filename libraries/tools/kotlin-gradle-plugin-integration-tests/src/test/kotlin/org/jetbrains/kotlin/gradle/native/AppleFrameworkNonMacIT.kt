@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.native
 
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.targets.native.cocoapods.CocoapodsPluginDiagnostics
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 
@@ -27,7 +28,7 @@ class AppleFrameworkNonMacIT : KGPBaseTest() {
             )
 
             build("podImport", buildOptions = buildOptions) {
-                assertOutputContains("Kotlin Cocoapods Plugin is fully supported on mac machines only. Gradle tasks that can not run on non-mac hosts will be skipped.")
+                assertHasDiagnostic(CocoapodsPluginDiagnostics.UnsupportedOs)
             }
         }
     }

@@ -23,6 +23,8 @@ import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.addExtension
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension.CocoapodsDependency
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnosticOncePerProject
 import org.jetbrains.kotlin.gradle.plugin.ide.Idea222Api
 import org.jetbrains.kotlin.gradle.plugin.ide.ideaImportDependsOn
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
@@ -30,6 +32,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.AppleSdk
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.AppleTarget
 import org.jetbrains.kotlin.gradle.plugin.whenEvaluated
+import org.jetbrains.kotlin.gradle.targets.native.cocoapods.CocoapodsPluginDiagnostics
 import org.jetbrains.kotlin.gradle.targets.native.cocoapods.KotlinArtifactsPodspecExtension
 import org.jetbrains.kotlin.gradle.targets.native.cocoapods.kotlinArtifactsPodspecExtension
 import org.jetbrains.kotlin.gradle.targets.native.tasks.*
@@ -243,22 +246,6 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
         val platforms = project.findProperty(PLATFORM_PROPERTY)?.toString()?.split(",", " ")?.filter { it.isNotBlank() }
         val archs = project.findProperty(ARCHS_PROPERTY)?.toString()?.split(",", " ")?.filter { it.isNotBlank() }
 
-        if (
-            project.findProperty(CFLAGS_PROPERTY) != null ||
-            project.findProperty(FRAMEWORK_PATHS_PROPERTY) != null ||
-            project.findProperty(HEADER_PATHS_PROPERTY) != null
-        ) {
-            logger.warn(
-                """
-                Properties 
-                    kotlin.native.cocoapods.cflags
-                    kotlin.native.cocoapods.paths.frameworks
-                    kotlin.native.cocoapods.paths.headers
-                are not supported and will be ignored since Cocoapods plugin generates all required properties automatically.
-                """.trimIndent()
-            )
-        }
-
         if (platforms == null || archs == null) {
             check(project.findProperty(TARGET_PROPERTY) == null) {
                 """
@@ -298,6 +285,15 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
         }
     }
 
+    private fun reportDeprecatedPropertiesUsage(project: Project) {
+        listOf(CFLAGS_PROPERTY, FRAMEWORK_PATHS_PROPERTY, HEADER_PATHS_PROPERTY)
+            .filter { project.findProperty(it) != null }
+            .takeIf { it.isNotEmpty() }
+            ?.let {
+                project.reportDiagnostic(CocoapodsPluginDiagnostics.DeprecatedPropertiesUsed(it))
+            }
+    }
+
     private fun createInterops(
         project: Project,
         kotlinExtension: KotlinMultiplatformExtension,
@@ -315,7 +311,6 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
                 lowerCamelCaseName("generateDef", pod.moduleName).asValidTaskName()
             ) {
                 it.pod.set(pod)
-                it.useLibraries.set(cocoapodsExtension.useLibraries)
                 it.description = "Generates a def file for CocoaPods dependencies with module ${pod.moduleName}"
                 // This task is an implementation detail so we don't add it in any group
                 // to avoid showing it in the `tasks` output.
@@ -374,11 +369,15 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
         dependencyName: String,
     ) {
         if (pod.name == dependencyName) {
-            error("Pod '${pod.name}' has an interop-binding dependency on itself")
+            project.reportDiagnosticOncePerProject(CocoapodsPluginDiagnostics.InteropBindingSelfDependency(pod.name))
+            return
         }
 
         val dependencyPod = cocoapodsExtension.pods.findByName(dependencyName)
-            ?: error("Couldn't find declaration of pod '$dependencyName' (interop-binding dependency of pod '${pod.name}')")
+            ?: run {
+                project.reportDiagnosticOncePerProject(CocoapodsPluginDiagnostics.InteropBindingUnknownDependency(pod.name, dependencyName))
+                return
+            }
 
         val dependencyTaskName = cinterops.getByName(dependencyPod.moduleName).interopProcessingTaskName
         val dependencyTask = project.tasks.named<CInteropProcess>(dependencyTaskName)
@@ -520,7 +519,6 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
                 task.description = "Сreates a synthetic Xcode project to retrieve CocoaPods dependencies"
                 task.podspec.set(podspecTaskProvider.map { it.outputFile })
                 task.podName.set(project.provider { cocoapodsExtension.name })
-                task.useLibraries.set(project.provider { cocoapodsExtension.useLibraries })
                 task.specRepos.set(project.provider { cocoapodsExtension.specRepos })
                 task.family.set(family)
                 task.platformSettings.set(platformSettings)
@@ -799,10 +797,7 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
         project.runProjectConfigurationHealthCheckWhenEvaluated {
             cocoapodsExtension.pods.all { pod ->
                 if (pod.linkOnly && cocoapodsExtension.podFrameworkIsStatic.get()) {
-                    logger.warn("""
-                        Dependency on '${pod.name}' with option 'linkOnly=true' is unused for building static frameworks.
-                        When using static linkage you will need to provide all dependencies for linking the framework into a final application.
-                    """.trimIndent())
+                    project.reportDiagnostic(CocoapodsPluginDiagnostics.LinkOnlyUsedWithStaticFramework(pod.name))
                 }
             }
         }
@@ -854,12 +849,10 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
             registerPodPublishTasks(project, cocoapodsExtension)
 
             if (!HostManager.hostIsMac) {
-                logger.warn(
-                    """
-                        Kotlin Cocoapods Plugin is fully supported on mac machines only. Gradle tasks that can not run on non-mac hosts will be skipped.
-                    """.trimIndent()
-                )
+                reportDiagnostic(CocoapodsPluginDiagnostics.UnsupportedOs())
             }
+            reportDeprecatedPropertiesUsage(project)
+
             createInterops(project, kotlinExtension, cocoapodsExtension)
             configureLinkingOptions(project, cocoapodsExtension)
             checkLinkOnlyNotUsedWithStaticFramework(project, cocoapodsExtension)

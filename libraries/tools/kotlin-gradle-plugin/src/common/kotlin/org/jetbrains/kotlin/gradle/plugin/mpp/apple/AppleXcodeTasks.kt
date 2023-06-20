@@ -14,6 +14,8 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.process.ExecOperations
 import org.jetbrains.kotlin.gradle.dsl.KotlinNativeBinaryContainer
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.gradle.plugin.mpp.enabledOnCurrentHost
@@ -106,10 +108,7 @@ private fun Project.registerAssembleAppleFrameworkTask(framework: Framework): Ta
     if (envBuildType == null || envTargets.isEmpty() || envFrameworkSearchDir == null) {
         val envConfiguration = System.getenv("CONFIGURATION")
         if (envTargets.isNotEmpty() && envConfiguration != null) {
-            logger.warn(
-                "Unable to detect Kotlin framework build type for CONFIGURATION=$envConfiguration automatically. " +
-                        "Specify 'KOTLIN_FRAMEWORK_BUILD_TYPE' to 'debug' or 'release'"
-            )
+            project.reportDiagnostic(KotlinToolingDiagnostics.UnknownAppleFrameworkBuildType(envConfiguration))
         } else {
             logger.debug("Not registering $frameworkTaskName, since not called from Xcode")
         }

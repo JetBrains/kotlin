@@ -40,9 +40,6 @@ abstract class PodGenTask @Inject constructor(projectLayout: ProjectLayout) : Co
     internal abstract val podName: Property<String>
 
     @get:Input
-    internal abstract val useLibraries: Property<Boolean>
-
-    @get:Input
     internal abstract val family: Property<Family>
 
     @get:Nested
@@ -80,9 +77,8 @@ abstract class PodGenTask @Inject constructor(projectLayout: ProjectLayout) : Co
             }
 
             appendLine("target '${family.platformLiteral}' do")
-            if (useLibraries.get().not()) {
-                appendLine("\tuse_frameworks!")
-            }
+            appendLine("\tuse_frameworks!")
+
             val settings = platformSettings.get()
             val deploymentTarget = settings.deploymentTarget
             if (deploymentTarget != null) {
