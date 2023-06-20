@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -14,8 +14,6 @@ import org.jetbrains.kotlin.fir.NoMutableState
 import org.jetbrains.kotlin.fir.ThreadSafeMutableState
 import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
-import org.jetbrains.kotlin.fir.originalForSubstitutionOverride
 import org.jetbrains.kotlin.fir.resolve.providers.*
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.CallableId
@@ -83,18 +81,8 @@ internal class LLFirProvider(
     }
 
     override fun getFirCallableContainerFile(symbol: FirCallableSymbol<*>): FirFile? {
-        symbol.fir.originalForSubstitutionOverride?.symbol?.let { originalSymbol ->
-            return originalSymbol.moduleData.session.firProvider.getFirCallableContainerFile(originalSymbol)
-        }
-
-        val fir = symbol.fir
-        return when {
-            symbol is FirSyntheticPropertySymbol && fir is FirSyntheticProperty -> getFirCallableContainerFile(fir.getter.delegate.symbol)
-            else -> {
-                symbol.callableId.classId?.let { SyntheticFirClassProvider.getInstance(session).getFirClassifierContainerFileIfAny(it) }
-                    ?: moduleComponents.cache.getContainerFirFile(symbol.fir)
-            }
-        }
+        return symbol.callableId.classId?.let { SyntheticFirClassProvider.getInstance(session).getFirClassifierContainerFileIfAny(it) }
+            ?: moduleComponents.cache.getContainerFirFile(symbol.fir)
     }
 
     override fun getFirScriptContainerFile(symbol: FirScriptSymbol): FirFile? {
