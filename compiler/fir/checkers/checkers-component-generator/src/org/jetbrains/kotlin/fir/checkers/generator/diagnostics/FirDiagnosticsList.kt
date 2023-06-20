@@ -1236,7 +1236,6 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<Set<KtSourceElement>>("unreachable")
         }
         val SENSELESS_COMPARISON by warning<KtExpression> {
-            parameter<FirExpression>("expression")
             parameter<Boolean>("compareResult")
         }
         val SENSELESS_NULL_IN_WHEN by warning<KtElement>()
@@ -1252,11 +1251,13 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<ConeKotlinType>("receiverType")
         }
         val UNSAFE_INFIX_CALL by error<KtExpression>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
+            parameter<ConeKotlinType>("receiverType")
             parameter<FirExpression>("receiverExpression")
             parameter<String>("operator")
             parameter<FirExpression>("argumentExpression")
         }
         val UNSAFE_OPERATOR_CALL by error<KtExpression>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
+            parameter<ConeKotlinType>("receiverType")
             parameter<FirExpression>("receiverExpression")
             parameter<String>("operator")
             parameter<FirExpression>("argumentExpression")
@@ -1520,7 +1521,6 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val NON_INTERNAL_PUBLISHED_API by error<KtElement>()
 
         val INVALID_DEFAULT_FUNCTIONAL_PARAMETER_FOR_INLINE by error<KtElement>() {
-            parameter<FirExpression>("defaultValue")
             parameter<FirValueParameterSymbol>("parameter")
         }
 

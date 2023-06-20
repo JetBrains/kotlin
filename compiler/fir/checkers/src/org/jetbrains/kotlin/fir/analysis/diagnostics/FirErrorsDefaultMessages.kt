@@ -20,8 +20,8 @@ import org.jetbrains.kotlin.diagnostics.rendering.CommonRenderers.STRING
 import org.jetbrains.kotlin.diagnostics.rendering.CommonRenderers.commaSeparated
 import org.jetbrains.kotlin.diagnostics.rendering.LanguageFeatureMessageRenderer
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.AMBIGUOUS_CALLS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.CALLEE_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.DECLARATION_NAME
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.FIR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.FQ_NAMES_IN_TYPES
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.FUNCTIONAL_TYPE_KINDS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.SYMBOLS_ON_NEWLINE_WITH_INDENT
@@ -1254,7 +1254,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             SMARTCAST_IMPOSSIBLE,
             "Smart cast to ''{0}'' is impossible, because ''{1}'' is a {2}",
             RENDER_TYPE,
-            FIR,
+            CALLEE_NAME,
             TO_STRING,
             NOT_RENDERED
         )
@@ -1367,8 +1367,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             INVALID_DEFAULT_FUNCTIONAL_PARAMETER_FOR_INLINE,
-            "Invalid default value for inline parameter: ''{0}''. Only lambdas, anonymous functions, and callable references are supported",
-            FIR,
+            "Invalid default value for inline function parameter. Only lambdas, anonymous functions, and callable references are supported",
             DECLARATION_NAME
         )
         map.put(
@@ -1898,36 +1897,37 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(LEAKED_IN_PLACE_LAMBDA, "Leaked in-place lambda: {0}", SYMBOL)
         map.put(FirErrors.WRONG_IMPLIES_CONDITION, "Wrong implies condition")
         map.put(UNREACHABLE_CODE, "Unreachable code", NOT_RENDERED, NOT_RENDERED)
-        map.put(SENSELESS_COMPARISON, "Condition ''{0}'' is always ''{1}''", FIR, TO_STRING)
+        map.put(SENSELESS_COMPARISON, "Condition is always ''{0}''", TO_STRING)
         map.put(SENSELESS_NULL_IN_WHEN, "Expression under 'when' is never equal to null")
 
         // Nullability
         map.put(USELESS_CALL_ON_NOT_NULL, "Unsafe call on not null")
         map.put(
             UNSAFE_CALL,
-            "Only safe (?.) or non-null asserted (!!.) calls are allowed on a nullable receiver of type {0}",
+            "Only safe (?.) or non-null asserted (!!.) calls are allowed on a nullable receiver of type ''{0}''.",
             RENDER_TYPE,
-            NOT_RENDERED,
+            NOT_RENDERED
         )
         map.put(
             UNSAFE_IMPLICIT_INVOKE_CALL,
-            "Reference has a nullable type ''{0}'', use explicit \"?.invoke\" to make a function-like call instead.",
+            "Reference has a nullable type ''{0}'', use explicit ''?.invoke'' to make a function-like call instead.",
             RENDER_TYPE
         )
         map.put(
             UNSAFE_INFIX_CALL,
-            "Infix call corresponds to a dot-qualified call ''{0}.{1}({2})'' which is not allowed on a nullable receiver ''{0}''. " +
-                    "Use ''?.''-qualified call instead",
-            FIR,
-            TO_STRING,
-            FIR,
+            "Infix call is not allowed on a nullable receiver of type ''{0}''. Use ''?.''-qualified call instead.",
+            RENDER_TYPE,
+            NOT_RENDERED,
+            NOT_RENDERED,
+            NOT_RENDERED,
         )
         map.put(
             UNSAFE_OPERATOR_CALL,
-            "Operator call corresponds to a dot-qualified call ''{0}.{1}({2})'' which is not allowed on a nullable receiver ''{0}''. ",
-            FIR,
-            TO_STRING,
-            FIR,
+            "Operator call is not allowed on a nullable receiver of type ''{0}''. Use ''?.''-qualified call instead.",
+            RENDER_TYPE,
+            NOT_RENDERED,
+            NOT_RENDERED,
+            NOT_RENDERED,
         )
         map.put(UNNECESSARY_NOT_NULL_ASSERTION, "Unnecessary non-null assertion (!!) on a non-null receiver of type {0}", RENDER_TYPE)
         map.put(NOT_NULL_ASSERTION_ON_LAMBDA_EXPRESSION, "Non-null assertion (!!) is called on a lambda expression")

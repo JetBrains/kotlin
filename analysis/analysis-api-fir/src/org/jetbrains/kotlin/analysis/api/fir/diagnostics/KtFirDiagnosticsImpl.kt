@@ -3018,7 +3018,6 @@ internal class UnreachableCodeImpl(
 ) : KtAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KtFirDiagnostic.UnreachableCode
 
 internal class SenselessComparisonImpl(
-    override val expression: KtExpression,
     override val compareResult: Boolean,
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,
@@ -3048,6 +3047,7 @@ internal class UnsafeImplicitInvokeCallImpl(
 ) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.UnsafeImplicitInvokeCall
 
 internal class UnsafeInfixCallImpl(
+    override val receiverType: KtType,
     override val receiverExpression: KtExpression,
     override val operator: String,
     override val argumentExpression: KtExpression,
@@ -3056,6 +3056,7 @@ internal class UnsafeInfixCallImpl(
 ) : KtAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KtFirDiagnostic.UnsafeInfixCall
 
 internal class UnsafeOperatorCallImpl(
+    override val receiverType: KtType,
     override val receiverExpression: KtExpression,
     override val operator: String,
     override val argumentExpression: KtExpression,
@@ -3629,7 +3630,6 @@ internal class NonInternalPublishedApiImpl(
 ) : KtAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KtFirDiagnostic.NonInternalPublishedApi
 
 internal class InvalidDefaultFunctionalParameterForInlineImpl(
-    override val defaultValue: KtExpression,
     override val parameter: KtSymbol,
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,

@@ -70,3 +70,10 @@ fun FirReference.isError(): Boolean {
         else -> false
     }
 }
+
+fun FirReference.toNameString(): String? = when (this) {
+    is FirNamedReference -> name.asString()
+    is FirThisReference -> "this"
+    is FirSuperReference -> "super"
+    else -> null
+}

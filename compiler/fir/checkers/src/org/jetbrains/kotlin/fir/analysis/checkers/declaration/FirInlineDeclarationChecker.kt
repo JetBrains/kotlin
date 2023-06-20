@@ -420,7 +420,6 @@ object FirInlineDeclarationChecker : FirFunctionChecker() {
                 reporter.reportOn(
                     defaultValue.source,
                     FirErrors.INVALID_DEFAULT_FUNCTIONAL_PARAMETER_FOR_INLINE,
-                    defaultValue,
                     param.symbol,
                     context
                 )

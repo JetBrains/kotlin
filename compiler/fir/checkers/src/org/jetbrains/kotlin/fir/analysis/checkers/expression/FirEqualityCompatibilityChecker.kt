@@ -273,7 +273,7 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker() {
         if (expression.source?.elementType != KtNodeTypes.BINARY_EXPRESSION && type === lType && !compareResult) {
             reporter.reportOn(expression.source, FirErrors.SENSELESS_NULL_IN_WHEN, context)
         } else {
-            reporter.reportOn(expression.source, FirErrors.SENSELESS_COMPARISON, expression, compareResult, context)
+            reporter.reportOn(expression.source, FirErrors.SENSELESS_COMPARISON, compareResult, context)
         }
     }
 }

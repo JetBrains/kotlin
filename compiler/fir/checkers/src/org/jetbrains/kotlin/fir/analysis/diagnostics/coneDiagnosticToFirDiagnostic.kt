@@ -200,6 +200,7 @@ private fun mapUnsafeCallError(
         return if (operationSource?.getChild(KtTokens.IDENTIFIER) != null) {
             FirErrors.UNSAFE_INFIX_CALL.createOn(
                 source,
+                rootCause.actualType,
                 receiverExpression,
                 candidateFunctionName!!.asString(),
                 singleArgument,
@@ -207,6 +208,7 @@ private fun mapUnsafeCallError(
         } else {
             FirErrors.UNSAFE_OPERATOR_CALL.createOn(
                 source,
+                rootCause.actualType,
                 receiverExpression,
                 candidateFunctionName!!.asString(),
                 singleArgument,

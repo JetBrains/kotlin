@@ -29743,6 +29743,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
             }
 
             @Test
+            @TestMetadata("complexExpression.kt")
+            public void testComplexExpression() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/senselessComparison/complexExpression.kt");
+            }
+
+            @Test
             @TestMetadata("noExplicitType.kt")
             public void testNoExplicitType() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/senselessComparison/noExplicitType.kt");
