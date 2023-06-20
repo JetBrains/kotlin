@@ -15,22 +15,29 @@ import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.backend.generators.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.declarations.utils.isSynthetic
 import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
+import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.extensions.declarationGenerators
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.extensions.generatedMembers
 import org.jetbrains.kotlin.fir.extensions.generatedNestedClassifiers
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.symbols.Fir2IrConstructorSymbol
+import org.jetbrains.kotlin.fir.symbols.Fir2IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyDeclarationResolver
 import org.jetbrains.kotlin.ir.PsiIrFileEntry
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreter
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreterConfiguration
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreterEnvironment
@@ -38,7 +45,10 @@ import org.jetbrains.kotlin.ir.interpreter.checker.EvaluationMode
 import org.jetbrains.kotlin.ir.interpreter.transformer.transformConst
 import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.ir.util.NaiveSourceBasedFileEntryImpl
+import org.jetbrains.kotlin.ir.util.defaultType
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 
 class Fir2IrConverter(
     private val moduleDescriptor: FirModuleDescriptor,
@@ -146,9 +156,11 @@ class Fir2IrConverter(
             moduleFragment
         )
         declarationStorage.registerFile(file, irFile)
-        file.declarations.forEach {
-            if (it is FirRegularClass) {
-                registerClassAndNestedClasses(it, irFile)
+        for (declaration in file.declarations) {
+            when (declaration) {
+                is FirRegularClass -> registerClassAndNestedClasses(declaration, irFile)
+                is FirCodeFragment -> classifierStorage.registerCodeFragmentClass(declaration, irFile)
+                else -> {}
             }
         }
         moduleFragment.files += irFile
@@ -224,6 +236,92 @@ class Fir2IrConverter(
             irClass.addFakeOverrides(klass, allDeclarations)
         }
 
+        return irClass
+    }
+
+    private fun processCodeFragmentMembers(
+        codeFragment: FirCodeFragment,
+        irClass: IrClass = classifierStorage.getCachedIrCodeFragment(codeFragment)!!
+    ): IrClass {
+        val conversionData = codeFragment.conversionData
+
+        declarationStorage.enterScope(irClass)
+
+        val signature = irClass.symbol.signature!!
+
+        val irPrimaryConstructor = symbolTable.declareConstructor(signature, { Fir2IrConstructorSymbol(signature) }) { irSymbol ->
+            irFactory.createConstructor(
+                UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+                IrDeclarationOrigin.DEFINED,
+                Name.special("<init>"),
+                irClass.visibility,
+                isInline = false,
+                isExpect = false,
+                irClass.defaultType,
+                irSymbol,
+                isExternal = false,
+                isPrimary = true
+            ).apply {
+                parent = irClass
+                body = irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET).apply {
+                    statements += IrDelegatingConstructorCallImpl.fromSymbolOwner(
+                        UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+                        irBuiltIns.unitType,
+                        irBuiltIns.anyClass.owner.declarations.firstIsInstance<IrConstructor>().symbol
+                    )
+                }
+            }
+        }
+
+        val irFragmentFunction = symbolTable.declareSimpleFunction(signature, { Fir2IrSimpleFunctionSymbol(signature) }) { irSymbol ->
+            val lastStatement = codeFragment.block.statements.lastOrNull()
+            val returnType = (lastStatement as? FirExpression)?.typeRef?.toIrType(typeConverter) ?: irBuiltIns.unitType
+
+            irFactory.createSimpleFunction(
+                UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+                IrDeclarationOrigin.DEFINED,
+                conversionData.methodName,
+                DescriptorVisibilities.PUBLIC,
+                isInline = false,
+                isExpect = false,
+                returnType,
+                Modality.FINAL,
+                irSymbol,
+                isTailrec = false,
+                isSuspend = false,
+                isOperator = false,
+                isInfix = false,
+                isExternal = false,
+                containerSource = null,
+                isFakeOverride = false
+            ).apply fragmentFunction@{
+                parent = irClass
+                valueParameters = conversionData.injectedValues.mapIndexed { index, injectedValue ->
+                    val isMutated = injectedValue.isMutated
+
+                    irFactory.createValueParameter(
+                        UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+                        if (isMutated) IrDeclarationOrigin.SHARED_VARIABLE_IN_EVALUATOR_FRAGMENT else IrDeclarationOrigin.DEFINED,
+                        Name.identifier("p$index"),
+                        injectedValue.typeRef.toIrType(typeConverter),
+                        isAssignable = isMutated,
+                        injectedValue.irParameterSymbol,
+                        index,
+                        varargElementType = null,
+                        isCrossinline = false,
+                        isNoinline = false,
+                        isHidden = false
+                    ).apply {
+                        parent = this@fragmentFunction
+                    }
+                }
+            }
+        }
+
+        irClass.declarations.add(irPrimaryConstructor)
+        irClass.declarations.add(irFragmentFunction)
+
+        declarationStorage.leaveScope(irClass)
         return irClass
     }
 
@@ -392,6 +490,9 @@ class Fir2IrConverter(
             is FirTypeAlias -> {
                 // DO NOTHING
                 null
+            }
+            is FirCodeFragment -> {
+                processCodeFragmentMembers(declaration)
             }
             else -> {
                 error("Unexpected member: ${declaration::class}")

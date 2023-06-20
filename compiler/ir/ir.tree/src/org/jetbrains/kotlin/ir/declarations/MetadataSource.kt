@@ -18,6 +18,7 @@ interface MetadataSource {
         var serializedIr: ByteArray?
     }
     interface Script : MetadataSource
+    interface CodeFragment : MetadataSource
     interface Function : MetadataSource
     interface Property : MetadataSource {
         val isConst: Boolean
