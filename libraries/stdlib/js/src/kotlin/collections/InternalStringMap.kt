@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 /*
@@ -161,6 +161,13 @@ internal open class InternalStringMap<K, V> : InternalMap<K, V> {
         backingMap = createJsMap()
         keys = createJsArray()
         values = createJsArray()
+    }
+
+    override fun build() {
+        throw UnsupportedOperationException("build method is not implemented")
+    }
+
+    override fun checkIsMutable() {
     }
 
     override fun keysIterator(): MutableIterator<K> = KeysItr(this)

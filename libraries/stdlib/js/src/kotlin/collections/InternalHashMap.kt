@@ -19,10 +19,6 @@ internal class InternalHashMap<K, V> private constructor(
     override val size: Int
         get() = _size
 
-    private var keysView: HashMapKeys<K>? = null
-    private var valuesView: HashMapValues<V>? = null
-    private var entriesView: HashMapEntrySet<K, V>? = null
-
     private var isReadOnly: Boolean = false
 
     // ---------------------------- functions ----------------------------
@@ -78,11 +74,9 @@ internal class InternalHashMap<K, V> private constructor(
         require(loadFactor > 0) { "Non-positive load factor: $loadFactor" }
     }
 
-    @PublishedApi
-    internal fun build(): InternalHashMap<K, V> {
+    override fun build() {
         checkIsMutable()
         isReadOnly = true
-        return if (size > 0) this else EmptyHolder.value()
     }
 
     fun isEmpty(): Boolean = _size == 0
@@ -142,36 +136,6 @@ internal class InternalHashMap<K, V> private constructor(
         _size = 0
         length = 0
     }
-
-    val keys: MutableSet<K>
-        get() {
-            val cur = keysView
-            return if (cur == null) {
-                val new = HashMapKeys(this)
-                keysView = new
-                new
-            } else cur
-        }
-
-    val values: MutableCollection<V>
-        get() {
-            val cur = valuesView
-            return if (cur == null) {
-                val new = HashMapValues(this)
-                valuesView = new
-                new
-            } else cur
-        }
-
-    val entries: MutableSet<MutableMap.MutableEntry<K, V>>
-        get() {
-            val cur = entriesView
-            return if (cur == null) {
-                val new = HashMapEntrySet(this)
-                entriesView = new
-                new
-            } else cur
-        }
 
     override fun equals(other: Any?): Boolean {
         return other === this ||
@@ -488,9 +452,9 @@ internal class InternalHashMap<K, V> private constructor(
         return true
     }
 
-    override fun removeValue(element: V): Boolean {
+    override fun removeValue(value: V): Boolean {
         checkIsMutable()
-        val index = findValue(element)
+        val index = findValue(value)
         if (index < 0) return false
         removeKeyAt(index)
         return true
@@ -509,15 +473,6 @@ internal class InternalHashMap<K, V> private constructor(
         private fun computeHashSize(capacity: Int): Int = (capacity.coerceAtLeast(1) * 3).takeHighestOneBit()
 
         private fun computeShift(hashSize: Int): Int = hashSize.countLeadingZeroBits() + 1
-    }
-
-    internal object EmptyHolder {
-        val value_ = InternalHashMap<Nothing, Nothing>(0).also { it.isReadOnly = true }
-
-        fun <K, V> value(): InternalHashMap<K, V> {
-            @Suppress("UNCHECKED_CAST")
-            return value_ as InternalHashMap<K, V>
-        }
     }
 
     internal open class Itr<K, V>(
@@ -621,100 +576,4 @@ internal class InternalHashMap<K, V> private constructor(
 
         override fun toString(): String = "$key=$value"
     }
-}
-
-internal class HashMapKeys<E> internal constructor(
-    private val backing: InternalMap<E, *>,
-) : MutableSet<E>, AbstractMutableSet<E>() {
-
-    override val size: Int get() = backing.size
-    override fun isEmpty(): Boolean = backing.size == 0
-    override fun contains(element: E): Boolean = backing.contains(element)
-    override fun clear() = backing.clear()
-    override fun add(element: E): Boolean = throw UnsupportedOperationException()
-    override fun addAll(elements: Collection<E>): Boolean = throw UnsupportedOperationException()
-    override fun remove(element: E): Boolean = backing.remove(element) != null
-    override fun iterator(): MutableIterator<E> = backing.keysIterator()
-
-    override fun removeAll(elements: Collection<E>): Boolean {
-        backing.checkIsMutable()
-        return super.removeAll(elements)
-    }
-
-    override fun retainAll(elements: Collection<E>): Boolean {
-        backing.checkIsMutable()
-        return super.retainAll(elements)
-    }
-}
-
-internal class HashMapValues<V> internal constructor(
-    private val backing: InternalMap<*, V>,
-) : MutableCollection<V>, AbstractMutableCollection<V>() {
-
-    override val size: Int get() = backing.size
-    override fun isEmpty(): Boolean = backing.size == 0
-    override fun contains(element: V): Boolean = backing.containsValue(element)
-    override fun add(element: V): Boolean = throw UnsupportedOperationException()
-    override fun addAll(elements: Collection<V>): Boolean = throw UnsupportedOperationException()
-    override fun clear() = backing.clear()
-    override fun iterator(): MutableIterator<V> = backing.valuesIterator()
-    override fun remove(element: V): Boolean = backing.removeValue(element)
-
-    override fun removeAll(elements: Collection<V>): Boolean {
-        backing.checkIsMutable()
-        return super.removeAll(elements)
-    }
-
-    override fun retainAll(elements: Collection<V>): Boolean {
-        backing.checkIsMutable()
-        return super.retainAll(elements)
-    }
-}
-
-/**
- * Note: intermediate class with [E] `: Map.Entry<K, V>` is required to support
- * [contains] for values that are [Map.Entry] but not [MutableMap.MutableEntry],
- * and probably same for other functions.
- * This is important because an instance of this class can be used as a result of [Map.entries],
- * which should support [contains] for [Map.Entry].
- * For example, this happens when upcasting [MutableMap] to [Map].
- *
- * The compiler enables special type-safe barriers to methods like [contains], which has [UnsafeVariance].
- * Changing type from [MutableMap.MutableEntry] to [E] makes the compiler generate barriers checking that
- * argument `is` [E] (so technically `is` [Map.Entry]) instead of `is` [MutableMap.MutableEntry].
- *
- * See also [KT-42248](https://youtrack.jetbrains.com/issue/KT-42428).
- */
-internal abstract class HashMapEntrySetBase<K, V, E : Map.Entry<K, V>> internal constructor(
-    val backing: InternalMap<K, V>,
-) : MutableSet<E>, AbstractMutableSet<E>() {
-
-    override val size: Int get() = backing.size
-    override fun isEmpty(): Boolean = backing.size == 0
-    override fun contains(element: E): Boolean = backing.containsEntry(element)
-    protected abstract fun getEntry(element: Map.Entry<K, V>): E?
-    override fun clear() = backing.clear()
-    override fun add(element: E): Boolean = throw UnsupportedOperationException()
-    override fun addAll(elements: Collection<E>): Boolean = throw UnsupportedOperationException()
-    override fun remove(element: E): Boolean = backing.removeEntry(element)
-    override fun containsAll(elements: Collection<E>): Boolean = backing.containsAllEntries(elements)
-
-    override fun removeAll(elements: Collection<E>): Boolean {
-        backing.checkIsMutable()
-        return super.removeAll(elements)
-    }
-
-    override fun retainAll(elements: Collection<E>): Boolean {
-        backing.checkIsMutable()
-        return super.retainAll(elements)
-    }
-}
-
-internal class HashMapEntrySet<K, V> internal constructor(
-    backing: InternalMap<K, V>,
-) : HashMapEntrySetBase<K, V, MutableMap.MutableEntry<K, V>>(backing) {
-
-    override fun getEntry(element: Map.Entry<K, V>): MutableMap.MutableEntry<K, V>? = backing.getEntry(element)
-
-    override fun iterator(): MutableIterator<MutableMap.MutableEntry<K, V>> = backing.entriesIterator()
 }

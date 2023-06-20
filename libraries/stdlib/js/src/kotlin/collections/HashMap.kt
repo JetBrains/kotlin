@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -20,34 +20,10 @@ import kotlin.collections.MutableMap.MutableEntry
 // Classes that extend HashMap and implement `build()` (freezing) operation
 // have to make sure mutating methods check `checkIsMutable`.
 public actual open class HashMap<K, V> : AbstractMutableMap<K, V>, MutableMap<K, V> {
-
-    private inner class EntrySet : AbstractEntrySet<MutableEntry<K, V>, K, V>() {
-
-        override fun add(element: MutableEntry<K, V>): Boolean = throw UnsupportedOperationException("Add is not supported on entries")
-        override fun clear() {
-            this@HashMap.clear()
-        }
-
-        override fun containsEntry(element: Map.Entry<K, V>): Boolean = this@HashMap.containsEntry(element)
-
-        override operator fun iterator(): MutableIterator<MutableEntry<K, V>> = internalMap.entriesIterator()
-
-        override fun removeEntry(element: Map.Entry<K, V>): Boolean {
-            if (contains(element)) {
-                this@HashMap.remove(element.key)
-                return true
-            }
-            return false
-        }
-
-        override val size: Int get() = this@HashMap.size
-    }
-
-
     /**
      * Internal implementation of the map: either string-based or hashcode-based.
      */
-    private val internalMap: InternalMap<K, V>
+    internal val internalMap: InternalMap<K, V>
 
     internal constructor(internalMap: InternalMap<K, V>) : super() {
         this.internalMap = internalMap
@@ -92,7 +68,6 @@ public actual open class HashMap<K, V> : AbstractMutableMap<K, V>, MutableMap<K,
      */
     actual constructor(initialCapacity: Int) : this(initialCapacity, 1.0f)
 
-
     /**
      * Creates a new [HashMap] filled with the contents of the specified [original] map.
      */
@@ -109,16 +84,12 @@ public actual open class HashMap<K, V> : AbstractMutableMap<K, V>, MutableMap<K,
 
     actual override fun containsValue(value: V): Boolean = internalMap.containsValue(value)
 
-    private var _entries: MutableSet<MutableMap.MutableEntry<K, V>>? = null
-    actual override val entries: MutableSet<MutableMap.MutableEntry<K, V>>
-        get() {
-            if (_entries == null) {
-                _entries = createEntrySet()
-            }
-            return _entries!!
-        }
+    override fun createKeysView(): MutableSet<K> = HashMapKeys(internalMap)
+    override fun createValuesView(): MutableCollection<V> = HashMapValues(internalMap)
 
-    internal open fun createEntrySet(): MutableSet<MutableMap.MutableEntry<K, V>> = EntrySet()
+    private var entriesView: HashMapEntrySet<K, V>? = null
+    actual override val entries: MutableSet<MutableEntry<K, V>>
+        get() = entriesView ?: HashMapEntrySet(internalMap).also { entriesView = it }
 
     actual override operator fun get(key: K): V? = internalMap.get(key)
 
@@ -128,6 +99,7 @@ public actual open class HashMap<K, V> : AbstractMutableMap<K, V>, MutableMap<K,
 
     actual override val size: Int get() = internalMap.size
 
+    actual override fun putAll(from: Map<out K, V>) = internalMap.putAll(from)
 }
 
 /**
