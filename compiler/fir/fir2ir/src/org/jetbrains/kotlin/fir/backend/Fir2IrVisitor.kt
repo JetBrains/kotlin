@@ -58,6 +58,7 @@ import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtForExpression
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 
 class Fir2IrVisitor(
@@ -314,6 +315,20 @@ class Fir2IrVisitor(
             }
             declarationStorage.leaveScope(irScript)
         }
+    }
+
+    override fun visitCodeFragment(codeFragment: FirCodeFragment, data: Any?): IrElement {
+        val irClass = classifierStorage.getCachedIrCodeFragment(codeFragment)!!
+        val irFunction = irClass.declarations.firstIsInstance<IrSimpleFunction>()
+
+        declarationStorage.enterScope(irFunction)
+        conversionScope.withParent(irFunction) {
+            val irBlock = codeFragment.block.convertToIrBlock(forceUnitType = false)
+            irFunction.body = irFactory.createExpressionBody(irBlock)
+        }
+        declarationStorage.leaveScope(irFunction)
+
+        return irFunction
     }
 
     override fun visitAnonymousObjectExpression(anonymousObjectExpression: FirAnonymousObjectExpression, data: Any?): IrElement {
@@ -639,6 +654,9 @@ class Fir2IrVisitor(
         data: Any?
     ): IrElement = whileAnalysing(session, thisReceiverExpression) {
         val calleeReference = thisReceiverExpression.calleeReference
+
+        callGenerator.injectGetValueCall(thisReceiverExpression, calleeReference)?.let { return it }
+
         val boundSymbol = calleeReference.boundSymbol
         when (boundSymbol) {
             is FirClassSymbol -> {
