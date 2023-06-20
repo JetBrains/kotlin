@@ -296,6 +296,10 @@ internal interface KotlinPluginLifecycle {
 
     val stage: Stage
 
+    val isStarted: Boolean
+
+    val isFinished: Boolean
+
     fun launch(block: suspend KotlinPluginLifecycle.() -> Unit)
 
     suspend fun await(stage: Stage)
