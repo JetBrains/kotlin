@@ -36,7 +36,7 @@ fun box() {
 // test.kt:5 box:
 // test.kt:11 box: map=kotlin.collections.HashMap
 // test.kt:11 box: map=kotlin.collections.HashMap
-// test.kt:14 box: map=kotlin.collections.HashMap, e=kotlin.collections.AbstractMutableMap.SimpleEntry
-// test.kt:14 box: map=kotlin.collections.HashMap, e=kotlin.collections.AbstractMutableMap.SimpleEntry
-// test.kt:11 box: map=kotlin.collections.HashMap, e=kotlin.collections.AbstractMutableMap.SimpleEntry
-// test.kt:16 box: map=kotlin.collections.HashMap, e=kotlin.collections.AbstractMutableMap.SimpleEntry
+// test.kt:14 box: map=kotlin.collections.HashMap, e=EntryRef
+// test.kt:14 box: map=kotlin.collections.HashMap, e=EntryRef
+// test.kt:11 box: map=kotlin.collections.HashMap, e=EntryRef
+// test.kt:16 box: map=kotlin.collections.HashMap, e=EntryRef
