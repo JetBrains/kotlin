@@ -73,7 +73,7 @@ class ParallelMark : private Pinned {
     static constexpr std::size_t kMaxWorkers = 1024;
     using MarkStackImpl = intrusive_forward_list<ObjectData>;
     // work balancing parameters were chosen pretty arbitrary
-    using ParallelProcessor = ParallelProcessor<kMaxWorkers, MarkStackImpl, 256, 128, kotlin::internal::ShareOn::kPop>;
+    using ParallelProcessor = ParallelProcessor<kMaxWorkers, MarkStackImpl, 256, 128, kotlin::internal::ShareOn::kPush>;
 public:
     class MarkTraits {
     public:
