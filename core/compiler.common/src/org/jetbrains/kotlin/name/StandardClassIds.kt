@@ -156,6 +156,7 @@ object StandardClassIds {
 
         val HidesMembers = "HidesMembers".internalId()
         val DynamicExtension = "DynamicExtension".internalId()
+        val IntrinsicConstEvaluation = "IntrinsicConstEvaluation".internalId()
 
         val Retention = "Retention".annotationId()
         val Target = "Target".annotationId()
