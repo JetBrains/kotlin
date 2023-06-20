@@ -418,7 +418,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
 
         impl(whenSubjectExpression) {
             default("typeRef") {
-                value = "whenRef.value.subject!!.typeRef"
+                value = "whenRef.value.subject?.typeRef ?: org.jetbrains.kotlin.fir.types.impl.FirImplicitUnitTypeRef(source)"
                 withGetter = true
             }
             useTypes(whenExpression)

@@ -1,0 +1,14 @@
+FILE: invalidWhen.kt
+    public? final? class SomeClass : R|kotlin/Any| {
+        public? [ContainingClassKey=SomeClass] constructor(): R|SomeClass| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public? final? fun someFun(): R|kotlin/Unit| {
+        when () {
+            ERROR_EXPR(No expression in condition with expression) ->  {
+            }
+        }
+
+    }

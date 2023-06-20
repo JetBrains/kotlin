@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.diagnostics
 import com.intellij.lang.LighterASTNode
 import com.intellij.openapi.util.Ref
 import com.intellij.openapi.util.TextRange
+import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
 import com.intellij.util.diff.FlyweightCapableTreeStructure
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.psi.KtParameter.VAL_VAR_TOKEN_SET
+import org.jetbrains.kotlin.psi.psiUtil.allChildren
 import org.jetbrains.kotlin.psi.stubs.elements.KtConstantExpressionElementType
 import org.jetbrains.kotlin.psi.stubs.elements.KtStringTemplateExpressionElementType
 import org.jetbrains.kotlin.psi.stubs.elements.KtTokenSets
@@ -1115,6 +1117,8 @@ object LightTreePositioningStrategies {
                 }
             }
         }
+
+        override fun isValid(node: LighterASTNode, tree: FlyweightCapableTreeStructure<LighterASTNode>): Boolean = true
     }
 
     val NON_FINAL_MODIFIER_OR_NAME: LightTreePositioningStrategy = ModifierSetBasedLightTreePositioningStrategy(

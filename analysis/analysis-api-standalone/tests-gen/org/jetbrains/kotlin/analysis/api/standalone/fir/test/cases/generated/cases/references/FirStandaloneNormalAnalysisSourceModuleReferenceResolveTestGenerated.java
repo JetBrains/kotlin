@@ -2024,6 +2024,12 @@ public class FirStandaloneNormalAnalysisSourceModuleReferenceResolveTestGenerate
         }
 
         @Test
+        @TestMetadata("ClassReferenceInIncorrectWhenClause.kt")
+        public void testClassReferenceInIncorrectWhenClause() throws Exception {
+            runTest("analysis/analysis-api/testData/referenceResolve/withErrors/ClassReferenceInIncorrectWhenClause.kt");
+        }
+
+        @Test
         @TestMetadata("ClassWithMultipleSuperTypeCalls.kt")
         public void testClassWithMultipleSuperTypeCalls() throws Exception {
             runTest("analysis/analysis-api/testData/referenceResolve/withErrors/ClassWithMultipleSuperTypeCalls.kt");

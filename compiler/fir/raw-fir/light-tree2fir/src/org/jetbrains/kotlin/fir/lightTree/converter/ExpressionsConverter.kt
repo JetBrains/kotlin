@@ -738,11 +738,9 @@ class ExpressionsConverter(
 
         @OptIn(FirContractViolation::class)
         val subject = FirExpressionRef<FirWhenExpression>()
+        var shouldBind = hasSubject
         whenEntryNodes.mapTo(whenEntries) {
-            convertWhenEntry(
-                it,
-                subject.takeIf { hasSubject }
-            )
+            convertWhenEntry(it, subject, hasSubject)
         }
         return buildWhenExpression {
             source = whenExpression.toFirSourceElement()
@@ -750,6 +748,7 @@ class ExpressionsConverter(
             this.subjectVariable = subjectVariable
             usedAsExpression = whenExpression.usedAsExpression
             for (entry in whenEntries) {
+                shouldBind = shouldBind || entry.shouldBindSubject
                 val branch = entry.firBlock
                 val entrySource = entry.node.toFirSourceElement()
                 branches += if (!entry.isElse) {
@@ -777,7 +776,7 @@ class ExpressionsConverter(
                 }
             }
         }.also {
-            if (hasSubject) {
+            if (shouldBind) {
                 subject.bind(it)
             }
         }
@@ -789,23 +788,33 @@ class ExpressionsConverter(
      */
     private fun convertWhenEntry(
         whenEntry: LighterASTNode,
-        whenRefWithSubject: FirExpressionRef<FirWhenExpression>?
+        whenRefWithSubject: FirExpressionRef<FirWhenExpression>,
+        hasSubject: Boolean,
     ): WhenEntry {
         var isElse = false
         var firBlock: FirBlock = buildEmptyExpressionBlock()
         val conditions = mutableListOf<FirExpression>()
+        var shouldBindSubject = false
         whenEntry.forEachChildren {
             when (it.tokenType) {
-                WHEN_CONDITION_EXPRESSION -> conditions += convertWhenConditionExpression(it, whenRefWithSubject)
-                WHEN_CONDITION_IN_RANGE -> conditions += convertWhenConditionInRange(it, whenRefWithSubject)
-                WHEN_CONDITION_IS_PATTERN -> conditions += convertWhenConditionIsPattern(it, whenRefWithSubject)
+                WHEN_CONDITION_EXPRESSION -> conditions += convertWhenConditionExpression(it, whenRefWithSubject.takeIf { hasSubject })
+                WHEN_CONDITION_IN_RANGE -> {
+                    val (condition, shouldBind) = convertWhenConditionInRange(it, whenRefWithSubject, hasSubject)
+                    conditions += condition
+                    shouldBindSubject = shouldBindSubject || shouldBind
+                }
+                WHEN_CONDITION_IS_PATTERN -> {
+                    val (condition, shouldBind) = convertWhenConditionIsPattern(it, whenRefWithSubject, hasSubject)
+                    conditions += condition
+                    shouldBindSubject = shouldBindSubject || shouldBind
+                }
                 ELSE_KEYWORD -> isElse = true
                 BLOCK -> firBlock = declarationsConverter.convertBlock(it)
                 else -> if (it.isExpression()) firBlock = declarationsConverter.convertBlock(it)
             }
         }
 
-        return WhenEntry(conditions, firBlock, whenEntry, isElse)
+        return WhenEntry(conditions, firBlock, whenEntry, isElse, shouldBindSubject)
     }
 
     private fun convertWhenConditionExpression(
@@ -841,10 +850,13 @@ class ExpressionsConverter(
         }
     }
 
+    private data class WhenConditionConvertedResults(val expression: FirExpression, val shouldBindSubject: Boolean)
+
     private fun convertWhenConditionInRange(
         whenCondition: LighterASTNode,
-        whenRefWithSubject: FirExpressionRef<FirWhenExpression>?
-    ): FirExpression {
+        whenRefWithSubject: FirExpressionRef<FirWhenExpression>,
+        hasSubject: Boolean,
+    ): WhenConditionConvertedResults {
         var isNegate = false
         var firExpression: FirExpression? = null
         var conditionSource: KtLightSourceElement? = null
@@ -861,19 +873,9 @@ class ExpressionsConverter(
             }
         }
 
-        val subjectExpression = if (whenRefWithSubject != null) {
-            buildWhenSubjectExpression {
-                whenRef = whenRefWithSubject
-                source = whenCondition.toFirSourceElement()
-            }
-        } else {
-            return buildErrorExpression {
-                source = whenCondition.toFirSourceElement()
-                diagnostic = ConeSimpleDiagnostic(
-                    "No expression in condition with expression",
-                    DiagnosticKind.ExpressionExpected
-                )
-            }
+        val subjectExpression = buildWhenSubjectExpression {
+            whenRef = whenRefWithSubject
+            source = whenCondition.toFirSourceElement()
         }
 
         val calculatedFirExpression = firExpression ?: buildErrorExpression(
@@ -881,18 +883,34 @@ class ExpressionsConverter(
             ConeSyntaxDiagnostic("No range in condition with range")
         )
 
-        return calculatedFirExpression.generateContainsOperation(
+        val result = calculatedFirExpression.generateContainsOperation(
             subjectExpression,
             inverted = isNegate,
             baseSource = whenCondition.toFirSourceElement(),
             operationReferenceSource = conditionSource
         )
+        return if (hasSubject) {
+            WhenConditionConvertedResults(result, false)
+        } else {
+            WhenConditionConvertedResults(
+                buildErrorExpression {
+                    source = whenCondition.toFirSourceElement()
+                    diagnostic = ConeSimpleDiagnostic(
+                        "No expression in condition with expression",
+                        DiagnosticKind.ExpressionExpected
+                    )
+                    nonExpressionElement = result
+                },
+                true,
+            )
+        }
     }
 
     private fun convertWhenConditionIsPattern(
         whenCondition: LighterASTNode,
-        whenRefWithSubject: FirExpressionRef<FirWhenExpression>?
-    ): FirExpression {
+        whenRefWithSubject: FirExpressionRef<FirWhenExpression>,
+        hasSubject: Boolean,
+    ): WhenConditionConvertedResults {
         lateinit var firOperation: FirOperation
         lateinit var firType: FirTypeRef
         whenCondition.forEachChildren {
@@ -903,26 +921,32 @@ class ExpressionsConverter(
             }
         }
 
-        val subjectExpression = if (whenRefWithSubject != null) {
-            buildWhenSubjectExpression {
-                source = whenCondition.toFirSourceElement()
-                whenRef = whenRefWithSubject
-            }
-        } else {
-            return buildErrorExpression {
-                source = whenCondition.toFirSourceElement()
-                diagnostic = ConeSimpleDiagnostic(
-                    "No expression in condition with expression",
-                    DiagnosticKind.ExpressionExpected
-                )
-            }
+        val subjectExpression = buildWhenSubjectExpression {
+            source = whenCondition.toFirSourceElement()
+            whenRef = whenRefWithSubject
         }
 
-        return buildTypeOperatorCall {
+        val result = buildTypeOperatorCall {
             source = whenCondition.toFirSourceElement()
             operation = firOperation
             conversionTypeRef = firType
             argumentList = buildUnaryArgumentList(subjectExpression)
+        }
+
+        return if (hasSubject) {
+            WhenConditionConvertedResults(result, false)
+        } else {
+            WhenConditionConvertedResults(
+                buildErrorExpression {
+                    source = whenCondition.toFirSourceElement()
+                    diagnostic = ConeSimpleDiagnostic(
+                        "No expression in condition with expression",
+                        DiagnosticKind.ExpressionExpected
+                    )
+                    nonExpressionElement = result
+                },
+                true,
+            )
         }
     }
 

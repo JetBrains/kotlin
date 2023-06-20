@@ -446,6 +446,11 @@ public class LightTree2FirConverterTestCaseGenerated extends AbstractLightTree2F
             runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/init.kt");
         }
 
+        @TestMetadata("invalidWhen.kt")
+        public void testInvalidWhen() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/invalidWhen.kt");
+        }
+
         @TestMetadata("labelForInfix.kt")
         public void testLabelForInfix() throws Exception {
             runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/labelForInfix.kt");

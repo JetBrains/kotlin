@@ -27,7 +27,7 @@ internal class FirWhenSubjectExpressionImpl(
     override var annotations: MutableOrEmptyList<FirAnnotation>,
     override val whenRef: FirExpressionRef<FirWhenExpression>,
 ) : FirWhenSubjectExpression() {
-    override val typeRef: FirTypeRef get() = whenRef.value.subject!!.typeRef
+    override val typeRef: FirTypeRef get() = whenRef.value.subject?.typeRef ?: org.jetbrains.kotlin.fir.types.impl.FirImplicitUnitTypeRef(source)
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }

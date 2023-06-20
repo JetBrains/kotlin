@@ -2283,6 +2283,7 @@ open class RawFirBuilder(
 
             @OptIn(FirContractViolation::class)
             val ref = FirExpressionRef<FirWhenExpression>()
+            var shouldBind = hasSubject
             return buildWhenExpression {
                 source = expression.toFirSourceElement()
                 this.subject = subjectExpression
@@ -2307,12 +2308,36 @@ open class RawFirBuilder(
                             val ktCondition = entry.conditions.first()
                             buildWhenBranch {
                                 source = entrySource
-                                condition = ((ktCondition as? KtWhenConditionWithExpression)?.expression
-                                    ?: ktCondition)
-                                    .toFirExpression(
-                                        "No expression in condition with expression",
-                                        DiagnosticKind.ExpressionExpected
-                                    )
+                                condition =
+                                    if (entry.conditions.size == 1 && ktCondition is KtWhenConditionWithExpression) {
+                                            (ktCondition.expression ?: ktCondition).toFirExpression(
+                                                "No expression in condition with expression",
+                                                DiagnosticKind.ExpressionExpected,
+                                            )
+                                    } else {
+                                        buildBalancedOrExpressionTree(entry.conditions.map { condition ->
+                                            if (condition is KtWhenConditionWithExpression) {
+                                                condition.expression.toFirExpression(
+                                                    "No expression in condition with expression",
+                                                    DiagnosticKind.ExpressionExpected
+                                                )
+                                            } else {
+                                                shouldBind = true
+                                                buildErrorExpression {
+                                                    source = condition.toFirSourceElement()
+                                                    nonExpressionElement = condition.toFirWhenCondition(
+                                                        ref,
+                                                        { toFirExpression(it) },
+                                                        { toFirOrErrorType() },
+                                                    )
+                                                    diagnostic = ConeSimpleDiagnostic(
+                                                        "No expression in condition with expression",
+                                                        DiagnosticKind.ExpressionExpected,
+                                                    )
+                                                }
+                                            }
+                                        })
+                                    }
                                 result = branchBody
                             }
                         }
@@ -2325,7 +2350,7 @@ open class RawFirBuilder(
                     }
                 }
             }.also {
-                if (hasSubject) {
+                if (shouldBind) {
                     ref.bind(it)
                 }
             }

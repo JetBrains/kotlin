@@ -992,6 +992,8 @@ object PositioningStrategies {
                 }
             }
         }
+
+        override fun isValid(element: PsiElement): Boolean = true
     }
 
     val NON_FINAL_MODIFIER_OR_NAME: PositioningStrategy<KtModifierListOwner> =

@@ -7319,6 +7319,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("whenWithNoSubjectAndCommas.kt")
+            public void testWhenWithNoSubjectAndCommas() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/controlStructures/whenWithNoSubjectAndCommas.kt");
+            }
+
+            @Test
             @TestMetadata("whenWithNothingTypedSubject.kt")
             public void testWhenWithNothingTypedSubject() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/controlStructures/whenWithNothingTypedSubject.kt");

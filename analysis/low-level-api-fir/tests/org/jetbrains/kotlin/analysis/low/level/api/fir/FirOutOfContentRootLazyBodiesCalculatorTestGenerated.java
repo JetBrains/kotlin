@@ -492,6 +492,12 @@ public class FirOutOfContentRootLazyBodiesCalculatorTestGenerated extends Abstra
         }
 
         @Test
+        @TestMetadata("invalidWhen.kt")
+        public void testInvalidWhen() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/invalidWhen.kt");
+        }
+
+        @Test
         @TestMetadata("labelForInfix.kt")
         public void testLabelForInfix() throws Exception {
             runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/labelForInfix.kt");
