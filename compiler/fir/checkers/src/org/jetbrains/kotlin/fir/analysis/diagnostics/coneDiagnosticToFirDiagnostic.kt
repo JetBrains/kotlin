@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.diagnostics.*
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.isLocalMember
 import org.jetbrains.kotlin.fir.analysis.getChild
@@ -20,6 +21,8 @@ import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.declarations.utils.isOperator
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.diagnostics.*
+import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
+import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.resolve.inference.ConeTypeParameterBasedTypeVariable
@@ -33,6 +36,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
@@ -461,10 +465,13 @@ private fun ConstraintSystemError.toDiagnostic(
         }
 
         is InferredEmptyIntersection -> {
+            val typeVariable = typeVariable as ConeTypeVariable
+            val narrowedSource = findInferredEmptyIntersectionNarrowedSource(typeVariable, candidate)
+
             @Suppress("UNCHECKED_CAST")
             reportInferredIntoEmptyIntersection(
-                source,
-                typeVariable as ConeTypeVariable,
+                narrowedSource ?: source,
+                typeVariable,
                 incompatibleTypes as Collection<ConeKotlinType>,
                 causingTypes as Collection<ConeKotlinType>,
                 kind,
@@ -481,6 +488,33 @@ private fun ConstraintSystemError.toDiagnostic(
 
         else -> null
     }
+}
+
+private fun findInferredEmptyIntersectionNarrowedSource(
+    typeVariable: ConeTypeVariable,
+    candidate: AbstractCandidate,
+): KtSourceElement? {
+    if (typeVariable !is ConeTypeParameterBasedTypeVariable) return null
+
+    var narrowedSource: KtSourceElement? = null
+
+    candidate.callInfo.callSite.accept(object : FirVisitorVoid() {
+        override fun visitElement(element: FirElement) {
+            if (narrowedSource != null) return
+
+            if (element is FirQualifiedAccessExpression) {
+                val symbol = element.calleeReference.toResolvedCallableSymbol()
+                if (symbol != null && symbol.typeParameterSymbols.contains(typeVariable.typeParameterSymbol)) {
+                    narrowedSource = element.calleeReference.source
+                    return
+                }
+            }
+
+            element.acceptChildren(this)
+        }
+    }, null)
+
+    return narrowedSource
 }
 
 private fun reportInferredIntoEmptyIntersection(

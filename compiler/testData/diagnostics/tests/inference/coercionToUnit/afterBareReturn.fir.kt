@@ -22,14 +22,14 @@ fun test2() = run {
     incomplete() // ? either uninferred T or Unit
 }
 
-fun test3() = <!INFERRED_TYPE_VARIABLE_INTO_POSSIBLE_EMPTY_INTERSECTION!>run<!> {
+fun test3() = run {
     if (p) return@run
-    incompatibleI() // ? either uninferred T or error (Unit </: I)
+    <!INFERRED_TYPE_VARIABLE_INTO_POSSIBLE_EMPTY_INTERSECTION!>incompatibleI<!>() // ? either uninferred T or error (Unit </: I)
 }
 
-fun test4() = <!INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION_WARNING!>run<!> {
+fun test4() = run {
     if (p) return@run
-    incompatibleC() // ? either uninferred T or error (Unit </: C)
+    <!INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION_WARNING!>incompatibleC<!>() // ? either uninferred T or error (Unit </: C)
 }
 
 fun main() {
