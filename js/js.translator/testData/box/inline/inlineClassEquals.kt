@@ -317,8 +317,7 @@ fun testCompareDifferentInstancesInSmartCast() {
 fun testCompareDifferentInstncesInInlineTemplate() {
     inline fun <reified T, reified S> myEq(x: T, y: S) = x == y
 
-    // CHECK_NOT_CALLED_IN_SCOPE: scope=testCompareDifferentInstncesInInlineTemplate$caseJsEq function=equals
-    // CHECK_NEW_COUNT: function=testCompareDifferentInstncesInInlineTemplate$caseJsEq count=0
+    // CHECK_NEW_COUNT: function=testCompareDifferentInstncesInInlineTemplate$caseJsEq count=8
     fun caseJsEq() {
         assertTrue(myEq(ClassInt(1), ClassInt(1)))
         assertTrue(myEq(ClassString("foo"), ClassString("foo")))

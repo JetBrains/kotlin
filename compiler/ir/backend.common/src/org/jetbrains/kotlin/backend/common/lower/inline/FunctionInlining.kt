@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.backend.common.lower.inline
 
 
-import org.jetbrains.kotlin.backend.common.BodyLoweringPass
-import org.jetbrains.kotlin.backend.common.CommonBackendContext
-import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
-import org.jetbrains.kotlin.backend.common.ScopeWithIr
+import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.common.ir.isPure
 import org.jetbrains.kotlin.backend.common.lower.InnerClassesSupport
@@ -90,7 +87,8 @@ class FunctionInlining(
     private val inlinePureArguments: Boolean = true,
     private val regenerateInlinedAnonymousObjects: Boolean = false,
     private val inlineArgumentsWithTheirOriginalTypeAndOffset: Boolean = false,
-    private val allowExternalInlining: Boolean = false
+    private val allowExternalInlining: Boolean = false,
+    private val useTypeParameterUpperBound: Boolean = false
 ) : IrElementTransformerVoidWithContext(), BodyLoweringPass {
     private var containerScope: ScopeWithIr? = null
 
@@ -746,7 +744,8 @@ class FunctionInlining(
                 // We take type parameter from copied callee and not from original because we need an actual copy. Without this copy,
                 // in case of recursive call, we can get a situation there the same type parameter will be mapped on different type arguments.
                 // (see compiler/testData/codegen/boxInline/complex/use.kt test file)
-                return copy.typeParameters[typeClassifier.index].defaultType.substituteSuperTypes()
+                val newTypeParameter = copy.typeParameters[typeClassifier.index].defaultType.substituteSuperTypes()
+                return if (useTypeParameterUpperBound) typeClassifier.firstRealUpperBound() else newTypeParameter
             }
 
             return when (this) {
@@ -755,10 +754,27 @@ class FunctionInlining(
                 copy.extensionReceiverParameter -> original.extensionReceiverParameter?.getTypeIfFromTypeParameter()
                     ?: copy.extensionReceiverParameter!!.type
                 else -> copy.valueParameters.first { it == this }.let { valueParameter ->
-                    original.valueParameters[valueParameter.index].getTypeIfFromTypeParameter()
+                    original.valueParameters.getOrNull(valueParameter.index)?.getTypeIfFromTypeParameter()
                         ?: valueParameter.type
                 }
             }
+        }
+
+        private fun IrTypeParameter?.firstRealUpperBound(): IrType {
+            val queue = this?.superTypes?.toMutableList() ?: mutableListOf()
+
+            while (queue.isNotEmpty()) {
+                val superType = queue.removeFirst()
+                val superTypeClassifier = superType.classifierOrNull?.owner ?: continue
+
+                if (superTypeClassifier is IrTypeParameter) {
+                    queue.addAll(superTypeClassifier.superTypes)
+                } else {
+                    return superType
+                }
+            }
+
+            return context.irBuiltIns.anyNType
         }
 
         private fun evaluateArguments(callSite: IrFunctionAccessExpression, callee: IrFunction): List<IrStatement> {

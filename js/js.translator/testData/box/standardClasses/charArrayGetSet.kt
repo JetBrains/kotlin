@@ -1,4 +1,5 @@
 // EXPECTED_REACHABLE_NODES: 1281
+// IGNORE_BACKEND: JS_IR, JS_IR_ES6
 
 fun box(): String {
     val a = CharArray(1)

@@ -81,6 +81,7 @@ fun box() {
 // a.kt:6 exclamate: s="Jesse":kotlin.String
 // test.kt:52 box: jesse="Jesse":kotlin.String, walter1="Walter!":kotlin.String, jesse1="Jesse!":kotlin.String
 // a.kt:6 exclamate: s="Jesse!":kotlin.String
+// a.kt:19 box: jesse="Jesse":kotlin.String, walter1="Walter!":kotlin.String, jesse1="Jesse!":kotlin.String
 // a.kt:22 value:
 // test.kt:63 box: jesse="Jesse":kotlin.String, walter1="Walter!":kotlin.String, jesse1="Jesse!":kotlin.String
 // test.kt:59 localFun: hello="hello":kotlin.String, world="world":kotlin.String

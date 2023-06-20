@@ -23,6 +23,8 @@ import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.util.getInlineClassBackingField
 import org.jetbrains.kotlin.js.backend.ast.*
+import org.jetbrains.kotlin.js.backend.ast.metadata.isInlineClassBoxing
+import org.jetbrains.kotlin.js.backend.ast.metadata.isInlineClassUnboxing
 
 typealias IrCallTransformer = (IrCall, context: JsGenerationContext) -> JsExpression
 
@@ -179,6 +181,7 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
                 val inlineClass = icUtils.getInlinedClass(call.getTypeArgument(0)!!)!!
                 val constructor = inlineClass.declarations.filterIsInstance<IrConstructor>().single { it.isPrimary }
                 JsNew(context.getNameForConstructor(constructor).makeRef(), listOf(arg))
+                    .apply { isInlineClassBoxing = true }
             }
 
             add(intrinsics.jsUnboxIntrinsic) { call, context ->
@@ -186,7 +189,7 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
                 val inlineClass = icUtils.getInlinedClass(call.getTypeArgument(1)!!)!!
                 val field = getInlineClassBackingField(inlineClass)
                 val fieldName = context.getNameForField(field)
-                JsNameRef(fieldName, arg)
+                JsNameRef(fieldName, arg).apply { isInlineClassUnboxing = true }
             }
 
             add(intrinsics.jsCall) { call, context: JsGenerationContext ->

@@ -79,6 +79,9 @@ var JsReturn.returnTarget: FunctionDescriptor? by MetadataProperty(default = nul
 
 var HasMetadata.synthetic: Boolean by MetadataProperty(default = false)
 
+var HasMetadata.isInlineClassBoxing: Boolean by MetadataProperty(default = false)
+var HasMetadata.isInlineClassUnboxing: Boolean by MetadataProperty(default = false)
+
 var HasMetadata.sideEffects: SideEffectKind by MetadataProperty(default = SideEffectKind.AFFECTS_STATE)
 
 /**

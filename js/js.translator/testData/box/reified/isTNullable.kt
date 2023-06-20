@@ -2,8 +2,7 @@
 package foo
 
 // CHECK_NOT_CALLED: isTypeOfOrNull
-// CHECK_NULLS_COUNT: function=box count=10 TARGET_BACKENDS=JS
-// CHECK_NULLS_COUNT: function=box count=6 IGNORED_BACKENDS=JS
+// CHECK_NULLS_COUNT: function=box count=10
 
 inline
 fun <reified T> Any?.isTypeOfOrNull() = this is T?

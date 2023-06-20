@@ -1693,6 +1693,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         }
 
         @Test
+        @TestMetadata("lambdaParameterInlining.kt")
+        public void testLambdaParameterInlining() throws Exception {
+            runTest("js/js.translator/testData/box/dynamic/lambdaParameterInlining.kt");
+        }
+
+        @Test
         @TestMetadata("nameClashing.kt")
         public void testNameClashing() throws Exception {
             runTest("js/js.translator/testData/box/dynamic/nameClashing.kt");

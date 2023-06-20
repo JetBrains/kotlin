@@ -1623,8 +1623,19 @@ object ArrayOps : TemplateGroupBase() {
                 body {
                     """
                     AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
-                    nativeFill(element, fromIndex, toIndex);
+                    nativeFill(element, fromIndex, toIndex)
                     """
+                }
+                specialFor(ArraysOfPrimitives) {
+                    if (primitive == PrimitiveType.Char) {
+                        body {
+                            """
+                            AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
+                            // We need to call [Char.code] here to eliminate Char-boxing with the new JS function inlining logic
+                            nativeFill(element.code, fromIndex, toIndex)
+                            """
+                        }
+                    }
                 }
             }
             on(Platform.Native) {

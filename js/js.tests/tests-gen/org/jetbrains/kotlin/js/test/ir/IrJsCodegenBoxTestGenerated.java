@@ -18570,6 +18570,12 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
                 runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/kt37986Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
             }
 
+            @Test
+            @TestMetadata("withInlineFunctionWithMultipleConstraints.kt")
+            public void testWithInlineFunctionWithMultipleConstraints() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/withInlineFunctionWithMultipleConstraints.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
             @Nested
             @TestMetadata("compiler/testData/codegen/box/inlineClasses/callableReferences/let")
             @TestDataPath("$PROJECT_ROOT")
