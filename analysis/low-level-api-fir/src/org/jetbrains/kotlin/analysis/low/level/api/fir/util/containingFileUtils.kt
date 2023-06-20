@@ -22,6 +22,7 @@ fun FirElementWithResolveState.getContainingFile(): FirFile? {
         is FirTypeParameter -> containingDeclarationSymbol.fir.getContainingFile()
         is FirPropertyAccessor -> propertySymbol.fir.getContainingFile()
         is FirValueParameter -> containingFunctionSymbol.fir.getContainingFile()
+        is FirBackingField -> propertySymbol.fir.getContainingFile()
         is FirCallableDeclaration -> provider.getFirCallableContainerFile(symbol)
         is FirClassLikeDeclaration -> provider.getFirClassifierContainerFileIfAny(symbol)
         is FirAnonymousInitializer -> containingClass().getContainingFile()
