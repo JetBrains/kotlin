@@ -7738,6 +7738,202 @@ public class FirJsBoxTestGenerated extends AbstractFirJsBoxTest {
     }
 
     @Nested
+    @TestMetadata("js/js.translator/testData/box/k2DifferencesChecks")
+    @TestDataPath("$PROJECT_ROOT")
+    public class K2DifferencesChecks {
+        @Test
+        public void testAllFilesPresentInK2DifferencesChecks() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/k2DifferencesChecks"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
+        }
+
+        @Test
+        @TestMetadata("badAssignment.kt")
+        public void testBadAssignment() throws Exception {
+            runTest("js/js.translator/testData/box/k2DifferencesChecks/badAssignment.kt");
+        }
+
+        @Test
+        @TestMetadata("bridgeClash.kt")
+        public void testBridgeClash() throws Exception {
+            runTest("js/js.translator/testData/box/k2DifferencesChecks/bridgeClash.kt");
+        }
+
+        @Test
+        @TestMetadata("builtinClash.kt")
+        public void testBuiltinClash() throws Exception {
+            runTest("js/js.translator/testData/box/k2DifferencesChecks/builtinClash.kt");
+        }
+
+        @Test
+        @TestMetadata("classAndFunction.kt")
+        public void testClassAndFunction() throws Exception {
+            runTest("js/js.translator/testData/box/k2DifferencesChecks/classAndFunction.kt");
+        }
+
+        @Test
+        @TestMetadata("classLevelMethodAndProperty.kt")
+        public void testClassLevelMethodAndProperty() throws Exception {
+            runTest("js/js.translator/testData/box/k2DifferencesChecks/classLevelMethodAndProperty.kt");
+        }
+
+        @Test
+        @TestMetadata("conflictingNamesFromSuperclass.kt")
+        public void testConflictingNamesFromSuperclass() throws Exception {
+            runTest("js/js.translator/testData/box/k2DifferencesChecks/conflictingNamesFromSuperclass.kt");
+        }
+
+        @Test
+        @TestMetadata("deleteOperation.kt")
+        public void testDeleteOperation() throws Exception {
+            runTest("js/js.translator/testData/box/k2DifferencesChecks/deleteOperation.kt");
+        }
+
+        @Test
+        @TestMetadata("dualModuleFromUmd.kt")
+        public void testDualModuleFromUmd() throws Exception {
+            runTest("js/js.translator/testData/box/k2DifferencesChecks/dualModuleFromUmd.kt");
+        }
+
+        @Test
+        @TestMetadata("dynamicCastTarget.kt")
+        public void testDynamicCastTarget() throws Exception {
+            runTest("js/js.translator/testData/box/k2DifferencesChecks/dynamicCastTarget.kt");
+        }
+
+        @Test
+        @TestMetadata("error.kt")
+        public void testError() throws Exception {
+            runTest("js/js.translator/testData/box/k2DifferencesChecks/error.kt");
+        }
+
+        @Test
+        @TestMetadata("extensionPropertyAndMethod.kt")
+        public void testExtensionPropertyAndMethod() throws Exception {
+            runTest("js/js.translator/testData/box/k2DifferencesChecks/extensionPropertyAndMethod.kt");
+        }
+
+        @Test
+        @TestMetadata("illegalName.kt")
+        public void testIllegalName() throws Exception {
+            runTest("js/js.translator/testData/box/k2DifferencesChecks/illegalName.kt");
+        }
+
+        @Test
+        @TestMetadata("jsNameAndOverridden.kt")
+        public void testJsNameAndOverridden() throws Exception {
+            runTest("js/js.translator/testData/box/k2DifferencesChecks/jsNameAndOverridden.kt");
+        }
+
+        @Test
+        @TestMetadata("jsNameClash.kt")
+        public void testJsNameClash() throws Exception {
+            runTest("js/js.translator/testData/box/k2DifferencesChecks/jsNameClash.kt");
+        }
+
+        @Test
+        @TestMetadata("jsNameClashWithDefault.kt")
+        public void testJsNameClashWithDefault() throws Exception {
+            runTest("js/js.translator/testData/box/k2DifferencesChecks/jsNameClashWithDefault.kt");
+        }
+
+        @Test
+        @TestMetadata("jsNameOnAccessors.kt")
+        public void testJsNameOnAccessors() throws Exception {
+            runTest("js/js.translator/testData/box/k2DifferencesChecks/jsNameOnAccessors.kt");
+        }
+
+        @Test
+        @TestMetadata("methodAndMethod.kt")
+        public void testMethodAndMethod() throws Exception {
+            runTest("js/js.translator/testData/box/k2DifferencesChecks/methodAndMethod.kt");
+        }
+
+        @Test
+        @TestMetadata("nameSwapInOverride.kt")
+        public void testNameSwapInOverride() throws Exception {
+            runTest("js/js.translator/testData/box/k2DifferencesChecks/nameSwapInOverride.kt");
+        }
+
+        @Test
+        @TestMetadata("nativeInterfaceAsReifiedTypeArgument.kt")
+        public void testNativeInterfaceAsReifiedTypeArgument() throws Exception {
+            runTest("js/js.translator/testData/box/k2DifferencesChecks/nativeInterfaceAsReifiedTypeArgument.kt");
+        }
+
+        @Test
+        @TestMetadata("noJavaScriptProduced.kt")
+        public void testNoJavaScriptProduced() throws Exception {
+            runTest("js/js.translator/testData/box/k2DifferencesChecks/noJavaScriptProduced.kt");
+        }
+
+        @Test
+        @TestMetadata("overrideOverloadedNativeFunction.kt")
+        public void testOverrideOverloadedNativeFunction() throws Exception {
+            runTest("js/js.translator/testData/box/k2DifferencesChecks/overrideOverloadedNativeFunction.kt");
+        }
+
+        @Test
+        @TestMetadata("packageAndMethod.kt")
+        public void testPackageAndMethod() throws Exception {
+            runTest("js/js.translator/testData/box/k2DifferencesChecks/packageAndMethod.kt");
+        }
+
+        @Test
+        @TestMetadata("packageAndProperty.kt")
+        public void testPackageAndProperty() throws Exception {
+            runTest("js/js.translator/testData/box/k2DifferencesChecks/packageAndProperty.kt");
+        }
+
+        @Test
+        @TestMetadata("privateJsNameClash.kt")
+        public void testPrivateJsNameClash() throws Exception {
+            runTest("js/js.translator/testData/box/k2DifferencesChecks/privateJsNameClash.kt");
+        }
+
+        @Test
+        @TestMetadata("propertyAndMethodInImplementor.kt")
+        public void testPropertyAndMethodInImplementor() throws Exception {
+            runTest("js/js.translator/testData/box/k2DifferencesChecks/propertyAndMethodInImplementor.kt");
+        }
+
+        @Test
+        @TestMetadata("propertyAndMethodInSubclass.kt")
+        public void testPropertyAndMethodInSubclass() throws Exception {
+            runTest("js/js.translator/testData/box/k2DifferencesChecks/propertyAndMethodInSubclass.kt");
+        }
+
+        @Test
+        @TestMetadata("propertyDelegateBy.kt")
+        public void testPropertyDelegateBy() throws Exception {
+            runTest("js/js.translator/testData/box/k2DifferencesChecks/propertyDelegateBy.kt");
+        }
+
+        @Test
+        @TestMetadata("topLevelMethodAndJsNameConstructor.kt")
+        public void testTopLevelMethodAndJsNameConstructor() throws Exception {
+            runTest("js/js.translator/testData/box/k2DifferencesChecks/topLevelMethodAndJsNameConstructor.kt");
+        }
+
+        @Test
+        @TestMetadata("topLevelMethodAndProperty.kt")
+        public void testTopLevelMethodAndProperty() throws Exception {
+            runTest("js/js.translator/testData/box/k2DifferencesChecks/topLevelMethodAndProperty.kt");
+        }
+
+        @Test
+        @TestMetadata("wrongCallToModule.kt")
+        public void testWrongCallToModule() throws Exception {
+            runTest("js/js.translator/testData/box/k2DifferencesChecks/wrongCallToModule.kt");
+        }
+
+        @Test
+        @TestMetadata("wrongCallToNonModule.kt")
+        public void testWrongCallToNonModule() throws Exception {
+            runTest("js/js.translator/testData/box/k2DifferencesChecks/wrongCallToNonModule.kt");
+        }
+    }
+
+    @Nested
     @TestMetadata("js/js.translator/testData/box/keep")
     @TestDataPath("$PROJECT_ROOT")
     public class Keep {

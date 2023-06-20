@@ -31539,6 +31539,490 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
     }
 
     @Nested
+    @TestMetadata("compiler/testData/codegen/box/k2DifferencesChecks")
+    @TestDataPath("$PROJECT_ROOT")
+    public class K2DifferencesChecks {
+        @Test
+        @TestMetadata("1.kt")
+        public void test1() throws Exception {
+            runTest("compiler/testData/codegen/box/k2DifferencesChecks/1.kt");
+        }
+
+        @Test
+        @TestMetadata("12.kt")
+        public void test12() throws Exception {
+            runTest("compiler/testData/codegen/box/k2DifferencesChecks/12.kt");
+        }
+
+        @Test
+        @TestMetadata("13.kt")
+        public void test13() throws Exception {
+            runTest("compiler/testData/codegen/box/k2DifferencesChecks/13.kt");
+        }
+
+        @Test
+        @TestMetadata("2.kt")
+        public void test2() throws Exception {
+            runTest("compiler/testData/codegen/box/k2DifferencesChecks/2.kt");
+        }
+
+        @Test
+        @TestMetadata("3.kt")
+        public void test3() throws Exception {
+            runTest("compiler/testData/codegen/box/k2DifferencesChecks/3.kt");
+        }
+
+        @Test
+        @TestMetadata("4.kt")
+        public void test4() throws Exception {
+            runTest("compiler/testData/codegen/box/k2DifferencesChecks/4.kt");
+        }
+
+        @Test
+        @TestMetadata("5.kt")
+        public void test5() throws Exception {
+            runTest("compiler/testData/codegen/box/k2DifferencesChecks/5.kt");
+        }
+
+        @Test
+        @TestMetadata("6.kt")
+        public void test6() throws Exception {
+            runTest("compiler/testData/codegen/box/k2DifferencesChecks/6.kt");
+        }
+
+        @Test
+        @TestMetadata("7.kt")
+        public void test7() throws Exception {
+            runTest("compiler/testData/codegen/box/k2DifferencesChecks/7.kt");
+        }
+
+        @Test
+        public void testAllFilesPresentInK2DifferencesChecks() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/k2DifferencesChecks"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+        }
+
+        @Test
+        @TestMetadata("ambigousLabelOnThis.kt")
+        public void testAmbigousLabelOnThis() throws Exception {
+            runTest("compiler/testData/codegen/box/k2DifferencesChecks/ambigousLabelOnThis.kt");
+        }
+
+        @Test
+        @TestMetadata("CasesWithTwoTypeParameters.kt")
+        public void testCasesWithTwoTypeParameters() throws Exception {
+            runTest("compiler/testData/codegen/box/k2DifferencesChecks/CasesWithTwoTypeParameters.kt");
+        }
+
+        @Test
+        @TestMetadata("Clash.kt")
+        public void testClash() throws Exception {
+            runTest("compiler/testData/codegen/box/k2DifferencesChecks/Clash.kt");
+        }
+
+        @Test
+        @TestMetadata("coercionToUnitWithNothingType.kt")
+        public void testCoercionToUnitWithNothingType() throws Exception {
+            runTest("compiler/testData/codegen/box/k2DifferencesChecks/coercionToUnitWithNothingType.kt");
+        }
+
+        @Test
+        @TestMetadata("constructorInHeaderEnum.kt")
+        public void testConstructorInHeaderEnum() throws Exception {
+            runTest("compiler/testData/codegen/box/k2DifferencesChecks/constructorInHeaderEnum.kt");
+        }
+
+        @Test
+        @TestMetadata("dataClassExplicitlyOverridingCopyNoDefaults.kt")
+        public void testDataClassExplicitlyOverridingCopyNoDefaults() throws Exception {
+            runTest("compiler/testData/codegen/box/k2DifferencesChecks/dataClassExplicitlyOverridingCopyNoDefaults.kt");
+        }
+
+        @Test
+        @TestMetadata("dataClassExplicitlyOverridingCopyWithDefaults.kt")
+        public void testDataClassExplicitlyOverridingCopyWithDefaults() throws Exception {
+            runTest("compiler/testData/codegen/box/k2DifferencesChecks/dataClassExplicitlyOverridingCopyWithDefaults.kt");
+        }
+
+        @Test
+        @TestMetadata("dataClassOverridingCopy_lv13.kt")
+        public void testDataClassOverridingCopy_lv13() throws Exception {
+            runTest("compiler/testData/codegen/box/k2DifferencesChecks/dataClassOverridingCopy_lv13.kt");
+        }
+
+        @Test
+        @TestMetadata("DefaultParameterValueInOverride.kt")
+        public void testDefaultParameterValueInOverride() throws Exception {
+            runTest("compiler/testData/codegen/box/k2DifferencesChecks/DefaultParameterValueInOverride.kt");
+        }
+
+        @Test
+        @TestMetadata("DuplicateParameterNamesInFunctionType.kt")
+        public void testDuplicateParameterNamesInFunctionType() throws Exception {
+            runTest("compiler/testData/codegen/box/k2DifferencesChecks/DuplicateParameterNamesInFunctionType.kt");
+        }
+
+        @Test
+        @TestMetadata("errorOnStubReceiver.kt")
+        public void testErrorOnStubReceiver() throws Exception {
+            runTest("compiler/testData/codegen/box/k2DifferencesChecks/errorOnStubReceiver.kt");
+        }
+
+        @Test
+        @TestMetadata("ExplicitConstructorCall.kt")
+        public void testExplicitConstructorCall() throws Exception {
+            runTest("compiler/testData/codegen/box/k2DifferencesChecks/ExplicitConstructorCall.kt");
+        }
+
+        @Test
+        @TestMetadata("illegalTypeInTypeAliasExpansion.kt")
+        public void testIllegalTypeInTypeAliasExpansion() throws Exception {
+            runTest("compiler/testData/codegen/box/k2DifferencesChecks/illegalTypeInTypeAliasExpansion.kt");
+        }
+
+        @Test
+        @TestMetadata("inconsistentTypeInference.kt")
+        public void testInconsistentTypeInference() throws Exception {
+            runTest("compiler/testData/codegen/box/k2DifferencesChecks/inconsistentTypeInference.kt");
+        }
+
+        @Test
+        @TestMetadata("InheritanceAmbiguity.kt")
+        public void testInheritanceAmbiguity() throws Exception {
+            runTest("compiler/testData/codegen/box/k2DifferencesChecks/InheritanceAmbiguity.kt");
+        }
+
+        @Test
+        @TestMetadata("InheritanceAmbiguity2.kt")
+        public void testInheritanceAmbiguity2() throws Exception {
+            runTest("compiler/testData/codegen/box/k2DifferencesChecks/InheritanceAmbiguity2.kt");
+        }
+
+        @Test
+        @TestMetadata("InheritanceAmbiguity3.kt")
+        public void testInheritanceAmbiguity3() throws Exception {
+            runTest("compiler/testData/codegen/box/k2DifferencesChecks/InheritanceAmbiguity3.kt");
+        }
+
+        @Test
+        @TestMetadata("InheritanceAmbiguity4.kt")
+        public void testInheritanceAmbiguity4() throws Exception {
+            runTest("compiler/testData/codegen/box/k2DifferencesChecks/InheritanceAmbiguity4.kt");
+        }
+
+        @Test
+        @TestMetadata("InheritingJavaClassWithRawTypeInOverrideSignature.kt")
+        public void testInheritingJavaClassWithRawTypeInOverrideSignature() throws Exception {
+            runTest("compiler/testData/codegen/box/k2DifferencesChecks/InheritingJavaClassWithRawTypeInOverrideSignature.kt");
+        }
+
+        @Test
+        @TestMetadata("inlineLambdaInDefaultInlineParameter.kt")
+        public void testInlineLambdaInDefaultInlineParameter() throws Exception {
+            runTest("compiler/testData/codegen/box/k2DifferencesChecks/inlineLambdaInDefaultInlineParameter.kt");
+        }
+
+        @Test
+        @TestMetadata("innerTypeAliasAsType.kt")
+        public void testInnerTypeAliasAsType() throws Exception {
+            runTest("compiler/testData/codegen/box/k2DifferencesChecks/innerTypeAliasAsType.kt");
+        }
+
+        @Test
+        @TestMetadata("InsideEntryConstructorCall.kt")
+        public void testInsideEntryConstructorCall() throws Exception {
+            runTest("compiler/testData/codegen/box/k2DifferencesChecks/InsideEntryConstructorCall.kt");
+        }
+
+        @Test
+        @TestMetadata("InsideSecondaryConstructorCall.kt")
+        public void testInsideSecondaryConstructorCall() throws Exception {
+            runTest("compiler/testData/codegen/box/k2DifferencesChecks/InsideSecondaryConstructorCall.kt");
+        }
+
+        @Test
+        @TestMetadata("JavaWithKotlin.kt")
+        public void testJavaWithKotlin() throws Exception {
+            runTest("compiler/testData/codegen/box/k2DifferencesChecks/JavaWithKotlin.kt");
+        }
+
+        @Test
+        @TestMetadata("jkjk.kt")
+        public void testJkjk() throws Exception {
+            runTest("compiler/testData/codegen/box/k2DifferencesChecks/jkjk.kt");
+        }
+
+        @Test
+        @TestMetadata("kotlinClassExtendsJavaClass.kt")
+        public void testKotlinClassExtendsJavaClass() throws Exception {
+            runTest("compiler/testData/codegen/box/k2DifferencesChecks/kotlinClassExtendsJavaClass.kt");
+        }
+
+        @Test
+        @TestMetadata("kotlinClassExtendsJavaClassExtendsJavaClass.kt")
+        public void testKotlinClassExtendsJavaClassExtendsJavaClass() throws Exception {
+            runTest("compiler/testData/codegen/box/k2DifferencesChecks/kotlinClassExtendsJavaClassExtendsJavaClass.kt");
+        }
+
+        @Test
+        @TestMetadata("kt2491.kt")
+        public void testKt2491() throws Exception {
+            runTest("compiler/testData/codegen/box/k2DifferencesChecks/kt2491.kt");
+        }
+
+        @Test
+        @TestMetadata("kt34029.kt")
+        public void testKt34029() throws Exception {
+            runTest("compiler/testData/codegen/box/k2DifferencesChecks/kt34029.kt");
+        }
+
+        @Test
+        @TestMetadata("kt45796.kt")
+        public void testKt45796() throws Exception {
+            runTest("compiler/testData/codegen/box/k2DifferencesChecks/kt45796.kt");
+        }
+
+        @Test
+        @TestMetadata("kt4785.kt")
+        public void testKt4785() throws Exception {
+            runTest("compiler/testData/codegen/box/k2DifferencesChecks/kt4785.kt");
+        }
+
+        @Test
+        @TestMetadata("kt49038.kt")
+        public void testKt49038() throws Exception {
+            runTest("compiler/testData/codegen/box/k2DifferencesChecks/kt49038.kt");
+        }
+
+        @Test
+        @TestMetadata("kt49276Error.kt")
+        public void testKt49276Error() throws Exception {
+            runTest("compiler/testData/codegen/box/k2DifferencesChecks/kt49276Error.kt");
+        }
+
+        @Test
+        @TestMetadata("kt51062Error.kt")
+        public void testKt51062Error() throws Exception {
+            runTest("compiler/testData/codegen/box/k2DifferencesChecks/kt51062Error.kt");
+        }
+
+        @Test
+        @TestMetadata("kt53639.kt")
+        public void testKt53639() throws Exception {
+            runTest("compiler/testData/codegen/box/k2DifferencesChecks/kt53639.kt");
+        }
+
+        @Test
+        @TestMetadata("kt56283.kt")
+        public void testKt56283() throws Exception {
+            runTest("compiler/testData/codegen/box/k2DifferencesChecks/kt56283.kt");
+        }
+
+        @Test
+        @TestMetadata("kt9633.kt")
+        public void testKt9633() throws Exception {
+            runTest("compiler/testData/codegen/box/k2DifferencesChecks/kt9633.kt");
+        }
+
+        @Test
+        @TestMetadata("mixingSuspendAndNonSuspendSupertypes.kt")
+        public void testMixingSuspendAndNonSuspendSupertypes() throws Exception {
+            runTest("compiler/testData/codegen/box/k2DifferencesChecks/mixingSuspendAndNonSuspendSupertypes.kt");
+        }
+
+        @Test
+        @TestMetadata("mixingSuspendAndNonSuspendSupertypesThruSuperClass.kt")
+        public void testMixingSuspendAndNonSuspendSupertypesThruSuperClass() throws Exception {
+            runTest("compiler/testData/codegen/box/k2DifferencesChecks/mixingSuspendAndNonSuspendSupertypesThruSuperClass.kt");
+        }
+
+        @Test
+        @TestMetadata("mixingSuspendAndNonSuspendSupertypesThruSuperClass_1.kt")
+        public void testMixingSuspendAndNonSuspendSupertypesThruSuperClass_1() throws Exception {
+            runTest("compiler/testData/codegen/box/k2DifferencesChecks/mixingSuspendAndNonSuspendSupertypesThruSuperClass_1.kt");
+        }
+
+        @Test
+        @TestMetadata("mixingSuspendAndNonSuspendSupertypesThruSuperClass_2.kt")
+        public void testMixingSuspendAndNonSuspendSupertypesThruSuperClass_2() throws Exception {
+            runTest("compiler/testData/codegen/box/k2DifferencesChecks/mixingSuspendAndNonSuspendSupertypesThruSuperClass_2.kt");
+        }
+
+        @Test
+        @TestMetadata("mixingSuspendAndNonSuspendSupertypesThruSuperFunInterface.kt")
+        public void testMixingSuspendAndNonSuspendSupertypesThruSuperFunInterface() throws Exception {
+            runTest("compiler/testData/codegen/box/k2DifferencesChecks/mixingSuspendAndNonSuspendSupertypesThruSuperFunInterface.kt");
+        }
+
+        @Test
+        @TestMetadata("mixingSuspendAndNonSuspendSupertypesThruSuperFunInterface_1.kt")
+        public void testMixingSuspendAndNonSuspendSupertypesThruSuperFunInterface_1() throws Exception {
+            runTest("compiler/testData/codegen/box/k2DifferencesChecks/mixingSuspendAndNonSuspendSupertypesThruSuperFunInterface_1.kt");
+        }
+
+        @Test
+        @TestMetadata("mixingSuspendAndNonSuspendSupertypesThruSuperFunInterface_2.kt")
+        public void testMixingSuspendAndNonSuspendSupertypesThruSuperFunInterface_2() throws Exception {
+            runTest("compiler/testData/codegen/box/k2DifferencesChecks/mixingSuspendAndNonSuspendSupertypesThruSuperFunInterface_2.kt");
+        }
+
+        @Test
+        @TestMetadata("mixingSuspendAndNonSuspendSupertypesThruSuperinterface.kt")
+        public void testMixingSuspendAndNonSuspendSupertypesThruSuperinterface() throws Exception {
+            runTest("compiler/testData/codegen/box/k2DifferencesChecks/mixingSuspendAndNonSuspendSupertypesThruSuperinterface.kt");
+        }
+
+        @Test
+        @TestMetadata("mixingSuspendAndNonSuspendSupertypesThruSuperinterface_1.kt")
+        public void testMixingSuspendAndNonSuspendSupertypesThruSuperinterface_1() throws Exception {
+            runTest("compiler/testData/codegen/box/k2DifferencesChecks/mixingSuspendAndNonSuspendSupertypesThruSuperinterface_1.kt");
+        }
+
+        @Test
+        @TestMetadata("mixingSuspendAndNonSuspendSupertypesThruSuperinterface_2.kt")
+        public void testMixingSuspendAndNonSuspendSupertypesThruSuperinterface_2() throws Exception {
+            runTest("compiler/testData/codegen/box/k2DifferencesChecks/mixingSuspendAndNonSuspendSupertypesThruSuperinterface_2.kt");
+        }
+
+        @Test
+        @TestMetadata("mixingSuspendAndNonSuspendSupertypes_1.kt")
+        public void testMixingSuspendAndNonSuspendSupertypes_1() throws Exception {
+            runTest("compiler/testData/codegen/box/k2DifferencesChecks/mixingSuspendAndNonSuspendSupertypes_1.kt");
+        }
+
+        @Test
+        @TestMetadata("mixingSuspendAndNonSuspendSupertypes_2.kt")
+        public void testMixingSuspendAndNonSuspendSupertypes_2() throws Exception {
+            runTest("compiler/testData/codegen/box/k2DifferencesChecks/mixingSuspendAndNonSuspendSupertypes_2.kt");
+        }
+
+        @Test
+        @TestMetadata("multiLambdaRestriction.kt")
+        public void testMultiLambdaRestriction() throws Exception {
+            runTest("compiler/testData/codegen/box/k2DifferencesChecks/multiLambdaRestriction.kt");
+        }
+
+        @Test
+        @TestMetadata("MultipleDefaultParametersInSupertypes.kt")
+        public void testMultipleDefaultParametersInSupertypes() throws Exception {
+            runTest("compiler/testData/codegen/box/k2DifferencesChecks/MultipleDefaultParametersInSupertypes.kt");
+        }
+
+        @Test
+        @TestMetadata("MultipleDefaultsAndNamesInSupertypes.kt")
+        public void testMultipleDefaultsAndNamesInSupertypes() throws Exception {
+            runTest("compiler/testData/codegen/box/k2DifferencesChecks/MultipleDefaultsAndNamesInSupertypes.kt");
+        }
+
+        @Test
+        @TestMetadata("multipleInheritedDefaults.kt")
+        public void testMultipleInheritedDefaults() throws Exception {
+            runTest("compiler/testData/codegen/box/k2DifferencesChecks/multipleInheritedDefaults.kt");
+        }
+
+        @Test
+        @TestMetadata("NestedAndTopLevelClassClash.kt")
+        public void testNestedAndTopLevelClassClash() throws Exception {
+            runTest("compiler/testData/codegen/box/k2DifferencesChecks/NestedAndTopLevelClassClash.kt");
+        }
+
+        @Test
+        @TestMetadata("NestedClassClash.kt")
+        public void testNestedClassClash() throws Exception {
+            runTest("compiler/testData/codegen/box/k2DifferencesChecks/NestedClassClash.kt");
+        }
+
+        @Test
+        @TestMetadata("noBackingField.kt")
+        public void testNoBackingField() throws Exception {
+            runTest("compiler/testData/codegen/box/k2DifferencesChecks/noBackingField.kt");
+        }
+
+        @Test
+        @TestMetadata("noContextReceiversOnValueClasses.kt")
+        public void testNoContextReceiversOnValueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/k2DifferencesChecks/noContextReceiversOnValueClasses.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("nonSuperCallConstructor.kt")
+        public void testNonSuperCallConstructor() throws Exception {
+            runTest("compiler/testData/codegen/box/k2DifferencesChecks/nonSuperCallConstructor.kt");
+        }
+
+        @Test
+        @TestMetadata("nonSuperCallConstructorJavaDifferentPackage.kt")
+        public void testNonSuperCallConstructorJavaDifferentPackage() throws Exception {
+            runTest("compiler/testData/codegen/box/k2DifferencesChecks/nonSuperCallConstructorJavaDifferentPackage.kt");
+        }
+
+        @Test
+        @TestMetadata("ParenthesizedVariable.kt")
+        public void testParenthesizedVariable() throws Exception {
+            runTest("compiler/testData/codegen/box/k2DifferencesChecks/ParenthesizedVariable.kt");
+        }
+
+        @Test
+        @TestMetadata("primaryConstructorMissingKeyword.kt")
+        public void testPrimaryConstructorMissingKeyword() throws Exception {
+            runTest("compiler/testData/codegen/box/k2DifferencesChecks/primaryConstructorMissingKeyword.kt");
+        }
+
+        @Test
+        @TestMetadata("protectedSuperCall.kt")
+        public void testProtectedSuperCall() throws Exception {
+            runTest("compiler/testData/codegen/box/k2DifferencesChecks/protectedSuperCall.kt");
+        }
+
+        @Test
+        @TestMetadata("PureKotlin.kt")
+        public void testPureKotlin() throws Exception {
+            runTest("compiler/testData/codegen/box/k2DifferencesChecks/PureKotlin.kt");
+        }
+
+        @Test
+        @TestMetadata("recursiveFun.kt")
+        public void testRecursiveFun() throws Exception {
+            runTest("compiler/testData/codegen/box/k2DifferencesChecks/recursiveFun.kt");
+        }
+
+        @Test
+        @TestMetadata("recursiveLambda.kt")
+        public void testRecursiveLambda() throws Exception {
+            runTest("compiler/testData/codegen/box/k2DifferencesChecks/recursiveLambda.kt");
+        }
+
+        @Test
+        @TestMetadata("RecursiveResolve.kt")
+        public void testRecursiveResolve() throws Exception {
+            runTest("compiler/testData/codegen/box/k2DifferencesChecks/RecursiveResolve.kt");
+        }
+
+        @Test
+        @TestMetadata("returnTypeNothingShouldBeSpecifiedExplicitly.kt")
+        public void testReturnTypeNothingShouldBeSpecifiedExplicitly() throws Exception {
+            runTest("compiler/testData/codegen/box/k2DifferencesChecks/returnTypeNothingShouldBeSpecifiedExplicitly.kt");
+        }
+
+        @Test
+        @TestMetadata("selfCallsInCompanionSuperConstructor_error.kt")
+        public void testSelfCallsInCompanionSuperConstructor_error() throws Exception {
+            runTest("compiler/testData/codegen/box/k2DifferencesChecks/selfCallsInCompanionSuperConstructor_error.kt");
+        }
+
+        @Test
+        @TestMetadata("subtypingBetweenContextReceivers.kt")
+        public void testSubtypingBetweenContextReceivers() throws Exception {
+            runTest("compiler/testData/codegen/box/k2DifferencesChecks/subtypingBetweenContextReceivers.kt");
+        }
+
+        @Test
+        @TestMetadata("upperBoundViolation.kt")
+        public void testUpperBoundViolation() throws Exception {
+            runTest("compiler/testData/codegen/box/k2DifferencesChecks/upperBoundViolation.kt");
+        }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/codegen/box/labels")
     @TestDataPath("$PROJECT_ROOT")
     public class Labels {

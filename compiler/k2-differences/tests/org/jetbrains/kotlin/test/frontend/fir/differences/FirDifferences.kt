@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 import org.jetbrains.kotlin.test.util.LANGUAGE_FEATURE_PATTERN
 import java.io.File
+import java.io.IOException
 import java.io.Writer
 
 val equivalentDiagnostics = listOf(
@@ -215,6 +216,9 @@ val equivalentDiagnostics = listOf(
 val k2SpecificLanguageFeatures = listOf(
     LanguageFeature.ReportErrorsForComparisonOperators,
 )
+
+val projectDirectory = File(System.getProperty("user.dir"))
+val build = projectDirectory.child("compiler").child("k2-differences").child("build")
 
 val equivalentDiagnosticsLookup = buildMap {
     for (klass in equivalentDiagnostics) {
@@ -568,19 +572,17 @@ fun fixStupidEmptyLines(
 }
 
 class DiagnosticsStatistics(
-    val disappearedDiagnosticToFilesCount: MutableMap<String, Int> = mutableMapOf(),
-    val introducedDiagnosticToFilesCount: MutableMap<String, Int> = mutableMapOf(),
+    val disappearedDiagnosticToFiles: MutableMap<String, MutableSet<File>> = mutableMapOf(),
+    val introducedDiagnosticToFiles: MutableMap<String, MutableSet<File>> = mutableMapOf(),
 )
 
-fun DiagnosticsStatistics.recordDiagnosticsStatistics(result: EquivalenceTestResult) {
+fun DiagnosticsStatistics.recordDiagnosticsStatistics(test: File, result: EquivalenceTestResult) {
     for (it in result.significantK1MetaInfo) {
-        val disappearedCount = disappearedDiagnosticToFilesCount.getOrDefault(it.tag, 0)
-        disappearedDiagnosticToFilesCount[it.tag] = disappearedCount + 1
+        disappearedDiagnosticToFiles.getOrPut(it.tag) { mutableSetOf() }.add(test)
     }
 
     for (it in result.significantK2MetaInfo) {
-        val introducedCount = introducedDiagnosticToFilesCount.getOrDefault(it.tag, 0)
-        introducedDiagnosticToFilesCount[it.tag] = introducedCount + 1
+        introducedDiagnosticToFiles.getOrPut(it.tag) { mutableSetOf() }.add(test)
     }
 }
 
@@ -605,15 +607,15 @@ fun logPossibleEquivalences(result: EquivalenceTestResult, writer: Writer) {
     }
 }
 
-fun printDiagnosticsStatistics(title: String? = null, diagnostics: Map<String, Int>, writer: Writer) {
+fun printDiagnosticsStatistics(title: String? = null, diagnostics: Map<String, Set<File>>, writer: Writer) {
     if (title != null) {
         writer.write("$title\n\n")
     }
 
-    val sorted = diagnostics.entries.sortedByDescending { it.value }
+    val sorted = diagnostics.entries.sortedByDescending { it.value.size }
 
     for (it in sorted) {
-        writer.write("- `${it.key}`: ${it.value} files")
+        writer.write("- `${it.key}`: ${it.value.size} files")
 
         val knownIssue = knownMissingDiagnostics[it.key]
 
@@ -629,13 +631,13 @@ fun File.renderDiagnosticsStatistics(diagnosticsStatistics: DiagnosticsStatistic
     bufferedWriter().use { writer ->
         printDiagnosticsStatistics(
             "Most common reasons of potential features (by the number of files) include:",
-            diagnosticsStatistics.disappearedDiagnosticToFilesCount,
+            diagnosticsStatistics.disappearedDiagnosticToFiles,
             writer,
         )
         writer.write("\n")
         printDiagnosticsStatistics(
             "Most common reasons of breaking changes (by the number of files) include:",
-            diagnosticsStatistics.introducedDiagnosticToFilesCount,
+            diagnosticsStatistics.introducedDiagnosticToFiles,
             writer,
         )
     }
@@ -643,10 +645,192 @@ fun File.renderDiagnosticsStatistics(diagnosticsStatistics: DiagnosticsStatistic
 
 val KT_ISSUE_PATTERN = """KT-?\d+""".toRegex(RegexOption.IGNORE_CASE)
 
-fun main() {
-    val projectDirectory = File(System.getProperty("user.dir"))
-    val build = projectDirectory.child("compiler").child("k2-differences").child("build")
+fun recordCandidateForBoxTestIfNeeded(
+    test: File,
+    result: EquivalenceTestResult,
+    shouldCheckManually: Boolean,
+    candidatesForAdditionalBoxTests: MutableList<File>,
+    candidatesForManualChecking: MutableList<File>,
+) {
+    val diagnosticsToCheckViaBoxTest = result.significantK1MetaInfo.filter {
+        it.tag in knownMissingDiagnostics && it.tag !in obsoleteIssues
+    }
 
+    if (diagnosticsToCheckViaBoxTest.isEmpty()) {
+        return
+    }
+
+    if (shouldCheckManually) {
+        candidatesForManualChecking.add(test)
+        return
+    }
+
+    candidatesForAdditionalBoxTests.add(test)
+}
+
+val knownFailingAdditionalBoxTests = listOf(
+    "coercionToUnitWithNothingType",
+    "innerTypeAliasAsType",
+    "dataClassExplicitlyOverridingCopyNoDefaults",
+    "clash",
+    "mixingSuspendAndNonSuspendSupertypesThruSuperClass",
+    "12",
+    "13",
+    "kt45796",
+    "kt53639",
+    "inheritanceAmbiguity",
+    "multiLambdaRestriction",
+    "mixingSuspendAndNonSuspendSupertypesThruSuperFunInterface_1",
+    "mixingSuspendAndNonSuspendSupertypesThruSuperFunInterface_2",
+    "kt51062Error",
+    "mixingSuspendAndNonSuspendSupertypes",
+    "mixingSuspendAndNonSuspendSupertypesThruSuperinterface_1",
+    "mixingSuspendAndNonSuspendSupertypesThruSuperinterface_2",
+    "recursiveLambda",
+    "noContextReceiversOnValueClasses",
+    "1",
+    "2",
+    "4",
+    "5",
+    "6",
+    "mixingSuspendAndNonSuspendSupertypesThruSuperinterface",
+    "inheritanceAmbiguity2",
+    "inheritanceAmbiguity3",
+    "inheritanceAmbiguity4",
+    "pureKotlin",
+    "multipleInheritedDefaults",
+    "nestedAndTopLevelClassClash",
+    "nestedClassClash",
+    "mixingSuspendAndNonSuspendSupertypesThruSuperClass_1",
+    "mixingSuspendAndNonSuspendSupertypesThruSuperClass_2",
+    "constructorInHeaderEnum",
+    "mixingSuspendAndNonSuspendSupertypes_1",
+    "mixingSuspendAndNonSuspendSupertypes_2",
+    "returnTypeNothingShouldBeSpecifiedExplicitly",
+    "mixingSuspendAndNonSuspendSupertypesThruSuperFunInterface",
+    "casesWithTwoTypeParameters",
+    "recursiveFun",
+    "dataClassExplicitlyOverridingCopyWithDefaults",
+    "protectedSuperCall",
+).map {
+    val file = projectDirectory.child("compiler/testData/codegen/box/k2DifferencesChecks/$it.kt")
+    """// ORIGINAL: (.*)""".toRegex().find(file.readText())?.groupValues?.get(1)
+        ?: error("No link to the original file found in $it")
+}.toSet()
+
+fun generateAdditionalBoxTestsAndLogManuals(
+    candidatesForAdditionalBoxTests: List<File>,
+    candidatesForManualChecking: List<File>,
+) {
+    val status = StatusPrinter()
+    val nextIndexAfter = mutableMapOf<String, Int>()
+
+    fun nextNameFor(baseName: String): String {
+        val index = nextIndexAfter[baseName] ?: 0
+        val name = if (index > 0) "${baseName}_$index" else baseName
+        return name.also {
+            nextIndexAfter[baseName] = index + 1
+        }
+    }
+
+    for (it in candidatesForAdditionalBoxTests) {
+        val boxTestsDirectory = when {
+            "compiler/testData/diagnostics/testsWithJsStdLib" in it.path -> "js/js.translator/testData/box"
+            else -> "compiler/testData/codegen/box"
+        }
+
+        val k2DifferencesChecks = projectDirectory.child(boxTestsDirectory).child("k2DifferencesChecks")
+            .also { it.mkdirs() }
+        val name = nextNameFor(it.name.split(".").first())
+        val additionalTest = k2DifferencesChecks.child("$name.kt")
+        val relativePath = it.path.removePrefix(projectDirectory.path)
+        val textPossiblyWithWarnings = it.readText().replace("// FIR_DUMP", "")
+        val text = clearTextFromDiagnosticMarkup(textPossiblyWithWarnings)
+
+        val textWithBox = when {
+            "fun box(): String?" in text -> text.replace("fun box(): String?", "fun vox(): String?") +
+                    "\n\nfun box() = vox() ?: \"FAIL\"\n"
+            "fun box(): String" in text -> text
+            else -> "$text\n\nfun box() = \"OK\"\n"
+        }
+
+        val originalReference = "// ORIGINAL: $relativePath\n"
+        val stdlibDirective = "// WITH_STDLIB\n"
+        val stdlib = if (stdlibDirective in text) "" else stdlibDirective
+        additionalTest.writeText(originalReference + stdlib + textWithBox)
+        status.loading("Regenerating $relativePath")
+    }
+
+    status.done("Additional box tests generated")
+
+    if (candidatesForManualChecking.isEmpty()) {
+        return
+    }
+
+    status.done("The following tests contain other errors, so they have to be checked manually")
+    println("")
+
+    for ((index, it) in candidatesForManualChecking.withIndex()) {
+        println("- $index: ${it.path.removePrefix(projectDirectory.path)}")
+    }
+}
+
+val File.analogousK2RelativePath get() = analogousK2File.path.removePrefix(projectDirectory.path)
+
+fun analyzeAdditionalBoxTests(
+    diagnosticsStatistics: DiagnosticsStatistics,
+) {
+    val testsAlwaysCausingCompilationCrashes = diagnosticsStatistics.disappearedDiagnosticToFiles.filter { (diagnostic, files) ->
+        files.all { it.analogousK2RelativePath in knownFailingAdditionalBoxTests }
+    }
+
+    val testsSometimesCausingCompilationCrashes = diagnosticsStatistics.disappearedDiagnosticToFiles.filter { (diagnostic, files) ->
+        files.any { it.analogousK2RelativePath in knownFailingAdditionalBoxTests }
+                && diagnostic !in testsAlwaysCausingCompilationCrashes
+    }
+
+    for ((diagnostic, files) in testsSometimesCausingCompilationCrashes) {
+        val missingIssue = knownMissingDiagnostics[diagnostic] ?: continue
+
+        val (failingBoxes, passingBoxes) = files.partition {
+            it.analogousK2RelativePath in knownFailingAdditionalBoxTests
+        }
+
+        val text = StringBuilder()
+        text.append("When turned into a box test, the following tests fail:\n\n")
+
+        for (it in failingBoxes) {
+            text.append("- ${it.analogousK2RelativePath}\n")
+        }
+
+        text.append("\n")
+        text.append("When turned into a box test, the following tests pass:\n\n")
+
+        for (it in passingBoxes) {
+            text.append("- ${it.analogousK2RelativePath}\n")
+        }
+
+        try {
+            val result = postJson(
+                "https://youtrack.jetbrains.com/api/issues/${missingIssue.id}/comments?fields=id,author(name),text",
+                mapOf(
+                    "Accept" to "application/json",
+                    "Authorization" to "Bearer $YT_TOKEN",
+                    "Content-Type" to "application/json",
+                ),
+                mapOf(
+                    "text" to text.toString(),
+                ),
+            )
+
+            println(result)
+        } catch (e: IOException) {
+            println(e)
+        }
+    }
+}
+
+fun main() {
     val tests = deserializeOrGenerate(build.child("testsStats.json")) {
         collectTestsStats(projectDirectory)
     }
@@ -666,6 +850,9 @@ fun main() {
 
     val similarityStatistics = DiagnosticsStatistics()
     val containmentStatistics = DiagnosticsStatistics()
+
+    val candidatesForAdditionalBoxTests = mutableListOf<File>()
+    val candidatesForManualChecking = mutableListOf<File>()
 
     fun checkTest(
         testPath: String,
@@ -713,7 +900,7 @@ fun main() {
             test, similarity, relativeK1TestPath, relativeK2TestPath,
             areNonEquivalent = { result ->
                 alongsideNonSimilarTests.add(test)
-                similarityStatistics.recordDiagnosticsStatistics(result)
+                similarityStatistics.recordDiagnosticsStatistics(test, result)
             },
             collectObsoleteFeatures = { obsoleteFeatures },
             collectBrandNewFeatures = { brandNewFeatures },
@@ -726,8 +913,13 @@ fun main() {
             test, containment, relativeK1TestPath, relativeK2TestPath,
             areNonEquivalent = { result ->
                 alongsideNonContainedTests.add(test)
-                containmentStatistics.recordDiagnosticsStatistics(result)
+                containmentStatistics.recordDiagnosticsStatistics(test, result)
                 logPossibleEquivalences(result, containment)
+
+                recordCandidateForBoxTestIfNeeded(
+                    test.analogousK2File, result, shouldCheckManually = allK2MetaInfos.isNotEmpty() || "expect " in k2Text,
+                    candidatesForAdditionalBoxTests, candidatesForManualChecking,
+                )
 
                 KT_ISSUE_PATTERN.find(k2Text)?.groupValues?.first()?.let {
                     alongsideNonContainedTestsWithIssues[test] = it
@@ -757,7 +949,7 @@ fun main() {
     build.child("containment-diagnostics-stats.md").renderDiagnosticsStatistics(containmentStatistics)
 
     build.child("k2-unimplemented-diagnostics.md").writer().use { writer ->
-        val missingDiagnostics = containmentStatistics.disappearedDiagnosticToFilesCount.filterKeys { it !in k2KnownErrors }
+        val missingDiagnostics = containmentStatistics.disappearedDiagnosticToFiles.filterKeys { it !in k2KnownErrors }
         val (withKnownIssues, newDiagnostics) = missingDiagnostics.entries.partition { it.key in knownMissingDiagnostics }
 
         printDiagnosticsStatistics(
@@ -771,6 +963,9 @@ fun main() {
             writer = writer,
         )
     }
+
+    generateAdditionalBoxTestsAndLogManuals(candidatesForAdditionalBoxTests, candidatesForManualChecking)
+    analyzeAdditionalBoxTests(containmentStatistics)
 
     val a = 10 + 1
     println("")

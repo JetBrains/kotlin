@@ -1,0 +1,11 @@
+FILE: inconsistentTypeInference.kt
+    public final fun foo(): R|kotlin/Unit| {
+        <Unresolved name: buildList>#(<L> = buildList@fun <anonymous>(): <ERROR TYPE REF: Unresolved name: println> <inline=Unknown>  {
+            <Unresolved name: add>#(String(Boom))
+            ^ <Unresolved name: println>#(<Unresolved name: plus>#(Int(1)).<Unresolved name: get>#(Int(0)))
+        }
+        )
+    }
+    public final fun box(): R|kotlin/String| {
+        ^box String(OK)
+    }

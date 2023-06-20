@@ -1,0 +1,9 @@
+/inconsistentTypeInference.kt:(62,71): error: Unresolved reference: buildList
+
+/inconsistentTypeInference.kt:(82,85): error: Unresolved reference: add
+
+/inconsistentTypeInference.kt:(102,109): error: Unresolved reference: println
+
+/inconsistentTypeInference.kt:(110,114): error: Unresolved reference: plus
+
+/inconsistentTypeInference.kt:(117,120): error: No get method providing array access
