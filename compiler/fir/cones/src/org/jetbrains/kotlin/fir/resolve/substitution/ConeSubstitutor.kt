@@ -21,6 +21,7 @@ abstract class ConeSubstitutor : TypeSubstitutorMarker {
             return null
         }
 
+        override fun toString(): String = "Empty"
     }
 }
 

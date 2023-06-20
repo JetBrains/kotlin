@@ -207,7 +207,11 @@ class DelegatedWrapperData<D : FirCallableDeclaration>(
     val wrapped: D,
     val containingClass: ConeClassLikeLookupTag,
     val delegateField: FirField,
-)
+) {
+    override fun toString(): String = "[${::wrapped.name}=${wrapped.symbol}, " +
+            "${::containingClass.name}=$containingClass, " +
+            "${::delegateField.name}=${delegateField.symbol}"
+}
 
 var <D : FirCallableDeclaration>
         D.delegatedWrapperData: DelegatedWrapperData<D>? by FirDeclarationDataRegistry.data(DelegatedWrapperDataKey)

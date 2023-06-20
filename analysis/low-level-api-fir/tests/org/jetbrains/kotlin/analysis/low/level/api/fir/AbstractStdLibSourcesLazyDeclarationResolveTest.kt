@@ -47,8 +47,8 @@ abstract class AbstractStdLibSourcesLazyDeclarationResolveTest : AbstractFirLazy
 
         doLazyResolveTest(file, testServices) { firSession ->
             val regularClass = findRegularClass(classId, module, firSession)
-            val declarationToResolve = chooseMemberDeclarationIfNeeded(regularClass, moduleStructure)
-            fun(phase: FirResolvePhase) {
+            val declarationToResolve = chooseMemberDeclarationIfNeeded(regularClass, moduleStructure, firSession)
+            declarationToResolve.fir to fun(phase: FirResolvePhase) {
                 declarationToResolve.lazyResolveToPhase(phase)
             }
         }

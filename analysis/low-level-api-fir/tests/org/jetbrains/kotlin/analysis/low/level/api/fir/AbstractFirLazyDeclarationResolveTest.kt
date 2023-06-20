@@ -36,7 +36,7 @@ abstract class AbstractFirLazyDeclarationResolveTest : AbstractFirLazyDeclaratio
             if (Directives.RESOLVE_FILE_ANNOTATIONS in moduleStructure.allDirectives) {
                 val annotationContainer = firResolveSession.getOrBuildFirFile(ktFile).annotationsContainer
                 val session = annotationContainer.moduleData.session as LLFirResolvableModuleSession
-                fun(phase: FirResolvePhase) {
+                annotationContainer to fun(phase: FirResolvePhase) {
                     session.moduleComponents.firModuleLazyDeclarationResolver.lazyResolve(
                         annotationContainer,
                         session.getScopeSession(),
@@ -46,8 +46,8 @@ abstract class AbstractFirLazyDeclarationResolveTest : AbstractFirLazyDeclaratio
             } else {
                 val ktDeclaration = testServices.expressionMarkerProvider.getElementOfTypeAtCaret<KtDeclaration>(ktFile)
                 val declarationSymbol = ktDeclaration.resolveToFirSymbol(firResolveSession)
-                val firDeclaration = chooseMemberDeclarationIfNeeded(declarationSymbol, moduleStructure)
-                fun(phase: FirResolvePhase) {
+                val firDeclaration = chooseMemberDeclarationIfNeeded(declarationSymbol, moduleStructure, firResolveSession)
+                firDeclaration.fir to fun(phase: FirResolvePhase) {
                     firDeclaration.lazyResolveToPhase(phase)
                 }
             }

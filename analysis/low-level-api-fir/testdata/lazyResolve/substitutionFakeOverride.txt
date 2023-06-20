@@ -1,0 +1,304 @@
+RAW_FIR:
+TARGET: public abstract [ResolvedTo(STATUS)] [SubstitutedOverrideOriginalKey=/AbstractClass.property] val property: R|kotlin/Int|
+
+
+FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverride.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    public abstract [ResolvedTo(STATUS)] class SubClass : R|AbstractClass<kotlin/Int>| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=SubClass] constructor(): R|SubClass| {
+            LAZY_super<R|AbstractClass<kotlin/Int>|>
+        }
+
+    }
+    public abstract [ResolvedTo(STATUS)] class AbstractClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] constructor<[ResolvedTo(STATUS)] T>(): R|AbstractClass<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public abstract [ResolvedTo(STATUS)] val property: R|T|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] get(): R|T|
+
+    }
+
+IMPORTS:
+TARGET: public abstract [ResolvedTo(STATUS)] [SubstitutedOverrideOriginalKey=/AbstractClass.property] val property: R|kotlin/Int|
+
+
+FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverride.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    public abstract [ResolvedTo(STATUS)] class SubClass : R|AbstractClass<kotlin/Int>| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=SubClass] constructor(): R|SubClass| {
+            LAZY_super<R|AbstractClass<kotlin/Int>|>
+        }
+
+    }
+    public abstract [ResolvedTo(STATUS)] class AbstractClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] constructor<[ResolvedTo(STATUS)] T>(): R|AbstractClass<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public abstract [ResolvedTo(STATUS)] val property: R|T|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] get(): R|T|
+
+    }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+TARGET: public abstract [ResolvedTo(STATUS)] [SubstitutedOverrideOriginalKey=/AbstractClass.property] val property: R|kotlin/Int|
+
+
+FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverride.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    public abstract [ResolvedTo(STATUS)] class SubClass : R|AbstractClass<kotlin/Int>| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=SubClass] constructor(): R|SubClass| {
+            LAZY_super<R|AbstractClass<kotlin/Int>|>
+        }
+
+    }
+    public abstract [ResolvedTo(STATUS)] class AbstractClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] constructor<[ResolvedTo(STATUS)] T>(): R|AbstractClass<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public abstract [ResolvedTo(STATUS)] val property: R|T|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] get(): R|T|
+
+    }
+
+COMPANION_GENERATION:
+TARGET: public abstract [ResolvedTo(STATUS)] [SubstitutedOverrideOriginalKey=/AbstractClass.property] val property: R|kotlin/Int|
+
+
+FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverride.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    public abstract [ResolvedTo(STATUS)] class SubClass : R|AbstractClass<kotlin/Int>| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=SubClass] constructor(): R|SubClass| {
+            LAZY_super<R|AbstractClass<kotlin/Int>|>
+        }
+
+    }
+    public abstract [ResolvedTo(STATUS)] class AbstractClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] constructor<[ResolvedTo(STATUS)] T>(): R|AbstractClass<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public abstract [ResolvedTo(STATUS)] val property: R|T|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] get(): R|T|
+
+    }
+
+SUPER_TYPES:
+TARGET: public abstract [ResolvedTo(STATUS)] [SubstitutedOverrideOriginalKey=/AbstractClass.property] val property: R|kotlin/Int|
+
+
+FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverride.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    public abstract [ResolvedTo(STATUS)] class SubClass : R|AbstractClass<kotlin/Int>| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=SubClass] constructor(): R|SubClass| {
+            LAZY_super<R|AbstractClass<kotlin/Int>|>
+        }
+
+    }
+    public abstract [ResolvedTo(STATUS)] class AbstractClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] constructor<[ResolvedTo(STATUS)] T>(): R|AbstractClass<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public abstract [ResolvedTo(STATUS)] val property: R|T|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] get(): R|T|
+
+    }
+
+TYPES:
+TARGET: public abstract [ResolvedTo(STATUS)] [SubstitutedOverrideOriginalKey=/AbstractClass.property] val property: R|kotlin/Int|
+
+
+FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverride.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    public abstract [ResolvedTo(STATUS)] class SubClass : R|AbstractClass<kotlin/Int>| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=SubClass] constructor(): R|SubClass| {
+            LAZY_super<R|AbstractClass<kotlin/Int>|>
+        }
+
+    }
+    public abstract [ResolvedTo(STATUS)] class AbstractClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] constructor<[ResolvedTo(STATUS)] T>(): R|AbstractClass<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public abstract [ResolvedTo(STATUS)] val property: R|T|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] get(): R|T|
+
+    }
+
+STATUS:
+TARGET: public abstract [ResolvedTo(STATUS)] [SubstitutedOverrideOriginalKey=/AbstractClass.property] val property: R|kotlin/Int|
+
+
+FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverride.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    public abstract [ResolvedTo(STATUS)] class SubClass : R|AbstractClass<kotlin/Int>| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=SubClass] constructor(): R|SubClass| {
+            LAZY_super<R|AbstractClass<kotlin/Int>|>
+        }
+
+    }
+    public abstract [ResolvedTo(STATUS)] class AbstractClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] constructor<[ResolvedTo(STATUS)] T>(): R|AbstractClass<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public abstract [ResolvedTo(STATUS)] val property: R|T|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] get(): R|T|
+
+    }
+
+EXPECT_ACTUAL_MATCHING:
+TARGET: public abstract [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [SubstitutedOverrideOriginalKey=/AbstractClass.property] val property: R|kotlin/Int|
+
+
+FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverride.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    public abstract [ResolvedTo(STATUS)] class SubClass : R|AbstractClass<kotlin/Int>| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=SubClass] constructor(): R|SubClass| {
+            LAZY_super<R|AbstractClass<kotlin/Int>|>
+        }
+
+    }
+    public abstract [ResolvedTo(STATUS)] class AbstractClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] constructor<[ResolvedTo(STATUS)] T>(): R|AbstractClass<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public abstract [ResolvedTo(STATUS)] val property: R|T|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] get(): R|T|
+
+    }
+
+ARGUMENTS_OF_ANNOTATIONS:
+TARGET: public abstract [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] [SubstitutedOverrideOriginalKey=/AbstractClass.property] val property: R|kotlin/Int|
+
+
+FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverride.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    public abstract [ResolvedTo(STATUS)] class SubClass : R|AbstractClass<kotlin/Int>| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=SubClass] constructor(): R|SubClass| {
+            LAZY_super<R|AbstractClass<kotlin/Int>|>
+        }
+
+    }
+    public abstract [ResolvedTo(STATUS)] class AbstractClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] constructor<[ResolvedTo(STATUS)] T>(): R|AbstractClass<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public abstract [ResolvedTo(STATUS)] val property: R|T|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] get(): R|T|
+
+    }
+
+CONTRACTS:
+TARGET: public abstract [ResolvedTo(CONTRACTS)] [SubstitutedOverrideOriginalKey=/AbstractClass.property] val property: R|kotlin/Int|
+
+
+FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverride.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    public abstract [ResolvedTo(STATUS)] class SubClass : R|AbstractClass<kotlin/Int>| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=SubClass] constructor(): R|SubClass| {
+            LAZY_super<R|AbstractClass<kotlin/Int>|>
+        }
+
+    }
+    public abstract [ResolvedTo(STATUS)] class AbstractClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] constructor<[ResolvedTo(STATUS)] T>(): R|AbstractClass<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public abstract [ResolvedTo(STATUS)] val property: R|T|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] get(): R|T|
+
+    }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+TARGET: public abstract [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [SubstitutedOverrideOriginalKey=/AbstractClass.property] val property: R|kotlin/Int|
+
+
+FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverride.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    public abstract [ResolvedTo(STATUS)] class SubClass : R|AbstractClass<kotlin/Int>| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=SubClass] constructor(): R|SubClass| {
+            LAZY_super<R|AbstractClass<kotlin/Int>|>
+        }
+
+    }
+    public abstract [ResolvedTo(STATUS)] class AbstractClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] constructor<[ResolvedTo(STATUS)] T>(): R|AbstractClass<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public abstract [ResolvedTo(STATUS)] val property: R|T|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] get(): R|T|
+
+    }
+
+ANNOTATIONS_ARGUMENTS_MAPPING:
+TARGET: public abstract [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] [SubstitutedOverrideOriginalKey=/AbstractClass.property] val property: R|kotlin/Int|
+
+
+FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverride.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    public abstract [ResolvedTo(STATUS)] class SubClass : R|AbstractClass<kotlin/Int>| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=SubClass] constructor(): R|SubClass| {
+            LAZY_super<R|AbstractClass<kotlin/Int>|>
+        }
+
+    }
+    public abstract [ResolvedTo(STATUS)] class AbstractClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] constructor<[ResolvedTo(STATUS)] T>(): R|AbstractClass<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public abstract [ResolvedTo(STATUS)] val property: R|T|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] get(): R|T|
+
+    }
+
+BODY_RESOLVE:
+TARGET: public abstract [ResolvedTo(BODY_RESOLVE)] [SubstitutedOverrideOriginalKey=/AbstractClass.property] val property: R|kotlin/Int|
+
+
+FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverride.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    public abstract [ResolvedTo(STATUS)] class SubClass : R|AbstractClass<kotlin/Int>| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=SubClass] constructor(): R|SubClass| {
+            LAZY_super<R|AbstractClass<kotlin/Int>|>
+        }
+
+    }
+    public abstract [ResolvedTo(STATUS)] class AbstractClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] constructor<[ResolvedTo(STATUS)] T>(): R|AbstractClass<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public abstract [ResolvedTo(STATUS)] val property: R|T|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] get(): R|T|
+
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverride.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    public abstract [ResolvedTo(BODY_RESOLVE)] class SubClass : R|AbstractClass<kotlin/Int>| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=SubClass] constructor(): R|SubClass| {
+            super<R|AbstractClass<kotlin/Int>|>()
+        }
+
+    }
+    public abstract [ResolvedTo(BODY_RESOLVE)] class AbstractClass<[ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=AbstractClass] constructor<[ResolvedTo(BODY_RESOLVE)] T>(): R|AbstractClass<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public abstract [ResolvedTo(BODY_RESOLVE)] val property: R|T|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=AbstractClass] get(): R|T|
+
+    }
