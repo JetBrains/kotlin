@@ -112,10 +112,12 @@ abstract class AbstractLightAnalysisModeTest : CodegenTestCase() {
         }
 
         override fun shouldWriteMethod(access: Int, name: String, desc: String) = when {
+            access and ACC_SYNTHETIC != 0 -> false
+            access and ACC_PRIVATE != 0 -> false
             name == "<clinit>" -> false
             name.contains("\$\$forInline") -> false
             AsmTypes.DEFAULT_CONSTRUCTOR_MARKER.descriptor in desc -> false
-            name.startsWith("access$") && (access and ACC_STATIC != 0) && (access and ACC_SYNTHETIC != 0) -> false
+            name.startsWith("access$") && (access and ACC_STATIC != 0) -> false
             else -> true
         }
 
@@ -123,11 +125,15 @@ abstract class AbstractLightAnalysisModeTest : CodegenTestCase() {
             name == "\$assertionsDisabled" -> false
             name == "\$VALUES" && (access and ACC_PRIVATE != 0) && (access and ACC_FINAL != 0) && (access and ACC_SYNTHETIC != 0) -> false
             name == JvmAbi.DELEGATED_PROPERTIES_ARRAY_NAME && (access and ACC_SYNTHETIC != 0) -> false
+            name.endsWith("\$receiver") -> false
+            JvmAbi.DELEGATED_PROPERTY_NAME_SUFFIX in name -> false
             else -> true
         }
 
-        override fun shouldWriteInnerClass(name: String, outerName: String?, innerName: String?) =
-            outerName != null && innerName != null
+        // Generated InnerClasses attributes depend on which types are used in method bodies, so they can easily be non-equal
+        // among full and light analysis modes.
+        override fun shouldWriteInnerClass(name: String, outerName: String?, innerName: String?, access: Int): Boolean =
+            false
 
         override val shouldTransformAnonymousTypes: Boolean
             get() = true

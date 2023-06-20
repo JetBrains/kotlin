@@ -77,14 +77,14 @@ class BytecodeListingTextCollectingVisitor(
         fun shouldWriteClass(node: ClassNode): Boolean
         fun shouldWriteMethod(access: Int, name: String, desc: String): Boolean
         fun shouldWriteField(access: Int, name: String, desc: String): Boolean
-        fun shouldWriteInnerClass(name: String, outerName: String?, innerName: String?): Boolean
+        fun shouldWriteInnerClass(name: String, outerName: String?, innerName: String?, access: Int): Boolean
         val shouldTransformAnonymousTypes: Boolean
 
         object EMPTY : Filter {
             override fun shouldWriteClass(node: ClassNode) = true
             override fun shouldWriteMethod(access: Int, name: String, desc: String) = true
             override fun shouldWriteField(access: Int, name: String, desc: String) = true
-            override fun shouldWriteInnerClass(name: String, outerName: String?, innerName: String?) = true
+            override fun shouldWriteInnerClass(name: String, outerName: String?, innerName: String?, access: Int) = true
             override val shouldTransformAnonymousTypes: Boolean get() = false
         }
 
@@ -92,7 +92,9 @@ class BytecodeListingTextCollectingVisitor(
             override fun shouldWriteClass(node: ClassNode): Boolean = !node.name.startsWith("helpers/")
             override fun shouldWriteMethod(access: Int, name: String, desc: String): Boolean = true
             override fun shouldWriteField(access: Int, name: String, desc: String): Boolean = true
-            override fun shouldWriteInnerClass(name: String, outerName: String?, innerName: String?): Boolean = !name.startsWith("helpers/")
+            override fun shouldWriteInnerClass(name: String, outerName: String?, innerName: String?, access: Int): Boolean =
+                !name.startsWith("helpers/")
+
             override val shouldTransformAnonymousTypes: Boolean get() = false
         }
     }
@@ -351,7 +353,7 @@ class BytecodeListingTextCollectingVisitor(
     }
 
     override fun visitInnerClass(name: String, outerName: String?, innerName: String?, access: Int) {
-        if (!filter.shouldWriteInnerClass(name, outerName, innerName)) {
+        if (!filter.shouldWriteInnerClass(name, outerName, innerName, access)) {
             return
         }
 
