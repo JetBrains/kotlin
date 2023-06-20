@@ -46,4 +46,6 @@ sealed class FirMetadataSource : MetadataSource {
     }
 
     class Script(override val fir: FirScript) : FirMetadataSource(), MetadataSource.Script
+
+    class CodeFragment(override val fir: FirCodeFragment) : FirMetadataSource(), MetadataSource.CodeFragment
 }

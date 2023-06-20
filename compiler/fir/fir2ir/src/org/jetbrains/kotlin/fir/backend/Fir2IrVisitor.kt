@@ -58,6 +58,7 @@ import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtForExpression
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 
 class Fir2IrVisitor(
     private val components: Fir2IrComponents,
@@ -224,6 +225,19 @@ class Fir2IrVisitor(
             }
             declarationStorage.leaveScope(irScript)
         }
+    }
+
+    override fun visitCodeFragment(codeFragment: FirCodeFragment, data: Any?): IrElement {
+        val irClass = classifierStorage.getCachedIrCodeFragment(codeFragment)!!
+        val irFunction = irClass.declarations.firstIsInstance<IrSimpleFunction>()
+
+        declarationStorage.enterScope(irFunction)
+        conversionScope.withParent(irFunction) {
+            irFunction.body = irFactory.createExpressionBody(codeFragment.block.convertToIrBlock())
+        }
+        declarationStorage.leaveScope(irFunction)
+
+        return irFunction
     }
 
     override fun visitAnonymousObjectExpression(anonymousObjectExpression: FirAnonymousObjectExpression, data: Any?): IrElement {
@@ -552,6 +566,9 @@ class Fir2IrVisitor(
         data: Any?
     ): IrElement = whileAnalysing(session, thisReceiverExpression) {
         val calleeReference = thisReceiverExpression.calleeReference
+
+        callGenerator.injectGetValueCall(thisReceiverExpression, calleeReference)?.let { return it }
+
         val boundSymbol = calleeReference.boundSymbol
         if (boundSymbol is FirClassSymbol) {
             // Object case
