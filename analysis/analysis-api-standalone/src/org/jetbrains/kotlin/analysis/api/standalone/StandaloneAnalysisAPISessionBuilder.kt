@@ -12,6 +12,9 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
 import com.intellij.psi.search.GlobalSearchScope
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.lifetime.KtDefaultLifetimeTokenProvider
 import org.jetbrains.kotlin.analysis.api.lifetime.KtReadActionConfinementDefaultLifetimeTokenProvider
@@ -37,13 +40,11 @@ import org.jetbrains.kotlin.fir.declarations.SealedClassInheritorsProvider
 import org.jetbrains.kotlin.fir.declarations.SealedClassInheritorsProviderImpl
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.psi.KtFile
-import kotlin.contracts.ExperimentalContracts
-import kotlin.contracts.InvocationKind
-import kotlin.contracts.contract
 
 public class StandaloneAnalysisAPISessionBuilder(
     applicationDisposable: Disposable,
     projectDisposable: Disposable,
+    unitTestMode: Boolean,
     classLoader: ClassLoader = MockProject::class.java.classLoader
 ) {
     init {
@@ -59,9 +60,9 @@ public class StandaloneAnalysisAPISessionBuilder(
         StandaloneProjectFactory.createProjectEnvironment(
             projectDisposable,
             applicationDisposable,
+            unitTestMode,
             classLoader = classLoader
         )
-
 
     init {
         FirStandaloneServiceRegistrar.registerApplicationServices(kotlinCoreProjectEnvironment.environment.application)
@@ -217,6 +218,7 @@ public class StandaloneAnalysisAPISessionBuilder(
 public inline fun buildStandaloneAnalysisAPISession(
     applicationDisposable: Disposable = Disposer.newDisposable("StandaloneAnalysisAPISession.application"),
     projectDisposable: Disposable = Disposer.newDisposable("StandaloneAnalysisAPISession.project"),
+    unitTestMode: Boolean = false,
     withPsiDeclarationFromBinaryModuleProvider: Boolean = false,
     classLoader: ClassLoader = MockProject::class.java.classLoader,
     init: StandaloneAnalysisAPISessionBuilder.() -> Unit
@@ -227,6 +229,7 @@ public inline fun buildStandaloneAnalysisAPISession(
     return StandaloneAnalysisAPISessionBuilder(
         applicationDisposable,
         projectDisposable,
+        unitTestMode,
         classLoader
     ).apply(init).build(
         withPsiDeclarationFromBinaryModuleProvider,

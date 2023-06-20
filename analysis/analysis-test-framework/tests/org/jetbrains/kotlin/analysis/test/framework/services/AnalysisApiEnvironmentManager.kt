@@ -43,6 +43,7 @@ class AnalysisApiEnvironmentManagerImpl(
         StandaloneProjectFactory.createProjectEnvironment(
             testRootDisposable,
             testServices.applicationDisposableProvider.getApplicationRootDisposable(),
+            unitTestMode = true
         )
     }
 
