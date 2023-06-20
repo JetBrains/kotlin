@@ -18430,6 +18430,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("deserializedOptInDeprecated.kt")
+        public void testDeserializedOptInDeprecated() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/deserializedOptInDeprecated.kt");
+        }
+
+        @Test
         @TestMetadata("differentSinceKotlin.kt")
         public void testDifferentSinceKotlin() throws Exception {
             runTest("compiler/testData/codegen/box/fir/differentSinceKotlin.kt");

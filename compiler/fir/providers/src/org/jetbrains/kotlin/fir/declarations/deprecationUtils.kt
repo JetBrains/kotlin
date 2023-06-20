@@ -103,7 +103,7 @@ fun FirAnnotationContainer.extractDeprecationInfoPerUseSite(
 ): DeprecationAnnotationInfoPerUseSiteStorage {
     val fromJava = this is FirDeclaration && this.isJavaOrEnhancement
     return buildDeprecationAnnotationInfoPerUseSiteStorage {
-        add((customAnnotations ?: annotations).extractDeprecationAnnotationInfoPerUseSite(session, fromJava))
+        add((customAnnotations ?: annotations).extractDeprecationAnnotationInfoPerUseSite(fromJava))
         if (this@extractDeprecationInfoPerUseSite is FirProperty) {
             add(
                 getDeprecationsAnnotationInfoByUseSiteFromAccessors(
@@ -158,7 +158,7 @@ fun List<FirAnnotation>.getDeprecationsProviderFromAnnotations(
     session: FirSession,
     fromJava: Boolean
 ): DeprecationsProvider {
-    val deprecationAnnotationByUseSite = extractDeprecationAnnotationInfoPerUseSite(session, fromJava)
+    val deprecationAnnotationByUseSite = extractDeprecationAnnotationInfoPerUseSite(fromJava)
     return deprecationAnnotationByUseSite.toDeprecationsProvider(session.firCachesFactory)
 }
 
@@ -199,9 +199,7 @@ val deprecationAnnotationSimpleNames: Set<String> = setOf(
     StandardClassIds.Annotations.SinceKotlin.shortClassName.asString(),
 )
 
-private fun List<FirAnnotation>.extractDeprecationAnnotationInfoPerUseSite(
-    session: FirSession, fromJava: Boolean
-): DeprecationAnnotationInfoPerUseSiteStorage {
+private fun List<FirAnnotation>.extractDeprecationAnnotationInfoPerUseSite(fromJava: Boolean): DeprecationAnnotationInfoPerUseSiteStorage {
     // NB: We can't expand typealiases (`toAnnotationClassId`), because it
     // requires `lookupTag.tySymbol()`, but we can have cycles in annotations.
     // See the commit message for an example.
@@ -228,9 +226,9 @@ private fun List<FirAnnotation>.extractDeprecationAnnotationInfoPerUseSite(
             } else {
                 val deprecationLevel = deprecated.getDeprecationLevel() ?: DeprecationLevelValue.WARNING
                 val propagatesToOverride = !fromJavaAnnotation && !fromJava
-                val deprecatedSinceKotlin = getAnnotationsByClassId(
-                    StandardClassIds.Annotations.DeprecatedSinceKotlin, session
-                ).firstOrNull()
+                val deprecatedSinceKotlin = this@extractDeprecationAnnotationInfoPerUseSite.firstOrNull {
+                    it.unexpandedClassId == StandardClassIds.Annotations.DeprecatedSinceKotlin
+                }
                 val message = deprecated.getStringArgument(ParameterNames.deprecatedMessage)
 
                 val deprecatedInfo =

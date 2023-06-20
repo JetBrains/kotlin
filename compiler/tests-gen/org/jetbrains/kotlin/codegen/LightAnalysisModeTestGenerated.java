@@ -14643,6 +14643,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/fir/ConstValAccess.kt");
         }
 
+        @TestMetadata("deserializedOptInDeprecated.kt")
+        public void testDeserializedOptInDeprecated() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/deserializedOptInDeprecated.kt");
+        }
+
         @TestMetadata("differentSinceKotlin.kt")
         public void testDifferentSinceKotlin() throws Exception {
             runTest("compiler/testData/codegen/box/fir/differentSinceKotlin.kt");
