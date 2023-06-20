@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.psi.KtExpression
 
 class KtFirInvokeFunctionReference(expression: KtCallExpression) : KtInvokeFunctionReference(expression), KtFirReference {
     override fun KtAnalysisSession.resolveToSymbols(): Collection<KtSymbol> {
-        return expression.resolveCall().calls.mapNotNull { call ->
+        return expression.resolveCall()?.calls.orEmpty().mapNotNull { call ->
             (call as? KtSimpleFunctionCall)
                 ?.takeIf { it.isImplicitInvoke }
                 ?.partiallyAppliedSymbol

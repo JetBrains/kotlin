@@ -62,7 +62,7 @@ internal abstract class SymbolLightAbstractAnnotation(parent: PsiElement) :
             val callElement = kotlinOrigin ?: return null
             return analyzeForLightClasses(callElement) {
                 val valueParameter = callElement.resolveCall()
-                    .singleConstructorCallOrNull()
+                    ?.singleConstructorCallOrNull()
                     ?.symbol
                     ?.valueParameters
                     ?.find { it.name.identifierOrNullIfSpecial == attributeName }
