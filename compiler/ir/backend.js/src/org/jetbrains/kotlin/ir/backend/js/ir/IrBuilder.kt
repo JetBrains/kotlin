@@ -189,12 +189,13 @@ object JsIrBuilder {
         isVar: Boolean = false,
         isConst: Boolean = false,
         isLateinit: Boolean = false,
-        initializer: IrExpression? = null
+        initializer: IrExpression? = null,
+        origin: IrDeclarationOrigin = SYNTHESIZED_DECLARATION
     ): IrVariable = buildVariable(
         parent,
         UNDEFINED_OFFSET,
         UNDEFINED_OFFSET,
-        SYNTHESIZED_DECLARATION,
+        origin,
         Name.identifier(name),
         type,
         isVar,

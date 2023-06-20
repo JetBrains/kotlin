@@ -205,7 +205,7 @@ fun translateCall(
             Pair(function, superQualifier.owner)
         }
 
-        if (expression.isSyntheticDelegatingReplacement || currentDispatchReceiver.canUseSuperRef(context, klass)) {
+        if (currentDispatchReceiver.canUseSuperRef(context, klass)) {
             return JsInvocation(JsNameRef(context.getNameForMemberFunction(target), JsSuperRef()), arguments)
         }
 

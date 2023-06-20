@@ -5213,6 +5213,12 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
         }
 
         @Test
+        @TestMetadata("delegatingToSecondaryCtor.kt")
+        public void testDelegatingToSecondaryCtor() throws Exception {
+            runTest("js/js.translator/testData/box/inheritance/delegatingToSecondaryCtor.kt");
+        }
+
+        @Test
         @TestMetadata("fromFakeClasses.kt")
         public void testFromFakeClasses() throws Exception {
             runTest("js/js.translator/testData/box/inheritance/fromFakeClasses.kt");

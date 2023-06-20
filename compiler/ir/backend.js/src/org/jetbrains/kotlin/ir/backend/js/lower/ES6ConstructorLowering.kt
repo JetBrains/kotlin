@@ -155,7 +155,8 @@ class ES6ConstructorLowering(val context: JsIrBackendContext) : DeclarationTrans
             type = irClass.defaultType,
             parent = this,
             name = Namer.SYNTHETIC_RECEIVER_NAME,
-            initializer = initializer
+            initializer = initializer,
+            origin = IrDeclarationOrigin.IR_TEMPORARY_VARIABLE
         )
     }
 

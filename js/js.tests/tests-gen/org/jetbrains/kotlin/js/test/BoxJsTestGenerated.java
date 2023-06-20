@@ -4479,6 +4479,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         }
 
         @Test
+        @TestMetadata("delegatingToSecondaryCtor.kt")
+        public void testDelegatingToSecondaryCtor() throws Exception {
+            runTest("js/js.translator/testData/box/inheritance/delegatingToSecondaryCtor.kt");
+        }
+
+        @Test
         @TestMetadata("fromFakeClasses.kt")
         public void testFromFakeClasses() throws Exception {
             runTest("js/js.translator/testData/box/inheritance/fromFakeClasses.kt");
