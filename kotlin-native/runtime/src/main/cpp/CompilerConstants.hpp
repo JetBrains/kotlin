@@ -113,7 +113,7 @@ ALWAYS_INLINE inline GCSchedulerType getGCSchedulerType() noexcept {
 }
 
 ALWAYS_INLINE inline bool gcMarkSingleThreaded() noexcept {
-    return Kotlin_gcMarkSingleThreaded != 0;
+    return true;//Kotlin_gcMarkSingleThreaded != 0;
 }
 
 
