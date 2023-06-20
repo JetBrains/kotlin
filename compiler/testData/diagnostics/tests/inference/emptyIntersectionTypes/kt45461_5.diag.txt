@@ -1,6 +1,6 @@
 /kt45461_5.kt:7:25: warning: parameter 'foo' is never used
     fun <S : T> takeFoo(foo: Foo<in S>) {}
                         ^
-/kt45461_5.kt:12:19: warning: type argument for a type parameter S can't be inferred because it has incompatible upper bounds: String, K (multiple incompatible classes: String, Number). This will become an error in a future release
+/kt45461_5.kt:12:19: warning: type argument for a type parameter S can't be inferred because it has incompatible upper bounds: String, K (multiple incompatible classes: String, Number). This will become an error in Kotlin 2.0
     Bar<String>().takeFoo(foo) // error in 1.3.72, no error in 1.4.31
                   ^

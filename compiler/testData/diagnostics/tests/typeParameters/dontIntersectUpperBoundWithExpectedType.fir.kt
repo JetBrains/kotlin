@@ -9,7 +9,7 @@ fun <T : Foo> foo(): T? {
 }
 
 fun main() {
-    val a: Bar? = <!DEBUG_INFO_EXPRESSION_TYPE("Foo? & Bar?")!><!INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION_WARNING!>foo<!>()<!>
+    val a: Bar? = <!DEBUG_INFO_EXPRESSION_TYPE("Foo? & Bar?")!><!INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION_ERROR!>foo<!>()<!>
 }
 
 

@@ -7,5 +7,5 @@ fun test1(l: List<Number>) {
 
     val i: Int = l.firstTyped()
 
-    val s: String = l.<!INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION_WARNING!>firstTyped<!>()
+    val s: String = l.<!INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION_ERROR!>firstTyped<!>()
 }

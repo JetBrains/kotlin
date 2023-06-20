@@ -1,6 +1,7 @@
 // FIR_IDENTICAL
 // !DIAGNOSTICS: -FINAL_UPPER_BOUND -CAST_NEVER_SUCCEEDS
 // !LANGUAGE: +AllowEmptyIntersectionsInResultTypeResolver
+// !LANGUAGE: -ForbidInferringTypeVariablesIntoEmptyIntersection
 
 interface I
 
