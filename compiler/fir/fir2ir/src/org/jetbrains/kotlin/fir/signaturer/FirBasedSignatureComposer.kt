@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.serialization.mangle.MangleConstant
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.backend.Fir2IrSignatureComposer
+import org.jetbrains.kotlin.fir.backend.conversionData
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
@@ -54,6 +55,9 @@ class FirBasedSignatureComposer(override val mangler: FirMangler) : Fir2IrSignat
         }
 
         override fun visitScript(script: FirScript, data: Any?) {
+        }
+
+        override fun visitCodeFragment(codeFragment: FirCodeFragment, data: Any?) {
         }
 
         override fun visitTypeAlias(typeAlias: FirTypeAlias, data: Any?) {
@@ -163,6 +167,12 @@ class FirBasedSignatureComposer(override val mangler: FirMangler) : Fir2IrSignat
                     mask = builder.mask,
                     description = null, // TODO(KT-59486): Save mangled name here
                 )
+            }
+            is FirCodeFragment -> {
+                val conversionData = declaration.conversionData
+                val packageFqName = conversionData.classId.packageFqName.asString()
+                val classFqName = conversionData.classId.relativeClassName.asString()
+                IdSignature.CommonSignature(packageFqName, classFqName, builder.hashId, builder.mask, description = null)
             }
             else -> error("Unsupported FIR declaration in signature composer: ${declaration.render()}")
         }
