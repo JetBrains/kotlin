@@ -329,6 +329,8 @@ internal interface KotlinPluginLifecycle {
 
     fun enqueue(stage: Stage, action: KotlinPluginLifecycle.() -> Unit)
 
+    val isStarted: Boolean
+
     fun launch(block: suspend KotlinPluginLifecycle.() -> Unit)
 
     suspend fun await(stage: Stage)
@@ -370,13 +372,16 @@ private class KotlinPluginLifecycleImpl(override val project: Project) : KotlinP
         Stage.values().associateWith { ArrayDeque() }
 
     private val loopRunning = AtomicBoolean(false)
-    private val isStarted = AtomicBoolean(false)
+    private val isStartedImpl = AtomicBoolean(false)
     private val isFinished = AtomicBoolean(false)
+
+    override val isStarted: Boolean
+        get() = isStartedImpl.get()
 
     private val properties = WeakHashMap<Property<*>, WeakReference<LifecycleAwareProperty<*>>>()
 
     fun start() {
-        check(!isStarted.getAndSet(true)) {
+        check(!isStartedImpl.getAndSet(true)) {
             "${KotlinPluginLifecycle::class.java.name} already started"
         }
 
@@ -444,7 +449,7 @@ private class KotlinPluginLifecycleImpl(override val project: Project) : KotlinP
 
         enqueuedActions.getValue(stage).addLast(action)
 
-        if (stage == Stage.EvaluateBuildscript && isStarted.get()) {
+        if (stage == Stage.EvaluateBuildscript && isStartedImpl.get()) {
             loopIfNecessary()
         }
     }
@@ -497,6 +502,13 @@ private class KotlinPluginLifecycleImpl(override val project: Project) : KotlinP
             finaliseIn.await()
             return property.orNull
         }
+    }
+
+    override fun toString(): String = buildString {
+        append("Kotlin Plugin Lifecycle: (${project.displayName})")
+        if (!isStarted) append(" *not started*")
+        else append(" stage '$stage'")
+        if (isFinished.get()) append(" *finished*")
     }
 }
 
