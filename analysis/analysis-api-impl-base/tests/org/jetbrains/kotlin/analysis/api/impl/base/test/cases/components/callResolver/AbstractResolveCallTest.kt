@@ -30,7 +30,7 @@ abstract class AbstractResolveCallTest : AbstractAnalysisApiBasedSingleModuleTes
         testServices.assertions.assertEqualsToTestDataFileSibling(actual)
     }
 
-    private fun KtAnalysisSession.resolveCall(element: PsiElement): KtCallInfo? = when (element) {
+    private fun KtAnalysisSession.resolveCall(element: KtElement): KtCallInfo? = when (element) {
         is KtValueArgument -> element.getArgumentExpression()?.resolveCall()
         is KtDeclarationModifierList -> {
             val annotationEntry = element.annotationEntries.singleOrNull()
@@ -42,9 +42,7 @@ abstract class AbstractResolveCallTest : AbstractAnalysisApiBasedSingleModuleTes
                 ?: error("Only single annotation entry is supported for now")
             annotationEntry.resolveCall()
         }
-        is KtCallElement -> element.resolveCall()
-        is KtElement -> element.resolveCall()
-        else -> error("Selected element type (${element::class.simpleName}) is not supported for resolveCall()")
+        else -> element.resolveCall()
     }
 
 }

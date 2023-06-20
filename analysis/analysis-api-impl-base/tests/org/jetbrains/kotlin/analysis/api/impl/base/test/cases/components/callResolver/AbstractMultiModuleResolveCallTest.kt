@@ -27,16 +27,9 @@ abstract class AbstractMultiModuleResolveCallTest : AbstractAnalysisApiBasedTest
 
         val actual = executeOnPooledThreadInReadAction {
             analyseForTest(expression) {
-                resolveCall(expression)?.let { stringRepresentation(it) }
+                expression.resolveCall()?.let { stringRepresentation(it) }
             }
         } ?: "null"
         testServices.assertions.assertEqualsToTestDataFileSibling(actual)
     }
-
-    private fun KtAnalysisSession.resolveCall(element: PsiElement): KtCallInfo? = when (element) {
-        is KtCallElement -> element.resolveCall()
-        is KtElement -> element.resolveCall()
-        else -> error("Selected element type (${element::class.simpleName}) is not supported for resolveCall()")
-    }
-
 }
