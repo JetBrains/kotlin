@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.ir.types.typeOrNull
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.isKFunction
 import org.jetbrains.kotlin.ir.util.isSubclassOf
+import org.jetbrains.kotlin.ir.util.properties
 import org.jetbrains.kotlin.name.SpecialNames
 
 // Note: this class still will not allow us to evaluate things like `A()::a.name + `A()::b.name`.
@@ -40,6 +41,9 @@ class IrInterpreterKCallableNamePreprocessor : IrInterpreterPreprocessor {
             val newType = kFunction.typeWith(receiver.type, *typeArguments.toTypedArray())
             callableReference.type = newType
         }
+
+        // We want to change symbol to keep IR correct. If something goes wrong during interpretation, we still will have compilable code.
+        expression.symbol = data.irBuiltIns.kCallableClass.owner.properties.single { it.name.asString() == "name" }.getter!!.symbol
 
         callableReference.dispatchReceiver = null
         callableReference.extensionReceiver = null
