@@ -35,7 +35,7 @@ class FirJvmMangleComputer(
 
     private inner class JvmVisitor : Visitor() {
         override fun visitField(field: FirField) {
-            if (field is FirJavaField) {
+            if (field is FirJavaField || field.origin == FirDeclarationOrigin.ImportedFromObjectOrStatic) {
                 field.mangleSimpleDeclaration(field.name.asString())
             } else {
                 visitVariable(field)

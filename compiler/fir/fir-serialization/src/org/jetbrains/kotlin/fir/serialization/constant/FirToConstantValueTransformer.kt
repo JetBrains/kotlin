@@ -11,15 +11,16 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.FirEnumEntry
+import org.jetbrains.kotlin.fir.declarations.FirField
 import org.jetbrains.kotlin.fir.declarations.utils.isConst
 import org.jetbrains.kotlin.fir.declarations.utils.isFinal
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.java.declarations.FirJavaField
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirArrayOfCallTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirArrayOfCallTransformer.Companion.isArrayOfCall
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.coneTypeUnsafe
@@ -141,7 +142,7 @@ internal abstract class FirToConstantValueTransformer(
                 if (symbol.fir.isConst) symbol.fir.initializer?.toConstantValue(data) else null
             }
 
-            fir is FirJavaField -> {
+            fir is FirField -> {
                 if (fir.isFinal) {
                     fir.initializer?.toConstantValue(data)
                 } else {
@@ -265,14 +266,13 @@ internal object FirToConstantValueChecker : FirDefaultVisitor<Boolean, FirSessio
 
     override fun visitQualifiedAccessExpression(qualifiedAccessExpression: FirQualifiedAccessExpression, data: FirSession): Boolean {
         val symbol = qualifiedAccessExpression.toResolvedCallableSymbol() ?: return false
-        val fir = symbol.fir
 
         return when {
             symbol.fir is FirEnumEntry -> symbol.callableId.classId != null
 
             symbol is FirPropertySymbol -> symbol.fir.isConst
 
-            fir is FirJavaField -> symbol.fir.isFinal
+            symbol is FirFieldSymbol -> symbol.fir.isFinal
 
             symbol is FirConstructorSymbol -> {
                 symbol.containingClassLookupTag()?.toFirRegularClassSymbol(data)?.classKind == ClassKind.ANNOTATION_CLASS
