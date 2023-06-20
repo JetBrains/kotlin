@@ -1106,8 +1106,8 @@ abstract class ObjCExportHeaderGenerator internal constructor(
     private val translator = ObjCExportTranslatorImpl(this, mapper, namer, problemCollector, objcGenerics)
 
     private val generatedClasses = mutableSetOf<ClassDescriptor>()
-    private val extensions = mutableMapOf<ClassDescriptor, MutableList<CallableMemberDescriptor>>()
-    private val topLevel = mutableMapOf<SourceFile, MutableList<CallableMemberDescriptor>>()
+    private val extensions = LinkedHashMap<ClassDescriptor, MutableList<CallableMemberDescriptor>>()
+    private val topLevel = LinkedHashMap<SourceFile, MutableList<CallableMemberDescriptor>>()
 
     open val shouldExportKDoc = false
 
@@ -1195,6 +1195,7 @@ abstract class ObjCExportHeaderGenerator internal constructor(
 
     private fun translatePackageFragments() {
         val packageFragments = moduleDescriptors.flatMap { it.getPackageFragments() }
+                .sortedBy { it.fqName.asString() }
 
         packageFragments.forEach { packageFragment ->
             packageFragment.getMemberScope().getContributedDescriptors()
@@ -1216,38 +1217,43 @@ abstract class ObjCExportHeaderGenerator internal constructor(
 
         }
 
-        fun MemberScope.translateClasses() {
+        val classesToTranslate = mutableListOf<ClassDescriptor>()
+
+        fun MemberScope.gatherClasses() {
             getContributedDescriptors()
                     .asSequence()
-                    .filterIsInstance<ClassDescriptor>()
-                    .forEach {
-                        if (mapper.shouldBeExposed(it)) {
-                            if (it.isInterface) {
-                                generateInterface(it)
-                            } else {
-                                generateClass(it)
-                            }
-
-                            it.unsubstitutedMemberScope.translateClasses()
-                        } else if (mapper.shouldBeVisible(it)) {
-                            stubs += if (it.isInterface) {
-                                translator.translateUnexposedInterfaceAsUnavailableStub(it)
-                            } else {
-                                translator.translateUnexposedClassAsUnavailableStub(it)
-                            }
-                        }
+                    .filterIsInstance<ClassDescriptor>().forEach {
+                        classesToTranslate += it
+                        it.unsubstitutedMemberScope.gatherClasses()
                     }
         }
 
         packageFragments.forEach { packageFragment ->
-            packageFragment.getMemberScope().translateClasses()
+            packageFragment.getMemberScope().gatherClasses()
         }
 
-        extensions.forEach { classDescriptor, declarations ->
+        classesToTranslate.sortedBy { it.classId.toString() }.sortedBy { it.name }.forEach {
+            if (mapper.shouldBeExposed(it)) {
+                if (it.isInterface) {
+                    generateInterface(it)
+                } else {
+                    generateClass(it)
+                }
+
+            } else if (mapper.shouldBeVisible(it)) {
+                stubs += if (it.isInterface) {
+                    translator.translateUnexposedInterfaceAsUnavailableStub(it)
+                } else {
+                    translator.translateUnexposedClassAsUnavailableStub(it)
+                }
+            }
+        }
+
+        extensions.entries.sortedBy { it.key.classId.toString() }.forEach { (classDescriptor, declarations) ->
             generateExtensions(classDescriptor, declarations)
         }
 
-        topLevel.forEach { sourceFile, declarations ->
+        topLevel.entries.sortedBy { it.key.name }.forEach { (sourceFile, declarations) ->
             generateFile(sourceFile, declarations)
         }
     }
