@@ -9,6 +9,7 @@ import com.intellij.openapi.progress.ProcessCanceledException
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isMethodOfAny
@@ -341,6 +342,19 @@ class CallAndReferenceGenerator(
             .applyCallArguments((qualifiedAccess as? FirCall)?.takeIf { !noArguments })
     }
 
+    internal fun injectGetValueCall(element: FirElement, calleeReference: FirReference): IrExpression? {
+        val injectedValue = extensions.findInjectedValue(calleeReference, conversionScope)
+        if (injectedValue != null) {
+            return element.convertWithOffsets { startOffset, endOffset ->
+                val type = injectedValue.typeRef.toIrType()
+                val origin = calleeReference.statementOrigin()
+                IrGetValueImpl(startOffset, endOffset, type, injectedValue.irParameterSymbol, origin)
+            }
+        }
+
+        return null
+    }
+
     fun convertToIrCall(
         qualifiedAccess: FirQualifiedAccessExpression,
         typeRef: FirTypeRef,
@@ -350,6 +364,8 @@ class CallAndReferenceGenerator(
         noArguments: Boolean = false
     ): IrExpression {
         try {
+            injectGetValueCall(qualifiedAccess, qualifiedAccess.calleeReference)?.let { return it }
+
             val type = typeRef.toIrType()
             val samConstructorCall = qualifiedAccess.tryConvertToSamConstructorCall(type)
             if (samConstructorCall != null) return samConstructorCall
@@ -535,11 +551,26 @@ class CallAndReferenceGenerator(
             ?: error("No receiver for dynamic call")
     }
 
+    private fun injectSetValueCall(element: FirElement, calleeReference: FirReference, assignedValue: IrExpression): IrExpression? {
+        val injectedValue = extensions.findInjectedValue(calleeReference, conversionScope)
+        if (injectedValue != null) {
+            return element.convertWithOffsets { startOffset, endOffset ->
+                val type = irBuiltIns.unitType
+                val origin = calleeReference.statementOrigin()
+                IrSetValueImpl(startOffset, endOffset, type, injectedValue.irParameterSymbol, assignedValue, origin)
+            }
+        }
+
+        return null
+    }
+
     fun convertToIrSetCall(variableAssignment: FirVariableAssignment, explicitReceiverExpression: IrExpression?): IrExpression {
         try {
             val type = irBuiltIns.unitType
             val calleeReference = variableAssignment.calleeReference ?: error("Reference not resolvable")
             val assignedValue = visitor.convertToIrExpression(variableAssignment.rValue)
+
+            injectSetValueCall(variableAssignment, calleeReference, assignedValue)?.let { return it }
 
             val firSymbol = calleeReference.toResolvedBaseSymbol()
             val isDynamicAccess = firSymbol?.origin == FirDeclarationOrigin.DynamicScope

@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.serialization.mangle.MangleConstant
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.backend.FirMangler
+import org.jetbrains.kotlin.fir.backend.conversionData
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
@@ -44,6 +45,10 @@ class FirBasedSignatureComposer(val mangler: FirMangler) {
     }
 
     fun composeSignature(declaration: FirScript): IdSignature? {
+        return composeSignatureImpl(declaration, containingClass = null, forceExpect = false)
+    }
+
+    fun composeSignature(declaration: FirCodeFragment): IdSignature? {
         return composeSignatureImpl(declaration, containingClass = null, forceExpect = false)
     }
 
@@ -174,6 +179,12 @@ class FirBasedSignatureComposer(val mangler: FirMangler) {
                     description = builder.description,
                 )
             }
+            is FirCodeFragment -> {
+                val conversionData = declaration.conversionData
+                val packageFqName = conversionData.classId.packageFqName.asString()
+                val classFqName = conversionData.classId.relativeClassName.asString()
+                IdSignature.CommonSignature(packageFqName, classFqName, builder.hashId, builder.mask, description = null)
+            }
             else -> error("Unsupported FIR declaration in signature composer: ${declaration.render()}")
         }
     }
@@ -204,6 +215,9 @@ class FirBasedSignatureComposer(val mangler: FirMangler) {
         }
 
         override fun visitScript(script: FirScript, data: Any?) {
+        }
+
+        override fun visitCodeFragment(codeFragment: FirCodeFragment, data: Any?) {
         }
 
         override fun visitTypeAlias(typeAlias: FirTypeAlias, data: Any?) {
