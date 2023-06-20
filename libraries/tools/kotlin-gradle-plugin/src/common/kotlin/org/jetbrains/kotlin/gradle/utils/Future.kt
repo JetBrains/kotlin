@@ -55,6 +55,10 @@ internal interface CompletableFuture<T> : Future<T> {
     fun complete(value: T)
 }
 
+internal fun <T, R> Future<T>.map(transform: (T) -> R): Future<R> {
+    return MappedFutureImpl(this, transform)
+}
+
 internal fun CompletableFuture<Unit>.complete() = complete(Unit)
 
 /**
@@ -114,6 +118,38 @@ private class FutureImpl<T>(
             "Future was not completed yet" + if (lifecycle != null) " '$lifecycle'"
             else ""
         )
+    }
+
+    private fun writeReplace(): Any {
+        return Surrogate(getOrThrow())
+    }
+
+    private class Surrogate<T>(private val value: T) : Serializable {
+        private fun readResolve(): Any {
+            return FutureImpl(Completable(value))
+        }
+    }
+}
+
+private class MappedFutureImpl<T, R>(
+    private val future: Future<T>,
+    private var transform: (T) -> R,
+) : Future<R>, Serializable {
+
+    private val value = Completable<R>()
+
+    override suspend fun await(): R {
+        if (value.isCompleted) return value.getCompleted()
+        value.complete(transform(future.await()))
+        transform = { throw IllegalStateException("Unexpected 'transform' in future") }
+        return value.getCompleted()
+    }
+
+    override fun getOrThrow(): R {
+        if (value.isCompleted) return value.getCompleted()
+        value.complete(transform(future.getOrThrow()))
+        transform = { throw IllegalStateException("Unexpected 'transform' in future") }
+        return value.getCompleted()
     }
 
     private fun writeReplace(): Any {

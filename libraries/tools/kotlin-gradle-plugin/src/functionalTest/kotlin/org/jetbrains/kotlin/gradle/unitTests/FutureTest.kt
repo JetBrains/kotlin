@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.gradle.idea.testFixtures.utils.serialize
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.IllegalLifecycleException
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.FinaliseDsl
+import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.ReadyForExecution
 import org.jetbrains.kotlin.gradle.util.buildProject
 import org.jetbrains.kotlin.gradle.util.runLifecycleAwareTest
 import org.jetbrains.kotlin.gradle.utils.*
@@ -113,5 +114,40 @@ class FutureTest {
             future.await()
             assertEquals(1, futureInvocations.get())
         }
+    }
+
+    @Test
+    fun `test - future map`() = project.runLifecycleAwareTest {
+        val future = project.future { "1" }
+        val transformInvocations = AtomicInteger(0)
+
+        val mappedFuture = future.map { value ->
+            transformInvocations.incrementAndGet()
+            value.toInt()
+        }
+
+        assertEquals(1, mappedFuture.await())
+        assertEquals(1, mappedFuture.getOrThrow())
+        assertEquals(1, transformInvocations.get())
+
+        val deserializedMappedFuture = mappedFuture.serialize().deserialize() as Future<*>
+        assertEquals(1, deserializedMappedFuture.await())
+        assertEquals(1, deserializedMappedFuture.getOrThrow())
+    }
+
+    @Test
+    fun `test - future map - getOrThrow - exception`() = project.runLifecycleAwareTest {
+        val future = project.future {
+            ReadyForExecution.await()
+            "1"
+        }
+
+        val mappedFuture = future.map {
+            it.toInt()
+        }
+
+        assertFailsWith<IllegalLifecycleException> { mappedFuture.getOrThrow() }
+        future.await()
+        assertEquals(1, mappedFuture.getOrThrow())
     }
 }
