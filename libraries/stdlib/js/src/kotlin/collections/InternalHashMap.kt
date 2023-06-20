@@ -80,7 +80,6 @@ internal class InternalHashMap<K, V> private constructor(
     }
 
     fun isEmpty(): Boolean = _size == 0
-    fun containsKey(key: K): Boolean = findKey(key) >= 0
     override fun containsValue(value: V): Boolean = findValue(value) >= 0
 
     override operator fun get(key: K): V? {
@@ -90,11 +89,10 @@ internal class InternalHashMap<K, V> private constructor(
     }
 
     override fun contains(key: K): Boolean {
-        return containsKey(key)
+        return findKey(key) >= 0
     }
 
     override fun put(key: K, value: V): V? {
-        checkIsMutable()
         val index = addKey(key)
         val valuesArray = allocateValuesArray()
         if (index < 0) {
@@ -286,7 +284,7 @@ internal class InternalHashMap<K, V> private constructor(
         return TOMBSTONE
     }
 
-    internal fun addKey(key: K): Int {
+    private fun addKey(key: K): Int {
         checkIsMutable()
         retry@ while (true) {
             var hash = hash(key)
@@ -320,7 +318,7 @@ internal class InternalHashMap<K, V> private constructor(
         }
     }
 
-    internal fun removeKey(key: K): Int {
+    private fun removeKey(key: K): Int {
         checkIsMutable()
         val index = findKey(key)
         if (index < 0) return TOMBSTONE
@@ -402,15 +400,6 @@ internal class InternalHashMap<K, V> private constructor(
             null
         } else {
             EntryRef(this, index)
-        }
-    }
-
-    internal fun getKey(key: K): K? {
-        val index = findKey(key)
-        return if (index >= 0) {
-            keysArray[index]!!
-        } else {
-            null
         }
     }
 

@@ -48,11 +48,7 @@ public actual open class HashMap<K, V> : AbstractMutableMap<K, V>, MutableMap<K,
      *
      * @throws IllegalArgumentException if [initialCapacity] is negative or [loadFactor] is non-positive.
      */
-    actual constructor(initialCapacity: Int, loadFactor: Float) : this() {
-        // This implementation of HashMap has no need of load factors or capacities.
-        require(initialCapacity >= 0) { "Negative initial capacity: $initialCapacity" }
-        require(loadFactor > 0) { "Non-positive load factor: $loadFactor" }
-    }
+    actual constructor(initialCapacity: Int, loadFactor: Float) : this(InternalHashMap(initialCapacity, loadFactor))
 
     /**
      * Creates a new empty [HashMap] with the specified initial capacity.
@@ -71,13 +67,10 @@ public actual open class HashMap<K, V> : AbstractMutableMap<K, V>, MutableMap<K,
     /**
      * Creates a new [HashMap] filled with the contents of the specified [original] map.
      */
-    actual constructor(original: Map<out K, V>) : this() {
-        this.putAll(original)
-    }
+    actual constructor(original: Map<out K, V>) : this(InternalHashMap(original))
 
     actual override fun clear() {
         internalMap.clear()
-//        structureChanged(this)
     }
 
     actual override fun containsKey(key: K): Boolean = internalMap.contains(key)
