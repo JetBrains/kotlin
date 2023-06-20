@@ -23,4 +23,11 @@ public interface KtValueParameterSymbolRenderer {
             )
         }
     }
+
+    public object TYPE_ONLY : KtValueParameterSymbolRenderer {
+        context(KtAnalysisSession, KtDeclarationRenderer)
+        override fun renderSymbol(symbol: KtValueParameterSymbol, printer: PrettyPrinter): Unit = printer {
+            typeRenderer.renderType(symbol.returnType, printer)
+        }
+    }
 }
