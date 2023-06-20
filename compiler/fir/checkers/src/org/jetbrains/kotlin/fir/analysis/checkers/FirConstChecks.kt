@@ -39,7 +39,7 @@ internal fun checkConstantArguments(
     val intrinsicConstEvaluation = session.languageVersionSettings.supportsFeature(LanguageFeature.IntrinsicConstEvaluation)
 
     fun FirBasedSymbol<*>.canBeEvaluated(): Boolean {
-        return intrinsicConstEvaluation && this.hasAnnotation(INTRINSIC_CONST_EVALUATION_ANNOTATION, session)
+        return intrinsicConstEvaluation && this.hasAnnotation(StandardClassIds.Annotations.IntrinsicConstEvaluation, session)
     }
 
     when {

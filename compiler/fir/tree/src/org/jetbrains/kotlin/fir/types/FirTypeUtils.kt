@@ -84,9 +84,6 @@ val FirFunctionTypeRef.parametersCount: Int
     else
         parameters.size + contextReceiverTypeRefs.size
 
-val EXTENSION_FUNCTION_ANNOTATION = ClassId.fromString("kotlin/ExtensionFunctionType")
-val INTRINSIC_CONST_EVALUATION_ANNOTATION = ClassId.fromString("kotlin/internal/IntrinsicConstEvaluation")
-
 private fun FirAnnotation.isOfType(classId: ClassId): Boolean {
     return (annotationTypeRef as? FirResolvedTypeRef)?.let { typeRef ->
         (typeRef.type as? ConeClassLikeType)?.let {
@@ -96,7 +93,7 @@ private fun FirAnnotation.isOfType(classId: ClassId): Boolean {
 }
 
 val FirAnnotation.isExtensionFunctionAnnotationCall: Boolean
-    get() = isOfType(EXTENSION_FUNCTION_ANNOTATION)
+    get() = isOfType(StandardClassIds.Annotations.ExtensionFunctionType)
 
 fun List<FirAnnotation>.dropExtensionFunctionAnnotation(): List<FirAnnotation> {
     return filterNot { it.isExtensionFunctionAnnotationCall }
