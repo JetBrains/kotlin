@@ -12,30 +12,20 @@ package kotlin.collections
 /**
  * The implementation of the [MutableSet] interface, backed by a [LinkedHashMap] instance.
  *
- * This implementation preserves the insertion order of elements during the iteration.
+ * The insertion order is preserved natively by the HashSet implementation.
  */
 public actual open class LinkedHashSet<E> : HashSet<E>, MutableSet<E> {
-    private companion object {
-        private val Empty = LinkedHashSet<Nothing>(0).also {
-            (it.map as LinkedHashMap<Nothing, Any>).build()
-        }
-    }
-
-    internal constructor(map: LinkedHashMap<E, Any>) : super(map)
-
     /**
      * Creates a new empty [LinkedHashSet].
      */
-    actual constructor() : super(LinkedHashMap<E, Any>())
+    actual constructor() : super()
 
     /**
      * Creates a new [LinkedHashSet] filled with the elements of the specified collection.
      *
      * The iteration order of elements in the created set is the same as in the specified collection.
      */
-    actual constructor(elements: Collection<E>) : super(LinkedHashMap<E, Any>()) {
-        addAll(elements)
-    }
+    actual constructor(elements: Collection<E>) : super(elements)
 
     /**
      * Creates a new empty [LinkedHashSet] with the specified initial capacity and load factor.
@@ -51,7 +41,7 @@ public actual open class LinkedHashSet<E> : HashSet<E>, MutableSet<E> {
      *
      * @throws IllegalArgumentException if [initialCapacity] is negative or [loadFactor] is non-positive.
      */
-    actual constructor(initialCapacity: Int, loadFactor: Float) : super(LinkedHashMap<E, Any>(initialCapacity, loadFactor))
+    actual constructor(initialCapacity: Int, loadFactor: Float) : super(initialCapacity, loadFactor)
 
     /**
      * Creates a new empty [LinkedHashSet] with the specified initial capacity.
@@ -67,18 +57,19 @@ public actual open class LinkedHashSet<E> : HashSet<E>, MutableSet<E> {
      */
     actual constructor(initialCapacity: Int) : this(initialCapacity, 1.0f)
 
-    @PublishedApi
-    internal fun build(): Set<E> {
-        (map as LinkedHashMap<E, Any>).build()
-        return if (size > 0) this else Empty
+    internal constructor(internalMap: InternalMap<E, Boolean>) : super(internalMap)
+
+    private object EmptyHolder {
+        val value = LinkedHashSet(InternalHashMap<Nothing, Boolean>(0).also { it.build() })
     }
 
-    internal override fun checkIsMutable(): Unit = map.checkIsMutable()
+    @PublishedApi
+    internal fun build(): Set<E> {
+        internalMap.build()
+        return if (size > 0) this else EmptyHolder.value
+    }
 
-//    public override fun clone(): Any {
-//        return LinkedHashSet(this)
-//    }
-
+    override fun checkIsMutable() = internalMap.checkIsMutable()
 }
 
 /**
@@ -86,5 +77,5 @@ public actual open class LinkedHashSet<E> : HashSet<E>, MutableSet<E> {
  * which elements the keys as properties of JS object without hashing them.
  */
 public fun linkedStringSetOf(vararg elements: String): LinkedHashSet<String> {
-    return LinkedHashSet(linkedStringMapOf<Any>()).apply { addAll(elements) }
+    return LinkedHashSet<String>(InternalStringMap()).apply { addAll(elements) }
 }

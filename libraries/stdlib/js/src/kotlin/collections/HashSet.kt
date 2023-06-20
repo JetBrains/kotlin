@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 /*
@@ -16,21 +16,30 @@ package kotlin.collections
 // have to make sure mutating methods check `checkIsMutable`.
 public actual open class HashSet<E> : AbstractMutableSet<E>, MutableSet<E> {
 
-    internal val map: HashMap<E, Any>
+    internal val internalMap: InternalMap<E, Boolean>
+
+    /**
+     * Internal constructor to specify the underlying map.
+     * This is used by LinkedHashSet and stringSetOf().
+     *
+     * @param map underlying map to use.
+     */
+    internal constructor(map: InternalMap<E, Boolean>) {
+        internalMap = map
+    }
 
     /**
      * Creates a new empty [HashSet].
      */
-    actual constructor() {
-        map = HashMap<E, Any>()
-    }
+    actual constructor() : this(InternalHashMap())
 
     /**
      * Creates a new [HashSet] filled with the elements of the specified collection.
      */
-    actual constructor(elements: Collection<E>) {
-        map = HashMap<E, Any>(elements.size)
-        addAll(elements)
+    actual constructor(elements: Collection<E>) : this(InternalHashMap(elements.size)) {
+        for (element in elements) {
+            internalMap.put(element, true)
+        }
     }
 
     /**
@@ -47,9 +56,7 @@ public actual open class HashSet<E> : AbstractMutableSet<E>, MutableSet<E> {
      *
      * @throws IllegalArgumentException if [initialCapacity] is negative or [loadFactor] is non-positive.
      */
-    actual constructor(initialCapacity: Int, loadFactor: Float) {
-        map = HashMap<E, Any>(initialCapacity, loadFactor)
-    }
+    actual constructor(initialCapacity: Int, loadFactor: Float) : this(InternalHashMap(initialCapacity, loadFactor))
 
     /**
      * Creates a new empty [HashSet] with the specified initial capacity.
@@ -65,39 +72,23 @@ public actual open class HashSet<E> : AbstractMutableSet<E>, MutableSet<E> {
      */
     actual constructor(initialCapacity: Int) : this(initialCapacity, 1.0f)
 
-    /**
-     * Protected constructor to specify the underlying map. This is used by
-     * LinkedHashSet.
-
-     * @param map underlying map to use.
-     */
-    internal constructor(map: HashMap<E, Any>) {
-        this.map = map
-    }
-
     actual override fun add(element: E): Boolean {
-        val old = map.put(element, this)
-        return old == null
+        return internalMap.put(element, true) == null
     }
 
     actual override fun clear() {
-        map.clear()
+        internalMap.clear()
     }
 
-//    public override fun clone(): Any {
-//        return HashSet<E>(this)
-//    }
+    actual override operator fun contains(element: E): Boolean = internalMap.contains(element)
 
-    actual override operator fun contains(element: E): Boolean = map.containsKey(element)
+    actual override fun isEmpty(): Boolean = internalMap.size == 0
 
-    actual override fun isEmpty(): Boolean = map.isEmpty()
+    actual override fun iterator(): MutableIterator<E> = internalMap.keysIterator()
 
-    actual override fun iterator(): MutableIterator<E> = map.keys.iterator()
+    actual override fun remove(element: E): Boolean = internalMap.remove(element) != null
 
-    actual override fun remove(element: E): Boolean = map.remove(element) != null
-
-    actual override val size: Int get() = map.size
-
+    actual override val size: Int get() = internalMap.size
 }
 
 /**
@@ -105,5 +96,5 @@ public actual open class HashSet<E> : AbstractMutableSet<E>, MutableSet<E> {
  * which elements the keys as properties of JS object without hashing them.
  */
 public fun stringSetOf(vararg elements: String): HashSet<String> {
-    return HashSet(stringMapOf<Any>()).apply { addAll(elements) }
+    return HashSet<String>(InternalStringMap()).apply { addAll(elements) }
 }
