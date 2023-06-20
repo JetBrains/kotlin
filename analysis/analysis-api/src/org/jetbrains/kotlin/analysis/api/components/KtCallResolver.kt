@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.components
 
-import com.intellij.openapi.diagnostic.Logger
 import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.calls.KtCallCandidateInfo
 import org.jetbrains.kotlin.analysis.api.calls.KtCallInfo
@@ -23,7 +22,7 @@ public abstract class KtCallResolver : KtAnalysisSessionComponent() {
     public abstract fun collectCallCandidates(psi: KtElement): List<KtCallCandidateInfo>
 
     @KtAnalysisApiInternals
-    public open fun unresolvedKtCallError(psi: KtElement): KtErrorCallInfo {
+    public fun unresolvedKtCallError(psi: KtElement): KtErrorCallInfo {
         return KtErrorCallInfo(
             _candidateCalls = emptyList(),
             KtNonBoundToPsiErrorDiagnostic(factoryName = null, "Unresolved call", token),

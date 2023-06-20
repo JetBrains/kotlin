@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.components
 
-import com.intellij.openapi.diagnostic.Logger
-import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.calls.*
 import org.jetbrains.kotlin.analysis.api.diagnostics.KtDiagnostic
 import org.jetbrains.kotlin.analysis.api.diagnostics.KtNonBoundToPsiErrorDiagnostic
@@ -32,8 +30,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbolOfT
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolver.AllCandidatesResolver
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withFirEntry
-import org.jetbrains.kotlin.analysis.utils.errors.ExceptionAttachmentBuilder
-import org.jetbrains.kotlin.analysis.utils.errors.logErrorWithAttachment
 import org.jetbrains.kotlin.analysis.utils.errors.rethrowExceptionWithDetails
 import org.jetbrains.kotlin.analysis.utils.errors.withPsiEntry
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
@@ -76,8 +72,6 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.util.OperatorNameConventions.EQUALS
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
-
-private val LOG: Logger = Logger.getInstance(KtFirCallResolver::class.java)
 
 internal class KtFirCallResolver(
     override val analysisSession: KtFirAnalysisSession,
@@ -1288,20 +1282,6 @@ internal class KtFirCallResolver(
                 realPsi.safeAs<KtValueArgument>()?.getArgumentExpression()
             else -> realPsi as? KtExpression
         }
-    }
-
-    @KtAnalysisApiInternals
-    override fun unresolvedKtCallError(psi: KtElement): KtErrorCallInfo {
-        LOG.logErrorWithAttachment("${psi::class.simpleName} should always resolve to a KtCallInfo") {
-            withPsiEntry("psi", psi, analysisSession::getModule)
-            provideAdditionalAttachmentToUnresolvedCall(psi, this)
-        }
-
-        return super.unresolvedKtCallError(psi)
-    }
-
-    private fun provideAdditionalAttachmentToUnresolvedCall(psi: KtElement, builder: ExceptionAttachmentBuilder) {
-        psi.getOrBuildFir(firResolveSession)?.let { builder.withFirEntry("fir", it) }
     }
 
     private inline fun <R> wrapError(element: KtElement, action: () -> R): R {
