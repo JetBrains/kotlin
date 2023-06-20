@@ -57,6 +57,8 @@ class Fir2IrClassifierStorage(
 
     private val enumEntryCache: MutableMap<FirEnumEntry, IrEnumEntry> = commonMemberStorage.enumEntryCache
 
+    private val codeFragmentCache: MutableMap<FirCodeFragment, IrClass> = mutableMapOf()
+
     private val fieldsForContextReceivers: MutableMap<IrClass, List<IrField>> = mutableMapOf()
 
     private val localStorage: Fir2IrLocalClassStorage = Fir2IrLocalClassStorage(
@@ -191,6 +193,10 @@ class Fir2IrClassifierStorage(
 
     private fun getCachedLocalClass(lookupTag: ConeClassLikeLookupTag): IrClass? {
         return localStorage[lookupTag.toSymbol(session)!!.fir as FirClass]
+    }
+
+    fun getCachedIrCodeFragment(codeFragment: FirCodeFragment): IrClass? {
+        return codeFragmentCache[codeFragment]
     }
 
     private fun FirRegularClass.enumClassModality(): Modality {
@@ -406,6 +412,44 @@ class Fir2IrClassifierStorage(
         }
         localStorage[anonymousObject] = irAnonymousObject
         return irAnonymousObject
+    }
+
+    fun registerCodeFragmentClass(codeFragment: FirCodeFragment, containingFile: IrFile): IrClass {
+        val conversionData = codeFragment.conversionData
+        val signature = signatureComposer.composeSignature(codeFragment)
+
+        val irClass = codeFragment.convertWithOffsets { startOffset, endOffset ->
+            declareIrClass(signature) { symbol ->
+                irFactory.createClass(
+                    startOffset,
+                    endOffset,
+                    IrDeclarationOrigin.DEFINED,
+                    symbol,
+                    conversionData.classId.shortClassName,
+                    ClassKind.CLASS,
+                    DescriptorVisibilities.PUBLIC,
+                    Modality.FINAL,
+                    isCompanion = false,
+                    isInner = false,
+                    isData = false,
+                    isExternal = false,
+                    isValue = false,
+                    isExpect = false,
+                    isFun = false
+                ).apply {
+                    metadata = FirMetadataSource.CodeFragment(codeFragment)
+                    parent = containingFile
+                    typeParameters = emptyList()
+                    thisReceiver = declareThisReceiverParameter(
+                        thisType = IrSimpleTypeImpl(symbol, false, emptyList(), emptyList()),
+                        thisOrigin = IrDeclarationOrigin.INSTANCE_RECEIVER
+                    )
+                    superTypes = listOf(irBuiltIns.anyType)
+                }
+            }
+        }
+        codeFragmentCache[codeFragment] = irClass
+        return irClass
     }
 
     private fun getIrAnonymousObjectForEnumEntry(anonymousObject: FirAnonymousObject, name: Name, irParent: IrClass?): IrClass {
