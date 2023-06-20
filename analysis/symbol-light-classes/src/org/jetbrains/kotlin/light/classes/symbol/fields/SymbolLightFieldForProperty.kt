@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.light.classes.symbol.modifierLists.with
 import org.jetbrains.kotlin.name.JvmNames.TRANSIENT_ANNOTATION_CLASS_ID
 import org.jetbrains.kotlin.name.JvmNames.VOLATILE_ANNOTATION_CLASS_ID
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
+import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.KtProperty
 
 internal class SymbolLightFieldForProperty private constructor(
@@ -186,8 +187,12 @@ internal class SymbolLightFieldForProperty private constructor(
     private val _initializer by lazyPub {
         _initializerValue?.createPsiExpression(this) ?: withPropertySymbol { propertySymbol ->
             if (propertySymbol !is KtKotlinPropertySymbol) return@withPropertySymbol null
-            (kotlinOrigin as? KtProperty)?.initializer?.evaluateAsAnnotationValue()
-                ?.let(::toPsiExpression)
+            val initializerExpression = when (kotlinOrigin) {
+                is KtProperty -> kotlinOrigin.initializer
+                is KtParameter -> kotlinOrigin.defaultValue
+                else -> null
+            }
+            initializerExpression?.evaluateAsAnnotationValue()?.let(::toPsiExpression)
         }
     }
 

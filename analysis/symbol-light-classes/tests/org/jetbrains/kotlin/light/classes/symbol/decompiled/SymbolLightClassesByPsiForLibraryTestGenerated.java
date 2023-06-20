@@ -97,6 +97,12 @@ public class SymbolLightClassesByPsiForLibraryTestGenerated extends AbstractSymb
     }
 
     @Test
+    @TestMetadata("defaultParameterValue.kt")
+    public void testDefaultParameterValue() throws Exception {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/defaultParameterValue.kt");
+    }
+
+    @Test
     @TestMetadata("DelegatedProperty.kt")
     public void testDelegatedProperty() throws Exception {
         runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/DelegatedProperty.kt");
