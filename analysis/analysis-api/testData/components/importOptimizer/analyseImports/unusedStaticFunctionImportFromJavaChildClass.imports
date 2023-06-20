@@ -1,0 +1,3 @@
+KotlinChild.nonStaticFieldFromBase
+dependency.Child.STATIC_CONSTANT_FROM_BASE
+dependency.Child.staticFunFromBase

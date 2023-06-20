@@ -101,6 +101,12 @@ public class FirIdeNormalAnalysisSourceModuleAnalysisApiImportOptimizerTestGener
     }
 
     @Test
+    @TestMetadata("unusedStaticFunctionImportFromJavaChildClass.kt")
+    public void testUnusedStaticFunctionImportFromJavaChildClass() throws Exception {
+        runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/unusedStaticFunctionImportFromJavaChildClass.kt");
+    }
+
+    @Test
     @TestMetadata("usedAliasedFunctionReference.kt")
     public void testUsedAliasedFunctionReference() throws Exception {
         runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/usedAliasedFunctionReference.kt");
@@ -170,6 +176,12 @@ public class FirIdeNormalAnalysisSourceModuleAnalysisApiImportOptimizerTestGener
     @TestMetadata("usedInvokeOperatorImport.kt")
     public void testUsedInvokeOperatorImport() throws Exception {
         runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/usedInvokeOperatorImport.kt");
+    }
+
+    @Test
+    @TestMetadata("usedStaticFunctionImportFromJavaChildClass.kt")
+    public void testUsedStaticFunctionImportFromJavaChildClass() throws Exception {
+        runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/usedStaticFunctionImportFromJavaChildClass.kt");
     }
 
     @Test
