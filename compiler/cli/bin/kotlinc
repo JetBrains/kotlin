@@ -39,7 +39,7 @@ if $cygwin; then
     KOTLIN_HOME=`cygpath --windows --short-name "$KOTLIN_HOME"`
 fi
 
-[ -n "$JAVA_OPTS" ] || JAVA_OPTS="-Xmx256M -Xms32M"
+[ -n "$JAVA_OPTS" ] || JAVA_OPTS="-Xmx256M -Xms128M"
 
 declare -a java_args
 declare -a kotlin_args

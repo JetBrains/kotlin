@@ -20,7 +20,7 @@ if not "%JAVA_HOME%"=="" (
 )
 
 rem We use the value of the JAVA_OPTS environment variable if defined
-if "%JAVA_OPTS%"=="" set JAVA_OPTS=-Xmx256M -Xms32M
+if "%JAVA_OPTS%"=="" set JAVA_OPTS=-Xmx256M -Xms128M
 
 rem Iterate through arguments and split them into java and kotlin ones
 :loop
