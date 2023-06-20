@@ -237,8 +237,7 @@ class WasmPrimitivesGenerator(writer: PrintWriter) : BasePrimitivesGenerator(wri
     override fun MethodBuilder.modifyGeneratedEquals(thisKind: PrimitiveType) {
         val additionalCheck = when (thisKind) {
             PrimitiveType.LONG -> "wasm_i64_eq(this, $parameterName)"
-            PrimitiveType.FLOAT -> "this.equals(other)"
-            PrimitiveType.DOUBLE -> "this.toBits() == other.toBits()"
+            PrimitiveType.FLOAT, PrimitiveType.DOUBLE -> "this.toBits() == other.toBits()"
             else -> {
                 "wasm_i32_eq(this${thisKind.castToIfNecessary(PrimitiveType.INT)}, $parameterName${thisKind.castToIfNecessary(PrimitiveType.INT)})"
             }
@@ -255,7 +254,6 @@ class WasmPrimitivesGenerator(writer: PrintWriter) : BasePrimitivesGenerator(wri
     }
 
     override fun ClassBuilder.generateAdditionalMethods(thisKind: PrimitiveType) {
-        generateCustomEquals(thisKind)
         generateHashCode(thisKind)
         when {
             thisKind == PrimitiveType.BYTE || thisKind == PrimitiveType.SHORT -> generateReinterpret(PrimitiveType.INT)
@@ -280,25 +278,6 @@ class WasmPrimitivesGenerator(writer: PrintWriter) : BasePrimitivesGenerator(wri
                 PrimitiveType.DOUBLE -> "toBits().hashCode()"
                 else -> "this${thisKind.castToIfNecessary(PrimitiveType.INT)}"
             }.addAsSingleLineBody()
-        }
-    }
-
-    private fun ClassBuilder.generateCustomEquals(thisKind: PrimitiveType) {
-        method {
-            annotations += "kotlin.internal.IntrinsicConstEvaluation"
-            signature {
-                isInline = thisKind in PrimitiveType.floatingPoint
-                methodName = "equals"
-                parameter {
-                    name = "other"
-                    type = thisKind.capitalized
-                }
-                returnType = PrimitiveType.BOOLEAN.capitalized
-            }
-            when (thisKind) {
-                in PrimitiveType.floatingPoint -> "toBits() == other.toBits()".addAsSingleLineBody(bodyOnNewLine = false)
-                else -> implementAsIntrinsic(thisKind, methodName)
-            }
         }
     }
 

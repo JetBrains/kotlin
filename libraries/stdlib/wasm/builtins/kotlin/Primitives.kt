@@ -429,11 +429,6 @@ public class Byte private constructor(private val value: Byte) : Number(), Compa
     public override fun equals(other: Any?): Boolean =
         other is Byte && wasm_i32_eq(this.toInt(), other.toInt())
 
-    @kotlin.internal.IntrinsicConstEvaluation
-    @WasmOp(WasmOp.I32_EQ)
-    public fun equals(other: Byte): Boolean =
-        implementedAsIntrinsic
-
     public override fun hashCode(): Int = this.toInt()
 
     @WasmNoOpCast
@@ -857,11 +852,6 @@ public class Short private constructor(private val value: Short) : Number(), Com
     @kotlin.internal.IntrinsicConstEvaluation
     public override fun equals(other: Any?): Boolean =
         other is Short && wasm_i32_eq(this.toInt(), other.toInt())
-
-    @kotlin.internal.IntrinsicConstEvaluation
-    @WasmOp(WasmOp.I32_EQ)
-    public fun equals(other: Short): Boolean =
-        implementedAsIntrinsic
 
     public override fun hashCode(): Int = this.toInt()
 
@@ -1350,11 +1340,6 @@ public class Int private constructor(private val value: Int) : Number(), Compara
     @kotlin.internal.IntrinsicConstEvaluation
     public override fun equals(other: Any?): Boolean =
         other is Int && wasm_i32_eq(this, other)
-
-    @kotlin.internal.IntrinsicConstEvaluation
-    @WasmOp(WasmOp.I32_EQ)
-    public fun equals(other: Int): Boolean =
-        implementedAsIntrinsic
 
     public override fun hashCode(): Int = this
 
@@ -1858,11 +1843,6 @@ public class Long private constructor(private val value: Long) : Number(), Compa
     public override fun equals(other: Any?): Boolean =
         other is Long && wasm_i64_eq(this, other)
 
-    @kotlin.internal.IntrinsicConstEvaluation
-    @WasmOp(WasmOp.I64_EQ)
-    public fun equals(other: Long): Boolean =
-        implementedAsIntrinsic
-
     public override fun hashCode(): Int = ((this ushr 32) xor this).toInt()
 }
 
@@ -2254,10 +2234,7 @@ public class Float private constructor(private val value: Float) : Number(), Com
 
     @kotlin.internal.IntrinsicConstEvaluation
     public override fun equals(other: Any?): Boolean =
-        other is Float && this.equals(other)
-
-    @kotlin.internal.IntrinsicConstEvaluation
-    public inline fun equals(other: Float): Boolean = toBits() == other.toBits()
+        other is Float && this.toBits() == other.toBits()
 
     public override fun hashCode(): Int = toBits()
 }
@@ -2653,9 +2630,6 @@ public class Double private constructor(private val value: Double) : Number(), C
     @kotlin.internal.IntrinsicConstEvaluation
     public override fun equals(other: Any?): Boolean =
         other is Double && this.toBits() == other.toBits()
-
-    @kotlin.internal.IntrinsicConstEvaluation
-    public inline fun equals(other: Double): Boolean = toBits() == other.toBits()
 
     public override fun hashCode(): Int = toBits().hashCode()
 }
