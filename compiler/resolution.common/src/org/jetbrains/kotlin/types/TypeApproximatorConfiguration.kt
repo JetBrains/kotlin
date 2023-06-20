@@ -105,6 +105,7 @@ open class TypeApproximatorConfiguration {
     object FinalApproximationAfterResolutionAndInference :
         AbstractCapturedTypesApproximation(CaptureStatus.FROM_EXPRESSION) {
         override val integerLiteralConstantType: Boolean get() = true
+        override val integerConstantOperatorType: Boolean get() = true
         override val intersectionTypesInContravariantPositions: Boolean get() = true
 
         override val convertToNonRawVersionAfterApproximationInK2: Boolean get() = true
