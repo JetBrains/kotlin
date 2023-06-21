@@ -13,7 +13,8 @@ import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirTowerDataContext
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.psi
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirTowerDataContextCollector
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.BodyResolveContext
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirResolveContextCollector
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -30,7 +31,7 @@ internal class FileTowerProvider(
         if (file == ktElement.containingKtFile) context else null
 }
 
-internal class FirTowerDataContextAllElementsCollector : FirTowerDataContextCollector, FirTowerContextProvider {
+internal class FirTowerDataContextAllElementsCollector : FirResolveContextCollector, FirTowerContextProvider {
     private val elementsToContext: MutableMap<KtElement, FirTowerDataContext> = hashMapOf()
 
     /**
@@ -46,13 +47,13 @@ internal class FirTowerDataContextAllElementsCollector : FirTowerDataContextColl
         elementsToContext[ktFile] = context
     }
 
-    override fun addStatementContext(statement: FirStatement, context: FirTowerDataContext) {
+    override fun addStatementContext(statement: FirStatement, context: BodyResolveContext) {
         val closestStatementInBlock = statement.psi?.closestBlockLevelOrInitializerExpression() ?: return
         // FIR body transform may alter the context if there are implicit receivers with smartcast
-        elementsToContext[closestStatementInBlock] = context.createSnapshot()
+        elementsToContext[closestStatementInBlock] = context.towerDataContext.createSnapshot()
     }
 
-    override fun addDeclarationContext(declaration: FirDeclaration, context: FirTowerDataContext) {
+    override fun addDeclarationContext(declaration: FirDeclaration, context: BodyResolveContext) {
         val psi = declaration.psi as? KtElement ?: return
 
         // FIR creates a fake field declaration for the delegated super calls,
@@ -60,7 +61,7 @@ internal class FirTowerDataContextAllElementsCollector : FirTowerDataContextColl
         // we do not collect contexts for such declarations
         if (psi is KtDelegatedSuperTypeEntry) return
 
-        elementsToContext[psi] = context
+        elementsToContext[psi] = context.towerDataContext
     }
 
     override fun addClassHeaderContext(declaration: FirRegularClass, context: FirTowerDataContext) {

@@ -560,7 +560,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
     }
 
     private fun collectStatementContext(statement: FirStatement) {
-        transformer.firTowerDataContextCollector?.addStatementContext(statement, context.towerDataContext)
+        transformer.firResolveContextCollector?.addStatementContext(statement, context)
     }
 
     override fun transformThisReceiverExpression(

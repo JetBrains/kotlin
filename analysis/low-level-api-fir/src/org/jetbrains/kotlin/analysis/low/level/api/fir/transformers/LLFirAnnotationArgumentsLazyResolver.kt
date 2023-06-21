@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirTowerDataContextCollector
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirResolveContextCollector
 import org.jetbrains.kotlin.fir.resolve.transformers.plugin.FirAnnotationArgumentsResolveTransformer
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.visitors.transformSingle
@@ -31,7 +31,7 @@ internal object LLFirAnnotationArgumentsLazyResolver : LLFirLazyResolver(FirReso
         lockProvider: LLFirLockProvider,
         session: FirSession,
         scopeSession: ScopeSession,
-        towerDataContextCollector: FirTowerDataContextCollector?,
+        towerDataContextCollector: FirResolveContextCollector?,
     ) {
         val resolver = LLFirAnnotationArgumentsTargetResolver(target, lockProvider, session, scopeSession)
         resolver.resolveDesignation()

@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.fir.references.builder.buildExplicitThisReference
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.dfa.FirControlFlowGraphReferenceImpl
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirBodyResolveTransformer
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirTowerDataContextCollector
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirResolveContextCollector
 import org.jetbrains.kotlin.fir.resolve.transformers.contracts.FirContractsDslNames
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
@@ -44,7 +44,7 @@ internal object LLFirBodyLazyResolver : LLFirLazyResolver(FirResolvePhase.BODY_R
         lockProvider: LLFirLockProvider,
         session: FirSession,
         scopeSession: ScopeSession,
-        towerDataContextCollector: FirTowerDataContextCollector?,
+        towerDataContextCollector: FirResolveContextCollector?,
     ) {
         val resolver = LLFirBodyTargetResolver(target, lockProvider, session, scopeSession, towerDataContextCollector)
         resolver.resolveDesignation()
@@ -75,7 +75,7 @@ private class LLFirBodyTargetResolver(
     lockProvider: LLFirLockProvider,
     session: FirSession,
     scopeSession: ScopeSession,
-    towerDataContextCollector: FirTowerDataContextCollector?,
+    towerDataContextCollector: FirResolveContextCollector?,
 ) : LLFirAbstractBodyTargetResolver(
     target,
     lockProvider,
@@ -88,7 +88,7 @@ private class LLFirBodyTargetResolver(
         implicitTypeOnly = false,
         scopeSession = scopeSession,
         returnTypeCalculator = createReturnTypeCalculator(towerDataContextCollector = towerDataContextCollector),
-        firTowerDataContextCollector = towerDataContextCollector,
+        firResolveContextCollector = towerDataContextCollector,
     ) {
         override val preserveCFGForClasses: Boolean get() = false
     }
@@ -131,10 +131,10 @@ private class LLFirBodyTargetResolver(
 
     private fun resolveMembersForControlFlowGraph(target: FirRegularClass) {
         withTypeArguments(target) {
-            transformer.firTowerDataContextCollector?.addClassHeaderContext(target, transformer.context.towerDataContext)
+            transformer.firResolveContextCollector?.addClassHeaderContext(target, transformer.context.towerDataContext)
         }
         withRegularClass(target) {
-            transformer.firTowerDataContextCollector?.addDeclarationContext(target, transformer.context.towerDataContext)
+            transformer.firResolveContextCollector?.addDeclarationContext(target, transformer.context)
 
             for (member in target.declarations) {
                 if (member is FirControlFlowGraphOwner && member.isUsedInControlFlowGraphBuilderForClass) {
@@ -146,15 +146,15 @@ private class LLFirBodyTargetResolver(
     }
 
     override fun doLazyResolveUnderLock(target: FirElementWithResolveState) {
-        val contextCollector = transformer.firTowerDataContextCollector
+        val contextCollector = transformer.firResolveContextCollector
         if (contextCollector != null && target is FirDeclaration) {
             val bodyResolveContext = transformer.context
             if (target is FirFunction) {
                 bodyResolveContext.forFunctionBody(target, transformer.components) {
-                    contextCollector.addDeclarationContext(target, bodyResolveContext.towerDataContext)
+                    contextCollector.addDeclarationContext(target, bodyResolveContext)
                 }
             } else {
-                contextCollector.addDeclarationContext(target, bodyResolveContext.towerDataContext)
+                contextCollector.addDeclarationContext(target, bodyResolveContext)
             }
         }
 

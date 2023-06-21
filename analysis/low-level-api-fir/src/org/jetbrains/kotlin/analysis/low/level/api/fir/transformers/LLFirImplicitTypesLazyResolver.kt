@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirImplicitAwareBodyResolveTransformer
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirTowerDataContextCollector
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirResolveContextCollector
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.ImplicitBodyResolveComputationSession
 import org.jetbrains.kotlin.fir.scopes.fakeOverrideSubstitution
 
@@ -27,7 +27,7 @@ internal object LLFirImplicitTypesLazyResolver : LLFirLazyResolver(FirResolvePha
         lockProvider: LLFirLockProvider,
         session: FirSession,
         scopeSession: ScopeSession,
-        towerDataContextCollector: FirTowerDataContextCollector?,
+        towerDataContextCollector: FirResolveContextCollector?,
     ) {
         val resolver = LLFirImplicitBodyTargetResolver(target, lockProvider, session, scopeSession, towerDataContextCollector)
         resolver.resolveDesignation()
@@ -56,7 +56,7 @@ internal class LLFirImplicitBodyTargetResolver(
     lockProvider: LLFirLockProvider,
     session: FirSession,
     scopeSession: ScopeSession,
-    towerDataContextCollector: FirTowerDataContextCollector?,
+    towerDataContextCollector: FirResolveContextCollector?,
     implicitBodyResolveComputationSession: ImplicitBodyResolveComputationSession? = null,
 ) : LLFirAbstractBodyTargetResolver(
     target,
@@ -72,7 +72,7 @@ internal class LLFirImplicitBodyTargetResolver(
         phase = resolverPhase,
         implicitTypeOnly = true,
         scopeSession = scopeSession,
-        firTowerDataContextCollector = towerDataContextCollector,
+        firResolveContextCollector = towerDataContextCollector,
         returnTypeCalculator = createReturnTypeCalculator(towerDataContextCollector = towerDataContextCollector),
     ) {
         override val preserveCFGForClasses: Boolean get() = false

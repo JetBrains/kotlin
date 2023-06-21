@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.fir.scopes.impl.originalForWrappedIntegerOperator
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
-import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
@@ -71,7 +70,7 @@ fun <F : FirClassLikeDeclaration> F.runContractAndBodiesResolutionForLocalClass(
     components: FirAbstractBodyResolveTransformer.BodyResolveTransformerComponents,
     resolutionMode: ResolutionMode,
     localClassesNavigationInfo: LocalClassesNavigationInfo,
-    firTowerDataContextCollector: FirTowerDataContextCollector? = null
+    firResolveContextCollector: FirResolveContextCollector? = null
 ): F {
     val currentReturnTypeCalculator = components.context.returnTypeCalculator as? ReturnTypeCalculatorWithJump
     val prevDesignation = currentReturnTypeCalculator?.designationMapForLocalClasses ?: emptyMap()
@@ -103,7 +102,7 @@ fun <F : FirClassLikeDeclaration> F.runContractAndBodiesResolutionForLocalClass(
         implicitTypeOnly = false,
         returnTypeCalculator,
         outerBodyResolveContext = newContext,
-        firTowerDataContextCollector = firTowerDataContextCollector
+        firResolveContextCollector = firResolveContextCollector
     )
     return this.transform(transformer, resolutionMode)
 }
@@ -116,7 +115,7 @@ open class FirImplicitAwareBodyResolveTransformer(
     implicitTypeOnly: Boolean,
     returnTypeCalculator: ReturnTypeCalculator,
     outerBodyResolveContext: BodyResolveContext? = null,
-    firTowerDataContextCollector: FirTowerDataContextCollector? = null,
+    firResolveContextCollector: FirResolveContextCollector? = null,
 ) : FirBodyResolveTransformer(
     session,
     phase,
@@ -124,7 +123,7 @@ open class FirImplicitAwareBodyResolveTransformer(
     scopeSession,
     returnTypeCalculator,
     outerBodyResolveContext,
-    firTowerDataContextCollector
+    firResolveContextCollector
 ) {
     override fun transformSimpleFunction(
         simpleFunction: FirSimpleFunction,

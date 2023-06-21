@@ -30,7 +30,7 @@ abstract class FirAbstractBodyResolveTransformerDispatcher(
     scopeSession: ScopeSession,
     val returnTypeCalculator: ReturnTypeCalculator = ReturnTypeCalculatorForFullBodyResolve,
     outerBodyResolveContext: BodyResolveContext? = null,
-    val firTowerDataContextCollector: FirTowerDataContextCollector? = null,
+    val firResolveContextCollector: FirResolveContextCollector? = null,
 ) : FirAbstractBodyResolveTransformer(phase) {
 
     open val preserveCFGForClasses: Boolean get() = !implicitTypeOnly
@@ -52,7 +52,7 @@ abstract class FirAbstractBodyResolveTransformerDispatcher(
         checkSessionConsistency(file)
         return context.withFile(file, components) {
             withFileAnalysisExceptionWrapping(file) {
-                firTowerDataContextCollector?.addFileContext(file, context.towerDataContext)
+                firResolveContextCollector?.addFileContext(file, context.towerDataContext)
 
                 @Suppress("UNCHECKED_CAST")
                 transformDeclarationContent(file, data) as FirFile
