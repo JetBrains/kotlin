@@ -39,12 +39,17 @@ import kotlin.reflect.KProperty
 @ExperimentalKotlinGradlePluginApi
 object KotlinSourceSetConvention :
     ReadOnlyProperty<NamedDomainObjectContainer<KotlinSourceSet>, NamedDomainObjectProvider<KotlinSourceSet>> {
+
+    internal class Trace : Throwable()
+
     override fun getValue(
         thisRef: NamedDomainObjectContainer<KotlinSourceSet>, property: KProperty<*>,
     ): NamedDomainObjectProvider<KotlinSourceSet> {
         val name = property.name
-        return if (name in thisRef.names) thisRef.named(name) else thisRef.register(name) { sourceSet ->
-            sourceSet.isRegisteredByKotlinSourceSetConventionAt = Throwable()
+        if (name in thisRef.names) return thisRef.named(name)
+        val trace = Trace()
+        return thisRef.register(name) { sourceSet ->
+            sourceSet.isRegisteredByKotlinSourceSetConventionAt = trace
         }
     }
 
@@ -53,7 +58,7 @@ object KotlinSourceSetConvention :
      * This will be null if SourceSet already existed and was referenced using the convention, or of no convention was used at all.
      */
     @Suppress("UnusedReceiverParameter") // Diagnostic is wrong
-    internal var KotlinSourceSet.isRegisteredByKotlinSourceSetConventionAt: Throwable?
+    internal var KotlinSourceSet.isRegisteredByKotlinSourceSetConventionAt: Trace?
             by extrasReadWriteProperty("isRegisteredByKotlinSourceSetConvention")
         private set
 }
