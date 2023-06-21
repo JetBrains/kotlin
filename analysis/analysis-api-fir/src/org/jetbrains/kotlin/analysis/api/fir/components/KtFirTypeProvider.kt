@@ -266,5 +266,10 @@ internal class KtFirTypeProvider(
         }
         return firSymbol.dispatchReceiverType(analysisSession.firSymbolBuilder)
     }
+
+    override fun getArrayElementType(type: KtType): KtType? {
+        require(type is KtFirType)
+        return type.coneType.arrayElementType()?.asKtType()
+    }
 }
 

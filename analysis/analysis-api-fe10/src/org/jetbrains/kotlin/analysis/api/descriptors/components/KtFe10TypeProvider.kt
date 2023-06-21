@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.api.types.KtTypeNullability
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -47,8 +48,12 @@ import org.jetbrains.kotlin.types.checker.intersectWrappedTypes
 import org.jetbrains.kotlin.types.error.ErrorType
 import org.jetbrains.kotlin.types.error.ErrorTypeKind
 import org.jetbrains.kotlin.types.error.ErrorUtils
+import org.jetbrains.kotlin.types.typeUtil.builtIns
+import org.jetbrains.kotlin.types.typeUtil.isGenericArrayOfTypeParameter
 import org.jetbrains.kotlin.types.typeUtil.isNothing
+import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import org.jetbrains.kotlin.util.containingNonLocalDeclaration
+import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 
 internal class KtFe10TypeProvider(
     override val analysisSession: KtFe10AnalysisSession
@@ -144,6 +149,16 @@ internal class KtFe10TypeProvider(
         require(symbol is KtFe10Symbol)
         val descriptor = symbol.getDescriptor() as? CallableDescriptor ?: return null
         return descriptor.dispatchReceiverParameter?.type?.toKtType(analysisContext)
+    }
+
+    override fun getArrayElementType(type: KtType): KtType? {
+        require(type is KtFe10Type)
+        val fe10Type = type.fe10Type
+
+        if (!KotlinBuiltIns.isArrayOrPrimitiveArray(fe10Type)) return null
+
+        val arrayElementType = fe10Type.builtIns.getArrayElementType(fe10Type)
+        return arrayElementType.toKtType(analysisContext)
     }
 
     private fun areTypesCompatible(a: KotlinType, b: KotlinType): Boolean {

@@ -42,6 +42,8 @@ public abstract class KtTypeProvider : KtAnalysisSessionComponent() {
     public abstract fun getAllSuperTypes(type: KtType, shouldApproximate: Boolean): List<KtType>
 
     public abstract fun getDispatchReceiverType(symbol: KtCallableSymbol): KtType?
+
+    public abstract fun getArrayElementType(type: KtType): KtType?
 }
 
 public interface KtTypeProviderMixIn : KtAnalysisSessionMixIn {
@@ -152,6 +154,12 @@ public interface KtTypeProviderMixIn : KtAnalysisSessionMixIn {
     @Deprecated("Avoid using this function")
     public fun KtCallableSymbol.getDispatchReceiverType(): KtType? =
         withValidityAssertion { analysisSession.typeProvider.getDispatchReceiverType(this) }
+
+    /**
+     * If provided [KtType] is a primitive type array or [Array], returns the type of the array's elements. Otherwise, returns null.
+     */
+    public fun KtType.getArrayElementType(): KtType? =
+        withValidityAssertion { analysisSession.typeProvider.getArrayElementType(this) }
 }
 
 @Suppress("PropertyName")
