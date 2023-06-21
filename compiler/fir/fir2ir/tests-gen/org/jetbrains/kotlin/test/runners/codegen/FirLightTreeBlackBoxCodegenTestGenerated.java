@@ -18672,6 +18672,12 @@ public class FirLightTreeBlackBoxCodegenTestGenerated extends AbstractFirLightTr
         }
 
         @Test
+        @TestMetadata("syntheticPropertyThroughJavaWithSetter.kt")
+        public void testSyntheticPropertyThroughJavaWithSetter() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/syntheticPropertyThroughJavaWithSetter.kt");
+        }
+
+        @Test
         @TestMetadata("toLong.kt")
         public void testToLong() throws Exception {
             runTest("compiler/testData/codegen/box/fir/toLong.kt");

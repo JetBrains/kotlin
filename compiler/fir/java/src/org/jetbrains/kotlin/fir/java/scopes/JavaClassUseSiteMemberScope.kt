@@ -196,7 +196,7 @@ class JavaClassUseSiteMemberScope(
 
             candidateSymbol.takeIf {
                 when {
-                    candidate.isJavaOrEnhancement ->
+                    candidate.isAcceptableAsAccessorOverride() ->
                         // TODO: Decide something for the case when property type is not computed yet
                         expectedReturnType == null ||
                                 AbstractTypeChecker.isSubtypeOf(session.typeContext, candidateReturnType, expectedReturnType)
@@ -220,9 +220,18 @@ class JavaClassUseSiteMemberScope(
                 candidate.valueParameters.single().returnTypeRef.toConeKotlinTypeProbablyFlexible(session, typeParameterStack)
 
             candidateSymbol.takeIf {
-                candidate.isJavaOrEnhancement && AbstractTypeChecker.equalTypes(session.typeContext, parameterType, propertyType)
+                candidate.isAcceptableAsAccessorOverride() && AbstractTypeChecker.equalTypes(
+                    session.typeContext, parameterType, propertyType
+                )
             }
         }
+    }
+
+    private fun FirSimpleFunction.isAcceptableAsAccessorOverride(): Boolean {
+        // We don't accept here accessors with type parameters from Kotlin to avoid strange cases like KT-59038
+        // However, we (temporarily, see below) accept accessors from Kotlin in general to keep K1 compatibility in cases like KT-59550
+        // KT-59601: we are going to forbid accessors from Kotlin in general after some investigation and/or deprecation period
+        return isJavaOrEnhancement || typeParameters.isEmpty()
     }
 
     private fun FirPropertySymbol.getBuiltinSpecialPropertyGetterName(): Name? {

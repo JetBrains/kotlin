@@ -9,10 +9,18 @@ public class Intermediate extends Base {
 }
 
 // FILE: FinalAndBase.kt
-abstract class Base(private val foo: String) {
+abstract class Base(private var foo: String) {
     fun getFoo() = foo
+
+    fun setFoo(newFoo: String) {
+        foo = newFoo
+    }
 }
 
 class Final(val i: Intermediate) : Intermediate(i.foo)
 
-fun box(): String = Final(Intermediate("OK")).foo
+fun box(): String {
+    val f = Final(Intermediate(""))
+    f.foo = "OK"
+    return f.foo
+}
