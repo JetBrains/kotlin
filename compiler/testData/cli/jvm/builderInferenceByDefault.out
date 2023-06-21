@@ -1,7 +1,1 @@
-compiler/testData/cli/jvm/builderInferenceByDefault.kt:1:21: warning: parameter 'builderAction' is never used
-fun <K, V> buildMap(builderAction: MutableMap<K, V>.() -> Unit): Map<K, V> = mapOf()
-                    ^
-compiler/testData/cli/jvm/builderInferenceByDefault.kt:4:9: warning: variable 'x' is never used
-    val x = buildMap {
-        ^
 OK

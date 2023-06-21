@@ -1,13 +1,10 @@
 warning: ATTENTION!
 This build uses unsafe internal compiler arguments:
 
--XXLanguage:+InlineClasses
+-XXLanguage:+SuspendFunctionAsSupertype
 
 This mode is not recommended for production use,
 as no stability/compatibility guarantees are given on
 compiler or generated code. Use it at your own risk!
 
-compiler/testData/cli/jvm/inlineClass.kt:1:1: warning: 'inline' modifier is deprecated. Use 'value' instead
-inline class Foo(val x: Int)
-^
 OK

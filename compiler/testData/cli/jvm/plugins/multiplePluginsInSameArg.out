@@ -1,4 +1,3 @@
-warning: language version 2.0 is experimental, there are no backwards compatibility guarantees for new language and library features
 error: multiple plugins found in given classpath: org.jetbrains.kotlin.allopen.AllOpenComponentRegistrar, org.jetbrains.kotlin.noarg.NoArgComponentRegistrar
   Plugin configuration is: dist/kotlinc/lib/allopen-compiler-plugin.jar,dist/kotlinc/lib/noarg-compiler-plugin.jar=annotation=foo.AllOpen
 COMPILATION_ERROR

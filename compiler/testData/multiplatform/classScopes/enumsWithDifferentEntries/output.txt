@@ -1,37 +1,19 @@
 -- Common --
 Exit code: OK
 Output:
-compiler/testData/multiplatform/classScopes/enumsWithDifferentEntries/common.kt:1:1: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. You can use -Xexpect-actual-classes flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
-expect enum class AB { A, B }
-^
-compiler/testData/multiplatform/classScopes/enumsWithDifferentEntries/common.kt:1:24: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. You can use -Xexpect-actual-classes flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
-expect enum class AB { A, B }
-                       ^
-compiler/testData/multiplatform/classScopes/enumsWithDifferentEntries/common.kt:1:27: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. You can use -Xexpect-actual-classes flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
-expect enum class AB { A, B }
-                          ^
-compiler/testData/multiplatform/classScopes/enumsWithDifferentEntries/common.kt:3:1: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. You can use -Xexpect-actual-classes flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
-expect enum class CD { C, D }
-^
-compiler/testData/multiplatform/classScopes/enumsWithDifferentEntries/common.kt:3:24: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. You can use -Xexpect-actual-classes flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
-expect enum class CD { C, D }
-                       ^
-compiler/testData/multiplatform/classScopes/enumsWithDifferentEntries/common.kt:3:27: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. You can use -Xexpect-actual-classes flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
-expect enum class CD { C, D }
-                          ^
 
 -- JVM --
 Exit code: COMPILATION_ERROR
 Output:
-compiler/testData/multiplatform/classScopes/enumsWithDifferentEntries/jvm.kt:1:19: error: actual enum class 'AB' has no corresponding expected declaration
+compiler/testData/multiplatform/classScopes/enumsWithDifferentEntries/jvm.kt:1:19: error: 'actual enum class AB : Enum<AB>' has no corresponding expected declaration
 The following declaration is incompatible because some entries from expected enum are missing in the actual enum:
-    public final expect enum class AB : Enum<AB>
+    expect enum class AB : Enum<AB>
 
 actual enum class AB { A, C }
                   ^
-compiler/testData/multiplatform/classScopes/enumsWithDifferentEntries/jvm.kt:3:19: error: actual enum class 'CD' has no corresponding expected declaration
+compiler/testData/multiplatform/classScopes/enumsWithDifferentEntries/jvm.kt:3:19: error: 'actual enum class CD : Enum<CD>' has no corresponding expected declaration
 The following declaration is incompatible because some entries from expected enum are missing in the actual enum:
-    public final expect enum class CD : Enum<CD>
+    expect enum class CD : Enum<CD>
 
 actual enum class CD { C }
                   ^

@@ -1,6 +1,6 @@
-$TESTDATA_DIR$/variableInWhenSubject.kt
+$TESTDATA_DIR$/internalArgEnableLanguageFeature.kt
 -d
 $TEMP_DIR$
 -language-version
-1.4
--XXLanguage\:+VariableDeclarationInWhenSubject
+2.0
+-XXLanguage\:+ProhibitImplementingVarByInheritedVal

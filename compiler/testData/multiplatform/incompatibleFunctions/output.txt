@@ -5,21 +5,21 @@ Output:
 -- JVM --
 Exit code: COMPILATION_ERROR
 Output:
-compiler/testData/multiplatform/incompatibleFunctions/jvm.kt:1:1: error: actual function 'plus' has no corresponding expected declaration
+compiler/testData/multiplatform/incompatibleFunctions/jvm.kt:1:16: error: 'actual fun Int.plus(s: CharSequence): Int' has no corresponding expected declaration
 The following declaration is incompatible because some modifiers on expected declaration are missing on the actual one (infix, inline, operator):
-    public expect infix fun Int.plus(s: CharSequence): Int
+    expect fun Int.plus(s: CharSequence): Int
 
 actual fun Int.plus(s: CharSequence): Int = 0
-^
-compiler/testData/multiplatform/incompatibleFunctions/jvm.kt:3:1: error: actual function 'times' has no corresponding expected declaration
+               ^
+compiler/testData/multiplatform/incompatibleFunctions/jvm.kt:3:19: error: 'actual fun Double.times(x: CharArray): Unit' has no corresponding expected declaration
 The following declaration is incompatible because some modifiers on expected declaration are missing on the actual one (infix, inline, operator):
-    public expect operator fun Double.times(x: CharArray): Unit
+    expect fun Double.times(x: CharArray): Unit
 
 actual fun Double.times(x: CharArray) {}
-^
-compiler/testData/multiplatform/incompatibleFunctions/jvm.kt:5:1: error: actual function 'f1' has no corresponding expected declaration
+                  ^
+compiler/testData/multiplatform/incompatibleFunctions/jvm.kt:5:12: error: 'actual fun f1(): Unit' has no corresponding expected declaration
 The following declaration is incompatible because some modifiers on expected declaration are missing on the actual one (infix, inline, operator):
-    public expect inline fun f1(): Unit
+    expect fun f1(): Unit
 
 actual fun f1() {}
-^
+           ^

@@ -1,5 +1,6 @@
 $TESTDATA_DIR$/werrorWithNoWarn.kt
 -d
 $TEMP_DIR$
+-XXLanguage\:+EnableDfaWarningsInK2
 -Werror
 -nowarn

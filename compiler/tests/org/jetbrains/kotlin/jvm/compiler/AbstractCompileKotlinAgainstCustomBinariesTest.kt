@@ -648,7 +648,9 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
 
     fun testAgainstFirWithStableAbiAndNoPrereleaseCheck() {
         val library = compileLibrary("library", additionalOptions = listOf("-language-version", "2.0", "-Xabi-stability=stable"))
-        compileKotlin("source.kt", tmpdir, listOf(library), additionalOptions = listOf("-Xskip-prerelease-check"))
+        compileKotlin(
+            "source.kt", tmpdir, listOf(library), additionalOptions = listOf("-language-version", "1.9", "-Xskip-prerelease-check")
+        )
     }
 
     fun testAgainstFirWithAllowUnstableDependencies() {
@@ -706,7 +708,7 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
             listOf("-Xexpect-actual-linker")
         )
     }
-
+    
     companion object {
         @JvmStatic
         protected fun copyJarFileWithoutEntry(jarPath: File, vararg entriesToDelete: String): File =

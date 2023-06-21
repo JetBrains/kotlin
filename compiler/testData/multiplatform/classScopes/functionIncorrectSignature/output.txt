@@ -1,25 +1,13 @@
 -- Common --
 Exit code: OK
 Output:
-compiler/testData/multiplatform/classScopes/functionIncorrectSignature/common.kt:1:1: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. You can use -Xexpect-actual-classes flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
-expect class Foo {
-^
 
 -- JVM --
 Exit code: COMPILATION_ERROR
 Output:
-compiler/testData/multiplatform/classScopes/functionIncorrectSignature/jvm.kt:1:14: error: actual class 'Foo' has no corresponding members for expected class members:
-
-    public final expect fun function(b: ByteArray): Int
-
-    The following declaration is incompatible because return type is different:
-        public final actual fun function(b: ByteArray): Long
-
-actual class Foo {
-             ^
-compiler/testData/multiplatform/classScopes/functionIncorrectSignature/jvm.kt:2:40: error: actual function 'function' has no corresponding expected declaration
-The following declaration is incompatible because return type is different:
-    public final expect fun function(b: ByteArray): Int
+compiler/testData/multiplatform/classScopes/functionIncorrectSignature/jvm.kt:2:16: error: 'actual fun function(b: ByteArray): Long' has no corresponding expected declaration
+The following declaration is incompatible:
+    expect fun function(b: ByteArray): Int
 
     actual fun function(b: ByteArray): Long = b.size.toLong()
-                                       ^
+               ^

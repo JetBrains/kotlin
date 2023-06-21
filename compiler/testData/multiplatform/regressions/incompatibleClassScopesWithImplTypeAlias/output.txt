@@ -1,21 +1,18 @@
 -- Common --
 Exit code: OK
 Output:
-compiler/testData/multiplatform/regressions/incompatibleClassScopesWithImplTypeAlias/common.kt:3:1: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. You can use -Xexpect-actual-classes flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
-expect abstract class Writer protected constructor()
-^
 
 -- JVM --
 Exit code: COMPILATION_ERROR
 Output:
-compiler/testData/multiplatform/regressions/incompatibleClassScopesWithImplTypeAlias/jvm.kt:3:18: error: actual class 'Writer' has no corresponding members for expected class members:
+compiler/testData/multiplatform/regressions/incompatibleClassScopesWithImplTypeAlias/jvm.kt:3:18: error: actual class 'actual typealias Writer = Writer' has no corresponding members for expected class members:
 
-    protected constructor Writer()
+    expect constructor(): Writer
 
     The following declaration is incompatible because visibility is different:
-        protected/*protected and package*/ constructor Writer()
+        constructor(): Writer
     The following declaration is incompatible because number of value parameters is different:
-        protected/*protected and package*/ constructor Writer(p0: Any!)
+        constructor(p0: Any!): Writer
 
 actual typealias Writer = java.io.Writer
                  ^

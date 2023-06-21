@@ -1,6 +1,0 @@
-$TESTDATA_DIR$/variableInWhenSubject.kt
--d
-$TEMP_DIR$
--language-version
-1.4
--XXLanguage\:+VariableDeclarationInWhenSubject

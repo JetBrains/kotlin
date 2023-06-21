@@ -1,7 +1,7 @@
-compiler/testData/cli/jvm/conflictingOverloads.kt:1:1: error: conflicting overloads: public fun a(): List<Int> defined in root package in file conflictingOverloads.kt, public fun a(): List<String> defined in root package in file conflictingOverloads.kt
+compiler/testData/cli/jvm/conflictingOverloads.kt:1:1: error: conflicting overloads: [fun a(): List<String>]
 fun a(): List<Int> = null!!
 ^
-compiler/testData/cli/jvm/conflictingOverloads.kt:2:1: error: conflicting overloads: public fun a(): List<Int> defined in root package in file conflictingOverloads.kt, public fun a(): List<String> defined in root package in file conflictingOverloads.kt
+compiler/testData/cli/jvm/conflictingOverloads.kt:2:1: error: conflicting overloads: [fun a(): List<Int>]
 fun a(): List<String> = null!!
 ^
 COMPILATION_ERROR

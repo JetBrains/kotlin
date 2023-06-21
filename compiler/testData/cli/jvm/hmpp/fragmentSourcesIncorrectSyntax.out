@@ -7,7 +7,6 @@ This mode is not recommended for production use,
 as no stability/compatibility guarantees are given on
 compiler or generated code. Use it at your own risk!
 
-warning: language version 2.0 is experimental, there are no backwards compatibility guarantees for new language and library features
 error: incorrect syntax for -Xfragment-sources argument. `<module name>:<source file>` expected but got `a;a.kt;`
 error: source '$TESTDATA_DIR$/src/a.kt' does not belong to any module
 error: source '$TESTDATA_DIR$/src/b.kt' does not belong to any module

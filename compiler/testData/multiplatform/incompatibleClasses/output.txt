@@ -1,160 +1,103 @@
 -- Common --
 Exit code: OK
 Output:
-compiler/testData/multiplatform/incompatibleClasses/common.kt:1:1: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. You can use -Xexpect-actual-classes flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
-expect class PClass
-^
-compiler/testData/multiplatform/incompatibleClasses/common.kt:2:1: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. You can use -Xexpect-actual-classes flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
-expect interface PInterface
-^
-compiler/testData/multiplatform/incompatibleClasses/common.kt:3:1: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. You can use -Xexpect-actual-classes flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
-expect object PObject
-^
-compiler/testData/multiplatform/incompatibleClasses/common.kt:4:1: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. You can use -Xexpect-actual-classes flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
-expect enum class PEnumClass
-^
-compiler/testData/multiplatform/incompatibleClasses/common.kt:5:1: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. You can use -Xexpect-actual-classes flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
-expect annotation class PAnnotationClass
-^
-compiler/testData/multiplatform/incompatibleClasses/common.kt:7:10: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. You can use -Xexpect-actual-classes flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
-internal expect object InternalObject
-         ^
-compiler/testData/multiplatform/incompatibleClasses/common.kt:8:8: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. You can use -Xexpect-actual-classes flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
-public expect object PublicObject
-       ^
-compiler/testData/multiplatform/incompatibleClasses/common.kt:10:6: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. You can use -Xexpect-actual-classes flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
-open expect class OpenClass
-     ^
-compiler/testData/multiplatform/incompatibleClasses/common.kt:11:10: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. You can use -Xexpect-actual-classes flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
-abstract expect class AbstractClass
-         ^
-compiler/testData/multiplatform/incompatibleClasses/common.kt:12:7: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. You can use -Xexpect-actual-classes flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
-final expect class FinalClass
-      ^
-compiler/testData/multiplatform/incompatibleClasses/common.kt:14:1: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. You can use -Xexpect-actual-classes flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
-expect class C1<A>
-^
-compiler/testData/multiplatform/incompatibleClasses/common.kt:15:1: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. You can use -Xexpect-actual-classes flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
-expect class C2<B>
-^
-compiler/testData/multiplatform/incompatibleClasses/common.kt:16:1: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. You can use -Xexpect-actual-classes flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
-expect class C3<D, E : D>
-^
-compiler/testData/multiplatform/incompatibleClasses/common.kt:18:1: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. You can use -Xexpect-actual-classes flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
-expect class C4<F>
-^
-compiler/testData/multiplatform/incompatibleClasses/common.kt:21:1: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. You can use -Xexpect-actual-classes flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
-expect abstract class ExtendsNumber : Number
-^
-compiler/testData/multiplatform/incompatibleClasses/common.kt:23:1: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. You can use -Xexpect-actual-classes flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
-expect fun interface FunInterface {
-^
-compiler/testData/multiplatform/incompatibleClasses/common.kt:27:1: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. You can use -Xexpect-actual-classes flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
-expect fun interface FunInterface2 {
-^
 
 -- JVM --
 Exit code: COMPILATION_ERROR
 Output:
-compiler/testData/multiplatform/incompatibleClasses/jvm.kt:1:8: error: actual interface 'PClass' has no corresponding expected declaration
+compiler/testData/multiplatform/incompatibleClasses/jvm.kt:1:18: error: 'actual interface PClass : Any' has no corresponding expected declaration
 The following declaration is incompatible because class kinds are different (class, interface, object, enum, annotation):
-    public final expect class PClass
+    expect class PClass : Any
 
 actual interface PClass
-       ^
-compiler/testData/multiplatform/incompatibleClasses/jvm.kt:2:8: error: actual object 'PInterface' has no corresponding expected declaration
+                 ^
+compiler/testData/multiplatform/incompatibleClasses/jvm.kt:2:15: error: 'actual object PInterface : Any' has no corresponding expected declaration
 The following declaration is incompatible because class kinds are different (class, interface, object, enum, annotation):
-    public expect interface PInterface
+    expect interface PInterface : Any
 
 actual object PInterface
-       ^
-compiler/testData/multiplatform/incompatibleClasses/jvm.kt:3:8: error: actual enum class 'PObject' has no corresponding expected declaration
+              ^
+compiler/testData/multiplatform/incompatibleClasses/jvm.kt:3:19: error: 'actual enum class PObject : Enum<PObject>' has no corresponding expected declaration
 The following declaration is incompatible because class kinds are different (class, interface, object, enum, annotation):
-    public expect object PObject
+    expect object PObject : Any
 
 actual enum class PObject
-       ^
-compiler/testData/multiplatform/incompatibleClasses/jvm.kt:4:8: error: actual annotation class 'PEnumClass' has no corresponding expected declaration
+                  ^
+compiler/testData/multiplatform/incompatibleClasses/jvm.kt:4:25: error: 'actual annotation class PEnumClass : Annotation' has no corresponding expected declaration
 The following declaration is incompatible because class kinds are different (class, interface, object, enum, annotation):
-    public final expect enum class PEnumClass : Enum<PEnumClass>
+    expect enum class PEnumClass : Enum<PEnumClass>
 
 actual annotation class PEnumClass
-       ^
-compiler/testData/multiplatform/incompatibleClasses/jvm.kt:5:8: error: actual class 'PAnnotationClass' has no corresponding expected declaration
+                        ^
+compiler/testData/multiplatform/incompatibleClasses/jvm.kt:5:14: error: 'actual class PAnnotationClass : Any' has no corresponding expected declaration
 The following declaration is incompatible because class kinds are different (class, interface, object, enum, annotation):
-    public final expect annotation class PAnnotationClass : Annotation
+    expect annotation class PAnnotationClass : Annotation
 
 actual class PAnnotationClass
-       ^
-compiler/testData/multiplatform/incompatibleClasses/jvm.kt:7:1: error: actual object 'PublicObject' has no corresponding expected declaration
+             ^
+compiler/testData/multiplatform/incompatibleClasses/jvm.kt:7:24: error: 'actual object PublicObject : Any' has no corresponding expected declaration
 The following declaration is incompatible because visibility is different:
-    public expect object PublicObject
+    expect object PublicObject : Any
 
 internal actual object PublicObject
-^
-compiler/testData/multiplatform/incompatibleClasses/jvm.kt:8:1: error: actual object 'InternalObject' has no corresponding expected declaration
-The following declaration is incompatible because visibility is different:
-    internal expect object InternalObject
-
-public actual object InternalObject
-^
-compiler/testData/multiplatform/incompatibleClasses/jvm.kt:10:1: error: actual class 'OpenClass' has no corresponding expected declaration
+                       ^
+compiler/testData/multiplatform/incompatibleClasses/jvm.kt:10:20: error: 'actual class OpenClass : Any' has no corresponding expected declaration
 The following declaration is incompatible because modality is different:
-    public open expect class OpenClass
+    expect class OpenClass : Any
 
 final actual class OpenClass
-^
-compiler/testData/multiplatform/incompatibleClasses/jvm.kt:11:1: error: actual class 'AbstractClass' has no corresponding expected declaration
+                   ^
+compiler/testData/multiplatform/incompatibleClasses/jvm.kt:11:19: error: 'actual class AbstractClass : Any' has no corresponding expected declaration
 The following declaration is incompatible because modality is different:
-    public abstract expect class AbstractClass
+    expect class AbstractClass : Any
 
 open actual class AbstractClass
-^
-compiler/testData/multiplatform/incompatibleClasses/jvm.kt:12:1: error: actual class 'FinalClass' has no corresponding expected declaration
+                  ^
+compiler/testData/multiplatform/incompatibleClasses/jvm.kt:12:23: error: 'actual class FinalClass : Any' has no corresponding expected declaration
 The following declaration is incompatible because modality is different:
-    public final expect class FinalClass
+    expect class FinalClass : Any
 
 abstract actual class FinalClass
-^
-compiler/testData/multiplatform/incompatibleClasses/jvm.kt:14:16: error: actual class 'C1' has no corresponding expected declaration
+                      ^
+compiler/testData/multiplatform/incompatibleClasses/jvm.kt:14:14: error: 'actual class C1<A, Extra> : Any' has no corresponding expected declaration
 The following declaration is incompatible because number of type parameters is different:
-    public final expect class C1<A>
+    expect class C1<A> : Any
 
 actual class C1<A, Extra>
-               ^
-compiler/testData/multiplatform/incompatibleClasses/jvm.kt:15:16: error: actual class 'C2' has no corresponding expected declaration
+             ^
+compiler/testData/multiplatform/incompatibleClasses/jvm.kt:15:14: error: 'actual class C2<out B> : Any' has no corresponding expected declaration
 The following declaration is incompatible because declaration-site variances of type parameters are different:
-    public final expect class C2<B>
+    expect class C2<B> : Any
 
 actual class C2<out B>
-               ^
-compiler/testData/multiplatform/incompatibleClasses/jvm.kt:16:16: error: actual class 'C3' has no corresponding expected declaration
+             ^
+compiler/testData/multiplatform/incompatibleClasses/jvm.kt:16:14: error: 'actual class C3<D, E : D?> : Any' has no corresponding expected declaration
 The following declaration is incompatible because upper bounds of type parameters are different:
-    public final expect class C3<D, E : D>
+    expect class C3<D, E : D> : Any
 
 actual class C3<D, E : D?>
-               ^
-compiler/testData/multiplatform/incompatibleClasses/jvm.kt:18:20: error: actual typealias 'C4' has no corresponding expected declaration
+             ^
+compiler/testData/multiplatform/incompatibleClasses/jvm.kt:18:18: error: 'actual typealias C4<F> = C4Impl<F>' has no corresponding expected declaration
 The following declaration is incompatible because upper bounds of type parameters are different:
-    public final expect class C4<F>
+    expect class C4<F> : Any
 
 actual typealias C4<F> = C4Impl<F>
-                   ^
-compiler/testData/multiplatform/incompatibleClasses/jvm.kt:21:39: error: actual class 'ExtendsNumber' has no corresponding expected declaration
+                 ^
+compiler/testData/multiplatform/incompatibleClasses/jvm.kt:21:23: error: 'actual class ExtendsNumber : Any' has no corresponding expected declaration
 The following declaration is incompatible because some supertypes are missing in the actual declaration:
-    public abstract expect class ExtendsNumber : Number
+    expect class ExtendsNumber : Number
 
 actual abstract class ExtendsNumber : Any()
-                                      ^
-compiler/testData/multiplatform/incompatibleClasses/jvm.kt:23:1: error: actual interface 'FunInterface' has no corresponding expected declaration
+                      ^
+compiler/testData/multiplatform/incompatibleClasses/jvm.kt:23:18: error: 'actual interface FunInterface : Any' has no corresponding expected declaration
 The following declaration is incompatible because actual declaration for fun expect interface is not a functional interface:
-    public expect fun interface FunInterface
+    expect fun interface FunInterface : Any
 
 actual interface FunInterface {
-^
-compiler/testData/multiplatform/incompatibleClasses/jvm.kt:31:1: error: actual typealias 'FunInterface2' has no corresponding expected declaration
+                 ^
+compiler/testData/multiplatform/incompatibleClasses/jvm.kt:31:18: error: 'actual typealias FunInterface2 = FunInterface2Typealias' has no corresponding expected declaration
 The following declaration is incompatible because actual declaration for fun expect interface is not a functional interface:
-    public expect fun interface FunInterface2
+    expect fun interface FunInterface2 : Any
 
 actual typealias FunInterface2 = FunInterface2Typealias
-^
+                 ^

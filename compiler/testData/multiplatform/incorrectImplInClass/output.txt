@@ -1,22 +1,19 @@
 -- Common --
 Exit code: OK
 Output:
-compiler/testData/multiplatform/incorrectImplInClass/common.kt:1:1: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. You can use -Xexpect-actual-classes flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
-expect class Foo
-^
 
 -- JVM --
 Exit code: COMPILATION_ERROR
 Output:
-compiler/testData/multiplatform/incorrectImplInClass/jvm.kt:1:18: error: actual constructor of 'Foo' has no corresponding expected declaration
+compiler/testData/multiplatform/incorrectImplInClass/jvm.kt:1:18: error: 'actual constructor(): Foo' has no corresponding expected declaration
 actual class Foo actual constructor() {
                  ^
-compiler/testData/multiplatform/incorrectImplInClass/jvm.kt:2:5: error: actual constructor of 'Foo' has no corresponding expected declaration
+compiler/testData/multiplatform/incorrectImplInClass/jvm.kt:2:5: error: 'actual constructor(s: String): Foo' has no corresponding expected declaration
     actual constructor(s: String) : this()
     ^
-compiler/testData/multiplatform/incorrectImplInClass/jvm.kt:4:16: error: actual function 'nonPlatformFun' has no corresponding expected declaration
+compiler/testData/multiplatform/incorrectImplInClass/jvm.kt:4:16: error: 'actual fun nonPlatformFun(): Unit' has no corresponding expected declaration
     actual fun nonPlatformFun() {}
                ^
-compiler/testData/multiplatform/incorrectImplInClass/jvm.kt:6:16: error: actual property 'nonPlatformVal' has no corresponding expected declaration
+compiler/testData/multiplatform/incorrectImplInClass/jvm.kt:6:16: error: 'actual val nonPlatformVal: String' has no corresponding expected declaration
     actual val nonPlatformVal = ""
                ^

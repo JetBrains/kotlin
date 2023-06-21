@@ -3,3 +3,5 @@ $TESTDATA_DIR$/moduleName.kt
 $TEMP_DIR$
 -module-name
 foo
+-language-version
+1.9

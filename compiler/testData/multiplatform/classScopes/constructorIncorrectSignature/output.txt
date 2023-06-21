@@ -1,25 +1,22 @@
 -- Common --
 Exit code: OK
 Output:
-compiler/testData/multiplatform/classScopes/constructorIncorrectSignature/common.kt:1:1: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. You can use -Xexpect-actual-classes flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
-expect class Foo {
-^
 
 -- JVM --
 Exit code: COMPILATION_ERROR
 Output:
-compiler/testData/multiplatform/classScopes/constructorIncorrectSignature/jvm.kt:1:14: error: actual class 'Foo' has no corresponding members for expected class members:
+compiler/testData/multiplatform/classScopes/constructorIncorrectSignature/jvm.kt:1:14: error: actual class 'actual class Foo : Any' has no corresponding members for expected class members:
 
-    public constructor Foo(s: String)
+    expect constructor(s: String): Foo
 
     The following declaration is incompatible because parameter types are different:
-        public constructor Foo(s: Array<String>)
+        actual constructor(s: Array<String>): Foo
 
 actual class Foo {
              ^
-compiler/testData/multiplatform/classScopes/constructorIncorrectSignature/jvm.kt:2:23: error: actual constructor of 'Foo' has no corresponding expected declaration
+compiler/testData/multiplatform/classScopes/constructorIncorrectSignature/jvm.kt:2:5: error: 'actual constructor(s: Array<String>): Foo' has no corresponding expected declaration
 The following declaration is incompatible because parameter types are different:
-    public constructor Foo(s: String)
+    expect constructor(s: String): Foo
 
     actual constructor(s: Array<String>)
-                      ^
+    ^

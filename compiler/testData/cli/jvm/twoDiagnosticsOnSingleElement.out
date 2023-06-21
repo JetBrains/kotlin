@@ -1,4 +1,3 @@
-warning: language version 2.0 is experimental, there are no backwards compatibility guarantees for new language and library features
 compiler/testData/cli/jvm/twoDiagnosticsOnSingleElement.kt:11:1: error: 'Class C' is not abstract and does not implement abstract member 'foo'.
 class C : I1, I2
 ^

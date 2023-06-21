@@ -1,4 +1,3 @@
-warning: language version 2.0 is experimental, there are no backwards compatibility guarantees for new language and library features
 compiler/testData/cli/jvm/firFriendlyErrorIfNoJdkOptionIsSet.kt:2:11: error: unresolved reference 'NullPointerException'.
     throw NullPointerException()
           ^

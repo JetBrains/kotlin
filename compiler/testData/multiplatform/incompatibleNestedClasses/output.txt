@@ -1,91 +1,55 @@
 -- Common --
 Exit code: OK
 Output:
-compiler/testData/multiplatform/incompatibleNestedClasses/common.kt:1:1: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. You can use -Xexpect-actual-classes flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
-expect class O1 {
-^
-compiler/testData/multiplatform/incompatibleNestedClasses/common.kt:2:11: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. You can use -Xexpect-actual-classes flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
-    class N1
-          ^
-compiler/testData/multiplatform/incompatibleNestedClasses/common.kt:3:15: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. You can use -Xexpect-actual-classes flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
-    interface N2
-              ^
-compiler/testData/multiplatform/incompatibleNestedClasses/common.kt:4:12: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. You can use -Xexpect-actual-classes flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
-    object N3
-           ^
-compiler/testData/multiplatform/incompatibleNestedClasses/common.kt:7:1: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. You can use -Xexpect-actual-classes flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
-expect class O2 {
-^
-compiler/testData/multiplatform/incompatibleNestedClasses/common.kt:8:11: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. You can use -Xexpect-actual-classes flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
-    class N2
-          ^
-compiler/testData/multiplatform/incompatibleNestedClasses/common.kt:9:17: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. You can use -Xexpect-actual-classes flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
-    inner class I2
-                ^
-compiler/testData/multiplatform/incompatibleNestedClasses/common.kt:12:1: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. You can use -Xexpect-actual-classes flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
-expect class O3 {
-^
-compiler/testData/multiplatform/incompatibleNestedClasses/common.kt:13:12: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. You can use -Xexpect-actual-classes flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
-    object Companion
-           ^
-compiler/testData/multiplatform/incompatibleNestedClasses/common.kt:14:22: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. You can use -Xexpect-actual-classes flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
-    companion object Factory
-                     ^
-compiler/testData/multiplatform/incompatibleNestedClasses/common.kt:17:1: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. You can use -Xexpect-actual-classes flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
-expect class O4 {
-^
-compiler/testData/multiplatform/incompatibleNestedClasses/common.kt:18:15: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. You can use -Xexpect-actual-classes flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
-    companion object
-              ^
 
 -- JVM --
 Exit code: COMPILATION_ERROR
 Output:
-compiler/testData/multiplatform/incompatibleNestedClasses/jvm.kt:2:12: error: actual interface 'N1' has no corresponding expected declaration
+compiler/testData/multiplatform/incompatibleNestedClasses/jvm.kt:2:22: error: 'actual interface N1 : Any' has no corresponding expected declaration
 The following declaration is incompatible because class kinds are different (class, interface, object, enum, annotation):
-    public final expect class N1
+    expect class N1 : Any
 
     actual interface N1
-           ^
-compiler/testData/multiplatform/incompatibleNestedClasses/jvm.kt:3:12: error: actual object 'N2' has no corresponding expected declaration
+                     ^
+compiler/testData/multiplatform/incompatibleNestedClasses/jvm.kt:3:19: error: 'actual object N2 : Any' has no corresponding expected declaration
 The following declaration is incompatible because class kinds are different (class, interface, object, enum, annotation):
-    public expect interface N2
+    expect interface N2 : Any
 
     actual object N2
-           ^
-compiler/testData/multiplatform/incompatibleNestedClasses/jvm.kt:4:12: error: actual class 'N3' has no corresponding expected declaration
+                  ^
+compiler/testData/multiplatform/incompatibleNestedClasses/jvm.kt:4:18: error: 'actual class N3 : Any' has no corresponding expected declaration
 The following declaration is incompatible because class kinds are different (class, interface, object, enum, annotation):
-    public expect object N3
+    expect object N3 : Any
 
     actual class N3
-           ^
-compiler/testData/multiplatform/incompatibleNestedClasses/jvm.kt:8:5: error: actual class 'N2' has no corresponding expected declaration
+                 ^
+compiler/testData/multiplatform/incompatibleNestedClasses/jvm.kt:8:24: error: 'actual inner class N2 : Any' has no corresponding expected declaration
 The following declaration is incompatible because modifiers are different (companion, inner, inline, value):
-    public final expect class N2
+    expect class N2 : Any
 
     actual inner class N2
-    ^
-compiler/testData/multiplatform/incompatibleNestedClasses/jvm.kt:9:5: error: actual class 'I2' has no corresponding expected declaration
+                       ^
+compiler/testData/multiplatform/incompatibleNestedClasses/jvm.kt:9:18: error: 'actual class I2 : Any' has no corresponding expected declaration
 The following declaration is incompatible because modifiers are different (companion, inner, inline, value):
-    public final expect inner class I2
+    expect inner class I2 : Any
 
     actual class I2
-    ^
-compiler/testData/multiplatform/incompatibleNestedClasses/jvm.kt:13:5: error: actual companion object 'Companion' has no corresponding expected declaration
+                 ^
+compiler/testData/multiplatform/incompatibleNestedClasses/jvm.kt:13:22: error: 'actual companion object Companion : Any' has no corresponding expected declaration
 The following declaration is incompatible because modifiers are different (companion, inner, inline, value):
-    public expect object Companion
+    expect object Companion : Any
 
     actual companion object {}
-    ^
-compiler/testData/multiplatform/incompatibleNestedClasses/jvm.kt:14:5: error: actual object 'Factory' has no corresponding expected declaration
+                     ^
+compiler/testData/multiplatform/incompatibleNestedClasses/jvm.kt:14:19: error: 'actual object Factory : Any' has no corresponding expected declaration
 The following declaration is incompatible because modifiers are different (companion, inner, inline, value):
-    public expect companion object Factory
+    expect companion object Factory : Any
 
     actual object Factory
-    ^
-compiler/testData/multiplatform/incompatibleNestedClasses/jvm.kt:18:5: error: actual object 'Companion' has no corresponding expected declaration
+                  ^
+compiler/testData/multiplatform/incompatibleNestedClasses/jvm.kt:18:19: error: 'actual object Companion : Any' has no corresponding expected declaration
 The following declaration is incompatible because modifiers are different (companion, inner, inline, value):
-    public expect companion object
+    expect companion object Companion : Any
 
     actual object Companion
-    ^
+                  ^

@@ -1,6 +1,9 @@
 
 ERR:
-test.kt:4:20: error: expecting an element
+test.kt:4:13: error: classifier 'class System : Any' does not have a companion object, and thus must be initialized here
+    val s = System.in
+            ^
+test.kt:4:20: error: syntax error: Expecting an element
     val s = System.in
                    ^
 

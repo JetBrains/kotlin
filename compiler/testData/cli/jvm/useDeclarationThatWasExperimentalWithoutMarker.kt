@@ -1,4 +1,3 @@
 fun test() {
-    "".lowercase()
-    1.digitToChar()
+    Regex("").matchAt("123", 0)
 }

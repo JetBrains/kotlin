@@ -1,5 +1,14 @@
+warning: ATTENTION!
+This build uses unsafe internal compiler arguments:
+
+-XXLanguage:+EnableDfaWarningsInK2
+
+This mode is not recommended for production use,
+as no stability/compatibility guarantees are given on
+compiler or generated code. Use it at your own risk!
+
 error: warnings found and -Werror specified
-compiler/testData/cli/jvm/werrorWithNoWarn.kt:2:6: warning: unnecessary non-null assertion (!!) on a non-null receiver of type String
+compiler/testData/cli/jvm/werrorWithNoWarn.kt:2:6: warning: unnecessary non-null assertion (!!) on a non-null receiver of type 'kotlin/String'
     s!!
      ^
 COMPILATION_ERROR

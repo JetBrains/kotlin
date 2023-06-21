@@ -1,25 +1,22 @@
 -- Common --
 Exit code: OK
 Output:
-compiler/testData/multiplatform/classScopes/functionAndPropertyWithSameName/common.kt:3:1: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. You can use -Xexpect-actual-classes flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
-expect class Foo {
-^
 
 -- JVM --
 Exit code: COMPILATION_ERROR
 Output:
-compiler/testData/multiplatform/classScopes/functionAndPropertyWithSameName/jvm.kt:3:14: error: actual class 'Foo' has no corresponding members for expected class members:
+compiler/testData/multiplatform/classScopes/functionAndPropertyWithSameName/jvm.kt:3:14: error: actual class 'actual class Foo : Any' has no corresponding members for expected class members:
 
-    public expect final val bar: String
+    expect val bar: String
 
     The following declaration is incompatible because callable kinds are different (function vs property):
-        public final actual fun bar(): String
+        actual fun bar(): String
 
 actual class Foo {
              ^
-compiler/testData/multiplatform/classScopes/functionAndPropertyWithSameName/jvm.kt:4:12: error: actual function 'bar' has no corresponding expected declaration
+compiler/testData/multiplatform/classScopes/functionAndPropertyWithSameName/jvm.kt:4:16: error: 'actual fun bar(): String' has no corresponding expected declaration
 The following declaration is incompatible because callable kinds are different (function vs property):
-    public expect final val bar: String
+    expect val bar: String
 
     actual fun bar(): String = ""
-           ^
+               ^

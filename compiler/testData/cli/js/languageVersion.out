@@ -1,5 +1,5 @@
-warning: language version 1.4 is deprecated and its support will be removed in a future version of Kotlin
-compiler/testData/cli/js/languageVersion.kt:3:1: error: the feature "sealed interfaces" is only available since language version 1.5
-sealed interface Polygon
-^
+warning: language version 1.5 is deprecated and its support will be removed in a future version of Kotlin
+compiler/testData/cli/js/languageVersion.kt:5:23: error: KSuspendFunctionN interfaces are not allowed as supertypes
+abstract class Some : KSuspendFunction0<Unit>
+                      ^
 COMPILATION_ERROR

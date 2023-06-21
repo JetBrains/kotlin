@@ -5,192 +5,120 @@ Output:
 -- JVM --
 Exit code: COMPILATION_ERROR
 Output:
-compiler/testData/multiplatform/incompatibleCallables/common.kt:1:12: error: expected function 'f1' has no actual declaration in module <main> for JVM
-The following declaration is incompatible because return type is different:
-    public actual fun f1(): String
-
-expect fun f1()
-           ^
-compiler/testData/multiplatform/incompatibleCallables/common.kt:5:14: error: expected function 'f3' has no actual declaration in module <main> for JVM
-The following declaration is incompatible because parameter types are different:
-    public actual fun f3(name: Double): Unit
-
-expect fun f3(name: String)
-             ^
-compiler/testData/multiplatform/incompatibleCallables/common.kt:6:24: error: expected function 'f3ext' has no actual declaration in module <main> for JVM
-The following declaration is incompatible because parameter types are different:
-    public actual fun Double.f3ext(): Unit
-
-expect fun String.f3ext()
-                       ^
-compiler/testData/multiplatform/incompatibleCallables/common.kt:8:14: error: expected function 'f4' has no actual declaration in module <main> for JVM
-The following declaration is incompatible because parameter shapes are different (extension vs non-extension):
-    public actual fun String.f4(): Unit
-
-expect fun f4(name: String)
-             ^
-compiler/testData/multiplatform/incompatibleCallables/common.kt:10:12: error: expected function 'f5' has no actual declaration in module <main> for JVM
-The following declaration is incompatible because parameter shapes are different (extension vs non-extension):
-    public actual fun f5(name: String): Unit
-
-expect fun String.f5()
-           ^
-compiler/testData/multiplatform/incompatibleCallables/common.kt:12:14: error: expected function 'f6' has no actual declaration in module <main> for JVM
-The following declaration is incompatible because number of value parameters is different:
-    public actual fun f6(p2: Int): Unit
-
-expect fun f6(p1: String, p2: Int)
-             ^
-compiler/testData/multiplatform/incompatibleCallables/common.kt:14:12: error: expected function 'f7' has no actual declaration in module <main> for JVM
-The following declaration is incompatible because number of type parameters is different:
-    public actual fun <K, V> f7(): Unit
-
-expect fun <T> f7()
-           ^
-compiler/testData/multiplatform/incompatibleCallables/common.kt:19:12: error: expected function 'f11' has no actual declaration in module <main> for JVM
-The following declaration is incompatible because upper bounds of type parameters are different:
-    public actual fun <T : Annotation> f11(): Unit
-
-expect fun <T : Number> f11()
-           ^
-compiler/testData/multiplatform/incompatibleCallables/common.kt:20:12: error: expected function 'f12' has no actual declaration in module <main> for JVM
-The following declaration is incompatible because upper bounds of type parameters are different:
-    public actual fun <U : MutableList<out String>> f12(): Unit
-
-expect fun <U : MutableList<String>> f12()
-           ^
-compiler/testData/multiplatform/incompatibleCallables/common.kt:21:12: error: expected function 'f13' has no actual declaration in module <main> for JVM
-The following declaration is incompatible because upper bounds of type parameters are different:
-    public actual fun <A, B : Comparable<B>> f13(): Unit
-
-expect fun <A, B : Comparable<A>> f13()
-           ^
-compiler/testData/multiplatform/incompatibleCallables/common.kt:32:15: error: expected function 'f21' has no actual declaration in module <main> for JVM
-The following declaration is incompatible because parameter types are different:
-    public actual fun f21(c: Unit.() -> Unit): Unit
-
-expect fun f21(c: suspend Unit.() -> Unit)
-              ^
-compiler/testData/multiplatform/incompatibleCallables/common.kt:33:15: error: expected function 'f22' has no actual declaration in module <main> for JVM
-The following declaration is incompatible because parameter types are different:
-    public actual fun f22(c: suspend Unit.() -> Unit): Unit
-
-expect fun f22(c: Unit.() -> Unit)
-              ^
-compiler/testData/multiplatform/incompatibleCallables/jvm.kt:1:18: error: actual function 'f1' has no corresponding expected declaration
-The following declaration is incompatible because return type is different:
-    public expect fun f1(): Unit
+compiler/testData/multiplatform/incompatibleCallables/jvm.kt:1:12: error: 'actual fun f1(): String' has no corresponding expected declaration
+The following declaration is incompatible:
+    expect fun f1(): Unit
 
 actual fun f1(): String = ""
-                 ^
-compiler/testData/multiplatform/incompatibleCallables/jvm.kt:3:14: error: actual function 'f2' has no corresponding expected declaration
+           ^
+compiler/testData/multiplatform/incompatibleCallables/jvm.kt:3:12: error: 'actual fun f2(otherName: String): Unit' has no corresponding expected declaration
 The following declaration is incompatible because parameter names are different:
-    public expect fun f2(name: String): Unit
+    expect fun f2(name: String): Unit
 
 actual fun f2(otherName: String) {}
-             ^
-compiler/testData/multiplatform/incompatibleCallables/jvm.kt:5:14: error: actual function 'f3' has no corresponding expected declaration
+           ^
+compiler/testData/multiplatform/incompatibleCallables/jvm.kt:5:12: error: 'actual fun f3(name: Double): Unit' has no corresponding expected declaration
 The following declaration is incompatible because parameter types are different:
-    public expect fun f3(name: String): Unit
+    expect fun f3(name: String): Unit
 
 actual fun f3(name: Double) {}
-             ^
-compiler/testData/multiplatform/incompatibleCallables/jvm.kt:6:24: error: actual function 'f3ext' has no corresponding expected declaration
+           ^
+compiler/testData/multiplatform/incompatibleCallables/jvm.kt:6:19: error: 'actual fun Double.f3ext(): Unit' has no corresponding expected declaration
 The following declaration is incompatible because parameter types are different:
-    public expect fun String.f3ext(): Unit
+    expect fun String.f3ext(): Unit
 
 actual fun Double.f3ext() {}
-                       ^
-compiler/testData/multiplatform/incompatibleCallables/jvm.kt:8:12: error: actual function 'f4' has no corresponding expected declaration
+                  ^
+compiler/testData/multiplatform/incompatibleCallables/jvm.kt:8:19: error: 'actual fun String.f4(): Unit' has no corresponding expected declaration
 The following declaration is incompatible because parameter shapes are different (extension vs non-extension):
-    public expect fun f4(name: String): Unit
+    expect fun f4(name: String): Unit
 
 actual fun String.f4() {}
-           ^
-compiler/testData/multiplatform/incompatibleCallables/jvm.kt:10:14: error: actual function 'f5' has no corresponding expected declaration
+                  ^
+compiler/testData/multiplatform/incompatibleCallables/jvm.kt:10:12: error: 'actual fun f5(name: String): Unit' has no corresponding expected declaration
 The following declaration is incompatible because parameter shapes are different (extension vs non-extension):
-    public expect fun String.f5(): Unit
+    expect fun String.f5(): Unit
 
 actual fun f5(name: String) {}
-             ^
-compiler/testData/multiplatform/incompatibleCallables/jvm.kt:12:14: error: actual function 'f6' has no corresponding expected declaration
+           ^
+compiler/testData/multiplatform/incompatibleCallables/jvm.kt:12:12: error: 'actual fun f6(p2: Int): Unit' has no corresponding expected declaration
 The following declaration is incompatible because number of value parameters is different:
-    public expect fun f6(p1: String, p2: Int): Unit
+    expect fun f6(p1: String, p2: Int): Unit
 
 actual fun f6(p2: Int) {}
-             ^
-compiler/testData/multiplatform/incompatibleCallables/jvm.kt:14:12: error: actual function 'f7' has no corresponding expected declaration
+           ^
+compiler/testData/multiplatform/incompatibleCallables/jvm.kt:14:19: error: 'actual fun <K, V> f7(): Unit' has no corresponding expected declaration
 The following declaration is incompatible because number of type parameters is different:
-    public expect fun <T> f7(): Unit
+    expect fun <T> f7(): Unit
 
 actual fun <K, V> f7() {}
-           ^
-compiler/testData/multiplatform/incompatibleCallables/jvm.kt:17:1: error: actual function 'f10' has no corresponding expected declaration
+                  ^
+compiler/testData/multiplatform/incompatibleCallables/jvm.kt:17:21: error: 'actual fun f10(): Unit' has no corresponding expected declaration
 The following declaration is incompatible because visibility is different:
-    public expect fun f10(): Unit
+    expect fun f10(): Unit
 
 internal actual fun f10() {}
-^
-compiler/testData/multiplatform/incompatibleCallables/jvm.kt:19:12: error: actual function 'f11' has no corresponding expected declaration
+                    ^
+compiler/testData/multiplatform/incompatibleCallables/jvm.kt:19:29: error: 'actual fun <T : Annotation> f11(): Unit' has no corresponding expected declaration
 The following declaration is incompatible because upper bounds of type parameters are different:
-    public expect fun <T : Number> f11(): Unit
+    expect fun <T : Number> f11(): Unit
 
 actual fun <T : Annotation> f11() {}
-           ^
-compiler/testData/multiplatform/incompatibleCallables/jvm.kt:20:12: error: actual function 'f12' has no corresponding expected declaration
+                            ^
+compiler/testData/multiplatform/incompatibleCallables/jvm.kt:20:42: error: 'actual fun <U : MutableList<out String>> f12(): Unit' has no corresponding expected declaration
 The following declaration is incompatible because upper bounds of type parameters are different:
-    public expect fun <U : MutableList<String>> f12(): Unit
+    expect fun <U : MutableList<String>> f12(): Unit
 
 actual fun <U : MutableList<out String>> f12() {}
-           ^
-compiler/testData/multiplatform/incompatibleCallables/jvm.kt:21:12: error: actual function 'f13' has no corresponding expected declaration
+                                         ^
+compiler/testData/multiplatform/incompatibleCallables/jvm.kt:21:35: error: 'actual fun <A, B : Comparable<B>> f13(): Unit' has no corresponding expected declaration
 The following declaration is incompatible because upper bounds of type parameters are different:
-    public expect fun <A, B : Comparable<A>> f13(): Unit
+    expect fun <A, B : Comparable<A>> f13(): Unit
 
 actual fun <A, B : Comparable<B>> f13() {}
-           ^
-compiler/testData/multiplatform/incompatibleCallables/jvm.kt:23:19: error: actual function 'f14' has no corresponding expected declaration
+                                  ^
+compiler/testData/multiplatform/incompatibleCallables/jvm.kt:23:31: error: 'actual fun <reified X> f14(): Unit' has no corresponding expected declaration
 The following declaration is incompatible because some type parameter is reified in one declaration and non-reified in the other:
-    public expect inline fun <X> f14(): Unit
+    expect fun <X> f14(): Unit
 
 actual inline fun <reified X> f14() {}
-                  ^
-compiler/testData/multiplatform/incompatibleCallables/jvm.kt:26:16: error: actual function cannot have default argument values, they should be declared in the expected function
+                              ^
+compiler/testData/multiplatform/incompatibleCallables/jvm.kt:26:16: error: actual function cannot have default argument values. They should be declared in the expected function.
 actual fun f16(s: String = "") {}
                ^
-compiler/testData/multiplatform/incompatibleCallables/jvm.kt:28:15: error: actual function 'f17' has no corresponding expected declaration
+compiler/testData/multiplatform/incompatibleCallables/jvm.kt:28:12: error: 'actual fun f17(s: Array<out String>): Unit' has no corresponding expected declaration
 The following declaration is incompatible because some value parameter is vararg in one declaration and non-vararg in the other:
-    public expect fun f17(vararg s: String): Unit
+    expect fun f17(vararg s: Array<out String>): Unit
 
 actual fun f17(s: Array<out String>) {}
-              ^
-compiler/testData/multiplatform/incompatibleCallables/jvm.kt:29:15: error: actual function 'f18' has no corresponding expected declaration
+           ^
+compiler/testData/multiplatform/incompatibleCallables/jvm.kt:29:12: error: 'actual fun f18(vararg s: Array<out String>): Unit' has no corresponding expected declaration
 The following declaration is incompatible because some value parameter is vararg in one declaration and non-vararg in the other:
-    public expect fun f18(s: Array<out String>): Unit
+    expect fun f18(s: Array<out String>): Unit
 
 actual fun f18(vararg s: String) {}
-              ^
-compiler/testData/multiplatform/incompatibleCallables/jvm.kt:30:22: error: actual function 'f19' has no corresponding expected declaration
+           ^
+compiler/testData/multiplatform/incompatibleCallables/jvm.kt:30:19: error: 'actual fun f19(crossinline s: () -> Unit): Unit' has no corresponding expected declaration
 The following declaration is incompatible because some value parameter is crossinline in one declaration and not crossinline in the other:
-    public expect inline fun f19(s: () -> Unit): Unit
+    expect fun f19(s: () -> Unit): Unit
 
 actual inline fun f19(crossinline s: () -> Unit) {}
-                     ^
-compiler/testData/multiplatform/incompatibleCallables/jvm.kt:31:22: error: actual function 'f20' has no corresponding expected declaration
+                  ^
+compiler/testData/multiplatform/incompatibleCallables/jvm.kt:31:19: error: 'actual fun f20(noinline s: () -> Unit): Unit' has no corresponding expected declaration
 The following declaration is incompatible because some value parameter is noinline in one declaration and not noinline in the other:
-    public expect inline fun f20(s: () -> Unit): Unit
+    expect fun f20(s: () -> Unit): Unit
 
 actual inline fun f20(noinline s: () -> Unit) {}
-                     ^
-compiler/testData/multiplatform/incompatibleCallables/jvm.kt:32:15: error: actual function 'f21' has no corresponding expected declaration
+                  ^
+compiler/testData/multiplatform/incompatibleCallables/jvm.kt:32:12: error: 'actual fun f21(c: Unit.() -> Unit): Unit' has no corresponding expected declaration
 The following declaration is incompatible because parameter types are different:
-    public expect fun f21(c: suspend Unit.() -> Unit): Unit
+    expect fun f21(c: suspend Unit.() -> Unit): Unit
 
 actual fun f21(c: Unit.() -> Unit) {}
-              ^
-compiler/testData/multiplatform/incompatibleCallables/jvm.kt:33:15: error: actual function 'f22' has no corresponding expected declaration
+           ^
+compiler/testData/multiplatform/incompatibleCallables/jvm.kt:33:12: error: 'actual fun f22(c: suspend Unit.() -> Unit): Unit' has no corresponding expected declaration
 The following declaration is incompatible because parameter types are different:
-    public expect fun f22(c: Unit.() -> Unit): Unit
+    expect fun f22(c: Unit.() -> Unit): Unit
 
 actual fun f22(c: suspend Unit.() -> Unit) {}
-              ^
+           ^

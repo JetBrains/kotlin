@@ -1,11 +1,5 @@
-warning: ATTENTION!
-This build uses unsafe internal compiler arguments:
-
--XXLanguage:+VariableDeclarationInWhenSubject
-
-This mode is not recommended for production use,
-as no stability/compatibility guarantees are given on
-compiler or generated code. Use it at your own risk!
-
-warning: language version 1.4 is deprecated and its support will be removed in a future version of Kotlin
-OK
+compiler/testData/cli/jvm/internalArgEnableLanguageFeature.kt:9:1: error: 'Class Impl' overrides 'var' property 'a' with inherited 'val' property 'public final val /Open.a: kotlin/String
+    public get(): kotlin/String'.
+class Impl : Open(), Interface
+^
+COMPILATION_ERROR

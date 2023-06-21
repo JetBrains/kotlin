@@ -1,13 +1,10 @@
 -- Common --
 Exit code: OK
 Output:
-compiler/testData/multiplatform/weakIncompatibilityWithoutActualModifier/common.kt:1:1: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. You can use -Xexpect-actual-classes flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
-expect class Foo
-^
 
 -- JVM --
 Exit code: COMPILATION_ERROR
 Output:
-compiler/testData/multiplatform/weakIncompatibilityWithoutActualModifier/jvm.kt:1:11: error: declaration must be marked with 'actual'
-interface Foo
-          ^
+compiler/testData/multiplatform/weakIncompatibilityWithoutActualModifier/common.kt:1:1: error: expect declaration `Foo` doesn't match actual `Foo` because class kinds are different (class, interface, object, enum, annotation)
+expect class Foo
+^

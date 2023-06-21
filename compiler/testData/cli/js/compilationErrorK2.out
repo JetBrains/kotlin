@@ -1,4 +1,3 @@
-warning: language version 2.0 is experimental, there are no backwards compatibility guarantees for new language and library features
 compiler/testData/cli/js/compilationErrorK2.kt:9:13: error: cannot access 'companion object Test : Any': it is private in '/Foo'.
         Foo.Test
             ^
