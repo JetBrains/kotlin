@@ -6,6 +6,9 @@
 package org.jetbrains.kotlin.gradle.plugin.diagnostics
 
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.dsl.KotlinSourceSetConvention.isRegisteredByKotlinSourceSetConventionAt
+import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_IGNORE_DISABLED_TARGETS
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic.Severity.*
@@ -287,7 +290,7 @@ object KotlinToolingDiagnostics {
             targetCompatibility: String,
             kotlinTaskName: String,
             jvmTarget: String,
-            severity: ToolingDiagnostic.Severity
+            severity: ToolingDiagnostic.Severity,
         ) = build(
             """
                 Inconsistent JVM-target compatibility detected for tasks '$javaTaskName' ($targetCompatibility) and '$kotlinTaskName' ($jvmTarget).
@@ -364,6 +367,72 @@ object KotlinToolingDiagnostics {
             """.trimIndent()
         )
     }
+
+    object PlatformSourceSetConventionUsedWithCustomTargetName : ToolingDiagnosticFactory(WARNING) {
+        operator fun invoke(sourceSet: KotlinSourceSet, target: KotlinTarget, expectedTargetName: String) = build(
+            """
+                |Accessed '$sourceSet', but $expectedTargetName target used a custom name '${target.name}' (expected '$expectedTargetName'):
+                |
+                |Replace:
+                |    kotlin {
+                |        $expectedTargetName("${target.name}") /* <- custom name used */
+                |    }
+                |
+                |With: 
+                |   kotlin {
+                |       $expectedTargetName()
+                |   }
+                |
+                |Stacktrace:
+                ${sourceSet.isRegisteredByKotlinSourceSetConventionAt?.joinToString(System.lineSeparator()) { "|    $it" }}
+            """.trimMargin()
+        )
+    }
+
+    object PlatformSourceSetConventionUsedWithoutCorrespondingTarget : ToolingDiagnosticFactory(WARNING) {
+        operator fun invoke(sourceSet: KotlinSourceSet, expectedTargetName: String) = build(
+            """
+                 |Accessed '$sourceSet' without the registering the $expectedTargetName target:
+                 |  kotlin {
+                 |      $expectedTargetName() /* <- register the '$expectedTargetName' target */
+                 |      
+                 |      sourceSets.${sourceSet.name}.dependencies {
+                 |        
+                 |      }
+                 |  }
+                 |
+                 |Stacktrace:
+                 ${sourceSet.isRegisteredByKotlinSourceSetConventionAt?.joinToString(System.lineSeparator()) { "|    $it" }}
+                """.trimMargin()
+        )
+    }
+
+    object AndroidMainSourceSetConventionUsedWithoutAndroidTarget : ToolingDiagnosticFactory(ERROR) {
+        operator fun invoke(sourceSet: KotlinSourceSet) = build(
+            """
+                |Accessed '$sourceSet' without registering the Android target
+                |Please apply a given Android Gradle plugin (e.g. com.android.library) and register an Android target
+                |
+                |Example using the 'com.android.library' plugin:
+                |
+                |    plugins {
+                |        id("com.android.library")
+                |    }
+                | 
+                |    android {
+                |        namespace = "org.sample.library"
+                |        compileSdk = 33
+                |    }
+                |
+                |    kotlin {
+                |        androidTarget() /* <- register the androidTarget */
+                |    }
+                |
+            """.trimMargin()
+        )
+    }
+
+
 }
 
 private fun String.indentLines(nSpaces: Int = 4, skipFirstLine: Boolean = true): String {

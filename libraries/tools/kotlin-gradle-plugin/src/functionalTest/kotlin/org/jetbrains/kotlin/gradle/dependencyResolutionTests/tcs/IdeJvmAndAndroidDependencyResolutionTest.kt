@@ -9,6 +9,9 @@ package org.jetbrains.kotlin.gradle.dependencyResolutionTests.tcs
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.dependencyResolutionTests.mavenCentralCacheRedirector
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformSourceSetConventionsImpl.commonMain
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformSourceSetConventionsImpl.commonTest
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformSourceSetConventionsImpl.dependencies
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinResolvedBinaryDependency
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.*
@@ -118,11 +121,11 @@ class IdeJvmAndAndroidDependencyResolutionTest {
         val a = buildProject({ withParent(root).withName("a") }) { configureAndroidAndMultiplatform() }
         val b = buildProject({ withParent(root).withName("b") }) { configureAndroidAndMultiplatform() }
 
-        b.multiplatformExtension.commonMain.dependencies {
+        b.multiplatformExtension.sourceSets.commonMain.dependencies {
             api(project(":a"))
         }
 
-        a.multiplatformExtension.commonTest.dependencies {
+        a.multiplatformExtension.sourceSets.commonTest.dependencies {
             api(project(":b"))
         }
 

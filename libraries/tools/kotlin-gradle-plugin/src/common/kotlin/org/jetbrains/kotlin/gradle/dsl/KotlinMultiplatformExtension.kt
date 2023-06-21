@@ -21,7 +21,8 @@ abstract class KotlinMultiplatformExtension(project: Project) :
     KotlinTargetContainerWithJsPresetFunctions,
     KotlinTargetContainerWithWasmPresetFunctions,
     KotlinTargetContainerWithNativeShortcuts,
-    KotlinHierarchyDsl {
+    KotlinHierarchyDsl,
+    KotlinMultiplatformSourceSetConventions by KotlinMultiplatformSourceSetConventionsImpl {
     override val presets: NamedDomainObjectCollection<KotlinTargetPreset<*>> = project.container(KotlinTargetPreset::class.java)
 
     final override val targets: NamedDomainObjectCollection<KotlinTarget> = project.container(KotlinTarget::class.java)

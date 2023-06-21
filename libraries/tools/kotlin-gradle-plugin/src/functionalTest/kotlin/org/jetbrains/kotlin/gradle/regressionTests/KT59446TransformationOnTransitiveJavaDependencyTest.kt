@@ -7,12 +7,13 @@
 
 package org.jetbrains.kotlin.gradle.regressionTests
 
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformSourceSetConventionsImpl.commonMain
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformSourceSetConventionsImpl.dependencies
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers.resolveMetadata
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution
 import org.jetbrains.kotlin.gradle.util.buildProject
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
-import org.jetbrains.kotlin.gradle.util.commonMain
 import kotlin.test.Test
 
 class KT59446TransformationOnTransitiveJavaDependencyTest {
@@ -31,11 +32,11 @@ class KT59446TransformationOnTransitiveJavaDependencyTest {
         projectA.multiplatformExtension.jvm()
         projectB.multiplatformExtension.jvm()
 
-        projectB.multiplatformExtension.commonMain.dependencies {
+        projectB.multiplatformExtension.sourceSets.commonMain.dependencies {
             api(project(":java"))
         }
 
-        projectA.multiplatformExtension.commonMain.dependencies {
+        projectA.multiplatformExtension.sourceSets.commonMain.dependencies {
             api(project(":b"))
         }
 
@@ -48,6 +49,6 @@ class KT59446TransformationOnTransitiveJavaDependencyTest {
 	        at org.jetbrains.kotlin.gradle.plugin.mpp.GranularMetadataTransformation.toModuleDependencyIdentifier(GranularMetadataTransformation.kt:303)
 	        at org.jetbrains.kotlin.gradle.plugin.mpp.GranularMetadataTransformation.processDependency(GranularMetadataTransformation.kt:260)
         */
-        projectA.multiplatformExtension.commonMain.resolveMetadata<MetadataDependencyResolution>()
+        projectA.multiplatformExtension.sourceSets.commonMain.get().resolveMetadata<MetadataDependencyResolution>()
     }
 }
