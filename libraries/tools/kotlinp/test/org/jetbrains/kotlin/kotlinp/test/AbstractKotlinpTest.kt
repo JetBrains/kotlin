@@ -12,7 +12,7 @@ abstract class AbstractKotlinpTest : TestCaseWithTmpdir() {
     abstract fun useK2(): Boolean
 
     protected fun doTest(fileName: String) {
-        compileAndPrintAllFiles(
+        compareAllFiles(
             File(fileName),
             testRootDisposable,
             tmpdir,
