@@ -4,6 +4,6 @@ FILE: test.kt
     public final val somethingElse: R|kotlin/Int| = Int(1)
         public get(): R|kotlin/Int|
     public final fun test(): R|kotlin/Unit| {
-        R|pkg/JEnumStaticField.entries*s|.R|kotlin/String.length|
-        R|pkg/JEnumStaticField.somethingElse*s|.R|kotlin/String.length|
+        Q|pkg/JEnumStaticField|.R|pkg/JEnumStaticField.entries*s|.R|kotlin/String.length|
+        Q|pkg/JEnumStaticField|.R|pkg/JEnumStaticField.somethingElse*s|.R|kotlin/String.length|
     }
