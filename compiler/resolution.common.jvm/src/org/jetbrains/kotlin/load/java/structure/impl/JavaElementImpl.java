@@ -23,6 +23,8 @@ import org.jetbrains.kotlin.load.java.structure.impl.source.JavaElementPsiSource
 import org.jetbrains.kotlin.load.java.structure.impl.source.JavaElementSourceFactory;
 import org.jetbrains.kotlin.load.java.structure.impl.source.JavaSourceFactoryOwner;
 
+import java.util.Objects;
+
 public abstract class JavaElementImpl<Psi extends PsiElement> implements JavaElement, JavaSourceFactoryOwner {
     protected final JavaElementPsiSource<Psi> psiElementSource;
 
@@ -43,12 +45,15 @@ public abstract class JavaElementImpl<Psi extends PsiElement> implements JavaEle
 
     @Override
     public int hashCode() {
-        return getPsi().hashCode();
+        return psiElementSource.hashCode();
     }
 
     @Override
-    public boolean equals(Object obj) {
-        return obj instanceof JavaElementImpl && getPsi().equals(((JavaElementImpl) obj).getPsi());
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        JavaElementImpl<?> element = (JavaElementImpl<?>) o;
+        return Objects.equals(psiElementSource, element.psiElementSource);
     }
 
     @Override
