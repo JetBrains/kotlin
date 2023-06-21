@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.test.util.LANGUAGE_FEATURE_PATTERN
 import java.io.File
 import java.io.IOException
 import java.io.Writer
+import org.jetbrains.kotlin.test.frontend.fir.differences.AdditionalTestFailureKind.*
 
 val equivalentDiagnostics = listOf(
     listOf("PARCELABLE_CANT_BE_LOCAL_CLASS", "PARCELABLE_SHOULD_BE_CLASS"),
@@ -668,55 +669,70 @@ fun recordCandidateForBoxTestIfNeeded(
     candidatesForAdditionalBoxTests.add(test)
 }
 
-val knownFailingAdditionalBoxTests = listOf(
-    "coercionToUnitWithNothingType",
-    "innerTypeAliasAsType",
-    "dataClassExplicitlyOverridingCopyNoDefaults",
-    "clash",
-    "mixingSuspendAndNonSuspendSupertypesThruSuperClass",
-    "12",
-    "13",
-    "kt45796",
-    "kt53639",
-    "inheritanceAmbiguity",
-    "multiLambdaRestriction",
-    "mixingSuspendAndNonSuspendSupertypesThruSuperFunInterface_1",
-    "mixingSuspendAndNonSuspendSupertypesThruSuperFunInterface_2",
-    "kt51062Error",
-    "mixingSuspendAndNonSuspendSupertypes",
-    "mixingSuspendAndNonSuspendSupertypesThruSuperinterface_1",
-    "mixingSuspendAndNonSuspendSupertypesThruSuperinterface_2",
-    "recursiveLambda",
-    "noContextReceiversOnValueClasses",
-    "1",
-    "2",
-    "4",
-    "5",
-    "6",
-    "mixingSuspendAndNonSuspendSupertypesThruSuperinterface",
-    "inheritanceAmbiguity2",
-    "inheritanceAmbiguity3",
-    "inheritanceAmbiguity4",
-    "pureKotlin",
-    "multipleInheritedDefaults",
-    "nestedAndTopLevelClassClash",
-    "nestedClassClash",
-    "mixingSuspendAndNonSuspendSupertypesThruSuperClass_1",
-    "mixingSuspendAndNonSuspendSupertypesThruSuperClass_2",
-    "constructorInHeaderEnum",
-    "mixingSuspendAndNonSuspendSupertypes_1",
-    "mixingSuspendAndNonSuspendSupertypes_2",
-    "returnTypeNothingShouldBeSpecifiedExplicitly",
-    "mixingSuspendAndNonSuspendSupertypesThruSuperFunInterface",
-    "casesWithTwoTypeParameters",
-    "recursiveFun",
-    "dataClassExplicitlyOverridingCopyWithDefaults",
-    "protectedSuperCall",
+enum class AdditionalTestFailureKind {
+    COMPILE_TIME, RUNTIME,
+}
+
+val knownFailingAdditionalBoxTests = mapOf(
+    "js/js.translator/testData/box/k2DifferencesChecks/propertyDelegateBy.kt" to COMPILE_TIME,
+    "js/js.translator/testData/box/k2DifferencesChecks/badAssignment.kt" to COMPILE_TIME,
+    "js/js.translator/testData/box/k2DifferencesChecks/error.kt" to COMPILE_TIME,
+    "js/js.translator/testData/box/k2DifferencesChecks/deleteOperation.kt" to COMPILE_TIME,
+    "js/js.translator/testData/box/k2DifferencesChecks/wrongCallToNonModule.kt" to COMPILE_TIME,
+    "js/js.translator/testData/box/k2DifferencesChecks/wrongCallToModule.kt" to COMPILE_TIME,
+    "js/js.translator/testData/box/k2DifferencesChecks/dualModuleFromUmd.kt" to COMPILE_TIME,
+    "js/js.translator/testData/box/k2DifferencesChecks/overrideOverloadedNativeFunction.kt" to COMPILE_TIME,
+    "js/js.translator/testData/box/k2DifferencesChecks/dynamicCastTarget.kt" to COMPILE_TIME,
+    "js/js.translator/testData/box/k2DifferencesChecks/illegalName.kt" to COMPILE_TIME,
+    "compiler/testData/codegen/box/k2DifferencesChecks/coercionToUnitWithNothingType.kt" to COMPILE_TIME,
+    "compiler/testData/codegen/box/k2DifferencesChecks/innerTypeAliasAsType.kt" to COMPILE_TIME,
+    "compiler/testData/codegen/box/k2DifferencesChecks/dataClassExplicitlyOverridingCopyNoDefaults.kt" to COMPILE_TIME,
+    "compiler/testData/codegen/box/k2DifferencesChecks/clash.kt" to RUNTIME,
+    "compiler/testData/codegen/box/k2DifferencesChecks/mixingSuspendAndNonSuspendSupertypesThruSuperClass.kt" to COMPILE_TIME,
+    "compiler/testData/codegen/box/k2DifferencesChecks/12.kt" to COMPILE_TIME,
+    "compiler/testData/codegen/box/k2DifferencesChecks/13.kt" to COMPILE_TIME,
+    "compiler/testData/codegen/box/k2DifferencesChecks/kt45796.kt" to COMPILE_TIME,
+    "compiler/testData/codegen/box/k2DifferencesChecks/kt53639.kt" to COMPILE_TIME,
+    "compiler/testData/codegen/box/k2DifferencesChecks/inheritanceAmbiguity.kt" to RUNTIME,
+    "compiler/testData/codegen/box/k2DifferencesChecks/multiLambdaRestriction.kt" to COMPILE_TIME,
+    "compiler/testData/codegen/box/k2DifferencesChecks/mixingSuspendAndNonSuspendSupertypesThruSuperFunInterface_1.kt" to COMPILE_TIME,
+    "compiler/testData/codegen/box/k2DifferencesChecks/mixingSuspendAndNonSuspendSupertypesThruSuperFunInterface_2.kt" to COMPILE_TIME,
+    "compiler/testData/codegen/box/k2DifferencesChecks/kt51062Error.kt" to RUNTIME,
+    "compiler/testData/codegen/box/k2DifferencesChecks/mixingSuspendAndNonSuspendSupertypes.kt" to COMPILE_TIME,
+    "compiler/testData/codegen/box/k2DifferencesChecks/mixingSuspendAndNonSuspendSupertypesThruSuperinterface_1.kt" to COMPILE_TIME,
+    "compiler/testData/codegen/box/k2DifferencesChecks/mixingSuspendAndNonSuspendSupertypesThruSuperinterface_2.kt" to COMPILE_TIME,
+    "compiler/testData/codegen/box/k2DifferencesChecks/recursiveLambda.kt" to COMPILE_TIME,
+    "compiler/testData/codegen/box/k2DifferencesChecks/noContextReceiversOnValueClasses.kt" to COMPILE_TIME,
+    "compiler/testData/codegen/box/k2DifferencesChecks/1.kt" to RUNTIME,
+    "compiler/testData/codegen/box/k2DifferencesChecks/2.kt" to RUNTIME,
+    "compiler/testData/codegen/box/k2DifferencesChecks/4.kt" to RUNTIME,
+    "compiler/testData/codegen/box/k2DifferencesChecks/5.kt" to RUNTIME,
+    "compiler/testData/codegen/box/k2DifferencesChecks/6.kt" to RUNTIME,
+    "compiler/testData/codegen/box/k2DifferencesChecks/mixingSuspendAndNonSuspendSupertypesThruSuperinterface.kt" to COMPILE_TIME,
+    "compiler/testData/codegen/box/k2DifferencesChecks/inheritanceAmbiguity2.kt" to RUNTIME,
+    "compiler/testData/codegen/box/k2DifferencesChecks/inheritanceAmbiguity3.kt" to RUNTIME,
+    "compiler/testData/codegen/box/k2DifferencesChecks/inheritanceAmbiguity4.kt" to RUNTIME,
+    "compiler/testData/codegen/box/k2DifferencesChecks/pureKotlin.kt" to COMPILE_TIME,
+    "compiler/testData/codegen/box/k2DifferencesChecks/multipleInheritedDefaults.kt" to RUNTIME,
+    "compiler/testData/codegen/box/k2DifferencesChecks/nestedAndTopLevelClassClash.kt" to RUNTIME,
+    "compiler/testData/codegen/box/k2DifferencesChecks/nestedClassClash.kt" to RUNTIME,
+    "compiler/testData/codegen/box/k2DifferencesChecks/mixingSuspendAndNonSuspendSupertypesThruSuperClass_1.kt" to COMPILE_TIME,
+    "compiler/testData/codegen/box/k2DifferencesChecks/mixingSuspendAndNonSuspendSupertypesThruSuperClass_2.kt" to COMPILE_TIME,
+    "compiler/testData/codegen/box/k2DifferencesChecks/constructorInHeaderEnum.kt" to COMPILE_TIME,
+    "compiler/testData/codegen/box/k2DifferencesChecks/mixingSuspendAndNonSuspendSupertypes_1.kt" to COMPILE_TIME,
+    "compiler/testData/codegen/box/k2DifferencesChecks/mixingSuspendAndNonSuspendSupertypes_2.kt" to COMPILE_TIME,
+    "compiler/testData/codegen/box/k2DifferencesChecks/returnTypeNothingShouldBeSpecifiedExplicitly.kt" to RUNTIME,
+    "compiler/testData/codegen/box/k2DifferencesChecks/mixingSuspendAndNonSuspendSupertypesThruSuperFunInterface.kt" to COMPILE_TIME,
+    "compiler/testData/codegen/box/k2DifferencesChecks/casesWithTwoTypeParameters.kt" to COMPILE_TIME,
+    "compiler/testData/codegen/box/k2DifferencesChecks/recursiveFun.kt" to COMPILE_TIME,
+    "compiler/testData/codegen/box/k2DifferencesChecks/dataClassExplicitlyOverridingCopyWithDefaults.kt" to COMPILE_TIME,
+    "compiler/testData/codegen/box/k2DifferencesChecks/protectedSuperCall.kt" to COMPILE_TIME,
 ).map {
-    val file = projectDirectory.child("compiler/testData/codegen/box/k2DifferencesChecks/$it.kt")
-    """// ORIGINAL: (.*)""".toRegex().find(file.readText())?.groupValues?.get(1)
+    val file = projectDirectory.child(it.key)
+    val newKey = """// ORIGINAL: (.*)""".toRegex().find(file.readText())?.groupValues?.get(1)
         ?: error("No link to the original file found in $it")
-}.toSet()
+    newKey to it.value
+}.toMap()
 
 fun generateAdditionalBoxTestsAndLogManuals(
     candidatesForAdditionalBoxTests: List<File>,
@@ -751,6 +767,8 @@ fun generateAdditionalBoxTestsAndLogManuals(
             "fun box(): String?" in text -> text.replace("fun box(): String?", "fun vox(): String?") +
                     "\n\nfun box() = vox() ?: \"FAIL\"\n"
             "fun box(): String" in text -> text
+            "fun box()" in text -> text.replace("fun box()", "fun vox()") +
+                    "\n\nfun box() = \"OK\".also { vox() }\n"
             else -> "$text\n\nfun box() = \"OK\"\n"
         }
 
@@ -768,7 +786,6 @@ fun generateAdditionalBoxTestsAndLogManuals(
     }
 
     status.done("The following tests contain other errors, so they have to be checked manually")
-    println("")
 
     for ((index, it) in candidatesForManualChecking.withIndex()) {
         println("- $index: ${it.path.removePrefix(projectDirectory.path)}")
@@ -777,12 +794,63 @@ fun generateAdditionalBoxTestsAndLogManuals(
 
 val File.analogousK2RelativePath get() = analogousK2File.path.removePrefix(projectDirectory.path)
 
+const val WHEN_TURNED_INTO_BOX_TEST = "When turned into a box test"
+
+fun buildFailingPassingAdditionalTestsStatisticsMessage(
+    failingBoxes: List<File>,
+    passingBoxes: List<File>,
+) = buildString {
+    append("Some of the K2 tests that have this diagnostic missing, when executed as box-tests, lead to #k2-compiler-crash.\n\n")
+    append("$WHEN_TURNED_INTO_BOX_TEST, the following tests fail:\n\n")
+
+    for (it in failingBoxes) {
+        append("- ${it.analogousK2RelativePath}\n")
+    }
+
+    append("\n")
+    append("$WHEN_TURNED_INTO_BOX_TEST, the following tests pass:\n\n")
+
+    for (it in passingBoxes) {
+        append("- ${it.analogousK2RelativePath}\n")
+    }
+}
+
 fun analyzeAdditionalBoxTests(
     diagnosticsStatistics: DiagnosticsStatistics,
 ) {
-    val testsAlwaysCausingCompilationCrashes = diagnosticsStatistics.disappearedDiagnosticToFiles.filter { (diagnostic, files) ->
+    val status = StatusPrinter()
+    status.done("Assigning #k2-compiler-crash to diagnostics with all corresponding box tests failing..")
+
+    val testsAlwaysCausingCompilationCrashes = diagnosticsStatistics.disappearedDiagnosticToFiles.filter { (_, files) ->
         files.all { it.analogousK2RelativePath in knownFailingAdditionalBoxTests }
     }
+
+    for ((diagnostic, files) in testsAlwaysCausingCompilationCrashes) {
+        val missingIssue = knownMissingDiagnostics[diagnostic] ?: continue
+
+        try {
+            if (files.any { knownFailingAdditionalBoxTests[it.analogousK2RelativePath] == RUNTIME }) {
+                postJson(
+                    "https://youtrack.jetbrains.com/api/issues/${missingIssue.id}/tags?fields=id,name",
+                    API_HEADERS,
+                    mapOf("id" to Tags.K2_RUNTIME_CRASH),
+                ).also(::println)
+            }
+
+            if (files.any { knownFailingAdditionalBoxTests[it.analogousK2RelativePath] == COMPILE_TIME }) {
+                postJson(
+                    "https://youtrack.jetbrains.com/api/issues/${missingIssue.id}/tags?fields=id,name",
+                    API_HEADERS,
+                    mapOf("id" to Tags.K2_COMPILER_CRASH),
+                ).also(::println)
+            }
+
+        } catch (e: IOException) {
+            println(e)
+        }
+    }
+
+    status.done("Assigning #k2-naive-box-passes-sometimes to diagnostics with some corresponding box tests failing..")
 
     val testsSometimesCausingCompilationCrashes = diagnosticsStatistics.disappearedDiagnosticToFiles.filter { (diagnostic, files) ->
         files.any { it.analogousK2RelativePath in knownFailingAdditionalBoxTests }
@@ -796,34 +864,47 @@ fun analyzeAdditionalBoxTests(
             it.analogousK2RelativePath in knownFailingAdditionalBoxTests
         }
 
-        val text = StringBuilder()
-        text.append("When turned into a box test, the following tests fail:\n\n")
-
-        for (it in failingBoxes) {
-            text.append("- ${it.analogousK2RelativePath}\n")
-        }
-
-        text.append("\n")
-        text.append("When turned into a box test, the following tests pass:\n\n")
-
-        for (it in passingBoxes) {
-            text.append("- ${it.analogousK2RelativePath}\n")
-        }
-
         try {
-            val result = postJson(
+            postJson(
+                "https://youtrack.jetbrains.com/api/issues/${missingIssue.id}/tags?fields=id,name",
+                API_HEADERS,
+                mapOf("id" to Tags.K2_NAIVE_BOX_PASSES_SOMETIMES),
+            ).also(::println)
+
+            if (failingBoxes.any { knownFailingAdditionalBoxTests[it.analogousK2RelativePath] == RUNTIME }) {
+                postJson(
+                    "https://youtrack.jetbrains.com/api/issues/${missingIssue.id}/tags?fields=id,name",
+                    API_HEADERS,
+                    mapOf("id" to Tags.K2_RUNTIME_CRASH),
+                ).also(::println)
+            }
+
+            if (failingBoxes.any { knownFailingAdditionalBoxTests[it.analogousK2RelativePath] == COMPILE_TIME }) {
+                postJson(
+                    "https://youtrack.jetbrains.com/api/issues/${missingIssue.id}/tags?fields=id,name",
+                    API_HEADERS,
+                    mapOf("id" to Tags.K2_COMPILER_CRASH),
+                ).also(::println)
+            }
+
+            val commentsResult = getJson(
+                "https://youtrack.jetbrains.com/api/issues/${missingIssue.id}/comments?fields=text",
+               API_HEADERS,
+            )
+
+            if (WHEN_TURNED_INTO_BOX_TEST in commentsResult) {
+                continue
+            }
+
+            val addCommentResult = postJson(
                 "https://youtrack.jetbrains.com/api/issues/${missingIssue.id}/comments?fields=id,author(name),text",
+                API_HEADERS,
                 mapOf(
-                    "Accept" to "application/json",
-                    "Authorization" to "Bearer $YT_TOKEN",
-                    "Content-Type" to "application/json",
-                ),
-                mapOf(
-                    "text" to text.toString(),
+                    "text" to buildFailingPassingAdditionalTestsStatisticsMessage(failingBoxes, passingBoxes),
                 ),
             )
 
-            println(result)
+            println(addCommentResult)
         } catch (e: IOException) {
             println(e)
         }

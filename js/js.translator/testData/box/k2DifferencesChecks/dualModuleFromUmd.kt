@@ -25,10 +25,10 @@ package bar
 
 import foo.*
 
-fun box() {
+fun vox() {
     A.f()+A.g
     B()
 }
 
 
-fun box() = "OK"
+fun box() = "OK".also { vox() }

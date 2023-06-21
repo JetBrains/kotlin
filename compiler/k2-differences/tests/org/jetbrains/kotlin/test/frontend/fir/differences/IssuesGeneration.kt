@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.test.frontend.fir.differences
 
 import kotlinx.serialization.json.*
-import java.io.BufferedReader
-import java.io.DataOutputStream
-import java.io.File
-import java.io.InputStreamReader
+import java.io.*
 import java.net.HttpURLConnection
 import java.net.URL
 
@@ -81,6 +78,14 @@ val YT_TOKEN by lazy {
     System.getenv("YT_TOKEN") ?: error("The `YT_TOKEN` environment has not been set. It's required to make YT API calls")
 }
 
+val API_HEADERS by lazy {
+    mapOf(
+        "Accept" to "application/json",
+        "Authorization" to "Bearer $YT_TOKEN",
+        "Content-Type" to "application/json",
+    )
+}
+
 const val KOTLIN_PROJECT_ID = "22-68"
 
 @Suppress("unused")
@@ -89,6 +94,9 @@ object Tags {
     const val K1_RED_K2_GREEN = "68-291983"
     const val K2_POTENTIAL_FEATURE = "68-284223"
     const val FIXED_IN_K2 = "68-169920"
+    const val K2_COMPILER_CRASH = "68-320984"
+    const val K2_RUNTIME_CRASH = "68-320989"
+    const val K2_NAIVE_BOX_PASSES_SOMETIMES = "68-321017"
 }
 
 @Suppress("unused")
@@ -205,11 +213,7 @@ object MissingK2Diagnostics {
 
             val result = postJson(
                 "https://youtrack.jetbrains.com/api/issues?fields=id,numberInProject",
-                mapOf(
-                    "Accept" to "application/json",
-                    "Authorization" to "Bearer $YT_TOKEN",
-                    "Content-Type" to "application/json",
-                ),
+                API_HEADERS,
                 mapOf(
                     "project" to mapOf(
                         "id" to KOTLIN_PROJECT_ID,

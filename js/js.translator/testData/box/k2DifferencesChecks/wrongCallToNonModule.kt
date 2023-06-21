@@ -31,7 +31,7 @@ package bar
 
 import foo.*
 
-fun box() {
+fun vox() {
     A.f()+A.g
     B()
     bar()
@@ -55,4 +55,4 @@ inline fun <reified T> boo(x: T) {
 }
 
 
-fun box() = "OK"
+fun box() = "OK".also { vox() }
