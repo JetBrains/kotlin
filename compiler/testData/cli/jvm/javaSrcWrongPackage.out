@@ -1,4 +1,4 @@
-compiler/testData/cli/jvm/javaSrcWrongPackage.kt:1:13: error: unresolved reference: A
+compiler/testData/cli/jvm/javaSrcWrongPackage.kt:1:13: error: unresolved reference: A.Nested
 fun test(): A.Nested = A().nested()
             ^
 compiler/testData/cli/jvm/javaSrcWrongPackage.kt:1:24: error: unresolved reference: A

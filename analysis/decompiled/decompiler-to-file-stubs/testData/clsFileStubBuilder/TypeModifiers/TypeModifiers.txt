@@ -17,20 +17,11 @@ PsiJetFileStubImpl[package=]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Unit]
-      PROPERTY[fqName=TypeModifiers.functionOnSuspendFunction, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=functionOnSuspendFunction]
+      PROPERTY[fqName=TypeModifiers.suspendFunction, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=suspendFunction]
         MODIFIER_LIST[public final]
         TYPE_REFERENCE
+          MODIFIER_LIST[suspend]
           FUNCTION_TYPE
-            FUNCTION_TYPE_RECEIVER
-              TYPE_REFERENCE
-                MODIFIER_LIST[suspend]
-                FUNCTION_TYPE
-                  VALUE_PARAMETER_LIST
-                  TYPE_REFERENCE
-                    USER_TYPE
-                      USER_TYPE
-                        REFERENCE_EXPRESSION[referencedName=kotlin]
-                      REFERENCE_EXPRESSION[referencedName=Unit]
             VALUE_PARAMETER_LIST
             TYPE_REFERENCE
               USER_TYPE
@@ -54,11 +45,20 @@ PsiJetFileStubImpl[package=]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Unit]
-      PROPERTY[fqName=TypeModifiers.suspendFunction, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=suspendFunction]
+      PROPERTY[fqName=TypeModifiers.functionOnSuspendFunction, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=functionOnSuspendFunction]
         MODIFIER_LIST[public final]
         TYPE_REFERENCE
-          MODIFIER_LIST[suspend]
           FUNCTION_TYPE
+            FUNCTION_TYPE_RECEIVER
+              TYPE_REFERENCE
+                MODIFIER_LIST[suspend]
+                FUNCTION_TYPE
+                  VALUE_PARAMETER_LIST
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=kotlin]
+                      REFERENCE_EXPRESSION[referencedName=Unit]
             VALUE_PARAMETER_LIST
             TYPE_REFERENCE
               USER_TYPE

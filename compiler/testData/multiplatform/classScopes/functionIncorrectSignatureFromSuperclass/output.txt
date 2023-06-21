@@ -5,12 +5,9 @@ Output:
 -- JVM --
 Exit code: COMPILATION_ERROR
 Output:
-compiler/testData/multiplatform/classScopes/functionIncorrectSignatureFromSuperclass/jvm.kt:5:14: error: actual class 'Foo' has no corresponding members for expected class members:
-
-    public final expect fun function(b: ByteArray): Int
-
-    The following declaration is incompatible because return type is different:
-        public final fun function(b: ByteArray): Long
-
-actual class Foo : Base()
-             ^
+compiler/testData/multiplatform/classScopes/functionIncorrectSignatureFromSuperclass/common.kt:1:1: error: expect declaration `Foo` doesn't match actual `Foo` because some expected members have no actual ones
+expect class Foo {
+^
+compiler/testData/multiplatform/classScopes/functionIncorrectSignatureFromSuperclass/common.kt:2:5: error: expect declaration `function` doesn't match actual `function` because return type is different
+    fun function(b: ByteArray): Int
+    ^

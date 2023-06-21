@@ -5,9 +5,9 @@ Output:
 -- JVM --
 Exit code: COMPILATION_ERROR
 Output:
-compiler/testData/multiplatform/classScopes/missingFunction/jvm.kt:1:14: error: actual class 'Foo' has no corresponding members for expected class members:
+compiler/testData/multiplatform/classScopes/missingFunction/jvm.kt:1:14: error: actual class 'actual class Foo : Any' has no corresponding members for expected class members:
 
-    public final expect fun function(s: String): Unit
+    expect fun function(s: String): Unit
 
 actual class Foo
              ^
