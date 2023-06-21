@@ -18660,6 +18660,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("syntheticPropertyThroughJava.kt")
+        public void testSyntheticPropertyThroughJava() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/syntheticPropertyThroughJava.kt");
+        }
+
+        @Test
+        @TestMetadata("syntheticPropertyThroughJavaMultiModule.kt")
+        public void testSyntheticPropertyThroughJavaMultiModule() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/syntheticPropertyThroughJavaMultiModule.kt");
+        }
+
+        @Test
         @TestMetadata("toLong.kt")
         public void testToLong() throws Exception {
             runTest("compiler/testData/codegen/box/fir/toLong.kt");
