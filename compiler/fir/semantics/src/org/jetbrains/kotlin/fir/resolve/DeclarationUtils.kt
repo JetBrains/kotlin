@@ -10,12 +10,12 @@ import org.jetbrains.kotlin.fir.containingClassForLocalAttr
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.LookupTagInternals
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.util.OperatorNameConventions
 
 fun FirClassLikeDeclaration.getContainingDeclaration(session: FirSession): FirClassLikeDeclaration? {
     if (isLocal) {
@@ -88,6 +88,11 @@ var FirConstructor.originalConstructorIfTypeAlias: FirConstructor? by FirDeclara
 val FirConstructorSymbol.isTypeAliasedConstructor: Boolean
     get() = fir.originalConstructorIfTypeAlias != null
 
-private object CodeFragmentTowerDataContext : FirDeclarationDataKey()
+interface FirCodeFragmentContext {
+    val towerDataContext: FirTowerDataContext
+    val variables: Map<FirBasedSymbol<*>, Set<ConeKotlinType>>
+}
 
-var FirCodeFragment.towerDataContext: FirTowerDataContext? by FirDeclarationDataRegistry.data(CodeFragmentTowerDataContext)
+private object CodeFragmentContextDataKey : FirDeclarationDataKey()
+
+var FirCodeFragment.codeFragmentContext: FirCodeFragmentContext? by FirDeclarationDataRegistry.data(CodeFragmentContextDataKey)

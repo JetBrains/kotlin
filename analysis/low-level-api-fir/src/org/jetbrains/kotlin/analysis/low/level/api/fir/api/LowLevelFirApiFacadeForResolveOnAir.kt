@@ -241,7 +241,7 @@ object LowLevelFirApiFacadeForResolveOnAir {
         return fileAnnotationsContainer.annotations.single()
     }
 
-    private fun runBodyResolveOnAir(
+    internal fun runBodyResolveOnAir(
         firResolveSession: LLFirResolvableResolveSession,
         replacement: RawFirReplacement,
         onAirCreatedDeclaration: Boolean,
