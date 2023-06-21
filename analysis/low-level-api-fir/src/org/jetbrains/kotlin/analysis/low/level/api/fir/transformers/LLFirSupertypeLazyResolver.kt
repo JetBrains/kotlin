@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.transformers.FirSupertypeResolverVisitor
 import org.jetbrains.kotlin.fir.resolve.transformers.SupertypeComputationSession
 import org.jetbrains.kotlin.fir.resolve.transformers.SupertypeComputationStatus
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirTowerDataContextCollector
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirResolveContextCollector
 import org.jetbrains.kotlin.fir.resolve.transformers.platformSupertypeUpdater
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
@@ -36,7 +36,7 @@ internal object LLFirSupertypeLazyResolver : LLFirLazyResolver(FirResolvePhase.S
         lockProvider: LLFirLockProvider,
         session: FirSession,
         scopeSession: ScopeSession,
-        towerDataContextCollector: FirTowerDataContextCollector?,
+        towerDataContextCollector: FirResolveContextCollector?,
     ) {
         val resolver = LLFirSuperTypeTargetResolver(target, lockProvider, session, scopeSession)
         resolver.resolveDesignation()

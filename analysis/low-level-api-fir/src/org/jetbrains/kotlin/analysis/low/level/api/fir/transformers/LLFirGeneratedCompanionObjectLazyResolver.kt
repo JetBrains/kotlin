@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirTowerDataContextCollector
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirResolveContextCollector
 import org.jetbrains.kotlin.fir.resolve.transformers.plugin.FirCompanionGenerationTransformer
 
 internal object LLFirGeneratedCompanionObjectLazyResolver : LLFirLazyResolver(FirResolvePhase.COMPANION_GENERATION) {
@@ -24,7 +24,7 @@ internal object LLFirGeneratedCompanionObjectLazyResolver : LLFirLazyResolver(Fi
         lockProvider: LLFirLockProvider,
         session: FirSession,
         scopeSession: ScopeSession,
-        towerDataContextCollector: FirTowerDataContextCollector?,
+        towerDataContextCollector: FirResolveContextCollector?,
     ) {
         val resolver = LLFirCompanionGenerationTargetResolver(target, lockProvider, session)
         resolver.resolveDesignation()

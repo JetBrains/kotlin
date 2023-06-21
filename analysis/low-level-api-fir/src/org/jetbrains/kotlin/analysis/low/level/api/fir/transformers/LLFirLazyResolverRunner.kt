@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveT
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirTowerDataContextCollector
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirResolveContextCollector
 
 internal object LLFirLazyResolverRunner {
     fun runLazyResolverByPhase(
@@ -17,7 +17,7 @@ internal object LLFirLazyResolverRunner {
         target: LLFirResolveTarget,
         scopeSession: ScopeSession,
         lockProvider: LLFirLockProvider,
-        towerDataContextCollector: FirTowerDataContextCollector?,
+        towerDataContextCollector: FirResolveContextCollector?,
     ) {
         val lazyResolver = LLFirLazyPhaseResolverByPhase.getByPhase(phase)
         val firFile = target.firFile

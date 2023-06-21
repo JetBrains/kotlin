@@ -18,7 +18,7 @@ fun <F : FirClassLikeDeclaration> F.runAllPhasesForLocalClass(
     transformer: FirAbstractBodyResolveTransformer,
     components: FirAbstractBodyResolveTransformer.BodyResolveTransformerComponents,
     resolutionMode: ResolutionMode,
-    firTowerDataContextCollector: FirTowerDataContextCollector?
+    firResolveContextCollector: FirResolveContextCollector?
 ): F {
     if (status is FirResolvedDeclarationStatus) return this
     if (this is FirRegularClass) {
@@ -65,7 +65,7 @@ fun <F : FirClassLikeDeclaration> F.runAllPhasesForLocalClass(
         components,
         resolutionMode,
         localClassesNavigationInfo,
-        firTowerDataContextCollector
+        firResolveContextCollector
     )
     return this
 }

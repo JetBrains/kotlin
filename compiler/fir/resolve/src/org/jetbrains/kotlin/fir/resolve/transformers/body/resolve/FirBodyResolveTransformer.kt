@@ -18,7 +18,7 @@ open class FirBodyResolveTransformer(
     scopeSession: ScopeSession,
     returnTypeCalculator: ReturnTypeCalculator = ReturnTypeCalculatorForFullBodyResolve,
     outerBodyResolveContext: BodyResolveContext? = null,
-    firTowerDataContextCollector: FirTowerDataContextCollector? = null
+    firResolveContextCollector: FirResolveContextCollector? = null
 ) : FirAbstractBodyResolveTransformerDispatcher(
     session,
     phase,
@@ -26,7 +26,7 @@ open class FirBodyResolveTransformer(
     scopeSession,
     returnTypeCalculator,
     outerBodyResolveContext,
-    firTowerDataContextCollector
+    firResolveContextCollector
 ) {
     final override val expressionsTransformer = FirExpressionsResolveTransformer(this)
     final override val declarationsTransformer = FirDeclarationsResolveTransformer(this)

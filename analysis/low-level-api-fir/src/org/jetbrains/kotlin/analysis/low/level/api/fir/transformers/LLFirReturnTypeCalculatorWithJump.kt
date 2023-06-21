@@ -10,10 +10,9 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.asResolveTarg
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLFirImplicitBodyTargetResolver
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLFirImplicitTypesLazyResolver
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirTowerDataContextCollector
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirResolveContextCollector
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.ImplicitBodyResolveComputationSession
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.ReturnTypeCalculatorWithJump
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
@@ -24,7 +23,7 @@ internal class LLFirReturnTypeCalculatorWithJump(
     scopeSession: ScopeSession,
     implicitBodyResolveComputationSession: ImplicitBodyResolveComputationSession,
     private val lockProvider: LLFirLockProvider,
-    private val towerDataContextCollector: FirTowerDataContextCollector?,
+    private val towerDataContextCollector: FirResolveContextCollector?,
 ) : ReturnTypeCalculatorWithJump(scopeSession, implicitBodyResolveComputationSession) {
     override fun resolveDeclaration(declaration: FirCallableDeclaration): FirResolvedTypeRef {
         if (declaration.returnTypeRef !is FirImplicitTypeRef) {

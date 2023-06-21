@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.BodyResolveCon
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformerDispatcher
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirDeclarationsResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirExpressionsResolveTransformer
-import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 
 open class FirAnnotationArgumentsMappingTransformer(
@@ -221,7 +220,7 @@ private class FirDeclarationsResolveTransformerForAnnotationArgumentsMapping(
     override fun transformTypeAlias(typeAlias: FirTypeAlias, data: ResolutionMode): FirTypeAlias {
         doTransformTypeParameters(typeAlias)
         typeAlias.transformAnnotations(transformer, data)
-        transformer.firTowerDataContextCollector?.addDeclarationContext(typeAlias, context.towerDataContext)
+        transformer.firResolveContextCollector?.addDeclarationContext(typeAlias, context)
         typeAlias.expandedTypeRef.transformSingle(transformer, data)
         return typeAlias
     }
