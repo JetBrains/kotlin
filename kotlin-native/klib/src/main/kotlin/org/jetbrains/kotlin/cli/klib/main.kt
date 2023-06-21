@@ -166,7 +166,7 @@ class Library(val libraryNameOrPath: String, val requestedRepository: String?, v
 
     fun contents(output: Appendable, printSignatures: Boolean) {
         val module = loadModule()
-        val signatureRenderer = if (printSignatures) DefaultIdSignatureRenderer("// ID signature: ") else IdSignatureRenderer.NO_SIGNATURE
+        val signatureRenderer = if (printSignatures) DefaultKlibSignatureRenderer("// ID signature: ") else KlibSignatureRenderer.NO_SIGNATURE
         val printer = DeclarationPrinter(output, DefaultDeclarationHeaderRenderer, signatureRenderer)
 
         printer.print(module)
@@ -174,7 +174,7 @@ class Library(val libraryNameOrPath: String, val requestedRepository: String?, v
 
     fun signatures(output: Appendable) {
         val module = loadModule()
-        val printer = SignaturePrinter(output, DefaultIdSignatureRenderer())
+        val printer = SignaturePrinter(output, DefaultKlibSignatureRenderer())
 
         printer.print(module)
     }

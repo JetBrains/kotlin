@@ -5,9 +5,9 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.DeclarationDescriptorVisitorEmptyBodies
 import org.jetbrains.kotlin.utils.Printer
 
-class SignaturePrinter(
+internal class SignaturePrinter(
         out: Appendable,
-        private val signatureRenderer: IdSignatureRenderer
+        private val signatureRenderer: KlibSignatureRenderer
 ) {
     private val printer = Printer(out)
 
