@@ -77,6 +77,12 @@ public class FirIdeNormalAnalysisSourceModuleAnalysisApiPsiTypeProviderTestGener
     }
 
     @Test
+    @TestMetadata("localClass_exposedAsMemberInAnonymousObject.kt")
+    public void testLocalClass_exposedAsMemberInAnonymousObject() throws Exception {
+        runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration/localClass_exposedAsMemberInAnonymousObject.kt");
+    }
+
+    @Test
     @TestMetadata("localClass_exposedAsReturnValue.kt")
     public void testLocalClass_exposedAsReturnValue() throws Exception {
         runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration/localClass_exposedAsReturnValue.kt");
