@@ -531,7 +531,8 @@ class BodyResolveContext(
     }
 
     fun <T> withScopesForCodeFragment(codeFragment: FirCodeFragment, holder: SessionHolder, f: () -> T): T {
-        val towerDataContext = codeFragment.towerDataContext ?: error("Context is not set for a code fragment")
+        val codeFragmentContext = codeFragment.codeFragmentContext ?: error("Context is not set for a code fragment")
+        val towerDataContext = codeFragmentContext.towerDataContext
 
         val fragmentImportTowerDataElements = computeImportingScopes(file, holder.session, holder.scopeSession)
             .map { it.asTowerDataElement(isLocal = false) }

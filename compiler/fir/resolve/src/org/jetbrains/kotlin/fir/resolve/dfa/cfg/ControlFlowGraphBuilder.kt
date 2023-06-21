@@ -558,8 +558,8 @@ class ControlFlowGraphBuilder {
         return exitGraph()
     }
 
-    fun enterCodeFragment(script: FirCodeFragment): CodeFragmentEnterNode {
-        return enterGraph(script, "CODE_FRAGMENT_GRAPH", ControlFlowGraph.Kind.Function) {
+    fun enterCodeFragment(codeFragment: FirCodeFragment): CodeFragmentEnterNode {
+        return enterGraph(codeFragment, "CODE_FRAGMENT_GRAPH", ControlFlowGraph.Kind.Function) {
             createCodeFragmentEnterNode(it) to createCodeFragmentExitNode(it)
         }
     }

@@ -11,7 +11,9 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveT
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.throwUnexpectedFirElementError
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.LLFirPhaseUpdater
+import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.RawFirReplacement
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.llFirModuleData
+import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLFirResolvableResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkDelegatedConstructorIsResolved
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.*
 import org.jetbrains.kotlin.analysis.utils.errors.buildErrorWithAttachment
@@ -34,7 +36,7 @@ import org.jetbrains.kotlin.fir.references.builder.buildExplicitSuperReference
 import org.jetbrains.kotlin.fir.references.builder.buildExplicitThisReference
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.dfa.FirControlFlowGraphReferenceImpl
-import org.jetbrains.kotlin.fir.resolve.towerDataContext
+import org.jetbrains.kotlin.fir.resolve.codeFragmentContext
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirResolveContextCollector
 import org.jetbrains.kotlin.fir.resolve.transformers.contracts.FirContractsDslNames
@@ -170,12 +172,12 @@ private class LLFirBodyTargetResolver(
             }
 
         val module = codeFragment.llFirModuleData.ktModule
-        val resolveSession = module.getFirResolveSession(ktFile.project)
+        val resolveSession = module.getFirResolveSession(ktFile.project) as LLFirResolvableResolveSession
 
-        val towerDataProvider = LowLevelFirApiFacadeForResolveOnAir.getOnAirGetTowerContextProvider(resolveSession, contextElement)
-        val towerDataContext = towerDataProvider.getClosestAvailableParentContext(contextElement) ?: FirTowerDataContext()
-
-        codeFragment.towerDataContext = towerDataContext
+        val collector = FirCodeFragmentResolveContextCollector(transformer.components, contextElement)
+        val replacement = RawFirReplacement(contextElement, contextElement)
+        LowLevelFirApiFacadeForResolveOnAir.runBodyResolveOnAir(resolveSession, replacement, onAirCreatedDeclaration = false, collector)
+        codeFragment.codeFragmentContext = collector.context
     }
 
     override fun doLazyResolveUnderLock(target: FirElementWithResolveState) {
