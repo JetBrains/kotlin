@@ -13,7 +13,7 @@ import kotlin.io.path.readText
 import kotlin.test.assertEquals
 
 @OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
-@DisplayName("K/N tests with cocoapods' podspec")
+@DisplayName("CocoaPods plugin podspec generation tests")
 @NativeGradlePluginTests
 class CocoaPodsPodspecIT : KGPBaseTest() {
 
@@ -44,7 +44,7 @@ class CocoaPodsPodspecIT : KGPBaseTest() {
         cocoapodsMultipleKtPods,
         gradleVersion,
         mapOf("kotlin-library" to null, "second-library" to null),
-        mapOf("kotlin-library" to kotlinLibraryPodspecContent(), "second-library" to secondLibraryPodspecContent("second_library")),
+        mapOf("kotlin-library" to kotlinLibraryPodspecContent(), "second-library" to secondLibraryPodspecContent()),
     )
 
     @DisplayName("Build project with two podspecs with custom framework name")
@@ -96,7 +96,7 @@ class CocoaPodsPodspecIT : KGPBaseTest() {
         }
     }
 
-    private fun kotlinLibraryPodspecContent(frameworkName: String? = null) = """
+    private fun kotlinLibraryPodspecContent(frameworkName: String = "kotlin_library") = """
                 Pod::Spec.new do |spec|
                     spec.name                     = 'kotlin_library'
                     spec.version                  = '1.0'
@@ -105,14 +105,21 @@ class CocoaPodsPodspecIT : KGPBaseTest() {
                     spec.authors                  = ''
                     spec.license                  = ''
                     spec.summary                  = 'CocoaPods test library'
-                    spec.vendored_frameworks      = 'build/cocoapods/framework/${frameworkName ?: "kotlin_library"}.framework'
+                    spec.vendored_frameworks      = 'build/cocoapods/framework/$frameworkName.framework'
                     spec.libraries                = 'c++'
                     spec.ios.deployment_target = '11.0'
                     spec.dependency 'pod_dependency', '1.0'
                     spec.dependency 'subspec_dependency/Core', '1.0'
+                    if !Dir.exist?('build/cocoapods/framework/$frameworkName.framework') || Dir.empty?('build/cocoapods/framework/$frameworkName.framework')
+                        raise "
+                        Kotlin framework '$frameworkName' doesn't exist yet, so a proper Xcode project can't be generated.
+                        'pod install' should be executed after running ':generateDummyFramework' Gradle task:
+                            ./gradlew :kotlin-library:generateDummyFramework
+                        Alternatively, proper pod installation is performed during Gradle sync in the IDE (if Podfile location is set)"
+                    end
                     spec.pod_target_xcconfig = {
                         'KOTLIN_PROJECT_PATH' => ':kotlin-library',
-                        'PRODUCT_MODULE_NAME' => '${frameworkName ?: "kotlin_library"}',
+                        'PRODUCT_MODULE_NAME' => '$frameworkName',
                     }
                     spec.script_phases = [
                         {
@@ -136,7 +143,7 @@ class CocoaPodsPodspecIT : KGPBaseTest() {
                 end
             """.trimIndent()
 
-    private fun secondLibraryPodspecContent(frameworkName: String? = null) = """
+    private fun secondLibraryPodspecContent(frameworkName: String = "second_library") = """
                 Pod::Spec.new do |spec|
                     spec.name                     = 'second_library'
                     spec.version                  = '1.0'
@@ -145,11 +152,18 @@ class CocoaPodsPodspecIT : KGPBaseTest() {
                     spec.authors                  = ''
                     spec.license                  = ''
                     spec.summary                  = 'CocoaPods test library'
-                    spec.vendored_frameworks      = 'build/cocoapods/framework/${frameworkName ?: "second_library"}.framework'
+                    spec.vendored_frameworks      = 'build/cocoapods/framework/$frameworkName.framework'
                     spec.libraries                = 'c++'
+                    if !Dir.exist?('build/cocoapods/framework/$frameworkName.framework') || Dir.empty?('build/cocoapods/framework/$frameworkName.framework')
+                        raise "
+                        Kotlin framework '$frameworkName' doesn't exist yet, so a proper Xcode project can't be generated.
+                        'pod install' should be executed after running ':generateDummyFramework' Gradle task:
+                            ./gradlew :second-library:generateDummyFramework
+                        Alternatively, proper pod installation is performed during Gradle sync in the IDE (if Podfile location is set)"
+                    end
                     spec.pod_target_xcconfig = {
                         'KOTLIN_PROJECT_PATH' => ':second-library',
-                        'PRODUCT_MODULE_NAME' => '${frameworkName ?: "kotlin_library"}',
+                        'PRODUCT_MODULE_NAME' => '$frameworkName',
                     }
                     spec.script_phases = [
                         {
