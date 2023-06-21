@@ -9,9 +9,27 @@ Read the details here: https://kotlinlang.org/docs/multiplatform-compatibility-g
 w: [CommonMainWithDependsOnDiagnostic | WARNING] commonMain can't declare dependsOn on other source sets
 #diagnostic-end
 
+w: [KotlinDefaultHierarchyFallbackDependsOnUsageDetected | WARNING] The Default Kotlin Hierarchy was not applied to 'project ':subprojectA'':
+Manual .dependsOn() edges were configured for the following source sets:
+[commonMain]
+
+To suppress the 'Default Hierarchy Template' add
+    'kotlin.mpp.applyDefaultHierarchyTemplate=false'
+to your gradle.properties
+#diagnostic-end
+
 
 > Configure project :subprojectB
 w: [CommonMainWithDependsOnDiagnostic | WARNING] commonMain can't declare dependsOn on other source sets
+#diagnostic-end
+
+w: [KotlinDefaultHierarchyFallbackDependsOnUsageDetected | WARNING] The Default Kotlin Hierarchy was not applied to 'project ':subprojectB'':
+Manual .dependsOn() edges were configured for the following source sets:
+[commonMain]
+
+To suppress the 'Default Hierarchy Template' add
+    'kotlin.mpp.applyDefaultHierarchyTemplate=false'
+to your gradle.properties
 #diagnostic-end
 
 w: [UnusedSourceSetsWarning | WARNING] The Kotlin source set unusedCreatedInAfterEvaluate was configured but not added to any Kotlin compilation.

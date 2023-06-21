@@ -18,6 +18,7 @@ class MppDiagnosticsFunctionalTest {
             kotlin {
                 jvm()
                 linuxX64()
+                applyDefaultHierarchyTemplate()
 
                 sourceSets.apply {
                     val myCustomCommonMain = create("myCustomCommonMain")
@@ -47,6 +48,7 @@ class MppDiagnosticsFunctionalTest {
             kotlin {
                 jvm()
                 linuxX64()
+                applyDefaultHierarchyTemplate()
 
                 sourceSets.apply {
                     val unused1 = create("unused1")
@@ -86,6 +88,7 @@ class MppDiagnosticsFunctionalTest {
             kotlin {
                 androidTarget()
                 linuxX64()
+                applyDefaultHierarchyTemplate()
 
                 sourceSets.apply {
                     val intermediateBetweenAndroid = create("intermediate")

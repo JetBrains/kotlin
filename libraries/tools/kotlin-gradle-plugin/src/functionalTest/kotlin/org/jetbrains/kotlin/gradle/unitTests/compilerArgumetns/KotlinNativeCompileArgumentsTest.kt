@@ -166,6 +166,10 @@ class KotlinNativeCompileArgumentsTest {
         linuxX64SourceFile.parentFile.mkdirs()
         linuxX64SourceFile.writeText("object Linux")
 
+        project.multiplatformExtension.applyHierarchyTemplate {
+            common { withLinux() }
+        }
+
         project.evaluate()
 
         val nativeCompilation = kotlin.linuxX64().compilations.main

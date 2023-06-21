@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.internal.customizeKotlinDependencies
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.hierarchy.orNull
+import org.jetbrains.kotlin.gradle.plugin.hierarchy.setupDefaultKotlinHierarchy
 import org.jetbrains.kotlin.gradle.plugin.ide.kotlinIdeMultiplatformImport
 import org.jetbrains.kotlin.gradle.plugin.ide.locateOrRegisterIdeResolveDependenciesTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMultiplatformPlugin.Companion.sourceSetFreeCompilerArgsPropertyName
@@ -175,19 +176,8 @@ class KotlinMultiplatformPlugin : Plugin<Project> {
         sourceSets.create(KotlinSourceSet.COMMON_MAIN_SOURCE_SET_NAME)
         sourceSets.create(KotlinSourceSet.COMMON_TEST_SOURCE_SET_NAME)
 
-        /* Create default 'dependsOn' to commonMain/commonTest (or even common{SourceSetTree}) */
-        targets.all { target ->
-            project.launchInStage(KotlinPluginLifecycle.Stage.FinaliseRefinesEdges) {
-                /* Only setup default refines edges when no KotlinTargetHierarchy was applied */
-                if (project.multiplatformExtension.internalKotlinTargetHierarchy.appliedDescriptors.isNotEmpty()) return@launchInStage
-                if (project.multiplatformExtension.hierarchy.appliedTemplates.isNotEmpty()) return@launchInStage
-
-                target.compilations.forEach { compilation ->
-                    val sourceSetTree = KotlinSourceSetTree.orNull(compilation) ?: return@forEach
-                    val commonSourceSet = sourceSets.findByName(lowerCamelCaseName("common", sourceSetTree.name)) ?: return@forEach
-                    compilation.defaultSourceSet.dependsOn(commonSourceSet)
-                }
-            }
+        project.launch {
+            project.setupDefaultKotlinHierarchy()
         }
 
         project.launchInStage(KotlinPluginLifecycle.Stage.ReadyForExecution) {

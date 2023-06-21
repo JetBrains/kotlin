@@ -1,0 +1,7 @@
+[KotlinDefaultHierarchyFallbackDependsOnUsageDetected | WARNING] The Default Kotlin Hierarchy was not applied to 'root project 'test'':
+Manual .dependsOn() edges were configured for the following source sets:
+[intermediateMain, jvmMain]
+
+To suppress the 'Default Hierarchy Template' add
+    'kotlin.mpp.applyDefaultHierarchyTemplate=false'
+to your gradle.properties
