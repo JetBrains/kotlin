@@ -10,10 +10,9 @@ package org.jetbrains.kotlin.fir.declarations.builder
 import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirImplementationDetail
-import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
-import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
-import org.jetbrains.kotlin.fir.declarations.impl.FirOuterClassTypeParameterRef
+import org.jetbrains.kotlin.fir.declarations.FirOuterClassTypeParameterRef
+import org.jetbrains.kotlin.fir.declarations.impl.FirOuterClassTypeParameterRefImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.visitors.*
 
@@ -28,8 +27,8 @@ class FirOuterClassTypeParameterRefBuilder {
     lateinit var symbol: FirTypeParameterSymbol
 
     @OptIn(FirImplementationDetail::class)
-    fun build(): FirTypeParameterRef {
-        return FirOuterClassTypeParameterRef(
+    fun build(): FirOuterClassTypeParameterRef {
+        return FirOuterClassTypeParameterRefImpl(
             source,
             symbol,
         )
@@ -38,7 +37,7 @@ class FirOuterClassTypeParameterRefBuilder {
 }
 
 @OptIn(ExperimentalContracts::class)
-inline fun buildOuterClassTypeParameterRef(init: FirOuterClassTypeParameterRefBuilder.() -> Unit): FirTypeParameterRef {
+inline fun buildOuterClassTypeParameterRef(init: FirOuterClassTypeParameterRefBuilder.() -> Unit): FirOuterClassTypeParameterRef {
     contract {
         callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
     }

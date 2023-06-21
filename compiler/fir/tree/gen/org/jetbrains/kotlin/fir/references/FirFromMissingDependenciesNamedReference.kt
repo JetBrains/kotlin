@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.references
 
 import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirElementInterface
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.fir.visitors.*
 
@@ -22,6 +22,6 @@ abstract class FirFromMissingDependenciesNamedReference : FirNamedReference() {
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitFromMissingDependenciesNamedReference(this, data)
 
     @Suppress("UNCHECKED_CAST")
-    override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =
+    override fun <E : FirElementInterface, D> transform(transformer: FirTransformer<D>, data: D): E =
         transformer.transformFromMissingDependenciesNamedReference(this, data) as E
 }

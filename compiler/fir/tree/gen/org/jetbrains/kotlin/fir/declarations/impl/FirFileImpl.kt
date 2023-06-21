@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.fir.MutableOrEmptyList
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.declarations.ResolveStateAccess
+import org.jetbrains.kotlin.fir.FirElement
 
 /*
  * This file was generated automatically
@@ -59,7 +60,7 @@ internal class FirFileImpl(
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotationsContainer.accept(visitor, data)
         packageDirective.accept(visitor, data)
-        imports.forEach { it.accept(visitor, data) }
+        imports.forEach { (it as FirElement).accept(visitor, data) }
         declarations.forEach { it.accept(visitor, data) }
     }
 

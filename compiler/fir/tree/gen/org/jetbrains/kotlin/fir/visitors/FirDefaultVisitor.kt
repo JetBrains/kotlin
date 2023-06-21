@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.visitors
 
-import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirElementInterface
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.references.FirReference
@@ -29,6 +29,8 @@ import org.jetbrains.kotlin.fir.declarations.FirAnonymousInitializer
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
+import org.jetbrains.kotlin.fir.declarations.FirConstructedClassTypeParameterRef
+import org.jetbrains.kotlin.fir.declarations.FirOuterClassTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.FirReceiverParameter
@@ -55,6 +57,7 @@ import org.jetbrains.kotlin.fir.declarations.FirAnonymousObject
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousObjectExpression
 import org.jetbrains.kotlin.fir.diagnostics.FirDiagnosticHolder
 import org.jetbrains.kotlin.fir.declarations.FirImport
+import org.jetbrains.kotlin.fir.declarations.FirImportBase
 import org.jetbrains.kotlin.fir.declarations.FirResolvedImport
 import org.jetbrains.kotlin.fir.declarations.FirErrorImport
 import org.jetbrains.kotlin.fir.expressions.FirLoop
@@ -155,6 +158,9 @@ import org.jetbrains.kotlin.fir.contracts.FirContractDescription
 import org.jetbrains.kotlin.fir.contracts.FirLegacyRawContractDescription
 import org.jetbrains.kotlin.fir.contracts.FirRawContractDescription
 import org.jetbrains.kotlin.fir.contracts.FirResolvedContractDescription
+import org.jetbrains.kotlin.fir.expressions.impl.FirStubStatement
+import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.FirElement
 
 /*
  * This file was generated automatically
@@ -162,25 +168,45 @@ import org.jetbrains.kotlin.fir.contracts.FirResolvedContractDescription
  */
 
 abstract class FirDefaultVisitor<out R, in D> : FirVisitor<R, D>() {
+    open fun visitAnnotationContainer(annotationContainer: FirAnnotationContainer, data: D): R  = visitElement(annotationContainer as FirElement, data)
+
     override fun visitTypeRef(typeRef: FirTypeRef, data: D): R  = visitAnnotationContainer(typeRef, data)
 
-    override fun visitResolvedDeclarationStatus(resolvedDeclarationStatus: FirResolvedDeclarationStatus, data: D): R  = visitDeclarationStatus(resolvedDeclarationStatus, data)
+    open fun visitResolvable(resolvable: FirResolvable, data: D): R  = visitElement(resolvable as FirElement, data)
 
-    override fun visitStatement(statement: FirStatement, data: D): R  = visitAnnotationContainer(statement, data)
+    open fun visitTargetElement(targetElement: FirTargetElement, data: D): R  = visitElement(targetElement as FirElement, data)
+
+    open fun visitDeclarationStatus(declarationStatus: FirDeclarationStatus, data: D): R  = visitElement(declarationStatus as FirElement, data)
+
+    open fun visitResolvedDeclarationStatus(resolvedDeclarationStatus: FirResolvedDeclarationStatus, data: D): R  = visitDeclarationStatus(resolvedDeclarationStatus, data)
+
+    open fun visitControlFlowGraphOwner(controlFlowGraphOwner: FirControlFlowGraphOwner, data: D): R  = visitElement(controlFlowGraphOwner as FirElement, data)
+
+    open fun visitStatement(statement: FirStatement, data: D): R  = visitAnnotationContainer(statement, data)
 
     override fun visitExpression(expression: FirExpression, data: D): R  = visitStatement(expression, data)
 
     override fun visitLazyExpression(lazyExpression: FirLazyExpression, data: D): R  = visitExpression(lazyExpression, data)
 
-    override fun visitTypeParametersOwner(typeParametersOwner: FirTypeParametersOwner, data: D): R  = visitTypeParameterRefsOwner(typeParametersOwner, data)
+    open fun visitTypeParameterRefsOwner(typeParameterRefsOwner: FirTypeParameterRefsOwner, data: D): R  = visitElement(typeParameterRefsOwner as FirElement, data)
+
+    open fun visitTypeParametersOwner(typeParametersOwner: FirTypeParametersOwner, data: D): R  = visitTypeParameterRefsOwner(typeParametersOwner, data)
 
     override fun visitCallableDeclaration(callableDeclaration: FirCallableDeclaration, data: D): R  = visitMemberDeclaration(callableDeclaration, data)
+
+    open fun visitTypeParameterRef(typeParameterRef: FirTypeParameterRef, data: D): R  = visitElement(typeParameterRef as FirElement, data)
+
+    override fun visitConstructedClassTypeParameterRef(constructedClassTypeParameterRef: FirConstructedClassTypeParameterRef, data: D): R  = visitTypeParameterRef(constructedClassTypeParameterRef, data)
+
+    override fun visitOuterClassTypeParameterRef(outerClassTypeParameterRef: FirOuterClassTypeParameterRef, data: D): R  = visitTypeParameterRef(outerClassTypeParameterRef, data)
 
     override fun visitReceiverParameter(receiverParameter: FirReceiverParameter, data: D): R  = visitAnnotationContainer(receiverParameter, data)
 
     override fun visitEnumEntry(enumEntry: FirEnumEntry, data: D): R  = visitVariable(enumEntry, data)
 
     override fun visitRegularClass(regularClass: FirRegularClass, data: D): R  = visitClass(regularClass, data)
+
+    open fun visitContractDescriptionOwner(contractDescriptionOwner: FirContractDescriptionOwner, data: D): R  = visitElement(contractDescriptionOwner as FirElement, data)
 
     override fun visitFile(file: FirFile, data: D): R  = visitDeclaration(file, data)
 
@@ -191,6 +217,12 @@ abstract class FirDefaultVisitor<out R, in D> : FirVisitor<R, D>() {
     override fun visitAnonymousObject(anonymousObject: FirAnonymousObject, data: D): R  = visitClass(anonymousObject, data)
 
     override fun visitAnonymousObjectExpression(anonymousObjectExpression: FirAnonymousObjectExpression, data: D): R  = visitExpression(anonymousObjectExpression, data)
+
+    open fun visitDiagnosticHolder(diagnosticHolder: FirDiagnosticHolder, data: D): R  = visitElement(diagnosticHolder as FirElement, data)
+
+    open fun visitImport(import: FirImport, data: D): R  = visitElement(import as FirElement, data)
+
+    override fun visitImportBase(importBase: FirImportBase, data: D): R  = visitImport(importBase, data)
 
     override fun visitResolvedImport(resolvedImport: FirResolvedImport, data: D): R  = visitImport(resolvedImport, data)
 
@@ -220,7 +252,7 @@ abstract class FirDefaultVisitor<out R, in D> : FirVisitor<R, D>() {
 
     override fun visitTypeProjectionWithVariance(typeProjectionWithVariance: FirTypeProjectionWithVariance, data: D): R  = visitTypeProjection(typeProjectionWithVariance, data)
 
-    override fun visitCall(call: FirCall, data: D): R  = visitStatement(call, data)
+    open fun visitCall(call: FirCall, data: D): R  = visitStatement(call, data)
 
     override fun visitAnnotation(annotation: FirAnnotation, data: D): R  = visitExpression(annotation, data)
 
@@ -229,6 +261,8 @@ abstract class FirDefaultVisitor<out R, in D> : FirVisitor<R, D>() {
     override fun visitAssignmentOperatorStatement(assignmentOperatorStatement: FirAssignmentOperatorStatement, data: D): R  = visitStatement(assignmentOperatorStatement, data)
 
     override fun visitIncrementDecrementExpression(incrementDecrementExpression: FirIncrementDecrementExpression, data: D): R  = visitExpression(incrementDecrementExpression, data)
+
+    open fun visitContextReceiverArgumentListOwner(contextReceiverArgumentListOwner: FirContextReceiverArgumentListOwner, data: D): R  = visitElement(contextReceiverArgumentListOwner as FirElement, data)
 
     override fun visitAugmentedArraySetCall(augmentedArraySetCall: FirAugmentedArraySetCall, data: D): R  = visitStatement(augmentedArraySetCall, data)
 
@@ -326,4 +360,6 @@ abstract class FirDefaultVisitor<out R, in D> : FirVisitor<R, D>() {
 
     override fun visitResolvedContractDescription(resolvedContractDescription: FirResolvedContractDescription, data: D): R  = visitContractDescription(resolvedContractDescription, data)
 
+    override fun visitStubStatement(stubStatement: FirStubStatement, data: D): R = visitStatement(stubStatement, data)
+    override fun visitDeclarationStatusImpl(declarationStatusImpl: FirDeclarationStatusImpl, data: D): R = visitDeclarationStatus(declarationStatusImpl, data)
 }

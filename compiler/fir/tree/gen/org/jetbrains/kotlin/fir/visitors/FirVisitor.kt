@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.visitors
 
-import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirElementInterface
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.references.FirReference
@@ -29,6 +29,8 @@ import org.jetbrains.kotlin.fir.declarations.FirAnonymousInitializer
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
+import org.jetbrains.kotlin.fir.declarations.FirConstructedClassTypeParameterRef
+import org.jetbrains.kotlin.fir.declarations.FirOuterClassTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.FirReceiverParameter
@@ -55,6 +57,7 @@ import org.jetbrains.kotlin.fir.declarations.FirAnonymousObject
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousObjectExpression
 import org.jetbrains.kotlin.fir.diagnostics.FirDiagnosticHolder
 import org.jetbrains.kotlin.fir.declarations.FirImport
+import org.jetbrains.kotlin.fir.declarations.FirImportBase
 import org.jetbrains.kotlin.fir.declarations.FirResolvedImport
 import org.jetbrains.kotlin.fir.declarations.FirErrorImport
 import org.jetbrains.kotlin.fir.expressions.FirLoop
@@ -155,6 +158,9 @@ import org.jetbrains.kotlin.fir.contracts.FirContractDescription
 import org.jetbrains.kotlin.fir.contracts.FirLegacyRawContractDescription
 import org.jetbrains.kotlin.fir.contracts.FirRawContractDescription
 import org.jetbrains.kotlin.fir.contracts.FirResolvedContractDescription
+import org.jetbrains.kotlin.fir.expressions.impl.FirStubStatement
+import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.FirElement
 
 /*
  * This file was generated automatically
@@ -164,25 +170,11 @@ import org.jetbrains.kotlin.fir.contracts.FirResolvedContractDescription
 abstract class FirVisitor<out R, in D> {
     abstract fun visitElement(element: FirElement, data: D): R
 
-    open fun visitAnnotationContainer(annotationContainer: FirAnnotationContainer, data: D): R  = visitElement(annotationContainer, data)
-
     open fun visitTypeRef(typeRef: FirTypeRef, data: D): R  = visitElement(typeRef, data)
 
     open fun visitReference(reference: FirReference, data: D): R  = visitElement(reference, data)
 
     open fun visitLabel(label: FirLabel, data: D): R  = visitElement(label, data)
-
-    open fun visitResolvable(resolvable: FirResolvable, data: D): R  = visitElement(resolvable, data)
-
-    open fun visitTargetElement(targetElement: FirTargetElement, data: D): R  = visitElement(targetElement, data)
-
-    open fun visitDeclarationStatus(declarationStatus: FirDeclarationStatus, data: D): R  = visitElement(declarationStatus, data)
-
-    open fun visitResolvedDeclarationStatus(resolvedDeclarationStatus: FirResolvedDeclarationStatus, data: D): R  = visitElement(resolvedDeclarationStatus, data)
-
-    open fun visitControlFlowGraphOwner(controlFlowGraphOwner: FirControlFlowGraphOwner, data: D): R  = visitElement(controlFlowGraphOwner, data)
-
-    open fun visitStatement(statement: FirStatement, data: D): R  = visitElement(statement, data)
 
     open fun visitExpression(expression: FirExpression, data: D): R  = visitElement(expression, data)
 
@@ -196,19 +188,17 @@ abstract class FirVisitor<out R, in D> {
 
     open fun visitDeclaration(declaration: FirDeclaration, data: D): R  = visitElement(declaration, data)
 
-    open fun visitTypeParameterRefsOwner(typeParameterRefsOwner: FirTypeParameterRefsOwner, data: D): R  = visitElement(typeParameterRefsOwner, data)
-
-    open fun visitTypeParametersOwner(typeParametersOwner: FirTypeParametersOwner, data: D): R  = visitElement(typeParametersOwner, data)
-
     open fun visitMemberDeclaration(memberDeclaration: FirMemberDeclaration, data: D): R  = visitElement(memberDeclaration, data)
 
     open fun visitAnonymousInitializer(anonymousInitializer: FirAnonymousInitializer, data: D): R  = visitElement(anonymousInitializer, data)
 
     open fun visitCallableDeclaration(callableDeclaration: FirCallableDeclaration, data: D): R  = visitElement(callableDeclaration, data)
 
-    open fun visitTypeParameterRef(typeParameterRef: FirTypeParameterRef, data: D): R  = visitElement(typeParameterRef, data)
-
     open fun visitTypeParameter(typeParameter: FirTypeParameter, data: D): R  = visitElement(typeParameter, data)
+
+    open fun visitConstructedClassTypeParameterRef(constructedClassTypeParameterRef: FirConstructedClassTypeParameterRef, data: D): R  = visitElement(constructedClassTypeParameterRef, data)
+
+    open fun visitOuterClassTypeParameterRef(outerClassTypeParameterRef: FirOuterClassTypeParameterRef, data: D): R  = visitElement(outerClassTypeParameterRef, data)
 
     open fun visitVariable(variable: FirVariable, data: D): R  = visitElement(variable, data)
 
@@ -234,8 +224,6 @@ abstract class FirVisitor<out R, in D> {
 
     open fun visitFunction(function: FirFunction, data: D): R  = visitElement(function, data)
 
-    open fun visitContractDescriptionOwner(contractDescriptionOwner: FirContractDescriptionOwner, data: D): R  = visitElement(contractDescriptionOwner, data)
-
     open fun visitSimpleFunction(simpleFunction: FirSimpleFunction, data: D): R  = visitElement(simpleFunction, data)
 
     open fun visitPropertyAccessor(propertyAccessor: FirPropertyAccessor, data: D): R  = visitElement(propertyAccessor, data)
@@ -258,9 +246,7 @@ abstract class FirVisitor<out R, in D> {
 
     open fun visitAnonymousObjectExpression(anonymousObjectExpression: FirAnonymousObjectExpression, data: D): R  = visitElement(anonymousObjectExpression, data)
 
-    open fun visitDiagnosticHolder(diagnosticHolder: FirDiagnosticHolder, data: D): R  = visitElement(diagnosticHolder, data)
-
-    open fun visitImport(import: FirImport, data: D): R  = visitElement(import, data)
+    open fun visitImportBase(importBase: FirImportBase, data: D): R  = visitElement(importBase, data)
 
     open fun visitResolvedImport(resolvedImport: FirResolvedImport, data: D): R  = visitElement(resolvedImport, data)
 
@@ -304,8 +290,6 @@ abstract class FirVisitor<out R, in D> {
 
     open fun visitArgumentList(argumentList: FirArgumentList, data: D): R  = visitElement(argumentList, data)
 
-    open fun visitCall(call: FirCall, data: D): R  = visitElement(call, data)
-
     open fun visitAnnotation(annotation: FirAnnotation, data: D): R  = visitElement(annotation, data)
 
     open fun visitAnnotationCall(annotationCall: FirAnnotationCall, data: D): R  = visitElement(annotationCall, data)
@@ -327,8 +311,6 @@ abstract class FirVisitor<out R, in D> {
     open fun visitWhenExpression(whenExpression: FirWhenExpression, data: D): R  = visitElement(whenExpression, data)
 
     open fun visitWhenBranch(whenBranch: FirWhenBranch, data: D): R  = visitElement(whenBranch, data)
-
-    open fun visitContextReceiverArgumentListOwner(contextReceiverArgumentListOwner: FirContextReceiverArgumentListOwner, data: D): R  = visitElement(contextReceiverArgumentListOwner, data)
 
     open fun visitCheckNotNullCall(checkNotNullCall: FirCheckNotNullCall, data: D): R  = visitElement(checkNotNullCall, data)
 
@@ -462,4 +444,6 @@ abstract class FirVisitor<out R, in D> {
 
     open fun visitResolvedContractDescription(resolvedContractDescription: FirResolvedContractDescription, data: D): R  = visitElement(resolvedContractDescription, data)
 
+    open fun visitStubStatement(stubStatement: FirStubStatement, data: D): R = visitElement(stubStatement, data)
+    open fun visitDeclarationStatusImpl(declarationStatusImpl: FirDeclarationStatusImpl, data: D): R = visitElement(declarationStatusImpl, data)
 }

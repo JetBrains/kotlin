@@ -9,10 +9,9 @@ package org.jetbrains.kotlin.fir.declarations.builder
 
 import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
-import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
-import org.jetbrains.kotlin.fir.declarations.impl.FirConstructedClassTypeParameterRef
+import org.jetbrains.kotlin.fir.declarations.FirConstructedClassTypeParameterRef
+import org.jetbrains.kotlin.fir.declarations.impl.FirConstructedClassTypeParameterRefImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.visitors.*
 
@@ -26,8 +25,8 @@ class FirConstructedClassTypeParameterRefBuilder {
     var source: KtSourceElement? = null
     lateinit var symbol: FirTypeParameterSymbol
 
-    fun build(): FirTypeParameterRef {
-        return FirConstructedClassTypeParameterRef(
+    fun build(): FirConstructedClassTypeParameterRef {
+        return FirConstructedClassTypeParameterRefImpl(
             source,
             symbol,
         )
@@ -36,7 +35,7 @@ class FirConstructedClassTypeParameterRefBuilder {
 }
 
 @OptIn(ExperimentalContracts::class)
-inline fun buildConstructedClassTypeParameterRef(init: FirConstructedClassTypeParameterRefBuilder.() -> Unit): FirTypeParameterRef {
+inline fun buildConstructedClassTypeParameterRef(init: FirConstructedClassTypeParameterRefBuilder.() -> Unit): FirConstructedClassTypeParameterRef {
     contract {
         callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
     }

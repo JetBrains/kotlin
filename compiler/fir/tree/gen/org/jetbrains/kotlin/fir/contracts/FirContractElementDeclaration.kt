@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.contracts
 
 import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirElementInterface
 import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.contracts.description.ConeContractDescriptionElement
 import org.jetbrains.kotlin.fir.visitors.*
@@ -16,13 +16,13 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-abstract class FirContractElementDeclaration : FirPureAbstractElement(), FirElement {
+abstract class FirContractElementDeclaration : FirPureAbstractElement(), FirElementInterface {
     abstract override val source: KtSourceElement?
     abstract val effect: ConeContractDescriptionElement
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitContractElementDeclaration(this, data)
 
     @Suppress("UNCHECKED_CAST")
-    override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =
+    override fun <E : FirElementInterface, D> transform(transformer: FirTransformer<D>, data: D): E =
         transformer.transformContractElementDeclaration(this, data) as E
 }

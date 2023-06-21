@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.visitors
 
-import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirElementInterface
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.references.FirReference
@@ -29,6 +29,8 @@ import org.jetbrains.kotlin.fir.declarations.FirAnonymousInitializer
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
+import org.jetbrains.kotlin.fir.declarations.FirConstructedClassTypeParameterRef
+import org.jetbrains.kotlin.fir.declarations.FirOuterClassTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.FirReceiverParameter
@@ -55,6 +57,7 @@ import org.jetbrains.kotlin.fir.declarations.FirAnonymousObject
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousObjectExpression
 import org.jetbrains.kotlin.fir.diagnostics.FirDiagnosticHolder
 import org.jetbrains.kotlin.fir.declarations.FirImport
+import org.jetbrains.kotlin.fir.declarations.FirImportBase
 import org.jetbrains.kotlin.fir.declarations.FirResolvedImport
 import org.jetbrains.kotlin.fir.declarations.FirErrorImport
 import org.jetbrains.kotlin.fir.expressions.FirLoop
@@ -155,6 +158,9 @@ import org.jetbrains.kotlin.fir.contracts.FirContractDescription
 import org.jetbrains.kotlin.fir.contracts.FirLegacyRawContractDescription
 import org.jetbrains.kotlin.fir.contracts.FirRawContractDescription
 import org.jetbrains.kotlin.fir.contracts.FirResolvedContractDescription
+import org.jetbrains.kotlin.fir.expressions.impl.FirStubStatement
+import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.FirElement
 
 /*
  * This file was generated automatically
@@ -162,25 +168,45 @@ import org.jetbrains.kotlin.fir.contracts.FirResolvedContractDescription
  */
 
 abstract class FirDefaultVisitorVoid : FirVisitorVoid() {
+    open fun visitAnnotationContainer(annotationContainer: FirAnnotationContainer)  = visitElement(annotationContainer as FirElement)
+
     override fun visitTypeRef(typeRef: FirTypeRef)  = visitAnnotationContainer(typeRef)
 
-    override fun visitResolvedDeclarationStatus(resolvedDeclarationStatus: FirResolvedDeclarationStatus)  = visitDeclarationStatus(resolvedDeclarationStatus)
+    open fun visitResolvable(resolvable: FirResolvable)  = visitElement(resolvable as FirElement)
 
-    override fun visitStatement(statement: FirStatement)  = visitAnnotationContainer(statement)
+    open fun visitTargetElement(targetElement: FirTargetElement)  = visitElement(targetElement as FirElement)
+
+    open fun visitDeclarationStatus(declarationStatus: FirDeclarationStatus)  = visitElement(declarationStatus as FirElement)
+
+    open fun visitResolvedDeclarationStatus(resolvedDeclarationStatus: FirResolvedDeclarationStatus)  = visitDeclarationStatus(resolvedDeclarationStatus)
+
+    open fun visitControlFlowGraphOwner(controlFlowGraphOwner: FirControlFlowGraphOwner)  = visitElement(controlFlowGraphOwner as FirElement)
+
+    open fun visitStatement(statement: FirStatement)  = visitAnnotationContainer(statement)
 
     override fun visitExpression(expression: FirExpression)  = visitStatement(expression)
 
     override fun visitLazyExpression(lazyExpression: FirLazyExpression)  = visitExpression(lazyExpression)
 
-    override fun visitTypeParametersOwner(typeParametersOwner: FirTypeParametersOwner)  = visitTypeParameterRefsOwner(typeParametersOwner)
+    open fun visitTypeParameterRefsOwner(typeParameterRefsOwner: FirTypeParameterRefsOwner)  = visitElement(typeParameterRefsOwner as FirElement)
+
+    open fun visitTypeParametersOwner(typeParametersOwner: FirTypeParametersOwner)  = visitTypeParameterRefsOwner(typeParametersOwner)
 
     override fun visitCallableDeclaration(callableDeclaration: FirCallableDeclaration)  = visitMemberDeclaration(callableDeclaration)
+
+    open fun visitTypeParameterRef(typeParameterRef: FirTypeParameterRef)  = visitElement(typeParameterRef as FirElement)
+
+    override fun visitConstructedClassTypeParameterRef(constructedClassTypeParameterRef: FirConstructedClassTypeParameterRef)  = visitTypeParameterRef(constructedClassTypeParameterRef)
+
+    override fun visitOuterClassTypeParameterRef(outerClassTypeParameterRef: FirOuterClassTypeParameterRef)  = visitTypeParameterRef(outerClassTypeParameterRef)
 
     override fun visitReceiverParameter(receiverParameter: FirReceiverParameter)  = visitAnnotationContainer(receiverParameter)
 
     override fun visitEnumEntry(enumEntry: FirEnumEntry)  = visitVariable(enumEntry)
 
     override fun visitRegularClass(regularClass: FirRegularClass)  = visitClass(regularClass)
+
+    open fun visitContractDescriptionOwner(contractDescriptionOwner: FirContractDescriptionOwner)  = visitElement(contractDescriptionOwner as FirElement)
 
     override fun visitFile(file: FirFile)  = visitDeclaration(file)
 
@@ -191,6 +217,12 @@ abstract class FirDefaultVisitorVoid : FirVisitorVoid() {
     override fun visitAnonymousObject(anonymousObject: FirAnonymousObject)  = visitClass(anonymousObject)
 
     override fun visitAnonymousObjectExpression(anonymousObjectExpression: FirAnonymousObjectExpression)  = visitExpression(anonymousObjectExpression)
+
+    open fun visitDiagnosticHolder(diagnosticHolder: FirDiagnosticHolder)  = visitElement(diagnosticHolder as FirElement)
+
+    open fun visitImport(import: FirImport)  = visitElement(import as FirElement)
+
+    override fun visitImportBase(importBase: FirImportBase)  = visitImport(importBase)
 
     override fun visitResolvedImport(resolvedImport: FirResolvedImport)  = visitImport(resolvedImport)
 
@@ -220,7 +252,7 @@ abstract class FirDefaultVisitorVoid : FirVisitorVoid() {
 
     override fun visitTypeProjectionWithVariance(typeProjectionWithVariance: FirTypeProjectionWithVariance)  = visitTypeProjection(typeProjectionWithVariance)
 
-    override fun visitCall(call: FirCall)  = visitStatement(call)
+    open fun visitCall(call: FirCall)  = visitStatement(call)
 
     override fun visitAnnotation(annotation: FirAnnotation)  = visitExpression(annotation)
 
@@ -229,6 +261,8 @@ abstract class FirDefaultVisitorVoid : FirVisitorVoid() {
     override fun visitAssignmentOperatorStatement(assignmentOperatorStatement: FirAssignmentOperatorStatement)  = visitStatement(assignmentOperatorStatement)
 
     override fun visitIncrementDecrementExpression(incrementDecrementExpression: FirIncrementDecrementExpression)  = visitExpression(incrementDecrementExpression)
+
+    open fun visitContextReceiverArgumentListOwner(contextReceiverArgumentListOwner: FirContextReceiverArgumentListOwner)  = visitElement(contextReceiverArgumentListOwner as FirElement)
 
     override fun visitAugmentedArraySetCall(augmentedArraySetCall: FirAugmentedArraySetCall)  = visitStatement(augmentedArraySetCall)
 
@@ -325,5 +359,9 @@ abstract class FirDefaultVisitorVoid : FirVisitorVoid() {
     override fun visitRawContractDescription(rawContractDescription: FirRawContractDescription)  = visitContractDescription(rawContractDescription)
 
     override fun visitResolvedContractDescription(resolvedContractDescription: FirResolvedContractDescription)  = visitContractDescription(resolvedContractDescription)
+
+    override fun visitStubStatement(stubStatement: FirStubStatement) = visitStatement(stubStatement)
+
+    override fun visitDeclarationStatusImpl(declarationStatusImpl: FirDeclarationStatusImpl) = visitDeclarationStatus(declarationStatusImpl)
 
 }

@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.declarations.ResolveStateAccess
  * DO NOT MODIFY IT MANUALLY
  */
 
-abstract class FirElementWithResolveState : FirPureAbstractElement(), FirElement {
+abstract class FirElementWithResolveState : FirPureAbstractElement(), FirElementInterface {
     abstract override val source: KtSourceElement?
     @Volatile
     @ResolveStateAccess
@@ -27,6 +27,6 @@ abstract class FirElementWithResolveState : FirPureAbstractElement(), FirElement
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitElementWithResolveState(this, data)
 
     @Suppress("UNCHECKED_CAST")
-    override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =
+    override fun <E : FirElementInterface, D> transform(transformer: FirTransformer<D>, data: D): E =
         transformer.transformElementWithResolveState(this, data) as E
 }

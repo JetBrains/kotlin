@@ -13,13 +13,13 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-abstract class FirLabel : FirPureAbstractElement(), FirElement {
+abstract class FirLabel : FirPureAbstractElement(), FirElementInterface {
     abstract override val source: KtSourceElement?
     abstract val name: String
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitLabel(this, data)
 
     @Suppress("UNCHECKED_CAST")
-    override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =
+    override fun <E : FirElementInterface, D> transform(transformer: FirTransformer<D>, data: D): E =
         transformer.transformLabel(this, data) as E
 }

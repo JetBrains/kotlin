@@ -8,23 +8,24 @@
 package org.jetbrains.kotlin.fir.declarations.impl
 
 import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.fir.FirPureAbstractElement
-import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
+import org.jetbrains.kotlin.fir.FirImplementationDetail
+import org.jetbrains.kotlin.fir.declarations.FirOuterClassTypeParameterRef
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.fir.FirElement
 
 /*
  * This file was generated automatically
  * DO NOT MODIFY IT MANUALLY
  */
 
-internal class FirConstructedClassTypeParameterRef(
+class FirOuterClassTypeParameterRefImpl @FirImplementationDetail constructor(
     override val source: KtSourceElement?,
     override val symbol: FirTypeParameterSymbol,
-) : FirPureAbstractElement(), FirTypeParameterRef {
+) : FirOuterClassTypeParameterRef() {
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirConstructedClassTypeParameterRef {
+    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirOuterClassTypeParameterRefImpl {
         return this
     }
 }
