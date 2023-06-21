@@ -545,7 +545,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                         data
                 else
                     ResolutionMode.ContextIndependent
-            transformer.firTowerDataContextCollector?.addStatementContext(block.statements[index], context.towerDataContext)
+            collectStatementContext(block.statements[index])
             TransformData.Data(value)
         }
         block.transformOtherChildren(transformer, data)
@@ -558,6 +558,10 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         }
 
         dataFlowAnalyzer.exitBlock(block)
+    }
+
+    private fun collectStatementContext(statement: FirStatement) {
+        transformer.firTowerDataContextCollector?.addStatementContext(statement, context.towerDataContext)
     }
 
     override fun transformThisReceiverExpression(
@@ -977,6 +981,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         return binaryLogicExpression.also(dataFlowAnalyzer::enterBinaryLogicExpression)
             .transformLeftOperand(this, ResolutionMode.WithExpectedType(booleanType))
             .also(dataFlowAnalyzer::exitLeftBinaryLogicExpressionArgument)
+            .also { collectStatementContext(it.rightOperand) }
             .transformRightOperand(this, ResolutionMode.WithExpectedType(booleanType))
             .also(dataFlowAnalyzer::exitBinaryLogicExpression)
             .transformOtherChildren(transformer, ResolutionMode.WithExpectedType(booleanType))
