@@ -51,6 +51,8 @@ abstract class AbstractPodInstallTask : CocoapodsTask() {
                    },
                    processConfiguration = {
                        directory(workingDir.get())
+                       // CocoaPods requires to be run with Unicode external encoding
+                       environment().putIfAbsent("LC_ALL", "en_US.UTF-8")
                    })
 
         with(podsXcodeProjDirProvider.get()) {
