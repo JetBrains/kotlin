@@ -304,13 +304,6 @@ internal class PropertiesProvider private constructor(private val project: Proje
         get() = this.booleanProperty("kotlin.native.distribution.downloadFromMaven") ?: false
 
     /**
-     * Allows a user to force a particular cinterop mode for platform libraries generation. Available modes: sourcecode, metadata.
-     * A main purpose of this property is working around potential problems with the metadata mode.
-     */
-    val nativePlatformLibrariesMode: String?
-        get() = this.property("kotlin.native.platform.libraries.mode")
-
-    /**
      * Allows a user to provide a local Kotlin/Native distribution instead of a downloaded one.
      */
     val nativeHome: String?

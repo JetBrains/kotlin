@@ -46,10 +46,6 @@ internal class PlatformLibrariesGenerator(val project: Project, val konanTarget:
     private val shouldBuildCaches: Boolean =
         konanPropertiesService.cacheWorksFor(konanTarget) && konanCacheKind != NativeCacheKind.NONE
 
-    private val mode: String? by lazy {
-        PropertiesProvider(project).nativePlatformLibrariesMode
-    }
-
     private val presentDefs: Set<String> by lazy {
         defDirectory
             .listFiles { file -> file.extension == "def" }.orEmpty()
@@ -126,11 +122,6 @@ internal class PlatformLibrariesGenerator(val project: Project, val konanTarget:
                 args.addArg("-cache-arg", it)
             }
         }
-
-        mode?.let {
-            args.addArg("-mode", it)
-        }
-
         KotlinNativeLibraryGenerationRunner.fromProject(this).run(args)
     }
 

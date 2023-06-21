@@ -53,8 +53,6 @@ open class CommonInteropArguments(val argParser: ArgParser) {
             .default("unspecified")
     val repo by argParser.option(ArgType.String, shortName = "r", description = "repository to resolve dependencies")
             .multiple()
-    val mode by argParser.option(ArgType.Choice<GenerationMode>(), description = "the way interop library is generated")
-            .default(DEFAULT_MODE)
     val nodefaultlibs by argParser.option(ArgType.Boolean, NODEFAULTLIBS,
             description = "don't link the libraries from dist/klib automatically").default(false)
     val nodefaultlibsDeprecated by argParser.option(ArgType.Boolean, NODEFAULTLIBS_DEPRECATED,
@@ -76,10 +74,6 @@ open class CommonInteropArguments(val argParser: ArgParser) {
             fullName = "Xoverride-konan-properties",
             description = "Override konan.properties.values"
         ).multiple().delimiter(";")
-
-    companion object {
-        val DEFAULT_MODE = GenerationMode.METADATA
-    }
 }
 
 open class CInteropArguments(argParser: ArgParser =

@@ -291,17 +291,6 @@ private fun processCLib(
 
     val outKtPkg = fqParts.joinToString(".")
 
-    val mode = run {
-        val providedMode = cinteropArguments.mode
-
-        if (providedMode == GenerationMode.METADATA && flavor == KotlinPlatform.JVM) {
-            warn("Metadata mode isn't supported for Kotlin/JVM! Falling back to sourcecode.")
-            GenerationMode.SOURCE_CODE
-        } else {
-            providedMode
-        }
-    }
-
     val resolver = getLibraryResolver(cinteropArguments, tool.target)
 
     val allLibraryDependencies = when (flavor) {
@@ -349,7 +338,10 @@ private fun processCLib(
     } else {
         {}
     }
-
+    val mode = when (flavor) {
+        KotlinPlatform.JVM -> GenerationMode.SOURCE_CODE
+        KotlinPlatform.NATIVE -> GenerationMode.METADATA
+    }
     val stubIrContext = StubIrContext(logger, configuration, nativeIndex, imports, flavor, mode, libName, plugin)
     val stubIrOutput = run {
         val outKtFileCreator = {
