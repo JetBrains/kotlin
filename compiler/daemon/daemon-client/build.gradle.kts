@@ -35,7 +35,7 @@ dependencies {
 tasks.withType<KotlinCompilationTask<*>> {
     compilerOptions {
         // This module is being run from within Gradle, older versions of which only have older kotlin-stdlib in the runtime classpath.
-        @Suppress("DEPRECATION")
+        @Suppress("DEPRECATION", "DEPRECATION_ERROR")
         apiVersion.set(KotlinVersion.KOTLIN_1_4)
         @Suppress("DEPRECATION")
         languageVersion.set(KotlinVersion.KOTLIN_1_4)
