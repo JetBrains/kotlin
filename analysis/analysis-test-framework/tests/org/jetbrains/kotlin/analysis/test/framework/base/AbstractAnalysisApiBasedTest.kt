@@ -160,8 +160,8 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
     fun cleanupTemporaryDirectories() {
         try {
             _testServices?.temporaryDirectoryManager?.cleanupTemporaryDirectories()
-        } catch (e: IOException) {
-            println("Failed to clean temporary directories: ${e.message}\n${e.stackTrace}")
+        } catch (_: IOException) {
+            // ignore
         }
     }
 
