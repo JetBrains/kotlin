@@ -11,7 +11,6 @@
 
 #include "ExtraObjectData.hpp"
 #include "ExtraObjectPage.hpp"
-#include "GCScheduler.hpp"
 #include "Heap.hpp"
 #include "NextFitPage.hpp"
 #include "Memory.h"
@@ -21,7 +20,7 @@ namespace kotlin::alloc {
 
 class CustomAllocator {
 public:
-    explicit CustomAllocator(Heap& heap, gcScheduler::GCSchedulerThreadData& gcScheduler) noexcept;
+    explicit CustomAllocator(Heap& heap) noexcept;
 
     ObjHeader* CreateObject(const TypeInfo* typeInfo) noexcept;
 
@@ -49,7 +48,6 @@ private:
     uint8_t* AllocateInFixedBlockPage(uint32_t cellCount) noexcept;
 
     Heap& heap_;
-    gcScheduler::GCSchedulerThreadData& gcScheduler_;
     NextFitPage* nextFitPage_;
     FixedBlockPage* fixedBlockPages_[FIXED_BLOCK_PAGE_MAX_BLOCK_SIZE + 1];
     ExtraObjectPage* extraObjectPage_;

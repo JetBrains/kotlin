@@ -3786,3 +3786,5 @@ void kotlin::StartFinalizerThreadIfNeeded() noexcept {}
 bool kotlin::FinalizersThreadIsRunning() noexcept {
     return false;
 }
+
+void kotlin::OnMemoryAllocation(size_t totalAllocatedBytes) noexcept {}

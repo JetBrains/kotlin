@@ -10,7 +10,6 @@
 
 #include "AppStateTrackingTestSupport.hpp"
 #include "ClockTestSupport.hpp"
-#include "GCSchedulerTestSupport.hpp"
 #include "SingleThreadExecutor.hpp"
 #include "TestSupport.hpp"
 #include "std_support/Vector.hpp"
@@ -21,25 +20,18 @@ namespace {
 
 class MutatorThread : private Pinned {
 public:
-    MutatorThread(gcScheduler::GCSchedulerConfig& config, std::function<void(gcScheduler::GCSchedulerThreadData&)> slowPath) :
-        executor_([&config, slowPath = std::move(slowPath)] { return Context(config, std::move(slowPath)); }) {}
+    explicit MutatorThread(gcScheduler::GCSchedulerData& scheduler) : executor_([&scheduler] { return Context{scheduler}; }) {}
 
-    std::future<void> Allocate(size_t bytes) {
+    std::future<void> SetAllocatedBytes(size_t bytes) {
         return executor_.execute([&, bytes] {
             auto& context = executor_.context();
-            context.threadDataTestApi.SetAllocatedBytes(bytes);
-            context.slowPath(context.threadData);
+            context.scheduler.SetAllocatedBytes(bytes);
         });
     }
 
 private:
     struct Context {
-        gcScheduler::GCSchedulerThreadData threadData;
-        gcScheduler::test_support::GCSchedulerThreadDataTestApi threadDataTestApi;
-        std::function<void(gcScheduler::GCSchedulerThreadData&)> slowPath;
-
-        Context(gcScheduler::GCSchedulerConfig& config, std::function<void(gcScheduler::GCSchedulerThreadData&)> slowPath) :
-            threadData(config, [](gcScheduler::GCSchedulerThreadData&) {}), threadDataTestApi(threadData), slowPath(slowPath) {}
+        gcScheduler::GCSchedulerData& scheduler;
     };
 
     SingleThreadExecutor<Context> executor_;
@@ -51,16 +43,22 @@ public:
     explicit GCSchedulerDataTestApi(gcScheduler::GCSchedulerConfig& config) : scheduler_(config, scheduleGC_.AsStdFunction()) {
         mutators_.reserve(MutatorCount);
         for (int i = 0; i < MutatorCount; ++i) {
-            mutators_.emplace_back(std_support::make_unique<MutatorThread>(
-                    config, [this](gcScheduler::GCSchedulerThreadData& threadData) { scheduler_.UpdateFromThreadData(threadData); }));
+            mutators_.emplace_back(std_support::make_unique<MutatorThread>(scheduler_));
         }
     }
 
-    std::future<void> Allocate(int mutator, size_t bytes) { return mutators_[mutator]->Allocate(bytes); }
+    std::future<void> Allocate(int mutator, size_t bytes) {
+        size_t allocatedBytes = allocatedBytes_.fetch_add(bytes);
+        allocatedBytes += bytes;
+        return mutators_[mutator]->SetAllocatedBytes(allocatedBytes);
+    }
 
     void OnPerformFullGC() { scheduler_.OnPerformFullGC(); }
 
-    void UpdateAliveSetBytes(size_t bytes) { scheduler_.UpdateAliveSetBytes(bytes); }
+    void UpdateAliveSetBytes(size_t bytes) {
+        allocatedBytes_.store(bytes);
+        scheduler_.UpdateAliveSetBytes(bytes);
+    }
 
     testing::MockFunction<void()>& scheduleGC() { return scheduleGC_; }
 
@@ -70,6 +68,7 @@ public:
     }
 
 private:
+    std::atomic<size_t> allocatedBytes_ = 0;
     std_support::vector<std_support::unique_ptr<MutatorThread>> mutators_;
     testing::MockFunction<void()> scheduleGC_;
     gcScheduler::internal::GCSchedulerDataAdaptive<test_support::manual_clock> scheduler_;

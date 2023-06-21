@@ -387,7 +387,8 @@ void* _mi_mem_alloc_aligned(size_t size, size_t alignment, bool* commit, bool* l
     if (*commit) { ((uint8_t*)p)[0] = 0; } // ensure the memory is committed
 #endif
 #if KONAN_MI_MALLOC
-    mi_atomic_add_relaxed(&allocated_size, size);
+    size_t prev_allocated_size = mi_atomic_add_relaxed(&allocated_size, size);
+    mi_hook_allocation(prev_allocated_size + size);
 #endif
   }
   return p;

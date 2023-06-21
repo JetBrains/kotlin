@@ -79,11 +79,8 @@ public:
         using ObjectData = SameThreadMarkAndSweep::ObjectData;
         using Allocator = AllocatorWithGC<Allocator, ThreadData>;
 
-        ThreadData(SameThreadMarkAndSweep& gc, mm::ThreadData& threadData, gcScheduler::GCSchedulerThreadData& gcScheduler) noexcept :
-            gc_(gc), gcScheduler_(gcScheduler) {}
+        ThreadData(SameThreadMarkAndSweep& gc, mm::ThreadData& threadData) noexcept : gc_(gc) {}
         ~ThreadData() = default;
-
-        void SafePointAllocation(size_t size) noexcept;
 
         void Schedule() noexcept;
         void ScheduleAndWaitFullGC() noexcept;
@@ -96,7 +93,6 @@ public:
     private:
 
         SameThreadMarkAndSweep& gc_;
-        gcScheduler::GCSchedulerThreadData& gcScheduler_;
     };
 
     using Allocator = ThreadData::Allocator;

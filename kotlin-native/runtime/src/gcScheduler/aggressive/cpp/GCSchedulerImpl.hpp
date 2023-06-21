@@ -22,25 +22,21 @@ class GCSchedulerDataAggressive : public GCSchedulerData {
 public:
     GCSchedulerDataAggressive(GCSchedulerConfig& config, std::function<void()> scheduleGC) noexcept :
         scheduleGC_(std::move(scheduleGC)), heapGrowthController_(config) {
-        // Trigger the slowpath on each allocation.
-        config.allocationThresholdBytes = 1;
         RuntimeLogInfo({kTagGC}, "Aggressive GC scheduler initialized");
     }
 
-    void UpdateFromThreadData(GCSchedulerThreadData& threadData) noexcept override {
-        heapGrowthController_.OnAllocated(threadData.allocatedBytes());
-        if (heapGrowthController_.NeedsGC()) {
-            // Still checking allocations: with a long running loop all safepoints
-            // might be "met", so that's the only trigger to not run out of memory.
+    void OnPerformFullGC() noexcept override { heapGrowthController_.OnPerformFullGC(); }
+    void UpdateAliveSetBytes(size_t bytes) noexcept override { heapGrowthController_.UpdateAliveSetBytes(bytes); }
+    void SetAllocatedBytes(size_t bytes) noexcept override {
+        // Still checking allocations: with a long running loop all safepoints
+        // might be "met", so that's the only trigger to not run out of memory.
+        if (heapGrowthController_.SetAllocatedBytes(bytes)) {
             RuntimeLogDebug({kTagGC}, "Scheduling GC by allocation");
             scheduleGC_();
         } else {
             safePoint();
         }
     }
-
-    void OnPerformFullGC() noexcept override { heapGrowthController_.OnPerformFullGC(); }
-    void UpdateAliveSetBytes(size_t bytes) noexcept override { heapGrowthController_.UpdateAliveSetBytes(bytes); }
 
     void safePoint() noexcept {
         if (safePointTracker_.registerCurrentSafePoint(1)) {

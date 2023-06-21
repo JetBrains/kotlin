@@ -42,8 +42,7 @@ private:
 class GC::ThreadData::Impl : private Pinned {
 public:
 #ifdef CUSTOM_ALLOCATOR
-    Impl(GC& gc, gcScheduler::GCSchedulerThreadData& gcScheduler, mm::ThreadData& threadData) noexcept :
-        alloc_(gc.impl_->gc().heap(), gcScheduler) {}
+    Impl(GC& gc, mm::ThreadData& threadData) noexcept : alloc_(gc.impl_->gc().heap()) {}
 #else
     Impl(GC& gc, mm::ThreadData& threadData) noexcept :
         objectFactoryThreadQueue_(gc.impl_->objectFactory(), gc_.CreateAllocator()),

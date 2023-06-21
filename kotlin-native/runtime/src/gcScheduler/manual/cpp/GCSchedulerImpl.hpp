@@ -15,9 +15,9 @@ class GCSchedulerDataManual : public GCSchedulerData {
 public:
     GCSchedulerDataManual() noexcept { RuntimeLogInfo({kTagGC}, "Manual GC scheduler initialized"); }
 
-    void UpdateFromThreadData(GCSchedulerThreadData& threadData) noexcept override {}
     void OnPerformFullGC() noexcept override {}
     void UpdateAliveSetBytes(size_t bytes) noexcept override {}
+    void SetAllocatedBytes(size_t bytes) noexcept override {}
 };
 
 } // namespace kotlin::gcScheduler::internal

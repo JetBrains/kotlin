@@ -50,14 +50,9 @@ TEST(AggressiveSchedulerTest, TriggerGCOnAllocationThreshold) {
         testing::MockFunction<void()> scheduleGC;
 
         gcScheduler::GCSchedulerConfig config;
-        gcScheduler::internal::GCSchedulerDataAggressive scheduler(config, scheduleGC.AsStdFunction());
-        gcScheduler::GCSchedulerThreadData threadSchedulerData(
-                config, [&scheduler](gcScheduler::GCSchedulerThreadData& data) { scheduler.UpdateFromThreadData(data); });
-
-        ASSERT_EQ(config.allocationThresholdBytes, 1);
-
         config.autoTune = false;
         config.targetHeapBytes = 10;
+        gcScheduler::internal::GCSchedulerDataAggressive scheduler(config, scheduleGC.AsStdFunction());
 
         int i = 0;
         // We trigger GC on the first iteration, when the unique allocation point is faced,
@@ -65,7 +60,7 @@ TEST(AggressiveSchedulerTest, TriggerGCOnAllocationThreshold) {
         EXPECT_CALL(scheduleGC, Call()).WillOnce([&i]() { EXPECT_THAT(i, 0); }).WillOnce([&i]() { EXPECT_THAT(i, 9); });
 
         for (; i < 10; i++) {
-            threadSchedulerData.OnSafePointAllocation(1);
+            scheduler.SetAllocatedBytes(i + 1);
         }
         testing::Mock::VerifyAndClearExpectations(&scheduleGC);
     }();

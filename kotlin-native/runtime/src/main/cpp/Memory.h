@@ -553,6 +553,8 @@ extern const bool kSupportsMultipleMutators;
 void StartFinalizerThreadIfNeeded() noexcept;
 bool FinalizersThreadIsRunning() noexcept;
 
+void OnMemoryAllocation(size_t totalAllocatedBytes) noexcept;
+
 } // namespace kotlin
 
 RUNTIME_NOTHROW ALWAYS_INLINE extern "C" void Kotlin_processObjectInMark(void* state, ObjHeader* object);

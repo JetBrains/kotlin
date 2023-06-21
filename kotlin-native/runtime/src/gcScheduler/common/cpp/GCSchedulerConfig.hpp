@@ -13,8 +13,6 @@ namespace kotlin::gcScheduler {
 
 // NOTE: When changing default values, reflect them in GC.kt as well.
 struct GCSchedulerConfig {
-    // How many object bytes a thread must allocate to trigger slow path.
-    std::atomic<int64_t> allocationThresholdBytes = 10 * 1024;
     std::atomic<bool> autoTune = true;
     // The target interval between collections when Kotlin code is idle. GC will be triggered
     // by timer no sooner than this value and no later than twice this value since the previous collection.

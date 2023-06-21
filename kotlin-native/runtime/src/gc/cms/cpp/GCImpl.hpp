@@ -44,14 +44,14 @@ private:
 
 class GC::ThreadData::Impl : private Pinned {
 public:
-    Impl(GC& gc, gcScheduler::GCSchedulerThreadData& gcScheduler, mm::ThreadData& threadData) noexcept :
-        gc_(gc.impl_->gc(), threadData, gcScheduler),
+    Impl(GC& gc, mm::ThreadData& threadData) noexcept :
+        gc_(gc.impl_->gc(), threadData),
 #ifndef CUSTOM_ALLOCATOR
         objectFactoryThreadQueue_(gc.impl_->objectFactory(), gc_.CreateAllocator()),
         extraObjectDataFactoryThreadQueue_(gc.impl_->extraObjectDataFactory()) {
     }
 #else
-        alloc_(gc.impl_->gc().heap(), gcScheduler) {
+        alloc_(gc.impl_->gc().heap()) {
     }
 #endif
 

@@ -28,7 +28,6 @@ public:
     AllocatorWithGC(BaseAllocator base, GCThreadData& gc) noexcept : base_(std::move(base)), gc_(gc) {}
 
     void* Alloc(size_t size) noexcept {
-        gc_.SafePointAllocation(size);
         if (void* ptr = base_.Alloc(size)) {
             return ptr;
         }

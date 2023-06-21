@@ -135,14 +135,12 @@ public object GC {
         }
 
     /**
-     * How many bytes a thread can allocate before informing the GC scheduler.
-     *
-     * Default: 10 * 1024
+     * Deprecated and unused.
      *
      * Legacy MM: GC allocation threshold, controlling how many bytes allocated since last
      * collection will trigger new GC.
      *
-     * Default: (legacy MM) 8 * 1024 * 1024
+     * Default: 8 * 1024 * 1024
      *
      * @throws [IllegalArgumentException] when value is not positive.
      */

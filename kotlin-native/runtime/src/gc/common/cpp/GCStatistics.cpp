@@ -309,7 +309,6 @@ void GCHandle::marked(kotlin::gc::MarkStats stats) {
         if (!stat->markStats) {
             stat->markStats = MarkStats{};
         }
-        stat->markStats->markedSizeBytes += stats.markedSizeBytes;
         stat->markStats->markedCount += stats.markedCount;
     }
 }

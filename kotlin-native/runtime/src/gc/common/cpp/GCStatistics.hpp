@@ -32,7 +32,6 @@ struct SweepStats {
 
 struct MarkStats {
     uint64_t markedCount = 0;
-    uint64_t markedSizeBytes = 0;
 };
 
 class GCHandle {
@@ -103,10 +102,7 @@ public:
         explicit GCMarkScope(GCHandle& handle);
         ~GCMarkScope();
 
-        void addObject(uint64_t objectSize) noexcept {
-            ++stats_.markedCount;
-            stats_.markedSizeBytes += objectSize;
-        }
+        void addObject() noexcept { ++stats_.markedCount; }
     };
 
     class GCProcessWeaksScope : GCStageScopeUsTimer, Pinned {

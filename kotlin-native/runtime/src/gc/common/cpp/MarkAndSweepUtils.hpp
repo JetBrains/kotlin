@@ -81,7 +81,7 @@ void processExtraObjectData(GCHandle::GCMarkScope& markHandle, typename Traits::
         // Do not schedule RegularWeakReferenceImpl but process it right away.
         // This will skip markQueue interaction.
         if (Traits::tryMark(weakReference)) {
-            markHandle.addObject(mm::GetAllocatedHeapSize(weakReference));
+            markHandle.addObject();
             // RegularWeakReferenceImpl is empty, but keeping this just in case.
             Traits::processInMark(markQueue, weakReference);
         }
@@ -94,9 +94,7 @@ template <typename Traits>
 void Mark(GCHandle handle, typename Traits::MarkQueue& markQueue) noexcept {
     auto markHandle = handle.mark();
     while (ObjHeader* top = Traits::tryDequeue(markQueue)) {
-        // TODO: Consider moving it to the sweep phase to make this loop more tight.
-        //       This, however, requires care with scheduler interoperation.
-        markHandle.addObject(mm::GetAllocatedHeapSize(top));
+        markHandle.addObject();
 
         Traits::processInMark(markQueue, top);
 
@@ -169,7 +167,6 @@ typename Traits::ObjectFactory::FinalizerQueue Sweep(GCHandle handle, typename T
 template <typename Traits>
 void collectRootSetForThread(GCHandle gcHandle, typename Traits::MarkQueue& markQueue, mm::ThreadData& thread) {
     auto handle = gcHandle.collectThreadRoots(thread);
-    thread.gcScheduler().OnStoppedForGC();
     // TODO: Remove useless mm::ThreadRootSet abstraction.
     for (auto value : mm::ThreadRootSet(thread)) {
         if (internal::collectRoot<Traits>(markQueue, value.object)) {

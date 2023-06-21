@@ -157,19 +157,10 @@ private:
     ScopedMarkTraits markTraits_;
 };
 
-size_t GetObjectsSize(std::initializer_list<std::reference_wrapper<test_support::Any>> objects) {
-    size_t size = 0;
-    for (auto& object : objects) {
-        size += mm::GetAllocatedHeapSize(object.get().header());
-    }
-    return size;
-}
-
 #define EXPECT_MARKED(stats, ...) \
     do { \
         std::initializer_list<std::reference_wrapper<test_support::Any>> objects = {__VA_ARGS__}; \
         EXPECT_THAT(stats.markedCount, objects.size()); \
-        EXPECT_THAT(stats.markedSizeBytes, GetObjectsSize(objects)); \
         EXPECT_THAT(marked(), MarkedMatcher(objects)); \
     } while (false)
 

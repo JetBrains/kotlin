@@ -78,12 +78,8 @@ public:
 
         using Allocator = AllocatorWithGC<Allocator, ThreadData>;
 
-        explicit ThreadData(
-                ConcurrentMarkAndSweep& gc, mm::ThreadData& threadData, gcScheduler::GCSchedulerThreadData& gcScheduler) noexcept :
-            gc_(gc), threadData_(threadData), gcScheduler_(gcScheduler) {}
+        explicit ThreadData(ConcurrentMarkAndSweep& gc, mm::ThreadData& threadData) noexcept : gc_(gc), threadData_(threadData) {}
         ~ThreadData() = default;
-
-        void SafePointAllocation(size_t size) noexcept;
 
         void Schedule() noexcept;
         void ScheduleAndWaitFullGC() noexcept;
@@ -103,7 +99,6 @@ public:
         friend ConcurrentMarkAndSweep;
         ConcurrentMarkAndSweep& gc_;
         mm::ThreadData& threadData_;
-        gcScheduler::GCSchedulerThreadData& gcScheduler_;
         std::atomic<bool> marking_;
         BarriersThreadData barriers_;
     };

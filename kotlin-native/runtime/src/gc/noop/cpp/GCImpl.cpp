@@ -15,12 +15,7 @@
 
 using namespace kotlin;
 
-gc::GC::ThreadData::ThreadData(GC& gc, gcScheduler::GCSchedulerThreadData& gcScheduler, mm::ThreadData& threadData) noexcept :
-#ifdef CUSTOM_ALLOCATOR
-    impl_(std_support::make_unique<Impl>(gc, gcScheduler, threadData)) {}
-#else
-    impl_(std_support::make_unique<Impl>(gc, threadData)) {}
-#endif
+gc::GC::ThreadData::ThreadData(GC& gc, mm::ThreadData& threadData) noexcept : impl_(std_support::make_unique<Impl>(gc, threadData)) {}
 
 gc::GC::ThreadData::~ThreadData() = default;
 

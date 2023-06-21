@@ -41,8 +41,7 @@ uint64_t ArrayAllocatedDataSize(const TypeInfo* typeInfo, uint32_t count) noexce
     return AlignUp<uint64_t>(heapArrayHeaderSize + membersSize, kObjectAlignment);
 }
 
-CustomAllocator::CustomAllocator(Heap& heap, gcScheduler::GCSchedulerThreadData& gcScheduler) noexcept :
-    heap_(heap), gcScheduler_(gcScheduler), nextFitPage_(nullptr), extraObjectPage_(nullptr) {
+CustomAllocator::CustomAllocator(Heap& heap) noexcept : heap_(heap), nextFitPage_(nullptr), extraObjectPage_(nullptr) {
     CustomAllocInfo("CustomAllocator::CustomAllocator(heap)");
     memset(fixedBlockPages_, 0, sizeof(fixedBlockPages_));
 }
@@ -126,7 +125,6 @@ size_t CustomAllocator::GetAllocatedHeapSize(ObjHeader* object) noexcept {
 
 uint8_t* CustomAllocator::Allocate(uint64_t size) noexcept {
     RuntimeAssert(size, "CustomAllocator::Allocate cannot allocate 0 bytes");
-    gcScheduler_.OnSafePointAllocation(size);
     CustomAllocDebug("CustomAllocator::Allocate(%" PRIu64 ")", size);
     uint64_t cellCount = (size + sizeof(Cell) - 1) / sizeof(Cell);
     uint8_t* ptr;

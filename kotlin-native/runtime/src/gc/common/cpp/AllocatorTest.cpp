@@ -33,7 +33,6 @@ private:
 
 class MockGC {
 public:
-    MOCK_METHOD(void, SafePointAllocation, (size_t));
     MOCK_METHOD(void, OnOOM, (size_t));
 };
 
@@ -46,7 +45,6 @@ TEST(AllocatorWithGCTest, AllocateWithoutOOM) {
     testing::StrictMock<MockGC> gc;
     {
         testing::InSequence seq;
-        EXPECT_CALL(gc, SafePointAllocation(size));
         EXPECT_CALL(*baseAllocator, Alloc(size)).WillOnce(testing::Return(nonNull));
         EXPECT_CALL(gc, OnOOM(_)).Times(0);
     }
@@ -62,7 +60,6 @@ TEST(AllocatorWithGCTest, AllocateWithFixableOOM) {
     testing::StrictMock<MockGC> gc;
     {
         testing::InSequence seq;
-        EXPECT_CALL(gc, SafePointAllocation(size));
         EXPECT_CALL(*baseAllocator, Alloc(size)).WillOnce(testing::Return(nullptr));
         EXPECT_CALL(gc, OnOOM(size));
         EXPECT_CALL(*baseAllocator, Alloc(size)).WillOnce(testing::Return(nonNull));
@@ -78,7 +75,6 @@ TEST(AllocatorWithGCTest, AllocateWithUnfixableOOM) {
     testing::StrictMock<MockGC> gc;
     {
         testing::InSequence seq;
-        EXPECT_CALL(gc, SafePointAllocation(size));
         EXPECT_CALL(*baseAllocator, Alloc(size)).WillOnce(testing::Return(nullptr));
         EXPECT_CALL(gc, OnOOM(size));
         EXPECT_CALL(*baseAllocator, Alloc(size)).WillOnce(testing::Return(nullptr));

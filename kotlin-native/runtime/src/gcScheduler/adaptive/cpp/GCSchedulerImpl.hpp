@@ -38,14 +38,6 @@ public:
         RuntimeLogInfo({kTagGC}, "Adaptive GC scheduler initialized");
     }
 
-    void UpdateFromThreadData(GCSchedulerThreadData& threadData) noexcept override {
-        heapGrowthController_.OnAllocated(threadData.allocatedBytes());
-        if (heapGrowthController_.NeedsGC()) {
-            RuntimeLogDebug({kTagGC}, "Scheduling GC by allocation");
-            scheduleGC_();
-        }
-    }
-
     void OnPerformFullGC() noexcept override {
         heapGrowthController_.OnPerformFullGC();
         regularIntervalPacer_.OnPerformFullGC();
@@ -53,6 +45,13 @@ public:
     }
 
     void UpdateAliveSetBytes(size_t bytes) noexcept override { heapGrowthController_.UpdateAliveSetBytes(bytes); }
+
+    void SetAllocatedBytes(size_t bytes) noexcept override {
+        if (heapGrowthController_.SetAllocatedBytes(bytes)) {
+            RuntimeLogDebug({kTagGC}, "Scheduling GC by allocation");
+            scheduleGC_();
+        }
+    }
 
 private:
     GCSchedulerConfig& config_;

@@ -358,12 +358,14 @@ extern "C" int64_t Kotlin_native_internal_GC_getCollectCyclesThreshold(ObjHeader
 }
 
 extern "C" void Kotlin_native_internal_GC_setThresholdAllocations(ObjHeader*, int64_t value) {
-    RuntimeAssert(value > 0, "Must be handled by the caller");
-    mm::GlobalData::Instance().gcScheduler().config().allocationThresholdBytes = value;
+    // TODO: Remove when legacy MM is gone.
+    // Nothing to do
 }
 
 extern "C" int64_t Kotlin_native_internal_GC_getThresholdAllocations(ObjHeader*) {
-    return mm::GlobalData::Instance().gcScheduler().config().allocationThresholdBytes.load();
+    // TODO: Remove when legacy MM is gone.
+    // Nothing to do
+    return 0;
 }
 
 extern "C" void Kotlin_native_internal_GC_setTuneThreshold(ObjHeader*, KBoolean value) {
@@ -618,4 +620,8 @@ RUNTIME_NOTHROW extern "C" OBJ_GETTER(Konan_RegularWeakReferenceImpl_get, ObjHea
 
 RUNTIME_NOTHROW extern "C" void DisposeRegularWeakReferenceImpl(ObjHeader* weakRef) {
     mm::disposeRegularWeakReferenceImpl(weakRef);
+}
+
+void kotlin::OnMemoryAllocation(size_t totalAllocatedBytes) noexcept {
+    mm::GlobalData::Instance().gcScheduler().gcData().SetAllocatedBytes(totalAllocatedBytes);
 }

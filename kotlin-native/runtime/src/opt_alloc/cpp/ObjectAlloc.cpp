@@ -72,3 +72,7 @@ void kotlin::compactObjectPoolInMainThread() noexcept {
 size_t kotlin::allocatedBytes() noexcept {
     return mi_allocated_size();
 }
+
+extern "C" void mi_hook_allocation(size_t allocated_size) mi_attr_noexcept {
+    OnMemoryAllocation(allocated_size);
+}

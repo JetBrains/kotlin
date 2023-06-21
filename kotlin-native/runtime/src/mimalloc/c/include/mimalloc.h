@@ -375,6 +375,8 @@ mi_decl_nodiscard mi_decl_export void* mi_new_reallocn(void* p, size_t newcount,
 
 #if KONAN_MI_MALLOC
 mi_decl_nodiscard mi_decl_export size_t mi_allocated_size(void) mi_attr_noexcept;
+// This hook must be implemented by the embedder. `allocated_size` is the new size of the heap.
+mi_decl_export void mi_hook_allocation(size_t allocated_size) mi_attr_noexcept;
 #endif
 
 #ifdef __cplusplus
