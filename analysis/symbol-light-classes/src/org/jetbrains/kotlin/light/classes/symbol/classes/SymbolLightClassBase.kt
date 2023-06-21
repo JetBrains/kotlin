@@ -125,9 +125,7 @@ abstract class SymbolLightClassBase protected constructor(val ktModule: KtModule
 
     abstract override fun hashCode(): Int
 
-    override fun getContext(): PsiElement = parent ?: buildErrorWithAttachment("parent must not be null") {
-        withClassEntry("class", this@SymbolLightClassBase)
-    }
+    override fun getContext(): PsiElement? = parent
 
     override fun isEquivalentTo(another: PsiElement?): Boolean = PsiClassImplUtil.isClassEquivalentTo(this, another)
 

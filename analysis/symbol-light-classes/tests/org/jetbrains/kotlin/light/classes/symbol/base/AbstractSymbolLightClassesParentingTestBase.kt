@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.light.classes.symbol.base
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.*
+import java.nio.file.Path
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassModifierList
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightMemberModifierList
@@ -17,7 +18,6 @@ import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.AssertionsService
 import org.junit.Assume
-import java.nio.file.Path
 
 open class AbstractSymbolLightClassesParentingTestBase(
     configurator: AnalysisApiTestConfigurator,
@@ -190,9 +190,18 @@ open class AbstractSymbolLightClassesParentingTestBase(
             }
 
             private fun checkDeclarationParent(declaration: PsiElement) {
-                val expectedParent = declarationStack.lastOrNull() ?: return
+                // NB: we deliberately put these retrievals before the bail-out below so that we can catch any potential exceptions.
+                val context = declaration.context
                 val parent = declaration.parent
-                assertions.assertNotNull(parent) { "Parent should not be null for ${declaration::class} with text ${declaration.text}" }
+                // NB: for a legitimate `null` parent case, e.g., an anonymous object as a return value of reified inline function,
+                // it will not have an expected parent from the stack, and we can bail out early here.
+                val expectedParent = declarationStack.lastOrNull() ?: return
+                assertions.assertNotNull(context) {
+                    "context should not be null for ${declaration::class} with text ${declaration.text}"
+                }
+                assertions.assertNotNull(parent) {
+                    "Parent should not be null for ${declaration::class} with text ${declaration.text}"
+                }
                 assertions.assertEquals(expectedParent, parent) {
                     "Unexpected parent for ${declaration::class} with text ${declaration.text}"
                 }
