@@ -144,12 +144,12 @@ public:
         }
 
         void shareAll() noexcept {
-            if (list_.localSize() > kMinSizeToShare) {
-                auto shared = list_.shareAllWith(list_);
-                if (shared > 0) {
-                    dispatcher_.onShare(shared);
-                }
-            }
+//            if (list_.localSize() > kMinSizeToShare) {
+//                auto shared = list_.shareAllWith(list_);
+//                if (shared > 0) {
+//                    dispatcher_.onShare(shared);
+//                }
+//            }
         }
 
         const int carrierThreadId_ = konan::currentThreadId();
@@ -185,14 +185,14 @@ private:
         return false;
     }
 
-    void onShare(std::size_t sharedAmount) {
-        RuntimeAssert(sharedAmount > 0, "Must have shared something");
-        RuntimeLogDebug({ "balancing" }, "Worker has shared %zu tasks", sharedAmount);
-        if (waitingWorkers_.load(std::memory_order_relaxed) > 0) {
-            waitCV_.notify_all();
-        }
-    }
-
+//    void onShare(std::size_t sharedAmount) {
+//        RuntimeAssert(sharedAmount > 0, "Must have shared something");
+//        RuntimeLogDebug({ "balancing" }, "Worker has shared %zu tasks", sharedAmount);
+//        if (waitingWorkers_.load(std::memory_order_relaxed) > 0) {
+//            waitCV_.notify_all();
+//        }
+//    }
+//
     PushOnlyAtomicArray<Worker*, kMaxWorkers, nullptr> registeredWorkers_;
     std::atomic<size_t> waitingWorkers_ = 0;
 
