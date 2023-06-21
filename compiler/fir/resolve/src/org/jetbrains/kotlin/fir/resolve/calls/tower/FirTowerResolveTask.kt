@@ -421,7 +421,7 @@ internal open class FirTowerResolveTask(
         skipSynthetics: Boolean,
     ) {
         processExtensionsThatHideMembers(
-            info, receiver, TowerGroup.EmptyRoot,
+            info, receiver, parentGroup,
             ExplicitReceiverKind.NO_EXPLICIT_RECEIVER,
         )
 

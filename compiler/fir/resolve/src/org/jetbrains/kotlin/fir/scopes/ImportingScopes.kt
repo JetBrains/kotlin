@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.name.FqName
 
 private val ALL_IMPORTS = scopeSessionKey<FirFile, ListStorageFirScope>()
-private val DEFAULT_STAR_IMPORT = scopeSessionKey<DefaultStarImportKey, FirDefaultStarImportingScope>()
+private val DEFAULT_STAR_IMPORT = scopeSessionKey<DefaultStarImportKey, FirSingleLevelDefaultStarImportingScope>()
 private val DEFAULT_SIMPLE_IMPORT = scopeSessionKey<DefaultImportPriority, FirDefaultSimpleImportingScope>()
 private data class DefaultStarImportKey(val priority: DefaultImportPriority, val excludedImportNames: Set<FqName>)
 
@@ -48,12 +48,15 @@ private fun doCreateImportingScopes(
         }
 
     return listOf(
-        scopeSession.getOrBuild(DefaultStarImportKey(DefaultImportPriority.LOW, excludedImportNames), DEFAULT_STAR_IMPORT) {
-            FirDefaultStarImportingScope(session, scopeSession, DefaultImportPriority.LOW, excludedImportNames)
-        },
-        scopeSession.getOrBuild(DefaultStarImportKey(DefaultImportPriority.HIGH, excludedImportNames), DEFAULT_STAR_IMPORT) {
-            FirDefaultStarImportingScope(session, scopeSession, DefaultImportPriority.HIGH, excludedImportNames)
-        },
+        FirDefaultStarImportingScope(
+            scopeSession.getOrBuild(DefaultStarImportKey(DefaultImportPriority.HIGH, excludedImportNames), DEFAULT_STAR_IMPORT) {
+                FirSingleLevelDefaultStarImportingScope(session, scopeSession, DefaultImportPriority.HIGH, excludedImportNames)
+            },
+            scopeSession.getOrBuild(DefaultStarImportKey(DefaultImportPriority.LOW, excludedImportNames), DEFAULT_STAR_IMPORT) {
+                FirSingleLevelDefaultStarImportingScope(session, scopeSession, DefaultImportPriority.LOW, excludedImportNames)
+            },
+        ),
+
         scopeSession.getOrBuild(DefaultImportPriority.KOTLIN_THROWS, DEFAULT_SIMPLE_IMPORT) {
             FirDefaultSimpleImportingScope(session, scopeSession, priority = DefaultImportPriority.KOTLIN_THROWS)
         },
