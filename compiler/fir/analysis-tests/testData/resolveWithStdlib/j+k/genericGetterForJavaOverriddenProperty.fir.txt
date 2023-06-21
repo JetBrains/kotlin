@@ -1,5 +1,5 @@
 FILE: test.kt
-    public final class Base : R|kotlin/Any| {
+    public open class Base : R|kotlin/Any| {
         public constructor(x: R|kotlin/Any|): R|Base| {
             super<R|kotlin/Any|>()
         }

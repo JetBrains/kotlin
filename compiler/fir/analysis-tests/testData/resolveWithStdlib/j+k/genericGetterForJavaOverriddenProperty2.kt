@@ -8,7 +8,7 @@ public class Some extends Base {
 
 // FILE: test.kt
 
-class Base(internal val foo: Any) {
+open class Base(internal val foo: Any) {
     fun <T> getFoo(): T = foo <!UNCHECKED_CAST!>as T<!>
 }
 
