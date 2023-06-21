@@ -19977,6 +19977,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
             }
 
             @Test
+            @TestMetadata("javaLangStringCtr.kt")
+            public void testJavaLangStringCtr() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/j+k/javaLangStringCtr.kt");
+            }
+
+            @Test
             @TestMetadata("javaStaticImport.kt")
             public void testJavaStaticImport() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/j+k/javaStaticImport.kt");
