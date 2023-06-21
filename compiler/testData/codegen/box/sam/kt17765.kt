@@ -1,4 +1,5 @@
-// IGNORE_BACKEND: JS, NATIVE, WASM, JS_IR, JS_IR_ES6
+// TARGET_BACKEND: JVM
+// TARGET_BACKEND: JVM_IR
 // !LANGUAGE: +EliminateAmbiguitiesOnInheritedSamInterfaces
 
 // FILE: Test.java
