@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.dsl
 
 import org.gradle.api.*
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.AfterFinaliseDsl
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
@@ -15,7 +16,9 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.hierarchy.default
 import javax.inject.Inject
 
-abstract class KotlinMultiplatformExtension(project: Project) :
+@KotlinGradlePluginDsl
+abstract class KotlinMultiplatformExtension
+@InternalKotlinGradlePluginApi constructor(project: Project) :
     KotlinProjectExtension(project),
     KotlinTargetContainerWithPresetFunctions,
     KotlinTargetContainerWithJsPresetFunctions,

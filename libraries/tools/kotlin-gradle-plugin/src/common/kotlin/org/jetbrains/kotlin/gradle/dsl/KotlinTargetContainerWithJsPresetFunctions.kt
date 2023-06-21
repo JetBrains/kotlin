@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.gradle.targets.js.calculateJsCompilerType
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 
+@KotlinGradlePluginDsl
 interface KotlinTargetContainerWithJsPresetFunctions :
     KotlinTargetContainerWithPresetFunctions,
     KotlinJsCompilerTypeHolder {

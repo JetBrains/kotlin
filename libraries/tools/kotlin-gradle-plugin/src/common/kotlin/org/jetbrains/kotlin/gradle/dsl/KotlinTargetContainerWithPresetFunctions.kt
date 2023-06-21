@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.konan.target.DEPRECATED_TARGET_MESSAGE
 
 private const val ANDROID_TARGET_MIGRATION_MESSAGE = "Please use androidTarget() instead. Learn more here: https://kotl.in/android-target-dsl"
 
+@KotlinGradlePluginDsl
 interface KotlinTargetContainerWithPresetFunctions : KotlinTargetsContainerWithPresets {
 
     fun jvm(

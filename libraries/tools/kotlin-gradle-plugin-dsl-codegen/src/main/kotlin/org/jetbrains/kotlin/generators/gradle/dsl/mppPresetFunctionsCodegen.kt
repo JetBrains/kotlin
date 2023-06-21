@@ -50,7 +50,7 @@ private fun generateKotlinTargetContainerWithPresetFunctionsInterface() {
         imports,
         generatedCodeWarning,
         extraTopLevelDeclarations,
-        "interface ${className.renderShort()} : ${parentInterfaceName.renderShort()} {",
+        "@KotlinGradlePluginDsl\ninterface ${className.renderShort()} : ${parentInterfaceName.renderShort()} {",
         functions.joinToString("\n\n") { it.indented(4) },
         "}"
     ).joinToString("\n\n")
