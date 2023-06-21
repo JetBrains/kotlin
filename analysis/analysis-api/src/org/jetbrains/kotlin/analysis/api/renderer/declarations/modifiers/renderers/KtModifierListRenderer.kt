@@ -22,10 +22,9 @@ public interface KtModifierListRenderer {
         override fun renderModifiers(symbol: KtDeclarationSymbol, printer: PrettyPrinter) {
             val modifiers = getModifiers(symbol)
                 .distinct()
-                .filter { modifierFilter.filter(it, symbol) }
                 .let { modifiersSorter.sort(it, symbol) }
                 .ifEmpty { return }
-            keywordRenderer.renderKeywords(modifiers, symbol, printer)
+            keywordsRenderer.renderKeywords(modifiers, symbol, printer)
         }
 
         context(KtAnalysisSession, KtDeclarationModifiersRenderer)

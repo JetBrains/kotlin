@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.api.renderer.types
 
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.renderer.base.contextReceivers.KtContextReceiversRenderer
-import org.jetbrains.kotlin.analysis.api.renderer.base.KtKeywordRenderer
+import org.jetbrains.kotlin.analysis.api.renderer.base.KtKeywordsRenderer
 import org.jetbrains.kotlin.analysis.api.renderer.base.annotations.KtAnnotationRenderer
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.KtRendererTypeApproximator
 import org.jetbrains.kotlin.analysis.api.renderer.types.renderers.*
@@ -33,7 +33,7 @@ public class KtTypeRenderer private constructor(
     public val typeProjectionRenderer: KtTypeProjectionRenderer,
     public val annotationsRenderer: KtAnnotationRenderer,
     public val contextReceiversRenderer: KtContextReceiversRenderer,
-    public val keywordRenderer: KtKeywordRenderer,
+    public val keywordsRenderer: KtKeywordsRenderer,
 ) {
     context(KtAnalysisSession)
     public fun renderType(type: KtType, printer: PrettyPrinter) {
@@ -72,7 +72,7 @@ public class KtTypeRenderer private constructor(
             this.typeProjectionRenderer = renderer.typeProjectionRenderer
             this.annotationsRenderer = renderer.annotationsRenderer
             this.contextReceiversRenderer = renderer.contextReceiversRenderer
-            this.keywordRenderer = renderer.keywordRenderer
+            this.keywordsRenderer = renderer.keywordsRenderer
             action()
         }
     }
@@ -100,7 +100,7 @@ public class KtTypeRenderer private constructor(
         public lateinit var typeProjectionRenderer: KtTypeProjectionRenderer
         public lateinit var annotationsRenderer: KtAnnotationRenderer
         public lateinit var contextReceiversRenderer: KtContextReceiversRenderer
-        public lateinit var keywordRenderer: KtKeywordRenderer
+        public lateinit var keywordsRenderer: KtKeywordsRenderer
 
         public fun build(): KtTypeRenderer = KtTypeRenderer(
             capturedTypeRenderer,
@@ -120,7 +120,7 @@ public class KtTypeRenderer private constructor(
             typeProjectionRenderer,
             annotationsRenderer,
             contextReceiversRenderer,
-            keywordRenderer,
+            keywordsRenderer,
         )
     }
 }

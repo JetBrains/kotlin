@@ -26,7 +26,7 @@ public interface KtFunctionalTypeRenderer {
             " ".separated(
                 {
                     if (type.isSuspend) {
-                        keywordRenderer.renderKeyword(KtTokens.SUSPEND_KEYWORD, type, printer)
+                        keywordsRenderer.renderKeyword(KtTokens.SUSPEND_KEYWORD, type, printer)
                     }
                 },
                 {
@@ -65,7 +65,7 @@ public interface KtFunctionalTypeRenderer {
 
     public object AS_CLASS_TYPE_FOR_REFLECTION_TYPES : KtFunctionalTypeRenderer {
         context(KtAnalysisSession, KtTypeRenderer)
-        override fun renderType(type: KtFunctionalType, printer: PrettyPrinter): Unit {
+        override fun renderType(type: KtFunctionalType, printer: PrettyPrinter) {
             val renderer = if (type.isReflectType) AS_CLASS_TYPE else AS_FUNCTIONAL_TYPE
             renderer.renderType(type, printer)
         }

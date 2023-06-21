@@ -18,7 +18,10 @@ public interface KtNamedClassOrObjectSymbolRenderer {
     context(KtAnalysisSession, KtDeclarationRenderer)
     public fun renderSymbol(symbol: KtNamedClassOrObjectSymbol, printer: PrettyPrinter)
 
-    public object AS_SOURCE : KtNamedClassOrObjectSymbolRenderer {
+    public object AS_SOURCE: AsSourceRenderer(true)
+    public object AS_SOURCE_WITHOUT_PRIMARY_CONSTRUCTOR: AsSourceRenderer(false)
+
+    public open class AsSourceRenderer(private val withPrimaryConstructor: Boolean) : KtNamedClassOrObjectSymbolRenderer {
         context(KtAnalysisSession, KtDeclarationRenderer)
         override fun renderSymbol(symbol: KtNamedClassOrObjectSymbol, printer: PrettyPrinter): Unit = printer {
             val keywords = when (symbol.classKind) {
@@ -34,9 +37,10 @@ public interface KtNamedClassOrObjectSymbolRenderer {
             " ".separated(
                 { renderAnnotationsModifiersAndContextReceivers(symbol, printer, keywords) },
                 {
-                    val primaryConstructor =
+                    val primaryConstructor = if (withPrimaryConstructor)
                         bodyMemberScopeProvider.getMemberScope(symbol).filterIsInstance<KtConstructorSymbol>()
                             .firstOrNull { it.isPrimary }
+                    else null
 
                     nameRenderer.renderName(symbol, printer)
                     typeParametersRenderer.renderTypeParameters(symbol, printer)
@@ -44,7 +48,7 @@ public interface KtNamedClassOrObjectSymbolRenderer {
                         val annotationsPrinted = checkIfPrinted { renderAnnotationsModifiersAndContextReceivers(primaryConstructor, printer) }
                         if (annotationsPrinted) {
                             withPrefix(" ") {
-                                keywordRenderer.renderKeyword(KtTokens.CONSTRUCTOR_KEYWORD, primaryConstructor, printer)
+                                keywordsRenderer.renderKeyword(KtTokens.CONSTRUCTOR_KEYWORD, primaryConstructor, printer)
                             }
                         }
                         if (primaryConstructor.valueParameters.isNotEmpty()) {

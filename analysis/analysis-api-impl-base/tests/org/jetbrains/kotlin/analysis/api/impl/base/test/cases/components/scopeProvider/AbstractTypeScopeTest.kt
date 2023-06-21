@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.prettyPrintSignature
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.stringRepresentation
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.impl.KtDeclarationRendererForSource
-import org.jetbrains.kotlin.analysis.api.renderer.declarations.modifiers.renderers.KtRendererModifierFilter
+import org.jetbrains.kotlin.analysis.api.renderer.declarations.modifiers.renderers.KtRendererKeywordFilter
 import org.jetbrains.kotlin.analysis.api.scopes.KtScope
 import org.jetbrains.kotlin.analysis.api.scopes.KtTypeScope
 import org.jetbrains.kotlin.analysis.api.symbols.DebugSymbolRenderer
@@ -98,7 +98,9 @@ abstract class AbstractTypeScopeTest : AbstractAnalysisApiSingleFileTest() {
 
     companion object {
         private val renderer = KtDeclarationRendererForSource.WITH_QUALIFIED_NAMES.with {
-            modifiersRenderer = modifiersRenderer.with { modifierFilter = KtRendererModifierFilter.NONE }
+            modifiersRenderer = modifiersRenderer.with {
+                keywordsRenderer = keywordsRenderer.with { keywordFilter = KtRendererKeywordFilter.NONE }
+            }
         }
     }
 }

@@ -20,7 +20,9 @@ public interface KtBackingFieldSymbolRenderer {
         override fun renderSymbol(symbol: KtBackingFieldSymbol, printer: PrettyPrinter): Unit = printer {
             codeStyle.getSeparatorBetweenAnnotationAndOwner(symbol).separated(
                 { annotationRenderer.renderAnnotations(symbol, printer) },
-                { keywordRenderer.renderKeyword(KtTokens.FIELD_KEYWORD, symbol, printer) },
+                {
+                    keywordsRenderer.renderKeyword(KtTokens.FIELD_KEYWORD, symbol, printer)
+                },
             )
         }
     }
