@@ -18,17 +18,17 @@ expect var v2: Boolean
 
 // MODULE: m1-jvm()()(m1-common)
 // FILE: jvm.kt
-<!ACTUAL_WITHOUT_EXPECT!>actual var v1: Boolean = false
-    private set<!>
+actual var <!ACTUAL_WITHOUT_EXPECT!>v1<!>: Boolean = false
+    private set
 
 actual var v2: Boolean = false
 
-<!ACTUAL_WITHOUT_EXPECT!>actual var v3: Boolean = false
-    private set<!>
+actual var <!ACTUAL_WITHOUT_EXPECT!>v3<!>: Boolean = false
+    private set
 
 actual open class C {
-    <!ACTUAL_WITHOUT_EXPECT!>actual var foo: Boolean = false
-        protected set<!>
+    actual var <!ACTUAL_WITHOUT_EXPECT!>foo<!>: Boolean = false
+        protected set
 }
 
 open class C2Typealias {

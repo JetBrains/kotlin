@@ -22,7 +22,7 @@ fun foo1(x: String) {}
 fun foo2(x: Int, y: Int) {}
 fun foo2(x: String) {}
 
-<!ACTUAL_WITHOUT_EXPECT!>actual fun foo3(): String = ""<!>
+actual fun <!ACTUAL_WITHOUT_EXPECT!>foo3<!>(): String = ""
 fun foo4(x: Int): String = ""
 
 actual class NoArgConstructor {

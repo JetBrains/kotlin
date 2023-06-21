@@ -17,10 +17,10 @@ expect inline fun f6(crossinline s: () -> String)
 // FILE: jvm.kt
 
 actual inline fun f1(noinline s: () -> String) {}
-<!ACTUAL_WITHOUT_EXPECT!>actual inline fun f2(noinline s: () -> String) {}<!>
+actual inline fun <!ACTUAL_WITHOUT_EXPECT!>f2<!>(noinline s: () -> String) {}
 actual inline fun f3(s: () -> String) {}
 actual inline fun f4(crossinline s: () -> String) {}
-<!ACTUAL_WITHOUT_EXPECT!>actual inline fun f5(crossinline s: () -> String) {}<!>
+actual inline fun <!ACTUAL_WITHOUT_EXPECT!>f5<!>(crossinline s: () -> String) {}
 actual inline fun f6(s: () -> String) {}
-<!ACTUAL_WITHOUT_EXPECT!>actual fun f7(vararg x: Any) {}<!>
-<!ACTUAL_WITHOUT_EXPECT!>actual fun f8(x: Any) {}<!>
+actual fun <!ACTUAL_WITHOUT_EXPECT!>f7<!>(vararg x: Any) {}
+actual fun <!ACTUAL_WITHOUT_EXPECT!>f8<!>(x: Any) {}

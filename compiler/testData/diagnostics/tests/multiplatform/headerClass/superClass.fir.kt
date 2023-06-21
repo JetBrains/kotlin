@@ -13,7 +13,7 @@ expect class Foo : I, C, J
 // FILE: jvm.kt
 actual class Foo : I, C(), J
 
-<!ACTUAL_WITHOUT_EXPECT!>actual class Bar<!>
+actual class <!ACTUAL_WITHOUT_EXPECT!>Bar<!>
 
 // MODULE: m3-js()()(m1-common)
 // FILE: js.kt

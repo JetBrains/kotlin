@@ -43,6 +43,11 @@ object SourceElementPositioningStrategies {
         PositioningStrategies.DECLARATION_NAME
     )
 
+    val DECLARATION_NAME_ONLY = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.DECLARATION_NAME_ONLY,
+        PositioningStrategies.DECLARATION_NAME_ONLY
+    )
+
     val DECLARATION_SIGNATURE = SourceElementPositioningStrategy(
         LightTreePositioningStrategies.DECLARATION_SIGNATURE,
         PositioningStrategies.DECLARATION_SIGNATURE

@@ -15,10 +15,10 @@
 // FILE: jvm.kt
 actual interface My {
     actual fun openFunPositive() = Unit
-    <!ACTUAL_WITHOUT_EXPECT!>actual fun openFunNegative()<!>
+    actual fun <!ACTUAL_WITHOUT_EXPECT!>openFunNegative<!>()
     actual fun abstractFun()
 
     actual val openValPositive: Int get() = 0
-    <!ACTUAL_WITHOUT_EXPECT!>actual val openValNegative: Int<!>
+    actual val <!ACTUAL_WITHOUT_EXPECT!>openValNegative<!>: Int
     actual val abstractVal: Int
 }

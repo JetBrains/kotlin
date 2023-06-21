@@ -23,7 +23,7 @@ fun foo() {
 // FILE: jvm.kt
 
 class Outer <!ACTUAL_WITHOUT_EXPECT!>actual constructor()<!> {
-    <!ACTUAL_WITHOUT_EXPECT!>actual class Nested<!>
+    actual class <!ACTUAL_WITHOUT_EXPECT!>Nested<!>
 
     <!WRONG_MODIFIER_TARGET!>actual<!> init {}
 }

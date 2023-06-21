@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.diagnostics
 import com.intellij.lang.LighterASTNode
 import com.intellij.openapi.util.Ref
 import com.intellij.openapi.util.TextRange
-import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
 import com.intellij.util.diff.FlyweightCapableTreeStructure
@@ -18,7 +17,6 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.psi.KtParameter.VAL_VAR_TOKEN_SET
-import org.jetbrains.kotlin.psi.psiUtil.allChildren
 import org.jetbrains.kotlin.psi.stubs.elements.KtConstantExpressionElementType
 import org.jetbrains.kotlin.psi.stubs.elements.KtStringTemplateExpressionElementType
 import org.jetbrains.kotlin.psi.stubs.elements.KtTokenSets
@@ -189,7 +187,7 @@ object LightTreePositioningStrategies {
         }
     }
 
-    val DECLARATION_NAME: LightTreePositioningStrategy = object : LightTreePositioningStrategy() {
+    private open class BaseDeclarationNameStrategy : LightTreePositioningStrategy() {
         override fun mark(
             node: LighterASTNode,
             startOffset: Int,
@@ -198,20 +196,42 @@ object LightTreePositioningStrategies {
         ): List<TextRange> {
             val nameIdentifier = tree.nameIdentifier(node)
             if (nameIdentifier != null) {
-                if (node.tokenType == KtNodeTypes.CLASS || node.tokenType == KtNodeTypes.OBJECT_DECLARATION) {
-                    val startElement =
-                        tree.modifierList(node)?.let { modifierList -> tree.findChildByType(modifierList, KtTokens.ENUM_KEYWORD) }
-                            ?: tree.findChildByType(node, TokenSet.create(KtTokens.CLASS_KEYWORD, KtTokens.OBJECT_KEYWORD))
-                            ?: node
-
-                    return markRange(startElement, nameIdentifier, startOffset, endOffset, tree, node)
-                }
-                return markElement(nameIdentifier, startOffset, endOffset, tree, node)
+                return markNameIdentifier(nameIdentifier, startOffset, endOffset, tree, node)
             }
             if (node.tokenType == KtNodeTypes.FUN) {
                 return DECLARATION_SIGNATURE.mark(node, startOffset, endOffset, tree)
             }
             return DEFAULT.mark(node, startOffset, endOffset, tree)
+        }
+
+        protected open fun markNameIdentifier(
+            nameIdentifier: LighterASTNode,
+            startOffset: Int,
+            endOffset: Int,
+            tree: FlyweightCapableTreeStructure<LighterASTNode>,
+            node: LighterASTNode,
+        ): List<TextRange> {
+            return markElement(nameIdentifier, startOffset, endOffset, tree, node)
+        }
+    }
+
+    val DECLARATION_NAME: LightTreePositioningStrategy = object : BaseDeclarationNameStrategy() {
+        override fun markNameIdentifier(
+            nameIdentifier: LighterASTNode,
+            startOffset: Int,
+            endOffset: Int,
+            tree: FlyweightCapableTreeStructure<LighterASTNode>,
+            node: LighterASTNode,
+        ): List<TextRange> {
+            if (node.tokenType == KtNodeTypes.CLASS || node.tokenType == KtNodeTypes.OBJECT_DECLARATION) {
+                val startElement =
+                    tree.modifierList(node)?.let { modifierList -> tree.findChildByType(modifierList, KtTokens.ENUM_KEYWORD) }
+                        ?: tree.findChildByType(node, TokenSet.create(KtTokens.CLASS_KEYWORD, KtTokens.OBJECT_KEYWORD))
+                        ?: node
+
+                return markRange(startElement, nameIdentifier, startOffset, endOffset, tree, node)
+            }
+            return markElement(nameIdentifier, startOffset, endOffset, tree, node)
         }
 
         override fun isValid(node: LighterASTNode, tree: FlyweightCapableTreeStructure<LighterASTNode>): Boolean {
@@ -228,6 +248,8 @@ object LightTreePositioningStrategies {
             return super.isValid(node, tree)
         }
     }
+
+    val DECLARATION_NAME_ONLY: LightTreePositioningStrategy = BaseDeclarationNameStrategy()
 
     val ACTUAL_DECLARATION_NAME: LightTreePositioningStrategy = object : LightTreePositioningStrategy() {
         override fun mark(

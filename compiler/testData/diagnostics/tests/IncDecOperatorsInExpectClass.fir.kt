@@ -10,4 +10,4 @@ expect class Counter {
     operator fun dec(): Counter
 }
 
-<!ACTUAL_WITHOUT_EXPECT!>actual typealias Counter = Int<!>
+actual typealias <!ACTUAL_WITHOUT_EXPECT!>Counter<!> = Int

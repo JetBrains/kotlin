@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // MODULE: m1-jvm
 // FILE: jvm.kt
 

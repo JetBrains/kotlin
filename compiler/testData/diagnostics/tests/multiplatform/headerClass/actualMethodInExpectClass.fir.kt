@@ -2,7 +2,7 @@
 // FILE: common.kt
 
 expect class Foo {
-    <!ACTUAL_WITHOUT_EXPECT!>actual fun bar()<!>
+    actual fun <!ACTUAL_WITHOUT_EXPECT!>bar<!>()
 }
 
 // MODULE: m1-jvm()()(m1-common)

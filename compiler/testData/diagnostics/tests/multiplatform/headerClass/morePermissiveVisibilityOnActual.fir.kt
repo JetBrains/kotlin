@@ -30,9 +30,9 @@ actual open class Container {
     actual fun protectedFun1() {}           // OK: protected -> public
     actual protected fun protectedFun2() {} // OK: protected -> protected
 
-    <!ACTUAL_WITHOUT_EXPECT!>actual internal fun protectedFun3() {}<!>  // BAD: protected -> internal
-    <!ACTUAL_WITHOUT_EXPECT!>actual protected fun internalFun3() {}<!>  // BAD: internal -> protected
+    actual internal fun <!ACTUAL_WITHOUT_EXPECT!>protectedFun3<!>() {}  // BAD: protected -> internal
+    actual protected fun <!ACTUAL_WITHOUT_EXPECT!>internalFun3<!>() {}  // BAD: internal -> protected
 
-    <!ACTUAL_WITHOUT_EXPECT!>actual open fun openInternalFun() {}<!>    // BAD: internal+open -> public
-    <!ACTUAL_WITHOUT_EXPECT!>actual internal fun openPublicFun() {}<!>  // BAD: open+public -> internal
+    actual open fun <!ACTUAL_WITHOUT_EXPECT!>openInternalFun<!>() {}    // BAD: internal+open -> public
+    actual internal fun <!ACTUAL_WITHOUT_EXPECT!>openPublicFun<!>() {}  // BAD: open+public -> internal
 }
