@@ -89,7 +89,7 @@ dependencies {
 afterEvaluate {
     tasks.withType<KotlinCompile>().configureEach {
         kotlinOptions {
-            languageVersion = "1.4"
+            languageVersion = "1.5"
             apiVersion = "1.4"
         }
     }
