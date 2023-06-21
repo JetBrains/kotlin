@@ -52,9 +52,9 @@ class MetricPolicyTest {
         assertEquals("1.2.3", StringAnonymizationPolicy.ComponentVersionAnonymizer().anonymize("1.2.3-unknown suffix"))
 
         assertEquals("123.234.345-dev", StringAnonymizationPolicy.ComponentVersionAnonymizer().anonymize("123.234.345-dev-12345"))
-        assertEquals("1.9.255-snapshot", StringAnonymizationPolicy.ComponentVersionAnonymizer().anonymize("1.9.255-SNAPSHOT"))
+        assertEquals("2.0.255-snapshot", StringAnonymizationPolicy.ComponentVersionAnonymizer().anonymize("2.0.255-SNAPSHOT"))
 
-        assertEquals("1.9.255-beta", StringAnonymizationPolicy.ComponentVersionAnonymizer().anonymize("1.9.255-beta"))
+        assertEquals("2.0.255-beta", StringAnonymizationPolicy.ComponentVersionAnonymizer().anonymize("2.0.255-beta"))
     }
 
     @Test
