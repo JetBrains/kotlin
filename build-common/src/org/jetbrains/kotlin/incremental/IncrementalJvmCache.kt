@@ -138,8 +138,6 @@ open class IncrementalJvmCache(
             internalNameToSource[className.internalName] = sourceFiles
         }
 
-        if (kotlinClassInfo.classId.isLocal) return
-
         when (kotlinClassInfo.classKind) {
             KotlinClassHeader.Kind.FILE_FACADE -> {
                 if (sourceFiles != null) {

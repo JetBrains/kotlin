@@ -522,6 +522,11 @@ public class IncrementalFirLightTreeJvmCompilerRunnerTestGenerated extends Abstr
             runTest("jps/jps-plugin/testData/incremental/pureKotlin/publicPropertyWithPrivateSetter/");
         }
 
+        @TestMetadata("receiverToArgumentAdded")
+        public void testReceiverToArgumentAdded() throws Exception {
+            runTest("jps/jps-plugin/testData/incremental/pureKotlin/receiverToArgumentAdded/");
+        }
+
         @TestMetadata("removeAndRestoreCompanion")
         public void testRemoveAndRestoreCompanion() throws Exception {
             runTest("jps/jps-plugin/testData/incremental/pureKotlin/removeAndRestoreCompanion/");
