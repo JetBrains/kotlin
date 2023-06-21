@@ -38,7 +38,7 @@ tasks.withType<KotlinCompilationTask<*>> {
         @Suppress("DEPRECATION", "DEPRECATION_ERROR")
         apiVersion.set(KotlinVersion.KOTLIN_1_4)
         @Suppress("DEPRECATION")
-        languageVersion.set(KotlinVersion.KOTLIN_1_4)
+        languageVersion.set(KotlinVersion.KOTLIN_1_5)
         freeCompilerArgs.add("-Xsuppress-version-warnings")
     }
 }
