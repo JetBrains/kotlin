@@ -22,4 +22,21 @@ public interface KtFunctionSymbolRenderer {
             functionLikeBodyRenderer.renderBody(symbol, printer)
         }
     }
+
+    public object AS_RAW_SIGNATURE : KtFunctionSymbolRenderer {
+        context(KtAnalysisSession, KtDeclarationRenderer)
+        override fun renderSymbol(symbol: KtFunctionSymbol, printer: PrettyPrinter) {
+            printer {
+                val receiverSymbol = symbol.receiverParameter
+                if (receiverSymbol != null) {
+                    withSuffix(".") { callableReceiverRenderer.renderReceiver(receiverSymbol, printer) }
+                }
+                nameRenderer.renderName(symbol, printer)
+                printer.printCollection(symbol.valueParameters, prefix = "(", postfix = ")") {
+                    typeRenderer.renderType(it.returnType, printer)
+                }
+                withPrefix(": ") { returnTypeRenderer.renderReturnType(symbol, printer) }
+            }
+        }
+    }
 }

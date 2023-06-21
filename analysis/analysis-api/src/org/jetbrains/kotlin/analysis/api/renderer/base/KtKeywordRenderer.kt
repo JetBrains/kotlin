@@ -28,6 +28,15 @@ public interface KtKeywordRenderer {
         }
     }
 
+    public class AsWordWithFilter(private val filter: (KtKeywordToken) -> Boolean) : KtKeywordRenderer {
+        context(KtAnalysisSession)
+        override fun renderKeyword(keyword: KtKeywordToken, owner: KtAnnotated, printer: PrettyPrinter) {
+            if (filter(keyword)) {
+                printer.append(keyword.value)
+            }
+        }
+    }
+
     public object NONE : KtKeywordRenderer {
         context(KtAnalysisSession)
         override fun renderKeyword(keyword: KtKeywordToken, owner: KtAnnotated, printer: PrettyPrinter) {
