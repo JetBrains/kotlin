@@ -193,6 +193,7 @@ if (splitGradleIntegrationTestTasks) {
         jUnitMode = JUnitMode.JUnit5
     ) {
         includeNative(true)
+        includeMppAndAndroid(true)
     }
 
     projectTest(
