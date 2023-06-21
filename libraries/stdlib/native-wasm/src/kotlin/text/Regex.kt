@@ -10,7 +10,7 @@ import kotlin.text.regex.*
 private fun Iterable<RegexOption>.toInt(): Int = this.fold(0, { value, option -> value or option.value })
 
 private fun fromInt(value: Int): Set<RegexOption> =
-        RegexOption.values().filterTo(mutableSetOf<RegexOption>()) { value and it.mask == it.value  }
+        RegexOption.entries.filterTo(mutableSetOf<RegexOption>()) { value and it.mask == it.value  }
 
 /**
  * Provides enumeration values to use to set regular expression options.

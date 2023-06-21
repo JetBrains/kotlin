@@ -166,8 +166,8 @@ public actual enum class CharCategory(internal val value: Int, public actual val
     public companion object {
         internal fun valueOf(category: Int): CharCategory =
                 when (category) {
-                    in 0..16 -> values()[category]
-                    in 18..30 -> values()[category - 1]
+                    in 0..16 -> entries[category]
+                    in 18..30 -> entries[category - 1]
                     else -> throw IllegalArgumentException("Category #$category is not defined.")
                 }
     }

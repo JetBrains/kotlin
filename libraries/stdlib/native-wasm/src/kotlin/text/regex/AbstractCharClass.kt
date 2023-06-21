@@ -635,10 +635,10 @@ internal abstract class AbstractCharClass : SpecialToken() {
             PF("Pf", { CachedCategory(CharCategory.FINAL_QUOTE_PUNCTUATION.value, false)  })
         }
 
-        private val classCache = Array<AtomicReference<CachedCharClass?>>(CharClasses.values().size, {
+        private val classCache = Array<AtomicReference<CachedCharClass?>>(CharClasses.entries.size, {
             AtomicReference<CachedCharClass?>(null)
         })
-        private val classCacheMap = CharClasses.values().associate { it -> it.regexName to it }
+        private val classCacheMap = CharClasses.entries.associate { it -> it.regexName to it }
 
         fun intersects(ch1: Int, ch2: Int): Boolean = ch1 == ch2
         fun intersects(cc: AbstractCharClass, ch: Int): Boolean = cc.contains(ch)

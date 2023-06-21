@@ -14,7 +14,7 @@ import kotlin.time.Duration.Companion.nanoseconds
 import kotlin.time.Duration.Companion.seconds
 
 class TimeMarkTest {
-    private val units = DurationUnit.values()
+    private val units = DurationUnit.entries
 
     private fun TimeMark.assertHasPassed(hasPassed: Boolean) {
         assertEquals(!hasPassed, this.hasNotPassedNow(), "Expected mark in the future")

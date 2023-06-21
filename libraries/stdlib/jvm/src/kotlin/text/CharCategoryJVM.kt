@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -169,8 +169,8 @@ public actual enum class CharCategory(public val value: Int, public actual val c
          */
         public fun valueOf(category: Int): CharCategory =
             when (category) {
-                in 0..16 -> values()[category]
-                in 18..30 -> values()[category - 1]
+                in 0..16 -> entries[category]
+                in 18..30 -> entries[category - 1]
                 else -> throw IllegalArgumentException("Category #$category is not defined.")
             }
     }

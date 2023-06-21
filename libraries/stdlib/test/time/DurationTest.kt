@@ -20,7 +20,7 @@ import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.nanoseconds
 import kotlin.time.Duration.Companion.seconds
 
-private val units = DurationUnit.values()
+private val units = DurationUnit.entries
 
 class DurationTest {
 
