@@ -400,8 +400,7 @@ class Fir2IrClassifierStorage(
                 name = name,
                 visibility = components.visibilityConverter.convertToDescriptorVisibility(visibility),
                 symbol = IrClassSymbolImpl(),
-                // NB: for unknown reason, IR uses 'CLASS' kind for simple anonymous objects
-                kind = anonymousObject.classKind.takeIf { it == ClassKind.ENUM_ENTRY } ?: ClassKind.CLASS,
+                kind = anonymousObject.classKind,
                 modality = modality,
             ).apply {
                 metadata = FirMetadataSource.Class(anonymousObject)

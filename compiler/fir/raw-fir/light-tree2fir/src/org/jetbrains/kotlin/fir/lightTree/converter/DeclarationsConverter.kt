@@ -657,7 +657,7 @@ class DeclarationsConverter(
                     source = objectDeclaration.toFirSourceElement()
                     origin = FirDeclarationOrigin.Source
                     moduleData = baseModuleData
-                    classKind = ClassKind.OBJECT
+                    classKind = ClassKind.CLASS
                     scopeProvider = baseScopeProvider
                     symbol = FirAnonymousObjectSymbol()
                     status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)

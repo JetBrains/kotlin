@@ -29,6 +29,7 @@ fun box(): String {
     assertEquals(null, C::class.objectInstance)
     assertEquals(null, String::class.objectInstance)
     assertEquals(Unit, Unit::class.objectInstance)
+    assertEquals(null, object {}::class.objectInstance)
 
     return "OK"
 }

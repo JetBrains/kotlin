@@ -1399,7 +1399,7 @@ open class RawFirBuilder(
                         source = objectDeclaration.toFirSourceElement()
                         moduleData = baseModuleData
                         origin = FirDeclarationOrigin.Source
-                        classKind = ClassKind.OBJECT
+                        classKind = ClassKind.CLASS
                         scopeProvider = baseScopeProvider
                         symbol = FirAnonymousObjectSymbol()
                         status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
