@@ -13,9 +13,8 @@ import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.jvm.tasks.Jar
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.dsl.explicitApiModeAsCompilerArg
-import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.internal.customizeKotlinDependencies
 import org.jetbrains.kotlin.gradle.plugin.*
@@ -59,6 +58,7 @@ class KotlinMultiplatformPlugin : Plugin<Project> {
         setupDefaultPresets(project)
         customizeKotlinDependencies(project)
         configureSourceSets(project)
+        setupTargetsBuildStatsReport(project)
 
         // set up metadata publishing
         kotlinMultiplatformExtension.targetFromPreset(
@@ -188,13 +188,6 @@ class KotlinMultiplatformPlugin : Plugin<Project> {
                     compilation.defaultSourceSet.dependsOn(commonSourceSet)
                 }
             }
-
-            /* Report the platform to tbe build stats service */
-            val targetName = if (target is KotlinNativeTarget)
-                target.konanTarget.name
-            else
-                target.platformType.name
-            KotlinBuildStatsService.getInstance()?.report(StringMetrics.MPP_PLATFORMS, targetName)
         }
 
         project.launchInStage(KotlinPluginLifecycle.Stage.ReadyForExecution) {
@@ -203,6 +196,18 @@ class KotlinMultiplatformPlugin : Plugin<Project> {
             }
         }
     }
+
+    private fun setupTargetsBuildStatsReport(project: Project) {
+        project.multiplatformExtension.targets.all { target ->
+            /* Report the platform to tbe build stats service */
+            val targetName = if (target is KotlinNativeTarget)
+                target.konanTarget.name
+            else
+                target.platformType.name
+            KotlinBuildStatsService.getInstance()?.report(StringMetrics.MPP_PLATFORMS, targetName)
+        }
+    }
+
 
     companion object {
         const val METADATA_TARGET_NAME = "metadata"
