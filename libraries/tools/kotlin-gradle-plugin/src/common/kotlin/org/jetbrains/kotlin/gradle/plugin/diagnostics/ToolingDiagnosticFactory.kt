@@ -14,7 +14,7 @@ abstract class ToolingDiagnosticFactory(private val predefinedSeverity: ToolingD
 
     open val id: String = customId ?: this::class.simpleName!!
 
-    protected fun build(message: String, severity: ToolingDiagnostic.Severity? = null): ToolingDiagnostic {
+    protected fun build(message: String, severity: ToolingDiagnostic.Severity? = null, throwable: Throwable? = null): ToolingDiagnostic {
         if (severity == null && predefinedSeverity == null) {
             error(
                 "Can't determine severity. " +
@@ -27,7 +27,7 @@ abstract class ToolingDiagnosticFactory(private val predefinedSeverity: ToolingD
                         " but not both at once"
             )
         }
-        return ToolingDiagnostic(id, message, severity ?: predefinedSeverity!!)
+        return ToolingDiagnostic(id, message, severity ?: predefinedSeverity!!, throwable)
     }
 
     protected fun String.onlyIf(condition: Boolean) = if (condition) this else ""

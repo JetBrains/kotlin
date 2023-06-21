@@ -378,14 +378,12 @@ object KotlinToolingDiagnostics {
                 |        $expectedTargetName("${target.name}") /* <- custom name used */
                 |    }
                 |
-                |With: 
+                |With:
                 |   kotlin {
                 |       $expectedTargetName()
                 |   }
-                |
-                |Stacktrace:
-                ${sourceSet.isRegisteredByKotlinSourceSetConventionAt?.joinToString(System.lineSeparator()) { "|    $it" }}
-            """.trimMargin()
+            """.trimMargin(),
+            throwable = sourceSet.isRegisteredByKotlinSourceSetConventionAt
         )
     }
 
@@ -395,15 +393,13 @@ object KotlinToolingDiagnostics {
                  |Accessed '$sourceSet' without the registering the $expectedTargetName target:
                  |  kotlin {
                  |      $expectedTargetName() /* <- register the '$expectedTargetName' target */
-                 |      
+                 |
                  |      sourceSets.${sourceSet.name}.dependencies {
-                 |        
+                 |
                  |      }
                  |  }
-                 |
-                 |Stacktrace:
-                 ${sourceSet.isRegisteredByKotlinSourceSetConventionAt?.joinToString(System.lineSeparator()) { "|    $it" }}
-                """.trimMargin()
+                """.trimMargin(),
+            throwable = sourceSet.isRegisteredByKotlinSourceSetConventionAt
         )
     }
 
@@ -418,7 +414,7 @@ object KotlinToolingDiagnostics {
                 |    plugins {
                 |        id("com.android.library")
                 |    }
-                | 
+                |
                 |    android {
                 |        namespace = "org.sample.library"
                 |        compileSdk = 33
@@ -427,7 +423,6 @@ object KotlinToolingDiagnostics {
                 |    kotlin {
                 |        androidTarget() /* <- register the androidTarget */
                 |    }
-                |
             """.trimMargin()
         )
     }

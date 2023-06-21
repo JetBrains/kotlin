@@ -8,7 +8,9 @@ package org.jetbrains.kotlin.gradle.plugin.diagnostics
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 
 @InternalKotlinGradlePluginApi // used in integration tests
-data class ToolingDiagnostic(val id: String, val message: String, val severity: Severity) {
+data class ToolingDiagnostic(
+    val id: String, val message: String, val severity: Severity, val throwable: Throwable? = null,
+) {
     enum class Severity {
         WARNING,
 

@@ -18,7 +18,7 @@ internal fun renderReportedDiagnostics(diagnostics: Collection<ToolingDiagnostic
 internal fun renderReportedDiagnostic(
     diagnostic: ToolingDiagnostic,
     logger: Logger,
-    isVerbose: Boolean
+    isVerbose: Boolean,
 ) {
     when (diagnostic.severity) {
         WARNING -> logger.warn("w: ${diagnostic.render(isVerbose)}\n")
@@ -29,7 +29,18 @@ internal fun renderReportedDiagnostic(
     }
 }
 
-private fun ToolingDiagnostic.render(isVerbose: Boolean): String =
-    if (isVerbose) toString() + "\n$DIAGNOSTIC_SEPARATOR" else message
+private fun ToolingDiagnostic.render(isVerbose: Boolean): String = buildString {
+    if (isVerbose) {
+        appendLine(this@render)
+        append(DIAGNOSTIC_SEPARATOR)
+    } else {
+        append(message)
+        if (throwable != null) {
+            appendLine()
+            appendLine("Stacktrace:")
+            append(throwable.stackTraceToString().prependIndent("    "))
+        }
+    }
+}
 
 internal const val DIAGNOSTIC_SEPARATOR = "#diagnostic-end"

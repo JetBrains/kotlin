@@ -15,7 +15,6 @@ Example using the 'com.android.library' plugin:
     kotlin {
         androidTarget() /* <- register the androidTarget */
     }
-
 ----
 [UnusedSourceSetsWarning | WARNING] The Kotlin source set androidMain was configured but not added to any Kotlin compilation.
 
