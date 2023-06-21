@@ -197,7 +197,7 @@ internal open class CInteropCommonizerTask
     }
 
     private fun commonize(group: CInteropCommonizerGroup) {
-        val cinteropsForTarget = cinterops.filter { cinterop -> cinterop.identifier in group.interops }
+        val cinteropsForTarget = cinterops.filter { cinterop -> cinterop.identifier in group.interops && cinterop.identifier.isToBeCommonized }
         outputDirectory(group).deleteRecursively()
         if (cinteropsForTarget.isEmpty()) return
 

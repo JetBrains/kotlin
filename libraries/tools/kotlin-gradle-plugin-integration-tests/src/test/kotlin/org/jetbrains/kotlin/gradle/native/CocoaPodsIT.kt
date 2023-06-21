@@ -505,7 +505,7 @@ class CocoaPodsIT : KGPBaseTest() {
     @GradleTest
     fun testCinteropCommonizationOff(gradleVersion: GradleVersion) {
         nativeProjectWithCocoapodsAndIosAppPodFile(cocoapodsCommonizationProjectName, gradleVersion) {
-            buildWithCocoapodsWrapper(":commonize") {
+            buildWithCocoapodsWrapper(":commonize", "-Pkotlin.mpp.enableCInteropCommonization=false") {
                 assertTasksExecuted(":commonizeNativeDistribution")
                 assertTasksNotExecuted(":cinteropAFNetworkingIosArm64")
                 assertTasksNotExecuted(":cinteropAFNetworkingIosX64")

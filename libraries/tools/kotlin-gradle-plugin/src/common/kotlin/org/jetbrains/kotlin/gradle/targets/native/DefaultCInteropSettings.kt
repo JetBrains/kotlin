@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmNativeVariantCompilationData
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.disambiguateName
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropIdentifier
+import org.jetbrains.kotlin.gradle.targets.native.internal.isCInteropCommonizationEnabled
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.gradle.utils.newInstance
 import org.jetbrains.kotlin.gradle.utils.property
@@ -146,7 +147,11 @@ internal class DefaultCInteropSettingsFactory(private val compilation: KotlinCom
     override fun create(name: String): DefaultCInteropSettings {
         val params = DefaultCInteropSettings.Params(
             name = name,
-            identifier = CInteropIdentifier(CInteropIdentifier.Scope.create(compilation), name),
+            identifier = CInteropIdentifier(
+                CInteropIdentifier.Scope.create(compilation),
+                name,
+                compilation.project.isCInteropCommonizationEnabled
+            ),
             dependencyConfigurationName = compilation.disambiguateName("${name.capitalizeAsciiOnly()}CInterop"),
             interopProcessingTaskName = lowerCamelCaseName(
                 "cinterop",
@@ -166,7 +171,11 @@ internal class GradleKpmDefaultCInteropSettingsFactory(private val compilation: 
     override fun create(name: String): DefaultCInteropSettings {
         val params = DefaultCInteropSettings.Params(
             name = name,
-            identifier = CInteropIdentifier(CInteropIdentifier.Scope.create(compilation), name),
+            identifier = CInteropIdentifier(
+                CInteropIdentifier.Scope.create(compilation),
+                name,
+                compilation.project.isCInteropCommonizationEnabled
+            ),
             dependencyConfigurationName = compilation.owner.disambiguateName("${name.capitalizeAsciiOnly()}CInterop"),
             interopProcessingTaskName = lowerCamelCaseName(
                 "cinterop",

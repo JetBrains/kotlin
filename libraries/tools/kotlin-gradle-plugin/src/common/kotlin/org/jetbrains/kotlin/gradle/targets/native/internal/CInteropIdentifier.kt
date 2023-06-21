@@ -16,7 +16,8 @@ import java.io.Serializable
  */
 internal data class CInteropIdentifier internal constructor(
     val scope: Scope,
-    val interopName: String
+    val interopName: String,
+    var isToBeCommonized: Boolean,
 ) : Serializable {
     class Scope @UnsafeApi internal constructor(val name: String) : Serializable {
         companion object {

@@ -111,7 +111,6 @@ open class CommonizerIT : BaseGradleIT() {
                 assertTasksExecuted(":commonizeNativeDistribution")
                 assertTasksNotExecuted(":cinteropCurl2TargetA")
                 assertTasksNotExecuted(":cinteropCurl2TargetB")
-                assertTasksNotExecuted(":commonizeCInterop")
                 assertSuccessful()
             }
 
@@ -127,7 +126,6 @@ open class CommonizerIT : BaseGradleIT() {
                 assertNativeDistributionCommonizationCacheHit()
                 assertTasksNotExecuted(":cinteropCurlTargetA")
                 assertTasksNotExecuted(":cinteropCurlTargetB")
-                assertTasksNotExecuted(":commonizeCInterop")
                 assertSuccessful()
             }
         }

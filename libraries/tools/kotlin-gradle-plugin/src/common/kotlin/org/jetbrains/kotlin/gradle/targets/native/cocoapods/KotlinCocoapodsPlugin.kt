@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.konan.target.KonanTarget.*
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 import java.io.File
+import org.jetbrains.kotlin.gradle.targets.native.internal.isCInteropCommonizationSpecified
 
 
 
@@ -325,6 +326,9 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
             kotlinExtension.supportedTargets().all { target ->
                 val cinterops = target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME).cinterops
                 cinterops.create(pod.moduleName) { interop ->
+                    if (!project.isCInteropCommonizationSpecified) {
+                        interop.identifier.isToBeCommonized = true
+                    }
 
                     val interopTask = project.tasks.named<CInteropProcess>(interop.interopProcessingTaskName).get()
 

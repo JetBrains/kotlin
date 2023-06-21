@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.gradle.targets.metadata.findMetadataCompilation
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropCommonizerDependent
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropIdentifier
 import org.jetbrains.kotlin.gradle.targets.native.internal.from
+import org.jetbrains.kotlin.gradle.targets.native.internal.isCInteropCommonizationEnabled
 import kotlin.test.BeforeTest
 import kotlin.test.assertNotNull
 import kotlin.test.fail
@@ -75,6 +76,6 @@ abstract class MultiplatformExtensionTest {
     }
 
     internal fun KotlinCompilation<*>.cinteropIdentifier(name: String): CInteropIdentifier {
-        return CInteropIdentifier(CInteropIdentifier.Scope.create(this), name)
+        return CInteropIdentifier(CInteropIdentifier.Scope.create(this), name, project.isCInteropCommonizationEnabled)
     }
 }

@@ -26,6 +26,7 @@ import java.io.File
 import javax.inject.Inject
 
 internal val Project.isCInteropCommonizationEnabled: Boolean get() = PropertiesProvider(this).enableCInteropCommonization
+internal val Project.isCInteropCommonizationSpecified: Boolean get() = PropertiesProvider(this).CInteropCommonizationSpecified
 
 internal val Project.isIntransitiveMetadataConfigurationEnabled: Boolean
     get() = PropertiesProvider(this).enableIntransitiveMetadataConfiguration
@@ -66,54 +67,49 @@ internal val Project.runCommonizerTask: TaskProvider<Task>
         }
     )
 
-internal val Project.commonizeCInteropTask: TaskProvider<CInteropCommonizerTask>?
-    get() {
-        if (isCInteropCommonizationEnabled) {
-            return locateOrRegisterTask(
-                "commonizeCInterop",
-                invokeWhenRegistered = {
-                    val task = this
-                    commonizeTask.dependsOn(this)
-                    whenEvaluated {
-                        commonizeNativeDistributionTask?.let(task::dependsOn)
-                    }
-                },
-                configureTask = {
-                    group = "interop"
-                    description = "Invokes the commonizer on c-interop bindings of the project"
+private const val commonizeCInteropTaskName = "commonizeCInterop"
 
-                    kotlinPluginVersion.set(getKotlinPluginVersion())
-                    commonizerClasspath.from(project.maybeCreateCommonizerClasspathConfiguration())
-                    customJvmArgs.set(PropertiesProvider(project).commonizerJvmArgs)
+internal val Project.commonizeCInteropTask: TaskProvider<CInteropCommonizerTask>
+    get() {
+        return locateOrRegisterTask(
+            commonizeCInteropTaskName,
+            invokeWhenRegistered = {
+                val task = this
+                commonizeTask.dependsOn(this)
+                whenEvaluated {
+                    commonizeNativeDistributionTask?.let(task::dependsOn)
                 }
-            )
-        }
-        return null
+            },
+            configureTask = {
+                group = "interop"
+                description = "Invokes the commonizer on c-interop bindings of the project"
+
+                kotlinPluginVersion.set(getKotlinPluginVersion())
+                commonizerClasspath.from(project.maybeCreateCommonizerClasspathConfiguration())
+                customJvmArgs.set(PropertiesProvider(project).commonizerJvmArgs)
+            }
+        )
     }
 
-internal val Project.copyCommonizeCInteropForIdeTask: TaskProvider<CopyCommonizeCInteropForIdeTask>?
+internal val Project.copyCommonizeCInteropForIdeTask: TaskProvider<CopyCommonizeCInteropForIdeTask>
     get() {
-        val commonizeCInteropTask = commonizeCInteropTask
-        if (commonizeCInteropTask != null) {
-            return locateOrRegisterTask(
-                "copyCommonizeCInteropForIde",
-                invokeWhenRegistered = {
-                    @OptIn(Idea222Api::class)
-                    ideaImportDependsOn(this)
+        return locateOrRegisterTask(
+            "copyCommonizeCInteropForIde",
+            invokeWhenRegistered = {
+                @OptIn(Idea222Api::class)
+                ideaImportDependsOn(this)
 
-                    /* Older IDEs will still call 'runCommonizer' -> 'commonize'  tasks */
-                    if (isInIdeaSync) {
-                        commonizeTask.dependsOn(this)
-                    }
-                },
-                configureTask = {
-                    group = "interop"
-                    description = "Copies the output of ${commonizeCInteropTask.get().name} into " +
-                            "the root projects .gradle folder for the IDE"
+                /* Older IDEs will still call 'runCommonizer' -> 'commonize'  tasks */
+                if (isInIdeaSync) {
+                    commonizeTask.dependsOn(this)
                 }
-            )
-        }
-        return null
+            },
+            configureTask = {
+                group = "interop"
+                description = "Copies the output of $commonizeCInteropTaskName into " +
+                        "the root projects .gradle folder for the IDE"
+            }
+        )
     }
 
 internal val Project.commonizeNativeDistributionTask: TaskProvider<NativeDistributionCommonizerTask>?
