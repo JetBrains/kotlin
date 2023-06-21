@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.hierarchy.default
 import javax.inject.Inject
 
+@Suppress("DEPRECATION")
 @KotlinGradlePluginDsl
 abstract class KotlinMultiplatformExtension
 @InternalKotlinGradlePluginApi constructor(project: Project) :

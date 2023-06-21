@@ -509,7 +509,8 @@ class ConfigurationsTest : MultiplatformExtensionTest() {
                 kotlin {
                     jvm()
                     js().nodejs()
-                    ios()
+                    iosX64()
+                    iosArm64()
                 }
             }
             project.evaluate()
