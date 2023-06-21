@@ -5,7 +5,3 @@ Output:
 -- JVM --
 Exit code: OK
 Output:
-compiler/testData/multiplatform/implTypeAlias/generic/jvm.kt:3:13: warning: parameter 'a' is never used
-    fun foo(a: A): List<A>? = null
-            ^
-

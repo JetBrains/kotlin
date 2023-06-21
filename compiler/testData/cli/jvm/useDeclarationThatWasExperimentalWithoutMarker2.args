@@ -1,5 +1,5 @@
 $TESTDATA_DIR$/useDeclarationThatWasExperimentalWithoutMarker2.kt
 -d
 $TEMP_DIR$
--language-version
-1.4
+-api-version
+1.7

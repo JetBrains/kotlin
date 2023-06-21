@@ -6,9 +6,9 @@ Output:
 Exit code: COMPILATION_ERROR
 Output:
 compiler/testData/multiplatform/defaultArguments/methodDefaultArgsViaTypealias/jvm.kt:8:1: error: default argument values inside expect declaration 'A' are not allowed if it is actualized via typealias. Possible fix is to remove default argument values in members:
-    public constructor A(p: String = ...)
+    expect fun foo(p: String = ...): Unit
 
-    public final expect fun foo(p: String = ...): Unit
+    expect constructor(p: String = ...): A
 
 actual typealias A = AImpl
 ^

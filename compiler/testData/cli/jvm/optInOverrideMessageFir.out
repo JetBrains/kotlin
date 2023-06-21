@@ -1,4 +1,3 @@
-warning: language version 2.0 is experimental, there are no backwards compatibility guarantees for new language and library features
 compiler/testData/cli/jvm/optInOverrideMessageFir.kt:16:18: error: base declaration of supertype 'Base' needs opt-in. This API is experimental and can change at any time, please use with care. The declaration override must be annotated with '@Marker' or '@OptIn(Marker::class)'
     override fun foo() {}
                  ^

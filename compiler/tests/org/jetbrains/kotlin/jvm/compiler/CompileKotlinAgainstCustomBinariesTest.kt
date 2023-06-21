@@ -604,7 +604,7 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
         val library = compileCommonLibrary("library")
         compileKotlin(
             "source.kt", tmpdir, listOf(library), K2MetadataCompiler(), listOf(
-                // TODO: "-Xfriend-paths=${library.path}"
+                "-Xfriend-paths=${library.path}"
             )
         )
     }

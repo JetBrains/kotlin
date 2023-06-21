@@ -1,13 +1,13 @@
 warning: ATTENTION!
 This build uses unsafe internal compiler arguments:
 
--XXLanguage:-SealedInterfaces
+-XXLanguage:-SuspendFunctionAsSupertype
 
 This mode is not recommended for production use,
 as no stability/compatibility guarantees are given on
 compiler or generated code. Use it at your own risk!
 
-compiler/testData/cli/jvm/languageVersion.kt:3:1: error: the feature "sealed interfaces" is disabled
-sealed interface Polygon
-^
+compiler/testData/cli/jvm/languageVersion.kt:5:23: error: KSuspendFunctionN interfaces are not allowed as supertypes
+abstract class Some : KSuspendFunction0<Unit>
+                      ^
 COMPILATION_ERROR

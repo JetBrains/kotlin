@@ -1,4 +1,4 @@
-warning: language version 1.4 is deprecated and its support will be removed in a future version of Kotlin
+warning: language version 1.5 is deprecated and its support will be removed in a future version of Kotlin
 compiler/testData/cli/jvm/kt19628_13.kt:5:29: error: unresolved reference: CollapsedStringAdapter
     @get:XmlJavaTypeAdapter(CollapsedStringAdapter::class)
                             ^
