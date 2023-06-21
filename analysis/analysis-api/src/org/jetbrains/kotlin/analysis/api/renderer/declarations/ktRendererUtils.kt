@@ -42,7 +42,7 @@ public fun <S> renderAnnotationsModifiersAndContextReceivers(
     }
 
     withPrefix(separator) {
-        keywordRenderer.renderKeywords(keywords, symbol, printer)
+        keywordsRenderer.renderKeywords(keywords, symbol, printer)
     }
 }
 

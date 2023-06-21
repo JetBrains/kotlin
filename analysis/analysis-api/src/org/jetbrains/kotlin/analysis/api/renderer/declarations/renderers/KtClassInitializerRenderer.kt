@@ -19,7 +19,9 @@ public interface KtClassInitializerRenderer {
         context(KtAnalysisSession, KtDeclarationRenderer)
         override fun renderClassInitializer(symbol: KtClassInitializerSymbol, printer: PrettyPrinter): Unit = printer {
             " ".separated(
-                { keywordRenderer.renderKeyword(KtTokens.INIT_KEYWORD, symbol, this) },
+                {
+                    keywordsRenderer.renderKeyword(KtTokens.INIT_KEYWORD, symbol, this)
+                },
                 { printer.withIndentInBraces {} },
             )
         }

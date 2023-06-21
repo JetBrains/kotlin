@@ -19,7 +19,7 @@ public interface KtDynamicTypeRenderer {
     public object AS_DYNAMIC_WORD : KtDynamicTypeRenderer {
         context(KtAnalysisSession, KtTypeRenderer)
         override fun renderType(type: KtDynamicType, printer: PrettyPrinter) {
-            keywordRenderer.renderKeyword(KtTokens.DYNAMIC_KEYWORD, type, printer)
+            keywordsRenderer.renderKeyword(KtTokens.DYNAMIC_KEYWORD, type, printer)
         }
     }
 }

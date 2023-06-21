@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.analysis.api.components.KtScopeContext
 import org.jetbrains.kotlin.analysis.api.components.KtScopeKind
 import org.jetbrains.kotlin.analysis.api.renderer.base.annotations.KtRendererAnnotationsFilter
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.impl.KtDeclarationRendererForSource
-import org.jetbrains.kotlin.analysis.api.renderer.declarations.modifiers.renderers.KtRendererModifierFilter
+import org.jetbrains.kotlin.analysis.api.renderer.declarations.modifiers.renderers.KtRendererKeywordFilter
 import org.jetbrains.kotlin.analysis.api.renderer.types.impl.KtTypeRendererForSource
 import org.jetbrains.kotlin.analysis.api.renderer.types.renderers.KtTypeErrorTypeRenderer
 import org.jetbrains.kotlin.analysis.api.scopes.KtScope
@@ -95,9 +95,9 @@ internal object TestScopeRenderer {
             appendLine()
             withIndent {
                 appendLine("classifiers: ${classifiers.size}")
-                withIndent { classifiers.forEach { appendLine(TestScopeRenderer.renderSymbol(it, printPretty)) } }
+                withIndent { classifiers.forEach { appendLine(renderSymbol(it, printPretty)) } }
                 appendLine("callables: ${callables.size}")
-                withIndent { callables.forEach { appendLine(TestScopeRenderer.renderSymbol(it, printPretty)) } }
+                withIndent { callables.forEach { appendLine(renderSymbol(it, printPretty)) } }
             }
         }
     }
@@ -112,7 +112,9 @@ internal object TestScopeRenderer {
 
     private val prettyPrintSymbolRenderer = KtDeclarationRendererForSource.WITH_QUALIFIED_NAMES.with {
         annotationRenderer = annotationRenderer.with { annotationFilter = KtRendererAnnotationsFilter.NONE }
-        modifiersRenderer = modifiersRenderer.with { modifierFilter = KtRendererModifierFilter.NONE }
+        modifiersRenderer = modifiersRenderer.with {
+            keywordsRenderer = keywordsRenderer.with { keywordFilter = KtRendererKeywordFilter.NONE }
+        }
     }
 
     private val prettyPrintTypeRenderer = KtTypeRendererForSource.WITH_QUALIFIED_NAMES.with {
