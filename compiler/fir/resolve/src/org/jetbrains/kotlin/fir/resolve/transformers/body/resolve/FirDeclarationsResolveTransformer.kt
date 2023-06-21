@@ -68,7 +68,7 @@ open class FirDeclarationsResolveTransformer(
     }
 
     protected fun transformDeclarationContent(declaration: FirDeclaration, data: ResolutionMode): FirDeclaration {
-        transformer.firTowerDataContextCollector?.addDeclarationContext(declaration, context.towerDataContext)
+        transformer.firResolveContextCollector?.addDeclarationContext(declaration, context)
         return transformer.transformDeclarationContent(declaration, data)
     }
 
@@ -540,7 +540,7 @@ open class FirDeclarationsResolveTransformer(
         whileAnalysing(session, regularClass) {
             return context.withContainingClass(regularClass) {
                 if (regularClass.isLocal && regularClass !in context.targetedLocalClasses) {
-                    return regularClass.runAllPhasesForLocalClass(transformer, components, data, transformer.firTowerDataContextCollector)
+                    return regularClass.runAllPhasesForLocalClass(transformer, components, data, transformer.firResolveContextCollector)
                 }
 
                 doTransformTypeParameters(regularClass)
@@ -569,11 +569,11 @@ open class FirDeclarationsResolveTransformer(
 
     override fun transformTypeAlias(typeAlias: FirTypeAlias, data: ResolutionMode): FirTypeAlias = whileAnalysing(session, typeAlias) {
         if (typeAlias.isLocal && typeAlias !in context.targetedLocalClasses) {
-            return typeAlias.runAllPhasesForLocalClass(transformer, components, data, transformer.firTowerDataContextCollector)
+            return typeAlias.runAllPhasesForLocalClass(transformer, components, data, transformer.firResolveContextCollector)
         }
         doTransformTypeParameters(typeAlias)
         typeAlias.transformAnnotations(transformer, data)
-        transformer.firTowerDataContextCollector?.addDeclarationContext(typeAlias, context.towerDataContext)
+        transformer.firResolveContextCollector?.addDeclarationContext(typeAlias, context)
         typeAlias.transformExpandedTypeRef(transformer, data)
         return typeAlias
     }
@@ -607,7 +607,7 @@ open class FirDeclarationsResolveTransformer(
         data: ResolutionMode
     ): FirStatement = whileAnalysing(session, anonymousObject) {
         if (anonymousObject !in context.targetedLocalClasses) {
-            return anonymousObject.runAllPhasesForLocalClass(transformer, components, data, transformer.firTowerDataContextCollector)
+            return anonymousObject.runAllPhasesForLocalClass(transformer, components, data, transformer.firResolveContextCollector)
         }
         // TODO: why would there be a graph already?
         val buildGraph = !implicitTypeOnly && anonymousObject.controlFlowGraphReference == null

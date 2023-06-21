@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.FirImportResolveTransformer
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirTowerDataContextCollector
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirResolveContextCollector
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 
 internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirModuleResolveComponents) {
@@ -103,7 +103,7 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
     fun lazyResolveTarget(
         target: LLFirResolveTarget,
         toPhase: FirResolvePhase,
-        towerDataContextCollector: FirTowerDataContextCollector?,
+        towerDataContextCollector: FirResolveContextCollector?,
     ) {
         try {
             lazyResolveTargets(
@@ -120,7 +120,7 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
     fun runLazyDesignatedOnAirResolveToBodyWithoutLock(
         designation: FirDesignationWithFile,
         onAirCreatedDeclaration: Boolean,
-        towerDataContextCollector: FirTowerDataContextCollector?,
+        towerDataContextCollector: FirResolveContextCollector?,
     ) {
         resolveFileToImportsWithLock(designation.firFile)
 
@@ -161,7 +161,7 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
         targets: List<LLFirResolveTarget>,
         scopeSession: ScopeSession,
         toPhase: FirResolvePhase,
-        towerDataContextCollector: FirTowerDataContextCollector?,
+        towerDataContextCollector: FirResolveContextCollector?,
     ) {
         if (targets.isEmpty()) return
         var currentPhase = getMinResolvePhase(targets).coerceAtLeast(FirResolvePhase.IMPORTS)

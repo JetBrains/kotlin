@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.KtToFirMap
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.RawFirNonLocalDeclarationBuilder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.RawFirReplacement
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.buildFileFirAnnotation
-import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.buildFirUserTypeRef
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirResolvableModuleSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirResolvableSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
@@ -37,12 +36,9 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.realPsi
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.transformers.FirTypeResolveTransformer
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirTowerDataContextCollector
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirResolveContextCollector
 import org.jetbrains.kotlin.fir.scopes.createImportingScopes
 import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
-import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
-import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
@@ -211,7 +207,7 @@ object LowLevelFirApiFacadeForResolveOnAir {
         annotationEntry: KtAnnotationEntry,
         replacement: RawFirReplacement,
         firFile: FirFile,
-        collector: FirTowerDataContextCollector? = null,
+        collector: FirResolveContextCollector? = null,
         firResolveSession: LLFirResolvableResolveSession,
     ): FirAnnotation {
         val annotationCall = buildFileFirAnnotation(
@@ -249,7 +245,7 @@ object LowLevelFirApiFacadeForResolveOnAir {
         firResolveSession: LLFirResolvableResolveSession,
         replacement: RawFirReplacement,
         onAirCreatedDeclaration: Boolean,
-        collector: FirTowerDataContextCollector? = null,
+        collector: FirResolveContextCollector? = null,
     ): FirElement {
         val nonLocalDeclaration = replacement.from.onAirGetNonLocalContainingOrThisDeclarationFor()
         val originalFirFile = firResolveSession.getOrBuildFirFile(replacement.from.containingKtFile)

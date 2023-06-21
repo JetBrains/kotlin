@@ -12,7 +12,8 @@ import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirTowerDataContext
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.psi
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirTowerDataContextCollector
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.BodyResolveContext
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirResolveContextCollector
 import org.jetbrains.kotlin.psi.*
 
 interface FirTowerContextProvider {
@@ -27,7 +28,7 @@ internal class FileTowerProvider(
         if (file == ktElement.containingKtFile) context else null
 }
 
-internal class FirTowerDataContextAllElementsCollector : FirTowerDataContextCollector, FirTowerContextProvider {
+internal class FirTowerDataContextAllElementsCollector : FirResolveContextCollector, FirTowerContextProvider {
     private val elementsToContext: MutableMap<KtElement, FirTowerDataContext> = hashMapOf()
 
     override fun addFileContext(file: FirFile, context: FirTowerDataContext) {
@@ -35,15 +36,15 @@ internal class FirTowerDataContextAllElementsCollector : FirTowerDataContextColl
         elementsToContext[ktFile] = context
     }
 
-    override fun addStatementContext(statement: FirStatement, context: FirTowerDataContext) {
+    override fun addStatementContext(statement: FirStatement, context: BodyResolveContext) {
         val closestStatementInBlock = statement.psi?.closestBlockLevelOrInitializerExpression() ?: return
         // FIR body transform may alter the context if there are implicit receivers with smartcast
-        elementsToContext[closestStatementInBlock] = context.createSnapshot()
+        elementsToContext[closestStatementInBlock] = context.towerDataContext.createSnapshot()
     }
 
-    override fun addDeclarationContext(declaration: FirDeclaration, context: FirTowerDataContext) {
+    override fun addDeclarationContext(declaration: FirDeclaration, context: BodyResolveContext) {
         val psi = declaration.psi as? KtElement ?: return
-        elementsToContext[psi] = context
+        elementsToContext[psi] = context.towerDataContext
     }
 
     override fun getClosestAvailableParentContext(ktElement: KtElement): FirTowerDataContext? {
