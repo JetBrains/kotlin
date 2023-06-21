@@ -430,6 +430,12 @@ public class SymbolLightClassesByPsiForSourceTestGenerated extends AbstractSymbo
         }
 
         @Test
+        @TestMetadata("reifiedInlineReturnsObject.kt")
+        public void testReifiedInlineReturnsObject() throws Exception {
+            runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/facades/reifiedInlineReturnsObject.kt");
+        }
+
+        @Test
         @TestMetadata("simpleFunctions.kt")
         public void testSimpleFunctions() throws Exception {
             runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/facades/simpleFunctions.kt");
