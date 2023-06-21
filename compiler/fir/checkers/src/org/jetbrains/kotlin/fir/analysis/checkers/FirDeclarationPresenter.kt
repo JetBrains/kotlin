@@ -203,7 +203,7 @@ interface FirDeclarationPresenter {
         }
         append('<')
         it.typeParameters.forEach {
-            appendRepresentation(it)
+            appendRepresentation(it as FirElement)
             append(',')
         }
         append('>')

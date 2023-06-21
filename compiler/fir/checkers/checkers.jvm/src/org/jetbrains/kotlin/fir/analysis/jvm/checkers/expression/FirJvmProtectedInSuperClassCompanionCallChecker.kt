@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.analysis.jvm.checkers.expression
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.context.findClosest
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirBasicExpressionChecker
@@ -38,7 +39,7 @@ object FirJvmProtectedInSuperClassCompanionCallChecker : FirBasicExpressionCheck
 
         if (dispatchReceiver is FirNoReceiverExpression) return
         val dispatchClassSymbol = dispatchReceiver.typeRef.toRegularClassSymbol(context.session) ?: return
-        val calleeReference = expression.calleeReference
+        val calleeReference = (expression as FirElement).calleeReference
         val resolvedSymbol = calleeReference?.toResolvedCallableSymbol() ?: return
 
         val visibility = if (resolvedSymbol is FirPropertySymbol) {

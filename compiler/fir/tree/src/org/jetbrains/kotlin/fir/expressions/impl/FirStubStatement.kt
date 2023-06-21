@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.expressions.impl
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirElementInterface
 import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirStatement
@@ -32,5 +33,13 @@ object FirStubStatement : FirPureAbstractElement(), FirStatement {
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
         return this
+    }
+
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R {
+        return visitor.visitStubStatement(this, data)
+    }
+
+    override fun <E : FirElementInterface, D> transform(transformer: FirTransformer<D>, data: D): E {
+        return transformer.transformStubStatement(this, data) as E
     }
 }

@@ -60,7 +60,7 @@ class FirScriptConfiguratorExtensionImpl(
                 val endsWithStar = trimmed.endsWith("*")
                 val stripped = if (endsWithStar) trimmed.substring(0, trimmed.length - 1) else trimmed
                 val fqName = FqName.fromSegments(stripped.split("."))
-                fileBuilder.imports += buildImport {
+                fileBuilder.imports += buildImportBase {
                     importedFqName = fqName
                     isAllUnder = endsWithStar
                 }

@@ -140,7 +140,8 @@ class FirRenderer(
     private fun List<FirTypeParameterRef>.renderTypeParameters() {
         if (isNotEmpty()) {
             print("<")
-            renderSeparated(this, visitor)
+            @Suppress("UNCHECKED_CAST")
+            renderSeparated(this as List<FirElement>, visitor)
             print(">")
         }
     }
@@ -175,7 +176,7 @@ class FirRenderer(
             printer.pushIndent()
             visitFileAnnotationsContainer(file.annotationsContainer)
             visitPackageDirective(file.packageDirective)
-            file.imports.forEach { it.accept(this) }
+            file.imports.forEach { (it as FirElement).accept(this) }
             file.declarations.forEach { it.accept(this) }
             printer.popIndent()
         }
@@ -242,8 +243,16 @@ class FirRenderer(
             contextReceiver.typeRef.accept(this)
         }
 
-        override fun visitTypeParameterRef(typeParameterRef: FirTypeParameterRef) {
+        private fun visitTypeParameterRef(typeParameterRef: FirTypeParameterRef) {
             typeParameterRef.symbol.fir.accept(this)
+        }
+
+        override fun visitOuterClassTypeParameterRef(outerClassTypeParameterRef: FirOuterClassTypeParameterRef) {
+            visitTypeParameterRef(outerClassTypeParameterRef)
+        }
+
+        override fun visitConstructedClassTypeParameterRef(constructedClassTypeParameterRef: FirConstructedClassTypeParameterRef) {
+            visitTypeParameterRef(constructedClassTypeParameterRef)
         }
 
         override fun visitMemberDeclaration(memberDeclaration: FirMemberDeclaration) {
@@ -465,7 +474,7 @@ class FirRenderer(
         override fun visitSafeCallExpression(safeCallExpression: FirSafeCallExpression) {
             safeCallExpression.receiver.accept(this)
             print("?.{ ")
-            safeCallExpression.selector.accept(this)
+            (safeCallExpression.selector as FirElement).accept(this)
             print(" }")
         }
 
@@ -477,17 +486,17 @@ class FirRenderer(
             valueParameterRenderer?.renderParameter(valueParameter)
         }
 
-        override fun visitImport(import: FirImport) {
-            visitElement(import)
-        }
+//        override fun visitImport(import: FirImport) {
+//            visitElement(import)
+//        }
 
-        override fun visitStatement(statement: FirStatement) {
-            if (statement is FirStubStatement) {
-                print("[StubStatement]")
-            } else {
-                visitElement(statement)
-            }
-        }
+//        override fun visitStatement(statement: FirStatement) {
+//            if (statement is FirStubStatement) {
+//                print("[StubStatement]")
+//            } else {
+//                visitElement(statement)
+//            }
+//        }
 
         override fun visitReturnExpression(returnExpression: FirReturnExpression) {
             annotationRenderer?.render(returnExpression)
@@ -684,7 +693,7 @@ class FirRenderer(
             print(")")
         }
 
-        override fun visitCall(call: FirCall) {
+        fun visitCall(call: FirCall) {
             callArgumentsRenderer?.renderArguments(call.arguments)
         }
 

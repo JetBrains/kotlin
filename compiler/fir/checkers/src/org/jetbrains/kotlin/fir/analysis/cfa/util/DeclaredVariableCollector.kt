@@ -24,7 +24,7 @@ class DeclaredVariableCollector {
     fun enterCapturingStatement(statement: FirStatement): Set<FirPropertySymbol> {
         assert(statement is FirLoop || statement is FirClass || statement is FirFunction)
         if (statement !in declaredVariablesPerElement) {
-            statement.accept(visitor, null)
+            (statement as FirElement).accept(visitor, null)
         }
         return declaredVariablesPerElement[statement]
     }
@@ -77,7 +77,7 @@ class DeclaredVariableCollector {
         }
 
         private fun visitCapturingStatement(statement: FirStatement, parent: FirStatement?) {
-            visitElement(statement, statement)
+            visitElement(statement as FirElement, statement)
             if (parent != null) {
                 declaredVariablesPerElement.putAll(parent, declaredVariablesPerElement[statement])
             }

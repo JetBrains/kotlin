@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.dfa
 
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirElementInterface
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirNamedReferenceWithCandidateBase
@@ -41,7 +42,7 @@ val FirExpression.coneType: ConeKotlinType
     get() = typeRef.coneType
 
 @DfaInternals
-val FirElement.symbol: FirBasedSymbol<*>?
+val FirElementInterface.symbol: FirBasedSymbol<*>?
     get() = when (this) {
         is FirResolvable -> symbol.unwrapFakeOverridesIfNecessary()
         is FirVariableAssignment -> unwrapLValue()?.symbol
@@ -76,12 +77,12 @@ internal val FirResolvable.symbol: FirBasedSymbol<*>?
     }
 
 @DfaInternals
-fun FirElement.unwrapElement(): FirElement = when (this) {
+fun FirElementInterface.unwrapElement(): FirElement = when (this) {
     is FirWhenSubjectExpression -> whenRef.value.let { it.subjectVariable ?: it.subject }?.unwrapElement() ?: this
     is FirSmartCastExpression -> originalExpression.unwrapElement()
     is FirSafeCallExpression -> selector.unwrapElement()
     is FirCheckedSafeCallSubject -> originalReceiverRef.value.unwrapElement()
     is FirCheckNotNullCall -> argument.unwrapElement()
-    else -> this
+    else -> this as FirElement
 }
 

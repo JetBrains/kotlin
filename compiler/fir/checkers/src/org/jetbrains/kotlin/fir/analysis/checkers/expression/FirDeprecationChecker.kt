@@ -33,6 +33,8 @@ object FirDeprecationChecker : FirBasicExpressionChecker() {
     )
 
     override fun check(expression: FirStatement, context: CheckerContext, reporter: DiagnosticReporter) {
+        require(expression is FirElement)
+
         if (!allowedSourceKinds.contains(expression.source?.kind)) return
         if (expression is FirAnnotation) return // checked by FirDeprecatedTypeChecker
         if (expression.isLhsOfAssignment(context)) return

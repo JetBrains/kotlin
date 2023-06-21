@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirNameConflictsTracker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.impl.FirOuterClassTypeParameterRef
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.scopes.impl.FirPackageMemberScope
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -271,7 +270,7 @@ class FirDeclarationInspector {
                 action(constructor)
             }
 
-            override fun visitDeclarationStatus(declarationStatus: FirDeclarationStatus) {}
+//            override fun visitDeclarationStatus(declarationStatus: FirDeclarationStatus) {}
             override fun visitRegularClass(regularClass: FirRegularClass) {}
             override fun visitProperty(property: FirProperty) {}
             override fun visitSimpleFunction(simpleFunction: FirSimpleFunction) {}

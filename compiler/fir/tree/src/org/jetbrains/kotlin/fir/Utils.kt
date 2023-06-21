@@ -20,6 +20,9 @@ import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.*
 import org.jetbrains.kotlin.fir.types.impl.*
+import org.jetbrains.kotlin.fir.visitors.FirTransformer
+import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.wrapIntoFileAnalysisExceptionIfNeeded
@@ -87,6 +90,9 @@ fun FirElement.renderWithType(): String =
 
 fun FirElement.render(): String =
     FirRenderer().renderElementAsString(this)
+
+fun FirElementInterface.render(): String =
+    FirRenderer().renderElementAsString(this as FirElement)
 
 fun FirDeclarationStatus.copy(
     visibility: Visibility? = this.visibility,
@@ -256,3 +262,15 @@ fun <T> List<T>.smartPlus(other: List<T>): List<T> = when {
 
 // Source element may be missing if the class came from a library
 fun FirVariable.isEnumEntries(containingClass: FirClass) = name == StandardNames.ENUM_ENTRIES && containingClass.isEnumClass
+
+//
+fun <R, D> FirElementInterface.accept(visitor: FirVisitor<R, D>, data: D): R {
+    return (this as FirElement).accept(visitor, data)
+}
+
+fun FirElementInterface.accept(visitor: FirVisitorVoid) = accept(visitor, null)
+
+fun <E : FirElementInterface, D> FirElementInterface.transform(transformer: FirTransformer<D>, data: D): E {
+    return (this as FirElement).transform(transformer, data)
+}
+

@@ -6,11 +6,16 @@
 package org.jetbrains.kotlin.fir.visitors
 
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirElementInterface
 import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.MutableOrEmptyList
 
 fun <T : FirElement, D> T.transformSingle(transformer: FirTransformer<D>, data: D): T {
     return (this as FirPureAbstractElement).transform<T, D>(transformer, data)
+}
+
+fun <T : FirElementInterface, D> T.transformSingle(transformer: FirTransformer<D>, data: D): T {
+    return (this as FirElement).transformSingle(transformer, data) as T
 }
 
 fun <T : FirElement, D> MutableList<T>.transformInplace(transformer: FirTransformer<D>, data: D) {
@@ -22,6 +27,12 @@ fun <T : FirElement, D> MutableList<T>.transformInplace(transformer: FirTransfor
             iterator.set(result)
         }
     }
+}
+
+@JvmName("transformInplaceOnInterface")
+fun <T : FirElementInterface, D> MutableList<T>.transformInplace(transformer: FirTransformer<D>, data: D) {
+    @Suppress("UNCHECKED_CAST")
+    (this as MutableList<FirElement>).transformInplace(transformer, data)
 }
 
 fun <T : FirElement, D> MutableOrEmptyList<T>.transformInplace(transformer: FirTransformer<D>, data: D) {
@@ -47,6 +58,12 @@ inline fun <T : FirElement, D> MutableList<T>.transformInplace(transformer: FirT
             iterator.set(result)
         }
     }
+}
+
+@JvmName("transformInplaceOnInterface")
+inline fun <T : FirElementInterface, D> MutableList<T>.transformInplace(transformer: FirTransformer<D>, dataProducer: (Int) -> TransformData<D>) {
+    @Suppress("UNCHECKED_CAST")
+    (this as MutableList<FirElement>).transformInplace(transformer, dataProducer)
 }
 
 fun <R, D> List<FirElement>.acceptAllElements(visitor: FirVisitor<R, D>, data: D) {

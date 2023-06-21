@@ -5,8 +5,15 @@
 
 package org.jetbrains.kotlin.fir.visitors
 
+import org.jetbrains.kotlin.fir.FirAnnotationContainer
+import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirErrorFunction
+import org.jetbrains.kotlin.fir.declarations.FirImport
+import org.jetbrains.kotlin.fir.declarations.FirImportBase
+import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.impl.FirStubStatement
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.types.*
@@ -105,6 +112,27 @@ abstract class FirDefaultTransformer<D> : FirTransformer<D>() {
 
     override fun transformImplicitInvokeCall(implicitInvokeCall: FirImplicitInvokeCall, data: D): FirStatement {
         return transformFunctionCall(implicitInvokeCall, data)
+    }
+
+    open fun transformDeclarationStatus(declarationStatus: FirDeclarationStatus, data: D): FirDeclarationStatus {
+        return transformElement(declarationStatus as FirElement, data) as FirDeclarationStatus
+    }
+
+    open fun transformAnnotationContainer(annotationContainer: FirAnnotationContainer, data: D): FirAnnotationContainer {
+        return transformElement(annotationContainer as FirElement, data) as FirAnnotationContainer
+    }
+
+    open fun transformImport(import: FirImport, data: D): FirImport {
+        return transformElement(import as FirElement, data) as FirImport
+    }
+
+    /* Redirection fixes */
+    override fun transformDeclarationStatusImpl(declarationStatusImpl: FirDeclarationStatusImpl, data: D): FirDeclarationStatusImpl {
+        return transformDeclarationStatus(declarationStatusImpl, data) as FirDeclarationStatusImpl
+    }
+
+    override fun transformImportBase(importBase: FirImportBase, data: D): FirImport {
+        return transformImport(importBase, data)
     }
 }
 

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.expression
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fakeElement
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.isLhsOfAssignment
 import org.jetbrains.kotlin.fir.declarations.FirProperty
@@ -19,6 +20,7 @@ import org.jetbrains.kotlin.fir.types.coneType
 
 object FirOptInUsageAccessChecker : FirBasicExpressionChecker() {
     override fun check(expression: FirStatement, context: CheckerContext, reporter: DiagnosticReporter) {
+        require(expression is FirElement)
         val sourceKind = expression.source?.kind
         if (sourceKind is KtFakeSourceElementKind.DataClassGeneratedMembers ||
             sourceKind is KtFakeSourceElementKind.PropertyFromParameter

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.renderer
 
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
@@ -33,7 +34,7 @@ class FirBodyRenderer {
                 annotationRenderer?.render(block)
                 printer.renderInBraces {
                     for (statement in additionalStatements + block.statements) {
-                        statement.accept(visitor)
+                        (statement as FirElement).accept(visitor)
                         printer.println()
                     }
                 }

@@ -878,7 +878,7 @@ abstract class FirDataFlowAnalyzer(
             if (operation == null) {
                 flow.addAllStatements(statements)
             } else {
-                val functionCallVariable = variableStorage.getOrCreate(flow, qualifiedAccess)
+                val functionCallVariable = variableStorage.getOrCreate(flow, qualifiedAccess as FirElement)
                 flow.addAllConditionally(OperationStatement(functionCallVariable, operation), statements)
             }
         }

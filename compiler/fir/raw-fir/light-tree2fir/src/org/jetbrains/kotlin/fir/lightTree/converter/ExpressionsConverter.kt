@@ -60,7 +60,7 @@ class ExpressionsConverter(
     context: Context<LighterASTNode> = Context(),
 ) : BaseConverter(session, tree, context) {
 
-    inline fun <reified R : FirElement> getAsFirExpression(expression: LighterASTNode?, errorReason: String = ""): R {
+    inline fun <reified R : FirElementInterface> getAsFirExpression(expression: LighterASTNode?, errorReason: String = ""): R {
         val converted = expression?.let { convertExpression(it, errorReason) }
         return converted as? R
             ?: buildErrorExpression(
@@ -74,7 +74,7 @@ class ExpressionsConverter(
     fun convertExpression(expression: LighterASTNode, errorReason: String): FirElement {
         return when (expression.tokenType) {
             LAMBDA_EXPRESSION -> convertLambdaExpression(expression)
-            BINARY_EXPRESSION -> convertBinaryExpression(expression)
+            BINARY_EXPRESSION -> convertBinaryExpression(expression) as FirElement
             BINARY_WITH_TYPE -> convertBinaryWithTypeRHSExpression(expression) {
                 this.getOperationSymbol().toFirOperation()
             }
@@ -113,7 +113,7 @@ class ExpressionsConverter(
             SUPER_EXPRESSION -> convertSuperExpression(expression)
 
             OBJECT_LITERAL -> declarationsConverter.convertObjectLiteral(expression)
-            FUN -> declarationsConverter.convertFunctionDeclaration(expression)
+            FUN -> declarationsConverter.convertFunctionDeclaration(expression) as FirElement
             DESTRUCTURING_DECLARATION -> declarationsConverter.convertDestructingDeclaration(expression).toFirDestructingDeclaration(baseModuleData)
             else -> buildErrorExpression(null, ConeSimpleDiagnostic(errorReason, DiagnosticKind.ExpressionExpected))
         }

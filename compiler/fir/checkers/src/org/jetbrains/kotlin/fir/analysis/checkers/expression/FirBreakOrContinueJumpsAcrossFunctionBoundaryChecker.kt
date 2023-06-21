@@ -52,7 +52,7 @@ object FirBreakOrContinueJumpsAcrossFunctionBoundaryChecker : FirLoopJumpChecker
                 }
                 is FirBlock -> {
                     for (statement in element.statements) {
-                        if (findPathAndCheck(statement)) {
+                        if (findPathAndCheck(statement as FirElement)) {
                             return true
                         }
                     }

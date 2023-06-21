@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.expressions.impl
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fakeElement
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.MutableOrEmptyList
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
@@ -31,7 +32,7 @@ class FirSingleExpressionBlock(
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }
-        statement.accept(visitor, data)
+        (statement as FirElement).accept(visitor, data)
         typeRef.accept(visitor, data)
     }
 
@@ -46,7 +47,7 @@ class FirSingleExpressionBlock(
     }
 
     override fun <D> transformStatements(transformer: FirTransformer<D>, data: D): FirBlock {
-        statement = statement.transformSingle(transformer, data)
+        statement = (statement as FirElement).transformSingle(transformer, data) as FirStatement
         return this
     }
 

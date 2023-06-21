@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.analysis.js.checkers.declaration
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirFunctionCallChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors
@@ -59,6 +60,7 @@ object FirJsDynamicCallChecker : FirFunctionCallChecker() {
 
     private val FirCall.isArrayAccessWithMultipleIndices: Boolean
         get() {
+            require(this is FirElement)
             val callee = calleeReference as? FirNamedReference
                 ?: return false
 

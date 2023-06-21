@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.scopes.impl
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.builder.buildImport
+import org.jetbrains.kotlin.fir.declarations.builder.buildImportBase
 import org.jetbrains.kotlin.fir.declarations.builder.buildResolvedImport
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.moduleData
@@ -36,7 +36,7 @@ class FirDefaultStarImportingScope(
             ?.filter { it.isAllUnder }
             ?.map {
                 buildResolvedImport {
-                    delegate = buildImport {
+                    delegate = buildImportBase {
                         importedFqName = it.fqName
                         isAllUnder = true
                     }

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirNameConflictsTrackerComponent
 import org.jetbrains.kotlin.fir.analysis.checkers.FirDeclarationInspector
 import org.jetbrains.kotlin.fir.analysis.checkers.checkConflictingElements
@@ -32,7 +33,7 @@ object FirConflictsDeclarationChecker : FirBasicDeclarationChecker() {
             }
             is FirRegularClass -> {
                 if (declaration.source?.kind !is KtFakeSourceElementKind) {
-                    checkConflictingElements(declaration.typeParameters, context, reporter)
+                    checkConflictingElements(declaration.typeParameters as List<FirElement>, context, reporter)
                 }
                 inspector = FirDeclarationInspector()
                 checkRegularClass(declaration, inspector)
@@ -42,7 +43,7 @@ object FirConflictsDeclarationChecker : FirBasicDeclarationChecker() {
                     if (declaration is FirFunction) {
                         checkConflictingElements(declaration.valueParameters, context, reporter)
                     }
-                    checkConflictingElements(declaration.typeParameters, context, reporter)
+                    checkConflictingElements(declaration.typeParameters as List<FirElement>, context, reporter)
                 }
                 return
             }

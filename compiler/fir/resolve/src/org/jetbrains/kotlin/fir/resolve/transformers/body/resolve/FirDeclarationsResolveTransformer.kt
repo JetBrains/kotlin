@@ -98,7 +98,7 @@ open class FirDeclarationsResolveTransformer(
 
     protected fun doTransformTypeParameters(declaration: FirMemberDeclaration) {
         for (typeParameter in declaration.typeParameters) {
-            typeParameter.transformChildren(transformer, ResolutionMode.ContextIndependent)
+            (typeParameter as FirElement).transformChildren(transformer, ResolutionMode.ContextIndependent)
         }
     }
 
