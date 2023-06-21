@@ -191,8 +191,10 @@ internal suspend fun <T : Any> Property<T>.awaitFinalValue(): T? {
  * See also [withRestrictedStages]
  *
  * Will ensure that the given [block] can only execute in the given [stage]
+ * Will wait for the given [stage] if not arrived yet
  */
 internal suspend fun <T> requiredStage(stage: Stage, block: suspend () -> T): T {
+    if (currentKotlinPluginLifecycle().stage < stage) stage.await()
     return withRestrictedStages(hashSetOf(stage), block)
 }
 

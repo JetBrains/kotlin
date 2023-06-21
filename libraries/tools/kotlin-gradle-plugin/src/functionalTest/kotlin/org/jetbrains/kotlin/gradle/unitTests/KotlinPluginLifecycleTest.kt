@@ -459,6 +459,16 @@ class KotlinPluginLifecycleTest {
     }
 
     @Test
+    fun `test - requireStage`() = project.runLifecycleAwareTest {
+        launch {
+            requiredStage(AfterFinaliseDsl) {
+                assertEquals(AfterFinaliseDsl, stage)
+                assertFailsWith<IllegalLifecycleException> { AfterFinaliseDsl.nextOrThrow.await() }
+            }
+        }
+    }
+
+    @Test
     fun `test - withRestrictedStages`() = project.runLifecycleAwareTest {
         launch {
             withRestrictedStages(Stage.upTo(FinaliseRefinesEdges)) {
