@@ -12,14 +12,9 @@
 #include "Porting.h"
 #include "PushOnlyAtomicArray.hpp"
 #include "SplitSharedList.hpp"
+#include "BoundedQueue.hpp"
 
 namespace kotlin {
-
-namespace internal {
-
-enum class ShareOn { kPush, kPop };
-
-} // namespace internal
 
 /**
  * Coordinates a group of workers working in parallel on a large amounts of identical tasks.
@@ -27,103 +22,129 @@ enum class ShareOn { kPush, kPop };
  *
  * Requirements:
  * -  Every instantiated worker must execute `tryPop` sooner or later;
- * -  No worker must be instantiated after at least one other worker has executed `tryPop`
+ * -  Every instantiated worker must finish execution before the destruction of the processor;
  */
-template <std::size_t kMaxWorkers, typename ListImpl, std::size_t kMinSizeToShare, std::size_t kMaxSizeToSteal = kMinSizeToShare / 2, internal::ShareOn kShareOn = internal::ShareOn::kPush>
+template <typename ListImpl, std::size_t kBatchSize, std::size_t kBatchesPoolSize>
 class ParallelProcessor : private Pinned {
-public:
-    static const std::size_t kStealingAttemptCyclesBeforeWait = 4;
-
-    class Worker : private Pinned {
-        friend ParallelProcessor;
+    class Batch {
     public:
-        explicit Worker(ParallelProcessor& dispatcher) : dispatcher_(dispatcher) {
-            dispatcher_.registerWorker(*this);
-        }
-
         ALWAYS_INLINE bool empty() const noexcept {
-            return list_.localEmpty() && list_.sharedEmpty();
+            return elems_.empty();
         }
 
-        ALWAYS_INLINE bool tryPushLocal(typename ListImpl::reference value) noexcept {
-            return list_.tryPushLocal(value);
+        ALWAYS_INLINE bool full() const noexcept {
+            return elemsCount_ == kBatchSize;
+        }
+
+        ALWAYS_INLINE std::size_t elementsCount() const noexcept {
+            return elemsCount_;
         }
 
         ALWAYS_INLINE bool tryPush(typename ListImpl::reference value) noexcept {
-            bool pushed = tryPushLocal(value);
-            if (pushed && kShareOn == internal::ShareOn::kPush) {
-                shareAll();
+            RuntimeAssert(!full(), "Batch overflow");
+            bool pushed = elems_.try_push_front(value);
+            if (pushed) {
+                ++elemsCount_;
             }
             return pushed;
         }
 
-        ALWAYS_INLINE typename ListImpl::pointer tryPopLocal() noexcept {
-            return list_.tryPopLocal();
+        ALWAYS_INLINE typename ListImpl::pointer tryPop() noexcept {
+            auto popped = elems_.try_pop_front();
+            if (popped) {
+                --elemsCount_;
+            }
+            return popped;
         }
 
-        ALWAYS_INLINE typename ListImpl::pointer tryPop() noexcept {
-            while (true) {
-                if (auto popped = tryPopLocal()) {
-                    if (kShareOn == internal::ShareOn::kPop) {
-                        shareAll();
-                    }
-                    return popped;
-                }
-                if (tryAcquireWork()) {
-                    continue;
-                }
-                break;
-            }
-            return nullptr;
+        void transferAllInto(ListImpl& dst) noexcept {
+            dst.splice_after(dst.before_begin(), elems_.before_begin(), elems_.end(), std::numeric_limits<typename ListImpl::size_type>::max());
+            RuntimeAssert(empty(), "All the elements must be transferred");
+            elemsCount_ = 0;
+        }
+
+        void fillFrom(ListImpl& src) noexcept {
+            auto spliced = elems_.splice_after(elems_.before_begin(), src.before_begin(), src.end(), kBatchSize);
+            elemsCount_ = spliced;
         }
 
     private:
-        bool tryTransferFromLocal() noexcept {
-            auto transferred = list_.tryTransferFrom(list_, kMaxSizeToSteal);
-            if (transferred > 0) {
-                RuntimeLogDebug({"balancing"}, "Worker has acquired %zu tasks from itself", transferred);
-                return true;
-            }
-            return false;
+        ListImpl elems_;
+        std::size_t elemsCount_ = 0;
+    };
+
+public:
+    class Worker : private Pinned {
+        friend ParallelProcessor;
+    public:
+        explicit Worker(ParallelProcessor& dispatcher) : dispatcher_(dispatcher) {
+            dispatcher_.registeredWorkers_.fetch_add(1, std::memory_order_relaxed);
+            RuntimeLogDebug({ "balancing" }, "Worker registered");
         }
 
-        bool tryTransferFromCooperating() {
-            for (size_t i = 0; i < kStealingAttemptCyclesBeforeWait; ++i) {
-                for (auto& fromAtomic : dispatcher_.registeredWorkers_) {
-                    auto& from = *fromAtomic.load(std::memory_order_relaxed);
-                    auto transferred = list_.tryTransferFrom(from.list_, kMaxSizeToSteal);
-                    if (transferred > 0) {
-                        RuntimeLogDebug({"balancing"}, "Worker has acquired %zu tasks from %d", transferred, from.carrierThreadId_);
-                        return true;
-                    }
+        ALWAYS_INLINE bool localEmpty() const noexcept {
+            return batch_.empty() && overflowList_.empty();
+        }
+
+        ALWAYS_INLINE bool tryPushLocal(typename ListImpl::reference value) noexcept {
+            return overflowList_.try_push_front(value);
+        }
+
+        ALWAYS_INLINE typename ListImpl::pointer tryPopLocal() noexcept {
+            return overflowList_.try_pop_front();
+        }
+
+        ALWAYS_INLINE bool tryPush(typename ListImpl::reference value) noexcept {
+            if (batch_.full()) {
+                bool released = dispatcher_.releaseBatch(std::move(batch_));
+                if (!released) {
+                    RuntimeLogDebug({ "balancing" }, "Batches pool overflow");
+                    batch_.transferAllInto(overflowList_);
                 }
-                std::this_thread::yield();
+                batch_ = Batch{};
             }
-            return false;
+            return batch_.tryPush(value);
         }
 
-        bool tryAcquireWork() noexcept {
-            if (tryTransferFromLocal()) return true;
-            if (tryTransferFromCooperating()) return true;
+        ALWAYS_INLINE typename ListImpl::pointer tryPop() noexcept {
+            if (batch_.empty()) {
+                while (true) {
+                    bool acquired = dispatcher_.acquireBatch(batch_);
+                    if (!acquired) {
+                        if (!overflowList_.empty()) {
+                            batch_.fillFrom(overflowList_);
+                            RuntimeLogDebug({ "balancing" }, "Acquired %zu elements from the overflow list", batch_.elementsCount());
+                        } else {
+                            bool newWorkAvailable = waitForMoreWork();
+                            if (newWorkAvailable) continue;
+                            return nullptr;
+                        }
+                    }
+                    RuntimeAssert(!batch_.empty(), "Must have acquired some elements");
+                    break;
+                }
+            }
 
-            RuntimeLogDebug({"balancing"}, "Worker has not found a victim to steal from :(");
-
-            return waitForMoreWork();
+            return batch_.tryPop();
         }
 
+    private:
         bool waitForMoreWork() noexcept {
+            RuntimeAssert(batch_.empty(), "Local batch must be depleted before waiting for shared work");
+            RuntimeAssert(overflowList_.empty(), "Local overflow list must be depleted before waiting for shared work");
+
             std::unique_lock lock(dispatcher_.waitMutex_);
 
             auto nowWaiting = dispatcher_.waitingWorkers_.fetch_add(1, std::memory_order_relaxed) + 1;
             RuntimeLogDebug({ "balancing" }, "Worker goes to sleep (now sleeping %zu of %zu)",
-                            nowWaiting, dispatcher_.registeredWorkers_.size());
+                            nowWaiting, dispatcher_.registeredWorkers_.load(std::memory_order_relaxed));
 
             if (dispatcher_.allDone_) {
                 dispatcher_.waitingWorkers_.fetch_sub(1, std::memory_order_relaxed);
                 return false;
             }
 
-            if (nowWaiting == dispatcher_.registeredWorkers_.size()) {
+            if (nowWaiting == dispatcher_.registeredWorkers_.load(std::memory_order_relaxed)) {
                 // we are the last ones awake
                 RuntimeLogDebug({ "balancing" }, "Worker has detected termination");
                 dispatcher_.allDone_ = true;
@@ -143,18 +164,10 @@ public:
             return true;
         }
 
-        void shareAll() noexcept {
-            if (list_.localSize() > kMinSizeToShare) {
-                auto shared = list_.shareAllWith(list_);
-                if (shared > 0) {
-                    dispatcher_.onShare(shared);
-                }
-            }
-        }
-
-        const int carrierThreadId_ = konan::currentThreadId();
         ParallelProcessor& dispatcher_;
-        SplitSharedList<ListImpl> list_;
+
+        Batch batch_;
+        ListImpl overflowList_;
     };
 
     ParallelProcessor() = default;
@@ -164,36 +177,34 @@ public:
     }
 
     size_t registeredWorkers() {
-        return registeredWorkers_.size(std::memory_order_relaxed);
+        return registeredWorkers_.load(std::memory_order_relaxed);
     }
 
 private:
-    void registerWorker(Worker& worker) {
-        RuntimeAssert(worker.empty(), "Work list of an unregistered worker must be empty (e.g. fully depleted earlier)");
-        RuntimeAssert(!allDone_, "Dispatcher must wait for every possible worker to register before finishing the work");
-        RuntimeAssert(!isRegistered(worker), "Task registration is not idempotent");
-
-        registeredWorkers_.push(&worker);
-        RuntimeLogDebug({ "balancing" }, "Worker registered");
-    }
-
-    // Primarily to be used in assertions
-    bool isRegistered(const Worker& worker) const {
-        for (size_t i = 0; i < registeredWorkers_.size(std::memory_order_acquire); ++i) {
-            if (registeredWorkers_[i] == &worker) return true;
+    bool releaseBatch(Batch&& batch) {
+        RuntimeAssert(!batch.empty(), "A batch to release into shared pool must be non-empty");
+        RuntimeLogDebug({ "balancing" }, "Releasing batch of %zu elements", batch.elementsCount());
+        bool shared = sharedBatches_.enqueue(std::move(batch));
+        if (shared) {
+            if (waitingWorkers_.load(std::memory_order_relaxed) > 0) {
+                waitCV_.notify_one();
+            }
         }
-        return false;
+        return shared;
     }
 
-    void onShare(std::size_t sharedAmount) {
-        RuntimeAssert(sharedAmount > 0, "Must have shared something");
-        RuntimeLogDebug({ "balancing" }, "Worker has shared %zu tasks", sharedAmount);
-        if (waitingWorkers_.load(std::memory_order_relaxed) > 0) {
-            waitCV_.notify_all();
+    bool acquireBatch(Batch& dst) {
+        RuntimeAssert(dst.empty(), "Destination batch must be already depleted");
+        bool acquired = sharedBatches_.dequeue(dst);
+        if (acquired) {
+            RuntimeLogDebug({ "balancing" }, "Acquired a batch of %zu elements", dst.elementsCount());
         }
+        return acquired;
     }
 
-    PushOnlyAtomicArray<Worker*, kMaxWorkers, nullptr> registeredWorkers_;
+    BoundedQueue<Batch, kBatchesPoolSize> sharedBatches_;
+
+    std::atomic<size_t> registeredWorkers_ = 0;
     std::atomic<size_t> waitingWorkers_ = 0;
 
     std::atomic<bool> allDone_ = false;
