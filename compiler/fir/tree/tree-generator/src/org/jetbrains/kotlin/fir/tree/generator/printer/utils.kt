@@ -149,6 +149,8 @@ fun Field.getMutableType(forBuilder: Boolean = false, notNull: Boolean = false):
 
 fun Field.call(): String = if (nullable) "?." else "."
 
+fun Field.cast(): String = if (nullable) "as?" else "as"
+
 fun Element.multipleUpperBoundsList(): String {
     return typeArguments.filterIsInstance<TypeArgumentWithMultipleUpperBounds>().takeIf { it.isNotEmpty() }?.let { arguments ->
         val upperBoundsList = arguments.joinToString(", ", postfix = " ") { argument ->

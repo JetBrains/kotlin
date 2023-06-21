@@ -17,7 +17,7 @@ import kotlin.reflect.KProperty
 abstract class AbstractFirTreeBuilder {
     companion object {
         val baseFirElement = Element(
-            "Element",
+            "ElementInterface",
             Element.Kind.Other
         )
 

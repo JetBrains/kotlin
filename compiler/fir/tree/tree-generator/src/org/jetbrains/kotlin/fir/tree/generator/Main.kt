@@ -21,10 +21,12 @@ fun main(args: Array<String>) {
     NodeConfigurator.configureFields()
     detectBaseTransformerTypes(FirTreeBuilder)
     ImplementationConfigurator.configureImplementations()
-    configureInterfacesAndAbstractClasses(FirTreeBuilder)
+
+    val kinds = configureInterfacesAndAbstractClasses(FirTreeBuilder)
+
     BuilderConfigurator.configureBuilders()
     val previouslyGeneratedFiles = collectPreviouslyGeneratedFiles(generationPath)
-    val generatedFiles = generateElements(FirTreeBuilder, generationPath)
+    val generatedFiles = generateElements(FirTreeBuilder, generationPath, kinds)
     generatedFiles.forEach { GeneratorsFileUtil.writeFileIfContentChanged(it.file, it.newText, logNotChanged = false) }
     removeExtraFilesFromPreviousGeneration(previouslyGeneratedFiles, generatedFiles.map { it.file })
 }

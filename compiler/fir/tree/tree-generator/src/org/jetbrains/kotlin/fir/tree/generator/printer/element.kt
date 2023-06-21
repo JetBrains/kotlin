@@ -88,15 +88,17 @@ fun SmartPrinter.printElement(element: Element) {
                 println()
             }
 
-            override()
-            println("fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visit$name(this, data)")
+            if (element != AbstractFirTreeBuilder.baseFirElement && !isInterface) {
+                override()
+                println("fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visit$name(this, data)")
 
-            println()
-            println("@Suppress(\"UNCHECKED_CAST\")")
-            override()
-            println("fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =")
-            withIndent {
-                println("transformer.transform$name(this, data) as E")
+                println()
+                println("@Suppress(\"UNCHECKED_CAST\")")
+                override()
+                println("fun <E : FirElementInterface, D> transform(transformer: FirTransformer<D>, data: D): E =")
+                withIndent {
+                    println("transformer.transform$name(this, data) as E")
+                }
             }
 
             fun Field.replaceDeclaration(override: Boolean, overridenType: Importable? = null, forceNullable: Boolean = false) {
@@ -137,15 +139,15 @@ fun SmartPrinter.printElement(element: Element) {
             }
 
             if (element == AbstractFirTreeBuilder.baseFirElement) {
-                require(isInterface)
-                println()
-                println("fun accept(visitor: FirVisitorVoid) = accept(visitor, null)")
-                println()
-                println("fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D)")
-                println()
-                println("fun acceptChildren(visitor: FirVisitorVoid) = acceptChildren(visitor, null)")
-                println()
-                println("fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement")
+//                require(isInterface)
+//                println()
+//                println("fun accept(visitor: FirVisitorVoid) = accept(visitor, null)")
+//                println()
+//                println("fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D)")
+//                println()
+//                println("fun acceptChildren(visitor: FirVisitorVoid) = acceptChildren(visitor, null)")
+//                println()
+//                println("fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElementInterface")
             }
         }
         println("}")

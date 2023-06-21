@@ -40,6 +40,8 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
     val callableDeclaration by sealedElement(Declaration, memberDeclaration)
     val typeParameterRef by element(Declaration)
     val typeParameter by element(Declaration, typeParameterRef, declaration)
+    val constructedClassTypeParameterRef by element(Declaration, typeParameterRef)
+    val outerClassTypeParameterRef by element(Declaration, typeParameterRef)
 
     val variable by sealedElement(Declaration, callableDeclaration, statement)
     val valueParameter by element(Declaration, variable, controlFlowGraphOwner)
@@ -75,6 +77,7 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
     val diagnosticHolder by element(Diagnostics)
 
     val import by element(Declaration)
+    val importBase by element(Declaration, import)
     val resolvedImport by element(Declaration, import)
     val errorImport by element(Declaration, import, diagnosticHolder)
 

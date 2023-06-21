@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.tree.generator.printer
 
 import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFirTreeBuilder
+import org.jetbrains.kotlin.fir.tree.generator.model.Implementation
 import org.jetbrains.kotlin.generators.util.GeneratorsFileUtil.GENERATED_MESSAGE
 import org.jetbrains.kotlin.util.SmartPrinter
 import java.io.File
@@ -15,10 +16,10 @@ private val COPYRIGHT = File("license/COPYRIGHT_HEADER.txt").readText()
 const val VISITOR_PACKAGE = "org.jetbrains.kotlin.fir.visitors"
 const val BASE_PACKAGE = "org.jetbrains.kotlin.fir"
 
-fun generateElements(builder: AbstractFirTreeBuilder, generationPath: File): List<GeneratedFile> {
+fun generateElements(builder: AbstractFirTreeBuilder, generationPath: File, kinds: Map<String, Implementation.Kind?>): List<GeneratedFile> {
     val generatedFiles = mutableListOf<GeneratedFile>()
     builder.elements.mapTo(generatedFiles) { it.generateCode(generationPath) }
-    builder.elements.flatMap { it.allImplementations }.mapTo(generatedFiles) { it.generateCode(generationPath) }
+    builder.elements.flatMap { it.allImplementations }.mapTo(generatedFiles) { it.generateCode(generationPath, kinds) }
     builder.elements.flatMap { it.allImplementations }.mapNotNull { it.builder }.mapTo(generatedFiles) { it.generateCode(generationPath) }
     builder.intermediateBuilders.mapTo(generatedFiles) { it.generateCode(generationPath) }
 
