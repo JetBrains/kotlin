@@ -170,7 +170,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
             }
             0U
         } else {
-            auxGCThreads ?: 1U // TODO is it a good default?
+            auxGCThreads ?: 0U // TODO is it a good default?
         }
     }
 

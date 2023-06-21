@@ -172,7 +172,7 @@ gc::ConcurrentMarkAndSweep::ConcurrentMarkAndSweep(GCScheduler& gcScheduler,
         GCHandle::getByEpoch(epoch).finalizersDone();
         state_.finalized(epoch);
     })),
-    markDispatcher_(mutatorsCooperate, auxGCThreads),
+    markDispatcher_(mutatorsCooperate),
     mainThread_(createGCThread("Main GC thread", [this] { mainGCThreadBody(); }))
 {
     gcScheduler_.SetScheduleGC([this]() NO_INLINE {
@@ -287,7 +287,7 @@ bool gc::ConcurrentMarkAndSweep::PerformFullGC(int64_t epoch) noexcept {
     gcHandle.finished();
     // This may start a new thread. On some pthreads implementations, this may block waiting for concurrent thread
     // destructors running. So, it must ensured that no locks are held by this point.
-    // TODO: Consider having an alwaing finalizer thread.
+    // TODO: Consider having an always on sleeping finalizer thread.
     finalizerProcessor_->ScheduleTasks(std::move(finalizerQueue), epoch);
     return true;
 }
@@ -298,7 +298,7 @@ void gc::ConcurrentMarkAndSweep::reconfigure(std::size_t maxParallelism, bool mu
         return;
     }
     std::unique_lock mainGCLock(gcMutex);
-    markDispatcher_.reset(maxParallelism, mutatorsCooperate, [this] { auxThreads_.clear(); }, auxGCThreads);
+    markDispatcher_.reset(maxParallelism, mutatorsCooperate, [this] { auxThreads_.clear(); });
     for (std::size_t i = 0; i < auxGCThreads; ++i) {
         auxThreads_.emplace_back(createGCThread("Auxiliary GC thread", [this] { auxiliaryGCThreadBody(); }));
     }

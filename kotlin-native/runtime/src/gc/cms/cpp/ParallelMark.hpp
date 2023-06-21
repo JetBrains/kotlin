@@ -70,10 +70,9 @@ private:
  * Mark workers are able to balance work between each other through sharing/stealing.
  */
 class ParallelMark : private Pinned {
-    static constexpr std::size_t kMaxWorkers = 1024;
     using MarkStackImpl = intrusive_forward_list<ObjectData>;
     // work balancing parameters were chosen pretty arbitrary
-    using ParallelProcessor = ParallelProcessor<kMaxWorkers, MarkStackImpl, 256, 128, kotlin::internal::ShareOn::kPop>;
+    using ParallelProcessor = ParallelProcessor<MarkStackImpl, 512, 4096>;
 public:
     class MarkTraits {
     public:
@@ -81,7 +80,7 @@ public:
         using ObjectFactory = ObjectData::ObjectFactory;
 
         static void clear(MarkQueue& queue) noexcept {
-            RuntimeAssert(queue.empty(), "Mark queue must be empty");
+            RuntimeAssert(queue.localEmpty(), "Mark queue must be empty");
         }
 
         static ALWAYS_INLINE ObjHeader* tryDequeue(MarkQueue& queue) noexcept {
@@ -110,7 +109,7 @@ public:
         }
     };
 
-    ParallelMark(bool mutatorsCooperate, std::size_t auxWorkersPoolSize);
+    ParallelMark(bool mutatorsCooperate);
 
     void beginMarkingEpoch(gc::GCHandle gcHandle);
     void waitForThreadsPauseMutation() noexcept;
@@ -135,17 +134,17 @@ public:
     bool shutdownRequested() const;
 
     template<typename Pred>
-    void reset(std::size_t maxParallelism, bool mutatorsCooperate, Pred waitForWorkersToFinish, std::size_t auxWorkersPoolSize) {
+    void reset(std::size_t maxParallelism, bool mutatorsCooperate, Pred waitForWorkersToFinish) {
         pacer_.begin(MarkPacer::Phase::kShutdown);
-        waitForWorkersToFinish();
+        waitForWorkersToFinish(); // TODO do we have to?
         pacer_.begin(MarkPacer::Phase::kIdle);
-        setParallelismLevel(maxParallelism, mutatorsCooperate, auxWorkersPoolSize);
+        setParallelismLevel(maxParallelism, mutatorsCooperate);
     }
 
 private:
     GCHandle& gcHandle();
 
-    void setParallelismLevel(size_t maxParallelism, bool mutatorsCooperate, std::size_t auxWorkersPoolSize);
+    void setParallelismLevel(size_t maxParallelism, bool mutatorsCooperate);
 
     template <typename Pred>
     bool allMutators(Pred predicate) noexcept {
@@ -169,16 +168,79 @@ private:
     std::size_t maxParallelism_ = 1;
     bool mutatorsCooperate_ = false;
 
-    // additional sync step to give auxiliary workers a chance to participate mark
-    std::size_t auxWorkersPoolSize_ = 0;
-    std::atomic<std::size_t> auxWorkersCount_ = 0;
-
     GCHandle gcHandle_ = GCHandle::invalid();
     MarkPacer pacer_;
     std::optional<mm::ThreadRegistry::Iterable> lockedMutatorsList_;
     ManuallyScoped<ParallelProcessor> parallelProcessor_;
-    std::mutex workerCreationMutex_;
-    std::atomic<std::size_t> activeWorkersCount_ = 0;
+
+    /**
+     * Keeps track of active workers count and of mark dispatcher's ability to register new workers.
+     * Forbids registration of excessive workers.
+     * Forbids registration of any workers, when they are no longer needed.
+     */
+    class WorkersRegistry {
+        // Any negative value of `count_` denotes that the registration is disabled.
+        constexpr static const auto kDisabled = std::numeric_limits<int>::min();
+    public:
+        void reset(int initialCount, int max) noexcept {
+            RuntimeAssert(initialCount > 0, "Implementation requires initial count to be positive");
+            max_ = max;
+            auto prev = count_.exchange(initialCount, std::memory_order_relaxed);
+            RuntimeAssert(prev < 0, "Can't reset non-disabled registry");
+        }
+
+        std::size_t count() const noexcept {
+            // TODO what if disabled?
+            return count_.load(std::memory_order_relaxed);
+        }
+
+        bool disabled() const noexcept {
+            return count_.load(std::memory_order_relaxed) < 0;
+        }
+
+        bool allTheWorkersHaveDeregistered() const noexcept {
+            // i.e. disabled or 0 workers
+            return count_.load(std::memory_order_relaxed) <= 0;
+        }
+
+        void disable() noexcept {
+            auto prev = count_.exchange(kDisabled, std::memory_order_relaxed);
+            RuntimeAssert(prev >= 0, "Should have been enabled");
+        }
+
+        bool tryRegister() noexcept {
+            auto prev = count_.fetch_add(1, std::memory_order_relaxed);
+            RuntimeAssert(prev != -1, "Counter have overflowed");
+            if (prev < 0) {
+                // Disabled. Deny registration. Do not mess with the counter, as it might be re-enabled any moment.
+                return false;
+            }
+            if (prev >= max_) {
+                // Already enough workers registered.
+                // Deny new registration. Restore the correct count.
+                deregister();
+                return false;
+            }
+            if (prev == 0) {
+                // All the workers have unregistered, but the registry have not yet been disabled.
+                // Dispatcher thread might still be waiting for the counter to become 0.
+                // Deny new registration. Restore the correct count.
+                deregister();
+                return false;
+            }
+            return true;
+        }
+
+        void deregister() noexcept {
+            auto prev = count_.fetch_sub(1, std::memory_order_relaxed);
+            RuntimeAssert(prev > 0, "The deregistered worker should have benn counted");
+        }
+    private:
+        std::atomic<int> count_ = kDisabled;
+        int max_ = 0;
+    };
+
+    WorkersRegistry workersRegistry_;
 };
 
 } // namespace kotlin::gc::mark

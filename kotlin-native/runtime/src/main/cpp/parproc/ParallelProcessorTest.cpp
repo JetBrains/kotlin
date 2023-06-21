@@ -66,10 +66,9 @@ void offerWork(WorkList& wl, Iterable& batch) {
     }
 }
 
-constexpr auto kMaxWorkers = kDefaultThreadCount * 2;
 using ListImpl = intrusive_forward_list<Task>;
-static constexpr auto kMinSizeToShare = 256;
-using Processor = ParallelProcessor<kMaxWorkers, ListImpl, kMinSizeToShare>;
+static constexpr auto kBatchSize = 256;
+using Processor = ParallelProcessor<ListImpl, kBatchSize, 1024>;
 using Worker = typename Processor::Worker;
 
 } // namespace
@@ -99,34 +98,18 @@ TEST(ParallelProcessorTest, ContededRegistration) {
     workers.clear();
 }
 
-TEST(ParallelProcessorTest, UncontendedStealing) {
+TEST(ParallelProcessorTest, Sharing) {
     Processor processor;
     Worker giver(processor);
     Worker taker(processor);
 
-    auto work = workBatch(kMinSizeToShare * 2);
+    auto work = workBatch(kBatchSize * 2);
     offerWork(giver, work);
 
-    EXPECT_TRUE(taker.empty());
+    EXPECT_TRUE(taker.localEmpty());
 
     // have to steal from giver
     EXPECT_NE(taker.tryPop(), nullptr);
 
-    EXPECT_FALSE(taker.empty());
-}
-
-TEST(ParallelProcessorTest, ShareOnPop) {
-    using ShareOnPopProcessor = ParallelProcessor<kMaxWorkers, ListImpl, kMinSizeToShare, kMinSizeToShare / 2, kotlin::internal::ShareOn::kPop>;
-    ShareOnPopProcessor processor;
-    ShareOnPopProcessor::Worker giver(processor);
-    ShareOnPopProcessor::Worker taker(processor);
-
-    auto work = workBatch(kMinSizeToShare * 2);
-    offerWork(giver, work);
-
-    // triggers sharing
-    EXPECT_NE(giver.tryPop(), nullptr);
-
-    // steals
-    EXPECT_NE(taker.tryPop(), nullptr);
+    EXPECT_FALSE(taker.localEmpty());
 }
