@@ -1,4 +1,6 @@
 $TESTDATA_DIR$/enumEntriesForJavaNotEnabled.kt
+-language-version
+1.9
 -XXLanguage\:-EnumEntries
 -d
 $TEMP_DIR$
