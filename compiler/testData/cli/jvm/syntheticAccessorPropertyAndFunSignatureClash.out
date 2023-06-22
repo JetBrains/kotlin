@@ -1,23 +1,23 @@
-compiler/testData/cli/jvm/syntheticAccessorPropertyAndFunSignatureClash.kt:3:7: error: platform declaration clash: The following declarations have the same JVM signature (access$getFoo$p(LA;)I):
+compiler/testData/cli/jvm/syntheticAccessorPropertyAndFunSignatureClash.kt:3:1: error: platform declaration clash: The following declarations have the same JVM signature (access$getFoo$p(LA;)I):
     fun `access$getFoo$p`(`$this`: A): Int defined in A
     fun `access$getFoo$p`(a: A): Int defined in A
 class A {
-      ^
-compiler/testData/cli/jvm/syntheticAccessorPropertyAndFunSignatureClash.kt:3:7: error: platform declaration clash: The following declarations have the same JVM signature (access$setFoo$p(LA;I)V):
+^
+compiler/testData/cli/jvm/syntheticAccessorPropertyAndFunSignatureClash.kt:3:1: error: platform declaration clash: The following declarations have the same JVM signature (access$setFoo$p(LA;I)V):
     fun `access$setFoo$p`(`$this`: A, `<set-?>`: Int): Unit defined in A
     fun `access$setFoo$p`(a: A, d: Int): Unit defined in A
 class A {
-      ^
-compiler/testData/cli/jvm/syntheticAccessorPropertyAndFunSignatureClash.kt:3:7: error: platform declaration clash: The following declarations have the same JVM signature (access$getFoo(LA;)I):
+^
+compiler/testData/cli/jvm/syntheticAccessorPropertyAndFunSignatureClash.kt:3:1: error: platform declaration clash: The following declarations have the same JVM signature (access$getFoo(LA;)I):
     fun `access$getFoo`(`$this`: A): Int defined in A
     fun `access$getFoo`(a: A): Int defined in A
 class A {
-      ^
-compiler/testData/cli/jvm/syntheticAccessorPropertyAndFunSignatureClash.kt:3:7: error: platform declaration clash: The following declarations have the same JVM signature (access$setFoo(LA;I)V):
+^
+compiler/testData/cli/jvm/syntheticAccessorPropertyAndFunSignatureClash.kt:3:1: error: platform declaration clash: The following declarations have the same JVM signature (access$setFoo(LA;I)V):
     fun `access$setFoo`(`$this`: A, i: Int): Unit defined in A
     fun `access$setFoo`(a: A, d: Int): Unit defined in A
 class A {
-      ^
+^
 compiler/testData/cli/jvm/syntheticAccessorPropertyAndFunSignatureClash.kt:6:5: error: platform declaration clash: The following declarations have the same JVM signature (access$getFoo$p(LA;)I):
     fun `access$getFoo$p`(`$this`: A): Int defined in A
     fun `access$getFoo$p`(a: A): Int defined in A
