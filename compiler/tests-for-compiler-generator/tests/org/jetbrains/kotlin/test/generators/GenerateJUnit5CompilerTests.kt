@@ -331,6 +331,10 @@ fun generateJUnit5CompilerTests(args: Array<String>) {
                 model("diagnostics/testsWithJvmBackend", excludedPattern = excludedCustomTestdataPattern)
             }
 
+            testClass<AbstractFirLightTreeDiagnosticsTestWithJvmIrBackend> {
+                model("diagnostics/testsWithJvmBackend", excludedPattern = excludedCustomTestdataPattern)
+            }
+
             testClass<AbstractFirLightTreeSerializeCompileKotlinAgainstInlineKotlinTest> {
                 model("codegen/boxInline")
             }

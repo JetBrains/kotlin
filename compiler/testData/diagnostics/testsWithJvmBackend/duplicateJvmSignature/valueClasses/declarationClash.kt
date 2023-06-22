@@ -1,3 +1,4 @@
+// COMPARE_WITH_LIGHT_TREE
 // !LANGUAGE: +ValueClasses
 // WITH_STDLIB
 

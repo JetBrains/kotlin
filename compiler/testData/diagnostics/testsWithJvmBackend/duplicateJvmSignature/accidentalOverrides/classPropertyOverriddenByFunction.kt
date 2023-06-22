@@ -1,4 +1,5 @@
-// FIR_IDENTICAL
+// COMPARE_WITH_LIGHT_TREE
+
 open class B {
     val x: Int
         get() = 1

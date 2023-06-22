@@ -1,4 +1,4 @@
-// FIR_IDENTICAL
+// COMPARE_WITH_LIGHT_TREE
 
 interface T1 {
     fun getX() = 1

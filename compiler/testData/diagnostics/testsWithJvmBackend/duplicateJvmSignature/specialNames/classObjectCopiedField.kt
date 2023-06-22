@@ -1,4 +1,5 @@
-// FIR_IDENTICAL
+// COMPARE_WITH_LIGHT_TREE
+
 class C {
     companion object {
         val X = 1

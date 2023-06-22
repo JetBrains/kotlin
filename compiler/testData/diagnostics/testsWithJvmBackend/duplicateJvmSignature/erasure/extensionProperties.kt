@@ -1,3 +1,5 @@
+// COMPARE_WITH_LIGHT_TREE
+
 class G<T>
 
 val <T> G<T>.foo: Int

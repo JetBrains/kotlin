@@ -1,0 +1,8 @@
+// COMPARE_WITH_LIGHT_TREE
+// !LANGUAGE: +InlineClasses, -JvmInlineValueClasses
+// !DIAGNOSTICS: -UNUSED_PARAMETER
+
+inline class IC(val i: Int)
+
+<!CONFLICTING_JVM_DECLARATIONS{LT}!><!CONFLICTING_JVM_DECLARATIONS{PSI}!>fun foo(a: Any, ic: IC)<!> {}<!>
+<!CONFLICTING_JVM_DECLARATIONS{LT}!><!CONFLICTING_JVM_DECLARATIONS{PSI}!>fun foo(a: Any?, ic: IC)<!> {}<!>

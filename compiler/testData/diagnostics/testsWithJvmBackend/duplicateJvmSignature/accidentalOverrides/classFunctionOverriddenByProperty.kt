@@ -1,3 +1,5 @@
+// COMPARE_WITH_LIGHT_TREE
+
 open class B {
     fun getX() = 1
 }

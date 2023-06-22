@@ -15,7 +15,10 @@ import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.KtDefaultJvmErrorMessages
+import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives
+import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
+import org.jetbrains.kotlin.test.directives.model.singleOrZeroValue
 import org.jetbrains.kotlin.test.frontend.classic.handlers.ClassicDiagnosticReporter
 import org.jetbrains.kotlin.test.frontend.classic.handlers.withNewInferenceModeEnabled
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticCodeMetaInfo
@@ -57,11 +60,13 @@ class JvmBackendDiagnosticsHandler(testServices: TestServices) : JvmBinaryArtifa
     private fun reportKtDiagnostics(module: TestModule, info: BinaryArtifacts.Jvm) {
         val ktDiagnosticReporter = info.classFileFactory.generationState.diagnosticReporter as BaseDiagnosticsCollector
         val globalMetadataInfoHandler = testServices.globalMetadataInfoHandler
+        val firParser = module.directives.singleOrZeroValue(FirDiagnosticsDirectives.FIR_PARSER)
+        val lightTreeComparingModeEnabled = firParser != null && FirDiagnosticsDirectives.COMPARE_WITH_LIGHT_TREE in module.directives
+        val lightTreeEnabled = firParser == FirParser.LightTree
         for (testFile in module.files) {
             val ktDiagnostics = ktDiagnosticReporter.diagnosticsByFilePath["/${testFile.name}"] ?: continue
             ktDiagnostics.forEach {
-                val metaInfos =
-                    it.toMetaInfos(module, testFile, globalMetadataInfoHandler, false, false)
+                val metaInfos = it.toMetaInfos(module, testFile, globalMetadataInfoHandler, lightTreeEnabled, lightTreeComparingModeEnabled)
                 globalMetadataInfoHandler.addMetadataInfosForFile(testFile, metaInfos)
             }
         }

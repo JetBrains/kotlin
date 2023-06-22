@@ -1,4 +1,4 @@
-// FIR_IDENTICAL
+// COMPARE_WITH_LIGHT_TREE
 // !LANGUAGE: +InlineClasses, -JvmInlineValueClasses
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 

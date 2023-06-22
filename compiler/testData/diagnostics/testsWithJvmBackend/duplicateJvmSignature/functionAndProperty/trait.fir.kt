@@ -1,5 +1,7 @@
+// COMPARE_WITH_LIGHT_TREE
+
 interface T {
-    <!CONFLICTING_JVM_DECLARATIONS!>val x: Int<!>
-        get() = 1
-    <!CONFLICTING_JVM_DECLARATIONS!>fun getX()<!> = 1
+    <!CONFLICTING_JVM_DECLARATIONS{LT}!><!CONFLICTING_JVM_DECLARATIONS{PSI}!>val x: Int<!>
+        get() = 1<!>
+    <!CONFLICTING_JVM_DECLARATIONS{LT}!><!CONFLICTING_JVM_DECLARATIONS{PSI}!>fun getX()<!> = 1<!>
 }

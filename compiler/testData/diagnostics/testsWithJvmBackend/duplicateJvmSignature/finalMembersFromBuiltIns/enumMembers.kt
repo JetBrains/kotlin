@@ -1,3 +1,5 @@
+// COMPARE_WITH_LIGHT_TREE
+
 enum class E {
     ENTRY;
 

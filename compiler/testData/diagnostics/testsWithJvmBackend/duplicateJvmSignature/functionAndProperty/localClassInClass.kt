@@ -1,4 +1,5 @@
-// FIR_IDENTICAL
+// COMPARE_WITH_LIGHT_TREE
+
 class Outer {
     fun foo() {
         class C {

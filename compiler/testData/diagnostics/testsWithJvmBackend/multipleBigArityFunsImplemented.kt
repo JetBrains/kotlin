@@ -1,4 +1,4 @@
-// FIR_IDENTICAL
+// COMPARE_WITH_LIGHT_TREE
 
 class <!CONFLICTING_INHERITED_JVM_DECLARATIONS!>Fun<!> :
         (Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int,

@@ -1,0 +1,14 @@
+// COMPARE_WITH_LIGHT_TREE
+
+<!CONFLICTING_JVM_DECLARATIONS{LT}, CONFLICTING_JVM_DECLARATIONS{LT}!>enum class <!CONFLICTING_JVM_DECLARATIONS{PSI}, CONFLICTING_JVM_DECLARATIONS{PSI}!>A<!> {
+    A1,
+    A2;
+
+    <!CONFLICTING_JVM_DECLARATIONS{LT}!><!CONFLICTING_JVM_DECLARATIONS{PSI}!>fun valueOf(s: String): A<!> = valueOf(s)<!>
+
+    fun valueOf() = "OK"
+
+    <!CONFLICTING_JVM_DECLARATIONS{LT}!><!CONFLICTING_JVM_DECLARATIONS{PSI}!>fun values(): Array<A><!> = null!!<!>
+
+    fun values(x: String) = x
+}<!>
