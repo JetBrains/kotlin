@@ -326,6 +326,8 @@
 /libraries/tools/kotlin-gradle-plugin-idea-for-compatibility-tests/ "Kotlin Build Tools"
 /libraries/tools/kotlin-gradle-plugin-idea-proto/ "Kotlin Build Tools"
 /libraries/tools/kotlin-gradle-plugin-integration-tests/ "Kotlin Build Tools"
+/libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/resources/testProject/new-mpp-wasm-*/ "Kotlin Build Tools" "Kotlin Wasm"
+/libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/resources/testProject/wasm-*/ "Kotlin Build Tools" "Kotlin Wasm"
 /libraries/tools/kotlin-gradle-plugin-model/ "Kotlin Build Tools"
 /libraries/tools/kotlin-gradle-plugin-npm-versions-codegen/ Ilya.Goncharov
 /libraries/tools/kotlin-gradle-plugin-test-utils-embeddable/ "Kotlin Build Tools"
