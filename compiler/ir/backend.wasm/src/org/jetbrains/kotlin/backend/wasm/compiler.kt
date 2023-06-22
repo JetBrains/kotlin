@@ -193,7 +193,7 @@ fun WasmCompiledModuleFragment.generateAsyncJsWrapper(
         .sorted()
         .joinToString("") {
             val moduleSpecifier = it.toJsStringLiteral()
-            "        $moduleSpecifier: await _importModule($moduleSpecifier),\n"
+            "        $moduleSpecifier: imports[$moduleSpecifier] ?? await import($moduleSpecifier),\n"
         }
 
     val referencesToQualifiedAndImportedDeclarations = jsModuleAndQualifierReferences
@@ -205,7 +205,7 @@ fun WasmCompiledModuleFragment.generateAsyncJsWrapper(
                 append(it.jsVariableName)
                 append(" = ")
                 if (module != null) {
-                    append("(await _importModule(${module.toJsStringLiteral()}))")
+                    append("(imports[${module.toJsStringLiteral()}] ?? await import(${module.toJsStringLiteral()}))")
                     if (qualifier != null)
                         append(".")
                 }
@@ -230,10 +230,6 @@ export async function instantiate(imports={}, runInitializer=true) {
         if (cachedBox !== void 0) return cachedBox;
         externrefBoxes.set(ref, ifNotCached);
         return ifNotCached;
-    }
-    
-    async function _importModule(x) { 
-        return imports[x] ?? await import(x);
     }
 
 $referencesToQualifiedAndImportedDeclarations
