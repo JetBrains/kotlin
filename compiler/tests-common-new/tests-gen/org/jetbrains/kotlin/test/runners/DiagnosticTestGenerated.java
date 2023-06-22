@@ -14209,6 +14209,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("ImportFromCurrentWithDifferentNameComplex.kt")
+            public void testImportFromCurrentWithDifferentNameComplex() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/imports/ImportFromCurrentWithDifferentNameComplex.kt");
+            }
+
+            @Test
             @TestMetadata("ImportFromObject.kt")
             public void testImportFromObject() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/imports/ImportFromObject.kt");
