@@ -47,13 +47,6 @@ class TemporaryDirectoryManagerImpl(testServices: TestServices) : TemporaryDirec
         }
     }
 
-    @Suppress("removal")
-    fun finalize() {
-        if (rootTempDir.isInitialized() && rootDir.exists()) {
-            error("The temporary directory $rootDir has not been deleted by the time the corresponding ${this::class.simpleName} is finalized.")
-        }
-    }
-
     companion object {
         private val onWindows: Boolean = System.getProperty("os.name").lowercase(Locale.getDefault()).contains("windows")
 
