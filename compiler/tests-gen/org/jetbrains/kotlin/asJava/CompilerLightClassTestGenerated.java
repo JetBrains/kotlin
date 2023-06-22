@@ -94,6 +94,16 @@ public class CompilerLightClassTestGenerated extends AbstractCompilerLightClassT
         runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/DataClassWithCustomImplementedMembers.kt");
     }
 
+    @TestMetadata("defaultMethodInKotlinWithSettingAll.kt")
+    public void testDefaultMethodInKotlinWithSettingAll() throws Exception {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/defaultMethodInKotlinWithSettingAll.kt");
+    }
+
+    @TestMetadata("defaultMethodInKotlinWithSettingAllCompatibility.kt")
+    public void testDefaultMethodInKotlinWithSettingAllCompatibility() throws Exception {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/defaultMethodInKotlinWithSettingAllCompatibility.kt");
+    }
+
     @TestMetadata("DelegatedNested.kt")
     public void testDelegatedNested() throws Exception {
         runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/DelegatedNested.kt");

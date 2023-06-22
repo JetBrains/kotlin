@@ -69,11 +69,12 @@ internal open class SymbolLightClassForInterface : SymbolLightClassForInterfaceO
         }
     }
 
-    private val jvmDefaultMode =
+    private val jvmDefaultMode: JvmDefaultMode by lazyPub {
         (ktModule as? KtSourceModule)
             ?.languageVersionSettings
             ?.getFlag(JvmAnalysisFlags.jvmDefaultMode)
             ?: JvmDefaultMode.DEFAULT
+    }
 
     context(KtAnalysisSession)
     protected open fun acceptCallableSymbol(symbol: KtCallableSymbol): Boolean =

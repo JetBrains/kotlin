@@ -103,6 +103,18 @@ public class SymbolLightClassesByFqNameForLibraryTestGenerated extends AbstractS
     }
 
     @Test
+    @TestMetadata("defaultMethodInKotlinWithSettingAll.kt")
+    public void testDefaultMethodInKotlinWithSettingAll() throws Exception {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/defaultMethodInKotlinWithSettingAll.kt");
+    }
+
+    @Test
+    @TestMetadata("defaultMethodInKotlinWithSettingAllCompatibility.kt")
+    public void testDefaultMethodInKotlinWithSettingAllCompatibility() throws Exception {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/defaultMethodInKotlinWithSettingAllCompatibility.kt");
+    }
+
+    @Test
     @TestMetadata("DelegatedNested.kt")
     public void testDelegatedNested() throws Exception {
         runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/DelegatedNested.kt");

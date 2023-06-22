@@ -1,5 +1,6 @@
-// COMPILER_ARGUMENTS: -Xjvm-default=all-compatibility
-// !JVM_DEFAULT_MODE: all-compatibility
+// KtInterface
+// COMPILER_ARGUMENTS: -Xjvm-default=all
+// !JVM_DEFAULT_MODE: all
 
 interface KtInterface {
     fun defaultFun() {

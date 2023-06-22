@@ -1,3 +1,4 @@
+// KtInterface
 // COMPILER_ARGUMENTS: -Xjvm-default=all-compatibility
 // !JVM_DEFAULT_MODE: all-compatibility
 

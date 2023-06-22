@@ -9,5 +9,8 @@ interface KtInterface {
     fun withoutBody()
 
     private fun privateFun() {}
+
+    private val prop: Int
+        get() = 1
 }
 
