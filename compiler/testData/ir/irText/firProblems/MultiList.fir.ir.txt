@@ -33,7 +33,7 @@ FILE fqName:<root> fileName:/MultiList.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun copy (value: T of <root>.Some): <root>.Some<T of <root>.Some> declared in <root>.Some'
           CONSTRUCTOR_CALL 'public constructor <init> (value: T of <root>.Some) declared in <root>.Some' type=<root>.Some<T of <root>.Some> origin=null
-            <class: T>: kotlin.Any
+            <class: T>: T of <root>.Some
             value: GET_VAR 'value: T of <root>.Some declared in <root>.Some.copy' type=T of <root>.Some origin=null
     FUN GENERATED_DATA_CLASS_MEMBER name:equals visibility:public modality:OPEN <> ($this:<root>.Some<T of <root>.Some>, other:kotlin.Any?) returnType:kotlin.Boolean [operator]
       overridden:

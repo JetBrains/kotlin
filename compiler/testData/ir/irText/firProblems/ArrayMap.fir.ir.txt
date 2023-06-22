@@ -742,7 +742,7 @@ FILE fqName:<root> fileName:/ArrayMap.kt
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun copy (key: kotlin.Int, value: T of <root>.ArrayMapImpl.Entry): <root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl.Entry> declared in <root>.ArrayMapImpl.Entry'
             CONSTRUCTOR_CALL 'public constructor <init> (key: kotlin.Int, value: T of <root>.ArrayMapImpl.Entry) declared in <root>.ArrayMapImpl.Entry' type=<root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl.Entry> origin=null
-              <class: T>: kotlin.Any
+              <class: T>: T of <root>.ArrayMapImpl.Entry
               key: GET_VAR 'key: kotlin.Int declared in <root>.ArrayMapImpl.Entry.copy' type=kotlin.Int origin=null
               value: GET_VAR 'value: T of <root>.ArrayMapImpl.Entry declared in <root>.ArrayMapImpl.Entry.copy' type=T of <root>.ArrayMapImpl.Entry origin=null
       FUN GENERATED_DATA_CLASS_MEMBER name:equals visibility:public modality:OPEN <> ($this:<root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl.Entry>, other:kotlin.Any?) returnType:kotlin.Boolean [operator]

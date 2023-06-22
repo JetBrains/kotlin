@@ -57,7 +57,7 @@ FILE fqName:<root> fileName:/dataClassMembers.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun copy (x: T of <root>.Test, y: kotlin.String): <root>.Test<T of <root>.Test> declared in <root>.Test'
           CONSTRUCTOR_CALL 'public constructor <init> (x: T of <root>.Test, y: kotlin.String) declared in <root>.Test' type=<root>.Test<T of <root>.Test> origin=null
-            <class: T>: kotlin.Any
+            <class: T>: T of <root>.Test
             x: GET_VAR 'x: T of <root>.Test declared in <root>.Test.copy' type=T of <root>.Test origin=null
             y: GET_VAR 'y: kotlin.String declared in <root>.Test.copy' type=kotlin.String origin=null
     FUN GENERATED_DATA_CLASS_MEMBER name:equals visibility:public modality:OPEN <> ($this:<root>.Test<T of <root>.Test>, other:kotlin.Any?) returnType:kotlin.Boolean [operator]

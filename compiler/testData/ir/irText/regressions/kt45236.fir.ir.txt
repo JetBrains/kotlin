@@ -75,7 +75,7 @@ FILE fqName:<root> fileName:/kt45236.kt
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun copy (error: kotlin.Throwable, value: T of <root>.NetRequestStatus.Error?): <root>.NetRequestStatus.Error<T of <root>.NetRequestStatus.Error> declared in <root>.NetRequestStatus.Error'
             CONSTRUCTOR_CALL 'public constructor <init> (error: kotlin.Throwable, value: T of <root>.NetRequestStatus.Error?) declared in <root>.NetRequestStatus.Error' type=<root>.NetRequestStatus.Error<T of <root>.NetRequestStatus.Error> origin=null
-              <class: T>: kotlin.Any
+              <class: T>: T of <root>.NetRequestStatus.Error
               error: GET_VAR 'error: kotlin.Throwable declared in <root>.NetRequestStatus.Error.copy' type=kotlin.Throwable origin=null
               value: GET_VAR 'value: T of <root>.NetRequestStatus.Error? declared in <root>.NetRequestStatus.Error.copy' type=T of <root>.NetRequestStatus.Error? origin=null
       FUN GENERATED_DATA_CLASS_MEMBER name:equals visibility:public modality:OPEN <> ($this:<root>.NetRequestStatus.Error<T of <root>.NetRequestStatus.Error>, other:kotlin.Any?) returnType:kotlin.Boolean [operator]

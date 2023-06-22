@@ -292,7 +292,7 @@ internal class ArrayMapImpl<T : Any> : ArrayMap<T> {
     }
 
     fun copy(key: Int = <this>.#key, value: T = <this>.#value): Entry<T> {
-      return Entry<Any>(key = key, value = value)
+      return Entry<T>(key = key, value = value)
     }
 
     override operator fun equals(other: Any?): Boolean {

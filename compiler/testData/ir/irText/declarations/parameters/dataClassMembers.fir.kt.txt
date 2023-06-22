@@ -22,7 +22,7 @@ data class Test<T : Any?> {
   }
 
   fun copy(x: T = <this>.#x, y: String = <this>.#y): Test<T> {
-    return Test<Any>(x = x, y = y)
+    return Test<T>(x = x, y = y)
   }
 
   override operator fun equals(other: Any?): Boolean {

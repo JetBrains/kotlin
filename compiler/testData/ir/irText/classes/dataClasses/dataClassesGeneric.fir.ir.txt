@@ -33,7 +33,7 @@ FILE fqName:<root> fileName:/dataClassesGeneric.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun copy (x: T of <root>.Test1): <root>.Test1<T of <root>.Test1> declared in <root>.Test1'
           CONSTRUCTOR_CALL 'public constructor <init> (x: T of <root>.Test1) declared in <root>.Test1' type=<root>.Test1<T of <root>.Test1> origin=null
-            <class: T>: kotlin.Any
+            <class: T>: T of <root>.Test1
             x: GET_VAR 'x: T of <root>.Test1 declared in <root>.Test1.copy' type=T of <root>.Test1 origin=null
     FUN GENERATED_DATA_CLASS_MEMBER name:equals visibility:public modality:OPEN <> ($this:<root>.Test1<T of <root>.Test1>, other:kotlin.Any?) returnType:kotlin.Boolean [operator]
       overridden:
@@ -133,7 +133,7 @@ FILE fqName:<root> fileName:/dataClassesGeneric.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun copy (x: T of <root>.Test2): <root>.Test2<T of <root>.Test2> declared in <root>.Test2'
           CONSTRUCTOR_CALL 'public constructor <init> (x: T of <root>.Test2) declared in <root>.Test2' type=<root>.Test2<T of <root>.Test2> origin=null
-            <class: T>: kotlin.Any
+            <class: T>: T of <root>.Test2
             x: GET_VAR 'x: T of <root>.Test2 declared in <root>.Test2.copy' type=T of <root>.Test2 origin=null
     FUN GENERATED_DATA_CLASS_MEMBER name:equals visibility:public modality:OPEN <> ($this:<root>.Test2<T of <root>.Test2>, other:kotlin.Any?) returnType:kotlin.Boolean [operator]
       overridden:
@@ -224,7 +224,7 @@ FILE fqName:<root> fileName:/dataClassesGeneric.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun copy (x: kotlin.collections.List<T of <root>.Test3>): <root>.Test3<T of <root>.Test3> declared in <root>.Test3'
           CONSTRUCTOR_CALL 'public constructor <init> (x: kotlin.collections.List<T of <root>.Test3>) declared in <root>.Test3' type=<root>.Test3<T of <root>.Test3> origin=null
-            <class: T>: kotlin.Any
+            <class: T>: T of <root>.Test3
             x: GET_VAR 'x: kotlin.collections.List<T of <root>.Test3> declared in <root>.Test3.copy' type=kotlin.collections.List<T of <root>.Test3> origin=null
     FUN GENERATED_DATA_CLASS_MEMBER name:equals visibility:public modality:OPEN <> ($this:<root>.Test3<T of <root>.Test3>, other:kotlin.Any?) returnType:kotlin.Boolean [operator]
       overridden:

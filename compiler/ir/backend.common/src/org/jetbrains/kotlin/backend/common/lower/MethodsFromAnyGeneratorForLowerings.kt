@@ -6,9 +6,6 @@
 package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.BackendContext
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.ir.builders.IrGeneratorContextBase
 import org.jetbrains.kotlin.ir.builders.declarations.addFunction
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
@@ -54,29 +51,21 @@ open class LoweringDataClassMemberGenerator(
     origin: IrDeclarationOrigin,
     forbidDirectFieldAccess: Boolean = false
 ) :
-    DataClassMembersGenerator(
+    IrBasedDataClassMembersGenerator(
         IrGeneratorContextBase(backendContext.irBuiltIns),
         backendContext.ir.symbols.externalSymbolTable,
         irClass,
         irClass.kotlinFqName,
         origin,
-        forbidDirectFieldAccess
+        forbidDirectFieldAccess,
     ) {
-
-    override fun declareSimpleFunction(startOffset: Int, endOffset: Int, functionDescriptor: FunctionDescriptor): IrFunction {
-        error("Descriptor API shouldn't be used in lowerings")
-    }
 
     override fun generateSyntheticFunctionParameterDeclarations(irFunction: IrFunction) {
         // no-op — irFunction from lowering should already have necessary parameters
     }
 
-    override fun getProperty(parameter: ValueParameterDescriptor?, irValueParameter: IrValueParameter?): IrProperty? {
-        error("Descriptor API shouldn't be used in lowerings")
-    }
-
-    override fun transform(typeParameterDescriptor: TypeParameterDescriptor): IrType {
-        error("Descriptor API shouldn't be used in lowerings")
+    override fun getProperty(irValueParameter: IrValueParameter?): IrProperty {
+        error("This API shouldn't be used in lowerings")
     }
 
     override fun getHashCodeFunctionInfo(type: IrType): HashCodeFunctionInfo {

@@ -35,7 +35,7 @@ FILE fqName:<root> fileName:/typeAliasWithUnsafeVariance.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun copy (action: kotlin.Function1<RenderingT of <root>.Tag, kotlin.Unit>): <root>.Tag<RenderingT of <root>.Tag> declared in <root>.Tag'
           CONSTRUCTOR_CALL 'public constructor <init> (action: kotlin.Function1<RenderingT of <root>.Tag, kotlin.Unit>) declared in <root>.Tag' type=<root>.Tag<RenderingT of <root>.Tag> origin=null
-            <class: RenderingT>: kotlin.Any
+            <class: RenderingT>: RenderingT of <root>.Tag
             action: GET_VAR 'action: kotlin.Function1<RenderingT of <root>.Tag, kotlin.Unit> declared in <root>.Tag.copy' type=kotlin.Function1<RenderingT of <root>.Tag, kotlin.Unit> origin=null
     FUN GENERATED_DATA_CLASS_MEMBER name:equals visibility:public modality:OPEN <> ($this:<root>.Tag<RenderingT of <root>.Tag>, other:kotlin.Any?) returnType:kotlin.Boolean [operator]
       overridden:

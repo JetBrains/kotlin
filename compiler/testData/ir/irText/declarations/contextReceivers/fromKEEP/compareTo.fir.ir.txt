@@ -56,8 +56,8 @@ FILE fqName:<root> fileName:/compareTo.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun copy (first: A of <root>.Pair, second: B of <root>.Pair): <root>.Pair<A of <root>.Pair, B of <root>.Pair> declared in <root>.Pair'
           CONSTRUCTOR_CALL 'public constructor <init> (first: A of <root>.Pair, second: B of <root>.Pair) declared in <root>.Pair' type=<root>.Pair<A of <root>.Pair, B of <root>.Pair> origin=null
-            <class: A>: kotlin.Any
-            <class: B>: kotlin.Any
+            <class: A>: A of <root>.Pair
+            <class: B>: B of <root>.Pair
             first: GET_VAR 'first: A of <root>.Pair declared in <root>.Pair.copy' type=A of <root>.Pair origin=null
             second: GET_VAR 'second: B of <root>.Pair declared in <root>.Pair.copy' type=B of <root>.Pair origin=null
     FUN GENERATED_DATA_CLASS_MEMBER name:equals visibility:public modality:OPEN <> ($this:<root>.Pair<A of <root>.Pair, B of <root>.Pair>, other:kotlin.Any?) returnType:kotlin.Boolean [operator]

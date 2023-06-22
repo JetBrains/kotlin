@@ -22,7 +22,7 @@ data class Pair<A : Any?, B : Any?> {
   }
 
   fun copy(first: A = <this>.#first, second: B = <this>.#second): Pair<A, B> {
-    return Pair<Any, Any>(first = first, second = second)
+    return Pair<A, B>(first = first, second = second)
   }
 
   override operator fun equals(other: Any?): Boolean {

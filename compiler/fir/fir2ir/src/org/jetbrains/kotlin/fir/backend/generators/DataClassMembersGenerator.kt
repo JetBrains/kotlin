@@ -6,12 +6,16 @@
 package org.jetbrains.kotlin.fir.backend.generators
 
 import org.jetbrains.kotlin.builtins.StandardNames.HASHCODE_NAME
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.backend.FirMetadataSource
 import org.jetbrains.kotlin.fir.backend.declareThisReceiverParameter
 import org.jetbrains.kotlin.fir.containingClassLookupTag
-import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
@@ -67,32 +71,25 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) : Fir2IrCompon
         val lookupTag: ConeClassLikeLookupTag,
         val origin: IrDeclarationOrigin
     ) {
-        private val irDataClassMembersGenerator = object : DataClassMembersGenerator(
+        private val irDataClassMembersGenerator = object : IrBasedDataClassMembersGenerator(
             IrGeneratorContextBase(components.irBuiltIns),
             components.symbolTable,
             irClass,
             irClass.kotlinFqName,
-            origin
+            origin,
+            forbidDirectFieldAccess = false
         ) {
-            override fun declareSimpleFunction(startOffset: Int, endOffset: Int, functionDescriptor: FunctionDescriptor): IrFunction {
-                throw IllegalStateException("Not expect to see function declaration.")
-            }
 
             override fun generateSyntheticFunctionParameterDeclarations(irFunction: IrFunction) {
                 // TODO
             }
 
-            override fun getProperty(parameter: ValueParameterDescriptor?, irValueParameter: IrValueParameter?): IrProperty? =
+            override fun getProperty(irValueParameter: IrValueParameter?): IrProperty =
                 irValueParameter?.let {
                     irClass.properties.single { irProperty ->
                         irProperty.name == irValueParameter.name && irProperty.backingField?.type == irValueParameter.type
                     }
-                }
-
-            override fun transform(typeParameterDescriptor: TypeParameterDescriptor): IrType {
-                // TODO
-                return components.irBuiltIns.anyType
-            }
+                } ?: error("Property for parameter $irValueParameter")
 
             inner class Fir2IrHashCodeFunctionInfo(override val symbol: IrSimpleFunctionSymbol) : HashCodeFunctionInfo {
                 override fun commitSubstituted(irMemberAccessExpression: IrMemberAccessExpression<*>) {
@@ -219,7 +216,7 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) : Fir2IrCompon
             irFunction.origin = origin
             val index = DataClassResolver.getComponentIndex(irFunction.name.asString())
             val valueParameter = irClass.primaryConstructor!!.valueParameters[index - 1]
-            val irProperty = irDataClassMembersGenerator.getProperty(null, valueParameter)!!
+            val irProperty = irDataClassMembersGenerator.getProperty(valueParameter)
             irDataClassMembersGenerator.generateComponentFunction(irFunction, irProperty)
         }
 

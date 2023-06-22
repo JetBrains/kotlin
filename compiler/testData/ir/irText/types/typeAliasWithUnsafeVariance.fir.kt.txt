@@ -15,7 +15,7 @@ data class Tag<out RenderingT : Any?> {
   }
 
   fun copy(action: Function1<RenderingT, Unit> = <this>.#action): Tag<RenderingT> {
-    return Tag<Any>(action = action)
+    return Tag<RenderingT>(action = action)
   }
 
   override operator fun equals(other: Any?): Boolean {
