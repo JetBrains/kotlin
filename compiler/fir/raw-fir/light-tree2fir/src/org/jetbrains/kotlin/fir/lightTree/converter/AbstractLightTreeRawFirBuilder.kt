@@ -99,7 +99,7 @@ abstract class AbstractLightTreeRawFirBuilder(
     }
 
     override fun LighterASTNode.getChildNodeByType(type: IElementType): LighterASTNode? {
-        return this.getChildNodesByType(type).firstOrNull()
+        return getChildrenAsArray().firstOrNull { it?.tokenType == type }
     }
 
     override val LighterASTNode?.receiverExpression: LighterASTNode?
