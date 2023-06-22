@@ -151,8 +151,20 @@ open class IncrementalCompilationJsMultiProjectIT : BaseIncrementalCompilationMu
     }
 }
 
-class IncrementalCompilationJsMultiProjectWithPreciseBackupIT : IncrementalCompilationJsMultiProjectIT() {
+open class IncrementalCompilationJsMultiProjectWithPreciseBackupIT : IncrementalCompilationJsMultiProjectIT() {
     override val defaultBuildOptions = super.defaultBuildOptions.copy(usePreciseOutputsBackup = true, keepIncrementalCompilationCachesInMemory = true)
+}
+
+class IncrementalCompilationFirJsMultiProject : IncrementalCompilationJsMultiProjectIT() {
+    override val defaultBuildOptions = super.defaultBuildOptions.copy(
+        languageVersion = "2.0"
+    )
+}
+
+class IncrementalCompilationFirJsMultiProjectWithPreciseBackupIT : IncrementalCompilationJsMultiProjectWithPreciseBackupIT() {
+    override val defaultBuildOptions = super.defaultBuildOptions.copy(
+        languageVersion = "2.0"
+    )
 }
 
 @JvmGradlePluginTests
