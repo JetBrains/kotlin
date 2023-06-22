@@ -1,4 +1,3 @@
-warning: language version 2.0 is experimental, there are no backwards compatibility guarantees for new language and library features
 compiler/testData/cli/jvm/plugins/multiplePlugins.kt:11:17: error:
     inner class Inner(val s: String)
                 ^

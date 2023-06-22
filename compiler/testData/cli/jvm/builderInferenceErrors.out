@@ -1,20 +1,4 @@
-compiler/testData/cli/jvm/builderInferenceErrors.kt:6:9: error: overload resolution ambiguity:
-public inline fun println(message: Any?): Unit defined in kotlin.io
-public inline fun println(message: Boolean): Unit defined in kotlin.io
-public inline fun println(message: Byte): Unit defined in kotlin.io
-public inline fun println(message: Char): Unit defined in kotlin.io
-public inline fun println(message: CharArray): Unit defined in kotlin.io
-public inline fun println(message: Double): Unit defined in kotlin.io
-public inline fun println(message: Float): Unit defined in kotlin.io
-public inline fun println(message: Int): Unit defined in kotlin.io
-public inline fun println(message: Long): Unit defined in kotlin.io
-public inline fun println(message: Short): Unit defined in kotlin.io
+compiler/testData/cli/jvm/builderInferenceErrors.kt:6:9: error: overload resolution ambiguity between candidates: [@InlineOnly() fun println(message: Any?): Unit, @InlineOnly() fun println(message: Boolean): Unit, @InlineOnly() fun println(message: Byte): Unit, ...]
         println(secondParameter)
         ^
-compiler/testData/cli/jvm/builderInferenceErrors.kt:6:9: error: no type argument for type parameter(s) `E` of the `buildList` builder specified. Cannot choose which overloaded function `println` to call. To disambiguate this call, either use an explicit type cast for a parameter or a receiver (see specific errors on them) or specify the type `E` explicitly.
-        println(secondParameter)
-        ^
-compiler/testData/cli/jvm/builderInferenceErrors.kt:6:17: error: the type of an argument hasn't been inferred yet. To disambiguate this call, explicitly cast it to `String` if you want the builder's type parameter(s) `E` to be inferred to `String`.
-        println(secondParameter)
-                ^
 COMPILATION_ERROR
