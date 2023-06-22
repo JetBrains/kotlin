@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
+import kotlin.test.assertNotNull
 
 @DisplayName("Configuration cache")
 class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
@@ -72,7 +73,8 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
         project("new-mpp-lib-and-app/sample-lib", gradleVersion) {
             val publishedTargets = listOf("kotlinMultiplatform", "jvm6", "nodeJs", "linux64", "mingw64")
             testConfigurationCacheOf(
-                *(publishedTargets.map { ":publish${it.replaceFirstChar { it.uppercaseChar() }}PublicationToMavenRepository" }.toTypedArray()),
+                *(publishedTargets.map { ":publish${it.replaceFirstChar { it.uppercaseChar() }}PublicationToMavenRepository" }
+                    .toTypedArray()),
                 checkUpToDateOnRebuild = false
             )
         }
@@ -171,9 +173,8 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
     @GradleTest
     fun testJvmWithJavaConfigurationCache(gradleVersion: GradleVersion) {
         project("mppJvmWithJava", gradleVersion) {
-            build("jar")
-
-            build("jar") {
+            build("jvmWithJavaJar")
+            build("jvmWithJavaJar") {
                 assertOutputContains("Reusing configuration cache.")
             }
         }
@@ -233,7 +234,7 @@ abstract class AbstractConfigurationCacheIT : KGPBaseTest() {
         vararg taskNames: String,
         executedTaskNames: List<String>? = null,
         checkUpToDateOnRebuild: Boolean = true,
-        buildOptions: BuildOptions = this.buildOptions
+        buildOptions: BuildOptions = this.buildOptions,
     ) {
         assertSimpleConfigurationCacheScenarioWorks(
             *taskNames,
