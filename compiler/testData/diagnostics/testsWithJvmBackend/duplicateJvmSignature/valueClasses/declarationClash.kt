@@ -1,6 +1,5 @@
 // !LANGUAGE: +ValueClasses
 // WITH_STDLIB
-// TARGET_BACKEND: JVM_IR
 
 @JvmInline
 value class A(val x: Int, val y: Int) {

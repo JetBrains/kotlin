@@ -1,5 +1,4 @@
 // FIR_IDENTICAL
-// TARGET_BACKEND: JVM_IR
 
 class B {
     companion object <!REDECLARATION!>A<!> {

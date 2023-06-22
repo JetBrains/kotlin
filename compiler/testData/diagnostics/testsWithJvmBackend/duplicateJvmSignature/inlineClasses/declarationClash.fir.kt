@@ -1,5 +1,4 @@
 // WITH_STDLIB
-// TARGET_BACKEND: JVM_IR
 
 @JvmInline
 value class A<!CONFLICTING_JVM_DECLARATIONS!>(val x: Int)<!> {

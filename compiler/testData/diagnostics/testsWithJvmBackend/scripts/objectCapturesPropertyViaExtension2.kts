@@ -1,5 +1,5 @@
 // !RENDER_DIAGNOSTICS_FULL_TEXT
-// TARGET_BACKEND: JVM_IR
+
 
 // see KT-49443
 // two similar examples check dependency on declarations ordering

@@ -1,5 +1,4 @@
 // FIR_IDENTICAL
-// TARGET_BACKEND: JVM_IR
 
 object O {
     val INSTANCE: O = null!!

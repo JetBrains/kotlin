@@ -1,5 +1,3 @@
-// TARGET_BACKEND: JVM_IR
-
 interface T {
     val x: Int
         <!CONFLICTING_JVM_DECLARATIONS!>get()<!> = 1

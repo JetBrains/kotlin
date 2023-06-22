@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// TARGET_BACKEND: JVM_IR
+
 interface T {
     val x: Int
         get() = 1

@@ -1,6 +1,5 @@
 // FIR_IDENTICAL
 // !DIAGNOSTICS: -UNUSED_PARAMETER
-// TARGET_BACKEND: JVM_IR
 
 public open class A<T> {
     fun foo(x: T) = "O"

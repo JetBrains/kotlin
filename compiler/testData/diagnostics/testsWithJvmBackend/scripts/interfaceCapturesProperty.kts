@@ -1,5 +1,5 @@
 // !RENDER_DIAGNOSTICS_FULL_TEXT
-// TARGET_BACKEND: JVM_IR
+
 
 fun foo() = B().bar()
 

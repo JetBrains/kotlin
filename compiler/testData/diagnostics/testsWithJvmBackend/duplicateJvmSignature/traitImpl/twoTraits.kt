@@ -1,5 +1,4 @@
 // FIR_IDENTICAL
-// TARGET_BACKEND: JVM_IR
 
 interface T1 {
     fun getX() = 1

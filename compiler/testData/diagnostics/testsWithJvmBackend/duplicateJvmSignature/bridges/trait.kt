@@ -1,6 +1,5 @@
 // FIR_IDENTICAL
 // !DIAGNOSTICS: -UNUSED_PARAMETER
-// TARGET_BACKEND: JVM_IR
 
 interface B<T> {
     fun foo(t: T) {}

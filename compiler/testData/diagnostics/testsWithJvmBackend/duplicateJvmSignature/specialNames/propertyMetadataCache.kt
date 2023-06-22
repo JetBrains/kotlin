@@ -1,6 +1,5 @@
 // FIR_IDENTICAL
 // !DIAGNOSTICS: -UNUSED_PARAMETER
-// TARGET_BACKEND: JVM_IR
 
 import kotlin.reflect.KProperty
 
