@@ -1,0 +1,11 @@
+/jvm.kt:(83,90): warning: All annotations from `expect` must be presented with same arguments on `actual`, otherwise they have no effect.
+Expected: @Ann() public final expect class OnClass : Any
+Actual: public final actual class OnClass : Any
+
+/jvm.kt:(131,139): warning: All annotations from `expect` must be presented with same arguments on `actual`, otherwise they have no effect.
+Expected: @Ann() public final expect fun onMember(): Unit
+Actual: public final actual fun onMember(): Unit
+
+/jvm.kt:(210,222): warning: All annotations from `expect` must be presented with same arguments on `actual`, otherwise they have no effect.
+Expected: @Ann() public final expect class ViaTypealias : Any
+Actual: public final class ViaTypealiasImpl : Any

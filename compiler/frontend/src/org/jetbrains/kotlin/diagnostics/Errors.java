@@ -840,6 +840,8 @@ public interface Errors {
     DiagnosticFactory0<KtNamedDeclaration> EXPECT_ACTUAL_OPT_IN_ANNOTATION = DiagnosticFactory0.create(ERROR, EXPECT_ACTUAL_MODIFIER);
     DiagnosticFactory1<KtTypeAlias, ClassId> ACTUAL_TYPEALIAS_TO_SPECIAL_ANNOTATION =
             DiagnosticFactory1.create(ERROR, TYPEALIAS_TYPE_REFERENCE);
+    DiagnosticFactory2<KtNamedDeclaration, DeclarationDescriptor, DeclarationDescriptor> ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT
+            = DiagnosticFactory2.create(WARNING, DECLARATION_NAME_ONLY);
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

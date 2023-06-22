@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
 import org.jetbrains.kotlin.resolve.*
+import org.jetbrains.kotlin.resolve.calls.mpp.AbstractExpectActualAnnotationMatchChecker
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.isAnnotationConstructor
 import org.jetbrains.kotlin.resolve.descriptorUtil.isPrimaryConstructorOfInlineClass
@@ -338,9 +339,11 @@ class ExpectedActualDeclarationChecker(
                 checkOptInAnnotation(reportOn, descriptor, expected, trace)
             }
         }
-        val expectSingleCandidate = compatibility.values.singleOrNull()?.singleOrNull()
+        // We want to report errors even if a candidate is incompatible, but it's single
+        val expectSingleCandidate = (compatibility[Compatible] ?: compatibility.values.singleOrNull())?.singleOrNull()
         if (expectSingleCandidate != null) {
             checkIfExpectHasDefaultArgumentsAndActualizedWithTypealias(expectSingleCandidate, reportOn, trace)
+            checkAnnotationsMatch(expectSingleCandidate, descriptor, reportOn, trace)
         }
     }
 
@@ -441,6 +444,24 @@ class ExpectedActualDeclarationChecker(
         ) {
             trace.report(Errors.EXPECT_ACTUAL_OPT_IN_ANNOTATION.on(reportOn))
         }
+    }
+
+    private fun checkAnnotationsMatch(
+        expectDescriptor: MemberDescriptor,
+        actualDescriptor: MemberDescriptor,
+        reportOn: KtNamedDeclaration,
+        trace: BindingTrace
+    ) {
+        val context = ClassicExpectActualMatchingContext(actualDescriptor.module)
+        val incompatibility =
+            AbstractExpectActualAnnotationMatchChecker.areAnnotationsCompatible(expectDescriptor, actualDescriptor, context) ?: return
+        trace.report(
+            Errors.ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT.on(
+                reportOn,
+                incompatibility.expectSymbol as DeclarationDescriptor,
+                incompatibility.actualSymbol as DeclarationDescriptor
+            )
+        )
     }
 
     companion object {

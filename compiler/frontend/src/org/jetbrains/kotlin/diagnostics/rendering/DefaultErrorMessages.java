@@ -396,6 +396,11 @@ public class DefaultErrorMessages {
         MAP.put(ACTUAL_TYPEALIAS_TO_SPECIAL_ANNOTATION,
                 "`actual typealias` to annotation which affects code compilation can lead to incorrect behavior. Instead, use ''{0}'' annotation directly.",
                 TO_STRING);
+        MAP.put(ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT,
+                "All annotations from `expect` must be presented with same arguments on `actual`, otherwise they have no effect.\n" +
+                "    Expected: {0}\n" +
+                "    Actual: {1}",
+                DESCRIPTOR_WITH_ANNOTATIONS, DESCRIPTOR_WITH_ANNOTATIONS);
 
         MAP.put(PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT, "Projections are not allowed on type arguments of functions and properties");
         MAP.put(SUPERTYPE_NOT_INITIALIZED, "This type has a constructor, and thus must be initialized here");

@@ -51,6 +51,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ABSTRACT_PROPERTY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ABSTRACT_SUPER_CALL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ABSTRACT_SUPER_CALL_WARNING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ACCESSOR_FOR_DELEGATED_PROPERTY
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ACTUAL_ANNOTATION_CONFLICTING_DEFAULT_ARGUMENT_VALUE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ACTUAL_MISSING
@@ -1853,6 +1854,13 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             ACTUAL_TYPEALIAS_TO_SPECIAL_ANNOTATION,
             "`actual typealias` to annotation which affects code compilation can lead to incorrect behavior. Instead, use ''{0}'' annotation directly.",
             TO_STRING
+        )
+        map.put(
+            ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT,
+            "All annotations from `expect` must be presented with same arguments on `actual`, otherwise they have no effect.\n" +
+                    "Expected: {0}\n" +
+                    "Actual: {1}",
+            FirDiagnosticRenderers.SYMBOL_WITH_ANNOTATIONS, FirDiagnosticRenderers.SYMBOL_WITH_ANNOTATIONS
         )
 
         // Destructuring declaration

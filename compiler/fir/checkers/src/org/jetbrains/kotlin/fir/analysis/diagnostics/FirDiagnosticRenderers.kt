@@ -178,4 +178,14 @@ object FirDiagnosticRenderers {
     }
 
     val FUNCTIONAL_TYPE_KINDS = KtDiagnosticRenderers.COLLECTION(FUNCTIONAL_TYPE_KIND)
+
+    @OptIn(SymbolInternals::class)
+    val SYMBOL_WITH_ANNOTATIONS = Renderer { s: FirBasedSymbol<*> ->
+        FirRenderer(
+            typeRenderer = ConeTypeRenderer(),
+            idRenderer = ConeIdShortRenderer(),
+            classMemberRenderer = null,
+            bodyRenderer = null,
+        ).renderElementAsString(s.fir, trim = true)
+    }
 }

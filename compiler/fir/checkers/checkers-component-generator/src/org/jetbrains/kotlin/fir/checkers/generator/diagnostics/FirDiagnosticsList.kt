@@ -1180,6 +1180,11 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val ACTUAL_TYPEALIAS_TO_SPECIAL_ANNOTATION by error<KtTypeAlias>(PositioningStrategy.TYPEALIAS_TYPE_REFERENCE) {
             parameter<ClassId>("typealiasedClassId")
         }
+
+        val ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT by warning<KtElement>(PositioningStrategy.DECLARATION_NAME_ONLY) {
+            parameter<Symbol>("expect")
+            parameter<Symbol>("actual")
+        }
     }
 
     val DESTRUCTING_DECLARATION by object : DiagnosticGroup("Destructuring declaration") {

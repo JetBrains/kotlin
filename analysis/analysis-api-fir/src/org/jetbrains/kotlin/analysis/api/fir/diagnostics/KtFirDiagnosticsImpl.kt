@@ -2952,6 +2952,13 @@ internal class ActualTypealiasToSpecialAnnotationImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<KtTypeAlias>(firDiagnostic, token), KtFirDiagnostic.ActualTypealiasToSpecialAnnotation
 
+internal class ActualAnnotationsNotMatchExpectImpl(
+    override val expect: KtSymbol,
+    override val actual: KtSymbol,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KtFirDiagnostic.ActualAnnotationsNotMatchExpect
+
 internal class InitializerRequiredForDestructuringDeclarationImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,

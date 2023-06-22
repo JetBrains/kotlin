@@ -22751,6 +22751,100 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Nested
+            @TestMetadata("compiler/testData/diagnostics/tests/multiplatform/annotationMatching")
+            @TestDataPath("$PROJECT_ROOT")
+            public class AnnotationMatching {
+                @Test
+                public void testAllFilesPresentInAnnotationMatching() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/multiplatform/annotationMatching"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+                }
+
+                @Test
+                @TestMetadata("annotationArgumentsConstExpressions.kt")
+                public void testAnnotationArgumentsConstExpressions() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/annotationArgumentsConstExpressions.kt");
+                }
+
+                @Test
+                @TestMetadata("annotationArgumentsDefaults.kt")
+                public void testAnnotationArgumentsDefaults() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/annotationArgumentsDefaults.kt");
+                }
+
+                @Test
+                @TestMetadata("annotationTypeParameters.kt")
+                public void testAnnotationTypeParameters() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/annotationTypeParameters.kt");
+                }
+
+                @Test
+                @TestMetadata("basicOnDeclaration.kt")
+                public void testBasicOnDeclaration() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/basicOnDeclaration.kt");
+                }
+
+                @Test
+                @TestMetadata("checkDiagnosticFullText.kt")
+                public void testCheckDiagnosticFullText() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/checkDiagnosticFullText.kt");
+                }
+
+                @Test
+                @TestMetadata("compatibleOverrides.kt")
+                public void testCompatibleOverrides() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/compatibleOverrides.kt");
+                }
+
+                @Test
+                @TestMetadata("differentOrder.kt")
+                public void testDifferentOrder() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/differentOrder.kt");
+                }
+
+                @Test
+                @TestMetadata("floatNumbersComparison.kt")
+                public void testFloatNumbersComparison() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/floatNumbersComparison.kt");
+                }
+
+                @Test
+                @TestMetadata("kclassArgWithExpectClass.kt")
+                public void testKclassArgWithExpectClass() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/kclassArgWithExpectClass.kt");
+                }
+
+                @Test
+                @TestMetadata("kotlinAnaloguesForJavaAnnotations.kt")
+                public void testKotlinAnaloguesForJavaAnnotations() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/kotlinAnaloguesForJavaAnnotations.kt");
+                }
+
+                @Test
+                @TestMetadata("typealias.kt")
+                public void testTypealias() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/typealias.kt");
+                }
+
+                @Test
+                @TestMetadata("typealiasToJavaLibrary.kt")
+                public void testTypealiasToJavaLibrary() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/typealiasToJavaLibrary.kt");
+                }
+
+                @Test
+                @TestMetadata("typealiasToKtLibrary.kt")
+                public void testTypealiasToKtLibrary() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/typealiasToKtLibrary.kt");
+                }
+
+                @Test
+                @TestMetadata("withOtherIncomatibilities.kt")
+                public void testWithOtherIncomatibilities() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/withOtherIncomatibilities.kt");
+                }
+            }
+
+            @Nested
             @TestMetadata("compiler/testData/diagnostics/tests/multiplatform/defaultArguments")
             @TestDataPath("$PROJECT_ROOT")
             public class DefaultArguments {

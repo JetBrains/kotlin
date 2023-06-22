@@ -11,12 +11,13 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirExpectActualMatchingContext
 import org.jetbrains.kotlin.fir.FirExpectActualMatchingContextFactory
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.declarations.collectEnumEntries
-import org.jetbrains.kotlin.fir.declarations.isAnnotationConstructor
+import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
+import org.jetbrains.kotlin.fir.expressions.FirConstExpression
+import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.isSubstitutionOrIntersectionOverride
 import org.jetbrains.kotlin.fir.resolve.*
+import org.jetbrains.kotlin.fir.resolve.dfa.coneType
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.mpp.*
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.calls.mpp.ExpectActualMatchingContext.AnnotationCallInfo
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.TypeCheckerState
 import org.jetbrains.kotlin.types.Variance
@@ -310,6 +312,48 @@ class FirExpectActualMatchingContextImpl private constructor(
 
     override val CallableSymbolMarker.hasStableParameterNames: Boolean
         get() = asSymbol().rawStatus.hasStableParameterNames
+
+    override val DeclarationSymbolMarker.annotations: List<AnnotationCallInfo>
+        get() = asSymbol().resolvedAnnotationsWithArguments.map(::AnnotationCallInfoImpl)
+
+    override fun areAnnotationArgumentsEqual(annotation1: AnnotationCallInfo, annotation2: AnnotationCallInfo): Boolean {
+        fun AnnotationCallInfo.getFirAnnotation(): FirAnnotation {
+            return (this as AnnotationCallInfoImpl).annotation
+        }
+        return areFirAnnotationsEqual(annotation1.getFirAnnotation(), annotation2.getFirAnnotation())
+    }
+
+    private fun areFirAnnotationsEqual(annotation1: FirAnnotation, annotation2: FirAnnotation): Boolean {
+        if (!areCompatibleExpectActualTypes(annotation1.typeRef.coneType, annotation2.typeRef.coneType)) {
+            return false
+        }
+        val args1 = annotation1.argumentMapping.mapping
+        val args2 = annotation2.argumentMapping.mapping
+        if (args1.size != args2.size) {
+            return false
+        }
+        return args1.all { (key, value1) ->
+            val value2 = args2[key]
+            value2 != null && areAnnotationArgumentsEqual(value1, value2)
+        }
+    }
+
+    private fun areAnnotationArgumentsEqual(expression1: FirExpression, expression2: FirExpression): Boolean {
+        // In K2 const expression calculated in backend.
+        // Because of that, we have "honest" checker at backend IR stage
+        // and "only simplest case" checker in frontend, so that we have at least some reporting in the IDE.
+        return when {
+            expression1 is FirConstExpression<*> && expression2 is FirConstExpression<*> -> {
+                expression1.value == expression2.value
+            }
+            else -> true
+        }
+    }
+
+    private inner class AnnotationCallInfoImpl(val annotation: FirAnnotation) : AnnotationCallInfo {
+        override val classId: ClassId?
+            get() = annotation.toAnnotationClassId(actualSession)
+    }
 
     object Factory : FirExpectActualMatchingContextFactory {
         override fun create(session: FirSession, scopeSession: ScopeSession): FirExpectActualMatchingContextImpl =

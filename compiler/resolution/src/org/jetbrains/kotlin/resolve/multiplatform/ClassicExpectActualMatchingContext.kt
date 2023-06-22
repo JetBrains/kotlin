@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.resolve.multiplatform
 
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.mpp.*
 import org.jetbrains.kotlin.name.CallableId
@@ -14,9 +15,8 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.components.ClassicTypeSystemContextForCS
 import org.jetbrains.kotlin.resolve.calls.mpp.ExpectActualMatchingContext
-import org.jetbrains.kotlin.resolve.descriptorUtil.classId
-import org.jetbrains.kotlin.resolve.descriptorUtil.getKotlinTypeRefiner
-import org.jetbrains.kotlin.resolve.descriptorUtil.isTypeRefinementEnabled
+import org.jetbrains.kotlin.resolve.calls.mpp.ExpectActualMatchingContext.AnnotationCallInfo
+import org.jetbrains.kotlin.resolve.descriptorUtil.*
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.getDescriptorsFiltered
@@ -35,6 +35,7 @@ class ClassicExpectActualMatchingContext(val platformModule: ModuleDescriptor) :
     override val shouldCheckReturnTypesOfCallables: Boolean
         get() = true
 
+    private fun DeclarationSymbolMarker.asDescriptor(): DeclarationDescriptor = this as DeclarationDescriptor
     private fun CallableSymbolMarker.asDescriptor(): CallableDescriptor = this as CallableDescriptor
     private fun FunctionSymbolMarker.asDescriptor(): FunctionDescriptor = this as FunctionDescriptor
     private fun PropertySymbolMarker.asDescriptor(): PropertyDescriptor = this as PropertyDescriptor
@@ -328,4 +329,21 @@ class ClassicExpectActualMatchingContext(val platformModule: ModuleDescriptor) :
 
     override val CallableSymbolMarker.hasStableParameterNames: Boolean
         get() = asDescriptor().hasStableParameterNames()
+
+    override val DeclarationSymbolMarker.annotations: List<AnnotationCallInfo>
+        get() = asDescriptor().annotations.map(::AnnotationCallInfoImpl)
+
+
+    override fun areAnnotationArgumentsEqual(annotation1: AnnotationCallInfo, annotation2: AnnotationCallInfo): Boolean {
+        fun AnnotationCallInfo.getDescriptor(): AnnotationDescriptor = (this as AnnotationCallInfoImpl).annotationDescriptor
+
+        return areExpressionConstValuesEqual(annotation1.getDescriptor(), annotation2.getDescriptor())
+    }
+
+    private class AnnotationCallInfoImpl(
+        val annotationDescriptor: AnnotationDescriptor,
+    ) : AnnotationCallInfo {
+        override val classId: ClassId?
+            get() = annotationDescriptor.annotationClass?.classId
+    }
 }
