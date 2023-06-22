@@ -21,8 +21,8 @@ import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.light.classes.symbol.annotations.hasJvmStaticAnnotation
+import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightField
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightFieldForObject
-import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightFieldForProperty
 import org.jetbrains.kotlin.light.classes.symbol.isConstOrJvmField
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.GranularModifiersBox
 import org.jetbrains.kotlin.psi.KtClassOrObject
@@ -99,6 +99,7 @@ abstract class SymbolLightClassForNamedClassLike : SymbolLightClassForClassLike<
         result: MutableList<KtLightField>,
         classOrObjectSymbol: KtNamedClassOrObjectSymbol,
     ) {
+        val nameGenerator = SymbolLightField.FieldNameGenerator()
         classOrObjectSymbol.companionObject
             ?.getDeclaredMemberScope()
             ?.getCallableSymbols()
@@ -106,14 +107,12 @@ abstract class SymbolLightClassForNamedClassLike : SymbolLightClassForClassLike<
             ?.applyIf(isInterface) {
                 filter { it.isConstOrJvmField }
             }
-            ?.mapTo(result) {
-                SymbolLightFieldForProperty(
-                    ktAnalysisSession = this@KtAnalysisSession,
-                    propertySymbol = it,
-                    fieldName = it.name.asString(),
-                    containingClass = this,
-                    lightMemberOrigin = null,
+            ?.forEach {
+                createField(
+                    declaration = it,
+                    nameGenerator = nameGenerator,
                     isStatic = true,
+                    result = result
                 )
             }
     }

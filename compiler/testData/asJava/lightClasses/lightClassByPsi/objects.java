@@ -1,11 +1,5 @@
 public final class C /* C*/ {
   @org.jetbrains.annotations.NotNull()
-  private static java.lang.String c1;
-
-  @org.jetbrains.annotations.NotNull()
-  private static java.lang.String c;
-
-  @org.jetbrains.annotations.NotNull()
   private static java.lang.String x = "" /* initializer type: java.lang.String */;
 
   @org.jetbrains.annotations.NotNull()
