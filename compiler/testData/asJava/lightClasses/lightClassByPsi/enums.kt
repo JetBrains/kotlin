@@ -1,3 +1,5 @@
+// FULL_JDK
+
 import java.util.function.*
 
 annotation class Some
