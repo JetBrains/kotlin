@@ -94,10 +94,12 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
     private val useOptimizedSuperClass =
         context.state.generateOptimizedCallableReferenceSuperClasses
 
+    private val IrClass.isSynthetic
+        get() = metadata !is MetadataSource.File && metadata !is MetadataSource.Class && metadata !is MetadataSource.Script
+
     private val IrMemberAccessExpression<*>.propertyContainer: IrDeclarationParent
         get() = if (this is IrLocalDelegatedPropertyReference)
-            currentClassData?.localPropertyOwner(getter)
-                ?: throw AssertionError("local property reference before declaration: ${render()}")
+            findClassOwner()
         else
             getter?.owner?.parent ?: field?.owner?.parent ?: error("Property without getter or field: ${dump()}")
 
@@ -105,6 +107,23 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
     // that a getter would have, if it existed.
     private val IrField.fakeGetterSignature: String
         get() = "${JvmAbi.getterName(name.asString())}()${context.defaultMethodSignatureMapper.mapReturnType(this)}"
+
+    private val IrDeclaration.parentsWithSelf: Sequence<IrDeclaration>
+        get() = generateSequence(this) { it.parent as? IrDeclaration }
+
+    private fun IrLocalDelegatedPropertyReference.findClassOwner(): IrClass {
+        val originalBeforeInline = originalBeforeInline
+        if (originalBeforeInline != null) {
+            require(originalBeforeInline is IrLocalDelegatedPropertyReference) {
+                "Original for local delegated property ${render()} has another type: ${originalBeforeInline.render()}"
+            }
+            return originalBeforeInline.findClassOwner()
+        }
+
+        val containingClasses = symbol.owner.parentsWithSelf.filterIsInstance<IrClass>()
+        // Prefer to attach metadata to non-synthetic classes, similarly to how it's done in rememberLocalProperty.
+        return containingClasses.firstOrNull { !it.isSynthetic } ?: containingClasses.first()
+    }
 
     private fun IrBuilderWithScope.computeSignatureString(expression: IrMemberAccessExpression<*>): IrExpression {
         if (expression is IrLocalDelegatedPropertyReference) {
@@ -213,19 +232,14 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
 
         val localProperties = mutableListOf<IrLocalDelegatedPropertySymbol>()
         val localPropertyIndices = mutableMapOf<IrSymbol, Int>()
-        val isSynthetic = irClass.metadata !is MetadataSource.File && irClass.metadata !is MetadataSource.Class &&
-                irClass.metadata !is MetadataSource.Script
 
         fun localPropertyIndex(getter: IrSymbol): Int? =
             localPropertyIndices[getter] ?: parent?.localPropertyIndex(getter)
 
-        fun localPropertyOwner(getter: IrSymbol): IrClass? =
-            if (getter in localPropertyIndices) irClass else parent?.localPropertyOwner(getter)
-
         fun rememberLocalProperty(property: IrLocalDelegatedProperty) {
             // Prefer to attach metadata to non-synthetic classes, because it won't be serialized otherwise;
             // if not possible, though, putting it right here will at least allow non-reflective uses.
-            val metadataOwner = generateSequence(this) { it.parent }.find { !it.isSynthetic } ?: this
+            val metadataOwner = generateSequence(this) { it.parent }.find { !it.irClass.isSynthetic } ?: this
             metadataOwner.localPropertyIndices[property.getter.symbol] = metadataOwner.localProperties.size
             metadataOwner.localProperties.add(property.symbol)
         }
