@@ -1,0 +1,9 @@
+FILE: incompleteWhen.kt
+    public final fun main(args: R|kotlin/Array<kotlin/String>|): R|kotlin/Unit| {
+        lval x: R|kotlin/Int| = Int(42)
+        when (R|<local>/x|) {
+            ($subj$ is <ERROR TYPE REF: Incomplete code>) ->  {
+            }
+        }
+
+    }

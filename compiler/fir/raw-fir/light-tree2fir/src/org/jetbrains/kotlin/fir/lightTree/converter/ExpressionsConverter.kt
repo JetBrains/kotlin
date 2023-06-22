@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.SpecialNames
@@ -912,7 +913,7 @@ class ExpressionsConverter(
         hasSubject: Boolean,
     ): WhenConditionConvertedResults {
         lateinit var firOperation: FirOperation
-        lateinit var firType: FirTypeRef
+        var firType: FirTypeRef? = null
         whenCondition.forEachChildren {
             when (it.tokenType) {
                 TYPE_REFERENCE -> firType = declarationsConverter.convertType(it)
@@ -929,7 +930,7 @@ class ExpressionsConverter(
         val result = buildTypeOperatorCall {
             source = whenCondition.toFirSourceElement()
             operation = firOperation
-            conversionTypeRef = firType
+            conversionTypeRef = firType ?: buildErrorTypeRef { diagnostic = ConeSyntaxDiagnostic("Incomplete code") }
             argumentList = buildUnaryArgumentList(subjectExpression)
         }
 

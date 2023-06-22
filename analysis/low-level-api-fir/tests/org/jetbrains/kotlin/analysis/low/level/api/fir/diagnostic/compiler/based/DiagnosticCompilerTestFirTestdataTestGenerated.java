@@ -3818,6 +3818,12 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
             }
 
             @Test
+            @TestMetadata("incompleteWhen.kt")
+            public void testIncompleteWhen() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/problems/incompleteWhen.kt");
+            }
+
+            @Test
             @TestMetadata("innerClassHierarchy.kt")
             public void testInnerClassHierarchy() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/problems/innerClassHierarchy.kt");
