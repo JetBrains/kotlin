@@ -1,0 +1,13 @@
+PsiJetFileStubImpl[package=]
+  PACKAGE_DIRECTIVE
+  IMPORT_LIST
+  OBJECT_DECLARATION[classId=/SpecialNames, fqName=SpecialNames, isCompanion=false, isLocal=false, isObjectLiteral=false, isTopLevel=true, name=SpecialNames, superNames=[]]
+    MODIFIER_LIST[public]
+    CLASS_BODY
+      PROPERTY[fqName=SpecialNames.1M, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=1M]
+        MODIFIER_LIST[public final]
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=Int]
