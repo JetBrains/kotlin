@@ -25,6 +25,7 @@ import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
 import org.apache.maven.artifact.resolver.ResolutionErrorHandler;
 import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.execution.MavenSession;
+import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.compiler.DependencyCoordinate;
 import org.apache.maven.project.MavenProject;
@@ -167,12 +168,27 @@ public class AnnotationProcessingManager {
         return new DefaultArtifact(
                 dependency.getGroupId(),
                 dependency.getArtifactId(),
-                VersionRange.createFromVersionSpec(dependency.getVersion()),
+                VersionRange.createFromVersionSpec(evaluateVersion(dependency)),
                 Artifact.SCOPE_RUNTIME,
                 dependency.getType(),
                 dependency.getClassifier(),
                 handler,
                 false);
+    }
+
+    private String evaluateVersion(@NotNull DependencyCoordinate dependency) {
+        String version = dependency.getVersion();
+        if (version == null) {
+            Optional<Dependency> sameButParentDependency = project.getDependencies().stream()
+                    .filter(dep -> dep.getGroupId().equals(dependency.getGroupId())
+                            && dep.getArtifactId().equals(dependency.getArtifactId())
+                            && dep.getVersion() != null
+                    ).findFirst();
+            if (sameButParentDependency.isPresent()) {
+                version = sameButParentDependency.get().getVersion();
+            }
+        }
+        return version;
     }
 
     @NotNull
