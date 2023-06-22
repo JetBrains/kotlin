@@ -113,7 +113,9 @@ internal val DEFAULT_KOTLIN_SETTINGS_FILE =
                     "com.android.asset-pack-bundle",
                     "com.android.lint",
                     "com.android.instantapp",
-                    "com.android.feature" -> useModule("com.android.tools.build:gradle:${'$'}android_tools_version")
+                    "com.android.feature",
+                    "com.android.kotlin.multiplatform.library"
+                       -> useModule("com.android.tools.build:gradle:${'$'}android_tools_version")
                 }
             }
         }
