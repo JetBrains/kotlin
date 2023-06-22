@@ -52,7 +52,6 @@ import org.jetbrains.kotlin.cli.common.CliModuleVisibilityManagerImpl
 import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
 import org.jetbrains.kotlin.cli.common.config.ContentRoot
 import org.jetbrains.kotlin.cli.common.config.KotlinSourceRoot
-import org.jetbrains.kotlin.cli.common.config.kotlinSourceRoots
 import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
 import org.jetbrains.kotlin.cli.common.extensions.ScriptEvaluationExtension
 import org.jetbrains.kotlin.cli.common.extensions.ShellExtension
@@ -195,7 +194,10 @@ class KotlinCoreEnvironment private constructor(
         val project = projectEnvironment.project
         project.registerService(DeclarationProviderFactoryService::class.java, CliDeclarationProviderFactoryService(sourceFiles))
 
-        sourceFiles += createSourceFilesFromSourceRoots(configuration, project, getSourceRootsCheckingForDuplicates())
+        sourceFiles += createSourceFilesFromSourceRoots(
+            configuration, project,
+            getSourceRootsCheckingForDuplicates(configuration, configuration[CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY])
+        )
 
         collectAdditionalSources(project)
 
@@ -401,20 +403,6 @@ class KotlinCoreEnvironment private constructor(
 
     private fun findJarRoot(file: File): VirtualFile? =
         projectEnvironment.jarFileSystem.findFileByPath("$file${URLUtil.JAR_SEPARATOR}")
-
-    private fun getSourceRootsCheckingForDuplicates(): List<KotlinSourceRoot> {
-        val uniqueSourceRoots = hashSetOf<String>()
-        val result = mutableListOf<KotlinSourceRoot>()
-
-        for (root in configuration.kotlinSourceRoots) {
-            if (!uniqueSourceRoots.add(root.path)) {
-                report(STRONG_WARNING, "Duplicate source root: ${root.path}")
-            }
-            result.add(root)
-        }
-
-        return result
-    }
 
     fun getSourceFiles(): List<KtFile> =
         ProcessSourcesBeforeCompilingExtension.getInstances(project)
