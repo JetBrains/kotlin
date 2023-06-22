@@ -1,7 +1,0 @@
-// TARGET_BACKEND: JVM_OLD
-
-class C {
-    companion <!CONFLICTING_JVM_DECLARATIONS, REDECLARATION!>object<!> {}
-
-    <!CONFLICTING_JVM_DECLARATIONS!>val <!REDECLARATION!>Companion<!><!> = C
-}
