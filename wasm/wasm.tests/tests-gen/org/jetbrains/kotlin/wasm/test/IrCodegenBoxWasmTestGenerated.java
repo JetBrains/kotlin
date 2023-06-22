@@ -31965,11 +31965,6 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
             runTest("compiler/testData/codegen/box/traits/multiple.kt");
         }
 
-        @TestMetadata("noPrivateDelegation.kt")
-        public void testNoPrivateDelegation() throws Exception {
-            runTest("compiler/testData/codegen/box/traits/noPrivateDelegation.kt");
-        }
-
         @TestMetadata("privateInterfaceMethod.kt")
         public void testPrivateInterfaceMethod() throws Exception {
             runTest("compiler/testData/codegen/box/traits/privateInterfaceMethod.kt");
@@ -32889,9 +32884,9 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
             runTest("compiler/testData/codegen/box/when/inferredTypeParameters.kt");
         }
 
-        @TestMetadata("integralWhenWithNoInlinedConstants.kt")
-        public void testIntegralWhenWithNoInlinedConstants() throws Exception {
-            runTest("compiler/testData/codegen/box/when/integralWhenWithNoInlinedConstants.kt");
+        @TestMetadata("integralWhenWithNoInlinedConstants2.kt")
+        public void testIntegralWhenWithNoInlinedConstants2() throws Exception {
+            runTest("compiler/testData/codegen/box/when/integralWhenWithNoInlinedConstants2.kt");
         }
 
         @TestMetadata("is.kt")

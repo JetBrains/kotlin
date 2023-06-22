@@ -39302,12 +39302,6 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
             }
 
             @Test
-            @TestMetadata("noPrivateDelegation.kt")
-            public void testNoPrivateDelegation() throws Exception {
-                runTest("compiler/testData/codegen/box/traits/noPrivateDelegation.kt");
-            }
-
-            @Test
             @TestMetadata("privateInterfaceMethod.kt")
             public void testPrivateInterfaceMethod() throws Exception {
                 runTest("compiler/testData/codegen/box/traits/privateInterfaceMethod.kt");
@@ -40407,9 +40401,9 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
             }
 
             @Test
-            @TestMetadata("integralWhenWithNoInlinedConstants.kt")
-            public void testIntegralWhenWithNoInlinedConstants() throws Exception {
-                runTest("compiler/testData/codegen/box/when/integralWhenWithNoInlinedConstants.kt");
+            @TestMetadata("integralWhenWithNoInlinedConstants2.kt")
+            public void testIntegralWhenWithNoInlinedConstants2() throws Exception {
+                runTest("compiler/testData/codegen/box/when/integralWhenWithNoInlinedConstants2.kt");
             }
 
             @Test
