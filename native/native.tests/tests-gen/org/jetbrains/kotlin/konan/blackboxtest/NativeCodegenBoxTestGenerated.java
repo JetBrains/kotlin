@@ -38002,12 +38002,6 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             }
 
             @Test
-            @TestMetadata("basicmethodSuperClass.kt")
-            public void testBasicmethodSuperClass() throws Exception {
-                runTest("compiler/testData/codegen/box/super/basicmethodSuperClass.kt");
-            }
-
-            @Test
             @TestMetadata("basicmethodSuperTrait.kt")
             public void testBasicmethodSuperTrait() throws Exception {
                 runTest("compiler/testData/codegen/box/super/basicmethodSuperTrait.kt");
