@@ -1403,6 +1403,16 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/js/outputPrefixFileNotFound.args");
         }
 
+        @TestMetadata("perFileWithValidModuleKind.args")
+        public void testPerFileWithValidModuleKind() throws Exception {
+            runTest("compiler/testData/cli/js/perFileWithValidModuleKind.args");
+        }
+
+        @TestMetadata("perFileWithWrongModuleKind.args")
+        public void testPerFileWithWrongModuleKind() throws Exception {
+            runTest("compiler/testData/cli/js/perFileWithWrongModuleKind.args");
+        }
+
         @TestMetadata("reifiedIntersectionType.args")
         public void testReifiedIntersectionType() throws Exception {
             runTest("compiler/testData/cli/js/reifiedIntersectionType.args");

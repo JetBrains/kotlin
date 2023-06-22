@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.backend.common.lower.BOUND_VALUE_PARAMETER
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
 import org.jetbrains.kotlin.ir.backend.js.lower.*
@@ -19,7 +18,6 @@ import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
-import org.jetbrains.kotlin.ir.types.isSubtypeOfClass
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -31,6 +29,7 @@ import org.jetbrains.kotlin.js.config.SourceMapNamesPolicy
 import org.jetbrains.kotlin.js.config.SourceMapSourceEmbedding
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
 import org.jetbrains.kotlin.utils.memoryOptimizedPlus
 import java.io.FileInputStream
@@ -38,8 +37,8 @@ import java.io.IOException
 import java.io.InputStreamReader
 import java.nio.charset.StandardCharsets
 
-fun jsUndefined(context: IrNamer, backendContext: JsIrBackendContext): JsExpression {
-    return when (val void = backendContext.getVoid()) {
+fun jsUndefined(context: JsStaticContext): JsExpression {
+    return when (val void = context.backendContext.getVoid()) {
         is IrGetField -> context.getNameForField(void.symbol.owner).makeRef()
         else -> JsNullLiteral()
     }
@@ -93,15 +92,11 @@ fun objectCreate(prototype: JsExpression, context: JsStaticContext) =
     )
 
 fun defineProperty(obj: JsExpression, name: String, getter: JsExpression?, setter: JsExpression?, context: JsStaticContext): JsExpression {
-    val undefined by lazy(LazyThreadSafetyMode.NONE) { jsUndefined(context, context.backendContext) }
     return JsInvocation(
         context
             .getNameForStaticFunction(context.backendContext.intrinsics.jsDefinePropertySymbol.owner)
             .makeRef(),
-        obj,
-        JsStringLiteral(name),
-        getter ?: undefined,
-        setter ?: undefined
+        listOfNotNull(obj, JsStringLiteral(name), getter ?: runIf(setter != null) { jsUndefined(context) }, setter)
     )
 }
 
@@ -213,7 +208,7 @@ fun translateCall(
             val nameForStaticDeclaration = context.getNameForStaticDeclaration(target)
             JsNameRef(Namer.CALL_FUNCTION, JsNameRef(nameForStaticDeclaration))
         } else {
-            val qualifierName = context.getNameForClass(klass).makeRef()
+            val qualifierName = klass.getClassRef(context.staticContext)
             val targetName = context.getNameForMemberFunction(target)
             val qPrototype = JsNameRef(targetName, prototypeOf(qualifierName, context.staticContext))
             JsNameRef(Namer.CALL_FUNCTION, qPrototype)
@@ -399,7 +394,7 @@ fun translateCallArguments(
     val varargParameterIndex = function.realOverrideTarget.varargParameterIndex()
 
     val validWithNullArgs = expression.validWithNullArgs()
-    val jsUndefined by lazy(LazyThreadSafetyMode.NONE) { jsUndefined(context, context.staticContext.backendContext) }
+    val jsUndefined by lazy(LazyThreadSafetyMode.NONE) { jsUndefined(context.staticContext) }
 
     val arguments = (0 until size)
         .mapIndexedTo(ArrayList(size)) { i, _ ->

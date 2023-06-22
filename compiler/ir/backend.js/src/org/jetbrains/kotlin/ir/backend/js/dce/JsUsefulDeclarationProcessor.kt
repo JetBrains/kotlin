@@ -159,7 +159,7 @@ internal class JsUsefulDeclarationProcessor(
             context.intrinsics.jsPrototypeOfSymbol.owner.enqueue(irClass, "interface default implementation")
         }
 
-        if ((!context.es6mode || !isEsModules) && (irClass.isInner || irClass.isObject)) {
+        if (irClass.isInner || irClass.isObject) {
             context.intrinsics.jsDefinePropertySymbol.owner.enqueue(irClass, "object lazy initialization")
         }
 
@@ -184,8 +184,6 @@ internal class JsUsefulDeclarationProcessor(
         if (irFunction.isReal && irFunction.body != null) {
             irFunction.parentClassOrNull?.takeIf { it.isInterface }?.enqueue(irFunction, "interface default method is used")
         }
-
-        if (context.es6mode && isEsModules) return
 
         val property = irFunction.correspondingPropertySymbol?.owner ?: return
 

@@ -2422,6 +2422,12 @@ public class FirJsBoxTestGenerated extends AbstractFirJsBoxTest {
             }
 
             @Test
+            @TestMetadata("perFileExportedApi.kt")
+            public void testPerFileExportedApi() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/jsExport/perFileExportedApi.kt");
+            }
+
+            @Test
             @TestMetadata("recursiveExport.kt")
             public void testRecursiveExport() throws Exception {
                 runTest("js/js.translator/testData/box/esModules/jsExport/recursiveExport.kt");

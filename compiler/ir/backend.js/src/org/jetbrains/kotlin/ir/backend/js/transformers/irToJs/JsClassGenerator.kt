@@ -20,55 +20,96 @@ import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.js.backend.ast.*
+import org.jetbrains.kotlin.js.backend.ast.JsVars.JsVar
 import org.jetbrains.kotlin.js.common.isValidES5Identifier
 import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.addToStdlib.butIf
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
 import org.jetbrains.kotlin.utils.toSmartList
 
 class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationContext) {
+    private val perFile = context.staticContext.isPerFile
+    private val es6mode = context.staticContext.backendContext.es6mode
+
     private val className = context.getNameForClass(irClass)
-    private val classNameRef = className.makeRef()
     private val baseClass: IrType? = irClass.superTypes.firstOrNull { !it.classifierOrFail.isInterface }
+
+    private val classNameUsedInsideDeclarationStatements = when {
+        perFile -> JsName("$", true)
+        else -> className
+    }
+
+    private val classNameRef = classNameUsedInsideDeclarationStatements.makeRef()
 
     private val classPrototypeRef by lazy(LazyThreadSafetyMode.NONE) { prototypeOf(classNameRef, context.staticContext) }
     private val baseClassRef by lazy(LazyThreadSafetyMode.NONE) { // Lazy in case was not collected by namer during JsClassGenerator construction
-        if (baseClass != null && !baseClass.isAny()) baseClass.getClassRef(context) else null
+        if (baseClass != null && !baseClass.isAny()) baseClass.getClassRef(context.staticContext) else null
     }
-    private val classBlock = JsCompositeBlock()
     private val classModel = JsIrClassModel(irClass)
+    private val classBlock = JsCompositeBlock()
 
-    private val es6mode = context.staticContext.backendContext.es6mode
+    private val interfaceDefaultsBlock = when {
+        perFile -> JsCompositeBlock()
+        else -> classModel.preDeclarationBlock
+    }
+
+    private val jsUndefined by lazy(LazyThreadSafetyMode.NONE) { jsUndefined(context.staticContext) }
 
     fun generate(): JsStatement {
+        return generateClassBlock().butIf(perFile) { it.wrapInFunction() }
+    }
+
+    private fun JsCompositeBlock.wrapInFunction(): JsStatement {
+        val classHolder = JsVar(JsName("${className.ident}Class", true))
+        val functionWrapper = JsFunction(emptyScope, JsBlock(), "lazy wrapper for classes in per-file").apply {
+            name = className
+            with(body.statements) {
+                add(
+                    JsIf(
+                        JsAstUtils.equality(classHolder.name.makeRef(), jsUndefined),
+                        JsBlock(
+                            classModel.preDeclarationBlock.statements + statements + classModel.postDeclarationBlock.statements +
+                                    JsAstUtils.assignment(classHolder.name.makeRef(), classNameRef).makeStmt()
+                        )
+                    )
+                )
+                add(JsReturn(classHolder.name.makeRef()))
+            }
+        }
+
+        return JsCompositeBlock(interfaceDefaultsBlock.statements + listOf(JsVars(classHolder), functionWrapper.makeStmt())).also {
+            classModel.preDeclarationBlock.statements.clear()
+            classModel.postDeclarationBlock.statements.clear()
+        }
+    }
+
+    private fun generateClassBlock(): JsCompositeBlock {
         assert(!irClass.isExpect)
 
         if (!es6mode) maybeGeneratePrimaryConstructor()
-
-        val transformer = IrDeclarationToJsTransformer()
 
         // Properties might be lowered out of classes
         // We'll use IrSimpleFunction::correspondingProperty to collect them into set
         val properties = mutableSetOf<IrProperty>()
 
-        val jsClass = JsClass(name = className, baseClass = baseClassRef)
+        val jsClass = JsClass(name = classNameUsedInsideDeclarationStatements, baseClass = baseClassRef)
 
         if (baseClass != null && !baseClass.isAny()) {
             jsClass.baseClass = baseClassRef
         }
 
-        if (es6mode) classModel.preDeclarationBlock.statements += jsClass.makeStmt()
+        if (es6mode) {
+            classModel.preDeclarationBlock.statements += jsClass.makeStmt()
+        }
 
         for (declaration in irClass.declarations) {
             when (declaration) {
                 is IrConstructor -> {
+                    val constructor = declaration.accept(IrFunctionToJsTransformer(), context)
                     if (es6mode) {
-                        declaration.accept(IrFunctionToJsTransformer(), context).let { fn ->
-                            if (fn.body.statements.any { it !is JsEmpty && !it.isSimpleSuperCall(fn) }) {
-                                jsClass.constructor = fn
-                            }
-                        }
+                        jsClass.constructor = constructor.apply { name = null }
                     } else {
-                        classBlock.statements += declaration.accept(transformer, context)
+                        classBlock.statements += constructor.apply { name = classNameUsedInsideDeclarationStatements }.makeStmt()
                     }
                 }
                 is IrSimpleFunction -> {
@@ -275,7 +316,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
             assert(!declaration.isStaticMethodOfClass)
 
             if (irClass.isInterface) {
-                classModel.preDeclarationBlock.statements += translatedFunction.makeStmt()
+                interfaceDefaultsBlock.statements += translatedFunction.makeStmt()
                 return Pair(memberName, null)
             }
 
@@ -323,7 +364,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
     private fun maybeGeneratePrimaryConstructor() {
         if (!irClass.declarations.any { it is IrConstructor }) {
             val func = JsFunction(emptyScope, JsBlock(), "Ctor for ${irClass.name}")
-            func.name = className
+            func.name = classNameUsedInsideDeclarationStatements
             classBlock.statements += func.makeStmt()
         }
     }
@@ -352,12 +393,12 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
     }
 
 
-    private fun IrType.asConstructorRef(): JsNameRef? {
+    private fun IrType.asConstructorRef(): JsExpression? {
         val ownerSymbol = classOrNull?.takeIf {
             !isAny() && !isFunctionType() && !it.owner.isEffectivelyExternal()
         } ?: return null
 
-        return JsNameRef(context.getNameForClass(ownerSymbol.owner))
+        return ownerSymbol.owner.getClassRef(context.staticContext)
     }
 
     private fun IrType.isFunctionType() = isFunctionOrKFunction() || isSuspendFunctionOrKFunction()

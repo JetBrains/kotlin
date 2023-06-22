@@ -211,7 +211,7 @@ internal fun CrossModuleReferences.crossModuleReferencesHashForIC() = HashCalcul
         update(importedModule.relativeRequirePath ?: "")
     }
 
-    updateForEach(transitiveJsExportFrom) { transitiveExport ->
+    updateForEach(transitiveExportFrom) { transitiveExport ->
         update(transitiveExport.internalName.toString())
         update(transitiveExport.externalName)
     }

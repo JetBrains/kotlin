@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.phaser.PhaserState
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
-import org.jetbrains.kotlin.ir.backend.js.codegen.JsGenerationGranularity
 import org.jetbrains.kotlin.ir.backend.js.ic.JsIrCompilerICInterface
 import org.jetbrains.kotlin.ir.backend.js.lower.collectNativeImplementations
 import org.jetbrains.kotlin.ir.backend.js.lower.generateJsTests
@@ -53,7 +52,7 @@ class JsIrCompilerWithIC(
         allModules: Collection<IrModuleFragment>,
         dirtyFiles: Collection<IrFile>,
         mainArguments: List<String>?
-    ): List<() -> JsIrProgramFragment> {
+    ): List<() -> List<JsIrProgramFragment>> {
         val shouldGeneratePolyfills = context.configuration.getBoolean(JSConfigurationKeys.GENERATE_POLYFILLS)
 
         allModules.forEach {

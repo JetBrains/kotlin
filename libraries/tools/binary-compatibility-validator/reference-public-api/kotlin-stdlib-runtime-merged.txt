@@ -3384,6 +3384,9 @@ public final class kotlin/jdk7/AutoCloseableKt {
 public abstract interface annotation class kotlin/js/ExperimentalJsExport : java/lang/annotation/Annotation {
 }
 
+public abstract interface annotation class kotlin/js/ExperimentalJsFileName : java/lang/annotation/Annotation {
+}
+
 public final class kotlin/jvm/JvmClassMappingKt {
 	public static final fun getAnnotationClass (Ljava/lang/annotation/Annotation;)Lkotlin/reflect/KClass;
 	public static final fun getJavaClass (Ljava/lang/Object;)Ljava/lang/Class;

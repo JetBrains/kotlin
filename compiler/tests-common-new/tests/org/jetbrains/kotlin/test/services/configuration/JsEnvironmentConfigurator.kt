@@ -58,7 +58,9 @@ class JsEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigu
             TranslationMode.FULL_DEV to "out",
             TranslationMode.FULL_PROD_MINIMIZED_NAMES to "outMin",
             TranslationMode.PER_MODULE_DEV to "outPm",
-            TranslationMode.PER_MODULE_PROD_MINIMIZED_NAMES to "outPmMin"
+            TranslationMode.PER_MODULE_PROD_MINIMIZED_NAMES to "outPmMin",
+            TranslationMode.PER_FILE_DEV to "outPf",
+            TranslationMode.PER_FILE_PROD_MINIMIZED_NAMES to "outPfMin"
         )
 
         private const val OUTPUT_KLIB_DIR_NAME = "outputKlibDir"
@@ -86,11 +88,15 @@ class JsEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigu
         }
 
         fun getJsModuleArtifactPath(testServices: TestServices, moduleName: String, translationMode: TranslationMode = TranslationMode.FULL_DEV): String {
-            return getJsArtifactsOutputDir(testServices, translationMode).absolutePath + File.separator + getJsArtifactSimpleName(testServices, moduleName) + "_v5"
+            return getJsArtifactsOutputDir(testServices, translationMode).absolutePath + File.separator + getJsModuleArtifactName(testServices, moduleName)
         }
 
         fun getRecompiledJsModuleArtifactPath(testServices: TestServices, moduleName: String, translationMode: TranslationMode = TranslationMode.FULL_DEV): String {
-            return getJsArtifactsRecompiledOutputDir(testServices, translationMode).absolutePath + File.separator + getJsArtifactSimpleName(testServices, moduleName) + "_v5"
+            return getJsArtifactsRecompiledOutputDir(testServices, translationMode).absolutePath + File.separator + getJsModuleArtifactName(testServices, moduleName)
+        }
+
+        fun getJsModuleArtifactName(testServices: TestServices, moduleName: String): String {
+           return getJsArtifactSimpleName(testServices, moduleName) + "_v5"
         }
 
         fun getJsKlibArtifactPath(testServices: TestServices, moduleName: String): String {

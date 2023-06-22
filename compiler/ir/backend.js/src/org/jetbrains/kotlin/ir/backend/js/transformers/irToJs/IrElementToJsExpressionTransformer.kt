@@ -8,9 +8,7 @@ package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
-import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
-import org.jetbrains.kotlin.ir.backend.js.utils.Namer
-import org.jetbrains.kotlin.ir.backend.js.utils.getJsNameOrKotlinName
+import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.isString
@@ -169,7 +167,7 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
     }
 
     override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall, context: JsGenerationContext): JsExpression {
-        val classNameRef = context.getNameForConstructor(expression.symbol.owner).makeRef()
+        val classNameRef = expression.symbol.owner.getConstructorRef(context.staticContext)
         val callFuncRef = JsNameRef(Namer.CALL_FUNCTION, classNameRef)
         val fromPrimary = context.currentFunction is IrConstructor
         val thisRef =
@@ -202,7 +200,7 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
 
         return when {
             klass.isEffectivelyExternal() -> {
-                val refForExternalClass = context.getRefForExternalClass(klass)
+                val refForExternalClass = klass.getClassRef(context.staticContext)
                 val varargParameterIndex = expression.symbol.owner.varargParameterIndex()
                 if (varargParameterIndex == -1) {
                     JsNew(refForExternalClass, arguments)
@@ -225,8 +223,7 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
                 }
             }
             else -> {
-                val ref = context.getNameForClass(klass).makeRef()
-                JsNew(ref, arguments)
+                JsNew(klass.getClassRef(context.staticContext), arguments)
             }
         }.withSource(expression, context)
     }
@@ -320,14 +317,14 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
 
     override fun visitRawFunctionReference(expression: IrRawFunctionReference, data: JsGenerationContext): JsExpression {
         val name = when (val function = expression.symbol.owner) {
-            is IrConstructor -> data.getNameForConstructor(function)
-            is IrSimpleFunction -> data.getNameForStaticFunction(function)
+            is IrConstructor -> function.getConstructorRef(data.staticContext)
+            is IrSimpleFunction -> data.getNameForStaticFunction(function).makeRef()
             else -> compilationException(
                 "Unexpected function kind",
                 expression
             )
         }
-        return JsNameRef(name).withSource(expression, data)
+        return name.withSource(expression, data)
     }
 
     private fun prefixOperation(operator: JsUnaryOperator, expression: IrDynamicOperatorExpression, data: JsGenerationContext) =

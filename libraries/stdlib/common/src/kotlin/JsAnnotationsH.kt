@@ -10,9 +10,33 @@ import kotlin.annotation.AnnotationTarget.*
 /**
  * Gives a declaration (a function, a property or a class) specific name in JavaScript.
  */
-@Target(CLASS, FUNCTION, PROPERTY, CONSTRUCTOR, PROPERTY_GETTER, PROPERTY_SETTER)
+@Target(FILE, CLASS, FUNCTION, PROPERTY, CONSTRUCTOR, PROPERTY_GETTER, PROPERTY_SETTER)
 @OptionalExpectation
 public expect annotation class JsName(val name: String)
+
+/**
+ * Marks experimental [JsFileName] annotation.
+ *
+ * Note that behavior of these annotations will likely be changed in the future.
+ *
+ * Usages of such annotations will be reported as warnings unless an explicit opt-in with
+ * the [OptIn] annotation, e.g. `@OptIn(ExperimentalJsFileName::class)`,
+ * or with the `-opt-in=kotlin.js.ExperimentalJsFileName` compiler option is given.
+ */
+@RequiresOptIn(level = RequiresOptIn.Level.WARNING)
+@MustBeDocumented
+@Retention(AnnotationRetention.BINARY)
+public annotation class ExperimentalJsFileName
+
+/**
+ * Specifies the name of the compiled file produced from the annotated source file instead of the default one.
+ *
+ * This annotation can be applied only to files and only when the compilation granularity is `PER_FILE`.
+ */
+@Target(FILE)
+@OptionalExpectation
+@ExperimentalJsFileName
+public expect annotation class JsFileName(val name: String)
 
 /**
  * Marks experimental JS export annotations.

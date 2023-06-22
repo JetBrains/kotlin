@@ -1,8 +1,11 @@
 MODULES: lib1, lib2, main
 
-STEP 0..1:
+STEP 0:
     libs: lib1, lib2, main
     dirty js: lib1, lib2, main
+STEP 1:
+    libs: lib1, lib2, main
+    dirty js: lib1, lib2
 STEP 2:
     libs: lib1, lib2, main
     dirty js: lib1, lib2
@@ -11,7 +14,7 @@ STEP 3:
     dirty js: lib2, main
 STEP 4:
     libs: lib1, lib2, main
-    dirty js: lib1, lib2, main
+    dirty js: lib1, lib2
 STEP 5..6:
     libs: lib1, lib2, main
     dirty js: lib2, main

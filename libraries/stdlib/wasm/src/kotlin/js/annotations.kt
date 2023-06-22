@@ -30,6 +30,7 @@ public actual annotation class JsExport {
  */
 @Retention(AnnotationRetention.BINARY)
 @Target(
+    AnnotationTarget.FILE,
     AnnotationTarget.CLASS,
     AnnotationTarget.FUNCTION,
     AnnotationTarget.PROPERTY,

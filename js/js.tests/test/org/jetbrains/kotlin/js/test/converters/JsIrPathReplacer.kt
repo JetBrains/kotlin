@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -18,6 +18,10 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.isJsFile
 import org.jetbrains.kotlin.test.services.isMjsFile
 import org.jetbrains.kotlin.test.services.moduleStructure
+import java.io.File
+import kotlin.io.invariantSeparatorsPath
+
+private const val PATH_TO_ROOT_TOKEN = "@PATH_TO_ROOT"
 
 class JsIrPathReplacer(testServices: TestServices) : DeclarationTransformer {
     private val replacements = testServices.collectReplacementsMap()
@@ -35,6 +39,7 @@ class JsIrPathReplacer(testServices: TestServices) : DeclarationTransformer {
 
     private fun IrAnnotationContainer.replaceJsModulePath() {
         val jsModuleAnnotation = getAnnotation(JsAnnotations.jsModuleFqn) ?: return
+
         @Suppress("UNCHECKED_CAST")
         val stringLiteral = jsModuleAnnotation.getValueArgument(0) as IrConst<String>
         val pathReplacement = stringLiteral.getReplacement() ?: return
@@ -43,17 +48,24 @@ class JsIrPathReplacer(testServices: TestServices) : DeclarationTransformer {
     }
 
     private fun IrConst<String>.getReplacement(): IrConst<String>? {
-        val replacement = replacements[value] ?: replacements[value.replace("./", "")] ?: return null
-        return IrConstImpl.string(startOffset, endOffset, type, "./" + replacement.replace("./", ""))
+        return IrConstImpl.string(startOffset, endOffset, type, replacements[value] ?: return null)
     }
 
     private fun TestServices.collectReplacementsMap(): Map<String, String> {
         return moduleStructure.modules.asSequence()
             .map { module -> module to module.files.filter { it.isJsFile || it.isMjsFile } }
             .filter { (_, files) -> files.isNotEmpty() }
-            .flatMap { (module, files) ->  files.map { it.relativePath to module.getNameFor(it, this) } }
-            .plus(getAdditionalFiles(this).map { it.name to it.name })
-            .plus(getAdditionalMainFiles(this).map { it.name to it.name })
+            .flatMap { (module, files) -> files.map { "./${it.relativePath}" to "$PATH_TO_ROOT_TOKEN/${module.getNameFor(it, this)}" } }
+            .plus(getAdditionalFiles(this).map { "./${it.name}" to "$PATH_TO_ROOT_TOKEN/${it.name}" })
+            .plus(getAdditionalMainFiles(this).map { "./${it.name}" to "$PATH_TO_ROOT_TOKEN/${it.name}" })
             .toMap()
+    }
+
+    fun replacePathTokensWithRealPath(content: String, file: File, rootDir: File): String {
+        val relativePathToRootDir = rootDir.relativeTo(file.parentFile).invariantSeparatorsPath.ifEmpty { "." }
+        return content.replace("from '$PATH_TO_ROOT_TOKEN/(.+?)';${'$'}".toRegex(RegexOption.MULTILINE)) { result ->
+            val importPath = result.groups[1]?.value ?: error("Unexpected import path")
+            "from '$relativePathToRootDir/$importPath'\n"
+        }
     }
 }

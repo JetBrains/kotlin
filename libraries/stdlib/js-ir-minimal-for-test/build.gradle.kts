@@ -78,7 +78,7 @@ val jsMainSources by task<Sync> {
             listOf(
                 "libraries/stdlib/js/src/org.w3c/**",
                 "libraries/stdlib/js/src/kotlin/char.kt",
-                "libraries/stdlib/js/src/kotlin/collections.kt",
+                "libraries/stdlib/js/src/kotlin/collectionJs.kt",
                 "libraries/stdlib/js/src/kotlin/collections/**",
                 "libraries/stdlib/js/src/kotlin/time/**",
                 "libraries/stdlib/js/src/kotlin/console.kt",
@@ -90,7 +90,7 @@ val jsMainSources by task<Sync> {
                 "libraries/stdlib/js/src/kotlin/json.kt",
                 "libraries/stdlib/js/src/kotlin/promise.kt",
                 "libraries/stdlib/js/src/kotlin/regexp.kt",
-                "libraries/stdlib/js/src/kotlin/sequence.kt",
+                "libraries/stdlib/js/src/kotlin/sequenceJs.kt",
                 "libraries/stdlib/js/src/kotlin/throwableExtensions.kt",
                 "libraries/stdlib/js/src/kotlin/text/**",
                 "libraries/stdlib/js/src/kotlin/reflect/KTypeHelpers.kt",

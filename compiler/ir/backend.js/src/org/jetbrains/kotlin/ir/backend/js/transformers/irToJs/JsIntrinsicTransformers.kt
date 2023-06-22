@@ -7,10 +7,7 @@ package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
 import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
-import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
-import org.jetbrains.kotlin.ir.backend.js.utils.Namer
-import org.jetbrains.kotlin.ir.backend.js.utils.getClassRef
-import org.jetbrains.kotlin.ir.backend.js.utils.invokeFunForLambda
+import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
@@ -91,13 +88,13 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
 
             add(intrinsics.jsObjectCreateSymbol) { call, context ->
                 val classToCreate = call.getTypeArgument(0)!!.classifierOrFail.owner as IrClass
-                val className = context.getNameForClass(classToCreate)
-                objectCreate(prototypeOf(className.makeRef(), context.staticContext), context.staticContext)
+                val className = classToCreate.getClassRef(context.staticContext)
+                objectCreate(prototypeOf(className, context.staticContext), context.staticContext)
             }
 
             add(intrinsics.jsClass) { call, context ->
                 val typeArgument = call.getTypeArgument(0)
-                typeArgument?.getClassRef(context)
+                typeArgument?.getClassRef(context.staticContext)
                     ?: compilationException(
                         "Type argument of jsClass must be statically known class",
                         typeArgument
@@ -180,7 +177,8 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
                 val arg = translateCallArguments(call, context).single()
                 val inlineClass = icUtils.getInlinedClass(call.getTypeArgument(0)!!)!!
                 val constructor = inlineClass.declarations.filterIsInstance<IrConstructor>().single { it.isPrimary }
-                JsNew(context.getNameForConstructor(constructor).makeRef(), listOf(arg))
+
+                JsNew(constructor.getConstructorRef(context.staticContext), listOf(arg))
                     .apply { isInlineClassBoxing = true }
             }
 
@@ -209,7 +207,7 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
                     is IrFunctionReference -> {
                         val superClass = call.superQualifierSymbol!!
                         val functionName = context.getNameForMemberFunction(target.symbol.owner as IrSimpleFunction)
-                        val superName = context.getNameForClass(superClass.owner).makeRef()
+                        val superName = superClass.owner.getClassRef(context.staticContext)
                         JsNameRef(functionName, prototypeOf(superName, context.staticContext))
                     }
                     is IrFunctionExpression -> target.accept(IrElementToJsExpressionTransformer(), context)

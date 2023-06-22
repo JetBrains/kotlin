@@ -26,11 +26,11 @@ class JsExecutableProducer(
         }
     }
 
-    fun buildExecutable(multiModule: Boolean, outJsProgram: Boolean) = if (multiModule) {
-        buildMultiModuleExecutable(outJsProgram)
-    } else {
-        buildSingleModuleExecutable(outJsProgram)
-    }
+    fun buildExecutable(granularity: JsGenerationGranularity, outJsProgram: Boolean) =
+        when (granularity) {
+            JsGenerationGranularity.WHOLE_PROGRAM -> buildSingleModuleExecutable(outJsProgram)
+            JsGenerationGranularity.PER_MODULE, JsGenerationGranularity.PER_FILE -> buildMultiModuleExecutable(outJsProgram)
+        }
 
     private fun buildSingleModuleExecutable(outJsProgram: Boolean): BuildResult {
         val modules = caches.map { cacheArtifact -> cacheArtifact.loadJsIrModule() }

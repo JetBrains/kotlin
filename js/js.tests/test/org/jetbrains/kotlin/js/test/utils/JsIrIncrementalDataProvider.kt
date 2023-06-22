@@ -35,7 +35,7 @@ private class TestArtifactCache(val moduleName: String, val binaryAsts: MutableM
                     // TODO: It will be better to use saved fragments, but it doesn't work
                     //  Merger.merge() + JsNode.resolveTemporaryNames() modify fragments,
                     //  therefore the sequential calls produce different results
-                    fragment = deserializeJsIrProgramFragment(it.value)
+                    fragments = deserializeJsIrProgramFragment(it.value)
                 )
             }
         )

@@ -58,8 +58,17 @@ internal annotation class marker
  *
  */
 @Retention(AnnotationRetention.BINARY)
-@Target(CLASS, FUNCTION, PROPERTY, CONSTRUCTOR, PROPERTY_GETTER, PROPERTY_SETTER)
+@Target(FILE, CLASS, FUNCTION, PROPERTY, CONSTRUCTOR, PROPERTY_GETTER, PROPERTY_SETTER)
 public actual annotation class JsName(actual val name: String)
+
+/**
+ * Specifies the name of the compiled file produced from the annotated source file instead of the default one.
+ *
+ * This annotation can be applied only to files and only when the compilation granularity is `PER_FILE`.
+ */
+@Retention(AnnotationRetention.BINARY)
+@Target(FILE)
+public actual annotation class JsFileName(actual val name: String)
 
 /**
  * Denotes an `external` declaration that must be imported from native JavaScript library.

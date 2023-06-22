@@ -13,11 +13,11 @@ import org.jetbrains.kotlin.cli.common.isWindows
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.backend.js.*
-import org.jetbrains.kotlin.ir.backend.js.codegen.JsGenerationGranularity
 import org.jetbrains.kotlin.ir.backend.js.ic.JsExecutableProducer
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerDesc
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.*
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.backend.js.SourceMapsInfo
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImplForJsIC
 import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageConfig
 import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageLogLevel
@@ -54,10 +54,10 @@ class JsIrBackendFacade(
     val testServices: TestServices,
     private val firstTimeCompilation: Boolean
 ) : AbstractTestFacade<BinaryArtifacts.KLib, BinaryArtifacts.Js>() {
-    override val inputKind: ArtifactKinds.KLib
-        get() = ArtifactKinds.KLib
-    override val outputKind: ArtifactKinds.Js
-        get() = ArtifactKinds.Js
+    override val inputKind: ArtifactKinds.KLib get() = ArtifactKinds.KLib
+    override val outputKind: ArtifactKinds.Js get() = ArtifactKinds.Js
+
+    private val jsIrPathReplacer by lazy { JsIrPathReplacer(testServices) }
 
     constructor(testServices: TestServices) : this(testServices, firstTimeCompilation = true)
 
@@ -90,8 +90,8 @@ class JsIrBackendFacade(
 
         val granularity = when {
             !firstTimeCompilation -> JsGenerationGranularity.WHOLE_PROGRAM
+            splitPerFile || module.kind == ModuleKind.ES -> JsGenerationGranularity.PER_FILE
             splitPerModule || perModule -> JsGenerationGranularity.PER_MODULE
-            splitPerFile -> JsGenerationGranularity.PER_FILE
             else -> JsGenerationGranularity.WHOLE_PROGRAM
         }
 
@@ -116,7 +116,7 @@ class JsIrBackendFacade(
                         caches = testServices.jsIrIncrementalDataProvider.getCaches(),
                         relativeRequirePath = false
                     )
-                    jsExecutableProducer.buildExecutable(it.perModule, true).compilationOut
+                    jsExecutableProducer.buildExecutable(it.granularity, true).compilationOut
                 }
             )
             return BinaryArtifacts.Js.JsIrArtifact(
@@ -168,6 +168,7 @@ class JsIrBackendFacade(
         val runIrDce = JsEnvironmentConfigurationDirectives.RUN_IR_DCE in module.directives
         val onlyIrDce = JsEnvironmentConfigurationDirectives.ONLY_IR_DCE in module.directives
         val perModuleOnly = JsEnvironmentConfigurationDirectives.SPLIT_PER_MODULE in module.directives
+        val perFileOnly = JsEnvironmentConfigurationDirectives.SPLIT_PER_FILE in module.directives
         val isEsModules = JsEnvironmentConfigurationDirectives.ES_MODULES in module.directives ||
                 module.directives[JsEnvironmentConfigurationDirectives.MODULE_KIND].contains(ModuleKind.ES)
 
@@ -182,7 +183,7 @@ class JsIrBackendFacade(
             mainArguments,
             moduleToName = runIf(isEsModules) {
                 loweredIr.allModules.associateWith {
-                    "./${getJsArtifactSimpleName(testServices, it.safeName)}_v5.mjs".minifyIfNeed()
+                    "./${getJsArtifactSimpleName(testServices, it.safeName)}_v5".minifyIfNeed()
                 }
             } ?: emptyMap()
         )
@@ -190,17 +191,21 @@ class JsIrBackendFacade(
         // If perModuleOnly then skip whole program
         // (it.dce => runIrDce) && (perModuleOnly => it.perModule)
         val translationModes = TranslationMode.values()
-            .filter { (it.production || !onlyIrDce) && (!it.production || runIrDce) && (!perModuleOnly || it.perModule) }
+            .filter {
+                (it.production || !onlyIrDce) &&
+                        (!it.production || runIrDce) &&
+                        (!perModuleOnly || it.granularity == JsGenerationGranularity.PER_MODULE) &&
+                        (!perFileOnly || it.granularity == JsGenerationGranularity.PER_FILE)
+            }
             .filter { it.production == it.minimizedMemberNames }
+            .filter { isEsModules || it.granularity != JsGenerationGranularity.PER_FILE }
             .toSet()
-        val compilationOut = transformer.generateModule(loweredIr.allModules, translationModes, false)
+        val compilationOut = transformer.generateModule(loweredIr.allModules, translationModes, isEsModules)
         return BinaryArtifacts.Js.JsIrArtifact(outputFile, compilationOut).dump(module)
     }
 
     private fun IrModuleFragment.resolveTestPaths() {
-        JsIrPathReplacer(testServices).let {
-            files.forEach(it::lower)
-        }
+        files.forEach(jsIrPathReplacer::lower)
     }
 
     private fun loadIrFromKlib(module: TestModule, configuration: CompilerConfiguration): IrModuleInfo {
@@ -268,8 +273,9 @@ class JsIrBackendFacade(
         return this
     }
 
-    fun File.fixJsFile(newJsTarget: File, moduleId: String, moduleKind: ModuleKind) {
+    fun File.fixJsFile(rootDir: File, newJsTarget: File, moduleId: String, moduleKind: ModuleKind) {
         val newJsCode = ClassicJsBackendFacade.wrapWithModuleEmulationMarkers(readText(), moduleKind, moduleId)
+        val jsCodeWithCorrectImportPath = jsIrPathReplacer.replacePathTokensWithRealPath(newJsCode, newJsTarget, rootDir)
 
         val oldJsMap = File("$absolutePath.map")
         val jsCodeMap = (moduleKind == ModuleKind.PLAIN && oldJsMap.exists()).ifTrue { oldJsMap.readText() }
@@ -277,12 +283,13 @@ class JsIrBackendFacade(
         this.delete()
         oldJsMap.delete()
 
-        newJsTarget.write(newJsCode)
+        newJsTarget.write(jsCodeWithCorrectImportPath)
         jsCodeMap?.let { File("${newJsTarget.absolutePath}.map").write(it) }
     }
 
     private fun CompilationOutputs.writeTo(outputFile: File, moduleId: String, moduleKind: ModuleKind) {
-        val tmpBuildDir = outputFile.parentFile.resolve("tmp-build")
+        val rootDir = outputFile.parentFile
+        val tmpBuildDir = rootDir.resolve("tmp-build")
         // CompilationOutputs keeps the `outputDir` clean by removing all outdated JS and other unknown files.
         // To ensure that useful files around `outputFile`, such as irdump, are not removed, use `tmpBuildDir` instead.
         val allJsFiles = writeAll(tmpBuildDir, outputFile.nameWithoutExtension, false, moduleId, moduleKind).filter {
@@ -290,11 +297,11 @@ class JsIrBackendFacade(
         }
 
         val mainModuleFile = allJsFiles.last()
-        mainModuleFile.fixJsFile(outputFile, moduleId, moduleKind)
+        mainModuleFile.fixJsFile(rootDir, outputFile, moduleId, moduleKind)
 
         dependencies.map { it.first }.zip(allJsFiles.dropLast(1)).forEach { (depModuleId, builtJsFilePath) ->
             val newFile = outputFile.augmentWithModuleName(depModuleId)
-            builtJsFilePath.fixJsFile(newFile, depModuleId, moduleKind)
+            builtJsFilePath.fixJsFile(rootDir, newFile, depModuleId, moduleKind)
         }
         tmpBuildDir.deleteRecursively()
     }
@@ -347,8 +354,9 @@ fun String.minifyIfNeed(): String {
     if (fileName.length <= 80) return this
 
     val fileExtension = fileFullName.substringAfterLast('.')
+    val extensionPart = if (fileExtension.isEmpty()) "" else ".$fileExtension"
 
-    return "$directoryPath$delimiter${fileName.cityHash64().toULong().toString(16)}.$fileExtension"
+    return "$directoryPath$delimiter${fileName.cityHash64().toULong().toString(16)}$extensionPart"
 }
 
 fun File.augmentWithModuleName(moduleName: String): File = File(absolutePath.augmentWithModuleName(moduleName))

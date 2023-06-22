@@ -32,6 +32,17 @@ internal inline fun File.useCodedOutput(f: CodedOutputStream.() -> Unit) {
     outputStream().useCodedOutput(f)
 }
 
+internal inline fun <T> CodedOutputStream.ifNotNull(value: T?, write: (T) -> Unit) {
+    writeBoolNoTag(value != null)
+    if (value != null) {
+        write(value)
+    }
+}
+
+internal inline fun <T> CodedInputStream.ifTrue(then: () -> T): T? {
+    return if (readBool()) then() else null
+}
+
 internal fun icError(what: String, libFile: KotlinLibraryFile? = null, srcFile: KotlinSourceFile? = null): Nothing {
     val filePath = listOfNotNull(libFile?.path, srcFile?.path).joinToString(":") { File(it).name }
     val msg = if (filePath.isEmpty()) what else "$what for $filePath"
