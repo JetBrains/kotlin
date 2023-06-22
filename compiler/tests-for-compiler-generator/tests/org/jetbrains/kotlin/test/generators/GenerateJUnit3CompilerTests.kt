@@ -110,11 +110,11 @@ fun generateJUnit3CompilerTests(args: Array<String>) {
             }
 
             testClass<AbstractCustomScriptCodegenTest> {
-                model("codegen/customScript", pattern = "^(.*)$")
+                model("codegen/customScript", pattern = "^(.*)$", targetBackend = TargetBackend.JVM)
             }
 
             testClass<AbstractIrCustomScriptCodegenTest> {
-                model("codegen/customScript", pattern = "^(.*)$")
+                model("codegen/customScript", pattern = "^(.*)$", targetBackend = TargetBackend.JVM_IR)
             }
 
             testClass<AbstractIrCfgTestCase> {

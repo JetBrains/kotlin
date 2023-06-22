@@ -1,5 +1,5 @@
 // LANGUAGE: +BreakContinueInInlineLambdas
-// IGNORE_BACKEND: JVM, JVM_OLD
+// IGNORE_BACKEND: JVM
 // WITH_STDLIB
 
 import kotlin.test.assertEquals

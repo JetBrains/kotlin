@@ -45,5 +45,5 @@ open class AbstractJvmIrAgainstOldBoxInlineTest : AbstractBoxInlineWithDifferent
 open class AbstractJvmOldAgainstIrBoxInlineTest : AbstractBoxInlineWithDifferentBackendsTest(
     targetBackend = TargetBackend.JVM_MULTI_MODULE_OLD_AGAINST_IR,
     backendForLib = TargetBackend.JVM_IR,
-    backendForMain = TargetBackend.JVM_OLD
+    backendForMain = TargetBackend.JVM
 )

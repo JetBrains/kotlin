@@ -11,7 +11,6 @@ enum class TargetBackend(
 ) {
     ANY(false),
     JVM(false),
-    JVM_OLD(false, JVM),
     JVM_IR(true, JVM),
     JVM_MULTI_MODULE_IR_AGAINST_OLD(true, JVM_IR),
     JVM_MULTI_MODULE_OLD_AGAINST_IR(false, JVM),
