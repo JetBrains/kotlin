@@ -37234,12 +37234,6 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             }
 
             @Test
-            @TestMetadata("kt54028_cursed.kt")
-            public void testKt54028_cursed() throws Exception {
-                runTest("compiler/testData/codegen/box/sealed/kt54028_cursed.kt");
-            }
-
-            @Test
             @TestMetadata("multipleFiles_enabled.kt")
             public void testMultipleFiles_enabled() throws Exception {
                 runTest("compiler/testData/codegen/box/sealed/multipleFiles_enabled.kt");
@@ -38137,12 +38131,6 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Test
             public void testAllFilesPresentInSuper() throws Exception {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/super"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
-            }
-
-            @Test
-            @TestMetadata("basicmethodSuperClass.kt")
-            public void testBasicmethodSuperClass() throws Exception {
-                runTest("compiler/testData/codegen/box/super/basicmethodSuperClass.kt");
             }
 
             @Test
