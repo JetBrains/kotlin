@@ -247,6 +247,12 @@ public class ClsStubBuilderTestGenerated extends AbstractClsStubBuilderTest {
     }
 
     @Test
+    @TestMetadata("SpecialNames")
+    public void testSpecialNames() throws Exception {
+        runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/SpecialNames/");
+    }
+
+    @Test
     @TestMetadata("SuspendLambda")
     public void testSuspendLambda() throws Exception {
         runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/SuspendLambda/");

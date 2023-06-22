@@ -26,7 +26,10 @@ fun Name.render(): String {
 
 private fun Name.shouldBeEscaped(): Boolean {
     val string = asString()
-    return string in KeywordStringsGenerated.KEYWORDS || string.any { !Character.isLetterOrDigit(it) && it != '_' }
+    return string in KeywordStringsGenerated.KEYWORDS ||
+            string.any { !Character.isLetterOrDigit(it) && it != '_' } ||
+            string.isEmpty() ||
+            !Character.isJavaIdentifierStart(string.codePointAt(0))
 }
 
 fun FqNameUnsafe.render(): String {
