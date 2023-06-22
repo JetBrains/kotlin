@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.util
 
+import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.containingDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.llFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirModuleWithDependenciesSymbolProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirBuiltinsAndCloneableSession
@@ -40,9 +41,21 @@ internal class FirDeclarationForCompiledElementSearcher(private val symbolProvid
             is KtProperty -> findNonLocalProperty(ktDeclaration)
             is KtParameter -> findParameter(ktDeclaration)
             is KtPropertyAccessor -> findNonLocalPropertyAccessor(ktDeclaration)
+            is KtTypeParameter -> findNonLocalTypeParameter(ktDeclaration)
 
             else -> errorWithFirSpecificEntries("Unsupported compiled declaration of type", psi = ktDeclaration)
         }
+    }
+
+    private fun findNonLocalTypeParameter(param: KtTypeParameter): FirDeclaration {
+        val owner = param.containingDeclaration ?: errorWithFirSpecificEntries("Unsupported compiled type parameter", psi = param)
+        val firDeclaration = findNonLocalDeclaration(owner)
+        val firTypeParameterRefOwner = firDeclaration as? FirTypeParameterRefsOwner ?: errorWithFirSpecificEntries(
+            "No fir found by $owner",
+            psi = owner,
+            fir = firDeclaration
+        )
+        return firTypeParameterRefOwner.typeParameters.find { it.realPsi === param } as FirDeclaration
     }
 
     private fun findParameter(param: KtParameter): FirDeclaration {
@@ -53,7 +66,7 @@ internal class FirDeclarationForCompiledElementSearcher(private val symbolProvid
             psi = ownerFunction,
             fir = firDeclaration
         )
-        return firFunction.valueParameters.find { it.name == param.nameAsSafeName }
+        return firFunction.valueParameters.find { it.realPsi === param }
             ?: errorWithFirSpecificEntries("No fir value parameter found", psi = param, fir = firFunction)
     }
 
@@ -66,7 +79,7 @@ internal class FirDeclarationForCompiledElementSearcher(private val symbolProvid
             ?: errorWithFirSpecificEntries("We should be able to find a symbol for $classId", psi = declaration)
 
         return (classCandidate.fir as? FirRegularClass)?.declarations?.first {
-            it is FirEnumEntry && it.name == declaration.nameAsName
+            it is FirEnumEntry && it.realPsi === declaration
         } as FirEnumEntry
     }
 
@@ -107,7 +120,7 @@ internal class FirDeclarationForCompiledElementSearcher(private val symbolProvid
 
         val constructorCandidate =
             symbolProvider.getClassDeclaredConstructors(classId)
-                .singleOrNull { representSameConstructor(declaration, it.fir) }
+                .singleOrNull { it.fir.realPsi === declaration }
                 ?: errorWithFirSpecificEntries("We should be able to find a constructor", psi = declaration)
 
         return constructorCandidate.fir
@@ -190,14 +203,6 @@ private fun FirSymbolProvider.findCallableCandidates(
 
     return getClassDeclaredFunctionSymbols(containerClassId, shortName) +
             getClassDeclaredPropertySymbols(containerClassId, shortName)
-}
-
-private fun representSameConstructor(psiConstructor: KtConstructor<*>, firConstructor: FirConstructor): Boolean {
-    if ((firConstructor.isPrimary) != (psiConstructor is KtPrimaryConstructor)) {
-        return false
-    }
-
-    return firConstructor.realPsi === psiConstructor
 }
 
 private fun ExceptionAttachmentBuilder.withCandidates(candidates: List<FirBasedSymbol<*>>) {

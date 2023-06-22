@@ -63,6 +63,9 @@ abstract class AbstractLibraryGetOrBuildFirTest : AbstractLowLevelApiSingleFileT
             if (decl is KtProperty) {
                 findFirstDeclaration(decl.accessors, expectedClass)?.let { return it }
             }
+            if (decl is KtTypeParameterListOwner) {
+                findFirstDeclaration(decl.typeParameters, expectedClass)?.let { return it }
+            }
             if (decl is KtClass && KtConstructor::class.java.isAssignableFrom(expectedClass)) {
                 decl.primaryConstructor?.let { return it }
             }

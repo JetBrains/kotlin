@@ -78,6 +78,12 @@ public class LibraryGetOrBuildFirTestGenerated extends AbstractLibraryGetOrBuild
         runTest("analysis/low-level-api-fir/testdata/getOrBuildFirBinary/topLevelFunction.kt");
     }
 
+    @Test
+    @TestMetadata("typeParameter.kt")
+    public void testTypeParameter() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/getOrBuildFirBinary/typeParameter.kt");
+    }
+
     @Nested
     @TestMetadata("analysis/low-level-api-fir/testdata/getOrBuildFirBinary/publishedApi")
     @TestDataPath("$PROJECT_ROOT")
