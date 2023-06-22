@@ -9,10 +9,10 @@ import org.jetbrains.kotlin.analysis.project.structure.KtModule
 
 public fun interface KotlinGlobalSourceOutOfBlockModificationListener {
     /**
-     * [afterModification] is invoked in a write action after global out-of-block modification of all source [KtModule]s, excluding binary
-     * modules.
+     * [onModification] is invoked in a write action before or after global out-of-block modification of all source [KtModule]s, excluding
+     * binary modules.
      *
      * This event is published on global PSI changes.
      */
-    public fun afterModification()
+    public fun onModification()
 }

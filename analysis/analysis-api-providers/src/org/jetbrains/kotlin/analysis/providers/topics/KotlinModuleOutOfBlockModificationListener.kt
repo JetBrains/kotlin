@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.analysis.providers.KotlinModificationTrackerFactory
 
 public fun interface KotlinModuleOutOfBlockModificationListener {
     /**
-     * [afterModification] is invoked in a write action after an out-of-block modification happened in [module]'s source code.
+     * [onModification] is invoked in a write action before or after an out-of-block modification happens in [module]'s source code.
      *
      * See [KotlinModificationTrackerFactory.createProjectWideOutOfBlockModificationTracker] for an explanation of out-of-block
      * modifications.
@@ -18,5 +18,5 @@ public fun interface KotlinModuleOutOfBlockModificationListener {
      * This event may be published for any and all source code changes, not just out-of-block modifications, to simplify the implementation
      * of modification detection.
      */
-    public fun afterModification(module: KtModule)
+    public fun onModification(module: KtModule)
 }

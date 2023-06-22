@@ -21,7 +21,7 @@ public abstract class KotlinGlobalModificationServiceBase(private val project: P
         ApplicationManager.getApplication().assertWriteAccessAllowed()
 
         incrementModificationTrackers(includeBinaryTrackers = true)
-        project.analysisMessageBus.syncPublisher(KotlinTopics.GLOBAL_MODULE_STATE_MODIFICATION).afterModification()
+        project.analysisMessageBus.syncPublisher(KotlinTopics.GLOBAL_MODULE_STATE_MODIFICATION).onModification()
     }
 
     @TestOnly
@@ -29,7 +29,7 @@ public abstract class KotlinGlobalModificationServiceBase(private val project: P
         ApplicationManager.getApplication().assertWriteAccessAllowed()
 
         incrementModificationTrackers(includeBinaryTrackers = true)
-        project.analysisMessageBus.syncPublisher(KotlinTopics.GLOBAL_OUT_OF_BLOCK_MODIFICATION).afterModification()
+        project.analysisMessageBus.syncPublisher(KotlinTopics.GLOBAL_OUT_OF_BLOCK_MODIFICATION).onModification()
     }
 
     @TestOnly
@@ -37,7 +37,7 @@ public abstract class KotlinGlobalModificationServiceBase(private val project: P
         ApplicationManager.getApplication().assertWriteAccessAllowed()
 
         incrementModificationTrackers(includeBinaryTrackers = false)
-        project.analysisMessageBus.syncPublisher(KotlinTopics.GLOBAL_SOURCE_MODULE_STATE_MODIFICATION).afterModification()
+        project.analysisMessageBus.syncPublisher(KotlinTopics.GLOBAL_SOURCE_MODULE_STATE_MODIFICATION).onModification()
     }
 
     @TestOnly
@@ -45,6 +45,6 @@ public abstract class KotlinGlobalModificationServiceBase(private val project: P
         ApplicationManager.getApplication().assertWriteAccessAllowed()
 
         incrementModificationTrackers(includeBinaryTrackers = false)
-        project.analysisMessageBus.syncPublisher(KotlinTopics.GLOBAL_SOURCE_OUT_OF_BLOCK_MODIFICATION).afterModification()
+        project.analysisMessageBus.syncPublisher(KotlinTopics.GLOBAL_SOURCE_OUT_OF_BLOCK_MODIFICATION).onModification()
     }
 }
