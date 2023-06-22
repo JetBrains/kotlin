@@ -78,5 +78,5 @@ public actual open class LinkedHashMap<K, V> : HashMap<K, V>, MutableMap<K, V> {
  * JS object without hashing them.
  */
 public fun <V> linkedStringMapOf(vararg pairs: Pair<String, V>): LinkedHashMap<String, V> {
-    return LinkedHashMap<String, V>(InternalStringMap()).apply { putAll(pairs) }
+    return LinkedHashMap<String, V>(InternalStringLinkedMap()).apply { putAll(pairs) }
 }

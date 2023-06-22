@@ -77,5 +77,5 @@ public actual open class LinkedHashSet<E> : HashSet<E>, MutableSet<E> {
  * which elements the keys as properties of JS object without hashing them.
  */
 public fun linkedStringSetOf(vararg elements: String): LinkedHashSet<String> {
-    return LinkedHashSet<String>(InternalStringMap()).apply { addAll(elements) }
+    return LinkedHashSet<String>(InternalStringLinkedMap()).apply { addAll(elements) }
 }
