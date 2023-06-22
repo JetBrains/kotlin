@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 
 public class KtDeclarationModifiersRenderer private constructor(
     public val modifierListRenderer: KtModifierListRenderer,
-    public val modifierFilter: KtRendererModifierFilter,
+    public val keywordFilter: KtRendererKeywordFilter,
     public val modifiersSorter: KtModifiersSorter,
     public val modalityProvider: KtRendererModalityModifierProvider,
     public val visibilityProvider: KtRendererVisibilityModifierProvider,
@@ -29,7 +29,7 @@ public class KtDeclarationModifiersRenderer private constructor(
         val renderer = this
         return KtDeclarationModifiersRenderer {
             this.modifierListRenderer = renderer.modifierListRenderer
-            this.modifierFilter = renderer.modifierFilter
+            this.keywordFilter = renderer.keywordFilter
             this.modifiersSorter = renderer.modifiersSorter
             this.modalityProvider = renderer.modalityProvider
             this.visibilityProvider = renderer.visibilityProvider
@@ -46,7 +46,7 @@ public class KtDeclarationModifiersRenderer private constructor(
 
     public class Builder {
         public lateinit var modifierListRenderer: KtModifierListRenderer
-        public lateinit var modifierFilter: KtRendererModifierFilter
+        public lateinit var keywordFilter: KtRendererKeywordFilter
         public lateinit var modifiersSorter: KtModifiersSorter
         public lateinit var modalityProvider: KtRendererModalityModifierProvider
         public lateinit var visibilityProvider: KtRendererVisibilityModifierProvider
@@ -55,7 +55,7 @@ public class KtDeclarationModifiersRenderer private constructor(
 
         public fun build(): KtDeclarationModifiersRenderer = KtDeclarationModifiersRenderer(
             modifierListRenderer,
-            modifierFilter,
+            keywordFilter,
             modifiersSorter,
             modalityProvider,
             visibilityProvider,

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.callab
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.KtDeclarationRenderer
 import org.jetbrains.kotlin.analysis.api.symbols.KtConstructorSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KtNamedSymbol
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.renderer.render
@@ -29,9 +30,13 @@ public interface KtConstructorSymbolRenderer {
         override fun renderSymbol(symbol: KtConstructorSymbol, printer: PrettyPrinter) {
             printer {
                 " ".separated(
-                    { keywordRenderer.renderKeyword(KtTokens.CONSTRUCTOR_KEYWORD, symbol, printer) },
                     {
-                        symbol.containingClassIdIfNonLocal?.shortClassName?.let { printer.append(it.render()) }
+                        if (keywordFilter.filter(KtTokens.CONSTRUCTOR_KEYWORD, symbol)) {
+                            keywordRenderer.renderKeyword(KtTokens.CONSTRUCTOR_KEYWORD, symbol, printer)
+                        }
+                    },
+                    {
+                        (symbol.getContainingSymbol() as? KtNamedSymbol)?.name?.let { printer.append(it.render()) }
                         printer.printCollection(symbol.valueParameters, prefix = "(", postfix = ")") {
                             typeRenderer.renderType(it.returnType, printer)
                         }

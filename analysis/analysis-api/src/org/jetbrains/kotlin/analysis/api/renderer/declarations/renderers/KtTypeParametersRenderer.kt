@@ -80,7 +80,11 @@ public interface KtTypeParametersRenderer {
                     }
                 }.ifEmpty { return }
             " ".separated(
-                { keywordRenderer.renderKeyword(KtTokens.WHERE_KEYWORD, symbol, printer) },
+                {
+                    if (keywordFilter.filter(KtTokens.WHERE_KEYWORD, symbol)) {
+                        keywordRenderer.renderKeyword(KtTokens.WHERE_KEYWORD, symbol, printer)
+                    }
+                },
                 {
                     printer.printCollection(allBounds) { (typeParameter, bound) ->
                         " : ".separated(

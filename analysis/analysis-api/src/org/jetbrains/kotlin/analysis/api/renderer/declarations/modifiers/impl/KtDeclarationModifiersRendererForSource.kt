@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.analysis.api.renderer.declarations.modifiers.rendere
 public object KtDeclarationModifiersRendererForSource {
     public val NO_IMPLICIT_MODIFIERS: KtDeclarationModifiersRenderer = KtDeclarationModifiersRenderer {
         modifierListRenderer = KtModifierListRenderer.AS_LIST
-        modifierFilter = KtRendererModifierFilter.ALL
+        keywordFilter = KtRendererKeywordFilter.ALL
         modifiersSorter = KtModifiersSorter.CANONICAL
         modalityProvider = KtRendererModalityModifierProvider.WITHOUT_IMPLICIT_MODALITY
         visibilityProvider = KtRendererVisibilityModifierProvider.NO_IMPLICIT_VISIBILITY
