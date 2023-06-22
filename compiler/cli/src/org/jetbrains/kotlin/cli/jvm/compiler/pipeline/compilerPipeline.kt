@@ -76,7 +76,8 @@ fun compileModulesUsingFrontendIrAndLightTree(
     messageCollector: MessageCollector,
     buildFile: File?,
     chunk: List<Module>,
-    targetDescription: String
+    targetDescription: String,
+    checkSourceFiles: Boolean
 ): Boolean {
     require(projectEnvironment is VfsBasedProjectEnvironment) // TODO: abstract away this requirement
     ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
@@ -93,6 +94,11 @@ fun compileModulesUsingFrontendIrAndLightTree(
             put(JVMConfigurationKeys.FRIEND_PATHS, module.getFriendPaths())
         }
         val groupedSources = collectSources(compilerConfiguration, projectEnvironment, messageCollector)
+
+        if (checkSourceFiles && groupedSources.isEmpty() && buildFile == null) {
+            messageCollector.report(CompilerMessageSeverity.ERROR, "No source files")
+            return false
+        }
 
         val compilerInput = ModuleCompilerInput(
             TargetId(module),
