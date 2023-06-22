@@ -31,9 +31,9 @@ interface KotlinHierarchyDsl {
     fun applyHierarchyTemplate(template: KotlinHierarchyTemplate)
 
     /**
-     * Similar to [applyDefaultHierarchyTemplate], but allows to extend the provided template
+     * Similar to [applyHierarchyTemplate], but allows to extend the provided template
      *
-     * #### Example 2: Adding custom groups (Experimental)
+     * #### Example: Adding custom groups (Experimental)
      * Let's imagine we would additionally like to share code between linux and apple (unixLike)
      *
      * ```kotlin
