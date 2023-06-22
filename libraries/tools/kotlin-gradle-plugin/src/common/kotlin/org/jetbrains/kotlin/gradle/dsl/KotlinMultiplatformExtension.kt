@@ -54,7 +54,7 @@ abstract class KotlinMultiplatformExtension
     internal val hierarchy by lazy { KotlinHierarchyDslImpl(targets, sourceSets) }
 
     /**
-     * Set's up a 'natural'/'default' hierarchy withing [KotlinTarget]'s in the project.
+     * Sets up a 'natural'/'default' hierarchy withing [KotlinTarget]'s in the project.
      *
      * #### Example
      *
