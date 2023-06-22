@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinSharedNativeCompilation
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropCommonizerDependent
 import org.jetbrains.kotlin.gradle.targets.native.internal.from
 import org.jetbrains.kotlin.gradle.targets.native.internal.isAllowCommonizer
+import org.jetbrains.kotlin.gradle.targets.native.internal.isCInteropCommonizationEnabled
 
 internal object DisabledCinteropCommonizationInHmppProjectChecker : KotlinGradleProjectChecker {
     override suspend fun KotlinGradleProjectCheckerContext.runChecks(collector: KotlinToolingDiagnosticsCollector) {
@@ -23,7 +24,7 @@ internal object DisabledCinteropCommonizationInHmppProjectChecker : KotlinGradle
 
         if (multiplatformExtension == null
             || !project.isAllowCommonizer()
-            || kotlinPropertiesProvider.enableCInteropCommonization
+            || project.isCInteropCommonizationEnabled
             || kotlinPropertiesProvider.ignoreDisabledCInteropCommonization
         ) return
 

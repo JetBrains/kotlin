@@ -25,7 +25,14 @@ import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import java.io.File
 import javax.inject.Inject
 
-internal val Project.isCInteropCommonizationEnabled: Boolean get() = PropertiesProvider(this).enableCInteropCommonization
+internal val Project.isCInteropCommonizationEnabled: Boolean
+    get() {
+        return if (PropertiesProvider(this).isCinteropCommonizationSpecified) {
+            PropertiesProvider(this).enableCInteropCommonization
+        } else {
+            this.pluginManager.hasPlugin("org.jetbrains.kotlin.native.cocoapods")
+        }
+    }
 
 internal val Project.isIntransitiveMetadataConfigurationEnabled: Boolean
     get() = PropertiesProvider(this).enableIntransitiveMetadataConfiguration
