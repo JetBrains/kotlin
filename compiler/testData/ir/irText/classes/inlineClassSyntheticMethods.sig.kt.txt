@@ -5,26 +5,32 @@ class C<T : Any?> {
   // CHECK:
   //   Mangled name: C{}t
   //   Public signature: /C.t|-8767999791664836944[0]
+  //   Public signature debug description: {}t
   val t: T
     // CHECK JVM_IR:
     //   Mangled name: C#<get-t>(){}1:0
     //   Public signature: /C.t.<get-t>|5296523675281381766[0]
+    //   Public signature debug description: <get-t>(){}1:0
     // CHECK JS_IR NATIVE:
     //   Mangled name: C#<get-t>(){}
     //   Public signature: /C.t.<get-t>|7061140872129253552[0]
+    //   Public signature debug description: <get-t>(){}
     get
 
   // CHECK:
   //   Mangled name: C#<init>(1:0){}
   //   Public signature: /C.<init>|-8731461708390519279[0]
+  //   Public signature debug description: <init>(1:0){}
   constructor(t: T) /* primary */
 
   // CHECK JVM_IR:
   //   Mangled name: C#hashCode(){}kotlin.Int
   //   Public signature: /C.hashCode|-8048879360829830756[0]
+  //   Public signature debug description: hashCode(){}kotlin.Int
   // CHECK JS_IR NATIVE:
   //   Mangled name: C#hashCode(){}
   //   Public signature: /C.hashCode|3409210261493131192[0]
+  //   Public signature debug description: hashCode(){}
   override fun hashCode(): Int
 
 }
@@ -36,49 +42,61 @@ value class IC<TT : Any?> {
   // CHECK:
   //   Mangled name: IC{}c
   //   Public signature: /IC.c|-4416962153448040627[0]
+  //   Public signature debug description: {}c
   val c: C<TT>
     // CHECK JVM_IR:
     //   Mangled name: IC#<get-c>(){}C<1:0>
     //   Public signature: /IC.c.<get-c>|-6707667902688835915[0]
+    //   Public signature debug description: <get-c>(){}C<1:0>
     // CHECK JS_IR NATIVE:
     //   Mangled name: IC#<get-c>(){}
     //   Public signature: /IC.c.<get-c>|2368736057102379596[0]
+    //   Public signature debug description: <get-c>(){}
     get
 
   // CHECK:
   //   Mangled name: IC#<init>(C<1:0>){}
   //   Public signature: /IC.<init>|-2549303465575104617[0]
+  //   Public signature debug description: <init>(C<1:0>){}
   constructor(c: C<TT>) /* primary */
   // CHECK JVM_IR:
   //   Mangled name: IC#equals(kotlin.Any?){}kotlin.Boolean
   //   Public signature: /IC.equals|722809408929142791[0]
+  //   Public signature debug description: equals(kotlin.Any?){}kotlin.Boolean
   // CHECK JS_IR NATIVE:
   //   Mangled name: IC#equals(kotlin.Any?){}
   //   Public signature: /IC.equals|4638265728071529943[0]
+  //   Public signature debug description: equals(kotlin.Any?){}
   override operator fun equals(other: Any?): Boolean
 
   // CHECK JVM_IR:
   //   Mangled name: IC#hashCode(){}kotlin.Int
   //   Public signature: /IC.hashCode|-8048879360829830756[0]
+  //   Public signature debug description: hashCode(){}kotlin.Int
   // CHECK JS_IR NATIVE:
   //   Mangled name: IC#hashCode(){}
   //   Public signature: /IC.hashCode|3409210261493131192[0]
+  //   Public signature debug description: hashCode(){}
   override fun hashCode(): Int
 
   // CHECK JVM_IR:
   //   Mangled name: IC#toString(){}kotlin.String
   //   Public signature: /IC.toString|6958853723545266802[0]
+  //   Public signature debug description: toString(){}kotlin.String
   // CHECK JS_IR NATIVE:
   //   Mangled name: IC#toString(){}
   //   Public signature: /IC.toString|-1522858123163872138[0]
+  //   Public signature debug description: toString(){}
   override fun toString(): String
 
   // CHECK JVM_IR:
   //   Mangled name: IC#foo(){}kotlin.Int
   //   Public signature: /IC.foo|-1256155405684507276[0]
+  //   Public signature debug description: foo(){}kotlin.Int
   // CHECK JS_IR NATIVE:
   //   Mangled name: IC#foo(){}
   //   Public signature: /IC.foo|-1041209573719867811[0]
+  //   Public signature debug description: foo(){}
   fun foo(): Int
 
 }
@@ -86,8 +104,10 @@ value class IC<TT : Any?> {
 // CHECK JVM_IR:
 //   Mangled name: #box(){}kotlin.String
 //   Public signature: /box|-9347091776561469[0]
+//   Public signature debug description: box(){}kotlin.String
 // CHECK JS_IR NATIVE:
 //   Mangled name: #box(){}
 //   Public signature: /box|2173511048851971368[0]
+//   Public signature debug description: box(){}
 fun box(): String
 

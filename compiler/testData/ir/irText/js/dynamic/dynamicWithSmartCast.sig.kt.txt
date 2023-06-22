@@ -1,10 +1,12 @@
 // CHECK JS_IR NATIVE:
 //   Mangled name: #test1(<dynamic>){}
 //   Public signature: /test1|4353482563436034667[0]
+//   Public signature debug description: test1(<dynamic>){}
 fun test1(d: dynamic): Int
 
 // CHECK JS_IR NATIVE:
 //   Mangled name: #test2(<dynamic>){}
 //   Public signature: /test2|-7945586224410659921[0]
+//   Public signature debug description: test2(<dynamic>){}
 fun test2(d: dynamic): Int
 

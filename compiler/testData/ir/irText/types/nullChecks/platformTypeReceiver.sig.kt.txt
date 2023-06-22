@@ -1,10 +1,12 @@
 // CHECK JVM_IR:
 //   Mangled name: #test1(){}kotlin.Boolean
 //   Public signature: /test1|6066090347244057212[0]
+//   Public signature debug description: test1(){}kotlin.Boolean
 fun test1(): Boolean
 
 // CHECK JVM_IR:
 //   Mangled name: #test2(){}kotlin.Boolean
 //   Public signature: /test2|-8502648892389047755[0]
+//   Public signature debug description: test2(){}kotlin.Boolean
 fun test2(): Boolean
 

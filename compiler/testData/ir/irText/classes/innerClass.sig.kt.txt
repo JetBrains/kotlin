@@ -9,6 +9,7 @@ class Outer {
     // CHECK:
     //   Mangled name: Outer.DerivedInnerClass#<init>(){}
     //   Public signature: /Outer.DerivedInnerClass.<init>|-5645683436151566731[0]
+    //   Public signature debug description: <init>(){}
     constructor() /* primary */
 
   }
@@ -20,6 +21,7 @@ class Outer {
     // CHECK:
     //   Mangled name: Outer.TestInnerClass#<init>(){}
     //   Public signature: /Outer.TestInnerClass.<init>|-5645683436151566731[0]
+    //   Public signature debug description: <init>(){}
     constructor() /* primary */
 
   }
@@ -27,6 +29,7 @@ class Outer {
   // CHECK:
   //   Mangled name: Outer#<init>(){}
   //   Public signature: /Outer.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   constructor() /* primary */
 
 }

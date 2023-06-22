@@ -1,5 +1,6 @@
 // CHECK:
 //   Mangled name: #test(J){}
 //   Public signature: /test|-8477572416399964095[0]
+//   Public signature debug description: test(J){}
 fun test(j: J): Unit
 

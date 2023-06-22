@@ -1,5 +1,6 @@
 // CHECK JVM_IR:
 //   Mangled name: #test(){}kotlin.String
 //   Public signature: /test|-7008832412320199001[0]
+//   Public signature debug description: test(){}kotlin.String
 fun test(): String
 

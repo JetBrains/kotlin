@@ -5,31 +5,38 @@ open class Base {
   // CHECK:
   //   Mangled name: Base{}bar
   //   Public signature: /Base.bar|-7864284097863469857[0]
+  //   Public signature debug description: {}bar
   open val bar: String
     // CHECK JVM_IR:
     //   Mangled name: Base#<get-bar>(){}kotlin.String
     //   Public signature: /Base.bar.<get-bar>|3423724227669014303[0]
+    //   Public signature debug description: <get-bar>(){}kotlin.String
     // CHECK JS_IR NATIVE:
     //   Mangled name: Base#<get-bar>(){}
     //   Public signature: /Base.bar.<get-bar>|6880642144337645699[0]
+    //   Public signature debug description: <get-bar>(){}
     open get
 
   // CHECK:
   //   Mangled name: Base#<init>(){}
   //   Public signature: /Base.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   constructor() /* primary */
 
   // CHECK:
   //   Mangled name: Base#foo(){}
   //   Public signature: /Base.foo|-1041209573719867811[0]
+  //   Public signature debug description: foo(){}
   open fun foo(): Unit
 
   // CHECK JVM_IR:
   //   Mangled name: Base#hashCode(){}kotlin.Int
   //   Public signature: /Base.hashCode|-8048879360829830756[0]
+  //   Public signature debug description: hashCode(){}kotlin.Int
   // CHECK JS_IR NATIVE:
   //   Mangled name: Base#hashCode(){}
   //   Public signature: /Base.hashCode|3409210261493131192[0]
+  //   Public signature debug description: hashCode(){}
   override fun hashCode(): Int
 
 }
@@ -41,31 +48,38 @@ class Derived : Base {
   // CHECK:
   //   Mangled name: Derived#<init>(){}
   //   Public signature: /Derived.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   constructor() /* primary */
 
   // CHECK JVM_IR:
   //   Mangled name: Derived#hashCode(){}kotlin.Int
   //   Public signature: /Derived.hashCode|-8048879360829830756[0]
+  //   Public signature debug description: hashCode(){}kotlin.Int
   // CHECK JS_IR NATIVE:
   //   Mangled name: Derived#hashCode(){}
   //   Public signature: /Derived.hashCode|3409210261493131192[0]
+  //   Public signature debug description: hashCode(){}
   /* fake */ override fun hashCode(): Int
 
   // CHECK:
   //   Mangled name: Derived#foo(){}
   //   Public signature: /Derived.foo|-1041209573719867811[0]
+  //   Public signature debug description: foo(){}
   override fun foo(): Unit
 
   // CHECK:
   //   Mangled name: Derived{}bar
   //   Public signature: /Derived.bar|-7864284097863469857[0]
+  //   Public signature debug description: {}bar
   override val bar: String
     // CHECK JVM_IR:
     //   Mangled name: Derived#<get-bar>(){}kotlin.String
     //   Public signature: /Derived.bar.<get-bar>|3423724227669014303[0]
+    //   Public signature debug description: <get-bar>(){}kotlin.String
     // CHECK JS_IR NATIVE:
     //   Mangled name: Derived#<get-bar>(){}
     //   Public signature: /Derived.bar.<get-bar>|6880642144337645699[0]
+    //   Public signature debug description: <get-bar>(){}
     override get(): String
 
 }

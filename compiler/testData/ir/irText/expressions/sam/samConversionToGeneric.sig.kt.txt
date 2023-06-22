@@ -1,50 +1,60 @@
 // CHECK JVM_IR:
 //   Mangled name: #test1(){}J<kotlin.String>
 //   Public signature: /test1|8889900013954121507[0]
+//   Public signature debug description: test1(){}J<kotlin.String>
 fun test1(): J<String>
 
 // CHECK:
 //   Mangled name: #test10(kotlin.Function1<kotlin.Int,kotlin.String>){}
 //   Public signature: /test10|3769162614537259024[0]
+//   Public signature debug description: test10(kotlin.Function1<kotlin.Int,kotlin.String>){}
 fun test10(fn: Function1<Int, String>): Unit
 
 // CHECK JVM_IR:
 //   Mangled name: #test2(){}J<kotlin.String?>
 //   Public signature: /test2|-2485267088492515783[0]
+//   Public signature debug description: test2(){}J<kotlin.String?>
 fun test2(): J<String?>
 
 // CHECK:
 //   Mangled name: #test3(){}
 //   Public signature: /test3|-3759735065270951803[0]
+//   Public signature debug description: test3(){}
 fun test3(): Unit
 
 // CHECK:
 //   Mangled name: #test4(kotlin.Any){}
 //   Public signature: /test4|-9023258848991787985[0]
+//   Public signature debug description: test4(kotlin.Any){}
 fun test4(a: Any): Unit
 
 // CHECK:
 //   Mangled name: #test5(kotlin.Any){}
 //   Public signature: /test5|4504681808078971124[0]
+//   Public signature debug description: test5(kotlin.Any){}
 fun test5(a: Any): Unit
 
 // CHECK:
 //   Mangled name: #test6(kotlin.Function1<0:0,0:0>){0§<kotlin.Any?>}
 //   Public signature: /test6|-3081320997310711341[0]
+//   Public signature debug description: test6(kotlin.Function1<0:0,0:0>){0§<kotlin.Any?>}
 fun <T : Any?> test6(a: Function1<T, T>): Unit
 
 // CHECK:
 //   Mangled name: #test7(kotlin.Any){0§<kotlin.Any?>}
 //   Public signature: /test7|-5359981114052378429[0]
+//   Public signature debug description: test7(kotlin.Any){0§<kotlin.Any?>}
 fun <T : Any?> test7(a: Any): Unit
 
 // CHECK JVM_IR:
 //   Mangled name: #test8(kotlin.Function1<kotlin.String,kotlin.String>){}J<kotlin.String?>
 //   Public signature: /test8|-6112132748185879177[0]
+//   Public signature debug description: test8(kotlin.Function1<kotlin.String,kotlin.String>){}J<kotlin.String?>
 fun test8(efn: @ExtensionFunctionType Function1<String, String>): J<String?>
 
 // CHECK:
 //   Mangled name: #test9(kotlin.Function1<kotlin.String,kotlin.String>){}
 //   Public signature: /test9|5682079641444556672[0]
+//   Public signature debug description: test9(kotlin.Function1<kotlin.String,kotlin.String>){}
 fun test9(efn: @ExtensionFunctionType Function1<String, String>): Unit
 

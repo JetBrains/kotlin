@@ -5,57 +5,71 @@ data class TestData {
   // CHECK:
   //   Mangled name: TestData{}nn
   //   Public signature: /TestData.nn|4910025065134137180[0]
+  //   Public signature debug description: {}nn
   val nn: Nothing?
     // CHECK JVM_IR:
     //   Mangled name: TestData#<get-nn>(){}kotlin.Nothing?
     //   Public signature: /TestData.nn.<get-nn>|-7894820649903816930[0]
+    //   Public signature debug description: <get-nn>(){}kotlin.Nothing?
     // CHECK JS_IR NATIVE:
     //   Mangled name: TestData#<get-nn>(){}
     //   Public signature: /TestData.nn.<get-nn>|-7268942028409156247[0]
+    //   Public signature debug description: <get-nn>(){}
     get
 
   // CHECK:
   //   Mangled name: TestData#<init>(kotlin.Nothing?){}
   //   Public signature: /TestData.<init>|-7885966204384349687[0]
+  //   Public signature debug description: <init>(kotlin.Nothing?){}
   constructor(nn: Nothing?) /* primary */
   // CHECK JVM_IR:
   //   Mangled name: TestData#component1(){}kotlin.Nothing?
   //   Public signature: /TestData.component1|137173073680766068[0]
+  //   Public signature debug description: component1(){}kotlin.Nothing?
   // CHECK JS_IR NATIVE:
   //   Mangled name: TestData#component1(){}
   //   Public signature: /TestData.component1|162597135895221648[0]
+  //   Public signature debug description: component1(){}
   operator fun component1(): Nothing?
 
   // CHECK JVM_IR:
   //   Mangled name: TestData#copy(kotlin.Nothing?){}TestData
   //   Public signature: /TestData.copy|-7161493903224753726[0]
+  //   Public signature debug description: copy(kotlin.Nothing?){}TestData
   // CHECK JS_IR NATIVE:
   //   Mangled name: TestData#copy(kotlin.Nothing?){}
   //   Public signature: /TestData.copy|1980693645743259965[0]
+  //   Public signature debug description: copy(kotlin.Nothing?){}
   fun copy(nn: Nothing?): TestData
 
   // CHECK JVM_IR:
   //   Mangled name: TestData#equals(kotlin.Any?){}kotlin.Boolean
   //   Public signature: /TestData.equals|722809408929142791[0]
+  //   Public signature debug description: equals(kotlin.Any?){}kotlin.Boolean
   // CHECK JS_IR NATIVE:
   //   Mangled name: TestData#equals(kotlin.Any?){}
   //   Public signature: /TestData.equals|4638265728071529943[0]
+  //   Public signature debug description: equals(kotlin.Any?){}
   override operator fun equals(other: Any?): Boolean
 
   // CHECK JVM_IR:
   //   Mangled name: TestData#hashCode(){}kotlin.Int
   //   Public signature: /TestData.hashCode|-8048879360829830756[0]
+  //   Public signature debug description: hashCode(){}kotlin.Int
   // CHECK JS_IR NATIVE:
   //   Mangled name: TestData#hashCode(){}
   //   Public signature: /TestData.hashCode|3409210261493131192[0]
+  //   Public signature debug description: hashCode(){}
   override fun hashCode(): Int
 
   // CHECK JVM_IR:
   //   Mangled name: TestData#toString(){}kotlin.String
   //   Public signature: /TestData.toString|6958853723545266802[0]
+  //   Public signature debug description: toString(){}kotlin.String
   // CHECK JS_IR NATIVE:
   //   Mangled name: TestData#toString(){}
   //   Public signature: /TestData.toString|-1522858123163872138[0]
+  //   Public signature debug description: toString(){}
   override fun toString(): String
 
 }
@@ -67,41 +81,51 @@ value class TestInline {
   // CHECK:
   //   Mangled name: TestInline{}nn
   //   Public signature: /TestInline.nn|4910025065134137180[0]
+  //   Public signature debug description: {}nn
   val nn: Nothing?
     // CHECK JVM_IR:
     //   Mangled name: TestInline#<get-nn>(){}kotlin.Nothing?
     //   Public signature: /TestInline.nn.<get-nn>|-7894820649903816930[0]
+    //   Public signature debug description: <get-nn>(){}kotlin.Nothing?
     // CHECK JS_IR NATIVE:
     //   Mangled name: TestInline#<get-nn>(){}
     //   Public signature: /TestInline.nn.<get-nn>|-7268942028409156247[0]
+    //   Public signature debug description: <get-nn>(){}
     get
 
   // CHECK:
   //   Mangled name: TestInline#<init>(kotlin.Nothing?){}
   //   Public signature: /TestInline.<init>|-7885966204384349687[0]
+  //   Public signature debug description: <init>(kotlin.Nothing?){}
   constructor(nn: Nothing?) /* primary */
   // CHECK JVM_IR:
   //   Mangled name: TestInline#equals(kotlin.Any?){}kotlin.Boolean
   //   Public signature: /TestInline.equals|722809408929142791[0]
+  //   Public signature debug description: equals(kotlin.Any?){}kotlin.Boolean
   // CHECK JS_IR NATIVE:
   //   Mangled name: TestInline#equals(kotlin.Any?){}
   //   Public signature: /TestInline.equals|4638265728071529943[0]
+  //   Public signature debug description: equals(kotlin.Any?){}
   override operator fun equals(other: Any?): Boolean
 
   // CHECK JVM_IR:
   //   Mangled name: TestInline#hashCode(){}kotlin.Int
   //   Public signature: /TestInline.hashCode|-8048879360829830756[0]
+  //   Public signature debug description: hashCode(){}kotlin.Int
   // CHECK JS_IR NATIVE:
   //   Mangled name: TestInline#hashCode(){}
   //   Public signature: /TestInline.hashCode|3409210261493131192[0]
+  //   Public signature debug description: hashCode(){}
   override fun hashCode(): Int
 
   // CHECK JVM_IR:
   //   Mangled name: TestInline#toString(){}kotlin.String
   //   Public signature: /TestInline.toString|6958853723545266802[0]
+  //   Public signature debug description: toString(){}kotlin.String
   // CHECK JS_IR NATIVE:
   //   Mangled name: TestInline#toString(){}
   //   Public signature: /TestInline.toString|-1522858123163872138[0]
+  //   Public signature debug description: toString(){}
   override fun toString(): String
 
 }

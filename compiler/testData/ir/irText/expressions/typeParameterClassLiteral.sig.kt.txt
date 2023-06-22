@@ -5,34 +5,42 @@ class Host {
   // CHECK:
   //   Mangled name: Host#<init>(){}
   //   Public signature: /Host.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   constructor() /* primary */
 
   // CHECK JVM_IR:
   //   Mangled name: Host#classRefGenericMemberExtFun@kotlin.Any(){0§<kotlin.Any>}kotlin.reflect.KClass<0:0>
   //   Public signature: /Host.classRefGenericMemberExtFun|3649030800014668260[0]
+  //   Public signature debug description: classRefGenericMemberExtFun@kotlin.Any(){0§<kotlin.Any>}kotlin.reflect.KClass<0:0>
   // CHECK JS_IR NATIVE:
   //   Mangled name: Host#classRefGenericMemberExtFun@kotlin.Any(){0§<kotlin.Any>}
   //   Public signature: /Host.classRefGenericMemberExtFun|-4515238060105953539[0]
+  //   Public signature debug description: classRefGenericMemberExtFun@kotlin.Any(){0§<kotlin.Any>}
   inline fun <reified TF : Any> Any.classRefGenericMemberExtFun(): KClass<TF>
 
   // CHECK JVM_IR:
   //   Mangled name: Host#classRefGenericMemberFun(){0§<kotlin.Any>}kotlin.reflect.KClass<0:0>
   //   Public signature: /Host.classRefGenericMemberFun|3400078441198881955[0]
+  //   Public signature debug description: classRefGenericMemberFun(){0§<kotlin.Any>}kotlin.reflect.KClass<0:0>
   // CHECK JS_IR NATIVE:
   //   Mangled name: Host#classRefGenericMemberFun(){0§<kotlin.Any>}
   //   Public signature: /Host.classRefGenericMemberFun|184046997078409627[0]
+  //   Public signature debug description: classRefGenericMemberFun(){0§<kotlin.Any>}
   inline fun <reified TF : Any> classRefGenericMemberFun(): KClass<TF>
 
   // CHECK:
   //   Mangled name: Host@0:0{0§<kotlin.Any>}classRefGenericMemberExtVal
   //   Public signature: /Host.classRefGenericMemberExtVal|-8932160824632385145[0]
+  //   Public signature debug description: @0:0{0§<kotlin.Any>}classRefGenericMemberExtVal
   val <reified TV : Any> TV.classRefGenericMemberExtVal: KClass<TV>
     // CHECK JVM_IR:
     //   Mangled name: Host#<get-classRefGenericMemberExtVal>@0:0(){0§<kotlin.Any>}kotlin.reflect.KClass<0:0>
     //   Public signature: /Host.classRefGenericMemberExtVal.<get-classRefGenericMemberExtVal>|-5755261364292961598[0]
+    //   Public signature debug description: <get-classRefGenericMemberExtVal>@0:0(){0§<kotlin.Any>}kotlin.reflect.KClass<0:0>
     // CHECK JS_IR NATIVE:
     //   Mangled name: Host#<get-classRefGenericMemberExtVal>@0:0(){0§<kotlin.Any>}
     //   Public signature: /Host.classRefGenericMemberExtVal.<get-classRefGenericMemberExtVal>|-6412952020535883296[0]
+    //   Public signature debug description: <get-classRefGenericMemberExtVal>@0:0(){0§<kotlin.Any>}
     inline get(): KClass<TV>
 
 }
@@ -40,28 +48,35 @@ class Host {
 // CHECK JVM_IR:
 //   Mangled name: #classRefExtFun@kotlin.Any(){0§<kotlin.Any>}kotlin.reflect.KClass<0:0>
 //   Public signature: /classRefExtFun|-1864950045386016139[0]
+//   Public signature debug description: classRefExtFun@kotlin.Any(){0§<kotlin.Any>}kotlin.reflect.KClass<0:0>
 // CHECK JS_IR NATIVE:
 //   Mangled name: #classRefExtFun@kotlin.Any(){0§<kotlin.Any>}
 //   Public signature: /classRefExtFun|9090772127767101131[0]
+//   Public signature debug description: classRefExtFun@kotlin.Any(){0§<kotlin.Any>}
 inline fun <reified T : Any> Any.classRefExtFun(): KClass<T>
 
 // CHECK JVM_IR:
 //   Mangled name: #classRefFun(){0§<kotlin.Any>}kotlin.reflect.KClass<0:0>
 //   Public signature: /classRefFun|3938071424191927837[0]
+//   Public signature debug description: classRefFun(){0§<kotlin.Any>}kotlin.reflect.KClass<0:0>
 // CHECK JS_IR NATIVE:
 //   Mangled name: #classRefFun(){0§<kotlin.Any>}
 //   Public signature: /classRefFun|-2224735520893898761[0]
+//   Public signature debug description: classRefFun(){0§<kotlin.Any>}
 inline fun <reified T : Any> classRefFun(): KClass<T>
 
 // CHECK:
 //   Mangled name: @0:0{0§<kotlin.Any>}classRefExtVal
 //   Public signature: /classRefExtVal|-7311932072197705388[0]
+//   Public signature debug description: @0:0{0§<kotlin.Any>}classRefExtVal
 val <reified T : Any> T.classRefExtVal: KClass<T>
   // CHECK JVM_IR:
   //   Mangled name: #<get-classRefExtVal>@0:0(){0§<kotlin.Any>}kotlin.reflect.KClass<0:0>
   //   Public signature: /classRefExtVal.<get-classRefExtVal>|6348231485331432921[0]
+  //   Public signature debug description: <get-classRefExtVal>@0:0(){0§<kotlin.Any>}kotlin.reflect.KClass<0:0>
   // CHECK JS_IR NATIVE:
   //   Mangled name: #<get-classRefExtVal>@0:0(){0§<kotlin.Any>}
   //   Public signature: /classRefExtVal.<get-classRefExtVal>|-4372549339255610381[0]
+  //   Public signature debug description: <get-classRefExtVal>@0:0(){0§<kotlin.Any>}
   inline get(): KClass<T>
 

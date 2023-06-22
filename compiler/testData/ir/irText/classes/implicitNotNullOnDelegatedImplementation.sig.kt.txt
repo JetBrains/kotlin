@@ -5,11 +5,13 @@ class K1 : JFoo {
   // CHECK:
   //   Mangled name: K1#<init>(){}
   //   Public signature: /K1.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   constructor() /* primary */
 
   // CHECK JVM_IR:
   //   Mangled name: K1#foo(){}kotlin.String{EnhancedNullability}
   //   Public signature: /K1.foo|7566064415059097436[0]
+  //   Public signature debug description: foo(){}kotlin.String{EnhancedNullability}
   /* fake */ override fun foo(): @EnhancedNullability String
 
 }
@@ -21,11 +23,13 @@ class K2 : JFoo {
   // CHECK:
   //   Mangled name: K2#<init>(){}
   //   Public signature: /K2.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   constructor() /* primary */
 
   // CHECK JVM_IR:
   //   Mangled name: K2#foo(){}kotlin.String
   //   Public signature: /K2.foo|485335955883620819[0]
+  //   Public signature debug description: foo(){}kotlin.String
   override fun foo(): String
 
 }
@@ -37,11 +41,13 @@ class K3 : JUnrelatedFoo, IFoo {
   // CHECK:
   //   Mangled name: K3#<init>(){}
   //   Public signature: /K3.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   constructor() /* primary */
 
   // CHECK JVM_IR:
   //   Mangled name: K3#foo(){}kotlin.String
   //   Public signature: /K3.foo|485335955883620819[0]
+  //   Public signature debug description: foo(){}kotlin.String
   /* fake */ override fun foo(): String
 
 }
@@ -53,11 +59,13 @@ class K4 : JUnrelatedFoo, IFoo {
   // CHECK:
   //   Mangled name: K4#<init>(){}
   //   Public signature: /K4.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   constructor() /* primary */
 
   // CHECK JVM_IR:
   //   Mangled name: K4#foo(){}kotlin.String?
   //   Public signature: /K4.foo|4483044608789364619[0]
+  //   Public signature debug description: foo(){}kotlin.String?
   override fun foo(): String?
 
 }
@@ -69,14 +77,17 @@ class TestJFoo : IFoo {
   // CHECK:
   //   Mangled name: TestJFoo#<init>(){}
   //   Public signature: /TestJFoo.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   constructor() /* primary */
   // CHECK:
   //   Mangled name: TestJFoo.$$delegate_0
   //   Public signature: /TestJFoo.$$delegate_0|-7286425919675154353[0]
+  //   Public signature debug description: 
   private /* final field */ val $$delegate_0: JFoo
   // CHECK JVM_IR:
   //   Mangled name: TestJFoo#foo(){}kotlin.String
   //   Public signature: /TestJFoo.foo|485335955883620819[0]
+  //   Public signature debug description: foo(){}kotlin.String
   override fun foo(): String
 
 }
@@ -88,14 +99,17 @@ class TestK1 : IFoo {
   // CHECK:
   //   Mangled name: TestK1#<init>(){}
   //   Public signature: /TestK1.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   constructor() /* primary */
   // CHECK:
   //   Mangled name: TestK1.$$delegate_0
   //   Public signature: /TestK1.$$delegate_0|-7286425919675154353[0]
+  //   Public signature debug description: 
   private /* final field */ val $$delegate_0: K1
   // CHECK JVM_IR:
   //   Mangled name: TestK1#foo(){}kotlin.String
   //   Public signature: /TestK1.foo|485335955883620819[0]
+  //   Public signature debug description: foo(){}kotlin.String
   override fun foo(): String
 
 }
@@ -107,14 +121,17 @@ class TestK2 : IFoo {
   // CHECK:
   //   Mangled name: TestK2#<init>(){}
   //   Public signature: /TestK2.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   constructor() /* primary */
   // CHECK:
   //   Mangled name: TestK2.$$delegate_0
   //   Public signature: /TestK2.$$delegate_0|-7286425919675154353[0]
+  //   Public signature debug description: 
   private /* final field */ val $$delegate_0: K2
   // CHECK JVM_IR:
   //   Mangled name: TestK2#foo(){}kotlin.String
   //   Public signature: /TestK2.foo|485335955883620819[0]
+  //   Public signature debug description: foo(){}kotlin.String
   override fun foo(): String
 
 }
@@ -126,14 +143,17 @@ class TestK3 : IFoo {
   // CHECK:
   //   Mangled name: TestK3#<init>(){}
   //   Public signature: /TestK3.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   constructor() /* primary */
   // CHECK:
   //   Mangled name: TestK3.$$delegate_0
   //   Public signature: /TestK3.$$delegate_0|-7286425919675154353[0]
+  //   Public signature debug description: 
   private /* final field */ val $$delegate_0: K3
   // CHECK JVM_IR:
   //   Mangled name: TestK3#foo(){}kotlin.String
   //   Public signature: /TestK3.foo|485335955883620819[0]
+  //   Public signature debug description: foo(){}kotlin.String
   override fun foo(): String
 
 }
@@ -145,14 +165,17 @@ class TestK4 : IFoo {
   // CHECK:
   //   Mangled name: TestK4#<init>(){}
   //   Public signature: /TestK4.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   constructor() /* primary */
   // CHECK:
   //   Mangled name: TestK4.$$delegate_0
   //   Public signature: /TestK4.$$delegate_0|-7286425919675154353[0]
+  //   Public signature debug description: 
   private /* final field */ val $$delegate_0: K4
   // CHECK JVM_IR:
   //   Mangled name: TestK4#foo(){}kotlin.String
   //   Public signature: /TestK4.foo|485335955883620819[0]
+  //   Public signature debug description: foo(){}kotlin.String
   override fun foo(): String
 
 }
@@ -165,6 +188,7 @@ interface IFoo {
   // CHECK JVM_IR:
   //   Mangled name: IFoo#foo(){}kotlin.String
   //   Public signature: /IFoo.foo|485335955883620819[0]
+  //   Public signature debug description: foo(){}kotlin.String
   abstract fun foo(): String
 
 }

@@ -1,6 +1,7 @@
 // CHECK JVM_IR:
 //   Mangled name: #component1@J?(){}kotlin.Int
 //   Public signature: /component1|-3884047873137386118[0]
+//   Public signature debug description: component1@J?(){}kotlin.Int
 operator fun J?.component1(): Int
 
 // CHECK JVM_IR:
@@ -11,5 +12,6 @@ private operator fun J.component2(): Int
 // CHECK:
 //   Mangled name: #test(){}
 //   Public signature: /test|6620506149988718649[0]
+//   Public signature debug description: test(){}
 fun test(): Unit
 

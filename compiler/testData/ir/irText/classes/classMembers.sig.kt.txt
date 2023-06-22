@@ -5,41 +5,51 @@ class C {
   // CHECK:
   //   Mangled name: C{}y
   //   Public signature: /C.y|3625903257357557171[0]
+  //   Public signature debug description: {}y
   val y: Int
     // CHECK JVM_IR:
     //   Mangled name: C#<get-y>(){}kotlin.Int
     //   Public signature: /C.y.<get-y>|-6745575372101973707[0]
+    //   Public signature debug description: <get-y>(){}kotlin.Int
     // CHECK JS_IR NATIVE:
     //   Mangled name: C#<get-y>(){}
     //   Public signature: /C.y.<get-y>|-7902422373892128922[0]
+    //   Public signature debug description: <get-y>(){}
     get
 
   // CHECK:
   //   Mangled name: C{}z
   //   Public signature: /C.z|7549650372729116193[0]
+  //   Public signature debug description: {}z
   var z: Int
     // CHECK JVM_IR:
     //   Mangled name: C#<get-z>(){}kotlin.Int
     //   Public signature: /C.z.<get-z>|373477940260174794[0]
+    //   Public signature debug description: <get-z>(){}kotlin.Int
     // CHECK JS_IR NATIVE:
     //   Mangled name: C#<get-z>(){}
     //   Public signature: /C.z.<get-z>|4925813204745917177[0]
+    //   Public signature debug description: <get-z>(){}
     get
     // CHECK:
     //   Mangled name: C#<set-z>(kotlin.Int){}
     //   Public signature: /C.z.<set-z>|8486465404430625584[0]
+    //   Public signature debug description: <set-z>(kotlin.Int){}
     set
 
   // CHECK:
   //   Mangled name: C{}property
   //   Public signature: /C.property|4634558160746314112[0]
+  //   Public signature debug description: {}property
   val property: Int
     // CHECK JVM_IR:
     //   Mangled name: C#<get-property>(){}kotlin.Int
     //   Public signature: /C.property.<get-property>|2853131919076574313[0]
+    //   Public signature debug description: <get-property>(){}kotlin.Int
     // CHECK JS_IR NATIVE:
     //   Mangled name: C#<get-property>(){}
     //   Public signature: /C.property.<get-property>|4838831487146901942[0]
+    //   Public signature debug description: <get-property>(){}
     get
 
   // CHECK:
@@ -49,16 +59,19 @@ class C {
     // CHECK:
     //   Mangled name: C.NestedClass#<init>(){}
     //   Public signature: /C.NestedClass.<init>|-5645683436151566731[0]
+    //   Public signature debug description: <init>(){}
     constructor() /* primary */
 
     // CHECK:
     //   Mangled name: C.NestedClass#function(){}
     //   Public signature: /C.NestedClass.function|-3322893411126713785[0]
+    //   Public signature debug description: function(){}
     fun function(): Unit
 
     // CHECK:
     //   Mangled name: C.NestedClass#memberExtensionFunction@kotlin.Int(){}
     //   Public signature: /C.NestedClass.memberExtensionFunction|4691153119931446820[0]
+    //   Public signature debug description: memberExtensionFunction@kotlin.Int(){}
     fun Int.memberExtensionFunction(): Unit
 
   }
@@ -71,11 +84,13 @@ class C {
     // CHECK:
     //   Mangled name: C.NestedInterface#bar(){}
     //   Public signature: /C.NestedInterface.bar|496682602797471549[0]
+    //   Public signature debug description: bar(){}
     fun bar(): Unit
 
     // CHECK:
     //   Mangled name: C.NestedInterface#foo(){}
     //   Public signature: /C.NestedInterface.foo|-1041209573719867811[0]
+    //   Public signature debug description: foo(){}
     abstract fun foo(): Unit
 
   }
@@ -87,6 +102,7 @@ class C {
     // CHECK:
     //   Mangled name: C.Companion#<init>(){}
     //   Public signature: /C.Companion.<init>|-5645683436151566731[0]
+    //   Public signature debug description: <init>(){}
     private constructor() /* primary */
 
   }
@@ -94,48 +110,59 @@ class C {
   // CHECK:
   //   Mangled name: C#<init>(){}
   //   Public signature: /C.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   constructor()
   // CHECK:
   //   Mangled name: C#<init>(kotlin.Int;kotlin.Int;kotlin.Int){}
   //   Public signature: /C.<init>|3555954663887180339[0]
+  //   Public signature debug description: <init>(kotlin.Int;kotlin.Int;kotlin.Int){}
   constructor(x: Int, y: Int, z: Int) /* primary */
 
   // CHECK:
   //   Mangled name: C#function(){}
   //   Public signature: /C.function|-3322893411126713785[0]
+  //   Public signature debug description: function(){}
   fun function(): Unit
 
   // CHECK:
   //   Mangled name: C#memberExtensionFunction@kotlin.Int(){}
   //   Public signature: /C.memberExtensionFunction|4691153119931446820[0]
+  //   Public signature debug description: memberExtensionFunction@kotlin.Int(){}
   fun Int.memberExtensionFunction(): Unit
 
   // CHECK:
   //   Mangled name: C{}propertyWithGet
   //   Public signature: /C.propertyWithGet|3309863354483039401[0]
+  //   Public signature debug description: {}propertyWithGet
   val propertyWithGet: Int
     // CHECK JVM_IR:
     //   Mangled name: C#<get-propertyWithGet>(){}kotlin.Int
     //   Public signature: /C.propertyWithGet.<get-propertyWithGet>|-1283372725192636165[0]
+    //   Public signature debug description: <get-propertyWithGet>(){}kotlin.Int
     // CHECK JS_IR NATIVE:
     //   Mangled name: C#<get-propertyWithGet>(){}
     //   Public signature: /C.propertyWithGet.<get-propertyWithGet>|5182559010864477179[0]
+    //   Public signature debug description: <get-propertyWithGet>(){}
     get(): Int
 
   // CHECK:
   //   Mangled name: C{}propertyWithGetAndSet
   //   Public signature: /C.propertyWithGetAndSet|9136157132489204883[0]
+  //   Public signature debug description: {}propertyWithGetAndSet
   var propertyWithGetAndSet: Int
     // CHECK JVM_IR:
     //   Mangled name: C#<get-propertyWithGetAndSet>(){}kotlin.Int
     //   Public signature: /C.propertyWithGetAndSet.<get-propertyWithGetAndSet>|2703109318737687323[0]
+    //   Public signature debug description: <get-propertyWithGetAndSet>(){}kotlin.Int
     // CHECK JS_IR NATIVE:
     //   Mangled name: C#<get-propertyWithGetAndSet>(){}
     //   Public signature: /C.propertyWithGetAndSet.<get-propertyWithGetAndSet>|6534309127249044994[0]
+    //   Public signature debug description: <get-propertyWithGetAndSet>(){}
     get(): Int
     // CHECK:
     //   Mangled name: C#<set-propertyWithGetAndSet>(kotlin.Int){}
     //   Public signature: /C.propertyWithGetAndSet.<set-propertyWithGetAndSet>|-6849583414558768890[0]
+    //   Public signature debug description: <set-propertyWithGetAndSet>(kotlin.Int){}
     set(value: Int): Unit
 
 }

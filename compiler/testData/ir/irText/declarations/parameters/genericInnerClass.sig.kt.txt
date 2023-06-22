@@ -9,11 +9,13 @@ class Outer<T1 : Any?> {
     // CHECK:
     //   Mangled name: Outer.Inner#<init>(){}
     //   Public signature: /Outer.Inner.<init>|-5645683436151566731[0]
+    //   Public signature debug description: <init>(){}
     constructor() /* primary */
 
     // CHECK:
     //   Mangled name: Outer.Inner#foo(2:0;1:0){}
     //   Public signature: /Outer.Inner.foo|615406329799946108[0]
+    //   Public signature debug description: foo(2:0;1:0){}
     fun foo(x1: T1, x2: T2): Unit
 
   }
@@ -21,6 +23,7 @@ class Outer<T1 : Any?> {
   // CHECK:
   //   Mangled name: Outer#<init>(){}
   //   Public signature: /Outer.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   constructor() /* primary */
 
 }

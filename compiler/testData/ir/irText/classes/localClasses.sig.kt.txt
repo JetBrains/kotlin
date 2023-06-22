@@ -1,6 +1,7 @@
 // CHECK:
 //   Mangled name: #outer(){}
 //   Public signature: /outer|1607449560170809066[0]
+//   Public signature debug description: outer(){}
 fun outer(): Unit
   // CHECK:
   //   Mangled name: #outer(){}.LocalClass

@@ -5,18 +5,22 @@ abstract class Base {
   // CHECK:
   //   Mangled name: Base{}lambda
   //   Public signature: /Base.lambda|2089663330466279497[0]
+  //   Public signature debug description: {}lambda
   val lambda: Function0<Any>
     // CHECK JVM_IR:
     //   Mangled name: Base#<get-lambda>(){}kotlin.Function0<kotlin.Any>
     //   Public signature: /Base.lambda.<get-lambda>|7399510716625048505[0]
+    //   Public signature debug description: <get-lambda>(){}kotlin.Function0<kotlin.Any>
     // CHECK JS_IR NATIVE:
     //   Mangled name: Base#<get-lambda>(){}
     //   Public signature: /Base.lambda.<get-lambda>|-6620550812344419453[0]
+    //   Public signature debug description: <get-lambda>(){}
     get
 
   // CHECK:
   //   Mangled name: Base#<init>(kotlin.Function0<kotlin.Any>){}
   //   Public signature: /Base.<init>|-4146636346230466645[0]
+  //   Public signature debug description: <init>(kotlin.Function0<kotlin.Any>){}
   constructor(lambda: Function0<Any>) /* primary */
 
 }
@@ -28,18 +32,22 @@ object Test : Base {
   // CHECK:
   //   Mangled name: Test#<init>(){}
   //   Public signature: /Test.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   private constructor() /* primary */
 
   // CHECK:
   //   Mangled name: Test{}lambda
   //   Public signature: /Test.lambda|2089663330466279497[0]
+  //   Public signature debug description: {}lambda
   /* fake */ override val lambda: Function0<Any>
     // CHECK JVM_IR:
     //   Mangled name: Test#<get-lambda>(){}kotlin.Function0<kotlin.Any>
     //   Public signature: /Test.lambda.<get-lambda>|7399510716625048505[0]
+    //   Public signature debug description: <get-lambda>(){}kotlin.Function0<kotlin.Any>
     // CHECK JS_IR NATIVE:
     //   Mangled name: Test#<get-lambda>(){}
     //   Public signature: /Test.lambda.<get-lambda>|-6620550812344419453[0]
+    //   Public signature debug description: <get-lambda>(){}
     /* fake */ override get(): Function0<Any>
 
 }

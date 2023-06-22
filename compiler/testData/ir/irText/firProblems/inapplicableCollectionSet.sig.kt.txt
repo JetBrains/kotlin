@@ -5,38 +5,47 @@ class Flaf {
   // CHECK:
   //   Mangled name: Flaf{}javaName
   //   Public signature: /Flaf.javaName|-8684515170534215532[0]
+  //   Public signature debug description: {}javaName
   val javaName: String
     // CHECK JVM_IR:
     //   Mangled name: Flaf#<get-javaName>(){}kotlin.String
     //   Public signature: /Flaf.javaName.<get-javaName>|-917464454700477406[0]
+    //   Public signature debug description: <get-javaName>(){}kotlin.String
     // CHECK JS_IR NATIVE:
     //   Mangled name: Flaf#<get-javaName>(){}
     //   Public signature: /Flaf.javaName.<get-javaName>|1070493169031219158[0]
+    //   Public signature debug description: <get-javaName>(){}
     get
 
   // CHECK:
   //   Mangled name: Flaf{}INSTANCES
   //   Public signature: /Flaf.INSTANCES|1897835723956041094[0]
+  //   Public signature debug description: {}INSTANCES
   private val INSTANCES: MutableMap<String, Flaf>
     // CHECK JVM_IR:
     //   Mangled name: Flaf#<get-INSTANCES>(){}kotlin.collections.MutableMap<kotlin.String,Flaf>
     //   Public signature: /Flaf.INSTANCES.<get-INSTANCES>|-852664816279800923[0]
+    //   Public signature debug description: <get-INSTANCES>(){}kotlin.collections.MutableMap<kotlin.String,Flaf>
     // CHECK JS_IR NATIVE:
     //   Mangled name: Flaf#<get-INSTANCES>(){}
     //   Public signature: /Flaf.INSTANCES.<get-INSTANCES>|7621104418939940009[0]
+    //   Public signature debug description: <get-INSTANCES>(){}
     private get
 
   // CHECK:
   //   Mangled name: Flaf#<init>(kotlin.String){}
   //   Public signature: /Flaf.<init>|1280618353163213788[0]
+  //   Public signature debug description: <init>(kotlin.String){}
   constructor(javaName: String) /* primary */
 
   // CHECK JVM_IR:
   //   Mangled name: Flaf#forJavaName(kotlin.String){}Flaf
   //   Public signature: /Flaf.forJavaName|5746555906334011497[0]
+  //   Public signature debug description: forJavaName(kotlin.String){}Flaf
   // CHECK JS_IR NATIVE:
   //   Mangled name: Flaf#forJavaName(kotlin.String){}
   //   Public signature: /Flaf.forJavaName|-6191380422625646968[0]
+  //   Public signature debug description: forJavaName(kotlin.String){}
   fun forJavaName(javaName: String): Flaf
 
 }

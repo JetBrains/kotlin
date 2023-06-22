@@ -1,25 +1,31 @@
 // CHECK:
 //   Mangled name: {}fsi
 //   Public signature: /fsi|5902301571547257746[0]
+//   Public signature debug description: {}fsi
 val fsi: Fn<String, Int>
   // CHECK JVM_IR:
   //   Mangled name: #<get-fsi>(){}Fn<kotlin.String,kotlin.Int>
   //   Public signature: /fsi.<get-fsi>|-2546794996796226350[0]
+  //   Public signature debug description: <get-fsi>(){}Fn<kotlin.String,kotlin.Int>
   // CHECK JS_IR NATIVE:
   //   Mangled name: #<get-fsi>(){}
   //   Public signature: /fsi.<get-fsi>|211056100616532240[0]
+  //   Public signature debug description: <get-fsi>(){}
   get
 
 // CHECK:
 //   Mangled name: {}fis
 //   Public signature: /fis|4743015834142814854[0]
+//   Public signature debug description: {}fis
 val fis: Fn<Int, String>
   // CHECK JVM_IR:
   //   Mangled name: #<get-fis>(){}Fn<kotlin.Int,kotlin.String>
   //   Public signature: /fis.<get-fis>|5252092316637653538[0]
+  //   Public signature debug description: <get-fis>(){}Fn<kotlin.Int,kotlin.String>
   // CHECK JS_IR NATIVE:
   //   Mangled name: #<get-fis>(){}
   //   Public signature: /fis.<get-fis>|-3144498278709673820[0]
+  //   Public signature debug description: <get-fis>(){}
   get
 
 // CHECK:
@@ -29,14 +35,17 @@ class J {
   // CHECK:
   //   Mangled name: J#<init>(){}
   //   Public signature: /J.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   constructor() /* primary */
 
   // CHECK JVM_IR:
   //   Mangled name: J#runConversion(Fn<kotlin.String,kotlin.Int>;Fn<kotlin.Int,kotlin.String>){}kotlin.Int
   //   Public signature: /J.runConversion|4347513371052535712[0]
+  //   Public signature debug description: runConversion(Fn<kotlin.String,kotlin.Int>;Fn<kotlin.Int,kotlin.String>){}kotlin.Int
   // CHECK JS_IR NATIVE:
   //   Mangled name: J#runConversion(Fn<kotlin.String,kotlin.Int>;Fn<kotlin.Int,kotlin.String>){}
   //   Public signature: /J.runConversion|-3250437629905581865[0]
+  //   Public signature debug description: runConversion(Fn<kotlin.String,kotlin.Int>;Fn<kotlin.Int,kotlin.String>){}
   fun runConversion(f1: Fn<String, Int>, f2: Fn<Int, String>): Int
 
 }
@@ -49,9 +58,11 @@ fun interface Fn<T : Any?, R : Any?> {
   // CHECK JVM_IR:
   //   Mangled name: Fn#run(kotlin.String;kotlin.Int;1:0){}1:1
   //   Public signature: /Fn.run|6229634511602909233[0]
+  //   Public signature debug description: run(kotlin.String;kotlin.Int;1:0){}1:1
   // CHECK JS_IR NATIVE:
   //   Mangled name: Fn#run(kotlin.String;kotlin.Int;1:0){}
   //   Public signature: /Fn.run|-3043809751901738692[0]
+  //   Public signature debug description: run(kotlin.String;kotlin.Int;1:0){}
   abstract fun run(s: String, i: Int, t: T): R
 
 }
@@ -59,5 +70,6 @@ fun interface Fn<T : Any?, R : Any?> {
 // CHECK:
 //   Mangled name: #test(J){}
 //   Public signature: /test|-8477572416399964095[0]
+//   Public signature debug description: test(J){}
 fun test(j: J): Unit
 

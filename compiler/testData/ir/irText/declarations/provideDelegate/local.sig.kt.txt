@@ -5,27 +5,33 @@ class Delegate {
   // CHECK:
   //   Mangled name: Delegate{}value
   //   Public signature: /Delegate.value|1987073854177347439[0]
+  //   Public signature debug description: {}value
   val value: String
     field
     // CHECK JVM_IR:
     //   Mangled name: Delegate#<get-value>(){}kotlin.String
     //   Public signature: /Delegate.value.<get-value>|-7202092821145242726[0]
+    //   Public signature debug description: <get-value>(){}kotlin.String
     // CHECK JS_IR NATIVE:
     //   Mangled name: Delegate#<get-value>(){}
     //   Public signature: /Delegate.value.<get-value>|3260093555963109437[0]
+    //   Public signature debug description: <get-value>(){}
     get
 
   // CHECK:
   //   Mangled name: Delegate#<init>(kotlin.String){}
   //   Public signature: /Delegate.<init>|1280618353163213788[0]
+  //   Public signature debug description: <init>(kotlin.String){}
   constructor(value: String) /* primary */
 
   // CHECK JVM_IR:
   //   Mangled name: Delegate#getValue(kotlin.Any?;kotlin.Any?){}kotlin.String
   //   Public signature: /Delegate.getValue|-3989854329232997863[0]
+  //   Public signature debug description: getValue(kotlin.Any?;kotlin.Any?){}kotlin.String
   // CHECK JS_IR NATIVE:
   //   Mangled name: Delegate#getValue(kotlin.Any?;kotlin.Any?){}
   //   Public signature: /Delegate.getValue|-9077843357189755365[0]
+  //   Public signature debug description: getValue(kotlin.Any?;kotlin.Any?){}
   operator fun getValue(thisRef: Any?, property: Any?): String
 
 }
@@ -37,27 +43,33 @@ class DelegateProvider {
   // CHECK:
   //   Mangled name: DelegateProvider{}value
   //   Public signature: /DelegateProvider.value|1987073854177347439[0]
+  //   Public signature debug description: {}value
   val value: String
     field
     // CHECK JVM_IR:
     //   Mangled name: DelegateProvider#<get-value>(){}kotlin.String
     //   Public signature: /DelegateProvider.value.<get-value>|-7202092821145242726[0]
+    //   Public signature debug description: <get-value>(){}kotlin.String
     // CHECK JS_IR NATIVE:
     //   Mangled name: DelegateProvider#<get-value>(){}
     //   Public signature: /DelegateProvider.value.<get-value>|3260093555963109437[0]
+    //   Public signature debug description: <get-value>(){}
     get
 
   // CHECK:
   //   Mangled name: DelegateProvider#<init>(kotlin.String){}
   //   Public signature: /DelegateProvider.<init>|1280618353163213788[0]
+  //   Public signature debug description: <init>(kotlin.String){}
   constructor(value: String) /* primary */
 
   // CHECK JVM_IR:
   //   Mangled name: DelegateProvider#provideDelegate(kotlin.Any?;kotlin.Any?){}Delegate
   //   Public signature: /DelegateProvider.provideDelegate|8347738726431448305[0]
+  //   Public signature debug description: provideDelegate(kotlin.Any?;kotlin.Any?){}Delegate
   // CHECK JS_IR NATIVE:
   //   Mangled name: DelegateProvider#provideDelegate(kotlin.Any?;kotlin.Any?){}
   //   Public signature: /DelegateProvider.provideDelegate|-8444239183469250963[0]
+  //   Public signature debug description: provideDelegate(kotlin.Any?;kotlin.Any?){}
   operator fun provideDelegate(thisRef: Any?, property: Any?): Delegate
 
 }
@@ -65,6 +77,7 @@ class DelegateProvider {
 // CHECK:
 //   Mangled name: #foo(){}
 //   Public signature: /foo|-1041209573719867811[0]
+//   Public signature debug description: foo(){}
 fun foo(): Unit
   // CHECK JVM_IR:
   //   Mangled name: #foo(){}#<get-testMember>#static(){}kotlin.String

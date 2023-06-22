@@ -1,47 +1,58 @@
 // CHECK:
 //   Mangled name: #expectsInt(kotlin.Int){}
 //   Public signature: /expectsInt|7060157470192889404[0]
+//   Public signature debug description: expectsInt(kotlin.Int){}
 fun expectsInt(i: Int): Unit
 
 // CHECK:
 //   Mangled name: #expectsString(kotlin.String){}
 //   Public signature: /expectsString|229423483676830816[0]
+//   Public signature debug description: expectsString(kotlin.String){}
 fun expectsString(s: String): Unit
 
 // CHECK JVM_IR:
 //   Mangled name: #overloaded(kotlin.String){}kotlin.String
 //   Public signature: /overloaded|-6751807575913949015[0]
+//   Public signature debug description: overloaded(kotlin.String){}kotlin.String
 // CHECK JS_IR NATIVE:
 //   Mangled name: #overloaded(kotlin.String){}
 //   Public signature: /overloaded|-6953470175034220057[0]
+//   Public signature debug description: overloaded(kotlin.String){}
 fun overloaded(s: String): String
 
 // CHECK JVM_IR:
 //   Mangled name: #overloaded(kotlin.Any){}kotlin.Any
 //   Public signature: /overloaded|-9074611933282297931[0]
+//   Public signature debug description: overloaded(kotlin.Any){}kotlin.Any
 // CHECK JS_IR NATIVE:
 //   Mangled name: #overloaded(kotlin.Any){}
 //   Public signature: /overloaded|7013236472054747107[0]
+//   Public signature debug description: overloaded(kotlin.Any){}
 fun overloaded(x: Any): Any
 
 // CHECK:
 //   Mangled name: #test1(kotlin.Any){}
 //   Public signature: /test1|-4133164698161335314[0]
+//   Public signature debug description: test1(kotlin.Any){}
 fun test1(x: Any): Unit
 
 // CHECK JVM_IR:
 //   Mangled name: #test2(kotlin.Any){}kotlin.String
 //   Public signature: /test2|1843573308398339018[0]
+//   Public signature debug description: test2(kotlin.Any){}kotlin.String
 // CHECK JS_IR NATIVE:
 //   Mangled name: #test2(kotlin.Any){}
 //   Public signature: /test2|-8648451680149324146[0]
+//   Public signature debug description: test2(kotlin.Any){}
 fun test2(x: Any): String
 
 // CHECK JVM_IR:
 //   Mangled name: #test3(kotlin.Any){}kotlin.String
 //   Public signature: /test3|-5895248493644150217[0]
+//   Public signature debug description: test3(kotlin.Any){}kotlin.String
 // CHECK JS_IR NATIVE:
 //   Mangled name: #test3(kotlin.Any){}
 //   Public signature: /test3|165168275269731002[0]
+//   Public signature debug description: test3(kotlin.Any){}
 fun test3(x: Any): String
 

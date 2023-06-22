@@ -5,18 +5,22 @@ class Box<T : Any?> {
   // CHECK:
   //   Mangled name: Box{}value
   //   Public signature: /Box.value|1987073854177347439[0]
+  //   Public signature debug description: {}value
   val value: T
     // CHECK JVM_IR:
     //   Mangled name: Box#<get-value>(){}1:0
     //   Public signature: /Box.value.<get-value>|3167862337988859752[0]
+    //   Public signature debug description: <get-value>(){}1:0
     // CHECK JS_IR NATIVE:
     //   Mangled name: Box#<get-value>(){}
     //   Public signature: /Box.value.<get-value>|3260093555963109437[0]
+    //   Public signature debug description: <get-value>(){}
     get
 
   // CHECK:
   //   Mangled name: Box#<init>(1:0){}
   //   Public signature: /Box.<init>|-8731461708390519279[0]
+  //   Public signature debug description: <init>(1:0){}
   constructor(value: T) /* primary */
 
 }
@@ -24,16 +28,20 @@ class Box<T : Any?> {
 // CHECK JVM_IR:
 //   Mangled name: #testArray(kotlin.Int;kotlin.Function0<0:0>){0§<kotlin.Any?>}kotlin.Array<0:0>
 //   Public signature: /testArray|-2387335896299631149[0]
+//   Public signature debug description: testArray(kotlin.Int;kotlin.Function0<0:0>){0§<kotlin.Any?>}kotlin.Array<0:0>
 // CHECK JS_IR NATIVE:
 //   Mangled name: #testArray(kotlin.Int;kotlin.Function0<0:0>){0§<kotlin.Any?>}
 //   Public signature: /testArray|1625095866611230766[0]
+//   Public signature debug description: testArray(kotlin.Int;kotlin.Function0<0:0>){0§<kotlin.Any?>}
 inline fun <reified T : Any?> testArray(n: Int, crossinline block: Function0<T>): Array<T>
 
 // CHECK JVM_IR:
 //   Mangled name: #testSimple(){}Box<kotlin.Long>
 //   Public signature: /testSimple|-4418410780086468517[0]
+//   Public signature debug description: testSimple(){}Box<kotlin.Long>
 // CHECK JS_IR NATIVE:
 //   Mangled name: #testSimple(){}
 //   Public signature: /testSimple|-7227012354903248125[0]
+//   Public signature debug description: testSimple(){}
 fun testSimple(): Box<Long>
 

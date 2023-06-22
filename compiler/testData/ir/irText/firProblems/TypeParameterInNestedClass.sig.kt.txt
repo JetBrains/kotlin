@@ -9,18 +9,22 @@ object Retry {
     // CHECK:
     //   Mangled name: Retry.Builder{}action
     //   Public signature: /Retry.Builder.action|4099104176676099950[0]
+    //   Public signature debug description: {}action
     private val action: SuspendFunction0<B>
       // CHECK JVM_IR:
       //   Mangled name: Retry.Builder#<get-action>(){}kotlin.coroutines.SuspendFunction0<1:0>
       //   Public signature: /Retry.Builder.action.<get-action>|964998313822025976[0]
+      //   Public signature debug description: <get-action>(){}kotlin.coroutines.SuspendFunction0<1:0>
       // CHECK JS_IR NATIVE:
       //   Mangled name: Retry.Builder#<get-action>(){}
       //   Public signature: /Retry.Builder.action.<get-action>|-746708740124539440[0]
+      //   Public signature debug description: <get-action>(){}
       private get
 
     // CHECK:
     //   Mangled name: Retry.Builder#<init>(kotlin.coroutines.SuspendFunction0<1:0>){}
     //   Public signature: /Retry.Builder.<init>|-2550942884229678400[0]
+    //   Public signature debug description: <init>(kotlin.coroutines.SuspendFunction0<1:0>){}
     constructor(action: SuspendFunction0<B>) /* primary */
 
   }
@@ -28,14 +32,18 @@ object Retry {
   // CHECK:
   //   Mangled name: Retry#<init>(){}
   //   Public signature: /Retry.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   private constructor() /* primary */
 
   // CHECK JVM_IR:
   //   Mangled name: Retry#withExponentialBackoff(kotlin.Function0<0:0>){0§<kotlin.Any?>}Retry.Builder<0:0>
   //   Public signature: /Retry.withExponentialBackoff|788887164644835500[0]
+  //   Public signature debug description: withExponentialBackoff(kotlin.Function0<0:0>){0§<kotlin.Any?>}Retry.Builder<0:0>
   // CHECK JS_IR NATIVE:
   //   Mangled name: Retry#withExponentialBackoff(kotlin.Function0<0:0>){0§<kotlin.Any?>}
   //   Public signature: /Retry.withExponentialBackoff|2683495208928755568[0]
+  //   Public signature debug description: withExponentialBackoff(kotlin.Function0<0:0>){0§<kotlin.Any?>}
   fun <W : Any?> withExponentialBackoff(action: Function0<W>): Builder<W>
 
 }
+

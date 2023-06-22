@@ -9,6 +9,7 @@ class Test<T0 : Any?> {
     // CHECK:
     //   Mangled name: Test.TestInner#<init>(){}
     //   Public signature: /Test.TestInner.<init>|-5645683436151566731[0]
+    //   Public signature debug description: <init>(){}
     constructor() /* primary */
 
   }
@@ -20,6 +21,7 @@ class Test<T0 : Any?> {
     // CHECK:
     //   Mangled name: Test.TestNested#<init>(){}
     //   Public signature: /Test.TestNested.<init>|-5645683436151566731[0]
+    //   Public signature debug description: <init>(){}
     constructor() /* primary */
 
   }
@@ -27,6 +29,7 @@ class Test<T0 : Any?> {
   // CHECK:
   //   Mangled name: Test#<init>(){}
   //   Public signature: /Test.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   constructor() /* primary */
 
 }

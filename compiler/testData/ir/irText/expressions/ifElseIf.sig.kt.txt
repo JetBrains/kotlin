@@ -1,23 +1,28 @@
 // CHECK JVM_IR:
 //   Mangled name: #test(kotlin.Int){}kotlin.Int
 //   Public signature: /test|-291422697420002546[0]
+//   Public signature debug description: test(kotlin.Int){}kotlin.Int
 // CHECK JS_IR NATIVE:
 //   Mangled name: #test(kotlin.Int){}
 //   Public signature: /test|7577436859890467564[0]
+//   Public signature debug description: test(kotlin.Int){}
 fun test(i: Int): Int
 
 // CHECK:
 //   Mangled name: #testEmptyBranches1(kotlin.Boolean){}
 //   Public signature: /testEmptyBranches1|6749407893686345218[0]
+//   Public signature debug description: testEmptyBranches1(kotlin.Boolean){}
 fun testEmptyBranches1(flag: Boolean): Unit
 
 // CHECK:
 //   Mangled name: #testEmptyBranches2(kotlin.Boolean){}
 //   Public signature: /testEmptyBranches2|3860029463289034948[0]
+//   Public signature debug description: testEmptyBranches2(kotlin.Boolean){}
 fun testEmptyBranches2(flag: Boolean): Unit
 
 // CHECK:
 //   Mangled name: #testEmptyBranches3(kotlin.Boolean){}
 //   Public signature: /testEmptyBranches3|-3957627705861131354[0]
+//   Public signature debug description: testEmptyBranches3(kotlin.Boolean){}
 fun testEmptyBranches3(flag: Boolean): Unit
 

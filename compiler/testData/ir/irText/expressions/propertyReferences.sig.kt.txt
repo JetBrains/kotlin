@@ -1,175 +1,214 @@
 // CHECK:
 //   Mangled name: {}valWithBackingField
 //   Public signature: /valWithBackingField|-1300301669393450275[0]
+//   Public signature debug description: {}valWithBackingField
 val valWithBackingField: Int
   // CHECK JVM_IR:
   //   Mangled name: #<get-valWithBackingField>(){}kotlin.Int
   //   Public signature: /valWithBackingField.<get-valWithBackingField>|-1831247219646478287[0]
+  //   Public signature debug description: <get-valWithBackingField>(){}kotlin.Int
   get
 
 // CHECK:
 //   Mangled name: {}test_valWithBackingField
 //   Public signature: /test_valWithBackingField|313805254579030051[0]
+//   Public signature debug description: {}test_valWithBackingField
 val test_valWithBackingField: KProperty0<Int>
   // CHECK JVM_IR:
   //   Mangled name: #<get-test_valWithBackingField>(){}kotlin.reflect.KProperty0<kotlin.Int>
   //   Public signature: /test_valWithBackingField.<get-test_valWithBackingField>|-1062436817917850148[0]
+  //   Public signature debug description: <get-test_valWithBackingField>(){}kotlin.reflect.KProperty0<kotlin.Int>
   get
 
 // CHECK:
 //   Mangled name: {}varWithBackingField
 //   Public signature: /varWithBackingField|-5551188429221341140[0]
+//   Public signature debug description: {}varWithBackingField
 var varWithBackingField: Int
   // CHECK JVM_IR:
   //   Mangled name: #<get-varWithBackingField>(){}kotlin.Int
   //   Public signature: /varWithBackingField.<get-varWithBackingField>|1127596629659442842[0]
+  //   Public signature debug description: <get-varWithBackingField>(){}kotlin.Int
   get
   // CHECK:
   //   Mangled name: #<set-varWithBackingField>(kotlin.Int){}
   //   Public signature: /varWithBackingField.<set-varWithBackingField>|-534437250090594268[0]
+  //   Public signature debug description: <set-varWithBackingField>(kotlin.Int){}
   set
 
 // CHECK:
 //   Mangled name: {}test_varWithBackingField
 //   Public signature: /test_varWithBackingField|-2347677877274099973[0]
+//   Public signature debug description: {}test_varWithBackingField
 val test_varWithBackingField: KMutableProperty0<Int>
   // CHECK JVM_IR:
   //   Mangled name: #<get-test_varWithBackingField>(){}kotlin.reflect.KMutableProperty0<kotlin.Int>
   //   Public signature: /test_varWithBackingField.<get-test_varWithBackingField>|6081487848306132886[0]
+  //   Public signature debug description: <get-test_varWithBackingField>(){}kotlin.reflect.KMutableProperty0<kotlin.Int>
   get
 
 // CHECK:
 //   Mangled name: {}varWithBackingFieldAndAccessors
 //   Public signature: /varWithBackingFieldAndAccessors|843158391931632923[0]
+//   Public signature debug description: {}varWithBackingFieldAndAccessors
 var varWithBackingFieldAndAccessors: Int
   // CHECK JVM_IR:
   //   Mangled name: #<get-varWithBackingFieldAndAccessors>(){}kotlin.Int
   //   Public signature: /varWithBackingFieldAndAccessors.<get-varWithBackingFieldAndAccessors>|2768930924142471122[0]
+  //   Public signature debug description: <get-varWithBackingFieldAndAccessors>(){}kotlin.Int
   get(): Int
   // CHECK:
   //   Mangled name: #<set-varWithBackingFieldAndAccessors>(kotlin.Int){}
   //   Public signature: /varWithBackingFieldAndAccessors.<set-varWithBackingFieldAndAccessors>|-5839035169847435382[0]
+  //   Public signature debug description: <set-varWithBackingFieldAndAccessors>(kotlin.Int){}
   set(value: Int): Unit
 
 // CHECK:
 //   Mangled name: {}test_varWithBackingFieldAndAccessors
 //   Public signature: /test_varWithBackingFieldAndAccessors|-2445303061936926860[0]
+//   Public signature debug description: {}test_varWithBackingFieldAndAccessors
 val test_varWithBackingFieldAndAccessors: KMutableProperty0<Int>
   // CHECK JVM_IR:
   //   Mangled name: #<get-test_varWithBackingFieldAndAccessors>(){}kotlin.reflect.KMutableProperty0<kotlin.Int>
   //   Public signature: /test_varWithBackingFieldAndAccessors.<get-test_varWithBackingFieldAndAccessors>|9147239181596359139[0]
+  //   Public signature debug description: <get-test_varWithBackingFieldAndAccessors>(){}kotlin.reflect.KMutableProperty0<kotlin.Int>
   get
 
 // CHECK:
 //   Mangled name: {}test_valWithAccessors
 //   Public signature: /test_valWithAccessors|3010356935899005810[0]
+//   Public signature debug description: {}test_valWithAccessors
 val test_valWithAccessors: KProperty0<Int>
   // CHECK JVM_IR:
   //   Mangled name: #<get-test_valWithAccessors>(){}kotlin.reflect.KProperty0<kotlin.Int>
   //   Public signature: /test_valWithAccessors.<get-test_valWithAccessors>|-1486014412324684270[0]
+  //   Public signature debug description: <get-test_valWithAccessors>(){}kotlin.reflect.KProperty0<kotlin.Int>
   get
 
 // CHECK:
 //   Mangled name: {}test_varWithAccessors
 //   Public signature: /test_varWithAccessors|-1500633065892977652[0]
+//   Public signature debug description: {}test_varWithAccessors
 val test_varWithAccessors: KMutableProperty0<Int>
   // CHECK JVM_IR:
   //   Mangled name: #<get-test_varWithAccessors>(){}kotlin.reflect.KMutableProperty0<kotlin.Int>
   //   Public signature: /test_varWithAccessors.<get-test_varWithAccessors>|-6951143286383171060[0]
+  //   Public signature debug description: <get-test_varWithAccessors>(){}kotlin.reflect.KMutableProperty0<kotlin.Int>
   get
 
 // CHECK:
 //   Mangled name: {}delegatedVal
 //   Public signature: /delegatedVal|-2000059721355675607[0]
+//   Public signature debug description: {}delegatedVal
 val delegatedVal: Int /* by */
   // CHECK JVM_IR:
   //   Mangled name: #<get-delegatedVal>(){}kotlin.Int
   //   Public signature: /delegatedVal.<get-delegatedVal>|-6460066711738230051[0]
+  //   Public signature debug description: <get-delegatedVal>(){}kotlin.Int
   get(): Int
 
 // CHECK:
 //   Mangled name: {}test_delegatedVal
 //   Public signature: /test_delegatedVal|2231672952604843943[0]
+//   Public signature debug description: {}test_delegatedVal
 val test_delegatedVal: KProperty0<Int>
   // CHECK JVM_IR:
   //   Mangled name: #<get-test_delegatedVal>(){}kotlin.reflect.KProperty0<kotlin.Int>
   //   Public signature: /test_delegatedVal.<get-test_delegatedVal>|1331025910107931364[0]
+  //   Public signature debug description: <get-test_delegatedVal>(){}kotlin.reflect.KProperty0<kotlin.Int>
   get
 
 // CHECK:
 //   Mangled name: {}delegatedVar
 //   Public signature: /delegatedVar|8351812919103314818[0]
+//   Public signature debug description: {}delegatedVar
 var delegatedVar: Int /* by */
   // CHECK JVM_IR:
   //   Mangled name: #<get-delegatedVar>(){}kotlin.Int
   //   Public signature: /delegatedVar.<get-delegatedVar>|-5392488440114938834[0]
+  //   Public signature debug description: <get-delegatedVar>(){}kotlin.Int
   get(): Int
   // CHECK:
   //   Mangled name: #<set-delegatedVar>(kotlin.Int){}
   //   Public signature: /delegatedVar.<set-delegatedVar>|-561950162883824863[0]
+  //   Public signature debug description: <set-delegatedVar>(kotlin.Int){}
   set(<set-?>: Int): Unit
 
 // CHECK:
 //   Mangled name: {}test_delegatedVar
 //   Public signature: /test_delegatedVar|-2049424451239803052[0]
+//   Public signature debug description: {}test_delegatedVar
 val test_delegatedVar: KMutableProperty0<Int>
   // CHECK JVM_IR:
   //   Mangled name: #<get-test_delegatedVar>(){}kotlin.reflect.KMutableProperty0<kotlin.Int>
   //   Public signature: /test_delegatedVar.<get-test_delegatedVar>|-7555389861967684049[0]
+  //   Public signature debug description: <get-test_delegatedVar>(){}kotlin.reflect.KMutableProperty0<kotlin.Int>
   get
 
 // CHECK:
 //   Mangled name: {}constVal
 //   Public signature: /constVal|5027619947092790884[0]
+//   Public signature debug description: {}constVal
 val constVal: Int
   // CHECK JVM_IR:
   //   Mangled name: #<get-constVal>(){}kotlin.Int
   //   Public signature: /constVal.<get-constVal>|-5615353796653730955[0]
+  //   Public signature debug description: <get-constVal>(){}kotlin.Int
   get
 
 // CHECK:
 //   Mangled name: {}test_constVal
 //   Public signature: /test_constVal|6984849995991396531[0]
+//   Public signature debug description: {}test_constVal
 val test_constVal: KProperty0<Int>
   // CHECK JVM_IR:
   //   Mangled name: #<get-test_constVal>(){}kotlin.reflect.KProperty0<kotlin.Int>
   //   Public signature: /test_constVal.<get-test_constVal>|-1004323247463589518[0]
+  //   Public signature debug description: <get-test_constVal>(){}kotlin.reflect.KProperty0<kotlin.Int>
   get
 
 // CHECK:
 //   Mangled name: {}test_J_CONST
 //   Public signature: /test_J_CONST|-7992728176633477973[0]
+//   Public signature debug description: {}test_J_CONST
 val test_J_CONST: KProperty0<Int>
   // CHECK JVM_IR:
   //   Mangled name: #<get-test_J_CONST>(){}kotlin.reflect.KProperty0<kotlin.Int>
   //   Public signature: /test_J_CONST.<get-test_J_CONST>|-5776298226410519637[0]
+  //   Public signature debug description: <get-test_J_CONST>(){}kotlin.reflect.KProperty0<kotlin.Int>
   get
 
 // CHECK:
 //   Mangled name: {}test_J_nonConst
 //   Public signature: /test_J_nonConst|-2311727055358689765[0]
+//   Public signature debug description: {}test_J_nonConst
 val test_J_nonConst: KMutableProperty0<Int>
   // CHECK JVM_IR:
   //   Mangled name: #<get-test_J_nonConst>(){}kotlin.reflect.KMutableProperty0<kotlin.Int>
   //   Public signature: /test_J_nonConst.<get-test_J_nonConst>|4445779398117724023[0]
+  //   Public signature debug description: <get-test_J_nonConst>(){}kotlin.reflect.KMutableProperty0<kotlin.Int>
   get
 
 // CHECK:
 //   Mangled name: {}test_varWithPrivateSet
 //   Public signature: /test_varWithPrivateSet|2625543943670808283[0]
+//   Public signature debug description: {}test_varWithPrivateSet
 val test_varWithPrivateSet: KProperty1<C, Int>
   // CHECK JVM_IR:
   //   Mangled name: #<get-test_varWithPrivateSet>(){}kotlin.reflect.KProperty1<C,kotlin.Int>
   //   Public signature: /test_varWithPrivateSet.<get-test_varWithPrivateSet>|8290622083592937536[0]
+  //   Public signature debug description: <get-test_varWithPrivateSet>(){}kotlin.reflect.KProperty1<C,kotlin.Int>
   get
 
 // CHECK:
 //   Mangled name: {}test_varWithProtectedSet
 //   Public signature: /test_varWithProtectedSet|6087621839947174098[0]
+//   Public signature debug description: {}test_varWithProtectedSet
 val test_varWithProtectedSet: KProperty1<C, Int>
   // CHECK JVM_IR:
   //   Mangled name: #<get-test_varWithProtectedSet>(){}kotlin.reflect.KProperty1<C,kotlin.Int>
   //   Public signature: /test_varWithProtectedSet.<get-test_varWithProtectedSet>|4791941401182475159[0]
+  //   Public signature debug description: <get-test_varWithProtectedSet>(){}kotlin.reflect.KProperty1<C,kotlin.Int>
   get
 
 // CHECK:
@@ -179,32 +218,39 @@ open class C {
   // CHECK:
   //   Mangled name: C{}varWithPrivateSet
   //   Public signature: /C.varWithPrivateSet|5963227574618907567[0]
+  //   Public signature debug description: {}varWithPrivateSet
   var varWithPrivateSet: Int
     // CHECK JVM_IR:
     //   Mangled name: C#<get-varWithPrivateSet>(){}kotlin.Int
     //   Public signature: /C.varWithPrivateSet.<get-varWithPrivateSet>|-8392476455600477334[0]
+    //   Public signature debug description: <get-varWithPrivateSet>(){}kotlin.Int
     get
     // CHECK:
     //   Mangled name: C#<set-varWithPrivateSet>(kotlin.Int){}
     //   Public signature: /C.varWithPrivateSet.<set-varWithPrivateSet>|6345817872201213518[0]
+    //   Public signature debug description: <set-varWithPrivateSet>(kotlin.Int){}
     private set
 
   // CHECK:
   //   Mangled name: C{}varWithProtectedSet
   //   Public signature: /C.varWithProtectedSet|2406418248737323969[0]
+  //   Public signature debug description: {}varWithProtectedSet
   var varWithProtectedSet: Int
     // CHECK JVM_IR:
     //   Mangled name: C#<get-varWithProtectedSet>(){}kotlin.Int
     //   Public signature: /C.varWithProtectedSet.<get-varWithProtectedSet>|6072113758305715267[0]
+    //   Public signature debug description: <get-varWithProtectedSet>(){}kotlin.Int
     get
     // CHECK:
     //   Mangled name: C#<set-varWithProtectedSet>(kotlin.Int){}
     //   Public signature: /C.varWithProtectedSet.<set-varWithProtectedSet>|213514706635969633[0]
+    //   Public signature debug description: <set-varWithProtectedSet>(kotlin.Int){}
     protected set
 
   // CHECK:
   //   Mangled name: C#<init>(){}
   //   Public signature: /C.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   constructor() /* primary */
 
 }
@@ -216,16 +262,19 @@ object Delegate {
   // CHECK:
   //   Mangled name: Delegate#<init>(){}
   //   Public signature: /Delegate.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   private constructor() /* primary */
 
   // CHECK JVM_IR:
   //   Mangled name: Delegate#getValue(kotlin.Any?;kotlin.Any){}kotlin.Int
   //   Public signature: /Delegate.getValue|-4563103632143148557[0]
+  //   Public signature debug description: getValue(kotlin.Any?;kotlin.Any){}kotlin.Int
   operator fun getValue(thisRef: Any?, kProp: Any): Int
 
   // CHECK:
   //   Mangled name: Delegate#setValue(kotlin.Any?;kotlin.Any;kotlin.Int){}
   //   Public signature: /Delegate.setValue|-4646360456097039533[0]
+  //   Public signature debug description: setValue(kotlin.Any?;kotlin.Any;kotlin.Int){}
   operator fun setValue(thisRef: Any?, kProp: Any, value: Int): Unit
 
 }
@@ -233,22 +282,27 @@ object Delegate {
 // CHECK:
 //   Mangled name: {}valWithAccessors
 //   Public signature: /valWithAccessors|-4074148554018795668[0]
+//   Public signature debug description: {}valWithAccessors
 val valWithAccessors: Int
   // CHECK JVM_IR:
   //   Mangled name: #<get-valWithAccessors>(){}kotlin.Int
   //   Public signature: /valWithAccessors.<get-valWithAccessors>|-9086063727459641516[0]
+  //   Public signature debug description: <get-valWithAccessors>(){}kotlin.Int
   get(): Int
 
 // CHECK:
 //   Mangled name: {}varWithAccessors
 //   Public signature: /varWithAccessors|6848745058900328380[0]
+//   Public signature debug description: {}varWithAccessors
 var varWithAccessors: Int
   // CHECK JVM_IR:
   //   Mangled name: #<get-varWithAccessors>(){}kotlin.Int
   //   Public signature: /varWithAccessors.<get-varWithAccessors>|-626234323258211195[0]
+  //   Public signature debug description: <get-varWithAccessors>(){}kotlin.Int
   get(): Int
   // CHECK:
   //   Mangled name: #<set-varWithAccessors>(kotlin.Int){}
   //   Public signature: /varWithAccessors.<set-varWithAccessors>|-8315955398927617126[0]
+  //   Public signature debug description: <set-varWithAccessors>(kotlin.Int){}
   set(value: Int): Unit
 

@@ -8,22 +8,27 @@ abstract class A {
   // CHECK:
   //   Mangled name: test1.A{}p
   //   Public signature: test1/A.p|6715504260787941082[0]
+  //   Public signature debug description: {}p
   protected var p: String
     // CHECK JVM_IR:
     //   Mangled name: test1.A#<get-p>(){}kotlin.String
     //   Public signature: test1/A.p.<get-p>|-7630602400384289276[0]
+    //   Public signature debug description: <get-p>(){}kotlin.String
     // CHECK JS_IR NATIVE:
     //   Mangled name: test1.A#<get-p>(){}
     //   Public signature: test1/A.p.<get-p>|-1162552463316289847[0]
+    //   Public signature debug description: <get-p>(){}
     protected get
     // CHECK:
     //   Mangled name: test1.A#<set-p>(kotlin.String){}
     //   Public signature: test1/A.p.<set-p>|1896329871380024517[0]
+    //   Public signature debug description: <set-p>(kotlin.String){}
     private set
 
   // CHECK:
   //   Mangled name: test1.A#<init>(){}
   //   Public signature: test1/A.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   constructor() /* primary */
 
 }
@@ -38,26 +43,32 @@ class B : A {
   // CHECK:
   //   Mangled name: test2.B#<init>(){}
   //   Public signature: test2/B.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   constructor() /* primary */
 
   // CHECK JVM_IR:
   //   Mangled name: test2.B#test(){}kotlin.Function0<kotlin.String>
   //   Public signature: test2/B.test|4450727485295834919[0]
+  //   Public signature debug description: test(){}kotlin.Function0<kotlin.String>
   // CHECK JS_IR NATIVE:
   //   Mangled name: test2.B#test(){}
   //   Public signature: test2/B.test|6620506149988718649[0]
+  //   Public signature debug description: test(){}
   fun test(): Function0<String>
 
   // CHECK:
   //   Mangled name: test2.B{}p
   //   Public signature: test2/B.p|6715504260787941082[0]
+  //   Public signature debug description: {}p
   protected /* fake */ override var p: String
     // CHECK JVM_IR:
     //   Mangled name: test2.B#<get-p>(){}kotlin.String
     //   Public signature: test2/B.p.<get-p>|-7630602400384289276[0]
+    //   Public signature debug description: <get-p>(){}kotlin.String
     // CHECK JS_IR NATIVE:
     //   Mangled name: test2.B#<get-p>(){}
     //   Public signature: test2/B.p.<get-p>|-1162552463316289847[0]
+    //   Public signature debug description: <get-p>(){}
     protected /* fake */ override get(): String
 
 }

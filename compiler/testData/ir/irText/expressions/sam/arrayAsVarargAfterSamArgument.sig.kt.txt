@@ -1,5 +1,6 @@
 // CHECK:
 //   Mangled name: #test(kotlin.Function0<kotlin.Unit>;java.lang.Runnable;kotlin.Array<kotlin.String>){}
 //   Public signature: /test|-6479681129946022977[0]
+//   Public signature debug description: test(kotlin.Function0<kotlin.Unit>;java.lang.Runnable;kotlin.Array<kotlin.String>){}
 fun test(fn: Function0<Unit>, r: Runnable, arr: Array<String>): Unit
 

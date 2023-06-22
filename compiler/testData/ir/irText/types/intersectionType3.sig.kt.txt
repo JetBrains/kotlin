@@ -50,60 +50,74 @@ interface Z2 : A, B {
 // CHECK:
 //   Mangled name: #asT@In<0:0>(){0§<kotlin.Any?>}
 //   Public signature: /asT|-6759682177852648403[0]
+//   Public signature debug description: asT@In<0:0>(){0§<kotlin.Any?>}
 inline fun <reified T : Any?> In<T>.asT(): Unit
 
 // CHECK JVM_IR:
 //   Mangled name: #isT@In<0:0>(){0§<kotlin.Any?>}kotlin.Boolean
 //   Public signature: /isT|8771576346253960603[0]
+//   Public signature debug description: isT@In<0:0>(){0§<kotlin.Any?>}kotlin.Boolean
 // CHECK JS_IR NATIVE:
 //   Mangled name: #isT@In<0:0>(){0§<kotlin.Any?>}
 //   Public signature: /isT|-5271358953373566018[0]
+//   Public signature debug description: isT@In<0:0>(){0§<kotlin.Any?>}
 inline fun <reified T : Any?> In<T>.isT(): Boolean
 
 // CHECK JVM_IR:
 //   Mangled name: #sel(0:0;0:0){0§<kotlin.Any?>}0:0
 //   Public signature: /sel|-3127722538163724092[0]
+//   Public signature debug description: sel(0:0;0:0){0§<kotlin.Any?>}0:0
 // CHECK JS_IR NATIVE:
 //   Mangled name: #sel(0:0;0:0){0§<kotlin.Any?>}
 //   Public signature: /sel|-259814768749576946[0]
+//   Public signature debug description: sel(0:0;0:0){0§<kotlin.Any?>}
 fun <S : Any?> sel(x: S, y: S): S
 
 // CHECK:
 //   Mangled name: #testInAs1(In<A>;In<B>){}
 //   Public signature: /testInAs1|-1470115559429545343[0]
+//   Public signature debug description: testInAs1(In<A>;In<B>){}
 fun testInAs1(x: In<A>, y: In<B>): Unit
 
 // CHECK:
 //   Mangled name: #testInAs2(In<Z1>;In<Z2>){}
 //   Public signature: /testInAs2|-3389815125418569226[0]
+//   Public signature debug description: testInAs2(In<Z1>;In<Z2>){}
 fun testInAs2(x: In<Z1>, y: In<Z2>): Unit
 
 // CHECK:
 //   Mangled name: #testInAs3(In<A1>;In<A2>){}
 //   Public signature: /testInAs3|5823331336080521451[0]
+//   Public signature debug description: testInAs3(In<A1>;In<A2>){}
 fun testInAs3(x: In<A1>, y: In<A2>): Unit
 
 // CHECK JVM_IR:
 //   Mangled name: #testInIs1(In<A>;In<B>){}kotlin.Boolean
 //   Public signature: /testInIs1|-5403748215345836831[0]
+//   Public signature debug description: testInIs1(In<A>;In<B>){}kotlin.Boolean
 // CHECK JS_IR NATIVE:
 //   Mangled name: #testInIs1(In<A>;In<B>){}
 //   Public signature: /testInIs1|4819444353092136691[0]
+//   Public signature debug description: testInIs1(In<A>;In<B>){}
 fun testInIs1(x: In<A>, y: In<B>): Boolean
 
 // CHECK JVM_IR:
 //   Mangled name: #testInIs2(In<Z1>;In<Z2>){}kotlin.Boolean
 //   Public signature: /testInIs2|-683199318068952927[0]
+//   Public signature debug description: testInIs2(In<Z1>;In<Z2>){}kotlin.Boolean
 // CHECK JS_IR NATIVE:
 //   Mangled name: #testInIs2(In<Z1>;In<Z2>){}
 //   Public signature: /testInIs2|-5620077316495477950[0]
+//   Public signature debug description: testInIs2(In<Z1>;In<Z2>){}
 fun testInIs2(x: In<Z1>, y: In<Z2>): Boolean
 
 // CHECK JVM_IR:
 //   Mangled name: #testInIs3(In<A1>;In<A2>){}kotlin.Boolean
 //   Public signature: /testInIs3|6337187045487006592[0]
+//   Public signature debug description: testInIs3(In<A1>;In<A2>){}kotlin.Boolean
 // CHECK JS_IR NATIVE:
 //   Mangled name: #testInIs3(In<A1>;In<A2>){}
 //   Public signature: /testInIs3|2260493346542468096[0]
+//   Public signature debug description: testInIs3(In<A1>;In<A2>){}
 fun testInIs3(x: In<A1>, y: In<A2>): Boolean
 

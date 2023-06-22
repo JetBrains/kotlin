@@ -5,18 +5,22 @@ open annotation class A : Annotation {
   // CHECK:
   //   Mangled name: A{}x
   //   Public signature: /A.x|-8060530855978347579[0]
+  //   Public signature debug description: {}x
   val x: Int
     // CHECK JVM_IR:
     //   Mangled name: A#<get-x>(){}kotlin.Int
     //   Public signature: /A.x.<get-x>|4966956098150895696[0]
+    //   Public signature debug description: <get-x>(){}kotlin.Int
     // CHECK JS_IR NATIVE:
     //   Mangled name: A#<get-x>(){}
     //   Public signature: /A.x.<get-x>|1482705010654679335[0]
+    //   Public signature debug description: <get-x>(){}
     get
 
   // CHECK:
   //   Mangled name: A#<init>(kotlin.Int){}
   //   Public signature: /A.<init>|-5182794243525578284[0]
+  //   Public signature debug description: <init>(kotlin.Int){}
   constructor(x: Int) /* primary */
 
 }
@@ -24,24 +28,29 @@ open annotation class A : Annotation {
 // CHECK:
 //   Mangled name: #test1(){}
 //   Public signature: /test1|4297044443957252634[0]
+//   Public signature debug description: test1(){}
 @A(x = 1)
 fun test1(): Unit
 
 // CHECK:
 //   Mangled name: #test2(){}
 //   Public signature: /test2|4279114864133353152[0]
+//   Public signature debug description: test2(){}
 @A(x = 2)
 fun test2(): Unit
 
 // CHECK:
 //   Mangled name: {}ONE
 //   Public signature: /ONE|5698484753436154102[0]
+//   Public signature debug description: {}ONE
 const val ONE: Int
   // CHECK JVM_IR:
   //   Mangled name: #<get-ONE>(){}kotlin.Int
   //   Public signature: /ONE.<get-ONE>|7844388037784691246[0]
+  //   Public signature debug description: <get-ONE>(){}kotlin.Int
   // CHECK JS_IR NATIVE:
   //   Mangled name: #<get-ONE>(){}
   //   Public signature: /ONE.<get-ONE>|6594203029520379115[0]
+  //   Public signature debug description: <get-ONE>(){}
   get
 

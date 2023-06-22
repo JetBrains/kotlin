@@ -6,18 +6,22 @@ interface Foo<in T : Any?> {
   // CHECK:
   //   Mangled name: Foo#foo(1:0){}
   //   Public signature: /Foo.foo|-701456291278879981[0]
+  //   Public signature debug description: foo(1:0){}
   abstract fun foo(x: T): Unit
 
   // CHECK:
   //   Mangled name: Foo{}x
   //   Public signature: /Foo.x|-8060530855978347579[0]
+  //   Public signature debug description: {}x
   abstract val x: Int
     // CHECK JVM_IR:
     //   Mangled name: Foo#<get-x>(){}kotlin.Int
     //   Public signature: /Foo.x.<get-x>|4966956098150895696[0]
+    //   Public signature debug description: <get-x>(){}kotlin.Int
     // CHECK JS_IR NATIVE:
     //   Mangled name: Foo#<get-x>(){}
     //   Public signature: /Foo.x.<get-x>|1482705010654679335[0]
+    //   Public signature debug description: <get-x>(){}
     abstract get
 
 }
@@ -25,21 +29,26 @@ interface Foo<in T : Any?> {
 // CHECK JVM_IR:
 //   Mangled name: #testReceiver@Foo<*>(){}kotlin.Int
 //   Public signature: /testReceiver|-6773216258466639837[0]
+//   Public signature debug description: testReceiver@Foo<*>(){}kotlin.Int
 // CHECK JS_IR NATIVE:
 //   Mangled name: #testReceiver@Foo<*>(){}
 //   Public signature: /testReceiver|-7894732961780427626[0]
+//   Public signature debug description: testReceiver@Foo<*>(){}
 fun Foo<*>.testReceiver(): Int
 
 // CHECK:
 //   Mangled name: #testSmartCastOnExtensionReceiver@Foo<*>(){}
 //   Public signature: /testSmartCastOnExtensionReceiver|5429678017158557324[0]
+//   Public signature debug description: testSmartCastOnExtensionReceiver@Foo<*>(){}
 fun Foo<*>.testSmartCastOnExtensionReceiver(): Unit
 
 // CHECK JVM_IR:
 //   Mangled name: #testValueParameter(Foo<*>){}kotlin.Int
 //   Public signature: /testValueParameter|6369528729009014404[0]
+//   Public signature debug description: testValueParameter(Foo<*>){}kotlin.Int
 // CHECK JS_IR NATIVE:
 //   Mangled name: #testValueParameter(Foo<*>){}
 //   Public signature: /testValueParameter|-1072740451270393632[0]
+//   Public signature debug description: testValueParameter(Foo<*>){}
 fun testValueParameter(vp: Foo<*>): Int
 

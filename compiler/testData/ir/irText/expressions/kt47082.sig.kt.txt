@@ -22,20 +22,24 @@ interface Receiver<out E : Any?> {
 // CHECK JVM_IR:
 //   Mangled name: #box(){}kotlin.String
 //   Public signature: /box|-9347091776561469[0]
+//   Public signature debug description: box(){}kotlin.String
 fun box(): String
 
 // CHECK JVM_IR:
 //   Mangled name: #foo(Receiver<0:0>){0§<kotlin.Any?>}0:0
 //   Public signature: /foo|1374936692204158291[0]
+//   Public signature debug description: foo(Receiver<0:0>){0§<kotlin.Any?>}0:0
 fun <R : Any?> foo(r: Receiver<R>): R
 
 // CHECK JVM_IR:
 //   Mangled name: #produce(kotlin.Function1<Derived<0:0>,kotlin.Unit>){0§<kotlin.Any?>}0:0
 //   Public signature: /produce|-8861632226015581377[0]
+//   Public signature debug description: produce(kotlin.Function1<Derived<0:0>,kotlin.Unit>){0§<kotlin.Any?>}0:0
 fun <E : Any?> produce(block: @ExtensionFunctionType Function1<Derived<E>, Unit>): E
 
 // CHECK JVM_IR:
 //   Mangled name: #toChannel@Receiver<0:0>(0:1){0§<kotlin.Any?>;1§<Base<0:0>>}0:1
 //   Public signature: /toChannel|5706628675310331058[0]
+//   Public signature debug description: toChannel@Receiver<0:0>(0:1){0§<kotlin.Any?>;1§<Base<0:0>>}0:1
 fun <E : Any?, C : Base<E>> Receiver<E>.toChannel(destination: C): C
 

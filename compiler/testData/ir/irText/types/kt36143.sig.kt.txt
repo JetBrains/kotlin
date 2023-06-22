@@ -1,8 +1,10 @@
 // CHECK JVM_IR:
 //   Mangled name: #test@kotlin.Array<out|kotlin.String>(){}kotlin.Int
 //   Public signature: /test|5356494473111947391[0]
+//   Public signature debug description: test@kotlin.Array<out|kotlin.String>(){}kotlin.Int
 // CHECK JS_IR NATIVE:
 //   Mangled name: #test@kotlin.Array<out|kotlin.String>(){}
 //   Public signature: /test|1764811181460445584[0]
+//   Public signature debug description: test@kotlin.Array<out|kotlin.String>(){}
 fun Array<out String>.test(): Int
 

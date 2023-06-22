@@ -8,14 +8,17 @@ abstract class BaseFirBuilder<T : Any?> {
   // CHECK:
   //   Mangled name: BaseFirBuilder#<init>(){}
   //   Public signature: /BaseFirBuilder.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   constructor() /* primary */
 
   // CHECK JVM_IR:
   //   Mangled name: BaseFirBuilder#withCapturedTypeParameters(kotlin.Function0<0:0>){0§<kotlin.Any?>}0:0
   //   Public signature: /BaseFirBuilder.withCapturedTypeParameters|9205970479583592258[0]
+  //   Public signature debug description: withCapturedTypeParameters(kotlin.Function0<0:0>){0§<kotlin.Any?>}0:0
   // CHECK JS_IR NATIVE:
   //   Mangled name: BaseFirBuilder#withCapturedTypeParameters(kotlin.Function0<0:0>){0§<kotlin.Any?>}
   //   Public signature: /BaseFirBuilder.withCapturedTypeParameters|6883879135586930649[0]
+  //   Public signature debug description: withCapturedTypeParameters(kotlin.Function0<0:0>){0§<kotlin.Any?>}
   inline fun <T : Any?> withCapturedTypeParameters(block: Function0<T>): T
 
 }
@@ -30,14 +33,17 @@ open class BaseConverter : BaseFirBuilder<Any> {
   // CHECK:
   //   Mangled name: BaseConverter#<init>(){}
   //   Public signature: /BaseConverter.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   constructor() /* primary */
 
   // CHECK JVM_IR:
   //   Mangled name: BaseConverter#withCapturedTypeParameters(kotlin.Function0<0:0>){0§<kotlin.Any?>}0:0
   //   Public signature: /BaseConverter.withCapturedTypeParameters|9205970479583592258[0]
+  //   Public signature debug description: withCapturedTypeParameters(kotlin.Function0<0:0>){0§<kotlin.Any?>}0:0
   // CHECK JS_IR NATIVE:
   //   Mangled name: BaseConverter#withCapturedTypeParameters(kotlin.Function0<0:0>){0§<kotlin.Any?>}
   //   Public signature: /BaseConverter.withCapturedTypeParameters|6883879135586930649[0]
+  //   Public signature debug description: withCapturedTypeParameters(kotlin.Function0<0:0>){0§<kotlin.Any?>}
   /* fake */ override inline fun <T : Any?> withCapturedTypeParameters(block: Function0<T>): T
 
 }
@@ -49,14 +55,17 @@ class DeclarationsConverter : BaseConverter {
   // CHECK:
   //   Mangled name: DeclarationsConverter#<init>(){}
   //   Public signature: /DeclarationsConverter.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   constructor() /* primary */
 
   // CHECK JVM_IR:
   //   Mangled name: DeclarationsConverter#withCapturedTypeParameters(kotlin.Function0<0:0>){0§<kotlin.Any?>}0:0
   //   Public signature: /DeclarationsConverter.withCapturedTypeParameters|9205970479583592258[0]
+  //   Public signature debug description: withCapturedTypeParameters(kotlin.Function0<0:0>){0§<kotlin.Any?>}0:0
   // CHECK JS_IR NATIVE:
   //   Mangled name: DeclarationsConverter#withCapturedTypeParameters(kotlin.Function0<0:0>){0§<kotlin.Any?>}
   //   Public signature: /DeclarationsConverter.withCapturedTypeParameters|6883879135586930649[0]
+  //   Public signature debug description: withCapturedTypeParameters(kotlin.Function0<0:0>){0§<kotlin.Any?>}
   /* fake */ override inline fun <T : Any?> withCapturedTypeParameters(block: Function0<T>): T
 
 }

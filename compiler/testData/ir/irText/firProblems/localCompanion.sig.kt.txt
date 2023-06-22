@@ -2,9 +2,11 @@
 //   Mangled name computed from Ir:         #main(){}
 //   Mangled name computed from Descriptor: #main(){}%localCompanion.kt
 //   Public signature: /main|1798078925369608927[0]
+//   Public signature debug description: main(){}%localCompanion.kt
 // CHECK JS_IR NATIVE:
 //   Mangled name: #main(){}
 //   Public signature: /main|-4284757841571462650[0]
+//   Public signature debug description: main(){}
 fun main(): Unit
   // CHECK JVM_IR:
   //   Mangled name computed from Ir:         #main(){}.Foo

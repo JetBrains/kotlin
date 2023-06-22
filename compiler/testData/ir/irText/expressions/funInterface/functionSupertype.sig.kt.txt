@@ -6,6 +6,7 @@ fun interface Foo : Function0<Int> {
   // CHECK JVM_IR:
   //   Mangled name: Foo#invoke(){}kotlin.Int
   //   Public signature: /Foo.invoke|906964710558498066[0]
+  //   Public signature debug description: invoke(){}kotlin.Int
   abstract /* fake */ override operator fun invoke(): Int
 
 }
@@ -13,10 +14,12 @@ fun interface Foo : Function0<Int> {
 // CHECK JVM_IR:
 //   Mangled name: #id(Foo){}kotlin.Any
 //   Public signature: /id|-7816997914602483733[0]
+//   Public signature debug description: id(Foo){}kotlin.Any
 fun id(foo: Foo): Any
 
 // CHECK:
 //   Mangled name: #test(Foo){}
 //   Public signature: /test|1185534388124909890[0]
+//   Public signature debug description: test(Foo){}
 fun test(foo: Foo): Unit
 

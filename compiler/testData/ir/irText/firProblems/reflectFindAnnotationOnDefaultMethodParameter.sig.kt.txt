@@ -5,6 +5,7 @@ open annotation class Ann : Annotation {
   // CHECK:
   //   Mangled name: Ann#<init>(){}
   //   Public signature: /Ann.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   constructor() /* primary */
 
 }
@@ -17,6 +18,7 @@ interface I {
   // CHECK:
   //   Mangled name: I#m(kotlin.String){}
   //   Public signature: /I.m|934693771674457301[0]
+  //   Public signature debug description: m(kotlin.String){}
   fun m(@Ann s: String): Unit
 
 }
@@ -24,5 +26,6 @@ interface I {
 // CHECK JVM_IR:
 //   Mangled name: #box(){}kotlin.String
 //   Public signature: /box|-9347091776561469[0]
+//   Public signature debug description: box(){}kotlin.String
 fun box(): String
 

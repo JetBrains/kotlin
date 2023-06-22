@@ -1,54 +1,66 @@
 // CHECK JVM_IR:
 //   Mangled name: #fn0(){}kotlin.Int
 //   Public signature: /fn0|-3364598877649792431[0]
+//   Public signature debug description: fn0(){}kotlin.Int
 // CHECK JS_IR NATIVE:
 //   Mangled name: #fn0(){}
 //   Public signature: /fn0|-2043665824144278007[0]
+//   Public signature debug description: fn0(){}
 fun fn0(): Int
 
 // CHECK JVM_IR:
 //   Mangled name: #fn1(kotlin.Int){}kotlin.Int
 //   Public signature: /fn1|-2634385227090463147[0]
+//   Public signature debug description: fn1(kotlin.Int){}kotlin.Int
 // CHECK JS_IR NATIVE:
 //   Mangled name: #fn1(kotlin.Int){}
 //   Public signature: /fn1|-2712608382334902272[0]
+//   Public signature debug description: fn1(kotlin.Int){}
 fun fn1(x: Int): Int
 
 // CHECK JVM_IR:
 //   Mangled name: #fnv(kotlin.IntArray...){}kotlin.Int
 //   Public signature: /fnv|7629192376934713891[0]
+//   Public signature debug description: fnv(kotlin.IntArray...){}kotlin.Int
 // CHECK JS_IR NATIVE:
 //   Mangled name: #fnv(kotlin.IntArray...){}
 //   Public signature: /fnv|2422608309256790418[0]
+//   Public signature debug description: fnv(kotlin.IntArray...){}
 fun fnv(vararg xs: Int): Int
 
 // CHECK:
 //   Mangled name: #test0(){}
 //   Public signature: /test0|-2819007353171228053[0]
+//   Public signature debug description: test0(){}
 fun test0(): Unit
 
 // CHECK:
 //   Mangled name: #test1(){}
 //   Public signature: /test1|4297044443957252634[0]
+//   Public signature debug description: test1(){}
 fun test1(): Unit
 
 // CHECK:
 //   Mangled name: #testV0(){}
 //   Public signature: /testV0|-8921284502747635947[0]
+//   Public signature debug description: testV0(){}
 fun testV0(): Unit
 
 // CHECK:
 //   Mangled name: #testV1(){}
 //   Public signature: /testV1|3830223062623947245[0]
+//   Public signature debug description: testV1(){}
 fun testV1(): Unit
 
 // CHECK:
 //   Mangled name: #useUnit0(kotlin.Function0<kotlin.Unit>){}
 //   Public signature: /useUnit0|5614361260644496254[0]
+//   Public signature debug description: useUnit0(kotlin.Function0<kotlin.Unit>){}
 fun useUnit0(fn: Function0<Unit>): Unit
 
 // CHECK:
 //   Mangled name: #useUnit1(kotlin.Function1<kotlin.Int,kotlin.Unit>){}
 //   Public signature: /useUnit1|-3238349347224683286[0]
+//   Public signature debug description: useUnit1(kotlin.Function1<kotlin.Int,kotlin.Unit>){}
 fun useUnit1(fn: Function1<Int, Unit>): Unit
 

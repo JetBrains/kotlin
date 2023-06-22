@@ -6,6 +6,7 @@ fun interface MyRunnable {
   // CHECK:
   //   Mangled name: MyRunnable#run(){}
   //   Public signature: /MyRunnable.run|-991178076551934874[0]
+  //   Public signature debug description: run(){}
   abstract fun run(): Unit
 
 }
@@ -13,10 +14,12 @@ fun interface MyRunnable {
 // CHECK:
 //   Mangled name: #foo(kotlin.Array<out|MyRunnable>...){}
 //   Public signature: /foo|6689815842309055774[0]
+//   Public signature debug description: foo(kotlin.Array<out|MyRunnable>...){}
 fun foo(vararg rs: MyRunnable): Unit
 
 // CHECK:
 //   Mangled name: #test(kotlin.Any;MyRunnable){}
 //   Public signature: /test|-2252565057874021036[0]
+//   Public signature debug description: test(kotlin.Any;MyRunnable){}
 fun test(a: Any, r: MyRunnable): Unit
 

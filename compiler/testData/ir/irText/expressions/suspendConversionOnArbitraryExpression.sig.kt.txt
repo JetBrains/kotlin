@@ -1,123 +1,148 @@
 // CHECK JVM_IR:
 //   Mangled name: #produceFun(){}kotlin.Function0<kotlin.Unit>
 //   Public signature: /produceFun|4804189546570931998[0]
+//   Public signature debug description: produceFun(){}kotlin.Function0<kotlin.Unit>
 // CHECK JS_IR NATIVE:
 //   Mangled name: #produceFun(){}
 //   Public signature: /produceFun|6933842891382874270[0]
+//   Public signature debug description: produceFun(){}
 fun produceFun(): Function0<Unit>
 
 // CHECK:
 //   Mangled name: #testExtAsExt(kotlin.Function1<kotlin.Int,kotlin.Unit>){}
 //   Public signature: /testExtAsExt|-7977860665221117368[0]
+//   Public signature debug description: testExtAsExt(kotlin.Function1<kotlin.Int,kotlin.Unit>){}
 fun testExtAsExt(fn: @ExtensionFunctionType Function1<Int, Unit>): Unit
 
 // CHECK:
 //   Mangled name: #testExtAsExtT(kotlin.Function1<kotlin.Int,kotlin.Unit>){}
 //   Public signature: /testExtAsExtT|7097873516490245685[0]
+//   Public signature debug description: testExtAsExtT(kotlin.Function1<kotlin.Int,kotlin.Unit>){}
 fun testExtAsExtT(fn: @ExtensionFunctionType Function1<Int, Unit>): Unit
 
 // CHECK:
 //   Mangled name: #testExtAsSimple(kotlin.Function1<kotlin.Int,kotlin.Unit>){}
 //   Public signature: /testExtAsSimple|-1067298536485961384[0]
+//   Public signature debug description: testExtAsSimple(kotlin.Function1<kotlin.Int,kotlin.Unit>){}
 fun testExtAsSimple(fn: @ExtensionFunctionType Function1<Int, Unit>): Unit
 
 // CHECK:
 //   Mangled name: #testExtAsSimpleT(kotlin.Function1<kotlin.Int,kotlin.Unit>){}
 //   Public signature: /testExtAsSimpleT|2898108913573127027[0]
+//   Public signature debug description: testExtAsSimpleT(kotlin.Function1<kotlin.Int,kotlin.Unit>){}
 fun testExtAsSimpleT(fn: @ExtensionFunctionType Function1<Int, Unit>): Unit
 
 // CHECK:
 //   Mangled name: #testExtSAsExtT(kotlin.Function1<0:0,kotlin.Unit>){0§<kotlin.Any?>}
 //   Public signature: /testExtSAsExtT|1144176814022208305[0]
+//   Public signature debug description: testExtSAsExtT(kotlin.Function1<0:0,kotlin.Unit>){0§<kotlin.Any?>}
 fun <S : Any?> testExtSAsExtT(fn: @ExtensionFunctionType Function1<S, Unit>): Unit
 
 // CHECK:
 //   Mangled name: #testExtSAsSimpleT(kotlin.Function1<0:0,kotlin.Unit>){0§<kotlin.Any?>}
 //   Public signature: /testExtSAsSimpleT|-2358609713172847328[0]
+//   Public signature debug description: testExtSAsSimpleT(kotlin.Function1<0:0,kotlin.Unit>){0§<kotlin.Any?>}
 fun <S : Any?> testExtSAsSimpleT(fn: @ExtensionFunctionType Function1<S, Unit>): Unit
 
 // CHECK:
 //   Mangled name: #testIntersectionVsSuspendConversion(0:0){0§<kotlin.Function0<kotlin.Unit>&kotlin.coroutines.SuspendFunction0<kotlin.Unit>>}
 //   Public signature: /testIntersectionVsSuspendConversion|3036580114518012351[0]
+//   Public signature debug description: testIntersectionVsSuspendConversion(0:0){0§<kotlin.Function0<kotlin.Unit>&kotlin.coroutines.SuspendFunction0<kotlin.Unit>>}
 fun <T> testIntersectionVsSuspendConversion(x: T): Unit where T : Function0<Unit>, T : SuspendFunction0<Unit>
 
 // CHECK:
 //   Mangled name: #testSimple(kotlin.Function0<kotlin.Unit>){}
 //   Public signature: /testSimple|-2671092887420400255[0]
+//   Public signature debug description: testSimple(kotlin.Function0<kotlin.Unit>){}
 fun testSimple(fn: Function0<Unit>): Unit
 
 // CHECK:
 //   Mangled name: #testSimpleAsExt(kotlin.Function1<kotlin.Int,kotlin.Unit>){}
 //   Public signature: /testSimpleAsExt|9047906843313761541[0]
+//   Public signature debug description: testSimpleAsExt(kotlin.Function1<kotlin.Int,kotlin.Unit>){}
 fun testSimpleAsExt(fn: Function1<Int, Unit>): Unit
 
 // CHECK:
 //   Mangled name: #testSimpleAsExtT(kotlin.Function1<kotlin.Int,kotlin.Unit>){}
 //   Public signature: /testSimpleAsExtT|6234667294456337247[0]
+//   Public signature debug description: testSimpleAsExtT(kotlin.Function1<kotlin.Int,kotlin.Unit>){}
 fun testSimpleAsExtT(fn: Function1<Int, Unit>): Unit
 
 // CHECK:
 //   Mangled name: #testSimpleAsSimpleT(kotlin.Function1<kotlin.Int,kotlin.Unit>){}
 //   Public signature: /testSimpleAsSimpleT|4911702590190727707[0]
+//   Public signature debug description: testSimpleAsSimpleT(kotlin.Function1<kotlin.Int,kotlin.Unit>){}
 fun testSimpleAsSimpleT(fn: Function1<Int, Unit>): Unit
 
 // CHECK:
 //   Mangled name: #testSimpleNonVal(){}
 //   Public signature: /testSimpleNonVal|8897109715568911238[0]
+//   Public signature debug description: testSimpleNonVal(){}
 fun testSimpleNonVal(): Unit
 
 // CHECK:
 //   Mangled name: #testSimpleSAsExtT(kotlin.Function1<0:0,kotlin.Unit>){0§<kotlin.Any?>}
 //   Public signature: /testSimpleSAsExtT|6597420463751673979[0]
+//   Public signature debug description: testSimpleSAsExtT(kotlin.Function1<0:0,kotlin.Unit>){0§<kotlin.Any?>}
 fun <S : Any?> testSimpleSAsExtT(fn: Function1<S, Unit>): Unit
 
 // CHECK:
 //   Mangled name: #testSimpleSAsSimpleT(kotlin.Function1<0:0,kotlin.Unit>){0§<kotlin.Any?>}
 //   Public signature: /testSimpleSAsSimpleT|8425022052538754664[0]
+//   Public signature debug description: testSimpleSAsSimpleT(kotlin.Function1<0:0,kotlin.Unit>){0§<kotlin.Any?>}
 fun <S : Any?> testSimpleSAsSimpleT(fn: Function1<S, Unit>): Unit
 
 // CHECK:
 //   Mangled name: #testSmartCastOnVarVsSuspendConversion(kotlin.Function0<kotlin.Unit>){}
 //   Public signature: /testSmartCastOnVarVsSuspendConversion|2087060806377142132[0]
+//   Public signature debug description: testSmartCastOnVarVsSuspendConversion(kotlin.Function0<kotlin.Unit>){}
 fun testSmartCastOnVarVsSuspendConversion(a: Function0<Unit>): Unit
 
 // CHECK:
 //   Mangled name: #testSmartCastOnVarWithSuspendConversion(kotlin.Any){}
 //   Public signature: /testSmartCastOnVarWithSuspendConversion|9105739241469619247[0]
+//   Public signature debug description: testSmartCastOnVarWithSuspendConversion(kotlin.Any){}
 fun testSmartCastOnVarWithSuspendConversion(a: Any): Unit
 
 // CHECK:
 //   Mangled name: #testSmartCastVsSuspendConversion(kotlin.Function0<kotlin.Unit>){}
 //   Public signature: /testSmartCastVsSuspendConversion|-8980078119905187795[0]
+//   Public signature debug description: testSmartCastVsSuspendConversion(kotlin.Function0<kotlin.Unit>){}
 fun testSmartCastVsSuspendConversion(a: Function0<Unit>): Unit
 
 // CHECK:
 //   Mangled name: #testSmartCastWithSuspendConversion(kotlin.Any){}
 //   Public signature: /testSmartCastWithSuspendConversion|7215678361079943817[0]
+//   Public signature debug description: testSmartCastWithSuspendConversion(kotlin.Any){}
 fun testSmartCastWithSuspendConversion(a: Any): Unit
 
 // CHECK:
 //   Mangled name: #useSuspend(kotlin.coroutines.SuspendFunction0<kotlin.Unit>){}
 //   Public signature: /useSuspend|60604456614172212[0]
+//   Public signature debug description: useSuspend(kotlin.coroutines.SuspendFunction0<kotlin.Unit>){}
 fun useSuspend(sfn: SuspendFunction0<Unit>): Unit
 
 // CHECK:
 //   Mangled name: #useSuspendArg(kotlin.coroutines.SuspendFunction1<kotlin.Int,kotlin.Unit>){}
 //   Public signature: /useSuspendArg|3426050309145504362[0]
+//   Public signature debug description: useSuspendArg(kotlin.coroutines.SuspendFunction1<kotlin.Int,kotlin.Unit>){}
 fun useSuspendArg(sfn: SuspendFunction1<Int, Unit>): Unit
 
 // CHECK:
 //   Mangled name: #useSuspendArgT(kotlin.coroutines.SuspendFunction1<0:0,kotlin.Unit>){0§<kotlin.Any?>}
 //   Public signature: /useSuspendArgT|6442526549851733448[0]
+//   Public signature debug description: useSuspendArgT(kotlin.coroutines.SuspendFunction1<0:0,kotlin.Unit>){0§<kotlin.Any?>}
 fun <T : Any?> useSuspendArgT(sfn: SuspendFunction1<T, Unit>): Unit
 
 // CHECK:
 //   Mangled name: #useSuspendExt(kotlin.coroutines.SuspendFunction1<kotlin.Int,kotlin.Unit>){}
 //   Public signature: /useSuspendExt|-8690505892244175114[0]
+//   Public signature debug description: useSuspendExt(kotlin.coroutines.SuspendFunction1<kotlin.Int,kotlin.Unit>){}
 fun useSuspendExt(sfn: @ExtensionFunctionType SuspendFunction1<Int, Unit>): Unit
 
 // CHECK:
 //   Mangled name: #useSuspendExtT(kotlin.coroutines.SuspendFunction1<0:0,kotlin.Unit>){0§<kotlin.Any?>}
 //   Public signature: /useSuspendExtT|-926225216925468449[0]
+//   Public signature debug description: useSuspendExtT(kotlin.coroutines.SuspendFunction1<0:0,kotlin.Unit>){0§<kotlin.Any?>}
 fun <T : Any?> useSuspendExtT(sfn: @ExtensionFunctionType SuspendFunction1<T, Unit>): Unit
 

@@ -5,11 +5,13 @@ open class ChannelCoroutine<E : Any?> {
   // CHECK:
   //   Mangled name: ChannelCoroutine#<init>(){}
   //   Public signature: /ChannelCoroutine.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   constructor() /* primary */
 
   // CHECK:
   //   Mangled name: ChannelCoroutine#sendFair(1:0){}
   //   Public signature: /ChannelCoroutine.sendFair|9002973699384044266[0]
+  //   Public signature debug description: sendFair(1:0){}
   suspend fun sendFair(element: E): Unit
 
 }
@@ -21,23 +23,28 @@ class SafeCollector<T : Any?> : FlowCollector<T> {
   // CHECK:
   //   Mangled name: SafeCollector{}collector
   //   Public signature: /SafeCollector.collector|4340129746635199588[0]
+  //   Public signature debug description: {}collector
   internal val collector: FlowCollector<T>
     // CHECK JVM_IR:
     //   Mangled name: SafeCollector#<get-collector>(){}FlowCollector<1:0>
     //   Public signature: /SafeCollector.collector.<get-collector>|7868666490655551038[0]
+    //   Public signature debug description: <get-collector>(){}FlowCollector<1:0>
     // CHECK JS_IR NATIVE:
     //   Mangled name: SafeCollector#<get-collector>(){}
     //   Public signature: /SafeCollector.collector.<get-collector>|2795575727343345994[0]
+    //   Public signature debug description: <get-collector>(){}
     internal get
 
   // CHECK:
   //   Mangled name: SafeCollector#<init>(FlowCollector<1:0>){}
   //   Public signature: /SafeCollector.<init>|-8536486589002361817[0]
+  //   Public signature debug description: <init>(FlowCollector<1:0>){}
   constructor(collector: FlowCollector<T>) /* primary */
 
   // CHECK:
   //   Mangled name: SafeCollector#emit(1:0){}
   //   Public signature: /SafeCollector.emit|-8401228374452471444[0]
+  //   Public signature debug description: emit(1:0){}
   override suspend fun emit(value: T): Unit
 
 }
@@ -57,6 +64,7 @@ interface Flow<out T : Any?> {
   // CHECK:
   //   Mangled name: Flow#collect(FlowCollector<1:0>){}
   //   Public signature: /Flow.collect|5114876798301803727[0]
+  //   Public signature debug description: collect(FlowCollector<1:0>){}
   abstract suspend fun collect(collector: FlowCollector<T>): Unit
 
 }
@@ -69,6 +77,7 @@ interface FlowCollector<in T : Any?> {
   // CHECK:
   //   Mangled name: FlowCollector#emit(1:0){}
   //   Public signature: /FlowCollector.emit|-8401228374452471444[0]
+  //   Public signature debug description: emit(1:0){}
   abstract suspend fun emit(value: T): Unit
 
 }
@@ -81,18 +90,22 @@ interface ProducerScope<in E : Any?> : CoroutineScope, SendChannel<E> {
   // CHECK:
   //   Mangled name: ProducerScope#send(1:0){}
   //   Public signature: /ProducerScope.send|-5896904506239336668[0]
+  //   Public signature debug description: send(1:0){}
   abstract /* fake */ override suspend fun send(e: E): Unit
 
   // CHECK:
   //   Mangled name: ProducerScope{}channel
   //   Public signature: /ProducerScope.channel|1234507572828696339[0]
+  //   Public signature debug description: {}channel
   abstract val channel: SendChannel<E>
     // CHECK JVM_IR:
     //   Mangled name: ProducerScope#<get-channel>(){}SendChannel<1:0>
     //   Public signature: /ProducerScope.channel.<get-channel>|6405133005890607699[0]
+    //   Public signature debug description: <get-channel>(){}SendChannel<1:0>
     // CHECK JS_IR NATIVE:
     //   Mangled name: ProducerScope#<get-channel>(){}
     //   Public signature: /ProducerScope.channel.<get-channel>|-6008301720542490954[0]
+    //   Public signature debug description: <get-channel>(){}
     abstract get
 
 }
@@ -112,6 +125,7 @@ interface SendChannel<in E : Any?> {
   // CHECK:
   //   Mangled name: SendChannel#send(1:0){}
   //   Public signature: /SendChannel.send|-5896904506239336668[0]
+  //   Public signature debug description: send(1:0){}
   abstract suspend fun send(e: E): Unit
 
 }
@@ -133,71 +147,87 @@ private fun CoroutineScope.asFairChannel(flow: Flow<*>): ReceiveChannel<Any>
 // CHECK:
 //   Mangled name: #collect@Flow<0:0>(kotlin.coroutines.SuspendFunction1<0:0,kotlin.Unit>){0§<kotlin.Any?>}
 //   Public signature: /collect|-7963666311311772650[0]
+//   Public signature debug description: collect@Flow<0:0>(kotlin.coroutines.SuspendFunction1<0:0,kotlin.Unit>){0§<kotlin.Any?>}
 suspend inline fun <T : Any?> Flow<T>.collect(crossinline action: SuspendFunction1<T, Unit>): Unit
 
 // CHECK JVM_IR:
 //   Mangled name: #flow(kotlin.coroutines.SuspendFunction1<FlowCollector<0:0>,kotlin.Unit>){0§<kotlin.Any?>}Flow<0:0>
 //   Public signature: /flow|-8236097055230938451[0]
+//   Public signature debug description: flow(kotlin.coroutines.SuspendFunction1<FlowCollector<0:0>,kotlin.Unit>){0§<kotlin.Any?>}Flow<0:0>
 // CHECK JS_IR NATIVE:
 //   Mangled name: #flow(kotlin.coroutines.SuspendFunction1<FlowCollector<0:0>,kotlin.Unit>){0§<kotlin.Any?>}
 //   Public signature: /flow|-783786779684717779[0]
+//   Public signature debug description: flow(kotlin.coroutines.SuspendFunction1<FlowCollector<0:0>,kotlin.Unit>){0§<kotlin.Any?>}
 @OptIn(markerClass = [ExperimentalTypeInference::class])
 fun <T : Any?> flow(block: @ExtensionFunctionType SuspendFunction1<FlowCollector<T>, Unit>): Flow<T>
 
 // CHECK JVM_IR:
 //   Mangled name: #flowScope(kotlin.coroutines.SuspendFunction1<CoroutineScope,0:0>){0§<kotlin.Any?>}0:0
 //   Public signature: /flowScope|-4863413966525211507[0]
+//   Public signature debug description: flowScope(kotlin.coroutines.SuspendFunction1<CoroutineScope,0:0>){0§<kotlin.Any?>}0:0
 // CHECK JS_IR NATIVE:
 //   Mangled name: #flowScope(kotlin.coroutines.SuspendFunction1<CoroutineScope,0:0>){0§<kotlin.Any?>}
 //   Public signature: /flowScope|-6102709541537901279[0]
+//   Public signature debug description: flowScope(kotlin.coroutines.SuspendFunction1<CoroutineScope,0:0>){0§<kotlin.Any?>}
 @OptIn(markerClass = [ExperimentalTypeInference::class])
 suspend fun <R : Any?> flowScope(block: @ExtensionFunctionType SuspendFunction1<CoroutineScope, R>): R
 
 // CHECK:
 //   Mangled name: #invokeSafely@FlowCollector<0:0>(kotlin.coroutines.SuspendFunction2<FlowCollector<0:0>,kotlin.Throwable?,kotlin.Unit>){0§<kotlin.Any?>}
 //   Public signature: /invokeSafely|-132311587249073600[0]
+//   Public signature debug description: invokeSafely@FlowCollector<0:0>(kotlin.coroutines.SuspendFunction2<FlowCollector<0:0>,kotlin.Throwable?,kotlin.Unit>){0§<kotlin.Any?>}
 suspend fun <T : Any?> FlowCollector<T>.invokeSafely(action: @ExtensionFunctionType SuspendFunction2<FlowCollector<T>, Throwable?, Unit>): Unit
 
 // CHECK JVM_IR:
 //   Mangled name: #onCompletion@Flow<0:0>(kotlin.coroutines.SuspendFunction2<FlowCollector<0:0>,kotlin.Throwable?,kotlin.Unit>){0§<kotlin.Any?>}Flow<0:0>
 //   Public signature: /onCompletion|-3071899649967554187[0]
+//   Public signature debug description: onCompletion@Flow<0:0>(kotlin.coroutines.SuspendFunction2<FlowCollector<0:0>,kotlin.Throwable?,kotlin.Unit>){0§<kotlin.Any?>}Flow<0:0>
 // CHECK JS_IR NATIVE:
 //   Mangled name: #onCompletion@Flow<0:0>(kotlin.coroutines.SuspendFunction2<FlowCollector<0:0>,kotlin.Throwable?,kotlin.Unit>){0§<kotlin.Any?>}
 //   Public signature: /onCompletion|7285895848812186696[0]
+//   Public signature debug description: onCompletion@Flow<0:0>(kotlin.coroutines.SuspendFunction2<FlowCollector<0:0>,kotlin.Throwable?,kotlin.Unit>){0§<kotlin.Any?>}
 fun <T : Any?> Flow<T>.onCompletion(action: @ExtensionFunctionType SuspendFunction2<FlowCollector<T>, Throwable?, Unit>): Flow<T>
 
 // CHECK JVM_IR:
 //   Mangled name: #onCompletion@Flow<0:0>(kotlin.coroutines.SuspendFunction1<kotlin.Throwable?,kotlin.Unit>){0§<kotlin.Any?>}Flow<0:0>
 //   Public signature: /onCompletion|647694112352607196[0]
+//   Public signature debug description: onCompletion@Flow<0:0>(kotlin.coroutines.SuspendFunction1<kotlin.Throwable?,kotlin.Unit>){0§<kotlin.Any?>}Flow<0:0>
 // CHECK JS_IR NATIVE:
 //   Mangled name: #onCompletion@Flow<0:0>(kotlin.coroutines.SuspendFunction1<kotlin.Throwable?,kotlin.Unit>){0§<kotlin.Any?>}
 //   Public signature: /onCompletion|8392097553242172135[0]
+//   Public signature debug description: onCompletion@Flow<0:0>(kotlin.coroutines.SuspendFunction1<kotlin.Throwable?,kotlin.Unit>){0§<kotlin.Any?>}
 fun <T : Any?> Flow<T>.onCompletion(action: SuspendFunction1<Throwable?, Unit>): Flow<T>
 
 // CHECK JVM_IR:
 //   Mangled name: #produce@CoroutineScope(kotlin.coroutines.SuspendFunction1<ProducerScope<0:0>,kotlin.Unit>){0§<kotlin.Any?>}ReceiveChannel<0:0>
 //   Public signature: /produce|5215241159089619820[0]
+//   Public signature debug description: produce@CoroutineScope(kotlin.coroutines.SuspendFunction1<ProducerScope<0:0>,kotlin.Unit>){0§<kotlin.Any?>}ReceiveChannel<0:0>
 // CHECK JS_IR NATIVE:
 //   Mangled name: #produce@CoroutineScope(kotlin.coroutines.SuspendFunction1<ProducerScope<0:0>,kotlin.Unit>){0§<kotlin.Any?>}
 //   Public signature: /produce|3284755252337258516[0]
+//   Public signature debug description: produce@CoroutineScope(kotlin.coroutines.SuspendFunction1<ProducerScope<0:0>,kotlin.Unit>){0§<kotlin.Any?>}
 @OptIn(markerClass = [ExperimentalTypeInference::class])
 fun <E : Any?> CoroutineScope.produce(block: @ExtensionFunctionType SuspendFunction1<ProducerScope<E>, Unit>): ReceiveChannel<E>
 
 // CHECK JVM_IR:
 //   Mangled name: #scopedFlow(kotlin.coroutines.SuspendFunction2<CoroutineScope,FlowCollector<0:0>,kotlin.Unit>){0§<kotlin.Any?>}Flow<0:0>
 //   Public signature: /scopedFlow|2249590853579674662[0]
+//   Public signature debug description: scopedFlow(kotlin.coroutines.SuspendFunction2<CoroutineScope,FlowCollector<0:0>,kotlin.Unit>){0§<kotlin.Any?>}Flow<0:0>
 // CHECK JS_IR NATIVE:
 //   Mangled name: #scopedFlow(kotlin.coroutines.SuspendFunction2<CoroutineScope,FlowCollector<0:0>,kotlin.Unit>){0§<kotlin.Any?>}
 //   Public signature: /scopedFlow|2704701452611653533[0]
+//   Public signature debug description: scopedFlow(kotlin.coroutines.SuspendFunction2<CoroutineScope,FlowCollector<0:0>,kotlin.Unit>){0§<kotlin.Any?>}
 @OptIn(markerClass = [ExperimentalTypeInference::class])
 fun <R : Any?> scopedFlow(block: @ExtensionFunctionType SuspendFunction2<CoroutineScope, FlowCollector<R>, Unit>): Flow<R>
 
 // CHECK JVM_IR:
 //   Mangled name: #unsafeFlow(kotlin.coroutines.SuspendFunction1<FlowCollector<0:0>,kotlin.Unit>){0§<kotlin.Any?>}Flow<0:0>
 //   Public signature: /unsafeFlow|-135607760831793589[0]
+//   Public signature debug description: unsafeFlow(kotlin.coroutines.SuspendFunction1<FlowCollector<0:0>,kotlin.Unit>){0§<kotlin.Any?>}Flow<0:0>
 // CHECK JS_IR NATIVE:
 //   Mangled name: #unsafeFlow(kotlin.coroutines.SuspendFunction1<FlowCollector<0:0>,kotlin.Unit>){0§<kotlin.Any?>}
 //   Public signature: /unsafeFlow|3400544419813792330[0]
+//   Public signature debug description: unsafeFlow(kotlin.coroutines.SuspendFunction1<FlowCollector<0:0>,kotlin.Unit>){0§<kotlin.Any?>}
 @OptIn(markerClass = [ExperimentalTypeInference::class])
 inline fun <T : Any?> unsafeFlow(crossinline block: @ExtensionFunctionType SuspendFunction1<FlowCollector<T>, Unit>): Flow<T>
 

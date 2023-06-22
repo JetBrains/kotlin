@@ -5,39 +5,47 @@ class Host {
   // CHECK:
   //   Mangled name: Host#<init>(){}
   //   Public signature: /Host.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   constructor() /* primary */
 
   // CHECK:
   //   Mangled name: Host#testBoundReceiverExpression(){}
   //   Public signature: /Host.testBoundReceiverExpression|4527152464563403382[0]
+  //   Public signature debug description: testBoundReceiverExpression(){}
   fun testBoundReceiverExpression(): Unit
 
   // CHECK:
   //   Mangled name: Host#testBoundReceiverLocalVal(){}
   //   Public signature: /Host.testBoundReceiverLocalVal|5089842263939902901[0]
+  //   Public signature debug description: testBoundReceiverLocalVal(){}
   fun testBoundReceiverLocalVal(): Unit
 
   // CHECK:
   //   Mangled name: Host#testBoundReceiverLocalVar(){}
   //   Public signature: /Host.testBoundReceiverLocalVar|7082315393387759929[0]
+  //   Public signature debug description: testBoundReceiverLocalVar(){}
   fun testBoundReceiverLocalVar(): Unit
 
   // CHECK:
   //   Mangled name: Host#testBoundReceiverParameter(Host){}
   //   Public signature: /Host.testBoundReceiverParameter|2962165494345239444[0]
+  //   Public signature debug description: testBoundReceiverParameter(Host){}
   fun testBoundReceiverParameter(h: Host): Unit
 
   // CHECK:
   //   Mangled name: Host#testImplicitThis(){}
   //   Public signature: /Host.testImplicitThis|-6601040006825871356[0]
+  //   Public signature debug description: testImplicitThis(){}
   fun testImplicitThis(): Unit
 
   // CHECK JVM_IR:
   //   Mangled name: Host#withVararg(kotlin.IntArray...){}kotlin.String
   //   Public signature: /Host.withVararg|3343284378880347768[0]
+  //   Public signature debug description: withVararg(kotlin.IntArray...){}kotlin.String
   // CHECK JS_IR NATIVE:
   //   Mangled name: Host#withVararg(kotlin.IntArray...){}
   //   Public signature: /Host.withVararg|2511032413940817176[0]
+  //   Public signature debug description: withVararg(kotlin.IntArray...){}
   fun withVararg(vararg xs: Int): String
 
 }
@@ -45,5 +53,6 @@ class Host {
 // CHECK:
 //   Mangled name: #use(kotlin.Function1<kotlin.Int,kotlin.Unit>){}
 //   Public signature: /use|4736665629979262606[0]
+//   Public signature debug description: use(kotlin.Function1<kotlin.Int,kotlin.Unit>){}
 fun use(fn: Function1<Int, Unit>): Unit
 

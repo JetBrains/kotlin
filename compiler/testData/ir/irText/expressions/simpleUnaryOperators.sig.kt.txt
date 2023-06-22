@@ -1,48 +1,60 @@
 // CHECK JVM_IR:
 //   Mangled name: #test1(kotlin.Int){}kotlin.Int
 //   Public signature: /test1|135491646798962448[0]
+//   Public signature debug description: test1(kotlin.Int){}kotlin.Int
 // CHECK JS_IR NATIVE:
 //   Mangled name: #test1(kotlin.Int){}
 //   Public signature: /test1|-3111244057316668638[0]
+//   Public signature debug description: test1(kotlin.Int){}
 fun test1(x: Int): Int
 
 // CHECK JVM_IR:
 //   Mangled name: #test2(){}kotlin.Int
 //   Public signature: /test2|5542371834528279174[0]
+//   Public signature debug description: test2(){}kotlin.Int
 // CHECK JS_IR NATIVE:
 //   Mangled name: #test2(){}
 //   Public signature: /test2|4279114864133353152[0]
+//   Public signature debug description: test2(){}
 fun test2(): Int
 
 // CHECK JVM_IR:
 //   Mangled name: #test3(kotlin.Int){}kotlin.Int
 //   Public signature: /test3|4444212326709071419[0]
+//   Public signature debug description: test3(kotlin.Int){}kotlin.Int
 // CHECK JS_IR NATIVE:
 //   Mangled name: #test3(kotlin.Int){}
 //   Public signature: /test3|7508947747710505690[0]
+//   Public signature debug description: test3(kotlin.Int){}
 fun test3(x: Int): Int
 
 // CHECK JVM_IR:
 //   Mangled name: #test4(){}kotlin.Int
 //   Public signature: /test4|3513867399525975921[0]
+//   Public signature debug description: test4(){}kotlin.Int
 // CHECK JS_IR NATIVE:
 //   Mangled name: #test4(){}
 //   Public signature: /test4|5588455914500386239[0]
+//   Public signature debug description: test4(){}
 fun test4(): Int
 
 // CHECK JVM_IR:
 //   Mangled name: #test5(kotlin.Boolean){}kotlin.Boolean
 //   Public signature: /test5|5789064363105651650[0]
+//   Public signature debug description: test5(kotlin.Boolean){}kotlin.Boolean
 // CHECK JS_IR NATIVE:
 //   Mangled name: #test5(kotlin.Boolean){}
 //   Public signature: /test5|-1911074993921234175[0]
+//   Public signature debug description: test5(kotlin.Boolean){}
 fun test5(x: Boolean): Boolean
 
 // CHECK JVM_IR:
 //   Mangled name: #test6(){}kotlin.Boolean
 //   Public signature: /test6|8631689306238556839[0]
+//   Public signature debug description: test6(){}kotlin.Boolean
 // CHECK JS_IR NATIVE:
 //   Mangled name: #test6(){}
 //   Public signature: /test6|-6357717956567725919[0]
+//   Public signature debug description: test6(){}
 fun test6(): Boolean
 

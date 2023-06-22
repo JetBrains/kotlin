@@ -1,5 +1,6 @@
 // CHECK:
 //   Mangled name: #test(J<0:0>){0§<kotlin.Any?>}
 //   Public signature: /test|-9034900230155254055[0]
+//   Public signature debug description: test(J<0:0>){0§<kotlin.Any?>}
 fun <F : Any?> test(j: J<F>): Unit
 

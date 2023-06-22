@@ -5,6 +5,7 @@ expect class Add : Ops {
   // CHECK:
   //   Mangled name: Add#<init>(){}
   //   Public signature: /Add.<init>|-5645683436151566731[1]
+  //   Public signature debug description: <init>(){}
   expect constructor() /* primary */
 
 }
@@ -16,6 +17,7 @@ class Add : Ops {
   // CHECK:
   //   Mangled name: Add#<init>(){}
   //   Public signature: /Add.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   constructor() /* primary */
 
 }
@@ -27,6 +29,7 @@ expect sealed class Ops {
   // CHECK:
   //   Mangled name: Ops#<init>(){}
   //   Public signature: /Ops.<init>|-5645683436151566731[1]
+  //   Public signature debug description: <init>(){}
   protected expect constructor() /* primary */
 
 }
@@ -38,6 +41,7 @@ sealed class Ops {
   // CHECK:
   //   Mangled name: Ops#<init>(){}
   //   Public signature: /Ops.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   protected constructor() /* primary */
 
 }

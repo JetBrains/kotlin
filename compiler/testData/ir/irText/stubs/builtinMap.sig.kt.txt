@@ -1,5 +1,6 @@
 // CHECK JVM_IR:
 //   Mangled name: #plus@kotlin.collections.Map<out|0:0,0:1>(kotlin.Pair<0:0,0:1>){0§<kotlin.Any?>;1§<kotlin.Any?>}kotlin.collections.Map<0:0,0:1>
 //   Public signature: /plus|-6703819129199897123[0]
+//   Public signature debug description: plus@kotlin.collections.Map<out|0:0,0:1>(kotlin.Pair<0:0,0:1>){0§<kotlin.Any?>;1§<kotlin.Any?>}kotlin.collections.Map<0:0,0:1>
 fun <K1 : Any?, V1 : Any?> Map<out K1, V1>.plus(pair: Pair<K1, V1>): Map<K1, V1>
 

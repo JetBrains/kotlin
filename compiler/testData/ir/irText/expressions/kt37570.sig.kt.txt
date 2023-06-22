@@ -5,18 +5,22 @@ class A {
   // CHECK:
   //   Mangled name: A{}b
   //   Public signature: /A.b|772347207915745207[0]
+  //   Public signature debug description: {}b
   val b: String
     // CHECK JVM_IR:
     //   Mangled name: A#<get-b>(){}kotlin.String
     //   Public signature: /A.b.<get-b>|5457451065030643294[0]
+    //   Public signature debug description: <get-b>(){}kotlin.String
     // CHECK JS_IR NATIVE:
     //   Mangled name: A#<get-b>(){}
     //   Public signature: /A.b.<get-b>|812004636995167743[0]
+    //   Public signature debug description: <get-b>(){}
     get
 
   // CHECK:
   //   Mangled name: A#<init>(){}
   //   Public signature: /A.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   constructor() /* primary */
 
 }
@@ -24,8 +28,10 @@ class A {
 // CHECK JVM_IR:
 //   Mangled name: #a(){}kotlin.String
 //   Public signature: /a|-7740409718469983371[0]
+//   Public signature debug description: a(){}kotlin.String
 // CHECK JS_IR NATIVE:
 //   Mangled name: #a(){}
 //   Public signature: /a|-4432112437378250461[0]
+//   Public signature debug description: a(){}
 fun a(): String
 

@@ -519,6 +519,8 @@ sealed class IdSignature {
         override val isPubliclyVisible: Boolean
             get() = memberSignature.isPubliclyVisible
 
+        override fun asPublic(): CommonSignature? = memberSignature.asPublic()
+
         override fun topLevelSignature(): IdSignature =
             memberSignature.topLevelSignature()
 

@@ -6,57 +6,71 @@ interface C {
   // CHECK:
   //   Mangled name: C{}test1
   //   Public signature: /C.test1|6005685442305498193[0]
+  //   Public signature debug description: {}test1
   abstract val test1: Int
     // CHECK JVM_IR:
     //   Mangled name: C#<get-test1>(){}kotlin.Int
     //   Public signature: /C.test1.<get-test1>|3978508226793108919[0]
+    //   Public signature debug description: <get-test1>(){}kotlin.Int
     // CHECK JS_IR NATIVE:
     //   Mangled name: C#<get-test1>(){}
     //   Public signature: /C.test1.<get-test1>|-5735092642142423279[0]
+    //   Public signature debug description: <get-test1>(){}
     abstract get
 
   // CHECK:
   //   Mangled name: C{}test2
   //   Public signature: /C.test2|2517758057000911509[0]
+  //   Public signature debug description: {}test2
   val test2: Int
     // CHECK JVM_IR:
     //   Mangled name: C#<get-test2>(){}kotlin.Int
     //   Public signature: /C.test2.<get-test2>|-8779933517717592707[0]
+    //   Public signature debug description: <get-test2>(){}kotlin.Int
     // CHECK JS_IR NATIVE:
     //   Mangled name: C#<get-test2>(){}
     //   Public signature: /C.test2.<get-test2>|-5218942532816206869[0]
+    //   Public signature debug description: <get-test2>(){}
     get(): Int
 
   // CHECK:
   //   Mangled name: C{}test3
   //   Public signature: /C.test3|7677556066983021166[0]
+  //   Public signature debug description: {}test3
   abstract var test3: Int
     // CHECK JVM_IR:
     //   Mangled name: C#<get-test3>(){}kotlin.Int
     //   Public signature: /C.test3.<get-test3>|6145294165644146033[0]
+    //   Public signature debug description: <get-test3>(){}kotlin.Int
     // CHECK JS_IR NATIVE:
     //   Mangled name: C#<get-test3>(){}
     //   Public signature: /C.test3.<get-test3>|-7333791615083236686[0]
+    //   Public signature debug description: <get-test3>(){}
     abstract get
     // CHECK:
     //   Mangled name: C#<set-test3>(kotlin.Int){}
     //   Public signature: /C.test3.<set-test3>|-4170290427940674844[0]
+    //   Public signature debug description: <set-test3>(kotlin.Int){}
     abstract set
 
   // CHECK:
   //   Mangled name: C{}test4
   //   Public signature: /C.test4|-9115637610245762085[0]
+  //   Public signature debug description: {}test4
   var test4: Int
     // CHECK JVM_IR:
     //   Mangled name: C#<get-test4>(){}kotlin.Int
     //   Public signature: /C.test4.<get-test4>|-8911174941514444072[0]
+    //   Public signature debug description: <get-test4>(){}kotlin.Int
     // CHECK JS_IR NATIVE:
     //   Mangled name: C#<get-test4>(){}
     //   Public signature: /C.test4.<get-test4>|4166854324968284003[0]
+    //   Public signature debug description: <get-test4>(){}
     get(): Int
     // CHECK:
     //   Mangled name: C#<set-test4>(kotlin.Int){}
     //   Public signature: /C.test4.<set-test4>|8105340104867729538[0]
+    //   Public signature debug description: <set-test4>(kotlin.Int){}
     set(value: Int): Unit
 
 }

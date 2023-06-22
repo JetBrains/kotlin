@@ -1,5 +1,6 @@
 // CHECK:
 //   Mangled name: #foo(PropertyDescriptorImpl){}
 //   Public signature: /foo|699254769171630146[0]
+//   Public signature debug description: foo(PropertyDescriptorImpl){}
 fun foo(descriptor: PropertyDescriptorImpl): Unit
 

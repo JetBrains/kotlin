@@ -7,24 +7,29 @@ object Definitions {
   // CHECK:
   //   Mangled name: interop.Definitions{}ktValue
   //   Public signature: interop/Definitions.ktValue|-7932704459611172354[0]
+  //   Public signature debug description: {}ktValue
   val ktValue: String
     // CHECK JVM_IR:
     //   Mangled name: interop.Definitions#<get-ktValue>(){}kotlin.String
     //   Public signature: interop/Definitions.ktValue.<get-ktValue>|233367925131846588[0]
+    //   Public signature debug description: <get-ktValue>(){}kotlin.String
     get
 
   // CHECK:
   //   Mangled name: interop.Definitions#<init>(){}
   //   Public signature: interop/Definitions.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   private constructor() /* primary */
 
   // CHECK:
   //   Mangled name: interop.Definitions{}KT_CONSTANT
   //   Public signature: interop/Definitions.KT_CONSTANT|-8714407162660026641[0]
+  //   Public signature debug description: {}KT_CONSTANT
   const val KT_CONSTANT: String
     // CHECK JVM_IR:
     //   Mangled name: interop.Definitions#<get-KT_CONSTANT>(){}kotlin.String
     //   Public signature: interop/Definitions.KT_CONSTANT.<get-KT_CONSTANT>|4728854297559730352[0]
+    //   Public signature debug description: <get-KT_CONSTANT>(){}kotlin.String
     get
 
 }

@@ -5,14 +5,17 @@ class AnnotationLoader {
   // CHECK:
   //   Mangled name: AnnotationLoader#<init>(){}
   //   Public signature: /AnnotationLoader.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   constructor() /* primary */
 
   // CHECK JVM_IR:
   //   Mangled name: AnnotationLoader#loadAnnotation(){}Visitor?
   //   Public signature: /AnnotationLoader.loadAnnotation|-7081476927485882760[0]
+  //   Public signature debug description: loadAnnotation(){}Visitor?
   // CHECK JS_IR NATIVE:
   //   Mangled name: AnnotationLoader#loadAnnotation(){}
   //   Public signature: /AnnotationLoader.loadAnnotation|-6649617337478670271[0]
+  //   Public signature debug description: loadAnnotation(){}
   fun loadAnnotation(): Visitor?
 
 }
@@ -25,22 +28,27 @@ interface Visitor {
   // CHECK:
   //   Mangled name: Visitor#visit(){}
   //   Public signature: /Visitor.visit|-7531698844362190050[0]
+  //   Public signature debug description: visit(){}
   abstract fun visit(): Unit
 
   // CHECK JVM_IR:
   //   Mangled name: Visitor#visitAnnotation(){}Visitor?
   //   Public signature: /Visitor.visitAnnotation|-8142708510940079695[0]
+  //   Public signature debug description: visitAnnotation(){}Visitor?
   // CHECK JS_IR NATIVE:
   //   Mangled name: Visitor#visitAnnotation(){}
   //   Public signature: /Visitor.visitAnnotation|4794980067153158180[0]
+  //   Public signature debug description: visitAnnotation(){}
   fun visitAnnotation(): Visitor?
 
   // CHECK JVM_IR:
   //   Mangled name: Visitor#visitArray(){}Visitor?
   //   Public signature: /Visitor.visitArray|-7483008353702058436[0]
+  //   Public signature debug description: visitArray(){}Visitor?
   // CHECK JS_IR NATIVE:
   //   Mangled name: Visitor#visitArray(){}
   //   Public signature: /Visitor.visitArray|-4548341020158450010[0]
+  //   Public signature debug description: visitArray(){}
   fun visitArray(): Visitor?
 
 }

@@ -5,41 +5,51 @@ value class Test {
   // CHECK:
   //   Mangled name: Test{}x
   //   Public signature: /Test.x|-8060530855978347579[0]
+  //   Public signature debug description: {}x
   val x: Int
     // CHECK JVM_IR:
     //   Mangled name: Test#<get-x>(){}kotlin.Int
     //   Public signature: /Test.x.<get-x>|4966956098150895696[0]
+    //   Public signature debug description: <get-x>(){}kotlin.Int
     // CHECK JS_IR NATIVE:
     //   Mangled name: Test#<get-x>(){}
     //   Public signature: /Test.x.<get-x>|1482705010654679335[0]
+    //   Public signature debug description: <get-x>(){}
     get
 
   // CHECK:
   //   Mangled name: Test#<init>(kotlin.Int){}
   //   Public signature: /Test.<init>|-5182794243525578284[0]
+  //   Public signature debug description: <init>(kotlin.Int){}
   constructor(x: Int) /* primary */
   // CHECK JVM_IR:
   //   Mangled name: Test#equals(kotlin.Any?){}kotlin.Boolean
   //   Public signature: /Test.equals|722809408929142791[0]
+  //   Public signature debug description: equals(kotlin.Any?){}kotlin.Boolean
   // CHECK JS_IR NATIVE:
   //   Mangled name: Test#equals(kotlin.Any?){}
   //   Public signature: /Test.equals|4638265728071529943[0]
+  //   Public signature debug description: equals(kotlin.Any?){}
   override operator fun equals(other: Any?): Boolean
 
   // CHECK JVM_IR:
   //   Mangled name: Test#hashCode(){}kotlin.Int
   //   Public signature: /Test.hashCode|-8048879360829830756[0]
+  //   Public signature debug description: hashCode(){}kotlin.Int
   // CHECK JS_IR NATIVE:
   //   Mangled name: Test#hashCode(){}
   //   Public signature: /Test.hashCode|3409210261493131192[0]
+  //   Public signature debug description: hashCode(){}
   override fun hashCode(): Int
 
   // CHECK JVM_IR:
   //   Mangled name: Test#toString(){}kotlin.String
   //   Public signature: /Test.toString|6958853723545266802[0]
+  //   Public signature debug description: toString(){}kotlin.String
   // CHECK JS_IR NATIVE:
   //   Mangled name: Test#toString(){}
   //   Public signature: /Test.toString|-1522858123163872138[0]
+  //   Public signature debug description: toString(){}
   override fun toString(): String
 
 }

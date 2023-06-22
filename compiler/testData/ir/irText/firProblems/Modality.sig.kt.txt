@@ -5,15 +5,18 @@ class Atom {
   // CHECK:
   //   Mangled name: Atom{}candidateDescriptor
   //   Public signature: /Atom.candidateDescriptor|-3112599931076785471[0]
+  //   Public signature debug description: {}candidateDescriptor
   val candidateDescriptor: CallableDescriptor
     // CHECK JVM_IR:
     //   Mangled name: Atom#<get-candidateDescriptor>(){}CallableDescriptor
     //   Public signature: /Atom.candidateDescriptor.<get-candidateDescriptor>|4556132200066715385[0]
+    //   Public signature debug description: <get-candidateDescriptor>(){}CallableDescriptor
     get
 
   // CHECK:
   //   Mangled name: Atom#<init>(CallableDescriptor){}
   //   Public signature: /Atom.<init>|-1799222929165952555[0]
+  //   Public signature debug description: <init>(CallableDescriptor){}
   constructor(candidateDescriptor: CallableDescriptor) /* primary */
 
 }
@@ -25,15 +28,18 @@ class KotlinResolutionCandidate {
   // CHECK:
   //   Mangled name: KotlinResolutionCandidate{}resolvedCall
   //   Public signature: /KotlinResolutionCandidate.resolvedCall|-2429780263902948392[0]
+  //   Public signature debug description: {}resolvedCall
   val resolvedCall: Atom
     // CHECK JVM_IR:
     //   Mangled name: KotlinResolutionCandidate#<get-resolvedCall>(){}Atom
     //   Public signature: /KotlinResolutionCandidate.resolvedCall.<get-resolvedCall>|49370572931497711[0]
+    //   Public signature debug description: <get-resolvedCall>(){}Atom
     get
 
   // CHECK:
   //   Mangled name: KotlinResolutionCandidate#<init>(Atom){}
   //   Public signature: /KotlinResolutionCandidate.<init>|-8995219914817488939[0]
+  //   Public signature debug description: <init>(Atom){}
   constructor(resolvedCall: Atom) /* primary */
 
 }
@@ -45,11 +51,13 @@ abstract class ResolutionPart {
   // CHECK:
   //   Mangled name: ResolutionPart#<init>(){}
   //   Public signature: /ResolutionPart.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   constructor() /* primary */
 
   // CHECK JVM_IR:
   //   Mangled name: ResolutionPart#process@KotlinResolutionCandidate(){}kotlin.String
   //   Public signature: /ResolutionPart.process|8201571705428560068[0]
+  //   Public signature debug description: process@KotlinResolutionCandidate(){}kotlin.String
   abstract fun KotlinResolutionCandidate.process(): String
 
 }
@@ -68,6 +76,7 @@ object Final : Modality {
   // CHECK:
   //   Mangled name: Final#<init>(){}
   //   Public signature: /Final.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   private constructor() /* primary */
 
 }
@@ -79,11 +88,13 @@ object Owner : ResolutionPart {
   // CHECK:
   //   Mangled name: Owner#<init>(){}
   //   Public signature: /Owner.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   private constructor() /* primary */
 
   // CHECK JVM_IR:
   //   Mangled name: Owner#process@KotlinResolutionCandidate(){}kotlin.String
   //   Public signature: /Owner.process|8201571705428560068[0]
+  //   Public signature debug description: process@KotlinResolutionCandidate(){}kotlin.String
   override fun KotlinResolutionCandidate.process(): String
 
 }

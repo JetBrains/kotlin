@@ -1,42 +1,52 @@
 // CHECK:
 //   Mangled name: #foo(kotlin.Int;kotlin.Int){}
 //   Public signature: /foo|-5894601321690082118[0]
+//   Public signature debug description: foo(kotlin.Int;kotlin.Int){}
 fun foo(a: Int, b: Int): Unit
 
 // CHECK JVM_IR:
 //   Mangled name: #noReorder1(){}kotlin.Int
 //   Public signature: /noReorder1|8490746646819369513[0]
+//   Public signature debug description: noReorder1(){}kotlin.Int
 // CHECK JS_IR NATIVE:
 //   Mangled name: #noReorder1(){}
 //   Public signature: /noReorder1|2041802031203244090[0]
+//   Public signature debug description: noReorder1(){}
 fun noReorder1(): Int
 
 // CHECK JVM_IR:
 //   Mangled name: #noReorder2(){}kotlin.Int
 //   Public signature: /noReorder2|1318805316632640434[0]
+//   Public signature debug description: noReorder2(){}kotlin.Int
 // CHECK JS_IR NATIVE:
 //   Mangled name: #noReorder2(){}
 //   Public signature: /noReorder2|-4183322961147077454[0]
+//   Public signature debug description: noReorder2(){}
 fun noReorder2(): Int
 
 // CHECK JVM_IR:
 //   Mangled name: #reordered1(){}kotlin.Int
 //   Public signature: /reordered1|-3373748716222518893[0]
+//   Public signature debug description: reordered1(){}kotlin.Int
 // CHECK JS_IR NATIVE:
 //   Mangled name: #reordered1(){}
 //   Public signature: /reordered1|3363717619618452144[0]
+//   Public signature debug description: reordered1(){}
 fun reordered1(): Int
 
 // CHECK JVM_IR:
 //   Mangled name: #reordered2(){}kotlin.Int
 //   Public signature: /reordered2|-1663811084556182906[0]
+//   Public signature debug description: reordered2(){}kotlin.Int
 // CHECK JS_IR NATIVE:
 //   Mangled name: #reordered2(){}
 //   Public signature: /reordered2|8960515960707640681[0]
+//   Public signature debug description: reordered2(){}
 fun reordered2(): Int
 
 // CHECK:
 //   Mangled name: #test(){}
 //   Public signature: /test|6620506149988718649[0]
+//   Public signature debug description: test(){}
 fun test(): Unit
 

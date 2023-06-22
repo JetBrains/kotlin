@@ -5,24 +5,29 @@ abstract class ImplicitReceiverStack : Iterable<ImplicitReceiverValue<*>> {
   // CHECK:
   //   Mangled name: ImplicitReceiverStack#<init>(){}
   //   Public signature: /ImplicitReceiverStack.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   constructor() /* primary */
 
   // CHECK:
   //   Mangled name: ImplicitReceiverStack#forEach(java.util.function.Consumer<in|ImplicitReceiverValue<*>?>?){}
   //   Public signature: /ImplicitReceiverStack.forEach|-3306751441263527018[0]
+  //   Public signature debug description: forEach(java.util.function.Consumer<in|ImplicitReceiverValue<*>?>?){}
   /* fake */ override fun forEach(p0: Consumer<in ImplicitReceiverValue<*>?>?): Unit
 
   // CHECK JVM_IR:
   //   Mangled name: ImplicitReceiverStack#iterator(){}kotlin.collections.Iterator<ImplicitReceiverValue<*>>
   //   Public signature: /ImplicitReceiverStack.iterator|-837055222250609728[0]
+  //   Public signature debug description: iterator(){}kotlin.collections.Iterator<ImplicitReceiverValue<*>>
   // CHECK JS_IR NATIVE:
   //   Mangled name: ImplicitReceiverStack#get(kotlin.String?){}
   //   Public signature: /ImplicitReceiverStack.get|-2385095576760729731[0]
+  //   Public signature debug description: get(kotlin.String?){}
   abstract /* fake */ override operator fun iterator(): Iterator<ImplicitReceiverValue<*>>
 
   // CHECK JVM_IR:
   //   Mangled name: ImplicitReceiverStack#spliterator(){}java.util.Spliterator<ImplicitReceiverValue<*>{EnhancedNullability}>{EnhancedNullability}
   //   Public signature: /ImplicitReceiverStack.spliterator|-1087522279462133212[0]
+  //   Public signature debug description: spliterator(){}java.util.Spliterator<ImplicitReceiverValue<*>{EnhancedNullability}>{EnhancedNullability}
   // CHECK JS_IR NATIVE:
   //   Mangled name: ImplicitReceiverValue
   //   Public signature: /ImplicitReceiverValue|null[0]
@@ -31,9 +36,11 @@ abstract class ImplicitReceiverStack : Iterable<ImplicitReceiverValue<*>> {
   // CHECK JVM_IR:
   //   Mangled name: ImplicitReceiverStack#get(kotlin.String?){}ImplicitReceiverValue<*>?
   //   Public signature: /ImplicitReceiverStack.get|-8207298175036627063[0]
+  //   Public signature debug description: get(kotlin.String?){}ImplicitReceiverValue<*>?
   // CHECK JS_IR NATIVE:
   //   Mangled name: ImplicitReceiverValue{}boundSymbol
   //   Public signature: /ImplicitReceiverValue.boundSymbol|7940914052046792092[0]
+  //   Public signature debug description: {}boundSymbol
   abstract operator fun get(name: String?): ImplicitReceiverValue<*>?
 
 }
@@ -45,22 +52,27 @@ class ImplicitReceiverValue<S : Symbol<*>> : ReceiverValue {
   // CHECK:
   //   Mangled name: ImplicitReceiverValue{}boundSymbol
   //   Public signature: /ImplicitReceiverValue.boundSymbol|7940914052046792092[0]
+  //   Public signature debug description: {}boundSymbol
   val boundSymbol: S?
     // CHECK JVM_IR:
     //   Mangled name: ImplicitReceiverValue#<get-boundSymbol>(){}1:0?
     //   Public signature: /ImplicitReceiverValue.boundSymbol.<get-boundSymbol>|4571442115658707994[0]
+    //   Public signature debug description: <get-boundSymbol>(){}1:0?
     // CHECK JS_IR NATIVE:
     //   Mangled name: ImplicitReceiverValue#<get-type>(){}
     //   Public signature: /ImplicitReceiverValue.type.<get-type>|5958014174245684635[0]
+    //   Public signature debug description: <get-type>(){}
     get
 
   // CHECK:
   //   Mangled name: ImplicitReceiverValue{}type
   //   Public signature: /ImplicitReceiverValue.type|-6051055617123801408[0]
+  //   Public signature debug description: {}type
   override val type: String
     // CHECK JVM_IR:
     //   Mangled name: ImplicitReceiverValue#<get-type>(){}kotlin.String
     //   Public signature: /ImplicitReceiverValue.type.<get-type>|9160771839252493702[0]
+    //   Public signature debug description: <get-type>(){}kotlin.String
     // CHECK JS_IR NATIVE:
     //   Mangled name: PersistentImplicitReceiverStack
     //   Public signature: /PersistentImplicitReceiverStack|null[0]
@@ -69,6 +81,7 @@ class ImplicitReceiverValue<S : Symbol<*>> : ReceiverValue {
   // CHECK:
   //   Mangled name: ImplicitReceiverValue#<init>(1:0?;kotlin.String){}
   //   Public signature: /ImplicitReceiverValue.<init>|-1731726113211136467[0]
+  //   Public signature debug description: <init>(1:0?;kotlin.String){}
   constructor(boundSymbol: S?, type: String) /* primary */
 
 }
@@ -80,44 +93,54 @@ class PersistentImplicitReceiverStack : ImplicitReceiverStack, Iterable<Implicit
   // CHECK:
   //   Mangled name: PersistentImplicitReceiverStack{}stack
   //   Public signature: /PersistentImplicitReceiverStack.stack|-6859012302810162613[0]
+  //   Public signature debug description: {}stack
   private val stack: List<ImplicitReceiverValue<*>>
     // CHECK JVM_IR:
     //   Mangled name: PersistentImplicitReceiverStack#<get-stack>(){}kotlin.collections.List<ImplicitReceiverValue<*>>
     //   Public signature: /PersistentImplicitReceiverStack.stack.<get-stack>|2790934809164034447[0]
+    //   Public signature debug description: <get-stack>(){}kotlin.collections.List<ImplicitReceiverValue<*>>
     // CHECK JS_IR NATIVE:
     //   Mangled name: PersistentImplicitReceiverStack#get(kotlin.String?){}
     //   Public signature: /PersistentImplicitReceiverStack.get|-2385095576760729731[0]
+    //   Public signature debug description: get(kotlin.String?){}
     private get
 
   // CHECK:
   //   Mangled name: PersistentImplicitReceiverStack#<init>(kotlin.collections.List<ImplicitReceiverValue<*>>){}
   //   Public signature: /PersistentImplicitReceiverStack.<init>|-7593555479041026486[0]
+  //   Public signature debug description: <init>(kotlin.collections.List<ImplicitReceiverValue<*>>){}
   constructor(stack: List<ImplicitReceiverValue<*>>) /* primary */
 
   // CHECK:
   //   Mangled name: PersistentImplicitReceiverStack#forEach(java.util.function.Consumer<in|ImplicitReceiverValue<*>?>?){}
   //   Public signature: /PersistentImplicitReceiverStack.forEach|-3306751441263527018[0]
+  //   Public signature debug description: forEach(java.util.function.Consumer<in|ImplicitReceiverValue<*>?>?){}
   /* fake */ override fun forEach(p0: Consumer<in ImplicitReceiverValue<*>?>?): Unit
 
   // CHECK JVM_IR:
   //   Mangled name: PersistentImplicitReceiverStack#spliterator(){}java.util.Spliterator<ImplicitReceiverValue<*>{EnhancedNullability}>{EnhancedNullability}
   //   Public signature: /PersistentImplicitReceiverStack.spliterator|-1087522279462133212[0]
+  //   Public signature debug description: spliterator(){}java.util.Spliterator<ImplicitReceiverValue<*>{EnhancedNullability}>{EnhancedNullability}
   // CHECK JS_IR NATIVE:
   //   Mangled name: ReceiverValue{}type
   //   Public signature: /ReceiverValue.type|-6051055617123801408[0]
+  //   Public signature debug description: {}type
   /* fake */ override fun spliterator(): @EnhancedNullability Spliterator<@EnhancedNullability ImplicitReceiverValue<*>>
 
   // CHECK JVM_IR:
   //   Mangled name: PersistentImplicitReceiverStack#get(kotlin.String?){}ImplicitReceiverValue<*>?
   //   Public signature: /PersistentImplicitReceiverStack.get|-8207298175036627063[0]
+  //   Public signature debug description: get(kotlin.String?){}ImplicitReceiverValue<*>?
   // CHECK JS_IR NATIVE:
   //   Mangled name: ReceiverValue#<get-type>(){}
   //   Public signature: /ReceiverValue.type.<get-type>|5958014174245684635[0]
+  //   Public signature debug description: <get-type>(){}
   override operator fun get(name: String?): ImplicitReceiverValue<*>?
 
   // CHECK JVM_IR:
   //   Mangled name: PersistentImplicitReceiverStack#iterator(){}kotlin.collections.Iterator<ImplicitReceiverValue<*>>
   //   Public signature: /PersistentImplicitReceiverStack.iterator|-837055222250609728[0]
+  //   Public signature debug description: iterator(){}kotlin.collections.Iterator<ImplicitReceiverValue<*>>
   // CHECK JS_IR NATIVE:
   //   Mangled name: Symbol
   //   Public signature: /Symbol|null[0]
@@ -133,13 +156,16 @@ interface ReceiverValue {
   // CHECK:
   //   Mangled name: ReceiverValue{}type
   //   Public signature: /ReceiverValue.type|-6051055617123801408[0]
+  //   Public signature debug description: {}type
   abstract val type: String
     // CHECK JVM_IR:
     //   Mangled name: ReceiverValue#<get-type>(){}kotlin.String
     //   Public signature: /ReceiverValue.type.<get-type>|9160771839252493702[0]
+    //   Public signature debug description: <get-type>(){}kotlin.String
     // CHECK JS_IR NATIVE:
     //   Mangled name: #box(){}
     //   Public signature: /box|2173511048851971368[0]
+    //   Public signature debug description: box(){}
     abstract get
 
 }
@@ -161,15 +187,18 @@ interface SymbolOwner<E : SymbolOwner<E>> {
 // CHECK:
 //   Mangled name: #bar(kotlin.String){}
 //   Public signature: /bar|5132770888056479978[0]
+//   Public signature debug description: bar(kotlin.String){}
 fun bar(s: String): Unit
 
 // CHECK JVM_IR:
 //   Mangled name: #box(){}kotlin.String
 //   Public signature: /box|-9347091776561469[0]
+//   Public signature debug description: box(){}kotlin.String
 fun box(): String
 
 // CHECK:
 //   Mangled name: #foo(PersistentImplicitReceiverStack){}
 //   Public signature: /foo|4910085870541175645[0]
+//   Public signature debug description: foo(PersistentImplicitReceiverStack){}
 fun foo(stack: PersistentImplicitReceiverStack): Unit
 

@@ -13,9 +13,11 @@ package b
 // CHECK JVM_IR:
 //   Mangled name: b#foo(kotlin.Function0<kotlin.String>){}kotlin.String
 //   Public signature: b/foo|-5020381652845254261[0]
+//   Public signature debug description: foo(kotlin.Function0<kotlin.String>){}kotlin.String
 // CHECK JS_IR NATIVE:
 //   Mangled name: b#foo(kotlin.Function0<kotlin.String>){}
 //   Public signature: b/foo|-2695324588787180624[0]
+//   Public signature debug description: foo(kotlin.Function0<kotlin.String>){}
 fun foo(f: Function0<String>): String
 
 // MODULE: c
@@ -24,8 +26,10 @@ fun foo(f: Function0<String>): String
 // CHECK JVM_IR:
 //   Mangled name: #box(){}kotlin.String
 //   Public signature: /box|-9347091776561469[0]
+//   Public signature debug description: box(){}kotlin.String
 // CHECK JS_IR NATIVE:
 //   Mangled name: #box(){}
 //   Public signature: /box|2173511048851971368[0]
+//   Public signature debug description: box(){}
 fun box(): String
 

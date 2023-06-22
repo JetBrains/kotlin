@@ -1,9 +1,11 @@
 // CHECK:
 //   Mangled name: @java.lang.Class<*>{}test
 //   Public signature: /test|-5107008281653532078[0]
+//   Public signature debug description: @java.lang.Class<*>{}test
 val Class<*>.test: Array<out Field?>?
   // CHECK JVM_IR:
   //   Mangled name: #<get-test>@java.lang.Class<*>(){}kotlin.Array<out|java.lang.reflect.Field?>?
   //   Public signature: /test.<get-test>|5143661076951635746[0]
+  //   Public signature debug description: <get-test>@java.lang.Class<*>(){}kotlin.Array<out|java.lang.reflect.Field?>?
   get(): Array<out Field?>?
 

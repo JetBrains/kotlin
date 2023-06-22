@@ -6,6 +6,7 @@ fun interface KRunnable {
   // CHECK:
   //   Mangled name: KRunnable#run(){}
   //   Public signature: /KRunnable.run|-991178076551934874[0]
+  //   Public signature debug description: run(){}
   abstract fun run(): Unit
 
 }
@@ -20,88 +21,106 @@ interface Unrelated {
 // CHECK JVM_IR:
 //   Mangled name: #id(0:0){0§<kotlin.Any?>}0:0
 //   Public signature: /id|-6791396263062521506[0]
+//   Public signature debug description: id(0:0){0§<kotlin.Any?>}0:0
 // CHECK JS_IR NATIVE:
 //   Mangled name: #id(0:0){0§<kotlin.Any?>}
 //   Public signature: /id|9187295668833355463[0]
+//   Public signature debug description: id(0:0){0§<kotlin.Any?>}
 fun <T : Any?> id(x: T): T
 
 // CHECK:
 //   Mangled name: #run1(KRunnable){}
 //   Public signature: /run1|2612844463130679128[0]
+//   Public signature debug description: run1(KRunnable){}
 fun run1(r: KRunnable): Unit
 
 // CHECK:
 //   Mangled name: #run2(KRunnable;KRunnable){}
 //   Public signature: /run2|8208068882257438869[0]
+//   Public signature debug description: run2(KRunnable;KRunnable){}
 fun run2(r1: KRunnable, r2: KRunnable): Unit
 
 // CHECK:
 //   Mangled name: #test0(0:0){0§<KRunnable&kotlin.Function0<kotlin.Unit>>}
 //   Public signature: /test0|7203793719980108226[0]
+//   Public signature debug description: test0(0:0){0§<KRunnable&kotlin.Function0<kotlin.Unit>>}
 fun <T> test0(a: T): Unit where T : KRunnable, T : Function0<Unit>
 
 // CHECK:
 //   Mangled name: #test1(kotlin.Function0<kotlin.Unit>){}
 //   Public signature: /test1|-2870537507416699845[0]
+//   Public signature debug description: test1(kotlin.Function0<kotlin.Unit>){}
 fun test1(a: Function0<Unit>): Unit
 
 // CHECK:
 //   Mangled name: #test2(KRunnable){}
 //   Public signature: /test2|-6262171320756539088[0]
+//   Public signature debug description: test2(KRunnable){}
 fun test2(a: KRunnable): Unit
 
 // CHECK:
 //   Mangled name: #test3(kotlin.Function0<kotlin.Unit>){}
 //   Public signature: /test3|-1760685804488672424[0]
+//   Public signature debug description: test3(kotlin.Function0<kotlin.Unit>){}
 fun test3(a: Function0<Unit>): Unit
 
 // CHECK:
 //   Mangled name: #test4(kotlin.Function0<kotlin.Unit>;kotlin.Function0<kotlin.Unit>){}
 //   Public signature: /test4|1443124276429499957[0]
+//   Public signature debug description: test4(kotlin.Function0<kotlin.Unit>;kotlin.Function0<kotlin.Unit>){}
 fun test4(a: Function0<Unit>, b: Function0<Unit>): Unit
 
 // CHECK:
 //   Mangled name: #test5(kotlin.Any){}
 //   Public signature: /test5|4504681808078971124[0]
+//   Public signature debug description: test5(kotlin.Any){}
 fun test5(a: Any): Unit
 
 // CHECK:
 //   Mangled name: #test5x(kotlin.Any){}
 //   Public signature: /test5x|8044678810048210306[0]
+//   Public signature debug description: test5x(kotlin.Any){}
 fun test5x(a: Any): Unit
 
 // CHECK:
 //   Mangled name: #test6(kotlin.Any){}
 //   Public signature: /test6|-7590017673454141671[0]
+//   Public signature debug description: test6(kotlin.Any){}
 fun test6(a: Any): Unit
 
 // CHECK:
 //   Mangled name: #test7(kotlin.Function1<kotlin.Int,kotlin.Int>){}
 //   Public signature: /test7|1095013294548842913[0]
+//   Public signature debug description: test7(kotlin.Function1<kotlin.Int,kotlin.Int>){}
 fun test7(a: Function1<Int, Int>): Unit
 
 // CHECK:
 //   Mangled name: #test7a(0:0){0§<kotlin.Function1<kotlin.Int,kotlin.Int>>}
 //   Public signature: /test7a|4611209577080015095[0]
+//   Public signature debug description: test7a(0:0){0§<kotlin.Function1<kotlin.Int,kotlin.Int>>}
 fun <T : Function1<Int, Int>> test7a(a: T): Unit
 
 // CHECK:
 //   Mangled name: #test7b(0:0){0§<kotlin.Function1<kotlin.Int,kotlin.Unit>&kotlin.Function0<kotlin.Unit>>}
 //   Public signature: /test7b|4558127648037232116[0]
+//   Public signature debug description: test7b(0:0){0§<kotlin.Function1<kotlin.Int,kotlin.Unit>&kotlin.Function0<kotlin.Unit>>}
 fun <T> test7b(a: T): Unit where T : Function0<Unit>, T : Function1<Int, Unit>
 
 // CHECK:
 //   Mangled name: #test7c(0:0){0§<Unrelated&kotlin.Function0<kotlin.Unit>>}
 //   Public signature: /test7c|-2955596188911782407[0]
+//   Public signature debug description: test7c(0:0){0§<Unrelated&kotlin.Function0<kotlin.Unit>>}
 fun <T> test7c(a: T): Unit where T : Unrelated, T : Function0<Unit>
 
 // CHECK:
 //   Mangled name: #test8(kotlin.Function0<kotlin.Unit>){}
 //   Public signature: /test8|8321269803549472585[0]
+//   Public signature debug description: test8(kotlin.Function0<kotlin.Unit>){}
 fun test8(a: Function0<Unit>): Unit
 
 // CHECK:
 //   Mangled name: #test9(){}
 //   Public signature: /test9|9214787561267119658[0]
+//   Public signature debug description: test9(){}
 fun test9(): Unit
 

@@ -5,30 +5,37 @@ open annotation class A : Annotation {
   // CHECK:
   //   Mangled name: A{}x
   //   Public signature: /A.x|-8060530855978347579[0]
+  //   Public signature debug description: {}x
   val x: String
     // CHECK JVM_IR:
     //   Mangled name: A#<get-x>(){}kotlin.String
     //   Public signature: /A.x.<get-x>|316111172223894646[0]
+    //   Public signature debug description: <get-x>(){}kotlin.String
     // CHECK JS_IR NATIVE:
     //   Mangled name: A#<get-x>(){}
     //   Public signature: /A.x.<get-x>|1482705010654679335[0]
+    //   Public signature debug description: <get-x>(){}
     get
 
   // CHECK:
   //   Mangled name: A{}y
   //   Public signature: /A.y|3625903257357557171[0]
+  //   Public signature debug description: {}y
   val y: Int
     // CHECK JVM_IR:
     //   Mangled name: A#<get-y>(){}kotlin.Int
     //   Public signature: /A.y.<get-y>|-6745575372101973707[0]
+    //   Public signature debug description: <get-y>(){}kotlin.Int
     // CHECK JS_IR NATIVE:
     //   Mangled name: A#<get-y>(){}
     //   Public signature: /A.y.<get-y>|-7902422373892128922[0]
+    //   Public signature debug description: <get-y>(){}
     get
 
   // CHECK:
   //   Mangled name: A#<init>(kotlin.String;kotlin.Int){}
   //   Public signature: /A.<init>|-2457917570611619111[0]
+  //   Public signature debug description: <init>(kotlin.String;kotlin.Int){}
   constructor(x: String, y: Int) /* primary */
 
 }
@@ -36,30 +43,35 @@ open annotation class A : Annotation {
 // CHECK:
 //   Mangled name: #test1(){}
 //   Public signature: /test1|4297044443957252634[0]
+//   Public signature debug description: test1(){}
 @A(x = "abc", y = 123)
 fun test1(): Unit
 
 // CHECK:
 //   Mangled name: #test2(){}
 //   Public signature: /test2|4279114864133353152[0]
+//   Public signature debug description: test2(){}
 @A(x = "def")
 fun test2(): Unit
 
 // CHECK:
 //   Mangled name: #test3(){}
 //   Public signature: /test3|-3759735065270951803[0]
+//   Public signature debug description: test3(){}
 @A(x = "ghi")
 fun test3(): Unit
 
 // CHECK:
 //   Mangled name: #test4(){}
 //   Public signature: /test4|5588455914500386239[0]
+//   Public signature debug description: test4(){}
 @A(, y = 456)
 fun test4(): Unit
 
 // CHECK:
 //   Mangled name: #test5(){}
 //   Public signature: /test5|-2461239215881954159[0]
+//   Public signature debug description: test5(){}
 @A
 fun test5(): Unit
 

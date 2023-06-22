@@ -5,22 +5,27 @@ class IntCell {
   // CHECK:
   //   Mangled name: IntCell{}value
   //   Public signature: /IntCell.value|1987073854177347439[0]
+  //   Public signature debug description: {}value
   var value: Int
     // CHECK JVM_IR:
     //   Mangled name: IntCell#<get-value>(){}kotlin.Int
     //   Public signature: /IntCell.value.<get-value>|-5900028706170996[0]
+    //   Public signature debug description: <get-value>(){}kotlin.Int
     // CHECK JS_IR NATIVE:
     //   Mangled name: IntCell#<get-value>(){}
     //   Public signature: /IntCell.value.<get-value>|3260093555963109437[0]
+    //   Public signature debug description: <get-value>(){}
     get
     // CHECK:
     //   Mangled name: IntCell#<set-value>(kotlin.Int){}
     //   Public signature: /IntCell.value.<set-value>|-195057410739577239[0]
+    //   Public signature debug description: <set-value>(kotlin.Int){}
     set
 
   // CHECK:
   //   Mangled name: IntCell#<init>(kotlin.Int){}
   //   Public signature: /IntCell.<init>|-5182794243525578284[0]
+  //   Public signature debug description: <init>(kotlin.Int){}
   constructor(value: Int) /* primary */
 
 }
@@ -33,25 +38,31 @@ interface IReceiver {
   // CHECK JVM_IR:
   //   Mangled name: IReceiver#hasNext@IntCell(){}kotlin.Boolean
   //   Public signature: /IReceiver.hasNext|8807543829800046753[0]
+  //   Public signature debug description: hasNext@IntCell(){}kotlin.Boolean
   // CHECK JS_IR NATIVE:
   //   Mangled name: IReceiver#hasNext@IntCell(){}
   //   Public signature: /IReceiver.hasNext|4886533440515007751[0]
+  //   Public signature debug description: hasNext@IntCell(){}
   operator fun IntCell.hasNext(): Boolean
 
   // CHECK JVM_IR:
   //   Mangled name: IReceiver#iterator@FiveTimes(){}IntCell
   //   Public signature: /IReceiver.iterator|-6854781980601462817[0]
+  //   Public signature debug description: iterator@FiveTimes(){}IntCell
   // CHECK JS_IR NATIVE:
   //   Mangled name: IReceiver#iterator@FiveTimes(){}
   //   Public signature: /IReceiver.iterator|-6775444143424139294[0]
+  //   Public signature debug description: iterator@FiveTimes(){}
   operator fun FiveTimes.iterator(): IntCell
 
   // CHECK JVM_IR:
   //   Mangled name: IReceiver#next@IntCell(){}kotlin.Int
   //   Public signature: /IReceiver.next|-2134453721443530519[0]
+  //   Public signature debug description: next@IntCell(){}kotlin.Int
   // CHECK JS_IR NATIVE:
   //   Mangled name: IReceiver#next@IntCell(){}
   //   Public signature: /IReceiver.next|3171952556520323113[0]
+  //   Public signature debug description: next@IntCell(){}
   operator fun IntCell.next(): Int
 
 }
@@ -63,6 +74,7 @@ object FiveTimes {
   // CHECK:
   //   Mangled name: FiveTimes#<init>(){}
   //   Public signature: /FiveTimes.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   private constructor() /* primary */
 
 }
@@ -70,5 +82,6 @@ object FiveTimes {
 // CHECK:
 //   Mangled name: #test@IReceiver(){}
 //   Public signature: /test|-5472672617978108350[0]
+//   Public signature debug description: test@IReceiver(){}
 fun IReceiver.test(): Unit
 

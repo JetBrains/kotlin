@@ -1,6 +1,7 @@
 // CHECK:
 //   Mangled name: #box(){}
 //   Public signature: /box|2173511048851971368[0]
+//   Public signature debug description: box(){}
 fun box(): Unit
   // CHECK:
   //   Mangled name: #box(){}#<anonymous>#static(kotlin.String){}
@@ -9,10 +10,12 @@ fun box(): Unit
 // CHECK:
 //   Mangled name: #foo@0:0(){0§<kotlin.Any?>}
 //   Public signature: /foo|2893921150824224093[0]
+//   Public signature debug description: foo@0:0(){0§<kotlin.Any?>}
 fun <T : Any?> (T & Any).foo(): Unit
 
 // CHECK:
 //   Mangled name: #foo(kotlin.Function1<0:0,kotlin.Unit>){0§<kotlin.Any?>}
 //   Public signature: /foo|-1916457112981119359[0]
+//   Public signature debug description: foo(kotlin.Function1<0:0,kotlin.Unit>){0§<kotlin.Any?>}
 fun <T : Any?> foo(l: Function1<(T & Any), Unit>): Unit
 

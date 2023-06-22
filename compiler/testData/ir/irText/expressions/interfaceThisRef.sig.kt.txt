@@ -6,11 +6,13 @@ interface IFoo {
   // CHECK:
   //   Mangled name: IFoo#bar(){}
   //   Public signature: /IFoo.bar|496682602797471549[0]
+  //   Public signature debug description: bar(){}
   fun bar(): Unit
 
   // CHECK:
   //   Mangled name: IFoo#foo(){}
   //   Public signature: /IFoo.foo|-1041209573719867811[0]
+  //   Public signature debug description: foo(){}
   abstract fun foo(): Unit
 
 }

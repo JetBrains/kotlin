@@ -5,6 +5,7 @@ open annotation class SomeAnn : Annotation {
   // CHECK:
   //   Mangled name: SomeAnn#<init>(){}
   //   Public signature: /SomeAnn.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   constructor() /* primary */
 
 }
@@ -17,6 +18,7 @@ class My {
   // CHECK:
   //   Mangled name: My#<init>(){}
   //   Public signature: /My.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   constructor() /* primary */
 
 }

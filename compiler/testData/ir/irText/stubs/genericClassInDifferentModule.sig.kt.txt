@@ -8,58 +8,72 @@ abstract class Base<T : Any?> {
   // CHECK:
   //   Mangled name: Base{}x
   //   Public signature: /Base.x|-8060530855978347579[0]
+  //   Public signature debug description: {}x
   val x: T
     // CHECK JVM_IR:
     //   Mangled name: Base#<get-x>(){}1:0
     //   Public signature: /Base.x.<get-x>|-8893883356128097563[0]
+    //   Public signature debug description: <get-x>(){}1:0
     // CHECK JS_IR NATIVE:
     //   Mangled name: Base#<get-x>(){}
     //   Public signature: /Base.x.<get-x>|1482705010654679335[0]
+    //   Public signature debug description: <get-x>(){}
     get
 
   // CHECK:
   //   Mangled name: Base#<init>(1:0){}
   //   Public signature: /Base.<init>|-8731461708390519279[0]
+  //   Public signature debug description: <init>(1:0){}
   constructor(x: T) /* primary */
 
   // CHECK JVM_IR:
   //   Mangled name: Base#foo(0:0){0§<kotlin.Any?>}1:0
   //   Public signature: /Base.foo|8673945311830780726[0]
+  //   Public signature debug description: foo(0:0){0§<kotlin.Any?>}1:0
   // CHECK JS_IR NATIVE:
   //   Mangled name: Base#foo(0:0){0§<kotlin.Any?>}
   //   Public signature: /Base.foo|-6838606926256314363[0]
+  //   Public signature debug description: foo(0:0){0§<kotlin.Any?>}
   abstract fun <Y : Any?> foo(y: Y): T
 
   // CHECK:
   //   Mangled name: Base{}bar
   //   Public signature: /Base.bar|-7864284097863469857[0]
+  //   Public signature debug description: {}bar
   abstract var bar: T
     // CHECK JVM_IR:
     //   Mangled name: Base#<get-bar>(){}1:0
     //   Public signature: /Base.bar.<get-bar>|7899956589744407340[0]
+    //   Public signature debug description: <get-bar>(){}1:0
     // CHECK JS_IR NATIVE:
     //   Mangled name: Base#<get-bar>(){}
     //   Public signature: /Base.bar.<get-bar>|6880642144337645699[0]
+    //   Public signature debug description: <get-bar>(){}
     abstract get
     // CHECK:
     //   Mangled name: Base#<set-bar>(1:0){}
     //   Public signature: /Base.bar.<set-bar>|3083825024913650500[0]
+    //   Public signature debug description: <set-bar>(1:0){}
     abstract set
 
   // CHECK:
   //   Mangled name: Base@0:0{0§<kotlin.Any?>}exn
   //   Public signature: /Base.exn|2371047114698435273[0]
+  //   Public signature debug description: @0:0{0§<kotlin.Any?>}exn
   abstract var <Z : Any?> Z.exn: T
     // CHECK JVM_IR:
     //   Mangled name: Base#<get-exn>@0:0(){0§<kotlin.Any?>}1:0
     //   Public signature: /Base.exn.<get-exn>|6217753676739394662[0]
+    //   Public signature debug description: <get-exn>@0:0(){0§<kotlin.Any?>}1:0
     // CHECK JS_IR NATIVE:
     //   Mangled name: Base#<get-exn>@0:0(){0§<kotlin.Any?>}
     //   Public signature: /Base.exn.<get-exn>|-202876889853335253[0]
+    //   Public signature debug description: <get-exn>@0:0(){0§<kotlin.Any?>}
     abstract get
     // CHECK:
     //   Mangled name: Base#<set-exn>@0:0(1:0){0§<kotlin.Any?>}
     //   Public signature: /Base.exn.<set-exn>|5747714515092438414[0]
+    //   Public signature debug description: <set-exn>@0:0(1:0){0§<kotlin.Any?>}
     abstract set
 
 }
@@ -74,58 +88,72 @@ class Derived1<T : Any?> : Base<T> {
   // CHECK:
   //   Mangled name: Derived1{}bar
   //   Public signature: /Derived1.bar|-7864284097863469857[0]
+  //   Public signature debug description: {}bar
   override var bar: T
     // CHECK JVM_IR:
     //   Mangled name: Derived1#<get-bar>(){}1:0
     //   Public signature: /Derived1.bar.<get-bar>|7899956589744407340[0]
+    //   Public signature debug description: <get-bar>(){}1:0
     // CHECK JS_IR NATIVE:
     //   Mangled name: Derived1#<get-bar>(){}
     //   Public signature: /Derived1.bar.<get-bar>|6880642144337645699[0]
+    //   Public signature debug description: <get-bar>(){}
     override get
     // CHECK:
     //   Mangled name: Derived1#<set-bar>(1:0){}
     //   Public signature: /Derived1.bar.<set-bar>|3083825024913650500[0]
+    //   Public signature debug description: <set-bar>(1:0){}
     override set
 
   // CHECK:
   //   Mangled name: Derived1#<init>(1:0){}
   //   Public signature: /Derived1.<init>|-8731461708390519279[0]
+  //   Public signature debug description: <init>(1:0){}
   constructor(x: T) /* primary */
 
   // CHECK JVM_IR:
   //   Mangled name: Derived1#foo(0:0){0§<kotlin.Any?>}1:0
   //   Public signature: /Derived1.foo|8673945311830780726[0]
+  //   Public signature debug description: foo(0:0){0§<kotlin.Any?>}1:0
   // CHECK JS_IR NATIVE:
   //   Mangled name: Derived1#foo(0:0){0§<kotlin.Any?>}
   //   Public signature: /Derived1.foo|-6838606926256314363[0]
+  //   Public signature debug description: foo(0:0){0§<kotlin.Any?>}
   override fun <Y : Any?> foo(y: Y): T
 
   // CHECK:
   //   Mangled name: Derived1{}x
   //   Public signature: /Derived1.x|-8060530855978347579[0]
+  //   Public signature debug description: {}x
   /* fake */ override val x: T
     // CHECK JVM_IR:
     //   Mangled name: Derived1#<get-x>(){}1:0
     //   Public signature: /Derived1.x.<get-x>|-8893883356128097563[0]
+    //   Public signature debug description: <get-x>(){}1:0
     // CHECK JS_IR NATIVE:
     //   Mangled name: Derived1#<get-x>(){}
     //   Public signature: /Derived1.x.<get-x>|1482705010654679335[0]
+    //   Public signature debug description: <get-x>(){}
     /* fake */ override get(): T
 
   // CHECK:
   //   Mangled name: Derived1@0:0{0§<kotlin.Any?>}exn
   //   Public signature: /Derived1.exn|2371047114698435273[0]
+  //   Public signature debug description: @0:0{0§<kotlin.Any?>}exn
   override var <Z : Any?> Z.exn: T
     // CHECK JVM_IR:
     //   Mangled name: Derived1#<get-exn>@0:0(){0§<kotlin.Any?>}1:0
     //   Public signature: /Derived1.exn.<get-exn>|6217753676739394662[0]
+    //   Public signature debug description: <get-exn>@0:0(){0§<kotlin.Any?>}1:0
     // CHECK JS_IR NATIVE:
     //   Mangled name: Derived1#<get-exn>@0:0(){0§<kotlin.Any?>}
     //   Public signature: /Derived1.exn.<get-exn>|-202876889853335253[0]
+    //   Public signature debug description: <get-exn>@0:0(){0§<kotlin.Any?>}
     override get(): T
     // CHECK:
     //   Mangled name: Derived1#<set-exn>@0:0(1:0){0§<kotlin.Any?>}
     //   Public signature: /Derived1.exn.<set-exn>|5747714515092438414[0]
+    //   Public signature debug description: <set-exn>@0:0(1:0){0§<kotlin.Any?>}
     override set(value: T): Unit
 
 }

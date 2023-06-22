@@ -1,20 +1,24 @@
 // CHECK:
 //   Mangled name: #test1(){}
 //   Public signature: /test1|4297044443957252634[0]
+//   Public signature debug description: test1(){}
 fun test1(): Unit
 
 // CHECK:
 //   Mangled name: #test2(){}
 //   Public signature: /test2|4279114864133353152[0]
+//   Public signature debug description: test2(){}
 fun test2(): Unit
 
 // CHECK:
 //   Mangled name: #test3(){}
 //   Public signature: /test3|-3759735065270951803[0]
+//   Public signature debug description: test3(){}
 fun test3(): Unit
 
 // CHECK:
 //   Mangled name: #test4(){}
 //   Public signature: /test4|5588455914500386239[0]
+//   Public signature debug description: test4(){}
 fun test4(): Unit
 

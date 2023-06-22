@@ -5,57 +5,71 @@ data class Tag<out RenderingT : Any?> {
   // CHECK:
   //   Mangled name: Tag{}action
   //   Public signature: /Tag.action|4099104176676099950[0]
+  //   Public signature debug description: {}action
   val action: Function1<RenderingT, Unit>
     // CHECK JVM_IR:
     //   Mangled name: Tag#<get-action>(){}kotlin.Function1<1:0,kotlin.Unit>
     //   Public signature: /Tag.action.<get-action>|8009562688035104366[0]
+    //   Public signature debug description: <get-action>(){}kotlin.Function1<1:0,kotlin.Unit>
     // CHECK JS_IR NATIVE:
     //   Mangled name: Tag#<get-action>(){}
     //   Public signature: /Tag.action.<get-action>|-746708740124539440[0]
+    //   Public signature debug description: <get-action>(){}
     get
 
   // CHECK:
   //   Mangled name: Tag#<init>(kotlin.Function1<1:0,kotlin.Unit>){}
   //   Public signature: /Tag.<init>|5347267751589030160[0]
+  //   Public signature debug description: <init>(kotlin.Function1<1:0,kotlin.Unit>){}
   constructor(action: Function1<RenderingT, Unit>) /* primary */
   // CHECK JVM_IR:
   //   Mangled name: Tag#component1(){}kotlin.Function1<1:0,kotlin.Unit>
   //   Public signature: /Tag.component1|8111540572719988721[0]
+  //   Public signature debug description: component1(){}kotlin.Function1<1:0,kotlin.Unit>
   // CHECK JS_IR NATIVE:
   //   Mangled name: Tag#component1(){}
   //   Public signature: /Tag.component1|162597135895221648[0]
+  //   Public signature debug description: component1(){}
   operator fun component1(): Function1<RenderingT, Unit>
 
   // CHECK JVM_IR:
   //   Mangled name: Tag#copy(kotlin.Function1<1:0,kotlin.Unit>){}Tag<1:0>
   //   Public signature: /Tag.copy|3977576146240089732[0]
+  //   Public signature debug description: copy(kotlin.Function1<1:0,kotlin.Unit>){}Tag<1:0>
   // CHECK JS_IR NATIVE:
   //   Mangled name: Tag#copy(kotlin.Function1<1:0,kotlin.Unit>){}
   //   Public signature: /Tag.copy|-2212065741790204544[0]
+  //   Public signature debug description: copy(kotlin.Function1<1:0,kotlin.Unit>){}
   fun copy(action: Function1<RenderingT, Unit>): Tag<RenderingT>
 
   // CHECK JVM_IR:
   //   Mangled name: Tag#equals(kotlin.Any?){}kotlin.Boolean
   //   Public signature: /Tag.equals|722809408929142791[0]
+  //   Public signature debug description: equals(kotlin.Any?){}kotlin.Boolean
   // CHECK JS_IR NATIVE:
   //   Mangled name: Tag#equals(kotlin.Any?){}
   //   Public signature: /Tag.equals|4638265728071529943[0]
+  //   Public signature debug description: equals(kotlin.Any?){}
   override operator fun equals(other: Any?): Boolean
 
   // CHECK JVM_IR:
   //   Mangled name: Tag#hashCode(){}kotlin.Int
   //   Public signature: /Tag.hashCode|-8048879360829830756[0]
+  //   Public signature debug description: hashCode(){}kotlin.Int
   // CHECK JS_IR NATIVE:
   //   Mangled name: Tag#hashCode(){}
   //   Public signature: /Tag.hashCode|3409210261493131192[0]
+  //   Public signature debug description: hashCode(){}
   override fun hashCode(): Int
 
   // CHECK JVM_IR:
   //   Mangled name: Tag#toString(){}kotlin.String
   //   Public signature: /Tag.toString|6958853723545266802[0]
+  //   Public signature debug description: toString(){}kotlin.String
   // CHECK JS_IR NATIVE:
   //   Mangled name: Tag#toString(){}
   //   Public signature: /Tag.toString|-1522858123163872138[0]
+  //   Public signature debug description: toString(){}
   override fun toString(): String
 
 }
@@ -63,14 +77,17 @@ data class Tag<out RenderingT : Any?> {
 // CHECK:
 //   Mangled name: #doAction(){}
 //   Public signature: /doAction|7630529100125907322[0]
+//   Public signature debug description: doAction(){}
 fun doAction(): Unit
 
 // CHECK JVM_IR:
 //   Mangled name: #getTag(){}Tag<*>
 //   Public signature: /getTag|-5296435485745699550[0]
+//   Public signature debug description: getTag(){}Tag<*>
 // CHECK JS_IR NATIVE:
 //   Mangled name: #getTag(){}
 //   Public signature: /getTag|-1598249619396187222[0]
+//   Public signature debug description: getTag(){}
 fun getTag(): Tag<*>
 
 // CHECK:

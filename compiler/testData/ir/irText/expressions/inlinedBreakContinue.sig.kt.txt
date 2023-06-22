@@ -1,16 +1,19 @@
 // CHECK:
 //   Mangled name: #bar(kotlin.Function0<kotlin.Unit>;kotlin.Function0<kotlin.Unit>){}
 //   Public signature: /bar|1436837239648519468[0]
+//   Public signature debug description: bar(kotlin.Function0<kotlin.Unit>;kotlin.Function0<kotlin.Unit>){}
 inline fun bar(block1: Function0<Unit>, noinline block2: Function0<Unit>): Unit
 
 // CHECK:
 //   Mangled name: #foo(kotlin.Function0<kotlin.Unit>){}
 //   Public signature: /foo|251397761749529488[0]
+//   Public signature debug description: foo(kotlin.Function0<kotlin.Unit>){}
 inline fun foo(block: Function0<Unit>): Unit
 
 // CHECK:
 //   Mangled name: #test1(){}
 //   Public signature: /test1|4297044443957252634[0]
+//   Public signature debug description: test1(){}
 fun test1(): Unit
   // CHECK:
   //   Mangled name: #test1(){}#<anonymous>#static(){}
@@ -31,6 +34,7 @@ fun test1(): Unit
 // CHECK:
 //   Mangled name: #test2(){}
 //   Public signature: /test2|4279114864133353152[0]
+//   Public signature debug description: test2(){}
 fun test2(): Unit
   // CHECK:
   //   Mangled name: #test2(){}#<anonymous>#static(){}

@@ -5,77 +5,96 @@ data class Test<T : Any?> {
   // CHECK:
   //   Mangled name: Test{}x
   //   Public signature: /Test.x|-8060530855978347579[0]
+  //   Public signature debug description: {}x
   val x: T
     // CHECK JVM_IR:
     //   Mangled name: Test#<get-x>(){}1:0
     //   Public signature: /Test.x.<get-x>|-8893883356128097563[0]
+    //   Public signature debug description: <get-x>(){}1:0
     // CHECK JS_IR NATIVE:
     //   Mangled name: Test#<get-x>(){}
     //   Public signature: /Test.x.<get-x>|1482705010654679335[0]
+    //   Public signature debug description: <get-x>(){}
     get
 
   // CHECK:
   //   Mangled name: Test{}y
   //   Public signature: /Test.y|3625903257357557171[0]
+  //   Public signature debug description: {}y
   val y: String
     // CHECK JVM_IR:
     //   Mangled name: Test#<get-y>(){}kotlin.String
     //   Public signature: /Test.y.<get-y>|1760775372995524147[0]
+    //   Public signature debug description: <get-y>(){}kotlin.String
     // CHECK JS_IR NATIVE:
     //   Mangled name: Test#<get-y>(){}
     //   Public signature: /Test.y.<get-y>|-7902422373892128922[0]
+    //   Public signature debug description: <get-y>(){}
     get
 
   // CHECK:
   //   Mangled name: Test#<init>(1:0;kotlin.String){}
   //   Public signature: /Test.<init>|-7411275398527089511[0]
+  //   Public signature debug description: <init>(1:0;kotlin.String){}
   constructor(x: T, y: String) /* primary */
   // CHECK JVM_IR:
   //   Mangled name: Test#component1(){}1:0
   //   Public signature: /Test.component1|2393470133763651536[0]
+  //   Public signature debug description: component1(){}1:0
   // CHECK JS_IR NATIVE:
   //   Mangled name: Test#component1(){}
   //   Public signature: /Test.component1|162597135895221648[0]
+  //   Public signature debug description: component1(){}
   operator fun component1(): T
 
   // CHECK JVM_IR:
   //   Mangled name: Test#component2(){}kotlin.String
   //   Public signature: /Test.component2|1228864375093914597[0]
+  //   Public signature debug description: component2(){}kotlin.String
   // CHECK JS_IR NATIVE:
   //   Mangled name: Test#component2(){}
   //   Public signature: /Test.component2|3796717572321500973[0]
+  //   Public signature debug description: component2(){}
   operator fun component2(): String
 
   // CHECK JVM_IR:
   //   Mangled name: Test#copy(1:0;kotlin.String){}Test<1:0>
   //   Public signature: /Test.copy|8763634592557776800[0]
+  //   Public signature debug description: copy(1:0;kotlin.String){}Test<1:0>
   // CHECK JS_IR NATIVE:
   //   Mangled name: Test#copy(1:0;kotlin.String){}
   //   Public signature: /Test.copy|-4651516421033771294[0]
+  //   Public signature debug description: copy(1:0;kotlin.String){}
   fun copy(x: T, y: String): Test<T>
 
   // CHECK JVM_IR:
   //   Mangled name: Test#equals(kotlin.Any?){}kotlin.Boolean
   //   Public signature: /Test.equals|722809408929142791[0]
+  //   Public signature debug description: equals(kotlin.Any?){}kotlin.Boolean
   // CHECK JS_IR NATIVE:
   //   Mangled name: Test#equals(kotlin.Any?){}
   //   Public signature: /Test.equals|4638265728071529943[0]
+  //   Public signature debug description: equals(kotlin.Any?){}
   override operator fun equals(other: Any?): Boolean
 
   // CHECK JVM_IR:
   //   Mangled name: Test#hashCode(){}kotlin.Int
   //   Public signature: /Test.hashCode|-8048879360829830756[0]
+  //   Public signature debug description: hashCode(){}kotlin.Int
   // CHECK JS_IR NATIVE:
   //   Mangled name: Test#hashCode(){}
   //   Public signature: /Test.hashCode|3409210261493131192[0]
+  //   Public signature debug description: hashCode(){}
   override fun hashCode(): Int
 
   // CHECK JVM_IR:
   //   Mangled name: Test#toString(){}kotlin.String
   //   Public signature: /Test.toString|6958853723545266802[0]
+  //   Public signature debug description: toString(){}kotlin.String
   // CHECK JS_IR NATIVE:
   //   Mangled name: Test#toString(){}
   //   Public signature: /Test.toString|-1522858123163872138[0]
+  //   Public signature debug description: toString(){}
   override fun toString(): String
 
 }

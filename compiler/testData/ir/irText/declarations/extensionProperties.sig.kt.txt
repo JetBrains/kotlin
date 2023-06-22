@@ -5,34 +5,42 @@ class Host {
   // CHECK:
   //   Mangled name: Host#<init>(){}
   //   Public signature: /Host.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   constructor() /* primary */
 
   // CHECK:
   //   Mangled name: Host@kotlin.String{}test3
   //   Public signature: /Host.test3|6611475030333167314[0]
+  //   Public signature debug description: @kotlin.String{}test3
   val String.test3: Int
     // CHECK JVM_IR:
     //   Mangled name: Host#<get-test3>@kotlin.String(){}kotlin.Int
     //   Public signature: /Host.test3.<get-test3>|-8733015989987681805[0]
+    //   Public signature debug description: <get-test3>@kotlin.String(){}kotlin.Int
     // CHECK JS_IR NATIVE:
     //   Mangled name: Host#<get-test3>@kotlin.String(){}
     //   Public signature: /Host.test3.<get-test3>|8733981612854462725[0]
+    //   Public signature debug description: <get-test3>@kotlin.String(){}
     get(): Int
 
   // CHECK:
   //   Mangled name: Host@kotlin.String{}test4
   //   Public signature: /Host.test4|7486468124994005123[0]
+  //   Public signature debug description: @kotlin.String{}test4
   var String.test4: Int
     // CHECK JVM_IR:
     //   Mangled name: Host#<get-test4>@kotlin.String(){}kotlin.Int
     //   Public signature: /Host.test4.<get-test4>|5807409276278007610[0]
+    //   Public signature debug description: <get-test4>@kotlin.String(){}kotlin.Int
     // CHECK JS_IR NATIVE:
     //   Mangled name: Host#<get-test4>@kotlin.String(){}
     //   Public signature: /Host.test4.<get-test4>|-1587066497248455001[0]
+    //   Public signature debug description: <get-test4>@kotlin.String(){}
     get(): Int
     // CHECK:
     //   Mangled name: Host#<set-test4>@kotlin.String(kotlin.Int){}
     //   Public signature: /Host.test4.<set-test4>|8811649911764795566[0]
+    //   Public signature debug description: <set-test4>@kotlin.String(kotlin.Int){}
     set(value: Int): Unit
 
 }
@@ -40,28 +48,35 @@ class Host {
 // CHECK:
 //   Mangled name: @kotlin.String{}test1
 //   Public signature: /test1|-338155035617859525[0]
+//   Public signature debug description: @kotlin.String{}test1
 val String.test1: Int
   // CHECK JVM_IR:
   //   Mangled name: #<get-test1>@kotlin.String(){}kotlin.Int
   //   Public signature: /test1.<get-test1>|-5900273555540008657[0]
+  //   Public signature debug description: <get-test1>@kotlin.String(){}kotlin.Int
   // CHECK JS_IR NATIVE:
   //   Mangled name: #<get-test1>@kotlin.String(){}
   //   Public signature: /test1.<get-test1>|-5601238586673262455[0]
+  //   Public signature debug description: <get-test1>@kotlin.String(){}
   get(): Int
 
 // CHECK:
 //   Mangled name: @kotlin.String{}test2
 //   Public signature: /test2|298349501950551030[0]
+//   Public signature debug description: @kotlin.String{}test2
 var String.test2: Int
   // CHECK JVM_IR:
   //   Mangled name: #<get-test2>@kotlin.String(){}kotlin.Int
   //   Public signature: /test2.<get-test2>|3412895218642147211[0]
+  //   Public signature debug description: <get-test2>@kotlin.String(){}kotlin.Int
   // CHECK JS_IR NATIVE:
   //   Mangled name: #<get-test2>@kotlin.String(){}
   //   Public signature: /test2.<get-test2>|1426339134726014217[0]
+  //   Public signature debug description: <get-test2>@kotlin.String(){}
   get(): Int
   // CHECK:
   //   Mangled name: #<set-test2>@kotlin.String(kotlin.Int){}
   //   Public signature: /test2.<set-test2>|3674864148848971521[0]
+  //   Public signature debug description: <set-test2>@kotlin.String(kotlin.Int){}
   set(value: Int): Unit
 

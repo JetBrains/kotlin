@@ -5,53 +5,64 @@ data class P {
   // CHECK:
   //   Mangled name: P{}x
   //   Public signature: /P.x|-8060530855978347579[0]
+  //   Public signature debug description: {}x
   val x: Int
     // CHECK JVM_IR:
     //   Mangled name: P#<get-x>(){}kotlin.Int
     //   Public signature: /P.x.<get-x>|4966956098150895696[0]
+    //   Public signature debug description: <get-x>(){}kotlin.Int
     get
 
   // CHECK:
   //   Mangled name: P{}y
   //   Public signature: /P.y|3625903257357557171[0]
+  //   Public signature debug description: {}y
   val y: Int
     // CHECK JVM_IR:
     //   Mangled name: P#<get-y>(){}kotlin.Int
     //   Public signature: /P.y.<get-y>|-6745575372101973707[0]
+    //   Public signature debug description: <get-y>(){}kotlin.Int
     get
 
   // CHECK:
   //   Mangled name: P#<init>(kotlin.Int;kotlin.Int){}
   //   Public signature: /P.<init>|-7691762014320324121[0]
+  //   Public signature debug description: <init>(kotlin.Int;kotlin.Int){}
   constructor(x: Int, y: Int) /* primary */
   // CHECK JVM_IR:
   //   Mangled name: P#component1(){}kotlin.Int
   //   Public signature: /P.component1|-8217597213800111288[0]
+  //   Public signature debug description: component1(){}kotlin.Int
   operator fun component1(): Int
 
   // CHECK JVM_IR:
   //   Mangled name: P#component2(){}kotlin.Int
   //   Public signature: /P.component2|-7444333055342785242[0]
+  //   Public signature debug description: component2(){}kotlin.Int
   operator fun component2(): Int
 
   // CHECK JVM_IR:
   //   Mangled name: P#copy(kotlin.Int;kotlin.Int){}P
   //   Public signature: /P.copy|7812152200479194143[0]
+  //   Public signature debug description: copy(kotlin.Int;kotlin.Int){}P
   fun copy(x: Int, y: Int): P
 
   // CHECK JVM_IR:
   //   Mangled name: P#equals(kotlin.Any?){}kotlin.Boolean
   //   Public signature: /P.equals|722809408929142791[0]
+  //   Public signature debug description: equals(kotlin.Any?){}kotlin.Boolean
   override operator fun equals(other: Any?): Boolean
 
   // CHECK JVM_IR:
   //   Mangled name: P#hashCode(){}kotlin.Int
   //   Public signature: /P.hashCode|-8048879360829830756[0]
+  //   Public signature debug description: hashCode(){}kotlin.Int
   override fun hashCode(): Int
 
   // CHECK JVM_IR:
   //   Mangled name: P#toString(){}kotlin.String
   //   Public signature: /P.toString|6958853723545266802[0]
+  //   Public signature debug description: toString(){}kotlin.String
   override fun toString(): String
 
 }
@@ -64,6 +75,7 @@ interface K {
   // CHECK JVM_IR:
   //   Mangled name: K#arrayOfNotNull(){}kotlin.Array<P>
   //   Public signature: /K.arrayOfNotNull|-3412104294529727261[0]
+  //   Public signature debug description: arrayOfNotNull(){}kotlin.Array<P>
   abstract fun arrayOfNotNull(): Array<P>
 
 }
@@ -71,35 +83,42 @@ interface K {
 // CHECK:
 //   Mangled name: #testDesugaredForInList(){}
 //   Public signature: /testDesugaredForInList|-5782772317279913567[0]
+//   Public signature debug description: testDesugaredForInList(){}
 fun testDesugaredForInList(): Unit
 
 // CHECK:
 //   Mangled name: #testForInArrayUnused(J){}
 //   Public signature: /testForInArrayUnused|-1510075261509964471[0]
+//   Public signature debug description: testForInArrayUnused(J){}
 fun testForInArrayUnused(j: J): Unit
 
 // CHECK:
 //   Mangled name: #testForInArrayUse(J){}
 //   Public signature: /testForInArrayUse|4222411163139319025[0]
+//   Public signature debug description: testForInArrayUse(J){}
 fun testForInArrayUse(j: J): Unit
 
 // CHECK:
 //   Mangled name: #testForInListDestructured(){}
 //   Public signature: /testForInListDestructured|-6792759367826308939[0]
+//   Public signature debug description: testForInListDestructured(){}
 fun testForInListDestructured(): Unit
 
 // CHECK:
 //   Mangled name: #testForInListUnused(){}
 //   Public signature: /testForInListUnused|-2195059500816622210[0]
+//   Public signature debug description: testForInListUnused(){}
 fun testForInListUnused(): Unit
 
 // CHECK:
 //   Mangled name: #testForInListUse(){}
 //   Public signature: /testForInListUse|2913967956256667805[0]
+//   Public signature debug description: testForInListUse(){}
 fun testForInListUse(): Unit
 
 // CHECK:
 //   Mangled name: #use(P){}
 //   Public signature: /use|3488579196470931687[0]
+//   Public signature debug description: use(P){}
 fun use(s: P): Unit
 

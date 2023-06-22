@@ -5,22 +5,27 @@ class Some {
   // CHECK:
   //   Mangled name: Some{}foo
   //   Public signature: /Some.foo|1688079488202778848[0]
+  //   Public signature debug description: {}foo
   var foo: Int
     // CHECK JVM_IR:
     //   Mangled name: Some#<get-foo>(){}kotlin.Int
     //   Public signature: /Some.foo.<get-foo>|-5521901919061670077[0]
+    //   Public signature debug description: <get-foo>(){}kotlin.Int
     // CHECK JS_IR NATIVE:
     //   Mangled name: Some#<get-foo>(){}
     //   Public signature: /Some.foo.<get-foo>|-2462361841367688099[0]
+    //   Public signature debug description: <get-foo>(){}
     get
     // CHECK:
     //   Mangled name: Some#<set-foo>(kotlin.Int){}
     //   Public signature: /Some.foo.<set-foo>|3461873232640801433[0]
+    //   Public signature debug description: <set-foo>(kotlin.Int){}
     set
 
   // CHECK:
   //   Mangled name: Some#<init>(kotlin.Int){}
   //   Public signature: /Some.<init>|-5182794243525578284[0]
+  //   Public signature debug description: <init>(kotlin.Int){}
   constructor(foo: Int) /* primary */
 
 }

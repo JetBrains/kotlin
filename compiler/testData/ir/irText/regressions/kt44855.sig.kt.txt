@@ -5,10 +5,12 @@ open class Child : Parent {
   // CHECK:
   //   Mangled name: Child{}x
   //   Public signature: /Child.x|-8060530855978347579[0]
+  //   Public signature debug description: {}x
   val x: Parent?
     // CHECK JVM_IR:
     //   Mangled name: Child#<get-x>(){}Parent?
     //   Public signature: /Child.x.<get-x>|-4268238355990068356[0]
+    //   Public signature debug description: <get-x>(){}Parent?
     get
 
   // CHECK:
@@ -18,11 +20,13 @@ open class Child : Parent {
     // CHECK:
     //   Mangled name: Child.QQQ#<init>(){}
     //   Public signature: /Child.QQQ.<init>|-5645683436151566731[0]
+    //   Public signature debug description: <init>(){}
     constructor() /* primary */
 
     // CHECK:
     //   Mangled name: Child.QQQ#z(){}
     //   Public signature: /Child.QQQ.z|-6990221057904452282[0]
+    //   Public signature debug description: z(){}
     fun z(): Unit
 
   }
@@ -30,11 +34,13 @@ open class Child : Parent {
   // CHECK:
   //   Mangled name: Child#<init>(Parent?){}
   //   Public signature: /Child.<init>|690323910030303924[0]
+  //   Public signature debug description: <init>(Parent?){}
   constructor(x: Parent?) /* primary */
 
   // CHECK JVM_IR:
   //   Mangled name: Child#getQqq(){}kotlin.String?
   //   Public signature: /Child.getQqq|2603726480275639305[0]
+  //   Public signature debug description: getQqq(){}kotlin.String?
   /* fake */ override fun getQqq(): String?
 
 }

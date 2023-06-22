@@ -5,6 +5,7 @@ class CInt32VarX<T : Any?> : CPointed {
   // CHECK:
   //   Mangled name: CInt32VarX#<init>(){}
   //   Public signature: /CInt32VarX.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   constructor() /* primary */
 
 }
@@ -16,18 +17,22 @@ class IdType : CPointed {
   // CHECK:
   //   Mangled name: IdType{}value
   //   Public signature: /IdType.value|1987073854177347439[0]
+  //   Public signature debug description: {}value
   val value: Int
     // CHECK JVM_IR:
     //   Mangled name: IdType#<get-value>(){}kotlin.Int
     //   Public signature: /IdType.value.<get-value>|-5900028706170996[0]
+    //   Public signature debug description: <get-value>(){}kotlin.Int
     // CHECK JS_IR NATIVE:
     //   Mangled name: IdType#<get-value>(){}
     //   Public signature: /IdType.value.<get-value>|3260093555963109437[0]
+    //   Public signature debug description: <get-value>(){}
     get
 
   // CHECK:
   //   Mangled name: IdType#<init>(kotlin.Int){}
   //   Public signature: /IdType.<init>|-5182794243525578284[0]
+  //   Public signature debug description: <init>(kotlin.Int){}
   constructor(value: Int) /* primary */
 
 }
@@ -42,30 +47,37 @@ interface CPointed {
 // CHECK:
 //   Mangled name: #foo(IdType;CInt32VarX<kotlin.Int>){}
 //   Public signature: /foo|-5455779368502417749[0]
+//   Public signature debug description: foo(IdType;CInt32VarX<kotlin.Int>){}
 fun foo(value: IdType, cv: CInt32VarX<Int>): Unit
 
 // CHECK JVM_IR:
 //   Mangled name: #reinterpret@CPointed(){0§<CPointed>}0:0
 //   Public signature: /reinterpret|6686627751758834868[0]
+//   Public signature debug description: reinterpret@CPointed(){0§<CPointed>}0:0
 // CHECK JS_IR NATIVE:
 //   Mangled name: #reinterpret@CPointed(){0§<CPointed>}
 //   Public signature: /reinterpret|-1583466554098866733[0]
+//   Public signature debug description: reinterpret@CPointed(){0§<CPointed>}
 inline fun <reified T : CPointed> CPointed.reinterpret(): T
 
 // CHECK:
 //   Mangled name: @CInt32VarX<0:0>{0§<kotlin.Int>}value
 //   Public signature: /value|-135689265793066449[0]
+//   Public signature debug description: @CInt32VarX<0:0>{0§<kotlin.Int>}value
 var <T_INT : Int> CInt32VarX<T_INT>.value: T_INT
   // CHECK JVM_IR:
   //   Mangled name: #<get-value>@CInt32VarX<0:0>(){0§<kotlin.Int>}0:0
   //   Public signature: /value.<get-value>|2596477086313818765[0]
+  //   Public signature debug description: <get-value>@CInt32VarX<0:0>(){0§<kotlin.Int>}0:0
   // CHECK JS_IR NATIVE:
   //   Mangled name: #<get-value>@CInt32VarX<0:0>(){0§<kotlin.Int>}
   //   Public signature: /value.<get-value>|7308799289468598697[0]
+  //   Public signature debug description: <get-value>@CInt32VarX<0:0>(){0§<kotlin.Int>}
   get(): T_INT
   // CHECK:
   //   Mangled name: #<set-value>@CInt32VarX<0:0>(0:0){0§<kotlin.Int>}
   //   Public signature: /value.<set-value>|4371752181027190206[0]
+  //   Public signature debug description: <set-value>@CInt32VarX<0:0>(0:0){0§<kotlin.Int>}
   set(value: T_INT): Unit
 
 // CHECK:

@@ -1,10 +1,12 @@
 // CHECK:
 //   Mangled name: #testAugmentedMemberAssignment(<dynamic>){}
 //   Public signature: /testAugmentedMemberAssignment|6871762003023534167[0]
+//   Public signature debug description: testAugmentedMemberAssignment(<dynamic>){}
 fun testAugmentedMemberAssignment(d: dynamic): Unit
 
 // CHECK:
 //   Mangled name: #testSafeAugmentedMemberAssignment(<dynamic>){}
 //   Public signature: /testSafeAugmentedMemberAssignment|9098819858529650270[0]
+//   Public signature debug description: testSafeAugmentedMemberAssignment(<dynamic>){}
 fun testSafeAugmentedMemberAssignment(d: dynamic): Unit
 

@@ -5,18 +5,22 @@ class C {
   // CHECK:
   //   Mangled name: C{}x
   //   Public signature: /C.x|-8060530855978347579[0]
+  //   Public signature debug description: {}x
   val x: String
     // CHECK JVM_IR:
     //   Mangled name: C#<get-x>(){}kotlin.String
     //   Public signature: /C.x.<get-x>|316111172223894646[0]
+    //   Public signature debug description: <get-x>(){}kotlin.String
     // CHECK JS_IR NATIVE:
     //   Mangled name: C#<get-x>(){}
     //   Public signature: /C.x.<get-x>|1482705010654679335[0]
+    //   Public signature debug description: <get-x>(){}
     get
 
   // CHECK:
   //   Mangled name: C#<init>(kotlin.String){}
   //   Public signature: /C.<init>|1280618353163213788[0]
+  //   Public signature debug description: <init>(kotlin.String){}
   constructor(x: String) /* primary */
 
 }
@@ -24,32 +28,40 @@ class C {
 // CHECK JVM_IR:
 //   Mangled name: #foo(kotlin.String){}kotlin.String
 //   Public signature: /foo|-5534735991146511619[0]
+//   Public signature debug description: foo(kotlin.String){}kotlin.String
 // CHECK JS_IR NATIVE:
 //   Mangled name: #foo(kotlin.String){}
 //   Public signature: /foo|1351044947738582195[0]
+//   Public signature debug description: foo(kotlin.String){}
 fun foo(x: String): String
 
 // CHECK JVM_IR:
 //   Mangled name: #testCtor(){}kotlin.Any
 //   Public signature: /testCtor|3044873605974435250[0]
+//   Public signature debug description: testCtor(){}kotlin.Any
 // CHECK JS_IR NATIVE:
 //   Mangled name: #testCtor(){}
 //   Public signature: /testCtor|3811619636113238850[0]
+//   Public signature debug description: testCtor(){}
 fun testCtor(): Any
 
 // CHECK JVM_IR:
 //   Mangled name: #testFn(){}kotlin.Any
 //   Public signature: /testFn|-7705393787943646360[0]
+//   Public signature debug description: testFn(){}kotlin.Any
 // CHECK JS_IR NATIVE:
 //   Mangled name: #testFn(){}
 //   Public signature: /testFn|-8314695367743779873[0]
+//   Public signature debug description: testFn(){}
 fun testFn(): Any
 
 // CHECK JVM_IR:
 //   Mangled name: #use(kotlin.Function0<kotlin.Any>){}kotlin.Any
 //   Public signature: /use|2706182574849638898[0]
+//   Public signature debug description: use(kotlin.Function0<kotlin.Any>){}kotlin.Any
 // CHECK JS_IR NATIVE:
 //   Mangled name: #use(kotlin.Function0<kotlin.Any>){}
 //   Public signature: /use|-6442695911656516766[0]
+//   Public signature debug description: use(kotlin.Function0<kotlin.Any>){}
 fun use(fn: Function0<Any>): Any
 

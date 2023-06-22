@@ -11,30 +11,37 @@ class Foo<T : Any?> {
     // CHECK:
     //   Mangled name: test.Foo.Inner{}a
     //   Public signature: test/Foo.Inner.a|-1200697420457237799[0]
+    //   Public signature debug description: {}a
     val a: T
       // CHECK JVM_IR:
       //   Mangled name: test.Foo.Inner#<get-a>(){}2:0
       //   Public signature: test/Foo.Inner.a.<get-a>|6634660852321063487[0]
+      //   Public signature debug description: <get-a>(){}2:0
       // CHECK JS_IR NATIVE:
       //   Mangled name: test.Foo.Inner#<get-a>(){}
       //   Public signature: test/Foo.Inner.a.<get-a>|6785176174175479410[0]
+      //   Public signature debug description: <get-a>(){}
       get
 
     // CHECK:
     //   Mangled name: test.Foo.Inner{}b
     //   Public signature: test/Foo.Inner.b|772347207915745207[0]
+    //   Public signature debug description: {}b
     val b: P
       // CHECK JVM_IR:
       //   Mangled name: test.Foo.Inner#<get-b>(){}1:0
       //   Public signature: test/Foo.Inner.b.<get-b>|-8930371436958509614[0]
+      //   Public signature debug description: <get-b>(){}1:0
       // CHECK JS_IR NATIVE:
       //   Mangled name: test.Foo.Inner#<get-b>(){}
       //   Public signature: test/Foo.Inner.b.<get-b>|812004636995167743[0]
+      //   Public signature debug description: <get-b>(){}
       get
 
     // CHECK:
     //   Mangled name: test.Foo.Inner#<init>(2:0;1:0){}
     //   Public signature: test/Foo.Inner.<init>|-2512702059187080850[0]
+    //   Public signature debug description: <init>(2:0;1:0){}
     constructor(a: T, b: P) /* primary */
 
   }
@@ -42,6 +49,7 @@ class Foo<T : Any?> {
   // CHECK:
   //   Mangled name: test.Foo#<init>(){}
   //   Public signature: test/Foo.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   constructor() /* primary */
 
 }
@@ -49,16 +57,20 @@ class Foo<T : Any?> {
 // CHECK JVM_IR:
 //   Mangled name: test#box(){}kotlin.String
 //   Public signature: test/box|-9347091776561469[0]
+//   Public signature debug description: box(){}kotlin.String
 // CHECK JS_IR NATIVE:
 //   Mangled name: test#box(){}
 //   Public signature: test/box|2173511048851971368[0]
+//   Public signature debug description: box(){}
 fun box(): String
 
 // CHECK JVM_IR:
 //   Mangled name: test#foo(0:0;0:1;kotlin.Function2<0:0,0:1,test.Foo.Inner<0:1,0:0>>){0§<kotlin.Any?>;1§<kotlin.Any?>}test.Foo.Inner<0:1,0:0>
 //   Public signature: test/foo|-4791591590952018519[0]
+//   Public signature debug description: foo(0:0;0:1;kotlin.Function2<0:0,0:1,test.Foo.Inner<0:1,0:0>>){0§<kotlin.Any?>;1§<kotlin.Any?>}test.Foo.Inner<0:1,0:0>
 // CHECK JS_IR NATIVE:
 //   Mangled name: test#foo(0:0;0:1;kotlin.Function2<0:0,0:1,test.Foo.Inner<0:1,0:0>>){0§<kotlin.Any?>;1§<kotlin.Any?>}
 //   Public signature: test/foo|-2625863985883503743[0]
+//   Public signature debug description: foo(0:0;0:1;kotlin.Function2<0:0,0:1,test.Foo.Inner<0:1,0:0>>){0§<kotlin.Any?>;1§<kotlin.Any?>}
 inline fun <A : Any?, B : Any?> foo(a: A, b: B, x: Function2<A, B, Inner<B, A>>): Inner<B, A>
 

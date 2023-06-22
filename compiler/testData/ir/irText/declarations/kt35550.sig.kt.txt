@@ -5,22 +5,27 @@ class A : I {
   // CHECK:
   //   Mangled name: A#<init>(I){}
   //   Public signature: /A.<init>|605687824747116295[0]
+  //   Public signature debug description: <init>(I){}
   constructor(i: I) /* primary */
   // CHECK:
   //   Mangled name: A.$$delegate_0
   //   Public signature: /A.$$delegate_0|-7286425919675154353[0]
+  //   Public signature debug description: 
   private /* final field */ val $$delegate_0: I
 
   // CHECK:
   //   Mangled name: A@0:0{0§<kotlin.Any?>}id
   //   Public signature: /A.id|6409895071901545951[0]
+  //   Public signature debug description: @0:0{0§<kotlin.Any?>}id
   override val <T : Any?> T.id: T
     // CHECK JVM_IR:
     //   Mangled name: A#<get-id>@0:0(){0§<kotlin.Any?>}0:0
     //   Public signature: /A.id.<get-id>|4983271234253098452[0]
+    //   Public signature debug description: <get-id>@0:0(){0§<kotlin.Any?>}0:0
     // CHECK JS_IR NATIVE:
     //   Mangled name: A#<get-id>@0:0(){0§<kotlin.Any?>}
     //   Public signature: /A.id.<get-id>|-1537502770664138716[0]
+    //   Public signature debug description: <get-id>@0:0(){0§<kotlin.Any?>}
     override get(): T
 
 }
@@ -33,13 +38,16 @@ interface I {
   // CHECK:
   //   Mangled name: I@0:0{0§<kotlin.Any?>}id
   //   Public signature: /I.id|6409895071901545951[0]
+  //   Public signature debug description: @0:0{0§<kotlin.Any?>}id
   val <T : Any?> T.id: T
     // CHECK JVM_IR:
     //   Mangled name: I#<get-id>@0:0(){0§<kotlin.Any?>}0:0
     //   Public signature: /I.id.<get-id>|4983271234253098452[0]
+    //   Public signature debug description: <get-id>@0:0(){0§<kotlin.Any?>}0:0
     // CHECK JS_IR NATIVE:
     //   Mangled name: I#<get-id>@0:0(){0§<kotlin.Any?>}
     //   Public signature: /I.id.<get-id>|-1537502770664138716[0]
+    //   Public signature debug description: <get-id>@0:0(){0§<kotlin.Any?>}
     get(): T
 
 }

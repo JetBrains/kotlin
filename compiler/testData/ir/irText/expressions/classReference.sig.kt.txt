@@ -5,6 +5,7 @@ class A {
   // CHECK:
   //   Mangled name: A#<init>(){}
   //   Public signature: /A.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   constructor() /* primary */
 
 }
@@ -12,5 +13,6 @@ class A {
 // CHECK:
 //   Mangled name: #test(){}
 //   Public signature: /test|6620506149988718649[0]
+//   Public signature debug description: test(){}
 fun test(): Unit
 

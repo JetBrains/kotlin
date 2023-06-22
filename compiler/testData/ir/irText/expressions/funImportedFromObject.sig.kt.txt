@@ -7,14 +7,17 @@ object Host {
   // CHECK:
   //   Mangled name: test.Host#<init>(){}
   //   Public signature: test/Host.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   private constructor() /* primary */
 
   // CHECK JVM_IR:
   //   Mangled name: test.Host#foo(){0§<kotlin.Any?>}kotlin.String
   //   Public signature: test/Host.foo|-170825690606698604[0]
+  //   Public signature debug description: foo(){0§<kotlin.Any?>}kotlin.String
   // CHECK JS_IR NATIVE:
   //   Mangled name: test.Host#foo(){0§<kotlin.Any?>}
   //   Public signature: test/Host.foo|-7822584347064313243[0]
+  //   Public signature debug description: foo(){0§<kotlin.Any?>}
   inline fun <reified T : Any?> foo(): String
 
 }
@@ -22,8 +25,10 @@ object Host {
 // CHECK JVM_IR:
 //   Mangled name: test#test(){}kotlin.String
 //   Public signature: test/test|-7008832412320199001[0]
+//   Public signature debug description: test(){}kotlin.String
 // CHECK JS_IR NATIVE:
 //   Mangled name: test#test(){}
 //   Public signature: test/test|6620506149988718649[0]
+//   Public signature debug description: test(){}
 fun test(): String
 

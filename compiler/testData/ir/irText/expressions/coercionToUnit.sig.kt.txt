@@ -1,19 +1,23 @@
 // CHECK:
 //   Mangled name: {}test1
 //   Public signature: /test1|6005685442305498193[0]
+//   Public signature debug description: {}test1
 val test1: Function0<Unit>
   // CHECK JVM_IR:
   //   Mangled name: #<get-test1>(){}kotlin.Function0<kotlin.Unit>
   //   Public signature: /test1.<get-test1>|4031203072491725526[0]
+  //   Public signature debug description: <get-test1>(){}kotlin.Function0<kotlin.Unit>
   get
 
 // CHECK:
 //   Mangled name: #test2(kotlin.collections.MutableCollection<kotlin.String>){}
 //   Public signature: /test2|127920314882232051[0]
+//   Public signature debug description: test2(kotlin.collections.MutableCollection<kotlin.String>){}
 fun test2(mc: MutableCollection<String>): Unit
 
 // CHECK:
 //   Mangled name: #test3(){}
 //   Public signature: /test3|-3759735065270951803[0]
+//   Public signature debug description: test3(){}
 fun test3(): Unit
 

@@ -1,60 +1,72 @@
 // CHECK:
 //   Mangled name: #bar(kotlin.Function0<kotlin.Unit>;kotlin.Function0<kotlin.Unit>){}
 //   Public signature: /bar|1436837239648519468[0]
+//   Public signature debug description: bar(kotlin.Function0<kotlin.Unit>;kotlin.Function0<kotlin.Unit>){}
 inline fun bar(block1: Function0<Unit>, noinline block2: Function0<Unit>): Unit
 
 // CHECK:
 //   Mangled name: #baz(kotlin.Function0<kotlin.Unit>){}
 //   Public signature: /baz|-1086471891001796248[0]
+//   Public signature debug description: baz(kotlin.Function0<kotlin.Unit>){}
 inline fun baz(crossinline block: Function0<Unit>): Unit
 
 // CHECK:
 //   Mangled name: #foo(kotlin.Function0<kotlin.Unit>){}
 //   Public signature: /foo|251397761749529488[0]
+//   Public signature debug description: foo(kotlin.Function0<kotlin.Unit>){}
 inline fun foo(block: Function0<Unit>): Unit
 
 // CHECK:
 //   Mangled name: #myForEach@kotlin.collections.Iterable<0:0>(kotlin.Function1<0:0,kotlin.Unit>){0§<kotlin.Any?>}
 //   Public signature: /myForEach|-478947801945904451[0]
+//   Public signature debug description: myForEach@kotlin.collections.Iterable<0:0>(kotlin.Function1<0:0,kotlin.Unit>){0§<kotlin.Any?>}
 inline fun <T : Any?> Iterable<T>.myForEach(action: Function1<T, Unit>): Unit
 
 // CHECK:
 //   Mangled name: #test1(){}
 //   Public signature: /test1|4297044443957252634[0]
+//   Public signature debug description: test1(){}
 fun test1(): Unit
 
 // CHECK:
 //   Mangled name: #test2(){}
 //   Public signature: /test2|4279114864133353152[0]
+//   Public signature debug description: test2(){}
 fun test2(): Unit
 
 // CHECK:
 //   Mangled name: #test3(){}
 //   Public signature: /test3|-3759735065270951803[0]
+//   Public signature debug description: test3(){}
 fun test3(): Unit
 
 // CHECK:
 //   Mangled name: #test4(){}
 //   Public signature: /test4|5588455914500386239[0]
+//   Public signature debug description: test4(){}
 fun test4(): Unit
 
 // CHECK:
 //   Mangled name: #test5(){}
 //   Public signature: /test5|-2461239215881954159[0]
+//   Public signature debug description: test5(){}
 fun test5(): Unit
 
 // CHECK:
 //   Mangled name: #test6(){}
 //   Public signature: /test6|-6357717956567725919[0]
+//   Public signature debug description: test6(){}
 fun test6(): Unit
 
 // CHECK:
 //   Mangled name: #test7(){}
 //   Public signature: /test7|-8173197202779127520[0]
+//   Public signature debug description: test7(){}
 fun test7(): Unit
 
 // CHECK:
 //   Mangled name: #test8(){}
 //   Public signature: /test8|70876202459738419[0]
+//   Public signature debug description: test8(){}
 fun test8(): Unit
 

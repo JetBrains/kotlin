@@ -5,6 +5,7 @@ class V8Array {
   // CHECK:
   //   Mangled name: V8Array#<init>(){}
   //   Public signature: /V8Array.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   constructor() /* primary */
 
 }
@@ -12,5 +13,6 @@ class V8Array {
 // CHECK JVM_IR:
 //   Mangled name: #box(){}kotlin.String
 //   Public signature: /box|-9347091776561469[0]
+//   Public signature debug description: box(){}kotlin.String
 fun box(): String
 

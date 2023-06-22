@@ -1,5 +1,6 @@
 // CHECK:
 //   Mangled name: #testImplicitCast(kotlin.Any){}
 //   Public signature: /testImplicitCast|3599450462487506190[0]
+//   Public signature debug description: testImplicitCast(kotlin.Any){}
 fun testImplicitCast(a: Any): Unit
 

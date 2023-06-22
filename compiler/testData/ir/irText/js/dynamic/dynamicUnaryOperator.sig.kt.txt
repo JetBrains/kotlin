@@ -1,15 +1,18 @@
 // CHECK JS_IR NATIVE:
 //   Mangled name: #testExcl(<dynamic>){}
 //   Public signature: /testExcl|1647775855598193701[0]
+//   Public signature debug description: testExcl(<dynamic>){}
 fun testExcl(d: dynamic): dynamic
 
 // CHECK JS_IR NATIVE:
 //   Mangled name: #testUnaryMinus(<dynamic>){}
 //   Public signature: /testUnaryMinus|2676344279010670857[0]
+//   Public signature debug description: testUnaryMinus(<dynamic>){}
 fun testUnaryMinus(d: dynamic): dynamic
 
 // CHECK JS_IR NATIVE:
 //   Mangled name: #testUnaryPlus(<dynamic>){}
 //   Public signature: /testUnaryPlus|3234645334485860647[0]
+//   Public signature debug description: testUnaryPlus(<dynamic>){}
 fun testUnaryPlus(d: dynamic): dynamic
 

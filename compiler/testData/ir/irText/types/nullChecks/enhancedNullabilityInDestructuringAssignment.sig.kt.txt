@@ -5,34 +5,41 @@ class P {
   // CHECK:
   //   Mangled name: P{}x
   //   Public signature: /P.x|-8060530855978347579[0]
+  //   Public signature debug description: {}x
   val x: Int
     // CHECK JVM_IR:
     //   Mangled name: P#<get-x>(){}kotlin.Int
     //   Public signature: /P.x.<get-x>|4966956098150895696[0]
+    //   Public signature debug description: <get-x>(){}kotlin.Int
     get
 
   // CHECK:
   //   Mangled name: P{}y
   //   Public signature: /P.y|3625903257357557171[0]
+  //   Public signature debug description: {}y
   val y: Int
     // CHECK JVM_IR:
     //   Mangled name: P#<get-y>(){}kotlin.Int
     //   Public signature: /P.y.<get-y>|-6745575372101973707[0]
+    //   Public signature debug description: <get-y>(){}kotlin.Int
     get
 
   // CHECK:
   //   Mangled name: P#<init>(kotlin.Int;kotlin.Int){}
   //   Public signature: /P.<init>|-7691762014320324121[0]
+  //   Public signature debug description: <init>(kotlin.Int;kotlin.Int){}
   constructor(x: Int, y: Int) /* primary */
 
   // CHECK JVM_IR:
   //   Mangled name: P#component1(){}kotlin.Int
   //   Public signature: /P.component1|-8217597213800111288[0]
+  //   Public signature debug description: component1(){}kotlin.Int
   operator fun component1(): Int
 
   // CHECK JVM_IR:
   //   Mangled name: P#component2(){}kotlin.Int
   //   Public signature: /P.component2|-7444333055342785242[0]
+  //   Public signature debug description: component2(){}kotlin.Int
   operator fun component2(): Int
 
 }
@@ -44,34 +51,41 @@ class Q<T1 : Any?, T2 : Any?> {
   // CHECK:
   //   Mangled name: Q{}x
   //   Public signature: /Q.x|-8060530855978347579[0]
+  //   Public signature debug description: {}x
   val x: T1
     // CHECK JVM_IR:
     //   Mangled name: Q#<get-x>(){}1:0
     //   Public signature: /Q.x.<get-x>|-8893883356128097563[0]
+    //   Public signature debug description: <get-x>(){}1:0
     get
 
   // CHECK:
   //   Mangled name: Q{}y
   //   Public signature: /Q.y|3625903257357557171[0]
+  //   Public signature debug description: {}y
   val y: T2
     // CHECK JVM_IR:
     //   Mangled name: Q#<get-y>(){}1:1
     //   Public signature: /Q.y.<get-y>|6657541212363005233[0]
+    //   Public signature debug description: <get-y>(){}1:1
     get
 
   // CHECK:
   //   Mangled name: Q#<init>(1:0;1:1){}
   //   Public signature: /Q.<init>|3086114026882374588[0]
+  //   Public signature debug description: <init>(1:0;1:1){}
   constructor(x: T1, y: T2) /* primary */
 
   // CHECK JVM_IR:
   //   Mangled name: Q#component1(){}1:0
   //   Public signature: /Q.component1|2393470133763651536[0]
+  //   Public signature debug description: component1(){}1:0
   operator fun component1(): T1
 
   // CHECK JVM_IR:
   //   Mangled name: Q#component2(){}1:1
   //   Public signature: /Q.component2|319033347667924570[0]
+  //   Public signature debug description: component2(){}1:1
   operator fun component2(): T2
 
 }
@@ -79,30 +93,36 @@ class Q<T1 : Any?, T2 : Any?> {
 // CHECK:
 //   Mangled name: #test1(){}
 //   Public signature: /test1|4297044443957252634[0]
+//   Public signature debug description: test1(){}
 fun test1(): Unit
 
 // CHECK:
 //   Mangled name: #test2(){}
 //   Public signature: /test2|4279114864133353152[0]
+//   Public signature debug description: test2(){}
 fun test2(): Unit
 
 // CHECK:
 //   Mangled name: #test2Desugared(){}
 //   Public signature: /test2Desugared|-3180716473372303323[0]
+//   Public signature debug description: test2Desugared(){}
 fun test2Desugared(): Unit
 
 // CHECK:
 //   Mangled name: #test3(){}
 //   Public signature: /test3|-3759735065270951803[0]
+//   Public signature debug description: test3(){}
 fun test3(): Unit
 
 // CHECK:
 //   Mangled name: #test4(){}
 //   Public signature: /test4|5588455914500386239[0]
+//   Public signature debug description: test4(){}
 fun test4(): Unit
 
 // CHECK:
 //   Mangled name: #use(kotlin.Any;kotlin.Any){}
 //   Public signature: /use|-6359788865457040335[0]
+//   Public signature debug description: use(kotlin.Any;kotlin.Any){}
 fun use(x: Any, y: Any): Unit
 

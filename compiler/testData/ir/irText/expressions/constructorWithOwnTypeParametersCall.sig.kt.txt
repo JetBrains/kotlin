@@ -9,6 +9,7 @@ class K1<T1 : Number> {
     // CHECK:
     //   Mangled name: K1.K2#<init>(){}
     //   Public signature: /K1.K2.<init>|-5645683436151566731[0]
+    //   Public signature debug description: <init>(){}
     constructor() /* primary */
 
   }
@@ -16,6 +17,7 @@ class K1<T1 : Number> {
   // CHECK:
   //   Mangled name: K1#<init>(){}
   //   Public signature: /K1.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   constructor() /* primary */
 
 }
@@ -23,10 +25,12 @@ class K1<T1 : Number> {
 // CHECK JVM_IR:
 //   Mangled name: #testJava(){}J1.J2<kotlin.Double,kotlin.Int>
 //   Public signature: /testJava|4724217123423783781[0]
+//   Public signature debug description: testJava(){}J1.J2<kotlin.Double,kotlin.Int>
 fun testJava(): J2<Double, Int>
 
 // CHECK JVM_IR:
 //   Mangled name: #testKotlin(){}K1.K2<kotlin.String,kotlin.Int>
 //   Public signature: /testKotlin|8698549833663124127[0]
+//   Public signature debug description: testKotlin(){}K1.K2<kotlin.String,kotlin.Int>
 fun testKotlin(): K2<String, Int>
 

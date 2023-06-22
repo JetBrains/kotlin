@@ -1,32 +1,40 @@
 // CHECK JVM_IR:
 //   Mangled name: #test1(kotlin.Any;kotlin.collections.Collection<kotlin.Any>){}kotlin.Boolean
 //   Public signature: /test1|2421564591168232411[0]
+//   Public signature debug description: test1(kotlin.Any;kotlin.collections.Collection<kotlin.Any>){}kotlin.Boolean
 // CHECK JS_IR NATIVE:
 //   Mangled name: #test1(kotlin.Any;kotlin.collections.Collection<kotlin.Any>){}
 //   Public signature: /test1|185139779466584752[0]
+//   Public signature debug description: test1(kotlin.Any;kotlin.collections.Collection<kotlin.Any>){}
 fun test1(a: Any, x: Collection<Any>): Boolean
 
 // CHECK JVM_IR:
 //   Mangled name: #test2(kotlin.Any;kotlin.collections.Collection<kotlin.Any>){}kotlin.Boolean
 //   Public signature: /test2|-2480848712272829730[0]
+//   Public signature debug description: test2(kotlin.Any;kotlin.collections.Collection<kotlin.Any>){}kotlin.Boolean
 // CHECK JS_IR NATIVE:
 //   Mangled name: #test2(kotlin.Any;kotlin.collections.Collection<kotlin.Any>){}
 //   Public signature: /test2|-8245838254458281601[0]
+//   Public signature debug description: test2(kotlin.Any;kotlin.collections.Collection<kotlin.Any>){}
 fun test2(a: Any, x: Collection<Any>): Boolean
 
 // CHECK JVM_IR:
 //   Mangled name: #test3(0:0;kotlin.collections.Collection<0:0>){0§<kotlin.Any?>}kotlin.Boolean
 //   Public signature: /test3|-3611627028832372019[0]
+//   Public signature debug description: test3(0:0;kotlin.collections.Collection<0:0>){0§<kotlin.Any?>}kotlin.Boolean
 // CHECK JS_IR NATIVE:
 //   Mangled name: #test3(0:0;kotlin.collections.Collection<0:0>){0§<kotlin.Any?>}
 //   Public signature: /test3|424039587834021207[0]
+//   Public signature debug description: test3(0:0;kotlin.collections.Collection<0:0>){0§<kotlin.Any?>}
 fun <T : Any?> test3(a: T, x: Collection<T>): Boolean
 
 // CHECK JVM_IR:
 //   Mangled name: #test4(0:0;kotlin.collections.Collection<0:0>){0§<kotlin.Any?>}kotlin.Boolean
 //   Public signature: /test4|-7047720598994490770[0]
+//   Public signature debug description: test4(0:0;kotlin.collections.Collection<0:0>){0§<kotlin.Any?>}kotlin.Boolean
 // CHECK JS_IR NATIVE:
 //   Mangled name: #test4(0:0;kotlin.collections.Collection<0:0>){0§<kotlin.Any?>}
 //   Public signature: /test4|-394283934792174597[0]
+//   Public signature debug description: test4(0:0;kotlin.collections.Collection<0:0>){0§<kotlin.Any?>}
 fun <T : Any?> test4(a: T, x: Collection<T>): Boolean
 

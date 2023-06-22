@@ -5,22 +5,27 @@ class A {
   // CHECK:
   //   Mangled name: A{}it
   //   Public signature: /A.it|3309866017710461759[0]
+  //   Public signature debug description: {}it
   var it: Double
     // CHECK JVM_IR:
     //   Mangled name: A#<get-it>(){}kotlin.Int
     //   Public signature: /A.it.<get-it>|6190054477763999448[0]
+    //   Public signature debug description: <get-it>(){}kotlin.Int
     // CHECK JS_IR NATIVE:
     //   Mangled name: A#<get-it>(){}
     //   Public signature: /A.it.<get-it>|1332554369542649775[0]
+    //   Public signature debug description: <get-it>(){}
     get(): Int
     // CHECK:
     //   Mangled name: A#<set-it>(kotlin.Int){}
     //   Public signature: /A.it.<set-it>|-4393420298619979651[0]
+    //   Public signature debug description: <set-it>(kotlin.Int){}
     set(value: Int): Unit
 
   // CHECK:
   //   Mangled name: A#<init>(){}
   //   Public signature: /A.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   constructor() /* primary */
 
 }
@@ -28,4 +33,5 @@ class A {
 // CHECK:
 //   Mangled name: #test(){}
 //   Public signature: /test|6620506149988718649[0]
+//   Public signature debug description: test(){}
 fun test(): Unit

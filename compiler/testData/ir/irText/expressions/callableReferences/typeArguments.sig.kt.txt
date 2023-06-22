@@ -1,37 +1,46 @@
 // CHECK:
 //   Mangled name: {}test1
 //   Public signature: /test1|6005685442305498193[0]
+//   Public signature debug description: {}test1
 val test1: Function1<Int, Unit>
   // CHECK JVM_IR:
   //   Mangled name: #<get-test1>(){}kotlin.Function1<kotlin.Int,kotlin.Unit>
   //   Public signature: /test1.<get-test1>|-2250341495239737904[0]
+  //   Public signature debug description: <get-test1>(){}kotlin.Function1<kotlin.Int,kotlin.Unit>
   // CHECK JS_IR NATIVE:
   //   Mangled name: #<get-test1>(){}
   //   Public signature: /test1.<get-test1>|-5735092642142423279[0]
+  //   Public signature debug description: <get-test1>(){}
   get
 
 // CHECK:
 //   Mangled name: {}test2
 //   Public signature: /test2|2517758057000911509[0]
+//   Public signature debug description: {}test2
 val test2: Function1<List<String>, Unit>
   // CHECK JVM_IR:
   //   Mangled name: #<get-test2>(){}kotlin.Function1<kotlin.collections.List<kotlin.String>,kotlin.Unit>
   //   Public signature: /test2.<get-test2>|1660110416035319894[0]
+  //   Public signature debug description: <get-test2>(){}kotlin.Function1<kotlin.collections.List<kotlin.String>,kotlin.Unit>
   // CHECK JS_IR NATIVE:
   //   Mangled name: #<get-test2>(){}
   //   Public signature: /test2.<get-test2>|-5218942532816206869[0]
+  //   Public signature debug description: <get-test2>(){}
   get
 
 // CHECK:
 //   Mangled name: {}test3
 //   Public signature: /test3|7677556066983021166[0]
+//   Public signature debug description: {}test3
 val test3: Function1<Int, Unit>
   // CHECK JVM_IR:
   //   Mangled name: #<get-test3>(){}kotlin.Function1<kotlin.Int,kotlin.Unit>
   //   Public signature: /test3.<get-test3>|6318789892361697174[0]
+  //   Public signature debug description: <get-test3>(){}kotlin.Function1<kotlin.Int,kotlin.Unit>
   // CHECK JS_IR NATIVE:
   //   Mangled name: #<get-test3>(){}
   //   Public signature: /test3.<get-test3>|-7333791615083236686[0]
+  //   Public signature debug description: <get-test3>(){}
   get
 
 // CHECK:
@@ -41,11 +50,13 @@ object Host {
   // CHECK:
   //   Mangled name: Host#<init>(){}
   //   Public signature: /Host.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   private constructor() /* primary */
 
   // CHECK:
   //   Mangled name: Host#objectMember(0:0){0§<kotlin.Any?>}
   //   Public signature: /Host.objectMember|-2876712893052428879[0]
+  //   Public signature debug description: objectMember(0:0){0§<kotlin.Any?>}
   inline fun <reified T : Any?> objectMember(x: T): Unit
 
 }
@@ -53,10 +64,12 @@ object Host {
 // CHECK:
 //   Mangled name: #topLevel1(0:0){0§<kotlin.Any?>}
 //   Public signature: /topLevel1|-1179785015028179967[0]
+//   Public signature debug description: topLevel1(0:0){0§<kotlin.Any?>}
 inline fun <reified T : Any?> topLevel1(x: T): Unit
 
 // CHECK:
 //   Mangled name: #topLevel2(kotlin.collections.List<0:0>){0§<kotlin.Any?>}
 //   Public signature: /topLevel2|-3665063920454112526[0]
+//   Public signature debug description: topLevel2(kotlin.collections.List<0:0>){0§<kotlin.Any?>}
 inline fun <reified T : Any?> topLevel2(x: List<T>): Unit
 

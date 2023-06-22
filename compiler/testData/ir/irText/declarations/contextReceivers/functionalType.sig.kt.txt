@@ -5,18 +5,22 @@ class C {
   // CHECK:
   //   Mangled name: C{}c
   //   Public signature: /C.c|-4416962153448040627[0]
+  //   Public signature debug description: {}c
   val c: Int
     // CHECK JVM_IR:
     //   Mangled name: C#<get-c>(){}kotlin.Int
     //   Public signature: /C.c.<get-c>|-2440337234483931882[0]
+    //   Public signature debug description: <get-c>(){}kotlin.Int
     // CHECK JS_IR NATIVE:
     //   Mangled name: C#<get-c>(){}
     //   Public signature: /C.c.<get-c>|2368736057102379596[0]
+    //   Public signature debug description: <get-c>(){}
     get
 
   // CHECK:
   //   Mangled name: C#<init>(){}
   //   Public signature: /C.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   constructor() /* primary */
 
 }
@@ -28,6 +32,7 @@ class Param {
   // CHECK:
   //   Mangled name: Param#<init>(){}
   //   Public signature: /Param.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   constructor() /* primary */
 
 }
@@ -39,18 +44,22 @@ class R {
   // CHECK:
   //   Mangled name: R{}r
   //   Public signature: /R.r|-8117627916896159533[0]
+  //   Public signature debug description: {}r
   val r: Int
     // CHECK JVM_IR:
     //   Mangled name: R#<get-r>(){}kotlin.Int
     //   Public signature: /R.r.<get-r>|4210912234201800356[0]
+    //   Public signature debug description: <get-r>(){}kotlin.Int
     // CHECK JS_IR NATIVE:
     //   Mangled name: R#<get-r>(){}
     //   Public signature: /R.r.<get-r>|-7424184448774736572[0]
+    //   Public signature debug description: <get-r>(){}
     get
 
   // CHECK:
   //   Mangled name: R#<init>(){}
   //   Public signature: /R.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   constructor() /* primary */
 
 }
@@ -58,25 +67,30 @@ class R {
 // CHECK:
 //   Mangled name: #f1!C@R(kotlin.Function3<C,R,Param,kotlin.Unit>){}
 //   Public signature: /f1|-6159499595952586733[0]
+//   Public signature debug description: f1!C@R(kotlin.Function3<C,R,Param,kotlin.Unit>){}
 fun R.f1($context_receiver_0: C, g: @ExtensionFunctionType Function3<C, R, Param, Unit>): Unit
 
 // CHECK:
 //   Mangled name: #f2!C(kotlin.Function2<C,Param,kotlin.Unit>){}
 //   Public signature: /f2|916795325728250836[0]
+//   Public signature debug description: f2!C(kotlin.Function2<C,Param,kotlin.Unit>){}
 fun f2($context_receiver_0: C, g: Function2<C, Param, Unit>): Unit
 
 // CHECK:
 //   Mangled name: #f3!C@R(kotlin.Function2<C,R,kotlin.Unit>){}
 //   Public signature: /f3|-4964362597990757320[0]
+//   Public signature debug description: f3!C@R(kotlin.Function2<C,R,kotlin.Unit>){}
 fun R.f3($context_receiver_0: C, g: @ExtensionFunctionType Function2<C, R, Unit>): Unit
 
 // CHECK:
 //   Mangled name: #f4!C(kotlin.Function1<C,kotlin.Unit>){}
 //   Public signature: /f4|-1495265522536685659[0]
+//   Public signature debug description: f4!C(kotlin.Function1<C,kotlin.Unit>){}
 fun f4($context_receiver_0: C, g: Function1<C, Unit>): Unit
 
 // CHECK:
 //   Mangled name: #test(){}
 //   Public signature: /test|6620506149988718649[0]
+//   Public signature debug description: test(){}
 fun test(): Unit
 

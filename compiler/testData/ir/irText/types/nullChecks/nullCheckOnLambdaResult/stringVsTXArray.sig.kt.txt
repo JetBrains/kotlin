@@ -1,10 +1,12 @@
 // CHECK:
 //   Mangled name: #testNoNullCheck(kotlin.Array<kotlin.String>){}
 //   Public signature: /testNoNullCheck|2656035610375474723[0]
+//   Public signature debug description: testNoNullCheck(kotlin.Array<kotlin.String>){}
 fun testNoNullCheck(xs: Array<String>): Unit
 
 // CHECK JVM_IR:
 //   Mangled name: #useTX(0:0;kotlin.Function0<0:0>){0§<kotlin.Any?>}0:0
 //   Public signature: /useTX|-6964391636652065512[0]
+//   Public signature debug description: useTX(0:0;kotlin.Function0<0:0>){0§<kotlin.Any?>}0:0
 fun <T : Any?> useTX(x: T, fn: Function0<T>): T
 

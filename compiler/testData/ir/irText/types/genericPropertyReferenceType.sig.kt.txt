@@ -5,22 +5,27 @@ class C<T : Any?> {
   // CHECK:
   //   Mangled name: C{}x
   //   Public signature: /C.x|-8060530855978347579[0]
+  //   Public signature debug description: {}x
   var x: T
     // CHECK JVM_IR:
     //   Mangled name: C#<get-x>(){}1:0
     //   Public signature: /C.x.<get-x>|-8893883356128097563[0]
+    //   Public signature debug description: <get-x>(){}1:0
     // CHECK JS_IR NATIVE:
     //   Mangled name: C#<get-x>(){}
     //   Public signature: /C.x.<get-x>|1482705010654679335[0]
+    //   Public signature debug description: <get-x>(){}
     get
     // CHECK:
     //   Mangled name: C#<set-x>(1:0){}
     //   Public signature: /C.x.<set-x>|-9166455774953348944[0]
+    //   Public signature debug description: <set-x>(1:0){}
     set
 
   // CHECK:
   //   Mangled name: C#<init>(1:0){}
   //   Public signature: /C.<init>|-8731461708390519279[0]
+  //   Public signature debug description: <init>(1:0){}
   constructor(x: T) /* primary */
 
 }
@@ -28,31 +33,38 @@ class C<T : Any?> {
 // CHECK:
 //   Mangled name: #test1(){}
 //   Public signature: /test1|4297044443957252634[0]
+//   Public signature debug description: test1(){}
 fun test1(): Unit
 
 // CHECK:
 //   Mangled name: #test2(kotlin.Any){}
 //   Public signature: /test2|-8648451680149324146[0]
+//   Public signature debug description: test2(kotlin.Any){}
 fun test2(a: Any): Unit
 
 // CHECK:
 //   Mangled name: #use(kotlin.reflect.KMutableProperty<kotlin.String>){}
 //   Public signature: /use|7185961134944189994[0]
+//   Public signature debug description: use(kotlin.reflect.KMutableProperty<kotlin.String>){}
 fun use(p: KMutableProperty<String>): Unit
 
 // CHECK:
 //   Mangled name: @C<0:0>{0§<kotlin.Any?>}y
 //   Public signature: /y|-2732700153869010159[0]
+//   Public signature debug description: @C<0:0>{0§<kotlin.Any?>}y
 var <T : Any?> C<T>.y: T
   // CHECK JVM_IR:
   //   Mangled name: #<get-y>@C<0:0>(){0§<kotlin.Any?>}0:0
   //   Public signature: /y.<get-y>|-1625423128410329211[0]
+  //   Public signature debug description: <get-y>@C<0:0>(){0§<kotlin.Any?>}0:0
   // CHECK JS_IR NATIVE:
   //   Mangled name: #<get-y>@C<0:0>(){0§<kotlin.Any?>}
   //   Public signature: /y.<get-y>|5204013647875052288[0]
+  //   Public signature debug description: <get-y>@C<0:0>(){0§<kotlin.Any?>}
   get(): T
   // CHECK:
   //   Mangled name: #<set-y>@C<0:0>(0:0){0§<kotlin.Any?>}
   //   Public signature: /y.<set-y>|6088413970012677834[0]
+  //   Public signature debug description: <set-y>@C<0:0>(0:0){0§<kotlin.Any?>}
   set(v: T): Unit
 

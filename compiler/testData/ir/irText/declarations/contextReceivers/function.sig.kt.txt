@@ -5,19 +5,23 @@ class C {
   // CHECK:
   //   Mangled name: C{}c
   //   Public signature: /C.c|-4416962153448040627[0]
+  //   Public signature debug description: {}c
   val c: Int
     field
     // CHECK JVM_IR:
     //   Mangled name: C#<get-c>(){}kotlin.Int
     //   Public signature: /C.c.<get-c>|-2440337234483931882[0]
+    //   Public signature debug description: <get-c>(){}kotlin.Int
     // CHECK JS_IR NATIVE:
     //   Mangled name: C#<get-c>(){}
     //   Public signature: /C.c.<get-c>|2368736057102379596[0]
+    //   Public signature debug description: <get-c>(){}
     get
 
   // CHECK:
   //   Mangled name: C#<init>(){}
   //   Public signature: /C.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   constructor() /* primary */
 
 }
@@ -25,6 +29,7 @@ class C {
 // CHECK:
 //   Mangled name: #bar(C){}
 //   Public signature: /bar|-380723744805794672[0]
+//   Public signature debug description: bar(C){}
 fun bar(c: C): Unit
   // CHECK:
   //   Mangled name: #bar(C){}#<anonymous>#static@C(){}
@@ -33,5 +38,6 @@ fun bar(c: C): Unit
 // CHECK:
 //   Mangled name: #foo!C(){}
 //   Public signature: /foo|-1491377105373055541[0]
+//   Public signature debug description: foo!C(){}
 fun foo($context_receiver_0: C): Unit
 

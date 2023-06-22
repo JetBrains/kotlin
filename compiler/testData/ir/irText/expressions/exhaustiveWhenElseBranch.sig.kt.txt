@@ -5,6 +5,7 @@ enum class A : Enum<A> {
   // CHECK:
   //   Mangled name: A#<init>(){}
   //   Public signature: /A.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   private constructor() /* primary */
   // CHECK:
   //   Mangled name: A.V1
@@ -14,93 +15,116 @@ enum class A : Enum<A> {
   // CHECK JVM_IR:
   //   Mangled name: A#valueOf#static(kotlin.String){}A
   //   Public signature: /A.valueOf|8636923007498802918[0]
+  //   Public signature debug description: valueOf#static(kotlin.String){}A
   // CHECK JS_IR NATIVE:
   //   Mangled name: A#valueOf#static(kotlin.String){}
   //   Public signature: /A.valueOf|-4683474617854611729[0]
+  //   Public signature debug description: valueOf#static(kotlin.String){}
   fun valueOf(value: String): A
 
   // CHECK JVM_IR:
   //   Mangled name: A#values#static(){}kotlin.Array<A>
   //   Public signature: /A.values|5753238680897834936[0]
+  //   Public signature debug description: values#static(){}kotlin.Array<A>
   // CHECK JS_IR NATIVE:
   //   Mangled name: A#values#static(){}
   //   Public signature: /A.values|-8715569000920726747[0]
+  //   Public signature debug description: values#static(){}
   fun values(): Array<A>
 
   // CHECK JVM_IR:
   //   Mangled name: A#clone(){}kotlin.Any
   //   Public signature: /A.clone|-6903128697527593263[0]
+  //   Public signature debug description: clone(){}kotlin.Any
   // CHECK JS_IR NATIVE:
   //   Mangled name: A#compareTo(A){}
   //   Public signature: /A.compareTo|5303387127644845713[0]
+  //   Public signature debug description: compareTo(A){}
   protected /* fake */ override fun clone(): Any
 
   // CHECK JVM_IR:
   //   Mangled name: A#compareTo(A){}kotlin.Int
   //   Public signature: /A.compareTo|-315052537630360750[0]
+  //   Public signature debug description: compareTo(A){}kotlin.Int
   // CHECK JS_IR NATIVE:
   //   Mangled name: A#equals(kotlin.Any?){}
   //   Public signature: /A.equals|4638265728071529943[0]
+  //   Public signature debug description: equals(kotlin.Any?){}
   /* fake */ override operator fun compareTo(other: A): Int
 
   // CHECK JVM_IR:
   //   Mangled name: A#equals(kotlin.Any?){}kotlin.Boolean
   //   Public signature: /A.equals|722809408929142791[0]
+  //   Public signature debug description: equals(kotlin.Any?){}kotlin.Boolean
   // CHECK JS_IR NATIVE:
   //   Mangled name: A#hashCode(){}
   //   Public signature: /A.hashCode|3409210261493131192[0]
+  //   Public signature debug description: hashCode(){}
   /* fake */ override operator fun equals(other: Any?): Boolean
 
   // CHECK JVM_IR:
   //   Mangled name: A#hashCode(){}kotlin.Int
   //   Public signature: /A.hashCode|-8048879360829830756[0]
+  //   Public signature debug description: hashCode(){}kotlin.Int
   // CHECK JS_IR NATIVE:
   //   Mangled name: A#toString(){}
   //   Public signature: /A.toString|-1522858123163872138[0]
+  //   Public signature debug description: toString(){}
   /* fake */ override fun hashCode(): Int
 
   // CHECK JVM_IR:
   //   Mangled name: A#toString(){}kotlin.String
   //   Public signature: /A.toString|6958853723545266802[0]
+  //   Public signature debug description: toString(){}kotlin.String
   // CHECK JS_IR NATIVE:
   //   Mangled name: A#static{}entries
   //   Public signature: /A.entries|-5134227801081826149[0]
+  //   Public signature debug description: #static{}entries
   /* fake */ override fun toString(): String
 
   // CHECK:
   //   Mangled name: A#static{}entries
   //   Public signature: /A.entries|-5134227801081826149[0]
+  //   Public signature debug description: #static{}entries
   val entries: EnumEntries<A>
     // CHECK JVM_IR:
     //   Mangled name: A#<get-entries>#static(){}kotlin.enums.EnumEntries<A>
     //   Public signature: /A.entries.<get-entries>|3279885591622842062[0]
+    //   Public signature debug description: <get-entries>#static(){}kotlin.enums.EnumEntries<A>
     // CHECK JS_IR NATIVE:
     //   Mangled name: A{}name
     //   Public signature: /A.name|4231860309499509769[0]
+    //   Public signature debug description: {}name
     get(): EnumEntries<A>
 
   // CHECK:
   //   Mangled name: A{}name
   //   Public signature: /A.name|4231860309499509769[0]
+  //   Public signature debug description: {}name
   /* fake */ override val name: String
     // CHECK JVM_IR:
     //   Mangled name: A#<get-name>(){}kotlin.String
     //   Public signature: /A.name.<get-name>|-8006111524522882650[0]
+    //   Public signature debug description: <get-name>(){}kotlin.String
     // CHECK JS_IR NATIVE:
     //   Mangled name: A{}ordinal
     //   Public signature: /A.ordinal|1912745122988592376[0]
+    //   Public signature debug description: {}ordinal
     /* fake */ override get(): String
 
   // CHECK:
   //   Mangled name: A{}ordinal
   //   Public signature: /A.ordinal|1912745122988592376[0]
+  //   Public signature debug description: {}ordinal
   /* fake */ override val ordinal: Int
     // CHECK JVM_IR:
     //   Mangled name: A#<get-ordinal>(){}kotlin.Int
     //   Public signature: /A.ordinal.<get-ordinal>|-6902664390061762634[0]
+    //   Public signature debug description: <get-ordinal>(){}kotlin.Int
     // CHECK JS_IR NATIVE:
     //   Mangled name: #testAnnotated_throwsJvm(A){}
     //   Public signature: /testAnnotated_throwsJvm|4125008918330317559[0]
+    //   Public signature debug description: testAnnotated_throwsJvm(A){}
     /* fake */ override get(): Int
 
 }
@@ -108,48 +132,58 @@ enum class A : Enum<A> {
 // CHECK:
 //   Mangled name: #testAnnotated_throwsJvm(A){}
 //   Public signature: /testAnnotated_throwsJvm|4125008918330317559[0]
+//   Public signature debug description: testAnnotated_throwsJvm(A){}
 fun testAnnotated_throwsJvm(a: A): Unit
 
 // CHECK JVM_IR:
 //   Mangled name: #testExpression_throws(A){}kotlin.Int
 //   Public signature: /testExpression_throws|-3237050390749274330[0]
+//   Public signature debug description: testExpression_throws(A){}kotlin.Int
 // CHECK JS_IR NATIVE:
 //   Mangled name: #testIfTheElseAnnotated_throwsJvm(A;kotlin.Boolean){}
 //   Public signature: /testIfTheElseAnnotated_throwsJvm|2206683935431102388[0]
+//   Public signature debug description: testIfTheElseAnnotated_throwsJvm(A;kotlin.Boolean){}
 fun testExpression_throws(a: A): Int
 
 // CHECK:
 //   Mangled name: #testIfTheElseAnnotated_throwsJvm(A;kotlin.Boolean){}
 //   Public signature: /testIfTheElseAnnotated_throwsJvm|2206683935431102388[0]
+//   Public signature debug description: testIfTheElseAnnotated_throwsJvm(A;kotlin.Boolean){}
 fun testIfTheElseAnnotated_throwsJvm(a: A, flag: Boolean): Unit
 
 // CHECK:
 //   Mangled name: #testIfTheElseParenthesized_throwsJvm(A;kotlin.Boolean){}
 //   Public signature: /testIfTheElseParenthesized_throwsJvm|3170189440226289413[0]
+//   Public signature debug description: testIfTheElseParenthesized_throwsJvm(A;kotlin.Boolean){}
 fun testIfTheElseParenthesized_throwsJvm(a: A, flag: Boolean): Unit
 
 // CHECK:
 //   Mangled name: #testIfTheElseStatement_empty(A;kotlin.Boolean){}
 //   Public signature: /testIfTheElseStatement_empty|303316846698538218[0]
+//   Public signature debug description: testIfTheElseStatement_empty(A;kotlin.Boolean){}
 fun testIfTheElseStatement_empty(a: A, flag: Boolean): Unit
 
 // CHECK:
 //   Mangled name: #testLambdaResultExpression_throws(A){}
 //   Public signature: /testLambdaResultExpression_throws|6372161286444781898[0]
+//   Public signature debug description: testLambdaResultExpression_throws(A){}
 fun testLambdaResultExpression_throws(a: A): Unit
 
 // CHECK:
 //   Mangled name: #testParenthesized_throwsJvm(A){}
 //   Public signature: /testParenthesized_throwsJvm|6011674528839266385[0]
+//   Public signature debug description: testParenthesized_throwsJvm(A){}
 fun testParenthesized_throwsJvm(a: A): Unit
 
 // CHECK:
 //   Mangled name: #testStatement_empty(A){}
 //   Public signature: /testStatement_empty|7105275116252213819[0]
+//   Public signature debug description: testStatement_empty(A){}
 fun testStatement_empty(a: A): Unit
 
 // CHECK:
 //   Mangled name: #testVariableAssignment_throws(A){}
 //   Public signature: /testVariableAssignment_throws|3390143287882484978[0]
+//   Public signature debug description: testVariableAssignment_throws(A){}
 fun testVariableAssignment_throws(a: A): Unit
 

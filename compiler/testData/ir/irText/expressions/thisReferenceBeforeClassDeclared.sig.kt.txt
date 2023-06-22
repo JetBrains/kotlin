@@ -9,14 +9,17 @@ open class WithCompanion {
     // CHECK:
     //   Mangled name: WithCompanion.Companion#<init>(){}
     //   Public signature: /WithCompanion.Companion.<init>|-5645683436151566731[0]
+    //   Public signature debug description: <init>(){}
     private constructor() /* primary */
 
     // CHECK JVM_IR:
     //   Mangled name: WithCompanion.Companion#foo(){}WithCompanion.Companion
     //   Public signature: /WithCompanion.Companion.foo|3115869173477949534[0]
+    //   Public signature debug description: foo(){}WithCompanion.Companion
     // CHECK JS_IR NATIVE:
     //   Mangled name: WithCompanion.Companion#foo(){}
     //   Public signature: /WithCompanion.Companion.foo|-1041209573719867811[0]
+    //   Public signature debug description: foo(){}
     fun foo(): Companion
 
   }
@@ -24,6 +27,7 @@ open class WithCompanion {
   // CHECK:
   //   Mangled name: WithCompanion#<init>(WithCompanion.Companion){}
   //   Public signature: /WithCompanion.<init>|-2521748254232742494[0]
+  //   Public signature debug description: <init>(WithCompanion.Companion){}
   constructor(a: Companion) /* primary */
 
 }
@@ -31,6 +35,7 @@ open class WithCompanion {
 // CHECK:
 //   Mangled name: #test@WithCompanion(){}
 //   Public signature: /test|4153745090133876513[0]
+//   Public signature debug description: test@WithCompanion(){}
 fun WithCompanion.test(): Unit
   // CHECK:
   //   Mangled name: #test@WithCompanion(){}.<no name provided>

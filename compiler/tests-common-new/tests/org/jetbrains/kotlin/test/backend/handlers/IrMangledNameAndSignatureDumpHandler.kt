@@ -213,18 +213,22 @@ class IrMangledNameAndSignatureDumpHandler(testServices: TestServices) : Abstrac
                 )
             }
 
-            // N.B. We do use IdSignatureRenderer.LEGACY because it renders public signatures with hashes which are
-            // computed by mangled names. So no real need in testing IdSignatureRenderer.DEFAULT which renders mangled names
-            // instead of hashes.
+            fun IdSignature.print(name: String) {
+                val commentPrefix = "//   "
+                // N.B. We do use IdSignatureRenderer.LEGACY because it renders public signatures with hashes which are
+                // computed from mangled names. So no real need in testing IdSignatureRenderer.DEFAULT which renders mangled names
+                // instead of hashes.
+                println(commentPrefix, name, ": ", render(IdSignatureRenderer.LEGACY))
+                asPublic()?.description?.let {
+                    println(commentPrefix, name, " debug description: ", it)
+                }
+            }
+
             fun printActualMangledNamesAndSignatures() {
                 printMangledNames(computedMangledNames)
 
-                symbol.signature?.let {
-                    println("//   Public signature: ${it.render(IdSignatureRenderer.LEGACY)}")
-                }
-                symbol.privateSignature?.let {
-                    println("//   Private signature: ${it.render(IdSignatureRenderer.LEGACY)}")
-                }
+                symbol.signature?.print("Public signature")
+                symbol.privateSignature?.print("Private signature")
             }
 
             var printedActualMangledNameAndSignature = false

@@ -8,6 +8,7 @@ interface Lazy<T : Any?> {
 // CHECK:
 //   Mangled name: #f(Lazy<kotlin.Int>;Lazy<kotlin.CharSequence>;Lazy<0:0>;Lazy<Lazy<0:0>>){0§<kotlin.Any?>}
 //   Public signature: /f|-6064829949850642050[0]
+//   Public signature debug description: f(Lazy<kotlin.Int>;Lazy<kotlin.CharSequence>;Lazy<0:0>;Lazy<Lazy<0:0>>){0§<kotlin.Any?>}
 fun <T : Any?> f(lazy1: Lazy<Int>, lazy2: Lazy<CharSequence>, lazyT: Lazy<T>, lazyLazyT: Lazy<Lazy<T>>): Unit
   // CHECK:
   //   Mangled name: #f(Lazy<kotlin.Int>;Lazy<kotlin.CharSequence>;Lazy<1:0>;Lazy<Lazy<1:0>>){0§<kotlin.Any?>}#<anonymous>#static@Lazy<kotlin.Int>(){}
@@ -47,15 +48,18 @@ fun <T : Any?> f(lazy1: Lazy<Int>, lazy2: Lazy<CharSequence>, lazyT: Lazy<T>, la
 // CHECK:
 //   Mangled name: #test1!Lazy<kotlin.Int>!Lazy<kotlin.CharSequence>(){}
 //   Public signature: /test1|5140438532469983470[0]
+//   Public signature debug description: test1!Lazy<kotlin.Int>!Lazy<kotlin.CharSequence>(){}
 fun test1($context_receiver_0: Lazy<Int>, $context_receiver_1: Lazy<CharSequence>): Unit
 
 // CHECK:
 //   Mangled name: #test2!Lazy<0:0>@Lazy<kotlin.Int>(){0§<kotlin.Any?>}
 //   Public signature: /test2|-2502875315769862011[0]
+//   Public signature debug description: test2!Lazy<0:0>@Lazy<kotlin.Int>(){0§<kotlin.Any?>}
 fun <T : Any?> Lazy<Int>.test2($context_receiver_0: Lazy<T>): Unit
 
 // CHECK:
 //   Mangled name: #test3!Lazy<Lazy<0:0>>@Lazy<kotlin.Int>(){0§<kotlin.Any?>}
 //   Public signature: /test3|-745136432920564509[0]
+//   Public signature debug description: test3!Lazy<Lazy<0:0>>@Lazy<kotlin.Int>(){0§<kotlin.Any?>}
 fun <T : Any?> Lazy<Int>.test3($context_receiver_0: Lazy<Lazy<T>>): Unit
 

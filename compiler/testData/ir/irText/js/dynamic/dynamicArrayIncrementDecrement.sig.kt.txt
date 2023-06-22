@@ -1,5 +1,6 @@
 // CHECK:
 //   Mangled name: #testArrayIncrementDecrement(<dynamic>){}
 //   Public signature: /testArrayIncrementDecrement|641183399401632019[0]
+//   Public signature debug description: testArrayIncrementDecrement(<dynamic>){}
 fun testArrayIncrementDecrement(d: dynamic): Unit
 

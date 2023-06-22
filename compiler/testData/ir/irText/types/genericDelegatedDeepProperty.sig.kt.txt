@@ -1,13 +1,16 @@
 // CHECK:
 //   Mangled name: @Value<0:0,CR<0:0>>{0§<kotlin.Any?>}additionalText
 //   Public signature: /additionalText|-3624592186686248643[0]
+//   Public signature debug description: @Value<0:0,CR<0:0>>{0§<kotlin.Any?>}additionalText
 val <T : Any?> Value<T, CR<T>>.additionalText: P<T, T> /* by */
   // CHECK JVM_IR:
   //   Mangled name: #<get-additionalText>@Value<0:0,CR<0:0>>(){0§<kotlin.Any?>}P<0:0,0:0>
   //   Public signature: /additionalText.<get-additionalText>|-2964788147301147474[0]
+  //   Public signature debug description: <get-additionalText>@Value<0:0,CR<0:0>>(){0§<kotlin.Any?>}P<0:0,0:0>
   // CHECK JS_IR NATIVE:
   //   Mangled name: #<get-additionalText>@Value<0:0,CR<0:0>>(){0§<kotlin.Any?>}
   //   Public signature: /additionalText.<get-additionalText>|7110754747328025719[0]
+  //   Public signature debug description: <get-additionalText>@Value<0:0,CR<0:0>>(){0§<kotlin.Any?>}
   get(): P<T, T>
 
 // CHECK:
@@ -17,26 +20,32 @@ class CR<R : Any?> : IR<R> {
   // CHECK:
   //   Mangled name: CR{}r
   //   Public signature: /CR.r|-8117627916896159533[0]
+  //   Public signature debug description: {}r
   val r: R
     // CHECK JVM_IR:
     //   Mangled name: CR#<get-r>(){}1:0
     //   Public signature: /CR.r.<get-r>|8828977917809363505[0]
+    //   Public signature debug description: <get-r>(){}1:0
     // CHECK JS_IR NATIVE:
     //   Mangled name: CR#<get-r>(){}
     //   Public signature: /CR.r.<get-r>|-7424184448774736572[0]
+    //   Public signature debug description: <get-r>(){}
     get
 
   // CHECK:
   //   Mangled name: CR#<init>(1:0){}
   //   Public signature: /CR.<init>|-8731461708390519279[0]
+  //   Public signature debug description: <init>(1:0){}
   constructor(r: R) /* primary */
 
   // CHECK JVM_IR:
   //   Mangled name: CR#foo(){}1:0
   //   Public signature: /CR.foo|-5478580208809996038[0]
+  //   Public signature debug description: foo(){}1:0
   // CHECK JS_IR NATIVE:
   //   Mangled name: CR#foo(){}
   //   Public signature: /CR.foo|-1041209573719867811[0]
+  //   Public signature debug description: foo(){}
   override fun foo(): R
 
 }
@@ -48,30 +57,37 @@ class P<P1 : Any?, P2 : Any?> {
   // CHECK:
   //   Mangled name: P{}p1
   //   Public signature: /P.p1|7711764890799440087[0]
+  //   Public signature debug description: {}p1
   val p1: P1
     // CHECK JVM_IR:
     //   Mangled name: P#<get-p1>(){}1:0
     //   Public signature: /P.p1.<get-p1>|-4219781876451304030[0]
+    //   Public signature debug description: <get-p1>(){}1:0
     // CHECK JS_IR NATIVE:
     //   Mangled name: P#<get-p1>(){}
     //   Public signature: /P.p1.<get-p1>|419663188770843259[0]
+    //   Public signature debug description: <get-p1>(){}
     get
 
   // CHECK:
   //   Mangled name: P{}p2
   //   Public signature: /P.p2|1837305664617486052[0]
+  //   Public signature debug description: {}p2
   val p2: P2
     // CHECK JVM_IR:
     //   Mangled name: P#<get-p2>(){}1:1
     //   Public signature: /P.p2.<get-p2>|6195993200459932152[0]
+    //   Public signature debug description: <get-p2>(){}1:1
     // CHECK JS_IR NATIVE:
     //   Mangled name: P#<get-p2>(){}
     //   Public signature: /P.p2.<get-p2>|3135798795606784082[0]
+    //   Public signature debug description: <get-p2>(){}
     get
 
   // CHECK:
   //   Mangled name: P#<init>(1:0;1:1){}
   //   Public signature: /P.<init>|3086114026882374588[0]
+  //   Public signature debug description: <init>(1:0;1:1){}
   constructor(p1: P1, p2: P2) /* primary */
 
 }
@@ -83,34 +99,42 @@ class Value<T : Any?, IT : IR<T>> {
   // CHECK:
   //   Mangled name: Value{}value1
   //   Public signature: /Value.value1|-1609410989855067486[0]
+  //   Public signature debug description: {}value1
   var value1: T
     // CHECK JVM_IR:
     //   Mangled name: Value#<get-value1>(){}1:0
     //   Public signature: /Value.value1.<get-value1>|6019421524321236052[0]
+    //   Public signature debug description: <get-value1>(){}1:0
     // CHECK JS_IR NATIVE:
     //   Mangled name: Value#<get-value1>(){}
     //   Public signature: /Value.value1.<get-value1>|6997002919469559625[0]
+    //   Public signature debug description: <get-value1>(){}
     get
     // CHECK:
     //   Mangled name: Value#<set-value1>(1:0){}
     //   Public signature: /Value.value1.<set-value1>|6839885877777773163[0]
+    //   Public signature debug description: <set-value1>(1:0){}
     set
 
   // CHECK:
   //   Mangled name: Value{}value2
   //   Public signature: /Value.value2|-1664181645671419060[0]
+  //   Public signature debug description: {}value2
   val value2: IT
     // CHECK JVM_IR:
     //   Mangled name: Value#<get-value2>(){}1:1
     //   Public signature: /Value.value2.<get-value2>|3746012481463661565[0]
+    //   Public signature debug description: <get-value2>(){}1:1
     // CHECK JS_IR NATIVE:
     //   Mangled name: Value#<get-value2>(){}
     //   Public signature: /Value.value2.<get-value2>|1776957621204807843[0]
+    //   Public signature debug description: <get-value2>(){}
     get
 
   // CHECK:
   //   Mangled name: Value#<init>(1:0;1:1){}
   //   Public signature: /Value.<init>|3086114026882374588[0]
+  //   Public signature debug description: <init>(1:0;1:1){}
   constructor(value1: T, value2: IT) /* primary */
 
 }
@@ -123,9 +147,11 @@ interface IDelegate1<T1 : Any?, R1 : Any?> {
   // CHECK JVM_IR:
   //   Mangled name: IDelegate1#getValue(1:0;kotlin.reflect.KProperty<*>){}1:1
   //   Public signature: /IDelegate1.getValue|-902248562118213940[0]
+  //   Public signature debug description: getValue(1:0;kotlin.reflect.KProperty<*>){}1:1
   // CHECK JS_IR NATIVE:
   //   Mangled name: IDelegate1#getValue(1:0;kotlin.reflect.KProperty<*>){}
   //   Public signature: /IDelegate1.getValue|-5099931934018608327[0]
+  //   Public signature debug description: getValue(1:0;kotlin.reflect.KProperty<*>){}
   abstract operator fun getValue(t: T1, p: KProperty<*>): R1
 
 }
@@ -138,9 +164,11 @@ interface IDelegate2<T2 : Any?, R2 : Any?> {
   // CHECK JVM_IR:
   //   Mangled name: IDelegate2#getValue(1:0;kotlin.reflect.KProperty<*>){}1:1
   //   Public signature: /IDelegate2.getValue|-902248562118213940[0]
+  //   Public signature debug description: getValue(1:0;kotlin.reflect.KProperty<*>){}1:1
   // CHECK JS_IR NATIVE:
   //   Mangled name: IDelegate2#getValue(1:0;kotlin.reflect.KProperty<*>){}
   //   Public signature: /IDelegate2.getValue|-5099931934018608327[0]
+  //   Public signature debug description: getValue(1:0;kotlin.reflect.KProperty<*>){}
   abstract operator fun getValue(t: T2, p: KProperty<*>): R2
 
 }
@@ -153,9 +181,11 @@ interface IR<R : Any?> {
   // CHECK JVM_IR:
   //   Mangled name: IR#foo(){}1:0
   //   Public signature: /IR.foo|-5478580208809996038[0]
+  //   Public signature debug description: foo(){}1:0
   // CHECK JS_IR NATIVE:
   //   Mangled name: IR#foo(){}
   //   Public signature: /IR.foo|-1041209573719867811[0]
+  //   Public signature debug description: foo(){}
   abstract fun foo(): R
 
 }

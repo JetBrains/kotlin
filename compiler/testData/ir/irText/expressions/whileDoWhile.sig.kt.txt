@@ -1,10 +1,12 @@
 // CHECK:
 //   Mangled name: #test(){}
 //   Public signature: /test|6620506149988718649[0]
+//   Public signature debug description: test(){}
 fun test(): Unit
 
 // CHECK:
 //   Mangled name: #testSmartcastInCondition(){}
 //   Public signature: /testSmartcastInCondition|-5923754457814780223[0]
+//   Public signature debug description: testSmartcastInCondition(){}
 fun testSmartcastInCondition(): Unit
 

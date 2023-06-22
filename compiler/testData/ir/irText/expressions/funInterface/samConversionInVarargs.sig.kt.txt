@@ -6,6 +6,7 @@ fun interface IFoo {
   // CHECK:
   //   Mangled name: IFoo#foo(kotlin.Int){}
   //   Public signature: /IFoo.foo|-104159190164110731[0]
+  //   Public signature debug description: foo(kotlin.Int){}
   abstract fun foo(i: Int): Unit
 
 }
@@ -13,28 +14,34 @@ fun interface IFoo {
 // CHECK:
 //   Mangled name: #testAdaptedCR(){}
 //   Public signature: /testAdaptedCR|-2000726175248606[0]
+//   Public signature debug description: testAdaptedCR(){}
 fun testAdaptedCR(): Unit
 
 // CHECK:
 //   Mangled name: #testLambda(){}
 //   Public signature: /testLambda|-124997257399938843[0]
+//   Public signature debug description: testLambda(){}
 fun testLambda(): Unit
 
 // CHECK:
 //   Mangled name: #testSeveralLambdas(){}
 //   Public signature: /testSeveralLambdas|884186753581284332[0]
+//   Public signature debug description: testSeveralLambdas(){}
 fun testSeveralLambdas(): Unit
 
 // CHECK:
 //   Mangled name: #useVararg(kotlin.Array<out|IFoo>...){}
 //   Public signature: /useVararg|-167843892719966590[0]
+//   Public signature debug description: useVararg(kotlin.Array<out|IFoo>...){}
 fun useVararg(vararg foos: IFoo): Unit
 
 // CHECK JVM_IR:
 //   Mangled name: #withVarargOfInt(kotlin.IntArray...){}kotlin.String
 //   Public signature: /withVarargOfInt|-4664776409518571139[0]
+//   Public signature debug description: withVarargOfInt(kotlin.IntArray...){}kotlin.String
 // CHECK JS_IR NATIVE:
 //   Mangled name: #withVarargOfInt(kotlin.IntArray...){}
 //   Public signature: /withVarargOfInt|-232972314185863621[0]
+//   Public signature debug description: withVarargOfInt(kotlin.IntArray...){}
 fun withVarargOfInt(vararg xs: Int): String
 

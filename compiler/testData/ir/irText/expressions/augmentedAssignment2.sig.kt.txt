@@ -1,13 +1,16 @@
 // CHECK:
 //   Mangled name: {}p
 //   Public signature: /p|6715504260787941082[0]
+//   Public signature debug description: {}p
 val p: A
   // CHECK JVM_IR:
   //   Mangled name: #<get-p>(){}A
   //   Public signature: /p.<get-p>|2133879666814551157[0]
+  //   Public signature debug description: <get-p>(){}A
   // CHECK JS_IR NATIVE:
   //   Mangled name: #<get-p>(){}
   //   Public signature: /p.<get-p>|-1162552463316289847[0]
+  //   Public signature debug description: <get-p>(){}
   get
 
 // CHECK:
@@ -17,6 +20,7 @@ class A {
   // CHECK:
   //   Mangled name: A#<init>(){}
   //   Public signature: /A.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   constructor() /* primary */
 
 }
@@ -24,35 +28,42 @@ class A {
 // CHECK:
 //   Mangled name: #divAssign@A(kotlin.String){}
 //   Public signature: /divAssign|8861164861689844119[0]
+//   Public signature debug description: divAssign@A(kotlin.String){}
 operator fun A.divAssign(s: String): Unit
 
 // CHECK:
 //   Mangled name: #minusAssign@A(kotlin.String){}
 //   Public signature: /minusAssign|7280125346699981355[0]
+//   Public signature debug description: minusAssign@A(kotlin.String){}
 operator fun A.minusAssign(s: String): Unit
 
 // CHECK:
 //   Mangled name: #plusAssign@A(kotlin.String){}
 //   Public signature: /plusAssign|-3878040514225458311[0]
+//   Public signature debug description: plusAssign@A(kotlin.String){}
 operator fun A.plusAssign(s: String): Unit
 
 // CHECK:
 //   Mangled name: #remAssign@A(kotlin.String){}
 //   Public signature: /remAssign|-6176434065111215580[0]
+//   Public signature debug description: remAssign@A(kotlin.String){}
 operator fun A.remAssign(s: String): Unit
 
 // CHECK:
 //   Mangled name: #testProperty(){}
 //   Public signature: /testProperty|5285658686723604291[0]
+//   Public signature debug description: testProperty(){}
 fun testProperty(): Unit
 
 // CHECK:
 //   Mangled name: #testVariable(){}
 //   Public signature: /testVariable|660968387512033895[0]
+//   Public signature debug description: testVariable(){}
 fun testVariable(): Unit
 
 // CHECK:
 //   Mangled name: #timesAssign@A(kotlin.String){}
 //   Public signature: /timesAssign|-8299603771166721739[0]
+//   Public signature debug description: timesAssign@A(kotlin.String){}
 operator fun A.timesAssign(s: String): Unit
 

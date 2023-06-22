@@ -1,24 +1,30 @@
 // CHECK JVM_IR:
 //   Mangled name: #test1(kotlin.String;kotlin.Any){}kotlin.String
 //   Public signature: /test1|2440544200321987910[0]
+//   Public signature debug description: test1(kotlin.String;kotlin.Any){}kotlin.String
 // CHECK JS_IR NATIVE:
 //   Mangled name: #test1(kotlin.String;kotlin.Any){}
 //   Public signature: /test1|-8076416945130465068[0]
+//   Public signature debug description: test1(kotlin.String;kotlin.Any){}
 fun test1(a: String, b: Any): String
 
 // CHECK JVM_IR:
 //   Mangled name: #test2(kotlin.String;kotlin.Int){}kotlin.String
 //   Public signature: /test2|9065897195329223931[0]
+//   Public signature debug description: test2(kotlin.String;kotlin.Int){}kotlin.String
 // CHECK JS_IR NATIVE:
 //   Mangled name: #test2(kotlin.String;kotlin.Int){}
 //   Public signature: /test2|6075955926134197604[0]
+//   Public signature debug description: test2(kotlin.String;kotlin.Int){}
 fun test2(a: String, b: Int): String
 
 // CHECK JVM_IR:
 //   Mangled name: #test3(kotlin.String;kotlin.Int){}kotlin.String
 //   Public signature: /test3|3363196109253524910[0]
+//   Public signature debug description: test3(kotlin.String;kotlin.Int){}kotlin.String
 // CHECK JS_IR NATIVE:
 //   Mangled name: #test3(kotlin.String;kotlin.Int){}
 //   Public signature: /test3|-788223786464412990[0]
+//   Public signature debug description: test3(kotlin.String;kotlin.Int){}
 fun test3(a: String, b: Int): String
 

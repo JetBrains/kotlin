@@ -5,23 +5,28 @@ class CBoth : ILeft, IRight {
   // CHECK:
   //   Mangled name: CBoth#<init>(){}
   //   Public signature: /CBoth.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   constructor() /* primary */
 
   // CHECK:
   //   Mangled name: CBoth#foo(){}
   //   Public signature: /CBoth.foo|-1041209573719867811[0]
+  //   Public signature debug description: foo(){}
   override fun foo(): Unit
 
   // CHECK:
   //   Mangled name: CBoth{}bar
   //   Public signature: /CBoth.bar|-7864284097863469857[0]
+  //   Public signature debug description: {}bar
   override val bar: Int
     // CHECK JVM_IR:
     //   Mangled name: CBoth#<get-bar>(){}kotlin.Int
     //   Public signature: /CBoth.bar.<get-bar>|-7403724005139201014[0]
+    //   Public signature debug description: <get-bar>(){}kotlin.Int
     // CHECK JS_IR NATIVE:
     //   Mangled name: CBoth#<get-bar>(){}
     //   Public signature: /CBoth.bar.<get-bar>|6880642144337645699[0]
+    //   Public signature debug description: <get-bar>(){}
     override get(): Int
 
 }
@@ -34,18 +39,22 @@ interface ILeft {
   // CHECK:
   //   Mangled name: ILeft#foo(){}
   //   Public signature: /ILeft.foo|-1041209573719867811[0]
+  //   Public signature debug description: foo(){}
   fun foo(): Unit
 
   // CHECK:
   //   Mangled name: ILeft{}bar
   //   Public signature: /ILeft.bar|-7864284097863469857[0]
+  //   Public signature debug description: {}bar
   val bar: Int
     // CHECK JVM_IR:
     //   Mangled name: ILeft#<get-bar>(){}kotlin.Int
     //   Public signature: /ILeft.bar.<get-bar>|-7403724005139201014[0]
+    //   Public signature debug description: <get-bar>(){}kotlin.Int
     // CHECK JS_IR NATIVE:
     //   Mangled name: ILeft#<get-bar>(){}
     //   Public signature: /ILeft.bar.<get-bar>|6880642144337645699[0]
+    //   Public signature debug description: <get-bar>(){}
     get(): Int
 
 }
@@ -58,18 +67,22 @@ interface IRight {
   // CHECK:
   //   Mangled name: IRight#foo(){}
   //   Public signature: /IRight.foo|-1041209573719867811[0]
+  //   Public signature debug description: foo(){}
   fun foo(): Unit
 
   // CHECK:
   //   Mangled name: IRight{}bar
   //   Public signature: /IRight.bar|-7864284097863469857[0]
+  //   Public signature debug description: {}bar
   val bar: Int
     // CHECK JVM_IR:
     //   Mangled name: IRight#<get-bar>(){}kotlin.Int
     //   Public signature: /IRight.bar.<get-bar>|-7403724005139201014[0]
+    //   Public signature debug description: <get-bar>(){}kotlin.Int
     // CHECK JS_IR NATIVE:
     //   Mangled name: IRight#<get-bar>(){}
     //   Public signature: /IRight.bar.<get-bar>|6880642144337645699[0]
+    //   Public signature debug description: <get-bar>(){}
     get(): Int
 
 }

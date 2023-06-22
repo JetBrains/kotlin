@@ -5,6 +5,7 @@ class MyClass {
   // CHECK:
   //   Mangled name: MyClass#<init>!kotlin.Unit!kotlin.Int(){}
   //   Public signature: /MyClass.<init>|1062323742830185042[0]
+  //   Public signature debug description: <init>!kotlin.Unit!kotlin.Int(){}
   constructor($context_receiver_0: Unit, $context_receiver_1: Int) /* primary */
   // CHECK JVM_IR:
   //   Mangled name computed from Ir:         MyClass.contextReceiverField0

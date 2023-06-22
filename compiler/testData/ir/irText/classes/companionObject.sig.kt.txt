@@ -9,6 +9,7 @@ class Test1 {
     // CHECK:
     //   Mangled name: Test1.Companion#<init>(){}
     //   Public signature: /Test1.Companion.<init>|-5645683436151566731[0]
+    //   Public signature debug description: <init>(){}
     private constructor() /* primary */
 
   }
@@ -16,6 +17,7 @@ class Test1 {
   // CHECK:
   //   Mangled name: Test1#<init>(){}
   //   Public signature: /Test1.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   constructor() /* primary */
 
 }
@@ -31,6 +33,7 @@ class Test2 {
     // CHECK:
     //   Mangled name: Test2.Named#<init>(){}
     //   Public signature: /Test2.Named.<init>|-5645683436151566731[0]
+    //   Public signature debug description: <init>(){}
     private constructor() /* primary */
 
   }
@@ -38,6 +41,7 @@ class Test2 {
   // CHECK:
   //   Mangled name: Test2#<init>(){}
   //   Public signature: /Test2.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   constructor() /* primary */
 
 }

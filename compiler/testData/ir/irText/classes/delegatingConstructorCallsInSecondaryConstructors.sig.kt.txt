@@ -5,6 +5,7 @@ open class Base {
   // CHECK:
   //   Mangled name: Base#<init>(){}
   //   Public signature: /Base.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   constructor() /* primary */
 
 }
@@ -16,14 +17,17 @@ class Test : Base {
   // CHECK:
   //   Mangled name: Test#<init>(){}
   //   Public signature: /Test.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   constructor()
   // CHECK:
   //   Mangled name: Test#<init>(kotlin.Int){}
   //   Public signature: /Test.<init>|-5182794243525578284[0]
+  //   Public signature debug description: <init>(kotlin.Int){}
   constructor(xx: Int)
   // CHECK:
   //   Mangled name: Test#<init>(kotlin.Short){}
   //   Public signature: /Test.<init>|-8537285994488541433[0]
+  //   Public signature debug description: <init>(kotlin.Short){}
   constructor(xx: Short)
 
 }

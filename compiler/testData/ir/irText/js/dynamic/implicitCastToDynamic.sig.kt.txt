@@ -1,61 +1,74 @@
 // CHECK:
 //   Mangled name: {}d1
 //   Public signature: /d1|-2026668325688559202[0]
+//   Public signature debug description: {}d1
 val d1: dynamic
   // CHECK JS_IR NATIVE:
   //   Mangled name: #<get-d1>(){}
   //   Public signature: /d1.<get-d1>|3799770350020755350[0]
+  //   Public signature debug description: <get-d1>(){}
   get
 
 // CHECK:
 //   Mangled name: {}p
 //   Public signature: /p|6715504260787941082[0]
+//   Public signature debug description: {}p
 val p: Int
   // CHECK JS_IR NATIVE:
   //   Mangled name: #<get-p>(){}
   //   Public signature: /p.<get-p>|-1162552463316289847[0]
+  //   Public signature debug description: <get-p>(){}
   get
 
 // CHECK:
 //   Mangled name: {}d2
 //   Public signature: /d2|-7196645270133305146[0]
+//   Public signature debug description: {}d2
 var d2: dynamic
   // CHECK JS_IR NATIVE:
   //   Mangled name: #<get-d2>(){}
   //   Public signature: /d2.<get-d2>|-1981535204947042648[0]
+  //   Public signature debug description: <get-d2>(){}
   get
   // CHECK:
   //   Mangled name: #<set-d2>(<dynamic>){}
   //   Public signature: /d2.<set-d2>|8009685074731428505[0]
+  //   Public signature debug description: <set-d2>(<dynamic>){}
   set
 
 // CHECK:
 //   Mangled name: #test1(kotlin.String){}
 //   Public signature: /test1|3813564455063048258[0]
+//   Public signature debug description: test1(kotlin.String){}
 fun test1(s: String): Unit
 
 // CHECK:
 //   Mangled name: #test2(kotlin.Any){}
 //   Public signature: /test2|-8648451680149324146[0]
+//   Public signature debug description: test2(kotlin.Any){}
 fun test2(a: Any): Unit
 
 // CHECK:
 //   Mangled name: #test3(kotlin.Any?){}
 //   Public signature: /test3|7681112685114804269[0]
+//   Public signature debug description: test3(kotlin.Any?){}
 fun test3(a: Any?): Unit
 
 // CHECK:
 //   Mangled name: #test4(kotlin.Any;kotlin.String;kotlin.Any?){}
 //   Public signature: /test4|-3496354737059131368[0]
+//   Public signature debug description: test4(kotlin.Any;kotlin.String;kotlin.Any?){}
 fun test4(a: Any, s: String, na: Any?): Unit
 
 // CHECK:
 //   Mangled name: #test5(kotlin.Any;kotlin.String;kotlin.Any?){}
 //   Public signature: /test5|-54558059321704654[0]
+//   Public signature debug description: test5(kotlin.Any;kotlin.String;kotlin.Any?){}
 fun test5(a: Any, s: String, na: Any?): Unit
 
 // CHECK JS_IR NATIVE:
 //   Mangled name: #withDynamic(<dynamic>){}
 //   Public signature: /withDynamic|4181319760857558891[0]
+//   Public signature debug description: withDynamic(<dynamic>){}
 fun withDynamic(d: dynamic): dynamic
 

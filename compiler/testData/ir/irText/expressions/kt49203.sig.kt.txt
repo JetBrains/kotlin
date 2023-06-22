@@ -5,38 +5,47 @@ abstract class A {
   // CHECK:
   //   Mangled name: A{}x
   //   Public signature: /A.x|-8060530855978347579[0]
+  //   Public signature debug description: {}x
   lateinit var x: X
     // CHECK JVM_IR:
     //   Mangled name: A#<get-x>(){}X
     //   Public signature: /A.x.<get-x>|4318922799872535978[0]
+    //   Public signature debug description: <get-x>(){}X
     // CHECK JS_IR NATIVE:
     //   Mangled name: A#<get-x>(){}
     //   Public signature: /A.x.<get-x>|1482705010654679335[0]
+    //   Public signature debug description: <get-x>(){}
     get
     // CHECK:
     //   Mangled name: A#<set-x>(X){}
     //   Public signature: /A.x.<set-x>|-2731605021834565340[0]
+    //   Public signature debug description: <set-x>(X){}
     private set
 
   // CHECK:
   //   Mangled name: A{}y
   //   Public signature: /A.y|3625903257357557171[0]
+  //   Public signature debug description: {}y
   var y: X
     // CHECK JVM_IR:
     //   Mangled name: A#<get-y>(){}X
     //   Public signature: /A.y.<get-y>|-1726466926791307923[0]
+    //   Public signature debug description: <get-y>(){}X
     // CHECK JS_IR NATIVE:
     //   Mangled name: A#<get-y>(){}
     //   Public signature: /A.y.<get-y>|-7902422373892128922[0]
+    //   Public signature debug description: <get-y>(){}
     get
     // CHECK:
     //   Mangled name: A#<set-y>(X){}
     //   Public signature: /A.y.<set-y>|-4972047968960381371[0]
+    //   Public signature debug description: <set-y>(X){}
     private set
 
   // CHECK:
   //   Mangled name: A#<init>(){}
   //   Public signature: /A.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   constructor() /* primary */
 
 }
@@ -48,30 +57,37 @@ class B : A {
   // CHECK:
   //   Mangled name: B#<init>(){}
   //   Public signature: /B.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   constructor() /* primary */
 
   // CHECK:
   //   Mangled name: B{}x
   //   Public signature: /B.x|-8060530855978347579[0]
+  //   Public signature debug description: {}x
   /* fake */ override lateinit var x: X
     // CHECK JVM_IR:
     //   Mangled name: B#<get-x>(){}X
     //   Public signature: /B.x.<get-x>|4318922799872535978[0]
+    //   Public signature debug description: <get-x>(){}X
     // CHECK JS_IR NATIVE:
     //   Mangled name: B#<get-x>(){}
     //   Public signature: /B.x.<get-x>|1482705010654679335[0]
+    //   Public signature debug description: <get-x>(){}
     /* fake */ override get(): X
 
   // CHECK:
   //   Mangled name: B{}y
   //   Public signature: /B.y|3625903257357557171[0]
+  //   Public signature debug description: {}y
   /* fake */ override var y: X
     // CHECK JVM_IR:
     //   Mangled name: B#<get-y>(){}X
     //   Public signature: /B.y.<get-y>|-1726466926791307923[0]
+    //   Public signature debug description: <get-y>(){}X
     // CHECK JS_IR NATIVE:
     //   Mangled name: B#<get-y>(){}
     //   Public signature: /B.y.<get-y>|-7902422373892128922[0]
+    //   Public signature debug description: <get-y>(){}
     /* fake */ override get(): X
 
 }
@@ -83,27 +99,33 @@ class X {
   // CHECK:
   //   Mangled name: X{}value
   //   Public signature: /X.value|1987073854177347439[0]
+  //   Public signature debug description: {}value
   var value: String
     // CHECK JVM_IR:
     //   Mangled name: X#<get-value>(){}kotlin.String
     //   Public signature: /X.value.<get-value>|-7202092821145242726[0]
+    //   Public signature debug description: <get-value>(){}kotlin.String
     // CHECK JS_IR NATIVE:
     //   Mangled name: X#<get-value>(){}
     //   Public signature: /X.value.<get-value>|3260093555963109437[0]
+    //   Public signature debug description: <get-value>(){}
     get
     // CHECK:
     //   Mangled name: X#<set-value>(kotlin.String){}
     //   Public signature: /X.value.<set-value>|7375160065891674826[0]
+    //   Public signature debug description: <set-value>(kotlin.String){}
     set
 
   // CHECK:
   //   Mangled name: X#<init>(){}
   //   Public signature: /X.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   constructor() /* primary */
 
   // CHECK:
   //   Mangled name: X#plusAssign(kotlin.String){}
   //   Public signature: /X.plusAssign|-9128532564902303626[0]
+  //   Public signature debug description: plusAssign(kotlin.String){}
   operator fun plusAssign(data: String): Unit
 
 }
@@ -111,5 +133,6 @@ class X {
 // CHECK:
 //   Mangled name: #test(B){}
 //   Public signature: /test|3809392349795657853[0]
+//   Public signature debug description: test(B){}
 fun test(b: B): Unit
 

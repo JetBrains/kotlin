@@ -5,18 +5,22 @@ open class Base {
   // CHECK:
   //   Mangled name: Base{}x
   //   Public signature: /Base.x|-8060530855978347579[0]
+  //   Public signature debug description: {}x
   val x: Any
     // CHECK JVM_IR:
     //   Mangled name: Base#<get-x>(){}kotlin.Any
     //   Public signature: /Base.x.<get-x>|98409022523676208[0]
+    //   Public signature debug description: <get-x>(){}kotlin.Any
     // CHECK JS_IR NATIVE:
     //   Mangled name: Base#<get-x>(){}
     //   Public signature: /Base.x.<get-x>|1482705010654679335[0]
+    //   Public signature debug description: <get-x>(){}
     get
 
   // CHECK:
   //   Mangled name: Base#<init>(kotlin.Any){}
   //   Public signature: /Base.<init>|4518179880532599055[0]
+  //   Public signature debug description: <init>(kotlin.Any){}
   constructor(x: Any) /* primary */
 
 }
@@ -32,18 +36,22 @@ object Host {
     // CHECK:
     //   Mangled name: Host.Derived1#<init>(){}
     //   Public signature: /Host.Derived1.<init>|-5645683436151566731[0]
+    //   Public signature debug description: <init>(){}
     constructor() /* primary */
 
     // CHECK:
     //   Mangled name: Host.Derived1{}x
     //   Public signature: /Host.Derived1.x|-8060530855978347579[0]
+    //   Public signature debug description: {}x
     /* fake */ override val x: Any
       // CHECK JVM_IR:
       //   Mangled name: Host.Derived1#<get-x>(){}kotlin.Any
       //   Public signature: /Host.Derived1.x.<get-x>|98409022523676208[0]
+      //   Public signature debug description: <get-x>(){}kotlin.Any
       // CHECK JS_IR NATIVE:
       //   Mangled name: Host.Derived1#<get-x>(){}
       //   Public signature: /Host.Derived1.x.<get-x>|1482705010654679335[0]
+      //   Public signature debug description: <get-x>(){}
       /* fake */ override get(): Any
 
   }
@@ -55,18 +63,22 @@ object Host {
     // CHECK:
     //   Mangled name: Host.Derived2#<init>(){}
     //   Public signature: /Host.Derived2.<init>|-5645683436151566731[0]
+    //   Public signature debug description: <init>(){}
     constructor() /* primary */
 
     // CHECK:
     //   Mangled name: Host.Derived2{}x
     //   Public signature: /Host.Derived2.x|-8060530855978347579[0]
+    //   Public signature debug description: {}x
     /* fake */ override val x: Any
       // CHECK JVM_IR:
       //   Mangled name: Host.Derived2#<get-x>(){}kotlin.Any
       //   Public signature: /Host.Derived2.x.<get-x>|98409022523676208[0]
+      //   Public signature debug description: <get-x>(){}kotlin.Any
       // CHECK JS_IR NATIVE:
       //   Mangled name: Host.Derived2#<get-x>(){}
       //   Public signature: /Host.Derived2.x.<get-x>|1482705010654679335[0]
+      //   Public signature debug description: <get-x>(){}
       /* fake */ override get(): Any
 
   }
@@ -74,6 +86,7 @@ object Host {
   // CHECK:
   //   Mangled name: Host#<init>(){}
   //   Public signature: /Host.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   private constructor() /* primary */
 
 }

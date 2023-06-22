@@ -5,41 +5,51 @@ value class IT {
   // CHECK:
   //   Mangled name: IT{}x
   //   Public signature: /IT.x|-8060530855978347579[0]
+  //   Public signature debug description: {}x
   val x: Int
     // CHECK JVM_IR:
     //   Mangled name: IT#<get-x>(){}kotlin.Int
     //   Public signature: /IT.x.<get-x>|4966956098150895696[0]
+    //   Public signature debug description: <get-x>(){}kotlin.Int
     // CHECK JS_IR NATIVE:
     //   Mangled name: IT#<get-x>(){}
     //   Public signature: /IT.x.<get-x>|1482705010654679335[0]
+    //   Public signature debug description: <get-x>(){}
     get
 
   // CHECK:
   //   Mangled name: IT#<init>(kotlin.Int){}
   //   Public signature: /IT.<init>|-5182794243525578284[0]
+  //   Public signature debug description: <init>(kotlin.Int){}
   constructor(x: Int) /* primary */
   // CHECK JVM_IR:
   //   Mangled name: IT#equals(kotlin.Any?){}kotlin.Boolean
   //   Public signature: /IT.equals|722809408929142791[0]
+  //   Public signature debug description: equals(kotlin.Any?){}kotlin.Boolean
   // CHECK JS_IR NATIVE:
   //   Mangled name: IT#equals(kotlin.Any?){}
   //   Public signature: /IT.equals|4638265728071529943[0]
+  //   Public signature debug description: equals(kotlin.Any?){}
   override operator fun equals(other: Any?): Boolean
 
   // CHECK JVM_IR:
   //   Mangled name: IT#hashCode(){}kotlin.Int
   //   Public signature: /IT.hashCode|-8048879360829830756[0]
+  //   Public signature debug description: hashCode(){}kotlin.Int
   // CHECK JS_IR NATIVE:
   //   Mangled name: IT#hashCode(){}
   //   Public signature: /IT.hashCode|3409210261493131192[0]
+  //   Public signature debug description: hashCode(){}
   override fun hashCode(): Int
 
   // CHECK JVM_IR:
   //   Mangled name: IT#toString(){}kotlin.String
   //   Public signature: /IT.toString|6958853723545266802[0]
+  //   Public signature debug description: toString(){}kotlin.String
   // CHECK JS_IR NATIVE:
   //   Mangled name: IT#toString(){}
   //   Public signature: /IT.toString|-1522858123163872138[0]
+  //   Public signature debug description: toString(){}
   override fun toString(): String
 
 }
@@ -51,130 +61,162 @@ value class InlineMutableSet : MutableSet<IT> {
   // CHECK:
   //   Mangled name: InlineMutableSet{}ms
   //   Public signature: /InlineMutableSet.ms|3456531059400385118[0]
+  //   Public signature debug description: {}ms
   private val ms: MutableSet<IT>
     // CHECK JVM_IR:
     //   Mangled name: InlineMutableSet#<get-ms>(){}kotlin.collections.MutableSet<IT>
     //   Public signature: /InlineMutableSet.ms.<get-ms>|1704733968327666901[0]
+    //   Public signature debug description: <get-ms>(){}kotlin.collections.MutableSet<IT>
     // CHECK JS_IR NATIVE:
     //   Mangled name: InlineMutableSet#<get-ms>(){}
     //   Public signature: /InlineMutableSet.ms.<get-ms>|4267115966333581446[0]
+    //   Public signature debug description: <get-ms>(){}
     private get
 
   // CHECK:
   //   Mangled name: InlineMutableSet#<init>(kotlin.collections.MutableSet<IT>){}
   //   Public signature: /InlineMutableSet.<init>|-3183535736515224569[0]
+  //   Public signature debug description: <init>(kotlin.collections.MutableSet<IT>){}
   constructor(ms: MutableSet<IT>) /* primary */
   // CHECK JVM_IR:
   //   Mangled name: InlineMutableSet#equals(kotlin.Any?){}kotlin.Boolean
   //   Public signature: /InlineMutableSet.equals|722809408929142791[0]
+  //   Public signature debug description: equals(kotlin.Any?){}kotlin.Boolean
   // CHECK JS_IR NATIVE:
   //   Mangled name: InlineMutableSet#equals(kotlin.Any?){}
   //   Public signature: /InlineMutableSet.equals|4638265728071529943[0]
+  //   Public signature debug description: equals(kotlin.Any?){}
   override operator fun equals(other: Any?): Boolean
 
   // CHECK JVM_IR:
   //   Mangled name: InlineMutableSet#hashCode(){}kotlin.Int
   //   Public signature: /InlineMutableSet.hashCode|-8048879360829830756[0]
+  //   Public signature debug description: hashCode(){}kotlin.Int
   // CHECK JS_IR NATIVE:
   //   Mangled name: InlineMutableSet#hashCode(){}
   //   Public signature: /InlineMutableSet.hashCode|3409210261493131192[0]
+  //   Public signature debug description: hashCode(){}
   override fun hashCode(): Int
 
   // CHECK JVM_IR:
   //   Mangled name: InlineMutableSet#toString(){}kotlin.String
   //   Public signature: /InlineMutableSet.toString|6958853723545266802[0]
+  //   Public signature debug description: toString(){}kotlin.String
   // CHECK JS_IR NATIVE:
   //   Mangled name: InlineMutableSet#toString(){}
   //   Public signature: /InlineMutableSet.toString|-1522858123163872138[0]
+  //   Public signature debug description: toString(){}
   override fun toString(): String
 
   // CHECK JVM_IR:
   //   Mangled name: InlineMutableSet#add(IT){}kotlin.Boolean
   //   Public signature: /InlineMutableSet.add|4556529580522000316[0]
+  //   Public signature debug description: add(IT){}kotlin.Boolean
   // CHECK JS_IR NATIVE:
   //   Mangled name: InlineMutableSet#add(IT){}
   //   Public signature: /InlineMutableSet.add|4002399033337307378[0]
+  //   Public signature debug description: add(IT){}
   override fun add(element: IT): Boolean
 
   // CHECK JVM_IR:
   //   Mangled name: InlineMutableSet#addAll(kotlin.collections.Collection<IT>){}kotlin.Boolean
   //   Public signature: /InlineMutableSet.addAll|-5427487393658674793[0]
+  //   Public signature debug description: addAll(kotlin.collections.Collection<IT>){}kotlin.Boolean
   // CHECK JS_IR NATIVE:
   //   Mangled name: InlineMutableSet#addAll(kotlin.collections.Collection<IT>){}
   //   Public signature: /InlineMutableSet.addAll|9104210835668956209[0]
+  //   Public signature debug description: addAll(kotlin.collections.Collection<IT>){}
   override fun addAll(elements: Collection<IT>): Boolean
 
   // CHECK:
   //   Mangled name: InlineMutableSet#clear(){}
   //   Public signature: /InlineMutableSet.clear|-6446868449915108923[0]
+  //   Public signature debug description: clear(){}
   override fun clear(): Unit
 
   // CHECK JVM_IR:
   //   Mangled name: InlineMutableSet#contains(IT){}kotlin.Boolean
   //   Public signature: /InlineMutableSet.contains|5433205509426188652[0]
+  //   Public signature debug description: contains(IT){}kotlin.Boolean
   // CHECK JS_IR NATIVE:
   //   Mangled name: InlineMutableSet#contains(IT){}
   //   Public signature: /InlineMutableSet.contains|1523972532095183124[0]
+  //   Public signature debug description: contains(IT){}
   override operator fun contains(element: IT): Boolean
 
   // CHECK JVM_IR:
   //   Mangled name: InlineMutableSet#containsAll(kotlin.collections.Collection<IT>){}kotlin.Boolean
   //   Public signature: /InlineMutableSet.containsAll|-7975270216380936973[0]
+  //   Public signature debug description: containsAll(kotlin.collections.Collection<IT>){}kotlin.Boolean
   // CHECK JS_IR NATIVE:
   //   Mangled name: InlineMutableSet#containsAll(kotlin.collections.Collection<IT>){}
   //   Public signature: /InlineMutableSet.containsAll|9031609470323530811[0]
+  //   Public signature debug description: containsAll(kotlin.collections.Collection<IT>){}
   override fun containsAll(elements: Collection<IT>): Boolean
 
   // CHECK JVM_IR:
   //   Mangled name: InlineMutableSet#isEmpty(){}kotlin.Boolean
   //   Public signature: /InlineMutableSet.isEmpty|-626562167393617703[0]
+  //   Public signature debug description: isEmpty(){}kotlin.Boolean
   // CHECK JS_IR NATIVE:
   //   Mangled name: InlineMutableSet#isEmpty(){}
   //   Public signature: /InlineMutableSet.isEmpty|-412363028532554867[0]
+  //   Public signature debug description: isEmpty(){}
   override fun isEmpty(): Boolean
 
   // CHECK JVM_IR:
   //   Mangled name: InlineMutableSet#iterator(){}kotlin.collections.MutableIterator<IT>
   //   Public signature: /InlineMutableSet.iterator|-4073191386552833309[0]
+  //   Public signature debug description: iterator(){}kotlin.collections.MutableIterator<IT>
   // CHECK JS_IR NATIVE:
   //   Mangled name: InlineMutableSet#iterator(){}
   //   Public signature: /InlineMutableSet.iterator|8062689420742628886[0]
+  //   Public signature debug description: iterator(){}
   override operator fun iterator(): MutableIterator<IT>
 
   // CHECK JVM_IR:
   //   Mangled name: InlineMutableSet#remove(IT){}kotlin.Boolean
   //   Public signature: /InlineMutableSet.remove|-5569885229390352812[0]
+  //   Public signature debug description: remove(IT){}kotlin.Boolean
   // CHECK JS_IR NATIVE:
   //   Mangled name: InlineMutableSet#remove(IT){}
   //   Public signature: /InlineMutableSet.remove|-8774249090991155730[0]
+  //   Public signature debug description: remove(IT){}
   override fun remove(element: IT): Boolean
 
   // CHECK JVM_IR:
   //   Mangled name: InlineMutableSet#removeAll(kotlin.collections.Collection<IT>){}kotlin.Boolean
   //   Public signature: /InlineMutableSet.removeAll|-3088468608435360013[0]
+  //   Public signature debug description: removeAll(kotlin.collections.Collection<IT>){}kotlin.Boolean
   // CHECK JS_IR NATIVE:
   //   Mangled name: InlineMutableSet#removeAll(kotlin.collections.Collection<IT>){}
   //   Public signature: /InlineMutableSet.removeAll|6600936413226809258[0]
+  //   Public signature debug description: removeAll(kotlin.collections.Collection<IT>){}
   override fun removeAll(elements: Collection<IT>): Boolean
 
   // CHECK JVM_IR:
   //   Mangled name: InlineMutableSet#retainAll(kotlin.collections.Collection<IT>){}kotlin.Boolean
   //   Public signature: /InlineMutableSet.retainAll|-9017555672250825665[0]
+  //   Public signature debug description: retainAll(kotlin.collections.Collection<IT>){}kotlin.Boolean
   // CHECK JS_IR NATIVE:
   //   Mangled name: InlineMutableSet#retainAll(kotlin.collections.Collection<IT>){}
   //   Public signature: /InlineMutableSet.retainAll|5389728810992799385[0]
+  //   Public signature debug description: retainAll(kotlin.collections.Collection<IT>){}
   override fun retainAll(elements: Collection<IT>): Boolean
 
   // CHECK:
   //   Mangled name: InlineMutableSet{}size
   //   Public signature: /InlineMutableSet.size|-6253659984320132064[0]
+  //   Public signature debug description: {}size
   override val size: Int
     // CHECK JVM_IR:
     //   Mangled name: InlineMutableSet#<get-size>(){}kotlin.Int
     //   Public signature: /InlineMutableSet.size.<get-size>|-3941649985161900780[0]
+    //   Public signature debug description: <get-size>(){}kotlin.Int
     // CHECK JS_IR NATIVE:
     //   Mangled name: InlineMutableSet#<get-size>(){}
     //   Public signature: /InlineMutableSet.size.<get-size>|-8255337774232345969[0]
+    //   Public signature debug description: <get-size>(){}
     override get(): Int
 
 }

@@ -1,13 +1,16 @@
 // CHECK:
 //   Mangled name: #test1(){}
 //   Public signature: /test1|4297044443957252634[0]
+//   Public signature debug description: test1(){}
 fun test1(): Unit
 
 // CHECK JVM_IR:
 //   Mangled name: #test2(){}kotlin.Int
 //   Public signature: /test2|5542371834528279174[0]
+//   Public signature debug description: test2(){}kotlin.Int
 // CHECK JS_IR NATIVE:
 //   Mangled name: #test2(){}
 //   Public signature: /test2|4279114864133353152[0]
+//   Public signature debug description: test2(){}
 fun test2(): Int
 

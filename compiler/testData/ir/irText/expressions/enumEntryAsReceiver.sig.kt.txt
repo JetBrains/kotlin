@@ -5,6 +5,7 @@ abstract enum class X : Enum<X> {
   // CHECK:
   //   Mangled name: X#<init>(){}
   //   Public signature: /X.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   private constructor() /* primary */
   // CHECK:
   //   Mangled name: X.B
@@ -18,93 +19,116 @@ abstract enum class X : Enum<X> {
     // CHECK:
     //   Mangled name: X.B{}value2
     //   Public signature: /X.B.<EEC>.value2|-1664181645671419060[0]
+    //   Public signature debug description: {}value2
     val value2: String
       // CHECK JVM_IR:
       //   Mangled name: X.B#<get-value2>(){}kotlin.String
       //   Public signature: /X.B.<EEC>.value2.<get-value2>|2390168402748813003[0]
+      //   Public signature debug description: <get-value2>(){}kotlin.String
       // CHECK JS_IR NATIVE:
       //   Mangled name: X.B#<get-value2>(){}
       //   Public signature: /X.B.<EEC>.value2.<get-value2>|1776957621204807843[0]
+      //   Public signature debug description: <get-value2>(){}
       get
 
     // CHECK:
     //   Mangled name: X.B{}value
     //   Public signature: /X.B.<EEC>.value|1987073854177347439[0]
+    //   Public signature debug description: {}value
     override val value: Function0<String>
       // CHECK JVM_IR:
       //   Mangled name: X.B#<get-value>(){}kotlin.Function0<kotlin.String>
       //   Public signature: /X.B.<EEC>.value.<get-value>|-2160558915408168462[0]
+      //   Public signature debug description: <get-value>(){}kotlin.Function0<kotlin.String>
       // CHECK JS_IR NATIVE:
       //   Mangled name: X.B#<get-value>(){}
       //   Public signature: /X.B.<EEC>.value.<get-value>|3260093555963109437[0]
+      //   Public signature debug description: <get-value>(){}
       override get
 
     // CHECK:
     //   Mangled name: X.B#<init>(){}
     //   Public signature: /X.B.<EEC>.<init>|-5645683436151566731[0]
+    //   Public signature debug description: <init>(){}
     private constructor() /* primary */
     // CHECK JVM_IR:
     //   Mangled name: X.B#clone(){}kotlin.Any
     //   Public signature: /X.B.<EEC>.clone|-6903128697527593263[0]
+    //   Public signature debug description: clone(){}kotlin.Any
     // CHECK JS_IR NATIVE:
     //   Mangled name: X.B#compareTo(X){}
     //   Public signature: /X.B.<EEC>.compareTo|1261254128967309541[0]
+    //   Public signature debug description: compareTo(X){}
     protected /* fake */ override fun clone(): Any
 
     // CHECK JVM_IR:
     //   Mangled name: X.B#compareTo(X){}kotlin.Int
     //   Public signature: /X.B.<EEC>.compareTo|-4945307460605318887[0]
+    //   Public signature debug description: compareTo(X){}kotlin.Int
     // CHECK JS_IR NATIVE:
     //   Mangled name: X.B#equals(kotlin.Any?){}
     //   Public signature: /X.B.<EEC>.equals|4638265728071529943[0]
+    //   Public signature debug description: equals(kotlin.Any?){}
     /* fake */ override operator fun compareTo(other: X): Int
 
     // CHECK JVM_IR:
     //   Mangled name: X.B#equals(kotlin.Any?){}kotlin.Boolean
     //   Public signature: /X.B.<EEC>.equals|722809408929142791[0]
+    //   Public signature debug description: equals(kotlin.Any?){}kotlin.Boolean
     // CHECK JS_IR NATIVE:
     //   Mangled name: X.B#hashCode(){}
     //   Public signature: /X.B.<EEC>.hashCode|3409210261493131192[0]
+    //   Public signature debug description: hashCode(){}
     /* fake */ override operator fun equals(other: Any?): Boolean
 
     // CHECK JVM_IR:
     //   Mangled name: X.B#hashCode(){}kotlin.Int
     //   Public signature: /X.B.<EEC>.hashCode|-8048879360829830756[0]
+    //   Public signature debug description: hashCode(){}kotlin.Int
     // CHECK JS_IR NATIVE:
     //   Mangled name: X.B#toString(){}
     //   Public signature: /X.B.<EEC>.toString|-1522858123163872138[0]
+    //   Public signature debug description: toString(){}
     /* fake */ override fun hashCode(): Int
 
     // CHECK JVM_IR:
     //   Mangled name: X.B#toString(){}kotlin.String
     //   Public signature: /X.B.<EEC>.toString|6958853723545266802[0]
+    //   Public signature debug description: toString(){}kotlin.String
     // CHECK JS_IR NATIVE:
     //   Mangled name: X.B{}name
     //   Public signature: /X.B.<EEC>.name|4231860309499509769[0]
+    //   Public signature debug description: {}name
     /* fake */ override fun toString(): String
 
     // CHECK:
     //   Mangled name: X.B{}name
     //   Public signature: /X.B.<EEC>.name|4231860309499509769[0]
+    //   Public signature debug description: {}name
     /* fake */ override val name: String
       // CHECK JVM_IR:
       //   Mangled name: X.B#<get-name>(){}kotlin.String
       //   Public signature: /X.B.<EEC>.name.<get-name>|-8006111524522882650[0]
+      //   Public signature debug description: <get-name>(){}kotlin.String
       // CHECK JS_IR NATIVE:
       //   Mangled name: X.B{}ordinal
       //   Public signature: /X.B.<EEC>.ordinal|1912745122988592376[0]
+      //   Public signature debug description: {}ordinal
       /* fake */ override get(): String
 
     // CHECK:
     //   Mangled name: X.B{}ordinal
     //   Public signature: /X.B.<EEC>.ordinal|1912745122988592376[0]
+    //   Public signature debug description: {}ordinal
     /* fake */ override val ordinal: Int
       // CHECK JVM_IR:
       //   Mangled name: X.B#<get-ordinal>(){}kotlin.Int
       //   Public signature: /X.B.<EEC>.ordinal.<get-ordinal>|-6902664390061762634[0]
+      //   Public signature debug description: <get-ordinal>(){}kotlin.Int
       // CHECK JS_IR NATIVE:
       //   Mangled name: X#valueOf#static(kotlin.String){}
       //   Public signature: /X.valueOf|-4683474617854611729[0]
+      //   Public signature debug description: valueOf#static(kotlin.String){}
       /* fake */ override get(): Int
 
   }
@@ -112,102 +136,127 @@ abstract enum class X : Enum<X> {
   // CHECK JVM_IR:
   //   Mangled name: X#valueOf#static(kotlin.String){}X
   //   Public signature: /X.valueOf|5795127078210310399[0]
+  //   Public signature debug description: valueOf#static(kotlin.String){}X
   // CHECK JS_IR NATIVE:
   //   Mangled name: X#values#static(){}
   //   Public signature: /X.values|-8715569000920726747[0]
+  //   Public signature debug description: values#static(){}
   fun valueOf(value: String): X
 
   // CHECK JVM_IR:
   //   Mangled name: X#values#static(){}kotlin.Array<X>
   //   Public signature: /X.values|-7109739533511471403[0]
+  //   Public signature debug description: values#static(){}kotlin.Array<X>
   // CHECK JS_IR NATIVE:
   //   Mangled name: X#compareTo(X){}
   //   Public signature: /X.compareTo|1261254128967309541[0]
+  //   Public signature debug description: compareTo(X){}
   fun values(): Array<X>
 
   // CHECK JVM_IR:
   //   Mangled name: X#clone(){}kotlin.Any
   //   Public signature: /X.clone|-6903128697527593263[0]
+  //   Public signature debug description: clone(){}kotlin.Any
   // CHECK JS_IR NATIVE:
   //   Mangled name: X#equals(kotlin.Any?){}
   //   Public signature: /X.equals|4638265728071529943[0]
+  //   Public signature debug description: equals(kotlin.Any?){}
   protected /* fake */ override fun clone(): Any
 
   // CHECK JVM_IR:
   //   Mangled name: X#compareTo(X){}kotlin.Int
   //   Public signature: /X.compareTo|-4945307460605318887[0]
+  //   Public signature debug description: compareTo(X){}kotlin.Int
   // CHECK JS_IR NATIVE:
   //   Mangled name: X#hashCode(){}
   //   Public signature: /X.hashCode|3409210261493131192[0]
+  //   Public signature debug description: hashCode(){}
   /* fake */ override operator fun compareTo(other: X): Int
 
   // CHECK JVM_IR:
   //   Mangled name: X#equals(kotlin.Any?){}kotlin.Boolean
   //   Public signature: /X.equals|722809408929142791[0]
+  //   Public signature debug description: equals(kotlin.Any?){}kotlin.Boolean
   // CHECK JS_IR NATIVE:
   //   Mangled name: X#toString(){}
   //   Public signature: /X.toString|-1522858123163872138[0]
+  //   Public signature debug description: toString(){}
   /* fake */ override operator fun equals(other: Any?): Boolean
 
   // CHECK JVM_IR:
   //   Mangled name: X#hashCode(){}kotlin.Int
   //   Public signature: /X.hashCode|-8048879360829830756[0]
+  //   Public signature debug description: hashCode(){}kotlin.Int
   // CHECK JS_IR NATIVE:
   //   Mangled name: X#static{}entries
   //   Public signature: /X.entries|-5134227801081826149[0]
+  //   Public signature debug description: #static{}entries
   /* fake */ override fun hashCode(): Int
 
   // CHECK JVM_IR:
   //   Mangled name: X#toString(){}kotlin.String
   //   Public signature: /X.toString|6958853723545266802[0]
+  //   Public signature debug description: toString(){}kotlin.String
   // CHECK JS_IR NATIVE:
   //   Mangled name: X#<get-entries>#static(){}
   //   Public signature: /X.entries.<get-entries>|-6068527377476727729[0]
+  //   Public signature debug description: <get-entries>#static(){}
   /* fake */ override fun toString(): String
 
   // CHECK:
   //   Mangled name: X#static{}entries
   //   Public signature: /X.entries|-5134227801081826149[0]
+  //   Public signature debug description: #static{}entries
   val entries: EnumEntries<X>
     // CHECK JVM_IR:
     //   Mangled name: X#<get-entries>#static(){}kotlin.enums.EnumEntries<X>
     //   Public signature: /X.entries.<get-entries>|6681560497291336349[0]
+    //   Public signature debug description: <get-entries>#static(){}kotlin.enums.EnumEntries<X>
     // CHECK JS_IR NATIVE:
     //   Mangled name: X#<get-name>(){}
     //   Public signature: /X.name.<get-name>|5879344792307730109[0]
+    //   Public signature debug description: <get-name>(){}
     get(): EnumEntries<X>
 
   // CHECK:
   //   Mangled name: X{}name
   //   Public signature: /X.name|4231860309499509769[0]
+  //   Public signature debug description: {}name
   /* fake */ override val name: String
     // CHECK JVM_IR:
     //   Mangled name: X#<get-name>(){}kotlin.String
     //   Public signature: /X.name.<get-name>|-8006111524522882650[0]
+    //   Public signature debug description: <get-name>(){}kotlin.String
     // CHECK JS_IR NATIVE:
     //   Mangled name: X#<get-ordinal>(){}
     //   Public signature: /X.ordinal.<get-ordinal>|8409904226035914023[0]
+    //   Public signature debug description: <get-ordinal>(){}
     /* fake */ override get(): String
 
   // CHECK:
   //   Mangled name: X{}ordinal
   //   Public signature: /X.ordinal|1912745122988592376[0]
+  //   Public signature debug description: {}ordinal
   /* fake */ override val ordinal: Int
     // CHECK JVM_IR:
     //   Mangled name: X#<get-ordinal>(){}kotlin.Int
     //   Public signature: /X.ordinal.<get-ordinal>|-6902664390061762634[0]
+    //   Public signature debug description: <get-ordinal>(){}kotlin.Int
     // CHECK JS_IR NATIVE:
     //   Mangled name: X#<get-value>(){}
     //   Public signature: /X.value.<get-value>|3260093555963109437[0]
+    //   Public signature debug description: <get-value>(){}
     /* fake */ override get(): Int
 
   // CHECK:
   //   Mangled name: X{}value
   //   Public signature: /X.value|1987073854177347439[0]
+  //   Public signature debug description: {}value
   abstract val value: Function0<String>
     // CHECK JVM_IR:
     //   Mangled name: X#<get-value>(){}kotlin.Function0<kotlin.String>
     //   Public signature: /X.value.<get-value>|-2160558915408168462[0]
+    //   Public signature debug description: <get-value>(){}kotlin.Function0<kotlin.String>
     abstract get
 
 }
@@ -215,5 +264,6 @@ abstract enum class X : Enum<X> {
 // CHECK JVM_IR:
 //   Mangled name: #box(){}kotlin.String
 //   Public signature: /box|-9347091776561469[0]
+//   Public signature debug description: box(){}kotlin.String
 fun box(): String
 

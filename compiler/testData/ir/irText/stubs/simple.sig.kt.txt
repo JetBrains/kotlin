@@ -1,12 +1,15 @@
 // CHECK:
 //   Mangled name: {}test
 //   Public signature: /test|-5712650070209114719[0]
+//   Public signature debug description: {}test
 val test: Int
   // CHECK JVM_IR:
   //   Mangled name: #<get-test>(){}kotlin.Int
   //   Public signature: /test.<get-test>|3701432460336260723[0]
+  //   Public signature debug description: <get-test>(){}kotlin.Int
   // CHECK JS_IR NATIVE:
   //   Mangled name: #<get-test>(){}
   //   Public signature: /test.<get-test>|208282462577758837[0]
+  //   Public signature debug description: <get-test>(){}
   get
 

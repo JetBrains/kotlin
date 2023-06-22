@@ -5,11 +5,13 @@ expect abstract class A {
   // CHECK:
   //   Mangled name: A#<init>(){}
   //   Public signature: /A.<init>|-5645683436151566731[1]
+  //   Public signature debug description: <init>(){}
   protected expect constructor() /* primary */
 
   // CHECK:
   //   Mangled name: A#foo(){}
   //   Public signature: /A.foo|-1041209573719867811[1]
+  //   Public signature debug description: foo(){}
   expect abstract fun foo(): Unit
 
 }
@@ -21,11 +23,13 @@ abstract class A {
   // CHECK:
   //   Mangled name: A#<init>(){}
   //   Public signature: /A.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   protected constructor() /* primary */
 
   // CHECK:
   //   Mangled name: A#foo(){}
   //   Public signature: /A.foo|-1041209573719867811[0]
+  //   Public signature debug description: foo(){}
   abstract fun foo(): Unit
 
 }
@@ -37,16 +41,19 @@ expect open class B : A {
   // CHECK:
   //   Mangled name: B#<init>(kotlin.Int){}
   //   Public signature: /B.<init>|-5182794243525578284[1]
+  //   Public signature debug description: <init>(kotlin.Int){}
   expect constructor(i: Int) /* primary */
 
   // CHECK:
   //   Mangled name: B#bar(kotlin.String){}
   //   Public signature: /B.bar|5132770888056479978[1]
+  //   Public signature debug description: bar(kotlin.String){}
   expect open fun bar(s: String): Unit
 
   // CHECK:
   //   Mangled name: B#foo(){}
   //   Public signature: /B.foo|-1041209573719867811[1]
+  //   Public signature debug description: foo(){}
   expect override fun foo(): Unit
 
 }
@@ -58,16 +65,19 @@ open class B : A {
   // CHECK:
   //   Mangled name: B#<init>(kotlin.Int){}
   //   Public signature: /B.<init>|-5182794243525578284[0]
+  //   Public signature debug description: <init>(kotlin.Int){}
   constructor(i: Int) /* primary */
 
   // CHECK:
   //   Mangled name: B#bar(kotlin.String){}
   //   Public signature: /B.bar|5132770888056479978[0]
+  //   Public signature debug description: bar(kotlin.String){}
   open fun bar(s: String): Unit
 
   // CHECK:
   //   Mangled name: B#foo(){}
   //   Public signature: /B.foo|-1041209573719867811[0]
+  //   Public signature debug description: foo(){}
   override fun foo(): Unit
 
 }

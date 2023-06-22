@@ -6,6 +6,7 @@ fun interface IFoo {
   // CHECK:
   //   Mangled name: IFoo#foo(kotlin.Int){}
   //   Public signature: /IFoo.foo|-104159190164110731[0]
+  //   Public signature debug description: foo(kotlin.Int){}
   abstract fun foo(i: Int): Unit
 
 }
@@ -13,18 +14,22 @@ fun interface IFoo {
 // CHECK:
 //   Mangled name: #test(){}
 //   Public signature: /test|6620506149988718649[0]
+//   Public signature debug description: test(){}
 fun test(): Unit
 
 // CHECK:
 //   Mangled name: #useFoo(IFoo){}
 //   Public signature: /useFoo|-5008863146598304258[0]
+//   Public signature debug description: useFoo(IFoo){}
 fun useFoo(foo: IFoo): Unit
 
 // CHECK JVM_IR:
 //   Mangled name: #withVararg(kotlin.IntArray...){}kotlin.Int
 //   Public signature: /withVararg|2262699225692856772[0]
+//   Public signature debug description: withVararg(kotlin.IntArray...){}kotlin.Int
 // CHECK JS_IR NATIVE:
 //   Mangled name: #withVararg(kotlin.IntArray...){}
 //   Public signature: /withVararg|2511032413940817176[0]
+//   Public signature debug description: withVararg(kotlin.IntArray...){}
 fun withVararg(vararg xs: Int): Int
 

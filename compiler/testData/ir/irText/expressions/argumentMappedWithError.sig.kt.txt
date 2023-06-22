@@ -1,22 +1,27 @@
 // CHECK JVM_IR:
 //   Mangled name: #convert@kotlin.Number(){0§<kotlin.Number>}0:0
 //   Public signature: /convert|-8929373318028206908[0]
+//   Public signature debug description: convert@kotlin.Number(){0§<kotlin.Number>}0:0
 // CHECK JS_IR NATIVE:
 //   Mangled name: #convert@kotlin.Number(){0§<kotlin.Number>}
 //   Public signature: /convert|1202542150258287198[0]
+//   Public signature debug description: convert@kotlin.Number(){0§<kotlin.Number>}
 fun <R : Number> Number.convert(): R
 
 // CHECK:
 //   Mangled name: #foo(kotlin.Number){}
 //   Public signature: /foo|97687418835402471[0]
+//   Public signature debug description: foo(kotlin.Number){}
 fun foo(arg: Number): Unit
 
 // CHECK JVM_IR:
 //   Mangled name computed from Ir:         #main(kotlin.Array<kotlin.String>){}
 //   Mangled name computed from Descriptor: #main(kotlin.Array<kotlin.String>){}%argumentMappedWithError.kt
 //   Public signature: /main|5561668743171252170[0]
+//   Public signature debug description: main(kotlin.Array<kotlin.String>){}%argumentMappedWithError.kt
 // CHECK JS_IR NATIVE:
 //   Mangled name: #main(kotlin.Array<kotlin.String>){}
 //   Public signature: /main|5976701115139892152[0]
+//   Public signature debug description: main(kotlin.Array<kotlin.String>){}
 fun main(args: Array<String>): Unit
 

@@ -1,6 +1,7 @@
 // CHECK:
 //   Mangled name: #test(){}
 //   Public signature: /test|6620506149988718649[0]
+//   Public signature debug description: test(){}
 fun test(): Unit
   // CHECK:
   //   Mangled name: #test(){}#<anonymous>#static@kotlin.Int(){}
@@ -12,5 +13,6 @@ fun test(): Unit
 // CHECK:
 //   Mangled name: #useContext!0:0(kotlin.Function1<0:0,kotlin.Unit>){0§<kotlin.Any?>}
 //   Public signature: /useContext|4354708628570086942[0]
+//   Public signature debug description: useContext!0:0(kotlin.Function1<0:0,kotlin.Unit>){0§<kotlin.Any?>}
 fun <T : Any?> useContext($context_receiver_0: T, block: Function1<T, Unit>): Unit
 

@@ -1,6 +1,7 @@
 // CHECK:
 //   Mangled name: {}anonymous
 //   Public signature: /anonymous|-1633601112294415930[0]
+//   Public signature debug description: {}anonymous
 val anonymous: Function0<Unit>
   field
     // CHECK JVM_IR:
@@ -14,8 +15,10 @@ val anonymous: Function0<Unit>
   // CHECK JVM_IR:
   //   Mangled name: #<get-anonymous>(){}kotlin.Function0<kotlin.Unit>
   //   Public signature: /anonymous.<get-anonymous>|4047260013555274752[0]
+  //   Public signature debug description: <get-anonymous>(){}kotlin.Function0<kotlin.Unit>
   // CHECK JS_IR NATIVE:
   //   Mangled name: #<get-anonymous>(){}
   //   Public signature: /anonymous.<get-anonymous>|-7938030596525369571[0]
+  //   Public signature debug description: <get-anonymous>(){}
   get
 

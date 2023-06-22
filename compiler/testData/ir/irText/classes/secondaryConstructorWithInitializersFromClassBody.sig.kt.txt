@@ -5,6 +5,7 @@ open class Base {
   // CHECK:
   //   Mangled name: Base#<init>(){}
   //   Public signature: /Base.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   constructor() /* primary */
 
 }
@@ -16,26 +17,32 @@ class TestInitBlock : Base {
   // CHECK:
   //   Mangled name: TestInitBlock{}x
   //   Public signature: /TestInitBlock.x|-8060530855978347579[0]
+  //   Public signature debug description: {}x
   val x: Int
     // CHECK JVM_IR:
     //   Mangled name: TestInitBlock#<get-x>(){}kotlin.Int
     //   Public signature: /TestInitBlock.x.<get-x>|4966956098150895696[0]
+    //   Public signature debug description: <get-x>(){}kotlin.Int
     // CHECK JS_IR NATIVE:
     //   Mangled name: TestInitBlock#<get-x>(){}
     //   Public signature: /TestInitBlock.x.<get-x>|1482705010654679335[0]
+    //   Public signature debug description: <get-x>(){}
     get
 
   // CHECK:
   //   Mangled name: TestInitBlock#<init>(){}
   //   Public signature: /TestInitBlock.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   constructor()
   // CHECK:
   //   Mangled name: TestInitBlock#<init>(kotlin.Int){}
   //   Public signature: /TestInitBlock.<init>|-5182794243525578284[0]
+  //   Public signature debug description: <init>(kotlin.Int){}
   constructor(y: Int)
   // CHECK:
   //   Mangled name: TestInitBlock#<init>(kotlin.Any){}
   //   Public signature: /TestInitBlock.<init>|4518179880532599055[0]
+  //   Public signature debug description: <init>(kotlin.Any){}
   constructor(z: Any)
 
 }
@@ -47,18 +54,22 @@ class TestProperty : Base {
   // CHECK:
   //   Mangled name: TestProperty{}x
   //   Public signature: /TestProperty.x|-8060530855978347579[0]
+  //   Public signature debug description: {}x
   val x: Int
     // CHECK JVM_IR:
     //   Mangled name: TestProperty#<get-x>(){}kotlin.Int
     //   Public signature: /TestProperty.x.<get-x>|4966956098150895696[0]
+    //   Public signature debug description: <get-x>(){}kotlin.Int
     // CHECK JS_IR NATIVE:
     //   Mangled name: TestProperty#<get-x>(){}
     //   Public signature: /TestProperty.x.<get-x>|1482705010654679335[0]
+    //   Public signature debug description: <get-x>(){}
     get
 
   // CHECK:
   //   Mangled name: TestProperty#<init>(){}
   //   Public signature: /TestProperty.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   constructor()
 
 }

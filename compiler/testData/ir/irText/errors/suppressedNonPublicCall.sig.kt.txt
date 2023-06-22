@@ -5,11 +5,13 @@ class C {
   // CHECK:
   //   Mangled name: C#<init>(){}
   //   Public signature: /C.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   constructor() /* primary */
 
   // CHECK:
   //   Mangled name: C#bar(){}
   //   Public signature: /C.bar|496682602797471549[0]
+  //   Public signature debug description: bar(){}
   internal fun bar(): Unit
 
 }
@@ -17,5 +19,6 @@ class C {
 // CHECK:
 //   Mangled name: #foo@C(){}
 //   Public signature: /foo|-8448020621019557006[0]
+//   Public signature debug description: foo@C(){}
 inline fun C.foo(): Unit
 

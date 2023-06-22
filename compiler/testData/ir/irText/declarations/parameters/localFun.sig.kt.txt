@@ -1,6 +1,7 @@
 // CHECK:
 //   Mangled name: #outer(){0§<kotlin.Any?>}
 //   Public signature: /outer|-6093606212547620330[0]
+//   Public signature debug description: outer(){0§<kotlin.Any?>}
 fun <TT : Any?> outer(): Unit
   // CHECK:
   //   Mangled name: #outer(){0§<kotlin.Any?>}#test1#static(kotlin.Int;0:0){0§<kotlin.Any?>}

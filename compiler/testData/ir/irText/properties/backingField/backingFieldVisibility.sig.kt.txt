@@ -5,59 +5,73 @@ class A {
   // CHECK:
   //   Mangled name: A{}a
   //   Public signature: /A.a|-1200697420457237799[0]
+  //   Public signature debug description: {}a
   val a: Int
     // CHECK JVM_IR:
     //   Mangled name: A#<get-a>(){}kotlin.Number
     //   Public signature: /A.a.<get-a>|-5418543833660929450[0]
+    //   Public signature debug description: <get-a>(){}kotlin.Number
     // CHECK JS_IR NATIVE:
     //   Mangled name: A#<get-a>(){}
     //   Public signature: /A.a.<get-a>|6785176174175479410[0]
+    //   Public signature debug description: <get-a>(){}
     get
 
   // CHECK:
   //   Mangled name: A{}b
   //   Public signature: /A.b|772347207915745207[0]
+  //   Public signature debug description: {}b
   val b: Int
     // CHECK JVM_IR:
     //   Mangled name: A#<get-b>(){}kotlin.Number
     //   Public signature: /A.b.<get-b>|2675477957877241625[0]
+    //   Public signature debug description: <get-b>(){}kotlin.Number
     // CHECK JS_IR NATIVE:
     //   Mangled name: A#<get-b>(){}
     //   Public signature: /A.b.<get-b>|812004636995167743[0]
+    //   Public signature debug description: <get-b>(){}
     get
 
   // CHECK:
   //   Mangled name: A{}c
   //   Public signature: /A.c|-4416962153448040627[0]
+  //   Public signature debug description: {}c
   val c: Int
     // CHECK JVM_IR:
     //   Mangled name: A#<get-c>(){}kotlin.Int
     //   Public signature: /A.c.<get-c>|-2440337234483931882[0]
+    //   Public signature debug description: <get-c>(){}kotlin.Int
     // CHECK JS_IR NATIVE:
     //   Mangled name: A#<get-c>(){}
     //   Public signature: /A.c.<get-c>|2368736057102379596[0]
+    //   Public signature debug description: <get-c>(){}
     get
 
   // CHECK:
   //   Mangled name: A{}d
   //   Public signature: /A.d|5174763769109925331[0]
+  //   Public signature debug description: {}d
   val d: Int
     // CHECK JVM_IR:
     //   Mangled name: A#<get-d>(){}kotlin.Int
     //   Public signature: /A.d.<get-d>|-3703416348690628760[0]
+    //   Public signature debug description: <get-d>(){}kotlin.Int
     // CHECK JS_IR NATIVE:
     //   Mangled name: A#<get-d>(){}
     //   Public signature: /A.d.<get-d>|-6701718004621354461[0]
+    //   Public signature debug description: <get-d>(){}
     get
 
   // CHECK:
   //   Mangled name: A#<init>(){}
   //   Public signature: /A.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   constructor() /* primary */
 
   // CHECK:
   //   Mangled name: A#rest(){}
   //   Public signature: /A.rest|-218529575230056205[0]
+  //   Public signature debug description: rest(){}
   fun rest(): Unit
 
 }
@@ -65,4 +79,5 @@ class A {
 // CHECK:
 //   Mangled name: #test(){}
 //   Public signature: /test|6620506149988718649[0]
+//   Public signature debug description: test(){}
 fun test(): Unit

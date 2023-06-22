@@ -1,10 +1,12 @@
 // CHECK:
 //   Mangled name: #test1(kotlin.Boolean){}
 //   Public signature: /test1|-5145024389903460958[0]
+//   Public signature debug description: test1(kotlin.Boolean){}
 fun test1(b: Boolean): Unit
 
 // CHECK:
 //   Mangled name: #test2(kotlin.Boolean){}
 //   Public signature: /test2|-1465977587350129281[0]
+//   Public signature debug description: test2(kotlin.Boolean){}
 fun test2(b: Boolean): Unit
 

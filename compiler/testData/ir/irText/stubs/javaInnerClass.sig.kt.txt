@@ -5,19 +5,23 @@ class Test1 : J {
   // CHECK:
   //   Mangled name: Test1{}test
   //   Public signature: /Test1.test|-5712650070209114719[0]
+  //   Public signature debug description: {}test
   val test: JInner
     // CHECK JVM_IR:
     //   Mangled name: Test1#<get-test>(){}J.JInner
     //   Public signature: /Test1.test.<get-test>|3142095303045720451[0]
+    //   Public signature debug description: <get-test>(){}J.JInner
     get
 
   // CHECK:
   //   Mangled name: Test1#<init>(){}
   //   Public signature: /Test1.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   constructor() /* primary */
   // CHECK:
   //   Mangled name: Test1#bar(){}
   //   Public signature: /Test1.bar|496682602797471549[0]
+  //   Public signature debug description: bar(){}
   /* fake */ override fun bar(): Unit
 
 }

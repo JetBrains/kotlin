@@ -9,53 +9,64 @@ sealed class NetRequestStatus<out T : Any> {
     // CHECK:
     //   Mangled name: NetRequestStatus.Error{}error
     //   Public signature: /NetRequestStatus.Error.error|6099401258667737098[0]
+    //   Public signature debug description: {}error
     val error: Throwable
       // CHECK JVM_IR:
       //   Mangled name: NetRequestStatus.Error#<get-error>(){}kotlin.Throwable
       //   Public signature: /NetRequestStatus.Error.error.<get-error>|-5591110135270758069[0]
+      //   Public signature debug description: <get-error>(){}kotlin.Throwable
       get
 
     // CHECK:
     //   Mangled name: NetRequestStatus.Error{}value
     //   Public signature: /NetRequestStatus.Error.value|1987073854177347439[0]
+    //   Public signature debug description: {}value
     override val value: T?
       // CHECK JVM_IR:
       //   Mangled name: NetRequestStatus.Error#<get-value>(){}1:0?
       //   Public signature: /NetRequestStatus.Error.value.<get-value>|6345929521467247406[0]
+      //   Public signature debug description: <get-value>(){}1:0?
       override get
 
     // CHECK:
     //   Mangled name: NetRequestStatus.Error#<init>(kotlin.Throwable;1:0?){}
     //   Public signature: /NetRequestStatus.Error.<init>|-1373568199086185373[0]
+    //   Public signature debug description: <init>(kotlin.Throwable;1:0?){}
     constructor(error: Throwable, value: T?) /* primary */
     // CHECK JVM_IR:
     //   Mangled name: NetRequestStatus.Error#component1(){}kotlin.Throwable
     //   Public signature: /NetRequestStatus.Error.component1|2250146239720393392[0]
+    //   Public signature debug description: component1(){}kotlin.Throwable
     operator fun component1(): Throwable
 
     // CHECK JVM_IR:
     //   Mangled name: NetRequestStatus.Error#component2(){}1:0?
     //   Public signature: /NetRequestStatus.Error.component2|8724683043803012713[0]
+    //   Public signature debug description: component2(){}1:0?
     operator fun component2(): T?
 
     // CHECK JVM_IR:
     //   Mangled name: NetRequestStatus.Error#copy(kotlin.Throwable;1:0?){}NetRequestStatus.Error<1:0>
     //   Public signature: /NetRequestStatus.Error.copy|1925006413771870834[0]
+    //   Public signature debug description: copy(kotlin.Throwable;1:0?){}NetRequestStatus.Error<1:0>
     fun copy(error: Throwable, value: T?): Error<T>
 
     // CHECK JVM_IR:
     //   Mangled name: NetRequestStatus.Error#equals(kotlin.Any?){}kotlin.Boolean
     //   Public signature: /NetRequestStatus.Error.equals|722809408929142791[0]
+    //   Public signature debug description: equals(kotlin.Any?){}kotlin.Boolean
     override operator fun equals(other: Any?): Boolean
 
     // CHECK JVM_IR:
     //   Mangled name: NetRequestStatus.Error#hashCode(){}kotlin.Int
     //   Public signature: /NetRequestStatus.Error.hashCode|-8048879360829830756[0]
+    //   Public signature debug description: hashCode(){}kotlin.Int
     override fun hashCode(): Int
 
     // CHECK JVM_IR:
     //   Mangled name: NetRequestStatus.Error#toString(){}kotlin.String
     //   Public signature: /NetRequestStatus.Error.toString|6958853723545266802[0]
+    //   Public signature debug description: toString(){}kotlin.String
     override fun toString(): String
 
   }
@@ -63,15 +74,18 @@ sealed class NetRequestStatus<out T : Any> {
   // CHECK:
   //   Mangled name: NetRequestStatus#<init>(){}
   //   Public signature: /NetRequestStatus.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   protected constructor() /* primary */
 
   // CHECK:
   //   Mangled name: NetRequestStatus{}value
   //   Public signature: /NetRequestStatus.value|1987073854177347439[0]
+  //   Public signature debug description: {}value
   abstract val value: T?
     // CHECK JVM_IR:
     //   Mangled name: NetRequestStatus#<get-value>(){}1:0?
     //   Public signature: /NetRequestStatus.value.<get-value>|6345929521467247406[0]
+    //   Public signature debug description: <get-value>(){}1:0?
     abstract get
 
 }
@@ -79,11 +93,13 @@ sealed class NetRequestStatus<out T : Any> {
 // CHECK JVM_IR:
 //   Mangled name: #isError@NetRequestStatus<0:0>(){0§<kotlin.Any>}kotlin.Boolean
 //   Public signature: /isError|6754547245432239931[0]
+//   Public signature debug description: isError@NetRequestStatus<0:0>(){0§<kotlin.Any>}kotlin.Boolean
 @OptIn(markerClass = [ExperimentalContracts::class])
 fun <T : Any> NetRequestStatus<T>.isError(): Boolean
 
 // CHECK:
 //   Mangled name: #successOrThrow(){0§<kotlin.Any>}
 //   Public signature: /successOrThrow|8924064942759337382[0]
+//   Public signature debug description: successOrThrow(){0§<kotlin.Any>}
 fun <T : Any> successOrThrow(): Unit
 

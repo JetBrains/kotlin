@@ -6,6 +6,7 @@ fun interface SuspendRunnable {
   // CHECK:
   //   Mangled name: SuspendRunnable#invoke(){}
   //   Public signature: /SuspendRunnable.invoke|-4663091332620260873[0]
+  //   Public signature debug description: invoke(){}
   abstract suspend fun invoke(): Unit
 
 }
@@ -13,36 +14,44 @@ fun interface SuspendRunnable {
 // CHECK:
 //   Mangled name: #bar1(){}
 //   Public signature: /bar1|1669926808669747346[0]
+//   Public signature debug description: bar1(){}
 fun bar1(): Unit
 
 // CHECK JVM_IR:
 //   Mangled name: #bar2(kotlin.String){}kotlin.Int
 //   Public signature: /bar2|3267780493794663662[0]
+//   Public signature debug description: bar2(kotlin.String){}kotlin.Int
 // CHECK JS_IR NATIVE:
 //   Mangled name: #bar2(kotlin.String){}
 //   Public signature: /bar2|871846488143355822[0]
+//   Public signature debug description: bar2(kotlin.String){}
 fun bar2(s: String): Int
 
 // CHECK:
 //   Mangled name: #bar3(){}
 //   Public signature: /bar3|-4458378888622542195[0]
+//   Public signature debug description: bar3(){}
 fun bar3(): Unit
 
 // CHECK JVM_IR:
 //   Mangled name: #bar3(kotlin.String){}kotlin.Int
 //   Public signature: /bar3|-5694254873370624097[0]
+//   Public signature debug description: bar3(kotlin.String){}kotlin.Int
 // CHECK JS_IR NATIVE:
 //   Mangled name: #bar3(kotlin.String){}
 //   Public signature: /bar3|-8604784325283105439[0]
+//   Public signature debug description: bar3(kotlin.String){}
 suspend fun bar3(s: String): Int
 
 // CHECK:
 //   Mangled name: #box(){}
 //   Public signature: /box|2173511048851971368[0]
+//   Public signature debug description: box(){}
 fun box(): Unit
 
 // CHECK:
 //   Mangled name: #foo1(SuspendRunnable){}
 //   Public signature: /foo1|-5121966172672447653[0]
+//   Public signature debug description: foo1(SuspendRunnable){}
 fun foo1(s: SuspendRunnable): Unit
 

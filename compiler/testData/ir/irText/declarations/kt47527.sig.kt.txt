@@ -1,24 +1,30 @@
 // CHECK JVM_IR:
 //   Mangled name: #box(){}kotlin.String
 //   Public signature: /box|-9347091776561469[0]
+//   Public signature debug description: box(){}kotlin.String
 // CHECK JS_IR NATIVE:
 //   Mangled name: #box(){}
 //   Public signature: /box|2173511048851971368[0]
+//   Public signature debug description: box(){}
 fun box(): String
 
 // CHECK JVM_IR:
 //   Mangled name: #test_1(kotlin.Any?){}kotlin.String?
 //   Public signature: /test_1|8306101080862525041[0]
+//   Public signature debug description: test_1(kotlin.Any?){}kotlin.String?
 // CHECK JS_IR NATIVE:
 //   Mangled name: #test_1(kotlin.Any?){}
 //   Public signature: /test_1|6244764910155513609[0]
+//   Public signature debug description: test_1(kotlin.Any?){}
 fun test_1(value: Any?): String?
 
 // CHECK JVM_IR:
 //   Mangled name: #test_2(kotlin.Any?){}kotlin.String?
 //   Public signature: /test_2|4804906371697221872[0]
+//   Public signature debug description: test_2(kotlin.Any?){}kotlin.String?
 // CHECK JS_IR NATIVE:
 //   Mangled name: #test_2(kotlin.Any?){}
 //   Public signature: /test_2|-2820233899677445404[0]
+//   Public signature debug description: test_2(kotlin.Any?){}
 fun test_2(value: Any?): String?
 

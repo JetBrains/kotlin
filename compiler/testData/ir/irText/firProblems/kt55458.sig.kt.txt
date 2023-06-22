@@ -2,8 +2,10 @@
 //   Mangled name computed from Ir:         #main(){}
 //   Mangled name computed from Descriptor: #main(){}%kt55458.kt
 //   Public signature: /main|-1793468409000137506[0]
+//   Public signature debug description: main(){}%kt55458.kt
 // CHECK JS_IR NATIVE:
 //   Mangled name: #main(){}
 //   Public signature: /main|-4284757841571462650[0]
+//   Public signature debug description: main(){}
 fun main(): Unit
 

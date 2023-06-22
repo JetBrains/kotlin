@@ -5,15 +5,18 @@ class MyCandidate {
   // CHECK:
   //   Mangled name: MyCandidate{}resolvedCall
   //   Public signature: /MyCandidate.resolvedCall|-2429780263902948392[0]
+  //   Public signature debug description: {}resolvedCall
   val resolvedCall: ResolvedCall<*>
     // CHECK JVM_IR:
     //   Mangled name: MyCandidate#<get-resolvedCall>(){}ResolvedCall<*>
     //   Public signature: /MyCandidate.resolvedCall.<get-resolvedCall>|2961495013206965605[0]
+    //   Public signature debug description: <get-resolvedCall>(){}ResolvedCall<*>
     get
 
   // CHECK:
   //   Mangled name: MyCandidate#<init>(ResolvedCall<*>){}
   //   Public signature: /MyCandidate.<init>|-1587603405695784398[0]
+  //   Public signature debug description: <init>(ResolvedCall<*>){}
   constructor(resolvedCall: ResolvedCall<*>) /* primary */
 
 }
@@ -25,6 +28,7 @@ class ResolvedCall<C : Any?> {
   // CHECK:
   //   Mangled name: ResolvedCall#<init>(){}
   //   Public signature: /ResolvedCall.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   constructor() /* primary */
 
 }

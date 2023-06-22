@@ -1,13 +1,16 @@
 // CHECK:
 //   Mangled name: {}n
 //   Public signature: /n|-1061662854873377138[0]
+//   Public signature debug description: {}n
 val n: Any?
   // CHECK JVM_IR:
   //   Mangled name: #<get-n>(){}kotlin.Any?
   //   Public signature: /n.<get-n>|7208370094191018600[0]
+  //   Public signature debug description: <get-n>(){}kotlin.Any?
   // CHECK JS_IR NATIVE:
   //   Mangled name: #<get-n>(){}
   //   Public signature: /n.<get-n>|6911753306564452317[0]
+  //   Public signature debug description: <get-n>(){}
   get
 
 // CHECK:
@@ -17,18 +20,22 @@ enum class En : Enum<En> {
   // CHECK:
   //   Mangled name: En{}x
   //   Public signature: /En.x|-8060530855978347579[0]
+  //   Public signature debug description: {}x
   val x: String?
     // CHECK JVM_IR:
     //   Mangled name: En#<get-x>(){}kotlin.String?
     //   Public signature: /En.x.<get-x>|1655337285200701437[0]
+    //   Public signature debug description: <get-x>(){}kotlin.String?
     // CHECK JS_IR NATIVE:
     //   Mangled name: En#<get-x>(){}
     //   Public signature: /En.x.<get-x>|1482705010654679335[0]
+    //   Public signature debug description: <get-x>(){}
     get
 
   // CHECK:
   //   Mangled name: En#<init>(kotlin.String?){}
   //   Public signature: /En.<init>|392868513202821770[0]
+  //   Public signature debug description: <init>(kotlin.String?){}
   private constructor(x: String?) /* primary */
   // CHECK:
   //   Mangled name: En.ENTRY
@@ -38,90 +45,112 @@ enum class En : Enum<En> {
   // CHECK JVM_IR:
   //   Mangled name: En#valueOf#static(kotlin.String){}En
   //   Public signature: /En.valueOf|-1047188124757226812[0]
+  //   Public signature debug description: valueOf#static(kotlin.String){}En
   // CHECK JS_IR NATIVE:
   //   Mangled name: En#valueOf#static(kotlin.String){}
   //   Public signature: /En.valueOf|-4683474617854611729[0]
+  //   Public signature debug description: valueOf#static(kotlin.String){}
   fun valueOf(value: String): En
 
   // CHECK JVM_IR:
   //   Mangled name: En#values#static(){}kotlin.Array<En>
   //   Public signature: /En.values|-6442868649398371099[0]
+  //   Public signature debug description: values#static(){}kotlin.Array<En>
   // CHECK JS_IR NATIVE:
   //   Mangled name: En#values#static(){}
   //   Public signature: /En.values|-8715569000920726747[0]
+  //   Public signature debug description: values#static(){}
   fun values(): Array<En>
 
   // CHECK JVM_IR:
   //   Mangled name: En#clone(){}kotlin.Any
   //   Public signature: /En.clone|-6903128697527593263[0]
+  //   Public signature debug description: clone(){}kotlin.Any
   // CHECK JS_IR NATIVE:
   //   Mangled name: En#compareTo(En){}
   //   Public signature: /En.compareTo|3555292261046836181[0]
+  //   Public signature debug description: compareTo(En){}
   protected /* fake */ override fun clone(): Any
 
   // CHECK JVM_IR:
   //   Mangled name: En#compareTo(En){}kotlin.Int
   //   Public signature: /En.compareTo|7450321438177070471[0]
+  //   Public signature debug description: compareTo(En){}kotlin.Int
   // CHECK JS_IR NATIVE:
   //   Mangled name: En#equals(kotlin.Any?){}
   //   Public signature: /En.equals|4638265728071529943[0]
+  //   Public signature debug description: equals(kotlin.Any?){}
   /* fake */ override operator fun compareTo(other: En): Int
 
   // CHECK JVM_IR:
   //   Mangled name: En#equals(kotlin.Any?){}kotlin.Boolean
   //   Public signature: /En.equals|722809408929142791[0]
+  //   Public signature debug description: equals(kotlin.Any?){}kotlin.Boolean
   // CHECK JS_IR NATIVE:
   //   Mangled name: En#hashCode(){}
   //   Public signature: /En.hashCode|3409210261493131192[0]
+  //   Public signature debug description: hashCode(){}
   /* fake */ override operator fun equals(other: Any?): Boolean
 
   // CHECK JVM_IR:
   //   Mangled name: En#hashCode(){}kotlin.Int
   //   Public signature: /En.hashCode|-8048879360829830756[0]
+  //   Public signature debug description: hashCode(){}kotlin.Int
   // CHECK JS_IR NATIVE:
   //   Mangled name: En#toString(){}
   //   Public signature: /En.toString|-1522858123163872138[0]
+  //   Public signature debug description: toString(){}
   /* fake */ override fun hashCode(): Int
 
   // CHECK JVM_IR:
   //   Mangled name: En#toString(){}kotlin.String
   //   Public signature: /En.toString|6958853723545266802[0]
+  //   Public signature debug description: toString(){}kotlin.String
   // CHECK JS_IR NATIVE:
   //   Mangled name: En#static{}entries
   //   Public signature: /En.entries|-5134227801081826149[0]
+  //   Public signature debug description: #static{}entries
   /* fake */ override fun toString(): String
 
   // CHECK:
   //   Mangled name: En#static{}entries
   //   Public signature: /En.entries|-5134227801081826149[0]
+  //   Public signature debug description: #static{}entries
   val entries: EnumEntries<En>
     // CHECK JVM_IR:
     //   Mangled name: En#<get-entries>#static(){}kotlin.enums.EnumEntries<En>
     //   Public signature: /En.entries.<get-entries>|7832995474718587298[0]
+    //   Public signature debug description: <get-entries>#static(){}kotlin.enums.EnumEntries<En>
     // CHECK JS_IR NATIVE:
     //   Mangled name: En{}name
     //   Public signature: /En.name|4231860309499509769[0]
+    //   Public signature debug description: {}name
     get(): EnumEntries<En>
 
   // CHECK:
   //   Mangled name: En{}name
   //   Public signature: /En.name|4231860309499509769[0]
+  //   Public signature debug description: {}name
   /* fake */ override val name: String
     // CHECK JVM_IR:
     //   Mangled name: En#<get-name>(){}kotlin.String
     //   Public signature: /En.name.<get-name>|-8006111524522882650[0]
+    //   Public signature debug description: <get-name>(){}kotlin.String
     // CHECK JS_IR NATIVE:
     //   Mangled name: En{}ordinal
     //   Public signature: /En.ordinal|1912745122988592376[0]
+    //   Public signature debug description: {}ordinal
     /* fake */ override get(): String
 
   // CHECK:
   //   Mangled name: En{}ordinal
   //   Public signature: /En.ordinal|1912745122988592376[0]
+  //   Public signature debug description: {}ordinal
   /* fake */ override val ordinal: Int
     // CHECK JVM_IR:
     //   Mangled name: En#<get-ordinal>(){}kotlin.Int
     //   Public signature: /En.ordinal.<get-ordinal>|-6902664390061762634[0]
+    //   Public signature debug description: <get-ordinal>(){}kotlin.Int
     /* fake */ override get(): Int
 
 }

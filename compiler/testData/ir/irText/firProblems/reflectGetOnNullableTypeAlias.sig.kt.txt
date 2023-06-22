@@ -5,18 +5,22 @@ class Foo {
   // CHECK:
   //   Mangled name: Foo{}bar
   //   Public signature: /Foo.bar|-7864284097863469857[0]
+  //   Public signature debug description: {}bar
   val bar: String
     // CHECK JVM_IR:
     //   Mangled name: Foo#<get-bar>(){}kotlin.String
     //   Public signature: /Foo.bar.<get-bar>|3423724227669014303[0]
+    //   Public signature debug description: <get-bar>(){}kotlin.String
     // CHECK JS_IR NATIVE:
     //   Mangled name: Foo#<get-bar>(){}
     //   Public signature: /Foo.bar.<get-bar>|6880642144337645699[0]
+    //   Public signature debug description: <get-bar>(){}
     get
 
   // CHECK:
   //   Mangled name: Foo#<init>(){}
   //   Public signature: /Foo.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   constructor() /* primary */
 
 }
@@ -24,9 +28,11 @@ class Foo {
 // CHECK JVM_IR:
 //   Mangled name: #box(){}kotlin.String
 //   Public signature: /box|-9347091776561469[0]
+//   Public signature debug description: box(){}kotlin.String
 // CHECK JS_IR NATIVE:
 //   Mangled name: #box(){}
 //   Public signature: /box|2173511048851971368[0]
+//   Public signature debug description: box(){}
 fun box(): String
 
 // CHECK JVM_IR:

@@ -1,72 +1,88 @@
 // CHECK:
 //   Mangled name: {}unitFun
 //   Public signature: /unitFun|1803856459034755718[0]
+//   Public signature debug description: {}unitFun
 val unitFun: Function0<Unit>
   // CHECK JVM_IR:
   //   Mangled name: #<get-unitFun>(){}kotlin.Function0<kotlin.Unit>
   //   Public signature: /unitFun.<get-unitFun>|4532865110110179705[0]
+  //   Public signature debug description: <get-unitFun>(){}kotlin.Function0<kotlin.Unit>
   get
 
 // CHECK:
 //   Mangled name: {}intFun
 //   Public signature: /intFun|-4231876274735497813[0]
+//   Public signature debug description: {}intFun
 val intFun: Function0<Int>
   // CHECK JVM_IR:
   //   Mangled name: #<get-intFun>(){}kotlin.Function0<kotlin.Int>
   //   Public signature: /intFun.<get-intFun>|4773158348447143883[0]
+  //   Public signature debug description: <get-intFun>(){}kotlin.Function0<kotlin.Int>
   get
 
 // CHECK:
 //   Mangled name: {}stringParamFun
 //   Public signature: /stringParamFun|-5263284220838449603[0]
+//   Public signature debug description: {}stringParamFun
 val stringParamFun: Function1<String, Unit>
   // CHECK JVM_IR:
   //   Mangled name: #<get-stringParamFun>(){}kotlin.Function1<kotlin.String,kotlin.Unit>
   //   Public signature: /stringParamFun.<get-stringParamFun>|-8573380628772791229[0]
+  //   Public signature debug description: <get-stringParamFun>(){}kotlin.Function1<kotlin.String,kotlin.Unit>
   get
 
 // CHECK:
 //   Mangled name: {}listFun
 //   Public signature: /listFun|-6618675779589745857[0]
+//   Public signature debug description: {}listFun
 val listFun: Function1<List<String>, List<String>>
   // CHECK JVM_IR:
   //   Mangled name: #<get-listFun>(){}kotlin.Function1<kotlin.collections.List<kotlin.String>,kotlin.collections.List<kotlin.String>>
   //   Public signature: /listFun.<get-listFun>|7260954818086257860[0]
+  //   Public signature debug description: <get-listFun>(){}kotlin.Function1<kotlin.collections.List<kotlin.String>,kotlin.collections.List<kotlin.String>>
   get
 
 // CHECK:
 //   Mangled name: {}mutableListFun
 //   Public signature: /mutableListFun|-8439106206370668738[0]
+//   Public signature debug description: {}mutableListFun
 val mutableListFun: Function1<MutableList<Double>, MutableList<Int>>
   // CHECK JVM_IR:
   //   Mangled name: #<get-mutableListFun>(){}kotlin.Function1<kotlin.collections.MutableList<kotlin.Double>,kotlin.collections.MutableList<kotlin.Int>>
   //   Public signature: /mutableListFun.<get-mutableListFun>|9091514786956715938[0]
+  //   Public signature debug description: <get-mutableListFun>(){}kotlin.Function1<kotlin.collections.MutableList<kotlin.Double>,kotlin.collections.MutableList<kotlin.Int>>
   get
 
 // CHECK:
 //   Mangled name: {}funWithIn
 //   Public signature: /funWithIn|4959168396602064196[0]
+//   Public signature debug description: {}funWithIn
 val funWithIn: Function1<Comparable<String>, Unit>
   // CHECK JVM_IR:
   //   Mangled name: #<get-funWithIn>(){}kotlin.Function1<kotlin.Comparable<kotlin.String>,kotlin.Unit>
   //   Public signature: /funWithIn.<get-funWithIn>|4348549724742549414[0]
+  //   Public signature debug description: <get-funWithIn>(){}kotlin.Function1<kotlin.Comparable<kotlin.String>,kotlin.Unit>
   get
 
 // CHECK:
 //   Mangled name: {}extensionFun
 //   Public signature: /extensionFun|-1816227375732956320[0]
+//   Public signature debug description: {}extensionFun
 val extensionFun: @ExtensionFunctionType Function1<Any, Unit>
   // CHECK JVM_IR:
   //   Mangled name: #<get-extensionFun>(){}kotlin.Function1<kotlin.Any,kotlin.Unit>
   //   Public signature: /extensionFun.<get-extensionFun>|791135109431325135[0]
+  //   Public signature debug description: <get-extensionFun>(){}kotlin.Function1<kotlin.Any,kotlin.Unit>
   get
 
 // CHECK:
 //   Mangled name: {}extensionWithArgFun
 //   Public signature: /extensionWithArgFun|2301069184471380148[0]
+//   Public signature debug description: {}extensionWithArgFun
 val extensionWithArgFun: @ExtensionFunctionType Function2<Long, Any, Date>
   // CHECK JVM_IR:
   //   Mangled name: #<get-extensionWithArgFun>(){}kotlin.Function2<kotlin.Long,kotlin.Any,java.util.Date>
   //   Public signature: /extensionWithArgFun.<get-extensionWithArgFun>|-6412543642125871211[0]
+  //   Public signature debug description: <get-extensionWithArgFun>(){}kotlin.Function2<kotlin.Long,kotlin.Any,java.util.Date>
   get
 

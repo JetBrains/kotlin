@@ -1,10 +1,12 @@
 // CHECK:
 //   Mangled name: #test_1(MyRec){}
 //   Public signature: /test_1|3006741164408257003[0]
+//   Public signature debug description: test_1(MyRec){}
 fun test_1(rec: MyRec): Unit
 
 // CHECK:
 //   Mangled name: #test_2(MyRec){}
 //   Public signature: /test_2|1426784909469346506[0]
+//   Public signature debug description: test_2(MyRec){}
 fun test_2(rec: MyRec): Unit
 

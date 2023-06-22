@@ -1,88 +1,110 @@
 // CHECK JVM_IR:
 //   Mangled name: #test1d(kotlin.Double;kotlin.Double){}kotlin.Int
 //   Public signature: /test1d|1918027866721027919[0]
+//   Public signature debug description: test1d(kotlin.Double;kotlin.Double){}kotlin.Int
 // CHECK JS_IR NATIVE:
 //   Mangled name: #test1d(kotlin.Double;kotlin.Double){}
 //   Public signature: /test1d|8996428331240250899[0]
+//   Public signature debug description: test1d(kotlin.Double;kotlin.Double){}
 fun test1d(x: Double, y: Double): Int
 
 // CHECK JVM_IR:
 //   Mangled name: #test1f(kotlin.Float;kotlin.Float){}kotlin.Int
 //   Public signature: /test1f|5423428835300813429[0]
+//   Public signature debug description: test1f(kotlin.Float;kotlin.Float){}kotlin.Int
 // CHECK JS_IR NATIVE:
 //   Mangled name: #test1f(kotlin.Float;kotlin.Float){}
 //   Public signature: /test1f|3996419052229966122[0]
+//   Public signature debug description: test1f(kotlin.Float;kotlin.Float){}
 fun test1f(x: Float, y: Float): Int
 
 // CHECK JVM_IR:
 //   Mangled name: #test1fr@kotlin.Float(kotlin.Float){}kotlin.Int
 //   Public signature: /test1fr|-1774976204846015291[0]
+//   Public signature debug description: test1fr@kotlin.Float(kotlin.Float){}kotlin.Int
 // CHECK JS_IR NATIVE:
 //   Mangled name: #test1fr@kotlin.Float(kotlin.Float){}
 //   Public signature: /test1fr|-5309606232782328951[0]
+//   Public signature debug description: test1fr@kotlin.Float(kotlin.Float){}
 fun Float.test1fr(x: Float): Int
 
 // CHECK JVM_IR:
 //   Mangled name: #test2d(kotlin.Double;kotlin.Any){}kotlin.Boolean
 //   Public signature: /test2d|1868332233853062954[0]
+//   Public signature debug description: test2d(kotlin.Double;kotlin.Any){}kotlin.Boolean
 // CHECK JS_IR NATIVE:
 //   Mangled name: #test2d(kotlin.Double;kotlin.Any){}
 //   Public signature: /test2d|3048714195566850595[0]
+//   Public signature debug description: test2d(kotlin.Double;kotlin.Any){}
 fun test2d(x: Double, y: Any): Boolean
 
 // CHECK JVM_IR:
 //   Mangled name: #test2f(kotlin.Float;kotlin.Any){}kotlin.Boolean
 //   Public signature: /test2f|-5327474494142874991[0]
+//   Public signature debug description: test2f(kotlin.Float;kotlin.Any){}kotlin.Boolean
 // CHECK JS_IR NATIVE:
 //   Mangled name: #test2f(kotlin.Float;kotlin.Any){}
 //   Public signature: /test2f|-8233698539945437419[0]
+//   Public signature debug description: test2f(kotlin.Float;kotlin.Any){}
 fun test2f(x: Float, y: Any): Boolean
 
 // CHECK JVM_IR:
 //   Mangled name: #test2fr@kotlin.Float(kotlin.Any){}kotlin.Boolean
 //   Public signature: /test2fr|-124673155428987679[0]
+//   Public signature debug description: test2fr@kotlin.Float(kotlin.Any){}kotlin.Boolean
 // CHECK JS_IR NATIVE:
 //   Mangled name: #test2fr@kotlin.Float(kotlin.Any){}
 //   Public signature: /test2fr|5632769814565198925[0]
+//   Public signature debug description: test2fr@kotlin.Float(kotlin.Any){}
 fun Float.test2fr(x: Any): Boolean
 
 // CHECK JVM_IR:
 //   Mangled name: #test3d(kotlin.Any;kotlin.Any){}kotlin.Boolean
 //   Public signature: /test3d|-5073128912492477196[0]
+//   Public signature debug description: test3d(kotlin.Any;kotlin.Any){}kotlin.Boolean
 // CHECK JS_IR NATIVE:
 //   Mangled name: #test3d(kotlin.Any;kotlin.Any){}
 //   Public signature: /test3d|1265476561252316973[0]
+//   Public signature debug description: test3d(kotlin.Any;kotlin.Any){}
 fun test3d(x: Any, y: Any): Boolean
 
 // CHECK JVM_IR:
 //   Mangled name: #test3f(kotlin.Any;kotlin.Any){}kotlin.Boolean
 //   Public signature: /test3f|1058712547644060622[0]
+//   Public signature debug description: test3f(kotlin.Any;kotlin.Any){}kotlin.Boolean
 // CHECK JS_IR NATIVE:
 //   Mangled name: #test3f(kotlin.Any;kotlin.Any){}
 //   Public signature: /test3f|-4162669948505292416[0]
+//   Public signature debug description: test3f(kotlin.Any;kotlin.Any){}
 fun test3f(x: Any, y: Any): Boolean
 
 // CHECK JVM_IR:
 //   Mangled name: #test3fr@kotlin.Float(kotlin.Any){}kotlin.Boolean
 //   Public signature: /test3fr|1133351613663431340[0]
+//   Public signature debug description: test3fr@kotlin.Float(kotlin.Any){}kotlin.Boolean
 // CHECK JS_IR NATIVE:
 //   Mangled name: #test3fr@kotlin.Float(kotlin.Any){}
 //   Public signature: /test3fr|-4692729798478355645[0]
+//   Public signature debug description: test3fr@kotlin.Float(kotlin.Any){}
 fun Float.test3fr(x: Any): Boolean
 
 // CHECK JVM_IR:
 //   Mangled name: #testDF(kotlin.Any;kotlin.Any){}kotlin.Boolean
 //   Public signature: /testDF|9162091323093859710[0]
+//   Public signature debug description: testDF(kotlin.Any;kotlin.Any){}kotlin.Boolean
 // CHECK JS_IR NATIVE:
 //   Mangled name: #testDF(kotlin.Any;kotlin.Any){}
 //   Public signature: /testDF|5325280582850746470[0]
+//   Public signature debug description: testDF(kotlin.Any;kotlin.Any){}
 fun testDF(x: Any, y: Any): Boolean
 
 // CHECK JVM_IR:
 //   Mangled name: #testFD(kotlin.Any;kotlin.Any){}kotlin.Boolean
 //   Public signature: /testFD|-1860793291456176126[0]
+//   Public signature debug description: testFD(kotlin.Any;kotlin.Any){}kotlin.Boolean
 // CHECK JS_IR NATIVE:
 //   Mangled name: #testFD(kotlin.Any;kotlin.Any){}
 //   Public signature: /testFD|-8637640662829760144[0]
+//   Public signature debug description: testFD(kotlin.Any;kotlin.Any){}
 fun testFD(x: Any, y: Any): Boolean
 

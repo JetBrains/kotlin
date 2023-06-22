@@ -5,6 +5,7 @@ class Context {
   // CHECK:
   //   Mangled name: Context#<init>(){}
   //   Public signature: /Context.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   constructor() /* primary */
 
 }
@@ -12,22 +13,27 @@ class Context {
 // CHECK JVM_IR:
 //   Mangled name: #f!Context(){}kotlin.String
 //   Public signature: /f|-5175802051654911360[0]
+//   Public signature debug description: f!Context(){}kotlin.String
 // CHECK JS_IR NATIVE:
 //   Mangled name: #f!Context(){}
 //   Public signature: /f|-1050574650869165395[0]
+//   Public signature debug description: f!Context(){}
 fun f($context_receiver_0: Context): String
 
 // CHECK JVM_IR:
 //   Mangled name: #f(){}kotlin.Any
 //   Public signature: /f|-2324325393552926316[0]
+//   Public signature debug description: f(){}kotlin.Any
 // CHECK JS_IR NATIVE:
 //   Mangled name: #f(){}
 //   Public signature: /f|5316533450599009716[0]
+//   Public signature debug description: f(){}
 fun f(): Any
 
 // CHECK:
 //   Mangled name: #test(){}
 //   Public signature: /test|6620506149988718649[0]
+//   Public signature debug description: test(){}
 fun test(): Unit
   // CHECK JVM_IR:
   //   Mangled name: #test(){}#<anonymous>#static@Context(){}kotlin.Int

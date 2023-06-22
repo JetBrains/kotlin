@@ -6,6 +6,7 @@ interface Base {
   // CHECK:
   //   Mangled name: Base#foo(){}
   //   Public signature: /Base.foo|-1041209573719867811[0]
+  //   Public signature debug description: foo(){}
   fun foo(): Unit
 
 }
@@ -17,11 +18,13 @@ object Derived : Base {
   // CHECK:
   //   Mangled name: Derived#<init>(){}
   //   Public signature: /Derived.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   private constructor() /* primary */
 
   // CHECK:
   //   Mangled name: Derived#foo(){}
   //   Public signature: /Derived.foo|-1041209573719867811[0]
+  //   Public signature debug description: foo(){}
   /* fake */ override fun foo(): Unit
 
 }
@@ -29,5 +32,6 @@ object Derived : Base {
 // CHECK:
 //   Mangled name: #test(){}
 //   Public signature: /test|6620506149988718649[0]
+//   Public signature debug description: test(){}
 fun test(): Unit
 

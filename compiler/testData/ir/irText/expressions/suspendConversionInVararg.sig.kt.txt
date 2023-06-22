@@ -1,15 +1,18 @@
 // CHECK:
 //   Mangled name: #testSuspendConversionInVarargElementsAll(kotlin.Function0<kotlin.Unit>;kotlin.Function0<kotlin.Unit>;kotlin.Function0<kotlin.Unit>){}
 //   Public signature: /testSuspendConversionInVarargElementsAll|7160265821198055848[0]
+//   Public signature debug description: testSuspendConversionInVarargElementsAll(kotlin.Function0<kotlin.Unit>;kotlin.Function0<kotlin.Unit>;kotlin.Function0<kotlin.Unit>){}
 fun testSuspendConversionInVarargElementsAll(f1: Function0<Unit>, f2: Function0<Unit>, f3: Function0<Unit>): Unit
 
 // CHECK:
 //   Mangled name: #testSuspendConversionInVarargElementsSome(kotlin.Function0<kotlin.Unit>;kotlin.coroutines.SuspendFunction0<kotlin.Unit>;kotlin.Function0<kotlin.Unit>){}
 //   Public signature: /testSuspendConversionInVarargElementsSome|1432579013054877862[0]
+//   Public signature debug description: testSuspendConversionInVarargElementsSome(kotlin.Function0<kotlin.Unit>;kotlin.coroutines.SuspendFunction0<kotlin.Unit>;kotlin.Function0<kotlin.Unit>){}
 fun testSuspendConversionInVarargElementsSome(f1: Function0<Unit>, sf2: SuspendFunction0<Unit>, f3: Function0<Unit>): Unit
 
 // CHECK:
 //   Mangled name: #useSuspendVararg(kotlin.Array<out|kotlin.coroutines.SuspendFunction0<kotlin.Unit>>...){}
 //   Public signature: /useSuspendVararg|6945312118968967398[0]
+//   Public signature debug description: useSuspendVararg(kotlin.Array<out|kotlin.coroutines.SuspendFunction0<kotlin.Unit>>...){}
 fun useSuspendVararg(vararg sfn: SuspendFunction0<Unit>): Unit
 

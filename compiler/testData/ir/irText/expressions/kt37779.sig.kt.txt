@@ -1,15 +1,18 @@
 // CHECK:
 //   Mangled name: #foo(kotlin.Array<out|kotlin.String>...){}
 //   Public signature: /foo|7137812470563281312[0]
+//   Public signature debug description: foo(kotlin.Array<out|kotlin.String>...){}
 fun foo(vararg s: String): Unit
 
 // CHECK:
 //   Mangled name: #test1(){}
 //   Public signature: /test1|4297044443957252634[0]
+//   Public signature debug description: test1(){}
 fun test1(): Unit
 
 // CHECK:
 //   Mangled name: #test2(kotlin.Array<kotlin.String>){}
 //   Public signature: /test2|-755890717186595402[0]
+//   Public signature debug description: test2(kotlin.Array<kotlin.String>){}
 fun test2(ss: Array<String>): Unit
 

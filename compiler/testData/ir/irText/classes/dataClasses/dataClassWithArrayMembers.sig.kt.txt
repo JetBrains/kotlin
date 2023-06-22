@@ -5,217 +5,271 @@ data class Test1 {
   // CHECK:
   //   Mangled name: Test1{}stringArray
   //   Public signature: /Test1.stringArray|3224078221487065108[0]
+  //   Public signature debug description: {}stringArray
   val stringArray: Array<String>
     // CHECK JVM_IR:
     //   Mangled name: Test1#<get-stringArray>(){}kotlin.Array<kotlin.String>
     //   Public signature: /Test1.stringArray.<get-stringArray>|3372814522015375360[0]
+    //   Public signature debug description: <get-stringArray>(){}kotlin.Array<kotlin.String>
     // CHECK JS_IR NATIVE:
     //   Mangled name: Test1#<get-stringArray>(){}
     //   Public signature: /Test1.stringArray.<get-stringArray>|-999420313937698549[0]
+    //   Public signature debug description: <get-stringArray>(){}
     get
 
   // CHECK:
   //   Mangled name: Test1{}charArray
   //   Public signature: /Test1.charArray|-5349931751208968301[0]
+  //   Public signature debug description: {}charArray
   val charArray: CharArray
     // CHECK JVM_IR:
     //   Mangled name: Test1#<get-charArray>(){}kotlin.CharArray
     //   Public signature: /Test1.charArray.<get-charArray>|-3365262090570994726[0]
+    //   Public signature debug description: <get-charArray>(){}kotlin.CharArray
     // CHECK JS_IR NATIVE:
     //   Mangled name: Test1#<get-charArray>(){}
     //   Public signature: /Test1.charArray.<get-charArray>|-8841051727055591008[0]
+    //   Public signature debug description: <get-charArray>(){}
     get
 
   // CHECK:
   //   Mangled name: Test1{}booleanArray
   //   Public signature: /Test1.booleanArray|7605527965651232515[0]
+  //   Public signature debug description: {}booleanArray
   val booleanArray: BooleanArray
     // CHECK JVM_IR:
     //   Mangled name: Test1#<get-booleanArray>(){}kotlin.BooleanArray
     //   Public signature: /Test1.booleanArray.<get-booleanArray>|-2975190751408552199[0]
+    //   Public signature debug description: <get-booleanArray>(){}kotlin.BooleanArray
     // CHECK JS_IR NATIVE:
     //   Mangled name: Test1#<get-booleanArray>(){}
     //   Public signature: /Test1.booleanArray.<get-booleanArray>|-1483974669542225092[0]
+    //   Public signature debug description: <get-booleanArray>(){}
     get
 
   // CHECK:
   //   Mangled name: Test1{}byteArray
   //   Public signature: /Test1.byteArray|-2314777124899298189[0]
+  //   Public signature debug description: {}byteArray
   val byteArray: ByteArray
     // CHECK JVM_IR:
     //   Mangled name: Test1#<get-byteArray>(){}kotlin.ByteArray
     //   Public signature: /Test1.byteArray.<get-byteArray>|-4531821776506226927[0]
+    //   Public signature debug description: <get-byteArray>(){}kotlin.ByteArray
     // CHECK JS_IR NATIVE:
     //   Mangled name: Test1#<get-byteArray>(){}
     //   Public signature: /Test1.byteArray.<get-byteArray>|1184466848294423218[0]
+    //   Public signature debug description: <get-byteArray>(){}
     get
 
   // CHECK:
   //   Mangled name: Test1{}shortArray
   //   Public signature: /Test1.shortArray|3516401755230006906[0]
+  //   Public signature debug description: {}shortArray
   val shortArray: ShortArray
     // CHECK JVM_IR:
     //   Mangled name: Test1#<get-shortArray>(){}kotlin.ShortArray
     //   Public signature: /Test1.shortArray.<get-shortArray>|3616346085964569365[0]
+    //   Public signature debug description: <get-shortArray>(){}kotlin.ShortArray
     // CHECK JS_IR NATIVE:
     //   Mangled name: Test1#<get-shortArray>(){}
     //   Public signature: /Test1.shortArray.<get-shortArray>|6916129091578524572[0]
+    //   Public signature debug description: <get-shortArray>(){}
     get
 
   // CHECK:
   //   Mangled name: Test1{}intArray
   //   Public signature: /Test1.intArray|-5845507301569286943[0]
+  //   Public signature debug description: {}intArray
   val intArray: IntArray
     // CHECK JVM_IR:
     //   Mangled name: Test1#<get-intArray>(){}kotlin.IntArray
     //   Public signature: /Test1.intArray.<get-intArray>|540017735713660266[0]
+    //   Public signature debug description: <get-intArray>(){}kotlin.IntArray
     // CHECK JS_IR NATIVE:
     //   Mangled name: Test1#<get-intArray>(){}
     //   Public signature: /Test1.intArray.<get-intArray>|8581538667026869746[0]
+    //   Public signature debug description: <get-intArray>(){}
     get
 
   // CHECK:
   //   Mangled name: Test1{}longArray
   //   Public signature: /Test1.longArray|-261136028309834719[0]
+  //   Public signature debug description: {}longArray
   val longArray: LongArray
     // CHECK JVM_IR:
     //   Mangled name: Test1#<get-longArray>(){}kotlin.LongArray
     //   Public signature: /Test1.longArray.<get-longArray>|-1197859177727725361[0]
+    //   Public signature debug description: <get-longArray>(){}kotlin.LongArray
     // CHECK JS_IR NATIVE:
     //   Mangled name: Test1#<get-longArray>(){}
     //   Public signature: /Test1.longArray.<get-longArray>|7513485594208747900[0]
+    //   Public signature debug description: <get-longArray>(){}
     get
 
   // CHECK:
   //   Mangled name: Test1{}floatArray
   //   Public signature: /Test1.floatArray|-863616440006860352[0]
+  //   Public signature debug description: {}floatArray
   val floatArray: FloatArray
     // CHECK JVM_IR:
     //   Mangled name: Test1#<get-floatArray>(){}kotlin.FloatArray
     //   Public signature: /Test1.floatArray.<get-floatArray>|379636537041432797[0]
+    //   Public signature debug description: <get-floatArray>(){}kotlin.FloatArray
     // CHECK JS_IR NATIVE:
     //   Mangled name: Test1#<get-floatArray>(){}
     //   Public signature: /Test1.floatArray.<get-floatArray>|-7251674888770048121[0]
+    //   Public signature debug description: <get-floatArray>(){}
     get
 
   // CHECK:
   //   Mangled name: Test1{}doubleArray
   //   Public signature: /Test1.doubleArray|-3027997348205759511[0]
+  //   Public signature debug description: {}doubleArray
   val doubleArray: DoubleArray
     // CHECK JVM_IR:
     //   Mangled name: Test1#<get-doubleArray>(){}kotlin.DoubleArray
     //   Public signature: /Test1.doubleArray.<get-doubleArray>|5171225634314785003[0]
+    //   Public signature debug description: <get-doubleArray>(){}kotlin.DoubleArray
     // CHECK JS_IR NATIVE:
     //   Mangled name: Test1#<get-doubleArray>(){}
     //   Public signature: /Test1.doubleArray.<get-doubleArray>|-8332107536960256489[0]
+    //   Public signature debug description: <get-doubleArray>(){}
     get
 
   // CHECK:
   //   Mangled name: Test1#<init>(kotlin.Array<kotlin.String>;kotlin.CharArray;kotlin.BooleanArray;kotlin.ByteArray;kotlin.ShortArray;kotlin.IntArray;kotlin.LongArray;kotlin.FloatArray;kotlin.DoubleArray){}
   //   Public signature: /Test1.<init>|-2901047261480922149[0]
+  //   Public signature debug description: <init>(kotlin.Array<kotlin.String>;kotlin.CharArray;kotlin.BooleanArray;kotlin.ByteArray;kotlin.ShortArray;kotlin.IntArray;kotlin.LongArray;kotlin.FloatArray;kotlin.DoubleArray){}
   constructor(stringArray: Array<String>, charArray: CharArray, booleanArray: BooleanArray, byteArray: ByteArray, shortArray: ShortArray, intArray: IntArray, longArray: LongArray, floatArray: FloatArray, doubleArray: DoubleArray) /* primary */
   // CHECK JVM_IR:
   //   Mangled name: Test1#component1(){}kotlin.Array<kotlin.String>
   //   Public signature: /Test1.component1|2673462985803256369[0]
+  //   Public signature debug description: component1(){}kotlin.Array<kotlin.String>
   // CHECK JS_IR NATIVE:
   //   Mangled name: Test1#component1(){}
   //   Public signature: /Test1.component1|162597135895221648[0]
+  //   Public signature debug description: component1(){}
   operator fun component1(): Array<String>
 
   // CHECK JVM_IR:
   //   Mangled name: Test1#component2(){}kotlin.CharArray
   //   Public signature: /Test1.component2|-8172205221988991671[0]
+  //   Public signature debug description: component2(){}kotlin.CharArray
   // CHECK JS_IR NATIVE:
   //   Mangled name: Test1#component2(){}
   //   Public signature: /Test1.component2|3796717572321500973[0]
+  //   Public signature debug description: component2(){}
   operator fun component2(): CharArray
 
   // CHECK JVM_IR:
   //   Mangled name: Test1#component3(){}kotlin.BooleanArray
   //   Public signature: /Test1.component3|8179741844146192752[0]
+  //   Public signature debug description: component3(){}kotlin.BooleanArray
   // CHECK JS_IR NATIVE:
   //   Mangled name: Test1#component3(){}
   //   Public signature: /Test1.component3|-7448948688383327918[0]
+  //   Public signature debug description: component3(){}
   operator fun component3(): BooleanArray
 
   // CHECK JVM_IR:
   //   Mangled name: Test1#component4(){}kotlin.ByteArray
   //   Public signature: /Test1.component4|-1739414106658456946[0]
+  //   Public signature debug description: component4(){}kotlin.ByteArray
   // CHECK JS_IR NATIVE:
   //   Mangled name: Test1#component4(){}
   //   Public signature: /Test1.component4|-5228865120014592696[0]
+  //   Public signature debug description: component4(){}
   operator fun component4(): ByteArray
 
   // CHECK JVM_IR:
   //   Mangled name: Test1#component5(){}kotlin.ShortArray
   //   Public signature: /Test1.component5|-3423229537519330548[0]
+  //   Public signature debug description: component5(){}kotlin.ShortArray
   // CHECK JS_IR NATIVE:
   //   Mangled name: Test1#component5(){}
   //   Public signature: /Test1.component5|-6761990273390998797[0]
+  //   Public signature debug description: component5(){}
   operator fun component5(): ShortArray
 
   // CHECK JVM_IR:
   //   Mangled name: Test1#component6(){}kotlin.IntArray
   //   Public signature: /Test1.component6|-2300576074023927975[0]
+  //   Public signature debug description: component6(){}kotlin.IntArray
   // CHECK JS_IR NATIVE:
   //   Mangled name: Test1#component6(){}
   //   Public signature: /Test1.component6|-341469160952212663[0]
+  //   Public signature debug description: component6(){}
   operator fun component6(): IntArray
 
   // CHECK JVM_IR:
   //   Mangled name: Test1#component7(){}kotlin.LongArray
   //   Public signature: /Test1.component7|-867169008637195949[0]
+  //   Public signature debug description: component7(){}kotlin.LongArray
   // CHECK JS_IR NATIVE:
   //   Mangled name: Test1#component7(){}
   //   Public signature: /Test1.component7|-5566060557311180434[0]
+  //   Public signature debug description: component7(){}
   operator fun component7(): LongArray
 
   // CHECK JVM_IR:
   //   Mangled name: Test1#component8(){}kotlin.FloatArray
   //   Public signature: /Test1.component8|4154428752572134259[0]
+  //   Public signature debug description: component8(){}kotlin.FloatArray
   // CHECK JS_IR NATIVE:
   //   Mangled name: Test1#component8(){}
   //   Public signature: /Test1.component8|-536160406046914439[0]
+  //   Public signature debug description: component8(){}
   operator fun component8(): FloatArray
 
   // CHECK JVM_IR:
   //   Mangled name: Test1#component9(){}kotlin.DoubleArray
   //   Public signature: /Test1.component9|-6146261915259686298[0]
+  //   Public signature debug description: component9(){}kotlin.DoubleArray
   // CHECK JS_IR NATIVE:
   //   Mangled name: Test1#component9(){}
   //   Public signature: /Test1.component9|4077304044778180766[0]
+  //   Public signature debug description: component9(){}
   operator fun component9(): DoubleArray
 
   // CHECK JVM_IR:
   //   Mangled name: Test1#copy(kotlin.Array<kotlin.String>;kotlin.CharArray;kotlin.BooleanArray;kotlin.ByteArray;kotlin.ShortArray;kotlin.IntArray;kotlin.LongArray;kotlin.FloatArray;kotlin.DoubleArray){}Test1
   //   Public signature: /Test1.copy|3580547657034916048[0]
+  //   Public signature debug description: copy(kotlin.Array<kotlin.String>;kotlin.CharArray;kotlin.BooleanArray;kotlin.ByteArray;kotlin.ShortArray;kotlin.IntArray;kotlin.LongArray;kotlin.FloatArray;kotlin.DoubleArray){}Test1
   // CHECK JS_IR NATIVE:
   //   Mangled name: Test1#copy(kotlin.Array<kotlin.String>;kotlin.CharArray;kotlin.BooleanArray;kotlin.ByteArray;kotlin.ShortArray;kotlin.IntArray;kotlin.LongArray;kotlin.FloatArray;kotlin.DoubleArray){}
   //   Public signature: /Test1.copy|-3582680923088795384[0]
+  //   Public signature debug description: copy(kotlin.Array<kotlin.String>;kotlin.CharArray;kotlin.BooleanArray;kotlin.ByteArray;kotlin.ShortArray;kotlin.IntArray;kotlin.LongArray;kotlin.FloatArray;kotlin.DoubleArray){}
   fun copy(stringArray: Array<String>, charArray: CharArray, booleanArray: BooleanArray, byteArray: ByteArray, shortArray: ShortArray, intArray: IntArray, longArray: LongArray, floatArray: FloatArray, doubleArray: DoubleArray): Test1
 
   // CHECK JVM_IR:
   //   Mangled name: Test1#equals(kotlin.Any?){}kotlin.Boolean
   //   Public signature: /Test1.equals|722809408929142791[0]
+  //   Public signature debug description: equals(kotlin.Any?){}kotlin.Boolean
   // CHECK JS_IR NATIVE:
   //   Mangled name: Test1#equals(kotlin.Any?){}
   //   Public signature: /Test1.equals|4638265728071529943[0]
+  //   Public signature debug description: equals(kotlin.Any?){}
   override operator fun equals(other: Any?): Boolean
 
   // CHECK JVM_IR:
   //   Mangled name: Test1#hashCode(){}kotlin.Int
   //   Public signature: /Test1.hashCode|-8048879360829830756[0]
+  //   Public signature debug description: hashCode(){}kotlin.Int
   // CHECK JS_IR NATIVE:
   //   Mangled name: Test1#hashCode(){}
   //   Public signature: /Test1.hashCode|3409210261493131192[0]
+  //   Public signature debug description: hashCode(){}
   override fun hashCode(): Int
 
   // CHECK JVM_IR:
   //   Mangled name: Test1#toString(){}kotlin.String
   //   Public signature: /Test1.toString|6958853723545266802[0]
+  //   Public signature debug description: toString(){}kotlin.String
   // CHECK JS_IR NATIVE:
   //   Mangled name: Test1#toString(){}
   //   Public signature: /Test1.toString|-1522858123163872138[0]
+  //   Public signature debug description: toString(){}
   override fun toString(): String
 
 }
@@ -227,57 +281,71 @@ data class Test2<T : Any?> {
   // CHECK:
   //   Mangled name: Test2{}genericArray
   //   Public signature: /Test2.genericArray|-3006201342680303597[0]
+  //   Public signature debug description: {}genericArray
   val genericArray: Array<T>
     // CHECK JVM_IR:
     //   Mangled name: Test2#<get-genericArray>(){}kotlin.Array<1:0>
     //   Public signature: /Test2.genericArray.<get-genericArray>|-887796497194881267[0]
+    //   Public signature debug description: <get-genericArray>(){}kotlin.Array<1:0>
     // CHECK JS_IR NATIVE:
     //   Mangled name: Test2#<get-genericArray>(){}
     //   Public signature: /Test2.genericArray.<get-genericArray>|-4084285588594711286[0]
+    //   Public signature debug description: <get-genericArray>(){}
     get
 
   // CHECK:
   //   Mangled name: Test2#<init>(kotlin.Array<1:0>){}
   //   Public signature: /Test2.<init>|-6569388914691766420[0]
+  //   Public signature debug description: <init>(kotlin.Array<1:0>){}
   constructor(genericArray: Array<T>) /* primary */
   // CHECK JVM_IR:
   //   Mangled name: Test2#component1(){}kotlin.Array<1:0>
   //   Public signature: /Test2.component1|-8550302254215159930[0]
+  //   Public signature debug description: component1(){}kotlin.Array<1:0>
   // CHECK JS_IR NATIVE:
   //   Mangled name: Test2#component1(){}
   //   Public signature: /Test2.component1|162597135895221648[0]
+  //   Public signature debug description: component1(){}
   operator fun component1(): Array<T>
 
   // CHECK JVM_IR:
   //   Mangled name: Test2#copy(kotlin.Array<1:0>){}Test2<1:0>
   //   Public signature: /Test2.copy|-4093092771055361563[0]
+  //   Public signature debug description: copy(kotlin.Array<1:0>){}Test2<1:0>
   // CHECK JS_IR NATIVE:
   //   Mangled name: Test2#copy(kotlin.Array<1:0>){}
   //   Public signature: /Test2.copy|-4145030177598586254[0]
+  //   Public signature debug description: copy(kotlin.Array<1:0>){}
   fun copy(genericArray: Array<T>): Test2<T>
 
   // CHECK JVM_IR:
   //   Mangled name: Test2#equals(kotlin.Any?){}kotlin.Boolean
   //   Public signature: /Test2.equals|722809408929142791[0]
+  //   Public signature debug description: equals(kotlin.Any?){}kotlin.Boolean
   // CHECK JS_IR NATIVE:
   //   Mangled name: Test2#equals(kotlin.Any?){}
   //   Public signature: /Test2.equals|4638265728071529943[0]
+  //   Public signature debug description: equals(kotlin.Any?){}
   override operator fun equals(other: Any?): Boolean
 
   // CHECK JVM_IR:
   //   Mangled name: Test2#hashCode(){}kotlin.Int
   //   Public signature: /Test2.hashCode|-8048879360829830756[0]
+  //   Public signature debug description: hashCode(){}kotlin.Int
   // CHECK JS_IR NATIVE:
   //   Mangled name: Test2#hashCode(){}
   //   Public signature: /Test2.hashCode|3409210261493131192[0]
+  //   Public signature debug description: hashCode(){}
   override fun hashCode(): Int
 
   // CHECK JVM_IR:
   //   Mangled name: Test2#toString(){}kotlin.String
   //   Public signature: /Test2.toString|6958853723545266802[0]
+  //   Public signature debug description: toString(){}kotlin.String
   // CHECK JS_IR NATIVE:
   //   Mangled name: Test2#toString(){}
   //   Public signature: /Test2.toString|-1522858123163872138[0]
+  //   Public signature debug description: toString(){}
   override fun toString(): String
 
 }
@@ -289,57 +357,71 @@ data class Test3 {
   // CHECK:
   //   Mangled name: Test3{}anyArrayN
   //   Public signature: /Test3.anyArrayN|-3755548963031234944[0]
+  //   Public signature debug description: {}anyArrayN
   val anyArrayN: Array<Any>?
     // CHECK JVM_IR:
     //   Mangled name: Test3#<get-anyArrayN>(){}kotlin.Array<kotlin.Any>?
     //   Public signature: /Test3.anyArrayN.<get-anyArrayN>|1018695805048889237[0]
+    //   Public signature debug description: <get-anyArrayN>(){}kotlin.Array<kotlin.Any>?
     // CHECK JS_IR NATIVE:
     //   Mangled name: Test3#<get-anyArrayN>(){}
     //   Public signature: /Test3.anyArrayN.<get-anyArrayN>|7972114620855000537[0]
+    //   Public signature debug description: <get-anyArrayN>(){}
     get
 
   // CHECK:
   //   Mangled name: Test3#<init>(kotlin.Array<kotlin.Any>?){}
   //   Public signature: /Test3.<init>|2034455610636948474[0]
+  //   Public signature debug description: <init>(kotlin.Array<kotlin.Any>?){}
   constructor(anyArrayN: Array<Any>?) /* primary */
   // CHECK JVM_IR:
   //   Mangled name: Test3#component1(){}kotlin.Array<kotlin.Any>?
   //   Public signature: /Test3.component1|3443609172722853741[0]
+  //   Public signature debug description: component1(){}kotlin.Array<kotlin.Any>?
   // CHECK JS_IR NATIVE:
   //   Mangled name: Test3#component1(){}
   //   Public signature: /Test3.component1|162597135895221648[0]
+  //   Public signature debug description: component1(){}
   operator fun component1(): Array<Any>?
 
   // CHECK JVM_IR:
   //   Mangled name: Test3#copy(kotlin.Array<kotlin.Any>?){}Test3
   //   Public signature: /Test3.copy|-3165504510354767753[0]
+  //   Public signature debug description: copy(kotlin.Array<kotlin.Any>?){}Test3
   // CHECK JS_IR NATIVE:
   //   Mangled name: Test3#copy(kotlin.Array<kotlin.Any>?){}
   //   Public signature: /Test3.copy|2372396661078018499[0]
+  //   Public signature debug description: copy(kotlin.Array<kotlin.Any>?){}
   fun copy(anyArrayN: Array<Any>?): Test3
 
   // CHECK JVM_IR:
   //   Mangled name: Test3#equals(kotlin.Any?){}kotlin.Boolean
   //   Public signature: /Test3.equals|722809408929142791[0]
+  //   Public signature debug description: equals(kotlin.Any?){}kotlin.Boolean
   // CHECK JS_IR NATIVE:
   //   Mangled name: Test3#equals(kotlin.Any?){}
   //   Public signature: /Test3.equals|4638265728071529943[0]
+  //   Public signature debug description: equals(kotlin.Any?){}
   override operator fun equals(other: Any?): Boolean
 
   // CHECK JVM_IR:
   //   Mangled name: Test3#hashCode(){}kotlin.Int
   //   Public signature: /Test3.hashCode|-8048879360829830756[0]
+  //   Public signature debug description: hashCode(){}kotlin.Int
   // CHECK JS_IR NATIVE:
   //   Mangled name: Test3#hashCode(){}
   //   Public signature: /Test3.hashCode|3409210261493131192[0]
+  //   Public signature debug description: hashCode(){}
   override fun hashCode(): Int
 
   // CHECK JVM_IR:
   //   Mangled name: Test3#toString(){}kotlin.String
   //   Public signature: /Test3.toString|6958853723545266802[0]
+  //   Public signature debug description: toString(){}kotlin.String
   // CHECK JS_IR NATIVE:
   //   Mangled name: Test3#toString(){}
   //   Public signature: /Test3.toString|-1522858123163872138[0]
+  //   Public signature debug description: toString(){}
   override fun toString(): String
 
 }

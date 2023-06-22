@@ -5,19 +5,23 @@ class C : IFooBar {
   // CHECK:
   //   Mangled name: C#<init>(){}
   //   Public signature: /C.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   constructor() /* primary */
   // CHECK:
   //   Mangled name: C.$$delegate_0
   //   Public signature: /C.$$delegate_0|-7286425919675154353[0]
+  //   Public signature debug description: 
   private /* final field */ val $$delegate_0: FooBarImpl
   // CHECK:
   //   Mangled name: C#foo(){}
   //   Public signature: /C.foo|-1041209573719867811[0]
+  //   Public signature debug description: foo(){}
   override fun foo(): Unit
 
   // CHECK:
   //   Mangled name: C#bar(){}
   //   Public signature: /C.bar|496682602797471549[0]
+  //   Public signature debug description: bar(){}
   override fun bar(): Unit
 
 }
@@ -30,11 +34,13 @@ interface IFooBar {
   // CHECK:
   //   Mangled name: IFooBar#bar(){}
   //   Public signature: /IFooBar.bar|496682602797471549[0]
+  //   Public signature debug description: bar(){}
   abstract fun bar(): Unit
 
   // CHECK:
   //   Mangled name: IFooBar#foo(){}
   //   Public signature: /IFooBar.foo|-1041209573719867811[0]
+  //   Public signature debug description: foo(){}
   abstract fun foo(): Unit
 
 }
@@ -46,16 +52,19 @@ object FooBarImpl : IFooBar {
   // CHECK:
   //   Mangled name: FooBarImpl#<init>(){}
   //   Public signature: /FooBarImpl.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   private constructor() /* primary */
 
   // CHECK:
   //   Mangled name: FooBarImpl#bar(){}
   //   Public signature: /FooBarImpl.bar|496682602797471549[0]
+  //   Public signature debug description: bar(){}
   override fun bar(): Unit
 
   // CHECK:
   //   Mangled name: FooBarImpl#foo(){}
   //   Public signature: /FooBarImpl.foo|-1041209573719867811[0]
+  //   Public signature debug description: foo(){}
   override fun foo(): Unit
 
 }

@@ -1,10 +1,12 @@
 // CHECK JS_IR NATIVE:
 //   Mangled name: #testAndAnd(<dynamic>){}
 //   Public signature: /testAndAnd|6769903474387958731[0]
+//   Public signature debug description: testAndAnd(<dynamic>){}
 fun testAndAnd(d: dynamic): Boolean
 
 // CHECK JS_IR NATIVE:
 //   Mangled name: #testOrOr(<dynamic>){}
 //   Public signature: /testOrOr|-4888923550082993745[0]
+//   Public signature debug description: testOrOr(<dynamic>){}
 fun testOrOr(d: dynamic): Boolean
 

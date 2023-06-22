@@ -6,6 +6,7 @@ interface IA {
   // CHECK:
   //   Mangled name: IA#foo(){}
   //   Public signature: /IA.foo|-1041209573719867811[0]
+  //   Public signature debug description: foo(){}
   abstract fun foo(): Unit
 
 }
@@ -18,6 +19,7 @@ interface IB {
   // CHECK:
   //   Mangled name: IB#bar(){}
   //   Public signature: /IB.bar|496682602797471549[0]
+  //   Public signature debug description: bar(){}
   abstract fun bar(): Unit
 
 }
@@ -37,13 +39,16 @@ interface Inv<T : Any?> {
   // CHECK:
   //   Mangled name: Inv{}t
   //   Public signature: /Inv.t|-8767999791664836944[0]
+  //   Public signature debug description: {}t
   abstract val t: T
     // CHECK JVM_IR:
     //   Mangled name: Inv#<get-t>(){}1:0
     //   Public signature: /Inv.t.<get-t>|5296523675281381766[0]
+    //   Public signature debug description: <get-t>(){}1:0
     // CHECK JS_IR NATIVE:
     //   Mangled name: Inv#<get-t>(){}
     //   Public signature: /Inv.t.<get-t>|7061140872129253552[0]
+    //   Public signature debug description: <get-t>(){}
     abstract get
 
 }
@@ -56,9 +61,11 @@ interface Z {
   // CHECK JVM_IR:
   //   Mangled name: Z#create(In<0:0>;In<0:0>){0§<kotlin.Any?>}Inv<0:0>
   //   Public signature: /Z.create|7944253173603668399[0]
+  //   Public signature debug description: create(In<0:0>;In<0:0>){0§<kotlin.Any?>}Inv<0:0>
   // CHECK JS_IR NATIVE:
   //   Mangled name: Z#create(In<0:0>;In<0:0>){0§<kotlin.Any?>}
   //   Public signature: /Z.create|-4145351315131572749[0]
+  //   Public signature debug description: create(In<0:0>;In<0:0>){0§<kotlin.Any?>}
   abstract fun <T : Any?> create(x: In<T>, y: In<T>): Inv<T>
 
 }
@@ -66,5 +73,6 @@ interface Z {
 // CHECK:
 //   Mangled name: #test(In<IA>;In<IB>;Z){}
 //   Public signature: /test|-7709946016530502758[0]
+//   Public signature debug description: test(In<IA>;In<IB>;Z){}
 fun test(a: In<IA>, b: In<IB>, z: Z): Unit
 

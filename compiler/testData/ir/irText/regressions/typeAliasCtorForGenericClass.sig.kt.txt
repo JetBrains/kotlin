@@ -5,18 +5,22 @@ class A<Q : Any?> {
   // CHECK:
   //   Mangled name: A{}q
   //   Public signature: /A.q|3274930974999175741[0]
+  //   Public signature debug description: {}q
   val q: Q
     // CHECK JVM_IR:
     //   Mangled name: A#<get-q>(){}1:0
     //   Public signature: /A.q.<get-q>|-447041854451904985[0]
+    //   Public signature debug description: <get-q>(){}1:0
     // CHECK JS_IR NATIVE:
     //   Mangled name: A#<get-q>(){}
     //   Public signature: /A.q.<get-q>|-39243554116721919[0]
+    //   Public signature debug description: <get-q>(){}
     get
 
   // CHECK:
   //   Mangled name: A#<init>(1:0){}
   //   Public signature: /A.<init>|-8731461708390519279[0]
+  //   Public signature debug description: <init>(1:0){}
   constructor(q: Q) /* primary */
 
 }
@@ -24,6 +28,7 @@ class A<Q : Any?> {
 // CHECK:
 //   Mangled name: #bar(){}
 //   Public signature: /bar|496682602797471549[0]
+//   Public signature debug description: bar(){}
 fun bar(): Unit
 
 // CHECK:

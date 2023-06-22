@@ -1,29 +1,36 @@
 // CHECK:
 //   Mangled name: {}p
 //   Public signature: /p|6715504260787941082[0]
+//   Public signature debug description: {}p
 var p: Int
   // CHECK JVM_IR:
   //   Mangled name: #<get-p>(){}kotlin.Int
   //   Public signature: /p.<get-p>|5329635969197638839[0]
+  //   Public signature debug description: <get-p>(){}kotlin.Int
   // CHECK JS_IR NATIVE:
   //   Mangled name: #<get-p>(){}
   //   Public signature: /p.<get-p>|-1162552463316289847[0]
+  //   Public signature debug description: <get-p>(){}
   get
   // CHECK:
   //   Mangled name: #<set-p>(kotlin.Int){}
   //   Public signature: /p.<set-p>|-6346582004572228570[0]
+  //   Public signature debug description: <set-p>(kotlin.Int){}
   set
 
 // CHECK:
 //   Mangled name: {}arr
 //   Public signature: /arr|3895543167155351037[0]
+//   Public signature debug description: {}arr
 val arr: IntArray
   // CHECK JVM_IR:
   //   Mangled name: #<get-arr>(){}kotlin.IntArray
   //   Public signature: /arr.<get-arr>|-3280308842233711836[0]
+  //   Public signature debug description: <get-arr>(){}kotlin.IntArray
   // CHECK JS_IR NATIVE:
   //   Mangled name: #<get-arr>(){}
   //   Public signature: /arr.<get-arr>|-3478894267993371734[0]
+  //   Public signature debug description: <get-arr>(){}
   get
 
 // CHECK:
@@ -33,35 +40,43 @@ class C {
   // CHECK:
   //   Mangled name: C{}p
   //   Public signature: /C.p|6715504260787941082[0]
+  //   Public signature debug description: {}p
   var p: Int
     // CHECK JVM_IR:
     //   Mangled name: C#<get-p>(){}kotlin.Int
     //   Public signature: /C.p.<get-p>|5329635969197638839[0]
+    //   Public signature debug description: <get-p>(){}kotlin.Int
     // CHECK JS_IR NATIVE:
     //   Mangled name: C#<get-p>(){}
     //   Public signature: /C.p.<get-p>|-1162552463316289847[0]
+    //   Public signature debug description: <get-p>(){}
     get
     // CHECK:
     //   Mangled name: C#<set-p>(kotlin.Int){}
     //   Public signature: /C.p.<set-p>|-6346582004572228570[0]
+    //   Public signature debug description: <set-p>(kotlin.Int){}
     set
 
   // CHECK:
   //   Mangled name: C#<init>(){}
   //   Public signature: /C.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   constructor() /* primary */
 
   // CHECK JVM_IR:
   //   Mangled name: C#get(kotlin.Int){}kotlin.Int
   //   Public signature: /C.get|3217555545696752959[0]
+  //   Public signature debug description: get(kotlin.Int){}kotlin.Int
   // CHECK JS_IR NATIVE:
   //   Mangled name: C#get(kotlin.Int){}
   //   Public signature: /C.get|-1406503945102116889[0]
+  //   Public signature debug description: get(kotlin.Int){}
   operator fun get(i: Int): Int
 
   // CHECK:
   //   Mangled name: C#set(kotlin.Int;kotlin.Int){}
   //   Public signature: /C.set|-213984015376347786[0]
+  //   Public signature debug description: set(kotlin.Int;kotlin.Int){}
   operator fun set(i: Int, value: Int): Unit
 
 }
@@ -73,35 +88,43 @@ object O {
   // CHECK:
   //   Mangled name: O{}p
   //   Public signature: /O.p|6715504260787941082[0]
+  //   Public signature debug description: {}p
   var p: Int
     // CHECK JVM_IR:
     //   Mangled name: O#<get-p>(){}kotlin.Int
     //   Public signature: /O.p.<get-p>|5329635969197638839[0]
+    //   Public signature debug description: <get-p>(){}kotlin.Int
     // CHECK JS_IR NATIVE:
     //   Mangled name: O#<get-p>(){}
     //   Public signature: /O.p.<get-p>|-1162552463316289847[0]
+    //   Public signature debug description: <get-p>(){}
     get
     // CHECK:
     //   Mangled name: O#<set-p>(kotlin.Int){}
     //   Public signature: /O.p.<set-p>|-6346582004572228570[0]
+    //   Public signature debug description: <set-p>(kotlin.Int){}
     set
 
   // CHECK:
   //   Mangled name: O#<init>(){}
   //   Public signature: /O.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   private constructor() /* primary */
 
   // CHECK JVM_IR:
   //   Mangled name: O#get(kotlin.Int){}kotlin.Int
   //   Public signature: /O.get|3217555545696752959[0]
+  //   Public signature debug description: get(kotlin.Int){}kotlin.Int
   // CHECK JS_IR NATIVE:
   //   Mangled name: O#get(kotlin.Int){}
   //   Public signature: /O.get|-1406503945102116889[0]
+  //   Public signature debug description: get(kotlin.Int){}
   operator fun get(i: Int): Int
 
   // CHECK:
   //   Mangled name: O#set(kotlin.Int;kotlin.Int){}
   //   Public signature: /O.set|-213984015376347786[0]
+  //   Public signature debug description: set(kotlin.Int;kotlin.Int){}
   operator fun set(i: Int, value: Int): Unit
 
 }
@@ -109,70 +132,84 @@ object O {
 // CHECK:
 //   Mangled name: #testArrayPostfix(){}
 //   Public signature: /testArrayPostfix|-5183940712820420583[0]
+//   Public signature debug description: testArrayPostfix(){}
 fun testArrayPostfix(): Unit
 
 // CHECK:
 //   Mangled name: #testArrayPrefix(){}
 //   Public signature: /testArrayPrefix|3229135807367985846[0]
+//   Public signature debug description: testArrayPrefix(){}
 fun testArrayPrefix(): Unit
 
 // CHECK:
 //   Mangled name: #testClassOperatorPostfix(){}
 //   Public signature: /testClassOperatorPostfix|2906708313202825150[0]
+//   Public signature debug description: testClassOperatorPostfix(){}
 fun testClassOperatorPostfix(): Unit
 
 // CHECK:
 //   Mangled name: #testClassOperatorPrefix(){}
 //   Public signature: /testClassOperatorPrefix|6915419153076323743[0]
+//   Public signature debug description: testClassOperatorPrefix(){}
 fun testClassOperatorPrefix(): Unit
 
 // CHECK:
 //   Mangled name: #testClassPropPostfix(){}
 //   Public signature: /testClassPropPostfix|-4203305206320166261[0]
+//   Public signature debug description: testClassPropPostfix(){}
 fun testClassPropPostfix(): Unit
 
 // CHECK:
 //   Mangled name: #testClassPropPrefix(){}
 //   Public signature: /testClassPropPrefix|1087589743797908334[0]
+//   Public signature debug description: testClassPropPrefix(){}
 fun testClassPropPrefix(): Unit
 
 // CHECK:
 //   Mangled name: #testObjectOperatorPostfix(){}
 //   Public signature: /testObjectOperatorPostfix|3636050613187164383[0]
+//   Public signature debug description: testObjectOperatorPostfix(){}
 fun testObjectOperatorPostfix(): Unit
 
 // CHECK:
 //   Mangled name: #testObjectOperatorPrefix(){}
 //   Public signature: /testObjectOperatorPrefix|-3519675779257775428[0]
+//   Public signature debug description: testObjectOperatorPrefix(){}
 fun testObjectOperatorPrefix(): Unit
 
 // CHECK:
 //   Mangled name: #testObjectPropPostfix(){}
 //   Public signature: /testObjectPropPostfix|2876726747893752873[0]
+//   Public signature debug description: testObjectPropPostfix(){}
 fun testObjectPropPostfix(): Unit
 
 // CHECK:
 //   Mangled name: #testObjectPropPrefix(){}
 //   Public signature: /testObjectPropPrefix|428265185993627760[0]
+//   Public signature debug description: testObjectPropPrefix(){}
 fun testObjectPropPrefix(): Unit
 
 // CHECK:
 //   Mangled name: #testPropPostfix(){}
 //   Public signature: /testPropPostfix|-2249245688892536772[0]
+//   Public signature debug description: testPropPostfix(){}
 fun testPropPostfix(): Unit
 
 // CHECK:
 //   Mangled name: #testPropPrefix(){}
 //   Public signature: /testPropPrefix|-2042336393408932139[0]
+//   Public signature debug description: testPropPrefix(){}
 fun testPropPrefix(): Unit
 
 // CHECK:
 //   Mangled name: #testVarPostfix(){}
 //   Public signature: /testVarPostfix|-5300999320944368230[0]
+//   Public signature debug description: testVarPostfix(){}
 fun testVarPostfix(): Unit
 
 // CHECK:
 //   Mangled name: #testVarPrefix(){}
 //   Public signature: /testVarPrefix|-4413709736918376229[0]
+//   Public signature debug description: testVarPrefix(){}
 fun testVarPrefix(): Unit
 

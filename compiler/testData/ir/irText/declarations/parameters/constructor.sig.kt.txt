@@ -5,30 +5,37 @@ class Test1<T1 : Any?, T2 : Any?> {
   // CHECK:
   //   Mangled name: Test1{}x
   //   Public signature: /Test1.x|-8060530855978347579[0]
+  //   Public signature debug description: {}x
   val x: T1
     // CHECK JVM_IR:
     //   Mangled name: Test1#<get-x>(){}1:0
     //   Public signature: /Test1.x.<get-x>|-8893883356128097563[0]
+    //   Public signature debug description: <get-x>(){}1:0
     // CHECK JS_IR NATIVE:
     //   Mangled name: Test1#<get-x>(){}
     //   Public signature: /Test1.x.<get-x>|1482705010654679335[0]
+    //   Public signature debug description: <get-x>(){}
     get
 
   // CHECK:
   //   Mangled name: Test1{}y
   //   Public signature: /Test1.y|3625903257357557171[0]
+  //   Public signature debug description: {}y
   val y: T2
     // CHECK JVM_IR:
     //   Mangled name: Test1#<get-y>(){}1:1
     //   Public signature: /Test1.y.<get-y>|6657541212363005233[0]
+    //   Public signature debug description: <get-y>(){}1:1
     // CHECK JS_IR NATIVE:
     //   Mangled name: Test1#<get-y>(){}
     //   Public signature: /Test1.y.<get-y>|-7902422373892128922[0]
+    //   Public signature debug description: <get-y>(){}
     get
 
   // CHECK:
   //   Mangled name: Test1#<init>(1:0;1:1){}
   //   Public signature: /Test1.<init>|3086114026882374588[0]
+  //   Public signature debug description: <init>(1:0;1:1){}
   constructor(x: T1, y: T2) /* primary */
 
 }
@@ -40,13 +47,16 @@ class Test2 {
   // CHECK:
   //   Mangled name: Test2{}y
   //   Public signature: /Test2.y|3625903257357557171[0]
+  //   Public signature debug description: {}y
   val y: String
     // CHECK JVM_IR:
     //   Mangled name: Test2#<get-y>(){}kotlin.String
     //   Public signature: /Test2.y.<get-y>|1760775372995524147[0]
+    //   Public signature debug description: <get-y>(){}kotlin.String
     // CHECK JS_IR NATIVE:
     //   Mangled name: Test2#<get-y>(){}
     //   Public signature: /Test2.y.<get-y>|-7902422373892128922[0]
+    //   Public signature debug description: <get-y>(){}
     get
 
   // CHECK:
@@ -56,22 +66,27 @@ class Test2 {
     // CHECK:
     //   Mangled name: Test2.TestInner{}z
     //   Public signature: /Test2.TestInner.z|7549650372729116193[0]
+    //   Public signature debug description: {}z
     val z: Z
       // CHECK JVM_IR:
       //   Mangled name: Test2.TestInner#<get-z>(){}1:0
       //   Public signature: /Test2.TestInner.z.<get-z>|6635558627205321915[0]
+      //   Public signature debug description: <get-z>(){}1:0
       // CHECK JS_IR NATIVE:
       //   Mangled name: Test2.TestInner#<get-z>(){}
       //   Public signature: /Test2.TestInner.z.<get-z>|4925813204745917177[0]
+      //   Public signature debug description: <get-z>(){}
       get
 
     // CHECK:
     //   Mangled name: Test2.TestInner#<init>(1:0){}
     //   Public signature: /Test2.TestInner.<init>|-8731461708390519279[0]
+    //   Public signature debug description: <init>(1:0){}
     constructor(z: Z) /* primary */
     // CHECK:
     //   Mangled name: Test2.TestInner#<init>(1:0;kotlin.Int){}
     //   Public signature: /Test2.TestInner.<init>|7281397193015694517[0]
+    //   Public signature debug description: <init>(1:0;kotlin.Int){}
     constructor(z: Z, i: Int)
 
   }
@@ -79,6 +94,7 @@ class Test2 {
   // CHECK:
   //   Mangled name: Test2#<init>(kotlin.Int;kotlin.String){}
   //   Public signature: /Test2.<init>|-6994814679185246063[0]
+  //   Public signature debug description: <init>(kotlin.Int;kotlin.String){}
   constructor(x: Int, y: String) /* primary */
 
 }
@@ -90,30 +106,37 @@ class Test3 {
   // CHECK:
   //   Mangled name: Test3{}x
   //   Public signature: /Test3.x|-8060530855978347579[0]
+  //   Public signature debug description: {}x
   val x: Int
     // CHECK JVM_IR:
     //   Mangled name: Test3#<get-x>(){}kotlin.Int
     //   Public signature: /Test3.x.<get-x>|4966956098150895696[0]
+    //   Public signature debug description: <get-x>(){}kotlin.Int
     // CHECK JS_IR NATIVE:
     //   Mangled name: Test3#<get-x>(){}
     //   Public signature: /Test3.x.<get-x>|1482705010654679335[0]
+    //   Public signature debug description: <get-x>(){}
     get
 
   // CHECK:
   //   Mangled name: Test3{}y
   //   Public signature: /Test3.y|3625903257357557171[0]
+  //   Public signature debug description: {}y
   val y: String
     // CHECK JVM_IR:
     //   Mangled name: Test3#<get-y>(){}kotlin.String
     //   Public signature: /Test3.y.<get-y>|1760775372995524147[0]
+    //   Public signature debug description: <get-y>(){}kotlin.String
     // CHECK JS_IR NATIVE:
     //   Mangled name: Test3#<get-y>(){}
     //   Public signature: /Test3.y.<get-y>|-7902422373892128922[0]
+    //   Public signature debug description: <get-y>(){}
     get
 
   // CHECK:
   //   Mangled name: Test3#<init>(kotlin.Int;kotlin.String){}
   //   Public signature: /Test3.<init>|-6994814679185246063[0]
+  //   Public signature debug description: <init>(kotlin.Int;kotlin.String){}
   constructor(x: Int, y: String) /* primary */
 
 }
@@ -125,22 +148,27 @@ class Test4<T : Any?> {
   // CHECK:
   //   Mangled name: Test4{}x
   //   Public signature: /Test4.x|-8060530855978347579[0]
+  //   Public signature debug description: {}x
   val x: Int
     // CHECK JVM_IR:
     //   Mangled name: Test4#<get-x>(){}kotlin.Int
     //   Public signature: /Test4.x.<get-x>|4966956098150895696[0]
+    //   Public signature debug description: <get-x>(){}kotlin.Int
     // CHECK JS_IR NATIVE:
     //   Mangled name: Test4#<get-x>(){}
     //   Public signature: /Test4.x.<get-x>|1482705010654679335[0]
+    //   Public signature debug description: <get-x>(){}
     get
 
   // CHECK:
   //   Mangled name: Test4#<init>(kotlin.Int){}
   //   Public signature: /Test4.<init>|-5182794243525578284[0]
+  //   Public signature debug description: <init>(kotlin.Int){}
   constructor(x: Int) /* primary */
   // CHECK:
   //   Mangled name: Test4#<init>(kotlin.Int;kotlin.Int){}
   //   Public signature: /Test4.<init>|-7691762014320324121[0]
+  //   Public signature debug description: <init>(kotlin.Int;kotlin.Int){}
   constructor(x: Int, y: Int)
 
 }

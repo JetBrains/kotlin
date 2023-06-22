@@ -1,20 +1,24 @@
 // CHECK JS_IR NATIVE:
 //   Mangled name: #testEqeq(<dynamic>){}
 //   Public signature: /testEqeq|-1993622698448833276[0]
+//   Public signature debug description: testEqeq(<dynamic>){}
 fun testEqeq(d: dynamic): Boolean
 
 // CHECK JS_IR NATIVE:
 //   Mangled name: #testEqeqeq(<dynamic>){}
 //   Public signature: /testEqeqeq|6434412038753944189[0]
+//   Public signature debug description: testEqeqeq(<dynamic>){}
 fun testEqeqeq(d: dynamic): Boolean
 
 // CHECK JS_IR NATIVE:
 //   Mangled name: #testExclEq(<dynamic>){}
 //   Public signature: /testExclEq|-2117076107258151936[0]
+//   Public signature debug description: testExclEq(<dynamic>){}
 fun testExclEq(d: dynamic): Boolean
 
 // CHECK JS_IR NATIVE:
 //   Mangled name: #testExclEqeq(<dynamic>){}
 //   Public signature: /testExclEqeq|5516019862167337768[0]
+//   Public signature debug description: testExclEqeq(<dynamic>){}
 fun testExclEqeq(d: dynamic): Boolean
 

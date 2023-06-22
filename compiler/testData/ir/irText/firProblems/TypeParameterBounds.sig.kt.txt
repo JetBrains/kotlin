@@ -6,18 +6,22 @@ open annotation class TypeAnn : Annotation {
   // CHECK:
   //   Mangled name: TypeAnn{}name
   //   Public signature: /TypeAnn.name|4231860309499509769[0]
+  //   Public signature debug description: {}name
   val name: String
     // CHECK JVM_IR:
     //   Mangled name: TypeAnn#<get-name>(){}kotlin.String
     //   Public signature: /TypeAnn.name.<get-name>|-8006111524522882650[0]
+    //   Public signature debug description: <get-name>(){}kotlin.String
     // CHECK JS_IR NATIVE:
     //   Mangled name: TypeAnn#<get-name>(){}
     //   Public signature: /TypeAnn.name.<get-name>|5879344792307730109[0]
+    //   Public signature debug description: <get-name>(){}
     get
 
   // CHECK:
   //   Mangled name: TypeAnn#<init>(kotlin.String){}
   //   Public signature: /TypeAnn.<init>|1280618353163213788[0]
+  //   Public signature debug description: <init>(kotlin.String){}
   constructor(name: String) /* primary */
 
 }
@@ -30,6 +34,7 @@ open annotation class TypeParameterAnn : Annotation {
   // CHECK:
   //   Mangled name: TypeParameterAnn#<init>(){}
   //   Public signature: /TypeParameterAnn.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   constructor() /* primary */
 
 }
@@ -43,6 +48,7 @@ open annotation class TypeParameterAnnBinary : Annotation {
   // CHECK:
   //   Mangled name: TypeParameterAnnBinary#<init>(){}
   //   Public signature: /TypeParameterAnnBinary.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   constructor() /* primary */
 
 }
@@ -54,6 +60,7 @@ class ClassBound<@TypeParameterAnn T : @TypeAnn(name = "Simple") SimpleClass> {
   // CHECK:
   //   Mangled name: ClassBound#<init>(){}
   //   Public signature: /ClassBound.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   constructor() /* primary */
 
 }
@@ -65,6 +72,7 @@ class ClassBoundGeneric<T : @TypeAnn(name = "GenericClass") GenericClass<@TypeAn
   // CHECK:
   //   Mangled name: ClassBoundGeneric#<init>(){}
   //   Public signature: /ClassBoundGeneric.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   constructor() /* primary */
 
 }
@@ -76,6 +84,7 @@ class GenericClass<G : Any?> {
   // CHECK:
   //   Mangled name: GenericClass#<init>(){}
   //   Public signature: /GenericClass.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   constructor() /* primary */
 
 }
@@ -87,6 +96,7 @@ class InterfaceBound<@TypeParameterAnn T : @TypeAnn(name = "Simple") Simple> {
   // CHECK:
   //   Mangled name: InterfaceBound#<init>(){}
   //   Public signature: /InterfaceBound.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   constructor() /* primary */
 
 }
@@ -98,6 +108,7 @@ class InterfaceBoundGeneric<T : @TypeAnn(name = "Generic") Generic<@TypeAnn(name
   // CHECK:
   //   Mangled name: InterfaceBoundGeneric#<init>(){}
   //   Public signature: /InterfaceBoundGeneric.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   constructor() /* primary */
 
 }
@@ -109,6 +120,7 @@ class SimpleClass {
   // CHECK:
   //   Mangled name: SimpleClass#<init>(){}
   //   Public signature: /SimpleClass.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   constructor() /* primary */
 
 }
@@ -120,6 +132,7 @@ class SimpleParameter<@TypeParameterAnn @TypeParameterAnnBinary T : Any?> {
   // CHECK:
   //   Mangled name: SimpleParameter#<init>(){}
   //   Public signature: /SimpleParameter.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   constructor() /* primary */
 
 }
@@ -131,6 +144,7 @@ class TypeParameterAsBound<Y : Any?, @TypeParameterAnn T : @TypeAnn(name = "Y as
   // CHECK:
   //   Mangled name: TypeParameterAsBound#<init>(){}
   //   Public signature: /TypeParameterAsBound.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   constructor() /* primary */
 
 }

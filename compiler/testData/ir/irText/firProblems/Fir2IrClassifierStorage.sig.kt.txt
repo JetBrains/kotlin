@@ -5,54 +5,67 @@ class Fir2IrClassifierStorage : Fir2IrComponents {
   // CHECK:
   //   Mangled name: Fir2IrClassifierStorage{}components
   //   Public signature: /Fir2IrClassifierStorage.components|4078011610978737739[0]
+  //   Public signature debug description: {}components
   private val components: Fir2IrComponents
     // CHECK JVM_IR:
     //   Mangled name: Fir2IrClassifierStorage#<get-components>(){}Fir2IrComponents
     //   Public signature: /Fir2IrClassifierStorage.components.<get-components>|-8289335322148381223[0]
+    //   Public signature debug description: <get-components>(){}Fir2IrComponents
     // CHECK JS_IR NATIVE:
     //   Mangled name: Fir2IrClassifierStorage#<get-components>(){}
     //   Public signature: /Fir2IrClassifierStorage.components.<get-components>|7539133630823831154[0]
+    //   Public signature debug description: <get-components>(){}
     private get
 
   // CHECK:
   //   Mangled name: Fir2IrClassifierStorage{}name
   //   Public signature: /Fir2IrClassifierStorage.name|4231860309499509769[0]
+  //   Public signature debug description: {}name
   private val name: String
     // CHECK JVM_IR:
     //   Mangled name: Fir2IrClassifierStorage#<get-name>(){}kotlin.String
     //   Public signature: /Fir2IrClassifierStorage.name.<get-name>|-8006111524522882650[0]
+    //   Public signature debug description: <get-name>(){}kotlin.String
     // CHECK JS_IR NATIVE:
     //   Mangled name: Fir2IrClassifierStorage#<get-name>(){}
     //   Public signature: /Fir2IrClassifierStorage.name.<get-name>|5879344792307730109[0]
+    //   Public signature debug description: <get-name>(){}
     private get
 
   // CHECK:
   //   Mangled name: Fir2IrClassifierStorage#<init>(Fir2IrComponents){}
   //   Public signature: /Fir2IrClassifierStorage.<init>|-9000355074851799366[0]
+  //   Public signature debug description: <init>(Fir2IrComponents){}
   constructor(components: Fir2IrComponents) /* primary */
 
   // CHECK:
   //   Mangled name: Fir2IrClassifierStorage{}classifierStorage
   //   Public signature: /Fir2IrClassifierStorage.classifierStorage|-9190759179670631614[0]
+  //   Public signature debug description: {}classifierStorage
   override val classifierStorage: Fir2IrClassifierStorage
     // CHECK JVM_IR:
     //   Mangled name: Fir2IrClassifierStorage#<get-classifierStorage>(){}Fir2IrClassifierStorage
     //   Public signature: /Fir2IrClassifierStorage.classifierStorage.<get-classifierStorage>|3872686339912673063[0]
+    //   Public signature debug description: <get-classifierStorage>(){}Fir2IrClassifierStorage
     // CHECK JS_IR NATIVE:
     //   Mangled name: Fir2IrClassifierStorage#<get-classifierStorage>(){}
     //   Public signature: /Fir2IrClassifierStorage.classifierStorage.<get-classifierStorage>|-7373157649530412207[0]
+    //   Public signature debug description: <get-classifierStorage>(){}
     override get(): Fir2IrClassifierStorage
 
   // CHECK:
   //   Mangled name: Fir2IrClassifierStorage{}session
   //   Public signature: /Fir2IrClassifierStorage.session|5876162548717009254[0]
+  //   Public signature debug description: {}session
   override val session: FirSession
     // CHECK JVM_IR:
     //   Mangled name: Fir2IrClassifierStorage#<get-session>(){}FirSession
     //   Public signature: /Fir2IrClassifierStorage.session.<get-session>|-987114078791317060[0]
+    //   Public signature debug description: <get-session>(){}FirSession
     // CHECK JS_IR NATIVE:
     //   Mangled name: Fir2IrClassifierStorage#<get-session>(){}
     //   Public signature: /Fir2IrClassifierStorage.session.<get-session>|-846408160347892823[0]
+    //   Public signature debug description: <get-session>(){}
     override get(): FirSession
 
 }
@@ -64,34 +77,42 @@ class Fir2IrComponentsStorage : Fir2IrComponents {
   // CHECK:
   //   Mangled name: Fir2IrComponentsStorage{}session
   //   Public signature: /Fir2IrComponentsStorage.session|5876162548717009254[0]
+  //   Public signature debug description: {}session
   override val session: FirSession
     // CHECK JVM_IR:
     //   Mangled name: Fir2IrComponentsStorage#<get-session>(){}FirSession
     //   Public signature: /Fir2IrComponentsStorage.session.<get-session>|-987114078791317060[0]
+    //   Public signature debug description: <get-session>(){}FirSession
     // CHECK JS_IR NATIVE:
     //   Mangled name: Fir2IrComponentsStorage#<get-session>(){}
     //   Public signature: /Fir2IrComponentsStorage.session.<get-session>|-846408160347892823[0]
+    //   Public signature debug description: <get-session>(){}
     override get
 
   // CHECK:
   //   Mangled name: Fir2IrComponentsStorage{}classifierStorage
   //   Public signature: /Fir2IrComponentsStorage.classifierStorage|-9190759179670631614[0]
+  //   Public signature debug description: {}classifierStorage
   override lateinit var classifierStorage: Fir2IrClassifierStorage
     // CHECK JVM_IR:
     //   Mangled name: Fir2IrComponentsStorage#<get-classifierStorage>(){}Fir2IrClassifierStorage
     //   Public signature: /Fir2IrComponentsStorage.classifierStorage.<get-classifierStorage>|3872686339912673063[0]
+    //   Public signature debug description: <get-classifierStorage>(){}Fir2IrClassifierStorage
     // CHECK JS_IR NATIVE:
     //   Mangled name: Fir2IrComponentsStorage#<get-classifierStorage>(){}
     //   Public signature: /Fir2IrComponentsStorage.classifierStorage.<get-classifierStorage>|-7373157649530412207[0]
+    //   Public signature debug description: <get-classifierStorage>(){}
     override get
     // CHECK:
     //   Mangled name: Fir2IrComponentsStorage#<set-classifierStorage>(Fir2IrClassifierStorage){}
     //   Public signature: /Fir2IrComponentsStorage.classifierStorage.<set-classifierStorage>|5982694170574938742[0]
+    //   Public signature debug description: <set-classifierStorage>(Fir2IrClassifierStorage){}
     open set
 
   // CHECK:
   //   Mangled name: Fir2IrComponentsStorage#<init>(FirSession){}
   //   Public signature: /Fir2IrComponentsStorage.<init>|-3192465151719300095[0]
+  //   Public signature debug description: <init>(FirSession){}
   constructor(session: FirSession) /* primary */
 
 }
@@ -103,18 +124,22 @@ class FirSession {
   // CHECK:
   //   Mangled name: FirSession{}name
   //   Public signature: /FirSession.name|4231860309499509769[0]
+  //   Public signature debug description: {}name
   val name: String
     // CHECK JVM_IR:
     //   Mangled name: FirSession#<get-name>(){}kotlin.String
     //   Public signature: /FirSession.name.<get-name>|-8006111524522882650[0]
+    //   Public signature debug description: <get-name>(){}kotlin.String
     // CHECK JS_IR NATIVE:
     //   Mangled name: FirSession#<get-name>(){}
     //   Public signature: /FirSession.name.<get-name>|5879344792307730109[0]
+    //   Public signature debug description: <get-name>(){}
     get
 
   // CHECK:
   //   Mangled name: FirSession#<init>(kotlin.String){}
   //   Public signature: /FirSession.<init>|1280618353163213788[0]
+  //   Public signature debug description: <init>(kotlin.String){}
   constructor(name: String) /* primary */
 
 }
@@ -127,25 +152,31 @@ interface Fir2IrComponents {
   // CHECK:
   //   Mangled name: Fir2IrComponents{}classifierStorage
   //   Public signature: /Fir2IrComponents.classifierStorage|-9190759179670631614[0]
+  //   Public signature debug description: {}classifierStorage
   abstract val classifierStorage: Fir2IrClassifierStorage
     // CHECK JVM_IR:
     //   Mangled name: Fir2IrComponents#<get-classifierStorage>(){}Fir2IrClassifierStorage
     //   Public signature: /Fir2IrComponents.classifierStorage.<get-classifierStorage>|3872686339912673063[0]
+    //   Public signature debug description: <get-classifierStorage>(){}Fir2IrClassifierStorage
     // CHECK JS_IR NATIVE:
     //   Mangled name: Fir2IrComponents#<get-classifierStorage>(){}
     //   Public signature: /Fir2IrComponents.classifierStorage.<get-classifierStorage>|-7373157649530412207[0]
+    //   Public signature debug description: <get-classifierStorage>(){}
     abstract get
 
   // CHECK:
   //   Mangled name: Fir2IrComponents{}session
   //   Public signature: /Fir2IrComponents.session|5876162548717009254[0]
+  //   Public signature debug description: {}session
   abstract val session: FirSession
     // CHECK JVM_IR:
     //   Mangled name: Fir2IrComponents#<get-session>(){}FirSession
     //   Public signature: /Fir2IrComponents.session.<get-session>|-987114078791317060[0]
+    //   Public signature debug description: <get-session>(){}FirSession
     // CHECK JS_IR NATIVE:
     //   Mangled name: Fir2IrComponents#<get-session>(){}
     //   Public signature: /Fir2IrComponents.session.<get-session>|-846408160347892823[0]
+    //   Public signature debug description: <get-session>(){}
     abstract get
 
 }

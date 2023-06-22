@@ -5,6 +5,7 @@ class A {
   // CHECK:
   //   Mangled name: A{}b
   //   Public signature: /A.b|772347207915745207[0]
+  //   Public signature debug description: {}b
   private val b: <no name provided>
     field
       // CHECK JVM_IR:
@@ -38,11 +39,13 @@ class A {
     //   Mangled name (compatible mode: false): A#<get-b>(){}A{}b.<no name provided>
     //   Mangled name (compatible mode: true):  A#<get-b>(){}A.b.<no name provided>
     //   Public signature: /A.b.<get-b>|-6508357397455690228[0]
+    //   Public signature debug description: <get-b>(){}A{}b.<no name provided>
     private get
 
   // CHECK:
   //   Mangled name: A#<init>(){}
   //   Public signature: /A.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   constructor() /* primary */
 
 }
@@ -54,22 +57,26 @@ class C : DoubleExpression {
   // CHECK:
   //   Mangled name: C#<init>(){}
   //   Public signature: /C.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   constructor() /* primary */
 
   // CHECK JVM_IR:
   //   Mangled name: C#isEqualTo(kotlin.Double){}kotlin.Any{EnhancedNullability}
   //   Public signature: /C.isEqualTo|6549516741996743028[0]
+  //   Public signature debug description: isEqualTo(kotlin.Double){}kotlin.Any{EnhancedNullability}
   @Override
   /* fake */ override fun isEqualTo(value: Double): @EnhancedNullability Any
 
   // CHECK JVM_IR:
   //   Mangled name: C#isEqualTo(kotlin.Double{EnhancedNullability}){}kotlin.Any{EnhancedNullability}
   //   Public signature: /C.isEqualTo|3976283770497294654[0]
+  //   Public signature debug description: isEqualTo(kotlin.Double{EnhancedNullability}){}kotlin.Any{EnhancedNullability}
   /* fake */ override fun isEqualTo(value: @EnhancedNullability Double): @EnhancedNullability Any
 
   // CHECK JVM_IR:
   //   Mangled name: C#get(){}kotlin.Double
   //   Public signature: /C.get|-8276149070669614990[0]
+  //   Public signature debug description: get(){}kotlin.Double
   override fun get(): Double
 
 }

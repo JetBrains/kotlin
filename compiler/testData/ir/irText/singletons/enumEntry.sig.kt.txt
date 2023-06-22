@@ -5,6 +5,7 @@ open enum class Z : Enum<Z> {
   // CHECK:
   //   Mangled name: Z#<init>(){}
   //   Public signature: /Z.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   private constructor() /* primary */
   // CHECK:
   //   Mangled name: Z.ENTRY
@@ -22,11 +23,13 @@ open enum class Z : Enum<Z> {
       // CHECK:
       //   Mangled name: Z.ENTRY.A#<init>(){}
       //   Public signature: /Z.ENTRY.<EEC>.A.<init>|-5645683436151566731[0]
+      //   Public signature debug description: <init>(){}
       constructor() /* primary */
 
       // CHECK:
       //   Mangled name: Z.ENTRY.A#test2(){}
       //   Public signature: /Z.ENTRY.<EEC>.A.test2|4279114864133353152[0]
+      //   Public signature debug description: test2(){}
       fun test2(): Unit
 
     }
@@ -34,74 +37,92 @@ open enum class Z : Enum<Z> {
     // CHECK:
     //   Mangled name: Z.ENTRY#<init>(){}
     //   Public signature: /Z.ENTRY.<EEC>.<init>|-5645683436151566731[0]
+    //   Public signature debug description: <init>(){}
     private constructor() /* primary */
     // CHECK JVM_IR:
     //   Mangled name: Z.ENTRY#clone(){}kotlin.Any
     //   Public signature: /Z.ENTRY.<EEC>.clone|-6903128697527593263[0]
+    //   Public signature debug description: clone(){}kotlin.Any
     // CHECK JS_IR NATIVE:
     //   Mangled name: Z.ENTRY#compareTo(Z){}
     //   Public signature: /Z.ENTRY.<EEC>.compareTo|7572315864006954503[0]
+    //   Public signature debug description: compareTo(Z){}
     protected /* fake */ override fun clone(): Any
 
     // CHECK JVM_IR:
     //   Mangled name: Z.ENTRY#compareTo(Z){}kotlin.Int
     //   Public signature: /Z.ENTRY.<EEC>.compareTo|-7935111597565816011[0]
+    //   Public signature debug description: compareTo(Z){}kotlin.Int
     // CHECK JS_IR NATIVE:
     //   Mangled name: Z.ENTRY#equals(kotlin.Any?){}
     //   Public signature: /Z.ENTRY.<EEC>.equals|4638265728071529943[0]
+    //   Public signature debug description: equals(kotlin.Any?){}
     /* fake */ override operator fun compareTo(other: Z): Int
 
     // CHECK JVM_IR:
     //   Mangled name: Z.ENTRY#equals(kotlin.Any?){}kotlin.Boolean
     //   Public signature: /Z.ENTRY.<EEC>.equals|722809408929142791[0]
+    //   Public signature debug description: equals(kotlin.Any?){}kotlin.Boolean
     // CHECK JS_IR NATIVE:
     //   Mangled name: Z.ENTRY#hashCode(){}
     //   Public signature: /Z.ENTRY.<EEC>.hashCode|3409210261493131192[0]
+    //   Public signature debug description: hashCode(){}
     /* fake */ override operator fun equals(other: Any?): Boolean
 
     // CHECK JVM_IR:
     //   Mangled name: Z.ENTRY#hashCode(){}kotlin.Int
     //   Public signature: /Z.ENTRY.<EEC>.hashCode|-8048879360829830756[0]
+    //   Public signature debug description: hashCode(){}kotlin.Int
     // CHECK JS_IR NATIVE:
     //   Mangled name: Z.ENTRY#toString(){}
     //   Public signature: /Z.ENTRY.<EEC>.toString|-1522858123163872138[0]
+    //   Public signature debug description: toString(){}
     /* fake */ override fun hashCode(): Int
 
     // CHECK JVM_IR:
     //   Mangled name: Z.ENTRY#toString(){}kotlin.String
     //   Public signature: /Z.ENTRY.<EEC>.toString|6958853723545266802[0]
+    //   Public signature debug description: toString(){}kotlin.String
     // CHECK JS_IR NATIVE:
     //   Mangled name: Z.ENTRY#test(){}
     //   Public signature: /Z.ENTRY.<EEC>.test|6620506149988718649[0]
+    //   Public signature debug description: test(){}
     /* fake */ override fun toString(): String
 
     // CHECK:
     //   Mangled name: Z.ENTRY#test(){}
     //   Public signature: /Z.ENTRY.<EEC>.test|6620506149988718649[0]
+    //   Public signature debug description: test(){}
     fun test(): Unit
 
     // CHECK:
     //   Mangled name: Z.ENTRY{}name
     //   Public signature: /Z.ENTRY.<EEC>.name|4231860309499509769[0]
+    //   Public signature debug description: {}name
     /* fake */ override val name: String
       // CHECK JVM_IR:
       //   Mangled name: Z.ENTRY#<get-name>(){}kotlin.String
       //   Public signature: /Z.ENTRY.<EEC>.name.<get-name>|-8006111524522882650[0]
+      //   Public signature debug description: <get-name>(){}kotlin.String
       // CHECK JS_IR NATIVE:
       //   Mangled name: Z.ENTRY{}ordinal
       //   Public signature: /Z.ENTRY.<EEC>.ordinal|1912745122988592376[0]
+      //   Public signature debug description: {}ordinal
       /* fake */ override get(): String
 
     // CHECK:
     //   Mangled name: Z.ENTRY{}ordinal
     //   Public signature: /Z.ENTRY.<EEC>.ordinal|1912745122988592376[0]
+    //   Public signature debug description: {}ordinal
     /* fake */ override val ordinal: Int
       // CHECK JVM_IR:
       //   Mangled name: Z.ENTRY#<get-ordinal>(){}kotlin.Int
       //   Public signature: /Z.ENTRY.<EEC>.ordinal.<get-ordinal>|-6902664390061762634[0]
+      //   Public signature debug description: <get-ordinal>(){}kotlin.Int
       // CHECK JS_IR NATIVE:
       //   Mangled name: Z#valueOf#static(kotlin.String){}
       //   Public signature: /Z.valueOf|-4683474617854611729[0]
+      //   Public signature debug description: valueOf#static(kotlin.String){}
       /* fake */ override get(): Int
 
   }
@@ -109,90 +130,112 @@ open enum class Z : Enum<Z> {
   // CHECK JVM_IR:
   //   Mangled name: Z#valueOf#static(kotlin.String){}Z
   //   Public signature: /Z.valueOf|6700955022581377295[0]
+  //   Public signature debug description: valueOf#static(kotlin.String){}Z
   // CHECK JS_IR NATIVE:
   //   Mangled name: Z#values#static(){}
   //   Public signature: /Z.values|-8715569000920726747[0]
+  //   Public signature debug description: values#static(){}
   fun valueOf(value: String): Z
 
   // CHECK JVM_IR:
   //   Mangled name: Z#values#static(){}kotlin.Array<Z>
   //   Public signature: /Z.values|-4467060086112669746[0]
+  //   Public signature debug description: values#static(){}kotlin.Array<Z>
   // CHECK JS_IR NATIVE:
   //   Mangled name: Z#compareTo(Z){}
   //   Public signature: /Z.compareTo|7572315864006954503[0]
+  //   Public signature debug description: compareTo(Z){}
   fun values(): Array<Z>
 
   // CHECK JVM_IR:
   //   Mangled name: Z#clone(){}kotlin.Any
   //   Public signature: /Z.clone|-6903128697527593263[0]
+  //   Public signature debug description: clone(){}kotlin.Any
   // CHECK JS_IR NATIVE:
   //   Mangled name: Z#equals(kotlin.Any?){}
   //   Public signature: /Z.equals|4638265728071529943[0]
+  //   Public signature debug description: equals(kotlin.Any?){}
   protected /* fake */ override fun clone(): Any
 
   // CHECK JVM_IR:
   //   Mangled name: Z#compareTo(Z){}kotlin.Int
   //   Public signature: /Z.compareTo|-7935111597565816011[0]
+  //   Public signature debug description: compareTo(Z){}kotlin.Int
   // CHECK JS_IR NATIVE:
   //   Mangled name: Z#hashCode(){}
   //   Public signature: /Z.hashCode|3409210261493131192[0]
+  //   Public signature debug description: hashCode(){}
   /* fake */ override operator fun compareTo(other: Z): Int
 
   // CHECK JVM_IR:
   //   Mangled name: Z#equals(kotlin.Any?){}kotlin.Boolean
   //   Public signature: /Z.equals|722809408929142791[0]
+  //   Public signature debug description: equals(kotlin.Any?){}kotlin.Boolean
   // CHECK JS_IR NATIVE:
   //   Mangled name: Z#toString(){}
   //   Public signature: /Z.toString|-1522858123163872138[0]
+  //   Public signature debug description: toString(){}
   /* fake */ override operator fun equals(other: Any?): Boolean
 
   // CHECK JVM_IR:
   //   Mangled name: Z#hashCode(){}kotlin.Int
   //   Public signature: /Z.hashCode|-8048879360829830756[0]
+  //   Public signature debug description: hashCode(){}kotlin.Int
   // CHECK JS_IR NATIVE:
   //   Mangled name: Z#static{}entries
   //   Public signature: /Z.entries|-5134227801081826149[0]
+  //   Public signature debug description: #static{}entries
   /* fake */ override fun hashCode(): Int
 
   // CHECK JVM_IR:
   //   Mangled name: Z#toString(){}kotlin.String
   //   Public signature: /Z.toString|6958853723545266802[0]
+  //   Public signature debug description: toString(){}kotlin.String
   // CHECK JS_IR NATIVE:
   //   Mangled name: Z#<get-entries>#static(){}
   //   Public signature: /Z.entries.<get-entries>|-6068527377476727729[0]
+  //   Public signature debug description: <get-entries>#static(){}
   /* fake */ override fun toString(): String
 
   // CHECK:
   //   Mangled name: Z#static{}entries
   //   Public signature: /Z.entries|-5134227801081826149[0]
+  //   Public signature debug description: #static{}entries
   val entries: EnumEntries<Z>
     // CHECK JVM_IR:
     //   Mangled name: Z#<get-entries>#static(){}kotlin.enums.EnumEntries<Z>
     //   Public signature: /Z.entries.<get-entries>|3224480899107517660[0]
+    //   Public signature debug description: <get-entries>#static(){}kotlin.enums.EnumEntries<Z>
     // CHECK JS_IR NATIVE:
     //   Mangled name: Z#<get-name>(){}
     //   Public signature: /Z.name.<get-name>|5879344792307730109[0]
+    //   Public signature debug description: <get-name>(){}
     get(): EnumEntries<Z>
 
   // CHECK:
   //   Mangled name: Z{}name
   //   Public signature: /Z.name|4231860309499509769[0]
+  //   Public signature debug description: {}name
   /* fake */ override val name: String
     // CHECK JVM_IR:
     //   Mangled name: Z#<get-name>(){}kotlin.String
     //   Public signature: /Z.name.<get-name>|-8006111524522882650[0]
+    //   Public signature debug description: <get-name>(){}kotlin.String
     // CHECK JS_IR NATIVE:
     //   Mangled name: Z#<get-ordinal>(){}
     //   Public signature: /Z.ordinal.<get-ordinal>|8409904226035914023[0]
+    //   Public signature debug description: <get-ordinal>(){}
     /* fake */ override get(): String
 
   // CHECK:
   //   Mangled name: Z{}ordinal
   //   Public signature: /Z.ordinal|1912745122988592376[0]
+  //   Public signature debug description: {}ordinal
   /* fake */ override val ordinal: Int
     // CHECK JVM_IR:
     //   Mangled name: Z#<get-ordinal>(){}kotlin.Int
     //   Public signature: /Z.ordinal.<get-ordinal>|-6902664390061762634[0]
+    //   Public signature debug description: <get-ordinal>(){}kotlin.Int
     /* fake */ override get(): Int
 
 }

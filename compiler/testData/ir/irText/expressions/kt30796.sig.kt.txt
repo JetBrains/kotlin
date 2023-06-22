@@ -1,13 +1,16 @@
 // CHECK JVM_IR:
 //   Mangled name: #magic(){0§<kotlin.Any?>}0:0
 //   Public signature: /magic|-2053324167820994651[0]
+//   Public signature debug description: magic(){0§<kotlin.Any?>}0:0
 // CHECK JS_IR NATIVE:
 //   Mangled name: #magic(){0§<kotlin.Any?>}
 //   Public signature: /magic|1377498203473786813[0]
+//   Public signature debug description: magic(){0§<kotlin.Any?>}
 fun <T : Any?> magic(): T
 
 // CHECK:
 //   Mangled name: #test(0:0;0:0){0§<kotlin.Any?>}
 //   Public signature: /test|112304132393930964[0]
+//   Public signature debug description: test(0:0;0:0){0§<kotlin.Any?>}
 fun <T : Any?> test(value: T, value2: T): Unit
 

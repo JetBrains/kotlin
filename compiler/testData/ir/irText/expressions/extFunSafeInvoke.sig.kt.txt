@@ -1,8 +1,10 @@
 // CHECK JVM_IR:
 //   Mangled name: #test(kotlin.Any?;kotlin.Function3<kotlin.Any,kotlin.Int,kotlin.String,kotlin.Unit>){}kotlin.Unit?
 //   Public signature: /test|-6483776340446886488[0]
+//   Public signature debug description: test(kotlin.Any?;kotlin.Function3<kotlin.Any,kotlin.Int,kotlin.String,kotlin.Unit>){}kotlin.Unit?
 // CHECK JS_IR NATIVE:
 //   Mangled name: #test(kotlin.Any?;kotlin.Function3<kotlin.Any,kotlin.Int,kotlin.String,kotlin.Unit>){}
 //   Public signature: /test|7562359801694057104[0]
+//   Public signature debug description: test(kotlin.Any?;kotlin.Function3<kotlin.Any,kotlin.Int,kotlin.String,kotlin.Unit>){}
 fun test(receiver: Any?, fn: @ExtensionFunctionType Function3<Any, Int, String, Unit>): Unit?
 

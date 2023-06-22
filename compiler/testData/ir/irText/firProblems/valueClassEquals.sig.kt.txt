@@ -1,13 +1,16 @@
 // CHECK:
 //   Mangled name: {}equals
 //   Public signature: /equals|-1340381053427629212[0]
+//   Public signature debug description: {}equals
 val equals: KFunction2<Z, Any?, Boolean>
   // CHECK JVM_IR:
   //   Mangled name: #<get-equals>(){}kotlin.reflect.KFunction2<Z,kotlin.Any?,kotlin.Boolean>
   //   Public signature: /equals.<get-equals>|5606412553566840313[0]
+  //   Public signature debug description: <get-equals>(){}kotlin.reflect.KFunction2<Z,kotlin.Any?,kotlin.Boolean>
   // CHECK JS_IR NATIVE:
   //   Mangled name: #<get-equals>(){}
   //   Public signature: /equals.<get-equals>|8604660172340853954[0]
+  //   Public signature debug description: <get-equals>(){}
   get
 
 // CHECK:
@@ -18,41 +21,52 @@ value class Z {
   // CHECK:
   //   Mangled name: Z{}s
   //   Public signature: /Z.s|7217541905509134881[0]
+  //   Public signature debug description: {}s
   val s: String
     // CHECK JVM_IR:
     //   Mangled name: Z#<get-s>(){}kotlin.String
     //   Public signature: /Z.s.<get-s>|4142379646177092803[0]
+    //   Public signature debug description: <get-s>(){}kotlin.String
     // CHECK JS_IR NATIVE:
     //   Mangled name: Z#<get-s>(){}
     //   Public signature: /Z.s.<get-s>|-1662172381559511151[0]
+    //   Public signature debug description: <get-s>(){}
     get
 
   // CHECK:
   //   Mangled name: Z#<init>(kotlin.String){}
   //   Public signature: /Z.<init>|1280618353163213788[0]
+  //   Public signature debug description: <init>(kotlin.String){}
   constructor(s: String) /* primary */
   // CHECK JVM_IR:
   //   Mangled name: Z#equals(kotlin.Any?){}kotlin.Boolean
   //   Public signature: /Z.equals|722809408929142791[0]
+  //   Public signature debug description: equals(kotlin.Any?){}kotlin.Boolean
   // CHECK JS_IR NATIVE:
   //   Mangled name: Z#equals(kotlin.Any?){}
   //   Public signature: /Z.equals|4638265728071529943[0]
+  //   Public signature debug description: equals(kotlin.Any?){}
   override operator fun equals(other: Any?): Boolean
 
   // CHECK JVM_IR:
   //   Mangled name: Z#hashCode(){}kotlin.Int
   //   Public signature: /Z.hashCode|-8048879360829830756[0]
+  //   Public signature debug description: hashCode(){}kotlin.Int
   // CHECK JS_IR NATIVE:
   //   Mangled name: Z#hashCode(){}
   //   Public signature: /Z.hashCode|3409210261493131192[0]
+  //   Public signature debug description: hashCode(){}
   override fun hashCode(): Int
 
   // CHECK JVM_IR:
   //   Mangled name: Z#toString(){}kotlin.String
   //   Public signature: /Z.toString|6958853723545266802[0]
+  //   Public signature debug description: toString(){}kotlin.String
   // CHECK JS_IR NATIVE:
   //   Mangled name: Z#toString(){}
   //   Public signature: /Z.toString|-1522858123163872138[0]
+  //   Public signature debug description: toString(){}
   override fun toString(): String
 
 }
+

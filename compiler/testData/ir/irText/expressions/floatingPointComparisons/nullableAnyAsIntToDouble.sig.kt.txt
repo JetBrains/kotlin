@@ -1,8 +1,10 @@
 // CHECK JVM_IR:
 //   Mangled name: #test(kotlin.Any?;kotlin.Double){}kotlin.Boolean
 //   Public signature: /test|-7959242928029112066[0]
+//   Public signature debug description: test(kotlin.Any?;kotlin.Double){}kotlin.Boolean
 // CHECK JS_IR NATIVE:
 //   Mangled name: #test(kotlin.Any?;kotlin.Double){}
 //   Public signature: /test|1382550638358700070[0]
+//   Public signature debug description: test(kotlin.Any?;kotlin.Double){}
 fun test(x: Any?, y: Double): Boolean
 

@@ -5,6 +5,7 @@ class Matrix {
   // CHECK:
   //   Mangled name: Matrix#<init>(){}
   //   Public signature: /Matrix.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   constructor() /* primary */
 
 }
@@ -17,9 +18,11 @@ interface NumberOperations {
   // CHECK JVM_IR:
   //   Mangled name: NumberOperations#plus@kotlin.Number(kotlin.Number){}kotlin.Number
   //   Public signature: /NumberOperations.plus|-6518987633126930952[0]
+  //   Public signature debug description: plus@kotlin.Number(kotlin.Number){}kotlin.Number
   // CHECK JS_IR NATIVE:
   //   Mangled name: NumberOperations#plus@kotlin.Number(kotlin.Number){}
   //   Public signature: /NumberOperations.plus|-1680445349837757562[0]
+  //   Public signature debug description: plus@kotlin.Number(kotlin.Number){}
   abstract fun Number.plus(other: Number): Number
 
 }
@@ -27,13 +30,16 @@ interface NumberOperations {
 // CHECK JVM_IR:
 //   Mangled name: #plus!NumberOperations@Matrix(Matrix){}Matrix
 //   Public signature: /plus|1303343764214809933[0]
+//   Public signature debug description: plus!NumberOperations@Matrix(Matrix){}Matrix
 // CHECK JS_IR NATIVE:
 //   Mangled name: #plus!NumberOperations@Matrix(Matrix){}
 //   Public signature: /plus|-2670469522083122958[0]
+//   Public signature debug description: plus!NumberOperations@Matrix(Matrix){}
 fun Matrix.plus($context_receiver_0: NumberOperations, other: Matrix): Matrix
 
 // CHECK:
 //   Mangled name: #plusMatrix@NumberOperations(Matrix;Matrix){}
 //   Public signature: /plusMatrix|-8194087590203252948[0]
+//   Public signature debug description: plusMatrix@NumberOperations(Matrix;Matrix){}
 fun NumberOperations.plusMatrix(m1: Matrix, m2: Matrix): Unit
 

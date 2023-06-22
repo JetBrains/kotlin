@@ -5,18 +5,22 @@ class View {
   // CHECK:
   //   Mangled name: View{}coefficient
   //   Public signature: /View.coefficient|4563127391682800227[0]
+  //   Public signature debug description: {}coefficient
   val coefficient: Int
     // CHECK JVM_IR:
     //   Mangled name: View#<get-coefficient>(){}kotlin.Int
     //   Public signature: /View.coefficient.<get-coefficient>|2286291581442465794[0]
+    //   Public signature debug description: <get-coefficient>(){}kotlin.Int
     // CHECK JS_IR NATIVE:
     //   Mangled name: View#<get-coefficient>(){}
     //   Public signature: /View.coefficient.<get-coefficient>|5285326162631504309[0]
+    //   Public signature debug description: <get-coefficient>(){}
     get
 
   // CHECK:
   //   Mangled name: View#<init>(){}
   //   Public signature: /View.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   constructor() /* primary */
 
 }
@@ -24,20 +28,25 @@ class View {
 // CHECK JVM_IR:
 //   Mangled name: #box(){}kotlin.String
 //   Public signature: /box|-9347091776561469[0]
+//   Public signature debug description: box(){}kotlin.String
 // CHECK JS_IR NATIVE:
 //   Mangled name: #box(){}
 //   Public signature: /box|2173511048851971368[0]
+//   Public signature debug description: box(){}
 fun box(): String
 
 // CHECK:
 //   Mangled name: @kotlin.Int{}dp
 //   Public signature: /dp|-4245635280375224248[0]
+//   Public signature debug description: @kotlin.Int{}dp
 val Int.dp: Int
   // CHECK JVM_IR:
   //   Mangled name: #<get-dp>!View@kotlin.Int(){}kotlin.Int
   //   Public signature: /dp.<get-dp>|933397372434095199[0]
+  //   Public signature debug description: <get-dp>!View@kotlin.Int(){}kotlin.Int
   // CHECK JS_IR NATIVE:
   //   Mangled name: #<get-dp>!View@kotlin.Int(){}
   //   Public signature: /dp.<get-dp>|-92585254995500394[0]
+  //   Public signature debug description: <get-dp>!View@kotlin.Int(){}
   get($context_receiver_0: View): Int
 

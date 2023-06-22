@@ -5,22 +5,27 @@ class Foo<T : Any?> {
   // CHECK:
   //   Mangled name: Foo{}x
   //   Public signature: /Foo.x|-8060530855978347579[0]
+  //   Public signature debug description: {}x
   var x: T
     // CHECK JVM_IR:
     //   Mangled name: Foo#<get-x>(){}1:0
     //   Public signature: /Foo.x.<get-x>|-8893883356128097563[0]
+    //   Public signature debug description: <get-x>(){}1:0
     // CHECK JS_IR NATIVE:
     //   Mangled name: Foo#<get-x>(){}
     //   Public signature: /Foo.x.<get-x>|1482705010654679335[0]
+    //   Public signature debug description: <get-x>(){}
     get
     // CHECK:
     //   Mangled name: Foo#<set-x>(1:0){}
     //   Public signature: /Foo.x.<set-x>|-9166455774953348944[0]
+    //   Public signature debug description: <set-x>(1:0){}
     set
 
   // CHECK:
   //   Mangled name: Foo#<init>(1:0){}
   //   Public signature: /Foo.<init>|-8731461708390519279[0]
+  //   Public signature debug description: <init>(1:0){}
   constructor(x: T) /* primary */
 
 }
@@ -28,17 +33,21 @@ class Foo<T : Any?> {
 // CHECK JVM_IR:
 //   Mangled name: #foo(kotlin.collections.MutableList<0:0>){0§<kotlin.Any?>}Foo<0:0>
 //   Public signature: /foo|1536530770177772929[0]
+//   Public signature debug description: foo(kotlin.collections.MutableList<0:0>){0§<kotlin.Any?>}Foo<0:0>
 // CHECK JS_IR NATIVE:
 //   Mangled name: #foo(kotlin.collections.MutableList<0:0>){0§<kotlin.Any?>}
 //   Public signature: /foo|5998809843393521079[0]
+//   Public signature debug description: foo(kotlin.collections.MutableList<0:0>){0§<kotlin.Any?>}
 fun <K : Any?> foo(x: MutableList<K>): Foo<K>
 
 // CHECK JVM_IR:
 //   Mangled name computed from Ir:         #main(){}
 //   Mangled name computed from Descriptor: #main(){}%dontLeaveStubTypesInSetter.kt
 //   Public signature: /main|-2535684763027974809[0]
+//   Public signature debug description: main(){}%dontLeaveStubTypesInSetter.kt
 // CHECK JS_IR NATIVE:
 //   Mangled name: #main(){}
 //   Public signature: /main|-4284757841571462650[0]
+//   Public signature debug description: main(){}
 fun main(): Unit
 

@@ -1,22 +1,27 @@
 // CHECK JVM_IR:
 //   Mangled name: #foo!kotlin.Int(){}kotlin.Int
 //   Public signature: /foo|-298514072419997277[0]
+//   Public signature debug description: foo!kotlin.Int(){}kotlin.Int
 // CHECK JS_IR NATIVE:
 //   Mangled name: #foo!kotlin.Int(){}
 //   Public signature: /foo|-2047845050892281405[0]
+//   Public signature debug description: foo!kotlin.Int(){}
 fun foo($context_receiver_0: Int): Int
 
 // CHECK JVM_IR:
 //   Mangled name: #foo!kotlin.Int!kotlin.String(){}kotlin.Int
 //   Public signature: /foo|7076979931255393427[0]
+//   Public signature debug description: foo!kotlin.Int!kotlin.String(){}kotlin.Int
 // CHECK JS_IR NATIVE:
 //   Mangled name: #foo!kotlin.Int!kotlin.String(){}
 //   Public signature: /foo|-6855876411691473491[0]
+//   Public signature debug description: foo!kotlin.Int!kotlin.String(){}
 fun foo($context_receiver_0: Int, $context_receiver_1: String): Int
 
 // CHECK:
 //   Mangled name: #test(){}
 //   Public signature: /test|6620506149988718649[0]
+//   Public signature debug description: test(){}
 fun test(): Unit
   // CHECK JVM_IR:
   //   Mangled name: #test(){}#<anonymous>#static@kotlin.Int(){}kotlin.Int

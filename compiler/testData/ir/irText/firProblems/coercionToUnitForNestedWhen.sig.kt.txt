@@ -1,6 +1,7 @@
 // CHECK:
 //   Mangled name: #consumeRestOfQuotedSequence@java.io.Reader(java.lang.StringBuilder;kotlin.Char){}
 //   Public signature: /consumeRestOfQuotedSequence|-9181202314719024538[0]
+//   Public signature debug description: consumeRestOfQuotedSequence@java.io.Reader(java.lang.StringBuilder;kotlin.Char){}
 fun Reader.consumeRestOfQuotedSequence(sb: StringBuilder, quote: Char): Unit
 
 // CHECK JVM_IR:

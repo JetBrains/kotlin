@@ -1,17 +1,21 @@
 // CHECK:
 //   Mangled name: {}operationScore
 //   Public signature: /operationScore|-9073278321118823634[0]
+//   Public signature debug description: {}operationScore
 var operationScore: Int
   // CHECK JVM_IR:
   //   Mangled name: #<get-operationScore>(){}kotlin.Int
   //   Public signature: /operationScore.<get-operationScore>|7107010356269447258[0]
+  //   Public signature debug description: <get-operationScore>(){}kotlin.Int
   // CHECK JS_IR NATIVE:
   //   Mangled name: #<get-operationScore>(){}
   //   Public signature: /operationScore.<get-operationScore>|6765204501149451629[0]
+  //   Public signature debug description: <get-operationScore>(){}
   get
   // CHECK:
   //   Mangled name: #<set-operationScore>(kotlin.Int){}
   //   Public signature: /operationScore.<set-operationScore>|1936076120216071025[0]
+  //   Public signature debug description: <set-operationScore>(kotlin.Int){}
   set
 
 // CHECK:
@@ -21,57 +25,71 @@ data class Result {
   // CHECK:
   //   Mangled name: Result{}i
   //   Public signature: /Result.i|5014384761142332495[0]
+  //   Public signature debug description: {}i
   val i: Int
     // CHECK JVM_IR:
     //   Mangled name: Result#<get-i>(){}kotlin.Int
     //   Public signature: /Result.i.<get-i>|-8784396159001927527[0]
+    //   Public signature debug description: <get-i>(){}kotlin.Int
     // CHECK JS_IR NATIVE:
     //   Mangled name: Result#<get-i>(){}
     //   Public signature: /Result.i.<get-i>|6945482638966853621[0]
+    //   Public signature debug description: <get-i>(){}
     get
 
   // CHECK:
   //   Mangled name: Result#<init>(kotlin.Int){}
   //   Public signature: /Result.<init>|-5182794243525578284[0]
+  //   Public signature debug description: <init>(kotlin.Int){}
   constructor(i: Int) /* primary */
   // CHECK JVM_IR:
   //   Mangled name: Result#component1(){}kotlin.Int
   //   Public signature: /Result.component1|-8217597213800111288[0]
+  //   Public signature debug description: component1(){}kotlin.Int
   // CHECK JS_IR NATIVE:
   //   Mangled name: Result#component1(){}
   //   Public signature: /Result.component1|162597135895221648[0]
+  //   Public signature debug description: component1(){}
   operator fun component1(): Int
 
   // CHECK JVM_IR:
   //   Mangled name: Result#copy(kotlin.Int){}Result
   //   Public signature: /Result.copy|5439238034196076859[0]
+  //   Public signature debug description: copy(kotlin.Int){}Result
   // CHECK JS_IR NATIVE:
   //   Mangled name: Result#copy(kotlin.Int){}
   //   Public signature: /Result.copy|-6971662324481626298[0]
+  //   Public signature debug description: copy(kotlin.Int){}
   fun copy(i: Int): Result
 
   // CHECK JVM_IR:
   //   Mangled name: Result#equals(kotlin.Any?){}kotlin.Boolean
   //   Public signature: /Result.equals|722809408929142791[0]
+  //   Public signature debug description: equals(kotlin.Any?){}kotlin.Boolean
   // CHECK JS_IR NATIVE:
   //   Mangled name: Result#equals(kotlin.Any?){}
   //   Public signature: /Result.equals|4638265728071529943[0]
+  //   Public signature debug description: equals(kotlin.Any?){}
   override operator fun equals(other: Any?): Boolean
 
   // CHECK JVM_IR:
   //   Mangled name: Result#hashCode(){}kotlin.Int
   //   Public signature: /Result.hashCode|-8048879360829830756[0]
+  //   Public signature debug description: hashCode(){}kotlin.Int
   // CHECK JS_IR NATIVE:
   //   Mangled name: Result#hashCode(){}
   //   Public signature: /Result.hashCode|3409210261493131192[0]
+  //   Public signature debug description: hashCode(){}
   override fun hashCode(): Int
 
   // CHECK JVM_IR:
   //   Mangled name: Result#toString(){}kotlin.String
   //   Public signature: /Result.toString|6958853723545266802[0]
+  //   Public signature debug description: toString(){}kotlin.String
   // CHECK JS_IR NATIVE:
   //   Mangled name: Result#toString(){}
   //   Public signature: /Result.toString|-1522858123163872138[0]
+  //   Public signature debug description: toString(){}
   override fun toString(): String
 
 }
@@ -79,40 +97,50 @@ data class Result {
 // CHECK JVM_IR:
 //   Mangled name: #box(){}kotlin.String
 //   Public signature: /box|-9347091776561469[0]
+//   Public signature debug description: box(){}kotlin.String
 // CHECK JS_IR NATIVE:
 //   Mangled name: #box(){}
 //   Public signature: /box|2173511048851971368[0]
+//   Public signature debug description: box(){}
 fun box(): String
 
 // CHECK JVM_IR:
 //   Mangled name: #dec!kotlin.Int@Result(){}Result
 //   Public signature: /dec|6054584114651390969[0]
+//   Public signature debug description: dec!kotlin.Int@Result(){}Result
 // CHECK JS_IR NATIVE:
 //   Mangled name: #dec!kotlin.Int@Result(){}
 //   Public signature: /dec|-7224087074051473472[0]
+//   Public signature debug description: dec!kotlin.Int@Result(){}
 operator fun Result.dec($context_receiver_0: Int): Result
 
 // CHECK JVM_IR:
 //   Mangled name: #inc!kotlin.Int@Result(){}Result
 //   Public signature: /inc|-6349683016158919485[0]
+//   Public signature debug description: inc!kotlin.Int@Result(){}Result
 // CHECK JS_IR NATIVE:
 //   Mangled name: #inc!kotlin.Int@Result(){}
 //   Public signature: /inc|6156460640001049173[0]
+//   Public signature debug description: inc!kotlin.Int@Result(){}
 operator fun Result.inc($context_receiver_0: Int): Result
 
 // CHECK JVM_IR:
 //   Mangled name: #unaryMinus!kotlin.Int@Result(){}Result
 //   Public signature: /unaryMinus|-8891797954767898088[0]
+//   Public signature debug description: unaryMinus!kotlin.Int@Result(){}Result
 // CHECK JS_IR NATIVE:
 //   Mangled name: #unaryMinus!kotlin.Int@Result(){}
 //   Public signature: /unaryMinus|-1245437128467335194[0]
+//   Public signature debug description: unaryMinus!kotlin.Int@Result(){}
 operator fun Result.unaryMinus($context_receiver_0: Int): Result
 
 // CHECK JVM_IR:
 //   Mangled name: #unaryPlus!kotlin.Int@Result(){}Result
 //   Public signature: /unaryPlus|6329022242309077522[0]
+//   Public signature debug description: unaryPlus!kotlin.Int@Result(){}Result
 // CHECK JS_IR NATIVE:
 //   Mangled name: #unaryPlus!kotlin.Int@Result(){}
 //   Public signature: /unaryPlus|-4073638544609631[0]
+//   Public signature debug description: unaryPlus!kotlin.Int@Result(){}
 operator fun Result.unaryPlus($context_receiver_0: Int): Result
 

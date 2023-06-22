@@ -1,5 +1,6 @@
 // CHECK:
 //   Mangled name: #foo(kotlin.collections.MutableList<Couple<FilePath>>){}
 //   Public signature: /foo|-235147134910002974[0]
+//   Public signature debug description: foo(kotlin.collections.MutableList<Couple<FilePath>>){}
 fun foo(movedPaths: MutableList<Couple<FilePath>>): Unit
 

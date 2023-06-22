@@ -5,19 +5,23 @@ open class Base {
   // CHECK:
   //   Mangled name: Base{}f1
   //   Public signature: /Base.f1|-3626880138223960403[0]
+  //   Public signature debug description: {}f1
   val f1: Function0<Any>
     field
     // CHECK JVM_IR:
     //   Mangled name: Base#<get-f1>(){}kotlin.Function0<kotlin.Any>
     //   Public signature: /Base.f1.<get-f1>|8566118280674785385[0]
+    //   Public signature debug description: <get-f1>(){}kotlin.Function0<kotlin.Any>
     // CHECK JS_IR NATIVE:
     //   Mangled name: Base#<get-f1>(){}
     //   Public signature: /Base.f1.<get-f1>|-4995485398991269878[0]
+    //   Public signature debug description: <get-f1>(){}
     get
 
   // CHECK:
   //   Mangled name: Base#<init>(kotlin.Function0<kotlin.Any>){}
   //   Public signature: /Base.<init>|-4146636346230466645[0]
+  //   Public signature debug description: <init>(kotlin.Function0<kotlin.Any>){}
   constructor(f1: Function0<Any>) /* primary */
 
 }
@@ -29,6 +33,7 @@ object Thing : Base {
   // CHECK:
   //   Mangled name: Thing#<init>(){}
   //   Public signature: /Thing.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   private constructor() /* primary */
     // CHECK JVM_IR:
     //   Mangled name: Thing#<init>(){}#<anonymous>#static(){}kotlin.Any
@@ -39,29 +44,36 @@ object Thing : Base {
   // CHECK JVM_IR:
   //   Mangled name: Thing#test1(){}Thing
   //   Public signature: /Thing.test1|3967638963180272121[0]
+  //   Public signature debug description: test1(){}Thing
   // CHECK JS_IR NATIVE:
   //   Mangled name: Thing#test1(){}
   //   Public signature: /Thing.test1|4297044443957252634[0]
+  //   Public signature debug description: test1(){}
   fun test1(): Thing
 
   // CHECK JVM_IR:
   //   Mangled name: Thing#test2(){}Thing
   //   Public signature: /Thing.test2|-7201124175106784013[0]
+  //   Public signature debug description: test2(){}Thing
   // CHECK JS_IR NATIVE:
   //   Mangled name: Thing#test2(){}
   //   Public signature: /Thing.test2|4279114864133353152[0]
+  //   Public signature debug description: test2(){}
   fun test2(): Thing
 
   // CHECK:
   //   Mangled name: Thing{}f1
   //   Public signature: /Thing.f1|-3626880138223960403[0]
+  //   Public signature debug description: {}f1
   /* fake */ override val f1: Function0<Any>
     // CHECK JVM_IR:
     //   Mangled name: Thing#<get-f1>(){}kotlin.Function0<kotlin.Any>
     //   Public signature: /Thing.f1.<get-f1>|8566118280674785385[0]
+    //   Public signature debug description: <get-f1>(){}kotlin.Function0<kotlin.Any>
     // CHECK JS_IR NATIVE:
     //   Mangled name: Thing#<get-f1>(){}
     //   Public signature: /Thing.f1.<get-f1>|-4995485398991269878[0]
+    //   Public signature debug description: <get-f1>(){}
     /* fake */ override get(): Function0<Any>
 
 }

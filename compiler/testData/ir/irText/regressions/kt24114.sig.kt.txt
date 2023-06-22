@@ -1,32 +1,40 @@
 // CHECK JVM_IR:
 //   Mangled name: #one(){}kotlin.Int
 //   Public signature: /one|-1338778839794458943[0]
+//   Public signature debug description: one(){}kotlin.Int
 // CHECK JS_IR NATIVE:
 //   Mangled name: #one(){}
 //   Public signature: /one|-883930323179095603[0]
+//   Public signature debug description: one(){}
 fun one(): Int
 
 // CHECK JVM_IR:
 //   Mangled name: #test1(){}kotlin.Int
 //   Public signature: /test1|3246027394688469880[0]
+//   Public signature debug description: test1(){}kotlin.Int
 // CHECK JS_IR NATIVE:
 //   Mangled name: #test1(){}
 //   Public signature: /test1|4297044443957252634[0]
+//   Public signature debug description: test1(){}
 fun test1(): Int
 
 // CHECK JVM_IR:
 //   Mangled name: #test2(){}kotlin.Int
 //   Public signature: /test2|5542371834528279174[0]
+//   Public signature debug description: test2(){}kotlin.Int
 // CHECK JS_IR NATIVE:
 //   Mangled name: #test2(){}
 //   Public signature: /test2|4279114864133353152[0]
+//   Public signature debug description: test2(){}
 fun test2(): Int
 
 // CHECK JVM_IR:
 //   Mangled name: #two(){}kotlin.Int
 //   Public signature: /two|-3668245894055563667[0]
+//   Public signature debug description: two(){}kotlin.Int
 // CHECK JS_IR NATIVE:
 //   Mangled name: #two(){}
 //   Public signature: /two|-8191816142589217386[0]
+//   Public signature debug description: two(){}
 fun two(): Int
 

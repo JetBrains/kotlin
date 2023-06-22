@@ -6,6 +6,7 @@ open annotation class Anno : Annotation {
   // CHECK:
   //   Mangled name: Anno#<init>(){}
   //   Public signature: /Anno.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   constructor() /* primary */
 
 }
@@ -13,5 +14,6 @@ open annotation class Anno : Annotation {
 // CHECK:
 //   Mangled name: #foo(){0§<kotlin.Any?>}
 //   Public signature: /foo|-7822584347064313243[0]
+//   Public signature debug description: foo(){0§<kotlin.Any?>}
 fun <@Anno T : Any?> foo(): Unit
 

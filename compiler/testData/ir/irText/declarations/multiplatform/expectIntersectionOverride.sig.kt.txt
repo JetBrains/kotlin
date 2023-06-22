@@ -8,26 +8,32 @@ expect class C : I1, I2 {
   // CHECK:
   //   Mangled name: C#<init>(){}
   //   Public signature: /C.<init>|-5645683436151566731[1]
+  //   Public signature debug description: <init>(){}
   expect constructor() /* primary */
 
   // CHECK JVM_IR:
   //   Mangled name: C#f(){}kotlin.String
   //   Public signature: /C.f|9098388873611041001[1]
+  //   Public signature debug description: f(){}kotlin.String
   // CHECK JS_IR NATIVE:
   //   Mangled name: C#f(){}
   //   Public signature: /C.f|5316533450599009716[1]
+  //   Public signature debug description: f(){}
   expect abstract /* fake */ override fun f(): String
 
   // CHECK:
   //   Mangled name: C{}p
   //   Public signature: /C.p|6715504260787941082[1]
+  //   Public signature debug description: {}p
   expect abstract /* fake */ override val p: Int
     // CHECK JVM_IR:
     //   Mangled name: C#<get-p>(){}kotlin.Int
     //   Public signature: /C.p.<get-p>|5329635969197638839[1]
+    //   Public signature debug description: <get-p>(){}kotlin.Int
     // CHECK JS_IR NATIVE:
     //   Mangled name: C#<get-p>(){}
     //   Public signature: /C.p.<get-p>|-1162552463316289847[1]
+    //   Public signature debug description: <get-p>(){}
     abstract /* fake */ override get(): Int
 
 }
@@ -40,21 +46,26 @@ interface I1 {
   // CHECK JVM_IR:
   //   Mangled name: I1#f(){}kotlin.String
   //   Public signature: /I1.f|9098388873611041001[0]
+  //   Public signature debug description: f(){}kotlin.String
   // CHECK JS_IR NATIVE:
   //   Mangled name: I1#f(){}
   //   Public signature: /I1.f|5316533450599009716[0]
+  //   Public signature debug description: f(){}
   abstract fun f(): String
 
   // CHECK:
   //   Mangled name: I1{}p
   //   Public signature: /I1.p|6715504260787941082[0]
+  //   Public signature debug description: {}p
   abstract val p: Int
     // CHECK JVM_IR:
     //   Mangled name: I1#<get-p>(){}kotlin.Int
     //   Public signature: /I1.p.<get-p>|5329635969197638839[0]
+    //   Public signature debug description: <get-p>(){}kotlin.Int
     // CHECK JS_IR NATIVE:
     //   Mangled name: I1#<get-p>(){}
     //   Public signature: /I1.p.<get-p>|-1162552463316289847[0]
+    //   Public signature debug description: <get-p>(){}
     abstract get
 
 }
@@ -67,21 +78,26 @@ interface I2 {
   // CHECK JVM_IR:
   //   Mangled name: I2#f(){}kotlin.String
   //   Public signature: /I2.f|9098388873611041001[0]
+  //   Public signature debug description: f(){}kotlin.String
   // CHECK JS_IR NATIVE:
   //   Mangled name: I2#f(){}
   //   Public signature: /I2.f|5316533450599009716[0]
+  //   Public signature debug description: f(){}
   abstract fun f(): String
 
   // CHECK:
   //   Mangled name: I2{}p
   //   Public signature: /I2.p|6715504260787941082[0]
+  //   Public signature debug description: {}p
   abstract val p: Int
     // CHECK JVM_IR:
     //   Mangled name: I2#<get-p>(){}kotlin.Int
     //   Public signature: /I2.p.<get-p>|5329635969197638839[0]
+    //   Public signature debug description: <get-p>(){}kotlin.Int
     // CHECK JS_IR NATIVE:
     //   Mangled name: I2#<get-p>(){}
     //   Public signature: /I2.p.<get-p>|-1162552463316289847[0]
+    //   Public signature debug description: <get-p>(){}
     abstract get
 
 }
@@ -96,26 +112,32 @@ class C : I1, I2 {
   // CHECK:
   //   Mangled name: C{}p
   //   Public signature: /C.p|6715504260787941082[0]
+  //   Public signature debug description: {}p
   override val p: Int
     // CHECK JVM_IR:
     //   Mangled name: C#<get-p>(){}kotlin.Int
     //   Public signature: /C.p.<get-p>|5329635969197638839[0]
+    //   Public signature debug description: <get-p>(){}kotlin.Int
     // CHECK JS_IR NATIVE:
     //   Mangled name: C#<get-p>(){}
     //   Public signature: /C.p.<get-p>|-1162552463316289847[0]
+    //   Public signature debug description: <get-p>(){}
     override get
 
   // CHECK:
   //   Mangled name: C#<init>(){}
   //   Public signature: /C.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   constructor() /* primary */
 
   // CHECK JVM_IR:
   //   Mangled name: C#f(){}kotlin.String
   //   Public signature: /C.f|9098388873611041001[0]
+  //   Public signature debug description: f(){}kotlin.String
   // CHECK JS_IR NATIVE:
   //   Mangled name: C#f(){}
   //   Public signature: /C.f|5316533450599009716[0]
+  //   Public signature debug description: f(){}
   override fun f(): String
 
 }

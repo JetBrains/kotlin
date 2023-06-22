@@ -5,11 +5,13 @@ class Serializer {
   // CHECK:
   //   Mangled name: Serializer#<init>(){}
   //   Public signature: /Serializer.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   constructor() /* primary */
 
   // CHECK JVM_IR:
   //   Mangled name: Serializer#createMessageCollector(){}Serializer#createMessageCollector.<no name provided>
   //   Public signature: /Serializer.createMessageCollector|2610567021773551177[0]
+  //   Public signature debug description: createMessageCollector(){}Serializer#createMessageCollector.<no name provided>
   private fun createMessageCollector(): <no name provided>
     // CHECK:
     //   Mangled name: Serializer#createMessageCollector(){}Serializer#createMessageCollector.<no name provided>.<no name provided>
@@ -27,6 +29,7 @@ class Serializer {
   // CHECK:
   //   Mangled name: Serializer#serialize(){}
   //   Public signature: /Serializer.serialize|2218225496927039174[0]
+  //   Public signature debug description: serialize(){}
   fun serialize(): Unit
 
 }

@@ -5,18 +5,22 @@ class A<T : Any?> {
   // CHECK:
   //   Mangled name: A{}a
   //   Public signature: /A.a|-1200697420457237799[0]
+  //   Public signature debug description: {}a
   val a: T
     // CHECK JVM_IR:
     //   Mangled name: A#<get-a>(){}1:0
     //   Public signature: /A.a.<get-a>|5765441560292063424[0]
+    //   Public signature debug description: <get-a>(){}1:0
     // CHECK JS_IR NATIVE:
     //   Mangled name: A#<get-a>(){}
     //   Public signature: /A.a.<get-a>|6785176174175479410[0]
+    //   Public signature debug description: <get-a>(){}
     get
 
   // CHECK:
   //   Mangled name: A#<init>(1:0){}
   //   Public signature: /A.<init>|-8731461708390519279[0]
+  //   Public signature debug description: <init>(1:0){}
   constructor(a: T) /* primary */
 
 }
@@ -28,18 +32,22 @@ class B {
   // CHECK:
   //   Mangled name: B{}b
   //   Public signature: /B.b|772347207915745207[0]
+  //   Public signature debug description: {}b
   val b: Any
     // CHECK JVM_IR:
     //   Mangled name: B#<get-b>(){}kotlin.Any
     //   Public signature: /B.b.<get-b>|4768115582956424363[0]
+    //   Public signature debug description: <get-b>(){}kotlin.Any
     // CHECK JS_IR NATIVE:
     //   Mangled name: B#<get-b>(){}
     //   Public signature: /B.b.<get-b>|812004636995167743[0]
+    //   Public signature debug description: <get-b>(){}
     get
 
   // CHECK:
   //   Mangled name: B#<init>(kotlin.Any){}
   //   Public signature: /B.<init>|4518179880532599055[0]
+  //   Public signature debug description: <init>(kotlin.Any){}
   constructor(b: Any) /* primary */
 
 }
@@ -51,18 +59,22 @@ class C {
   // CHECK:
   //   Mangled name: C{}c
   //   Public signature: /C.c|-4416962153448040627[0]
+  //   Public signature debug description: {}c
   val c: Any
     // CHECK JVM_IR:
     //   Mangled name: C#<get-c>(){}kotlin.Any
     //   Public signature: /C.c.<get-c>|-7073232512849879703[0]
+    //   Public signature debug description: <get-c>(){}kotlin.Any
     // CHECK JS_IR NATIVE:
     //   Mangled name: C#<get-c>(){}
     //   Public signature: /C.c.<get-c>|2368736057102379596[0]
+    //   Public signature debug description: <get-c>(){}
     get
 
   // CHECK:
   //   Mangled name: C#<init>(kotlin.Any){}
   //   Public signature: /C.<init>|4518179880532599055[0]
+  //   Public signature debug description: <init>(kotlin.Any){}
   constructor(c: Any) /* primary */
 
 }
@@ -70,17 +82,21 @@ class C {
 // CHECK:
 //   Mangled name: #f!A<kotlin.Int>!A<kotlin.String>!B(){}
 //   Public signature: /f|-2471136927765483161[0]
+//   Public signature debug description: f!A<kotlin.Int>!A<kotlin.String>!B(){}
 fun f($context_receiver_0: A<Int>, $context_receiver_1: A<String>, $context_receiver_2: B): Unit
 
 // CHECK:
 //   Mangled name: @C{}p
 //   Public signature: /p|-5429013048289439414[0]
+//   Public signature debug description: @C{}p
 val C.p: Int
   // CHECK JVM_IR:
   //   Mangled name: #<get-p>!A<kotlin.Int>!A<kotlin.String>!B@C(){}kotlin.Int
   //   Public signature: /p.<get-p>|-7725362510645392909[0]
+  //   Public signature debug description: <get-p>!A<kotlin.Int>!A<kotlin.String>!B@C(){}kotlin.Int
   // CHECK JS_IR NATIVE:
   //   Mangled name: #<get-p>!A<kotlin.Int>!A<kotlin.String>!B@C(){}
   //   Public signature: /p.<get-p>|-2698360468898936971[0]
+  //   Public signature debug description: <get-p>!A<kotlin.Int>!A<kotlin.String>!B@C(){}
   get($context_receiver_0: A<Int>, $context_receiver_1: A<String>, $context_receiver_2: B): Int
 

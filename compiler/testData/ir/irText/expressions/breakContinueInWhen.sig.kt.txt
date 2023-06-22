@@ -1,30 +1,36 @@
 // CHECK:
 //   Mangled name: #testBreakDoWhile(){}
 //   Public signature: /testBreakDoWhile|-1704674514591918334[0]
+//   Public signature debug description: testBreakDoWhile(){}
 fun testBreakDoWhile(): Unit
 
 // CHECK:
 //   Mangled name: #testBreakFor(){}
 //   Public signature: /testBreakFor|-7772840210562213149[0]
+//   Public signature debug description: testBreakFor(){}
 fun testBreakFor(): Unit
 
 // CHECK:
 //   Mangled name: #testBreakWhile(){}
 //   Public signature: /testBreakWhile|3882710933639253522[0]
+//   Public signature debug description: testBreakWhile(){}
 fun testBreakWhile(): Unit
 
 // CHECK:
 //   Mangled name: #testContinueDoWhile(){}
 //   Public signature: /testContinueDoWhile|-1939470436794612956[0]
+//   Public signature debug description: testContinueDoWhile(){}
 fun testContinueDoWhile(): Unit
 
 // CHECK:
 //   Mangled name: #testContinueFor(){}
 //   Public signature: /testContinueFor|-6520729324717708312[0]
+//   Public signature debug description: testContinueFor(){}
 fun testContinueFor(): Unit
 
 // CHECK:
 //   Mangled name: #testContinueWhile(){}
 //   Public signature: /testContinueWhile|2151596509430082894[0]
+//   Public signature debug description: testContinueWhile(){}
 fun testContinueWhile(): Unit
 

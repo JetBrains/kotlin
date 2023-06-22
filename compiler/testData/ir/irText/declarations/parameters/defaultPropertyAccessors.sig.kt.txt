@@ -1,29 +1,36 @@
 // CHECK:
 //   Mangled name: {}test1
 //   Public signature: /test1|6005685442305498193[0]
+//   Public signature debug description: {}test1
 val test1: Int
   // CHECK JVM_IR:
   //   Mangled name: #<get-test1>(){}kotlin.Int
   //   Public signature: /test1.<get-test1>|3978508226793108919[0]
+  //   Public signature debug description: <get-test1>(){}kotlin.Int
   // CHECK JS_IR NATIVE:
   //   Mangled name: #<get-test1>(){}
   //   Public signature: /test1.<get-test1>|-5735092642142423279[0]
+  //   Public signature debug description: <get-test1>(){}
   get
 
 // CHECK:
 //   Mangled name: {}test2
 //   Public signature: /test2|2517758057000911509[0]
+//   Public signature debug description: {}test2
 var test2: Int
   // CHECK JVM_IR:
   //   Mangled name: #<get-test2>(){}kotlin.Int
   //   Public signature: /test2.<get-test2>|-8779933517717592707[0]
+  //   Public signature debug description: <get-test2>(){}kotlin.Int
   // CHECK JS_IR NATIVE:
   //   Mangled name: #<get-test2>(){}
   //   Public signature: /test2.<get-test2>|-5218942532816206869[0]
+  //   Public signature debug description: <get-test2>(){}
   get
   // CHECK:
   //   Mangled name: #<set-test2>(kotlin.Int){}
   //   Public signature: /test2.<set-test2>|1925150309265265312[0]
+  //   Public signature debug description: <set-test2>(kotlin.Int){}
   set
 
 // CHECK:
@@ -33,34 +40,42 @@ class Host {
   // CHECK:
   //   Mangled name: Host{}testMember1
   //   Public signature: /Host.testMember1|-6927948367741148766[0]
+  //   Public signature debug description: {}testMember1
   val testMember1: Int
     // CHECK JVM_IR:
     //   Mangled name: Host#<get-testMember1>(){}kotlin.Int
     //   Public signature: /Host.testMember1.<get-testMember1>|-5459388376303709502[0]
+    //   Public signature debug description: <get-testMember1>(){}kotlin.Int
     // CHECK JS_IR NATIVE:
     //   Mangled name: Host#<get-testMember1>(){}
     //   Public signature: /Host.testMember1.<get-testMember1>|-4927757728199550360[0]
+    //   Public signature debug description: <get-testMember1>(){}
     get
 
   // CHECK:
   //   Mangled name: Host{}testMember2
   //   Public signature: /Host.testMember2|-8955784718453180422[0]
+  //   Public signature debug description: {}testMember2
   var testMember2: Int
     // CHECK JVM_IR:
     //   Mangled name: Host#<get-testMember2>(){}kotlin.Int
     //   Public signature: /Host.testMember2.<get-testMember2>|6996843230957051336[0]
+    //   Public signature debug description: <get-testMember2>(){}kotlin.Int
     // CHECK JS_IR NATIVE:
     //   Mangled name: Host#<get-testMember2>(){}
     //   Public signature: /Host.testMember2.<get-testMember2>|7875832727540192624[0]
+    //   Public signature debug description: <get-testMember2>(){}
     get
     // CHECK:
     //   Mangled name: Host#<set-testMember2>(kotlin.Int){}
     //   Public signature: /Host.testMember2.<set-testMember2>|5166755654765741256[0]
+    //   Public signature debug description: <set-testMember2>(kotlin.Int){}
     set
 
   // CHECK:
   //   Mangled name: Host#<init>(){}
   //   Public signature: /Host.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   constructor() /* primary */
 
 }
@@ -72,34 +87,42 @@ class InPrimaryCtor<T : Any?> {
   // CHECK:
   //   Mangled name: InPrimaryCtor{}testInPrimaryCtor1
   //   Public signature: /InPrimaryCtor.testInPrimaryCtor1|8162816596808715257[0]
+  //   Public signature debug description: {}testInPrimaryCtor1
   val testInPrimaryCtor1: T
     // CHECK JVM_IR:
     //   Mangled name: InPrimaryCtor#<get-testInPrimaryCtor1>(){}1:0
     //   Public signature: /InPrimaryCtor.testInPrimaryCtor1.<get-testInPrimaryCtor1>|-3259454449312875389[0]
+    //   Public signature debug description: <get-testInPrimaryCtor1>(){}1:0
     // CHECK JS_IR NATIVE:
     //   Mangled name: InPrimaryCtor#<get-testInPrimaryCtor1>(){}
     //   Public signature: /InPrimaryCtor.testInPrimaryCtor1.<get-testInPrimaryCtor1>|4519403801874358446[0]
+    //   Public signature debug description: <get-testInPrimaryCtor1>(){}
     get
 
   // CHECK:
   //   Mangled name: InPrimaryCtor{}testInPrimaryCtor2
   //   Public signature: /InPrimaryCtor.testInPrimaryCtor2|6743375261432235408[0]
+  //   Public signature debug description: {}testInPrimaryCtor2
   var testInPrimaryCtor2: Int
     // CHECK JVM_IR:
     //   Mangled name: InPrimaryCtor#<get-testInPrimaryCtor2>(){}kotlin.Int
     //   Public signature: /InPrimaryCtor.testInPrimaryCtor2.<get-testInPrimaryCtor2>|-455870240469973752[0]
+    //   Public signature debug description: <get-testInPrimaryCtor2>(){}kotlin.Int
     // CHECK JS_IR NATIVE:
     //   Mangled name: InPrimaryCtor#<get-testInPrimaryCtor2>(){}
     //   Public signature: /InPrimaryCtor.testInPrimaryCtor2.<get-testInPrimaryCtor2>|6677557829332876002[0]
+    //   Public signature debug description: <get-testInPrimaryCtor2>(){}
     get
     // CHECK:
     //   Mangled name: InPrimaryCtor#<set-testInPrimaryCtor2>(kotlin.Int){}
     //   Public signature: /InPrimaryCtor.testInPrimaryCtor2.<set-testInPrimaryCtor2>|-2246089499454556022[0]
+    //   Public signature debug description: <set-testInPrimaryCtor2>(kotlin.Int){}
     set
 
   // CHECK:
   //   Mangled name: InPrimaryCtor#<init>(1:0;kotlin.Int){}
   //   Public signature: /InPrimaryCtor.<init>|7281397193015694517[0]
+  //   Public signature debug description: <init>(1:0;kotlin.Int){}
   constructor(testInPrimaryCtor1: T, testInPrimaryCtor2: Int) /* primary */
 
 }

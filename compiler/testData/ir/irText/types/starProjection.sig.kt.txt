@@ -5,14 +5,17 @@ abstract class C {
   // CHECK:
   //   Mangled name: C#<init>(){}
   //   Public signature: /C.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   constructor() /* primary */
 
   // CHECK JVM_IR:
   //   Mangled name: C#dispatchResumeWithException(kotlin.Throwable;Continuation<*>){}kotlin.Boolean
   //   Public signature: /C.dispatchResumeWithException|4528907504622041214[0]
+  //   Public signature debug description: dispatchResumeWithException(kotlin.Throwable;Continuation<*>){}kotlin.Boolean
   // CHECK JS_IR NATIVE:
   //   Mangled name: C#dispatchResumeWithException(kotlin.Throwable;Continuation<*>){}
   //   Public signature: /C.dispatchResumeWithException|-2529565672521727710[0]
+  //   Public signature debug description: dispatchResumeWithException(kotlin.Throwable;Continuation<*>){}
   abstract fun dispatchResumeWithException(exception: Throwable, continuation: Continuation<*>): Boolean
 
 }

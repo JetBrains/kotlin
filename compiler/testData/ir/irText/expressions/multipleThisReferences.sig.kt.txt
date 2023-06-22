@@ -5,27 +5,33 @@ class Host {
   // CHECK:
   //   Mangled name: Host{}y
   //   Public signature: /Host.y|3625903257357557171[0]
+  //   Public signature debug description: {}y
   val y: Int
     field
     // CHECK JVM_IR:
     //   Mangled name: Host#<get-y>(){}kotlin.Int
     //   Public signature: /Host.y.<get-y>|-6745575372101973707[0]
+    //   Public signature debug description: <get-y>(){}kotlin.Int
     // CHECK JS_IR NATIVE:
     //   Mangled name: Host#<get-y>(){}
     //   Public signature: /Host.y.<get-y>|-7902422373892128922[0]
+    //   Public signature debug description: <get-y>(){}
     get
 
   // CHECK:
   //   Mangled name: Host#<init>(kotlin.Int){}
   //   Public signature: /Host.<init>|-5182794243525578284[0]
+  //   Public signature debug description: <init>(kotlin.Int){}
   constructor(y: Int) /* primary */
 
   // CHECK JVM_IR:
   //   Mangled name: Host#test@Outer(){}Outer.Inner
   //   Public signature: /Host.test|-982409629050476808[0]
+  //   Public signature debug description: test@Outer(){}Outer.Inner
   // CHECK JS_IR NATIVE:
   //   Mangled name: Host#test@Outer(){}
   //   Public signature: /Host.test|-3179256530033214921[0]
+  //   Public signature debug description: test@Outer(){}
   fun Outer.test(): Inner
     // CHECK JVM_IR:
     //   Mangled name: Host#test@Outer(){}Outer.Inner.<no name provided>
@@ -76,19 +82,23 @@ class Outer {
     // CHECK:
     //   Mangled name: Outer.Inner{}x
     //   Public signature: /Outer.Inner.x|-8060530855978347579[0]
+    //   Public signature debug description: {}x
     val x: Int
       field
       // CHECK JVM_IR:
       //   Mangled name: Outer.Inner#<get-x>(){}kotlin.Int
       //   Public signature: /Outer.Inner.x.<get-x>|4966956098150895696[0]
+      //   Public signature debug description: <get-x>(){}kotlin.Int
       // CHECK JS_IR NATIVE:
       //   Mangled name: Outer.Inner#<get-x>(){}
       //   Public signature: /Outer.Inner.x.<get-x>|1482705010654679335[0]
+      //   Public signature debug description: <get-x>(){}
       get
 
     // CHECK:
     //   Mangled name: Outer.Inner#<init>(kotlin.Int){}
     //   Public signature: /Outer.Inner.<init>|-5182794243525578284[0]
+    //   Public signature debug description: <init>(kotlin.Int){}
     constructor(x: Int) /* primary */
 
   }
@@ -96,6 +106,7 @@ class Outer {
   // CHECK:
   //   Mangled name: Outer#<init>(){}
   //   Public signature: /Outer.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   constructor() /* primary */
 
 }

@@ -5,6 +5,7 @@ class Test : Base {
   // CHECK:
   //   Mangled name: Test#<init>(){}
   //   Public signature: /Test.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   constructor() /* primary */
 
 }

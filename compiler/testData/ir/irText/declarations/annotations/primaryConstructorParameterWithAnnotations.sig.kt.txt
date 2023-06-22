@@ -5,6 +5,7 @@ open annotation class Ann : Annotation {
   // CHECK:
   //   Mangled name: Ann#<init>(){}
   //   Public signature: /Ann.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   constructor() /* primary */
 
 }
@@ -16,18 +17,22 @@ class Test {
   // CHECK:
   //   Mangled name: Test{}x
   //   Public signature: /Test.x|-8060530855978347579[0]
+  //   Public signature debug description: {}x
   val x: Int
     // CHECK JVM_IR:
     //   Mangled name: Test#<get-x>(){}kotlin.Int
     //   Public signature: /Test.x.<get-x>|4966956098150895696[0]
+    //   Public signature debug description: <get-x>(){}kotlin.Int
     // CHECK JS_IR NATIVE:
     //   Mangled name: Test#<get-x>(){}
     //   Public signature: /Test.x.<get-x>|1482705010654679335[0]
+    //   Public signature debug description: <get-x>(){}
     get
 
   // CHECK:
   //   Mangled name: Test#<init>(kotlin.Int){}
   //   Public signature: /Test.<init>|-5182794243525578284[0]
+  //   Public signature debug description: <init>(kotlin.Int){}
   constructor(@Ann x: Int) /* primary */
 
 }

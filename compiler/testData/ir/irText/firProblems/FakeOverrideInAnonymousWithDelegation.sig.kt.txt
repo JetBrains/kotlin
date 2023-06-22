@@ -5,6 +5,7 @@ class Wrapper {
   // CHECK:
   //   Mangled name: Wrapper{}dummy
   //   Public signature: /Wrapper.dummy|-4015397354973262001[0]
+  //   Public signature debug description: {}dummy
   private val dummy: <no name provided>
     field
       // CHECK JVM_IR:
@@ -37,14 +38,17 @@ class Wrapper {
     //   Mangled name (compatible mode: false): Wrapper#<get-dummy>(){}Wrapper{}dummy.<no name provided>
     //   Mangled name (compatible mode: true):  Wrapper#<get-dummy>(){}Wrapper.dummy.<no name provided>
     //   Public signature: /Wrapper.dummy.<get-dummy>|-1011589390871666922[0]
+    //   Public signature debug description: <get-dummy>(){}Wrapper{}dummy.<no name provided>
     // CHECK JS_IR NATIVE:
     //   Mangled name: Wrapper#<get-dummy>(){}
     //   Public signature: /Wrapper.dummy.<get-dummy>|2827030438021585844[0]
+    //   Public signature debug description: <get-dummy>(){}
     private get
 
   // CHECK:
   //   Mangled name: Wrapper{}bar
   //   Public signature: /Wrapper.bar|-7864284097863469857[0]
+  //   Public signature debug description: {}bar
   private val bar: <no name provided>
     field
       // CHECK JVM_IR:
@@ -81,14 +85,17 @@ class Wrapper {
     //   Mangled name (compatible mode: false): Wrapper#<get-bar>(){}Wrapper{}bar.<no name provided>
     //   Mangled name (compatible mode: true):  Wrapper#<get-bar>(){}Wrapper.bar.<no name provided>
     //   Public signature: /Wrapper.bar.<get-bar>|-6775654681164748186[0]
+    //   Public signature debug description: <get-bar>(){}Wrapper{}bar.<no name provided>
     // CHECK JS_IR NATIVE:
     //   Mangled name: Wrapper#<get-bar>(){}
     //   Public signature: /Wrapper.bar.<get-bar>|6880642144337645699[0]
+    //   Public signature debug description: <get-bar>(){}
     private get
 
   // CHECK:
   //   Mangled name: Wrapper#<init>(){}
   //   Public signature: /Wrapper.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   constructor() /* primary */
 
 }
@@ -101,13 +108,16 @@ interface Bar {
   // CHECK:
   //   Mangled name: Bar{}foo
   //   Public signature: /Bar.foo|1688079488202778848[0]
+  //   Public signature debug description: {}foo
   val foo: String
     // CHECK JVM_IR:
     //   Mangled name: Bar#<get-foo>(){}kotlin.String
     //   Public signature: /Bar.foo.<get-foo>|9191418659696353323[0]
+    //   Public signature debug description: <get-foo>(){}kotlin.String
     // CHECK JS_IR NATIVE:
     //   Mangled name: Bar#<get-foo>(){}
     //   Public signature: /Bar.foo.<get-foo>|-2462361841367688099[0]
+    //   Public signature debug description: <get-foo>(){}
     get(): String
 
 }

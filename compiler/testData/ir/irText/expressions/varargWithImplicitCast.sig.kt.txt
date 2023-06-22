@@ -1,16 +1,20 @@
 // CHECK JVM_IR:
 //   Mangled name: #testScalar(kotlin.Any){}kotlin.IntArray
 //   Public signature: /testScalar|-7300349592361569657[0]
+//   Public signature debug description: testScalar(kotlin.Any){}kotlin.IntArray
 // CHECK JS_IR NATIVE:
 //   Mangled name: #testScalar(kotlin.Any){}
 //   Public signature: /testScalar|5015664091652776532[0]
+//   Public signature debug description: testScalar(kotlin.Any){}
 fun testScalar(a: Any): IntArray
 
 // CHECK JVM_IR:
 //   Mangled name: #testSpread(kotlin.Any){}kotlin.IntArray
 //   Public signature: /testSpread|-65767048159588156[0]
+//   Public signature debug description: testSpread(kotlin.Any){}kotlin.IntArray
 // CHECK JS_IR NATIVE:
 //   Mangled name: #testSpread(kotlin.Any){}
 //   Public signature: /testSpread|7513462184387724605[0]
+//   Public signature debug description: testSpread(kotlin.Any){}
 fun testSpread(a: Any): IntArray
 

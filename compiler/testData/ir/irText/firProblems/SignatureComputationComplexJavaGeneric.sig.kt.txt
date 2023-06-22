@@ -5,15 +5,18 @@ class Inv<T : Any?> {
   // CHECK:
   //   Mangled name: Inv{}x
   //   Public signature: /Inv.x|-8060530855978347579[0]
+  //   Public signature debug description: {}x
   val x: T
     // CHECK JVM_IR:
     //   Mangled name: Inv#<get-x>(){}1:0
     //   Public signature: /Inv.x.<get-x>|-8893883356128097563[0]
+    //   Public signature debug description: <get-x>(){}1:0
     get
 
   // CHECK:
   //   Mangled name: Inv#<init>(1:0){}
   //   Public signature: /Inv.<init>|-8731461708390519279[0]
+  //   Public signature debug description: <init>(1:0){}
   constructor(x: T) /* primary */
 
 }
@@ -25,20 +28,24 @@ class Test_1<TT : Any?> : JavaClass1<TT> {
   // CHECK:
   //   Mangled name: Test_1{}x
   //   Public signature: /Test_1.x|-8060530855978347579[0]
+  //   Public signature debug description: {}x
   val x: TT
     // CHECK JVM_IR:
     //   Mangled name: Test_1#<get-x>(){}1:0
     //   Public signature: /Test_1.x.<get-x>|-8893883356128097563[0]
+    //   Public signature debug description: <get-x>(){}1:0
     get
 
   // CHECK:
   //   Mangled name: Test_1#<init>(1:0){}
   //   Public signature: /Test_1.<init>|-8731461708390519279[0]
+  //   Public signature debug description: <init>(1:0){}
   constructor(x: TT) /* primary */
 
   // CHECK:
   //   Mangled name: Test_1#test(JavaClass1.B<1:0>){}
   //   Public signature: /Test_1.test|-4347685660863074857[0]
+  //   Public signature debug description: test(JavaClass1.B<1:0>){}
   fun test(b: B<TT>): Unit
 
 }
@@ -50,11 +57,13 @@ class Test_2<TT : Any?> : JavaClass2<TT, Inv<TT>> {
   // CHECK:
   //   Mangled name: Test_2#<init>(){}
   //   Public signature: /Test_2.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   constructor() /* primary */
 
   // CHECK:
   //   Mangled name: Test_2#process(JavaClass2.B<1:0,Inv<1:0>>){}
   //   Public signature: /Test_2.process|4196267472785317094[0]
+  //   Public signature debug description: process(JavaClass2.B<1:0,Inv<1:0>>){}
   fun process(b: B<TT, Inv<TT>>): Unit
 
 }
@@ -62,4 +71,6 @@ class Test_2<TT : Any?> : JavaClass2<TT, Inv<TT>> {
 // CHECK:
 //   Mangled name: #test_3(JavaClass1.B<0:0>;0:0){0§<kotlin.Any?>}
 //   Public signature: /test_3|8017402258673595148[0]
+//   Public signature debug description: test_3(JavaClass1.B<0:0>;0:0){0§<kotlin.Any?>}
 fun <R : Any?> test_3(jb: B<R>, r: R): Unit
+

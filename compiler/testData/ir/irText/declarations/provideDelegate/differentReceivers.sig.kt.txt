@@ -1,37 +1,46 @@
 // CHECK:
 //   Mangled name: {}testO
 //   Public signature: /testO|-1722316900881071484[0]
+//   Public signature debug description: {}testO
 val testO: String /* by */
   // CHECK JVM_IR:
   //   Mangled name: #<get-testO>(){}kotlin.String
   //   Public signature: /testO.<get-testO>|6508188275214307126[0]
+  //   Public signature debug description: <get-testO>(){}kotlin.String
   // CHECK JS_IR NATIVE:
   //   Mangled name: #<get-testO>(){}
   //   Public signature: /testO.<get-testO>|-3763883097242620954[0]
+  //   Public signature debug description: <get-testO>(){}
   get(): String
 
 // CHECK:
 //   Mangled name: {}testK
 //   Public signature: /testK|461235508368952777[0]
+//   Public signature debug description: {}testK
 val testK: String /* by */
   // CHECK JVM_IR:
   //   Mangled name: #<get-testK>(){}kotlin.String
   //   Public signature: /testK.<get-testK>|-2909374821716432695[0]
+  //   Public signature debug description: <get-testK>(){}kotlin.String
   // CHECK JS_IR NATIVE:
   //   Mangled name: #<get-testK>(){}
   //   Public signature: /testK.<get-testK>|-1940693732380089532[0]
+  //   Public signature debug description: <get-testK>(){}
   get(): String
 
 // CHECK:
 //   Mangled name: {}testOK
 //   Public signature: /testOK|2366514158430938845[0]
+//   Public signature debug description: {}testOK
 val testOK: String
   // CHECK JVM_IR:
   //   Mangled name: #<get-testOK>(){}kotlin.String
   //   Public signature: /testOK.<get-testOK>|-4878971389425188413[0]
+  //   Public signature debug description: <get-testOK>(){}kotlin.String
   // CHECK JS_IR NATIVE:
   //   Mangled name: #<get-testOK>(){}
   //   Public signature: /testOK.<get-testOK>|-5404434627257810463[0]
+  //   Public signature debug description: <get-testOK>(){}
   get
 
 // CHECK:
@@ -41,18 +50,22 @@ class MyClass {
   // CHECK:
   //   Mangled name: MyClass{}value
   //   Public signature: /MyClass.value|1987073854177347439[0]
+  //   Public signature debug description: {}value
   val value: String
     // CHECK JVM_IR:
     //   Mangled name: MyClass#<get-value>(){}kotlin.String
     //   Public signature: /MyClass.value.<get-value>|-7202092821145242726[0]
+    //   Public signature debug description: <get-value>(){}kotlin.String
     // CHECK JS_IR NATIVE:
     //   Mangled name: MyClass#<get-value>(){}
     //   Public signature: /MyClass.value.<get-value>|3260093555963109437[0]
+    //   Public signature debug description: <get-value>(){}
     get
 
   // CHECK:
   //   Mangled name: MyClass#<init>(kotlin.String){}
   //   Public signature: /MyClass.<init>|1280618353163213788[0]
+  //   Public signature debug description: <init>(kotlin.String){}
   constructor(value: String) /* primary */
 
 }
@@ -60,16 +73,20 @@ class MyClass {
 // CHECK JVM_IR:
 //   Mangled name: #getValue@kotlin.String(kotlin.Any?;kotlin.Any){}kotlin.String
 //   Public signature: /getValue|-3094640188751663439[0]
+//   Public signature debug description: getValue@kotlin.String(kotlin.Any?;kotlin.Any){}kotlin.String
 // CHECK JS_IR NATIVE:
 //   Mangled name: #getValue@kotlin.String(kotlin.Any?;kotlin.Any){}
 //   Public signature: /getValue|3042257834970167256[0]
+//   Public signature debug description: getValue@kotlin.String(kotlin.Any?;kotlin.Any){}
 operator fun String.getValue(receiver: Any?, p: Any): String
 
 // CHECK JVM_IR:
 //   Mangled name: #provideDelegate@MyClass(kotlin.Any?;kotlin.Any){}kotlin.String
 //   Public signature: /provideDelegate|1258517683836483629[0]
+//   Public signature debug description: provideDelegate@MyClass(kotlin.Any?;kotlin.Any){}kotlin.String
 // CHECK JS_IR NATIVE:
 //   Mangled name: #provideDelegate@MyClass(kotlin.Any?;kotlin.Any){}
 //   Public signature: /provideDelegate|-3220946013837035345[0]
+//   Public signature debug description: provideDelegate@MyClass(kotlin.Any?;kotlin.Any){}
 operator fun MyClass.provideDelegate(host: Any?, p: Any): String
 

@@ -7,6 +7,7 @@ class C {
   // CHECK:
   //   Mangled name: test.C#<init>(){}
   //   Public signature: test/C.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   constructor() /* primary */
 
 }
@@ -14,47 +15,58 @@ class C {
 // CHECK JVM_IR:
 //   Mangled name: test#get@kotlin.Int?(kotlin.Int){}kotlin.Int
 //   Public signature: test/get|-6221002532708237996[0]
+//   Public signature debug description: get@kotlin.Int?(kotlin.Int){}kotlin.Int
 // CHECK JS_IR NATIVE:
 //   Mangled name: test#get@kotlin.Int?(kotlin.Int){}
 //   Public signature: test/get|2096149375626254616[0]
+//   Public signature debug description: get@kotlin.Int?(kotlin.Int){}
 operator fun Int?.get(index: Int): Int
 
 // CHECK JVM_IR:
 //   Mangled name: test#inc@kotlin.Int?(){}kotlin.Int?
 //   Public signature: test/inc|-8688916183051881962[0]
+//   Public signature debug description: inc@kotlin.Int?(){}kotlin.Int?
 // CHECK JS_IR NATIVE:
 //   Mangled name: test#inc@kotlin.Int?(){}
 //   Public signature: test/inc|7389847627046551690[0]
+//   Public signature debug description: inc@kotlin.Int?(){}
 operator fun Int?.inc(): Int?
 
 // CHECK:
 //   Mangled name: test#set@kotlin.Int?(kotlin.Int;kotlin.Int){}
 //   Public signature: test/set|6578463135726025700[0]
+//   Public signature debug description: set@kotlin.Int?(kotlin.Int;kotlin.Int){}
 operator fun Int?.set(index: Int, value: Int): Unit
 
 // CHECK:
 //   Mangled name: test#testArrayAccess(test.C?){}
 //   Public signature: test/testArrayAccess|4252489655706845013[0]
+//   Public signature debug description: testArrayAccess(test.C?){}
 fun testArrayAccess(nc: C?): Unit
 
 // CHECK:
 //   Mangled name: test#testProperty(test.C?){}
 //   Public signature: test/testProperty|-2369045043413337370[0]
+//   Public signature debug description: testProperty(test.C?){}
 fun testProperty(nc: C?): Unit
 
 // CHECK:
 //   Mangled name: test@test.C?{}p
 //   Public signature: test/p|-1845876355852807020[0]
+//   Public signature debug description: @test.C?{}p
 var C?.p: Int
   // CHECK JVM_IR:
   //   Mangled name: test#<get-p>@test.C?(){}kotlin.Int
   //   Public signature: test/p.<get-p>|-8557468444569568699[0]
+  //   Public signature debug description: <get-p>@test.C?(){}kotlin.Int
   // CHECK JS_IR NATIVE:
   //   Mangled name: test#<get-p>@test.C?(){}
   //   Public signature: test/p.<get-p>|-8829073944247347395[0]
+  //   Public signature debug description: <get-p>@test.C?(){}
   get(): Int
   // CHECK:
   //   Mangled name: test#<set-p>@test.C?(kotlin.Int){}
   //   Public signature: test/p.<set-p>|358628307976846417[0]
+  //   Public signature debug description: <set-p>@test.C?(kotlin.Int){}
   set(value: Int): Unit
 

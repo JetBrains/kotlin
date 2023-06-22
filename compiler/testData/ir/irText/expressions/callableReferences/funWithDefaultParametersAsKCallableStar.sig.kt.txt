@@ -5,18 +5,22 @@ class C {
   // CHECK:
   //   Mangled name: C{}x
   //   Public signature: /C.x|-8060530855978347579[0]
+  //   Public signature debug description: {}x
   val x: String
     // CHECK JVM_IR:
     //   Mangled name: C#<get-x>(){}kotlin.String
     //   Public signature: /C.x.<get-x>|316111172223894646[0]
+    //   Public signature debug description: <get-x>(){}kotlin.String
     // CHECK JS_IR NATIVE:
     //   Mangled name: C#<get-x>(){}
     //   Public signature: /C.x.<get-x>|1482705010654679335[0]
+    //   Public signature debug description: <get-x>(){}
     get
 
   // CHECK:
   //   Mangled name: C#<init>(kotlin.String){}
   //   Public signature: /C.<init>|1280618353163213788[0]
+  //   Public signature debug description: <init>(kotlin.String){}
   constructor(x: String) /* primary */
 
 }
@@ -24,49 +28,60 @@ class C {
 // CHECK JVM_IR:
 //   Mangled name: #defaultsOnly(kotlin.String){}kotlin.Int
 //   Public signature: /defaultsOnly|4494765395390675935[0]
+//   Public signature debug description: defaultsOnly(kotlin.String){}kotlin.Int
 // CHECK JS_IR NATIVE:
 //   Mangled name: #defaultsOnly(kotlin.String){}
 //   Public signature: /defaultsOnly|-7244666068765377321[0]
+//   Public signature debug description: defaultsOnly(kotlin.String){}
 fun defaultsOnly(x: String): Int
 
 // CHECK JVM_IR:
 //   Mangled name: #regularAndDefaults(kotlin.String;kotlin.String){}kotlin.Int
 //   Public signature: /regularAndDefaults|5576798369123640728[0]
+//   Public signature debug description: regularAndDefaults(kotlin.String;kotlin.String){}kotlin.Int
 // CHECK JS_IR NATIVE:
 //   Mangled name: #regularAndDefaults(kotlin.String;kotlin.String){}
 //   Public signature: /regularAndDefaults|-7839345972361254384[0]
+//   Public signature debug description: regularAndDefaults(kotlin.String;kotlin.String){}
 fun regularAndDefaults(x1: String, x2: String): Int
 
 // CHECK:
 //   Mangled name: #testCtorStar(){}
 //   Public signature: /testCtorStar|-4590755602285114659[0]
+//   Public signature debug description: testCtorStar(){}
 fun testCtorStar(): Unit
 
 // CHECK:
 //   Mangled name: #testDefaultsOnlyStar(){}
 //   Public signature: /testDefaultsOnlyStar|6030377692452868527[0]
+//   Public signature debug description: testDefaultsOnlyStar(){}
 fun testDefaultsOnlyStar(): Unit
 
 // CHECK:
 //   Mangled name: #testRegularAndDefaultsStar(){}
 //   Public signature: /testRegularAndDefaultsStar|-2047981816963711456[0]
+//   Public signature debug description: testRegularAndDefaultsStar(){}
 fun testRegularAndDefaultsStar(): Unit
 
 // CHECK:
 //   Mangled name: #testVarargsStar(){}
 //   Public signature: /testVarargsStar|7637113077643006205[0]
+//   Public signature debug description: testVarargsStar(){}
 fun testVarargsStar(): Unit
 
 // CHECK:
 //   Mangled name: #useKCallableStar(kotlin.reflect.KCallable<*>){}
 //   Public signature: /useKCallableStar|-9105337902957696086[0]
+//   Public signature debug description: useKCallableStar(kotlin.reflect.KCallable<*>){}
 fun useKCallableStar(fn: KCallable<*>): Unit
 
 // CHECK JVM_IR:
 //   Mangled name: #varargs(kotlin.Array<out|kotlin.String>...){}kotlin.Int
 //   Public signature: /varargs|-1029748167171123081[0]
+//   Public signature debug description: varargs(kotlin.Array<out|kotlin.String>...){}kotlin.Int
 // CHECK JS_IR NATIVE:
 //   Mangled name: #varargs(kotlin.Array<out|kotlin.String>...){}
 //   Public signature: /varargs|1577881396515650516[0]
+//   Public signature debug description: varargs(kotlin.Array<out|kotlin.String>...){}
 fun varargs(vararg xs: String): Int
 

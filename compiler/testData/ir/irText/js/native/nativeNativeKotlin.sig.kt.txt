@@ -7,11 +7,13 @@ open external class A {
   // CHECK:
   //   Mangled name: foo.A#<init>(){}
   //   Public signature: foo/A.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   external constructor() /* primary */
 
   // CHECK JS_IR NATIVE:
   //   Mangled name: foo.A#foo(){}
   //   Public signature: foo/A.foo|-1041209573719867811[0]
+  //   Public signature debug description: foo(){}
   external fun foo(): String
 
 }
@@ -23,16 +25,19 @@ open external class B : A {
   // CHECK:
   //   Mangled name: foo.B#<init>(){}
   //   Public signature: foo/B.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   external constructor() /* primary */
 
   // CHECK JS_IR NATIVE:
   //   Mangled name: foo.B#foo(){}
   //   Public signature: foo/B.foo|-1041209573719867811[0]
+  //   Public signature debug description: foo(){}
   external /* fake */ override fun foo(): String
 
   // CHECK JS_IR NATIVE:
   //   Mangled name: foo.B#bar(){}
   //   Public signature: foo/B.bar|496682602797471549[0]
+  //   Public signature debug description: bar(){}
   external fun bar(): String
 
 }
@@ -44,15 +49,18 @@ class C : B {
   // CHECK:
   //   Mangled name: foo.C#<init>(){}
   //   Public signature: foo/C.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   constructor() /* primary */
   // CHECK JS_IR NATIVE:
   //   Mangled name: foo.C#bar(){}
   //   Public signature: foo/C.bar|496682602797471549[0]
+  //   Public signature debug description: bar(){}
   /* fake */ override fun bar(): String
 
   // CHECK JS_IR NATIVE:
   //   Mangled name: foo.C#foo(){}
   //   Public signature: foo/C.foo|-1041209573719867811[0]
+  //   Public signature debug description: foo(){}
   /* fake */ override fun foo(): String
 
 }
@@ -60,5 +68,6 @@ class C : B {
 // CHECK JS_IR NATIVE:
 //   Mangled name: foo#box(){}
 //   Public signature: foo/box|2173511048851971368[0]
+//   Public signature debug description: box(){}
 fun box(): String
 

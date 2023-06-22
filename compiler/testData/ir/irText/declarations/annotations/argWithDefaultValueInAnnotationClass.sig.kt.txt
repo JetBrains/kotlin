@@ -5,15 +5,18 @@ open annotation class ModuleInfo : Annotation {
   // CHECK:
   //   Mangled name: ModuleInfo{}keyBind
   //   Public signature: /ModuleInfo.keyBind|-3946407517690370511[0]
+  //   Public signature debug description: {}keyBind
   val keyBind: Int
     // CHECK JVM_IR:
     //   Mangled name: ModuleInfo#<get-keyBind>(){}kotlin.Int
     //   Public signature: /ModuleInfo.keyBind.<get-keyBind>|-5105783608349623557[0]
+    //   Public signature debug description: <get-keyBind>(){}kotlin.Int
     get
 
   // CHECK:
   //   Mangled name: ModuleInfo#<init>(kotlin.Int){}
   //   Public signature: /ModuleInfo.<init>|-5182794243525578284[0]
+  //   Public signature debug description: <init>(kotlin.Int){}
   constructor(keyBind: Int) /* primary */
 
 }

@@ -5,6 +5,7 @@ class Inner {
   // CHECK:
   //   Mangled name: Inner#<init>!Outer(kotlin.Any){}
   //   Public signature: /Inner.<init>|7428094623108856579[0]
+  //   Public signature debug description: <init>!Outer(kotlin.Any){}
   constructor($context_receiver_0: Outer, arg: Any) /* primary */
   // CHECK JVM_IR:
   //   Mangled name computed from Ir:         Inner.contextReceiverField0
@@ -17,9 +18,11 @@ class Inner {
   // CHECK JVM_IR:
   //   Mangled name: Inner#bar(){}kotlin.Int
   //   Public signature: /Inner.bar|-6436649210114349217[0]
+  //   Public signature debug description: bar(){}kotlin.Int
   // CHECK JS_IR NATIVE:
   //   Mangled name: Inner#bar(){}
   //   Public signature: /Inner.bar|496682602797471549[0]
+  //   Public signature debug description: bar(){}
   fun bar(): Int
 
 }
@@ -31,19 +34,23 @@ class Outer {
   // CHECK:
   //   Mangled name: Outer{}x
   //   Public signature: /Outer.x|-8060530855978347579[0]
+  //   Public signature debug description: {}x
   val x: Int
     field
     // CHECK JVM_IR:
     //   Mangled name: Outer#<get-x>(){}kotlin.Int
     //   Public signature: /Outer.x.<get-x>|4966956098150895696[0]
+    //   Public signature debug description: <get-x>(){}kotlin.Int
     // CHECK JS_IR NATIVE:
     //   Mangled name: Outer#<get-x>(){}
     //   Public signature: /Outer.x.<get-x>|1482705010654679335[0]
+    //   Public signature debug description: <get-x>(){}
     get
 
   // CHECK:
   //   Mangled name: Outer#<init>(){}
   //   Public signature: /Outer.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   constructor() /* primary */
 
 }
@@ -51,6 +58,7 @@ class Outer {
 // CHECK:
 //   Mangled name: #f(Outer){}
 //   Public signature: /f|-90367846469451219[0]
+//   Public signature debug description: f(Outer){}
 fun f(outer: Outer): Unit
   // CHECK JVM_IR:
   //   Mangled name: #f(Outer){}#<anonymous>#static@Outer(){}Inner

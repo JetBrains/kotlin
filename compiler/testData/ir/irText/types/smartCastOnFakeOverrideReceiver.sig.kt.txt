@@ -5,42 +5,52 @@ open class A {
   // CHECK:
   //   Mangled name: A{}aVal
   //   Public signature: /A.aVal|-4026160909590410018[0]
+  //   Public signature debug description: {}aVal
   val aVal: Int
     // CHECK JVM_IR:
     //   Mangled name: A#<get-aVal>(){}kotlin.Int
     //   Public signature: /A.aVal.<get-aVal>|-1703021672602726383[0]
+    //   Public signature debug description: <get-aVal>(){}kotlin.Int
     // CHECK JS_IR NATIVE:
     //   Mangled name: A#<get-aVal>(){}
     //   Public signature: /A.aVal.<get-aVal>|1133261762939420636[0]
+    //   Public signature debug description: <get-aVal>(){}
     get
 
   // CHECK:
   //   Mangled name: A#<init>(){}
   //   Public signature: /A.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   constructor() /* primary */
 
   // CHECK JVM_IR:
   //   Mangled name: A#f(){}kotlin.Int
   //   Public signature: /A.f|-2854658745315648608[0]
+  //   Public signature debug description: f(){}kotlin.Int
   // CHECK JS_IR NATIVE:
   //   Mangled name: A#f(){}
   //   Public signature: /A.f|5316533450599009716[0]
+  //   Public signature debug description: f(){}
   fun f(): Int
 
   // CHECK JVM_IR:
   //   Mangled name: A#testA1(kotlin.Any){}kotlin.Int?
   //   Public signature: /A.testA1|2875421029417429294[0]
+  //   Public signature debug description: testA1(kotlin.Any){}kotlin.Int?
   // CHECK JS_IR NATIVE:
   //   Mangled name: A#testA1(kotlin.Any){}
   //   Public signature: /A.testA1|8315841731790135220[0]
+  //   Public signature debug description: testA1(kotlin.Any){}
   fun testA1(x: Any): Int?
 
   // CHECK JVM_IR:
   //   Mangled name: A#testA2(kotlin.Any){}kotlin.Int?
   //   Public signature: /A.testA2|-4968448057047160096[0]
+  //   Public signature debug description: testA2(kotlin.Any){}kotlin.Int?
   // CHECK JS_IR NATIVE:
   //   Mangled name: A#testA2(kotlin.Any){}
   //   Public signature: /A.testA2|7321153466955297562[0]
+  //   Public signature debug description: testA2(kotlin.Any){}
   fun testA2(x: Any): Int?
 
 }
@@ -52,58 +62,72 @@ class B : A {
   // CHECK:
   //   Mangled name: B#<init>(){}
   //   Public signature: /B.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   constructor() /* primary */
 
   // CHECK JVM_IR:
   //   Mangled name: B#f(){}kotlin.Int
   //   Public signature: /B.f|-2854658745315648608[0]
+  //   Public signature debug description: f(){}kotlin.Int
   // CHECK JS_IR NATIVE:
   //   Mangled name: B#f(){}
   //   Public signature: /B.f|5316533450599009716[0]
+  //   Public signature debug description: f(){}
   /* fake */ override fun f(): Int
 
   // CHECK JVM_IR:
   //   Mangled name: B#testA1(kotlin.Any){}kotlin.Int?
   //   Public signature: /B.testA1|2875421029417429294[0]
+  //   Public signature debug description: testA1(kotlin.Any){}kotlin.Int?
   // CHECK JS_IR NATIVE:
   //   Mangled name: B#testA1(kotlin.Any){}
   //   Public signature: /B.testA1|8315841731790135220[0]
+  //   Public signature debug description: testA1(kotlin.Any){}
   /* fake */ override fun testA1(x: Any): Int?
 
   // CHECK JVM_IR:
   //   Mangled name: B#testA2(kotlin.Any){}kotlin.Int?
   //   Public signature: /B.testA2|-4968448057047160096[0]
+  //   Public signature debug description: testA2(kotlin.Any){}kotlin.Int?
   // CHECK JS_IR NATIVE:
   //   Mangled name: B#testA2(kotlin.Any){}
   //   Public signature: /B.testA2|7321153466955297562[0]
+  //   Public signature debug description: testA2(kotlin.Any){}
   /* fake */ override fun testA2(x: Any): Int?
 
   // CHECK JVM_IR:
   //   Mangled name: B#testB1(kotlin.Any){}kotlin.Int?
   //   Public signature: /B.testB1|3289472249587789251[0]
+  //   Public signature debug description: testB1(kotlin.Any){}kotlin.Int?
   // CHECK JS_IR NATIVE:
   //   Mangled name: B#testB1(kotlin.Any){}
   //   Public signature: /B.testB1|-8016237152028222856[0]
+  //   Public signature debug description: testB1(kotlin.Any){}
   fun testB1(x: Any): Int?
 
   // CHECK JVM_IR:
   //   Mangled name: B#testB2(kotlin.Any){}kotlin.Int?
   //   Public signature: /B.testB2|-6423506669184631110[0]
+  //   Public signature debug description: testB2(kotlin.Any){}kotlin.Int?
   // CHECK JS_IR NATIVE:
   //   Mangled name: B#testB2(kotlin.Any){}
   //   Public signature: /B.testB2|-6848848121088735860[0]
+  //   Public signature debug description: testB2(kotlin.Any){}
   fun testB2(x: Any): Int?
 
   // CHECK:
   //   Mangled name: B{}aVal
   //   Public signature: /B.aVal|-4026160909590410018[0]
+  //   Public signature debug description: {}aVal
   /* fake */ override val aVal: Int
     // CHECK JVM_IR:
     //   Mangled name: B#<get-aVal>(){}kotlin.Int
     //   Public signature: /B.aVal.<get-aVal>|-1703021672602726383[0]
+    //   Public signature debug description: <get-aVal>(){}kotlin.Int
     // CHECK JS_IR NATIVE:
     //   Mangled name: B#<get-aVal>(){}
     //   Public signature: /B.aVal.<get-aVal>|1133261762939420636[0]
+    //   Public signature debug description: <get-aVal>(){}
     /* fake */ override get(): Int
 
 }
@@ -115,26 +139,32 @@ open class GA<T : Any?> {
   // CHECK:
   //   Mangled name: GA{}aVal
   //   Public signature: /GA.aVal|-4026160909590410018[0]
+  //   Public signature debug description: {}aVal
   val aVal: Int
     // CHECK JVM_IR:
     //   Mangled name: GA#<get-aVal>(){}kotlin.Int
     //   Public signature: /GA.aVal.<get-aVal>|-1703021672602726383[0]
+    //   Public signature debug description: <get-aVal>(){}kotlin.Int
     // CHECK JS_IR NATIVE:
     //   Mangled name: GA#<get-aVal>(){}
     //   Public signature: /GA.aVal.<get-aVal>|1133261762939420636[0]
+    //   Public signature debug description: <get-aVal>(){}
     get
 
   // CHECK:
   //   Mangled name: GA#<init>(){}
   //   Public signature: /GA.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   constructor() /* primary */
 
   // CHECK JVM_IR:
   //   Mangled name: GA#f(){}kotlin.Int
   //   Public signature: /GA.f|-2854658745315648608[0]
+  //   Public signature debug description: f(){}kotlin.Int
   // CHECK JS_IR NATIVE:
   //   Mangled name: GA#f(){}
   //   Public signature: /GA.f|5316533450599009716[0]
+  //   Public signature debug description: f(){}
   fun f(): Int
 
 }
@@ -146,31 +176,38 @@ class GB<T : Any?, S : Any?> : GA<T> {
   // CHECK:
   //   Mangled name: GB#<init>(){}
   //   Public signature: /GB.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   constructor() /* primary */
 
   // CHECK JVM_IR:
   //   Mangled name: GB#f(){}kotlin.Int
   //   Public signature: /GB.f|-2854658745315648608[0]
+  //   Public signature debug description: f(){}kotlin.Int
   // CHECK JS_IR NATIVE:
   //   Mangled name: GB#f(){}
   //   Public signature: /GB.f|5316533450599009716[0]
+  //   Public signature debug description: f(){}
   /* fake */ override fun f(): Int
 
   // CHECK:
   //   Mangled name: GB#testGB1(kotlin.Any){}
   //   Public signature: /GB.testGB1|-7751162722819007112[0]
+  //   Public signature debug description: testGB1(kotlin.Any){}
   fun testGB1(a: Any): Unit
 
   // CHECK:
   //   Mangled name: GB{}aVal
   //   Public signature: /GB.aVal|-4026160909590410018[0]
+  //   Public signature debug description: {}aVal
   /* fake */ override val aVal: Int
     // CHECK JVM_IR:
     //   Mangled name: GB#<get-aVal>(){}kotlin.Int
     //   Public signature: /GB.aVal.<get-aVal>|-1703021672602726383[0]
+    //   Public signature debug description: <get-aVal>(){}kotlin.Int
     // CHECK JS_IR NATIVE:
     //   Mangled name: GB#<get-aVal>(){}
     //   Public signature: /GB.aVal.<get-aVal>|1133261762939420636[0]
+    //   Public signature debug description: <get-aVal>(){}
     /* fake */ override get(): Int
 
 }

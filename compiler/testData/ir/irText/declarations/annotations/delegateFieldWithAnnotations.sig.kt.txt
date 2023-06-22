@@ -1,6 +1,7 @@
 // CHECK:
 //   Mangled name: {}test1
 //   Public signature: /test1|6005685442305498193[0]
+//   Public signature debug description: {}test1
 val test1: Int /* by */
   field
     // CHECK JVM_IR:
@@ -14,9 +15,11 @@ val test1: Int /* by */
   // CHECK JVM_IR:
   //   Mangled name: #<get-test1>(){}kotlin.Int
   //   Public signature: /test1.<get-test1>|3978508226793108919[0]
+  //   Public signature debug description: <get-test1>(){}kotlin.Int
   // CHECK JS_IR NATIVE:
   //   Mangled name: #<get-test1>(){}
   //   Public signature: /test1.<get-test1>|-5735092642142423279[0]
+  //   Public signature debug description: <get-test1>(){}
   get(): Int
 
 // CHECK:
@@ -26,6 +29,7 @@ open annotation class Ann : Annotation {
   // CHECK:
   //   Mangled name: Ann#<init>(){}
   //   Public signature: /Ann.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   constructor() /* primary */
 
 }

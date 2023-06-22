@@ -5,14 +5,17 @@ class ObjectAssert<ACTUAL : Any?> {
   // CHECK:
   //   Mangled name: ObjectAssert#<init>(){}
   //   Public signature: /ObjectAssert.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   constructor() /* primary */
 
   // CHECK JVM_IR:
   //   Mangled name: ObjectAssert#describedAs(kotlin.String?;kotlin.Array<out|kotlin.Any?>...){}ObjectAssert<1:0>?
   //   Public signature: /ObjectAssert.describedAs|2640805776853081848[0]
+  //   Public signature debug description: describedAs(kotlin.String?;kotlin.Array<out|kotlin.Any?>...){}ObjectAssert<1:0>?
   // CHECK JS_IR NATIVE:
   //   Mangled name: ObjectAssert#describedAs(kotlin.String?;kotlin.Array<out|kotlin.Any?>...){}
   //   Public signature: /ObjectAssert.describedAs|-4390537078786909003[0]
+  //   Public signature debug description: describedAs(kotlin.String?;kotlin.Array<out|kotlin.Any?>...){}
   fun describedAs(description: String?, vararg args: Any?): ObjectAssert<ACTUAL>?
 
 }
@@ -24,14 +27,17 @@ object Assertions {
   // CHECK:
   //   Mangled name: Assertions#<init>(){}
   //   Public signature: /Assertions.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
   private constructor() /* primary */
 
   // CHECK JVM_IR:
   //   Mangled name: Assertions#assertThat(0:0){0§<kotlin.Any?>}ObjectAssert<0:0>
   //   Public signature: /Assertions.assertThat|4423159698393343609[0]
+  //   Public signature debug description: assertThat(0:0){0§<kotlin.Any?>}ObjectAssert<0:0>
   // CHECK JS_IR NATIVE:
   //   Mangled name: Assertions#assertThat(0:0){0§<kotlin.Any?>}
   //   Public signature: /Assertions.assertThat|4526101325959638422[0]
+  //   Public signature debug description: assertThat(0:0){0§<kotlin.Any?>}
   fun <S : Any?> assertThat(actual: S): ObjectAssert<S>
 
 }
@@ -39,5 +45,6 @@ object Assertions {
 // CHECK:
 //   Mangled name: #assertNotNull@0:0?(kotlin.String?){0§<kotlin.Any>}
 //   Public signature: /assertNotNull|-8507040693411793741[0]
+//   Public signature debug description: assertNotNull@0:0?(kotlin.String?){0§<kotlin.Any>}
 fun <T : Any> T?.assertNotNull(description: String?): Unit
 
