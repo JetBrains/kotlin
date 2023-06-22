@@ -157,7 +157,7 @@ private inline fun <T> createCoroutineFromSuspendFunction(
 @PublishedApi
 internal fun <T> createSimpleCoroutineFromSuspendFunction(
     completion: Continuation<T>
-): CoroutineImpl = object : CoroutineImpl(completion as Continuation<Any?>) {
+): CoroutineImpl = object : CoroutineImpl(@Suppress("UNCHECKED_CAST") (completion as Continuation<Any?>)) {
     override fun doResume(): Any? {
         if (exception != null) throw exception as Throwable
         return result
