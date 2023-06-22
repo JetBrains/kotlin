@@ -26,7 +26,9 @@ data class GroupedKtSources(
     val platformSources: Collection<KtSourceFile>,
     val commonSources: Collection<KtSourceFile>,
     val sourcesByModuleName: Map<String, Set<KtSourceFile>>,
-)
+) {
+    fun isEmpty(): Boolean = platformSources.isEmpty() && commonSources.isEmpty()
+}
 
 fun collectSources(
     compilerConfiguration: CompilerConfiguration,

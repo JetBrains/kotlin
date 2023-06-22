@@ -147,7 +147,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                     createProjectEnvironment(configuration, rootDisposable, EnvironmentConfigFiles.JVM_CONFIG_FILES, messageCollector)
 
                 compileModulesUsingFrontendIrAndLightTree(
-                    projectEnvironment, configuration, messageCollector, buildFile, chunk, targetDescription
+                    projectEnvironment, configuration, messageCollector, buildFile, chunk, targetDescription, !arguments.allowNoSourceFiles
                 )
             } else {
                 val environment = createCoreEnvironment(
