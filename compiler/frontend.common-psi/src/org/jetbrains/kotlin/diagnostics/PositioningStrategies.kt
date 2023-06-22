@@ -945,11 +945,14 @@ object PositioningStrategies {
 
     val PROPERTY_INITIALIZER: PositioningStrategy<KtNamedDeclaration> = object : PositioningStrategy<KtNamedDeclaration>() {
         override fun mark(element: KtNamedDeclaration): List<TextRange> {
-            return markElement(when (element) {
-                is KtProperty -> element.initializer ?: element
-                is KtParameter -> element.typeReference ?: element
-                else -> element
-            })
+            return markElement(
+                when (element) {
+                    is KtProperty -> element.initializer ?: element
+                    // Type reference is used as a target for loop variable type mismatches
+                    is KtParameter -> element.defaultValue ?: element.typeReference ?: element
+                    else -> element
+                }
+            )
         }
     }
 

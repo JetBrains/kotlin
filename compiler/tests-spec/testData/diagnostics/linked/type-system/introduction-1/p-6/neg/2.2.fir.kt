@@ -11,29 +11,29 @@
  */
 
 // TESTCASE NUMBER: 1
-fun case_1(x: Int = null) {
+fun case_1(x: Int = <!NULL_FOR_NONNULL_TYPE!>null<!>) {
     println(x)
 }
 
 // TESTCASE NUMBER: 2
-fun case_2(x: Any = null) {
+fun case_2(x: Any = <!NULL_FOR_NONNULL_TYPE!>null<!>) {
     println(x)
 }
 
 // TESTCASE NUMBER: 3
-fun case_3(x: Nothing = null) {
+fun case_3(x: Nothing = <!NULL_FOR_NONNULL_TYPE!>null<!>) {
     <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(x)
 }
 
 // TESTCASE NUMBER: 4
-class Case4(x: Int = null)
+class Case4(x: Int = <!NULL_FOR_NONNULL_TYPE!>null<!>)
 
 // TESTCASE NUMBER: 5
-class Case5 constructor(x: Any = null)
+class Case5 constructor(x: Any = <!NULL_FOR_NONNULL_TYPE!>null<!>)
 
 // TESTCASE NUMBER: 6
 class Case6 {
-    fun foo(x: Nothing = null) {}
+    fun foo(x: Nothing = <!NULL_FOR_NONNULL_TYPE!>null<!>) {}
 }
 
 // TESTCASE NUMBER: 7

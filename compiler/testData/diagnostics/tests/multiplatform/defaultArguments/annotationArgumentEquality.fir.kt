@@ -41,7 +41,7 @@ expect annotation class ClassArrays(
     val s: Array<String> = ["OK"],
     val e: Array<En> = [En.B],
     // val a: Array<Anno> = [Anno()],
-    val k: Array<KClass<*>> = [List::class], // KT-59581
+    val k: Array<KClass<*>> = <!INITIALIZER_TYPE_MISMATCH!>[List::class]<!>, // KT-59581
     vararg val v: Int = [42]
 )
 
@@ -83,6 +83,6 @@ actual annotation class ClassArrays(
     actual val s: Array<String> = ["OK"],
     actual val e: Array<En> = [En.B],
     // actual val a: Array<Anno> = [Anno()],
-    actual val k: Array<KClass<*>> = [List::class],
+    actual val k: Array<KClass<*>> = <!INITIALIZER_TYPE_MISMATCH!>[List::class]<!>,
     actual vararg val v: Int = [42]
 )

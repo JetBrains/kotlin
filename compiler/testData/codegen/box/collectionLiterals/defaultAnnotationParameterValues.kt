@@ -19,6 +19,7 @@ annotation class Foo(
         val a: IntArray = [],
         val b: IntArray = [1, 2, 3],
         val c: Array<String> = ["/"],
+        @Suppress("INITIALIZER_TYPE_MISMATCH") // Remove after KT-59581 is fixed
         val d: Array<KClass<*>> = [Int::class, Array<Int>::class],
         val e: DoubleArray = [1.0]
 )

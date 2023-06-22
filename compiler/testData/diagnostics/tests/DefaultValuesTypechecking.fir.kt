@@ -1,6 +1,6 @@
 val x = ""
 
-fun bar(x : Int = "", y : Int = x, z : String = y) {
+fun bar(x : Int = <!INITIALIZER_TYPE_MISMATCH!>""<!>, y : Int = x, z : String = <!INITIALIZER_TYPE_MISMATCH!>y<!>) {
 
 }
 
@@ -8,7 +8,7 @@ fun bar(x : Int = "", y : Int = x, z : String = y) {
 
 class A(x : Int = <!UNINITIALIZED_PARAMETER!>y<!>, y : Int = x) { // None of the references is resolved, no types checked
     constructor(x : Int = <!UNINITIALIZED_PARAMETER!>x<!>) : this(x, x)
-    fun foo(bool: Boolean, a: Int = <!UNINITIALIZED_PARAMETER!>b<!>, b: String = a) {}
+    fun foo(bool: Boolean, a: Int = <!INITIALIZER_TYPE_MISMATCH, UNINITIALIZED_PARAMETER!>b<!>, b: String = <!INITIALIZER_TYPE_MISMATCH!>a<!>) {}
 }
 
 val z = 3

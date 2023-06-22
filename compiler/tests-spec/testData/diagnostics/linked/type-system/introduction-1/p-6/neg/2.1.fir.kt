@@ -65,4 +65,4 @@ fun case_10(x: Int?) {
 }
 
 // TESTCASE NUMBER: 11
-fun case_11(x: Int?, y: Int = x) = null
+fun case_11(x: Int?, y: Int = <!INITIALIZER_TYPE_MISMATCH!>x<!>) = null

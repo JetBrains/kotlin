@@ -17,7 +17,7 @@ annotation class Bar(
 )
 
 annotation class Baz(
-        val a: IntArray = [null],
-        val b: IntArray = [1, null, 2],
-        val c: IntArray = [<!NO_THIS!>this<!>]
+        val a: IntArray = <!INITIALIZER_TYPE_MISMATCH!>[null]<!>,
+        val b: IntArray = <!INITIALIZER_TYPE_MISMATCH!>[1, null, 2]<!>,
+        val c: IntArray = <!INITIALIZER_TYPE_MISMATCH!>[<!NO_THIS!>this<!>]<!>
 )

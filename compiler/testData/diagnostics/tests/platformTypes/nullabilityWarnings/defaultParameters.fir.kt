@@ -21,7 +21,7 @@ fun test() {
     // platform type with no annotation
     val platformJ = J.staticJ
 
-    fun foo(p: J = platformNN, p1: J = platformN, p2: J = platformJ) {}
+    fun foo(p: J = platformNN, p1: J = <!INITIALIZER_TYPE_MISMATCH!>platformN<!>, p2: J = platformJ) {}
 
     fun foo1(p: J? = platformNN, p1: J? = platformN, p2: J? = platformJ) {}
 }

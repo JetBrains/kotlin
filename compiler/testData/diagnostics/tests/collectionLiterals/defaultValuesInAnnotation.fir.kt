@@ -5,9 +5,9 @@ annotation class Foo(
 )
 
 annotation class Bar(
-        val a: Array<String> = [' '],
+        val a: Array<String> = <!INITIALIZER_TYPE_MISMATCH!>[' ']<!>,
         val b: Array<String> = ["", <!EMPTY_CHARACTER_LITERAL!>''<!>],
-        val c: Array<String> = [1]
+        val c: Array<String> = <!INITIALIZER_TYPE_MISMATCH!>[1]<!>
 )
 
 annotation class Base(
@@ -18,6 +18,6 @@ annotation class Base(
 )
 
 annotation class Err(
-        val a: IntArray = [1L],
-        val b: Array<String> = [1]
+        val a: IntArray = <!INITIALIZER_TYPE_MISMATCH!>[1L]<!>,
+        val b: Array<String> = <!INITIALIZER_TYPE_MISMATCH!>[1]<!>
 )
