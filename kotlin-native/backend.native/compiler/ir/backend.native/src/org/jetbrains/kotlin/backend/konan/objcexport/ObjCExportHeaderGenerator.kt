@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.konan.objcexport
 import org.jetbrains.kotlin.backend.common.serialization.findSourceFile
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.*
+import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerDesc
 import org.jetbrains.kotlin.builtins.*
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns.isAny
 import org.jetbrains.kotlin.descriptors.*
@@ -313,6 +314,7 @@ internal class ObjCExportTranslatorImpl(
             val presentConstructors = mutableSetOf<String>()
 
             descriptor.constructors
+                    .sorted1()
                     .asSequence()
                     .filter { mapper.shouldBeExposed(it) }
                     .forEach {
@@ -336,6 +338,7 @@ internal class ObjCExportTranslatorImpl(
 
             // Hide "unimplemented" super constructors:
             superClass?.constructors
+                    ?.sorted1()
                     ?.asSequence()
                     ?.filter { mapper.shouldBeExposed(it) }
                     ?.forEach {
@@ -524,6 +527,16 @@ internal class ObjCExportTranslatorImpl(
         }
     }
 
+    private fun Sequence<PropertyDescriptor>.sorted1() = this.sortedBy { it.name }
+    private fun List<PropertyDescriptor>.sorted1() = this.sortedBy { it.name }
+    private fun Collection<FunctionDescriptor>.sorted1() = this.sortedWith(
+            compareBy(
+                    { it.name },
+                    { it.valueParameters.size },
+                    { KonanManglerDesc.run { it.signatureString(false) } }
+            )
+    )
+
     private fun StubBuilder<Stub<*>>.translateClassMembers(
             members: List<CallableMemberDescriptor>,
             objCExportScope: ObjCExportScope
@@ -540,16 +553,18 @@ internal class ObjCExportTranslatorImpl(
         methods.retainAll { it.kind.isReal }
         properties.retainAll { it.kind.isReal }
 
-        methods.forEach { method ->
+        methods.sorted1().forEach { method ->
             mapper.getBaseMethods(method)
+                    .sorted1()
                     .asSequence()
                     .distinctBy { namer.getSelector(it) }
                     .forEach { base -> add { buildMethod(method, base, objCExportScope) } }
         }
 
-        properties.forEach { property ->
+        properties.sorted1().forEach { property ->
             mapper.getBaseProperties(property)
                     .asSequence()
+                    .sorted1()
                     .distinctBy { namer.getPropertyName(it) }
                     .forEach { base -> add { buildProperty(property, base, objCExportScope) } }
         }
@@ -591,8 +606,8 @@ internal class ObjCExportTranslatorImpl(
     }
 
     private fun StubBuilder<Stub<*>>.translatePlainMembers(methods: List<FunctionDescriptor>, properties: List<PropertyDescriptor>, objCExportScope: ObjCExportScope) {
-        methods.forEach { add { buildMethod(it, it, objCExportScope) } }
-        properties.forEach { add { buildProperty(it, it, objCExportScope) } }
+        methods.sorted1().forEach { add { buildMethod(it, it, objCExportScope) } }
+        properties.sorted1().forEach { add { buildProperty(it, it, objCExportScope) } }
     }
     // TODO: consider checking that signatures for bases with same selector/name are equal.
 
