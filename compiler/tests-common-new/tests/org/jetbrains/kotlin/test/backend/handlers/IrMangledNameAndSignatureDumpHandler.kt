@@ -213,14 +213,17 @@ class IrMangledNameAndSignatureDumpHandler(testServices: TestServices) : Abstrac
                 )
             }
 
+            // N.B. We do use IdSignatureRenderer.LEGACY because it renders public signatures with hashes which are
+            // computed by mangled names. So no real need in testing IdSignatureRenderer.DEFAULT which renders mangled names
+            // instead of hashes.
             fun printActualMangledNamesAndSignatures() {
                 printMangledNames(computedMangledNames)
 
                 symbol.signature?.let {
-                    println("//   Public signature: ${it.render()}")
+                    println("//   Public signature: ${it.render(IdSignatureRenderer.LEGACY)}")
                 }
                 symbol.privateSignature?.let {
-                    println("//   Private signature: ${it.render()}")
+                    println("//   Private signature: ${it.render(IdSignatureRenderer.LEGACY)}")
                 }
             }
 

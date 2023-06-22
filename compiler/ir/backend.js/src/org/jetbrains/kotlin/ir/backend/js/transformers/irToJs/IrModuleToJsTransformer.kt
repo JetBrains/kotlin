@@ -418,7 +418,7 @@ class IrModuleToJsTransformer(
     }
 
     private fun Set<IrDeclaration>.computeTag(declaration: IrDeclaration): String? {
-        val tag = (backendContext.irFactory as IdSignatureRetriever).declarationSignature(declaration)?.toString()
+        val tag = (backendContext.irFactory as IdSignatureRetriever).declarationSignature(declaration)?.render()
 
         if (tag == null && !contains(declaration)) {
             error("signature for ${declaration.render()} not found")

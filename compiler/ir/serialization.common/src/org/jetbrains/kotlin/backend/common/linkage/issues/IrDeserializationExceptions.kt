@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.common.linkage.issues
 
 import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.util.render
 
 sealed class IrDeserializationException(message: String) : Exception(message) {
     override val message: String get() = super.message!!

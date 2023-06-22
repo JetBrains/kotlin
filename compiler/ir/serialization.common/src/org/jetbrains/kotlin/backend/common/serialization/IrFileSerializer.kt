@@ -1436,7 +1436,7 @@ open class IrFileSerializer(
             // TODO: keep order similar
             val sigIndex = protoIdSignatureMap[idSig]
                 ?: if (it is IrErrorDeclaration) protoIdSignature(idSig) else error("Not found ID for $idSig (${it.render()})")
-            topLevelDeclarations.add(SerializedDeclaration(sigIndex, idSig.toString(), byteArray))
+            topLevelDeclarations.add(SerializedDeclaration(sigIndex, idSig.render(), byteArray))
             proto.addDeclarationId(sigIndex)
         }
 

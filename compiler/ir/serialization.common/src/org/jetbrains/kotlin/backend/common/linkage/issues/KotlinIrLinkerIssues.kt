@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.common.linkage.issues.PotentialConflictReaso
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.IrMessageLogger
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.ResolvedDependency
 import org.jetbrains.kotlin.utils.ResolvedDependencyId
