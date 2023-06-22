@@ -1234,6 +1234,7 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
 
     interface NullForNonnullType : KtFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = NullForNonnullType::class
+        val expectedType: KtType
     }
 
     interface InapplicableLateinitModifier : KtFirDiagnostic<KtModifierListOwner> {

@@ -112,7 +112,7 @@ class ArgumentTypeMismatch(
 ) : ResolutionDiagnostic(INAPPLICABLE)
 
 class NullForNotNullType(
-    val argument: FirExpression
+    val argument: FirExpression, val expectedType: ConeKotlinType
 ) : ResolutionDiagnostic(INAPPLICABLE)
 
 class ManyLambdaExpressionArguments(

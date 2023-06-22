@@ -531,7 +531,9 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<Boolean>("isMismatchDueToNullability")
         }
 
-        val NULL_FOR_NONNULL_TYPE by error<PsiElement> { }
+        val NULL_FOR_NONNULL_TYPE by error<PsiElement> {
+            parameter<ConeKotlinType>("expectedType")
+        }
 
         val INAPPLICABLE_LATEINIT_MODIFIER by error<KtModifierListOwner>(PositioningStrategy.LATEINIT_MODIFIER) {
             parameter<String>("reason")

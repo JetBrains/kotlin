@@ -475,7 +475,7 @@ fun checkTypeMismatch(
             reporter.reportOn(assignment.source, FirErrors.SETTER_PROJECTED_OUT, resolvedSymbol, context)
         }
         rValue.isNullLiteral && lValueType.nullability == ConeNullability.NOT_NULL -> {
-            reporter.reportOn(rValue.source, FirErrors.NULL_FOR_NONNULL_TYPE, context)
+            reporter.reportOn(rValue.source, FirErrors.NULL_FOR_NONNULL_TYPE, lValueType, context)
         }
         isInitializer -> {
             reporter.reportOn(

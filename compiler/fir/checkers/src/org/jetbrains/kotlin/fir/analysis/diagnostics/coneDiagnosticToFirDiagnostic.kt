@@ -271,7 +271,7 @@ private fun mapInapplicableCandidateError(
                 )
 
             is NullForNotNullType -> FirErrors.NULL_FOR_NONNULL_TYPE.createOn(
-                rootCause.argument.source ?: source
+                rootCause.argument.source ?: source, rootCause.expectedType.removeTypeVariableTypes(typeContext)
             )
 
             is NonVarargSpread -> FirErrors.NON_VARARG_SPREAD.createOn(rootCause.argument.source?.getChild(KtTokens.MUL, depth = 1)!!)

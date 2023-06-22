@@ -58,7 +58,7 @@ object FirFunctionReturnTypeMismatchChecker : FirReturnExpressionChecker() {
 
         if (!isSubtypeForTypeMismatch(typeContext, subtype = returnExpressionType, supertype = functionReturnType)) {
             if (resultExpression.isNullLiteral && functionReturnType.nullability == ConeNullability.NOT_NULL) {
-                reporter.reportOn(resultExpression.source, NULL_FOR_NONNULL_TYPE, context)
+                reporter.reportOn(resultExpression.source, NULL_FOR_NONNULL_TYPE, functionReturnType, context)
             } else {
                 val isDueToNullability =
                     context.session.typeContext.isTypeMismatchDueToNullability(returnExpressionType, functionReturnType)

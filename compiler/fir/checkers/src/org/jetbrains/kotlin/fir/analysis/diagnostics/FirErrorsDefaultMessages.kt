@@ -707,7 +707,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(INCORRECT_CHARACTER_LITERAL, "Incorrect character literal")
         map.put(TOO_MANY_CHARACTERS_IN_CHARACTER_LITERAL, "Too many characters in a character literal")
         map.put(ILLEGAL_ESCAPE, "Illegal escape")
-        map.put(NULL_FOR_NONNULL_TYPE, "Null can not be a value of a non-null type")
+        map.put(NULL_FOR_NONNULL_TYPE, "Null can not be a value of a non-null type ''{0}''", RENDER_TYPE)
 
         // Unresolved
         map.put(INVISIBLE_REFERENCE, "Cannot access ''{0}'': it is {1} in {2}", SYMBOL, VISIBILITY, NAME_OF_DECLARATION_OR_FILE)
