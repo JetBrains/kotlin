@@ -11,12 +11,11 @@ import com.intellij.psi.javadoc.PsiDocComment
 import com.intellij.psi.util.MethodSignature
 import com.intellij.psi.util.MethodSignatureBackedByPsiMethod
 import org.jetbrains.kotlin.analysis.decompiled.light.classes.origin.LightMemberOriginForCompiledMethod
+import org.jetbrains.kotlin.asJava.checkIsMangled
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
-import org.jetbrains.kotlin.asJava.demangleInternalName
 import org.jetbrains.kotlin.asJava.elements.KtLightElementBase
 import org.jetbrains.kotlin.asJava.elements.KtLightMember
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
-import org.jetbrains.kotlin.asJava.propertyNameByAccessor
 import org.jetbrains.kotlin.psi.KtDeclaration
 
 class KtLightMethodForDecompiledDeclaration(
@@ -118,10 +117,4 @@ class KtLightMethodForDecompiledDeclaration(
             visitor.visitElement(this)
         }
     }
-}
-
-private fun KtLightMethod.checkIsMangled(): Boolean {
-    val demangledName = demangleInternalName(name) ?: return false
-    val originalName = propertyNameByAccessor(demangledName, this) ?: demangledName
-    return originalName == kotlinOrigin?.name
 }
