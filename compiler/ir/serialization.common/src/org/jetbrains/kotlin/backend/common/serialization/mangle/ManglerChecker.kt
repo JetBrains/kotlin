@@ -68,9 +68,6 @@ class ManglerChecker(
     private fun KotlinMangler<IrDeclaration>.signatureMangle(declaration: IrDeclaration) =
         declaration.signatureString(compatibleMode = false)
 
-    private fun KotlinMangler<IrDeclaration>.fqnMangle(declaration: IrDeclaration) =
-        declaration.fqnString(compatibleMode = false)
-
     private fun <T : Any, R> Iterable<T>.checkAllEqual(init: R, op: T.() -> R, onError: (T, R, T, R) -> Unit): R {
         var prev: T? = null
 
@@ -109,10 +106,6 @@ class ManglerChecker(
 
         manglers.checkAllEqual("", { signatureMangle(declaration) }) { m1, r1, m2, r2 ->
             error("SIG: ${declaration.render()}\n ${m1.manglerName}: $r1\n ${m2.manglerName}: $r2\n")
-        }
-
-        manglers.checkAllEqual("", { fqnMangle(declaration) }) { m1, r1, m2, r2 ->
-            error("FQN: ${declaration.render()}\n ${m1.manglerName}: $r1\n ${m2.manglerName}: $r2\n")
         }
 
         declaration.acceptChildrenVoid(this)

@@ -33,8 +33,6 @@ class Ir2FirManglerAdapter(private val delegate: FirMangler) : AbstractKotlinMan
 
     override fun IrDeclaration.signatureString(compatibleMode: Boolean): String = delegate.run { fir().signatureString(compatibleMode) }
 
-    override fun IrDeclaration.fqnString(compatibleMode: Boolean): String = delegate.run { fir().fqnString(compatibleMode) }
-
     override fun getMangleComputer(mode: MangleMode, compatibleMode: Boolean): KotlinMangleComputer<IrDeclaration> =
         error("Should not have been reached")
 

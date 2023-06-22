@@ -27,8 +27,6 @@ abstract class DescriptorBasedKotlinManglerImpl : AbstractKotlinMangler<Declarat
 
     override fun DeclarationDescriptor.signatureString(compatibleMode: Boolean): String = withMode(MangleMode.SIGNATURE, compatibleMode, this)
 
-    override fun DeclarationDescriptor.fqnString(compatibleMode: Boolean): String = withMode(MangleMode.FQNAME, compatibleMode, this)
-
     override fun DeclarationDescriptor.isExported(compatibleMode: Boolean): Boolean = getExportChecker(compatibleMode).check(this, SpecialDeclarationType.REGULAR)
 }
 
@@ -50,8 +48,6 @@ class Ir2DescriptorManglerAdapter(private val delegate: DescriptorBasedKotlinMan
     }
 
     override fun IrDeclaration.signatureString(compatibleMode: Boolean): String = delegate.run { descriptor.signatureString(compatibleMode) }
-
-    override fun IrDeclaration.fqnString(compatibleMode: Boolean): String = delegate.run { descriptor.fqnString(compatibleMode) }
 
     override fun getMangleComputer(mode: MangleMode, compatibleMode: Boolean): KotlinMangleComputer<IrDeclaration> =
         error("Should not have been reached")

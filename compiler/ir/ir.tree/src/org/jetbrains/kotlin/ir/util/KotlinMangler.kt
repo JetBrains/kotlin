@@ -17,11 +17,9 @@ interface KotlinMangler<D : Any> {
     fun D.isExported(compatibleMode: Boolean): Boolean
     fun D.mangleString(compatibleMode: Boolean): String
     fun D.signatureString(compatibleMode: Boolean): String
-    fun D.fqnString(compatibleMode: Boolean): String
 
     fun D.hashedMangle(compatibleMode: Boolean): Long = mangleString(compatibleMode).hashMangle
     fun D.signatureMangle(compatibleMode: Boolean): Long = signatureString(compatibleMode).hashMangle
-    fun D.fqnMangle(compatibleMode: Boolean): Long = fqnString(compatibleMode).hashMangle
 
     fun D.isPlatformSpecificExport(): Boolean = false
 

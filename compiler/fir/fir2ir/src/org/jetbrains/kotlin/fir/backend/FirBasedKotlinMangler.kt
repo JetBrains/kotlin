@@ -17,8 +17,6 @@ abstract class FirBasedKotlinMangler : AbstractKotlinMangler<FirDeclaration>(), 
 
     override fun FirDeclaration.signatureString(compatibleMode: Boolean): String = getMangleComputer(MangleMode.SIGNATURE, compatibleMode).computeMangle(this)
 
-    override fun FirDeclaration.fqnString(compatibleMode: Boolean): String = getMangleComputer(MangleMode.FQNAME, compatibleMode).computeMangle(this)
-
     override fun FirDeclaration.isExported(compatibleMode: Boolean): Boolean = true
 
     override fun getExportChecker(compatibleMode: Boolean): KotlinExportChecker<FirDeclaration> {
