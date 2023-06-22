@@ -26,15 +26,15 @@ public class DiagnosticsTestWithJvmIrBackendGenerated extends AbstractDiagnostic
     }
 
     @Test
-    @TestMetadata("indirectInlineCycle_ir.kt")
-    public void testIndirectInlineCycle_ir() throws Exception {
-        runTest("compiler/testData/diagnostics/testsWithJvmBackend/indirectInlineCycle_ir.kt");
+    @TestMetadata("indirectInlineCycle.kt")
+    public void testIndirectInlineCycle() throws Exception {
+        runTest("compiler/testData/diagnostics/testsWithJvmBackend/indirectInlineCycle.kt");
     }
 
     @Test
-    @TestMetadata("inlineCycle_ir.kt")
-    public void testInlineCycle_ir() throws Exception {
-        runTest("compiler/testData/diagnostics/testsWithJvmBackend/inlineCycle_ir.kt");
+    @TestMetadata("inlineCycle.kt")
+    public void testInlineCycle() throws Exception {
+        runTest("compiler/testData/diagnostics/testsWithJvmBackend/inlineCycle.kt");
     }
 
     @Test
@@ -50,9 +50,9 @@ public class DiagnosticsTestWithJvmIrBackendGenerated extends AbstractDiagnostic
     }
 
     @Test
-    @TestMetadata("multipleBigArityFunsImplemented_ir.kt")
-    public void testMultipleBigArityFunsImplemented_ir() throws Exception {
-        runTest("compiler/testData/diagnostics/testsWithJvmBackend/multipleBigArityFunsImplemented_ir.kt");
+    @TestMetadata("multipleBigArityFunsImplemented.kt")
+    public void testMultipleBigArityFunsImplemented() throws Exception {
+        runTest("compiler/testData/diagnostics/testsWithJvmBackend/multipleBigArityFunsImplemented.kt");
     }
 
     @Test
@@ -68,9 +68,9 @@ public class DiagnosticsTestWithJvmIrBackendGenerated extends AbstractDiagnostic
     }
 
     @Test
-    @TestMetadata("suspendInlineCycle_ir.kt")
-    public void testSuspendInlineCycle_ir() throws Exception {
-        runTest("compiler/testData/diagnostics/testsWithJvmBackend/suspendInlineCycle_ir.kt");
+    @TestMetadata("suspendInlineCycle.kt")
+    public void testSuspendInlineCycle() throws Exception {
+        runTest("compiler/testData/diagnostics/testsWithJvmBackend/suspendInlineCycle.kt");
     }
 
     @Nested
@@ -140,15 +140,15 @@ public class DiagnosticsTestWithJvmIrBackendGenerated extends AbstractDiagnostic
             }
 
             @Test
-            @TestMetadata("defaultFunction_ir.kt")
-            public void testDefaultFunction_ir() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/accidentalOverrides/defaultFunction_ir.kt");
+            @TestMetadata("defaultFunction.kt")
+            public void testDefaultFunction() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/accidentalOverrides/defaultFunction.kt");
             }
 
             @Test
-            @TestMetadata("delegatedFunctionOverriddenByProperty_ir.kt")
-            public void testDelegatedFunctionOverriddenByProperty_ir() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/accidentalOverrides/delegatedFunctionOverriddenByProperty_ir.kt");
+            @TestMetadata("delegatedFunctionOverriddenByProperty.kt")
+            public void testDelegatedFunctionOverriddenByProperty() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/accidentalOverrides/delegatedFunctionOverriddenByProperty.kt");
             }
 
             @Test
@@ -158,9 +158,9 @@ public class DiagnosticsTestWithJvmIrBackendGenerated extends AbstractDiagnostic
             }
 
             @Test
-            @TestMetadata("overridesNothing_ir.kt")
-            public void testOverridesNothing_ir() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/accidentalOverrides/overridesNothing_ir.kt");
+            @TestMetadata("overridesNothing.kt")
+            public void testOverridesNothing() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/accidentalOverrides/overridesNothing.kt");
             }
 
             @Test
@@ -170,27 +170,27 @@ public class DiagnosticsTestWithJvmIrBackendGenerated extends AbstractDiagnostic
             }
 
             @Test
+            @TestMetadata("traitFunctionOverriddenByProperty.kt")
+            public void testTraitFunctionOverriddenByProperty() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/accidentalOverrides/traitFunctionOverriddenByProperty.kt");
+            }
+
+            @Test
             @TestMetadata("traitFunctionOverriddenByPropertyNoImpl.kt")
             public void testTraitFunctionOverriddenByPropertyNoImpl() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/accidentalOverrides/traitFunctionOverriddenByPropertyNoImpl.kt");
             }
 
             @Test
-            @TestMetadata("traitFunctionOverriddenByProperty_ir.kt")
-            public void testTraitFunctionOverriddenByProperty_ir() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/accidentalOverrides/traitFunctionOverriddenByProperty_ir.kt");
+            @TestMetadata("traitPropertyOverriddenByFunction.kt")
+            public void testTraitPropertyOverriddenByFunction() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/accidentalOverrides/traitPropertyOverriddenByFunction.kt");
             }
 
             @Test
             @TestMetadata("traitPropertyOverriddenByFunctionNoImpl.kt")
             public void testTraitPropertyOverriddenByFunctionNoImpl() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/accidentalOverrides/traitPropertyOverriddenByFunctionNoImpl.kt");
-            }
-
-            @Test
-            @TestMetadata("traitPropertyOverriddenByFunction_ir.kt")
-            public void testTraitPropertyOverriddenByFunction_ir() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/accidentalOverrides/traitPropertyOverriddenByFunction_ir.kt");
             }
         }
 
@@ -204,21 +204,21 @@ public class DiagnosticsTestWithJvmIrBackendGenerated extends AbstractDiagnostic
             }
 
             @Test
-            @TestMetadata("class_ir.kt")
-            public void testClass_ir() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/bridges/class_ir.kt");
+            @TestMetadata("class.kt")
+            public void testClass() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/bridges/class.kt");
             }
 
             @Test
-            @TestMetadata("fakeOverrideTrait_ir.kt")
-            public void testFakeOverrideTrait_ir() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/bridges/fakeOverrideTrait_ir.kt");
+            @TestMetadata("fakeOverrideTrait.kt")
+            public void testFakeOverrideTrait() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/bridges/fakeOverrideTrait.kt");
             }
 
             @Test
-            @TestMetadata("trait_ir.kt")
-            public void testTrait_ir() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/bridges/trait_ir.kt");
+            @TestMetadata("trait.kt")
+            public void testTrait() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/bridges/trait.kt");
             }
         }
 
@@ -232,9 +232,9 @@ public class DiagnosticsTestWithJvmIrBackendGenerated extends AbstractDiagnostic
             }
 
             @Test
-            @TestMetadata("clashFromInterfaceAndSuperClass_ir.kt")
-            public void testClashFromInterfaceAndSuperClass_ir() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/erasure/clashFromInterfaceAndSuperClass_ir.kt");
+            @TestMetadata("clashFromInterfaceAndSuperClass.kt")
+            public void testClashFromInterfaceAndSuperClass() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/erasure/clashFromInterfaceAndSuperClass.kt");
             }
 
             @Test
@@ -274,9 +274,9 @@ public class DiagnosticsTestWithJvmIrBackendGenerated extends AbstractDiagnostic
             }
 
             @Test
-            @TestMetadata("inheritFromTwoTraits_ir.kt")
-            public void testInheritFromTwoTraits_ir() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/erasure/inheritFromTwoTraits_ir.kt");
+            @TestMetadata("inheritFromTwoTraits.kt")
+            public void testInheritFromTwoTraits() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/erasure/inheritFromTwoTraits.kt");
             }
 
             @Test
@@ -292,15 +292,15 @@ public class DiagnosticsTestWithJvmIrBackendGenerated extends AbstractDiagnostic
             }
 
             @Test
-            @TestMetadata("superTraitAndDelegationToTraitImpl_ir.kt")
-            public void testSuperTraitAndDelegationToTraitImpl_ir() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/erasure/superTraitAndDelegationToTraitImpl_ir.kt");
+            @TestMetadata("superTraitAndDelegationToTraitImpl.kt")
+            public void testSuperTraitAndDelegationToTraitImpl() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/erasure/superTraitAndDelegationToTraitImpl.kt");
             }
 
             @Test
-            @TestMetadata("twoTraitsAndOwnFunction_ir.kt")
-            public void testTwoTraitsAndOwnFunction_ir() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/erasure/twoTraitsAndOwnFunction_ir.kt");
+            @TestMetadata("twoTraitsAndOwnFunction.kt")
+            public void testTwoTraitsAndOwnFunction() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/erasure/twoTraitsAndOwnFunction.kt");
             }
 
             @Test
@@ -350,9 +350,9 @@ public class DiagnosticsTestWithJvmIrBackendGenerated extends AbstractDiagnostic
             }
 
             @Test
-            @TestMetadata("waitNotifyGetClass_ir.kt")
-            public void testWaitNotifyGetClass_ir() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/finalMembersFromBuiltIns/waitNotifyGetClass_ir.kt");
+            @TestMetadata("waitNotifyGetClass.kt")
+            public void testWaitNotifyGetClass() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/finalMembersFromBuiltIns/waitNotifyGetClass.kt");
             }
         }
 
@@ -468,9 +468,9 @@ public class DiagnosticsTestWithJvmIrBackendGenerated extends AbstractDiagnostic
             }
 
             @Test
-            @TestMetadata("trait_ir.kt")
-            public void testTrait_ir() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/functionAndProperty/trait_ir.kt");
+            @TestMetadata("trait.kt")
+            public void testTrait() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/functionAndProperty/trait.kt");
             }
         }
 
@@ -500,21 +500,21 @@ public class DiagnosticsTestWithJvmIrBackendGenerated extends AbstractDiagnostic
             }
 
             @Test
+            @TestMetadata("classObject.kt")
+            public void testClassObject() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/specialNames/classObject.kt");
+            }
+
+            @Test
             @TestMetadata("classObjectCopiedField.kt")
             public void testClassObjectCopiedField() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/specialNames/classObjectCopiedField.kt");
             }
 
             @Test
-            @TestMetadata("classObjectCopiedFieldObject_ir.kt")
-            public void testClassObjectCopiedFieldObject_ir() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/specialNames/classObjectCopiedFieldObject_ir.kt");
-            }
-
-            @Test
-            @TestMetadata("classObject_ir.kt")
-            public void testClassObject_ir() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/specialNames/classObject_ir.kt");
+            @TestMetadata("classObjectCopiedFieldObject.kt")
+            public void testClassObjectCopiedFieldObject() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/specialNames/classObjectCopiedFieldObject.kt");
             }
 
             @Test
@@ -524,15 +524,15 @@ public class DiagnosticsTestWithJvmIrBackendGenerated extends AbstractDiagnostic
             }
 
             @Test
-            @TestMetadata("defaults_ir.kt")
-            public void testDefaults_ir() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/specialNames/defaults_ir.kt");
+            @TestMetadata("defaults.kt")
+            public void testDefaults() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/specialNames/defaults.kt");
             }
 
             @Test
-            @TestMetadata("delegationBy_ir.kt")
-            public void testDelegationBy_ir() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/specialNames/delegationBy_ir.kt");
+            @TestMetadata("delegationBy.kt")
+            public void testDelegationBy() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/specialNames/delegationBy.kt");
             }
 
             @Test
@@ -542,21 +542,21 @@ public class DiagnosticsTestWithJvmIrBackendGenerated extends AbstractDiagnostic
             }
 
             @Test
-            @TestMetadata("innerClassField_ir.kt")
-            public void testInnerClassField_ir() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/specialNames/innerClassField_ir.kt");
+            @TestMetadata("innerClassField.kt")
+            public void testInnerClassField() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/specialNames/innerClassField.kt");
             }
 
             @Test
-            @TestMetadata("instance_ir.kt")
-            public void testInstance_ir() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/specialNames/instance_ir.kt");
+            @TestMetadata("instance.kt")
+            public void testInstance() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/specialNames/instance.kt");
             }
 
             @Test
-            @TestMetadata("propertyMetadataCache_ir.kt")
-            public void testPropertyMetadataCache_ir() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/specialNames/propertyMetadataCache_ir.kt");
+            @TestMetadata("propertyMetadataCache.kt")
+            public void testPropertyMetadataCache() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/specialNames/propertyMetadataCache.kt");
             }
         }
 
@@ -632,9 +632,9 @@ public class DiagnosticsTestWithJvmIrBackendGenerated extends AbstractDiagnostic
             }
 
             @Test
-            @TestMetadata("defaultVsNonDefault_ir.kt")
-            public void testDefaultVsNonDefault_ir() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/traitImpl/defaultVsNonDefault_ir.kt");
+            @TestMetadata("defaultVsNonDefault.kt")
+            public void testDefaultVsNonDefault() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/traitImpl/defaultVsNonDefault.kt");
             }
 
             @Test
@@ -644,27 +644,27 @@ public class DiagnosticsTestWithJvmIrBackendGenerated extends AbstractDiagnostic
             }
 
             @Test
-            @TestMetadata("oneTrait_ir.kt")
-            public void testOneTrait_ir() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/traitImpl/oneTrait_ir.kt");
+            @TestMetadata("oneTrait.kt")
+            public void testOneTrait() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/traitImpl/oneTrait.kt");
             }
 
             @Test
-            @TestMetadata("traitFunctionOverriddenByPropertyInTrait_ir.kt")
-            public void testTraitFunctionOverriddenByPropertyInTrait_ir() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/traitImpl/traitFunctionOverriddenByPropertyInTrait_ir.kt");
+            @TestMetadata("traitFunctionOverriddenByPropertyInTrait.kt")
+            public void testTraitFunctionOverriddenByPropertyInTrait() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/traitImpl/traitFunctionOverriddenByPropertyInTrait.kt");
             }
 
             @Test
-            @TestMetadata("traitPropertyOverriddenByFunctionInTrait_ir.kt")
-            public void testTraitPropertyOverriddenByFunctionInTrait_ir() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/traitImpl/traitPropertyOverriddenByFunctionInTrait_ir.kt");
+            @TestMetadata("traitPropertyOverriddenByFunctionInTrait.kt")
+            public void testTraitPropertyOverriddenByFunctionInTrait() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/traitImpl/traitPropertyOverriddenByFunctionInTrait.kt");
             }
 
             @Test
-            @TestMetadata("twoTraits_ir.kt")
-            public void testTwoTraits_ir() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/traitImpl/twoTraits_ir.kt");
+            @TestMetadata("twoTraits.kt")
+            public void testTwoTraits() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/traitImpl/twoTraits.kt");
             }
         }
 

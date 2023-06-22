@@ -25,8 +25,8 @@ public class FirPsiDiagnosticsTestWithJvmIrBackendGenerated extends AbstractFirP
     }
 
     @Test
-    @TestMetadata("exceptionFromInterpreter_ir.kt")
-    public void testExceptionFromInterpreter_ir() throws Exception {
-        runTest("compiler/testData/diagnostics/firTestWithJvmBackend/exceptionFromInterpreter_ir.kt");
+    @TestMetadata("exceptionFromInterpreter.kt")
+    public void testExceptionFromInterpreter() throws Exception {
+        runTest("compiler/testData/diagnostics/firTestWithJvmBackend/exceptionFromInterpreter.kt");
     }
 }

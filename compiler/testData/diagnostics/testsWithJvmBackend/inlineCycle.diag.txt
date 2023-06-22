@@ -1,0 +1,3 @@
+/inlineCycle.kt:6:5: error: The 'inlineFun2' invocation is a part of inline cycle
+
+/inlineCycle.kt:11:5: error: The 'inlineFun1' invocation is a part of inline cycle
