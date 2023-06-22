@@ -1117,13 +1117,11 @@ class CallAndReferenceGenerator(
     ): IrExpression {
         when (this) {
             is IrMemberAccessExpression<*> -> {
-                val ownerFunction =
-                    symbol.owner as? IrFunction
-                        ?: (symbol.owner as? IrProperty)?.getter
-                if (ownerFunction?.dispatchReceiverParameter != null) {
+                val resolvedFirSymbol = qualifiedAccess.toResolvedCallableSymbol()
+                if (resolvedFirSymbol?.dispatchReceiverType != null) {
                     val baseDispatchReceiver = qualifiedAccess.findIrDispatchReceiver(explicitReceiverExpression)
                     dispatchReceiver =
-                        if (!ownerFunction.isMethodOfAny() || baseDispatchReceiver?.type?.classOrNull?.owner?.isInterface != true) {
+                        if (!resolvedFirSymbol.isMethodOfAny() || baseDispatchReceiver?.type?.classOrNull?.owner?.isInterface != true) {
                             baseDispatchReceiver
                         } else {
                             // NB: for FE 1.0, this type cast is added by InterfaceObjectCallsLowering
@@ -1139,7 +1137,8 @@ class CallAndReferenceGenerator(
                             )
                         }
                 }
-                if (ownerFunction?.extensionReceiverParameter != null) {
+                // constructors don't have extension receiver but may have receiver parameter in case of inner classes
+                if (resolvedFirSymbol?.receiverParameter != null && resolvedFirSymbol !is FirConstructorSymbol) {
                     extensionReceiver = qualifiedAccess.findIrExtensionReceiver(explicitReceiverExpression)?.let {
                         val symbol = qualifiedAccess.calleeReference.toResolvedCallableSymbol()
                             ?: error("Symbol for call ${qualifiedAccess.render()} not found")
@@ -1164,6 +1163,16 @@ class CallAndReferenceGenerator(
             }
         }
         return this
+    }
+
+    private fun FirCallableSymbol<*>.isMethodOfAny(): Boolean {
+        if (this !is FirNamedFunctionSymbol) return false
+        if (receiverParameter != null) return false
+        return when (name) {
+            OperatorNameConventions.HASH_CODE, OperatorNameConventions.TO_STRING -> valueParameterSymbols.isEmpty()
+            OperatorNameConventions.EQUALS -> valueParameterSymbols.singleOrNull()?.resolvedReturnType?.isNullableAny == true
+            else -> false
+        }
     }
 
     private fun generateErrorCallExpression(
