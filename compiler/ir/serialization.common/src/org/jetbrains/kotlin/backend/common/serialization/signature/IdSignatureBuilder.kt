@@ -74,7 +74,7 @@ abstract class IdSignatureBuilder<D> {
                     declarationFqName = classFqName,
                     id = hashId,
                     mask = mask,
-                    description = null, // TODO(KT-59486): Save mangled name here
+                    description = description,
                 )
             }
             else -> {
@@ -83,7 +83,7 @@ abstract class IdSignatureBuilder<D> {
                     declarationFqName = classFqName,
                     id = hashIdAcc,
                     mask = mask,
-                    description = null, // TODO(KT-59486): Save mangled name here
+                    description = description,
                 )
                 hashIdAcc = null
                 classFqnSegments.run { removeAt(lastIndex) }

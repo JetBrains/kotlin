@@ -24,35 +24,30 @@ internal fun CodedOutputStream.writeIdSignature(signature: IdSignature, signatur
         return
     }
 
-    when (signature) {
-        is IdSignature.CommonSignature -> {
-            writeInt32NoTag(IdSignatureProtoType.COMMON_SIGNATURE.id)
-            writeStringNoTag(signature.packageFqName)
-            writeStringNoTag(signature.declarationFqName)
-            val id = signature.id
-            if (id != null) {
-                writeBoolNoTag(true)
-                writeFixed64NoTag(id)
-            } else {
-                writeBoolNoTag(false)
+            when (signature) {
+                is IdSignature.CommonSignature -> {
+                    writeInt32NoTag(IdSignatureProtoType.COMMON_SIGNATURE.id)
+                    writeStringNoTag(signature.packageFqName)
+                    writeStringNoTag(signature.declarationFqName)
+                    ifNotNull(signature.id, this::writeFixed64NoTag)
+                    writeInt64NoTag(signature.mask)
+                    ifNotNull(signature.description, this::writeStringNoTag)
+                }
+                is IdSignature.CompositeSignature -> {
+                    writeInt32NoTag(IdSignatureProtoType.COMPOSITE_SIGNATURE.id)
+                    writeIdSignature(signature.container, signatureToIndexMapper)
+                    writeIdSignature(signature.inner, signatureToIndexMapper)
+                }
+                is IdSignature.AccessorSignature -> {
+                    writeInt32NoTag(IdSignatureProtoType.ACCESSOR_SIGNATURE.id)
+                    writeIdSignature(signature.propertySignature, signatureToIndexMapper)
+                    writeIdSignature(signature.accessorSignature, signatureToIndexMapper)
+                }
+                else -> {
+                    icError("can not write $signature signature")
+                }
             }
-            writeInt64NoTag(signature.mask)
         }
-        is IdSignature.CompositeSignature -> {
-            writeInt32NoTag(IdSignatureProtoType.COMPOSITE_SIGNATURE.id)
-            writeIdSignature(signature.container, signatureToIndexMapper)
-            writeIdSignature(signature.inner, signatureToIndexMapper)
-        }
-        is IdSignature.AccessorSignature -> {
-            writeInt32NoTag(IdSignatureProtoType.ACCESSOR_SIGNATURE.id)
-            writeIdSignature(signature.propertySignature, signatureToIndexMapper)
-            writeIdSignature(signature.accessorSignature, signatureToIndexMapper)
-        }
-        else -> {
-            icError("can not write $signature signature")
-        }
-    }
-}
 
 internal fun CodedInputStream.readIdSignature(indexToSignatureMapper: (Int) -> IdSignature): IdSignature {
     when (val signatureType = readInt32()) {
@@ -62,18 +57,15 @@ internal fun CodedInputStream.readIdSignature(indexToSignatureMapper: (Int) -> I
         IdSignatureProtoType.COMMON_SIGNATURE.id -> {
             val packageFqName = readString()
             val declarationFqName = readString()
-            val id = if (readBool()) {
-                readFixed64()
-            } else {
-                null
-            }
+            val id = ifTrue(this::readFixed64)
             val mask = readInt64()
+            val description = ifTrue(this::readString)
             return IdSignature.CommonSignature(
                 packageFqName = packageFqName,
                 declarationFqName = declarationFqName,
                 id = id,
                 mask = mask,
-                description = null, // TODO(KT-59486): Deserialize mangled name and save it here
+                description = description
             )
         }
         IdSignatureProtoType.COMPOSITE_SIGNATURE.id -> {
@@ -103,10 +95,9 @@ internal fun CodedInputStream.skipIdSignature() {
         IdSignatureProtoType.COMMON_SIGNATURE.id -> {
             readString()
             readString()
-            if (readBool()) {
-                readFixed64()
-            }
+            ifTrue(this::readFixed64)
             readInt64()
+            ifTrue(this::readString)
         }
         IdSignatureProtoType.COMPOSITE_SIGNATURE.id -> {
             skipIdSignature()

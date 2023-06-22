@@ -217,6 +217,10 @@ open class IrFileSerializer(
             proto.flags = signature.mask
         }
 
+        if (addDebugInfo) {
+            signature.description?.let { proto.debugInfo = serializeDebugInfo(it) }
+        }
+
         return proto.build()
     }
 
@@ -229,6 +233,9 @@ open class IrFileSerializer(
             proto.accessorHashId = id ?: error("Expected hash Id")
             if (mask != 0L) {
                 proto.flags = mask
+            }
+            if (addDebugInfo) {
+                description?.let { proto.debugInfo = serializeDebugInfo(it) }
             }
         }
 
