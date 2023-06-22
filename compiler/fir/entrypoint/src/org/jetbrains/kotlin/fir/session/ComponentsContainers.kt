@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.impl.FirQualifierResolverImpl
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirTypeResolverImpl
 import org.jetbrains.kotlin.fir.resolve.transformers.FirDummyCompilerLazyDeclarationResolver
 import org.jetbrains.kotlin.fir.resolve.transformers.PlatformSupertypeUpdater
+import org.jetbrains.kotlin.fir.resolve.transformers.mpp.FirExpectActualMatchingContextImpl
 import org.jetbrains.kotlin.fir.resolve.transformers.plugin.CompilerRequiredAnnotationEnhancementProvider
 import org.jetbrains.kotlin.fir.scopes.FirOverrideChecker
 import org.jetbrains.kotlin.fir.scopes.FirOverrideService
@@ -142,6 +143,7 @@ fun FirSession.registerResolveComponents(lookupTracker: LookupTracker? = null, e
             IncrementalPassThroughEnumWhenTrackerComponent(enumWhenTracker)
         )
     }
+    register(FirExpectActualMatchingContextFactory::class, FirExpectActualMatchingContextImpl.Factory)
 }
 
 /*

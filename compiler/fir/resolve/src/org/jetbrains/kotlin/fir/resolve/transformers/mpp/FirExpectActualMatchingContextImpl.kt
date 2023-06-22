@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.fir.resolve.transformers.mpp
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.fir.FirExpectActualMatchingContext
+import org.jetbrains.kotlin.fir.FirExpectActualMatchingContextFactory
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
@@ -24,18 +26,20 @@ import org.jetbrains.kotlin.mpp.*
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.calls.mpp.ExpectActualMatchingContext
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.TypeCheckerState
 import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.types.model.*
+import org.jetbrains.kotlin.types.model.KotlinTypeMarker
+import org.jetbrains.kotlin.types.model.SimpleTypeMarker
+import org.jetbrains.kotlin.types.model.TypeSubstitutorMarker
+import org.jetbrains.kotlin.types.model.TypeSystemContext
 import org.jetbrains.kotlin.utils.addToStdlib.UnsafeCastFunction
 import org.jetbrains.kotlin.utils.addToStdlib.castAll
 
-class FirExpectActualMatchingContext(
+class FirExpectActualMatchingContextImpl private constructor(
     private val actualSession: FirSession,
     private val scopeSession: ScopeSession
-) : ExpectActualMatchingContext<FirBasedSymbol<*>>, TypeSystemContext by actualSession.typeContext {
+) : FirExpectActualMatchingContext, TypeSystemContext by actualSession.typeContext {
     override val shouldCheckReturnTypesOfCallables: Boolean
         get() = false
 
@@ -48,6 +52,7 @@ class FirExpectActualMatchingContext(
     override val allowTransitiveSupertypesActualization: Boolean
         get() = true
 
+    private fun DeclarationSymbolMarker.asSymbol(): FirBasedSymbol<*> = this as FirBasedSymbol<*>
     private fun CallableSymbolMarker.asSymbol(): FirCallableSymbol<*> = this as FirCallableSymbol<*>
     private fun FunctionSymbolMarker.asSymbol(): FirFunctionSymbol<*> = this as FirFunctionSymbol<*>
     private fun PropertySymbolMarker.asSymbol(): FirPropertySymbol = this as FirPropertySymbol
@@ -197,9 +202,9 @@ class FirExpectActualMatchingContext(
         }
     }
 
-    fun FirClassSymbol<*>.getConstructors(
+    override fun FirClassSymbol<*>.getConstructors(
         scopeSession: ScopeSession,
-        session: FirSession = moduleData.session
+        session: FirSession,
     ): Collection<FirConstructorSymbol> = mutableListOf<FirConstructorSymbol>().apply {
         getConstructorsTo(
             this,
@@ -305,4 +310,9 @@ class FirExpectActualMatchingContext(
 
     override val CallableSymbolMarker.hasStableParameterNames: Boolean
         get() = asSymbol().rawStatus.hasStableParameterNames
+
+    object Factory : FirExpectActualMatchingContextFactory {
+        override fun create(session: FirSession, scopeSession: ScopeSession): FirExpectActualMatchingContextImpl =
+            FirExpectActualMatchingContextImpl(session, scopeSession)
+    }
 }
