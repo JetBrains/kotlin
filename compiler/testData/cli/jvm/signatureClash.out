@@ -28,11 +28,11 @@ compiler/testData/cli/jvm/signatureClash.kt:20:5: error: accidental override: Th
     fun getTr(): Int defined in SubTr
     val tr = 1
     ^
-compiler/testData/cli/jvm/signatureClash.kt:24:7: error: platform declaration clash: The following declarations have the same JVM signature (access$f(LC;)V):
+compiler/testData/cli/jvm/signatureClash.kt:24:1: error: platform declaration clash: The following declarations have the same JVM signature (access$f(LC;)V):
     fun `access$f`(`$this`: C): Unit defined in C
     fun `access$f`(c: C): Unit defined in C
 class C {
-      ^
+^
 compiler/testData/cli/jvm/signatureClash.kt:26:5: error: platform declaration clash: The following declarations have the same JVM signature (access$f(LC;)V):
     fun `access$f`(`$this`: C): Unit defined in C
     fun `access$f`(c: C): Unit defined in C
