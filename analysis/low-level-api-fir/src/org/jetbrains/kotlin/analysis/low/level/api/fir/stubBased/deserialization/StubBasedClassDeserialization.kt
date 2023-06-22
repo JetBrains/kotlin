@@ -212,6 +212,7 @@ internal fun deserializeClassToSymbol(
                     },
                     toFirSource = { src, kind -> KtFakeSourceElement(src as PsiElement, kind) },
                     addValueParameterAnnotations = { annotations += context.annotationDeserializer.loadAnnotations(it) },
+                    isVararg = { it.isVarArg }
                 )
             )
         }

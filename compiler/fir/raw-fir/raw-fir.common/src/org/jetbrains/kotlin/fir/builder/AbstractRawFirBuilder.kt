@@ -63,6 +63,7 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
     abstract val T?.selectorExpression: T?
     abstract val T?.arrayExpression: T?
     abstract val T?.indexExpressions: List<T>?
+    abstract val T.isVararg: Boolean
 
     /**** Class name utils ****/
     inline fun <T> withChildClassName(
@@ -901,6 +902,7 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
                     createParameterTypeRefWithSourceKind,
                     { src, kind -> src?.toFirSourceElement(kind) },
                     addValueParameterAnnotations,
+                    { it.isVararg },
                 )
             )
         }
@@ -1028,21 +1030,22 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
     }
 }
 
-fun <T> FirRegularClassBuilder.createDataClassCopyFunction(
+fun <TBase, TSource : TBase, TParameter : TBase> FirRegularClassBuilder.createDataClassCopyFunction(
     classId: ClassId,
-    sourceElement: T,
+    sourceElement: TSource,
     dispatchReceiver: ConeClassLikeType?,
-    zippedParameters: List<Pair<T, FirProperty>>,
+    zippedParameters: List<Pair<TParameter, FirProperty>>,
     createClassTypeRefWithSourceKind: (KtFakeSourceElementKind) -> FirTypeRef,
     createParameterTypeRefWithSourceKind: (FirProperty, KtFakeSourceElementKind) -> FirTypeRef,
-    toFirSource: (T?, KtFakeSourceElementKind) -> KtSourceElement?,
-    addValueParameterAnnotations: FirValueParameterBuilder.(T) -> Unit,
+    toFirSource: (TBase?, KtFakeSourceElementKind) -> KtSourceElement?,
+    addValueParameterAnnotations: FirValueParameterBuilder.(TParameter) -> Unit,
+    isVararg: (TParameter) -> Boolean,
 ): FirSimpleFunction {
     fun generateComponentAccess(
         parameterSource: KtSourceElement?,
         firProperty: FirProperty,
         classTypeRefWithCorrectSourceKind: FirTypeRef,
-        firPropertyReturnTypeRefWithCorrectSourceKind: FirTypeRef
+        firPropertyReturnTypeRefWithCorrectSourceKind: FirTypeRef,
     ) =
         buildPropertyAccessExpression {
             this.source = parameterSource
@@ -1088,7 +1091,7 @@ fun <T> FirRegularClassBuilder.createDataClassCopyFunction(
                 defaultValue = generateComponentAccess(parameterSource, firProperty, classTypeRef, propertyReturnTypeRef)
                 isCrossinline = false
                 isNoinline = false
-                isVararg = false
+                this.isVararg = isVararg(ktParameter)
                 addValueParameterAnnotations(ktParameter)
                 for (annotation in annotations) {
                     annotation.replaceUseSiteTarget(null)

@@ -31,6 +31,6 @@ FILE: withSuppression.kt
 
         public final operator fun component1(): R|kotlin/String|
 
-        public final fun copy(x: R|kotlin/String| = this@R|/D|.R|/D.x|): R|D|
+        public final fun copy(vararg x: R|kotlin/Array<out kotlin/String>| = this@R|/D|.R|/D.x|): R|D|
 
     }

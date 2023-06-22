@@ -140,6 +140,9 @@ open class PsiRawFirBuilder(
     override val PsiElement?.indexExpressions: List<PsiElement>?
         get() = (this as? KtArrayAccessExpression)?.indexExpressions
 
+    override val PsiElement.isVararg: Boolean
+        get() = (this as? KtParameter)?.isVarArg ?: false
+
     private val KtModifierListOwner.visibility: Visibility
         get() = with(modifierList) {
             when {
