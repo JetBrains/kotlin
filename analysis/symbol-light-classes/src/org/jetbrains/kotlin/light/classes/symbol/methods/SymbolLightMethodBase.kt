@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.markers.KtAnnotatedSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithVisibility
 import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
+import org.jetbrains.kotlin.asJava.checkIsMangled
 import org.jetbrains.kotlin.asJava.classes.KotlinLightReferenceListBuilder
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.classes.cannotModify
@@ -78,7 +79,7 @@ internal abstract class SymbolLightMethodBase(
         }
     }
 
-    override val isMangled: Boolean = false // TODO: checkIsMangled ?
+    override val isMangled: Boolean get() = checkIsMangled()
 
     abstract override fun getTypeParameters(): Array<PsiTypeParameter>
     abstract override fun hasTypeParameters(): Boolean
