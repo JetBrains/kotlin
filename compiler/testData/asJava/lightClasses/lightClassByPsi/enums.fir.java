@@ -49,23 +49,24 @@ public enum Direction /* Direction*/ {
   private  Direction();//  .ctor()
 }
 
-public enum IntArithmetics /* IntArithmetics*/ implements BinaryOperator<java.lang.Integer>, IntBinaryOperator {
+public abstract enum IntArithmetics /* IntArithmetics*/ implements java.util.function.BinaryOperator<java.lang.Integer>, java.util.function.IntBinaryOperator {
   PLUS {
    PLUS();//  .ctor()
 
   @java.lang.Override()
-  public int apply(int, int);//  apply(int, int)
+  @org.jetbrains.annotations.NotNull()
+  public java.lang.Integer apply(int, int);//  apply(int, int)
   },
   TIMES {
    TIMES();//  .ctor()
 
   @java.lang.Override()
-  public int apply(int, int);//  apply(int, int)
+  @org.jetbrains.annotations.NotNull()
+  public java.lang.Integer apply(int, int);//  apply(int, int)
   };
 
   @java.lang.Override()
-  @org.jetbrains.annotations.NotNull()
-  public IntArithmetics applyAsInt(int, int);//  applyAsInt(int, int)
+  public int applyAsInt(int, int);//  applyAsInt(int, int)
 
   @org.jetbrains.annotations.NotNull()
   public static IntArithmetics valueOf(java.lang.String) throws java.lang.IllegalArgumentException, java.lang.NullPointerException;//  valueOf(java.lang.String)
@@ -83,7 +84,8 @@ static final class PLUS /* IntArithmetics.PLUS*/ extends IntArithmetics {
    PLUS();//  .ctor()
 
   @java.lang.Override()
-  public int apply(int, int);//  apply(int, int)
+  @org.jetbrains.annotations.NotNull()
+  public java.lang.Integer apply(int, int);//  apply(int, int)
 }
 
 public abstract enum ProtocolState /* ProtocolState*/ {
@@ -133,7 +135,8 @@ static final class TIMES /* IntArithmetics.TIMES*/ extends IntArithmetics {
    TIMES();//  .ctor()
 
   @java.lang.Override()
-  public int apply(int, int);//  apply(int, int)
+  @org.jetbrains.annotations.NotNull()
+  public java.lang.Integer apply(int, int);//  apply(int, int)
 }
 
 static final class WAITING /* ProtocolState.WAITING*/ extends ProtocolState {
