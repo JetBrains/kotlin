@@ -16,8 +16,8 @@ import org.jetbrains.kotlin.name.Name
  * @see org.jetbrains.kotlin.resolve.lazy.LazyImportScope that produces similar semantics
  */
 class FirDefaultStarImportingScope(
-    private val first: FirSingleLevelDefaultStarImportingScope,
-    private val second: FirSingleLevelDefaultStarImportingScope,
+    val first: FirSingleLevelDefaultStarImportingScope,
+    val second: FirSingleLevelDefaultStarImportingScope,
 ) : FirScope(), DefaultStarImportingScopeMarker {
     override fun processClassifiersByNameWithSubstitution(name: Name, processor: (FirClassifierSymbol<*>, ConeSubstitutor) -> Unit) {
         var wasFoundAny = false

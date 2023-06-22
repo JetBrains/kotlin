@@ -45,5 +45,3 @@ scopes:
 
   DefaultStarImportingScope, index = 11
 
-  DefaultStarImportingScope, index = 12
-

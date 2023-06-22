@@ -233,6 +233,7 @@ internal class KtFirScopeProvider(
         return when (firScope) {
             is FirAbstractSimpleImportingScope -> KtFirNonStarImportingScope(firScope, builder)
             is FirAbstractStarImportingScope -> KtFirStarImportingScope(firScope, analysisSession)
+            is FirDefaultStarImportingScope -> KtFirDefaultStarImportingScope(firScope, analysisSession)
             is FirPackageMemberScope -> createPackageScope(firScope.fqName)
             is FirContainingNamesAwareScope -> KtFirDelegatingNamesAwareScope(firScope, builder)
             else -> TODO(firScope::class.toString())
