@@ -12,25 +12,13 @@ import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 sealed interface KotlinHierarchyTemplate {
     companion object Templates {
         /**
-         * Set's up a 'natural'/'default' hierarchy within [KotlinTarget]'s, inside the project.
+         * Default hierarchy for Kotlin Multiplatform projects.
+         * This hierarchy template will be applied to projects 'by default' if the project does not opt-out
+         * and is compatible.
          *
-         * #### Example 1
-         *
-         * ```kotlin
-         * kotlin {
-         *     applyDefaultHierarchyTemplate() // <- position of this call is not relevant!
-         *
-         *     iosX64()
-         *     iosArm64()
-         *     linuxX64()
-         *     linuxArm64()
-         * }
-         * ```
-         *
-         * Will create the following SourceSets:
-         * `[iosMain, iosTest, appleMain, appleTest, linuxMain, linuxTest, nativeMain, nativeTest]
-         *
-         *
+         * Incompatible projects include:
+         *  - projects that setup custom dependsOn edges
+         *  - projects that define custom target names matching one of the shared source sets (e.g. linuxX64("linux"))
          * Hierarchy:
          * ```
          *                                                                     common
