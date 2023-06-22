@@ -399,10 +399,17 @@ class CallAndReferenceGenerator(
                 when (symbol) {
                     is IrConstructorSymbol -> IrConstructorCallImpl.fromSymbolOwner(startOffset, endOffset, type, symbol)
                     is IrSimpleFunctionSymbol -> {
+                        require(firSymbol is FirCallableSymbol<*>) { "Illegal symbol: ${firSymbol!!::class}" }
+                        val valueParametersNumber = when (firSymbol) {
+                            is FirSyntheticPropertySymbol -> 0
+                            is FirNamedFunctionSymbol -> firSymbol.valueParameterSymbols.size + firSymbol.resolvedContextReceivers.size
+                            is FirFunctionSymbol<*> -> firSymbol.valueParameterSymbols.size
+                            else -> error("Illegal symbol: ${firSymbol::class}")
+                        }
                         IrCallImpl(
                             startOffset, endOffset, type, symbol,
-                            typeArgumentsCount = symbol.owner.typeParameters.size,
-                            valueArgumentsCount = symbol.owner.valueParameters.size,
+                            typeArgumentsCount = firSymbol.typeParameterSymbols.size,
+                            valueArgumentsCount = valueParametersNumber,
                             origin = calleeReference.statementOrigin(),
                             superQualifierSymbol = dispatchReceiver.superQualifierSymbol()
                         )
