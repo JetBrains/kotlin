@@ -195,7 +195,9 @@ class KotlinCoreEnvironment private constructor(
         val project = projectEnvironment.project
         project.registerService(DeclarationProviderFactoryService::class.java, CliDeclarationProviderFactoryService(sourceFiles))
 
-        sourceFiles += createSourceFilesFromSourceRoots(configuration, project, getSourceRootsCheckingForDuplicates())
+        sourceFiles += createSourceFilesFromSourceRoots(
+            configuration, project, getSourceRootsCheckingForDuplicates(configuration, messageCollector)
+        )
 
         collectAdditionalSources(project)
 
@@ -401,20 +403,6 @@ class KotlinCoreEnvironment private constructor(
 
     private fun findJarRoot(file: File): VirtualFile? =
         projectEnvironment.jarFileSystem.findFileByPath("$file${URLUtil.JAR_SEPARATOR}")
-
-    private fun getSourceRootsCheckingForDuplicates(): List<KotlinSourceRoot> {
-        val uniqueSourceRoots = hashSetOf<String>()
-        val result = mutableListOf<KotlinSourceRoot>()
-
-        for (root in configuration.kotlinSourceRoots) {
-            if (!uniqueSourceRoots.add(root.path)) {
-                report(STRONG_WARNING, "Duplicate source root: ${root.path}")
-            }
-            result.add(root)
-        }
-
-        return result
-    }
 
     fun getSourceFiles(): List<KtFile> =
         ProcessSourcesBeforeCompilingExtension.getInstances(project)
