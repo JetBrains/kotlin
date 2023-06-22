@@ -10,12 +10,9 @@ import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DuplicatesStrategy
-import org.gradle.api.plugins.JavaPlugin
+import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.tasks.SourceSet
-import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.compile.AbstractCompile
-import org.gradle.api.tasks.testing.Test
-import org.gradle.jvm.tasks.Jar
 import org.gradle.language.jvm.tasks.ProcessResources
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
@@ -107,7 +104,7 @@ abstract class KotlinJvmTarget @Inject constructor(
 
         withJavaEnabled = true
 
-        project.plugins.apply(JavaPlugin::class.java)
+        project.plugins.apply(JavaBasePlugin::class.java)
         val javaSourceSets = project.variantImplementationFactory<JavaSourceSetsAccessor.JavaSourceSetsAccessorVariantFactory>()
             .getInstance(project)
             .sourceSets
@@ -144,14 +141,6 @@ abstract class KotlinJvmTarget @Inject constructor(
             }
         }
 
-        // Eliminate the Java output configurations from dependency resolution to avoid ambiguity between them and
-        // the equivalent configurations created for the target:
-        listOf(JavaPlugin.API_ELEMENTS_CONFIGURATION_NAME, JavaPlugin.RUNTIME_ELEMENTS_CONFIGURATION_NAME)
-            .forEach { outputConfigurationName ->
-                project.configurations.findByName(outputConfigurationName)?.isCanBeConsumed = false
-            }
-
-        disableJavaPluginTasks(javaSourceSets)
     }
 
     private fun setupJavaSourceSetSourcesAndResources(
@@ -180,24 +169,6 @@ abstract class KotlinJvmTarget @Inject constructor(
         project.tasks.named(javaSourceSet.processResourcesTaskName).configure {
             it.dependsOn(project.tasks.named(compilation.processResourcesTaskName))
             it.enabled = false
-        }
-    }
-
-    private fun disableJavaPluginTasks(javaSourceSet: SourceSetContainer) {
-        // A 'normal' build should not do redundant job like running the tests twice or building two JARs,
-        // so disable some tasks and just make them depend on the others:
-        val targetJar = project.tasks.withType(Jar::class.java).named(artifactsTaskName)
-
-        project.tasks.withType(Jar::class.java).named(javaSourceSet.getByName("main").jarTaskName) { javaJar ->
-            (javaJar.source as? ConfigurableFileCollection)?.setFrom(targetJar.map { it.source })
-            javaJar.archiveFileName.set(targetJar.flatMap { it.archiveFileName })
-            javaJar.dependsOn(targetJar)
-            javaJar.enabled = false
-        }
-
-        project.tasks.withType(Test::class.java).named(JavaPlugin.TEST_TASK_NAME) { javaTestTask ->
-            javaTestTask.dependsOn(project.tasks.named(testTaskName))
-            javaTestTask.enabled = false
         }
     }
 
