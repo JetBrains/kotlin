@@ -74,7 +74,7 @@ internal fun createObjCFramework(
         exportedInterface: ObjCExportedInterface,
         frameworkDirectory: File
 ) {
-    val frameworkName = frameworkDirectory.name.removeSuffix(".framework")
+    val frameworkName = frameworkDirectory.name.removeSuffix(CompilerOutputKind.FRAMEWORK.suffix())
     val frameworkBuilder = FrameworkBuilder(
             config,
             infoPListBuilder = InfoPListBuilder(config),
@@ -89,6 +89,16 @@ internal fun createObjCFramework(
             exportedInterface.headerLines,
             moduleDependencies = setOf("Foundation")
     )
+}
+
+internal fun createTestBundle(
+        config: KonanConfig,
+        moduleDescriptor: ModuleDescriptor,
+        bundleDirectory: File
+) {
+    val name = bundleDirectory.name.removeSuffix(CompilerOutputKind.TEST_BUNDLE.suffix())
+    BundleBuilder(config, infoPListBuilder = InfoPListBuilder(config), mainPackageGuesser = MainPackageGuesser())
+            .build(moduleDescriptor, bundleDirectory, name)
 }
 
 // TODO: No need for such class in dynamic driver.
