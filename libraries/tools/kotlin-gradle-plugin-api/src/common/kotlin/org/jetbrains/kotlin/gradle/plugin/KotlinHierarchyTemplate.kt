@@ -61,7 +61,7 @@ fun KotlinHierarchyTemplate(
 @ExperimentalKotlinGradlePluginApi
 fun KotlinHierarchyTemplate.extend(describe: KotlinHierarchyBuilder.Root.() -> Unit): KotlinHierarchyTemplate {
     return KotlinHierarchyTemplate {
-        this@extend.internal.layout(this)
+        this@extend.impl.layout(this)
         describe()
     }
 }
@@ -73,24 +73,19 @@ INTERNAL API
 @InternalKotlinGradlePluginApi
 @OptIn(ExperimentalKotlinGradlePluginApi::class)
 fun KotlinHierarchyBuilder.Root.applyHierarchyTemplate(template: KotlinHierarchyTemplate) {
-    template.internal.layout(this)
+    template.impl.layout(this)
 }
 
-internal val KotlinHierarchyTemplate.internal
+internal val KotlinHierarchyTemplate.impl
     get() = when (this) {
-        is InternalKotlinHierarchyTemplate -> this
+        is KotlinHierarchyTemplateImpl -> this
     }
-
-@OptIn(ExperimentalKotlinGradlePluginApi::class)
-internal interface InternalKotlinHierarchyTemplate : KotlinHierarchyTemplate {
-    fun layout(builder: KotlinHierarchyBuilder.Root)
-}
 
 @OptIn(ExperimentalKotlinGradlePluginApi::class)
 internal class KotlinHierarchyTemplateImpl(
     private val describe: KotlinHierarchyBuilder.Root.() -> Unit,
-) : InternalKotlinHierarchyTemplate {
-    override fun layout(builder: KotlinHierarchyBuilder.Root) {
+) : KotlinHierarchyTemplate {
+    fun layout(builder: KotlinHierarchyBuilder.Root) {
         describe(builder)
     }
 }
