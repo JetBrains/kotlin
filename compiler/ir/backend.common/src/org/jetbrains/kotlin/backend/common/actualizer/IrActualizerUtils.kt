@@ -122,6 +122,18 @@ internal fun KtDiagnosticReporterWithImplicitIrBasedContext.reportIncompatibleEx
     )
 }
 
+internal fun KtDiagnosticReporterWithImplicitIrBasedContext.reportActualAnnotationsNotMatchExpect(
+    expectSymbol: IrSymbol,
+    actualSymbol: IrSymbol,
+    reportOn: IrSymbol,
+) {
+    at(reportOn.owner as IrDeclaration).report(
+        CommonBackendErrors.ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT,
+        expectSymbol,
+        actualSymbol,
+    )
+}
+
 internal fun IrElement.containsOptionalExpectation(): Boolean {
     return this is IrClass &&
             this.kind == ClassKind.ANNOTATION_CLASS &&

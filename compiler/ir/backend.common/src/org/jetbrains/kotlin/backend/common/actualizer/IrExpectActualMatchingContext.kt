@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.mpp.ExpectActualMatchingContext
+import org.jetbrains.kotlin.resolve.calls.mpp.ExpectActualMatchingContext.AnnotationCallInfo
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.TypeCheckerState
 import org.jetbrains.kotlin.types.Variance
@@ -446,12 +448,21 @@ internal abstract class IrExpectActualMatchingContext(
     abstract fun onMatchedClasses(expectClassSymbol: IrClassSymbol, actualClassSymbol: IrClassSymbol)
     abstract fun onMatchedCallables(expectSymbol: IrSymbol, actualSymbol: IrSymbol)
 
-    override val DeclarationSymbolMarker.annotations: List<ExpectActualMatchingContext.AnnotationCallInfo>
-        // TODO(Roman.Efremov): implement in subsequent commits
-        get() = emptyList()
+    override val DeclarationSymbolMarker.annotations: List<AnnotationCallInfo>
+        get() = asIr().annotations.map(::AnnotationCallInfoImpl)
 
-    override fun areAnnotationArgumentsEqual(annotation1: ExpectActualMatchingContext.AnnotationCallInfo, annotation2: ExpectActualMatchingContext.AnnotationCallInfo): Boolean {
-        // TODO(Roman.Efremov): implement in subsequent commits
-        return true
+    override fun areAnnotationArgumentsEqual(annotation1: AnnotationCallInfo, annotation2: AnnotationCallInfo): Boolean {
+        fun AnnotationCallInfo.getIrElement(): IrConstructorCall = (this as AnnotationCallInfoImpl).irElement
+
+        return areIrExpressionConstValuesEqual(annotation1.getIrElement(), annotation2.getIrElement())
+    }
+
+    internal fun getClassIdAfterActualization(classId: ClassId): ClassId {
+        return expectToActualClassMap[classId]?.classId ?: classId
+    }
+
+    private class AnnotationCallInfoImpl(val irElement: IrConstructorCall) : AnnotationCallInfo {
+        override val classId: ClassId?
+            get() = irElement.type.getClass()?.classId
     }
 }

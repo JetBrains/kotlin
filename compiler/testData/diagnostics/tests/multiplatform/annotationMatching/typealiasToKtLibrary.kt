@@ -1,4 +1,5 @@
 // WITH_STDLIB
+// DIAGNOSTICS: -ACTUAL_TYPEALIAS_TO_SPECIAL_ANNOTATION
 // MODULE: m1-common
 // FILE: common.kt
 @Target(
@@ -25,8 +26,17 @@ expect annotation class MyDeprecatedNotMatch
 )
 expect annotation class MyDeprecatedMatch
 
+annotation class Ann(val s: String)
+
+expect abstract class MyAbstractIterator<T> {
+    @Ann("something" + "complex")
+    fun hasNext(): Boolean
+}
+
 // MODULE: m1-jvm()()(m1-common)
 // FILE: jvm.kt
 actual typealias <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>MyDeprecatedNotMatch<!> = kotlin.Deprecated
 
 actual typealias MyDeprecatedMatch = kotlin.Deprecated
+
+actual typealias MyAbstractIterator<T> = AbstractIterator<T>

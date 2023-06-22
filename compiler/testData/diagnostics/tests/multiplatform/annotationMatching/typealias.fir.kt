@@ -14,9 +14,9 @@ expect class AnnotationsNotConsideredOnTypealias
 // FILE: jvm.kt
 class KtTypealiasNotMatchImpl
 
-actual typealias <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>KtTypealiasNotMatch<!> = KtTypealiasNotMatchImpl
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual typealias <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>KtTypealiasNotMatch<!> = KtTypealiasNotMatchImpl<!>
 
 class AnnotationsNotConsideredOnTypealiasImpl
 
-@Ann
-actual typealias <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>AnnotationsNotConsideredOnTypealias<!> = AnnotationsNotConsideredOnTypealiasImpl
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>@Ann
+actual typealias <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>AnnotationsNotConsideredOnTypealias<!> = AnnotationsNotConsideredOnTypealiasImpl<!>

@@ -1,17 +1,17 @@
 // -- Module: <m1-common> --
 
 // -- Module: <m1-jvm> --
-/jvm.kt:24:14: warning: all annotations from `expect` must be presented with same arguments on `actual`, otherwise they have no effect.
+/jvm.kt:23:14: warning: all annotations from `expect` must be presented with same arguments on `actual`, otherwise they have no effect.
     Expected: @Ann public final expect class OnClass defined in root package in file common.kt
     Actual: public final actual class OnClass defined in root package in file jvm.kt
 actual class OnClass
              ^
-/jvm.kt:27:16: warning: all annotations from `expect` must be presented with same arguments on `actual`, otherwise they have no effect.
+/jvm.kt:26:16: warning: all annotations from `expect` must be presented with same arguments on `actual`, otherwise they have no effect.
     Expected: @Ann public final expect fun onMember(): Unit defined in OnMember
     Actual: public final actual fun onMember(): Unit defined in OnMember
     actual fun onMember() {}
                ^
-/jvm.kt:34:18: warning: all annotations from `expect` must be presented with same arguments on `actual`, otherwise they have no effect.
+/jvm.kt:33:18: warning: all annotations from `expect` must be presented with same arguments on `actual`, otherwise they have no effect.
     Expected: @Ann public final expect class ViaTypealias defined in root package in file common.kt
     Actual: public final class ViaTypealiasImpl defined in root package in file jvm.kt
 actual typealias ViaTypealias = ViaTypealiasImpl

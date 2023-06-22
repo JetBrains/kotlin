@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // RENDER_DIAGNOSTICS_FULL_TEXT
 // MODULE: m1-common
 // FILE: common.kt

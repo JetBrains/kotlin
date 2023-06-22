@@ -87,8 +87,8 @@ package test
 @ClassArgAnn(ClassForReference::class)
 actual fun getClassExpression() {}
 
-@ClassArgAnn(ClassForReference::class)
-actual fun differentClassesWithSameName() {}
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>@ClassArgAnn(ClassForReference::class)
+actual fun differentClassesWithSameName() {}<!>
 
 @StringArgAnn("1.9")
 actual fun stringConstant() {}
@@ -114,8 +114,8 @@ actual fun varargInAnnotationWithArraySpread() {}
 @ArrayArgAnn(arrayOf("foo", "bar"))
 actual fun arrayInAnnotation() {}
 
-@ArrayArgAnn(["foo"])
-actual fun arrayInAnnotationNotMatch() {}
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>@ArrayArgAnn(["foo"])
+actual fun arrayInAnnotationNotMatch() {}<!>
 
 @NestedAnnArg(
     text = "root",
@@ -127,7 +127,7 @@ actual fun arrayInAnnotationNotMatch() {}
 )
 actual fun complexNestedAnnotations() {}
 
-@NestedAnnArg(
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>@NestedAnnArg(
     text = "root",
     NestedAnnArg("1"),
     NestedAnnArg("2",
@@ -135,4 +135,4 @@ actual fun complexNestedAnnotations() {}
                  NestedAnnArg("DIFFERENT")
     )
 )
-actual fun complexNestedAnnotationsNotMatch() {}
+actual fun complexNestedAnnotationsNotMatch() {}<!>
