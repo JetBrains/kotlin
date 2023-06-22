@@ -22,7 +22,6 @@ import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.PackageIndex;
 import com.intellij.openapi.util.LowMemoryWatcher;
-import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
@@ -62,10 +61,10 @@ public class KotlinJavaPsiFacade implements Disposable {
 
     private static class PackageCache {
         // long term cache
-        final ConcurrentMap<Pair<String, GlobalSearchScope>, PsiPackage> packageInLibScopeCache = new ConcurrentHashMap<>();
+        final ConcurrentMap<GlobalSearchScope, ConcurrentMap<String, PsiPackage>> packageInLibScopeCache = new ConcurrentHashMap<>();
 
         // short term caches
-        final ConcurrentMap<Pair<String, GlobalSearchScope>, PsiPackage> packageInScopeCache = new ConcurrentHashMap<>();
+        final ConcurrentMap<GlobalSearchScope, ConcurrentMap<String, PsiPackage>> packageInScopeCache = new ConcurrentHashMap<>();
         final ConcurrentMap<String, Boolean> hasPackageInAllScopeCache = new ConcurrentHashMap<>();
 
         void clear() {
@@ -340,12 +339,13 @@ public class KotlinJavaPsiFacade implements Disposable {
         Boolean packageFoundInAllScope = cache.hasPackageInAllScopeCache.get(qualifiedName);
         if (packageFoundInAllScope != null && !packageFoundInAllScope.booleanValue()) return null;
 
-        Pair<String, GlobalSearchScope> key = new Pair<>(qualifiedName, searchScope);
-        PsiPackage pkg = cache.packageInLibScopeCache.get(key);
+        ConcurrentMap<String, PsiPackage> packageInLibScope = cache.packageInLibScopeCache.get(searchScope);
+        PsiPackage pkg = packageInLibScope != null ? packageInLibScope.get(qualifiedName) : null;
         if (pkg != null) {
             return unwrap(pkg);
         }
-        pkg = cache.packageInScopeCache.get(key);
+        ConcurrentMap<String, PsiPackage> packageInScope = cache.packageInScopeCache.get(searchScope);
+        pkg = packageInScope != null ? packageInScope.get(qualifiedName) : null;
         if (pkg != null) {
             return unwrap(pkg);
         }
@@ -356,7 +356,7 @@ public class KotlinJavaPsiFacade implements Disposable {
 
         {
             // store found package in a long term cache if package is found in library search scope
-            ConcurrentMap<Pair<String, GlobalSearchScope>, PsiPackage> existedPackageInScopeCache =
+            ConcurrentMap<GlobalSearchScope, ConcurrentMap<String, PsiPackage>> existedPackageInScopeCache =
                     isALibrarySearchScope ? cache.packageInLibScopeCache : cache.packageInScopeCache;
 
             KotlinPsiElementFinderWrapper[] finders = filteredFinders();
@@ -367,7 +367,9 @@ public class KotlinJavaPsiFacade implements Disposable {
                     if (!finder.isSameResultForAnyScope()) {
                         PsiPackage aPackage = finder.findPackage(qualifiedName, searchScope);
                         if (aPackage != null) {
-                            return unwrap(ConcurrencyUtil.cacheOrGet(existedPackageInScopeCache, key, aPackage));
+                            ConcurrentMap<String, PsiPackage> concurrentMap =
+                                    ConcurrencyUtil.cacheOrGet(existedPackageInScopeCache, searchScope, new ConcurrentHashMap<>());
+                            return unwrap(ConcurrencyUtil.cacheOrGet(concurrentMap, qualifiedName, aPackage));
                         }
                     }
                 }
@@ -377,7 +379,9 @@ public class KotlinJavaPsiFacade implements Disposable {
                     PsiPackage aPackage = finder.findPackage(qualifiedName, searchScope);
 
                     if (aPackage != null) {
-                        return unwrap(ConcurrencyUtil.cacheOrGet(existedPackageInScopeCache, key, aPackage));
+                        ConcurrentMap<String, PsiPackage> concurrentMap =
+                                ConcurrencyUtil.cacheOrGet(existedPackageInScopeCache, searchScope, new ConcurrentHashMap<>());
+                        return unwrap(ConcurrencyUtil.cacheOrGet(concurrentMap, qualifiedName, aPackage));
                     }
                 }
 
@@ -397,7 +401,7 @@ public class KotlinJavaPsiFacade implements Disposable {
             }
         }
 
-        ConcurrentMap<Pair<String, GlobalSearchScope>, PsiPackage> notFoundPackageInScopeCache;
+        ConcurrentMap<GlobalSearchScope, ConcurrentMap<String, PsiPackage>> notFoundPackageInScopeCache;
         switch (notFoundCacheType) {
             case LIB_SCOPE:
                 notFoundPackageInScopeCache = cache.packageInLibScopeCache;
@@ -411,7 +415,9 @@ public class KotlinJavaPsiFacade implements Disposable {
                 throw new IllegalStateException("Impossible enum value: " + notFoundCacheType.toString());
         }
 
-        return unwrap(ConcurrencyUtil.cacheOrGet(notFoundPackageInScopeCache, key, NULL_PACKAGE));
+        ConcurrentMap<String, PsiPackage> concurrentMap =
+                ConcurrencyUtil.cacheOrGet(notFoundPackageInScopeCache, searchScope, new ConcurrentHashMap<>());
+        return unwrap(ConcurrencyUtil.cacheOrGet(concurrentMap, qualifiedName, NULL_PACKAGE));
     }
 
     private PackageCache obtainPackageCache() {
