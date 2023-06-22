@@ -47,7 +47,6 @@ compileKotlinCommon {
                 "-opt-in=kotlin.ExperimentalMultiplatform",
                 "-opt-in=kotlin.contracts.ExperimentalContracts",
                 "-Xallow-kotlin-package",
-                "-XXLanguage:+RangeUntilOperator",
         ]
     }
 }
@@ -59,7 +58,6 @@ compileTestKotlinCommon {
                 "-opt-in=kotlin.ExperimentalUnsignedTypes",
                 "-opt-in=kotlin.ExperimentalStdlibApi",
                 "-opt-in=kotlin.io.encoding.ExperimentalEncodingApi",
-                "-XXLanguage:+RangeUntilOperator",
         ]
     }
 }

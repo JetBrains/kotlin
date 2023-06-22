@@ -152,7 +152,6 @@ compileKotlin {
                 "-opt-in=kotlin.contracts.ExperimentalContracts",
                 "-Xuse-14-inline-classes-mangling-scheme",
                 "-Xbuiltins-from-sources",
-                "-XXLanguage:+RangeUntilOperator",
                 "-Xno-new-java-annotation-targets",
         ]
         moduleName = "kotlin-stdlib"
@@ -197,7 +196,6 @@ compileTestKotlin {
                 "-opt-in=kotlin.ExperimentalStdlibApi",
                 "-opt-in=kotlin.io.path.ExperimentalPathApi",
                 "-opt-in=kotlin.io.encoding.ExperimentalEncodingApi",
-                "-XXLanguage:+RangeUntilOperator",
                 "-Xallow-kotlin-package", // TODO: maybe rename test packages
         ]
         if (project.kotlinBuildProperties.useFir) {
