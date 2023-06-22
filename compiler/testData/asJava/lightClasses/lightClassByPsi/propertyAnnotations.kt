@@ -21,8 +21,16 @@ class C {
     }
 }
 
-@Anno("propery")
-val <T: Any> @receiver:Anno("receiver") List<T>.extensionProperty: Int
+@Anno("property")
+val <T: Any> @receiver:Anno("receiver") T.extensionProperty1: Int
+    get() = 0
+
+@Anno("property")
+val <T: Any> @receiver:Anno("receiver") List<T>.extensionProperty2: Int
+    get() = 0
+
+@Anno("property")
+val <X, Y: List<X>, Z: Map<X, Y>> @receiver:Anno("receiver") Z.extensionProperty3: Int
     get() = 0
 
 @Anno("nullable")

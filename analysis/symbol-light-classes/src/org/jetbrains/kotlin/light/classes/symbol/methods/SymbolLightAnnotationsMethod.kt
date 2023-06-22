@@ -23,9 +23,11 @@ import org.jetbrains.kotlin.light.classes.symbol.modifierLists.GranularModifiers
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightMemberModifierList
 import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightParameterForReceiver
 import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightParameterList
+import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightTypeParameterList
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 
 internal class SymbolLightAnnotationsMethod private constructor(
     lightMemberOrigin: LightMemberOrigin?,
@@ -126,14 +128,29 @@ internal class SymbolLightAnnotationsMethod private constructor(
     override fun getTypeParameterList(): PsiTypeParameterList? = null
     override fun getTypeParameters(): Array<PsiTypeParameter> = PsiTypeParameter.EMPTY_ARRAY
 
+    internal fun getPropertyTypeParameters(): Array<PsiTypeParameter> =
+        _propertyTypeParameterList?.typeParameters ?: PsiTypeParameter.EMPTY_ARRAY
+
+    private val _propertyTypeParameterList: PsiTypeParameterList? by lazyPub {
+        propertyHasTypeParameters().ifTrue {
+            SymbolLightTypeParameterList(
+                owner = this,
+                symbolWithTypeParameterPointer = containingPropertySymbolPointer,
+                ktModule = ktModule,
+                ktDeclaration = containingPropertyDeclaration,
+            )
+        }
+    }
+
+    private fun propertyHasTypeParameters(): Boolean = hasTypeParameters(ktModule, containingPropertyDeclaration, containingPropertySymbolPointer)
+
     private val _parametersList by lazyPub {
         SymbolLightParameterList(
             parent = this@SymbolLightAnnotationsMethod,
             parameterPopulator = { builder ->
                 SymbolLightParameterForReceiver.tryGet(
                     callableSymbolPointer = containingPropertySymbolPointer,
-                    method = this@SymbolLightAnnotationsMethod,
-                    forPropertyAnnotations = true
+                    method = this@SymbolLightAnnotationsMethod
                 )?.let(builder::addParameter)
             },
         )

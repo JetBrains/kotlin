@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.light.classes.symbol.*
 import org.jetbrains.kotlin.light.classes.symbol.annotations.*
+import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightAnnotationsMethod
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodBase
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassModifierList
 import org.jetbrains.kotlin.psi.KtParameter
@@ -27,7 +28,6 @@ internal class SymbolLightParameterForReceiver private constructor(
     private val receiverPointer: KtSymbolPointer<KtReceiverParameterSymbol>,
     methodName: String,
     method: SymbolLightMethodBase,
-    private val forPropertyAnnotations: Boolean
 ) : SymbolLightParameterBase(method) {
     private inline fun <T> withReceiverSymbol(crossinline action: context(KtAnalysisSession) (KtReceiverParameterSymbol) -> T): T =
         receiverPointer.withSymbol(ktModule, action)
@@ -35,8 +35,7 @@ internal class SymbolLightParameterForReceiver private constructor(
     companion object {
         fun tryGet(
             callableSymbolPointer: KtSymbolPointer<KtCallableSymbol>,
-            method: SymbolLightMethodBase,
-            forPropertyAnnotations: Boolean = false
+            method: SymbolLightMethodBase
         ): SymbolLightParameterForReceiver? = callableSymbolPointer.withSymbol(method.ktModule) { callableSymbol ->
             if (callableSymbol !is KtNamedSymbol) return@withSymbol null
             if (!callableSymbol.isExtension) return@withSymbol null
@@ -46,13 +45,12 @@ internal class SymbolLightParameterForReceiver private constructor(
                 receiverPointer = receiverSymbol.createPointer(),
                 methodName = callableSymbol.name.asString(),
                 method = method,
-                forPropertyAnnotations = forPropertyAnnotations,
             )
         }
     }
 
     private val _name: String by lazyPub {
-        if (forPropertyAnnotations) "p0" else AsmUtil.getLabeledThisName(methodName, AsmUtil.LABELED_THIS_PARAMETER, AsmUtil.RECEIVER_PARAMETER_NAME)
+        if (method is SymbolLightAnnotationsMethod) "p0" else AsmUtil.getLabeledThisName(methodName, AsmUtil.LABELED_THIS_PARAMETER, AsmUtil.RECEIVER_PARAMETER_NAME)
     }
 
     override fun getNameIdentifier(): PsiIdentifier? = null
@@ -67,7 +65,7 @@ internal class SymbolLightParameterForReceiver private constructor(
     override fun getModifierList(): PsiModifierList = _modifierList
 
     private val _modifierList: PsiModifierList by lazyPub {
-        if (forPropertyAnnotations)
+        if (method is SymbolLightAnnotationsMethod)
             SymbolLightClassModifierList(containingDeclaration = this)
         else SymbolLightClassModifierList(
             containingDeclaration = this,
@@ -92,7 +90,16 @@ internal class SymbolLightParameterForReceiver private constructor(
             val psiType = ktType.asPsiTypeElement(this, allowErrorTypes = true)?.let {
                 annotateByKtType(it.type, ktType, it, modifierList)
             }
-            if (forPropertyAnnotations) TypeConversionUtil.erasure(psiType) else psiType
+            if (method is SymbolLightAnnotationsMethod) {
+                val erased = TypeConversionUtil.erasure(psiType)
+                val name = erased.canonicalText
+                method.getPropertyTypeParameters()
+                    .firstOrNull { it.name == name }
+                    ?.superTypes
+                    ?.firstOrNull()
+                    ?.let { TypeConversionUtil.erasure(it) }
+                    ?: erased
+            } else psiType
         } ?: nonExistentType()
     }
 
@@ -101,7 +108,6 @@ internal class SymbolLightParameterForReceiver private constructor(
     override fun equals(other: Any?): Boolean = this === other ||
             other is SymbolLightParameterForReceiver &&
             ktModule == other.ktModule &&
-            forPropertyAnnotations == other.forPropertyAnnotations &&
             compareSymbolPointers(receiverPointer, other.receiverPointer)
 
     override fun hashCode(): Int = _name.hashCode()
