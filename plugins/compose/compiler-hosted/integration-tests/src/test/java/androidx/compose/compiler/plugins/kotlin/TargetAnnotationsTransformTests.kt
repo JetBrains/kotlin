@@ -1103,7 +1103,7 @@ class TargetAnnotationsTransformTests : AbstractIrTransformTest(useFir = false) 
               } else {
                 %composer.skipToGroupEnd()
               }
-            }, %composer, 0b00111000)
+            }, %composer, 0b00110000 or ProvidedValue.%stable or 0)
             if (isTraceInProgress()) {
               traceEventEnd()
             }
@@ -1141,7 +1141,7 @@ class TargetAnnotationsTransformTests : AbstractIrTransformTest(useFir = false) 
               } else {
                 %composer.skipToGroupEnd()
               }
-            }, %composer, 0b00111000)
+            }, %composer, 0b00110000 or ProvidedValue.%stable or 0)
             if (isTraceInProgress()) {
               traceEventEnd()
             }
