@@ -19156,26 +19156,6 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
             public void testAllFilesPresentInObjectMethods() throws Exception {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/javaInterop/objectMethods"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
             }
-
-            @TestMetadata("cloneCallsConstructor.kt")
-            public void testCloneCallsConstructor() throws Exception {
-                runTest("compiler/testData/codegen/box/javaInterop/objectMethods/cloneCallsConstructor.kt");
-            }
-
-            @TestMetadata("cloneCallsSuper.kt")
-            public void testCloneCallsSuper() throws Exception {
-                runTest("compiler/testData/codegen/box/javaInterop/objectMethods/cloneCallsSuper.kt");
-            }
-
-            @TestMetadata("cloneCallsSuperAndModifies.kt")
-            public void testCloneCallsSuperAndModifies() throws Exception {
-                runTest("compiler/testData/codegen/box/javaInterop/objectMethods/cloneCallsSuperAndModifies.kt");
-            }
-
-            @TestMetadata("cloneableClassWithoutClone.kt")
-            public void testCloneableClassWithoutClone() throws Exception {
-                runTest("compiler/testData/codegen/box/javaInterop/objectMethods/cloneableClassWithoutClone.kt");
-            }
         }
     }
 

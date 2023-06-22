@@ -24586,30 +24586,6 @@ public class NativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenBoxT
                 public void testAllFilesPresentInObjectMethods() throws Exception {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/javaInterop/objectMethods"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
                 }
-
-                @Test
-                @TestMetadata("cloneCallsConstructor.kt")
-                public void testCloneCallsConstructor() throws Exception {
-                    runTest("compiler/testData/codegen/box/javaInterop/objectMethods/cloneCallsConstructor.kt");
-                }
-
-                @Test
-                @TestMetadata("cloneCallsSuper.kt")
-                public void testCloneCallsSuper() throws Exception {
-                    runTest("compiler/testData/codegen/box/javaInterop/objectMethods/cloneCallsSuper.kt");
-                }
-
-                @Test
-                @TestMetadata("cloneCallsSuperAndModifies.kt")
-                public void testCloneCallsSuperAndModifies() throws Exception {
-                    runTest("compiler/testData/codegen/box/javaInterop/objectMethods/cloneCallsSuperAndModifies.kt");
-                }
-
-                @Test
-                @TestMetadata("cloneableClassWithoutClone.kt")
-                public void testCloneableClassWithoutClone() throws Exception {
-                    runTest("compiler/testData/codegen/box/javaInterop/objectMethods/cloneableClassWithoutClone.kt");
-                }
             }
         }
 
@@ -24693,12 +24669,6 @@ public class NativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenBoxT
             @TestMetadata("iteratingOverHashMap.kt")
             public void testIteratingOverHashMap() throws Exception {
                 runTest("compiler/testData/codegen/box/jdk/iteratingOverHashMap.kt");
-            }
-
-            @Test
-            @TestMetadata("kt1397.kt")
-            public void testKt1397() throws Exception {
-                runTest("compiler/testData/codegen/box/jdk/kt1397.kt");
             }
 
             @Test
