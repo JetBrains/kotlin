@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.generators.tests.analysis.api
 import org.jetbrains.kotlin.generators.TestGroup
 import org.jetbrains.kotlin.generators.TestGroupSuite
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
+import org.jetbrains.kotlin.light.classes.symbol.base.AbstractLightClassUtilTest
 import org.jetbrains.kotlin.light.classes.symbol.base.AbstractSymbolLightClassesEquivalentTest
 import org.jetbrains.kotlin.light.classes.symbol.decompiled.*
 import org.jetbrains.kotlin.light.classes.symbol.source.*
@@ -48,6 +49,12 @@ internal fun TestGroupSuite.generateSymbolLightClassesTests() {
         run {
             testClass<AbstractSymbolLightClassesAnnotationEqualityForSourceTest> {
                 model("annotationsEquality", pattern = TestGeneratorUtil.KT)
+            }
+        }
+
+        run {
+            testClass<AbstractLightClassUtilTest> {
+                model("lightElements", pattern = TestGeneratorUtil.KT)
             }
         }
     }
