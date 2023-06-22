@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.resolve.calls.mpp
 
 import org.jetbrains.kotlin.mpp.DeclarationSymbolMarker
 import org.jetbrains.kotlin.mpp.TypeAliasSymbolMarker
+import org.jetbrains.kotlin.name.StandardClassIds
 
 object AbstractExpectActualAnnotationMatchChecker {
     class Incompatibility(val expectSymbol: DeclarationSymbolMarker, val actualSymbol: DeclarationSymbolMarker)
@@ -30,6 +31,9 @@ object AbstractExpectActualAnnotationMatchChecker {
         val actualAnnotationsByName = actualSymbol.annotations.groupBy { it.classId }
 
         for (expectAnnotation in expectSymbol.annotations) {
+            if (expectAnnotation.classId == StandardClassIds.Annotations.OptionalExpectation) {
+                continue
+            }
             val actualAnnotationsWithSameClassId = actualAnnotationsByName[expectAnnotation.classId] ?: emptyList()
             if (actualAnnotationsWithSameClassId.none { areAnnotationArgumentsEqual(expectAnnotation, it) }) {
                 return Incompatibility(expectSymbol, actualSymbol)

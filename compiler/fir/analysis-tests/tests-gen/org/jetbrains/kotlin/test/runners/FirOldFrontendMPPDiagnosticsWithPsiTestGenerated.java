@@ -275,6 +275,12 @@ public class FirOldFrontendMPPDiagnosticsWithPsiTestGenerated extends AbstractFi
         }
 
         @Test
+        @TestMetadata("optionalExpectation.kt")
+        public void testOptionalExpectation() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/optionalExpectation.kt");
+        }
+
+        @Test
         @TestMetadata("typealias.kt")
         public void testTypealias() throws Exception {
             runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/typealias.kt");
