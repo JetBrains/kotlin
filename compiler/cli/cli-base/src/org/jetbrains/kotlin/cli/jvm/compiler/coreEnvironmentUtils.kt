@@ -15,6 +15,7 @@ import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiManager
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.config.KotlinSourceRoot
+import org.jetbrains.kotlin.cli.common.config.kotlinSourceRoots
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -142,4 +143,19 @@ fun CompilerConfiguration.applyModuleProperties(module: Module, buildFile: File?
         }
     }
 }
+
+fun getSourceRootsCheckingForDuplicates(configuration: CompilerConfiguration, messageCollector: MessageCollector?): List<KotlinSourceRoot> {
+    val uniqueSourceRoots = hashSetOf<String>()
+    val result = mutableListOf<KotlinSourceRoot>()
+
+    for (root in configuration.kotlinSourceRoots) {
+        if (!uniqueSourceRoots.add(root.path)) {
+            messageCollector?.report(CompilerMessageSeverity.STRONG_WARNING, "Duplicate source root: ${root.path}")
+        }
+        result.add(root)
+    }
+
+    return result
+}
+
 
