@@ -7,7 +7,6 @@
 package org.jetbrains.kotlin.gradle.tasks
 
 import org.gradle.api.DefaultTask
-import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.OutputDirectory
@@ -26,20 +25,23 @@ import java.io.File
  * So we create a dummy static framework to allow CocoaPods install our pod correctly
  * and then replace it with the real one during a real build process.
  */
-abstract class DummyFrameworkTask : DefaultTask() {
+open class DummyFrameworkTask : DefaultTask() {
 
-    @get:Input
-    abstract val frameworkName: Property<String>
+    @OutputDirectory
+    val destinationDir = project.cocoapodsBuildDirs.framework
 
-    @get:Input
-    abstract val useStaticFramework: Property<Boolean>
+    @Input
+    lateinit var frameworkName: Provider<String>
 
-    @get:OutputDirectory
-    val outputFramework: Provider<File> = project.provider { project.cocoapodsBuildDirs.dummyFramework }
+    @Input
+    lateinit var useDynamicFramework: Provider<Boolean>
 
-    private val dummyFrameworkResource: String
+    private val frameworkDir: File
+        get() = destinationDir.resolve("${frameworkName.get()}.framework")
+
+    private val dummyFrameworkPath: String
         get() {
-            val staticOrDynamic = if (!useStaticFramework.get()) "dynamic" else "static"
+            val staticOrDynamic = if (useDynamicFramework.get()) "dynamic" else "static"
             return "/cocoapods/$staticOrDynamic/dummy.framework/"
         }
 
@@ -65,8 +67,8 @@ abstract class DummyFrameworkTask : DefaultTask() {
 
     private fun copyFrameworkFile(relativeFrom: String, relativeTo: String = relativeFrom) =
         copyResource(
-            "$dummyFrameworkResource$relativeFrom",
-            outputFramework.get().resolve(relativeTo)
+            "$dummyFrameworkPath$relativeFrom",
+            frameworkDir.resolve(relativeTo)
         )
 
     private fun copyFrameworkTextFile(
@@ -74,15 +76,15 @@ abstract class DummyFrameworkTask : DefaultTask() {
         relativeTo: String = relativeFrom,
         transform: (String) -> String = { it }
     ) = copyTextResource(
-        "$dummyFrameworkResource$relativeFrom",
-        outputFramework.get().resolve(relativeTo),
+        "$dummyFrameworkPath$relativeFrom",
+        frameworkDir.resolve(relativeTo),
         transform
     )
 
     @TaskAction
     fun create() {
         // Reset the destination directory
-        with(outputFramework.get()) {
+        with(frameworkDir) {
             deleteRecursively()
             mkdirs()
         }
