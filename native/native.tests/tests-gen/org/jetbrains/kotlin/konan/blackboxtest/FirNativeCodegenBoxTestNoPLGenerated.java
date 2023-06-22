@@ -71,12 +71,6 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
             }
 
             @Test
-            @TestMetadata("parameters.kt")
-            public void testParameters() throws Exception {
-                runTest("compiler/testData/codegen/box/annotations/parameters.kt");
-            }
-
-            @Test
             @TestMetadata("resolveWithLowPriorityAnnotation.kt")
             public void testResolveWithLowPriorityAnnotation() throws Exception {
                 runTest("compiler/testData/codegen/box/annotations/resolveWithLowPriorityAnnotation.kt");
@@ -401,24 +395,6 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
             @TestMetadata("arrayPlusAssign.kt")
             public void testArrayPlusAssign() throws Exception {
                 runTest("compiler/testData/codegen/box/arrays/arrayPlusAssign.kt");
-            }
-
-            @Test
-            @TestMetadata("arraysAreCloneable.kt")
-            public void testArraysAreCloneable() throws Exception {
-                runTest("compiler/testData/codegen/box/arrays/arraysAreCloneable.kt");
-            }
-
-            @Test
-            @TestMetadata("cloneArray.kt")
-            public void testCloneArray() throws Exception {
-                runTest("compiler/testData/codegen/box/arrays/cloneArray.kt");
-            }
-
-            @Test
-            @TestMetadata("clonePrimitiveArrays.kt")
-            public void testClonePrimitiveArrays() throws Exception {
-                runTest("compiler/testData/codegen/box/arrays/clonePrimitiveArrays.kt");
             }
 
             @Test
@@ -1280,9 +1256,9 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
             }
 
             @Test
-            @TestMetadata("checkcastAndInstanceOf.kt")
-            public void testCheckcastAndInstanceOf() throws Exception {
-                runTest("compiler/testData/codegen/box/boxingOptimization/checkcastAndInstanceOf.kt");
+            @TestMetadata("checkcastAndInstanceOf2.kt")
+            public void testCheckcastAndInstanceOf2() throws Exception {
+                runTest("compiler/testData/codegen/box/boxingOptimization/checkcastAndInstanceOf2.kt");
             }
 
             @Test
@@ -1643,12 +1619,6 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
             }
 
             @Test
-            @TestMetadata("kt2498.kt")
-            public void testKt2498() throws Exception {
-                runTest("compiler/testData/codegen/box/bridges/kt2498.kt");
-            }
-
-            @Test
             @TestMetadata("kt2702.kt")
             public void testKt2702() throws Exception {
                 runTest("compiler/testData/codegen/box/bridges/kt2702.kt");
@@ -1979,38 +1949,8 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
             @Tag("no-partial-linkage-may-be-skipped")
             public class ExtendJavaClasses {
                 @Test
-                @TestMetadata("abstractSet.kt")
-                public void testAbstractSet() throws Exception {
-                    runTest("compiler/testData/codegen/box/builtinStubMethods/extendJavaClasses/abstractSet.kt");
-                }
-
-                @Test
                 public void testAllFilesPresentInExtendJavaClasses() throws Exception {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/builtinStubMethods/extendJavaClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
-                }
-
-                @Test
-                @TestMetadata("arrayList.kt")
-                public void testArrayList() throws Exception {
-                    runTest("compiler/testData/codegen/box/builtinStubMethods/extendJavaClasses/arrayList.kt");
-                }
-
-                @Test
-                @TestMetadata("extendArrayListThroughKotlin.kt")
-                public void testExtendArrayListThroughKotlin() throws Exception {
-                    runTest("compiler/testData/codegen/box/builtinStubMethods/extendJavaClasses/extendArrayListThroughKotlin.kt");
-                }
-
-                @Test
-                @TestMetadata("hashMap.kt")
-                public void testHashMap() throws Exception {
-                    runTest("compiler/testData/codegen/box/builtinStubMethods/extendJavaClasses/hashMap.kt");
-                }
-
-                @Test
-                @TestMetadata("hashSet.kt")
-                public void testHashSet() throws Exception {
-                    runTest("compiler/testData/codegen/box/builtinStubMethods/extendJavaClasses/hashSet.kt");
                 }
 
                 @Test
@@ -2716,12 +2656,6 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
                     public void testReceiverInEquals() throws Exception {
                         runTest("compiler/testData/codegen/box/callableReference/bound/equals/receiverInEquals.kt");
                     }
-
-                    @Test
-                    @TestMetadata("reflectionReference.kt")
-                    public void testReflectionReference() throws Exception {
-                        runTest("compiler/testData/codegen/box/callableReference/bound/equals/reflectionReference.kt");
-                    }
                 }
             }
 
@@ -3010,9 +2944,9 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
                 }
 
                 @Test
-                @TestMetadata("genericCallableReferenceArguments.kt")
-                public void testGenericCallableReferenceArguments() throws Exception {
-                    runTest("compiler/testData/codegen/box/callableReference/function/genericCallableReferenceArguments.kt");
+                @TestMetadata("genericCallableReferenceArgumentsNonJVM.kt")
+                public void testGenericCallableReferenceArgumentsNonJVM() throws Exception {
+                    runTest("compiler/testData/codegen/box/callableReference/function/genericCallableReferenceArgumentsNonJVM.kt");
                 }
 
                 @Test
@@ -3460,12 +3394,6 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
                 }
 
                 @Test
-                @TestMetadata("kt6870_privatePropertyReference.kt")
-                public void testKt6870_privatePropertyReference() throws Exception {
-                    runTest("compiler/testData/codegen/box/callableReference/property/kt6870_privatePropertyReference.kt");
-                }
-
-                @Test
                 @TestMetadata("listOfStringsMapLength.kt")
                 public void testListOfStringsMapLength() throws Exception {
                     runTest("compiler/testData/codegen/box/callableReference/property/listOfStringsMapLength.kt");
@@ -3581,21 +3509,9 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
             }
 
             @Test
-            @TestMetadata("as.kt")
-            public void testAs() throws Exception {
-                runTest("compiler/testData/codegen/box/casts/as.kt");
-            }
-
-            @Test
             @TestMetadata("asForConstants.kt")
             public void testAsForConstants() throws Exception {
                 runTest("compiler/testData/codegen/box/casts/asForConstants.kt");
-            }
-
-            @Test
-            @TestMetadata("asSafe.kt")
-            public void testAsSafe() throws Exception {
-                runTest("compiler/testData/codegen/box/casts/asSafe.kt");
             }
 
             @Test
@@ -3677,12 +3593,6 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
             }
 
             @Test
-            @TestMetadata("is.kt")
-            public void testIs() throws Exception {
-                runTest("compiler/testData/codegen/box/casts/is.kt");
-            }
-
-            @Test
             @TestMetadata("isNullablePrimitive.kt")
             public void testIsNullablePrimitive() throws Exception {
                 runTest("compiler/testData/codegen/box/casts/isNullablePrimitive.kt");
@@ -3740,12 +3650,6 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
             @TestMetadata("lambdaToUnitCast.kt")
             public void testLambdaToUnitCast() throws Exception {
                 runTest("compiler/testData/codegen/box/casts/lambdaToUnitCast.kt");
-            }
-
-            @Test
-            @TestMetadata("notIs.kt")
-            public void testNotIs() throws Exception {
-                runTest("compiler/testData/codegen/box/casts/notIs.kt");
             }
 
             @Test
@@ -3820,6 +3724,12 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
                 @TestMetadata("isFunKSmall.kt")
                 public void testIsFunKSmall() throws Exception {
                     runTest("compiler/testData/codegen/box/casts/functions/isFunKSmall.kt");
+                }
+
+                @Test
+                @TestMetadata("isFunKSmallNonJS.kt")
+                public void testIsFunKSmallNonJS() throws Exception {
+                    runTest("compiler/testData/codegen/box/casts/functions/isFunKSmallNonJS.kt");
                 }
 
                 @Test
@@ -4157,12 +4067,6 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
                 public void testAllFilesPresentInJava() throws Exception {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/classLiteral/java"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
                 }
-
-                @Test
-                @TestMetadata("kt11943.kt")
-                public void testKt11943() throws Exception {
-                    runTest("compiler/testData/codegen/box/classLiteral/java/kt11943.kt");
-                }
             }
         }
 
@@ -4295,12 +4199,6 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
             }
 
             @Test
-            @TestMetadata("delegationJava.kt")
-            public void testDelegationJava() throws Exception {
-                runTest("compiler/testData/codegen/box/classes/delegationJava.kt");
-            }
-
-            @Test
             @TestMetadata("delegationMethodsWithArgs.kt")
             public void testDelegationMethodsWithArgs() throws Exception {
                 runTest("compiler/testData/codegen/box/classes/delegationMethodsWithArgs.kt");
@@ -4334,12 +4232,6 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
             @TestMetadata("implementComparableInSubclass.kt")
             public void testImplementComparableInSubclass() throws Exception {
                 runTest("compiler/testData/codegen/box/classes/implementComparableInSubclass.kt");
-            }
-
-            @Test
-            @TestMetadata("inheritSetAndHashSet.kt")
-            public void testInheritSetAndHashSet() throws Exception {
-                runTest("compiler/testData/codegen/box/classes/inheritSetAndHashSet.kt");
             }
 
             @Test
@@ -4388,12 +4280,6 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
             @TestMetadata("kt1018.kt")
             public void testKt1018() throws Exception {
                 runTest("compiler/testData/codegen/box/classes/kt1018.kt");
-            }
-
-            @Test
-            @TestMetadata("kt1120.kt")
-            public void testKt1120() throws Exception {
-                runTest("compiler/testData/codegen/box/classes/kt1120.kt");
             }
 
             @Test
@@ -5669,12 +5555,6 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
             }
 
             @Test
-            @TestMetadata("kt41123.kt")
-            public void testKt41123() throws Exception {
-                runTest("compiler/testData/codegen/box/collections/kt41123.kt");
-            }
-
-            @Test
             @TestMetadata("removeClash.kt")
             public void testRemoveClash() throws Exception {
                 runTest("compiler/testData/codegen/box/collections/removeClash.kt");
@@ -6509,12 +6389,6 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
             @TestMetadata("long.kt")
             public void testLong() throws Exception {
                 runTest("compiler/testData/codegen/box/constants/long.kt");
-            }
-
-            @Test
-            @TestMetadata("numberLiteralCoercionToInferredType.kt")
-            public void testNumberLiteralCoercionToInferredType() throws Exception {
-                runTest("compiler/testData/codegen/box/constants/numberLiteralCoercionToInferredType.kt");
             }
 
             @Test
@@ -10594,27 +10468,6 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
                 @Test
                 public void testAllFilesPresentInLocalFunctions() throws Exception {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/localFunctions"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
-                }
-
-                @Nested
-                @TestMetadata("compiler/testData/codegen/box/coroutines/localFunctions/anonymous")
-                @TestDataPath("$PROJECT_ROOT")
-                @Tag("frontend-fir")
-                @FirPipeline()
-                @UseExtTestCaseGroupProvider()
-                @UsePartialLinkage(mode = Mode.DISABLED)
-                @Tag("no-partial-linkage-may-be-skipped")
-                public class Anonymous {
-                    @Test
-                    public void testAllFilesPresentInAnonymous() throws Exception {
-                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/localFunctions/anonymous"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
-                    }
-
-                    @Test
-                    @TestMetadata("simple.kt")
-                    public void testSimple() throws Exception {
-                        runTest("compiler/testData/codegen/box/coroutines/localFunctions/anonymous/simple.kt");
-                    }
                 }
 
                 @Nested

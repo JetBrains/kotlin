@@ -1,5 +1,5 @@
 // IGNORE_BACKEND: WASM
-// WASM_MUTE_REASON: IGNORED_IN_JS
+// WASM_MUTE_REASON: Wrong box result 'fail2: global = AD'; Expected "OK"
 var global = "A"
 
 class C {
