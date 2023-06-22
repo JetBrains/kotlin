@@ -405,32 +405,23 @@ class FunctionInlining(
                     typeParam.symbol to superType.arguments[typeParam.index].typeOrNull!!
                 }
 
-                fun createTypeArgumentsSubstitutor(typeParameters: List<IrTypeParameter>): IrTypeSubstitutor {
-                    val typeArguments = typeParameters.withIndex().map { (index, param) ->
-                        makeTypeProjection(irFunctionReference.getTypeArgument(index)!!, param.variance)
-                    }
-                    return IrTypeSubstitutor(typeParameters.map { it.symbol }, typeArguments, context.irBuiltIns, true)
-                }
-
                 val immediateCall = when (inlinedFunction) {
                     is IrConstructor -> {
-                        val typeSubstitutor = createTypeArgumentsSubstitutor(inlinedFunction.classIfConstructor.typeParameters)
                         val classTypeParametersCount = inlinedFunction.parentAsClass.typeParameters.size
                         IrConstructorCallImpl.fromSymbolOwner(
                             if (inlineArgumentsWithTheirOriginalTypeAndOffset) irFunctionReference.startOffset else irCall.startOffset,
                             if (inlineArgumentsWithTheirOriginalTypeAndOffset) irFunctionReference.endOffset else irCall.endOffset,
-                            typeSubstitutor.substitute(inlinedFunction.returnType),
+                            irCall.type,
                             inlinedFunction.symbol,
                             classTypeParametersCount,
                             INLINED_FUNCTION_REFERENCE
                         )
                     }
                     is IrSimpleFunction -> {
-                        val typeSubstitutor = createTypeArgumentsSubstitutor(inlinedFunction.typeParameters)
                         IrCallImpl(
                             if (inlineArgumentsWithTheirOriginalTypeAndOffset) irFunctionReference.startOffset else irCall.startOffset,
                             if (inlineArgumentsWithTheirOriginalTypeAndOffset) irFunctionReference.endOffset else irCall.endOffset,
-                            typeSubstitutor.substitute(inlinedFunction.returnType),
+                            irCall.type,
                             inlinedFunction.symbol,
                             inlinedFunction.typeParameters.size,
                             inlinedFunction.valueParameters.size,
