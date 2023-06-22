@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.importO
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.multiplatformInfoProvider.AbstractExpectForActualTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.psiTypeProvider.AbstractAnalysisApiExpressionPsiTypeProviderTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.psiTypeProvider.AbstractAnalysisApiPsiTypeProviderTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.referenceResolveProvider.AbstractIsImplicitCompanionReferenceTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.scopeProvider.*
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.signatureSubstitution.AbstractAnalysisApiSignatureContractsTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.signatureSubstitution.AbstractAnalysisApiSignatureSubstitutionTest
@@ -388,6 +389,13 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
             test(AbstractSubstitutorBuilderTest::class) {
                 model("substitutorBuilder")
             }
+        }
+    }
+
+
+    component("referenceResolveProvider") {
+        test(AbstractIsImplicitCompanionReferenceTest::class) {
+            model("isImplicitReferenceToCompanion")
         }
     }
 

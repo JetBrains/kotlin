@@ -17,4 +17,25 @@ public interface KtReferenceResolveMixIn : KtAnalysisSessionMixIn {
     public fun KtReference.resolveToSymbol(): KtSymbol? = withValidityAssertion {
         return resolveToSymbols().singleOrNull()
     }
+
+    /**
+     * Checks if the reference is an implicit reference to a companion object via the containing class.
+     *
+     * Example:
+     * ```
+     * class A {
+     *    companion object {
+     *       fun foo() {}
+     *    }
+     * }
+     * ```
+     *
+     * For the case provided, inside the call `A.foo()`,
+     * the `A` is an implicit reference to the companion object, so `isImplicitReferenceToCompanion` returns `true`
+     *
+     * @return `true` if the reference is an implicit reference to a companion object, `false` otherwise.
+     */
+    public fun KtReference.isImplicitReferenceToCompanion(): Boolean = withValidityAssertion {
+        analysisSession.referenceResolveProvider.isImplicitReferenceToCompanion(this)
+    }
 }

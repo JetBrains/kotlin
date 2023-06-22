@@ -12,10 +12,12 @@ import org.jetbrains.kotlin.analysis.api.descriptors.components.base.Fe10KtAnaly
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.idea.references.KtReference
+import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.references.fe10.base.KtFe10Reference
+import org.jetbrains.kotlin.resolve.BindingContext
 
 internal class KtFe10ReferenceResolveProvider(
-    override val analysisSession: KtFe10AnalysisSession
+    override val analysisSession: KtFe10AnalysisSession,
 ) : KtReferenceResolveProvider(), Fe10KtAnalysisSessionComponent {
     override fun resolveToSymbols(reference: KtReference): Collection<KtSymbol> {
         require(reference is KtFe10Reference)
@@ -23,5 +25,13 @@ internal class KtFe10ReferenceResolveProvider(
         return reference.getTargetDescriptors(bindingContext).mapNotNull { descriptor ->
             descriptor.toKtSymbol(analysisContext)
         }
+    }
+
+    override fun isImplicitReferenceToCompanion(reference: KtReference): Boolean {
+        if (reference !is KtSimpleNameReference) {
+            return false
+        }
+        val bindingContext = analysisContext.analyze(reference.element, Fe10AnalysisFacade.AnalysisMode.PARTIAL)
+        return bindingContext[BindingContext.SHORT_REFERENCE_TO_COMPANION_OBJECT, reference.element] != null
     }
 }

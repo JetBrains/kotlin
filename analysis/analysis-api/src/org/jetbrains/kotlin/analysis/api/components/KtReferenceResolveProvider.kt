@@ -10,4 +10,6 @@ import org.jetbrains.kotlin.idea.references.KtReference
 
 public abstract class KtReferenceResolveProvider {
     public abstract fun resolveToSymbols(reference: KtReference): Collection<KtSymbol>
+
+    public abstract fun isImplicitReferenceToCompanion(reference: KtReference): Boolean
 }
