@@ -27832,6 +27832,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
                 }
 
                 @Test
+                @TestMetadata("kt55705.kt")
+                public void testKt55705() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/resolve/overloadConflicts/kt55705.kt");
+                }
+
+                @Test
                 @TestMetadata("kt55722.kt")
                 public void testKt55722() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/resolve/overloadConflicts/kt55722.kt");
