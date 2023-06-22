@@ -27,6 +27,10 @@ class FirBasedSignatureComposer(val mangler: FirMangler) {
 
     private val signatureCache = mutableMapOf<FirDeclarationWithParentId, IdSignature.CommonSignature>()
 
+    private fun computeSignatureHashAndDescriptionFor(declaration: FirDeclaration): Pair<Long, String> = mangler.run {
+        declaration.signatureString(compatibleMode = false).let { it.hashMangle to it }
+    }
+
     fun composeSignature(declaration: FirClassLikeDeclaration): IdSignature? {
         return composeSignatureImpl(declaration, containingClass = null, forceExpect = false)
     }
@@ -72,24 +76,19 @@ class FirBasedSignatureComposer(val mangler: FirMangler) {
             }
             else -> return null
         }
-        val id = with(mangler) {
-            if (isSetter) {
-                property.setterOrDefault().signatureMangle(compatibleMode = false)
-            } else {
-                property.getterOrDefault().signatureMangle(compatibleMode = false)
-            }
-        }
-        val accessorFqName = if (isSetter) {
-            propSig.declarationFqName + ".<set-${property.name.asString()}>"
+        val accessor = if (isSetter) {
+            property.setterOrDefault()
         } else {
-            propSig.declarationFqName + ".<get-${property.name.asString()}>"
+            property.getterOrDefault()
         }
+        val (id, description) = computeSignatureHashAndDescriptionFor(accessor)
+        val accessorFqName = "${propSig.declarationFqName}.${accessor.irName}"
         val commonSig = IdSignature.CommonSignature(
             packageFqName = propSig.packageFqName,
             declarationFqName = accessorFqName,
             id = id,
             mask = propSig.mask,
-            description = null, // TODO(KT-59486): Save mangled name here
+            description = description,
         )
         val accessorSig = IdSignature.AccessorSignature(propSig, commonSig)
         return if (fileSig != null) {
@@ -140,7 +139,7 @@ class FirBasedSignatureComposer(val mangler: FirMangler) {
                     declarationFqName = classId.relativeClassName.asString(),
                     id = builder.hashId,
                     mask = builder.mask,
-                    description = null, // TODO(KT-59486): Save mangled name here
+                    description = builder.description,
                 )
             }
             is FirTypeAlias -> {
@@ -150,7 +149,7 @@ class FirBasedSignatureComposer(val mangler: FirMangler) {
                     declarationFqName = classId.relativeClassName.asString(),
                     id = builder.hashId,
                     mask = builder.mask,
-                    description = null, // TODO(KT-59486): Save mangled name here
+                    description = builder.description,
                 )
             }
             is FirCallableDeclaration -> {
@@ -163,7 +162,7 @@ class FirBasedSignatureComposer(val mangler: FirMangler) {
                     declarationFqName = classId?.relativeClassName?.child(callableName)?.asString() ?: callableName.asString(),
                     id = builder.hashId,
                     mask = builder.mask,
-                    description = null, // TODO(KT-59486): Save mangled name here
+                    description = builder.description,
                 )
             }
             is FirScript -> {
@@ -172,7 +171,7 @@ class FirBasedSignatureComposer(val mangler: FirMangler) {
                     declarationFqName = declaration.name.asString(),
                     id = builder.hashId,
                     mask = builder.mask,
-                    description = null, // TODO(KT-59486): Save mangled name here
+                    description = builder.description,
                 )
             }
             else -> error("Unsupported FIR declaration in signature composer: ${declaration.render()}")
@@ -181,7 +180,15 @@ class FirBasedSignatureComposer(val mangler: FirMangler) {
 
     private inner class SignatureBuilder(private val forceExpect: Boolean) : FirVisitor<Unit, Any?>() {
         var hashId: Long? = null
+        var description: String? = null
         var mask = 0L
+
+        private fun setHashAndDescriptionFor(declaration: FirDeclaration) {
+            computeSignatureHashAndDescriptionFor(declaration).let {
+                hashId = it.first
+                description = it.second
+            }
+        }
 
         private fun setExpected(f: Boolean) {
             mask = mask or IdSignature.Flags.IS_EXPECT.encode(f || forceExpect)
@@ -204,22 +211,22 @@ class FirBasedSignatureComposer(val mangler: FirMangler) {
         }
 
         override fun visitConstructor(constructor: FirConstructor, data: Any?) {
-            hashId = mangler.run { constructor.signatureMangle(compatibleMode = false) }
+            setHashAndDescriptionFor(constructor)
             setExpected(constructor.isExpect)
         }
 
         override fun visitSimpleFunction(simpleFunction: FirSimpleFunction, data: Any?) {
-            hashId = mangler.run { simpleFunction.signatureMangle(compatibleMode = false) }
+            setHashAndDescriptionFor(simpleFunction)
             setExpected(simpleFunction.isExpect)
         }
 
         override fun visitProperty(property: FirProperty, data: Any?) {
-            hashId = mangler.run { property.signatureMangle(compatibleMode = false) }
+            setHashAndDescriptionFor(property)
             setExpected(property.isExpect)
         }
 
         override fun visitField(field: FirField, data: Any?) {
-            hashId = mangler.run { field.signatureMangle(compatibleMode = false) }
+            setHashAndDescriptionFor(field)
             setExpected(field.isExpect)
         }
 

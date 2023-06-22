@@ -69,7 +69,41 @@ class IdSignatureRenderer private constructor(private val showDescriptionForPubl
     }
 
     companion object {
+
+        /**
+         * The renderer which ignores [IdSignature.CommonSignature.id] and renders its [IdSignature.CommonSignature.description] instead.
+         *
+         * This results in more human-readable representations of signatures.
+         *
+         * If [IdSignature.CommonSignature.description] is `null`, falls back to rendering [IdSignature.CommonSignature.id].
+         *
+         * For example, for the following function:
+         *
+         * ```kotlin
+         * package com.example
+         *
+         * fun box(): String {}
+         * ```
+         *
+         * its signature rendered with the [DEFAULT] renderer will look like `com.example/box|box(){}[0]`
+         * whereas when using the [LEGACY] renderer, it will look like `com.example/box|2173511048851971368[0]`.
+         */
         val DEFAULT = IdSignatureRenderer(showDescriptionForPublicSignatures = true)
+
+        /**
+         * The renderer which ignores [IdSignature.CommonSignature.description] and renders its [IdSignature.CommonSignature.id] instead.
+         *
+         * For example, for the following function:
+         *
+         * ```kotlin
+         * package com.example
+         *
+         * fun box(): String {}
+         * ```
+         *
+         * its signature rendered with the [LEGACY] renderer will look like `com.example/box|2173511048851971368[0]`
+         * whereas when using the [DEFAULT] renderer, it will look like `com.example/box|box(){}[0]`.
+         */
         val LEGACY = IdSignatureRenderer(showDescriptionForPublicSignatures = false)
     }
 }

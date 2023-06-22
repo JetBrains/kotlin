@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.ir.backend.js.lower.StaticMembersLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.isBuiltInClass
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.util.IdSignatureRenderer
 import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.js.backend.JsToStringGenerationVisitor
@@ -418,7 +419,14 @@ class IrModuleToJsTransformer(
     }
 
     private fun Set<IrDeclaration>.computeTag(declaration: IrDeclaration): String? {
-        val tag = (backendContext.irFactory as IdSignatureRetriever).declarationSignature(declaration)?.render()
+        // Use LEGACY here because the declaration may come from an old klib, in which its `IdSignature.CommonSignature`
+        // doesn't have `description`, but only `id`. Hence, we always render the signature with `id` instead of `description`,
+        // because otherwise there may be a mismatch when we're computing the tag first for the IrDeclaration deserialized from klib,
+        // and then for the same declaration but constructed from a descriptor.
+        //
+        // The former won't have `description` in its `IdSignature`, the latter will have it,
+        // which will result in different renders unless we use the LEGACY renderer.
+        val tag = (backendContext.irFactory as IdSignatureRetriever).declarationSignature(declaration)?.render(IdSignatureRenderer.LEGACY)
 
         if (tag == null && !contains(declaration)) {
             error("signature for ${declaration.render()} not found")

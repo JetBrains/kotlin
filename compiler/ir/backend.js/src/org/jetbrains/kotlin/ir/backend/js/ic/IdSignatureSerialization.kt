@@ -46,14 +46,9 @@ internal class IdSignatureSerialization(private val library: KotlinLibraryHeader
                     out.writeInt32NoTag(IdSignatureProtoType.COMMON_SIGNATURE.id)
                     out.writeStringNoTag(signature.packageFqName)
                     out.writeStringNoTag(signature.declarationFqName)
-                    val id = signature.id
-                    if (id != null) {
-                        out.writeBoolNoTag(true)
-                        out.writeFixed64NoTag(id)
-                    } else {
-                        out.writeBoolNoTag(false)
-                    }
+                    out.ifNotNull(signature.id, out::writeFixed64NoTag)
                     out.writeInt64NoTag(signature.mask)
+                    out.ifNotNull(signature.description, out::writeStringNoTag)
                 }
                 is IdSignature.CompositeSignature -> {
                     out.writeInt32NoTag(IdSignatureProtoType.COMPOSITE_SIGNATURE.id)
@@ -82,18 +77,15 @@ internal class IdSignatureSerialization(private val library: KotlinLibraryHeader
                 IdSignatureProtoType.COMMON_SIGNATURE.id -> {
                     val packageFqName = input.readString()
                     val declarationFqName = input.readString()
-                    val id = if (input.readBool()) {
-                        input.readFixed64()
-                    } else {
-                        null
-                    }
+                    val id = input.ifTrue(input::readFixed64)
                     val mask = input.readInt64()
+                    val description = input.ifTrue(input::readString)
                     return IdSignature.CommonSignature(
                         packageFqName = packageFqName,
                         declarationFqName = declarationFqName,
                         id = id,
                         mask = mask,
-                        description = null, // TODO(KT-59486): Deserialize mangled name and save it here
+                        description = description,
                     )
                 }
                 IdSignatureProtoType.COMPOSITE_SIGNATURE.id -> {
@@ -123,10 +115,9 @@ internal class IdSignatureSerialization(private val library: KotlinLibraryHeader
                 IdSignatureProtoType.COMMON_SIGNATURE.id -> {
                     input.readString()
                     input.readString()
-                    if (input.readBool()) {
-                        input.readFixed64()
-                    }
+                    input.ifTrue(input::readFixed64)
                     input.readInt64()
+                    input.ifTrue(input::readString)
                 }
                 IdSignatureProtoType.COMPOSITE_SIGNATURE.id -> {
                     skipIdSignature(input)
