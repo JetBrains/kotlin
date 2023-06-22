@@ -15,33 +15,6 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinTargetHierarchy.SourceSetTree
 import org.jetbrains.kotlin.gradle.plugin.awaitFinalValue
 import org.jetbrains.kotlin.gradle.plugin.hierarchy.KotlinSourceSetTreeClassifier
 
-/**
- * Classifier providing the corresponding [SourceSetTree] associated with any given [KotlinCompilation]
- *
- * ### Example: Overwriting 'test' compilations [SourceSetTreeClassifier]:
- * Consider the following setup:
- * ```kotlin
- * kotlin {
- *     val testCompilation = jvm().compilations.getByName("test")
- * }
- * ```
- *
- * In this example, we know that the 'jvm/test' compilation will have a 'jvmTest' SourceSet which
- * will depend on 'commonTest' and therefore is part of the 'test' [SourceSetTree].
- *
- * When another [SourceSetTreeClassifier] is specified, this behaviour is changed.
- * Using the External Kotlin Target API:
- * ```kotlin
- *   myTarget.createCompilation {
- *         compilationName = "test"
- *         sourceSetTreeClassifier = SourceSetTreeClassifier.Name("unitTest")
- *   }
- * ```
- *
- * This will create a compilation called 'test' which however will be considered part of the 'unitTest' SourceSetTree.
- * The SourceSet of this 'jvm/test' compilation will still be called 'jvmTest' but since its part of the 'unitTest [SourceSetTree],
- * there will not be a dependsOn edge to 'commonTest', but (if present) 'commonUnitTest'
- */
 @ExternalKotlinTargetApi
 @Deprecated(
     "Use org.jetbrains.kotlin.gradle.plugin.hierarchy.KotlinSourceSetTreeClassifier instead",
@@ -49,42 +22,24 @@ import org.jetbrains.kotlin.gradle.plugin.hierarchy.KotlinSourceSetTreeClassifie
 )
 sealed class SourceSetTreeClassifier {
 
-    /**
-     * Default Classifier: The name of the compilation will be used to infer the [SourceSetTree]:
-     * 'main' compilations will be part of [SourceSetTree.main]
-     * 'test' compilations will be part of [SourceSetTree.test]
-     * ...
-     */
     @ExternalKotlinTargetApi
     object Default : SourceSetTreeClassifier() {
         override fun toString(): String = "Default"
     }
 
-    /**
-     * Indicates that the given compilations is not part of any 'named' [SourceSetTree].
-     * Neither [KotlinTargetHierarchy] will be applied nor default dependsOn edges shall be set.
-     */
     @ExternalKotlinTargetApi
     object None : SourceSetTreeClassifier() {
         override fun toString(): String = "None"
     }
 
-    /**
-     * Predefined [SourceSetTree] using the [tree] specified.
-     */
     @ExternalKotlinTargetApi
     data class Value(val tree: SourceSetTree) : SourceSetTreeClassifier()
 
-    /**
-     * Predefined [SourceSetTree] using the [name] specified
-     */
+
     @ExternalKotlinTargetApi
     data class Name(val name: String) : SourceSetTreeClassifier()
 
-    /**
-     * Wrapper around [org.gradle.api.provider.Property] of a given [SourceSetTree] in order to
-     * make the [SourceSetTree] configurable.
-     */
+
     @ExternalKotlinTargetApi
     class Property(val property: org.gradle.api.provider.Property<KotlinSourceSetTree>) : SourceSetTreeClassifier() {
         override fun toString(): String {

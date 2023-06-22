@@ -23,33 +23,10 @@ interface KotlinTargetHierarchy {
 
         @Suppress("DEPRECATION")
         companion object {
-            /**
-             * The 'main' SourceSetTree. Typically, with 'commonMain' as the root SourceSet
-             */
             val main = SourceSetTree("main")
-
-            /**
-             * The 'test' SourceSetTree. Typically, with 'commonTest' as the root SourceSet
-             */
             val test = SourceSetTree("test")
-
-            /**
-             * Special pre-defined SourceSetTree: Can be used to introduce a new tree with 'commonUnitTest' as the root SourceSet
-             * e.g. relevant for organising Android unitTest compilations/SourceSets
-             */
             val unitTest = SourceSetTree("unitTest")
-
-
-            /**
-             * Special pre-defined SourceSetTree: Can be used to introduce a new tree with 'commonInstrumentedTest' as the root SourceSet
-             * e.g. relevant for organising Android instrumented compilations/SourceSets
-             */
             val instrumentedTest = SourceSetTree("instrumentedTest")
-
-
-            /**
-             * Special pre-defined SourceSetTree: Can be used to introduce a new tree with 'commonIntegrationTest' as root SourceSEt
-             */
             val integrationTest = SourceSetTree("integrationTest")
         }
     }
