@@ -5,12 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.plugin
 
-import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetTree.Companion.instrumentedTest
-import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetTree.Companion.integrationTest
-import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetTree.Companion.main
-import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetTree.Companion.test
-import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetTree.Companion.unitTest
-
 /**
  * When applying any [KotlinHierarchyTemplate] (e.g. by calling `applyDefaultHierarchyTemplate()`), the descriptor will
  * be applied on individual compilations, creating multiple trees of shared SourceSets.
@@ -60,59 +54,8 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetTree.Companion.unitTest
  * There are some exceptions, where the name of the compilations cannot be chosen by the user directly (Android)
  * In this case, the name of the SourceSet can be configured outside the target hierarchy DSL.
  */
-sealed interface KotlinSourceSetTree {
-    val name: String
+class KotlinSourceSetTree(val name: String) {
 
-    companion object {
-        /**
-         * The 'main' SourceSetTree. Typically, with 'commonMain' as the root SourceSet
-         */
-        val main: KotlinSourceSetTree = KotlinSourceSetTreeImpl("main")
-
-        /**
-         * The 'test' SourceSetTree. Typically, with 'commonTest' as the root SourceSet
-         */
-        val test: KotlinSourceSetTree = KotlinSourceSetTreeImpl("test")
-
-        /**
-         * Special pre-defined SourceSetTree: Can be used to introduce a new tree with 'commonUnitTest' as the root SourceSet
-         * e.g. relevant for organising Android unitTest compilations/SourceSets
-         */
-        val unitTest: KotlinSourceSetTree = KotlinSourceSetTreeImpl("unitTest")
-
-
-        /**
-         * Special pre-defined SourceSetTree: Can be used to introduce a new tree with 'commonInstrumentedTest' as the root SourceSet
-         * e.g. relevant for organising Android instrumented compilations/SourceSets
-         */
-        val instrumentedTest: KotlinSourceSetTree = KotlinSourceSetTreeImpl("instrumentedTest")
-
-
-        /**
-         * Special pre-defined SourceSetTree: Can be used to introduce a new tree with 'commonIntegrationTest' as root SourceSEt
-         */
-        val integrationTest: KotlinSourceSetTree = KotlinSourceSetTreeImpl("integrationTest")
-
-    }
-}
-
-fun KotlinSourceSetTree(name: String): KotlinSourceSetTree {
-    return when (name) {
-        main.name -> main
-        test.name -> test
-        unitTest.name -> unitTest
-        instrumentedTest.name -> instrumentedTest
-        integrationTest.name -> integrationTest
-        else -> KotlinSourceSetTreeImpl(name)
-    }
-}
-
-/*
-Implementation
- */
-
-
-private class KotlinSourceSetTreeImpl(override val name: String) : KotlinSourceSetTree {
     override fun toString(): String = name
 
     override fun equals(other: Any?): Boolean {
@@ -122,5 +65,37 @@ private class KotlinSourceSetTreeImpl(override val name: String) : KotlinSourceS
 
     override fun hashCode(): Int {
         return name.hashCode()
+    }
+
+    companion object {
+        /**
+         * The 'main' SourceSetTree. Typically, with 'commonMain' as the root SourceSet
+         */
+        val main: KotlinSourceSetTree = KotlinSourceSetTree("main")
+
+        /**
+         * The 'test' SourceSetTree. Typically, with 'commonTest' as the root SourceSet
+         */
+        val test: KotlinSourceSetTree = KotlinSourceSetTree("test")
+
+        /**
+         * Special pre-defined SourceSetTree: Can be used to introduce a new tree with 'commonUnitTest' as the root SourceSet
+         * e.g. relevant for organising Android unitTest compilations/SourceSets
+         */
+        val unitTest: KotlinSourceSetTree = KotlinSourceSetTree("unitTest")
+
+
+        /**
+         * Special pre-defined SourceSetTree: Can be used to introduce a new tree with 'commonInstrumentedTest' as the root SourceSet
+         * e.g. relevant for organising Android instrumented compilations/SourceSets
+         */
+        val instrumentedTest: KotlinSourceSetTree = KotlinSourceSetTree("instrumentedTest")
+
+
+        /**
+         * Special pre-defined SourceSetTree: Can be used to introduce a new tree with 'commonIntegrationTest' as root SourceSEt
+         */
+        val integrationTest: KotlinSourceSetTree = KotlinSourceSetTree("integrationTest")
+
     }
 }

@@ -10,14 +10,13 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetTree
-import org.jetbrains.kotlin.gradle.plugin.KotlinTargetHierarchy.SourceSetTree
 import org.jetbrains.kotlin.gradle.utils.property
 
 
 @ExperimentalKotlinGradlePluginApi
 interface KotlinAndroidTargetVariantDsl {
     /**
-     * Configures under which [SourceSetTree] the currently configured Android Variant shall be placed.
+     * Configures under which [KotlinSourceSetTree] the currently configured Android Variant shall be placed.
      * e.g.
      *
      * ```kotlin

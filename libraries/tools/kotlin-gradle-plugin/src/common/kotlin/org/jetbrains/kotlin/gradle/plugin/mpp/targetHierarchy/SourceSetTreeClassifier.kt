@@ -41,13 +41,13 @@ sealed class SourceSetTreeClassifier {
 
 
     @ExternalKotlinTargetApi
-    class Property(val property: org.gradle.api.provider.Property<KotlinSourceSetTree>) : SourceSetTreeClassifier() {
+    class Property(val property: org.gradle.api.provider.Property<SourceSetTree>) : SourceSetTreeClassifier() {
         override fun toString(): String {
             return property.toString()
         }
     }
 
-    internal suspend fun classify(compilation: KotlinCompilation<*>): KotlinSourceSetTree? {
+    internal suspend fun classify(compilation: KotlinCompilation<*>): SourceSetTree? {
         return when (this) {
             is Default -> SourceSetTree(compilation.name)
             is Property -> property.awaitFinalValue()

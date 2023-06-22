@@ -106,7 +106,7 @@ internal suspend fun KotlinSourceSetTreeClassifier.classify(compilation: KotlinC
         is KotlinSourceSetTreeClassifier.Value -> tree
         is KotlinSourceSetTreeClassifier.Name -> KotlinSourceSetTree(name)
         is KotlinSourceSetTreeClassifier.None -> null
-        is SourceSetTreeClassifierWrapper -> classifier.classify(compilation)
+        is SourceSetTreeClassifierWrapper -> classifier.classify(compilation)?.name?.let(::KotlinSourceSetTree)
     }
 }
 

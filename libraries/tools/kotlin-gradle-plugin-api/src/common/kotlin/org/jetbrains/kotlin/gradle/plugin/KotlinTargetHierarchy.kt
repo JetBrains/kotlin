@@ -9,7 +9,7 @@ package org.jetbrains.kotlin.gradle.plugin
 interface KotlinTargetHierarchy {
 
     @Deprecated("Use KotlinSourceSetTree instead", replaceWith = ReplaceWith("KotlinSourceSetTree"))
-    class SourceSetTree(override val name: String) : KotlinSourceSetTree {
+    class SourceSetTree(val name: String)  {
         override fun toString(): String = name
 
         override fun equals(other: Any?): Boolean {

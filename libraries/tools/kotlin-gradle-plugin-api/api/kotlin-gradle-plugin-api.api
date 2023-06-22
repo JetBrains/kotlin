@@ -1094,9 +1094,13 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinSourceS
 	public abstract fun getSourceSets ()Lorg/gradle/api/NamedDomainObjectContainer;
 }
 
-public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinSourceSetTree {
+public final class org/jetbrains/kotlin/gradle/plugin/KotlinSourceSetTree {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/plugin/KotlinSourceSetTree$Companion;
-	public abstract fun getName ()Ljava/lang/String;
+	public fun <init> (Ljava/lang/String;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getName ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class org/jetbrains/kotlin/gradle/plugin/KotlinSourceSetTree$Companion {
@@ -1105,10 +1109,6 @@ public final class org/jetbrains/kotlin/gradle/plugin/KotlinSourceSetTree$Compan
 	public final fun getMain ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinSourceSetTree;
 	public final fun getTest ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinSourceSetTree;
 	public final fun getUnitTest ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinSourceSetTree;
-}
-
-public final class org/jetbrains/kotlin/gradle/plugin/KotlinSourceSetTreeKt {
-	public static final fun KotlinSourceSetTree (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/KotlinSourceSetTree;
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinTarget : org/gradle/api/Named, org/gradle/api/attributes/HasAttributes, org/jetbrains/kotlin/gradle/plugin/HasProject, org/jetbrains/kotlin/tooling/core/HasMutableExtras {
@@ -1157,11 +1157,11 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinTargetE
 public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchy {
 }
 
-public final class org/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchy$SourceSetTree : org/jetbrains/kotlin/gradle/plugin/KotlinSourceSetTree {
+public final class org/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchy$SourceSetTree {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchy$SourceSetTree$Companion;
 	public fun <init> (Ljava/lang/String;)V
 	public fun equals (Ljava/lang/Object;)Z
-	public fun getName ()Ljava/lang/String;
+	public final fun getName ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
