@@ -22,7 +22,10 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.getDescriptorsFiltered
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.*
-import org.jetbrains.kotlin.types.model.*
+import org.jetbrains.kotlin.types.model.KotlinTypeMarker
+import org.jetbrains.kotlin.types.model.TypeConstructorMarker
+import org.jetbrains.kotlin.types.model.TypeSubstitutorMarker
+import org.jetbrains.kotlin.types.model.TypeSystemContext
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 import org.jetbrains.kotlin.utils.addToStdlib.UnsafeCastFunction
 import org.jetbrains.kotlin.utils.addToStdlib.castAll
@@ -345,5 +348,15 @@ class ClassicExpectActualMatchingContext(val platformModule: ModuleDescriptor) :
     ) : AnnotationCallInfo {
         override val classId: ClassId?
             get() = annotationDescriptor.annotationClass?.classId
+
+        override val isRetentionSource: Boolean
+            get() = annotationDescriptor.isSourceAnnotation
     }
+
+    override val DeclarationSymbolMarker.hasSourceAnnotationsErased: Boolean
+        get() {
+            return DescriptorUtils.getContainingSourceFile(asDescriptor()) != SourceFile.NO_SOURCE_FILE ||
+                    this is K1SyntheticClassifierSymbolMarker ||
+                    this is CallableMemberDescriptor && kind == CallableMemberDescriptor.Kind.SYNTHESIZED
+        }
 }

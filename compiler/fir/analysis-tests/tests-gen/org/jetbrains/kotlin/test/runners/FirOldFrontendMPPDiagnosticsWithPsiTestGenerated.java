@@ -287,6 +287,12 @@ public class FirOldFrontendMPPDiagnosticsWithPsiTestGenerated extends AbstractFi
         }
 
         @Test
+        @TestMetadata("sourceRetentionAnnotationsWhenTypealias.kt")
+        public void testSourceRetentionAnnotationsWhenTypealias() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/sourceRetentionAnnotationsWhenTypealias.kt");
+        }
+
+        @Test
         @TestMetadata("typealias.kt")
         public void testTypealias() throws Exception {
             runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/typealias.kt");

@@ -25,4 +25,4 @@ interface TypeParameterSymbolMarker : ClassifierSymbolMarker
 interface ClassLikeSymbolMarker : ClassifierSymbolMarker
 interface RegularClassSymbolMarker : ClassLikeSymbolMarker
 interface TypeAliasSymbolMarker : ClassLikeSymbolMarker
-
+interface K1SyntheticClassifierSymbolMarker : ClassifierSymbolMarker

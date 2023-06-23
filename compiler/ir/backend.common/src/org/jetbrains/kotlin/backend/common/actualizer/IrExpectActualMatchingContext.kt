@@ -5,13 +5,14 @@
 
 package org.jetbrains.kotlin.backend.common.actualizer
 
+import org.jetbrains.kotlin.backend.common.sourceElement
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
-import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
@@ -464,5 +465,17 @@ internal abstract class IrExpectActualMatchingContext(
     private class AnnotationCallInfoImpl(val irElement: IrConstructorCall) : AnnotationCallInfo {
         override val classId: ClassId?
             get() = irElement.type.getClass()?.classId
+
+        override val isRetentionSource: Boolean
+            get() {
+                val annotationClass = irElement.symbol.owner.parent as? IrClass ?: return false
+                return annotationClass.getAnnotationRetention() == KotlinRetention.SOURCE
+            }
     }
+
+    override val DeclarationSymbolMarker.hasSourceAnnotationsErased: Boolean
+        get() {
+            val ir = asIr()
+            return ir.sourceElement() != null || ir.origin is IrDeclarationOrigin.GeneratedByPlugin
+        }
 }

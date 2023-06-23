@@ -28,10 +28,14 @@ object AbstractExpectActualAnnotationMatchChecker {
             return areAnnotationsCompatible(expectSymbol, expanded)
         }
 
+        val skipSourceAnnotations = !actualSymbol.hasSourceAnnotationsErased
         val actualAnnotationsByName = actualSymbol.annotations.groupBy { it.classId }
 
         for (expectAnnotation in expectSymbol.annotations) {
             if (expectAnnotation.classId == StandardClassIds.Annotations.OptionalExpectation) {
+                continue
+            }
+            if (expectAnnotation.isRetentionSource && skipSourceAnnotations) {
                 continue
             }
             val actualAnnotationsWithSameClassId = actualAnnotationsByName[expectAnnotation.classId] ?: emptyList()

@@ -6,16 +6,19 @@
 package org.jetbrains.kotlin.fir.analysis
 
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.findArgumentByName
-import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.references.toResolvedEnumEntrySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds
 
 fun FirRegularClass.getRetention(session: FirSession): AnnotationRetention {
+    return getRetentionAnnotation(session)?.getRetention() ?: AnnotationRetention.RUNTIME
+}
+
+fun FirRegularClassSymbol.getRetention(session: FirSession): AnnotationRetention {
     return getRetentionAnnotation(session)?.getRetention() ?: AnnotationRetention.RUNTIME
 }
 
@@ -32,4 +35,12 @@ fun FirAnnotation.getRetention(): AnnotationRetention? {
 
 fun FirDeclaration.getRetentionAnnotation(session: FirSession): FirAnnotation? {
     return getAnnotationByClassId(StandardClassIds.Annotations.Retention, session)
+}
+
+private fun FirRegularClassSymbol.getRetentionAnnotation(session: FirSession): FirAnnotation? {
+    return getAnnotationByClassId(StandardClassIds.Annotations.Retention, session)
+}
+
+private fun FirRegularClassSymbol.getAnnotationByClassId(classId: ClassId, session: FirSession): FirAnnotation? {
+    return resolvedAnnotationsWithArguments.firstOrNull { it.toAnnotationClassId(session) == classId }
 }

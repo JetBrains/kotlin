@@ -11,13 +11,13 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirExpectActualMatchingContext
 import org.jetbrains.kotlin.fir.FirExpectActualMatchingContextFactory
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.analysis.getRetention
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirConstExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.isSubstitutionOrIntersectionOverride
 import org.jetbrains.kotlin.fir.resolve.*
-import org.jetbrains.kotlin.fir.resolve.dfa.coneType
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -353,7 +353,19 @@ class FirExpectActualMatchingContextImpl private constructor(
     private inner class AnnotationCallInfoImpl(val annotation: FirAnnotation) : AnnotationCallInfo {
         override val classId: ClassId?
             get() = annotation.toAnnotationClassId(actualSession)
+
+        override val isRetentionSource: Boolean
+            get() = getAnnotationClass()?.getRetention(actualSession) == AnnotationRetention.SOURCE
+
+        private fun getAnnotationClass(): FirRegularClassSymbol? =
+            annotation.annotationTypeRef.coneType.toRegularClassSymbol(actualSession)
     }
+
+    override val DeclarationSymbolMarker.hasSourceAnnotationsErased: Boolean
+        get() {
+            val symbol = asSymbol()
+            return symbol.source != null || symbol.origin is FirDeclarationOrigin.Plugin
+        }
 
     object Factory : FirExpectActualMatchingContextFactory {
         override fun create(session: FirSession, scopeSession: ScopeSession): FirExpectActualMatchingContextImpl =

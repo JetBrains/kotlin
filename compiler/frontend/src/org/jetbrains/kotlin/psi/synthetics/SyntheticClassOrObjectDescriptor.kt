@@ -9,6 +9,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorBase
+import org.jetbrains.kotlin.mpp.K1SyntheticClassifierSymbolMarker
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -50,7 +51,8 @@ class SyntheticClassOrObjectDescriptor(
         constructorVisibility: DescriptorVisibility,
         private val kind: ClassKind,
         private val isCompanionObject: Boolean
-) : ClassDescriptorBase(c.storageManager, containingDeclaration, name, source, false), ClassDescriptorWithResolutionScopes {
+) : ClassDescriptorBase(c.storageManager, containingDeclaration, name, source, false), ClassDescriptorWithResolutionScopes,
+    K1SyntheticClassifierSymbolMarker {
     val syntheticDeclaration: KtPureClassOrObject = SyntheticDeclaration(parentClassOrObject, name.asString())
 
     private val thisDescriptor: SyntheticClassOrObjectDescriptor get() = this // code readability
