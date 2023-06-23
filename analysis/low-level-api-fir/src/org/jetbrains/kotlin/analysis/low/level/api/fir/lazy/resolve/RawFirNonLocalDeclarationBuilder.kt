@@ -38,7 +38,7 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
     session: FirSession,
     baseScopeProvider: FirScopeProvider,
     private val originalDeclaration: FirDeclaration,
-    private val declarationToBuild: KtDeclaration,
+    private val declarationToBuild: KtElement,
     private val functionsToRebind: Set<FirFunction>? = null,
     private val replacementApplier: RawFirReplacement.Applier? = null,
     private val additionalFunctionInit: FirFunctionBuilder.() -> Unit = {},
@@ -118,7 +118,7 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
             session: FirSession,
             scopeProvider: FirScopeProvider,
             designation: FirDesignation,
-            rootNonLocalDeclaration: KtDeclaration,
+            rootNonLocalDeclaration: KtElement,
             replacement: RawFirReplacement?
         ): FirDeclaration {
             val replacementApplier = replacement?.Applier()
@@ -344,6 +344,10 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
                         originalDeclaration is FirField -> visitor.processField(declarationToBuild, originalDeclaration)
                         else -> visitor.convertElement(declarationToBuild, originalDeclaration)
                     }
+                }
+                is KtCodeFragment -> {
+                    val firFile = visitor.convertElement(declarationToBuild, originalDeclaration) as FirFile
+                    firFile.declarations.single() as FirCodeFragment
                 }
                 else -> visitor.convertElement(declarationToBuild, originalDeclaration)
             } as FirDeclaration

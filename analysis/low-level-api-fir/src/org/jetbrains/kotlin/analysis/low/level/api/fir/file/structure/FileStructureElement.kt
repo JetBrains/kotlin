@@ -47,7 +47,7 @@ internal class KtToFirMapping(firElement: FirElement, recorder: FirElementsRecor
 
     fun getFirOfClosestParent(element: KtElement): FirElement? {
         var current: PsiElement? = element
-        while (current != null && current !is KtFile) {
+        while (current != null && (current !is KtFile || current is KtCodeFragment)) {
             if (current is KtElement) {
                 getElement(current)?.let { return it }
             }

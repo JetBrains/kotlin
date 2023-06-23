@@ -38,6 +38,14 @@ internal object DeclarationCopyBuilder {
         initDeclaration(this@withBodyFrom, scriptWithBody)
     }
 
+    fun FirCodeFragment.withBodyFrom(
+        codeFragmentWithBody: FirCodeFragment
+    ): FirCodeFragment = buildCodeFragmentCopy(this) {
+        block = codeFragmentWithBody.block
+        symbol = codeFragmentWithBody.symbol
+        initDeclaration(this@withBodyFrom, codeFragmentWithBody)
+    }
+
     fun FirProperty.withBodyFrom(propertyWithBody: FirProperty): FirProperty {
         val newSetter = getAccessorToUse(this, propertyWithBody) { it.setter }
         val newGetter = getAccessorToUse(this, propertyWithBody) { it.getter }
@@ -101,6 +109,15 @@ internal object DeclarationCopyBuilder {
         builtDeclaration: FirDeclaration,
     ) {
         resolvePhase = minOf(originalDeclaration.resolvePhase, FirResolvePhase.DECLARATIONS)
+        source = builtDeclaration.source
+        moduleData = originalDeclaration.moduleData
+    }
+
+    private fun FirCodeFragmentBuilder.initDeclaration(
+        originalDeclaration: FirDeclaration,
+        builtDeclaration: FirDeclaration,
+    ) {
+        resolvePhase = FirResolvePhase.RAW_FIR
         source = builtDeclaration.source
         moduleData = originalDeclaration.moduleData
     }
