@@ -1256,6 +1256,40 @@ public class FirIdeDependentAnalysisSourceModuleReferenceResolveTestGenerated ex
         }
 
         @Nested
+        @TestMetadata("analysis/analysis-api/testData/referenceResolve/kDoc/companionObject")
+        @TestDataPath("$PROJECT_ROOT")
+        public class CompanionObject {
+            @Test
+            public void testAllFilesPresentInCompanionObject() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/kDoc/companionObject"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+            }
+
+            @Test
+            @TestMetadata("CompanionObjectFunctionByFullName.kt")
+            public void testCompanionObjectFunctionByFullName() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/kDoc/companionObject/CompanionObjectFunctionByFullName.kt");
+            }
+
+            @Test
+            @TestMetadata("CompanionObjectFunctionByShortName.kt")
+            public void testCompanionObjectFunctionByShortName() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/kDoc/companionObject/CompanionObjectFunctionByShortName.kt");
+            }
+
+            @Test
+            @TestMetadata("CompanionObjectFunctionFromBaseClass.kt")
+            public void testCompanionObjectFunctionFromBaseClass() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/kDoc/companionObject/CompanionObjectFunctionFromBaseClass.kt");
+            }
+
+            @Test
+            @TestMetadata("CompanionObjectPropertyByShortName.kt")
+            public void testCompanionObjectPropertyByShortName() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/kDoc/companionObject/CompanionObjectPropertyByShortName.kt");
+            }
+        }
+
+        @Nested
         @TestMetadata("analysis/analysis-api/testData/referenceResolve/kDoc/imports")
         @TestDataPath("$PROJECT_ROOT")
         public class Imports {
