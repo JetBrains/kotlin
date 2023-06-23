@@ -5,18 +5,21 @@
 
 package org.jetbrains.kotlin.test.backend.handlers
 
+import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
+import org.jetbrains.kotlin.codeMetaInfo.model.DiagnosticCodeMetaInfo
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
-import org.jetbrains.kotlin.diagnostics.KtDiagnostic
-import org.jetbrains.kotlin.diagnostics.PsiDiagnosticUtils
+import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
+import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.KtDefaultJvmErrorMessages
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives
 import org.jetbrains.kotlin.test.frontend.classic.handlers.ClassicDiagnosticReporter
 import org.jetbrains.kotlin.test.frontend.classic.handlers.withNewInferenceModeEnabled
+import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticCodeMetaInfo
 import org.jetbrains.kotlin.test.frontend.fir.handlers.toMetaInfos
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.FrontendKinds
@@ -35,7 +38,7 @@ class JvmBackendDiagnosticsHandler(testServices: TestServices) : JvmBinaryArtifa
     override fun processModule(module: TestModule, info: BinaryArtifacts.Jvm) {
         reportDiagnostics(module, info)
         reportKtDiagnostics(module, info)
-        checkFullDiagnosticRender(module, info)
+        checkFullDiagnosticRender(module)
     }
 
     private fun getKtFiles(module: TestModule): Map<TestFile, KtFile> {
@@ -48,12 +51,6 @@ class JvmBackendDiagnosticsHandler(testServices: TestServices) : JvmBinaryArtifa
     }
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {}
-
-    private fun getLineAndColumnRange(diagnostic: KtDiagnostic): PsiDiagnosticUtils.LineAndColumnRange {
-        val file = diagnostic.psiElement.containingFile
-        val textRanges = diagnostic.textRanges
-        return DiagnosticUtils.getLineAndColumnRange(file, textRanges)
-    }
 
     private fun reportDiagnostics(module: TestModule, info: BinaryArtifacts.Jvm) {
         val testFileToKtFileMap = getKtFiles(module)
@@ -86,29 +83,36 @@ class JvmBackendDiagnosticsHandler(testServices: TestServices) : JvmBinaryArtifa
         }
     }
 
-    private fun checkFullDiagnosticRender(module: TestModule, info: BinaryArtifacts.Jvm) {
+    private fun checkFullDiagnosticRender(module: TestModule) {
         if (DiagnosticsDirectives.RENDER_DIAGNOSTICS_FULL_TEXT !in module.directives) return
 
         val testFileToKtFileMap = getKtFiles(module)
-        val generationState = info.classFileFactory.generationState
 
-        val ktDiagnosticReporter = generationState.diagnosticReporter as BaseDiagnosticsCollector
         val reportedDiagnostics = mutableListOf<String>()
-        for (ktFile in testFileToKtFileMap.values) {
-            val ktDiagnostics = ktDiagnosticReporter.diagnosticsByFilePath[ktFile.virtualFilePath] ?: continue
-            ktDiagnostics.forEach {
-                val severity = AnalyzerWithCompilerReport.convertSeverity(it.severity).toString().toLowerCaseAsciiOnly()
-                val message = KtDefaultJvmErrorMessages.MAP[it.factory]?.render(it)
-                val position = getLineAndColumnRange(it).start
-                reportedDiagnostics += "/${ktFile.name}:${position.line}:${position.column}: $severity: $message"
+        for ((testFile, ktFile) in testFileToKtFileMap) {
+            for (metaInfo in testServices.globalMetadataInfoHandler.getReportedMetaInfosForFile(testFile).sortedBy { it.start }) {
+                when (metaInfo) {
+                    is DiagnosticCodeMetaInfo -> metaInfo.diagnostic.let {
+                        val message = DefaultErrorMessages.render(it)
+                        reportedDiagnostics += renderDiagnosticMessage(ktFile, it.severity, message, it.textRanges)
+                    }
+                    is FirDiagnosticCodeMetaInfo -> metaInfo.diagnostic.let {
+                        val message = KtDefaultJvmErrorMessages.MAP[it.factory]?.render(it)
+                        reportedDiagnostics += renderDiagnosticMessage(ktFile, it.severity, message, it.textRanges)
+                    }
+                }
             }
         }
 
-        if (reportedDiagnostics.isNotEmpty()) {
-            testServices.assertions.assertEqualsToFile(
-                File(FileUtil.getNameWithoutExtension(testFileToKtFileMap.keys.first().originalFile.absolutePath) + ".diag.txt"),
-                reportedDiagnostics.joinToString(separator = "\n\n")
-            )
-        }
+        testServices.assertions.assertEqualsToFile(
+            File(FileUtil.getNameWithoutExtension(testFileToKtFileMap.keys.first().originalFile.absolutePath) + ".diag.txt"),
+            reportedDiagnostics.joinToString(separator = "\n\n", postfix = "\n")
+        )
+    }
+
+    private fun renderDiagnosticMessage(file: KtFile, severity: Severity, message: String?, textRanges: List<TextRange>): String {
+        val severityString = AnalyzerWithCompilerReport.convertSeverity(severity).toString().toLowerCaseAsciiOnly()
+        val position = DiagnosticUtils.getLineAndColumnRange(file, textRanges).start
+        return "/${file.name}:${position.line}:${position.column}: $severityString: $message"
     }
 }
