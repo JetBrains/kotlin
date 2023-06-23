@@ -122,7 +122,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib:${project.bootstrapKotlinVersion}")
     implementation("org.jetbrains.kotlin:kotlin-reflect:${project.bootstrapKotlinVersion}")
     implementation("com.google.code.gson:gson:2.8.9") // Workaround for Gradle dependency resolution error
-    implementation("org.jetbrains.kotlinx:kotlinx-metadata-jvm:0.6.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-metadata-jvm:0.6.2")
 }
 
 samWithReceiver {
