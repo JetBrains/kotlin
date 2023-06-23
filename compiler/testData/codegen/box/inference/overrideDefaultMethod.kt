@@ -1,7 +1,6 @@
 // TARGET_BACKEND: JS
 
-// Ignore these backangd because they don't support overriding and calling interface methods with default arguments
-// IGNORE_BACKEND: JVM, WASM, NATIVE
+// Don't test other backends because they don't support overriding and calling interface methods with default arguments
 
 // MODULE: InterfaceModule
 // FILE: MyInterface.kt

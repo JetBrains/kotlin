@@ -1,11 +1,14 @@
+// https://youtrack.jetbrains.com/issue/KT-42020/Psi2ir-IllegalStateException-IrSimpleFunctionPublicSymbolImpl-for-public-...-is-already-bound-on-generic-function-whose
 // IGNORE_BACKEND: WASM
-// WASM_MUTE_REASON: SERIALIZATION_REGRESSION
-// IGNORE_BACKEND: JS
-// IGNORE_BACKEND: JS_IR
 // IGNORE_BACKEND: JS_IR_ES6
-// IGNORE_BACKEND: NATIVE
-// IGNORE_BACKEND_K2: JVM_IR
+// IGNORE_BACKEND_K1: NATIVE, JS_IR
+
+// https://youtrack.jetbrains.com/issue/KT-59279/Psi2Ir-FIR2IR-Signature-clash-leads-to-wrong-method-resolve
+// IGNORE_BACKEND: JS
+// IGNORE_BACKEND_K2: NATIVE, JS_IR
+
 // FIR status: validation failed. TODO decide if we want to fix KT-42020 for FIR as well
+// IGNORE_BACKEND_K2: JVM_IR
 // MODULE: lib
 // FILE: lib.kt
 
@@ -22,8 +25,10 @@ class Derived : Base<String>()
 
 fun box(): String {
     val d = Derived()
-    if (d.foo(p1 = "42") != "p1:42") return "FAIL1"
-    if (d.foo(p2 = "24") != "p2:24") return "FAIL2"
+    val foo42 = d.foo(p1 = "42")
+    if (foo42 != "p1:42") return "FAIL1: foo42=$foo42"
+    val foo24 = d.foo(p2 = "24")
+    if (foo24 != "p2:24") return "FAIL2: foo24=$foo24"
 
     return "OK"
 }

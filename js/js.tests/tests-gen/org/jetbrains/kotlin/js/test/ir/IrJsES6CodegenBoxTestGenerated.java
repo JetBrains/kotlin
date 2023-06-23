@@ -11080,12 +11080,6 @@ public class IrJsES6CodegenBoxTestGenerated extends AbstractIrJsES6CodegenBoxTes
         }
 
         @Test
-        @TestMetadata("getDelegateWithoutReflection.kt")
-        public void testGetDelegateWithoutReflection() throws Exception {
-            runTest("compiler/testData/codegen/box/delegatedProperty/getDelegateWithoutReflection.kt");
-        }
-
-        @Test
         @TestMetadata("inClassVal.kt")
         public void testInClassVal() throws Exception {
             runTest("compiler/testData/codegen/box/delegatedProperty/inClassVal.kt");
@@ -11209,12 +11203,6 @@ public class IrJsES6CodegenBoxTestGenerated extends AbstractIrJsES6CodegenBoxTes
         @TestMetadata("useKPropertyLater.kt")
         public void testUseKPropertyLater() throws Exception {
             runTest("compiler/testData/codegen/box/delegatedProperty/useKPropertyLater.kt");
-        }
-
-        @Test
-        @TestMetadata("useReflectionOnKProperty.kt")
-        public void testUseReflectionOnKProperty() throws Exception {
-            runTest("compiler/testData/codegen/box/delegatedProperty/useReflectionOnKProperty.kt");
         }
 
         @Test
@@ -14064,18 +14052,6 @@ public class IrJsES6CodegenBoxTestGenerated extends AbstractIrJsES6CodegenBoxTes
         }
 
         @Test
-        @TestMetadata("functionNtoString.kt")
-        public void testFunctionNtoString() throws Exception {
-            runTest("compiler/testData/codegen/box/functions/functionNtoString.kt");
-        }
-
-        @Test
-        @TestMetadata("functionNtoStringGeneric.kt")
-        public void testFunctionNtoStringGeneric() throws Exception {
-            runTest("compiler/testData/codegen/box/functions/functionNtoStringGeneric.kt");
-        }
-
-        @Test
         @TestMetadata("infixRecursiveCall.kt")
         public void testInfixRecursiveCall() throws Exception {
             runTest("compiler/testData/codegen/box/functions/infixRecursiveCall.kt");
@@ -14109,12 +14085,6 @@ public class IrJsES6CodegenBoxTestGenerated extends AbstractIrJsES6CodegenBoxTes
         @TestMetadata("kt1649_2.kt")
         public void testKt1649_2() throws Exception {
             runTest("compiler/testData/codegen/box/functions/kt1649_2.kt");
-        }
-
-        @Test
-        @TestMetadata("kt1739.kt")
-        public void testKt1739() throws Exception {
-            runTest("compiler/testData/codegen/box/functions/kt1739.kt");
         }
 
         @Test
@@ -14562,12 +14532,6 @@ public class IrJsES6CodegenBoxTestGenerated extends AbstractIrJsES6CodegenBoxTes
             @TestMetadata("kt4514.kt")
             public void testKt4514() throws Exception {
                 runTest("compiler/testData/codegen/box/functions/localFunctions/kt4514.kt");
-            }
-
-            @Test
-            @TestMetadata("kt4777.kt")
-            public void testKt4777() throws Exception {
-                runTest("compiler/testData/codegen/box/functions/localFunctions/kt4777.kt");
             }
 
             @Test
@@ -17208,7 +17172,7 @@ public class IrJsES6CodegenBoxTestGenerated extends AbstractIrJsES6CodegenBoxTes
         @Test
         @TestMetadata("overrideReturnNothing.kt")
         public void testOverrideReturnNothing() throws Exception {
-            runTest("compiler/testData/codegen/box/inlineClasses/overrideReturnNothing.kt");
+            runTest("compiler/testData/codegen/box/inlineClasses/overrideReturnNothing.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -20947,18 +20911,6 @@ public class IrJsES6CodegenBoxTestGenerated extends AbstractIrJsES6CodegenBoxTes
         @TestMetadata("stringFromCollection.kt")
         public void testStringFromCollection() throws Exception {
             runTest("compiler/testData/codegen/box/intrinsics/stringFromCollection.kt");
-        }
-
-        @Test
-        @TestMetadata("throwable.kt")
-        public void testThrowable() throws Exception {
-            runTest("compiler/testData/codegen/box/intrinsics/throwable.kt");
-        }
-
-        @Test
-        @TestMetadata("throwableCallableReference.kt")
-        public void testThrowableCallableReference() throws Exception {
-            runTest("compiler/testData/codegen/box/intrinsics/throwableCallableReference.kt");
         }
 
         @Test
