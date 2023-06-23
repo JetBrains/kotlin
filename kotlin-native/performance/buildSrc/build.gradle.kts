@@ -108,7 +108,12 @@ gradlePlugin {
 }
 
 afterEvaluate {
-    tasks.withType<JavaCompile> {
+    tasks.withType<JavaCompile>().configureEach {
         targetCompatibility = "1.8"
+    }
+    tasks.withType<KotlinCompile>().configureEach {
+        kotlinOptions {
+            jvmTarget = "1.8"
+        }
     }
 }
