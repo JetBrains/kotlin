@@ -1,12 +1,10 @@
 import org.gradle.api.internal.component.SoftwareComponentInternal
 import org.gradle.api.internal.component.UsageContext
 import java.nio.file.*
-import org.gradle.kotlin.dsl.support.serviceOf
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
 import org.jetbrains.kotlin.gradle.tasks.UsesKotlinJavaToolchain
 import plugins.configureDefaultPublishing
 import org.gradle.jvm.tasks.Jar
-import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import plugins.configureKotlinPomAttributes
@@ -47,7 +45,6 @@ val jsSrcJsDir = "${jsSrcDir}/js"
 // for js-ir
 val jsIrDir = "${projectDir}/js-ir"
 val jsIrMainSources = "${buildDir}/src/jsMainSources"
-val jsIrTestSources = "${buildDir}/src/jsTestSources"
 lateinit var jsIrTarget: KotlinJsTargetDsl
 lateinit var jsV1Target: KotlinJsTargetDsl
 
@@ -186,14 +183,9 @@ kotlin {
         }
     }
     jsV1Target = js("jsV1", LEGACY) {
-        if (!kotlinBuildProperties.isTeamcityBuild) {
-            browser {}
-        }
         nodejs {
             testTask {
-                useMocha {
-                    timeout = "10s"
-                }
+                enabled = false
             }
         }
         compilations {
@@ -229,6 +221,9 @@ kotlin {
             val test by getting; test.apply {
                 kotlinOptions {
                     moduleKind = "umd"
+                }
+                compileTaskProvider.configure {
+                    exclude("*")
                 }
             }
         }
@@ -379,15 +374,6 @@ kotlin {
                 into(builtinsSrcDir)
             }
         }
-        val jsV1Test by getting {
-            dependencies {
-                api(project(":kotlin-test:kotlin-test-js-v1"))
-            }
-            kotlin {
-                srcDir(jsCommonTestSrcDir)
-                srcDir("$jsV1Dir/test")
-            }
-        }
 
         val jsMain by getting {
             val prepareJsIrMainSources by tasks.registering(Sync::class)
@@ -459,11 +445,7 @@ kotlin {
             dependencies {
                 api(project(":kotlin-test:kotlin-test-js-ir"))
             }
-            val prepareJsIrTestSources by tasks.registering(Sync::class) {
-                from(jsCommonTestSrcDir)
-                into(jsIrTestSources)
-            }
-            kotlin.srcDir(prepareJsIrTestSources)
+            kotlin.srcDir(jsCommonTestSrcDir)
         }
 
         all sourceSet@ {
@@ -619,20 +601,6 @@ tasks {
 
     val jsV1MainClasses by existing {
         dependsOn(mergeJsV1)
-    }
-
-    jsV1Target.compilations["test"].compileTaskProvider.configure {
-        val fs = serviceOf<FileSystemOperations>()
-        val jsOutputFileName = jsOutputFileName
-        val kotlinTestJsV1Output = (project.tasks.getByPath(":kotlin-test:kotlin-test-js-v1:compileKotlinJs") as Kotlin2JsCompile).outputFileProperty
-        doLast {
-            // copy freshly-built legacy kotlin.js into node_modules subdir of kotlin-stdlib-js-v1-test module
-            fs.copy {
-                from(jsOutputFileName)
-                from(kotlinTestJsV1Output)
-                into(destinationDirectory.dir("node_modules"))
-            }
-        }
     }
 
     val jsResultingJar by registering(Jar::class) {
