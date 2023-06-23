@@ -166,6 +166,7 @@ fun cocoaPodsEnvironmentVariables(): Map<String, String> {
  *
  * @throws AssertionError if [shouldInstallLocalCocoapods] is false and  cocoapods has not been installed
  */
+@Synchronized
 fun ensureCocoapodsInstalled() {
     if (shouldInstallLocalCocoapods) {
         val installDir = cocoapodsInstallationRoot.absolutePathString()
@@ -174,7 +175,7 @@ fun ensureCocoapodsInstalled() {
         try {
             //https://github.com/ffi/ffi/issues/864#issuecomment-875242776
             gem("install", "--install-dir", installDir, "ffi", "-v", "1.15.5", "--", "--enable-libffi-alloc")
-        } catch (e: Exception) {
+        } catch (e: AssertionError) {
             System.err.println("ffi installation with '--enable-libffi-alloc' has failed but we'll try to continue with a default ffi")
             System.err.println(e.toString())
         }
