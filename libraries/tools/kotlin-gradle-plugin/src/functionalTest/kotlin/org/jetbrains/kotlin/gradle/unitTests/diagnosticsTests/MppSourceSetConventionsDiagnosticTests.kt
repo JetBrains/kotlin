@@ -7,6 +7,8 @@
 
 package org.jetbrains.kotlin.gradle.unitTests.diagnosticsTests
 
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformSourceSetConventionsImpl.iosMain
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformSourceSetConventionsImpl.iosTest
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.configurationResult
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
@@ -85,5 +87,17 @@ class MppSourceSetConventionsDiagnosticTests {
             configurationResult.await()
             checkDiagnostics("AndroidMainSourceSetConventionUsedWithoutAndroidTarget")
         }
+    }
+
+    @Test
+    fun `test - iosMain and iosTest - without any ios target`() = buildProjectWithMPP().runLifecycleAwareTest {
+        multiplatformExtension.linuxX64()
+        multiplatformExtension.jvm()
+
+        multiplatformExtension.sourceSets.iosMain
+        multiplatformExtension.sourceSets.iosTest
+
+        configurationResult.await()
+        checkDiagnostics("IosSourceSetConventionUsedWithoutIosTarget")
     }
 }

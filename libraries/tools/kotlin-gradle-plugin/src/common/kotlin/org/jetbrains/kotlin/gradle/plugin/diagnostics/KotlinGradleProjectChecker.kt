@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.plugin.diagnostics
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.dsl.AndroidMainSourceSetConventionsChecker
+import org.jetbrains.kotlin.gradle.dsl.IosSourceSetConventionChecker
 import org.jetbrains.kotlin.gradle.dsl.PlatformSourceSetConventionsChecker
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
@@ -112,6 +113,7 @@ internal interface KotlinGradleProjectChecker {
             KotlinSourceSetTreeDependsOnMismatchChecker,
             PlatformSourceSetConventionsChecker,
             AndroidMainSourceSetConventionsChecker,
+            IosSourceSetConventionChecker
         )
     }
 }

@@ -8,16 +8,22 @@ package org.jetbrains.kotlin.gradle.dsl
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.NamedDomainObjectProvider
 import org.jetbrains.kotlin.gradle.dsl.KotlinSourceSetConvention.isRegisteredByKotlinSourceSetConventionAt
-import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
+import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
+import org.jetbrains.kotlin.gradle.plugin.LanguageSettingsBuilder
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinGradleProjectChecker
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinGradleProjectCheckerContext
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics.AndroidMainSourceSetConventionUsedWithoutAndroidTarget
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics.IosSourceSetConventionUsedWithoutIosTarget
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics.PlatformSourceSetConventionUsedWithCustomTargetName
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics.PlatformSourceSetConventionUsedWithoutCorrespondingTarget
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsCollector
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
+import org.jetbrains.kotlin.konan.target.Family
 
 @KotlinGradlePluginDsl
 interface KotlinMultiplatformSourceSetConventions {
@@ -150,5 +156,26 @@ internal object AndroidMainSourceSetConventionsChecker : KotlinGradleProjectChec
         if (androidTarget == null) {
             project.reportDiagnostic(AndroidMainSourceSetConventionUsedWithoutAndroidTarget(androidMainSourceSet))
         }
+    }
+}
+
+internal object IosSourceSetConventionChecker : KotlinGradleProjectChecker {
+    override suspend fun KotlinGradleProjectCheckerContext.runChecks(collector: KotlinToolingDiagnosticsCollector) {
+        val kotlin = project.multiplatformExtensionOrNull ?: return
+
+        val iosSourceSets = listOf("iosMain", "iosTest")
+            .mapNotNull { sourceSetName -> kotlin.awaitSourceSets().findByName(sourceSetName) }
+            .filter { it.isRegisteredByKotlinSourceSetConventionAt != null }
+
+
+        val hasIosTarget = kotlin.awaitTargets()
+            .any { target -> target is KotlinNativeTarget && target.konanTarget.family == Family.IOS }
+
+        if (!hasIosTarget) {
+            iosSourceSets.forEach { sourceSet ->
+                project.reportDiagnostic(IosSourceSetConventionUsedWithoutIosTarget(sourceSet))
+            }
+        }
+
     }
 }

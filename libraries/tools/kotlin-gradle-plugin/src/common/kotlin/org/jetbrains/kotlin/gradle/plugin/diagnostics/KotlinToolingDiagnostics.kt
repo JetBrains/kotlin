@@ -425,7 +425,28 @@ object KotlinToolingDiagnostics {
                 |    kotlin {
                 |        androidTarget() /* <- register the androidTarget */
                 |    }
-            """.trimMargin()
+            """.trimMargin(),
+            throwable = sourceSet.isRegisteredByKotlinSourceSetConventionAt
+        )
+    }
+
+    object IosSourceSetConventionUsedWithoutIosTarget : ToolingDiagnosticFactory(WARNING) {
+        operator fun invoke(sourceSet: KotlinSourceSet) = build(
+            """
+                |Accessed '$sourceSet' without registering any ios target:
+                |  kotlin {
+                |     /* Register at least one of the following targets */
+                |     iosX64()
+                |     iosArm64()
+                |     iosSimulatorArm64()
+                |     
+                |     /* Use convention
+                |     sourceSets.${sourceSet.name}.dependencies {
+                |     
+                |     }
+                |  }
+            """.trimMargin(),
+            throwable = sourceSet.isRegisteredByKotlinSourceSetConventionAt
         )
     }
 
