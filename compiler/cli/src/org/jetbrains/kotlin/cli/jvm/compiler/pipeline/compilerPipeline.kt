@@ -49,6 +49,7 @@ import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendClassResolver
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendExtension
 import org.jetbrains.kotlin.fir.backend.jvm.JvmFir2IrExtensions
 import org.jetbrains.kotlin.fir.extensions.FirAnalysisHandlerExtension
+import org.jetbrains.kotlin.fir.extensions.FirAnalysisResult
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.pipeline.*
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
@@ -78,8 +79,8 @@ fun compileModulesUsingFrontendIrAndLightTree(
     messageCollector: MessageCollector,
     buildFile: File?,
     chunk: List<Module>,
-    targetDescription: String
-): Boolean {
+    targetDescription: String,
+) {
     require(projectEnvironment is VfsBasedProjectEnvironment) // TODO: abstract away this requirement
     ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
 
@@ -87,15 +88,26 @@ fun compileModulesUsingFrontendIrAndLightTree(
 
     performanceManager?.notifyCompilerInitialized(0, 0, targetDescription)
 
+    val project = (projectEnvironment as? VfsBasedProjectEnvironment)?.project
+    if (project != null) {
+        val extensions = FirAnalysisHandlerExtension.getInstances(project)
+        when (extensions.size) {
+            0 -> {}
+            1 -> if (extensions[0].doAnalysis(compilerConfiguration) != FirAnalysisResult.Skipped) return
+            else -> {
+                val extensionNames = extensions.map { it::class.qualifiedName }
+                messageCollector.reportError("It's allowed to register only one FirAnalysisHandlerExtension, but several are registered: $extensionNames")
+                return
+            }
+        }
+    }
+
     val outputs = mutableListOf<GenerationState>()
     var mainClassFqName: FqName? = null
-    val project = (projectEnvironment as? VfsBasedProjectEnvironment)?.project
     for (module in chunk) {
         val moduleConfiguration = compilerConfiguration.copy().applyModuleProperties(module, buildFile).apply {
             put(JVMConfigurationKeys.FRIEND_PATHS, module.getFriendPaths())
         }
-
-        if (project != null && processAnalysisHandlerExtensions(project, moduleConfiguration, messageCollector)) return true
 
         val groupedSources = collectSources(compilerConfiguration, projectEnvironment, messageCollector)
 
@@ -123,7 +135,7 @@ fun compileModulesUsingFrontendIrAndLightTree(
         )
 
         if (!checkKotlinPackageUsageForLightTree(moduleConfiguration, analysisResults.outputs.flatMap { it.fir })) {
-            return false
+            return
         }
 
         performanceManager?.notifyAnalysisFinished()
@@ -159,7 +171,7 @@ fun compileModulesUsingFrontendIrAndLightTree(
         }
     }
 
-    return writeOutputs(
+    writeOutputs(
         projectEnvironment,
         compilerConfiguration,
         outputs,
@@ -167,25 +179,10 @@ fun compileModulesUsingFrontendIrAndLightTree(
     )
 }
 
-private fun processAnalysisHandlerExtensions(project: Project, configuration: CompilerConfiguration, messageCollector: MessageCollector): Boolean {
-    val extensions = FirAnalysisHandlerExtension.getInstances(project)
-    val extension = when (extensions.size) {
-        0 -> return false
-        1 -> extensions.single()
-        else -> {
-            val extensionNames = extensions.map { it::class.qualifiedName }
-            messageCollector.reportError("It's allowed to register only one FirAnalysisHandlerExtension, but several are registered: $extensionNames")
-            return true
-        }
-    }
-
-    return extension.doAnalysis(configuration)
-}
-
 fun convertAnalyzedFirToIr(
     input: ModuleCompilerInput,
     analysisResults: FirResult,
-    environment: ModuleCompilerEnvironment
+    environment: ModuleCompilerEnvironment,
 ): ModuleCompilerIrBackendInput {
     val extensions = JvmFir2IrExtensions(input.configuration, JvmIrDeserializerImpl(), JvmIrMangler)
 
@@ -220,7 +217,7 @@ fun convertAnalyzedFirToIr(
 fun generateCodeFromIr(
     input: ModuleCompilerIrBackendInput,
     environment: ModuleCompilerEnvironment,
-    performanceManager: CommonCompilerPerformanceManager?
+    performanceManager: CommonCompilerPerformanceManager?,
 ): ModuleCompilerOutput {
     // IR
     val codegenFactory = JvmIrCodegenFactory(
@@ -275,7 +272,7 @@ fun compileModuleToAnalyzedFir(
     previousStepsSymbolProviders: List<FirSymbolProvider>,
     incrementalExcludesScope: AbstractProjectFileSearchScope?,
     diagnosticsReporter: DiagnosticReporter,
-    performanceManager: CommonCompilerPerformanceManager?
+    performanceManager: CommonCompilerPerformanceManager?,
 ): FirResult {
     val projectEnvironment = environment.projectEnvironment
     val moduleConfiguration = input.configuration
@@ -329,7 +326,7 @@ fun writeOutputs(
     projectEnvironment: AbstractProjectEnvironment,
     configuration: CompilerConfiguration,
     outputs: Collection<GenerationState>,
-    mainClassFqName: FqName?
+    mainClassFqName: FqName?,
 ): Boolean {
     try {
         for (state in outputs) {
@@ -361,7 +358,7 @@ fun writeOutputs(
 fun createIncrementalCompilationScope(
     configuration: CompilerConfiguration,
     projectEnvironment: AbstractProjectEnvironment,
-    incrementalExcludesScope: AbstractProjectFileSearchScope?
+    incrementalExcludesScope: AbstractProjectFileSearchScope?,
 ): AbstractProjectFileSearchScope? {
     if (!needCreateIncrementalCompilationScope(configuration)) return null
     val dir = configuration[JVMConfigurationKeys.OUTPUT_DIRECTORY] ?: return null
@@ -371,7 +368,7 @@ fun createIncrementalCompilationScope(
     }
 }
 
-private fun needCreateIncrementalCompilationScope(configuration: CompilerConfiguration, ): Boolean {
+private fun needCreateIncrementalCompilationScope(configuration: CompilerConfiguration): Boolean {
     if (configuration.get(JVMConfigurationKeys.MODULES) == null) return false
     if (configuration.get(JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS) == null) return false
     return true
@@ -382,7 +379,7 @@ fun createContextForIncrementalCompilation(
     projectEnvironment: AbstractProjectEnvironment,
     sourceScope: AbstractProjectFileSearchScope,
     previousStepsSymbolProviders: List<FirSymbolProvider>,
-    incrementalCompilationScope: AbstractProjectFileSearchScope?
+    incrementalCompilationScope: AbstractProjectFileSearchScope?,
 ): IncrementalCompilationContext? {
     if (incrementalCompilationScope == null && previousStepsSymbolProviders.isEmpty()) return null
     val targetIds = configuration.get(JVMConfigurationKeys.MODULES)?.map(::TargetId) ?: return null
@@ -403,7 +400,7 @@ private class ProjectEnvironmentWithCoreEnvironmentEmulation(
     localFileSystem: VirtualFileSystem,
     getPackagePartProviderFn: (GlobalSearchScope) -> PackagePartProvider,
     val initialRoots: List<JavaRoot>,
-    val configuration: CompilerConfiguration
+    val configuration: CompilerConfiguration,
 ) : VfsBasedProjectEnvironment(project, localFileSystem, getPackagePartProviderFn) {
 
     val packagePartProviders = mutableListOf<JvmPackagePartProvider>()
@@ -423,7 +420,7 @@ fun createProjectEnvironment(
     configuration: CompilerConfiguration,
     parentDisposable: Disposable,
     configFiles: EnvironmentConfigFiles,
-    messageCollector: MessageCollector
+    messageCollector: MessageCollector,
 ): VfsBasedProjectEnvironment {
     setupIdeaStandaloneExecution()
     val appEnv = KotlinCoreEnvironment.getOrCreateApplicationEnvironmentForProduction(parentDisposable, configuration)
@@ -523,7 +520,7 @@ private fun VirtualFileSystem.findJarRoot(file: File): VirtualFile? =
     findFileByPath("$file${URLUtil.JAR_SEPARATOR}")
 
 private fun VirtualFileSystem.findExistingRoot(
-    root: JvmContentRoot, rootDescription: String, messageCollector: MessageCollector
+    root: JvmContentRoot, rootDescription: String, messageCollector: MessageCollector,
 ): VirtualFile? {
     return findFileByPath(root.file.absolutePath).also {
         if (it == null) {

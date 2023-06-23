@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.fir.backend.jvm.*
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.extensions.FirAnalysisHandlerExtension
+import org.jetbrains.kotlin.fir.extensions.FirAnalysisResult
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.pipeline.*
 import org.jetbrains.kotlin.fir.session.*
@@ -93,6 +94,19 @@ object FirKotlinToJvmBytecodeCompiler {
 
         // TODO: run lowerings for all modules in the chunk, then run codegen for all modules.
         val project = (projectEnvironment as? VfsBasedProjectEnvironment)?.project
+        if (project != null) {
+            val extensions = FirAnalysisHandlerExtension.getInstances(project)
+            when (extensions.size) {
+                0 -> {}
+                1 -> if (extensions[0].doAnalysis(projectConfiguration) != FirAnalysisResult.Skipped) return true
+                else -> {
+                    val extensionNames = extensions.map { it::class.qualifiedName }
+                    messageCollector.reportError("It's allowed to register only one FirAnalysisHandlerExtension, but several are registered: $extensionNames")
+                    return false
+                }
+            }
+        }
+
         for (module in chunk) {
             val moduleConfiguration = projectConfiguration.applyModuleProperties(module, buildFile)
             val context = CompilationContext(
@@ -110,7 +124,6 @@ object FirKotlinToJvmBytecodeCompiler {
                 extensionRegistrars = project?.let { FirExtensionRegistrar.getInstances(it) } ?: emptyList(),
                 irGenerationExtensions = project?.let { IrGenerationExtension.getInstances(it) } ?: emptyList()
             )
-            if (project != null && context.processAnalysisHandlerExtensions(project)) return true
             val generationState = context.compileModule() ?: return false
             outputs += generationState
         }
@@ -298,20 +311,6 @@ object FirKotlinToJvmBytecodeCompiler {
         val extensionRegistrars: List<FirExtensionRegistrar>,
         val irGenerationExtensions: Collection<IrGenerationExtension>
     )
-
-    private fun CompilationContext.processAnalysisHandlerExtensions(project: Project): Boolean {
-        val extensions = FirAnalysisHandlerExtension.getInstances(project)
-        val extension = when (extensions.size) {
-            0 -> return false
-            1 -> extensions.single()
-            else -> {
-                val extensionNames = extensions.map { it::class.qualifiedName }
-                messageCollector.reportError("It's allowed to register only one FirAnalysisHandlerExtension, but several are registered: $extensionNames")
-                return true
-            }
-        }
-        return extension.doAnalysis(moduleConfiguration)
-    }
 
     inline fun CompilerConfiguration.update(block: CompilerConfiguration.() -> Unit) {
         val oldReadOnlyValue = isReadOnly
