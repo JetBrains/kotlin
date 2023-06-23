@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.test.frontend.fir.differences
 import org.jetbrains.kotlin.codeMetaInfo.model.ParsedCodeMetaInfo
 import java.util.*
 import kotlin.NoSuchElementException
+import kotlin.collections.Collection
 
 class MetaInfoHierarchySet : AbstractMutableSet<ParsedCodeMetaInfo>() {
     open class NodeBase(
@@ -115,44 +116,6 @@ class MetaInfoHierarchySet : AbstractMutableSet<ParsedCodeMetaInfo>() {
     }
 
     override fun iterator() = Iterator()
-
-    fun hasOverlappingEquivalentOf(element: ParsedCodeMetaInfo): Boolean {
-        val parents = findParentsFor(element.start, element.end)
-        val hasEquivalentParent = parents.any {
-            it is Node && it.metaInfo.equivalenceClass == element.equivalenceClass
-        }
-
-        if (hasEquivalentParent) {
-            return true
-        }
-
-        return parents.last().hasChildThatIsOverlappingEquivalentOf(element)
-    }
-
-    private fun NodeBase.hasChildThatIsOverlappingEquivalentOf(element: ParsedCodeMetaInfo): Boolean {
-        val iterator = children.iterator()
-
-        while (iterator.hasNext()) {
-            val next = iterator.next().value
-
-            if (next.metaInfo.end <= element.start) {
-                continue
-            }
-
-            if (element.end <= next.metaInfo.start) {
-                break
-            }
-
-            if (
-                next.metaInfo.equivalenceClass == element.equivalenceClass ||
-                next.hasChildThatIsOverlappingEquivalentOf(element)
-            ) {
-                return true
-            }
-        }
-
-        return false
-    }
 }
 
 fun MetaInfoHierarchySet.NodeBase.findChildContaining(start: Int, end: Int) =
@@ -169,3 +132,56 @@ fun MetaInfoHierarchySet.findParentsFor(start: Int, end: Int): List<MetaInfoHier
 
     return parents
 }
+
+fun MetaInfoHierarchySet.hasOverlappingEquivalentOf(element: ParsedCodeMetaInfo): Boolean {
+    val parents = findParentsFor(element.start, element.end)
+    val hasEquivalentParent = parents.any {
+        it is MetaInfoHierarchySet.Node && it.metaInfo.equivalenceClass == element.equivalenceClass
+    }
+
+    if (hasEquivalentParent) {
+        return true
+    }
+
+    return parents.last().hasOverlappingChildWhere(element) {
+        it.metaInfo.equivalenceClass == element.equivalenceClass
+    }
+}
+
+fun MetaInfoHierarchySet.overlapsWith(element: ParsedCodeMetaInfo): Boolean {
+    val parents = findParentsFor(element.start, element.end)
+
+    if (parents.last() is MetaInfoHierarchySet.Node) {
+        return true
+    }
+
+    return parents.last().hasOverlappingChildWhere(element) { true }
+}
+
+private fun MetaInfoHierarchySet.NodeBase.hasOverlappingChildWhere(
+    element: ParsedCodeMetaInfo,
+    condition: (MetaInfoHierarchySet.Node) -> Boolean,
+): Boolean {
+    val iterator = children.iterator()
+
+    while (iterator.hasNext()) {
+        val next = iterator.next().value
+
+        if (next.metaInfo.shiftedEnd <= element.shiftedStart) {
+            continue
+        }
+
+        if (element.shiftedEnd <= next.metaInfo.shiftedStart) {
+            break
+        }
+
+        if (condition(next) || next.hasOverlappingChildWhere(element, condition)) {
+            return true
+        }
+    }
+
+    return false
+}
+
+fun Collection<ParsedCodeMetaInfo>.toMetaInfosHierarchySet() =
+    MetaInfoHierarchySet().also { it.addAll(this) }

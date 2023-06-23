@@ -29,10 +29,12 @@ val equivalentDiagnostics = listOf(
         "TYPE_MISMATCH_IN_FOR_LOOP",
         "TYPE_MISMATCH_IN_RANGE",
         "CONSTANT_EXPECTED_TYPE_MISMATCH",
+        "JSCODE_ARGUMENT_SHOULD_BE_CONSTANT",
         "HAS_NEXT_FUNCTION_TYPE_MISMATCH",
         "CONDITION_TYPE_MISMATCH",
         "EXPECTED_TYPE_MISMATCH",
         "EXPECTED_PARAMETERS_NUMBER_MISMATCH",
+        "EXPECTED_PARAMETER_TYPE_MISMATCH",
         "TYPE_MISMATCH_DUE_TO_EQUALS_LAMBDA_IN_FUN",
         "SIGNED_CONSTANT_CONVERTED_TO_UNSIGNED",
         "UNSUPPORTED_FEATURE",
@@ -80,6 +82,12 @@ val equivalentDiagnostics = listOf(
         "ANNOTATION_ARGUMENT_MUST_BE_CONST",
         "OPT_IN_USAGE_ERROR",
         "EXPRESSION_EXPECTED_PACKAGE_FOUND",
+        "ADAPTED_CALLABLE_REFERENCE_AGAINST_REFLECTION_TYPE",
+//    ),
+//    listOf(
+        "CLASS_LITERAL_LHS_NOT_A_CLASS",
+        "RESERVED_SYNTAX_IN_CALLABLE_REFERENCE_LHS",
+        "EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS",
 //    ),
 //    listOf(
         "RETURN_NOT_ALLOWED",
@@ -98,6 +106,10 @@ val equivalentDiagnostics = listOf(
         "OUTER_CLASS_ARGUMENTS_REQUIRED",
         "TYPE_ARGUMENTS_NOT_ALLOWED",
 //    ),
+//    listOf(
+        "MIXING_NAMED_AND_POSITIONED_ARGUMENTS",
+        "POSITIONED_VALUE_ARGUMENT_FOR_JAVA_ANNOTATION",
+//    )
 //    listOf(
         "VAL_REASSIGNMENT",
         "CAPTURED_MEMBER_VAL_INITIALIZATION",
@@ -192,10 +204,6 @@ val equivalentDiagnostics = listOf(
         "NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY",
     ),
     listOf(
-        "MIXING_NAMED_AND_POSITIONED_ARGUMENTS",
-        "POSITIONED_VALUE_ARGUMENT_FOR_JAVA_ANNOTATION",
-    ),
-    listOf(
         "NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION",
         "CONST_VAL_WITH_NON_CONST_INITIALIZER",
     ),
@@ -211,6 +219,10 @@ val equivalentDiagnostics = listOf(
     listOf(
         "RETURN_TYPE_MISMATCH_ON_INHERITANCE",
         "RETURN_TYPE_MISMATCH_BY_DELEGATION",
+    ),
+    listOf(
+        "CANNOT_CHANGE_ACCESS_PRIVILEGE",
+        "CANNOT_INFER_VISIBILITY",
     ),
 )
 
@@ -339,19 +351,32 @@ class ModifiedParsedCodeMetaInfo(
     attributes: MutableList<String>,
     tag: String,
     description: String?,
-    val original: ParsedCodeMetaInfo,
+    val startingLineOffset: Int,
+    val endingLineOffset: Int,
 ) : ParsedCodeMetaInfo(start, end, attributes, tag, description)
+
+val ParsedCodeMetaInfo.shiftedStart
+    get() = when {
+        this is ModifiedParsedCodeMetaInfo -> startingLineOffset
+        else -> start
+    }
+
+val ParsedCodeMetaInfo.shiftedEnd
+    get() = when {
+        this is ModifiedParsedCodeMetaInfo -> endingLineOffset
+        else -> start
+    }
 
 fun ParsedCodeMetaInfo.replaceOffsetsWithLineNumbersWithin(lineStartOffsets: IntArray): ParsedCodeMetaInfo {
     val lineIndex = lineStartOffsets.getLineNumberForOffset(start)
-    return ModifiedParsedCodeMetaInfo(lineIndex + 1, lineIndex + 1, attributes, tag, description, this)
+    return ParsedCodeMetaInfo(lineIndex + 1, lineIndex + 1, attributes, tag, description)
 }
 
-val ParsedCodeMetaInfo.originalOrSelf
-    get() = when (this) {
-        is ModifiedParsedCodeMetaInfo -> original
-        else -> this
-    }
+fun ParsedCodeMetaInfo.shiftOffsetsWithin(lineStartOffsets: IntArray, totalTextLength: Int): ParsedCodeMetaInfo {
+    val shiftedStart = lineStartOffsets[lineStartOffsets.getLineNumberForOffset(start) - 1]
+    val shiftedEnd = lineStartOffsets.getOrNull(lineStartOffsets.getLineNumberForOffset(end)) ?: totalTextLength
+    return ModifiedParsedCodeMetaInfo(start, end, attributes, tag, description, shiftedStart, shiftedEnd)
+}
 
 val String.lineStartOffsets: IntArray
     get() {
@@ -451,18 +476,24 @@ fun analyseEquivalencesAsHierarchyAmong(
     erroneousK1MetaInfos: List<ParsedCodeMetaInfo>,
     erroneousK2MetaInfos: List<ParsedCodeMetaInfo>,
 ): EquivalenceTestResult {
-    val allK1MetaInfos = MetaInfoHierarchySet().also {
-        it.addAll(erroneousK1MetaInfos)
-    }
-    val allK2MetaInfos = MetaInfoHierarchySet().also {
-        it.addAll(erroneousK2MetaInfos)
-    }
+    val allK1MetaInfos = erroneousK1MetaInfos.toMetaInfosHierarchySet()
+    val allK2MetaInfos = erroneousK2MetaInfos.toMetaInfosHierarchySet()
 
-    val significantK1MetaInfo = erroneousK1MetaInfos.filterNot {
+    val (commonK1MetaInfoList, uniqueK1MetaInfos) = erroneousK1MetaInfos.partition {
         allK2MetaInfos.hasOverlappingEquivalentOf(it)
     }
-    val significantK2MetaInfo = erroneousK2MetaInfos.filterNot {
+    val (commonK2MetaInfoList, uniqueK2MetaInfos) = erroneousK2MetaInfos.partition {
         allK1MetaInfos.hasOverlappingEquivalentOf(it)
+    }
+
+    val commonK1MetaInfos = commonK1MetaInfoList.toMetaInfosHierarchySet()
+    val commonK2MetaInfos = commonK2MetaInfoList.toMetaInfosHierarchySet()
+
+    val significantK1MetaInfo = uniqueK1MetaInfos.filterNot {
+        commonK1MetaInfos.overlapsWith(it)
+    }
+    val significantK2MetaInfo = uniqueK2MetaInfos.filterNot {
+        commonK2MetaInfos.overlapsWith(it)
     }
 
     return EquivalenceTestResult(significantK1MetaInfo, significantK2MetaInfo)
@@ -651,7 +682,7 @@ fun recordCandidateForBoxTestIfNeeded(
     result: EquivalenceTestResult,
     shouldCheckManually: Boolean,
     candidatesForAdditionalBoxTests: MutableList<File>,
-    candidatesForManualChecking: MutableList<File>,
+    candidatesForManualChecking: MutableMap<File, Set<String>>,
 ) {
     val diagnosticsToCheckViaBoxTest = result.significantK1MetaInfo.filter {
         it.tag in knownMissingDiagnostics && it.tag !in obsoleteIssues
@@ -662,7 +693,7 @@ fun recordCandidateForBoxTestIfNeeded(
     }
 
     if (shouldCheckManually) {
-        candidatesForManualChecking.add(test)
+        candidatesForManualChecking[test] = diagnosticsToCheckViaBoxTest.map { it.tag }.toSet()
         return
     }
 
@@ -736,7 +767,7 @@ val knownFailingAdditionalBoxTests = mapOf(
 
 fun generateAdditionalBoxTestsAndLogManuals(
     candidatesForAdditionalBoxTests: List<File>,
-    candidatesForManualChecking: List<File>,
+    candidatesForManualChecking: Map<File, Set<String>>,
 ) {
     val status = StatusPrinter()
     val nextIndexAfter = mutableMapOf<String, Int>()
@@ -752,6 +783,10 @@ fun generateAdditionalBoxTestsAndLogManuals(
     for (it in candidatesForAdditionalBoxTests) {
         val boxTestsDirectory = when {
             "compiler/testData/diagnostics/testsWithJsStdLib" in it.path -> "js/js.translator/testData/box"
+            "/plugins/" in it.path -> {
+                val plugin = extractPluginNameFrom(it.path)
+                "plugins/$plugin/testData/box"
+            }
             else -> "compiler/testData/codegen/box"
         }
 
@@ -787,8 +822,10 @@ fun generateAdditionalBoxTestsAndLogManuals(
 
     status.done("The following tests contain other errors, so they have to be checked manually")
 
-    for ((index, it) in candidatesForManualChecking.withIndex()) {
-        println("- $index: ${it.path.removePrefix(projectDirectory.path)}")
+    for ((index, it) in candidatesForManualChecking.entries.withIndex()) {
+        val (file, diagnostics) = it
+        println("- $index: ${file.path.removePrefix(projectDirectory.path)}")
+        println("  - ${diagnostics.joinToString()}")
     }
 }
 
@@ -933,7 +970,7 @@ fun main() {
     val containmentStatistics = DiagnosticsStatistics()
 
     val candidatesForAdditionalBoxTests = mutableListOf<File>()
-    val candidatesForManualChecking = mutableListOf<File>()
+    val candidatesForManualChecking = mutableMapOf<File, Set<String>>()
 
     fun checkTest(
         testPath: String,
@@ -969,8 +1006,11 @@ fun main() {
             collectBrandNewFeatures = { brandNewFeatures },
         )
 
-        val k1LineStartOffsets = clearTextFromDiagnosticMarkup(k1Text).lineStartOffsets
-        val k2LineStartOffsets = clearTextFromDiagnosticMarkup(k2Text).lineStartOffsets
+        val clearedK1Text = clearTextFromDiagnosticMarkup(k1Text)
+        val clearedK2Text = clearTextFromDiagnosticMarkup(k2Text)
+
+        val k1LineStartOffsets = clearedK1Text.lineStartOffsets
+        val k2LineStartOffsets = clearedK2Text.lineStartOffsets
 
         val allK1LineMetaInfos = allK1MetaInfos.map { it.replaceOffsetsWithLineNumbersWithin(k1LineStartOffsets) }
         val allK2LineMetaInfos = allK2MetaInfos.map { it.replaceOffsetsWithLineNumbersWithin(k2LineStartOffsets) }
@@ -987,10 +1027,10 @@ fun main() {
             collectBrandNewFeatures = { brandNewFeatures },
         )
 
-        val nonSimilarK1MetaInfos = similarityAnalysisResults.significantK1MetaInfo.map { it.originalOrSelf }
-        val nonSimilarK2MetaInfos = similarityAnalysisResults.significantK2MetaInfo.map { it.originalOrSelf }
+        val allK1ShiftedMetaInfos = allK1MetaInfos.map { it.shiftOffsetsWithin(k1LineStartOffsets, clearedK1Text.length) }
+        val allK2ShiftedMetaInfos = allK2MetaInfos.map { it.shiftOffsetsWithin(k2LineStartOffsets, clearedK2Text.length) }
 
-        analyseEquivalencesAsHierarchyAmong(nonSimilarK1MetaInfos, nonSimilarK2MetaInfos).ifTests(
+        analyseEquivalencesAsHierarchyAmong(allK1ShiftedMetaInfos, allK2ShiftedMetaInfos).ifTests(
             test, containment, relativeK1TestPath, relativeK2TestPath,
             areNonEquivalent = { result ->
                 alongsideNonContainedTests.add(test)
@@ -1046,7 +1086,7 @@ fun main() {
     }
 
     generateAdditionalBoxTestsAndLogManuals(candidatesForAdditionalBoxTests, candidatesForManualChecking)
-    analyzeAdditionalBoxTests(containmentStatistics)
+//    analyzeAdditionalBoxTests(containmentStatistics)
 
     val a = 10 + 1
     println("")

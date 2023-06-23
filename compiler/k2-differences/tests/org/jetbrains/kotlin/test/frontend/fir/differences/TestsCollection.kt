@@ -127,14 +127,7 @@ fun collectTestsStats(projectDirectory: File): TestsCollection {
                     tests.categories.getOrPut(category) { mutableListOf() }
                 }
                 "/plugins/" in file.path -> {
-                    val pathAfterPlugins = file.path.split("/plugins/").last()
-                    val testDataSubstringIndex = pathAfterPlugins.indexOf("/testData")
-
-                    if (testDataSubstringIndex == -1) {
-                        error("Please, name test data root folders as `testData` within the plugins directory")
-                    }
-
-                    val plugin = pathAfterPlugins.substring(0, testDataSubstringIndex)
+                    val plugin = extractPluginNameFrom(file.path)
                     tests.pluginTests.getOrPut(plugin) { mutableListOf() }
                 }
                 else -> tests.uncategorizedTests
@@ -146,4 +139,15 @@ fun collectTestsStats(projectDirectory: File): TestsCollection {
 
     status.done("Test data collected")
     return tests
+}
+
+fun extractPluginNameFrom(path: String): String {
+    val pathAfterPlugins = path.split("/plugins/").last()
+    val testDataSubstringIndex = pathAfterPlugins.indexOf("/testData")
+
+    if (testDataSubstringIndex == -1) {
+        error("Please, name test data root folders as `testData` within the plugins directory")
+    }
+
+    return pathAfterPlugins.substring(0, testDataSubstringIndex)
 }
