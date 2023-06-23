@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.fir.expressions.*
 object FirUnsupportedArrayLiteralChecker : FirArrayOfCallChecker() {
     override fun check(expression: FirArrayOfCall, context: CheckerContext, reporter: DiagnosticReporter) {
         if (!isInsideAnnotationCall(expression, context) &&
-            (context.qualifiedAccessOrAssignmentsOrAnnotationCalls.isNotEmpty() || !isInsideAnnotationClass(context))
+            (context.callsOrAssignments.isNotEmpty() || !isInsideAnnotationClass(context))
         ) {
             reporter.reportOn(
                 expression.source,
@@ -32,7 +32,7 @@ object FirUnsupportedArrayLiteralChecker : FirArrayOfCallChecker() {
     }
 
     private fun isInsideAnnotationCall(expression: FirArrayOfCall, context: CheckerContext): Boolean {
-        context.qualifiedAccessOrAssignmentsOrAnnotationCalls.lastOrNull()?.let {
+        context.callsOrAssignments.lastOrNull()?.let {
             val arguments = when (it) {
                 is FirFunctionCall ->
                     if (it.typeRef.toRegularClassSymbol(context.session)?.classKind == ClassKind.ANNOTATION_CLASS) {

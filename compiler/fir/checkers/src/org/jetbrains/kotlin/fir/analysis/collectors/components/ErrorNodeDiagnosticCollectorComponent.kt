@@ -63,7 +63,7 @@ class ErrorNodeDiagnosticCollectorComponent(
 
     private fun processErrorReference(reference: FirNamedReference, diagnostic: ConeDiagnostic, context: CheckerContext) {
         var source = reference.source ?: return
-        val qualifiedAccessOrAnnotationCall = context.qualifiedAccessOrAssignmentsOrAnnotationCalls.lastOrNull()?.takeIf {
+        val callOrAssignment = context.callsOrAssignments.lastOrNull()?.takeIf {
             // Use the source of the enclosing FirQualifiedAccess if it is exactly the call to the erroneous callee.
             it.calleeReference == reference
         }
@@ -75,10 +75,10 @@ class ErrorNodeDiagnosticCollectorComponent(
         ) return
 
         // If the receiver cannot be resolved, we skip reporting any further problems for this call.
-        if (qualifiedAccessOrAnnotationCall is FirQualifiedAccessExpression) {
-            if (qualifiedAccessOrAnnotationCall.dispatchReceiver.cannotBeResolved() ||
-                qualifiedAccessOrAnnotationCall.extensionReceiver.cannotBeResolved() ||
-                qualifiedAccessOrAnnotationCall.explicitReceiver.cannotBeResolved()
+        if (callOrAssignment is FirQualifiedAccessExpression) {
+            if (callOrAssignment.dispatchReceiver.cannotBeResolved() ||
+                callOrAssignment.extensionReceiver.cannotBeResolved() ||
+                callOrAssignment.explicitReceiver.cannotBeResolved()
             ) return
         }
 
@@ -87,7 +87,7 @@ class ErrorNodeDiagnosticCollectorComponent(
             source = property.delegate?.source?.fakeElement(KtFakeSourceElementKind.DelegatedPropertyAccessor) ?: return
         }
 
-        reportFirDiagnostic(diagnostic, source, context, qualifiedAccessOrAnnotationCall?.source)
+        reportFirDiagnostic(diagnostic, source, context, callOrAssignment?.source)
     }
 
     private fun FirExpression?.cannotBeResolved(): Boolean {
@@ -129,7 +129,7 @@ class ErrorNodeDiagnosticCollectorComponent(
         diagnostic: ConeDiagnostic,
         source: KtSourceElement,
         context: CheckerContext,
-        qualifiedAccessSource: KtSourceElement? = null
+        callOrAssignmentSource: KtSourceElement? = null
     ) {
         // Will be handled by [FirDestructuringDeclarationChecker]
         if (source.elementType == KtNodeTypes.DESTRUCTURING_DECLARATION_ENTRY) {
@@ -153,7 +153,7 @@ class ErrorNodeDiagnosticCollectorComponent(
             return
         }
 
-        for (coneDiagnostic in diagnostic.toFirDiagnostics(session, source, qualifiedAccessSource)) {
+        for (coneDiagnostic in diagnostic.toFirDiagnostics(session, source, callOrAssignmentSource)) {
             reporter.report(coneDiagnostic, context)
         }
     }

@@ -36,7 +36,7 @@ object FirOptInUsageTypeRefChecker : FirTypeRefChecker() {
         val symbol = coneType.lookupTag.toSymbol(context.session) ?: return
         symbol.lazyResolveToPhase(FirResolvePhase.STATUS)
         val classId = symbol.classId
-        val lastAnnotationCall = context.qualifiedAccessOrAssignmentsOrAnnotationCalls.lastOrNull() as? FirAnnotation
+        val lastAnnotationCall = context.callsOrAssignments.lastOrNull() as? FirAnnotation
         if (lastAnnotationCall == null || lastAnnotationCall.annotationTypeRef !== typeRef) {
             if (classId == OptInNames.REQUIRES_OPT_IN_CLASS_ID || classId == OptInNames.OPT_IN_CLASS_ID) {
                 reporter.reportOn(source, OPT_IN_CAN_ONLY_BE_USED_AS_ANNOTATION, context)

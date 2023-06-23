@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 
 object FirReceiverAccessBeforeSuperCallChecker : FirInaccessibleReceiverChecker() {
     override fun check(expression: FirInaccessibleReceiverExpression, context: CheckerContext, reporter: DiagnosticReporter) {
-        val containingCall = context.qualifiedAccessOrAssignmentsOrAnnotationCalls.last() as FirQualifiedAccessExpression
+        val containingCall = context.callsOrAssignments.last() as FirQualifiedAccessExpression
         containingCall.run {
             require(expression == dispatchReceiver || expression == extensionReceiver || expression in contextReceiverArguments)
         }

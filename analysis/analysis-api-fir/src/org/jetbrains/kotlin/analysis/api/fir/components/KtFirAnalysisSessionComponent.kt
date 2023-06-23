@@ -50,9 +50,9 @@ internal interface KtFirAnalysisSessionComponent {
 
     fun ConeDiagnostic.asKtDiagnostic(
         source: KtSourceElement,
-        qualifiedAccessSource: KtSourceElement?,
+        callOrAssignmentSource: KtSourceElement?,
     ): KtDiagnosticWithPsi<*>? {
-        val firDiagnostic = toFirDiagnostics(analysisSession.useSiteSession, source, qualifiedAccessSource).firstOrNull() ?: return null
+        val firDiagnostic = toFirDiagnostics(analysisSession.useSiteSession, source, callOrAssignmentSource).firstOrNull() ?: return null
         check(firDiagnostic is KtPsiDiagnostic)
         return firDiagnostic.asKtDiagnostic()
     }

@@ -50,9 +50,9 @@ abstract class CheckerContextForProvider(
         }
     }
 
-    abstract fun addQualifiedAccessOrAnnotationCall(qualifiedAccessOrAnnotationCall: FirStatement): CheckerContextForProvider
+    abstract fun addCallOrAssignment(qualifiedAccessOrAnnotationCall: FirStatement): CheckerContextForProvider
 
-    abstract fun dropQualifiedAccessOrAnnotationCall()
+    abstract fun dropCallOrAssignment()
 
     abstract fun addGetClassCall(getClassCall: FirGetClassCall): CheckerContextForProvider
 

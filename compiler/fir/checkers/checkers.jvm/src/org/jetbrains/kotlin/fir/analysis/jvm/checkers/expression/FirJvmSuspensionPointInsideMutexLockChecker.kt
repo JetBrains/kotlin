@@ -28,7 +28,7 @@ object FirJvmSuspensionPointInsideMutexLockChecker : FirFunctionCallChecker() {
         if (!symbol.isSuspend) return
         val closestAnonymousFunction = context.findClosest<FirAnonymousFunction>() ?: return
 
-        for (call in context.qualifiedAccessOrAssignmentsOrAnnotationCalls.asReversed()) {
+        for (call in context.callsOrAssignments.asReversed()) {
             if (call is FirFunctionCall) {
                 val callableSymbol = call.calleeReference.toResolvedCallableSymbol() ?: continue
                 if (callableSymbol.callableId == synchronizedCallableId) {

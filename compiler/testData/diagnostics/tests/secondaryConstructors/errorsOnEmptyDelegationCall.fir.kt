@@ -3,7 +3,7 @@ open class B0(x: Int)
 
 class A0 : B0 {
     <!EXPLICIT_DELEGATION_CALL_REQUIRED!>constructor()<!>
-    constructor(x: Int) : <!NO_VALUE_FOR_PARAMETER!>super<!>()
+    constructor(x: Int) : <!NO_VALUE_FOR_PARAMETER!>super()<!>
 }
 
 // --------------------------

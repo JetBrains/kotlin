@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.utils.isAbstract
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.references.toResolvedConstructorSymbol
@@ -26,7 +25,7 @@ object FirConstructorCallChecker : FirFunctionCallChecker() {
 
         if (declarationClass != null) {
             if (declarationClass.classKind == ClassKind.ANNOTATION_CLASS &&
-                context.qualifiedAccessOrAssignmentsOrAnnotationCalls.all { call ->
+                context.callsOrAssignments.all { call ->
                     call !is FirAnnotation
                 } &&
                 context.containingDeclarations.all { klass ->

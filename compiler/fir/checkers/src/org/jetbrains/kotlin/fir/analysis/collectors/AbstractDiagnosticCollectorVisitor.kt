@@ -216,23 +216,27 @@ abstract class AbstractDiagnosticCollectorVisitor(
     }
 
     override fun visitFunctionCall(functionCall: FirFunctionCall, data: Nothing?) {
-        visitWithQualifiedAccessOrAnnotationCall(functionCall)
+        visitWithCallOrAssignment(functionCall)
     }
 
     override fun visitQualifiedAccessExpression(qualifiedAccessExpression: FirQualifiedAccessExpression, data: Nothing?) {
-        visitWithQualifiedAccessOrAnnotationCall(qualifiedAccessExpression)
+        visitWithCallOrAssignment(qualifiedAccessExpression)
     }
 
     override fun visitPropertyAccessExpression(propertyAccessExpression: FirPropertyAccessExpression, data: Nothing?) {
-        visitWithQualifiedAccessOrAnnotationCall(propertyAccessExpression)
+        visitWithCallOrAssignment(propertyAccessExpression)
     }
 
     override fun visitAnnotationCall(annotationCall: FirAnnotationCall, data: Nothing?) {
-        visitWithQualifiedAccessOrAnnotationCall(annotationCall)
+        visitWithCallOrAssignment(annotationCall)
     }
 
     override fun visitVariableAssignment(variableAssignment: FirVariableAssignment, data: Nothing?) {
-        visitWithQualifiedAccessOrAnnotationCall(variableAssignment)
+        visitWithCallOrAssignment(variableAssignment)
+    }
+
+    override fun visitDelegatedConstructorCall(delegatedConstructorCall: FirDelegatedConstructorCall, data: Nothing?) {
+        visitWithCallOrAssignment(delegatedConstructorCall)
     }
 
     override fun visitGetClassCall(getClassCall: FirGetClassCall, data: Nothing?) {
@@ -273,9 +277,9 @@ abstract class AbstractDiagnosticCollectorVisitor(
         }
     }
 
-    private fun visitWithQualifiedAccessOrAnnotationCall(qualifiedAccessOrAnnotationCall: FirStatement) {
-        return withQualifiedAccessOrAnnotationCall(qualifiedAccessOrAnnotationCall) {
-            visitElement(qualifiedAccessOrAnnotationCall, null)
+    private fun visitWithCallOrAssignment(callOrAssignment: FirStatement) {
+        return withCallOrAssignment(callOrAssignment) {
+            visitElement(callOrAssignment, null)
         }
     }
 
@@ -286,15 +290,15 @@ abstract class AbstractDiagnosticCollectorVisitor(
     }
 
     @OptIn(PrivateForInline::class)
-    inline fun <R> withQualifiedAccessOrAnnotationCall(qualifiedAccessOrAnnotationCall: FirStatement, block: () -> R): R {
+    inline fun <R> withCallOrAssignment(callOrAssignment: FirStatement, block: () -> R): R {
         val existingContext = context
-        context = context.addQualifiedAccessOrAnnotationCall(qualifiedAccessOrAnnotationCall)
+        context = context.addCallOrAssignment(callOrAssignment)
         try {
-            return whileAnalysing(context.session, qualifiedAccessOrAnnotationCall) {
+            return whileAnalysing(context.session, callOrAssignment) {
                 block()
             }
         } finally {
-            existingContext.dropQualifiedAccessOrAnnotationCall()
+            existingContext.dropCallOrAssignment()
             context = existingContext
         }
     }

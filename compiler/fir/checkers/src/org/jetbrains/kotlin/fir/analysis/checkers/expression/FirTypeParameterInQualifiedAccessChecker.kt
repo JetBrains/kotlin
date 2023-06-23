@@ -33,7 +33,7 @@ object FirTypeParameterInQualifiedAccessChecker : FirQualifiedAccessExpressionCh
         // Make sure the current expression is not the receiver of a qualified access expression.
         // E.g., for `T::toString`, which is a callable reference (a subtype of qualified access), type parameter T is checked once as an
         // explicit receiver. When we visit `T` (as a qualified access expression), we should not regard it as an expression here.
-        val secondLast = context.qualifiedAccessOrAssignmentsOrAnnotationCalls.elementAtOrNull(context.qualifiedAccessOrAssignmentsOrAnnotationCalls.size - 2)
+        val secondLast = context.callsOrAssignments.elementAtOrNull(context.callsOrAssignments.size - 2)
         if (secondLast is FirQualifiedAccessExpression && secondLast.explicitReceiver == expression) return
 
         val diagnostic = expression.typeRef.coneTypeParameterInQualifiedAccess ?: return

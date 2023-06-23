@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.name.Name
 class PersistentCheckerContext private constructor(
     override val implicitReceiverStack: PersistentImplicitReceiverStack,
     override val containingDeclarations: PersistentList<FirDeclaration>,
-    override val qualifiedAccessOrAssignmentsOrAnnotationCalls: PersistentList<FirStatement>,
+    override val callsOrAssignments: PersistentList<FirStatement>,
     override val getClassCalls: PersistentList<FirGetClassCall>,
     override val annotationContainers: PersistentList<FirAnnotationContainer>,
     override val containingElements: PersistentList<FirElement>,
@@ -62,13 +62,13 @@ class PersistentCheckerContext private constructor(
 
     override fun dropDeclaration() {}
 
-    override fun addQualifiedAccessOrAnnotationCall(qualifiedAccessOrAnnotationCall: FirStatement): PersistentCheckerContext =
+    override fun addCallOrAssignment(qualifiedAccessOrAnnotationCall: FirStatement): PersistentCheckerContext =
         copy(
             qualifiedAccessOrAssignmentsOrAnnotationCalls =
-            qualifiedAccessOrAssignmentsOrAnnotationCalls.add(qualifiedAccessOrAnnotationCall)
+            callsOrAssignments.add(qualifiedAccessOrAnnotationCall)
         )
 
-    override fun dropQualifiedAccessOrAnnotationCall() {}
+    override fun dropCallOrAssignment() {}
 
     override fun addGetClassCall(getClassCall: FirGetClassCall): PersistentCheckerContext =
         copy(getClassCalls = getClassCalls.add(getClassCall))
@@ -102,7 +102,7 @@ class PersistentCheckerContext private constructor(
 
     private fun copy(
         implicitReceiverStack: PersistentImplicitReceiverStack = this.implicitReceiverStack,
-        qualifiedAccessOrAssignmentsOrAnnotationCalls: PersistentList<FirStatement> = this.qualifiedAccessOrAssignmentsOrAnnotationCalls,
+        qualifiedAccessOrAssignmentsOrAnnotationCalls: PersistentList<FirStatement> = this.callsOrAssignments,
         getClassCalls: PersistentList<FirGetClassCall> = this.getClassCalls,
         annotationContainers: PersistentList<FirAnnotationContainer> = this.annotationContainers,
         containingElements: PersistentList<FirElement> = this.containingElements,

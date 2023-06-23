@@ -33,7 +33,9 @@ abstract class CheckerContext : DiagnosticContext {
     // Context
     abstract val implicitReceiverStack: ImplicitReceiverStack
     abstract val containingDeclarations: List<FirDeclaration>
-    abstract val qualifiedAccessOrAssignmentsOrAnnotationCalls: List<FirStatement>
+
+    /** Contains qualified access, annotation call, delegated constructor call, and variable assignment. */
+    abstract val callsOrAssignments: List<FirStatement>
     abstract val getClassCalls: List<FirGetClassCall>
     abstract val annotationContainers: List<FirAnnotationContainer>
     abstract val containingElements: List<FirElement>

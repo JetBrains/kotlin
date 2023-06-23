@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.name.Name
 class MutableCheckerContext private constructor(
     override val implicitReceiverStack: PersistentImplicitReceiverStack,
     override val containingDeclarations: MutableList<FirDeclaration>,
-    override val qualifiedAccessOrAssignmentsOrAnnotationCalls: MutableList<FirStatement>,
+    override val callsOrAssignments: MutableList<FirStatement>,
     override val getClassCalls: MutableList<FirGetClassCall>,
     override val annotationContainers: MutableList<FirAnnotationContainer>,
     override val containingElements: MutableList<FirElement>,
@@ -56,7 +56,7 @@ class MutableCheckerContext private constructor(
         return MutableCheckerContext(
             implicitReceiverStack.add(name, value),
             containingDeclarations,
-            qualifiedAccessOrAssignmentsOrAnnotationCalls,
+            callsOrAssignments,
             getClassCalls,
             annotationContainers,
             containingElements,
@@ -80,13 +80,13 @@ class MutableCheckerContext private constructor(
         containingDeclarations.removeLast()
     }
 
-    override fun addQualifiedAccessOrAnnotationCall(qualifiedAccessOrAnnotationCall: FirStatement): MutableCheckerContext {
-        qualifiedAccessOrAssignmentsOrAnnotationCalls.add(qualifiedAccessOrAnnotationCall)
+    override fun addCallOrAssignment(qualifiedAccessOrAnnotationCall: FirStatement): MutableCheckerContext {
+        callsOrAssignments.add(qualifiedAccessOrAnnotationCall)
         return this
     }
 
-    override fun dropQualifiedAccessOrAnnotationCall() {
-        qualifiedAccessOrAssignmentsOrAnnotationCalls.removeLast()
+    override fun dropCallOrAssignment() {
+        callsOrAssignments.removeLast()
     }
 
     override fun addGetClassCall(getClassCall: FirGetClassCall): MutableCheckerContext {
@@ -127,7 +127,7 @@ class MutableCheckerContext private constructor(
         return MutableCheckerContext(
             implicitReceiverStack,
             containingDeclarations,
-            qualifiedAccessOrAssignmentsOrAnnotationCalls,
+            callsOrAssignments,
             getClassCalls,
             annotationContainers,
             containingElements,

@@ -253,8 +253,8 @@ object FirInlineDeclarationChecker : FirFunctionChecker() {
 
         private fun FirStatement.partOfCall(context: CheckerContext): Boolean {
             if (this !is FirExpression) return false
-            val containingQualifiedAccess = context.qualifiedAccessOrAssignmentsOrAnnotationCalls.getOrNull(
-                context.qualifiedAccessOrAssignmentsOrAnnotationCalls.size - 2
+            val containingQualifiedAccess = context.callsOrAssignments.getOrNull(
+                context.callsOrAssignments.size - 2
             ) ?: return false
             if (this == (containingQualifiedAccess as? FirQualifiedAccessExpression)?.explicitReceiver) return true
             val call = containingQualifiedAccess as? FirCall ?: return false

@@ -17,4 +17,4 @@ val test2 = <!NO_VALUE_FOR_PARAMETER!>C2_Alias()<!>
 
 class Test3 : <!API_NOT_AVAILABLE!>C1_Alias<!>()
 
-class Test4 : <!NO_VALUE_FOR_PARAMETER!>C2_Alias<!>()
+class Test4 : <!NO_VALUE_FOR_PARAMETER!>C2_Alias()<!>

@@ -36,7 +36,7 @@ object FirReturnSyntaxAndLabelChecker : FirReturnExpressionChecker() {
         if (targetSymbol is FirAnonymousFunctionSymbol) {
             val label = targetSymbol.label
             if (label?.source?.kind !is KtRealSourceElementKind) {
-                val functionCall = context.qualifiedAccessOrAssignmentsOrAnnotationCalls.asReversed().find {
+                val functionCall = context.callsOrAssignments.asReversed().find {
                     it is FirFunctionCall &&
                             (it.calleeReference.toResolvedFunctionSymbol())?.callableId ==
                             FirSuspendCallChecker.KOTLIN_SUSPEND_BUILT_IN_FUNCTION_CALLABLE_ID

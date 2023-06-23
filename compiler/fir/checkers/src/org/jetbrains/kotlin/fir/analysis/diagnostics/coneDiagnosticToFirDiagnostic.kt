@@ -46,7 +46,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 private fun ConeDiagnostic.toKtDiagnostic(
     source: KtSourceElement,
-    qualifiedAccessSource: KtSourceElement?
+    callOrAssignmentSource: KtSourceElement?
 ): KtDiagnostic? = when (this) {
     is ConeUnresolvedReferenceError -> FirErrors.UNRESOLVED_REFERENCE.createOn(
         source,
@@ -83,7 +83,7 @@ private fun ConeDiagnostic.toKtDiagnostic(
         applicability.isSuccess -> FirErrors.OVERLOAD_RESOLUTION_AMBIGUITY.createOn(source, this.candidates.map { it.symbol })
         applicability == CandidateApplicability.UNSAFE_CALL -> {
             val (unsafeCall, candidate) = candidates.firstNotNullOf { it.diagnostics.firstIsInstanceOrNull<UnsafeCall>()?.to(it) }
-            mapUnsafeCallError(candidate, unsafeCall, source, qualifiedAccessSource)
+            mapUnsafeCallError(candidate, unsafeCall, source, callOrAssignmentSource)
         }
 
         applicability == CandidateApplicability.UNSTABLE_SMARTCAST -> {
@@ -109,22 +109,22 @@ private fun ConeDiagnostic.toKtDiagnostic(
         FirErrors.WRONG_NUMBER_OF_TYPE_ARGUMENTS.createOn(this.source, this.desiredCount, this.symbol)
 
     is ConeOuterClassArgumentsRequired ->
-        FirErrors.OUTER_CLASS_ARGUMENTS_REQUIRED.createOn(qualifiedAccessSource ?: source, this.symbol)
+        FirErrors.OUTER_CLASS_ARGUMENTS_REQUIRED.createOn(callOrAssignmentSource ?: source, this.symbol)
 
     is ConeNoTypeArgumentsOnRhsError ->
-        FirErrors.NO_TYPE_ARGUMENTS_ON_RHS.createOn(qualifiedAccessSource ?: source, this.desiredCount, this.symbol)
+        FirErrors.NO_TYPE_ARGUMENTS_ON_RHS.createOn(callOrAssignmentSource ?: source, this.desiredCount, this.symbol)
 
-    is ConeSyntaxDiagnostic -> FirSyntaxErrors.SYNTAX.createOn(qualifiedAccessSource ?: source, reason)
+    is ConeSyntaxDiagnostic -> FirSyntaxErrors.SYNTAX.createOn(callOrAssignmentSource ?: source, reason)
 
     is ConeSimpleDiagnostic -> when {
         source.kind is KtFakeSourceElementKind && source.kind != KtFakeSourceElementKind.ReferenceInAtomicQualifiedAccess -> null
-        else -> this.getFactory(source).createOn(qualifiedAccessSource ?: source)
+        else -> this.getFactory(source).createOn(callOrAssignmentSource ?: source)
     }
 
     is ConeDestructuringDeclarationsOnTopLevel -> null // TODO Currently a parsing error. Would be better to report here instead KT-58563
     is ConeCannotInferTypeParameterType -> FirErrors.CANNOT_INFER_PARAMETER_TYPE.createOn(source)
     is ConeCannotInferValueParameterType -> FirErrors.CANNOT_INFER_PARAMETER_TYPE.createOn(source)
-    is ConeTypeVariableTypeIsNotInferred -> FirErrors.INFERENCE_ERROR.createOn(qualifiedAccessSource ?: source)
+    is ConeTypeVariableTypeIsNotInferred -> FirErrors.INFERENCE_ERROR.createOn(callOrAssignmentSource ?: source)
     is ConeInstanceAccessBeforeSuperCall -> FirErrors.INSTANCE_ACCESS_BEFORE_SUPER_CALL.createOn(source, this.target)
     is ConeStubDiagnostic -> null
     is ConeIntermediateDiagnostic -> null
@@ -162,12 +162,12 @@ fun FirBasedSymbol<*>.toInvisibleReferenceDiagnostic(source: KtSourceElement?): 
 fun ConeDiagnostic.toFirDiagnostics(
     session: FirSession,
     source: KtSourceElement,
-    qualifiedAccessSource: KtSourceElement?
+    callOrAssignmentSource: KtSourceElement?
 ): List<KtDiagnostic> {
     return when (this) {
-        is ConeInapplicableCandidateError -> mapInapplicableCandidateError(session, this, source, qualifiedAccessSource)
-        is ConeConstraintSystemHasContradiction -> mapSystemHasContradictionError(session, this, source, qualifiedAccessSource)
-        else -> listOfNotNull(toKtDiagnostic(source, qualifiedAccessSource))
+        is ConeInapplicableCandidateError -> mapInapplicableCandidateError(session, this, source, callOrAssignmentSource)
+        is ConeConstraintSystemHasContradiction -> mapSystemHasContradictionError(session, this, source, callOrAssignmentSource)
+        else -> listOfNotNull(toKtDiagnostic(source, callOrAssignmentSource))
     }
 }
 
