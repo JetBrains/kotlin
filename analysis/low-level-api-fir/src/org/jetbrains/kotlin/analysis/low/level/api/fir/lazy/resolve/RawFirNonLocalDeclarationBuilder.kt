@@ -9,6 +9,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignation
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.llFirModuleData
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.codeFragment
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
@@ -54,7 +55,7 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
             session: FirSession,
             scopeProvider: FirScopeProvider,
             designation: FirDesignation,
-            rootNonLocalDeclaration: KtDeclaration,
+            rootNonLocalDeclaration: KtElement,
             replacement: RawFirReplacement?,
         ): FirDeclaration {
             val replacementApplier = replacement?.Applier()
@@ -316,6 +317,10 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
                     }
                 }
                 is KtDestructuringDeclaration -> visitor.convertDestructuringDeclaration(declarationToBuild)
+                is KtCodeFragment -> {
+                    val firFile = visitor.convertElement(declarationToBuild, originalDeclaration) as FirFile
+                    firFile.codeFragment
+                }
                 else -> visitor.convertElement(declarationToBuild, originalDeclaration)
             } as FirDeclaration
         }
