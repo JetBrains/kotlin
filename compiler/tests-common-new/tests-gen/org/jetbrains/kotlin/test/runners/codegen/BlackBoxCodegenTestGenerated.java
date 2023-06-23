@@ -46946,6 +46946,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
 
         @Test
+        @TestMetadata("bridgesJVM.kt")
+        public void testBridgesJVM() throws Exception {
+            runTest("compiler/testData/codegen/box/specialBuiltins/bridgesJVM.kt");
+        }
+
+        @Test
         @TestMetadata("charBuffer.kt")
         public void testCharBuffer() throws Exception {
             runTest("compiler/testData/codegen/box/specialBuiltins/charBuffer.kt");

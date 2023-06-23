@@ -37934,12 +37934,6 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
             }
 
             @Test
-            @TestMetadata("commonBridgesTarget.kt")
-            public void testCommonBridgesTarget() throws Exception {
-                runTest("compiler/testData/codegen/box/specialBuiltins/commonBridgesTarget.kt");
-            }
-
-            @Test
             @TestMetadata("emptyList.kt")
             public void testEmptyList() throws Exception {
                 runTest("compiler/testData/codegen/box/specialBuiltins/emptyList.kt");
@@ -37958,12 +37952,6 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
             }
 
             @Test
-            @TestMetadata("entrySetSOE.kt")
-            public void testEntrySetSOE() throws Exception {
-                runTest("compiler/testData/codegen/box/specialBuiltins/entrySetSOE.kt");
-            }
-
-            @Test
             @TestMetadata("enumAsOrdinaled.kt")
             public void testEnumAsOrdinaled() throws Exception {
                 runTest("compiler/testData/codegen/box/specialBuiltins/enumAsOrdinaled.kt");
@@ -37973,12 +37961,6 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
             @TestMetadata("exceptionCause.kt")
             public void testExceptionCause() throws Exception {
                 runTest("compiler/testData/codegen/box/specialBuiltins/exceptionCause.kt");
-            }
-
-            @Test
-            @TestMetadata("explicitSuperCall.kt")
-            public void testExplicitSuperCall() throws Exception {
-                runTest("compiler/testData/codegen/box/specialBuiltins/explicitSuperCall.kt");
             }
 
             @Test
@@ -38021,12 +38003,6 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
             @TestMetadata("removeAtTwoSpecialBridges.kt")
             public void testRemoveAtTwoSpecialBridges() throws Exception {
                 runTest("compiler/testData/codegen/box/specialBuiltins/removeAtTwoSpecialBridges.kt");
-            }
-
-            @Test
-            @TestMetadata("removeSetInt.kt")
-            public void testRemoveSetInt() throws Exception {
-                runTest("compiler/testData/codegen/box/specialBuiltins/removeSetInt.kt");
             }
 
             @Test
