@@ -217,7 +217,7 @@ private class CodeFragmentCapturedValueVisitor(
         val declarationSite = symbol.fir.source?.psi ?: return false
         val commonParent = findCommonParentContextAware(callSite, declarationSite) ?: return false
 
-        for (elementInBetween in callSite.parentsContextAware) {
+        for (elementInBetween in callSite.parentsCodeFragmentAware) {
             if (elementInBetween === commonParent) {
                 break
             }
