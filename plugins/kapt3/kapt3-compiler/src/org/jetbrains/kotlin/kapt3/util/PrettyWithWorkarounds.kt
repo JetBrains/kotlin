@@ -1,9 +1,9 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.kapt4
+package org.jetbrains.kotlin.kapt3.util
 
 import com.sun.tools.javac.code.Flags
 import com.sun.tools.javac.tree.JCTree
@@ -14,11 +14,7 @@ import org.jetbrains.kotlin.kapt3.base.util.isJava11OrLater
 import java.io.StringWriter
 import java.io.Writer
 
-internal fun JCTree.prettyPrint(context: Context): String {
-    return StringWriter().apply { PrettyWithWorkarounds(context, this, false).printStat(this@prettyPrint) }.toString()
-}
-
-private class PrettyWithWorkarounds(private val context: Context, val out: Writer, sourceOutput: Boolean) : Pretty(out, sourceOutput) {
+class PrettyWithWorkarounds(private val context: Context, val out: Writer, sourceOutput: Boolean) : Pretty(out, sourceOutput) {
     companion object {
         private const val ENUM = Flags.ENUM.toLong()
     }
@@ -42,4 +38,8 @@ private class PrettyWithWorkarounds(private val context: Context, val out: Write
         }
         super.visitVarDef(tree)
     }
+}
+
+fun JCTree.prettyPrint(context: Context): String {
+    return StringWriter().apply { PrettyWithWorkarounds(context, this, false).printStat(this@prettyPrint) }.toString()
 }

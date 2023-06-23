@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.kapt3.test.handlers.ClassFileToSourceKaptStubHandler
 import org.jetbrains.kotlin.kapt3.test.handlers.checkTxtAccordingToBackendAndFrontend
 import org.jetbrains.kotlin.kapt3.test.handlers.removeMetadataAnnotationContents
 import org.jetbrains.kotlin.kapt3.test.messageCollectorProvider
+import org.jetbrains.kotlin.kapt3.util.prettyPrint
 import org.jetbrains.kotlin.test.model.AnalysisHandler
 import org.jetbrains.kotlin.test.model.TestArtifactKind
 import org.jetbrains.kotlin.test.model.TestModule

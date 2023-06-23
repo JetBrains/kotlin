@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.kapt3.base.*
 import org.jetbrains.kotlin.kapt3.base.util.KaptLogger
 import org.jetbrains.kotlin.kapt3.base.util.WriterBackedKaptLogger
 import org.jetbrains.kotlin.kapt3.util.MessageCollectorBackedKaptLogger
+import org.jetbrains.kotlin.kapt3.util.prettyPrint
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.util.ServiceLoaderLite
