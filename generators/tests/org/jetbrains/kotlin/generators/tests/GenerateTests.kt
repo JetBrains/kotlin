@@ -386,9 +386,9 @@ fun main(args: Array<String>) {
                 model("converter")
             }
         }
-        testGroup("plugins/kapt4/kapt4-compiler/tests-gen", "plugins/kapt4/kapt4-compiler/testData") {
+        testGroup("plugins/kapt4/tests-gen", "plugins/kapt4/testData") {
             testClass<AbstractKotlinKapt4ContextTest> {
-                model("../../../kapt3/kapt3-compiler/testData/converter")
+                model("../../kapt3/kapt3-compiler/testData/converter")
             }
             testClass<AbstractKaptToolIntegrationTest> {
                 model("integration", recursive = false, extension = null)

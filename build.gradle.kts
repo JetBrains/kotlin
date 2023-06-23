@@ -372,7 +372,7 @@ val projectsWithEnabledContextReceivers by extra {
         ":kotlinx-serialization-compiler-plugin.k2",
         ":plugins:parcelize:parcelize-compiler:parcelize.k2",
         ":plugins:fir-plugin-prototype",
-        ":plugins:kapt4:kapt4-compiler",
+        ":plugins:kapt4-compiler",
     )
 }
 
