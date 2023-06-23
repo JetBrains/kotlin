@@ -53,6 +53,7 @@ val nodeModules by configurations.registering {
 }
 
 val compileTestDevelopmentExecutableKotlinJs = tasks.named<KotlinJsIrLink>("compileTestDevelopmentExecutableKotlinJs") {
+    @Suppress("DEPRECATION")
     kotlinOptions.outputFile = buildDir.resolve("compileSync/js/test/testDevelopmentExecutable/kotlin/kotlin-kotlin-test-js-ir-it-test.js").normalize().absolutePath
 }
 

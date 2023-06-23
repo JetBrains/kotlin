@@ -69,7 +69,7 @@ fun getRootSettings(
         }
         else -> {
             val gradleParent = gradle.parent ?: error("Could not get includedBuild parent build for ${settings.rootDir}!")
-            getRootSettings(gradle.parent!!.settings, gradle.parent!!)
+            getRootSettings(gradleParent.settings, gradleParent)
         }
     }
 }
@@ -138,7 +138,7 @@ fun String?.propValueToBoolean(default: Boolean = false): Boolean {
     }
 }
 
-fun Provider<String>.mapToBoolean(): Provider<Boolean> = map { it?.propValueToBoolean() }
+fun Provider<String>.mapToBoolean(): Provider<Boolean> = map { it.propValueToBoolean() }
 
 fun RepositoryHandler.addBootstrapRepo(
     bootstrapRepo: String,

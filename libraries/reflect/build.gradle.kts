@@ -176,7 +176,7 @@ val proguard by task<CacheableProguardTask> {
                     "jre/lib/rt.jar",
                     "../Classes/classes.jar",
                     jdkHome = it.metadata.installationPath.asFile
-                )
+                )!!
             }
         )
     )

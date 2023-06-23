@@ -63,17 +63,17 @@ idePluginDependency {
                         "jre/lib/rt.jar",
                         "../Classes/classes.jar",
                         jdkHome = it.metadata.installationPath.asFile
-                    )
+                    )!!
                 },
                 javaLauncher.map {
                     firstFromJavaHomeThatExists(
                         "jre/lib/jsse.jar",
                         "../Classes/jsse.jar",
                         jdkHome = it.metadata.installationPath.asFile
-                    )
+                    )!!
                 },
                 javaLauncher.map {
-                    org.gradle.internal.jvm.Jvm.forHome(it.metadata.installationPath.asFile).toolsJar
+                    org.gradle.internal.jvm.Jvm.forHome(it.metadata.installationPath.asFile).toolsJar!!
                 }
             )
         )

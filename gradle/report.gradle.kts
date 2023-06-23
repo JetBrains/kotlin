@@ -4,7 +4,6 @@
  */
 
 import org.gradle.api.Task
-import org.gradle.api.execution.TaskExecutionListener
 import org.gradle.api.invocation.Gradle
 import org.gradle.api.logging.Logger
 import org.gradle.api.tasks.TaskState
@@ -19,7 +18,7 @@ private class BuildTimeReporter(
     private val javaCompileClass: Class<*>,
     private val jarClass: Class<*>,
     private val proguardClass: Class<*>
-) : TaskExecutionListener {
+) : @Suppress("DEPRECATION") org.gradle.api.execution.TaskExecutionListener {
     companion object {
         fun configure(gradle: Gradle) {
             val rootProject = gradle.rootProject
@@ -40,7 +39,9 @@ private class BuildTimeReporter(
                 jarClass = findClass("org.gradle.jvm.tasks.Jar") ?: return,
                 proguardClass = findClass("proguard.gradle.ProGuardTask") ?: return
             )
+            @Suppress("DEPRECATION")
             gradle.taskGraph.addTaskExecutionListener(reporter)
+            @Suppress("DEPRECATION")
             gradle.buildFinished {
                 reporter.report(logger)
             }

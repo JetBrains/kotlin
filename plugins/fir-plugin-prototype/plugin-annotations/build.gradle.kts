@@ -8,6 +8,7 @@ kotlin {
         binaries.executable()
     }
 
+    @Suppress("UNUSED_VARIABLE")
     sourceSets {
         val commonMain by getting {
             dependencies {
@@ -15,7 +16,7 @@ kotlin {
             }
         }
         val jvmMain by getting {
-            dependencies {1
+            dependencies {
                 implementation(kotlin("stdlib-jdk8"))
             }
         }

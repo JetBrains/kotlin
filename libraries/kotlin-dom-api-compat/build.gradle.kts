@@ -10,6 +10,7 @@ val jsStdlibSources = "${projectDir}/../stdlib/js/src"
 
 kotlin {
     js(IR) {
+        @Suppress("UNUSED_VARIABLE")
         sourceSets {
             val main by getting {
                 if (!kotlinBuildProperties.isInIdeaSync) {

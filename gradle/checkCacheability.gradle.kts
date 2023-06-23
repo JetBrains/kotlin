@@ -5,6 +5,7 @@ val checkCacheability = findProperty("kotlin.build.cache.check.enabled") as Stri
 val isTeamcityBuild = project.hasProperty("teamcity") || System.getenv("TEAMCITY_VERSION") != null
 
 if (checkCacheability && buildCacheEnabled()) {
+    @Suppress("DEPRECATION")
     gradle.taskGraph.afterTask {
         if (isCacheable()) {
             if (isTeamcityBuild)

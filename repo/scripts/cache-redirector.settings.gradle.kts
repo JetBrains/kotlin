@@ -14,6 +14,7 @@ import org.gradle.util.GradleVersion
 // This script is also being used in the Gradle integration tests which runs older Gradle versions
 fun <T : Any> Provider<T>.forUseAtConfigurationTimeCompat(): Provider<T> =
     if (GradleVersion.current() < GradleVersion.version("7.4")) {
+        @Suppress("DEPRECATION")
         forUseAtConfigurationTime()
     } else {
         this

@@ -129,7 +129,7 @@ fun prepareDeps(
 ) {
     val makeIntellijCore = buildIvyRepositoryTask(intellijCore, customDepsOrg, customDepsRepoDir)
 
-    val makeIntellijAnnotations = tasks.register("makeIntellijAnnotations${intellij.name.capitalize()}", Copy::class) {
+    val makeIntellijAnnotations = tasks.register("makeIntellijAnnotations${intellij.name.replaceFirstChar(Char::uppercase)}", Copy::class) {
         dependsOn(makeIntellijCore)
 
         val intellijCoreRepo = CleanableStore[repoDir.resolve("intellij-core").absolutePath][intellijVersion].use()
@@ -160,7 +160,7 @@ fun prepareDeps(
         }
     }
 
-    val mergeSources = tasks.create("mergeSources${intellij.name.capitalize()}", Jar::class.java) {
+    val mergeSources = tasks.create("mergeSources${intellij.name.replaceFirstChar(Char::uppercase)}", Jar::class.java) {
         dependsOn(sources)
         isPreserveFileTimestamps = false
         isReproducibleFileOrder = true
@@ -236,7 +236,7 @@ fun buildIvyRepositoryTask(
     fun ResolvedArtifact.moduleDirectory(): File =
         storeDirectory()[moduleVersion.id.version].use()
 
-    return tasks.register("buildIvyRepositoryFor${configuration.name.capitalize()}") {
+    return tasks.register("buildIvyRepositoryFor${configuration.name.replaceFirstChar(Char::uppercase)}") {
         dependsOn(configuration)
         inputs.files(configuration)
 
@@ -366,7 +366,7 @@ fun writeIvyXml(
                 element("publications") {
                     artifactDir.listFiles()
                         ?.filter(::shouldIncludeIntellijJar)
-                        ?.sortedBy { it.name.toLowerCase() }
+                        ?.sortedBy { it.name.lowercase() }
                         ?.forEach { jarFile ->
                             val relativeName = jarFile.toRelativeString(baseDir).removeSuffix(".jar")
                             emptyElement("artifact") {

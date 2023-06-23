@@ -121,17 +121,17 @@ val proguard by task<CacheableProguardTask> {
                     "jre/lib/rt.jar",
                     "../Classes/classes.jar",
                     jdkHome = it.metadata.installationPath.asFile
-                )
+                )!!
             },
             javaLauncher.map {
                 firstFromJavaHomeThatExists(
                     "jre/lib/jsse.jar",
                     "../Classes/jsse.jar",
                     jdkHome = it.metadata.installationPath.asFile
-                )
+                )!!
             },
             javaLauncher.map {
-                Jvm.forHome(it.metadata.installationPath.asFile).toolsJar
+                Jvm.forHome(it.metadata.installationPath.asFile).toolsJar!!
             }
         )
     )
