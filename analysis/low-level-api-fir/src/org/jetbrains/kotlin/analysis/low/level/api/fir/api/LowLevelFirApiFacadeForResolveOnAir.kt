@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirResolvableS
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLFirResolvableResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.FirElementFinder
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.codeFragment
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.originalDeclaration
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
@@ -51,8 +52,12 @@ object LowLevelFirApiFacadeForResolveOnAir {
         else -> true
     }
 
-    private fun PsiElement.onAirGetNonLocalContainingOrThisDeclaration(): KtDeclaration? {
-        return getNonLocalContainingOrThisDeclaration { declaration ->
+    private fun PsiElement.getNonLocalContainingOrThisDeclarationCodeFragmentAware(predicate: (KtDeclaration) -> Boolean): KtElement? {
+        return getNonLocalContainingOrThisDeclaration(predicate) ?: containingFile as? KtCodeFragment
+    }
+
+    private fun PsiElement.onAirGetNonLocalContainingOrThisDeclaration(): KtElement? {
+        return getNonLocalContainingOrThisDeclarationCodeFragmentAware { declaration ->
             declaration.isApplicableForOnAirResolve() && !declaration.canBePartOfParentDeclaration
         }
     }
@@ -176,7 +181,7 @@ object LowLevelFirApiFacadeForResolveOnAir {
         require(originalFirResolveSession is LLFirResolvableResolveSession)
         require(elementToAnalyze !is KtFile) { "KtFile for dependency element not supported" }
 
-        val minimalCopiedDeclaration = elementToAnalyze.getNonLocalContainingOrThisDeclaration {
+        val minimalCopiedDeclaration = elementToAnalyze.getNonLocalContainingOrThisDeclarationCodeFragmentAware {
             it.isApplicableForOnAirResolve()
         }
 
@@ -193,7 +198,12 @@ object LowLevelFirApiFacadeForResolveOnAir {
                 withPsiEntry("originalFile", originalKtFile)
             }
 
-        recordOriginalDeclaration(targetDeclaration = copiedNonLocalDeclaration, originalDeclaration = originalNonLocalDeclaration)
+        if (copiedNonLocalDeclaration is KtNamedDeclaration && originalNonLocalDeclaration is KtNamedDeclaration) {
+            recordOriginalDeclaration(
+                targetDeclaration = copiedNonLocalDeclaration,
+                originalDeclaration = originalNonLocalDeclaration
+            )
+        }
 
         val collector = FirTowerDataContextAllElementsCollector()
         val copiedFirDeclaration = runBodyResolveOnAir(
@@ -260,7 +270,7 @@ object LowLevelFirApiFacadeForResolveOnAir {
         collector: FirResolveContextCollector?,
         forcedResolvePhase: FirResolvePhase? = null,
     ): FirElement {
-        val minimalOriginalDeclarationToReplace = originalPlace.getNonLocalContainingOrThisDeclaration {
+        val minimalOriginalDeclarationToReplace = originalPlace.getNonLocalContainingOrThisDeclarationCodeFragmentAware {
             it.isApplicableForOnAirResolve()
         }
 
@@ -286,7 +296,7 @@ object LowLevelFirApiFacadeForResolveOnAir {
             }
         }
 
-        val originalDesignationPath = FirElementFinder.collectDesignationPath(originalFirFile, originalDeclaration)
+        val originalDesignationPath = computeDesignation(originalDeclaration, originalFirFile)
             ?: errorWithFirSpecificEntries(message = "Impossible to collect designation", fir = originalFirFile, psi = originalDeclaration)
 
         val originalFirDeclaration = originalDesignationPath.target
@@ -321,17 +331,31 @@ object LowLevelFirApiFacadeForResolveOnAir {
         return newFirDeclaration
     }
 
-    private fun requiredResolvePhase(
-        container: KtDeclaration,
-        elementToReplace: PsiElement,
-    ): FirResolvePhase = when {
-        bodyResolveRequired(container, elementToReplace) -> FirResolvePhase.BODY_RESOLVE
-        annotationMappingRequired(container, elementToReplace) -> FirResolvePhase.ANNOTATIONS_ARGUMENTS_MAPPING
+    private fun computeDesignation(originalDeclaration: KtElement, originalFirFile: FirFile): FirElementFinder.FirDeclarationDesignation? {
+        if (originalDeclaration is KtCodeFragment) {
+            val firCodeFragment = originalFirFile.codeFragment
+            return FirElementFinder.FirDeclarationDesignation(emptyList(), firCodeFragment)
+        }
 
-        /**
-         * Currently it is a minimal phase there we can collect [FirResolveContextCollector]
-         */
-        else -> FirResolvePhase.ARGUMENTS_OF_ANNOTATIONS
+        require(originalDeclaration is KtDeclaration)
+        return FirElementFinder.collectDesignationPath(originalFirFile, originalDeclaration)
+    }
+
+    private fun requiredResolvePhase(
+        container: KtElement,
+        elementToReplace: PsiElement,
+    ): FirResolvePhase {
+        assert(container is KtDeclaration || container is KtCodeFragment)
+
+        return when {
+            container !is KtDeclaration -> FirResolvePhase.BODY_RESOLVE
+            bodyResolveRequired(container, elementToReplace) -> FirResolvePhase.BODY_RESOLVE
+            annotationMappingRequired(container, elementToReplace) -> FirResolvePhase.ANNOTATIONS_ARGUMENTS_MAPPING
+            else -> {
+                /** Currently it is a minimal phase there we can collect [FirResolveContextCollector] */
+                FirResolvePhase.ARGUMENTS_OF_ANNOTATIONS
+            }
+        }
     }
 
     private fun annotationMappingRequired(
@@ -374,6 +398,7 @@ object LowLevelFirApiFacadeForResolveOnAir {
             }
             is KtClassOrObject -> check(ktDeclaration.body)
             is KtScript -> check(ktDeclaration.blockExpression)
+            is KtCodeFragment -> true
             is KtTypeAlias -> false
             else -> errorWithAttachment("Not supported type ${ktDeclaration::class}") {
                 withPsiEntry("declaration", ktDeclaration)
