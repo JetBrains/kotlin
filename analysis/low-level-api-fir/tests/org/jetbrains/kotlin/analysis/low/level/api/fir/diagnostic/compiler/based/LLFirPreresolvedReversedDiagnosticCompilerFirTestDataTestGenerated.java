@@ -3866,6 +3866,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
             }
 
             @Test
+            @TestMetadata("primaryConstructorParameterWithoutReturnType.kt")
+            public void testPrimaryConstructorParameterWithoutReturnType() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/problems/primaryConstructorParameterWithoutReturnType.kt");
+            }
+
+            @Test
             @TestMetadata("questionableSmartCast.kt")
             public void testQuestionableSmartCast() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/problems/questionableSmartCast.kt");

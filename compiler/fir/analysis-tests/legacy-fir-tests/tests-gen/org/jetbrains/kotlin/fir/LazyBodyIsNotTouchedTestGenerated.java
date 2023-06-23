@@ -3396,6 +3396,11 @@ public class LazyBodyIsNotTouchedTestGenerated extends AbstractLazyBodyIsNotTouc
             runTest("compiler/fir/analysis-tests/testData/resolve/problems/objectDerivedFromInnerClass.kt");
         }
 
+        @TestMetadata("primaryConstructorParameterWithoutReturnType.kt")
+        public void testPrimaryConstructorParameterWithoutReturnType() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/problems/primaryConstructorParameterWithoutReturnType.kt");
+        }
+
         @TestMetadata("questionableSmartCast.kt")
         public void testQuestionableSmartCast() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/problems/questionableSmartCast.kt");
