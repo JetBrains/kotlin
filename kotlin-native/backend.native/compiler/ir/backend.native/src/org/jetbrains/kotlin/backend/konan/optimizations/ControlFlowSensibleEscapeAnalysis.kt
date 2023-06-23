@@ -2173,12 +2173,8 @@ internal object ControlFlowSensibleEscapeAnalysis {
             }
 
             functionResult.graph.variableNodes.clear() // No need in this map anymore.
-            functionResult.removeUnreachable()
+            val reachableFromGlobal = functionResult.removeUnreachable()
             context.log { "after removing unreachable:" }
-            functionResult.logDigraph(context)
-
-            functionResult.removeRedundantNodesPart1()
-            context.log { "after removing redundant nodes (part 1):" }
             functionResult.logDigraph(context)
 
             functionResult.bypassAndRemoveVariables()
@@ -2186,7 +2182,7 @@ internal object ControlFlowSensibleEscapeAnalysis {
             functionResult.logDigraph(context)
 
             // Remove multi-edges.
-            functionResult.reenumerateNodes()
+            functionResult.reenumerateNodes(reachableFromGlobal)
             val list = mutableListOf(functionResult.returnValue)
             val graph = PointsToGraphForest(functionResult.graph.nodes.size).mergeGraphs(listOf(functionResult.graph), list)
             val returnValue = list[0]
@@ -2194,8 +2190,8 @@ internal object ControlFlowSensibleEscapeAnalysis {
             context.log { "after removing multi-edges:" }
             optimizedFunctionResult.logDigraph(context)
 
-            optimizedFunctionResult.removeRedundantNodesPart2()
-            optimizedFunctionResult.reenumerateNodes()
+            optimizedFunctionResult.removeRedundantNodesPart(reachableFromGlobal)
+            optimizedFunctionResult.reenumerateNodes(reachableFromGlobal)
             context.log { "after removing redundant nodes:" }
             optimizedFunctionResult.logDigraph(context)
 
@@ -2213,14 +2209,17 @@ internal object ControlFlowSensibleEscapeAnalysis {
             return true
         }
 
-        private fun EscapeAnalysisResult.reenumerateNodes() {
+        private fun EscapeAnalysisResult.reenumerateNodes(reachableFromGlobal: BitSet) {
             var id = 0
             val objectsReferencedFromThrown = mutableListOf<Node.Object>()
+            val nodesReachableFromGlobal = mutableListOf<Node>()
             for (index in graph.nodes.indices) {
                 val node = graph.nodes[index]
                 if (node != null) {
                     if (this.objectsReferencedFromThrown.get(node.id))
                         objectsReferencedFromThrown.add(node as Node.Object)
+                    if (reachableFromGlobal.get(node.id))
+                        nodesReachableFromGlobal.add(node)
                     graph.nodes[id] = node
                     node.id = id++
                 }
@@ -2228,13 +2227,12 @@ internal object ControlFlowSensibleEscapeAnalysis {
             graph.nodes.trimSize(id)
             this.objectsReferencedFromThrown.clear()
             objectsReferencedFromThrown.forEach { this.objectsReferencedFromThrown.set(it.id) }
+            reachableFromGlobal.clear()
+            nodesReachableFromGlobal.forEach { reachableFromGlobal.set(it.id) }
         }
 
-        private fun EscapeAnalysisResult.removeUnreachable() {
+        private fun EscapeAnalysisResult.removeUnreachable(): BitSet {
             val visited = BitSet(graph.forest.totalNodes)
-            visited.set(Node.NOTHING_ID)
-            visited.set(Node.NULL_ID)
-            visited.set(Node.UNIT_ID)
 
             fun findReachable(node: Node) {
                 visited.set(node.id)
@@ -2243,9 +2241,17 @@ internal object ControlFlowSensibleEscapeAnalysis {
                 }
             }
 
+            findReachable(graph.globalNode)
+            val reachableFromGlobal = visited.copy()
+
+            graph.globalNode.fields.clear()
+            visited.clear()
+            visited.set(Node.NOTHING_ID)
+            visited.set(Node.NULL_ID)
+            visited.set(Node.UNIT_ID)
+            visited.set(Node.GLOBAL_ID)
             if (!visited.get(returnValue.id))
                 findReachable(returnValue)
-            findReachable(graph.globalNode)
             graph.parameterNodes.values.forEach {
                 if (!visited.get(it.id)) findReachable(it)
             }
@@ -2257,6 +2263,8 @@ internal object ControlFlowSensibleEscapeAnalysis {
                     (node as? Node.Reference)?.assignedTo?.removeAll { !visited.get(it.id) }
                 }
             }
+
+            return reachableFromGlobal
         }
 
         private fun EscapeAnalysisResult.bypassAndRemoveVariables() {
@@ -2281,93 +2289,12 @@ internal object ControlFlowSensibleEscapeAnalysis {
             }
         }
 
-        // TODO: Rethink.
-        private fun EscapeAnalysisResult.removeRedundantNodesPart1() {
-            val visited = BitSet(graph.forest.totalNodes)
-
-            fun findReachable(node: Node) {
-                visited.set(node.id)
-                node.forEachPointee { pointee ->
-                    if (!visited.get(pointee.id)) findReachable(pointee)
-                }
-            }
-
-            findReachable(graph.globalNode)
-            val reachableFromGlobal = visited.copy()
-            visited.clear()
-            visited.set(Node.NOTHING_ID)
-            visited.set(Node.NULL_ID)
-            visited.set(Node.UNIT_ID)
-            if (!visited.get(returnValue.id))
-                findReachable(returnValue)
-            graph.parameterNodes.values.forEach {
-                if (!visited.get(it.id))
-                    findReachable(it)
-            }
-            val reachableFromParameters = visited.copy()
-            val reachableFromGlobalAndParameters = reachableFromParameters.copy().also { it.and(reachableFromGlobal) }
-
-            reachableFromGlobal.forEachBit { id ->
-                val node = graph.nodes[id]!!
-                if (id == Node.GLOBAL_ID || reachableFromParameters.get(id) || node !is Node.Reference)
-                    return@forEachBit
-                val indices = IntArray(node.assignedWith.size)
-                for (i in node.assignedWith.indices) {
-                    val pointee = node.assignedWith[i]
-                    if (!reachableFromParameters.get(pointee.id)) continue
-                    var count = 0
-                    for (j in i until node.assignedWith.size)
-                        if (node.assignedWith[j] == pointee) {
-                            indices[count++] = j
-                            node.assignedWith[j] = graph.globalNode
-                        }
-                    visited.clear()
-                    findReachable(graph.globalNode)
-                    if (visited.get(pointee.id)) {
-                        (pointee as? Node.Reference)?.assignedTo?.removeAll(node)
-                    } else {
-                        for (j in 0 until count)
-                            node.assignedWith[indices[j]] = pointee
-                    }
-                }
-                node.assignedWith.removeAll(graph.globalNode)
-            }
-
-            val removed = BitSet(graph.nodes.size)
-            reachableFromGlobal.forEachBit { id ->
-                if (id == Node.GLOBAL_ID || reachableFromParameters.get(id))
-                    return@forEachBit
-                visited.clear()
-                visited.or(removed)
-                visited.set(id)
-                findReachable(graph.globalNode)
-                visited.and(reachableFromGlobalAndParameters)
-                if (visited.cardinality() == reachableFromGlobalAndParameters.cardinality()) {
-                    removed.set(id)
-                }
-            }
-
-            for (id in 0 until graph.nodes.size) {
-                if (removed.get(id))
-                    graph.nodes[id] = null
-                else {
-                    val node = graph.nodes[id] ?: continue
-                    when (node) {
-                        is Node.Object -> {
-                            val removedFields = node.fields.filter { removed.get(it.value.id) }
-                            removedFields.forEach { node.fields.remove(it.key) }
-                        }
-                        is Node.Reference -> {
-                            node.assignedWith.removeAll { removed.get(it.id) }
-                            node.assignedTo.removeAll { removed.get(it.id) }
-                        }
-                    }
-                }
-            }
-        }
-
         // TODO: Remove incoming edges to Unit/Null/Nothing.
-        private fun EscapeAnalysisResult.removeRedundantNodesPart2() {
+        private fun EscapeAnalysisResult.removeRedundantNodesPart(reachableFromGlobal: BitSet) {
+            for (node in graph.nodes) {
+                val reference = node as? Node.Reference ?: continue
+                reference.assignedWith.removeAll(Node.Null)
+            }
 
             val singleNodesPointingAt = arrayOfNulls<Node>(graph.nodes.size)
             val incomingEdgesCounts = IntArray(graph.nodes.size)
@@ -2406,8 +2333,13 @@ internal object ControlFlowSensibleEscapeAnalysis {
             while (leaves.isNotEmpty()) {
                 val leafNode = leaves.pop()
                 val leafNodeId = leafNode.id
-                if (forbiddenToRemove.get(leafNodeId)) continue
-                val singleNodePointingAtLeaf = singleNodesPointingAt[leafNodeId] ?: continue
+                val singleNodePointingAtLeaf = singleNodesPointingAt[leafNodeId]
+                if (forbiddenToRemove.get(leafNodeId)
+                        || singleNodePointingAtLeaf == null
+                        || (reachableFromGlobal.get(leafNodeId) && !reachableFromGlobal.get(singleNodePointingAtLeaf.id))
+                ) {
+                    continue
+                }
                 removed.set(leafNodeId)
                 val hasBecomeALeaf = when (singleNodePointingAtLeaf) {
                     is Node.Object -> singleNodePointingAtLeaf.fields.let { fields ->
@@ -2452,6 +2384,14 @@ internal object ControlFlowSensibleEscapeAnalysis {
                 val reference = graph.nodes[id] as? Node.Reference ?: continue
                 reference.assignedWith.removeAll { removed.get(it.id) }
                 reference.assignedTo.removeAll { removed.get(it.id) }
+            }
+
+            if (reachableFromGlobal.cardinality() > 1) {
+                val escapes = with(graph) { globalNode.getField(escapesField) }
+                for (node in graph.nodes) {
+                    if (node != null && node != graph.globalNode && reachableFromGlobal.get(node.id))
+                        escapes.addEdge(node)
+                }
             }
         }
 
