@@ -65,6 +65,12 @@ public class FirIdeDependentAnalysisSourceModuleAnalysisApiExpressionPsiTypeProv
     }
 
     @Test
+    @TestMetadata("recursiveTypeParameter.kt")
+    public void testRecursiveTypeParameter() throws Exception {
+        runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forExpression/recursiveTypeParameter.kt");
+    }
+
+    @Test
     @TestMetadata("typeParamFlexibleUpperBound.kt")
     public void testTypeParamFlexibleUpperBound() throws Exception {
         runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forExpression/typeParamFlexibleUpperBound.kt");

@@ -1,0 +1,2 @@
+KtType: kotlin.collections.List<Test>
+PsiType: PsiType:List<? extends Comparable<? super Test>>

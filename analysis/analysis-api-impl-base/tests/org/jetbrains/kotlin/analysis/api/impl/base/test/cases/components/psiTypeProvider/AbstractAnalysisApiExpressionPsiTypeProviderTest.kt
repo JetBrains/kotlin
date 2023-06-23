@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtValueArgument
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
@@ -21,7 +22,11 @@ import org.jetbrains.kotlin.types.Variance
 
 abstract class AbstractAnalysisApiExpressionPsiTypeProviderTest : AbstractAnalysisApiSingleFileTest() {
     override fun doTestByFileStructure(ktFile: KtFile, module: TestModule, testServices: TestServices) {
-        val declarationAtCaret = testServices.expressionMarkerProvider.getSelectedElement(ktFile) as KtExpression
+        val declarationAtCaret = when (val element = testServices.expressionMarkerProvider.getSelectedElement(ktFile)) {
+            is KtExpression -> element
+            is KtValueArgument -> element.getArgumentExpression()!!
+            else -> error("Unexpected element: $element of ${element::class.java}")
+        }
         val containingDeclaration = declarationAtCaret.parentOfType<KtDeclaration>()
             ?: error("Can't find containing declaration for $declarationAtCaret")
         val containingClass = getContainingKtLightClass(containingDeclaration, ktFile)
