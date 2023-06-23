@@ -1,0 +1,3 @@
+KtErrorCallInfo:
+  candidateCalls = []
+  diagnostic = ERROR<ASSIGNMENT_IN_EXPRESSION_CONTEXT: Assignments are not expressions, and only expressions are allowed in this context>
