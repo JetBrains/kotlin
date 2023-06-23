@@ -24,8 +24,8 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import java.util.concurrent.ConcurrentHashMap
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.canBePartOfParentDeclaration
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.codeFragment
 import org.jetbrains.kotlin.fir.correspondingProperty
-import org.jetbrains.kotlin.fir.declarations.FirCodeFragment
 import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
 
 internal class FileStructure private constructor(
@@ -183,7 +183,7 @@ internal class FileStructure private constructor(
 
     private fun createStructureElement(container: KtElement): FileStructureElement = when {
         container is KtCodeFragment -> {
-            val firCodeFragment = firFile.declarations.single() as FirCodeFragment
+            val firCodeFragment = firFile.codeFragment
             firCodeFragment.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
 
             val timestamp = container.modificationStamp

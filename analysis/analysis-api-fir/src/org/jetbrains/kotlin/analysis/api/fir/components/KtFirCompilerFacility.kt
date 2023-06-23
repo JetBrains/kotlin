@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.collectDiagnosticsFor
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.compile.CodeFragmentCapturedValueAnalyzer
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirResolvableModuleSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.codeFragment
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.jvm.*
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
@@ -33,7 +34,6 @@ import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.backend.jvm.*
-import org.jetbrains.kotlin.fir.declarations.FirCodeFragment
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.pipeline.signatureComposerForJvmFir2Ir
@@ -217,7 +217,7 @@ internal class KtFirCompilerFacility(
         resolveSession: LLFirResolveSession,
         configuration: CompilerConfiguration,
     ): CodeFragmentMappings {
-        val codeFragment = mainFirFile.declarations.single() as FirCodeFragment
+        val codeFragment = mainFirFile.codeFragment
 
         val capturedData = CodeFragmentCapturedValueAnalyzer.analyze(resolveSession, codeFragment)
 

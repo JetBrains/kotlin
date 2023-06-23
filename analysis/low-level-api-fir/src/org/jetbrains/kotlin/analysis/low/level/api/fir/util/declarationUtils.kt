@@ -191,6 +191,11 @@ private fun KtClassLikeDeclaration.findFir(provider: FirProvider): FirClassLikeD
     }
 }
 
+val FirFile.codeFragment: FirCodeFragment
+    get() {
+        return declarations.singleOrNull() as? FirCodeFragment
+            ?: errorWithFirSpecificEntries("Code fragment not found in a FirFile", fir = this)
+    }
 
 val FirDeclaration.isGeneratedDeclaration
     get() = realPsi == null
