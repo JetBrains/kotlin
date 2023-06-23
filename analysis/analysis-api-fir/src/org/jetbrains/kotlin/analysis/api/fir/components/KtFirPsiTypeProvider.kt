@@ -11,6 +11,7 @@ import com.intellij.psi.impl.cache.TypeInfo
 import com.intellij.psi.impl.compiled.ClsTypeElementImpl
 import com.intellij.psi.impl.compiled.SignatureParsing
 import com.intellij.psi.impl.compiled.StubBuildingVisitor
+import java.text.StringCharacterIterator
 import org.jetbrains.kotlin.analysis.api.components.KtPsiTypeProvider
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.types.KtFirType
@@ -42,7 +43,6 @@ import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.types.model.SimpleTypeMarker
-import java.text.StringCharacterIterator
 
 internal class KtFirPsiTypeProvider(
     override val analysisSession: KtFirAnalysisSession,
@@ -238,7 +238,15 @@ private class AnonymousTypesSubstitutor(
         if (type !is ConeClassLikeType) return null
 
         val hasStableName = type.classId?.isLocal == true
-        if (!hasStableName) return null
+        if (!hasStableName) {
+            // Make sure we're not going to expand type argument over and over again.
+            // If so, i.e., if there is a recursive type argument, return the current, non-null [type]
+            // to prevent the following [substituteTypeOr*] from proceeding to its own (recursive) substitution.
+            if (type.hasRecursiveTypeArgument()) return type
+            // Return `null` means we will use [fir.resolve.substitution.Substitutors]'s [substituteRecursive]
+            // that literally substitutes type arguments recursively.
+            return null
+        }
 
         val firClassNode = type.lookupTag.toSymbol(session) as? FirClassSymbol
         if (firClassNode != null) {
@@ -248,4 +256,22 @@ private class AnonymousTypesSubstitutor(
         return if (type.nullability.isNullable) session.builtinTypes.nullableAnyType.type
         else session.builtinTypes.anyType.type
     }
+
+    private fun ConeKotlinType.hasRecursiveTypeArgument(
+        visited: MutableSet<ConeKotlinType> = mutableSetOf()
+    ): Boolean {
+        if (typeArguments.isEmpty()) return false
+        visited.add(this)
+        for (projection in typeArguments) {
+            // E.g., Test : Comparable<Test>
+            val type = (projection as? ConeKotlinTypeProjection)?.type ?: continue
+            // E.g., Comparable<Test>
+            val newType = substituteOrNull(type) ?: continue
+            if (newType in visited) return true
+            // Visit new type: e.g., Test, as a type argument, is substituted with Comparable<Test>, again.
+            if (newType.hasRecursiveTypeArgument(visited)) return true
+        }
+        return false
+    }
+
 }
