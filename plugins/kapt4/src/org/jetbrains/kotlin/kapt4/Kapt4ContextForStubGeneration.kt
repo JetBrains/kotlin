@@ -27,8 +27,4 @@ class Kapt4ContextForStubGeneration(
     override fun preregisterTreeMaker(context: Context) {
         Kapt4TreeMaker.preRegister(context, this)
     }
-
-    override fun close() {
-//        TODO()
-    }
 }

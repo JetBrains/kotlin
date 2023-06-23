@@ -748,7 +748,7 @@ class Kapt4StubGenerator(private val analysisSession: KtAnalysisSession) {
                 info.flags or varargs or Flags.PARAMETER,
                 ElementKind.PARAMETER,
                 packageFqName,
-                info.visibleAnnotations + info.invisibleAnnotations, // TODO
+                info.annotations,
                 metadata = null
             )
 
