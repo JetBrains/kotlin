@@ -3842,6 +3842,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
             }
 
             @Test
+            @TestMetadata("javaCodeAsKotlin.kt")
+            public void testJavaCodeAsKotlin() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/problems/javaCodeAsKotlin.kt");
+            }
+
+            @Test
             @TestMetadata("javaQualifier.kt")
             public void testJavaQualifier() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/problems/javaQualifier.kt");

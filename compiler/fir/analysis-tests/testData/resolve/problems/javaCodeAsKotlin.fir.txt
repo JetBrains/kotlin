@@ -1,0 +1,14 @@
+FILE: javaCodeAsKotlin.kt
+    public final class Hierarchy : R|kotlin/Any| {
+        public constructor(): R|Hierarchy| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final fun <no name provided>(): R|kotlin/Unit| {
+        <Unresolved name: void>#.<Unresolved name: companionMembers>#(<Call has no callee>#(<L> = <Call has no callee>@fun <anonymous>(): <ERROR TYPE REF: Unresolved name: companionlateinitStaticVariable> <inline=Unknown>  {
+            <Unresolved name: Custom>#.<Unresolved name: companionlateinitVariable>#(ERROR_EXPR(No right operand)).<Unresolved name: KotlinOnlyClass>#(ERROR_EXPR(No right operand)).<Unresolved name: companionlateinitVariable>#(ERROR_EXPR(No right operand))
+            ^ <Unresolved name: Custom>#.<Unresolved name: companionlateinitStaticVariable>#(ERROR_EXPR(No right operand)).<Unresolved name: KotlinOnlyClass>#(ERROR_EXPR(No right operand)).<Unresolved name: companionlateinitStaticVariable>#(ERROR_EXPR(No right operand))
+        }
+        ))
+    }
