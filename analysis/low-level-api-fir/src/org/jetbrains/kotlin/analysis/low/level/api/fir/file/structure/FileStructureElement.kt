@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.FileDiagnosti
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.FileStructureElementDiagnostics
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.SingleNonLocalDeclarationDiagnosticRetriever
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.RawFirNonLocalDeclarationBuilder
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.codeFragment
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.correspondingProperty
 import org.jetbrains.kotlin.fir.declarations.*
@@ -45,7 +46,7 @@ internal class KtToFirMapping(firElement: FirElement, recorder: FirElementsRecor
 
     fun getFirOfClosestParent(element: KtElement): FirElement? {
         var current: PsiElement? = element
-        while (current != null && current !is KtFile) {
+        while (current != null && (current !is KtFile || current is KtCodeFragment)) {
             if (current is KtElement) {
                 getElement(current)?.let { return it }
             }
@@ -107,7 +108,7 @@ internal class ReanalyzableCodeFragmentStructureElement(
             }
         }, null)
 
-        val newCodeFragment = firFile.declarations.single() as FirCodeFragment
+        val newCodeFragment = firFile.codeFragment
         newCodeFragment.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
 
         return ReanalyzableCodeFragmentStructureElement(

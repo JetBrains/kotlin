@@ -8,32 +8,41 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure
 import com.intellij.openapi.application.ApplicationManager
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getFirResolveSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbol
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.codeFragment
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
 import org.jetbrains.kotlin.fir.contracts.impl.FirEmptyContractDescription
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirLazyBlock
 import org.jetbrains.kotlin.fir.expressions.FirLazyExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildLazyBlock
 import org.jetbrains.kotlin.fir.expressions.builder.buildLazyExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirContractCallBlock
+import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtElement
 
 /**
  * Must be called in a write action.
  */
 @LLFirInternals
-fun invalidateAfterInBlockModification(declaration: KtDeclaration) {
+fun invalidateAfterInBlockModification(declaration: KtElement) {
     ApplicationManager.getApplication().assertIsWriteThread()
 
     val project = declaration.project
     val ktModule = ProjectStructureProvider.getModule(project, declaration, contextualModule = null)
     val resolveSession = ktModule.getFirResolveSession(project)
-    when (val firDeclaration = declaration.resolveToFirSymbol(resolveSession).fir) {
+
+    val firDeclaration = when (declaration) {
+        is KtCodeFragment -> declaration.getOrBuildFirFile(resolveSession).codeFragment
+        is KtDeclaration -> declaration.resolveToFirSymbol(resolveSession).fir
+        else -> errorWithFirSpecificEntries("Unexpected declaration kind: ${declaration.javaClass.simpleName}", psi = declaration)
+    }
+
+    when (firDeclaration) {
         is FirSimpleFunction -> firDeclaration.inBodyInvalidation()
         is FirPropertyAccessor -> firDeclaration.inBodyInvalidation()
         is FirProperty -> firDeclaration.inBodyInvalidation()

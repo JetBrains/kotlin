@@ -8,9 +8,9 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.compile.CodeFragmentCapturedValueAnalyzer
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.codeFragment
 import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
 import org.jetbrains.kotlin.analysis.test.framework.utils.indented
-import org.jetbrains.kotlin.fir.declarations.FirCodeFragment
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
@@ -30,7 +30,7 @@ abstract class AbstractCodeFragmentCapturingTest : AbstractLowLevelApiCodeFragme
         val resolveSession = module.getFirResolveSession(project)
         val firFile = ktCodeFragment.getOrBuildFirFile(resolveSession)
 
-        val firCodeFragment = firFile.declarations.single() as FirCodeFragment
+        val firCodeFragment = firFile.codeFragment
         firCodeFragment.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
 
         val capturedSymbols = CodeFragmentCapturedValueAnalyzer.analyze(resolveSession, firCodeFragment).symbols
