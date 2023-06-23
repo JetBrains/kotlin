@@ -972,6 +972,12 @@ public class Fe10IdeNormalAnalysisSourceModuleResolveCallTestGenerated extends A
         }
 
         @Test
+        @TestMetadata("assignementInExpression.kt")
+        public void testAssignementInExpression() throws Exception {
+            runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/invalidCode/assignementInExpression.kt");
+        }
+
+        @Test
         @TestMetadata("getterAssignment.kt")
         public void testGetterAssignment() throws Exception {
             runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/invalidCode/getterAssignment.kt");
