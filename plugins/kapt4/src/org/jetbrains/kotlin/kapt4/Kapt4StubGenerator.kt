@@ -725,8 +725,8 @@ class Kapt4StubGenerator(private val analysisSession: KtAnalysisSession) {
             excludeNullabilityAnnotations = returnType == PsiType.VOID
         )
 
-        if (containingClass.isInterface && !method.isAbstract && !method.isStatic) {
-            modifiers.flags = modifiers.flags or Flags.ABSTRACT.toLong()
+        if (method.hasModifierProperty(PsiModifier.DEFAULT)) {
+            modifiers.flags = modifiers.flags or Flags.DEFAULT
         }
 
         val parametersInfo = method.getParametersInfo()
