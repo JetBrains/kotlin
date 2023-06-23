@@ -3,12 +3,12 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.kapt4;
+package org.jetbrains.kotlin.kapt.cli.test;
 
 import com.intellij.testFramework.TestDataPath;
-import org.jetbrains.kotlin.kapt.cli.test.AbstractKaptToolIntegrationTest;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("plugins/kapt4/testData/integration")
 @TestDataPath("$PROJECT_ROOT")
-public class KotlinKapt4IntegrationTestGenerated extends AbstractKaptToolIntegrationTest {
+public class KaptToolIntegrationTestGenerated extends AbstractKaptToolIntegrationTest {
     @Test
     public void testAllFilesPresentInIntegration() throws Exception {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/kapt4/testData/integration"), Pattern.compile("^([^\\.]+)$"), null, false);
