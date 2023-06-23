@@ -37297,12 +37297,6 @@ public class NativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenBoxT
             }
 
             @Test
-            @TestMetadata("kt17765.kt")
-            public void testKt17765() throws Exception {
-                runTest("compiler/testData/codegen/box/sam/kt17765.kt");
-            }
-
-            @Test
             @TestMetadata("kt51821.kt")
             public void testKt51821() throws Exception {
                 runTest("compiler/testData/codegen/box/sam/kt51821.kt");
@@ -37402,9 +37396,9 @@ public class NativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenBoxT
                 }
 
                 @Test
-                @TestMetadata("sameWrapperClass.kt")
-                public void testSameWrapperClass() throws Exception {
-                    runTest("compiler/testData/codegen/box/sam/constructors/sameWrapperClass.kt");
+                @TestMetadata("sameWrapperClass2.kt")
+                public void testSameWrapperClass2() throws Exception {
+                    runTest("compiler/testData/codegen/box/sam/constructors/sameWrapperClass2.kt");
                 }
             }
 
@@ -37448,51 +37442,9 @@ public class NativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenBoxT
             }
 
             @Test
-            @TestMetadata("classDeclaration.kt")
-            public void testClassDeclaration() throws Exception {
-                runTest("compiler/testData/codegen/box/sameFileInSourceAndDependencies/classDeclaration.kt");
-            }
-
-            @Test
             @TestMetadata("differingNumberOfGenericTypeParameters.kt")
             public void testDifferingNumberOfGenericTypeParameters() throws Exception {
                 runTest("compiler/testData/codegen/box/sameFileInSourceAndDependencies/differingNumberOfGenericTypeParameters.kt");
-            }
-
-            @Test
-            @TestMetadata("functionDeclaration.kt")
-            public void testFunctionDeclaration() throws Exception {
-                runTest("compiler/testData/codegen/box/sameFileInSourceAndDependencies/functionDeclaration.kt");
-            }
-
-            @Test
-            @TestMetadata("lateinitMemberPropertyDeclaration.kt")
-            public void testLateinitMemberPropertyDeclaration() throws Exception {
-                runTest("compiler/testData/codegen/box/sameFileInSourceAndDependencies/lateinitMemberPropertyDeclaration.kt");
-            }
-
-            @Test
-            @TestMetadata("memberFunctionDeclaration.kt")
-            public void testMemberFunctionDeclaration() throws Exception {
-                runTest("compiler/testData/codegen/box/sameFileInSourceAndDependencies/memberFunctionDeclaration.kt");
-            }
-
-            @Test
-            @TestMetadata("memberFunctionWithDefaultArgumentsDeclaration.kt")
-            public void testMemberFunctionWithDefaultArgumentsDeclaration() throws Exception {
-                runTest("compiler/testData/codegen/box/sameFileInSourceAndDependencies/memberFunctionWithDefaultArgumentsDeclaration.kt");
-            }
-
-            @Test
-            @TestMetadata("memberPropertyDeclaration.kt")
-            public void testMemberPropertyDeclaration() throws Exception {
-                runTest("compiler/testData/codegen/box/sameFileInSourceAndDependencies/memberPropertyDeclaration.kt");
-            }
-
-            @Test
-            @TestMetadata("nestedClassDeclaration.kt")
-            public void testNestedClassDeclaration() throws Exception {
-                runTest("compiler/testData/codegen/box/sameFileInSourceAndDependencies/nestedClassDeclaration.kt");
             }
 
             @Test

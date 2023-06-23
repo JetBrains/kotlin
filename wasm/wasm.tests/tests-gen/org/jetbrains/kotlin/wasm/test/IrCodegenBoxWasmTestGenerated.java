@@ -30209,11 +30209,6 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/sam"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
         }
 
-        @TestMetadata("kt17765.kt")
-        public void testKt17765() throws Exception {
-            runTest("compiler/testData/codegen/box/sam/kt17765.kt");
-        }
-
         @TestMetadata("kt51821.kt")
         public void testKt51821() throws Exception {
             runTest("compiler/testData/codegen/box/sam/kt51821.kt");
@@ -30305,9 +30300,9 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
                 runTest("compiler/testData/codegen/box/sam/constructors/nonLiteralComparator.kt");
             }
 
-            @TestMetadata("sameWrapperClass.kt")
-            public void testSameWrapperClass() throws Exception {
-                runTest("compiler/testData/codegen/box/sam/constructors/sameWrapperClass.kt");
+            @TestMetadata("sameWrapperClass2.kt")
+            public void testSameWrapperClass2() throws Exception {
+                runTest("compiler/testData/codegen/box/sam/constructors/sameWrapperClass2.kt");
             }
         }
 
