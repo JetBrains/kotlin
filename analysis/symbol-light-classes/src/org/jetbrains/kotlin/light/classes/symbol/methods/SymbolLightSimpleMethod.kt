@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.light.classes.symbol.*
 import org.jetbrains.kotlin.light.classes.symbol.annotations.*
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
+import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForInterfaceDefaultImpls
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.GranularModifiersBox
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightMemberModifierList
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.with
@@ -77,10 +78,10 @@ internal class SymbolLightSimpleMethod(
     private fun computeModifiers(modifier: String): Map<String, Boolean>? = when (modifier) {
         in GranularModifiersBox.MODALITY_MODIFIERS -> {
             ifInlineOnly { return modifiersForInlineOnlyCase() }
-            val modality = if (isTopLevel) {
-                PsiModifier.FINAL
-            } else {
-                withFunctionSymbol { functionSymbol ->
+            val modality = when {
+                isTopLevel -> PsiModifier.FINAL
+                containingClass is SymbolLightClassForInterfaceDefaultImpls -> null
+                else -> withFunctionSymbol { functionSymbol ->
                     functionSymbol.computeSimpleModality()?.takeUnless { it.isSuppressedFinalModifier(containingClass, functionSymbol) }
                 }
             }
@@ -98,7 +99,9 @@ internal class SymbolLightSimpleMethod(
             val isStatic = if (suppressStatic) {
                 false
             } else {
-                isTopLevel || withFunctionSymbol { it.isStatic || it.hasJvmStaticAnnotation() }
+                isTopLevel
+                        || containingClass is SymbolLightClassForInterfaceDefaultImpls
+                        || withFunctionSymbol { it.isStatic || it.hasJvmStaticAnnotation() }
             }
 
             mapOf(modifier to isStatic)

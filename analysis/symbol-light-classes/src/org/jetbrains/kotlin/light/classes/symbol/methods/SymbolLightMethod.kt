@@ -5,9 +5,7 @@
 
 package org.jetbrains.kotlin.light.classes.symbol.methods
 
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiIdentifier
-import com.intellij.psi.PsiParameterList
+import com.intellij.psi.*
 import com.intellij.psi.impl.light.LightReferenceListBuilder
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionLikeSymbol
@@ -21,10 +19,12 @@ import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
 import org.jetbrains.kotlin.light.classes.symbol.annotations.computeThrowsList
 import org.jetbrains.kotlin.light.classes.symbol.annotations.hasDeprecatedAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
+import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForInterfaceDefaultImpls
 import org.jetbrains.kotlin.light.classes.symbol.compareSymbolPointers
 import org.jetbrains.kotlin.light.classes.symbol.isOriginEquivalentTo
 import org.jetbrains.kotlin.light.classes.symbol.isValid
 import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightParameter
+import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightParameterForDefaultImplsReceiver
 import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightParameterList
 import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightSuspendContinuationParameter
 import org.jetbrains.kotlin.light.classes.symbol.withSymbol
@@ -81,6 +81,10 @@ internal abstract class SymbolLightMethod<FType : KtFunctionLikeSymbol> private 
             parent = this@SymbolLightMethod,
             callableWithReceiverSymbolPointer = functionSymbolPointer,
         ) { builder ->
+            if (this@SymbolLightMethod.containingClass is SymbolLightClassForInterfaceDefaultImpls) {
+                builder.addParameter(SymbolLightParameterForDefaultImplsReceiver(this@SymbolLightMethod))
+            }
+
             withFunctionSymbol { functionSymbol ->
                 functionSymbol.valueParameters.mapIndexed { index, parameter ->
                     val needToSkip = argumentsSkipMask?.get(index) == true
