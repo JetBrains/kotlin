@@ -505,7 +505,7 @@ class CocoaPodsIT : KGPBaseTest() {
     @GradleTest
     fun testCinteropCommonizationOff(gradleVersion: GradleVersion) {
         nativeProjectWithCocoapodsAndIosAppPodFile(cocoapodsCommonizationProjectName, gradleVersion) {
-            buildWithCocoapodsWrapper(":commonize") {
+            buildWithCocoapodsWrapper(":commonize", "-Pkotlin.mpp.enableCInteropCommonization=false") {
                 assertTasksExecuted(":commonizeNativeDistribution")
                 assertTasksNotExecuted(":cinteropAFNetworkingIosArm64")
                 assertTasksNotExecuted(":cinteropAFNetworkingIosX64")
@@ -517,8 +517,21 @@ class CocoaPodsIT : KGPBaseTest() {
     @DisplayName("Cinterop commonization on")
     @GradleTest
     fun testCinteropCommonizationOn(gradleVersion: GradleVersion) {
+        testCinteropCommonizationExecutes(gradleVersion, buildArguments=arrayOf("-Pkotlin.mpp.enableCInteropCommonization=true"))
+    }
+
+    @DisplayName("Cinterop commonization unspecified")
+    @GradleTest
+    fun testCinteropCommonizationUnspecified(gradleVersion: GradleVersion) {
+        testCinteropCommonizationExecutes(gradleVersion, buildArguments=emptyArray())
+    }
+
+    private fun testCinteropCommonizationExecutes(
+        gradleVersion: GradleVersion,
+        buildArguments: Array<String>
+    ) {
         nativeProjectWithCocoapodsAndIosAppPodFile(cocoapodsCommonizationProjectName, gradleVersion) {
-            buildWithCocoapodsWrapper(":commonize", "-Pkotlin.mpp.enableCInteropCommonization=true") {
+            buildWithCocoapodsWrapper(":commonize", *buildArguments) {
                 assertTasksExecuted(":commonizeNativeDistribution")
                 assertTasksExecuted(":cinteropAFNetworkingIosArm64")
                 assertTasksExecuted(":cinteropAFNetworkingIosX64")
