@@ -36,6 +36,8 @@ abstract class FirCodeFragment : FirDeclaration() {
 
     abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 
+    abstract fun replaceBlock(newBlock: FirBlock)
+
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirCodeFragment
 
     abstract fun <D> transformBlock(transformer: FirTransformer<D>, data: D): FirCodeFragment
