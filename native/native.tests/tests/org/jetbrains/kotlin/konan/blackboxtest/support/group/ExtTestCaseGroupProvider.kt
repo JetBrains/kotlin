@@ -146,7 +146,6 @@ private class ExtTestDataFile(
                 && structure.directives[API_VERSION_DIRECTIVE] !in INCOMPATIBLE_API_VERSIONS
                 && structure.directives[LANGUAGE_VERSION_DIRECTIVE] !in INCOMPATIBLE_LANGUAGE_VERSIONS
                 && !(testDataFileSettings.languageSettings.contains("+${LanguageFeature.MultiPlatformProjects.name}")
-                     && pipelineType == PipelineType.K2
                      && testMode == TestMode.ONE_STAGE_MULTI_MODULE)
 
     private fun isIgnoredTarget(pipelineType: PipelineType, testDataFile: File, backend: TargetBackend): Boolean {
