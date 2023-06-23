@@ -144,13 +144,13 @@ fun CompilerConfiguration.applyModuleProperties(module: Module, buildFile: File?
     }
 }
 
-fun getSourceRootsCheckingForDuplicates(configuration: CompilerConfiguration, messageCollector: MessageCollector): List<KotlinSourceRoot> {
+fun getSourceRootsCheckingForDuplicates(configuration: CompilerConfiguration, messageCollector: MessageCollector?): List<KotlinSourceRoot> {
     val uniqueSourceRoots = hashSetOf<String>()
     val result = mutableListOf<KotlinSourceRoot>()
 
     for (root in configuration.kotlinSourceRoots) {
         if (!uniqueSourceRoots.add(root.path)) {
-            messageCollector.report(CompilerMessageSeverity.STRONG_WARNING, "Duplicate source root: ${root.path}")
+            messageCollector?.report(CompilerMessageSeverity.STRONG_WARNING, "Duplicate source root: ${root.path}")
         }
         result.add(root)
     }
