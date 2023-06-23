@@ -269,6 +269,12 @@ public class FirOldFrontendMPPDiagnosticsWithPsiTestGenerated extends AbstractFi
         }
 
         @Test
+        @TestMetadata("instrinsicConstEvaluation.kt")
+        public void testInstrinsicConstEvaluation() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/instrinsicConstEvaluation.kt");
+        }
+
+        @Test
         @TestMetadata("kclassArgWithExpectClass.kt")
         public void testKclassArgWithExpectClass() throws Exception {
             runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/kclassArgWithExpectClass.kt");
