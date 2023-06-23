@@ -22,7 +22,7 @@ internal object IdeCommonizedNativePlatformDependencyResolver :
     override fun resolve(sourceSet: KotlinSourceSet): Set<IdeaKotlinDependency> {
         val project = sourceSet.project
         val commonizerTarget = sourceSet.commonizerTarget.getOrThrow() as? SharedCommonizerTarget ?: return emptySet()
-        val commonizerTask = project.commonizeNativeDistributionTask?.get() ?: return emptySet()
+        val commonizerTask = project.commonizeNativeDistributionTask.get()
         val outputDirectory = resolveCommonizedDirectory(commonizerTask.rootOutputDirectory, commonizerTarget)
 
         return outputDirectory.listFiles().orEmpty()
@@ -33,6 +33,6 @@ internal object IdeCommonizedNativePlatformDependencyResolver :
     }
 
     override fun dependencies(project: Project): Iterable<Any> {
-        return listOfNotNull(project.commonizeNativeDistributionTask)
+        return listOf(project.commonizeNativeDistributionTask)
     }
 }

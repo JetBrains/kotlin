@@ -27,10 +27,6 @@ import java.io.File
 internal fun Project.setupKotlinNativePlatformDependencies() {
     val kotlin = multiplatformExtensionOrNull ?: return
 
-    if (isAllowCommonizer()) {
-        checkNotNull(commonizeNativeDistributionTask) { "Missing commonizeNativeDistributionTask" }
-    }
-
     kotlin.sourceSets.all { sourceSet ->
         launch {
             val target = sourceSet.internal.commonizerTarget.await() ?: return@launch
@@ -61,7 +57,7 @@ internal fun Project.setupKotlinNativePlatformDependencies() {
 internal fun Project.getNativeDistributionDependencies(target: CommonizerTarget): FileCollection {
     return when (target) {
         is LeafCommonizerTarget -> getOriginalPlatformLibrariesFor(target)
-        is SharedCommonizerTarget -> commonizeNativeDistributionTask?.get()?.getCommonizedPlatformLibrariesFor(target) ?: project.files()
+        is SharedCommonizerTarget -> commonizeNativeDistributionTask.get().getCommonizedPlatformLibrariesFor(target) ?: project.files()
     }
 }
 

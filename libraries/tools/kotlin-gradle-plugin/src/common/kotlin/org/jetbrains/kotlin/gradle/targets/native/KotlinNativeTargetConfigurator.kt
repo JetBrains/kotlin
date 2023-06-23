@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.copyAttributes
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultLanguageSettingsBuilder
 import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
 import org.jetbrains.kotlin.gradle.targets.native.*
+import org.jetbrains.kotlin.gradle.targets.native.internal.*
 import org.jetbrains.kotlin.gradle.targets.native.internal.commonizeCInteropTask
 import org.jetbrains.kotlin.gradle.targets.native.internal.createCInteropApiElementsKlibArtifact
 import org.jetbrains.kotlin.gradle.targets.native.internal.locateOrCreateCInteropApiElementsConfiguration
@@ -149,8 +150,22 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
                 it.enabled = compilation.konanTarget.enabledOnCurrentHost
             }
 
-            project.commonizeCInteropTask?.configure { commonizeCInteropTask ->
+            // FIXME: Connect these tasks properly
+            project.commonizeCInteropTask.configure { commonizeCInteropTask ->
                 commonizeCInteropTask.from((interopTask.get()))
+                commonizeCInteropTask.onlyIf {
+                    project.isCInteropCommonizationEnabled
+                }
+            }
+            project.copyCommonizeCInteropForIdeTask.configure { copyCommonizeCInteropForIdeTask ->
+                copyCommonizeCInteropForIdeTask.onlyIf {
+                    project.isCInteropCommonizationEnabled
+                }
+            }
+            project.commonizeNativeDistributionTask.configure { commonizeNativeDistributionTask ->
+                commonizeNativeDistributionTask.onlyIf {
+                    project.isAllowCommonizer()
+                }
             }
 
             val interopOutput = project.files(interopTask.map { it.outputFileProvider })

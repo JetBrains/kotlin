@@ -21,7 +21,7 @@ import kotlin.test.*
 
 class CInteropCommonizerTaskTest : MultiplatformExtensionTest() {
 
-    private val task: CInteropCommonizerTask get() = project.commonizeCInteropTask?.get() ?: fail("Missing commonizeCInteropTask")
+    private val task: CInteropCommonizerTask get() = project.commonizeCInteropTask.get()
 
     @BeforeTest
     override fun setup() {

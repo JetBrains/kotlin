@@ -113,8 +113,8 @@ open class CommonizerIT : KGPBaseTest() {
 
             build(":commonize") {
                 assertTasksExecuted(":commonizeNativeDistribution")
-                assertTasksNotExecuted(":cinteropCurl2TargetA")
-                assertTasksNotExecuted(":cinteropCurl2TargetB")
+                assertTasksNotExecuted(":cinteropCurlTargetA")
+                assertTasksNotExecuted(":cinteropCurlTargetB")
                 assertTasksNotExecuted(":commonizeCInterop")
             }
 

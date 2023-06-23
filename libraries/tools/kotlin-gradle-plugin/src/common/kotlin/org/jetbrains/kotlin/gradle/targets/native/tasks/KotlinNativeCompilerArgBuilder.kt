@@ -21,7 +21,6 @@ internal class CompilerPluginData(
 
 internal class SharedCompilationData(
     val manifestFile: File,
-    val isAllowCommonizer: Boolean,
     val refinesPaths: FileCollection,
 )
 

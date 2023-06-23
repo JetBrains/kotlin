@@ -13,7 +13,7 @@ import java.io.File
 internal open class CopyCommonizeCInteropForIdeTask : AbstractCInteropCommonizerTask() {
 
     private val commonizeCInteropTask: TaskProvider<CInteropCommonizerTask>
-        get() = project.commonizeCInteropTask ?: throw IllegalStateException("Missing commonizeCInteropTask")
+        get() = project.commonizeCInteropTask
 
     @get:IgnoreEmptyDirectories
     @get:InputFiles
