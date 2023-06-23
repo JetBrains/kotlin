@@ -381,7 +381,11 @@ open class CommonizerIT : KGPBaseTest() {
             gradleVersion,
             buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
         ) {
-            build("commonizeCInterop") {
+            build(
+                "commonizeCInterop",
+                /* See: https://youtrack.jetbrains.com/issue/KT-59596/CInterop-commonization-depends-on-compile-tasks */
+                "-Pkotlin.mpp.applyDefaultHierarchyTemplate=false"
+            ) {
                 assertTasksExecuted(":p1:commonizeCInterop")
                 assertTasksExecuted(":p2:commonizeCInterop")
 
