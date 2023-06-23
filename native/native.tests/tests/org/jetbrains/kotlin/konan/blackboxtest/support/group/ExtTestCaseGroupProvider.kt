@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.konan.blackboxtest.support.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestCase.WithTestRunnerExtras
 import org.jetbrains.kotlin.konan.blackboxtest.support.runner.TestRunChecks
@@ -26,7 +27,6 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.util.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.addRemoveModifier.addAnnotationEntry
 import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
 import org.jetbrains.kotlin.psi.psiUtil.getChildrenOfType
 import org.jetbrains.kotlin.resolve.ImportPath
@@ -74,6 +74,7 @@ internal class ExtTestCaseGroupProvider : TestCaseGroupProvider, TestDisposable(
                     generatedSources = settings.get(),
                     customKlibs = settings.get(),
                     pipelineType = settings.get(),
+                    testMode = settings.get(),
                     timeouts = settings.get(),
                 )
 
@@ -99,6 +100,7 @@ private class ExtTestDataFile(
     private val generatedSources: GeneratedSources,
     private val customKlibs: CustomKlibs,
     private val pipelineType: PipelineType,
+    private val testMode: TestMode,
     private val timeouts: Timeouts,
 ) {
     private val structure by lazy {
@@ -143,6 +145,9 @@ private class ExtTestDataFile(
                 && INCOMPATIBLE_DIRECTIVES.none { it in structure.directives }
                 && structure.directives[API_VERSION_DIRECTIVE] !in INCOMPATIBLE_API_VERSIONS
                 && structure.directives[LANGUAGE_VERSION_DIRECTIVE] !in INCOMPATIBLE_LANGUAGE_VERSIONS
+                && !(testDataFileSettings.languageSettings.contains("+${LanguageFeature.MultiPlatformProjects.name}")
+                     && pipelineType == PipelineType.K2
+                     && testMode == TestMode.ONE_STAGE_MULTI_MODULE)
 
     private fun isIgnoredTarget(pipelineType: PipelineType, testDataFile: File, backend: TargetBackend): Boolean {
         return when (pipelineType) {

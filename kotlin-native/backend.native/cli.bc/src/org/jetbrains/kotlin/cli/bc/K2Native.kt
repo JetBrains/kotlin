@@ -20,10 +20,7 @@ import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.KotlinCompilerVersion
-import org.jetbrains.kotlin.config.Services
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.ir.linkage.partial.partialLinkageConfig
 import org.jetbrains.kotlin.ir.linkage.partial.setupPartialLinkageConfig
 import org.jetbrains.kotlin.ir.util.IrMessageLogger
@@ -69,7 +66,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
         if (!enoughArguments) {
             messageCollector.report(ERROR, "You have not specified any compilation arguments. No output has been produced.")
         }
-        if(configuration.get(KonanConfigKeys.PRODUCE) != CompilerOutputKind.LIBRARY &&
+        if (configuration.get(KonanConfigKeys.PRODUCE) != CompilerOutputKind.LIBRARY &&
                 configuration.getBoolean(CommonConfigurationKeys.USE_FIR) &&
                 configuration.kotlinSourceRoots.isNotEmpty()) {
             // K2/Native backend cannot produce binary directly from FIR frontend output, since descriptors, deserialized from KLib, are needed
@@ -78,6 +75,17 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
             // - intermediate Klib is compiled to binary by K2/Native backend
             // In this implementation, 'arguments' is not changed accordingly to changes in `firstStageConfiguration` and `configuration`,
             // since values of fields `produce`, `output`, `freeArgs`, `includes` does not seem to matter downstream in prepareEnvironment()
+
+            if (configuration.get(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS)
+                            ?.getFeatureSupport(LanguageFeature.MultiPlatformProjects) == LanguageFeature.State.ENABLED)
+                messageCollector.report(ERROR,
+                        """
+                            Producing a multiplatform library directly from sources is not allowed.
+                        
+                            If you use the command-line compiler, then first compile the sources to a KLIB with
+                            the `-p library` compiler flag. Then, use '-Xinclude=<klib>' to pass the KLIB to
+                            the compiler to produce the required type of binary artifact.
+                        """.trimIndent())
 
             val firstStageConfiguration = configuration.copy()
             // For the first stage, use "-p library" produce mode

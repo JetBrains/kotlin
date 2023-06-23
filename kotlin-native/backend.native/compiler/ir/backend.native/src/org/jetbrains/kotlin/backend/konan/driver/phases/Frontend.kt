@@ -58,8 +58,8 @@ internal val FrontendPhase = createSimpleNamedCompilerPhase(
 
         if (sourceFiles.isNotEmpty()) {
             require (!input.configuration.getBoolean(CommonConfigurationKeys.USE_FIR)) {
-                "For K2 compiler, no source files should have been passed here. " +
-                        "K2Native.doExecute() must transform such compilation into two-stage compilation"
+                "Internal error: For K2 compiler, no source files should have been passed here. " +
+                "K2Native.doExecute() must transform such compilation into two-stage compilation.\n"
             }
         } else {
             // TODO: we shouldn't be here in this case.
