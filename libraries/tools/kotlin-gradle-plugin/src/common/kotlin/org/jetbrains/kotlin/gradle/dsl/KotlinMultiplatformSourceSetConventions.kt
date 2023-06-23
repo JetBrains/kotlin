@@ -59,9 +59,7 @@ interface KotlinMultiplatformSourceSetConventions {
 
     fun NamedDomainObjectProvider<KotlinSourceSet>.dependencies(
         handler: KotlinDependencyHandler.() -> Unit,
-    ) = configure { sourceSet ->
-        sourceSet.dependencies(handler)
-    }
+    ) = get().dependencies(handler)
 
     fun NamedDomainObjectProvider<KotlinSourceSet>.languageSettings(
         configure: LanguageSettingsBuilder.() -> Unit,
