@@ -1,4 +1,6 @@
-// IGNORE_BACKEND: JS, NATIVE
+// The test isn't passing when using K/N per-file caches and in order to fix it,
+// some hacks are required, which isn't worth it considering that test contains invalid code (reassign of val property).
+// IGNORE_BACKEND: NATIVE
 // IGNORE_BACKEND_K2: ANY
 // FIR_STATUS: KT-35565
 //  java.lang.AssertionError
