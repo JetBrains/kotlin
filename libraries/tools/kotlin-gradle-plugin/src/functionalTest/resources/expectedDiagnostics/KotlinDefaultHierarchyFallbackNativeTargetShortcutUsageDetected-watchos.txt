@@ -1,0 +1,19 @@
+[KotlinDefaultHierarchyFallbackNativeTargetShortcutUsageDetected | WARNING] The Default Kotlin Hierarchy was not applied to 'root project 'test'':
+Deprecated 'watchos()' shortcut was used:
+
+  kotlin {
+      watchos()
+  }
+
+Could be replaced by declaring the supported watchos targets directly:
+
+  kotlin {
+      watchosX64()
+      watchosArm64()
+      watchosSimulatorArm64() /* <- Note: Was not previously applied */
+      /* ... */
+  }
+
+To suppress the 'Default Hierarchy Template' add
+    'kotlin.mpp.applyDefaultHierarchyTemplate=false'
+to your gradle.properties

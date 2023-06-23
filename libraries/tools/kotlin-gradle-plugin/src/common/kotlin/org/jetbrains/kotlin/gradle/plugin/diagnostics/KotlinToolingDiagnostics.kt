@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.plugin.diagnostics
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinSourceSetConvention.isRegisteredByKotlinSourceSetConventionAt
+import org.jetbrains.kotlin.gradle.dsl.NativeTargetShortcutTrace
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
@@ -461,6 +462,33 @@ object KotlinToolingDiagnostics {
                     '$KOTLIN_MPP_APPLY_DEFAULT_HIERARCHY_TEMPLATE=false'
                 to your gradle.properties
             """.trimIndent()
+        )
+    }
+
+    object KotlinDefaultHierarchyFallbackNativeTargetShortcutUsageDetected : ToolingDiagnosticFactory(WARNING) {
+        internal operator fun invoke(project: Project, trace: NativeTargetShortcutTrace) = build(
+            """
+                The Default Kotlin Hierarchy was not applied to '${project.displayName}':
+                Deprecated '${trace.shortcut}()' shortcut was used:
+                
+                  kotlin {
+                      ${trace.shortcut}()
+                  }
+                  
+                Could be replaced by declaring the supported ${trace.shortcut} targets directly: 
+                
+                  kotlin {
+                      ${trace.shortcut}X64()
+                      ${trace.shortcut}Arm64()
+                      ${trace.shortcut}SimulatorArm64() /* <- Note: Was not previously applied */
+                      /* ... */
+                  }
+                
+                To suppress the 'Default Hierarchy Template' add
+                    '$KOTLIN_MPP_APPLY_DEFAULT_HIERARCHY_TEMPLATE=false'
+                to your gradle.properties
+            """.trimIndent(),
+            throwable = trace
         )
     }
 

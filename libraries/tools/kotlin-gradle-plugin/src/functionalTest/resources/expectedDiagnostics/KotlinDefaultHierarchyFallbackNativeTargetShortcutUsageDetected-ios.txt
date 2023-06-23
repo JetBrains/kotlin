@@ -1,0 +1,19 @@
+[KotlinDefaultHierarchyFallbackNativeTargetShortcutUsageDetected | WARNING] The Default Kotlin Hierarchy was not applied to 'root project 'test'':
+Deprecated 'ios()' shortcut was used:
+
+  kotlin {
+      ios()
+  }
+
+Could be replaced by declaring the supported ios targets directly:
+
+  kotlin {
+      iosX64()
+      iosArm64()
+      iosSimulatorArm64() /* <- Note: Was not previously applied */
+      /* ... */
+  }
+
+To suppress the 'Default Hierarchy Template' add
+    'kotlin.mpp.applyDefaultHierarchyTemplate=false'
+to your gradle.properties

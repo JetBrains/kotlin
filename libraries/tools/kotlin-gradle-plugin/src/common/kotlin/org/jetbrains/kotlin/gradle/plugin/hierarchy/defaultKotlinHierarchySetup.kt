@@ -6,15 +6,19 @@
 package org.jetbrains.kotlin.gradle.plugin.hierarchy
 
 import org.gradle.api.Project
+import org.jetbrains.kotlin.gradle.dsl.NativeTargetShortcutTrace.Companion.nativeTargetShortcutTrace
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
-import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.gradle.plugin.KotlinAndroidPlugin.Companion.dynamicallyApplyWhenAndroidPluginIsApplied
+import org.jetbrains.kotlin.gradle.plugin.KotlinHierarchyTemplate
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.FinaliseRefinesEdges
+import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetTree
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics.KotlinDefaultHierarchyFallbackDependsOnUsageDetected
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics.KotlinDefaultHierarchyFallbackIllegalTargetNames
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics.KotlinDefaultHierarchyFallbackNativeTargetShortcutUsageDetected
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.kotlinToolingDiagnosticsCollector
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
+import org.jetbrains.kotlin.gradle.plugin.requiredStage
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 
 internal suspend fun Project.setupDefaultKotlinHierarchy() = requiredStage(FinaliseRefinesEdges) setup@{
@@ -28,6 +32,23 @@ internal suspend fun Project.setupDefaultKotlinHierarchy() = requiredStage(Final
         setupPreMultiplatformStableDefaultDependsOnEdges()
         return@setup
     }
+
+    /*
+    User used ios(), tvos(), ... shortcuts.
+    This will be incompatible with the default template, as it sets dependsOn edges.
+    We detect this case manually to give even better diagnostic
+     */
+    run check@{
+        extension.sourceSets
+            .mapNotNull { it.nativeTargetShortcutTrace }
+            .toSet()
+            .ifEmpty { return@check }
+            .onEach { trace -> project.reportDiagnostic(KotlinDefaultHierarchyFallbackNativeTargetShortcutUsageDetected(project, trace)) }
+
+        setupPreMultiplatformStableDefaultDependsOnEdges()
+        return@setup
+    }
+
 
     /*
     User manually added a .dependsOn:

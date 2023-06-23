@@ -8,6 +8,7 @@
 package org.jetbrains.kotlin.gradle.dsl
 
 import org.gradle.api.Action
+import org.jetbrains.kotlin.gradle.dsl.NativeTargetShortcutTrace.Companion.nativeTargetShortcutTrace
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.MAIN_COMPILATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.TEST_COMPILATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
@@ -15,6 +16,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet.Companion.COMMON_MAIN_
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet.Companion.COMMON_TEST_SOURCE_SET_NAME
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetContainer
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.tooling.core.extrasReadWriteProperty
 
 
 private const val SHORTCUTS_DEPRECATION_MESSAGE = "Use applyDefaultHierarchyTemplate() instead. " +
@@ -52,12 +54,22 @@ interface KotlinTargetContainerWithNativeShortcuts : KotlinTargetContainerWithPr
         }
 
     private fun createIntermediateSourceSets(
+        trace: NativeTargetShortcutTrace,
         namePrefix: String,
         children: List<DefaultSourceSets>,
         parent: DefaultSourceSets? = null,
     ): DefaultSourceSets {
         val main = createIntermediateSourceSet("${namePrefix}Main", children.map { it.main }, parent?.main)
         val test = createIntermediateSourceSet("${namePrefix}Test", children.map { it.test }, parent?.test)
+
+        main.nativeTargetShortcutTrace = trace
+        test.nativeTargetShortcutTrace = trace
+
+        children.forEach { child ->
+            child.main.nativeTargetShortcutTrace = trace
+            child.test.nativeTargetShortcutTrace = trace
+        }
+
         return DefaultSourceSets(main, test)
     }
 
@@ -70,7 +82,9 @@ interface KotlinTargetContainerWithNativeShortcuts : KotlinTargetContainerWithPr
             iosArm64("${namePrefix}Arm64"),
             iosX64("${namePrefix}X64")
         )
-        createIntermediateSourceSets(namePrefix, targets.defaultSourceSets(), mostCommonSourceSets())
+        createIntermediateSourceSets(
+            NativeTargetShortcutTrace("ios"), namePrefix, targets.defaultSourceSets(), mostCommonSourceSets()
+        )
         targets.forEach { it.configure() }
     }
 
@@ -108,7 +122,10 @@ interface KotlinTargetContainerWithNativeShortcuts : KotlinTargetContainerWithPr
             tvosArm64("${namePrefix}Arm64"),
             tvosX64("${namePrefix}X64")
         )
-        createIntermediateSourceSets(namePrefix, targets.defaultSourceSets(), mostCommonSourceSets())
+        createIntermediateSourceSets(
+            NativeTargetShortcutTrace("tvos"),
+            namePrefix, targets.defaultSourceSets(), mostCommonSourceSets()
+        )
         targets.forEach { it.configure() }
     }
 
@@ -149,12 +166,16 @@ interface KotlinTargetContainerWithNativeShortcuts : KotlinTargetContainerWithPr
         val simulatorX64 = watchosX64("${namePrefix}X64")
         val deviceTargets = listOf(device32, device64)
 
+        val trace = NativeTargetShortcutTrace("watchos")
+
         val deviceSourceSets = createIntermediateSourceSets(
+            trace,
             "${namePrefix}Device",
             deviceTargets.defaultSourceSets()
         )
 
         createIntermediateSourceSets(
+            trace,
             namePrefix,
             listOf(deviceSourceSets, simulatorX64.defaultSourceSets()),
             mostCommonSourceSets()
@@ -191,4 +212,10 @@ interface KotlinTargetContainerWithNativeShortcuts : KotlinTargetContainerWithPr
 
     @Deprecated(SHORTCUTS_DEPRECATION_MESSAGE)
     fun watchos(configure: Action<KotlinNativeTarget>) = watchos { configure.execute(this) }
+}
+
+internal class NativeTargetShortcutTrace(val shortcut: String) : Throwable() {
+    companion object {
+        var KotlinSourceSet.nativeTargetShortcutTrace by extrasReadWriteProperty<NativeTargetShortcutTrace>()
+    }
 }
