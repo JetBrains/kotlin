@@ -1272,6 +1272,52 @@ public class FirIdeNormalAnalysisSourceModuleReferenceResolveTestGenerated exten
         }
 
         @Nested
+        @TestMetadata("analysis/analysis-api/testData/referenceResolve/kDoc/javaDeclarations")
+        @TestDataPath("$PROJECT_ROOT")
+        public class JavaDeclarations {
+            @Test
+            public void testAllFilesPresentInJavaDeclarations() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/kDoc/javaDeclarations"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+            }
+
+            @Test
+            @TestMetadata("StaticFieldQualified.kt")
+            public void testStaticFieldQualified() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/kDoc/javaDeclarations/StaticFieldQualified.kt");
+            }
+
+            @Test
+            @TestMetadata("StaticFunctionFromBaseClass.kt")
+            public void testStaticFunctionFromBaseClass() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/kDoc/javaDeclarations/StaticFunctionFromBaseClass.kt");
+            }
+
+            @Test
+            @TestMetadata("StaticFunctionFullyQualified.kt")
+            public void testStaticFunctionFullyQualified() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/kDoc/javaDeclarations/StaticFunctionFullyQualified.kt");
+            }
+
+            @Test
+            @TestMetadata("StaticFunctionQualified.kt")
+            public void testStaticFunctionQualified() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/kDoc/javaDeclarations/StaticFunctionQualified.kt");
+            }
+
+            @Test
+            @TestMetadata("StaticFunctionQualifiedWithJavaSubclass.kt")
+            public void testStaticFunctionQualifiedWithJavaSubclass() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/kDoc/javaDeclarations/StaticFunctionQualifiedWithJavaSubclass.kt");
+            }
+
+            @Test
+            @TestMetadata("StaticFunctionQualifiedWithKotlinSubclass.kt")
+            public void testStaticFunctionQualifiedWithKotlinSubclass() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/kDoc/javaDeclarations/StaticFunctionQualifiedWithKotlinSubclass.kt");
+            }
+        }
+
+        @Nested
         @TestMetadata("analysis/analysis-api/testData/referenceResolve/kDoc/localContext")
         @TestDataPath("$PROJECT_ROOT")
         public class LocalContext {
