@@ -1,16 +1,13 @@
-import org.gradle.api.internal.GradleInternal
-
 pluginManagement {
-    apply from: '../repo/scripts/cache-redirector.settings.gradle.kts'
-    apply from: '../repo/scripts/kotlin-bootstrap.settings.gradle.kts'
+    apply from: '../scripts/cache-redirector.settings.gradle.kts'
+    apply from: '../scripts/kotlin-bootstrap.settings.gradle.kts'
 
-    if (((GradleInternal) gradle).isRootBuild()) {
-        includeBuild '../repo/gradle-settings-conventions'
-    }
+    includeBuild '../gradle-settings-conventions'
 
     repositories {
         maven { url "https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies" }
         mavenCentral()
+        google()
         gradlePluginPortal()
     }
 }
@@ -22,7 +19,7 @@ plugins {
     id "kotlin-daemon-config"
 }
 
-File versionPropertiesFile = new File(rootProject.projectDir.parentFile, "gradle/versions.properties")
+File versionPropertiesFile = new File(rootProject.projectDir.parentFile, "../gradle/versions.properties")
 def versionProperties = new Properties()
 versionPropertiesFile.withInputStream {
     versionProperties.load(it)
@@ -44,4 +41,5 @@ dependencyResolutionManagement {
     }
 }
 
-include "prepare-deps"
+include ":buildsrc-compat"
+include ":prepare-deps"

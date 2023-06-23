@@ -6,7 +6,7 @@ import groovy.util.Node
 import groovy.util.NodeList
 
 plugins {
-    `kotlin-multiplatform` apply false
+    id("org.jetbrains.kotlin.multiplatform") apply false
     base
     `maven-publish`
     signing

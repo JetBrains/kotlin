@@ -8,7 +8,7 @@ import org.jetbrains.kotlin.tools.solib
 import org.jetbrains.kotlin.*
 
 plugins {
-    kotlin
+    id("org.jetbrains.kotlin.jvm")
     id("native")
 }
 

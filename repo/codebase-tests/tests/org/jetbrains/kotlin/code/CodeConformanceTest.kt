@@ -26,7 +26,6 @@ class CodeConformanceTest : TestCase() {
                 ".idea",
                 "build/js",
                 "build/tmp",
-                "buildSrc",
                 "compiler/build",
                 "compiler/fir/lightTree/testData",
                 "compiler/testData/psi/kdoc",
@@ -80,8 +79,6 @@ class CodeConformanceTest : TestCase() {
             File("."),
             listOf(
                 "build",
-                "buildSrc/build/generated-sources",
-                "buildSrc/prepare-deps/build",
                 "compiler/ir/serialization.js/build/fullRuntime",
                 "compiler/ir/serialization.js/build/reducedRuntime/src/libraries/stdlib/js-ir/runtime/longjs.kt",
                 "dependencies",
@@ -108,6 +105,7 @@ class CodeConformanceTest : TestCase() {
                 "libraries/stdlib/js-v1/.gradle",
                 "libraries/stdlib/js-v1/build",
                 "libraries/stdlib/js-v1/node_modules",
+                "libraries/stdlib/jvm/build",
                 "libraries/stdlib/jvm-minimal-for-test/build",
                 "libraries/stdlib/wasm/build",
                 "libraries/tools/atomicfu/build",
@@ -142,6 +140,7 @@ class CodeConformanceTest : TestCase() {
                 "repo/gradle-settings-conventions/jvm-toolchain-provisioning/build/generated-sources",
                 "repo/gradle-settings-conventions/gradle-enterprise/build/generated-sources",
                 "repo/gradle-settings-conventions/kotlin-daemon-config/build/generated-sources",
+                "repo/gradle-build-conventions/buildsrc-compat/build/generated-sources",
                 ".gradle/expanded",
             )
         )

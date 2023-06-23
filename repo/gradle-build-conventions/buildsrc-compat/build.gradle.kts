@@ -4,7 +4,7 @@ buildscript {
     // workaround for KGP build metrics reports: https://github.com/gradle/gradle/issues/20001
     project.extensions.extraProperties["kotlin.build.report.output"] = null
 
-    val versionPropertiesFile = project.rootProject.projectDir.parentFile.resolve("gradle/versions.properties")
+    val versionPropertiesFile = project.rootProject.projectDir.parentFile.resolve("../gradle/versions.properties")
     val versionProperties = java.util.Properties()
     versionPropertiesFile.inputStream().use { propInput ->
         versionProperties.load(propInput)
@@ -24,7 +24,7 @@ logger.info("buildSrc kotlin compiler version: " + org.jetbrains.kotlin.config.K
 logger.info("buildSrc stdlib version: " + KotlinVersion.CURRENT)
 
 apply {
-    from("../gradle/checkCacheability.gradle.kts")
+    from("../../../gradle/checkCacheability.gradle.kts")
 }
 
 plugins {
@@ -52,8 +52,8 @@ fun Project.getBooleanProperty(name: String): Boolean? = this.findProperty(name)
     else v.toBoolean()
 }
 
-rootProject.apply {
-    from(rootProject.file("../gradle/versions.gradle.kts"))
+project.apply {
+    from(rootProject.file("../../gradle/versions.gradle.kts"))
 }
 
 val isTeamcityBuild = kotlinBuildProperties.isTeamcityBuild
@@ -70,7 +70,7 @@ extra["customDepsOrg"] = "kotlin.build"
 
 repositories {
     mavenCentral()
-    maven("https://maven.google.com/")
+    google()
     maven("https://packages.jetbrains.team/maven/p/ij/intellij-dependencies")
     maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies")
     gradlePluginPortal()
@@ -104,15 +104,17 @@ dependencies {
 
     implementation("com.jakewharton.dex:dex-member-list:4.1.1")
 
-    implementation("gradle.plugin.com.github.johnrengelman:shadow:${rootProject.extra["versions.shadow"]}") {
+    implementation("gradle.plugin.com.github.johnrengelman:shadow:${project.extra["versions.shadow"]}") {
         // https://github.com/johnrengelman/shadow/issues/807
         exclude("org.ow2.asm")
     }
     implementation("net.sf.proguard:proguard-gradle:6.2.2")
 
+    // Version should be in sync with <root>/build.gradle.kts
     implementation("gradle.plugin.org.jetbrains.gradle.plugin.idea-ext:gradle-idea-ext:1.0.1")
-    implementation("io.ktor:ktor-client-core:${rootProject.extra["versions.ktor-client-core"]}")
-    implementation("io.ktor:ktor-client-cio:${rootProject.extra["versions.ktor-client-cio"]}")
+
+    implementation("io.ktor:ktor-client-core:${project.extra["versions.ktor-client-core"]}")
+    implementation("io.ktor:ktor-client-cio:${project.extra["versions.ktor-client-cio"]}")
 
     compileOnly("com.gradle:gradle-enterprise-gradle-plugin:3.12.4")
 

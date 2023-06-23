@@ -45,8 +45,6 @@
 
 /build-common/ "Kotlin Build Tools"
 
-/buildSrc/ "Kotlin Build Infrastructure"
-
 /compiler/android-tests/ "Kotlin JVM"
 /compiler/backend/ "Kotlin JVM"
 /compiler/backend.common.jvm/ "Kotlin JVM"

@@ -64,7 +64,7 @@ fun getRootSettings(
     val gradleInternal = (gradle as GradleInternal)
     return when {
         gradleInternal.isRootBuild() ||
-                settings.rootProject.name == "gradle-settings-conventions" -> {
+                setOf("gradle-settings-conventions", "gradle-build-conventions").contains(settings.rootProject.name) -> {
             settings
         }
         else -> {
@@ -91,6 +91,7 @@ val kotlinRootDir: File = when (rootSettings.rootProject.name) {
     }
     "benchmarksAnalyzer", "performance-server" -> rootSettings.rootDir.parentFile.parentFile.parentFile
     "gradle-settings-conventions" -> rootSettings.rootDir.parentFile.parentFile
+    "gradle-build-conventions" -> rootSettings.rootDir.parentFile.parentFile
     "performance" -> rootSettings.rootDir.parentFile.parentFile
     "ui" -> rootSettings.rootDir.parentFile.parentFile.parentFile.parentFile
     else -> rootSettings.rootDir
