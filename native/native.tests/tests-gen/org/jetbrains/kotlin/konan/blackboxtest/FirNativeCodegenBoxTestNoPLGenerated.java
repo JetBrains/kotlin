@@ -38381,12 +38381,6 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
             }
 
             @Test
-            @TestMetadata("kt54028_cursed.kt")
-            public void testKt54028_cursed() throws Exception {
-                runTest("compiler/testData/codegen/box/sealed/kt54028_cursed.kt");
-            }
-
-            @Test
             @TestMetadata("multipleFiles_enabled.kt")
             public void testMultipleFiles_enabled() throws Exception {
                 runTest("compiler/testData/codegen/box/sealed/multipleFiles_enabled.kt");

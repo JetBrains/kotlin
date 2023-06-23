@@ -1,10 +1,10 @@
 // ALLOW_FILES_WITH_SAME_NAMES
 
 // The test infrastructure for Kotlin/Native doesn't allow files with same names.
-// IGNORE_BACKEND: NATIVE
-
-// IGNORE_BACKEND: JS
-// IGNORE_BACKEND: WASM
+// TARGET_BACKEND: JVM
+// TARGET_BACKEND: JVM_IR
+// TARGET_BACKEND: JS_IR
+// K2 JS_IR MUTE_REASON: java.lang.NullPointerException at org.jetbrains.kotlin.fir.backend.Fir2IrClassifierStorage.getIrClassSymbol
 // IGNORE_BACKEND_K2: JS_IR
 
 // Test that if we have two different files with the same name in the same package, KT-54028 doesn't reproduce.

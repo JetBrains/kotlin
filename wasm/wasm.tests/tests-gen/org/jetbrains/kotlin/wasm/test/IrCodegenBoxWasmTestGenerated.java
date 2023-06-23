@@ -30391,11 +30391,6 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
             runTest("compiler/testData/codegen/box/sealed/kt54028.kt");
         }
 
-        @TestMetadata("kt54028_cursed.kt")
-        public void testKt54028_cursed() throws Exception {
-            runTest("compiler/testData/codegen/box/sealed/kt54028_cursed.kt");
-        }
-
         @TestMetadata("multipleFiles_enabled.kt")
         public void testMultipleFiles_enabled() throws Exception {
             runTest("compiler/testData/codegen/box/sealed/multipleFiles_enabled.kt");
