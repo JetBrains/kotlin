@@ -15,14 +15,13 @@ digraph smartCastInInit_kt {
         2 [label="Enter class S" style="filled" fillcolor=red];
         3 [label="Exit class S" style="filled" fillcolor=red];
     }
+    2 -> {3} [color=green];
+
     subgraph cluster_2 {
-        color=blue
+        color=red
         4 [label="Enter function foo" style="filled" fillcolor=red];
         5 [label="Exit function foo" style="filled" fillcolor=red];
     }
-    2 -> {3} [color=green];
-    3 -> {4} [color=green];
-    3 -> {4} [style=dashed];
     4 -> {5};
 
     subgraph cluster_3 {

@@ -310,8 +310,8 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverrides.kt
                 super<R|kotlin/Any|>()
             }
 
-            public open override [ResolvedTo(BODY_RESOLVE)] val originalExpressions: R|A|
-                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=ResolveMe] get(): R|A|
+            public open override [ResolvedTo(STATUS)] val originalExpressions: R|A|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=ResolveMe] get(): R|A|
 
         }
 

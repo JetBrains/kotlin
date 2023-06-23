@@ -14,8 +14,15 @@ digraph delayedAssignment_kt {
         }
         4 [label="Exit class A" style="filled" fillcolor=red];
     }
+    0 -> {1} [color=green];
+    0 -> {4} [style=dotted];
+    0 -> {1} [style=dashed];
+    1 -> {2};
+    2 -> {3};
+    3 -> {4} [color=green];
+
     subgraph cluster_2 {
-        color=blue
+        color=red
         5 [label="Enter function foo" style="filled" fillcolor=red];
         subgraph cluster_3 {
             color=blue
@@ -24,14 +31,6 @@ digraph delayedAssignment_kt {
         }
         8 [label="Exit function foo" style="filled" fillcolor=red];
     }
-    0 -> {1} [color=green];
-    0 -> {4} [style=dotted];
-    0 -> {1} [style=dashed];
-    1 -> {2};
-    2 -> {3};
-    3 -> {4} [color=green];
-    4 -> {5} [color=green];
-    4 -> {5} [style=dashed];
     5 -> {6};
     6 -> {7};
     7 -> {8};

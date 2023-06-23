@@ -13,12 +13,10 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructor.kt
             super<R|kotlin/Any|>()
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] val value: R|kotlin/String|
-            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=JsQualifier] get(): R|kotlin/String|
+        public final [ResolvedTo(STATUS)] val value: R|kotlin/String|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=JsQualifier] get(): R|kotlin/String|
 
-        public final [ResolvedTo(BODY_RESOLVE)] fun <no name provided>(): R|kotlin/Unit| {
-            <Unresolved name: get>#
-        }
+        public final [ResolvedTo(STATUS)] fun <no name provided>(): R|kotlin/Unit| { LAZY_BLOCK }
 
         <DANGLING MODIFIER: Top level declaration expected>
     }

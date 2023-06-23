@@ -762,8 +762,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedCompilerRequiredAnnotations.kt
         @R|kotlin/Deprecated|[Types](message = String(constructorProperty)) public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val a: R|kotlin/Int| = R|<local>/a|
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=FirstClass] get(): R|kotlin/Int|
 
-        @R|kotlin/Deprecated|[Types](message = String(memberFunction)) @R|Anno|[Types](s = String(memberFunction)) public final [ResolvedTo(BODY_RESOLVE)] fun memberFunction(): R|kotlin/Unit| {
-        }
+        @R|kotlin/Deprecated|[Types](String(memberFunction)) @R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] fun memberFunction(): R|kotlin/Unit| { LAZY_BLOCK }
 
         @R|kotlin/Deprecated|[Types](message = String(memberProperty)) @R|Anno|[Types](s = String(memberProperty)) public final [ResolvedTo(BODY_RESOLVE)] val memberProperty: R|kotlin/Int| = Int(32)
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=FirstClass] get(): R|kotlin/Int|

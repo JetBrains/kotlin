@@ -384,8 +384,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverride.kt
             super<R|kotlin/Any|>()
         }
 
-        public open override [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
-        }
+        public open override [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
 

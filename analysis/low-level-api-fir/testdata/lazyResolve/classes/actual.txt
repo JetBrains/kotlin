@@ -294,8 +294,7 @@ FILE: [ResolvedTo(IMPORTS)] actual.kt
             super<R|kotlin/Any|>()
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] fun memberFun(): R|kotlin/Unit| {
-        }
+        public final [ResolvedTo(STATUS)] fun memberFun(): R|kotlin/Unit| { LAZY_BLOCK }
 
         public final [ResolvedTo(BODY_RESOLVE)] val a: R|kotlin/Int| = Int(1)
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Actual] get(): R|kotlin/Int|

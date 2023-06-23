@@ -42,8 +42,16 @@ digraph overridenOpenVal_kt {
         }
         13 [label="Exit class B" style="filled" fillcolor=red];
     }
+    8 -> {9} [color=green];
+    8 -> {13} [style=dotted];
+    8 -> {9} [style=dashed];
+    9 -> {10};
+    10 -> {11};
+    11 -> {12};
+    12 -> {13} [color=green];
+
     subgraph cluster_5 {
-        color=blue
+        color=red
         14 [label="Enter function test_1" style="filled" fillcolor=red];
         subgraph cluster_6 {
             color=blue
@@ -75,15 +83,6 @@ digraph overridenOpenVal_kt {
         }
         31 [label="Exit function test_1" style="filled" fillcolor=red];
     }
-    8 -> {9} [color=green];
-    8 -> {13} [style=dotted];
-    8 -> {9} [style=dashed];
-    9 -> {10};
-    10 -> {11};
-    11 -> {12};
-    12 -> {13} [color=green];
-    13 -> {14} [color=green];
-    13 -> {14} [style=dashed];
     14 -> {15};
     15 -> {16};
     16 -> {17};

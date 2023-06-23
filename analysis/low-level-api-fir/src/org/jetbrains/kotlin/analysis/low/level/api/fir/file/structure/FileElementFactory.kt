@@ -63,6 +63,10 @@ internal object FileElementFactory {
         val classMembersToResolve = buildList {
             for (member in firClass.declarations) {
                 when {
+                    member is FirSimpleFunction && member.source?.kind == KtFakeSourceElementKind.DataClassGeneratedMembers -> {
+                        add(member)
+                    }
+
                     member is FirPrimaryConstructor && member.source?.kind == KtFakeSourceElementKind.ImplicitConstructor -> {
                         add(member)
                     }

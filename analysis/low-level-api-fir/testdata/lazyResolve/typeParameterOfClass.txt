@@ -150,8 +150,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass.kt
             super<R|kotlin/Any|>()
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] t: R|Type|): R|kotlin/Unit| {
-        }
+        public final [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] t: R|Type|): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
 

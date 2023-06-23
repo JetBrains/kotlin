@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirTowerDataCo
 import org.jetbrains.kotlin.fir.resolve.transformers.contracts.FirContractsDslNames
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
+import org.jetbrains.kotlin.fir.resolve.dfa.cfg.isUsedInControlFlowGraphBuilderForClass
 
 internal object LLFirBodyLazyResolver : LLFirLazyResolver(FirResolvePhase.BODY_RESOLVE) {
     override fun resolve(
@@ -136,10 +137,7 @@ private class LLFirBodyTargetResolver(
             transformer.firTowerDataContextCollector?.addDeclarationContext(target, transformer.context.towerDataContext)
 
             for (member in target.declarations) {
-                if (member is FirCallableDeclaration || member is FirAnonymousInitializer) {
-                    // TODO: Ideally, only properties and init blocks should be resolved here.
-                    // However, dues to changes in the compiler resolution, we temporarily have to resolve all callable members.
-                    // Such additional work might affect incremental analysis performance.
+                if (member is FirControlFlowGraphOwner && member.isUsedInControlFlowGraphBuilderForClass) {
                     member.lazyResolveToPhase(resolverPhase.previous)
                     performResolve(member)
                 }

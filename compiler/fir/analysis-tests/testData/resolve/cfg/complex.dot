@@ -8,14 +8,13 @@ digraph complex_kt {
         0 [label="Enter class AutoCloseable" style="filled" fillcolor=red];
         1 [label="Exit class AutoCloseable" style="filled" fillcolor=red];
     }
+    0 -> {1} [color=green];
+
     subgraph cluster_1 {
-        color=blue
+        color=red
         2 [label="Enter function close" style="filled" fillcolor=red];
         3 [label="Exit function close" style="filled" fillcolor=red];
     }
-    0 -> {1} [color=green];
-    1 -> {2} [color=green];
-    1 -> {2} [style=dashed];
     2 -> {3};
 
     subgraph cluster_2 {

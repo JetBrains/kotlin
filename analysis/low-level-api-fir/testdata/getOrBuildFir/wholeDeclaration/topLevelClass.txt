@@ -8,7 +8,7 @@ public final [ResolvedTo(BODY_RESOLVE)] class X : R|kotlin/Any| {
         super<R|kotlin/Any|>()
     }
 
-    public final [ResolvedTo(BODY_RESOLVE)] fun y(): R|kotlin/String|
+    public final [ResolvedTo(STATUS)] fun y(): R|kotlin/String|
 
 }
 
@@ -20,6 +20,6 @@ FILE: [ResolvedTo(IMPORTS)] topLevelClass.kt
             super<R|kotlin/Any|>()
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] fun y(): R|kotlin/String|
+        public final [ResolvedTo(STATUS)] fun y(): R|kotlin/String|
 
     }

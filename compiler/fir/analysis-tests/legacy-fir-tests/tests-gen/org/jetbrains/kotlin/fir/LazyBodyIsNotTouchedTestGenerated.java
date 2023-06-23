@@ -1199,6 +1199,11 @@ public class LazyBodyIsNotTouchedTestGenerated extends AbstractLazyBodyIsNotTouc
             runTest("compiler/fir/analysis-tests/testData/resolve/cfg/loops.kt");
         }
 
+        @TestMetadata("nestedClass.kt")
+        public void testNestedClass() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/cfg/nestedClass.kt");
+        }
+
         @TestMetadata("postponedLambdaInConstructor.kt")
         public void testPostponedLambdaInConstructor() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/cfg/postponedLambdaInConstructor.kt");

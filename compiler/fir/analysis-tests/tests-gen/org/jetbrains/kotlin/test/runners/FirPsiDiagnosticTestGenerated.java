@@ -1392,6 +1392,12 @@ public class FirPsiDiagnosticTestGenerated extends AbstractFirPsiDiagnosticTest 
             }
 
             @Test
+            @TestMetadata("nestedClass.kt")
+            public void testNestedClass() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/cfg/nestedClass.kt");
+            }
+
+            @Test
             @TestMetadata("postponedLambdaInConstructor.kt")
             public void testPostponedLambdaInConstructor() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/cfg/postponedLambdaInConstructor.kt");

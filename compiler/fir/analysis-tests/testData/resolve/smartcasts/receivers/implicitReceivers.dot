@@ -14,8 +14,15 @@ digraph implicitReceivers_kt {
         }
         4 [label="Exit class A" style="filled" fillcolor=red];
     }
+    0 -> {1} [color=green];
+    0 -> {4} [style=dotted];
+    0 -> {1} [style=dashed];
+    1 -> {2};
+    2 -> {3};
+    3 -> {4} [color=green];
+
     subgraph cluster_2 {
-        color=blue
+        color=red
         5 [label="Enter function foo" style="filled" fillcolor=red];
         subgraph cluster_3 {
             color=blue
@@ -24,14 +31,6 @@ digraph implicitReceivers_kt {
         }
         8 [label="Exit function foo" style="filled" fillcolor=red];
     }
-    0 -> {1} [color=green];
-    0 -> {4} [style=dotted];
-    0 -> {1} [style=dashed];
-    1 -> {2};
-    2 -> {3};
-    3 -> {4} [color=green];
-    4 -> {5} [color=green];
-    4 -> {5} [style=dashed];
     5 -> {6};
     6 -> {7};
     7 -> {8};
@@ -47,8 +46,15 @@ digraph implicitReceivers_kt {
         }
         13 [label="Exit class B" style="filled" fillcolor=red];
     }
+    9 -> {10} [color=green];
+    9 -> {13} [style=dotted];
+    9 -> {10} [style=dashed];
+    10 -> {11};
+    11 -> {12};
+    12 -> {13} [color=green];
+
     subgraph cluster_6 {
-        color=blue
+        color=red
         14 [label="Enter function bar" style="filled" fillcolor=red];
         subgraph cluster_7 {
             color=blue
@@ -57,14 +63,6 @@ digraph implicitReceivers_kt {
         }
         17 [label="Exit function bar" style="filled" fillcolor=red];
     }
-    9 -> {10} [color=green];
-    9 -> {13} [style=dotted];
-    9 -> {10} [style=dashed];
-    10 -> {11};
-    11 -> {12};
-    12 -> {13} [color=green];
-    13 -> {14} [color=green];
-    13 -> {14} [style=dashed];
     14 -> {15};
     15 -> {16};
     16 -> {17};

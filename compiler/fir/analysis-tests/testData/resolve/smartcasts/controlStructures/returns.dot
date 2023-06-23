@@ -157,14 +157,13 @@ digraph returns_kt {
         53 [label="Enter class A" style="filled" fillcolor=red];
         54 [label="Exit class A" style="filled" fillcolor=red];
     }
+    53 -> {54} [color=green];
+
     subgraph cluster_15 {
-        color=blue
+        color=red
         55 [label="Enter function foo" style="filled" fillcolor=red];
         56 [label="Exit function foo" style="filled" fillcolor=red];
     }
-    53 -> {54} [color=green];
-    54 -> {55} [color=green];
-    54 -> {55} [style=dashed];
     55 -> {56};
 
     subgraph cluster_16 {
@@ -172,14 +171,13 @@ digraph returns_kt {
         57 [label="Enter class B" style="filled" fillcolor=red];
         58 [label="Exit class B" style="filled" fillcolor=red];
     }
+    57 -> {58} [color=green];
+
     subgraph cluster_17 {
-        color=blue
+        color=red
         59 [label="Enter function bar" style="filled" fillcolor=red];
         60 [label="Exit function bar" style="filled" fillcolor=red];
     }
-    57 -> {58} [color=green];
-    58 -> {59} [color=green];
-    58 -> {59} [style=dashed];
     59 -> {60};
 
     subgraph cluster_18 {
@@ -187,14 +185,13 @@ digraph returns_kt {
         61 [label="Enter class C" style="filled" fillcolor=red];
         62 [label="Exit class C" style="filled" fillcolor=red];
     }
+    61 -> {62} [color=green];
+
     subgraph cluster_19 {
-        color=blue
+        color=red
         63 [label="Enter function baz" style="filled" fillcolor=red];
         64 [label="Exit function baz" style="filled" fillcolor=red];
     }
-    61 -> {62} [color=green];
-    62 -> {63} [color=green];
-    62 -> {63} [style=dashed];
     63 -> {64};
 
     subgraph cluster_20 {
