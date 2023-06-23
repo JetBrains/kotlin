@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.platform.TargetPlatform
  *      'true' - interpreter will construct object and initialize its properties despite the fact it is not marked as compile time;
  *      'false' - interpreter will create a representation of empty object, that can be used to get const properties
  * @param inlineConstVal tell the interpreter that value of const property can be inlined instead of getter call
+ * @param inlineNanVal allows to inline values of `Double.NaN` and `Float.NaN`
  */
 // TODO maybe create some sort of builder
 data class IrInterpreterConfiguration(
@@ -25,4 +26,5 @@ data class IrInterpreterConfiguration(
     val printOnlyExceptionMessage: Boolean = false,
     val collapseStackTraceFromJDK: Boolean = true,
     val inlineConstVal: Boolean = true,
+    val inlineNanVal: Boolean = true,
 )

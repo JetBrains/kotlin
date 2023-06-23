@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.backend.konan.lower.UnboxInlineLowering
 import org.jetbrains.kotlin.backend.konan.optimizations.KonanBCEForLoopBodyTransformer
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.interpreter.IrInterpreterConfiguration
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 
@@ -493,7 +494,12 @@ private val objectClassesPhase = createFileLoweringPhase(
 )
 
 private val constEvaluationPhase = createFileLoweringPhase(
-        lowering = ::ConstEvaluationLowering,
+        lowering = { context: Context ->
+            // NaN constants has inconsistencies between IR and metadata representation,
+            // so inlining them can lead to incorrect behaviour. Check KT-53258 for details.
+            val configuration = IrInterpreterConfiguration(printOnlyExceptionMessage = true, inlineNanVal = false)
+            ConstEvaluationLowering(context, configuration = configuration)
+        },
         name = "ConstEvaluationLowering",
         description = "Evaluate functions that are marked as `IntrinsicConstEvaluation`",
         prerequisite = setOf(inlinePhase)

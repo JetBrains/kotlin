@@ -116,7 +116,15 @@ class IrInterpreterCommonChecker : IrInterpreterChecker {
         return body.kind == IrSyntheticBodyKind.ENUM_VALUES || body.kind == IrSyntheticBodyKind.ENUM_VALUEOF
     }
 
+    private fun IrConst<*>.isNaN(): Boolean {
+        return this.kind == IrConstKind.Double && IrConstKind.Double.valueOf(this).isNaN() ||
+                this.kind == IrConstKind.Float && IrConstKind.Float.valueOf(this).isNaN()
+    }
+
     override fun visitConst(expression: IrConst<*>, data: IrInterpreterCheckerData): Boolean {
+        if (!data.interpreterConfiguration.inlineNanVal) {
+            return !expression.isNaN()
+        }
         return true
     }
 
