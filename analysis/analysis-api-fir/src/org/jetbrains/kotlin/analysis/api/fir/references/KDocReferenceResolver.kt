@@ -168,7 +168,13 @@ internal object KDocReferenceResolver {
             .fold(scope) { currentScope, fqNamePart ->
                 currentScope
                     .getClassifierSymbols(fqNamePart)
-                    .mapNotNull { (it as? KtSymbolWithMembers)?.getDeclaredMemberScope() }
+                    .filterIsInstance<KtSymbolWithMembers>()
+                    .flatMap {
+                        listOf(
+                            it.getDeclaredMemberScope(),
+                            it.getStaticMemberScope(),
+                        )
+                    }
                     .toList()
                     .asCompositeScope()
             }
@@ -185,7 +191,7 @@ internal object KDocReferenceResolver {
     }
 
     context(KtAnalysisSession)
-    private fun getNonImportedSymbolsByFullyQualifiedName(fqName: FqName): List<KtSymbol> = buildList {
+    private fun getNonImportedSymbolsByFullyQualifiedName(fqName: FqName): Collection<KtSymbol> = buildSet {
         generateNameInterpretations(fqName).forEach { interpretation ->
             collectSymbolsByFqNameInterpretation(interpretation)
         }
@@ -229,7 +235,13 @@ internal object KDocReferenceResolver {
 
             else -> {
                 getClassOrObjectSymbolByClassId(classId)
-                    ?.getDeclaredMemberScope()
+                    ?.let {
+                        listOf(
+                            it.getDeclaredMemberScope(),
+                            it.getStaticMemberScope(),
+                        )
+                    }
+                    ?.asCompositeScope()
                     ?.getCallableSymbols(callableId.callableName)
                     ?.let(::addAll)
             }
