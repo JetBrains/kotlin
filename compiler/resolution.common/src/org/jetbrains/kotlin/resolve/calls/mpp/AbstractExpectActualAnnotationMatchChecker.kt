@@ -27,6 +27,10 @@ object AbstractExpectActualAnnotationMatchChecker {
             val expanded = actualSymbol.expandToRegularClass() ?: return null
             return areAnnotationsCompatible(expectSymbol, expanded)
         }
+        // TODO(Roman.Efremov, KT-58551): properly handle repeatable annotations
+        // TODO(Roman.Efremov, KT-58551): check other annotation targets (constructors, types, value parameters, etc)
+        // TODO(Roman.Efremov, KT-58551): fix actual typealias class members not checked in FE checkers
+        // TODO(Roman.Efremov, KT-58551): check annotations on fake overrides in case of implicit actualization
 
         val skipSourceAnnotations = !actualSymbol.hasSourceAnnotationsErased
         val actualAnnotationsByName = actualSymbol.annotations.groupBy { it.classId }
