@@ -34,4 +34,4 @@ package a
 
 fun test() = Test().getO()
 
-fun box() = "OK"
+fun box() = "OK".also { test() }

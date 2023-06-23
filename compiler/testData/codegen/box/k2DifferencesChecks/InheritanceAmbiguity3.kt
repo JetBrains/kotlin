@@ -26,4 +26,4 @@ package a
 
 fun test() = x().getZ()
 
-fun box() = "OK"
+fun box() = "OK".also { test() }

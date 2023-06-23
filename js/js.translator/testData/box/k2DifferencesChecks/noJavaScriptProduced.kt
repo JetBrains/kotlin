@@ -18,4 +18,4 @@ fun test() {
 }
 
 
-fun box() = "OK"
+fun box() = "OK".also { test() }

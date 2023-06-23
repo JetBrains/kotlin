@@ -27,4 +27,4 @@ fun box(x: dynamic) {
 }
 
 
-fun box() = "OK"
+fun box() = "OK".also { foo() }

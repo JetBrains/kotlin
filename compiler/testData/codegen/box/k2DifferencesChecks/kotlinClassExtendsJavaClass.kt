@@ -23,4 +23,4 @@ open class K : A() {
     }
 }
 
-fun box() = "OK"
+fun box() = "OK".also { foo() }

@@ -35,4 +35,4 @@ open class K : C() {
     }
 }
 
-fun box() = "OK"
+fun box() = "OK".also { foo() }

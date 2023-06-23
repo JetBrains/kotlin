@@ -11,4 +11,4 @@ class Sub : Super() {
 }
 
 
-fun box() = "OK"
+fun box() = "OK".also { foo() }

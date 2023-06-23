@@ -31,4 +31,4 @@ package a
 
 fun test() = y().getZ()
 
-fun box() = "OK"
+fun box() = "OK".also { test() }

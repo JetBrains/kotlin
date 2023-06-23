@@ -6,4 +6,4 @@ fun foo() {
     }
 }
 
-fun box() = "OK"
+fun box() = "OK".also { foo() }

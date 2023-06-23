@@ -22,4 +22,4 @@ fun main() {
 }
 
 
-fun box() = "OK"
+fun box() = "OK".also { test() }

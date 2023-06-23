@@ -12,4 +12,4 @@ class D : C(), T
 
 val obj: C = object : C(), T {}
 
-fun box() = "OK"
+fun box() = "OK".also { foo() }

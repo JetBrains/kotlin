@@ -269,13 +269,13 @@ fun extractCommonMetaInfosSlow(
 fun extractSignificantMetaInfosSlow(
     erroneousK1MetaInfos: Collection<ParsedCodeMetaInfo>,
     erroneousK2MetaInfos: Collection<ParsedCodeMetaInfo>,
-): Pair<Collection<ParsedCodeMetaInfo>, Collection<ParsedCodeMetaInfo>> {
+): Pair<MutableList<ParsedCodeMetaInfo>, MutableList<ParsedCodeMetaInfo>> {
     val (k1MetaInfos, k2MetaInfos, commonMetaInfos) = extractCommonMetaInfosSlow(erroneousK1MetaInfos, erroneousK2MetaInfos)
 
-    val significantK1MetaInfo = k1MetaInfos.filter { tagInK1 ->
+    val significantK1MetaInfo = k1MetaInfos.filterTo(mutableListOf()) { tagInK1 ->
         commonMetaInfos.none { it.isOnSamePositionAs(tagInK1) }
     }
-    val significantK2MetaInfo = k2MetaInfos.filter { tagInK2 ->
+    val significantK2MetaInfo = k2MetaInfos.filterTo(mutableListOf()) { tagInK2 ->
         commonMetaInfos.none { it.isOnSamePositionAs(tagInK2) }
     }
 
@@ -308,13 +308,13 @@ fun extractCommonMetaInfos(
 fun extractSignificantMetaInfos(
     erroneousK1MetaInfos: Collection<ParsedCodeMetaInfo>,
     erroneousK2MetaInfos: Collection<ParsedCodeMetaInfo>,
-): Pair<Collection<ParsedCodeMetaInfo>, Collection<ParsedCodeMetaInfo>> {
+): Pair<MutableList<ParsedCodeMetaInfo>, MutableList<ParsedCodeMetaInfo>> {
     val (k1MetaInfos, k2MetaInfos, commonMetaInfos) = extractCommonMetaInfos(erroneousK1MetaInfos, erroneousK2MetaInfos)
 
-    val significantK1MetaInfo = k1MetaInfos.filterNot { tagInK1 ->
+    val significantK1MetaInfo = k1MetaInfos.filterNotTo(mutableListOf()) { tagInK1 ->
         commonMetaInfos.hasDiagnosticsAt(tagInK1.start, tagInK1.end)
     }
-    val significantK2MetaInfo = k2MetaInfos.filterNot { tagInK2 ->
+    val significantK2MetaInfo = k2MetaInfos.filterNotTo(mutableListOf()) { tagInK2 ->
         commonMetaInfos.hasDiagnosticsAt(tagInK2.start, tagInK2.end)
     }
 
@@ -393,26 +393,26 @@ val String.lineStartOffsets: IntArray
     }
 
 class EquivalenceTestResult(
-    val significantK1MetaInfo: Collection<ParsedCodeMetaInfo>,
-    val significantK2MetaInfo: Collection<ParsedCodeMetaInfo>,
+    val significantK1MetaInfo: MutableList<ParsedCodeMetaInfo> = mutableListOf(),
+    val significantK2MetaInfo: MutableList<ParsedCodeMetaInfo> = mutableListOf(),
 )
 
 fun reportEquivalenceDifference(
-    writer: Writer,
+    writer: Appendable,
     result: EquivalenceTestResult,
     relativeTestPath: String,
 ) {
-    writer.write("The `${relativeTestPath}` test:\n\n")
+    writer.append("The `${relativeTestPath}` test:\n\n")
 
     for (it in result.significantK1MetaInfo) {
-        writer.write("- `#potential-feature`: `${it.tag}` was in K1 at `(${it.start}..${it.end})`, but disappeared\n")
+        writer.append("- `#potential-feature`: `${it.tag}` was in K1 at `(${it.start}..${it.end})`, but disappeared\n")
     }
 
     for (it in result.significantK2MetaInfo) {
-        writer.write("- `#potential-breaking-change`: `${it.tag}` was introduced in K2 at `(${it.start}..${it.end})`\n")
+        writer.append("- `#potential-breaking-change`: `${it.tag}` was introduced in K2 at `(${it.start}..${it.end})`\n")
     }
 
-    writer.write("\n")
+    writer.append("\n")
 }
 
 inline fun EquivalenceTestResult.ifTests(
@@ -489,10 +489,10 @@ fun analyseEquivalencesAsHierarchyAmong(
     val commonK1MetaInfos = commonK1MetaInfoList.toMetaInfosHierarchySet()
     val commonK2MetaInfos = commonK2MetaInfoList.toMetaInfosHierarchySet()
 
-    val significantK1MetaInfo = uniqueK1MetaInfos.filterNot {
+    val significantK1MetaInfo = uniqueK1MetaInfos.filterNotTo(mutableListOf()) {
         commonK1MetaInfos.overlapsWith(it)
     }
-    val significantK2MetaInfo = uniqueK2MetaInfos.filterNot {
+    val significantK2MetaInfo = uniqueK2MetaInfos.filterNotTo(mutableListOf()) {
         commonK2MetaInfos.overlapsWith(it)
     }
 
@@ -603,18 +603,15 @@ fun fixStupidEmptyLines(
     status.done("$missingCommentsCount fir files had stupid empty lines")
 }
 
-class DiagnosticsStatistics(
-    val disappearedDiagnosticToFiles: MutableMap<String, MutableSet<File>> = mutableMapOf(),
-    val introducedDiagnosticToFiles: MutableMap<String, MutableSet<File>> = mutableMapOf(),
-)
+typealias DiagnosticsStatistics = MutableMap<String, MutableMap<File, EquivalenceTestResult>>
 
 fun DiagnosticsStatistics.recordDiagnosticsStatistics(test: File, result: EquivalenceTestResult) {
     for (it in result.significantK1MetaInfo) {
-        disappearedDiagnosticToFiles.getOrPut(it.tag) { mutableSetOf() }.add(test)
+        getOrPut(it.tag) { mutableMapOf() }.getOrPut(test) { EquivalenceTestResult() }.significantK1MetaInfo.add(it)
     }
 
     for (it in result.significantK2MetaInfo) {
-        introducedDiagnosticToFiles.getOrPut(it.tag) { mutableSetOf() }.add(test)
+        getOrPut(it.tag) { mutableMapOf() }.getOrPut(test) { EquivalenceTestResult() }.significantK2MetaInfo.add(it)
     }
 }
 
@@ -652,24 +649,33 @@ fun printDiagnosticsStatistics(title: String? = null, diagnostics: Map<String, S
         val knownIssue = knownMissingDiagnostics[it.key]
 
         if (knownIssue != null) {
-            writer.write(". The corresponding issue is KT-${knownIssue.numberInProject}\n")
+            val ticket = knownIssue.numberInProject
+            writer.write(". The corresponding issue is [KT-$ticket](https://youtrack.jetbrains.com/issue/KT-$ticket)\n")
         } else {
             writer.write("\n")
         }
     }
 }
 
+fun DiagnosticsStatistics.extractDisappearances() = mapValues { (_, filesToStats) ->
+    filesToStats.filter { it.value.significantK1MetaInfo.isNotEmpty() }.keys
+}
+
+fun DiagnosticsStatistics.extractIntroductions() = mapValues { (_, filesToStats) ->
+    filesToStats.filter { it.value.significantK2MetaInfo.isNotEmpty() }.keys
+}
+
 fun File.renderDiagnosticsStatistics(diagnosticsStatistics: DiagnosticsStatistics) {
     bufferedWriter().use { writer ->
         printDiagnosticsStatistics(
             "Most common reasons of potential features (by the number of files) include:",
-            diagnosticsStatistics.disappearedDiagnosticToFiles,
+            diagnosticsStatistics.extractDisappearances(),
             writer,
         )
         writer.write("\n")
         printDiagnosticsStatistics(
             "Most common reasons of breaking changes (by the number of files) include:",
-            diagnosticsStatistics.introducedDiagnosticToFiles,
+            diagnosticsStatistics.extractIntroductions(),
             writer,
         )
     }
@@ -804,6 +810,9 @@ fun generateAdditionalBoxTestsAndLogManuals(
             "fun box(): String" in text -> text
             "fun box()" in text -> text.replace("fun box()", "fun vox()") +
                     "\n\nfun box() = \"OK\".also { vox() }\n"
+            "fun test()" in text -> "$text\n\nfun box() = \"OK\".also { test() }\n"
+            "fun main()" in text -> "$text\n\nfun box() = \"OK\".also { main() }\n"
+            "fun foo()" in text -> "$text\n\nfun box() = \"OK\".also { foo() }\n"
             else -> "$text\n\nfun box() = \"OK\"\n"
         }
 
@@ -857,8 +866,9 @@ fun analyzeAdditionalBoxTests(
 ) {
     val status = StatusPrinter()
     status.done("Assigning #k2-compiler-crash to diagnostics with all corresponding box tests failing..")
+    val disappearances = diagnosticsStatistics.extractDisappearances()
 
-    val testsAlwaysCausingCompilationCrashes = diagnosticsStatistics.disappearedDiagnosticToFiles.filter { (_, files) ->
+    val testsAlwaysCausingCompilationCrashes = disappearances.filter { (_, files) ->
         files.all { it.analogousK2RelativePath in knownFailingAdditionalBoxTests }
     }
 
@@ -889,7 +899,7 @@ fun analyzeAdditionalBoxTests(
 
     status.done("Assigning #k2-naive-box-passes-sometimes to diagnostics with some corresponding box tests failing..")
 
-    val testsSometimesCausingCompilationCrashes = diagnosticsStatistics.disappearedDiagnosticToFiles.filter { (diagnostic, files) ->
+    val testsSometimesCausingCompilationCrashes = disappearances.filter { (diagnostic, files) ->
         files.any { it.analogousK2RelativePath in knownFailingAdditionalBoxTests }
                 && diagnostic !in testsAlwaysCausingCompilationCrashes
     }
@@ -948,6 +958,50 @@ fun analyzeAdditionalBoxTests(
     }
 }
 
+val knownDiagnosticIssues = knownMissingDiagnostics
+
+fun updateKnownIssuesDescriptions(statistics: DiagnosticsStatistics) {
+    for ((diagnostic, filesToEntries) in statistics) {
+        val knownIssue = knownDiagnosticIssues[diagnostic] ?: continue
+
+        try {
+            val resolvedResult = getJson(
+                "https://youtrack.jetbrains.com/api/issues/${knownIssue.id}?fields=resolved",
+                API_HEADERS,
+            ).also(::println)
+
+            if ("\"resolved\":null" !in resolvedResult) {
+                continue
+            }
+
+            postJson(
+                "https://youtrack.jetbrains.com/api/issues/${knownIssue.id}?fields=id,resolved",
+                API_HEADERS,
+                mapOf(
+                    "description" to buildDiagnosticStatisticsIssueDescription(filesToEntries),
+                ),
+            ).also(::println)
+        } catch (e: IOException) {
+            println(e)
+        }
+    }
+}
+
+fun buildDiagnosticStatisticsIssueDescription(
+    filesToEntries: Map<File, EquivalenceTestResult>,
+) = buildString {
+    if (filesToEntries.isEmpty()) {
+        append("According to the reports in the parent KT-58630 issue, this diagnostic no longer causes any significant differences. This issue should probably be closed.")
+        return@buildString
+    }
+
+    append("This diagnostic is backed up by ${filesToEntries.size} tests. See the reports in the parent KT-58630 issue for more details.\n\n")
+
+    for ((file, entry) in filesToEntries) {
+        reportEquivalenceDifference(this, entry, file.path.removePrefix(projectDirectory.path))
+    }
+}
+
 fun main() {
     val tests = deserializeOrGenerate(build.child("testsStats.json")) {
         collectTestsStats(projectDirectory)
@@ -966,8 +1020,8 @@ fun main() {
     val alongsideNonContainedTests = mutableListOf<File>()
     val alongsideNonContainedTestsWithIssues = mutableMapOf<File, String>()
 
-    val similarityStatistics = DiagnosticsStatistics()
-    val containmentStatistics = DiagnosticsStatistics()
+    val similarityStatistics: DiagnosticsStatistics = mutableMapOf()
+    val containmentStatistics: DiagnosticsStatistics = mutableMapOf()
 
     val candidatesForAdditionalBoxTests = mutableListOf<File>()
     val candidatesForManualChecking = mutableMapOf<File, Set<String>>()
@@ -1070,7 +1124,7 @@ fun main() {
     build.child("containment-diagnostics-stats.md").renderDiagnosticsStatistics(containmentStatistics)
 
     build.child("k2-unimplemented-diagnostics.md").writer().use { writer ->
-        val missingDiagnostics = containmentStatistics.disappearedDiagnosticToFiles.filterKeys { it !in k2KnownErrors }
+        val missingDiagnostics = containmentStatistics.extractDisappearances().filterKeys { it !in k2KnownErrors }
         val (withKnownIssues, newDiagnostics) = missingDiagnostics.entries.partition { it.key in knownMissingDiagnostics }
 
         printDiagnosticsStatistics(
@@ -1087,6 +1141,8 @@ fun main() {
 
     generateAdditionalBoxTestsAndLogManuals(candidatesForAdditionalBoxTests, candidatesForManualChecking)
 //    analyzeAdditionalBoxTests(containmentStatistics)
+
+    updateKnownIssuesDescriptions(containmentStatistics)
 
     val a = 10 + 1
     println("")

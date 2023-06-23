@@ -42,4 +42,4 @@ fun test() = A1().getB()
 fun test2() = A2().getB()
 
 
-fun box() = "OK"
+fun box() = "OK".also { test() }

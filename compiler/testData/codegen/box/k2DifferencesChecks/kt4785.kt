@@ -13,4 +13,4 @@ class E : C(), T
 val z: T = object : C(), T {}
 
 
-fun box() = "OK"
+fun box() = "OK".also { foo() }

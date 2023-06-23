@@ -34,6 +34,7 @@ fun getNonErrorFromFieldValue(value: Any?): String? {
             else -> value.name
         }
         is KtDiagnosticFactoryForDeprecation<*> -> value.warningFactory.name
+        is DiagnosticFactoryForDeprecation<*, *, *> -> value.warningFactory.name
         is DiagnosticFactoryWithPsiElement<*, *> -> when (value.severity) {
             Severity.ERROR -> null
             else -> value.name
@@ -50,6 +51,7 @@ fun getErrorFromFieldValue(value: Any?): String? {
             else -> null
         }
         is KtDiagnosticFactoryForDeprecation<*> -> value.errorFactory.name
+        is DiagnosticFactoryForDeprecation<*, *, *> -> value.errorFactory.name
         is DiagnosticFactoryWithPsiElement<*, *> -> when (value.severity) {
             Severity.ERROR -> value.name
             else -> null

@@ -20,4 +20,4 @@ interface L : K {
 }
 
 
-fun box() = "OK"
+fun box() = "OK".also { foo() }

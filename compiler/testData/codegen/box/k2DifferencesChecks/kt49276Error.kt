@@ -38,4 +38,4 @@ fun main() {
     append4(1..10)    // warning
 }
 
-fun box() = "OK"
+fun box() = "OK".also { main() }

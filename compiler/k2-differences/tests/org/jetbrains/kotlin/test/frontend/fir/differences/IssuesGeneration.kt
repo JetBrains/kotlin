@@ -94,7 +94,7 @@ object Tags {
     const val K1_RED_K2_GREEN = "68-291983"
     const val K2_POTENTIAL_FEATURE = "68-284223"
     const val FIXED_IN_K2 = "68-169920"
-    const val K2_COMPILER_CRASH = "68-320984"
+    const val K2_COMPILER_CRASH = "68-320807"
     const val K2_RUNTIME_CRASH = "68-320989"
     const val K2_NAIVE_BOX_PASSES_SOMETIMES = "68-321017"
 }

@@ -27,4 +27,4 @@ fun main(): Unit {
 }
 
 
-fun box() = "OK"
+fun box() = "OK".also { main() }

@@ -11,4 +11,4 @@ class Sub : I {
 }
 
 
-fun box() = "OK"
+fun box() = "OK".also { foo() }

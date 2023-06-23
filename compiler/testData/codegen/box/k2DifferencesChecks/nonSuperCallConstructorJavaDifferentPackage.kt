@@ -34,4 +34,4 @@ class B4 : A(1) {
 }
 
 
-fun box() = "OK"
+fun box() = "OK".also { foo() }
