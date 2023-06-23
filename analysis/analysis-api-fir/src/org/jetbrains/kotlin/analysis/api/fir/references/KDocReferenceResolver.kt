@@ -8,7 +8,9 @@ package org.jetbrains.kotlin.analysis.api.fir.references
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.components.KtScopeContext
 import org.jetbrains.kotlin.analysis.api.components.KtScopeKind
+import org.jetbrains.kotlin.analysis.api.fir.references.KDocReferenceResolver.scopeForQualifiedResolve
 import org.jetbrains.kotlin.analysis.api.scopes.KtScope
+import org.jetbrains.kotlin.analysis.api.symbols.KtClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KtDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
@@ -19,6 +21,8 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import kotlin.reflect.KClass
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KtSymbolOrigin
+import org.jetbrains.kotlin.utils.addIfNotNull
 
 internal object KDocReferenceResolver {
 
@@ -169,13 +173,7 @@ internal object KDocReferenceResolver {
                 currentScope
                     .getClassifierSymbols(fqNamePart)
                     .filterIsInstance<KtSymbolWithMembers>()
-                    .flatMap { symbol ->
-                        listOfNotNull(
-                            symbol.getMemberScope(),
-                            (symbol as? KtClassOrObjectSymbol)?.let { getCompanionObjectMemberScope(it) },
-                            symbol.getStaticMemberScope(),
-                        )
-                    }
+                    .map { symbol -> symbol.scopeForQualifiedResolve() }
                     .toList()
                     .asCompositeScope()
             }
@@ -236,18 +234,34 @@ internal object KDocReferenceResolver {
 
             else -> {
                 getClassOrObjectSymbolByClassId(classId)
-                    ?.let {
-                        listOfNotNull(
-                            it.getMemberScope(),
-                            getCompanionObjectMemberScope(it),
-                            it.getStaticMemberScope(),
-                        )
-                    }
-                    ?.asCompositeScope()
+                    ?.scopeForQualifiedResolve()
                     ?.getCallableSymbols(callableId.callableName)
                     ?.let(::addAll)
             }
         }
+    }
+
+    context(KtAnalysisSession)
+    private fun KtSymbolWithMembers.scopeForQualifiedResolve(): KtScope {
+        val symbol = this
+
+        val scopes = buildList {
+            add(symbol.getMemberScope())
+
+            if (symbol is KtClassOrObjectSymbol) {
+                addIfNotNull(getCompanionObjectMemberScope(symbol))
+
+                if (symbol.classKind == KtClassKind.ENUM_CLASS) {
+                    add(symbol.getDeclaredMemberScope())
+                }
+            }
+
+            if (symbol.origin == KtSymbolOrigin.JAVA) {
+                add(getStaticMemberScope())
+            }
+        }
+
+        return scopes.asCompositeScope()
     }
 
 

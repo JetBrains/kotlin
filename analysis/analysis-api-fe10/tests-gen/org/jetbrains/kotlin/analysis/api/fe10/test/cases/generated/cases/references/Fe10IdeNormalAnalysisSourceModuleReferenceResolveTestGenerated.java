@@ -1327,6 +1327,12 @@ public class Fe10IdeNormalAnalysisSourceModuleReferenceResolveTestGenerated exte
             }
 
             @Test
+            @TestMetadata("EnumStaticFunctionQualified.kt")
+            public void testEnumStaticFunctionQualified() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/kDoc/javaDeclarations/EnumStaticFunctionQualified.kt");
+            }
+
+            @Test
             @TestMetadata("StaticFieldQualified.kt")
             public void testStaticFieldQualified() throws Exception {
                 runTest("analysis/analysis-api/testData/referenceResolve/kDoc/javaDeclarations/StaticFieldQualified.kt");
@@ -1593,6 +1599,18 @@ public class Fe10IdeNormalAnalysisSourceModuleReferenceResolveTestGenerated exte
                 @TestMetadata("EnumEntryFromStdlibByShortName.kt")
                 public void testEnumEntryFromStdlibByShortName() throws Exception {
                     runTest("analysis/analysis-api/testData/referenceResolve/kDoc/qualified/stdlib/EnumEntryFromStdlibByShortName.kt");
+                }
+
+                @Test
+                @TestMetadata("MemberFromBaseClassByFullName.kt")
+                public void testMemberFromBaseClassByFullName() throws Exception {
+                    runTest("analysis/analysis-api/testData/referenceResolve/kDoc/qualified/stdlib/MemberFromBaseClassByFullName.kt");
+                }
+
+                @Test
+                @TestMetadata("MemberFromBaseClassByShortName.kt")
+                public void testMemberFromBaseClassByShortName() throws Exception {
+                    runTest("analysis/analysis-api/testData/referenceResolve/kDoc/qualified/stdlib/MemberFromBaseClassByShortName.kt");
                 }
 
                 @Test

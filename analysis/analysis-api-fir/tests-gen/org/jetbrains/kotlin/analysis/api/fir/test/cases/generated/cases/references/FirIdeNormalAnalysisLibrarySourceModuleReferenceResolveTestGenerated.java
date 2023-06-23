@@ -1199,6 +1199,24 @@ public class FirIdeNormalAnalysisLibrarySourceModuleReferenceResolveTestGenerate
             }
 
             @Test
+            @TestMetadata("EnumEntryFullyQualified.kt")
+            public void testEnumEntryFullyQualified() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/kDoc/javaDeclarations/EnumEntryFullyQualified.kt");
+            }
+
+            @Test
+            @TestMetadata("EnumEntryQualified.kt")
+            public void testEnumEntryQualified() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/kDoc/javaDeclarations/EnumEntryQualified.kt");
+            }
+
+            @Test
+            @TestMetadata("EnumStaticFunctionQualified.kt")
+            public void testEnumStaticFunctionQualified() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/kDoc/javaDeclarations/EnumStaticFunctionQualified.kt");
+            }
+
+            @Test
             @TestMetadata("StaticFieldQualified.kt")
             public void testStaticFieldQualified() throws Exception {
                 runTest("analysis/analysis-api/testData/referenceResolve/kDoc/javaDeclarations/StaticFieldQualified.kt");
