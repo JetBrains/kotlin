@@ -453,22 +453,6 @@ val IrDeclaration.fileParentOrNull: IrFile?
         else -> null
     }
 
-private val RETENTION_PARAMETER_NAME = Name.identifier("value")
-
-fun IrClass.getAnnotationRetention(): KotlinRetention? {
-    val retentionArgument =
-        getAnnotation(StandardNames.FqNames.retention)?.getValueArgument(RETENTION_PARAMETER_NAME)
-                as? IrGetEnumValue ?: return null
-    val retentionArgumentValue = retentionArgument.symbol.owner
-    return KotlinRetention.valueOf(retentionArgumentValue.name.asString())
-}
-
-// To be generalized to IrMemberAccessExpression as soon as properties get symbols.
-fun IrConstructorCall.getValueArgument(name: Name): IrExpression? {
-    val index = symbol.owner.valueParameters.find { it.name == name }?.index ?: return null
-    return getValueArgument(index)
-}
-
 val IrMemberWithContainerSource.parentClassId: ClassId?
     get() = ((this as? IrSimpleFunction)?.correspondingPropertySymbol?.owner ?: this).let { directMember ->
         (directMember.containerSource as? JvmPackagePartSource)?.classId ?: (directMember.parent as? IrClass)?.classId
