@@ -55,12 +55,6 @@ public class KaptToolIntegrationTestGenerated extends AbstractKaptToolIntegratio
     }
 
     @Test
-    @TestMetadata("kotlinFileGenerationCorrectErrorTypes")
-    public void testKotlinFileGenerationCorrectErrorTypes() throws Exception {
-        runTest("plugins/kapt4/testData/integration/kotlinFileGenerationCorrectErrorTypes/");
-    }
-
-    @Test
     @TestMetadata("kotlinFileGenerationDefaultOutput")
     public void testKotlinFileGenerationDefaultOutput() throws Exception {
         runTest("plugins/kapt4/testData/integration/kotlinFileGenerationDefaultOutput/");
