@@ -72,9 +72,12 @@ internal class FirElementBuilder(
     fun getOrBuildFirFor(
         element: KtElement,
         firResolveSession: LLFirResolveSession,
-    ): FirElement? = when (element) {
-        is KtFile -> getOrBuildFirForKtFile(element)
-        else -> getOrBuildFirForNonKtFileElement(element, firResolveSession)
+    ): FirElement? {
+        return if (element is KtFile && element !is KtCodeFragment) {
+            getOrBuildFirForKtFile(element)
+        } else {
+            getOrBuildFirForNonKtFileElement(element, firResolveSession)
+        }
     }
 
     private fun getOrBuildFirForKtFile(ktFile: KtFile): FirFile {
@@ -87,7 +90,7 @@ internal class FirElementBuilder(
         element: KtElement,
         firResolveSession: LLFirResolveSession,
     ): FirElement? {
-        require(element !is KtFile)
+        require(element !is KtFile || element is KtCodeFragment)
 
         if (!doKtElementHasCorrespondingFirElement(element)) {
             return null
@@ -244,6 +247,13 @@ internal val KtTypeParameter.containingDeclaration: KtDeclaration?
 internal val KtDeclaration.canBePartOfParentDeclaration: Boolean get() = this is KtPropertyAccessor || this is KtParameter || this is KtTypeParameter
 
 internal fun PsiElement.getNonLocalContainingOrThisDeclaration(predicate: (KtDeclaration) -> Boolean = { true }): KtDeclaration? {
+    return getNonLocalContainingDeclaration(parentsWithSelf, predicate)
+}
+
+internal fun getNonLocalContainingDeclaration(
+    elementsToCheck: Sequence<PsiElement>,
+    predicate: (KtDeclaration) -> Boolean = { true }
+): KtDeclaration? {
     var candidate: KtDeclaration? = null
 
     fun propose(declaration: KtDeclaration) {
@@ -252,7 +262,7 @@ internal fun PsiElement.getNonLocalContainingOrThisDeclaration(predicate: (KtDec
         }
     }
 
-    for (parent in parentsWithSelf) {
+    for (parent in elementsToCheck) {
         candidate?.let { notNullCandidate ->
             if (parent is KtEnumEntry ||
                 parent is KtCallableDeclaration &&
