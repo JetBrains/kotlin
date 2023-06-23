@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.backend.jvm.Fir2IrJvmSpecialAnnotationSymbolProv
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
+import org.jetbrains.kotlin.fir.pipeline.applyIrGenerationExtensions
 import org.jetbrains.kotlin.fir.serialization.FirKLibSerializerExtension
 import org.jetbrains.kotlin.fir.serialization.serializeSingleFirFile
 import org.jetbrains.kotlin.incremental.components.LookupTracker
@@ -41,6 +42,8 @@ import org.jetbrains.kotlin.library.metadata.resolver.KotlinResolvedLibrary
 import org.jetbrains.kotlin.library.unresolvedDependencies
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
+import org.jetbrains.kotlin.test.backend.ir.irGenerationExtensions
+import org.jetbrains.kotlin.test.backend.ir.useIrActualizer
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.model.BackendKinds
 import org.jetbrains.kotlin.test.model.Frontend2BackendConverter
@@ -120,7 +123,7 @@ class Fir2IrJsResultsConverter(
 
         var actualizedExpectDeclarations: Set<FirDeclaration>? = null
 
-        return IrBackendInput.JsIrBackendInput(
+        val result = IrBackendInput.JsIrBackendInput(
             mainIrPart,
             dependentIrParts,
             mainPluginContext,
@@ -152,6 +155,15 @@ class Fir2IrJsResultsConverter(
                 configuration.languageVersionSettings,
             )
         }
+
+        if (!module.useIrActualizer()) {
+            result.irPluginContext.applyIrGenerationExtensions(
+                result.irModuleFragment,
+                irGenerationExtensions = module.irGenerationExtensions(testServices)
+            )
+        }
+
+        return result
     }
 }
 
@@ -185,7 +197,6 @@ fun AbstractFirAnalyzerFacade.convertToJsIr(
         irMangler, IrFactoryImpl,
         Fir2IrVisibilityConverter.Default,
         Fir2IrJvmSpecialAnnotationSymbolProvider(), // TODO: replace with appropriate (probably empty) implementation
-        irGeneratorExtensions,
         kotlinBuiltIns = builtIns ?: DefaultBuiltIns.Instance, // TODO: consider passing externally,
         commonMemberStorage = commonMemberStorage,
         initializedIrBuiltIns = irBuiltIns

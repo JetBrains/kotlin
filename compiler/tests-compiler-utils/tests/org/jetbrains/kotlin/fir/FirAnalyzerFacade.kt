@@ -119,7 +119,6 @@ class FirAnalyzerFacade(
             JvmIrMangler, IrFactoryImpl,
             FirJvmVisibilityConverter,
             Fir2IrJvmSpecialAnnotationSymbolProvider(),
-            irGeneratorExtensions,
             kotlinBuiltIns = DefaultBuiltIns.Instance, // TODO: consider passing externally,
             commonMemberStorage = commonMemberStorage,
             initializedIrBuiltIns = irBuiltIns

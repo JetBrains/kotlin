@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
+import org.jetbrains.kotlin.fir.pipeline.applyIrGenerationExtensions
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.ir.backend.js.JsFactories
 import org.jetbrains.kotlin.ir.backend.js.resolverLogger
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.test.backend.ir.IrBackendFacade
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
+import org.jetbrains.kotlin.test.backend.ir.irGenerationExtensions
 import org.jetbrains.kotlin.test.frontend.classic.ModuleDescriptorProvider
 import org.jetbrains.kotlin.test.frontend.classic.moduleDescriptorProvider
 import org.jetbrains.kotlin.test.frontend.fir.getAllJsDependenciesPaths
@@ -74,7 +76,12 @@ class FirJsKlibBackendFacade(
                         diagnosticReporter,
                         IrTypeSystemContextImpl(inputArtifact.irModuleFragment.irBuiltins),
                         configuration.languageVersionSettings
-                    )
+                    ).also {
+                        inputArtifact.irPluginContext.applyIrGenerationExtensions(
+                            inputArtifact.irModuleFragment,
+                            irGenerationExtensions = module.irGenerationExtensions(testServices)
+                        )
+                    }
                 } else {
                     null
                 }

@@ -8,14 +8,15 @@ package org.jetbrains.kotlin.test.backend.ir
 import org.jetbrains.kotlin.KtPsiSourceFile
 import org.jetbrains.kotlin.backend.common.BackendException
 import org.jetbrains.kotlin.backend.common.actualizer.IrActualizer
+import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.jvm.JvmIrTypeSystemContext
 import org.jetbrains.kotlin.backend.jvm.MultifileFacadeFileEntry
 import org.jetbrains.kotlin.backend.jvm.lower.getFileClassInfoFromIrFile
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
+import org.jetbrains.kotlin.fir.pipeline.applyIrGenerationExtensions
 import org.jetbrains.kotlin.ir.PsiIrFileEntry
 import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.ir.util.NaiveSourceBasedFileEntryImpl
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.backend.classic.JavaCompilerFacade
@@ -44,6 +45,10 @@ class JvmIrBackendFacade(
                 inputArtifact.state.diagnosticReporter,
                 JvmIrTypeSystemContext(inputArtifact.irModuleFragment.irBuiltins),
                 inputArtifact.state.languageVersionSettings
+            )
+            inputArtifact.irPluginContext.applyIrGenerationExtensions(
+                inputArtifact.irModuleFragment,
+                module.irGenerationExtensions(testServices)
             )
         }
 
@@ -91,8 +96,12 @@ class JvmIrBackendFacade(
             }
         )
     }
+}
 
-    private fun TestModule.useIrActualizer(): Boolean {
-        return frontendKind == FrontendKinds.FIR && languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)
-    }
+internal fun TestModule.useIrActualizer(): Boolean {
+    return frontendKind == FrontendKinds.FIR && languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)
+}
+
+fun TestModule.irGenerationExtensions(testServices: TestServices): Collection<IrGenerationExtension> {
+    return IrGenerationExtension.getInstances(testServices.compilerConfigurationProvider.getProject(this))
 }

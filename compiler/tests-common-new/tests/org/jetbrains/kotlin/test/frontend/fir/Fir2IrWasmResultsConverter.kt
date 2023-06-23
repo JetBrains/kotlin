@@ -185,7 +185,6 @@ fun AbstractFirAnalyzerFacade.convertToWasmIr(
         irMangler, IrFactoryImpl,
         Fir2IrVisibilityConverter.Default,
         Fir2IrJvmSpecialAnnotationSymbolProvider(), // TODO: replace with appropriate (probably empty) implementation
-        irGeneratorExtensions,
         kotlinBuiltIns = builtIns ?: DefaultBuiltIns.Instance, // TODO: consider passing externally,
         commonMemberStorage = commonMemberStorage,
         initializedIrBuiltIns = irBuiltIns

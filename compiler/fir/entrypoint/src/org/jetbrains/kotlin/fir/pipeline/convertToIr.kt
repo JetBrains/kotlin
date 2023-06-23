@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.pipeline
 import org.jetbrains.kotlin.backend.common.actualizer.IrActualizedResult
 import org.jetbrains.kotlin.backend.common.actualizer.IrActualizer
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
+import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.jvm.JvmIrTypeSystemContext
 import org.jetbrains.kotlin.backend.jvm.serialization.JvmIdSignatureDescriptor
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
@@ -96,7 +97,6 @@ fun FirResult.convertToIrAndActualize(
             fir2IrResult = outputs.single().convertToIr(
                 fir2IrExtensions,
                 fir2IrConfiguration,
-                irGeneratorExtensions,
                 commonMemberStorage = commonMemberStorage,
                 irBuiltIns = null,
                 irMangler,
@@ -115,7 +115,6 @@ fun FirResult.convertToIrAndActualize(
                 it.convertToIr(
                     fir2IrExtensions,
                     fir2IrConfiguration,
-                    irGeneratorExtensions,
                     commonMemberStorage = commonMemberStorage,
                     irBuiltIns = irBuiltIns,
                     irMangler,
@@ -131,7 +130,6 @@ fun FirResult.convertToIrAndActualize(
             fir2IrResult = platformOutput.convertToIr(
                 fir2IrExtensions,
                 fir2IrConfiguration,
-                irGeneratorExtensions,
                 commonMemberStorage = commonMemberStorage,
                 irBuiltIns = irBuiltIns!!,
                 irMangler,
@@ -152,13 +150,25 @@ fun FirResult.convertToIrAndActualize(
     }
 
     val (irModuleFragment, components, pluginContext) = fir2IrResult
+    components.applyIrGenerationExtensions(irModuleFragment, irGeneratorExtensions)
     return Fir2IrActualizedResult(irModuleFragment, components, pluginContext, actualizationResult)
+}
+
+fun Fir2IrComponents.applyIrGenerationExtensions(irModuleFragment: IrModuleFragment, irGenerationExtensions: Collection<IrGenerationExtension>) {
+    if (irGenerationExtensions.isEmpty()) return
+    Fir2IrPluginContext(this, irModuleFragment.descriptor).applyIrGenerationExtensions(irModuleFragment, irGenerationExtensions)
+}
+
+fun IrPluginContext.applyIrGenerationExtensions(irModuleFragment: IrModuleFragment, irGenerationExtensions: Collection<IrGenerationExtension>) {
+    if (irGenerationExtensions.isEmpty()) return
+    for (extension in irGenerationExtensions) {
+        extension.generate(irModuleFragment, this)
+    }
 }
 
 private fun ModuleCompilerAnalyzedOutput.convertToIr(
     fir2IrExtensions: Fir2IrExtensions,
     fir2IrConfiguration: Fir2IrConfiguration,
-    irGeneratorExtensions: Collection<IrGenerationExtension>,
     commonMemberStorage: Fir2IrCommonMemberStorage,
     irBuiltIns: IrBuiltInsOverFir?,
     irMangler: KotlinMangler.IrMangler,
@@ -170,7 +180,6 @@ private fun ModuleCompilerAnalyzedOutput.convertToIr(
         fir2IrExtensions, fir2IrConfiguration,
         irMangler, IrFactoryImpl, visibilityConverter,
         Fir2IrJvmSpecialAnnotationSymbolProvider(), // TODO: replace with appropriate (probably empty) implementation for other backends.
-        irGeneratorExtensions,
         kotlinBuiltIns = kotlinBuiltIns,
         commonMemberStorage = commonMemberStorage,
         initializedIrBuiltIns = irBuiltIns

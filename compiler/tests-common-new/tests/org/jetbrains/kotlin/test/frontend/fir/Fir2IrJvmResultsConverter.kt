@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendClassResolver
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendExtension
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmKotlinMangler
 import org.jetbrains.kotlin.fir.backend.jvm.JvmFir2IrExtensions
+import org.jetbrains.kotlin.fir.pipeline.applyIrGenerationExtensions
 import org.jetbrains.kotlin.fir.pipeline.signatureComposerForJvmFir2Ir
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrMangler
@@ -29,6 +30,8 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.CompilerEnvironment
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
+import org.jetbrains.kotlin.test.backend.ir.irGenerationExtensions
+import org.jetbrains.kotlin.test.backend.ir.useIrActualizer
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.model.BackendKinds
 import org.jetbrains.kotlin.test.model.Frontend2BackendConverter
@@ -126,7 +129,7 @@ class Fir2IrJvmResultsConverter(
             FirJvmBackendClassResolver(mainModuleComponents)
         ).build()
 
-        return IrBackendInput.JvmIrBackendInput(
+        val result = IrBackendInput.JvmIrBackendInput(
             generationState,
             codegenFactory,
             backendInput,
@@ -136,5 +139,14 @@ class Fir2IrJvmResultsConverter(
             irMangler = irMangler,
             firMangler = commonMemberStorage.firSignatureComposer.mangler,
         )
+
+        if (!module.useIrActualizer()) {
+            result.irPluginContext.applyIrGenerationExtensions(
+                backendInput.irModuleFragment,
+                irGenerationExtensions = module.irGenerationExtensions(testServices)
+            )
+        }
+
+        return result
     }
 }

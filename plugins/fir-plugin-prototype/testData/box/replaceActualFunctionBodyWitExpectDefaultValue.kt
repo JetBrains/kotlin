@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 // LANGUAGE: +MultiPlatformProjects
 // ISSUE: KT-56173
 

@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.actualizer.IrActualizer
 import org.jetbrains.kotlin.backend.jvm.JvmIrTypeSystemContext
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.fir.pipeline.applyIrGenerationExtensions
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.test.model.*
@@ -31,6 +32,10 @@ class ActualizerOnlyFacade(
                 inputArtifact.diagnosticReporter,
                 typeSystemContext,
                 testServices.compilerConfigurationProvider.getCompilerConfiguration(module).languageVersionSettings
+            )
+            inputArtifact.irPluginContext.applyIrGenerationExtensions(
+                inputArtifact.irModuleFragment,
+                irGenerationExtensions = module.irGenerationExtensions(testServices)
             )
         }
         return inputArtifact

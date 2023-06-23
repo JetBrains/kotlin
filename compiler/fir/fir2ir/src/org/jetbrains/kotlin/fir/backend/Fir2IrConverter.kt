@@ -53,7 +53,6 @@ class Fir2IrConverter(
     private fun runSourcesConversion(
         allFirFiles: List<FirFile>,
         irModuleFragment: IrModuleFragmentImpl,
-        irGenerationExtensions: Collection<IrGenerationExtension>,
         fir2irVisitor: Fir2IrVisitor,
         fir2IrExtensions: Fir2IrExtensions,
         runPreCacheBuiltinClasses: Boolean
@@ -99,13 +98,6 @@ class Fir2IrConverter(
         }
 
         evaluateConstants(irModuleFragment, configuration)
-
-        if (irGenerationExtensions.isNotEmpty()) {
-            val pluginContext = Fir2IrPluginContext(components, irModuleFragment.descriptor)
-            for (extension in irGenerationExtensions) {
-                extension.generate(irModuleFragment, pluginContext)
-            }
-        }
 
         irModuleFragment.acceptVoid(ExternalPackageParentPatcher(components, fir2IrExtensions))
     }
@@ -461,7 +453,6 @@ class Fir2IrConverter(
             irFactory: IrFactory,
             visibilityConverter: Fir2IrVisibilityConverter,
             specialSymbolProvider: Fir2IrSpecialSymbolProvider,
-            irGenerationExtensions: Collection<IrGenerationExtension>,
             kotlinBuiltIns: KotlinBuiltIns,
             commonMemberStorage: Fir2IrCommonMemberStorage,
             initializedIrBuiltIns: IrBuiltInsOverFir?
@@ -508,7 +499,7 @@ class Fir2IrConverter(
             }
 
             converter.runSourcesConversion(
-                allFirFiles, irModuleFragment, irGenerationExtensions, fir2irVisitor, fir2IrExtensions,
+                allFirFiles, irModuleFragment, fir2irVisitor, fir2IrExtensions,
                 runPreCacheBuiltinClasses = initializedIrBuiltIns == null
             )
 
