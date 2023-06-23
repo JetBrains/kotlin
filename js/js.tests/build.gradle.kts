@@ -9,7 +9,7 @@ plugins {
     kotlin("jvm")
     kotlin("plugin.serialization")
     id("jps-compatible")
-    id("com.github.node-gradle.node") version "3.2.1"
+    id("com.github.node-gradle.node") version "5.0.0"
 }
 
 val nodeDir = buildDir.resolve("node")

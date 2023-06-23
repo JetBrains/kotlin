@@ -1,5 +1,5 @@
 plugins {
-    id "com.github.node-gradle.node" version "3.0.1"
+    id "com.github.node-gradle.node" version "5.0.0"
 }
 
 description = 'Kotlin Standard Library for JS'

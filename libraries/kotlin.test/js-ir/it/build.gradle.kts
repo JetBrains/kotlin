@@ -6,7 +6,7 @@ import java.io.FileOutputStream
 
 plugins {
     kotlin("js")
-    id("com.github.node-gradle.node") version "3.2.1"
+    id("com.github.node-gradle.node") version "5.0.0"
 }
 
 description = "Kotlin-test integration tests for JS IR"
