@@ -32,8 +32,10 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.addToStdlib.sumByLong
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.removeAll
@@ -76,7 +78,12 @@ internal object ControlFlowSensibleEscapeAnalysis {
             val moduleDFG: ModuleDFG,
             val needDebug: (IrFunction) -> Boolean
     ) {
-        @Suppress("UNUSED_PARAMETER")
+        var failedToConvergeCount = 0
+
+        val averageNumberOfNodes = (callGraph.directEdges.keys.sumByLong {
+            moduleDFG.functions[it]!!.body.allScopes.sumOf { it.nodes.size }.toLong()
+        } / callGraph.directEdges.size).toInt()
+
         fun analyze(lifetimes: MutableMap<IrElement, Lifetime>) {
             // TODO: To common function.
             context.logMultiple {
@@ -96,7 +103,35 @@ internal object ControlFlowSensibleEscapeAnalysis {
                 +""
             }
 
-            val condensation = DirectedGraphCondensationBuilder(callGraph).build()
+            val escapeAnalysisResults = mutableMapOf<IrFunctionSymbol, EscapeAnalysisResult>()
+            val computedLifetimes = mutableMapOf<IrFunctionAccessExpression, Lifetime>()
+            val allocationToFunction = mutableMapOf<IrFunctionAccessExpression, IrFunction>()
+            analyze(callGraph, escapeAnalysisResults, computedLifetimes, allocationToFunction)
+            computedLifetimes.forEach { (ir, lifetime) ->
+                lifetimes[ir] = lifetime
+//                val expectedLifetime = lifetimes[ir]
+//                if (expectedLifetime == Lifetime.STACK && lifetime == Lifetime.GLOBAL) {
+//                    //error("BUGBUGBUG: ${allocationToFunction[ir]!!.render()}\n${ir.dump()}")
+//                    println("BUGBUGBUG: ${allocationToFunction[ir]!!.render()}\n${ir.dump()}")
+//                    println()
+//                }
+//                if (expectedLifetime == Lifetime.GLOBAL && lifetime == Lifetime.STACK) {
+//                    println("YEAH, BABY: ${allocationToFunction[ir]!!.render()}\n${ir.dump()}")
+//                    println()
+//                }
+            }
+
+//            println("ZZZ: $failedToConvergeCount")
+        }
+
+        @Suppress("UNUSED_PARAMETER")
+        private fun analyze(
+                subCallGraph: CallGraph,
+                escapeAnalysisResults: MutableMap<IrFunctionSymbol, EscapeAnalysisResult>,
+                lifetimes: MutableMap<IrFunctionAccessExpression, Lifetime>,
+                allocationToFunction: MutableMap<IrFunctionAccessExpression, IrFunction>,
+        ) {
+            val condensation = DirectedGraphCondensationBuilder(subCallGraph).build()
 
             context.logMultiple {
                 +"CONDENSATION"
@@ -110,10 +145,10 @@ internal object ControlFlowSensibleEscapeAnalysis {
                     +"    MULTI-NODE"
                     multiNode.nodes.forEach {
                         +"        $it"
-                        callGraph.directEdges[it]!!.callSites
-                                .filter { callGraph.directEdges.containsKey(it.actualCallee) }
+                        subCallGraph.directEdges[it]!!.callSites
+                                .filter { subCallGraph.directEdges.containsKey(it.actualCallee) }
                                 .forEach { +"            CALLS ${it.actualCallee}" }
-                        callGraph.reversedEdges[it]!!.forEach { +"            CALLED BY $it" }
+                        subCallGraph.reversedEdges[it]!!.forEach { +"            CALLED BY $it" }
                     }
                 }
                 +""
@@ -126,25 +161,8 @@ internal object ControlFlowSensibleEscapeAnalysis {
 //                }
 //            }
 
-            val escapeAnalysisResults = mutableMapOf<IrFunctionSymbol, EscapeAnalysisResult>()
-            for (multiNode in condensation.topologicalOrder.reversed()) {
-                val currentLifetimes = mutableMapOf<IrFunctionAccessExpression, Lifetime>()
-                val allocationToFunction = mutableMapOf<IrFunctionAccessExpression, IrFunction>()
-                analyze(multiNode, escapeAnalysisResults, currentLifetimes, allocationToFunction)
-                currentLifetimes.forEach { (ir, lifetime) ->
-                    lifetimes[ir] = lifetime
-//                    val expectedLifetime = lifetimes[ir]
-//                    if (expectedLifetime == Lifetime.STACK && lifetime == Lifetime.GLOBAL) {
-//                        error("BUGBUGBUG: ${allocationToFunction[ir]!!.render()}\n${ir.dump()}")
-//                        //println("BUGBUGBUG: ${allocationToFunction[ir]!!.render()}\n${ir.dump()}")
-//                        //println()
-//                    }
-////                    if (expectedLifetime == Lifetime.GLOBAL && lifetime == Lifetime.STACK) {
-////                        println("YEAH, BABY: ${allocationToFunction[ir]!!.render()}\n${ir.dump()}")
-////                        println()
-////                    }
-                }
-            }
+            for (multiNode in condensation.topologicalOrder.reversed())
+                analyze(multiNode, escapeAnalysisResults, lifetimes, allocationToFunction)
         }
 
         private enum class ComputationState {
@@ -154,7 +172,6 @@ internal object ControlFlowSensibleEscapeAnalysis {
         }
 
         object DivergenceResolutionParams {
-            const val MaxAttempts = 3
             const val NegligibleSize = 100
             const val SwellingFactor = 25
         }
@@ -168,6 +185,13 @@ internal object ControlFlowSensibleEscapeAnalysis {
             NegligibleSize + numberOfNodes * SwellingFactor
         }
 
+        private fun maxPointsToGraphSizeOf(numberOfNodes: Int) = with(DivergenceResolutionParams) {
+            // A heuristic: the majority of functions have their points-to graph size linear to the number of IR (or DFG) nodes,
+            // there are exceptions, but it's a trade-off we have to make.
+            // The trick with [NegligibleSize] handles functions that basically delegate their work to other functions.
+            NegligibleSize + numberOfNodes * SwellingFactor
+        }
+
         private fun analyze(
                 multiNode: DirectedGraphMultiNode<DataFlowIR.FunctionSymbol.Declared>,
                 escapeAnalysisResults: MutableMap<IrFunctionSymbol, EscapeAnalysisResult>,
@@ -176,13 +200,21 @@ internal object ControlFlowSensibleEscapeAnalysis {
         ) {
             val nodes = multiNode.nodes.filter { callGraph.directEdges.containsKey(it) && it.irFunction != null }.toMutableSet()
 
-            nodes.forEach {
-                val function = it.irFunction!!
-                escapeAnalysisResults[function.symbol] = EscapeAnalysisResult.optimistic(function)
-            }
-
             context.logMultiple {
                 +"Analyzing multiNode:\n    ${multiNode.nodes.joinToString("\n   ") { it.toString() }}"
+                +"digraph {"
+                val nodeIds = nodes.withIndex().associate { it.value to it.index }.toMap()
+                nodes.forEach { node ->
+                    +"node${nodeIds[node]!!}[label=\"${node.irFunction!!.let { (it.parentClassOrNull?.name?.asString() ?: "ROOT") + ".${it.name}" }}\" shape=oval]"
+                }
+                nodes.forEach { from ->
+                    val fromId = nodeIds[from]!!
+                    callGraph.directEdges[from]!!.callSites.forEach edge@{ to ->
+                        val toId = (to.actualCallee as? DataFlowIR.FunctionSymbol.Declared)?.let { nodeIds[it] } ?: return@edge
+                        +"node$fromId -> node$toId;"
+                    }
+                }
+                +"}"
                 nodes.forEach { from ->
                     +"PATH"
                     +(from.irFunction?.fileOrNull?.path ?: "")
@@ -196,72 +228,120 @@ internal object ControlFlowSensibleEscapeAnalysis {
                 }
             }
 
-            val isALoop = nodes.singleOrNull()?.let { node ->
-                callGraph.directEdges[node]!!.callSites.any { it.actualCallee == node }
-            } == true
+            if (nodes.isEmpty()) return
 
-            var failedToConverge = false
-            if (isALoop) {
-                val node = nodes.first()
-                failedToConverge = !intraproceduralAnalysis(
-                        callGraph.directEdges[node]!!,
-                        true,
-                        escapeAnalysisResults,
-                        lifetimes,
-                        allocationToFunction,
-                        maxPointsToGraphSizeOf(node))
-            } else {
-                val toAnalyze = mutableSetOf<DataFlowIR.FunctionSymbol.Declared>()
-                toAnalyze.addAll(nodes)
-                val numberOfRuns = nodes.associateWith { 0 }.toMutableMap()
-                while (!failedToConverge && toAnalyze.isNotEmpty()) {
-                    val node = toAnalyze.first()
-                    toAnalyze.remove(node)
-                    val function = node.irFunction!!
-                    numberOfRuns[node] = numberOfRuns[node]!! + 1
-                    context.log { "Processing function $node" }
+            val callStack = mutableListOf<DataFlowIR.FunctionSymbol.Declared>()
+            val isRecursive = BooleanArray(nodes.size)
+            val callSitesStartingRecursion = mutableMapOf<IrFunctionAccessExpression, MutableSet<IrFunction>>()
 
-                    val startResult = escapeAnalysisResults[function.symbol]!!
-                    context.log { "Start escape analysis result:" }
-                    startResult.logDigraph(context)
-
-//                val pointsToGraph = PointsToGraph(node)
-//                pointsToGraphs[node] = pointsToGraph
-
-                    if (!intraproceduralAnalysis(
-                                    callGraph.directEdges[node]!!,
-                                    false,
-                                    escapeAnalysisResults,
-                                    lifetimes,
-                                    allocationToFunction,
-                                    maxPointsToGraphSizeOf(node))
-                    ) {
-                        failedToConverge = true
+            fun computeRecursionParameters(): Pair<Int, Int> {
+                val curFunction = callStack.peek()!!
+                var size = moduleDFG.functions[curFunction]!!.body.allScopes.sumOf { it.nodes.size }
+                var nestingFactor = 0
+                for (callSite in callGraph.directEdges[curFunction]!!.callSites) {
+                    val callee = callSite.actualCallee
+                    if (callee !is DataFlowIR.FunctionSymbol.Declared || callee !in nodes)
+                        continue
+                    val index = callStack.indexOf(callee)
+                    if (index >= 0) {
+                        isRecursive[index] = true
                     } else {
-                        val endResult = escapeAnalysisResults[function.symbol]!!
-                        if (startResult == endResult) {
-                            context.log { "Escape analysis is not changed" }
-                        } else {
-                            context.log { "Escape analysis was refined:" }
-                            endResult.logDigraph(context)
-                            if (numberOfRuns[node]!! > DivergenceResolutionParams.MaxAttempts)
-                                failedToConverge = true
-                            else {
-                                callGraph.reversedEdges[node]?.forEach {
-                                    if (nodes.contains(it))
-                                        toAnalyze.add(it)
-                                }
-                            }
+                        callStack.push(callee)
+                        isRecursive[callStack.size - 1] = false
+                        var (subSize, subNestingFactor) = computeRecursionParameters()
+                        if (isRecursive[callStack.size - 1]) {
+                            val irCallSite = callSite.call.irCallSite ?: error("No IR for ${callSite.call}")
+                            callSitesStartingRecursion.getOrPut(irCallSite) { mutableSetOf() }
+                                    .add(callee.irFunction ?: error("No IR for $callee"))
+                            subSize += callee.parameters.size + 1 /* return value */ + 1 /* wrap to a loop */
+                            ++subNestingFactor
                         }
+                        callStack.pop()
+                        size += subSize
+                        if (nestingFactor < subNestingFactor)
+                            nestingFactor = subNestingFactor
                     }
-
-                    if (failedToConverge)
-                        context.log { "WARNING: Escape analysis for $node seems not to be converging. Falling back to conservative strategy." }
                 }
+                return size to nestingFactor
             }
 
-            if (failedToConverge) {
-                /*pointsToGraphs = */analyzePessimistically(multiNode, escapeAnalysisResults, lifetimes, allocationToFunction)
+            var minNestingFactor = Int.MAX_VALUE
+            var minInlinedSize = Int.MAX_VALUE
+            var bestNode: DataFlowIR.FunctionSymbol.Declared? = null
+
+            for (node in nodes) {
+                callSitesStartingRecursion.clear()
+                callStack.push(node)
+                isRecursive[0] = false
+                val (size, nestingFactor) = computeRecursionParameters()
+                callStack.pop()
+                if (isRecursive[0]) {
+                    if (nestingFactor < minNestingFactor || (nestingFactor == minNestingFactor && size < minInlinedSize)) {
+                        minNestingFactor = nestingFactor
+                        minInlinedSize = size
+                        bestNode = node
+                    }
+                }
+            }
+            if (bestNode == null) {
+                // No recursion.
+                val node = nodes.single()
+                if (!intraproceduralAnalysis(
+                                callGraph.directEdges[node]!!,
+                                escapeAnalysisResults,
+                                lifetimes,
+                                allocationToFunction,
+                                maxPointsToGraphSizeOf(node))
+                ) {
+                    val function = node.irFunction!!
+                    escapeAnalysisResults[function.symbol] = EscapeAnalysisResult.pessimistic(function)
+                }
+            } else {
+                callSitesStartingRecursion.clear()
+                callStack.push(bestNode)
+                val (size, _) = computeRecursionParameters()
+                context.log { "Starting converting recursion to a loop from ${bestNode.irFunction!!.render()}" }
+                context.log { "Call site starting recursion:" }
+                callSitesStartingRecursion.keys.forEach {
+                    context.log { "    $it ${it.dump()}" }
+                }
+                val component = nodes.associate { it.irFunction!! to callGraph.directEdges[it]!! }.toMap()
+                if (size > 1000 * averageNumberOfNodes
+                        || !intraproceduralAnalysis(
+                                callGraph.directEdges[bestNode]!!.symbol.irFunction!!,
+                                component,
+                                true,
+                                callSitesStartingRecursion,
+                                escapeAnalysisResults,
+                                lifetimes,
+                                allocationToFunction,
+                                maxPointsToGraphSizeOf(size))
+                ) {
+                    ++failedToConvergeCount
+                    /*pointsToGraphs = */analyzePessimistically(multiNode, escapeAnalysisResults, lifetimes, allocationToFunction)
+                } else {
+                    // Create new component without bestNode.
+                    nodes.remove(bestNode)
+                    if (nodes.isEmpty()) return
+                    val directEdges = mutableMapOf<DataFlowIR.FunctionSymbol.Declared, CallGraphNode>()
+                    val reversedEdges = mutableMapOf<DataFlowIR.FunctionSymbol.Declared, MutableList<DataFlowIR.FunctionSymbol.Declared>>()
+                    val subCallGraph = CallGraph(directEdges, reversedEdges, emptyList())
+                    for (node in nodes) {
+                        reversedEdges[node] = mutableListOf()
+                    }
+                    for (node in nodes) {
+                        val callGraphNode = CallGraphNode(subCallGraph, node)
+                        directEdges[node] = callGraphNode
+                        for (callSite in callGraph.directEdges[node]!!.callSites) {
+                            val callee = callSite.actualCallee
+                            if (callee !is DataFlowIR.FunctionSymbol.Declared || callee !in nodes)
+                                continue
+                            callGraphNode.callSites.add(callSite)
+                            reversedEdges[callee]!!.add(node)
+                        }
+                    }
+                    analyze(subCallGraph, escapeAnalysisResults, lifetimes, allocationToFunction)
+                }
             }
         }
 
@@ -314,7 +394,6 @@ internal object ControlFlowSensibleEscapeAnalysis {
 //                        val pointsToGraph = PointsToGraph(node)
                         if (intraproceduralAnalysis(
                                         callGraphNode,
-                                        false,
                                         escapeAnalysisResults,
                                         lifetimes,
                                         allocationToFunction,
@@ -1108,11 +1187,15 @@ internal object ControlFlowSensibleEscapeAnalysis {
                 val allocations: Map<IrFunctionAccessExpression, Int>
         )
 
+        private class RecursionAsLoopParameters(val parameterVariables: List<IrVariable>, val returnVariable: IrVariable, val loop: IrLoop)
+
         private inner class PointsToGraphBuilder(
                 val function: IrFunction,
                 val forest: PointsToGraphForest,
+                val component: Map<IrFunction, CallGraphNode>,
+                val shouldConvertRecursionToLoop: Boolean,
+                val callSitesStartingRecursion: Map<IrFunctionAccessExpression, MutableSet<IrFunction>>,
                 val escapeAnalysisResults: Map<IrFunctionSymbol, EscapeAnalysisResult>,
-                val devirtualizedCallSites: Map<IrCall, List<IrFunctionSymbol>>,
                 val maxAllowedGraphSize: Int,
                 val needDebug: Boolean,
         ) : IrElementVisitor<Node, BuilderState> {
@@ -1120,6 +1203,25 @@ internal object ControlFlowSensibleEscapeAnalysis {
             private inline fun debug(block: () -> Unit) =
                     if (needDebug) block() else Unit
 
+            fun IrFunction.createRecursionParameters() =
+                    RecursionAsLoopParameters(
+                            allParameters.mapIndexed { index, parameter ->
+                                IrVariableImpl(
+                                        parameter.startOffset, parameter.endOffset, parameter.origin,
+                                        IrVariableSymbolImpl(),
+                                        Name.identifier("p${index}_${parameter.name}"),
+                                        parameter.type, true, false, false)
+                            },
+                            IrVariableImpl(
+                                    startOffset, endOffset, origin,
+                                    IrVariableSymbolImpl(),
+                                    Name.identifier("ret_$name"),
+                                    returnType, true, false, false),
+                            with(irBuilder) { irDoWhile().apply { condition = irNull() } }
+                    )
+
+            val preprocessedFunctions = mutableSetOf<IrFunction>()
+            val devirtualizedCallSites = mutableMapOf<IrCall, MutableList<IrFunctionSymbol>>()
             val throwableType = context.ir.symbols.throwable.defaultType
             val irBuilder = context.createIrBuilder(function.symbol)
             val fictitiousVariableInitSetValues = mutableMapOf<IrVariable, IrSetValue>()
@@ -1131,47 +1233,34 @@ internal object ControlFlowSensibleEscapeAnalysis {
             val loopsBreakGraphs = mutableMapOf<IrLoop, PointsToGraphForest.GraphBuilder>()
             val objectsReferencedFromThrown = BitSet()
             val allocations = mutableMapOf<IrFunctionAccessExpression, Int>()
-            val parameterValues = mutableMapOf<IrValueParameter, IrVariable>()
-            val returnValues = mutableMapOf<IrFunction, IrVariable>()
+            val parameterVariables = mutableMapOf<IrValueParameter, IrVariable>()
+            val returnVariables = mutableMapOf<IrFunction, IrVariable>()
+            val parameterValueIds = mutableMapOf<IrValueParameter, Int>()
             val recursiveFunctionLoops = mutableMapOf<IrFunction, IrLoop>()
+            val callSitesStartingRecursionParameters = callSitesStartingRecursion.keys.associateWith {
+                it.symbol.owner.createRecursionParameters()
+            }
+            val copiedBodies = mutableMapOf<IrFunctionAccessExpression, IrBlockBody>()
+            val originalCalls = mutableMapOf<IrFunctionAccessExpression, IrFunctionAccessExpression>()
+            val callStack = mutableListOf<IrFunction>()
 
-            fun build(isALoop: Boolean): PointsToGraphBuilderResult {
+            fun build(): PointsToGraphBuilderResult {
                 require(Node.Nothing.fields.isEmpty())
                 require(Node.Null.fields.isEmpty())
                 require(Node.Unit.fields.isEmpty())
+                preprocess(function)
+                callStack.push(function)
                 val pointsToGraph = PointsToGraph(forest, function)
                 val functionResult = MultipleExpressionResult(BitSet(), forest.GraphBuilder(function))
                 returnTargetResults[function.symbol] = functionResult
                 val state = BuilderState(pointsToGraph, Levels.FUNCTION, false, null, null)
-                if (!isALoop)
-                    (function.body as IrBlockBody).statements.forEach { it.accept(this, state) }
-                else {
-                    function.allParameters.forEachIndexed { index, parameter ->
-                        val value = IrVariableImpl(
-                                parameter.startOffset, parameter.endOffset, parameter.origin,
-                                IrVariableSymbolImpl(),
-                                Name.identifier("p${index}_${parameter.name}"),
-                                parameter.type, true, false, false)
-                        parameterValues[parameter] = value
-                        val valueNode = pointsToGraph.getOrAddVariable(value, Levels.FUNCTION)
-                        valueNode.addEdge(pointsToGraph.parameterNodes[parameter]!!)
-                    }
-                    val returnValue = IrVariableImpl(
-                            function.startOffset, function.endOffset, function.origin,
-                            IrVariableSymbolImpl(),
-                            Name.identifier("ret_${function.name}"),
-                            function.returnType, true, false, false)
-                    returnValues[function] = returnValue
-                    val returnValueNode = pointsToGraph.getOrAddVariable(returnValue, Levels.FUNCTION)
-                    val loop = irBuilder.irDoWhile().apply {
-                        body = irBuilder.irBlock {
-                            (function.body as IrBlockBody).statements.forEach { +it }
-                        }
-                        condition = irBuilder.irNull()
-                    }
-                    recursiveFunctionLoops[function] = loop
-                    loop.accept(this, state)
+                val body = function.body as IrBlockBody
+                if (shouldConvertRecursionToLoop) {
+                    val arguments = function.allParameters.map { parameter -> pointsToGraph.parameterNodes[parameter]!! }
+                    val returnValueNode = convertRecursionToLoop(function.createRecursionParameters(), function, body, arguments, state)
                     functionResult.merge(returnValueNode, pointsToGraph)
+                } else {
+                    body.statements.forEach { it.accept(this, state) }
                 }
                 if (forest.totalNodes > maxAllowedGraphSize)
                     return PointsToGraphBuilderResult(EscapeAnalysisResult.pessimistic(function), emptyMap())
@@ -1182,6 +1271,59 @@ internal object ControlFlowSensibleEscapeAnalysis {
                         EscapeAnalysisResult(pointsToGraph, functionResultNode, objectsReferencedFromThrown),
                         allocations
                 )
+            }
+
+            fun preprocess(function: IrFunction) {
+                if (!preprocessedFunctions.add(function)) return
+                // TODO: Use these maps or remove.
+                val producerInvocations = mutableMapOf<IrExpression, IrCall>()
+                val jobInvocations = mutableMapOf<IrCall, IrCall>()
+                val failedToDevirtualizeCallSites = mutableSetOf<IrCall>()
+                for (callSite in component[function]!!.callSites) {
+                    val call = callSite.call
+                    val irCall = call.irCallSite as? IrCall ?: continue
+                    if (irCall.origin == STATEMENT_ORIGIN_PRODUCER_INVOCATION)
+                        producerInvocations[irCall.dispatchReceiver!!] = irCall
+                    else if (irCall.origin == STATEMENT_ORIGIN_JOB_INVOCATION)
+                        jobInvocations[irCall.getValueArgument(0) as IrCall] = irCall
+                    if (call !is DataFlowIR.Node.VirtualCall) continue
+                    if (callSite.isVirtual)
+                        failedToDevirtualizeCallSites.add(irCall)
+                    devirtualizedCallSites.getOrPut(irCall) { mutableListOf() }.add(
+                            callSite.actualCallee.irFunction?.symbol ?: error("No IR for ${callSite.actualCallee}")
+                    )
+                }
+                // TODO: Remove after testing.
+                failedToDevirtualizeCallSites.forEach {
+                    val list = devirtualizedCallSites[it] ?: return@forEach
+                    require(list.size == 1)
+                    devirtualizedCallSites.remove(it)
+                }
+            }
+
+            fun convertRecursionToLoop(
+                    recursionParameters: RecursionAsLoopParameters,
+                    function: IrFunction,
+                    functionBody: IrBlockBody,
+                    arguments: List<Node>,
+                    state: BuilderState
+            ): Node {
+                function.allParameters.forEachIndexed { index, parameter ->
+                    val variable = recursionParameters.parameterVariables[index]
+                    parameterVariables[parameter] = variable
+                    val variableNode = state.graph.getOrAddVariable(variable, Levels.FUNCTION)
+                    variableNode.addEdge(arguments[index])
+                }
+                val returnVariable = recursionParameters.returnVariable
+                returnVariables[function] = returnVariable
+                val returnVariableNode = state.graph.getOrAddVariable(returnVariable, Levels.FUNCTION)
+                val loop = recursionParameters.loop
+                loop.body = irBuilder.irBlock {
+                    functionBody.statements.forEach { +it }
+                }
+                recursiveFunctionLoops[function] = loop
+                loop.accept(this, state)
+                return returnVariableNode
             }
 
             fun PointsToGraph.logDigraph(vararg markedNodes: Node) =
@@ -1336,7 +1478,12 @@ internal object ControlFlowSensibleEscapeAnalysis {
                 when (val owner = expression.symbol.owner) {
                     is IrVariable -> getVariableValue(data.graph, owner)
                     is IrValueParameter ->
-                        parameterValues[owner]?.let { getVariableValue(data.graph, it) }
+                        parameterValueIds[owner]?.let {
+                            if (it >= data.graph.nodes.size || data.graph.nodes[it] == null)
+                                data.graph.unreachable()
+                            else data.graph.nodes[it]!!
+                        }
+                                ?: parameterVariables[owner]?.let { getVariableValue(data.graph, it) }
                                 ?: data.graph.parameterNodes[owner]
                                 ?: error("Unknown value parameter: ${owner.render()}")
                     else -> error("Unknown value declaration: ${owner.render()}")
@@ -1525,9 +1672,11 @@ internal object ControlFlowSensibleEscapeAnalysis {
                     val function = expression.returnTargetSymbol.owner as? IrFunction
                     val loop = function?.let { recursiveFunctionLoops[it] }
                     if (loop != null) {
-                        val returnValue = returnValues[function] ?: error("No return value for a recursive function ${function.render()}")
-                        val returnValueNode = data.graph.variableNodes[returnValue] ?: error("Unknown variable ${returnValue.render()}")
-                        returnValueNode.addEdge(result)
+                        val returnVariable = returnVariables[function]
+                                ?: error("No return variable for a recursive function ${function.render()}")
+                        val returnVariableNode = data.graph.variableNodes[returnVariable]
+                                ?: error("Unknown variable ${returnVariable.render()}")
+                        returnVariableNode.addEdge(result)
                         (loopsContinueGraphs[loop] ?: error("A continue from an unknown loop: $loop"))
                                 .merge(data.graph)
                     } else {
@@ -1778,6 +1927,7 @@ internal object ControlFlowSensibleEscapeAnalysis {
                     state: BuilderState,
                     callSite: IrFunctionAccessExpression,
                     callee: IrFunction,
+                    recursionParameters: RecursionAsLoopParameters?,
                     argumentNodeIds: List<Int>,
                     calleeEscapeAnalysisResult: EscapeAnalysisResult,
             ): Node {
@@ -1804,15 +1954,58 @@ internal object ControlFlowSensibleEscapeAnalysis {
                 if (loop != null) {
                     context.log { "A recursive call: saving arguments to parameter values" }
                     callee.allParameters.forEachIndexed { index, parameter ->
-                        val value = parameterValues[parameter]
+                        val variable = parameterVariables[parameter]
                                 ?: error("Unknown parameter ${parameter.render()} of a recursive function ${callee.render()}")
-                        val valueNode = state.graph.variableNodes[value] ?: error("Unknown variable ${value.render()}")
-                        valueNode.addEdge(arguments[index])
+                        val variableNode = state.graph.variableNodes[variable] ?: error("Unknown variable ${variable.render()}")
+                        variableNode.addEdge(arguments[index])
                     }
                     if (callee.returnType.isNothing())
                         return state.graph.unreachable()
-                    val returnValue = returnValues[callee] ?: error("No return value for a recursive function ${callee.render()}")
-                    return state.graph.variableNodes[returnValue] ?: error("Unknown variable ${returnValue.render()}")
+                    val returnVariable = returnVariables[callee] ?: error("No return value for a recursive function ${callee.render()}")
+                    return state.graph.variableNodes[returnVariable] ?: error("Unknown variable ${returnVariable.render()}")
+                } else if (shouldConvertRecursionToLoop && callee in component) {
+                    // Inline call.
+                    preprocess(callee)
+                    callStack.push(callee)
+
+                    val copiedBody = copiedBodies.getOrPut(callSite) {
+                        val body = callee.body as IrBlockBody
+                        val symbolRemapper = DeepCopySymbolRemapper(NullDescriptorsRemapper)
+                        body.acceptVoid(symbolRemapper)
+                        val typeRemapper = DeepCopyTypeRemapper(symbolRemapper)
+                        val copier = object : DeepCopyIrTreeWithSymbols(symbolRemapper, typeRemapper) {
+                            override fun visitCall(expression: IrCall): IrCall {
+                                return super.visitCall(expression).also { originalCalls[it] = expression }
+                            }
+
+                            override fun visitConstructorCall(expression: IrConstructorCall): IrConstructorCall {
+                                return super.visitConstructorCall(expression).also { originalCalls[it] = expression }
+                            }
+                        }
+                        body.transform(copier, null) as IrBlockBody
+                    }
+
+                    return if (recursionParameters != null) {
+                        convertRecursionToLoop(recursionParameters, callee, copiedBody, arguments, state).also {
+                            recursiveFunctionLoops.remove(callee)
+                        }
+                    } else {
+                        callee.allParameters.forEachIndexed { index, parameter ->
+                            parameterValueIds[parameter] = argumentNodeIds[index]
+                        }
+                        val functionResult = MultipleExpressionResult(BitSet(), forest.GraphBuilder(function))
+                        returnTargetResults[callee.symbol] = functionResult
+                        copiedBody.statements.forEach { it.accept(this, state) }
+                        if (forest.totalNodes > maxAllowedGraphSize)
+                            state.graph.unreachable()
+                        else {
+                            if (functionResult.valueIds.isEmpty) // Function returns Nothing.
+                                functionResult.valueIds.set(Node.NOTHING_ID)
+                            controlFlowMergePoint(state.graph, state.toNodeContext(callSite), callee.returnType, functionResult)
+                        }
+                    }.also {
+                        callStack.pop()
+                    }
                 }
 
                 val calleeGraph = calleeEscapeAnalysisResult.graph
@@ -2079,7 +2272,8 @@ internal object ControlFlowSensibleEscapeAnalysis {
 
                 val calleeEscapeAnalysisResult = escapeAnalysisResults[callee.symbol]
                         ?: getExternalFunctionEAResult(callee)
-                processCall(state, callSite, callee, argumentNodeIds, calleeEscapeAnalysisResult)
+                val originalCall = originalCalls[callSite] ?: callSite
+                processCall(state, callSite, callee, callSitesStartingRecursionParameters[originalCall], argumentNodeIds, calleeEscapeAnalysisResult)
                 return Node.Unit
             }
 
@@ -2100,7 +2294,7 @@ internal object ControlFlowSensibleEscapeAnalysis {
 
             override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall, data: BuilderState) = checkGraphSizeAndVisit(expression, data) {
                 val constructor = expression.symbol.owner
-                val thisReceiver = (function as IrConstructor).constructedClass.thisReceiver!!
+                val thisReceiver = (callStack.peek() as IrConstructor).constructedClass.thisReceiver!!
                 val irThis = IrGetValueImpl(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, thisReceiver.type, thisReceiver.symbol)
                 return processConstructorCall(constructor, irThis.accept(this, data), expression, data)
             }
@@ -2142,15 +2336,17 @@ internal object ControlFlowSensibleEscapeAnalysis {
                         context.log { "Unreachable code - skipping call to ${actualCallee.render()}" }
                         data.graph.unreachable()
                     } else {
+                        val originalCall = originalCalls[expression] ?: expression
                         if (!expression.isVirtualCall) {
                             val calleeEscapeAnalysisResult = escapeAnalysisResults[actualCallee.symbol]
                                     ?: getExternalFunctionEAResult(actualCallee)
-                            processCall(data, expression, actualCallee, argumentNodeIds, calleeEscapeAnalysisResult)
+                            processCall(data, expression, actualCallee, callSitesStartingRecursionParameters[originalCall],
+                                    argumentNodeIds, calleeEscapeAnalysisResult)
                         } else {
-                            val devirtualizedCallSite = devirtualizedCallSites[expression]
+                            val devirtualizedCallSite = devirtualizedCallSites[originalCall]
                             if (devirtualizedCallSite == null) {
                                 // Non-devirtualized call.
-                                processCall(data, expression, expression.actualCallee, argumentNodeIds,
+                                processCall(data, expression, expression.actualCallee, null, argumentNodeIds,
                                         EscapeAnalysisResult.pessimistic(actualCallee))
                             } else when (devirtualizedCallSite.size) {
                                 0 -> {
@@ -2158,9 +2354,11 @@ internal object ControlFlowSensibleEscapeAnalysis {
                                     data.graph.unreachable()
                                 }
                                 1 -> {
-                                    processCall(data, expression, devirtualizedCallSite[0].owner, argumentNodeIds,
-                                            escapeAnalysisResults[devirtualizedCallSite[0]]
-                                                    ?: getExternalFunctionEAResult(devirtualizedCallSite[0].owner))
+                                    val callee = devirtualizedCallSite[0].owner
+                                    processCall(data, expression, callee,
+                                            callSitesStartingRecursionParameters[originalCall]?.takeIf { callSitesStartingRecursion[originalCall]?.contains(callee) == true },
+                                            argumentNodeIds,
+                                            escapeAnalysisResults[devirtualizedCallSite[0]] ?: getExternalFunctionEAResult(callee))
                                 }
                                 else -> {
                                     // Multiple possible callees - model this as a when clause.
@@ -2176,6 +2374,7 @@ internal object ControlFlowSensibleEscapeAnalysis {
                                         val resultNode = processCall(
                                                 BuilderState(clonedGraph, data.level, data.anchorIds, data.loop, data.tryBlock),
                                                 callSite, callee,
+                                                callSitesStartingRecursionParameters[originalCall]?.takeIf { callSitesStartingRecursion[originalCall]?.contains(callee) == true },
                                                 argumentNodeIds,
                                                 escapeAnalysisResults[calleeSymbol] ?: getExternalFunctionEAResult(callee))
                                         ExpressionResult(resultNode, clonedGraph)
@@ -2191,46 +2390,42 @@ internal object ControlFlowSensibleEscapeAnalysis {
 
         private fun intraproceduralAnalysis(
                 callGraphNode: CallGraphNode,
-                isALoop: Boolean,
                 escapeAnalysisResults: MutableMap<IrFunctionSymbol, EscapeAnalysisResult>,
                 lifetimes: MutableMap<IrFunctionAccessExpression, Lifetime>,
                 allocationToFunction: MutableMap<IrFunctionAccessExpression, IrFunction>,
                 maxAllowedGraphSize: Int,
         ): Boolean {
-            val function = callGraphNode.symbol.irFunction!!
-            if (function.body == null) return true
+            val function = callGraphNode.symbol.irFunction ?: error("No IR for ${callGraphNode.symbol}")
+            return intraproceduralAnalysis(
+                    function,
+                    mapOf(function to callGraphNode),
+                    false,
+                    emptyMap(),
+                    escapeAnalysisResults,
+                    lifetimes,
+                    allocationToFunction,
+                    maxAllowedGraphSize)
+        }
 
-            // TODO: Use these maps or remove.
-            val producerInvocations = mutableMapOf<IrExpression, IrCall>()
-            val jobInvocations = mutableMapOf<IrCall, IrCall>()
-            val devirtualizedCallSites = mutableMapOf<IrCall, MutableList<IrFunctionSymbol>>()
-            val failedToDevirtualizeCallSites = mutableSetOf<IrCall>()
-            for (callSite in callGraphNode.callSites) {
-                val call = callSite.call
-                val irCall = call.irCallSite as? IrCall ?: continue
-                if (irCall.origin == STATEMENT_ORIGIN_PRODUCER_INVOCATION)
-                    producerInvocations[irCall.dispatchReceiver!!] = irCall
-                else if (irCall.origin == STATEMENT_ORIGIN_JOB_INVOCATION)
-                    jobInvocations[irCall.getValueArgument(0) as IrCall] = irCall
-                if (call !is DataFlowIR.Node.VirtualCall) continue
-                if (callSite.isVirtual)
-                    failedToDevirtualizeCallSites.add(irCall)
-                devirtualizedCallSites.getOrPut(irCall) { mutableListOf() }.add(
-                        callSite.actualCallee.irFunction?.symbol ?: error("No IR for ${callSite.actualCallee}")
-                )
-            }
-            // TODO: Remove after testing.
-            failedToDevirtualizeCallSites.forEach {
-                val list = devirtualizedCallSites[it] ?: return@forEach
-                require(list.size == 1)
-                devirtualizedCallSites.remove(it)
-            }
+        private fun intraproceduralAnalysis(
+                function: IrFunction,
+                component: Map<IrFunction, CallGraphNode>,
+                shouldConvertRecursionToLoop: Boolean,
+                callSitesStartingRecursion: Map<IrFunctionAccessExpression, MutableSet<IrFunction>>,
+                escapeAnalysisResults: MutableMap<IrFunctionSymbol, EscapeAnalysisResult>,
+                lifetimes: MutableMap<IrFunctionAccessExpression, Lifetime>,
+                allocationToFunction: MutableMap<IrFunctionAccessExpression, IrFunction>,
+                maxAllowedGraphSize: Int,
+        ): Boolean {
+            context.log { "Analyzing ${function.render()}" }
+            if (function.body == null) return true
 
             val forest = PointsToGraphForest(function)
             val (functionResult, allocations) = PointsToGraphBuilder(
-                    function, forest, escapeAnalysisResults, devirtualizedCallSites,
+                    function, forest, component, shouldConvertRecursionToLoop,
+                    callSitesStartingRecursion, escapeAnalysisResults,
                     maxAllowedGraphSize, needDebug(function)
-            ).build(isALoop)
+            ).build()
 
             if (forest.totalNodes > maxAllowedGraphSize) return false
 

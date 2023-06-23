@@ -825,6 +825,23 @@ open class DeepCopyIrTreeWithSymbols(
             expression.value.transform()
         ).copyAttributes(expression)
 
+    override fun visitSuspendableExpression(expression: IrSuspendableExpression) =
+        IrSuspendableExpressionImpl(
+            expression.startOffset, expression.endOffset,
+            expression.type.remapType(),
+            expression.suspensionPointId.transform(),
+            expression.result.transform()
+        )
+
+    override fun visitSuspensionPoint(expression: IrSuspensionPoint) =
+        IrSuspensionPointImpl(
+            expression.startOffset, expression.endOffset,
+            expression.type.remapType(),
+            expression.suspensionPointIdParameter.transform(),
+            expression.result.transform(),
+            expression.resumeResult.transform()
+        )
+
     override fun visitDynamicOperatorExpression(expression: IrDynamicOperatorExpression): IrDynamicOperatorExpression =
         IrDynamicOperatorExpressionImpl(
             expression.startOffset, expression.endOffset,
