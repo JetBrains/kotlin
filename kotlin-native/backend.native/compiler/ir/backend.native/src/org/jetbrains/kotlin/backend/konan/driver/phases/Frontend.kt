@@ -10,13 +10,12 @@ import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.TopDownAnalyzerFacadeForKonan
 import org.jetbrains.kotlin.backend.konan.driver.BasicPhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
-import org.jetbrains.kotlin.backend.konan.driver.PhaseEngine
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
@@ -56,13 +55,10 @@ internal val FrontendPhase = createSimpleNamedCompilerPhase(
 
         val sourceFiles = input.getSourceFiles()
 
-        if (sourceFiles.isNotEmpty()) {
-            require (!input.configuration.getBoolean(CommonConfigurationKeys.USE_FIR)) {
-                "Internal error: For K2 compiler, no source files should have been passed here. " +
-                "K2Native.doExecute() must transform such compilation into two-stage compilation.\n"
-            }
-        } else {
-            // TODO: we shouldn't be here in this case.
+        require(context.config.produce == CompilerOutputKind.LIBRARY || sourceFiles.isEmpty()) {
+            "Internal error: no source files should have been passed here (${sourceFiles.first().virtualFilePath} in particular)\n" +
+            "to produce binary (e.g. a ${context.config.produce.name.toLowerCaseAsciiOnly()})\n" +
+            "K2Native.doExecute() must transform such compilation into two-stage compilation. Please report this here: https://kotl.in/issue"
         }
 
         // Build AST and binding info.

@@ -67,7 +67,6 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
             messageCollector.report(ERROR, "You have not specified any compilation arguments. No output has been produced.")
         }
         if (configuration.get(KonanConfigKeys.PRODUCE) != CompilerOutputKind.LIBRARY &&
-                configuration.getBoolean(CommonConfigurationKeys.USE_FIR) &&
                 configuration.kotlinSourceRoots.isNotEmpty()) {
             // K2/Native backend cannot produce binary directly from FIR frontend output, since descriptors, deserialized from KLib, are needed
             // So, such compilation is split to two stages:
