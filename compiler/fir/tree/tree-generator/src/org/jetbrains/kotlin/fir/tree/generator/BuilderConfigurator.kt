@@ -370,6 +370,10 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
             withCopy()
         }
 
+        builder(codeFragment) {
+            withCopy()
+        }
+
         builder(resolvedQualifier) {
             parents += abstractResolvedQualifierBuilder
             defaultFalse("isNullableLHSForCallableReference", "isFullyQualified")
