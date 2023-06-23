@@ -15500,6 +15500,21 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/fir/SuspendFunctionReference.kt");
         }
 
+        @TestMetadata("syntheticPropertyThroughJava.kt")
+        public void testSyntheticPropertyThroughJava() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/syntheticPropertyThroughJava.kt");
+        }
+
+        @TestMetadata("syntheticPropertyThroughJavaMultiModule.kt")
+        public void testSyntheticPropertyThroughJavaMultiModule() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/syntheticPropertyThroughJavaMultiModule.kt");
+        }
+
+        @TestMetadata("syntheticPropertyThroughJavaWithSetter.kt")
+        public void testSyntheticPropertyThroughJavaWithSetter() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/syntheticPropertyThroughJavaWithSetter.kt");
+        }
+
         @TestMetadata("toLong.kt")
         public void testToLong() throws Exception {
             runTest("compiler/testData/codegen/box/fir/toLong.kt");
