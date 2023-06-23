@@ -872,6 +872,12 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
         }
 
         @Test
+        @TestMetadata("expectAndActualInTheSameFile.kt")
+        public void testExpectAndActualInTheSameFile() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/invalidCode/expectAndActualInTheSameFile.kt");
+        }
+
+        @Test
         @TestMetadata("incompletePropertyWithAnnotation.kt")
         public void testIncompletePropertyWithAnnotation() throws Exception {
             runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/invalidCode/incompletePropertyWithAnnotation.kt");
