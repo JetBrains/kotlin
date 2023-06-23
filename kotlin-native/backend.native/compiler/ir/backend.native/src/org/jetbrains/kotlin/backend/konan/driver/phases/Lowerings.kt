@@ -415,12 +415,6 @@ private val expressionBodyTransformPhase = createFileLoweringPhase(
         description = "Replace IrExpressionBody with IrBlockBody"
 )
 
-private val constantInliningPhase = createFileLoweringPhase(
-        ::ConstLowering,
-        name = "ConstantInlining",
-        description = "Inline const fields reads",
-)
-
 private val staticInitializersPhase = createFileLoweringPhase(
         ::StaticInitializersLowering,
         name = "StaticInitializers",
@@ -550,7 +544,6 @@ private fun PhaseEngine<NativeGenerationState>.getAllLowerings() = listOfNotNull
         coroutinesPhase,
         typeOperatorPhase,
         expressionBodyTransformPhase,
-        constantInliningPhase,
         objectClassesPhase,
         staticInitializersPhase,
         builtinOperatorPhase,
