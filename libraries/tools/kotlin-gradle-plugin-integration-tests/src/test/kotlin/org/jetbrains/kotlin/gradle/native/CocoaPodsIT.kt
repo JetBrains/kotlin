@@ -17,10 +17,8 @@ import org.jetbrains.kotlin.gradle.util.assertProcessRunResult
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.gradle.util.runProcess
 import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
-import java.io.File
 import java.util.zip.ZipFile
 import kotlin.io.path.*
 import kotlin.test.*
@@ -121,11 +119,19 @@ class CocoaPodsIT : KGPBaseTest() {
         }
     }
 
-    @DisplayName("UTD after linking framework")
+    @DisplayName("UTD after syncing framework")
     @GradleTest
-    fun testImportUTDAfterLinkingFramework(gradleVersion: GradleVersion) {
-        nativeProjectWithCocoapodsAndIosAppPodFile(gradleVersion = gradleVersion) {
-            val linkTaskName = ":linkPodDebugFrameworkIOS"
+    fun testImportUTDAfterSyncingFramework(gradleVersion: GradleVersion) {
+        val buildOptions = defaultBuildOptions.copy(
+            nativeOptions = defaultBuildOptions.nativeOptions.copy(
+                cocoapodsPlatform = "iphonesimulator",
+                cocoapodsArchs = "x86_64",
+                cocoapodsConfiguration = "Debug"
+            )
+        )
+
+        nativeProjectWithCocoapodsAndIosAppPodFile(gradleVersion = gradleVersion, buildOptions = buildOptions) {
+            val syncTaskName = ":syncFramework"
 
             buildGradleKts.addCocoapodsBlock(
                 """
@@ -142,12 +148,13 @@ class CocoaPodsIT : KGPBaseTest() {
                 assertTasksExecuted(podInstallTaskName)
             }
 
-            buildWithCocoapodsWrapper(linkTaskName) {
-                assertTasksExecuted(linkTaskName)
+            buildWithCocoapodsWrapper(syncTaskName) {
+                assertTasksExecuted(syncTaskName)
             }
 
             buildWithCocoapodsWrapper(podImportTaskName) {
-                assertTasksUpToDate(dummyTaskName)
+                assertTasksExecuted(dummyTaskName)
+                assertOutputContains("Skipping dummy-framework generation because a dynamic framework is already present")
                 assertTasksUpToDate(podInstallTaskName)
             }
         }
@@ -156,7 +163,17 @@ class CocoaPodsIT : KGPBaseTest() {
     @DisplayName("Changing framework type and checks UTD")
     @GradleTest
     fun testChangeFrameworkTypeUTD(gradleVersion: GradleVersion) {
-        nativeProjectWithCocoapodsAndIosAppPodFile(gradleVersion = gradleVersion) {
+        val buildOptions = defaultBuildOptions.copy(
+            nativeOptions = defaultBuildOptions.nativeOptions.copy(
+                cocoapodsPlatform = "iphonesimulator",
+                cocoapodsArchs = "x86_64",
+                cocoapodsConfiguration = "Debug"
+            )
+        )
+
+        nativeProjectWithCocoapodsAndIosAppPodFile(gradleVersion = gradleVersion, buildOptions = buildOptions) {
+            val syncTaskName = ":syncFramework"
+
             buildGradleKts.addCocoapodsBlock(
                 """
                     framework {
@@ -177,9 +194,14 @@ class CocoaPodsIT : KGPBaseTest() {
                 assertTasksUpToDate(podInstallTaskName)
             }
 
+            buildWithCocoapodsWrapper(syncTaskName) {
+                assertTasksExecuted(syncTaskName)
+            }
+
             buildGradleKts.addFrameworkBlock("isStatic = true")
             buildWithCocoapodsWrapper(podImportTaskName) {
                 assertTasksExecuted(dummyTaskName)
+                assertOutputContains("Regenerating dummy-framework because present framework has different linkage")
                 assertTasksExecuted(podInstallTaskName)
             }
 

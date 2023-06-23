@@ -60,8 +60,6 @@ internal class CocoapodsBuildDirs(private val layout: ProjectLayout) {
         get() = layout.buildDirectory.dir("cocoapods")
     val framework: Provider<Directory>
         get() = dir("framework")
-    val dummyFramework: Provider<Directory>
-        get() = dir("dummy.framework")
     val defs: Provider<Directory>
         get() = dir("defs")
     val publish: Provider<Directory>
@@ -394,8 +392,9 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
         cocoapodsExtension: CocoapodsExtension
     ) {
         project.registerTask<DummyFrameworkTask>(DUMMY_FRAMEWORK_TASK_NAME) { task ->
-            task.frameworkName.set(cocoapodsExtension.podFrameworkName)
-            task.useStaticFramework.set(cocoapodsExtension.podFrameworkIsStatic)
+            task.frameworkName.convention(cocoapodsExtension.podFrameworkName)
+            task.useStaticFramework.convention(cocoapodsExtension.podFrameworkIsStatic)
+            task.outputFramework.convention(project.layout.cocoapodsBuildDirs.framework.map { it.dir(task.frameworkName.get() + ".framework") })
         }
     }
 
@@ -478,17 +477,18 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
         cocoapodsExtension: CocoapodsExtension
     ) {
         val podspecTaskProvider = project.tasks.named<PodspecTask>(POD_SPEC_TASK_NAME)
-        val dummyFrameworkTaskProvider = project.tasks.named<DummyFrameworkTask>(DUMMY_FRAMEWORK_TASK_NAME)
+        val dummyFrameworkTaskProvider = project.tasks.named(DUMMY_FRAMEWORK_TASK_NAME)
         project.registerTask<PodInstallTask>(POD_INSTALL_TASK_NAME) { task ->
             task.group = TASK_GROUP
             task.description = "Invokes `pod install` call within Podfile location directory"
             task.podfile.set(project.provider { cocoapodsExtension.podfile })
             task.podspec.set(podspecTaskProvider.map { it.outputFile })
+            task.useStaticFramework.set(cocoapodsExtension.podFrameworkIsStatic)
             task.frameworkName.set(cocoapodsExtension.podFrameworkName)
             task.specRepos.set(project.provider { cocoapodsExtension.specRepos })
             task.pods.set(cocoapodsExtension.pods)
-            task.dummyFramework.set(dummyFrameworkTaskProvider.map { it.outputFramework.get() })
             task.dependsOn(podspecTaskProvider)
+            task.dependsOn(dummyFrameworkTaskProvider)
         }
     }
 

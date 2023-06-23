@@ -10,6 +10,7 @@ import org.gradle.api.Action
 import org.gradle.api.Named
 import org.gradle.api.NamedDomainObjectSet
 import org.gradle.api.Project
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension.CocoapodsDependency.PodLocation.*
@@ -118,8 +119,8 @@ abstract class CocoapodsExtension @Inject constructor(private val project: Proje
         anyFramework
     }
 
-    internal val podFrameworkName = anyPodFramework.map { it.baseName.asValidFrameworkName() }
-    internal val podFrameworkIsStatic = anyPodFramework.map { it.isStatic }
+    internal val podFrameworkName: Provider<String> = anyPodFramework.map { it.baseName.asValidFrameworkName() }
+    internal val podFrameworkIsStatic: Provider<Boolean> = anyPodFramework.map { it.isStatic }
 
     /**
      * Configure custom Xcode Configurations to Native Build Types mapping
