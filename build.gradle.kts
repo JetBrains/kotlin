@@ -37,6 +37,7 @@ plugins {
     id("build-time-report")
     id("java-instrumentation")
     id("jps")
+    id("modularized-test-configurations")
     id("org.gradle.crypto.checksum") version "1.4.0"
     id("org.jetbrains.kotlinx.binary-compatibility-validator") version "0.13.1" apply false
     signing
@@ -93,7 +94,6 @@ rootProject.apply {
     from(rootProject.file("gradle/checkArtifacts.gradle.kts"))
     from(rootProject.file("gradle/checkCacheability.gradle.kts"))
     from(rootProject.file("gradle/retryPublishing.gradle.kts"))
-    from(rootProject.file("gradle/modularizedTestConfigurations.gradle.kts"))
     from(rootProject.file("gradle/ideaRtHack.gradle.kts"))
     from(rootProject.file("gradle/resolveDependencies.gradle.kts"))
 }
