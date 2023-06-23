@@ -295,6 +295,10 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = CreatingAnInstanceOfAbstractClass::class
     }
 
+    interface NoConstructor : KtFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = NoConstructor::class
+    }
+
     interface FunctionCallExpected : KtFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = FunctionCallExpected::class
         val functionName: String

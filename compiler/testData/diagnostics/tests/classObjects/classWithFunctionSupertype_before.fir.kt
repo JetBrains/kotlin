@@ -2,12 +2,12 @@
 // LANGUAGE: -ProhibitConstructorCallOnFunctionalSupertype
 // ISSUE: KT-46344
 
-abstract class A : <!UNRESOLVED_REFERENCE!>() -> Int<!>()
-abstract class B : <!UNRESOLVED_REFERENCE!>(() -> Int)<!>()
-abstract class C : <!UNRESOLVED_REFERENCE!>Function0<Int><!>()
-abstract class D : <!UNRESOLVED_REFERENCE!>suspend () -> Int<!>()
-abstract class E : <!UNRESOLVED_REFERENCE!>(suspend () -> Int)<!>()
-abstract class F : <!UNRESOLVED_REFERENCE!>kotlin.coroutines.SuspendFunction0<Int><!>()
+abstract class A : () -> Int<!NO_CONSTRUCTOR!>()<!>
+abstract class B : (() -> Int)<!NO_CONSTRUCTOR!>()<!>
+abstract class C : Function0<Int><!NO_CONSTRUCTOR!>()<!>
+abstract class D : suspend () -> Int<!NO_CONSTRUCTOR!>()<!>
+abstract class E : (suspend () -> Int)<!NO_CONSTRUCTOR!>()<!>
+abstract class F : kotlin.coroutines.SuspendFunction0<Int><!NO_CONSTRUCTOR!>()<!>
 
 interface IA : <!SUPERTYPE_INITIALIZED_IN_INTERFACE!>() -> Int<!>()
 interface IB : <!SUPERTYPE_INITIALIZED_IN_INTERFACE!>(() -> Int)<!>()

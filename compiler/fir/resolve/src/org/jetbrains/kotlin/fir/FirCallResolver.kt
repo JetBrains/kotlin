@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.hasExplicitBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
+import org.jetbrains.kotlin.fir.declarations.utils.isInterface
 import org.jetbrains.kotlin.fir.declarations.utils.isReferredViaField
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
@@ -697,10 +698,14 @@ class FirCallResolver(
             }
 
             candidates.isEmpty() -> {
-                if (name.asString() == "invoke" && explicitReceiver is FirConstExpression<*>) {
-                    ConeFunctionExpectedError(explicitReceiver.value?.toString() ?: "", explicitReceiver.typeRef.coneType)
-                } else {
-                    ConeUnresolvedNameError(name)
+                when {
+                    name.asString() == "invoke" && explicitReceiver is FirConstExpression<*> ->
+                        ConeFunctionExpectedError(
+                            explicitReceiver.value?.toString() ?: "",
+                            explicitReceiver.typeRef.coneType,
+                        )
+                    reference is FirSuperReference && (reference.superTypeRef.firClassLike(session) as? FirClass)?.isInterface == true -> ConeNoConstructorError
+                    else -> ConeUnresolvedNameError(name)
                 }
             }
 

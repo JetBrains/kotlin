@@ -363,6 +363,12 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.NO_CONSTRUCTOR) { firDiagnostic ->
+        NoConstructorImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.FUNCTION_CALL_EXPECTED) { firDiagnostic ->
         FunctionCallExpectedImpl(
             firDiagnostic.a,

@@ -76,6 +76,7 @@ enum class PositioningStrategy(private val strategy: String? = null) {
     USELESS_ELVIS,
     NAME_OF_NAMED_ARGUMENT,
     VALUE_ARGUMENTS,
+    VALUE_ARGUMENTS_LIST,
     SUPERTYPES_LIST,
     RETURN_WITH_LABEL,
     PROPERTY_INITIALIZER,

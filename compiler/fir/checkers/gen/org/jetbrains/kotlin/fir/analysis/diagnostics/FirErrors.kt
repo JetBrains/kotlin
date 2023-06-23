@@ -165,6 +165,7 @@ object FirErrors {
 
     // Call resolution
     val CREATING_AN_INSTANCE_OF_ABSTRACT_CLASS by error0<KtExpression>()
+    val NO_CONSTRUCTOR by error0<PsiElement>(SourceElementPositioningStrategies.VALUE_ARGUMENTS_LIST)
     val FUNCTION_CALL_EXPECTED by error2<PsiElement, String, Boolean>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
     val ILLEGAL_SELECTOR by error0<PsiElement>()
     val NO_RECEIVER_ALLOWED by error0<PsiElement>()

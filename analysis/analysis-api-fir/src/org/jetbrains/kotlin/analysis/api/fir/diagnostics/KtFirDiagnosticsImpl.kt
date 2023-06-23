@@ -339,6 +339,11 @@ internal class CreatingAnInstanceOfAbstractClassImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KtFirDiagnostic.CreatingAnInstanceOfAbstractClass
 
+internal class NoConstructorImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.NoConstructor
+
 internal class FunctionCallExpectedImpl(
     override val functionName: String,
     override val hasValueParameters: Boolean,

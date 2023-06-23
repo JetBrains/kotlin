@@ -708,6 +708,13 @@ object PositioningStrategies {
     }
 
     @JvmField
+    val VALUE_ARGUMENTS_LIST: PositioningStrategy<KtElement> = object : PositioningStrategy<KtElement>() {
+        override fun mark(element: KtElement): List<TextRange> {
+            return markElement(element.getChildOfType<KtValueArgumentList>() ?: element)
+        }
+    }
+
+    @JvmField
     val FUNCTION_PARAMETERS: PositioningStrategy<KtFunction> = object : PositioningStrategy<KtFunction>() {
         override fun mark(element: KtFunction): List<TextRange> {
             val valueParameterList = element.valueParameterList
