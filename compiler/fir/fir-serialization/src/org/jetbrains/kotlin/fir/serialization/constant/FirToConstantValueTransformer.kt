@@ -48,6 +48,8 @@ internal data class FirToConstantValueTransformerData(
     val constValueProvider: ConstValueProvider?,
 )
 
+private val constantIntrinsicCalls = setOf("toByte", "toLong", "toShort", "toFloat", "toDouble", "toChar", "unaryMinus")
+
 internal abstract class FirToConstantValueTransformer(
     private val failOnNonConst: Boolean,
 ) : FirDefaultVisitor<ConstantValue<*>?, FirToConstantValueTransformerData>() {
@@ -162,22 +164,25 @@ internal abstract class FirToConstantValueTransformer(
             }
 
             symbol.callableId.packageName.asString() == "kotlin" -> {
+                val callableName = symbol.callableId.callableName.asString()
+                if (callableName !in constantIntrinsicCalls) return null
+
                 val dispatchReceiver = qualifiedAccessExpression.dispatchReceiver
-                val dispatchReceiverValue by lazy { dispatchReceiver.toConstantValue(data) }
-                when (symbol.callableId.callableName.asString()) {
-                    "toByte" -> ByteValue((dispatchReceiverValue!!.value as Number).toByte())
-                    "toLong" -> LongValue((dispatchReceiverValue!!.value as Number).toLong())
-                    "toShort" -> ShortValue((dispatchReceiverValue!!.value as Number).toShort())
-                    "toFloat" -> FloatValue((dispatchReceiverValue!!.value as Number).toFloat())
-                    "toDouble" -> DoubleValue((dispatchReceiverValue!!.value as Number).toDouble())
-                    "toChar" -> CharValue((dispatchReceiverValue!!.value as Number).toInt().toChar())
+                val dispatchReceiverValue = dispatchReceiver.toConstantValue(data) ?: return null
+                when (callableName) {
+                    "toByte" -> ByteValue((dispatchReceiverValue.value as Number).toByte())
+                    "toLong" -> LongValue((dispatchReceiverValue.value as Number).toLong())
+                    "toShort" -> ShortValue((dispatchReceiverValue.value as Number).toShort())
+                    "toFloat" -> FloatValue((dispatchReceiverValue.value as Number).toFloat())
+                    "toDouble" -> DoubleValue((dispatchReceiverValue.value as Number).toDouble())
+                    "toChar" -> CharValue((dispatchReceiverValue.value as Number).toInt().toChar())
                     "unaryMinus" -> {
-                        when (val receiverValue = dispatchReceiverValue) {
-                            is ByteValue -> ByteValue((-receiverValue.value).toByte())
-                            is LongValue -> LongValue(-receiverValue.value)
-                            is ShortValue -> ShortValue((-receiverValue.value).toShort())
-                            is FloatValue -> FloatValue(-receiverValue.value)
-                            is DoubleValue -> DoubleValue(-receiverValue.value)
+                        when (dispatchReceiverValue) {
+                            is ByteValue -> ByteValue((-dispatchReceiverValue.value).toByte())
+                            is LongValue -> LongValue(-dispatchReceiverValue.value)
+                            is ShortValue -> ShortValue((-dispatchReceiverValue.value).toShort())
+                            is FloatValue -> FloatValue(-dispatchReceiverValue.value)
+                            is DoubleValue -> DoubleValue(-dispatchReceiverValue.value)
                             else -> null
                         }
                     }
@@ -234,8 +239,6 @@ internal object FirToConstantValueChecker : FirDefaultVisitor<Boolean, FirSessio
         ConstantValueKind.Byte, ConstantValueKind.UnsignedByte, ConstantValueKind.Short, ConstantValueKind.UnsignedShort,
         ConstantValueKind.Int, ConstantValueKind.UnsignedInt, ConstantValueKind.Long, ConstantValueKind.UnsignedLong,
     )
-
-    private val constantIntrinsicCalls = setOf("toByte", "toLong", "toShort", "toFloat", "toDouble", "toChar", "unaryMinus")
 
     override fun visitElement(element: FirElement, data: FirSession): Boolean {
         return false

@@ -5,3 +5,5 @@ $TESTDATA_DIR$/kt58139/platform.kt
 2.0
 -d
 $TEMP_DIR$
+-cp
+$TESTDATA_DIR$/../../../../dist/common/kotlin-stdlib-common.jar
