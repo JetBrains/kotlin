@@ -13,14 +13,13 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveCompone
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getModule
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.FirTowerContextProvider
-import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLocalContainingOrThisDeclaration
+import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLocalContainingDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.retryOnInvalidSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirResolvableModuleSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionCache
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.FirDeclarationForCompiledElementSearcher
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.findSourceNonLocalFirDeclaration
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
@@ -133,7 +132,7 @@ internal abstract class LLFirResolvableResolveSession(
             "Declaration should be resolvable module, instead it had ${module::class}"
         }
 
-        val nonLocalDeclaration = ktDeclaration.getNonLocalContainingOrThisDeclaration()
+        val nonLocalDeclaration = getNonLocalContainingDeclaration(ktDeclaration.parentsWithSelfCodeFragmentAware)
             ?: errorWithAttachment("Declaration should have non-local container") {
                 withPsiEntry("ktDeclaration", ktDeclaration, ::getModule)
                 withEntry("module", module) { it.moduleDescription }
