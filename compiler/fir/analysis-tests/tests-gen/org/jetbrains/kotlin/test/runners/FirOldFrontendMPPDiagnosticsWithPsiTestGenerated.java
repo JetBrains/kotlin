@@ -257,6 +257,12 @@ public class FirOldFrontendMPPDiagnosticsWithPsiTestGenerated extends AbstractFi
         }
 
         @Test
+        @TestMetadata("fakeOverrides.kt")
+        public void testFakeOverrides() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/fakeOverrides.kt");
+        }
+
+        @Test
         @TestMetadata("floatNumbersComparison.kt")
         public void testFloatNumbersComparison() throws Exception {
             runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/floatNumbersComparison.kt");
