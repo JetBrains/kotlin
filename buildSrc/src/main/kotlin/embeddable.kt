@@ -31,7 +31,9 @@ val packagesToRelocate =
         "net.jpountz",
         "one.util.streamex",
         "it.unimi.dsi.fastutil",
-        "kotlinx.collections.immutable"
+        "kotlinx.collections.immutable",
+        "com.fasterxml",
+        "org.codehaus"
     )
 
 // The shaded compiler "dummy" is used to rewrite dependencies in projects that are used with the embeddable compiler
