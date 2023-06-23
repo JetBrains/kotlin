@@ -81,9 +81,7 @@ public interface KtTypeParametersRenderer {
                 }.ifEmpty { return }
             " ".separated(
                 {
-                    if (keywordFilter.filter(KtTokens.WHERE_KEYWORD, symbol)) {
-                        keywordRenderer.renderKeyword(KtTokens.WHERE_KEYWORD, symbol, printer)
-                    }
+                    keywordsRenderer.renderKeyword(KtTokens.WHERE_KEYWORD, symbol, printer)
                 },
                 {
                     printer.printCollection(allBounds) { (typeParameter, bound) ->

@@ -185,7 +185,7 @@ internal fun renderScopeWithParentDeclarations(scope: KtScope): String = prettyP
 
     val renderingOptions = KtDeclarationRendererForSource.WITH_SHORT_NAMES.with {
         modifiersRenderer = modifiersRenderer.with {
-            keywordFilter = KtRendererKeywordFilter.NONE
+            keywordsRenderer = keywordsRenderer.with { keywordFilter = KtRendererKeywordFilter.NONE }
         }
     }
 

@@ -48,9 +48,7 @@ public interface KtNamedClassOrObjectSymbolRenderer {
                         val annotationsPrinted = checkIfPrinted { renderAnnotationsModifiersAndContextReceivers(primaryConstructor, printer) }
                         if (annotationsPrinted) {
                             withPrefix(" ") {
-                                if (keywordFilter.filter(KtTokens.CONSTRUCTOR_KEYWORD, primaryConstructor)) {
-                                    keywordRenderer.renderKeyword(KtTokens.CONSTRUCTOR_KEYWORD, primaryConstructor, printer)
-                                }
+                                keywordsRenderer.renderKeyword(KtTokens.CONSTRUCTOR_KEYWORD, primaryConstructor, printer)
                             }
                         }
                         if (primaryConstructor.valueParameters.isNotEmpty()) {

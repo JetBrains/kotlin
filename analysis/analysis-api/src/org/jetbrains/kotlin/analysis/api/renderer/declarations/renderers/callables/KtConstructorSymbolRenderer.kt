@@ -31,9 +31,7 @@ public interface KtConstructorSymbolRenderer {
             printer {
                 " ".separated(
                     {
-                        if (keywordFilter.filter(KtTokens.CONSTRUCTOR_KEYWORD, symbol)) {
-                            keywordRenderer.renderKeyword(KtTokens.CONSTRUCTOR_KEYWORD, symbol, printer)
-                        }
+                        keywordsRenderer.renderKeyword(KtTokens.CONSTRUCTOR_KEYWORD, symbol, printer)
                     },
                     {
                         (symbol.getContainingSymbol() as? KtNamedSymbol)?.name?.let { printer.append(it.render()) }

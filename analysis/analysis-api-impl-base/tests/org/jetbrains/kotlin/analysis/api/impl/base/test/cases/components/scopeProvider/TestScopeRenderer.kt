@@ -95,9 +95,9 @@ internal object TestScopeRenderer {
             appendLine()
             withIndent {
                 appendLine("classifiers: ${classifiers.size}")
-                withIndent { classifiers.forEach { appendLine(TestScopeRenderer.renderSymbol(it, printPretty)) } }
+                withIndent { classifiers.forEach { appendLine(renderSymbol(it, printPretty)) } }
                 appendLine("callables: ${callables.size}")
-                withIndent { callables.forEach { appendLine(TestScopeRenderer.renderSymbol(it, printPretty)) } }
+                withIndent { callables.forEach { appendLine(renderSymbol(it, printPretty)) } }
             }
         }
     }
@@ -112,7 +112,9 @@ internal object TestScopeRenderer {
 
     private val prettyPrintSymbolRenderer = KtDeclarationRendererForSource.WITH_QUALIFIED_NAMES.with {
         annotationRenderer = annotationRenderer.with { annotationFilter = KtRendererAnnotationsFilter.NONE }
-        modifiersRenderer = modifiersRenderer.with { keywordFilter = KtRendererKeywordFilter.NONE }
+        modifiersRenderer = modifiersRenderer.with {
+            keywordsRenderer = keywordsRenderer.with { keywordFilter = KtRendererKeywordFilter.NONE }
+        }
     }
 
     private val prettyPrintTypeRenderer = KtTypeRendererForSource.WITH_QUALIFIED_NAMES.with {

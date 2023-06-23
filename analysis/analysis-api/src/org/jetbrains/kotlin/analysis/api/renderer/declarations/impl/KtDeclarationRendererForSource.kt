@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.renderer.declarations.impl
 
-import org.jetbrains.kotlin.analysis.api.renderer.base.KtKeywordRenderer
+import org.jetbrains.kotlin.analysis.api.renderer.base.KtKeywordsRenderer
 import org.jetbrains.kotlin.analysis.api.renderer.base.annotations.KtAnnotationRendererForSource
 import org.jetbrains.kotlin.analysis.api.renderer.base.contextReceivers.KtContextReceiversRendererForSource
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.KtCallableReturnTypeFilter
@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.analysis.api.renderer.declarations.KtRecommendedRend
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.KtRendererTypeApproximator
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.bodies.*
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.modifiers.impl.KtDeclarationModifiersRendererForSource
-import org.jetbrains.kotlin.analysis.api.renderer.declarations.modifiers.renderers.KtRendererKeywordFilter
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.*
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.callables.*
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.classifiers.KtAnonymousObjectSymbolRenderer
@@ -30,8 +29,7 @@ import org.jetbrains.kotlin.analysis.api.renderer.types.impl.KtTypeRendererForSo
 public object KtDeclarationRendererForSource {
     public val WITH_QUALIFIED_NAMES: KtDeclarationRenderer = KtDeclarationRenderer {
         nameRenderer = KtDeclarationNameRenderer.QUOTED
-        keywordRender = KtKeywordRenderer.AS_WORD
-        keywordFilter = KtRendererKeywordFilter.ALL
+        keywordsRenderer = KtKeywordsRenderer.AS_WORD
         contextReceiversRenderer = KtContextReceiversRendererForSource.WITH_LABELS
         codeStyle = KtRecommendedRendererCodeStyle
         modifiersRenderer = KtDeclarationModifiersRendererForSource.NO_IMPLICIT_MODIFIERS

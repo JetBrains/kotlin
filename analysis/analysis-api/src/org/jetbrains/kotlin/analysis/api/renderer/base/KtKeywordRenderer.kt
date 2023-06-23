@@ -11,25 +11,27 @@ import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.lexer.KtKeywordToken
 
 public interface KtKeywordRenderer {
-    context(KtAnalysisSession)
+    context(KtAnalysisSession, KtKeywordsRenderer)
     public fun renderKeyword(keyword: KtKeywordToken, owner: KtAnnotated, printer: PrettyPrinter)
 
-    context(KtAnalysisSession)
+    context(KtAnalysisSession, KtKeywordsRenderer)
     public fun renderKeywords(keywords: List<KtKeywordToken>, owner: KtAnnotated, printer: PrettyPrinter) {
-        printer.printCollection(keywords, separator = " ") {
+        printer.printCollection(keywords.filter { keywordFilter.filter(it, owner) }, separator = " ") {
             renderKeyword(it, owner, this)
         }
     }
 
     public object AS_WORD : KtKeywordRenderer {
-        context(KtAnalysisSession)
+        context(KtAnalysisSession, KtKeywordsRenderer)
         override fun renderKeyword(keyword: KtKeywordToken, owner: KtAnnotated, printer: PrettyPrinter) {
-            printer.append(keyword.value)
+            if (keywordFilter.filter(keyword, owner)) {
+                printer.append(keyword.value)
+            }
         }
     }
 
     public object NONE : KtKeywordRenderer {
-        context(KtAnalysisSession)
+        context(KtAnalysisSession, KtKeywordsRenderer)
         override fun renderKeyword(keyword: KtKeywordToken, owner: KtAnnotated, printer: PrettyPrinter) {
         }
     }

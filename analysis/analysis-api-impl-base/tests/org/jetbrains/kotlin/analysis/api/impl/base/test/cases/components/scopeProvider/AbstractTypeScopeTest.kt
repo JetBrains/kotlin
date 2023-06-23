@@ -98,7 +98,9 @@ abstract class AbstractTypeScopeTest : AbstractAnalysisApiSingleFileTest() {
 
     companion object {
         private val renderer = KtDeclarationRendererForSource.WITH_QUALIFIED_NAMES.with {
-            modifiersRenderer = modifiersRenderer.with { keywordFilter = KtRendererKeywordFilter.NONE }
+            modifiersRenderer = modifiersRenderer.with {
+                keywordsRenderer = keywordsRenderer.with { keywordFilter = KtRendererKeywordFilter.NONE }
+            }
         }
     }
 }

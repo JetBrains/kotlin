@@ -21,9 +21,7 @@ public interface KtBackingFieldSymbolRenderer {
             codeStyle.getSeparatorBetweenAnnotationAndOwner(symbol).separated(
                 { annotationRenderer.renderAnnotations(symbol, printer) },
                 {
-                    if (keywordFilter.filter(KtTokens.FIELD_KEYWORD, symbol)) {
-                        keywordRenderer.renderKeyword(KtTokens.FIELD_KEYWORD, symbol, printer)
-                    }
+                    keywordsRenderer.renderKeyword(KtTokens.FIELD_KEYWORD, symbol, printer)
                 },
             )
         }
