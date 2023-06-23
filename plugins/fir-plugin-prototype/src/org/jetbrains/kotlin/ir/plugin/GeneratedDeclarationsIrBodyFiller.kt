@@ -19,6 +19,7 @@ class GeneratedDeclarationsIrBodyFiller : IrGenerationExtension {
             TransformerForTopLevelDeclarationsGenerator(pluginContext),
             AllPropertiesConstructorIrGenerator(pluginContext),
             TransformerForAddingAnnotations(pluginContext),
+            ComposableFunctionsTransformer(pluginContext),
         )
 
         for (transformer in transformers) {

@@ -1,0 +1,165 @@
+FILE fqName:<root> fileName:/composableFunction.kt
+  FUN name:runUsual visibility:public modality:FINAL <> (block:kotlin.Function0<kotlin.Unit>) returnType:kotlin.Unit
+    VALUE_PARAMETER name:block index:0 type:kotlin.Function0<kotlin.Unit>
+    BLOCK_BODY
+      CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.Unit origin=INVOKE
+        $this: GET_VAR 'block: kotlin.Function0<kotlin.Unit> declared in <root>.runUsual' type=kotlin.Function0<kotlin.Unit> origin=null
+  FUN name:runComposable visibility:public modality:FINAL <> (block:@[MyComposable] kotlin.Function0<kotlin.Unit>) returnType:kotlin.Unit
+    VALUE_PARAMETER name:block index:0 type:@[MyComposable] kotlin.Function0<kotlin.Unit>
+    BLOCK_BODY
+      CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.Unit origin=null
+        $this: GET_VAR 'block: @[MyComposable] kotlin.Function0<kotlin.Unit> declared in <root>.runComposable' type=@[MyComposable] kotlin.Function0<kotlin.Unit> origin=null
+  FUN name:test_1 visibility:public modality:FINAL <> () returnType:kotlin.Int
+    BLOCK_BODY
+      VAR name:x type:kotlin.Int [var]
+        CONST Int type=kotlin.Int value=0
+      VAR name:l0 type:kotlin.Function0<kotlin.Unit> [val]
+        FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
+          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
+            BLOCK_BODY
+              TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+                BLOCK type=kotlin.Int origin=POSTFIX_INCR
+                  VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:kotlin.Int [val]
+                    GET_VAR 'var x: kotlin.Int declared in <root>.test_1' type=kotlin.Int origin=null
+                  SET_VAR 'var x: kotlin.Int declared in <root>.test_1' type=kotlin.Unit origin=POSTFIX_INCR
+                    CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+                      $this: GET_VAR 'val tmp_0: kotlin.Int declared in <root>.test_1.<anonymous>' type=kotlin.Int origin=null
+                  GET_VAR 'val tmp_0: kotlin.Int declared in <root>.test_1.<anonymous>' type=kotlin.Int origin=null
+              GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+      VAR name:l1 type:kotlin.Function0<kotlin.Unit> [val]
+        FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
+          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
+            BLOCK_BODY
+              TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+                BLOCK type=kotlin.Int origin=POSTFIX_INCR
+                  VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:kotlin.Int [val]
+                    GET_VAR 'var x: kotlin.Int declared in <root>.test_1' type=kotlin.Int origin=null
+                  SET_VAR 'var x: kotlin.Int declared in <root>.test_1' type=kotlin.Unit origin=POSTFIX_INCR
+                    CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+                      $this: GET_VAR 'val tmp_1: kotlin.Int declared in <root>.test_1.<anonymous>' type=kotlin.Int origin=null
+                  GET_VAR 'val tmp_1: kotlin.Int declared in <root>.test_1.<anonymous>' type=kotlin.Int origin=null
+              GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+      VAR name:l2 type:@[MyComposable] kotlin.Function0<kotlin.Unit> [val]
+        FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
+          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
+            BLOCK_BODY
+              TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+                BLOCK type=kotlin.Int origin=POSTFIX_INCR
+                  VAR IR_TEMPORARY_VARIABLE name:tmp_2 type:kotlin.Int [val]
+                    GET_VAR 'var x: kotlin.Int declared in <root>.test_1' type=kotlin.Int origin=null
+                  SET_VAR 'var x: kotlin.Int declared in <root>.test_1' type=kotlin.Unit origin=POSTFIX_INCR
+                    CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+                      $this: GET_VAR 'val tmp_2: kotlin.Int declared in <root>.test_1.<anonymous>' type=kotlin.Int origin=null
+                  GET_VAR 'val tmp_2: kotlin.Int declared in <root>.test_1.<anonymous>' type=kotlin.Int origin=null
+      VAR name:l3 type:kotlin.Function0<kotlin.Unit> [val]
+        FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
+          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
+            annotations:
+              MyComposable
+            BLOCK_BODY
+              TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+                BLOCK type=kotlin.Int origin=POSTFIX_INCR
+                  VAR IR_TEMPORARY_VARIABLE name:tmp_3 type:kotlin.Int [val]
+                    GET_VAR 'var x: kotlin.Int declared in <root>.test_1' type=kotlin.Int origin=null
+                  SET_VAR 'var x: kotlin.Int declared in <root>.test_1' type=kotlin.Unit origin=POSTFIX_INCR
+                    CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+                      $this: GET_VAR 'val tmp_3: kotlin.Int declared in <root>.test_1.<anonymous>' type=kotlin.Int origin=null
+                  GET_VAR 'val tmp_3: kotlin.Int declared in <root>.test_1.<anonymous>' type=kotlin.Int origin=null
+              GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+      CALL 'public final fun runUsual (block: kotlin.Function0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+        block: GET_VAR 'val l0: kotlin.Function0<kotlin.Unit> declared in <root>.test_1' type=kotlin.Function0<kotlin.Unit> origin=null
+      CALL 'public final fun runUsual (block: kotlin.Function0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+        block: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
+          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
+            BLOCK_BODY
+              TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+                BLOCK type=kotlin.Int origin=POSTFIX_INCR
+                  VAR IR_TEMPORARY_VARIABLE name:tmp_4 type:kotlin.Int [val]
+                    GET_VAR 'var x: kotlin.Int declared in <root>.test_1' type=kotlin.Int origin=null
+                  SET_VAR 'var x: kotlin.Int declared in <root>.test_1' type=kotlin.Unit origin=POSTFIX_INCR
+                    CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+                      $this: GET_VAR 'val tmp_4: kotlin.Int declared in <root>.test_1.<anonymous>' type=kotlin.Int origin=null
+                  GET_VAR 'val tmp_4: kotlin.Int declared in <root>.test_1.<anonymous>' type=kotlin.Int origin=null
+      CALL 'public final fun runComposable (block: @[MyComposable] kotlin.Function0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+        block: GET_VAR 'val l0: kotlin.Function0<kotlin.Unit> declared in <root>.test_1' type=kotlin.Function0<kotlin.Unit> origin=null
+      CALL 'public final fun runComposable (block: @[MyComposable] kotlin.Function0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+        block: GET_VAR 'val l1: kotlin.Function0<kotlin.Unit> declared in <root>.test_1' type=kotlin.Function0<kotlin.Unit> origin=null
+      CALL 'public final fun runComposable (block: @[MyComposable] kotlin.Function0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+        block: GET_VAR 'val l2: @[MyComposable] kotlin.Function0<kotlin.Unit> declared in <root>.test_1' type=@[MyComposable] kotlin.Function0<kotlin.Unit> origin=null
+      CALL 'public final fun runComposable (block: @[MyComposable] kotlin.Function0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+        block: GET_VAR 'val l3: kotlin.Function0<kotlin.Unit> declared in <root>.test_1' type=kotlin.Function0<kotlin.Unit> origin=null
+      CALL 'public final fun runComposable (block: @[MyComposable] kotlin.Function0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+        block: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
+          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
+            BLOCK_BODY
+              TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+                BLOCK type=kotlin.Int origin=POSTFIX_INCR
+                  VAR IR_TEMPORARY_VARIABLE name:tmp_5 type:kotlin.Int [val]
+                    GET_VAR 'var x: kotlin.Int declared in <root>.test_1' type=kotlin.Int origin=null
+                  SET_VAR 'var x: kotlin.Int declared in <root>.test_1' type=kotlin.Unit origin=POSTFIX_INCR
+                    CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+                      $this: GET_VAR 'val tmp_5: kotlin.Int declared in <root>.test_1.<anonymous>' type=kotlin.Int origin=null
+                  GET_VAR 'val tmp_5: kotlin.Int declared in <root>.test_1.<anonymous>' type=kotlin.Int origin=null
+      CALL 'public final fun runComposable (block: @[MyComposable] kotlin.Function0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+        block: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
+          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
+            annotations:
+              MyComposable
+            BLOCK_BODY
+              TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+                BLOCK type=kotlin.Int origin=POSTFIX_INCR
+                  VAR IR_TEMPORARY_VARIABLE name:tmp_6 type:kotlin.Int [val]
+                    GET_VAR 'var x: kotlin.Int declared in <root>.test_1' type=kotlin.Int origin=null
+                  SET_VAR 'var x: kotlin.Int declared in <root>.test_1' type=kotlin.Unit origin=POSTFIX_INCR
+                    CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+                      $this: GET_VAR 'val tmp_6: kotlin.Int declared in <root>.test_1.<anonymous>' type=kotlin.Int origin=null
+                  GET_VAR 'val tmp_6: kotlin.Int declared in <root>.test_1.<anonymous>' type=kotlin.Int origin=null
+      RETURN type=kotlin.Nothing from='public final fun test_1 (): kotlin.Int declared in <root>'
+        GET_VAR 'var x: kotlin.Int declared in <root>.test_1' type=kotlin.Int origin=null
+  FUN name:runComposable2 visibility:public modality:FINAL <> (block:kotlin.Function1<kotlin.String, kotlin.String>) returnType:kotlin.String
+    VALUE_PARAMETER name:block index:0 type:kotlin.Function1<kotlin.String, kotlin.String>
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun runComposable2 (block: kotlin.Function1<kotlin.String, kotlin.String>): kotlin.String declared in <root>'
+        CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=kotlin.String origin=null
+          $this: GET_VAR 'block: kotlin.Function1<kotlin.String, kotlin.String> declared in <root>.runComposable2' type=kotlin.Function1<kotlin.String, kotlin.String> origin=null
+          p1: CONST String type=kotlin.String value="O"
+  FUN name:test_2 visibility:public modality:FINAL <> () returnType:kotlin.String
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun test_2 (): kotlin.String declared in <root>'
+        CALL 'public final fun runComposable2 (block: kotlin.Function1<kotlin.String, kotlin.String>): kotlin.String declared in <root>' type=kotlin.String origin=null
+          block: FUN_EXPR type=kotlin.Function1<kotlin.String, kotlin.String> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:kotlin.String) returnType:kotlin.String
+              VALUE_PARAMETER name:it index:0 type:kotlin.String
+              BLOCK_BODY
+                RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: kotlin.String): kotlin.String declared in <root>.test_2'
+                  CALL 'public final fun plus (other: kotlin.Any?): kotlin.String declared in kotlin.String' type=kotlin.String origin=PLUS
+                    $this: GET_VAR 'it: kotlin.String declared in <root>.test_2.<anonymous>' type=kotlin.String origin=null
+                    other: CONST String type=kotlin.String value="K"
+  FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
+    BLOCK_BODY
+      VAR name:res1 type:kotlin.Int [val]
+        CALL 'public final fun test_1 (): kotlin.Int declared in <root>' type=kotlin.Int origin=null
+      WHEN type=kotlin.Unit origin=IF
+        BRANCH
+          if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+            $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
+              arg0: GET_VAR 'val res1: kotlin.Int declared in <root>.box' type=kotlin.Int origin=null
+              arg1: CONST Int type=kotlin.Int value=8
+          then: RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
+            STRING_CONCATENATION type=kotlin.String
+              CONST String type=kotlin.String value="Fail 1: "
+              GET_VAR 'val res1: kotlin.Int declared in <root>.box' type=kotlin.Int origin=null
+      VAR name:res2 type:kotlin.String [val]
+        CALL 'public final fun test_2 (): kotlin.String declared in <root>' type=kotlin.String origin=null
+      WHEN type=kotlin.Unit origin=IF
+        BRANCH
+          if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+            $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
+              arg0: GET_VAR 'val res2: kotlin.String declared in <root>.box' type=kotlin.String origin=null
+              arg1: CONST String type=kotlin.String value="OK"
+          then: RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
+            STRING_CONCATENATION type=kotlin.String
+              CONST String type=kotlin.String value="Fail 2: "
+              GET_VAR 'val res2: kotlin.String declared in <root>.box' type=kotlin.String origin=null
+      RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
+        CONST String type=kotlin.String value="OK"

@@ -1,0 +1,108 @@
+FILE: composableFunction.kt
+    public final fun runUsual(block: R|() -> kotlin/Unit|): R|kotlin/Unit| {
+        R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
+    }
+    public final fun runComposable(block: R|@R|org/jetbrains/kotlin/fir/plugin/MyComposable|()  some/MyComposableFunction0<kotlin/Unit>|): R|kotlin/Unit| {
+        R|<local>/block|.R|SubstitutionOverride<some/MyComposableFunction0.invoke: R|kotlin/Unit|>|()
+    }
+    public final fun test_1(): R|kotlin/Int| {
+        lvar x: R|kotlin/Int| = Int(0)
+        lval l0: R|() -> kotlin/Unit| = fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+             {
+                lval <unary>: R|kotlin/Int| = R|<local>/x|
+                R|<local>/x| = R|<local>/<unary>|.R|kotlin/Int.inc|()
+                R|<local>/<unary>|
+            }
+
+            Q|kotlin/Unit|
+        }
+
+        lval l1: R|some/MyComposableFunction0<kotlin/Unit>| = fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+             {
+                lval <unary>: R|kotlin/Int| = R|<local>/x|
+                R|<local>/x| = R|<local>/<unary>|.R|kotlin/Int.inc|()
+                R|<local>/<unary>|
+            }
+
+            Q|kotlin/Unit|
+        }
+
+        lval l2: R|@R|org/jetbrains/kotlin/fir/plugin/MyComposable|()  some/MyComposableFunction0<kotlin/Unit>| = fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+             {
+                lval <unary>: R|kotlin/Int| = R|<local>/x|
+                R|<local>/x| = R|<local>/<unary>|.R|kotlin/Int.inc|()
+                R|<local>/<unary>|
+            }
+
+        }
+
+        lval l3: R|some/MyComposableFunction0<kotlin/Unit>| = @R|org/jetbrains/kotlin/fir/plugin/MyComposable|() fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+             {
+                lval <unary>: R|kotlin/Int| = R|<local>/x|
+                R|<local>/x| = R|<local>/<unary>|.R|kotlin/Int.inc|()
+                R|<local>/<unary>|
+            }
+
+            Q|kotlin/Unit|
+        }
+
+        R|/runUsual|(R|<local>/l0|)
+        R|/runUsual|(<L> = runUsual@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+             {
+                lval <unary>: R|kotlin/Int| = R|<local>/x|
+                R|<local>/x| = R|<local>/<unary>|.R|kotlin/Int.inc|()
+                R|<local>/<unary>|
+            }
+
+        }
+        )
+        R|/runComposable|(R|<local>/l0|)
+        R|/runComposable|(R|<local>/l1|)
+        R|/runComposable|(R|<local>/l2|)
+        R|/runComposable|(R|<local>/l3|)
+        R|/runComposable|(<L> = runComposable@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+             {
+                lval <unary>: R|kotlin/Int| = R|<local>/x|
+                R|<local>/x| = R|<local>/<unary>|.R|kotlin/Int.inc|()
+                R|<local>/<unary>|
+            }
+
+        }
+        )
+        R|/runComposable|(<L> = @R|org/jetbrains/kotlin/fir/plugin/MyComposable|() runComposable@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+             {
+                lval <unary>: R|kotlin/Int| = R|<local>/x|
+                R|<local>/x| = R|<local>/<unary>|.R|kotlin/Int.inc|()
+                R|<local>/<unary>|
+            }
+
+        }
+        )
+        ^test_1 R|<local>/x|
+    }
+    public final fun runComposable2(block: R|some/MyComposableFunction1<kotlin/String, kotlin/String>|): R|kotlin/String| {
+        ^runComposable2 R|<local>/block|.R|SubstitutionOverride<some/MyComposableFunction1.invoke: R|kotlin/String|>|(String(O))
+    }
+    public final fun test_2(): R|kotlin/String| {
+        ^test_2 R|/runComposable2|(<L> = runComposable2@fun <anonymous>(it: R|kotlin/String|): R|kotlin/String| <inline=NoInline>  {
+            ^ R|<local>/it|.R|kotlin/String.plus|(String(K))
+        }
+        )
+    }
+    public final fun box(): R|kotlin/String| {
+        lval res1: R|kotlin/Int| = R|/test_1|()
+        when () {
+            !=(R|<local>/res1|, Int(8)) ->  {
+                ^box <strcat>(String(Fail 1: ), R|<local>/res1|)
+            }
+        }
+
+        lval res2: R|kotlin/String| = R|/test_2|()
+        when () {
+            !=(R|<local>/res2|, String(OK)) ->  {
+                ^box <strcat>(String(Fail 2: ), R|<local>/res2|)
+            }
+        }
+
+        ^box String(OK)
+    }
