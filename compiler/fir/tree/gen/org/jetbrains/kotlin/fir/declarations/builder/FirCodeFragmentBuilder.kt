@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.declarations.FirResolveState
 import org.jetbrains.kotlin.fir.declarations.ResolveStateAccess
 import org.jetbrains.kotlin.fir.declarations.asResolveState
 import org.jetbrains.kotlin.fir.declarations.impl.FirCodeFragmentImpl
+import org.jetbrains.kotlin.fir.declarations.resolvePhase
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.symbols.impl.FirCodeFragmentSymbol
@@ -63,4 +64,21 @@ inline fun buildCodeFragment(init: FirCodeFragmentBuilder.() -> Unit): FirCodeFr
         callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
     }
     return FirCodeFragmentBuilder().apply(init).build()
+}
+
+@OptIn(ExperimentalContracts::class)
+inline fun buildCodeFragmentCopy(original: FirCodeFragment, init: FirCodeFragmentBuilder.() -> Unit): FirCodeFragment {
+    contract {
+        callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+    }
+    val copyBuilder = FirCodeFragmentBuilder()
+    copyBuilder.source = original.source
+    copyBuilder.resolvePhase = original.resolvePhase
+    copyBuilder.annotations.addAll(original.annotations)
+    copyBuilder.moduleData = original.moduleData
+    copyBuilder.origin = original.origin
+    copyBuilder.attributes = original.attributes.copy()
+    copyBuilder.symbol = original.symbol
+    copyBuilder.block = original.block
+    return copyBuilder.apply(init).build()
 }

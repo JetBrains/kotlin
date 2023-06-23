@@ -68,4 +68,8 @@ internal class FirCodeFragmentImpl(
     override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
         annotations = newAnnotations.toMutableOrEmpty()
     }
+
+    override fun replaceBlock(newBlock: FirBlock) {
+        block = newBlock
+    }
 }
