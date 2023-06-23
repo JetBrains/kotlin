@@ -1584,6 +1584,18 @@ public class FirIdeNormalAnalysisSourceModuleReferenceResolveTestGenerated exten
                 }
 
                 @Test
+                @TestMetadata("MemberFromBaseClassByFullName.kt")
+                public void testMemberFromBaseClassByFullName() throws Exception {
+                    runTest("analysis/analysis-api/testData/referenceResolve/kDoc/qualified/stdlib/MemberFromBaseClassByFullName.kt");
+                }
+
+                @Test
+                @TestMetadata("MemberFromBaseClassByShortName.kt")
+                public void testMemberFromBaseClassByShortName() throws Exception {
+                    runTest("analysis/analysis-api/testData/referenceResolve/kDoc/qualified/stdlib/MemberFromBaseClassByShortName.kt");
+                }
+
+                @Test
                 @TestMetadata("TopLevelClassFromStdlibByFullName.kt")
                 public void testTopLevelClassFromStdlibByFullName() throws Exception {
                     runTest("analysis/analysis-api/testData/referenceResolve/kDoc/qualified/stdlib/TopLevelClassFromStdlibByFullName.kt");

@@ -171,7 +171,7 @@ internal object KDocReferenceResolver {
                     .filterIsInstance<KtSymbolWithMembers>()
                     .flatMap { symbol ->
                         listOfNotNull(
-                            symbol.getDeclaredMemberScope(),
+                            symbol.getMemberScope(),
                             (symbol as? KtClassOrObjectSymbol)?.let { getCompanionObjectMemberScope(it) },
                             symbol.getStaticMemberScope(),
                         )
@@ -238,7 +238,7 @@ internal object KDocReferenceResolver {
                 getClassOrObjectSymbolByClassId(classId)
                     ?.let {
                         listOfNotNull(
-                            it.getDeclaredMemberScope(),
+                            it.getMemberScope(),
                             getCompanionObjectMemberScope(it),
                             it.getStaticMemberScope(),
                         )
