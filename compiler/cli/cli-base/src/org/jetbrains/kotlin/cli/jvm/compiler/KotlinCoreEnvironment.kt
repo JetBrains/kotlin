@@ -52,7 +52,6 @@ import org.jetbrains.kotlin.cli.common.CliModuleVisibilityManagerImpl
 import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
 import org.jetbrains.kotlin.cli.common.config.ContentRoot
 import org.jetbrains.kotlin.cli.common.config.KotlinSourceRoot
-import org.jetbrains.kotlin.cli.common.config.kotlinSourceRoots
 import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
 import org.jetbrains.kotlin.cli.common.extensions.ScriptEvaluationExtension
 import org.jetbrains.kotlin.cli.common.extensions.ShellExtension
@@ -196,7 +195,8 @@ class KotlinCoreEnvironment private constructor(
         project.registerService(DeclarationProviderFactoryService::class.java, CliDeclarationProviderFactoryService(sourceFiles))
 
         sourceFiles += createSourceFilesFromSourceRoots(
-            configuration, project, getSourceRootsCheckingForDuplicates(configuration, messageCollector)
+            configuration, project,
+            getSourceRootsCheckingForDuplicates(configuration, configuration[CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY])
         )
 
         collectAdditionalSources(project)
