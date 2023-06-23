@@ -8,7 +8,7 @@ fun test() {
     foo(1, 2.0, true)
     foo(1, third = true)
 
-    <!NO_VALUE_FOR_PARAMETER!>foo()<!>
+    foo<!NO_VALUE_FOR_PARAMETER!>()<!>
     foo(0, 0.0, false, <!TOO_MANY_ARGUMENTS!>""<!>)
 
     bar(1, third = true)

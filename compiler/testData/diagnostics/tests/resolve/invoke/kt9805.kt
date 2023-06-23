@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 class A {
     val foo: B.() -> Unit get() = null!!
 }

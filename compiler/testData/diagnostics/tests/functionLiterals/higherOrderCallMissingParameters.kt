@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // See KT-7813: Call to functional parameter with missing argument: no error detected but compiler crashes
 
 fun foo(p: (Int, () -> Int) -> Unit) {

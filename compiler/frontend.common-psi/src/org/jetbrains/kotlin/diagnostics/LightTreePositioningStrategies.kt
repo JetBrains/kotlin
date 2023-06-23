@@ -590,7 +590,8 @@ object LightTreePositioningStrategies {
                     if (lastArgument != null) {
                         markRange(lastArgument, rightParenthesis, startOffset, endOffset, tree, node)
                     } else {
-                        markRange(nodeToStart, rightParenthesis, startOffset, endOffset, tree, node)
+                        val leftParenthesis = tree.findLastChildByType(argumentList, LPAR)
+                        markRange(leftParenthesis?: nodeToStart, rightParenthesis, startOffset, endOffset, tree, node)
                     }
                 }
 

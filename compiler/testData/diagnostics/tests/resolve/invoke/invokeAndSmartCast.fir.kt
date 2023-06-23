@@ -11,10 +11,10 @@ fun test(a: A) {
     <!UNSAFE_IMPLICIT_INVOKE_CALL!>(a.x)<!>("")
 
     with("") {
-        a.<!NO_VALUE_FOR_PARAMETER!>x()<!>
+        a.x<!NO_VALUE_FOR_PARAMETER!>()<!>
         <!UNSAFE_IMPLICIT_INVOKE_CALL!>(a.x)<!>()
         if (a.x != null) {
-            a.<!NO_VALUE_FOR_PARAMETER!>x()<!> // todo
+            a.x<!NO_VALUE_FOR_PARAMETER!>()<!> // todo
             (a.x)()
         }
     }

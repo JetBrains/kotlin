@@ -6,7 +6,7 @@ fun test1() {
 
 fun test2(f: String.(Int) -> Unit) {
     <!ARGUMENT_TYPE_MISMATCH!>11<!>.(f)(1)
-    11.<!NO_VALUE_FOR_PARAMETER!>(f)()<!>
+    11.(f)<!NO_VALUE_FOR_PARAMETER!>()<!>
 }
 
 fun test3() {

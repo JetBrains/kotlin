@@ -7,7 +7,7 @@ fun test() {
     foo(1, second = 3.14, third = false, fourth = "!?")
     foo(third = false, second = 2.71, fourth = "?!", first = 0)
 
-    <!NO_VALUE_FOR_PARAMETER, NO_VALUE_FOR_PARAMETER, NO_VALUE_FOR_PARAMETER, NO_VALUE_FOR_PARAMETER!>foo()<!>
+    foo<!NO_VALUE_FOR_PARAMETER, NO_VALUE_FOR_PARAMETER, NO_VALUE_FOR_PARAMETER, NO_VALUE_FOR_PARAMETER!>()<!>
     foo(<!ARGUMENT_TYPE_MISMATCH!>0.0<!>, <!ARGUMENT_TYPE_MISMATCH!>false<!>, <!ARGUMENT_TYPE_MISMATCH!>0<!>, "")
     foo(1, 2.0, third = true, "")
     foo(second = 0.0, first = 0, <!NO_VALUE_FOR_PARAMETER!>fourth = "")<!>

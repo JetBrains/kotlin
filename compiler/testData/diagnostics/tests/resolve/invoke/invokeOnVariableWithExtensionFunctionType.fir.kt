@@ -23,8 +23,8 @@ fun test(a: A, b: B) {
     }
 
     with(b) {
-        a.<!NO_VALUE_FOR_PARAMETER!>foo()<!>
-        a.<!NO_VALUE_FOR_PARAMETER!>(foo)()<!>
+        a.foo<!NO_VALUE_FOR_PARAMETER!>()<!>
+        a.(foo)<!NO_VALUE_FOR_PARAMETER!>()<!>
 
         (a.foo)()
 
@@ -65,8 +65,8 @@ fun test(a: A, b: B) {
     }
 
     with(b) {
-        a.<!NO_VALUE_FOR_PARAMETER!>foo()<!>
-        a.<!NO_VALUE_FOR_PARAMETER!>(foo)()<!>
+        a.foo<!NO_VALUE_FOR_PARAMETER!>()<!>
+        a.(foo)<!NO_VALUE_FOR_PARAMETER!>()<!>
 
         (a.foo)()
 

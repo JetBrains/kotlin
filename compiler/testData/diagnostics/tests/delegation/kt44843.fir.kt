@@ -1,13 +1,13 @@
 // WITH_STDLIB
 
 // FILE: test.kt
-val bar2 by <!NO_VALUE_FOR_PARAMETER!>bar2()<!>
+val bar2 by bar2<!NO_VALUE_FOR_PARAMETER!>()<!>
 
 // FILE: lt/neworld/compiler/Foo.kt
 package lt.neworld.compiler
 
 class Foo {
-    val bar by <!NO_VALUE_FOR_PARAMETER!>bar()<!>
+    val bar by bar<!NO_VALUE_FOR_PARAMETER!>()<!>
 }
 
 // FILE: lt/neworld/compiler/bar/Bar.kt

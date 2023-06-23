@@ -693,7 +693,8 @@ object PositioningStrategies {
                     if (lastArgument != null) {
                         markRange(lastArgument, rightParenthesis)
                     } else {
-                        markRange(qualifiedAccess, rightParenthesis)
+                        val leftParenthesis = argumentList.leftParenthesis
+                        markRange(leftParenthesis ?: qualifiedAccess, rightParenthesis)
                     }
                 }
 

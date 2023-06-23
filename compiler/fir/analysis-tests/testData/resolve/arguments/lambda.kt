@@ -29,6 +29,6 @@ fun test() {
 
     // Bad
     <!NO_VALUE_FOR_PARAMETER!>baz<!> {}
-    <!NO_VALUE_FOR_PARAMETER!>baz()<!> {}
+    baz<!NO_VALUE_FOR_PARAMETER!>()<!> {}
     baz(<!NO_VALUE_FOR_PARAMETER!>other = false)<!> <!TOO_MANY_ARGUMENTS!>{}<!>
 }
