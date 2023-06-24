@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.IrWhenUtils
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.backend.js.utils.valueArguments
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildVariable
 import org.jetbrains.kotlin.ir.declarations.*
@@ -18,7 +19,10 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.interpreter.toIrConst
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isNullable
+import org.jetbrains.kotlin.ir.types.makeNotNull
+import org.jetbrains.kotlin.ir.util.copyTypeAndValueArgumentsFrom
 import org.jetbrains.kotlin.ir.util.getSimpleFunction
+import org.jetbrains.kotlin.ir.util.irCall
 import org.jetbrains.kotlin.ir.util.isElseBranch
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
@@ -46,7 +50,7 @@ class WasmStringSwitchOptimizerLowering(
     private fun asEqCall(expression: IrExpression): IrCall? =
         (expression as? IrCall)?.takeIf { it.symbol == context.irBuiltIns.eqeqSymbol }
 
-    private class MatchedCase(val condition: IrCall, val branchIndex: Int)
+    private class MatchedCase(var condition: IrCall, val branchIndex: Int)
     private class BucketSelector(val hashCode: Int, val selector: IrExpression)
 
     override fun lower(irFile: IrFile) {
@@ -261,6 +265,14 @@ class WasmStringSwitchOptimizerLowering(
         val convertedBlock = context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol).run {
             irBlock(resultType = visitedWhen.type) {
                 val tempIntVariable = addHashCodeVariable(firstEqCall!!)
+
+                stringConstantToMatchedCase.forEach {(_, c) ->
+                    if (c.condition.symbol ==  context.irBuiltIns.eqeqSymbol) {
+                        val nc = irCall(c.condition, symbols.streqeq)
+                        c.condition = nc
+                    }
+                    c.condition.valueArguments[0]?.let { it.type = it.type.makeNotNull() }
+                }
 
                 val buckets = stringConstantToMatchedCase.keys.groupBy { it.hashCode() }
 

@@ -217,7 +217,7 @@ public actual fun String.encodeToByteArray(
  * Returns a substring of this string that starts at the specified [startIndex] and continues to the end of the string.
  */
 public actual fun String.substring(startIndex: Int): String =
-    subSequence(startIndex, this.length) as String
+    subSequence(startIndex, this.length)// as String
 
 /**
  * Returns the substring of this string starting at the [startIndex] and ending right before the [endIndex].
@@ -226,7 +226,7 @@ public actual fun String.substring(startIndex: Int): String =
  * @param endIndex the end index (exclusive).
  */
 public actual fun String.substring(startIndex: Int, endIndex: Int): String =
-    subSequence(startIndex, endIndex) as String
+    subSequence(startIndex, endIndex)// as String
 
 /**
  * Returns a copy of this string converted to upper case using the rules of the default locale.

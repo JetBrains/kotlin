@@ -193,6 +193,7 @@ class WasmSymbols(
     val refCastNull = getInternalFunction("wasm_ref_cast_null")
     val wasmArrayCopy = getInternalFunction("wasm_array_copy")
     val wasmArrayNewData0 = getInternalFunction("array_new_data0")
+    val wasmArrayNewFiexd1 = getInternalFunction("array_new_fixed1")
 
     val primitiveTypeToCreateTypedArray = mapOf(
         context.irBuiltIns.arrayClass to getFunction("createAnyArray", kotlinTopLevelPackage),
@@ -215,6 +216,7 @@ class WasmSymbols(
     val unboxIntrinsic: IrSimpleFunctionSymbol = getInternalFunction("unboxIntrinsic")
 
     val stringGetLiteral = getFunction("stringLiteral", builtInsPackage)
+    val streqeq = getFunction("streqeq", builtInsPackage)
     val stringGetPoolSize = getInternalFunction("stringGetPoolSize")
 
     val testFun = maybeGetFunction("test", kotlinTestPackage)

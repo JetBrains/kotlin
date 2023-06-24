@@ -6,7 +6,6 @@
 package kotlin
 
 import kotlin.wasm.internal.*
-import kotlin.math.min
 
 /**
  * The `String` class represents character strings. All string literals in Kotlin programs, such as `"abc"`, are
@@ -16,7 +15,7 @@ public class String internal @WasmPrimitiveConstructor constructor(
     private var leftIfInSum: String?,
     @kotlin.internal.IntrinsicConstEvaluation
     public override val length: Int,
-    private var _chars: WasmCharArray,
+    internal var _chars: WasmCharArray,
 ) : Comparable<String>, CharSequence {
     public companion object {}
 
@@ -26,6 +25,8 @@ public class String internal @WasmPrimitiveConstructor constructor(
     @kotlin.internal.IntrinsicConstEvaluation
     public operator fun plus(other: Any?): String {
         val right = other.toString()
+        if (right.isEmpty()) return this
+        if (this.isEmpty()) return right
         return String(this, this.length + right.length, right.chars)
     }
 
@@ -66,14 +67,28 @@ public class String internal @WasmPrimitiveConstructor constructor(
         return _chars
     }
 
-    public override fun subSequence(startIndex: Int, endIndex: Int): CharSequence {
-        val actualStartIndex = startIndex.coerceAtLeast(0)
-        val actualEndIndex = endIndex.coerceAtMost(this.length)
-        val newLength = actualEndIndex - actualStartIndex
-        if (newLength <= 0) return ""
+    public override fun subSequence(startIndex: Int, endIndex: Int): String {
+//        val actualStartIndex = if (startIndex < 0) 0 else startIndex
+//        val length1 = this.length
+//        val actualEndIndex = if (endIndex > length1) length1 else endIndex
+//        val newLength = actualEndIndex - actualStartIndex
+        if (startIndex < 0) error("start")
+        if (endIndex > length) error("end")
+
+        val newLength = endIndex - startIndex
+
+        when (newLength) {
+            0 -> return EMPTY_STRING
+            1 -> {
+                return String(null, 1, array_new_fixed1(chars.get(startIndex)))
+            }
+        }
+
+        if (newLength < 0) error("")
+
         val newChars = WasmCharArray(newLength)
-        copyWasmArray(chars, newChars, actualStartIndex, 0, newLength)
-        return newChars.createString()
+        copyWasmArray(chars, newChars, startIndex, 0, newLength)
+        return String(null, newLength, newChars)
     }
 
     @kotlin.internal.IntrinsicConstEvaluation
@@ -93,24 +108,30 @@ public class String internal @WasmPrimitiveConstructor constructor(
         return thisLength - otherLength
     }
 
+
     @kotlin.internal.IntrinsicConstEvaluation
     public override fun equals(other: Any?): Boolean {
-        if (other == null) return false
+        if (other == null) return false //
         if (other === this) return true
-        val otherString = other as? String ?: return false
+        if (other !is String) return false //
+
+        val otherString: String = other //
 
         val thisLength = this.length
-        val otherLength = otherString.length
-        if (thisLength != otherLength) return false
+        if (thisLength != otherString.length) return false
 
         val thisHash = this._hashCode
-        val otherHash = other._hashCode
-        if (thisHash != otherHash && thisHash != 0 && otherHash != 0) return false
+        if (thisHash != 0) {
+            val otherHash = otherString._hashCode
+            if (otherHash != 0 && thisHash != otherHash) return false
+        }
 
-        val thisChars = this.chars
-        val otherChars = other.chars
-        repeat(thisLength) {
-            if (thisChars.get(it) != otherChars.get(it)) return false
+        val thisChars = this.chars // _chars
+        val otherChars = otherString.chars // _chars
+        var index = 0
+        while (index < thisLength) {
+            if (thisChars.get(index) != otherChars.get(index)) return false
+            index = index + 1
         }
         return true
     }
@@ -147,4 +168,25 @@ internal fun stringLiteral(poolId: Int, startAddress: Int, length: Int): String 
     val newString = String(null, length, chars)
     stringPool[poolId] = newString
     return newString
+}
+
+internal fun streqeq(this_: String, other: String): Boolean {
+    if (other === this_) return true
+
+    val thisChars = this_.chars
+    val otherChars = other.chars
+
+    if (otherChars === thisChars) return true
+
+    val thisLength = thisChars.len()
+    val otherLength = otherChars.len()
+
+    if (thisLength != otherLength) return false
+
+    var index = 0
+    while (index < thisLength) {
+        if (thisChars.get(index) != otherChars.get(index)) return false
+        index = index + 1
+    }
+    return true
 }

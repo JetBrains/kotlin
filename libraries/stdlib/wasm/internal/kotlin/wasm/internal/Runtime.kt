@@ -47,6 +47,21 @@ internal fun nullableEquals(lhs: Any?, rhs: Any?): Boolean {
     if (wasm_ref_is_null(lhs))
         return wasm_ref_is_null(rhs)
     return unsafeNotNull(lhs).equals(rhs)
+    /*
+    block {
+        if (l is null) {
+            r is null
+            br 
+        }
+        
+        if (r is null) {
+          0
+          br
+        }
+
+        l.eqauls(r)
+    }
+     */
 }
 
 internal fun anyNtoString(x: Any?): String = x.toString()
@@ -119,4 +134,20 @@ internal fun stringGetPoolSize(): Int =
 // This initializer is a special case in FieldInitializersLowering
 @Suppress("DEPRECATION")
 @EagerInitialization
-internal val stringPool: Array<String?> = Array(stringGetPoolSize())
+internal val stringPool: WasmStringArray/*<String?>*/ = WasmStringArray(stringGetPoolSize())
+internal val EMPTY_STRING = ""
+
+@WasmArrayOf(String::class, isNullable = true)
+internal class WasmStringArray(size: Int) {
+    @WasmOp(WasmOp.ARRAY_GET)
+    operator fun get(index: Int): String? =
+        implementedAsIntrinsic
+
+    @WasmOp(WasmOp.ARRAY_SET)
+    operator fun set(index: Int, value: String?): Unit =
+        implementedAsIntrinsic
+
+    @WasmOp(WasmOp.ARRAY_LEN)
+    fun length(): Int =
+        implementedAsIntrinsic
+}
