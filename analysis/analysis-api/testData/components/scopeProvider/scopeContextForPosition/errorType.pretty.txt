@@ -7,13 +7,13 @@ implicit receivers:
   owner symbol: KtFirAnonymousFunctionSymbol
 
 scopes:
-  SimpleTypeScope, index = 0, empty
+  TypeScope, index = 0, empty
 
   LocalScope, index = 1, empty
 
   LocalScope, index = 2, empty
 
-  SimpleTypeScope, index = 3
+  TypeScope, index = 3
     classifiers: 0
     callables: 5
       fun add(e: T)

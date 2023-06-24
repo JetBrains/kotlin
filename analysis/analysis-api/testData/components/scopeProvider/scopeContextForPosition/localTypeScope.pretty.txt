@@ -11,7 +11,7 @@ scopes:
 
   LocalScope, index = 1, empty
 
-  SimpleTypeScope, index = 2
+  TypeScope, index = 2
     classifiers: 0
     callables: 5
       val propertyInY: kotlin.Int

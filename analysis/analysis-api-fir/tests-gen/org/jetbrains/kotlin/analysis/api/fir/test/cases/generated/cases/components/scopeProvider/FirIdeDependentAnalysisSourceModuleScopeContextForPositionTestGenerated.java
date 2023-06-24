@@ -75,4 +75,10 @@ public class FirIdeDependentAnalysisSourceModuleScopeContextForPositionTestGener
     public void testSimpleScopeContextForPosition() throws Exception {
         runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/simpleScopeContextForPosition.kt");
     }
+
+    @Test
+    @TestMetadata("syntheticPropertiesScope.kt")
+    public void testSyntheticPropertiesScope() throws Exception {
+        runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/syntheticPropertiesScope.kt");
+    }
 }

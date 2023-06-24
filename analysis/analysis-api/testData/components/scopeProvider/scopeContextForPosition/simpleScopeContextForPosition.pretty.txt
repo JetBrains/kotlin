@@ -10,7 +10,7 @@ implicit receivers:
   owner symbol: KtFirNamedClassOrObjectSymbol
 
 scopes:
-  SimpleTypeScope, index = 0
+  TypeScope, index = 0
     classifiers: 0
     callables: 4
       fun memberInA()
@@ -22,7 +22,7 @@ scopes:
 
   LocalScope, index = 2, empty
 
-  SimpleTypeScope, index = 3
+  TypeScope, index = 3
     classifiers: 0
     callables: 4
       fun memberInB()
@@ -58,7 +58,7 @@ scopes:
       T
     callables: 0
 
-  SimpleTypeScope, index = 10
+  TypeScope, index = 10
     classifiers: 2
       class NestedInC
       class NestedInJavaClass

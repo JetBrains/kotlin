@@ -3,7 +3,7 @@ implicit receivers:
   type: KtUsualClassType:
     annotationsList: []
     ownTypeArguments: []
-    type: Context
+    type: JavaClass
   owner symbol: KtFirFunctionSymbol
 
 scopes:
@@ -11,13 +11,13 @@ scopes:
 
   TypeScope, index = 1
     classifiers: 0
-    callables: 4
+    callables: 5
       KtFunctionSymbol:
         annotationsList: []
-        callableIdIfNonLocal: /Context.memberInContext
+        callableIdIfNonLocal: /JavaClass.getValue
         contextReceivers: []
         contractEffects: []
-        hasStableParameterNames: true
+        hasStableParameterNames: false
         isBuiltinFunctionInvoke: false
         isExtension: false
         isExternal: false
@@ -27,14 +27,13 @@ scopes:
         isOverride: false
         isStatic: false
         isSuspend: false
-        modality: FINAL
-        name: memberInContext
-        origin: SOURCE
+        modality: OPEN
+        name: getValue
+        origin: JAVA
         receiverParameter: null
-        returnType: KtUsualClassType:
+        returnType: KtFlexibleType:
           annotationsList: []
-          ownTypeArguments: []
-          type: kotlin/Unit
+          type: kotlin/Int!
         symbolKind: CLASS_MEMBER
         typeParameters: []
         valueParameters: []
@@ -141,52 +140,70 @@ scopes:
         typeParameters: []
         valueParameters: []
         visibility: Public
+      KtSyntheticJavaPropertySymbol:
+        annotationsList: []
+        backingFieldSymbol: null
+        callableIdIfNonLocal: /JavaClass.value
+        contextReceivers: []
+        getter: KtPropertyGetterSymbol:
+          annotationsList: []
+          callableIdIfNonLocal: /JavaClass.getValue
+          contextReceivers: []
+          hasBody: false
+          hasStableParameterNames: true
+          isDefault: false
+          isExtension: false
+          isInline: false
+          isOverride: false
+          modality: OPEN
+          origin: JAVA_SYNTHETIC_PROPERTY
+          receiverParameter: null
+          returnType: KtFlexibleType:
+            annotationsList: []
+            type: kotlin/Int!
+          symbolKind: ACCESSOR
+          typeParameters: []
+          valueParameters: []
+          visibility: Public
+        hasBackingField: true
+        hasGetter: true
+        hasSetter: false
+        initializer: null
+        isDelegatedProperty: false
+        isExtension: false
+        isFromPrimaryConstructor: false
+        isOverride: false
+        isStatic: false
+        isVal: true
+        javaGetterSymbol: KtFunctionSymbol(/JavaClass.getValue)
+        javaSetterSymbol: null
+        modality: OPEN
+        name: value
+        origin: JAVA_SYNTHETIC_PROPERTY
+        receiverParameter: null
+        returnType: KtFlexibleType:
+          annotationsList: []
+          type: kotlin/Int!
+        setter: null
+        symbolKind: CLASS_MEMBER
+        typeParameters: []
+        visibility: Public
 
   LocalScope, index = 2, empty
 
   ExplicitSimpleImportingScope, index = 3, empty
 
   PackageMemberScope, index = 4
-    classifiers: 1
-      KtNamedClassOrObjectSymbol:
-        annotationsList: []
-        classIdIfNonLocal: Context
-        classKind: CLASS
-        companionObject: null
-        contextReceivers: []
-        isData: false
-        isExternal: false
-        isFun: false
-        isInline: false
-        isInner: false
-        modality: FINAL
-        name: Context
-        origin: SOURCE
-        superTypes: [
-          KtUsualClassType:
-            annotationsList: []
-            ownTypeArguments: []
-            type: kotlin/Any
-        ]
-        symbolKind: TOP_LEVEL
-        typeParameters: []
-        visibility: Public
+    classifiers: 0
     callables: 1
       KtFunctionSymbol:
         annotationsList: []
         callableIdIfNonLocal: /test
-        contextReceivers: [
-          KtContextReceiver:
-            label: null
-            type: KtUsualClassType:
-              annotationsList: []
-              ownTypeArguments: []
-              type: Context
-        ]
+        contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
         isBuiltinFunctionInvoke: false
-        isExtension: false
+        isExtension: true
         isExternal: false
         isInfix: false
         isInline: false
@@ -197,7 +214,14 @@ scopes:
         modality: FINAL
         name: test
         origin: SOURCE
-        receiverParameter: null
+        receiverParameter: KtReceiverParameterSymbol:
+          annotationsList: []
+          origin: SOURCE
+          owningCallableSymbol: KtFunctionSymbol(/test)
+          type: KtUsualClassType:
+            annotationsList: []
+            ownTypeArguments: []
+            type: JavaClass
         returnType: KtUsualClassType:
           annotationsList: []
           ownTypeArguments: []

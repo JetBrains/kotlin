@@ -1,6 +1,6 @@
 element: e
 implicit receivers:
-  type: Context
+  type: JavaClass
   owner symbol: KtFirFunctionSymbol
 
 scopes:
@@ -8,22 +8,22 @@ scopes:
 
   TypeScope, index = 1
     classifiers: 0
-    callables: 4
-      fun memberInContext()
+    callables: 5
+      fun getValue(): kotlin.Int?
       fun equals(other: kotlin.Any?): kotlin.Boolean
       fun hashCode(): kotlin.Int
       fun toString(): kotlin.String
+      val value: kotlin.Int?
+        get()
 
   LocalScope, index = 2, empty
 
   ExplicitSimpleImportingScope, index = 3, empty
 
   PackageMemberScope, index = 4
-    classifiers: 1
-      class Context
+    classifiers: 0
     callables: 1
-      context(Context)
-      fun test()
+      fun JavaClass.test()
 
   DefaultSimpleImportingScope, index = 5
 

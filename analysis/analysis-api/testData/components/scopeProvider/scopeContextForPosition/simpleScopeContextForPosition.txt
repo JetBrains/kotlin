@@ -19,7 +19,7 @@ implicit receivers:
   owner symbol: KtFirNamedClassOrObjectSymbol
 
 scopes:
-  SimpleTypeScope, index = 0
+  TypeScope, index = 0
     classifiers: 0
     callables: 4
       KtFunctionSymbol:
@@ -156,7 +156,7 @@ scopes:
 
   LocalScope, index = 2, empty
 
-  SimpleTypeScope, index = 3
+  TypeScope, index = 3
     classifiers: 0
     callables: 4
       KtFunctionSymbol:
@@ -416,7 +416,7 @@ scopes:
         variance: INVARIANT
     callables: 0
 
-  SimpleTypeScope, index = 10
+  TypeScope, index = 10
     classifiers: 2
       KtNamedClassOrObjectSymbol:
         annotationsList: []

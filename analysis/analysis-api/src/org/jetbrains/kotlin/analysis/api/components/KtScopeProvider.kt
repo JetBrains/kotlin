@@ -90,7 +90,7 @@ public interface KtScopeProviderMixIn : KtAnalysisSessionMixIn {
      * Inside the `LIST_KT_ELEMENT.getKtType().getTypeScope()` would contain the `get(i: Int): String` method with substituted type `T = String`
      *
      * @return type scope for the given type if given `KtType` is not error type, `null` otherwise.
-     * Returned [KtTypeScope] doesn't include synthetic Java properties. To get such properties use [getSyntheticJavaPropertiesScope].
+     * Returned [KtTypeScope] includes synthetic Java properties.
      *
      * @see KtTypeScope
      * @see KtTypeProviderMixIn.getKtType
@@ -105,11 +105,10 @@ public interface KtScopeProviderMixIn : KtAnalysisSessionMixIn {
         withValidityAssertion { analysisSession.scopeProvider.getSyntheticJavaPropertiesScope(this) }
 
     /**
-     * Scopes in returned [KtScopeContext] don't include synthetic Java properties.
-     * To get such properties use [getSyntheticJavaPropertiesScope].
-     *
      * For each scope in [KtScopeContext] an index is calculated. The indexes are relative to position, and they are only known for
      * scopes obtained with [getScopeContextForPosition].
+     *
+     * Scopes with [KtScopeKind.TypeScope] include synthetic Java properties.
      */
     public fun KtFile.getScopeContextForPosition(positionInFakeFile: KtElement): KtScopeContext =
         withValidityAssertion { analysisSession.scopeProvider.getScopeContextForPosition(this, positionInFakeFile) }
@@ -174,14 +173,10 @@ public sealed class KtScopeKind {
 
     public class LocalScope(override val indexInTower: Int) : KtScopeKind()
 
-    public sealed class TypeScope : KtScopeKind()
-
     /**
-     * Represents [KtTypeScope], which doesn't include synthetic Java properties of corresponding type.
+     * Represents [KtScope] for type, which include synthetic Java properties of corresponding type.
      */
-    public class SimpleTypeScope(override val indexInTower: Int) : TypeScope()
-
-    public class SyntheticJavaPropertiesScope(override val indexInTower: Int) : TypeScope()
+    public class TypeScope(override val indexInTower: Int) : KtScopeKind()
 
     public sealed class NonLocalScope : KtScopeKind()
 

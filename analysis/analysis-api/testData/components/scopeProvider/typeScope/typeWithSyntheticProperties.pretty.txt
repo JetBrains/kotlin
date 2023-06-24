@@ -1,0 +1,15 @@
+KtTypeScope:
+fun getValue(): kotlin.Int!
+fun equals(other: kotlin.Any?): kotlin.Boolean
+fun hashCode(): kotlin.Int
+fun toString(): kotlin.String
+val value: kotlin.Int!
+
+
+Declaration Scope:
+fun getValue(): kotlin.Int?
+fun equals(other: kotlin.Any?): kotlin.Boolean
+fun hashCode(): kotlin.Int
+fun toString(): kotlin.String
+val value: kotlin.Int?
+  get()

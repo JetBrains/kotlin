@@ -81,4 +81,10 @@ public class FirStandaloneNormalAnalysisSourceModuleTypeScopeTestGenerated exten
     public void testTypeParamList() throws Exception {
         runTest("analysis/analysis-api/testData/components/scopeProvider/typeScope/typeParamList.kt");
     }
+
+    @Test
+    @TestMetadata("typeWithSyntheticProperties.kt")
+    public void testTypeWithSyntheticProperties() throws Exception {
+        runTest("analysis/analysis-api/testData/components/scopeProvider/typeScope/typeWithSyntheticProperties.kt");
+    }
 }
