@@ -2,6 +2,9 @@ public final class FunsPropsAndFields /* FunsPropsAndFields*/ extends kotlin.scr
   @kotlin.jvm.JvmField()
   public final int testField;
 
+  @org.jetbrains.annotations.NotNull()
+  final java.lang.String[] args;
+
   private final int testPropVal;
 
   private int testPropVar;
