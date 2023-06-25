@@ -75,11 +75,12 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
             // In this implementation, 'arguments' is not changed accordingly to changes in `firstStageConfiguration` and `configuration`,
             // since values of fields `produce`, `output`, `freeArgs`, `includes` does not seem to matter downstream in prepareEnvironment()
 
-            if (configuration.get(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS)
+            if (configuration.getBoolean(CommonConfigurationKeys.USE_FIR) &&
+                    configuration.get(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS)
                             ?.getFeatureSupport(LanguageFeature.MultiPlatformProjects) == LanguageFeature.State.ENABLED)
                 messageCollector.report(ERROR,
                         """
-                            Producing a multiplatform library directly from sources is not allowed.
+                            Producing a multiplatform library directly from sources is not allowed since language version 2.0.
                         
                             If you use the command-line compiler, then first compile the sources to a KLIB with
                             the `-p library` compiler flag. Then, use '-Xinclude=<klib>' to pass the KLIB to
