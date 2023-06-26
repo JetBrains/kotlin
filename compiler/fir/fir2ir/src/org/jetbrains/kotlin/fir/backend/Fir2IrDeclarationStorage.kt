@@ -985,8 +985,7 @@ class Fir2IrDeclarationStorage(
                                 property.name, property.isVal, initializer, typeToUse
                             ).also { field ->
                                 if (initializer is FirConstExpression<*>) {
-                                    // TODO: Normally we shouldn't have error type here
-                                    val constType = initializer.typeRef.toIrType().takeIf { it !is IrErrorType } ?: typeToUse
+                                    val constType = initializer.typeRef.toIrType()
                                     field.initializer = factory.createExpressionBody(initializer.toIrConst(constType))
                                 }
                             }
