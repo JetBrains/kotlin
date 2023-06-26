@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.Analys
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.builder.BodyBuildingMode
-import org.jetbrains.kotlin.fir.builder.RawFirBuilder
+import org.jetbrains.kotlin.fir.builder.PsiRawFirBuilder
 import org.jetbrains.kotlin.fir.expressions.FirLazyBlock
 import org.jetbrains.kotlin.fir.expressions.FirLazyExpression
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
@@ -36,7 +36,7 @@ abstract class AbstractFirLazyBodiesCalculatorTest : AbstractLowLevelApiSingleFi
             val session = firResolveSession.useSiteFirSession
             val provider = session.kotlinScopeProvider
 
-            val laziedFirFile = RawFirBuilder(
+            val laziedFirFile = PsiRawFirBuilder(
                 session,
                 provider,
                 bodyBuildingMode = BodyBuildingMode.LAZY_BODIES
@@ -45,7 +45,7 @@ abstract class AbstractFirLazyBodiesCalculatorTest : AbstractLowLevelApiSingleFi
             FirLazyBodiesCalculator.calculateAllLazyExpressionsInFile(laziedFirFile)
             laziedFirFile.accept(lazyChecker)
 
-            val fullFirFile = RawFirBuilder(
+            val fullFirFile = PsiRawFirBuilder(
                 session,
                 provider,
                 bodyBuildingMode = BodyBuildingMode.NORMAL

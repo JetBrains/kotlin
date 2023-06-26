@@ -10,7 +10,7 @@ import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignation
 import org.jetbrains.kotlin.fir.*
-import org.jetbrains.kotlin.fir.builder.RawFirBuilder
+import org.jetbrains.kotlin.fir.builder.PsiRawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.getExplicitBackingField
 import org.jetbrains.kotlin.fir.expressions.*
@@ -59,7 +59,7 @@ internal object FirLazyBodiesCalculator {
 
     fun calculateLazyArgumentsForAnnotation(annotationCall: FirAnnotationCall, session: FirSession): FirArgumentList {
         require(needCalculatingAnnotationCall(annotationCall))
-        val builder = RawFirBuilder(session, baseScopeProvider = session.kotlinScopeProvider)
+        val builder = PsiRawFirBuilder(session, baseScopeProvider = session.kotlinScopeProvider)
         val ktAnnotationEntry = annotationCall.psi as KtAnnotationEntry
         builder.context.packageFqName = ktAnnotationEntry.containingKtFile.packageFqName
         val newAnnotationCall = builder.buildAnnotationCall(ktAnnotationEntry)

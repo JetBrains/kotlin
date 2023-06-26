@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.languageVersionSettings
-import org.jetbrains.kotlin.fir.lightTree.converter.DeclarationsConverter
+import org.jetbrains.kotlin.fir.lightTree.converter.LightTreeRawFirDeclarationBuilder
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.lexer.KotlinLexer
 import org.jetbrains.kotlin.parsing.KotlinLightParser
@@ -87,7 +87,7 @@ class LightTree2Fir(
         sourceFile: KtSourceFile,
         linesMapping: KtSourceFileLinesMapping,
     ): FirFile {
-        return DeclarationsConverter(session, scopeProvider, lightTree)
+        return LightTreeRawFirDeclarationBuilder(session, scopeProvider, lightTree)
             .convertFile(lightTree.root, sourceFile, linesMapping)
     }
 

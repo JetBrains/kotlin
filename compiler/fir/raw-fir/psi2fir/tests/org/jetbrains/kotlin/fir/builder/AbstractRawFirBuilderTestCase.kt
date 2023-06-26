@@ -80,7 +80,7 @@ abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase(
 
     protected fun KtFile.toFirFile(bodyBuildingMode: BodyBuildingMode = BodyBuildingMode.NORMAL): FirFile {
         val session = FirSessionFactoryHelper.createEmptySession()
-        return RawFirBuilder(
+        return PsiRawFirBuilder(
             session,
             StubFirScopeProvider,
             bodyBuildingMode = bodyBuildingMode

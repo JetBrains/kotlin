@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.fir.analysis.collectors.AbstractDiagnosticCollector
 import org.jetbrains.kotlin.fir.analysis.collectors.FirDiagnosticsCollector
-import org.jetbrains.kotlin.fir.builder.RawFirBuilder
+import org.jetbrains.kotlin.fir.builder.PsiRawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.dump.MultiModuleHtmlFirDump
 import org.jetbrains.kotlin.fir.lightTree.LightTree2Fir
@@ -35,12 +35,10 @@ import org.jetbrains.kotlin.fir.resolve.transformers.FirTransformerBasedResolveP
 import org.jetbrains.kotlin.fir.resolve.transformers.createAllCompilerResolveProcessors
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
-import sun.management.ManagementFactoryHelper
 import java.io.File
 import java.io.FileOutputStream
 import java.io.PrintStream
 import java.lang.management.ManagementFactory
-import java.text.DecimalFormat
 
 
 private const val FAIL_FAST = true
@@ -139,7 +137,7 @@ class FirResolveModularizedTotalKotlinTest : AbstractFrontendModularizedTest() {
             val lightTree2Fir = LightTree2Fir(session, firProvider.kotlinScopeProvider, diagnosticsReporter = null)
             bench.buildFiles(lightTree2Fir, sourceFiles)
         } else {
-            val builder = RawFirBuilder(session, firProvider.kotlinScopeProvider)
+            val builder = PsiRawFirBuilder(session, firProvider.kotlinScopeProvider)
             bench.buildFiles(builder, sourceFiles.map { it as KtPsiSourceFile })
         }
 

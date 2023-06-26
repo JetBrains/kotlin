@@ -54,12 +54,12 @@ import org.jetbrains.kotlin.psi.stubs.elements.KtNameReferenceExpressionElementT
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-class ExpressionsConverter(
+class LightTreeRawFirExpressionBuilder(
     session: FirSession,
     tree: FlyweightCapableTreeStructure<LighterASTNode>,
-    private val declarationsConverter: DeclarationsConverter,
+    private val declarationBuilder: LightTreeRawFirDeclarationBuilder,
     context: Context<LighterASTNode> = Context(),
-) : BaseConverter(session, tree, context) {
+) : AbstractLightTreeRawFirBuilder(session, tree, context) {
 
     inline fun <reified R : FirElement> getAsFirExpression(expression: LighterASTNode?, errorReason: String = ""): R {
         val converted = expression?.let { convertExpression(it, errorReason) }
@@ -113,9 +113,9 @@ class ExpressionsConverter(
             THIS_EXPRESSION -> convertThisExpression(expression)
             SUPER_EXPRESSION -> convertSuperExpression(expression)
 
-            OBJECT_LITERAL -> declarationsConverter.convertObjectLiteral(expression)
-            FUN -> declarationsConverter.convertFunctionDeclaration(expression)
-            DESTRUCTURING_DECLARATION -> declarationsConverter.convertDestructingDeclaration(expression).toFirDestructingDeclaration(baseModuleData)
+            OBJECT_LITERAL -> declarationBuilder.convertObjectLiteral(expression)
+            FUN -> declarationBuilder.convertFunctionDeclaration(expression)
+            DESTRUCTURING_DECLARATION -> declarationBuilder.convertDestructingDeclaration(expression).toFirDestructingDeclaration(baseModuleData)
             else -> buildErrorExpression(null, ConeSimpleDiagnostic(errorReason, DiagnosticKind.ExpressionExpected))
         }
     }
@@ -132,7 +132,7 @@ class ExpressionsConverter(
         val functionSymbol = FirAnonymousFunctionSymbol()
         lambdaExpression.getChildNodesByType(FUNCTION_LITERAL).first().forEachChildren {
             when (it.tokenType) {
-                VALUE_PARAMETER_LIST -> valueParameterList += declarationsConverter.convertValueParameters(it, functionSymbol, ValueParameterDeclaration.LAMBDA)
+                VALUE_PARAMETER_LIST -> valueParameterList += declarationBuilder.convertValueParameters(it, functionSymbol, ValueParameterDeclaration.LAMBDA)
                 BLOCK -> block = it
                 ARROW -> hasArrow = true
             }
@@ -188,7 +188,7 @@ class ExpressionsConverter(
             }
 
             body = if (block != null) {
-                declarationsConverter.convertBlockExpressionWithoutBuilding(block!!).apply {
+                declarationBuilder.convertBlockExpressionWithoutBuilding(block!!).apply {
                     statements.firstOrNull()?.let {
                         if (it.isContractBlockFirCheck()) {
                             this@buildAnonymousFunction.contractDescription = it.toLegacyRawContractDescription()
@@ -326,7 +326,7 @@ class ExpressionsConverter(
         binaryExpression.forEachChildren {
             when (it.tokenType) {
                 OPERATION_REFERENCE -> operationTokenName = it.asText
-                TYPE_REFERENCE -> firType = declarationsConverter.convertType(it)
+                TYPE_REFERENCE -> firType = declarationBuilder.convertType(it)
                 else -> if (it.isExpression()) leftArgAsFir = getAsFirExpression(it, "No left operand")
             }
         }
@@ -361,8 +361,8 @@ class ExpressionsConverter(
                     context.addNewLabel(pair.first)
                     errorLabelSource = pair.second
                 }
-                BLOCK -> firExpression = declarationsConverter.convertBlock(it)
-                PROPERTY -> firExpression = declarationsConverter.convertPropertyDeclaration(it)
+                BLOCK -> firExpression = declarationBuilder.convertBlock(it)
+                PROPERTY -> firExpression = declarationBuilder.convertPropertyDeclaration(it)
                 else -> if (it.isExpression()) firExpression = getAsFirExpression(it)
             }
         }
@@ -436,9 +436,9 @@ class ExpressionsConverter(
         val firAnnotationList = mutableListOf<FirAnnotation>()
         annotatedExpression.forEachChildren {
             when (it.tokenType) {
-                ANNOTATION -> firAnnotationList += declarationsConverter.convertAnnotation(it)
-                ANNOTATION_ENTRY -> firAnnotationList += declarationsConverter.convertAnnotationEntry(it)
-                BLOCK -> firExpression = declarationsConverter.convertBlockExpression(it)
+                ANNOTATION -> firAnnotationList += declarationBuilder.convertAnnotation(it)
+                ANNOTATION_ENTRY -> firAnnotationList += declarationBuilder.convertAnnotationEntry(it)
+                BLOCK -> firExpression = declarationBuilder.convertBlockExpression(it)
                 else -> if (it.isExpression()) {
                     context.forwardLabelUsagePermission(annotatedExpression, it)
                     firExpression = getAsFirExpression(it)
@@ -604,7 +604,7 @@ class ExpressionsConverter(
                         additionalArgument = getAsFirExpression(node, "Incorrect invoke receiver")
                     }
                     TYPE_ARGUMENT_LIST -> {
-                        firTypeArguments += declarationsConverter.convertTypeArguments(node, allowedUnderscoredTypeArgument = true)
+                        firTypeArguments += declarationBuilder.convertTypeArguments(node, allowedUnderscoredTypeArgument = true)
                     }
                     VALUE_ARGUMENT_LIST, LAMBDA_ARGUMENT -> {
                         hasArguments = true
@@ -713,7 +713,7 @@ class ExpressionsConverter(
         val whenEntries = mutableListOf<WhenEntry>()
         whenExpression.forEachChildren {
             when (it.tokenType) {
-                PROPERTY -> subjectVariable = (declarationsConverter.convertPropertyDeclaration(it) as FirVariable).let { variable ->
+                PROPERTY -> subjectVariable = (declarationBuilder.convertPropertyDeclaration(it) as FirVariable).let { variable ->
                     buildProperty {
                         source = it.toFirSourceElement()
                         origin = FirDeclarationOrigin.Source
@@ -810,8 +810,8 @@ class ExpressionsConverter(
                     shouldBindSubject = shouldBindSubject || shouldBind
                 }
                 ELSE_KEYWORD -> isElse = true
-                BLOCK -> firBlock = declarationsConverter.convertBlock(it)
-                else -> if (it.isExpression()) firBlock = declarationsConverter.convertBlock(it)
+                BLOCK -> firBlock = declarationBuilder.convertBlock(it)
+                else -> if (it.isExpression()) firBlock = declarationBuilder.convertBlock(it)
             }
         }
 
@@ -916,7 +916,7 @@ class ExpressionsConverter(
         var firType: FirTypeRef? = null
         whenCondition.forEachChildren {
             when (it.tokenType) {
-                TYPE_REFERENCE -> firType = declarationsConverter.convertType(it)
+                TYPE_REFERENCE -> firType = declarationBuilder.convertType(it)
                 IS_KEYWORD -> firOperation = FirOperation.IS
                 NOT_IS -> firOperation = FirOperation.NOT_IS
             }
@@ -1101,7 +1101,7 @@ class ExpressionsConverter(
         var blockNode: LighterASTNode? = null
         forLoop.forEachChildren {
             when (it.tokenType) {
-                VALUE_PARAMETER -> parameter = declarationsConverter.convertValueParameter(it, null, ValueParameterDeclaration.FOR_LOOP)
+                VALUE_PARAMETER -> parameter = declarationBuilder.convertValueParameter(it, null, ValueParameterDeclaration.FOR_LOOP)
                 LOOP_RANGE -> rangeExpression = getAsFirExpression(it, "No range in for loop")
                 BODY -> blockNode = it
             }
@@ -1190,7 +1190,7 @@ class ExpressionsConverter(
         var firStatement: FirStatement? = null
         body?.forEachChildren {
             when (it.tokenType) {
-                BLOCK -> firBlock = declarationsConverter.convertBlockExpression(it)
+                BLOCK -> firBlock = declarationBuilder.convertBlockExpression(it)
                 ANNOTATED_EXPRESSION -> {
                     if (it.getChildNodeByType(BLOCK) != null) {
                         firBlock = getAsFirExpression(it)
@@ -1215,7 +1215,7 @@ class ExpressionsConverter(
         var finallyBlock: FirBlock? = null
         tryExpression.forEachChildren {
             when (it.tokenType) {
-                BLOCK -> tryBlock = declarationsConverter.convertBlock(it)
+                BLOCK -> tryBlock = declarationBuilder.convertBlock(it)
                 CATCH -> convertCatchClause(it)?.also { oneClause -> catchClauses += oneClause }
                 FINALLY -> finallyBlock = convertFinally(it)
             }
@@ -1256,13 +1256,13 @@ class ExpressionsConverter(
         var blockNode: LighterASTNode? = null
         catchClause.forEachChildren {
             when (it.tokenType) {
-                VALUE_PARAMETER_LIST -> valueParameter = declarationsConverter.convertValueParameters(it, FirAnonymousFunctionSymbol()/*TODO*/, ValueParameterDeclaration.CATCH)
+                VALUE_PARAMETER_LIST -> valueParameter = declarationBuilder.convertValueParameters(it, FirAnonymousFunctionSymbol()/*TODO*/, ValueParameterDeclaration.CATCH)
                     .firstOrNull() ?: return null
                 BLOCK -> blockNode = it
             }
         }
 
-        return Triple(valueParameter, declarationsConverter.convertBlock(blockNode), catchClause.toFirSourceElement())
+        return Triple(valueParameter, declarationBuilder.convertBlock(blockNode), catchClause.toFirSourceElement())
     }
 
     /**
@@ -1276,7 +1276,7 @@ class ExpressionsConverter(
             }
         }
 
-        return declarationsConverter.convertBlock(blockNode)
+        return declarationBuilder.convertBlock(blockNode)
     }
 
     /**
@@ -1442,7 +1442,7 @@ class ExpressionsConverter(
         var superTypeRef: FirTypeRef = implicitType
         superExpression.forEachChildren {
             when (it.tokenType) {
-                TYPE_REFERENCE -> superTypeRef = declarationsConverter.convertType(it)
+                TYPE_REFERENCE -> superTypeRef = declarationBuilder.convertType(it)
             }
         }
 

@@ -7,19 +7,15 @@ package org.jetbrains.kotlin.fir
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.KtIoFileSourceFile
 import org.jetbrains.kotlin.KtPsiSourceFile
 import org.jetbrains.kotlin.KtSourceFile
-import org.jetbrains.kotlin.fir.builder.RawFirBuilder
+import org.jetbrains.kotlin.fir.builder.PsiRawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.diagnostics.ConeStubDiagnostic
-import org.jetbrains.kotlin.fir.diagnostics.FirDiagnosticHolder
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.lightTree.LightTree2Fir
-import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
-import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
 import org.jetbrains.kotlin.fir.references.isError
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirProviderImpl
@@ -32,7 +28,6 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.readSourceFileWithMapping
 import org.jetbrains.kotlin.utils.addToStdlib.sumByLong
-import java.io.File
 import java.io.PrintStream
 import java.text.DecimalFormat
 import kotlin.math.max
@@ -114,7 +109,7 @@ class FirResolveBench(val withProgress: Boolean, val listener: BenchListener? = 
     private val errorTypesReports = mutableMapOf<String, ErrorTypeReport>()
 
     fun buildFiles(
-        builder: RawFirBuilder,
+        builder: PsiRawFirBuilder,
         files: Collection<KtPsiSourceFile>
     ): List<FirFile> {
         listener?.before()

@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.Analys
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.builder.RawFirBuilder
+import org.jetbrains.kotlin.fir.builder.PsiRawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.renderer.ConeIdFullRenderer
@@ -117,7 +117,7 @@ abstract class AbstractPartialRawFirBuilderTestCase : AbstractLowLevelApiSingleF
         }
 
         val session = FirSessionFactoryHelper.createEmptySession()
-        val firBuilder = RawFirBuilder(session, scopeProvider)
+        val firBuilder = PsiRawFirBuilder(session, scopeProvider)
         val original = firBuilder.buildFirFile(file)
 
         val designationBuilder = DesignationBuilder(elementToBuild)

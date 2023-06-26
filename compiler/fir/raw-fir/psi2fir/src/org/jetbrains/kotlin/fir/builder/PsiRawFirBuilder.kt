@@ -51,11 +51,11 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
-open class RawFirBuilder(
+open class PsiRawFirBuilder(
     session: FirSession,
     val baseScopeProvider: FirScopeProvider,
     bodyBuildingMode: BodyBuildingMode = BodyBuildingMode.NORMAL
-) : BaseFirBuilder<PsiElement>(session) {
+) : AbstractRawFirBuilder<PsiElement>(session) {
     protected open fun bindFunctionTarget(target: FirFunctionTarget, function: FirFunction) = target.bind(function)
     protected open fun FirFunctionBuilder.additionalFunctionInit() {}
     protected open fun FirPropertyBuilder.additionalPropertyInit() {}
@@ -87,7 +87,7 @@ open class RawFirBuilder(
     }
 
     override fun PsiElement.toFirSourceElement(kind: KtFakeSourceElementKind?): KtPsiSourceElement {
-        val actualKind = kind ?: this@RawFirBuilder.context.forcedElementSourceKind ?: KtRealSourceElementKind
+        val actualKind = kind ?: this@PsiRawFirBuilder.context.forcedElementSourceKind ?: KtRealSourceElementKind
         return this.toKtPsiSourceElement(actualKind)
     }
 
@@ -458,7 +458,7 @@ open class RawFirBuilder(
                         this.status = status
                         annotations += accessorAnnotationsFromProperty
                         extractAnnotationsTo(this)
-                        this@RawFirBuilder.context.firFunctionTargets += accessorTarget
+                        this@PsiRawFirBuilder.context.firFunctionTargets += accessorTarget
                         symbol = FirPropertyAccessorSymbol()
                         extractValueParametersTo(
                             this, symbol, ValueParameterDeclaration.SETTER, propertyTypeRefToUse, parameterAnnotationsFromProperty
@@ -486,7 +486,7 @@ open class RawFirBuilder(
                     }.also {
                         it.initContainingClassAttr()
                         bindFunctionTarget(accessorTarget, it)
-                        this@RawFirBuilder.context.firFunctionTargets.removeLast()
+                        this@PsiRawFirBuilder.context.firFunctionTargets.removeLast()
                     }
                 }
                 isGetter || property.isVar -> {
@@ -629,7 +629,7 @@ open class RawFirBuilder(
             require(hasValOrVar())
             val type = typeReference.convertSafe<FirTypeRef>() ?: createNoTypeForParameterTypeRef()
             val status = FirDeclarationStatusImpl(visibility, modality).apply {
-                isExpect = hasExpectModifier() || this@RawFirBuilder.context.containerIsExpect
+                isExpect = hasExpectModifier() || this@PsiRawFirBuilder.context.containerIsExpect
                 isActual = hasActualModifier()
                 isOverride = hasModifier(OVERRIDE_KEYWORD)
                 isConst = hasModifier(CONST_KEYWORD)
@@ -861,7 +861,7 @@ open class RawFirBuilder(
                 origin = FirDeclarationOrigin.Synthetic
                 name = NameUtils.delegateFieldName(fieldOrd)
                 returnTypeRef = type
-                symbol = FirFieldSymbol(CallableId(this@RawFirBuilder.context.currentClassId, name))
+                symbol = FirFieldSymbol(CallableId(this@PsiRawFirBuilder.context.currentClassId, name))
                 isVar = false
                 status = FirDeclarationStatusImpl(Visibilities.Private, Modality.FINAL)
                 initializer = delegateExpression
@@ -1018,7 +1018,7 @@ open class RawFirBuilder(
 
             val explicitVisibility = this?.visibility?.takeUnless { it == Visibilities.Unknown }
             val status = FirDeclarationStatusImpl(explicitVisibility ?: defaultVisibility(), Modality.FINAL).apply {
-                isExpect = this@toFirConstructor?.hasExpectModifier() == true || this@RawFirBuilder.context.containerIsExpect
+                isExpect = this@toFirConstructor?.hasExpectModifier() == true || this@PsiRawFirBuilder.context.containerIsExpect
                 isActual = this@toFirConstructor?.hasActualModifier() == true
                 isInner = owner.hasModifier(INNER_KEYWORD)
                 isFromSealedClass = owner.hasModifier(SEALED_KEYWORD) && explicitVisibility !== Visibilities.Private
@@ -1144,7 +1144,7 @@ open class RawFirBuilder(
             ownerClassHasDefaultConstructor: Boolean
         ): FirDeclaration {
             val ktEnumEntry = this@toFirEnumEntry
-            val containingClassIsExpectClass = hasExpectModifier() || this@RawFirBuilder.context.containerIsExpect
+            val containingClassIsExpectClass = hasExpectModifier() || this@PsiRawFirBuilder.context.containerIsExpect
             return buildEnumEntry {
                 source = toFirSourceElement()
                 moduleData = baseModuleData
@@ -1172,7 +1172,7 @@ open class RawFirBuilder(
                                 moduleData = baseModuleData
                                 origin = FirDeclarationOrigin.Source
                                 classKind = ClassKind.ENUM_ENTRY
-                                scopeProvider = this@RawFirBuilder.baseScopeProvider
+                                scopeProvider = this@PsiRawFirBuilder.baseScopeProvider
                                 symbol = FirAnonymousObjectSymbol()
                                 status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
 
@@ -1702,7 +1702,7 @@ open class RawFirBuilder(
                 returnTypeRef = selfTypeRef
                 val explicitVisibility = visibility
                 status = FirDeclarationStatusImpl(explicitVisibility, Modality.FINAL).apply {
-                    isExpect = hasExpectModifier() || this@RawFirBuilder.context.containerIsExpect
+                    isExpect = hasExpectModifier() || this@PsiRawFirBuilder.context.containerIsExpect
                     isActual = hasActualModifier()
                     isInner = owner.hasModifier(INNER_KEYWORD)
                     isFromSealedClass = owner.hasModifier(SEALED_KEYWORD) && explicitVisibility !== Visibilities.Private
@@ -1717,7 +1717,7 @@ open class RawFirBuilder(
                 ) {
                     getDelegationCall().convert(delegatedTypeRef)
                 }
-                this@RawFirBuilder.context.firFunctionTargets += target
+                this@PsiRawFirBuilder.context.firFunctionTargets += target
                 extractAnnotationsTo(this)
                 typeParameters += constructorTypeParametersFromConstructedClass(ownerTypeParameters)
                 extractValueParametersTo(this, symbol, ValueParameterDeclaration.FUNCTION)
@@ -1726,7 +1726,7 @@ open class RawFirBuilder(
                 val (body, contractDescription) = buildFirBody()
                 contractDescription?.let { this.contractDescription = it }
                 this.body = body
-                this@RawFirBuilder.context.firFunctionTargets.removeLast()
+                this@PsiRawFirBuilder.context.firFunctionTargets.removeLast()
             }.also {
                 it.containingClassForStaticMemberAttr = currentDispatchReceiverType()!!.lookupTag
                 bindFunctionTarget(target, it)
@@ -1766,13 +1766,13 @@ open class RawFirBuilder(
 
         private fun KtDeclarationWithInitializer.toInitializerExpression() =
             runIf(hasInitializer()) {
-                this@RawFirBuilder.context.calleeNamesForLambda += null
+                this@PsiRawFirBuilder.context.calleeNamesForLambda += null
 
                 val expression = buildOrLazyExpression(null) {
                     initializer.toFirExpression("Should have initializer")
                 }
 
-                this@RawFirBuilder.context.calleeNamesForLambda.removeLast()
+                this@PsiRawFirBuilder.context.calleeNamesForLambda.removeLast()
                 expression
             }
 
@@ -1867,7 +1867,7 @@ open class RawFirBuilder(
                         )
 
                         status = FirDeclarationStatusImpl(visibility, modality).apply {
-                            isExpect = hasExpectModifier() || this@RawFirBuilder.context.containerIsExpect
+                            isExpect = hasExpectModifier() || this@PsiRawFirBuilder.context.containerIsExpect
                             isActual = hasActualModifier()
                             isOverride = hasModifier(OVERRIDE_KEYWORD)
                             isConst = hasModifier(CONST_KEYWORD)

@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.analysis.utils.errors.buildErrorWithAttachment
 import org.jetbrains.kotlin.analysis.utils.errors.withPsiEntry
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.builder.BodyBuildingMode
-import org.jetbrains.kotlin.fir.builder.RawFirBuilder
+import org.jetbrains.kotlin.fir.builder.PsiRawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.FirBackingFieldBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.FirFunctionBuilder
@@ -45,7 +45,7 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
     private val additionalPropertyInit: FirPropertyBuilder.() -> Unit = {},
     private val additionalAccessorInit: FirPropertyAccessorBuilder.() -> Unit = {},
     private val additionalBackingFieldInit: FirBackingFieldBuilder.() -> Unit = {},
-) : RawFirBuilder(session, baseScopeProvider, bodyBuildingMode = BodyBuildingMode.NORMAL) {
+) : PsiRawFirBuilder(session, baseScopeProvider, bodyBuildingMode = BodyBuildingMode.NORMAL) {
     override fun FirFunctionBuilder.additionalFunctionInit() {
         additionalFunctionInit.invoke(this)
     }
@@ -68,7 +68,7 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
             scopeProvider: FirScopeProvider,
             file: KtFile,
         ): FirFile {
-            val builder = RawFirBuilder(session,scopeProvider, bodyBuildingMode = BodyBuildingMode.LAZY_BODIES)
+            val builder = PsiRawFirBuilder(session, scopeProvider, bodyBuildingMode = BodyBuildingMode.LAZY_BODIES)
             return builder.buildFirFile(file)
         }
 

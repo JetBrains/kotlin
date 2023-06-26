@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve
 
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.builder.RawFirBuilder
+import org.jetbrains.kotlin.fir.builder.PsiRawFirBuilder
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
@@ -22,7 +22,7 @@ internal fun buildFileFirAnnotation(
 
     val replacementApplier = replacement?.Applier()
 
-    val builder = object : RawFirBuilder(session, baseScopeProvider) {
+    val builder = object : PsiRawFirBuilder(session, baseScopeProvider) {
         inner class VisitorWithReplacement : Visitor() {
             override fun convertElement(element: KtElement, original: FirElement?): FirElement? =
                 super.convertElement(replacementApplier?.tryReplace(element) ?: element, original)

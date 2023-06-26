@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveCompone
 import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
 import org.jetbrains.kotlin.analysis.utils.errors.checkWithAttachmentBuilder
 import org.jetbrains.kotlin.fir.builder.BodyBuildingMode
-import org.jetbrains.kotlin.fir.builder.RawFirBuilder
+import org.jetbrains.kotlin.fir.builder.PsiRawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.psi.KtFile
 
@@ -44,7 +44,7 @@ internal class LLFirFileBuilder(val moduleComponents: LLFirModuleResolveComponen
             else -> BodyBuildingMode.LAZY_BODIES
         }
 
-        RawFirBuilder(
+        PsiRawFirBuilder(
             moduleComponents.session,
             moduleComponents.scopeProvider,
             bodyBuildingMode = bodyBuildingMode
