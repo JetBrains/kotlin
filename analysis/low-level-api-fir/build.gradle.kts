@@ -76,6 +76,7 @@ allprojects {
         kotlinOptions {
             freeCompilerArgs += "-opt-in=org.jetbrains.kotlin.fir.symbols.SymbolInternals"
             freeCompilerArgs += "-opt-in=org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals"
+            freeCompilerArgs += "-opt-in=org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals"
         }
     }
 }

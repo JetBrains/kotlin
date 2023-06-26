@@ -10,80 +10,104 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.packageFqName
+import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 
 object FirElementFinder {
     fun findClassifierWithClassId(
         firFile: FirFile,
         classId: ClassId,
-    ): FirClassLikeDeclaration? = findPathToClassifierWithClassId(
+    ): FirClassLikeDeclaration? = collectDesignationPath(
         firFile = firFile,
-        classId = classId,
-        expectedMemberDeclaration = null
-    )?.second
+        containerClassId = classId.outerClassId,
+        expectedDeclarationAcceptor = { it is FirClassLikeDeclaration && it.symbol.name == classId.shortClassName },
+    )?.target?.let { it as FirClassLikeDeclaration }
 
     fun findClassPathToDeclaration(
         firFile: FirFile,
         declarationContainerClassId: ClassId,
         targetMemberDeclaration: FirDeclaration,
-    ): List<FirRegularClass>? = findPathToClassifierWithClassId(
+    ): List<FirRegularClass>? = collectDesignationPath(
         firFile = firFile,
-        classId = declarationContainerClassId,
-        expectedMemberDeclaration = targetMemberDeclaration
-    )?.first
+        containerClassId = declarationContainerClassId,
+        expectedDeclarationAcceptor = { it == targetMemberDeclaration },
+    )?.path
 
-    private fun findPathToClassifierWithClassId(
+    fun findDeclaration(firFile: FirFile, nonLocalDeclaration: KtDeclaration): FirDeclaration? = collectDesignationPath(
+        firFile = firFile,
+        nonLocalDeclaration = nonLocalDeclaration,
+    )?.target
+
+    fun findPathToDeclarationWithTarget(
         firFile: FirFile,
-        classId: ClassId,
-        expectedMemberDeclaration: FirDeclaration?,
-    ): Pair<List<FirRegularClass>, FirClassLikeDeclaration>? {
-        requireWithAttachmentBuilder(!classId.isLocal, { "ClassId should not be local" }) {
-            withEntry("classId", classId) { it.asString() }
-        }
-        requireWithAttachmentBuilder(
-            firFile.packageFqName == classId.packageFqName,
-            { "ClassId should not be local" }
-        ) {
-            withEntry("FirFile.packageName", firFile.packageFqName) { it.asString() }
-            withEntry("ClassId.packageName", classId.packageFqName) { it.asString() }
+        nonLocalDeclaration: KtDeclaration,
+    ): List<FirDeclaration>? = collectDesignationPath(
+        firFile = firFile,
+        nonLocalDeclaration = nonLocalDeclaration,
+    )?.pathWithTarget
+
+    private class FirDeclarationDesignation(
+        val path: List<FirRegularClass>,
+        val target: FirDeclaration,
+    ) {
+        val pathWithTarget: List<FirDeclaration> get() = path + target
+    }
+
+    private fun collectDesignationPath(
+        firFile: FirFile,
+        nonLocalDeclaration: KtDeclaration,
+    ): FirDeclarationDesignation? = collectDesignationPath(
+        firFile = firFile,
+        containerClassId = nonLocalDeclaration.containingClassOrObject?.getClassId(),
+        expectedDeclarationAcceptor = { it.psi == nonLocalDeclaration },
+    )
+
+    private fun collectDesignationPath(
+        firFile: FirFile,
+        containerClassId: ClassId?,
+        expectedDeclarationAcceptor: (FirDeclaration) -> Boolean,
+    ): FirDeclarationDesignation? {
+        if (containerClassId != null) {
+            requireWithAttachmentBuilder(!containerClassId.isLocal, { "ClassId should not be local" }) {
+                withEntry("classId", containerClassId) { it.asString() }
+            }
+
+            requireWithAttachmentBuilder(
+                firFile.packageFqName == containerClassId.packageFqName,
+                { "ClassId should not be local" }
+            ) {
+                withEntry("FirFile.packageName", firFile.packageFqName) { it.asString() }
+                withEntry("ClassId.packageName", containerClassId.packageFqName) { it.asString() }
+            }
         }
 
-        val classIdPathSegment = classId.relativeClassName.pathSegments()
+        val classIdPathSegment = containerClassId?.relativeClassName?.pathSegments().orEmpty()
         val path = ArrayList<FirRegularClass>(classIdPathSegment.size)
-        var result: FirClassLikeDeclaration? = null
+        var result: FirDeclaration? = null
 
         fun find(declarations: Iterable<FirDeclaration>, classIdPathIndex: Int): Boolean {
-            val currentClassSegment = classIdPathSegment[classIdPathIndex]
-
+            val currentClassSegment = classIdPathSegment.getOrNull(classIdPathIndex)
             for (subDeclaration in declarations) {
-                if (subDeclaration is FirScript) {
-                    val scriptDeclarations = subDeclaration.statements.asSequence().filterIsInstance<FirDeclaration>()
-                    if (find(scriptDeclarations.asIterable(), classIdPathIndex)) {
+                when {
+                    currentClassSegment == null && expectedDeclarationAcceptor(subDeclaration) -> {
+                        result = subDeclaration
                         return true
                     }
 
-                    continue
-                }
-
-                if (subDeclaration is FirClassLikeDeclaration && currentClassSegment == subDeclaration.symbol.name) {
-                    if (classIdPathIndex == classIdPathSegment.lastIndex) {
-                        if (expectedMemberDeclaration == null ||
-                            subDeclaration is FirRegularClass && expectedMemberDeclaration in subDeclaration.declarations
-                        ) {
-                            if (subDeclaration is FirRegularClass) {
-                                path += subDeclaration
-                            }
-
-                            result = subDeclaration
+                    subDeclaration is FirScript -> {
+                        val scriptDeclarations = subDeclaration.statements.asSequence().filterIsInstance<FirDeclaration>()
+                        if (find(scriptDeclarations.asIterable(), classIdPathIndex)) {
                             return true
                         }
 
                         continue
                     }
 
-                    if (subDeclaration is FirRegularClass) {
+                    subDeclaration is FirRegularClass && currentClassSegment == subDeclaration.symbol.name -> {
                         path += subDeclaration
                         if (find(subDeclaration.declarations, classIdPathIndex + 1)) {
                             return true
@@ -99,7 +123,10 @@ object FirElementFinder {
 
         find(firFile.declarations, classIdPathIndex = 0)
         return result?.let {
-            (path as List<FirRegularClass>) to it
+            FirDeclarationDesignation(
+                path = if (path.isEmpty()) emptyList() else path,
+                target = it,
+            )
         }
     }
 
