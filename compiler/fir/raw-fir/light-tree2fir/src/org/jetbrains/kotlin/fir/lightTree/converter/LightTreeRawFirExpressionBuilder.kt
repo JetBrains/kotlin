@@ -1445,10 +1445,12 @@ class LightTreeRawFirExpressionBuilder(
         }
 
         return buildPropertyAccessExpression {
-            source = superExpression.toFirSourceElement()
+            val sourceElement = superExpression.toFirSourceElement()
+            source = sourceElement
             calleeReference = buildExplicitSuperReference {
                 labelName = label
                 this.superTypeRef = superTypeRef
+                source = sourceElement.fakeElement(KtFakeSourceElementKind.ReferenceInAtomicQualifiedAccess)
             }
         }
     }
