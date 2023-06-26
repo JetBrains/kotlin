@@ -119,6 +119,7 @@ object FirErrors {
 
     // Miscellaneous
     val OTHER_ERROR by error0<PsiElement>()
+    val DUMP_RESOLVE_TARGET by warning2<PsiElement, String, ConeKotlinType>()
 
     // General syntax
     val ILLEGAL_CONST_EXPRESSION by error0<PsiElement>()

@@ -495,6 +495,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REPEATED_ANNOTATI
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REPEATED_BOUND
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REPEATED_MODIFIER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RESERVED_MEMBER_INSIDE_VALUE_CLASS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DUMP_RESOLVE_TARGET
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RESOLUTION_TO_CLASSIFIER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RESOLVED_TO_UNDERSCORE_NAMED_CATCH_PARAMETER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RESTRICTED_RETENTION_FOR_EXPRESSION_ANNOTATION
@@ -656,6 +657,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
 
         // Miscellaneous
         map.put(OTHER_ERROR, "Unknown (other) error")
+        map.put(DUMP_RESOLVE_TARGET, "{0} : {1}", STRING, RENDER_TYPE)
 
         // General syntax
         map.put(ILLEGAL_CONST_EXPRESSION, "Illegal const expression")

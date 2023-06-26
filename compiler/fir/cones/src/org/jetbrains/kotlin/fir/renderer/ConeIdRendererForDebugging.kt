@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.name.ClassId
 
 class ConeIdRendererForDebugging : ConeIdRenderer() {
     override fun renderClassId(classId: ClassId) {
-        builder.append(classId.asString())
+        builder.append(classId.asFqNameString())
     }
 
     override fun renderCallableId(callableId: CallableId) {

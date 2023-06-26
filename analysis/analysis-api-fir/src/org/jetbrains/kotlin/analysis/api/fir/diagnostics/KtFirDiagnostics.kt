@@ -109,6 +109,12 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = OtherError::class
     }
 
+    interface ResolutionTargetDump : KtFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = ResolutionTargetDump::class
+        val resolvedCalleeReferenceName: String
+        val expressionConeType: KtType
+    }
+
     interface IllegalConstExpression : KtFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = IllegalConstExpression::class
     }

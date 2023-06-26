@@ -65,7 +65,7 @@ open class ConeTypeRenderer {
         if (type !is ConeFlexibleType && type !is ConeDefinitelyNotNullType) {
             // We don't render attributes for flexible/definitely not null types here,
             // because bounds duplicate these attributes often
-            type.renderAttributes()
+//            type.renderAttributes()
         }
         when (type) {
             is ConeTypeVariableType -> {

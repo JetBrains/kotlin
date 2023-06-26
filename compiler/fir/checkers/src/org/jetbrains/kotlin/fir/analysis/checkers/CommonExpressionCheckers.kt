@@ -24,6 +24,7 @@ object CommonExpressionCheckers : ExpressionCheckers() {
             FirDeprecationChecker,
             FirRecursiveProblemChecker,
             FirOptInUsageAccessChecker,
+            FirResolutionTargetDumpChecker,
         )
 
     override val throwExpressionCheckers: Set<FirThrowExpressionChecker>

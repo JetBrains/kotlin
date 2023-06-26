@@ -57,6 +57,10 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
 
     val Miscellaneous by object : DiagnosticGroup("Miscellaneous") {
         val OTHER_ERROR by error<PsiElement>()
+        val DUMP_RESOLVE_TARGET by warning<PsiElement> {
+            parameter<String>("resolvedCalleeReferenceName")
+            parameter<ConeKotlinType>("expressionConeType")
+        }
     }
 
     val GENERAL_SYNTAX by object : DiagnosticGroup("General syntax") {
