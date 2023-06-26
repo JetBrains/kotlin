@@ -28,8 +28,8 @@ dependencies {
 //        exclude("org.jetbrains.kotlin", "kotlin-stdlib-common")
 //    }
 //
-//    implementation(project(":kotlin-annotation-processing"))
-//    embedded(project(":kotlin-annotation-processing")) {
+//    implementation(project(":kotlin-annotation-processing-compiler"))
+//    embedded(project(":kotlin-annotation-processing-compiler")) {
 //        exclude("org.jetbrains.kotlin", "kotlin-stdlib")
 //        exclude("org.jetbrains.kotlin", "kotlin-stdlib-common")
 //    }
@@ -47,7 +47,7 @@ dependencies {
 //    testApi(projectTests(":compiler:tests-common-new"))
 //    testApi(projectTests(":compiler:test-infrastructure"))
 //    testApi(projectTests(":compiler:test-infrastructure-utils"))
-//    testApi(projectTests(":kotlin-annotation-processing"))
+//    testApi(projectTests(":kotlin-annotation-processing-compiler"))
 //    testApi(projectTests(":kotlin-annotation-processing-cli"))
 //
 //    testApi(projectTests(":kotlin-annotation-processing-base"))
