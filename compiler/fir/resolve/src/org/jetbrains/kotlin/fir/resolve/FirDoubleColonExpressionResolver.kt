@@ -38,7 +38,7 @@ sealed class DoubleColonLHS(val type: ConeKotlinType) {
 
 // Returns true if this expression has the form "A<B>" which means it's a type on the LHS of a double colon expression
 internal val FirFunctionCall.hasExplicitValueArguments: Boolean
-    get() = true // TODO: hasExplicitArgumentList || hasExplicitLambdaArguments
+    get() = arguments.isNotEmpty()
 
 class FirDoubleColonExpressionResolver(private val session: FirSession) {
 
