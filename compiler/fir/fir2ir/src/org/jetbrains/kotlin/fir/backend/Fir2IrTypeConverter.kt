@@ -89,11 +89,11 @@ class Fir2IrTypeConverter(
             override val intersectionTypesInContravariantPositions: Boolean get() = true
         }
 
-    fun FirTypeRef.toIrType(typeContext: ConversionTypeContext = ConversionTypeContext.DEFAULT): IrType {
+    fun FirTypeRef.toIrType(typeOrigin: ConversionTypeOrigin = ConversionTypeOrigin.DEFAULT): IrType {
         capturedTypeCache.clear()
         return when (this) {
             !is FirResolvedTypeRef -> createErrorType()
-            !is FirImplicitBuiltinTypeRef -> type.toIrType(typeContext, annotations)
+            !is FirImplicitBuiltinTypeRef -> type.toIrType(typeOrigin, annotations)
             is FirImplicitNothingTypeRef -> irBuiltIns.nothingType
             is FirImplicitUnitTypeRef -> irBuiltIns.unitType
             is FirImplicitBooleanTypeRef -> irBuiltIns.booleanType
@@ -102,12 +102,12 @@ class Fir2IrTypeConverter(
             is FirImplicitIntTypeRef -> irBuiltIns.intType
             is FirImplicitNullableAnyTypeRef -> irBuiltIns.anyNType
             is FirImplicitNullableNothingTypeRef -> irBuiltIns.nothingNType
-            else -> type.toIrType(typeContext, annotations)
+            else -> type.toIrType(typeOrigin, annotations)
         }
     }
 
     fun ConeKotlinType.toIrType(
-        typeContext: ConversionTypeContext = ConversionTypeContext.DEFAULT,
+        typeOrigin: ConversionTypeOrigin = ConversionTypeOrigin.DEFAULT,
         annotations: List<FirAnnotation> = emptyList(),
         hasFlexibleNullability: Boolean = false,
         hasFlexibleMutability: Boolean = false,
@@ -121,7 +121,7 @@ class Fir2IrTypeConverter(
 
                 val irSymbol =
                     getBuiltInClassSymbol(classId)
-                        ?: lookupTag.toSymbol(session)?.toSymbol(typeContext) {
+                        ?: lookupTag.toSymbol(session)?.toSymbol(typeOrigin) {
                             typeAnnotations += with(annotationGenerator) { it.toIrAnnotations() }
                         }
                         ?: (lookupTag as? ConeClassLikeLookupTag)?.let(classifierStorage::getIrClassSymbolForNotFoundClass)
@@ -169,7 +169,7 @@ class Fir2IrTypeConverter(
                 IrSimpleTypeImpl(
                     irSymbol,
                     hasQuestionMark = approximatedType.isMarkedNullable,
-                    arguments = approximatedType.typeArguments.map { it.toIrTypeArgument(typeContext) },
+                    arguments = approximatedType.typeArguments.map { it.toIrTypeArgument(typeOrigin) },
                     annotations = typeAnnotations
                 )
             }
@@ -177,7 +177,7 @@ class Fir2IrTypeConverter(
                 // Upper bound has star projections here, so we take lower one
                 // (some reflection tests rely on this)
                 lowerBound.toIrType(
-                    typeContext,
+                    typeOrigin,
                     annotations,
                     hasFlexibleNullability = lowerBound.nullability != upperBound.nullability,
                     hasFlexibleMutability = isMutabilityFlexible(),
@@ -198,14 +198,14 @@ class Fir2IrTypeConverter(
                     (intermediate.withNullability(upper.isNullable) as ConeKotlinType)
                         .withAttributes(lower.attributes)
                         .toIrType(
-                            typeContext,
+                            typeOrigin,
                             annotations,
                             hasFlexibleNullability = lower.nullability != upper.nullability,
                             hasFlexibleMutability = isMutabilityFlexible()
                         )
                 } else {
                     upperBound.toIrType(
-                        typeContext,
+                        typeOrigin,
                         annotations,
                         hasFlexibleNullability = lowerBound.nullability != upperBound.nullability,
                         hasFlexibleMutability = isMutabilityFlexible()
@@ -220,7 +220,7 @@ class Fir2IrTypeConverter(
                     val approximation = supertypes.find {
                         it == (constructor.projection as? ConeKotlinTypeProjection)?.type
                     } ?: supertypes.first()
-                    val irType = approximation.toIrType(typeContext)
+                    val irType = approximation.toIrType(typeOrigin)
                     capturedTypeCache[this] = irType
                     irType
                 } else {
@@ -231,11 +231,11 @@ class Fir2IrTypeConverter(
                 }
             }
             is ConeDefinitelyNotNullType -> {
-                original.toIrType(typeContext).makeNotNull()
+                original.toIrType(typeOrigin).makeNotNull()
             }
             is ConeIntersectionType -> {
                 // TODO: add intersectionTypeApproximation
-                intersectedTypes.first().toIrType(typeContext)
+                intersectedTypes.first().toIrType(typeOrigin)
             }
             is ConeStubType -> createErrorType()
             is ConeIntegerLiteralType -> createErrorType()
@@ -250,9 +250,9 @@ class Fir2IrTypeConverter(
                 CommonFlexibleTypeBoundsChecker.getBaseBoundFqNameByMutability(upperFqName)
     }
 
-    private fun ConeTypeProjection.toIrTypeArgument(typeContext: ConversionTypeContext): IrTypeArgument {
+    private fun ConeTypeProjection.toIrTypeArgument(typeOrigin: ConversionTypeOrigin): IrTypeArgument {
         fun toIrTypeArgument(type: ConeKotlinType, variance: Variance): IrTypeProjection {
-            val irType = type.toIrType(typeContext)
+            val irType = type.toIrType(typeOrigin)
             return makeTypeProjection(irType, variance)
         }
 
@@ -267,7 +267,7 @@ class Fir2IrTypeConverter(
                     // We can return * early here to avoid recursive type conversions.
                     IrStarProjectionImpl
                 } else {
-                    val irType = toIrType(typeContext)
+                    val irType = toIrType(typeOrigin)
                     makeTypeProjection(irType, Variance.INVARIANT)
                 }
             }
@@ -331,8 +331,8 @@ class Fir2IrTypeConverter(
 
 fun FirTypeRef.toIrType(
     typeConverter: Fir2IrTypeConverter,
-    typeContext: ConversionTypeContext = ConversionTypeContext.DEFAULT
+    typeOrigin: ConversionTypeOrigin = ConversionTypeOrigin.DEFAULT
 ): IrType =
     with(typeConverter) {
-        toIrType(typeContext)
+        toIrType(typeOrigin)
     }

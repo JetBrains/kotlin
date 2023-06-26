@@ -135,8 +135,8 @@ class Fir2IrConversionScope {
 
     fun parent(): IrDeclarationParent? = parentStack.lastOrNull()
 
-    fun defaultConversionTypeContext(): ConversionTypeContext =
-        if ((parent() as? IrFunction)?.isSetter == true) ConversionTypeContext.IN_SETTER else ConversionTypeContext.DEFAULT
+    fun defaultConversionTypeOrigin(): ConversionTypeOrigin =
+        if ((parent() as? IrFunction)?.isSetter == true) ConversionTypeOrigin.SETTER else ConversionTypeOrigin.DEFAULT
 
     fun dispatchReceiverParameter(irClass: IrClass): IrValueParameter? {
         for (function in functionStack.asReversed()) {

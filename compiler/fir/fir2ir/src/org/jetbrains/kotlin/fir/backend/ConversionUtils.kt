@@ -61,7 +61,6 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffsetSkippingComments
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.OperatorNameConventions
-import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 fun AbstractKtSourceElement?.startOffsetSkippingComments(): Int? {
     return when (this) {
@@ -110,37 +109,26 @@ internal fun <T : IrElement> FirStatement.convertWithOffsets(
 
 internal fun createErrorType(): IrErrorType = IrErrorTypeImpl(null, emptyList(), Variance.INVARIANT)
 
-internal enum class ConversionTypeOrigin {
-    DEFAULT,
-    SETTER
-}
-
-class ConversionTypeContext private constructor(internal val origin: ConversionTypeOrigin) {
-    companion object {
-        internal val DEFAULT = ConversionTypeContext(
-            origin = ConversionTypeOrigin.DEFAULT
-        )
-        internal val IN_SETTER = ConversionTypeContext(
-            origin = ConversionTypeOrigin.SETTER
-        )
-    }
+enum class ConversionTypeOrigin(val forSetter: Boolean) {
+    DEFAULT(forSetter = false),
+    SETTER(forSetter = true);
 }
 
 context(Fir2IrComponents)
 fun FirClassifierSymbol<*>.toSymbol(
-    typeContext: ConversionTypeContext = ConversionTypeContext.DEFAULT,
+    typeOrigin: ConversionTypeOrigin = ConversionTypeOrigin.DEFAULT,
     handleAnnotations: ((List<FirAnnotation>) -> Unit)? = null
 ): IrClassifierSymbol {
     return when (this) {
         is FirTypeParameterSymbol -> {
-            classifierStorage.getIrTypeParameterSymbol(this, typeContext)
+            classifierStorage.getIrTypeParameterSymbol(this, typeOrigin)
         }
 
         is FirTypeAliasSymbol -> {
             handleAnnotations?.invoke(fir.expandedTypeRef.annotations)
             val coneClassLikeType = fir.expandedTypeRef.coneType as ConeClassLikeType
             coneClassLikeType.lookupTag.toSymbol(session)
-                ?.toSymbol(typeContext, handleAnnotations)
+                ?.toSymbol(typeOrigin, handleAnnotations)
                 ?: classifierStorage.getIrClassSymbolForNotFoundClass(coneClassLikeType.lookupTag)
         }
 

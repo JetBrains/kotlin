@@ -63,7 +63,7 @@ class Fir2IrBuiltIns(
     }
 
     private val extensionFunctionTypeAnnotationSymbol by lazy {
-        extensionFunctionTypeAnnotationFirSymbol?.toSymbol(ConversionTypeContext.DEFAULT) as? IrClassSymbol
+        extensionFunctionTypeAnnotationFirSymbol?.toSymbol(ConversionTypeOrigin.DEFAULT) as? IrClassSymbol
     }
 
     internal fun extensionFunctionTypeAnnotationConstructorCall(): IrConstructorCall? =

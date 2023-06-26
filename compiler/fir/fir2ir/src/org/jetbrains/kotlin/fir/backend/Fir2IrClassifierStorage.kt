@@ -66,8 +66,8 @@ class Fir2IrClassifierStorage(
         commonMemberStorage.localClassCache
     )
 
-    private fun FirTypeRef.toIrType(typeContext: ConversionTypeContext = ConversionTypeContext.DEFAULT): IrType =
-        with(typeConverter) { toIrType(typeContext) }
+    private fun FirTypeRef.toIrType(typeOrigin: ConversionTypeOrigin = ConversionTypeOrigin.DEFAULT): IrType =
+        with(typeConverter) { toIrType(typeOrigin) }
 
     fun preCacheBuiltinClasses() {
         for ((classId, irBuiltinSymbol) in typeConverter.classIdToSymbolMap) {
@@ -93,7 +93,7 @@ class Fir2IrClassifierStorage(
     private fun IrClass.setThisReceiver(typeParameters: List<FirTypeParameterRef>) {
         symbolTable.enterScope(this)
         val typeArguments = typeParameters.map {
-            IrSimpleTypeImpl(getIrTypeParameterSymbol(it.symbol, ConversionTypeContext.DEFAULT), false, emptyList(), emptyList())
+            IrSimpleTypeImpl(getIrTypeParameterSymbol(it.symbol, ConversionTypeOrigin.DEFAULT), false, emptyList(), emptyList())
         }
         thisReceiver = declareThisReceiverParameter(
             thisType = IrSimpleTypeImpl(symbol, false, typeArguments, emptyList()),
@@ -108,7 +108,7 @@ class Fir2IrClassifierStorage(
             getCachedIrTypeParameter(original)
                 ?: createIrTypeParameterWithoutBounds(original, index, irOwnerSymbol)
             if (owner is FirProperty && owner.isVar) {
-                val context = ConversionTypeContext.IN_SETTER
+                val context = ConversionTypeOrigin.SETTER
                 getCachedIrTypeParameter(original, context)
                     ?: createIrTypeParameterWithoutBounds(original, index, irOwnerSymbol, context)
             }
@@ -117,14 +117,14 @@ class Fir2IrClassifierStorage(
 
     internal fun IrTypeParametersContainer.setTypeParameters(
         owner: FirTypeParameterRefsOwner,
-        typeContext: ConversionTypeContext = ConversionTypeContext.DEFAULT
+        typeOrigin: ConversionTypeOrigin = ConversionTypeOrigin.DEFAULT
     ) {
         typeParameters = owner.typeParameters.mapIndexedNotNull { index, typeParameter ->
             if (typeParameter !is FirTypeParameter) return@mapIndexedNotNull null
-            getIrTypeParameter(typeParameter, index, symbol, typeContext).apply {
+            getIrTypeParameter(typeParameter, index, symbol, typeOrigin).apply {
                 parent = this@setTypeParameters
                 if (superTypes.isEmpty()) {
-                    superTypes = typeParameter.bounds.map { it.toIrType(typeContext) }
+                    superTypes = typeParameter.bounds.map { it.toIrType(typeOrigin) }
                 }
             }
         }
@@ -419,7 +419,7 @@ class Fir2IrClassifierStorage(
         typeParameter: FirTypeParameter,
         index: Int,
         ownerSymbol: IrSymbol,
-        typeContext: ConversionTypeContext = ConversionTypeContext.DEFAULT,
+        typeOrigin: ConversionTypeOrigin = ConversionTypeOrigin.DEFAULT,
     ): IrTypeParameter {
         require(index >= 0)
         val origin = typeParameter.computeIrOrigin()
@@ -476,7 +476,7 @@ class Fir2IrClassifierStorage(
         }
 
         // Cache the type parameter BEFORE processing its bounds/supertypes, to properly handle recursive type bounds.
-        if (typeContext.origin == ConversionTypeOrigin.SETTER) {
+        if (typeOrigin.forSetter) {
             typeParameterCacheForSetter[typeParameter] = irTypeParameter
         } else {
             typeParameterCache[typeParameter] = irTypeParameter
@@ -487,9 +487,9 @@ class Fir2IrClassifierStorage(
 
     internal fun getCachedIrTypeParameter(
         typeParameter: FirTypeParameter,
-        typeContext: ConversionTypeContext = ConversionTypeContext.DEFAULT
+        typeOrigin: ConversionTypeOrigin = ConversionTypeOrigin.DEFAULT
     ): IrTypeParameter? {
-        return if (typeContext.origin == ConversionTypeOrigin.SETTER)
+        return if (typeOrigin.forSetter)
             typeParameterCacheForSetter[typeParameter]
         else
             typeParameterCache[typeParameter]
@@ -499,11 +499,11 @@ class Fir2IrClassifierStorage(
         typeParameter: FirTypeParameter,
         index: Int,
         ownerSymbol: IrSymbol,
-        typeContext: ConversionTypeContext = ConversionTypeContext.DEFAULT
+        typeOrigin: ConversionTypeOrigin = ConversionTypeOrigin.DEFAULT
     ): IrTypeParameter {
-        getCachedIrTypeParameter(typeParameter, typeContext)?.let { return it }
+        getCachedIrTypeParameter(typeParameter, typeOrigin)?.let { return it }
         return typeParameter.run {
-            val irTypeParameter = createIrTypeParameterWithoutBounds(typeParameter, index, ownerSymbol, typeContext)
+            val irTypeParameter = createIrTypeParameterWithoutBounds(typeParameter, index, ownerSymbol, typeOrigin)
             irTypeParameter.superTypes = bounds.map { it.toIrType() }
             irTypeParameter
         }
@@ -664,10 +664,10 @@ class Fir2IrClassifierStorage(
 
     fun getIrTypeParameterSymbol(
         firTypeParameterSymbol: FirTypeParameterSymbol,
-        typeContext: ConversionTypeContext
+        typeOrigin: ConversionTypeOrigin
     ): IrTypeParameterSymbol {
         val firTypeParameter = firTypeParameterSymbol.fir
-        return getCachedIrTypeParameter(firTypeParameter, typeContext)?.symbol
+        return getCachedIrTypeParameter(firTypeParameter, typeOrigin)?.symbol
         // We can try to use default cache because setter can use parent type parameters
             ?: typeParameterCache[firTypeParameter]?.symbol
             ?: error("Cannot find cached type parameter by FIR symbol: ${firTypeParameterSymbol.name} of the owner: ${firTypeParameter.containingDeclarationSymbol}")

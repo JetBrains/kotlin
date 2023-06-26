@@ -53,7 +53,6 @@ import org.jetbrains.kotlin.ir.expressions.IrSyntheticBodyKind
 import org.jetbrains.kotlin.ir.expressions.impl.IrErrorExpressionImpl
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.*
-import org.jetbrains.kotlin.ir.types.IrErrorType
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.*
@@ -240,11 +239,11 @@ class Fir2IrDeclarationStorage(
         symbolTable.leaveScope(declaration)
     }
 
-    private fun FirTypeRef.toIrType(typeContext: ConversionTypeContext = ConversionTypeContext.DEFAULT): IrType =
-        with(typeConverter) { toIrType(typeContext) }
+    private fun FirTypeRef.toIrType(typeOrigin: ConversionTypeOrigin = ConversionTypeOrigin.DEFAULT): IrType =
+        with(typeConverter) { toIrType(typeOrigin) }
 
-    private fun ConeKotlinType.toIrType(typeContext: ConversionTypeContext = ConversionTypeContext.DEFAULT): IrType =
-        with(typeConverter) { toIrType(typeContext) }
+    private fun ConeKotlinType.toIrType(typeOrigin: ConversionTypeOrigin = ConversionTypeOrigin.DEFAULT): IrType =
+        with(typeConverter) { toIrType(typeOrigin) }
 
     private fun getIrExternalOrBuiltInsPackageFragment(fqName: FqName, firOrigin: FirDeclarationOrigin): IrExternalPackageFragment {
         val isBuiltIn = fqName in BUILT_INS_PACKAGE_FQ_NAMES
@@ -365,10 +364,10 @@ class Fir2IrDeclarationStorage(
                 setTypeParameters(function)
             }
         }
-        val typeContext = if (forSetter) ConversionTypeContext.IN_SETTER else ConversionTypeContext.DEFAULT
+        val typeOrigin = if (forSetter) ConversionTypeOrigin.SETTER else ConversionTypeOrigin.DEFAULT
         if (function is FirDefaultPropertySetter) {
             val valueParameter = function.valueParameters.first()
-            val type = valueParameter.returnTypeRef.toIrType(ConversionTypeContext.IN_SETTER)
+            val type = valueParameter.returnTypeRef.toIrType(ConversionTypeOrigin.SETTER)
             declareDefaultSetterParameter(type, valueParameter)
         } else if (function != null) {
             val contextReceivers = function.contextReceiversForFunctionOrContainingProperty()
@@ -381,7 +380,7 @@ class Fir2IrDeclarationStorage(
                     createIrParameter(
                         valueParameter, index + contextReceiverParametersCount,
                         useStubForDefaultValueStub = function !is FirConstructor || containingClass?.name != Name.identifier("Enum"),
-                        typeContext,
+                        typeOrigin,
                         skipDefaultParameter = isFakeOverride || origin == IrDeclarationOrigin.DELEGATED_MEMBER
                     ).apply {
                         this.parent = parent
@@ -402,7 +401,7 @@ class Fir2IrDeclarationStorage(
                         Name.identifier("\$this\$$suffix")
                     } ?: SpecialNames.THIS
                     declareThisReceiverParameter(
-                        thisType = receiver.typeRef.toIrType(typeContext),
+                        thisType = receiver.typeRef.toIrType(typeOrigin),
                         thisOrigin = thisOrigin,
                         startOffset = startOffset,
                         endOffset = endOffset,
@@ -776,7 +775,7 @@ class Fir2IrDeclarationStorage(
                 }
                 with(classifierStorage) {
                     setTypeParameters(
-                        property, if (isSetter) ConversionTypeContext.IN_SETTER else ConversionTypeContext.DEFAULT
+                        property, if (isSetter) ConversionTypeOrigin.SETTER else ConversionTypeOrigin.DEFAULT
                     )
                 }
                 // NB: we should enter accessor' scope before declaring its parameters
@@ -784,7 +783,7 @@ class Fir2IrDeclarationStorage(
                 enterScope(this)
                 if (propertyAccessor == null && isSetter) {
                     declareDefaultSetterParameter(
-                        property.returnTypeRef.toIrType(ConversionTypeContext.IN_SETTER),
+                        property.returnTypeRef.toIrType(ConversionTypeOrigin.SETTER),
                         firValueParameter = null
                     )
                 }
@@ -1207,11 +1206,11 @@ class Fir2IrDeclarationStorage(
         valueParameter: FirValueParameter,
         index: Int = UNDEFINED_PARAMETER_INDEX,
         useStubForDefaultValueStub: Boolean = true,
-        typeContext: ConversionTypeContext = ConversionTypeContext.DEFAULT,
+        typeOrigin: ConversionTypeOrigin = ConversionTypeOrigin.DEFAULT,
         skipDefaultParameter: Boolean = false,
     ): IrValueParameter = convertCatching(valueParameter) {
         val origin = valueParameter.computeIrOrigin()
-        val type = valueParameter.returnTypeRef.toIrType(typeContext)
+        val type = valueParameter.returnTypeRef.toIrType(typeOrigin)
         val irParameter = valueParameter.convertWithOffsets { startOffset, endOffset ->
             irFactory.createValueParameter(
                 startOffset = startOffset,
@@ -1224,7 +1223,7 @@ class Fir2IrDeclarationStorage(
                 index = index,
                 varargElementType =
                     if (!valueParameter.isVararg) null
-                    else valueParameter.returnTypeRef.coneType.arrayElementType()?.toIrType(typeContext),
+                    else valueParameter.returnTypeRef.coneType.arrayElementType()?.toIrType(typeOrigin),
                 isCrossinline = valueParameter.isCrossinline,
                 isNoinline = valueParameter.isNoinline,
                 isHidden = false,

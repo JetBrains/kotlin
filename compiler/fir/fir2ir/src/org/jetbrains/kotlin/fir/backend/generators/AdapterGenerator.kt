@@ -80,8 +80,8 @@ internal class AdapterGenerator(
         }
     }
 
-    private fun ConeKotlinType.toIrType(typeContext: ConversionTypeContext = ConversionTypeContext.DEFAULT): IrType =
-        with(typeConverter) { toIrType(typeContext) }
+    private fun ConeKotlinType.toIrType(typeOrigin: ConversionTypeOrigin = ConversionTypeOrigin.DEFAULT): IrType =
+        with(typeConverter) { toIrType(typeOrigin) }
 
     internal fun needToGenerateAdaptedCallableReference(
         callableReferenceAccess: FirCallableReferenceAccess,
@@ -440,7 +440,7 @@ internal class AdapterGenerator(
             }
 
         val samFirType = substitutedParameterType.removeExternalProjections() ?: substitutedParameterType
-        val samType = samFirType.toIrType(ConversionTypeContext.DEFAULT)
+        val samType = samFirType.toIrType(ConversionTypeOrigin.DEFAULT)
         // Make sure the converted IrType owner indeed has a single abstract method, since FunctionReferenceLowering relies on it.
         if (!samType.isSamType) return this
         return IrTypeOperatorCallImpl(
