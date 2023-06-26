@@ -32,16 +32,12 @@ internal inline fun <reified T : ConstantValue<*>> FirExpression.toConstantValue
     constValueProvider: ConstValueProvider? = null
 ): T? {
     return constValueProvider?.findConstantValueFor(this) as? T
-        ?: accept(FirToConstantValueTransformerUnsafe(), FirToConstantValueTransformerData(session, constValueProvider)) as? T
+        ?: accept(FirToConstantValueTransformer, FirToConstantValueTransformerData(session, constValueProvider)) as? T
 }
 
 internal fun FirExpression?.hasConstantValue(session: FirSession): Boolean {
     return this?.accept(FirToConstantValueChecker, session) == true
 }
-
-internal class FirToConstantValueTransformerSafe : FirToConstantValueTransformer(failOnNonConst = false)
-
-internal class FirToConstantValueTransformerUnsafe : FirToConstantValueTransformer(failOnNonConst = true)
 
 internal data class FirToConstantValueTransformerData(
     val session: FirSession,
@@ -50,9 +46,7 @@ internal data class FirToConstantValueTransformerData(
 
 private val constantIntrinsicCalls = setOf("toByte", "toLong", "toShort", "toFloat", "toDouble", "toChar", "unaryMinus")
 
-internal abstract class FirToConstantValueTransformer(
-    private val failOnNonConst: Boolean,
-) : FirDefaultVisitor<ConstantValue<*>?, FirToConstantValueTransformerData>() {
+internal object FirToConstantValueTransformer : FirDefaultVisitor<ConstantValue<*>?, FirToConstantValueTransformerData>() {
     private fun FirExpression.toConstantValue(data: FirToConstantValueTransformerData): ConstantValue<*>? {
         return data.constValueProvider?.findConstantValueFor(this)
             ?: accept(this@FirToConstantValueTransformer, data)
@@ -62,10 +56,7 @@ internal abstract class FirToConstantValueTransformer(
         element: FirElement,
         data: FirToConstantValueTransformerData
     ): ConstantValue<*>? {
-        if (failOnNonConst) {
-            error("Illegal element as annotation argument: ${element::class.qualifiedName} -> ${element.render()}")
-        }
-        return null
+        error("Illegal element as annotation argument: ${element::class.qualifiedName} -> ${element.render()}")
     }
 
     override fun <T> visitConstExpression(
