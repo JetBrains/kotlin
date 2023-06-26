@@ -25386,6 +25386,12 @@ public class FirJsCodegenBoxTestGenerated extends AbstractFirJsCodegenBoxTest {
         }
 
         @Test
+        @TestMetadata("substituteIntForGeneric.kt")
+        public void testSubstituteIntForGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/primitiveTypes/substituteIntForGeneric.kt");
+        }
+
+        @Test
         @TestMetadata("unboxComparable.kt")
         public void testUnboxComparable() throws Exception {
             runTest("compiler/testData/codegen/box/primitiveTypes/unboxComparable.kt");

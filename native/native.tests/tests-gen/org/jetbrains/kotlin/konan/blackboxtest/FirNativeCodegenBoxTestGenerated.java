@@ -5714,12 +5714,6 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
             }
 
             @Test
-            @TestMetadata("specialBridgesInDependencies.kt")
-            public void testSpecialBridgesInDependencies() throws Exception {
-                runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/specialBridgesInDependencies.kt");
-            }
-
-            @Test
             @TestMetadata("starImportEnum.kt")
             public void testStarImportEnum() throws Exception {
                 runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/starImportEnum.kt");
@@ -5729,12 +5723,6 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
             @TestMetadata("typeAliasesKt13181.kt")
             public void testTypeAliasesKt13181() throws Exception {
                 runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/typeAliasesKt13181.kt");
-            }
-
-            @Test
-            @TestMetadata("unsignedTypesInAnnotations.kt")
-            public void testUnsignedTypesInAnnotations() throws Exception {
-                runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/unsignedTypesInAnnotations.kt");
             }
 
             @Test
@@ -5829,12 +5817,6 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
                 }
 
                 @Test
-                @TestMetadata("privateCompanionObjectValInDifferentModule.kt")
-                public void testPrivateCompanionObjectValInDifferentModule() throws Exception {
-                    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/privateCompanionObjectValInDifferentModule.kt");
-                }
-
-                @Test
                 @TestMetadata("privateConstructor.kt")
                 public void testPrivateConstructor() throws Exception {
                     runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/privateConstructor.kt");
@@ -5850,12 +5832,6 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
                 @TestMetadata("privateConstructorWithPrivateFieldUsingTypeTable.kt")
                 public void testPrivateConstructorWithPrivateFieldUsingTypeTable() throws Exception {
                     runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/privateConstructorWithPrivateFieldUsingTypeTable.kt");
-                }
-
-                @Test
-                @TestMetadata("privateTopLevelValInDifferentModule.kt")
-                public void testPrivateTopLevelValInDifferentModule() throws Exception {
-                    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/privateTopLevelValInDifferentModule.kt");
                 }
 
                 @Test
@@ -28424,6 +28400,12 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
             @TestMetadata("stringEqualsHashCodeToString.kt")
             public void testStringEqualsHashCodeToString() throws Exception {
                 runTest("compiler/testData/codegen/box/primitiveTypes/stringEqualsHashCodeToString.kt");
+            }
+
+            @Test
+            @TestMetadata("substituteIntForGeneric.kt")
+            public void testSubstituteIntForGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/primitiveTypes/substituteIntForGeneric.kt");
             }
 
             @Test
