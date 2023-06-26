@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
+import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
@@ -32,7 +33,6 @@ import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
-import org.jetbrains.kotlin.fir.expressions.FirConstExpression
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.fir.utils.exceptions.withConeTypeEntry
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 import org.jetbrains.kotlin.resolve.jvm.KotlinFinderMarker
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 val FirSession.javaElementFinder: FirJavaElementFinder? by FirSession.nullableSessionComponentAccessor<FirJavaElementFinder>()
@@ -90,8 +91,16 @@ class FirJavaElementFinder(
             if (topLevelClass.isRoot) break
             val classId = ClassId.topLevel(topLevelClass)
 
-            val firClass = firProviders.firstNotNullOfOrNull { it.getFirClassifierByFqName(classId) as? FirRegularClass } ?: continue
+            // 1. We could be asked to find class of kind "...MainKt" that was created from file "main.kt"
+            val firFile = firProviders.firstNotNullOfOrNull { it.getFirFilesByPackage(classId.packageFqName) }
+                ?.singleOrNull { classId.relativeClassName.asString() == it.name.removeSuffix(".kt").capitalizeAsciiOnly() + "Kt" }
+            if (firFile != null) {
+                val fileStub = createJavaFileStub(classId.packageFqName, psiManager)
+                return buildFileAsClassStub(firFile, classId, fileStub).psi
+            }
 
+            // 2. Find regular class
+            val firClass = firProviders.firstNotNullOfOrNull { it.getFirClassifierByFqName(classId) as? FirRegularClass } ?: continue
             val fileStub = createJavaFileStub(classId.packageFqName, psiManager)
             val topLevelResult = buildStub(firClass, fileStub).psi
             val tail = fqName.tail(topLevelClass).pathSegments()
@@ -102,6 +111,26 @@ class FirJavaElementFinder(
         }
 
         return null
+    }
+
+    private fun buildFileAsClassStub(firFile: FirFile, classId: ClassId, parent: StubElement<*>): PsiClassStub<*> {
+        val stub = PsiClassStubImpl<ClsClassImpl>(
+            JavaStubElementTypes.CLASS, parent, classId.asSingleFqName().asString(), classId.relativeClassName.asString(), null,
+            PsiClassStubImpl.packFlags(
+                false, false, false, false, false, false, false,
+                false, false, false, false
+            )
+        )
+
+        firFile.declarations.filterIsInstance<FirProperty>().forEach {
+            buildFieldStub(it, stub)
+        }
+
+        PsiModifierListStubImpl(stub, ModifierFlags.PUBLIC_MASK or ModifierFlags.FINAL_MASK)
+        PsiTypeParameterListStubImpl(stub)
+        newReferenceList(JavaStubElementTypes.EXTENDS_LIST, stub, ArrayUtil.EMPTY_STRING_ARRAY)
+        newReferenceList(JavaStubElementTypes.IMPLEMENTS_LIST, stub, ArrayUtil.EMPTY_STRING_ARRAY)
+        return stub
     }
 
     private fun buildStub(firClass: FirRegularClass, parent: StubElement<*>): PsiClassStub<*> {
@@ -121,12 +150,7 @@ class FirJavaElementFinder(
         // Note: we must store companion properties in outer clas because java resolver will not find it other way.
         val companionProperties = firClass.companionObjectSymbol?.declarationSymbols?.map { it.fir }?.filterIsInstance<FirProperty>() ?: emptyList()
         (classProperties + companionProperties).forEach {
-            // TODO correct type info
-            val psiField = PsiFieldStubImpl(
-                stub, it.name.identifier, TypeInfo.fromString("int"), propertyEvaluator?.invoke(it),
-                PsiFieldStubImpl.packFlags(false, false, false, false)
-            )
-            PsiModifierListStubImpl(psiField, ModifierFlags.PUBLIC_MASK + ModifierFlags.FINAL_MASK + ModifierFlags.STATIC_MASK)
+            buildFieldStub(it, stub)
         }
 
         PsiModifierListStubImpl(stub, firClass.packFlags())
@@ -148,6 +172,16 @@ class FirJavaElementFinder(
         }
 
         return stub
+    }
+
+    private fun buildFieldStub(firProperty: FirProperty, classStub: PsiClassStubImpl<ClsClassImpl>) {
+        // TODO correct type info
+        val propertyValue = propertyEvaluator?.invoke(firProperty)
+        val psiField = PsiFieldStubImpl(
+            classStub, firProperty.name.identifier, TypeInfo.fromString("int"), propertyValue,
+            PsiFieldStubImpl.packFlags(false, false, false, false)
+        )
+        PsiModifierListStubImpl(psiField, ModifierFlags.PUBLIC_MASK + ModifierFlags.FINAL_MASK + ModifierFlags.STATIC_MASK)
     }
 
 }

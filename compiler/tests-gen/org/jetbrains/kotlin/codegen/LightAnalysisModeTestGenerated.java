@@ -24546,6 +24546,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
         }
 
+        @TestMetadata("accessTopLevelConstFromJava.kt")
+        public void testAccessTopLevelConstFromJava() throws Exception {
+            runTest("compiler/testData/codegen/box/involvesIrInterpreter/accessTopLevelConstFromJava.kt");
+        }
+
         public void testAllFilesPresentInInvolvesIrInterpreter() throws Exception {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/involvesIrInterpreter"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
@@ -24625,9 +24630,14 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/involvesIrInterpreter/kt57313.kt");
         }
 
-        @TestMetadata("kt57802.kt")
-        public void testKt57802() throws Exception {
-            runTest("compiler/testData/codegen/box/involvesIrInterpreter/kt57802.kt");
+        @TestMetadata("kt57802_1.kt")
+        public void testKt57802_1() throws Exception {
+            runTest("compiler/testData/codegen/box/involvesIrInterpreter/kt57802_1.kt");
+        }
+
+        @TestMetadata("kt57802_2.kt")
+        public void testKt57802_2() throws Exception {
+            runTest("compiler/testData/codegen/box/involvesIrInterpreter/kt57802_2.kt");
         }
 
         @TestMetadata("kt58005.kt")
