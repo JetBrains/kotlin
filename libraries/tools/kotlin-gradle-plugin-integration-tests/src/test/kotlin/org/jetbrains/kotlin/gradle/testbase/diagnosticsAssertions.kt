@@ -71,34 +71,44 @@ fun String.assertNoDiagnostic(diagnosticFactory: ToolingDiagnosticFactory, withS
  */
 fun BuildResult.extractProjectsAndTheirVerboseDiagnostics(): String = buildString {
     var diagnosticStarted = false
+    val currentDiagnostic = StringBuilder()
+
+    fun startDiagnostic(line: String, lineIndex: Int) {
+        require(!diagnosticStarted) {
+            printBuildOutput()
+            "Unexpected start of diagnostic $line on line ${lineIndex + 1}. The end of the previous diagnostic wasn't found yet"
+        }
+
+        currentDiagnostic.appendLine(line)
+        diagnosticStarted = true
+    }
+
+    fun continueDiagnostic(line: String) {
+        currentDiagnostic.appendLine(line)
+    }
+
+    fun endDiagnostic(line: String, lineIndex: Int) {
+        require(diagnosticStarted) {
+            printBuildOutput()
+            "Unexpected end of diagnostic $line on line ${lineIndex + 1}"
+        }
+
+        currentDiagnostic.appendLine(line)
+        currentDiagnostic.appendLine()
+        append(currentDiagnostic.toString())
+
+        currentDiagnostic.clear()
+        diagnosticStarted = false
+    }
+
+
     for ((index, line) in output.lines().withIndex()) {
         when {
-            line.trim() == VERBOSE_DIAGNOSTIC_SEPARATOR -> {
-                if (diagnosticStarted) {
-                    appendLine(line)
-                    appendLine()
-                    diagnosticStarted = false
-                } else {
-                    printBuildOutput()
-                    error("Unexpected end of diagnostic $line on line ${index + 1}")
-                }
-            }
+            line.trim() == VERBOSE_DIAGNOSTIC_SEPARATOR -> endDiagnostic(line, index)
 
-            DIAGNOSTIC_START_REGEX.matches(line) -> {
-                if (!diagnosticStarted) {
-                    appendLine(line)
-                    diagnosticStarted = true
-                } else {
-                    printBuildOutput()
-                    error(
-                        "Unexpected start of diagnostic $line on line ${index + 1}. The end of the previous diagnostic wasn't found yet"
-                    )
-                }
-            }
+            DIAGNOSTIC_START_REGEX.matches(line) -> startDiagnostic(line, index)
 
-            diagnosticStarted -> {
-                appendLine(line)
-            }
+            diagnosticStarted -> continueDiagnostic(line)
 
             line.startsWith(CONFIGURE_PROJECT_PREFIX) -> {
                 appendLine() // additional empty line between projects
