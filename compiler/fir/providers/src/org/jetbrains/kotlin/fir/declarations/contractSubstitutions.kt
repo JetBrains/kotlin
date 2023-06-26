@@ -6,41 +6,12 @@
 package org.jetbrains.kotlin.fir.declarations
 
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
-import org.jetbrains.kotlin.fir.contracts.FirEffectDeclaration
-import org.jetbrains.kotlin.fir.contracts.FirResolvedContractDescription
-import org.jetbrains.kotlin.fir.contracts.builder.buildEffectDeclaration
-import org.jetbrains.kotlin.fir.contracts.builder.buildResolvedContractDescription
 import org.jetbrains.kotlin.fir.contracts.description.*
 import org.jetbrains.kotlin.fir.contracts.impl.FirEmptyContractDescription
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 
 val FirContractDescription?.isNullOrEmpty: Boolean
     get() = (this == null) || (this is FirEmptyContractDescription)
-
-fun FirContractDescription.createContractDescriptionForSubstitutionOverride(substitutor: ConeSubstitutor?): FirContractDescription {
-    if (this !is FirResolvedContractDescription) return this
-    if (substitutor == null || substitutor == ConeSubstitutor.Empty) return this
-    return createContractDescriptionForSubstitutionOverride(substitutor)
-}
-
-private fun FirResolvedContractDescription.createContractDescriptionForSubstitutionOverride(
-    substitutor: ConeSubstitutor
-): FirResolvedContractDescription {
-    val original = this
-    return buildResolvedContractDescription {
-        source = original.source
-        original.effects.mapTo(effects) { it.substitute(substitutor) }
-        unresolvedEffects.addAll(original.unresolvedEffects)
-    }
-}
-
-private fun FirEffectDeclaration.substitute(substitutor: ConeSubstitutor): FirEffectDeclaration {
-    val original = this
-    return buildEffectDeclaration {
-        source = original.source
-        effect = original.effect.substitute(substitutor)
-    }
-}
 
 private fun ConeEffectDeclaration.substitute(substitutor: ConeSubstitutor): ConeEffectDeclaration {
     return when (this) {

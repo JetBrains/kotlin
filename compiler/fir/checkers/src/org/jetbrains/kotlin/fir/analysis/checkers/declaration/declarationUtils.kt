@@ -14,8 +14,11 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitUnitTypeRef
+import org.jetbrains.kotlin.fir.types.isNullable
+import org.jetbrains.kotlin.fir.types.typeContext
 
 internal fun isInsideExpectClass(containingClass: FirClass, context: CheckerContext): Boolean {
     return isInsideSpecificClass(containingClass, context) { klass -> klass is FirRegularClass && klass.isExpect }
@@ -89,9 +92,6 @@ internal val FirBasedSymbol<*>.isLocalMember: Boolean
         is FirNamedFunctionSymbol -> this.isLocal
         else -> false
     }
-
-internal val FirCallableDeclaration.isExtensionMember: Boolean
-    get() = symbol.isExtensionMember
 
 internal val FirCallableSymbol<*>.isExtensionMember: Boolean
     get() = resolvedReceiverTypeRef != null && dispatchReceiverType != null

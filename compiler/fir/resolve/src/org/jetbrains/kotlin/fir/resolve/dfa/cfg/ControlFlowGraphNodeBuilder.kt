@@ -160,12 +160,6 @@ fun ControlFlowGraphBuilder.createConstExpressionNode(fir: FirConstExpression<*>
 fun ControlFlowGraphBuilder.createThrowExceptionNode(fir: FirThrowExpression): ThrowExceptionNode =
     ThrowExceptionNode(currentGraph, fir, levelCounter)
 
-fun ControlFlowGraphBuilder.createFinallyProxyExitNode(fir: FirTryExpression): FinallyProxyExitNode =
-    FinallyProxyExitNode(currentGraph, fir, levelCounter)
-
-fun ControlFlowGraphBuilder.createFinallyProxyEnterNode(fir: FirTryExpression): FinallyProxyEnterNode =
-    FinallyProxyEnterNode(currentGraph, fir, levelCounter)
-
 fun ControlFlowGraphBuilder.createFinallyBlockExitNode(fir: FirTryExpression): FinallyBlockExitNode =
     FinallyBlockExitNode(currentGraph, fir, levelCounter)
 

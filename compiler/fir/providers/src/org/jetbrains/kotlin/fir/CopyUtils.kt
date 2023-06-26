@@ -7,9 +7,7 @@ package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
 import org.jetbrains.kotlin.fir.declarations.utils.expandedConeType
-import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.FirImplicitInvokeCallBuilder
 import org.jetbrains.kotlin.fir.expressions.builder.buildImplicitInvokeCall
@@ -61,15 +59,6 @@ fun FirTypeRef.resolvedTypeFromPrototype(
             }
             annotations += this@resolvedTypeFromPrototype.annotations
         }
-    }
-}
-
-fun FirTypeRef.errorTypeFromPrototype(
-    diagnostic: ConeDiagnostic
-): FirErrorTypeRef {
-    return buildErrorTypeRef {
-        source = this@errorTypeFromPrototype.source
-        this.diagnostic = diagnostic
     }
 }
 

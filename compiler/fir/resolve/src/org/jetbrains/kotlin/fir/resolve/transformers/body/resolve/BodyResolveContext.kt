@@ -90,9 +90,6 @@ class BodyResolveContext(
 
     var containingClassDeclarations: ArrayDeque<FirRegularClass> = ArrayDeque()
 
-    val topClassDeclaration: FirRegularClass?
-        get() = containingClassDeclarations.lastOrNull()
-
     @OptIn(PrivateForInline::class)
     inline fun <T> withTowerDataContexts(newContexts: FirRegularTowerDataContexts, f: () -> T): T {
         val old = regularTowerDataContexts

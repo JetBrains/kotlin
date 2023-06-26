@@ -131,13 +131,6 @@ val ConeAttributes.enhancedNullability: CompilerConeAttributes.EnhancedNullabili
 val ConeAttributes.extensionFunctionType: CompilerConeAttributes.ExtensionFunctionType? by ConeAttributes.attributeAccessor<CompilerConeAttributes.ExtensionFunctionType>()
 private val ConeAttributes.contextFunctionTypeParams: CompilerConeAttributes.ContextFunctionTypeParams? by ConeAttributes.attributeAccessor<CompilerConeAttributes.ContextFunctionTypeParams>()
 
-val ConeAttributes.unsafeVarianceType: CompilerConeAttributes.UnsafeVariance? by ConeAttributes.attributeAccessor<CompilerConeAttributes.UnsafeVariance>()
-
-// ------------------------------------------------------------------
-
-val ConeAttributes.hasEnhancedNullability: Boolean
-    get() = enhancedNullability != null
-
 // ------------------------------------------------------------------
 
 val ConeKotlinType.hasEnhancedNullability: Boolean

@@ -60,11 +60,3 @@ class MultipleModuleDataProvider(private val moduleDataWithFilters: Map<FirModul
     }
 }
 
-class EmptyModuleDataProvider(
-    override val platform: TargetPlatform,
-    override val analyzerServices: PlatformDependentAnalyzerServices
-) : ModuleDataProvider() {
-    override val allModuleData: Collection<FirModuleData> get() = emptyList()
-
-    override fun getModuleData(path: Path?): FirModuleData? = null
-}

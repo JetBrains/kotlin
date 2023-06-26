@@ -174,13 +174,4 @@ object FirDiagnosticRenderers {
     }
 
     val FUNCTIONAL_TYPE_KINDS = KtDiagnosticRenderers.COLLECTION(FUNCTIONAL_TYPE_KIND)
-
-    @Suppress("FunctionName")
-    fun <T> COLLECTION(renderer: ContextIndependentParameterRenderer<T>): ContextIndependentParameterRenderer<Collection<T>> {
-        return Renderer { list ->
-            list.joinToString(prefix = "[", postfix = "]", separator = ", ", limit = 3, truncated = "...") {
-                renderer.render(it)
-            }
-        }
-    }
 }

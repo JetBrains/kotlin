@@ -27,19 +27,6 @@ import org.jetbrains.kotlin.fir.visitors.transformInplace
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
-import org.jetbrains.kotlin.util.OperatorNameConventions.ASSIGNMENT_OPERATIONS
-import org.jetbrains.kotlin.util.OperatorNameConventions.BINARY_OPERATION_NAMES
-import org.jetbrains.kotlin.util.OperatorNameConventions.COMPARE_TO
-import org.jetbrains.kotlin.util.OperatorNameConventions.CONTAINS
-import org.jetbrains.kotlin.util.OperatorNameConventions.DELEGATED_PROPERTY_OPERATORS
-import org.jetbrains.kotlin.util.OperatorNameConventions.EQUALS
-import org.jetbrains.kotlin.util.OperatorNameConventions.GET
-import org.jetbrains.kotlin.util.OperatorNameConventions.HAS_NEXT
-import org.jetbrains.kotlin.util.OperatorNameConventions.INVOKE
-import org.jetbrains.kotlin.util.OperatorNameConventions.ITERATOR
-import org.jetbrains.kotlin.util.OperatorNameConventions.NEXT
-import org.jetbrains.kotlin.util.OperatorNameConventions.SET
-import org.jetbrains.kotlin.util.OperatorNameConventions.UNARY_OPERATION_NAMES
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
@@ -187,10 +174,6 @@ class FirJavaMethod @FirImplementationDetail constructor(
         status = newStatus
     }
 }
-
-val ALL_JAVA_OPERATION_NAMES =
-    UNARY_OPERATION_NAMES + BINARY_OPERATION_NAMES + ASSIGNMENT_OPERATIONS + DELEGATED_PROPERTY_OPERATORS +
-            EQUALS + COMPARE_TO + CONTAINS + INVOKE + ITERATOR + GET + SET + NEXT + HAS_NEXT
 
 @FirBuilderDsl
 class FirJavaMethodBuilder : FirFunctionBuilder, FirTypeParametersOwnerBuilder, FirAnnotationContainerBuilder {

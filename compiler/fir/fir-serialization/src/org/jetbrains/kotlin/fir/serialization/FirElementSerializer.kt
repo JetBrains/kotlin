@@ -32,11 +32,14 @@ import org.jetbrains.kotlin.fir.expressions.builder.buildConstExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyAnnotationArgumentMapping
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.extensions.typeAttributeExtensions
-import org.jetbrains.kotlin.fir.resolve.*
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
+import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.nestedClassifierScope
-import org.jetbrains.kotlin.fir.serialization.constant.*
+import org.jetbrains.kotlin.fir.serialization.constant.hasConstantValue
+import org.jetbrains.kotlin.fir.serialization.constant.toConstantValue
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
@@ -1100,9 +1103,6 @@ class FirElementSerializer private constructor(
         return writeLanguageVersionRequirement(languageFeature, this)
     }
 
-    private fun MutableVersionRequirementTable.writeCompilerVersionRequirement(major: Int, minor: Int, patch: Int): Int =
-        writeCompilerVersionRequirement(major, minor, patch, this)
-
     private fun MutableVersionRequirementTable.writeVersionRequirementDependingOnCoroutinesVersion(): Int =
         writeVersionRequirement(LanguageFeature.ReleaseCoroutines)
 
@@ -1272,17 +1272,6 @@ class FirElementSerializer private constructor(
                 versionRequirementTable
             )
         }
-
-        fun writeCompilerVersionRequirement(
-            major: Int,
-            minor: Int,
-            patch: Int,
-            versionRequirementTable: MutableVersionRequirementTable
-        ): Int = writeVersionRequirement(
-            major, minor, patch,
-            ProtoBuf.VersionRequirement.VersionKind.COMPILER_VERSION,
-            versionRequirementTable
-        )
 
         fun writeVersionRequirement(
             major: Int,

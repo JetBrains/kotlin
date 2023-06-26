@@ -12,7 +12,10 @@ import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.declarations.utils.*
+import org.jetbrains.kotlin.fir.declarations.utils.delegateFields
+import org.jetbrains.kotlin.fir.declarations.utils.isData
+import org.jetbrains.kotlin.fir.declarations.utils.isExpect
+import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeRawScopeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
@@ -114,10 +117,6 @@ data class ConeSubstitutionScopeKey(
     val substitutor: ConeSubstitutor,
     val derivedClassLookupTag: ConeClassLikeLookupTag?
 ) : ScopeSessionKey<FirClass, FirClassSubstitutionScope>()
-
-data class AnySynthesizedScopeKey(
-    val lookupTag: ConeClassLikeLookupTag
-) : ScopeSessionKey<ConeClassLikeLookupTag, FirClassAnySynthesizedMemberScope>()
 
 fun FirClass.unsubstitutedScope(
     useSiteSession: FirSession,

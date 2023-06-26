@@ -161,14 +161,6 @@ abstract class ControlFlowGraphVisitorVoid : ControlFlowGraphVisitor<Unit, Nothi
         visitNode(node)
     }
 
-    open fun visitFinallyProxyEnterNode(node: FinallyProxyEnterNode) {
-        visitNode(node)
-    }
-
-    open fun visitFinallyProxyExitNode(node: FinallyProxyExitNode) {
-        visitNode(node)
-    }
-
     open fun visitTryExpressionExitNode(node: TryExpressionExitNode) {
         visitNode(node)
     }
@@ -440,14 +432,6 @@ abstract class ControlFlowGraphVisitorVoid : ControlFlowGraphVisitor<Unit, Nothi
 
     final override fun visitFinallyBlockExitNode(node: FinallyBlockExitNode, data: Nothing?) {
         visitFinallyBlockExitNode(node)
-    }
-
-    final override fun visitFinallyProxyEnterNode(node: FinallyProxyEnterNode, data: Nothing?) {
-        visitFinallyProxyEnterNode(node)
-    }
-
-    final override fun visitFinallyProxyExitNode(node: FinallyProxyExitNode, data: Nothing?) {
-        visitFinallyProxyExitNode(node)
     }
 
     final override fun visitTryExpressionExitNode(node: TryExpressionExitNode, data: Nothing?) {

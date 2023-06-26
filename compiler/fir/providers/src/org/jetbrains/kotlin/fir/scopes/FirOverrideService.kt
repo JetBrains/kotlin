@@ -19,23 +19,8 @@ import org.jetbrains.kotlin.fir.types.ConeFlexibleType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.types.AbstractTypeChecker
-import java.util.*
 
 class FirOverrideService(val session: FirSession) : FirSessionComponent {
-    fun <D : FirCallableSymbol<*>> createOverridableGroups(
-        members: Collection<MemberWithBaseScope<D>>,
-        overrideChecker: FirOverrideChecker
-    ): List<List<MemberWithBaseScope<D>>> {
-        if (members.size <= 1) return listOf(members.toList())
-        val queue = LinkedList(members)
-        val result = mutableListOf<List<MemberWithBaseScope<D>>>()
-        while (queue.isNotEmpty()) {
-            val nextHandle = queue.first()
-            val overridableGroup = extractBothWaysOverridable(nextHandle, queue, overrideChecker)
-            result += overridableGroup
-        }
-        return result
-    }
 
     fun <D : FirCallableSymbol<*>> extractBothWaysOverridable(
         overrider: MemberWithBaseScope<D>,

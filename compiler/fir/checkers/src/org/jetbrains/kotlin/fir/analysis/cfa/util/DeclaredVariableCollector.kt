@@ -34,10 +34,6 @@ class DeclaredVariableCollector {
         declaredVariablesPerElement.removeKey(statement)
     }
 
-    fun resetState() {
-        declaredVariablesPerElement.clear()
-    }
-
     // FirStatement -- closest statement (loop/lambda/local declaration) which may contain reassignments
     private val visitor = object : FirVisitor<Unit, FirStatement?>() {
         override fun visitElement(element: FirElement, data: FirStatement?) {

@@ -121,8 +121,4 @@ object FirBreakOrContinueJumpsAcrossFunctionBoundaryChecker : FirLoopJumpChecker
         findPathAndCheck(expression.target.labeledElement.block)
     }
 
-    private fun FirExpression.tryInline(): FirExpression {
-        val anonymousFunctionExpression = (((this as? FirLambdaArgumentExpression)?.expression) ?: this) as? FirAnonymousFunctionExpression
-        return anonymousFunctionExpression?.anonymousFunction?.body ?: this
-    }
 }

@@ -18,16 +18,11 @@ import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
 import org.jetbrains.kotlin.fir.types.toSymbol
-import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 fun FirClass.constructors(session: FirSession): List<FirConstructorSymbol> {
     val result = mutableListOf<FirConstructorSymbol>()
     session.declaredMemberScope(this, memberRequiredPhase = null).processDeclaredConstructors { result += it }
     return result
-}
-
-fun FirClass.constructorsSortedByDelegation(session: FirSession): List<FirConstructorSymbol> {
-    return constructors(session).sortedWith(ConstructorDelegationComparator)
 }
 
 fun FirClass.primaryConstructorIfAny(session: FirSession): FirConstructorSymbol? {
@@ -42,23 +37,6 @@ fun FirClass.collectEnumEntries(): Collection<FirEnumEntry> {
 
 fun FirClassSymbol<*>.collectEnumEntries(): Collection<FirEnumEntrySymbol> {
     return fir.collectEnumEntries().map { it.symbol }
-}
-
-val FirConstructorSymbol.delegatedThisConstructor: FirConstructorSymbol?
-    get() = runIf(delegatedConstructorCallIsThis) { this.resolvedDelegatedConstructor }
-
-
-private object ConstructorDelegationComparator : Comparator<FirConstructorSymbol> {
-    override fun compare(p0: FirConstructorSymbol?, p1: FirConstructorSymbol?): Int {
-        if (p0 == null && p1 == null) return 0
-        if (p0 == null) return -1
-        if (p1 == null) return 1
-        if (p0.delegatedThisConstructor == p1) return 1
-        if (p1.delegatedThisConstructor == p0) return -1
-        // If neither is a delegation to each other, the order doesn't matter.
-        // Here we return 0 to preserve the original order.
-        return 0
-    }
 }
 
 /**
@@ -78,11 +56,6 @@ tailrec fun FirClassLikeSymbol<*>.fullyExpandedClass(useSiteSession: FirSession)
 fun FirBasedSymbol<*>.isAnnotationConstructor(session: FirSession): Boolean {
     if (this !is FirConstructorSymbol) return false
     return getConstructedClass(session)?.classKind == ClassKind.ANNOTATION_CLASS
-}
-
-fun FirBasedSymbol<*>.isEnumConstructor(session: FirSession): Boolean {
-    if (this !is FirConstructorSymbol) return false
-    return getConstructedClass(session)?.classKind == ClassKind.ENUM_CLASS
 }
 
 fun FirBasedSymbol<*>.isPrimaryConstructorOfInlineOrValueClass(session: FirSession): Boolean {

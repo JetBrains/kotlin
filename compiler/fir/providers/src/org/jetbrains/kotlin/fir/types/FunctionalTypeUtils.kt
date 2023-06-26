@@ -104,17 +104,6 @@ fun ConeKotlinType.customFunctionTypeToSimpleFunctionType(session: FirSession): 
     return createFunctionTypeWithNewKind(session, newKind)
 }
 
-/*
- * KFunction -> Function
- * KSuspendFunction -> SuspendFunction
- * K[Custom]Function -> [Custom]Function
- */
-fun ConeKotlinType.reflectFunctionTypeToNonReflectFunctionType(session: FirSession): ConeClassLikeType {
-    val kind = functionTypeKind(session)
-    require(kind != null && kind.isReflectType)
-    return createFunctionTypeWithNewKind(session, kind.nonReflectKind())
-}
-
 private fun ConeKotlinType.createFunctionTypeWithNewKind(session: FirSession, kind: FunctionTypeKind): ConeClassLikeType {
     val expandedType = fullyExpandedType(session)
     val functionTypeId = ClassId(kind.packageFqName, kind.numberedClassName(expandedType.typeArguments.size - 1))

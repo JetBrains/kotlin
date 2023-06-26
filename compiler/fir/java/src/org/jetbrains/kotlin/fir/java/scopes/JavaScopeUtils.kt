@@ -78,23 +78,6 @@ object BuiltinMethodsWithSpecialGenericSignature {
 
     val Name.sameAsBuiltinMethodWithErasedValueParameters: Boolean
         get() = this in ERASED_VALUE_PARAMETERS_SHORT_NAMES
-
-    fun FirNamedFunctionSymbol.isBuiltinWithSpecialDescriptorInJvm(containingScope: FirTypeScope, session: FirSession): Boolean {
-        if (!isFromBuiltinClass(session)) return false
-        return getSpecialSignatureInfo(containingScope)?.isObjectReplacedWithTypeParameter ?: false ||
-                doesOverrideBuiltinWithDifferentJvmName(containingScope, session)
-    }
-
-    @JvmStatic
-    fun FirNamedFunctionSymbol.getSpecialSignatureInfo(containingScope: FirTypeScope): SpecialGenericSignatures.SpecialSignatureInfo? {
-        if (name !in ERASED_VALUE_PARAMETERS_SHORT_NAMES) return null
-
-        val builtinSignature = firstOverriddenFunction(containingScope) { it.hasErasedValueParametersInJava }
-            ?.fir
-            ?.computeJvmSignature()
-            ?: return null
-        return SpecialGenericSignatures.getSpecialSignatureInfo(builtinSignature)
-    }
 }
 
 object BuiltinMethodsWithDifferentJvmName {

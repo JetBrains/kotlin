@@ -34,7 +34,6 @@ data class ModuleData(
 ) {
     val qualifiedName get() = if (name in qualifier) qualifier else "$name.$qualifier"
 
-    val outputDir = rawOutputDir.fixPath()
     val classpath = rawClasspath.map { it.fixPath() }
     val sources = rawSources.map { it.fixPath() }
     val javaSourceRoots = rawJavaSourceRoots.map { JavaSourceRootData(it.path.fixPath(), it.packagePrefix) }

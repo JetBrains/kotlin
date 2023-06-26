@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.extensions
 
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.FirLazyValue
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
@@ -77,12 +76,6 @@ abstract class FirDeclarationGenerationExtension(session: FirSession) : FirExten
     fun interface Factory : FirExtension.Factory<FirDeclarationGenerationExtension>
 
     // ----------------------------------- internal utils -----------------------------------
-
-    @FirExtensionApiInternals
-    val nestedClassifierNamesCache: FirCache<FirClassSymbol<*>, Set<Name>, NestedClassGenerationContext> =
-        session.firCachesFactory.createCache { symbol, context ->
-            getNestedClassifiersNames(symbol, context)
-        }
 
     @FirExtensionApiInternals
     val topLevelClassIdsCache: FirLazyValue<Set<ClassId>> =

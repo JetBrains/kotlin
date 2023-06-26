@@ -190,16 +190,6 @@ fun CheckerContext.findClosestClassOrObject(): FirClass? {
     return null
 }
 
-/**
- * Returns the list of functions that overridden by given
- */
-fun FirSimpleFunction.overriddenFunctions(
-    containingClass: FirClassSymbol<*>,
-    context: CheckerContext,
-): List<FirFunctionSymbol<*>> {
-    return symbol.overriddenFunctions(containingClass, context)
-}
-
 fun FirNamedFunctionSymbol.overriddenFunctions(
     containingClass: FirClassSymbol<*>,
     context: CheckerContext,

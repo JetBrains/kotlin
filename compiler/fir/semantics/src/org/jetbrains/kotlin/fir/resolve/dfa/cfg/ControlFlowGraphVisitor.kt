@@ -231,14 +231,6 @@ abstract class ControlFlowGraphVisitor<out R, in D> {
         return visitNode(node, data)
     }
 
-    open fun visitFinallyProxyEnterNode(node: FinallyProxyEnterNode, data: D): R {
-        return visitNode(node, data)
-    }
-
-    open fun visitFinallyProxyExitNode(node: FinallyProxyExitNode, data: D): R {
-        return visitNode(node, data)
-    }
-
     open fun visitTryExpressionExitNode(node: TryExpressionExitNode, data: D): R {
         return visitNode(node, data)
     }

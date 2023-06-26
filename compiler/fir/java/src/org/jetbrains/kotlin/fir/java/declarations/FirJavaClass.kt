@@ -154,7 +154,6 @@ class FirJavaClassBuilder : FirRegularClassBuilder(), FirAnnotationContainerBuil
     var isFromSource: Boolean by Delegates.notNull()
     var isTopLevel: Boolean by Delegates.notNull()
     var isStatic: Boolean by Delegates.notNull()
-    var isNotSam: Boolean by Delegates.notNull()
     var javaPackage: JavaPackage? = null
     lateinit var javaTypeParameterStack: JavaTypeParameterStack
     val existingNestedClassifierNames: MutableList<Name> = mutableListOf()

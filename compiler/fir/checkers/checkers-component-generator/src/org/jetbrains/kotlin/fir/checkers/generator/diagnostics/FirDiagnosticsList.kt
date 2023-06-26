@@ -1592,12 +1592,6 @@ private inline fun <reified P : PsiElement> AbstractDiagnosticGroup.exposedVisib
     return error<P>(positioningStrategy, exposedVisibilityDiagnosticInit)
 }
 
-private inline fun <reified P : PsiElement> AbstractDiagnosticGroup.exposedVisibilityWarning(
-    positioningStrategy: PositioningStrategy = PositioningStrategy.DEFAULT
-): PropertyDelegateProvider<Any?, ReadOnlyProperty<AbstractDiagnosticGroup, RegularDiagnosticData>> {
-    return warning<P>(positioningStrategy, exposedVisibilityDiagnosticInit)
-}
-
 private inline fun <reified P : PsiElement> AbstractDiagnosticGroup.exposedVisibilityDeprecationError(
     languageFeature: LanguageFeature,
     positioningStrategy: PositioningStrategy = PositioningStrategy.DEFAULT

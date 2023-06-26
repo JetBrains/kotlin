@@ -25,9 +25,6 @@ class ClassWrapper(
     val delegatedSuperTypeRef: FirTypeRef,
     val delegatedSuperCalls: List<DelegatedConstructorWrapper>,
 ) {
-    fun isObjectLiteral(): Boolean {
-        return className == SpecialNames.NO_NAME_PROVIDED && isObject()
-    }
 
     fun isEnumEntry(): Boolean {
         return classKind == ClassKind.ENUM_ENTRY

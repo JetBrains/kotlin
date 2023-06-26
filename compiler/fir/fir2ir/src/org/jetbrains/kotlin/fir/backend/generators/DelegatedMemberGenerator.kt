@@ -11,12 +11,14 @@ import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
-import org.jetbrains.kotlin.fir.scopes.*
-import org.jetbrains.kotlin.fir.delegatedWrapperData
 import org.jetbrains.kotlin.fir.resolve.scope
+import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
-import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.lowerBoundIfFlexible
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
@@ -76,16 +78,6 @@ class DelegatedMemberGenerator(private val components: Fir2IrComponents) : Fir2I
             }
         }
         bodiesInfo.clear()
-    }
-
-    private fun FirClassifierSymbol<*>?.boundClass(): FirClass {
-        return when (this) {
-            is FirRegularClassSymbol -> fir
-            is FirAnonymousObjectSymbol -> fir
-            is FirTypeParameterSymbol ->
-                fir.bounds.first().coneType.fullyExpandedType(session).lowerBoundIfFlexible().toSymbol(session).boundClass()
-            is FirTypeAliasSymbol, null -> throw AssertionError(this?.fir?.render())
-        }
     }
 
     // Generate delegated members for [subClass]. The synthetic field [irField] has the super interface type.

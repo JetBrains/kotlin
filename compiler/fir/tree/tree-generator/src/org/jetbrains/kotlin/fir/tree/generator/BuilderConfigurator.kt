@@ -6,7 +6,10 @@
 package org.jetbrains.kotlin.fir.tree.generator
 
 import org.jetbrains.kotlin.fir.tree.generator.context.AbstractBuilderConfigurator
-import org.jetbrains.kotlin.fir.tree.generator.model.*
+import org.jetbrains.kotlin.fir.tree.generator.model.Element
+import org.jetbrains.kotlin.fir.tree.generator.model.Field
+import org.jetbrains.kotlin.fir.tree.generator.model.Implementation
+import org.jetbrains.kotlin.fir.tree.generator.model.LeafBuilder
 import org.jetbrains.kotlin.fir.tree.generator.printer.invisibleField
 import org.jetbrains.kotlin.fir.tree.generator.util.traverseParents
 
@@ -506,20 +509,6 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
             if (!builder.allFields.any { it.name == field }) continue
             if (fieldPredicate != null && !fieldPredicate(builder[field])) continue
             LeafBuilderConfigurationContext(builder).init(field)
-        }
-    }
-
-    private fun configureFieldInAllIntermediateBuilders(
-        field: String,
-        builderPredicate: ((IntermediateBuilder) -> Boolean)? = null,
-        fieldPredicate: ((Field) -> Boolean)? = null,
-        init: IntermediateBuilderConfigurationContext.(field: String) -> Unit
-    ) {
-        for (builder in FirTreeBuilder.intermediateBuilders) {
-            if (builderPredicate != null && !builderPredicate(builder)) continue
-            if (!builder.allFields.any { it.name == field }) continue
-            if (fieldPredicate != null && !fieldPredicate(builder[field])) continue
-            IntermediateBuilderConfigurationContext(builder).init(field)
         }
     }
 
