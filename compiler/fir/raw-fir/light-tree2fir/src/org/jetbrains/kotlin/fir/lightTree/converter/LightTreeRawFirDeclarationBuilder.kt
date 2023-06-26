@@ -541,9 +541,7 @@ class LightTreeRawFirDeclarationBuilder(
 
                     val secondaryConstructors = classBody.getChildNodesByType(SECONDARY_CONSTRUCTOR)
                     val classWrapper = ClassWrapper(
-                        className, modifiers, classKind, this,
-                        hasPrimaryConstructor = primaryConstructor != null,
-                        hasSecondaryConstructor = secondaryConstructors.isNotEmpty(),
+                        modifiers, classKind, this, hasSecondaryConstructor = secondaryConstructors.isNotEmpty(),
                         hasDefaultConstructor = if (primaryConstructor != null) !primaryConstructor!!.hasValueParameters()
                         else secondaryConstructors.isEmpty() || secondaryConstructors.any { !it.hasValueParameters() },
                         delegatedSelfTypeRef = selfType,
@@ -699,8 +697,9 @@ class LightTreeRawFirDeclarationBuilder(
                     this.superTypeRefs += superTypeRefs
 
                     val classWrapper = ClassWrapper(
-                        SpecialNames.NO_NAME_PROVIDED, modifiers, ClassKind.OBJECT, this,
-                        hasPrimaryConstructor = false,
+                        modifiers,
+                        ClassKind.OBJECT,
+                        this,
                         hasSecondaryConstructor = classBody.getChildNodesByType(SECONDARY_CONSTRUCTOR).isNotEmpty(),
                         hasDefaultConstructor = false,
                         delegatedSelfTypeRef = delegatedSelfType,
@@ -784,8 +783,9 @@ class LightTreeRawFirDeclarationBuilder(
                         symbol = FirAnonymousObjectSymbol()
                         status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
                         val enumClassWrapper = ClassWrapper(
-                            enumEntryName, modifiers, ClassKind.ENUM_ENTRY, this,
-                            hasPrimaryConstructor = true,
+                            modifiers,
+                            ClassKind.ENUM_ENTRY,
+                            this,
                             hasSecondaryConstructor = classBodyNode.getChildNodesByType(SECONDARY_CONSTRUCTOR).isNotEmpty(),
                             hasDefaultConstructor = false,
                             delegatedSelfTypeRef = buildResolvedTypeRef {
