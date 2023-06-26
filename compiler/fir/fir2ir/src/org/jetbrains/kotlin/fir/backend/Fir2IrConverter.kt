@@ -46,7 +46,6 @@ import org.jetbrains.kotlin.ir.interpreter.IrInterpreter
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreterConfiguration
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreterEnvironment
 import org.jetbrains.kotlin.ir.interpreter.checker.EvaluationMode
-import org.jetbrains.kotlin.ir.interpreter.transformer.evaluate
 import org.jetbrains.kotlin.ir.interpreter.transformer.transformConst
 import org.jetbrains.kotlin.ir.overrides.IrFakeOverrideBuilder
 import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorPublicSymbolImpl
@@ -546,29 +545,12 @@ class Fir2IrConverter(
             val interpreter = IrInterpreter(IrInterpreterEnvironment(irModuleFragment.irBuiltins, configuration))
             val mode = if (intrinsicConstEvaluation) EvaluationMode.ONLY_INTRINSIC_CONST else EvaluationMode.ONLY_BUILTINS
 
-            components.session.javaElementFinder?.propertyEvaluator = eval@{ firProperty ->
-                val irProperty = components.declarationStorage.getCachedIrProperty(firProperty, fakeOverrideOwnerLookupTag = null) ?: return@eval null
-
-                fun IrProperty.tryToGetConst(): IrConst<*>? {
-                    return (backingField?.initializer?.expression as? IrConst<*>)
-                }
-
-                irProperty.tryToGetConst()?.let { return@eval it.value.toString() }
-                val irFile = irProperty.fileOrNull ?: return@eval null
-                // Note: can't evaluate all expressions in given file, because we can accidentally get recursive processing and
-                // second call of `Fir2IrLazyField.initializer` will return null
-                val evaluated = irProperty.evaluate(
-                    irFile, interpreter, mode,
-                    evaluatedConstTracker = fir2IrConfiguration.evaluatedConstTracker,
-                    inlineConstTracker = fir2IrConfiguration.inlineConstTracker,
-                )
-
-                return@eval evaluated?.tryToGetConst()?.value?.toString()
-            }
+            components.session.javaElementFinder?.propertyEvaluator = { it.evaluate(components, interpreter, mode) }
 
             val ktDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(fir2IrConfiguration.diagnosticReporter, languageVersionSettings)
             irModuleFragment.files.forEach {
                 it.transformConst(
+                    it,
                     interpreter,
                     mode,
                     fir2IrConfiguration.evaluatedConstTracker,
@@ -580,6 +562,24 @@ class Fir2IrConverter(
                     }
                 )
             }
+        }
+
+        private fun FirProperty.evaluate(components: Fir2IrComponents, interpreter: IrInterpreter, mode: EvaluationMode): String? {
+            val irProperty = components.declarationStorage.getCachedIrProperty(this, fakeOverrideOwnerLookupTag = null) ?: return null
+
+            fun IrProperty.tryToGetConst(): IrConst<*>? = (backingField?.initializer?.expression as? IrConst<*>)
+            irProperty.tryToGetConst()?.let { return it.value.toString() }
+
+            val irFile = irProperty.fileOrNull ?: return null
+            // Note: can't evaluate all expressions in given file, because we can accidentally get recursive processing and
+            // second call of `Fir2IrLazyField.initializer` will return null
+            val evaluated = irProperty.transformConst(
+                irFile, interpreter, mode,
+                evaluatedConstTracker = components.configuration.evaluatedConstTracker,
+                inlineConstTracker = components.configuration.inlineConstTracker,
+            )
+
+            return (evaluated as? IrProperty)?.tryToGetConst()?.value?.toString()
         }
 
         // TODO: drop this function in favor of using [IrModuleDescriptor::shouldSeeInternalsOf] in FakeOverrideBuilder KT-61384
