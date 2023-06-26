@@ -87,6 +87,11 @@ public interface KtReferenceShortenerMixIn : KtAnalysisSessionMixIn {
     /**
      * Collects possible references to shorten. By default, it shortens a fully-qualified members to the outermost class and does not
      * shorten enum entries.
+     *
+     * N.B. This API is not implemented for the FE10 implementation!
+     * For a K1- and K2-compatible API, use [org.jetbrains.kotlin.idea.base.codeInsight.ShortenReferencesFacility].
+     *
+     * Also see [org.jetbrains.kotlin.idea.base.analysis.api.utils.shortenReferences] and functions around it.
      */
     public fun collectPossibleReferenceShortenings(
         file: KtFile,
@@ -103,6 +108,15 @@ public interface KtReferenceShortenerMixIn : KtAnalysisSessionMixIn {
             )
         }
 
+    /**
+     * Collects possible references to shorten in [element]s text range. By default, it shortens a fully-qualified members to the outermost
+     * class and does not shorten enum entries.
+     *
+     * N.B. This API is not implemented for the FE10 implementation!
+     * For a K1- and K2-compatible API, use [org.jetbrains.kotlin.idea.base.codeInsight.ShortenReferencesFacility].
+     *
+     * Also see [org.jetbrains.kotlin.idea.base.analysis.api.utils.shortenReferences] and functions around it.
+     */
     public fun collectPossibleReferenceShorteningsInElement(
         element: KtElement,
         classShortenOption: (KtClassLikeSymbol) -> ShortenOption = defaultClassShortenOption,
