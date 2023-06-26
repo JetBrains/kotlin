@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
 import org.jetbrains.kotlin.fir.lightTree.fir.*
 import org.jetbrains.kotlin.fir.lightTree.fir.modifier.Modifier
-import org.jetbrains.kotlin.fir.lightTree.fir.modifier.TypeModifier
 import org.jetbrains.kotlin.fir.lightTree.fir.modifier.TypeParameterModifier
 import org.jetbrains.kotlin.fir.lightTree.fir.modifier.TypeProjectionModifier
 import org.jetbrains.kotlin.fir.references.builder.buildExplicitSuperReference
@@ -270,8 +269,8 @@ class LightTreeRawFirDeclarationBuilder(
     /**
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseTypeModifierList
      */
-    private fun convertTypeModifierList(modifiers: LighterASTNode): TypeModifier {
-        val typeModifier = TypeModifier()
+    private fun convertTypeModifierList(modifiers: LighterASTNode): Modifier {
+        val typeModifier = Modifier()
         modifiers.forEachChildren {
             when (it.tokenType) {
                 ANNOTATION -> typeModifier.annotations += convertAnnotation(it)
@@ -2041,7 +2040,7 @@ class LightTreeRawFirDeclarationBuilder(
         // 2. `(suspend @A () -> Int)?` is a nullable suspend function type but the modifier list is on the child NULLABLE_TYPE
         //
         // TODO: Report MODIFIER_LIST_NOT_ALLOWED error when there are multiple modifier lists. How do we report on each of them?
-        val allTypeModifiers = mutableListOf<TypeModifier>()
+        val allTypeModifiers = mutableListOf<Modifier>()
 
         var firType: FirTypeRef? = null
         type.forEachChildren {
@@ -2075,7 +2074,7 @@ class LightTreeRawFirDeclarationBuilder(
         return calculatedFirType
     }
 
-    private fun Collection<TypeModifier>.hasSuspend() = any { it.hasSuspend() }
+    private fun Collection<Modifier>.hasSuspend() = any { it.hasSuspend() }
 
     private fun convertIntersectionType(typeRefSource: KtSourceElement, intersectionType: LighterASTNode, isNullable: Boolean): FirTypeRef {
         val children = arrayListOf<FirTypeRef>()
@@ -2120,7 +2119,7 @@ class LightTreeRawFirDeclarationBuilder(
     private fun convertNullableType(
         typeRefSource: KtSourceElement,
         nullableType: LighterASTNode,
-        allTypeModifiers: MutableList<TypeModifier>,
+        allTypeModifiers: MutableList<Modifier>,
         isNullable: Boolean = true
     ): FirTypeRef {
         lateinit var firType: FirTypeRef
