@@ -568,7 +568,14 @@ class Fir2IrConverter(
             val irProperty = components.declarationStorage.getCachedIrProperty(this, fakeOverrideOwnerLookupTag = null) ?: return null
 
             fun IrProperty.tryToGetConst(): IrConst<*>? = (backingField?.initializer?.expression as? IrConst<*>)
-            irProperty.tryToGetConst()?.let { return it.value.toString() }
+            fun IrConst<*>.asString(): String {
+                return when (val constVal = value) {
+                    is Char -> constVal.code.toString()
+                    is String -> "\"$constVal\""
+                    else -> constVal.toString()
+                }
+            }
+            irProperty.tryToGetConst()?.let { return it.asString() }
 
             val irFile = irProperty.fileOrNull ?: return null
             // Note: can't evaluate all expressions in given file, because we can accidentally get recursive processing and
@@ -579,7 +586,7 @@ class Fir2IrConverter(
                 inlineConstTracker = components.configuration.inlineConstTracker,
             )
 
-            return (evaluated as? IrProperty)?.tryToGetConst()?.value?.toString()
+            return (evaluated as? IrProperty)?.tryToGetConst()?.asString()
         }
 
         // TODO: drop this function in favor of using [IrModuleDescriptor::shouldSeeInternalsOf] in FakeOverrideBuilder KT-61384

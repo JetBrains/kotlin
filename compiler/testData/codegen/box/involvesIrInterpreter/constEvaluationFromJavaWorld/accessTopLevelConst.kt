@@ -1,4 +1,5 @@
 // TARGET_BACKEND: JVM
+// IGNORE_LIGHT_ANALYSIS
 // FILE: Bar.java
 package one.two;
 

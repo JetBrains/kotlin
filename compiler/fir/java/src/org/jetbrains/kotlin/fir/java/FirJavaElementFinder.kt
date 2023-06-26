@@ -185,6 +185,8 @@ class FirJavaElementFinder(
 
             override fun getType(): TypeInfo {
                 val coneClassLikeType = firProperty.returnTypeRef.coneTypeUnsafe<ConeClassLikeType>()
+                if (coneClassLikeType.isString) return TypeInfo.fromString(CommonClassNames.JAVA_LANG_STRING)
+
                 val classId = coneClassLikeType.lookupTag.classId
                 val typeInfo = classId.relativeClassName.asString().toLowerCaseAsciiOnly()
                 return TypeInfo.fromString(typeInfo)
