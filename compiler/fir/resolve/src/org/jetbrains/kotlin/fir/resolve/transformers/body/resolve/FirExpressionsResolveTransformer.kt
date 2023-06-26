@@ -590,7 +590,13 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         val rightArgument = assignmentOperatorStatement.rightArgument.transformSingle(transformer, ResolutionMode.ContextDependent)
         dataFlowAnalyzer.exitCallArguments()
 
-        val generator = GeneratorOfPlusAssignCalls(assignmentOperatorStatement, operation, leftArgument, rightArgument)
+        val generator = GeneratorOfPlusAssignCalls(
+            assignmentOperatorStatement,
+            assignmentOperatorStatement.calleeReference?.source,
+            operation,
+            leftArgument,
+            rightArgument
+        )
 
         // x.plusAssign(y)
         val assignOperatorCall = generator.createAssignOperatorCall()
@@ -1336,6 +1342,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
 
     private class GeneratorOfPlusAssignCalls(
         val baseElement: FirStatement,
+        val referenceSource: KtSourceElement?,
         val operation: FirOperation,
         val lhs: FirExpression,
         val rhs: FirExpression
@@ -1344,6 +1351,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             fun createFunctionCall(
                 name: Name,
                 source: KtSourceElement?,
+                referenceSource: KtSourceElement?,
                 receiver: FirExpression,
                 vararg arguments: FirExpression
             ): FirFunctionCall = buildFunctionCall {
@@ -1357,8 +1365,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                     }
                 }
                 calleeReference = buildSimpleNamedReference {
-                    // TODO: Use source of operator for callee reference source
-                    this.source = source
+                    this.source = referenceSource ?: source
                     this.name = name
                 }
                 origin = FirFunctionCallOrigin.Operator
@@ -1366,7 +1373,13 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         }
 
         private fun createFunctionCall(name: Name): FirFunctionCall {
-            return createFunctionCall(name, baseElement.source?.fakeElement(KtFakeSourceElementKind.DesugaredCompoundAssignment), lhs, rhs)
+            return createFunctionCall(
+                name,
+                baseElement.source?.fakeElement(KtFakeSourceElementKind.DesugaredCompoundAssignment),
+                referenceSource,
+                lhs,
+                rhs
+            )
         }
 
         fun createAssignOperatorCall(): FirFunctionCall {
@@ -1401,7 +1414,13 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         val transformedRhs = augmentedArraySetCall.rhs.transformSingle(transformer, ResolutionMode.ContextDependent)
         dataFlowAnalyzer.exitCallArguments()
 
-        val generator = GeneratorOfPlusAssignCalls(augmentedArraySetCall, operation, transformedLhsCall, transformedRhs)
+        val generator = GeneratorOfPlusAssignCalls(
+            augmentedArraySetCall,
+            augmentedArraySetCall.calleeReference.source,
+            operation,
+            transformedLhsCall,
+            transformedRhs
+        )
 
         // a.get(b).plusAssign(c)
         val assignOperatorCall = generator.createAssignOperatorCall()
@@ -1582,7 +1601,13 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             typeRef = lhsGetCall.typeRef
         }
 
-        val generator = GeneratorOfPlusAssignCalls(augmentedArraySetCall, augmentedArraySetCall.operation, getCall, transformedRhs)
+        val generator = GeneratorOfPlusAssignCalls(
+            augmentedArraySetCall,
+            augmentedArraySetCall.calleeReference.source,
+            augmentedArraySetCall.operation,
+            getCall,
+            transformedRhs
+        )
 
         val operatorCall = generator.createSimpleOperatorCall()
         val resolvedOperatorCall = resolveCandidateForAssignmentOperatorCall {
@@ -1592,6 +1617,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         val setCall = GeneratorOfPlusAssignCalls.createFunctionCall(
             OperatorNameConventions.SET,
             augmentedArraySetCall.source,
+            augmentedArraySetCall.calleeReference.source,
             receiver = arrayAccess, // a
             *indicesQualifiedAccess.toTypedArray(), // indices
             resolvedOperatorCall // a.get(b).plus(c)
