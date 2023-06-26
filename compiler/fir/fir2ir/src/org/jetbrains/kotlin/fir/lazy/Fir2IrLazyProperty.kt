@@ -114,12 +114,7 @@ class Fir2IrLazyProperty(
     }
 
     override var backingField: IrField? by lazyVar(lock) {
-        // TODO: this checks are very preliminary, FIR resolve should determine backing field presence itself
-        val parent = parent
         when {
-            !fir.isConst && (fir.modality == Modality.ABSTRACT || parent is IrClass && parent.isInterface) -> {
-                null
-            }
             fir.hasExplicitBackingField -> {
                 with(declarationStorage) {
                     val backingFieldType = with(typeConverter) {
