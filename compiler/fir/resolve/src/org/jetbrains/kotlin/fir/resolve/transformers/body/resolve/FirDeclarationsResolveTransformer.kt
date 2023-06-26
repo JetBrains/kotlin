@@ -600,8 +600,8 @@ open class FirDeclarationsResolveTransformer(
         if (anonymousObject !in context.targetedLocalClasses) {
             return anonymousObject.runAllPhasesForLocalClass(transformer, components, data, transformer.firTowerDataContextCollector)
         }
-        // TODO: why would there be a graph already?
-        val buildGraph = !implicitTypeOnly && anonymousObject.controlFlowGraphReference == null
+        require(anonymousObject.controlFlowGraphReference == null)
+        val buildGraph = !implicitTypeOnly
         dataFlowAnalyzer.enterClass(anonymousObject, buildGraph)
         val result = context.withAnonymousObject(anonymousObject, components) {
             transformDeclarationContent(anonymousObject, data) as FirAnonymousObject
