@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/diagnostics/testsWithJvmBackend")
 @TestDataPath("$PROJECT_ROOT")
-public class FirPsiOldDiagnosticsTestWithJvmIrBackendGenerated extends AbstractFirPsiDiagnosticsTestWithJvmIrBackend {
+public class FirPsiDiagnosticsTestWithJvmIrBackendGenerated extends AbstractFirPsiDiagnosticsTestWithJvmIrBackend {
     @Test
     public void testAllFilesPresentInTestsWithJvmBackend() throws Exception {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
