@@ -204,8 +204,8 @@ class Fir2IrImplicitCastInserter(
             insertImplicitCasts()
         }
 
-        val valueType = valueTypeRef.coneTypeSafe<ConeKotlinType>()?.fullyExpandedType(session) ?: return this
-        val expectedType = expectedTypeRef.coneTypeSafe<ConeKotlinType>()?.fullyExpandedType(session) ?: return this
+        val valueType = valueTypeRef.coneType.fullyExpandedType(session)
+        val expectedType = expectedTypeRef.coneType.fullyExpandedType(session)
 
         return when {
             expectedType.isUnit -> {

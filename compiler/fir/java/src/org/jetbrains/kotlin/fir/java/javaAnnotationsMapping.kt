@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
+import org.jetbrains.kotlin.fir.types.jvm.FirJavaTypeRef
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.load.java.structure.impl.JavaElementImpl
 import org.jetbrains.kotlin.name.ClassId
@@ -88,7 +89,9 @@ internal fun JavaAnnotationArgument.toFirExpression(
         is JavaLiteralAnnotationArgument -> value.createConstantOrError(session)
         is JavaArrayAnnotationArgument -> buildArrayOfCall {
             val argumentTypeRef = expectedTypeRef?.let {
-                typeRef = it
+                typeRef = if (it is FirJavaTypeRef) buildResolvedTypeRef {
+                    type = it.toConeKotlinTypeProbablyFlexible(session, javaTypeParameterStack)
+                } else it
                 buildResolvedTypeRef {
                     type = it.coneTypeSafe<ConeKotlinType>()?.lowerBoundIfFlexible()?.arrayElementType()
                         ?: ConeErrorType(ConeSimpleDiagnostic("expected type is not array type"))
@@ -184,13 +187,17 @@ private fun List<JavaAnnotationArgument>.mapJavaTargetArguments(session: FirSess
         }
         val classId = StandardClassIds.AnnotationTarget
         resultSet.mapTo(arguments) { buildEnumCall(session, classId, Name.identifier(it.name)) }
+        val elementConeType = ConeClassLikeTypeImpl(
+            classId.toLookupTag(),
+            emptyArray(),
+            isNullable = false,
+            ConeAttributes.Empty
+        )
+        typeRef = buildResolvedTypeRef {
+            type = elementConeType
+        }
         varargElementType = buildResolvedTypeRef {
-            type = ConeClassLikeTypeImpl(
-                classId.toLookupTag(),
-                emptyArray(),
-                isNullable = false,
-                ConeAttributes.Empty
-            ).createOutArrayType()
+            type = elementConeType.createOutArrayType()
         }
     }
 }
