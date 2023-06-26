@@ -448,6 +448,7 @@ fun <T> FirPropertyBuilder.generateAccessorsByDelegate(
                         origin = FirFunctionCallOrigin.Operator
                     }
                     target = returnTarget
+                    source = fakeSource
                 }
             )
             if (annotations != null) {

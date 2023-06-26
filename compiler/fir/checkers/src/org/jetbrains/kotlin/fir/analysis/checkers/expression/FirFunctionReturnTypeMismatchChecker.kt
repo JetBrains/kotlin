@@ -24,7 +24,9 @@ import org.jetbrains.kotlin.fir.types.*
 
 object FirFunctionReturnTypeMismatchChecker : FirReturnExpressionChecker() {
     override fun check(expression: FirReturnExpression, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (expression.source == null) return
+        // checked in FirDelegatedPropertyChecker
+        if (expression.source?.kind == KtFakeSourceElementKind.DelegatedPropertyAccessor) return
+
         val targetElement = expression.target.labeledElement
         if (targetElement is FirErrorFunction || targetElement is FirAnonymousFunction && targetElement.isLambda) {
             return
