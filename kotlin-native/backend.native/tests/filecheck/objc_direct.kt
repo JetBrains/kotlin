@@ -10,14 +10,14 @@ import kotlinx.cinterop.*
 fun callDirect(): ULong {
     val cc = CallingConventions()
     //CHECK: invoke i64 @_{{[a-zA-Z0-9]+}}_knbridge{{[0-9]+}}(i8* %{{[0-9]+}}, i64 42)
-    return cc.direct(42)
+    return cc.direct(42uL)
 }
 
 //CHECK-LABEL: kfun:#callRegular(){}kotlin.ULong
 fun callRegular(): ULong {
     val cc = CallingConventions()
     //CHECK: invoke i64 @_{{[a-zA-Z0-9]+}}_knbridge{{[0-9]+}}(i8* %{{[0-9]+}}, i8* %{{[0-9]+}}, i64 42)
-    return cc.regular(42)
+    return cc.regular(42uL)
 }
 
 fun main() {
