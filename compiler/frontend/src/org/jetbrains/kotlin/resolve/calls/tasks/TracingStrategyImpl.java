@@ -20,14 +20,13 @@ import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.FunctionTypesKt;
-import org.jetbrains.kotlin.descriptors.CallableDescriptor;
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
-import org.jetbrains.kotlin.descriptors.VariableDescriptor;
+import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.psi.Call;
 import org.jetbrains.kotlin.psi.KtReferenceExpression;
+import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.resolve.BindingTrace;
+import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.calls.util.CallResolverUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall;
@@ -38,8 +37,7 @@ import org.jetbrains.kotlin.types.KotlinType;
 import java.util.Collection;
 import java.util.List;
 
-import static org.jetbrains.kotlin.diagnostics.Errors.UNRESOLVED_REFERENCE;
-import static org.jetbrains.kotlin.diagnostics.Errors.UNRESOLVED_REFERENCE_WRONG_RECEIVER;
+import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.kotlin.resolve.BindingContext.*;
 
 public class TracingStrategyImpl extends AbstractTracingStrategy {
@@ -63,19 +61,34 @@ public class TracingStrategyImpl extends AbstractTracingStrategy {
     @Override
     public <D extends CallableDescriptor> void bindReference(@NotNull BindingTrace trace, @NotNull ResolvedCall<D> resolvedCall) {
         DeclarationDescriptor descriptor = resolvedCall.getCandidateDescriptor();
+        KotlinType type = null;
         if (resolvedCall instanceof VariableAsFunctionResolvedCall) {
-            descriptor = ((VariableAsFunctionResolvedCall) resolvedCall).getVariableCall().getCandidateDescriptor();
+            VariableDescriptor varDesc = ((VariableAsFunctionResolvedCall) resolvedCall).getVariableCall().getCandidateDescriptor();
+            descriptor = varDesc;
+            type = varDesc.getType();
         }
         if (descriptor instanceof FakeCallableDescriptorForObject) {
             FakeCallableDescriptorForObject fakeCallableDescriptorForObject = (FakeCallableDescriptorForObject) descriptor;
-            descriptor = fakeCallableDescriptorForObject.getReferencedDescriptor();
+            ClassifierDescriptorWithTypeParameters classDesc = fakeCallableDescriptorForObject.getReferencedDescriptor();
+            descriptor = classDesc;
+            type = classDesc.getDefaultType();
             if (fakeCallableDescriptorForObject.getClassDescriptor().getCompanionObjectDescriptor() != null) {
                 trace.record(SHORT_REFERENCE_TO_COMPANION_OBJECT, reference, fakeCallableDescriptorForObject.getClassDescriptor());
             }
         }
+        if (descriptor instanceof FunctionDescriptor) {
+            type = ((FunctionDescriptor) descriptor).getReturnType();
+        } else if (descriptor instanceof ClassDescriptor) {
+            type = ((ClassDescriptor) descriptor).getDefaultType();
+        } else if (descriptor instanceof PropertyDescriptor) {
+            type = ((PropertyDescriptor) descriptor).getType();
+        }
         DeclarationDescriptor storedReference = trace.get(REFERENCE_TARGET, reference);
         if (storedReference == null || !ErrorUtils.isError(descriptor)) {
             trace.record(REFERENCE_TARGET, reference, descriptor);
+            trace.report(DUMP_RESOLVE_TARGET.on(
+                    reference, descriptor.getName().asString(),
+                    type == null ? "?" : DescriptorUtils.getFqName(type.getConstructor().getDeclarationDescriptor()).asString()));
         }
     }
 

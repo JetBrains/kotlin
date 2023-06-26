@@ -184,11 +184,18 @@ object LabelResolver {
                     is PropertyDescriptor -> declarationDescriptor.extensionReceiverParameter
                     else -> throw UnsupportedOperationException("Unsupported descriptor: $declarationDescriptor") // TODO
                 }
+                val type = when (declarationDescriptor) {
+                    is ClassDescriptor -> declarationDescriptor.defaultType
+                    is FunctionDescriptor -> declarationDescriptor.returnType
+                    is PropertyDescriptor -> declarationDescriptor.type
+                    else -> null
+                }
 
                 val declarationElement = DescriptorToSourceUtils.descriptorToDeclaration(declarationDescriptor)
                     ?: error("No PSI element for descriptor: $declarationDescriptor")
                 trace.record(LABEL_TARGET, targetLabelExpression, declarationElement)
                 trace.record(REFERENCE_TARGET, referenceExpression, declarationDescriptor)
+                trace.report(DUMP_RESOLVE_TARGET.on(referenceExpression, declarationDescriptor.name.asString(), type?.toString() ?: "?"))
                 val closestElement = elementsByLabel.firstOrNull()
                 if (closestElement != null && declarationElement in closestElement.parents) {
                     reportLabelResolveWillChange(
@@ -234,8 +241,14 @@ object LabelResolver {
                             return LabeledReceiverResolutionResult.labelResolutionFailed()
                         }
                     }?.also {
+                        val type = when (declarationDescriptor) {
+                            is ClassDescriptor -> declarationDescriptor.defaultType
+                            is FunctionDescriptor -> declarationDescriptor.returnType
+                            else -> null
+                        }
                         trace.record(LABEL_TARGET, targetLabelExpression, element)
                         trace.record(REFERENCE_TARGET, referenceExpression, declarationDescriptor)
+                        trace.report(DUMP_RESOLVE_TARGET.on(referenceExpression, declarationDescriptor.name.asString(), type?.toString() ?: "?"))
                     }
                     return LabeledReceiverResolutionResult.labelResolutionSuccess(thisReceiver)
                 } else {

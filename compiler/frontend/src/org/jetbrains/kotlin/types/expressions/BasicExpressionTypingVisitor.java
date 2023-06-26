@@ -623,6 +623,11 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             }
             if (result != null) {
                 context.trace.record(REFERENCE_TARGET, expression.getInstanceReference(), result.getContainingDeclaration());
+                context.trace.report(
+                        DUMP_RESOLVE_TARGET.on(expression.getInstanceReference(),
+                                               result.getContainingDeclaration().getName().asString(),
+                                               result.getType().toString()
+                        ));
                 recordThisOrSuperCallInTraceAndCallExtension(context, result, expression);
             }
             return LabelResolver.LabeledReceiverResolutionResult.Companion.labelResolutionSuccess(result);

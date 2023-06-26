@@ -18,8 +18,7 @@ package org.jetbrains.kotlin.resolve.calls.tasks
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.diagnostics.Errors.UNRESOLVED_REFERENCE
-import org.jetbrains.kotlin.diagnostics.Errors.UNRESOLVED_REFERENCE_WRONG_RECEIVER
+import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.psi.Call
 import org.jetbrains.kotlin.psi.KtConstructorDelegationCall
 import org.jetbrains.kotlin.resolve.BindingContext.CALL
@@ -50,6 +49,8 @@ class TracingStrategyForImplicitConstructorDelegationCall(
         val storedReference = trace.get(REFERENCE_TARGET, calleeExpression)
         if (storedReference == null || !ErrorUtils.isError(descriptor)) {
             trace.record(REFERENCE_TARGET, calleeExpression, descriptor)
+            if (calleeExpression != null)
+                trace.report(DUMP_RESOLVE_TARGET.on(calleeExpression, descriptor.name.asString(), descriptor.returnType?.toString() ?: "?"))
         }
     }
 

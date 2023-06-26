@@ -383,6 +383,7 @@ class DelegatedPropertyResolver(
             arguments.add(fakeArgument)
             val valueParameters = accessor.valueParameters
             trace.record(REFERENCE_TARGET, fakeArgument, valueParameters[0])
+            trace.report(DUMP_RESOLVE_TARGET.on(fakeArgument, valueParameters[0].name.asString(), valueParameters[0].type.toString()))
         }
 
         val functionName = if (isGet) OperatorNameConventions.GET_VALUE else OperatorNameConventions.SET_VALUE
