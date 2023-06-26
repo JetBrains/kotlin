@@ -49,26 +49,24 @@ internal fun isInterface(obj: dynamic, iface: dynamic): Boolean {
 }
 
 internal fun isSuspendFunction(obj: dynamic, arity: Int): Boolean {
-    if (jsTypeOf(obj) == "function") {
+    val objTypeOf = jsTypeOf(obj)
+
+    if (objTypeOf == "function") {
         @Suppress("DEPRECATED_IDENTITY_EQUALS")
         return obj.`$arity`.unsafeCast<Int>() === arity
     }
 
-    if (jsTypeOf(obj) == "object" && jsIn("${'$'}metadata${'$'}", obj.constructor)) {
-        @Suppress("IMPLICIT_BOXING_IN_IDENTITY_EQUALS")
-        return obj.constructor.unsafeCast<Ctor>().`$metadata$`.suspendArity?.let {
-            var result = false
-            for (item in it) {
-                if (arity == item) {
-                    result = true
-                    break
-                }
-            }
-            return result
-        } ?: false
-    }
+    val suspendArity = obj?.constructor.unsafeCast<Ctor?>()?.`$metadata$`?.suspendArity ?: return false
 
-    return false
+    @Suppress("IMPLICIT_BOXING_IN_IDENTITY_EQUALS")
+    var result = false
+    for (item in suspendArity) {
+        if (arity == item) {
+            result = true
+            break
+        }
+    }
+    return result
 }
 
 internal fun isObject(obj: dynamic): Boolean {
@@ -114,43 +112,30 @@ internal fun jsIsType(obj: dynamic, jsClass: dynamic): Boolean {
         return isObject(obj)
     }
 
-    if (obj == null || jsClass == null || (jsTypeOf(obj) != "object" && jsTypeOf(obj) != "function")) {
+    val objType = jsTypeOf(obj)
+    val jsClassType = jsTypeOf(jsClass)
+
+    if (obj == null || jsClass == null || (objType != "object" && objType != "function")) {
         return false
     }
 
-    if (jsTypeOf(jsClass) == "function" && jsInstanceOf(obj, jsClass)) {
-        return true
-    }
-
-    var proto = jsGetPrototypeOf(jsClass)
-    var constructor = proto?.constructor
-    if (constructor != null && jsIn("${'$'}metadata${'$'}", constructor)) {
-        var metadata = constructor.`$metadata$`
-        if (metadata.kind === "object") {
-            return obj === jsClass
-        }
-    }
-
-    var klassMetadata = jsClass.`$metadata$`
-
     // In WebKit (JavaScriptCore) for some interfaces from DOM typeof returns "object", nevertheless they can be used in RHS of instanceof
-    if (klassMetadata == null) {
-        return jsInstanceOf(obj, jsClass)
-    }
+    val constructor = if (jsClassType == "object") jsGetPrototypeOf(jsClass) else jsClass
+    val klassMetadata = constructor.`$metadata$`
 
-    if (klassMetadata.kind === "interface") {
-        val iid =  klassMetadata.iid.unsafeCast<Int?>() ?: return false
+    if (klassMetadata?.kind === "interface") {
+        val iid = klassMetadata.iid.unsafeCast<Int?>() ?: return false
         return isInterfaceImpl(obj, iid)
     }
 
-    return false
+    return jsInstanceOf(obj, constructor)
 }
 
 internal fun isNumber(a: dynamic) = jsTypeOf(a) == "number" || a is Long
 
 @OptIn(JsIntrinsic::class)
 internal fun isComparable(value: dynamic): Boolean {
-    var type = jsTypeOf(value)
+    val type = jsTypeOf(value)
 
     return type == "string" ||
             type == "boolean" ||
