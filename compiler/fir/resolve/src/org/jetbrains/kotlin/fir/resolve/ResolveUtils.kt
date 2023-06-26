@@ -515,14 +515,7 @@ private val FirExpression.isCallToStatementLikeFunction: Boolean
     }
 
 fun FirAnnotation.getCorrespondingClassSymbolOrNull(session: FirSession): FirRegularClassSymbol? {
-    return annotationTypeRef.coneType.fullyExpandedType(session).classId?.let {
-        if (it.isLocal) {
-            // TODO: How to retrieve local annotaiton's constructor?
-            null
-        } else {
-            (session.symbolProvider.getClassLikeSymbolByClassId(it) as? FirRegularClassSymbol)
-        }
-    }
+    return annotationTypeRef.coneType.fullyExpandedType(session).toRegularClassSymbol(session)
 }
 
 fun BodyResolveComponents.initialTypeOfCandidate(candidate: Candidate): ConeKotlinType {
