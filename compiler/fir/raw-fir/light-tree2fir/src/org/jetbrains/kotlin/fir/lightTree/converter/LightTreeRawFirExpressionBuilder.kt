@@ -1422,8 +1422,12 @@ class LightTreeRawFirExpressionBuilder(
     private fun convertThisExpression(thisExpression: LighterASTNode): FirQualifiedAccessExpression {
         val label: String? = thisExpression.getLabelName()
         return buildThisReceiverExpression {
-            source = thisExpression.toFirSourceElement()
-            calleeReference = buildExplicitThisReference { labelName = label }
+            val sourceElement = thisExpression.toFirSourceElement()
+            source = sourceElement
+            calleeReference = buildExplicitThisReference {
+                labelName = label
+                source = sourceElement.fakeElement(KtFakeSourceElementKind.ReferenceInAtomicQualifiedAccess)
+            }
         }
     }
 
