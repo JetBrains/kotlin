@@ -22,6 +22,7 @@ data class NativeSensitiveManifestData(
     val isInterop: Boolean,
     val packageFqName: String?,
     val exportForwardDeclarations: List<String>,
+    val includedForwardDeclarations: List<String>,
     val nativeTargets: Collection<String>,
     val shortName: String?,
     val commonizerTarget: CommonizerTarget?,
@@ -35,6 +36,7 @@ data class NativeSensitiveManifestData(
             isInterop = library.isInterop,
             packageFqName = library.packageFqName,
             exportForwardDeclarations = library.exportForwardDeclarations,
+            includedForwardDeclarations = library.includedForwardDeclarations,
             nativeTargets = library.nativeTargets,
             shortName = library.shortName,
             commonizerTarget = library.commonizerTarget?.let(::parseCommonizerTargetOrNull),
@@ -60,6 +62,10 @@ fun BaseWriterImpl.addManifest(manifest: NativeSensitiveManifestData) {
     addOptionalProperty(KLIB_PROPERTY_PACKAGE, manifest.packageFqName != null) { manifest.packageFqName!! }
     addOptionalProperty(KLIB_PROPERTY_EXPORT_FORWARD_DECLARATIONS, manifest.exportForwardDeclarations.isNotEmpty() || manifest.isInterop) {
         manifest.exportForwardDeclarations.sorted().joinToString(" ")
+    }
+
+    addOptionalProperty(KLIB_PROPERTY_INCLUDED_FORWARD_DECLARATIONS, manifest.includedForwardDeclarations.isNotEmpty() || manifest.isInterop) {
+        manifest.includedForwardDeclarations.sorted().joinToString(" ")
     }
 
     addOptionalProperty(KLIB_PROPERTY_NATIVE_TARGETS, manifest.nativeTargets.isNotEmpty()) {
