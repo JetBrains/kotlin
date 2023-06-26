@@ -117,16 +117,66 @@ class Fir2IrAnnotationsFromPluginRegistrar(private val components: Fir2IrCompone
                         val name = this@toFirAnnotation.symbol.owner.valueParameters[i].name
                         val argument = this@toFirAnnotation.getValueArgument(i) as IrConst<*>
                         this.mapping[name] = when (argument.kind) {
-                            IrConstKind.Boolean -> buildConstExpression(source = null, ConstantValueKind.Boolean, argument.value as Boolean)
-                            IrConstKind.Byte -> buildConstExpression(source = null, ConstantValueKind.Byte, argument.value as Byte)
-                            IrConstKind.Char -> buildConstExpression(source = null, ConstantValueKind.Char, argument.value as Char)
-                            IrConstKind.Double -> buildConstExpression(source = null, ConstantValueKind.Double, argument.value as Double)
-                            IrConstKind.Float -> buildConstExpression(source = null, ConstantValueKind.Float, argument.value as Float)
-                            IrConstKind.Int -> buildConstExpression(source = null, ConstantValueKind.Int, argument.value as Int)
-                            IrConstKind.Long -> buildConstExpression(source = null, ConstantValueKind.Long, argument.value as Long)
-                            IrConstKind.Null -> buildConstExpression(source = null, ConstantValueKind.Null, null)
-                            IrConstKind.Short -> buildConstExpression(source = null, ConstantValueKind.Short, argument.value as Short)
-                            IrConstKind.String -> buildConstExpression(source = null, ConstantValueKind.String, argument.value as String)
+                            IrConstKind.Boolean -> buildConstExpression(
+                                source = null,
+                                ConstantValueKind.Boolean,
+                                argument.value as Boolean,
+                                setType = true
+                            )
+                            IrConstKind.Byte -> buildConstExpression(
+                                source = null,
+                                ConstantValueKind.Byte,
+                                argument.value as Byte,
+                                setType = true
+                            )
+                            IrConstKind.Char -> buildConstExpression(
+                                source = null,
+                                ConstantValueKind.Char,
+                                argument.value as Char,
+                                setType = true
+                            )
+                            IrConstKind.Double -> buildConstExpression(
+                                source = null,
+                                ConstantValueKind.Double,
+                                argument.value as Double,
+                                setType = true
+                            )
+                            IrConstKind.Float -> buildConstExpression(
+                                source = null,
+                                ConstantValueKind.Float,
+                                argument.value as Float,
+                                setType = true
+                            )
+                            IrConstKind.Int -> buildConstExpression(
+                                source = null,
+                                ConstantValueKind.Int,
+                                argument.value as Int,
+                                setType = true
+                            )
+                            IrConstKind.Long -> buildConstExpression(
+                                source = null,
+                                ConstantValueKind.Long,
+                                argument.value as Long,
+                                setType = true
+                            )
+                            IrConstKind.Null -> buildConstExpression(
+                                source = null,
+                                ConstantValueKind.Null,
+                                value = null,
+                                setType = true
+                            )
+                            IrConstKind.Short -> buildConstExpression(
+                                source = null,
+                                ConstantValueKind.Short,
+                                argument.value as Short,
+                                setType = false
+                            )
+                            IrConstKind.String -> buildConstExpression(
+                                source = null,
+                                ConstantValueKind.String,
+                                argument.value as String,
+                                setType = false
+                            )
                         }
                     }
                 }

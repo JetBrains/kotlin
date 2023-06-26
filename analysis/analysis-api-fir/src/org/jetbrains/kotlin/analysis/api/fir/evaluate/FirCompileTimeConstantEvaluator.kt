@@ -390,7 +390,7 @@ internal object FirCompileTimeConstantEvaluator {
 
     private fun <T> ConstantValueKind<T>.toConstExpression(source: KtSourceElement?, value: Any?): FirConstExpression<T> =
         @Suppress("UNCHECKED_CAST")
-        buildConstExpression(source, this, value as T)
+        buildConstExpression(source, this, value as T, setType = false)
 
     private fun FirFunctionCall.getOriginalFunction(): FirCallableDeclaration? {
         val symbol: FirBasedSymbol<*>? = when (val reference = calleeReference) {

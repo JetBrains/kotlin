@@ -38,7 +38,7 @@ inline val FirAnnotation.unexpandedClassId: ClassId?
 
 fun <T> buildConstOrErrorExpression(source: KtSourceElement?, kind: ConstantValueKind<T>, value: T?, diagnostic: ConeDiagnostic): FirExpression =
     value?.let {
-        buildConstExpression(source, kind, it)
+        buildConstExpression(source, kind, it, setType = false)
     } ?: buildErrorExpression {
         this.source = source
         this.diagnostic = diagnostic

@@ -18,18 +18,30 @@ fun <T> buildConstExpression(
     kind: ConstantValueKind<T>,
     value: T,
     annotations: MutableList<FirAnnotation> = mutableListOf(),
-    setType: Boolean = false
+    setType: Boolean
 ): FirConstExpression<T> {
     return FirConstExpressionImpl(source, annotations.toMutableOrEmpty(), kind, value).also {
         if (setType) {
-            when (value) {
-                null -> it.typeRef = FirImplicitNullableAnyTypeRef(null)
-                is String -> it.typeRef = FirImplicitStringTypeRef(null)
-                is Long -> it.typeRef = FirImplicitLongTypeRef(null)
-                is Int -> it.typeRef = FirImplicitIntTypeRef(null)
-                is Boolean -> it.typeRef = FirImplicitBooleanTypeRef(null)
-                is Double -> it.typeRef = FirImplicitDoubleTypeRef(null)
-                is Float -> it.typeRef = FirImplicitFloatTypeRef(null)
+            when (kind) {
+                ConstantValueKind.Boolean -> it.typeRef = FirImplicitBooleanTypeRef(null)
+                ConstantValueKind.Byte -> it.typeRef = FirImplicitByteTypeRef(null)
+                ConstantValueKind.Char -> it.typeRef = FirImplicitCharTypeRef(null)
+                ConstantValueKind.Double -> it.typeRef = FirImplicitDoubleTypeRef(null)
+                ConstantValueKind.Float -> it.typeRef = FirImplicitFloatTypeRef(null)
+                ConstantValueKind.Int -> it.typeRef = FirImplicitIntTypeRef(null)
+                ConstantValueKind.Long -> it.typeRef = FirImplicitLongTypeRef(null)
+                ConstantValueKind.Null -> it.typeRef = FirImplicitNullableAnyTypeRef(null)
+                ConstantValueKind.Short -> it.typeRef = FirImplicitShortTypeRef(null)
+                ConstantValueKind.String -> it.typeRef = FirImplicitStringTypeRef(null)
+                ConstantValueKind.UnsignedByte -> it.typeRef = FirImplicitUByteTypeRef(null)
+                ConstantValueKind.UnsignedInt -> it.typeRef = FirImplicitUIntTypeRef(null)
+                ConstantValueKind.UnsignedLong -> it.typeRef = FirImplicitULongTypeRef(null)
+                ConstantValueKind.UnsignedShort -> it.typeRef = FirImplicitUShortTypeRef(null)
+                ConstantValueKind.IntegerLiteral,
+                ConstantValueKind.UnsignedIntegerLiteral,
+                ConstantValueKind.Error,
+                -> {
+                }
             }
         }
     }

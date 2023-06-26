@@ -355,7 +355,7 @@ fun <T> FirPropertyBuilder.generateAccessorsByDelegate(
                     type = context.dispatchReceiverTypesStack.last()
                 }
             }
-            else -> buildConstExpression(null, ConstantValueKind.Null, null)
+            else -> buildConstExpression(null, ConstantValueKind.Null, null, setType = false)
         }
 
     fun delegateAccess() = buildPropertyAccessExpression {

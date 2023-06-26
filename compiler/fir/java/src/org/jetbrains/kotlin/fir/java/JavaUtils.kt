@@ -63,15 +63,33 @@ internal fun Any?.createConstantOrError(session: FirSession): FirExpression {
 
 internal fun Any?.createConstantIfAny(session: FirSession, unsigned: Boolean = false): FirExpression? {
     return when (this) {
-        is Byte -> buildConstExpression(null, if (unsigned) ConstantValueKind.UnsignedByte else ConstantValueKind.Byte, this).setProperType(session)
-        is Short -> buildConstExpression(null, if (unsigned) ConstantValueKind.UnsignedShort else ConstantValueKind.Short, this).setProperType(session)
-        is Int -> buildConstExpression(null, if (unsigned) ConstantValueKind.UnsignedInt else ConstantValueKind.Int, this).setProperType(session)
-        is Long -> buildConstExpression(null, if (unsigned) ConstantValueKind.UnsignedLong else ConstantValueKind.Long, this).setProperType(session)
-        is Char -> buildConstExpression(null, ConstantValueKind.Char, this).setProperType(session)
-        is Float -> buildConstExpression(null, ConstantValueKind.Float, this).setProperType(session)
-        is Double -> buildConstExpression(null, ConstantValueKind.Double, this).setProperType(session)
-        is Boolean -> buildConstExpression(null, ConstantValueKind.Boolean, this).setProperType(session)
-        is String -> buildConstExpression(null, ConstantValueKind.String, this).setProperType(session)
+        is Byte -> buildConstExpression(
+            null, if (unsigned) ConstantValueKind.UnsignedByte else ConstantValueKind.Byte, this, setType = true
+        )
+        is Short -> buildConstExpression(
+            null, if (unsigned) ConstantValueKind.UnsignedShort else ConstantValueKind.Short, this, setType = true
+        )
+        is Int -> buildConstExpression(
+            null, if (unsigned) ConstantValueKind.UnsignedInt else ConstantValueKind.Int, this, setType = true
+        )
+        is Long -> buildConstExpression(
+            null, if (unsigned) ConstantValueKind.UnsignedLong else ConstantValueKind.Long, this, setType = true
+        )
+        is Char -> buildConstExpression(
+            null, ConstantValueKind.Char, this, setType = true
+        )
+        is Float -> buildConstExpression(
+            null, ConstantValueKind.Float, this, setType = true
+        )
+        is Double -> buildConstExpression(
+            null, ConstantValueKind.Double, this, setType = true
+        )
+        is Boolean -> buildConstExpression(
+            null, ConstantValueKind.Boolean, this, setType = true
+        )
+        is String -> buildConstExpression(
+            null, ConstantValueKind.String, this, setType = true
+        )
         is ByteArray -> toList().createArrayOfCall(session, ConstantValueKind.Byte)
         is ShortArray -> toList().createArrayOfCall(session, ConstantValueKind.Short)
         is IntArray -> toList().createArrayOfCall(session, ConstantValueKind.Int)
@@ -80,7 +98,9 @@ internal fun Any?.createConstantIfAny(session: FirSession, unsigned: Boolean = f
         is FloatArray -> toList().createArrayOfCall(session, ConstantValueKind.Float)
         is DoubleArray -> toList().createArrayOfCall(session, ConstantValueKind.Double)
         is BooleanArray -> toList().createArrayOfCall(session, ConstantValueKind.Boolean)
-        null -> buildConstExpression(null, ConstantValueKind.Null, null).setProperType(session)
+        null -> buildConstExpression(
+            null, ConstantValueKind.Null, null, setType = true
+        )
 
         else -> null
     }
@@ -97,14 +117,6 @@ private fun <T> List<T>.createArrayOfCall(session: FirSession, kind: ConstantVal
             type = kind.expectedConeType(session).createArrayType()
         }
     }
-}
-
-private fun FirConstExpression<*>.setProperType(session: FirSession): FirConstExpression<*> {
-    val typeRef = buildResolvedTypeRef {
-        type = kind.expectedConeType(session)
-    }
-    replaceTypeRef(typeRef)
-    return this
 }
 
 // For now, it's supported only for RxJava3 annotations, see KT-53041

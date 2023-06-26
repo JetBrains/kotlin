@@ -106,6 +106,14 @@ class FirImplicitULongTypeRef(
     source: KtSourceElement?
 ) : FirImplicitBuiltinTypeRef(source, StandardClassIds.ULong)
 
+class FirImplicitUShortTypeRef(
+    source: KtSourceElement?
+) : FirImplicitBuiltinTypeRef(source, StandardClassIds.UShort)
+
+class FirImplicitUByteTypeRef(
+    source: KtSourceElement?
+) : FirImplicitBuiltinTypeRef(source, StandardClassIds.UByte)
+
 class FirImplicitNothingTypeRef(
     source: KtSourceElement?
 ) : FirImplicitBuiltinTypeRef(source, StandardClassIds.Nothing)
@@ -241,5 +249,7 @@ fun FirImplicitBuiltinTypeRef.withNewSource(newSource: KtSourceElement?): FirImp
             extensionReceiverTypeArgument = type.typeArguments[1],
             propertyTypeArgument = type.typeArguments[2]
         )
+        is FirImplicitUByteTypeRef -> FirImplicitUByteTypeRef(newSource)
+        is FirImplicitUShortTypeRef -> FirImplicitUShortTypeRef(newSource)
     }
 }

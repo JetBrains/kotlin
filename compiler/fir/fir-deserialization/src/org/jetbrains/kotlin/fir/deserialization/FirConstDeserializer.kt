@@ -35,16 +35,33 @@ fun buildFirConstant(
     protoValue: ProtoBuf.Annotation.Argument.Value?, sourceValue: Any?, constKind: String, nameResolver: NameResolver
 ): FirExpression? {
     return when (constKind) {
-        "BYTE", "B" -> buildConstExpression(null, ConstantValueKind.Byte, ((protoValue?.intValue ?: sourceValue) as Number).toByte())
-        "CHAR", "C" -> buildConstExpression(null, ConstantValueKind.Char, ((protoValue?.intValue ?: sourceValue) as Number).toInt().toChar())
-        "SHORT", "S" -> buildConstExpression(null, ConstantValueKind.Short, ((protoValue?.intValue ?: sourceValue) as Number).toShort())
-        "INT", "I" -> buildConstExpression(null, ConstantValueKind.Int, protoValue?.intValue?.toInt() ?: sourceValue as Int)
-        "LONG", "J" -> buildConstExpression(null, ConstantValueKind.Long, protoValue?.intValue ?: sourceValue as Long)
-        "FLOAT", "F" -> buildConstExpression(null, ConstantValueKind.Float, protoValue?.floatValue ?: sourceValue as Float)
-        "DOUBLE", "D" -> buildConstExpression(null, ConstantValueKind.Double, protoValue?.doubleValue ?: sourceValue as Double)
-        "BOOLEAN", "Z" -> buildConstExpression(null, ConstantValueKind.Boolean, (protoValue?.intValue?.toInt() ?: sourceValue) != 0)
+        "BYTE", "B" -> buildConstExpression(
+            null, ConstantValueKind.Byte, ((protoValue?.intValue ?: sourceValue) as Number).toByte(), setType = true
+        )
+        "CHAR", "C" -> buildConstExpression(
+            null, ConstantValueKind.Char, ((protoValue?.intValue ?: sourceValue) as Number).toInt().toChar(), setType = true
+        )
+        "SHORT", "S" -> buildConstExpression(
+            null, ConstantValueKind.Short, ((protoValue?.intValue ?: sourceValue) as Number).toShort(), setType = true
+        )
+        "INT", "I" -> buildConstExpression(
+            null, ConstantValueKind.Int, protoValue?.intValue?.toInt() ?: sourceValue as Int, setType = true
+        )
+        "LONG", "J" -> buildConstExpression(
+            null, ConstantValueKind.Long, protoValue?.intValue ?: sourceValue as Long, setType = true
+        )
+        "FLOAT", "F" -> buildConstExpression(
+            null, ConstantValueKind.Float, protoValue?.floatValue ?: sourceValue as Float, setType = true
+        )
+        "DOUBLE", "D" -> buildConstExpression(
+            null, ConstantValueKind.Double, protoValue?.doubleValue ?: sourceValue as Double, setType = true
+        )
+        "BOOLEAN", "Z" -> buildConstExpression(
+            null, ConstantValueKind.Boolean, (protoValue?.intValue?.toInt() ?: sourceValue) != 0, setType = true
+        )
         "STRING", "Ljava/lang/String;" -> buildConstExpression(
-            null, ConstantValueKind.String, protoValue?.stringValue?.let { nameResolver.getString(it) } ?: sourceValue as String
+            null, ConstantValueKind.String,
+            protoValue?.stringValue?.let { nameResolver.getString(it) } ?: sourceValue as String, setType = true
         )
         else -> null
     }

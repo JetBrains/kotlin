@@ -467,6 +467,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
 
             proto.contextReceiverTypes(c.typeTable).mapTo(contextReceivers, ::loadContextReceiver)
         }.apply {
+            initializer?.replaceTypeRef(returnTypeRef)
             versionRequirementsTable = c.versionRequirementTable
             setLazyPublishedVisibility(c.session)
             getter?.setLazyPublishedVisibility(annotations, this, c.session)

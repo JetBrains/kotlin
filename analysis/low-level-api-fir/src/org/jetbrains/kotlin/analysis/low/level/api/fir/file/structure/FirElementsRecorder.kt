@@ -215,7 +215,8 @@ internal open class FirElementsRecorder : FirVisitor<Unit, MutableMap<KtElement,
         return buildConstExpression(
             original.ktConstantExpression?.toKtPsiSourceElement(),
             this,
-            convertedValue as T
+            convertedValue as T,
+            setType = false
         ).also {
             it.replaceTypeRef(original.typeRef)
         }
