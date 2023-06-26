@@ -3,6 +3,7 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.api.logging.LogLevel
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.internals.asFinishLogMessage
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.checkedReplace
@@ -99,15 +100,17 @@ abstract class ExecutionStrategyIT : KGPDaemonsBaseTest() {
         project(
             projectName = "kotlinBuiltins",
             gradleVersion = gradleVersion,
-            addHeapDumpOptions = false
+            addHeapDumpOptions = false,
+            buildOptions = defaultBuildOptions.copy(
+                useDaemonFallbackStrategy = false,
+                compilerExecutionStrategy = KotlinCompilerExecutionStrategy.DAEMON,
+            )
         ) {
             setupProject(this)
 
             buildAndFail(
                 "build",
-                "-Pkotlin.compiler.execution.strategy=${KotlinCompilerExecutionStrategy.DAEMON}",
                 "-Pkotlin.daemon.jvmargs=-Xmxqwerty",
-                "-Pkotlin.daemon.useFallbackStrategy=false"
             ) {
                 assertOutputContains("Failed to compile with Kotlin daemon. Fallback strategy (compiling without Kotlin daemon) is turned off.")
             }
@@ -200,26 +203,28 @@ abstract class ExecutionStrategyIT : KGPDaemonsBaseTest() {
             projectName = "kotlinBuiltins",
             gradleVersion = gradleVersion,
             addHeapDumpOptions = addHeapDumpOptions,
-            buildOptions = defaultBuildOptions.copy(useDaemonFallbackStrategy = testFallbackStrategy)
+            buildOptions = defaultBuildOptions.copy(
+                useDaemonFallbackStrategy = testFallbackStrategy,
+                compilerExecutionStrategy = if (shouldConfigureStrategyViaGradleProperty) {
+                    executionStrategy
+                } else {
+                    null
+                }
+            )
         ) {
             setupProject(this)
             additionalProjectConfiguration()
 
-            @OptIn(ExperimentalStdlibApi::class)
-            val args = buildList {
-                if (shouldConfigureStrategyViaGradleProperty) {
-                    add("-Pkotlin.compiler.execution.strategy=${executionStrategy.propertyValue}")
-                }
-                if (testFallbackStrategy) {
-                    // add jvm option that JVM fails to parse
-                    add("-Pkotlin.daemon.jvmargs=-Xmxqwerty")
-                }
-            }.toTypedArray()
+            val args = if (testFallbackStrategy) {
+                arrayOf("-Pkotlin.daemon.jvmargs=-Xmxqwerty")
+            } else {
+                emptyArray()
+            }
             val expectedFinishStrategy = if (testFallbackStrategy) KotlinCompilerExecutionStrategy.OUT_OF_PROCESS else executionStrategy
-            val finishMessage = "Finished executing kotlin compiler using $expectedFinishStrategy strategy"
+            val finishMessage = expectedFinishStrategy.asFinishLogMessage
 
             build("build", *args) {
-                assertOutputContains(finishMessage)
+                assertOutputContains(expectedFinishStrategy.asFinishLogMessage)
                 checkOutput(this@project)
                 assertNoBuildWarnings()
 

@@ -227,8 +227,11 @@ private fun createLoggingMessageCollector(log: KotlinLogger): MessageCollector =
     }
 }
 
+internal val KotlinCompilerExecutionStrategy.asFinishLogMessage: String
+    get() = "Finished executing kotlin compiler using $this strategy"
+
 internal fun KotlinLogger.logFinish(strategy: KotlinCompilerExecutionStrategy) {
-    debug("Finished executing kotlin compiler using $strategy strategy")
+    debug(strategy.asFinishLogMessage)
 }
 
 internal fun exitCodeFromProcessExitCode(log: KotlinLogger, code: Int): ExitCode {

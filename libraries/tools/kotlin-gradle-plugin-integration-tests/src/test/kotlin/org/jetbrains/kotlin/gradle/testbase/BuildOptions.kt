@@ -11,6 +11,7 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.cli.common.CompilerSystemProperties.COMPILE_INCREMENTAL_WITH_ARTIFACT_TRANSFORM
 import org.jetbrains.kotlin.gradle.BaseGradleIT
 import org.jetbrains.kotlin.gradle.dsl.NativeCacheKind
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.junit.jupiter.api.condition.OS
 import java.util.*
@@ -44,6 +45,8 @@ data class BuildOptions(
     val useDaemonFallbackStrategy: Boolean = false,
     val verboseDiagnostics: Boolean = true,
     val nativeOptions: NativeOptions = NativeOptions(),
+    val compilerExecutionStrategy: KotlinCompilerExecutionStrategy? = null,
+    val runViaBuildToolsApi: Boolean? = null,
 ) {
     val safeAndroidVersion: String
         get() = androidVersion ?: error("AGP version is expected to be set")
@@ -174,6 +177,14 @@ data class BuildOptions(
 
         if (verboseDiagnostics) {
             arguments.add("-Pkotlin.internal.verboseDiagnostics=$verboseDiagnostics")
+        }
+
+        if (compilerExecutionStrategy != null) {
+            arguments.add("-Pkotlin.compiler.execution.strategy=${compilerExecutionStrategy.propertyValue}")
+        }
+
+        if (runViaBuildToolsApi != null) {
+            arguments.add("-Pkotlin.compiler.runViaBuildToolsApi=$runViaBuildToolsApi")
         }
 
         arguments.addAll(freeArgs)
