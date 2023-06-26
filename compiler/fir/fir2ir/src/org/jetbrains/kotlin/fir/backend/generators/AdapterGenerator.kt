@@ -165,7 +165,6 @@ internal class AdapterGenerator(
             if (boundReceiver == null) {
                 IrFunctionExpressionImpl(startOffset, endOffset, type, irAdapterFunction, IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE)
             } else {
-                // TODO add a bound receiver property to IrFunctionExpressionImpl?
                 val irAdapterRef = IrFunctionReferenceImpl(
                     startOffset, endOffset, type, irAdapterFunction.symbol, irAdapterFunction.typeParameters.size,
                     irAdapterFunction.valueParameters.size, null, IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE
@@ -590,7 +589,6 @@ internal class AdapterGenerator(
         argument: FirExpression,
         parameterType: ConeKotlinType
     ): IrExpression {
-        // TODO: should refer to LanguageVersionSettings.SuspendConversion
         if (this is IrBlock && origin == IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE) {
             return this
         }
@@ -610,7 +608,6 @@ internal class AdapterGenerator(
         val suspendConvertedType = parameterType.toIrType() as IrSimpleType
         return argument.convertWithOffsets { startOffset, endOffset ->
             val irAdapterFunction = createAdapterFunctionForArgument(startOffset, endOffset, suspendConvertedType, type, invokeSymbol)
-            // TODO add a bound receiver property to IrFunctionExpressionImpl?
             val irAdapterRef = IrFunctionReferenceImpl(
                 startOffset, endOffset, suspendConvertedType, irAdapterFunction.symbol, irAdapterFunction.typeParameters.size,
                 irAdapterFunction.valueParameters.size, null, IrStatementOrigin.SUSPEND_CONVERSION

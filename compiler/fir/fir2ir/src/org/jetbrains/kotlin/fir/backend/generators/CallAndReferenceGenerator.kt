@@ -972,7 +972,6 @@ class CallAndReferenceGenerator(
         argument: FirExpression,
         parameter: FirValueParameter?
     ): IrExpression {
-        // TODO: Need to refer to language feature: AllowAssigningArrayElementsToVarargsInNamedFormForFunctions
         if (this !is IrVarargImpl ||
             parameter?.isVararg != true ||
             argument !is FirVarargArgumentsExpression ||

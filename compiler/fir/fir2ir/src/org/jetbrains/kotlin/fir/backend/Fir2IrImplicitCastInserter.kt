@@ -137,7 +137,6 @@ class Fir2IrImplicitCastInserter(
 
     override fun visitWhenSubjectExpression(whenSubjectExpression: FirWhenSubjectExpression, data: IrElement): IrElement = data
 
-    // TODO: cast `condition` expression to boolean?
     override fun visitWhenBranch(whenBranch: FirWhenBranch, data: IrElement): IrBranch {
         val irBranch = data as IrBranch
         (irBranch.result as? IrContainerExpression)?.let {
@@ -151,7 +150,6 @@ class Fir2IrImplicitCastInserter(
 
     // ==================================================================================
 
-    // TODO: cast `condition` expression to boolean?
     override fun visitDoWhileLoop(doWhileLoop: FirDoWhileLoop, data: IrElement): IrElement {
         val loop = data as IrDoWhileLoop
         (loop.body as? IrContainerExpression)?.let {
@@ -160,7 +158,6 @@ class Fir2IrImplicitCastInserter(
         return data
     }
 
-    // TODO: cast `condition` expression to boolean?
     override fun visitWhileLoop(whileLoop: FirWhileLoop, data: IrElement): IrElement {
         val loop = data as IrWhileLoop
         (loop.body as? IrContainerExpression)?.let {

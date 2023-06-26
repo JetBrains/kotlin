@@ -157,7 +157,7 @@ class FirBasedSignatureComposer(override val mangler: FirMangler) : Fir2IrSignat
             }
             is FirScript -> {
                 IdSignature.CommonSignature(
-                    packageFqName = declaration.name.asString(), // TODO: find package id
+                    packageFqName = declaration.name.asString(),
                     declarationFqName = declaration.name.asString(),
                     id = builder.hashId,
                     mask = builder.mask,

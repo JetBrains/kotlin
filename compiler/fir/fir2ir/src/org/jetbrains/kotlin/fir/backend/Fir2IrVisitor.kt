@@ -466,7 +466,7 @@ class Fir2IrVisitor(
     }
 
     override fun visitWrappedArgumentExpression(wrappedArgumentExpression: FirWrappedArgumentExpression, data: Any?): IrElement {
-        // TODO: change this temporary hack to something correct
+        // Note: we deal with specific arguments in CallAndReferenceGenerator
         return convertToIrExpression(wrappedArgumentExpression.expression)
     }
 
@@ -694,7 +694,6 @@ class Fir2IrVisitor(
                 }
             }
         }
-        // TODO handle qualified "this" in instance methods of non-inner classes (inner class cases are handled by InnerClassesLowering)
         return visitQualifiedAccessExpression(thisReceiverExpression, data)
     }
 

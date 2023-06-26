@@ -1615,7 +1615,6 @@ class Fir2IrDeclarationStorage(
 
             val parentOrigin = (irParent as? IrDeclaration)?.origin ?: IrDeclarationOrigin.DEFINED
             val declarationOrigin = computeDeclarationOrigin(firSymbol, parentOrigin)
-            // TODO: package fragment members (?)
             when (val parent = irParent) {
                 is Fir2IrLazyClass -> {
                     assert(parentOrigin != IrDeclarationOrigin.DEFINED) {
