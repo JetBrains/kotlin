@@ -54,13 +54,13 @@ abstract class AbstractKotlinKapt4ContextTestBase(
     }
 }
 
-@TestMetadata("plugins/kapt4/kapt4-compiler/testData/converter")
+@TestMetadata("plugins/kapt4/testData/converter")
 @TestDataPath("\$PROJECT_ROOT")
 @Tag("IgnoreJDK11")
 class KotlinKapt4ContextTestManual : AbstractKotlinKapt4ContextTest() {
     @Test
     @TestMetadata("simple.kt")
     fun testSimple() {
-        runTest("plugins/kapt4/kapt4-compiler/testData/converter/simple.kt")
+        runTest("plugins/kapt4/testData/converter/simple.kt")
     }
 }
