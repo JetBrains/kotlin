@@ -5,6 +5,11 @@
 
 package kotlin.collections
 
+/**
+ * This is the most performant implementations of [HashMap.keys] container.
+ * It is implemented over [InternalMap] interface and can not be used without it.
+ * [HashMapKeys] is more efficient than the implementation [HashMapKeysDefault] from HashMapEntryDefault.kt.
+ */
 internal class HashMapKeys<E> internal constructor(
     private val backing: InternalMap<E, *>,
 ) : MutableSet<E>, AbstractMutableSet<E>() {
@@ -21,6 +26,11 @@ internal class HashMapKeys<E> internal constructor(
     override fun checkIsMutable() = backing.checkIsMutable()
 }
 
+/**
+ * This is the most performant implementations of [HashMap.values] container.
+ * It is implemented over [InternalMap] interface and can not be used without it.
+ * [HashMapValues] is more efficient than the implementation [HashMapValuesDefault] from HashMapEntryDefault.kt.
+ */
 internal class HashMapValues<V> internal constructor(
     private val backing: InternalMap<*, V>,
 ) : MutableCollection<V>, AbstractMutableCollection<V>() {
@@ -68,6 +78,10 @@ internal abstract class HashMapEntrySetBase<K, V, E : Map.Entry<K, V>> internal 
     override fun checkIsMutable() = backing.checkIsMutable()
 }
 
+/**
+ * This is the implementations of [HashMap.entries] container.
+ * It is implemented over [InternalMap] interface and can not be used without it.
+ */
 internal class HashMapEntrySet<K, V> internal constructor(
     backing: InternalMap<K, V>,
 ) : HashMapEntrySetBase<K, V, MutableMap.MutableEntry<K, V>>(backing) {

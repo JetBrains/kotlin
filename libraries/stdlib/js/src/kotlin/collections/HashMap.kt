@@ -96,8 +96,8 @@ public actual open class HashMap<K, V> : AbstractMutableMap<K, V>, MutableMap<K,
 }
 
 /**
- * Constructs the specialized implementation of [HashMap] with [String] keys, which stores the keys as properties of
- * JS object without hashing them.
+ * Constructs the specialized implementation of [HashMap] with [String] keys,
+ * which stores the keys as properties of JS object without hashing them.
  */
 public fun <V> stringMapOf(vararg pairs: Pair<String, V>): HashMap<String, V> {
     return HashMap<String, V>(InternalStringMap()).apply { putAll(pairs) }

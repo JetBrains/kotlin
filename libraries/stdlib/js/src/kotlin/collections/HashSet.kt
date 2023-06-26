@@ -10,7 +10,7 @@
 package kotlin.collections
 
 /**
- * The implementation of the [MutableSet] interface, backed by a [HashMap] instance.
+ * The implementation of the [MutableSet] interface, backed by a [InternalMap] implementation.
  */
 // Classes that extend HashSet and implement `build()` (freezing) operation
 // have to make sure mutating methods check `checkIsMutable`.

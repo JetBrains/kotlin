@@ -5,6 +5,19 @@
 
 package kotlin.collections
 
+/**
+ * Extends [InternalStringMap] by preserving the insertion order.
+ *
+ * Two [IntArray]s are used to implement a linked list:
+ *  the [nextIndexes] Array keeps the next indexes of the corresponding node,
+ *  the [prevIndexes] Array keeps the previous indexes of the corresponding node.
+ *
+ * When adding a new key, we append its previous index (which points to the tail) to the end of the [prevIndexes] Array
+ * and update the next index of the tail. The last element of the [nextIndexes] array for the new key is set to [EMPTY_INDEX].
+ *
+ * When removing a key, we update the next and previous indexes of adjacent nodes
+ * and move the last next-prev pair to the position of the removing key.
+ */
 internal class InternalStringLinkedMap<K, V> : InternalStringMap<K, V>() {
     companion object {
         private const val EMPTY_INDEX = -1

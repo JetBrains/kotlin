@@ -10,10 +10,10 @@
 package kotlin.collections
 
 /**
- * Hash table based implementation of the [MutableMap] interface, which additionally preserves the insertion order
- * of entries during the iteration.
+ * Hash table based implementation of the [MutableMap] interface,
+ * which additionally preserves the insertion order of entries during the iteration.
  *
- * The insertion order is preserved natively by the HashMap implementation.
+ * The insertion order is preserved by the corresponding [InternalMap] implementation.
  */
 public actual open class LinkedHashMap<K, V> : HashMap<K, V>, MutableMap<K, V> {
     /**
@@ -74,8 +74,8 @@ public actual open class LinkedHashMap<K, V> : HashMap<K, V>, MutableMap<K, V> {
 }
 
 /**
- * Constructs the specialized implementation of [LinkedHashMap] with [String] keys, which stores the keys as properties of
- * JS object without hashing them.
+ * Constructs the specialized implementation of [LinkedHashMap] with [String] keys,
+ * which stores the keys as properties of JS object without hashing them.
  */
 public fun <V> linkedStringMapOf(vararg pairs: Pair<String, V>): LinkedHashMap<String, V> {
     return LinkedHashMap<String, V>(InternalStringLinkedMap()).apply { putAll(pairs) }

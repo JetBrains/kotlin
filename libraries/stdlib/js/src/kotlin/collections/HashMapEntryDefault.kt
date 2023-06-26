@@ -5,6 +5,11 @@
 
 package kotlin.collections
 
+/**
+ * This is a default implementations of [AbstractMutableMap.keys] container.
+ * It is implemented over [AbstractMutableMap] and can be used directly from [AbstractMutableMap].
+ * [HashMapKeysDefault] is less efficient than the implementation [HashMapKeys] from HashMapEntry.kt.
+ */
 internal class HashMapKeysDefault<K, V>(private val backingMap: AbstractMutableMap<K, V>) : AbstractMutableSet<K>() {
     override fun add(element: K): Boolean = throw UnsupportedOperationException("Add is not supported on keys")
     override fun clear() = backingMap.clear()
@@ -33,6 +38,11 @@ internal class HashMapKeysDefault<K, V>(private val backingMap: AbstractMutableM
     override fun checkIsMutable(): Unit = backingMap.checkIsMutable()
 }
 
+/**
+ * This is a default implementations of [AbstractMutableMap.values] container.
+ * They are implemented over [AbstractMutableMap] and can be used directly from [AbstractMutableMap].
+ * [HashMapValuesDefault] is efficient than the implementations [HashMapValues] from HashMapEntry.kt.
+ */
 internal class HashMapValuesDefault<K, V>(private val backingMap: AbstractMutableMap<K, V>) : AbstractMutableCollection<V>() {
     override fun add(element: V): Boolean = throw UnsupportedOperationException("Add is not supported on values")
     override fun clear() = backingMap.clear()

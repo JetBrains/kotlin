@@ -5,6 +5,11 @@
 
 package kotlin.collections
 
+/**
+ * This is an open addressing hash map implementation.
+ *
+ * Copied from libraries/stdlib/native-wasm/src/kotlin/collections/HashMap.kt
+ */
 internal class InternalHashMap<K, V> private constructor(
     // keys in insert order
     private var keysArray: Array<K>,

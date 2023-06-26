@@ -10,9 +10,9 @@
 package kotlin.collections
 
 /**
- * The implementation of the [MutableSet] interface, backed by a [LinkedHashMap] instance.
+ * The implementation of the [MutableSet] interface, backed by a [InternalMap] implementation.
  *
- * The insertion order is preserved natively by the HashSet implementation.
+ * The insertion order is preserved by the corresponding [InternalMap] implementation.
  */
 public actual open class LinkedHashSet<E> : HashSet<E>, MutableSet<E> {
     /**

@@ -31,11 +31,34 @@ private inline fun <E> JsRawArray<E>.replaceElementAtWithLast(index: Int) {
 }
 
 /**
- * A simple wrapper around JavaScript Map for key type is string.
+ * A simple wrapper around JavaScript Object for key type is string.
  *
  * Though this map is instantiated only with K=String, the K type is not fixed to String statically,
  * because we want to have it erased to Any? in order not to generate type-safe override bridges for
  * [get], [contains], [remove] etc, if they ever are generated.
+ *
+ * The string map has the following structure:
+ * A JavaScript Object keeps a mapping from a string key to an integer index:
+ *      { <key 0>: 0, <key 1>: 1, ..., <key n>: n }
+ *
+ * Two separate JavaScript Arrays store key-value pairs corresponding to their indexes:
+ *      [<key 0>, <key 1>, ..., <key n>]
+ *      [<val 0>, <val 1>, ..., <val n>]
+ *
+ * When adding a new key-value pair, we append them to the end of the Arrays:
+ *      [<key 0>, <key 1>, ..., <key n>, <key n+1>]
+ *      [<val 0>, <val 1>, ..., <val n>, <val n+1>]
+ * and then set the new key with the last index in the Object:
+ *      { <key 0>: 0, <key 1>: 1, ..., <key n>: n, <key n+1>: n + 1 }
+ *
+ * When removing a pair, we retrieve the index from the Object:
+ *      { <key 0>: 0, [[[<key 1>: 1]]], ..., <key n>: n, <key n+1>: n + 1 }
+ *                    ^remove <key 1>^
+ * and replace the removing pair with the last pair:
+ *      [<key 0>, <key n+1>, ..., <key n>]
+ *      [<val 0>, <val n+1>, ..., <val n>]
+ * After that, we update the moved key's index in the Object:
+ *      { <key 0>: 0, <key n+1>: 1, ..., <key n>: n }
  */
 internal open class InternalStringMap<K, V> : InternalMap<K, V> {
     private fun createJsMap(): dynamic {
