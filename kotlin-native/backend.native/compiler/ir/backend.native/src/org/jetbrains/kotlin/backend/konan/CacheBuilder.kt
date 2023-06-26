@@ -270,6 +270,7 @@ class CacheBuilder(
                 if (generateTestRunner != TestRunnerKind.NONE && libraryPath in includedLibraries) {
                     put(KonanConfigKeys.GENERATE_TEST_RUNNER, generateTestRunner)
                     put(KonanConfigKeys.INCLUDED_LIBRARIES, listOf(libraryPath))
+                    put(KonanConfigKeys.TEST_DUMP_OUTPUT_PATH, configuration.get(KonanConfigKeys.TEST_DUMP_OUTPUT_PATH)!!)
                 }
                 put(KonanConfigKeys.CACHED_LIBRARIES, cachedLibraries)
                 put(KonanConfigKeys.CACHE_DIRECTORIES, listOf(libraryCacheDirectory.absolutePath))
