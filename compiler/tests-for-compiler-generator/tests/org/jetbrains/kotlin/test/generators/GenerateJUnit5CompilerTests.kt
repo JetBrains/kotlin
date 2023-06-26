@@ -317,10 +317,6 @@ fun generateJUnit5CompilerTests(args: Array<String>) {
                 model("debug/localVariables")
             }
 
-            testClass<AbstractFirPsiDiagnosticsTestWithJvmIrBackend> {
-                model("diagnostics/firTestWithJvmBackend")
-            }
-
             testClass<AbstractFirPsiDiagnosticsTestWithJvmIrBackend>(suiteTestClassName = "FirPsiOldDiagnosticsTestWithJvmIrBackendGenerated") {
                 model("diagnostics/testsWithJvmBackend", excludedPattern = excludedCustomTestdataPattern)
             }

@@ -25,6 +25,12 @@ public class FirPsiOldDiagnosticsTestWithJvmIrBackendGenerated extends AbstractF
     }
 
     @Test
+    @TestMetadata("exceptionFromInterpreter.kt")
+    public void testExceptionFromInterpreter() throws Exception {
+        runTest("compiler/testData/diagnostics/testsWithJvmBackend/exceptionFromInterpreter.kt");
+    }
+
+    @Test
     @TestMetadata("indirectInlineCycle.kt")
     public void testIndirectInlineCycle() throws Exception {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/indirectInlineCycle.kt");
