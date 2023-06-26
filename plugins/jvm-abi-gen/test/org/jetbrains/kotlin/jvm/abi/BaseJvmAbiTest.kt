@@ -76,10 +76,9 @@ abstract class BaseJvmAbiTest : TestCase() {
             freeArgs = listOf(compilation.srcDir.canonicalPath)
             classpath = (abiDependencies + kotlinJvmStdlib).joinToString(File.pathSeparator) { it.canonicalPath }
             pluginClasspaths = arrayOf(abiPluginJar.canonicalPath)
-            pluginOptions = listOfNotNull(
+            pluginOptions = arrayOf(
                 abiOption(JvmAbiCommandLineProcessor.OUTPUT_PATH_OPTION.optionName, compilation.abiDir.canonicalPath),
-                if (useLegacyAbiGen) abiOption("useLegacyAbiGen", "true") else null
-            ).toTypedArray()
+            )
             destination = compilation.destinationDir.canonicalPath
             noSourceDebugExtension = InTextDirectivesUtils.findStringWithPrefixes(directives, "// NO_SOURCE_DEBUG_EXTENSION") != null
 
@@ -118,9 +117,6 @@ abstract class BaseJvmAbiTest : TestCase() {
             FileUtil.copyDir(compilation.javaDestinationDir, compilation.abiDir)
         }
     }
-
-    protected open val useLegacyAbiGen: Boolean
-        get() = false
 
     protected val kotlinJvmStdlib = File("dist/kotlinc/lib/kotlin-stdlib.jar").also {
         check(it.exists()) { "Stdlib file '$it' does not exist" }
