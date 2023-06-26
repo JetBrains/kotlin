@@ -15,6 +15,7 @@ import com.intellij.mock.MockApplication
 import com.intellij.mock.MockProject
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.extensions.PluginDescriptor
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.PackageIndex
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
@@ -27,8 +28,8 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.ProjectScope
 import com.intellij.util.io.URLUtil.JAR_PROTOCOL
 import com.intellij.util.io.URLUtil.JAR_SEPARATOR
-import org.jetbrains.kotlin.analysis.api.impl.base.references.HLApiReferenceProviderService
 import org.jetbrains.kotlin.analysis.api.impl.base.java.source.JavaElementSourceWithSmartPointerFactory
+import org.jetbrains.kotlin.analysis.api.impl.base.references.HLApiReferenceProviderService
 import org.jetbrains.kotlin.analysis.api.resolve.extensions.KtResolveExtensionProvider
 import org.jetbrains.kotlin.analysis.decompiler.stub.file.ClsKotlinBinaryClassCache
 import org.jetbrains.kotlin.analysis.decompiler.stub.file.DummyFileAttributeService
@@ -57,6 +58,7 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.popLast
 import org.picocontainer.PicoContainer
 import java.nio.file.Path
+import java.nio.file.Paths
 
 object StandaloneProjectFactory {
     fun createProjectEnvironment(
@@ -251,6 +253,18 @@ object StandaloneProjectFactory {
         project.registerService(VirtualFileFinderFactory::class.java, finderFactory)
     }
 
+    fun getDefaultJdkModulePaths(
+        project: Project,
+        jdkHome: Path?,
+    ): List<Path> {
+        val javaFileManager = project.getService(JavaFileManager::class.java) as KotlinCliJavaFileManagerImpl
+        val javaModuleFinder = CliJavaModuleFinder(jdkHome?.toFile(), null, javaFileManager, project, null)
+        val javaModuleGraph = JavaModuleGraph(javaModuleFinder)
+
+        val javaRoots = getDefaultJdkModuleRoots(javaModuleFinder, javaModuleGraph)
+        return javaRoots.map { getBinaryPath(it.file) }
+    }
+
     /**
      * Computes the [JavaRoot]s of the JDK's default modules.
      *
@@ -364,11 +378,34 @@ object StandaloneProjectFactory {
             // e.g., "/path/to/jdk/home!/modules/java.base". (JDK home path + JAR separator + actual file path)
             // To work with that JRT handler, a hacky workaround here is to add "modules" before the module name so that it can
             // find the actual file path.
-            // See [LLFirJavaFacadeForBinaries#getBinaryPath] for a similar hack.
+            // See [LLFirJavaFacadeForBinaries#getBinaryPath] and [StandaloneProjectFactory#getBinaryPath] for a similar hack.
             val (libHomePath, pathInImage) = CoreJrtFileSystem.splitPath(pathString)
             libHomePath + JAR_SEPARATOR + "modules/$pathInImage"
         } else
             pathString
+    }
+
+    // From [LLFirJavaFacadeForBinaries#getBinaryPath]
+    private fun getBinaryPath(virtualFile: VirtualFile): Path {
+        val path = virtualFile.path
+        return when {
+            ".$JAR_PROTOCOL$JAR_SEPARATOR" in path ->
+                Paths.get(path.substringBefore(JAR_SEPARATOR))
+            JAR_SEPARATOR in path && "modules/" in path -> {
+                // CoreJrtFileSystem.CoreJrtHandler#findFile, which uses Path#resolve, finds a virtual file path to the file itself,
+                // e.g., "/path/to/jdk/home!/modules/java.base/java/lang/Object.class". (JDK home path + JAR separator + actual file path)
+                // URLs loaded from JDK, though, point to module names in a JRT protocol format,
+                // e.g., "jrt:///path/to/jdk/home!/java.base" (JRT protocol prefix + JDK home path + JAR separator + module name)
+                // After splitting at the JAR separator, it is regarded as a root directory "/java.base".
+                // To work with LibraryPathFilter, a hacky workaround here is to remove "modules/" from actual file path.
+                // e.g. "/path/to/jdk/home!/java.base/java/lang/Object.class", which, from Path viewpoint, belongs to "/java.base",
+                // after splitting at the JAR separator, in a similar way.
+                // See [StandaloneProjectFactory#getAllBinaryRoots] for a similar hack.
+                Paths.get(path.replace("modules/", ""))
+            }
+            else ->
+                Paths.get(path)
+        }
     }
 
     fun createPackagePartsProvider(

@@ -173,7 +173,7 @@ object TestModuleStructureFactory {
         )
     }
 
-    private fun getScopeForLibraryByRoots(roots: Collection<Path>, project: Project, testServices: TestServices): GlobalSearchScope {
+    fun getScopeForLibraryByRoots(roots: Collection<Path>, project: Project, testServices: TestServices): GlobalSearchScope {
         val virtualFileRoots = StandaloneProjectFactory.getVirtualFilesForLibraryRoots(
             roots,
             testServices.environmentManager.getProjectEnvironment()

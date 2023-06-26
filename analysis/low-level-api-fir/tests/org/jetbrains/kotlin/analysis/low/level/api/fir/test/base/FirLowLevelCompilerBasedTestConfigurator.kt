@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisAp
 import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiDecompiledCodeTestServiceRegistrar
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtModuleProjectStructure
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtModuleWithFiles
+import org.jetbrains.kotlin.analysis.project.structure.KtBinaryModule
 import org.jetbrains.kotlin.analysis.project.structure.KtLibraryModule
 import org.jetbrains.kotlin.analysis.project.structure.allDirectDependenciesOfType
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtSourceModuleByCompilerConfiguration
@@ -52,7 +53,7 @@ object FirLowLevelCompilerBasedTestConfigurator : AnalysisApiTestConfigurator() 
         }
         return KtModuleProjectStructure(
             mainModules = mainModules,
-            binaryModules = mainModules.asSequence().flatMap { it.ktModule.allDirectDependenciesOfType<KtLibraryModule>() }.asIterable(),
+            binaryModules = mainModules.asSequence().flatMap { it.ktModule.allDirectDependenciesOfType<KtBinaryModule>() }.asIterable(),
         )
     }
 
