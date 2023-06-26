@@ -16,6 +16,7 @@ import com.intellij.psi.impl.file.PsiPackageImpl
 import com.intellij.psi.impl.java.stubs.*
 import com.intellij.psi.impl.java.stubs.impl.*
 import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.psi.stubs.StubBase
 import com.intellij.psi.stubs.StubElement
 import com.intellij.util.ArrayUtil
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
@@ -29,10 +30,7 @@ import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
-import org.jetbrains.kotlin.fir.declarations.utils.classId
-import org.jetbrains.kotlin.fir.declarations.utils.isInner
-import org.jetbrains.kotlin.fir.declarations.utils.modality
-import org.jetbrains.kotlin.fir.declarations.utils.visibility
+import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
@@ -48,6 +46,7 @@ import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 import org.jetbrains.kotlin.resolve.jvm.KotlinFinderMarker
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 val FirSession.javaElementFinder: FirJavaElementFinder? by FirSession.nullableSessionComponentAccessor<FirJavaElementFinder>()
@@ -123,7 +122,7 @@ class FirJavaElementFinder(
         )
 
         firFile.declarations.filterIsInstance<FirProperty>().forEach {
-            buildFieldStub(it, stub)
+            buildFieldStubForConst(it, stub)
         }
 
         PsiModifierListStubImpl(stub, ModifierFlags.PUBLIC_MASK or ModifierFlags.FINAL_MASK)
@@ -150,7 +149,7 @@ class FirJavaElementFinder(
         // Note: we must store companion properties in outer clas because java resolver will not find it other way.
         val companionProperties = firClass.companionObjectSymbol?.declarationSymbols?.map { it.fir }?.filterIsInstance<FirProperty>() ?: emptyList()
         (classProperties + companionProperties).forEach {
-            buildFieldStub(it, stub)
+            buildFieldStubForConst(it, stub)
         }
 
         PsiModifierListStubImpl(stub, firClass.packFlags())
@@ -174,16 +173,30 @@ class FirJavaElementFinder(
         return stub
     }
 
-    private fun buildFieldStub(firProperty: FirProperty, classStub: PsiClassStubImpl<ClsClassImpl>) {
-        // TODO correct type info
-        val propertyValue = propertyEvaluator?.invoke(firProperty)
-        val psiField = PsiFieldStubImpl(
-            classStub, firProperty.name.identifier, TypeInfo.fromString("int"), propertyValue,
-            PsiFieldStubImpl.packFlags(false, false, false, false)
-        )
+    private fun buildFieldStubForConst(firProperty: FirProperty, classStub: PsiClassStubImpl<ClsClassImpl>) {
+        if (!firProperty.isConst) return
+
+        val psiField = object : StubBase<PsiField>(classStub, JavaStubElementTypes.FIELD), PsiFieldStub {
+            private val lazyInitializerText by lazy { propertyEvaluator?.invoke(firProperty) }
+
+            override fun getName(): String = firProperty.name.identifier
+
+            override fun getInitializerText(): String? = lazyInitializerText
+
+            override fun getType(): TypeInfo {
+                val coneClassLikeType = firProperty.returnTypeRef.coneTypeUnsafe<ConeClassLikeType>()
+                val classId = coneClassLikeType.lookupTag.classId
+                val typeInfo = classId.relativeClassName.asString().toLowerCaseAsciiOnly()
+                return TypeInfo.fromString(typeInfo)
+            }
+
+            override fun isDeprecated(): Boolean = false
+
+            override fun isEnumConstant(): Boolean = false
+        }
+
         PsiModifierListStubImpl(psiField, ModifierFlags.PUBLIC_MASK + ModifierFlags.FINAL_MASK + ModifierFlags.STATIC_MASK)
     }
-
 }
 
 private fun FirRegularClass.resolveSupertypesOnAir(session: FirSession): List<FirTypeRef> {
