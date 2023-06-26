@@ -7,6 +7,8 @@ package test.collections
 
 import kotlin.test.*
 import test.*
+import test.collections.js.linkedStringMapOf
+import test.collections.js.stringMapOf
 import kotlin.math.pow
 
 class MapTest {
@@ -438,6 +440,9 @@ class MapTest {
             doTest("MapBuilder", this, "z", 25)
         }
         doTest("built Map", builtMap, "y", 24)
+
+        doTest("stringMapOf", mapLetterToIndex.toMap(stringMapOf()), "x", 23)
+        doTest("linkedStringMapOf", mapLetterToIndex.toMap(linkedStringMapOf()), "w", 22)
     }
 
     @Test
@@ -468,6 +473,9 @@ class MapTest {
             putAll(mapLetterToIndex)
             doTest("MapBuilder", this, "z", 25)
         }
+
+        doTest("stringMapOf", mapLetterToIndex.toMap(stringMapOf()), "x", 23)
+        doTest("linkedStringMapOf", mapLetterToIndex.toMap(linkedStringMapOf()), "w", 22)
     }
 
     @Test

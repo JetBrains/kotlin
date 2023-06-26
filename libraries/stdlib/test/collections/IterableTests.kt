@@ -6,6 +6,7 @@
 package test.collections
 
 import test.*
+import test.collections.js.linkedStringSetOf
 import kotlin.test.*
 
 fun <T> iterableOf(vararg items: T): Iterable<T> = Iterable { items.iterator() }
@@ -14,6 +15,7 @@ fun <T> Iterable<T>.toIterable(): Iterable<T> = Iterable { this.iterator() }
 class IterableTest : OrderedIterableTests<Iterable<String>>({ iterableOf(*it) }, iterableOf<String>())
 class SetTest : IterableTests<Set<String>>({ setOf(*it) }, setOf())
 class LinkedSetTest : OrderedIterableTests<LinkedHashSet<String>>({ linkedSetOf(*it) }, linkedSetOf())
+class LinkedStringSetTest : OrderedIterableTests<LinkedHashSet<String>>({ linkedStringSetOf(*it) }, linkedStringSetOf())
 class ListTest : OrderedIterableTests<List<String>>({ listOf(*it) }, listOf<String>())
 class ArrayListTest : OrderedIterableTests<ArrayList<String>>({ arrayListOf(*it) }, arrayListOf<String>())
 

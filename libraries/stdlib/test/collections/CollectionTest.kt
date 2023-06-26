@@ -8,6 +8,10 @@ package test.collections
 import test.*
 import kotlin.test.*
 import test.collections.behaviors.*
+import test.collections.js.linkedStringMapOf
+import test.collections.js.linkedStringSetOf
+import test.collections.js.stringMapOf
+import test.collections.js.stringSetOf
 import test.comparisons.STRING_CASE_INSENSITIVE_ORDER
 import kotlin.math.pow
 import kotlin.random.Random
@@ -1209,12 +1213,16 @@ class CollectionTest {
         compare(linkedSetOf<Int>(), setOf<Int>()) { setBehavior() }
         compare(hashSetOf<Double>(), emptySet<Double>()) { setBehavior() }
         compare(listOf("value").toMutableSet(), setOf("value")) { setBehavior() }
+        compare(stringSetOf("value"), setOf("value")) { setBehavior() }
+        compare(linkedStringSetOf("value"), setOf("value")) { setBehavior() }
     }
 
     @Test fun specialMaps() {
         compare(hashMapOf<String, Int>(), mapOf<String, Int>()) { mapBehavior() }
         compare(linkedMapOf<Int, String>(), emptyMap<Int, String>()) { mapBehavior() }
         compare(linkedMapOf(2 to 3), mapOf(2 to 3)) { mapBehavior() }
+        compare(stringMapOf("2" to 3), mapOf("2" to 3)) { mapBehavior() }
+        compare(linkedStringMapOf("2" to 3), mapOf("2" to 3)) { mapBehavior() }
     }
 
     @Test fun toStringTest() {

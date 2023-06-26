@@ -74,7 +74,7 @@ class PrimitiveMapJsTest : MapJsTest() {
     }
 }
 
-class LinkedHashMapJsTest : MapJsTest() {
+class LinkedHashMapJsTest : LinkedMapJsTest() {
     @Test override fun constructors() {
         LinkedHashMap<String, Int>()
         LinkedHashMap<String, Int>(3)
@@ -91,7 +91,7 @@ class LinkedHashMapJsTest : MapJsTest() {
     override fun emptyMutableMapWithNullableKeyValue(): MutableMap<String?, Int?> = LinkedHashMap()
 }
 
-class LinkedPrimitiveMapJsTest : MapJsTest() {
+class LinkedPrimitiveMapJsTest : LinkedMapJsTest() {
     @Test override fun constructors() {
         val map = createTestMap()
 
@@ -461,120 +461,6 @@ abstract class MapJsTest {
 
     @Test abstract fun constructors()
 
-    /*
-    test fun createLinkedMap() {
-        val map = linkedMapOf("c" to 3, "b" to 2, "a" to 1)
-        assertEquals(1, map.get("a"))
-        assertEquals(2, map.get("b"))
-        assertEquals(3, map.get("c"))
-        assertEquals(arrayList("c", "b", "a"), map.keySet().toList())
-    }
-
-    test fun iterate() {
-        val map = TreeMap<String, String>()
-        map["beverage"] = "beer"
-        map["location"] = "Mells"
-        map["name"] = "James"
-
-        val list = arrayList<String>()
-        for (e in map) {
-            println("key = ${e.getKey()}, value = ${e.getValue()}")
-            list.add(e.getKey())
-            list.add(e.getValue())
-        }
-
-        assertEquals(6, list.size())
-        assertEquals("beverage,beer,location,Mells,name,James", list.joinToString(","))
-    }
-
-    test fun iterateWithProperties() {
-        val map = TreeMap<String, String>()
-        map["beverage"] = "beer"
-        map["location"] = "Mells"
-        map["name"] = "James"
-
-        val list = arrayList<String>()
-        for (e in map) {
-            println("key = ${e.key}, value = ${e.value}")
-            list.add(e.key)
-            list.add(e.value)
-        }
-
-        assertEquals(6, list.size())
-        assertEquals("beverage,beer,location,Mells,name,James", list.joinToString(","))
-    }
-
-    test fun map() {
-        val m1 = TreeMap<String, String>()
-        m1["beverage"] = "beer"
-        m1["location"] = "Mells"
-
-        val list = m1.map{ it.value + " rocks" }
-
-        println("Got new list $list")
-        assertEquals(arrayList("beer rocks", "Mells rocks"), list)
-    }
-
-    test fun mapValues() {
-        val m1 = TreeMap<String, String>()
-        m1["beverage"] = "beer"
-        m1["location"] = "Mells"
-
-        val m2 = m1.mapValues{ it.value + "2" }
-
-        println("Got new map $m2")
-        assertEquals(arrayList("beer2", "Mells2"), m2.values().toList())
-    }
-
-    test fun createSortedMap() {
-        val map = sortedMapOf("c" to 3, "b" to 2, "a" to 1)
-        assertEquals(1, map.get("a"))
-        assertEquals(2, map.get("b"))
-        assertEquals(3, map.get("c"))
-        assertEquals(arrayList("a", "b", "c"), map.keySet()!!.toList())
-    }
-
-    test fun toSortedMap() {
-        val map = hashMapOf<String,Int>("c" to 3, "b" to 2, "a" to 1)
-        val sorted = map.toSortedMap<String,Int>()
-        assertEquals(1, sorted.get("a"))
-        assertEquals(2, sorted.get("b"))
-        assertEquals(3, sorted.get("c"))
-        assertEquals(arrayList("a", "b", "c"), sorted.keySet()!!.toList())
-    }
-
-    test fun toSortedMapWithComparator() {
-        val map = hashMapOf("c" to 3, "bc" to 2, "bd" to 4, "abc" to 1)
-        val c = comparator<String>{ a, b ->
-            val answer = a.length() - b.length()
-            if (answer == 0) a.compareTo(b) else answer
-        }
-        val sorted = map.toSortedMap(c)
-        assertEquals(arrayList("c", "bc", "bd", "abc"), sorted.keySet()!!.toList())
-        assertEquals(1, sorted.get("abc"))
-        assertEquals(2, sorted.get("bc"))
-        assertEquals(3, sorted.get("c"))
-    }
-
-    test fun compilerBug() {
-        val map = TreeMap<String, String>()
-        map["beverage"] = "beer"
-        map["location"] = "Mells"
-        map["name"] = "James"
-
-        var list = arrayList<String>()
-        for (e in map) {
-            println("key = ${e.getKey()}, value = ${e.getValue()}")
-            list += e.getKey()
-            list += e.getValue()
-        }
-
-        assertEquals(6, list.size())
-        assertEquals("beverage,beer,location,Mells,name,James", list.joinToString(","))
-        println("==== worked! $list")
-    }
-    */
-
     private object ConstMap : Map<String, Int> {
         override val entries: Set<Map.Entry<String, Int>>
             get() = setOf(object : Map.Entry<String, Int> {
@@ -611,4 +497,145 @@ abstract class MapJsTest {
     }
 
     fun <K, V> genericHashMapOf(vararg values: Pair<K, V>) = hashMapOf(*values)
+}
+
+abstract class LinkedMapJsTest : MapJsTest() {
+    private fun <T> assertSameOrder(expected: Collection<T>, actual: Collection<T>, message: String) {
+        assertEquals(expected.size, actual.size, "$message; different elements count")
+        expected.zip(actual).forEachIndexed { index, (a, b) ->
+            assertEquals(a, b, "$message; wrong element at index $index")
+        }
+    }
+
+    private data class FakeEntry(override val key: String, override val value: Int) : Map.Entry<String, Int> {
+        override fun equals(other: Any?): Boolean {
+            return other is Map.Entry<*, *> && other.key == key && other.value == value
+        }
+
+        override fun hashCode(): Int {
+            return 31 * key.hashCode() + value
+        }
+    }
+
+    @Test
+    fun insertionOrder() {
+        val map = createTestMap()
+        assertSameOrder(KEYS, map.keys, "keys order")
+        assertSameOrder(VALUES, map.values, "values order")
+        assertSameOrder(KEYS.zip(VALUES, ::FakeEntry), map.entries, "entries order")
+    }
+
+    @Test
+    fun insertionOrderAfterRemovingFirstElement() {
+        val map = createTestMutableMap()
+
+        for (i in KEYS.indices) {
+            assertEquals(map.remove(KEYS[i]), VALUES[i], "remove $i element")
+
+            assertSameOrder(KEYS.drop(i + 1), map.keys, "keys order after removing $i")
+            assertSameOrder(VALUES.drop(i + 1), map.values, "values order after removing $i")
+            assertSameOrder(KEYS.zip(VALUES, ::FakeEntry).drop(i + 1), map.entries, "values order after removing $i")
+        }
+    }
+
+    @Test
+    fun insertionOrderAfterRemovingLastElement() {
+        val map = createTestMutableMap()
+
+        for (i in KEYS.indices.reversed()) {
+            assertEquals(map.remove(KEYS[i]), VALUES[i], "remove $i element")
+
+            assertSameOrder(KEYS.dropLast(KEYS.size - i), map.keys, "keys order after removing $i")
+            assertSameOrder(VALUES.dropLast(VALUES.size - i), map.values, "values order after removing $i")
+            assertSameOrder(KEYS.zip(VALUES, ::FakeEntry).dropLast(KEYS.size - i), map.entries, "values order after removing $i")
+        }
+    }
+
+    @Test
+    fun insertionOrderAfterRemovingMidElement() {
+        val map = createTestMutableMap()
+
+        assertEquals(map.remove(KEYS[1]), VALUES[1], "remove element")
+
+        assertSameOrder(KEYS.filter { it != KEYS[1] }, map.keys, "keys order after removing")
+        assertSameOrder(VALUES.filter { it != VALUES[1] }, map.values, "values order after removing")
+        assertSameOrder(KEYS.zip(VALUES, ::FakeEntry).filter { it.key != KEYS[1] }, map.entries, "values order after removing")
+    }
+
+    @Test
+    fun insertionOrderAfterRemovingWithIterator() {
+        val map = createTestMutableMap()
+
+        var newKeys = KEYS
+        var newValues = VALUES
+        val iter = map.iterator()
+
+        val toRemove = listOf(true, true, false, true)
+        for ((i, remove) in toRemove.withIndex()) {
+            assertEquals<Map.Entry<*, *>>(FakeEntry(KEYS[i], VALUES[i]), iter.next(), "element ${KEYS[i]}")
+            if (remove) {
+                iter.remove()
+                newKeys = newKeys.filter { it != KEYS[i] }
+                newValues = newValues.filter { it != VALUES[i] }
+            }
+
+            assertSameOrder(newKeys, map.keys, "keys order after removing")
+            assertSameOrder(newValues, map.values, "values order after removing")
+            assertSameOrder(newKeys.zip(newValues, ::FakeEntry), map.entries, "values order after removing")
+        }
+    }
+
+    @Test
+    fun insertionOrderAfterInserting() {
+        val map = createTestMutableMap()
+
+        map[KEYS[0]] = VALUES[0]
+        map[KEYS[2]] = VALUES[2]
+
+        assertSameOrder(KEYS, map.keys, "keys order")
+        assertSameOrder(VALUES, map.values, "values order")
+        assertSameOrder(KEYS.zip(VALUES, ::FakeEntry), map.entries, "entries order")
+
+        map["extra key 1"] = 101
+        map["extra key 2"] = 102
+
+        val newKeys = KEYS + listOf("extra key 1", "extra key 2")
+        val newValues = VALUES + listOf(101, 102)
+
+        assertSameOrder(newKeys, map.keys, "keys order")
+        assertSameOrder(newValues, map.values, "values order")
+        assertSameOrder(newKeys.zip(newValues, ::FakeEntry), map.entries, "entries order")
+    }
+
+    @Test
+    fun insertionOrderAfterInsertingRemoving() {
+        val map = emptyMutableMap()
+
+        var entries = (1 until 100).map { FakeEntry("key$it", it) }
+        val insertingRemoving = listOf(
+            -1, -99, 1, -10, 150, 99, -2, 10, -150, -49, 101, -99, -98, -97, -77, -1, 2,
+            +102, 103, 1, -4, 104, 4, -3, -5, -6, -7, 7, 3, -101, 150, -8, -9, -10, 8,
+            +200, 201, 202, 203, 204, 205, 206, -200, -201, -102, -11, -12, -13, -14, -15,
+            136, -7, 117, -43, -70, 106, -74, -91, 133, 5, 6, -85, -58, 145, -54, -34, 74, -93,
+            146, -38, -40, -16, 118, 114, -61, -81, -6, -88, -67, -39, -94, -28, -63, -86, 61,
+            -21, -82, -33, 28, -84, -37, 115, -30, 112, 14, -73, -79, 116, 16, 148, 33, 113, 86,
+            -68, -45, 100, -74, -56, 21, -96, 131, 9, -46, 137, -18, -87, 135, 97, -133, -32, 108,
+            -22, 58, 68, 63, 45, -35, 99, -68, -114, -89, 134, 35, -29, 144, -25, 7, 96, -33, 82,
+        )
+
+        entries.forEach { map[it.key] = it.value }
+        for (i in insertingRemoving) {
+            if (i < 0) {
+                entries = entries.filter { it.value != -i }
+                assertEquals(map.remove("key${-i}"), -i, "remove element ${-i}")
+            } else {
+                entries = entries + listOf(FakeEntry("key$i", i))
+                assertEquals(map.put("key$i", i), null, "insert element $i")
+            }
+
+            assertSameOrder(entries.map { it.key }, map.keys, "keys order after $i")
+            assertSameOrder(entries.map { it.value }, map.values, "values order after $i")
+            assertSameOrder(entries, map.entries, "values order after $i")
+        }
+    }
 }
