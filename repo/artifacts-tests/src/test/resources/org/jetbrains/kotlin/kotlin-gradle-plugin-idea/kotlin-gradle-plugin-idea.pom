@@ -47,14 +47,14 @@
       <groupId>org.jetbrains.kotlin</groupId>
       <artifactId>kotlin-gradle-plugin-idea-proto</artifactId>
       <version>ArtifactsTest.version</version>
-      <scope>compile</scope>
+      <scope>runtime</scope>
       <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>org.jetbrains.kotlin</groupId>
       <artifactId>kotlin-test-junit</artifactId>
       <version>ArtifactsTest.version</version>
-      <scope>compile</scope>
+      <scope>runtime</scope>
       <optional>true</optional>
     </dependency>
   </dependencies>
