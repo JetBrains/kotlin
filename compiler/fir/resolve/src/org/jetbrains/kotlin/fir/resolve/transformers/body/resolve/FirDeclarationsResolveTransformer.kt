@@ -434,8 +434,7 @@ open class FirDeclarationsResolveTransformer(
         return variable
     }
 
-    // TODO: This enum might actually be a boolean (resolve setter/don't resolve setter)
-    // But for some reason, in IDE there's a need to resolve setter's parameter types on the implicit-resolution stage
+    // In IDE there's a need to resolve setter's parameter types on the implicit-resolution stage
     // See ad183434137939a0c9eeea2f7df9ef522672a18e commit.
     // But for delegate inference case, we don't need both body of the setter and its parameter resolved (SKIP mode)
     private enum class SetterResolutionMode {
@@ -630,7 +629,6 @@ open class FirDeclarationsResolveTransformer(
         return context.withSimpleFunction(simpleFunction, session) {
             doTransformTypeParameters(simpleFunction)
 
-            // TODO: I think it worth creating something like runAllPhasesForLocalFunction
             if (containingDeclaration != null && containingDeclaration !is FirClass) {
                 // For class members everything should be already prepared
                 prepareSignatureForBodyResolve(simpleFunction)

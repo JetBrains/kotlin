@@ -210,10 +210,10 @@ private fun processConstructors(
             }
         }
 
-        //TODO: why don't we use declared member scope at this point?
-        scope?.processDeclaredConstructors {
-            if (includeInnerConstructors || !it.fir.isInner) {
-                processor(it)
+            scope?.processDeclaredConstructors {
+                if (includeInnerConstructors || !it.fir.isInner) {
+                    processor(it)
+
             }
         }
     }

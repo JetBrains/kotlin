@@ -125,8 +125,6 @@ class FirControlFlowGraphRenderVisitor(
         val controlFlowGraph = (controlFlowGraphReference as? FirControlFlowGraphReferenceImpl)?.controlFlowGraph ?: return
         if (controlFlowGraph.isSubGraph) return
 
-        // TODO: nodes are already in a topological order, but grouping nodes into clusters requires something more.
-        //  But what exactly? And is there a way to do `renderNodes` differently so that any topological order is ok?
         val nodes = DFS.topologicalOrder(listOf(controlFlowGraph.enterNode)) { it.followingNodes }
             .associateWithTo(linkedMapOf()) { nodeCounter++ }
         printer.renderNodes(nodes)

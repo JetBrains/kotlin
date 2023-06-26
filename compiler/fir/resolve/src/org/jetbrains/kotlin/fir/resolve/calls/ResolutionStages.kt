@@ -55,7 +55,6 @@ internal object CheckExplicitReceiverConsistency : ResolutionStage() {
     override suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext) {
         val receiverKind = candidate.explicitReceiverKind
         val explicitReceiver = callInfo.explicitReceiver
-        // TODO: add invoke cases
         when (receiverKind) {
             NO_EXPLICIT_RECEIVER -> {
                 if (explicitReceiver != null && explicitReceiver !is FirResolvedQualifier && !explicitReceiver.isSuperReferenceExpression()) {
@@ -71,7 +70,6 @@ internal object CheckExplicitReceiverConsistency : ResolutionStage() {
                 if (explicitReceiver == null) {
                     return sink.yieldDiagnostic(InapplicableWrongReceiver())
                 }
-                // Here we should also check additional invoke receiver
             }
         }
     }
@@ -268,7 +266,6 @@ object CheckDslScopeViolation : ResolutionStage() {
                     context,
                     { getDslMarkersOfImplicitReceiver(thisReference.boundSymbol, receiver.typeRef.coneType, context) }
                 ) {
-                    // TODO: is there better alternative?
                     // Here we rely on the fact that receiver expression of implicit receiver value can not be changed
                     //   during resolution of one single call
                     it.receiverExpression == receiver
@@ -550,7 +547,6 @@ internal object CheckVisibility : CheckerStage() {
         }
 
         if (declaration is FirConstructor) {
-            // TODO: Should be some other form
             val classSymbol = declaration.returnTypeRef.coneTypeUnsafe<ConeClassLikeType>().lookupTag.toSymbol(context.session)
 
             if (classSymbol is FirRegularClassSymbol) {
@@ -621,10 +617,8 @@ internal object CheckIncompatibleTypeVariableUpperBounds : ResolutionStage() {
 }
 
 internal object PostponedVariablesInitializerResolutionStage : ResolutionStage() {
-
     override suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext) {
         val argumentMapping = candidate.argumentMapping ?: return
-        // TODO: convert type argument mapping to map [FirTypeParameterSymbol, FirTypedProjection?]
         if (candidate.typeArgumentMapping is TypeArgumentMapping.Mapped) return
         for (parameter in argumentMapping.values) {
             if (!parameter.hasBuilderInferenceAnnotation(context.session)) continue

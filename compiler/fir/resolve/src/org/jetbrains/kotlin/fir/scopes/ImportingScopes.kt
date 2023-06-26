@@ -77,7 +77,6 @@ private fun doCreateImportingScopes(
             else ->
                 FirPackageMemberScope(file.packageFqName, session, excludedNames = excludedNamesInPackage)
         },
-        // TODO: explicit simple importing scope should have highest priority (higher than inner scopes added in process)
         FirExplicitSimpleImportingScope(file.imports, session, scopeSession)
     )
 }

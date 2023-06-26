@@ -163,8 +163,6 @@ private class FirApplySupertypesTransformer(
     private fun applyResolvedSupertypesToClass(firClass: FirClass) {
         if (firClass.superTypeRefs.any { it !is FirResolvedTypeRef || it is FirImplicitBuiltinTypeRef }) {
             val supertypeRefs = getResolvedSupertypeRefs(firClass)
-
-            // TODO: Replace with an immutable version or transformer
             firClass.replaceSuperTypeRefs(supertypeRefs)
         }
 
@@ -196,7 +194,6 @@ private class FirApplySupertypesTransformer(
             "Expected single supertypeRefs, but found ${supertypeRefs.size} in ${typeAlias.symbol.classId}"
         }
 
-        // TODO: Replace with an immutable version or transformer
         typeAlias.replaceExpandedTypeRef(supertypeRefs[0])
         return typeAlias
     }
@@ -521,7 +518,6 @@ open class FirSupertypeResolverVisitor(
         expandedTypeRef: FirTypeRef,
         resolveRecursively: Boolean,
     ): List<FirResolvedTypeRef> {
-        // TODO: this if is a temporary hack for built-in types (because we can't load file for them)
         if (expandedTypeRef is FirResolvedTypeRef) {
             return listOf(expandedTypeRef)
         }

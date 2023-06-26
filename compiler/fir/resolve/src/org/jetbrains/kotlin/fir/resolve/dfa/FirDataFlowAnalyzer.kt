@@ -449,8 +449,9 @@ abstract class FirDataFlowAnalyzer(
             return
         }
 
-        // TODO: should be `getOrCreateIfRealAndUnchanged(flow from LHS, flow, leftOperand)`, otherwise the statement will
-        //  be added even if the value has changed in the RHS. Currently the only previous node is the RHS.
+        // Ideally it should be `getOrCreateIfRealAndUnchanged(flow from LHS, flow, leftOperand)`, otherwise the statement will
+        //  be added even if the value has changed in the RHS. Currently, the only previous node is the RHS.
+        // But seems like everything works and with current implementation
         val leftOperandVariable = variableStorage.getOrCreateIfReal(flow, leftOperand)
         val rightOperandVariable = variableStorage.getOrCreateIfReal(flow, rightOperand)
         if (leftOperandVariable == null && rightOperandVariable == null) return
@@ -751,8 +752,6 @@ abstract class FirDataFlowAnalyzer(
             // Otherwise if the result is non-null, then `b` executed, which implies `a` is not null
             // and every statement from `b` holds.
             val expressionVariable = variableStorage.getOrCreate(flow, safeCall)
-            // TODO? if the callee has non-null return type, then safe-call == null => receiver == null
-            //   if (x?.toString() == null) { /* x == null */ }
             // TODO? all new implications in previous node's flow are valid here if receiver != null
             //  (that requires a second level of implications: receiver != null => condition => effect).
             flow.addAllConditionally(expressionVariable notEq null, node.lastPreviousNode.flow)
@@ -842,8 +841,6 @@ abstract class FirDataFlowAnalyzer(
         if (conditionalEffects.isEmpty()) return
 
         val arguments = qualifiedAccess.orderedArguments(callee) ?: return
-        // TODO: should be `getOrCreateIfRealAndUnchanged(last flow of argument i, flow, it)`
-        //                                                ^-- good luck finding that
         val argumentVariables = Array(arguments.size) { i -> arguments[i]?.let { variableStorage.getOrCreateIfReal(flow, it) } }
         if (argumentVariables.all { it == null }) return
 
@@ -899,7 +896,6 @@ abstract class FirDataFlowAnalyzer(
             if (property.isLocal || property.isVal) {
                 exitVariableInitialization(flow, assignment.rValue, property, assignment.lValue, hasExplicitType = false)
             } else {
-                // TODO: add unstable smartcast for non-local var
                 val variable = variableStorage.getRealVariableWithoutUnwrappingAlias(flow, assignment)
                 if (variable != null) {
                     logicSystem.recordNewAssignment(flow, variable, context.newAssignmentIndex())
@@ -946,7 +942,7 @@ abstract class FirDataFlowAnalyzer(
 
         if (isAssignment) {
             // `propertyVariable` can be an alias to `initializerVariable`, in which case this will add
-            // a redundant type statement which is fine...probably. TODO: store initial type within the variable?
+            // a redundant type statement which is fine...probably
             flow.addTypeStatement(flow.unwrapVariable(propertyVariable) typeEq initializer.typeRef.coneType)
         }
     }

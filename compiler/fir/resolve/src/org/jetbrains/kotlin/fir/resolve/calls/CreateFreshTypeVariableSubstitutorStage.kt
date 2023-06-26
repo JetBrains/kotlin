@@ -38,7 +38,7 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
 
         // bad function -- error on declaration side
         if (csBuilder.hasContradiction) {
-            sink.yieldDiagnostic(InapplicableCandidate) //TODO: auto report it
+            sink.yieldDiagnostic(InapplicableCandidate)
             return
         }
 

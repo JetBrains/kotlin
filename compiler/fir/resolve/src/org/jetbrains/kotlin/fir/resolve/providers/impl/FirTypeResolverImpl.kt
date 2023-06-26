@@ -412,7 +412,6 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
         userTypeRef: FirUserTypeRef,
         qualifierPartArgumentsCount: Int?
     ): ConeErrorType? {
-        // TODO: It should be TYPE_ARGUMENTS_NOT_ALLOWED diagnostics when parameterClass is null
         val actualTypeParametersCount = getActualTypeParametersCount(parameterClass ?: symbol.fir)
 
         if (qualifierPartArgumentsCount == null || actualTypeParametersCount != qualifierPartArgumentsCount) {

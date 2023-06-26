@@ -269,7 +269,7 @@ class ControlFlowGraphBuilder {
             // Postponed exit node was needed so we could create lambda->call edges without having the subgraph ready. If it
             // doesn't exist, then we probably can't do that anymore, and the lambda won't be called-in-place in the CFG.
             // TODO: verify & enable this assertion?
-            //assert(invocationKind?.canBeVisited() != true) { "no exit node for calledInPlace($invocationKind) lambda" }
+            // assert(invocationKind?.canBeVisited() != true) { "no exit node for calledInPlace($invocationKind) lambda" }
             return Triple(exitNode, null, graph)
         }
 
@@ -310,7 +310,6 @@ class ControlFlowGraphBuilder {
         } else {
             for ((exit, kind) in currentLevelExits) {
                 // Do not add data flow edges from non-terminating lambdas; there is no "dead data flow only"
-                // `EdgeKind`. TODO?
                 if (kind.usedInCfa || !exit.isDead) {
                     // Since `node` is a union node, it is dead iff any input is dead. For once, `propagateDeadness`
                     // semantics are correct without an `updateDeadStatus`.
@@ -397,7 +396,6 @@ class ControlFlowGraphBuilder {
         }
 
         val localClassEnterNode = when {
-            // TODO: enum classes cannot be local so this is mostly fine, but it looks hacky. Maybe handle FirEnumEntry?
             klass is FirAnonymousObject && klass.classKind != ClassKind.ENUM_ENTRY -> createAnonymousObjectEnterNode(klass)
             // Local classes are only initialized on first use, so they look pretty much like named functions:
             // control flow enters here and never leaves, and assignments invalidate smart casts.
@@ -511,14 +509,8 @@ class ControlFlowGraphBuilder {
             addEdge(enterNode, exitNode, preferredKind = EdgeKind.DeadForward, propagateDeadness = false)
         }
 
-        // TODO: Here we're assuming that the methods are called after the object is constructed, which is really not true
-        //   (init blocks can call them). But FE1.0 did so too, hence the following code compiles and prints 0:
-        //     val x: Int
-        //     object {
-        //         fun bar() = x
-        //         init { x = bar() }
-        //     }
-        //     println(x)
+        // Here we're assuming that the methods are called after the object is constructed, which is really not true
+        //   But it's fine, since Kotlin intentionally does not support analysis of "leaked this" bugs
         for (graph in calledLater) {
             addEdgeToSubGraph(exitNode, graph.enterNode)
         }
@@ -534,7 +526,6 @@ class ControlFlowGraphBuilder {
 
         return createAnonymousObjectExpressionExitNode(anonymousObjectExpression).also {
             val exitNode = klass.controlFlowGraphReference?.controlFlowGraph?.exitNode
-            // TODO: `lastNode` should be `AnonymousObjectEnterNode`, but delegate properties are somewhat broken.
             if (exitNode != null && lastNode is AnonymousObjectEnterNode) {
                 addEdge(exitNode, it)
                 // Fake edge to enforce ordering.
@@ -879,7 +870,6 @@ class ControlFlowGraphBuilder {
 
         // These edges should really be from `enterTryMainBlockNode`, but there is no practical difference
         // so w/e. In fact, `enterTryExpressionNode` is just 100% redundant.
-        // TODO: this is more or less `addExceptionEdgesFrom(enterTryExpressionNode)`. Hmm.
         for (catchEnterNode in catchNodes.top()) {
             addEdge(enterTryExpressionNode, catchEnterNode)
         }
@@ -904,8 +894,6 @@ class ControlFlowGraphBuilder {
         addEdge(node, nextNode, propagateDeadness = false)
         for (catchEnterNode in catchNodes.pop().asReversed()) {
             catchBlocksInProgress.push(catchEnterNode)
-            // TODO: figure out if this edge is correct.
-            //   try { x = /* something non-throwing like variable read */ } catch (...) { /* can assume assignment didn't happen? */ }
             addEdge(node, catchEnterNode, propagateDeadness = false)
         }
         return node
@@ -915,7 +903,6 @@ class ControlFlowGraphBuilder {
         val catchEnterNode = catchBlocksInProgress.pop()
         assert(catchEnterNode.fir == catch)
         if (tryExitNodes.top().fir.finallyBlock != null) {
-            // TODO: not sure this does anything?
             addEdge(catchEnterNode, finallyEnterNodes.top(), propagateDeadness = false, label = UncaughtExceptionPath)
         }
         lastNodes.push(catchEnterNode)
@@ -946,10 +933,6 @@ class ControlFlowGraphBuilder {
         val exitNode = createFinallyBlockExitNode(enterNode.fir)
         popAndAddEdge(exitNode)
         addEdge(exitNode, tryExitNode, isDead = enterNode.allNormalInputsAreDead)
-        // TODO: there should also be edges to outer catch blocks? Control flow can go like this:
-        //   try { try { throw E2() } catch (e: E1) { } finally { } } catch (e: E2) { }
-        //                        \-----------------------------^ \-----------------^
-        //  Wait, that's just `addExceptionEdgesFrom(exitNode)` again!
         val nextExitLevel = levelOfNextExceptionCatchingGraph()
         val nextFinally = finallyEnterNodes.topOrNull()?.takeIf { it.level > nextExitLevel }
         if (nextFinally != null) {
@@ -984,7 +967,12 @@ class ControlFlowGraphBuilder {
         for (node in nodes) {
             when {
                 // TODO: this check is imprecise and can add redundant edges:
-                //   x@{ try { return@x } finally {}; try {} finally { /* return@x target is in nonDirectJumps */ }
+                // x@{
+                //     try {
+                //         return@x
+                //     } finally {}
+                // }
+                // try {} finally { /* return@x target is in nonDirectJumps */ }
                 node.level < minLevel || node !in nonDirectJumps -> continue
                 // TODO: if the input to finally with that label is dead, then so should be the exit probably
                 node.returnPathIsBackwards -> addBackEdge(this, node, label = node)
@@ -1038,7 +1026,7 @@ class ControlFlowGraphBuilder {
 
     // this is a workaround to make function call dead when call is completed _after_ building its node in the graph
     // this happens when completing the last call in try/catch blocks
-    // todo this doesn't make fully 'right' Nothing node (doesn't support going to catch and pass through finally)
+    // TODO: this doesn't make fully 'right' Nothing node (doesn't support going to catch and pass through finally)
     //  because doing those afterwards is quite challenging
     //  it would be much easier if we could build calls after full completion only, at least for Nothing calls
     // @returns `true` if node actually returned Nothing
@@ -1164,7 +1152,6 @@ class ControlFlowGraphBuilder {
     fun enterFakeExpression(): FakeExpressionEnterNode {
         // Things like annotations and `contract { ... }` use normal call resolution, but aren't real expressions
         // and are never evaluated. We'll push all nodes created in the process into a stub graph, then throw it away.
-        // TODO: don't waste time creating the nodes in the first place
         return enterGraph(null, "<compile-time expression graph>", ControlFlowGraph.Kind.FakeCall) {
             createFakeExpressionEnterNode() to createFakeExpressionEnterNode()
         }
@@ -1188,7 +1175,6 @@ class ControlFlowGraphBuilder {
     // ----------------------------------- Block -----------------------------------
 
     fun enterInitBlock(initBlock: FirAnonymousInitializer): InitBlockEnterNode {
-        // TODO: questionable moment that we should pass data flow from init to init
         return enterGraph(initBlock, "init block", ControlFlowGraph.Kind.ClassInitializer) {
             createInitBlockEnterNode(it) to createInitBlockExitNode(it)
         }.also { addEdgeIfLocalClassMember(it) }

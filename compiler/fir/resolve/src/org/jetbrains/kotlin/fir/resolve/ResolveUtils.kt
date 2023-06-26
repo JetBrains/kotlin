@@ -228,7 +228,6 @@ fun BodyResolveComponents.typeForQualifier(resolvedQualifier: FirResolvedQualifi
             typeForQualifierByDeclaration(declaration, resultType, session)?.let { return it }
         }
     }
-    // TODO: Handle no value type here
     return session.builtinTypes.unitType
 }
 
@@ -349,7 +348,6 @@ private fun BodyResolveComponents.typeFromSymbol(symbol: FirBasedSymbol<*>): Fir
             returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.ImplicitTypeRef)
         }
         is FirClassifierSymbol<*> -> {
-            // TODO: unhack
             buildResolvedTypeRef {
                 source = null
                 type = symbol.constructType(emptyArray(), isNullable = false)

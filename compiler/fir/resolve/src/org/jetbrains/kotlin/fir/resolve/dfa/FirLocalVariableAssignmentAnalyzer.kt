@@ -137,7 +137,6 @@ internal class FirLocalVariableAssignmentAnalyzer {
         val (info, prohibitSmartCasts) = enterScope(klass.symbol, klass is FirAnonymousObject)
         if (klass is FirAnonymousObject && info != null) {
             // Assignments in initializers and methods invalidate smart casts in other members.
-            // TODO: initializers shouldn't invalidate smart casts in themselves.
             prohibitSmartCasts.addAll(info.assignedInside)
         }
     }

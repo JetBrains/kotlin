@@ -301,7 +301,6 @@ abstract class FirAbstractContractResolveTransformerDispatcher(
         }
 
         private fun <T : FirContractDescriptionOwner> transformOwnerOfErrorContract(owner: T): T {
-            // TODO
             dataFlowAnalyzer.exitContractDescription()
             return owner
         }

@@ -116,7 +116,7 @@ class FirSamResolver(
         val syntheticFunctionSymbol = classSymbol.createSyntheticConstructorSymbol()
 
         val newTypeParameters = firRegularClass.typeParameters.map { typeParameter ->
-            val declaredTypeParameter = typeParameter.symbol.fir // TODO: or really declared?
+            val declaredTypeParameter = typeParameter.symbol.fir
             FirTypeParameterBuilder().apply {
                 source = declaredTypeParameter.source
                 moduleData = session.moduleData
@@ -143,7 +143,7 @@ class FirSamResolver(
         )
 
         for ((newTypeParameter, oldTypeParameter) in newTypeParameters.zip(firRegularClass.typeParameters)) {
-            val declared = oldTypeParameter.symbol.fir // TODO: or really declared?
+            val declared = oldTypeParameter.symbol.fir
             newTypeParameter.bounds += declared.symbol.resolvedBounds.map { typeRef ->
                 buildResolvedTypeRef {
                     source = typeRef.source

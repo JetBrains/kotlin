@@ -110,10 +110,7 @@ fun Candidate.resolveArgumentExpression(
                 )
             else
                 preprocessCallableReference(argument, expectedType, context)
-        // TODO:!
         is FirAnonymousFunctionExpression -> preprocessLambdaArgument(csBuilder, argument, expectedType, context, sink)
-        // TODO:!
-        //TODO: Collection literal
         is FirWrappedArgumentExpression -> resolveArgumentExpression(
             csBuilder,
             argument.expression,
@@ -344,7 +341,6 @@ private fun checkApplicabilityForArgumentType(
 ) {
     if (expectedType == null) return
 
-    // todo run this approximation only once for call
     val argumentType = captureFromTypeParameterUpperBoundIfNeeded(argumentTypeBeforeCapturing, expectedType, context.session)
 
     fun subtypeError(actualExpectedType: ConeKotlinType): ResolutionDiagnostic {
@@ -422,7 +418,7 @@ private fun checkApplicabilityForArgumentType(
         val nullableExpectedType = expectedType.withNullability(ConeNullability.NULLABLE, context.session.typeContext)
 
         if (csBuilder.addSubtypeConstraintIfCompatible(argumentType, nullableExpectedType, position)) {
-            sink.reportDiagnostic(UnsafeCall(argumentType)) // TODO
+            sink.reportDiagnostic(UnsafeCall(argumentType))
         } else {
             csBuilder.addSubtypeConstraint(argumentType, expectedType, position)
             sink.reportDiagnostic(InapplicableWrongReceiver(expectedType, argumentType))
@@ -496,8 +492,6 @@ private fun Candidate.getExpectedTypeWithSAMConversion(
 ): ConeKotlinType? {
     if (candidateExpectedType.isSomeFunctionType(session)) return null
 
-    // TODO: resolvedCall.registerArgumentWithSamConversion(argument, SamConversionDescription(convertedTypeByOriginal, convertedTypeByCandidate!!))
-
     val expectedFunctionType = context.bodyResolveComponents.samResolver.getFunctionTypeForPossibleSamType(candidateExpectedType)
         ?: return null
     return runIf(argument.isFunctional(session, scopeSession, expectedFunctionType, context.returnTypeCalculator)) {
@@ -526,8 +520,6 @@ private fun getExpectedTypeWithImplicintIntegerCoercion(
                 it.rawStatus.isConst && it.isMarkedWithImplicitIntegerCoercion
             }?.resolvedReturnType
         }
-
-    // TODO: consider adding a check that argument could be converted to the parameter type (maybe difficult for platform types)
 
     return argumentType?.withNullability(candidateExpectedType.nullability, session.typeContext)
 }

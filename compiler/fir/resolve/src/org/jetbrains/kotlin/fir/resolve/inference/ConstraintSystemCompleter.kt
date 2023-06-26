@@ -233,7 +233,7 @@ class ConstraintSystemCompleter(components: BodyResolveComponents, private val c
             is ResolvedCallableReferenceAtom ->
                 argument.reviseExpectedType(revisedExpectedType)
             is LambdaWithTypeVariableAsExpectedTypeAtom ->
-                argument.transformToResolvedLambda(c.getBuilder(), resolutionContext, revisedExpectedType, null /*TODO()*/)
+                argument.transformToResolvedLambda(c.getBuilder(), resolutionContext, revisedExpectedType)
             else -> throw IllegalStateException("Unsupported postponed argument type of $argument")
         }
 
@@ -338,7 +338,6 @@ class ConstraintSystemCompleter(components: BodyResolveComponents, private val c
         fun ConeTypeVariable?.toTypeConstructor(): TypeConstructorMarker? =
             this?.typeConstructor?.takeIf { it in notFixedTypeVariables.keys }
 
-        // TODO: non-top-level variables?
         fun PostponedAtomWithRevisableExpectedType.collectNotFixedVariables() {
             revisedExpectedType?.lowerBoundIfFlexible()?.asArgumentList()?.let { typeArgumentList ->
                 for (typeArgument in typeArgumentList) {
@@ -402,7 +401,7 @@ class ConstraintSystemCompleter(components: BodyResolveComponents, private val c
             TypeVariableDirectionCalculator.ResolveDirection.UNKNOWN
         )
         val variable = variableWithConstraints.typeVariable
-        c.fixVariable(variable, resultType, ConeFixVariableConstraintPosition(variable)) // TODO: obtain atom for diagnostics
+        c.fixVariable(variable, resultType, ConeFixVariableConstraintPosition(variable))
     }
 
     companion object {

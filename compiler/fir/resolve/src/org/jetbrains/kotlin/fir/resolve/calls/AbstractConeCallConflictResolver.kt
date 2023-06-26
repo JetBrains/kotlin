@@ -134,7 +134,7 @@ abstract class AbstractConeCallConflictResolver(
             hasVarargs = false,
             numDefaults = 0,
             isExpect = (variable as? FirProperty)?.isExpect == true,
-            isSyntheticMember = false // TODO
+            isSyntheticMember = false
         )
     }
 
@@ -149,7 +149,7 @@ abstract class AbstractConeCallConflictResolver(
             hasVarargs = constructor.valueParameters.any { it.isVararg },
             numDefaults = call.numDefaults,
             isExpect = constructor.isExpect,
-            isSyntheticMember = false // TODO
+            isSyntheticMember = false
         )
     }
 
@@ -163,7 +163,7 @@ abstract class AbstractConeCallConflictResolver(
             hasVarargs = function.valueParameters.any { it.isVararg },
             numDefaults = call.numDefaults,
             isExpect = function.isExpect,
-            isSyntheticMember = false // TODO
+            isSyntheticMember = false
         )
     }
 
@@ -226,7 +226,7 @@ abstract class AbstractConeCallConflictResolver(
             (klass as? FirTypeParameterRefsOwner)?.typeParameters?.map { it.symbol.toLookupTag() }.orEmpty(),
             emptyList(),
             hasExtensionReceiver = false,
-            0, // TODO
+            0,
             hasVarargs = false,
             numDefaults = 0,
             isExpect = (klass as? FirRegularClass)?.isExpect == true,

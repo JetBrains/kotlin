@@ -92,7 +92,7 @@ abstract class FirInferenceSessionForChainedResolve(
             lowerSubstituted,
             upperSubstituted,
             this.constraintKind,
-            ConeBuilderInferenceSubstitutionConstraintPosition(this) // TODO
+            ConeBuilderInferenceSubstitutionConstraintPosition(this)
         )
     }
 

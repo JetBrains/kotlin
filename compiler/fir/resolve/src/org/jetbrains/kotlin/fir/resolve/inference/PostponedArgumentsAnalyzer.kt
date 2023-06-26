@@ -63,8 +63,6 @@ class PostponedArgumentsAnalyzer(
                 analyzeLambda(c, argument.transformToResolvedLambda(c.getBuilder(), resolutionContext), candidate, completionMode)
 
             is ResolvedCallableReferenceAtom -> processCallableReference(argument, candidate)
-
-//            is ResolvedCollectionLiteralAtom -> TODO("Not supported")
         }
     }
 
