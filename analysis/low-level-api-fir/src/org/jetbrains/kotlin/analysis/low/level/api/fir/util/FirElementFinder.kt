@@ -8,10 +8,8 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.util
 import org.jetbrains.kotlin.analysis.utils.errors.requireWithAttachmentBuilder
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.packageFqName
 import org.jetbrains.kotlin.fir.psi
-import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -138,43 +136,15 @@ internal object FirElementFinder {
         var result: E? = null
         container.accept(object : FirVisitorVoid() {
             override fun visitElement(element: FirElement) {
-                if (result != null) return
                 when {
-                    element !is E || element is FirFile -> {
-                        element.acceptChildren(this)
-                    }
-                    predicate(element) -> {
-                        result = element
-                    }
-                    canGoInside(element) -> {
-                        element.acceptChildren(this)
-                    }
-                }
-            }
-
-            @OptIn(ResolveStateAccess::class)
-            override fun visitRegularClass(regularClass: FirRegularClass) {
-                // Checking the rest super types that weren't resolved on the first OUTER_CLASS_ARGUMENTS_REQUIRED check in FirTypeResolver
-                val oldResolveState = regularClass.resolveState
-                val oldList = regularClass.superTypeRefs.toList()
-
-                try {
-                    super.visitRegularClass(regularClass)
-                } catch (e: ConcurrentModificationException) {
-                    val newResolveState = regularClass.resolveState
-                    val newList = regularClass.superTypeRefs.toList()
-
-                    throw IllegalStateException(
-                        """
-                        CME while traversing superTypeRefs of declaration=${regularClass.render()}:
-                        classId: ${regularClass.classId},
-                        oldState: $oldResolveState, oldList: ${oldList.joinToString(",", "[", "]") { it.render() }},
-                        newState: $newResolveState, newList: ${newList.joinToString(",", "[", "]") { it.render() }}
-                        """.trimIndent(), e
-                    )
+                    result != null -> return
+                    element !is E || element is FirFile -> element.acceptChildren(this)
+                    predicate(element) -> result = element
+                    canGoInside(element) -> element.acceptChildren(this)
                 }
             }
         })
+
         return result
     }
 }
