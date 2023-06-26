@@ -41,6 +41,8 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
+import org.jetbrains.kotlin.utils.addToStdlib.unreachableBranch
 
 private val SAM_PARAMETER_NAME = Name.identifier("function")
 
@@ -73,14 +75,13 @@ class FirSamResolver(
                 val upperType = getFunctionTypeForPossibleSamType(type.upperBound) ?: return null
                 ConeFlexibleType(lowerType.lowerBoundIfFlexible(), upperType.upperBoundIfFlexible())
             }
-            is ConeStubType -> null
-            // TODO: support those types as well
-            is ConeTypeParameterType, is ConeTypeVariableType,
+
+            is ConeStubType, is ConeTypeParameterType, is ConeTypeVariableType,
             is ConeCapturedType, is ConeDefinitelyNotNullType, is ConeIntersectionType,
             is ConeIntegerLiteralType,
             -> null
-            // TODO: Thing of getting rid of this branch since ConeLookupTagBasedType should be a sealed class
-            is ConeLookupTagBasedType -> null
+
+            is ConeLookupTagBasedType -> unreachableBranch(type)
         }
     }
 
@@ -282,7 +283,6 @@ private fun FirRegularClass.getSingleAbstractMethodOrNull(
     session: FirSession,
     scopeSession: ScopeSession,
 ): FirSimpleFunction? {
-    // TODO: restrict to Java interfaces
     if (classKind != ClassKind.INTERFACE || hasMoreThenOneAbstractFunctionOrHasAbstractProperty()) return null
 
     val samCandidateNames = computeSamCandidateNames(session)

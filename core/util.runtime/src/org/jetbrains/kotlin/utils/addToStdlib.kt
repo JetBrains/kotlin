@@ -334,3 +334,10 @@ private inline fun <T, R> Iterable<T>.zipWithDefault(other: Iterable<R>, leftDef
 fun <T, R> Iterable<T>.zipWithNulls(other: Iterable<R>): List<Pair<T?, R?>> {
     return zipWithDefault(other, { null }, { null })
 }
+
+/**
+ * Use this function to indicate that some when branch is semantically unreachable
+ */
+fun unreachableBranch(argument: Any?): Nothing {
+    error("This argument should've been processed by previous when branches but it wasn't: $argument")
+}
