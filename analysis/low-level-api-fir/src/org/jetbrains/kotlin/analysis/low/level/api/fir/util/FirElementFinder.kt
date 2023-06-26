@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 
-object FirElementFinder {
+internal object FirElementFinder {
     fun findClassifierWithClassId(
         firFile: FirFile,
         classId: ClassId,
