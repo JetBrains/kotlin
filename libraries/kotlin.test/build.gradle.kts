@@ -418,3 +418,18 @@ publishing {
 tasks.withType<GenerateModuleMetadata> {
     enabled = "common" !in (publication.get() as MavenPublication).artifactId
 }
+
+tasks.named("publishAnnotationsCommonPublicationToMavenLocal").configure {
+    dependsOn("signCommonPublication")
+}
+
+tasks.named("publishCommonPublicationToMavenLocal").configure {
+    dependsOn("signAnnotationsCommonPublication")
+}
+tasks.named("publishAnnotationsCommonPublicationToMavenRepository").configure {
+    dependsOn("signCommonPublication")
+}
+
+tasks.named("publishCommonPublicationToMavenRepository").configure {
+    dependsOn("signAnnotationsCommonPublication")
+}
