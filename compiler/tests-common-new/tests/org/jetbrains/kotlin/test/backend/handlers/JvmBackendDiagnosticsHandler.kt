@@ -84,7 +84,7 @@ class JvmBackendDiagnosticsHandler(testServices: TestServices) : JvmBinaryArtifa
     }
 
     private fun checkFullDiagnosticRender(module: TestModule) {
-        if (DiagnosticsDirectives.RENDER_DIAGNOSTICS_FULL_TEXT !in module.directives) return
+        if (DiagnosticsDirectives.RENDER_ALL_DIAGNOSTICS_FULL_TEXT !in module.directives) return
 
         val testFileToKtFileMap = getKtFiles(module)
 
