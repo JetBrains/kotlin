@@ -23,6 +23,7 @@ fun ConeClassLikeLookupTag.getNestedClassifierScope(session: FirSession, scopeSe
 /**
  * Use this function to collect direct overridden tree for debug purposes
  */
+@Suppress("unused")
 @TestOnly
 fun debugCollectOverrides(symbol: FirCallableSymbol<*>, session: FirSession, scopeSession: ScopeSession): Map<Any, Any> {
     val scope = symbol.dispatchReceiverType?.scope(
