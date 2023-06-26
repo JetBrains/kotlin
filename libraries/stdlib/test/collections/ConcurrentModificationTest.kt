@@ -139,8 +139,6 @@ class ConcurrentModificationTest {
         val operations = listOf<CollectionOperation<ArrayList<String>>>(
             CollectionOperation("trimToSize()") { trimToSize() },
             CollectionOperation("ensureCapacity(minCapacity > capacity)") { ensureCapacity(100) },
-            CollectionOperation("ensureCapacity(minCapacity < capacity)") { ensureCapacity(1) },
-            CollectionOperation("ensureCapacity(minCapacity == size)") { ensureCapacity(size) },
         )
 
         fun testThrowsCME(withArrayList: WithCollection<ArrayList<String>>) {

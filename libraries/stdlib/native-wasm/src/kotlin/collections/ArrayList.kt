@@ -167,8 +167,8 @@ actual class ArrayList<E> private constructor(
 
     final actual fun ensureCapacity(minCapacity: Int) {
         if (backingList != null) throw IllegalStateException() // just in case somebody casts subList to ArrayList
-        registerModification()
         if (minCapacity <= backingArray.size) return
+        registerModification()
         ensureCapacityInternal(minCapacity)
     }
 
