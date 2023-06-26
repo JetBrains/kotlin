@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.kapt.cli.test;
+package org.jetbrains.kotlin.kapt4;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("plugins/kapt4/testData/integration")
 @TestDataPath("$PROJECT_ROOT")
-public class KaptToolIntegrationTestGenerated extends AbstractKaptToolIntegrationTest {
+public class Kapt4ToolIntegrationTestGenerated extends AbstractKapt4ToolIntegrationTest {
     @Test
     public void testAllFilesPresentInIntegration() throws Exception {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/kapt4/testData/integration"), Pattern.compile("^([^\\.]+)$"), null, false);
@@ -28,12 +28,6 @@ public class KaptToolIntegrationTestGenerated extends AbstractKaptToolIntegratio
     @TestMetadata("argfile")
     public void testArgfile() throws Exception {
         runTest("plugins/kapt4/testData/integration/argfile/");
-    }
-
-    @Test
-    @TestMetadata("correctErrorTypesOff")
-    public void testCorrectErrorTypesOff() throws Exception {
-        runTest("plugins/kapt4/testData/integration/correctErrorTypesOff/");
     }
 
     @Test

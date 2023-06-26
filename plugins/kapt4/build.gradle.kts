@@ -14,7 +14,6 @@ dependencies {
     implementation(project(":kotlin-annotation-processing-compiler"))
     embedded(project(":kotlin-annotation-processing-compiler")) { isTransitive = false }
 
-
 //    api(project(":compiler:util"))
 //    api(project(":compiler:cli"))
 //    api(project(":compiler:backend"))
@@ -48,7 +47,7 @@ dependencies {
 //    testApi(projectTests(":compiler:test-infrastructure"))
 //    testApi(projectTests(":compiler:test-infrastructure-utils"))
 //    testApi(projectTests(":kotlin-annotation-processing-compiler"))
-//    testApi(projectTests(":kotlin-annotation-processing-cli"))
+//    testImplementation(projectTests(":kotlin-annotation-processing-cli"))
 //
 //    testApi(projectTests(":kotlin-annotation-processing-base"))
 //
