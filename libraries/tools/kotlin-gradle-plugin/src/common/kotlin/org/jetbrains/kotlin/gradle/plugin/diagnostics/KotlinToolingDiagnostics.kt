@@ -594,6 +594,14 @@ object KotlinToolingDiagnostics {
             throwable = trace,
         )
     }
+
+    object CircularDependsOnEdges : ToolingDiagnosticFactory(FATAL) {
+        operator fun invoke(sourceSetsOnCycle: Collection<String>) = build(
+            """
+                Circular dependsOn hierarchy found in the Kotlin source sets: ${sourceSetsOnCycle.joinToString(" -> ")}
+            """.trimIndent()
+        )
+    }
 }
 
 private fun String.indentLines(nSpaces: Int = 4, skipFirstLine: Boolean = true): String {
