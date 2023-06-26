@@ -106,8 +106,7 @@ class Fir2IrLazyProperty(
             }
             // Setting initializers to every other class causes some cryptic errors in lowerings
             initializer is FirConstExpression<*> -> {
-                // TODO: Normally we shouldn't have error type here
-                val constType = with(typeConverter) { initializer.typeRef.toIrType().takeIf { it !is IrErrorType } ?: type }
+                val constType = with(typeConverter) { initializer.typeRef.toIrType() }
                 factory.createExpressionBody(initializer.toIrConst(constType))
             }
             else -> null
