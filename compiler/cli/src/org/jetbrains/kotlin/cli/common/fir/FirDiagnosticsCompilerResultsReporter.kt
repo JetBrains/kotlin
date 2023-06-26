@@ -35,25 +35,16 @@ object FirDiagnosticsCompilerResultsReporter {
         }
     }
 
-    fun reportByFile(
+    private fun reportByFile(
         diagnosticsCollector: BaseDiagnosticsCollector, report: (KtDiagnostic, CompilerMessageSourceLocation) -> Unit
     ): Boolean {
         var hasErrors = false
         for (filePath in diagnosticsCollector.diagnosticsByFilePath.keys) {
-            // emulating lazy because of the usage pattern in finally block below (should not initialize in finally)
-            var positionFinderInitialized = false
-            var positionFinder: SequentialFilePositionFinder? = null
+            val positionFinder = lazy {
+                val file = filePath?.let(::File)
+                if (file != null && file.isFile) SequentialFilePositionFinder(file) else null
+            }
 
-            fun getPositionFinder() =
-                if (positionFinderInitialized) positionFinder
-                else {
-                    positionFinderInitialized = true
-                    filePath?.let(::File)?.takeIf { it.isFile }?.let(::SequentialFilePositionFinder)?.also {
-                        positionFinder = it
-                    }
-                }
-
-            @Suppress("ConvertTryFinallyToUseCall")
             try {
                 for (diagnostic in diagnosticsCollector.diagnosticsByFilePath[filePath].orEmpty().sortedWith(InFileDiagnosticsComparator)) {
                     when (diagnostic) {
@@ -70,7 +61,7 @@ object FirDiagnosticsCompilerResultsReporter {
                             // NOTE: SequentialPositionFinder relies on the ascending order of the input offsets, so the code relies
                             // on the the appropriate sorting above
                             // Also the end offset is ignored, as it is irrelevant for the CLI reporting
-                            getPositionFinder()?.findNextPosition(DiagnosticUtils.firstRange(diagnostic.textRanges).startOffset)
+                            positionFinder.value?.findNextPosition(DiagnosticUtils.firstRange(diagnostic.textRanges).startOffset)
                                 ?.let { pos ->
                                     MessageUtil.createMessageLocation(filePath, pos.lineContent, pos.line, pos.column, -1, -1)
                                 }
@@ -81,7 +72,9 @@ object FirDiagnosticsCompilerResultsReporter {
                     }
                 }
             } finally {
-                positionFinder?.close()
+                if (positionFinder.isInitialized()) {
+                    positionFinder.value?.close()
+                }
             }
         }
         // TODO: for uncommenting, see comment in reportSpecialErrors
