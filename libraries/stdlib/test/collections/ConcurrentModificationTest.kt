@@ -6,6 +6,10 @@
 package test.collections
 
 import test.TestPlatform
+import test.collections.js.linkedStringMapOf
+import test.collections.js.linkedStringSetOf
+import test.collections.js.stringMapOf
+import test.collections.js.stringSetOf
 import test.current
 import kotlin.test.Test
 import kotlin.test.assertFailsWith
@@ -167,8 +171,6 @@ class ConcurrentModificationTest {
 
     @Test
     fun mutableSet() {
-        if (TestPlatform.current == TestPlatform.Js) return
-
         val operations = listOf<CollectionOperation<MutableSet<String>>>(
             CollectionOperation("add(non-existing)") { add("e") },
             CollectionOperation("add(existing)", throwsCME = false) { add("d") },
@@ -226,12 +228,25 @@ class ConcurrentModificationTest {
                 action(this)
             }
         }
+
+        if (TestPlatform.current == TestPlatform.Js) {
+            testThrowsCME { action ->
+                stringSetOf().apply {
+                    addAll(elements)
+                    action(this)
+                }
+            }
+            testThrowsCME { action ->
+                linkedStringSetOf().apply {
+                    addAll(elements)
+                    action(this)
+                }
+            }
+        }
     }
 
     @Test
     fun mutableMap() {
-        if (TestPlatform.current == TestPlatform.Js) return
-
         val operations = listOf<CollectionOperation<MutableMap<String, String>>>(
             CollectionOperation("put(non-existing)") { put("e", "e") },
             CollectionOperation("put(existing)", throwsCME = false) { put("d", "d") },
@@ -283,6 +298,21 @@ class ConcurrentModificationTest {
             buildMap(10) {
                 putAll(entries)
                 action(this)
+            }
+        }
+
+        if (TestPlatform.current == TestPlatform.Js) {
+            testThrowsCME { action ->
+                stringMapOf<String>().apply {
+                    putAll(entries)
+                    action(this)
+                }
+            }
+            testThrowsCME { action ->
+                linkedStringMapOf<String>().apply {
+                    putAll(entries)
+                    action(this)
+                }
             }
         }
     }

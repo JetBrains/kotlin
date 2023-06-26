@@ -54,6 +54,22 @@ internal open class InternalStringMap<K, V> : InternalMap<K, V> {
     internal var values = createJsArray<V>()
     internal var keys = createJsArray<K>()
 
+    /**
+     * The number of times this map is structurally modified.
+     *
+     * A modification is considered to be structural if it changes the map size,
+     * or otherwise changes it in a way that iterations in progress may return incorrect results.
+     *
+     * This value can be used by iterators of the [keys], [values] and [entries] views
+     * to provide fail-fast behavoir when a concurrent modification is detected during iteration.
+     * [ConcurrentModificationException] will be thrown in this case.
+     */
+    internal var modCount: Int = 0
+
+    private fun registerModification() {
+        modCount += 1
+    }
+
     override val size: Int
         get() = keys.length
 
@@ -121,6 +137,7 @@ internal open class InternalStringMap<K, V> : InternalMap<K, V> {
         backingMap[key] = size
         keys.push(key)
         values.push(value)
+        registerModification()
         return null
     }
 
@@ -155,12 +172,14 @@ internal open class InternalStringMap<K, V> : InternalMap<K, V> {
             values.replaceElementAtWithLast(removingIndex)
             backingMap[keys.getElement(removingIndex)] = removingIndex
         }
+        registerModification()
     }
 
     override fun clear() {
         backingMap = createJsMap()
         keys = createJsArray()
         values = createJsArray()
+        registerModification()
     }
 
     override fun build() {
@@ -177,8 +196,10 @@ internal open class InternalStringMap<K, V> : InternalMap<K, V> {
     private abstract class BaseItr<K, V>(protected val map: InternalStringMap<K, V>) {
         protected var lastIndex = -1
         protected var index = 0
+        private var expectedModCount = map.modCount
 
         protected fun goNext() {
+            checkForComodification()
             if (index >= map.size) {
                 throw NoSuchElementException()
             }
@@ -188,9 +209,18 @@ internal open class InternalStringMap<K, V> : InternalMap<K, V> {
         fun hasNext(): Boolean = index < map.size
 
         fun remove() {
+            checkForComodification()
+            check(lastIndex != -1) { "Call next() before removing element from the iterator." }
             map.removeKeyIndex(map.keys.getElement(lastIndex), lastIndex)
             index = lastIndex
             lastIndex = -1
+            expectedModCount = map.modCount
+        }
+
+        private fun checkForComodification() {
+            if (map.modCount != expectedModCount) {
+                throw ConcurrentModificationException()
+            }
         }
     }
 

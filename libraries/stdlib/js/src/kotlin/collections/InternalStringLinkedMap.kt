@@ -96,8 +96,10 @@ internal class InternalStringLinkedMap<K, V> : InternalStringMap<K, V>() {
     private abstract class BaseLinkedItr<K, V>(protected val map: InternalStringLinkedMap<K, V>) {
         protected var lastIndex = EMPTY_INDEX
         protected var index = map.headIndex
+        private var expectedModCount = map.modCount
 
         protected fun goNext() {
+            checkForComodification()
             if (index == EMPTY_INDEX) {
                 throw NoSuchElementException()
             }
@@ -108,11 +110,20 @@ internal class InternalStringLinkedMap<K, V> : InternalStringMap<K, V>() {
         fun hasNext(): Boolean = index != EMPTY_INDEX
 
         fun remove() {
+            checkForComodification()
+            check(lastIndex != EMPTY_INDEX) { "Call next() before removing element from the iterator." }
             map.removeKeyIndex(map.keys.getElement(lastIndex), lastIndex)
             if (index == map.size) {
                 index = lastIndex
             }
             lastIndex = EMPTY_INDEX
+            expectedModCount = map.modCount
+        }
+
+        private fun checkForComodification() {
+            if (map.modCount != expectedModCount) {
+                throw ConcurrentModificationException()
+            }
         }
     }
 
