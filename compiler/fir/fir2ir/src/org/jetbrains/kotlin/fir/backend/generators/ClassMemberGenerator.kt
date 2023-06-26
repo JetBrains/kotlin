@@ -59,7 +59,7 @@ internal class ClassMemberGenerator(
         conversionScope.withClass(irClass) {
             val allDeclarations = buildList {
                 addAll(klass.declarations)
-                if (session.extensionService.declarationGenerators.isNotEmpty()) {
+                if (klass is FirRegularClass && session.extensionService.declarationGenerators.isNotEmpty()) {
                     addAll(klass.generatedMembers(session).sortedWith(FirCallableDeclarationComparator))
                     addAll(klass.generatedNestedClassifiers(session).sortedWith(FirMemberDeclarationComparator))
                 }

@@ -246,7 +246,7 @@ class Fir2IrClassifierStorage(
         // If non-local classes are already created (this means we are in body translation) we do everything immediately
         // The last variant is possible for local variables like 'val a = object : Any() { ... }'
         if (processMembersOfClassesOnTheFlyImmediately) {
-            processMembersOfClassCreatedOnTheFly(classOrLocalParent, result)
+            converter.processClassMembers(classOrLocalParent, result)
             converter.bindFakeOverridesInClass(result)
         } else {
             localClassesCreatedOnTheFly[classOrLocalParent] = result
@@ -262,7 +262,7 @@ class Fir2IrClassifierStorage(
         // Before the call it's not possible, because f/o binding for regular classes isn't done yet
         processMembersOfClassesOnTheFlyImmediately = true
         for ((klass, irClass) in localClassesCreatedOnTheFly) {
-            processMembersOfClassCreatedOnTheFly(klass, irClass)
+            converter.processClassMembers(klass, irClass)
             // See the problem from KT-57441
 //            class Wrapper {
 //                private val dummy = object: Bar {}
@@ -277,13 +277,6 @@ class Fir2IrClassifierStorage(
             converter.bindFakeOverridesInClass(irClass)
         }
         localClassesCreatedOnTheFly.clear()
-    }
-
-    private fun processMembersOfClassCreatedOnTheFly(klass: FirClass, irClass: IrClass) {
-        when (klass) {
-            is FirRegularClass -> converter.processRegularClassMembers(klass, irClass)
-            is FirAnonymousObject -> converter.processAnonymousObjectMembers(klass, irClass, processHeaders = false)
-        }
     }
 
     fun processClassHeader(klass: FirClass, irClass: IrClass = getCachedIrClass(klass)!!): IrClass {

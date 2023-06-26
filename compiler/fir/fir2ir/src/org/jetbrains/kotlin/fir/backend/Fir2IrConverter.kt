@@ -113,10 +113,7 @@ class Fir2IrConverter(
     fun processLocalClassAndNestedClasses(klass: FirClass, parent: IrDeclarationParent): IrClass {
         val irClass = registerClassAndNestedClasses(klass, parent)
         processClassAndNestedClassHeaders(klass)
-        when (klass) {
-            is FirRegularClass -> processRegularClassMembers(klass, irClass)
-            is FirAnonymousObject -> processAnonymousObjectMembers(klass, irClass, processHeaders = false)
-        }
+        processClassMembers(klass, irClass)
         bindFakeOverridesInClass(irClass)
         return irClass
     }
@@ -171,56 +168,33 @@ class Fir2IrConverter(
         }
     }
 
-    // TODO: unite with/extract common part from processRegularClassMembers
-    fun processAnonymousObjectMembers(
+    fun processAnonymousObjectHeaders(
         anonymousObject: FirAnonymousObject,
         irClass: IrClass,
-        processHeaders: Boolean
-    ): IrClass {
-        if (processHeaders) {
-            registerNestedClasses(anonymousObject, irClass)
-            processNestedClassHeaders(anonymousObject)
-        }
-        anonymousObject.primaryConstructorIfAny(session)?.let {
-            irClass.declarations += declarationStorage.createIrConstructor(
-                it.fir, irClass, isLocal = true
-            )
-        }
-        for (declaration in syntheticPropertiesLast(anonymousObject.declarations)) {
-            val irDeclaration = processMemberDeclaration(declaration, anonymousObject, irClass) ?: continue
-            irClass.declarations += irDeclaration
-        }
-        // Add delegated members *before* fake override generations.
-        // Otherwise, fake overrides for delegated members, which are redundant, will be added.
-        val realDeclarations = delegatedMembers(irClass) + anonymousObject.declarations
-        with(fakeOverrideGenerator) {
-            irClass.addFakeOverrides(anonymousObject, realDeclarations)
-        }
-
-        return irClass
+    ) {
+        registerNestedClasses(anonymousObject, irClass)
+        processNestedClassHeaders(anonymousObject)
     }
 
-    internal fun processRegularClassMembers(
-        regularClass: FirRegularClass,
-        irClass: IrClass =
-            classifierStorage.getCachedIrClass(regularClass) ?: error("Expecting existing IrClass for class ${regularClass.name}")
-    ): IrClass {
+    internal fun processClassMembers(klass: FirClass, irClass: IrClass): IrClass {
         val allDeclarations = mutableListOf<FirDeclaration>().apply {
-            addAll(regularClass.declarations)
-            if (generatorExtensions.isNotEmpty()) {
-                addAll(regularClass.generatedMembers(session))
-                addAll(regularClass.generatedNestedClassifiers(session))
+            addAll(klass.declarations)
+            if (klass is FirRegularClass && generatorExtensions.isNotEmpty()) {
+                addAll(klass.generatedMembers(session))
+                addAll(klass.generatedNestedClassifiers(session))
             }
         }
-        val irConstructor = (allDeclarations.firstOrNull { it is FirConstructor && it.isPrimary })?.let {
-            declarationStorage.getOrCreateIrConstructor(it as FirConstructor, irClass, isLocal = regularClass.isLocal)
+        val irConstructor = klass.primaryConstructorIfAny(session)?.let {
+            declarationStorage.getOrCreateIrConstructor(
+                it.fir, irClass, isLocal = klass.isLocal
+            )
         }
         if (irConstructor != null) {
             irClass.declarations += irConstructor
         }
         // At least on enum entry creation we may need a default constructor, so ctors should be converted first
         for (declaration in syntheticPropertiesLast(allDeclarations)) {
-            val irDeclaration = processMemberDeclaration(declaration, regularClass, irClass) ?: continue
+            val irDeclaration = processMemberDeclaration(declaration, klass, irClass) ?: continue
             irClass.declarations += irDeclaration
         }
         // Add delegated members *before* fake override generations.
@@ -228,22 +202,22 @@ class Fir2IrConverter(
         allDeclarations += delegatedMembers(irClass)
         // Add synthetic members *before* fake override generations.
         // Otherwise, redundant members, e.g., synthetic toString _and_ fake override toString, will be added.
-        if (irConstructor != null && (irClass.isValue || irClass.isData)) {
+        if (klass is FirRegularClass && irConstructor != null && (irClass.isValue || irClass.isData)) {
             declarationStorage.enterScope(irConstructor)
             val dataClassMembersGenerator = DataClassMembersGenerator(components)
             if (irClass.isSingleFieldValueClass) {
-                allDeclarations += dataClassMembersGenerator.generateSingleFieldValueClassMembers(regularClass, irClass)
+                allDeclarations += dataClassMembersGenerator.generateSingleFieldValueClassMembers(klass, irClass)
             }
             if (irClass.isMultiFieldValueClass) {
-                allDeclarations += dataClassMembersGenerator.generateMultiFieldValueClassMembers(regularClass, irClass)
+                allDeclarations += dataClassMembersGenerator.generateMultiFieldValueClassMembers(klass, irClass)
             }
             if (irClass.isData) {
-                allDeclarations += dataClassMembersGenerator.generateDataClassMembers(regularClass, irClass)
+                allDeclarations += dataClassMembersGenerator.generateDataClassMembers(klass, irClass)
             }
             declarationStorage.leaveScope(irConstructor)
         }
         with(fakeOverrideGenerator) {
-            irClass.addFakeOverrides(regularClass, allDeclarations)
+            irClass.addFakeOverrides(klass, allDeclarations)
         }
 
         return irClass
@@ -303,7 +277,7 @@ class Fir2IrConverter(
                 registerClassAndNestedClasses(it, irClass)
             }
         }
-        if (generatorExtensions.isNotEmpty()) {
+        if (klass is FirRegularClass && generatorExtensions.isNotEmpty()) {
             klass.generatedNestedClassifiers(session).forEach {
                 if (it is FirRegularClass) {
                     registerClassAndNestedClasses(it, irClass)
@@ -323,7 +297,7 @@ class Fir2IrConverter(
                 processClassAndNestedClassHeaders(it)
             }
         }
-        if (generatorExtensions.isNotEmpty()) {
+        if (klass is FirRegularClass && generatorExtensions.isNotEmpty()) {
             klass.generatedNestedClassifiers(session).forEach {
                 if (it is FirRegularClass) {
                     processClassAndNestedClassHeaders(it)
@@ -341,7 +315,7 @@ class Fir2IrConverter(
                 (containingClass !is FirRegularClass || containingClass.isLocal)
         return when (declaration) {
             is FirRegularClass -> {
-                processRegularClassMembers(declaration)
+                processClassMembers(declaration, classifierStorage.getCachedIrClass(declaration)!!)
             }
             is FirScript -> {
                 parent as IrFile

@@ -138,7 +138,8 @@ class Fir2IrVisitor(
             declarationStorage.enterScope(irEnumEntry)
             classifierStorage.putEnumEntryClassInScope(enumEntry, correspondingClass)
             val anonymousObject = (enumEntry.initializer as FirAnonymousObjectExpression).anonymousObject
-            converter.processAnonymousObjectMembers(anonymousObject, correspondingClass, processHeaders = true)
+            converter.processAnonymousObjectHeaders(anonymousObject, correspondingClass)
+            converter.processClassMembers(anonymousObject, correspondingClass)
             converter.bindFakeOverridesInClass(correspondingClass)
             conversionScope.withParent(correspondingClass) {
                 memberGenerator.convertClassContent(correspondingClass, anonymousObject)
