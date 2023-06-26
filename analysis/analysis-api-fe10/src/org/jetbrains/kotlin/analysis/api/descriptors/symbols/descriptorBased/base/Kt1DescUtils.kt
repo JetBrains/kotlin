@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.api.types.KtTypeNullability
 import org.jetbrains.kotlin.analysis.utils.errors.unexpectedElementError
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
@@ -349,7 +350,7 @@ internal fun DeclarationDescriptor.getSymbolOrigin(analysisContext: Fe10Analysis
         return analysisContext.getOrigin(virtualFile)
     } else { // psi == null
         // Implicit lambda parameter
-        if (this is ValueParameterDescriptor && this.name.identifierOrNullIfSpecial == "it") {
+        if (this is ValueParameterDescriptor && this.name == StandardNames.IMPLICIT_LAMBDA_PARAMETER_NAME) {
             return KtSymbolOrigin.SOURCE_MEMBER_GENERATED
         }
     }

@@ -333,7 +333,7 @@ class FunctionDescriptorResolver(
                 // it parameter for lambda
                 val valueParameterDescriptor = expectedValueParameters.single()
                 val it = ValueParameterDescriptorImpl(
-                    functionDescriptor, null, 0, Annotations.EMPTY, Name.identifier("it"),
+                    functionDescriptor, null, 0, Annotations.EMPTY, StandardNames.IMPLICIT_LAMBDA_PARAMETER_NAME,
                     expectedParameterTypes!!.single(), valueParameterDescriptor.declaresDefaultValue(),
                     valueParameterDescriptor.isCrossinline, valueParameterDescriptor.isNoinline,
                     valueParameterDescriptor.varargElementType, SourceElement.NO_SOURCE

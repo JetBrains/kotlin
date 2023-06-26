@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtValueParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
 import org.jetbrains.kotlin.name.Name
@@ -54,7 +55,7 @@ internal class KtFe10DescValueParameterSymbol(
     override val isImplicitLambdaParameter: Boolean
         get() = withValidityAssertion {
             descriptor.containingDeclaration is AnonymousFunctionDescriptor &&
-                    descriptor.name.identifierOrNullIfSpecial == "it" &&
+                    descriptor.name == StandardNames.IMPLICIT_LAMBDA_PARAMETER_NAME &&
                     // Implicit lambda parameter doesn't have a source PSI.
                     descriptor.source.getPsi() == null &&
                     // But, that could be the case for a declaration from Library. Double-check the slice in the binding context

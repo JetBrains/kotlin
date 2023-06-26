@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fakeElement
@@ -905,7 +906,7 @@ open class FirDeclarationsResolveTransformer(
         val singleParameterType = resolvedLambdaAtom.parameters.singleOrNull()
         return when {
             lambda.valueParameters.isEmpty() && singleParameterType != null -> {
-                val name = Name.identifier("it")
+                val name = StandardNames.IMPLICIT_LAMBDA_PARAMETER_NAME
                 val itParam = buildValueParameter {
                     resolvePhase = FirResolvePhase.BODY_RESOLVE
                     source = lambda.source?.fakeElement(KtFakeSourceElementKind.ItLambdaParameter)

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.inference
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
@@ -258,7 +259,7 @@ class FirCallCompleter(
 
             val itParam = when {
                 needItParam -> {
-                    val name = Name.identifier("it")
+                    val name = StandardNames.IMPLICIT_LAMBDA_PARAMETER_NAME
                     val itType = parameters.single()
                     buildValueParameter {
                         resolvePhase = FirResolvePhase.BODY_RESOLVE
