@@ -1,6 +1,5 @@
 RAW_FIR:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideSuperEntryCall.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
         public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] param: R|kotlin/String|): R|kotlin/Unit|
 
@@ -29,7 +28,6 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideSuperEntryCall.kt
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideSuperEntryCall.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
         public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] param: R|kotlin/String|): R|kotlin/Unit|
 
@@ -58,7 +56,6 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideSuperEntryCall.kt
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideSuperEntryCall.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
         public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] param: R|kotlin/String|): R|kotlin/Unit|
 
@@ -87,7 +84,6 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideSuperEntryCall.kt
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideSuperEntryCall.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
         public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] param: R|kotlin/String|): R|kotlin/Unit|
 
@@ -116,7 +112,6 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideSuperEntryCall.kt
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideSuperEntryCall.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
         public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] param: R|kotlin/String|): R|kotlin/Unit|
 
@@ -145,7 +140,6 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideSuperEntryCall.kt
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideSuperEntryCall.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
         public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] param: R|kotlin/String|): R|kotlin/Unit|
 
@@ -174,7 +168,6 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideSuperEntryCall.kt
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideSuperEntryCall.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
         public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] param: R|kotlin/String|): R|kotlin/Unit|
 
@@ -203,7 +196,6 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideSuperEntryCall.kt
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideSuperEntryCall.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
         public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] param: R|kotlin/String|): R|kotlin/Unit|
 
@@ -232,7 +224,6 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideSuperEntryCall.kt
 
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideSuperEntryCall.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
         public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] param: R|kotlin/String|): R|kotlin/Unit|
 
@@ -261,7 +252,6 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideSuperEntryCall.kt
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideSuperEntryCall.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
         public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] param: R|kotlin/String|): R|kotlin/Unit|
 
@@ -290,7 +280,6 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideSuperEntryCall.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideSuperEntryCall.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
         public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] param: R|kotlin/String|): R|kotlin/Unit|
 
@@ -319,7 +308,6 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideSuperEntryCall.kt
 
 ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideSuperEntryCall.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
         public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] param: R|kotlin/String|): R|kotlin/Unit|
 
@@ -348,7 +336,6 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideSuperEntryCall.kt
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideSuperEntryCall.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
         public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] param: R|kotlin/String|): R|kotlin/Unit|
 
@@ -377,7 +364,6 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideSuperEntryCall.kt
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideSuperEntryCall.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public abstract [ResolvedTo(BODY_RESOLVE)] interface Interface : R|kotlin/Any| {
         public abstract [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] param: R|kotlin/String|): R|kotlin/Unit|
 

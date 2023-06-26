@@ -7,6 +7,5 @@ R|kotlin/Number|
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] typeParameterBound.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun <[ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] T : R|kotlin/Number|> check([ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] t: R|T|): R|kotlin/Unit| {
     }

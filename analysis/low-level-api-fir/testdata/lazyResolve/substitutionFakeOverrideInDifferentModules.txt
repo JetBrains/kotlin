@@ -3,7 +3,6 @@ TARGET: public abstract [ResolvedTo(STATUS)] [SubstitutedOverrideOriginalKey=/Ab
 
 
 FILE: [ResolvedTo(IMPORTS)] SubClass.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public abstract [ResolvedTo(STATUS)] class SubClass : R|AbstractClass<kotlin/Int>| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=SubClass] constructor(): R|SubClass| {
             LAZY_super<R|AbstractClass<kotlin/Int>|>
@@ -16,7 +15,6 @@ TARGET: public abstract [ResolvedTo(STATUS)] [SubstitutedOverrideOriginalKey=/Ab
 
 
 FILE: [ResolvedTo(IMPORTS)] SubClass.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public abstract [ResolvedTo(STATUS)] class SubClass : R|AbstractClass<kotlin/Int>| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=SubClass] constructor(): R|SubClass| {
             LAZY_super<R|AbstractClass<kotlin/Int>|>
@@ -29,7 +27,6 @@ TARGET: public abstract [ResolvedTo(STATUS)] [SubstitutedOverrideOriginalKey=/Ab
 
 
 FILE: [ResolvedTo(IMPORTS)] SubClass.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public abstract [ResolvedTo(STATUS)] class SubClass : R|AbstractClass<kotlin/Int>| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=SubClass] constructor(): R|SubClass| {
             LAZY_super<R|AbstractClass<kotlin/Int>|>
@@ -42,7 +39,6 @@ TARGET: public abstract [ResolvedTo(STATUS)] [SubstitutedOverrideOriginalKey=/Ab
 
 
 FILE: [ResolvedTo(IMPORTS)] SubClass.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public abstract [ResolvedTo(STATUS)] class SubClass : R|AbstractClass<kotlin/Int>| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=SubClass] constructor(): R|SubClass| {
             LAZY_super<R|AbstractClass<kotlin/Int>|>
@@ -55,7 +51,6 @@ TARGET: public abstract [ResolvedTo(STATUS)] [SubstitutedOverrideOriginalKey=/Ab
 
 
 FILE: [ResolvedTo(IMPORTS)] SubClass.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public abstract [ResolvedTo(STATUS)] class SubClass : R|AbstractClass<kotlin/Int>| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=SubClass] constructor(): R|SubClass| {
             LAZY_super<R|AbstractClass<kotlin/Int>|>
@@ -68,7 +63,6 @@ TARGET: public abstract [ResolvedTo(STATUS)] [SubstitutedOverrideOriginalKey=/Ab
 
 
 FILE: [ResolvedTo(IMPORTS)] SubClass.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public abstract [ResolvedTo(STATUS)] class SubClass : R|AbstractClass<kotlin/Int>| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=SubClass] constructor(): R|SubClass| {
             LAZY_super<R|AbstractClass<kotlin/Int>|>
@@ -81,7 +75,6 @@ TARGET: public abstract [ResolvedTo(STATUS)] [SubstitutedOverrideOriginalKey=/Ab
 
 
 FILE: [ResolvedTo(IMPORTS)] SubClass.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public abstract [ResolvedTo(STATUS)] class SubClass : R|AbstractClass<kotlin/Int>| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=SubClass] constructor(): R|SubClass| {
             LAZY_super<R|AbstractClass<kotlin/Int>|>
@@ -94,7 +87,6 @@ TARGET: public abstract [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [SubstitutedOverrid
 
 
 FILE: [ResolvedTo(IMPORTS)] SubClass.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public abstract [ResolvedTo(STATUS)] class SubClass : R|AbstractClass<kotlin/Int>| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=SubClass] constructor(): R|SubClass| {
             LAZY_super<R|AbstractClass<kotlin/Int>|>
@@ -107,7 +99,6 @@ TARGET: public abstract [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] [SubstitutedOverr
 
 
 FILE: [ResolvedTo(IMPORTS)] SubClass.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public abstract [ResolvedTo(STATUS)] class SubClass : R|AbstractClass<kotlin/Int>| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=SubClass] constructor(): R|SubClass| {
             LAZY_super<R|AbstractClass<kotlin/Int>|>
@@ -120,7 +111,6 @@ TARGET: public abstract [ResolvedTo(CONTRACTS)] [SubstitutedOverrideOriginalKey=
 
 
 FILE: [ResolvedTo(IMPORTS)] SubClass.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public abstract [ResolvedTo(STATUS)] class SubClass : R|AbstractClass<kotlin/Int>| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=SubClass] constructor(): R|SubClass| {
             LAZY_super<R|AbstractClass<kotlin/Int>|>
@@ -133,7 +123,6 @@ TARGET: public abstract [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [SubstitutedOv
 
 
 FILE: [ResolvedTo(IMPORTS)] SubClass.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public abstract [ResolvedTo(STATUS)] class SubClass : R|AbstractClass<kotlin/Int>| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=SubClass] constructor(): R|SubClass| {
             LAZY_super<R|AbstractClass<kotlin/Int>|>
@@ -146,7 +135,6 @@ TARGET: public abstract [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] [Substituted
 
 
 FILE: [ResolvedTo(IMPORTS)] SubClass.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public abstract [ResolvedTo(STATUS)] class SubClass : R|AbstractClass<kotlin/Int>| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=SubClass] constructor(): R|SubClass| {
             LAZY_super<R|AbstractClass<kotlin/Int>|>
@@ -159,7 +147,6 @@ TARGET: public abstract [ResolvedTo(BODY_RESOLVE)] [SubstitutedOverrideOriginalK
 
 
 FILE: [ResolvedTo(IMPORTS)] SubClass.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public abstract [ResolvedTo(STATUS)] class SubClass : R|AbstractClass<kotlin/Int>| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=SubClass] constructor(): R|SubClass| {
             LAZY_super<R|AbstractClass<kotlin/Int>|>
@@ -169,7 +156,6 @@ FILE: [ResolvedTo(IMPORTS)] SubClass.kt
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(IMPORTS)] SubClass.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public abstract [ResolvedTo(BODY_RESOLVE)] class SubClass : R|AbstractClass<kotlin/Int>| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=SubClass] constructor(): R|SubClass| {
             super<R|AbstractClass<kotlin/Int>|>()

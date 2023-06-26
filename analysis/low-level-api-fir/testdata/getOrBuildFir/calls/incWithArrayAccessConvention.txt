@@ -7,7 +7,6 @@ R|<local>/<array>|.R|SubstitutionOverride</MyMap.set: R|kotlin/Unit|>|(R|<local>
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] incWithArrayAccessConvention.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public abstract [ResolvedTo(STATUS)] interface A : R|kotlin/Any| {
         public abstract operator [ResolvedTo(CONTRACTS)] fun inc(): R|A|
 

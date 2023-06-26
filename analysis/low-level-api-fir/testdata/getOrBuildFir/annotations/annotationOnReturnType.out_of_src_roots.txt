@@ -7,7 +7,6 @@ FIR element rendered:
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] annotationOnReturnType.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun <reified [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] T : R|kotlin/Number|> R|kotlin/String|.collectOfType([ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] i: R|kotlin/Int|): <ERROR TYPE REF: Symbol not found for Sequence> {
         ^collectOfType IntegerLiteral(4)
     }

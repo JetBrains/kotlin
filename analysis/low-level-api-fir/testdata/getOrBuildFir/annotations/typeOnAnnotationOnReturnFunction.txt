@@ -7,7 +7,6 @@ FIR element rendered:
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] typeOnAnnotationOnReturnFunction.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun check(): R|@R|Anno|(s = String(ab))  kotlin/Int| {
         ^check IntegerLiteral(1)
     }

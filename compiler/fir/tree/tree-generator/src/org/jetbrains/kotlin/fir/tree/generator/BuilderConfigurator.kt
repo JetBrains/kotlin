@@ -41,6 +41,10 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
             fields from klass without listOf("symbol", "resolvePhase", "resolveState", "controlFlowGraphReference")
         }
 
+        builder(file) {
+            defaultNull("annotationsContainer")
+        }
+
         builder(regularClass) {
             parents += classBuilder
             parents += typeParameterRefsOwnerBuilder

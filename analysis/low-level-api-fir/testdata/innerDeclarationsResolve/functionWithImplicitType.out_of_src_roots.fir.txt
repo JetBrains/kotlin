@@ -1,5 +1,4 @@
 FILE: [ResolvedTo(IMPORTS)] functionWithImplicitType.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public final [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] T> checkSubtype([ResolvedTo(BODY_RESOLVE)] t: R|T|): R|T| {
         ^checkSubtype R|<local>/t|
     }

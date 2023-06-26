@@ -1,6 +1,5 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] hierarchyWithOverrideAndNestedClass3.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(RAW_FIR)] interface Foo1 : R|kotlin/Any| {
         public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
 
@@ -71,7 +70,6 @@ FILE: [ResolvedTo(RAW_FIR)] hierarchyWithOverrideAndNestedClass3.kt
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass3.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(RAW_FIR)] interface Foo1 : R|kotlin/Any| {
         public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
 
@@ -142,7 +140,6 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass3.kt
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass3.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(RAW_FIR)] interface Foo1 : R|kotlin/Any| {
         public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
 
@@ -213,7 +210,6 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass3.kt
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass3.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(RAW_FIR)] interface Foo1 : R|kotlin/Any| {
         public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
 
@@ -284,7 +280,6 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass3.kt
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass3.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(SUPER_TYPES)] interface Foo1 : R|kotlin/Any| {
         public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
 
@@ -355,7 +350,6 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass3.kt
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass3.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(SUPER_TYPES)] interface Foo1 : R|kotlin/Any| {
         public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
 
@@ -426,7 +420,6 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass3.kt
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass3.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(SUPER_TYPES)] interface Foo1 : R|kotlin/Any| {
         public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
 
@@ -497,7 +490,6 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass3.kt
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass3.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(SUPER_TYPES)] interface Foo1 : R|kotlin/Any| {
         public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
 
@@ -568,7 +560,6 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass3.kt
 
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass3.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public abstract [ResolvedTo(STATUS)] interface Foo1 : R|kotlin/Any| {
         public abstract [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
 
@@ -639,7 +630,6 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass3.kt
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass3.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public abstract [ResolvedTo(STATUS)] interface Foo1 : R|kotlin/Any| {
         public abstract [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
 
@@ -710,7 +700,6 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass3.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass3.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public abstract [ResolvedTo(STATUS)] interface Foo1 : R|kotlin/Any| {
         public abstract [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
 
@@ -781,7 +770,6 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass3.kt
 
 ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass3.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public abstract [ResolvedTo(STATUS)] interface Foo1 : R|kotlin/Any| {
         public abstract [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
 
@@ -852,7 +840,6 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass3.kt
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass3.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public abstract [ResolvedTo(STATUS)] interface Foo1 : R|kotlin/Any| {
         public abstract [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
 
@@ -923,7 +910,6 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass3.kt
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass3.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public abstract [ResolvedTo(BODY_RESOLVE)] interface Foo1 : R|kotlin/Any| {
         public abstract [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit|
 

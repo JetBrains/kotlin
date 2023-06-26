@@ -1,6 +1,5 @@
 RAW_FIR:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideFunctionLiteral.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] i: R|() -> kotlin/Unit|): R|one/ClassWithParameter| {
             LAZY_super<R|kotlin/Any|>
@@ -21,7 +20,6 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideFunctionLiteral.kt
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideFunctionLiteral.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] i: R|() -> kotlin/Unit|): R|one/ClassWithParameter| {
             LAZY_super<R|kotlin/Any|>
@@ -42,7 +40,6 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideFunctionLiteral.kt
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideFunctionLiteral.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] i: R|() -> kotlin/Unit|): R|one/ClassWithParameter| {
             LAZY_super<R|kotlin/Any|>
@@ -63,7 +60,6 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideFunctionLiteral.kt
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideFunctionLiteral.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] i: R|() -> kotlin/Unit|): R|one/ClassWithParameter| {
             LAZY_super<R|kotlin/Any|>
@@ -84,7 +80,6 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideFunctionLiteral.kt
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideFunctionLiteral.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] i: R|() -> kotlin/Unit|): R|one/ClassWithParameter| {
             LAZY_super<R|kotlin/Any|>
@@ -105,7 +100,6 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideFunctionLiteral.kt
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideFunctionLiteral.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] i: R|() -> kotlin/Unit|): R|one/ClassWithParameter| {
             LAZY_super<R|kotlin/Any|>
@@ -126,7 +120,6 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideFunctionLiteral.kt
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideFunctionLiteral.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] i: R|() -> kotlin/Unit|): R|one/ClassWithParameter| {
             LAZY_super<R|kotlin/Any|>
@@ -147,7 +140,6 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideFunctionLiteral.kt
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideFunctionLiteral.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] i: R|() -> kotlin/Unit|): R|one/ClassWithParameter| {
             LAZY_super<R|kotlin/Any|>
@@ -168,7 +160,6 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideFunctionLiteral.kt
 
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideFunctionLiteral.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] i: R|() -> kotlin/Unit|): R|one/ClassWithParameter| {
             LAZY_super<R|kotlin/Any|>
@@ -189,7 +180,6 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideFunctionLiteral.kt
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideFunctionLiteral.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] i: R|() -> kotlin/Unit|): R|one/ClassWithParameter| {
             LAZY_super<R|kotlin/Any|>
@@ -210,7 +200,6 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideFunctionLiteral.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideFunctionLiteral.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] i: R|() -> kotlin/Unit|): R|one/ClassWithParameter| {
             LAZY_super<R|kotlin/Any|>
@@ -231,7 +220,6 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideFunctionLiteral.kt
 
 ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideFunctionLiteral.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] i: R|() -> kotlin/Unit|): R|one/ClassWithParameter| {
             LAZY_super<R|kotlin/Any|>
@@ -252,7 +240,6 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideFunctionLiteral.kt
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideFunctionLiteral.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] i: R|() -> kotlin/Unit|): R|one/ClassWithParameter| {
             LAZY_super<R|kotlin/Any|>
@@ -273,7 +260,6 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideFunctionLiteral.kt
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideFunctionLiteral.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public open [ResolvedTo(BODY_RESOLVE)] class ClassWithParameter : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(BODY_RESOLVE)] i: R|() -> kotlin/Unit|): R|one/ClassWithParameter| {
             super<R|kotlin/Any|>()

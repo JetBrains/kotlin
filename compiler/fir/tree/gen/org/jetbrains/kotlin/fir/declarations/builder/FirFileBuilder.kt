@@ -43,7 +43,7 @@ class FirFileBuilder : FirAnnotationContainerBuilder {
     lateinit var moduleData: FirModuleData
     lateinit var origin: FirDeclarationOrigin
     var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
-    lateinit var annotationsContainer: FirFileAnnotationsContainer
+    var annotationsContainer: FirFileAnnotationsContainer? = null
     lateinit var packageDirective: FirPackageDirective
     val imports: MutableList<FirImport> = mutableListOf()
     val declarations: MutableList<FirDeclaration> = mutableListOf()

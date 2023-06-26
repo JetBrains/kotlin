@@ -7,7 +7,6 @@ R|Foo.Nested|
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] nestedClassType.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public open [ResolvedTo(STATUS)] class Foo : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Foo] constructor(): R|Foo| {
             LAZY_super<R|kotlin/Any|>

@@ -7,6 +7,5 @@ String(2)
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] annotationApplicationVarargArgument.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     @R|kotlin/Suppress|[Types](names = vararg(String(1), String(2))) public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun x(): R|kotlin/Unit| {
     }

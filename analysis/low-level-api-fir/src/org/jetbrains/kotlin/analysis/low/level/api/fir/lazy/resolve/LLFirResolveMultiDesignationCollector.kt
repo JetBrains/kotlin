@@ -34,7 +34,7 @@ internal object LLFirResolveMultiDesignationCollector {
 
     private fun LLFirResolveTarget.withAnnotationContainer(): List<LLFirResolveTarget> {
         val annotationsContainer = firFile.annotationsContainer
-        if (!annotationsContainer.shouldBeResolved()) return listOf(this)
+        if (annotationsContainer?.shouldBeResolved() != true) return listOf(this)
         return buildList {
             add(annotationsContainer.collectDesignationWithFile().asResolveTarget())
             add(this@withAnnotationContainer)

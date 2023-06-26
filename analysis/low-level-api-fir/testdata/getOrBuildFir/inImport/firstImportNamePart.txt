@@ -7,4 +7,3 @@ import a.b.c
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] firstImportNamePart.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container

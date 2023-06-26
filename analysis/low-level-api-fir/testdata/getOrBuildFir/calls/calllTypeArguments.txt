@@ -7,7 +7,6 @@ R|kotlin/Int|
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] calllTypeArguments.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public final [ResolvedTo(CONTRACTS)] fun <[ResolvedTo(CONTRACTS)] T> y(): R|kotlin/Unit| {
     }
     public final [ResolvedTo(BODY_RESOLVE)] fun x(): R|kotlin/Unit| {

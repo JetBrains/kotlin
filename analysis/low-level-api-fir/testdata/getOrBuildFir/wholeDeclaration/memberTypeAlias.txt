@@ -7,7 +7,6 @@ public final [ResolvedTo(BODY_RESOLVE)] typealias Str = R|kotlin/String|
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] memberTypeAlias.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public final [ResolvedTo(STATUS)] class Y : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Y] constructor(): R|Y| {
             LAZY_super<R|kotlin/Any|>

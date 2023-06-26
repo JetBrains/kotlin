@@ -7,7 +7,6 @@ FIR element rendered:
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] localProperty.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public final [ResolvedTo(BODY_RESOLVE)] fun y(): R|kotlin/Unit| {
         [ResolvedTo(BODY_RESOLVE)] lval x: R|kotlin/String| = String()
     }

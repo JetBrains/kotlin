@@ -8,7 +8,6 @@ public final [ResolvedTo(BODY_RESOLVE)] val x: R|kotlin/String| = String()
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] memberProperty.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public final [ResolvedTo(STATUS)] class Y : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Y] constructor(): R|Y| {
             LAZY_super<R|kotlin/Any|>

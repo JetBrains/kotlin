@@ -10,7 +10,6 @@ R|kotlin/lazy|<R|kotlin/Int|>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunc
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] propertyDelegate.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public final [ResolvedTo(BODY_RESOLVE)] val x: R|kotlin/Int|by R|kotlin/lazy|<R|kotlin/Int|>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function0<T>] lazy@fun <anonymous>(): R|kotlin/Int| <inline=NoInline>  {
         ^ Int(1)
     }

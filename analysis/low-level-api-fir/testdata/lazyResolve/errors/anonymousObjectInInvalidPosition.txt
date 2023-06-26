@@ -1,6 +1,5 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] anonymousObjectInInvalidPosition.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     private final? [ResolvedTo(RAW_FIR)] val resolveMe: A = LAZY_EXPRESSION
         private [ResolvedTo(RAW_FIR)] get(): A
     public? final? [ResolvedTo(RAW_FIR)] interface A<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
@@ -10,7 +9,6 @@ FILE: [ResolvedTo(RAW_FIR)] anonymousObjectInInvalidPosition.kt
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] anonymousObjectInInvalidPosition.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     private final? [ResolvedTo(RAW_FIR)] val resolveMe: A = LAZY_EXPRESSION
         private [ResolvedTo(RAW_FIR)] get(): A
     public? final? [ResolvedTo(RAW_FIR)] interface A<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
@@ -20,7 +18,6 @@ FILE: [ResolvedTo(IMPORTS)] anonymousObjectInInvalidPosition.kt
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] anonymousObjectInInvalidPosition.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     private final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] val resolveMe: A = LAZY_EXPRESSION
         private [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] get(): A
     public? final? [ResolvedTo(RAW_FIR)] interface A<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
@@ -30,7 +27,6 @@ FILE: [ResolvedTo(IMPORTS)] anonymousObjectInInvalidPosition.kt
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] anonymousObjectInInvalidPosition.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     private final? [ResolvedTo(COMPANION_GENERATION)] val resolveMe: A = LAZY_EXPRESSION
         private [ResolvedTo(COMPANION_GENERATION)] get(): A
     public? final? [ResolvedTo(RAW_FIR)] interface A<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
@@ -40,7 +36,6 @@ FILE: [ResolvedTo(IMPORTS)] anonymousObjectInInvalidPosition.kt
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] anonymousObjectInInvalidPosition.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     private final? [ResolvedTo(SUPER_TYPES)] val resolveMe: A = LAZY_EXPRESSION
         private [ResolvedTo(SUPER_TYPES)] get(): A
     public? final? [ResolvedTo(RAW_FIR)] interface A<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
@@ -50,7 +45,6 @@ FILE: [ResolvedTo(IMPORTS)] anonymousObjectInInvalidPosition.kt
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] anonymousObjectInInvalidPosition.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     private final? [ResolvedTo(TYPES)] val resolveMe: <ERROR TYPE REF: Wrong number of type arguments> = LAZY_EXPRESSION
         private [ResolvedTo(TYPES)] get(): <ERROR TYPE REF: Wrong number of type arguments>
     public? final? [ResolvedTo(RAW_FIR)] interface A<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
@@ -60,7 +54,6 @@ FILE: [ResolvedTo(IMPORTS)] anonymousObjectInInvalidPosition.kt
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] anonymousObjectInInvalidPosition.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     private final [ResolvedTo(STATUS)] val resolveMe: <ERROR TYPE REF: Wrong number of type arguments> = LAZY_EXPRESSION
         private [ResolvedTo(STATUS)] get(): <ERROR TYPE REF: Wrong number of type arguments>
     public? final? [ResolvedTo(RAW_FIR)] interface A<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
@@ -70,7 +63,6 @@ FILE: [ResolvedTo(IMPORTS)] anonymousObjectInInvalidPosition.kt
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] anonymousObjectInInvalidPosition.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     private final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] val resolveMe: <ERROR TYPE REF: Wrong number of type arguments> = LAZY_EXPRESSION
         private [ResolvedTo(EXPECT_ACTUAL_MATCHING)] get(): <ERROR TYPE REF: Wrong number of type arguments>
     public? final? [ResolvedTo(RAW_FIR)] interface A<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
@@ -80,7 +72,6 @@ FILE: [ResolvedTo(IMPORTS)] anonymousObjectInInvalidPosition.kt
 
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] anonymousObjectInInvalidPosition.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     private final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] val resolveMe: <ERROR TYPE REF: Wrong number of type arguments> = LAZY_EXPRESSION
         private [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] get(): <ERROR TYPE REF: Wrong number of type arguments>
     public? final? [ResolvedTo(RAW_FIR)] interface A<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
@@ -90,7 +81,6 @@ FILE: [ResolvedTo(IMPORTS)] anonymousObjectInInvalidPosition.kt
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] anonymousObjectInInvalidPosition.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     private final [ResolvedTo(CONTRACTS)] val resolveMe: <ERROR TYPE REF: Wrong number of type arguments> = ERROR_EXPR(Should have initializer)Null(null) = object : A<Int> {
         private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
             super<<implicit>>()
@@ -109,7 +99,6 @@ FILE: [ResolvedTo(IMPORTS)] anonymousObjectInInvalidPosition.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] anonymousObjectInInvalidPosition.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     private final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val resolveMe: <ERROR TYPE REF: Wrong number of type arguments> = ERROR_EXPR(Should have initializer)Null(null) = object : R|A<kotlin/Int>| {
         private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
             super<R|kotlin/Any|>()
@@ -128,7 +117,6 @@ FILE: [ResolvedTo(IMPORTS)] anonymousObjectInInvalidPosition.kt
 
 ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: [ResolvedTo(IMPORTS)] anonymousObjectInInvalidPosition.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     private final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] val resolveMe: <ERROR TYPE REF: Wrong number of type arguments> = ERROR_EXPR(Should have initializer)Null(null) = object : R|A<kotlin/Int>| {
         private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
             super<R|kotlin/Any|>()
@@ -147,7 +135,6 @@ FILE: [ResolvedTo(IMPORTS)] anonymousObjectInInvalidPosition.kt
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] anonymousObjectInInvalidPosition.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     private final [ResolvedTo(BODY_RESOLVE)] val resolveMe: <ERROR TYPE REF: Wrong number of type arguments> = ERROR_EXPR(Should have initializer)Null(null) = object : R|A<kotlin/Int>| {
         private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
             super<R|kotlin/Any|>()
@@ -166,7 +153,6 @@ FILE: [ResolvedTo(IMPORTS)] anonymousObjectInInvalidPosition.kt
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(IMPORTS)] anonymousObjectInInvalidPosition.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     private final [ResolvedTo(BODY_RESOLVE)] val resolveMe: <ERROR TYPE REF: Wrong number of type arguments> = ERROR_EXPR(Should have initializer)Null(null) = object : R|A<kotlin/Int>| {
         private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
             super<R|kotlin/Any|>()

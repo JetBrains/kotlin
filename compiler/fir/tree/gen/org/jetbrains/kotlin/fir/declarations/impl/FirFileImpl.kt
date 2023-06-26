@@ -39,7 +39,7 @@ internal class FirFileImpl(
     override val moduleData: FirModuleData,
     override val origin: FirDeclarationOrigin,
     override val attributes: FirDeclarationAttributes,
-    override var annotationsContainer: FirFileAnnotationsContainer,
+    override var annotationsContainer: FirFileAnnotationsContainer?,
     override var packageDirective: FirPackageDirective,
     override val imports: MutableList<FirImport>,
     override val declarations: MutableList<FirDeclaration>,
@@ -48,7 +48,7 @@ internal class FirFileImpl(
     override val sourceFileLinesMapping: KtSourceFileLinesMapping?,
     override val symbol: FirFileSymbol,
 ) : FirFile() {
-    override val annotations: List<FirAnnotation> get() = annotationsContainer.annotations
+    override val annotations: List<FirAnnotation> get() = annotationsContainer?.annotations ?: emptyList()
 
     init {
         symbol.bind(this)
@@ -57,7 +57,7 @@ internal class FirFileImpl(
     }
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        annotationsContainer.accept(visitor, data)
+        annotationsContainer?.accept(visitor, data)
         packageDirective.accept(visitor, data)
         imports.forEach { it.accept(visitor, data) }
         declarations.forEach { it.accept(visitor, data) }
@@ -76,7 +76,7 @@ internal class FirFileImpl(
     }
 
     override fun <D> transformAnnotationsContainer(transformer: FirTransformer<D>, data: D): FirFileImpl {
-        annotationsContainer = annotationsContainer.transform(transformer, data)
+        annotationsContainer = annotationsContainer?.transform(transformer, data)
         return this
     }
 

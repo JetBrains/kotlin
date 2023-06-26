@@ -7,4 +7,3 @@ import a.b.c
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] middleImportNamePart.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container

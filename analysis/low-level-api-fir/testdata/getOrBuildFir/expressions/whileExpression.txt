@@ -8,7 +8,6 @@ while(Boolean(true)) {
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] whileExpression.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
         while(Boolean(true)) {
         }

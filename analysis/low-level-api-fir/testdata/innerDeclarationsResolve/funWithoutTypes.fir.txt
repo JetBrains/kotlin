@@ -1,4 +1,3 @@
 FILE: [ResolvedTo(IMPORTS)] funWithoutTypes.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public final [ResolvedTo(BODY_RESOLVE)] fun main(): R|kotlin/Unit| {
     }

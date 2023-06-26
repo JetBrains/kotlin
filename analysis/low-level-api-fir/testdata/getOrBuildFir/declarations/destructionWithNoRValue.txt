@@ -7,5 +7,4 @@ FIR element rendered:
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] destructionWithNoRValue.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     <ERROR PROPERTY: Destructuring declarations are only allowed for local variables/values>

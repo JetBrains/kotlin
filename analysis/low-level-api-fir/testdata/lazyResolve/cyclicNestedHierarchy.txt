@@ -1,6 +1,5 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] cyclicNestedHierarchy.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? open [ResolvedTo(RAW_FIR)] class C : D {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor(): R|C| {
             LAZY_super<D>
@@ -23,7 +22,6 @@ FILE: [ResolvedTo(RAW_FIR)] cyclicNestedHierarchy.kt
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? open [ResolvedTo(RAW_FIR)] class C : D {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor(): R|C| {
             LAZY_super<D>
@@ -46,7 +44,6 @@ FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy.kt
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? open [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class C : D {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor(): R|C| {
             LAZY_super<D>
@@ -69,7 +66,6 @@ FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy.kt
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? open [ResolvedTo(COMPANION_GENERATION)] class C : D {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor(): R|C| {
             LAZY_super<D>
@@ -92,7 +88,6 @@ FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy.kt
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? open [ResolvedTo(SUPER_TYPES)] class C : <ERROR TYPE REF: Loop in supertype: /C -> /D> {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor(): R|C| {
             LAZY_super<D>
@@ -115,7 +110,6 @@ FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy.kt
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? open [ResolvedTo(TYPES)] class C : <ERROR TYPE REF: Loop in supertype: /C -> /D> {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor(): R|C| {
             LAZY_super<D>
@@ -138,7 +132,6 @@ FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy.kt
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public open [ResolvedTo(STATUS)] class C : <ERROR TYPE REF: Loop in supertype: /C -> /D> {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor(): R|C| {
             LAZY_super<D>
@@ -161,7 +154,6 @@ FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy.kt
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public open [ResolvedTo(EXPECT_ACTUAL_MATCHING)] class C : <ERROR TYPE REF: Loop in supertype: /C -> /D> {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor(): R|C| {
             LAZY_super<D>
@@ -184,7 +176,6 @@ FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy.kt
 
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public open [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] class C : <ERROR TYPE REF: Loop in supertype: /C -> /D> {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor(): R|C| {
             LAZY_super<D>
@@ -207,7 +198,6 @@ FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy.kt
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public open [ResolvedTo(CONTRACTS)] class C : <ERROR TYPE REF: Loop in supertype: /C -> /D> {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor(): R|C| {
             LAZY_super<D>
@@ -230,7 +220,6 @@ FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public open [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] class C : <ERROR TYPE REF: Loop in supertype: /C -> /D> {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor(): R|C| {
             LAZY_super<D>
@@ -253,7 +242,6 @@ FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy.kt
 
 ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public open [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] class C : <ERROR TYPE REF: Loop in supertype: /C -> /D> {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor(): R|C| {
             LAZY_super<D>
@@ -276,7 +264,6 @@ FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy.kt
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public open [ResolvedTo(BODY_RESOLVE)] class C : <ERROR TYPE REF: Loop in supertype: /C -> /D> {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=C] constructor(): R|C| {
             super<R|D|>()
@@ -299,7 +286,6 @@ FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy.kt
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public open [ResolvedTo(BODY_RESOLVE)] class C : <ERROR TYPE REF: Loop in supertype: /C -> /D> {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=C] constructor(): R|C| {
             super<R|D|>()

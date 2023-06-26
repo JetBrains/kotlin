@@ -1,6 +1,5 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] dataComponent2.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? data [ResolvedTo(RAW_FIR)] class DataClass : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=DataClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/DataClass.i] i: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/DataClass.b] b: Boolean): R|one/DataClass| {
             LAZY_super<R|kotlin/Any|>
@@ -22,7 +21,6 @@ FILE: [ResolvedTo(RAW_FIR)] dataComponent2.kt
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] dataComponent2.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? data [ResolvedTo(RAW_FIR)] class DataClass : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=DataClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/DataClass.i] i: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/DataClass.b] b: Boolean): R|one/DataClass| {
             LAZY_super<R|kotlin/Any|>
@@ -44,7 +42,6 @@ FILE: [ResolvedTo(IMPORTS)] dataComponent2.kt
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] dataComponent2.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? data [ResolvedTo(RAW_FIR)] class DataClass : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=DataClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/DataClass.i] i: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/DataClass.b] b: Boolean): R|one/DataClass| {
             LAZY_super<R|kotlin/Any|>
@@ -66,7 +63,6 @@ FILE: [ResolvedTo(IMPORTS)] dataComponent2.kt
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] dataComponent2.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? data [ResolvedTo(RAW_FIR)] class DataClass : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=DataClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/DataClass.i] i: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/DataClass.b] b: Boolean): R|one/DataClass| {
             LAZY_super<R|kotlin/Any|>
@@ -88,7 +84,6 @@ FILE: [ResolvedTo(IMPORTS)] dataComponent2.kt
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] dataComponent2.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? data [ResolvedTo(SUPER_TYPES)] class DataClass : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=DataClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/DataClass.i] i: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/DataClass.b] b: Boolean): R|one/DataClass| {
             LAZY_super<R|kotlin/Any|>
@@ -110,7 +105,6 @@ FILE: [ResolvedTo(IMPORTS)] dataComponent2.kt
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] dataComponent2.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? data [ResolvedTo(TYPES)] class DataClass : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=DataClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/DataClass.i] i: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/DataClass.b] b: Boolean): R|one/DataClass| {
             LAZY_super<R|kotlin/Any|>
@@ -132,7 +126,6 @@ FILE: [ResolvedTo(IMPORTS)] dataComponent2.kt
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] dataComponent2.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public final data [ResolvedTo(STATUS)] class DataClass : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=DataClass] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/DataClass.i] i: R|kotlin/Int|, [ResolvedTo(STATUS)] [CorrespondingProperty=one/DataClass.b] b: R|kotlin/Boolean|): R|one/DataClass| {
             LAZY_super<R|kotlin/Any|>
@@ -154,7 +147,6 @@ FILE: [ResolvedTo(IMPORTS)] dataComponent2.kt
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] dataComponent2.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public final data [ResolvedTo(STATUS)] class DataClass : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=DataClass] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/DataClass.i] i: R|kotlin/Int|, [ResolvedTo(STATUS)] [CorrespondingProperty=one/DataClass.b] b: R|kotlin/Boolean|): R|one/DataClass| {
             LAZY_super<R|kotlin/Any|>
@@ -176,7 +168,6 @@ FILE: [ResolvedTo(IMPORTS)] dataComponent2.kt
 
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] dataComponent2.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public final data [ResolvedTo(STATUS)] class DataClass : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=DataClass] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/DataClass.i] i: R|kotlin/Int|, [ResolvedTo(STATUS)] [CorrespondingProperty=one/DataClass.b] b: R|kotlin/Boolean|): R|one/DataClass| {
             LAZY_super<R|kotlin/Any|>
@@ -198,7 +189,6 @@ FILE: [ResolvedTo(IMPORTS)] dataComponent2.kt
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] dataComponent2.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public final data [ResolvedTo(STATUS)] class DataClass : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=DataClass] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/DataClass.i] i: R|kotlin/Int|, [ResolvedTo(STATUS)] [CorrespondingProperty=one/DataClass.b] b: R|kotlin/Boolean|): R|one/DataClass| {
             LAZY_super<R|kotlin/Any|>
@@ -220,7 +210,6 @@ FILE: [ResolvedTo(IMPORTS)] dataComponent2.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] dataComponent2.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public final data [ResolvedTo(STATUS)] class DataClass : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=DataClass] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/DataClass.i] i: R|kotlin/Int|, [ResolvedTo(STATUS)] [CorrespondingProperty=one/DataClass.b] b: R|kotlin/Boolean|): R|one/DataClass| {
             LAZY_super<R|kotlin/Any|>
@@ -242,7 +231,6 @@ FILE: [ResolvedTo(IMPORTS)] dataComponent2.kt
 
 ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: [ResolvedTo(IMPORTS)] dataComponent2.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public final data [ResolvedTo(STATUS)] class DataClass : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=DataClass] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/DataClass.i] i: R|kotlin/Int|, [ResolvedTo(STATUS)] [CorrespondingProperty=one/DataClass.b] b: R|kotlin/Boolean|): R|one/DataClass| {
             LAZY_super<R|kotlin/Any|>
@@ -264,7 +252,6 @@ FILE: [ResolvedTo(IMPORTS)] dataComponent2.kt
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] dataComponent2.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public final data [ResolvedTo(STATUS)] class DataClass : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=DataClass] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/DataClass.i] i: R|kotlin/Int|, [ResolvedTo(STATUS)] [CorrespondingProperty=one/DataClass.b] b: R|kotlin/Boolean|): R|one/DataClass| {
             LAZY_super<R|kotlin/Any|>
@@ -286,7 +273,6 @@ FILE: [ResolvedTo(IMPORTS)] dataComponent2.kt
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(IMPORTS)] dataComponent2.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public final data [ResolvedTo(BODY_RESOLVE)] class DataClass : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=DataClass] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=one/DataClass.i] i: R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=one/DataClass.b] b: R|kotlin/Boolean|): R|one/DataClass| {
             super<R|kotlin/Any|>()

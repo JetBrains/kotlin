@@ -7,5 +7,4 @@ public final [ResolvedTo(BODY_RESOLVE)] typealias Str = R|kotlin/String|
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] topLevelTypelTypeAlias.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public final [ResolvedTo(BODY_RESOLVE)] typealias Str = R|kotlin/String|

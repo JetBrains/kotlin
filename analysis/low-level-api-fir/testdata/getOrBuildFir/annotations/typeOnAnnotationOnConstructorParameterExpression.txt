@@ -7,7 +7,6 @@ String(abc)
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] typeOnAnnotationOnConstructorParameterExpression.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public final [ResolvedTo(STATUS)] class ResolveMe : R|kotlin/Any| {
         public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] [ContainingClassKey=ResolveMe] constructor([ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] addCommaWarning: R|@R|Anno|(s = String(abc))  kotlin/Boolean| = Boolean(false)): R|ResolveMe| {
             super<R|kotlin/Any|>()

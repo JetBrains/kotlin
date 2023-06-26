@@ -7,7 +7,6 @@ R|kotlin/collections/Map<kotlin/String, kotlin/collections/List<kotlin/Int>>|
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] wholeType.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun x(): R|kotlin/collections/Map<kotlin/String, kotlin/collections/List<kotlin/Int>>| {
         ^x IntegerLiteral(1)
     }

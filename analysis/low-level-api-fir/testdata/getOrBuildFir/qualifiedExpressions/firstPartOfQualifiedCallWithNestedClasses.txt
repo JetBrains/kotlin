@@ -7,7 +7,6 @@ Q|A.B|
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] firstPartOfQualifiedCallWithNestedClasses.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>

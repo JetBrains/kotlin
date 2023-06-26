@@ -7,7 +7,6 @@ R|<local>/m|
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] compoundAssignWithArrayAccessConvention_propertyAccess.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public abstract [ResolvedTo(STATUS)] interface MyMap<[ResolvedTo(STATUS)] K, [ResolvedTo(STATUS)] V> : R|kotlin/Any| {
         public abstract operator [ResolvedTo(CONTRACTS)] fun get([ResolvedTo(CONTRACTS)] k: R|K|): R|V|
 

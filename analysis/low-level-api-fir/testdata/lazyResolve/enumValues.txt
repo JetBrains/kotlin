@@ -1,6 +1,5 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] enumValues.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(RAW_FIR)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
         private [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
             LAZY_super<R|kotlin/Enum<one/MyEnum>|>
@@ -20,7 +19,6 @@ FILE: [ResolvedTo(RAW_FIR)] enumValues.kt
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] enumValues.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(RAW_FIR)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
         private [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
             LAZY_super<R|kotlin/Enum<one/MyEnum>|>
@@ -40,7 +38,6 @@ FILE: [ResolvedTo(IMPORTS)] enumValues.kt
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] enumValues.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(RAW_FIR)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
         private [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
             LAZY_super<R|kotlin/Enum<one/MyEnum>|>
@@ -60,7 +57,6 @@ FILE: [ResolvedTo(IMPORTS)] enumValues.kt
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] enumValues.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(RAW_FIR)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
         private [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
             LAZY_super<R|kotlin/Enum<one/MyEnum>|>
@@ -80,7 +76,6 @@ FILE: [ResolvedTo(IMPORTS)] enumValues.kt
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] enumValues.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(SUPER_TYPES)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
         private [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
             LAZY_super<R|kotlin/Enum<one/MyEnum>|>
@@ -100,7 +95,6 @@ FILE: [ResolvedTo(IMPORTS)] enumValues.kt
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] enumValues.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(TYPES)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
         private [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
             LAZY_super<R|kotlin/Enum<one/MyEnum>|>
@@ -120,7 +114,6 @@ FILE: [ResolvedTo(IMPORTS)] enumValues.kt
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] enumValues.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public final [ResolvedTo(STATUS)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
         private [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
             LAZY_super<R|kotlin/Enum<one/MyEnum>|>
@@ -140,7 +133,6 @@ FILE: [ResolvedTo(IMPORTS)] enumValues.kt
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] enumValues.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public final [ResolvedTo(STATUS)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
         private [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
             LAZY_super<R|kotlin/Enum<one/MyEnum>|>
@@ -160,7 +152,6 @@ FILE: [ResolvedTo(IMPORTS)] enumValues.kt
 
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] enumValues.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public final [ResolvedTo(STATUS)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
         private [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
             LAZY_super<R|kotlin/Enum<one/MyEnum>|>
@@ -180,7 +171,6 @@ FILE: [ResolvedTo(IMPORTS)] enumValues.kt
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] enumValues.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public final [ResolvedTo(STATUS)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
         private [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
             LAZY_super<R|kotlin/Enum<one/MyEnum>|>
@@ -200,7 +190,6 @@ FILE: [ResolvedTo(IMPORTS)] enumValues.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] enumValues.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public final [ResolvedTo(STATUS)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
         private [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
             LAZY_super<R|kotlin/Enum<one/MyEnum>|>
@@ -220,7 +209,6 @@ FILE: [ResolvedTo(IMPORTS)] enumValues.kt
 
 ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: [ResolvedTo(IMPORTS)] enumValues.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public final [ResolvedTo(STATUS)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
         private [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
             LAZY_super<R|kotlin/Enum<one/MyEnum>|>
@@ -240,7 +228,6 @@ FILE: [ResolvedTo(IMPORTS)] enumValues.kt
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] enumValues.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public final [ResolvedTo(STATUS)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
         private [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
             LAZY_super<R|kotlin/Enum<one/MyEnum>|>
@@ -260,7 +247,6 @@ FILE: [ResolvedTo(IMPORTS)] enumValues.kt
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(IMPORTS)] enumValues.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public final [ResolvedTo(BODY_RESOLVE)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
         private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
             super<R|kotlin/Enum<one/MyEnum>|>()

@@ -7,5 +7,4 @@ package a.b.c
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] wholePackageDirective.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     package a.b.c

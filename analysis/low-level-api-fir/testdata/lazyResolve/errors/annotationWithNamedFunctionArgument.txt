@@ -1,6 +1,5 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] annotationWithNamedFunctionArgument.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] class TopLevelClass : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|TopLevelClass| {
             LAZY_super<R|kotlin/Any|>
@@ -10,7 +9,6 @@ FILE: [ResolvedTo(RAW_FIR)] annotationWithNamedFunctionArgument.kt
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] annotationWithNamedFunctionArgument.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] class TopLevelClass : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|TopLevelClass| {
             LAZY_super<R|kotlin/Any|>
@@ -20,7 +18,6 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithNamedFunctionArgument.kt
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] annotationWithNamedFunctionArgument.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class TopLevelClass : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|TopLevelClass| {
             LAZY_super<R|kotlin/Any|>
@@ -30,7 +27,6 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithNamedFunctionArgument.kt
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] annotationWithNamedFunctionArgument.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(COMPANION_GENERATION)] class TopLevelClass : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|TopLevelClass| {
             LAZY_super<R|kotlin/Any|>
@@ -40,7 +36,6 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithNamedFunctionArgument.kt
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] annotationWithNamedFunctionArgument.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(SUPER_TYPES)] class TopLevelClass : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|TopLevelClass| {
             LAZY_super<R|kotlin/Any|>
@@ -50,7 +45,6 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithNamedFunctionArgument.kt
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] annotationWithNamedFunctionArgument.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     @<ERROR TYPE REF: Symbol not found for Anno>[Types](LAZY_EXPRESSION) public? final? [ResolvedTo(TYPES)] class TopLevelClass : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|TopLevelClass| {
             LAZY_super<R|kotlin/Any|>
@@ -60,7 +54,6 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithNamedFunctionArgument.kt
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] annotationWithNamedFunctionArgument.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     @<ERROR TYPE REF: Symbol not found for Anno>[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] class TopLevelClass : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|TopLevelClass| {
             LAZY_super<R|kotlin/Any|>
@@ -70,7 +63,6 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithNamedFunctionArgument.kt
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] annotationWithNamedFunctionArgument.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     @<ERROR TYPE REF: Symbol not found for Anno>[Types](LAZY_EXPRESSION) public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] class TopLevelClass : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|TopLevelClass| {
             LAZY_super<R|kotlin/Any|>
@@ -80,7 +72,6 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithNamedFunctionArgument.kt
 
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] annotationWithNamedFunctionArgument.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     @<ERROR TYPE REF: Symbol not found for Anno>[Types](ERROR_EXPR(Incorrect invoke receiver)local final? [ResolvedTo(RAW_FIR)] fun a(): String {
     }
     .invoke#()) public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] class TopLevelClass : R|kotlin/Any| {
@@ -92,7 +83,6 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithNamedFunctionArgument.kt
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] annotationWithNamedFunctionArgument.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     @<ERROR TYPE REF: Symbol not found for Anno>[Types](ERROR_EXPR(Incorrect invoke receiver)local final? [ResolvedTo(RAW_FIR)] fun a(): String {
     }
     .invoke#()) public final [ResolvedTo(CONTRACTS)] class TopLevelClass : R|kotlin/Any| {
@@ -104,7 +94,6 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithNamedFunctionArgument.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] annotationWithNamedFunctionArgument.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     @<ERROR TYPE REF: Symbol not found for Anno>[Types](ERROR_EXPR(Incorrect invoke receiver)local final? [ResolvedTo(RAW_FIR)] fun a(): String {
     }
     .invoke#()) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] class TopLevelClass : R|kotlin/Any| {
@@ -116,7 +105,6 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithNamedFunctionArgument.kt
 
 ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: [ResolvedTo(IMPORTS)] annotationWithNamedFunctionArgument.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     @<ERROR TYPE REF: Symbol not found for Anno>[Types]() public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] class TopLevelClass : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|TopLevelClass| {
             LAZY_super<R|kotlin/Any|>
@@ -126,7 +114,6 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithNamedFunctionArgument.kt
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] annotationWithNamedFunctionArgument.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     @<ERROR TYPE REF: Symbol not found for Anno>[Types]() public final [ResolvedTo(BODY_RESOLVE)] class TopLevelClass : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|TopLevelClass| {
             super<R|kotlin/Any|>()
@@ -136,7 +123,6 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithNamedFunctionArgument.kt
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(IMPORTS)] annotationWithNamedFunctionArgument.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     @<ERROR TYPE REF: Symbol not found for Anno>[Types]() public final [ResolvedTo(BODY_RESOLVE)] class TopLevelClass : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|TopLevelClass| {
             super<R|kotlin/Any|>()

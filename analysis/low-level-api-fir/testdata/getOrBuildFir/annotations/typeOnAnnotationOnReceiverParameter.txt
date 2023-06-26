@@ -7,7 +7,6 @@ FIR element rendered:
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] typeOnAnnotationOnReceiverParameter.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun @RECEIVER:R|Anno|[Types](s = String(ab)) R|kotlin/Int|.check(): R|kotlin/Int| {
         ^check Int(1)
     }

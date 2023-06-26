@@ -7,7 +7,6 @@ FIR element rendered:
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] expectAndActualInTheSameFile.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(RAW_FIR)] fun main(): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? expect [ResolvedTo(RAW_FIR)] fun f(): R|kotlin/Unit|
     public? final? [ResolvedTo(RAW_FIR)] fun test(): R|kotlin/Unit| { LAZY_BLOCK }

@@ -28,7 +28,7 @@ class LLFirWholeFileResolveTarget(
     }
 
     inline fun forEachTopLevelDeclaration(action: (FirElementWithResolveState) -> Unit) {
-        action(firFile.annotationsContainer)
+        firFile.annotationsContainer?.let { action(it) }
 
         for (member in firFile.declarations) {
             action(member)

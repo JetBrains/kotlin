@@ -1,6 +1,5 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] typeParameterOfClass2.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(RAW_FIR)] class MyClass<[ResolvedTo(RAW_FIR)] Type> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(RAW_FIR)] Type>(): R|MyClass<Type>| {
             LAZY_super<R|kotlin/Any|>
@@ -17,7 +16,6 @@ FILE: [ResolvedTo(RAW_FIR)] typeParameterOfClass2.kt
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass2.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(RAW_FIR)] class MyClass<[ResolvedTo(RAW_FIR)] Type> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(RAW_FIR)] Type>(): R|MyClass<Type>| {
             LAZY_super<R|kotlin/Any|>
@@ -34,7 +32,6 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass2.kt
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass2.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(RAW_FIR)] class MyClass<[ResolvedTo(RAW_FIR)] Type> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(RAW_FIR)] Type>(): R|MyClass<Type>| {
             LAZY_super<R|kotlin/Any|>
@@ -51,7 +48,6 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass2.kt
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass2.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(RAW_FIR)] class MyClass<[ResolvedTo(RAW_FIR)] Type> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(RAW_FIR)] Type>(): R|MyClass<Type>| {
             LAZY_super<R|kotlin/Any|>
@@ -68,7 +64,6 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass2.kt
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass2.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(SUPER_TYPES)] class MyClass<[ResolvedTo(SUPER_TYPES)] Type> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(SUPER_TYPES)] Type>(): R|MyClass<Type>| {
             LAZY_super<R|kotlin/Any|>
@@ -85,7 +80,6 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass2.kt
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass2.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(TYPES)] class MyClass<[ResolvedTo(TYPES)] Type> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(TYPES)] Type>(): R|MyClass<Type>| {
             LAZY_super<R|kotlin/Any|>
@@ -102,7 +96,6 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass2.kt
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass2.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public final [ResolvedTo(STATUS)] class MyClass<[ResolvedTo(STATUS)] Type> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(STATUS)] Type>(): R|MyClass<Type>| {
             LAZY_super<R|kotlin/Any|>
@@ -119,7 +112,6 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass2.kt
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass2.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public final [ResolvedTo(STATUS)] class MyClass<[ResolvedTo(STATUS)] Type> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(STATUS)] Type>(): R|MyClass<Type>| {
             LAZY_super<R|kotlin/Any|>
@@ -136,7 +128,6 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass2.kt
 
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass2.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public final [ResolvedTo(STATUS)] class MyClass<[ResolvedTo(STATUS)] Type> : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(STATUS)] Type>(): R|MyClass<Type>| {
             LAZY_super<R|kotlin/Any|>
@@ -153,7 +144,6 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass2.kt
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass2.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public final [ResolvedTo(STATUS)] class MyClass<[ResolvedTo(STATUS)] Type> : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(STATUS)] Type>(): R|MyClass<Type>| {
             LAZY_super<R|kotlin/Any|>
@@ -170,7 +160,6 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass2.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass2.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public final [ResolvedTo(STATUS)] class MyClass<[ResolvedTo(STATUS)] Type> : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(STATUS)] Type>(): R|MyClass<Type>| {
             LAZY_super<R|kotlin/Any|>
@@ -187,7 +176,6 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass2.kt
 
 ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass2.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public final [ResolvedTo(STATUS)] class MyClass<[ResolvedTo(STATUS)] Type> : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(STATUS)] Type>(): R|MyClass<Type>| {
             LAZY_super<R|kotlin/Any|>
@@ -204,7 +192,6 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass2.kt
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass2.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public final [ResolvedTo(STATUS)] class MyClass<[ResolvedTo(STATUS)] Type> : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(STATUS)] Type>(): R|MyClass<Type>| {
             LAZY_super<R|kotlin/Any|>
@@ -221,7 +208,6 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass2.kt
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass2.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public final [ResolvedTo(BODY_RESOLVE)] class MyClass<[ResolvedTo(BODY_RESOLVE)] Type> : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(BODY_RESOLVE)] Type>(): R|MyClass<Type>| {
             super<R|kotlin/Any|>()

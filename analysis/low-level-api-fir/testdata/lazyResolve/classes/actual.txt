@@ -1,6 +1,5 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] actual.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? actual [ResolvedTo(RAW_FIR)] class Actual : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Actual] constructor(): R|Actual| {
             LAZY_super<R|kotlin/Any|>
@@ -24,7 +23,6 @@ FILE: [ResolvedTo(RAW_FIR)] actual.kt
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] actual.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? actual [ResolvedTo(RAW_FIR)] class Actual : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Actual] constructor(): R|Actual| {
             LAZY_super<R|kotlin/Any|>
@@ -48,7 +46,6 @@ FILE: [ResolvedTo(IMPORTS)] actual.kt
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] actual.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? actual [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class Actual : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Actual] constructor(): R|Actual| {
             LAZY_super<R|kotlin/Any|>
@@ -72,7 +69,6 @@ FILE: [ResolvedTo(IMPORTS)] actual.kt
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] actual.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? actual [ResolvedTo(COMPANION_GENERATION)] class Actual : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Actual] constructor(): R|Actual| {
             LAZY_super<R|kotlin/Any|>
@@ -96,7 +92,6 @@ FILE: [ResolvedTo(IMPORTS)] actual.kt
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] actual.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? actual [ResolvedTo(SUPER_TYPES)] class Actual : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Actual] constructor(): R|Actual| {
             LAZY_super<R|kotlin/Any|>
@@ -120,7 +115,6 @@ FILE: [ResolvedTo(IMPORTS)] actual.kt
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] actual.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? actual [ResolvedTo(TYPES)] class Actual : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Actual] constructor(): R|Actual| {
             LAZY_super<R|kotlin/Any|>
@@ -144,7 +138,6 @@ FILE: [ResolvedTo(IMPORTS)] actual.kt
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] actual.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public final actual [ResolvedTo(STATUS)] class Actual : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Actual] constructor(): R|Actual| {
             LAZY_super<R|kotlin/Any|>
@@ -168,7 +161,6 @@ FILE: [ResolvedTo(IMPORTS)] actual.kt
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] actual.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public final actual [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ExpectForActualAttributeKey={}] class Actual : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Actual] constructor(): R|Actual| {
             LAZY_super<R|kotlin/Any|>
@@ -192,7 +184,6 @@ FILE: [ResolvedTo(IMPORTS)] actual.kt
 
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] actual.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public final actual [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] [ExpectForActualAttributeKey={}] class Actual : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Actual] constructor(): R|Actual| {
             LAZY_super<R|kotlin/Any|>
@@ -216,7 +207,6 @@ FILE: [ResolvedTo(IMPORTS)] actual.kt
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] actual.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public final actual [ResolvedTo(CONTRACTS)] [ExpectForActualAttributeKey={}] class Actual : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Actual] constructor(): R|Actual| {
             LAZY_super<R|kotlin/Any|>
@@ -240,7 +230,6 @@ FILE: [ResolvedTo(IMPORTS)] actual.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] actual.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public final actual [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ExpectForActualAttributeKey={}] class Actual : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Actual] constructor(): R|Actual| {
             LAZY_super<R|kotlin/Any|>
@@ -264,7 +253,6 @@ FILE: [ResolvedTo(IMPORTS)] actual.kt
 
 ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: [ResolvedTo(IMPORTS)] actual.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public final actual [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] [ExpectForActualAttributeKey={}] class Actual : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Actual] constructor(): R|Actual| {
             LAZY_super<R|kotlin/Any|>
@@ -288,7 +276,6 @@ FILE: [ResolvedTo(IMPORTS)] actual.kt
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] actual.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public final actual [ResolvedTo(BODY_RESOLVE)] [ExpectForActualAttributeKey={}] class Actual : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Actual] constructor(): R|Actual| {
             super<R|kotlin/Any|>()
@@ -312,7 +299,6 @@ FILE: [ResolvedTo(IMPORTS)] actual.kt
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(IMPORTS)] actual.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public final actual [ResolvedTo(BODY_RESOLVE)] [ExpectForActualAttributeKey={}] class Actual : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Actual] constructor(): R|Actual| {
             super<R|kotlin/Any|>()

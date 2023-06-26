@@ -7,5 +7,4 @@ package a.b.c
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] wholePackageName.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     package a.b.c

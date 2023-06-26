@@ -7,6 +7,5 @@ FIR element rendered:
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] annotationApplicationCallExpression.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     @R|kotlin/Suppress|[Types](names = vararg(String())) public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun x(): R|kotlin/Unit| {
     }

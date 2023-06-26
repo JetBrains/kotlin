@@ -7,7 +7,6 @@ R|<local>/m|
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] incWithArrayAccessConvention_propertyAccess.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public abstract [ResolvedTo(STATUS)] interface A : R|kotlin/Any| {
         public abstract operator [ResolvedTo(CONTRACTS)] fun inc(): R|A|
 

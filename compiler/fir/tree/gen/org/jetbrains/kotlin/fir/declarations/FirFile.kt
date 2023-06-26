@@ -28,7 +28,7 @@ abstract class FirFile : FirDeclaration() {
     abstract override val moduleData: FirModuleData
     abstract override val origin: FirDeclarationOrigin
     abstract override val attributes: FirDeclarationAttributes
-    abstract val annotationsContainer: FirFileAnnotationsContainer
+    abstract val annotationsContainer: FirFileAnnotationsContainer?
     abstract val packageDirective: FirPackageDirective
     abstract val imports: List<FirImport>
     abstract val declarations: List<FirDeclaration>

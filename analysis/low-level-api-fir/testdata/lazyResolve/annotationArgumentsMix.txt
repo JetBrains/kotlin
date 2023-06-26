@@ -1,6 +1,5 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] annotationArgumentsMix.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(RAW_FIR)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherAnnotation] constructor(): R|AnotherAnnotation| {
             LAZY_super<R|kotlin/Any|>
@@ -46,7 +45,6 @@ FILE: [ResolvedTo(RAW_FIR)] annotationArgumentsMix.kt
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMix.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(RAW_FIR)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherAnnotation] constructor(): R|AnotherAnnotation| {
             LAZY_super<R|kotlin/Any|>
@@ -92,7 +90,6 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMix.kt
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMix.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(RAW_FIR)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherAnnotation] constructor(): R|AnotherAnnotation| {
             LAZY_super<R|kotlin/Any|>
@@ -138,7 +135,6 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMix.kt
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMix.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(RAW_FIR)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherAnnotation] constructor(): R|AnotherAnnotation| {
             LAZY_super<R|kotlin/Any|>
@@ -184,7 +180,6 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMix.kt
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMix.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(RAW_FIR)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherAnnotation] constructor(): R|AnotherAnnotation| {
             LAZY_super<R|kotlin/Any|>
@@ -230,7 +225,6 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMix.kt
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMix.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(RAW_FIR)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherAnnotation] constructor(): R|AnotherAnnotation| {
             LAZY_super<R|kotlin/Any|>
@@ -276,7 +270,6 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMix.kt
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMix.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(RAW_FIR)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherAnnotation] constructor(): R|AnotherAnnotation| {
             LAZY_super<R|kotlin/Any|>
@@ -322,7 +315,6 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMix.kt
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMix.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(RAW_FIR)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherAnnotation] constructor(): R|AnotherAnnotation| {
             LAZY_super<R|kotlin/Any|>
@@ -368,7 +360,6 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMix.kt
 
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMix.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public final [ResolvedTo(STATUS)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherAnnotation] constructor(): R|AnotherAnnotation| {
             LAZY_super<R|kotlin/Any|>
@@ -414,7 +405,6 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMix.kt
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMix.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public final [ResolvedTo(STATUS)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherAnnotation] constructor(): R|AnotherAnnotation| {
             LAZY_super<R|kotlin/Any|>
@@ -461,7 +451,6 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMix.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMix.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public final [ResolvedTo(STATUS)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherAnnotation] constructor(): R|AnotherAnnotation| {
             LAZY_super<R|kotlin/Any|>
@@ -508,7 +497,6 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMix.kt
 
 ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMix.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public final [ResolvedTo(STATUS)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=AnotherAnnotation] constructor(): R|AnotherAnnotation| {
             LAZY_super<R|kotlin/Any|>
@@ -555,7 +543,6 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMix.kt
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMix.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public final [ResolvedTo(STATUS)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=AnotherAnnotation] constructor(): R|AnotherAnnotation| {
             LAZY_super<R|kotlin/Any|>
@@ -602,7 +589,6 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMix.kt
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMix.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public final [ResolvedTo(BODY_RESOLVE)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=AnotherAnnotation] constructor(): R|AnotherAnnotation| {
             super<R|kotlin/Any|>()

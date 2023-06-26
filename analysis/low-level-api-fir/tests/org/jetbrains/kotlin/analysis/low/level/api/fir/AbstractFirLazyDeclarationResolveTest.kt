@@ -34,7 +34,7 @@ abstract class AbstractFirLazyDeclarationResolveTest : AbstractFirLazyDeclaratio
     override fun doTestByFileStructure(ktFile: KtFile, moduleStructure: TestModuleStructure, testServices: TestServices) {
         doLazyResolveTest(ktFile, testServices) { firResolveSession ->
             if (Directives.RESOLVE_FILE_ANNOTATIONS in moduleStructure.allDirectives) {
-                val annotationContainer = firResolveSession.getOrBuildFirFile(ktFile).annotationsContainer
+                val annotationContainer = firResolveSession.getOrBuildFirFile(ktFile).annotationsContainer!!
                 val session = annotationContainer.moduleData.session as LLFirResolvableModuleSession
                 annotationContainer to fun(phase: FirResolvePhase) {
                     session.moduleComponents.firModuleLazyDeclarationResolver.lazyResolve(

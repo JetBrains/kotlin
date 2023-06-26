@@ -7,7 +7,6 @@ R|test/B.set|
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] setOperator.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     package test
 
     public final [ResolvedTo(STATUS)] class B : R|kotlin/Any| {

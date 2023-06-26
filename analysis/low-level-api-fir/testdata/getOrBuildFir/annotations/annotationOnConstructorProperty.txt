@@ -7,7 +7,6 @@ FIR element rendered:
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] annotationOnConstructorProperty.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public final [ResolvedTo(STATUS)] class Abc : R|kotlin/Any| {
         public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] [ContainingClassKey=Abc] constructor([ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] [CorrespondingProperty=/Abc.i] @<ERROR TYPE REF: Symbol not found for Anno>[Types]() i: R|kotlin/Int|): R|Abc| {
             super<R|kotlin/Any|>()

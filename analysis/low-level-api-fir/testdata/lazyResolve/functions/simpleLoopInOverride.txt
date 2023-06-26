@@ -1,6 +1,5 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] simpleLoopInOverride.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(RAW_FIR)] interface Foo1 : Foo2 {
         public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
 
@@ -16,7 +15,6 @@ FILE: [ResolvedTo(RAW_FIR)] simpleLoopInOverride.kt
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverride.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(RAW_FIR)] interface Foo1 : Foo2 {
         public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
 
@@ -32,7 +30,6 @@ FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverride.kt
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverride.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(RAW_FIR)] interface Foo1 : Foo2 {
         public? open? override [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun foo(): R|kotlin/Unit|
 
@@ -48,7 +45,6 @@ FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverride.kt
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverride.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(RAW_FIR)] interface Foo1 : Foo2 {
         public? open? override [ResolvedTo(COMPANION_GENERATION)] fun foo(): R|kotlin/Unit|
 
@@ -64,7 +60,6 @@ FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverride.kt
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverride.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(SUPER_TYPES)] interface Foo1 : <ERROR TYPE REF: Loop in supertype: /Foo1 -> /Foo2> {
         public? open? override [ResolvedTo(SUPER_TYPES)] fun foo(): R|kotlin/Unit|
 
@@ -80,7 +75,6 @@ FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverride.kt
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverride.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(TYPES)] interface Foo1 : <ERROR TYPE REF: Loop in supertype: /Foo1 -> /Foo2> {
         public? open? override [ResolvedTo(TYPES)] fun foo(): R|kotlin/Unit|
 
@@ -96,7 +90,6 @@ FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverride.kt
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverride.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public abstract [ResolvedTo(STATUS)] interface Foo1 : <ERROR TYPE REF: Loop in supertype: /Foo1 -> /Foo2> {
         public abstract override [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
 
@@ -112,7 +105,6 @@ FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverride.kt
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverride.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public abstract [ResolvedTo(STATUS)] interface Foo1 : <ERROR TYPE REF: Loop in supertype: /Foo1 -> /Foo2> {
         public abstract override [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun foo(): R|kotlin/Unit|
 
@@ -128,7 +120,6 @@ FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverride.kt
 
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverride.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public abstract [ResolvedTo(STATUS)] interface Foo1 : <ERROR TYPE REF: Loop in supertype: /Foo1 -> /Foo2> {
         public abstract override [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] fun foo(): R|kotlin/Unit|
 
@@ -144,7 +135,6 @@ FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverride.kt
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverride.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public abstract [ResolvedTo(STATUS)] interface Foo1 : <ERROR TYPE REF: Loop in supertype: /Foo1 -> /Foo2> {
         public abstract override [ResolvedTo(CONTRACTS)] fun foo(): R|kotlin/Unit|
 
@@ -160,7 +150,6 @@ FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverride.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverride.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public abstract [ResolvedTo(STATUS)] interface Foo1 : <ERROR TYPE REF: Loop in supertype: /Foo1 -> /Foo2> {
         public abstract override [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun foo(): R|kotlin/Unit|
 
@@ -176,7 +165,6 @@ FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverride.kt
 
 ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverride.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public abstract [ResolvedTo(STATUS)] interface Foo1 : <ERROR TYPE REF: Loop in supertype: /Foo1 -> /Foo2> {
         public abstract override [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun foo(): R|kotlin/Unit|
 
@@ -192,7 +180,6 @@ FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverride.kt
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverride.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public abstract [ResolvedTo(STATUS)] interface Foo1 : <ERROR TYPE REF: Loop in supertype: /Foo1 -> /Foo2> {
         public abstract override [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit|
 
@@ -208,7 +195,6 @@ FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverride.kt
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverride.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public abstract [ResolvedTo(BODY_RESOLVE)] interface Foo1 : <ERROR TYPE REF: Loop in supertype: /Foo1 -> /Foo2> {
         public abstract override [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit|
 

@@ -7,7 +7,6 @@ FIR element rendered:
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] typeOnAnnotationOnReturnProperty.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] val i: R|@R|Anno|(s = String(ab))  kotlin/Int| = Int(1)
         public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] get(): R|@R|Anno|(s = String(ab))  kotlin/Int|
     @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {

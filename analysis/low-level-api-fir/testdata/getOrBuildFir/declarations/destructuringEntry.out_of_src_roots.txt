@@ -7,7 +7,6 @@ FIR element rendered:
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] destructuringEntry.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public final [ResolvedTo(BODY_RESOLVE)] fun main(): R|kotlin/Unit| {
         [ResolvedTo(BODY_RESOLVE)] lval <destruct>: <ERROR TYPE REF: Unresolved name: to> = IntegerLiteral(1).<Unresolved name: to>#(Int(2))
         [ResolvedTo(BODY_RESOLVE)] lval a: <ERROR TYPE REF: Unresolved name: component1> = R|<local>/<destruct>|.<Unresolved name: component1>#()

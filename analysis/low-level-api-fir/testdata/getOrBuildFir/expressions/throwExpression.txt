@@ -7,7 +7,6 @@ throw R|java/lang/IllegalStateException.IllegalStateException|()
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] throwExpression.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public final [ResolvedTo(BODY_RESOLVE)] fun x(): R|kotlin/Unit| {
         throw R|java/lang/IllegalStateException.IllegalStateException|()
     }

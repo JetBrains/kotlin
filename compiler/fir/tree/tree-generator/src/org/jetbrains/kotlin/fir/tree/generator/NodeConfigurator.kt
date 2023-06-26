@@ -477,7 +477,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         }
 
         file.configure {
-            +field("annotationsContainer", fileAnnotationsContainer).withTransform()
+            +field("annotationsContainer", fileAnnotationsContainer, nullable = true).withTransform()
             +field("packageDirective", packageDirective)
             +fieldList(import).withTransform()
             +declarations.withTransform()

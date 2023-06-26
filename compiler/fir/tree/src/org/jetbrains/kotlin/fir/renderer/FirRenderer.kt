@@ -172,7 +172,7 @@ class FirRenderer(
             printer.println(file.name)
 
             printer.pushIndent()
-            visitFileAnnotationsContainer(file.annotationsContainer)
+            file.annotationsContainer?.let { visitFileAnnotationsContainer(it) }
             visitPackageDirective(file.packageDirective)
             file.imports.forEach { it.accept(this) }
             file.declarations.forEach { it.accept(this) }

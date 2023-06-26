@@ -8,7 +8,6 @@ private final [ResolvedTo(BODY_RESOLVE)] val branchManager: <ERROR TYPE REF: Sym
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] KotlinFile.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     package one.three
 
     public final [ResolvedTo(STATUS)] class KotlinFile : R|kotlin/Any| {

@@ -7,7 +7,6 @@ R|<local>/m|.R|SubstitutionOverride</MyMap.get: R|A|>|(String(a)).R|/A.plusAssig
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] compoundAssignWithArrayGetConvention.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public abstract [ResolvedTo(STATUS)] interface A : R|kotlin/Any| {
         public abstract operator [ResolvedTo(CONTRACTS)] fun plusAssign([ResolvedTo(CONTRACTS)] i: R|kotlin/Int|): R|kotlin/Unit|
 

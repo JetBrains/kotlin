@@ -1,6 +1,5 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] cyclicHierarchy2.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(RAW_FIR)] interface ResolveMe : A, E {
     }
     public? final? [ResolvedTo(RAW_FIR)] interface C : ResolveMe {
@@ -16,7 +15,6 @@ FILE: [ResolvedTo(RAW_FIR)] cyclicHierarchy2.kt
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy2.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(RAW_FIR)] interface ResolveMe : A, E {
     }
     public? final? [ResolvedTo(RAW_FIR)] interface C : ResolveMe {
@@ -32,7 +30,6 @@ FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy2.kt
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy2.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] interface ResolveMe : A, E {
     }
     public? final? [ResolvedTo(RAW_FIR)] interface C : ResolveMe {
@@ -48,7 +45,6 @@ FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy2.kt
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy2.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(COMPANION_GENERATION)] interface ResolveMe : A, E {
     }
     public? final? [ResolvedTo(RAW_FIR)] interface C : ResolveMe {
@@ -64,7 +60,6 @@ FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy2.kt
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy2.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(SUPER_TYPES)] interface ResolveMe : <ERROR TYPE REF: Symbol not found for A>, <ERROR TYPE REF: Loop in supertype: /ResolveMe -> /E> {
     }
     public? final? [ResolvedTo(SUPER_TYPES)] interface C : <ERROR TYPE REF: Loop in supertype: /C -> /ResolveMe> {
@@ -80,7 +75,6 @@ FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy2.kt
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy2.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public? final? [ResolvedTo(TYPES)] interface ResolveMe : <ERROR TYPE REF: Symbol not found for A>, <ERROR TYPE REF: Loop in supertype: /ResolveMe -> /E> {
     }
     public? final? [ResolvedTo(SUPER_TYPES)] interface C : <ERROR TYPE REF: Loop in supertype: /C -> /ResolveMe> {
@@ -96,7 +90,6 @@ FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy2.kt
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy2.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public abstract [ResolvedTo(STATUS)] interface ResolveMe : <ERROR TYPE REF: Symbol not found for A>, <ERROR TYPE REF: Loop in supertype: /ResolveMe -> /E> {
     }
     public? final? [ResolvedTo(SUPER_TYPES)] interface C : <ERROR TYPE REF: Loop in supertype: /C -> /ResolveMe> {
@@ -112,7 +105,6 @@ FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy2.kt
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy2.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public abstract [ResolvedTo(EXPECT_ACTUAL_MATCHING)] interface ResolveMe : <ERROR TYPE REF: Symbol not found for A>, <ERROR TYPE REF: Loop in supertype: /ResolveMe -> /E> {
     }
     public? final? [ResolvedTo(SUPER_TYPES)] interface C : <ERROR TYPE REF: Loop in supertype: /C -> /ResolveMe> {
@@ -128,7 +120,6 @@ FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy2.kt
 
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy2.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public abstract [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] interface ResolveMe : <ERROR TYPE REF: Symbol not found for A>, <ERROR TYPE REF: Loop in supertype: /ResolveMe -> /E> {
     }
     public? final? [ResolvedTo(SUPER_TYPES)] interface C : <ERROR TYPE REF: Loop in supertype: /C -> /ResolveMe> {
@@ -144,7 +135,6 @@ FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy2.kt
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy2.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public abstract [ResolvedTo(CONTRACTS)] interface ResolveMe : <ERROR TYPE REF: Symbol not found for A>, <ERROR TYPE REF: Loop in supertype: /ResolveMe -> /E> {
     }
     public? final? [ResolvedTo(SUPER_TYPES)] interface C : <ERROR TYPE REF: Loop in supertype: /C -> /ResolveMe> {
@@ -160,7 +150,6 @@ FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy2.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy2.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public abstract [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] interface ResolveMe : <ERROR TYPE REF: Symbol not found for A>, <ERROR TYPE REF: Loop in supertype: /ResolveMe -> /E> {
     }
     public? final? [ResolvedTo(SUPER_TYPES)] interface C : <ERROR TYPE REF: Loop in supertype: /C -> /ResolveMe> {
@@ -176,7 +165,6 @@ FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy2.kt
 
 ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy2.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public abstract [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] interface ResolveMe : <ERROR TYPE REF: Symbol not found for A>, <ERROR TYPE REF: Loop in supertype: /ResolveMe -> /E> {
     }
     public? final? [ResolvedTo(SUPER_TYPES)] interface C : <ERROR TYPE REF: Loop in supertype: /C -> /ResolveMe> {
@@ -192,7 +180,6 @@ FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy2.kt
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy2.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public abstract [ResolvedTo(BODY_RESOLVE)] interface ResolveMe : <ERROR TYPE REF: Symbol not found for A>, <ERROR TYPE REF: Loop in supertype: /ResolveMe -> /E> {
     }
     public? final? [ResolvedTo(SUPER_TYPES)] interface C : <ERROR TYPE REF: Loop in supertype: /C -> /ResolveMe> {
@@ -208,7 +195,6 @@ FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy2.kt
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy2.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public abstract [ResolvedTo(BODY_RESOLVE)] interface ResolveMe : <ERROR TYPE REF: Symbol not found for A>, <ERROR TYPE REF: Loop in supertype: /ResolveMe -> /E> {
     }
     public abstract [ResolvedTo(BODY_RESOLVE)] interface C : <ERROR TYPE REF: Loop in supertype: /C -> /ResolveMe> {

@@ -7,7 +7,6 @@ Int(0)
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] arrayIndexExpressionWithInc.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public final [ResolvedTo(BODY_RESOLVE)] fun main([ResolvedTo(BODY_RESOLVE)] args: R|kotlin/Array<kotlin/String>|): R|kotlin/Unit| {
         [ResolvedTo(BODY_RESOLVE)] lval a: R|java/util/ArrayList<kotlin/String>| = R|java/util/ArrayList.ArrayList|<R|kotlin/String|>()
         R|<local>/a|.R|SubstitutionOverride<java/util/ArrayList.add: R|kotlin/Boolean|>|(String())

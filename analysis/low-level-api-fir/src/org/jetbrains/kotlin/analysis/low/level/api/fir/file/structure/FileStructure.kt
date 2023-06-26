@@ -185,11 +185,13 @@ internal class FileStructure private constructor(
             val firFile = moduleComponents.firFileBuilder.buildRawFirFileWithCaching(ktFile)
             firFile.lazyResolveToPhase(FirResolvePhase.IMPORTS)
 
-            moduleComponents.firModuleLazyDeclarationResolver.lazyResolve(
-                target = firFile.annotationsContainer,
-                scopeSession = moduleComponents.scopeSessionProvider.getScopeSession(),
-                FirResolvePhase.BODY_RESOLVE,
-            )
+            firFile.annotationsContainer?.let {
+                moduleComponents.firModuleLazyDeclarationResolver.lazyResolve(
+                    target = it,
+                    scopeSession = moduleComponents.scopeSessionProvider.getScopeSession(),
+                    FirResolvePhase.BODY_RESOLVE,
+                )
+            }
 
             RootStructureElement(firFile, container, moduleComponents)
         }

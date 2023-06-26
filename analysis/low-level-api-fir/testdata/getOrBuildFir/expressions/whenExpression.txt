@@ -14,7 +14,6 @@ when (R|<local>/x|) {
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] whenExpression.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public final [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] x: R|kotlin/Any|): R|kotlin/String| {
         ^foo when (R|<local>/x|) {
             ($subj$ is R|kotlin/String|) ->  {

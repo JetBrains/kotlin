@@ -7,7 +7,6 @@ R|kotlin/collections/List<ERROR CLASS: Symbol not found for UNRESOVLED>|
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] unresolvedTypeArgumentResolvedTypeConsturctor.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun x(): R|kotlin/collections/List<ERROR CLASS: Symbol not found for UNRESOVLED>| {
         ^x IntegerLiteral(1)
     }

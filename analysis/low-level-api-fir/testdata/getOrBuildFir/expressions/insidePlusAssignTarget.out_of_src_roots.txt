@@ -7,7 +7,6 @@ FIR element rendered:
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] insidePlusAssignTarget.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public final [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] x: R|kotlin/collections/MutableMap<kotlin/Int, kotlin/collections/MutableList<kotlin/String>>|): R|kotlin/Unit| {
          {
             [ResolvedTo(BODY_RESOLVE)] lval <receiver>: R|kotlin/collections/MutableMap<kotlin/Int, kotlin/collections/MutableList<kotlin/String>>| = R|<local>/x|
@@ -21,3 +20,4 @@ FILE: [ResolvedTo(IMPORTS)] insidePlusAssignTarget.kt
         }
 
     }
+

@@ -7,7 +7,6 @@ public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=X] enum entry
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] enumEntry.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public final [ResolvedTo(STATUS)] enum class X : R|kotlin/Enum<X>| {
         private [ResolvedTo(STATUS)] [ContainingClassKey=X] constructor(): R|X| {
             LAZY_super<R|kotlin/Enum<X>|>
