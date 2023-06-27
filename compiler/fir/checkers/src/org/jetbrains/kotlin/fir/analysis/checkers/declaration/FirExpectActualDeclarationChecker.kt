@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
-import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
@@ -21,18 +20,14 @@ import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.isExternal
 import org.jetbrains.kotlin.fir.declarations.utils.isTailRec
 import org.jetbrains.kotlin.fir.languageVersionSettings
-import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.scopes.collectAllFunctions
 import org.jetbrains.kotlin.fir.scopes.getDeclaredConstructors
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.fir.types.toSymbol
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility.*
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
 @Suppress("DuplicatedCode")
 object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker() {
@@ -131,7 +126,7 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker() {
         val singleIncompatibility = compatibilityToMembersMap.keys.singleOrNull()
         when {
             singleIncompatibility is Incompatible.ClassScopes -> {
-                assert(symbol is FirRegularClassSymbol || symbol is FirTypeAliasSymbol) {
+                require(symbol is FirRegularClassSymbol || symbol is FirTypeAliasSymbol) {
                     "Incompatible.ClassScopes is only possible for a class or a typealias: $declaration"
                 }
 
@@ -146,7 +141,6 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker() {
                     val actualMember = incompatibility.values.singleOrNull()?.singleOrNull()
                     @OptIn(SymbolInternals::class)
                     return actualMember != null &&
-                            actualMember.isExplicitActualDeclaration() &&
                             !incompatibility.allStrongIncompatibilities() &&
                             actualMember.fir.expectForActual?.values?.singleOrNull()?.singleOrNull() == expectedMember
                 }
@@ -168,17 +162,7 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker() {
                 )
             }
 
-            else -> {
-                val expected = compatibilityToMembersMap[Compatible]!!.first()
-                if (expected is FirRegularClassSymbol && expected.classKind == ClassKind.ANNOTATION_CLASS) {
-                    val klass = symbol.expandedClass(session)
-                    val actualConstructor = klass?.declarationSymbols?.firstIsInstanceOrNull<FirConstructorSymbol>()
-                    val expectedConstructor = expected.declarationSymbols.firstIsInstanceOrNull<FirConstructorSymbol>()
-                    if (expectedConstructor != null && actualConstructor != null) {
-                        checkAnnotationConstructors(source, expectedConstructor, actualConstructor, context, reporter)
-                    }
-                }
-            }
+            else -> {}
         }
         val expectedSingleCandidate = symbol.getSingleExpectForActualOrNull()
         if (expectedSingleCandidate != null) {
@@ -190,38 +174,6 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker() {
             )
         }
     }
-
-    @Suppress("UNUSED_PARAMETER")
-    private fun checkAnnotationConstructors(
-        source: KtSourceElement?,
-        expected: FirConstructorSymbol,
-        actual: FirConstructorSymbol,
-        context: CheckerContext,
-        reporter: DiagnosticReporter
-    ) {
-        for (expectedValueParameter in expected.valueParameterSymbols) {
-            // Actual parameter with the same name is guaranteed to exist because this method is only called for compatible annotations
-            val actualValueDescriptor = actual.valueParameterSymbols.first { it.name == expectedValueParameter.name }
-
-            if (expectedValueParameter.hasDefaultValue && actualValueDescriptor.hasDefaultValue) {
-//              TODO
-//                val expectedParameter =
-//                    DescriptorToSourceUtils.descriptorToDeclaration(expectedValueParameter) as? KtParameter ?: continue
-//
-//                val expectedValue = trace.bindingContext.get(BindingContext.COMPILE_TIME_VALUE, expectedParameter.defaultValue)
-//                    ?.toConstantValue(expectedValueParameter.type)
-//
-//                val actualValue =
-//                    getActualAnnotationParameterValue(actualValueDescriptor, trace.bindingContext, expectedValueParameter.type)
-//                if (expectedValue != actualValue) {
-//                    val ktParameter = DescriptorToSourceUtils.descriptorToDeclaration(actualValueDescriptor)
-//                    val target = (ktParameter as? KtParameter)?.defaultValue ?: (reportOn as? KtTypeAlias)?.nameIdentifier ?: reportOn
-//                    trace.report(Errors.ACTUAL_ANNOTATION_CONFLICTING_DEFAULT_ARGUMENT_VALUE.on(target, actualValueDescriptor))
-//                }
-            }
-        }
-    }
-
 
     private fun checkAmbiguousExpects(
         actualDeclaration: FirBasedSymbol<*>,
@@ -293,31 +245,6 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker() {
     //  - value parameter inside primary constructor of inline class, because inline class must have one value parameter
     private fun requireActualModifier(declaration: FirBasedSymbol<*>, session: FirSession): Boolean {
         return !declaration.isAnnotationConstructor(session) &&
-                !declaration.isPrimaryConstructorOfInlineOrValueClass(session) &&
-                !isUnderlyingPropertyOfInlineClass(declaration)
-    }
-
-    @Suppress("UNUSED_PARAMETER")
-    private fun isUnderlyingPropertyOfInlineClass(declaration: FirBasedSymbol<*>): Boolean {
-        // TODO
-        // return declaration is PropertyDescriptor && declaration.isUnderlyingPropertyOfInlineClass()
-        return false
-    }
-
-    private fun FirBasedSymbol<*>.isExplicitActualDeclaration(): Boolean {
-//        return when (this) {
-//            is FirConstructor -> DescriptorToSourceUtils.getSourceFromDescriptor(this) is KtConstructor<*>
-//            is FirCallableMemberDeclaration<*> -> kind == CallableMemberDescriptor.Kind.DECLARATION
-//            else -> true
-//        }
-        return true
-    }
-}
-
-fun FirBasedSymbol<*>.expandedClass(session: FirSession): FirRegularClassSymbol? {
-    return when (this) {
-        is FirTypeAliasSymbol -> resolvedExpandedTypeRef.coneType.fullyExpandedType(session).toSymbol(session) as? FirRegularClassSymbol
-        is FirRegularClassSymbol -> this
-        else -> null
+                !declaration.isPrimaryConstructorOfInlineOrValueClass(session)
     }
 }
