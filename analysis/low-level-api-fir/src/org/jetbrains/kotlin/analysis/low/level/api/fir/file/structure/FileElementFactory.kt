@@ -5,18 +5,19 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.collectDesignationWithFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirClassWithSpecificMembersResolveTarget
+import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLocalContainingOrThisDeclaration
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 
 internal object FileElementFactory {
-    /**
-     * should be consistent with [isReanalyzableContainer]
-     */
     fun createFileStructureElement(
         firDeclaration: FirDeclaration,
         ktDeclaration: KtDeclaration,
@@ -103,22 +104,35 @@ internal object FileElementFactory {
 }
 
 /**
- * should be consistent with [createFileStructureElement]
+ * @return The declaration in which a change of the passed receiver parameter can be treated as in-block modification
  */
-//TODO make internal
-fun isReanalyzableContainer(
-    ktDeclaration: KtDeclaration,
-): Boolean = when (ktDeclaration) {
-    is KtNamedFunction -> ktDeclaration.isReanalyzableContainer()
-    is KtProperty -> ktDeclaration.isReanalyzableContainer()
-    else -> false
+@LLFirInternals
+@Suppress("unused") // Used in the IDE plugin
+fun PsiElement.getNonLocalReanalyzableContainingDeclaration(): KtDeclaration? {
+    return when (val declaration = getNonLocalContainingOrThisDeclaration()) {
+        is KtNamedFunction -> declaration.takeIf { function ->
+            function.isReanalyzableContainer() && function.bodyExpression?.isAncestor(this) == true
+        }
+
+        is KtPropertyAccessor -> declaration.takeIf { accessor ->
+            accessor.isReanalyzableContainer() && accessor.bodyExpression?.isAncestor(this) == true
+        }
+
+        is KtProperty -> declaration.takeIf { property ->
+            property.isReanalyzableContainer() && property.delegateExpressionOrInitializer?.isAncestor(this) == true
+        }
+
+        else -> null
+    }
 }
 
-private fun KtNamedFunction.isReanalyzableContainer() =
-    name != null && hasExplicitTypeOrUnit
+private fun KtNamedFunction.isReanalyzableContainer(): Boolean = name != null && (hasBlockBody() || typeReference != null)
 
-private fun KtProperty.isReanalyzableContainer() =
-    name != null && typeReference != null
+private fun KtPropertyAccessor.isReanalyzableContainer(): Boolean {
+    val property = property
+    return property.name != null && (hasBlockBody() || property.typeReference != null)
+}
 
-private val KtNamedFunction.hasExplicitTypeOrUnit
-    get() = hasBlockBody() || typeReference != null
+private fun KtProperty.isReanalyzableContainer(): Boolean =
+    name != null && typeReference != null && (isTopLevel || !hasDelegateExpressionOrInitializer())
+

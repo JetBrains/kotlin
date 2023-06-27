@@ -5,7 +5,7 @@ var x: Int = 10/* ReanalyzablePropertyStructureElement */
     }
 
 class X {/* NonReanalyzableClassDeclarationStructureElement */
-    var y: Int = 10/* ReanalyzablePropertyStructureElement */
+    var y: Int = 10/* NonReanalyzableNonClassDeclarationStructureElement */
         get() = field
         set(value) {
             field = value

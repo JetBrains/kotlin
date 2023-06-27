@@ -7,5 +7,5 @@ class X {/* NonReanalyzableClassDeclarationStructureElement */
 
     val y = 42/* NonReanalyzableNonClassDeclarationStructureElement */
 
-    var z: Int = 15/* ReanalyzablePropertyStructureElement */
+    var z: Int = 15/* NonReanalyzableNonClassDeclarationStructureElement */
 }

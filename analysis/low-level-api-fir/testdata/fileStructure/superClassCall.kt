@@ -1,7 +1,7 @@
 open class A
     (init: A.() -> Unit)/* NonReanalyzableNonClassDeclarationStructureElement */
 {/* NonReanalyzableClassDeclarationStructureElement */
-    val prop: String = ""/* ReanalyzablePropertyStructureElement */
+    val prop: String = ""/* NonReanalyzableNonClassDeclarationStructureElement */
 }
 
 class B()/* NonReanalyzableNonClassDeclarationStructureElement */ : A()/* NonReanalyzableClassDeclarationStructureElement */

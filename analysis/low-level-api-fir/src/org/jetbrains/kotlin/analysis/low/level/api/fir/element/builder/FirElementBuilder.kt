@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.kotlin.psi.psiUtil.isObjectLiteral
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 
@@ -307,15 +306,3 @@ internal fun PsiElement.getNonLocalContainingOrThisDeclaration(predicate: (KtDec
 
     return candidate
 }
-
-@Suppress("unused") // Used in the IDE plugin
-fun PsiElement.getNonLocalContainingInBodyDeclarationWith(): KtDeclaration? =
-    getNonLocalContainingOrThisDeclaration { declaration ->
-        when (declaration) {
-            is KtNamedFunction -> declaration.bodyExpression?.isAncestor(this) == true
-            is KtProperty -> declaration.initializer?.isAncestor(this) == true ||
-                    declaration.getter?.bodyExpression?.isAncestor(this) == true ||
-                    declaration.setter?.bodyExpression?.isAncestor(this) == true
-            else -> false
-        }
-    }
