@@ -24,18 +24,13 @@ import com.sun.tools.javac.tree.DCTree
 import com.sun.tools.javac.tree.DocCommentTable
 import com.sun.tools.javac.tree.JCTree
 import com.sun.tools.javac.tree.TreeScanner
-import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
-import org.jetbrains.kotlin.kapt3.KaptContextForStubGeneration
+import org.jetbrains.kotlin.kapt3.base.KaptContext
 import org.jetbrains.kotlin.kdoc.lexer.KDocTokens
 import org.jetbrains.kotlin.kdoc.psi.api.KDoc
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.org.objectweb.asm.Opcodes
-import org.jetbrains.org.objectweb.asm.tree.FieldNode
-import org.jetbrains.org.objectweb.asm.tree.MethodNode
 
-class KDocCommentKeeper(private val kaptContext: KaptContextForStubGeneration) {
+abstract class AbstractKDocCommentKeeper<T: KaptContext>(protected val kaptContext: T) {
     private val docCommentTable = KaptDocCommentTable()
 
     fun getDocTable(file: JCTree.JCCompilationUnit): DocCommentTable {
@@ -71,32 +66,8 @@ class KDocCommentKeeper(private val kaptContext: KaptContextForStubGeneration) {
         return docCommentTable
     }
 
-    fun saveKDocComment(tree: JCTree, node: Any) {
-        val origin = kaptContext.origins[node] ?: return
-        val psiElement = origin.element as? KtDeclaration ?: return
-        val descriptor = origin.descriptor
-        val docComment = psiElement.docComment ?: return
-
-        if (descriptor is ConstructorDescriptor && psiElement is KtClassOrObject) {
-            // We don't want the class comment to be duplicated on <init>()
-            return
-        }
-
-        if (node is MethodNode
-            && psiElement is KtProperty
-            && descriptor is PropertyAccessorDescriptor
-            && kaptContext.bindingContext[BindingContext.BACKING_FIELD_REQUIRED, descriptor.correspondingProperty] == true
-        ) {
-            // Do not place documentation on backing field and property accessors
-            return
-        }
-
-        if (node is FieldNode && psiElement is KtObjectDeclaration && descriptor == null) {
-            // Do not write KDoc on object instance field
-            return
-        }
-
-        docCommentTable.putComment(tree, KDocComment(escapeNestedComments(extractCommentText(docComment))))
+    protected fun saveKDocComment(tree: JCTree, comment: KDoc) {
+        docCommentTable.putComment(tree, KDocComment(escapeNestedComments(extractCommentText(comment))))
     }
 
     private fun escapeNestedComments(text: String): String {

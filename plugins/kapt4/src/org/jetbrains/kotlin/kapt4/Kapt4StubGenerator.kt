@@ -98,7 +98,7 @@ class Kapt4StubGenerator(private val analysisSession: KtAnalysisSession) {
     private val keepKdocComments = options[KaptFlag.KEEP_KDOC_COMMENTS_IN_STUBS]
     private val dumpDefaultParameterValues = options[KaptFlag.DUMP_DEFAULT_PARAMETER_VALUES]
 
-    private val kdocCommentKeeper = runIf(keepKdocComments) { Kapt4KDocCommentKeeper() }
+    private val kdocCommentKeeper = runIf(keepKdocComments) { Kapt4KDocCommentKeeper(this@Kapt4ContextForStubGeneration) }
 
     fun generateStubs(): Map<KtLightClass, KaptStub?> {
         return classes.associateWith { convertTopLevelClass(it) }
