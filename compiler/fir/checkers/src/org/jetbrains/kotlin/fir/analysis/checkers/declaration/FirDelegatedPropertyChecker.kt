@@ -33,9 +33,6 @@ object FirDelegatedPropertyChecker : FirPropertyChecker() {
         val delegateType = delegate.typeRef.coneType
         val source = delegate.source;
 
-        // TODO: Also suppress delegate issue if type inference failed. For example, in
-        //  compiler/testData/diagnostics/tests/delegatedProperty/inference/differentDelegatedExpressions.fir.kt, no delegate issues are
-        //  reported due to the inference issue.
         if (delegateType is ConeErrorType) {
             // Implicit recursion type is not reported since the type ref does not have a real source.
             if (source != null && (delegateType.diagnostic as? ConeSimpleDiagnostic)?.kind == DiagnosticKind.RecursionInImplicitTypes) {
