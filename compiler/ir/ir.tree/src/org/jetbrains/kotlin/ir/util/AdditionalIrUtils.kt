@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.util
 
 import com.intellij.util.containers.SLRUCache
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -322,3 +323,8 @@ fun IrClassSymbol.getPropertySetter(name: String): IrSimpleFunctionSymbol? = own
 fun filterOutAnnotations(fqName: FqName, annotations: List<IrConstructorCall>): List<IrConstructorCall> {
     return annotations.filterNot { it.annotationClass.hasEqualFqName(fqName) }
 }
+
+fun <S : IrBindableSymbol<DeclarationDescriptor, T>, T : IrOverridableDeclaration<S>> T.getOverriddenRootSymbol(): S {
+    return if (overriddenSymbols.isEmpty()) symbol else overriddenSymbols.first().owner.getOverriddenRootSymbol()
+}
+

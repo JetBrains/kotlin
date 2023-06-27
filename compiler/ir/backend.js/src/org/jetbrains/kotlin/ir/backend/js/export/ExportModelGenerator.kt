@@ -794,10 +794,6 @@ fun IrOverridableDeclaration<*>.isAllowedFakeOverriddenDeclaration(context: JsIr
         .any { it == context.irBuiltIns.enumClass }
 }
 
-fun <S : IrBindableSymbol<DeclarationDescriptor, T>, T : IrOverridableDeclaration<S>> T.getOverriddenRootSymbol(): S {
-    return if (overriddenSymbols.isEmpty()) symbol else overriddenSymbols.first().owner.getOverriddenRootSymbol()
-}
-
 fun IrOverridableDeclaration<*>.isOverriddenExported(context: JsIrBackendContext): Boolean =
     overriddenSymbols
         .any { shouldDeclarationBeExported(it.owner as IrDeclarationWithName, context) }
