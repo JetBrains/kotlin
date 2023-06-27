@@ -87,6 +87,7 @@ class ConfigurationAvoidanceIT : KGPBaseTest() {
             buildJdk = providedJdk.location
         ) {
 
+            gradleProperties.appendText("android.defaults.buildfeatures.aidl=true")
             listOf("Android", "Test").forEach { subproject ->
                 subProject(subproject)
                     .buildGradle

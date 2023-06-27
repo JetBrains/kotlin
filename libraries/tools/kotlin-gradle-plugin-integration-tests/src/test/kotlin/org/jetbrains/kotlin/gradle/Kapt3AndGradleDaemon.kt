@@ -46,6 +46,7 @@ class Kapt3AndGradleDaemon : KGPDaemonsBaseTest() {
     }
 
     @DisplayName("Annotation processor class should be loaded only once")
+    @GradleTestVersions(maxVersion = TestVersions.Gradle.G_7_6)
     @GradleTest
     fun testAnnotationProcessorClassIsLoadedOnce(gradleVersion: GradleVersion) {
         project(

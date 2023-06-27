@@ -245,12 +245,13 @@ class KotlinGradleIT : KGPBaseTest() {
             buildOptions = defaultBuildOptions.copy(incremental = true)
         ) {
             build("assemble")
+            val buildOptions = buildOptions.copy(
+                kotlinVersion = TestVersions.Kotlin.STABLE_RELEASE
+            )
             build(
                 "clean",
                 "assemble",
-                buildOptions = buildOptions.copy(
-                    kotlinVersion = TestVersions.Kotlin.STABLE_RELEASE
-                )
+                buildOptions = buildOptions
             )
         }
     }
@@ -508,7 +509,7 @@ class KotlinGradleIT : KGPBaseTest() {
     @GradleTest
     fun symlinkedBuildDir(
         gradleVersion: GradleVersion,
-        @TempDir tempDir: Path
+        @TempDir tempDir: Path,
     ) {
         project("internalTest", gradleVersion) {
             val externalBuildDir = tempDir.resolve("externalBuild")
@@ -659,7 +660,7 @@ class KotlinGradleIT : KGPBaseTest() {
                     }
                     else -> {
                         assertOutputContains(
-                            "No matching variant of project :projA was found. The consumer was configured to find an API of a library " +
+                            "No matching variant of project :projA was found. The consumer was configured to find a library for use during compile-time, " +
                                     "compatible with Java 8, preferably in the form of class files, " +
                                     "preferably optimized for standard JVMs, and its dependencies declared externally, " +
                                     "as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'jvm', " +
@@ -691,7 +692,7 @@ class KotlinGradleIT : KGPBaseTest() {
                     }
                     else -> {
                         assertOutputContains(
-                            "No matching variant of project :projA was found. The consumer was configured to find an API of a library " +
+                            "No matching variant of project :projA was found. The consumer was configured to find a library for use during compile-time, " +
                                     "compatible with Java 8, preferably in the form of class files, preferably optimized for standard JVMs, " +
                                     "and its dependencies declared externally, " +
                                     "as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'jvm', " +
@@ -729,10 +730,12 @@ class KotlinGradleIT : KGPBaseTest() {
 
             buildGradle.modify {
                 val reorderedClasspath = run {
-                    val (kotlinCompilerEmbeddable, others) = classpath.partition { "kotlin-compiler-embeddable" in it ||
+                    val (kotlinCompilerEmbeddable, others) = classpath.partition {
+                        "kotlin-compiler-embeddable" in it ||
                                 // build-common should be loaded prior compiler-embedable, otherwise we could depend on old version of
                                 // serializer classes and fail with NSME
-                                "kotlin-build-common" in it}
+                                "kotlin-build-common" in it
+                    }
                     others + kotlinCompilerEmbeddable
                 }
                 val newClasspathString = "classpath files(\n" + reorderedClasspath.joinToString(",\n") { "'$it'" } + "\n)"

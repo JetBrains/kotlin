@@ -3,6 +3,8 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 
 android {
+    namespace "com.example.databinding"
+
     compileSdkVersion 32
 
     defaultConfig {

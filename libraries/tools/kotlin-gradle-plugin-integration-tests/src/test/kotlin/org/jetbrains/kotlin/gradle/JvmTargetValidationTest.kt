@@ -260,6 +260,7 @@ class JvmTargetValidationTest : KGPBaseTest() {
     }
 
     @DisplayName("Should still do JVM target validation if no java sources are available")
+    @GradleTestVersions(maxVersion = TestVersions.Gradle.G_7_6)
     @GradleTest
     internal fun shouldDoJvmTargetValidationOnNoJavaSources(gradleVersion: GradleVersion) {
         project(
@@ -282,6 +283,8 @@ class JvmTargetValidationTest : KGPBaseTest() {
     }
 
     @DisplayName("Should do JVM target validation if java sources are added and configuration cache is reused")
+    @GradleTestVersions(maxVersion = TestVersions.Gradle.G_7_6)
+    @AndroidTestVersions(maxVersion = TestVersions.AGP.AGP_74)
     @GradleTest
     internal fun shouldDoJvmTargetValidationOnNewJavaSourcesAndConfigurationCacheReuse(gradleVersion: GradleVersion) {
         project(

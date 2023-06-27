@@ -16,6 +16,8 @@ import java.io.File
 @AndroidGradlePluginTests
 class Kapt3AndroidExternalIT : Kapt3BaseIT() {
     @DisplayName("kapt works with butterknife")
+    @GradleTestVersions(maxVersion = TestVersions.Gradle.G_7_6)
+    @AndroidTestVersions(maxVersion = TestVersions.AGP.AGP_74)
     @GradleAndroidTest
     fun testButterKnife(
         gradleVersion: GradleVersion,
@@ -127,6 +129,8 @@ class Kapt3AndroidExternalIT : Kapt3BaseIT() {
     }
 
     @DisplayName("kapt works with databinding")
+    @GradleTestVersions(maxVersion = TestVersions.Gradle.G_7_6)
+    @AndroidTestVersions(maxVersion = TestVersions.AGP.AGP_74)
     @GradleAndroidTest
     fun testDatabinding(
         gradleVersion: GradleVersion,

@@ -201,7 +201,10 @@ class SimpleKotlinGradleIT : KGPBaseTest() {
 
     @GradleTest
     @DisplayName("Should be compatible with project isolation")
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_1)
+    @GradleTestVersions(
+        minVersion = TestVersions.Gradle.G_7_1,
+        maxVersion = TestVersions.Gradle.G_7_6
+    )
     fun testProjectIsolation(gradleVersion: GradleVersion) {
         project(
             projectName = "instantExecution",
@@ -236,7 +239,12 @@ class SimpleKotlinGradleIT : KGPBaseTest() {
     }
 
     @DisplayName("Validate Gradle plugins inputs")
-    @GradleTestVersions(minVersion = TestVersions.Gradle.MAX_SUPPORTED) // Always should use only latest Gradle version
+    // TODO(Dmitrii Krasnov): validate-external-gradle-plugin has been removed in Gradle 8.0,
+    //  so this test should be removed after correct configuring k-g-p and k-g-p-api tasks
+    @GradleTestVersions(
+        minVersion = TestVersions.Gradle.G_7_6,
+        maxVersion = TestVersions.Gradle.G_7_6
+    ) // Always should use only latest Gradle version
     @GradleTest
     internal fun validatePluginInputs(gradleVersion: GradleVersion) {
         project("kotlinProject", gradleVersion) {

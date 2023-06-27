@@ -18,7 +18,7 @@ kotlin {
     js {
         tasks.register("checkConfigurationsResolve") {
             doLast {
-                configurations.named(compilations["main"].npmAggregatedConfigurationName).resolve()
+                configurations.named(compilations["main"].npmAggregatedConfigurationName).get().resolve()
             }
         }
     }

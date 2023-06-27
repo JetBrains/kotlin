@@ -3,6 +3,8 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 
 android {
+    namespace "org.example.kotlin.butterknife"
+
     compileSdkVersion 23
 
     defaultConfig {
@@ -20,9 +22,8 @@ android {
         }
     }
 
-    compileOptions {
-        sourceCompatibility 1.8
-        targetCompatibility 1.8
+    kotlin {
+        jvmToolchain(8)
     }
 
     sourceSets {

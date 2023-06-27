@@ -8,6 +8,9 @@ plugins {
 android {
     namespace = "com.example"
     compileSdk = 24
+    kotlin {
+        jvmToolchain(8)
+    }
 }
 
 repositories {

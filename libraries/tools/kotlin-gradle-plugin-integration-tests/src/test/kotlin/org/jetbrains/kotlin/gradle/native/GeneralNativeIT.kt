@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.gradle.internals.KOTLIN_NATIVE_IGNORE_DISABLED_TARGE
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeOutputKind
 import org.jetbrains.kotlin.gradle.testbase.*
-import org.jetbrains.kotlin.gradle.testbase.TestVersions.Kotlin.NATIVE_STABLE_RELEASE
+import org.jetbrains.kotlin.gradle.testbase.TestVersions.Kotlin.STABLE_RELEASE
 import org.jetbrains.kotlin.gradle.util.modify
 import org.jetbrains.kotlin.gradle.util.runProcess
 import org.jetbrains.kotlin.konan.target.*
@@ -911,8 +911,8 @@ class GeneralNativeIT : BaseGradleIT() {
 
 
             val platform = HostManager.platformName()
-            val version = NATIVE_STABLE_RELEASE
-            val escapedRegexVersion = Regex.escape(NATIVE_STABLE_RELEASE)
+            val version = STABLE_RELEASE
+            val escapedRegexVersion = Regex.escape(STABLE_RELEASE)
             build("tasks", "-Pkotlin.native.version=$version") {
                 assertSuccessful()
                 assertContainsRegex("Kotlin/Native distribution: .*kotlin-native-prebuilt-$platform-$escapedRegexVersion".toRegex())

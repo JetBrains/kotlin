@@ -10,6 +10,9 @@ repositories {
 }
 
 android {
+
+    namespace "com.revolut.cmdemo"
+
     compileSdkVersion 31
     buildTypes {
         release {
@@ -18,9 +21,8 @@ android {
         }
     }
 
-    compileOptions {
-        sourceCompatibility 1.8
-        targetCompatibility 1.8
+    kotlin {
+        jvmToolchain(8)
     }
 }
 

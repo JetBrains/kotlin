@@ -23,7 +23,8 @@ internal class CompilerOptionsIT : KGPBaseTest() {
     @DisplayName("Allows to set kotlinOptions.freeCompilerArgs on task execution with warning")
     @JvmGradlePluginTests
     @GradleTestVersions(
-        minVersion = TestVersions.Gradle.G_7_3
+        minVersion = TestVersions.Gradle.G_7_3,
+        maxVersion = TestVersions.Gradle.G_7_6 // TODO(Dmitrii Krasnov): we don't use TestVersions.Gradle.G_8_0, because there is some problem in printing warn message
     )
     @GradleTest
     internal fun compatibleWithKotlinDsl(gradleVersion: GradleVersion) {

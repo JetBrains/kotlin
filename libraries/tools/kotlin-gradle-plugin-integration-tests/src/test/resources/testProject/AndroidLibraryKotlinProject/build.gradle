@@ -20,6 +20,7 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
 android {
+    namespace "org.jetbrains.kotlin.gradle.test.android.libalfa"
     compileSdkVersion 23
 }
 

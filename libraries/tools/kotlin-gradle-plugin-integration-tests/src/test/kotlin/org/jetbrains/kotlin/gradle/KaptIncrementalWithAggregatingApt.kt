@@ -93,6 +93,7 @@ open class KaptIncrementalWithAggregatingApt : KaptIncrementalIT() {
 
     @DisplayName("Incremental changes in JDK9+")
     @JdkVersions(versions = [JavaVersion.VERSION_1_9])
+    @GradleTestVersions(maxVersion = TestVersions.Gradle.G_7_6)
     @GradleWithJdkTest
     fun testIncrementalChangesWithJdk9(gradleVersion: GradleVersion, jdk: JdkVersions.ProvidedJdk) {
         kaptProject(gradleVersion, buildJdk = jdk.location) {

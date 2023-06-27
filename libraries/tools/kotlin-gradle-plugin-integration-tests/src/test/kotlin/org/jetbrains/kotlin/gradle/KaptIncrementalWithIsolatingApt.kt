@@ -166,6 +166,7 @@ open class KaptIncrementalWithIsolatingApt : KaptIncrementalIT() {
 
     @DisplayName("KT-33617: sources in compile classpath jars")
     @JdkVersions(versions = [JavaVersion.VERSION_11])
+    @GradleTestVersions(maxVersion = TestVersions.Gradle.G_7_6)
     @GradleWithJdkTest
     fun testSourcesInCompileClasspathJars(gradleVersion: GradleVersion, jdk: JdkVersions.ProvidedJdk) {
         kaptProject(gradleVersion, buildJdk = jdk.location) {

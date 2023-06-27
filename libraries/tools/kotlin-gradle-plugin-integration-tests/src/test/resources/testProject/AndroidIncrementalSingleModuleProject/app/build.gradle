@@ -14,6 +14,9 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
 android {
+
+    namespace 'com.example'
+
     compileSdkVersion 23
 
     defaultConfig {
@@ -49,4 +52,8 @@ repositories {
 dependencies {
     implementation 'com.android.support:appcompat-v7:23.1.1'
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+}
+
+kotlin {
+    jvmToolchain(8)
 }

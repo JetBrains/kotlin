@@ -27,12 +27,11 @@ interface TestVersions {
         const val G_8_1 = "8.1"
         const val MIN_SUPPORTED = minSupportedGradleVersion
         const val MIN_SUPPORTED_KPM = G_7_0
-        const val MAX_SUPPORTED = G_7_6
+        const val MAX_SUPPORTED = G_8_0
     }
 
     object Kotlin {
-        const val STABLE_RELEASE = "1.6.21"
-        const val NATIVE_STABLE_RELEASE = "1.8.20"
+        const val STABLE_RELEASE = "1.8.22"
 
         // Copied from KOTLIN_VERSION.kt file
         val CURRENT
@@ -46,12 +45,12 @@ interface TestVersions {
         const val AGP_72 = "7.2.2"
         const val AGP_73 = "7.3.1"
         const val AGP_74 = "7.4.0"
-        const val AGP_80 = "8.0.0-beta05"
+        const val AGP_80 = "8.0.2"
         const val AGP_81 = "8.1.0-alpha08"
         const val AGP_82 = "8.2.0-alpha09"
 
         const val MIN_SUPPORTED = AGP_42 // KotlinAndroidPlugin.minimalSupportedAgpVersion
-        const val MAX_SUPPORTED = AGP_74 // Update once Gradle MAX_SUPPORTED version will be bumped
+        const val MAX_SUPPORTED = AGP_80 // Update once Gradle MAX_SUPPORTED version will be bumped
     }
 
     enum class AgpCompatibilityMatrix(
@@ -78,5 +77,9 @@ interface TestVersions {
 
     object AppleGradlePlugin {
         const val V222_0_21 = "222.4550-0.21"
+    }
+
+    object ThirdPartyDependencies {
+        const val SHADOW_PLUGIN_VERSION = "8.1.1"
     }
 }

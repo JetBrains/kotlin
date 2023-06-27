@@ -12,7 +12,6 @@ import org.gradle.internal.jvm.Jvm
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
-import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
 import java.io.File
 import kotlin.io.path.appendText
@@ -564,6 +563,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
     }
 
     @DisplayName("JVM target shouldn't be changed when toolchain is not configured")
+    @GradleTestVersions(maxVersion = TestVersions.Gradle.G_7_6)
     @GradleTest
     internal fun shouldNotChangeJvmTargetWithNoToolchain(gradleVersion: GradleVersion) {
         project(
@@ -704,7 +704,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
     }
 
     @DisplayName("Toolchain should not override Jvm target configured in project level DSL")
-    @TestMetadata("kotlin-java-toolchain/simple")
+    @GradleTestVersions(maxVersion = TestVersions.Gradle.G_7_6)
     @GradleTest
     fun toolchainNotOverrideProjectJvmTarget(gradleVersion: GradleVersion) {
         project(

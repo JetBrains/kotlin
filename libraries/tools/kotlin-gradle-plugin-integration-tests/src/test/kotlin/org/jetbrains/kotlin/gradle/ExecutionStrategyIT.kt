@@ -221,8 +221,9 @@ abstract class ExecutionStrategyIT : KGPDaemonsBaseTest() {
                     assertOutputContains("Using fallback strategy: Compile without Kotlin daemon")
                 } else if (executionStrategy == KotlinCompilerExecutionStrategy.DAEMON) {
                     // 256m is the default value for Gradle 5.0+
+                    val defauldJvmSettingsForGivenGradleVersion = if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_8_0)) "256" else "384"
                     assertKotlinDaemonJvmOptions(
-                        listOf("-XX:MaxMetaspaceSize=256m", "-ea")
+                        listOf("-XX:MaxMetaspaceSize=${defauldJvmSettingsForGivenGradleVersion}m", "-ea")
                     )
                 }
             }

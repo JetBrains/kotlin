@@ -3,6 +3,7 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 
 android {
+    namespace "org.maw.library"
     compileSdkVersion 32
 
     defaultConfig {

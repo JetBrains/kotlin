@@ -2,6 +2,9 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
 android {
+
+    namespace "com.example"
+
     compileSdkVersion 23
 
     defaultConfig {
@@ -12,11 +15,10 @@ android {
         versionName "1.0"
     }
 
-    // Needed for older AGP. It can be removed when the lowest supported AGP version is 4.2.0 or newer.
-    compileOptions {
-        sourceCompatibility 1.8
-        targetCompatibility 1.8
+    kotlin {
+        jvmToolchain(8)
     }
+
     buildTypes.release.minifyEnabled = false
     lintOptions.abortOnError = false
 }
