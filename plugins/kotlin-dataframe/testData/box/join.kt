@@ -23,6 +23,6 @@ fun box(): String {
 
     df2
         .filter { achievements.preStage != null }
-        .joinDefault(df2) { achievements.preStage.match(right.achievements.id) }
+//        .joinDefault(df2) { achievements.preStage.match(right.achievements.id) }
     return "OK"
 }

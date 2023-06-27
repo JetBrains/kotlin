@@ -92,7 +92,7 @@ FILE: main.kt
 
             }
 
-            ^ (Q|org/jetbrains/kotlinx/dataframe/DataFrame|.R|org/jetbrains/kotlinx/dataframe/api/readCSVDefault|(String(https://raw.githubusercontent.com/Kotlin/dataframe/master/data/jetbrains_repositories.csv)) as R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Token499>|)
+            ^ (R|<local>/it|.R|org/jetbrains/kotlinx/dataframe/api/readCSVDefault|(String(https://raw.githubusercontent.com/Kotlin/dataframe/master/data/jetbrains_repositories.csv)) as R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Token499>|)
         }
         )
         (this@R|org/jetbrains/kotlinx/dataframe/box|, R|<local>/df|).R|<local>/stargazers_count|.R|org/jetbrains/kotlinx/dataframe/api/print|<R|kotlin/Int|>()
@@ -203,7 +203,7 @@ FILE: main.kt
 
             }
 
-            ^ (R|<local>/df|.R|org/jetbrains/kotlinx/dataframe/api/add|<R|kotlin/Int|, R|org/jetbrains/kotlinx/dataframe/Token499|>(String(hello), <L> = add@fun R|org/jetbrains/kotlinx/dataframe/api/AddDataRow<org/jetbrains/kotlinx/dataframe/Token499>|.<anonymous>(it: R|org/jetbrains/kotlinx/dataframe/api/AddDataRow<org/jetbrains/kotlinx/dataframe/Token499>|): R|kotlin/Int| <inline=NoInline>  {
+            ^ (R|<local>/it|.R|org/jetbrains/kotlinx/dataframe/api/add|<R|kotlin/Int|, R|org/jetbrains/kotlinx/dataframe/Token499|>(String(hello), <L> = add@fun R|org/jetbrains/kotlinx/dataframe/api/AddDataRow<org/jetbrains/kotlinx/dataframe/Token499>|.<anonymous>(it: R|org/jetbrains/kotlinx/dataframe/api/AddDataRow<org/jetbrains/kotlinx/dataframe/Token499>|): R|kotlin/Int| <inline=NoInline>  {
                 ^ Int(42)
             }
             ) as R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Token498>|)
