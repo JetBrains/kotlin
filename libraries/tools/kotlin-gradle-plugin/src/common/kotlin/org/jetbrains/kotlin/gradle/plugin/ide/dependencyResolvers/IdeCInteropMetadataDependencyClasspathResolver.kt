@@ -30,7 +30,7 @@ internal object IdeCInteropMetadataDependencyClasspathResolver : IdeDependencyRe
         return project.resolveCInteropDependencies(cinteropFiles)
     }
 
-    override fun dependencies(project: Project): Iterable<Any> {
+    override suspend fun dependencies(project: Project): Iterable<Any> {
         return project.multiplatformExtension.sourceSets
             .filterIsInstance<DefaultKotlinSourceSet>()
             .filter { it.commonizerTarget.getOrThrow() is SharedCommonizerTarget}

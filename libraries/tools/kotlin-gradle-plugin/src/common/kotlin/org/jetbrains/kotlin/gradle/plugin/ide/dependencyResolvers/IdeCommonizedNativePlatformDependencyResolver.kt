@@ -32,7 +32,7 @@ internal object IdeCommonizedNativePlatformDependencyResolver :
             .toSet()
     }
 
-    override fun dependencies(project: Project): Iterable<Any> {
+    override suspend fun dependencies(project: Project): Iterable<Any> {
         return listOfNotNull(project.commonizeNativeDistributionTask)
     }
 }

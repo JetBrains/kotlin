@@ -45,7 +45,7 @@ internal object IdePlatformCinteropDependencyResolver : IdeDependencyResolver, I
         return outputFile
     }
 
-    override fun dependencies(project: Project): Iterable<Any> {
+    override suspend fun dependencies(project: Project): Iterable<Any> {
         return project.kotlinExtension.sourceSets.mapNotNull { sourceSet ->
             if (sourceSet !is DefaultKotlinSourceSet) return@mapNotNull null
             if (!IdeMultiplatformImport.SourceSetConstraint.isNative(sourceSet)) return@mapNotNull null

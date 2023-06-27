@@ -22,7 +22,7 @@ internal object IdeCommonizedCinteropDependencyResolver : IdeDependencyResolver,
         return project.resolveCInteropDependencies(cinteropFiles)
     }
 
-    override fun dependencies(project: Project): Iterable<Any> {
-        return listOfNotNull(project.copyCommonizeCInteropForIdeTask)
+    override suspend fun dependencies(project: Project): Iterable<Any> {
+        return listOfNotNull(project.copyCommonizeCInteropForIdeTask())
     }
 }

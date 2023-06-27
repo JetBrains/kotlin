@@ -58,7 +58,7 @@ fun interface IdeDependencyResolver {
          * }
          * ```
          */
-        fun dependencies(project: Project): Iterable<Any>
+        suspend fun dependencies(project: Project): Iterable<Any>
     }
 
     @ExternalKotlinTargetApi
@@ -132,7 +132,7 @@ private class IdeCompositeDependencyResolver(
         return children.flatMap { child -> child.resolve(sourceSet) }.toSet()
     }
 
-    override fun dependencies(project: Project): Iterable<Any> {
+    override suspend fun dependencies(project: Project): Iterable<Any> {
         return children.flatMap { child ->
             if (child is IdeDependencyResolver.WithBuildDependencies) child.dependencies(project) else emptyList()
         }

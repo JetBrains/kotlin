@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeDependencyResolver.Companion.resolvedBy
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImport.*
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImport.Companion.logger
+import org.jetbrains.kotlin.gradle.utils.future
 import org.jetbrains.kotlin.tooling.core.Extras
 import org.jetbrains.kotlin.tooling.core.HasMutableExtras
 import org.jetbrains.kotlin.utils.addToStdlib.measureTimeMillisWithResult
@@ -71,7 +72,7 @@ internal class IdeMultiplatformImportImpl(
 
         if (resolver is IdeDependencyResolver.WithBuildDependencies) {
             val project = extension.project
-            val dependencies = project.provider { resolver.dependencies(project) }
+            val dependencies = project.provider { project.future { resolver.dependencies(project) }.getOrThrow() }
             extension.project.locateOrRegisterIdeResolveDependenciesTask().configure { it.dependsOn(dependencies) }
             extension.project.prepareKotlinIdeaImportTask.configure { it.dependsOn(dependencies) }
         }
