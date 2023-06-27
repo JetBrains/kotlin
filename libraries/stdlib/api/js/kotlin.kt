@@ -2821,6 +2821,8 @@ public open external class Throwable {
 
     public open val message: kotlin.String? { get; }
 
+    public final val name: kotlin.String { get; }
+
     public open override fun toString(): kotlin.String
 }
 
