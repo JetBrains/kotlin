@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.util
 
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VfsUtilCore
@@ -38,7 +39,7 @@ object LibraryUtils {
             ?.let { getAllVirtualFilesFromRoot(it, includeRoot) } ?: emptySet()
     }
 
-    fun getAllPsiFilesFromTheJar(
+    fun getAllPsiFilesFromJar(
         jar: Path,
         project: Project,
         jarFileSystem: CoreJarFileSystem = CoreJarFileSystem(),
@@ -116,7 +117,9 @@ object LibraryUtils {
         val result = mutableListOf<String>()
 
         if (isModularRuntime(jdkHome)) {
-            val jrtBaseUrl: String = StandardFileSystems.JRT_PROTOCOL_PREFIX + jdkHome.toString() + JAR_SEPARATOR
+            val jrtBaseUrl = "${StandardFileSystems.JRT_PROTOCOL_PREFIX}${
+                FileUtil.toSystemIndependentName(jdkHome.toAbsolutePath().toString())
+            }$JAR_SEPARATOR"
             val modules = readModulesFromReleaseFile(jdkHome)
             if (modules != null) {
                 for (module in modules) {

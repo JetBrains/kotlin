@@ -16,6 +16,7 @@ import com.intellij.mock.MockProject
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.extensions.PluginDescriptor
 import com.intellij.openapi.roots.PackageIndex
+import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.*
@@ -304,7 +305,7 @@ object StandaloneProjectFactory {
         environment: KotlinCoreProjectEnvironment,
     ): List<VirtualFile> {
         return roots.mapNotNull { path ->
-            val pathString = path.toAbsolutePath().toString()
+            val pathString = FileUtil.toSystemIndependentName(path.toAbsolutePath().toString())
             when {
                 pathString.endsWith(JAR_PROTOCOL) -> {
                     environment.environment.jarFileSystem.findFileByPath(pathString + JAR_SEPARATOR)
@@ -352,7 +353,9 @@ object StandaloneProjectFactory {
     private fun KtBinaryModule.getJavaRoots(
         environment: KotlinCoreProjectEnvironment,
     ): List<JavaRoot> {
-        return getVirtualFilesForLibraryRoots(getBinaryRoots(), environment).map { root -> JavaRoot(root, JavaRoot.RootType.BINARY)}
+        return getVirtualFilesForLibraryRoots(getBinaryRoots(), environment).map { root ->
+            JavaRoot(root, JavaRoot.RootType.BINARY)
+        }
     }
 
     private fun adjustModulePath(pathString: String): String {
