@@ -10,9 +10,9 @@ import com.sun.tools.javac.util.Context
 import org.jetbrains.kotlin.analysis.api.components.KtMetadataCalculator
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.base.kapt3.KaptOptions
-import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.kapt3.base.KaptContext
 import org.jetbrains.kotlin.kapt3.base.util.KaptLogger
+import org.jetbrains.kotlin.psi.KtFile
 
 class Kapt4ContextForStubGeneration(
     options: KaptOptions,

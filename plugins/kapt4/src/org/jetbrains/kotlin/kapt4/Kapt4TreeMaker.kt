@@ -6,15 +6,9 @@
 package org.jetbrains.kotlin.kapt4
 
 import com.intellij.openapi.Disposable
-import com.intellij.psi.PsiArrayType
-import com.intellij.psi.PsiClass
-import com.intellij.psi.PsiClassType
-import com.intellij.psi.PsiType
-import com.intellij.psi.PsiWildcardType
+import com.intellij.psi.*
 import com.sun.tools.javac.code.BoundKind
 import com.sun.tools.javac.code.TypeTag
-import org.jetbrains.org.objectweb.asm.Type
-import org.jetbrains.org.objectweb.asm.Type.*
 import com.sun.tools.javac.tree.JCTree
 import com.sun.tools.javac.tree.TreeMaker
 import com.sun.tools.javac.util.Context
@@ -22,6 +16,8 @@ import com.sun.tools.javac.util.Name
 import com.sun.tools.javac.util.Names
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.org.objectweb.asm.Type
+import org.jetbrains.org.objectweb.asm.Type.*
 
 class Kapt4TreeMaker(
     context: Context,

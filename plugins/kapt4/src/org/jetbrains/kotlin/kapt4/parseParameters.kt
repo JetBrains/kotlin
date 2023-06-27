@@ -16,7 +16,10 @@
 
 package org.jetbrains.kotlin.kapt4
 
-import com.intellij.psi.*
+import com.intellij.psi.JvmPsiConversionHelper
+import com.intellij.psi.PsiAnnotation
+import com.intellij.psi.PsiMethod
+import com.intellij.psi.PsiType
 
 internal class ParameterInfo(
     val flags: Long,
