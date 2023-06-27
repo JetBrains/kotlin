@@ -9,9 +9,7 @@ import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
-import org.jetbrains.kotlin.ir.backend.js.export.isAllowedFakeOverriddenDeclaration
-import org.jetbrains.kotlin.ir.backend.js.export.isExported
-import org.jetbrains.kotlin.ir.backend.js.export.isOverriddenExported
+import org.jetbrains.kotlin.ir.backend.js.export.*
 import org.jetbrains.kotlin.ir.backend.js.lower.isEs6ConstructorReplacement
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -28,8 +26,14 @@ import org.jetbrains.kotlin.utils.memoryOptimizedMap
 import org.jetbrains.kotlin.utils.toSmartList
 
 class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationContext) {
+    private val backendContext = context.staticContext.backendContext
+
     private val perFile = context.staticContext.isPerFile
-    private val es6mode = context.staticContext.backendContext.es6mode
+    private val es6mode = backendContext.es6mode
+
+    private val throwableClass = backendContext.throwableClass.owner
+    private val throwableCause = throwableClass.getProperty("cause")
+    private val throwableMessage = throwableClass.getProperty("message")
 
     private val className = context.getNameForClass(irClass)
     private val baseClass: IrType? = irClass.superTypes.firstOrNull { !it.classifierOrFail.isInterface }
@@ -190,6 +194,23 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
 
                 val needsOverride = (overriddenExportedGetter && noOverriddenExportedSetter) ||
                         property.isAllowedFakeOverriddenDeclaration(context.staticContext.backendContext)
+
+                if (getterOverridesExternal) {
+                    val originalProperty = property.getOverriddenRootSymbol()
+
+                    if (throwableMessage == originalProperty) {
+                        classBlock.statements += jsAssignment(
+                            jsElementAccess("__hasErrMsg", classPrototypeRef),
+                            JsBooleanLiteral(true)
+                        ).makeStmt()
+                    }
+                    if (throwableCause == originalProperty) {
+                        classBlock.statements += jsAssignment(
+                            jsElementAccess("__hasErrCause", classPrototypeRef),
+                            JsBooleanLiteral(true)
+                        ).makeStmt()
+                    }
+                }
 
                 if (irClass.isExported(context.staticContext.backendContext) &&
                     (overriddenSymbols.isEmpty() || needsOverride) ||
