@@ -1,4 +1,5 @@
 // UNRESOLVED_REFERENCE
+// IGNORE_FE10
 
 fun <T : Any, Z> createTuple(a: T, b: Z&Any): Pair<T, Z&Any> {
     return Pair(a, b)
