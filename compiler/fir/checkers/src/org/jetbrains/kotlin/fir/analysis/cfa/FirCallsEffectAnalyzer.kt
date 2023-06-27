@@ -156,7 +156,7 @@ object FirCallsEffectAnalyzer : FirControlFlowChecker() {
         override fun visitNode(node: CFGNode<*>, data: IllegalScopeContext) {}
 
         override fun visitFunctionEnterNode(node: FunctionEnterNode, data: IllegalScopeContext) {
-            // TODO: this is not how CFG works, this should be done by FIR tree traversal. Especially considering that
+            // TODO, KT-59668: this is not how CFG works, this should be done by FIR tree traversal. Especially considering that
             //  none of these methods use anything from the CFG other than `node.fir`, which should've been a hint.
             data.enterScope(node.fir === rootFunction || node.fir.isInPlaceLambda())
         }

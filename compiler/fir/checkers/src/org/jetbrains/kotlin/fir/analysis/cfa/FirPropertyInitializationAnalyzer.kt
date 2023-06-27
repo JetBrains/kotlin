@@ -96,7 +96,7 @@ private fun PropertyInitializationInfoData.checkPropertyAccesses(
 
     for (node in graph.nodes) {
         when {
-            // TODO: `node.isUnion` - f({ x = 1 }, { x = 2 }) - which to report?
+            // TODO, KT-59669: `node.isUnion` - f({ x = 1 }, { x = 2 }) - which to report?
             //  Also this is currently indistinguishable from x = 1; f({}, {}).
 
             node is VariableDeclarationNode -> {
