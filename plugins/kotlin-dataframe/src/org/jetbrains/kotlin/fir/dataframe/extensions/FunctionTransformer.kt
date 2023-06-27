@@ -5,12 +5,17 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.dataframe.FirMetaContext
 import org.jetbrains.kotlin.fir.dataframe.InterpretationErrorReporter
 import org.jetbrains.kotlin.fir.dataframe.flatten
-import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
+import org.jetbrains.kotlin.fir.expressions.FirAnonymousFunctionExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
+import org.jetbrains.kotlin.fir.expressions.FirLambdaArgumentExpression
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
-import org.jetbrains.kotlin.fir.expressions.FirStatement
+import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
+import org.jetbrains.kotlin.fir.expressions.FirTypeOperatorCall
+import org.jetbrains.kotlin.fir.expressions.arguments
+import org.jetbrains.kotlin.fir.expressions.builder.buildArgumentList
 import org.jetbrains.kotlin.fir.expressions.builder.buildBlock
+import org.jetbrains.kotlin.fir.expressions.builder.buildReturnExpression
 import org.jetbrains.kotlin.fir.extensions.FirFunctionTransformerExtension
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
@@ -23,10 +28,7 @@ import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.isNullable
 import org.jetbrains.kotlin.fir.types.toSymbol
 import org.jetbrains.kotlin.fir.types.type
-import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
-import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitorVoid
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
-import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlinx.dataframe.KotlinTypeFacade
 import org.jetbrains.kotlinx.dataframe.annotations.TypeApproximation
@@ -86,7 +88,8 @@ class FunctionTransformer(
         class SchemaDeclaration(val proposedName: String, val column: SimpleCol?, val columns: List<SimpleCol>)
         val schemas = mutableListOf<SchemaDeclaration>()
 
-
+//        val rootToken = "$rootToken${Random.nextUInt()}"
+        val rootToken = "$rootToken"
         schemas.add(SchemaDeclaration(rootToken, null, columns))
 
         dataFrameSchema.flatten().distinctBy { it.column }.forEach {
@@ -111,7 +114,6 @@ class FunctionTransformer(
         distinctBy.asReversed().forEachIndexed { i, declaration ->
             appendSchemaDeclarations(declaration.proposedName, declaration.columns, """Scope$i""")
         }
-
 
         val name = token.type.classId?.shortClassName?.identifierOrNullIfSpecial!!
         val scopes = buildString {
@@ -170,26 +172,34 @@ class FunctionTransformer(
         )
         newCall.replaceExplicitReceiver(call.explicitReceiver)
         newCall.replaceExtensionReceiver(call.extensionReceiver)
-        newCall.acceptChildren(object : FirDefaultVisitorVoid() {
-            override fun visitElement(element: FirElement) {
-                element.acceptChildren(this)
-            }
 
-            override fun visitAnonymousFunction(anonymousFunction: FirAnonymousFunction) {
-                val block = buildBlock {
-                    val original = anonymousFunction.body?.statements ?: emptyList()
-                    for ((i, statement) in original.withIndex()) {
-                        if (i == original.lastIndex) {
-                            statements.add(statement.transformSingle(InsertOriginalCall(call), null))
-                        } else {
-                            statements.add(statement)
-                        }
-                    }
+        val anonymousFunction = ((newCall.argumentList.arguments[0] as FirLambdaArgumentExpression).expression as FirAnonymousFunctionExpression).anonymousFunction
+        val block = buildBlock {
+            val original = anonymousFunction.body?.statements ?: emptyList()
+            for ((i, statement) in original.withIndex()) {
+                if (i == original.lastIndex) {
+                    val lastStatement = (statement as FirReturnExpression).result as FirTypeOperatorCall
+                    lastStatement
+                        .replaceArgumentList(buildArgumentList {
+                            // df.add("col") { 42 } -> it.add("col") { 42 }
+                            // but is it correct to REPLACE?
+                            call.replaceExplicitReceiver(lastStatement.arguments[0])
+                            call.replaceExtensionReceiver(lastStatement.arguments[0])
+
+                            arguments += call
+                        })
+
+                    statements.add(buildReturnExpression {
+                        target = statement.target
+                        result = lastStatement
+                    })
+                } else {
+                    statements.add(statement)
                 }
-                block.replaceTypeRef(anonymousFunction.body?.typeRef!!)
-                anonymousFunction.replaceBody(block)
             }
-        })
+        }
+        block.replaceTypeRef(anonymousFunction.body?.typeRef!!)
+        anonymousFunction.replaceBody(block)
         return newCall
     }
 
@@ -282,17 +292,6 @@ class FunctionTransformer(
                 val token = names[this]!!
                 "abstract val $name: ${type.type().classId!!.asFqNameString()}<$token>"
             }
-        }
-    }
-
-    private class InsertOriginalCall(val call: FirFunctionCall) :  FirDefaultTransformer<Nothing?>() {
-        override fun <E : FirElement> transformElement(element: E, data: Nothing?): E {
-            return element.transformChildren(this, data) as E
-        }
-
-        override fun transformPropertyAccessExpression(propertyAccessExpression: FirPropertyAccessExpression, data: Nothing?): FirStatement {
-            call.replaceExplicitReceiver(propertyAccessExpression)
-            return call
         }
     }
 }
