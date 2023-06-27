@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.fir.backend.jvm.*
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.extensions.FirAnalysisHandlerExtension
-import org.jetbrains.kotlin.fir.extensions.FirAnalysisResult
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.pipeline.*
 import org.jetbrains.kotlin.fir.session.*
@@ -95,15 +94,9 @@ object FirKotlinToJvmBytecodeCompiler {
         // TODO: run lowerings for all modules in the chunk, then run codegen for all modules.
         val project = (projectEnvironment as? VfsBasedProjectEnvironment)?.project
         if (project != null) {
-            val extensions = FirAnalysisHandlerExtension.getInstances(project)
-            when (extensions.size) {
-                0 -> {}
-                1 -> if (extensions[0].doAnalysis(projectConfiguration) != FirAnalysisResult.Skipped) return true
-                else -> {
-                    val extensionNames = extensions.map { it::class.qualifiedName }
-                    messageCollector.reportError("It's allowed to register only one FirAnalysisHandlerExtension, but several are registered: $extensionNames")
-                    return false
-                }
+            val extensions = FirAnalysisHandlerExtension.getInstances(project).filter { it.isApplicable(projectConfiguration) }
+            if (extensions.isNotEmpty()) {
+                return extensions.all { it.doAnalysis(projectConfiguration) }
             }
         }
 

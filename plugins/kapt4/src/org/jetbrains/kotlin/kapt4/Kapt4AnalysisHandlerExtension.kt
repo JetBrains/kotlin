@@ -24,8 +24,8 @@ import org.jetbrains.kotlin.cli.jvm.config.JavaSourceRoot
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.config.CommonConfigurationKeys.USE_FIR
 import org.jetbrains.kotlin.fir.extensions.FirAnalysisHandlerExtension
-import org.jetbrains.kotlin.fir.extensions.FirAnalysisResult
 import org.jetbrains.kotlin.kapt3.KAPT_OPTIONS
 import org.jetbrains.kotlin.kapt3.base.*
 import org.jetbrains.kotlin.kapt3.base.util.KaptLogger
@@ -41,10 +41,10 @@ import javax.annotation.processing.Processor
 
 class Kapt4AnalysisHandlerExtension : FirAnalysisHandlerExtension() {
     override fun isApplicable(configuration: CompilerConfiguration): Boolean =
-        configuration.getBoolean(CommonConfigurationKeys.USE_FIR) && configuration[KAPT_OPTIONS] != null
+        configuration.getBoolean(USE_FIR) && configuration[KAPT_OPTIONS] != null
 
     @OptIn(KtAnalysisApiInternals::class)
-    override fun doAnalysis(configuration: CompilerConfiguration): FirAnalysisResult {
+    override fun doAnalysis(configuration: CompilerConfiguration): Boolean {
         val languageVersionSettings = configuration[CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS]!!
         val updatedConfiguration = configuration.copy().apply {
             put(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS, object : LanguageVersionSettings by languageVersionSettings {
@@ -78,7 +78,7 @@ class Kapt4AnalysisHandlerExtension : FirAnalysisHandlerExtension() {
 
         val contentRoots = configuration[CLIConfigurationKeys.CONTENT_ROOTS] ?: emptyList()
 
-        val options = (configuration[KAPT_OPTIONS] ?: return FirAnalysisResult.Skipped).apply {
+        val options = configuration[KAPT_OPTIONS]!!.apply {
             projectBaseDir = ktAnalysisSession.useSiteModule.project.basePath?.let(::File)
             compileClasspath.addAll(contentRoots.filterIsInstance<JvmClasspathRoot>().map { it.file })
             compileClasspath.addAll(module.directRegularDependencies.filterIsInstance<KtLibraryModule>().flatMap { it.getBinaryRoots() }.map { it.toFile() })
@@ -99,7 +99,7 @@ class Kapt4AnalysisHandlerExtension : FirAnalysisHandlerExtension() {
         try {
             if (options.mode == AptMode.WITH_COMPILATION) {
                 logger.error("KAPT \"compile\" mode is not supported in Kotlin 2.x. Run kapt with -Kapt-mode=stubsAndApt and use kotlinc for the final compilation step.")
-                return FirAnalysisResult.Error
+                return false
             }
 
             val context = Kapt4ContextForStubGeneration(
@@ -120,7 +120,7 @@ class Kapt4AnalysisHandlerExtension : FirAnalysisHandlerExtension() {
                     options.stubsOutputDir
                 )
             }
-            if (options.mode == AptMode.STUBS_ONLY) return FirAnalysisResult.Success
+            if (options.mode == AptMode.STUBS_ONLY) return true
 
             var sourcesToProcess = options.collectJavaSourceFiles(context.sourcesToReprocess)
             var processedSources = emptySet<File>()
@@ -151,9 +151,9 @@ class Kapt4AnalysisHandlerExtension : FirAnalysisHandlerExtension() {
             }
         } catch (e: Exception) {
             logger.exception(e)
-            return FirAnalysisResult.Error
+            return false
         }
-        return FirAnalysisResult.Success
+        return true
     }
 
     private fun findClassLoaderWithJavac(): ClassLoader {

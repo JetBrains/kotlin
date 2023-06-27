@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.fir.reportToMessageCollector
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.cli.common.messages.reportError
 import org.jetbrains.kotlin.cli.jvm.compiler.*
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment.Companion.configureProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.*
@@ -49,7 +48,6 @@ import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendClassResolver
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendExtension
 import org.jetbrains.kotlin.fir.backend.jvm.JvmFir2IrExtensions
 import org.jetbrains.kotlin.fir.extensions.FirAnalysisHandlerExtension
-import org.jetbrains.kotlin.fir.extensions.FirAnalysisResult
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.pipeline.*
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
@@ -90,15 +88,10 @@ fun compileModulesUsingFrontendIrAndLightTree(
 
     val project = (projectEnvironment as? VfsBasedProjectEnvironment)?.project
     if (project != null) {
-        val extensions = FirAnalysisHandlerExtension.getInstances(project)
-        when (extensions.size) {
-            0 -> {}
-            1 -> if (extensions[0].doAnalysis(compilerConfiguration) != FirAnalysisResult.Skipped) return
-            else -> {
-                val extensionNames = extensions.map { it::class.qualifiedName }
-                messageCollector.reportError("It's allowed to register only one FirAnalysisHandlerExtension, but several are registered: $extensionNames")
-                return
-            }
+        val extensions = FirAnalysisHandlerExtension.getInstances(project).filter { it.isApplicable(compilerConfiguration) }
+        if (extensions.isNotEmpty()) {
+            extensions.all { it.doAnalysis(compilerConfiguration) }
+            return
         }
     }
 
