@@ -145,6 +145,7 @@ abstract class KtCodeFragment(
         if (contextFile != null) {
             if (contextFile.importDirectives.find { it.text == import } == null) {
                 imports.add(import)
+                clearCaches() // Increment the modification stamp
             }
         }
     }
