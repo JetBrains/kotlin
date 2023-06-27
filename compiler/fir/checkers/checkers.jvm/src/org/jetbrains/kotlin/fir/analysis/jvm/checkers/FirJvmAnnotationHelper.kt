@@ -17,7 +17,6 @@ fun <D> FirBasedSymbol<out D>.isCompiledToJvmDefault(
     session: FirSession,
     jvmDefaultMode: JvmDefaultMode?
 ): Boolean where D : FirAnnotationContainer, D : FirDeclaration {
-    // TODO: Fix support for all cases
     if (getAnnotationByClassId(StandardClassIds.Annotations.JvmDefault, session) != null) return true
 
     // jvmDefaultMode is null only on common metadata compilation
