@@ -7,13 +7,13 @@
 
 class A
 
-context(A)
-inline class B1(val x: Int)
+<!VALUE_CLASS_CANNOT_HAVE_CONTEXT_RECEIVERS!>context(A)
+inline class B1(val x: Int)<!>
 
-context(A)
+<!VALUE_CLASS_CANNOT_HAVE_CONTEXT_RECEIVERS!>context(A)
 OPTIONAL_JVM_INLINE_ANNOTATION
-value class B2(val x: Int)
+value class B2(val x: Int)<!>
 
-context(A)
+<!VALUE_CLASS_CANNOT_HAVE_CONTEXT_RECEIVERS!>context(A)
 OPTIONAL_JVM_INLINE_ANNOTATION
-value class C(val x: Int, val y: Int)
+value class C(val x: Int, val y: Int)<!>

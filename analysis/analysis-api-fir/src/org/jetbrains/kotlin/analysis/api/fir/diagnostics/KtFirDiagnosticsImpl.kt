@@ -1419,6 +1419,11 @@ internal class ValueClassCannotBeCloneableImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<KtDeclaration>(firDiagnostic, token), KtFirDiagnostic.ValueClassCannotBeCloneable
 
+internal class ValueClassCannotHaveContextReceiversImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<KtDeclaration>(firDiagnostic, token), KtFirDiagnostic.ValueClassCannotHaveContextReceivers
+
 internal class AnnotationOnIllegalMultiFieldValueClassTypedTargetImpl(
     override val name: String,
     firDiagnostic: KtPsiDiagnostic,

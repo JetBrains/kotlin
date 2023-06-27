@@ -1182,6 +1182,10 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = ValueClassCannotBeCloneable::class
     }
 
+    interface ValueClassCannotHaveContextReceivers : KtFirDiagnostic<KtDeclaration> {
+        override val diagnosticClass get() = ValueClassCannotHaveContextReceivers::class
+    }
+
     interface AnnotationOnIllegalMultiFieldValueClassTypedTarget : KtFirDiagnostic<KtAnnotationEntry> {
         override val diagnosticClass get() = AnnotationOnIllegalMultiFieldValueClassTypedTarget::class
         val name: String

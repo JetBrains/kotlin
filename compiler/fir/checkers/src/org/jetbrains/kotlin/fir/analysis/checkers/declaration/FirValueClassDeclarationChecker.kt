@@ -53,7 +53,10 @@ object FirValueClassDeclarationChecker : FirRegularClassChecker() {
             reporter.reportOn(declaration.source, FirErrors.VALUE_CLASS_NOT_FINAL, context)
         }
 
-        // TODO check absence of context receivers when FIR infrastructure is ready
+        if (declaration.contextReceivers.isNotEmpty()) {
+            reporter.reportOn(declaration.source, FirErrors.VALUE_CLASS_CANNOT_HAVE_CONTEXT_RECEIVERS, context)
+        }
+
 
         for (supertypeEntry in declaration.superTypeRefs) {
             if (supertypeEntry !is FirImplicitAnyTypeRef && supertypeEntry.toRegularClassSymbol(context.session)?.isInterface != true) {
@@ -206,7 +209,7 @@ object FirValueClassDeclarationChecker : FirRegularClassChecker() {
                 }
 
                 declaration.multiFieldValueClassRepresentation != null && primaryConstructorParameter.defaultValue != null -> {
-                    // todo fix when inline arguments are supported
+                    // TODO, KT-50113: Fix when inline arguments are supported.
                     reporter.reportOn(
                         primaryConstructorParameter.defaultValue!!.source,
                         FirErrors.MULTI_FIELD_VALUE_CLASS_PRIMARY_CONSTRUCTOR_DEFAULT_PARAMETER,
