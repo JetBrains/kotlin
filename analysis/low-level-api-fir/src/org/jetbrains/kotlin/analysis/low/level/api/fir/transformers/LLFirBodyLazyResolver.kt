@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LowLevelFirApiFacadeF
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.throwUnexpectedFirElementError
+import org.jetbrains.kotlin.analysis.low.level.api.fir.compiler.codeFragmentScopeProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.LLFirPhaseUpdater
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.RawFirReplacement
@@ -174,7 +175,8 @@ private class LLFirBodyTargetResolver(
         val module = codeFragment.llFirModuleData.ktModule
         val resolveSession = module.getFirResolveSession(ktFile.project) as LLFirResolvableResolveSession
 
-        val collector = FirCodeFragmentResolveContextCollector(transformer.components, contextElement)
+        val extraScopes = resolveSession.useSiteFirSession.codeFragmentScopeProvider.getExtraScopes(ktFile)
+        val collector = FirCodeFragmentResolveContextCollector(transformer.components, extraScopes, contextElement)
         val replacement = RawFirReplacement(contextElement, contextElement)
         LowLevelFirApiFacadeForResolveOnAir.runBodyResolveOnAir(resolveSession, replacement, onAirCreatedDeclaration = false, collector)
         codeFragment.codeFragmentContext = collector.context
