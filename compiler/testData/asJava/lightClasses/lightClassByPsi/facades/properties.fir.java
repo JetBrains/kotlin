@@ -79,6 +79,9 @@ public final class PropertiesKt /* PropertiesKt*/ {
   public static final Unresolved getSubject();//  getSubject()
 
   @org.jetbrains.annotations.NotNull()
+  public static final error.NonExistentClass getDelegatedProp2();//  getDelegatedProp2()
+
+  @org.jetbrains.annotations.NotNull()
   public static final java.lang.Object getArrayConst();//  getArrayConst()
 
   @org.jetbrains.annotations.NotNull()
@@ -135,8 +138,6 @@ public final class PropertiesKt /* PropertiesKt*/ {
 
   public static final boolean isEmpty();//  isEmpty()
 
-  public static final error.NonExistentClass getDelegatedProp2();//  getDelegatedProp2()
-
   public static final error.NonExistentClass getIntConst();//  getIntConst()
 
   public static final int getCounter();//  getCounter()
@@ -159,7 +160,7 @@ public final class PropertiesKt /* PropertiesKt*/ {
 
   public static final void setDelegatedProp(@org.jetbrains.annotations.NotNull() java.lang.String);//  setDelegatedProp(java.lang.String)
 
-  public static final void setDelegatedProp2(error.NonExistentClass);//  setDelegatedProp2(error.NonExistentClass)
+  public static final void setDelegatedProp2(@org.jetbrains.annotations.NotNull() error.NonExistentClass);//  setDelegatedProp2(error.NonExistentClass)
 
   public static final void setEmptyInt(@org.jetbrains.annotations.Nullable() java.lang.Integer);//  setEmptyInt(java.lang.Integer)
 

@@ -51,9 +51,8 @@ class ConeErrorType(
         get() = ConeClassLikeErrorLookupTag(ClassId.fromString("<error>"))
 
     override val nullability: ConeNullability
-        get() = if (diagnostic is ConeDiagnosticWithNullability) {
-            if (diagnostic.isNullable) ConeNullability.NULLABLE else ConeNullability.NOT_NULL
-        } else ConeNullability.UNKNOWN
+        get() =
+            if (diagnostic is ConeDiagnosticWithNullability && diagnostic.isNullable) ConeNullability.NULLABLE else ConeNullability.NOT_NULL
 
     override fun equals(other: Any?) = this === other
     override fun hashCode(): Int = System.identityHashCode(this)

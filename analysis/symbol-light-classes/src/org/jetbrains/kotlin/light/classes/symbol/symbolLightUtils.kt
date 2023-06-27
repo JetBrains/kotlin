@@ -142,7 +142,7 @@ internal fun KtLightElement<*, *>.isOriginEquivalentTo(that: PsiElement?): Boole
 }
 
 internal fun KtAnalysisSession.getTypeNullability(ktType: KtType): NullabilityType {
-    if (ktType is KtClassErrorType) return NullabilityType.NotNull
+    if (ktType is KtClassErrorType) return ktType.nullabilityType
     if (ktType.nullabilityType != NullabilityType.NotNull) return ktType.nullabilityType
 
     if (ktType.isUnit) return NullabilityType.NotNull

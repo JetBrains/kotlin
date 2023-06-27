@@ -1,8 +1,8 @@
 public final class Derived /* some.Derived*/ implements other.Unresolved {
-  @org.jetbrains.annotations.NotNull()
+  @org.jetbrains.annotations.Nullable()
   private final other.Unresolved x = null /* initializer type: null */;
 
-  @org.jetbrains.annotations.NotNull()
+  @org.jetbrains.annotations.Nullable()
   public final other.Unresolved getX();//  getX()
 
   public  Derived();//  .ctor()
