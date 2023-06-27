@@ -851,25 +851,10 @@ class Fir2IrVisitor(
     }
 
     private fun List<FirStatement>.getStatementsOrigin(index: Int): IrStatementOrigin? {
-        if (index + 3 > size) return null
-
-        val statement0 = this[index]
-        if (statement0 !is FirProperty || !statement0.isLocal) return null
-        val unarySymbol = statement0.symbol
-        if (unarySymbol.callableId.callableName != SpecialNames.UNARY) return null
-        val variable = statement0.initializer?.toResolvedCallableSymbol() ?: return null
-
-        val statement2 = this[index + 2]
-        if (statement2 !is FirPropertyAccessExpression) return null
-        if (statement2.calleeReference.toResolvedCallableSymbol() != unarySymbol) return null
-
-        val incrementStatement = this[index + 1]
+        val incrementStatement = getOrNull(index + 1)
         if (incrementStatement !is FirVariableAssignment) return null
 
-        if (incrementStatement.calleeReference?.toResolvedCallableSymbol() != variable) return null
-
-        val origin = incrementStatement.getIrAssignmentOrigin()
-        return if (origin == IrStatementOrigin.EQ) null else origin
+        return incrementStatement.getIrPrefixPostfixOriginIfAny()
     }
 
     internal fun convertToIrBlockBody(block: FirBlock): IrBlockBody {

@@ -725,35 +725,54 @@ fun FirDeclaration?.computeIrOrigin(predefinedOrigin: IrDeclarationOrigin? = nul
 }
 
 fun FirVariableAssignment.getIrAssignmentOrigin(): IrStatementOrigin {
-    val calleeReferenceSymbol = calleeReference?.toResolvedCallableSymbol() ?: return IrStatementOrigin.EQ
+    val callableName = getCallableNameFromIntClassIfAny() ?: return IrStatementOrigin.EQ
+    getIrPrefixPostfixOriginIfAny(callableName)?.let { return it }
+
+    val rValue = rValue as FirFunctionCall
+    val kind = rValue.source?.kind
+    if (kind == KtFakeSourceElementKind.DesugaredIncrementOrDecrement || kind == KtFakeSourceElementKind.DesugaredCompoundAssignment) {
+        if (callableName == OperatorNameConventions.PLUS) {
+            return IrStatementOrigin.PLUSEQ
+        } else if (callableName == OperatorNameConventions.MINUS) {
+            return IrStatementOrigin.MINUSEQ
+        }
+    }
+
+    return IrStatementOrigin.EQ
+}
+
+fun FirVariableAssignment.getIrPrefixPostfixOriginIfAny(): IrStatementOrigin? {
+    val callableName = getCallableNameFromIntClassIfAny() ?: return null
+    return getIrPrefixPostfixOriginIfAny(callableName)
+}
+
+private fun FirVariableAssignment.getIrPrefixPostfixOriginIfAny(
+    callableNameFromIntClass: Name
+): IrStatementOrigin? {
+    if (callableNameFromIntClass == OperatorNameConventions.INC) {
+        return if (source?.elementType == KtNodeTypes.PREFIX_EXPRESSION)
+            IrStatementOrigin.PREFIX_INCR
+        else
+            IrStatementOrigin.POSTFIX_INCR
+    } else if (callableNameFromIntClass == OperatorNameConventions.DEC) {
+        return if (source?.elementType == KtNodeTypes.PREFIX_EXPRESSION)
+            IrStatementOrigin.PREFIX_DECR
+        else
+            IrStatementOrigin.POSTFIX_DECR
+    }
+    return null
+}
+
+private fun FirVariableAssignment.getCallableNameFromIntClassIfAny(): Name? {
+    val calleeReferenceSymbol = calleeReference?.toResolvedCallableSymbol() ?: return null
     val rValue = rValue
     if (rValue is FirFunctionCall && calleeReferenceSymbol.callableId.isLocal) {
         val callableId = rValue.calleeReference.toResolvedCallableSymbol()?.callableId
         if (callableId?.classId == StandardClassIds.Int) {
-            val callableName = callableId.callableName
-            if (callableName == OperatorNameConventions.INC) {
-                return if (source?.elementType == KtNodeTypes.PREFIX_EXPRESSION)
-                    IrStatementOrigin.PREFIX_INCR
-                else
-                    IrStatementOrigin.POSTFIX_INCR
-            } else if (callableName == OperatorNameConventions.DEC) {
-                return if (source?.elementType == KtNodeTypes.PREFIX_EXPRESSION)
-                    IrStatementOrigin.PREFIX_DECR
-                else
-                    IrStatementOrigin.POSTFIX_DECR
-            }
-
-            val kind = rValue.source?.kind
-            if (kind == KtFakeSourceElementKind.DesugaredIncrementOrDecrement || kind == KtFakeSourceElementKind.DesugaredCompoundAssignment) {
-                if (callableName == OperatorNameConventions.PLUS) {
-                    return IrStatementOrigin.PLUSEQ
-                } else if (callableName == OperatorNameConventions.MINUS) {
-                    return IrStatementOrigin.MINUSEQ
-                }
-            }
+            return callableId.callableName
         }
     }
-    return IrStatementOrigin.EQ
+    return null
 }
 
 fun FirCallableDeclaration.contextReceiversForFunctionOrContainingProperty(): List<FirContextReceiver> =
