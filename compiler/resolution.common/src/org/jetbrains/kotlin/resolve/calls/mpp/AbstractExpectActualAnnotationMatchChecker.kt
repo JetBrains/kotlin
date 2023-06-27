@@ -10,6 +10,16 @@ import org.jetbrains.kotlin.mpp.TypeAliasSymbolMarker
 import org.jetbrains.kotlin.name.StandardClassIds
 
 object AbstractExpectActualAnnotationMatchChecker {
+    private val SKIPPED_CLASS_IDS = setOf(
+        StandardClassIds.Annotations.Deprecated,
+        StandardClassIds.Annotations.DeprecatedSinceKotlin,
+        StandardClassIds.Annotations.OptionalExpectation,
+        StandardClassIds.Annotations.RequireKotlin,
+        StandardClassIds.Annotations.SinceKotlin,
+        StandardClassIds.Annotations.Suppress,
+        StandardClassIds.Annotations.WasExperimental,
+    )
+
     class Incompatibility(val expectSymbol: DeclarationSymbolMarker, val actualSymbol: DeclarationSymbolMarker)
 
     fun areAnnotationsCompatible(
@@ -36,7 +46,7 @@ object AbstractExpectActualAnnotationMatchChecker {
         val actualAnnotationsByName = actualSymbol.annotations.groupBy { it.classId }
 
         for (expectAnnotation in expectSymbol.annotations) {
-            if (expectAnnotation.classId == StandardClassIds.Annotations.OptionalExpectation) {
+            if (expectAnnotation.classId in SKIPPED_CLASS_IDS || expectAnnotation.isOptIn) {
                 continue
             }
             if (expectAnnotation.isRetentionSource && skipSourceAnnotations) {

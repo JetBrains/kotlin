@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.components.ClassicTypeSystemContextForCS
 import org.jetbrains.kotlin.resolve.calls.mpp.ExpectActualMatchingContext
 import org.jetbrains.kotlin.resolve.calls.mpp.ExpectActualMatchingContext.AnnotationCallInfo
+import org.jetbrains.kotlin.resolve.checkers.OptInNames
 import org.jetbrains.kotlin.resolve.descriptorUtil.*
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
@@ -351,6 +352,9 @@ class ClassicExpectActualMatchingContext(val platformModule: ModuleDescriptor) :
 
         override val isRetentionSource: Boolean
             get() = annotationDescriptor.isSourceAnnotation
+
+        override val isOptIn: Boolean
+            get() = annotationDescriptor.annotationClass?.annotations?.hasAnnotation(OptInNames.REQUIRES_OPT_IN_FQ_NAME) ?: false
     }
 
     override val DeclarationSymbolMarker.hasSourceAnnotationsErased: Boolean

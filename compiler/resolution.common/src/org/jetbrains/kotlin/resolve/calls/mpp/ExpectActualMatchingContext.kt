@@ -167,5 +167,6 @@ interface ExpectActualMatchingContext<T : DeclarationSymbolMarker> : TypeSystemC
     interface AnnotationCallInfo {
         val classId: ClassId?
         val isRetentionSource: Boolean
+        val isOptIn: Boolean
     }
 }

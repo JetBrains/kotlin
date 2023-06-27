@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.mpp.ExpectActualMatchingContext.AnnotationCallInfo
+import org.jetbrains.kotlin.resolve.checkers.OptInNames
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.TypeCheckerState
 import org.jetbrains.kotlin.types.Variance
@@ -356,6 +357,9 @@ class FirExpectActualMatchingContextImpl private constructor(
 
         override val isRetentionSource: Boolean
             get() = getAnnotationClass()?.getRetention(actualSession) == AnnotationRetention.SOURCE
+
+        override val isOptIn: Boolean
+            get() = getAnnotationClass()?.hasAnnotation(OptInNames.REQUIRES_OPT_IN_CLASS_ID, actualSession) ?: false
 
         private fun getAnnotationClass(): FirRegularClassSymbol? =
             annotation.annotationTypeRef.coneType.toRegularClassSymbol(actualSession)
