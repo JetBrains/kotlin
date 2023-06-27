@@ -18631,6 +18631,18 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
             }
 
             @Test
+            @TestMetadata("localDelegatedPropertiesInInlineError.kt")
+            public void testLocalDelegatedPropertiesInInlineError() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inline/localDelegatedPropertiesInInlineError.kt");
+            }
+
+            @Test
+            @TestMetadata("localDelegatedPropertiesInInlineWarning.kt")
+            public void testLocalDelegatedPropertiesInInlineWarning() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inline/localDelegatedPropertiesInInlineWarning.kt");
+            }
+
+            @Test
             @TestMetadata("localFun.kt")
             public void testLocalFun() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inline/localFun.kt");
