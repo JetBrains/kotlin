@@ -100,7 +100,6 @@ private fun removeSmartCastTypeForAttemptToFitVisibility(dispatchReceiver: FirEx
         when {
             originalType.isNullableType() && !receiverType.isNullableType() ->
                 buildSmartCastExpression {
-                    source = originalExpression.source?.fakeElement(KtFakeSourceElementKind.SmartCastExpression)
                     this.originalExpression = originalExpression
                     smartcastType = buildResolvedTypeRef {
                         source = originalExpression.typeRef.source?.fakeElement(KtFakeSourceElementKind.SmartCastedTypeRef)

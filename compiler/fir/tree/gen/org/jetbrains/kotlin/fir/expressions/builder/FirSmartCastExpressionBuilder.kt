@@ -8,7 +8,9 @@
 package org.jetbrains.kotlin.fir.expressions.builder
 
 import kotlin.contracts.*
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
@@ -29,7 +31,6 @@ import org.jetbrains.kotlin.types.SmartcastStability
 
 @FirBuilderDsl
 class FirSmartCastExpressionBuilder : FirAnnotationContainerBuilder, FirExpressionBuilder {
-    override var source: KtSourceElement? = null
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
     override lateinit var typeRef: FirTypeRef
     lateinit var originalExpression: FirExpression
@@ -40,7 +41,6 @@ class FirSmartCastExpressionBuilder : FirAnnotationContainerBuilder, FirExpressi
 
     override fun build(): FirSmartCastExpression {
         return FirSmartCastExpressionImpl(
-            source,
             annotations.toMutableOrEmpty(),
             typeRef,
             originalExpression,
@@ -51,6 +51,13 @@ class FirSmartCastExpressionBuilder : FirAnnotationContainerBuilder, FirExpressi
         )
     }
 
+
+    @Deprecated("Modification of 'source' has no impact for FirSmartCastExpressionBuilder", level = DeprecationLevel.HIDDEN)
+    override var source: KtSourceElement?
+        get() = throw IllegalStateException()
+        set(_) {
+            throw IllegalStateException()
+        }
 }
 
 @OptIn(ExperimentalContracts::class)

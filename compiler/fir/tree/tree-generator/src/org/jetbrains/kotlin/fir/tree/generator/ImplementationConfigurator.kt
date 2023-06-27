@@ -452,6 +452,10 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
                 value = "smartcastStability == SmartcastStability.STABLE_VALUE"
                 withGetter = true
             }
+            default("source") {
+                value = "originalExpression.source?.fakeElement(KtFakeSourceElementKind.SmartCastExpression)"
+            }
+            useTypes(fakeElementImport, fakeSourceElementKindImport)
         }
 
         impl(resolvedNamedReference)

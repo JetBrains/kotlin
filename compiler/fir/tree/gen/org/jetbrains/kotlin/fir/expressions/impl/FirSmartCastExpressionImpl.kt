@@ -7,7 +7,9 @@
 
 package org.jetbrains.kotlin.fir.expressions.impl
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirSmartCastExpression
@@ -24,7 +26,6 @@ import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
  */
 
 internal class FirSmartCastExpressionImpl(
-    override val source: KtSourceElement?,
     override var annotations: MutableOrEmptyList<FirAnnotation>,
     override var typeRef: FirTypeRef,
     override var originalExpression: FirExpression,
@@ -33,6 +34,7 @@ internal class FirSmartCastExpressionImpl(
     override var smartcastTypeWithoutNullableNothing: FirTypeRef?,
     override val smartcastStability: SmartcastStability,
 ) : FirSmartCastExpression() {
+    override val source: KtSourceElement? = originalExpression.source?.fakeElement(KtFakeSourceElementKind.SmartCastExpression)
     override val isStable: Boolean get() = smartcastStability == SmartcastStability.STABLE_VALUE
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {

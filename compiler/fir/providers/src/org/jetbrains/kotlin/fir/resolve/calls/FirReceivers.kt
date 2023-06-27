@@ -115,7 +115,6 @@ sealed class ImplicitReceiverValue<S : FirBasedSymbol<*>>(
         val actualReceiverExpression = if (receiverIsSmartcasted) {
             buildSmartCastExpression {
                 originalExpression = originalReceiverExpression
-                this.source = originalExpression.source?.fakeElement(KtFakeSourceElementKind.SmartCastExpression)
                 smartcastType = buildResolvedTypeRef {
                     source = originalReceiverExpression.typeRef.source?.fakeElement(KtFakeSourceElementKind.SmartCastedTypeRef)
                     type = this@ImplicitReceiverValue.type
