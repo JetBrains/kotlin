@@ -53,7 +53,7 @@ public interface CompilationService {
         compilationConfig: JvmCompilationConfiguration,
         sources: List<File>,
         arguments: List<String>
-    )
+    ): CompilationResult
 
     @ExperimentalBuildToolsApi
     public companion object {

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.buildtools.internal
 
+import org.jetbrains.kotlin.buildtools.api.CompilationResult
 import org.jetbrains.kotlin.buildtools.api.CompilationService
 import org.jetbrains.kotlin.buildtools.api.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.api.jvm.*
@@ -24,7 +25,8 @@ internal class CompilationServiceImpl : CompilationService {
         compilationConfig: JvmCompilationConfiguration,
         sources: List<File>,
         arguments: List<String>
-    ) {
+    ): CompilationResult {
         println("I'm simulating compilation, nothing more yet")
+        return CompilationResult.COMPILATION_SUCCESS
     }
 }

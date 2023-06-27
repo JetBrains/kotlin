@@ -1,7 +1,16 @@
+public final class org/jetbrains/kotlin/buildtools/api/CompilationResult : java/lang/Enum {
+	public static final field COMPILATION_ERROR Lorg/jetbrains/kotlin/buildtools/api/CompilationResult;
+	public static final field COMPILATION_OOM_ERROR Lorg/jetbrains/kotlin/buildtools/api/CompilationResult;
+	public static final field COMPILATION_SUCCESS Lorg/jetbrains/kotlin/buildtools/api/CompilationResult;
+	public static final field COMPILER_INTERNAL_ERROR Lorg/jetbrains/kotlin/buildtools/api/CompilationResult;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/buildtools/api/CompilationResult;
+	public static fun values ()[Lorg/jetbrains/kotlin/buildtools/api/CompilationResult;
+}
+
 public abstract interface class org/jetbrains/kotlin/buildtools/api/CompilationService {
 	public static final field Companion Lorg/jetbrains/kotlin/buildtools/api/CompilationService$Companion;
 	public abstract fun calculateClasspathSnapshot (Ljava/io/File;)Lorg/jetbrains/kotlin/buildtools/api/jvm/ClasspathEntrySnapshot;
-	public abstract fun compileJvm (Lorg/jetbrains/kotlin/buildtools/api/CompilerExecutionStrategyConfiguration;Lorg/jetbrains/kotlin/buildtools/api/jvm/JvmCompilationConfiguration;Ljava/util/List;Ljava/util/List;)V
+	public abstract fun compileJvm (Lorg/jetbrains/kotlin/buildtools/api/CompilerExecutionStrategyConfiguration;Lorg/jetbrains/kotlin/buildtools/api/jvm/JvmCompilationConfiguration;Ljava/util/List;Ljava/util/List;)Lorg/jetbrains/kotlin/buildtools/api/CompilationResult;
 	public static fun loadImplementation (Ljava/lang/ClassLoader;)Lorg/jetbrains/kotlin/buildtools/api/CompilationService;
 	public abstract fun makeCompilerExecutionStrategyConfiguration ()Lorg/jetbrains/kotlin/buildtools/api/CompilerExecutionStrategyConfiguration;
 	public abstract fun makeJvmCompilationConfiguration ()Lorg/jetbrains/kotlin/buildtools/api/jvm/JvmCompilationConfiguration;
