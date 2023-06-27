@@ -33,12 +33,12 @@ private fun ClassId.toConeFlexibleType(
     )
 }
 
-internal enum class FirJavaTypeConversionMode {
+enum class FirJavaTypeConversionMode {
     DEFAULT, ANNOTATION_MEMBER, SUPERTYPE,
     TYPE_PARAMETER_BOUND_FIRST_ROUND, TYPE_PARAMETER_BOUND_AFTER_FIRST_ROUND
 }
 
-internal fun FirTypeRef.resolveIfJavaType(
+fun FirTypeRef.resolveIfJavaType(
     session: FirSession, javaTypeParameterStack: JavaTypeParameterStack,
     mode: FirJavaTypeConversionMode = FirJavaTypeConversionMode.DEFAULT
 ): FirTypeRef = when (this) {
