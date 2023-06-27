@@ -12,6 +12,7 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
+import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.*
 import org.gradle.process.ExecOperations
 import org.jetbrains.kotlin.commonizer.*
@@ -136,7 +137,7 @@ internal open class CInteropCommonizerTask
             (group.targets + group.targets.allLeaves()).map { target ->
                 val externalDependencyFiles: List<FileCollection> = when (target) {
                     is LeafCommonizerTarget -> {
-                        cinterops
+                        cinterops.get()
                             .filter { cinterop -> cinterop.identifier in group.interops && cinterop.konanTarget == target.konanTarget }
                             .map { cinterop -> cinterop.dependencies }
                     }
@@ -170,25 +171,16 @@ internal open class CInteropCommonizerTask
     }
 
     @get:Nested
-    internal var cinterops = setOf<CInteropGist>()
-        private set
+    internal val cinterops: SetProperty<CInteropGist> = objectFactory.setProperty<CInteropGist>()
 
     @get:OutputDirectories
     val allOutputDirectories: Set<File>
         get() = allInteropGroups.getOrThrow().map { outputDirectory(it) }.toSet()
 
-    fun from(vararg tasks: CInteropProcess) = from(
-        tasks.toList()
-            .onEach { task -> this.dependsOn(task) }
-            .map { task -> task.toGist() }
-    )
+    internal fun from(task: TaskProvider<CInteropProcess>) {
+        dependsOn(task)
+        cinterops.add(task.map { it.toGist() })
 
-    internal fun from(vararg cinterop: CInteropGist) {
-        from(cinterop.toList())
-    }
-
-    internal fun from(cinterops: List<CInteropGist>) {
-        this.cinterops += cinterops
     }
 
     @TaskAction
@@ -197,7 +189,7 @@ internal open class CInteropCommonizerTask
     }
 
     private fun commonize(group: CInteropCommonizerGroup) {
-        val cinteropsForTarget = cinterops.filter { cinterop -> cinterop.identifier in group.interops }
+        val cinteropsForTarget = cinterops.get().filter { cinterop -> cinterop.identifier in group.interops }
         outputDirectory(group).deleteRecursively()
         if (cinteropsForTarget.isEmpty()) return
 

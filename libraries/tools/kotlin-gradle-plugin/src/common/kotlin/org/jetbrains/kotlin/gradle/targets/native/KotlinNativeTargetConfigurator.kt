@@ -150,7 +150,7 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
             }
 
             project.commonizeCInteropTask?.configure { commonizeCInteropTask ->
-                commonizeCInteropTask.from((interopTask.get()))
+                commonizeCInteropTask.from(interopTask)
             }
 
             val interopOutput = project.files(interopTask.map { it.outputFileProvider })
