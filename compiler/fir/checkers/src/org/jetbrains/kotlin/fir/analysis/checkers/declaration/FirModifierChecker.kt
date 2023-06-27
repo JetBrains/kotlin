@@ -183,7 +183,6 @@ object FirModifierChecker : FirBasicDeclarationChecker() {
             val set = map[modifierToken] ?: emptySet()
             val checkResult = if (factory == FirErrors.WRONG_MODIFIER_TARGET) {
                 actualTargets.none { it in set } ||
-                        // TODO: Implement some generic feature-checking mechanism
                         (modifierToken == DATA_KEYWORD
                                 && actualTargets.contains(KotlinTarget.STANDALONE_OBJECT)
                                 && !context.languageVersionSettings.supportsFeature(LanguageFeature.DataObjects))
