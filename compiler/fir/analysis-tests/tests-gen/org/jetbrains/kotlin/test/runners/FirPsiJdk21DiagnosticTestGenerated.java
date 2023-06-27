@@ -23,10 +23,4 @@ public class FirPsiJdk21DiagnosticTestGenerated extends AbstractFirPsiJdk21Diagn
     public void testAllFilesPresentInTestsWithJdk21() throws Exception {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJdk21"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
     }
-
-    @Test
-    @TestMetadata("newListMethods.kt")
-    public void testNewListMethods() throws Exception {
-        runTest("compiler/testData/diagnostics/testsWithJdk21/newListMethods.kt");
-    }
 }

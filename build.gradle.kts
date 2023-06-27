@@ -42,6 +42,7 @@ plugins {
     if (kotlinBuildProperties.isKotlinNativeEnabled) {
         id("kotlin.native.build-tools-conventions") apply false
     }
+    id("org.jetbrains.kotlinx.kover") version "0.7.1"
 }
 
 pill {
@@ -954,4 +955,27 @@ afterEvaluate {
 
 afterEvaluate {
     checkExpectedGradlePropertyValues()
+}
+
+koverReport {
+    // configure default reports - for Kotlin/JVM or Kotlin/MPP projects or merged android variants
+    defaults {
+        // configure HTML report
+        html {
+            // custom header in HTML reports, project path by default
+            title = "Kotlin Compiler"
+
+            // custom charset in HTML report files, used return value of `Charset.defaultCharset()` for Kover or UTF-8 for JaCoCo by default.
+            charset = "UTF-8"
+
+            //  generate a HTML report when running the `check` task
+            onCheck = false
+
+            filters {
+                includes {
+                    classes("org.jetbrains.kotlin.*")
+                }
+            }
+        }
+    }
 }

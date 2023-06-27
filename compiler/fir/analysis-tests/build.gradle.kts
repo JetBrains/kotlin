@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.ideaExt.idea
+import org.gradle.api.*
 
 /*
  * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
@@ -8,6 +9,7 @@ import org.jetbrains.kotlin.ideaExt.idea
 plugins {
     kotlin("jvm")
     id("jps-compatible")
+    id("org.jetbrains.kotlinx.kover")
 }
 
 dependencies {
@@ -90,3 +92,6 @@ projectTest(
 }
 
 testsJar()
+kover {
+//    useJacoco()
+}

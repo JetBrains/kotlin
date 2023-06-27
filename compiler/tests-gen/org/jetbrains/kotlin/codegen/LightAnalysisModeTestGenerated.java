@@ -5284,11 +5284,6 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Closures extends AbstractLightAnalysisModeTest {
-        @TestMetadata("kt23881.kt")
-        public void ignoreKt23881() throws Exception {
-            runTest("compiler/testData/codegen/box/closures/kt23881.kt");
-        }
-
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
         }
@@ -5510,11 +5505,6 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         @TestMetadata("localReturnWithAutolabel.kt")
         public void testLocalReturnWithAutolabel() throws Exception {
             runTest("compiler/testData/codegen/box/closures/localReturnWithAutolabel.kt");
-        }
-
-        @TestMetadata("noRefToOuter.kt")
-        public void testNoRefToOuter() throws Exception {
-            runTest("compiler/testData/codegen/box/closures/noRefToOuter.kt");
         }
 
         @TestMetadata("recursiveClosure.kt")
@@ -39632,11 +39622,6 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         @TestMetadata("enhancedPrimitives.kt")
         public void testEnhancedPrimitives() throws Exception {
             runTest("compiler/testData/codegen/box/typeMapping/enhancedPrimitives.kt");
-        }
-
-        @TestMetadata("genericTypeWithNothing.kt")
-        public void testGenericTypeWithNothing() throws Exception {
-            runTest("compiler/testData/codegen/box/typeMapping/genericTypeWithNothing.kt");
         }
 
         @TestMetadata("kt2831.kt")

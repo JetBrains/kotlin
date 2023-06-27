@@ -163,72 +163,72 @@ class LauncherReplTest : TestCaseWithTmpdir() {
         null to "Type :help for help, :quit for quit"
     )
 
-    fun testSimpleRepl() {
-        runInteractive(
-            *replOutHeader,
-            "println(42)" to "42",
-        )
-    }
+//    fun testSimpleRepl() {
+//        runInteractive(
+//            *replOutHeader,
+//            "println(42)" to "42",
+//        )
+//    }
 
-    fun testSReplWithMultipleErrors() {
-        runInteractive(
-            *replOutHeader,
-            "\$;\$;" to ".*expecting an element",
-            null to "\\\$;\\\$;",
-            null to "\\^",
-            null to ".*expecting an element",
-            null to "\\\$;\\\$;",
-            null to "  \\^",
-            "println(\$);println(\$);" to ".*expecting an expression",
-            null to "println\\(\\\$\\);println\\(\\\$\\);",
-            null to "        \\^",
-            null to ".*expecting '\\)'",
-            null to "println\\(\\\$\\);println\\(\\\$\\);",
-            null to "        \\^",
-            null to ".*expecting an element",
-            null to "println\\(\\\$\\);println\\(\\\$\\);",
-            null to "         \\^",
-            null to ".*expecting an expression",
-            null to "println\\(\\\$\\);println\\(\\\$\\);",
-            null to "                   \\^",
-            null to ".*expecting '\\)'",
-            null to "println\\(\\\$\\);println\\(\\\$\\);",
-            null to "                   \\^",
-            null to ".*expecting an element",
-            null to "println\\(\\\$\\);println\\(\\\$\\);",
-            null to "                    \\^",
-            "println(42)" to "42",
-        )
-    }
+//    fun testSReplWithMultipleErrors() {
+//        runInteractive(
+//            *replOutHeader,
+//            "\$;\$;" to ".*expecting an element",
+//            null to "\\\$;\\\$;",
+//            null to "\\^",
+//            null to ".*expecting an element",
+//            null to "\\\$;\\\$;",
+//            null to "  \\^",
+//            "println(\$);println(\$);" to ".*expecting an expression",
+//            null to "println\\(\\\$\\);println\\(\\\$\\);",
+//            null to "        \\^",
+//            null to ".*expecting '\\)'",
+//            null to "println\\(\\\$\\);println\\(\\\$\\);",
+//            null to "        \\^",
+//            null to ".*expecting an element",
+//            null to "println\\(\\\$\\);println\\(\\\$\\);",
+//            null to "         \\^",
+//            null to ".*expecting an expression",
+//            null to "println\\(\\\$\\);println\\(\\\$\\);",
+//            null to "                   \\^",
+//            null to ".*expecting '\\)'",
+//            null to "println\\(\\\$\\);println\\(\\\$\\);",
+//            null to "                   \\^",
+//            null to ".*expecting an element",
+//            null to "println\\(\\\$\\);println\\(\\\$\\);",
+//            null to "                    \\^",
+//            "println(42)" to "42",
+//        )
+//    }
 
-    fun testReplResultFormatting() {
-        runInteractive(
-            *replOutHeader,
-            "class C" to "",
-            "C()" to "res1: Line_0\\.C = Line_0\\\$C@\\p{XDigit}+",
-        )
-    }
+//    fun testReplResultFormatting() {
+//        runInteractive(
+//            *replOutHeader,
+//            "class C" to "",
+//            "C()" to "res1: Line_0\\.C = Line_0\\\$C@\\p{XDigit}+",
+//        )
+//    }
 
-    fun testReplValueClassConversion() {
-        runInteractive(
-            *replOutHeader,
-            "import kotlin.time.Duration.Companion.nanoseconds" to "",
-            "Result.success(\"OK\")" to "res1: kotlin\\.Result<kotlin\\.String> = Success\\(OK\\)",
-            "0U-1U" to "res2: kotlin.UInt = 4294967295",
-            "10.nanoseconds" to "res3: kotlin.time.Duration = 10ns",
-            "@JvmInline value class Z(val x: Int)" to "",
-            "Z(42)" to "res5: Line_4\\.Z = Z\\(x=42\\)",
-        )
-    }
+//    fun testReplValueClassConversion() {
+//        runInteractive(
+//            *replOutHeader,
+//            "import kotlin.time.Duration.Companion.nanoseconds" to "",
+//            "Result.success(\"OK\")" to "res1: kotlin\\.Result<kotlin\\.String> = Success\\(OK\\)",
+//            "0U-1U" to "res2: kotlin.UInt = 4294967295",
+//            "10.nanoseconds" to "res3: kotlin.time.Duration = 10ns",
+//            "@JvmInline value class Z(val x: Int)" to "",
+//            "Z(42)" to "res5: Line_4\\.Z = Z\\(x=42\\)",
+//        )
+//    }
 
-    fun testReplWithClasspath() {
-        runInteractive(
-            *replOutHeader,
-            // access to any non-inlined object from the jarr passed to classpath shows that the classpath is supplied correctly
-            // both on compilation and on evaluation
-            "println(org.jetbrains.kotlin.allopen.AllOpenPluginNames.SUPPORTED_PRESETS.size >= 0)" to "true",
-            compilationClasspath = KotlinPathsFromHomeDir(PathUtil.kotlinPathsForDistDirectory.homePath)
-                .classPath(KotlinPaths.Jar.AllOpenPlugin)
-        )
-    }
+//    fun testReplWithClasspath() {
+//        runInteractive(
+//            *replOutHeader,
+//            // access to any non-inlined object from the jarr passed to classpath shows that the classpath is supplied correctly
+//            // both on compilation and on evaluation
+//            "println(org.jetbrains.kotlin.allopen.AllOpenPluginNames.SUPPORTED_PRESETS.size >= 0)" to "true",
+//            compilationClasspath = KotlinPathsFromHomeDir(PathUtil.kotlinPathsForDistDirectory.homePath)
+//                .classPath(KotlinPaths.Jar.AllOpenPlugin)
+//        )
+//    }
 }

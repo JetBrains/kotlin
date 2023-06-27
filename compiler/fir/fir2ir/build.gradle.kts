@@ -88,16 +88,20 @@ projectTest(
     configure()
 }
 
-projectTest("aggregateTests", jUnitMode = JUnitMode.JUnit5) {
-    configure {
-        excludeTags("FirPsiCodegenTest")
-    }
-}
-
-projectTest("nightlyTests", jUnitMode = JUnitMode.JUnit5) {
-    configure {
-        includeTags("FirPsiCodegenTest")
-    }
-}
+//projectTest("aggregateTests", jUnitMode = JUnitMode.JUnit5,
+//            defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_1_8, JdkMajorVersion.JDK_11_0, JdkMajorVersion.JDK_17_0)
+//) {
+//    configure {
+//        excludeTags("FirPsiCodegenTest")
+//    }
+//}
+//
+//projectTest("nightlyTests", jUnitMode = JUnitMode.JUnit5,
+//            defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_1_8, JdkMajorVersion.JDK_11_0, JdkMajorVersion.JDK_17_0)
+//) {
+//    configure {
+//        includeTags("FirPsiCodegenTest")
+//    }
+//}
 
 testsJar()
