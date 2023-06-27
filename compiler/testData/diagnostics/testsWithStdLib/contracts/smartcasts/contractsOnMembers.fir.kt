@@ -17,7 +17,7 @@ open class Foo {
     }
 
     inline fun <reified T> assertIs(value: Any) {
-        <!WRONG_IMPLIES_CONDITION!>contract { returns() implies (value is T) }<!>
+        contract { returns() implies (value is T) }
     }
 }
 

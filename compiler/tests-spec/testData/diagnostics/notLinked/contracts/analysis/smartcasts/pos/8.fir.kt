@@ -29,34 +29,34 @@ fun <T> T?.case_3(value_1: Int?, value_2: Boolean): Boolean {
 
 // TESTCASE NUMBER: 4
 fun case_4(value_1: Number, block: (() -> Unit)?): Boolean? {
-    <!WRONG_IMPLIES_CONDITION!>contract {
+    contract {
         returns(true) implies (value_1 is Int)
         returns(false) implies (block == null)
         returns(null) implies (block != null)
-    }<!>
+    }
 
     return <!SENSELESS_COMPARISON!>value_1 == null<!>
 }
 
 // TESTCASE NUMBER: 5
 fun String?.case_5(value_1: Number?): Boolean? {
-    <!WRONG_IMPLIES_CONDITION, WRONG_IMPLIES_CONDITION, WRONG_IMPLIES_CONDITION!>contract {
+    contract {
         returns(true) implies (value_1 != null)
         returns(false) implies (value_1 is Int)
         returnsNotNull() implies (this@case_5 != null)
-    }<!>
+    }
 
     return value_1 == null
 }
 
 // TESTCASE NUMBER: 6
 fun <T> T?.case_6(value_1: Number, value_2: String?): Boolean? {
-    <!WRONG_IMPLIES_CONDITION, WRONG_IMPLIES_CONDITION, WRONG_IMPLIES_CONDITION!>contract {
+    contract {
         returns(true) implies (this@case_6 != null)
         returns(false) implies (this@case_6 is String)
         returns(null) implies (value_1 is Int)
         returnsNotNull() implies (value_2 != null)
-    }<!>
+    }
 
     return <!SENSELESS_COMPARISON!>value_1 == null<!>
 }

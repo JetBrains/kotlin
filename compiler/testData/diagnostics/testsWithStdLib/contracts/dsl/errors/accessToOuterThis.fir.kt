@@ -27,9 +27,9 @@ class Foo {
         }
 
         fun A?.goodWithReceiver() {
-            <!WRONG_IMPLIES_CONDITION!>contract {
+            contract {
                 returns() implies (this@goodWithReceiver != null)
-            }<!>
+            }
         }
 
         fun A?.badWithReceiver() {

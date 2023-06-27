@@ -193,7 +193,9 @@ fun TestConfigurationBuilder.baseFirDiagnosticTestConfiguration(
 
     forTestsMatching(
         "compiler/fir/analysis-tests/testData/resolve/extendedCheckers/*" or
-                "compiler/testData/diagnostics/tests/controlFlowAnalysis/deadCode/*"
+                "compiler/testData/diagnostics/tests/controlFlowAnalysis/deadCode/*" or
+                "compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/bad/returnsImplies/*" or
+                "compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/returnsImplies/*"
     ) {
         defaultDirectives {
             +WITH_EXTENDED_CHECKERS
