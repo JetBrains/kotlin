@@ -28,12 +28,12 @@ inline fun case_1(value_1: Int?, block: () -> Unit): Boolean {
 
 // TESTCASE NUMBER: 2
 inline fun <T> T?.case_2(value_1: Int?, value_2: Any?, block: () -> Unit): Boolean? {
-    <!WRONG_IMPLIES_CONDITION, WRONG_IMPLIES_CONDITION, WRONG_IMPLIES_CONDITION!>contract {
+    contract {
         callsInPlace(block, InvocationKind.AT_MOST_ONCE)
         returns(true) implies (value_1 == null && this@case_2 == null && value_2 !is Boolean?)
         returns(false) implies (value_2 is Boolean?)
         returns(null) implies ((value_1 != null || this@case_2 != null) && value_2 !is Boolean?)
-    }<!>
+    }
 
     block()
 

@@ -140,7 +140,6 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
     override val controlFlowAnalyserCheckers: Set<FirControlFlowChecker>
         get() = setOf(
             FirCallsEffectAnalyzer,
-            FirReturnsImpliesAnalyzer,
         )
 
     override val variableAssignmentCfaBasedCheckers: Set<AbstractFirPropertyInitializationChecker>
