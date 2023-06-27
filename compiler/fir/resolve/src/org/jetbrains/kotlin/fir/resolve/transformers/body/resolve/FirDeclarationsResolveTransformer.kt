@@ -931,7 +931,10 @@ open class FirDeclarationsResolveTransformer(
                 param
             } else {
                 val resolvedType =
-                    param.returnTypeRef.resolvedTypeFromPrototype(expectedTypeParameterTypes[index])
+                    param.returnTypeRef.resolvedTypeFromPrototype(
+                        expectedTypeParameterTypes[index],
+                        param.source?.fakeElement(KtFakeSourceElementKind.ImplicitReturnTypeOfLambdaValueParameter)
+                    )
                 param.replaceReturnTypeRef(resolvedType)
                 param
             }

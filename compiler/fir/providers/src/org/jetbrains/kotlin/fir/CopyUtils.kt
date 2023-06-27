@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.utils.expandedConeType
@@ -40,17 +41,18 @@ inline fun FirFunctionCall.copyAsImplicitInvokeCall(
 }
 
 fun FirTypeRef.resolvedTypeFromPrototype(
-    type: ConeKotlinType
+    type: ConeKotlinType,
+    fallbackSource: KtSourceElement? = null,
 ): FirResolvedTypeRef {
     return if (type is ConeErrorType) {
         buildErrorTypeRef {
-            source = this@resolvedTypeFromPrototype.source
+            source = this@resolvedTypeFromPrototype.source ?: fallbackSource
             this.type = type
             diagnostic = type.diagnostic
         }
     } else {
         buildResolvedTypeRef {
-            source = this@resolvedTypeFromPrototype.source
+            source = this@resolvedTypeFromPrototype.source ?: fallbackSource
             this.type = type
             delegatedTypeRef = when (val original = this@resolvedTypeFromPrototype) {
                 is FirResolvedTypeRef -> original.delegatedTypeRef

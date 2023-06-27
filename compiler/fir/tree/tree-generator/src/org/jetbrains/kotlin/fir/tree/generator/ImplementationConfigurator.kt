@@ -536,12 +536,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         }
 
         impl(functionTypeRef)
-        impl(implicitTypeRef) {
-            defaultEmptyList("annotations")
-            default("source") {
-                notNull = true
-            }
-        }
+        noImpl(implicitTypeRef)
 
         impl(reference, "FirStubReference") {
             default("source") {

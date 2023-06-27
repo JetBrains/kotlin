@@ -282,7 +282,12 @@ class FirCallCompleter(
                 lambdaArgument.replaceReceiverParameter(null)
             } else {
                 lambdaArgument.receiverParameter?.apply {
-                    replaceTypeRef(typeRef.resolvedTypeFromPrototype(receiverType.approximateLambdaInputType()))
+                    replaceTypeRef(
+                        typeRef.resolvedTypeFromPrototype(
+                            receiverType.approximateLambdaInputType(),
+                            source?.fakeElement(KtFakeSourceElementKind.ImplicitTypeRef),
+                        )
+                    )
                 }
             }
 

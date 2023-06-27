@@ -625,9 +625,9 @@ fun FirTypeRef.convertToReceiverParameter(): FirReceiverParameter {
     }
 }
 
-fun FirImplicitTypeRef.asReceiverParameter(): FirReceiverParameter = buildReceiverParameter {
-    source = this@asReceiverParameter.source?.fakeElement(KtFakeSourceElementKind.ReceiverFromType)
-    typeRef = this@asReceiverParameter
+fun KtSourceElement.asReceiverParameter(): FirReceiverParameter = buildReceiverParameter {
+    source = this@asReceiverParameter.fakeElement(KtFakeSourceElementKind.ReceiverFromType)
+    typeRef = FirImplicitTypeRefImplWithoutSource
 }
 
 fun <T> FirCallableDeclaration.initContainingClassAttr(context: Context<T>) {
