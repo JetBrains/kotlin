@@ -19,12 +19,17 @@ import org.jetbrains.kotlin.gradle.targets.native.internal.commonizeCInteropTask
 import org.jetbrains.kotlin.gradle.util.enableCInteropCommonization
 import org.jetbrains.kotlin.gradle.util.main
 import org.jetbrains.kotlin.gradle.util.runLifecycleAwareTest
+import org.jetbrains.kotlin.gradle.utils.Future
+import org.jetbrains.kotlin.gradle.utils.future
 import org.jetbrains.kotlin.konan.target.KonanTarget.*
 import kotlin.test.*
 
 class CInteropCommonizerTaskTest : MultiplatformExtensionTest() {
 
-    private val task: CInteropCommonizerTask get() = project.commonizeCInteropTask?.get() ?: fail("Missing commonizeCInteropTask")
+    private val task: Future<CInteropCommonizerTask>
+        get() = project.future {
+            project.commonizeCInteropTask()?.get() ?: fail("Missing commonizeCInteropTask")
+        }
 
     @BeforeTest
     override fun setup() {
@@ -52,6 +57,7 @@ class CInteropCommonizerTaskTest : MultiplatformExtensionTest() {
 
     @Test
     fun `nativeMain linux macos`() = project.runLifecycleAwareTest {
+        val task = this@CInteropCommonizerTaskTest.task.await()
         val linuxInterop = kotlin.linuxX64("linux").compilations.getByName("main").cinterops.create("anyInteropName")
         val macosInterop = kotlin.macosX64("macos").compilations.getByName("main").cinterops.create("anyInteropName")
 
@@ -106,6 +112,7 @@ class CInteropCommonizerTaskTest : MultiplatformExtensionTest() {
 
     @Test
     fun `nativeMain iosMain linux macos iosX64 iosArm64`() = project.runLifecycleAwareTest {
+        val task = this@CInteropCommonizerTaskTest.task.await()
         val linuxInterop = kotlin.linuxX64("linux").compilations.getByName("main").cinterops.create("anyInteropName").identifier
         val macosInterop = kotlin.macosX64("macos").compilations.getByName("main").cinterops.create("anyInteropName").identifier
         val iosX64Interop = kotlin.iosX64("iosX64").compilations.getByName("main").cinterops.create("anyInteropName").identifier
@@ -159,8 +166,9 @@ class CInteropCommonizerTaskTest : MultiplatformExtensionTest() {
     }
 
     private fun `nativeTest nativeMain linux macos`(
-        nativeTestDependsOnNativeMain: Boolean
+        nativeTestDependsOnNativeMain: Boolean,
     ) = project.runLifecycleAwareTest {
+        val task = this@CInteropCommonizerTaskTest.task.await()
         val linuxInterop = kotlin.linuxX64("linux").compilations.getByName("main").cinterops.create("anyInteropName").identifier
         val macosInterop = kotlin.macosX64("macos").compilations.getByName("main").cinterops.create("anyInteropName").identifier
 
@@ -222,8 +230,9 @@ class CInteropCommonizerTaskTest : MultiplatformExtensionTest() {
     }
 
     private fun `nativeTest nativeMain linux macos - test compilation defines custom cinterop`(
-        nativeTestDependsOnNativeMain: Boolean
+        nativeTestDependsOnNativeMain: Boolean,
     ) = project.runLifecycleAwareTest {
+        val task = this@CInteropCommonizerTaskTest.task.await()
         val linuxInterop = kotlin.linuxX64("linux").compilations.getByName("main").cinterops.create("anyInteropName").identifier
         val macosInterop = kotlin.macosX64("macos").compilations.getByName("main").cinterops.create("anyInteropName").identifier
         kotlin.linuxX64("linux").compilations.getByName("test").cinterops.create("anyOtherName").identifier
@@ -285,6 +294,7 @@ class CInteropCommonizerTaskTest : MultiplatformExtensionTest() {
     }
 
     private fun `hierarchical project`(testSourceSetsDependOnMainSourceSets: Boolean) = project.runLifecycleAwareTest {
+        val task = this@CInteropCommonizerTaskTest.task.await()
         /* Define targets */
         val linux = kotlin.linuxX64("linux")
         val macos = kotlin.macosX64("macos")
