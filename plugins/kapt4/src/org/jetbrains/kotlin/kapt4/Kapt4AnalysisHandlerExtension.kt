@@ -9,6 +9,7 @@ import com.intellij.mock.MockProject
 import com.sun.tools.javac.tree.JCTree
 import com.sun.tools.javac.util.Context
 import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
+import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.lifetime.KtAlwaysAccessibleLifetimeTokenFactory
 import org.jetbrains.kotlin.analysis.api.session.KtAnalysisSessionProvider
 import org.jetbrains.kotlin.analysis.api.standalone.buildStandaloneAnalysisAPISession
@@ -29,7 +30,6 @@ import org.jetbrains.kotlin.fir.extensions.FirAnalysisHandlerExtension
 import org.jetbrains.kotlin.kapt3.KAPT_OPTIONS
 import org.jetbrains.kotlin.kapt3.base.*
 import org.jetbrains.kotlin.kapt3.base.util.KaptLogger
-import org.jetbrains.kotlin.kapt3.base.util.WriterBackedKaptLogger
 import org.jetbrains.kotlin.kapt3.util.MessageCollectorBackedKaptLogger
 import org.jetbrains.kotlin.kapt3.util.prettyPrint
 import org.jetbrains.kotlin.psi.KtClassOrObject
@@ -48,10 +48,12 @@ class Kapt4AnalysisHandlerExtension : FirAnalysisHandlerExtension() {
         val languageVersionSettings = configuration[CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS]!!
         val updatedConfiguration = configuration.copy().apply {
             put(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS, object : LanguageVersionSettings by languageVersionSettings {
-                override fun <T> getFlag(flag: AnalysisFlag<T>): T {
-                    @Suppress("UNCHECKED_CAST")
-                    return if (flag == JvmAnalysisFlags.generatePropertyAnnotationsMethods) (true as T) else languageVersionSettings.getFlag(flag)
-                }
+                @Suppress("UNCHECKED_CAST")
+                override fun <T> getFlag(flag: AnalysisFlag<T>): T =
+                    when(flag) {
+                        JvmAnalysisFlags.generatePropertyAnnotationsMethods -> true as T
+                        else -> languageVersionSettings.getFlag(flag)
+                    }
             })
         }
 
@@ -79,14 +81,17 @@ class Kapt4AnalysisHandlerExtension : FirAnalysisHandlerExtension() {
         val contentRoots = configuration[CLIConfigurationKeys.CONTENT_ROOTS] ?: emptyList()
 
         val options = configuration[KAPT_OPTIONS]!!.apply {
-            projectBaseDir = ktAnalysisSession.useSiteModule.project.basePath?.let(::File)
+            projectBaseDir = projectBaseDir ?: ktAnalysisSession.useSiteModule.project.basePath?.let(::File)
             compileClasspath.addAll(contentRoots.filterIsInstance<JvmClasspathRoot>().map { it.file })
-            compileClasspath.addAll(module.directRegularDependencies.filterIsInstance<KtLibraryModule>().flatMap { it.getBinaryRoots() }.map { it.toFile() })
+            compileClasspath.addAll(module.directRegularDependencies
+                                        .filterIsInstance<KtLibraryModule>()
+                                        .flatMap { it.getBinaryRoots() }
+                                        .map { it.toFile() })
             javaSourceRoots.addAll(contentRoots.filterIsInstance<JavaSourceRoot>().map { it.file })
             classesOutputDir = classesOutputDir ?: configuration.get(JVMConfigurationKeys.OUTPUT_DIRECTORY)
         }.build()
 
-        val logger: KaptLogger = MessageCollectorBackedKaptLogger(
+        val logger = MessageCollectorBackedKaptLogger(
             options.flags[KaptFlag.VERBOSE],
             options.flags[KaptFlag.INFO_AS_WARNINGS],
             configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)!!
@@ -105,50 +110,17 @@ class Kapt4AnalysisHandlerExtension : FirAnalysisHandlerExtension() {
             val context = Kapt4ContextForStubGeneration(
                 options,
                 withJdk = false,
-                WriterBackedKaptLogger(isVerbose = false),
+                logger,
                 lightClasses.keys.toList(),
                 lightClasses,
                 ktAnalysisSession.ktMetadataCalculator
             )
 
-            if (options.mode != AptMode.APT_ONLY) {
-                val generator = with(context) { Kapt4StubGenerator(ktAnalysisSession) }
-                val stubs = generator.generateStubs()
-                saveStubs(
-                    context,
-                    stubs.values.filterNotNull().toList(),
-                    options.stubsOutputDir
-                )
-            }
-            if (options.mode == AptMode.STUBS_ONLY) return true
+            if (options.mode != AptMode.APT_ONLY)
+                generateStubs(ktAnalysisSession, context)
 
-            var sourcesToProcess = options.collectJavaSourceFiles(context.sourcesToReprocess)
-            var processedSources = emptySet<File>()
-            val processorLoader = object : ProcessorLoader(options, logger) {
-                override fun doLoadProcessors(classpath: LinkedHashSet<File>, classLoader: ClassLoader): List<Processor> =
-                    when (classLoader) {
-                        is URLClassLoader -> ServiceLoaderLite.loadImplementations(Processor::class.java, classLoader)
-                        else -> super.doLoadProcessors(classpath, classLoader)
-                    }
-            }
-
-            while (sourcesToProcess.isNotEmpty()) {
-                val processingContext = KaptContext(
-                    options,
-                    withJdk = false,
-                    logger
-                )
-                val processors = processorLoader.loadProcessors(findClassLoaderWithJavac())
-                processingContext.doAnnotationProcessing(
-                    sourcesToProcess,
-                    processors.processors,
-//                    binaryTypesToReprocess = collectAggregatedTypes(context.sourcesToReprocess)
-                )
-                processedSources = processedSources + sourcesToProcess
-                sourcesToProcess = options.sourcesOutputDir.walkTopDown()
-                    .filter { it.isFile && it.name.endsWith(".java", true) && it !in processedSources }
-                    .toList()
-            }
+            if (options.mode != AptMode.STUBS_ONLY)
+                runProcessors(options, context, logger)
         } catch (e: Exception) {
             logger.exception(e)
             return false
@@ -156,30 +128,60 @@ class Kapt4AnalysisHandlerExtension : FirAnalysisHandlerExtension() {
         return true
     }
 
-    private fun findClassLoaderWithJavac(): ClassLoader {
-        // Class.getClassLoader() may return null if the class is defined in a bootstrap class loader
-        return Context::class.java.classLoader ?: ClassLoader.getSystemClassLoader()
-    }
-
-    fun saveStubs(
-        kaptContext: Kapt4ContextForStubGeneration,
-        stubs: List<Kapt4StubGenerator.KaptStub>,
-        stubsOutputDir: File,
-    ): List<File> = buildList {
+    private fun generateStubs(
+        ktAnalysisSession: KtAnalysisSession,
+        context: Kapt4ContextForStubGeneration,
+    ) {
+        val generator = with(context) { Kapt4StubGenerator(ktAnalysisSession) }
+        val stubs = generator.generateStubs().values.filterNotNull().toList()
         for (kaptStub in stubs) {
             val stub = kaptStub.file
             val className = (stub.defs.first { it is JCTree.JCClassDecl } as JCTree.JCClassDecl).simpleName.toString()
 
             val packageName = stub.getPackageNameJava9Aware()?.toString() ?: ""
+            val stubsOutputDir = context.options.stubsOutputDir
             val packageDir = if (packageName.isEmpty()) stubsOutputDir else File(stubsOutputDir, packageName.replace('.', '/'))
             packageDir.mkdirs()
 
             val sourceFile = File(packageDir, "$className.java")
-            sourceFile.writeText(stub.prettyPrint(kaptContext.context))
+            sourceFile.writeText(stub.prettyPrint(context.context))
 
-            add(sourceFile)
+            kaptStub.writeMetadataIfNeeded(forSource = sourceFile)
+        }
+    }
 
-            kaptStub.writeMetadataIfNeeded(forSource = sourceFile)?.let { add(it) }
+    private fun runProcessors(
+        options: KaptOptions,
+        context: Kapt4ContextForStubGeneration,
+        logger: KaptLogger
+    ) {
+        var sourcesToProcess = options.collectJavaSourceFiles(context.sourcesToReprocess)
+        var processedSources = emptySet<File>()
+        val processorLoader = object : ProcessorLoader(options, logger) {
+            override fun doLoadProcessors(classpath: LinkedHashSet<File>, classLoader: ClassLoader): List<Processor> =
+                when (classLoader) {
+                    is URLClassLoader -> ServiceLoaderLite.loadImplementations(Processor::class.java, classLoader)
+                    else -> super.doLoadProcessors(classpath, classLoader)
+                }
+        }
+
+        val loaderWithJavac = Context::class.java.classLoader ?: ClassLoader.getSystemClassLoader()
+        while (sourcesToProcess.isNotEmpty()) {
+            val processingContext = KaptContext(
+                options,
+                withJdk = false,
+                logger
+            )
+            val processors = processorLoader.loadProcessors(loaderWithJavac)
+            processingContext.doAnnotationProcessing(
+                sourcesToProcess,
+                processors.processors,
+                //                    binaryTypesToReprocess = collectAggregatedTypes(context.sourcesToReprocess)
+            )
+            processedSources += sourcesToProcess
+            sourcesToProcess = options.sourcesOutputDir.walkTopDown()
+                .filter { it.isFile && it.name.endsWith(".java", true) && it !in processedSources }
+                .toList()
         }
     }
 }
