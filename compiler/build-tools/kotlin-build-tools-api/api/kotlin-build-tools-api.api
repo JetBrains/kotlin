@@ -20,12 +20,20 @@ public final class org/jetbrains/kotlin/buildtools/api/CompilationService$Compan
 	public final fun loadImplementation (Ljava/lang/ClassLoader;)Lorg/jetbrains/kotlin/buildtools/api/CompilationService;
 }
 
+public final class org/jetbrains/kotlin/buildtools/api/CompilerArgumentsParseException : org/jetbrains/kotlin/buildtools/api/KotlinBuildToolsException {
+	public fun <init> (Ljava/lang/String;)V
+}
+
 public abstract interface class org/jetbrains/kotlin/buildtools/api/CompilerExecutionStrategyConfiguration {
 	public abstract fun useDaemonStrategy (Ljava/io/File;Ljava/util/List;)Lorg/jetbrains/kotlin/buildtools/api/CompilerExecutionStrategyConfiguration;
 	public abstract fun useInProcessStrategy ()Lorg/jetbrains/kotlin/buildtools/api/CompilerExecutionStrategyConfiguration;
 }
 
 public abstract interface annotation class org/jetbrains/kotlin/buildtools/api/ExperimentalBuildToolsApi : java/lang/annotation/Annotation {
+}
+
+public abstract class org/jetbrains/kotlin/buildtools/api/KotlinBuildToolsException : java/lang/Exception {
+	public synthetic fun <init> (Ljava/lang/String;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 }
 
 public abstract interface class org/jetbrains/kotlin/buildtools/api/KotlinLogger {
