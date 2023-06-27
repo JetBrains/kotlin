@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.resolve.FirCodeFragmentContext
 import org.jetbrains.kotlin.fir.resolve.SessionHolder
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.BodyResolveContext
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirResolveContextCollector
+import org.jetbrains.kotlin.fir.scopes.impl.FirLocalScope
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.psi.KtElement
@@ -20,7 +21,8 @@ import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 
 internal class FirCodeFragmentResolveContextCollector(
     private val sessionHolder: SessionHolder,
-    contextElement: KtElement
+    private val extraScopes: List<FirLocalScope>,
+    contextElement: KtElement,
 ) : FirResolveContextCollector {
     private val contextElementCandidates = contextElement.parentsWithSelf.toSet()
     private val elementContexts = hashMapOf<KtElement, FirCodeFragmentContext>()
@@ -30,7 +32,7 @@ internal class FirCodeFragmentResolveContextCollector(
 
     override fun addFileContext(file: FirFile, context: FirTowerDataContext) {
         val psiFile = file.psi as? KtFile ?: return
-        elementContexts[psiFile] = FileFirCodeFragmentContext(context)
+        elementContexts[psiFile] = FileFirCodeFragmentContext(context.includingExtraScopes())
     }
 
     override fun addStatementContext(statement: FirStatement, context: BodyResolveContext) {
@@ -73,7 +75,11 @@ internal class FirCodeFragmentResolveContextCollector(
             }
         }
 
-        return StatementFirCodeFragmentContext(towerDataContext, variables)
+        return StatementFirCodeFragmentContext(towerDataContext.includingExtraScopes(), variables)
+    }
+
+    private fun FirTowerDataContext.includingExtraScopes(): FirTowerDataContext {
+        return extraScopes.fold(this) { context, scope -> context.addLocalScope(scope) }
     }
 }
 

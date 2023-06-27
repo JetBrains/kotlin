@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.compiler
 
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbol
@@ -163,6 +162,7 @@ private class CodeFragmentCapturedValueVisitor(
                 if (symbol.isLocal) {
                     val isCrossingInlineBounds = isCrossingInlineBounds(element, symbol)
                     val capturedValue = when {
+                        symbol.fir.foreignValueMarker == true -> CodeFragmentCapturedValue.ForeignValue(symbol.name, isCrossingInlineBounds)
                         symbol.hasDelegate -> CodeFragmentCapturedValue.LocalDelegate(symbol.name, symbol.isMutated, isCrossingInlineBounds)
                         else -> CodeFragmentCapturedValue.Local(symbol.name, symbol.isMutated, isCrossingInlineBounds)
                     }

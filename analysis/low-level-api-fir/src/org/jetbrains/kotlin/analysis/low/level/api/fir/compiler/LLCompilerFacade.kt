@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.compiler
 
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.progress.ProgressManager
+import com.intellij.openapi.util.Key
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirResolvableModuleSession
 import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
@@ -51,7 +52,6 @@ import org.jetbrains.kotlin.psi2ir.generators.fragments.EvaluatorFragmentInfo
 import org.jetbrains.kotlin.resolve.source.PsiSourceFile
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
-import org.jetbrains.org.objectweb.asm.Type
 
 class LLCompilationResult(
     val outputFiles: List<OutputFile>,
@@ -65,9 +65,6 @@ object LLCompilerFacade {
 
     /** Entry point method name for the code fragment. */
     val CODE_FRAGMENT_METHOD_NAME = CompilerConfigurationKey<String>("code fragment method name")
-
-    /** '_DebugLabel' mappings for the code fragment. */
-    val CODE_FRAGMENT_DEBUG_LABELS = CompilerConfigurationKey<Map<String, Type>>("code fragment '_DebugLabel' entries")
 
     fun compile(
         file: KtFile,
