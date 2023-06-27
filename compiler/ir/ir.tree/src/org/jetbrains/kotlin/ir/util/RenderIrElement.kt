@@ -72,7 +72,7 @@ class RenderIrElementVisitor(private val options: DumpIrTreeOptions = DumpIrTree
             renderClassWithRenderer(declaration, null, options)
 
         override fun visitEnumEntry(declaration: IrEnumEntry, data: Nothing?) =
-            renderEnumEntry(declaration)
+            renderEnumEntry(declaration, options)
 
         override fun visitField(declaration: IrField, data: Nothing?) =
             renderField(declaration, null, options)
@@ -271,6 +271,7 @@ class RenderIrElementVisitor(private val options: DumpIrTreeOptions = DumpIrTree
     override fun visitConstructor(declaration: IrConstructor, data: Nothing?): String =
         declaration.runTrimEnd {
             "CONSTRUCTOR ${renderOriginIfNonTrivial()}" +
+                    renderSignatureIfEnabled(options.printSignatures) +
                     "visibility:$visibility " +
                     renderTypeParameters() + " " +
                     renderValueParameterTypes() + " " +
@@ -299,7 +300,7 @@ class RenderIrElementVisitor(private val options: DumpIrTreeOptions = DumpIrTree
         }
 
     override fun visitEnumEntry(declaration: IrEnumEntry, data: Nothing?): String =
-        renderEnumEntry(declaration)
+        renderEnumEntry(declaration, options)
 
     override fun visitAnonymousInitializer(declaration: IrAnonymousInitializer, data: Nothing?): String =
         "ANONYMOUS_INITIALIZER isStatic=${declaration.isStatic}"
@@ -326,7 +327,9 @@ class RenderIrElementVisitor(private val options: DumpIrTreeOptions = DumpIrTree
     override fun visitTypeAlias(declaration: IrTypeAlias, data: Nothing?): String =
         declaration.run {
             "TYPEALIAS ${declaration.renderOriginIfNonTrivial()}" +
-                    "name:$name visibility:$visibility expandedType:${expandedType.render()}" +
+                    "name:$name " +
+                    renderSignatureIfEnabled(options.printSignatures) +
+                    "visibility:$visibility expandedType:${expandedType.render()}" +
                     renderTypeAliasFlags()
         }
 
@@ -537,7 +540,7 @@ internal fun DescriptorRenderer.renderDescriptor(descriptor: DeclarationDescript
         render(descriptor)
 
 private fun IrDeclarationWithName.renderSignatureIfEnabled(printSignatures: Boolean): String =
-    if (printSignatures) "signature:${symbol.signature?.render()} " else ""
+    symbol.signature.takeIf { printSignatures }?.let {"signature:${it.render()} "} ?: ""
 
 internal fun IrDeclaration.renderOriginIfNonTrivial(): String =
     if (origin != IrDeclarationOrigin.DEFINED) "$origin " else ""
@@ -878,8 +881,11 @@ private fun renderClassWithRenderer(declaration: IrClass, renderer: RenderIrElem
                 "superTypes:[${superTypes.joinToString(separator = "; ") { it.renderTypeWithRenderer(renderer, options) }}]"
     }
 
-private fun renderEnumEntry(declaration: IrEnumEntry) = declaration.runTrimEnd {
-    "ENUM_ENTRY ${renderOriginIfNonTrivial()}name:$name"
+private fun renderEnumEntry(declaration: IrEnumEntry, options: DumpIrTreeOptions) = declaration.runTrimEnd {
+    "ENUM_ENTRY " +
+            renderOriginIfNonTrivial() +
+            "name:$name " +
+            renderSignatureIfEnabled(options.printSignatures)
 }
 
 private fun renderField(declaration: IrField, renderer: RenderIrElementVisitor?, options: DumpIrTreeOptions) = declaration.runTrimEnd {

@@ -2,7 +2,7 @@ MODULE_FRAGMENT name:<fun.kt>
   FILE fqName:test fileName:fun.kt
     CLASS CLASS name:A signature:test/A|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassPublicSymbolImpl>]
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.A
-      CONSTRUCTOR visibility:public <> () returnType:test.A [primary]
+      CONSTRUCTOR signature:test/A.<init>|-5645683436151566731[0] visibility:public <> () returnType:test.A [primary]
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorPublicSymbolImpl'
           INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A signature:test/A|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassPublicSymbolImpl>]'

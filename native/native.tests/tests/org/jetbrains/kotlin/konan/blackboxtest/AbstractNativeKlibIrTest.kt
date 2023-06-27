@@ -5,9 +5,7 @@
 
 package org.jetbrains.kotlin.konan.blackboxtest
 
-import com.intellij.openapi.util.text.StringUtilRt
 import com.intellij.testFramework.TestDataFile
-import org.jetbrains.kotlin.konan.blackboxtest.support.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.PackageName
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestCase
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestCaseId
@@ -57,7 +55,7 @@ abstract class AbstractNativeKlibIrTest : AbstractNativeSimpleTest() {
         val artifact = compilationResult.assertSuccess().resultingArtifact
         val kotlinNativeClassLoader = testRunSettings.get<KotlinNativeClassLoader>()
         val klibIr = artifact.getIr(kotlinNativeClassLoader.classLoader, printSignatures)
-        assertEqualsToFile( expectedContents, klibIr)
+        assertEqualsToFile(expectedContents, klibIr)
     }
 
     private fun generateTestCaseWithSingleSource(source: File, extraArgs: List<String>): TestCase {

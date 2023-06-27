@@ -31,6 +31,18 @@ public class NativeKlibIrTestGenerated extends AbstractNativeKlibIrTest {
     }
 
     @Test
+    @TestMetadata("constructor.kt")
+    public void testConstructor() throws Exception {
+        runTest("native/native.tests/testData/klibIr/constructor.kt");
+    }
+
+    @Test
+    @TestMetadata("enum.kt")
+    public void testEnum() throws Exception {
+        runTest("native/native.tests/testData/klibIr/enum.kt");
+    }
+
+    @Test
     @TestMetadata("field.kt")
     public void testField() throws Exception {
         runTest("native/native.tests/testData/klibIr/field.kt");
@@ -40,5 +52,11 @@ public class NativeKlibIrTestGenerated extends AbstractNativeKlibIrTest {
     @TestMetadata("fun.kt")
     public void testFun() throws Exception {
         runTest("native/native.tests/testData/klibIr/fun.kt");
+    }
+
+    @Test
+    @TestMetadata("typealias.kt")
+    public void testTypealias() throws Exception {
+        runTest("native/native.tests/testData/klibIr/typealias.kt");
     }
 }
