@@ -20,7 +20,6 @@ class BuildToolsApiJvmCompilationIT : KGPBaseTest() {
     override val defaultBuildOptions = super.defaultBuildOptions.copy(runViaBuildToolsApi = true)
 
     @GradleTest
-    @Disabled
     @DisplayName("Simple project non-incremental in-process compilation")
     fun compileJvmInProcessNonIncremental(gradleVersion: GradleVersion) = testSimpleProject(
         gradleVersion, defaultBuildOptions.copy(

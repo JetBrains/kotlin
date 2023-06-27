@@ -7,27 +7,54 @@ package org.jetbrains.kotlin.buildtools.internal
 
 import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 
+private enum class LogLevel {
+    ERROR,
+    WARN,
+    LIFECYCLE,
+    INFO,
+    DEBUG,
+    ;
+
+    companion object {
+        fun fromString(rawValue: String) = entries.firstOrNull { it.name.equals(rawValue, ignoreCase = true) }
+            ?: error("Unknown log level for the DefaultKotlinLogger: $rawValue")
+    }
+}
+
 internal object DefaultKotlinLogger : KotlinLogger {
+    private val logLevel: LogLevel = System.getProperty("kotlin.build-tools-api.log.level")?.let {
+        LogLevel.fromString(it)
+    } ?: LogLevel.WARN
+
+    private val LogLevel.isEnabled: Boolean
+        get() = logLevel >= this
+
     override val isDebugEnabled: Boolean
-        get() = TODO("Default KotlinLogger is not yet implemented in the Build Tools API")
+        get() = LogLevel.DEBUG.isEnabled
 
     override fun error(msg: String, throwable: Throwable?) {
-        TODO("Default KotlinLogger is not yet implemented in the Build Tools API")
+        if (!LogLevel.ERROR.isEnabled) return
+        System.err.println("e: $msg")
+        throwable?.printStackTrace()
     }
 
     override fun warn(msg: String) {
-        TODO("Default KotlinLogger is not yet implemented in the Build Tools API")
+        if (!LogLevel.WARN.isEnabled) return
+        System.err.println("w: $msg")
     }
 
     override fun info(msg: String) {
-        TODO("Default KotlinLogger is not yet implemented in the Build Tools API")
+        if (!LogLevel.INFO.isEnabled) return
+        println("i: $msg")
     }
 
     override fun debug(msg: String) {
-        TODO("Default KotlinLogger is not yet implemented in the Build Tools API")
+        if (!LogLevel.DEBUG.isEnabled) return
+        println("d: $msg")
     }
 
     override fun lifecycle(msg: String) {
-        TODO("Default KotlinLogger is not yet implemented in the Build Tools API")
+        if (!LogLevel.LIFECYCLE.isEnabled) return
+        println("l: $msg")
     }
 }

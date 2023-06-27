@@ -8,12 +8,22 @@ package org.jetbrains.kotlin.buildtools.internal
 import org.jetbrains.kotlin.buildtools.api.CompilerExecutionStrategyConfiguration
 import java.io.File
 
-class CompilerExecutionStrategyConfigurationImpl : CompilerExecutionStrategyConfiguration {
+internal sealed interface CompilerExecutionStrategy {
+    data object InProcess : CompilerExecutionStrategy
+
+    data class Daemon(val sessionDir: File, val jvmArguments: List<String>) : CompilerExecutionStrategy
+}
+
+internal class CompilerExecutionStrategyConfigurationImpl : CompilerExecutionStrategyConfiguration {
+    internal var selectedStrategy: CompilerExecutionStrategy = CompilerExecutionStrategy.InProcess
+
     override fun useInProcessStrategy(): CompilerExecutionStrategyConfiguration {
+        selectedStrategy = CompilerExecutionStrategy.InProcess
         return this
     }
 
     override fun useDaemonStrategy(sessionDir: File, jvmArguments: List<String>): CompilerExecutionStrategyConfiguration {
-        TODO("Daemon strategy is not yet supported in the Build Tools API")
+        selectedStrategy = CompilerExecutionStrategy.Daemon(sessionDir, jvmArguments)
+        return this
     }
 }
