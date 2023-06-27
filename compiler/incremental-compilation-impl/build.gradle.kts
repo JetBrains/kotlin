@@ -1,6 +1,7 @@
 plugins {
     kotlin("jvm")
     id("jps-compatible")
+    id("org.jetbrains.kotlinx.kover")
 }
 
 dependencies {
@@ -56,3 +57,16 @@ projectTest("testJvmICWithJdk11", parallel = true) {
 }
 
 testsJar()
+
+koverReport {
+    defaults {
+        filters {
+            html {
+                includes {
+                    classes("*IncrementalFir*")
+                }
+            }
+        }
+    }
+
+}

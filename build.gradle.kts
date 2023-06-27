@@ -997,7 +997,7 @@ dependencies {
     kover(project("compiler:fir:resolve"))
     kover(project("compiler:fir:semantics"))
     kover(project("compiler:fir:tree"))
-
+    kover(project("compiler:incremental-compilation-impl"))
 }
 
 tasks.withType(org.gradle.api.tasks.testing.Test::class).all {
