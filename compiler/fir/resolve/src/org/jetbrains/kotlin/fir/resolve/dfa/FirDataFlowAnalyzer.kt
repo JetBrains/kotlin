@@ -652,7 +652,7 @@ abstract class FirDataFlowAnalyzer(
     private fun enterRepeatableStatement(flow: MutableFlow, statement: FirStatement) {
         val reassignedNames = context.preliminaryLoopVisitor.enterCapturingStatement(statement)
         if (reassignedNames.isEmpty()) return
-        // TODO: only choose the innermost variable for each name
+        // TODO: only choose the innermost variable for each name, KT-59688
         val possiblyChangedVariables = variableStorage.realVariables.values.filter {
             val identifier = it.identifier
             val symbol = identifier.symbol
@@ -754,6 +754,7 @@ abstract class FirDataFlowAnalyzer(
             val expressionVariable = variableStorage.getOrCreate(flow, safeCall)
             // TODO? all new implications in previous node's flow are valid here if receiver != null
             //  (that requires a second level of implications: receiver != null => condition => effect).
+            //  KT-59689
             flow.addAllConditionally(expressionVariable notEq null, node.lastPreviousNode.flow)
         }
     }
@@ -1000,7 +1001,7 @@ abstract class FirDataFlowAnalyzer(
             // Approved type statements for RHS already contain everything implied by the corresponding value of LHS.
             val bothEvaluated = operatorVariable eq isAnd
             // TODO? `bothEvaluated` also implies all implications from RHS. This requires a second level
-            //  of implications, which the logic system currently doesn't support. See also safe calls.
+            //  of implications, which the logic system currently doesn't support. See also safe calls. KT-59689
             flow.addAllConditionally(bothEvaluated, flowFromRight)
             if (rightIsBoolean) {
                 flow.addAllConditionally(bothEvaluated, logicSystem.approveOperationStatement(flowFromRight, rightVariable!! eq isAnd))
@@ -1014,7 +1015,7 @@ abstract class FirDataFlowAnalyzer(
                         // Not checking for reassignments is safe since we will only take statements that are also true in RHS
                         // (so they're true regardless of whether the variable ends up being reassigned or not).
                         logicSystem.approveOperationStatement(flowFromLeft, leftVariable!! eq !isAnd),
-                        // TODO: and(approved from right, ...)? FE1.0 doesn't seem to handle that correctly either.
+                        // TODO: and(approved from right, ...)? FE1.0 doesn't seem to handle that correctly either. KT-59690
                         //   if (x is A || whatever(x as B)) { /* x is (A | B) */ }
                         logicSystem.approveOperationStatement(flowFromRight, rightVariable!! eq !isAnd),
                     )

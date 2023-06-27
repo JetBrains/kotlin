@@ -799,7 +799,7 @@ class FirCallCompletionResultsWriterTransformer(
         return varargArgumentsExpression
     }
 
-    // TODO: report warning with a checker and return true here only in case of errors
+    // TODO: report warning with a checker and return true here only in case of errors, KT-59676
     private fun FirNamedReferenceWithCandidate.hasAdditionalResolutionErrors(): Boolean =
         candidate.system.errors.any { it is InferredEmptyIntersection }
 

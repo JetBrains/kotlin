@@ -41,7 +41,7 @@ internal fun remapArgumentsWithVararg(
     var indexAfterVarargs = argumentList.size
     val newArgumentMapping = linkedMapOf<FirExpression, FirValueParameter>()
     val varargArgument = buildVarargArgumentsExpression {
-        // TODO: ideally we should use here a source from the use-site and not from the declaration-site
+        // TODO: ideally we should use here a source from the use-site and not from the declaration-site, KT-59682
         this.varargElementType = varargParameterTypeRef.withReplacedConeType(varargElementType, KtFakeSourceElementKind.VarargArgument)
         this.typeRef = varargParameterTypeRef.withReplacedConeType(varargArrayType, KtFakeSourceElementKind.VarargArgument)
         var startOffset = Int.MAX_VALUE

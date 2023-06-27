@@ -588,7 +588,7 @@ internal object CheckIncompatibleTypeVariableUpperBounds : ResolutionStage() {
             for (variableWithConstraints in candidate.system.notFixedTypeVariables.values) {
                 val upperTypes = variableWithConstraints.constraints.extractUpperTypesToCheckIntersectionEmptiness()
 
-                // TODO: consider reporting errors on bounded type variables by incompatible types but with other lower constraints
+                // TODO: consider reporting errors on bounded type variables by incompatible types but with other lower constraints, KT-59676
                 if (upperTypes.size <= 1 || variableWithConstraints.constraints.any { it.kind.isLower() })
                     continue
 

@@ -99,6 +99,7 @@ internal class FirLocalVariableAssignmentAnalyzer {
                 //        p.memberOfSomething // Bad
                 //    }
                 //   FE1.0 has the same behavior.
+                //   KT-59692
                 currentInfo?.assignedInside?.let(prohibitInOuterScope::addAll)
                 // => any write to a variable outside the callable invalidates smart casts inside it
                 outerInfo?.assignedLater?.let(prohibitInThisScope::addAll)
@@ -348,7 +349,7 @@ internal class FirLocalVariableAssignmentAnalyzer {
             // TODO: liveness analysis - return/throw/break/continue terminate the flow.
             //   This is somewhat problematic though because try-catch and loops can restore it.
             //   It is not possible to implement liveness analysis partially - otherwise combinations of
-            //   control flow structures can cause incorrect smartcasts.
+            //   control flow structures can cause incorrect smartcasts. KT-59691
 
             override fun visitFunctionCall(functionCall: FirFunctionCall, data: MiniCfgData) {
                 val visitor = this
@@ -356,7 +357,7 @@ internal class FirLocalVariableAssignmentAnalyzer {
                     setOfNotNull(explicitReceiver, dispatchReceiver, extensionReceiver).forEach { it.accept(visitor, data) }
                     // Delay processing of lambda args because lambda body are evaluated after all arguments have been evaluated.
                     // TODO: this is not entirely correct (the lambda might be nested deep inside an expression), but also this
-                    //  entire override should be unnecessary as long as the full CFG builder visits everything in the right order
+                    //  entire override should be unnecessary as long as the full CFG builder visits everything in the right order. KT-59691
                     val (postponedFunctionArgs, normalArgs) = argumentList.arguments.partition { it is FirAnonymousFunctionExpression }
                     normalArgs.forEach { it.accept(visitor, data) }
                     postponedFunctionArgs.forEach { it.accept(visitor, data) }

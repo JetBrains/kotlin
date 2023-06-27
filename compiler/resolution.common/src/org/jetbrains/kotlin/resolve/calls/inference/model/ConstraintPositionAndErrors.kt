@@ -93,7 +93,7 @@ object BuilderInferencePosition : ConstraintPosition() {
     override fun toString(): String = "For builder inference call"
 }
 
-// TODO: should be used only in SimpleConstraintSystemImpl
+// TODO: should be used only in SimpleConstraintSystemImpl, KT-59675
 object SimpleConstraintSystemConstraintPosition : ConstraintPosition()
 
 // ------------------------------------------------ Errors ------------------------------------------------

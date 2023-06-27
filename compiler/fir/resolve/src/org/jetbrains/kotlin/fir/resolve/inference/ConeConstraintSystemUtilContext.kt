@@ -34,7 +34,7 @@ object ConeConstraintSystemUtilContext : ConstraintSystemUtilContext {
 
     override fun KotlinTypeMarker.unCapture(): KotlinTypeMarker {
         require(this is ConeKotlinType)
-        // TODO, see TypeUtils.kt
+        // TODO, see TypeUtils.kt, KT-59678
         return this
     }
 

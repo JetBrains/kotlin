@@ -369,7 +369,7 @@ open class FirDeclarationsResolveTransformer(
 
         // Resolve call for provideDelegate, without completion
         // TODO: this generates some nodes in the control flow graph which we don't want if we
-        //  end up not selecting this option.
+        //  end up not selecting this option, KT-59684
         transformer.expressionsTransformer.transformFunctionCallInternal(
             provideDelegateCall, ResolutionMode.ContextIndependent, provideDelegate = true
         )
@@ -554,7 +554,7 @@ open class FirDeclarationsResolveTransformer(
         val result = context.withScopesForScript(script, components) {
             transformDeclarationContent(script, data) as FirScript
         }
-        dataFlowAnalyzer.exitScript() // TODO: FirScript should be a FirControlFlowGraphOwner
+        dataFlowAnalyzer.exitScript() // TODO: FirScript should be a FirControlFlowGraphOwner, KT-59683
         return result
     }
 

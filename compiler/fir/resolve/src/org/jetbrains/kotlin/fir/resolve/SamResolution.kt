@@ -254,7 +254,8 @@ class FirSamResolver(
         return resolvedFunctionType.getOrPut(firRegularClass) {
             if (!firRegularClass.status.isFun) return@getOrPut null
             val abstractMethod = firRegularClass.getSingleAbstractMethodOrNull(session, scopeSession) ?: return@getOrPut null
-            // TODO: val shouldConvertFirstParameterToDescriptor = samWithReceiverResolvers.any { it.shouldConvertFirstSamParameterToReceiver(abstractMethod) }
+            // TODO: KT-59674
+            // val shouldConvertFirstParameterToDescriptor = samWithReceiverResolvers.any { it.shouldConvertFirstSamParameterToReceiver(abstractMethod) }
 
             val typeFromExtension = samConversionTransformers.firstNotNullOfOrNull {
                 it.getCustomFunctionTypeForSamConversion(abstractMethod)

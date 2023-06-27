@@ -102,7 +102,7 @@ class FirTowerResolver(
             if (outerType != null)
                 components.implicitReceiverStack.receiversAsReversed().drop(1).firstOrNull {
                     AbstractTypeChecker.isSubtypeOf(components.session.typeContext, it.type, outerType)
-                } ?: return collector // TODO: report diagnostic about not-found receiver
+                } ?: return collector // TODO: report diagnostic about not-found receiver, KT-59677
             else
                 null
 

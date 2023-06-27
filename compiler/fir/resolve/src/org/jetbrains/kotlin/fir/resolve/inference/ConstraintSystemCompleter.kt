@@ -67,7 +67,7 @@ class ConstraintSystemCompleter(components: BodyResolveComponents, private val c
         }
 
         completion@ while (true) {
-            // TODO: This is very slow
+            // TODO: This is very slow, KT-59680
             val postponedArguments = getOrderedNotAnalyzedPostponedArguments(topLevelAtoms)
 
             if (completionMode == ConstraintSystemCompletionMode.UNTIL_FIRST_LAMBDA && hasLambdaToAnalyze(
@@ -409,7 +409,7 @@ class ConstraintSystemCompleter(components: BodyResolveComponents, private val c
             val notAnalyzedArguments = arrayListOf<PostponedResolvedAtom>()
             for (primitive in topLevelAtoms) {
                 primitive.processAllContainingCallCandidates(
-                    // TODO: remove this argument and relevant parameter
+                    // TODO: remove this argument and relevant parameter, KT-59679
                     // Currently, it's used because otherwise problem happens with a lambda in a try-block (see tryWithLambdaInside test)
                     processBlocks = true
                 ) { candidate ->

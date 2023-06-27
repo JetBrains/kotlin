@@ -341,7 +341,7 @@ class ControlFlowGraphBuilder {
     //
     // TODO: an alternative is to delay computing incoming flow for "branch result exit" nodes
     //   until the entire "when" is resolved; then either unify each branch's lambdas into its
-    //   exit node, or create N union nodes (1/branch) and point them into the merge node.
+    //   exit node, or create N union nodes (1/branch) and point them into the merge node. KT-59730
     private fun mergeDataFlowFromPostponedLambdas(node: CFGNode<*>, callCompleted: Boolean) {
         val currentLevelExits = postponedLambdaExits.pop()
         if (currentLevelExits.isEmpty()) return
@@ -445,7 +445,7 @@ class ControlFlowGraphBuilder {
         if ((klass as FirControlFlowGraphOwner).controlFlowGraphReference != null) {
             // TODO: IDE LL API sometimes attempts to analyze a enum class while already analyzing it, causing
             //  this graph to be built twice (or more). Not sure what this means. Nothing good, probably.
-            //  In any case, attempting to add more edges to subgraphs will be fatal.
+            //  In any case, attempting to add more edges to subgraphs will be fatal. KT-59728
             graphs.pop()
             return null to null
         }
@@ -661,7 +661,7 @@ class ControlFlowGraphBuilder {
         if (jump is FirReturnExpression && jump.target.labeledElement is FirAnonymousFunction) {
             // TODO: these should be DFA-only edges; they should be pointed into the postponed function exit node?
             //  With builder inference, lambdas are not necessarily resolved starting from the innermost one...
-            //  See analysis test cfg/postponedLambdaInReturn.kt.
+            //  See analysis test cfg/postponedLambdaInReturn.kt. KT-59729
             postponedLambdaExits.pop()
         }
 
@@ -973,8 +973,9 @@ class ControlFlowGraphBuilder {
                 //     } finally {}
                 // }
                 // try {} finally { /* return@x target is in nonDirectJumps */ }
+                //  KT-59725
                 node.level < minLevel || node !in nonDirectJumps -> continue
-                // TODO: if the input to finally with that label is dead, then so should be the exit probably
+                // TODO: if the input to finally with that label is dead, then so should be the exit probably. KT-59725
                 node.returnPathIsBackwards -> addBackEdge(this, node, label = node)
                 else -> addEdge(this, node, propagateDeadness = false, label = node)
             }
@@ -1029,6 +1030,7 @@ class ControlFlowGraphBuilder {
     // TODO: this doesn't make fully 'right' Nothing node (doesn't support going to catch and pass through finally)
     //  because doing those afterwards is quite challenging
     //  it would be much easier if we could build calls after full completion only, at least for Nothing calls
+    //  KT-59726
     // @returns `true` if node actually returned Nothing
     private fun completeFunctionCall(node: FunctionCallNode): Boolean {
         if (!node.fir.resultType.isNothing) return false

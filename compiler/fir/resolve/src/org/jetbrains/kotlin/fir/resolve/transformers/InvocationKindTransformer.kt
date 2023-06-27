@@ -36,7 +36,7 @@ fun FirFunctionCall.replaceLambdaArgumentInvocationKinds(session: FirSession) {
     val byParameter = mutableMapOf<FirValueParameter, EventOccurrencesRange>()
     function.contractDescription.effects?.forEach { fir ->
         val effect = fir.effect as? ConeCallsEffectDeclaration ?: return@forEach
-        // TODO: Support callsInPlace contracts on receivers
+        // TODO: Support callsInPlace contracts on receivers, KT-59681
         val valueParameter = function.valueParameters.getOrNull(effect.valueParameterReference.parameterIndex) ?: return@forEach
         byParameter[valueParameter] = effect.kind
     }
