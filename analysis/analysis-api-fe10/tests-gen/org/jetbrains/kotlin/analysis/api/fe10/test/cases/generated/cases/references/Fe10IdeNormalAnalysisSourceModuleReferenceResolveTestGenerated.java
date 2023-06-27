@@ -2190,6 +2190,12 @@ public class Fe10IdeNormalAnalysisSourceModuleReferenceResolveTestGenerated exte
         }
 
         @Test
+        @TestMetadata("TopLevelDestructingDeclaration.kt")
+        public void testTopLevelDestructingDeclaration() throws Exception {
+            runTest("analysis/analysis-api/testData/referenceResolve/withErrors/TopLevelDestructingDeclaration.kt");
+        }
+
+        @Test
         @TestMetadata("TypeArgumentBeforeDot2.kt")
         public void testTypeArgumentBeforeDot2() throws Exception {
             runTest("analysis/analysis-api/testData/referenceResolve/withErrors/TypeArgumentBeforeDot2.kt");

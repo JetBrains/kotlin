@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.analysis.api.components.KtSymbolContainingDeclarationProvider
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
+import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirErrorVariableSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.getContainingKtModule
 import org.jetbrains.kotlin.analysis.api.fir.utils.withSymbolAttachment
@@ -23,7 +24,9 @@ import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.utils.errors.buildErrorWithAttachment
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
 import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
+import org.jetbrains.kotlin.fir.diagnostics.ConeDestructuringDeclarationsOnTopLevel
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
+import org.jetbrains.kotlin.fir.symbols.impl.FirErrorPropertySymbol
 import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.*
 
@@ -38,6 +41,8 @@ internal class KtFirSymbolContainingDeclarationProvider(
 
         if (symbol !is KtDeclarationSymbol) return null
         if (symbol is KtSymbolWithKind && symbol.symbolKind == KtSymbolKind.TOP_LEVEL) return null
+        val firSymbol = symbol.firSymbol
+        if (firSymbol is FirErrorPropertySymbol && firSymbol.diagnostic is ConeDestructuringDeclarationsOnTopLevel) return null
         fun getParentSymbolByPsi() = getContainingPsi(symbol).let { with(analysisSession) { it.getSymbol() } }
         return when (symbol) {
             is KtPropertyAccessorSymbol -> firSymbolBuilder.buildSymbol(symbol.firSymbol.fir.propertySymbol) as? KtDeclarationSymbol

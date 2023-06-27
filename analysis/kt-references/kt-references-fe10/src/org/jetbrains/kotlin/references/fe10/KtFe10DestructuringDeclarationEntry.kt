@@ -25,10 +25,6 @@ class KtFe10DestructuringDeclarationEntry(
         )
     }
 
-    override fun resolve() = multiResolve(false).asSequence()
-        .map { it.element }
-        .firstOrNull { it is KtDestructuringDeclarationEntry }
-
     override fun getRangeInElement() = TextRange(0, element.textLength)
 
     override fun isReferenceToImportAlias(alias: KtImportAlias): Boolean {
