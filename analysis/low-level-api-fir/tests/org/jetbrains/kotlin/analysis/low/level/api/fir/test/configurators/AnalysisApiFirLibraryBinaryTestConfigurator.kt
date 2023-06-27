@@ -57,7 +57,7 @@ object AnalysisApiFirLibraryBinaryTestConfigurator : AnalysisApiTestConfigurator
 private class KtLibraryBinaryModuleFactory : KtModuleFactory {
     override fun createModule(testModule: TestModule, testServices: TestServices, project: Project): KtModuleWithFiles {
         val library = testServices.compiledLibraryProvider.compileToLibrary(testModule).jar
-        val decompiledFiles = LibraryUtils.getAllPsiFilesFromTheJar(library, project)
+        val decompiledFiles = LibraryUtils.getAllPsiFilesFromJar(library, project)
 
         return KtModuleWithFiles(
             KtLibraryModuleImpl(

@@ -11,7 +11,6 @@ import com.intellij.psi.search.GlobalSearchScope
 import java.nio.file.Path
 import org.jetbrains.kotlin.analysis.api.impl.base.util.LibraryUtils
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtModuleWithFiles
-import org.jetbrains.kotlin.analysis.project.structure.KtLibrarySourceModule
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtLibraryModuleImpl
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtLibrarySourceModuleImpl
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtModuleFactory
@@ -39,7 +38,7 @@ fun createKtLibrarySourceModule(libraryJar: Path, librarySourcesJar: Path, testM
         librarySources = null,
     )
 
-    val decompiledPsiFilesFromSourceJar = LibraryUtils.getAllPsiFilesFromTheJar(librarySourcesJar, project)
+    val decompiledPsiFilesFromSourceJar = LibraryUtils.getAllPsiFilesFromJar(librarySourcesJar, project)
     val librarySourceKtModule = KtLibrarySourceModuleImpl(
         testModule.name,
         testModule.targetPlatform,
