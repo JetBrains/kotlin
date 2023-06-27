@@ -51,7 +51,6 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker() {
         val effects = function.contractDescription.effects ?: return
         val dataFlowInfo = function.controlFlowGraphReference?.dataFlowInfo ?: return
         for (firEffect in effects) {
-            // TODO: why is *everything* an "effect"? Something's not right with this terminology.
             val coneEffect = firEffect.effect as? ConeConditionalEffectDeclaration ?: continue
             val returnValue = coneEffect.effect as? ConeReturnsEffectDeclaration ?: continue
             val wrongCondition = graph.exitNode.previousCfgNodes.any {
