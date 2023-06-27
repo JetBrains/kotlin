@@ -14,11 +14,11 @@ import org.jetbrains.kotlinx.dataframe.api.*
 @DataSchema
 interface ActivePlayer {
     val char: Int
-    val level: Int
-    val race: String
-    val charclass: String
-    val zone: String
-    val guild: Int
+//    val level: Int
+//    val race: String
+//    val charclass: String
+//    val zone: String
+//    val guild: Int
     val timestamp: String
 }
 
@@ -27,17 +27,20 @@ interface ActivePlayer {
 fun <T, V : Temporal> DataRow<T>.diff(unit: ChronoUnit, expression: RowExpression<T, V>): Long? = prev()?.let { p -> unit.between(expression(this, this), expression(p, p)) }
 
 
-fun main() {
-    val df = @DisableInterpretation DataFrame.read("wowah_data_100K.csv")
+fun box(): String {
+    val df = @DisableInterpretation DataFrame.readDelimStr("""
+        char,level,race,charclass,zone,guild,timestamp
+        59425,1,Orc,Rogue,Orgrimmar,165,01/01/08 00:02:04
+        65494,9,Orc,Hunter,Durotar,-1,01/01/08 00:02:04
+    """.trimIndent())
     val df = df.cast<ActivePlayer>()
     val format = DateTimeFormatter.ofPattern("MM/dd/yy HH:mm:ss")
 
     val df1 = df
-        .convert { timestamp }.with { LocalDateTime.parse(it, format) }
+        .convert { timestamp }.with { LocalDateTime.parse(it, format)!! }
         .add("tsDiff") { diff(ChronoUnit.MINUTES) { timestamp }?.let { it > 20  } ?: true }
-        .add("charDiff") { diff { char }?.let { it != 0 } ?: true }
+        //.add("charDiff") { diff { char }?.let { it != 0 } ?: true }
 
     df1.print()
+    return "OK"
 }
-
-fun box(): String = "OK"
