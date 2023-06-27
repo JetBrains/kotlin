@@ -81,7 +81,7 @@ class KotlinKarma(
     val webpackConfig = KotlinWebpackConfig(
         configDirectory = project.projectDir.resolve("webpack.config.d"),
         optimization = KotlinWebpackConfig.Optimization(
-            runtimeChunk = false,
+            runtimeChunk = null,
             splitChunks = false
         ),
         sourceMaps = true,

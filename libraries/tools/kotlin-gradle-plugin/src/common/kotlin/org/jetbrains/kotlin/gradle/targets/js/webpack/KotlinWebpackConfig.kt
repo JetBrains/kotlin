@@ -108,8 +108,8 @@ data class KotlinWebpackConfig(
 
     @Suppress("unused")
     data class Optimization(
-        var runtimeChunk: Any,
-        var splitChunks: Any
+        var runtimeChunk: Any?,
+        var splitChunks: Any?
     ) : Serializable
 
     @Suppress("unused")
