@@ -28,6 +28,12 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
     }
 
     @Test
+    @TestMetadata("diff.kt")
+    public void testDiff() throws Exception {
+        runTest("testData/box/diff.kt");
+    }
+
+    @Test
     @TestMetadata("duplicatedSignature.kt")
     public void testDuplicatedSignature() throws Exception {
         runTest("testData/box/duplicatedSignature.kt");

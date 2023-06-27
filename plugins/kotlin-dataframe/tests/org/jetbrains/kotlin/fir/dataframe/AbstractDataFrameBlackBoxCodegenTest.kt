@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.test.builders.fir2IrStep
 import org.jetbrains.kotlin.test.builders.firHandlersStep
 import org.jetbrains.kotlin.test.builders.irHandlersStep
 import org.jetbrains.kotlin.test.builders.jvmArtifactsHandlersStep
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirCfgConsistencyHandler
@@ -51,6 +52,7 @@ open class AbstractDataFrameBlackBoxCodegenTest : BaseTestRunner()/*, RunnerWith
         defaultDirectives {
             JvmEnvironmentConfigurationDirectives.JDK_KIND with TestJdkKind.FULL_JDK
             +JvmEnvironmentConfigurationDirectives.WITH_REFLECT
+            +CodegenTestDirectives.DUMP_IR
         }
         facadeStep(::FirFrontendFacade)
         commonFirWithPluginFrontendConfiguration()
