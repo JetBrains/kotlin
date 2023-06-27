@@ -76,6 +76,12 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
     }
 
     @Test
+    @TestMetadata("platformType.kt")
+    public void testPlatformType() throws Exception {
+        runTest("testData/box/platformType.kt");
+    }
+
+    @Test
     @TestMetadata("readCSV.kt")
     public void testReadCSV() throws Exception {
         runTest("testData/box/readCSV.kt");
