@@ -1,7 +1,6 @@
 plugins {
     kotlin("jvm")
     id("jps-compatible")
-    id("org.jetbrains.kotlinx.kover")
 }
 
 val compilerModules: Array<String> by rootProject.extra

@@ -92,6 +92,3 @@ projectTest(
 }
 
 testsJar()
-kover {
-//    useJacoco()
-}
