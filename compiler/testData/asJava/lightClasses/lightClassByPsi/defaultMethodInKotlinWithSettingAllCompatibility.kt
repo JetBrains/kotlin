@@ -1,3 +1,4 @@
+// KtInterface
 // COMPILER_ARGUMENTS: -Xjvm-default=all-compatibility
 // !JVM_DEFAULT_MODE: all-compatibility
 
@@ -8,9 +9,14 @@ interface KtInterface {
 
     fun withoutBody()
 
+    val defaultProp: Int
+        get() = 1
+
+    val propWithoutBody: Int
+
     private fun privateFun() {}
 
-    private val prop: Int
+    private val privateProp: Int
         get() = 1
 }
 

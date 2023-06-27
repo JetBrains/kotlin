@@ -9,9 +9,14 @@ interface KtInterface {
 
     fun withoutBody()
 
+    val defaultProp: Int
+        get() = 1
+
+    val propWithoutBody: Int
+
     private fun privateFun() {}
 
-    private val prop: Int
+    private val privateProp: Int
         get() = 1
 }
 
