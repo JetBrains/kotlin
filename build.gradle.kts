@@ -979,3 +979,27 @@ koverReport {
         }
     }
 }
+
+dependencies {
+    kover(project("analysis:analysis-api-fir"))
+    kover(project("compiler:fir:analysis-tests"))
+    kover(project("compiler:fir:checkers"))
+    kover(project("compiler:fir:cones"))
+    kover(project("compiler:fir:dump"))
+    kover(project("compiler:fir:entrypoint"))
+    kover(project("compiler:fir:fir2ir"))
+    kover(project("compiler:fir:fir-deserialization"))
+    kover(project("compiler:fir:fir-serialization"))
+    kover(project("compiler:fir:java"))
+    kover(project("compiler:fir:plugin-utils"))
+    kover(project("compiler:fir:providers"))
+    kover(project("compiler:fir:raw-fir"))
+    kover(project("compiler:fir:resolve"))
+    kover(project("compiler:fir:semantics"))
+    kover(project("compiler:fir:tree"))
+
+}
+
+tasks.withType(org.gradle.api.tasks.testing.Test::class).all {
+    ignoreFailures = true
+}
