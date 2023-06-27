@@ -150,7 +150,7 @@ internal fun checkPropertyInitializer(
             ) {
                 if (property.receiverParameter != null && !property.hasAnyAccessorImplementation) {
                     reporter.reportOn(propertySource, FirErrors.EXTENSION_PROPERTY_MUST_HAVE_ACCESSORS_OR_BE_ABSTRACT, context)
-                } else if (reachable) { // TODO: can be suppressed not to report diagnostics about no body
+                } else if (reachable) {
                     reportMustBeInitialized(property, isDefinitelyAssignedInConstructor, containingClass, propertySource, reporter, context)
                 }
             }
