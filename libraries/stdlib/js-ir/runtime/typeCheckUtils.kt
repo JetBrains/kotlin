@@ -14,29 +14,6 @@ internal external interface Ctor {
 
 private fun hasProp(proto: dynamic, propName: String): Boolean = proto.hasOwnProperty(propName)
 
-internal fun calculateErrorInfo(proto: dynamic): Int {
-    val metadata: Metadata? = proto.constructor?.`$metadata$`
-
-    metadata?.errorInfo?.let { return it } // cached
-
-    var result = 0
-    if (hasProp(proto, "message")) result = result or 0x1
-    if (hasProp(proto, "cause")) result = result or 0x2
-
-    if (result != 0x3) { //
-        val parentProto = getPrototypeOf(proto)
-        if (parentProto != js("Error").prototype) {
-            result = result or calculateErrorInfo(parentProto)
-        }
-    }
-
-    if (metadata != null) {
-        metadata.errorInfo = result
-    }
-
-    return result
-}
-
 private fun getPrototypeOf(obj: dynamic) = JsObject.getPrototypeOf(obj)
 
 private fun isInterfaceImpl(obj: dynamic, iface: Int): Boolean {

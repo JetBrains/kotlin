@@ -15,6 +15,7 @@ package kotlin
 public external open class Throwable {
     public open val message: String?
     public open val cause: Throwable?
+    public val name: String
 
     public constructor(message: String?, cause: Throwable?)
     public constructor(message: String?)

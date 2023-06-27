@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.backend.js.export
 import org.jetbrains.kotlin.backend.common.ir.isExpect
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.Modality
@@ -17,9 +18,7 @@ import org.jetbrains.kotlin.ir.backend.js.lower.isBoxParameter
 import org.jetbrains.kotlin.ir.backend.js.lower.isEs6ConstructorReplacement
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
-import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
+import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.serialization.js.ModuleKind
@@ -793,6 +792,10 @@ fun IrOverridableDeclaration<*>.isAllowedFakeOverriddenDeclaration(context: JsIr
         .mapNotNull { it.parentClassOrNull }
         .map { it.symbol }
         .any { it == context.irBuiltIns.enumClass }
+}
+
+fun <S : IrBindableSymbol<DeclarationDescriptor, T>, T : IrOverridableDeclaration<S>> T.getOverriddenRootSymbol(): S {
+    return if (overriddenSymbols.isEmpty()) symbol else overriddenSymbols.first().owner.getOverriddenRootSymbol()
 }
 
 fun IrOverridableDeclaration<*>.isOverriddenExported(context: JsIrBackendContext): Boolean =
