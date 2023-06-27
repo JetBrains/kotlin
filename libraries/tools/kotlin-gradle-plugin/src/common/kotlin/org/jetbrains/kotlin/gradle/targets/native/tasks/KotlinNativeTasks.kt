@@ -419,7 +419,6 @@ internal constructor(
             .map { it + (languageSettings as DefaultLanguageSettingsBuilder).freeCompilerArgsForNonImport }
 
     private val runnerSettings = KotlinNativeCompilerRunner.Settings.fromProject(project)
-    private val isAllowCommonizer: Boolean by lazy { project.isAllowCommonizer() }
     // endregion.
 
     @Suppress("DeprecatedCallableAddReplaceWith")
@@ -507,7 +506,7 @@ internal constructor(
         properties[KLIB_PROPERTY_NATIVE_TARGETS] = konanTargetsForManifest
         properties.saveToFile(org.jetbrains.kotlin.konan.file.File(manifestFile.toPath()))
 
-        return SharedCompilationData(manifestFile, isAllowCommonizer, refinesModule)
+        return SharedCompilationData(manifestFile, refinesModule)
     }
 
     @TaskAction
