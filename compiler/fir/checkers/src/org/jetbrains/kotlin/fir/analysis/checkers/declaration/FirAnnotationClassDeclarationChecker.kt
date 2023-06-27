@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
-import org.jetbrains.kotlin.KtNodeTypes.FUN
 import org.jetbrains.kotlin.KtNodeTypes.VALUE_PARAMETER
 import org.jetbrains.kotlin.descriptors.ClassKind.ANNOTATION_CLASS
 import org.jetbrains.kotlin.descriptors.ClassKind.ENUM_CLASS
@@ -21,12 +20,12 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.*
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CYCLE_IN_ANNOTATION_PARAMETER
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
+import org.jetbrains.kotlin.fir.declarations.utils.isSynthetic
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.name.StandardClassIds.primitiveArrayTypeByElementType
 import org.jetbrains.kotlin.name.StandardClassIds.unsignedArrayTypeByElementType
@@ -76,8 +75,8 @@ object FirAnnotationClassDeclarationChecker : FirRegularClassChecker() {
                     val classId = coneType?.classId
 
                     if (coneType != null) when {
-                        classId == ClassId.fromString("<error>") -> {
-                            // TODO: replace with UNRESOLVED_REFERENCE check
+                        coneType is ConeErrorType -> {
+                            // DO NOTHING: error types already have diagnostics which are reported elsewhere.
                         }
                         coneType.isNullable -> {
                             reporter.reportOn(typeRef.source, FirErrors.NULLABLE_TYPE_OF_ANNOTATION_MEMBER, context)
@@ -86,7 +85,7 @@ object FirAnnotationClassDeclarationChecker : FirRegularClassChecker() {
                             // DO NOTHING: primitives are allowed as annotation class parameter
                         }
                         coneType.isUnsignedTypeOrNullableUnsignedType -> {
-                            // TODO: replace with EXPERIMENTAL_UNSIGNED_LITERALS check
+                            // DO NOTHING: unsigned types are allowed as annotation class parameter.
                         }
                         classId == StandardClassIds.KClass -> {
                             // DO NOTHING: KClass is allowed
@@ -119,9 +118,8 @@ object FirAnnotationClassDeclarationChecker : FirRegularClassChecker() {
             member is FirProperty && member.source?.elementType == VALUE_PARAMETER -> {
                 // DO NOTHING to avoid reporting constructor properties
             }
-            member is FirSimpleFunction && member.source?.elementType != FUN -> {
+            member is FirSimpleFunction && member.isSynthetic -> {
                 // DO NOTHING to avoid reporting synthetic functions
-                // TODO: replace with origin check
             }
             else -> {
                 reporter.reportOn(member.source, FirErrors.ANNOTATION_CLASS_MEMBER, context)
