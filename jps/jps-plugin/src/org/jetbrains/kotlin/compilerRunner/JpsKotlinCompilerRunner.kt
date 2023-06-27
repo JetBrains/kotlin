@@ -219,6 +219,7 @@ class JpsKotlinCompilerRunner {
                 progress.compilationStarted()
                 daemon.compile(
                     sessionId,
+                    emptyArray(),
                     withAdditionalCompilerArgs(compilerArgs),
                     options,
                     JpsCompilerServicesFacadeImpl(environment),

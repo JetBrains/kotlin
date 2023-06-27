@@ -75,9 +75,10 @@ internal class GradleKotlinCompilerWorkArguments(
     val errorsFile: File?,
     val kotlinPluginVersion: String,
     val kotlinLanguageVersion: KotlinVersion,
+    val sources: List<File>,
 ) : Serializable {
     companion object {
-        const val serialVersionUID: Long = 1
+        const val serialVersionUID: Long = 2
     }
 }
 
@@ -113,6 +114,9 @@ internal class GradleKotlinCompilerWork @Inject constructor(
     private val errorsFile = config.errorsFile
     private val kotlinPluginVersion = config.kotlinPluginVersion
     private val kotlinLanguageVersion = config.kotlinLanguageVersion
+    private val sources = config.sources
+    private val compilerArgsWithSources: Array<String>
+        get() = compilerArgs + sources.map { it.absolutePath }
 
     private val log: KotlinLogger =
         TaskLoggers.get(taskPath)?.let { GradleKotlinLogger(it).apply { debug("Using '$taskPath' logger") } }
@@ -171,7 +175,7 @@ internal class GradleKotlinCompilerWork @Inject constructor(
             kotlinDebug {
                 "Kotlin compiler classpath: ${compilerFullClasspath.joinToString(File.pathSeparator) { it.normalize().absolutePath }}"
             }
-            kotlinDebug { "$taskPath Kotlin compiler args: ${compilerArgs.joinToString(" ")}" }
+            kotlinDebug { "$taskPath Kotlin compiler args: ${compilerArgsWithSources.joinToString(" ")}" }
         }
 
         if (compilerExecutionSettings.strategy == KotlinCompilerExecutionStrategy.DAEMON) {
@@ -299,7 +303,14 @@ internal class GradleKotlinCompilerWork @Inject constructor(
         val servicesFacade = GradleCompilerServicesFacadeImpl(log, bufferingMessageCollector)
         val compilationResults = GradleCompilationResults(log, projectRootFile)
         return metrics.measure(BuildTime.NON_INCREMENTAL_COMPILATION_DAEMON) {
-            daemon.compile(sessionId, compilerArgs, compilationOptions, servicesFacade, compilationResults)
+            daemon.compile(
+                sessionId,
+                sources.map { it.absolutePath }.toTypedArray(),
+                compilerArgs,
+                compilationOptions,
+                servicesFacade,
+                compilationResults
+            )
         }.also {
             metrics.addMetrics(compilationResults.buildMetrics)
             icLogLines = compilationResults.icLogLines
@@ -341,7 +352,14 @@ internal class GradleKotlinCompilerWork @Inject constructor(
         val compilationResults = GradleCompilationResults(log, projectRootFile)
         metrics.addTimeMetric(BuildPerformanceMetric.CALL_KOTLIN_DAEMON)
         return metrics.measure(BuildTime.RUN_COMPILATION) {
-            daemon.compile(sessionId, compilerArgs, compilationOptions, servicesFacade, compilationResults)
+            daemon.compile(
+                sessionId,
+                sources.map { it.absolutePath }.toTypedArray(),
+                compilerArgs,
+                compilationOptions,
+                servicesFacade,
+                compilationResults
+            )
         }.also {
             metrics.addMetrics(compilationResults.buildMetrics)
             icLogLines = compilationResults.icLogLines
@@ -353,7 +371,7 @@ internal class GradleKotlinCompilerWork @Inject constructor(
         cleanOutputsAndLocalState(outputFiles, log, metrics, reason = "out-of-process execution strategy is non-incremental")
 
         return metrics.measure(BuildTime.NON_INCREMENTAL_COMPILATION_OUT_OF_PROCESS) {
-            runToolInSeparateProcess(compilerArgs, compilerClassName, compilerFullClasspath, log, buildDir)
+            runToolInSeparateProcess(compilerArgsWithSources, compilerClassName, compilerFullClasspath, log, buildDir)
         }
     }
 
@@ -395,7 +413,7 @@ internal class GradleKotlinCompilerWork @Inject constructor(
             Array<String>::class.java
         )
 
-        val res = exec.invoke(compiler.newInstance(), out, emptyServices, compilerArgs)
+        val res = exec.invoke(compiler.newInstance(), out, emptyServices, compilerArgsWithSources)
         val exitCode = ExitCode.valueOf(res.toString())
         processCompilerOutput(
             messageCollector,

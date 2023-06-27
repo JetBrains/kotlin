@@ -159,6 +159,7 @@ object KotlinCompilerClient {
         val services = BasicCompilerServicesWithResultsFacadeServer(messageCollector, outputsCollector, port)
         compilerService.compile(
                 sessionId,
+                emptyArray(),
                 args,
                 CompilationOptions(
                         compilerMode,
@@ -264,6 +265,7 @@ object KotlinCompilerClient {
 
                     val res = daemon.compile(
                         CompileService.NO_SESSION,
+                        emptyArray(),
                         filteredArgs.toList().toTypedArray(),
                         compilationOptions,
                         servicesFacade,

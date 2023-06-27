@@ -273,18 +273,13 @@ abstract class KotlinCompile @Inject constructor(
                 args.commonSources = commonSourceSet.asFileTree.toPathsArray()
             }
 
-            val sourcesFiles = sources.asFileTree.files.toList()
             val javaSourcesFiles = javaSources.files.toList()
-            val scriptSourcesFiles = scriptSources.asFileTree.files.toList()
 
             if (logger.isInfoEnabled) {
-                logger.info("Kotlin source files: ${sourcesFiles.joinToString()}")
                 logger.info("Java source files: ${javaSourcesFiles.joinToString()}")
-                logger.info("Script source files: ${scriptSourcesFiles.joinToString()}")
-                logger.info("Script file extensions: ${scriptExtensions.get().joinToString()}")
             }
 
-            args.freeArgs += (scriptSourcesFiles + javaSourcesFiles + sourcesFiles).map { it.absolutePath }
+            args.freeArgs += javaSourcesFiles.map { it.absolutePath }
         }
     }
 
@@ -345,7 +340,18 @@ abstract class KotlinCompile @Inject constructor(
             incrementalCompilationEnvironment = icEnv,
             kotlinScriptExtensions = scriptExtensions.get().toTypedArray()
         )
+
+        val sourcesFiles = sources.asFileTree.files.toList()
+        val scriptSourcesFiles = scriptSources.asFileTree.files.toList()
+
+        if (logger.isInfoEnabled) {
+            logger.info("Kotlin source files: ${sourcesFiles.joinToString()}")
+            logger.info("Script source files: ${scriptSourcesFiles.joinToString()}")
+            logger.info("Script file extensions: ${scriptExtensions.get().joinToString()}")
+        }
+
         compilerRunner.runJvmCompilerAsync(
+            sourcesFiles + scriptSourcesFiles,
             args,
             environment,
             defaultKotlinJavaToolchain.get().buildJvm.get().javaHome,

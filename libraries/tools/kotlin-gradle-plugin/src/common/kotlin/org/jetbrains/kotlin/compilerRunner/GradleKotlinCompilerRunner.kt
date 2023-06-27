@@ -112,6 +112,7 @@ internal open class GradleCompilerRunner(
      * @see [GradleKotlinCompilerWork]
      */
     fun runJvmCompilerAsync(
+        sources: List<File>,
         args: K2JVMCompilerArguments,
         environment: GradleCompilerEnvironment,
         jdkHome: File,
@@ -119,7 +120,7 @@ internal open class GradleCompilerRunner(
     ): WorkQueue? {
         if (args.jdkHome == null && !args.noJdk) args.jdkHome = jdkHome.absolutePath
         loggerProvider.kotlinInfo("Kotlin compilation 'jdkHome' argument: ${args.jdkHome}")
-        return runCompilerAsync(KotlinCompilerClass.JVM, args, environment, taskOutputsBackup)
+        return runCompilerAsync(KotlinCompilerClass.JVM, sources, args, environment, taskOutputsBackup)
     }
 
     /**
@@ -127,11 +128,12 @@ internal open class GradleCompilerRunner(
      * @see [GradleKotlinCompilerWork]
      */
     fun runJsCompilerAsync(
+        sources: List<File>,
         args: K2JSCompilerArguments,
         environment: GradleCompilerEnvironment,
         taskOutputsBackup: TaskOutputsBackup?
     ): WorkQueue? {
-        return runCompilerAsync(KotlinCompilerClass.JS, args, environment, taskOutputsBackup)
+        return runCompilerAsync(KotlinCompilerClass.JS, sources, args, environment, taskOutputsBackup)
     }
 
     /**
@@ -139,10 +141,11 @@ internal open class GradleCompilerRunner(
      * @see [GradleKotlinCompilerWork]
      */
     fun runMetadataCompilerAsync(
+        sources: List<File>,
         args: K2MetadataCompilerArguments,
         environment: GradleCompilerEnvironment
     ): WorkQueue? {
-        return runCompilerAsync(KotlinCompilerClass.METADATA, args, environment)
+        return runCompilerAsync(KotlinCompilerClass.METADATA, sources, args, environment)
     }
 
     private fun reportCompilerArgumentsStatistics(compilerArgs: CommonCompilerArguments, argsArray: Array<String>) {
@@ -194,6 +197,7 @@ internal open class GradleCompilerRunner(
 
     private fun prepareWorkArguments(
         compilerClassName: String,
+        sources: List<File>,
         compilerArgs: CommonCompilerArguments,
         environment: GradleCompilerEnvironment,
         argsArray: Array<String>
@@ -201,6 +205,7 @@ internal open class GradleCompilerRunner(
         val incrementalCompilationEnvironment = environment.incrementalCompilationEnvironment
         val modulesInfo = incrementalCompilationEnvironment?.let { incrementalModuleInfoProvider.get().info }
         return GradleKotlinCompilerWorkArguments(
+            sources = sources,
             projectFiles = ProjectFilesForCompilation(
                 loggerProvider,
                 projectDirProvider,
@@ -230,6 +235,7 @@ internal open class GradleCompilerRunner(
 
     private fun runCompilerAsync(
         compilerClassName: String,
+        sources: List<File>,
         compilerArgs: CommonCompilerArguments,
         environment: GradleCompilerEnvironment,
         taskOutputsBackup: TaskOutputsBackup? = null
@@ -243,7 +249,7 @@ internal open class GradleCompilerRunner(
         }
         val argsArray = ArgumentUtils.convertArgumentsToStringList(compilerArgs).toTypedArray()
         reportCompilerArgumentsStatistics(compilerArgs, argsArray)
-        val workArgs = prepareWorkArguments(compilerClassName, compilerArgs, environment, argsArray)
+        val workArgs = prepareWorkArguments(compilerClassName, sources, compilerArgs, environment, argsArray)
         TaskLoggers.put(pathProvider, loggerProvider)
         return runCompilerAsync(
             workArgs,

@@ -115,7 +115,6 @@ abstract class KotlinCompileCommon @Inject constructor(
         }
 
         sources { args ->
-            args.freeArgs += sources.asFileTree.map { it.absolutePath }
             args.commonSources = commonSourceSet.asFileTree.toPathsArray()
         }
     }
@@ -143,7 +142,11 @@ abstract class KotlinCompileCommon @Inject constructor(
             reportingSettings = reportingSettings(),
             outputFiles = allOutputFiles()
         )
-        compilerRunner.runMetadataCompilerAsync(args, environment)
+        val sourceFiles = sources.asFileTree.toList()
+        if (logger.isInfoEnabled) {
+            logger.info("Kotlin source files: $sourceFiles")
+        }
+        compilerRunner.runMetadataCompilerAsync(sourceFiles, args, environment)
         compilerRunner.errorsFile?.also { gradleMessageCollector.flush(it) }
     }
 }

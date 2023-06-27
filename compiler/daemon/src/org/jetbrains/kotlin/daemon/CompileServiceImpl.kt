@@ -286,6 +286,7 @@ abstract class CompileServiceImplBase(
 
     protected inline fun <ServicesFacadeT, JpsServicesFacadeT, CompilationResultsT> compileImpl(
         sessionId: Int,
+        sources: Array<String>,
         compilerArguments: Array<out String>,
         compilationOptions: CompilationOptions,
         servicesFacade: ServicesFacadeT,
@@ -317,6 +318,7 @@ abstract class CompileServiceImplBase(
             CompileService.CallResult.Good(ExitCode.COMPILATION_ERROR.code)
         } else when (compilationOptions.compilerMode) {
             CompilerMode.JPS_COMPILER -> {
+                k2PlatformArgs.freeArgs += sources
                 @Suppress("UNCHECKED_CAST")
                 servicesFacade as JpsServicesFacadeT
                 withIncrementalCompilation(k2PlatformArgs, enabled = servicesFacade.hasIncrementalCaches()) {
@@ -327,6 +329,7 @@ abstract class CompileServiceImplBase(
                 }
             }
             CompilerMode.NON_INCREMENTAL_COMPILER -> {
+                k2PlatformArgs.freeArgs += sources
                 doCompile(sessionId, daemonReporter, tracer = null) { _, _ ->
                     val exitCode = compiler.exec(messageCollector, Services.EMPTY, k2PlatformArgs)
 
@@ -349,6 +352,7 @@ abstract class CompileServiceImplBase(
                     CompileService.TargetPlatform.JVM -> withIncrementalCompilation(k2PlatformArgs) {
                         doCompile(sessionId, daemonReporter, tracer = null) { _, _ ->
                             execIncrementalCompiler(
+                                sources,
                                 k2PlatformArgs as K2JVMCompilerArguments,
                                 gradleIncrementalArgs,
                                 messageCollector,
@@ -363,6 +367,7 @@ abstract class CompileServiceImplBase(
                     CompileService.TargetPlatform.JS -> withJsIC(k2PlatformArgs) {
                         doCompile(sessionId, daemonReporter, tracer = null) { _, _ ->
                             execJsIncrementalCompiler(
+                                sources,
                                 k2PlatformArgs as K2JSCompilerArguments,
                                 gradleIncrementalArgs,
                                 messageCollector,
@@ -529,22 +534,29 @@ abstract class CompileServiceImplBase(
     }
 
     protected fun execJsIncrementalCompiler(
+        sources: Array<String>,
         args: K2JSCompilerArguments,
         incrementalCompilationOptions: IncrementalCompilationOptions,
         compilerMessageCollector: MessageCollector,
         reporter: RemoteBuildReporter
     ): ExitCode {
         reporter.startMeasureGc()
-        val allKotlinFiles = arrayListOf<File>()
-        val freeArgsWithoutKotlinFiles = arrayListOf<String>()
-        args.freeArgs.forEach {
-            if (it.endsWith(".kt") && File(it).exists()) {
-                allKotlinFiles.add(File(it))
-            } else {
-                freeArgsWithoutKotlinFiles.add(it)
+        val allKotlinFiles = if (sources.isNotEmpty()) {
+            sources.map { File(it) }
+        } else {
+            // fallback logic
+            val allKotlinFiles = arrayListOf<File>()
+            val freeArgsWithoutKotlinFiles = arrayListOf<String>()
+            args.freeArgs.forEach {
+                if (it.endsWith(".kt") && File(it).exists()) {
+                    allKotlinFiles.add(File(it))
+                } else {
+                    freeArgsWithoutKotlinFiles.add(it)
+                }
             }
+            args.freeArgs = freeArgsWithoutKotlinFiles
+            allKotlinFiles
         }
-        args.freeArgs = freeArgsWithoutKotlinFiles
 
         val changedFiles = if (incrementalCompilationOptions.areFileChangesKnown) {
             ChangedFiles.Known(incrementalCompilationOptions.modifiedFiles!!, incrementalCompilationOptions.deletedFiles!!)
@@ -574,6 +586,7 @@ abstract class CompileServiceImplBase(
     }
 
     protected fun execIncrementalCompiler(
+        sources: Array<String>,
         k2jvmArgs: K2JVMCompilerArguments,
         incrementalCompilationOptions: IncrementalCompilationOptions,
         compilerMessageCollector: MessageCollector,
@@ -582,18 +595,24 @@ abstract class CompileServiceImplBase(
         reporter.startMeasureGc()
         val allKotlinExtensions = (DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS +
                 (incrementalCompilationOptions.kotlinScriptExtensions ?: emptyArray())).distinct()
-        val dotExtensions = allKotlinExtensions.map { ".$it" }
-        val freeArgs = arrayListOf<String>()
-        val allKotlinFiles = arrayListOf<File>()
-        for (arg in k2jvmArgs.freeArgs) {
-            val file = File(arg)
-            if (file.isFile && dotExtensions.any { ext -> file.path.endsWith(ext, ignoreCase = true) }) {
-                allKotlinFiles.add(file)
-            } else {
-                freeArgs.add(arg)
+        val allKotlinFiles = if (sources.isNotEmpty()) {
+            sources.map { File(it) }
+        } else {
+            // fallback logic
+            val dotExtensions = allKotlinExtensions.map { ".$it" }
+            val freeArgs = arrayListOf<String>()
+            val allKotlinFiles = arrayListOf<File>()
+            for (arg in k2jvmArgs.freeArgs) {
+                val file = File(arg)
+                if (file.isFile && dotExtensions.any { ext -> file.path.endsWith(ext, ignoreCase = true) }) {
+                    allKotlinFiles.add(file)
+                } else {
+                    freeArgs.add(arg)
+                }
             }
+            k2jvmArgs.freeArgs = freeArgs
+            allKotlinFiles
         }
-        k2jvmArgs.freeArgs = freeArgs
 
         val changedFiles = if (incrementalCompilationOptions.areFileChangesKnown) {
             ChangedFiles.Known(incrementalCompilationOptions.modifiedFiles!!, incrementalCompilationOptions.deletedFiles!!)
@@ -759,6 +778,7 @@ class CompileServiceImpl(
 
     override fun compile(
         sessionId: Int,
+        sources: Array<String>,
         compilerArguments: Array<out String>,
         compilationOptions: CompilationOptions,
         servicesFacade: CompilerServicesFacadeBase,
@@ -766,6 +786,7 @@ class CompileServiceImpl(
     ) = ifAlive {
         compileImpl(
             sessionId,
+            sources,
             compilerArguments,
             compilationOptions,
             servicesFacade,

@@ -140,8 +140,8 @@ abstract class KaptGenerateStubsTask @Inject constructor(
             args.friendPaths = friendPaths.toPathsArray()
         }
 
-        sources{ args ->
-            args.freeArgs += (scriptSources.asFileTree.files + javaSources.files + sources.asFileTree.files).map { it.absolutePath }
+        sources { args ->
+            args.freeArgs += javaSources.files.map { it.absolutePath }
         }
     }
 }

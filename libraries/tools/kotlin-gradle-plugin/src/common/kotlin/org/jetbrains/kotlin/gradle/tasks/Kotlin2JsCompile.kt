@@ -203,8 +203,6 @@ abstract class Kotlin2JsCompile @Inject constructor(
             } else {
                 args.commonSources = commonSourceSet.asFileTree.toPathsArray()
             }
-
-            args.freeArgs += sources.asFileTree.files.map { it.absolutePath }
         }
 
         contributeAdditionalCompilerArguments(this)
@@ -341,7 +339,14 @@ abstract class Kotlin2JsCompile @Inject constructor(
             incrementalCompilationEnvironment = icEnv
         )
         processArgsBeforeCompile(args)
+
+        val sourceFiles = sources.asFileTree.files.toList()
+        if (logger.isInfoEnabled) {
+            logger.info("Kotlin source files: $sourceFiles")
+        }
+
         compilerRunner.runJsCompilerAsync(
+            sourceFiles,
             args,
             environment,
             taskOutputsBackup
