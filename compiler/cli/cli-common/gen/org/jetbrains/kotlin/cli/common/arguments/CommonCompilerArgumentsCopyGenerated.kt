@@ -81,6 +81,7 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     to.useFirIC = from.useFirIC
     to.useFirLT = from.useFirLT
     to.useK2 = from.useK2
+    to.useKapt4 = from.useKapt4
     to.useMixedNamedArguments = from.useMixedNamedArguments
     to.verbosePhases = from.verbosePhases?.copyOf()
 
