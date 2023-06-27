@@ -49,7 +49,9 @@ kotlin {
     mingwX64("mingw64") {}
     linuxX64("linux64") {}
     macosX64("macos64") {}
-    iosX64("ios") {}
+    macosArm64("macosArm64") {}
+    iosX64("iosX64") {}
+    iosSimulatorArm64("iosSimulatorArm64") {}
 
     targets.matching { it.name != "metadata" }.all {
         compilations.create("integrationTest") {
@@ -90,7 +92,7 @@ kotlin {
         }
     }
 
-    targets.matching { it.name == "mingw64" || it.name == "linux64" || it.name == "macos64" || it.name == "ios" }.all {
+    targets.matching { it.name == "mingw64" || it.name == "linux64" || it.name == "macos64" || it.name == "macosArm64" || it.name == "iosX64" || it.name == "iosSimulatorArm64" }.all {
         testRuns {
             getByName("test").filter { excludeTestsMatching("*.secondTest") }
 

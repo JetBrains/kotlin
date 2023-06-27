@@ -16,8 +16,8 @@
   </testsuite>
   <testsuite name="com.example.lib.TestCommonCode" tests="2" skipped="0" failures="0" errors="0" timestamp="..." hostname="..." time="...">
     <properties />
-    <testcase name="testId[linux64]" classname="com.example.lib.TestCommonCode" time="..." />
-    <testcase name="testExpectedFun[linux64]" classname="com.example.lib.TestCommonCode" time="..." />
+    <testcase name="testId[<target>]" classname="com.example.lib.TestCommonCode" time="..." />
+    <testcase name="testExpectedFun[<target>]" classname="com.example.lib.TestCommonCode" time="..." />
     <system-out />
     <system-err />
   </testsuite>
