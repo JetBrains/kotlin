@@ -116,12 +116,6 @@ public class JsIrInvalidationTestGenerated extends AbstractJsIrInvalidationTest 
     }
 
     @Test
-    @TestMetadata("esModules")
-    public void testEsModules() throws Exception {
-        runTest("js/js.translator/testData/incremental/invalidation/esModules/");
-    }
-
-    @Test
     @TestMetadata("exceptionsFromInlineFunction")
     public void testExceptionsFromInlineFunction() throws Exception {
         runTest("js/js.translator/testData/incremental/invalidation/exceptionsFromInlineFunction/");

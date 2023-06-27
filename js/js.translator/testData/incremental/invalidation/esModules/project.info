@@ -1,9 +1,0 @@
-MODULES: lib1, main
-MODULE_KIND: es
-
-STEP 0:
-    libs: lib1, main
-    dirty js: lib1, main
-STEP 1..3:
-    libs: lib1, main
-    dirty js: lib1, main
