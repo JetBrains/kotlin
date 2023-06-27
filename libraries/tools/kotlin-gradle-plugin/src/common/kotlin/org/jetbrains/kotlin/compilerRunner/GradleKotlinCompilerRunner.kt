@@ -145,21 +145,7 @@ internal open class GradleCompilerRunner(
         return runCompilerAsync(KotlinCompilerClass.METADATA, args, environment)
     }
 
-    private fun runCompilerAsync(
-        compilerClassName: String,
-        compilerArgs: CommonCompilerArguments,
-        environment: GradleCompilerEnvironment,
-        taskOutputsBackup: TaskOutputsBackup? = null
-    ): WorkQueue? {
-        if (compilerArgs.version) {
-            loggerProvider.lifecycle(
-                "Kotlin version " + loadCompilerVersion(environment.compilerClasspath) +
-                        " (JRE " + System.getProperty("java.runtime.version") + ")"
-            )
-            compilerArgs.version = false
-        }
-        val argsArray = ArgumentUtils.convertArgumentsToStringList(compilerArgs).toTypedArray()
-
+    private fun reportCompilerArgumentsStatistics(compilerArgs: CommonCompilerArguments, argsArray: Array<String>) {
         // compilerArgs arguments may have some attributes which are overrided by freeCompilerArguments.
         // Here we perform the work which is repeated in compiler in order to obtain correct values. This extra work could be avoided when
         // compiler would report metrics by itself via JMX
@@ -172,17 +158,18 @@ internal open class GradleCompilerRunner(
                         report(StringMetrics.JVM_DEFAULTS, args.jvmDefault)
                         report(StringMetrics.USE_FIR, args.useK2.toString())
 
-                        val pluginPatterns = listOf(Pair(BooleanMetrics.ENABLED_COMPILER_PLUGIN_ALL_OPEN, "kotlin-allopen-.*jar"),
-                                                    Pair(BooleanMetrics.ENABLED_COMPILER_PLUGIN_NO_ARG, "kotlin-noarg-.*jar"),
-                                                    Pair(BooleanMetrics.ENABLED_COMPILER_PLUGIN_SAM_WITH_RECEIVER, "kotlin-sam-with-receiver-.*jar"),
-                                                    Pair(BooleanMetrics.ENABLED_COMPILER_PLUGIN_LOMBOK, "kotlin-lombok-.*jar"),
-                                                    Pair(BooleanMetrics.ENABLED_COMPILER_PLUGIN_PARSELIZE, "kotlin-parcelize-compiler-.*jar"),
-                                                    Pair(BooleanMetrics.ENABLED_COMPILER_PLUGIN_ATOMICFU, "atomicfu-.*jar")
+                        val pluginPatterns = listOf(
+                            Pair(BooleanMetrics.ENABLED_COMPILER_PLUGIN_ALL_OPEN, "kotlin-allopen-.*jar"),
+                            Pair(BooleanMetrics.ENABLED_COMPILER_PLUGIN_NO_ARG, "kotlin-noarg-.*jar"),
+                            Pair(BooleanMetrics.ENABLED_COMPILER_PLUGIN_SAM_WITH_RECEIVER, "kotlin-sam-with-receiver-.*jar"),
+                            Pair(BooleanMetrics.ENABLED_COMPILER_PLUGIN_LOMBOK, "kotlin-lombok-.*jar"),
+                            Pair(BooleanMetrics.ENABLED_COMPILER_PLUGIN_PARSELIZE, "kotlin-parcelize-compiler-.*jar"),
+                            Pair(BooleanMetrics.ENABLED_COMPILER_PLUGIN_ATOMICFU, "atomicfu-.*jar")
                         )
                         val pluginJars = args.pluginClasspaths?.map { it.replace("\\", "/").split("/").last() }
                         if (pluginJars != null) {
                             for (pluginPattern in pluginPatterns) {
-                                if (pluginJars.any { it.matches(pluginPattern.second.toRegex())}) {
+                                if (pluginJars.any { it.matches(pluginPattern.second.toRegex()) }) {
                                     report(pluginPattern.first, true)
                                 }
                             }
@@ -203,10 +190,17 @@ internal open class GradleCompilerRunner(
                 }
             }
         }
+    }
 
+    private fun prepareWorkArguments(
+        compilerClassName: String,
+        compilerArgs: CommonCompilerArguments,
+        environment: GradleCompilerEnvironment,
+        argsArray: Array<String>
+    ): GradleKotlinCompilerWorkArguments {
         val incrementalCompilationEnvironment = environment.incrementalCompilationEnvironment
         val modulesInfo = incrementalCompilationEnvironment?.let { incrementalModuleInfoProvider.get().info }
-        val workArgs = GradleKotlinCompilerWorkArguments(
+        return GradleKotlinCompilerWorkArguments(
             projectFiles = ProjectFilesForCompilation(
                 loggerProvider,
                 projectDirProvider,
@@ -232,6 +226,24 @@ internal open class GradleCompilerRunner(
             //no need to log warnings in MessageCollector hear it will be logged by compiler
             kotlinLanguageVersion = parseLanguageVersion(compilerArgs.languageVersion, compilerArgs.useK2)
         )
+    }
+
+    private fun runCompilerAsync(
+        compilerClassName: String,
+        compilerArgs: CommonCompilerArguments,
+        environment: GradleCompilerEnvironment,
+        taskOutputsBackup: TaskOutputsBackup? = null
+    ): WorkQueue? {
+        if (compilerArgs.version) {
+            loggerProvider.lifecycle(
+                "Kotlin version " + loadCompilerVersion(environment.compilerClasspath) +
+                        " (JRE " + System.getProperty("java.runtime.version") + ")"
+            )
+            compilerArgs.version = false
+        }
+        val argsArray = ArgumentUtils.convertArgumentsToStringList(compilerArgs).toTypedArray()
+        reportCompilerArgumentsStatistics(compilerArgs, argsArray)
+        val workArgs = prepareWorkArguments(compilerClassName, compilerArgs, environment, argsArray)
         TaskLoggers.put(pathProvider, loggerProvider)
         return runCompilerAsync(
             workArgs,
