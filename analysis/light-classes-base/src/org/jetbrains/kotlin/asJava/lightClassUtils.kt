@@ -135,7 +135,7 @@ val PsiElement.namedUnwrappedElement: PsiNamedElement?
 
 
 val KtClassOrObject.hasInterfaceDefaultImpls: Boolean
-    get() = this is KtClass && isInterface() && hasNonAbstractMembers(this)
+    get() = this is KtClass && isInterface() && hasNonAbstractNonPrivateMembers(this)
 
 val KtClassOrObject.hasRepeatableAnnotationContainer: Boolean
     get() = this is KtClass &&
@@ -154,6 +154,8 @@ val KtClassOrObject.hasRepeatableAnnotationContainer: Boolean
             }
 
 private fun hasNonAbstractMembers(ktInterface: KtClass): Boolean = ktInterface.declarations.any(::isNonAbstractMember)
+
+private fun hasNonAbstractNonPrivateMembers(ktInterface: KtClass): Boolean = ktInterface.declarations.any{ isNonAbstractMember(it) && !it.isPrivate() }
 
 private fun isNonAbstractMember(member: KtDeclaration?): Boolean =
     (member is KtNamedFunction && member.hasBody()) ||
