@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.gradle.targets.native.internal.cinteropMetadataDepen
 import org.jetbrains.kotlin.gradle.targets.native.internal.commonizerTarget
 import org.jetbrains.kotlin.gradle.targets.native.internal.createCInteropMetadataDependencyClasspathForIde
 import org.jetbrains.kotlin.gradle.tasks.locateTask
+import org.jetbrains.kotlin.gradle.utils.future
 
 internal object IdeCInteropMetadataDependencyClasspathResolver : IdeDependencyResolver, IdeDependencyResolver.WithBuildDependencies {
     override fun resolve(sourceSet: KotlinSourceSet): Set<IdeaKotlinDependency> {
@@ -26,7 +27,7 @@ internal object IdeCInteropMetadataDependencyClasspathResolver : IdeDependencyRe
         val project = sourceSet.project
         project.locateDependencyTask(sourceSet) ?: return emptySet()
 
-        val cinteropFiles = project.createCInteropMetadataDependencyClasspathForIde(sourceSet)
+        val cinteropFiles = project.future { createCInteropMetadataDependencyClasspathForIde(sourceSet) }.getOrThrow()
         return project.resolveCInteropDependencies(cinteropFiles)
     }
 

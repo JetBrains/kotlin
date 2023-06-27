@@ -30,8 +30,8 @@ internal fun Project.setupCInteropCommonizerDependencies() {
     }
 }
 
-private fun Project.setupCInteropCommonizerDependenciesForCompilation(compilation: KotlinSharedNativeCompilation) {
-    val cinteropCommonizerTask = project.commonizeCInteropTask ?: return
+private fun Project.setupCInteropCommonizerDependenciesForCompilation(compilation: KotlinSharedNativeCompilation) = launch {
+    val cinteropCommonizerTask = project.commonizeCInteropTask() ?: return@launch
 
     compilation.compileDependencyFiles += filesProvider {
         val cinteropCommonizerDependent = future { CInteropCommonizerDependent.from(compilation) }.getOrThrow()
@@ -45,15 +45,15 @@ private fun Project.setupCInteropCommonizerDependenciesForCompilation(compilatio
  * This will use the [Project.copyCommonizeCInteropForIdeTask] over the regular cinterop commonization task.
  * The copying task prevent red code within the IDE after cleaning the build output.
  */
-private fun Project.setupCInteropCommonizerDependenciesForIde(sourceSet: DefaultKotlinSourceSet) {
+private fun Project.setupCInteropCommonizerDependenciesForIde(sourceSet: DefaultKotlinSourceSet) = launch {
     addIntransitiveMetadataDependencyIfPossible(sourceSet, cinteropCommonizerDependencies(sourceSet))
 }
 
 internal fun Project.cinteropCommonizerDependencies(sourceSet: DefaultKotlinSourceSet): FileCollection {
-    val cinteropCommonizerTask = project.copyCommonizeCInteropForIdeTask ?: return project.files()
-
     return filesProvider {
         future {
+            val cinteropCommonizerTask = project.copyCommonizeCInteropForIdeTask() ?: return@future project.files()
+
             val directlyDependent = CInteropCommonizerDependent.from(sourceSet)
             val associateDependent = CInteropCommonizerDependent.fromAssociateCompilations(sourceSet)
 

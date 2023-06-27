@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinGradleProjectChecker
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsCollector
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinSharedNativeCompilation
+import org.jetbrains.kotlin.gradle.targets.native.internal.*
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropCommonizerDependent
 import org.jetbrains.kotlin.gradle.targets.native.internal.from
 import org.jetbrains.kotlin.gradle.targets.native.internal.isAllowCommonizer
@@ -23,7 +24,7 @@ internal object DisabledCinteropCommonizationInHmppProjectChecker : KotlinGradle
 
         if (multiplatformExtension == null
             || !project.isAllowCommonizer()
-            || kotlinPropertiesProvider.enableCInteropCommonization
+            || project.cInteropCommonizationEnabled()
             || kotlinPropertiesProvider.ignoreDisabledCInteropCommonization
         ) return
 

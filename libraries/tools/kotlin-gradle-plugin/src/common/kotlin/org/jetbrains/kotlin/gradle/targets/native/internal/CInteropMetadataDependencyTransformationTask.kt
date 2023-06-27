@@ -41,10 +41,10 @@ internal val KotlinSourceSet.cinteropMetadataDependencyTransformationTaskName: S
 internal val KotlinSourceSet.cinteropMetadataDependencyTransformationForIdeTaskName: String
     get() = lowerCamelCaseName("transform", name, "CInteropDependenciesMetadataForIde")
 
-internal fun Project.locateOrRegisterCInteropMetadataDependencyTransformationTask(
+internal suspend fun Project.locateOrRegisterCInteropMetadataDependencyTransformationTask(
     sourceSet: DefaultKotlinSourceSet,
 ): TaskProvider<CInteropMetadataDependencyTransformationTask>? {
-    if (!kotlinPropertiesProvider.enableCInteropCommonization) return null
+    if (!cInteropCommonizationEnabled()) return null
 
     return locateOrRegisterTask(
         sourceSet.cinteropMetadataDependencyTransformationTaskName,
@@ -61,10 +61,10 @@ internal fun Project.locateOrRegisterCInteropMetadataDependencyTransformationTas
     )
 }
 
-internal fun Project.locateOrRegisterCInteropMetadataDependencyTransformationTaskForIde(
+internal suspend fun Project.locateOrRegisterCInteropMetadataDependencyTransformationTaskForIde(
     sourceSet: DefaultKotlinSourceSet,
 ): TaskProvider<CInteropMetadataDependencyTransformationTask>? {
-    if (!kotlinPropertiesProvider.enableCInteropCommonization) return null
+    if (!cInteropCommonizationEnabled()) return null
 
     return locateOrRegisterTask(
         sourceSet.cinteropMetadataDependencyTransformationForIdeTaskName,

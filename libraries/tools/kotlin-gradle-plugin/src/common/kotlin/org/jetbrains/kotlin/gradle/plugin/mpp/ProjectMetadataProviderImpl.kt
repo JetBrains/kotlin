@@ -85,8 +85,8 @@ private suspend fun KotlinMultiplatformExtension.sourceSetsMetadataOutputs(): Ma
 private suspend fun KotlinMultiplatformExtension.cInteropMetadataOfSourceSets(
     sourceSets: Iterable<KotlinSourceSet>
 ): Map<KotlinSourceSet, SourceSetMetadataOutputs.CInterop?> {
-    val taskForCLI = project.commonizeCInteropTask ?: return emptyMap()
-    val taskForIde = project.copyCommonizeCInteropForIdeTask ?: return emptyMap()
+    val taskForCLI = project.commonizeCInteropTask() ?: return emptyMap()
+    val taskForIde = project.copyCommonizeCInteropForIdeTask() ?: return emptyMap()
 
     return sourceSets.associateWith { sourceSet ->
         val dependent = CInteropCommonizerDependent.from(sourceSet) ?: return@associateWith null

@@ -21,6 +21,7 @@ import org.gradle.api.tasks.wrapper.Wrapper
 import org.jetbrains.kotlin.daemon.common.trimQuotes
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.addExtension
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension.CocoapodsDependency
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
@@ -825,10 +826,15 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
         }
     }
 
+    // Enable cinterop commonization if it is not explicitly specified
+    private fun Project.enableCInteropCommonizationSetByExternalPlugin() {
+        kotlinPropertiesProvider.enableCInteropCommonizationSetByExternalPlugin = true
+    }
 
     override fun apply(project: Project): Unit = with(project) {
 
         pluginManager.withPlugin("kotlin-multiplatform") {
+            enableCInteropCommonizationSetByExternalPlugin()
             val kotlinExtension = project.multiplatformExtension
             val kotlinArtifactsExtension = project.kotlinArtifactsExtension
             val cocoapodsExtension = project.objects.newInstance(CocoapodsExtension::class.java, this)

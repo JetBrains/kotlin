@@ -380,9 +380,16 @@ internal class PropertiesProvider private constructor(private val project: Proje
     /**
      * Enables experimental commonization of user defined c-interop libraries.
      */
-    val enableCInteropCommonization: Boolean
-        get() = booleanProperty(KOTLIN_MPP_ENABLE_CINTEROP_COMMONIZATION) ?: false
+    val enableCInteropCommonization: Boolean?
+        get() = booleanProperty(KOTLIN_MPP_ENABLE_CINTEROP_COMMONIZATION)
 
+    private val enableCInteropCommonizationSetByExternalPluginKey = "kotlin.internal.mpp.enableCInteropCommonization.setByExternalPlugin"
+
+    internal var enableCInteropCommonizationSetByExternalPlugin: Boolean?
+        get() = booleanProperty(enableCInteropCommonizationSetByExternalPluginKey)
+        set(value) {
+            project.extensions.extraProperties.set(enableCInteropCommonizationSetByExternalPluginKey, "$value")
+        }
 
     val commonizerLogLevel: String?
         get() = this.property("kotlin.mpp.commonizerLogLevel")

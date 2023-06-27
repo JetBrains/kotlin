@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.gradle.plugin.ide.IdeDependencyResolver
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 import org.jetbrains.kotlin.gradle.targets.native.internal.cinteropCommonizerDependencies
 import org.jetbrains.kotlin.gradle.targets.native.internal.copyCommonizeCInteropForIdeTask
+import org.jetbrains.kotlin.gradle.utils.future
+import org.jetbrains.kotlin.gradle.utils.lenient
 
 internal object IdeCommonizedCinteropDependencyResolver : IdeDependencyResolver, IdeDependencyResolver.WithBuildDependencies {
     override fun resolve(sourceSet: KotlinSourceSet): Set<IdeaKotlinDependency> {
@@ -23,6 +25,6 @@ internal object IdeCommonizedCinteropDependencyResolver : IdeDependencyResolver,
     }
 
     override fun dependencies(project: Project): Iterable<Any> {
-        return listOfNotNull(project.copyCommonizeCInteropForIdeTask)
+        return listOfNotNull(project.future { copyCommonizeCInteropForIdeTask() }.getOrThrow())
     }
 }
