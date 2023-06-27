@@ -22,11 +22,10 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMultiplatformPlugin
 import org.jetbrains.kotlin.gradle.plugin.sources.METADATA_CONFIGURATION_NAME_SUFFIX
 import org.jetbrains.kotlin.gradle.plugin.sources.UnsatisfiedSourceSetVisibilityException
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
-import org.jetbrains.kotlin.gradle.testbase.TestVersions
-import org.jetbrains.kotlin.gradle.testbase.assertHasDiagnostic
-import org.jetbrains.kotlin.gradle.testbase.assertNoDiagnostic
+import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_SHORT_NAME
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_UNIQUE_NAME
 import org.junit.Assert
@@ -688,6 +687,14 @@ open class NewMultiplatformIT : BaseGradleIT() {
             }
         }
 
+    private val targetName = when (HostManager.host) {
+        KonanTarget.LINUX_X64 -> "linux64"
+        KonanTarget.MACOS_X64 -> "macos64"
+        KonanTarget.MACOS_ARM64 -> "macosArm64"
+        KonanTarget.MINGW_X64 -> "mingw64"
+        else -> fail("Unsupported host")
+    }
+
     @Test
     fun testLibWithTests() = doTestLibWithTests(transformNativeTestProject("new-mpp-lib-with-tests", gradleVersion))
 
@@ -737,7 +744,6 @@ open class NewMultiplatformIT : BaseGradleIT() {
                     arrayOf(
                         it + "com/example/lib/CommonKt.class",
                         it + "com/example/lib/MainKt.class",
-                        it + "Script.class",
                         it + "META-INF/new-mpp-lib-with-tests.kotlin_module"
                     )
                 },
@@ -751,22 +757,15 @@ open class NewMultiplatformIT : BaseGradleIT() {
             )
 
             expectedKotlinOutputFiles.forEach { assertFileExists(it) }
+            val expectedTestResults = projectDir.resolve("TEST-all.xml")
 
-            // Gradle 6.6+ slightly changed format of xml test results
-            // If, in the test project, preset name was updated,
-            // update accordingly test result output for Gradle 6.6+
-            val testGradleVersion = chooseWrapperVersionOrFinishTest()
-            val expectedTestResults = if (GradleVersion.version(testGradleVersion) < GradleVersion.version("6.6")) {
-                "testProject/new-mpp-lib-with-tests/TEST-all-pre6.6.xml"
-            } else {
-                "testProject/new-mpp-lib-with-tests/TEST-all.xml"
-            }
+            expectedTestResults.replaceText("<target>", targetName)
 
             assertTestResults(
                 expectedTestResults,
                 "jsNodeTest",
                 "test", // jvmTest
-                "${nativeHostTargetName}Test"
+                "${targetName}Test"
             )
         }
     }
@@ -1796,7 +1795,11 @@ open class NewMultiplatformIT : BaseGradleIT() {
         gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
 
         // TOOD: add Kotlin/JS tests once they can be tested without much performance overhead
-        val targetsToTest = listOf("jvm", nativeHostTargetName) + listOf("ios").takeIf { HostManager.hostIsMac }.orEmpty()
+        val targetsToTest = listOf("jvm", nativeHostTargetName) + when (HostManager.host) {
+            KonanTarget.MACOS_X64 -> listOf("iosX64")
+            KonanTarget.MACOS_ARM64 -> listOf("iosSimulatorArm64")
+            else -> emptyList()
+        }
         val testTasks = targetsToTest.flatMap { listOf(":${it}Test", ":${it}IntegrationTest") }.toTypedArray()
 
         build(*testTasks) {

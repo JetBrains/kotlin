@@ -30,11 +30,12 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 internal object MPPNativeTargets {
-    val current = when {
-        HostManager.hostIsMingw -> "mingw64"
-        HostManager.hostIsLinux -> "linux64"
-        HostManager.hostIsMac -> "macos64"
-        else -> error("Unknown host")
+    val current = when (HostManager.host) {
+        KonanTarget.LINUX_X64 -> "linux64"
+        KonanTarget.MACOS_X64 -> "macos64"
+        KonanTarget.MACOS_ARM64 -> "macosArm64"
+        KonanTarget.MINGW_X64 -> "mingw64"
+        else -> error("Unsupported host")
     }
 
     val unsupported = when {

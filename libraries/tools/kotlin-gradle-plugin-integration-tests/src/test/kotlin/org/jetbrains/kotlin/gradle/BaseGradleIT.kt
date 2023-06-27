@@ -830,6 +830,14 @@ abstract class BaseGradleIT {
     fun CompiledProject.assertTestResults(
         @TestDataFile assertionFileName: String,
         vararg testReportNames: String
+    ) = assertTestResults(
+        resourcesRootFile.resolve(assertionFileName),
+        *testReportNames
+    )
+
+    fun CompiledProject.assertTestResults(
+        assertionXmlFile: File,
+        vararg testReportNames: String
     ) {
         val projectDir = project.projectDir
         val testReportDirs = testReportNames.map { projectDir.resolve("build/test-results/$it").toPath() }
@@ -844,7 +852,7 @@ abstract class BaseGradleIT {
             val excl = "Invalid connection: com.apple.coresymbolicationd"
             s.lines().filter { it != excl }.joinToString("\n")
         }
-        val expectedTestResults = prettyPrintXml(resourcesRootFile.resolve(assertionFileName).readText())
+        val expectedTestResults = prettyPrintXml(assertionXmlFile.readText())
 
         assertEquals(expectedTestResults, actualTestResults)
     }
