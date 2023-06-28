@@ -167,7 +167,8 @@ dependencies {
 
     libraries(kotlinStdlib("jdk8"))
     if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
-        libraries(kotlinStdlib("js", "distLibrary"))
+        libraries(kotlinStdlib(classifier = "distJsJar"))
+        libraries(kotlinStdlib(classifier = "distJsKlib"))
         libraries(project(":kotlin-test:kotlin-test-js", configuration = "distLibrary"))
     }
 
@@ -204,13 +205,13 @@ dependencies {
         sources("org.jetbrains.kotlin:kotlin-reflect:$bootstrapKotlinVersion:sources")
     } else {
         sources(project(":kotlin-stdlib", configuration = "distSources"))
-        sources(project(":kotlin-stdlib-js", configuration = "distSources"))
+        sources(project(":kotlin-stdlib", configuration = "distJsSourcesJar"))
         sources(project(":kotlin-reflect", configuration = "sources"))
         sources(project(":kotlin-test", "combinedJvmSourcesJar"))
 
         distStdlibMinimalForTests(project(":kotlin-stdlib-jvm-minimal-for-test"))
 
-        distJSContents(project(":kotlin-stdlib-js", configuration = "distJs"))
+        distJSContents(project(":kotlin-stdlib", configuration = "distJsContent"))
         distJSContents(project(":kotlin-test:kotlin-test-js", configuration = "distJs"))
     }
 
