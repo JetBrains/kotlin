@@ -529,7 +529,6 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
 
     @AndroidGradlePluginTests
     @DisplayName("Toolchain should take into account kotlin options that are set via android extension")
-    @AndroidTestVersions(minVersion = TestVersions.AGP.AGP_42)
     @GradleAndroidTest
     internal fun kotlinOptionsAndroidAndToolchain(
         gradleVersion: GradleVersion,
@@ -729,8 +728,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
     }
 
     @AndroidGradlePluginTests
-    @DisplayName("Toolchain should not override Jvm taget configured via kotlinOptions in android project")
-    @AndroidTestVersions(minVersion = TestVersions.AGP.AGP_42)
+    @DisplayName("Toolchain should not override Jvm target configured via kotlinOptions in android project")
     @GradleAndroidTest
     internal fun kotlinOptionsAndroidAndToolchainNotOverrideJvmTarget(
         gradleVersion: GradleVersion,
@@ -749,6 +747,15 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
                 |
                 |android.kotlinOptions.jvmTarget = "11"
                 """.trimMargin()
+            )
+
+            // Otherwise jvm target validation on Gradle 8+ will fail
+            //language=properties
+            gradleProperties.append(
+                """
+                # suppress inspection "UnusedProperty"
+                kotlin.jvm.target.validation.mode = warning
+                """.trimIndent()
             )
 
             build(":compileDebugKotlin") {
