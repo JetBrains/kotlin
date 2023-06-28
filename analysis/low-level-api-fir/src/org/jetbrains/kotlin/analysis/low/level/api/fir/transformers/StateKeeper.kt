@@ -117,9 +117,25 @@ internal inline fun <Entity : Any> entity(entity: Entity?, block: StateKeeperSco
 }
 
 /**
- * Individually registers all entities in a given [list] using the building [block].
+ * Registers all entities in a given [list] sequentially using the delegate [keeper].
  * Does nothing if the [list] is `null`.
- * Skips the `null` elements in the [list].
+ * Skips `null` elements in the [list].
+ */
+context(StateKeeperBuilder)
+internal fun <Entity : Any> entityList(list: List<Entity?>?, keeper: StateKeeper<Entity>) {
+    if (list != null) {
+        for (entity in list) {
+            if (entity != null) {
+                StateKeeperScope(entity).add(keeper)
+            }
+        }
+    }
+}
+
+/**
+ * Registers all entities in a given [list] sequentially using the building [block].
+ * Does nothing if the [list] is `null`.
+ * Skips `null` elements in the [list].
  */
 context(StateKeeperBuilder)
 internal inline fun <Entity : Any> entityList(list: List<Entity?>?, block: StateKeeperScope<Entity>.(Entity) -> Unit) {

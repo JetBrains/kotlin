@@ -196,12 +196,7 @@ internal object BodyStateKeepers {
             preserveContractBlock(function)
 
             add(FirFunction::body, FirFunction::replaceBody, ::blockGuard)
-
-            entityList(function.valueParameters) { valueParameter ->
-                if (valueParameter.defaultValue != null) {
-                    add(FirValueParameter::defaultValue, FirValueParameter::replaceDefaultValue, ::expressionGuard)
-                }
-            }
+            entityList(function.valueParameters, VALUE_PARAMETER)
         }
 
         add(FirFunction::controlFlowGraphReference, FirFunction::replaceControlFlowGraphReference)
@@ -218,6 +213,14 @@ internal object BodyStateKeepers {
         if (!isCallableWithSpecialBody(variable)) {
             add(FirVariable::initializerIfUnresolved, FirVariable::replaceInitializer, ::expressionGuard)
         }
+    }
+
+    private val VALUE_PARAMETER: StateKeeper<FirValueParameter> = stateKeeper { valueParameter ->
+        if (valueParameter.defaultValue != null) {
+            add(FirValueParameter::defaultValue, FirValueParameter::replaceDefaultValue, ::expressionGuard)
+        }
+
+        add(FirValueParameter::controlFlowGraphReference, FirValueParameter::replaceControlFlowGraphReference)
     }
 
     val FIELD: StateKeeper<FirField> = stateKeeper {
