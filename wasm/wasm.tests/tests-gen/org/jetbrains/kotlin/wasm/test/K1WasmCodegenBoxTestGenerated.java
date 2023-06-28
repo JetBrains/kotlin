@@ -1912,6 +1912,12 @@ public class K1WasmCodegenBoxTestGenerated extends AbstractK1WasmCodegenBoxTest 
         }
 
         @Test
+        @TestMetadata("arrayOfNulls.kt")
+        public void testArrayOfNulls() throws Exception {
+            runTest("compiler/testData/codegen/box/callableReference/arrayOfNulls.kt");
+        }
+
+        @Test
         @TestMetadata("callableReferenceOfCompanionConst.kt")
         public void testCallableReferenceOfCompanionConst() throws Exception {
             runTest("compiler/testData/codegen/box/callableReference/callableReferenceOfCompanionConst.kt");
