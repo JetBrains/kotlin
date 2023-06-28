@@ -68,7 +68,7 @@ class FunctionTransformer(
         val (token, dataFrameSchema) =
             analyzeRefinedCallShape(call, InterpretationErrorReporter.DEFAULT) ?: return call
 
-        val names = mutableMapOf<SimpleCol, String>()
+        val names = linkedMapOf<SimpleCol, String>()
         val columns = dataFrameSchema.columns()
 
         val declarations = StringBuilder()
@@ -88,21 +88,20 @@ class FunctionTransformer(
         class SchemaDeclaration(val proposedName: String, val column: SimpleCol?, val columns: List<SimpleCol>)
         val schemas = mutableListOf<SchemaDeclaration>()
 
-//        val rootToken = "$rootToken${Random.nextUInt()}"
-        val rootToken = "$rootToken"
         schemas.add(SchemaDeclaration(rootToken, null, columns))
 
-        dataFrameSchema.flatten().distinctBy { it.column }.forEach {
+        val flatten = dataFrameSchema.flatten()
+        flatten.distinctBy { it.column }.forEach {
             names[it.column] = it.path.path.last()
         }
 
-        dataFrameSchema.flatten().mapNotNullTo(schemas) { (path, column) ->
+        names.mapNotNullTo(schemas) { (column, name) ->
             when (column) {
                 is SimpleColumnGroup -> {
-                    SchemaDeclaration(path.path.lastOrNull()!!, column, column.columns())
+                    SchemaDeclaration(name, column, column.columns())
                 }
                 is SimpleFrameColumn -> {
-                    SchemaDeclaration(path.path.lastOrNull()!!, column, column.columns())
+                    SchemaDeclaration(name, column, column.columns())
                 }
                 is SimpleCol -> null
                 else -> error(column::class.java)
@@ -114,12 +113,13 @@ class FunctionTransformer(
             appendSchemaDeclarations(declaration.proposedName, declaration.columns, """Scope$i""")
         }
 
-        val name = token.type.classId?.shortClassName?.identifierOrNullIfSpecial!!
         val scopes = buildString {
             distinctBy.forEachIndexed { index, schemaDeclaration ->
                 appendLine("""abstract val scope$index: Scope$index""")
             }
         }
+
+        val name = token.type.classId?.shortClassName?.identifierOrNullIfSpecial!!
         declarations.appendLine("""
             abstract class $name : $rootToken() {
                 $scopes
@@ -205,9 +205,6 @@ class FunctionTransformer(
     private fun SimpleCol.extensions(markerName: String, names: MutableMap<SimpleCol, String>): String {
         val getter = "this[\"${renderStringLiteral(name())}\"]"
         val name = name()
-
-
-
         val fieldType = when (kind()) {
             SimpleColumnKind.VALUE ->
                 type.renderType()
