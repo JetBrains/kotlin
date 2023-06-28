@@ -109,8 +109,7 @@ class FunctionTransformer(
             }
         }
 
-
-        val distinctBy = schemas.distinctBy { it.columns }
+        val distinctBy = schemas.distinctBy { it.column }
         distinctBy.asReversed().forEachIndexed { i, declaration ->
             appendSchemaDeclarations(declaration.proposedName, declaration.columns, """Scope$i""")
         }
