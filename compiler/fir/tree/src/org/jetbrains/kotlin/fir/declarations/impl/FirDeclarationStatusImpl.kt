@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl.Modifier.*
@@ -21,6 +22,9 @@ open class FirDeclarationStatusImpl(
 ) : FirPureAbstractElement(), FirDeclarationStatus {
     override val source: KtSourceElement? get() = null
     protected var flags: Int = HAS_STABLE_PARAMETER_NAMES.mask
+
+    @FirImplementationDetail
+    internal val rawFlags get() = flags
 
     operator fun get(modifier: Modifier): Boolean = (flags and modifier.mask) != 0
 
@@ -182,3 +186,10 @@ open class FirDeclarationStatusImpl(
         return FirResolvedDeclarationStatusImpl(visibility, modality, effectiveVisibility, flags)
     }
 }
+
+@OptIn(FirImplementationDetail::class)
+val FirDeclarationStatus.modifiersRepresentation: Any
+    get() = when (this) {
+        is FirDeclarationStatusImpl -> rawFlags
+        else -> error("Generating modifier representations for ${this::class.simpleName} is not supported")
+    }

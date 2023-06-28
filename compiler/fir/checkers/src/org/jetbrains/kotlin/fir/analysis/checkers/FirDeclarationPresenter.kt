@@ -158,7 +158,7 @@ interface FirDeclarationPresenter {
         }
     }
 
-    fun represent(it: FirSimpleFunction) = buildString {
+    fun StringBuilder.appendRepresentationBeforeCallableId(it: FirSimpleFunction) {
         it.contextReceivers.forEach {
             appendRepresentation(it)
             append(',')
@@ -175,13 +175,21 @@ interface FirDeclarationPresenter {
         }
         append(']')
         appendOperatorTag(it)
-        appendRepresentation(it.symbol.callableId)
+    }
+
+    fun StringBuilder.appendRepresentationAfterCallableId(it: FirSimpleFunction) {
         append('(')
         it.valueParameters.forEach {
             appendRepresentation(it)
             append(',')
         }
         append(')')
+    }
+
+    fun represent(it: FirSimpleFunction) = buildString {
+        appendRepresentationBeforeCallableId(it)
+        appendRepresentation(it.symbol.callableId)
+        appendRepresentationAfterCallableId(it)
     }
 
     fun represent(it: FirTypeAlias) = buildString {
