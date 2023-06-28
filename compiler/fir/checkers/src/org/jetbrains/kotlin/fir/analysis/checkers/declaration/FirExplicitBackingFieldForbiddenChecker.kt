@@ -25,16 +25,6 @@ object FirExplicitBackingFieldForbiddenChecker : FirBackingFieldChecker() {
             return
         }
 
-        // TODO: Sometimes status is not resolved.
-        // See: recursiveContractCustomContractFunction.fir.kt#L31
-
-        @OptIn(SymbolInternals::class)
-        val status = declaration.propertySymbol.fir.status
-
-        if (status !is FirResolvedDeclarationStatus) {
-            return
-        }
-
         if (declaration.propertySymbol.isAbstract) {
             reporter.reportOn(declaration.source, getProperDiagnostic(context), context)
         }
