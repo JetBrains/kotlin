@@ -470,13 +470,19 @@ private class ElementsToShortenCollector(
 
     private fun FirScope.correspondingClassIdIfExists(): ClassId = when (this) {
         is FirNestedClassifierScope -> klass.classId
+        is FirNestedClassifierScopeWithSubstitution -> originalScope.correspondingClassIdIfExists()
         is FirClassUseSiteMemberScope -> classId
         else -> error("FirScope `$this` is expected to be one of FirNestedClassifierScope and FirClassUseSiteMemberScope to get ClassId")
     }
 
     private fun ClassId.idWithoutCompanion() = if (shortClassName == SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT) outerClassId else this
 
-    private fun FirScope.isScopeForClass() = this is FirNestedClassifierScope || this is FirClassUseSiteMemberScope
+    private fun FirScope.isScopeForClass(): Boolean = when {
+        this is FirNestedClassifierScope -> true
+        this is FirNestedClassifierScopeWithSubstitution -> originalScope.isScopeForClass()
+        this is FirClassUseSiteMemberScope -> true
+        else -> false
+    }
 
     /**
      * Assuming that both this [FirScope] and [another] are [FirNestedClassifierScope] or [FirClassUseSiteMemberScope] and both of them
@@ -569,6 +575,7 @@ private class ElementsToShortenCollector(
                     is FirLocalScope -> Local
                     is FirClassUseSiteMemberScope -> ClassUseSite
                     is FirNestedClassifierScope -> NestedClassifier
+                    is FirNestedClassifierScopeWithSubstitution -> originalScope.toPartialOrder()
                     is FirExplicitSimpleImportingScope -> ExplicitSimpleImporting
                     is FirPackageMemberScope -> PackageMember
                     else -> Unclassified
