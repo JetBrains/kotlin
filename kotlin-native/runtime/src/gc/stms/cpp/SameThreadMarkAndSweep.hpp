@@ -79,20 +79,14 @@ public:
         using ObjectData = SameThreadMarkAndSweep::ObjectData;
         using Allocator = AllocatorWithGC<Allocator, ThreadData>;
 
-        ThreadData(SameThreadMarkAndSweep& gc, mm::ThreadData& threadData) noexcept : gc_(gc) {}
+        ThreadData(SameThreadMarkAndSweep& gc, mm::ThreadData& threadData) noexcept {}
         ~ThreadData() = default;
-
-        void Schedule() noexcept;
-        void ScheduleAndWaitFullGC() noexcept;
-        void ScheduleAndWaitFullGCWithFinalizers() noexcept;
 
         void OnOOM(size_t size) noexcept;
 
         Allocator CreateAllocator() noexcept { return Allocator(gc::Allocator(), *this); }
 
     private:
-
-        SameThreadMarkAndSweep& gc_;
     };
 
     using Allocator = ThreadData::Allocator;
@@ -118,8 +112,7 @@ public:
     void StopFinalizerThreadIfRunning() noexcept;
     bool FinalizersThreadIsRunning() noexcept;
 
-    int64_t Schedule() noexcept { return state_.schedule(); }
-    void WaitFinalized(int64_t epoch) noexcept { state_.waitEpochFinalized(epoch); }
+    GCStateHolder& state() noexcept { return state_; }
 
 #ifdef CUSTOM_ALLOCATOR
     alloc::Heap& heap() noexcept { return heap_; }

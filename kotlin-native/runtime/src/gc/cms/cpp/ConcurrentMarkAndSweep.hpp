@@ -78,12 +78,8 @@ public:
 
         using Allocator = AllocatorWithGC<Allocator, ThreadData>;
 
-        explicit ThreadData(ConcurrentMarkAndSweep& gc, mm::ThreadData& threadData) noexcept : gc_(gc), threadData_(threadData) {}
+        explicit ThreadData(ConcurrentMarkAndSweep& gc, mm::ThreadData& threadData) noexcept : threadData_(threadData) {}
         ~ThreadData() = default;
-
-        void Schedule() noexcept;
-        void ScheduleAndWaitFullGC() noexcept;
-        void ScheduleAndWaitFullGCWithFinalizers() noexcept;
 
         void OnOOM(size_t size) noexcept;
 
@@ -97,7 +93,6 @@ public:
 
     private:
         friend ConcurrentMarkAndSweep;
-        ConcurrentMarkAndSweep& gc_;
         mm::ThreadData& threadData_;
         std::atomic<bool> marking_;
         BarriersThreadData barriers_;
@@ -135,8 +130,7 @@ public:
     alloc::Heap& heap() noexcept { return heap_; }
 #endif
 
-    int64_t Schedule() noexcept { return state_.schedule(); }
-    void WaitFinalized(int64_t epoch) noexcept { state_.waitEpochFinalized(epoch); }
+    GCStateHolder& state() noexcept { return state_; }
 
 private:
     void PerformFullGC(int64_t epoch) noexcept;

@@ -39,10 +39,6 @@ public:
         ThreadData() noexcept {}
         ~ThreadData() = default;
 
-        void Schedule() noexcept {}
-        void ScheduleAndWaitFullGC() noexcept {}
-        void ScheduleAndWaitFullGCWithFinalizers() noexcept {}
-
         void OnOOM(size_t size) noexcept {}
 
         Allocator CreateAllocator() noexcept { return Allocator(); }

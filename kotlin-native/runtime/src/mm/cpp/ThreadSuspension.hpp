@@ -35,6 +35,7 @@ public:
     ThreadState state() noexcept { return state_; }
 
     ThreadState setState(ThreadState newState) noexcept;
+    ThreadState setStateNoSafePoint(ThreadState newState) noexcept { return state_.exchange(newState, std::memory_order_acq_rel); }
 
     bool suspended() noexcept { return suspended_; }
     bool suspendedOrNative() noexcept { return suspended() || state() == kotlin::ThreadState::kNative; }

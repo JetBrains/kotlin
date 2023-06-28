@@ -62,6 +62,7 @@ fun test() {
     if (Platform.memoryModel == MemoryModel.EXPERIMENTAL) {
         kotlin.native.runtime.GC.autotune = false
         kotlin.native.runtime.GC.targetHeapBytes = retainLimit
+        kotlin.native.runtime.GC.pauseOnTargetHeapOverflow = true
     }
 
     // On Linux, the child process might immediately commit the same amount of memory as the parent.

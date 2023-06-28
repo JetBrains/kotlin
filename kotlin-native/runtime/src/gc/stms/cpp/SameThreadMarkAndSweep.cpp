@@ -58,29 +58,10 @@ struct ProcessWeaksTraits {
 
 } // namespace
 
-void gc::SameThreadMarkAndSweep::ThreadData::Schedule() noexcept {
-    RuntimeLogInfo({kTagGC}, "Scheduling GC manually");
-    ThreadStateGuard guard(ThreadState::kNative);
-    gc_.state_.schedule();
-}
-
-void gc::SameThreadMarkAndSweep::ThreadData::ScheduleAndWaitFullGC() noexcept {
-    RuntimeLogInfo({kTagGC}, "Scheduling GC manually");
-    ThreadStateGuard guard(ThreadState::kNative);
-    auto scheduled_epoch = gc_.state_.schedule();
-    gc_.state_.waitEpochFinished(scheduled_epoch);
-}
-
-void gc::SameThreadMarkAndSweep::ThreadData::ScheduleAndWaitFullGCWithFinalizers() noexcept {
-    RuntimeLogInfo({kTagGC}, "Scheduling GC manually");
-    ThreadStateGuard guard(ThreadState::kNative);
-    auto scheduled_epoch = gc_.state_.schedule();
-    gc_.state_.waitEpochFinalized(scheduled_epoch);
-}
-
 void gc::SameThreadMarkAndSweep::ThreadData::OnOOM(size_t size) noexcept {
     RuntimeLogDebug({kTagGC}, "Attempt to GC on OOM at size=%zu", size);
-    ScheduleAndWaitFullGC();
+    // TODO: This will print the log for "manual" scheduling. Fix this.
+    mm::GlobalData::Instance().gcScheduler().scheduleAndWaitFinished();
 }
 
 #ifdef CUSTOM_ALLOCATOR
@@ -142,7 +123,7 @@ void gc::SameThreadMarkAndSweep::PerformFullGC(int64_t epoch) noexcept {
     gcHandle.threadsAreSuspended();
 
     auto& scheduler = gcScheduler_;
-    scheduler.gcData().OnPerformFullGC();
+    scheduler.onGCStart();
 
     state_.start(epoch);
 
@@ -175,7 +156,7 @@ void gc::SameThreadMarkAndSweep::PerformFullGC(int64_t epoch) noexcept {
     auto finalizerQueue = heap_.Sweep(gcHandle);
 #endif
 
-    scheduler.gcData().UpdateAliveSetBytes(allocatedBytes());
+    scheduler.onGCFinish(epoch, allocatedBytes());
 
     mm::ResumeThreads();
     gcHandle.threadsAreResumed();

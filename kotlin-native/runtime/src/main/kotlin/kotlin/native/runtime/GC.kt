@@ -177,7 +177,6 @@ public object GC {
      * When Kotlin code is not allocating enough to trigger GC, the GC scheduler uses timer to drive collection.
      * Timer-triggered collection will happen roughly in [regularGCInterval] .. 2 * [regularGCInterval] since
      * any previous collection.
-     * Unused with on-safepoints GC scheduler.
      *
      * Default: 10 seconds
      *
@@ -193,8 +192,9 @@ public object GC {
         }
 
     /**
-     * Total amount of heap available for Kotlin objects. When Kotlin objects overflow this heap,
-     * the garbage collection is requested. Automatically adjusts when [autotune] is true:
+     * Total amount of heap available for Kotlin objects. The GC tries to schedule execution
+     * so that Kotlin heap doesn't overflow this heap.
+     * Automatically adjusts when [autotune] is true:
      * after each collection the [targetHeapBytes] is set to heapBytes / [targetHeapUtilization] and
      * capped between [minHeapBytes] and [maxHeapBytes], where heapBytes is heap usage after the garbage
      * is collected.
@@ -264,6 +264,30 @@ public object GC {
             require(value >= 0) { "maxHeapBytes must not be negative: $value" }
             setMaxHeapBytes(value)
         }
+
+    /**
+     * The GC is scheduled when Kotlin heap overflows [heapTriggerCoefficient] * [targetHeapBytes].
+     *
+     * Default: 0.9
+     *
+     * @throws [IllegalArgumentException] when value is outside (0, 1] interval.
+     */
+    var heapTriggerCoefficient: Double
+        get() = getHeapTriggerCoefficient()
+        set(value) {
+            require(value > 0 && value <= 1) { "heapTriggerCoefficient must be in (0, 1] interval: $value" }
+            setHeapTriggerCoefficient(value)
+        }
+
+    /**
+     * If true, the GC will pause Kotlin threads when Kotlin heap overflows [targetHeapBytes]
+     * and will resume them only after current GC is done.
+     *
+     * Default: true, unless [autotune] is false or [maxHeapBytes] is less than [Long.MAX_VALUE].
+     */
+    var pauseOnTargetHeapOverflow: Boolean
+        get() = getPauseOnTargetHeapOverflow()
+        set(value) = setPauseOnTargetHeapOverflow(value)
 
     /**
      * Deprecated and unused. Always returns null.
@@ -356,4 +380,16 @@ public object GC {
 
     @GCUnsafeCall("Kotlin_native_internal_GC_setMaxHeapBytes")
     private external fun setMaxHeapBytes(value: Long)
+
+    @GCUnsafeCall("Kotlin_native_internal_GC_getHeapTriggerCoefficient")
+    private external fun getHeapTriggerCoefficient(): Double
+
+    @GCUnsafeCall("Kotlin_native_internal_GC_setHeapTriggerCoefficient")
+    private external fun setHeapTriggerCoefficient(value: Double)
+
+    @GCUnsafeCall("Kotlin_native_internal_GC_getPauseOnTargetHeapOverflow")
+    private external fun getPauseOnTargetHeapOverflow(): Boolean
+
+    @GCUnsafeCall("Kotlin_native_internal_GC_setPauseOnTargetHeapOverflow")
+    private external fun setPauseOnTargetHeapOverflow(value: Boolean)
 }

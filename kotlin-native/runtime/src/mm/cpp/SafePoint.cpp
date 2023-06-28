@@ -26,7 +26,7 @@ void safePointActionImpl(mm::ThreadData& threadData) noexcept {
     RuntimeAssert(!recursion, "Recursive safepoint");
     AutoReset guard(&recursion, true);
 
-    mm::GlobalData::Instance().gcScheduler().safePoint();
+    threadData.gcScheduler().safePoint();
     threadData.gc().safePoint();
     threadData.suspensionData().suspendIfRequested();
 }

@@ -19,18 +19,6 @@ gc::GC::ThreadData::ThreadData(GC& gc, mm::ThreadData& threadData) noexcept : im
 
 gc::GC::ThreadData::~ThreadData() = default;
 
-void gc::GC::ThreadData::Schedule() noexcept {
-    impl_->gc().Schedule();
-}
-
-void gc::GC::ThreadData::ScheduleAndWaitFullGC() noexcept {
-    impl_->gc().ScheduleAndWaitFullGC();
-}
-
-void gc::GC::ThreadData::ScheduleAndWaitFullGCWithFinalizers() noexcept {
-    impl_->gc().ScheduleAndWaitFullGCWithFinalizers();
-}
-
 void gc::GC::ThreadData::Publish() noexcept {
 #ifndef CUSTOM_ALLOCATOR
     impl_->extraObjectDataFactoryThreadQueue().Publish();
@@ -131,6 +119,9 @@ ALWAYS_INLINE void gc::GC::processFieldInMark(void* state, ObjHeader* field) noe
 int64_t gc::GC::Schedule() noexcept {
     return 0;
 }
+
+void gc::GC::WaitFinished(int64_t epoch) noexcept {}
+
 void gc::GC::WaitFinalizers(int64_t epoch) noexcept {}
 
 bool gc::isMarked(ObjHeader* object) noexcept {

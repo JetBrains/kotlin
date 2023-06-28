@@ -32,6 +32,7 @@ public:
         threadId_(threadId),
         globalsThreadQueue_(GlobalsRegistry::Instance()),
         specialRefRegistry_(SpecialRefRegistry::instance()),
+        gcScheduler_(GlobalData::Instance().gcScheduler(), *this),
         gc_(GlobalData::Instance().gc(), *this),
         suspensionData_(ThreadState::kNative, *this) {}
 
@@ -52,6 +53,8 @@ public:
     ShadowStack& shadowStack() noexcept { return shadowStack_; }
 
     std_support::vector<std::pair<ObjHeader**, ObjHeader*>>& initializingSingletons() noexcept { return initializingSingletons_; }
+
+    gcScheduler::GCScheduler::ThreadData& gcScheduler() noexcept { return gcScheduler_; }
 
     gc::GC::ThreadData& gc() noexcept { return gc_; }
 
@@ -76,6 +79,7 @@ private:
     ThreadLocalStorage tls_;
     SpecialRefRegistry::ThreadQueue specialRefRegistry_;
     ShadowStack shadowStack_;
+    gcScheduler::GCScheduler::ThreadData gcScheduler_;
     gc::GC::ThreadData gc_;
     std_support::vector<std::pair<ObjHeader**, ObjHeader*>> initializingSingletons_;
     ThreadSuspensionData suspensionData_;

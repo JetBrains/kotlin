@@ -14,45 +14,59 @@
 #include "Utils.hpp"
 #include "std_support/Memory.hpp"
 
-namespace kotlin::gcScheduler {
-
-namespace test_support {
-class GCSchedulerThreadDataTestApi;
+namespace kotlin::mm {
+class ThreadData;
 }
 
-class GCSchedulerThreadData;
-
-class GCSchedulerData {
-public:
-    virtual ~GCSchedulerData() = default;
-
-    // The protocol is: after the scheduler schedules the GC, the GC eventually calls `OnPerformFullGC`
-    // when the collection has started, followed by `UpdateAliveSetBytes` when the marking has finished.
-    // TODO: Consider returning a sort of future from the scheduleGC, and listen to it instead.
-
-    // Always called by the GC thread.
-    virtual void OnPerformFullGC() noexcept = 0;
-
-    // Always called by the GC thread.
-    virtual void UpdateAliveSetBytes(size_t bytes) noexcept = 0;
-
-    // Called by different mutator threads.
-    virtual void SetAllocatedBytes(size_t bytes) noexcept = 0;
-};
+namespace kotlin::gcScheduler {
 
 class GCScheduler : private Pinned {
 public:
+    class Impl;
+
+    class ThreadData : private Pinned {
+    public:
+        class Impl;
+
+        ThreadData(GCScheduler&, mm::ThreadData&) noexcept;
+        ~ThreadData();
+
+        Impl& impl() noexcept { return *impl_; }
+
+        void safePoint() noexcept;
+
+    private:
+        std_support::unique_ptr<Impl> impl_;
+    };
+
     GCScheduler() noexcept;
+    ~GCScheduler();
+
+    Impl& impl() noexcept { return *impl_; }
 
     GCSchedulerConfig& config() noexcept { return config_; }
-    GCSchedulerData& gcData() noexcept { return *gcData_; }
 
-    // Should be called on encountering a safepoint.
-    void safePoint() noexcept;
+    // Called by different mutator threads.
+    void setAllocatedBytes(size_t bytes) noexcept;
+
+    // Can be called by any thread.
+    void schedule() noexcept;
+
+    // Can be called by any thread.
+    void scheduleAndWaitFinished() noexcept;
+
+    // Can be called by any thread.
+    void scheduleAndWaitFinalized() noexcept;
+
+    // Always called by the GC thread.
+    void onGCStart() noexcept;
+
+    // Called by the GC thread only.
+    void onGCFinish(int64_t epoch, size_t aliveBytes) noexcept;
 
 private:
     GCSchedulerConfig config_;
-    std_support::unique_ptr<GCSchedulerData> gcData_;
+    std_support::unique_ptr<Impl> impl_;
 };
 
 } // namespace kotlin::gcScheduler

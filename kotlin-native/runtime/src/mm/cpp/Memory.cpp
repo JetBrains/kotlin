@@ -105,7 +105,7 @@ extern "C" void DeinitMemory(MemoryState* state, bool destroyRuntime) {
     auto* node = mm::FromMemoryState(state);
     if (destroyRuntime) {
         ThreadStateGuard guard(state, ThreadState::kRunnable);
-        node->Get()->gc().ScheduleAndWaitFullGCWithFinalizers();
+        mm::GlobalData::Instance().gcScheduler().scheduleAndWaitFinalized();
         // TODO: Why not just destruct `GC` object and its thread data counterpart entirely?
         mm::GlobalData::Instance().gc().StopFinalizerThreadIfRunning();
     }
@@ -300,15 +300,11 @@ extern "C" RUNTIME_NOTHROW void GC_CollectorCallback(void* worker) {
 }
 
 extern "C" void Kotlin_native_internal_GC_collect(ObjHeader*) {
-    auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
-    AssertThreadState(threadData, ThreadState::kRunnable);
-    threadData->gc().ScheduleAndWaitFullGCWithFinalizers();
+    mm::GlobalData::Instance().gcScheduler().scheduleAndWaitFinalized();
 }
 
 extern "C" void Kotlin_native_internal_GC_schedule(ObjHeader*) {
-    auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
-    AssertThreadState(threadData, ThreadState::kRunnable);
-    threadData->gc().Schedule();
+    mm::GlobalData::Instance().gcScheduler().schedule();
 }
 
 extern "C" void Kotlin_native_internal_GC_collectCyclic(ObjHeader*) {
@@ -421,6 +417,23 @@ extern "C" void Kotlin_native_internal_GC_setMinHeapBytes(ObjHeader*, KLong valu
     mm::GlobalData::Instance().gcScheduler().config().minHeapBytes = value;
 }
 
+extern "C" KDouble Kotlin_native_internal_GC_getHeapTriggerCoefficient(ObjHeader*) {
+    return mm::GlobalData::Instance().gcScheduler().config().heapTriggerCoefficient.load();
+}
+
+extern "C" void Kotlin_native_internal_GC_setHeapTriggerCoefficient(ObjHeader*, KDouble value) {
+    RuntimeAssert(value > 0 && value <= 1, "Must be handled by the caller");
+    mm::GlobalData::Instance().gcScheduler().config().heapTriggerCoefficient = value;
+}
+
+extern "C" KBoolean Kotlin_native_internal_GC_getPauseOnTargetHeapOverflow(ObjHeader*) {
+    return mm::GlobalData::Instance().gcScheduler().config().mutatorAssists();
+}
+
+extern "C" void Kotlin_native_internal_GC_setPauseOnTargetHeapOverflow(ObjHeader*, KBoolean value) {
+    mm::GlobalData::Instance().gcScheduler().config().setMutatorAssists(value);
+}
+
 extern "C" OBJ_GETTER(Kotlin_native_internal_GC_detectCycles, ObjHeader*) {
     // TODO: Remove when legacy MM is gone.
     RETURN_OBJ(nullptr);
@@ -453,9 +466,7 @@ extern "C" void Kotlin_Any_share(ObjHeader* thiz) {
 }
 
 extern "C" RUNTIME_NOTHROW void PerformFullGC(MemoryState* memory) {
-    auto* threadData = memory->GetThreadData();
-    AssertThreadState(threadData, ThreadState::kRunnable);
-    threadData->gc().ScheduleAndWaitFullGCWithFinalizers();
+    mm::GlobalData::Instance().gcScheduler().scheduleAndWaitFinalized();
 }
 
 extern "C" RUNTIME_NOTHROW bool ClearSubgraphReferences(ObjHeader* root, bool checked) {
@@ -623,5 +634,5 @@ RUNTIME_NOTHROW extern "C" void DisposeRegularWeakReferenceImpl(ObjHeader* weakR
 }
 
 void kotlin::OnMemoryAllocation(size_t totalAllocatedBytes) noexcept {
-    mm::GlobalData::Instance().gcScheduler().gcData().SetAllocatedBytes(totalAllocatedBytes);
+    mm::GlobalData::Instance().gcScheduler().setAllocatedBytes(totalAllocatedBytes);
 }
