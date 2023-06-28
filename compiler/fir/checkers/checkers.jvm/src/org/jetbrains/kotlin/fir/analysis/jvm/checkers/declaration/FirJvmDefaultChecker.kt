@@ -26,7 +26,7 @@ object FirJvmDefaultChecker : FirBasicDeclarationChecker() {
         val annotationNoCompatibility = declaration.getAnnotationByClassId(JVM_DEFAULT_NO_COMPATIBILITY_CLASS_ID, session)
         if (annotationNoCompatibility != null) {
             val source = annotationNoCompatibility.source
-            if (jvmDefaultMode?.isEnabled != true) {
+            if (!jvmDefaultMode.isEnabled) {
                 reporter.reportOn(source, FirJvmErrors.JVM_DEFAULT_IN_DECLARATION, "JvmDefaultWithoutCompatibility", context)
                 return
             }
