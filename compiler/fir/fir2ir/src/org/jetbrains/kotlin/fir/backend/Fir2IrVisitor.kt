@@ -1092,8 +1092,12 @@ class Fir2IrVisitor(
                 if (whenExpression.branches.isEmpty()) {
                     return@convertWithOffsets IrBlockImpl(startOffset, endOffset, irBuiltIns.unitType, origin)
                 }
+                val whenExpressionType =
+                    if (whenExpression.isProperlyExhaustive && whenExpression.branches.none {
+                            it.condition is FirElseIfTrueCondition && it.result.statements.isEmpty()
+                        }) whenExpression.typeRef else session.builtinTypes.unitType
                 val irBranches = whenExpression.branches.mapTo(mutableListOf()) { branch ->
-                    branch.toIrWhenBranch(whenExpression.typeRef)
+                    branch.toIrWhenBranch(whenExpressionType)
                 }
                 if (whenExpression.isProperlyExhaustive && whenExpression.branches.none { it.condition is FirElseIfTrueCondition }) {
                     val irResult = IrCallImpl(
@@ -1106,14 +1110,7 @@ class Fir2IrVisitor(
                         IrConstImpl.boolean(startOffset, endOffset, irBuiltIns.booleanType, true), irResult
                     )
                 }
-                generateWhen(
-                    startOffset, endOffset, origin,
-                    subjectVariable, irBranches,
-                    if (whenExpression.isProperlyExhaustive && whenExpression.branches.none {
-                            it.condition is FirElseIfTrueCondition && it.result.statements.isEmpty()
-                        }
-                    ) whenExpression.typeRef.toIrType() else irBuiltIns.unitType
-                )
+                generateWhen(startOffset, endOffset, origin, subjectVariable, irBranches, whenExpressionType.toIrType())
             }
         }.also {
             whenExpression.accept(implicitCastInserter, it)

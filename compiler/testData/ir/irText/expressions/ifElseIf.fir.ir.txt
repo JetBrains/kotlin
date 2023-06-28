@@ -47,7 +47,8 @@ FILE fqName:<root> fileName:/ifElseIf.kt
       WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: GET_VAR 'flag: kotlin.Boolean declared in <root>.testEmptyBranches2' type=kotlin.Boolean origin=null
-          then: CONST Boolean type=kotlin.Boolean value=true
+          then: TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+            CONST Boolean type=kotlin.Boolean value=true
         BRANCH
           if: CONST Boolean type=kotlin.Boolean value=true
           then: BLOCK type=kotlin.Unit origin=null
