@@ -694,6 +694,12 @@ public class FirSourceLazyDeclarationResolveTestGenerated extends AbstractFirSou
         }
 
         @Test
+        @TestMetadata("getterWithDelegation.kt")
+        public void testGetterWithDelegation() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/lazyResolve/properties/getterWithDelegation.kt");
+        }
+
+        @Test
         @TestMetadata("hierarchyWithOverride.kt")
         public void testHierarchyWithOverride() throws Exception {
             runTest("analysis/low-level-api-fir/testdata/lazyResolve/properties/hierarchyWithOverride.kt");

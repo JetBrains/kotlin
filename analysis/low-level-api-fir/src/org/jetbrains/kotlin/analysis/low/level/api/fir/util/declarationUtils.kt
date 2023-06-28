@@ -158,7 +158,8 @@ private fun KtDeclaration.findSourceNonLocalFirDeclarationByProvider(
         else -> errorWithFirSpecificEntries("Invalid container", psi = this)
     }
 
-    return candidate?.takeIf { it.realPsi == this }
+    //property accessors for properties with delegation have KtFakeSourceElementKind.DelegatedPropertyAccessor kind
+    return candidate?.takeIf { it.psi == this }
 }
 
 fun FirAnonymousInitializer.containingClass(): FirRegularClass {
