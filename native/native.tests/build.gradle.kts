@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.ideaExt.idea
 plugins {
     kotlin("jvm")
     id("jps-compatible")
+//    id("org.jetbrains.kotlinx.kover")
 }
 
 project.configureJvmToolchain(JdkMajorVersion.JDK_11_0)
