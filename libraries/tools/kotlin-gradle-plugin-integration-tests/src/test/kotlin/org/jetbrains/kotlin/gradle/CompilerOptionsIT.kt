@@ -24,7 +24,9 @@ internal class CompilerOptionsIT : KGPBaseTest() {
     @JvmGradlePluginTests
     @GradleTestVersions(
         minVersion = TestVersions.Gradle.G_7_3,
-        maxVersion = TestVersions.Gradle.G_7_6 // TODO(Dmitrii Krasnov): we don't use TestVersions.Gradle.G_8_0, because there is some problem in printing warn message
+        // In Gradle 8.0 there is logic to filter logger messages that contain compiler options configured by `kotlin-dsl` plugin
+        // https://github.com/gradle/gradle/blob/master/subprojects/kotlin-dsl-plugins/src/main/kotlin/org/gradle/kotlin/dsl/plugins/dsl/KotlinDslCompilerPlugins.kt#L70-L73
+        maxVersion = TestVersions.Gradle.G_7_6,
     )
     @GradleTest
     internal fun compatibleWithKotlinDsl(gradleVersion: GradleVersion) {
