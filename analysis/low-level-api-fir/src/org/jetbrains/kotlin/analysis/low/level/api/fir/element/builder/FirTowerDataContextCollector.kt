@@ -50,17 +50,24 @@ internal class FirTowerDataContextAllElementsCollector : FirTowerDataContextColl
         var current: PsiElement? = ktElement
         while (current != null) {
             if (current is KtElement) {
-                elementsToContext[current]?.let { return it }
-            }
-            if (current is KtDeclaration) {
-                val originalDeclaration = current.originalDeclaration
-                originalDeclaration?.let { elementsToContext[it] }?.let { return it }
+                getContextForElement(current)?.let { return it }
             }
             if (current is KtFile) {
                 break
             }
             current = current.parent
         }
+        return null
+    }
+
+    private fun getContextForElement(element: KtElement): FirTowerDataContext? {
+        elementsToContext[element]?.let { return it }
+
+        if (element is KtDeclaration) {
+            val originalDeclaration = element.originalDeclaration
+            originalDeclaration?.let { elementsToContext[it] }?.let { return it }
+        }
+
         return null
     }
 }
