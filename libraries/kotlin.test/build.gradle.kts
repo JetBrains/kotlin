@@ -266,7 +266,7 @@ val (jsApi, jsRuntime) = listOf("api", "runtime").map { usage ->
 jsRuntime.extendsFrom(jsApi)
 
 dependencies {
-    jsApi(project(":kotlin-stdlib-js"))
+    jsApi(project(":kotlin-stdlib"))
 }
 
 artifacts {

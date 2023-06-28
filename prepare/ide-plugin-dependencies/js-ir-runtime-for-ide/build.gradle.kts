@@ -10,8 +10,8 @@ idePluginDependency {
     jar.apply {
         archiveExtension.set("klib")
 
-        val jsRuntimeProjectName = ":kotlin-stdlib-js-ir"
-        val klibTaskName = "packFullRuntimeKLib"
+        val jsRuntimeProjectName = ":kotlin-stdlib"
+        val klibTaskName = "jsJar"
 
         dependsOn("$jsRuntimeProjectName:$klibTaskName")
 
