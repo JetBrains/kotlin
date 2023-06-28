@@ -11,6 +11,7 @@ import org.gradle.internal.jvm.JavaInfo
 import org.gradle.internal.jvm.Jvm
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
 import java.io.File
@@ -582,6 +583,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
 
     @JvmGradlePluginTests
     @DisplayName("JVM target shouldn't be changed when toolchain is not configured")
+    // Starting Gradle 8.0 toolchain is always configured by default
     @GradleTestVersions(maxVersion = TestVersions.Gradle.G_7_6)
     @GradleTest
     internal fun shouldNotChangeJvmTargetWithNoToolchain(gradleVersion: GradleVersion) {
@@ -598,13 +600,17 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
                 """.trimIndent()
             )
 
+            val defaultJvmTargetName = JvmTarget.DEFAULT.let {
+                "${it.declaringJavaClass.canonicalName}.${it.name}"
+            }
+
             //language=Groovy
             buildGradle.append(
                 """
                 tasks.named("compileKotlin") {
                     doLast {
                         def actualJvmTarget = compilerOptions.jvmTarget.orNull
-                        if (actualJvmTarget != org.jetbrains.kotlin.gradle.dsl.JvmTarget.DEFAULT) {
+                        if (actualJvmTarget != $defaultJvmTargetName) {
                             //noinspection GroovyAssignabilityCheck
                             throw new GradleException("Expected `jvmTarget` value is 'JvmTarget.DEFAULT' but the actual value was ${'$'}actualJvmTarget")
                         }
@@ -728,7 +734,6 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
 
     @JvmGradlePluginTests
     @DisplayName("Toolchain should not override Jvm target configured in project level DSL")
-    @GradleTestVersions(maxVersion = TestVersions.Gradle.G_7_6)
     @GradleTest
     fun toolchainNotOverrideProjectJvmTarget(gradleVersion: GradleVersion) {
         project(
@@ -736,6 +741,14 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
             gradleVersion = gradleVersion,
             buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
         ) {
+            //language=properties
+            gradleProperties.append(
+                """
+                # suppress inspection "UnusedProperty"
+                kotlin.jvm.target.validation.mode = warning
+                """.trimIndent()
+            )
+
             buildGradle.appendText(
                 //language=groovy
                 """
