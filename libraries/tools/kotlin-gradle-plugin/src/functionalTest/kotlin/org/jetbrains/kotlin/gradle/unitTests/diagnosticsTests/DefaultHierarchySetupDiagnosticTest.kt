@@ -39,7 +39,7 @@ class DefaultHierarchySetupDiagnosticTest {
     fun `test - warning KotlinTargetHierarchyFallbackIllegalTargetNames`() = buildProjectWithMPP().runLifecycleAwareTest {
         val kotlin = multiplatformExtension
         kotlin.linuxX64("linux") // <- illegal: Will clash with 'linux' group
-        kotlin.linuxArm64("native") // <-- illegal: Will clash with 'native' group
+        kotlin.linuxArm64("Native") // <-- illegal: Will clash with 'native' group
         kotlin.jvm()
 
         project.launchInStage(KotlinPluginLifecycle.Stage.ReadyForExecution) {

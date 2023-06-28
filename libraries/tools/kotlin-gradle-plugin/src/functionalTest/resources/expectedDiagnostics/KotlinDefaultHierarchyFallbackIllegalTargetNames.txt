@@ -1,6 +1,6 @@
 [KotlinDefaultHierarchyFallbackIllegalTargetNames | WARNING] The Default Kotlin Hierarchy was not applied to 'root project 'test'':
 Illegal target names were found:
-[native, linux]
+[Native, linux]
 
 To suppress the 'Default Hierarchy Template' add
     'kotlin.mpp.applyDefaultHierarchyTemplate=false'

@@ -85,8 +85,11 @@ private suspend fun Project.illegalTargetNamesUsed(): Set<String> {
     val targetNames = targets.map { it.name }.toSet()
     return targets.flatMap { it.compilations }.mapNotNull { compilation ->
         val hierarchy = KotlinHierarchyTemplate.default.buildHierarchy(compilation) ?: return@mapNotNull null
-        val nodeNames = hierarchy.childrenClosure.mapNotNull { it.node as? KotlinHierarchy.Node.Group }.map { it.name }.toSet()
-        nodeNames.intersect(targetNames)
+        val nodeNames = hierarchy.childrenClosure
+            .mapNotNull { it.node as? KotlinHierarchy.Node.Group }
+            .map { it.name }
+            .toSortedSet(String.CASE_INSENSITIVE_ORDER)
+        targetNames.intersect(nodeNames)
     }.flatten().toSet()
 }
 
