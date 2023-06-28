@@ -74,7 +74,9 @@ private class LLFirContractsTargetResolver(
             is FirFileAnnotationsContainer,
             is FirDanglingModifierList -> {
                 // No contracts here
-                check(target !is FirContractDescriptionOwner)
+                check(target !is FirContractDescriptionOwner) {
+                    "Unexpected contract description owner: $target (${target.javaClass.name})"
+                }
             }
             else -> throwUnexpectedFirElementError(target)
         }
