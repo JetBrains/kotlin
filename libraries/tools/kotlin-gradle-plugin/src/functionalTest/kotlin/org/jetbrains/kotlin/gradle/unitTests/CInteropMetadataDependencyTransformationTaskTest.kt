@@ -11,21 +11,20 @@ import org.gradle.api.Project
 import org.gradle.api.internal.TaskInternal
 import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
+import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
+import org.jetbrains.kotlin.gradle.plugin.await
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 import org.jetbrains.kotlin.gradle.targets.native.internal.locateOrRegisterCInteropMetadataDependencyTransformationTask
 import org.jetbrains.kotlin.gradle.targets.native.internal.locateOrRegisterCInteropMetadataDependencyTransformationTaskForIde
-import org.jetbrains.kotlin.gradle.util.MultiplatformExtensionTest
-import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
-import org.jetbrains.kotlin.gradle.util.enableCInteropCommonization
-import org.jetbrains.kotlin.gradle.util.kotlin
+import org.jetbrains.kotlin.gradle.util.*
 import java.io.File
 import kotlin.test.*
 
 class CInteropMetadataDependencyTransformationTaskTest : MultiplatformExtensionTest() {
 
     @Test
-    fun `task not registered when cinterop commonization is disabled`() {
-        project.enableCInteropCommonization(false)
+    fun `task not registered when cinterop commonization is disabled`() = project.runLifecycleAwareTest {
+        enableCInteropCommonization(false)
 
         kotlin.linuxArm64()
         kotlin.linuxX64()
@@ -40,13 +39,13 @@ class CInteropMetadataDependencyTransformationTaskTest : MultiplatformExtensionT
         linuxX64Main.dependsOn(linuxMain)
 
         /* Expect no tasks being registered without the cinterop commonization feature flag */
-        assertNull(project.locateOrRegisterCInteropMetadataDependencyTransformationTask(linuxMain))
-        assertNull(project.locateOrRegisterCInteropMetadataDependencyTransformationTaskForIde(linuxMain))
+        assertNull(locateOrRegisterCInteropMetadataDependencyTransformationTask(linuxMain))
+        assertNull(locateOrRegisterCInteropMetadataDependencyTransformationTaskForIde(linuxMain))
     }
 
     @Test
-    fun `test task ordering`() {
-        project.enableCInteropCommonization(true)
+    fun `test task ordering`() = project.runLifecycleAwareTest {
+        enableCInteropCommonization(true)
         kotlin.linuxX64()
         kotlin.linuxArm64()
 
@@ -67,16 +66,17 @@ class CInteropMetadataDependencyTransformationTaskTest : MultiplatformExtensionT
         linuxX64Test.dependsOn(nativeTest)
         linuxArm64Test.dependsOn(nativeTest)
 
-        project.evaluate()
-        val nativeTestTransformationTask = project.locateOrRegisterCInteropMetadataDependencyTransformationTask(nativeTest)
+        KotlinPluginLifecycle.Stage.ReadyForExecution.await()
+
+        val nativeTestTransformationTask = locateOrRegisterCInteropMetadataDependencyTransformationTask(nativeTest)
 
         assertNotNull(nativeTestTransformationTask, "Expected transformation task registered for 'nativeTest'")
         assertEquals(
             listOf(commonMain, commonTest, nativeMain).flatMap { sourceSet ->
                 listOf(
-                    project.locateOrRegisterCInteropMetadataDependencyTransformationTask(sourceSet as DefaultKotlinSourceSet)?.get()
+                    locateOrRegisterCInteropMetadataDependencyTransformationTask(sourceSet as DefaultKotlinSourceSet)?.get()
                         ?: fail("Expected transformation task registered for '${sourceSet.name}'"),
-                    project.locateOrRegisterCInteropMetadataDependencyTransformationTaskForIde(sourceSet)?.get()
+                    locateOrRegisterCInteropMetadataDependencyTransformationTaskForIde(sourceSet)?.get()
                         ?: fail("Expected transformation task registered for '${sourceSet.name}'(forIde)")
                 )
             }.toSet(),
@@ -101,31 +101,33 @@ class CInteropMetadataDependencyTransformationTaskTest : MultiplatformExtensionT
         linuxArm64Main.dependsOn(linuxMain)
         linuxX64Main.dependsOn(linuxMain)
 
-        project.evaluate()
+        project.runLifecycleAwareTest {
+            KotlinPluginLifecycle.Stage.ReadyForExecution.await()
 
-        listOf(
-            "commonMain", "jvmMain", "linuxArm64Main", "linuxX64Main"
-        ).map { sourceSetName -> kotlin.sourceSets.getByName(sourceSetName) }.forEach { sourceSet ->
-            val task = project.locateOrRegisterCInteropMetadataDependencyTransformationTask(sourceSet as DefaultKotlinSourceSet)
-                ?: return@forEach
+            listOf(
+                "commonMain", "jvmMain", "linuxArm64Main", "linuxX64Main"
+            ).map { sourceSetName -> kotlin.sourceSets.getByName(sourceSetName) }.forEach { sourceSet ->
+                val task = locateOrRegisterCInteropMetadataDependencyTransformationTask(sourceSet as DefaultKotlinSourceSet)
+                    ?: return@forEach
 
-            assertFalse(
-                task.get().onlyIf.isSatisfiedBy(task.get() as TaskInternal),
-                "Expected task ${task.name} to be disabled (not a shared native source set)"
+                assertFalse(
+                    task.get().onlyIf.isSatisfiedBy(task.get() as TaskInternal),
+                    "Expected task ${task.name} to be disabled (not a shared native source set)"
+                )
+            }
+
+            val linuxMainTask = locateOrRegisterCInteropMetadataDependencyTransformationTaskForIde(linuxMain)
+                ?: fail("Expected transformation task registered for 'linuxMain'")
+
+            assertTrue(
+                linuxMainTask.get().onlyIf.isSatisfiedBy(linuxMainTask.get() as TaskInternal),
+                "Expected task ${linuxMainTask.name} to be enabled"
             )
         }
-
-        val linuxMainTask = project.locateOrRegisterCInteropMetadataDependencyTransformationTaskForIde(linuxMain)
-            ?: fail("Expected transformation task registered for 'linuxMain'")
-
-        assertTrue(
-            linuxMainTask.get().onlyIf.isSatisfiedBy(linuxMainTask.get() as TaskInternal),
-            "Expected task ${linuxMainTask.name} to be enabled"
-        )
     }
 
     @Test
-    fun `test IDE task outputs doesnt conflict`() {
+    fun `test IDE task outputs doesnt conflict`() = project.runLifecycleAwareTest {
         fun projectWithCinterops(name: String, parent: Project? = null) = buildProjectWithMPP(
             projectBuilder = { withName(name); if (parent != null) withParent(parent) }
         ) {
@@ -137,7 +139,7 @@ class CInteropMetadataDependencyTransformationTaskTest : MultiplatformExtensionT
             }
         }.also { it.evaluate() }
 
-        fun Project.transformationTaskOutputs(): Set<File> {
+        suspend fun Project.transformationTaskOutputs(): Set<File> {
             val kotlin = multiplatformExtension
             val nativeMain = kotlin.sourceSets.findByName("nativeMain") ?: fail("Expected source set 'nativeMain")
             val cinteropTransformationTaskProvider = locateOrRegisterCInteropMetadataDependencyTransformationTaskForIde(
@@ -154,7 +156,7 @@ class CInteropMetadataDependencyTransformationTaskTest : MultiplatformExtensionT
                 .minus(File(".gradle/kotlin/kotlinTransformedCInteropMetadataLibraries"))
         }
 
-        fun assertTasksOutputsDoesntIntersect(a: Project, b: Project) {
+        suspend fun assertTasksOutputsDoesntIntersect(a: Project, b: Project) {
             val outputsA = a.transformationTaskOutputs()
             val outputsB = b.transformationTaskOutputs()
 

@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.gradle.internal.isInIdeaSync
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.await
 import org.jetbrains.kotlin.gradle.plugin.ide.Idea222Api
 import org.jetbrains.kotlin.gradle.plugin.ide.ideaImportDependsOn
@@ -29,14 +30,9 @@ import javax.inject.Inject
 
 internal suspend fun Project.cInteropCommonizationEnabled(): Boolean {
     KotlinPluginLifecycle.Stage.AfterEvaluateBuildscript.await()
-
-    return if (PropertiesProvider(this).enableCInteropCommonization) {
-        true
-    } else if (!PropertiesProvider(this).isCinteropCommonizationSpecified) {
-        pluginManager.hasPlugin("org.jetbrains.kotlin.native.cocoapods")
-    } else {
-        false
-    }
+    return kotlinPropertiesProvider.enableCInteropCommonization
+        ?: kotlinPropertiesProvider.enableCInteropCommonizationSetByPlugin
+        ?: false
 }
 
 internal val Project.isIntransitiveMetadataConfigurationEnabled: Boolean

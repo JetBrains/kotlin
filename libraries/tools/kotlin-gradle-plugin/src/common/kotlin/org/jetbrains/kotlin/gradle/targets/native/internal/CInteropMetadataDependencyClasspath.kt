@@ -16,13 +16,14 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.metadataDependencyResolutionsOrEmp
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.metadataTransformation
 import org.jetbrains.kotlin.gradle.utils.filesProvider
+import org.jetbrains.kotlin.gradle.utils.future
 import java.io.File
 
-internal fun Project.createCInteropMetadataDependencyClasspath(sourceSet: DefaultKotlinSourceSet): FileCollection {
+internal suspend fun Project.createCInteropMetadataDependencyClasspath(sourceSet: DefaultKotlinSourceSet): FileCollection {
     return createCInteropMetadataDependencyClasspath(sourceSet, forIde = false)
 }
 
-internal fun Project.createCInteropMetadataDependencyClasspathForIde(sourceSet: DefaultKotlinSourceSet): FileCollection {
+internal suspend fun Project.createCInteropMetadataDependencyClasspathForIde(sourceSet: DefaultKotlinSourceSet): FileCollection {
     return createCInteropMetadataDependencyClasspath(sourceSet, forIde = true)
 }
 
@@ -30,7 +31,7 @@ internal fun Project.createCInteropMetadataDependencyClasspathForIde(sourceSet: 
  * @param forIde: A different task for dependency transformation will be used. This task will not use the regular 'build' directory
  * as transformation output to ensure IDE still being able to resolve the dependencies even when the project is cleaned.
  */
-internal fun Project.createCInteropMetadataDependencyClasspath(sourceSet: DefaultKotlinSourceSet, forIde: Boolean): FileCollection {
+internal suspend fun Project.createCInteropMetadataDependencyClasspath(sourceSet: DefaultKotlinSourceSet, forIde: Boolean): FileCollection {
     val dependencyTransformationTask = if (forIde) locateOrRegisterCInteropMetadataDependencyTransformationTaskForIde(sourceSet)
     else locateOrRegisterCInteropMetadataDependencyTransformationTask(sourceSet)
     if (dependencyTransformationTask == null) return project.files()
@@ -99,7 +100,7 @@ private fun Project.createCInteropMetadataDependencyClasspathFromAssociatedCompi
             .filter { (_, otherCommonizerTarget) -> otherCommonizerTarget.targets.containsAll(commonizerTarget.targets) }
             .minByOrNull { (_, otherCommonizerTarget) -> otherCommonizerTarget.targets.size } ?: return@files emptySet<File>()
 
-        createCInteropMetadataDependencyClasspath(associatedSourceSet, forIde)
+        project.future { createCInteropMetadataDependencyClasspath(associatedSourceSet, forIde) }.getOrThrow()
     }
 }
 
