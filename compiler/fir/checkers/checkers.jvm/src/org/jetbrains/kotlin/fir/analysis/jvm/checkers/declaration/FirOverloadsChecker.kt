@@ -14,10 +14,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.declarations.FirConstructor
-import org.jetbrains.kotlin.fir.declarations.FirFunction
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
-import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isAbstract
 import org.jetbrains.kotlin.fir.declarations.utils.isActual
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
@@ -29,8 +26,10 @@ object FirOverloadsChecker : FirFunctionChecker() {
     override fun check(declaration: FirFunction, context: CheckerContext, reporter: DiagnosticReporter) {
         val session = context.session
         val annotation = declaration.getAnnotationByClassId(JVM_OVERLOADS_CLASS_ID, session) ?: return
-        //todo need to have expect declaration here to check if it has default values
-        if (declaration.isActual) return
+
+        val ownerOfParametersWithDefaultValues = declaration.symbol.takeIf { !it.isActual }
+            ?: declaration.symbol.getSingleExpectForActualOrNull()
+            ?: return
 
         val containingDeclaration = declaration.getContainingClassSymbol(session)
         when {
@@ -45,9 +44,8 @@ object FirOverloadsChecker : FirFunctionChecker() {
                 reporter.reportOn(annotation.source, FirJvmErrors.OVERLOADS_ANNOTATION_CLASS_CONSTRUCTOR, context)
             !declaration.visibility.isPublicAPI && declaration.visibility != Visibilities.Internal ->
                 reporter.reportOn(annotation.source, FirJvmErrors.OVERLOADS_PRIVATE, context)
-            declaration.valueParameters.none { it.defaultValue != null } ->
+            ownerOfParametersWithDefaultValues.valueParameterSymbols.none { it.hasDefaultValue } ->
                 reporter.reportOn(annotation.source, FirJvmErrors.OVERLOADS_WITHOUT_DEFAULT_ARGUMENTS, context)
         }
     }
-
 }
