@@ -981,7 +981,6 @@ koverReport {
 }
 
 dependencies {
-    kover(project("analysis:analysis-api-fir"))
     kover(project("compiler:fir:analysis-tests"))
     kover(project("compiler:fir:checkers"))
     kover(project("compiler:fir:cones"))
@@ -997,7 +996,6 @@ dependencies {
     kover(project("compiler:fir:resolve"))
     kover(project("compiler:fir:semantics"))
     kover(project("compiler:fir:tree"))
-    kover(project("compiler:incremental-compilation-impl"))
 }
 
 tasks.withType(org.gradle.api.tasks.testing.Test::class).all {

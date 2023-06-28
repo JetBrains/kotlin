@@ -31,10 +31,6 @@ subprojects {
     }
 }
 
-//subprojects {
-//    apply(plugin = "org.jetbrains.kotlinx.kover")
-//}
-
 projectTest {
     ignoreFailures = true
 }

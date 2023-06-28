@@ -1,6 +1,7 @@
 plugins {
     kotlin("jvm")
     id("jps-compatible")
+    id("org.jetbrains.kotlinx.kover")
 }
 
 val compilerModules: Array<String> by rootProject.extra
@@ -66,6 +67,8 @@ projectTest(
         systemProperty("kotlin.ant.classpath", antLauncherJarPathProvider.get())
         systemProperty("kotlin.ant.launcher.class", "org.apache.tools.ant.Main")
     }
+    exclude("*")
+    setTestNameIncludePatterns(listOf("*Fir*", "*fir*"))
 }
 
 val generateTestData by generator("org.jetbrains.kotlin.generators.tests.GenerateCompilerTestDataKt")

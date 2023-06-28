@@ -57,16 +57,3 @@ projectTest("testJvmICWithJdk11", parallel = true) {
 }
 
 testsJar()
-
-koverReport {
-    defaults {
-        filters {
-            html {
-                includes {
-                    classes("*IncrementalFir*")
-                }
-            }
-        }
-    }
-
-}
