@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
+import org.jetbrains.kotlin.ir.backend.js.utils.typeArguments
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
@@ -94,7 +95,7 @@ abstract class AbstractBlockDecomposerLowering(private val context: JsCommonBack
 }
 
 class BlockDecomposerTransformer(
-    private val context: CommonBackendContext,
+    private val context: JsCommonBackendContext,
     private val unreachableExpression: () -> IrExpression
 ) : IrElementTransformerVoid() {
     private lateinit var function: IrDeclarationParent
@@ -110,6 +111,9 @@ class BlockDecomposerTransformer(
     private val unitValue get() = JsIrBuilder.buildGetObjectValue(unitType, context.irBuiltIns.unitClass)
 
     private val booleanNotSymbol = context.irBuiltIns.booleanNotSymbol
+
+    private val boxIntrinsic = context.inlineClassesUtils.boxIntrinsic
+    private val unboxIntrinsic = context.inlineClassesUtils.unboxIntrinsic
 
     override fun visitScript(declaration: IrScript): IrStatement {
         function = declaration
@@ -537,15 +541,51 @@ class BlockDecomposerTransformer(
                     value.isPure(anyVariable = false, context = context) -> value
                     else -> {
                         // TODO: do not wrap if value is pure (const, variable, etc)
-                        val irVar = makeTempVar(value.type, value)
-                        newStatements += irVar
-                        JsIrBuilder.buildGetValue(irVar.symbol)
+                        val (newArg, tempVar) = mapArgument(value)
+                        newStatements += tempVar
+                        newArg
                     }
                 }
 
                 arguments += newArg
             }
             return arguments
+        }
+
+        /**
+         * Move the passing argument and store it in a temporary variable.
+         * However, the box and unbox intrinsics should be preserved in the call.
+         * They can be used later for optimizations, for example, in [EqualityAndComparisonCallsTransformer].
+         * Example:
+         *      foo(boxIntrinsic(<expr>))
+         * should be transformed to:
+         *      var tmp = <expr>
+         *      foo(boxIntrinsic(tmp))
+         */
+        private fun mapArgument(arg: IrExpression): Pair<IrExpression, IrVariable> {
+            var saveToTmp = arg
+            var rootIntrinsicCall: IrCall? = null
+            var lastIntrinsicCall: IrCall? = null
+            while (saveToTmp is IrCall && (saveToTmp.symbol == boxIntrinsic || saveToTmp.symbol == unboxIntrinsic)) {
+                if (lastIntrinsicCall == null) {
+                    lastIntrinsicCall = JsIrBuilder.buildCall(saveToTmp.symbol, saveToTmp.type, saveToTmp.typeArguments.filterNotNull())
+                    rootIntrinsicCall = lastIntrinsicCall
+                } else {
+                    val nextCall = JsIrBuilder.buildCall(saveToTmp.symbol)
+                    lastIntrinsicCall.putValueArgument(0, nextCall)
+                    lastIntrinsicCall = nextCall
+                }
+                saveToTmp = saveToTmp.getValueArgument(0) ?: error("expect passing 1 argument to boxing intrinsic")
+            }
+
+            val irTempVar = makeTempVar(saveToTmp.type, saveToTmp)
+            val irGetTempVar = JsIrBuilder.buildGetValue(irTempVar.symbol)
+            val newArg = lastIntrinsicCall?.let {
+                it.putValueArgument(0, irGetTempVar)
+                rootIntrinsicCall
+            } ?: irGetTempVar
+
+            return newArg to irTempVar
         }
 
         // TODO: remove this when vararg is lowered

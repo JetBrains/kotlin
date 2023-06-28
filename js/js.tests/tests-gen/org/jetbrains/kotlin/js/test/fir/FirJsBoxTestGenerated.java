@@ -247,6 +247,12 @@ public class FirJsBoxTestGenerated extends AbstractFirJsBoxTest {
         }
 
         @Test
+        @TestMetadata("charNoBoxing.kt")
+        public void testCharNoBoxing() throws Exception {
+            runTest("js/js.translator/testData/box/char/charNoBoxing.kt");
+        }
+
+        @Test
         @TestMetadata("charRanges.kt")
         public void testCharRanges() throws Exception {
             runTest("js/js.translator/testData/box/char/charRanges.kt");

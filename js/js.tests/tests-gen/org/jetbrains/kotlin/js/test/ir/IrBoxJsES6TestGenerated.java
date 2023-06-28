@@ -247,6 +247,12 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
         }
 
         @Test
+        @TestMetadata("charNoBoxing.kt")
+        public void testCharNoBoxing() throws Exception {
+            runTest("js/js.translator/testData/box/char/charNoBoxing.kt");
+        }
+
+        @Test
         @TestMetadata("charRanges.kt")
         public void testCharRanges() throws Exception {
             runTest("js/js.translator/testData/box/char/charRanges.kt");
