@@ -70,6 +70,7 @@ fun printUsage() {
     println("\t-repository <path>\twork with the specified repository")
     println("\t-target <name>\tinspect specifics of the given target")
     println("\t-print-signatures [true|false]\tprint ID signature for every declaration (only for \"contents\" and \"ir\" commands)")
+    println("\t-partial-linkage [true|false]\tprint IR with or without partial linkage (only for \"ir\" command)")
 }
 
 private fun parseArgs(args: Array<String>): Map<String, List<String>> {
@@ -111,15 +112,15 @@ fun error(text: String): Nothing {
 }
 
 object KlibToolLogger : Logger, IrMessageLogger {
-    override fun warning(message: String) = org.jetbrains.kotlin.cli.klib.warn(message)
-    override fun error(message: String) = org.jetbrains.kotlin.cli.klib.warn(message)
+    override fun warning(message: String) = warn(message)
+    override fun error(message: String) = warn(message)
     override fun fatal(message: String) = org.jetbrains.kotlin.cli.klib.error(message)
     override fun log(message: String) = println(message)
     override fun report(severity: IrMessageLogger.Severity, message: String, location: IrMessageLogger.Location?) {
         when (severity) {
-            IrMessageLogger.Severity.INFO -> log("$message")
-            IrMessageLogger.Severity.WARNING -> warning("$message")
-            IrMessageLogger.Severity.ERROR -> error("$message")
+            IrMessageLogger.Severity.INFO -> log(message)
+            IrMessageLogger.Severity.WARNING -> warning(message)
+            IrMessageLogger.Severity.ERROR -> error(message)
         }
     }
 }
