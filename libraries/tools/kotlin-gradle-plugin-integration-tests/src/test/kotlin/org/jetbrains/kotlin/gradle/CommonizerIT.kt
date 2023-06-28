@@ -461,6 +461,42 @@ open class CommonizerIT : KGPBaseTest() {
         }
     }
 
+    @DisplayName("Cinterop task should not be configured if commonization is configured")
+    @GradleTest
+    fun testCommonizationTaskToCInteropTaskConfigurationAvoidance(gradleVersion: GradleVersion) {
+        nativeProject("commonizeCurlInterop", gradleVersion) {
+            configureCommonizerTargets()
+
+            buildGradleKts.modify { content ->
+                """
+                    |import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+                    |
+                    |$content
+                    |
+                    |val interopTasks = mutableListOf<TaskProvider<*>>() 
+                    |
+                    |kotlin.targets.withType<KotlinNativeTarget>().configureEach {
+                    |    compilations.configureEach {
+                    |        cinterops.configureEach {
+                    |            val provider = project.tasks.named(interopProcessingTaskName)
+                    |            interopTasks.add(provider)
+                    |            provider.configure {
+                    |                throw GradleException("Interop task should not be configured")
+                    |            }
+                    |        }
+                    |    }
+                    |}
+                    |
+                    |tasks.getByName("commonizeCInterop")
+                    |
+                    |if (interopTasks.isEmpty()) throw GradleException("There should be at least one interop task") 
+                """.trimMargin()
+            }
+
+            build("help")
+        }
+    }
+
     @DisplayName("KT-51517 commonization with transitive cinterop")
     @GradleTest
     fun testCommonizationWithTransitiveCinterop(gradleVersion: GradleVersion) {
