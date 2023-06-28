@@ -285,7 +285,7 @@ class TemplateCompiler(
 
   init {
     synchronized(lock) {
-      if (!templatesFolder.exists()) templatesFolder.createDirectory()
+      if (!templatesFolder.exists()) try { templatesFolder.createDirectory() } catch (_: Exception) { }
     }
 
     templatesFolder.deleteOnExit()
