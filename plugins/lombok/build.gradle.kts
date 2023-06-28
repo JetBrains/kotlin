@@ -3,6 +3,7 @@ description = "Lombok compiler plugin"
 plugins {
     kotlin("jvm")
     id("jps-compatible")
+    id("org.jetbrains.kotlinx.kover")
 }
 
 dependencies {
@@ -67,6 +68,7 @@ projectTest(jUnitMode = JUnitMode.JUnit5) {
             ?.let { systemProperty("org.jetbrains.kotlin.test.guava-location", it) }
 
     }
+    setTestNameIncludePatterns(listOf("*Fir*", "Fir*", "*fir*"))
 }
 
 publish()

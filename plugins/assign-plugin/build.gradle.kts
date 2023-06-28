@@ -3,6 +3,7 @@ description = "Kotlin Assignment Compiler Plugin"
 plugins {
     kotlin("jvm")
     id("jps-compatible")
+    id("org.jetbrains.kotlinx.kover")
 }
 
 dependencies {
@@ -51,4 +52,5 @@ projectTest(parallel = true) {
     dependsOn(":dist")
     workingDir = rootDir
     useJUnitPlatform()
+    setTestNameIncludePatterns(listOf("*Fir*", "*fir*"))
 }

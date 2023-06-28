@@ -30,7 +30,3 @@ subprojects {
         }
     }
 }
-
-projectTest {
-    ignoreFailures = true
-}

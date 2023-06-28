@@ -67,8 +67,7 @@ projectTest(
         systemProperty("kotlin.ant.classpath", antLauncherJarPathProvider.get())
         systemProperty("kotlin.ant.launcher.class", "org.apache.tools.ant.Main")
     }
-    exclude("*")
-    setTestNameIncludePatterns(listOf("*Fir*", "*fir*"))
+    setTestNameIncludePatterns(listOf("*Fir*", "Fir*", "*fir*"))
 }
 
 val generateTestData by generator("org.jetbrains.kotlin.generators.tests.GenerateCompilerTestDataKt")

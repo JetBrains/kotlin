@@ -3,6 +3,7 @@ description = "Parcelize compiler plugin"
 plugins {
     kotlin("jvm")
     id("jps-compatible")
+    id("org.jetbrains.kotlinx.kover")
 }
 
 val robolectricClasspath by configurations.creating
@@ -103,4 +104,5 @@ projectTest(jUnitMode = JUnitMode.JUnit5) {
         println(filter.excludePatterns)
         println(filter.includePatterns)
     }
+    setTestNameIncludePatterns(listOf("*Fir*", "Fir*", "*fir*"))
 }

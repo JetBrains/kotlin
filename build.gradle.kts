@@ -957,47 +957,45 @@ afterEvaluate {
     checkExpectedGradlePropertyValues()
 }
 
-koverReport {
-    // configure default reports - for Kotlin/JVM or Kotlin/MPP projects or merged android variants
-    defaults {
-        // configure HTML report
-        html {
-            // custom header in HTML reports, project path by default
-            title = "Kotlin Compiler"
-
-            // custom charset in HTML report files, used return value of `Charset.defaultCharset()` for Kover or UTF-8 for JaCoCo by default.
-            charset = "UTF-8"
-
-            //  generate a HTML report when running the `check` task
-            onCheck = false
-
-            filters {
-                includes {
-                    classes("org.jetbrains.kotlin.*")
-                }
-            }
-        }
-    }
-}
-
 dependencies {
-    kover(project("compiler:fir:analysis-tests"))
-    kover(project("compiler:fir:checkers"))
-    kover(project("compiler:fir:cones"))
-    kover(project("compiler:fir:dump"))
-    kover(project("compiler:fir:entrypoint"))
-    kover(project("compiler:fir:fir2ir"))
-    kover(project("compiler:fir:fir-deserialization"))
-    kover(project("compiler:fir:fir-serialization"))
-    kover(project("compiler:fir:java"))
-    kover(project("compiler:fir:plugin-utils"))
-    kover(project("compiler:fir:providers"))
-    kover(project("compiler:fir:raw-fir"))
-    kover(project("compiler:fir:resolve"))
-    kover(project("compiler:fir:semantics"))
-    kover(project("compiler:fir:tree"))
+    kover(project(":compiler:fir:analysis-tests"))
+    kover(project(":compiler:fir:checkers"))
+    kover(project(":compiler:fir:cones"))
+    kover(project(":compiler:fir:dump"))
+    kover(project(":compiler:fir:entrypoint"))
+    kover(project(":compiler:fir:fir2ir"))
+    kover(project(":compiler:fir:fir-deserialization"))
+    kover(project(":compiler:fir:fir-serialization"))
+    kover(project(":compiler:fir:java"))
+    kover(project(":compiler:fir:plugin-utils"))
+    kover(project(":compiler:fir:providers"))
+    kover(project(":compiler:fir:raw-fir"))
+    kover(project(":compiler:fir:resolve"))
+    kover(project(":compiler:fir:semantics"))
+    kover(project(":compiler:fir:tree"))
+    kover(project(":analysis:analysis-api-fir"))
+    kover(project(":compiler:incremental-compilation-impl"))
+    kover(project(":kotlin-allopen-compiler-plugin"))
+    kover(project(":kotlin-assignment-compiler-plugin"))
+    kover(project(":plugins:fir-plugin-prototype"))
+    kover(project(":kotlinx-serialization-compiler-plugin"))
+    kover(project(":kotlin-noarg-compiler-plugin"))
+    kover(project(":kotlin-sam-with-receiver-compiler-plugin"))
+//    kover(project(":native:native.tests"))
 }
 
 tasks.withType(org.gradle.api.tasks.testing.Test::class).all {
     ignoreFailures = true
+}
+
+koverReport {
+    defaults {
+        html {
+            filters {
+                includes {
+                    packages("org.jetbrains.kotlin.fir.*")
+                }
+            }
+        }
+    }
 }
