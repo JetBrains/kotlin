@@ -78,6 +78,7 @@ public actual data class MatchGroup(public actual val value: String, public val 
  *
  * For pattern syntax reference see [Pattern].
  */
+@Suppress("NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS") // Counterpart for @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual class Regex
 @PublishedApi
 internal constructor(private val nativePattern: Pattern) : Serializable {

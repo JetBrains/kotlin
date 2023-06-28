@@ -39,6 +39,9 @@ interface ExpectActualMatchingContext<T : DeclarationSymbolMarker> : TypeSystemC
     val enumConstructorsAreAlwaysCompatible: Boolean
         get() = false
 
+    // Try to drop it once KT-61105 is fixed
+    val shouldCheckAbsenceOfDefaultParamsInActual: Boolean
+
     /**
      * This flag determines, how visibilities for classes/typealiases will be matched
      * - `false` means that visibilities should be identical
@@ -114,6 +117,11 @@ interface ExpectActualMatchingContext<T : DeclarationSymbolMarker> : TypeSystemC
     val CallableSymbolMarker.returnType: KotlinTypeMarker
     val CallableSymbolMarker.typeParameters: List<TypeParameterSymbolMarker>
     val FunctionSymbolMarker.valueParameters: List<ValueParameterSymbolMarker>
+
+    /**
+     * Returns all symbols that are overridden by [this] symbol
+     */
+    fun FunctionSymbolMarker.allOverriddenDeclarationsRecursive(): Sequence<CallableSymbolMarker>
 
     val CallableSymbolMarker.valueParameters: List<ValueParameterSymbolMarker>
         get() = (this as? FunctionSymbolMarker)?.valueParameters ?: emptyList()

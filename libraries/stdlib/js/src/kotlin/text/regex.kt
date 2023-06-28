@@ -61,6 +61,7 @@ public actual operator fun MatchGroupCollection.get(name: String): MatchGroup? {
  *
  * @constructor Creates a regular expression from the specified [pattern] string and the specified set of [options].
  */
+@Suppress("NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS") // Counterpart for @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual class Regex actual constructor(pattern: String, options: Set<RegexOption>) {
 
     /** Creates a regular expression from the specified [pattern] string and the specified single [option].  */

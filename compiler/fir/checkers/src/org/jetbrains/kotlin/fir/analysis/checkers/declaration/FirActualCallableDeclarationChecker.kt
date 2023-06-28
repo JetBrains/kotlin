@@ -22,19 +22,7 @@ object FirActualCallableDeclarationChecker : FirCallableDeclarationChecker() {
     override fun check(declaration: FirCallableDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
         if (!declaration.isActual) return
 
-        if (declaration is FirFunction) {
-            checkActualFunctionWithDefaultArguments(declaration, reporter, context)
-        }
         checkReturnTypes(declaration, context, reporter)
-    }
-
-    private fun checkActualFunctionWithDefaultArguments(function: FirFunction, reporter: DiagnosticReporter, context: CheckerContext) {
-        if (function.symbol.isAnnotationConstructor(context.session)) return
-        for (valueParameter in function.valueParameters) {
-            if (valueParameter.defaultValue != null) {
-                reporter.reportOn(valueParameter.source, FirErrors.ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS, context)
-            }
-        }
     }
 
     private fun checkReturnTypes(callableDeclaration: FirCallableDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {

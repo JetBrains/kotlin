@@ -148,6 +148,11 @@ object SourceElementPositioningStrategies {
         PositioningStrategies.PARAMETER_DEFAULT_VALUE
     )
 
+    val PARAMETERS_WITH_DEFAULT_VALUE = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.PARAMETERS_WITH_DEFAULT_VALUE,
+        PositioningStrategies.PARAMETERS_WITH_DEFAULT_VALUE
+    )
+
     val PARAMETER_VARARG_MODIFIER = SourceElementPositioningStrategy(
         LightTreePositioningStrategies.PARAMETER_VARARG_MODIFIER,
         PositioningStrategies.PARAMETER_VARARG_MODIFIER

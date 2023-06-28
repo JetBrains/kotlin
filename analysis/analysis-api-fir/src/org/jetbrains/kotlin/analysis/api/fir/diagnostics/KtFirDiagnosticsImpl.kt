@@ -2957,7 +2957,7 @@ internal class ActualTypeAliasToNothingImpl(
 internal class ActualFunctionWithDefaultArgumentsImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,
-) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.ActualFunctionWithDefaultArguments
+) : KtAbstractFirDiagnostic<KtFunction>(firDiagnostic, token), KtFirDiagnostic.ActualFunctionWithDefaultArguments
 
 internal class DefaultArgumentsInExpectWithActualTypealiasImpl(
     override val expectClassSymbol: KtClassLikeSymbol,

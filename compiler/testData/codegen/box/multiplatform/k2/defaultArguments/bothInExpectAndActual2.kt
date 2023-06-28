@@ -13,6 +13,7 @@ expect interface J : I
 // MODULE: platform()()(common)
 // FILE: platform.kt
 
+@Suppress("NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS") // Counterpart for @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 actual interface I {
     // This test should be updated once KT-22818 is fixed; default values are not allowed in the actual function
     @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")

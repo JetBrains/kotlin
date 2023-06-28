@@ -82,6 +82,7 @@ public actual operator fun MatchGroupCollection.get(name: String): MatchGroup? {
  *
  * Note that in the future, the behavior of regular expression matching and replacement functions can be altered to match JVM implementation behavior where differences exist.
  */
+@Suppress("NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS") // Counterpart for @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual class Regex internal constructor(internal val nativePattern: Pattern) {
 
     internal enum class Mode {

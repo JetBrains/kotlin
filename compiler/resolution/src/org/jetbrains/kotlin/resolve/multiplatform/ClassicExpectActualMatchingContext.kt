@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.resolve.calls.mpp.ExpectActualMatchingContext
 import org.jetbrains.kotlin.resolve.calls.mpp.ExpectActualMatchingContext.AnnotationCallInfo
 import org.jetbrains.kotlin.resolve.checkers.OptInNames
 import org.jetbrains.kotlin.resolve.descriptorUtil.*
+import org.jetbrains.kotlin.resolve.findTopMostOverriddenDescriptors
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.getDescriptorsFiltered
@@ -34,9 +35,16 @@ import org.jetbrains.kotlin.utils.addToStdlib.castAll
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 import org.jetbrains.kotlin.utils.keysToMap
 
-class ClassicExpectActualMatchingContext(val platformModule: ModuleDescriptor) : ExpectActualMatchingContext<MemberDescriptor>,
-    TypeSystemContext by ClassicTypeSystemContextForCS(platformModule.builtIns, KotlinTypeRefiner.Default)
-{
+class ClassicExpectActualMatchingContext(
+    val platformModule: ModuleDescriptor,
+    /**
+     * You want to enable this check only in expect-actual matcher checker. And disable everywhere else (especially on backends)
+     *
+     * Otherwise, it won't be possible to suppress the compilation error in user code
+     */
+    override val shouldCheckAbsenceOfDefaultParamsInActual: Boolean = false
+) : ExpectActualMatchingContext<MemberDescriptor>,
+    TypeSystemContext by ClassicTypeSystemContextForCS(platformModule.builtIns, KotlinTypeRefiner.Default) {
     override val shouldCheckReturnTypesOfCallables: Boolean
         get() = true
 
@@ -194,6 +202,12 @@ class ClassicExpectActualMatchingContext(val platformModule: ModuleDescriptor) :
         get() = asDescriptor().isCrossinline
     override val ValueParameterSymbolMarker.hasDefaultValue: Boolean
         get() = asDescriptor().declaresDefaultValue()
+    override fun FunctionSymbolMarker.allOverriddenDeclarationsRecursive(): Sequence<CallableSymbolMarker> =
+        (sequenceOf(asDescriptor()) + asDescriptor().overriddenTreeAsSequence(useOriginal = true))
+            // Tests work even if you don't filter out fake-overrides. Filtering fake-overrides is needed because
+            // the returned descriptors are compared by `equals`. And `equals` for fake-overrides is weird.
+            // I didn't manage to invent a test that would check this condition
+            .filter { it.kind.isReal }
 
     override fun CallableSymbolMarker.isAnnotationConstructor(): Boolean {
         val descriptor = safeAsDescriptor<ConstructorDescriptor>() ?: return false
