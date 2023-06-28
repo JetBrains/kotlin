@@ -42,6 +42,7 @@ plugins {
     if (kotlinBuildProperties.isKotlinNativeEnabled) {
         id("kotlin.native.build-tools-conventions") apply false
     }
+    id("gradle-doctor")
 }
 
 pill {
