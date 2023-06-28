@@ -45,7 +45,7 @@ fun box(): String {
         .convert { timestamp }.with { LocalDateTime.parse(it, format) }
         .sortBy { char and timestamp }
         .add("tsDiff") { diff(ChronoUnit.MINUTES) { timestamp }?.let { it > 20  } ?: true }
-//        .add("charDiff") { diff { char }?.let { it != 0 } ?: true }
+        .add("charDiff") { diff { char }?.let { it != 0 } ?: true }
 
     df1.print()
     return "OK"
