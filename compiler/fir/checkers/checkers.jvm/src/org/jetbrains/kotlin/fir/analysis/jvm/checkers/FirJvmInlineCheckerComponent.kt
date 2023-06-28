@@ -5,19 +5,15 @@
 
 package org.jetbrains.kotlin.fir.analysis.jvm.checkers
 
-import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.FirInlineCheckerPlatformSpecificComponent
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirInlineDeclarationChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.isLocalMember
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 
 class FirJvmInlineCheckerComponent : FirInlineCheckerPlatformSpecificComponent() {
     override fun isGenerallyOk(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter): Boolean {
@@ -29,8 +25,6 @@ class FirJvmInlineCheckerComponent : FirInlineCheckerPlatformSpecificComponent()
             true
         }
     }
-
-    override val inlineVisitor get() = ::JvmInlineVisitor
 
     override fun checkSuspendFunctionalParameterWithDefaultValue(
         param: FirValueParameter,
@@ -66,36 +60,6 @@ class FirJvmInlineCheckerComponent : FirInlineCheckerPlatformSpecificComponent()
                     context
                 )
             }
-        }
-    }
-}
-
-class JvmInlineVisitor(
-    inlineFunction: FirFunction,
-    inlineFunEffectiveVisibility: EffectiveVisibility,
-    inalienableParameters: List<FirValueParameterSymbol>,
-    session: FirSession,
-    reporter: DiagnosticReporter
-) : FirInlineDeclarationChecker.BasicInlineVisitor(
-    inlineFunction,
-    inlineFunEffectiveVisibility,
-    inalienableParameters,
-    session,
-    reporter
-) {
-    override fun visitRegularClass(regularClass: FirRegularClass, data: CheckerContext) {
-        if (!regularClass.classKind.isSingleton && data.containingDeclarations.lastOrNull() === inlineFunction) {
-            reporter.reportOn(regularClass.source, FirErrors.NOT_YET_SUPPORTED_IN_INLINE, "Local classes", data)
-        } else {
-            super.visitRegularClass(regularClass, data)
-        }
-    }
-
-    override fun visitSimpleFunction(simpleFunction: FirSimpleFunction, data: CheckerContext) {
-        if (data.containingDeclarations.lastOrNull() === inlineFunction) {
-            reporter.reportOn(simpleFunction.source, FirErrors.NOT_YET_SUPPORTED_IN_INLINE, "Local functions", data)
-        } else {
-            super.visitSimpleFunction(simpleFunction, data)
         }
     }
 }

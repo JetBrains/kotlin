@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.context
 
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirInlineDeclarationChecker
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.expressions.FirGetClassCall
@@ -65,6 +66,10 @@ abstract class CheckerContextForProvider(
     abstract fun enterContractBody(): CheckerContextForProvider
 
     abstract fun exitContractBody(): CheckerContextForProvider
+
+    abstract fun setInlineFunctionBodyContext(context: FirInlineDeclarationChecker.InlineFunctionBodyContext): CheckerContextForProvider
+
+    abstract fun unsetInlineFunctionBodyContext(): CheckerContextForProvider
 
     abstract fun enterFile(file: FirFile): CheckerContextForProvider
 

@@ -6,17 +6,17 @@ inline fun inlineFun(lambda: () -> String) = lambda()
 fun noInlineFun(lambda: () -> String) = lambda()
 
 
-inline fun default0_1(lambda: () -> String, dlambda: () -> String = { lambda; "OK" }) {
+inline fun default0_1(lambda: () -> String, dlambda: () -> String = { <!USAGE_IS_NOT_INLINABLE!>lambda<!>; "OK" }) {
     lambda() + dlambda()
 }
 
-inline fun default0_2(lambda: () -> String, dlambda: () -> String = { noInlineFun (lambda) }) {
+inline fun default0_2(lambda: () -> String, dlambda: () -> String = { noInlineFun (<!USAGE_IS_NOT_INLINABLE!>lambda<!>) }) {
     lambda() + dlambda()
 }
 
 
 
-inline fun default0(lambda: () -> String, dlambda: () -> String = { noInlineFun (lambda) }) {
+inline fun default0(lambda: () -> String, dlambda: () -> String = { noInlineFun (<!USAGE_IS_NOT_INLINABLE!>lambda<!>) }) {
     lambda() + dlambda()
 }
 

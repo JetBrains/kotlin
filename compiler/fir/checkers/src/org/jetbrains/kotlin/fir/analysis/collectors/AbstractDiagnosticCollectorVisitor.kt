@@ -9,8 +9,11 @@ import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.PrivateForInline
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContextForProvider
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.createInlineFunctionBodyContext
+import org.jetbrains.kotlin.fir.contracts.FirContractDescription
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildReceiverParameter
+import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirContractCallBlock
 import org.jetbrains.kotlin.fir.resolve.defaultType
@@ -105,7 +108,9 @@ abstract class AbstractDiagnosticCollectorVisitor(
 
     override fun visitSimpleFunction(simpleFunction: FirSimpleFunction, data: Nothing?) {
         withAnnotationContainer(simpleFunction) {
-            visitWithDeclarationAndReceiver(simpleFunction, simpleFunction.name, simpleFunction.receiverParameter)
+            withInlineFunctionBodyIfApplicable(simpleFunction, simpleFunction.isInline) {
+                visitWithDeclarationAndReceiver(simpleFunction, simpleFunction.name, simpleFunction.receiverParameter)
+            }
         }
     }
 
@@ -145,7 +150,9 @@ abstract class AbstractDiagnosticCollectorVisitor(
     override fun visitPropertyAccessor(propertyAccessor: FirPropertyAccessor, data: Nothing?) {
         val property = context.containingDeclarations.last() as FirProperty
         withAnnotationContainer(propertyAccessor) {
-            visitWithDeclarationAndReceiver(propertyAccessor, property.name, property.receiverParameter)
+            withInlineFunctionBodyIfApplicable(propertyAccessor, propertyAccessor.isInline || property.isInline) {
+                visitWithDeclarationAndReceiver(propertyAccessor, property.name, property.receiverParameter)
+            }
         }
     }
 
@@ -186,6 +193,12 @@ abstract class AbstractDiagnosticCollectorVisitor(
             }
         } else {
             visitExpression(block, data)
+        }
+    }
+
+    override fun visitContractDescription(contractDescription: FirContractDescription, data: Nothing?) {
+        suppressInlineFunctionBodyContext {
+            visitElement(contractDescription, data)
         }
     }
 
@@ -282,6 +295,20 @@ abstract class AbstractDiagnosticCollectorVisitor(
                 receiverParameter?.typeRef?.coneType
             ) {
                 visitNestedElements(declaration)
+            }
+        }
+    }
+
+    @OptIn(PrivateForInline::class)
+    private inline fun <T> withInlineFunctionBodyIfApplicable(function: FirFunction, isInline: Boolean, block: () -> T): T {
+        return try {
+            if (isInline) {
+                context = context.setInlineFunctionBodyContext(createInlineFunctionBodyContext(function, context.session))
+            }
+            block()
+        } finally {
+            if (isInline) {
+                context = context.unsetInlineFunctionBodyContext()
             }
         }
     }
@@ -406,6 +433,20 @@ abstract class AbstractDiagnosticCollectorVisitor(
                     existingContext.dropAnnotationContainer()
                 }
                 context = existingContext
+            }
+        }
+    }
+
+    @OptIn(PrivateForInline::class)
+    private inline fun <R> suppressInlineFunctionBodyContext(block: () -> R): R {
+        val oldInlineFunctionBodyContext = context.inlineFunctionBodyContext?.also {
+            context = context.unsetInlineFunctionBodyContext()
+        }
+        return try {
+            block()
+        } finally {
+            oldInlineFunctionBodyContext?.let {
+                context = context.setInlineFunctionBodyContext(it)
             }
         }
     }

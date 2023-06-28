@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirInlineDeclarationChecker
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
@@ -18,8 +17,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 
 abstract class FirInlineCheckerPlatformSpecificComponent : FirSessionComponent {
     open fun isGenerallyOk(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter): Boolean = true
-
-    open val inlineVisitor get() = FirInlineDeclarationChecker::BasicInlineVisitor
 
     open fun checkSuspendFunctionalParameterWithDefaultValue(
         param: FirValueParameter,

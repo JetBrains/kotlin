@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers
 
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirInlineBodyQualifiedAccessExpressionChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirInlineBodyResolvedQualifierChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirInlineBodyVariableAssignmentChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.*
 import org.jetbrains.kotlin.fir.analysis.checkers.syntax.FirCommaInWhenConditionChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.syntax.FirConfusingWhenBranchSyntaxChecker
@@ -49,6 +52,7 @@ object CommonExpressionCheckers : ExpressionCheckers() {
             FirSuspendCallChecker,
             FirLateinitIntrinsicApplicabilityChecker,
             FirAbstractClassInstantiationChecker,
+            FirInlineBodyQualifiedAccessExpressionChecker,
         )
 
     override val callCheckers: Set<FirCallChecker>
@@ -82,6 +86,7 @@ object CommonExpressionCheckers : ExpressionCheckers() {
         get() = setOf(
             FirReassignmentAndInvisibleSetterChecker,
             FirAssignmentTypeMismatchChecker,
+            FirInlineBodyVariableAssignmentChecker,
         )
 
     override val whenExpressionCheckers: Set<FirWhenExpressionChecker>
@@ -152,6 +157,7 @@ object CommonExpressionCheckers : ExpressionCheckers() {
             FirOptInUsageQualifierChecker,
             FirDeprecatedQualifierChecker,
             FirVisibilityQualifierChecker,
+            FirInlineBodyResolvedQualifierChecker,
         )
 
     override val equalityOperatorCallCheckers: Set<FirEqualityOperatorCallChecker>
