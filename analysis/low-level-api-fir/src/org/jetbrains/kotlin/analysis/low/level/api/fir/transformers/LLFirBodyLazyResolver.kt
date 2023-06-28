@@ -161,6 +161,7 @@ private class LLFirBodyTargetResolver(
             is FirConstructor -> resolve(target, BodyStateKeepers.CONSTRUCTOR)
             is FirFunction -> resolve(target, BodyStateKeepers.FUNCTION)
             is FirProperty -> resolve(target, BodyStateKeepers.PROPERTY)
+            is FirField -> resolve(target, BodyStateKeepers.FIELD)
             is FirVariable -> resolve(target, BodyStateKeepers.VARIABLE)
             is FirAnonymousInitializer -> resolve(target, BodyStateKeepers.ANONYMOUS_INITIALIZER)
             is FirScript -> resolve(target, BodyStateKeepers.SCRIPT)
@@ -217,6 +218,11 @@ internal object BodyStateKeepers {
         if (!isCallableWithSpecialBody(variable)) {
             add(FirVariable::initializerIfUnresolved, FirVariable::replaceInitializer, ::expressionGuard)
         }
+    }
+
+    val FIELD: StateKeeper<FirField> = stateKeeper {
+        add(VARIABLE)
+        add(FirField::controlFlowGraphReference, FirField::replaceControlFlowGraphReference)
     }
 
     val PROPERTY: StateKeeper<FirProperty> = stateKeeper { property ->
