@@ -422,8 +422,16 @@ class ExpressionCodegen(
             }
         }
 
-        if (expression is IrInlinedFunctionBlock && expression.isFunctionInlining()) {
-            markLineNumberAfterInlineIfNeeded(isInsideCondition)
+        if (expression is IrInlinedFunctionBlock) {
+            // This block must be executed after `writeLocalVariablesInTable`
+            if (expression.isFunctionInlining()) {
+                val callLineNumber = lineNumberMapper.getLineNumberForOffset(expression.inlineCall.startOffset)
+                // takeUnless is required to avoid markLineNumberAfterInlineIfNeeded for inline only
+                lastLineNumber = callLineNumber.takeUnless { noLineNumberScope } ?: -1
+                markLineNumberAfterInlineIfNeeded(isInsideCondition)
+            } else {
+                lineNumberMapper.setUpAdditionalLineNumbersAfterLambdaInlining(expression)
+            }
         }
 
         if (isSynthesizedInitBlock) {
@@ -482,7 +490,6 @@ class ExpressionCodegen(
     private fun visitInlinedFunctionBlock(inlinedBlock: IrInlinedFunctionBlock, data: BlockInfo): PromisedValue {
         val inlineCall = inlinedBlock.inlineCall
         val callee = inlinedBlock.inlineDeclaration as? IrFunction
-        val callLineNumber = lineNumberMapper.getLineNumberForOffset(inlineCall.startOffset)
 
         // 1. Evaluate NON DEFAULT arguments from inline function call
         inlinedBlock.getNonDefaultAdditionalStatementsFromInlinedBlock().forEach { exp ->
@@ -538,13 +545,6 @@ class ExpressionCodegen(
             }
 
             lineNumberMapper.dropCurrentSmap()
-
-            if (inlinedBlock.isLambdaInlining()) {
-                lineNumberMapper.setUpAdditionalLineNumbersAfterLambdaInlining(inlinedBlock)
-            } else {
-                // takeUnless is required to avoid markLineNumberAfterInlineIfNeeded for inline only
-                lastLineNumber = callLineNumber.takeUnless { noLineNumberScope } ?: -1
-            }
 
             return result
         }

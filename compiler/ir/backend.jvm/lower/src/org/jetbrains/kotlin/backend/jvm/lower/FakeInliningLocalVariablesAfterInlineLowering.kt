@@ -123,6 +123,14 @@ private class LocalVariablesProcessor : IrElementVisitor<Unit, LocalVariablesPro
         element.acceptChildren(this, data)
     }
 
+    override fun visitClass(declaration: IrClass, data: Data) {
+        if (declaration.originalBeforeInline != null) {
+            // Don't take into account regenerated classes
+            return super.visitClass(declaration, data.copy(processingOriginalDeclarations = false))
+        }
+        super.visitClass(declaration, data)
+    }
+
     override fun visitBlock(expression: IrBlock, data: Data) {
         if (expression !is IrInlinedFunctionBlock) {
             return super.visitBlock(expression, data)

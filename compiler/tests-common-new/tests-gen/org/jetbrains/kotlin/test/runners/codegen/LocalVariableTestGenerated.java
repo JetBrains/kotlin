@@ -68,6 +68,12 @@ public class LocalVariableTestGenerated extends AbstractLocalVariableTest {
     }
 
     @Test
+    @TestMetadata("inlineFunInObject.kt")
+    public void testInlineFunInObject() throws Exception {
+        runTest("compiler/testData/debug/localVariables/inlineFunInObject.kt");
+    }
+
+    @Test
     @TestMetadata("inlineProperty.kt")
     public void testInlineProperty() throws Exception {
         runTest("compiler/testData/debug/localVariables/inlineProperty.kt");
@@ -77,6 +83,12 @@ public class LocalVariableTestGenerated extends AbstractLocalVariableTest {
     @TestMetadata("jvmOverloads.kt")
     public void testJvmOverloads() throws Exception {
         runTest("compiler/testData/debug/localVariables/jvmOverloads.kt");
+    }
+
+    @Test
+    @TestMetadata("lambdaInObject.kt")
+    public void testLambdaInObject() throws Exception {
+        runTest("compiler/testData/debug/localVariables/lambdaInObject.kt");
     }
 
     @Test

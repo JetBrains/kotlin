@@ -68,6 +68,12 @@ public class IrJsLocalVariableTestGenerated extends AbstractIrJsLocalVariableTes
     }
 
     @Test
+    @TestMetadata("inlineFunInObject.kt")
+    public void testInlineFunInObject() throws Exception {
+        runTest("compiler/testData/debug/localVariables/inlineFunInObject.kt");
+    }
+
+    @Test
     @TestMetadata("inlineProperty.kt")
     public void testInlineProperty() throws Exception {
         runTest("compiler/testData/debug/localVariables/inlineProperty.kt");
@@ -77,6 +83,12 @@ public class IrJsLocalVariableTestGenerated extends AbstractIrJsLocalVariableTes
     @TestMetadata("jsCode.kt")
     public void testJsCode() throws Exception {
         runTest("compiler/testData/debug/localVariables/jsCode.kt");
+    }
+
+    @Test
+    @TestMetadata("lambdaInObject.kt")
+    public void testLambdaInObject() throws Exception {
+        runTest("compiler/testData/debug/localVariables/lambdaInObject.kt");
     }
 
     @Test
