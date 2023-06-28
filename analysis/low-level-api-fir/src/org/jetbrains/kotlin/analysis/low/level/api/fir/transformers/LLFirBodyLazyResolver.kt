@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.analysis.utils.errors.checkWithAttachmentBuilder
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirFileAnnotationsContainer
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.PrivateForInline
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.getExplicitBackingField
 import org.jetbrains.kotlin.fir.expressions.*
@@ -128,6 +129,9 @@ private class LLFirBodyTargetResolver(
     }
 
     private fun resolveMembersForControlFlowGraph(target: FirRegularClass) {
+        withTypeArguments(target) {
+            transformer.firTowerDataContextCollector?.addClassHeaderContext(target, transformer.context.towerDataContext)
+        }
         withRegularClass(target) {
             transformer.firTowerDataContextCollector?.addDeclarationContext(target, transformer.context.towerDataContext)
 
@@ -171,6 +175,13 @@ private class LLFirBodyTargetResolver(
                 // No bodies here
             }
             else -> throwUnexpectedFirElementError(target)
+        }
+    }
+
+    private inline fun withTypeArguments(regularClass: FirRegularClass, action: () -> Unit) {
+        @OptIn(PrivateForInline::class)
+        transformer.declarationsTransformer.context.withTypeParametersOf(regularClass) {
+            action()
         }
     }
 }

@@ -450,5 +450,81 @@ public class FirIdeNormalAnalysisSourceModuleReferenceShortenerTestGenerated ext
         public void testNestedClassFromSupertypes6() throws Exception {
             runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/nestedClasses/nestedClassFromSupertypes6.kt");
         }
+
+        @Nested
+        @TestMetadata("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/nestedClasses/classHeaderPositions")
+        @TestDataPath("$PROJECT_ROOT")
+        public class ClassHeaderPositions {
+            @Test
+            public void testAllFilesPresentInClassHeaderPositions() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/nestedClasses/classHeaderPositions"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            }
+
+            @Test
+            @TestMetadata("annotationOnClass.kt")
+            public void testAnnotationOnClass() throws Exception {
+                runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/nestedClasses/classHeaderPositions/annotationOnClass.kt");
+            }
+
+            @Test
+            @TestMetadata("annotationOnConstructor.kt")
+            public void testAnnotationOnConstructor() throws Exception {
+                runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/nestedClasses/classHeaderPositions/annotationOnConstructor.kt");
+            }
+
+            @Test
+            @TestMetadata("annotationOnParameter.kt")
+            public void testAnnotationOnParameter() throws Exception {
+                runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/nestedClasses/classHeaderPositions/annotationOnParameter.kt");
+            }
+
+            @Test
+            @TestMetadata("contextReceiver.kt")
+            public void testContextReceiver() throws Exception {
+                runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/nestedClasses/classHeaderPositions/contextReceiver.kt");
+            }
+
+            @Test
+            @TestMetadata("primaryConstructorParameter.kt")
+            public void testPrimaryConstructorParameter() throws Exception {
+                runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/nestedClasses/classHeaderPositions/primaryConstructorParameter.kt");
+            }
+
+            @Test
+            @TestMetadata("superType.kt")
+            public void testSuperType() throws Exception {
+                runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/nestedClasses/classHeaderPositions/superType.kt");
+            }
+
+            @Test
+            @TestMetadata("superTypeConstructor.kt")
+            public void testSuperTypeConstructor() throws Exception {
+                runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/nestedClasses/classHeaderPositions/superTypeConstructor.kt");
+            }
+
+            @Test
+            @TestMetadata("superTypeConstructorArgument.kt")
+            public void testSuperTypeConstructorArgument() throws Exception {
+                runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/nestedClasses/classHeaderPositions/superTypeConstructorArgument.kt");
+            }
+
+            @Test
+            @TestMetadata("superTypeDelegation.kt")
+            public void testSuperTypeDelegation() throws Exception {
+                runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/nestedClasses/classHeaderPositions/superTypeDelegation.kt");
+            }
+
+            @Test
+            @TestMetadata("superTypeTypeArguments.kt")
+            public void testSuperTypeTypeArguments() throws Exception {
+                runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/nestedClasses/classHeaderPositions/superTypeTypeArguments.kt");
+            }
+
+            @Test
+            @TestMetadata("typeBound.kt")
+            public void testTypeBound() throws Exception {
+                runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/nestedClasses/classHeaderPositions/typeBound.kt");
+            }
+        }
     }
 }
