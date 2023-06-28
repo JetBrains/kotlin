@@ -333,5 +333,5 @@ private fun transformToJsonString(reachabilityInfos: List<ReachabilityInfo>): St
 }
 
 private fun transformToJsConstDeclaration(reachabilityInfos: List<ReachabilityInfo>): String {
-    return "const kotlinReachabilityInfos = " + transformToJsonString(reachabilityInfos) + ";"
+    return "export const kotlinReachabilityInfos = " + transformToJsonString(reachabilityInfos) + ";"
 }
