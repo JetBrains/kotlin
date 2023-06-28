@@ -82,7 +82,7 @@ class SingleCandidateResolver(
                 ?: ResolutionMode.ContextIndependent
         )
 
-        return completionResult.takeIf { it.callCompleted }?.result
+        return completionResult
     }
 
     private fun createCandidateInfoProvider(resolutionParameters: ResolutionParameters): CandidateInfoProvider {

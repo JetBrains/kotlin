@@ -323,7 +323,7 @@ private fun BodyResolveComponents.createExplicitReceiverForInvokeByCallable(
         }
         source = info.fakeSourceForImplicitInvokeCallReceiver
     }.build().let {
-        callCompleter.completeCall(it, ResolutionMode.ReceiverResolution).result
+        callCompleter.completeCall(it, ResolutionMode.ReceiverResolution)
     }.let {
         transformQualifiedAccessUsingSmartcastInfo(it)
     }

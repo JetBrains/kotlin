@@ -94,24 +94,18 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
                 // exhaustiveness is not yet computed there, but at the same time to compute it properly
                 // we need having branches condition bes analyzed that is why we can't have call
                 // `whenExpression.transformSingle(whenExhaustivenessTransformer, null)` at the beginning
-                val callCompleted = when {
-                    completionNeeded -> {
-                        val completionResult = callCompleter.completeCall(
-                            whenExpression,
-                            // For non-exhaustive when expressions, we should complete then as independent because below
-                            // their type is artificially replaced with Unit, while candidate symbol's return type remains the same
-                            // So when combining two when's the inner one was erroneously resolved as a normal dependent exhaustive sub-expression
-                            // At the same time, it all looks suspicious and inconsistent, so we hope it would be investigated at KT-55175
-                            if (whenExpression.isProperlyExhaustive) data else ResolutionMode.ContextIndependent,
-                        )
-                        whenExpression = completionResult.result
-
-                        completionResult.callCompleted
-                    }
-                    else -> false
+                if (completionNeeded) {
+                    val completionResult = callCompleter.completeCall(
+                        whenExpression,
+                        // For non-exhaustive when expressions, we should complete then as independent because below
+                        // their type is artificially replaced with Unit, while candidate symbol's return type remains the same
+                        // So when combining two when's the inner one was erroneously resolved as a normal dependent exhaustive sub-expression
+                        // At the same time, it all looks suspicious and inconsistent, so we hope it would be investigated at KT-55175
+                        if (whenExpression.isProperlyExhaustive) data else ResolutionMode.ContextIndependent,
+                    )
+                    whenExpression = completionResult
                 }
-
-                dataFlowAnalyzer.exitWhenExpression(whenExpression, callCompleted)
+                dataFlowAnalyzer.exitWhenExpression(whenExpression, data.forceFullCompletion)
                 whenExpression = whenExpression.replaceReturnTypeIfNotExhaustive()
                 whenExpression
             }
@@ -169,13 +163,13 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
         tryExpression.transformCatches(this, ResolutionMode.ContextDependent)
 
         val incomplete = syntheticCallGenerator.generateCalleeForTryExpression(tryExpression, resolutionContext)
-        var (result, callCompleted) = callCompleter.completeCall(incomplete, data)
+        var result = callCompleter.completeCall(incomplete, data)
         if (result.finallyBlock != null) {
             dataFlowAnalyzer.enterFinallyBlock()
             result = result.transformFinallyBlock(transformer, ResolutionMode.ContextIndependent)
             dataFlowAnalyzer.exitFinallyBlock()
         }
-        dataFlowAnalyzer.exitTryExpression(callCompleted)
+        dataFlowAnalyzer.exitTryExpression(data.forceFullCompletion)
         return result
     }
 
@@ -262,7 +256,7 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
         )
         elvisExpression.transformRhs(transformer, resolutionModeForRhs)
 
-        val (result, callCompleted) = callCompleter.completeCall(
+        val result = callCompleter.completeCall(
             syntheticCallGenerator.generateCalleeForElvisExpression(elvisExpression, resolutionContext), data
         )
 
@@ -291,7 +285,7 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
             }
         }
 
-        dataFlowAnalyzer.exitElvis(elvisExpression, isLhsNotNull, callCompleted)
+        dataFlowAnalyzer.exitElvis(elvisExpression, isLhsNotNull, data.forceFullCompletion)
         return result
     }
 }

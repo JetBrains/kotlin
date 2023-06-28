@@ -54,13 +54,10 @@ class FirCallCompleter(
 
     val completer = ConstraintSystemCompleter(components, transformer.context)
 
-
-    data class CompletionResult<T>(val result: T, val callCompleted: Boolean)
-
-    fun <T> completeCall(call: T, resolutionMode: ResolutionMode): CompletionResult<T> where T : FirResolvable, T : FirStatement {
+    fun <T> completeCall(call: T, resolutionMode: ResolutionMode): T where T : FirResolvable, T : FirStatement {
         val typeRef = components.typeFromCallee(call)
 
-        val reference = call.calleeReference as? FirNamedReferenceWithCandidate ?: return CompletionResult(call, true)
+        val reference = call.calleeReference as? FirNamedReferenceWithCandidate ?: return call
 
         val candidate = reference.candidate
         val initialType = typeRef.initialTypeOfCandidate(candidate)
@@ -104,10 +101,10 @@ class FirCallCompleter(
                         null
                     )
                     inferenceSession.addCompletedCall(completedCall, candidate)
-                    CompletionResult(completedCall, true)
+                    completedCall
                 } else {
                     inferenceSession.addPartiallyResolvedCall(call)
-                    CompletionResult(call, false)
+                    call
                 }
             }
 
@@ -120,7 +117,7 @@ class FirCallCompleter(
                     inferenceSession.addPartiallyResolvedCall(call)
                 }
 
-                CompletionResult(call, false)
+                call
             }
 
             ConstraintSystemCompletionMode.UNTIL_FIRST_LAMBDA -> throw IllegalStateException()

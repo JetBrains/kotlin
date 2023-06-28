@@ -188,7 +188,7 @@ class FirSyntheticCallGenerator(
             this.argumentList = argumentList
         }
 
-        val result = components.callCompleter.completeCall(fakeCallElement, ResolutionMode.ContextIndependent).result
+        val result = components.callCompleter.completeCall(fakeCallElement, ResolutionMode.ContextIndependent)
         val completedCallableReference = result.argument as FirCallableReferenceAccess?
 
         val callCalleeReference = result.calleeReference

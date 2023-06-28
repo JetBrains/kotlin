@@ -39,7 +39,7 @@ fun completedCallExactlyOnce(x: Any?, y: Any?) {
         // The value of the type argument is known, so the call is complete and the data can flow.
         id(exactlyOnce { y.<!UNRESOLVED_REFERENCE!>inc<!>(); x as Int }),
         y as Int,
-        exactlyOnce { x.inc(); y.inc(); 1 }
+        exactlyOnce { x.<!UNRESOLVED_REFERENCE!>inc<!>(); y.inc(); 1 }
     ).inc() // OK
     x.inc() // OK
     y.inc() // OK
@@ -49,7 +49,7 @@ fun completedCallAtLeastOnce(x: Any?, y: Any?) {
     select(
         id(atLeastOnce { y.<!UNRESOLVED_REFERENCE!>inc<!>(); x as Int }),
         y as Int,
-        atLeastOnce { x.inc(); y.inc(); 1 }
+        atLeastOnce { x.<!UNRESOLVED_REFERENCE!>inc<!>(); y.inc(); 1 }
     ).inc() // OK
     x.inc() // OK
     y.inc() // OK

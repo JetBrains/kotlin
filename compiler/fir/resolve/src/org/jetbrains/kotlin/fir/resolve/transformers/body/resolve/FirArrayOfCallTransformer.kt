@@ -25,9 +25,8 @@ import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
  */
 class FirArrayOfCallTransformer : FirDefaultTransformer<Nothing?>() {
     private fun toArrayOfCall(functionCall: FirFunctionCall): FirArrayOfCall? {
-        if (!functionCall.isArrayOfCall) {
-            return null
-        }
+        if (!functionCall.isArrayOfCall) return null
+        if (functionCall.calleeReference !is FirResolvedNamedReference) return null
         return buildArrayOfCall {
             source = functionCall.source
             annotations += functionCall.annotations

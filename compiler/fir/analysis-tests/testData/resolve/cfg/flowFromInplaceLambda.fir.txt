@@ -84,7 +84,7 @@ FILE: flowFromInplaceLambda.kt
             ^ (R|<local>/x| as R|kotlin/Int|)
         }
         )), (R|<local>/y| as R|kotlin/Int|), R|/exactlyOnce|<R|kotlin/Int|>(<L> = exactlyOnce@fun <anonymous>(): R|kotlin/Int| <inline=NoInline, kind=EXACTLY_ONCE>  {
-            R|<local>/x|.R|kotlin/Int.inc|()
+            R|<local>/x|.<Unresolved name: inc>#()
             R|<local>/y|.R|kotlin/Int.inc|()
             ^ Int(1)
         }
@@ -98,7 +98,7 @@ FILE: flowFromInplaceLambda.kt
             ^ (R|<local>/x| as R|kotlin/Int|)
         }
         )), (R|<local>/y| as R|kotlin/Int|), R|/atLeastOnce|<R|kotlin/Int|>(<L> = atLeastOnce@fun <anonymous>(): R|kotlin/Int| <inline=NoInline, kind=AT_LEAST_ONCE>  {
-            R|<local>/x|.R|kotlin/Int.inc|()
+            R|<local>/x|.<Unresolved name: inc>#()
             R|<local>/y|.R|kotlin/Int.inc|()
             ^ Int(1)
         }
