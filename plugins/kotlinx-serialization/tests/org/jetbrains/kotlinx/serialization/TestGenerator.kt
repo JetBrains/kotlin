@@ -64,6 +64,10 @@ fun main(args: Array<String>) {
             testClass<AbstractSerializationIrJsBoxTest> {
                 model("boxIr")
             }
+
+            testClass<AbstractSerializationFirJsBoxTest> {
+                model("boxIr")
+            }
         }
     }
 }

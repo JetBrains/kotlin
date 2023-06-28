@@ -232,6 +232,18 @@ public class SerializationFirLightTreeBlackBoxTestGenerated extends AbstractSeri
         }
 
         @Test
+        @TestMetadata("serializerFactory.kt")
+        public void testSerializerFactory() throws Exception {
+            runTest("plugins/kotlinx-serialization/testData/boxIr/serializerFactory.kt");
+        }
+
+        @Test
+        @TestMetadata("serializerFactoryInUserDefined.kt")
+        public void testSerializerFactoryInUserDefined() throws Exception {
+            runTest("plugins/kotlinx-serialization/testData/boxIr/serializerFactoryInUserDefined.kt");
+        }
+
+        @Test
         @TestMetadata("starProjections.kt")
         public void testStarProjections() throws Exception {
             runTest("plugins/kotlinx-serialization/testData/boxIr/starProjections.kt");

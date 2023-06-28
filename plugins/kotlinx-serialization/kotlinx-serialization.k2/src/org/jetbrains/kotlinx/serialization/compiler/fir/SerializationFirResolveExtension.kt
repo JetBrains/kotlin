@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.getContainingDeclarationSymbol
 import org.jetbrains.kotlin.fir.containingClassForStaticMemberAttr
 import org.jetbrains.kotlin.fir.copy
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunctionCopy
 import org.jetbrains.kotlin.fir.declarations.origin
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
@@ -28,17 +29,12 @@ import org.jetbrains.kotlin.fir.scopes.impl.toConeType
 import org.jetbrains.kotlin.fir.scopes.scopeForSupertype
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.types.ConeTypeProjection
-import org.jetbrains.kotlin.fir.types.classId
-import org.jetbrains.kotlin.fir.types.constructClassLikeType
-import org.jetbrains.kotlin.fir.types.constructType
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
-import org.jetbrains.kotlin.platform.isJs
-import org.jetbrains.kotlin.platform.isWasm
-import org.jetbrains.kotlin.platform.konan.isNative
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.SERIALIZER_FACTORY_INTERFACE_NAME
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationPackages
@@ -151,7 +147,7 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
             useSiteSuperType.scopeForSupertype(session, scopeSession, owner.fir, memberRequiredPhase = null)
         }
         val targets = scopes.flatMap { extractor(it) }
-        return targets.singleOrNull() ?: error("Multiple overrides found for ${callableId.callableName}")
+        return targets.singleOrNull() ?: error("Zero or multiple overrides found for ${callableId.callableName} in $owner")
     }
 
     @OptIn(SymbolInternals::class)
@@ -165,8 +161,13 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
                 if (with(session) { owner.isSerializableObject }) owner else null
             }
 
-            serializableClass ?: return emptyList()
-            return listOf(generateSerializerGetterInCompanion(owner, serializableClass, callableId))
+            if (serializableClass == null) return emptyList()
+            val serializableGetterInCompanion = generateSerializerGetterInCompanion(owner, serializableClass, callableId)
+            val serializableGetterFromFactory = runIf (with(session) { serializableClass.companionNeedsSerializerFactory }) {
+                val original = getFromSupertype(callableId, owner) { it.getFunctions(callableId.callableName) }.fir
+                generateSerializerFactoryVararg(owner, callableId, original)
+            }
+            return listOfNotNull(serializableGetterInCompanion, serializableGetterFromFactory)
         }
         if (!owner.isSerializer) return emptyList()
         if (callableId.callableName !in setOf(
@@ -187,6 +188,18 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
         copy.excludeFromJsExport()
         return listOf(copy.symbol)
     }
+
+    private fun generateSerializerFactoryVararg(
+        owner: FirClassSymbol<*>,
+        callableId: CallableId,
+        original: FirSimpleFunction
+    ): FirNamedFunctionSymbol =
+        createMemberFunction(owner, SerializationPluginKey, callableId.callableName, original.returnTypeRef.coneType) {
+            val vpo = original.valueParameters.single()
+            valueParameter(vpo.name, vpo.returnTypeRef.coneType, vpo.isCrossinline, vpo.isNoinline, vpo.isVararg, vpo.defaultValue != null)
+        }.apply {
+            excludeFromJsExport()
+        }.symbol
 
     private fun generateSerializerGetterInCompanion(
         owner: FirClassSymbol<*>,
@@ -308,17 +321,5 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
 
     private val FirClassSymbol<*>.isExternalSerializer: Boolean
         get() = session.predicateBasedProvider.matches(FirSerializationPredicates.serializerFor, this)
-
-    context(FirSession)
-    private val FirClassSymbol<*>.companionNeedsSerializerFactory: Boolean
-        get() {
-            if (!(moduleData.platform.isNative() || moduleData.platform.isJs() || moduleData.platform.isWasm())) return false
-            if (isSerializableObject) return true
-            if (isSerializableEnum) return true
-            if (isAbstractOrSealedSerializableClass) return true
-            if (isSealedSerializableInterface) return true
-            if (typeParameterSymbols.isEmpty()) return false
-            return true
-        }
 
 }
