@@ -58,8 +58,8 @@ class FirCallCompleter(
 
     fun <T> completeCall(call: T, resolutionMode: ResolutionMode): CompletionResult<T> where T : FirResolvable, T : FirStatement {
         val typeRef = components.typeFromCallee(call)
-
-        val reference = call.calleeReference as? FirNamedReferenceWithCandidate ?: return CompletionResult(call, true)
+        val reference = call.calleeReference
+        require(reference is FirNamedReferenceWithCandidate)
 
         val candidate = reference.candidate
         val initialType = typeRef.initialTypeOfCandidate(candidate)
