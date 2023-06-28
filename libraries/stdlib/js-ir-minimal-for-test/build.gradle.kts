@@ -9,11 +9,28 @@ kotlin {
         nodejs()
     }
 }
+val commonMainFullSources by task<Sync> {
+    dependsOn(":prepare:build.version:writeStdlibVersion")
+
+    val sources = listOf(
+        "libraries/stdlib/common/src/",
+        "libraries/stdlib/src/kotlin/",
+        "libraries/stdlib/unsigned/",
+        "core/builtins/src/kotlin/internal/",
+    )
+
+    sources.forEach { path ->
+        from("$rootDir/$path") {
+            into(path.dropLastWhile { it != '/' })
+        }
+    }
+
+    into("$buildDir/commonMainFullSources")
+}
 
 val commonMainSources by task<Sync> {
-    dependsOn(":kotlin-stdlib-js-ir:commonMainSources")
+    dependsOn(commonMainFullSources)
     from {
-        val fullCommonMainSources = tasks.getByPath(":kotlin-stdlib-js-ir:commonMainSources")
         exclude(
             listOf(
                 "libraries/stdlib/unsigned/src/kotlin/UByteArray.kt",
@@ -52,28 +69,27 @@ val commonMainSources by task<Sync> {
                 "libraries/stdlib/src/kotlin/enums/**"
             )
         )
-        fullCommonMainSources.outputs.files.singleFile
+        commonMainFullSources.get().outputs.files.singleFile
     }
 
     into("$buildDir/commonMainSources")
 }
 
 val commonMainCollectionSources by task<Sync> {
-    dependsOn(":kotlin-stdlib-js-ir:commonMainSources")
+    dependsOn(commonMainFullSources)
     from {
-        val fullCommonMainSources = tasks.getByPath(":kotlin-stdlib-js-ir:commonMainSources")
         include("libraries/stdlib/src/kotlin/collections/PrimitiveIterators.kt")
-        fullCommonMainSources.outputs.files.singleFile
+        commonMainFullSources.get().outputs.files.singleFile
     }
 
     into("$buildDir/commonMainCollectionSources")
 }
 
 val jsMainSources by task<Sync> {
-    dependsOn(":kotlin-stdlib-js-ir:jsMainSources")
+    dependsOn(":kotlin-stdlib:prepareJsIrMainSources")
 
     from {
-        val fullJsMainSources = tasks.getByPath(":kotlin-stdlib-js-ir:jsMainSources")
+        val fullJsMainSources = tasks.getByPath(":kotlin-stdlib:prepareJsIrMainSources")
         exclude(
             listOf(
                 "libraries/stdlib/js/src/org.w3c/**",

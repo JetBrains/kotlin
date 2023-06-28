@@ -68,7 +68,7 @@ dependencies {
     testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps:jdom"))
 
     testRuntimeOnly(kotlinStdlib())
-    testJsRuntime(kotlinStdlib("js"))
+    testJsRuntime(kotlinStdlib())
     if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
         testJsRuntime(project(":kotlin-test:kotlin-test-js")) // to be sure that kotlin-test-js built before tests runned
     }
