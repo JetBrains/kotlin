@@ -9,6 +9,10 @@ import org.junit.jupiter.api.Tag
 
 /**
  * Add it to test classes performing Gradle or Kotlin daemon checks.
+ *
+ * You could add tag onto test suite once, but then all tests
+ * in test suite should be for the related tag.
+ * Preferably add tag for each test.
  */
 @Target(AnnotationTarget.CLASS, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.RUNTIME)
@@ -17,6 +21,10 @@ annotation class DaemonsGradlePluginTests
 
 /**
  * Add it to tests covering Kotlin Gradle Plugin/JVM platform.
+ *
+ * You could add tag onto test suite once, but then all tests
+ * in test suite should be for the related tag.
+ * Preferably add tag for each test.
  */
 @Target(AnnotationTarget.CLASS, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.RUNTIME)
@@ -25,6 +33,10 @@ annotation class JvmGradlePluginTests
 
 /**
  * Add it to tests covering Kotlin Gradle Plugin/JS platform.
+ *
+ * You could add tag onto test suite once, but then all tests
+ * in test suite should be for the related tag.
+ * Preferably add tag for each test.
  */
 @Target(AnnotationTarget.CLASS, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.RUNTIME)
@@ -33,6 +45,10 @@ annotation class JsGradlePluginTests
 
 /**
  * Add it to tests covering Kotlin Gradle Plugin/Native platform.
+ *
+ * You could add tag onto test suite once, but then all tests
+ * in test suite should be for the related tag.
+ * Preferably add tag for each test.
  */
 @Target(AnnotationTarget.CLASS, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.RUNTIME)
@@ -41,6 +57,10 @@ annotation class NativeGradlePluginTests
 
 /**
  * Add it to tests covering Kotlin Multiplatform Gradle plugin.
+ *
+ * You could add tag onto test suite once, but then all tests
+ * in test suite should be for the related tag.
+ * Preferably add tag for each test.
  */
 @Target(AnnotationTarget.CLASS, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.RUNTIME)
@@ -49,6 +69,10 @@ annotation class MppGradlePluginTests
 
 /**
  * Add it to the tests covering Kotlin Android Gradle plugin.
+ *
+ * You could add tag onto test suite once, but then all tests
+ * in test suite should be for the related tag.
+ * Preferably add tag for each test.
  */
 @Target(AnnotationTarget.CLASS, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.RUNTIME)
@@ -59,6 +83,10 @@ annotation class AndroidGradlePluginTests
  * Add it the tests that are not covered by tags above.
  *
  * Usually it would be tests for kapt, serialization plugins, etc...
+ *
+ * You could add tag onto test suite once, but then all tests
+ * in test suite should be for the related tag.
+ * Preferably add tag for each test.
  */
 @Target(AnnotationTarget.CLASS, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.RUNTIME)

@@ -16,10 +16,10 @@ import org.junit.jupiter.api.DisplayName
 import java.io.File
 import kotlin.io.path.appendText
 
-@JvmGradlePluginTests
 @DisplayName("Kotlin Java Toolchain support")
 class KotlinJavaToolchainTest : KGPBaseTest() {
 
+    @JvmGradlePluginTests
     @GradleTest
     @DisplayName("Should use by default same jvm as Gradle daemon for jdkHome")
     internal fun byDefaultShouldUseGradleJDK(gradleVersion: GradleVersion) {
@@ -33,6 +33,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
         }
     }
 
+    @JvmGradlePluginTests
     @GradleTest
     @DisplayName("Should use provided jdk location to compile Kotlin sources")
     internal fun customJdkHomeLocation(gradleVersion: GradleVersion) {
@@ -53,6 +54,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
         }
     }
 
+    @JvmGradlePluginTests
     @GradleTest
     @DisplayName("KotlinCompile task should use build cache when using provided JDK")
     internal fun customJdkBuildCache(gradleVersion: GradleVersion) {
@@ -100,6 +102,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
         }
     }
 
+    @JvmGradlePluginTests
     @DisplayName("Kotlin compile task should reuse build cache when toolchain is set and build is happening on different JDKs")
     @GradleTest
     internal fun differentBuildJDKBuildCacheHit(gradleVersion: GradleVersion) {
@@ -133,6 +136,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
         }
     }
 
+    @JvmGradlePluginTests
     @GradleTest
     @DisplayName("Kotlin compile task should not use build cache on using different JDK versions")
     internal fun differentJdkBuildCacheMiss(gradleVersion: GradleVersion) {
@@ -169,6 +173,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
         }
     }
 
+    @JvmGradlePluginTests
     @DisplayName("Kapt task should use only process worker isolation when kotlin java toolchain is set")
     @GradleTest
     internal fun kaptTasksShouldUseProcessWorkersIsolation(gradleVersion: GradleVersion) {
@@ -203,6 +208,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
         }
     }
 
+    @JvmGradlePluginTests
     @DisplayName("Kapt task should use worker no-isolation mode when build is using Gradle JDK")
     @GradleTest
     internal fun kaptTasksShouldUseNoIsolationModeOnDefaultJvm(gradleVersion: GradleVersion) {
@@ -217,6 +223,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
         }
     }
 
+    @JvmGradlePluginTests
     @DisplayName("Kapt tasks with custom JDK should be cacheable")
     @GradleTest
     internal fun kaptTasksWithCustomJdkCacheable(gradleVersion: GradleVersion) {
@@ -266,6 +273,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
         }
     }
 
+    @JvmGradlePluginTests
     @DisplayName("Kapt tasks with default JDK and different isolation modes should be cacheable")
     @GradleTest
     internal fun kaptCacheableOnSwitchingIsolationModeAndDefaultJDK(gradleVersion: GradleVersion) {
@@ -302,6 +310,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
         }
     }
 
+    @JvmGradlePluginTests
     @DisplayName("Should allow to set JDK version for tasks via Java toolchain")
     @GradleTest
     internal fun setJdkUsingJavaToolchain(gradleVersion: GradleVersion) {
@@ -316,6 +325,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
         }
     }
 
+    @JvmGradlePluginTests
     @DisplayName("Should allow to set Java toolchain via extension")
     @GradleTest
     internal fun setJdkUsingJavaToolchainViaExtension(gradleVersion: GradleVersion) {
@@ -330,6 +340,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
         }
     }
 
+    @JvmGradlePluginTests
     @DisplayName("Toolchain should be correctly supported in multiplatform plugin jvm targets")
     @GradleTest
     internal fun toolchainCorrectlySupportedInMPPlugin(gradleVersion: GradleVersion) {
@@ -345,6 +356,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
         }
     }
 
+    @JvmGradlePluginTests
     @DisplayName("Should set 'jvmTarget' option if user does not specify it explicitly via jdk setter")
     @GradleTest
     internal fun shouldSetJvmTargetNonSpecifiedByUserViaSetJdk(gradleVersion: GradleVersion) {
@@ -373,6 +385,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
         }
     }
 
+    @JvmGradlePluginTests
     @DisplayName("Should not override user specified 'jvmTarget' option via jdk setter")
     @GradleTest
     internal fun shouldNotOverrideUserJvmTargetViaSetJDK(gradleVersion: GradleVersion) {
@@ -395,6 +408,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
         }
     }
 
+    @JvmGradlePluginTests
     @DisplayName("Should set 'jvmTarget' option if user does not specify it explicitly via toolchain setter")
     @GradleTest
     internal fun shouldSetJvmTargetNonSpecifiedByUserViaToolchain(gradleVersion: GradleVersion) {
@@ -412,6 +426,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
         }
     }
 
+    @JvmGradlePluginTests
     @DisplayName("Should not override user specified 'jvmTarget' option via toolchain setter")
     @GradleTest
     internal fun shouldNotOverrideUserSpecifiedJvmTargetViaToolchain(gradleVersion: GradleVersion) {
@@ -438,6 +453,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
         }
     }
 
+    @JvmGradlePluginTests
     @DisplayName("Setting toolchain via java extension should also affect Kotlin compilations")
     @GradleTest
     internal fun settingToolchainViaJavaShouldAlsoWork(gradleVersion: GradleVersion) {
@@ -464,6 +480,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
         }
     }
 
+    @JvmGradlePluginTests
     @DisplayName("Setting toolchain via java extension should update jvm-target argument on eager task creation")
     @GradleTest
     internal fun settingToolchainViaJavaUpdateJvmTarget(gradleVersion: GradleVersion) {
@@ -496,6 +513,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
         }
     }
 
+    @JvmGradlePluginTests
     @DisplayName("Build should not produce warnings when '-no-jdk' option is present")
     @GradleTest
     internal fun noWarningOnNoJdkOptionPresent(gradleVersion: GradleVersion) {
@@ -547,6 +565,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
         }
     }
 
+    @JvmGradlePluginTests
     @DisplayName("Toolchain should not make an exception when build is running on JDK 11, but toolchain is set to JDK 1.8")
     @GradleTest
     internal fun shouldNotRaiseErrorOnJDK11withJDK1_8Toolchain(gradleVersion: GradleVersion) {
@@ -561,6 +580,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
         }
     }
 
+    @JvmGradlePluginTests
     @DisplayName("JVM target shouldn't be changed when toolchain is not configured")
     @GradleTestVersions(maxVersion = TestVersions.Gradle.G_7_6)
     @GradleTest
@@ -596,6 +616,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
         }
     }
 
+    @JvmGradlePluginTests
     @DisplayName("Kotlin toolchain should support configuration cache")
     @GradleTest
     internal fun testConfigurationCache(gradleVersion: GradleVersion) {
@@ -613,6 +634,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
         }
     }
 
+    @JvmGradlePluginTests
     @DisplayName("Should work with configuration cache when toolchain is not configured")
     @GradleTest
     internal fun testConfigurationCacheNoToolchain(gradleVersion: GradleVersion) {
@@ -626,6 +648,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
         }
     }
 
+    @JvmGradlePluginTests
     @DisplayName("Toolchain simplified method with JDK version in extension is working")
     @GradleTest
     internal fun toolchainSimplifiedConfiguration(gradleVersion: GradleVersion) {
@@ -660,6 +683,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
         }
     }
 
+    @JvmGradlePluginTests
     @DisplayName("KT-55004: Should use non-default toolchain for parent project")
     @GradleTest
     internal fun toolchainFromParentProject(gradleVersion: GradleVersion) {
@@ -702,6 +726,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
         }
     }
 
+    @JvmGradlePluginTests
     @DisplayName("Toolchain should not override Jvm target configured in project level DSL")
     @GradleTestVersions(maxVersion = TestVersions.Gradle.G_7_6)
     @GradleTest

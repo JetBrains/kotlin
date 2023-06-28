@@ -47,6 +47,9 @@ compile tests and run them. This should reduce test execution time.
 a lot of output, that slows down test execution.
 - Add `@DisplayName(...)` with meaningful description both for test class and methods inside. This will allow developers easier 
 to understand what test is about.
+- Add to test related Kotlin tag. For example for Kotlin/Jvm tests - `@JvmGradlePluginTests`. Other available tags are located nearby 
+`@JvmGradlePluginTests` - check yourself what suites best for the test. You could add tag onto test suite once, but then all tests 
+in test suite should be for the related tag. Preferably add tag for each test.
 - Consider using [Gradle Plugin DSL](https://docs.gradle.org/current/userguide/plugins.html#sec:plugins_block) while adding new/modifying 
 existing test projects.
 
