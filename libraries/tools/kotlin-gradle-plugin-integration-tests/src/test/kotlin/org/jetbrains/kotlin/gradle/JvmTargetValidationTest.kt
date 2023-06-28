@@ -345,17 +345,13 @@ class JvmTargetValidationTest : KGPBaseTest() {
         project(
             projectName = "kapt2/simple",
             gradleVersion = gradleVersion,
-            buildJdk = getJdk11().javaHome
         ) {
-            val toolchainJavaVersion = if (gradleVersion < GradleVersion.version("6.9")) {
-                15
-            } else {
-                16
-            }
+            val toolchainJavaVersion = if (gradleVersion < GradleVersion.version("6.9")) 11 else 16
 
             gradleProperties.append(
                 """
                 kotlin.jvm.target.validation.mode = error
+                org.gradle.java.installations.paths=${getJdk16().javaHome},${getJdk11().javaHome}
                 """.trimIndent()
             )
 
@@ -370,7 +366,7 @@ class JvmTargetValidationTest : KGPBaseTest() {
                 """.trimIndent()
             )
 
-            build("assemble", forceOutput = true)
+            build(":kaptGenerateStubsKotlin")
         }
     }
 
@@ -497,6 +493,8 @@ class JvmTargetValidationTest : KGPBaseTest() {
     }
 
     private fun getJdk11(): JavaInfo = Jvm.forHome(File(System.getProperty("jdk11Home")))
+
+    private fun getJdk16(): JavaInfo = Jvm.forHome(File(System.getProperty("jdk16Home")))
 
     private val String.fullProjectName get() = "kotlin-java-toolchain/$this"
 }
