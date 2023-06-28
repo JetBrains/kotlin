@@ -1,6 +1,8 @@
 // !LANGUAGE: +ProhibitProtectedCallFromInline
 // !DIAGNOSTICS: -EXPOSED_PARAMETER_TYPE -NOTHING_TO_INLINE
 
+// FIR_IDENTICAL
+
 // FILE: JavaClass.java
 
 

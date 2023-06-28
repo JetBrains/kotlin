@@ -32,10 +32,10 @@ open class A {
 
     @PublishedApi
     internal inline fun callFromPublished() {
-        test()
-        z
+        <!PROTECTED_CALL_FROM_PUBLIC_INLINE!>test<!>()
+        <!PROTECTED_CALL_FROM_PUBLIC_INLINE!>z<!>
         zVar
-        zVar = "123"
+        <!PROTECTED_CALL_FROM_PUBLIC_INLINE!>zVar<!> = "123"
     }
 
     protected inline fun callFromProtected() {
@@ -67,7 +67,7 @@ class C : JavaClass() {
 
     @PublishedApi
     internal inline fun callFromPublished() {
-        bind()
+        <!PROTECTED_CALL_FROM_PUBLIC_INLINE!>bind<!>()
     }
 }
 

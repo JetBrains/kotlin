@@ -1,4 +1,7 @@
 // !DIAGNOSTICS: -EXPOSED_PARAMETER_TYPE -NOTHING_TO_INLINE
+
+// FIR_IDENTICAL
+
 inline fun call(a: A) {
     a.test()
     publishedTopLevel()
