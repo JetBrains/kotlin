@@ -268,13 +268,11 @@ class JvmTargetValidationTest : KGPBaseTest() {
 
     @JvmGradlePluginTests
     @DisplayName("Should still do JVM target validation if no java sources are available")
-    @GradleTestVersions(maxVersion = TestVersions.Gradle.G_7_6)
     @GradleTest
     internal fun shouldDoJvmTargetValidationOnNoJavaSources(gradleVersion: GradleVersion) {
         project(
             projectName = "simple".fullProjectName,
             gradleVersion = gradleVersion,
-            buildJdk = getJdk11().javaHome // should differ from default Kotlin jvm target value
         ) {
             //language=properties
             gradleProperties.append(
@@ -284,23 +282,28 @@ class JvmTargetValidationTest : KGPBaseTest() {
                 """.trimIndent()
             )
 
-            build("assemble") {
+            buildGradle.appendText(
+                """
+                |
+                |kotlin.jvmToolchain(11)
+                |kotlin.compilerOptions.jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
+                """.trimMargin()
+            )
+
+            build(":compileKotlin") {
                 assertHasDiagnostic(KotlinToolingDiagnostics.InconsistentTargetCompatibilityForKotlinAndJavaTasks)
             }
         }
     }
 
-    @AndroidGradlePluginTests
+    @JvmGradlePluginTests
     @DisplayName("Should do JVM target validation if java sources are added and configuration cache is reused")
-    @GradleTestVersions(maxVersion = TestVersions.Gradle.G_7_6)
-    @AndroidTestVersions(maxVersion = TestVersions.AGP.AGP_74)
     @GradleTest
     internal fun shouldDoJvmTargetValidationOnNewJavaSourcesAndConfigurationCacheReuse(gradleVersion: GradleVersion) {
         project(
             projectName = "simple".fullProjectName,
             gradleVersion = gradleVersion,
-            buildOptions = defaultBuildOptions.withConfigurationCache,
-            buildJdk = getJdk11().javaHome // should differ from default Kotlin jvm target value
+            buildOptions = defaultBuildOptions.withConfigurationCache
         ) {
             // Validation mode should be 'warning' because of https://github.com/gradle/gradle/issues/9339
             // which is fixed in Gradle 7.2
@@ -312,7 +315,15 @@ class JvmTargetValidationTest : KGPBaseTest() {
                 """.trimIndent()
             )
 
-            build("assemble") {
+            buildGradle.appendText(
+                """
+                |
+                |kotlin.jvmToolchain(11)
+                |kotlin.compilerOptions.jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
+                """.trimMargin()
+            )
+
+            build(":compileKotlin") {
                 assertHasDiagnostic(KotlinToolingDiagnostics.InconsistentTargetCompatibilityForKotlinAndJavaTasks)
             }
 
@@ -332,7 +343,7 @@ class JvmTargetValidationTest : KGPBaseTest() {
                 )
             }
 
-            build("assemble") {
+            build(":compileKotlin") {
                 assertHasDiagnostic(KotlinToolingDiagnostics.InconsistentTargetCompatibilityForKotlinAndJavaTasks)
             }
         }
