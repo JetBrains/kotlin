@@ -150,8 +150,8 @@ object FirInlineDeclarationChecker : FirFunctionChecker() {
                 reporter.reportOn(
                     source,
                     FirErrors.NON_PUBLIC_CALL_FROM_PUBLIC_INLINE,
-                    accessedSymbol,
                     inlineFunction.symbol,
+                    accessedSymbol,
                     context
                 )
             } else {
@@ -295,7 +295,7 @@ object FirInlineDeclarationChecker : FirFunctionChecker() {
                     prohibitProtectedCallFromInline -> FirErrors.PROTECTED_CALL_FROM_PUBLIC_INLINE_ERROR
                     else -> FirErrors.PROTECTED_CALL_FROM_PUBLIC_INLINE
                 }
-                reporter.reportOn(source, factory, calledDeclaration, inlineFunction.symbol, context)
+                reporter.reportOn(source, factory, inlineFunction.symbol, calledDeclaration, context)
             }
         }
 
