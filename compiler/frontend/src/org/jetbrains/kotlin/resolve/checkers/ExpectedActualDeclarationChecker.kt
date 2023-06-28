@@ -296,7 +296,8 @@ class ExpectedActualDeclarationChecker(
         trace: BindingTrace,
         moduleVisibilityFilter: ModuleFilter
     ) {
-        val compatibility = ExpectedActualResolver.findExpectedForActual(descriptor, moduleVisibilityFilter)
+        val compatibility = ExpectedActualResolver
+            .findExpectedForActual(descriptor, moduleVisibilityFilter, shouldCheckAbsenceOfDefaultParamsInActual = true)
             ?: return
 
         checkAmbiguousExpects(compatibility, trace, reportOn, descriptor)
@@ -356,7 +357,19 @@ class ExpectedActualDeclarationChecker(
             assert(compatibility.keys.all { it is Incompatible })
             @Suppress("UNCHECKED_CAST")
             val incompatibility = compatibility as Map<Incompatible<MemberDescriptor>, Collection<MemberDescriptor>>
-            trace.report(Errors.ACTUAL_WITHOUT_EXPECT.on(reportOn, descriptor, incompatibility))
+            val paramsWithDefaultValues =
+                when (reportOn is KtFunction && incompatibility.keys.any { it is Incompatible.ActualFunctionWithDefaultParameters }) {
+                    true -> reportOn.valueParameters.filter(KtParameter::hasDefaultValue)
+                    false -> emptyList()
+                }
+            // A nicer diagnostic for functions with default params
+            if (paramsWithDefaultValues.isNotEmpty()) {
+                for (parameter in paramsWithDefaultValues) {
+                    trace.report(Errors.ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS.on(parameter))
+                }
+            } else {
+                trace.report(Errors.ACTUAL_WITHOUT_EXPECT.on(reportOn, descriptor, incompatibility))
+            }
         } else {
             val expected = compatibility[Compatible]!!.first()
             if (expected is ClassDescriptor && expected.kind == ClassKind.ANNOTATION_CLASS) {

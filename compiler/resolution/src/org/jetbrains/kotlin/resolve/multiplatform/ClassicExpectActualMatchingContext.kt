@@ -34,9 +34,16 @@ import org.jetbrains.kotlin.utils.addToStdlib.castAll
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 import org.jetbrains.kotlin.utils.keysToMap
 
-class ClassicExpectActualMatchingContext(val platformModule: ModuleDescriptor) : ExpectActualMatchingContext<MemberDescriptor>,
-    TypeSystemContext by ClassicTypeSystemContextForCS(platformModule.builtIns, KotlinTypeRefiner.Default)
-{
+class ClassicExpectActualMatchingContext(
+    val platformModule: ModuleDescriptor,
+    /**
+     * You want to enable this check only in expect-actual matcher checker. And disable everywhere else (especially on backends)
+     *
+     * Otherwise, it won't be possible to suppress the compilation error in user code
+     */
+    override val shouldCheckAbsenceOfDefaultParamsInActual: Boolean = false
+) : ExpectActualMatchingContext<MemberDescriptor>,
+    TypeSystemContext by ClassicTypeSystemContextForCS(platformModule.builtIns, KotlinTypeRefiner.Default) {
     override val shouldCheckReturnTypesOfCallables: Boolean
         get() = true
 
@@ -194,6 +201,7 @@ class ClassicExpectActualMatchingContext(val platformModule: ModuleDescriptor) :
         get() = asDescriptor().isCrossinline
     override val ValueParameterSymbolMarker.hasDefaultValue: Boolean
         get() = asDescriptor().declaresDefaultValue()
+    override fun FunctionSymbolMarker.overridden(): Collection<CallableSymbolMarker> = asDescriptor().overriddenDescriptors
 
     override fun CallableSymbolMarker.isAnnotationConstructor(): Boolean {
         val descriptor = safeAsDescriptor<ConstructorDescriptor>() ?: return false

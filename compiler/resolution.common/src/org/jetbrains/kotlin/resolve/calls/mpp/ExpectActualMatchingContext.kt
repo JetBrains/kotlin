@@ -39,6 +39,8 @@ interface ExpectActualMatchingContext<T : DeclarationSymbolMarker> : TypeSystemC
     val enumConstructorsAreAlwaysCompatible: Boolean
         get() = false
 
+    val shouldCheckAbsenceOfDefaultParamsInActual: Boolean
+
     /**
      * This flag determines, how visibilities for classes/typealiases will be matched
      * - `false` means that visibilities should be identical
@@ -114,6 +116,7 @@ interface ExpectActualMatchingContext<T : DeclarationSymbolMarker> : TypeSystemC
     val CallableSymbolMarker.returnType: KotlinTypeMarker
     val CallableSymbolMarker.typeParameters: List<TypeParameterSymbolMarker>
     val FunctionSymbolMarker.valueParameters: List<ValueParameterSymbolMarker>
+    fun FunctionSymbolMarker.overridden(): Collection<CallableSymbolMarker>
 
     val CallableSymbolMarker.valueParameters: List<ValueParameterSymbolMarker>
         get() = (this as? FunctionSymbolMarker)?.valueParameters ?: emptyList()

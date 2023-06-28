@@ -18,8 +18,9 @@ object ExpectedActualResolver {
         expected: MemberDescriptor,
         platformModule: ModuleDescriptor,
         moduleVisibilityFilter: ModuleFilter = allModulesProvidingActualsFor(expected.module, platformModule),
+        shouldCheckAbsenceOfDefaultParamsInActual: Boolean = false
     ): Map<ExpectActualCompatibility<MemberDescriptor>, List<MemberDescriptor>>? {
-        val context = ClassicExpectActualMatchingContext(platformModule)
+        val context = ClassicExpectActualMatchingContext(platformModule, shouldCheckAbsenceOfDefaultParamsInActual)
         return when (expected) {
             is CallableMemberDescriptor -> {
                 expected.findNamesakesFromModule(context, platformModule, moduleVisibilityFilter).filter { actual ->
@@ -56,9 +57,10 @@ object ExpectedActualResolver {
 
     fun findExpectedForActual(
         actual: MemberDescriptor,
-        moduleFilter: (ModuleDescriptor) -> Boolean = allModulesProvidingExpectsFor(actual.module)
+        moduleFilter: (ModuleDescriptor) -> Boolean = allModulesProvidingExpectsFor(actual.module),
+        shouldCheckAbsenceOfDefaultParamsInActual: Boolean = false,
     ): Map<ExpectActualCompatibility<MemberDescriptor>, List<MemberDescriptor>>? {
-        val context = ClassicExpectActualMatchingContext(actual.module)
+        val context = ClassicExpectActualMatchingContext(actual.module, shouldCheckAbsenceOfDefaultParamsInActual)
         return when (actual) {
             is CallableMemberDescriptor -> {
                 val container = actual.containingDeclaration
@@ -66,7 +68,8 @@ object ExpectedActualResolver {
                     is ClassifierDescriptorWithTypeParameters -> {
                         // TODO: replace with 'singleOrNull' as soon as multi-module diagnostic tests are refactored
                         val expectedClass =
-                            findExpectedForActual(container, moduleFilter)?.values?.firstOrNull()?.firstOrNull() as? ClassDescriptor
+                            findExpectedForActual(container, moduleFilter, shouldCheckAbsenceOfDefaultParamsInActual)?.values
+                                ?.firstOrNull()?.firstOrNull() as? ClassDescriptor
                         with(context) {
                             expectedClass?.getMembersForExpectClass(actual.name)?.filterIsInstance<CallableMemberDescriptor>().orEmpty()
                         }

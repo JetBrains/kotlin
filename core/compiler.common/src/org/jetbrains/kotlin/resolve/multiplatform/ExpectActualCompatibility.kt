@@ -55,6 +55,11 @@ sealed class ExpectActualCompatibility<out D> {
         object FunctionModifiersNotSubset : Incompatible<Nothing>(
             "some modifiers on expected declaration are missing on the actual one (infix, inline, operator)"
         )
+        object ActualFunctionWithDefaultParameters :
+            Incompatible<Nothing>(
+                "actual function cannot have default argument values, they should be declared in the expected function",
+                IncompatibilityKind.STRONG
+            )
 
         // Properties
 

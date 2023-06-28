@@ -79,6 +79,7 @@ object ClassicPositioningStrategies {
                     }
                     ExpectActualCompatibility.Incompatible.ParameterCount, ExpectActualCompatibility.Incompatible.ParameterTypes,
                     ExpectActualCompatibility.Incompatible.ParameterNames, ExpectActualCompatibility.Incompatible.ValueParameterVararg,
+                    ExpectActualCompatibility.Incompatible.ActualFunctionWithDefaultParameters,
                     ExpectActualCompatibility.Incompatible.ValueParameterNoinline,
                     ExpectActualCompatibility.Incompatible.ValueParameterCrossinline -> {
                         callableDeclaration?.valueParameterList
