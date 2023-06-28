@@ -85,8 +85,6 @@ internal object AnnotationArgumentMappingStateKeepers {
     }
 
     private val ANNOTATION_BASE: StateKeeper<FirAnnotation> = stateKeeper { annotation ->
-        add(FirAnnotation::annotationTypeRef, FirAnnotation::replaceAnnotationTypeRef)
-
         if (annotation is FirAnnotationCall) {
             entity(annotation, ANNOTATION_CALL)
         }
