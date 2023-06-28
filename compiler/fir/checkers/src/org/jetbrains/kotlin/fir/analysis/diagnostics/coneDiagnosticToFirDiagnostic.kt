@@ -15,11 +15,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.isLocalMember
 import org.jetbrains.kotlin.fir.analysis.getChild
 import org.jetbrains.kotlin.fir.builder.FirSyntaxErrors
-import org.jetbrains.kotlin.fir.declarations.utils.isExpect
-import org.jetbrains.kotlin.fir.declarations.utils.isInfix
-import org.jetbrains.kotlin.fir.declarations.utils.isInner
-import org.jetbrains.kotlin.fir.declarations.utils.isOperator
-import org.jetbrains.kotlin.fir.declarations.utils.visibility
+import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.diagnostics.*
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
@@ -314,7 +310,6 @@ private fun mapInapplicableCandidateError(
                     source,
                     qualifiedAccessSource,
                     session.typeContext,
-                    mutableSetOf(),
                     diagnostic.candidate
                 )
             }
@@ -345,7 +340,6 @@ private fun mapSystemHasContradictionError(
     source: KtSourceElement,
     qualifiedAccessSource: KtSourceElement?,
 ): List<KtDiagnostic> {
-    val errorsToIgnore = mutableSetOf<ConstraintSystemError>()
     return buildList {
         for (error in diagnostic.candidate.errors) {
             addIfNotNull(
@@ -353,7 +347,6 @@ private fun mapSystemHasContradictionError(
                     source,
                     qualifiedAccessSource,
                     session.typeContext,
-                    errorsToIgnore,
                     diagnostic.candidate,
                 )
             )
@@ -361,7 +354,6 @@ private fun mapSystemHasContradictionError(
     }.ifEmpty {
         listOfNotNull(
             diagnostic.candidate.errors.firstNotNullOfOrNull {
-                if (it in errorsToIgnore) return@firstNotNullOfOrNull null
                 val message = when (it) {
                     is NewConstraintError -> "NewConstraintError at ${it.position}: ${it.lowerType} <!: ${it.upperType}"
                     // Error should be reported on the error type itself
@@ -387,7 +379,6 @@ private fun ConstraintSystemError.toDiagnostic(
     source: KtSourceElement,
     qualifiedAccessSource: KtSourceElement?,
     typeContext: ConeTypeContext,
-    errorsToIgnore: MutableSet<ConstraintSystemError>,
     candidate: AbstractCandidate,
 ): KtDiagnostic? {
     return when (this) {
@@ -425,12 +416,6 @@ private fun ConstraintSystemError.toDiagnostic(
                         inferredType.removeTypeVariableTypes(typeContext),
                         typeMismatchDueToNullability
                     )
-                }
-
-                is ExplicitTypeParameterConstraintPosition<*>,
-                is DelegatedPropertyConstraintPosition<*> -> {
-                    errorsToIgnore.add(this)
-                    return null
                 }
 
                 else -> null
