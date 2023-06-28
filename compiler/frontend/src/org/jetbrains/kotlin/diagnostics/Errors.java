@@ -811,7 +811,7 @@ public interface Errors {
     DiagnosticFactory0<KtTypeAlias> ACTUAL_TYPE_ALIAS_WITH_COMPLEX_SUBSTITUTION = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
     DiagnosticFactory0<KtTypeAlias> ACTUAL_TYPE_ALIAS_TO_NULLABLE_TYPE = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
     DiagnosticFactory0<KtTypeAlias> ACTUAL_TYPE_ALIAS_TO_NOTHING = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
-    DiagnosticFactory0<PsiElement> ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<KtFunction> ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS = DiagnosticFactory0.create(ERROR, PARAMETERS_WITH_DEFAULT_VALUE);
     DiagnosticFactory2<KtNamedDeclaration, ClassDescriptor, Collection<FunctionDescriptor>> DEFAULT_ARGUMENTS_IN_EXPECT_WITH_ACTUAL_TYPEALIAS = DiagnosticFactory2.create(ERROR);
     DiagnosticFactory1<PsiElement, ValueParameterDescriptor> ACTUAL_ANNOTATION_CONFLICTING_DEFAULT_ARGUMENT_VALUE =
             DiagnosticFactory1.create(ERROR);

@@ -52,6 +52,7 @@ enum class PositioningStrategy(private val strategy: String? = null) {
     MODALITY_MODIFIER,
     OPERATOR,
     PARAMETER_DEFAULT_VALUE,
+    PARAMETERS_WITH_DEFAULT_VALUE,
     PARAMETER_VARARG_MODIFIER,
     DECLARATION_RETURN_TYPE,
     OVERRIDE_MODIFIER,

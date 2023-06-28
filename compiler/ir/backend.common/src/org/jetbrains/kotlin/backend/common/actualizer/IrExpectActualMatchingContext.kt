@@ -49,6 +49,12 @@ internal abstract class IrExpectActualMatchingContext(
     override val allowTransitiveSupertypesActualization: Boolean
         get() = true
 
+    // This incompatibility is often suppressed in the source code (e.g. in kotlin-stdlib).
+    // The backend must be able to do expect-actual matching to emit bytecode
+    // That's why we disable the checker here. Probably, this checker can be enabled once KT-60426 is fixed
+    override val shouldCheckAbsenceOfDefaultParamsInActual: Boolean
+        get() = false
+
     private inline fun <R> CallableSymbolMarker.processIr(
         onFunction: (IrFunction) -> R,
         onProperty: (IrProperty) -> R,
@@ -284,6 +290,9 @@ internal abstract class IrExpectActualMatchingContext(
             onValueParameter = { emptyList() },
             onEnumEntry = { emptyList() }
         )
+
+    override fun FunctionSymbolMarker.allOverriddenDeclarationsRecursive(): Sequence<CallableSymbolMarker> =
+        throw NotImplementedError("Not implemented because it's unused")
 
     override val FunctionSymbolMarker.valueParameters: List<ValueParameterSymbolMarker>
         get() = asIr().valueParameters.map { it.symbol }
