@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.cli.jvm.config.JavaSourceRoot
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.config.CommonConfigurationKeys.METADATA_VERSION
 import org.jetbrains.kotlin.config.CommonConfigurationKeys.USE_FIR
 import org.jetbrains.kotlin.fir.extensions.FirAnalysisHandlerExtension
 import org.jetbrains.kotlin.kapt3.KAPT_OPTIONS
@@ -36,6 +37,7 @@ import org.jetbrains.kotlin.kapt3.util.prettyPrint
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.util.ServiceLoaderLite
+import org.jetbrains.kotlin.utils.toMetadataVersion
 import java.io.File
 import java.net.URLClassLoader
 import javax.annotation.processing.Processor
@@ -101,6 +103,9 @@ class Kapt4AnalysisHandlerExtension : FirAnalysisHandlerExtension() {
         if (options[KaptFlag.VERBOSE]) {
             logger.info(options.logString())
         }
+
+        ktAnalysisSession.ktMetadataCalculator.metadataVersion =
+            configuration[METADATA_VERSION] ?: languageVersionSettings.languageVersion.toMetadataVersion()
 
         try {
             if (options.mode == AptMode.WITH_COMPILATION) {

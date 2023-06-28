@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirOfType
 import org.jetbrains.kotlin.codegen.ClassBuilderMode
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings
+import org.jetbrains.kotlin.config.JvmAnalysisFlags
 import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.FirMetadataSource
@@ -27,7 +28,8 @@ import org.jetbrains.kotlin.fir.serialization.FirElementAwareStringTable
 import org.jetbrains.kotlin.fir.serialization.FirElementSerializer
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.typeApproximator
-import org.jetbrains.kotlin.load.kotlin.JvmBytecodeBinaryVersion
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames
+import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.metadata.jvm.serialization.JvmStringTable
 import org.jetbrains.kotlin.name.ClassId
@@ -44,6 +46,9 @@ internal class KtFirMetadataCalculator(
 
     private val scopeSession: ScopeSession
         get() = firResolveSession.getScopeSessionFor(firSession)
+
+    private val targetMetadataVersion: BinaryVersion
+        get() = metadataVersion ?: firSession.languageVersionSettings.languageVersion.toMetadataVersion()
 
     override fun calculate(ktClass: KtClassOrObject): Metadata {
         // TODO: support nested classes
@@ -80,15 +85,22 @@ internal class KtFirMetadataCalculator(
     }
 
     private fun generateAnnotation(message: GeneratedMessageLite, stringTable: JvmStringTable, kind: Kind): Metadata {
+        val languageVersionSettings = firSession.languageVersionSettings
+        var flags = 0
+        if (languageVersionSettings.isPreRelease()) {
+            flags = flags or JvmAnnotationNames.METADATA_PRE_RELEASE_FLAG
+        }
+        if (languageVersionSettings.getFlag(JvmAnalysisFlags.strictMetadataVersionSemantics)) {
+            flags = flags or JvmAnnotationNames.METADATA_STRICT_VERSION_SEMANTICS_FLAG
+        }
         return Metadata(
             kind = kind.value,
-            metadataVersion = JvmBytecodeBinaryVersion.INSTANCE.toArray(),
-            bytecodeVersion = intArrayOf(1, 0, 3),
+            metadataVersion = targetMetadataVersion.toArray(),
             data1 = JvmProtoBufUtil.writeData(message, stringTable),
             data2 = ArrayUtil.toStringArray(stringTable.strings),
             extraString = "",
             packageName = "",
-            extraInt = 0
+            extraInt = flags
         )
     }
 
@@ -110,7 +122,7 @@ internal class KtFirMetadataCalculator(
             classBuilderMode = ClassBuilderMode.KAPT3,
             isParamAssertionsDisabled = true,
             unifiedNullChecks = false,
-            metadataVersion = session.languageVersionSettings.languageVersion.toMetadataVersion(),
+            metadataVersion = targetMetadataVersion,
             jvmDefaultMode = JvmDefaultMode.ENABLE,
             stringTable,
             null,

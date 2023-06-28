@@ -5,10 +5,13 @@
 
 package org.jetbrains.kotlin.analysis.api.components
 
+import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 
 public abstract class KtMetadataCalculator {
+    public var metadataVersion: BinaryVersion? = null
+
     public abstract fun calculate(ktClass: KtClassOrObject): Metadata?
     public abstract fun calculate(ktFile: KtFile): Metadata?
     public abstract fun calculate(ktFiles: Collection<KtFile>): Metadata?
