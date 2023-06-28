@@ -324,9 +324,9 @@ private fun transformToJsonString(reachabilityInfos: List<ReachabilityInfo>): St
     return "[\n" + transformToStringBy(reachabilityInfos, ",\n") { sourceFqn, targetFqn, description, isTargetContagious ->
         """
         |    {
-        |        "source" : "$sourceFqn",
-        |        "target" : "$targetFqn",
-        |        "description" : "$description",
+        |        "source" : "${sourceFqn.removeQuotes()}",
+        |        "target" : "${targetFqn.removeQuotes()}",
+        |        "description" : "${description.removeQuotes()}",
         |        "isTargetContagious" : $isTargetContagious
         |    }""".trimMargin()
     } + "\n]"

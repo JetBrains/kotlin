@@ -45,7 +45,9 @@ fun dumpDeclarationIrSizesIfNeed(path: String?, allModules: List<IrModuleFragmen
                     is IrFunction,
                     is IrProperty,
                     is IrField,
-                    is IrAnonymousInitializer -> {
+                    is IrAnonymousInitializer,
+                    is IrClass,
+                    -> {
                         declarations.add(declaration)
                     }
                 }
@@ -62,11 +64,29 @@ fun dumpDeclarationIrSizesIfNeed(path: String?, allModules: List<IrModuleFragmen
         else -> listOf("", "", "\n", "")
     }
 
-    val value = declarations.joinToString(separator, prefix, postfix) {
-        val fqn = it.fqNameForDceDump()
-        val size = it.dumpKotlinLike().length
-        "$indent\"$fqn\" : $size"
-    }
+    val value = declarations
+        .groupBy({ it.fqNameForDceDump() }, { it })
+        .map { (k, v) -> k to v.maxBy { it.dumpKotlinLike().length } }
+        .joinToString(separator, prefix, postfix) { (fqn, element) ->
+            val size = element.dumpKotlinLike().length
+            val type = when (element) {
+                is IrFunction -> "function"
+                is IrProperty -> "property"
+                is IrField -> "field"
+                is IrAnonymousInitializer -> "anonymousInitializer"
+                is IrClass -> "class"
+                else -> "unknown"
+            }
+            """$indent"${fqn.removeQuotes()}": {
+                |$indent$indent"size": $size,
+                |$indent$indent"type": "$type"
+                |$indent}
+            """.trimMargin()
+        }
 
     out.writeText(value)
 }
+
+internal fun String.removeQuotes() = replace('"'.toString(), "")
+    .replace("'", "")
+    .replace("\\", "\\\\")
