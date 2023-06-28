@@ -8,15 +8,13 @@ package org.jetbrains.kotlin.fir.resolve.transformers.mpp
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.fir.FirExpectActualMatchingContext
-import org.jetbrains.kotlin.fir.FirExpectActualMatchingContextFactory
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.getRetention
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirConstExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.isSubstitutionOrIntersectionOverride
+import org.jetbrains.kotlin.fir.declarations.utils.isOverride
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.*
@@ -46,6 +44,9 @@ class FirExpectActualMatchingContextImpl private constructor(
 ) : FirExpectActualMatchingContext, TypeSystemContext by actualSession.typeContext {
     override val shouldCheckReturnTypesOfCallables: Boolean
         get() = false
+
+    override val shouldCheckAbsenceOfDefaultParamsInActual: Boolean
+        get() = true
 
     override val enumConstructorsAreAlwaysCompatible: Boolean
         get() = true
@@ -243,6 +244,23 @@ class FirExpectActualMatchingContextImpl private constructor(
         get() = asSymbol().resolvedReturnType.type
     override val CallableSymbolMarker.typeParameters: List<TypeParameterSymbolMarker>
         get() = asSymbol().typeParameterSymbols
+
+    override fun FunctionSymbolMarker.allOverriddenDeclarationsRecursive(): Sequence<CallableSymbolMarker> {
+        return when (val symbol = asSymbol()) {
+            is FirConstructorSymbol, is FirFunctionWithoutNameSymbol -> sequenceOf(this)
+            is FirNamedFunctionSymbol -> {
+                val session = symbol.moduleData.session
+                val containingClass = symbol.containingClassLookupTag()?.toFirRegularClassSymbol(session)
+                    ?: return sequenceOf(symbol)
+                (sequenceOf(symbol) + symbol.overriddenFunctions(containingClass, session, scopeSession).asSequence())
+                    // Tests work even if you don't filter out fake-overrides. Filtering fake-overrides is needed because
+                    // the returned descriptors are compared by `equals`. And `equals` for fake-overrides is weird.
+                    // I didn't manage to invent a test that would check this condition
+                    .filter { !it.isSubstitutionOrIntersectionOverride }
+            }
+        }
+    }
+
     override val FunctionSymbolMarker.valueParameters: List<ValueParameterSymbolMarker>
         get() = asSymbol().valueParameterSymbols
 
