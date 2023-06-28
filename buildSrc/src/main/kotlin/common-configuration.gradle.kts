@@ -37,6 +37,7 @@ project.configureJavaBasePlugin()
 project.configureKotlinCompilationOptions()
 project.configureArtifacts()
 project.configureTests()
+project.disableConfigurationCacheIfRequired()
 
 // There are problems with common build dir:
 //  - some tests (in particular js and binary-compatibility-validator depend on the fixed (default) location
@@ -308,3 +309,14 @@ fun skipJvmDefaultAllForModule(path: String): Boolean =
             //     )V from class kotlin.reflect.jvm.internal.impl.resolve.OverridingUtilTypeSystemContext
             // KT-54749
             path == ":core:descriptors"
+
+fun Project.disableConfigurationCacheIfRequired() {
+    val reason = when {
+        project.kotlinBuildProperties.isKotlinNativeEnabled -> "The Kotlin/Native build doesn't support configuration cache yet"
+        project.kotlinBuildProperties.isTeamcityBuild -> "The TeamCity runner doesn't support configuration cache yet: TW-71916"
+        else -> return
+    }
+    tasks.configureEach {
+        notCompatibleWithConfigurationCache(reason)
+    }
+}
