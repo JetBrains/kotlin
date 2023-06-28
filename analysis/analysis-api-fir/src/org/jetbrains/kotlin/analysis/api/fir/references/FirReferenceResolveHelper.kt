@@ -50,6 +50,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
@@ -142,13 +143,28 @@ internal object FirReferenceResolveHelper {
         return when (qualified) {
             null -> FqName(expression.getReferencedName())
             else -> {
-                qualified
-                    .collectDescendantsOfType<KtSimpleNameExpression>()
-                    .dropWhile { it.getReferencedName() == ROOT_PREFIX_FOR_IDE_RESOLUTION_MODE }
-                    .joinToString(separator = ".") { it.getReferencedName() }
+                val refs =
+                    if (qualified is KtUserType && qualified.stub != null && (qualified.containingFile as? KtFile)?.isCompiled == true) {
+                        collectTypeReferences(qualified)
+                    } else {
+                        qualified.collectDescendantsOfType<KtSimpleNameExpression>()
+                    }
+                refs.map { it.getReferencedName() }
+                    .dropWhile { it == ROOT_PREFIX_FOR_IDE_RESOLUTION_MODE }
+                    .joinToString(separator = ".")
                     .let(::FqName)
             }
         }
+    }
+
+    private fun collectTypeReferences(qualified: KtUserType): MutableList<KtNameReferenceExpression> {
+        val refs = mutableListOf<KtNameReferenceExpression>()
+        fun collectFragments(type: KtUserType) {
+            type.getStubOrPsiChild(KtStubElementTypes.USER_TYPE)?.let { collectFragments(it) }
+            refs.add(type.referenceExpression as? KtNameReferenceExpression ?: return)
+        }
+        collectFragments(qualified)
+        return refs
     }
 
     private fun KtSimpleNameExpression.isPartOfQualifiedExpression(): Boolean {

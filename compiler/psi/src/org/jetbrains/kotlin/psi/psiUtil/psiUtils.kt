@@ -278,7 +278,7 @@ inline fun <reified T : PsiElement> PsiElement.findDescendantOfType(
 
 fun PsiElement.checkDecompiledText() {
     val file = containingFile
-    if (file is KtFile && file.isCompiled) {
+    if (file is KtFile && file.isCompiled && file.stub != null) {
         error("Attempt to load decompiled text, please use stubs instead. Decompile process might be slow and should be avoided")
     }
 }
