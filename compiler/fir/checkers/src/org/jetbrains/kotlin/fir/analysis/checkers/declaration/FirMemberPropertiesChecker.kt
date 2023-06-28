@@ -79,7 +79,6 @@ object FirMemberPropertiesChecker : FirClassChecker() {
             context,
             reachable
         )
-        checkExpectDeclarationVisibilityAndBody(property, source, reporter, context)
 
         val hasAbstractModifier = KtTokens.ABSTRACT_KEYWORD in modifierList
         val isAbstract = property.isAbstract || hasAbstractModifier

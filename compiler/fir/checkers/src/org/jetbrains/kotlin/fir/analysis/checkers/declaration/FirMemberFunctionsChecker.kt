@@ -70,7 +70,5 @@ object FirMemberFunctionsChecker : FirSimpleFunctionChecker() {
                 reporter.reportOn(source, FirErrors.NON_ABSTRACT_FUNCTION_WITH_NO_BODY, functionSymbol, context)
             }
         }
-
-        checkExpectDeclarationVisibilityAndBody(function, source, reporter, context)
     }
 }
