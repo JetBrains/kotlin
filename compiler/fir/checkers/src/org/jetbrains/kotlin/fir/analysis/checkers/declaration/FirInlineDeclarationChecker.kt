@@ -47,7 +47,7 @@ object FirInlineDeclarationChecker : FirFunctionChecker() {
         if (context.session.inlineCheckerExtension?.isGenerallyOk(declaration, context, reporter) == false) return
         if (declaration !is FirPropertyAccessor && declaration !is FirSimpleFunction) return
 
-        val effectiveVisibility = declaration.effectiveVisibility
+        val effectiveVisibility = declaration.publishedApiEffectiveVisibility ?: declaration.effectiveVisibility
         checkInlineFunctionBody(declaration, effectiveVisibility, context, reporter)
         checkCallableDeclaration(declaration, context, reporter)
     }
