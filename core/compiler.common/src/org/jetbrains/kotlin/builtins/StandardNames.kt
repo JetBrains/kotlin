@@ -36,6 +36,8 @@ object StandardNames {
 
     @JvmField val NAME = Name.identifier("name")
 
+    @JvmField val MAIN = Name.identifier("main")
+
     @JvmField val NEXT_CHAR = Name.identifier("nextChar")
 
     @JvmField val IMPLICIT_LAMBDA_PARAMETER_NAME = Name.identifier("it")

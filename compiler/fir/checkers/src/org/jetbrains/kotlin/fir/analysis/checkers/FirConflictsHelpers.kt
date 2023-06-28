@@ -6,15 +6,22 @@
 package org.jetbrains.kotlin.fir.analysis.checkers
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirMethodOfAnyImplementedInInterfaceChecker.appendRepresentation
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirMethodOfAnyImplementedInInterfaceChecker.appendRepresentationAfterCallableId
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirMethodOfAnyImplementedInInterfaceChecker.appendRepresentationBeforeCallableId
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirNameConflictsTracker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirOuterClassTypeParameterRef
+import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl.Companion.DEFAULT_STATUS_FOR_STATUSLESS_DECLARATIONS
+import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl.Companion.DEFAULT_STATUS_FOR_SUSPEND_MAIN_FUNCTION
+import org.jetbrains.kotlin.fir.declarations.impl.modifiersRepresentation
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.scopes.impl.FirPackageMemberScope
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -22,15 +29,43 @@ import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
-import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.util.ListMultimap
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
+import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.SmartSet
 
 internal class FirDefaultDeclarationPresenter : FirDeclarationPresenter
 
 private val NO_NAME_PROVIDED = Name.special("<no name provided>")
+
+private val MAIN_FUNCTION_SHAPES = setOf(
+    "<>[]():kotlin/Unit",
+    "<>[](kotlin/Array<kotlin/String,>,):kotlin/Unit",
+    "<>[](vararg kotlin/String,):kotlin/Unit",
+)
+
+val DEFAULT_STATUS_FOR_NORMAL_MAIN_FUNCTION = DEFAULT_STATUS_FOR_STATUSLESS_DECLARATIONS
+
+private val FirSimpleFunction.hasMainFunctionStatus
+    get() = when (status.modifiersRepresentation) {
+        DEFAULT_STATUS_FOR_NORMAL_MAIN_FUNCTION.modifiersRepresentation,
+        DEFAULT_STATUS_FOR_SUSPEND_MAIN_FUNCTION.modifiersRepresentation -> true
+        else -> false
+    }
+
+private val CallableId.isTopLevel get() = className == null
+
+private val FirSimpleFunction.representsMainFunctionAllowingConflictingOverloads
+    get(): Boolean = when {
+        name != StandardNames.MAIN || !symbol.callableId.isTopLevel || !hasMainFunctionStatus -> false
+        else -> buildString {
+            appendRepresentationBeforeCallableId(this@representsMainFunctionAllowingConflictingOverloads)
+            appendRepresentationAfterCallableId(this@representsMainFunctionAllowingConflictingOverloads)
+            append(':')
+            appendRepresentation(returnTypeRef)
+        } in MAIN_FUNCTION_SHAPES
+    }
 
 // - see testEnumValuesValueOf.
 // it generates a static function that has
@@ -211,12 +246,11 @@ class FirDeclarationInspector {
 
     private fun areCompatibleMainFunctions(
         declaration1: FirDeclaration, file1: FirFile, declaration2: FirDeclaration, file2: FirFile?
-    ): Boolean {
-        // TODO: proper main function detector
-        if (declaration1 !is FirSimpleFunction || declaration2 !is FirSimpleFunction) return false
-        if (declaration1.name.asString() != "main" || declaration2.name.asString() != "main") return false
-        return file1 != file2
-    }
+    ) = file1 != file2
+            && declaration1 is FirSimpleFunction
+            && declaration2 is FirSimpleFunction
+            && declaration1.representsMainFunctionAllowingConflictingOverloads
+            && declaration2.representsMainFunctionAllowingConflictingOverloads
 
     private fun collectExternalConflict(
         declaration: FirDeclaration,
