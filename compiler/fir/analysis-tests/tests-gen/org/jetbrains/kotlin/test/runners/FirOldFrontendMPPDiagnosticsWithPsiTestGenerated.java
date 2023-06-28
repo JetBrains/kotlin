@@ -33,14 +33,62 @@ public class FirOldFrontendMPPDiagnosticsWithPsiTestGenerated extends AbstractFi
     }
 
     @Test
+    @TestMetadata("actualFakeOverride_defaultParamsIncompatibility.kt")
+    public void testActualFakeOverride_defaultParamsIncompatibility() throws Exception {
+        runTest("compiler/testData/diagnostics/tests/multiplatform/actualFakeOverride_defaultParamsIncompatibility.kt");
+    }
+
+    @Test
+    @TestMetadata("actualFakeOverride_paramsAreCompatibleViaSharedMethodWithDefaultParams.kt")
+    public void testActualFakeOverride_paramsAreCompatibleViaSharedMethodWithDefaultParams() throws Exception {
+        runTest("compiler/testData/diagnostics/tests/multiplatform/actualFakeOverride_paramsAreCompatibleViaSharedMethodWithDefaultParams.kt");
+    }
+
+    @Test
+    @TestMetadata("actualFakeOverride_paramsAreCompatibleViaTransitiveSharedMethodWithDefaultParams.kt")
+    public void testActualFakeOverride_paramsAreCompatibleViaTransitiveSharedMethodWithDefaultParams() throws Exception {
+        runTest("compiler/testData/diagnostics/tests/multiplatform/actualFakeOverride_paramsAreCompatibleViaTransitiveSharedMethodWithDefaultParams.kt");
+    }
+
+    @Test
+    @TestMetadata("actualFakeOverride_transitiveFakeOverrides_compatible.kt")
+    public void testActualFakeOverride_transitiveFakeOverrides_compatible() throws Exception {
+        runTest("compiler/testData/diagnostics/tests/multiplatform/actualFakeOverride_transitiveFakeOverrides_compatible.kt");
+    }
+
+    @Test
+    @TestMetadata("actualFakeOverride_transitiveFakeOverrides_incompatible.kt")
+    public void testActualFakeOverride_transitiveFakeOverrides_incompatible() throws Exception {
+        runTest("compiler/testData/diagnostics/tests/multiplatform/actualFakeOverride_transitiveFakeOverrides_incompatible.kt");
+    }
+
+    @Test
     @TestMetadata("actualTypealiasToSpecialAnnotation.kt")
     public void testActualTypealiasToSpecialAnnotation() throws Exception {
         runTest("compiler/testData/diagnostics/tests/multiplatform/actualTypealiasToSpecialAnnotation.kt");
     }
 
     @Test
+    @TestMetadata("actualTypealias_defaultParamsIncompatibility.kt")
+    public void testActualTypealias_defaultParamsIncompatibility() throws Exception {
+        runTest("compiler/testData/diagnostics/tests/multiplatform/actualTypealias_defaultParamsIncompatibility.kt");
+    }
+
+    @Test
     public void testAllFilesPresentInMultiplatform() throws Exception {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/multiplatform"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), TargetBackend.JVM_IR, true);
+    }
+
+    @Test
+    @TestMetadata("arraySort.kt")
+    public void testArraySort() throws Exception {
+        runTest("compiler/testData/diagnostics/tests/multiplatform/arraySort.kt");
+    }
+
+    @Test
+    @TestMetadata("arraySortFixed.kt")
+    public void testArraySortFixed() throws Exception {
+        runTest("compiler/testData/diagnostics/tests/multiplatform/arraySortFixed.kt");
     }
 
     @Test
