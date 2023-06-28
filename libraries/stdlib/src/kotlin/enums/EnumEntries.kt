@@ -13,7 +13,7 @@ package kotlin.enums
  * [EnumEntries] contains all enum entries in the order they are declared in the source code,
  * consistently with the corresponding [Enum.ordinal] values.
  *
- * An instance of this interface can only be obtained from `EnumClass.entries` property.
+ * An instance of this interface can be obtained from `EnumClass.entries` property or with [enumEntries] function.
  *
  * #### Implementation note
  * All basic operations, such as `contains` and `indexOf`, are executed in constant time and are likely to be
@@ -22,6 +22,21 @@ package kotlin.enums
 @SinceKotlin("1.9")
 @WasExperimental(ExperimentalStdlibApi::class)
 public sealed interface EnumEntries<E : Enum<E>> : List<E>
+
+/**
+ * Returns [EnumEntries] list containing all enum entries for the given enum type [T].
+ */
+@PublishedApi
+@ExperimentalStdlibApi
+@SinceKotlin("1.9")
+internal inline fun <reified T : Enum<T>> enumEntries(): EnumEntries<T> {
+    /*
+     * Implementation note: this body will be replaced with `throw NotImplementedException()` the moment
+     * all backends starts intrinsifying this call.
+     * Then this method will also be promoted to public.
+     */
+    return enumEntries(enumValues<T>())
+}
 
 @PublishedApi
 @SinceKotlin("1.8") // Used by pre-1.9.0 JVM compiler for the feature in preview mode. Can be safely removed around 2.1
