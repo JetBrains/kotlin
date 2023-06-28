@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirInlineDeclarationChecker
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.expressions.FirGetClassCall
@@ -40,6 +41,7 @@ abstract class CheckerContext : DiagnosticContext {
     abstract val annotationContainers: List<FirAnnotationContainer>
     abstract val containingElements: List<FirElement>
     abstract val isContractBody: Boolean
+    abstract val inlineFunctionBodyContext: FirInlineDeclarationChecker.InlineFunctionBodyContext?
 
     // Suppress
     abstract val suppressedDiagnostics: Set<String>
