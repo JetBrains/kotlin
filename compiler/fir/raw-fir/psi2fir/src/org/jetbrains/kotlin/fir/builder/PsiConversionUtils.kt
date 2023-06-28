@@ -36,7 +36,7 @@ internal fun KtWhenCondition.toFirWhenCondition(
     return when (this) {
         is KtWhenConditionWithExpression -> {
             buildEqualityOperatorCall {
-                source = expression?.toKtPsiSourceElement(KtFakeSourceElementKind.WhenCondition)
+                source = (expression ?: firstChild)?.toKtPsiSourceElement(KtFakeSourceElementKind.WhenCondition)
                 operation = FirOperation.EQ
                 argumentList = buildBinaryArgumentList(
                     firSubjectExpression, expression.convert("No expression in condition with expression")
