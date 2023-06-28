@@ -7,6 +7,7 @@
 
 package org.jetbrains.kotlin.gradle.unitTests
 
+import org.gradle.api.GradleException
 import org.jetbrains.kotlin.commonizer.CommonizerTarget
 import org.jetbrains.kotlin.commonizer.SharedCommonizerTarget
 import org.jetbrains.kotlin.gradle.util.MultiplatformExtensionTest
@@ -15,6 +16,8 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropCommonizerTask
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropCommonizerGroup
 import org.jetbrains.kotlin.gradle.targets.native.internal.commonizeCInteropTask
+import org.jetbrains.kotlin.gradle.util.enableCInteropCommonization
+import org.jetbrains.kotlin.gradle.util.main
 import org.jetbrains.kotlin.gradle.util.runLifecycleAwareTest
 import org.jetbrains.kotlin.konan.target.KonanTarget.*
 import kotlin.test.*
@@ -28,6 +31,22 @@ class CInteropCommonizerTaskTest : MultiplatformExtensionTest() {
         enableGranularSourceSetsMetadata()
         enableCInteropCommonization()
         super.setup()
+    }
+
+    @Test
+    fun `commonizeCInteropTask configuration - avoids cinterop task configuration`() {
+        project.enableCInteropCommonization(true)
+
+        listOf(
+            kotlin.linuxX64().compilations.main.cinterops.create("anyInteropName"),
+            kotlin.macosX64().compilations.main.cinterops.create("anyInteropName"),
+        ).forEach {
+            project.tasks.named(it.interopProcessingTaskName).configure {
+                throw GradleException("Interop task configuration should not avoided by commonizeCInteropTask configuration")
+            }
+        }
+
+        project.commonizeCInteropTask?.get() ?: fail("Expected commonizeCInteropTask to be present")
     }
 
     @Test
