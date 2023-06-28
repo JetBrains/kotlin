@@ -2718,7 +2718,10 @@ open class PsiRawFirBuilder(
 
                 null -> {
                     CalleeAndReceiver(
-                        buildErrorNamedReference { diagnostic = ConeSyntaxDiagnostic("Call has no callee") }
+                        buildErrorNamedReference {
+                            source = defaultSource
+                            diagnostic = ConeSyntaxDiagnostic("Call has no callee")
+                        }
                     )
                 }
 
