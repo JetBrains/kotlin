@@ -87,7 +87,11 @@ object LLCompilerFacade {
             val mainFirFile = resolveSession.getOrBuildFirFile(file)
             val inlineCollector = InlineFunctionCollectingVisitor().apply { process(mainFirFile) }
 
-            val filesToCompile = inlineCollector.files
+            val filesToCompile = when (file) {
+                is KtCodeFragment -> (inlineCollector.files - file) + file
+                else -> inlineCollector.files
+            }
+
             val firFilesToCompile = filesToCompile
                 .map { it.getOrBuildFirFile(resolveSession) }
                 .onEach { it.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE) }

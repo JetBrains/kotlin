@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.compiler
 
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.isLocalMember
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.hasBody
@@ -16,11 +17,11 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirContractCallBlock
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.unwrapSubstitutionOverrides
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitorVoid
 import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.utils.addIfNotNull
 
@@ -46,15 +47,23 @@ internal class InlineFunctionCollectingVisitor : FirDefaultVisitorVoid() {
         }
     }
 
-    private fun processSingle(declaration: FirDeclaration) {
-        if (processed.add(declaration)) {
-            val containingFile = declaration.psi?.containingFile
-            if (containingFile is KtFile && !containingFile.isCompiled) {
-                collectedFiles.add(containingFile)
+    private fun recordFile(declaration: FirDeclaration): Boolean {
+        val containingFile = declaration.psi?.containingFile
+        if (containingFile is KtFile && !containingFile.isCompiled) {
+            collectedFiles.add(containingFile)
 
-                declaration.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
-                declaration.accept(this)
-            }
+            // Even if the file is already in the list,
+            // there might be different declarations that depend on other files.
+            return true
+        }
+
+        return false
+    }
+
+    private fun processSingle(declaration: FirDeclaration) {
+        if (processed.add(declaration) && recordFile(declaration)) {
+            declaration.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
+            declaration.accept(this)
         }
     }
 
@@ -98,8 +107,12 @@ internal class InlineFunctionCollectingVisitor : FirDefaultVisitorVoid() {
     private fun processResolvable(element: FirResolvable) {
         fun addToQueue(function: FirFunction?) {
             val original = function?.unwrapSubstitutionOverrides() ?: return
-            if (original.isInline && original.hasBody) {
-                queue.add(function)
+            if (original.hasBody) {
+                if (original.isInline) {
+                    queue.add(function)
+                } else if (original.isLocalMember) {
+                    recordFile(original)
+                }
             }
         }
 
@@ -109,17 +122,15 @@ internal class InlineFunctionCollectingVisitor : FirDefaultVisitorVoid() {
         }
 
         val symbol = reference.resolvedSymbol
-        if (symbol is FirCallableSymbol<*>) {
-            when (val fir = symbol.fir) {
-                is FirFunction -> {
-                    addToQueue(fir)
-                }
-                is FirProperty -> {
-                    addToQueue(fir.getter)
-                    addToQueue(fir.setter)
-                }
-                else -> {}
+        when (val fir = symbol.fir) {
+            is FirFunction -> {
+                addToQueue(fir)
             }
+            is FirProperty -> {
+                addToQueue(fir.getter)
+                addToQueue(fir.setter)
+            }
+            else -> {}
         }
     }
 }
