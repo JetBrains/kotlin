@@ -46,24 +46,6 @@ object FirTopLevelPropertiesChecker : FirPropertyChecker() {
             reporter,
             context
         )
-        checkExpectDeclarationVisibilityAndBody(declaration, source, reporter, context)
-    }
-}
-
-// TODO: check class too
-internal fun checkExpectDeclarationVisibilityAndBody(
-    declaration: FirMemberDeclaration,
-    source: KtSourceElement,
-    reporter: DiagnosticReporter,
-    context: CheckerContext
-) {
-    if (declaration.isExpect) {
-        if (Visibilities.isPrivate(declaration.visibility)) {
-            reporter.reportOn(source, FirErrors.EXPECTED_PRIVATE_DECLARATION, context)
-        }
-        if (declaration is FirSimpleFunction && declaration.hasBody) {
-            reporter.reportOn(source, FirErrors.EXPECTED_DECLARATION_WITH_BODY, context)
-        }
     }
 }
 

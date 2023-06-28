@@ -5,7 +5,7 @@
 <!EXPECTED_PRIVATE_DECLARATION!>private<!> expect val bar: String
 <!EXPECTED_PRIVATE_DECLARATION!>private<!> expect fun Int.memExt(): Any
 
-private expect class Foo
+<!EXPECTED_PRIVATE_DECLARATION!>private<!> expect class Foo
 
 // MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt

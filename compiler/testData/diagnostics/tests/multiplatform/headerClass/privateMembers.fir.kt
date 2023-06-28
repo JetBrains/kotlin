@@ -6,7 +6,7 @@ expect class A {
     <!EXPECTED_PRIVATE_DECLARATION!>private<!> val bar: String
     <!EXPECTED_PRIVATE_DECLARATION!>private<!> fun Int.memExt(): Any
 
-    private class Nested
+    <!EXPECTED_PRIVATE_DECLARATION!>private<!> class Nested
 }
 
 // MODULE: m1-jvm()()(m1-common)

@@ -29,8 +29,6 @@ object FirTopLevelFunctionsChecker : FirSimpleFunctionChecker() {
 
         val source = declaration.source ?: return
         if (source.kind is KtFakeSourceElementKind) return
-        // If multiple (potentially conflicting) modality modifiers are specified, not all modifiers are recorded at `status`.
-        // So, our source of truth should be the full modifier list retrieved from the source.
         if (declaration.hasModifier(KtTokens.ABSTRACT_KEYWORD)) return
         if (declaration.isExternal) return
         if (!declaration.hasBody &&
@@ -39,7 +37,5 @@ object FirTopLevelFunctionsChecker : FirSimpleFunctionChecker() {
         ) {
             reporter.reportOn(source, FirErrors.NON_MEMBER_FUNCTION_NO_BODY, declaration.symbol, context)
         }
-
-        checkExpectDeclarationVisibilityAndBody(declaration, source, reporter, context)
     }
 }
