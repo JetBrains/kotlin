@@ -54,3 +54,7 @@ tasks.register<Jar>("sourcesJar") {
     from(kotlin.sourceSets["commonMain"].kotlin)
     from(kotlin.sourceSets["wasmMain"].kotlin)
 }
+
+tasks.register<Jar>("emptyJavadocJar") {
+    archiveClassifier.set("javadoc")
+}

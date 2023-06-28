@@ -365,6 +365,7 @@ publishing {
         val mainPublication = register("main", MavenPublication::class) {
             from(rootComponent)
             artifact(combinedSourcesJar)
+            artifact(emptyJavadocJar)
             // Remove all optional dependencies from the root pom
             pom.withXml {
                 val dependenciesNode = (asNode().get("dependencies") as NodeList).filterIsInstance<Node>().single()
@@ -385,6 +386,7 @@ publishing {
                 artifactId = "kotlin-test-$framework"
                 from(components[framework])
                 artifact(tasks.getByPath(":kotlin-test:kotlin-test-$framework:sourcesJar") as Jar)
+                artifact(tasks.getByPath(":kotlin-test:kotlin-test-$framework:javadocJar") as Jar)
                 configureKotlinPomAttributes(project, "Kotlin Test Support for $framework")
                 suppressAllPomMetadataWarnings()
             }
@@ -397,6 +399,7 @@ publishing {
             artifactId = "kotlin-test-js"
             from(jsComponent)
             artifact(tasks.getByPath(":kotlin-test:kotlin-test-js:sourcesJar") as Jar)
+            artifact(tasks.getByPath(":kotlin-test:kotlin-test-js:javadocJar") as Jar)
             configureKotlinPomAttributes(project, "Kotlin Test for JS")
         }
         configureSbom(
@@ -407,6 +410,7 @@ publishing {
             artifactId = "kotlin-test-wasm"
             from(wasmComponent)
             artifact(tasks.getByPath(":kotlin-test:kotlin-test-wasm:sourcesJar") as Jar)
+            artifact(tasks.getByPath(":kotlin-test:kotlin-test-wasm:emptyJavadocJar") as Jar)
             configureKotlinPomAttributes(project, "Kotlin Test for WASM", packaging = "klib")
         }
         configureSbom(
@@ -417,6 +421,7 @@ publishing {
             artifactId = "kotlin-test-common"
             from(commonMetadataComponent)
             artifact(tasks.getByPath(":kotlin-test:kotlin-test-common:sourcesJar") as Jar)
+            artifact(tasks.getByPath(":kotlin-test:kotlin-test-common:javadocJar") as Jar)
             configureKotlinPomAttributes(project, "Kotlin Test Common")
         }
         configureSbom(
@@ -427,15 +432,13 @@ publishing {
             artifactId = "kotlin-test-annotations-common"
             from(annotationsMetadataComponent)
             artifact(tasks.getByPath(":kotlin-test:kotlin-test-annotations-common:sourcesJar") as Jar)
+            artifact(tasks.getByPath(":kotlin-test:kotlin-test-annotations-common:javadocJar") as Jar)
             configureKotlinPomAttributes(project, "Kotlin Test Common")
         }
         configureSbom(
             "AnnotationsCommon", "kotlin-test-annotations-common",
             setOf(annotationsMetadata.name), annotationsCommonPublication
         )
-        withType<MavenPublication> {
-            artifact(emptyJavadocJar)
-        }
     }
 }
 
