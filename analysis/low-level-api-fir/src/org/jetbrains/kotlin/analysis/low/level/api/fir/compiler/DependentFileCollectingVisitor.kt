@@ -6,11 +6,14 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.compiler
 
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.isLocalMember
+import org.jetbrains.kotlin.fir.analysis.checkers.toClassLikeSymbol
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.hasBody
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
+import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirResolvable
 import org.jetbrains.kotlin.fir.expressions.impl.FirContractCallBlock
@@ -18,14 +21,18 @@ import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
+import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.unwrapSubstitutionOverrides
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitorVoid
 import org.jetbrains.kotlin.psi.KtClassOrObject
-import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.utils.addIfNotNull
 
-internal class InlineFunctionCollectingVisitor : FirDefaultVisitorVoid() {
+/**
+ * Collects files needed for compilation of a given declaration.
+ * Basically, it collects files with called inline functions, and a context file if local functions/classes are used.
+ */
+internal class DependentFileCollectingVisitor(private val session: FirSession) : FirDefaultVisitorVoid() {
     private val processed = mutableSetOf<FirDeclaration>()
     private val queue = ArrayDeque<FirDeclaration>()
 
@@ -68,8 +75,9 @@ internal class InlineFunctionCollectingVisitor : FirDefaultVisitorVoid() {
     }
 
     override fun visitElement(element: FirElement) {
-        if (element is FirResolvable) {
-            processResolvable(element)
+        when (element) {
+            is FirResolvable -> processResolvable(element)
+            is FirTypeRef -> processTypeRef(element)
         }
 
         element.acceptChildren(this)
@@ -131,6 +139,13 @@ internal class InlineFunctionCollectingVisitor : FirDefaultVisitorVoid() {
                 addToQueue(fir.setter)
             }
             else -> {}
+        }
+    }
+
+    private fun processTypeRef(typeRef: FirTypeRef) {
+        val symbol = typeRef.toClassLikeSymbol(session) ?: return
+        if (symbol.isLocal) {
+            recordFile(symbol.fir)
         }
     }
 }

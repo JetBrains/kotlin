@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.compiler
 
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.progress.ProgressManager
-import com.intellij.openapi.util.Key
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirResolvableModuleSession
 import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
@@ -85,7 +84,7 @@ object LLCompilerFacade {
             val scopeSession = session.moduleComponents.scopeSessionProvider.getScopeSession()
 
             val mainFirFile = resolveSession.getOrBuildFirFile(file)
-            val inlineCollector = InlineFunctionCollectingVisitor().apply { process(mainFirFile) }
+            val inlineCollector = DependentFileCollectingVisitor(session).apply { process(mainFirFile) }
 
             val filesToCompile = when (file) {
                 is KtCodeFragment -> (inlineCollector.files - file) + file
