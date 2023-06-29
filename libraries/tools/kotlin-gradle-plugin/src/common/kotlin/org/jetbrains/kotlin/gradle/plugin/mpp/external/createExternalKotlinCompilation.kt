@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.gradle.ExternalKotlinTargetApi
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.hierarchy.SourceSetTreeClassifierWrapper
 import org.jetbrains.kotlin.gradle.plugin.hierarchy.sourceSetTreeClassifier
-import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.DefaultKotlinCompilationAssociator
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.DefaultKotlinCompilationFriendPathsResolver
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationAssociator
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationSourceSetsContainer
@@ -50,12 +49,12 @@ fun <T : DecoratedExternalKotlinCompilation> DecoratedExternalKotlinTarget.creat
                 compileAllTaskName = descriptor.compileAllTaskName ?: default.compileAllTaskName
             )
         },
-        compilationAssociator = descriptor.compilationAssociator?.let { declaredAssociator ->
-            @Suppress("unchecked_cast")
-            KotlinCompilationAssociator { _, first, second ->
-                declaredAssociator.associate(first.decoratedInstance as T, second.decoratedInstance as DecoratedExternalKotlinCompilation)
-            }
-        } ?: DefaultKotlinCompilationAssociator,
+        compilationAssociator = @Suppress("unchecked_cast") KotlinCompilationAssociator { _, first, second ->
+            descriptor.compilationAssociator.associate(
+                first.decoratedInstance as T,
+                second.decoratedInstance as DecoratedExternalKotlinCompilation
+            )
+        },
         compilationFriendPathsResolver = DefaultKotlinCompilationFriendPathsResolver(
             DefaultKotlinCompilationFriendPathsResolver.FriendArtifactResolver.composite(
                 DefaultKotlinCompilationFriendPathsResolver.DefaultFriendArtifactResolver,
