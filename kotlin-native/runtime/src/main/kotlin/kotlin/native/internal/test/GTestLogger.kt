@@ -16,11 +16,11 @@ internal class GTestLogger : TestLoggerWithStatistics() {
     private val Collection<TestSuite>.totalNotIgnored: Int
         get() = filter { !it.ignored }.size
 
-    override fun startIteration(runner: TestRunner, iteration: Int, suites: Collection<TestSuite>) {
-        if (runner.iterations != 1) {
+    override fun startIteration(settings: TestSettings, iteration: Int, suites: Collection<TestSuite>) {
+        if (settings.iterations != 1) {
             println("\nRepeating all tests (iteration $iteration) . . .\n")
         }
-        super.startIteration(runner, iteration, suites)
+        super.startIteration(settings, iteration, suites)
         println("[==========] Running ${suites.totalTestsNotIgnored} tests from ${suites.totalNotIgnored} test cases.")
         // Just hack to deal with GTest output parsers.
         println("[----------] Global test environment set-up.")
@@ -47,7 +47,7 @@ internal class GTestLogger : TestLoggerWithStatistics() {
         }
     }
 
-    override fun finishIteration(runner: TestRunner, iteration: Int, timeMillis: Long) = printResults(timeMillis)
+    override fun finishIteration(settings: TestSettings, iteration: Int, timeMillis: Long) = printResults(timeMillis)
 
     override fun startSuite(suite: TestSuite) = println("[----------] ${suite.size} tests from ${suite.name}")
 

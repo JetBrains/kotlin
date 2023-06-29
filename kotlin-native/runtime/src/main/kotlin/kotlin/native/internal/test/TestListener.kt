@@ -9,11 +9,11 @@ import kotlin.experimental.ExperimentalNativeApi
 
 @ExperimentalNativeApi
 internal interface TestListener {
-    fun startTesting(runner: TestRunner)
-    fun finishTesting(runner: TestRunner, timeMillis: Long)
+    fun startTesting(settings: TestSettings)
+    fun finishTesting(settings: TestSettings, timeMillis: Long)
 
-    fun startIteration(runner: TestRunner, iteration: Int, suites: Collection<TestSuite>)
-    fun finishIteration(runner: TestRunner, iteration: Int, timeMillis: Long)
+    fun startIteration(settings: TestSettings, iteration: Int, suites: Collection<TestSuite>)
+    fun finishIteration(settings: TestSettings, iteration: Int, timeMillis: Long)
 
     fun startSuite(suite: TestSuite)
     fun finishSuite(suite: TestSuite, timeMillis: Long)
@@ -27,10 +27,10 @@ internal interface TestListener {
 
 @ExperimentalNativeApi
 internal open class BaseTestListener: TestListener {
-    override fun startTesting(runner: TestRunner) {}
-    override fun finishTesting(runner: TestRunner, timeMillis: Long) {}
-    override fun startIteration(runner: TestRunner, iteration: Int, suites: Collection<TestSuite>) {}
-    override fun finishIteration(runner: TestRunner, iteration: Int, timeMillis: Long) {}
+    override fun startTesting(settings: TestSettings) {}
+    override fun finishTesting(settings: TestSettings, timeMillis: Long) {}
+    override fun startIteration(settings: TestSettings, iteration: Int, suites: Collection<TestSuite>) {}
+    override fun finishIteration(settings: TestSettings, iteration: Int, timeMillis: Long) {}
     override fun startSuite(suite: TestSuite) {}
     override fun finishSuite(suite: TestSuite, timeMillis: Long) {}
     override fun ignoreSuite(suite: TestSuite) {}
