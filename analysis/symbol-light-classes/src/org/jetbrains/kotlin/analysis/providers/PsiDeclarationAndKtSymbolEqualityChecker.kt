@@ -57,7 +57,6 @@ internal object PsiDeclarationAndKtSymbolEqualityChecker {
         val offset = if (symbol.isExtension) 1 else 0
         symbol.valueParameters.forEachIndexed { index, valueParameterSymbol ->
             val psiParameter = psi.parameterList.parameters[index + offset]
-            if (valueParameterSymbol.name.asString() != psiParameter.name) return false
             if (valueParameterSymbol.isVararg != psiParameter.isVarArgs) return false
             if (!isTheSameTypes(
                     psi,
