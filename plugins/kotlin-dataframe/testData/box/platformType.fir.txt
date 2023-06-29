@@ -29,10 +29,10 @@ FILE: platformType.kt
         lval df: R|org/jetbrains/kotlinx/dataframe/AnyFrame| = @R|org/jetbrains/kotlinx/dataframe/annotations/DisableInterpretation|() Q|org/jetbrains/kotlinx/dataframe/DataFrame|.R|org/jetbrains/kotlinx/dataframe/io/read|(String())
         lval df: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/ActivePlayer>| = R|<local>/df|.R|org/jetbrains/kotlinx/dataframe/api/cast|<R|org/jetbrains/kotlinx/dataframe/ActivePlayer|>()
         lval format: R|java/time/format/DateTimeFormatter!| = Q|java/time/format/DateTimeFormatter|.R|java/time/format/DateTimeFormatter.ofPattern|(String(MM/dd/yy HH:mm:ss))
-        lval df1: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Token499>| = R|<local>/df|.R|org/jetbrains/kotlinx/dataframe/api/convert|<R|org/jetbrains/kotlinx/dataframe/ActivePlayer|, R|kotlin/String|>(<L> = convert@fun R|org/jetbrains/kotlinx/dataframe/api/ColumnsSelectionDsl<org/jetbrains/kotlinx/dataframe/ActivePlayer>|.<anonymous>(it: R|org/jetbrains/kotlinx/dataframe/api/ColumnsSelectionDsl<org/jetbrains/kotlinx/dataframe/ActivePlayer>|): R|org/jetbrains/kotlinx/dataframe/columns/ColumnSet<kotlin/String>| <inline=NoInline>  {
+        lval df1: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/TokenWith_113141796>| = R|<local>/df|.R|org/jetbrains/kotlinx/dataframe/api/convert|<R|org/jetbrains/kotlinx/dataframe/ActivePlayer|, R|kotlin/String|>(<L> = convert@fun R|org/jetbrains/kotlinx/dataframe/api/ColumnsSelectionDsl<org/jetbrains/kotlinx/dataframe/ActivePlayer>|.<anonymous>(it: R|org/jetbrains/kotlinx/dataframe/api/ColumnsSelectionDsl<org/jetbrains/kotlinx/dataframe/ActivePlayer>|): R|org/jetbrains/kotlinx/dataframe/columns/ColumnSet<kotlin/String>| <inline=NoInline>  {
             ^ this@R|special/anonymous|.R|org/jetbrains/kotlinx/dataframe/timestamp|
         }
-        ).R|kotlin/let|<R|org/jetbrains/kotlinx/dataframe/api/Convert<org/jetbrains/kotlinx/dataframe/ActivePlayer, kotlin/String>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Token499>|>(<L> = let@fun <anonymous>(it: R|org/jetbrains/kotlinx/dataframe/api/Convert<org/jetbrains/kotlinx/dataframe/ActivePlayer, kotlin/String>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Token499>| <inline=Inline, kind=EXACTLY_ONCE>  {
+        ).R|kotlin/let|<R|org/jetbrains/kotlinx/dataframe/api/Convert<org/jetbrains/kotlinx/dataframe/ActivePlayer, kotlin/String>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/TokenWith_113141796>|>(<L> = let@fun <anonymous>(it: R|org/jetbrains/kotlinx/dataframe/api/Convert<org/jetbrains/kotlinx/dataframe/ActivePlayer, kotlin/String>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/TokenWith_113141796>| <inline=Inline, kind=EXACTLY_ONCE>  {
             local abstract class DataFrameType1 : R|kotlin/Any| {
                 public constructor(): R|org/jetbrains/kotlinx/dataframe/DataFrameType1| {
                     super<R|kotlin/Any|>()
@@ -138,8 +138,8 @@ FILE: platformType.kt
 
             }
 
-            local abstract class Token499 : R|org/jetbrains/kotlinx/dataframe/DataFrameType1| {
-                public constructor(): R|org/jetbrains/kotlinx/dataframe/Token499| {
+            local abstract class TokenWith_113141796 : R|org/jetbrains/kotlinx/dataframe/DataFrameType1| {
+                public constructor(): R|org/jetbrains/kotlinx/dataframe/TokenWith_113141796| {
                     super<R|org/jetbrains/kotlinx/dataframe/DataFrameType1|>()
                 }
 
@@ -151,7 +151,7 @@ FILE: platformType.kt
             ^ (R|<local>/it|.R|org/jetbrains/kotlinx/dataframe/api/with|<R|org/jetbrains/kotlinx/dataframe/ActivePlayer|, R|kotlin/String|, R|java/time/LocalDateTime!|>(<L> = with@fun R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/ActivePlayer>|.<anonymous>(it: R|kotlin/String|): R|java/time/LocalDateTime!| <inline=NoInline>  {
                 ^ Q|java/time/LocalDateTime|.R|java/time/LocalDateTime.parse|(R|<local>/it|, R|<local>/format|)
             }
-            ) as R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Token499>|)
+            ) as R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/TokenWith_113141796>|)
         }
         )
         lval date: R|java/time/LocalDateTime| = (this@R|org/jetbrains/kotlinx/dataframe/main|, R|<local>/df1|).R|<local>/timestamp|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataColumn.get: R|java/time/LocalDateTime|>|(Int(0))

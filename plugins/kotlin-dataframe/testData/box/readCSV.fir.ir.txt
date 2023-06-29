@@ -1,13 +1,13 @@
 FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/readCSV.kt
   FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
     BLOCK_BODY
-      VAR name:df type:org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Token499> [val]
-        CALL 'public final fun let <T, R> (block: kotlin.Function1<T of kotlin.StandardKt.let, R of kotlin.StandardKt.let>): R of kotlin.StandardKt.let [inline] declared in kotlin.StandardKt' type=org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Token499> origin=null
+      VAR name:df type:org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadCSVDefault_1639480572> [val]
+        CALL 'public final fun let <T, R> (block: kotlin.Function1<T of kotlin.StandardKt.let, R of kotlin.StandardKt.let>): R of kotlin.StandardKt.let [inline] declared in kotlin.StandardKt' type=org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadCSVDefault_1639480572> origin=null
           <T>: org.jetbrains.kotlinx.dataframe.DataFrame.Companion
-          <R>: org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Token499>
+          <R>: org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadCSVDefault_1639480572>
           $receiver: GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[kotlin.Any]' type=org.jetbrains.kotlinx.dataframe.DataFrame.Companion
-          block: FUN_EXPR type=kotlin.Function1<org.jetbrains.kotlinx.dataframe.DataFrame.Companion, org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Token499>> origin=LAMBDA
-            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:org.jetbrains.kotlinx.dataframe.DataFrame.Companion) returnType:org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Token499>
+          block: FUN_EXPR type=kotlin.Function1<org.jetbrains.kotlinx.dataframe.DataFrame.Companion, org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadCSVDefault_1639480572>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:org.jetbrains.kotlinx.dataframe.DataFrame.Companion) returnType:org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadCSVDefault_1639480572>
               VALUE_PARAMETER name:it index:0 type:org.jetbrains.kotlinx.dataframe.DataFrame.Companion
               BLOCK_BODY
                 CLASS CLASS name:DataFrameType1 modality:ABSTRACT visibility:local superTypes:[kotlin.Any]
@@ -198,16 +198,16 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/readCSV.kt
                     overridden:
                       public open fun toString (): kotlin.String declared in kotlin.Any
                     $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-                CLASS CLASS name:Token499 modality:ABSTRACT visibility:local superTypes:[org.jetbrains.kotlinx.dataframe.box.<anonymous>.DataFrameType1]
-                  $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Token499
-                  CONSTRUCTOR visibility:public <> () returnType:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Token499 [primary]
+                CLASS CLASS name:TokenReadCSVDefault_1639480572 modality:ABSTRACT visibility:local superTypes:[org.jetbrains.kotlinx.dataframe.box.<anonymous>.DataFrameType1]
+                  $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadCSVDefault_1639480572
+                  CONSTRUCTOR visibility:public <> () returnType:org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadCSVDefault_1639480572 [primary]
                     BLOCK_BODY
                       DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.DataFrameType1'
-                      INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Token499 modality:ABSTRACT visibility:local superTypes:[org.jetbrains.kotlinx.dataframe.box.<anonymous>.DataFrameType1]'
+                      INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:TokenReadCSVDefault_1639480572 modality:ABSTRACT visibility:local superTypes:[org.jetbrains.kotlinx.dataframe.box.<anonymous>.DataFrameType1]'
                   PROPERTY name:scope0 visibility:public modality:ABSTRACT [val]
-                    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-scope0> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Token499) returnType:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0
+                    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-scope0> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadCSVDefault_1639480572) returnType:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0
                       correspondingProperty: PROPERTY name:scope0 visibility:public modality:ABSTRACT [val]
-                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Token499
+                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadCSVDefault_1639480572
                   PROPERTY FAKE_OVERRIDE name:full_name visibility:public modality:ABSTRACT [fake_override,val]
                     overridden:
                       public abstract full_name: kotlin.String [val]
@@ -261,14 +261,14 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/readCSV.kt
                     overridden:
                       public open fun toString (): kotlin.String [fake_override] declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.DataFrameType1
                     $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-                RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: org.jetbrains.kotlinx.dataframe.DataFrame.Companion): org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Token499> declared in org.jetbrains.kotlinx.dataframe.box'
-                  TYPE_OP type=org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Token499> origin=CAST typeOperand=org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Token499>
-                    CALL 'public final fun readCSVDefault (fileOrUrl: kotlin.String): org.jetbrains.kotlinx.dataframe.DataFrame<*> declared in org.jetbrains.kotlinx.dataframe.api.PluginKt' type=org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.Token499> origin=null
+                RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: org.jetbrains.kotlinx.dataframe.DataFrame.Companion): org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadCSVDefault_1639480572> declared in org.jetbrains.kotlinx.dataframe.box'
+                  TYPE_OP type=org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadCSVDefault_1639480572> origin=CAST typeOperand=org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadCSVDefault_1639480572>
+                    CALL 'public final fun readCSVDefault (fileOrUrl: kotlin.String): org.jetbrains.kotlinx.dataframe.DataFrame<*> declared in org.jetbrains.kotlinx.dataframe.api.PluginKt' type=org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.TokenReadCSVDefault_1639480572> origin=null
                       $receiver: GET_VAR 'it: org.jetbrains.kotlinx.dataframe.DataFrame.Companion declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>' type=org.jetbrains.kotlinx.dataframe.DataFrame.Companion origin=null
                       fileOrUrl: CONST String type=kotlin.String value="https://raw.githubusercontent.com/Kotlin/dataframe/master/data/jetbrains_repositories.csv"
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         CALL 'public final fun <get-full_name> (): org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0' type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String> origin=GET_PROPERTY
           $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0' type=org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0 origin=null
-          $receiver: GET_VAR 'val df: org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Token499> [val] declared in org.jetbrains.kotlinx.dataframe.box' type=org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Token499> origin=null
+          $receiver: GET_VAR 'val df: org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadCSVDefault_1639480572> [val] declared in org.jetbrains.kotlinx.dataframe.box' type=org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadCSVDefault_1639480572> origin=null
       RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in org.jetbrains.kotlinx.dataframe'
         CONST String type=kotlin.String value="OK"

@@ -39,10 +39,10 @@ FILE: diff.kt
     ).R|kotlin/text/trimIndent|())
         lval df: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/ActivePlayer>| = R|<local>/df|.R|org/jetbrains/kotlinx/dataframe/api/cast|<R|org/jetbrains/kotlinx/dataframe/ActivePlayer|>()
         lval format: R|java/time/format/DateTimeFormatter!| = Q|java/time/format/DateTimeFormatter|.R|java/time/format/DateTimeFormatter.ofPattern|(String(MM/dd/yy HH:mm:ss))
-        lval df1: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Token496>| = R|<local>/df|.R|org/jetbrains/kotlinx/dataframe/api/convert|<R|org/jetbrains/kotlinx/dataframe/ActivePlayer|, R|kotlin/String|>(<L> = convert@fun R|org/jetbrains/kotlinx/dataframe/api/ColumnsSelectionDsl<org/jetbrains/kotlinx/dataframe/ActivePlayer>|.<anonymous>(it: R|org/jetbrains/kotlinx/dataframe/api/ColumnsSelectionDsl<org/jetbrains/kotlinx/dataframe/ActivePlayer>|): R|org/jetbrains/kotlinx/dataframe/columns/ColumnSet<kotlin/String>| <inline=NoInline>  {
+        lval df1: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/TokenWith_1438061604>| = R|<local>/df|.R|org/jetbrains/kotlinx/dataframe/api/convert|<R|org/jetbrains/kotlinx/dataframe/ActivePlayer|, R|kotlin/String|>(<L> = convert@fun R|org/jetbrains/kotlinx/dataframe/api/ColumnsSelectionDsl<org/jetbrains/kotlinx/dataframe/ActivePlayer>|.<anonymous>(it: R|org/jetbrains/kotlinx/dataframe/api/ColumnsSelectionDsl<org/jetbrains/kotlinx/dataframe/ActivePlayer>|): R|org/jetbrains/kotlinx/dataframe/columns/ColumnSet<kotlin/String>| <inline=NoInline>  {
             ^ this@R|special/anonymous|.R|org/jetbrains/kotlinx/dataframe/timestamp|
         }
-        ).R|kotlin/let|<R|org/jetbrains/kotlinx/dataframe/api/Convert<org/jetbrains/kotlinx/dataframe/ActivePlayer, kotlin/String>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Token499>|>(<L> = let@fun <anonymous>(it: R|org/jetbrains/kotlinx/dataframe/api/Convert<org/jetbrains/kotlinx/dataframe/ActivePlayer, kotlin/String>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Token499>| <inline=Inline, kind=EXACTLY_ONCE>  {
+        ).R|kotlin/let|<R|org/jetbrains/kotlinx/dataframe/api/Convert<org/jetbrains/kotlinx/dataframe/ActivePlayer, kotlin/String>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/TokenWith_113141796>|>(<L> = let@fun <anonymous>(it: R|org/jetbrains/kotlinx/dataframe/api/Convert<org/jetbrains/kotlinx/dataframe/ActivePlayer, kotlin/String>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/TokenWith_113141796>| <inline=Inline, kind=EXACTLY_ONCE>  {
             local abstract class DataFrameType1 : R|kotlin/Any| {
                 public constructor(): R|org/jetbrains/kotlinx/dataframe/DataFrameType1| {
                     super<R|kotlin/Any|>()
@@ -148,8 +148,8 @@ FILE: diff.kt
 
             }
 
-            local abstract class Token499 : R|org/jetbrains/kotlinx/dataframe/DataFrameType1| {
-                public constructor(): R|org/jetbrains/kotlinx/dataframe/Token499| {
+            local abstract class TokenWith_113141796 : R|org/jetbrains/kotlinx/dataframe/DataFrameType1| {
+                public constructor(): R|org/jetbrains/kotlinx/dataframe/TokenWith_113141796| {
                     super<R|org/jetbrains/kotlinx/dataframe/DataFrameType1|>()
                 }
 
@@ -161,12 +161,12 @@ FILE: diff.kt
             ^ (R|<local>/it|.R|org/jetbrains/kotlinx/dataframe/api/with|<R|org/jetbrains/kotlinx/dataframe/ActivePlayer|, R|kotlin/String|, R|java/time/LocalDateTime!|>(<L> = with@fun R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/ActivePlayer>|.<anonymous>(it: R|kotlin/String|): R|java/time/LocalDateTime!| <inline=NoInline>  {
                 ^ Q|java/time/LocalDateTime|.R|java/time/LocalDateTime.parse|(R|<local>/it|, R|<local>/format|)
             }
-            ) as R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Token499>|)
+            ) as R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/TokenWith_113141796>|)
         }
-        ).R|org/jetbrains/kotlinx/dataframe/api/sortBy|<R|org/jetbrains/kotlinx/dataframe/Token499|, R|it(kotlin/Comparable<*> & java/io/Serializable)|>(<L> = sortBy@fun R|org/jetbrains/kotlinx/dataframe/api/SortDsl<org/jetbrains/kotlinx/dataframe/Token499>|.<anonymous>(it: R|org/jetbrains/kotlinx/dataframe/api/SortDsl<org/jetbrains/kotlinx/dataframe/Token499>|): R|org/jetbrains/kotlinx/dataframe/columns/ColumnSet<it(kotlin/Comparable<*> & java/io/Serializable)>| <inline=NoInline>  {
+        ).R|org/jetbrains/kotlinx/dataframe/api/sortBy|<R|org/jetbrains/kotlinx/dataframe/TokenWith_113141796|, R|it(kotlin/Comparable<*> & java/io/Serializable)|>(<L> = sortBy@fun R|org/jetbrains/kotlinx/dataframe/api/SortDsl<org/jetbrains/kotlinx/dataframe/TokenWith_113141796>|.<anonymous>(it: R|org/jetbrains/kotlinx/dataframe/api/SortDsl<org/jetbrains/kotlinx/dataframe/TokenWith_113141796>|): R|org/jetbrains/kotlinx/dataframe/columns/ColumnSet<it(kotlin/Comparable<*> & java/io/Serializable)>| <inline=NoInline>  {
             ^ (this@R|special/anonymous|, (this@R|org/jetbrains/kotlinx/dataframe/box|, this@R|special/anonymous|).R|<local>/char|).R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/api/SortDsl.and: R|org/jetbrains/kotlinx/dataframe/columns/ColumnSet<C>|>|<R|it(kotlin/Comparable<*> & java/io/Serializable)|>((this@R|org/jetbrains/kotlinx/dataframe/box|, this@R|special/anonymous|).R|<local>/timestamp|)
         }
-        ).R|kotlin/let|<R|org/jetbrains/kotlinx/dataframe/DataFrame<*>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Token498>|>(<L> = let@fun <anonymous>(it: R|org/jetbrains/kotlinx/dataframe/DataFrame<*>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Token498>| <inline=Inline, kind=EXACTLY_ONCE>  {
+        ).R|kotlin/let|<R|org/jetbrains/kotlinx/dataframe/DataFrame<*>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/TokenWith_862661939>|>(<L> = let@fun <anonymous>(it: R|org/jetbrains/kotlinx/dataframe/DataFrame<*>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/TokenWith_862661939>| <inline=Inline, kind=EXACTLY_ONCE>  {
             local abstract class DataFrameType1 : R|kotlin/Any| {
                 public constructor(): R|org/jetbrains/kotlinx/dataframe/DataFrameType1| {
                     super<R|kotlin/Any|>()
@@ -285,8 +285,8 @@ FILE: diff.kt
 
             }
 
-            local abstract class Token498 : R|org/jetbrains/kotlinx/dataframe/DataFrameType1| {
-                public constructor(): R|org/jetbrains/kotlinx/dataframe/Token498| {
+            local abstract class TokenWith_862661939 : R|org/jetbrains/kotlinx/dataframe/DataFrameType1| {
+                public constructor(): R|org/jetbrains/kotlinx/dataframe/TokenWith_862661939| {
                     super<R|org/jetbrains/kotlinx/dataframe/DataFrameType1|>()
                 }
 
@@ -295,8 +295,8 @@ FILE: diff.kt
 
             }
 
-            ^ (R|<local>/it|.R|org/jetbrains/kotlinx/dataframe/api/add|<R|kotlin/Boolean|, R|org/jetbrains/kotlinx/dataframe/Token499|>(String(tsDiff), <L> = add@fun R|org/jetbrains/kotlinx/dataframe/api/AddDataRow<org/jetbrains/kotlinx/dataframe/Token499>|.<anonymous>(it: R|org/jetbrains/kotlinx/dataframe/api/AddDataRow<org/jetbrains/kotlinx/dataframe/Token499>|): R|kotlin/Boolean| <inline=NoInline>  {
-                ^ this@R|special/anonymous|.R|org/jetbrains/kotlinx/dataframe/diff|<R|org/jetbrains/kotlinx/dataframe/Token499|, R|java/time/LocalDateTime|>(Q|java/time/temporal/ChronoUnit|.R|java/time/temporal/ChronoUnit.MINUTES|, <L> = diff@fun R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Token499>|.<anonymous>(it: R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Token499>|): R|java/time/LocalDateTime| <inline=NoInline>  {
+            ^ (R|<local>/it|.R|org/jetbrains/kotlinx/dataframe/api/add|<R|kotlin/Boolean|, R|org/jetbrains/kotlinx/dataframe/TokenWith_113141796|>(String(tsDiff), <L> = add@fun R|org/jetbrains/kotlinx/dataframe/api/AddDataRow<org/jetbrains/kotlinx/dataframe/TokenWith_113141796>|.<anonymous>(it: R|org/jetbrains/kotlinx/dataframe/api/AddDataRow<org/jetbrains/kotlinx/dataframe/TokenWith_113141796>|): R|kotlin/Boolean| <inline=NoInline>  {
+                ^ this@R|special/anonymous|.R|org/jetbrains/kotlinx/dataframe/diff|<R|org/jetbrains/kotlinx/dataframe/TokenWith_113141796|, R|java/time/LocalDateTime|>(Q|java/time/temporal/ChronoUnit|.R|java/time/temporal/ChronoUnit.MINUTES|, <L> = diff@fun R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/TokenWith_113141796>|.<anonymous>(it: R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/TokenWith_113141796>|): R|java/time/LocalDateTime| <inline=NoInline>  {
                     ^ (this@R|org/jetbrains/kotlinx/dataframe/box|, this@R|special/anonymous|).R|<local>/timestamp|
                 }
                 )?.{ $subj$.R|kotlin/let|<R|kotlin/Long|, R|kotlin/Boolean|>(<L> = let@fun <anonymous>(it: R|kotlin/Long|): R|kotlin/Boolean| <inline=Inline, kind=EXACTLY_ONCE>  {
@@ -304,9 +304,9 @@ FILE: diff.kt
                 }
                 ) } ?: Boolean(true)
             }
-            ) as R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Token498>|)
+            ) as R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/TokenWith_862661939>|)
         }
-        ).R|kotlin/let|<R|org/jetbrains/kotlinx/dataframe/DataFrame<*>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Token496>|>(<L> = let@fun <anonymous>(it: R|org/jetbrains/kotlinx/dataframe/DataFrame<*>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Token496>| <inline=Inline, kind=EXACTLY_ONCE>  {
+        ).R|kotlin/let|<R|org/jetbrains/kotlinx/dataframe/DataFrame<*>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/TokenWith_1438061604>|>(<L> = let@fun <anonymous>(it: R|org/jetbrains/kotlinx/dataframe/DataFrame<*>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/TokenWith_1438061604>| <inline=Inline, kind=EXACTLY_ONCE>  {
             local abstract class DataFrameType1 : R|kotlin/Any| {
                 public constructor(): R|org/jetbrains/kotlinx/dataframe/DataFrameType1| {
                     super<R|kotlin/Any|>()
@@ -438,8 +438,8 @@ FILE: diff.kt
 
             }
 
-            local abstract class Token496 : R|org/jetbrains/kotlinx/dataframe/DataFrameType1| {
-                public constructor(): R|org/jetbrains/kotlinx/dataframe/Token496| {
+            local abstract class TokenWith_1438061604 : R|org/jetbrains/kotlinx/dataframe/DataFrameType1| {
+                public constructor(): R|org/jetbrains/kotlinx/dataframe/TokenWith_1438061604| {
                     super<R|org/jetbrains/kotlinx/dataframe/DataFrameType1|>()
                 }
 
@@ -448,8 +448,8 @@ FILE: diff.kt
 
             }
 
-            ^ (R|<local>/it|.R|org/jetbrains/kotlinx/dataframe/api/add|<R|kotlin/Boolean|, R|org/jetbrains/kotlinx/dataframe/Token498|>(String(charDiff), <L> = add@fun R|org/jetbrains/kotlinx/dataframe/api/AddDataRow<org/jetbrains/kotlinx/dataframe/Token498>|.<anonymous>(it: R|org/jetbrains/kotlinx/dataframe/api/AddDataRow<org/jetbrains/kotlinx/dataframe/Token498>|): R|kotlin/Boolean| <inline=NoInline>  {
-                ^ this@R|special/anonymous|.R|org/jetbrains/kotlinx/dataframe/api/diff|<R|org/jetbrains/kotlinx/dataframe/Token498|>(<L> = diff@fun R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Token498>|.<anonymous>(it: R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Token498>|): R|kotlin/Int| <inline=NoInline>  {
+            ^ (R|<local>/it|.R|org/jetbrains/kotlinx/dataframe/api/add|<R|kotlin/Boolean|, R|org/jetbrains/kotlinx/dataframe/TokenWith_862661939|>(String(charDiff), <L> = add@fun R|org/jetbrains/kotlinx/dataframe/api/AddDataRow<org/jetbrains/kotlinx/dataframe/TokenWith_862661939>|.<anonymous>(it: R|org/jetbrains/kotlinx/dataframe/api/AddDataRow<org/jetbrains/kotlinx/dataframe/TokenWith_862661939>|): R|kotlin/Boolean| <inline=NoInline>  {
+                ^ this@R|special/anonymous|.R|org/jetbrains/kotlinx/dataframe/api/diff|<R|org/jetbrains/kotlinx/dataframe/TokenWith_862661939|>(<L> = diff@fun R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/TokenWith_862661939>|.<anonymous>(it: R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/TokenWith_862661939>|): R|kotlin/Int| <inline=NoInline>  {
                     ^ (this@R|org/jetbrains/kotlinx/dataframe/box|, this@R|special/anonymous|).R|<local>/char|
                 }
                 )?.{ $subj$.R|kotlin/let|<R|kotlin/Int|, R|kotlin/Boolean|>(<L> = let@fun <anonymous>(it: R|kotlin/Int|): R|kotlin/Boolean| <inline=Inline, kind=EXACTLY_ONCE>  {
@@ -457,10 +457,10 @@ FILE: diff.kt
                 }
                 ) } ?: Boolean(true)
             }
-            ) as R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Token496>|)
+            ) as R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/TokenWith_1438061604>|)
         }
         )
-        R|<local>/df1|.R|org/jetbrains/kotlinx/dataframe/api/print|<R|org/jetbrains/kotlinx/dataframe/Token496|>()
+        R|<local>/df1|.R|org/jetbrains/kotlinx/dataframe/api/print|<R|org/jetbrains/kotlinx/dataframe/TokenWith_1438061604|>()
         ^box String(OK)
     }
 FILE: __GENERATED DECLARATIONS__.kt

@@ -2,7 +2,7 @@ FILE: readCSV.kt
     package org.jetbrains.kotlinx.dataframe
 
     public final fun box(): R|kotlin/String| {
-        lval df: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Token499>| = Q|org/jetbrains/kotlinx/dataframe/DataFrame|.R|kotlin/let|<R|org/jetbrains/kotlinx/dataframe/DataFrame.Companion|, R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Token499>|>(<L> = let@fun <anonymous>(it: R|org/jetbrains/kotlinx/dataframe/DataFrame.Companion|): R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Token499>| <inline=Inline, kind=EXACTLY_ONCE>  {
+        lval df: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/TokenReadCSVDefault_1639480572>| = Q|org/jetbrains/kotlinx/dataframe/DataFrame|.R|kotlin/let|<R|org/jetbrains/kotlinx/dataframe/DataFrame.Companion|, R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/TokenReadCSVDefault_1639480572>|>(<L> = let@fun <anonymous>(it: R|org/jetbrains/kotlinx/dataframe/DataFrame.Companion|): R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/TokenReadCSVDefault_1639480572>| <inline=Inline, kind=EXACTLY_ONCE>  {
             local abstract class DataFrameType1 : R|kotlin/Any| {
                 public constructor(): R|org/jetbrains/kotlinx/dataframe/DataFrameType1| {
                     super<R|kotlin/Any|>()
@@ -82,8 +82,8 @@ FILE: readCSV.kt
 
             }
 
-            local abstract class Token499 : R|org/jetbrains/kotlinx/dataframe/DataFrameType1| {
-                public constructor(): R|org/jetbrains/kotlinx/dataframe/Token499| {
+            local abstract class TokenReadCSVDefault_1639480572 : R|org/jetbrains/kotlinx/dataframe/DataFrameType1| {
+                public constructor(): R|org/jetbrains/kotlinx/dataframe/TokenReadCSVDefault_1639480572| {
                     super<R|org/jetbrains/kotlinx/dataframe/DataFrameType1|>()
                 }
 
@@ -92,7 +92,7 @@ FILE: readCSV.kt
 
             }
 
-            ^ (R|<local>/it|.R|org/jetbrains/kotlinx/dataframe/api/readCSVDefault|(String(https://raw.githubusercontent.com/Kotlin/dataframe/master/data/jetbrains_repositories.csv)) as R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Token499>|)
+            ^ (R|<local>/it|.R|org/jetbrains/kotlinx/dataframe/api/readCSVDefault|(String(https://raw.githubusercontent.com/Kotlin/dataframe/master/data/jetbrains_repositories.csv)) as R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/TokenReadCSVDefault_1639480572>|)
         }
         )
         (this@R|org/jetbrains/kotlinx/dataframe/box|, R|<local>/df|).R|<local>/full_name|

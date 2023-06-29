@@ -2,7 +2,7 @@ FILE: explodeDataFrame.kt
     package org.jetbrains.kotlinx.dataframe
 
     public final fun box(): R|kotlin/String| {
-        lval df: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Token499>| = Q|org/jetbrains/kotlinx/dataframe/DataFrame|.R|kotlin/let|<R|org/jetbrains/kotlinx/dataframe/DataFrame.Companion|, R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Token499>|>(<L> = let@fun <anonymous>(it: R|org/jetbrains/kotlinx/dataframe/DataFrame.Companion|): R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Token499>| <inline=Inline, kind=EXACTLY_ONCE>  {
+        lval df: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/TokenReadJsonDefault_1643727490>| = Q|org/jetbrains/kotlinx/dataframe/DataFrame|.R|kotlin/let|<R|org/jetbrains/kotlinx/dataframe/DataFrame.Companion|, R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/TokenReadJsonDefault_1643727490>|>(<L> = let@fun <anonymous>(it: R|org/jetbrains/kotlinx/dataframe/DataFrame.Companion|): R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/TokenReadJsonDefault_1643727490>| <inline=Inline, kind=EXACTLY_ONCE>  {
             local abstract class achievements : R|kotlin/Any| {
                 public constructor(): R|org/jetbrains/kotlinx/dataframe/achievements| {
                     super<R|kotlin/Any|>()
@@ -200,8 +200,8 @@ FILE: explodeDataFrame.kt
 
             }
 
-            local abstract class Token499 : R|org/jetbrains/kotlinx/dataframe/DataFrameType1| {
-                public constructor(): R|org/jetbrains/kotlinx/dataframe/Token499| {
+            local abstract class TokenReadJsonDefault_1643727490 : R|org/jetbrains/kotlinx/dataframe/DataFrameType1| {
+                public constructor(): R|org/jetbrains/kotlinx/dataframe/TokenReadJsonDefault_1643727490| {
                     super<R|org/jetbrains/kotlinx/dataframe/DataFrameType1|>()
                 }
 
@@ -213,10 +213,10 @@ FILE: explodeDataFrame.kt
 
             }
 
-            ^ (R|<local>/it|.R|org/jetbrains/kotlinx/dataframe/api/readJsonDefault|(String(/home/nikitak/IdeaProjects/dataframe-examples/datasets/achievements_all.json)) as R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Token499>|)
+            ^ (R|<local>/it|.R|org/jetbrains/kotlinx/dataframe/api/readJsonDefault|(String(/home/nikitak/IdeaProjects/dataframe-examples/datasets/achievements_all.json)) as R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/TokenReadJsonDefault_1643727490>|)
         }
         )
-        lval df1: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Token498>| = R|<local>/df|.R|kotlin/let|<R|org/jetbrains/kotlinx/dataframe/DataFrame<*>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Token498>|>(<L> = let@fun <anonymous>(it: R|org/jetbrains/kotlinx/dataframe/DataFrame<*>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Token498>| <inline=Inline, kind=EXACTLY_ONCE>  {
+        lval df1: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/TokenReadJsonDefault_1928912023>| = R|<local>/df|.R|kotlin/let|<R|org/jetbrains/kotlinx/dataframe/DataFrame<*>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/TokenReadJsonDefault_1928912023>|>(<L> = let@fun <anonymous>(it: R|org/jetbrains/kotlinx/dataframe/DataFrame<*>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/TokenReadJsonDefault_1928912023>| <inline=Inline, kind=EXACTLY_ONCE>  {
             local abstract class achievements : R|kotlin/Any| {
                 public constructor(): R|org/jetbrains/kotlinx/dataframe/achievements| {
                     super<R|kotlin/Any|>()
@@ -414,8 +414,8 @@ FILE: explodeDataFrame.kt
 
             }
 
-            local abstract class Token498 : R|org/jetbrains/kotlinx/dataframe/DataFrameType1| {
-                public constructor(): R|org/jetbrains/kotlinx/dataframe/Token498| {
+            local abstract class TokenReadJsonDefault_1928912023 : R|org/jetbrains/kotlinx/dataframe/DataFrameType1| {
+                public constructor(): R|org/jetbrains/kotlinx/dataframe/TokenReadJsonDefault_1928912023| {
                     super<R|org/jetbrains/kotlinx/dataframe/DataFrameType1|>()
                 }
 
@@ -427,10 +427,10 @@ FILE: explodeDataFrame.kt
 
             }
 
-            ^ (R|<local>/it|.R|org/jetbrains/kotlinx/dataframe/api/explode|<R|org/jetbrains/kotlinx/dataframe/Token499|>(<L> = explode@fun R|org/jetbrains/kotlinx/dataframe/api/ColumnsSelectionDsl<org/jetbrains/kotlinx/dataframe/Token499>|.<anonymous>(it: R|org/jetbrains/kotlinx/dataframe/api/ColumnsSelectionDsl<org/jetbrains/kotlinx/dataframe/Token499>|): R|org/jetbrains/kotlinx/dataframe/columns/ColumnSet<*>| <inline=NoInline>  {
+            ^ (R|<local>/it|.R|org/jetbrains/kotlinx/dataframe/api/explode|<R|org/jetbrains/kotlinx/dataframe/TokenReadJsonDefault_1643727490|>(<L> = explode@fun R|org/jetbrains/kotlinx/dataframe/api/ColumnsSelectionDsl<org/jetbrains/kotlinx/dataframe/TokenReadJsonDefault_1643727490>|.<anonymous>(it: R|org/jetbrains/kotlinx/dataframe/api/ColumnsSelectionDsl<org/jetbrains/kotlinx/dataframe/TokenReadJsonDefault_1643727490>|): R|org/jetbrains/kotlinx/dataframe/columns/ColumnSet<*>| <inline=NoInline>  {
                 ^ (this@R|org/jetbrains/kotlinx/dataframe/box|, this@R|special/anonymous|).R|<local>/achievements|
             }
-            ) as R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Token498>|)
+            ) as R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/TokenReadJsonDefault_1928912023>|)
         }
         )
         (this@R|org/jetbrains/kotlinx/dataframe/box|, (this@R|org/jetbrains/kotlinx/dataframe/box|, R|<local>/df1|).R|<local>/achievements|).R|<local>/order|
