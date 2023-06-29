@@ -8,5 +8,18 @@ package org.jetbrains.kotlin.gradle.report
 import com.gradle.scan.plugin.BuildScanExtension
 
 class BuildScanExtensionHolder(val buildScan: BuildScanExtension) : java.io.Serializable {
-    constructor(extension: Any) : this(extension as BuildScanExtension)
+
+    companion object {
+        internal operator fun invoke(extension: Any): BuildScanExtensionHolder? {
+            val buildScanExtension = try {
+                extension as BuildScanExtension
+            } catch (e: ClassNotFoundException) {
+                // Build scan plugin is applied, but BuildScanExtension class is not available due to Gradle classpath isolation
+                // Could be reproduced by applying Gradle enterprise plugin via init script: KT-59589
+                null
+            }
+
+            return buildScanExtension?.let { BuildScanExtensionHolder(it) }
+        }
+    }
 }

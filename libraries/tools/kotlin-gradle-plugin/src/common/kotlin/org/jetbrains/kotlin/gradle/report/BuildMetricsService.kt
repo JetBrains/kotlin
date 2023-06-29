@@ -231,44 +231,60 @@ abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters
         }
 
         private fun subscribeForTaskEvents(project: Project, buildMetricServiceProvider: Provider<BuildMetricsService>) {
-            // BuildScanExtension cant be parameter nor BuildService's field
-            val buildScanExtension = project.rootProject.extensions.findByName("buildScan")
-            val buildScan = buildScanExtension?.let { BuildScanExtensionHolder(it) }
-            val buildMetricService = buildMetricServiceProvider.get()
-            val buildScanReportSettings = buildMetricService.parameters.reportingSettings.orNull?.buildScanReportSettings
+            val buildScanHolder = initBuildScanExtensionHolder(project, buildMetricServiceProvider)
+            if (buildScanHolder != null) {
+                subscribeForTaskEventsForBuildScan(project, buildMetricServiceProvider, buildScanHolder)
+            }
+
             val gradle80withBuildScanReport =
-                GradleVersion.current().baseVersion == GradleVersion.version("8.0") && buildScanReportSettings != null && buildScan != null
+                GradleVersion.current().baseVersion == GradleVersion.version("8.0") && buildScanHolder != null
 
             if (!gradle80withBuildScanReport) {
                 BuildEventsListenerRegistryHolder.getInstance(project).listenerRegistry.onTaskCompletion(buildMetricServiceProvider)
             }
+        }
 
+        private fun initBuildScanExtensionHolder(
+            project: Project,
+            buildMetricServiceProvider: Provider<BuildMetricsService>,
+        ): BuildScanExtensionHolder? {
+            val buildScanReportSettings = buildMetricServiceProvider.get().parameters.reportingSettings.orNull?.buildScanReportSettings
             if (buildScanReportSettings != null) {
-                buildScan?.also { buildScanHolder ->
-                    when {
-                        GradleVersion.current().baseVersion < GradleVersion.version("8.0") -> {
-                            buildScanHolder.buildScan.buildFinished {
-                                buildMetricServiceProvider.map {it.addBuildScanReport(buildScan)}.get()
-                            }
-                        }
-                        GradleVersion.current().baseVersion < GradleVersion.version("8.1") -> {
-                            buildMetricService.buildReportService.initBuildScanTags(buildScan, buildMetricService.parameters.label.orNull)
-                            BuildEventsListenerRegistryHolder.getInstance(project).listenerRegistry.onTaskCompletion(project.provider {
-                                OperationCompletionListener { event ->
-                                    if (event is TaskFinishEvent) {
-                                        val buildOperation = buildMetricService.updateBuildOperationRecord(event)
-                                        val buildParameters = buildMetricService.parameters.toBuildReportParameters()
-                                        val buildReportService = buildMetricServiceProvider.map { it.buildReportService }.get()
-                                        buildReportService.addBuildScanReport(event, buildOperation, buildParameters, buildScanHolder)
-                                        buildReportService.onFinish(event, buildOperation, buildParameters)
-                                    }
-                                }
+                // BuildScanExtension cant be parameter nor BuildService's field
+                val buildScanExtension = project.rootProject.extensions.findByName("buildScan")
+                return buildScanExtension?.let { BuildScanExtensionHolder(it) }
+            }
+            return null
+        }
 
-                            })
-                        }
-                        else -> {}//do nothing, BuildScanFlowAction is used
+        private fun subscribeForTaskEventsForBuildScan(
+            project: Project,
+            buildMetricServiceProvider: Provider<BuildMetricsService>,
+            buildScanHolder: BuildScanExtensionHolder
+        ) {
+            when {
+                GradleVersion.current().baseVersion < GradleVersion.version("8.0") -> {
+                    buildScanHolder.buildScan.buildFinished {
+                        buildMetricServiceProvider.map { it.addBuildScanReport(buildScanHolder) }.get()
                     }
                 }
+                GradleVersion.current().baseVersion < GradleVersion.version("8.1") -> {
+                    val buildMetricService = buildMetricServiceProvider.get()
+                    buildMetricService.buildReportService.initBuildScanTags(buildScanHolder, buildMetricService.parameters.label.orNull)
+                    BuildEventsListenerRegistryHolder.getInstance(project).listenerRegistry.onTaskCompletion(project.provider {
+                        OperationCompletionListener { event ->
+                            if (event is TaskFinishEvent) {
+                                val buildOperation = buildMetricService.updateBuildOperationRecord(event)
+                                val buildParameters = buildMetricService.parameters.toBuildReportParameters()
+                                val buildReportService = buildMetricServiceProvider.map { it.buildReportService }.get()
+                                buildReportService.addBuildScanReport(event, buildOperation, buildParameters, buildScanHolder)
+                                buildReportService.onFinish(event, buildOperation, buildParameters)
+                            }
+                        }
+
+                    })
+                }
+                else -> {}//do nothing, BuildScanFlowAction is used
             }
         }
 
