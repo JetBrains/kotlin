@@ -31,7 +31,7 @@ class FragmentModuleGenerator(
             ktFiles.forEach { ktFile ->
                 irModule.files.add(
                     if (ktFile is KtBlockCodeFragment) {
-                        createEmptyIrFile(ktFile).apply {
+                        createEmptyIrFile(ktFile, irModule).apply {
                             declarations.add(
                                 irDeclarationGenerator.generateClassForCodeFragment(ktFile)
                             )
@@ -61,9 +61,9 @@ class FragmentModuleGenerator(
         }
     }
 
-    private fun createEmptyIrFile(ktFile: KtFile): IrFileImpl {
+    private fun createEmptyIrFile(ktFile: KtFile, irModule: IrModuleFragment): IrFileImpl {
         val fileEntry = PsiIrFileEntry(ktFile)
         val packageFragmentDescriptor = context.moduleDescriptor.findPackageFragmentForFile(ktFile)!!
-        return IrFileImpl(fileEntry, packageFragmentDescriptor)
+        return IrFileImpl(fileEntry, packageFragmentDescriptor, irModule)
     }
 }
