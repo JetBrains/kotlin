@@ -20,11 +20,13 @@ import com.intellij.psi.*
 import org.jetbrains.kotlin.load.java.structure.JavaClassifierType
 import org.jetbrains.kotlin.load.java.structure.JavaType
 import org.jetbrains.kotlin.load.java.structure.impl.source.JavaElementTypeSource
+import java.util.concurrent.atomic.AtomicReferenceFieldUpdater
 
 class JavaClassifierTypeImpl(
     psiClassTypeSource: JavaElementTypeSource<PsiClassType>,
 ) : JavaTypeImpl<PsiClassType>(psiClassTypeSource), JavaClassifierType {
 
+    @Volatile
     private var resolutionResult: ResolutionResult? = null
 
     override val classifier: JavaClassifierImpl<*>?
@@ -63,19 +65,60 @@ class JavaClassifierTypeImpl(
         val classifier: JavaClassifierImpl<*>?,
         val substitutor: PsiSubstitutor,
         val isRaw: Boolean
-    )
+    ) {
+        /**
+         * Checks if the [ResolutionResult] is valid.
+         *
+         * The [PsiSubstitutor] which is contained inside [ResolutionResult] might become
+         * invalidated as it contains [PsiType]s inside
+         *
+         * @return true if the substitutor is valid, false otherwise.
+         */
+        fun isValid(): Boolean {
+            return substitutor.isValid
+        }
+    }
 
+    /**
+     * Resolves the current [JavaClassifierType]
+     *
+     * The code is thread safe and the logic is the following:
+     * 1. Try to get a cached resolution result and return it if it's not invalidated
+     * 2. Otherwise, resolve the current [JavaClassifierType], update the cache and return the result.
+     *
+     * @returns [ResolutionResult] to which the [JavaClassifierType] resovled
+     */
     private fun resolve(): ResolutionResult {
-        return resolutionResult ?: run {
-            val result = psi.resolveGenerics()
-            val psiClass = result.element
-            val substitutor = result.substitutor
-            ResolutionResult(
-                psiClass?.let { JavaClassifierImpl.create(it, sourceFactory) }, substitutor, PsiClassType.isRaw(result)
-            ).apply {
-                resolutionResult = this
+        while (true) {
+            val snapshot = resolutionResult
+            @Suppress("LiftReturnOrAssignment")
+            when {
+                snapshot != null && snapshot.isValid() -> {
+                    return snapshot
+                }
+
+                else -> {
+                    val computedResult = computeResolveResult()
+                    if (!resolutionResultAtomicFieldUpdater.compareAndSet(this, snapshot, computedResult)) {
+                        // some other thread already computed the value,
+                        // we should get it on the next `while` loop iteration.
+                        continue
+                    }
+                    return computedResult
+                }
             }
         }
+    }
+
+    private fun computeResolveResult(): ResolutionResult {
+        val result = psi.resolveGenerics()
+        val psiClass = result.element
+        val substitutor = result.substitutor
+        return ResolutionResult(
+            psiClass?.let { JavaClassifierImpl.create(it, sourceFactory) },
+            substitutor,
+            PsiClassType.isRaw(result)
+        )
     }
 
     // Copy-pasted from PsiUtil.typeParametersIterable
@@ -102,5 +145,14 @@ class JavaClassifierTypeImpl(
         }
 
         return result ?: emptyList()
+    }
+
+    companion object {
+        @JvmStatic
+        private val resolutionResultAtomicFieldUpdater = AtomicReferenceFieldUpdater.newUpdater(
+            JavaClassifierTypeImpl::class.java,
+            ResolutionResult::class.java,
+            JavaClassifierTypeImpl::resolutionResult.name
+        )
     }
 }
