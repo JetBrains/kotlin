@@ -32,6 +32,7 @@ internal class ExternalKotlinTargetImpl internal constructor(
     val sourcesElementsConfiguration: Configuration,
     val apiElementsPublishedConfiguration: Configuration,
     val runtimeElementsPublishedConfiguration: Configuration,
+    val sourcesElementsPublishedConfiguration: Configuration,
     val kotlinTargetComponent: ExternalKotlinTargetComponent,
     private val artifactsTaskLocator: ArtifactsTaskLocator,
 ) : InternalKotlinTarget {
@@ -78,7 +79,7 @@ internal class ExternalKotlinTargetImpl internal constructor(
     @InternalKotlinGradlePluginApi
     override val kotlinComponents: Set<KotlinTargetComponent> = setOf(kotlinTargetComponent)
 
-    override val components: Set<SoftwareComponent> by lazy {
+    override val components: Set<ExternalKotlinTargetSoftwareComponent> by lazy {
         logger.debug("Creating SoftwareComponent")
         setOf(ExternalKotlinTargetSoftwareComponent(this))
     }
