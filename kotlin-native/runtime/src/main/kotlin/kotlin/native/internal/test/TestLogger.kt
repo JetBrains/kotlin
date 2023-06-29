@@ -31,8 +31,8 @@ internal open class TestLoggerWithStatistics: BaseTestLogger() {
 
     protected val statistics = MutableTestStatistics()
 
-    override fun startTesting(runner: TestRunner) = statistics.reset()
-    override fun startIteration(runner: TestRunner, iteration: Int, suites: Collection<TestSuite>) = statistics.reset()
+    override fun startTesting(settings: TestSettings) = statistics.reset()
+    override fun startIteration(settings: TestSettings, iteration: Int, suites: Collection<TestSuite>) = statistics.reset()
 
     override fun finishSuite(suite: TestSuite, timeMillis: Long) = statistics.registerSuite()
     override fun ignoreSuite(suite: TestSuite) = statistics.registerIgnore(suite)
@@ -50,12 +50,12 @@ internal class SilentTestLogger: BaseTestLogger() {
 
 @ExperimentalNativeApi
 internal class SimpleTestLogger: BaseTestLogger() {
-    override fun startTesting(runner: TestRunner) = println("Starting testing")
-    override fun finishTesting(runner: TestRunner, timeMillis: Long) = println("Testing finished")
+    override fun startTesting(settings: TestSettings) = println("Starting testing")
+    override fun finishTesting(settings: TestSettings, timeMillis: Long) = println("Testing finished")
 
-    override fun startIteration(runner: TestRunner, iteration: Int, suites: Collection<TestSuite>) =
+    override fun startIteration(settings: TestSettings, iteration: Int, suites: Collection<TestSuite>) =
             println("Starting iteration: $iteration")
-    override fun finishIteration(runner: TestRunner, iteration: Int, timeMillis: Long) =
+    override fun finishIteration(settings: TestSettings, iteration: Int, timeMillis: Long) =
             println("Iteration finished: $iteration")
 
     override fun startSuite(suite: TestSuite) = println("Starting test suite: $suite")
