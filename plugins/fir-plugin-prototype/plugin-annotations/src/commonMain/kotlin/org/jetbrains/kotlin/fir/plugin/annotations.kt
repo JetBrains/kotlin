@@ -42,4 +42,14 @@ annotation class AllPropertiesConstructor
 
 annotation class AddAnnotations
 
-annotation class AnnotationToAdd
+annotation class AnnotationToAdd(
+    val booleanValue: Boolean,
+    val byteValue: Byte,
+    val charValue: Char,
+    val doubleValue: Double,
+    val floatValue: Float,
+    val intValue: Int,
+    val longValue: Long,
+    val shortValue: Short,
+    val stringValue: String
+)

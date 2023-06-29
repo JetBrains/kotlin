@@ -1,28 +1,28 @@
 package test
 
 @AddAnnotations
-@AnnotationToAdd
+@AnnotationToAdd(booleanValue = true, byteValue = 1B, charValue = 'c', doubleValue = 4.2, floatValue = 2.4F, intValue = 42, longValue = 24L, shortValue = 7S, stringValue = "OK")
 class Some {
-  @AnnotationToAdd
-  constructor(@AnnotationToAdd x: Int) /* primary */ {
+  @AnnotationToAdd(booleanValue = true, byteValue = 1B, charValue = 'c', doubleValue = 4.2, floatValue = 2.4F, intValue = 42, longValue = 24L, shortValue = 7S, stringValue = "OK")
+  constructor(@AnnotationToAdd(booleanValue = true, byteValue = 1B, charValue = 'c', doubleValue = 4.2, floatValue = 2.4F, intValue = 42, longValue = 24L, shortValue = 7S, stringValue = "OK") x: Int) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
-  @AnnotationToAdd
+  @AnnotationToAdd(booleanValue = true, byteValue = 1B, charValue = 'c', doubleValue = 4.2, floatValue = 2.4F, intValue = 42, longValue = 24L, shortValue = 7S, stringValue = "OK")
   val x: Int
     field = x
-    @AnnotationToAdd
+    @AnnotationToAdd(booleanValue = true, byteValue = 1B, charValue = 'c', doubleValue = 4.2, floatValue = 2.4F, intValue = 42, longValue = 24L, shortValue = 7S, stringValue = "OK")
     get
 
-  @AnnotationToAdd
+  @AnnotationToAdd(booleanValue = true, byteValue = 1B, charValue = 'c', doubleValue = 4.2, floatValue = 2.4F, intValue = 42, longValue = 24L, shortValue = 7S, stringValue = "OK")
   fun foo() {
   }
 
-  @AnnotationToAdd
+  @AnnotationToAdd(booleanValue = true, byteValue = 1B, charValue = 'c', doubleValue = 4.2, floatValue = 2.4F, intValue = 42, longValue = 24L, shortValue = 7S, stringValue = "OK")
   class Derived {
-    @AnnotationToAdd
+    @AnnotationToAdd(booleanValue = true, byteValue = 1B, charValue = 'c', doubleValue = 4.2, floatValue = 2.4F, intValue = 42, longValue = 24L, shortValue = 7S, stringValue = "OK")
     constructor() /* primary */ {
       super/*Any*/()
       /* <init>() */
