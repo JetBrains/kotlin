@@ -68,14 +68,48 @@ public interface TestCase {
 @ExperimentalNativeApi
 internal val TestCase.prettyName get() = "${suite.name}.$name"
 
+/**
+ * Represents Test suite, a suite that contains test cases.
+ *
+ * Test suite can be either test class containing test cases
+ * or a top level suite for top level methods.
+ */
 @ExperimentalNativeApi
 public interface TestSuite {
+    /**
+     * Test suite name.
+     */
     val name: String
+
+    /**
+     * Shows if the suite is ignored with `@Ignore` annotation.
+     *
+     * @see kotlin.test.Ignore
+     */
     val ignored: Boolean
+
+    /**
+     * Test cases this test suite contains
+     */
     val testCases: Map<String, TestCase>
+
+    /**
+     * Number of test cases
+     */
     val size : Int
 
+    /**
+     * Executes all methods marked with `@BeforeClass` annotation
+     *
+     * @see kotlin.test.BeforeClass
+     */
     fun doBeforeClass()
+
+    /**
+     * Executes all methods marked with `@AfterClass` annotation
+     *
+     * @see @see kotlin.test.AfterClass
+     */
     fun doAfterClass()
 }
 
