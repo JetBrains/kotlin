@@ -9,14 +9,14 @@ import kotlin.experimental.ExperimentalNativeApi
 
 @ExperimentalNativeApi
 internal interface TestLogger: TestListener {
-    fun logTestList(runner: TestRunner, suites: Collection<TestSuite>)
+    fun logTestList(suites: Collection<TestSuite>)
     fun log(message: String)
 }
 
 @ExperimentalNativeApi
 internal open class BaseTestLogger: BaseTestListener(), TestLogger {
     override fun log(message: String) = println(message)
-    override fun logTestList(runner: TestRunner, suites: Collection<TestSuite>) {
+    override fun logTestList(suites: Collection<TestSuite>) {
         suites.forEach { suite ->
             println("${suite.name}.")
             suite.testCases.values.forEach {
@@ -43,7 +43,7 @@ internal open class TestLoggerWithStatistics: BaseTestLogger() {
 
 @ExperimentalNativeApi
 internal class SilentTestLogger: BaseTestLogger() {
-    override fun logTestList(runner: TestRunner, suites: Collection<TestSuite>) {}
+    override fun logTestList(suites: Collection<TestSuite>) {}
     override fun log(message: String) {}
     override fun fail(testCase: TestCase, e: Throwable, timeMillis: Long) = e.printStackTrace()
 }
