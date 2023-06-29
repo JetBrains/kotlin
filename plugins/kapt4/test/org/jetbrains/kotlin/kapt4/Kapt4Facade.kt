@@ -106,7 +106,6 @@ private fun run(
         options,
         withJdk = false,
         WriterBackedKaptLogger(isVerbose = false),
-        lightClasses.keys.toList(),
         lightClasses,
         ktAnalysisSession.ktMetadataCalculator
     )

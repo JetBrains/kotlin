@@ -18,7 +18,6 @@ class Kapt4ContextForStubGeneration(
     options: KaptOptions,
     withJdk: Boolean,
     logger: KaptLogger,
-    val classes: List<KtLightClass>,
     val origins: Map<KtLightClass, KtFile>,
     val metadataCalculator: KtMetadataCalculator
 ) : KaptContext(options, withJdk, logger) {

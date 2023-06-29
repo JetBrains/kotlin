@@ -117,7 +117,6 @@ class Kapt4AnalysisHandlerExtension : FirAnalysisHandlerExtension() {
                 options,
                 withJdk = false,
                 logger,
-                lightClasses.keys.toList(),
                 lightClasses,
                 ktAnalysisSession.ktMetadataCalculator
             )

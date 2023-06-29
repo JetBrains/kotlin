@@ -102,7 +102,7 @@ class Kapt4StubGenerator(private val analysisSession: KtAnalysisSession) {
     private val kdocCommentKeeper = runIf(keepKdocComments) { Kapt4KDocCommentKeeper(this@Kapt4ContextForStubGeneration) }
 
     fun generateStubs(): Map<KtLightClass, KaptStub?> {
-        return classes.associateWith { convertTopLevelClass(it) }
+        return origins.keys.associateWith { convertTopLevelClass(it) }
     }
 
     private fun convertTopLevelClass(lightClass: KtLightClass): KaptStub? {
