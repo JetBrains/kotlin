@@ -42,11 +42,12 @@ class CInteropCommonizerTaskTest : MultiplatformExtensionTest() {
             kotlin.macosX64().compilations.main.cinterops.create("anyInteropName"),
         ).forEach {
             project.tasks.named(it.interopProcessingTaskName).configure {
-                throw GradleException("Interop task configuration should not avoided by commonizeCInteropTask configuration")
+                fail("Interop task configuration should not avoided by commonizeCInteropTask configuration")
             }
         }
 
         project.commonizeCInteropTask?.get() ?: fail("Expected commonizeCInteropTask to be present")
+        project.evaluate()
     }
 
     @Test
