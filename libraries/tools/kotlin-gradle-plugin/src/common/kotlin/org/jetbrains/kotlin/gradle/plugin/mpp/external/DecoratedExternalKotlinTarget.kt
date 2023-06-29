@@ -40,7 +40,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.InternalKotlinTarget
  */
 @ExternalKotlinTargetApi
 open class DecoratedExternalKotlinTarget internal constructor(
-    internal val delegate: ExternalKotlinTargetImpl
+    internal val delegate: ExternalKotlinTargetImpl,
 ) : InternalKotlinTarget by delegate {
     constructor(delegate: Delegate) : this(delegate.impl)
 
@@ -50,9 +50,19 @@ open class DecoratedExternalKotlinTarget internal constructor(
 
     val runtimeElementsConfiguration: Configuration = delegate.runtimeElementsConfiguration
 
+    /**
+     * @since 1.9.20
+     */
+    val sourcesElementsConfiguration: Configuration = delegate.sourcesElementsConfiguration
+
     val apiElementsPublishedConfiguration: Configuration = delegate.apiElementsPublishedConfiguration
 
     val runtimeElementsPublishedConfiguration: Configuration = delegate.runtimeElementsPublishedConfiguration
+
+    /**
+     * @since 1.9.20
+     */
+    val sourcesElementsPublishedConfiguration: Configuration = delegate.sourcesElementsPublishedConfiguration
 
     internal val logger: Logger = delegate.logger
 }

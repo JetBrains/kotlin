@@ -31,6 +31,10 @@ internal fun ExternalKotlinTargetSoftwareComponent(
         details.mapToMavenScope("runtime")
     }
 
+    if (target.isSourcesPublishable) {
+        adhocSoftwareComponent.addVariantsFromConfiguration(target.sourcesElementsPublishedConfiguration) { _ -> }
+    }
+
     @OptIn(UnsafeApi::class)
     return ExternalKotlinTargetSoftwareComponent(
         target.project.multiplatformExtension,
@@ -42,7 +46,7 @@ internal fun ExternalKotlinTargetSoftwareComponent(
 internal class ExternalKotlinTargetSoftwareComponent @UnsafeApi constructor(
     private val multiplatformExtension: KotlinMultiplatformExtension,
     private val adhocSoftwareComponent: SoftwareComponentInternal,
-    private val kotlinTargetComponent: ExternalKotlinTargetComponent
+    private val kotlinTargetComponent: ExternalKotlinTargetComponent,
 ) : ComponentWithCoordinates, ComponentWithVariants, SoftwareComponentInternal {
     override fun getName(): String = adhocSoftwareComponent.name
     override fun getUsages(): Set<UsageContext> = adhocSoftwareComponent.usages
