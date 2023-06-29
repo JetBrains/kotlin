@@ -4133,6 +4133,9 @@ if (PlatformInfo.isAppleTarget(project)) {
         it.defFile 'interop/objc/objCAction/objclib.def'
         it.headers "$projectDir/interop/objc/objCAction/objclib.h"
     }
+    createInterop("kt59167") {
+        it.defFile 'interop/kt59167/kt59167.def'
+    }
 }
 
 createInterop("withSpaces") {
@@ -4940,6 +4943,11 @@ if (PlatformInfo.isAppleTarget(project)) {
             }
         }
         UtilsKt.dependsOnPlatformLibs(it)
+    }
+
+    interopTest("interop_kt59167") {
+        source = 'interop/kt59167/main.kt'
+        interop = 'kt59167'
     }
 }
 
