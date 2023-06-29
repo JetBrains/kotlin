@@ -12,7 +12,7 @@ plugins {
     `maven-publish`
 }
 
-configureCommonPublicationSettingsForGradle(signLibraryPublication, sbom = false)
+configureCommonPublicationSettingsForGradle(signLibraryPublication)
 configureKotlinCompileTasksGradleCompatibility()
 addBomCheckTask()
 extensions.extraProperties["kotlin.stdlib.default.dependency"] = "false"

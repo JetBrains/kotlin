@@ -65,9 +65,7 @@ val commonSourceSetName = "common"
  */
 fun Project.configureCommonPublicationSettingsForGradle(
     signingRequired: Boolean,
-    sbom: Boolean = true,
 ) {
-    val sbomTask = if (sbom) configureSbom() else null
     plugins.withId("maven-publish") {
         configureDefaultPublishing(signingRequired)
 
@@ -76,12 +74,6 @@ fun Project.configureCommonPublicationSettingsForGradle(
                 .withType<MavenPublication>()
                 .configureEach {
                     configureKotlinPomAttributes(project)
-
-                    if (sbomTask != null) {
-                        artifact(sbomTask.map { it.outputDirectory.file("MainPublication.spdx.json") }) {
-                            extension = "spdx.json"
-                        }
-                    }
                 }
         }
     }
