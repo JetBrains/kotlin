@@ -5,7 +5,7 @@ FILE: lowerGeneratedImplicitReceiver.kt
     }
     public final fun box(): R|kotlin/String| {
         lval df: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/api/Cars>| = R|org/jetbrains/kotlinx/dataframe/api/dataFrameOf|(vararg(String(a))).R|org/jetbrains/kotlinx/dataframe/api/DataFrameBuilder.invoke|(vararg(Int(1))).R|org/jetbrains/kotlinx/dataframe/api/cast|<R|org/jetbrains/kotlinx/dataframe/api/Cars|>()
-        lval df1: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Token499>| = R|<local>/df|.R|kotlin/let|<R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/api/Cars>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Token499>|>(<L> = let@fun <anonymous>(it: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/api/Cars>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Token499>| <inline=Inline, kind=EXACTLY_ONCE>  {
+        lval df1: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/TokenCars_3085480>| = R|<local>/df|.R|kotlin/let|<R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/api/Cars>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/TokenCars_3085480>|>(<L> = let@fun <anonymous>(it: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/api/Cars>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/TokenCars_3085480>| <inline=Inline, kind=EXACTLY_ONCE>  {
             local abstract class DataFrameType1 : R|kotlin/Any| {
                 public constructor(): R|org/jetbrains/kotlinx/dataframe/DataFrameType1| {
                     super<R|kotlin/Any|>()
@@ -33,8 +33,8 @@ FILE: lowerGeneratedImplicitReceiver.kt
 
             }
 
-            local abstract class Token499 : R|org/jetbrains/kotlinx/dataframe/DataFrameType1| {
-                public constructor(): R|org/jetbrains/kotlinx/dataframe/Token499| {
+            local abstract class TokenCars_3085480 : R|org/jetbrains/kotlinx/dataframe/DataFrameType1| {
+                public constructor(): R|org/jetbrains/kotlinx/dataframe/TokenCars_3085480| {
                     super<R|org/jetbrains/kotlinx/dataframe/DataFrameType1|>()
                 }
 
@@ -46,7 +46,7 @@ FILE: lowerGeneratedImplicitReceiver.kt
             ^ (R|<local>/it|.R|org/jetbrains/kotlinx/dataframe/api/add|<R|kotlin/Int|, R|org/jetbrains/kotlinx/dataframe/api/Cars|>(String(age), <L> = add@fun R|org/jetbrains/kotlinx/dataframe/api/AddDataRow<org/jetbrains/kotlinx/dataframe/api/Cars>|.<anonymous>(it: R|org/jetbrains/kotlinx/dataframe/api/AddDataRow<org/jetbrains/kotlinx/dataframe/api/Cars>|): R|kotlin/Int| <inline=NoInline>  {
                 ^ Int(2022)
             }
-            ) as R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Token499>|)
+            ) as R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/TokenCars_3085480>|)
         }
         )
         lval col: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>| = (this@R|org/jetbrains/kotlinx/dataframe/api/box|, R|<local>/df1|).R|<local>/age|

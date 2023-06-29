@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.util.prefixIfNot
 
 interface IGeneratedNames {
     val scopes: Set<ClassId>
@@ -34,6 +35,16 @@ interface IGeneratedNames {
     fun nextName(s: String): ClassId
     fun nextScope(s: String): ClassId
     fun nextFunction(s: String): CallableId
+}
+
+class Checker(private val generator: IGeneratedNames) : IGeneratedNames by generator {
+    override fun nextName(s: String): ClassId {
+        val id = generator.nextName(s)
+        if (!id.shortClassName.asString().startsWith("Token")) {
+            error("there are places that rely on token name to start with Token")
+        }
+        return id
+    }
 }
 
 class PredefinedNames : IGeneratedNames {
@@ -93,7 +104,10 @@ class GeneratedNames : IGeneratedNames {
     override val tokenState = mutableMapOf<ClassId, SchemaContext>()
     override val callableState = mutableMapOf<Name, FirSimpleFunction>()
 
+    private val id = mutableMapOf<String, Int>().withDefault { 0 }
+
     override fun nextName(s: String): ClassId {
+        val s = s.prefixIfNot("Token")
         val newId = ClassId(FqName("org.jetbrains.kotlinx.dataframe"), Name.identifier(s))
         tokens.add(newId)
         return newId
@@ -106,7 +120,9 @@ class GeneratedNames : IGeneratedNames {
     }
 
     override fun nextFunction(s: String): CallableId {
-        val callableId = CallableId(FqName("org.jetbrains.kotlinx.dataframe.api"), Name.identifier(s))
+        val i = id.getValue(s)
+        val callableId = CallableId(FqName("org.jetbrains.kotlinx.dataframe.api"), Name.identifier("$s$i"))
+        id[s] = i + 1
         callables.add(callableId)
         return callableId
 //        val callableId = callableNames.removeLast()
@@ -145,8 +161,10 @@ class FirDataFrameExtensionRegistrar(
     private val mode: Mode = Mode.OBSOLETE
 ) : FirExtensionRegistrar() {
     override fun ExtensionRegistrarContext.configurePlugin() {
-        val flag = true
-        val generator = if (flag) PredefinedNames() else GeneratedNames()
+        val flag = false
+        var generator = if (flag) PredefinedNames() else GeneratedNames()
+        // if input data schema for refinement is also generated schema, maybe it'll be possible to save names to a set
+        generator = Checker(generator)
         val refinedToOriginal = mutableMapOf<Name, FirBasedSymbol<*>>()
         with(generator) {
             +::ExtensionsGenerator

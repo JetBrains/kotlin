@@ -152,8 +152,15 @@ class CandidateInterceptor(
             this.symbol = newSymbol
             returnTypeRef = typeRef
         }.also { newSymbol.bind(it) }
-        callableState[generatedName.callableName] = function
-        originalSymbol[generatedName.callableName] = symbol
+        callableState.compute(generatedName.callableName) { name, it ->
+            if (it != null) error("$name is not unique")
+            function
+
+        }
+        originalSymbol.compute(generatedName.callableName) { name, it ->
+            if (it != null) error("$name is not unique")
+            symbol
+        }
         return newSymbol
     }
 }

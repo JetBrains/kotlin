@@ -96,7 +96,7 @@ FILE: extractPluginSchemaWithUnfold.kt
     }
     public final fun R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Function>|.refine(bridges: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Bridge>|): R|kotlin/Unit| {
         lval functions: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Function>| = this@R|org/jetbrains/kotlinx/dataframe/refine|
-        lval df1: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Token499>| = R|<local>/functions|.R|kotlin/let|<R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Function>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Token499>|>(<L> = let@fun <anonymous>(it: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Function>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Token499>| <inline=Inline, kind=EXACTLY_ONCE>  {
+        lval df1: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/TokenFunction_796890755>| = R|<local>/functions|.R|kotlin/let|<R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Function>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/TokenFunction_796890755>|>(<L> = let@fun <anonymous>(it: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Function>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/TokenFunction_796890755>| <inline=Inline, kind=EXACTLY_ONCE>  {
             local abstract class returnType : R|kotlin/Any| {
                 public constructor(): R|org/jetbrains/kotlinx/dataframe/returnType| {
                     super<R|kotlin/Any|>()
@@ -348,8 +348,8 @@ FILE: extractPluginSchemaWithUnfold.kt
 
             }
 
-            local abstract class Token499 : R|org/jetbrains/kotlinx/dataframe/DataFrameType1| {
-                public constructor(): R|org/jetbrains/kotlinx/dataframe/Token499| {
+            local abstract class TokenFunction_796890755 : R|org/jetbrains/kotlinx/dataframe/DataFrameType1| {
+                public constructor(): R|org/jetbrains/kotlinx/dataframe/TokenFunction_796890755| {
                     super<R|org/jetbrains/kotlinx/dataframe/DataFrameType1|>()
                 }
 
@@ -370,7 +370,7 @@ FILE: extractPluginSchemaWithUnfold.kt
             ^ (R|<local>/it|.R|org/jetbrains/kotlinx/dataframe/api/joinDefault|<R|org/jetbrains/kotlinx/dataframe/Function|, R|org/jetbrains/kotlinx/dataframe/Bridge|>(R|<local>/bridges|, <L> = joinDefault@fun R|org/jetbrains/kotlinx/dataframe/api/JoinDsl<org/jetbrains/kotlinx/dataframe/Function, org/jetbrains/kotlinx/dataframe/Bridge>|.<anonymous>(it: R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Function>|): R|org/jetbrains/kotlinx/dataframe/columns/ColumnSet<*>| <inline=NoInline>  {
                 ^ (this@R|special/anonymous|, R|<local>/functions|.R|org/jetbrains/kotlinx/dataframe/functionReturnType|.R|org/jetbrains/kotlinx/dataframe/name|).R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/api/JoinDsl.match: R|org/jetbrains/kotlinx/dataframe/api/ColumnMatch<C>|>|<R|kotlin/String|>(this@R|special/anonymous|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/api/JoinDsl.right: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Bridge>|>|.R|org/jetbrains/kotlinx/dataframe/type|.R|org/jetbrains/kotlinx/dataframe/name|)
             }
-            ) as R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Token499>|)
+            ) as R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/TokenFunction_796890755>|)
         }
         )
         lval col: R|org/jetbrains/kotlinx/dataframe/DataColumn<org/jetbrains/kotlinx/dataframe/DataFrame<*>>| = (this@R|org/jetbrains/kotlinx/dataframe/refine|, R|<local>/df1|).R|<local>/parameters|
