@@ -7,7 +7,6 @@
 
 package org.jetbrains.kotlin.gradle.unitTests
 
-import org.gradle.api.GradleException
 import org.jetbrains.kotlin.commonizer.CommonizerTarget
 import org.jetbrains.kotlin.commonizer.SharedCommonizerTarget
 import org.jetbrains.kotlin.gradle.util.MultiplatformExtensionTest
@@ -39,7 +38,7 @@ class CInteropCommonizerTaskTest : MultiplatformExtensionTest() {
     }
 
     @Test
-    fun `commonizeCInteropTask configuration - avoids cinterop task configuration`() {
+    fun `commonizeCInteropTask configuration - avoids cinterop task configuration`() = project.runLifecycleAwareTest {
         project.enableCInteropCommonization(true)
 
         listOf(
@@ -51,8 +50,7 @@ class CInteropCommonizerTaskTest : MultiplatformExtensionTest() {
             }
         }
 
-        project.commonizeCInteropTask?.get() ?: fail("Expected commonizeCInteropTask to be present")
-        project.evaluate()
+        project.commonizeCInteropTask()?.get() ?: fail("Expected commonizeCInteropTask to be present")
     }
 
     @Test
