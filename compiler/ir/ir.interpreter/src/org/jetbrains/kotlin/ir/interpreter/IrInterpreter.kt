@@ -414,8 +414,7 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
         val state = callStack.popState()
         when (expression.operator) {
             IrTypeOperator.IMPLICIT_COERCION_TO_UNIT -> {
-                // do nothing
-                // callStack.pushState(getUnitState()) TODO find real use cases for this
+                callStack.pushState(getUnitState())
             }
             IrTypeOperator.CAST, IrTypeOperator.IMPLICIT_CAST -> {
                 when {

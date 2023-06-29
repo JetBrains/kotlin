@@ -1,3 +1,5 @@
+// IGNORE_BACKEND_K2: WASM
+// ^ KT-59800 K2 + Wasm: test failure after changing `finally` block generation
 
 fun test1() : Boolean {
     try {

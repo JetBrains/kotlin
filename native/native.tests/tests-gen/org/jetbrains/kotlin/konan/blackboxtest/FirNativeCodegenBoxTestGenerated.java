@@ -7756,6 +7756,12 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
                 }
 
                 @Test
+                @TestMetadata("tryFinallyOfTypeUnit.kt")
+                public void testTryFinallyOfTypeUnit() throws Exception {
+                    runTest("compiler/testData/codegen/box/controlStructures/tryCatchInExpressions/tryFinallyOfTypeUnit.kt");
+                }
+
+                @Test
                 @TestMetadata("tryInsideCatch.kt")
                 public void testTryInsideCatch() throws Exception {
                     runTest("compiler/testData/codegen/box/controlStructures/tryCatchInExpressions/tryInsideCatch.kt");

@@ -957,13 +957,13 @@ class Fir2IrVisitor(
         return statements.convertToIrExpressionOrBlock(source, origin)
     }
 
-    private fun FirBlock.convertToIrBlock(origin: IrStatementOrigin? = null): IrExpression {
-        return statements.convertToIrBlock(source, origin)
+    private fun FirBlock.convertToIrBlock(forceUnitType: Boolean): IrExpression {
+        return statements.convertToIrBlock(source, null, forceUnitType)
     }
 
     private fun List<FirStatement>.convertToIrExpressionOrBlock(
         source: KtSourceElement?,
-        origin: IrStatementOrigin? = null
+        origin: IrStatementOrigin?
     ): IrExpression {
         if (size == 1) {
             val firStatement = single()
@@ -973,14 +973,15 @@ class Fir2IrVisitor(
                 return convertToIrExpression(firStatement)
             }
         }
-        return convertToIrBlock(source, origin)
+        return convertToIrBlock(source, origin, forceUnitType = origin?.isLoop == true)
     }
 
     private fun List<FirStatement>.convertToIrBlock(
         source: KtSourceElement?,
-        origin: IrStatementOrigin? = null
+        origin: IrStatementOrigin?,
+        forceUnitType: Boolean,
     ): IrExpression {
-        val type = if (origin?.isLoop == true)
+        val type = if (forceUnitType)
             irBuiltIns.unitType
         else
             (lastOrNull() as? FirExpression)?.typeRef?.toIrType() ?: irBuiltIns.unitType
@@ -1230,7 +1231,8 @@ class Fir2IrVisitor(
                             innerEndOffset,
                             irBuiltIns.unitType,
                             origin,
-                            loopVariables + loopBodyStatements.drop(loopVariableIndex).convertToIrExpressionOrBlock(firLoopBody.source)
+                            loopVariables +
+                                    loopBodyStatements.drop(loopVariableIndex).convertToIrExpressionOrBlock(firLoopBody.source, null)
                         )
                     }
                 } else {
@@ -1286,10 +1288,12 @@ class Fir2IrVisitor(
         return tryExpression.convertWithOffsets { startOffset, endOffset ->
             IrTryImpl(
                 startOffset, endOffset, tryExpression.typeRef.toIrType(),
-                tryExpression.tryBlock.convertToIrBlock(),
+                tryExpression.tryBlock.convertToIrBlock(forceUnitType = false),
                 tryExpression.catches.map { it.accept(this, data) as IrCatch },
-                tryExpression.finallyBlock?.convertToIrBlock()
+                tryExpression.finallyBlock?.convertToIrBlock(forceUnitType = true)
             )
+        }.also {
+            tryExpression.accept(implicitCastInserter, it)
         }
     }
 
@@ -1298,7 +1302,7 @@ class Fir2IrVisitor(
             val catchParameter = declarationStorage.createIrVariable(
                 catch.parameter, conversionScope.parentFromStack(), IrDeclarationOrigin.CATCH_PARAMETER
             )
-            IrCatchImpl(startOffset, endOffset, catchParameter, catch.block.convertToIrBlock())
+            IrCatchImpl(startOffset, endOffset, catchParameter, catch.block.convertToIrBlock(forceUnitType = false))
         }
     }
 

@@ -173,7 +173,7 @@ class Fir2IrImplicitCastInserter(
     override fun visitTryExpression(tryExpression: FirTryExpression, data: IrElement): IrElement {
         val irTry = data as IrTry
         (irTry.finallyExpression as? IrContainerExpression)?.let {
-            irTry.finallyExpression = it.insertImplicitCasts()
+            irTry.finallyExpression = it.insertImplicitCasts(coerceLastExpressionToUnit = true)
         }
         return data
     }
@@ -237,13 +237,13 @@ class Fir2IrImplicitCastInserter(
         return implicitNotNullCast(this)
     }
 
-    private fun IrContainerExpression.insertImplicitCasts(): IrContainerExpression {
+    private fun IrContainerExpression.insertImplicitCasts(coerceLastExpressionToUnit: Boolean = false): IrContainerExpression {
         if (statements.isEmpty()) return this
 
         val lastIndex = statements.lastIndex
         statements.forEachIndexed { i, irStatement ->
             if (irStatement !is IrErrorCallExpression && irStatement is IrExpression) {
-                if (i != lastIndex) {
+                if (i != lastIndex || coerceLastExpressionToUnit) {
                     statements[i] = coerceToUnitIfNeeded(irStatement, irBuiltIns)
                 }
                 // TODO: for the last statement, need to cast to the return type if mismatched
