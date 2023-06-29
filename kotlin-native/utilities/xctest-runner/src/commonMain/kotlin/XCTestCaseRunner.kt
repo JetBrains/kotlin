@@ -2,17 +2,14 @@
  * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+@file:Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 
 import kotlinx.cinterop.*
-
+import kotlin.native.internal.test.*
 import platform.Foundation.*
 import platform.UniformTypeIdentifiers.UTTypeSourceCode
 import platform.XCTest.*
 import platform.objc.*
-
-import kotlin.native.internal.test.GeneratedSuites
-import kotlin.native.internal.test.TestCase
-import kotlin.native.internal.test.TestSuite
 
 @ExportObjCClass(name = "Kotlin/Native::Test")
 class XCTestCaseRunner(
@@ -147,7 +144,7 @@ class XCTestCaseRunner(
 
         // TODO: need to clean up those methods. When/where should this be invoked?
         private fun disposeRunMethods() {
-            testMethodsNames.forEach {
+            testMethodsNames().forEach {
                 val selector = NSSelectorFromString(it)
                 dispose(selector)
             }
@@ -161,7 +158,7 @@ class XCTestCaseRunner(
          * Create Test invocations for each test method to make them resolvable by the XCTest's machinery
          * @see NSInvocation
          */
-        override fun testInvocations(): List<NSInvocation> = testMethodsNames.map {
+        override fun testInvocations(): List<NSInvocation> = testMethodsNames().map {
             val selector = NSSelectorFromString(it)
             createRunMethod(selector)
             this.instanceMethodSignatureForSelector(selector)?.let { signature ->
@@ -188,33 +185,50 @@ class XCTestSuiteRunner(private val testSuite: TestSuite) : XCTestSuite(testSuit
     }
 }
 
-private val testMethodsNames: List<String> =
-    GeneratedSuites.suites.flatMap { testSuite ->
-        testSuite.testCases.values.map { "$testSuite.${it.name}" }
-    }
+// Test settings should be initialized by the setup method
+// It stores settings with the filtered test suites, loggers and listeners.
+private var testSettings: TestSettings? = null
 
-@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER", "unused")
+private fun testMethodsNames(): List<String> = testSettings?.testSuites
+        ?.toList()
+        ?.flatMap { testSuite ->
+            testSuite.testCases.values.map { "$testSuite.${it.name}" }
+        } ?: error("TestSettings isn't initialized")
+
+@Suppress("unused")
 @kotlin.native.internal.ExportForCppRuntime("Konan_create_testSuite")
 internal fun setupXCTestSuite(): XCTestSuite {
     val nativeTestSuite = XCTestSuite.testSuiteWithName("Kotlin/Native test suite")
 
-    // Create and add tests to the main suite
-    createTestSuites().forEach {
-        nativeTestSuite.addTest(it)
-    }
+    // Get test arguments from the Info.plist to create test settings
+    val plistTestArgs = NSBundle.allBundles.mapNotNull {
+        (it as? NSBundle)?.infoDictionary
+                ?.get("KotlinNativeTestArgs")
+    }.singleOrNull() as? String
+    val args = plistTestArgs?.split(" ")?.toTypedArray() ?: emptyArray<String>()
 
-    // Tests created (self-check)
-    @Suppress("UNCHECKED_CAST")
-    check(GeneratedSuites.suites.size == (nativeTestSuite.tests as List<XCTest>).size) {
-        "The amount of generated XCTest suites should be equal to Kotlin test suites"
+    // Initialize settings with the given args
+    testSettings = TestProcessor(GeneratedSuites.suites, args).process()
+
+    if (testSettings?.runTests == true) {
+        // Generate and add tests to the main suite
+        testSettings?.testSuites?.generate()?.forEach {
+            nativeTestSuite.addTest(it)
+        }
+
+        // Tests created (self-check)
+        @Suppress("UNCHECKED_CAST")
+        check(testSettings?.testSuites?.size == (nativeTestSuite.tests as List<XCTest>).size) {
+            "The amount of generated XCTest suites should be equal to Kotlin test suites"
+        }
     }
 
     return nativeTestSuite
 }
 
-private fun createTestSuites(): List<XCTestSuite> {
+private fun Collection<TestSuite>.generate(): List<XCTestSuite> {
     val testInvocations = XCTestCaseRunner.testInvocations()
-    return GeneratedSuites.suites.map { suite ->
+    return this.map { suite ->
         val xcSuite = XCTestSuiteRunner(suite)
         suite.testCases.values.map { testCase ->
             testInvocations.filter {
