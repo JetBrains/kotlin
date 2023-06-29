@@ -84,7 +84,7 @@ private fun Configuration.applyBinaryFrameworkGroupAttributes(
         attribute(KotlinPlatformType.attribute, KotlinPlatformType.native)
         attribute(project.artifactTypeAttribute, KotlinNativeTargetConfigurator.NativeArtifactFormat.FRAMEWORK)
         attribute(KotlinNativeTarget.kotlinNativeBuildTypeAttribute, frameworkDescription.buildType.name)
-        attribute(KotlinNativeTarget.kotlinNativeFrameworkNameAttribute, frameworkDescription.baseName)
+        attribute(KotlinNativeTarget.kotlinNativeFrameworkNameAttribute, frameworkDescription.frameworkName)
         attribute(Framework.frameworkTargets, targets.map { it.konanTarget.name }.toSet())
     }
 }

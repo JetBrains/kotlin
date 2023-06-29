@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.*
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
-import java.util.*
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.appendText
 import kotlin.test.assertTrue
@@ -223,6 +222,30 @@ class FatFrameworkIT : KGPBaseTest() {
             val nestedProjectName = "nested"
             includeOtherProjectAsSubmodule("smoke", "native-fat-framework", nestedProjectName, true)
             buildGradleKts.appendText("dependencies { \"commonMainImplementation\"(project(\":$nestedProjectName\")) }")
+            testResolveAllConfigurations()
+        }
+    }
+
+    @DisplayName("Test that the configurations exposing fat frameworks with the same baseName are resolved normally")
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_8_0, maxVersion = TestVersions.Gradle.G_8_1)
+    @GradleTest
+    fun testExposingFrameworksWithSameBaseName(gradleVersion: GradleVersion) {
+        nativeProject("native-fat-framework/smoke", gradleVersion) {
+            buildGradleKts.addKotlinBlock("""
+                    iosX64 {
+                        binaries {
+                            framework("A") { baseName = "smoke" }
+                            framework("B") { baseName = "smoke" }
+                        }
+                    }
+                    iosArm64 {
+                        binaries {
+                            framework("A") { baseName = "smoke" }
+                            framework("B") { baseName = "smoke" }
+                        }
+                    }
+            """.trimIndent())
+
             testResolveAllConfigurations()
         }
     }

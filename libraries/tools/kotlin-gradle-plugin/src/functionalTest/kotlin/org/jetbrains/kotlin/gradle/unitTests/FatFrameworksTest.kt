@@ -96,8 +96,8 @@ class FatFrameworksTest {
         project.evaluate()
         val barFat = project.assertConfigurationExists("barDebugFrameworkIosFat")
         val fooFat = project.assertConfigurationExists("fooDebugFrameworkIosFat")
-        assertEquals("f1", fooFat.attributes.getAttribute(KotlinNativeTarget.kotlinNativeFrameworkNameAttribute))
-        assertEquals("f2", barFat.attributes.getAttribute(KotlinNativeTarget.kotlinNativeFrameworkNameAttribute))
+        assertEquals("fooDebugFramework", fooFat.attributes.getAttribute(KotlinNativeTarget.kotlinNativeFrameworkNameAttribute))
+        assertEquals("barDebugFramework", barFat.attributes.getAttribute(KotlinNativeTarget.kotlinNativeFrameworkNameAttribute))
     }
 
     private fun testFatFrameworkGrouping(

@@ -13,7 +13,7 @@ apple {
         dependencies {
             implementation(project(":iosLib")) {
                 if (properties.containsKey("multipleFrameworks")) {
-                    attributes.attribute(KotlinNativeTarget.kotlinNativeFrameworkNameAttribute, "mainStatic")
+                    attributes.attribute(KotlinNativeTarget.kotlinNativeFrameworkNameAttribute, "mainStaticDebugFramework")
                 }
             }
         }

@@ -460,13 +460,14 @@ class AppleFrameworkIT : KGPBaseTest() {
                 ":iosApp:dependencyInsight", "--configuration", configuration, "--dependency", "iosLib"
             )
 
-            fun BuildResult.assertContainsVariant(variantName: String) {
-                assertOutputContains(
-                    if (gradleVersion >= GradleVersion.version(TestVersions.Gradle.G_7_5))
-                        "Variant $variantName"
-                    else "variant \"$variantName\""
-                )
-            }
+            fun variant(variantName: String) =
+                if (gradleVersion >= GradleVersion.version(TestVersions.Gradle.G_7_5)) {
+                    "Variant $variantName"
+                } else {
+                    "variant \"$variantName\""
+                }
+
+            fun BuildResult.assertContainsVariant(variantName: String) = assertOutputContains(variant(variantName))
 
             subProject("iosApp").buildGradleKts.replaceText("<applePluginTestVersion>", "\"${TestVersions.AppleGradlePlugin.V222_0_21}\"")
 
@@ -484,7 +485,7 @@ class AppleFrameworkIT : KGPBaseTest() {
             }
 
             build(*dependencyInsight("iosAppIosX64ReleaseImplementation0"), "-PmultipleFrameworks") {
-                assertContainsVariant("mainStaticReleaseFrameworkIos")
+                assertOutputDoesNotContain(variant("mainStaticReleaseFrameworkIos"))
             }
         }
     }
