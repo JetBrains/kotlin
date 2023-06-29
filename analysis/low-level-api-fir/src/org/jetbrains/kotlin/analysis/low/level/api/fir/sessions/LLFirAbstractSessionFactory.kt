@@ -80,7 +80,7 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
                 builtinTypes,
                 scope
             ),
-            LLFirDependenciesSymbolProvider(session, listOf(builtinSymbolProvider)),
+            LLFirDependenciesSymbolProvider(session) { listOf(builtinSymbolProvider) },
         )
     }
 
@@ -100,8 +100,6 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
         val scopeProvider = FirKotlinScopeProvider(::wrapScopeWithJvmMapped)
 
         val components = LLFirModuleResolveComponents(module, globalResolveComponents, scopeProvider)
-
-        val dependencies = collectSourceModuleDependencies(module)
 
         val session = LLFirScriptSession(module, components, builtinsSession.builtinTypes)
         components.session = session
@@ -130,10 +128,12 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
             register(FirProvider::class, provider)
             register(FirLazyDeclarationResolver::class, LLFirLazyDeclarationResolver())
 
-            val dependencyProvider = LLFirDependenciesSymbolProvider(this, buildList {
-                addDependencySymbolProvidersTo(session, dependencies, this)
-                add(builtinsSession.symbolProvider)
-            })
+            val dependencyProvider = LLFirDependenciesSymbolProvider(this) {
+                buildList {
+                    addDependencySymbolProvidersTo(session, collectSourceModuleDependencies(module), this)
+                    add(builtinsSession.symbolProvider)
+                }
+            }
 
             val javaSymbolProvider = LLFirJavaSymbolProvider(this, moduleData, project, provider.searchScope)
             register(JavaSymbolProvider::class, javaSymbolProvider)
@@ -212,7 +212,7 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
             register(FirProvider::class, provider)
             register(FirLazyDeclarationResolver::class, LLFirLazyDeclarationResolver())
 
-            val dependencyProvider = LLFirDependenciesSymbolProvider(this, listOf(builtinsSession.symbolProvider))
+            val dependencyProvider = LLFirDependenciesSymbolProvider(this) { listOf(builtinsSession.symbolProvider) }
 
             register(
                 FirSymbolProvider::class,
@@ -254,7 +254,6 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
 
         val components = LLFirModuleResolveComponents(module, globalResolveComponents, scopeProvider)
 
-        val dependencies = collectSourceModuleDependencies(module)
         val session = LLFirSourcesSession(module, components, builtinsSession.builtinTypes)
         components.session = session
 
@@ -284,10 +283,12 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
             registerCompilerPluginExtensions(project, module)
             registerCommonComponentsAfterExtensionsAreConfigured()
 
-            val dependencyProvider = LLFirDependenciesSymbolProvider(this, buildList {
-                addDependencySymbolProvidersTo(session, dependencies, this)
-                add(builtinsSession.symbolProvider)
-            })
+            val dependencyProvider = LLFirDependenciesSymbolProvider(this) {
+                buildList {
+                    addDependencySymbolProvidersTo(session, collectSourceModuleDependencies(module), this)
+                    add(builtinsSession.symbolProvider)
+                }
+            }
 
             register(DEPENDENCIES_SYMBOL_PROVIDER_QUALIFIED_KEY, dependencyProvider)
             register(LLFirFirClassByPsiClassProvider::class, LLFirFirClassByPsiClassProvider(this))
@@ -372,30 +373,32 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
             register(FirRegisteredPluginAnnotations::class, LLFirIdeRegisteredPluginAnnotations(this, annotationsResolver))
             register(FirPredicateBasedProvider::class, FirEmptyPredicateBasedProvider)
 
-            val dependencyProvider = LLFirDependenciesSymbolProvider(this, buildList {
-                add(builtinsSession.symbolProvider)
+            val dependencyProvider = LLFirDependenciesSymbolProvider(this) {
+                buildList {
+                    add(builtinsSession.symbolProvider)
 
-                // Script dependencies are self-contained and should not depend on other libraries
-                if (module !is KtScriptDependencyModule) {
-                    // Add all libraries excluding the current one
-                    val librariesSearchScope = ProjectScope.getLibrariesScope(project)
-                        .intersectWith(GlobalSearchScope.notScope(libraryModule.contentScope))
+                    // Script dependencies are self-contained and should not depend on other libraries
+                    if (module !is KtScriptDependencyModule) {
+                        // Add all libraries excluding the current one
+                        val librariesSearchScope = ProjectScope.getLibrariesScope(project)
+                            .intersectWith(GlobalSearchScope.notScope(libraryModule.contentScope))
 
-                    val restLibrariesProvider = createProjectLibraryProvidersForScope(
-                        session, moduleData, scopeProvider,
-                        project, builtinTypes, librariesSearchScope
-                    )
+                        val restLibrariesProvider = createProjectLibraryProvidersForScope(
+                            session, moduleData, scopeProvider,
+                            project, builtinTypes, librariesSearchScope
+                        )
 
-                    addAll(restLibrariesProvider)
+                        addAll(restLibrariesProvider)
 
-                    moduleAnchorSession?.let {
-                        (it.symbolProvider as LLFirModuleWithDependenciesSymbolProvider).also { moduleSymbolProvider ->
-                            addAll(moduleSymbolProvider.providers)
-                            addAll(moduleSymbolProvider.dependencyProvider.providers)
+                        moduleAnchorSession?.let {
+                            (it.symbolProvider as LLFirModuleWithDependenciesSymbolProvider).also { moduleSymbolProvider ->
+                                addAll(moduleSymbolProvider.providers)
+                                addAll(moduleSymbolProvider.dependencyProvider.providers)
+                            }
                         }
                     }
                 }
-            })
+            }
 
             register(DEPENDENCIES_SYMBOL_PROVIDER_QUALIFIED_KEY, dependencyProvider)
             register(LLFirFirClassByPsiClassProvider::class, LLFirFirClassByPsiClassProvider(this))
