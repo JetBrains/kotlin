@@ -48,7 +48,7 @@ TEST(BoundedQueueTest, ConcurrentEnqueue) {
     std::atomic<bool> start = false;
     std::list<ScopedThread> threads;
     for (int t = 0; t < kThreadCount; ++t) {
-        threads.emplace_back([&]() {
+        threads.emplace_back([&, t]() {
             while (!start) {
                 std::this_thread::yield();
             }
