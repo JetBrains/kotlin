@@ -7,13 +7,11 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.appendText
 
 @DisplayName("Integration with the Gradle java-test-fixtures plugin")
 class TestFixturesIT : KGPBaseTest() {
-    @Disabled
     @DisplayName("Test fixtures can access internals of the main source set in Kotlin/JVM projects")
     @JvmGradlePluginTests
     @GradleTest
@@ -31,7 +29,6 @@ class TestFixturesIT : KGPBaseTest() {
         }
     }
 
-    @Disabled
     @DisplayName("Test fixtures can access internals of the main JVM source set in Kotlin MPP projects")
     @MppGradlePluginTests
     @GradleTest
@@ -49,7 +46,6 @@ class TestFixturesIT : KGPBaseTest() {
         }
     }
 
-    @Disabled
     @DisplayName("Test code can access internals of the test fixtures source set in Kotlin/JVM projects")
     @JvmGradlePluginTests
     @GradleTest
@@ -74,7 +70,6 @@ class TestFixturesIT : KGPBaseTest() {
         }
     }
 
-    @Disabled
     @DisplayName("JVM test code can access internals of the test fixtures source set in Kotlin MPP projects")
     @MppGradlePluginTests
     @GradleTest
