@@ -1,0 +1,106 @@
+/*
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.kotlin.gradle
+
+import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.testbase.*
+import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.DisplayName
+import kotlin.io.path.appendText
+
+@DisplayName("Integration with the Gradle java-test-fixtures plugin")
+class TestFixturesIT : KGPBaseTest() {
+    @Disabled
+    @DisplayName("Test fixtures can access internals of the main source set in Kotlin/JVM projects")
+    @JvmGradlePluginTests
+    @GradleTest
+    fun testInternalAccessInJvmProject(gradleVersion: GradleVersion) {
+        project(JVM_TEST_FIXTURES_PROJECT_NAME, gradleVersion) {
+            kotlinSourcesDir("testFixtures").resolve("Netherlands.kt").appendText(
+                //language=kt
+                """
+
+                    fun isCityFromNetherlands(city: City) = city.isNetherlands()
+                """.trimIndent()
+            )
+
+            build("compileTestFixturesKotlin")
+        }
+    }
+
+    @Disabled
+    @DisplayName("Test fixtures can access internals of the main JVM source set in Kotlin MPP projects")
+    @MppGradlePluginTests
+    @GradleTest
+    fun testInternalAccessInMppProject(gradleVersion: GradleVersion) {
+        project(MPP_TEST_FIXTURES_PROJECT_NAME, gradleVersion) {
+            kotlinSourcesDir("jvmTestFixtures").resolve("Netherlands.kt").appendText(
+                //language=kt
+                """
+
+                    fun isCityFromNetherlands(city: City) = city.isNetherlands()
+                """.trimIndent()
+            )
+
+            build("compileTestFixturesKotlinJvm")
+        }
+    }
+
+    @Disabled
+    @DisplayName("Test code can access internals of the test fixtures source set in Kotlin/JVM projects")
+    @JvmGradlePluginTests
+    @GradleTest
+    fun testInternalAccessFromTestsInJvmProject(gradleVersion: GradleVersion) {
+        project(JVM_TEST_FIXTURES_PROJECT_NAME, gradleVersion) {
+            kotlinSourcesDir("testFixtures").resolve("Netherlands.kt").appendText(
+                //language=kt
+                """
+
+                    internal fun isCityFromNetherlands(city: City) = city.isNetherlands()
+                """.trimIndent()
+            )
+
+            kotlinSourcesDir("test").resolve("Tests.kt").modify {
+                it.replace(
+                    "assertEquals(true, AMSTERDAM.isNetherlands())",
+                    "assertEquals(AMSTERDAM.isNetherlands(), isCityFromNetherlands(AMSTERDAM))"
+                )
+            }
+
+            build("compileTestKotlin")
+        }
+    }
+
+    @Disabled
+    @DisplayName("JVM test code can access internals of the test fixtures source set in Kotlin MPP projects")
+    @MppGradlePluginTests
+    @GradleTest
+    fun testInternalAccessFromTestsInMppProject(gradleVersion: GradleVersion) {
+        project(MPP_TEST_FIXTURES_PROJECT_NAME, gradleVersion) {
+            kotlinSourcesDir("jvmTestFixtures").resolve("Netherlands.kt").appendText(
+                //language=kt
+                """
+
+                    internal fun isCityFromNetherlands(city: City) = city.isNetherlands()
+                """.trimIndent()
+            )
+
+            kotlinSourcesDir("jvmTest").resolve("Tests.kt").modify {
+                it.replace(
+                    "assertEquals(true, AMSTERDAM.isNetherlands())",
+                    "assertEquals(AMSTERDAM.isNetherlands(), isCityFromNetherlands(AMSTERDAM))"
+                )
+            }
+
+            build("compileTestKotlinJvm")
+        }
+    }
+
+    companion object {
+        private const val JVM_TEST_FIXTURES_PROJECT_NAME = "jvm-test-fixtures"
+        private const val MPP_TEST_FIXTURES_PROJECT_NAME = "mpp-test-fixtures"
+    }
+}

@@ -1,0 +1,17 @@
+plugins {
+    id("org.jetbrains.kotlin.jvm")
+    id("java-test-fixtures")
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
+}
+
+tasks.named("test").configure {
+    useJUnitPlatform()
+}

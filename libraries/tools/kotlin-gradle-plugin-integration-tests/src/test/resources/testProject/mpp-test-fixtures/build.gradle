@@ -1,0 +1,27 @@
+plugins {
+    id("org.jetbrains.kotlin.multiplatform")
+    id("java-test-fixtures")
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+kotlin {
+    jvm() {
+        withJava()
+    }
+
+    sourceSets {
+        named("jvmTest") {
+            dependencies {
+                implementation("org.jetbrains.kotlin:kotlin-test-junit5")
+            }
+        }
+    }
+}
+
+tasks.named("test").configure {
+    useJUnitPlatform()
+}
