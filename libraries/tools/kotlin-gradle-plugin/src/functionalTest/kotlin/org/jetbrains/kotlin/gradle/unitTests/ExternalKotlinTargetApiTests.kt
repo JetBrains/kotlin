@@ -17,12 +17,15 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetTree
 import org.jetbrains.kotlin.gradle.plugin.hierarchy.KotlinSourceSetTreeClassifier
 import org.jetbrains.kotlin.gradle.plugin.hierarchy.orNull
 import org.jetbrains.kotlin.gradle.plugin.launchInStage
+import org.jetbrains.kotlin.gradle.plugin.mpp.external.ExternalKotlinCompilationDescriptor.CompilationAssociator
 import org.jetbrains.kotlin.gradle.plugin.mpp.external.ExternalKotlinCompilationDescriptor.CompilationFactory
+import org.jetbrains.kotlin.gradle.plugin.mpp.external.ExternalKotlinCompilationDescriptorBuilder
 import org.jetbrains.kotlin.gradle.plugin.mpp.external.createCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.external.createExternalKotlinTarget
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.gradle.utils.property
 import org.jetbrains.kotlin.gradle.utils.toMap
+import org.jetbrains.kotlin.tooling.core.extrasKeyOf
 import kotlin.test.*
 
 class ExternalKotlinTargetApiTests {
@@ -75,6 +78,57 @@ class ExternalKotlinTargetApiTests {
 
         assertEquals(KotlinSourceSetTree.main, KotlinSourceSetTree.orNull(mainCompilation))
         assertNull(KotlinSourceSetTree.orNull(auxCompilation))
+    }
+
+    @Test
+    fun `test - compilation associator - default`() {
+        val target = kotlin.createExternalKotlinTarget<FakeTarget> { defaults() }
+
+        val mainCompilation = target.createCompilation<FakeCompilation> {
+            assertEquals(
+                CompilationAssociator.default, compilationAssociator,
+                "Expected CompilationAssociator.default being set in ${ExternalKotlinCompilationDescriptorBuilder::class.simpleName}"
+            )
+
+            defaults(kotlin)
+            compileTaskName = "main"
+        }
+
+        val auxCompilation = target.createCompilation<FakeCompilation> {
+            defaults(kotlin)
+            compilationName = "aux"
+        }
+
+        auxCompilation.associateWith(mainCompilation)
+        assertEquals(setOf(mainCompilation), auxCompilation.associateWith.toSet())
+    }
+
+    @Test
+    fun `test - compilation associator - custom`() {
+        val target = kotlin.createExternalKotlinTarget<FakeTarget> { defaults() }
+        val testTraceKey = extrasKeyOf<String>("testTrace")
+
+        val compilationAssociator = CompilationAssociator<FakeCompilation> { auxiliary, main ->
+            auxiliary.extras[testTraceKey] = "aux"
+            main.extras[testTraceKey] = "main"
+        }
+
+        val mainCompilation = target.createCompilation<FakeCompilation> {
+            defaults(kotlin)
+            this.compilationAssociator = compilationAssociator
+            this.compileTaskName = "main"
+        }
+
+        val auxCompilation = target.createCompilation<FakeCompilation> {
+            defaults(kotlin)
+            this.compilationName = "aux"
+            this.compilationAssociator = compilationAssociator
+        }
+
+        auxCompilation.associateWith(mainCompilation)
+
+        assertEquals("aux", auxCompilation.extras[testTraceKey])
+        assertEquals("main", mainCompilation.extras[testTraceKey])
     }
 
     @Test
