@@ -270,7 +270,7 @@ internal class TestRunner(val settings: TestSettings) {
 
     private fun runIteration(iteration: Int) {
         val suitesFiltered = settings.testSuites
-        sendToListeners { startIteration(this@TestRunner, iteration, suitesFiltered) }
+        sendToListeners { startIteration(settings, iteration, suitesFiltered) }
         val iterationTime = measureTime {
             suitesFiltered.forEach {
                 if (it.ignored) {
@@ -286,13 +286,13 @@ internal class TestRunner(val settings: TestSettings) {
                 }
             }
         }.inWholeMilliseconds
-        sendToListeners { finishIteration(this@TestRunner, iteration, iterationTime) }
+        sendToListeners { finishIteration(settings, iteration, iterationTime) }
     }
 
     fun run(): Int {
         if (!settings.runTests)
             return 0
-        sendToListeners { startTesting(this@TestRunner) }
+        sendToListeners { startTesting(settings) }
         val totalTime = measureTime {
             var i = 1
             while (i <= settings.iterations || settings.iterations < 0) {
@@ -300,7 +300,7 @@ internal class TestRunner(val settings: TestSettings) {
                 i++
             }
         }.inWholeMilliseconds
-        sendToListeners { finishTesting(this@TestRunner, totalTime) }
+        sendToListeners { finishTesting(settings, totalTime) }
         return exitCode
     }
 }
