@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotation
+import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationArgumentMapping
+import org.jetbrains.kotlin.fir.expressions.builder.buildConstExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyAnnotationArgumentMapping
 import org.jetbrains.kotlin.fir.packageFqName
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
@@ -21,18 +23,30 @@ import org.jetbrains.kotlin.fir.types.toFirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.toLookupTag
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.nameWithPackage
+import org.jetbrains.kotlin.ir.expressions.IrConst
+import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 class Fir2IrAnnotationsFromPluginRegistrar(private val components: Fir2IrComponents) : IrAnnotationsFromPluginRegistrar() {
     private val generatedIrDeclarationsByFileByOffset = mutableMapOf<String, MutableMap<Pair<Int, Int>, MutableList<IrConstructorCall>>>()
 
+    private fun IrConstructorCall.hasOnlySupportedAnnotationArgumentTypes(): Boolean {
+        for (i in 0 until valueArgumentsCount) {
+            if (getValueArgument(i) !is IrConst<*>) {
+                return false
+            }
+        }
+        return true
+    }
+
     override fun addMetadataVisibleAnnotationsToElement(declaration: IrDeclaration, annotations: List<IrConstructorCall>) {
-        require(annotations.all { it.valueArgumentsCount == 0 && it.typeArgumentsCount == 0 }) {
-            "Saving annotations with arguments from IR to metadata is not supported yet. See KT-58968"
+        require(annotations.all { it.typeArgumentsCount == 0 && it.hasOnlySupportedAnnotationArgumentTypes() }) {
+            "Saving annotations with arguments from IR to metadata is only supported for basic constants. See KT-58968"
         }
         annotations.forEach {
             require(it.symbol.owner.constructedClass.isAnnotationClass) { "${it.render()} is not an annotation constructor call" }
@@ -98,7 +112,24 @@ class Fir2IrAnnotationsFromPluginRegistrar(private val components: Fir2IrCompone
                     .toLookupTag()
                     .constructClassType(typeArguments = emptyArray(), isNullable = false)
                     .toFirResolvedTypeRef()
-                argumentMapping = FirEmptyAnnotationArgumentMapping
+                argumentMapping = buildAnnotationArgumentMapping {
+                    for (i in 0 until this@toFirAnnotation.valueArgumentsCount) {
+                        val name = this@toFirAnnotation.symbol.owner.valueParameters[i].name
+                        val argument = this@toFirAnnotation.getValueArgument(i) as IrConst<*>
+                        this.mapping[name] = when (argument.kind) {
+                            IrConstKind.Boolean -> buildConstExpression(source = null, ConstantValueKind.Boolean, argument.value as Boolean)
+                            IrConstKind.Byte -> buildConstExpression(source = null, ConstantValueKind.Byte, argument.value as Byte)
+                            IrConstKind.Char -> buildConstExpression(source = null, ConstantValueKind.Char, argument.value as Char)
+                            IrConstKind.Double -> buildConstExpression(source = null, ConstantValueKind.Double, argument.value as Double)
+                            IrConstKind.Float -> buildConstExpression(source = null, ConstantValueKind.Float, argument.value as Float)
+                            IrConstKind.Int -> buildConstExpression(source = null, ConstantValueKind.Int, argument.value as Int)
+                            IrConstKind.Long -> buildConstExpression(source = null, ConstantValueKind.Long, argument.value as Long)
+                            IrConstKind.Null -> buildConstExpression(source = null, ConstantValueKind.Null, null)
+                            IrConstKind.Short -> buildConstExpression(source = null, ConstantValueKind.Short, argument.value as Short)
+                            IrConstKind.String -> buildConstExpression(source = null, ConstantValueKind.String, argument.value as String)
+                        }
+                    }
+                }
             }
         }
     }
