@@ -19,6 +19,8 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.BuildEventsListenerRegistryHolder
 import org.jetbrains.kotlin.gradle.plugin.StatisticsBuildFlowManager
 import org.jetbrains.kotlin.gradle.plugin.internal.isProjectIsolationEnabled
+import org.jetbrains.kotlin.gradle.report.BuildReportType
+import org.jetbrains.kotlin.gradle.report.reportingSettings
 import org.jetbrains.kotlin.gradle.utils.isConfigurationCacheAvailable
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import org.jetbrains.kotlin.statistics.metrics.IStatisticsValuesConsumer
@@ -56,6 +58,7 @@ internal abstract class BuildFlowService : BuildService<BuildFlowService.Paramet
             }
 
             val fusStatisticsAvailable = fusStatisticsAvailable(project.gradle)
+            val buildScanReportEnabled = reportingSettings(project).buildReportOutputs.contains(BuildReportType.BUILD_SCAN)
 
             //Workaround for known issues for Gradle 8+: https://github.com/gradle/gradle/issues/24887:
             // when this OperationCompletionListener is called services can be already closed for Gradle 8,
@@ -80,7 +83,7 @@ internal abstract class BuildFlowService : BuildService<BuildFlowService.Paramet
                         else -> StatisticsBuildFlowManager.getInstance(project).subscribeForBuildResult()
                     }
                 }
-                if (GradleVersion.current().baseVersion >= GradleVersion.version("8.1")) {
+                if (buildScanReportEnabled && GradleVersion.current().baseVersion >= GradleVersion.version("8.1")) {
                     StatisticsBuildFlowManager.getInstance(project).subscribeForBuildScan(project)
                 }
             }
