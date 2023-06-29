@@ -4023,6 +4023,16 @@ createInterop("cForwardDeclarationsTwoLibs2") {
 }
 
 if (PlatformInfo.isAppleTarget(project)) {
+    createInterop("forwardDeclarationsCastA") {
+        it.defFile "interop/forwardDeclarationsCast/a.def"
+    }
+
+    createInterop("forwardDeclarationsCastB") {
+        it.defFile "interop/forwardDeclarationsCast/b.def"
+        it.headers "$projectDir/interop/forwardDeclarationsCast/b.h"
+        it.extraOpts "-Xcompile-source", "$projectDir/interop/forwardDeclarationsCast/b.m"
+    }
+
     createInterop("objcSmoke") {
         it.defFile 'interop/objc/objcSmoke.def'
         it.headers "$projectDir/interop/objc/smoke.h"
@@ -4155,7 +4165,7 @@ createInterop("exceptions_cCallback") {
 /**
  * Creates a task for the interop test. Configures runner and adds library and test build tasks.
  */
-Task interopTestBase(String name, boolean multiFile, Closure<KonanInteropTest> configureClosure) {
+Task interopTestBase(String name, boolean multiFile, boolean interop2ForMainOnly, Closure<KonanInteropTest> configureClosure) {
     return KotlinNativeTestKt.createTest(project, name, KonanInteropTest) { task ->
         task.configure(configureClosure)
         if (task.enabled) {
@@ -4173,7 +4183,7 @@ Task interopTestBase(String name, boolean multiFile, Closure<KonanInteropTest> c
                     library(lib, targets: [targetName]) {
                         libraries {
                             artifact interopLib
-                            if (interopLib2 != null) artifact interopLib2
+                            if (interopLib2 != null && !interop2ForMainOnly) artifact interopLib2
                         }
                         srcFiles task.lib
                         baseDir  "$testOutputLocal/$name"
@@ -4202,11 +4212,11 @@ Task interopTestBase(String name, boolean multiFile, Closure<KonanInteropTest> c
 }
 
 Task interopTest(String name, Closure<KonanInteropTest> configureClosure) {
-    return interopTestBase(name, false, configureClosure)
+    return interopTestBase(name, false, false, configureClosure)
 }
 
 Task interopTestMultifile(String name, Closure<KonanInteropTest> configureClosure) {
-    return interopTestBase(name, true, configureClosure)
+    return interopTestBase(name, true, false, configureClosure)
 }
 
 standaloneTest("interop_objc_allocException") {
@@ -4445,6 +4455,14 @@ interopTest("interop_kt51925") {
     lib = 'interop/kt51925/kt51925_lib.kt'
     source = 'interop/kt51925/kt51925_main.kt'
     useGoldenData = true
+}
+
+interopTestBase("interop_forwardDeclarationsCast", false, true) {
+    enabled = isAppleTarget(project)
+    interop = 'forwardDeclarationsCastA'
+    interop2 = 'forwardDeclarationsCastB'
+    lib = 'interop/forwardDeclarationsCast/lib.kt'
+    source = 'interop/forwardDeclarationsCast/main.kt'
 }
 
 dynamicTest("interop_kt43502") {

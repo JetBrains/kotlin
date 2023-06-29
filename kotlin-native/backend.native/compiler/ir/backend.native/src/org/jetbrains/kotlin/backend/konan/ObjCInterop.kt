@@ -67,6 +67,10 @@ fun IrClass.isExternalObjCClass(): Boolean = this.isObjCClass() &&
 fun ClassDescriptor.isObjCForwardDeclaration(): Boolean =
         this.findPackage().fqName.startsWith(objcnamesForwardDeclarationsPackageName)
 
+fun IrClass.isObjCForwardDeclaration(): Boolean =
+        getPackageFragment().packageFqName.startsWith(objcnamesForwardDeclarationsPackageName)
+
+
 fun ClassDescriptor.isObjCMetaClass(): Boolean = this.getAllSuperClassifiers().any {
     it.fqNameSafe == objCClassFqName
 }

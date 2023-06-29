@@ -1,0 +1,18 @@
+language = Objective-C
+---
+#import <Foundation/Foundation.h>
+#include <stdio.h>
+
+struct ForwardDeclaredStruct;
+@class ForwardDeclaredClass;
+@protocol ForwardDeclaredProtocol;
+
+NSString* consumeProtocol(id<ForwardDeclaredProtocol> s) {
+	return [NSString stringWithUTF8String:"Protocol"];
+}
+NSString* consumeClass(ForwardDeclaredClass* s) {
+	return [NSString stringWithUTF8String:"Class"];
+}
+NSString* consumeStruct(struct ForwardDeclaredStruct* s) {
+	return [NSString stringWithUTF8String:"Struct"];
+}
