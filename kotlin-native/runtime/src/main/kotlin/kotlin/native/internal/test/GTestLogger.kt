@@ -17,7 +17,7 @@ internal class GTestLogger : TestLoggerWithStatistics() {
         get() = filter { !it.ignored }.size
 
     override fun startIteration(runner: TestRunner, iteration: Int, suites: Collection<TestSuite>) {
-        if (runner.iterations != 1) {
+        if (runner.settings.iterations != 1) {
             println("\nRepeating all tests (iteration $iteration) . . .\n")
         }
         super.startIteration(runner, iteration, suites)

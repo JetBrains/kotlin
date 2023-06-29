@@ -30,7 +30,8 @@ public fun registerSuite(suite: TestSuite): Unit {
 
 @ExperimentalNativeApi
 fun testLauncherEntryPoint(args: Array<String>): Int {
-    return TestRunner(GeneratedSuites.suites, args).run()
+    val testSettings = TestProcessor(GeneratedSuites.suites, args).process()
+    return TestRunner(testSettings).run()
 }
 
 @ExperimentalNativeApi
