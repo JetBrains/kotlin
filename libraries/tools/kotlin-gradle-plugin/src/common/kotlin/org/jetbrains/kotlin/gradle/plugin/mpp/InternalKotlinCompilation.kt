@@ -8,7 +8,9 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 import org.gradle.api.file.FileCollection
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.await
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationConfigurationsContainer
 import org.jetbrains.kotlin.gradle.utils.ObservableSet
 import org.jetbrains.kotlin.tooling.core.HasMutableExtras
@@ -26,3 +28,8 @@ internal val <T : KotlinCommonOptions> KotlinCompilation<T>.internal: InternalKo
     get() = (this as? InternalKotlinCompilation<T>) ?: throw IllegalArgumentException(
         "KotlinCompilation($name) ${this::class} does not implement ${InternalKotlinCompilation::class}"
     )
+
+internal suspend fun InternalKotlinCompilation<*>.awaitAllKotlinSourceSets(): Set<KotlinSourceSet> {
+    KotlinPluginLifecycle.Stage.AfterFinaliseCompilations.await()
+    return allKotlinSourceSets
+}

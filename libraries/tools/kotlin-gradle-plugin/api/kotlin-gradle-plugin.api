@@ -831,6 +831,13 @@ public final class org/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotli
 	public static final fun ExternalKotlinTargetDescriptor (Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinTargetDescriptor;
 }
 
+public final class org/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinTargetSourcesJarUtilsKt {
+	public static final fun includeSources (Lorg/gradle/jvm/tasks/Jar;Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/DecoratedExternalKotlinCompilation;)V
+	public static final fun publishSources (Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/DecoratedExternalKotlinTarget;Lorg/gradle/api/tasks/TaskProvider;)V
+	public static final fun publishSources (Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/DecoratedExternalKotlinTarget;Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/DecoratedExternalKotlinCompilation;)V
+	public static final fun sourcesJarTask (Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/DecoratedExternalKotlinTarget;Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/DecoratedExternalKotlinCompilation;)Lorg/gradle/api/tasks/TaskProvider;
+}
+
 public abstract class org/jetbrains/kotlin/gradle/plugin/mpp/targetHierarchy/SourceSetTreeClassifier {
 }
 
