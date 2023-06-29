@@ -136,6 +136,21 @@ sealed class ClangArgs(
             // See KT-43502.
             add(listOf("-fPIC"))
         }
+        // See https://github.com/apple/llvm-project/commit/dfa99c49306262eac46becbf1f7f5ba33ecc2fe3
+        // TL;DR: This commit adds an OS-agnostic __ENVIRONMENT_OS_VERSION_MIN_REQUIRED__ macro and now
+        // some of the Xcode headers use it instead of platform-specific ones. Workaround this problem
+        // by manually setting this macro.
+        // YouTrack ticket: KT-59167
+        val environmentOsVersionMinRequired = when (target.family) {
+            Family.OSX -> "__ENVIRONMENT_MAC_OS_X_VERSION_MIN_REQUIRED__"
+            Family.IOS -> "__ENVIRONMENT_IPHONE_OS_VERSION_MIN_REQUIRED__"
+            Family.TVOS -> "__ENVIRONMENT_TV_OS_VERSION_MIN_REQUIRED__"
+            Family.WATCHOS -> "__ENVIRONMENT_WATCH_OS_VERSION_MIN_REQUIRED__"
+            else -> null
+        }
+        if (environmentOsVersionMinRequired != null) {
+            add(listOf("-D__ENVIRONMENT_OS_VERSION_MIN_REQUIRED__=$environmentOsVersionMinRequired"))
+        }
     }.flatten()
 
     private val specificClangArgs: List<String> = when (target) {
