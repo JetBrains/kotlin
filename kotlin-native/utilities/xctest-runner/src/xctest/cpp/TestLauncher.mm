@@ -34,5 +34,6 @@ extern "C" OBJ_GETTER0(Konan_create_testSuite);
 
 - (void)dealloc {
     Kotlin_shutdownRuntime();
+    [super dealloc];
 }
 @end
