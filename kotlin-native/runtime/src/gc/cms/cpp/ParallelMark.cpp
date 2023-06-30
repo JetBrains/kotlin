@@ -107,14 +107,15 @@ void gc::mark::ParallelMark::endMarkingEpoch() {
 }
 
 void gc::mark::ParallelMark::runMainInSTW() {
-    RuntimeAssert(activeWorkersCount_ > 0, "Main worker must always be accounted");
-    ParallelProcessor::Worker mainWorker(*parallelProcessor_);
-    GCLogDebug(gcHandle().getEpoch(), "Creating main (#0) mark worker");
-
     if (compiler::gcMarkSingleThreaded()) {
-        gc::collectRootSet<MarkTraits>(gcHandle(), mainWorker, [] (mm::ThreadData&) { return true; });
-        gc::Mark<MarkTraits>(gcHandle(), mainWorker);
+        ParallelProcessor::Worker worker(*parallelProcessor_);
+        gc::collectRootSet<MarkTraits>(gcHandle(), worker, [] (mm::ThreadData&) { return true; });
+        gc::Mark<MarkTraits>(gcHandle(), worker);
     } else {
+        RuntimeAssert(activeWorkersCount_ > 0, "Main worker must always be accounted");
+        ParallelProcessor::Worker mainWorker(*parallelProcessor_);
+        GCLogDebug(gcHandle().getEpoch(), "Creating main (#0) mark worker");
+
         pacer_.begin(MarkPacer::Phase::kRootSet);
         completeMutatorsRootSet(mainWorker);
         spinWait([this] {
