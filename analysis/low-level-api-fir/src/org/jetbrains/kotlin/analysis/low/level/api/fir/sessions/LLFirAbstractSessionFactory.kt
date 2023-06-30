@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveCompone
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.*
 import org.jetbrains.kotlin.analysis.project.structure.*
+import org.jetbrains.kotlin.analysis.providers.KotlinAnchorModuleProvider
 import org.jetbrains.kotlin.analysis.providers.KotlinDeclarationProvider
 import org.jetbrains.kotlin.analysis.providers.createAnnotationResolver
 import org.jetbrains.kotlin.analysis.providers.createDeclarationProvider
@@ -300,7 +301,11 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
         val scopeProvider = FirKotlinScopeProvider()
         val components = LLFirModuleResolveComponents(module, globalResolveComponents, scopeProvider)
 
-        val dependencyTracker = builtinsSession.modificationTracker
+        val moduleAnchorSession = KotlinAnchorModuleProvider.getInstance(project)?.getAnchorModule(libraryModule)?.let {
+            LLFirSessionCache.getInstance(project).getSession(it)
+        }
+
+        val dependencyTracker = createLibraryDependencyTracker(moduleAnchorSession, builtinsSession)
         val session =
             LLFirLibraryOrLibrarySourceResolvableModuleSession(module, dependencyTracker, components, builtinsSession.builtinTypes)
         components.session = session
@@ -348,6 +353,13 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
                     )
 
                     addAll(restLibrariesProvider)
+
+                    moduleAnchorSession?.let {
+                        (it.symbolProvider as LLFirModuleWithDependenciesSymbolProvider).also { moduleSymbolProvider ->
+                            addAll(moduleSymbolProvider.providers)
+                            addAll(moduleSymbolProvider.dependencyProvider.providers)
+                        }
+                    }
                 }
             })
 
@@ -457,6 +469,16 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
         friendDependencies.forEach { trackers += llFirSessionCache.getSession(it).modificationTracker }
 
         return CompositeModificationTracker.createFlattened(trackers)
+    }
+
+    private fun createLibraryDependencyTracker(moduleAnchorSession: LLFirSession?, builtinsSession: LLFirBuiltinsAndCloneableSession): ModificationTracker {
+        return moduleAnchorSession?.let {
+            CompositeModificationTracker.createFlattened(buildList {
+                add(moduleAnchorSession.modificationTracker)
+                add(builtinsSession.modificationTracker)
+            })
+        }
+            ?: builtinsSession.modificationTracker
     }
 
     private fun createModuleData(session: LLFirSession): LLFirModuleData {
