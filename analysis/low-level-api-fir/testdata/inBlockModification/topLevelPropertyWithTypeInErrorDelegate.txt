@@ -1,0 +1,11 @@
+BEFORE MODIFICATION:
+public final [ResolvedTo(BODY_RESOLVE)] val x: R|kotlin/Int|by <Unresolved name: ErrorDelegate>#()
+    public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int| {
+        ^ D|/x|.<Unresolved name: getValue>#(Null(null), ::R|/x|)
+    }
+
+AFTER MODIFICATION:
+public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] val x: R|kotlin/Int|by LAZY_EXPRESSION
+    public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int| {
+        ^ D|/x|.<Unresolved name: getValue>#(Null(null), ::R|/x|)
+    }

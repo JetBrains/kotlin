@@ -16,10 +16,6 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.builder.BodyBuildingMode
 import org.jetbrains.kotlin.fir.builder.PsiRawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.builder.FirBackingFieldBuilder
-import org.jetbrains.kotlin.fir.declarations.builder.FirFunctionBuilder
-import org.jetbrains.kotlin.fir.declarations.builder.FirPropertyAccessorBuilder
-import org.jetbrains.kotlin.fir.declarations.builder.FirPropertyBuilder
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirMultiDelegatedConstructorCall
@@ -41,27 +37,7 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
     private val declarationToBuild: KtDeclaration,
     private val functionsToRebind: Set<FirFunction>? = null,
     private val replacementApplier: RawFirReplacement.Applier? = null,
-    private val additionalFunctionInit: FirFunctionBuilder.() -> Unit = {},
-    private val additionalPropertyInit: FirPropertyBuilder.() -> Unit = {},
-    private val additionalAccessorInit: FirPropertyAccessorBuilder.() -> Unit = {},
-    private val additionalBackingFieldInit: FirBackingFieldBuilder.() -> Unit = {},
 ) : PsiRawFirBuilder(session, baseScopeProvider, bodyBuildingMode = BodyBuildingMode.NORMAL) {
-    override fun FirFunctionBuilder.additionalFunctionInit() {
-        additionalFunctionInit.invoke(this)
-    }
-
-    override fun FirPropertyBuilder.additionalPropertyInit() {
-        additionalPropertyInit.invoke(this)
-    }
-
-    override fun FirPropertyAccessorBuilder.additionalPropertyAccessorInit() {
-        additionalAccessorInit.invoke(this)
-    }
-
-    override fun FirBackingFieldBuilder.additionalBackingFieldInit() {
-        additionalBackingFieldInit.invoke(this)
-    }
-
     companion object {
         fun buildNewFile(
             session: FirSession,
@@ -72,54 +48,12 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
             return builder.buildFirFile(file)
         }
 
-        fun buildNewSimpleFunction(
-            session: FirSession,
-            scopeProvider: FirScopeProvider,
-            designation: FirDesignation,
-            newFunction: KtNamedFunction,
-            additionalFunctionInit: FirFunctionBuilder.() -> Unit,
-        ): FirSimpleFunction {
-            val builder = RawFirNonLocalDeclarationBuilder(
-                session = session,
-                baseScopeProvider = scopeProvider,
-                originalDeclaration = designation.target as FirDeclaration,
-                declarationToBuild = newFunction,
-                additionalFunctionInit = additionalFunctionInit,
-            )
-
-            builder.context.packageFqName = newFunction.containingKtFile.packageFqName
-            return builder.moveNext(designation.path.iterator(), containingClass = null) as FirSimpleFunction
-        }
-
-        fun buildNewProperty(
-            session: FirSession,
-            scopeProvider: FirScopeProvider,
-            designation: FirDesignation,
-            newProperty: KtProperty,
-            additionalPropertyInit: FirPropertyBuilder.() -> Unit,
-            additionalAccessorInit: FirPropertyAccessorBuilder.() -> Unit,
-            additionalBackingFieldInit: FirBackingFieldBuilder.() -> Unit,
-        ): FirProperty {
-            val builder = RawFirNonLocalDeclarationBuilder(
-                session = session,
-                baseScopeProvider = scopeProvider,
-                originalDeclaration = designation.target as FirDeclaration,
-                declarationToBuild = newProperty,
-                additionalPropertyInit = additionalPropertyInit,
-                additionalAccessorInit = additionalAccessorInit,
-                additionalBackingFieldInit = additionalBackingFieldInit,
-            )
-
-            builder.context.packageFqName = newProperty.containingKtFile.packageFqName
-            return builder.moveNext(designation.path.iterator(), containingClass = null) as FirProperty
-        }
-
         fun buildWithReplacement(
             session: FirSession,
             scopeProvider: FirScopeProvider,
             designation: FirDesignation,
             rootNonLocalDeclaration: KtDeclaration,
-            replacement: RawFirReplacement?
+            replacement: RawFirReplacement?,
         ): FirDeclaration {
             val replacementApplier = replacement?.Applier()
             val builder = RawFirNonLocalDeclarationBuilder(
@@ -167,7 +101,7 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
     override fun addCapturedTypeParameters(
         status: Boolean,
         declarationSource: KtSourceElement?,
-        currentFirTypeParameters: List<FirTypeParameterRef>
+        currentFirTypeParameters: List<FirTypeParameterRef>,
     ) {
         if (originalDeclaration is FirTypeParameterRefsOwner && declarationSource?.psi == originalDeclaration.psi) {
             super.addCapturedTypeParameters(status, declarationSource, originalDeclaration.typeParameters)
@@ -183,7 +117,7 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
         override fun convertProperty(
             property: KtProperty,
             ownerRegularOrAnonymousObjectSymbol: FirClassSymbol<*>?,
-            ownerRegularClassTypeParametersCount: Int?
+            ownerRegularClassTypeParametersCount: Int?,
         ): FirProperty {
             val replacementProperty = replacementApplier?.tryReplace(property) ?: property
             check(replacementProperty is KtProperty)
@@ -199,7 +133,7 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
             functionSymbol: FirFunctionSymbol<*>,
             defaultTypeRef: FirTypeRef?,
             valueParameterDeclaration: ValueParameterDeclaration,
-            additionalAnnotations: List<FirAnnotation>
+            additionalAnnotations: List<FirAnnotation>,
         ): FirValueParameter {
             val replacementParameter = replacementApplier?.tryReplace(valueParameter) ?: valueParameter
             check(replacementParameter is KtParameter)
@@ -214,7 +148,7 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
 
         private fun extractContructorConversionParams(
             classOrObject: KtClassOrObject,
-            constructor: KtConstructor<*>?
+            constructor: KtConstructor<*>?,
         ): ConstructorConversionParams {
             val typeParameters = mutableListOf<FirTypeParameterRef>()
             context.appendOuterTypeParameters(ignoreLastLevel = false, typeParameters)

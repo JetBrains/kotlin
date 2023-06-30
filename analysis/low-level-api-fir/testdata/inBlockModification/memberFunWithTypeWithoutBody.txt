@@ -1,0 +1,7 @@
+BEFORE MODIFICATION:
+public final [ResolvedTo(BODY_RESOLVE)] fun x(): R|kotlin/Int| {
+    ^x R|/doSmth|(String(str))
+}
+
+AFTER MODIFICATION:
+public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun x(): R|kotlin/Int| { LAZY_BLOCK }

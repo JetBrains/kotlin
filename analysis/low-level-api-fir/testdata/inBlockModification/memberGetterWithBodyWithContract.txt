@@ -1,0 +1,30 @@
+BEFORE MODIFICATION:
+public final [ResolvedTo(BODY_RESOLVE)] var x: R|kotlin/Int|
+    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] get(): R|kotlin/Int|
+        [R|Contract description]
+         <
+        >
+     {
+         {
+            R|kotlin/contracts/contract|(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=@ExtensionFunctionType kotlin/Function1<kotlin/contracts/ContractBuilder, kotlin/Unit>] contract@fun R|kotlin/contracts/ContractBuilder|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+                <Unresolved name: req>#
+            }
+            )
+        }
+
+        local final [ResolvedTo(BODY_RESOLVE)] fun doSmth([ResolvedTo(BODY_RESOLVE)] i: R|kotlin/String|): R|kotlin/Int| {
+            ^doSmth Int(4)
+        }
+
+        ^ R|<local>/doSmth|(String(str))
+    }
+    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] set([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/Int|): R|kotlin/Unit| {
+        ^ Q|kotlin/Unit|
+    }
+
+AFTER MODIFICATION:
+public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] var x: R|kotlin/Int|
+    public [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] [ContainingClassKey=A] get(): R|kotlin/Int| { LAZY_BLOCK }
+    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] set([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/Int|): R|kotlin/Unit| {
+        ^ Q|kotlin/Unit|
+    }

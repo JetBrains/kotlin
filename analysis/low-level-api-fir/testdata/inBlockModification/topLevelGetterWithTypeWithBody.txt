@@ -1,0 +1,13 @@
+BEFORE MODIFICATION:
+public final [ResolvedTo(BODY_RESOLVE)] val x: R|kotlin/Int|
+    public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int| {
+        local final [ResolvedTo(BODY_RESOLVE)] fun doSmth([ResolvedTo(BODY_RESOLVE)] i: R|kotlin/String|): R|kotlin/Int| {
+            ^doSmth Int(4)
+        }
+
+        ^ R|<local>/doSmth|(String(str))
+    }
+
+AFTER MODIFICATION:
+public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] val x: R|kotlin/Int|
+    public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] get(): R|kotlin/Int| { LAZY_BLOCK }

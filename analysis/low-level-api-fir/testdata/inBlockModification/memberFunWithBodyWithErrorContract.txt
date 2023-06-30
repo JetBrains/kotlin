@@ -1,0 +1,14 @@
+BEFORE MODIFICATION:
+public final [ResolvedTo(BODY_RESOLVE)] fun passLambdaValue([ResolvedTo(BODY_RESOLVE)] l: R|kotlin/contracts/ContractBuilder.() -> kotlin/Unit|): R|kotlin/Unit|
+    [Contract description] <
+        R|kotlin/contracts/contract|(R|<local>/l|)
+    >
+ {
+     {
+        R|kotlin/contracts/contract|(R|<local>/l|)
+    }
+
+}
+
+AFTER MODIFICATION:
+public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] fun passLambdaValue([ResolvedTo(BODY_RESOLVE)] l: R|kotlin/contracts/ContractBuilder.() -> kotlin/Unit|): R|kotlin/Unit| { LAZY_BLOCK }

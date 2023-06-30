@@ -1,0 +1,15 @@
+BEFORE MODIFICATION:
+public final [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] arg: R|kotlin/Any?|, [ResolvedTo(BODY_RESOLVE)] num: R|kotlin/Int?|, [ResolvedTo(BODY_RESOLVE)] block: R|() -> kotlin/Unit|): R|kotlin/Unit|
+    [Contract description] <
+        <Unresolved name: returns>#().<Unresolved name: implies>#((R|<local>/arg| is R|kotlin/String|)),
+        <Unresolved name: returns>#().<Unresolved name: implies>#(!=(R|<local>/num|, Null(null))),
+        <Unresolved name: callsInPlace>#(R|<local>/block|, <Unresolved name: InvocationKind>#.<Unresolved name: EXACTLY_ONCE>#)
+    >
+ {
+    <Unresolved name: require>#((R|<local>/arg| is R|kotlin/String|))
+    <Unresolved name: require>#(!=(R|<local>/num|, Null(null)))
+    R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
+}
+
+AFTER MODIFICATION:
+public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun foo([ResolvedTo(BODY_RESOLVE)] arg: R|kotlin/Any?|, [ResolvedTo(BODY_RESOLVE)] num: R|kotlin/Int?|, [ResolvedTo(BODY_RESOLVE)] block: R|() -> kotlin/Unit|): R|kotlin/Unit| { LAZY_BLOCK }

@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLoc
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.findSourceByTraversingWholeTree
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.findSourceNonLocalFirDeclaration
-import org.jetbrains.kotlin.analysis.utils.printer.getElementTextInContext
 import org.jetbrains.kotlin.diagnostics.KtPsiDiagnostic
 import org.jetbrains.kotlin.fir.declarations.FirDanglingModifierList
 import org.jetbrains.kotlin.fir.declarations.FirFile
@@ -88,18 +87,21 @@ internal class FileStructure private constructor(
     }
 
     private fun getStructureElementForDeclaration(declaration: KtElement): FileStructureElement {
-        @Suppress("CANNOT_CHECK_FOR_ERASED")
         val structureElement = structureElements.compute(declaration) { _, structureElement ->
             when {
                 structureElement == null -> createStructureElement(declaration)
-                structureElement is ReanalyzableStructureElement<KtDeclaration, *> && !structureElement.isUpToDate() -> {
-                    structureElement.reanalyze(newKtDeclaration = declaration as KtDeclaration)
+                structureElement is ReanalyzableStructureElement<*, *> && !structureElement.isUpToDate() -> {
+                    structureElement.reanalyze()
                 }
+
                 else -> structureElement
             }
         }
-        return structureElement
-            ?: error("FileStructureElement for was not defined for \n${declaration.getElementTextInContext()}")
+
+        return structureElement ?: errorWithFirSpecificEntries(
+            "FileStructureElement for was not defined for ${declaration::class.simpleName}",
+            psi = declaration,
+        )
     }
 
     fun getAllDiagnosticsForFile(diagnosticCheckerFilter: DiagnosticCheckerFilter): Collection<KtPsiDiagnostic> {
@@ -112,7 +114,7 @@ internal class FileStructure private constructor(
 
     private fun MutableCollection<KtPsiDiagnostic>.collectDiagnosticsFromStructureElements(
         structureElements: Collection<FileStructureElement>,
-        diagnosticCheckerFilter: DiagnosticCheckerFilter
+        diagnosticCheckerFilter: DiagnosticCheckerFilter,
     ) {
         structureElements.forEach { structureElement ->
             structureElement.diagnostics.forEach(diagnosticCheckerFilter) { diagnostics ->
@@ -149,9 +151,8 @@ internal class FileStructure private constructor(
 
     private fun createDeclarationStructure(declaration: KtDeclaration): FileStructureElement {
         val firDeclaration = declaration.findSourceNonLocalFirDeclaration(
-            moduleComponents.firFileBuilder,
+            firFile,
             firProvider,
-            firFile
         )
 
         firDeclaration.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)

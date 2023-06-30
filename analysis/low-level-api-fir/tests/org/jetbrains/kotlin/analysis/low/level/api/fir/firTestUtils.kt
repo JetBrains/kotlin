@@ -45,6 +45,13 @@ internal inline fun <R> resolveWithClearCaches(context: KtElement, action: (LLFi
     return action(resolveSession)
 }
 
+internal inline fun <R> resolveWithCaches(context: KtElement, action: (LLFirResolveSession) -> R): R {
+    val project = context.project
+    val module = ProjectStructureProvider.getModule(project, context, contextualModule = null)
+    val resolveSession = LLFirResolveSessionService.getInstance(project).getFirResolveSession(module)
+    return action(resolveSession)
+}
+
 internal val LLFirResolveSession.isSourceSession: Boolean
     get() {
         return when (this) {

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
@@ -33,7 +34,9 @@ internal object FileElementFactory {
             moduleComponents,
         )
 
-        ktDeclaration is KtProperty && ktDeclaration.isReanalyzableContainer() -> ReanalyzablePropertyStructureElement(
+        ktDeclaration is KtProperty &&
+                (ktDeclaration.isReanalyzableContainer() || ktDeclaration.accessors.any { it.isReanalyzableContainer() })
+        -> ReanalyzablePropertyStructureElement(
             firFile,
             ktDeclaration,
             (firDeclaration as FirProperty).symbol,
@@ -105,6 +108,11 @@ internal object FileElementFactory {
 }
 
 /**
+ * Covered by org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.AbstractInBlockModificationTest
+ * on the compiler side and by
+ * org.jetbrains.kotlin.idea.fir.analysis.providers.trackers.AbstractProjectWideOutOfBlockKotlinModificationTrackerTest
+ * on the plugin part
+ *
  * @return The declaration in which a change of the passed receiver parameter can be treated as in-block modification
  */
 @LLFirInternals
@@ -141,11 +149,19 @@ private fun isInsideContract(body: KtExpression, child: PsiElement): Boolean {
     return firstStatement.isAncestor(child)
 }
 
+@TestOnly
+internal fun KtDeclaration.isReanalyzableContainer(): Boolean = when (this) {
+    is KtNamedFunction -> isReanalyzableContainer()
+    is KtPropertyAccessor -> isReanalyzableContainer()
+    is KtProperty -> isReanalyzableContainer()
+    else -> error("Unknown declaration type: ${this::class.simpleName}")
+}
+
 private fun KtNamedFunction.isReanalyzableContainer(): Boolean = name != null && (hasBlockBody() || typeReference != null)
 
 private fun KtPropertyAccessor.isReanalyzableContainer(): Boolean {
     val property = property
-    return property.name != null && (hasBlockBody() || property.typeReference != null)
+    return property.name != null && (isSetter || hasBlockBody() || property.typeReference != null)
 }
 
 private fun KtProperty.isReanalyzableContainer(): Boolean =

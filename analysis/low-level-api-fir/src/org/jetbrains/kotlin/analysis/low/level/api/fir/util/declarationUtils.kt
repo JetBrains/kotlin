@@ -24,16 +24,18 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.parameterIndex
 
-/**
- * 'Non-local' stands for not local classes/functions/etc.
- */
 internal fun KtDeclaration.findSourceNonLocalFirDeclaration(
     firFileBuilder: LLFirFileBuilder,
     provider: FirProvider,
-    containerFirFile: FirFile? = null,
-): FirDeclaration {
-    val firFile = containerFirFile ?: firFileBuilder.buildRawFirFileWithCaching(containingKtFile)
+): FirDeclaration = findSourceNonLocalFirDeclaration(
+    firFileBuilder.buildRawFirFileWithCaching(containingKtFile),
+    provider,
+)
 
+/**
+ * 'Non-local' stands for not local classes/functions/etc.
+ */
+internal fun KtDeclaration.findSourceNonLocalFirDeclaration(firFile: FirFile, provider: FirProvider): FirDeclaration {
     // TODO test what way faster
     if (isPhysical) {
         // do not request providers with non-physical psi in order not to leak them there and

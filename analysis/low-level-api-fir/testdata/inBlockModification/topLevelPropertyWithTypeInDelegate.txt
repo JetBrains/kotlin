@@ -1,0 +1,18 @@
+BEFORE MODIFICATION:
+public final [ResolvedTo(BODY_RESOLVE)] val x: R|kotlin/Int|by <Unresolved name: lazy>#(<L> = [ResolvedTo(RAW_FIR)] lazy@fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
+    local final [ResolvedTo(RAW_FIR)] fun doSmth([ResolvedTo(RAW_FIR)] i: R|kotlin/String|): R|kotlin/Int| {
+        ^doSmth Int(4)
+    }
+
+    ^ R|<local>/doSmth|(String(str))
+}
+)
+    public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int| {
+        ^ D|/x|.<Unresolved name: getValue>#(Null(null), ::R|/x|)
+    }
+
+AFTER MODIFICATION:
+public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] val x: R|kotlin/Int|by LAZY_EXPRESSION
+    public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int| {
+        ^ D|/x|.<Unresolved name: getValue>#(Null(null), ::R|/x|)
+    }

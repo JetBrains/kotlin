@@ -1,0 +1,18 @@
+BEFORE MODIFICATION:
+public final [ResolvedTo(BODY_RESOLVE)] fun x(): R|kotlin/Unit|
+    [R|Contract description]
+     <
+    >
+ {
+     {
+        R|kotlin/contracts/contract|(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=@ExtensionFunctionType kotlin/Function1<kotlin/contracts/ContractBuilder, kotlin/Unit>] contract@fun R|kotlin/contracts/ContractBuilder|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+            <Unresolved name: req>#
+        }
+        )
+    }
+
+    [ResolvedTo(BODY_RESOLVE)] lval a: R|kotlin/Int| = R|/doSmth|(String(str))
+}
+
+AFTER MODIFICATION:
+public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] fun x(): R|kotlin/Unit| { LAZY_BLOCK }

@@ -1,0 +1,21 @@
+BEFORE MODIFICATION:
+public final inline [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] block: R|() -> kotlin/Unit|): R|kotlin/Unit|
+    [Contract description] <
+        Q|kotlin|.<Unresolved name: contracts>#.<Unresolved name: contract>#(<L> = [ResolvedTo(RAW_FIR)] contract@fun <anonymous>(): <ERROR TYPE REF: Unresolved name: callsInPlace> <inline=Unknown>  {
+            ^ <Unresolved name: callsInPlace>#(R|<local>/block|, <Unresolved name: InvocationKind>#.<Unresolved name: EXACTLY_ONCE>#)
+        }
+        )
+    >
+ {
+     {
+        kotlin#.contracts#.contract#(<L> = [ResolvedTo(BODY_RESOLVE)] contract@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+            callsInPlace#(block#, InvocationKind#.EXACTLY_ONCE#)
+        }
+        )
+    }
+
+    R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
+}
+
+AFTER MODIFICATION:
+public final inline [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] fun foo([ResolvedTo(BODY_RESOLVE)] block: R|() -> kotlin/Unit|): R|kotlin/Unit| { LAZY_BLOCK }

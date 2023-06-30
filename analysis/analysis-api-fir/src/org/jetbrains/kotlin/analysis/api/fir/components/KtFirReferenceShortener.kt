@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.components.ElementsToShortenCollector.PartialOrderOfScope.Companion.toPartialOrder
 import org.jetbrains.kotlin.analysis.api.fir.isImplicitDispatchReceiver
 import org.jetbrains.kotlin.analysis.api.fir.references.KDocReferenceResolver
-import org.jetbrains.kotlin.analysis.api.fir.utils.FirBodyReanalyzingVisitorVoid
 import org.jetbrains.kotlin.analysis.api.fir.utils.computeImportableName
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
@@ -59,6 +58,7 @@ import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.*
@@ -359,8 +359,7 @@ private class ElementsToShortenCollector(
     private val classShortenOption: (FirClassLikeSymbol<*>) -> ShortenOption,
     private val callableShortenOption: (FirCallableSymbol<*>) -> ShortenOption,
     private val firResolveSession: LLFirResolveSession,
-) :
-    FirBodyReanalyzingVisitorVoid(firResolveSession) {
+) : FirVisitorVoid() {
     val typesToShorten: MutableList<ShortenType> = mutableListOf()
     val qualifiersToShorten: MutableList<ShortenQualifier> = mutableListOf()
     private val visitedProperty = mutableSetOf<FirProperty>()
@@ -370,8 +369,11 @@ private class ElementsToShortenCollector(
         valueParameter.correspondingProperty?.let { visitProperty(it) }
     }
 
-    override fun skipProperty(property: FirProperty): Boolean =
-        !visitedProperty.add(property)
+    override fun visitProperty(property: FirProperty) {
+        if (visitedProperty.add(property)) {
+            super.visitProperty(property)
+        }
+    }
 
     override fun visitElement(element: FirElement) {
         element.acceptChildren(this)

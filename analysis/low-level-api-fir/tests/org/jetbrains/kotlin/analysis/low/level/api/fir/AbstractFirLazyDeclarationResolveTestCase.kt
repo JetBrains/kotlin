@@ -42,13 +42,7 @@ abstract class AbstractFirLazyDeclarationResolveTestCase : AbstractLowLevelApiSi
         resolverProvider: (LLFirResolveSession) -> Pair<FirElementWithResolveState, ((FirResolvePhase) -> Unit)>,
     ) {
         val resultBuilder = StringBuilder()
-        val renderer = FirRenderer(
-            builder = resultBuilder,
-            declarationRenderer = FirDeclarationRendererWithFilteredAttributes(),
-            resolvePhaseRenderer = FirResolvePhaseRenderer(),
-            errorExpressionRenderer = FirErrorExpressionExtendedRenderer(),
-            fileAnnotationsContainerRenderer = FirFileAnnotationsContainerRenderer(),
-        )
+        val renderer = lazyResolveRenderer(resultBuilder)
 
         resolveWithClearCaches(ktFile) { firResolveSession ->
             checkSession(firResolveSession)
@@ -174,3 +168,11 @@ abstract class AbstractFirLazyDeclarationResolveTestCase : AbstractLowLevelApiSi
         }
     }
 }
+
+internal fun lazyResolveRenderer(builder: StringBuilder): FirRenderer = FirRenderer(
+    builder = builder,
+    declarationRenderer = FirDeclarationRendererWithFilteredAttributes(),
+    resolvePhaseRenderer = FirResolvePhaseRenderer(),
+    errorExpressionRenderer = FirErrorExpressionExtendedRenderer(),
+    fileAnnotationsContainerRenderer = FirFileAnnotationsContainerRenderer(),
+)
