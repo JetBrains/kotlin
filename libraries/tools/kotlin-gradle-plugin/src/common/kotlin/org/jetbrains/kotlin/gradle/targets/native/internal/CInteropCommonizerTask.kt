@@ -38,7 +38,7 @@ private typealias GroupedCommonizerDependencies = Map<CInteropCommonizerGroup, L
 
 
 @CacheableTask
-internal abstract class CInteropCommonizerTask
+internal open class CInteropCommonizerTask
 @Inject constructor(
     private val objectFactory: ObjectFactory,
     private val execOperations: ExecOperations,
@@ -171,7 +171,7 @@ internal abstract class CInteropCommonizerTask
     }
 
     @get:Nested
-    internal abstract val cinterops: SetProperty<CInteropGist>
+    internal val cinterops: SetProperty<CInteropGist> = objectFactory.setProperty<CInteropGist>()
 
     @get:OutputDirectories
     val allOutputDirectories: Set<File>
