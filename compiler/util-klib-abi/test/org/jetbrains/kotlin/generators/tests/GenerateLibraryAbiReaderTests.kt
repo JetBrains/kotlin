@@ -3,16 +3,20 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.library.abi
+package org.jetbrains.kotlin.generators.tests
 
 import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
+import org.jetbrains.kotlin.library.abi.test.*
 
 fun main() {
     System.setProperty("java.awt.headless", "true")
 
     generateTestGroupSuiteWithJUnit5 {
-        testGroup("compiler/util-klib-abi/test", "compiler/util-klib-abi/testData") {
-            testClass<AbstractLibraryAbiReaderTest>(suiteTestClassName = "LibraryAbiReaderTestV1") {
+        testGroup("compiler/util-klib-abi/tests-gen", "compiler/util-klib-abi/testData") {
+            testClass<AbstractFirJsLibraryAbiReaderTest> {
+                model("content")
+            }
+            testClass<AbstractClassicJsLibraryAbiReaderTest> {
                 model("content")
             }
         }

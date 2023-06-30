@@ -1,3 +1,5 @@
+// LANGUAGE: +ContextReceivers
+
 package callables.test
 
 fun regularFun(): String = ""

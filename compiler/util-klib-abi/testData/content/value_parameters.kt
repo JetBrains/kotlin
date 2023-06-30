@@ -1,3 +1,5 @@
+// LANGUAGE: +ContextReceivers
+
 package value_parameters.test
 
 inline fun funWithInlineParameters1(

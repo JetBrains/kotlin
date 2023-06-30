@@ -13,25 +13,28 @@ dependencies {
     testImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     testImplementation(projectTests(":compiler:tests-common-new"))
     testImplementation(projectTests(":generators:test-generator"))
+    testImplementation(projectTests(":js:js.tests"))
 }
 
 sourceSets {
     "main" { projectDefault() }
-    "test" { projectDefault() }
+    "test" {
+        projectDefault()
+        generatedTestDir()
+    }
 }
 
 val testDataDir = projectDir.resolve("testData")
 
 projectTest(jUnitMode = JUnitMode.JUnit5) {
     inputs.dir(testDataDir)
-    outputs.dir("$buildDir/t")
 
     dependsOn(":dist")
     workingDir = rootDir
     useJUnitPlatform()
 }
 
-val generateTests by generator("org.jetbrains.kotlin.library.abi.GenerateLibraryAbiReaderTestsKt")
+val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateLibraryAbiReaderTestsKt")
 
 tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
     kotlinOptions {
