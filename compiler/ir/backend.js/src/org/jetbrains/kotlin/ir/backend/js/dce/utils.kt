@@ -29,10 +29,12 @@ internal fun IrDeclaration.fqNameForDceDump(): String {
     return (fqn + signature + synthetic)
 }
 
+private data class IrDeclarationDump(val name: String, val type: String, val size: Int)
+
 fun dumpDeclarationIrSizesIfNeed(path: String?, allModules: List<IrModuleFragment>) {
     if (path == null) return
 
-    val declarations = linkedSetOf<IrDeclaration>()
+    val declarations = linkedSetOf<IrDeclarationDump>()
 
     allModules.forEach {
         it.acceptChildrenVoid(object : IrElementVisitorVoid {
@@ -41,15 +43,22 @@ fun dumpDeclarationIrSizesIfNeed(path: String?, allModules: List<IrModuleFragmen
             }
 
             override fun visitDeclaration(declaration: IrDeclarationBase) {
-                when (declaration) {
-                    is IrFunction,
-                    is IrProperty,
-                    is IrField,
-                    is IrAnonymousInitializer,
-                    is IrClass,
-                    -> {
-                        declarations.add(declaration)
-                    }
+                val type = when (declaration) {
+                    is IrFunction -> "function"
+                    is IrProperty -> "property"
+                    is IrField -> "field"
+                    is IrAnonymousInitializer -> "anonymous initializer"
+                    is IrClass -> "class"
+                    else -> null
+                }
+                type?.let {
+                    declarations.add(
+                        IrDeclarationDump(
+                            name = declaration.fqNameForDceDump().removeQuotes(),
+                            type = it,
+                            size = declaration.dumpKotlinLike().length
+                        )
+                    )
                 }
 
                 super.visitDeclaration(declaration)
@@ -65,21 +74,16 @@ fun dumpDeclarationIrSizesIfNeed(path: String?, allModules: List<IrModuleFragmen
     }
 
     val value = declarations
-        .groupBy({ it.fqNameForDceDump() }, { it })
-        .map { (k, v) -> k to v.maxBy { it.dumpKotlinLike().length } }
-        .joinToString(separator, prefix, postfix) { (fqn, element) ->
-            val size = element.dumpKotlinLike().length
-            val type = when (element) {
-                is IrFunction -> "function"
-                is IrProperty -> "property"
-                is IrField -> "field"
-                is IrAnonymousInitializer -> "anonymousInitializer"
-                is IrClass -> "class"
-                else -> "unknown"
+        .groupBy { it.name }
+        .flatMap { (_, v) ->
+            v.mapIndexed { index: Int, declaration: IrDeclarationDump ->
+                if (index == 0) declaration
+                else declaration.copy(name = "${declaration.name} ($index)")
             }
-            """$indent"${fqn.removeQuotes()}": {
-                |$indent$indent"size": $size,
-                |$indent$indent"type": "$type"
+        }.joinToString(separator, prefix, postfix) { declaration ->
+            """$indent"${declaration.name}": {
+                |$indent$indent"size": ${declaration.size},
+                |$indent$indent"type": "${declaration.type}"
                 |$indent}
             """.trimMargin()
         }
