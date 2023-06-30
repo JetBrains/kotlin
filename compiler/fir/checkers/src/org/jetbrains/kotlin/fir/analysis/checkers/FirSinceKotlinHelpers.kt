@@ -62,14 +62,14 @@ fun FirDeclaration.checkSinceKotlinVersionAccessibility(context: CheckerContext)
 private fun FirDeclaration.getOwnSinceKotlinVersion(session: FirSession): FirSinceKotlinValue? {
     var result: FirSinceKotlinValue? = null
 
-    // TODO: use-site targeted annotations
+    // TODO, KT-59824: use-site targeted annotations
     fun FirDeclaration.consider() {
         val sinceKotlinSingleArgument = getAnnotationByClassId(StandardClassIds.Annotations.SinceKotlin, session)?.findArgumentByName(
             StandardClassIds.Annotations.ParameterNames.sinceKotlinVersion
         )
         val apiVersion = ((sinceKotlinSingleArgument as? FirConstExpression<*>)?.value as? String)?.let(ApiVersion.Companion::parse)
         if (apiVersion != null) {
-            // TODO: combine wasExperimentalMarkerClasses in case of several associated declarations with the same maximal API version
+            // TODO, KT-59825: combine wasExperimentalMarkerClasses in case of several associated declarations with the same maximal API version
             if (result == null || apiVersion > result!!.apiVersion) {
                 result = FirSinceKotlinValue(apiVersion, loadWasExperimentalMarkerClasses(session))
             }

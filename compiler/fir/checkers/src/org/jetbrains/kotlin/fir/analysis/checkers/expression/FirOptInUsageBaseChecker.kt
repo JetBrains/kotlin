@@ -174,7 +174,7 @@ object FirOptInUsageBaseChecker {
             }
         }
 
-        // TODO: getAnnotationsOnContainingModule
+        // TODO, KT-59802: getAnnotationsOnContainingModule
         return result
     }
 

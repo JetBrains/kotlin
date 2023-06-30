@@ -32,7 +32,7 @@ object FirTailrecFunctionChecker : FirSimpleFunctionChecker() {
         }
         val graph = declaration.controlFlowGraphReference?.controlFlowGraph ?: return
 
-        // TODO: this is not how CFG works, tail calls inside try-catch should be detected by FIR tree traversal.
+        // TODO, KT-59668: this is not how CFG works, tail calls inside try-catch should be detected by FIR tree traversal.
         var tryScopeCount = 0
         var catchScopeCount = 0
         var finallyScopeCount = 0

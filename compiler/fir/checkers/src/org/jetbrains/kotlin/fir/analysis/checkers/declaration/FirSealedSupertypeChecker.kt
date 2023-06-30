@@ -52,7 +52,7 @@ object FirSealedSupertypeChecker : FirClassChecker() {
                 reporter.reportOn(superTypeRef.source, FirErrors.SEALED_INHERITOR_IN_DIFFERENT_PACKAGE, context)
             }
             if (superClass.moduleData != declaration.moduleData) {
-                // TODO: implement logic like in org.jetbrains.kotlin.resolve.checkers.SealedInheritorInSameModuleChecker for MPP support.
+                // TODO, KT-59804: implement logic like in org.jetbrains.kotlin.resolve.checkers.SealedInheritorInSameModuleChecker for MPP support.
                 reporter.reportOn(superTypeRef.source, FirErrors.SEALED_INHERITOR_IN_DIFFERENT_MODULE, context)
             }
         }

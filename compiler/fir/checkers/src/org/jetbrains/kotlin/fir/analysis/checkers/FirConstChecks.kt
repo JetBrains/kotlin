@@ -101,7 +101,7 @@ internal fun checkConstantArguments(
             //DO NOTHING
         }
         expressionSymbol is FirFieldSymbol -> {
-            //TODO: fix checking of Java fields initializer
+            //TODO, KT-59821: fix checking of Java fields initializer
             if (!expressionSymbol.isStatic || expressionSymbol.modality != Modality.FINAL) {
                 return ConstantArgumentKind.NOT_CONST
             }
@@ -125,7 +125,7 @@ internal fun checkConstantArguments(
                 return ConstantArgumentKind.NOT_KCLASS_LITERAL
             }
 
-            //TODO: UNRESOLVED REFERENCE
+            //TODO, KT-59822: UNRESOLVED REFERENCE
             if (expression.dispatchReceiver is FirThisReceiverExpression) {
                 return null
             }
@@ -140,7 +140,7 @@ internal fun checkConstantArguments(
             for (exp in expression.arguments.plus(expression.dispatchReceiver).plus(expression.extensionReceiver)) {
                 if (exp is FirNoReceiverExpression) continue
                 val expClassId = exp.typeRef.coneType.lowerBoundIfFlexible().classId
-                // TODO: add annotation for allowed constant types
+                // TODO, KT-59823: add annotation for allowed constant types
                 if (expClassId !in StandardClassIds.constantAllowedTypes) {
                     return ConstantArgumentKind.NOT_CONST
                 }
@@ -168,7 +168,7 @@ internal fun checkConstantArguments(
                 propertySymbol.isLocal || propertySymbol.callableId.className?.isRoot == false -> return ConstantArgumentKind.NOT_CONST
                 expressionType.classId == StandardClassIds.KClass -> return ConstantArgumentKind.NOT_KCLASS_LITERAL
 
-                //TODO: UNRESOLVED REFERENCE
+                //TODO, KT-59822: UNRESOLVED REFERENCE
                 expression.dispatchReceiver is FirThisReceiverExpression -> return null
             }
             return when (property.initializer) {

@@ -57,7 +57,7 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker() {
                 isWrongConditionOnNode(it, coneEffect, returnValue, function, logicSystem, dataFlowInfo, context)
             }
             if (wrongCondition) {
-                // TODO: reportOn(firEffect.source, ...)
+                // TODO, KT-59813: reportOn(firEffect.source, ...)
                 reporter.reportOn(function.contractDescription.source, FirErrors.WRONG_IMPLIES_CONDITION, context)
             }
         }
@@ -106,10 +106,10 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker() {
             }
         }
 
-        // TODO: if this is not a top-level function, `FirDataFlowAnalyzer` has erased its value parameters
+        // TODO, KT-59814: if this is not a top-level function, `FirDataFlowAnalyzer` has erased its value parameters
         //  from `dataFlowInfo.variableStorage` for some reason, so its `getLocalVariable` doesn't work.
         val knownVariables = flow.knownVariables.associateBy { it.identifier }
-        // TODO: these should be the same on all return paths, so maybe don't recompute them every time?
+        // TODO, KT-59815: these should be the same on all return paths, so maybe don't recompute them every time?
         val argumentVariables = Array(function.valueParameters.size + 1) { i ->
             val parameterSymbol = if (i > 0) {
                 function.valueParameters[i - 1].symbol
