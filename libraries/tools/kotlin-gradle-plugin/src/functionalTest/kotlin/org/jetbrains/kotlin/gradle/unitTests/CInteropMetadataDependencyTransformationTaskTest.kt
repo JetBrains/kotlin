@@ -66,7 +66,6 @@ class CInteropMetadataDependencyTransformationTaskTest : MultiplatformExtensionT
         linuxX64Test.dependsOn(nativeTest)
         linuxArm64Test.dependsOn(nativeTest)
 
-        KotlinPluginLifecycle.Stage.ReadyForExecution.await()
 
         val nativeTestTransformationTask = locateOrRegisterCInteropMetadataDependencyTransformationTask(nativeTest)
 
@@ -102,18 +101,10 @@ class CInteropMetadataDependencyTransformationTaskTest : MultiplatformExtensionT
         linuxX64Main.dependsOn(linuxMain)
 
         project.runLifecycleAwareTest {
-            KotlinPluginLifecycle.Stage.ReadyForExecution.await()
-
             listOf(
                 "commonMain", "jvmMain", "linuxArm64Main", "linuxX64Main"
             ).map { sourceSetName -> kotlin.sourceSets.getByName(sourceSetName) }.forEach { sourceSet ->
-                val task = locateOrRegisterCInteropMetadataDependencyTransformationTask(sourceSet as DefaultKotlinSourceSet)
-                    ?: return@forEach
-
-                assertFalse(
-                    task.get().onlyIf.isSatisfiedBy(task.get() as TaskInternal),
-                    "Expected task ${task.name} to be disabled (not a shared native source set)"
-                )
+                assertNull(locateOrRegisterCInteropMetadataDependencyTransformationTask(sourceSet as DefaultKotlinSourceSet))
             }
 
             val linuxMainTask = locateOrRegisterCInteropMetadataDependencyTransformationTaskForIde(linuxMain)

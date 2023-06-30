@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.ide.Idea222Api
 import org.jetbrains.kotlin.gradle.plugin.ide.ideaImportDependsOn
+import org.jetbrains.kotlin.gradle.plugin.launch
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.ArtifactMetadataProvider
@@ -45,6 +46,7 @@ internal suspend fun Project.locateOrRegisterCInteropMetadataDependencyTransform
     sourceSet: DefaultKotlinSourceSet,
 ): TaskProvider<CInteropMetadataDependencyTransformationTask>? {
     if (!cInteropCommonizationEnabled()) return null
+    if (sourceSet.internal.commonizerTarget.await() !is SharedCommonizerTarget) return null
 
     return locateOrRegisterTask(
         sourceSet.cinteropMetadataDependencyTransformationTaskName,
@@ -57,7 +59,7 @@ internal suspend fun Project.locateOrRegisterCInteropMetadataDependencyTransform
             /* transformProjectDependencies = */
             true,
         ),
-        configureTask = { configureTaskOrder(); onlyIfSourceSetIsSharedNative() }
+        configureTask = { configureTaskOrder() }
     )
 }
 
@@ -65,6 +67,7 @@ internal suspend fun Project.locateOrRegisterCInteropMetadataDependencyTransform
     sourceSet: DefaultKotlinSourceSet,
 ): TaskProvider<CInteropMetadataDependencyTransformationTask>? {
     if (!cInteropCommonizationEnabled()) return null
+    if (sourceSet.internal.commonizerTarget.await() !is SharedCommonizerTarget) return null
 
     return locateOrRegisterTask(
         sourceSet.cinteropMetadataDependencyTransformationForIdeTaskName,
@@ -85,7 +88,7 @@ internal suspend fun Project.locateOrRegisterCInteropMetadataDependencyTransform
             /* transformProjectDependencies = */
             false, // For IDE Project Dependencies will be transformed during configuration, see [createCInteropMetadataDependencyClasspath]
         ),
-        configureTask = { configureTaskOrder(); onlyIfSourceSetIsSharedNative() }
+        configureTask = { configureTaskOrder() }
     )
 }
 
@@ -106,10 +109,6 @@ private fun CInteropMetadataDependencyTransformationTask.configureTaskOrder() {
     mustRunAfter(tasksForVisibleSourceSets)
 }
 
-private fun CInteropMetadataDependencyTransformationTask.onlyIfSourceSetIsSharedNative() {
-    val isSharedCommonizerTarget = sourceSet.internal.commonizerTarget.getOrThrow() is SharedCommonizerTarget
-    onlyIf { isSharedCommonizerTarget }
-}
 
 @DisableCachingByDefault(because = "Metadata Dependency Transformation Task doesn't benefit from caching as it doesn't have heavy load")
 internal open class CInteropMetadataDependencyTransformationTask @Inject constructor(
@@ -169,7 +168,7 @@ internal open class CInteropMetadataDependencyTransformationTask @Inject constru
     }
 
     private fun materializeMetadata(
-        chooseVisibleSourceSets: ChooseVisibleSourceSets
+        chooseVisibleSourceSets: ChooseVisibleSourceSets,
     ): Iterable<File> {
         val metadataProvider = chooseVisibleSourceSets.metadataProvider
         return when (metadataProvider) {
