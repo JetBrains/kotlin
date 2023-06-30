@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // ISSUE: KT-59789
 // FILE: a/A.java
 package a;

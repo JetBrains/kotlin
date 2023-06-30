@@ -24,15 +24,11 @@ class FirPackageMemberScope(
     val fqName: FqName,
     val session: FirSession,
     private val symbolProvider: FirSymbolProvider = session.symbolProvider,
-    excludedImportNames: Collection<FqName>? = null,
+    private val excludedNames: Set<Name> = emptySet(),
 ) : FirScope() {
     private val classifierCache: MutableMap<Name, FirClassifierSymbol<*>?> = mutableMapOf()
     private val functionCache: MutableMap<Name, List<FirNamedFunctionSymbol>> = mutableMapOf()
     private val propertyCache: MutableMap<Name, List<FirPropertySymbol>> = mutableMapOf()
-
-    private val excludedNames by lazy {
-        excludedImportNames?.mapNotNullTo(mutableSetOf()) { if (it.parent() == fqName) it.shortName() else null }.orEmpty()
-    }
 
     override fun processClassifiersByNameWithSubstitution(
         name: Name,

@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.name.FqName
 private val ALL_IMPORTS = scopeSessionKey<FirFile, ListStorageFirScope>()
 private val DEFAULT_STAR_IMPORT = scopeSessionKey<DefaultStarImportKey, FirDefaultStarImportingScope>()
 private val DEFAULT_SIMPLE_IMPORT = scopeSessionKey<DefaultImportPriority, FirDefaultSimpleImportingScope>()
-
 private data class DefaultStarImportKey(val priority: DefaultImportPriority, val excludedImportNames: Set<FqName>)
 
 fun createImportingScopes(
@@ -42,6 +41,12 @@ private fun doCreateImportingScopes(
     file.lazyResolveToPhase(FirResolvePhase.IMPORTS)
     val excludedImportNames =
         file.imports.filter { it.aliasName != null }.mapNotNullTo(hashSetOf()) { it.importedFqName }.ifEmpty { emptySet() }
+
+    val excludedNamesInPackage =
+        excludedImportNames.mapNotNullTo(mutableSetOf()) {
+            if (it.parent() == file.packageFqName) it.shortName() else null
+        }
+
     return listOf(
         scopeSession.getOrBuild(DefaultStarImportKey(DefaultImportPriority.LOW, excludedImportNames), DEFAULT_STAR_IMPORT) {
             FirDefaultStarImportingScope(session, scopeSession, DefaultImportPriority.LOW, excludedImportNames)
@@ -60,8 +65,14 @@ private fun doCreateImportingScopes(
         scopeSession.getOrBuild(DefaultImportPriority.HIGH, DEFAULT_SIMPLE_IMPORT) {
             FirDefaultSimpleImportingScope(session, scopeSession, priority = DefaultImportPriority.HIGH)
         },
-        scopeSession.getOrBuild(file.packageFqName, PACKAGE_MEMBER) {
-            FirPackageMemberScope(file.packageFqName, session, excludedImportNames = excludedImportNames)
+        when {
+            excludedNamesInPackage.isEmpty() ->
+                // Supposed to be the most common branch, so we cache it
+                scopeSession.getOrBuild(file.packageFqName, PACKAGE_MEMBER) {
+                    FirPackageMemberScope(file.packageFqName, session, excludedNames = emptySet())
+                }
+            else ->
+                FirPackageMemberScope(file.packageFqName, session, excludedNames = excludedNamesInPackage)
         },
         // TODO: explicit simple importing scope should have highest priority (higher than inner scopes added in process)
         FirExplicitSimpleImportingScope(file.imports, session, scopeSession)
