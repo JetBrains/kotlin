@@ -27,28 +27,24 @@ public expect fun <T : Comparable<T>> maxOf(a: T, b: T): T
  * Returns the greater of two values.
  */
 @SinceKotlin("1.1")
-@kotlin.internal.InlineOnly
 public expect inline fun maxOf(a: Byte, b: Byte): Byte
 
 /**
  * Returns the greater of two values.
  */
 @SinceKotlin("1.1")
-@kotlin.internal.InlineOnly
 public expect inline fun maxOf(a: Short, b: Short): Short
 
 /**
  * Returns the greater of two values.
  */
 @SinceKotlin("1.1")
-@kotlin.internal.InlineOnly
 public expect inline fun maxOf(a: Int, b: Int): Int
 
 /**
  * Returns the greater of two values.
  */
 @SinceKotlin("1.1")
-@kotlin.internal.InlineOnly
 public expect inline fun maxOf(a: Long, b: Long): Long
 
 /**
@@ -57,7 +53,6 @@ public expect inline fun maxOf(a: Long, b: Long): Long
  * If either value is `NaN`, returns `NaN`.
  */
 @SinceKotlin("1.1")
-@kotlin.internal.InlineOnly
 public expect inline fun maxOf(a: Float, b: Float): Float
 
 /**
@@ -66,7 +61,6 @@ public expect inline fun maxOf(a: Float, b: Float): Float
  * If either value is `NaN`, returns `NaN`.
  */
 @SinceKotlin("1.1")
-@kotlin.internal.InlineOnly
 public expect inline fun maxOf(a: Double, b: Double): Double
 
 /**
@@ -215,28 +209,24 @@ public expect fun <T : Comparable<T>> minOf(a: T, b: T): T
  * Returns the smaller of two values.
  */
 @SinceKotlin("1.1")
-@kotlin.internal.InlineOnly
 public expect inline fun minOf(a: Byte, b: Byte): Byte
 
 /**
  * Returns the smaller of two values.
  */
 @SinceKotlin("1.1")
-@kotlin.internal.InlineOnly
 public expect inline fun minOf(a: Short, b: Short): Short
 
 /**
  * Returns the smaller of two values.
  */
 @SinceKotlin("1.1")
-@kotlin.internal.InlineOnly
 public expect inline fun minOf(a: Int, b: Int): Int
 
 /**
  * Returns the smaller of two values.
  */
 @SinceKotlin("1.1")
-@kotlin.internal.InlineOnly
 public expect inline fun minOf(a: Long, b: Long): Long
 
 /**
@@ -245,7 +235,6 @@ public expect inline fun minOf(a: Long, b: Long): Long
  * If either value is `NaN`, returns `NaN`.
  */
 @SinceKotlin("1.1")
-@kotlin.internal.InlineOnly
 public expect inline fun minOf(a: Float, b: Float): Float
 
 /**
@@ -254,7 +243,6 @@ public expect inline fun minOf(a: Float, b: Float): Float
  * If either value is `NaN`, returns `NaN`.
  */
 @SinceKotlin("1.1")
-@kotlin.internal.InlineOnly
 public expect inline fun minOf(a: Double, b: Double): Double
 
 /**
