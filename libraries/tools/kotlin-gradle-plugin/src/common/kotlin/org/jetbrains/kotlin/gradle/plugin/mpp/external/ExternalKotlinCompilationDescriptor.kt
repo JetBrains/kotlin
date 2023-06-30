@@ -53,7 +53,6 @@ interface ExternalKotlinCompilationDescriptor<T : DecoratedExternalKotlinCompila
         @ExternalKotlinTargetApi
         companion object {
             val default = CompilationAssociator<DecoratedExternalKotlinCompilation> { aux, main ->
-                require(aux.target == main.target) { "Cannot associate '$aux' with '$main': Compilations belong to different targets" }
                 DefaultKotlinCompilationAssociator.associate(aux.target, aux.compilation.internal, main.compilation.internal)
             }
         }
