@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
+import org.jetbrains.kotlin.psi.psiUtil.isContractDescriptionCallPsiCheck
 
 internal object FileElementFactory {
     fun createFileStructureElement(
@@ -111,11 +112,11 @@ internal object FileElementFactory {
 fun PsiElement.getNonLocalReanalyzableContainingDeclaration(): KtDeclaration? {
     return when (val declaration = getNonLocalContainingOrThisDeclaration()) {
         is KtNamedFunction -> declaration.takeIf { function ->
-            function.isReanalyzableContainer() && function.bodyExpression?.isAncestor(this) == true
+            function.isReanalyzableContainer() && isElementInsideBody(declaration = function, child = this)
         }
 
         is KtPropertyAccessor -> declaration.takeIf { accessor ->
-            accessor.isReanalyzableContainer() && accessor.bodyExpression?.isAncestor(this) == true
+            accessor.isReanalyzableContainer() && isElementInsideBody(declaration = accessor, child = this)
         }
 
         is KtProperty -> declaration.takeIf { property ->
@@ -124,6 +125,20 @@ fun PsiElement.getNonLocalReanalyzableContainingDeclaration(): KtDeclaration? {
 
         else -> null
     }
+}
+
+private fun isElementInsideBody(declaration: KtDeclarationWithBody, child: PsiElement): Boolean {
+    val body = declaration.bodyExpression ?: return false
+    if (!body.isAncestor(child)) return false
+    return !isInsideContract(body = body, child = child)
+}
+
+private fun isInsideContract(body: KtExpression, child: PsiElement): Boolean {
+    if (body !is KtBlockExpression) return false
+
+    val firstStatement = body.firstStatement ?: return false
+    if (!firstStatement.isContractDescriptionCallPsiCheck()) return false
+    return firstStatement.isAncestor(child)
 }
 
 private fun KtNamedFunction.isReanalyzableContainer(): Boolean = name != null && (hasBlockBody() || typeReference != null)
