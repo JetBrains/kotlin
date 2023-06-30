@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser
 import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageConfig
 import org.jetbrains.kotlin.ir.linkage.partial.partialLinkageConfig
 import org.jetbrains.kotlin.ir.linkage.partial.setupPartialLinkageConfig
 import org.jetbrains.kotlin.ir.util.IrMessageLogger
@@ -97,6 +98,13 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                 it.deleteOnExit()
             }
             firstStageConfiguration.put(KonanConfigKeys.OUTPUT, intermediateKLib.absolutePath)
+            // Empty all cache-related keys.
+            firstStageConfiguration.put(KonanConfigKeys.CACHE_DIRECTORIES, emptyList())
+            firstStageConfiguration.put(KonanConfigKeys.AUTO_CACHEABLE_FROM, emptyList())
+            firstStageConfiguration.put(KonanConfigKeys.CACHED_LIBRARIES, emptyMap())
+            firstStageConfiguration.put(KonanConfigKeys.AUTO_CACHE_DIR, "")
+            firstStageConfiguration.put(KonanConfigKeys.INCREMENTAL_CACHE_DIR, "")
+            firstStageConfiguration.setupPartialLinkageConfig(PartialLinkageConfig.DEFAULT) // Disable PL for KLIB compilation.
 
             val firstStageExitCode = executeStage(firstStageConfiguration, arguments, rootDisposable)
             if (firstStageExitCode != ExitCode.OK)
