@@ -4,7 +4,7 @@ apply plugin: 'kotlin'
 
 configurePublishing(project)
 configureSourcesJar()
-configureJavadocJar()
+RepoArtifacts.javadocJar(project)
 
 dependencies {
     api project(':kotlin-stdlib')

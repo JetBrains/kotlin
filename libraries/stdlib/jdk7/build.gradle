@@ -6,7 +6,7 @@ JvmToolchain.configureJvmToolchain(project, JdkMajorVersion.JDK_1_8)
 
 configurePublishing(project)
 configureSourcesJar()
-configureJavadocJar()
+RepoArtifacts.javadocJar(project)
 
 sourceSets {
     main {

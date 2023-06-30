@@ -27,7 +27,7 @@ jar {
 }
 
 configureSourcesJar()
-configureJavadocJar()
+RepoArtifacts.javadocJar(project)
 
 compileKotlin {
     kotlinOptions.freeCompilerArgs = [

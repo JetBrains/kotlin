@@ -14,7 +14,7 @@ jar {
 }
 
 configureSourcesJar()
-configureJavadocJar()
+RepoArtifacts.javadocJar(project)
 
 tasks.withType(org.jetbrains.kotlin.gradle.dsl.KotlinCompile) {
     kotlinOptions.freeCompilerArgs += ["-Xallow-kotlin-package", "-opt-in=kotlin.RequiresOptIn"]

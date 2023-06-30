@@ -50,7 +50,7 @@ task preparePublication {
 }
 
 ext.configurePublishing = { Project project, configure = { } ->
-    ArtifactsKt.publish(project, false, true) { publication ->
+    RepoArtifacts.publish(project, false, true) { publication ->
         configure.delegate = publication
         configure()
     }
@@ -74,14 +74,7 @@ ext.configureFrontendIr = { Project project ->
 
 allprojects { project ->
     project.ext.configureSourcesJar = { lambda = {} ->
-        ArtifactsKt.sourcesJar(project) { task ->
-            lambda.delegate = task
-            lambda()
-        }
-    }
-
-    project.ext.configureJavadocJar = { lambda = {} ->
-        ArtifactsKt.javadocJar(project) { task ->
+        RepoArtifacts.sourcesJar(project) { task ->
             lambda.delegate = task
             lambda()
         }

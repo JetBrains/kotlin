@@ -88,4 +88,4 @@ artifacts {
 
 configureSourcesJar()
 
-configureJavadocJar()
+RepoArtifacts.javadocJar(project)

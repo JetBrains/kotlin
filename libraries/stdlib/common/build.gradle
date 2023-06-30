@@ -67,7 +67,7 @@ jar {
 }
 
 configureSourcesJar()
-configureJavadocJar()
+RepoArtifacts.javadocJar(project)
 
 sourcesJar.dependsOn(":prepare:build.version:writeStdlibVersion")
 

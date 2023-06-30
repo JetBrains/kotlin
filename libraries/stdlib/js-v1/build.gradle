@@ -8,7 +8,7 @@ apply plugin: 'kotlin-platform-js'
 apply plugin: 'idea'
 
 configurePublishing(project)
-configureJavadocJar()
+RepoArtifacts.javadocJar(project)
 
 configurations {
     sources

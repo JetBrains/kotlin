@@ -6,6 +6,6 @@ dependencies {
     embedded(project(":kotlinx-serialization-compiler-plugin")) { transitive = false }
 }
 
-ArtifactsKt.runtimeJar(project, {})
+RepoArtifacts.runtimeJar(project, {})
 configureSourcesJar()
-configureJavadocJar()
+RepoArtifacts.javadocJar(project)

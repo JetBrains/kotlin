@@ -18,4 +18,4 @@ jar {
 }
 
 configureSourcesJar()
-configureJavadocJar()
+RepoArtifacts.javadocJar(project)

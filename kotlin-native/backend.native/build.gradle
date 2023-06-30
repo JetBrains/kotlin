@@ -249,7 +249,7 @@ publishing {
     }
 }
 
-ArtifactsKt.sourcesJar(project) {
+RepoArtifacts.sourcesJar(project) {
     it.from(sourceSets["cli_bc"].allSource)
     it.from(sourceSets["compiler"].allSource)
 }

@@ -1,4 +1,5 @@
 @file:Suppress("unused") // usages in build scripts are not tracked properly
+@file:JvmName("RepoArtifacts")
 
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.gradle.api.Project
@@ -219,6 +220,7 @@ fun Jar.addEmbeddedSources(configurationName: String = "embedded") {
     }
 }
 
+@JvmOverloads
 fun Project.javadocJar(body: Jar.() -> Unit = {}): TaskProvider<Jar> {
     configure<JavaPluginExtension> {
         withJavadocJar()
