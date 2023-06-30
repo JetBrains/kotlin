@@ -273,6 +273,7 @@ fun Project.standardPublicJars() {
     javadocJar()
 }
 
+@JvmOverloads
 fun Project.publish(moduleMetadata: Boolean = false, sbom: Boolean = true, configure: MavenPublication.() -> Unit = { }) {
     apply<KotlinBuildPublishingPlugin>()
 

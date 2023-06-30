@@ -1,6 +1,6 @@
 apply plugin: 'kotlin'
 
-configurePublishing(project)
+RepoArtifacts.publish(project)
 
 dependencies {
     embedded(project(":kotlinx-serialization-compiler-plugin")) { transitive = false }

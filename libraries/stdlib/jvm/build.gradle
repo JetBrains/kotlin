@@ -8,7 +8,7 @@ archivesBaseName = 'kotlin-stdlib'
 
 JvmToolchain.configureJvmToolchain(project, JdkMajorVersion.JDK_1_8)
 
-configurePublishing(project)
+RepoArtifacts.publish(project)
 RepoArtifacts.javadocJar(project)
 RepoArtifacts.sourcesJar(project)
 

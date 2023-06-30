@@ -2,7 +2,7 @@ description = 'Kotlin Common Standard Library'
 
 apply plugin: 'kotlin-platform-common'
 
-configurePublishing(project)
+RepoArtifacts.publish(project)
 
 JvmToolchain.updateJvmTarget(project, "1.8")
 

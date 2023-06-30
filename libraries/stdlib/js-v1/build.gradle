@@ -7,7 +7,7 @@ description = 'Kotlin Standard Library for JS'
 apply plugin: 'kotlin-platform-js'
 apply plugin: 'idea'
 
-configurePublishing(project)
+RepoArtifacts.publish(project)
 RepoArtifacts.javadocJar(project)
 
 configurations {

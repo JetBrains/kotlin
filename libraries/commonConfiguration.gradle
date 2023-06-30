@@ -49,13 +49,6 @@ task preparePublication {
     }
 }
 
-ext.configurePublishing = { Project project, configure = { } ->
-    RepoArtifacts.publish(project, false, true) { publication ->
-        configure.delegate = publication
-        configure()
-    }
-}
-
 ext.configureFrontendIr = { Project project ->
     project.tasks.withType(KotlinCompile.class) { task ->
         task.kotlinOptions {

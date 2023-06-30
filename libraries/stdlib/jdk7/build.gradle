@@ -4,7 +4,7 @@ apply plugin: 'kotlin'
 
 JvmToolchain.configureJvmToolchain(project, JdkMajorVersion.JDK_1_8)
 
-configurePublishing(project)
+RepoArtifacts.publish(project)
 RepoArtifacts.sourcesJar(project)
 RepoArtifacts.javadocJar(project)
 
