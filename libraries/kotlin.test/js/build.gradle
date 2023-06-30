@@ -10,7 +10,7 @@ configurations {
 dependencies {
     expectedBy project(':kotlin-test:kotlin-test-common')
     expectedBy project(':kotlin-test:kotlin-test-annotations-common')
-    api kotlinStdlib("js")
+    api RepoDependencies.kotlinStdlib(project, "js")
 }
 
 compileKotlin2Js {

@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:JvmName("RepoDependencies")
+
 import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.api.artifacts.*
@@ -81,6 +83,7 @@ fun Project.preloadedDeps(
 fun kotlinDep(artifactBaseName: String, version: String, classifier: String? = null): String =
     listOfNotNull("org.jetbrains.kotlin:kotlin-$artifactBaseName:$version", classifier).joinToString(":")
 
+@JvmOverloads
 fun Project.kotlinStdlib(suffix: String? = null, classifier: String? = null): Any {
     return if (kotlinBuildProperties.useBootstrapStdlib)
         kotlinDep(listOfNotNull("stdlib", suffix).joinToString("-"), bootstrapKotlinVersion, classifier)

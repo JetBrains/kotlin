@@ -36,7 +36,7 @@ configurations {
 
 dependencies {
     // TODO: upgrade coroutines to common version
-    api DependenciesKt.commonDependency(project, "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.7")
+    api RepoDependencies.commonDependency(project, "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.7")
 }
 ext.testOutputRoot = rootProject.file("test.output").absolutePath
 
@@ -6246,7 +6246,7 @@ dependencies {
 
     implementation kotlinCompilerModule
     api project(path: ':kotlin-native:backend.native', configuration: 'cli_bcApiElements')
-    api DependenciesKt.commonDependency(project, "junit")
+    api RepoDependencies.commonDependency(project, "junit")
 }
 
 // Configure build for iOS device targets.

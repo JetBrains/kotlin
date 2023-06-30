@@ -7,7 +7,7 @@ JvmToolchain.configureJvmToolchain(project, JdkMajorVersion.JDK_1_8)
 configurePublishing(project)
 
 dependencies {
-    compileOnly kotlinStdlib()
+    compileOnly RepoDependencies.kotlinStdlib(project)
 }
 
 sourceSets {

@@ -24,7 +24,7 @@ dependencies {
 
     api project(':kotlin-test:kotlin-test-junit')
 
-    compileOnly kotlinStdlib()
+    compileOnly RepoDependencies.kotlinStdlib(project)
     compileOnly project(':compiler')
     compileOnly project(':compiler:plugin-api')
     compileOnly project(':compiler:cli-common')

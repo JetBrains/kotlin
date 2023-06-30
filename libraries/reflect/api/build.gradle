@@ -22,7 +22,7 @@ sourceSets {
 }
 
 dependencies {
-    api kotlinStdlib()
+    api RepoDependencies.kotlinStdlib(project)
     compileOnly project(':core:descriptors')
     compileOnly project(':core:descriptors.jvm')
     compileOnly project(':core:deserialization')

@@ -15,7 +15,7 @@ sourceSets {
 }
 
 dependencies {
-    compileOnly DependenciesKt.kotlinBuiltins(project)
+    compileOnly RepoDependencies.kotlinBuiltins(project)
 }
 
 configureSourcesJar()

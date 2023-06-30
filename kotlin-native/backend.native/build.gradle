@@ -141,7 +141,7 @@ configurations {
 dependencies {
     kotlin_compiler_jar kotlinCompilerModule
     kotlin_stdlib_jar kotlinStdLibModule
-    use(DependenciesKt) {
+    use(RepoDependencies) {
         trove4j_jar commonDependency("org.jetbrains.intellij.deps:trove4j")
         kotlin_reflect_jar commonDependency("org.jetbrains.kotlin:kotlin-reflect")
         compilerApi(commonDependency("org.jetbrains.intellij.deps.fastutil:intellij-deps-fastutil")) { setTransitive(false) }

@@ -54,7 +54,7 @@ tasks.register("populateNodeModules", Copy) {
 }
 
 node {
-    version = DependenciesKt.getNodejsVersion(project)
+    version = RepoDependencies.getNodejsVersion(project)
     download = true
 }
 

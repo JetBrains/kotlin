@@ -327,7 +327,7 @@ artifacts {
 
 node {
     download = true
-    version = DependenciesKt.getNodejsVersion(project)
+    version = RepoDependencies.getNodejsVersion(project)
     nodeProjectDir = buildDir
 }
 
