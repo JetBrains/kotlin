@@ -113,10 +113,10 @@ class XCTestCaseRunner(
             )
         }
 
-        // region: Dynamic run methods creation
+        // region Dynamic run methods creation
 
+        // Creates and adds method to the class
         private fun createRunMethod(selector: SEL) {
-            // Note: must be disposed off with imp_removeBlock
             val result = class_addMethod(
                     cls = this.`class`(),
                     name = selector,
@@ -139,7 +139,7 @@ class XCTestCaseRunner(
             }
         }
 
-        // TODO: need to clean up those methods. When/where should this be invoked?
+        // TODO: dow we need to clean up those methods? When/where should this be invoked?
         private fun disposeRunMethods() {
             testMethodsNames().forEach {
                 val selector = NSSelectorFromString(it)
@@ -149,10 +149,11 @@ class XCTestCaseRunner(
 
         @Suppress("UNUSED_PARAMETER")
         private fun runner(runner: XCTestCaseRunner, cmd: SEL) = runner.run()
-        //endregion
+        // endregion
 
         /**
-         * Create Test invocations for each test method to make them resolvable by the XCTest's machinery
+         * Creates Test invocations for each test method to make them resolvable by the XCTest machinery.
+         *
          * @see NSInvocation
          */
         override fun testInvocations(): List<NSInvocation> = testMethodsNames().map {
