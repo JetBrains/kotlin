@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.psiUtil.isIdentifier
 import org.jetbrains.kotlin.resolve.ImportPath
 import org.jetbrains.kotlin.utils.checkWithAttachment
+import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
 
 @JvmOverloads
 @JvmName("KtPsiFactory")

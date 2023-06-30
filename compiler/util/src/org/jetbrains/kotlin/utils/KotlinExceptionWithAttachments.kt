@@ -7,38 +7,23 @@ package org.jetbrains.kotlin.utils
 
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Attachment
-import com.intellij.openapi.diagnostic.ExceptionWithAttachments
-import java.nio.charset.StandardCharsets
-import com.intellij.psi.*
+import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.utils.exceptions.KotlinExceptionWithAttachments as KotlinExceptionWithAttachmentsBase
+import org.jetbrains.kotlin.utils.exceptions.KotlinExceptionWithAttachments.Companion.withAttachmentsFrom
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
-open class KotlinExceptionWithAttachments : RuntimeException, ExceptionWithAttachments {
-    private val attachments = mutableListOf<Attachment>()
+open class KotlinExceptionWithAttachments : RuntimeException, KotlinExceptionWithAttachmentsBase {
+    override val mutableAttachments = mutableListOf<Attachment>()
+
+    override fun withAttachment(name: String, content: Any?): KotlinExceptionWithAttachments {
+        return super.withAttachment(name, content) as KotlinExceptionWithAttachments
+    }
 
     constructor(message: String) : super(message)
 
     constructor(message: String?, cause: Throwable?) : super(message, cause) {
-        if (cause is KotlinExceptionWithAttachments) {
-            cause.attachments.mapTo(attachments) { attachment ->
-                attachment.copyWithNewName("case_${attachment.path}")
-            }
-        }
-        if (cause != null) {
-            withAttachment("causeThrowable", cause.stackTraceToString())
-        }
-    }
-
-    private fun Attachment.copyWithNewName(newName: String): Attachment {
-        val content = String(bytes, StandardCharsets.UTF_8)
-        return Attachment(newName, content)
-    }
-
-    override fun getAttachments(): Array<Attachment> = attachments.toTypedArray()
-
-    fun withAttachment(name: String, content: Any?): KotlinExceptionWithAttachments {
-        attachments.add(Attachment(name, content?.toString() ?: "<null>"))
-        return this
+        withAttachmentsFrom(cause)
     }
 
     fun withPsiAttachment(name: String, element: PsiElement?): KotlinExceptionWithAttachments {
@@ -50,7 +35,7 @@ open class KotlinExceptionWithAttachments : RuntimeException, ExceptionWithAttac
 
 
 @OptIn(ExperimentalContracts::class)
-inline fun checkWithAttachment(value: Boolean, lazyMessage: () -> String, attachments: (KotlinExceptionWithAttachments) -> Unit = {}) {
+inline fun checkWithAttachment(value: Boolean, lazyMessage: () -> String, attachments: (org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments) -> Unit = {}) {
     contract { returns() implies (value) }
 
     if (!value) {
