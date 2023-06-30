@@ -71,24 +71,23 @@ class LLFirSessionCache(private val project: Project) {
     }
 
     /**
-     * Removes the session(s) associated with [module] after it has been invalidated.
+     * Removes the session(s) associated with [module] after it has been invalidated. Must be called in a write action.
      *
-     * [removeSession] must be called in a write action.
+     * @return `true` if any sessions were removed.
      */
-    fun removeSession(module: KtModule) {
+    fun removeSession(module: KtModule): Boolean {
         ApplicationManager.getApplication().assertWriteAccessAllowed()
 
-        removeSessionFrom(module, sourceCache)
-        if (module is KtBinaryModule) {
-            removeSessionFrom(module, binaryCache)
-        }
+        val didSourceSessionExist = removeSessionFrom(module, sourceCache)
+        val didBinarySessionExist = if (module is KtBinaryModule) removeSessionFrom(module, binaryCache) else false
+
+        return didSourceSessionExist || didBinarySessionExist
     }
 
-    private fun removeSessionFrom(module: KtModule, storage: SessionStorage) {
-        val session = storage.remove(module)
-        if (session != null) {
-            session.isValid = false
-        }
+    private fun removeSessionFrom(module: KtModule, storage: SessionStorage): Boolean {
+        val session = storage.remove(module) ?: return false
+        session.isValid = false
+        return true
     }
 
     /**

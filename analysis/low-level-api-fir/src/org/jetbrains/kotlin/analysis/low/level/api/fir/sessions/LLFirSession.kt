@@ -68,6 +68,8 @@ abstract class LLFirSession(
     }
 
     private fun invalidateInWriteAction() {
+        if (!isValid) return
+
         LLFirSessionInvalidationService.getInstance(project).invalidate(ktModule)
     }
 
