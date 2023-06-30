@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.diagnostics.FirDiagnosticHolder
 import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
@@ -61,7 +62,8 @@ object FirCommonConstructorDelegationIssuesChecker : FirRegularClassChecker() {
             for (it in otherConstructors) {
                 // couldn't find proper super() constructor implicitly
                 if (it.delegatedConstructor?.calleeReference is FirDiagnosticHolder &&
-                    it.delegatedConstructor?.source?.kind is KtFakeSourceElementKind
+                    it.delegatedConstructor?.source?.kind is KtFakeSourceElementKind &&
+                    !it.isExpect
                 ) {
                     reporter.reportOn(it.source, FirErrors.EXPLICIT_DELEGATION_CALL_REQUIRED, context)
                 }
