@@ -1,0 +1,84 @@
+package foo
+
+// CHECK:
+//   Mangled name: foo{}array
+//   Public signature: foo/array|6187513897999240281[0]
+val array: Array<Int>
+  // CHECK JVM_IR:
+  //   Mangled name: foo#<get-array>(){}kotlin.Array<kotlin.Int>
+  //   Public signature: foo/array.<get-array>|7467926770652597701[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: foo#<get-array>(){}
+  //   Public signature: foo/array.<get-array>|-7741494344808015919[0]
+  get
+
+// CHECK:
+//   Mangled name: foo.A
+//   Public signature: foo/A|null[0]
+class A {
+  // CHECK:
+  //   Mangled name: foo.A{}prop
+  //   Public signature: foo/A.prop|3598315380056892812[0]
+  var prop: Int
+    // CHECK JVM_IR:
+    //   Mangled name: foo.A#<get-prop>(){}kotlin.Int
+    //   Public signature: foo/A.prop.<get-prop>|-2094203252476742575[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: foo.A#<get-prop>(){}
+    //   Public signature: foo/A.prop.<get-prop>|-5734736374948136327[0]
+    get
+    // CHECK:
+    //   Mangled name: foo.A#<set-prop>(kotlin.Int){}
+    //   Public signature: foo/A.prop.<set-prop>|3724820243841906450[0]
+    set
+
+  // CHECK:
+  //   Mangled name: foo.A#<init>(){}
+  //   Public signature: foo/A.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: foo.B
+//   Public signature: foo/B|null[0]
+object B {
+  // CHECK:
+  //   Mangled name: foo.B{}prop
+  //   Public signature: foo/B.prop|3598315380056892812[0]
+  var prop: Int
+    // CHECK JVM_IR:
+    //   Mangled name: foo.B#<get-prop>(){}kotlin.Int
+    //   Public signature: foo/B.prop.<get-prop>|-2094203252476742575[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: foo.B#<get-prop>(){}
+    //   Public signature: foo/B.prop.<get-prop>|-5734736374948136327[0]
+    get
+    // CHECK:
+    //   Mangled name: foo.B#<set-prop>(kotlin.Int){}
+    //   Public signature: foo/B.prop.<set-prop>|3724820243841906450[0]
+    set
+
+  // CHECK:
+  //   Mangled name: foo.B#<init>(){}
+  //   Public signature: foo/B.<init>|-5645683436151566731[0]
+  private constructor() /* primary */
+
+}
+
+// CHECK JVM_IR:
+//   Mangled name: foo#id(0:0){0§<kotlin.Any?>}0:0
+//   Public signature: foo/id|-6791396263062521506[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: foo#id(0:0){0§<kotlin.Any?>}
+//   Public signature: foo/id|9187295668833355463[0]
+fun <T : Any?> id(t: T): T
+
+// CHECK JVM_IR:
+//   Mangled name computed from Ir:         foo#main(){}
+//   Mangled name computed from Descriptor: foo#main(){}%AssignmentOperator.kt
+//   Public signature: foo/main|7392120756922895329[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: foo#main(){}
+//   Public signature: foo/main|-4284757841571462650[0]
+fun main(): Unit

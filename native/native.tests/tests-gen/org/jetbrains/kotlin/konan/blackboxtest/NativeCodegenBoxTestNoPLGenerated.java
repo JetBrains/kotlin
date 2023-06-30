@@ -27646,6 +27646,12 @@ public class NativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenBoxT
             }
 
             @Test
+            @TestMetadata("assignToDotQualifiedWithSideEffect.kt")
+            public void testAssignToDotQualifiedWithSideEffect() throws Exception {
+                runTest("compiler/testData/codegen/box/operatorConventions/assignToDotQualifiedWithSideEffect.kt");
+            }
+
+            @Test
             @TestMetadata("assignmentOperations.kt")
             public void testAssignmentOperations() throws Exception {
                 runTest("compiler/testData/codegen/box/operatorConventions/assignmentOperations.kt");
@@ -27769,6 +27775,12 @@ public class NativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenBoxT
             @TestMetadata("plusExplicit.kt")
             public void testPlusExplicit() throws Exception {
                 runTest("compiler/testData/codegen/box/operatorConventions/plusExplicit.kt");
+            }
+
+            @Test
+            @TestMetadata("reassignmentLhsCaching.kt")
+            public void testReassignmentLhsCaching() throws Exception {
+                runTest("compiler/testData/codegen/box/operatorConventions/reassignmentLhsCaching.kt");
             }
 
             @Test

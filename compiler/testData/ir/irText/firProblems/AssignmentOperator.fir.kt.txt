@@ -1,0 +1,164 @@
+package foo
+
+class A {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  var prop: Int
+    field = 0
+    get
+    set
+
+}
+
+object B {
+  private constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  var prop: Int
+    field = 0
+    get
+    set
+
+}
+
+val array: Array<Int>
+  field = arrayOf<Int>(elements = [0])
+  get
+
+fun <T : Any?> id(t: T): T {
+  return t
+}
+
+fun main() {
+  val a: A = A()
+  id<A>(t = a).<set-prop>(<set-?> = 10)
+  { // BLOCK
+    val <receiver>: A = id<A>(t = a)
+    <receiver>.<set-prop>(<set-?> = <receiver>.<get-prop>().plus(other = 20))
+  }
+  { // BLOCK
+    val <receiver>: A = id<A>(t = a)
+    <receiver>.<set-prop>(<set-?> = <receiver>.<get-prop>().minus(other = 20))
+  }
+  { // BLOCK
+    val <receiver>: A = id<A>(t = a)
+    <receiver>.<set-prop>(<set-?> = <receiver>.<get-prop>().times(other = 2))
+  }
+  { // BLOCK
+    val <receiver>: A = id<A>(t = a)
+    <receiver>.<set-prop>(<set-?> = <receiver>.<get-prop>().div(other = 5))
+  }
+  { // BLOCK
+    val <receiver>: A = id<A>(t = a)
+    <receiver>.<set-prop>(<set-?> = <receiver>.<get-prop>().rem(other = 3))
+  }
+  { // BLOCK
+    val <receiver>: A = id<A>(t = a)
+    val <unary>: Int = <receiver>.<get-prop>()
+    <receiver>.<set-prop>(<set-?> = <unary>.inc())
+    <unary>
+  } /*~> Unit */
+  { // BLOCK
+    val <receiver>: A = id<A>(t = a)
+    val <unary>: Int = <receiver>.<get-prop>()
+    <receiver>.<set-prop>(<set-?> = <unary>.dec())
+    <unary>
+  } /*~> Unit */
+  { // BLOCK
+    val <receiver>: A = id<A>(t = a)
+    <receiver>.<set-prop>(<set-?> = <receiver>.<get-prop>().inc())
+    <receiver>.<get-prop>()
+  } /*~> Unit */
+  { // BLOCK
+    val <receiver>: A = id<A>(t = a)
+    <receiver>.<set-prop>(<set-?> = <receiver>.<get-prop>().dec())
+    <receiver>.<get-prop>()
+  } /*~> Unit */
+  { // BLOCK
+    val <unary>: Int = B.<get-prop>()
+    B.<set-prop>(<set-?> = <unary>.inc())
+    <unary>
+  } /*~> Unit */
+  { // BLOCK
+    val <unary>: Int = B.<get-prop>()
+    B.<set-prop>(<set-?> = <unary>.dec())
+    <unary>
+  } /*~> Unit */
+  { // BLOCK
+    B.<set-prop>(<set-?> = B.<get-prop>().inc())
+    B.<get-prop>()
+  } /*~> Unit */
+  { // BLOCK
+    B.<set-prop>(<set-?> = B.<get-prop>().dec())
+    B.<get-prop>()
+  } /*~> Unit */
+  id<Array<Int>>(t = <get-array>()).set(index = 0, value = 10)
+  { // BLOCK
+    val <array>: Array<Int> = id<Array<Int>>(t = <get-array>())
+    val <index_0>: Int = 0
+    <array>.set(index = <index_0>, value = <array>.get(index = <index_0>).plus(other = 20))
+  }
+  { // BLOCK
+    val <array>: Array<Int> = id<Array<Int>>(t = <get-array>())
+    val <index_0>: Int = 0
+    <array>.set(index = <index_0>, value = <array>.get(index = <index_0>).minus(other = 20))
+  }
+  { // BLOCK
+    val <array>: Array<Int> = id<Array<Int>>(t = <get-array>())
+    val <index_0>: Int = 0
+    <array>.set(index = <index_0>, value = <array>.get(index = <index_0>).times(other = 2))
+  }
+  { // BLOCK
+    val <array>: Array<Int> = id<Array<Int>>(t = <get-array>())
+    val <index_0>: Int = 0
+    <array>.set(index = <index_0>, value = <array>.get(index = <index_0>).div(other = 5))
+  }
+  { // BLOCK
+    val <array>: Array<Int> = id<Array<Int>>(t = <get-array>())
+    val <index_0>: Int = 0
+    <array>.set(index = <index_0>, value = <array>.get(index = <index_0>).rem(other = 3))
+  }
+  val <array>: Array<Int> = id<Array<Int>>(t = <get-array>())
+  val <index_0>: Int = 0
+  val <unary>: Int = <array>.get(index = <index_0>)
+  <array>.set(index = <index_0>, value = <unary>.inc())
+  <unary> /*~> Unit */
+  val <array>: Array<Int> = id<Array<Int>>(t = <get-array>())
+  val <index_0>: Int = 0
+  val <unary>: Int = <array>.get(index = <index_0>)
+  <array>.set(index = <index_0>, value = <unary>.dec())
+  <unary> /*~> Unit */
+  val <array>: Array<Int> = id<Array<Int>>(t = <get-array>())
+  val <index_0>: Int = 0
+  <array>.set(index = <index_0>, value = <array>.get(index = <index_0>).inc())
+  <array>.get(index = <index_0>) /*~> Unit */
+  val <array>: Array<Int> = id<Array<Int>>(t = <get-array>())
+  val <index_0>: Int = 0
+  <array>.set(index = <index_0>, value = <array>.get(index = <index_0>).dec())
+  <array>.get(index = <index_0>) /*~> Unit */
+  val <array>: Array<Int> = <get-array>()
+  val <index_0>: Int = 0
+  val <unary>: Int = <array>.get(index = <index_0>)
+  <array>.set(index = <index_0>, value = <unary>.inc())
+  <unary> /*~> Unit */
+  val <array>: Array<Int> = <get-array>()
+  val <index_0>: Int = 0
+  val <unary>: Int = <array>.get(index = <index_0>)
+  <array>.set(index = <index_0>, value = <unary>.dec())
+  <unary> /*~> Unit */
+  val <array>: Array<Int> = <get-array>()
+  val <index_0>: Int = 0
+  <array>.set(index = <index_0>, value = <array>.get(index = <index_0>).inc())
+  <array>.get(index = <index_0>) /*~> Unit */
+  val <array>: Array<Int> = <get-array>()
+  val <index_0>: Int = 0
+  <array>.set(index = <index_0>, value = <array>.get(index = <index_0>).dec())
+  <array>.get(index = <index_0>) /*~> Unit */
+}

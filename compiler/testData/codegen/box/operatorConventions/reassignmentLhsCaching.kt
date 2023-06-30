@@ -1,5 +1,3 @@
-// IGNORE_BACKEND_K2: JS_IR
-// FIR_STATUS: KT-53490
 // EXPECTED_REACHABLE_NODES: 1298
 package foo
 
@@ -55,4 +53,8 @@ fun box(): String {
     assertEquals("getArray();getArrayIndex();A.plus(3);foo;A.plus(20);bar();A.plus(200);", log)
 
     return "OK"
+}
+
+fun assertEquals(first: Any?, second: Any?) {
+    if (first != second) throw AssertionError("$first != $second")
 }

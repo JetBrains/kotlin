@@ -16,16 +16,15 @@ import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
-import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildPropertyAccessExpression
+import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.types.builder.buildImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.SpecialNames
 
 fun FirVariable.toQualifiedAccess(
     fakeSource: KtSourceElement? = source?.fakeElement(KtFakeSourceElementKind.ReferenceInAtomicQualifiedAccess),
@@ -66,3 +65,38 @@ fun generateTemporaryVariable(
         }
     }
 
+fun generateExplicitReceiverTemporaryVariable(
+    session: FirSession,
+    expression: FirExpression,
+    source: KtSourceElement?,
+): FirProperty? {
+    return (expression as? FirQualifiedAccessExpression)?.explicitReceiver
+        ?.takeIf {
+            // If a receiver x exists, write it to a temporary variable to prevent multiple calls to it.
+            // Exceptions: ResolvedQualifiers, ThisReceivers, and SuperReference as they can't have side effects when called.
+            it !is FirResolvedQualifier
+                    && it !is FirThisReceiverExpression
+                    && !(it is FirQualifiedAccessExpression && it.calleeReference is FirSuperReference)
+        }
+        ?.let { receiver ->
+            // val <receiver> = x
+            generateTemporaryVariable(
+                moduleData = session.moduleData,
+                source = source,
+                name = SpecialNames.RECEIVER,
+                initializer = receiver,
+                typeRef = receiver.typeRef.copyWithNewSource(source),
+            ).also { property ->
+                // Change the expression from x.a to <receiver>.a
+                val newReceiverAccess =
+                    property.toQualifiedAccess(fakeSource = receiver.source?.fakeElement(KtFakeSourceElementKind.DesugaredIncrementOrDecrement))
+
+                if (expression.explicitReceiver == expression.dispatchReceiver) {
+                    expression.replaceDispatchReceiver(newReceiverAccess)
+                } else {
+                    expression.replaceExtensionReceiver(newReceiverAccess)
+                }
+                expression.replaceExplicitReceiver(newReceiverAccess)
+            }
+        }
+}

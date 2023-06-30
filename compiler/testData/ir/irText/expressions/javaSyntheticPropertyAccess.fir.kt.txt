@@ -7,5 +7,8 @@ fun test(j: J) {
     <receiver>.setFoo(x = <unary>.inc())
     <unary>
   } /*~> Unit */
-  j.setFoo(x = j.getFoo().plus(other = 1))
+  { // BLOCK
+    val <receiver>: J = j
+    <receiver>.setFoo(x = <receiver>.getFoo().plus(other = 1))
+  }
 }

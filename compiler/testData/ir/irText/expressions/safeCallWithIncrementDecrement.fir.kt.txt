@@ -39,8 +39,9 @@ fun testProperty(nc: C?) {
     when {
       EQEQ(arg0 = tmp1_safe_receiver, arg1 = null) -> null
       else -> { // BLOCK
-        val <unary>: Int = tmp1_safe_receiver.<get-p>()
-        tmp1_safe_receiver.<set-p>(value = <unary>.inc())
+        val <receiver>: C = tmp1_safe_receiver
+        val <unary>: Int = <receiver>.<get-p>()
+        <receiver>.<set-p>(value = <unary>.inc())
         <unary>
       }
     }

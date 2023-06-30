@@ -29833,6 +29833,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class OperatorConventions extends AbstractLightAnalysisModeTest {
+        @TestMetadata("augmentedAssigmentPlusLhsCount.kt")
+        public void ignoreAugmentedAssigmentPlusLhsCount() throws Exception {
+            runTest("compiler/testData/codegen/box/operatorConventions/augmentedAssigmentPlusLhsCount.kt");
+        }
+
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
         }
@@ -29844,6 +29849,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         @TestMetadata("annotatedAssignment.kt")
         public void testAnnotatedAssignment() throws Exception {
             runTest("compiler/testData/codegen/box/operatorConventions/annotatedAssignment.kt");
+        }
+
+        @TestMetadata("assignToDotQualifiedWithSideEffect.kt")
+        public void testAssignToDotQualifiedWithSideEffect() throws Exception {
+            runTest("compiler/testData/codegen/box/operatorConventions/assignToDotQualifiedWithSideEffect.kt");
         }
 
         @TestMetadata("assignmentOperations.kt")
@@ -29949,6 +29959,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         @TestMetadata("plusExplicit.kt")
         public void testPlusExplicit() throws Exception {
             runTest("compiler/testData/codegen/box/operatorConventions/plusExplicit.kt");
+        }
+
+        @TestMetadata("reassignmentLhsCaching.kt")
+        public void testReassignmentLhsCaching() throws Exception {
+            runTest("compiler/testData/codegen/box/operatorConventions/reassignmentLhsCaching.kt");
         }
 
         @TestMetadata("remAssignmentOperation.kt")

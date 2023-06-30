@@ -1,0 +1,200 @@
+package foo
+
+class A {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  var prop: Int
+    field = 0
+    get
+    set
+
+}
+
+object B {
+  private constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  var prop: Int
+    field = 0
+    get
+    set
+
+}
+
+val array: Array<Int>
+  field = arrayOf<Int>(elements = [0])
+  get
+
+fun <T : Any?> id(t: T): T {
+  return t
+}
+
+fun main() {
+  val a: A = A()
+  id<A>(t = a).<set-prop>(<set-?> = 10)
+  { // BLOCK
+    val tmp0_this: A = id<A>(t = a)
+    tmp0_this.<set-prop>(<set-?> = tmp0_this.<get-prop>().plus(other = 20))
+  }
+  { // BLOCK
+    val tmp1_this: A = id<A>(t = a)
+    tmp1_this.<set-prop>(<set-?> = tmp1_this.<get-prop>().minus(other = 20))
+  }
+  { // BLOCK
+    val tmp2_this: A = id<A>(t = a)
+    tmp2_this.<set-prop>(<set-?> = tmp2_this.<get-prop>().times(other = 2))
+  }
+  { // BLOCK
+    val tmp3_this: A = id<A>(t = a)
+    tmp3_this.<set-prop>(<set-?> = tmp3_this.<get-prop>().div(other = 5))
+  }
+  { // BLOCK
+    val tmp4_this: A = id<A>(t = a)
+    tmp4_this.<set-prop>(<set-?> = tmp4_this.<get-prop>().rem(other = 3))
+  }
+  { // BLOCK
+    val tmp5_this: A = id<A>(t = a)
+    { // BLOCK
+      val tmp6: Int = tmp5_this.<get-prop>()
+      tmp5_this.<set-prop>(<set-?> = tmp6.inc())
+      tmp6
+    }
+  } /*~> Unit */
+  { // BLOCK
+    val tmp7_this: A = id<A>(t = a)
+    { // BLOCK
+      val tmp8: Int = tmp7_this.<get-prop>()
+      tmp7_this.<set-prop>(<set-?> = tmp8.dec())
+      tmp8
+    }
+  } /*~> Unit */
+  { // BLOCK
+    val tmp9_this: A = id<A>(t = a)
+    { // BLOCK
+      tmp9_this.<set-prop>(<set-?> = tmp9_this.<get-prop>().inc())
+      tmp9_this.<get-prop>()
+    }
+  } /*~> Unit */
+  { // BLOCK
+    val tmp10_this: A = id<A>(t = a)
+    { // BLOCK
+      tmp10_this.<set-prop>(<set-?> = tmp10_this.<get-prop>().dec())
+      tmp10_this.<get-prop>()
+    }
+  } /*~> Unit */
+  { // BLOCK
+    val tmp11_this: B = B
+    { // BLOCK
+      val tmp12: Int = tmp11_this.<get-prop>()
+      tmp11_this.<set-prop>(<set-?> = tmp12.inc())
+      tmp12
+    }
+  } /*~> Unit */
+  { // BLOCK
+    val tmp13_this: B = B
+    { // BLOCK
+      val tmp14: Int = tmp13_this.<get-prop>()
+      tmp13_this.<set-prop>(<set-?> = tmp14.dec())
+      tmp14
+    }
+  } /*~> Unit */
+  { // BLOCK
+    val tmp15_this: B = B
+    { // BLOCK
+      tmp15_this.<set-prop>(<set-?> = tmp15_this.<get-prop>().inc())
+      tmp15_this.<get-prop>()
+    }
+  } /*~> Unit */
+  { // BLOCK
+    val tmp16_this: B = B
+    { // BLOCK
+      tmp16_this.<set-prop>(<set-?> = tmp16_this.<get-prop>().dec())
+      tmp16_this.<get-prop>()
+    }
+  } /*~> Unit */
+  id<Array<Int>>(t = <get-array>()).set(index = 0, value = 10)
+  { // BLOCK
+    val tmp17_array: Array<Int> = id<Array<Int>>(t = <get-array>())
+    val tmp18_index0: Int = 0
+    tmp17_array.set(index = tmp18_index0, value = tmp17_array.get(index = tmp18_index0).plus(other = 20))
+  }
+  { // BLOCK
+    val tmp19_array: Array<Int> = id<Array<Int>>(t = <get-array>())
+    val tmp20_index0: Int = 0
+    tmp19_array.set(index = tmp20_index0, value = tmp19_array.get(index = tmp20_index0).minus(other = 20))
+  }
+  { // BLOCK
+    val tmp21_array: Array<Int> = id<Array<Int>>(t = <get-array>())
+    val tmp22_index0: Int = 0
+    tmp21_array.set(index = tmp22_index0, value = tmp21_array.get(index = tmp22_index0).times(other = 2))
+  }
+  { // BLOCK
+    val tmp23_array: Array<Int> = id<Array<Int>>(t = <get-array>())
+    val tmp24_index0: Int = 0
+    tmp23_array.set(index = tmp24_index0, value = tmp23_array.get(index = tmp24_index0).div(other = 5))
+  }
+  { // BLOCK
+    val tmp25_array: Array<Int> = id<Array<Int>>(t = <get-array>())
+    val tmp26_index0: Int = 0
+    tmp25_array.set(index = tmp26_index0, value = tmp25_array.get(index = tmp26_index0).rem(other = 3))
+  }
+  { // BLOCK
+    val tmp27_array: Array<Int> = id<Array<Int>>(t = <get-array>())
+    val tmp28_index0: Int = 0
+    val tmp29: Int = tmp27_array.get(index = tmp28_index0)
+    tmp27_array.set(index = tmp28_index0, value = tmp29.inc())
+    tmp29
+  } /*~> Unit */
+  { // BLOCK
+    val tmp30_array: Array<Int> = id<Array<Int>>(t = <get-array>())
+    val tmp31_index0: Int = 0
+    val tmp32: Int = tmp30_array.get(index = tmp31_index0)
+    tmp30_array.set(index = tmp31_index0, value = tmp32.dec())
+    tmp32
+  } /*~> Unit */
+  { // BLOCK
+    val tmp33_array: Array<Int> = id<Array<Int>>(t = <get-array>())
+    val tmp34_index0: Int = 0
+    tmp33_array.set(index = tmp34_index0, value = tmp33_array.get(index = tmp34_index0).inc())
+    tmp33_array.get(index = tmp34_index0)
+  } /*~> Unit */
+  { // BLOCK
+    val tmp35_array: Array<Int> = id<Array<Int>>(t = <get-array>())
+    val tmp36_index0: Int = 0
+    tmp35_array.set(index = tmp36_index0, value = tmp35_array.get(index = tmp36_index0).dec())
+    tmp35_array.get(index = tmp36_index0)
+  } /*~> Unit */
+  { // BLOCK
+    val tmp37_array: Array<Int> = <get-array>()
+    val tmp38_index0: Int = 0
+    val tmp39: Int = tmp37_array.get(index = tmp38_index0)
+    tmp37_array.set(index = tmp38_index0, value = tmp39.inc())
+    tmp39
+  } /*~> Unit */
+  { // BLOCK
+    val tmp40_array: Array<Int> = <get-array>()
+    val tmp41_index0: Int = 0
+    val tmp42: Int = tmp40_array.get(index = tmp41_index0)
+    tmp40_array.set(index = tmp41_index0, value = tmp42.dec())
+    tmp42
+  } /*~> Unit */
+  { // BLOCK
+    val tmp43_array: Array<Int> = <get-array>()
+    val tmp44_index0: Int = 0
+    tmp43_array.set(index = tmp44_index0, value = tmp43_array.get(index = tmp44_index0).inc())
+    tmp43_array.get(index = tmp44_index0)
+  } /*~> Unit */
+  { // BLOCK
+    val tmp45_array: Array<Int> = <get-array>()
+    val tmp46_index0: Int = 0
+    tmp45_array.set(index = tmp46_index0, value = tmp45_array.get(index = tmp46_index0).dec())
+    tmp45_array.get(index = tmp46_index0)
+  } /*~> Unit */
+}

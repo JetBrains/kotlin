@@ -3410,12 +3410,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
             }
 
             @Test
-            @TestMetadata("assignToDotQualifiedWithSideEffect.kt")
-            public void testAssignToDotQualifiedWithSideEffect() throws Exception {
-                runTest("js/js.translator/testData/box/expression/evaluationOrder/assignToDotQualifiedWithSideEffect.kt");
-            }
-
-            @Test
             @TestMetadata("booleanAndOr.kt")
             public void testBooleanAndOr() throws Exception {
                 runTest("js/js.translator/testData/box/expression/evaluationOrder/booleanAndOr.kt");
@@ -3569,12 +3563,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
             @TestMetadata("orOrWithSideEffect.kt")
             public void testOrOrWithSideEffect() throws Exception {
                 runTest("js/js.translator/testData/box/expression/evaluationOrder/orOrWithSideEffect.kt");
-            }
-
-            @Test
-            @TestMetadata("reassignmentLhsCaching.kt")
-            public void testReassignmentLhsCaching() throws Exception {
-                runTest("js/js.translator/testData/box/expression/evaluationOrder/reassignmentLhsCaching.kt");
             }
 
             @Test

@@ -9,11 +9,15 @@ FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] insidePlusAssignTarget.kt
     [ResolvedTo(BODY_RESOLVE)] annotations container
     public final [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] x: R|kotlin/collections/MutableMap<kotlin/Int, kotlin/collections/MutableList<kotlin/String>>|): R|kotlin/Unit| {
-        R|<local>/x|.<Unresolved name: getOrPut>#(Int(1), <L> = [ResolvedTo(BODY_RESOLVE)] getOrPut@fun <anonymous>(): <ERROR TYPE REF: Unresolved name: mutableListOf> <inline=Unknown>  {
-            ^ <Unresolved name: mutableListOf>#<R|kotlin/String|>()
+         {
+            [ResolvedTo(BODY_RESOLVE)] lval <receiver>: R|kotlin/collections/MutableMap<kotlin/Int, kotlin/collections/MutableList<kotlin/String>>| = R|<local>/x|
+            R|<local>/<receiver>|.<Unresolved name: getOrPut>#(Int(1), <L> = [ResolvedTo(BODY_RESOLVE)] getOrPut@fun <anonymous>(): <ERROR TYPE REF: Unresolved name: mutableListOf> <inline=Unknown>  {
+                ^ <Unresolved name: mutableListOf>#<R|kotlin/String|>()
+            }
+            ) = R|<local>/<receiver>|.<Unresolved name: getOrPut>#(Int(1), <L> = [ResolvedTo(BODY_RESOLVE)] getOrPut@fun <anonymous>(): <ERROR TYPE REF: Unresolved name: mutableListOf> <inline=Unknown>  {
+                ^ <Unresolved name: mutableListOf>#<R|kotlin/String|>()
+            }
+            ).R|kotlin/plus|(String(str))
         }
-        ) = R|<local>/x|.<Unresolved name: getOrPut>#(Int(1), <L> = [ResolvedTo(BODY_RESOLVE)] getOrPut@fun <anonymous>(): <ERROR TYPE REF: Unresolved name: mutableListOf> <inline=Unknown>  {
-            ^ <Unresolved name: mutableListOf>#<R|kotlin/String|>()
-        }
-        ).R|kotlin/plus|(String(str))
+
     }

@@ -2595,6 +2595,12 @@ public class FirLightTreeJvmIrTextTestGenerated extends AbstractFirLightTreeJvmI
         }
 
         @Test
+        @TestMetadata("AssignmentOperator.kt")
+        public void testAssignmentOperator() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/AssignmentOperator.kt");
+        }
+
+        @Test
         @TestMetadata("candidateSymbol.kt")
         public void testCandidateSymbol() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/candidateSymbol.kt");

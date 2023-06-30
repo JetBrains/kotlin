@@ -647,10 +647,11 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             )
             dataFlowAnalyzer.exitFunctionCall(resolvedOperatorCall, callCompleted = true)
 
+            val leftArgumentDesugaredSource = leftArgument.source?.fakeElement(KtFakeSourceElementKind.DesugaredCompoundAssignment)
             val unwrappedLeftArgument = leftArgument.unwrapSmartcastExpression()
             val assignmentLeftArgument = buildDesugaredAssignmentValueReferenceExpression {
                 expressionRef = FirExpressionRef<FirExpression>().apply { bind(unwrappedLeftArgument) }
-                source = leftArgument.source?.fakeElement(KtFakeSourceElementKind.DesugaredCompoundAssignment)
+                source = leftArgumentDesugaredSource
             }
 
             val assignment =
@@ -660,16 +661,36 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                     rValue = resolvedOperatorCall
                     annotations += assignmentOperatorStatement.annotations
                 }
-            return assignment.transform(transformer, ResolutionMode.ContextIndependent)
+
+            val receiverTemporaryVariable =
+                generateExplicitReceiverTemporaryVariable(session, unwrappedLeftArgument, leftArgumentDesugaredSource)
+            return if (receiverTemporaryVariable != null) {
+                buildBlock {
+                    source = assignmentOperatorStatement.source?.fakeElement(KtFakeSourceElementKind.DesugaredCompoundAssignment)
+                    annotations += assignmentOperatorStatement.annotations
+
+                    statements += receiverTemporaryVariable
+                    statements += assignment
+                }
+            } else {
+                assignment
+            }.transform(transformer, ResolutionMode.ContextIndependent)
+        }
+
+        fun chooseResolved(): FirStatement {
+            // If neither candidate is successful, choose whichever is resolved, prioritizing assign
+            val isAssignResolved = (assignCallReference as? FirErrorReferenceWithCandidate)?.diagnostic !is ConeUnresolvedNameError
+            val isOperatorResolved = (operatorCallReference as? FirErrorReferenceWithCandidate)?.diagnostic !is ConeUnresolvedNameError
+            return when {
+                isAssignResolved -> chooseAssign()
+                isOperatorResolved -> chooseOperator()
+                else -> chooseAssign()
+            }
         }
 
         fun reportAmbiguity(): FirStatement {
-            val operatorCallCandidate = operatorCallReference?.candidate
-            val assignmentCallCandidate = assignCallReference?.candidate
-
-            requireNotNull(operatorCallCandidate)
-            requireNotNull(assignmentCallCandidate)
-
+            val operatorCallCandidate = requireNotNull(operatorCallReference?.candidate)
+            val assignmentCallCandidate = requireNotNull(assignCallReference?.candidate)
             return buildErrorExpression {
                 source = assignmentOperatorStatement.source
                 diagnostic = ConeOperatorAmbiguityError(listOf(operatorCallCandidate, assignmentCallCandidate))
@@ -678,16 +699,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
 
         return when {
             assignIsSuccessful && !lhsIsVar -> chooseAssign()
-            !assignIsSuccessful && !operatorIsSuccessful -> {
-                // If neither candidate is successful, choose whichever is resolved, prioritizing assign
-                val isAssignResolved = (assignCallReference as? FirErrorReferenceWithCandidate)?.diagnostic !is ConeUnresolvedNameError
-                val isOperatorResolved = (operatorCallReference as? FirErrorReferenceWithCandidate)?.diagnostic !is ConeUnresolvedNameError
-                when {
-                    isAssignResolved -> chooseAssign()
-                    isOperatorResolved -> chooseOperator()
-                    else -> chooseAssign()
-                }
-            }
+            !assignIsSuccessful && !operatorIsSuccessful -> chooseResolved()
             !assignIsSuccessful && operatorIsSuccessful -> chooseOperator()
             assignIsSuccessful && !operatorIsSuccessful -> chooseAssign()
             leftArgument.typeRef.coneType is ConeDynamicType -> chooseAssign()
@@ -750,25 +762,8 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             source = desugaredSource
             annotations += incrementDecrementExpression.annotations
 
-            (expression as? FirQualifiedAccessExpression)?.explicitReceiver
-                // If a receiver x exists, write it to a temporary variable to prevent multiple calls to it.
-                // Exceptions: ResolvedQualifiers and ThisReceivers as they can't have side effects when called.
-                ?.takeIf { it is FirQualifiedAccessExpression && it !is FirThisReceiverExpression }
-                ?.let { receiver ->
-                    // val <receiver> = x
-                    statements += generateTemporaryVariable(SpecialNames.RECEIVER, receiver).also { property ->
-                        // Change the expression from x.a to <receiver>.a
-                        val newReceiverAccess =
-                            property.toQualifiedAccess(fakeSource = receiver.source?.fakeElement(KtFakeSourceElementKind.DesugaredIncrementOrDecrement))
-
-                        if (expression.explicitReceiver == expression.dispatchReceiver) {
-                            expression.replaceDispatchReceiver(newReceiverAccess)
-                        } else {
-                            expression.replaceExtensionReceiver(newReceiverAccess)
-                        }
-                        expression.replaceExplicitReceiver(newReceiverAccess)
-                    }
-                }
+            generateExplicitReceiverTemporaryVariable(session, expression, desugaredSource)
+                ?.let { statements += it }
 
             if (incrementDecrementExpression.isPrefix) {
                 // a = a.inc()

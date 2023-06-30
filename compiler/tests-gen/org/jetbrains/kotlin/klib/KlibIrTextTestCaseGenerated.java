@@ -1965,6 +1965,11 @@ public class KlibIrTextTestCaseGenerated extends AbstractKlibIrTextTestCase {
             runTest("compiler/testData/ir/irText/firProblems/ArrayMap.kt");
         }
 
+        @TestMetadata("AssignmentOperator.kt")
+        public void testAssignmentOperator() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/AssignmentOperator.kt");
+        }
+
         @TestMetadata("candidateSymbol.kt")
         public void testCandidateSymbol() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/candidateSymbol.kt");
