@@ -373,7 +373,7 @@ abstract class AbstractInvalidationTest(private val targetBackend: TargetBackend
 
     private fun String.isAllowedKtFile() = endsWith(".kt") && !TEST_FILE_IGNORE_PATTERN.matches(this)
 
-    private fun String.isAllowedJsFile() = endsWith(".js") && !TEST_FILE_IGNORE_PATTERN.matches(this)
+    private fun String.isAllowedJsFile() = (endsWith(".js") || endsWith(".mjs")) && !TEST_FILE_IGNORE_PATTERN.matches(this)
 
     protected fun File.filteredKtFiles(): Collection<File> {
         assert(isDirectory && exists())

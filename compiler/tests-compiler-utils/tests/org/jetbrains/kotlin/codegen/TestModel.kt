@@ -153,7 +153,7 @@ class ProjectInfoParser(infoFile: File) : InfoParser<ProjectInfo>(infoFile) {
         val libraries = mutableListOf<String>()
         val steps = mutableListOf<ProjectInfo.ProjectBuildStep>()
         var muted = false
-        var moduleKind = ModuleKind.COMMON_JS
+        var moduleKind = ModuleKind.ES
 
         loop { line ->
             lineCounter++
