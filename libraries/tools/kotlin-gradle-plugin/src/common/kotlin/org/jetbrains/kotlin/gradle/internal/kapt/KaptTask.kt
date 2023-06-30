@@ -34,7 +34,6 @@ abstract class KaptTask @Inject constructor(
     objectFactory: ObjectFactory
 ) : DefaultTask(),
     TaskWithLocalState,
-    UsesKotlinJavaToolchain,
     BaseKapt {
 
     init {

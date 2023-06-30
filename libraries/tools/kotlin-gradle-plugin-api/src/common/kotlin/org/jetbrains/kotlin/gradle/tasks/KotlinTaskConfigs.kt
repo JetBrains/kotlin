@@ -80,7 +80,8 @@ interface BaseKotlinCompile : KotlinCompileTool {
 @Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
 interface KotlinJvmCompile : BaseKotlinCompile,
     KotlinCompileDeprecated<KotlinJvmOptionsDeprecated>,
-    KotlinCompilationTask<KotlinJvmCompilerOptions> {
+    KotlinCompilationTask<KotlinJvmCompilerOptions>,
+    UsesKotlinJavaToolchain {
 
     @get:Deprecated(
         message = "Please migrate to compilerOptions.moduleName",
@@ -137,7 +138,8 @@ interface KaptGenerateStubs : KotlinJvmCompile {
     override val moduleName: Property<String>
 }
 
-interface BaseKapt : Task {
+interface BaseKapt : Task,
+    UsesKotlinJavaToolchain {
 
     //part of kaptClasspath consisting from external artifacts only
     //basically kaptClasspath = kaptExternalClasspath + artifacts built locally
