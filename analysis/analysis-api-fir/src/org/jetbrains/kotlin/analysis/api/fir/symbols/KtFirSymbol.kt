@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtSymbolOrigin
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolKind
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withFirEntry
-import org.jetbrains.kotlin.utils.exceptions.buildErrorWithAttachment
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.fir.containingClassForLocalAttr
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
@@ -70,7 +70,7 @@ internal tailrec fun FirDeclaration.ktSymbolOrigin(): KtSymbolOrigin = when (ori
             this is FirValueParameter && this.containingFunctionSymbol.origin == FirDeclarationOrigin.Synthetic -> KtSymbolOrigin.SOURCE_MEMBER_GENERATED
             this is FirSyntheticProperty || this is FirSyntheticPropertyAccessor -> KtSymbolOrigin.JAVA_SYNTHETIC_PROPERTY
 
-            else -> buildErrorWithAttachment("Invalid FirDeclarationOrigin ${origin::class.simpleName}") {
+            else -> errorWithAttachment("Invalid FirDeclarationOrigin ${origin::class.simpleName}") {
                 withFirEntry("firToGetOrigin", this@ktSymbolOrigin)
             }
         }
@@ -78,7 +78,7 @@ internal tailrec fun FirDeclaration.ktSymbolOrigin(): KtSymbolOrigin = when (ori
 
     FirDeclarationOrigin.ImportedFromObjectOrStatic -> {
         val importedFromObjectData = (this as FirCallableDeclaration).importedFromObjectOrStaticData
-            ?: buildErrorWithAttachment("Declaration has ImportedFromObject origin, but no importedFromObjectData present") {
+            ?: errorWithAttachment("Declaration has ImportedFromObject origin, but no importedFromObjectData present") {
                 withFirEntry("firToGetOrigin", this@ktSymbolOrigin)
             }
 
@@ -98,7 +98,7 @@ internal tailrec fun FirDeclaration.ktSymbolOrigin(): KtSymbolOrigin = when (ori
     is FirDeclarationOrigin.Plugin -> KtSymbolOrigin.PLUGIN
     FirDeclarationOrigin.RenamedForOverride -> KtSymbolOrigin.JAVA
     is FirDeclarationOrigin.SubstitutionOverride -> KtSymbolOrigin.SUBSTITUTION_OVERRIDE
-    FirDeclarationOrigin.DynamicScope -> buildErrorWithAttachment("Invalid FirDeclarationOrigin ${origin::class.simpleName}") {
+    FirDeclarationOrigin.DynamicScope -> errorWithAttachment("Invalid FirDeclarationOrigin ${origin::class.simpleName}") {
         withFirEntry("firToGetOrigin", this@ktSymbolOrigin)
     }
     FirDeclarationOrigin.ScriptCustomization -> KtSymbolOrigin.PLUGIN

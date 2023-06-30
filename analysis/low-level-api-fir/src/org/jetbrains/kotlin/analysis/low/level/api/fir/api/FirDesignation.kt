@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.FirElementFinder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.containingClass
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.getContainingFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withFirEntry
-import org.jetbrains.kotlin.utils.exceptions.buildErrorWithAttachment
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.checkWithAttachmentBuilder
 import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
 import org.jetbrains.kotlin.analysis.utils.errors.unexpectedElementError
@@ -240,19 +240,19 @@ private fun findKotlinStdlibClass(classId: ClassId, target: FirDeclaration): Fir
 }
 
 fun FirElementWithResolveState.collectDesignation(firFile: FirFile): FirDesignationWithFile =
-    tryCollectDesignation(firFile) ?: buildErrorWithAttachment("No designation of local declaration") {
+    tryCollectDesignation(firFile) ?: errorWithAttachment("No designation of local declaration") {
         withFirEntry("firFile", firFile)
     }
 
 fun FirElementWithResolveState.collectDesignation(): FirDesignation =
     tryCollectDesignation()
-        ?: buildErrorWithAttachment("No designation of local declaration") {
+        ?: errorWithAttachment("No designation of local declaration") {
             withFirEntry("FirDeclaration", this@collectDesignation)
         }
 
 fun FirElementWithResolveState.collectDesignationWithFile(): FirDesignationWithFile =
     tryCollectDesignationWithFile()
-        ?: buildErrorWithAttachment("No designation of local declaration") {
+        ?: errorWithAttachment("No designation of local declaration") {
             withFirEntry("FirDeclaration", this@collectDesignationWithFile)
         }
 

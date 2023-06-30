@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.llFirMo
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
 import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
 import org.jetbrains.kotlin.utils.exceptions.ExceptionAttachmentBuilder
-import org.jetbrains.kotlin.utils.exceptions.buildErrorWithAttachment
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.analysis.utils.errors.withKtModuleEntry
 import org.jetbrains.kotlin.analysis.utils.errors.withPsiEntry
 import org.jetbrains.kotlin.fir.FirElement
@@ -60,7 +60,7 @@ fun errorWithFirSpecificEntries(
     psi: PsiElement? = null,
     additionalInfos: ExceptionAttachmentBuilder.() -> Unit = {}
 ): Nothing {
-    buildErrorWithAttachment(message, cause) {
+    errorWithAttachment(message, cause) {
         if (fir != null) {
             withFirEntry("fir", fir)
         }

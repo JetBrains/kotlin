@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.analysis.utils.classIdIfNonLocal
-import org.jetbrains.kotlin.utils.exceptions.buildErrorWithAttachment
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.checkWithAttachmentBuilder
 
 class LLFirFirClassByPsiClassProvider(private val session: LLFirSession) : FirSessionComponent {
@@ -71,7 +71,7 @@ class LLFirFirClassByPsiClassProvider(private val session: LLFirSession) : FirSe
             ?: error("No classId for non-local class")
         val provider = session.nullableJavaSymbolProvider ?: session.symbolProvider
         val symbol = provider.getClassLikeSymbolByClassId(classId)
-            ?: buildErrorWithAttachment("No classifier found") {
+            ?: errorWithAttachment("No classifier found") {
                 withPsiEntry("psiClass", psiClass, session.ktModule)
                 withEntry("classId", classId) { it.asString() }
             }

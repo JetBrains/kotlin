@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLFirResolvableReso
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.FirElementFinder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.originalDeclaration
-import org.jetbrains.kotlin.utils.exceptions.buildErrorWithAttachment
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.analysis.utils.errors.withPsiEntry
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
 import org.jetbrains.kotlin.analysis.utils.printer.parentsOfType
@@ -187,7 +187,7 @@ object LowLevelFirApiFacadeForResolveOnAir {
         }
 
         val originalNonLocalDeclaration = PsiTreeUtil.findSameElementInCopy(copiedNonLocalDeclaration, originalKtFile)
-            ?: buildErrorWithAttachment("Cannot find original function matching") {
+            ?: errorWithAttachment("Cannot find original function matching") {
                 withPsiEntry("matchingPsi", elementToAnalyze, originalFirResolveSession::getModule)
                 withPsiEntry("originalFile", originalKtFile, originalFirResolveSession::getModule)
             }
@@ -228,7 +228,7 @@ object LowLevelFirApiFacadeForResolveOnAir {
         }
 
         val llFirResolvableSession = firFile.llFirResolvableSession
-            ?: buildErrorWithAttachment("FirFile session expected to be a resolvable session but was ${firFile.llFirSession::class.java}") {
+            ?: errorWithAttachment("FirFile session expected to be a resolvable session but was ${firFile.llFirSession::class.java}") {
                 withEntry("firSession", firFile.llFirSession) { it.toString() }
             }
 

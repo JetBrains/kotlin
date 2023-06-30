@@ -58,7 +58,7 @@ inline fun KotlinExceptionWithAttachments.buildAttachment(
     return withAttachment(name, ExceptionAttachmentBuilder().apply(buildContent).buildString())
 }
 
-inline fun buildErrorWithAttachment(
+inline fun errorWithAttachment(
     message: String,
     cause: Exception? = null,
     attachmentName: String = "info.txt",
@@ -86,7 +86,7 @@ inline fun rethrowExceptionWithDetails(
     buildAttachment: ExceptionAttachmentBuilder.() -> Unit = {},
 ): Nothing {
     if (shouldIjPlatformExceptionBeRethrown(exception)) throw exception
-    buildErrorWithAttachment(message, exception, attachmentName, buildAttachment)
+    errorWithAttachment(message, exception, attachmentName, buildAttachment)
 }
 
 
@@ -99,7 +99,7 @@ inline fun checkWithAttachmentBuilder(
     contract { returns() implies (condition) }
 
     if (!condition) {
-        buildErrorWithAttachment(message(), buildAttachment = buildAttachment)
+        errorWithAttachment(message(), buildAttachment = buildAttachment)
     }
 }
 
@@ -112,6 +112,6 @@ inline fun requireWithAttachmentBuilder(
     contract { returns() implies (condition) }
 
     if (!condition) {
-        buildErrorWithAttachment(message(), buildAttachment = buildAttachment)
+        errorWithAttachment(message(), buildAttachment = buildAttachment)
     }
 }
