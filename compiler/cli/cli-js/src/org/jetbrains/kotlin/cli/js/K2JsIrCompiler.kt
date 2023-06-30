@@ -340,7 +340,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
             if (arguments.wasm) {
                 val (allModules, backendContext) = compileToLoweredIr(
                     depsDescriptors = module,
-                    phaseConfig = PhaseConfig(wasmPhases),
+                    phaseConfig = createPhaseConfig(wasmPhases, arguments, messageCollector),
                     irFactory = IrFactoryImpl,
                     exportedDeclarations = setOf(FqName("main")),
                     propertyLazyInitialization = arguments.irPropertyLazyInitialization,

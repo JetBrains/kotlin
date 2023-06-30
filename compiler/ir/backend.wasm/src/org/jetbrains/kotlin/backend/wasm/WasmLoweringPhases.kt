@@ -742,5 +742,6 @@ val wasmPhases = SameTypeNamedCompilerPhase(
             virtualDispatchReceiverExtractionPhase then
             staticMembersLoweringPhase then
             inlineObjectsWithPureInitializationLoweringPhase then
-            validateIrAfterLowering
+            validateIrAfterLowering,
+    actions = setOf(defaultDumper.toMultiModuleAction())
 )
