@@ -78,10 +78,12 @@ void gc::mark::ParallelMark::beginMarkingEpoch(gc::GCHandle gcHandle) {
 
     parallelProcessor_.construct();
 
-    std::unique_lock guard(workerCreationMutex_);
-    pacer_.beginEpoch(gcHandle.getEpoch());
-    // main worker is always accounted, so others would not be able to exhaust all the parallelism before main is instantiated
-    activeWorkersCount_ = 1;
+    if (!compiler::gcMarkSingleThreaded()) {
+        std::unique_lock guard(workerCreationMutex_);
+        pacer_.beginEpoch(gcHandle.getEpoch());
+        // main worker is always accounted, so others would not be able to exhaust all the parallelism before main is instantiated
+        activeWorkersCount_ = 1;
+    }
 }
 
 void gc::mark::ParallelMark::waitForThreadsPauseMutation() noexcept {
@@ -94,9 +96,11 @@ void gc::mark::ParallelMark::waitForThreadsPauseMutation() noexcept {
 }
 
 void gc::mark::ParallelMark::endMarkingEpoch() {
-    std::unique_lock guard(workerCreationMutex_);
-    RuntimeAssert(activeWorkersCount_ == 0, "All the workers must already finish");
-    pacer_.begin(MarkPacer::Phase::kIdle);
+    if (!compiler::gcMarkSingleThreaded()) {
+        std::unique_lock guard(workerCreationMutex_);
+        RuntimeAssert(activeWorkersCount_ == 0, "All the workers must already finish");
+        pacer_.begin(MarkPacer::Phase::kIdle);
+    }
     parallelProcessor_.destroy();
     resetMutatorFlags();
     lockedMutatorsList_ = std::nullopt;
