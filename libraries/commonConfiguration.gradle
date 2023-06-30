@@ -71,12 +71,3 @@ ext.configureFrontendIr = { Project project ->
         }
     }
 }
-
-allprojects { project ->
-    project.ext.configureSourcesJar = { lambda = {} ->
-        RepoArtifacts.sourcesJar(project) { task ->
-            lambda.delegate = task
-            lambda()
-        }
-    }
-}

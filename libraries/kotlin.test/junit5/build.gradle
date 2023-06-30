@@ -27,7 +27,7 @@ jar {
     }
 }
 
-configureSourcesJar()
+RepoArtifacts.sourcesJar(project)
 RepoArtifacts.javadocJar(project)
 
 compileKotlin {

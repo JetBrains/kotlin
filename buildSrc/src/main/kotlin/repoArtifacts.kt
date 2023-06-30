@@ -159,6 +159,7 @@ private fun Project.mainKotlinSourceSet() =
     (extensions.findByName("kotlin") as? KotlinSourceSetContainer)?.sourceSets?.findByName("main")
 private fun Project.sources() = mainJavaPluginSourceSet()?.allSource ?: mainKotlinSourceSet()?.kotlin
 
+@JvmOverloads
 fun Project.sourcesJar(body: Jar.() -> Unit = {}): TaskProvider<Jar> {
     configure<JavaPluginExtension> {
         withSourcesJar()

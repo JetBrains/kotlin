@@ -3,7 +3,7 @@ description = 'Kotlin Standard Library JDK 8 extension'
 apply plugin: 'kotlin'
 
 configurePublishing(project)
-configureSourcesJar()
+RepoArtifacts.sourcesJar(project)
 RepoArtifacts.javadocJar(project)
 
 dependencies {

@@ -13,7 +13,7 @@ jar {
     manifestAttributes(manifest, project, 'Test')
 }
 
-configureSourcesJar()
+RepoArtifacts.sourcesJar(project)
 RepoArtifacts.javadocJar(project)
 
 tasks.withType(org.jetbrains.kotlin.gradle.dsl.KotlinCompile) {

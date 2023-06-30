@@ -10,7 +10,7 @@ JvmToolchain.configureJvmToolchain(project, JdkMajorVersion.JDK_1_8)
 
 configurePublishing(project)
 RepoArtifacts.javadocJar(project)
-configureSourcesJar()
+RepoArtifacts.sourcesJar(project)
 
 configurations {
     distSources

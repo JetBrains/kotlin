@@ -22,7 +22,7 @@ jar {
     manifestAttributes(manifest, project, 'Main')
 }
 
-configureSourcesJar()
+RepoArtifacts.sourcesJar(project)
 RepoArtifacts.javadocJar(project)
 
 compileKotlin {

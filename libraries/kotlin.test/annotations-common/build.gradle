@@ -17,5 +17,5 @@ jar {
     manifestAttributes(manifest, project, 'Test')
 }
 
-configureSourcesJar()
+RepoArtifacts.sourcesJar(project)
 RepoArtifacts.javadocJar(project)
