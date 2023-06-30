@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.KtContextReceiverImpl
 import org.jetbrains.kotlin.analysis.api.symbols.KtValueParameterSymbol
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
-import org.jetbrains.kotlin.analysis.utils.printer.getElementTextInContext
+import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
@@ -39,7 +39,7 @@ internal fun FirCallableSymbol<*>.invalidModalityError(): Nothing {
                    |
                    |$rendered
                    |
-                   |${(fir.psi as? KtDeclaration)?.getElementTextInContext()}""".trimMargin()
+                   |${(fir.psi as? KtDeclaration)?.getElementTextWithContext()}""".trimMargin()
     )
 }
 

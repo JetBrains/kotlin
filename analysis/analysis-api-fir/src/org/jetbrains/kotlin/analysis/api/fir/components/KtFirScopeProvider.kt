@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.utils.errors.unexpectedElementError
-import org.jetbrains.kotlin.analysis.utils.printer.getElementTextInContext
+import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
@@ -194,7 +194,7 @@ internal class KtFirScopeProvider(
     ): KtScopeContext {
         val towerDataContext =
             analysisSession.firResolveSession.getTowerContextProvider(originalFile).getClosestAvailableParentContext(positionInFakeFile)
-                ?: error("Cannot find enclosing declaration for ${positionInFakeFile.getElementTextInContext()}")
+                ?: error("Cannot find enclosing declaration for ${positionInFakeFile.getElementTextWithContext()}")
         val towerDataElementsIndexed = towerDataContext.towerDataElements.asReversed().withIndex()
 
         val implicitReceivers = towerDataElementsIndexed.flatMap { (index, towerDataElement) ->

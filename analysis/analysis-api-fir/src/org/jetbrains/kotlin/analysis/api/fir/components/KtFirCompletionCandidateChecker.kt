@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirOfType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolver.ResolutionParameters
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolver.SingleCandidateResolutionMode
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolver.SingleCandidateResolver
-import org.jetbrains.kotlin.analysis.utils.printer.getElementTextInContext
+import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirVariable
@@ -90,7 +90,7 @@ internal class KtFirCompletionCandidateChecker(
     ): Sequence<ImplicitReceiverValue<*>?> {
         val towerDataContext = analysisSession.firResolveSession.getTowerContextProvider(originalFile)
             .getClosestAvailableParentContext(fakeNameExpression)
-            ?: error("Cannot find enclosing declaration for ${fakeNameExpression.getElementTextInContext()}")
+            ?: error("Cannot find enclosing declaration for ${fakeNameExpression.getElementTextWithContext()}")
 
         return sequence {
             yield(null) // otherwise explicit receiver won't be checked when there are no implicit receivers in completion position
