@@ -1,18 +1,16 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.util
-
-import java.lang.Appendable
+package org.jetbrains.kotlin.utils
 
 class SmartPrinter(appendable: Appendable, indent: String = DEFAULT_INDENT) {
     companion object {
         private const val DEFAULT_INDENT = "    "
     }
 
-    private val printer = org.jetbrains.kotlin.utils.Printer(appendable, indent)
+    private val printer = Printer(appendable, indent)
 
     private var notFirstPrint: Boolean = false
 

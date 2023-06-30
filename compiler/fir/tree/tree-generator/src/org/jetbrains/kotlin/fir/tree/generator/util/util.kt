@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.tree.generator.util
 
 import org.jetbrains.kotlin.fir.tree.generator.model.Element
 import org.jetbrains.kotlin.generators.util.GeneratorsFileUtil
-import org.jetbrains.kotlin.util.SmartPrinter
+import org.jetbrains.kotlin.utils.SmartPrinter
 import java.io.File
 
 fun Element.traverseParents(block: (Element) -> Unit) {

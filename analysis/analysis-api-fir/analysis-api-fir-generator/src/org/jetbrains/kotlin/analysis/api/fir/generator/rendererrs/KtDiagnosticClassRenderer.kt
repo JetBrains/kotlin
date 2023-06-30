@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.fir.checkers.generator.collectClassNamesTo
 import org.jetbrains.kotlin.fir.checkers.generator.inBracketsWithIndent
 import org.jetbrains.kotlin.analysis.api.fir.generator.*
 import org.jetbrains.kotlin.analysis.api.fir.generator.printTypeWithShortNames
-import org.jetbrains.kotlin.util.SmartPrinter
+import org.jetbrains.kotlin.utils.SmartPrinter
 
 object KtDiagnosticClassRenderer : AbstractDiagnosticsDataClassRenderer() {
     override fun SmartPrinter.render(diagnosticList: HLDiagnosticList, packageName: String) {

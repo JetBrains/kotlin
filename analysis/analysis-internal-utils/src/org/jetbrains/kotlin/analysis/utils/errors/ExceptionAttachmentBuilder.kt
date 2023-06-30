@@ -9,10 +9,10 @@ import com.intellij.openapi.diagnostic.Attachment
 import com.intellij.openapi.diagnostic.Logger
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
-import org.jetbrains.kotlin.util.SmartPrinter
+import org.jetbrains.kotlin.utils.SmartPrinter
 import org.jetbrains.kotlin.util.SourceCodeAnalysisException
 import org.jetbrains.kotlin.util.shouldIjPlatformExceptionBeRethrown
-import org.jetbrains.kotlin.util.withIndent
+import org.jetbrains.kotlin.utils.withIndent
 import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract

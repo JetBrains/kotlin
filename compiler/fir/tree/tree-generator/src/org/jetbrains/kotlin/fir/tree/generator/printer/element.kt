@@ -12,8 +12,8 @@ import org.jetbrains.kotlin.fir.tree.generator.model.Implementation.Kind
 import org.jetbrains.kotlin.fir.tree.generator.model.Importable
 import org.jetbrains.kotlin.fir.tree.generator.pureAbstractElementType
 import org.jetbrains.kotlin.fir.tree.generator.util.get
-import org.jetbrains.kotlin.util.SmartPrinter
-import org.jetbrains.kotlin.util.withIndent
+import org.jetbrains.kotlin.utils.SmartPrinter
+import org.jetbrains.kotlin.utils.withIndent
 import java.io.File
 
 fun Element.generateCode(generationPath: File): GeneratedFile {

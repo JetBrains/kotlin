@@ -10,8 +10,8 @@ import org.jetbrains.kotlin.analysis.api.fir.generator.HLDiagnostic
 import org.jetbrains.kotlin.analysis.api.fir.generator.HLDiagnosticList
 import org.jetbrains.kotlin.analysis.api.fir.generator.HLDiagnosticParameter
 import org.jetbrains.kotlin.fir.checkers.generator.inBracketsWithIndent
-import org.jetbrains.kotlin.util.SmartPrinter
-import org.jetbrains.kotlin.util.withIndent
+import org.jetbrains.kotlin.utils.SmartPrinter
+import org.jetbrains.kotlin.utils.withIndent
 
 object FirDiagnosticToKtDiagnosticConverterRenderer : AbstractDiagnosticsDataClassRenderer() {
     override fun SmartPrinter.render(diagnosticList: HLDiagnosticList, packageName: String) {
