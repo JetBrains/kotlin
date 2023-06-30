@@ -97,6 +97,12 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                 it.deleteOnExit()
             }
             firstStageConfiguration.put(KonanConfigKeys.OUTPUT, intermediateKLib.absolutePath)
+            // Empty all cache-related keys.
+            firstStageConfiguration.put(KonanConfigKeys.CACHE_DIRECTORIES, emptyList())
+            firstStageConfiguration.put(KonanConfigKeys.AUTO_CACHEABLE_FROM, emptyList())
+            firstStageConfiguration.put(KonanConfigKeys.CACHED_LIBRARIES, emptyMap())
+            firstStageConfiguration.put(KonanConfigKeys.AUTO_CACHE_DIR, "")
+            firstStageConfiguration.put(KonanConfigKeys.INCREMENTAL_CACHE_DIR, "")
 
             val firstStageExitCode = executeStage(firstStageConfiguration, arguments, rootDisposable)
             if (firstStageExitCode != ExitCode.OK)
