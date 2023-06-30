@@ -382,11 +382,11 @@ fun generateJUnit5CompilerTests(args: Array<String>) {
 
         testGroup("compiler/visualizer/tests-gen", "compiler/fir/raw-fir/psi2fir/testData") {
             testClass<AbstractPsiVisualizerTest>("PsiVisualizerForRawFirDataGenerated") {
-                model("rawBuilder")
+                model("rawBuilder", pattern = TestGeneratorUtil.KT_OR_KTS)
             }
 
             testClass<AbstractFirVisualizerTest>("FirVisualizerForRawFirDataGenerated") {
-                model("rawBuilder")
+                model("rawBuilder", pattern = TestGeneratorUtil.KT_OR_KTS)
             }
         }
 

@@ -26,6 +26,9 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.fir.types.customAnnotations
+import org.jetbrains.kotlin.fir.types.forEachType
+import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 
 internal object FirLazyBodiesCalculator {
     fun calculateBodies(designation: FirDesignation) {
@@ -145,6 +148,24 @@ private fun replaceLazyDelegate(target: FirVariable, copy: FirVariable) {
     }
 }
 
+private fun calculateLazyBodiesForScript(designation: FirDesignation) {
+    val firScript = designation.target as FirScript
+    val ktScript = firScript.psi as KtScript
+
+    val replacement = RawFirReplacement(ktScript, ktScript)
+
+    val newDeclarationWithReplacement = RawFirNonLocalDeclarationBuilder.buildWithReplacement(
+        session = firScript.moduleData.session,
+        scopeProvider = firScript.moduleData.session.kotlinScopeProvider,
+        designation = designation,
+        rootNonLocalDeclaration = ktScript,
+        replacement = replacement,
+    ) as FirScript
+
+    firScript.replaceAnnotations(newDeclarationWithReplacement.annotations)
+    firScript.replaceStatements(newDeclarationWithReplacement.statements)
+}
+
 private fun calculateLazyBodiesForFunction(designation: FirDesignation) {
     val simpleFunction = designation.target as FirSimpleFunction
     require(needCalculatingLazyBodyForFunction(simpleFunction))
@@ -249,6 +270,12 @@ private fun needCalculatingLazyBodyForFunction(firFunction: FirFunction): Boolea
             || (firFunction is FirContractDescriptionOwner && needCalculatingLazyBodyForContractDescriptionOwner(firFunction))
 }
 
+private fun needCalculatingLazyBodyForScript(firScript: FirScript): Boolean {
+    val lazyBodiesVisitor = LazyBodiesVisitor()
+    firScript.acceptChildren(lazyBodiesVisitor)
+    return lazyBodiesVisitor.lazyBodyDetected
+}
+
 private fun needCalculatingLazyBodyForProperty(firProperty: FirProperty): Boolean =
     firProperty.getter?.let { needCalculatingLazyBodyForFunction(it) } == true
             || firProperty.setter?.let { needCalculatingLazyBodyForFunction(it) } == true
@@ -293,6 +320,18 @@ private object FirTargetLazyAnnotationCalculatorTransformer : FirLazyAnnotationT
     override fun transformBlock(block: FirBlock, data: FirLazyAnnotationTransformerData): FirStatement {
         // We shouldn't process blocks because there are no lazy annotations
         return block
+    }
+}
+
+private class LazyBodiesVisitor : FirVisitorVoid() {
+    var lazyBodyDetected = false
+        private set
+
+    override fun visitElement(element: FirElement) {
+        when (element) {
+            is FirLazyExpression -> lazyBodyDetected = true
+            else -> element.acceptChildren(this)
+        }
     }
 }
 
@@ -405,6 +444,14 @@ private abstract class FirLazyBodiesCalculatorTransformer : FirTransformer<Persi
         }
 
         return field
+    }
+
+    override fun transformScript(script: FirScript, data: PersistentList<FirRegularClass>): FirScript {
+        if (needCalculatingLazyBodyForScript(script)) {
+            val designation = FirDesignation(data, script)
+            calculateLazyBodiesForScript(designation)
+        }
+        return script
     }
 
     override fun transformSimpleFunction(

@@ -1,0 +1,6 @@
+FILE: scriptWithCustomImport.kts
+    plugins#(<L> = plugins@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+        kotlin#(String(jvm)).version#(String(1.8.21))
+        application#
+    }
+    )group# = String(org.example)version# = String(1.0-SNAPSHOT)

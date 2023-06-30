@@ -28,11 +28,11 @@ import org.jetbrains.kotlin.test.utils.CUSTOM_TEST_DATA_EXTENSION_PATTERN
 internal fun TestGroupSuite.generateFirLowLevelApiTests() {
     testGroup("analysis/low-level-api-fir/tests", "compiler/fir/raw-fir/psi2fir/testData") {
         testClass<AbstractFirSourceLazyBodiesCalculatorTest> {
-            model("rawBuilder", testMethod = "doTest")
+            model("rawBuilder", testMethod = "doTest", pattern = TestGeneratorUtil.KT_OR_KTS )
         }
 
         testClass<AbstractFirOutOfContentRootLazyBodiesCalculatorTest> {
-            model("rawBuilder", testMethod = "doTest")
+            model("rawBuilder", testMethod = "doTest", pattern = TestGeneratorUtil.KT_OR_KTS)
         }
     }
 

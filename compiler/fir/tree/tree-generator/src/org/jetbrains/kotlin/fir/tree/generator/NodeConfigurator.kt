@@ -489,7 +489,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
 
         script.configure {
             +name
-            +fieldList(statement).withTransform()
+            +fieldList(statement).withTransform().withReplace()
             +symbol("FirScriptSymbol")
             +FieldList("parameters", variable, withReplace = false)
             +fieldList(contextReceiver, useMutableOrEmpty = true)

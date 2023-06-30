@@ -14,7 +14,8 @@ abstract class AbstractRawFirBuilderLazyBodiesTestCase : AbstractRawFirBuilderTe
         val file = createKtFile(filePath)
         val firFile = file.toFirFile(BodyBuildingMode.LAZY_BODIES)
         val firFileDump = FirRenderer().renderElementAsString(firFile)
-        val expectedPath = filePath.replace(".kt", ".lazyBodies.txt")
+        val extension = File(filePath).extension
+        val expectedPath = filePath.replace(".$extension", ".lazyBodies.txt")
         KotlinTestUtils.assertEqualsToFile(File(expectedPath), firFileDump)
     }
 }

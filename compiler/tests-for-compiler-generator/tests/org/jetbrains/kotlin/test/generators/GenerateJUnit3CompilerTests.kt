@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.java.AbstractFirTypeEnhancementTest
 import org.jetbrains.kotlin.fir.java.AbstractOwnFirTypeEnhancementTest
 import org.jetbrains.kotlin.fir.lightTree.AbstractLightTree2FirConverterTestCase
 import org.jetbrains.kotlin.generators.impl.generateTestGroupSuite
+import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil.KT_OR_KTS_WITHOUT_DOTS_IN_NAME
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME
 import org.jetbrains.kotlin.integration.AbstractAntTaskTest
@@ -400,7 +401,7 @@ fun generateJUnit3CompilerTests(args: Array<String>) {
 
         testGroup("compiler/fir/raw-fir/psi2fir/tests-gen", "compiler/fir/raw-fir/psi2fir/testData") {
             testClass<AbstractRawFirBuilderTestCase> {
-                model("rawBuilder", testMethod = "doRawFirTest")
+                model("rawBuilder", testMethod = "doRawFirTest", pattern = TestGeneratorUtil.KT_OR_KTS)
             }
 
             testClass<AbstractRawFirBuilderLazyBodiesTestCase> {
@@ -414,6 +415,7 @@ fun generateJUnit3CompilerTests(args: Array<String>) {
 
         testGroup("compiler/fir/raw-fir/light-tree2fir/tests-gen", "compiler/fir/raw-fir/psi2fir/testData") {
             testClass<AbstractLightTree2FirConverterTestCase> {
+                // TODO TestGeneratorUtil.KT_OR_KTS once DeclarationsConverter#convertFile supports scripts
                 model("rawBuilder")
             }
         }

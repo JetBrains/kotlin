@@ -8,7 +8,10 @@ package org.jetbrains.kotlin.fir.session
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.caches.FirCachesFactory
+import org.jetbrains.kotlin.fir.caches.FirThreadUnsafeCachesFactory
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
+import org.jetbrains.kotlin.fir.extensions.FirExtensionService
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
@@ -76,6 +79,15 @@ object FirSessionFactoryHelper {
             registerExtraComponents = {},
             sessionConfigurator,
         )
+    }
+
+    @OptIn(SessionConfiguration::class)
+    @TestOnly
+    fun createEmptyKtsAwareSession(): FirSession {
+        return createEmptySession().apply {
+            register(FirCachesFactory::class, FirThreadUnsafeCachesFactory)
+            register(FirExtensionService::class, FirExtensionService(this))
+        }
     }
 
     @OptIn(SessionConfiguration::class, PrivateSessionConstructor::class)

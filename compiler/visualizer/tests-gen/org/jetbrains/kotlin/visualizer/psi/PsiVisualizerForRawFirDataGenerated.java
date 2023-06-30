@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 public class PsiVisualizerForRawFirDataGenerated extends AbstractPsiVisualizerTest {
     @Test
     public void testAllFilesPresentInRawBuilder() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/rawBuilder"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/rawBuilder"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
     }
 
     @Nested
@@ -30,7 +30,7 @@ public class PsiVisualizerForRawFirDataGenerated extends AbstractPsiVisualizerTe
     public class Declarations {
         @Test
         public void testAllFilesPresentInDeclarations() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
         }
 
         @Test
@@ -226,6 +226,12 @@ public class PsiVisualizerForRawFirDataGenerated extends AbstractPsiVisualizerTe
         }
 
         @Test
+        @TestMetadata("scriptWithCustomImport.kts")
+        public void testScriptWithCustomImport() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/scriptWithCustomImport.kts");
+        }
+
+        @Test
         @TestMetadata("simpleClass.kt")
         public void testSimpleClass() throws Exception {
             runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/simpleClass.kt");
@@ -285,7 +291,7 @@ public class PsiVisualizerForRawFirDataGenerated extends AbstractPsiVisualizerTe
         public class Contracts {
             @Test
             public void testAllFilesPresentInContracts() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/contracts"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/contracts"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
             }
 
             @Nested
@@ -294,7 +300,7 @@ public class PsiVisualizerForRawFirDataGenerated extends AbstractPsiVisualizerTe
             public class NewSyntax {
                 @Test
                 public void testAllFilesPresentInNewSyntax() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/contracts/newSyntax"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/contracts/newSyntax"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
                 }
 
                 @Test
@@ -322,7 +328,7 @@ public class PsiVisualizerForRawFirDataGenerated extends AbstractPsiVisualizerTe
             public class OldSyntax {
                 @Test
                 public void testAllFilesPresentInOldSyntax() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/contracts/oldSyntax"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/contracts/oldSyntax"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
                 }
 
                 @Test
@@ -339,7 +345,7 @@ public class PsiVisualizerForRawFirDataGenerated extends AbstractPsiVisualizerTe
         public class NoParameterType {
             @Test
             public void testAllFilesPresentInNoParameterType() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/noParameterType"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/noParameterType"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
             }
 
             @Test
@@ -398,7 +404,7 @@ public class PsiVisualizerForRawFirDataGenerated extends AbstractPsiVisualizerTe
     public class Expressions {
         @Test
         public void testAllFilesPresentInExpressions() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
         }
 
         @Test
