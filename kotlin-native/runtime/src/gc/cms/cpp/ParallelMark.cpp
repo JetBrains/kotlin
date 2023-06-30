@@ -76,14 +76,12 @@ void gc::mark::ParallelMark::beginMarkingEpoch(gc::GCHandle gcHandle) {
 
     lockedMutatorsList_ = mm::ThreadRegistry::Instance().LockForIter();
 
-    // main worker is always accounted, so others would not be able to exhaust all the parallelism before main is instantiated
-    activeWorkersCount_ = 1;
-
     parallelProcessor_.construct();
 
+    std::unique_lock guard(workerCreationMutex_);
     pacer_.beginEpoch(gcHandle.getEpoch());
     // main worker is always accounted, so others would not be able to exhaust all the parallelism before main is instantiated
-    // TODO workersRegistry_.reset(1, maxParallelism_);
+    activeWorkersCount_ = 1;
 }
 
 void gc::mark::ParallelMark::waitForThreadsPauseMutation() noexcept {
@@ -97,7 +95,7 @@ void gc::mark::ParallelMark::waitForThreadsPauseMutation() noexcept {
 
 void gc::mark::ParallelMark::endMarkingEpoch() {
     std::unique_lock guard(workerCreationMutex_);
-    RuntimeAssert(activeWorkersCount_ == 0, "TODO must be 0");
+    RuntimeAssert(activeWorkersCount_ == 0, "All the workers must already finish");
     pacer_.begin(MarkPacer::Phase::kIdle);
     parallelProcessor_.destroy();
     resetMutatorFlags();
@@ -219,9 +217,8 @@ std::optional<gc::mark::ParallelMark::ParallelProcessor::Worker> gc::mark::Paral
         activeWorkersCount_.load(std::memory_order_relaxed) >= maxParallelism_ ||
         activeWorkersCount_.load(std::memory_order_relaxed) == 0) return std::nullopt;
 
-    GCLogDebug(gcHandle().getEpoch(), "Creating mark worker #%zu", activeWorkersCount_.load(std::memory_order_relaxed));
-    activeWorkersCount_.fetch_add(1, std::memory_order_relaxed);
-    //activeWorkersCount_.store(activeWorkersCount_.load(std::memory_order_relaxed) + 1, std::memory_order_relaxed);
+    auto num = activeWorkersCount_.fetch_add(1, std::memory_order_relaxed);
+    GCLogDebug(gcHandle().getEpoch(), "Creating mark worker #%zu", num);
     return std::make_optional<ParallelProcessor::Worker>(*parallelProcessor_);
 }
 
