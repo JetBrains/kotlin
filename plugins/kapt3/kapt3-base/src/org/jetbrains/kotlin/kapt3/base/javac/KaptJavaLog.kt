@@ -263,15 +263,7 @@ private fun JCDiagnostic.Factory.errorJava9Aware(
 
         errorMethod.invoke(this, JCDiagnostic.DiagnosticFlag.MANDATORY, source, pos, key, args) as JCDiagnostic
     } else {
-        val errorMethod = this::class.java.getDeclaredMethod(
-            "error",
-            DiagnosticSource::class.java,
-            JCDiagnostic.DiagnosticPosition::class.java,
-            String::class.java,
-            Array<Any>::class.java
-        )
-
-        errorMethod.invoke(this, source, pos, key, args) as JCDiagnostic
+        this.error(source, pos, key, *args)
     }
 }
 

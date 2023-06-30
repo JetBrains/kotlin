@@ -56,11 +56,11 @@ fun KaptContext.doAnnotationProcessing(
             return
         }
 
-        val initProcessAnnotationsMethod = JavaCompiler::class.java.declaredMethods.single { it.name == "initProcessAnnotations" }
         if (isJava9OrLater()) {
+            val initProcessAnnotationsMethod = JavaCompiler::class.java.declaredMethods.single { it.name == "initProcessAnnotations" }
             initProcessAnnotationsMethod.invoke(compiler, wrappedProcessors, emptyList<JavaFileObject>(), emptyList<String>())
         } else {
-            initProcessAnnotationsMethod.invoke(compiler, wrappedProcessors)
+            compiler.initProcessAnnotations(wrappedProcessors)
         }
 
         if (logger.isVerbose) {
@@ -90,9 +90,7 @@ fun KaptContext.doAnnotationProcessing(
                 processAnnotationsMethod.invoke(compiler, analyzedFiles, additionalClassNames)
                 compiler
             } else {
-                val processAnnotationsMethod =
-                    compiler.javaClass.getMethod("processAnnotations", JavacList::class.java, JavacList::class.java)
-                processAnnotationsMethod.invoke(compiler, analyzedFiles, additionalClassNames) as JavaCompiler
+                compiler.processAnnotations(analyzedFiles, additionalClassNames)
             }
         } catch (e: AnnotationProcessingError) {
             throw KaptBaseError(KaptBaseError.Kind.EXCEPTION, e.cause ?: e)
