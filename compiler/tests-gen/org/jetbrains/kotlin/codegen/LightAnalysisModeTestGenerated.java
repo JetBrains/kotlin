@@ -7913,16 +7913,6 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/controlStructures/tryCatchInExpressions/splitTry.kt");
             }
 
-            @TestMetadata("splitTryCorner1.kt")
-            public void testSplitTryCorner1() throws Exception {
-                runTest("compiler/testData/codegen/box/controlStructures/tryCatchInExpressions/splitTryCorner1.kt");
-            }
-
-            @TestMetadata("splitTryCorner2.kt")
-            public void testSplitTryCorner2() throws Exception {
-                runTest("compiler/testData/codegen/box/controlStructures/tryCatchInExpressions/splitTryCorner2.kt");
-            }
-
             @TestMetadata("try.kt")
             public void testTry() throws Exception {
                 runTest("compiler/testData/codegen/box/controlStructures/tryCatchInExpressions/try.kt");
