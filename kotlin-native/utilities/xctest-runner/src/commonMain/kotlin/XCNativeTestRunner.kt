@@ -13,9 +13,9 @@ import platform.objc.*
 
 @ExportObjCClass(name = "Kotlin/Native::Test")
 class XCTestCaseRunner(
-    invocation: NSInvocation,
-    private val testName: String,
-    private val testCase: TestCase,
+        invocation: NSInvocation,
+        val testName: String,
+        val testCase: TestCase,
 ) : XCTestCase(invocation) {
     // Sets XCTest to continue running after failure to match Kotlin Test
     override fun continueAfterFailure(): Boolean = true
@@ -35,15 +35,12 @@ class XCTestCaseRunner(
         try {
             testCase.doRun()
         } catch (throwable: Throwable) {
-            // First of all, just print it
-            val stackTrace = throwable.getStackTrace()
-            println(throwable)
-            println(stackTrace.filter { it.contains("kfun:") }.joinToString("\n"))
-
             val type = when (throwable) {
                 is AssertionError -> XCTIssueTypeAssertionFailure
                 else -> XCTIssueTypeUncaughtException
             }
+
+            val stackTrace = throwable.getStackTrace()
             val failedStackLine = stackTrace.first {
                 // try to filter out kotlin.Exceptions and kotlin.test.Assertion inits
                 !it.contains("kfun:kotlin.")
@@ -60,27 +57,27 @@ class XCTestCaseRunner(
 
             @Suppress("CAST_NEVER_SUCCEEDS")
             val stackAsPayload = (stackTrace.joinToString("\n") as? NSString)
-                ?.dataUsingEncoding(NSUTF8StringEncoding)
+                    ?.dataUsingEncoding(NSUTF8StringEncoding)
             val stackTraceAttachment = XCTAttachment.attachmentWithUniformTypeIdentifier(
-                identifier = UTTypeSourceCode.identifier,
-                name = "Kotlin stacktrace (full)",
-                payload = stackAsPayload,
-                userInfo = null
+                    identifier = UTTypeSourceCode.identifier,
+                    name = "Kotlin stacktrace (full)",
+                    payload = stackAsPayload,
+                    userInfo = null
             )
 
             val issue = XCTIssue(
-                type = type,
-                compactDescription = "$throwable in $testName",
-                detailedDescription = buildString {
-                    appendLine("Test '$testName' from '${testCase.suite.name}' failed with $throwable")
-                    throwable.cause?.let { appendLine("(caused by ${throwable.cause})") }
-                },
-                sourceCodeContext = XCTSourceCodeContext(
-                    callStackAddresses = throwable.getStackTraceAddresses(),
-                    location = sourceLocation
-                ),
-                associatedError = null,
-                attachments = listOf(stackTraceAttachment)
+                    type = type,
+                    compactDescription = "$throwable in $testName",
+                    detailedDescription = buildString {
+                        appendLine("Test '$testName' from '${testCase.suite.name}' failed with $throwable")
+                        throwable.cause?.let { appendLine("(caused by ${throwable.cause})") }
+                    },
+                    sourceCodeContext = XCTSourceCodeContext(
+                            callStackAddresses = throwable.getStackTraceAddresses(),
+                            location = sourceLocation
+                    ),
+                    associatedError = NSErrorWithKotlinException(throwable),
+                    attachments = listOf(stackTraceAttachment)
             )
             testRun?.recordIssue(issue) ?: error("TestRun for the test $testName not found")
         }
@@ -108,7 +105,7 @@ class XCTestCaseRunner(
          */
         override fun testCaseWithInvocation(invocation: NSInvocation?): XCTestCase {
             error(
-                """
+                    """
                 This should not happen by default.
                 Got invocation: ${invocation?.description}
                 with selector @sel(${NSStringFromSelector(invocation?.selector)})
@@ -121,10 +118,10 @@ class XCTestCaseRunner(
         private fun createRunMethod(selector: SEL) {
             // Note: must be disposed off with imp_removeBlock
             val result = class_addMethod(
-                cls = this.`class`(),
-                name = selector,
-                imp = imp_implementationWithBlock(this::runner),
-                types = "v@:" // See ObjC' type encodings: v (returns void), @ (id self), : (SEL _cmd)
+                    cls = this.`class`(),
+                    name = selector,
+                    imp = imp_implementationWithBlock(this::runner),
+                    types = "v@:" // See ObjC' type encodings: v (returns void), @ (id self), : (SEL _cmd)
             )
             check(result) {
                 "Internal error: was unable to add method with selector $selector"
@@ -133,8 +130,8 @@ class XCTestCaseRunner(
 
         private fun dispose(selector: SEL) {
             val imp = class_getMethodImplementation(
-                cls = this.`class`(),
-                name = selector
+                    cls = this.`class`(),
+                    name = selector
             )
             val result = imp_removeBlock(imp)
             check(result) {
@@ -172,7 +169,13 @@ class XCTestCaseRunner(
 
 private typealias SEL = COpaquePointer?
 
-class XCTestSuiteRunner(private val testSuite: TestSuite) : XCTestSuite(testSuite.name) {
+/**
+ * This is a NSError-wrapper of Kotlin exception used to pass it through the XCTIssue
+ */
+internal class NSErrorWithKotlinException(val kotlinException: Throwable) :
+        NSError(NSCocoaErrorDomain, NSValidationErrorMinimum, null)
+
+class XCTestSuiteRunner(val testSuite: TestSuite) : XCTestSuite(testSuite.name) {
     private val ignoredSuite: Boolean
         get() = testSuite.ignored || testSuite.testCases.all { it.value.ignored }
 
@@ -184,67 +187,3 @@ class XCTestSuiteRunner(private val testSuite: TestSuite) : XCTestSuite(testSuit
         if (!ignoredSuite) testSuite.doAfterClass()
     }
 }
-
-// Test settings should be initialized by the setup method
-// It stores settings with the filtered test suites, loggers and listeners.
-private var testSettings: TestSettings? = null
-
-private fun testMethodsNames(): List<String> = testSettings?.testSuites
-        ?.toList()
-        ?.flatMap { testSuite ->
-            testSuite.testCases.values.map { "$testSuite.${it.name}" }
-        } ?: error("TestSettings isn't initialized")
-
-@Suppress("unused")
-@kotlin.native.internal.ExportForCppRuntime("Konan_create_testSuite")
-internal fun setupXCTestSuite(): XCTestSuite {
-    val nativeTestSuite = XCTestSuite.testSuiteWithName("Kotlin/Native test suite")
-
-    // Get test arguments from the Info.plist to create test settings
-    val plistTestArgs = NSBundle.allBundles.mapNotNull {
-        (it as? NSBundle)?.infoDictionary
-                ?.get("KotlinNativeTestArgs")
-    }.singleOrNull() as? String
-    val args = plistTestArgs?.split(" ")?.toTypedArray() ?: emptyArray<String>()
-
-    // Initialize settings with the given args
-    testSettings = TestProcessor(GeneratedSuites.suites, args).process()
-
-    if (testSettings?.runTests == true) {
-        // Generate and add tests to the main suite
-        testSettings?.testSuites?.generate()?.forEach {
-            nativeTestSuite.addTest(it)
-        }
-
-        // Tests created (self-check)
-        @Suppress("UNCHECKED_CAST")
-        check(testSettings?.testSuites?.size == (nativeTestSuite.tests as List<XCTest>).size) {
-            "The amount of generated XCTest suites should be equal to Kotlin test suites"
-        }
-    }
-
-    return nativeTestSuite
-}
-
-private fun Collection<TestSuite>.generate(): List<XCTestSuite> {
-    val testInvocations = XCTestCaseRunner.testInvocations()
-    return this.map { suite ->
-        val xcSuite = XCTestSuiteRunner(suite)
-        suite.testCases.values.map { testCase ->
-            testInvocations.filter {
-                it.selectorString() == "${suite.name}.${testCase.name}"
-            }.map { invocation ->
-                XCTestCaseRunner(
-                    invocation = invocation,
-                    testName = "${suite.name}.${testCase.name}",
-                    testCase = testCase
-                )
-            }.single()
-        }.forEach {
-            xcSuite.addTest(it)
-        }
-        xcSuite
-    }
-}
-
-private fun NSInvocation.selectorString() = NSStringFromSelector(selector)
