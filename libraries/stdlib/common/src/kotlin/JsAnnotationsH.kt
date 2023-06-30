@@ -95,7 +95,7 @@ public expect annotation class JsExport() {
     */
     @ExperimentalJsExport
     @Retention(AnnotationRetention.BINARY)
-    @Target(CLASS, PROPERTY, FUNCTION)
+    @Target(CLASS, PROPERTY, FUNCTION, CONSTRUCTOR)
     @SinceKotlin("1.8")
     @OptionalExpectation
     public annotation class Ignore()

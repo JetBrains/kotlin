@@ -13,6 +13,8 @@ package kotlin.js
 @ExperimentalJsExport
 @Retention(AnnotationRetention.BINARY)
 @Target(AnnotationTarget.FUNCTION)
+// All targets from expect can't be set because for K/Wasm so far you can export only functions
+@Suppress("ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT")
 public actual annotation class JsExport {
     @ExperimentalJsExport
     @Retention(AnnotationRetention.BINARY)
