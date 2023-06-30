@@ -12,11 +12,9 @@ import com.intellij.psi.impl.source.resolve.ResolveCache
 import org.jetbrains.kotlin.analysis.api.KtAllowAnalysisOnEdt
 import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.lifetime.allowAnalysisOnEdt
-import org.jetbrains.kotlin.analysis.utils.errors.buildErrorWithAttachment
-import org.jetbrains.kotlin.analysis.utils.errors.withPsiEntry
 import org.jetbrains.kotlin.diagnostics.PsiDiagnosticUtils
-import org.jetbrains.kotlin.util.shouldIjPlatformExceptionBeRethrown
 import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
+import org.jetbrains.kotlin.utils.exceptions.shouldIjPlatformExceptionBeRethrown
 
 object KtFirReferenceResolver : ResolveCache.PolyVariantResolver<KtReference> {
     class KotlinResolveResult(element: PsiElement) : PsiElementResolveResult(element)

@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder
 import org.jetbrains.kotlin.analysis.api.impl.barebone.annotations.ThreadSafe
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
 import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
-import org.jetbrains.kotlin.analysis.utils.errors.checkWithAttachmentBuilder
+import org.jetbrains.kotlin.utils.exceptions.checkWithAttachmentBuilder
 import org.jetbrains.kotlin.fir.builder.BodyBuildingMode
 import org.jetbrains.kotlin.fir.builder.PsiRawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.FirFile

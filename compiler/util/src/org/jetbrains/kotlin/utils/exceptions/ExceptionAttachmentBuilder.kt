@@ -1,36 +1,32 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.analysis.utils.errors
+package org.jetbrains.kotlin.utils.exceptions
 
 import com.intellij.openapi.diagnostic.Attachment
 import com.intellij.openapi.diagnostic.Logger
-import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
-import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
-import org.jetbrains.kotlin.utils.SmartPrinter
-import org.jetbrains.kotlin.util.SourceCodeAnalysisException
-import org.jetbrains.kotlin.util.shouldIjPlatformExceptionBeRethrown
-import org.jetbrains.kotlin.utils.withIndent
 import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
+import org.jetbrains.kotlin.utils.SmartPrinter
+import org.jetbrains.kotlin.utils.withIndent
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
-public class ExceptionAttachmentBuilder {
+class ExceptionAttachmentBuilder {
     private val printer = SmartPrinter(StringBuilder())
 
-    public fun <T> withEntry(name: String, value: T, render: (T & Any) -> String) {
+    fun <T> withEntry(name: String, value: T, render: (T & Any) -> String) {
         withEntry(name) {
-            appendLine("Class: ${value?.let { it::class.java.name } ?: "<null>"}")
-            appendLine("Value:")
+            println("Class: ${value?.let { it::class.java.name } ?: "<null>"}")
+            println("Value:")
             withIndent {
-                appendLine(value?.let(render) ?: "<null>")
+                println(value?.let(render) ?: "<null>")
             }
         }
     }
 
-    public fun withEntry(name: String, value: String?) {
+    fun withEntry(name: String, value: String?) {
         with(printer) {
             println("- $name:")
             withIndent {
@@ -40,68 +36,66 @@ public class ExceptionAttachmentBuilder {
         }
     }
 
-    public fun withEntry(name: String, buildValue: PrettyPrinter.() -> Unit) {
-        withEntry(name, prettyPrint { buildValue() })
+    fun withEntry(name: String, buildValue: SmartPrinter.() -> Unit) {
+        withEntry(name, SmartPrinter(StringBuilder()).apply(buildValue).toString())
     }
 
-    public fun withEntryGroup(groupName: String, build: ExceptionAttachmentBuilder.() -> Unit) {
+    fun withEntryGroup(groupName: String, build: ExceptionAttachmentBuilder.() -> Unit) {
         val builder = ExceptionAttachmentBuilder().apply(build)
         withEntry(groupName, builder) { it.buildString() }
     }
 
-    public fun buildString(): String = printer.toString()
+    fun buildString(): String = printer.toString()
 
     private companion object {
         private const val separator = "========"
     }
 }
 
-public inline fun KotlinExceptionWithAttachments.buildAttachment(
+inline fun KotlinExceptionWithAttachments.buildAttachment(
     name: String = "info.txt",
-    buildContent: ExceptionAttachmentBuilder.() -> Unit
+    buildContent: ExceptionAttachmentBuilder.() -> Unit,
 ): KotlinExceptionWithAttachments {
     return withAttachment(name, ExceptionAttachmentBuilder().apply(buildContent).buildString())
 }
 
-public inline fun buildErrorWithAttachment(
+inline fun buildErrorWithAttachment(
     message: String,
     cause: Exception? = null,
     attachmentName: String = "info.txt",
-    buildAttachment: ExceptionAttachmentBuilder.() -> Unit = {}
+    buildAttachment: ExceptionAttachmentBuilder.() -> Unit = {},
 ): Nothing {
     val exception = KotlinExceptionWithAttachments(message, cause)
     exception.buildAttachment(attachmentName) { buildAttachment() }
     throw exception
 }
 
-public inline fun Logger.logErrorWithAttachment(
+inline fun Logger.logErrorWithAttachment(
     message: String,
     cause: Exception? = null,
     attachmentName: String = "info.txt",
-    buildAttachment: ExceptionAttachmentBuilder.() -> Unit = {}
+    buildAttachment: ExceptionAttachmentBuilder.() -> Unit = {},
 ) {
     val attachment = Attachment(attachmentName, ExceptionAttachmentBuilder().apply(buildAttachment).buildString())
     this.error(message, cause, attachment)
 }
 
-public inline fun rethrowExceptionWithDetails(
+inline fun rethrowExceptionWithDetails(
     message: String,
     exception: Exception,
     attachmentName: String = "info.txt",
-    buildAttachment: ExceptionAttachmentBuilder.() -> Unit = {}
+    buildAttachment: ExceptionAttachmentBuilder.() -> Unit = {},
 ): Nothing {
     if (shouldIjPlatformExceptionBeRethrown(exception)) throw exception
-    val unwrappedException = if (exception is SourceCodeAnalysisException) exception.cause else exception
-    if (unwrappedException !is Exception) throw unwrappedException
-    buildErrorWithAttachment(message, unwrappedException, attachmentName, buildAttachment)
+    buildErrorWithAttachment(message, exception, attachmentName, buildAttachment)
 }
 
 
 @OptIn(ExperimentalContracts::class)
-public inline fun checkWithAttachmentBuilder(
+inline fun checkWithAttachmentBuilder(
     condition: Boolean,
     message: () -> String,
-    buildAttachment: ExceptionAttachmentBuilder.() -> Unit = {}
+    buildAttachment: ExceptionAttachmentBuilder.() -> Unit = {},
 ) {
     contract { returns() implies (condition) }
 
@@ -111,10 +105,10 @@ public inline fun checkWithAttachmentBuilder(
 }
 
 @OptIn(ExperimentalContracts::class)
-public inline fun requireWithAttachmentBuilder(
+inline fun requireWithAttachmentBuilder(
     condition: Boolean,
     message: () -> String,
-    buildAttachment: ExceptionAttachmentBuilder.() -> Unit = {}
+    buildAttachment: ExceptionAttachmentBuilder.() -> Unit = {},
 ) {
     contract { returns() implies (condition) }
 

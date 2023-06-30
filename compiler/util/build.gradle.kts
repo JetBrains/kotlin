@@ -6,6 +6,7 @@ plugins {
 dependencies {
     api(kotlinStdlib())
     api(project(":compiler:compiler.version"))
+    api(project(":core:util.runtime"))
 
     compileOnly(intellijCore())
     compileOnly(commonDependency("org.jetbrains.intellij.deps:log4j"))

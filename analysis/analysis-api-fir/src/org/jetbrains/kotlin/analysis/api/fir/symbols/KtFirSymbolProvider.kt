@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbolOfT
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.throwUnexpectedFirElementError
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withFirSymbolEntry
-import org.jetbrains.kotlin.analysis.utils.errors.buildErrorWithAttachment
+import org.jetbrains.kotlin.utils.exceptions.buildErrorWithAttachment
 import org.jetbrains.kotlin.analysis.utils.errors.withPsiEntry
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass

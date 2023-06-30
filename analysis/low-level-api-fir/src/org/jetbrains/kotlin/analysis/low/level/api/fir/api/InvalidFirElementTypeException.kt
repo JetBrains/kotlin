@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
-import org.jetbrains.kotlin.analysis.utils.errors.*
+import org.jetbrains.kotlin.utils.exceptions.buildAttachment
 import java.util.*
 import kotlin.reflect.KClass
 

@@ -10,6 +10,7 @@ import com.intellij.psi.PsiInvalidElementAccessException
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.utils.printer.getElementTextInContext
 import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.utils.exceptions.ExceptionAttachmentBuilder
 
 public fun ExceptionAttachmentBuilder.withPsiEntry(name: String, psi: PsiElement?, moduleFactory: (PsiElement) -> KtModule) {
     return withPsiEntry(name, psi, psi?.let(moduleFactory))

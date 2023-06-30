@@ -10,8 +10,8 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.throwUnexpectedFirEle
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkDelegatedConstructorIsResolved
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.*
-import org.jetbrains.kotlin.analysis.utils.errors.buildErrorWithAttachment
-import org.jetbrains.kotlin.analysis.utils.errors.checkWithAttachmentBuilder
+import org.jetbrains.kotlin.utils.exceptions.buildErrorWithAttachment
+import org.jetbrains.kotlin.utils.exceptions.checkWithAttachmentBuilder
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirFileAnnotationsContainer
 import org.jetbrains.kotlin.fir.FirSession

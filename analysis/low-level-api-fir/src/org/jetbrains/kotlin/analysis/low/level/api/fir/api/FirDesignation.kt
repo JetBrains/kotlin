@@ -11,8 +11,8 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.FirElementFinder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.containingClass
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.getContainingFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withFirEntry
-import org.jetbrains.kotlin.analysis.utils.errors.buildErrorWithAttachment
-import org.jetbrains.kotlin.analysis.utils.errors.checkWithAttachmentBuilder
+import org.jetbrains.kotlin.utils.exceptions.buildErrorWithAttachment
+import org.jetbrains.kotlin.utils.exceptions.checkWithAttachmentBuilder
 import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
 import org.jetbrains.kotlin.analysis.utils.errors.unexpectedElementError
 import org.jetbrains.kotlin.builtins.StandardNames

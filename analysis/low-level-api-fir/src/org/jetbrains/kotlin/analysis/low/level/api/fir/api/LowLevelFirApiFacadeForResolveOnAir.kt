@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLFirResolvableReso
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.FirElementFinder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.originalDeclaration
-import org.jetbrains.kotlin.analysis.utils.errors.buildErrorWithAttachment
+import org.jetbrains.kotlin.utils.exceptions.buildErrorWithAttachment
 import org.jetbrains.kotlin.analysis.utils.errors.withPsiEntry
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
 import org.jetbrains.kotlin.analysis.utils.printer.parentsOfType

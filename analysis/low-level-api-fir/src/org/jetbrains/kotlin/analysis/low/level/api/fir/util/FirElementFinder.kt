@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.util
 
-import org.jetbrains.kotlin.analysis.utils.errors.requireWithAttachmentBuilder
+import org.jetbrains.kotlin.utils.exceptions.requireWithAttachmentBuilder
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.packageFqName

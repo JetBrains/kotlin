@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.analysis.utils.errors
 
+import org.jetbrains.kotlin.utils.exceptions.buildErrorWithAttachment
+
 public fun unexpectedElementError(elementName: String, element: Any?): Nothing {
     buildErrorWithAttachment("Unexpected $elementName ${element?.let { it::class.simpleName }}") {
         withEntry(elementName, element) { element.toString() }

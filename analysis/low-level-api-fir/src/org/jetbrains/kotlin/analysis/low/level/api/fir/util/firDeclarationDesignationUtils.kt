@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.util
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignation
-import org.jetbrains.kotlin.analysis.utils.errors.checkWithAttachmentBuilder
+import org.jetbrains.kotlin.utils.exceptions.checkWithAttachmentBuilder
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration

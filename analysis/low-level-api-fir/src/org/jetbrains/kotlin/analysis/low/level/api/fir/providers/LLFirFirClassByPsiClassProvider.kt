@@ -19,6 +19,8 @@ import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.analysis.utils.classIdIfNonLocal
+import org.jetbrains.kotlin.utils.exceptions.buildErrorWithAttachment
+import org.jetbrains.kotlin.utils.exceptions.checkWithAttachmentBuilder
 
 class LLFirFirClassByPsiClassProvider(private val session: LLFirSession) : FirSessionComponent {
     fun getFirClass(psiClass: PsiClass): FirRegularClassSymbol? {

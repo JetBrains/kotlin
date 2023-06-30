@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withConeTypeEntry
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withFirEntry
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withFirSymbolEntry
 import org.jetbrains.kotlin.analysis.providers.KotlinPackageProvider
-import org.jetbrains.kotlin.analysis.utils.errors.buildErrorWithAttachment
+import org.jetbrains.kotlin.utils.exceptions.buildErrorWithAttachment
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
