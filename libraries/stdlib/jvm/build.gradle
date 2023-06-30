@@ -221,7 +221,7 @@ compileLongRunningTestKotlin {
     kotlinOptions.freeCompilerArgs += "-opt-in=kotlin.ExperimentalStdlibApi"
 }
 
-configureFrontendIr(project)
+LibrariesCommon.configureFrontendIr(project)
 
 tasks.register("longRunningTest", Test) {
     dependsOn(longRunningTestClasses)

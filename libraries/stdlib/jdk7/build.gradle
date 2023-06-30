@@ -53,7 +53,7 @@ compileKotlin {
 compileTestKotlin {
 }
 
-configureFrontendIr(project)
+LibrariesCommon.configureFrontendIr(project)
 
 LibrariesCommon.configureJava9Compilation(project, 'kotlin.stdlib.jdk7')
 

@@ -9,9 +9,10 @@ import org.gradle.api.JavaVersion
 import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.compile.JavaCompile
-import org.gradle.kotlin.dsl.get
+import org.gradle.kotlin.dsl.*
 import org.gradle.process.CommandLineArgumentProvider
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 @JvmOverloads
 fun Project.configureJava9Compilation(
@@ -61,4 +62,20 @@ private class Java9AdditionalArgumentsProvider(
         "--patch-module", "$moduleName=${moduleFiles.asPath}",
         "-Xlint:-requires-transitive-automatic" // suppress automatic module transitive dependencies in kotlin.test
     )
+}
+
+fun Project.configureFrontendIr() = tasks.withType<KotlinJvmCompile>().configureEach {
+    compilerOptions {
+        if (project.kotlinBuildProperties.useFirForLibraries) {
+            freeCompilerArgs.add("-Xuse-k2")
+            allWarningsAsErrors.set(false)
+        } else if (project.kotlinBuildProperties.useFir) {
+            freeCompilerArgs.add("-Xskip-prerelease-check")
+        }
+
+        val renderDiagnosticNames by extra(project.kotlinBuildProperties.renderDiagnosticNames)
+        if (renderDiagnosticNames) {
+            freeCompilerArgs.add("-Xrender-internal-diagnostic-names")
+        }
+    }
 }
