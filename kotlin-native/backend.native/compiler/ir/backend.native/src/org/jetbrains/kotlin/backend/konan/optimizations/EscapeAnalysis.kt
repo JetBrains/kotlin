@@ -1175,11 +1175,11 @@ internal object EscapeAnalysis {
                             is PointsToGraphEdge.Assignment ->
                                 compressedEdges += CompressedPointsToGraph.Edge(fromCompressedNode, toCompressedNode)
 
-                            is PointsToGraphEdge.Field ->
-                                if (edge.node == from /* A loop */) {
-                                    compressedEdges += CompressedPointsToGraph.Edge(
-                                            fromCompressedNode.goto(edge.field), toCompressedNode)
-                                }
+                            is PointsToGraphEdge.Field -> {
+                                val next = fromCompressedNode.goto(edge.field)
+                                if (next != toCompressedNode) // Skip loops.
+                                    compressedEdges += CompressedPointsToGraph.Edge(next, toCompressedNode)
+                            }
                         }
                     }
                 }
@@ -1768,30 +1768,40 @@ internal object EscapeAnalysis {
                         nodeIds[drain] = drainFactory()
                 }
 
-                var front = nodeIds.keys.toList()
-                while (front.isNotEmpty()) {
-                    val nextFront = mutableListOf<PointsToGraphNode>()
-                    for (node in front) {
-                        val nodeId = nodeIds[node]!!
-                        node.edges.filterIsInstance<PointsToGraphEdge.Field>().forEach { edge ->
-                            val field = edge.field
-                            val nextNode = edge.node
-                            if (nextNode.drain in interestingDrains && nextNode != node /* Skip loops */) {
-                                val nextNodeId = nodeId.goto(field)
-                                if (nodeIds[nextNode] != null)
-                                    error("Expected only one incoming field edge. ${nodeIds[nextNode]} != $nextNodeId")
-                                nodeIds[nextNode] = nextNodeId
-                                if (nextNode.isDrain)
-                                    nextFront += nextNode
+                var front = nodeIds.keys.toMutableList()
+                do {
+                    while (front.isNotEmpty()) {
+                        val nextFront = mutableListOf<PointsToGraphNode>()
+                        for (node in front) {
+                            val nodeId = nodeIds[node]!!
+                            node.edges.filterIsInstance<PointsToGraphEdge.Field>().forEach { edge ->
+                                val field = edge.field
+                                val nextNode = edge.node
+                                if (nextNode.drain in interestingDrains && nextNode != node /* Skip loops */) {
+                                    val nextNodeId = nodeId.goto(field)
+                                    if (nodeIds[nextNode] == null) {
+                                        nodeIds[nextNode] = nextNodeId
+                                        if (nextNode.isDrain)
+                                            nextFront += nextNode
+                                    }
+                                }
                             }
                         }
+                        front = nextFront
                     }
-                    front = nextFront
-                }
-                for (drain in interestingDrains) {
-                    if (nodeIds[drain] == null && drain.edges.any { it.node.drain in interestingDrains })
-                        error("Drains have not been painted properly")
-                }
+
+                    // Find unpainted drain.
+                    for (drain in interestingDrains) {
+                        if (nodeIds[drain] == null
+                                // A little optimization - skip leaf drains.
+                                && drain.edges.any { it.node.drain in interestingDrains }
+                        ) {
+                            nodeIds[drain] = drainFactory()
+                            front += drain
+                            break
+                        }
+                    }
+                } while (front.isNotEmpty()) // Loop until all drains have been painted.
 
                 return nodeIds
             }
