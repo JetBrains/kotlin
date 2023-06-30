@@ -22,7 +22,7 @@ dependencies {
 }
 
 jar {
-    manifestAttributes(manifest, project, 'Test', true)
+    LibrariesCommon.manifestAttributes(project, manifest, 'Test', true)
     if (includeJava9) {
         from sourceSets.java9.output
     }

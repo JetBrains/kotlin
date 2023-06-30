@@ -247,7 +247,7 @@ jar {
 tasks.register("libraryJarWithoutIr", Jar) {
     dependsOn(compileJs)
     archiveClassifier = null
-    manifestAttributes(manifest, project, 'Main')
+    LibrariesCommon.manifestAttributes(project, manifest, 'Main')
     destinationDirectory = file("$buildDir/lib/dist")
 
     // TODO: Use standard implementation title after js stdlib detector becomes more flexible (KT-17655)

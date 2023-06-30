@@ -42,7 +42,7 @@ dependencies {
 }
 
 jar {
-    manifestAttributes(manifest, project, 'Main', true)
+    LibrariesCommon.manifestAttributes(project, manifest, 'Main', true)
     from sourceSets.java9.output
 }
 

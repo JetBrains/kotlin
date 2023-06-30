@@ -62,7 +62,7 @@ compileKotlin {
 LibrariesCommon.configureFrontendIr(project)
 
 jar {
-    manifestAttributes(manifest, project, "internal")
+    LibrariesCommon.manifestAttributes(project, manifest, "internal")
 }
 
 tasks.register("java9Jar", Jar) {

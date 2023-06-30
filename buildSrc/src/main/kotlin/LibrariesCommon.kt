@@ -5,9 +5,11 @@
 
 @file:JvmName("LibrariesCommon")
 
+import gradle.kotlin.dsl.accessors._a448c82b4669f5dc55622c27b71461fb.base
 import org.gradle.api.JavaVersion
 import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
+import org.gradle.api.java.archives.Manifest
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.kotlin.dsl.*
 import org.gradle.process.CommandLineArgumentProvider
@@ -77,5 +79,32 @@ fun Project.configureFrontendIr() = tasks.withType<KotlinJvmCompile>().configure
         if (renderDiagnosticNames) {
             freeCompilerArgs.add("-Xrender-internal-diagnostic-names")
         }
+    }
+}
+
+@JvmOverloads
+fun Project.manifestAttributes(
+    manifest: Manifest,
+    component: String? = null,
+    multiRelease: Boolean = false
+) {
+    manifest.attributes(
+        "Implementation-Vendor" to "JetBrains",
+        "Implementation-Title" to base.archivesName,
+        "Implementation-Version" to project.rootProject.extra["buildNumber"] as String
+    )
+
+    if (component != null) {
+        val kotlinLanguageVersion: String by rootProject.extra
+        manifest.attributes(
+            "Kotlin-Runtime-Component" to component,
+            "Kotlin-Version" to kotlinLanguageVersion
+        )
+    }
+
+    if (multiRelease) {
+        manifest.attributes(
+            "Multi-Release" to "true"
+        )
     }
 }

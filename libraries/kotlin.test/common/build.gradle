@@ -10,7 +10,7 @@ dependencies {
 }
 
 jar {
-    manifestAttributes(manifest, project, 'Test')
+    LibrariesCommon.manifestAttributes(project, manifest, 'Test')
 }
 
 RepoArtifacts.sourcesJar(project)

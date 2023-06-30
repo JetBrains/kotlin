@@ -63,7 +63,7 @@ compileTestKotlinCommon {
 }
 
 jar {
-    manifestAttributes(manifest, project, 'Main')
+    LibrariesCommon.manifestAttributes(project, manifest, 'Main')
 }
 
 RepoArtifacts.sourcesJar(project)

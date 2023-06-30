@@ -37,5 +37,5 @@ tasks.named<KotlinJvmCompile>("compileTestFixturesKotlin") {
 }
 
 tasks.named<Jar>("jar") {
-    callGroovy("manifestAttributes", manifest, project)
+    manifestAttributes(manifest)
 }

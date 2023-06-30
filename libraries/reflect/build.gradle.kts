@@ -238,7 +238,11 @@ val result by task<Jar> {
     from(zipTree(provider { reflectShadowJar.get().archiveFile.get().asFile })) {
         include("META-INF/versions/**")
     }
-    callGroovy("manifestAttributes", manifest, project, "Main", true)
+    manifestAttributes(
+        manifest,
+        component = "Main",
+        multiRelease = true
+    )
 }
 
 javadocJar()

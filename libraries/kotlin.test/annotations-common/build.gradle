@@ -14,7 +14,7 @@ tasks.withType(org.jetbrains.kotlin.gradle.dsl.KotlinCompile) {
 }
 
 jar {
-    manifestAttributes(manifest, project, 'Test')
+    LibrariesCommon.manifestAttributes(project, manifest, 'Test')
 }
 
 RepoArtifacts.sourcesJar(project)

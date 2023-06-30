@@ -97,7 +97,7 @@ dependencies {
 
 tasks.named("jar", Jar) {
     dependsOn(configurations.builtins)
-    manifestAttributes(manifest, project, 'Main', true)
+    LibrariesCommon.manifestAttributes(project, manifest, 'Main', true)
     from {
         zipTree(configurations.builtins.singleFile)
     }

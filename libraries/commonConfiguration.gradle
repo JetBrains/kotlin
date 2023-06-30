@@ -1,22 +1,3 @@
-ext.manifestAttributes = { Manifest manifest, Project project, String component = null, boolean multiRelease = false ->
-    project.configure(manifest) {
-        attributes \
-                'Implementation-Vendor': 'JetBrains',
-                'Implementation-Title': project.archivesBaseName,
-                'Implementation-Version': project.buildNumber
-
-        if (component != null) {
-            attributes \
-                'Kotlin-Runtime-Component': component,
-                'Kotlin-Version': project.kotlinLanguageVersion
-        }
-        if (multiRelease) {
-            attributes \
-                'Multi-Release': 'true'
-        }
-    }
-}
-
 task preparePublication {
     def properties = project.properties
     assert project.version != 'unspecified'
