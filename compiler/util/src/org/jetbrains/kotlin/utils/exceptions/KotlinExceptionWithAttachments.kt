@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.utils.exceptions
 
 import com.intellij.openapi.diagnostic.Attachment
 import com.intellij.openapi.diagnostic.ExceptionWithAttachments
+import org.jetbrains.kotlin.utils.exceptions.KotlinExceptionWithAttachments.Companion.withAttachmentsFrom
 import java.nio.charset.StandardCharsets
 
 interface KotlinExceptionWithAttachments : ExceptionWithAttachments {
@@ -37,3 +38,34 @@ interface KotlinExceptionWithAttachments : ExceptionWithAttachments {
         }
     }
 }
+
+open class KotlinIllegalStateExceptionWithAttachments : IllegalStateException, KotlinExceptionWithAttachments {
+    final override val mutableAttachments = mutableListOf<Attachment>()
+
+    constructor(message: String) : super(message)
+
+    constructor(message: String?, cause: Throwable?) : super(message, cause) {
+        withAttachmentsFrom(cause)
+    }
+}
+
+open class KotlinRuntimeExceptionWithAttachments : RuntimeException, KotlinExceptionWithAttachments {
+    final override val mutableAttachments = mutableListOf<Attachment>()
+
+    constructor(message: String) : super(message)
+
+    constructor(message: String?, cause: Throwable?) : super(message, cause) {
+        withAttachmentsFrom(cause)
+    }
+}
+
+open class KotlinIllegalArgumentExceptionWithAttachments : IllegalArgumentException, KotlinExceptionWithAttachments {
+    final override val mutableAttachments = mutableListOf<Attachment>()
+
+    constructor(message: String) : super(message)
+
+    constructor(message: String?, cause: Throwable?) : super(message, cause) {
+        withAttachmentsFrom(cause)
+    }
+}
+

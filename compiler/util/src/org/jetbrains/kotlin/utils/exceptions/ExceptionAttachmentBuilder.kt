@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.utils.exceptions
 
 import com.intellij.openapi.diagnostic.Attachment
 import com.intellij.openapi.diagnostic.Logger
-import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
 import org.jetbrains.kotlin.utils.SmartPrinter
 import org.jetbrains.kotlin.utils.withIndent
 import kotlin.contracts.ExperimentalContracts
@@ -65,7 +64,7 @@ inline fun buildErrorWithAttachment(
     attachmentName: String = "info.txt",
     buildAttachment: ExceptionAttachmentBuilder.() -> Unit = {},
 ): Nothing {
-    val exception = KotlinExceptionWithAttachments(message, cause)
+    val exception = KotlinIllegalArgumentExceptionWithAttachments(message, cause)
     exception.buildAttachment(attachmentName) { buildAttachment() }
     throw exception
 }
