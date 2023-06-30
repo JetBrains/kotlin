@@ -39,7 +39,7 @@ import kotlin.contracts.contract
 object FirCallsEffectAnalyzer : FirControlFlowChecker() {
 
     override fun analyze(graph: ControlFlowGraph, reporter: DiagnosticReporter, context: CheckerContext) {
-        // TODO: this is quadratic due to `graph.traverse`, surely there is a better way?
+        // TODO, KT-59816: this is quadratic due to `graph.traverse`, surely there is a better way?
         for (subGraph in graph.subGraphs) {
             analyze(subGraph, reporter, context)
         }

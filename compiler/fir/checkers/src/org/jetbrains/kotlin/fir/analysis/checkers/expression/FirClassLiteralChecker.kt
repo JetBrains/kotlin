@@ -73,7 +73,7 @@ object FirClassLiteralChecker : FirGetClassCallChecker() {
         }
 
         if (argument !is FirResolvedQualifier) return
-        // TODO: differentiate RESERVED_SYNTAX_IN_CALLABLE_REFERENCE_LHS
+        // TODO, KT-59835: differentiate RESERVED_SYNTAX_IN_CALLABLE_REFERENCE_LHS
         if (argument.typeArguments.isNotEmpty() && !argument.typeRef.coneType.fullyExpandedType(context.session).isAllowedInClassLiteral(context)) {
             val symbol = argument.symbol
             symbol?.lazyResolveToPhase(FirResolvePhase.TYPES)

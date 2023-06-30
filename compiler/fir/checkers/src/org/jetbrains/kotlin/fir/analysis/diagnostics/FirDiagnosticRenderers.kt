@@ -121,7 +121,7 @@ object FirDiagnosticRenderers {
     }
 
     val RENDER_TYPE = Renderer { t: ConeKotlinType ->
-        // TODO: need a way to tune granuality, e.g., without parameter names in functional types.
+        // TODO, KT-59811: need a way to tune granuality, e.g., without parameter names in functional types.
         t.renderReadableWithFqNames()
     }
 

@@ -45,7 +45,7 @@ object FirContractChecker : FirFunctionChecker() {
         for (unresolvedEffect in contractDescription.unresolvedEffects) {
             val diagnostic = unresolvedEffect.effect.accept(DiagnosticExtractor, null) ?: continue
 
-            // TODO: report on fine-grained locations, e.g., ... implies unresolved => report on unresolved, not the entire statement.
+            // TODO, KT-59806: report on fine-grained locations, e.g., ... implies unresolved => report on unresolved, not the entire statement.
             //  but, sometimes, it's just reported on `contract`...
             reporter.reportOn(unresolvedEffect.source, FirErrors.ERROR_IN_CONTRACT_DESCRIPTION, diagnostic.reason, context)
         }

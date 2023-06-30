@@ -140,7 +140,7 @@ internal fun checkPropertyInitializer(
                 if (isExpect) {
                     reporter.reportOn(propertySource, FirErrors.EXPECTED_LATEINIT_PROPERTY, context)
                 }
-                // TODO: like [BindingContext.MUST_BE_LATEINIT], we should consider variable with uninitialized error.
+                // TODO, KT-59807: like [BindingContext.MUST_BE_LATEINIT], we should consider variable with uninitialized error.
                 if (backingFieldRequired && !inInterface && isCorrectlyInitialized) {
                     if (context.languageVersionSettings.supportsFeature(LanguageFeature.EnableDfaWarningsInK2)) {
                         reporter.reportOn(propertySource, FirErrors.UNNECESSARY_LATEINIT, context)

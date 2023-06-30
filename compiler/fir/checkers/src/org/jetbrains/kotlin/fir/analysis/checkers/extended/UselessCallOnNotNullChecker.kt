@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.name.CallableId
 
 object UselessCallOnNotNullChecker : FirQualifiedAccessExpressionChecker() {
-    // todo: add 'call may be reduced' in cases like 's?.isNullOrEmpty()' where 's: String? = ""'
+    // todo, KT-59829: add 'call may be reduced' in cases like 's?.isNullOrEmpty()' where 's: String? = ""'
     override fun check(expression: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
         val method = expression.getCallableId() ?: return
         val calleeOn = expression.explicitReceiver ?: return

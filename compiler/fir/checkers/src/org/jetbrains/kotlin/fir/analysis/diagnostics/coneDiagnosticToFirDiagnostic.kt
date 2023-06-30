@@ -191,7 +191,7 @@ private fun mapUnsafeCallError(
         (candidateFunctionSymbol?.isOperator == true || candidateFunctionSymbol?.isInfix == true)
     ) {
         // For augmented assignment operations (e.g., `a += b`), the source is the entire binary expression (BINARY_EXPRESSION).
-        // TODO: No need to check for source.elementType == BINARY_EXPRESSION if we use operator as callee reference source
+        // TODO, KT-59809: No need to check for source.elementType == BINARY_EXPRESSION if we use operator as callee reference source
         //  (see FirExpressionsResolveTransformer.transformAssignmentOperatorStatement)
         val operationSource = if (source.elementType == KtNodeTypes.BINARY_EXPRESSION) {
             source.getChild(KtNodeTypes.OPERATION_REFERENCE)
@@ -387,7 +387,7 @@ private fun ConstraintSystemError.toDiagnostic(
             val position = position.from
             val argument =
                 when (position) {
-                    // TODO: Support other ReceiverConstraintPositionImpl, LHSArgumentConstraintPositionImpl
+                    // TODO, KT-59810: Support other ReceiverConstraintPositionImpl, LHSArgumentConstraintPositionImpl
                     is ConeArgumentConstraintPosition -> position.argument
                     is ConeLambdaArgumentConstraintPosition -> position.lambda
                     else -> null

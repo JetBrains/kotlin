@@ -49,7 +49,7 @@ object UnusedChecker : AbstractFirPropertyInitializationChecker() {
             for (dataPerLabel in dataPerNode.values) {
                 val data = dataPerLabel[variableSymbol] ?: continue
                 if (data == VariableStatus.ONLY_WRITTEN_NEVER_READ) {
-                    // todo: report case like "a += 1" where `a` `doesn't writes` different way (special for Idea)
+                    // TODO, KT-59831: report case like "a += 1" where `a` `doesn't writes` different way (special for Idea)
                     val source = node.fir.lValue.source
                     reporter.reportOn(source, FirErrors.ASSIGNED_VALUE_IS_NEVER_READ, context)
                     // To avoid duplicate reports, stop investigating remaining paths once reported.
@@ -63,7 +63,7 @@ object UnusedChecker : AbstractFirPropertyInitializationChecker() {
             if (node.fir.source == null) return
             if (variableSymbol.isLoopIterator) return
             val dataPerNode = data[node] ?: return
-            // TODO: merge values for labels, otherwise diagnostics are inconsistent
+            // TODO, KT-59832: merge values for labels, otherwise diagnostics are inconsistent
             for (dataPerLabel in dataPerNode.values) {
                 val data = dataPerLabel[variableSymbol] ?: continue
 
@@ -117,7 +117,7 @@ object UnusedChecker : AbstractFirPropertyInitializationChecker() {
             else variableUseState
 
             return base.also {
-                // TODO: is this modifying constant enum values???
+                // TODO, KT-59833: is this modifying constant enum values???
                 it.isRead = this.isRead || variableUseState?.isRead == true
                 it.isRedundantInit = this.isRedundantInit && variableUseState?.isRedundantInit == true
             }
@@ -146,7 +146,7 @@ object UnusedChecker : AbstractFirPropertyInitializationChecker() {
         }
 
         override fun plus(other: VariableStatusInfo): VariableStatusInfo =
-            merge(other) // TODO: not sure
+            merge(other) // TODO, KT-59834: not sure
     }
 
     private class ValueWritesWithoutReading(

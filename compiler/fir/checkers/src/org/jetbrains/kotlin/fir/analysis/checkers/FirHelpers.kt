@@ -384,7 +384,7 @@ fun FirCallableSymbol<*>.getImplementationStatus(
             ) {
                 return ImplementationStatus.INHERITED_OR_SYNTHESIZED
             }
-            // TODO: suspend function overridden by a Java class in the middle is not properly regarded as an override
+            // TODO, KT-59818: suspend function overridden by a Java class in the middle is not properly regarded as an override
             if (isSuspend) {
                 return ImplementationStatus.INHERITED_OR_SYNTHESIZED
             }
@@ -670,7 +670,7 @@ fun getActualTargetList(container: FirAnnotationContainer): AnnotationTargetList
             } else {
                 TargetLists.T_OBJECT_LITERAL
             }
-//            TODO: properly implement those cases
+//            TODO, KT-59819: properly implement those cases
 //            is KtDestructuringDeclarationEntry -> TargetLists.T_LOCAL_VARIABLE
 //            is KtDestructuringDeclaration -> TargetLists.T_DESTRUCTURING_DECLARATION
 //            is KtLambdaExpression -> TargetLists.T_FUNCTION_LITERAL

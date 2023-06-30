@@ -258,7 +258,7 @@ fun ConeKotlinType.isNonReifiedTypeParameter(): Boolean {
 fun shouldCheckForExactType(expression: FirTypeOperatorCall, context: CheckerContext): Boolean {
     return when (expression.operation) {
         FirOperation.IS, FirOperation.NOT_IS -> false
-        // TODO: differentiate if this expression defines the enclosing thing's type
+        // TODO, KT-59820: differentiate if this expression defines the enclosing thing's type
         //   e.g.,
         //   val c1 get() = 1 as Number
         //   val c2: Number get() = 1 <!USELESS_CAST!>as Number<!>
