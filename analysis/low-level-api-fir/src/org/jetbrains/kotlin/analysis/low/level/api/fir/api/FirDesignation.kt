@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.containingClass
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.getContainingFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withFirEntry
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
-import org.jetbrains.kotlin.utils.exceptions.checkWithAttachmentBuilder
+import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
 import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
 import org.jetbrains.kotlin.analysis.utils.errors.unexpectedElementError
 import org.jetbrains.kotlin.builtins.StandardNames
@@ -151,7 +151,7 @@ private fun collectDesignationPathWithContainingClass(target: FirDeclaration, co
                 ?: findKotlinStdlibClass(classId, target)
         }
 
-        checkWithAttachmentBuilder(
+        checkWithAttachment(
             declaration is FirRegularClass,
             message = { "'FirRegularClass' expected as a containing declaration, got '${declaration?.javaClass?.name}'" },
             buildAttachment = {

@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.bas
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.psiSafe
-import org.jetbrains.kotlin.utils.exceptions.checkWithAttachmentBuilder
+import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
 import org.jetbrains.kotlin.descriptors.MemberDescriptor
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
@@ -33,7 +33,7 @@ internal class KtFe10MultiplatformInfoProvider(
         val expectsForActual = (expectedCompatibilityMap[ExpectActualCompatibility.Compatible]
             ?: expectedCompatibilityMap.values.flatten())
         check(expectsForActual.size <= 1) { "expected as maximum one `expect` for the actual" }
-        checkWithAttachmentBuilder(expectsForActual.size <= 1, message = { "expected as maximum one `expect` for the actual" }) {
+        checkWithAttachment(expectsForActual.size <= 1, message = { "expected as maximum one `expect` for the actual" }) {
             withEntry("actual", memberDescriptor.toString())
             withEntry("expectsForActualSize", expectsForActual.size.toString())
             for ((index, expectForActual) in expectsForActual.withIndex()) {

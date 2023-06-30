@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockPro
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkDelegatedConstructorIsResolved
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.*
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
-import org.jetbrains.kotlin.utils.exceptions.checkWithAttachmentBuilder
+import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirFileAnnotationsContainer
 import org.jetbrains.kotlin.fir.FirSession
@@ -103,7 +103,7 @@ private class LLFirBodyTargetResolver(
     }
 
     private fun calculateControlFlowGraph(target: FirRegularClass) {
-        checkWithAttachmentBuilder(
+        checkWithAttachment(
             target.controlFlowGraphReference == null,
             { "'controlFlowGraphReference' should be 'null' if the class phase < $resolverPhase)" },
         ) {

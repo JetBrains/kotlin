@@ -91,27 +91,33 @@ inline fun rethrowExceptionWithDetails(
 
 
 @OptIn(ExperimentalContracts::class)
-inline fun checkWithAttachmentBuilder(
+inline fun checkWithAttachment(
     condition: Boolean,
     message: () -> String,
+    attachmentName: String = "info.txt",
     buildAttachment: ExceptionAttachmentBuilder.() -> Unit = {},
 ) {
     contract { returns() implies (condition) }
 
     if (!condition) {
-        errorWithAttachment(message(), buildAttachment = buildAttachment)
+        val exception = KotlinIllegalStateExceptionWithAttachments(message())
+        exception.buildAttachment(attachmentName) { buildAttachment() }
+        throw exception
     }
 }
 
 @OptIn(ExperimentalContracts::class)
-inline fun requireWithAttachmentBuilder(
+inline fun requireWithAttachment(
     condition: Boolean,
     message: () -> String,
+    attachmentName: String = "info.txt",
     buildAttachment: ExceptionAttachmentBuilder.() -> Unit = {},
 ) {
     contract { returns() implies (condition) }
 
     if (!condition) {
-        errorWithAttachment(message(), buildAttachment = buildAttachment)
+        val exception = KotlinIllegalArgumentExceptionWithAttachments(message())
+        exception.buildAttachment(attachmentName) { buildAttachment() }
+        throw exception
     }
 }

@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.analysis.api.types.KtClassTypeQualifier
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.tryCollectDesignation
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withFirEntry
-import org.jetbrains.kotlin.utils.exceptions.checkWithAttachmentBuilder
+import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
 import org.jetbrains.kotlin.fir.containingClassForLocal
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
@@ -94,7 +94,7 @@ internal object UsualClassTypeQualifierBuilder {
     }
 
     private fun collectDesignationPathForLocal(declaration: FirClassLikeDeclaration): List<FirDeclaration> {
-        checkWithAttachmentBuilder(
+        checkWithAttachment(
             declaration.isLocal,
             message = { "${declaration::class} is not local" }
         ) {

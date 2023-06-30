@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.analysis.api.annotations.KtNamedAnnotationValue
 import org.jetbrains.kotlin.analysis.api.fir.toKtAnnotationApplication
 import org.jetbrains.kotlin.analysis.api.fir.toKtAnnotationInfo
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withFirEntry
-import org.jetbrains.kotlin.utils.exceptions.checkWithAttachmentBuilder
+import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
 import org.jetbrains.kotlin.analysis.utils.errors.withClassEntry
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
@@ -47,7 +47,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 internal fun mapAnnotationParameters(annotation: FirAnnotation): Map<Name, FirExpression> {
     if (annotation is FirAnnotationCall && annotation.arguments.isEmpty()) return emptyMap()
 
-    checkWithAttachmentBuilder(annotation.resolved, { "By now the annotations argument mapping should have been resolved" }) {
+    checkWithAttachment(annotation.resolved, { "By now the annotations argument mapping should have been resolved" }) {
         withFirEntry("annotation", annotation)
         withClassEntry("annotationTypeRef", annotation.annotationTypeRef)
         withClassEntry("typeRef", annotation.typeRef)

@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirSymbol
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.symbols.KtDeclarationSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withFirSymbolEntry
-import org.jetbrains.kotlin.utils.exceptions.checkWithAttachmentBuilder
+import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.expectForActual
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -29,7 +29,7 @@ internal class KtFirMultiplatformInfoProvider(
         if (!isActual(actual)) return null
 
         val expectsForActual = firSymbol.expectForActual?.get(ExpectActualCompatibility.Compatible) ?: return null
-        checkWithAttachmentBuilder(expectsForActual.size <= 1, message = { "expected as maximum one `expect` for the actual" }) {
+        checkWithAttachment(expectsForActual.size <= 1, message = { "expected as maximum one `expect` for the actual" }) {
             withFirSymbolEntry("actual", firSymbol)
             withEntry("expectsForActualSize", expectsForActual.size.toString())
             for ((index, expectForActual) in expectsForActual.withIndex()) {

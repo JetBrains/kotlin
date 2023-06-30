@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.util
 
-import org.jetbrains.kotlin.utils.exceptions.requireWithAttachmentBuilder
+import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.packageFqName
@@ -70,11 +70,11 @@ internal object FirElementFinder {
         expectedDeclarationAcceptor: (FirDeclaration) -> Boolean,
     ): FirDeclarationDesignation? {
         if (containerClassId != null) {
-            requireWithAttachmentBuilder(!containerClassId.isLocal, { "ClassId should not be local" }) {
+            requireWithAttachment(!containerClassId.isLocal, { "ClassId should not be local" }) {
                 withEntry("classId", containerClassId) { it.asString() }
             }
 
-            requireWithAttachmentBuilder(
+            requireWithAttachment(
                 firFile.packageFqName == containerClassId.packageFqName,
                 { "ClassId should not be local" }
             ) {

@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder
 import org.jetbrains.kotlin.analysis.api.impl.barebone.annotations.ThreadSafe
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
 import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
-import org.jetbrains.kotlin.utils.exceptions.checkWithAttachmentBuilder
+import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
 import org.jetbrains.kotlin.fir.builder.BodyBuildingMode
 import org.jetbrains.kotlin.fir.builder.PsiRawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.FirFile
@@ -25,7 +25,7 @@ internal class LLFirFileBuilder(val moduleComponents: LLFirModuleResolveComponen
         val contextualModule = moduleComponents.module
         val actualFileModule = projectStructureProvider.getModule(ktFile, contextualModule)
 
-        checkWithAttachmentBuilder(actualFileModule == contextualModule, { "Modules are inconsistent" }) {
+        checkWithAttachment(actualFileModule == contextualModule, { "Modules are inconsistent" }) {
             withEntry("file", ktFile.name)
             withEntry("file module", actualFileModule) {
                 it.toString()
