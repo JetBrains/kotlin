@@ -6,50 +6,14 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.util
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.llFirModuleData
-import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
 import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
-import org.jetbrains.kotlin.utils.exceptions.ExceptionAttachmentBuilder
-import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
-import org.jetbrains.kotlin.analysis.utils.errors.withKtModuleEntry
 import org.jetbrains.kotlin.analysis.utils.errors.withPsiEntry
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirElementWithResolveState
-import org.jetbrains.kotlin.fir.psi
-import org.jetbrains.kotlin.fir.renderer.ConeTypeRendererForDebugging
-import org.jetbrains.kotlin.fir.renderer.FirDeclarationRendererWithAttributes
-import org.jetbrains.kotlin.fir.renderer.FirFileAnnotationsContainerRenderer
-import org.jetbrains.kotlin.fir.renderer.FirRenderer
-import org.jetbrains.kotlin.fir.renderer.FirResolvePhaseRenderer
-import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
-
-
-fun ExceptionAttachmentBuilder.withFirEntry(name: String, fir: FirElement) {
-    withEntry(name, fir) {
-        FirRenderer(
-            resolvePhaseRenderer = FirResolvePhaseRenderer(),
-            declarationRenderer = FirDeclarationRendererWithAttributes(),
-            fileAnnotationsContainerRenderer = FirFileAnnotationsContainerRenderer(),
-        ).renderElementAsString(it)
-    }
-    withEntry("${name}FirSourceElementKind", fir.source?.kind?.let { it::class.simpleName })
-    if (fir is FirElementWithResolveState) {
-        withKtModuleEntry("${name}KtModule", fir.llFirModuleData.ktModule)
-    }
-    withPsiEntry("${name}Psi", fir.psi, (fir as? FirElementWithResolveState)?.llFirSession?.ktModule)
-}
-
-
-fun ExceptionAttachmentBuilder.withFirSymbolEntry(name: String, symbol: FirBasedSymbol<*>) {
-    withFirEntry("${name}Fir", symbol.fir)
-}
-
-fun ExceptionAttachmentBuilder.withConeTypeEntry(name: String, coneType: ConeKotlinType) {
-    withEntry(name, coneType) {
-        buildString { ConeTypeRendererForDebugging(this).render(it) }
-    }
-}
+import org.jetbrains.kotlin.fir.utils.exceptions.withConeTypeEntry
+import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
+import org.jetbrains.kotlin.utils.exceptions.ExceptionAttachmentBuilder
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 
 fun errorWithFirSpecificEntries(

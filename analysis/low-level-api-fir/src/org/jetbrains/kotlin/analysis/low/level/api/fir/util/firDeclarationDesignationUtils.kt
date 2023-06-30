@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.ResolveStateAccess
 import org.jetbrains.kotlin.fir.declarations.resolvePhase
+import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 
 internal fun FirElementWithResolveState.checkPhase(requiredResolvePhase: FirResolvePhase) {
     @OptIn(ResolveStateAccess::class)
