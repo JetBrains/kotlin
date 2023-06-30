@@ -377,10 +377,10 @@ publishing {
             configureKotlinPomAttributes(project, "Kotlin Test Multiplatform library")
             suppressAllPomMetadataWarnings()
         }
-        configureSbom(
-            "Main", "kotlin-test",
-            setOf(jvmRuntime.name, commonVariant.name), mainPublication
-        )
+//        configureSbom(
+//            "Main", "kotlin-test",
+//            setOf(jvmRuntime.name, commonVariant.name), mainPublication
+//        )
         jvmTestFrameworks.forEach { framework ->
             val publication = register(framework, MavenPublication::class) {
                 artifactId = "kotlin-test-$framework"
@@ -390,10 +390,10 @@ publishing {
                 configureKotlinPomAttributes(project, "Kotlin Test Support for $framework")
                 suppressAllPomMetadataWarnings()
             }
-            configureSbom(
-                framework.capitalize(), "kotlin-test-$framework",
-                setOf("${framework}Api", commonVariant.name), publication
-            )
+//            configureSbom(
+//                framework.capitalize(), "kotlin-test-$framework",
+//                setOf("${framework}Api", commonVariant.name), publication
+//            )
         }
         val kotlinTestJsPublication = register("js", MavenPublication::class) {
             artifactId = "kotlin-test-js"
@@ -402,10 +402,10 @@ publishing {
             artifact(tasks.getByPath(":kotlin-test:kotlin-test-js:javadocJar") as Jar)
             configureKotlinPomAttributes(project, "Kotlin Test for JS")
         }
-        configureSbom(
-            "Js", "kotlin-test-js",
-            setOf(jsRuntime.name, commonVariant.name), kotlinTestJsPublication
-        )
+//        configureSbom(
+//            "Js", "kotlin-test-js",
+//            setOf(jsRuntime.name, commonVariant.name), kotlinTestJsPublication
+//        )
         val kotlinTestWasmPublication = register("wasm", MavenPublication::class) {
             artifactId = "kotlin-test-wasm"
             from(wasmComponent)
@@ -413,10 +413,10 @@ publishing {
             artifact(tasks.getByPath(":kotlin-test:kotlin-test-wasm:emptyJavadocJar") as Jar)
             configureKotlinPomAttributes(project, "Kotlin Test for WASM", packaging = "klib")
         }
-        configureSbom(
-            "Wasm", "kotlin-test-wasm",
-            setOf(wasmRuntime.name, commonVariant.name), kotlinTestWasmPublication
-        )
+//        configureSbom(
+//            "Wasm", "kotlin-test-wasm",
+//            setOf(wasmRuntime.name, commonVariant.name), kotlinTestWasmPublication
+//        )
         val kotlinTestCommonPublication = register("common", MavenPublication::class) {
             artifactId = "kotlin-test-common"
             from(commonMetadataComponent)
@@ -424,10 +424,10 @@ publishing {
             artifact(tasks.getByPath(":kotlin-test:kotlin-test-common:javadocJar") as Jar)
             configureKotlinPomAttributes(project, "Kotlin Test Common")
         }
-        configureSbom(
-            "Common", "kotlin-test-common",
-            setOf(commonMetadata.name), kotlinTestCommonPublication
-        )
+//        configureSbom(
+//            "Common", "kotlin-test-common",
+//            setOf(commonMetadata.name), kotlinTestCommonPublication
+//        )
         val annotationsCommonPublication = register("annotationsCommon", MavenPublication::class) {
             artifactId = "kotlin-test-annotations-common"
             from(annotationsMetadataComponent)
@@ -435,10 +435,10 @@ publishing {
             artifact(tasks.getByPath(":kotlin-test:kotlin-test-annotations-common:javadocJar") as Jar)
             configureKotlinPomAttributes(project, "Kotlin Test Common")
         }
-        configureSbom(
-            "AnnotationsCommon", "kotlin-test-annotations-common",
-            setOf(annotationsMetadata.name), annotationsCommonPublication
-        )
+//        configureSbom(
+//            "AnnotationsCommon", "kotlin-test-annotations-common",
+//            setOf(annotationsMetadata.name), annotationsCommonPublication
+//        )
     }
 }
 
