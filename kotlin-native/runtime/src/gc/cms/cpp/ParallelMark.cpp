@@ -220,14 +220,17 @@ std::optional<gc::mark::ParallelMark::ParallelProcessor::Worker> gc::mark::Paral
         activeWorkersCount_.load(std::memory_order_relaxed) == 0) return std::nullopt;
 
     GCLogDebug(gcHandle().getEpoch(), "Creating mark worker #%zu", activeWorkersCount_.load(std::memory_order_relaxed));
-    ++activeWorkersCount_;
+    activeWorkersCount_.fetch_add(1, std::memory_order_relaxed);
     //activeWorkersCount_.store(activeWorkersCount_.load(std::memory_order_relaxed) + 1, std::memory_order_relaxed);
     return std::make_optional<ParallelProcessor::Worker>(*parallelProcessor_);
 }
 
 void gc::mark::ParallelMark::waitEveryWorkerTermination() {
     auto curEpoch = gcHandle().getEpoch();
-    --activeWorkersCount_;
+    {
+        std::unique_lock guard(workerCreationMutex_);
+        activeWorkersCount_.fetch_sub(1, std::memory_order_relaxed);
+    }
     spinWait([=]() { return curEpoch != gcHandle().getEpoch() || activeWorkersCount_.load(std::memory_order_relaxed) == 0; });
 }
 
