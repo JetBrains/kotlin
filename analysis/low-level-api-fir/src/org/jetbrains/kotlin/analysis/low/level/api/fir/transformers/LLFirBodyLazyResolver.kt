@@ -223,6 +223,7 @@ internal object BodyStateKeepers {
 
         if (!isCallableWithSpecialBody(variable)) {
             add(FirVariable::initializerIfUnresolved, FirVariable::replaceInitializer, ::expressionGuard)
+            add(FirVariable::delegateIfUnresolved, FirVariable::replaceDelegate, ::expressionGuard)
         }
     }
 
@@ -252,11 +253,6 @@ internal object BodyStateKeepers {
         entity(property.getterIfUnresolved, FUNCTION)
         entity(property.setterIfUnresolved, FUNCTION)
         entity(property.backingFieldIfUnresolved, VARIABLE)
-
-        entity(property.delegateIfUnresolved) {
-            add(FirWrappedDelegateExpression::expression, FirWrappedDelegateExpression::replaceExpression, ::expressionGuard)
-            add(FirWrappedDelegateExpression::delegateProvider, FirWrappedDelegateExpression::replaceDelegateProvider, ::expressionGuard)
-        }
 
         add(FirProperty::controlFlowGraphReference, FirProperty::replaceControlFlowGraphReference)
     }
@@ -324,6 +320,12 @@ private val FirVariable.initializerIfUnresolved: FirExpression?
         else -> initializer
     }
 
+private val FirVariable.delegateIfUnresolved: FirExpression?
+    get() = when (this) {
+        is FirProperty -> if (bodyResolveState < FirPropertyBodyResolveState.EVERYTHING_RESOLVED) delegate else null
+        else -> delegate
+    }
+
 private val FirProperty.backingFieldIfUnresolved: FirBackingField?
     get() = if (bodyResolveState < FirPropertyBodyResolveState.INITIALIZER_RESOLVED) getExplicitBackingField() else null
 
@@ -332,9 +334,6 @@ private val FirProperty.getterIfUnresolved: FirPropertyAccessor?
 
 private val FirProperty.setterIfUnresolved: FirPropertyAccessor?
     get() = if (bodyResolveState < FirPropertyBodyResolveState.EVERYTHING_RESOLVED) setter else null
-
-private val FirProperty.delegateIfUnresolved: FirWrappedDelegateExpression?
-    get() = if (bodyResolveState < FirPropertyBodyResolveState.EVERYTHING_RESOLVED) delegate as? FirWrappedDelegateExpression else null
 
 private fun delegatedConstructorCallGuard(fir: FirDelegatedConstructorCall): FirDelegatedConstructorCall {
     if (fir is FirLazyDelegatedConstructorCall) {

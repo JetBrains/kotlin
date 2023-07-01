@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.contracts.FirLegacyRawContractDescription
 import org.jetbrains.kotlin.fir.contracts.builder.buildLegacyRawContractDescription
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirReceiverParameter
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.declarations.builder.*
@@ -313,6 +314,7 @@ fun <T> FirPropertyBuilder.generateAccessorsByDelegate(
     ownerRegularOrAnonymousObjectSymbol: FirClassSymbol<*>?,
     context: Context<T>,
     isExtension: Boolean,
+    lazyDelegateExpression: FirLazyExpression? = null,
 ) {
     if (delegateBuilder == null) return
     val delegateFieldSymbol = FirDelegateFieldSymbol(symbol.callableId).also {
@@ -402,17 +404,21 @@ fun <T> FirPropertyBuilder.generateAccessorsByDelegate(
         }
     }
 
-    delegateBuilder.delegateProvider = buildFunctionCall {
-        explicitReceiver = delegateBuilder.expression
-        calleeReference = buildSimpleNamedReference {
+    delegate = lazyDelegateExpression ?: run {
+        delegateBuilder.delegateProvider = buildFunctionCall {
+            explicitReceiver = delegateBuilder.expression
+            calleeReference = buildSimpleNamedReference {
+                source = fakeSource
+                name = OperatorNameConventions.PROVIDE_DELEGATE
+            }
+            argumentList = buildBinaryArgumentList(thisRef(forDispatchReceiver = true), propertyRef())
+            origin = FirFunctionCallOrigin.Operator
             source = fakeSource
-            name = OperatorNameConventions.PROVIDE_DELEGATE
         }
-        argumentList = buildBinaryArgumentList(thisRef(forDispatchReceiver = true), propertyRef())
-        origin = FirFunctionCallOrigin.Operator
-        source = fakeSource
+
+        delegateBuilder.build()
     }
-    delegate = delegateBuilder.build()
+
     if (getter == null || getter is FirDefaultPropertyAccessor) {
         val annotations = getter?.annotations
         val returnTarget = FirFunctionTarget(null, isLambda = false)

@@ -139,9 +139,9 @@ private fun replaceLazyInitializer(target: FirVariable, copy: FirVariable) {
     }
 }
 
-private fun replaceLazyExpression(target: FirWrappedExpression, copy: FirWrappedExpression) {
-    if (target.expression is FirLazyExpression) {
-        target.replaceExpression(copy.expression)
+private fun replaceLazyDelegate(target: FirVariable, copy: FirVariable) {
+    if (target.delegate is FirLazyExpression) {
+        target.replaceDelegate(copy.delegate)
     }
 }
 
@@ -187,16 +187,11 @@ private fun calculateLazyBodyForProperty(designation: FirDesignation) {
     }
 
     replaceLazyInitializer(firProperty, newProperty)
+    replaceLazyDelegate(firProperty, newProperty)
 
     firProperty.getExplicitBackingField()?.let { backingField ->
         val newBackingField = newProperty.getExplicitBackingField()!!
         replaceLazyInitializer(backingField, newBackingField)
-    }
-
-    (firProperty.delegate as? FirWrappedDelegateExpression)?.let { delegate ->
-        val newDelegate = newProperty.delegate as FirWrappedDelegateExpression
-        replaceLazyExpression(delegate, newDelegate)
-        delegate.replaceDelegateProvider(newDelegate.delegateProvider)
     }
 }
 
@@ -258,7 +253,7 @@ private fun needCalculatingLazyBodyForProperty(firProperty: FirProperty): Boolea
     firProperty.getter?.let { needCalculatingLazyBodyForFunction(it) } == true
             || firProperty.setter?.let { needCalculatingLazyBodyForFunction(it) } == true
             || firProperty.initializer is FirLazyExpression
-            || (firProperty.delegate as? FirWrappedDelegateExpression)?.expression is FirLazyExpression
+            || firProperty.delegate is FirLazyExpression
             || firProperty.getExplicitBackingField()?.initializer is FirLazyExpression
 
 private enum class FirLazyAnnotationTransformerScope {

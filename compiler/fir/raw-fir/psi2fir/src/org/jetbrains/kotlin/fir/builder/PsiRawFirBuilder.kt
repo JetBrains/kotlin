@@ -1908,12 +1908,18 @@ open class PsiRawFirBuilder(
                                 expression = delegateExpression
                             }
 
+                            val lazyDelegateExpression: FirLazyExpression? = buildOrLazy(
+                                build = { null },
+                                lazy = { buildLazyExpression { source = delegateBuilder.source } },
+                            )
+
                             generateAccessorsByDelegate(
                                 delegateBuilder,
                                 baseModuleData,
                                 ownerRegularOrAnonymousObjectSymbol,
                                 context,
                                 isExtension = receiverTypeReference != null,
+                                lazyDelegateExpression = lazyDelegateExpression,
                             )
                         }
                     }
