@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirBu
 import org.jetbrains.kotlin.analysis.project.structure.*
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
+import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
 
 internal class KtModuleProviderImpl(
     private val platform: TargetPlatform,
@@ -36,6 +37,7 @@ internal class KtModuleProviderImpl(
         LLFirBuiltinsSessionFactory.getInstance(project).getBuiltinsSession(platform).ktModule as KtBuiltinsModule
     }
 
+    @OptIn(KtModuleStructureInternals::class)
     override fun getModule(element: PsiElement, contextualModule: KtModule?): KtModule {
         val containingFileAsPsiFile = element.containingFile
             ?: return ktNotUnderContentRootModuleWithoutPsiFile
@@ -56,9 +58,16 @@ internal class KtModuleProviderImpl(
             return builtinsModule
         }
 
-        return mainModules.first { module ->
+        containingFileAsVirtualFile.analysisExtensionFileContextModule?.let { return it }
+
+        return mainModules.firstOrNull { module ->
             containingFileAsVirtualFile in module.contentScope
         }
+            ?: throw KotlinExceptionWithAttachments("Cannot find KtModule; see the attachment for more details.")
+                .withAttachment(
+                    containingFileAsVirtualFile.path,
+                    mainModules.joinToString(separator = System.lineSeparator()) { it.asDebugString() }
+                )
     }
 
     internal val binaryModules: List<KtBinaryModule> by lazy {
