@@ -641,11 +641,11 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         }
 
         wrappedExpression.configure {
-            +field(expression).withReplace()
+            +field(expression)
         }
 
         wrappedDelegateExpression.configure {
-            +field("delegateProvider", expression).withReplace()
+            +field("delegateProvider", expression)
         }
 
         enumEntryDeserializedAccessExpression.configure {

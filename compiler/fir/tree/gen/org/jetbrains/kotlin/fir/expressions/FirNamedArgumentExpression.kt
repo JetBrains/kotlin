@@ -34,7 +34,5 @@ abstract class FirNamedArgumentExpression : FirWrappedArgumentExpression() {
 
     abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 
-    abstract override fun replaceExpression(newExpression: FirExpression)
-
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirNamedArgumentExpression
 }

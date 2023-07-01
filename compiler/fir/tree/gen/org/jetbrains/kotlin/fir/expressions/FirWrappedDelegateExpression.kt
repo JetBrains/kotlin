@@ -32,9 +32,5 @@ abstract class FirWrappedDelegateExpression : FirWrappedExpression() {
 
     abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 
-    abstract override fun replaceExpression(newExpression: FirExpression)
-
-    abstract fun replaceDelegateProvider(newDelegateProvider: FirExpression)
-
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirWrappedDelegateExpression
 }

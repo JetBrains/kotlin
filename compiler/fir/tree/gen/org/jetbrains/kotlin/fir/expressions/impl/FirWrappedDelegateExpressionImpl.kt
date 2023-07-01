@@ -52,12 +52,4 @@ internal class FirWrappedDelegateExpressionImpl(
     override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
         annotations = newAnnotations.toMutableOrEmpty()
     }
-
-    override fun replaceExpression(newExpression: FirExpression) {
-        expression = newExpression
-    }
-
-    override fun replaceDelegateProvider(newDelegateProvider: FirExpression) {
-        delegateProvider = newDelegateProvider
-    }
 }

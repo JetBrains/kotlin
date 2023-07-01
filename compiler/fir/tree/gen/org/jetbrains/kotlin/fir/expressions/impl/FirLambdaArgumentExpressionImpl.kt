@@ -50,8 +50,4 @@ internal class FirLambdaArgumentExpressionImpl(
     override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
         annotations = newAnnotations.toMutableOrEmpty()
     }
-
-    override fun replaceExpression(newExpression: FirExpression) {
-        expression = newExpression
-    }
 }
