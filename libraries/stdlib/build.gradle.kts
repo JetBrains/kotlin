@@ -501,6 +501,11 @@ tasks {
         }
     }
 
+    dexMethodCount {
+        from(jvmJar)
+        ownPackages.set(listOf("kotlin"))
+    }
+
     val jsOutputFileName = "${buildDir}/classes/js-v1/kotlin.js"
     val jsOutputMapFileName = "${jsOutputFileName}.map"
     val jsOutputMetaFileName = "${buildDir}/classes/js-v1/kotlin.meta.js"
