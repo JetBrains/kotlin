@@ -33,7 +33,7 @@ public class KotlinStaticPackageProvider(
     }
 
     override fun doesKotlinOnlyPackageExist(packageFqName: FqName): Boolean {
-        return packageFqName in kotlinPackageToSubPackages
+        return packageFqName.isRoot || packageFqName in kotlinPackageToSubPackages
     }
 
     override fun getKotlinOnlySubPackagesFqNames(packageFqName: FqName, nameFilter: (Name) -> Boolean): Set<Name> {
