@@ -15,7 +15,7 @@ import com.intellij.psi.util.CachedValuesManager
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirBuiltinsAndCloneableSessionProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirBuiltinsAndCloneableSession
-import org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserialization.JvmStubBasedFirDeserializedSymbolProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserialization.StubBasedFirDeserializedSymbolProvider
 import org.jetbrains.kotlin.analysis.project.structure.KtBuiltinsModule
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analyzer.common.CommonPlatformAnalyzerServices
@@ -100,7 +100,7 @@ class LLFirBuiltinsSessionFactory(private val project: Project) {
             val symbolProvider = createCompositeSymbolProvider(this) {
                 val moduleDataProvider = SingleModuleDataProvider(moduleData)
                 add(
-                    object : JvmStubBasedFirDeserializedSymbolProvider(
+                    object : StubBasedFirDeserializedSymbolProvider(
                         session,
                         moduleDataProvider,
                         kotlinScopeProvider,

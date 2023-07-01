@@ -6,17 +6,24 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.sessions
 
 import com.intellij.openapi.project.Project
+import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.*
 import org.jetbrains.kotlin.analysis.project.structure.*
+import org.jetbrains.kotlin.analysis.providers.createPackagePartProvider
+import org.jetbrains.kotlin.fir.BuiltinTypes
 import org.jetbrains.kotlin.fir.SessionConfiguration
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmTypeMapper
+import org.jetbrains.kotlin.fir.deserialization.SingleModuleDataProvider
 import org.jetbrains.kotlin.fir.java.JavaSymbolProvider
+import org.jetbrains.kotlin.fir.java.deserialization.OptionalAnnotationClassesProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.scopes.wrapScopeWithJvmMapped
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.session.*
+import org.jetbrains.kotlin.load.java.createJavaClassFinder
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
+import org.jetbrains.kotlin.utils.addIfNotNull
 
 @OptIn(SessionConfiguration::class)
 internal class LLFirJvmSessionFactory(project: Project) : LLFirAbstractSessionFactory(project) {
@@ -72,6 +79,42 @@ internal class LLFirJvmSessionFactory(project: Project) : LLFirAbstractSessionFa
             registerCommonJavaComponents(JavaModuleResolver.getInstance(project))
             registerJavaSpecificResolveComponents()
             register(FirJvmTypeMapper::class, FirJvmTypeMapper(this))
+        }
+    }
+
+    override fun createProjectLibraryProvidersForScope(
+        session: LLFirSession,
+        moduleData: LLFirModuleData,
+        kotlinScopeProvider: FirKotlinScopeProvider,
+        project: Project,
+        builtinTypes: BuiltinTypes,
+        scope: GlobalSearchScope,
+    ): List<FirSymbolProvider> {
+        val moduleDataProvider = SingleModuleDataProvider(moduleData)
+        val packagePartProvider = project.createPackagePartProvider(scope)
+        return buildList {
+            val firJavaFacade = LLFirJavaFacadeForBinaries(session, builtinTypes, project.createJavaClassFinder(scope), moduleDataProvider)
+            val deserializedSymbolProviderFactory = project.getService(JvmFirDeserializedSymbolProviderFactory::class.java)
+            addAll(
+                deserializedSymbolProviderFactory.createJvmFirDeserializedSymbolProviders(
+                    project,
+                    session,
+                    moduleData,
+                    kotlinScopeProvider,
+                    moduleDataProvider,
+                    firJavaFacade,
+                    packagePartProvider,
+                    scope
+                )
+            )
+            addIfNotNull(
+                OptionalAnnotationClassesProvider.createIfNeeded(
+                    session,
+                    moduleDataProvider,
+                    kotlinScopeProvider,
+                    packagePartProvider
+                )
+            )
         }
     }
 }
