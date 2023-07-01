@@ -18799,6 +18799,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
             }
 
             @Test
+            @TestMetadata("virtualValInEnum.kt")
+            public void testVirtualValInEnum() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inline/virtualValInEnum.kt");
+            }
+
+            @Test
             @TestMetadata("when.kt")
             public void testWhen() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inline/when.kt");
