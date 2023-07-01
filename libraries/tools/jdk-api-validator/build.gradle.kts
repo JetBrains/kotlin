@@ -15,10 +15,10 @@ sourceSets {
 }
 
 dependencies {
-    api("org.codehaus.mojo:animal-sniffer:1.21")
-    api(kotlinStdlib())
+    implementation("org.codehaus.mojo:animal-sniffer:1.21")
+    implementation(kotlinStdlib())
 
-    testApi(project(":kotlin-test:kotlin-test-junit"))
+    testImplementation(project(":kotlin-test:kotlin-test-junit"))
 
     testArtifacts(project(":kotlin-reflect"))
 

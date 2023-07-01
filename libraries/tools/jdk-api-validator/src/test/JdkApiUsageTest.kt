@@ -82,8 +82,7 @@ class JdkApiUsageTest {
 }
 
 private val suppressAnnotations = listOf(
-    "kotlin.reflect.jvm.internal.SuppressAnimalSniffer",
-    "kotlin.internal.SuppressAnimalSniffer",
+    "kotlin.reflect.jvm.internal.SuppressAnimalSniffer"
 )
 
 private val undefinedReferencesToIgnore = listOf(
