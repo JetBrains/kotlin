@@ -38,7 +38,7 @@ internal fun KotlinLibrary.getAllTransitiveDependencies(allLibraries: Map<String
 // TODO: deleteRecursively might throw an exception!
 class CacheBuilder(
         val konanConfig: KonanConfig,
-        val spawnCompilation: (List<String>, CompilerConfiguration.() -> Unit) -> Unit
+        val compilationSpawner: CompilationSpawner
 ) {
     private val configuration = konanConfig.configuration
     private val autoCacheableFrom = configuration.get(KonanConfigKeys.AUTO_CACHEABLE_FROM)!!.map { File(it) }
@@ -249,7 +249,7 @@ class CacheBuilder(
         try {
             // TODO: Run monolithic cache builds in parallel.
             libraryCacheDirectory.mkdirs()
-            spawnCompilation(konanConfig.additionalCacheFlags /* TODO: Some way to put them directly to CompilerConfiguration? */) {
+            compilationSpawner.spawn(konanConfig.additionalCacheFlags /* TODO: Some way to put them directly to CompilerConfiguration? */) {
                 val libraryPath = library.libraryFile.absolutePath
                 val libraries = dependencies.filter { !it.isDefault }.map { it.libraryFile.absolutePath }
                 val cachedLibraries = dependencies.zip(dependencyCaches).associate { it.first.libraryFile.absolutePath to it.second }
