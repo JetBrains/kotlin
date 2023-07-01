@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.asJava;
 
 import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiPackage;
 import com.intellij.psi.search.GlobalSearchScope;
 import junit.framework.TestCase;
 import org.jetbrains.annotations.NotNull;
@@ -48,12 +49,20 @@ public class JavaElementFinderTest extends KotlinAsJavaTestBase {
 
     public void testEmptyQualifiedName() {
         assertNoClass("");
+        // ROOT package exists
+        assertPackage("");
     }
 
     public void testRepeatableAnnotation() {
         assertClass("RepeatableAnnotation.Container");
         assertNoClass("RepeatableAnnotation2.Container");
         assertNoClass("RepeatableAnnotation2.Container");
+    }
+
+    private void assertPackage(String qualifiedName) {
+        PsiPackage psiPackage = finder.findPackage(qualifiedName);
+        TestCase.assertNotNull(String.format("Package with fqn='%s' wasn't found.", qualifiedName), psiPackage);
+        TestCase.assertTrue(String.format("Package with fqn='%s' is not valid.", qualifiedName), psiPackage.isValid());
     }
 
     private void assertClass(String qualifiedName) {
