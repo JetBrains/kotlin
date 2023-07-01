@@ -170,6 +170,8 @@ class FirFieldImpl @FirImplementationDetail constructor(
         initializer = newInitializer
     }
 
+    override fun replaceDelegate(newDelegate: FirExpression?) {}
+
     override fun replaceGetter(newGetter: FirPropertyAccessor?) {}
 
     override fun replaceSetter(newSetter: FirPropertyAccessor?) {}

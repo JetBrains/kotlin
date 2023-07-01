@@ -191,6 +191,10 @@ internal class FirPropertyImpl(
         initializer = newInitializer
     }
 
+    override fun replaceDelegate(newDelegate: FirExpression?) {
+        delegate = newDelegate
+    }
+
     override fun replaceGetter(newGetter: FirPropertyAccessor?) {
         getter = newGetter
     }

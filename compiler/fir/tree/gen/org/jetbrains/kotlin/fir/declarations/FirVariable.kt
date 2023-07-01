@@ -66,6 +66,8 @@ sealed class FirVariable : FirCallableDeclaration(), FirStatement {
 
     abstract fun replaceInitializer(newInitializer: FirExpression?)
 
+    abstract fun replaceDelegate(newDelegate: FirExpression?)
+
     abstract fun replaceGetter(newGetter: FirPropertyAccessor?)
 
     abstract fun replaceSetter(newSetter: FirPropertyAccessor?)

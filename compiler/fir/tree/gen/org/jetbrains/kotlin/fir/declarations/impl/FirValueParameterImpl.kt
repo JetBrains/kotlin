@@ -170,6 +170,8 @@ internal class FirValueParameterImpl(
 
     override fun replaceInitializer(newInitializer: FirExpression?) {}
 
+    override fun replaceDelegate(newDelegate: FirExpression?) {}
+
     override fun replaceGetter(newGetter: FirPropertyAccessor?) {}
 
     override fun replaceSetter(newSetter: FirPropertyAccessor?) {}

@@ -142,6 +142,7 @@ class FirJavaField @FirImplementationDetail constructor(
         return this
     }
 
+    override fun replaceDelegate(newDelegate: FirExpression?) {}
     override val delegate: FirExpression?
         get() = null
 

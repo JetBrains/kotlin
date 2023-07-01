@@ -440,7 +440,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +name
             +symbol("FirVariableSymbol", "out FirVariable")
             +initializer.withTransform().withReplace()
-            +field("delegate", expression, nullable = true).withTransform()
+            +field("delegate", expression, nullable = true, withReplace = true).withTransform()
             generateBooleanFields("var", "val")
             +field("getter", propertyAccessor, nullable = true, withReplace = true).withTransform()
             +field("setter", propertyAccessor, nullable = true, withReplace = true).withTransform()

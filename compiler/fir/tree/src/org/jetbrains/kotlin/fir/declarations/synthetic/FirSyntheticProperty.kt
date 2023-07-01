@@ -167,6 +167,10 @@ class FirSyntheticProperty(
         notSupported()
     }
 
+    override fun replaceDelegate(newDelegate: FirExpression?) {
+        notSupported()
+    }
+
     override fun replaceBodyResolveState(newBodyResolveState: FirPropertyBodyResolveState) {
         notSupported()
     }

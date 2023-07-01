@@ -64,6 +64,8 @@ abstract class FirBackingField : FirVariable(), FirTypeParametersOwner, FirState
 
     abstract override fun replaceContextReceivers(newContextReceivers: List<FirContextReceiver>)
 
+    abstract override fun replaceDelegate(newDelegate: FirExpression?)
+
     abstract override fun replaceGetter(newGetter: FirPropertyAccessor?)
 
     abstract override fun replaceSetter(newSetter: FirPropertyAccessor?)

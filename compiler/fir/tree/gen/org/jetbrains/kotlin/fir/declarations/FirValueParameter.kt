@@ -73,6 +73,8 @@ abstract class FirValueParameter : FirVariable(), FirControlFlowGraphOwner {
 
     abstract override fun replaceInitializer(newInitializer: FirExpression?)
 
+    abstract override fun replaceDelegate(newDelegate: FirExpression?)
+
     abstract override fun replaceGetter(newGetter: FirPropertyAccessor?)
 
     abstract override fun replaceSetter(newSetter: FirPropertyAccessor?)
