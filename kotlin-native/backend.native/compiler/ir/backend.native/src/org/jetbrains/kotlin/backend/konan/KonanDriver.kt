@@ -56,7 +56,7 @@ class KonanDriver(
                 configuration.kotlinSourceRoots.isNotEmpty() &&
                 configuration.get(KonanConfigKeys.COMPILE_FROM_BITCODE) == null
         ) {
-            splitOntoTwoStages(configuration, compilationSpawner)
+            splitOntoTwoStages()
             return
         }
 
@@ -120,21 +120,18 @@ class KonanDriver(
             }
         }
     }
-}
 
-private fun splitOntoTwoStages(configuration: CompilerConfiguration, compilationSpawner: CompilationSpawner) {
-    // K2/Native backend cannot produce binary directly from FIR frontend output, since descriptors, deserialized from KLib, are needed
-    // So, such compilation is split to two stages:
-    // - source files are compiled to intermediate KLib by FIR frontend
-    // - intermediate Klib is compiled to binary by K2/Native backend
-    // In this implementation, 'arguments' is not changed accordingly to changes in `firstStageConfiguration` and `configuration`,
-    // since values of fields `produce`, `output`, `freeArgs`, `includes` does not seem to matter downstream in prepareEnvironment()
+    private fun splitOntoTwoStages() {
+        // K2/Native backend cannot produce binary directly from FIR frontend output, since descriptors, deserialized from KLib, are needed
+        // So, such compilation is split to two stages:
+        // - source files are compiled to intermediate KLib by FIR frontend
+        // - intermediate Klib is compiled to binary by K2/Native backend
 
-    if (configuration.getBoolean(CommonConfigurationKeys.USE_FIR) &&
-            configuration.get(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS)
-                    ?.getFeatureSupport(LanguageFeature.MultiPlatformProjects) == LanguageFeature.State.ENABLED)
-        configuration.report(CompilerMessageSeverity.ERROR,
-                """
+        if (configuration.getBoolean(CommonConfigurationKeys.USE_FIR) &&
+                configuration.get(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS)
+                        ?.getFeatureSupport(LanguageFeature.MultiPlatformProjects) == LanguageFeature.State.ENABLED)
+            configuration.report(CompilerMessageSeverity.ERROR,
+                    """
                             Producing a multiplatform library directly from sources is not allowed since language version 2.0.
                         
                             If you use the command-line compiler, then first compile the sources to a KLIB with
@@ -142,24 +139,25 @@ private fun splitOntoTwoStages(configuration: CompilerConfiguration, compilation
                             the compiler to produce the required type of binary artifact.
                         """.trimIndent())
 
-    // For the first stage, construct a temporary file name for an intermediate KLib
-    val intermediateKLib = File(System.getProperty("java.io.tmpdir"), "${UUID.randomUUID()}.klib").also {
-        require(!it.exists) { "Collision writing intermediate KLib $it" }
-        it.deleteOnExit()
-    }
-    compilationSpawner.spawn(emptyList()) {
-        // For the first stage, use "-p library" produce mode
-        put(KonanConfigKeys.PRODUCE, CompilerOutputKind.LIBRARY)
-        put(KonanConfigKeys.OUTPUT, intermediateKLib.absolutePath)
-        put(CLIConfigurationKeys.CONTENT_ROOTS, configuration.getNotNull(CLIConfigurationKeys.CONTENT_ROOTS))
-        put(KonanConfigKeys.LIBRARY_FILES, configuration.getNotNull(KonanConfigKeys.LIBRARY_FILES))
-    }
+        // For the first stage, construct a temporary file name for an intermediate KLib.
+        val intermediateKLib = File(System.getProperty("java.io.tmpdir"), "${UUID.randomUUID()}.klib").also {
+            require(!it.exists) { "Collision writing intermediate KLib $it" }
+            it.deleteOnExit()
+        }
+        compilationSpawner.spawn(emptyList()) {
+            // For the first stage, use "-p library" produce mode.
+            put(KonanConfigKeys.PRODUCE, CompilerOutputKind.LIBRARY)
+            put(KonanConfigKeys.OUTPUT, intermediateKLib.absolutePath)
+            put(CLIConfigurationKeys.CONTENT_ROOTS, configuration.getNotNull(CLIConfigurationKeys.CONTENT_ROOTS))
+            put(KonanConfigKeys.LIBRARY_FILES, configuration.getNotNull(KonanConfigKeys.LIBRARY_FILES))
+        }
 
-    // For the second stage, remove already compiled source files from the configuration
-    configuration.put(CLIConfigurationKeys.CONTENT_ROOTS, listOf())
-    // For the second stage, provide just compiled intermediate KLib as "-Xinclude=" param
-    require(intermediateKLib.exists) { "Intermediate KLib $intermediateKLib must have been created by successful first compilation stage" }
-    configuration.put(KonanConfigKeys.INCLUDED_LIBRARIES,
-            configuration.get(KonanConfigKeys.INCLUDED_LIBRARIES).orEmpty() + listOf(intermediateKLib.absolutePath))
-    compilationSpawner.spawn(configuration) // Need to spawn a new compilation to create fresh environment (without sources).
+        // For the second stage, remove already compiled source files from the configuration.
+        configuration.put(CLIConfigurationKeys.CONTENT_ROOTS, listOf())
+        // For the second stage, provide just compiled intermediate KLib as "-Xinclude=" param.
+        require(intermediateKLib.exists) { "Intermediate KLib $intermediateKLib must have been created by successful first compilation stage" }
+        configuration.put(KonanConfigKeys.INCLUDED_LIBRARIES,
+                configuration.get(KonanConfigKeys.INCLUDED_LIBRARIES).orEmpty() + listOf(intermediateKLib.absolutePath))
+        compilationSpawner.spawn(configuration) // Need to spawn a new compilation to create fresh environment (without sources).
+    }
 }
