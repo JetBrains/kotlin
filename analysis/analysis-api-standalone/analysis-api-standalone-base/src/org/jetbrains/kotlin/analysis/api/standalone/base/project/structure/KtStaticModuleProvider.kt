@@ -9,6 +9,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.project.structure.*
 import org.jetbrains.kotlin.psi.psiUtil.contains
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
+import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
 
 class KtStaticModuleProvider(
     private val builtinsModule: KtBuiltinsModule,
@@ -31,8 +32,13 @@ class KtStaticModuleProvider(
             containingFileAsVirtualFile in binaryModule.contentScope
         }?.let { return it }
 
-        return projectStructure.mainModules
-            .first { module -> element in module.ktModule.contentScope }
-            .ktModule
+        return projectStructure.mainModules.firstOrNull { module ->
+            element in module.ktModule.contentScope
+        }?.ktModule
+            ?: throw KotlinExceptionWithAttachments("Cannot find KtModule; see the attachment for more details.")
+                .withAttachment(
+                    containingFileAsVirtualFile.path,
+                    allModules.joinToString(separator = System.lineSeparator()) { it.asDebugString() }
+                )
     }
 }

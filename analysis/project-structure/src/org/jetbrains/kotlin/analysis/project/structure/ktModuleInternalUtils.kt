@@ -18,3 +18,17 @@ public var VirtualFile.analysisExtensionFileContextModule: KtModule? by UserData
 
 @RequiresOptIn("Internal KtModule structure API component which should not be used outside the Analysis API implementation modules as it does not have any compatibility guarantees")
 public annotation class KtModuleStructureInternals
+
+public fun KtModule.asDebugString(indent: Int = 0): String = buildString {
+    appendLine("$moduleDescription {")
+    appendLine("contentScope: $contentScope")
+    appendLine("directRegularDependencies:${System.lineSeparator()}")
+    directRegularDependencies.joinTo(this, separator = System.lineSeparator()) { dep ->
+        dep.asDebugString(indent + 1)
+    }
+    appendLine("directDependsOnDependencies:${System.lineSeparator()}")
+    directDependsOnDependencies.joinTo(this, separator = System.lineSeparator()) { dep ->
+        dep.asDebugString(indent + 1)
+    }
+    append("}")
+}.prependIndent("  ".repeat(indent))
