@@ -9,15 +9,20 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.backend.common.serialization.codedInputStream
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFile
 import org.jetbrains.kotlin.backend.konan.driver.DynamicCompilerDriver
+import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.common.config.kotlinSourceRoots
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.impl.createKonanLibrary
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
+import java.util.*
 
 // Extracted from KonanTarget class to avoid problems with kotlin-native-shared.
 private val deprecatedTargets = setOf(
@@ -35,13 +40,26 @@ private val softDeprecatedTargets = setOf(
 
 private const val DEPRECATION_LINK = "https://kotl.in/native-targets-tiers"
 
+interface CompilationSpawner {
+    fun spawn(configuration: CompilerConfiguration)
+    fun spawn(arguments: List<String>, setupConfiguration: CompilerConfiguration.() -> Unit)
+}
+
 class KonanDriver(
         val project: Project,
         val environment: KotlinCoreEnvironment,
         val configuration: CompilerConfiguration,
-        val spawnCompilation: (List<String>, CompilerConfiguration.() -> Unit) -> Unit
+        val compilationSpawner: CompilationSpawner
 ) {
     fun run() {
+        if (configuration.get(KonanConfigKeys.PRODUCE) != CompilerOutputKind.LIBRARY &&
+                configuration.kotlinSourceRoots.isNotEmpty() &&
+                configuration.get(KonanConfigKeys.COMPILE_FROM_BITCODE) == null
+        ) {
+            splitOntoTwoStages(configuration, compilationSpawner)
+            return
+        }
+
         val fileNames = configuration.get(KonanConfigKeys.LIBRARY_TO_ADD_TO_CACHE)?.let { libPath ->
             val filesToCache = configuration.get(KonanConfigKeys.FILES_TO_CACHE)
             when {
@@ -80,7 +98,7 @@ class KonanDriver(
 
         ensureModuleName(konanConfig)
 
-        val cacheBuilder = CacheBuilder(konanConfig, spawnCompilation)
+        val cacheBuilder = CacheBuilder(konanConfig, compilationSpawner)
         if (cacheBuilder.needToBuild()) {
             cacheBuilder.build()
             konanConfig = KonanConfig(project, configuration) // TODO: Just set freshly built caches.
@@ -102,4 +120,46 @@ class KonanDriver(
             }
         }
     }
+}
+
+private fun splitOntoTwoStages(configuration: CompilerConfiguration, compilationSpawner: CompilationSpawner) {
+    // K2/Native backend cannot produce binary directly from FIR frontend output, since descriptors, deserialized from KLib, are needed
+    // So, such compilation is split to two stages:
+    // - source files are compiled to intermediate KLib by FIR frontend
+    // - intermediate Klib is compiled to binary by K2/Native backend
+    // In this implementation, 'arguments' is not changed accordingly to changes in `firstStageConfiguration` and `configuration`,
+    // since values of fields `produce`, `output`, `freeArgs`, `includes` does not seem to matter downstream in prepareEnvironment()
+
+    if (configuration.getBoolean(CommonConfigurationKeys.USE_FIR) &&
+            configuration.get(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS)
+                    ?.getFeatureSupport(LanguageFeature.MultiPlatformProjects) == LanguageFeature.State.ENABLED)
+        configuration.report(CompilerMessageSeverity.ERROR,
+                """
+                            Producing a multiplatform library directly from sources is not allowed since language version 2.0.
+                        
+                            If you use the command-line compiler, then first compile the sources to a KLIB with
+                            the `-p library` compiler flag. Then, use '-Xinclude=<klib>' to pass the KLIB to
+                            the compiler to produce the required type of binary artifact.
+                        """.trimIndent())
+
+    // For the first stage, construct a temporary file name for an intermediate KLib
+    val intermediateKLib = File(System.getProperty("java.io.tmpdir"), "${UUID.randomUUID()}.klib").also {
+        require(!it.exists) { "Collision writing intermediate KLib $it" }
+        it.deleteOnExit()
+    }
+    compilationSpawner.spawn(emptyList()) {
+        // For the first stage, use "-p library" produce mode
+        put(KonanConfigKeys.PRODUCE, CompilerOutputKind.LIBRARY)
+        put(KonanConfigKeys.OUTPUT, intermediateKLib.absolutePath)
+        put(CLIConfigurationKeys.CONTENT_ROOTS, configuration.getNotNull(CLIConfigurationKeys.CONTENT_ROOTS))
+        put(KonanConfigKeys.LIBRARY_FILES, configuration.getNotNull(KonanConfigKeys.LIBRARY_FILES))
+    }
+
+    // For the second stage, remove already compiled source files from the configuration
+    configuration.put(CLIConfigurationKeys.CONTENT_ROOTS, listOf())
+    // For the second stage, provide just compiled intermediate KLib as "-Xinclude=" param
+    require(intermediateKLib.exists) { "Intermediate KLib $intermediateKLib must have been created by successful first compilation stage" }
+    configuration.put(KonanConfigKeys.INCLUDED_LIBRARIES,
+            configuration.get(KonanConfigKeys.INCLUDED_LIBRARIES).orEmpty() + listOf(intermediateKLib.absolutePath))
+    compilationSpawner.spawn(configuration) // Need to spawn a new compilation to create fresh environment (without sources).
 }

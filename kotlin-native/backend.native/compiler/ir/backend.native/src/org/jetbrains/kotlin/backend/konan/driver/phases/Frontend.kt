@@ -57,8 +57,8 @@ internal val FrontendPhase = createSimpleNamedCompilerPhase(
 
         require(context.config.produce == CompilerOutputKind.LIBRARY || sourceFiles.isEmpty()) {
             "Internal error: no source files should have been passed here (${sourceFiles.first().virtualFilePath} in particular)\n" +
-            "to produce binary (e.g. a ${context.config.produce.name.toLowerCaseAsciiOnly()})\n" +
-            "K2Native.doExecute() must transform such compilation into two-stage compilation. Please report this here: https://kotl.in/issue"
+                    "to produce binary (e.g. a ${context.config.produce.name.toLowerCaseAsciiOnly()})\n" +
+                    "KonanDriver.kt::splitOntoTwoStages() must transform such compilation into two-stage compilation. Please report this here: https://kotl.in/issue"
         }
 
         // Build AST and binding info.
