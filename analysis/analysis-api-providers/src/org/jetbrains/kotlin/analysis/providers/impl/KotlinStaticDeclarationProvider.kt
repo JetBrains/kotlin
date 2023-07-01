@@ -23,6 +23,7 @@ import com.intellij.util.indexing.FileContentImpl
 import com.intellij.util.io.URLUtil
 import java.util.concurrent.ConcurrentHashMap
 import org.jetbrains.kotlin.analysis.decompiler.psi.KotlinBuiltInDecompiler
+import org.jetbrains.kotlin.analysis.decompiler.psi.KotlinBuiltInFileType
 import org.jetbrains.kotlin.analysis.decompiler.stub.file.ClsKotlinBinaryClassCache
 import org.jetbrains.kotlin.analysis.decompiler.stub.file.KotlinClsStubBuilder
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
@@ -315,10 +316,20 @@ public class KotlinStaticDeclarationProviderFactory(
                     override fun visitFile(file: VirtualFile): Boolean {
                         if (!file.isDirectory) {
                             val fileContent = FileContentImpl.createByFile(file)
-                            if (binaryClassCache.isKotlinJvmCompiledFile(file, fileContent.content) &&
-                                file.fileType == JavaClassFileType.INSTANCE
-                            ) {
-                                (KotlinClsStubBuilder().buildFileStub(fileContent) as? KotlinFileStubImpl)?.let { stubs.put(file, it) }
+                            when {
+                                binaryClassCache.isKotlinJvmCompiledFile(file, fileContent.content) &&
+                                        file.fileType == JavaClassFileType.INSTANCE -> {
+                                    (KotlinClsStubBuilder().buildFileStub(fileContent) as? KotlinFileStubImpl)?.let { stubs.put(file, it) }
+                                }
+                                file.fileType == KotlinBuiltInFileType
+                                        && file.extension != BuiltInSerializerProtocol.BUILTINS_FILE_EXTENSION -> {
+                                    (builtInDecompiler.stubBuilder.buildFileStub(fileContent) as? KotlinFileStubImpl)?.let {
+                                        stubs.put(
+                                            file,
+                                            it
+                                        )
+                                    }
+                                }
                             }
                         }
                         return true

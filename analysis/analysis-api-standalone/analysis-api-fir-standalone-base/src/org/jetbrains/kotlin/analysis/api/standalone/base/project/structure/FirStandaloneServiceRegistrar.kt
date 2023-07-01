@@ -55,7 +55,7 @@ object FirStandaloneServiceRegistrar : AnalysisApiStandaloneServiceRegistrar {
             registerService(LLFirBuiltinsSessionFactory::class.java)
             registerService(JvmFirDeserializedSymbolProviderFactory::class.java, JvmStubBasedDeserializedSymbolProviderFactory::class.java)
             registerService(KotlinReferenceProviderContributor::class.java, KotlinFirReferenceContributor::class.java)
-            registerService(ReadWriteAccessChecker::class.java, ReadWriteAccessCheckerFirImpl::class.java   )
+            registerService(ReadWriteAccessChecker::class.java, ReadWriteAccessCheckerFirImpl::class.java)
         }
     }
 
