@@ -21,6 +21,7 @@ dependencies {
     api(project(":analysis:analysis-api-impl-barebone"))
     api(project(":js:js.config"))
     api(project(":compiler:cli-common"))
+    implementation(project(":analysis:decompiled:decompiler-to-psi"))
     testImplementation(project(":analysis:analysis-api-fir"))
     implementation(project(":compiler:frontend.common"))
     implementation(project(":compiler:fir:entrypoint"))

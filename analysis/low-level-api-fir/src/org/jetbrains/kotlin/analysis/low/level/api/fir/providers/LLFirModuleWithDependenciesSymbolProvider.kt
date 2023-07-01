@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.providers
 
-import org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserialization.JvmStubBasedFirDeserializedSymbolProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserialization.StubBasedFirDeserializedSymbolProvider
 import org.jetbrains.kotlin.analysis.utils.collections.buildSmartList
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.resolve.providers.FirNullSymbolNamesProvider
@@ -45,7 +45,7 @@ internal class LLFirModuleWithDependenciesSymbolProvider(
         classId: ClassId,
         classLikeDeclaration: KtClassLikeDeclaration,
     ): FirClassLikeSymbol<*>? = providers.firstNotNullOfOrNull { provider ->
-        if (provider !is JvmStubBasedFirDeserializedSymbolProvider) return@firstNotNullOfOrNull null
+        if (provider !is StubBasedFirDeserializedSymbolProvider) return@firstNotNullOfOrNull null
         provider.getClassLikeSymbolByClassId(classId, classLikeDeclaration)
     }
 
@@ -63,7 +63,7 @@ internal class LLFirModuleWithDependenciesSymbolProvider(
         callableDeclaration: KtCallableDeclaration,
     ) {
         providers.forEach { provider ->
-            if (provider !is JvmStubBasedFirDeserializedSymbolProvider) return@forEach
+            if (provider !is StubBasedFirDeserializedSymbolProvider) return@forEach
             destination.addIfNotNull(provider.getTopLevelCallableSymbol(packageFqName, shortName, callableDeclaration))
         }
     }

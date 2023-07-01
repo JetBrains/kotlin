@@ -6,10 +6,13 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.sessions
 
 import com.intellij.openapi.project.Project
+import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirModuleWithDependenciesSymbolProvider
 import org.jetbrains.kotlin.analysis.project.structure.KtBinaryModule
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
+import org.jetbrains.kotlin.fir.BuiltinTypes
 import org.jetbrains.kotlin.fir.FirVisibilityChecker
 import org.jetbrains.kotlin.fir.SessionConfiguration
 import org.jetbrains.kotlin.fir.analysis.FirOverridesBackwardCompatibilityHelper
@@ -18,6 +21,7 @@ import org.jetbrains.kotlin.fir.analysis.js.checkers.FirJsPlatformDiagnosticSupp
 import org.jetbrains.kotlin.fir.analysis.jvm.FirJvmOverridesBackwardCompatibilityHelper
 import org.jetbrains.kotlin.fir.resolve.calls.ConeCallConflictResolverFactory
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
+import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.scopes.FirPlatformClassMapper
 import org.jetbrains.kotlin.fir.session.JsCallConflictResolverFactory
 
@@ -63,6 +67,17 @@ internal class LLFirJsSessionFactory(project: Project) : LLFirAbstractSessionFac
         return doCreateBinaryLibrarySession(module) {
             registerModuleIndependentJsComponents()
         }
+    }
+
+    override fun createProjectLibraryProvidersForScope(
+        session: LLFirSession,
+        moduleData: LLFirModuleData,
+        kotlinScopeProvider: FirKotlinScopeProvider,
+        project: Project,
+        builtinTypes: BuiltinTypes,
+        scope: GlobalSearchScope,
+    ): List<FirSymbolProvider> {
+        return emptyList() // TODO(kirpichenkov)
     }
 
     private fun LLFirSession.registerModuleIndependentJsComponents() {
