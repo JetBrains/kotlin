@@ -647,6 +647,7 @@ public class LockBasedStorageManager implements StorageManager {
             );
         }
 
+        @org.jetbrains.kotlin.SuppressAnimalSniffer
         private AssertionError unableToRemoveKey(K input, Throwable throwable) {
             return sanitizeStackTrace(
                     new AssertionError("Unable to remove "
