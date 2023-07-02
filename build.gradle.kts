@@ -540,16 +540,7 @@ allprojects {
     }
 }
 
-apply {
-    from("libraries/commonConfiguration.gradle")
-}
-
-if (extra.has("isDeployStagingRepoGenerationRequired") &&
-    project.extra["isDeployStagingRepoGenerationRequired"] as Boolean == true
-) {
-    logger.info("Applying configuration for sonatype release")
-    project.apply { from("libraries/prepareSonatypeStaging.gradle") }
-}
+preparePublication()
 
 gradle.taskGraph.whenReady {
     fun Boolean.toOnOff(): String = if (this) "on" else "off"

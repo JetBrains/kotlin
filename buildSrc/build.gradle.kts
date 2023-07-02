@@ -111,6 +111,8 @@ dependencies {
     implementation("net.sf.proguard:proguard-gradle:6.2.2")
 
     implementation("gradle.plugin.org.jetbrains.gradle.plugin.idea-ext:gradle-idea-ext:1.0.1")
+    implementation("io.ktor:ktor-client-core:${rootProject.extra["versions.ktor-client-core"]}")
+    implementation("io.ktor:ktor-client-cio:${rootProject.extra["versions.ktor-client-cio"]}")
 
     compileOnly("com.gradle:gradle-enterprise-gradle-plugin:3.12.4")
 
