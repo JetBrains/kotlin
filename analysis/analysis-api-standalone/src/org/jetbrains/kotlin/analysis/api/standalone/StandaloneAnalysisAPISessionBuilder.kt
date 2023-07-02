@@ -44,7 +44,8 @@ import org.jetbrains.kotlin.psi.KtFile
 public class StandaloneAnalysisAPISessionBuilder(
     applicationDisposable: Disposable,
     projectDisposable: Disposable,
-    unitTestMode: Boolean,
+    unitTestMode: Boolean = false,
+    compilerConfiguration: CompilerConfiguration = CompilerConfiguration(),
     classLoader: ClassLoader = MockProject::class.java.classLoader
 ) {
     init {
@@ -61,7 +62,8 @@ public class StandaloneAnalysisAPISessionBuilder(
             projectDisposable,
             applicationDisposable,
             unitTestMode,
-            classLoader = classLoader
+            compilerConfiguration,
+            classLoader
         )
 
     init {
@@ -220,6 +222,7 @@ public inline fun buildStandaloneAnalysisAPISession(
     projectDisposable: Disposable = Disposer.newDisposable("StandaloneAnalysisAPISession.project"),
     unitTestMode: Boolean = false,
     withPsiDeclarationFromBinaryModuleProvider: Boolean = false,
+    compilerConfiguration: CompilerConfiguration = CompilerConfiguration(),
     classLoader: ClassLoader = MockProject::class.java.classLoader,
     init: StandaloneAnalysisAPISessionBuilder.() -> Unit
 ): StandaloneAnalysisAPISession {
@@ -230,6 +233,7 @@ public inline fun buildStandaloneAnalysisAPISession(
         applicationDisposable,
         projectDisposable,
         unitTestMode,
+        compilerConfiguration,
         classLoader
     ).apply(init).build(
         withPsiDeclarationFromBinaryModuleProvider,
