@@ -1222,6 +1222,7 @@ internal object ControlFlowSensibleEscapeAnalysis {
 
             val preprocessedFunctions = mutableSetOf<IrFunction>()
             val devirtualizedCallSites = mutableMapOf<IrCall, MutableList<IrFunctionSymbol>>()
+            val failedToDevirtualizeCallSites = mutableSetOf<IrCall>()
             val throwableType = context.ir.symbols.throwable.defaultType
             val irBuilder = context.createIrBuilder(function.symbol)
             val fictitiousVariableInitSetValues = mutableMapOf<IrVariable, IrSetValue>()
@@ -1278,7 +1279,6 @@ internal object ControlFlowSensibleEscapeAnalysis {
                 // TODO: Use these maps or remove.
                 val producerInvocations = mutableMapOf<IrExpression, IrCall>()
                 val jobInvocations = mutableMapOf<IrCall, IrCall>()
-                val failedToDevirtualizeCallSites = mutableSetOf<IrCall>()
                 for (callSite in component[function]!!.callSites) {
                     val call = callSite.call
                     val irCall = call.irCallSite as? IrCall ?: continue
@@ -1289,15 +1289,11 @@ internal object ControlFlowSensibleEscapeAnalysis {
                     if (call !is DataFlowIR.Node.VirtualCall) continue
                     if (callSite.isVirtual)
                         failedToDevirtualizeCallSites.add(irCall)
-                    devirtualizedCallSites.getOrPut(irCall) { mutableListOf() }.add(
-                            callSite.actualCallee.irFunction?.symbol ?: error("No IR for ${callSite.actualCallee}")
-                    )
-                }
-                // TODO: Remove after testing.
-                failedToDevirtualizeCallSites.forEach {
-                    val list = devirtualizedCallSites[it] ?: return@forEach
-                    require(list.size == 1)
-                    devirtualizedCallSites.remove(it)
+                    else {
+                        devirtualizedCallSites.getOrPut(irCall) { mutableListOf() }.add(
+                                callSite.actualCallee.irFunction?.symbol ?: error("No IR for ${callSite.actualCallee}")
+                        )
+                    }
                 }
             }
 
@@ -2343,14 +2339,14 @@ internal object ControlFlowSensibleEscapeAnalysis {
                             processCall(data, expression, actualCallee, callSitesStartingRecursionParameters[originalCall],
                                     argumentNodeIds, calleeEscapeAnalysisResult)
                         } else {
-                            val devirtualizedCallSite = devirtualizedCallSites[originalCall]
-                            if (devirtualizedCallSite == null) {
+                            val devirtualizedCallSite = devirtualizedCallSites[originalCall] ?: emptyList()
+                            if (originalCall in failedToDevirtualizeCallSites) {
                                 // Non-devirtualized call.
                                 processCall(data, expression, expression.actualCallee, null, argumentNodeIds,
                                         EscapeAnalysisResult.pessimistic(actualCallee))
                             } else when (devirtualizedCallSite.size) {
                                 0 -> {
-                                    // No actual callees - this call site bound to be unreachable.
+                                    // No actual callees - this call site is bound to be unreachable.
                                     data.graph.unreachable()
                                 }
                                 1 -> {
