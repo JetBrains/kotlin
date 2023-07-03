@@ -4946,6 +4946,8 @@ if (PlatformInfo.isAppleTarget(project)) {
     }
 
     interopTest("interop_kt59167") {
+        // There is no GameController on watchOS.
+        enabled = target.family != Family.WATCHOS
         source = 'interop/kt59167/main.kt'
         interop = 'kt59167'
     }
