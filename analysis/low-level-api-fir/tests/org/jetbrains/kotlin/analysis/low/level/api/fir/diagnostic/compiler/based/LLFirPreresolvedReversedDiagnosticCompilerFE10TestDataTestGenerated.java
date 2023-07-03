@@ -6637,6 +6637,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
             }
 
             @Test
+            @TestMetadata("safeCallAfterVariableInitialization.kt")
+            public void testSafeCallAfterVariableInitialization() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/safeCallAfterVariableInitialization.kt");
+            }
+
+            @Test
             @TestMetadata("scopeOfAnonymousInitializer.kt")
             public void testScopeOfAnonymousInitializer() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/scopeOfAnonymousInitializer.kt");
