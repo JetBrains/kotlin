@@ -30,26 +30,25 @@ internal fun equals(obj1: dynamic, obj2: dynamic): Boolean {
 internal fun toString(o: dynamic): String = when {
     o == null -> "null"
     isArrayish(o) -> "[...]"
-
+    jsTypeOf(o.toString) != "function" -> anyToString(o)
     else -> (o.toString)().unsafeCast<String>()
 }
 
 internal fun anyToString(o: dynamic): String = js("Object").prototype.toString.call(o)
 
-private fun hasOwnPrototypeProperty(o: Any, name: String): Boolean {
-    return JsObject.getPrototypeOf(o).hasOwnProperty(name).unsafeCast<Boolean>()
-}
-
 internal fun hashCode(obj: dynamic): Int {
-    if (obj == null)
-        return 0
+    if (obj == null) return 0
 
-    return when (jsTypeOf(obj)) {
+    @Suppress("UNUSED_VARIABLE")
+    return when (val typeOf = jsTypeOf(obj)) {
         "object" -> if ("function" === jsTypeOf(obj.hashCode)) (obj.hashCode)() else getObjectHashCode(obj)
         "function" -> getObjectHashCode(obj)
         "number" -> getNumberHashCode(obj)
         "boolean" -> getBooleanHashCode(obj.unsafeCast<Boolean>())
-        else -> getStringHashCode(js("String")(obj))
+        "string" -> getStringHashCode(js("String")(obj))
+        "bigint" -> getBigIntHashCode(obj)
+        "symbol" -> getSymbolHashCode(obj)
+        else -> js("throw new Error('Unexpected typeof `' + typeOf + '`')")
     }
 }
 
@@ -57,12 +56,71 @@ internal fun getBooleanHashCode(value: Boolean): Int {
     return if (value) 1231 else 1237
 }
 
+private fun getBigIntHashCode(value: dynamic): Int {
+    @Suppress("UNUSED_VARIABLE")
+    val shiftNumber = js("BigInt(32)");
+    @Suppress("UNUSED_VARIABLE")
+    val MASK = js("BigInt(0xffffffff)");
+
+    @Suppress("ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE")
+    var bigNumber = if (value < 0) -value else value
+    var hashCode = 0
+    val signum = if (value < 0) -1 else 1
+
+    while (bigNumber != 0) {
+        val chunk = js("Number(bigNumber & MASK)").unsafeCast<Int>()
+        hashCode = 31 * hashCode + chunk
+        @Suppress("UNUSED_VALUE")
+        bigNumber = js("bigNumber >> shiftNumber")
+    }
+
+    return hashCode * signum
+}
+
+@Suppress("MUST_BE_INITIALIZED")
+private var symbolWeakMap: dynamic
+
+@Suppress("MUST_BE_INITIALIZED")
+private var symbolMap: dynamic
+
+private fun getSymbolWeakMap(): dynamic {
+    if (symbolWeakMap === VOID) {
+        symbolWeakMap = js("new WeakMap()")
+    }
+    return symbolWeakMap
+}
+
+private fun getSymbolMap(): dynamic {
+    if (symbolMap === VOID) {
+        symbolMap = js("new Map()")
+    }
+    return symbolMap
+}
+
+@Suppress("UNUSED_PARAMETER")
+private fun symbolIsSharable(symbol: dynamic) = js("Symbol.keyFor(symbol)") != VOID
+
+private fun getSymbolHashCode(value: dynamic): Int {
+    val hashCodeMap = if (symbolIsSharable(value)) getSymbolMap() else getSymbolWeakMap()
+    val cachedHashCode = hashCodeMap.get(value)
+
+    if (cachedHashCode !== VOID) return cachedHashCode
+
+    val hash = calculateRandomHash()
+    hashCodeMap.set(value, hash)
+    return hash
+}
+
 private const val POW_2_32 = 4294967296.0
 private const val OBJECT_HASH_CODE_PROPERTY_NAME = "kotlinHashCodeValue$"
 
+private fun calculateRandomHash(): Int {
+    return jsBitwiseOr(js("Math").random() * POW_2_32, 0) // Make 32-bit singed integer.
+}
+
 internal fun getObjectHashCode(obj: dynamic): Int {
     if (!jsIn(OBJECT_HASH_CODE_PROPERTY_NAME, obj)) {
-        var hash = jsBitwiseOr(js("Math").random() * POW_2_32, 0) // Make 32-bit singed integer.
+        var hash = calculateRandomHash()
         var descriptor = js("new Object()")
         descriptor.value = hash
         descriptor.enumerable = false

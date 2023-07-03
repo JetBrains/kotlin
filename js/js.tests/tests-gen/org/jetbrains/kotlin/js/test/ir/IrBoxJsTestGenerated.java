@@ -1721,6 +1721,12 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
         }
 
         @Test
+        @TestMetadata("hashCode.kt")
+        public void testHashCode() throws Exception {
+            runTest("js/js.translator/testData/box/dynamic/hashCode.kt");
+        }
+
+        @Test
         @TestMetadata("identityEquals.kt")
         public void testIdentityEquals() throws Exception {
             runTest("js/js.translator/testData/box/dynamic/identityEquals.kt");

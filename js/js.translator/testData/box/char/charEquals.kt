@@ -1,7 +1,7 @@
 // EXPECTED_REACHABLE_NODES: 1372
 package foo
 
-// CHECK_NEW_COUNT: function=box max=6
+// CHECK_NEW_COUNT: function=box max=10
 fun box(): String {
     assertEquals(true, 'A' == 'A')
     assertEquals(false, 'A' != 'A')

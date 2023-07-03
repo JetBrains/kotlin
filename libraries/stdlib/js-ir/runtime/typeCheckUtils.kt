@@ -69,18 +69,6 @@ internal fun isSuspendFunction(obj: dynamic, arity: Int): Boolean {
     return result
 }
 
-internal fun isObject(obj: dynamic): Boolean {
-    val objTypeOf = jsTypeOf(obj)
-
-    return when (objTypeOf) {
-        "string" -> true
-        "number" -> true
-        "boolean" -> true
-        "function" -> true
-        else -> jsInstanceOf(obj, js("Object"))
-    }
-}
-
 private fun isJsArray(obj: Any): Boolean {
     return js("Array").isArray(obj).unsafeCast<Boolean>()
 }
@@ -88,6 +76,9 @@ private fun isJsArray(obj: Any): Boolean {
 internal fun isArray(obj: Any): Boolean {
     return isJsArray(obj) && !(obj.asDynamic().`$type$`)
 }
+
+// TODO: Remove after the next bootstrap
+internal fun isObject(o: dynamic): Boolean = o != null
 
 internal fun isArrayish(o: dynamic) = isJsArray(o) || arrayBufferIsView(o)
 
@@ -109,7 +100,7 @@ internal fun jsGetPrototypeOf(jsClass: dynamic) = js("Object").getPrototypeOf(js
 
 internal fun jsIsType(obj: dynamic, jsClass: dynamic): Boolean {
     if (jsClass === js("Object")) {
-        return isObject(obj)
+        return obj != null
     }
 
     val objType = jsTypeOf(obj)
