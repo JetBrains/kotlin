@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.analysis.providers
 
+import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.analysis.project.structure.KtLibraryModule
 import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
 
 /**
@@ -15,5 +17,10 @@ import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
  * but should be replaced with given sources.
  */
 public interface KotlinAnchorModuleProvider {
-    public fun getAnchorModule(libraryName: String): KtSourceModule?
+    public fun getAnchorModule(libraryModule: KtLibraryModule): KtSourceModule?
+
+    public companion object {
+        public fun getInstance(project: Project): KotlinAnchorModuleProvider? =
+            project.getService(KotlinAnchorModuleProvider::class.java)
+    }
 }

@@ -301,7 +301,7 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
         val scopeProvider = FirKotlinScopeProvider()
         val components = LLFirModuleResolveComponents(module, globalResolveComponents, scopeProvider)
 
-        val moduleAnchorSession = project.getService(KotlinAnchorModuleProvider::class.java)?.getAnchorModule(libraryModule.libraryName)?.let {
+        val moduleAnchorSession = KotlinAnchorModuleProvider.getInstance(project)?.getAnchorModule(libraryModule)?.let {
             LLFirSessionCache.getInstance(project).getSession(it)
         }
 
