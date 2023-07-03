@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.buildtools.internal
 
-import org.jetbrains.kotlin.buildtools.api.CompilationResult
-import org.jetbrains.kotlin.buildtools.api.CompilationService
-import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
-import org.jetbrains.kotlin.buildtools.api.CompilerExecutionStrategyConfiguration
+import org.jetbrains.kotlin.buildtools.api.*
 import org.jetbrains.kotlin.buildtools.api.jvm.*
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
@@ -27,7 +24,7 @@ private val ExitCode.asCompilationResult
         else -> error("Unexpected exit code: $this")
     }
 
-internal class CompilationServiceImpl : CompilationService {
+internal object CompilationServiceImpl : CompilationService {
     override fun calculateClasspathSnapshot(classpathEntry: File): ClasspathEntrySnapshot {
         TODO("Calculating classpath snapshots via the Build Tools API is not yet implemented: KT-57565")
     }
@@ -37,6 +34,7 @@ internal class CompilationServiceImpl : CompilationService {
     override fun makeJvmCompilationConfiguration() = JvmCompilationConfigurationImpl()
 
     override fun compileJvm(
+        projectId: ProjectId,
         strategyConfig: CompilerExecutionStrategyConfiguration,
         compilationConfig: JvmCompilationConfiguration,
         sources: List<File>,
@@ -55,6 +53,10 @@ internal class CompilationServiceImpl : CompilationService {
         }
     }
 
+    override fun finishProjectCompilation(projectId: ProjectId) {
+
+    }
+
     private fun compileInProcess(
         loggerAdapter: KotlinLoggerMessageCollectorAdapter,
         sources: List<File>,
@@ -71,3 +73,5 @@ internal class CompilationServiceImpl : CompilationService {
         return compiler.exec(loggerAdapter, Services.EMPTY, parsedArguments).asCompilationResult
     }
 }
+
+internal class CompilationServiceProxy : CompilationService by CompilationServiceImpl

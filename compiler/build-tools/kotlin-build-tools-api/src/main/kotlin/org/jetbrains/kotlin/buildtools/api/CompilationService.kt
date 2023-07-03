@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.buildtools.api
 import org.jetbrains.kotlin.buildtools.api.jvm.ClasspathEntrySnapshot
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmCompilationConfiguration
 import java.io.File
+import java.util.*
 
 /**
  * A facade for invoking compilation and related stuff (such as [calculateClasspathSnapshot]) in Kotlin compiler.
@@ -43,17 +44,30 @@ public interface CompilationService {
 
     /**
      * Compiles Kotlin code targeting JVM platform and using specified options.
+     *
+     * The [finishProjectCompilation] must be called with the same [projectId] after the entire project is compiled.
+     * @param projectId The unique identifier of the project to be compiled. It may be the same for different modules of the project.
      * @param strategyConfig an instance of [CompilerExecutionStrategyConfiguration] initially obtained from [makeCompilerExecutionStrategyConfiguration]
      * @param compilationConfig an instance of [JvmCompilationConfiguration] initially obtained from [makeJvmCompilationConfiguration]
      * @param sources a list of all sources of the compilation unit
      * @param arguments a list of Kotlin JVM compiler arguments
      */
     public fun compileJvm(
+        projectId: ProjectId,
         strategyConfig: CompilerExecutionStrategyConfiguration,
         compilationConfig: JvmCompilationConfiguration,
         sources: List<File>,
         arguments: List<String>
     ): CompilationResult
+
+    /**
+     * A finalization function that must be called when all the modules of the project are compiled.
+     *
+     * May perform cache clean-ups and resource freeing.
+     *
+     * @param projectId The unique identifier of the compiled project.
+     */
+    public fun finishProjectCompilation(projectId: ProjectId)
 
     @ExperimentalBuildToolsApi
     public companion object {

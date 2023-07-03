@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.gradle.internal.ClassLoadersCachingBuildService
 import org.jetbrains.kotlin.gradle.internal.KaptGenerateStubsTask
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.internal.BuildIdService
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.associateWithClosure
@@ -69,6 +70,7 @@ internal abstract class AbstractKotlinCompileConfig<TASK : AbstractKotlinCompile
             })
         val buildFinishedListenerService = BuildFinishedListenerService.registerIfAbsent(project)
         val cachedClassLoadersService = ClassLoadersCachingBuildService.registerIfAbsent(project)
+        val buildIdService = BuildIdService.registerIfAbsent(project)
         configureTask { task ->
             val propertiesProvider = project.kotlinPropertiesProvider
 
@@ -113,6 +115,7 @@ internal abstract class AbstractKotlinCompileConfig<TASK : AbstractKotlinCompile
                 .convention(propertiesProvider.suppressExperimentalICOptimizationsWarning)
                 .finalizeValueOnRead()
             task.buildFinishedListenerService.value(buildFinishedListenerService).disallowChanges()
+            task.buildIdService.value(buildIdService).disallowChanges()
 
             task.incremental = false
             task.useModuleDetection.convention(false)

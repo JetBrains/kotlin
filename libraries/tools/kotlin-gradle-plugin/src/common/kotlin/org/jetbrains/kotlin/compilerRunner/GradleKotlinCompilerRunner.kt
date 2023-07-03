@@ -9,6 +9,7 @@ import org.gradle.api.Project
 import org.gradle.api.invocation.Gradle
 import org.gradle.api.logging.Logger
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.bundling.AbstractArchiveTask
 import org.gradle.api.tasks.bundling.Zip
 import org.gradle.jvm.tasks.Jar
@@ -29,8 +30,10 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.internal.ClassLoadersCachingBuildService
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.logging.kotlinInfo
+import org.jetbrains.kotlin.gradle.plugin.BuildFinishedListenerService
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
+import org.jetbrains.kotlin.gradle.plugin.internal.BuildIdService
 import org.jetbrains.kotlin.gradle.plugin.internal.JavaSourceSetsAccessor
 import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskLoggers
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaTarget
@@ -60,7 +63,9 @@ internal fun createGradleCompilerRunner(
     buildMetricsReporter: BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>,
     workerExecutor: WorkerExecutor,
     runViaBuildToolsApi: Boolean,
-    cachedClassLoadersService: Property<ClassLoadersCachingBuildService>
+    cachedClassLoadersService: Property<ClassLoadersCachingBuildService>,
+    buildFinishedListenerService: Provider<BuildFinishedListenerService>,
+    buildIdService: Provider<BuildIdService>,
 ): GradleCompilerRunner {
     return if (runViaBuildToolsApi) {
         GradleBuildToolsApiCompilerRunner(
@@ -70,6 +75,8 @@ internal fun createGradleCompilerRunner(
             buildMetricsReporter,
             workerExecutor,
             cachedClassLoadersService,
+            buildFinishedListenerService,
+            buildIdService,
         )
     } else {
         GradleCompilerRunnerWithWorkers(

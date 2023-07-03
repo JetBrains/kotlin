@@ -16,6 +16,8 @@ import org.jetbrains.kotlin.compilerRunner.CompilerExecutionSettings
 import org.jetbrains.kotlin.compilerRunner.GradleCompilerRunner
 import org.jetbrains.kotlin.compilerRunner.GradleKotlinCompilerWorkArguments
 import org.jetbrains.kotlin.gradle.internal.ClassLoadersCachingBuildService
+import org.jetbrains.kotlin.gradle.plugin.BuildFinishedListenerService
+import org.jetbrains.kotlin.gradle.plugin.internal.BuildIdService
 import org.jetbrains.kotlin.gradle.tasks.GradleCompileTaskProvider
 import org.jetbrains.kotlin.gradle.tasks.TaskOutputsBackup
 import java.io.File
@@ -26,7 +28,9 @@ internal class GradleBuildToolsApiCompilerRunner(
     compilerExecutionSettings: CompilerExecutionSettings,
     buildMetrics: BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>,
     private val workerExecutor: WorkerExecutor,
-    private val cachedClassLoadersService: Provider<ClassLoadersCachingBuildService>
+    private val cachedClassLoadersService: Provider<ClassLoadersCachingBuildService>,
+    private val buildFinishedListenerService: Provider<BuildFinishedListenerService>,
+    private val buildIdService: Provider<BuildIdService>,
 ) : GradleCompilerRunner(taskProvider, jdkToolsJar, compilerExecutionSettings, buildMetrics) {
 
 
@@ -39,6 +43,8 @@ internal class GradleBuildToolsApiCompilerRunner(
         workQueue.submit(BuildToolsApiCompilationWork::class.java) { params ->
             params.compilerWorkArguments.set(workArgs)
             params.classLoadersCachingService.set(cachedClassLoadersService)
+            params.buildFinishedListenerService.set(buildFinishedListenerService)
+            params.buildIdService.set(buildIdService)
             if (taskOutputsBackup != null) {
                 params.taskOutputsToRestore.set(taskOutputsBackup.outputsToRestore)
                 params.buildDir.set(taskOutputsBackup.buildDirectory)

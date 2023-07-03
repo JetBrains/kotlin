@@ -21,15 +21,20 @@ import org.jetbrains.kotlin.gradle.internal.ClassLoadersCachingBuildService
 import org.jetbrains.kotlin.gradle.internal.ParentClassLoaderProvider
 import org.jetbrains.kotlin.gradle.logging.GradleKotlinLogger
 import org.jetbrains.kotlin.gradle.logging.SL4JKotlinLogger
+import org.jetbrains.kotlin.gradle.plugin.BuildFinishedListenerService
+import org.jetbrains.kotlin.gradle.plugin.internal.BuildIdService
 import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskLoggers
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.tasks.throwExceptionIfCompilationFailed
 import org.slf4j.LoggerFactory
 import java.io.File
+import java.util.*
 
 @OptIn(ExperimentalBuildToolsApi::class)
 internal abstract class BuildToolsApiCompilationWork : WorkAction<BuildToolsApiCompilationWork.BuildToolsApiCompilationParameters> {
     internal interface BuildToolsApiCompilationParameters : WorkParameters {
+        val buildIdService: Property<BuildIdService>
+        val buildFinishedListenerService: Property<BuildFinishedListenerService>
         val classLoadersCachingService: Property<ClassLoadersCachingBuildService>
         val compilerWorkArguments: Property<GradleKotlinCompilerWorkArguments>
         val taskOutputsToRestore: ListProperty<File>
@@ -64,6 +69,10 @@ internal abstract class BuildToolsApiCompilationWork : WorkAction<BuildToolsApiC
             val classLoader = parameters.classLoadersCachingService.get()
                 .getClassLoader(workArguments.compilerFullClasspath, SharedApiClassesClassLoaderProvider)
             val compilationService = CompilationService.loadImplementation(classLoader)
+            val buildId = ProjectId.ProjectUUID(parameters.buildIdService.get().buildId)
+            parameters.buildFinishedListenerService.get().onCloseOnceByKey(buildId.toString()) {
+                compilationService.finishProjectCompilation(buildId)
+            }
             val executionConfig = compilationService.makeCompilerExecutionStrategyConfiguration().apply {
                 when (executionStrategy) {
                     KotlinCompilerExecutionStrategy.DAEMON -> TODO("The daemon strategy is not yet supported in the Build Tools API")
@@ -73,6 +82,7 @@ internal abstract class BuildToolsApiCompilationWork : WorkAction<BuildToolsApiC
             }
             val jvmCompilationConfig = compilationService.makeJvmCompilationConfiguration()
             val result = compilationService.compileJvm(
+                buildId,
                 executionConfig,
                 jvmCompilationConfig,
                 emptyList(),
