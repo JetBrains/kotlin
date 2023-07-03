@@ -304,7 +304,7 @@ private class FirCallArgumentsProcessor(
             if (!result.containsKey(parameter)) {
                 when {
                     bodyResolveComponents.session.defaultParameterResolver.declaresDefaultValue(
-                        useSiteSession, bodyResolveComponents.scopeSession, parameter, function, originScope, index
+                        useSiteSession, bodyResolveComponents.scopeSession, function, originScope, index
                     ) ->
                         result[parameter] = ResolvedCallArgument.DefaultArgument
                     parameter.isVararg ->

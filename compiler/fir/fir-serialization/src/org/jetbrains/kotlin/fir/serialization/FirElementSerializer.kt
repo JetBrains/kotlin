@@ -701,8 +701,7 @@ class FirElementSerializer private constructor(
     ): ProtoBuf.ValueParameter.Builder = whileAnalysing(session, parameter) {
         val builder = ProtoBuf.ValueParameter.newBuilder()
 
-        val declaresDefaultValue = parameter.defaultValue != null ||
-                function.symbol.getSingleExpectForActualOrNull().containsDefaultValue(index)
+        val declaresDefaultValue = function.itOrExpectHasDefaultParameterValue(index)
 
         val flags = Flags.getValueParameterFlags(
             additionalAnnotations.isNotEmpty()

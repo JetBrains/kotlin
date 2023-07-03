@@ -16,14 +16,11 @@ class FirDefaultParametersResolver : FirSessionComponent {
     fun declaresDefaultValue(
         session: FirSession,
         scopeSession: ScopeSession,
-        valueParameter: FirValueParameter,
         function: FirFunction,
         originScope: FirScope?,
         index: Int,
     ): Boolean {
-        if (valueParameter.defaultValue != null || function.symbol.getSingleExpectForActualOrNull().containsDefaultValue(index)) {
-            return true
-        }
+        if (function.itOrExpectHasDefaultParameterValue(index)) return true
         if (function !is FirSimpleFunction) return false
         val symbol = function.symbol
         val typeScope = when (originScope) {
@@ -44,9 +41,7 @@ class FirDefaultParametersResolver : FirSessionComponent {
         var result = false
 
         typeScope.processOverriddenFunctions(symbol) { overridden ->
-            if (overridden.containsDefaultValue(index) ||
-                overridden.getSingleExpectForActualOrNull().containsDefaultValue(index)
-            ) {
+            if (overridden.fir.itOrExpectHasDefaultParameterValue(index)) {
                 result = true
                 return@processOverriddenFunctions ProcessorAction.STOP
             }
