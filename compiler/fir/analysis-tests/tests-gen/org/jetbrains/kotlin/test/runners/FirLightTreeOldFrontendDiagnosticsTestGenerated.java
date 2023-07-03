@@ -6868,6 +6868,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
                 }
 
                 @Test
+                @TestMetadata("initializationInUnreachableCode.kt")
+                public void testInitializationInUnreachableCode() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/deadCode/initializationInUnreachableCode.kt");
+                }
+
+                @Test
                 @TestMetadata("kt2585_1.kt")
                 public void testKt2585_1() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/deadCode/kt2585_1.kt");
