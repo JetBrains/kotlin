@@ -6886,6 +6886,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("reassignementInUnreachableCode.kt")
+                public void testReassignementInUnreachableCode() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/deadCode/reassignementInUnreachableCode.kt");
+                }
+
+                @Test
                 @TestMetadata("returnInDeadLambda.kt")
                 public void testReturnInDeadLambda() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/deadCode/returnInDeadLambda.kt");
