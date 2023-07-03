@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.PrivateSessionConstructor
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import java.lang.ref.WeakReference
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicLong
 
@@ -58,19 +59,17 @@ abstract class LLFirSession(
                 "Outside a write action, a session may only be invalidated directly when FIR guards are turned off."
             }
 
+            // The lambda passed to `invokeLater` might survive beyond project disposal (especially in tests), so me must not capture a hard
+            // reference to `this` that can leak `project`. A weak reference is appropriate because we do not need to invalidate the session
+            // when it has already been collected.
+            val weakSession = WeakReference(this)
             application.invokeLater(
-                { application.runWriteAction { invalidateInWriteAction() } },
+                { weakSession.invalidateIfAlive() },
 
                 // `ModalityState.any()` can be used because session invalidation does not modify PSI, VFS, or the project model.
                 ModalityState.any(),
             )
         }
-    }
-
-    private fun invalidateInWriteAction() {
-        if (!isValid) return
-
-        LLFirSessionInvalidationService.getInstance(project).invalidate(ktModule)
     }
 
     /**
@@ -91,6 +90,19 @@ abstract class LLFirSession(
             return count.incrementAndGet()
         }
     }
+}
+
+private fun LLFirSession.invalidateInWriteAction() {
+    if (!isValid) return
+
+    LLFirSessionInvalidationService.getInstance(project).invalidate(ktModule)
+}
+
+private fun WeakReference<LLFirSession>.invalidateIfAlive() = ApplicationManager.getApplication().runWriteAction {
+    val session = get() ?: return@runWriteAction
+    if (session.project.isDisposed) return@runWriteAction
+
+    session.invalidateInWriteAction()
 }
 
 abstract class LLFirModuleSession(
