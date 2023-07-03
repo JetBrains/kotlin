@@ -6,6 +6,13 @@ import org.jetbrains.dokka.model.properties.WithExtraProperties
 import org.jetbrains.dokka.plugability.DokkaContext
 import org.jetbrains.dokka.transformers.documentation.DocumentableTransformer
 
+/**
+ * Since we can not merge [DClasslike] with [DTypeAlias.underlyingType] and [DTypeAlias.extra],
+ * we have this transformer to add [ActualTypealias] extra in expect [DClasslike]
+ *
+ * The transformer should be applied after merging all documentables
+ */
+// TODO assign actual [DTypeAlias.expectPresentInSet] an expect source set, currently, [DTypeAlias.expectPresentInSet] always = null
 class ActualTypealiasAdder : DocumentableTransformer {
 
     override fun invoke(original: DModule, context: DokkaContext) = original.generateTypealiasesMap().let { aliases ->
@@ -66,30 +73,36 @@ class ActualTypealiasAdder : DocumentableTransformer {
         elements.map { element ->
             if (element.expectPresentInSet != null) {
                 typealiases[element.dri]?.let { ta ->
-                    val merged = element.withNewExtras(element.extra + ActualTypealias(ta.underlyingType)).let {
+                    val actualTypealiasExtra = ActualTypealias(ta.copy(expectPresentInSet = element.expectPresentInSet))
+                    val merged = element.withNewExtras(element.extra + actualTypealiasExtra).let {
                         when (it) {
                             is DClass -> it.copy(
                                 documentation = element.documentation + ta.documentation,
+                                sources = element.sources + ta.sources,
                                 sourceSets = element.sourceSets + ta.sourceSets
                             )
 
                             is DEnum -> it.copy(
                                 documentation = element.documentation + ta.documentation,
+                                sources = element.sources + ta.sources,
                                 sourceSets = element.sourceSets + ta.sourceSets
                             )
 
                             is DInterface -> it.copy(
                                 documentation = element.documentation + ta.documentation,
+                                sources = element.sources + ta.sources,
                                 sourceSets = element.sourceSets + ta.sourceSets
                             )
 
                             is DObject -> it.copy(
                                 documentation = element.documentation + ta.documentation,
+                                sources = element.sources + ta.sources,
                                 sourceSets = element.sourceSets + ta.sourceSets
                             )
 
                             is DAnnotation -> it.copy(
                                 documentation = element.documentation + ta.documentation,
+                                sources = element.sources + ta.sources,
                                 sourceSets = element.sourceSets + ta.sourceSets
                             )
 
