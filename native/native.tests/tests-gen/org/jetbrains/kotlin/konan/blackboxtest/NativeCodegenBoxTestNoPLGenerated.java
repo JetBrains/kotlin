@@ -25976,6 +25976,12 @@ public class NativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenBoxT
             }
 
             @Test
+            @TestMetadata("kt59613.kt")
+            public void testKt59613() throws Exception {
+                runTest("compiler/testData/codegen/box/multiplatform/kt59613.kt");
+            }
+
+            @Test
             @TestMetadata("optionalExpectation.kt")
             public void testOptionalExpectation() throws Exception {
                 runTest("compiler/testData/codegen/box/multiplatform/optionalExpectation.kt");

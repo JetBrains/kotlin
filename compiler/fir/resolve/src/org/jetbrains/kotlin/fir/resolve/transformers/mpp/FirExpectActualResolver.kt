@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.resolve.calls.mpp.AbstractExpectActualCompatibilityChecker
 import org.jetbrains.kotlin.mpp.CallableSymbolMarker
+import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility
 
 object FirExpectActualResolver {
     fun findExpectForActual(
@@ -77,6 +78,12 @@ object FirExpectActualResolver {
                             actualContainingClass,
                             context
                         )
+                    }.let {
+                        // If there is a compatible entry, return a map only containing it
+                        when (val compatibleSymbols = it[ExpectActualCompatibility.Compatible]) {
+                            null -> it
+                            else -> mapOf<ExpectActualCompatibility<FirBasedSymbol<*>>, _>(ExpectActualCompatibility.Compatible to compatibleSymbols)
+                        }
                     }
                 }
                 is FirClassLikeSymbol<*> -> {
