@@ -8,7 +8,7 @@
   },
   "devDependencies": {
     "jasmine": "^3.10.0",
-    "jest": "^27.4.3",
+    "jest": "^29.5.0",
     "mocha": "^9.2.1",
     "qunit": "^2.18.2",
     "tape": "~4.10.0"
