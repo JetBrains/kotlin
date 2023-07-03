@@ -109,6 +109,26 @@ class LLFirSessionCache(private val project: Project) {
         storage.clear()
     }
 
+    // Removing script sessions is only needed temporarily until KTIJ-25620 has been implemented.
+    fun removeAllScriptSessions() {
+        ApplicationManager.getApplication().assertWriteAccessAllowed()
+
+        removeAllScriptSessionsFrom(sourceCache)
+        removeAllScriptSessionsFrom(binaryCache)
+    }
+
+    private fun removeAllScriptSessionsFrom(storage: SessionStorage) {
+        // `ConcurrentSoftValueHashMap` (the implementation used by `storage`) does not back its entry set but rather creates a copy, which
+        // is in violation of the contract of `Map.entrySet`, and thus changes to the entry set are not reflected in `storage`. Because this
+        // function is executed in a write action, we do not need the weak consistency guarantees made by `ConcurrentMap`'s iterator, so a
+        // "collect and remove" approach also works.
+        val scriptEntries = storage.entries.filter { (module, _) -> module is KtScriptModule || module is KtScriptDependencyModule }
+        for ((module, session) in scriptEntries) {
+            session.isValid = false
+            storage.remove(module)
+        }
+    }
+
     private fun createSession(module: KtModule): LLFirSession {
         val sessionFactory = createPlatformAwareSessionFactory(module)
         return when (module) {
