@@ -7097,6 +7097,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("continueInInitBlock.kt")
+            public void testContinueInInitBlock() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/controlStructures/continueInInitBlock.kt");
+            }
+
+            @Test
             @TestMetadata("emptyIf.kt")
             public void testEmptyIf() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/controlStructures/emptyIf.kt");
