@@ -68,11 +68,14 @@ internal abstract class KotlinToolingDiagnosticsCollector : BuildService<BuildSe
             return
         }
 
-        if (diagnostic.severity == ToolingDiagnostic.Severity.FATAL) {
-            throw InvalidUserCodeException(diagnostic.message)
-        }
         rawDiagnosticsFromProject.compute(project.path) { _, previousListIfAny ->
             previousListIfAny?.apply { add(diagnostic) } ?: mutableListOf(diagnostic)
+        }
+
+        if (diagnostic.severity == ToolingDiagnostic.Severity.FATAL) {
+            if (diagnostic.throwable != null)
+                throw InvalidUserCodeException(diagnostic.message, diagnostic.throwable)
+            else throw InvalidUserCodeException(diagnostic.message)
         }
     }
 }

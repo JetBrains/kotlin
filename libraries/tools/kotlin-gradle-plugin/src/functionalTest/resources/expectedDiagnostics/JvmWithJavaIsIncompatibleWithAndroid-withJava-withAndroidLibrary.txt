@@ -1,0 +1,8 @@
+[JvmWithJavaIsIncompatibleWithAndroid | FATAL] 'withJava()' is not compatible with Android Plugins
+Incompatible Android Plugin applied: 'com.android.library'
+
+  kotlin {
+      jvm {
+          withJava() /* <- cannot be used when the Android Plugin is present */
+      }
+  }

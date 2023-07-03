@@ -530,6 +530,22 @@ object KotlinToolingDiagnostics {
             """.trimIndent()
         )
     }
+
+    object JvmWithJavaIsIncompatibleWithAndroid : ToolingDiagnosticFactory(FATAL) {
+        operator fun invoke(androidPluginId: String, trace: Throwable?) = build(
+            """
+                'withJava()' is not compatible with Android Plugins
+                Incompatible Android Plugin applied: '$androidPluginId'
+                
+                  kotlin {
+                      jvm {
+                          withJava() /* <- cannot be used when the Android Plugin is present */
+                      }
+                  }
+            """.trimIndent(),
+            throwable = trace
+        )
+    }
 }
 
 private fun String.indentLines(nSpaces: Int = 4, skipFirstLine: Boolean = true): String {
