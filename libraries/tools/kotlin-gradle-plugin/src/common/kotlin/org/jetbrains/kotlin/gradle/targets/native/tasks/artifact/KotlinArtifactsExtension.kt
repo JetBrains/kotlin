@@ -10,6 +10,9 @@ import org.gradle.api.Project
 import org.gradle.api.plugins.ExtensionAware
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.dsl.KotlinNativeArtifactDSL.ExperimentalArtifactDsl
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnosticOncePerProject
 import org.jetbrains.kotlin.gradle.utils.castIsolatedKotlinPluginClassLoaderAware
 import javax.inject.Inject
 
@@ -66,6 +69,10 @@ abstract class KotlinNativeArtifactDSLImpl @Inject constructor(private val proje
     }
 
     private inline fun <reified T : KotlinArtifactConfig> addKotlinArtifact(name: String, configure: Action<in T>) {
+        if (!project.kotlinPropertiesProvider.suppressExperimentalArtifactsDslWarning) {
+            project.reportDiagnosticOncePerProject(KotlinToolingDiagnostics.ExperimentalArtifactsDslUsed())
+        }
+
         //create via newInstance for extensibility
         val config: T = project.objects.newInstance(T::class.java, name)
         project.kotlinArtifactsExtension.artifactConfigs.add(config)

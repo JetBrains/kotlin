@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_APPLY_DEFAULT_HIERARCHY_TEMPLATE
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_IGNORE_DISABLED_TARGETS
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_SUPPRESS_EXPERIMENTAL_ARTIFACTS_DSL_WARNING
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic.Severity.*
 import org.jetbrains.kotlin.gradle.plugin.sources.android.multiplatformAndroidSourceSetLayoutV1
 import org.jetbrains.kotlin.gradle.plugin.sources.android.multiplatformAndroidSourceSetLayoutV2
@@ -517,6 +518,15 @@ object KotlinToolingDiagnostics {
             """
                 Unable to detect Kotlin framework build type for CONFIGURATION=$envConfiguration automatically.
                 Specify 'KOTLIN_FRAMEWORK_BUILD_TYPE' to 'debug' or 'release'
+            """.trimIndent()
+        )
+    }
+
+    object ExperimentalArtifactsDslUsed : ToolingDiagnosticFactory(WARNING) {
+        operator fun invoke() = build(
+            """
+                'kotlinArtifacts' DSL is experimental and may be changed in the future.
+                To suppress this warning add '$KOTLIN_NATIVE_SUPPRESS_EXPERIMENTAL_ARTIFACTS_DSL_WARNING=true' to your gradle.properties
             """.trimIndent()
         )
     }

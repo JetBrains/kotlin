@@ -115,8 +115,8 @@ internal fun Collection<ToolingDiagnostic>.assertDiagnostics(vararg diagnostics:
     fail(errorMessage)
 }
 
-internal fun Project.assertNoDiagnostics(id: String) {
-    kotlinToolingDiagnosticsCollector.getDiagnosticsForProject(this).assertNoDiagnostics(id)
+internal fun Project.assertNoDiagnostics(factory: ToolingDiagnosticFactory) {
+    kotlinToolingDiagnosticsCollector.getDiagnosticsForProject(this).assertNoDiagnostics(factory.id)
 }
 
 internal fun Collection<ToolingDiagnostic>.assertNoDiagnostics(id: String) {

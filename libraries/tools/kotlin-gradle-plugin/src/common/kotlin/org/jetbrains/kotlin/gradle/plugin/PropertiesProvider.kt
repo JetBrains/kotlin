@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLI
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_IMPORT_ENABLE_SLOW_SOURCES_JAR_RESOLVER
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_DEPENDENCY_PROPAGATION
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_IGNORE_DISABLED_TARGETS
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_SUPPRESS_EXPERIMENTAL_ARTIFACTS_DSL_WARNING
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_USE_XCODE_MESSAGE_STYLE
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_RUN_COMPILER_VIA_BUILD_TOOLS_API
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_STDLIB_DEFAULT_DEPENDENCY
@@ -528,6 +529,9 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val suppressedGradlePluginErrors: List<String>
         get() = property(PropertyNames.KOTLIN_SUPPRESS_GRADLE_PLUGIN_ERRORS)?.split(",").orEmpty()
 
+    val suppressExperimentalArtifactsDslWarning: Boolean
+        get() = booleanProperty(KOTLIN_NATIVE_SUPPRESS_EXPERIMENTAL_ARTIFACTS_DSL_WARNING) ?: false
+
     /**
      * Retrieves a comma-separated list of browsers to use when running karma tests for [target]
      * @see KOTLIN_JS_KARMA_BROWSERS
@@ -624,6 +628,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
         const val KOTLIN_SUPPRESS_GRADLE_PLUGIN_WARNINGS = "kotlin.suppressGradlePluginWarnings"
         const val KOTLIN_SUPPRESS_GRADLE_PLUGIN_ERRORS = "kotlin.internal.suppressGradlePluginErrors"
         const val KOTLIN_NATIVE_IGNORE_DISABLED_TARGETS = "kotlin.native.ignoreDisabledTargets"
+        const val KOTLIN_NATIVE_SUPPRESS_EXPERIMENTAL_ARTIFACTS_DSL_WARNING = "kotlin.native.suppressExperimentalArtifactsDslWarning"
     }
 
     companion object {

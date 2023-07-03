@@ -22,6 +22,8 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLI
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension
 import org.jetbrains.kotlin.gradle.plugin.getExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinPm20ProjectExtension
+import org.jetbrains.kotlin.gradle.targets.native.tasks.artifact.KotlinArtifactsExtensionImpl
+import org.jetbrains.kotlin.gradle.targets.native.tasks.artifact.kotlinArtifactsExtension
 import org.jetbrains.kotlin.gradle.unitTests.kpm.applyKpmPlugin
 
 fun buildProject(
@@ -68,6 +70,11 @@ fun Project.applyKotlinAndroidPlugin() {
 fun Project.kotlin(code: KotlinMultiplatformExtension.() -> Unit) {
     val kotlin = project.kotlinExtension as KotlinMultiplatformExtension
     kotlin.code()
+}
+
+fun Project.kotlinArtifacts(code: KotlinArtifactsExtensionImpl.() -> Unit) {
+    val kotlinArtifacts = project.kotlinArtifactsExtension as KotlinArtifactsExtensionImpl
+    kotlinArtifacts.code()
 }
 
 fun Project.androidLibrary(code: LibraryExtension.() -> Unit) {
