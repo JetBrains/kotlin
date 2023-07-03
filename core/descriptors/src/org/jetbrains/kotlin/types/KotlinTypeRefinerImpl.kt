@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
+import org.jetbrains.kotlin.storage.CacheWithNotNullValues
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
@@ -25,6 +26,12 @@ class KotlinTypeRefinerImpl(
     private val moduleDescriptor: ModuleDescriptor,
     storageManager: StorageManager
 ) : KotlinTypeRefiner() {
+    private val refinedTypeCache: CacheWithNotNullValues<TypeConstructor, KotlinType> =
+        storageManager.createCacheWithNotNullValues()
+    private val isRefinementNeededForTypeConstructorCache: CacheWithNotNullValues<ClassifierDescriptor, Boolean> =
+        storageManager.createCacheWithNotNullValues()
+    private val scopes: CacheWithNotNullValues<ClassDescriptor, MemberScope> =
+        storageManager.createCacheWithNotNullValues()
     private var isStandalone: Boolean = false
 
     private constructor(
@@ -40,10 +47,6 @@ class KotlinTypeRefinerImpl(
             moduleDescriptor.getCapability(REFINER_CAPABILITY)?.value = TypeRefinementSupport.Enabled(this)
         }
     }
-
-    private val refinedTypeCache = storageManager.createCacheWithNotNullValues<TypeConstructor, KotlinType>()
-    private val isRefinementNeededForTypeConstructorCache = storageManager.createCacheWithNotNullValues<ClassifierDescriptor, Boolean>()
-    private val scopes = storageManager.createCacheWithNotNullValues<ClassDescriptor, MemberScope>()
 
     /**
      * IMPORTANT: that function has not obvious contract: it refines only supertypes,
