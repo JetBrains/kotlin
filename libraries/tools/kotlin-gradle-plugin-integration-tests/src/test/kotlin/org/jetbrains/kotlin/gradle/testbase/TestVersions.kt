@@ -15,16 +15,17 @@ interface TestVersions {
     // Gradle nightly releases retention policy is 3 months
     object Gradle {
         const val G_6_8 = "6.8.3"
-        const val G_6_9 = "6.9.2"
+        const val G_6_9 = "6.9.4"
         const val G_7_0 = "7.0.2"
         const val G_7_1 = "7.1.1"
         const val G_7_2 = "7.2"
         const val G_7_3 = "7.3.3"
         const val G_7_4 = "7.4.2"
         const val G_7_5 = "7.5.1"
-        const val G_7_6 = "7.6"
+        const val G_7_6 = "7.6.2"
         const val G_8_0 = "8.0.2"
-        const val G_8_1 = "8.1"
+        const val G_8_1 = "8.1.1"
+        const val G_8_2 = "8.2"
         const val MIN_SUPPORTED = minSupportedGradleVersion
         const val MIN_SUPPORTED_KPM = G_7_0
         const val MAX_SUPPORTED = G_8_0

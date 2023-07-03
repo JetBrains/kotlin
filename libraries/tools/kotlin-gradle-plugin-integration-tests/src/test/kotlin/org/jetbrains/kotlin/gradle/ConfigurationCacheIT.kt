@@ -129,10 +129,8 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
         }
     }
 
-    // Set min Gradle version to 6.8 because of using DependencyResolutionManagement API to add repositories.
     @JvmGradlePluginTests
     @DisplayName("with instance execution")
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_6_8)
     @GradleTest
     fun testInstantExecution(gradleVersion: GradleVersion) {
         project("instantExecution", gradleVersion) {
@@ -157,7 +155,6 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
 
     @JvmGradlePluginTests
     @DisplayName("instant execution works with included build plugin")
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_6_8)
     @GradleTest
     fun testInstantExecutionWithIncludedBuildPlugin(gradleVersion: GradleVersion) {
         project("instantExecutionWithIncludedBuildPlugin", gradleVersion) {
