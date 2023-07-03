@@ -418,6 +418,8 @@ private fun commonBuildSetup(
     kotlinDaemonDebugPort: Int? = null,
 ): List<String> {
     return buildOptions.toArguments(gradleVersion) + buildArguments + listOfNotNull(
+        // Required toolchains should be pre-installed via repo. Tests should not download any JDKs
+        "-Porg.gradle.java.installations.auto-download=false",
         "--full-stacktrace",
         if (enableBuildCacheDebug) "-Dorg.gradle.caching.debug=true" else null,
         if (enableBuildScan) "--scan" else null,
