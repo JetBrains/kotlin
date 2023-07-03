@@ -20,6 +20,7 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.AfterFinaliseDsl
 import org.jetbrains.kotlin.gradle.plugin.internal.JavaSourceSetsAccessor
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTarget
@@ -137,7 +138,7 @@ abstract class KotlinJvmTarget @Inject constructor(
             setupDependenciesCrossInclusionForJava(compilation, javaSourceSet)
         }
 
-        project.afterEvaluate {
+        project.launchInStage(AfterFinaliseDsl) {
             javaSourceSets.all { javaSourceSet ->
                 copyUserDefinedAttributesToJavaConfigurations(javaSourceSet)
             }
