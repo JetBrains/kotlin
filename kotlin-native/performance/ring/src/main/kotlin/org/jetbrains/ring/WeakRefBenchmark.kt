@@ -22,11 +22,13 @@ private class Data(var x: Int = Random.nextInt(1000) + 1)
 private class ReferenceWrapper private constructor(
     data: Data
 ) {
+    @OptIn(kotlin.experimental.ExperimentalNativeApi::class)
     private val weak = WeakReference(data)
     private val strong = StableRef.create(data)
 
     val value: Int
         get() {
+            @OptIn(kotlin.experimental.ExperimentalNativeApi::class)
             val ref: Data? = weak.value
             if (ref == null) {
                 return 0

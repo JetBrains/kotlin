@@ -25,6 +25,7 @@ class Generation(private val width: Int, private val height: Int) {
                         }
                     }
                 }
+                @OptIn(kotlin.experimental.ExperimentalNativeApi::class)
                 assert(neighborhood.size == 8)
                 val aliveNeighbours = neighborhood
                         .map { wrapOverEdge(it) }

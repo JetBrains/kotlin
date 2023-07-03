@@ -31,6 +31,7 @@ actual fun writeToFile(fileName: String, text: String) {
 }
 
 // Wrapper for assert funtion in stdlib
+@OptIn(kotlin.experimental.ExperimentalNativeApi::class)
 actual fun assert(value: Boolean) {
     kotlin.assert(value)
 }
