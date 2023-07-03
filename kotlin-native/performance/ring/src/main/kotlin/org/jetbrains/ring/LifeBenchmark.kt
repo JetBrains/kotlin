@@ -1,3 +1,5 @@
+@file:OptIn(kotlin.experimental.ExperimentalNativeApi::class)
+
 package org.jetbrains.ring
 
 import kotlin.native.concurrent.*
