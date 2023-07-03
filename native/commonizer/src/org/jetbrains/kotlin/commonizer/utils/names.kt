@@ -10,10 +10,7 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.commonizer.cir.CirEntityId
 import org.jetbrains.kotlin.commonizer.cir.CirName
 import org.jetbrains.kotlin.commonizer.cir.CirPackageName
-import org.jetbrains.kotlin.library.metadata.impl.ForwardDeclarationsFqNames
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.*
 
 internal val DEPRECATED_ANNOTATION_FQN: FqName = FqName(Deprecated::class.java.name)
 internal const val DEPRECATED_ANNOTATION_FULL_NAME: ClassName = "kotlin/Deprecated"
@@ -38,19 +35,19 @@ private val STANDARD_KOTLIN_PACKAGES: List<CirPackageName> = listOf(
     CirPackageName.create("kotlinx")
 )
 
-private val KOTLIN_NATIVE_SYNTHETIC_PACKAGES: List<CirPackageName> = ForwardDeclarationsFqNames.syntheticPackages
+private val KOTLIN_NATIVE_SYNTHETIC_PACKAGES: List<CirPackageName> = NativeStandardInteropNames.ForwardDeclarations.syntheticPackages
     .map { packageFqName ->
         check(!packageFqName.isRoot)
         CirPackageName.create(packageFqName)
     }
 
-internal val CNAMES_STRUCTS_PACKAGE = CirPackageName.create("cnames.structs")
+internal val CNAMES_STRUCTS_PACKAGE = CirPackageName.create(NativeForwardDeclarationKind.Struct.packageFqName)
 
-internal val OBJCNAMES_CLASSES_PACKAGE = CirPackageName.create("objcnames.classes")
+internal val OBJCNAMES_CLASSES_PACKAGE = CirPackageName.create(NativeForwardDeclarationKind.ObjCClass.packageFqName)
 
-internal val OBJCNAMES_PROTOCOLS_PACKAGE = CirPackageName.create("objcnames.protocols")
+internal val OBJCNAMES_PROTOCOLS_PACKAGE = CirPackageName.create(NativeForwardDeclarationKind.ObjCProtocol.packageFqName)
 
-private val CINTEROP_PACKAGE: CirPackageName = CirPackageName.create("kotlinx.cinterop")
+private val CINTEROP_PACKAGE: CirPackageName = CirPackageName.create(NativeStandardInteropNames.cInteropPackage)
 
 private val OBJC_INTEROP_CALLABLE_ANNOTATIONS: List<CirName> = listOf(
     CirName.create("ObjCMethod"),

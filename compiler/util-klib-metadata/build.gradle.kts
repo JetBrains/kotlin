@@ -9,6 +9,7 @@ dependencies {
     compileOnly(project(":compiler:cli-common"))
     compileOnly(project(":compiler:frontend"))
     compileOnly(project(":core:deserialization"))
+    compileOnly(project(":core:compiler.common.native"))
     compileOnly(project(":compiler:serialization"))
 
     api(kotlinStdlib())

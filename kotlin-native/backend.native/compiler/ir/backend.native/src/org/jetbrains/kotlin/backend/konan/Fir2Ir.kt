@@ -35,8 +35,8 @@ import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.library.metadata.KlibMetadataFactories
-import org.jetbrains.kotlin.library.metadata.impl.ForwardDeclarationKind
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
+import org.jetbrains.kotlin.name.*
 
 internal val KlibFactories = KlibMetadataFactories(::KonanBuiltIns, DynamicTypeDeserializer, PlatformDependentTypeTransformer.None)
 
@@ -111,7 +111,7 @@ internal fun PhaseContext.fir2Ir(
         }
         // This packages exists in all platform libraries, but can contain only synthetic declarations.
         // These declarations are not really located in klib, so we don't need to depend on klib to use them.
-        removeAll(ForwardDeclarationKind.values().map { it.packageFqName })
+        removeAll(NativeForwardDeclarationKind.entries.map { it.packageFqName })
     }.toList()
 
 

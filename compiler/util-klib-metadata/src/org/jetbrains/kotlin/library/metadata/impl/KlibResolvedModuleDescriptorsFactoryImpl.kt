@@ -17,9 +17,7 @@ import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.metadata.*
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinLibraryResolveResult
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.MemberScopeImpl
@@ -121,18 +119,18 @@ class KlibResolvedModuleDescriptorsFactoryImpl(
 
         val module = createDescriptorOptionalBuiltsIns(FORWARD_DECLARATIONS_MODULE_NAME, storageManager, builtIns, SyntheticModulesOrigin)
 
-        fun createPackage(forwardDeclarationKind: ForwardDeclarationKind) =
+        fun createPackage(forwardDeclarationKind: NativeForwardDeclarationKind) =
             ForwardDeclarationsPackageFragmentDescriptor(
                 storageManager,
                 module,
                 forwardDeclarationKind.packageFqName,
-                Name.identifier(forwardDeclarationKind.superClassName),
+                forwardDeclarationKind.superClassName,
                 forwardDeclarationKind.classKind,
                 isExpect
             )
 
         val packageFragmentProvider = PackageFragmentProviderImpl(
-            ForwardDeclarationKind.values().map { createPackage(it) }
+            NativeForwardDeclarationKind.entries.map { createPackage(it) }
         )
 
         module.initialize(packageFragmentProvider)
@@ -184,7 +182,7 @@ class ForwardDeclarationsPackageFragmentDescriptor(
         private val declarations = storageManager.createMemoizedFunction(this::createDeclaration)
 
         private val supertype by storageManager.createLazyValue {
-            val descriptor = builtIns.builtInsModule.getPackage(ForwardDeclarationsFqNames.cInterop)
+            val descriptor = builtIns.builtInsModule.getPackage(NativeStandardInteropNames.cInteropPackage)
                 .memberScope
                 .getContributedClassifier(supertypeName, NoLookupLocation.FROM_BACKEND) as ClassDescriptor
 
@@ -218,31 +216,18 @@ class ForwardDeclarationsPackageFragmentDescriptor(
     override fun getMemberScope(): MemberScope = memberScope
 }
 
-// TODO decouple and move interop-specific logic back to Kotlin/Native.
+
+@Deprecated(
+    level = DeprecationLevel.ERROR,
+    message = "This class was moved to org.jetbrains.kotlin.name.NativeStandardInteropNames.ForwardDeclarations",
+)
 object ForwardDeclarationsFqNames {
 
-    internal val cInterop = FqName("kotlinx.cinterop")
+    internal val cInterop = NativeStandardInteropNames.cInteropPackage
 
-    private val cNames = FqName("cnames")
-    internal val cNamesStructs = cNames.child(Name.identifier("structs"))
+    internal val cNamesStructs = NativeStandardInteropNames.ForwardDeclarations.cNamesStructsPackage
+    internal val objCNamesClasses = NativeStandardInteropNames.ForwardDeclarations.objCNamesClassesPackage
+    internal val objCNamesProtocols = NativeStandardInteropNames.ForwardDeclarations.objCNamesProtocolsPackage
 
-    private val objCNames = FqName("objcnames")
-    internal val objCNamesClasses = objCNames.child(Name.identifier("classes"))
-    internal val objCNamesProtocols = objCNames.child(Name.identifier("protocols"))
-
-    val syntheticPackages = setOf(cNames, objCNames)
-}
-
-enum class ForwardDeclarationKind(val packageFqName: FqName, val superClassName: String, val classKind: ClassKind) {
-    CNAMES_STRUCTS(ForwardDeclarationsFqNames.cNamesStructs, "COpaque", ClassKind.CLASS),
-    OBJCNAMES_CLASSES(ForwardDeclarationsFqNames.objCNamesClasses, "ObjCObjectBase", ClassKind.CLASS),
-    OBJCNAMES_PROTOCOLS(ForwardDeclarationsFqNames.objCNamesProtocols, "ObjCObject", ClassKind.INTERFACE)
-
-    ;
-
-    val superClassId = ClassId.topLevel(ForwardDeclarationsFqNames.cInterop.child(Name.identifier(superClassName)))
-
-    companion object {
-        val packageFqNameToKind: Map<FqName, ForwardDeclarationKind> = ForwardDeclarationKind.values().associateBy { it.packageFqName }
-    }
+    val syntheticPackages = NativeStandardInteropNames.ForwardDeclarations.syntheticPackages
 }

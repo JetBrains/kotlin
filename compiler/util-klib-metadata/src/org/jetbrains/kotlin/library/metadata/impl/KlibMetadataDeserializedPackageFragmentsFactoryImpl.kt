@@ -8,6 +8,7 @@ import org.jetbrains.kotlin.library.exportForwardDeclarations
 import org.jetbrains.kotlin.library.isInterop
 import org.jetbrains.kotlin.library.metadata.*
 import org.jetbrains.kotlin.library.packageFqName
+import org.jetbrains.kotlin.name.NativeForwardDeclarationKind
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
@@ -138,7 +139,7 @@ class ClassifierAliasingPackageFragmentDescriptor(
     targets: List<KlibMetadataPackageFragment>,
     module: ModuleDescriptor,
     private val checker: ExportedForwardDeclarationChecker,
-) : PackageFragmentDescriptorImpl(module, checker.fqName) {
+) : PackageFragmentDescriptorImpl(module, checker.declKind.packageFqName) {
     private val memberScope = object : MemberScopeImpl() {
         override fun getContributedClassifier(name: Name, location: LookupLocation) =
             targets.firstNotNullOfOrNull {
@@ -169,43 +170,14 @@ class ClassifierAliasingPackageFragmentDescriptor(
  * we need to check declaration type before returning the result of lookup.
  * See KT-49034.
  */
-enum class ExportedForwardDeclarationChecker(val fqName: FqName) {
+enum class ExportedForwardDeclarationChecker(val declKind: NativeForwardDeclarationKind) {
 
-    Struct(ForwardDeclarationsFqNames.cNamesStructs) {
-        override fun check(classifierDescriptor: ClassifierDescriptor): Boolean =
-            classifierDescriptor is ClassDescriptor && classifierDescriptor.kind.isClass &&
-                    classifierDescriptor.isCStructVar()
-
-    },
-    ObjCClass(ForwardDeclarationsFqNames.objCNamesClasses) {
-        override fun check(classifierDescriptor: ClassifierDescriptor): Boolean =
-            classifierDescriptor is ClassDescriptor && classifierDescriptor.kind.isClass &&
-                    classifierDescriptor.isObjCObjectBase()
-    },
-    ObjCProtocol(ForwardDeclarationsFqNames.objCNamesProtocols) {
-        override fun check(classifierDescriptor: ClassifierDescriptor): Boolean =
-            classifierDescriptor is ClassDescriptor && classifierDescriptor.kind.isInterface &&
-                    classifierDescriptor.isObjCObject()
-    }
+    Struct(NativeForwardDeclarationKind.Struct),
+    ObjCClass(NativeForwardDeclarationKind.ObjCClass),
+    ObjCProtocol(NativeForwardDeclarationKind.ObjCProtocol)
     ;
 
-    abstract fun check(classifierDescriptor: ClassifierDescriptor): Boolean
-
-    companion object {
-        private val cStructVarFqName = FqName("kotlinx.cinterop.CStructVar")
-        private val objCObjectBaseFqName = FqName("kotlinx.cinterop.ObjCObjectBase")
-        private val objCObjectFqName = FqName("kotlinx.cinterop.ObjCObject")
-
-        // We can stop at ObjCObjectBase when checking Obj-C classes.
-        // Checking @ExternalObjCClass would be faster, but this annotation is not commonized. See KT-57541.
-        private fun ClassifierDescriptor.isObjCObjectBase(): Boolean =
-            getAllSuperClassifiers().any { it.fqNameSafe == objCObjectBaseFqName }
-
-        // For protocols, we have to go all the way up to ObjCObject.
-        private fun ClassifierDescriptor.isObjCObject(): Boolean =
-            getAllSuperClassifiers().any { it.fqNameSafe == objCObjectFqName }
-
-        private fun ClassifierDescriptor.isCStructVar(): Boolean =
-            getAllSuperClassifiers().any { it.fqNameSafe == cStructVarFqName }
-    }
+    fun check(classifierDescriptor: ClassifierDescriptor): Boolean = classifierDescriptor is ClassDescriptor &&
+            classifierDescriptor.kind == declKind.classKind &&
+            classifierDescriptor.getAllSuperClassifiers().any { it.fqNameSafe == declKind.matchSuperClassFqName }
 }

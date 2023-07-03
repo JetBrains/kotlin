@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.ir.descriptors.IrBasedClassConstructorDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.name.NativeForwardDeclarationKind
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.ExternalOverridabilityCondition
@@ -37,7 +38,6 @@ internal val objCDirectFqName = interopPackageName.child(Name.identifier("ObjCDi
 internal val objCMethodFqName = interopPackageName.child(Name.identifier("ObjCMethod"))
 internal val objCConstructorFqName = FqName("kotlinx.cinterop.ObjCConstructor")
 internal val objCFactoryFqName = interopPackageName.child(Name.identifier("ObjCFactory"))
-private val objcnamesForwardDeclarationsPackageName = Name.identifier("objcnames")
 
 fun ClassDescriptor.isObjCClass(): Boolean =
                 this.containingDeclaration.fqNameSafe != interopPackageName &&
@@ -64,8 +64,10 @@ fun IrClass.isExternalObjCClass(): Boolean = this.isObjCClass() &&
             it.annotations.hasAnnotation(externalObjCClassFqName)
         }
 
-fun ClassDescriptor.isObjCForwardDeclaration(): Boolean =
-        this.findPackage().fqName.startsWith(objcnamesForwardDeclarationsPackageName)
+fun ClassDescriptor.isObjCForwardDeclaration(): Boolean = when (NativeForwardDeclarationKind.packageFqNameToKind[findPackage().fqName]) {
+    null, NativeForwardDeclarationKind.Struct -> false
+    NativeForwardDeclarationKind.ObjCProtocol, NativeForwardDeclarationKind.ObjCClass -> true
+}
 
 fun IrClass.isObjCForwardDeclaration(): Boolean =
         getPackageFragment().packageFqName.startsWith(objcnamesForwardDeclarationsPackageName)

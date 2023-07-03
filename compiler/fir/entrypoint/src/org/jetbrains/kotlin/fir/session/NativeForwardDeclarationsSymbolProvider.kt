@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.fir.types.constructClassType
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.includedForwardDeclarations
 import org.jetbrains.kotlin.library.isInterop
-import org.jetbrains.kotlin.library.metadata.impl.ForwardDeclarationKind
+import org.jetbrains.kotlin.name.NativeForwardDeclarationKind
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -41,7 +41,7 @@ class NativeForwardDeclarationsSymbolProvider(
     private val kotlinLibraries: Collection<KotlinLibrary>,
 ) : FirSymbolProvider(session) {
     private companion object {
-        private val validPackages = ForwardDeclarationKind.packageFqNameToKind.keys
+        private val validPackages = NativeForwardDeclarationKind.packageFqNameToKind.keys
     }
 
     private val includedForwardDeclarations: Set<ClassId> by lazy {
@@ -77,7 +77,7 @@ class NativeForwardDeclarationsSymbolProvider(
         session.firCachesFactory.createCache(::createSyntheticForwardDeclarationClass)
 
     private fun createSyntheticForwardDeclarationClass(classId: ClassId): FirClassLikeSymbol<*>? {
-        val forwardDeclarationKind = ForwardDeclarationKind.packageFqNameToKind[classId.packageFqName] ?: return null
+        val forwardDeclarationKind = NativeForwardDeclarationKind.packageFqNameToKind[classId.packageFqName] ?: return null
 
         val symbol = FirRegularClassSymbol(classId)
 

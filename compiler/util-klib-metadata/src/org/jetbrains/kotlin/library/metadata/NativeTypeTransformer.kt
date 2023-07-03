@@ -9,8 +9,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.deserialization.PlatformDependentTypeTransformer
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.NativeForwardDeclarationKind
 import org.jetbrains.kotlin.types.SimpleType
 import org.jetbrains.kotlin.types.SupposititiousSimpleType
 
@@ -31,13 +30,6 @@ class NativeTypeTransformer : PlatformDependentTypeTransformer {
     }
 
     companion object {
-        private val cNames = FqName("cnames")
-        private val cNamesStructs = cNames.child(Name.identifier("structs"))
-
-        private val objCNames = FqName("objcnames")
-        private val objCNamesClasses = objCNames.child(Name.identifier("classes"))
-        private val objCNamesProtocols = objCNames.child(Name.identifier("protocols"))
-
-        private val forwardPackagesSet = setOf(cNamesStructs, objCNamesClasses, objCNamesProtocols)
+        private val forwardPackagesSet = NativeForwardDeclarationKind.entries.map { it.packageFqName }.toSet()
     }
 }
