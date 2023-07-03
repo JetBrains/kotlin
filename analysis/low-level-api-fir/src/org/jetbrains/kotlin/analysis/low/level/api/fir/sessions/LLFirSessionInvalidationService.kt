@@ -8,16 +8,9 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.sessions
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.analysis.project.structure.KotlinModuleDependentsProvider
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.analysis.project.structure.*
 import org.jetbrains.kotlin.analysis.providers.analysisMessageBus
-import org.jetbrains.kotlin.analysis.providers.topics.KotlinGlobalModuleStateModificationListener
-import org.jetbrains.kotlin.analysis.providers.topics.KotlinGlobalOutOfBlockModificationListener
-import org.jetbrains.kotlin.analysis.providers.topics.KotlinGlobalSourceModuleStateModificationListener
-import org.jetbrains.kotlin.analysis.providers.topics.KotlinGlobalSourceOutOfBlockModificationListener
-import org.jetbrains.kotlin.analysis.providers.topics.KotlinTopics
-import org.jetbrains.kotlin.analysis.providers.topics.KotlinModuleOutOfBlockModificationListener
-import org.jetbrains.kotlin.analysis.providers.topics.KotlinModuleStateModificationListener
+import org.jetbrains.kotlin.analysis.providers.topics.*
 
 /**
  * [LLFirSessionInvalidationService] listens to [modification events][KotlinTopics] and invalidates [LLFirSession]s which depend on the
@@ -81,6 +74,14 @@ class LLFirSessionInvalidationService(private val project: Project) : Disposable
         if (!didSessionExist) return
 
         KotlinModuleDependentsProvider.getInstance(project).getTransitiveDependents(module).forEach(sessionCache::removeSession)
+
+        // Due to a missing IDE implementation for script dependents (see KTIJ-25620), script sessions need to be invalidated globally:
+        //  - A script may include other scripts, so a script modification may affect any other script.
+        //  - Script dependencies are also not linked via dependents yet, so any script dependency modification may affect any script.
+        //  - Scripts may depend on libraries, and the IDE module dependents provider doesn't provide script dependents for libraries yet.
+        if (module is KtScriptModule || module is KtScriptDependencyModule || module is KtLibraryModule) {
+            sessionCache.removeAllScriptSessions()
+        }
     }
 
     private fun invalidateAll(includeBinaryModules: Boolean) {
