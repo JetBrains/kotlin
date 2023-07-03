@@ -35,6 +35,7 @@ internal fun dce(
             externalModulesDFG,
             devirtualizationAnalysisResult,
             // For DCE we don't wanna miss any potentially reachable function.
+            devirtualizedCallSitesUnfoldFactor = Int.MAX_VALUE,
             nonDevirtualizedCallSitesUnfoldFactor = Int.MAX_VALUE
     ).build()
 

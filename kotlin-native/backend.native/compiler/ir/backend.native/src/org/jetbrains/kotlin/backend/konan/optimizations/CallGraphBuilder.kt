@@ -59,6 +59,7 @@ internal class CallGraphBuilder(
         val moduleDFG: ModuleDFG,
         val externalModulesDFG: ExternalModulesDFG,
         val devirtualizationAnalysisResult: DevirtualizationAnalysis.AnalysisResult,
+        val devirtualizedCallSitesUnfoldFactor: Int,
         val nonDevirtualizedCallSitesUnfoldFactor: Int
 ) {
 
@@ -161,9 +162,21 @@ internal class CallGraphBuilder(
                 call !is DataFlowIR.Node.VirtualCall -> staticCall(symbol, call, node, call.callee)
 
                 devirtualizedCallSite != null -> {
-                    devirtualizedCallSite.possibleCallees.forEach {
-                        staticCall(symbol, call, node, it.callee)
+                    if (devirtualizedCallSite.possibleCallees.size <= devirtualizedCallSitesUnfoldFactor)
+                        devirtualizedCallSite.possibleCallees.forEach {
+                            staticCall(symbol, call, node, it.callee)
+                        }
+                    else {
+                        val callSite = CallGraphNode.CallSite(call, node, true, call.callee)
+                        callGraph.addEdge(symbol, callSite)
+
+                        devirtualizedCallSite.possibleCallees.forEach {
+                            val callee = moduleDFG.functions[it.callee]
+                            if (callee != null)
+                                functionStack.push(HandleFunctionParams(null, callee))
+                        }
                     }
+
                 }
 
                 call.receiverType == DataFlowIR.Type.Virtual -> {
