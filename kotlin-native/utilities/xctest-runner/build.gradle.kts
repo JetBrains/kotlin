@@ -28,7 +28,7 @@ with(PlatformInfo) {
 /**
  * Path to the target SDK platform.
  *
- * By default, K/N includes only SDKs frameworks.
+ * By default, K/N includes only SDK frameworks.
  * It's required to get the Library frameworks path where the `XCTest.framework` is located.
  */
 fun targetPlatform(target: String): String {
@@ -113,18 +113,20 @@ kotlin {
     }
 }
 
-targets.forEach {
-    val targetName = it.name.capitalize(Locale.getDefault())
-    tasks.named<KotlinNativeCompile>("compileKotlin$targetName") {
-        dependsOnDist(it)
-        dependsOnPlatformLibs(it)
-    }
-
-    tasks.named<CInteropProcess>("cinteropXCTest$targetName") {
-        dependsOnDist(it)
-        dependsOnPlatformLibs(it)
-    }
-}
+// Due to the KT-42056 and KT-58303 it is not possible to set dependencies on dist.
+// It makes cinterop tasks eagerly resolve dependencies, effectively running the dist-build in configuration time
+//targets.forEach {
+//    val targetName = it.name.capitalize(Locale.getDefault())
+//    tasks.named<KotlinNativeCompile>("compileKotlin$targetName") {
+//        dependsOnDist(it)
+//        dependsOnPlatformLibs(it)
+//    }
+//
+//    tasks.named<CInteropProcess>("cinteropXCTest$targetName") {
+//        dependsOnDist(it)
+//        dependsOnPlatformLibs(it)
+//    }
+//}
 
 bitcode {
     targets.map { it.withSanitizer() }
@@ -134,9 +136,7 @@ bitcode {
                     compilerArgs.set(listOf("-iframework", target.getDeveloperFramework()))
                     headersDirs.from(project(":kotlin-native:runtime").files("src/main/cpp"))
 
-                    sourceSets {
-                        main {}
-                    }
+                    sourceSets { main {} }
                     onlyIf { target.family.isAppleFamily }
                 }
             }
