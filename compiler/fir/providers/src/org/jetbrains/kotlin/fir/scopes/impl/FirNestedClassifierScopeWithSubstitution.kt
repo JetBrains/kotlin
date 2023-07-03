@@ -16,37 +16,37 @@ import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.name.Name
 
 class FirNestedClassifierScopeWithSubstitution internal constructor(
-    private val scope: FirContainingNamesAwareScope,
+    val originalScope: FirContainingNamesAwareScope,
     private val substitutor: ConeSubstitutor
 ) : FirContainingNamesAwareScope() {
 
     override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
-        scope.processFunctionsByName(name, processor)
+        originalScope.processFunctionsByName(name, processor)
     }
 
     override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
-        scope.processPropertiesByName(name, processor)
+        originalScope.processPropertiesByName(name, processor)
     }
 
     override fun processDeclaredConstructors(processor: (FirConstructorSymbol) -> Unit) {
-        scope.processDeclaredConstructors(processor)
+        originalScope.processDeclaredConstructors(processor)
     }
 
     override fun mayContainName(name: Name): Boolean {
-        return scope.mayContainName(name)
+        return originalScope.mayContainName(name)
     }
 
     override fun processClassifiersByNameWithSubstitution(name: Name, processor: (FirClassifierSymbol<*>, ConeSubstitutor) -> Unit) {
-        val matchedClass = scope.getSingleClassifier(name) as? FirRegularClassSymbol ?: return
+        val matchedClass = originalScope.getSingleClassifier(name) as? FirRegularClassSymbol ?: return
         val substitutor = substitutor.takeIf { matchedClass.fir.isInner } ?: ConeSubstitutor.Empty
         processor(matchedClass, substitutor)
     }
 
-    override fun getCallableNames(): Set<Name> = scope.getCallableNames()
-    override fun getClassifierNames(): Set<Name> = scope.getClassifierNames()
+    override fun getCallableNames(): Set<Name> = originalScope.getCallableNames()
+    override fun getClassifierNames(): Set<Name> = originalScope.getClassifierNames()
 
     override val scopeOwnerLookupNames: List<String>
-        get() = scope.scopeOwnerLookupNames
+        get() = originalScope.scopeOwnerLookupNames
 }
 
 fun FirContainingNamesAwareScope.wrapNestedClassifierScopeWithSubstitutionForSuperType(
