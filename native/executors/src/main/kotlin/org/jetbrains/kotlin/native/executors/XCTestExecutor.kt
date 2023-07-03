@@ -6,6 +6,9 @@
 package org.jetbrains.kotlin.native.executors
 
 import org.jetbrains.kotlin.konan.target.*
+import java.io.File
+import java.nio.file.Files
+import kotlin.io.path.exists
 
 abstract class AbstractXCTestExecutor(
     private val configurables: AppleConfigurables,
@@ -39,11 +42,41 @@ abstract class AbstractXCTestExecutor(
         get() = "${targetPlatform()}/Developer/Library/Xcode/Agents/xctest"
 
     override fun execute(request: ExecuteRequest): ExecuteResponse {
+        val bundlePath = if (request.args.isNotEmpty()) {
+            // Copy the bundle to a temp dir
+            val dir = Files.createTempDirectory("tmp-xctest-runner")
+            val newBundlePath = File(request.executableAbsolutePath).run {
+                copyRecursively(dir.toFile())
+                dir.resolve(name)
+            }
+            check(newBundlePath.exists())
+
+            // Passing arguments to the XCTest-runner using Info.plist file.
+            val infoPlist = newBundlePath.toFile()
+                .walk()
+                .firstOrNull { it.name == "Info.plist" }
+                ?.absolutePath
+            checkNotNull(infoPlist) { "Info.plist of xctest-bundle wasn't found. Check the bundle contents and location "}
+
+            val writeArgsRequest = ExecuteRequest(
+                executableAbsolutePath = "/usr/libexec/PlistBuddy",
+                args = mutableListOf("-c Add :KotlinNativeTestArgs string ${request.args.joinToString(" ")}", infoPlist)
+            )
+            val writeResponse = hostExecutor.execute(writeArgsRequest)
+            println(writeArgsRequest.stdout.toString())
+            println(writeArgsRequest.stderr.toString())
+            writeResponse.assertSuccess()
+
+            newBundlePath.toString()
+        } else {
+            request.executableAbsolutePath
+        }
+
         val response = executor.execute(request.copying {
             environment["DYLD_FRAMEWORK_PATH"] = frameworkPath
-            val testExecutable = executableAbsolutePath
             executableAbsolutePath = xcTestExecutablePath
-            args.add(0, testExecutable)
+            args.clear()
+            args.add(bundlePath)
         })
         return response
     }
