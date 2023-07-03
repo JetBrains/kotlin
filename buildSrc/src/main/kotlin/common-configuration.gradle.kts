@@ -15,7 +15,7 @@ dependencies {
         configurations.all {
             if (isCanBeResolved && !isCanBeConsumed) {
                 allDependencies.configureEach {
-                    if (group == "com.google.code.gson" && name == "gson" && (this as? DeprecatableConfiguration)?.isCanBeDeclaredAgainst == true) { // isCanBeDeclaredAgainst will be a part of the public API since 8.2 https://github.com/gradle/gradle/pull/24823
+                    if (group == "com.google.code.gson" && name == "gson" && this@all.isCanBeDeclared) {
                         this@constraints.add(this@all.name, "com.google.code.gson:gson") {
                             version {
                                 require(gsonVersion)

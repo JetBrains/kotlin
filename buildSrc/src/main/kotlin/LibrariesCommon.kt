@@ -5,11 +5,11 @@
 
 @file:JvmName("LibrariesCommon")
 
-import gradle.kotlin.dsl.accessors._a448c82b4669f5dc55622c27b71461fb.base
 import org.gradle.api.JavaVersion
 import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
 import org.gradle.api.java.archives.Manifest
+import org.gradle.api.plugins.BasePluginExtension
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.kotlin.dsl.*
 import org.gradle.process.CommandLineArgumentProvider
@@ -90,7 +90,7 @@ fun Project.manifestAttributes(
 ) {
     manifest.attributes(
         "Implementation-Vendor" to "JetBrains",
-        "Implementation-Title" to base.archivesName,
+        "Implementation-Title" to project.extensions.getByType<BasePluginExtension>().archivesName,
         "Implementation-Version" to project.rootProject.extra["buildNumber"] as String
     )
 
