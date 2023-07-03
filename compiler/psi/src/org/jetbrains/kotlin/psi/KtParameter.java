@@ -157,15 +157,7 @@ public class KtParameter extends KtNamedDeclarationStub<KotlinParameterStub> imp
         if (parent == null) {
             return false;
         }
-        if (klass.isInstance(parent.getParent())) {
-            //don't check ast if the tree structure is different; skip for compiled code
-            if (!getContainingKtFile().isCompiled() && 
-                parent.getNextSibling() instanceof PsiErrorElement) {
-                return false;
-            }
-            return true;
-        }
-        return false;
+        return klass.isInstance(parent.getParent());
     }
 
     public boolean isCatchParameter() {
