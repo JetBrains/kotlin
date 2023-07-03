@@ -104,13 +104,22 @@ object PrimaryConstructorExtra : ExtraProperty<DFunction>, ExtraProperty.Key<DFu
     override val key: ExtraProperty.Key<DFunction, *> = this
 }
 
-data class ActualTypealias(val underlyingType: SourceSetDependent<Bound>) : ExtraProperty<DClasslike> {
+data class ActualTypealias(
+    val typeAlias: DTypeAlias
+) : ExtraProperty<DClasslike> {
+
+    @Suppress("unused")
+    @Deprecated(message = "It can be removed soon. Use [typeAlias.underlyingType]", ReplaceWith("this.typeAlias.underlyingType"))
+    val underlyingType: SourceSetDependent<Bound>
+        get() = typeAlias.underlyingType
+
     companion object : ExtraProperty.Key<DClasslike, ActualTypealias> {
         override fun mergeStrategyFor(
             left: ActualTypealias,
             right: ActualTypealias
-        ) =
-            MergeStrategy.Replace(ActualTypealias(left.underlyingType + right.underlyingType))
+        ) = MergeStrategy.Fail {
+            throw IllegalStateException("Adding [ActualTypealias] should be after merging all documentables")
+        }
     }
 
     override val key: ExtraProperty.Key<DClasslike, ActualTypealias> = ActualTypealias
