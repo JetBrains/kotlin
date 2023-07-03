@@ -71,7 +71,7 @@ val targets = sdkNames.keys
  * a path to the Developer frameworks.
  */
 val developerFrameworks: Map<KonanTarget, () -> String> by lazy {
-    platformManager.targetValues
+    platformManager.enabled
         .filter { it.family.isAppleFamily }
         .associateWith { target ->
             val configurable = platformManager.platform(target).configurables as AppleConfigurables
