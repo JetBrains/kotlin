@@ -20085,6 +20085,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
             }
 
             @Test
+            @TestMetadata("ktij24272.kt")
+            public void testKtij24272() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/j+k/ktij24272.kt");
+            }
+
+            @Test
             @TestMetadata("matchers.kt")
             public void testMatchers() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/j+k/matchers.kt");

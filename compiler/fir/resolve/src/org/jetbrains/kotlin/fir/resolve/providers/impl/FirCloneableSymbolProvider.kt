@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.builder.buildRegularClass
 import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunction
-import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolNamesProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolNamesProviderWithoutCallables
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
@@ -36,7 +35,7 @@ import org.jetbrains.kotlin.name.StandardClassIds
 class FirCloneableSymbolProvider(
     session: FirSession,
     moduleData: FirModuleData,
-    scopeProvider: FirScopeProvider
+    scopeProvider: FirScopeProvider,
 ) : FirSymbolProvider(session) {
     private val klass = buildRegularClass {
         resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
@@ -47,9 +46,14 @@ class FirCloneableSymbolProvider(
             Modality.ABSTRACT,
             EffectiveVisibility.Public
         )
+
         classKind = ClassKind.INTERFACE
         val classSymbol = FirRegularClassSymbol(StandardClassIds.Cloneable)
         symbol = classSymbol
+        superTypeRefs += buildResolvedTypeRef {
+            type = session.builtinTypes.anyType.type
+        }
+
         declarations += buildSimpleFunction {
             this.moduleData = moduleData
             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
@@ -57,14 +61,18 @@ class FirCloneableSymbolProvider(
             returnTypeRef = buildResolvedTypeRef {
                 type = session.builtinTypes.anyType.type
             }
+
             status = FirResolvedDeclarationStatusImpl(
                 Visibilities.Protected,
                 Modality.OPEN,
-                Visibilities.Protected.toEffectiveVisibility(classSymbol))
+                Visibilities.Protected.toEffectiveVisibility(classSymbol)
+            )
+
             name = StandardClassIds.Callables.clone.callableName
             symbol = FirNamedFunctionSymbol(StandardClassIds.Callables.clone)
             dispatchReceiverType = this@buildRegularClass.symbol.constructType(emptyArray(), isNullable = false)
         }
+
         this.scopeProvider = scopeProvider
         name = StandardClassIds.Cloneable.shortClassName
 
