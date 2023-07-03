@@ -41,6 +41,7 @@ actual fun writeToFile(fileName: String, text: String) {
     }
 }
 
+@OptIn(kotlin.experimental.ExperimentalNativeApi::class)
 actual fun assert(value: Boolean, lazyMessage: () -> Any) =
     kotlin.assert(value, lazyMessage)
 
