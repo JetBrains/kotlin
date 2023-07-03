@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.fir
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplicationInfo
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplicationWithArgumentsInfo
 import org.jetbrains.kotlin.analysis.api.annotations.KtNamedAnnotationValue
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
+import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.arguments
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
@@ -94,3 +96,21 @@ internal fun FirAnnotation.toKtAnnotationInfo(
     isCallWithArguments = this is FirAnnotationCall && arguments.isNotEmpty(),
     index = index,
 )
+
+/**
+ * Implicit dispatch receiver is present when an extension function declared in object
+ * is imported somewhere else and used without directly referencing the object instance
+ * itself:
+ *
+ * ```kt
+ * import Foo.bar
+ *
+ * object Foo { fun String.bar() {} }
+ *
+ * fun usage() {
+ *   "hello".bar() // this call has implicit 'Foo' dispatch receiver
+ * }
+ * ```
+ */
+internal val FirResolvedQualifier.isImplicitDispatchReceiver: Boolean
+    get() = source?.kind == KtFakeSourceElementKind.ImplicitReceiver

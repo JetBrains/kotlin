@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.components
 
-import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.analysis.api.components.KtImportOptimizer
 import org.jetbrains.kotlin.analysis.api.components.KtImportOptimizerResult
 import org.jetbrains.kotlin.analysis.api.fir.getCandidateSymbols
+import org.jetbrains.kotlin.analysis.api.fir.isImplicitDispatchReceiver
 import org.jetbrains.kotlin.analysis.api.fir.utils.FirBodyReanalyzingVisitorVoid
 import org.jetbrains.kotlin.analysis.api.fir.utils.computeImportableName
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
@@ -274,7 +274,7 @@ internal class KtFirImportOptimizer(
                 val dispatchReceiver = dispatchReceiver
                 if (
                     dispatchReceiver !is FirResolvedQualifier ||
-                    dispatchReceiver.source?.kind != KtFakeSourceElementKind.ImplicitReceiver
+                    !dispatchReceiver.isImplicitDispatchReceiver
                 ) {
                     return null
                 }
