@@ -185,6 +185,12 @@ public class FirStandaloneNormalAnalysisSourceModuleReferenceShortenerTestGenera
     }
 
     @Test
+    @TestMetadata("extensionFromObject.kt")
+    public void testExtensionFromObject() throws Exception {
+        runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/extensionFromObject.kt");
+    }
+
+    @Test
     @TestMetadata("multipleImport.kt")
     public void testMultipleImport() throws Exception {
         runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/multipleImport.kt");
