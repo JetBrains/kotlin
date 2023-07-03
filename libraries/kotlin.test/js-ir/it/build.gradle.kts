@@ -31,9 +31,9 @@ val ignoreTestFailures by extra(project.kotlinBuildProperties.ignoreTestFailures
 kotlin {
     js(IR) {
         nodejs {
-            testTask {
+            testTask(Action {
                 enabled = false
-            }
+            })
         }
     }
 

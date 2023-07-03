@@ -7,11 +7,11 @@ plugins {
 kotlin {
     js(IR) {
         nodejs {
-            testTask {
+            testTask(Action {
                 useMocha {
                     timeout = "10s"
                 }
-            }
+            })
         }
     }
 }

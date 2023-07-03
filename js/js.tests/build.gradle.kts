@@ -1,4 +1,5 @@
 import com.github.gradle.node.npm.task.NpmTask
+import com.github.gradle.node.variant.computeNodeExec
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.ideaExt.idea
@@ -214,11 +215,7 @@ val generateTypeScriptJsExportOnFileTests by parallel(
 fun Test.setupNodeJs() {
     systemProperty("javascript.engine.path.NodeJs", com.github.gradle.node.variant.VariantComputer()
         .let { variantComputer ->
-            variantComputer
-                .computeNodeDir(node)
-                .let { variantComputer.computeNodeBinDir(it) }
-                .let { variantComputer.computeNodeExec(node, it) }
-                .get()
+            computeNodeExec(node, variantComputer.computeNodeBinDir(node.computedNodeDir)).get()
         }
     )
 }
