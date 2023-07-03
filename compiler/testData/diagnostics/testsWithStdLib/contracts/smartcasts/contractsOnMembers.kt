@@ -4,7 +4,7 @@
 
 import kotlin.contracts.*
 
-class Foo {
+open class Foo {
     fun myRun(block: () -> Unit) {
         contract {
             callsInPlace(block, InvocationKind.EXACTLY_ONCE)
@@ -12,17 +12,46 @@ class Foo {
         block()
     }
 
-    fun require(x: Boolean) {
+    fun myRequire(x: Boolean) {
         contract { returns() implies (x) }
+    }
+
+    inline fun <reified T> assertIs(value: Any) {
+        contract { returns() implies (value is T) }
+    }
+}
+
+class Bar : Foo() {
+    fun test_1(x: Any) {
+        myRequire(x is String)
+        <!DEBUG_INFO_SMARTCAST!>x<!>.length
+    }
+
+    fun test_2(x: Any) {
+        assertIs<String>(x)
+        x.<!UNRESOLVED_REFERENCE!>length<!>
+    }
+
+    fun test_3(): Int {
+        val x: Int
+        myRun {
+            x = 1
+        }
+        return x + 1
     }
 }
 
 fun test_1(foo: Foo, x: Any) {
-    foo.require(x is String)
+    foo.myRequire(x is String)
     <!DEBUG_INFO_SMARTCAST!>x<!>.length
 }
 
-fun test_2(foo: Foo): Int {
+fun test_2(foo: Foo, x: Any) {
+    foo.assertIs<String>(x)
+    <!DEBUG_INFO_SMARTCAST!>x<!>.length
+}
+
+fun test_3(foo: Foo): Int {
     val x: Int
     foo.myRun {
         x = 1
