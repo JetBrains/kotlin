@@ -702,7 +702,7 @@ class FirElementSerializer private constructor(
         val builder = ProtoBuf.ValueParameter.newBuilder()
 
         val declaresDefaultValue = parameter.defaultValue != null ||
-                function.symbol.getSingleExpectForActualOrNull(compatibleOnly = true).containsDefaultValue(index)
+                function.symbol.getSingleExpectForActualOrNull().containsDefaultValue(index)
 
         val flags = Flags.getValueParameterFlags(
             additionalAnnotations.isNotEmpty()
