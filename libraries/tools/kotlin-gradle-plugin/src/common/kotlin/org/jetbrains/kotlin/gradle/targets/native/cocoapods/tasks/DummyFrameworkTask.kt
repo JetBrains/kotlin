@@ -13,6 +13,7 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
+import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.cocoapodsBuildDirs
 import org.jetbrains.kotlin.gradle.utils.mapToFile
 import java.io.File
@@ -29,6 +30,7 @@ import javax.inject.Inject
  * So we create a dummy static framework to allow CocoaPods install our pod correctly
  * and then replace it with the real one during a real build process.
  */
+@DisableCachingByDefault
 abstract class DummyFrameworkTask @Inject constructor(projectLayout: ProjectLayout) : DefaultTask() {
 
     @get:Input

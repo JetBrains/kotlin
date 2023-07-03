@@ -13,6 +13,7 @@ import org.gradle.api.provider.Property
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.TaskProvider
+import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.compilerRunner.maybeCreateCommonizerClasspathConfiguration
 import org.jetbrains.kotlin.gradle.internal.isInIdeaSync
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
@@ -160,6 +161,7 @@ internal val Project.cleanNativeDistributionCommonizerTask: TaskProvider<CleanNa
         )
     }
 
+@DisableCachingByDefault
 internal abstract class CleanNativeDistributionCommonizerTask : DefaultTask() {
     @get:Inject
     abstract val fileSystemOperations: FileSystemOperations

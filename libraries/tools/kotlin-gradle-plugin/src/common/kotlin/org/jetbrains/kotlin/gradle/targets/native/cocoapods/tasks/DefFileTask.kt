@@ -15,6 +15,7 @@ import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
+import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension.CocoapodsDependency
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.cocoapodsBuildDirs
 import org.jetbrains.kotlin.gradle.utils.appendLine
@@ -25,6 +26,7 @@ import javax.inject.Inject
 /**
  * Generates a def-file for the given CocoaPods dependency.
  */
+@DisableCachingByDefault
 abstract class DefFileTask @Inject constructor(projectLayout: ProjectLayout) : DefaultTask() {
 
     @get:Nested

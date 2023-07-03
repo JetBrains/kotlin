@@ -12,6 +12,7 @@ import org.gradle.api.Task
 import org.gradle.api.file.ProjectLayout
 import org.gradle.api.internal.GeneratedSubclass
 import org.gradle.api.tasks.*
+import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.compilerRunner.konanVersion
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.*
@@ -85,6 +86,7 @@ internal val GradleKpmModule.buildKotlinToolingMetadataTask: TaskProvider<BuildK
 
 abstract class BuildKotlinToolingMetadataTask : DefaultTask() {
 
+    @DisableCachingByDefault
     abstract class FromKpmModule
     @Inject constructor(
         @get:Internal
@@ -103,6 +105,7 @@ abstract class BuildKotlinToolingMetadataTask : DefaultTask() {
         override fun buildKotlinToolingMetadata() = module.getKotlinToolingMetadata()
     }
 
+    @DisableCachingByDefault
     abstract class FromKotlinExtension
     @Inject constructor(
         private val projectLayout: ProjectLayout

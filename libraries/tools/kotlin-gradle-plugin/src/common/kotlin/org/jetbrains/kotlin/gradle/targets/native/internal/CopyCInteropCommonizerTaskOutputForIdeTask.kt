@@ -7,9 +7,11 @@ package org.jetbrains.kotlin.gradle.targets.native.internal
 
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
+import org.gradle.work.DisableCachingByDefault
 import org.gradle.work.NormalizeLineEndings
 import java.io.File
 
+@DisableCachingByDefault
 internal open class CopyCommonizeCInteropForIdeTask : AbstractCInteropCommonizerTask() {
 
     private val commonizeCInteropTask: TaskProvider<CInteropCommonizerTask>

@@ -9,6 +9,7 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.file.FileCollection
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.tasks.*
+import org.gradle.work.DisableCachingByDefault
 import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.disambiguateName
@@ -18,6 +19,7 @@ import org.jetbrains.kotlin.gradle.utils.getValue
 import java.io.File
 import javax.inject.Inject
 
+@DisableCachingByDefault
 internal open class GradleKpmMetadataDependencyTransformationTask
 @Inject constructor(
     @get:Internal

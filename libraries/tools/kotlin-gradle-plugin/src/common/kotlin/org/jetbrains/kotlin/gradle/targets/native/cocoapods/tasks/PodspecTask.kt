@@ -14,6 +14,7 @@ import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
+import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension.CocoapodsDependency
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension.PodspecPlatformSettings
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin
@@ -28,6 +29,7 @@ import javax.inject.Inject
  * The task generates a podspec file which allows a user to
  * integrate a Kotlin/Native framework into a CocoaPods project.
  */
+@DisableCachingByDefault
 abstract class PodspecTask @Inject constructor(private val projectLayout: ProjectLayout) : DefaultTask() {
 
     @get:Input

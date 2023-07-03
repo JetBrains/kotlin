@@ -11,6 +11,7 @@ import org.gradle.api.Project
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.TaskProvider
+import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.dsl.pm20Extension
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.utils.doNotTrackStateCompat
@@ -25,6 +26,7 @@ internal fun Project.locateOrRegisterIdeaKpmBuildProjectModelTask(): TaskProvide
 /**
  * Internal Task used for troubleshooting/debugging/diagnosing IdeaKpm model building.
  */
+@DisableCachingByDefault
 internal open class IdeaKpmBuildProjectModelTask : DefaultTask() {
 
     @OutputDirectory

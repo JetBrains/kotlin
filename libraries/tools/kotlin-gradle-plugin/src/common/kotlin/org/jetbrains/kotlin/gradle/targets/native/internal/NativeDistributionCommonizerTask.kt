@@ -17,6 +17,7 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
 import org.gradle.process.ExecOperations
+import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.commonizer.SharedCommonizerTarget
 import org.jetbrains.kotlin.compilerRunner.GradleCliCommonizer
 import org.jetbrains.kotlin.compilerRunner.KotlinNativeCommonizerToolRunner
@@ -34,6 +35,7 @@ import java.io.File
 import java.net.URLEncoder
 import javax.inject.Inject
 
+@DisableCachingByDefault(because = "Native Distribution Commonizer Task uses internal caching mechanism with fine grained cache control")
 internal open class NativeDistributionCommonizerTask
 @Inject constructor(
     private val objectFactory: ObjectFactory,

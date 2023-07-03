@@ -14,10 +14,12 @@ import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
+import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension.CocoapodsDependency
 import org.jetbrains.kotlin.gradle.targets.native.tasks.GenerateArtifactPodspecTask.ArtifactType.*
 import org.jetbrains.kotlin.gradle.utils.appendLine
 
+@DisableCachingByDefault
 abstract class GenerateArtifactPodspecTask : DefaultTask() {
 
     enum class ArtifactType {

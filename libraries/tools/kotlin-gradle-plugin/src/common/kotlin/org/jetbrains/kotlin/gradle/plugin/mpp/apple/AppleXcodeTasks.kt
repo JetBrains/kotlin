@@ -13,6 +13,7 @@ import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.process.ExecOperations
+import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.dsl.KotlinNativeBinaryContainer
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
@@ -221,6 +222,7 @@ private fun Project.appleFrameworkDir(frameworkSearchDir: File) =
  * To preserve these symlinks we are using the `cp` command instead.
  * See https://youtrack.jetbrains.com/issue/KT-48594.
  */
+@DisableCachingByDefault
 @Suppress("LeakingThis") // Should be extended only by Gradle
 internal abstract class FrameworkCopy : DefaultTask() {
 
