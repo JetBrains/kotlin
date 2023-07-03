@@ -25,21 +25,6 @@ open class KotlinJvmTargetConfigurator :
     override fun configurePlatformSpecificModel(target: KotlinJvmTarget) {
         super<KotlinOnlyTargetConfigurator>.configurePlatformSpecificModel(target)
         super<KotlinTargetWithTestsConfigurator>.configurePlatformSpecificModel(target)
-
-        // Create the configuration under the name 'compileClasspath', as Android lint tasks want it, KT-27170
-        target.project.whenEvaluated {
-            if (configurations.findByName("compileClasspath") == null) {
-                configurations.create("compileClasspath").apply {
-                    isCanBeResolved = false
-                    isCanBeConsumed = false
-                    extendsFrom(
-                        target.project.configurations.getByName(
-                            target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME).compileDependencyConfigurationName
-                        )
-                    )
-                }
-            }
-        }
     }
 
     override fun configureCompilations(target: KotlinJvmTarget) {
@@ -57,7 +42,7 @@ open class KotlinJvmTargetConfigurator :
 
     override fun createTestRun(
         name: String,
-        target: KotlinJvmTarget
+        target: KotlinJvmTarget,
     ): KotlinJvmTestRun = KotlinJvmTestRun(name, target).apply {
         val testTaskOrProvider = target.project.registerTask<KotlinJvmTest>(testTaskName) { testTask ->
             testTask.targetName = target.disambiguationClassifier

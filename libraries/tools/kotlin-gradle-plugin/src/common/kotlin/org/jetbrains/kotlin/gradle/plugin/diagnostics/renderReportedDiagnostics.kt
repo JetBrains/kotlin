@@ -25,7 +25,9 @@ internal fun renderReportedDiagnostic(
 
         ERROR -> logger.error("e: ${diagnostic.render(isVerbose)}\n")
 
-        FATAL -> throw InvalidUserCodeException(diagnostic.render(isVerbose))
+        FATAL -> if (diagnostic.throwable != null)
+            throw InvalidUserCodeException(diagnostic.render(isVerbose), diagnostic.throwable)
+        else throw InvalidUserCodeException(diagnostic.render(isVerbose))
     }
 }
 
