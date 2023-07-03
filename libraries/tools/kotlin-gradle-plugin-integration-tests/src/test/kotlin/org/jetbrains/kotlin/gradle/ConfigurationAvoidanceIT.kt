@@ -73,7 +73,6 @@ class ConfigurationAvoidanceIT : KGPBaseTest() {
 
     @AndroidGradlePluginTests
     @DisplayName("Android unrelated tasks are not configured")
-    @AndroidTestVersions(minVersion = TestVersions.AGP.AGP_42)
     @GradleAndroidTest
     fun testAndroidUnrelatedTaskNotConfigured(
         gradleVersion: GradleVersion,
