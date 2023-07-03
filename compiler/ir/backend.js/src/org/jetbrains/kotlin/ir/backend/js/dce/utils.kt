@@ -48,7 +48,6 @@ fun dumpDeclarationIrSizesIfNeed(path: String?, allModules: List<IrModuleFragmen
                     is IrProperty -> "property"
                     is IrField -> "field"
                     is IrAnonymousInitializer -> "anonymous initializer"
-                    is IrClass -> "class"
                     else -> null
                 }
                 type?.let {
