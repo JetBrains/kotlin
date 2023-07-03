@@ -26,7 +26,7 @@ public final class org/jetbrains/kotlin/buildtools/api/CompilerArgumentsParseExc
 }
 
 public abstract interface class org/jetbrains/kotlin/buildtools/api/CompilerExecutionStrategyConfiguration {
-	public abstract fun useDaemonStrategy (Ljava/io/File;Ljava/util/List;)Lorg/jetbrains/kotlin/buildtools/api/CompilerExecutionStrategyConfiguration;
+	public abstract fun useDaemonStrategy (Ljava/util/List;)Lorg/jetbrains/kotlin/buildtools/api/CompilerExecutionStrategyConfiguration;
 	public abstract fun useInProcessStrategy ()Lorg/jetbrains/kotlin/buildtools/api/CompilerExecutionStrategyConfiguration;
 }
 

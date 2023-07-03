@@ -11,19 +11,20 @@ import java.io.File
 internal sealed interface CompilerExecutionStrategy {
     data object InProcess : CompilerExecutionStrategy
 
-    data class Daemon(val sessionDir: File, val jvmArguments: List<String>) : CompilerExecutionStrategy
+    data class Daemon(val jvmArguments: List<String>) : CompilerExecutionStrategy
 }
 
 internal class CompilerExecutionStrategyConfigurationImpl : CompilerExecutionStrategyConfiguration {
     internal var selectedStrategy: CompilerExecutionStrategy = CompilerExecutionStrategy.InProcess
+        private set
 
     override fun useInProcessStrategy(): CompilerExecutionStrategyConfiguration {
         selectedStrategy = CompilerExecutionStrategy.InProcess
         return this
     }
 
-    override fun useDaemonStrategy(sessionDir: File, jvmArguments: List<String>): CompilerExecutionStrategyConfiguration {
-        selectedStrategy = CompilerExecutionStrategy.Daemon(sessionDir, jvmArguments)
+    override fun useDaemonStrategy(jvmArguments: List<String>): CompilerExecutionStrategyConfiguration {
+        selectedStrategy = CompilerExecutionStrategy.Daemon(jvmArguments)
         return this
     }
 }

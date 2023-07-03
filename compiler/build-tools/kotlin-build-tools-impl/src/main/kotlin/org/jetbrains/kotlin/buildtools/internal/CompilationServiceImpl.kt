@@ -12,8 +12,15 @@ import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
 import org.jetbrains.kotlin.cli.common.arguments.validateArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
+import org.jetbrains.kotlin.compilerRunner.KotlinCompilerRunnerUtils
 import org.jetbrains.kotlin.config.Services
+import org.jetbrains.kotlin.daemon.client.BasicCompilerServicesWithResultsFacadeServer
+import org.jetbrains.kotlin.daemon.common.CompilerId
+import org.jetbrains.kotlin.daemon.common.configureDaemonJVMOptions
+import org.jetbrains.kotlin.daemon.common.filterExtractProps
 import java.io.File
+import java.net.URLClassLoader
+import java.util.concurrent.ConcurrentHashMap
 
 private val ExitCode.asCompilationResult
     get() = when (this) {
@@ -24,7 +31,11 @@ private val ExitCode.asCompilationResult
         else -> error("Unexpected exit code: $this")
     }
 
+private fun getCurrentClasspath() = (CompilationServiceImpl::class.java.classLoader as URLClassLoader).urLs.map { File(it.file) }
+
 internal object CompilationServiceImpl : CompilationService {
+    private val buildIdToSessionFlagFile: MutableMap<ProjectId, File> = ConcurrentHashMap()
+
     override fun calculateClasspathSnapshot(classpathEntry: File): ClasspathEntrySnapshot {
         TODO("Calculating classpath snapshots via the Build Tools API is not yet implemented: KT-57565")
     }
@@ -47,14 +58,23 @@ internal object CompilationServiceImpl : CompilationService {
             "Initial JVM compilation configuration object must be acquired from the `makeJvmCompilationConfiguration` method."
         }
         val loggerAdapter = KotlinLoggerMessageCollectorAdapter(compilationConfig.logger)
-        return when (strategyConfig.selectedStrategy) {
+        val selectedStrategy = strategyConfig.selectedStrategy
+        return when (selectedStrategy) {
             is CompilerExecutionStrategy.InProcess -> compileInProcess(loggerAdapter, sources, arguments)
-            is CompilerExecutionStrategy.Daemon -> TODO("The daemon strategy is not yet supported in the Build Tools API")
+            is CompilerExecutionStrategy.Daemon -> compileWithinDaemon(
+                projectId,
+                loggerAdapter,
+                selectedStrategy,
+                compilationConfig,
+                sources,
+                arguments
+            )
         }
     }
 
     override fun finishProjectCompilation(projectId: ProjectId) {
-
+        val file = buildIdToSessionFlagFile.remove(projectId) ?: return
+        file.delete()
     }
 
     private fun compileInProcess(
@@ -68,9 +88,58 @@ internal object CompilationServiceImpl : CompilationService {
         validateArguments(parsedArguments.errors)?.let {
             throw CompilerArgumentsParseException(it)
         }
-        parsedArguments.freeArgs += sources.map { it.absolutePath } // TODO: they're not actually passed yet
+        parsedArguments.freeArgs += sources.map { it.absolutePath } // TODO: they're not explicitly passed yet
         loggerAdapter.report(CompilerMessageSeverity.INFO, arguments.toString())
         return compiler.exec(loggerAdapter, Services.EMPTY, parsedArguments).asCompilationResult
+    }
+
+    private fun compileWithinDaemon(
+        projectId: ProjectId,
+        loggerAdapter: KotlinLoggerMessageCollectorAdapter,
+        daemonConfiguration: CompilerExecutionStrategy.Daemon,
+        compilationConfiguration: JvmCompilationConfigurationImpl,
+        sources: List<File>,
+        arguments: List<String>
+    ): CompilationResult {
+        val compilerId = CompilerId.makeCompilerId(getCurrentClasspath())
+        val sessionIsAliveFlagFile = buildIdToSessionFlagFile.computeIfAbsent(projectId) {
+            createSessionIsAliveFlagFile()
+        }
+
+        val jvmOptions = configureDaemonJVMOptions(
+            inheritMemoryLimits = true,
+            inheritOtherJvmOptions = false,
+            inheritAdditionalProperties = true
+        ).also { opts ->
+            if (daemonConfiguration.jvmArguments.isNotEmpty()) {
+                opts.jvmParams.addAll(
+                    daemonConfiguration.jvmArguments.filterExtractProps(opts.mappers, "", opts.restMapper)
+                )
+            }
+        }
+
+        val (daemon, sessionId) = KotlinCompilerRunnerUtils.newDaemonConnection(
+            compilerId,
+            clientIsAliveFile,
+            sessionIsAliveFlagFile,
+            loggerAdapter,
+            false,
+            daemonJVMOptions = jvmOptions
+        ) ?: error("Can't get connection")
+        val daemonCompileOptions = compilationConfiguration.asDaemonCompilationOptions
+        val exitCode = daemon.compile(
+            sessionId,
+            arguments.toTypedArray() + sources.map { it.absolutePath }, // TODO: the sources not explicitly passed yet
+            daemonCompileOptions,
+            BasicCompilerServicesWithResultsFacadeServer(loggerAdapter),
+            DaemonCompilationResults()
+        ).get()
+
+        return (ExitCode.entries.find { it.code == exitCode } ?: if (exitCode == 0) {
+            ExitCode.OK
+        } else {
+            ExitCode.COMPILATION_ERROR
+        }).asCompilationResult
     }
 }
 

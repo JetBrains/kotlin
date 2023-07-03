@@ -10,10 +10,20 @@ import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.buildtools.api.jvm.*
 import java.io.File
 
+internal data class AggregatedIcConfiguration<P : IncrementalCompilationApproachParameters>(
+    val options: IncrementalJvmCompilationConfiguration<P>,
+    val parameters: P,
+    val sourcesChanges: SourcesChanges,
+    val workingDir: File,
+)
+
 internal class JvmCompilationConfigurationImpl(
     override var kotlinScriptFilenameExtensions: Set<String> = emptySet(),
     override var logger: KotlinLogger = DefaultKotlinLogger,
 ) : JvmCompilationConfiguration {
+    internal var aggregatedIcConfiguration: AggregatedIcConfiguration<*>? = null
+        private set
+
     override fun useLogger(logger: KotlinLogger): JvmCompilationConfiguration {
         this.logger = logger
         return this

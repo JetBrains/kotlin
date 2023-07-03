@@ -75,7 +75,7 @@ internal abstract class BuildToolsApiCompilationWork : WorkAction<BuildToolsApiC
             }
             val executionConfig = compilationService.makeCompilerExecutionStrategyConfiguration().apply {
                 when (executionStrategy) {
-                    KotlinCompilerExecutionStrategy.DAEMON -> TODO("The daemon strategy is not yet supported in the Build Tools API")
+                    KotlinCompilerExecutionStrategy.DAEMON -> useDaemonStrategy(workArguments.compilerExecutionSettings.daemonJvmArgs ?: emptyList())
                     KotlinCompilerExecutionStrategy.IN_PROCESS -> useInProcessStrategy()
                     else -> error("The \"$executionStrategy\" execution strategy is not supported by the Build Tools API")
                 }

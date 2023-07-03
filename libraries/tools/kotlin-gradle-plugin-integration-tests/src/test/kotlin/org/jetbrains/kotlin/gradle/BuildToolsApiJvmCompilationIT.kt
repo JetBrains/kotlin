@@ -45,7 +45,6 @@ class BuildToolsApiJvmCompilationIT : KGPBaseTest() {
     }
 
     @GradleTest
-    @Disabled
     @DisplayName("Simple project non-incremental compilation within the daemon")
     fun compileJvmNonIncrementalWithinDaemon(gradleVersion: GradleVersion) = testSimpleProject(
         gradleVersion, defaultBuildOptions.copy(

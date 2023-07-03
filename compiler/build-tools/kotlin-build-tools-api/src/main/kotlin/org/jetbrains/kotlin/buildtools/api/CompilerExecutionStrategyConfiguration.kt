@@ -23,11 +23,9 @@ public interface CompilerExecutionStrategyConfiguration {
     /**
      * Marks the compilation to be run in Kotlin daemon launched as a separate process and shared across similar compilation requests.
      * See Kotlin daemon documentation here: https://kotlinlang.org/docs/gradle-compilation-and-caches.html#the-kotlin-daemon-and-how-to-use-it-with-gradle
-     * @param sessionDir a directory for storing data related to the daemon work session (should not be shared with other compilations)
      * @param jvmArguments a list of JVM startup arguments for the daemon
      */
     public fun useDaemonStrategy(
-        sessionDir: File,
         jvmArguments: List<String>,
     ): CompilerExecutionStrategyConfiguration
 }
