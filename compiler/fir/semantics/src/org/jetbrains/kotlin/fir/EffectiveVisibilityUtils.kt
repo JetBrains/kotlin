@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
+import org.jetbrains.kotlin.fir.utils.exceptions.withFirLookupTagEntry
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 fun Visibility.toEffectiveVisibility(
     ownerSymbol: FirClassLikeSymbol<*>?,
@@ -35,6 +37,8 @@ fun Visibility.toEffectiveVisibility(
         }
         Visibilities.Public -> EffectiveVisibility.Public
         Visibilities.Local -> EffectiveVisibility.Local
-        else -> error("Unknown visibility: $this")
+        else -> errorWithAttachment("Unknown visibility: $this") {
+            withFirLookupTagEntry("owner", owner)
+        }
     }
 }
