@@ -40,8 +40,15 @@ internal abstract class KotlinSourceSetFactory<T : KotlinSourceSet> internal con
     }
 
     private fun defineSourceSetConfigurations(project: Project, sourceSet: KotlinSourceSet) = with(project.configurations) {
-        @Suppress("DEPRECATION")
-        sourceSet.relatedConfigurationNames.forEach { configurationName ->
+        val configurationNames = sourceSet.run {
+            listOfNotNull(
+                apiConfigurationName,
+                implementationConfigurationName,
+                compileOnlyConfigurationName,
+                runtimeOnlyConfigurationName,
+            )
+        }
+        configurationNames.forEach { configurationName ->
             maybeCreate(configurationName).apply {
                 if (!configurationName.endsWith(METADATA_CONFIGURATION_NAME_SUFFIX)) {
                     isCanBeResolved = false

@@ -63,13 +63,6 @@ interface GradleKpmFragment : KpmFragment, HasKotlinDependencies, GradleKpmFragm
 
     override val runtimeOnlyConfigurationName: String
         get() = runtimeOnlyConfiguration.name
-
-    @Deprecated("Scheduled for removal with Kotlin 2.0")
-    @Suppress("DEPRECATION")
-    override val relatedConfigurationNames: List<String>
-        get() = super.relatedConfigurationNames +
-                // TODO: resolvable metadata configurations?
-                listOf(transitiveApiConfiguration.name, transitiveImplementationConfiguration.name)
 }
 
 val GradleKpmFragment.path: String
