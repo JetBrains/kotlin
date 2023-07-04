@@ -23,10 +23,12 @@ import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.utils.exceptions.withConeTypeEntry
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 // ---------------------------------------------- is type is a function type ----------------------------------------------
 
@@ -46,7 +48,9 @@ private inline fun ConeKotlinType.isFunctionTypeWithPredicate(
     predicate: (FunctionTypeKind) -> Boolean
 ): Boolean {
     val kind = functionTypeKind(session)
-        ?: if (errorOnNotFunctionType) error("$this is not a function type") else return false
+        ?: if (errorOnNotFunctionType) errorWithAttachment("${this::class.java} is not a function type") {
+            withConeTypeEntry("type", this@isFunctionTypeWithPredicate)
+        } else return false
     return predicate(kind)
 }
 

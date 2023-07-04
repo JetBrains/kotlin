@@ -25,8 +25,10 @@ import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.types.AbstractTypeChecker
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 abstract class FirModuleVisibilityChecker : FirSessionComponent {
     abstract fun isInFriendModule(declaration: FirMemberDeclaration): Boolean
@@ -463,7 +465,9 @@ fun FirBasedSymbol<*>.getOwnerLookupTag(): ConeClassLikeLookupTag? {
         is FirClassLikeSymbol<*> -> getContainingClassLookupTag()
         is FirCallableSymbol<*> -> containingClassLookupTag()
         is FirScriptSymbol -> null
-        else -> error("Unsupported owner search for ${fir.javaClass}: ${fir.render()}")
+        else -> errorWithAttachment("Unsupported owner search for ${fir::class.java}") {
+            withFirEntry("ownerDeclaration", fir)
+        }
     }
 }
 

@@ -21,7 +21,9 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
+import org.jetbrains.kotlin.fir.utils.exceptions.withConeTypeEntry
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
@@ -41,7 +43,9 @@ class FirIntegerConstantOperatorScope(
             scopeSession,
             FakeOverrideTypeCalculator.DoNothing,
             requiredMembersPhase = FirResolvePhase.STATUS,
-        ) ?: error("Scope for $baseType not found")
+        ) ?: errorWithAttachment("Scope for ${baseType::class.java} not found") {
+            withConeTypeEntry("type", baseType)
+        }
     }
 
     private val mappedFunctions = mutableMapOf<Name, FirNamedFunctionSymbol>()

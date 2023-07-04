@@ -24,12 +24,14 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousObjectSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
+import org.jetbrains.kotlin.fir.utils.exceptions.withConeTypeEntry
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.AbstractTypeRefiner
 import org.jetbrains.kotlin.types.TypeCheckerState
 import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.utils.DFS
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeContext {
 
@@ -142,7 +144,9 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
     override fun KotlinTypeMarker.typeDepth() = when (this) {
         is ConeSimpleKotlinType -> typeDepth()
         is ConeFlexibleType -> maxOf(lowerBound().typeDepth(), upperBound().typeDepth())
-        else -> error("Type should be simple or flexible: $this")
+        else -> errorWithAttachment("Type should be simple or flexible: ${this::class.java}") {
+            withConeTypeEntry("type", this@typeDepth as? ConeKotlinType)
+        }
     }
 
     override fun SimpleTypeMarker.typeDepth(): Int {
@@ -526,7 +530,10 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
                         isFunction
                     } ?: false
                 }
-                functionalSupertype ?: error("Failed to find functional supertype for $simpleType")
+                functionalSupertype
+                    ?: errorWithAttachment("Failed to find functional supertype for ${simpleType::class.java}") {
+                    withConeTypeEntry("type", simpleType)
+                }
             }
         }
     }

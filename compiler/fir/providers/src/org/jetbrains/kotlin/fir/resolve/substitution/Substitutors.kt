@@ -15,12 +15,14 @@ import org.jetbrains.kotlin.fir.resolve.withCombinedAttributesFrom
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
+import org.jetbrains.kotlin.fir.utils.exceptions.withConeTypeEntry
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.types.model.TypeSubstitutorMarker
 import org.jetbrains.kotlin.types.model.TypeVariableMarker
 import org.jetbrains.kotlin.types.model.typeConstructor
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 abstract class AbstractConeSubstitutor(protected val typeContext: ConeTypeContext) : ConeSubstitutor() {
     protected fun wrapProjection(old: ConeTypeProjection, newType: ConeKotlinType): ConeTypeProjection {
@@ -160,7 +162,9 @@ abstract class AbstractConeSubstitutor(protected val typeContext: ConeTypeContex
                     newArguments as Array<ConeTypeProjection>,
                     attributes
                 )
-                else -> error("Unknown class-like type to substitute: $this, ${this::class}")
+                else -> errorWithAttachment("Unknown class-like type to substitute, ${this::class}") {
+                    withConeTypeEntry("type", this@substituteArguments)
+                }
             }
         }
         return null

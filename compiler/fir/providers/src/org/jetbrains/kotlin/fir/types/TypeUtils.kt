@@ -30,10 +30,12 @@ import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.fir.types.lowerBoundIfFlexible
+import org.jetbrains.kotlin.fir.utils.exceptions.withConeTypeEntry
 import org.jetbrains.kotlin.resolve.calls.NewCommonSuperTypeCalculator
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.fir.types.lowerBoundIfFlexible as coneLowerBoundIfFlexible
 import org.jetbrains.kotlin.fir.types.upperBoundIfFlexible as coneUpperBoundIfFlexible
 
@@ -122,7 +124,9 @@ fun <T : ConeKotlinType> T.withArguments(arguments: Array<out ConeTypeProjection
         is ConeErrorType -> ConeErrorType(diagnostic, isUninferredParameter, arguments, attributes) as T
         is ConeClassLikeTypeImpl -> ConeClassLikeTypeImpl(lookupTag, arguments, nullability.isNullable, attributes) as T
         is ConeDefinitelyNotNullType -> ConeDefinitelyNotNullType(original.withArguments(arguments)) as T
-        else -> error("Not supported: $this: ${this.renderForDebugging()}")
+        else -> errorWithAttachment("Not supported: ${this::class}") {
+            withConeTypeEntry("type", this@withArguments)
+        }
     }
 }
 
@@ -154,7 +158,9 @@ fun <T : ConeKotlinType> T.withAttributes(attributes: ConeAttributes): T {
         // Attributes for stub types are not supported, and it's not obvious if it should
         is ConeStubType -> this
         is ConeIntegerLiteralType -> this
-        else -> error("Not supported: $this: ${this.renderForDebugging()}")
+        else -> errorWithAttachment("Not supported: ${this::class}") {
+            withConeTypeEntry("type", this@withAttributes)
+        }
     } as T
 }
 
@@ -729,7 +735,9 @@ private fun ConeKotlinType.eraseAsUpperBound(
             original.eraseAsUpperBound(session, cache, mode)
                 .makeConeTypeDefinitelyNotNullOrNotNull(session.typeContext)
 
-        else -> error("unexpected Java type parameter upper bound kind: $this")
+        else -> errorWithAttachment("unexpected Java type parameter upper bound kind: ${this::class}") {
+            withConeTypeEntry("type", this@eraseAsUpperBound)
+        }
     }
 
 fun ConeKotlinType.isRaw(): Boolean = lowerBoundIfFlexible().attributes.contains(CompilerConeAttributes.RawType)

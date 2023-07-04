@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.fir.scopes.FirOverrideChecker
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 abstract class AbstractFirOverrideScope(
     val session: FirSession,
@@ -54,7 +56,10 @@ internal fun FirOverrideChecker.similarFunctionsOrBothProperties(
         overrideCandidate is FirConstructor -> false
         overrideCandidate is FirProperty -> baseDeclaration is FirProperty && isOverriddenProperty(overrideCandidate, baseDeclaration)
         overrideCandidate is FirField -> baseDeclaration is FirField
-        else -> error("Unknown fir callable type: $overrideCandidate, $baseDeclaration")
+        else -> errorWithAttachment("Unknown fir callable type") {
+            withFirEntry("overrideCandidate", overrideCandidate)
+            withFirEntry("baseDeclaration", baseDeclaration)
+        }
     }
 }
 

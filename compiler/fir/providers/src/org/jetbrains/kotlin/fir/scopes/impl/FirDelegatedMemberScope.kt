@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 class FirDelegatedMemberScope(
     private val session: FirSession,
@@ -221,7 +222,9 @@ fun FirSimpleFunction.isPublicInAny(): Boolean {
     return when (name.asString()) {
         "hashCode", "toString" -> valueParameters.isEmpty()
         "equals" -> valueParameters.singleOrNull()?.hasTypeOf(StandardClassIds.Any, allowNullable = true) == true
-        else -> error("Unexpected method name: $name")
+        else -> errorWithAttachment("Unexpected method name") {
+            withEntry("methodName", name) { name.asString() }
+        }
     }
 }
 
