@@ -8,11 +8,14 @@
 package org.jetbrains.kotlin.gradle.unitTests
 
 import org.gradle.api.ProjectConfigurationException
+import org.gradle.internal.impldep.org.testng.TestException
+import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.IllegalLifecycleException
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.ProjectConfigurationResult.Failure
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.*
+import org.jetbrains.kotlin.gradle.util.applyMultiplatformPlugin
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.runLifecycleAwareTest
 import org.jetbrains.kotlin.gradle.utils.future
@@ -552,5 +555,18 @@ class KotlinPluginLifecycleTest {
 
         assertTrue(FinaliseDsl !in Stage.until(FinaliseDsl))
         assertTrue(FinaliseDsl.previousOrFirst in Stage.until(FinaliseDsl))
+    }
+
+    @Test
+    fun `test - runLifecycleAwareTest - in a project with lifecycle`() {
+        val project = ProjectBuilder.builder().build()
+        project.applyMultiplatformPlugin()
+        project.runLifecycleAwareTest{}
+    }
+
+    @Test
+    fun `test - runLifecycleAwareTest - in a project without lifecycle`() {
+        val project = ProjectBuilder.builder().build()
+        assertFailsWith<AssertionError> { project.runLifecycleAwareTest{} }
     }
 }

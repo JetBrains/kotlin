@@ -10,11 +10,16 @@ import org.gradle.api.internal.project.ProjectInternal
 import org.jetbrains.kotlin.gradle.plugin.kotlinPluginLifecycle
 import org.jetbrains.kotlin.tooling.core.withLinearClosure
 import java.lang.AssertionError
+import kotlin.test.assertTrue
 
 fun Project.runLifecycleAwareTest(block: suspend Project.() -> Unit) {
-    kotlinPluginLifecycle.launch { block() }
+    kotlinPluginLifecycle.launch {
+        block()
+    }
     try {
         (this as ProjectInternal).evaluate()
+        assertTrue(kotlinPluginLifecycle.isStarted)
+        assertTrue(kotlinPluginLifecycle.isFinished)
     } catch (t: Throwable) {
         /* Prefer throwing AssertionError directly, if possible */
         val allCauses = t.withLinearClosure { it.cause }
