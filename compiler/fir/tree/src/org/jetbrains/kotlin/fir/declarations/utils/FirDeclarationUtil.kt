@@ -6,10 +6,13 @@
 package org.jetbrains.kotlin.fir.declarations.utils
 
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
+import org.jetbrains.kotlin.fir.types.isNullableAny
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 val FirTypeAlias.expandedConeType: ConeClassLikeType? get() = expandedTypeRef.coneTypeSafe()
 
@@ -55,4 +58,13 @@ val FirMemberDeclaration.nameOrSpecialName: Name
             this.classId.shortClassName
         is FirTypeAlias ->
             this.name
+    }
+
+val FirNamedFunctionSymbol.isMethodOfAny: Boolean
+    get() {
+        return when (name) {
+            OperatorNameConventions.EQUALS -> valueParameterSymbols.singleOrNull()?.resolvedReturnType?.isNullableAny == true
+            OperatorNameConventions.HASH_CODE, OperatorNameConventions.TO_STRING -> fir.valueParameters.isEmpty()
+            else -> false
+        }
     }

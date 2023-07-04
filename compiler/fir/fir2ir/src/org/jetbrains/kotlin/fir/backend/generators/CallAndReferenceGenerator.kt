@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.isMethodOfAny
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
@@ -40,7 +41,6 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.isFunctionTypeOrSubtype
 import org.jetbrains.kotlin.ir.util.isInterface
-import org.jetbrains.kotlin.ir.util.isMethodOfAny
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.NewCommonSuperTypeCalculator.commonSuperType
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -1128,7 +1128,7 @@ class CallAndReferenceGenerator(
                 if (resolvedFirSymbol?.dispatchReceiverType != null) {
                     val baseDispatchReceiver = qualifiedAccess.findIrDispatchReceiver(explicitReceiverExpression)
                     dispatchReceiver =
-                        if (!resolvedFirSymbol.isMethodOfAny() || baseDispatchReceiver?.type?.classOrNull?.owner?.isInterface != true) {
+                        if (!resolvedFirSymbol.isFunctionFromAny() || baseDispatchReceiver?.type?.classOrNull?.owner?.isInterface != true) {
                             baseDispatchReceiver
                         } else {
                             // NB: for FE 1.0, this type cast is added by InterfaceObjectCallsLowering
@@ -1172,14 +1172,9 @@ class CallAndReferenceGenerator(
         return this
     }
 
-    private fun FirCallableSymbol<*>.isMethodOfAny(): Boolean {
+    private fun FirCallableSymbol<*>.isFunctionFromAny(): Boolean {
         if (this !is FirNamedFunctionSymbol) return false
-        if (receiverParameter != null) return false
-        return when (name) {
-            OperatorNameConventions.HASH_CODE, OperatorNameConventions.TO_STRING -> valueParameterSymbols.isEmpty()
-            OperatorNameConventions.EQUALS -> valueParameterSymbols.singleOrNull()?.resolvedReturnType?.isNullableAny == true
-            else -> false
-        }
+        return isMethodOfAny
     }
 
     private fun generateErrorCallExpression(

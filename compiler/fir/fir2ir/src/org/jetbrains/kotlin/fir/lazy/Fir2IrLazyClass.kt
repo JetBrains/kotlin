@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.fir.scopes.processClassifiersByName
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.types.isNullableAny
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.lazy.IrMaybeDeserializedClass
@@ -27,9 +26,11 @@ import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.DeserializableClass
+import org.jetbrains.kotlin.ir.util.isComposite
+import org.jetbrains.kotlin.ir.util.isEnumClass
+import org.jetbrains.kotlin.ir.util.isObject
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 class Fir2IrLazyClass(
@@ -239,13 +240,8 @@ class Fir2IrLazyClass(
         get() = fir.isNewPlaceForBodyGeneration == true
 
     private fun FirNamedFunctionSymbol.isAbstractMethodOfAny(): Boolean {
-        val fir = fir
-        if (fir.modality != Modality.ABSTRACT) return false
-        return when (fir.name) {
-            OperatorNameConventions.EQUALS -> fir.valueParameters.singleOrNull()?.returnTypeRef?.isNullableAny == true
-            OperatorNameConventions.HASH_CODE, OperatorNameConventions.TO_STRING -> fir.valueParameters.isEmpty()
-            else -> false
-        }
+        if (modality != Modality.ABSTRACT) return false
+        return isMethodOfAny
     }
 
     private var irLoaded: Boolean? = null
