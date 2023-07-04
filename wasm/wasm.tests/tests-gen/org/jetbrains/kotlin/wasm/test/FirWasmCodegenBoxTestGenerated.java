@@ -23143,12 +23143,6 @@ public class FirWasmCodegenBoxTestGenerated extends AbstractFirWasmCodegenBoxTes
     @TestDataPath("$PROJECT_ROOT")
     public class K2DifferencesChecks {
         @Test
-        @TestMetadata("1.kt")
-        public void test1() throws Exception {
-            runTest("compiler/testData/codegen/box/k2DifferencesChecks/1.kt");
-        }
-
-        @Test
         @TestMetadata("12.kt")
         public void test12() throws Exception {
             runTest("compiler/testData/codegen/box/k2DifferencesChecks/12.kt");
@@ -23161,44 +23155,8 @@ public class FirWasmCodegenBoxTestGenerated extends AbstractFirWasmCodegenBoxTes
         }
 
         @Test
-        @TestMetadata("2.kt")
-        public void test2() throws Exception {
-            runTest("compiler/testData/codegen/box/k2DifferencesChecks/2.kt");
-        }
-
-        @Test
-        @TestMetadata("3.kt")
-        public void test3() throws Exception {
-            runTest("compiler/testData/codegen/box/k2DifferencesChecks/3.kt");
-        }
-
-        @Test
-        @TestMetadata("4.kt")
-        public void test4() throws Exception {
-            runTest("compiler/testData/codegen/box/k2DifferencesChecks/4.kt");
-        }
-
-        @Test
-        @TestMetadata("5.kt")
-        public void test5() throws Exception {
-            runTest("compiler/testData/codegen/box/k2DifferencesChecks/5.kt");
-        }
-
-        @Test
-        @TestMetadata("6.kt")
-        public void test6() throws Exception {
-            runTest("compiler/testData/codegen/box/k2DifferencesChecks/6.kt");
-        }
-
-        @Test
-        @TestMetadata("7.kt")
-        public void test7() throws Exception {
-            runTest("compiler/testData/codegen/box/k2DifferencesChecks/7.kt");
-        }
-
-        @Test
         public void testAllFilesPresentInK2DifferencesChecks() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/k2DifferencesChecks"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/k2DifferencesChecks"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
         }
 
         @Test

@@ -28309,11 +28309,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
     @RunWith(JUnit3RunnerWithInners.class)
     public static class K2DifferencesChecks extends AbstractLightAnalysisModeTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
         }
 
         private void runTest(String testDataFilePath, java.util.function.Function<String, String> transformer) throws Exception {
-            KotlinTestUtils.runTest(path -> doTestWithTransformer(path, transformer), TargetBackend.JVM, testDataFilePath);
+            KotlinTestUtils.runTest(path -> doTestWithTransformer(path, transformer), TargetBackend.JVM_IR, testDataFilePath);
         }
 
         @TestMetadata("1.kt")
@@ -28362,7 +28362,7 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         }
 
         public void testAllFilesPresentInK2DifferencesChecks() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/k2DifferencesChecks"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/k2DifferencesChecks"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
         @TestMetadata("ambigousLabelOnThis.kt")
@@ -28518,6 +28518,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         @TestMetadata("kt4785.kt")
         public void testKt4785() throws Exception {
             runTest("compiler/testData/codegen/box/k2DifferencesChecks/kt4785.kt");
+        }
+
+        @TestMetadata("kt48987.kt")
+        public void testKt48987() throws Exception {
+            runTest("compiler/testData/codegen/box/k2DifferencesChecks/kt48987.kt");
         }
 
         @TestMetadata("kt49038.kt")
