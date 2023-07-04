@@ -76,6 +76,9 @@ class CocoaPodsIT : KGPBaseTest() {
 
             buildWithCocoapodsWrapper(":kotlin-library:podImport") {
                 podImportAsserts(subProject("kotlin-library").buildGradleKts, "kotlin-library")
+                if (gradleVersion >= GradleVersion.version(TestVersions.Gradle.G_7_6)) {
+                    assertOutputContains("Podfile location is set")
+                }
             }
 
             buildWithCocoapodsWrapper(":second-library:podImport") {

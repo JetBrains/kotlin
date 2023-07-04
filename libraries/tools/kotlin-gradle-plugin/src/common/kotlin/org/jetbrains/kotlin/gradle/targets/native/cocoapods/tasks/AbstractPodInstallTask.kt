@@ -10,6 +10,7 @@ package org.jetbrains.kotlin.gradle.targets.native.tasks
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
+import org.jetbrains.kotlin.gradle.utils.onlyIfCompat
 import org.jetbrains.kotlin.gradle.utils.runCommand
 import java.io.File
 import java.io.IOException
@@ -21,7 +22,7 @@ import java.io.IOException
  */
 abstract class AbstractPodInstallTask : CocoapodsTask() {
     init {
-        onlyIf { podfile.isPresent }
+        onlyIfCompat("Podfile location is set") { podfile.isPresent }
     }
 
     @get:Optional
