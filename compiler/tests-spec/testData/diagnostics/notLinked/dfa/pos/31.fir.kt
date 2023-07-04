@@ -103,7 +103,7 @@ fun case_6(x: Class?) {
 // TESTCASE NUMBER: 5
 fun <T> case_5(x: T) {
     if ((x as Any).propNullableT != null) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & T!!")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & T & Any")!>x<!>
     }
 }
 

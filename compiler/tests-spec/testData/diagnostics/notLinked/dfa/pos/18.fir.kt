@@ -234,16 +234,16 @@ fun case_16(map: Map<Int?, Int?>) {
 fun <T>case_17(x: T?, f: Boolean) {
     while (f) {
         if (x === implicitNullableNothingProperty || false) { break }
-        <!DEBUG_INFO_EXPRESSION_TYPE("T? & T?!!")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("T? & T?!!")!>x<!>.equals(null)
-        <!DEBUG_INFO_EXPRESSION_TYPE("T? & T?!!")!>x<!>.propT
-        <!DEBUG_INFO_EXPRESSION_TYPE("T? & T?!!")!>x<!>.propAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("T? & T?!!")!>x<!>.propNullableT
-        <!DEBUG_INFO_EXPRESSION_TYPE("T? & T?!!")!>x<!>.propNullableAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("T? & T?!!")!>x<!>.funT()
-        <!DEBUG_INFO_EXPRESSION_TYPE("T? & T?!!")!>x<!>.funAny()
-        <!DEBUG_INFO_EXPRESSION_TYPE("T? & T?!!")!>x<!>.funNullableT()
-        <!DEBUG_INFO_EXPRESSION_TYPE("T? & T?!!")!>x<!>.funNullableAny()
+        <!DEBUG_INFO_EXPRESSION_TYPE("T? & T? & Any")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("T? & T? & Any")!>x<!>.equals(null)
+        <!DEBUG_INFO_EXPRESSION_TYPE("T? & T? & Any")!>x<!>.propT
+        <!DEBUG_INFO_EXPRESSION_TYPE("T? & T? & Any")!>x<!>.propAny
+        <!DEBUG_INFO_EXPRESSION_TYPE("T? & T? & Any")!>x<!>.propNullableT
+        <!DEBUG_INFO_EXPRESSION_TYPE("T? & T? & Any")!>x<!>.propNullableAny
+        <!DEBUG_INFO_EXPRESSION_TYPE("T? & T? & Any")!>x<!>.funT()
+        <!DEBUG_INFO_EXPRESSION_TYPE("T? & T? & Any")!>x<!>.funAny()
+        <!DEBUG_INFO_EXPRESSION_TYPE("T? & T? & Any")!>x<!>.funNullableT()
+        <!DEBUG_INFO_EXPRESSION_TYPE("T? & T? & Any")!>x<!>.funNullableAny()
     }
 }
 
@@ -251,16 +251,16 @@ fun <T>case_17(x: T?, f: Boolean) {
 fun <T>case_18(x: T, f: Boolean) {
     while (f) {
         if (false || false || false || x == nullableNothingProperty) break
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & T!!")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & T!!")!>x<!>.equals(null)
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & T!!")!>x<!>.propT
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & T!!")!>x<!>.propAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & T!!")!>x<!>.propNullableT
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & T!!")!>x<!>.propNullableAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & T!!")!>x<!>.funT()
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & T!!")!>x<!>.funAny()
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & T!!")!>x<!>.funNullableT()
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & T!!")!>x<!>.funNullableAny()
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & T & Any")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & T & Any")!>x<!>.equals(null)
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & T & Any")!>x<!>.propT
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & T & Any")!>x<!>.propAny
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & T & Any")!>x<!>.propNullableT
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & T & Any")!>x<!>.propNullableAny
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & T & Any")!>x<!>.funT()
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & T & Any")!>x<!>.funAny()
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & T & Any")!>x<!>.funNullableT()
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & T & Any")!>x<!>.funNullableAny()
     }
 }
 
@@ -268,26 +268,26 @@ fun <T>case_18(x: T, f: Boolean) {
 fun <K, V>case_19(map: MutableMap<K, V>, y: Nothing?) {
     for ((k, v) in map) {
         if (k !== implicitNullableNothingProperty && true && v != y) else { break }
-        <!DEBUG_INFO_EXPRESSION_TYPE("K & K!!")!>k<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("K & K!!")!>k<!>.equals(null)
-        <!DEBUG_INFO_EXPRESSION_TYPE("K & K!!")!>k<!>.propT
-        <!DEBUG_INFO_EXPRESSION_TYPE("K & K!!")!>k<!>.propAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("K & K!!")!>k<!>.propNullableT
-        <!DEBUG_INFO_EXPRESSION_TYPE("K & K!!")!>k<!>.propNullableAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("K & K!!")!>k<!>.funT()
-        <!DEBUG_INFO_EXPRESSION_TYPE("K & K!!")!>k<!>.funAny()
-        <!DEBUG_INFO_EXPRESSION_TYPE("K & K!!")!>k<!>.funNullableT()
-        <!DEBUG_INFO_EXPRESSION_TYPE("K & K!!")!>k<!>.funNullableAny()
-        <!DEBUG_INFO_EXPRESSION_TYPE("V & V!!")!>v<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("V & V!!")!>v<!>.equals(null)
-        <!DEBUG_INFO_EXPRESSION_TYPE("V & V!!")!>v<!>.propT
-        <!DEBUG_INFO_EXPRESSION_TYPE("V & V!!")!>v<!>.propAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("V & V!!")!>v<!>.propNullableT
-        <!DEBUG_INFO_EXPRESSION_TYPE("V & V!!")!>v<!>.propNullableAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("V & V!!")!>v<!>.funT()
-        <!DEBUG_INFO_EXPRESSION_TYPE("V & V!!")!>v<!>.funAny()
-        <!DEBUG_INFO_EXPRESSION_TYPE("V & V!!")!>v<!>.funNullableT()
-        <!DEBUG_INFO_EXPRESSION_TYPE("V & V!!")!>v<!>.funNullableAny()
+        <!DEBUG_INFO_EXPRESSION_TYPE("K & K & Any")!>k<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("K & K & Any")!>k<!>.equals(null)
+        <!DEBUG_INFO_EXPRESSION_TYPE("K & K & Any")!>k<!>.propT
+        <!DEBUG_INFO_EXPRESSION_TYPE("K & K & Any")!>k<!>.propAny
+        <!DEBUG_INFO_EXPRESSION_TYPE("K & K & Any")!>k<!>.propNullableT
+        <!DEBUG_INFO_EXPRESSION_TYPE("K & K & Any")!>k<!>.propNullableAny
+        <!DEBUG_INFO_EXPRESSION_TYPE("K & K & Any")!>k<!>.funT()
+        <!DEBUG_INFO_EXPRESSION_TYPE("K & K & Any")!>k<!>.funAny()
+        <!DEBUG_INFO_EXPRESSION_TYPE("K & K & Any")!>k<!>.funNullableT()
+        <!DEBUG_INFO_EXPRESSION_TYPE("K & K & Any")!>k<!>.funNullableAny()
+        <!DEBUG_INFO_EXPRESSION_TYPE("V & V & Any")!>v<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("V & V & Any")!>v<!>.equals(null)
+        <!DEBUG_INFO_EXPRESSION_TYPE("V & V & Any")!>v<!>.propT
+        <!DEBUG_INFO_EXPRESSION_TYPE("V & V & Any")!>v<!>.propAny
+        <!DEBUG_INFO_EXPRESSION_TYPE("V & V & Any")!>v<!>.propNullableT
+        <!DEBUG_INFO_EXPRESSION_TYPE("V & V & Any")!>v<!>.propNullableAny
+        <!DEBUG_INFO_EXPRESSION_TYPE("V & V & Any")!>v<!>.funT()
+        <!DEBUG_INFO_EXPRESSION_TYPE("V & V & Any")!>v<!>.funAny()
+        <!DEBUG_INFO_EXPRESSION_TYPE("V & V & Any")!>v<!>.funNullableT()
+        <!DEBUG_INFO_EXPRESSION_TYPE("V & V & Any")!>v<!>.funNullableAny()
     }
 }
 
@@ -295,26 +295,26 @@ fun <K, V>case_19(map: MutableMap<K, V>, y: Nothing?) {
 fun <K, V: K>case_20(map: MutableMap<K?, V>) {
     for ((k, v) in map) {
         if (true && true && true && k !== null && v != null && true) else continue
-        <!DEBUG_INFO_EXPRESSION_TYPE("K? & K?!!")!>k<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("K? & K?!!")!>k<!>.equals(null)
-        <!DEBUG_INFO_EXPRESSION_TYPE("K? & K?!!")!>k<!>.propT
-        <!DEBUG_INFO_EXPRESSION_TYPE("K? & K?!!")!>k<!>.propAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("K? & K?!!")!>k<!>.propNullableT
-        <!DEBUG_INFO_EXPRESSION_TYPE("K? & K?!!")!>k<!>.propNullableAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("K? & K?!!")!>k<!>.funT()
-        <!DEBUG_INFO_EXPRESSION_TYPE("K? & K?!!")!>k<!>.funAny()
-        <!DEBUG_INFO_EXPRESSION_TYPE("K? & K?!!")!>k<!>.funNullableT()
-        <!DEBUG_INFO_EXPRESSION_TYPE("K? & K?!!")!>k<!>.funNullableAny()
-        <!DEBUG_INFO_EXPRESSION_TYPE("V & V!!")!>v<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("V & V!!")!>v<!>.equals(null)
-        <!DEBUG_INFO_EXPRESSION_TYPE("V & V!!")!>v<!>.propT
-        <!DEBUG_INFO_EXPRESSION_TYPE("V & V!!")!>v<!>.propAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("V & V!!")!>v<!>.propNullableT
-        <!DEBUG_INFO_EXPRESSION_TYPE("V & V!!")!>v<!>.propNullableAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("V & V!!")!>v<!>.funT()
-        <!DEBUG_INFO_EXPRESSION_TYPE("V & V!!")!>v<!>.funAny()
-        <!DEBUG_INFO_EXPRESSION_TYPE("V & V!!")!>v<!>.funNullableT()
-        <!DEBUG_INFO_EXPRESSION_TYPE("V & V!!")!>v<!>.funNullableAny()
+        <!DEBUG_INFO_EXPRESSION_TYPE("K? & K? & Any")!>k<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("K? & K? & Any")!>k<!>.equals(null)
+        <!DEBUG_INFO_EXPRESSION_TYPE("K? & K? & Any")!>k<!>.propT
+        <!DEBUG_INFO_EXPRESSION_TYPE("K? & K? & Any")!>k<!>.propAny
+        <!DEBUG_INFO_EXPRESSION_TYPE("K? & K? & Any")!>k<!>.propNullableT
+        <!DEBUG_INFO_EXPRESSION_TYPE("K? & K? & Any")!>k<!>.propNullableAny
+        <!DEBUG_INFO_EXPRESSION_TYPE("K? & K? & Any")!>k<!>.funT()
+        <!DEBUG_INFO_EXPRESSION_TYPE("K? & K? & Any")!>k<!>.funAny()
+        <!DEBUG_INFO_EXPRESSION_TYPE("K? & K? & Any")!>k<!>.funNullableT()
+        <!DEBUG_INFO_EXPRESSION_TYPE("K? & K? & Any")!>k<!>.funNullableAny()
+        <!DEBUG_INFO_EXPRESSION_TYPE("V & V & Any")!>v<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("V & V & Any")!>v<!>.equals(null)
+        <!DEBUG_INFO_EXPRESSION_TYPE("V & V & Any")!>v<!>.propT
+        <!DEBUG_INFO_EXPRESSION_TYPE("V & V & Any")!>v<!>.propAny
+        <!DEBUG_INFO_EXPRESSION_TYPE("V & V & Any")!>v<!>.propNullableT
+        <!DEBUG_INFO_EXPRESSION_TYPE("V & V & Any")!>v<!>.propNullableAny
+        <!DEBUG_INFO_EXPRESSION_TYPE("V & V & Any")!>v<!>.funT()
+        <!DEBUG_INFO_EXPRESSION_TYPE("V & V & Any")!>v<!>.funAny()
+        <!DEBUG_INFO_EXPRESSION_TYPE("V & V & Any")!>v<!>.funNullableT()
+        <!DEBUG_INFO_EXPRESSION_TYPE("V & V & Any")!>v<!>.funNullableAny()
     }
 }
 
@@ -323,16 +323,16 @@ fun <K, V>case_21(map: MutableMap<out K?, in V>) {
     for ((k, v) in map) {
         if (k == null) continue
         if (v === null || false) break
-        <!DEBUG_INFO_EXPRESSION_TYPE("K? & K?!!")!>k<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("K? & K?!!")!>k<!>.equals(null)
-        <!DEBUG_INFO_EXPRESSION_TYPE("K? & K?!!")!>k<!>.propT
-        <!DEBUG_INFO_EXPRESSION_TYPE("K? & K?!!")!>k<!>.propAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("K? & K?!!")!>k<!>.propNullableT
-        <!DEBUG_INFO_EXPRESSION_TYPE("K? & K?!!")!>k<!>.propNullableAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("K? & K?!!")!>k<!>.funT()
-        <!DEBUG_INFO_EXPRESSION_TYPE("K? & K?!!")!>k<!>.funAny()
-        <!DEBUG_INFO_EXPRESSION_TYPE("K? & K?!!")!>k<!>.funNullableT()
-        <!DEBUG_INFO_EXPRESSION_TYPE("K? & K?!!")!>k<!>.funNullableAny()
+        <!DEBUG_INFO_EXPRESSION_TYPE("K? & K? & Any")!>k<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("K? & K? & Any")!>k<!>.equals(null)
+        <!DEBUG_INFO_EXPRESSION_TYPE("K? & K? & Any")!>k<!>.propT
+        <!DEBUG_INFO_EXPRESSION_TYPE("K? & K? & Any")!>k<!>.propAny
+        <!DEBUG_INFO_EXPRESSION_TYPE("K? & K? & Any")!>k<!>.propNullableT
+        <!DEBUG_INFO_EXPRESSION_TYPE("K? & K? & Any")!>k<!>.propNullableAny
+        <!DEBUG_INFO_EXPRESSION_TYPE("K? & K? & Any")!>k<!>.funT()
+        <!DEBUG_INFO_EXPRESSION_TYPE("K? & K? & Any")!>k<!>.funAny()
+        <!DEBUG_INFO_EXPRESSION_TYPE("K? & K? & Any")!>k<!>.funNullableT()
+        <!DEBUG_INFO_EXPRESSION_TYPE("K? & K? & Any")!>k<!>.funNullableAny()
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>v<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>v<!>.equals(null)
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>v<!>.propT
@@ -350,16 +350,16 @@ fun <K, V>case_21(map: MutableMap<out K?, in V>) {
 fun <T> case_22(x: T?) {
     while (true) {
         if (x === null) break
-        <!DEBUG_INFO_EXPRESSION_TYPE("T? & T?!!")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("T? & T?!!")!>x<!>.equals(null)
-        <!DEBUG_INFO_EXPRESSION_TYPE("T? & T?!!")!>x<!>.propT
-        <!DEBUG_INFO_EXPRESSION_TYPE("T? & T?!!")!>x<!>.propAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("T? & T?!!")!>x<!>.propNullableT
-        <!DEBUG_INFO_EXPRESSION_TYPE("T? & T?!!")!>x<!>.propNullableAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("T? & T?!!")!>x<!>.funT()
-        <!DEBUG_INFO_EXPRESSION_TYPE("T? & T?!!")!>x<!>.funAny()
-        <!DEBUG_INFO_EXPRESSION_TYPE("T? & T?!!")!>x<!>.funNullableT()
-        <!DEBUG_INFO_EXPRESSION_TYPE("T? & T?!!")!>x<!>.funNullableAny()
+        <!DEBUG_INFO_EXPRESSION_TYPE("T? & T? & Any")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("T? & T? & Any")!>x<!>.equals(null)
+        <!DEBUG_INFO_EXPRESSION_TYPE("T? & T? & Any")!>x<!>.propT
+        <!DEBUG_INFO_EXPRESSION_TYPE("T? & T? & Any")!>x<!>.propAny
+        <!DEBUG_INFO_EXPRESSION_TYPE("T? & T? & Any")!>x<!>.propNullableT
+        <!DEBUG_INFO_EXPRESSION_TYPE("T? & T? & Any")!>x<!>.propNullableAny
+        <!DEBUG_INFO_EXPRESSION_TYPE("T? & T? & Any")!>x<!>.funT()
+        <!DEBUG_INFO_EXPRESSION_TYPE("T? & T? & Any")!>x<!>.funAny()
+        <!DEBUG_INFO_EXPRESSION_TYPE("T? & T? & Any")!>x<!>.funNullableT()
+        <!DEBUG_INFO_EXPRESSION_TYPE("T? & T? & Any")!>x<!>.funNullableAny()
     }
 }
 

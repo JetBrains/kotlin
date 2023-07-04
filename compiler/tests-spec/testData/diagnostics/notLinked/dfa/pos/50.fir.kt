@@ -35,9 +35,9 @@ fun Any.case_2() {
 // TESTCASE NUMBER: 3
 fun <T> T.case_3() {
     if (this is Inv<*>) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & Inv<*> & T!!")!>this<!>.test()
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & Inv<*> & T!!")!>this<!>.prop_4
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & Inv<*> & T!!")!>this<!>.prop_4.inv()
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & Inv<*> & T & Any")!>this<!>.test()
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & Inv<*> & T & Any")!>this<!>.prop_4
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & Inv<*> & T & Any")!>this<!>.prop_4.inv()
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>prop_4<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>prop_4<!>.inv()
     }
@@ -46,9 +46,9 @@ fun <T> T.case_3() {
 // TESTCASE NUMBER: 4
 fun <T> T?.case_4() {
     if (this is ClassWithSixTypeParameters<*, *, *, *, *, *>) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("T? & ClassWithSixTypeParameters<*, *, *, *, *, *> & T?!!")!>this<!>.test()
-        <!DEBUG_INFO_EXPRESSION_TYPE("T? & ClassWithSixTypeParameters<*, *, *, *, *, *> & T?!!")!>this<!>.x
-        <!DEBUG_INFO_EXPRESSION_TYPE("T? & ClassWithSixTypeParameters<*, *, *, *, *, *> & T?!!")!>this<!>.y
+        <!DEBUG_INFO_EXPRESSION_TYPE("T? & ClassWithSixTypeParameters<*, *, *, *, *, *> & T? & Any")!>this<!>.test()
+        <!DEBUG_INFO_EXPRESSION_TYPE("T? & ClassWithSixTypeParameters<*, *, *, *, *, *> & T? & Any")!>this<!>.x
+        <!DEBUG_INFO_EXPRESSION_TYPE("T? & ClassWithSixTypeParameters<*, *, *, *, *, *> & T? & Any")!>this<!>.y
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>y<!>
     }
@@ -86,8 +86,8 @@ fun <T> Inv<out T>.case_7() {
     if (this.prop_3 is MutableList<*>) {
         this.prop_3
         this.prop_3[0]
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & kotlin.collections.MutableList<*> & T!!")!>prop_3<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & kotlin.collections.MutableList<*> & T!!")!>prop_3<!>[0]
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & kotlin.collections.MutableList<*> & T & Any")!>prop_3<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & kotlin.collections.MutableList<*> & T & Any")!>prop_3<!>[0]
     }
 }
 
@@ -106,8 +106,8 @@ fun <T> T.case_8() {
  */
 fun <T> T.case_9() {
     if (this is String) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & kotlin.String & T!!")!>this<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & kotlin.String & T!!")!>this<!>.length
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & kotlin.String & T & Any")!>this<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & kotlin.String & T & Any")!>this<!>.length
         length
     }
 }
