@@ -30,17 +30,3 @@ internal fun <T> NamedDomainObjectContainer<T>.getOrCreate(
         if (invokeWhenCreated != null) invokeWhenCreated(value)
     }
 }
-
-internal fun <T> NamedDomainObjectContainer<T>.maybeRegister(
-    name: String,
-    configure: (T.() -> Unit)? = null
-): NamedDomainObjectProvider<T> {
-    val entity = if (name in names) {
-        named(name)
-    } else {
-        register(name)
-    }
-
-    if (configure != null) entity.configure(configure)
-    return entity
-}
