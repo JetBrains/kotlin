@@ -424,14 +424,6 @@ internal object ControlFlowSensibleEscapeAnalysis {
         }
 
         private class EscapeAnalysisResult(val graph: PointsToGraph, val returnValue: Node, val objectsReferencedFromThrown: BitSet) {
-            override fun equals(other: Any?): Boolean {
-                if (this === other) return true
-                if (other !is EscapeAnalysisResult) return false
-                return returnValue.id == other.returnValue.id
-                        && objectsReferencedFromThrown == other.objectsReferencedFromThrown
-                        && PointsToGraphForest.graphsAreEqual(graph, other.graph)
-            }
-
             fun logDigraph(context: Context) {
                 graph.logDigraph(context) {
                     thrownNodes = objectsReferencedFromThrown
@@ -826,44 +818,6 @@ internal object ControlFlowSensibleEscapeAnalysis {
                 for (i in otherNodesToMap.indices)
                     otherNodesToMap[i] = newNodes[otherNodesToMap[i].id]!!
                 return PointsToGraph(this, newNodes, parameterNodes, variableNodes)
-            }
-
-            companion object {
-                fun graphsAreEqual(first: PointsToGraph, second: PointsToGraph): Boolean {
-                    val size = kotlin.math.min(first.nodes.size, second.nodes.size)
-                    for (id in size until first.nodes.size)
-                        if (first.nodes[id] != null) return false
-                    for (id in size until second.nodes.size)
-                        if (second.nodes[id] != null) return false
-                    val firstPointsTo = BitSet(size)
-                    val secondPointsTo = BitSet(size)
-                    for (id in 0 until size) {
-                        val firstNode = first.nodes[id]
-                        val secondNode = second.nodes[id]
-                        when (firstNode) {
-                            null -> if (secondNode != null) return false
-                            is Node.Object -> {
-                                if (secondNode !is Node.Object) return false
-                                if (firstNode.fields.size != secondNode.fields.size) return false
-                                firstNode.fields.forEach { (field, fieldValue) ->
-                                    if (fieldValue.id != secondNode.fields[field]?.id) return false
-                                }
-                            }
-                            is Node.Reference -> {
-                                if (secondNode !is Node.Reference) return false
-                                if (firstNode::class.java != secondNode::class.java) return false
-                                firstNode.assignedWith.forEach { firstPointsTo.set(it.id) }
-                                secondNode.assignedWith.forEach { secondPointsTo.set(it.id) }
-                                firstNode.assignedWith.forEach { if (!secondPointsTo.get(it.id)) return false }
-                                secondNode.assignedWith.forEach { if (!firstPointsTo.get(it.id)) return false }
-                                firstNode.assignedWith.forEach { firstPointsTo.clear(it.id) }
-                                secondNode.assignedWith.forEach { secondPointsTo.clear(it.id) }
-                            }
-                        }
-                    }
-
-                    return true
-                }
             }
         }
 
