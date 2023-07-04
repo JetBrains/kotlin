@@ -34,6 +34,7 @@ object FirSerializationErrors {
     val SERIALIZER_NOT_FOUND by error1<PsiElement, ConeKotlinType>()
     val SERIALIZER_NULLABILITY_INCOMPATIBLE by error2<PsiElement, ConeKotlinType, ConeKotlinType>()
     val SERIALIZER_TYPE_INCOMPATIBLE by warning3<PsiElement, ConeKotlinType, ConeKotlinType, ConeKotlinType>()
+    val ABSTRACT_SERIALIZER_TYPE by error2<PsiElement, ConeKotlinType, ConeKotlinType>()
     val LOCAL_SERIALIZER_USAGE by error1<PsiElement, ConeKotlinType>()
     val GENERIC_ARRAY_ELEMENT_NOT_SUPPORTED by error0<PsiElement>()
     val TRANSIENT_MISSING_INITIALIZER by error0<PsiElement>()

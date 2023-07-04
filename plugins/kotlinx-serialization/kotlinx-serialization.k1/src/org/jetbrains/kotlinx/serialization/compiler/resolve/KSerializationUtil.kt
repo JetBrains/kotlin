@@ -124,6 +124,9 @@ val ClassDescriptor.isInternallySerializableObject: Boolean
 val ClassDescriptor.isSealedSerializableInterface: Boolean
     get() = kind == ClassKind.INTERFACE && modality == Modality.SEALED && hasSerializableOrMetaAnnotation
 
+val ClassDescriptor.isAbstractOrSealedOrInterface: Boolean
+    get() = kind == ClassKind.INTERFACE || modality == Modality.SEALED || modality == Modality.ABSTRACT
+
 val ClassDescriptor.isInternalSerializable: Boolean //todo normal checking
     get() {
         if (kind != ClassKind.CLASS) return false

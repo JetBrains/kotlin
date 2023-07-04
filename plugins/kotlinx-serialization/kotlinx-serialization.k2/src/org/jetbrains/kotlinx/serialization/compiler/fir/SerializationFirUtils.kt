@@ -222,6 +222,11 @@ context(FirSession)
 val ConeKotlinType.isGeneratedSerializableObject: Boolean
     get() = toRegularClassSymbol(this@FirSession)?.let { it.classKind.isObject && it.hasSerializableOrMetaAnnotationWithoutArgs } ?: false
 
+context(FirSession)
+val ConeKotlinType.isAbstractOrSealedOrInterface: Boolean
+    get() = toRegularClassSymbol(this@FirSession)?.let { it.classKind.isInterface || it.rawStatus.modality == Modality.ABSTRACT || it.rawStatus.modality == Modality.SEALED }
+        ?: false
+
 
 context(FirExtension)
 fun FirAnnotationContainer.excludeFromJsExport() {

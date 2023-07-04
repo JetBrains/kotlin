@@ -108,6 +108,12 @@ object SerializationPluginErrorsRendering : DefaultErrorMessages.Extension {
             Renderers.RENDER_TYPE
         )
         MAP.put(
+            SerializationErrors.ABSTRACT_SERIALIZER_TYPE,
+            "Custom serializer ''{1}'' on serializable type ''{0}'' can not be instantiated. It is not allowed to specify the interface, abstract or sealed class as a custom serializer.",
+            Renderers.RENDER_TYPE,
+            Renderers.RENDER_TYPE
+        )
+        MAP.put(
             SerializationErrors.LOCAL_SERIALIZER_USAGE,
             "Class ''{0}'' can't be used as a serializer since it is local",
             Renderers.RENDER_TYPE

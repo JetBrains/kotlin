@@ -22,6 +22,12 @@ public class SerializationFirPsiDiagnosticTestGenerated extends AbstractSerializ
     @TestDataPath("$PROJECT_ROOT")
     public class Diagnostics {
         @Test
+        @TestMetadata("abstractCustomSerializer.kt")
+        public void testAbstractCustomSerializer() throws Exception {
+            runTest("plugins/kotlinx-serialization/testData/diagnostics/abstractCustomSerializer.kt");
+        }
+
+        @Test
         public void testAllFilesPresentInDiagnostics() throws Exception {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/kotlinx-serialization/testData/diagnostics"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
         }

@@ -5,9 +5,7 @@
 
 package org.jetbrains.kotlinx.serialization.compiler.fir.checkers
 
-import org.jetbrains.kotlin.diagnostics.KtDiagnostic
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactoryToRendererMap
-import org.jetbrains.kotlin.diagnostics.KtDiagnosticRenderer
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
 import org.jetbrains.kotlin.diagnostics.rendering.CommonRenderers
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers
@@ -103,6 +101,12 @@ object KtDefaultErrorMessagesSerialization : BaseDiagnosticRendererFactory() {
             FirSerializationErrors.SERIALIZER_TYPE_INCOMPATIBLE,
             "Class ''{1}'', which is serializer for type ''{2}'', is applied here to type ''{0}''. This may lead to errors or incorrect behavior.",
             FirDiagnosticRenderers.RENDER_TYPE,
+            FirDiagnosticRenderers.RENDER_TYPE,
+            FirDiagnosticRenderers.RENDER_TYPE
+        )
+        put(
+            FirSerializationErrors.ABSTRACT_SERIALIZER_TYPE,
+            "Custom serializer ''{1}'' on serializable type ''{0}'' can not be instantiated. It is not allowed to specify the interface, abstract or sealed class as a custom serializer.",
             FirDiagnosticRenderers.RENDER_TYPE,
             FirDiagnosticRenderers.RENDER_TYPE
         )
