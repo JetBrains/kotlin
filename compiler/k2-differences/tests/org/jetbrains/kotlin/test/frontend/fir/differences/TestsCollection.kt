@@ -94,7 +94,6 @@ val File.hasAnalogousK2File get() = analogousK2File.isFile
 
 fun collectTestsStats(projectDirectory: File): TestsCollection {
     val tests = TestsCollection()
-    val status = StatusPrinter()
 
     projectDirectory.forEachChildRecursively(
         shouldIgnoreDirectory = { file ->
@@ -137,7 +136,7 @@ fun collectTestsStats(projectDirectory: File): TestsCollection {
         },
     )
 
-    status.done("Test data collected")
+    status.doneSilently("Test data collected")
     return tests
 }
 

@@ -233,6 +233,35 @@ val k2SpecificLanguageFeatures = listOf(
 val projectDirectory = File(System.getProperty("user.dir"))
 val build = projectDirectory.child("compiler").child("k2-differences").child("build")
 
+object PublishableArtifacts {
+    val allArtifacts = mutableListOf<File>()
+
+    private inline fun publishable(block: () -> File) = block().also(allArtifacts::add)
+
+    val similarityReport = publishable {
+        build.child("similarity-report.md")
+    }
+    val equivalenceReport = publishable {
+        build.child("equivalence-report.md")
+    }
+    val containmentReport = publishable {
+        build.child("containment-report.md")
+    }
+
+    val similarityDiagnosticsStats = publishable {
+        build.child("similarity-diagnostics-stats.md")
+    }
+    val containmentDiagnosticsStats = publishable {
+        build.child("containment-diagnostics-stats.md")
+    }
+
+    val k2UnimplementedDiagnostics = publishable {
+        build.child("k2-unimplemented-diagnostics.md")
+    }
+}
+
+val status = StatusPrinter()
+
 val equivalentDiagnosticsLookup = buildMap {
     for (klass in equivalentDiagnostics) {
         for (diagnostic in klass) {
@@ -542,8 +571,6 @@ val testCaseCommentPattern = """TESTCASE NUMBER""".toRegex()
 fun fixMissingTestSpecComments(
     alongsideNonIdenticalTests: List<String>,
 ) {
-    val status = StatusPrinter()
-
     val missingCommentsCount = alongsideNonIdenticalTests.count {
         status.loading("Checking SPEC TEST comments in $it", probability = 0.001)
         val k1Text = File(it).readText()
@@ -572,14 +599,12 @@ fun fixMissingTestSpecComments(
         true
     }
 
-    status.done("$missingCommentsCount fir files had missing TEST SPEC comments")
+    status.doneSilently("$missingCommentsCount fir files had missing TEST SPEC comments")
 }
 
 fun fixStupidEmptyLines(
     alongsideNonIdenticalTests: List<String>,
 ) {
-    val status = StatusPrinter()
-
     val missingCommentsCount = alongsideNonIdenticalTests.count {
         status.loading("Checking stupid empty lines in $it", probability = 0.001)
         val k1FirstLine = File(it).readLines().firstOrNull() ?: return@count false
@@ -600,7 +625,7 @@ fun fixStupidEmptyLines(
         }
     }
 
-    status.done("$missingCommentsCount fir files had stupid empty lines")
+    status.doneSilently("$missingCommentsCount fir files had stupid empty lines")
 }
 
 typealias DiagnosticsStatistics = MutableMap<String, MutableMap<File, EquivalenceTestResult>>
@@ -657,13 +682,19 @@ fun printDiagnosticsStatistics(title: String? = null, diagnostics: Map<String, S
     }
 }
 
-fun DiagnosticsStatistics.extractDisappearances() = mapValues { (_, filesToStats) ->
-    filesToStats.filter { it.value.significantK1MetaInfo.isNotEmpty() }.keys
-}
+fun DiagnosticsStatistics.extractDisappearances() =
+    mapValues { (_, filesToStats) ->
+        filesToStats.filter { it.value.significantK1MetaInfo.isNotEmpty() }.keys
+    }.filterValues {
+        it.isNotEmpty()
+    }
 
-fun DiagnosticsStatistics.extractIntroductions() = mapValues { (_, filesToStats) ->
-    filesToStats.filter { it.value.significantK2MetaInfo.isNotEmpty() }.keys
-}
+fun DiagnosticsStatistics.extractIntroductions() =
+    mapValues { (_, filesToStats) ->
+        filesToStats.filter { it.value.significantK2MetaInfo.isNotEmpty() }.keys
+    }.filterValues {
+        it.isNotEmpty()
+    }
 
 fun File.renderDiagnosticsStatistics(diagnosticsStatistics: DiagnosticsStatistics) {
     bufferedWriter().use { writer ->
@@ -775,7 +806,6 @@ fun generateAdditionalBoxTestsAndLogManuals(
     candidatesForAdditionalBoxTests: List<File>,
     candidatesForManualChecking: Map<File, Set<String>>,
 ) {
-    val status = StatusPrinter()
     val nextIndexAfter = mutableMapOf<String, Int>()
 
     fun nextNameFor(baseName: String): String {
@@ -823,13 +853,13 @@ fun generateAdditionalBoxTestsAndLogManuals(
         status.loading("Regenerating $relativePath")
     }
 
-    status.done("Additional box tests generated")
+    status.doneSilently("Additional box tests generated")
 
     if (candidatesForManualChecking.isEmpty()) {
         return
     }
 
-    status.done("The following tests contain other errors, so they have to be checked manually")
+    status.doneSilently("The following tests contain other errors, so they have to be checked manually")
 
     for ((index, it) in candidatesForManualChecking.entries.withIndex()) {
         val (file, diagnostics) = it
@@ -861,11 +891,10 @@ fun buildFailingPassingAdditionalTestsStatisticsMessage(
     }
 }
 
-fun analyzeAdditionalBoxTests(
+fun updateMissingDiagnosticsTags(
     diagnosticsStatistics: DiagnosticsStatistics,
 ) {
-    val status = StatusPrinter()
-    status.done("Assigning #k2-compiler-crash to diagnostics with all corresponding box tests failing..")
+    status.doneSilently("Assigning #k2-compiler-crash to diagnostics with all corresponding box tests failing..")
     val disappearances = diagnosticsStatistics.extractDisappearances()
 
     val testsAlwaysCausingCompilationCrashes = disappearances.filter { (_, files) ->
@@ -897,7 +926,7 @@ fun analyzeAdditionalBoxTests(
         }
     }
 
-    status.done("Assigning #k2-naive-box-passes-sometimes to diagnostics with some corresponding box tests failing..")
+    status.doneSilently("Assigning #k2-naive-box-passes-sometimes to diagnostics with some corresponding box tests failing..")
 
     val testsSometimesCausingCompilationCrashes = disappearances.filter { (diagnostic, files) ->
         files.any { it.analogousK2RelativePath in knownFailingAdditionalBoxTests }
@@ -990,6 +1019,8 @@ fun updateKnownIssuesDescriptions(statistics: DiagnosticsStatistics) {
 fun buildDiagnosticStatisticsIssueDescription(
     filesToEntries: Map<File, EquivalenceTestResult>,
 ) = buildString {
+    append("*Don't edit this issue description, it will be regenerated automatically.*\n\n")
+
     if (filesToEntries.isEmpty()) {
         append("According to the reports in the parent KT-58630 issue, this diagnostic no longer causes any significant differences. This issue should probably be closed.")
         return@buildString
@@ -1002,6 +1033,49 @@ fun buildDiagnosticStatisticsIssueDescription(
     }
 }
 
+val mainCompletenessIssueId = IssueInfo("25-4446335", 58630)
+
+fun publishReports() {
+    val attachmentsJson = getJson(
+        "https://youtrack.jetbrains.com/api/issues/${mainCompletenessIssueId.id}?fields=attachments(id,name,url)",
+        API_HEADERS,
+    ).also(::println)
+
+    val existingAttachments = "\"id\":\"([^\"]*)\"".toRegex()
+        .findAll(attachmentsJson)
+        .map { it.groupValues.last() }
+        .toList()
+
+    for (attachment in existingAttachments) {
+        deleteJson(
+            "https://youtrack.jetbrains.com/api/issues/${mainCompletenessIssueId.id}/attachments/$attachment",
+            API_HEADERS,
+        ).also(::println)
+    }
+
+    uploadFiles(
+        "https://youtrack.jetbrains.com/api/issues/${mainCompletenessIssueId.id}/attachments?fields=id,url,name",
+        PublishableArtifacts.allArtifacts,
+    ).also(::println)
+}
+
+fun doNonLocalThings(
+    containmentStatistics: DiagnosticsStatistics,
+) {
+//    updateMissingDiagnosticsTags(containmentStatistics)
+
+    updateKnownIssuesDescriptions(containmentStatistics)
+//    publishReports()
+
+    postJson(
+        "https://youtrack.jetbrains.com/api/issues/${mainCompletenessIssueId.id}/comments?fields=id,author(name),text",
+        API_HEADERS,
+        mapOf(
+            "text" to status.outputCopy,
+        ),
+    ).also(::println)
+}
+
 fun main() {
     val tests = deserializeOrGenerate(build.child("testsStats.json")) {
         collectTestsStats(projectDirectory)
@@ -1009,7 +1083,6 @@ fun main() {
 
     fixMissingTestSpecComments(tests.alongsideNonIdenticalTests)
     fixStupidEmptyLines(tests.alongsideNonIdenticalTests)
-    val status = StatusPrinter()
 
     fun Int.outOfAllAlongsideTests(): Int = this * 100 / (tests.alongsideNonIdenticalTests.size + tests.alongsideIdenticalTests.size)
 
@@ -1105,9 +1178,9 @@ fun main() {
         )
     }
 
-    build.child("similarity-report.md").bufferedWriter().use { similarity ->
-        build.child("equivalence-report.md").bufferedWriter().use { equivalence ->
-            build.child("containment-report.md").bufferedWriter().use { containment ->
+    PublishableArtifacts.similarityReport.bufferedWriter().use { similarity ->
+        PublishableArtifacts.equivalenceReport.bufferedWriter().use { equivalence ->
+            PublishableArtifacts.containmentReport.bufferedWriter().use { containment ->
                 for (testPath in tests.alongsideNonIdenticalTests) {
                     checkTest(testPath, equivalence, similarity, containment)
                 }
@@ -1120,10 +1193,10 @@ fun main() {
     status.done("Found ${alongsideNonContainedTests.size} non-containment-s among alongside tests (~${alongsideNonContainedTests.size.outOfAllAlongsideTests()}% of all alongside tests). That is ${tests.alongsideNonIdenticalTests.size - alongsideNonContainedTests.size} tests are similar (~${(tests.alongsideNonIdenticalTests.size - alongsideNonContainedTests.size).outOfAllAlongsideTests()}% of all alongside tests)")
     status.done("Found ${alongsideNonContainedTestsWithIssues.size} non-contained tests referencing some KT-XXXX tickets, but possibly not the ones describing the differences!")
 
-    build.child("similarity-diagnostics-stats.md").renderDiagnosticsStatistics(similarityStatistics)
-    build.child("containment-diagnostics-stats.md").renderDiagnosticsStatistics(containmentStatistics)
+    PublishableArtifacts.similarityDiagnosticsStats.renderDiagnosticsStatistics(similarityStatistics)
+    PublishableArtifacts.containmentDiagnosticsStats.renderDiagnosticsStatistics(containmentStatistics)
 
-    build.child("k2-unimplemented-diagnostics.md").writer().use { writer ->
+    PublishableArtifacts.k2UnimplementedDiagnostics.writer().use { writer ->
         val missingDiagnostics = containmentStatistics.extractDisappearances().filterKeys { it !in k2KnownErrors }
         val (withKnownIssues, newDiagnostics) = missingDiagnostics.entries.partition { it.key in knownMissingDiagnostics }
 
@@ -1140,9 +1213,7 @@ fun main() {
     }
 
     generateAdditionalBoxTestsAndLogManuals(candidatesForAdditionalBoxTests, candidatesForManualChecking)
-//    analyzeAdditionalBoxTests(containmentStatistics)
-
-    updateKnownIssuesDescriptions(containmentStatistics)
+    doNonLocalThings(containmentStatistics)
 
     val a = 10 + 1
     println("")

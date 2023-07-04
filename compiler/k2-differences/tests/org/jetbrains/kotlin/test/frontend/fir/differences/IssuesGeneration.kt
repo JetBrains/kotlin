@@ -9,6 +9,8 @@ import kotlinx.serialization.json.*
 import java.io.*
 import java.net.HttpURLConnection
 import java.net.URL
+import org.jetbrains.kotlin.test.frontend.fir.differences.ContentTypes.JSON
+import org.jetbrains.kotlin.test.frontend.fir.differences.ContentTypes.MULTIPART
 
 val MISSING_DIAGNOSTIC_PATTERN = """- `(\w+)`: (\d+) files""".toRegex()
 
@@ -39,11 +41,11 @@ fun Any?.encodeToJsonDynamically(): JsonElement {
     }
 }
 
-fun requestViaJson(
+fun request(
     url: String,
     headers: Map<String, String>,
-    body: @kotlinx.serialization.Serializable Any? = null,
     configureConnection: HttpURLConnection.() -> Unit,
+    writeBody: ((DataOutputStream) -> Unit)? = null,
 ): String {
     val connection = createConnection(url) {
         for ((key, value) in headers) {
@@ -53,9 +55,9 @@ fun requestViaJson(
         configureConnection()
     }
 
-    if (body != null) {
+    if (writeBody != null) {
         DataOutputStream(connection.outputStream).use {
-            it.writeBytes(body.encodeToJsonDynamically().toString())
+            writeBody(it)
         }
     }
 
@@ -63,6 +65,22 @@ fun requestViaJson(
         reader.readText()
     }
 }
+
+fun requestViaJson(
+    url: String,
+    headers: Map<String, String>,
+    body: @kotlinx.serialization.Serializable Any? = null,
+    configureConnection: HttpURLConnection.() -> Unit,
+) = request(
+    url, headers,
+    configureConnection = configureConnection,
+    writeBody = when {
+        body != null -> fun(it: DataOutputStream) {
+            it.writeBytes(body.encodeToJsonDynamically().toString())
+        }
+        else -> null
+    },
+)
 
 fun postJson(url: String, headers: Map<String, String>, body: @kotlinx.serialization.Serializable Any) =
     requestViaJson(url, headers, body) {
@@ -74,15 +92,65 @@ fun getJson(url: String, headers: Map<String, String>) =
         requestMethod = "GET"
     }
 
+fun deleteJson(url: String, headers: Map<String, String>) =
+    requestViaJson(url, headers) {
+        requestMethod = "DELETE"
+    }
+
+private const val dashDash = "--"
+private const val crlf = "\r\n"
+
+fun uploadFiles(url: String, files: List<File>) =
+    request(
+        url,
+        headers = mapOf(
+            Headers.accept(JSON),
+            Headers.authorization,
+            Headers.contentType(MULTIPART),
+            Headers.keepAlive,
+        ),
+        configureConnection = {
+            requestMethod = "POST"
+        },
+        writeBody = {
+            for (file in files) {
+                val relativeName = file.name
+
+                it.writeBytes(dashDash + MULTIPARY_BOUNDARY + crlf)
+                it.writeBytes("Content-Disposition: form-data; name=\"upload\"; filename=\"$relativeName\"$crlf")
+                it.writeBytes(crlf)
+                it.write(file.readBytes())
+                it.writeBytes(crlf)
+            }
+
+            it.writeBytes(dashDash + MULTIPARY_BOUNDARY + dashDash + crlf)
+            it.flush()
+        },
+    )
+
 val YT_TOKEN by lazy {
     System.getenv("YT_TOKEN") ?: error("The `YT_TOKEN` environment has not been set. It's required to make YT API calls")
 }
 
+object Headers {
+    val authorization get() = "Authorization" to "Bearer $YT_TOKEN"
+    fun accept(type: String) = "Accept" to type
+    fun contentType(type: String) = "Content-Type" to type
+    val keepAlive = "Connection" to "Keep-Alive"
+}
+
+const val MULTIPARY_BOUNDARY = "*****"
+
+object ContentTypes {
+    val JSON = "application/json"
+    val MULTIPART = "multipart/form-data;boundary=$MULTIPARY_BOUNDARY"
+}
+
 val API_HEADERS by lazy {
     mapOf(
-        "Accept" to "application/json",
-        "Authorization" to "Bearer $YT_TOKEN",
-        "Content-Type" to "application/json",
+        Headers.accept(JSON),
+        Headers.authorization,
+        Headers.contentType(JSON),
     )
 }
 

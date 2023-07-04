@@ -13,6 +13,10 @@ const val LOADING_SYMBOLS =
 fun <T> Sequence<T>.cycle() = sequence { while (true) yieldAll(this@cycle) }
 
 class StatusPrinter {
+    private val outputCopyBuilder = StringBuilder()
+
+    val outputCopy get() = outputCopyBuilder.toString()
+
     private var loadingSymbolSequence = LOADING_SYMBOLS.asSequence().cycle().iterator()
 
     fun loading(message: String, probability: Double = 1.0) {
@@ -22,6 +26,11 @@ class StatusPrinter {
     }
 
     fun done(message: String) {
+        doneSilently(message)
+        outputCopyBuilder.append("> $message.\n")
+    }
+
+    fun doneSilently(message: String) {
         println("\r> $message.")
     }
 }
