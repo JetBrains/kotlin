@@ -17,8 +17,10 @@ import org.jetbrains.kotlin.fir.expressions.arguments
 import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.utils.exceptions.withFirSymbolIdEntry
 import org.jetbrains.kotlin.mpp.DeclarationSymbolMarker
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 abstract class FirBasedSymbol<E : FirDeclaration> : DeclarationSymbolMarker {
     private var _fir: E? = null
@@ -26,7 +28,9 @@ abstract class FirBasedSymbol<E : FirDeclaration> : DeclarationSymbolMarker {
     @SymbolInternals
     val fir: E
         get() = _fir
-            ?: error("Fir is not initialized for $this")
+            ?: errorWithAttachment("Fir is not initialized for ${this::class}") {
+                withFirSymbolIdEntry("symbol", this@FirBasedSymbol)
+            }
 
     fun bind(e: E) {
         _fir = e
