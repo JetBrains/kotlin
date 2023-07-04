@@ -39,9 +39,11 @@ import org.jetbrains.kotlin.fir.resolve.transformers.FirSupertypeResolverVisitor
 import org.jetbrains.kotlin.fir.resolve.transformers.SupertypeComputationSession
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.utils.exceptions.withConeTypeEntry
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 import org.jetbrains.kotlin.resolve.jvm.KotlinFinderMarker
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 class FirJavaElementFinder(
     private val session: FirSession,
@@ -267,7 +269,9 @@ private fun ConeKotlinType.mapToCanonicalString(session: FirSession): String {
         is ConeClassLikeType -> mapToCanonicalString(session)
         is ConeTypeVariableType, is ConeFlexibleType, is ConeCapturedType,
         is ConeDefinitelyNotNullType, is ConeIntersectionType, is ConeStubType, is ConeIntegerLiteralType ->
-            error("Unexpected type: $this [${this::class}]")
+            errorWithAttachment("Unexpected type: ${this::class.java}") {
+                withConeTypeEntry("type", this@mapToCanonicalString)
+            }
         is ConeLookupTagBasedType -> lookupTag.name.asString()
     }
 }

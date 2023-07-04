@@ -41,6 +41,8 @@ import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.fir.types.jvm.FirJavaTypeRef
+import org.jetbrains.kotlin.fir.utils.exceptions.withConeTypeEntry
+import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.load.java.AnnotationQualifierApplicabilityType
 import org.jetbrains.kotlin.load.java.FakePureImplementationsProvider
 import org.jetbrains.kotlin.load.java.JavaTypeQualifiersByElementType
@@ -52,6 +54,7 @@ import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeParameterMarker
 import org.jetbrains.kotlin.types.model.TypeSystemContext
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.util.PrivateForInline
 
 class FirSignatureEnhancement(
@@ -182,7 +185,9 @@ class FirSignatureEnhancement(
             }
             else -> {
                 if (original is FirPropertySymbol) return original
-                error("Can't make enhancement for $original: `${firElement.render()}`")
+                errorWithAttachment("Can't make enhancement for ${original::class.java}") {
+                    withFirEntry("firElement", firElement)
+                }
             }
         }
     }
@@ -353,7 +358,9 @@ class FirSignatureEnhancement(
                     attributes = firMethod.attributes.copy()
                 }
             }
-            else -> throw AssertionError("Unknown Java method to enhance: ${firMethod.render()}")
+            else -> errorWithAttachment("Unknown Java method to enhance: ${firMethod::class.java}") {
+                withFirEntry("firMethod", firMethod)
+            }
         }.apply {
             val newValueParameters = firMethod.valueParameters.zip(enhancedValueParameterTypes) { valueParameter, enhancedReturnType ->
                 valueParameter.defaultValue?.replaceTypeRef(enhancedReturnType)

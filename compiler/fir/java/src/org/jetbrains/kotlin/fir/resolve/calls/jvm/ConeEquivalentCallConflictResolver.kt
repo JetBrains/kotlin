@@ -13,8 +13,10 @@ import org.jetbrains.kotlin.fir.resolve.calls.AbstractConeCallConflictResolver
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
 import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
 import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.resolve.calls.results.FlatSignature
 import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 // This conflict resolver filters JVM equivalent top-level functions
 // like emptyArray() from intrinsics and built-ins
@@ -103,7 +105,9 @@ class ConeEquivalentCallConflictResolver(
             is FirSimpleFunction -> createFlatSignature(call, declaration)
             is FirConstructor -> createFlatSignature(call, declaration)
             is FirVariable -> createFlatSignature(call, declaration)
-            else -> error("Not supported: $declaration")
+            else -> errorWithAttachment("Not supported: ${this::class}") {
+                withFirEntry("declaration", declaration)
+            }
         }
     }
 }

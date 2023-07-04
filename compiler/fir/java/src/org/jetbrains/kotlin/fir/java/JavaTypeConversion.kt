@@ -16,11 +16,13 @@ import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.fir.types.jvm.FirJavaTypeRef
 import org.jetbrains.kotlin.fir.types.jvm.buildJavaTypeRef
+import org.jetbrains.kotlin.fir.utils.exceptions.withConeTypeEntry
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 private fun ClassId.toConeFlexibleType(
     typeArguments: Array<out ConeTypeProjection>,
@@ -158,7 +160,9 @@ private fun JavaType?.toConeTypeProjection(
         }
 
         null -> ConeStarProjection
-        else -> error("Strange JavaType: ${this::class.java}")
+        else -> errorWithAttachment("Strange JavaType: ${this::class.java}") {
+            withEntry("type", this@toConeTypeProjection) { it.toString() }
+        }
     }
 }
 
