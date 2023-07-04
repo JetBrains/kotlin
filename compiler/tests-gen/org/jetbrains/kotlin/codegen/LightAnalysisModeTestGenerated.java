@@ -24139,6 +24139,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/involvesIrInterpreter/thisPlusString.kt");
         }
 
+        @TestMetadata("thisPlusStringWithObject.kt")
+        public void testThisPlusStringWithObject() throws Exception {
+            runTest("compiler/testData/codegen/box/involvesIrInterpreter/thisPlusStringWithObject.kt");
+        }
+
         @TestMetadata("unsignedConst.kt")
         public void testUnsignedConst() throws Exception {
             runTest("compiler/testData/codegen/box/involvesIrInterpreter/unsignedConst.kt");

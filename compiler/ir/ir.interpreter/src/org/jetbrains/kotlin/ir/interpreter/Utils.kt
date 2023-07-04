@@ -305,11 +305,16 @@ internal fun IrClass.getSingleAbstractMethod(): IrFunction {
 }
 
 internal fun IrExpression?.isAccessToNotNullableObject(): Boolean {
-    if (this !is IrGetValue) return false
-    val owner = this.symbol.owner
-    val expectedClass = this.type.classOrNull?.owner
-    if (expectedClass == null || !expectedClass.isObject || this.type.isNullable()) return false
-    return owner.origin == IrDeclarationOrigin.INSTANCE_RECEIVER || owner.name.asString() == "<this>"
+    return when (this) {
+        is IrGetObjectValue -> !this.type.isNullable()
+        is IrGetValue -> {
+            val owner = this.symbol.owner
+            val expectedClass = this.type.classOrNull?.owner
+            if (expectedClass == null || !expectedClass.isObject || this.type.isNullable()) return false
+            owner.origin == IrDeclarationOrigin.INSTANCE_RECEIVER || owner.name.asString() == "<this>"
+        }
+        else -> false
+    }
 }
 
 internal fun IrFunction.isAccessorOfPropertyWithBackingField(): Boolean {

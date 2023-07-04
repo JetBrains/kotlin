@@ -58,16 +58,17 @@ class IrInterpreterCommonChecker : IrInterpreterChecker {
     }
 
     override fun visitCall(expression: IrCall, data: IrInterpreterCheckerData): Boolean {
+        val owner = expression.symbol.owner
+
+        if (expression.dispatchReceiver.isAccessToNotNullableObject() && expression.isGetterToConstVal()) {
+            return visitBodyIfNeeded(owner, data)
+        }
+
         if (!data.mode.canEvaluateExpression(expression)) return false
 
-        val owner = expression.symbol.owner
         if (!data.mode.canEvaluateFunction(owner)) return false
 
         if (expression.isKCallableNameCall(data.irBuiltIns) || expression.isEnumName()) return true
-
-        if (expression.dispatchReceiver.isAccessToNotNullableObject()) {
-            return expression.isGetterToConstVal()
-        }
 
         val dispatchReceiverComputable = expression.dispatchReceiver?.accept(this, data) ?: true
         val extensionReceiverComputable = expression.extensionReceiver?.accept(this, data) ?: true
@@ -146,8 +147,7 @@ class IrInterpreterCommonChecker : IrInterpreterChecker {
     }
 
     override fun visitGetObjectValue(expression: IrGetObjectValue, data: IrInterpreterCheckerData): Boolean {
-        // to get object value we need nothing, but it will contain only fields with compile time annotation
-        return true
+        return data.mode.canEvaluateExpression(expression)
     }
 
     override fun visitGetEnumValue(expression: IrGetEnumValue, data: IrInterpreterCheckerData): Boolean {
@@ -185,7 +185,7 @@ class IrInterpreterCommonChecker : IrInterpreterChecker {
                 expression.receiver == null -> property?.isConst == true && owner.initializer?.accept(this, data) == true
                 owner.origin == IrDeclarationOrigin.PROPERTY_BACKING_FIELD && property?.isConst == true -> {
                     val receiverComputable = (expression.receiver?.accept(this, data) ?: true)
-                            || expression.isAccessToNotNullableObject()
+                            || expression.receiver.isAccessToNotNullableObject()
                     val initializerComputable = owner.initializer?.accept(this, data) ?: false
                     receiverComputable && initializerComputable
                 }
