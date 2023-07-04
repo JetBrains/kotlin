@@ -30,6 +30,8 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.toSymbol
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.resolve.checkers.OptInNames
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility.*
 
@@ -50,6 +52,7 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker() {
         }
         if (declaration.isExpect) {
             checkExpectDeclarationModifiers(declaration, context, reporter)
+            checkOptInAnnotation(declaration, declaration.symbol, context, reporter)
         }
         if (declaration.isActual) {
             checkActualDeclarationHasExpected(declaration, context, reporter)
@@ -181,6 +184,7 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker() {
                 context,
                 reporter,
             )
+            checkOptInAnnotation(declaration, expectedSingleCandidate, context, reporter)
         }
     }
 
@@ -255,5 +259,20 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker() {
     private fun requireActualModifier(declaration: FirBasedSymbol<*>, session: FirSession): Boolean {
         return !declaration.isAnnotationConstructor(session) &&
                 !declaration.isPrimaryConstructorOfInlineOrValueClass(session)
+    }
+
+    private fun checkOptInAnnotation(
+        declaration: FirMemberDeclaration,
+        expectDeclarationSymbol: FirBasedSymbol<*>,
+        context: CheckerContext,
+        reporter: DiagnosticReporter,
+    ) {
+        if (declaration is FirClass &&
+            declaration.classKind == ClassKind.ANNOTATION_CLASS &&
+            !expectDeclarationSymbol.hasAnnotation(StandardClassIds.Annotations.OptionalExpectation, context.session) &&
+            declaration.hasAnnotation(OptInNames.REQUIRES_OPT_IN_CLASS_ID, context.session)
+        ) {
+            reporter.reportOn(declaration.source, FirErrors.EXPECT_ACTUAL_OPT_IN_ANNOTATION, context)
+        }
     }
 }

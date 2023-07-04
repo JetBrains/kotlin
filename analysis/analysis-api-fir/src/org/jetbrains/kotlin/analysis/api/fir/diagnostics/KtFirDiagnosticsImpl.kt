@@ -2912,6 +2912,11 @@ internal class NotAMultiplatformCompilationImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.NotAMultiplatformCompilation
 
+internal class ExpectActualOptInAnnotationImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KtFirDiagnostic.ExpectActualOptInAnnotation
+
 internal class InitializerRequiredForDestructuringDeclarationImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,

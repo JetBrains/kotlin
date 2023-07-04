@@ -3457,6 +3457,12 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.EXPECT_ACTUAL_OPT_IN_ANNOTATION) { firDiagnostic ->
+        ExpectActualOptInAnnotationImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.INITIALIZER_REQUIRED_FOR_DESTRUCTURING_DECLARATION) { firDiagnostic ->
         InitializerRequiredForDestructuringDeclarationImpl(
             firDiagnostic as KtPsiDiagnostic,

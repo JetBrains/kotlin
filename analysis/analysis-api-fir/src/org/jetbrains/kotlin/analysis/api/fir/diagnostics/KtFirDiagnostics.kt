@@ -2415,6 +2415,10 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = NotAMultiplatformCompilation::class
     }
 
+    interface ExpectActualOptInAnnotation : KtFirDiagnostic<KtNamedDeclaration> {
+        override val diagnosticClass get() = ExpectActualOptInAnnotation::class
+    }
+
     interface InitializerRequiredForDestructuringDeclaration : KtFirDiagnostic<KtDestructuringDeclaration> {
         override val diagnosticClass get() = InitializerRequiredForDestructuringDeclaration::class
     }

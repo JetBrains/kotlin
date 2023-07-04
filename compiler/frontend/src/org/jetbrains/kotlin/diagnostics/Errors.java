@@ -836,6 +836,7 @@ public interface Errors {
     DiagnosticFactory0<PsiElement> OPTIONAL_DECLARATION_OUTSIDE_OF_ANNOTATION_ENTRY = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> NOT_A_MULTIPLATFORM_COMPILATION = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<KtNamedDeclaration> EXPECT_ACTUAL_OPT_IN_ANNOTATION = DiagnosticFactory0.create(ERROR, EXPECT_ACTUAL_MODIFIER);
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

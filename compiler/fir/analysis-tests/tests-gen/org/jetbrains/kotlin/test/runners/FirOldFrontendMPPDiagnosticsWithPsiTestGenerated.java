@@ -56,6 +56,12 @@ public class FirOldFrontendMPPDiagnosticsWithPsiTestGenerated extends AbstractFi
     }
 
     @Test
+    @TestMetadata("expectOptInAnnotation.kt")
+    public void testExpectOptInAnnotation() throws Exception {
+        runTest("compiler/testData/diagnostics/tests/multiplatform/expectOptInAnnotation.kt");
+    }
+
+    @Test
     @TestMetadata("expectTailrec.kt")
     public void testExpectTailrec() throws Exception {
         runTest("compiler/testData/diagnostics/tests/multiplatform/expectTailrec.kt");

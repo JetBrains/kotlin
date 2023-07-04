@@ -392,6 +392,7 @@ public class DefaultErrorMessages {
         MAP.put(OPTIONAL_DECLARATION_OUTSIDE_OF_ANNOTATION_ENTRY, "Declaration annotated with '@OptionalExpectation' can only be used inside an annotation entry");
         MAP.put(OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE, "Declaration annotated with '@OptionalExpectation' can only be used in common module sources");
         MAP.put(NOT_A_MULTIPLATFORM_COMPILATION, "'expect' and 'actual' declarations can be used only in multiplatform projects. Learn more about Kotlin Multiplatform: https://kotl.in/multiplatform-setup");
+        MAP.put(EXPECT_ACTUAL_OPT_IN_ANNOTATION, "Opt-in annotations are prohibited to be `expect` or `actual`. Instead, declare annotation once in common sources.");
 
         MAP.put(PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT, "Projections are not allowed on type arguments of functions and properties");
         MAP.put(SUPERTYPE_NOT_INITIALIZED, "This type has a constructor, and thus must be initialized here");

@@ -230,6 +230,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPOSED_PROPERTY_
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DEPRECATED_IDENTITY_EQUALS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECTED_EXTERNAL_DECLARATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECTED_TAILREC_FUNCTION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECT_ACTUAL_OPT_IN_ANNOTATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECT_CLASS_AS_FUNCTION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FORBIDDEN_BINARY_MOD
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FORBIDDEN_IDENTITY_EQUALS
@@ -1845,6 +1846,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(ACTUAL_MISSING, "Declaration must be marked with 'actual'")
         map.put(NOT_A_MULTIPLATFORM_COMPILATION, "'expect' and 'actual' declarations can be used only in multiplatform projects. Learn more about Kotlin Multiplatform: https://kotl.in/multiplatform-setup")
+        map.put(EXPECT_ACTUAL_OPT_IN_ANNOTATION, "Opt-in annotations are prohibited to be `expect` or `actual`. Instead, declare annotation once in common sources.")
 
         // Destructuring declaration
         map.put(INITIALIZER_REQUIRED_FOR_DESTRUCTURING_DECLARATION, "Initializer required for destructuring declaration")

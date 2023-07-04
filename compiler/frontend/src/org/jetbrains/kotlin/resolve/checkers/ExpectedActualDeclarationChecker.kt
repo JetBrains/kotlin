@@ -64,6 +64,7 @@ class ExpectedActualDeclarationChecker(
                 declaration, descriptor, context.trace,
                 checkActualModifier, context.expectActualTracker
             )
+            checkOptInAnnotation(declaration, descriptor, descriptor, context.trace)
         }
         if (descriptor.isActualOrSomeContainerIsActual()) {
             val allDependsOnModules = moduleStructureOracle.findAllDependsOnPaths(descriptor.module).flatMap { it.nodes }.toHashSet()
@@ -334,6 +335,7 @@ class ExpectedActualDeclarationChecker(
                 if (expectedConstructor != null && actualConstructor != null) {
                     checkAnnotationConstructors(expectedConstructor, actualConstructor, trace, reportOn)
                 }
+                checkOptInAnnotation(reportOn, descriptor, expected, trace)
             }
         }
         val expectSingleCandidate = compatibility.values.singleOrNull()?.singleOrNull()
@@ -424,6 +426,21 @@ class ExpectedActualDeclarationChecker(
         }
 
         return null
+    }
+
+    private fun checkOptInAnnotation(
+        reportOn: KtNamedDeclaration,
+        descriptor: MemberDescriptor,
+        expectDescriptor: MemberDescriptor,
+        trace: BindingTrace,
+    ) {
+        if (descriptor is ClassDescriptor &&
+            descriptor.kind == ClassKind.ANNOTATION_CLASS &&
+            descriptor.annotations.hasAnnotation(OptInNames.REQUIRES_OPT_IN_FQ_NAME) &&
+            !expectDescriptor.annotations.hasAnnotation(OptionalAnnotationUtil.OPTIONAL_EXPECTATION_FQ_NAME)
+        ) {
+            trace.report(Errors.EXPECT_ACTUAL_OPT_IN_ANNOTATION.on(reportOn))
+        }
     }
 
     companion object {
