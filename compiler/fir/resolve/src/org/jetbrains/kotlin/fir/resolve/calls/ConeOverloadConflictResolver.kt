@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.utils.modality
-import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.inference.ConeTypeParameterBasedTypeVariable
 import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
@@ -22,6 +21,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.unwrapSubstitutionOverrides
+import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
 import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.results.FlatSignature
@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeParameterMarker
 import org.jetbrains.kotlin.types.model.TypeSubstitutorMarker
 import org.jetbrains.kotlin.types.model.TypeSystemInferenceExtensionContext
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 typealias CandidateSignature = FlatSignature<Candidate>
 
@@ -337,7 +338,9 @@ class ConeSimpleConstraintSystemImpl(val system: NewConstraintSystemImpl, val se
             for (upperBound in typeParameter.symbol.resolvedBounds) {
                 addSubtypeConstraint(
                     substitutionMap[typeParameter.typeParameterSymbol]
-                        ?: error("No ${typeParameter.symbol.fir.render()} in substitution map"),
+                        ?: errorWithAttachment("No ${typeParameter.symbol.fir::class.java} in substitution map") {
+                            withFirEntry("typeParameter", typeParameter.symbol.fir)
+                        },
                     substitutor.substituteOrSelf(upperBound.coneType)
                 )
             }

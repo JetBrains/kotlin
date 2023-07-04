@@ -18,15 +18,16 @@ import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.extensions.FirStatusTransformerExtension
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.extensions.statusTransformerExtensions
-import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.toEffectiveVisibility
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.visibilityChecker
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 class FirStatusResolver(
     val session: FirSession,
@@ -77,7 +78,9 @@ class FirStatusResolver(
             is FirConstructor -> resolveStatus(declaration, containingClass, isLocal)
             is FirField -> resolveStatus(declaration, containingClass, isLocal)
             is FirBackingField -> resolveStatus(declaration, containingClass, isLocal)
-            else -> error("Unsupported declaration type: ${declaration.render()}")
+            else -> errorWithAttachment("Unsupported declaration type: ${declaration::class.java}") {
+                withFirEntry("declaration", declaration)
+            }
         }
     }
 

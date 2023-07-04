@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 
 import org.jetbrains.kotlin.fir.FirCallResolver
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.util.PrivateForInline
 import org.jetbrains.kotlin.fir.declarations.*
@@ -24,8 +25,10 @@ import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.transformers.*
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirLocalScope
-import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
 import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
+import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAbstractPhaseTransformer<ResolutionMode>(phase) {
     abstract val context: BodyResolveContext
@@ -54,18 +57,20 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
     }
 
     override fun transformLazyExpression(lazyExpression: FirLazyExpression, data: ResolutionMode): FirStatement {
-        suppressOrThrowError("FirLazyExpression should be calculated before accessing")
+        suppressOrThrowError("FirLazyExpression should be calculated before accessing", lazyExpression)
         return lazyExpression
     }
 
     override fun transformLazyBlock(lazyBlock: FirLazyBlock, data: ResolutionMode): FirStatement {
-        suppressOrThrowError("FirLazyBlock should be calculated before accessing")
+        suppressOrThrowError("FirLazyBlock should be calculated before accessing", lazyBlock)
         return lazyBlock
     }
 
-    private fun suppressOrThrowError(message: String) {
+    private fun suppressOrThrowError(message: String, element: FirElement) {
         if (System.getProperty("kotlin.suppress.lazy.expression.access").toBoolean()) return
-        error(message)
+        errorWithAttachment(message) {
+            withFirEntry("firElement", element)
+        }
     }
 
     protected inline val localScopes: List<FirLocalScope> get() = components.localScopes

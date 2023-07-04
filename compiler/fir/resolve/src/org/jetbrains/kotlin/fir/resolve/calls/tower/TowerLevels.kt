@@ -9,7 +9,10 @@ import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
-import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.ContextReceiverGroup
+import org.jetbrains.kotlin.fir.declarations.FirConstructor
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.expressions.FirExpression
@@ -26,9 +29,11 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.utils.exceptions.withConeTypeEntry
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.HidesMembers
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.utils.SmartList
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 enum class ProcessResult {
     FOUND, SCOPE_EMPTY;
@@ -133,7 +138,9 @@ class MemberScopeTowerLevel(
                     scopeSession,
                     FakeOverrideTypeCalculator.DoNothing,
                     requiredMembersPhase = FirResolvePhase.STATUS,
-                ) ?: error("No scope for flexible type scope, while it's not null for $dispatchReceiverType")
+                ) ?: errorWithAttachment("No scope for flexible type scope, while it's not null") {
+                    withConeTypeEntry("dispatchReceiverType", dispatchReceiverType)
+                }
             } else {
                 typeForSyntheticScope = dispatchReceiverType
                 useSiteForSyntheticScope = scope

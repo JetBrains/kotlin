@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.resolve.FirSamResolver
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.name.StandardClassIds.Byte
@@ -29,6 +30,7 @@ import org.jetbrains.kotlin.resolve.calls.results.*
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.requireOrDescribe
 import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 abstract class AbstractConeCallConflictResolver(
     private val specificityComparator: TypeSpecificityComparator,
@@ -120,7 +122,9 @@ abstract class AbstractConeCallConflictResolver(
             is FirVariable -> createFlatSignature(call, declaration)
             is FirClass -> createFlatSignature(call, declaration)
             is FirTypeAlias -> createFlatSignature(call, declaration)
-            else -> error("Not supported: $declaration")
+            else -> errorWithAttachment("Not supported: ${declaration::class.java}") {
+                withFirEntry("declaration", declaration)
+            }
         }
     }
 

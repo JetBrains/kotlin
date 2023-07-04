@@ -28,6 +28,8 @@ import org.jetbrains.kotlin.fir.resolve.scope
 import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.utils.exceptions.withConeTypeEntry
+import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -36,6 +38,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.runTransaction
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import org.jetbrains.kotlin.types.expressions.CoercionStrategy
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 
 internal object CheckCallableReferenceExpectedType : CheckerStage() {
@@ -309,7 +312,11 @@ private fun varargParameterTypeByExpectedParameter(
     varargMappingState: VarargMappingState,
 ): Pair<ConeKotlinType?, VarargMappingState> {
     val elementType = substitutedParameter.returnTypeRef.coneType.arrayElementType()
-        ?: error("Vararg parameter $substitutedParameter does not have vararg type")
+        ?: errorWithAttachment("Vararg parameter ${substitutedParameter::class.java} does not have vararg type") {
+            withConeTypeEntry("expectedParameterType", expectedParameterType)
+            withFirEntry("substitutedParameter", substitutedParameter)
+            withEntry("varargMappingState", varargMappingState.toString())
+        }
 
     return when (varargMappingState) {
         VarargMappingState.UNMAPPED -> {

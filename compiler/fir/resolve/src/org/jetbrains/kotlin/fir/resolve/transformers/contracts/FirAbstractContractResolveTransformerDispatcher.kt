@@ -31,8 +31,10 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirDeclaration
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirExpressionsResolveTransformer
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
+import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 abstract class FirAbstractContractResolveTransformerDispatcher(
     session: FirSession,
@@ -313,13 +315,17 @@ abstract class FirAbstractContractResolveTransformerDispatcher(
 private val FirContractDescriptionOwner.valueParameters: List<FirValueParameter>
     get() = when (this) {
         is FirFunction -> valueParameters
-        else -> error()
+        else -> errorWithAttachment("Expected ${FirFunction::class.java} but ${this::class.java} found") {
+            withFirEntry("foundElement", this@valueParameters)
+        }
     }
 
 private val FirContractDescriptionOwner.body: FirBlock
     get() = when (this) {
         is FirFunction -> body!!
-        else -> error()
+        else ->  errorWithAttachment("Expected ${FirFunction::class.java} but ${this::class.java} found") {
+            withFirEntry("foundElement", this@body)
+        }
     }
 
 private fun FirContractDescriptionOwner.error(): Nothing = throw IllegalStateException("${this::class} can not be a contract owner")

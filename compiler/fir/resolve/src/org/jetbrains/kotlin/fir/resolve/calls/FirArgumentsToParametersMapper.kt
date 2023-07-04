@@ -23,9 +23,11 @@ import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.processOverriddenFunctions
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
+import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.ForbiddenNamedArgumentsTarget
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import kotlin.collections.component1
 import kotlin.collections.component2
 import kotlin.collections.set
@@ -293,7 +295,14 @@ private class FirCallArgumentsProcessor(
         for ((parameter, resolvedArgument) in result) {
             if (!parameter.isVararg) {
                 if (resolvedArgument !is ResolvedCallArgument.SimpleArgument) {
-                    error("Incorrect resolved argument for parameter $parameter :$resolvedArgument")
+                    errorWithAttachment("Incorrect resolved argument for parameter ${parameter::class.java}: ${resolvedArgument::class.java}") {
+                        withFirEntry("parameter", parameter)
+                        withEntryGroup("arguments") {
+                            for ((index, argument) in resolvedArgument.arguments.withIndex()) {
+                                withFirEntry("argument$index", argument)
+                            }
+                        }
+                    }
                 } else if (resolvedArgument.callArgument.isSpread) {
                     addDiagnostic(NonVarargSpread(resolvedArgument.callArgument))
                 }

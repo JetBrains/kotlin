@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
+import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
@@ -48,6 +49,7 @@ import org.jetbrains.kotlin.types.SmartcastStability
 import org.jetbrains.kotlin.types.model.safeSubstitute
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
@@ -354,7 +356,9 @@ private fun BodyResolveComponents.typeFromSymbol(symbol: FirBasedSymbol<*>): Fir
                 type = symbol.constructType(emptyArray(), isNullable = false)
             }
         }
-        else -> error("Failed to extract type from symbol: $symbol")
+        else -> errorWithAttachment("Failed to extract type from symbol: ${symbol::class.java}") {
+            withFirEntry("declaration", symbol.fir)
+        }
     }
 }
 
