@@ -35,11 +35,6 @@ sealed class DoubleColonLHS(val type: ConeKotlinType) {
     class Type(type: ConeKotlinType) : DoubleColonLHS(type)
 }
 
-
-// Returns true if this expression has the form "A<B>" which means it's a type on the LHS of a double colon expression
-internal val FirFunctionCall.hasExplicitValueArguments: Boolean
-    get() = arguments.isNotEmpty()
-
 class FirDoubleColonExpressionResolver(private val session: FirSession) {
 
     // Returns true if the expression is not a call expression without value arguments (such as "A<B>") or a qualified expression
@@ -48,7 +43,6 @@ class FirDoubleColonExpressionResolver(private val session: FirSession) {
     private fun FirExpression.canBeConsideredProperExpression(): Boolean {
         return when {
             this is FirQualifiedAccessExpression && explicitReceiver?.canBeConsideredProperExpression() != true -> false
-            this is FirFunctionCall && !hasExplicitValueArguments -> false
             else -> true
         }
     }
@@ -56,7 +50,7 @@ class FirDoubleColonExpressionResolver(private val session: FirSession) {
     private fun FirExpression.canBeConsideredProperType(): Boolean {
         return when {
             this is FirFunctionCall &&
-                    explicitReceiver?.canBeConsideredProperType() != false -> !hasExplicitValueArguments
+                    explicitReceiver?.canBeConsideredProperType() != false -> false
             this is FirQualifiedAccessExpression &&
                     explicitReceiver?.canBeConsideredProperType() != false &&
                     calleeReference is FirNamedReference -> true
