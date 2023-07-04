@@ -16,11 +16,14 @@ import org.jetbrains.kotlin.backend.konan.BitcodePostProcessingContextImpl
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.driver.phases.*
 import org.jetbrains.kotlin.backend.konan.getIncludedLibraryDescriptors
+import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
 import org.jetbrains.kotlin.backend.konan.llvm.parseBitcodeFile
+import org.jetbrains.kotlin.backend.konan.swift.IrBasedSwiftGenerator
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.util.usingNativeMemoryAllocator
@@ -46,10 +49,31 @@ internal class DynamicCompilerDriver : CompilerDriver() {
                         CompilerOutputKind.STATIC_CACHE -> produceBinary(engine, config, environment)
                         CompilerOutputKind.PRELIMINARY_CACHE -> TODO()
                         CompilerOutputKind.TEST_BUNDLE -> produceBundle(engine, config, environment)
+                        CompilerOutputKind.IR_BASED_SWIFT -> produceSwiftArtifacts(engine, config, environment)
                     }
                 }
             }
         }
+    }
+
+    private fun generateSwiftFiles(module: IrModuleFragment, config: KonanConfig) {
+        val moduleName = module.name.asStringStripSpecialMarkers()
+        val swiftGenerator = IrBasedSwiftGenerator(moduleName)
+        swiftGenerator.visitModuleFragment(module)
+        val fileSpec = swiftGenerator.build()
+        val outputDirectory = java.io.File(config.outputPath).absoluteFile.parentFile
+        fileSpec.writeTo(outputDirectory)
+    }
+
+    private fun produceSwiftArtifacts(engine: PhaseEngine<PhaseContext>, config: KonanConfig, environment: KotlinCoreEnvironment) {
+        val frontendOutput = engine.runFrontend(config, environment) ?: return
+        val psiToIrOutput = engine.runPsiToIr(frontendOutput, isProducingLibrary = false)
+        require(psiToIrOutput is PsiToIrOutput.ForBackend)
+        psiToIrOutput.irModules
+                .filter { config.resolve.includedLibraries.contains(it.value.konanLibrary) }
+                .forEach { (_, module) -> generateSwiftFiles(module, config) }
+        val backendContext = createBackendContext(config, frontendOutput, psiToIrOutput)
+        engine.runBackend(backendContext, psiToIrOutput.irModule)
     }
 
     /**

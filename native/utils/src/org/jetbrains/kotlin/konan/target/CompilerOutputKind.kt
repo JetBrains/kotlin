@@ -40,6 +40,9 @@ enum class CompilerOutputKind {
     },
     PRELIMINARY_CACHE {
         override fun suffix(target: KonanTarget?) = ""
+    },
+    IR_BASED_SWIFT {
+        override fun suffix(target: KonanTarget?): String = ""
     };
 
     abstract fun suffix(target: KonanTarget? = null): String
