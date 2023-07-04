@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.types.KotlinType
 
 object ErrorsNative {
     @JvmField
@@ -60,6 +61,14 @@ object ErrorsNative {
     val INVALID_REFINES_IN_SWIFT_TARGETS = DiagnosticFactory0.create<KtElement>(Severity.ERROR)
     @JvmField
     val SUBTYPE_OF_HIDDEN_FROM_OBJC = DiagnosticFactory0.create<KtElement>(Severity.ERROR)
+    @JvmField
+    val CANNOT_CHECK_FOR_FORWARD_DECLARATION = DiagnosticFactory1.create<PsiElement, KotlinType>(Severity.ERROR)
+    @JvmField
+    val UNCHECKED_CAST_TO_FORWARD_DECLARATION = DiagnosticFactory2.create<PsiElement, KotlinType, KotlinType>(Severity.WARNING)
+    @JvmField
+    val FORWARD_DECLARATION_AS_REIFIED_TYPE_ARGUMENT = DiagnosticFactory1.create<PsiElement, KotlinType>(Severity.ERROR)
+    @JvmField
+    val FORWARD_DECLARATION_AS_CLASS_LITERAL = DiagnosticFactory1.create<PsiElement, KotlinType>(Severity.ERROR)
 
     init {
         Errors.Initializer.initializeFactoryNames(ErrorsNative::class.java)

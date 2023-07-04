@@ -35,6 +35,12 @@ public class FirPsiOldFrontendNativeDiagnosticsTestGenerated extends AbstractFir
     }
 
     @Test
+    @TestMetadata("forwardDeclarations.kt")
+    public void testForwardDeclarations() throws Exception {
+        runTest("compiler/testData/diagnostics/nativeTests/forwardDeclarations.kt");
+    }
+
+    @Test
     @TestMetadata("identifiers.kt")
     public void testIdentifiers() throws Exception {
         runTest("compiler/testData/diagnostics/nativeTests/identifiers.kt");
