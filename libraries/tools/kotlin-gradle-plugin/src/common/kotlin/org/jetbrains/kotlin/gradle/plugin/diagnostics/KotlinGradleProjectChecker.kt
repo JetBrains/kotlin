@@ -113,7 +113,7 @@ internal interface KotlinGradleProjectChecker {
             KotlinSourceSetTreeDependsOnMismatchChecker,
             PlatformSourceSetConventionsChecker,
             AndroidMainSourceSetConventionsChecker,
-            IosSourceSetConventionChecker
+            IosSourceSetConventionChecker,
         )
     }
 }

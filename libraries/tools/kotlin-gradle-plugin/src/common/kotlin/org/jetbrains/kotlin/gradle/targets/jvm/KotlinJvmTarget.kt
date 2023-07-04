@@ -10,9 +10,7 @@ import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DuplicatesStrategy
-import org.gradle.api.internal.tasks.JvmConstants
 import org.gradle.api.plugins.JavaBasePlugin
-import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.language.jvm.tasks.ProcessResources
@@ -21,6 +19,8 @@ import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.AfterFinaliseDsl
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.internal.JavaSourceSetsAccessor
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTarget
@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.gradle.targets.jvm.tasks.registerMainRunTask
 import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.Future
 import org.jetbrains.kotlin.gradle.utils.addExtendsFromRelation
+import org.jetbrains.kotlin.gradle.utils.findAppliedAndroidPluginIdOrNull
 import org.jetbrains.kotlin.gradle.utils.future
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 import java.util.concurrent.Callable
@@ -92,6 +93,7 @@ abstract class KotlinJvmTarget @Inject constructor(
     var withJavaEnabled = false
         private set
 
+
     @Suppress("unused") // user DSL
     fun withJava() {
         if (withJavaEnabled)
@@ -104,6 +106,25 @@ abstract class KotlinJvmTarget @Inject constructor(
                             "already set up to work with Java; cannot setup another target '$targetName'"
                 )
             }
+
+
+        /**
+         * Reports diagnostic in the case of
+         * ```kotlin
+         * kotlin {
+         *     jvm().withJava()
+         * }
+         * ```
+         *
+         * is used together with the Android Gradle Plugin.
+         * This case is incompatible so far, as the 'withJava' implementation is still using 'global' namespaces
+         * (like main/test, etc), which will clash with the global names used by AGP (also occupying main, test, etc).
+         */
+        val trace = Throwable()
+        project.launchInStage(AfterFinaliseDsl) check@{
+            val androidPluginId = project.findAppliedAndroidPluginIdOrNull() ?: return@check
+            project.reportDiagnostic(KotlinToolingDiagnostics.JvmWithJavaIsIncompatibleWithAndroid(androidPluginId, trace))
+        }
 
         withJavaEnabled = true
 
