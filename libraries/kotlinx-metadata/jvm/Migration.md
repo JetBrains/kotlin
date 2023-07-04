@@ -1,9 +1,122 @@
 # Kotlinx-metadata migration guide
 
-Starting with 0.6.0 release, Kotlin team is focused on revisiting and improving kotlinx-metadata API, with an aim to provide a stable release
+Starting with 0.6.0 release, Kotlin team is focused on revisiting and improving kotlinx-metadata-jvm API, with an aim to provide a stable release
 in the near future. As a result, the API was reshaped, with cuts here and there, so we've provided a migration guide to help you with updates.
 
-## Migrating from 0.5.0 to 0.6.0+
+## Migrating from 0.6.x to 0.7.0
+
+### Migration from Flags API to Attributes API
+
+There are a lot of various modifiers that can be applied to various Kotlin declarations: `public`, `sealed`, `data`, `inline`, and so on.
+Introspecting them is one of the major use cases for the kotlinx-metadata library.
+In previous versions, they were represented as a bit mask and a `Flag.invoke` function:
+
+```kotlin
+fun nameOfPublicDataClass(kmClass: KmClass): ClassName? {
+    return if (Flag.Common.IS_PUBLIC(kmClass.flags) && Flag.Class.IS_DATA(kmClass.flags)) kmClass.name else null
+}
+```
+
+Such an API is based on implementation details and has problems, such as:
+
+* Discoverability; it is hard to stumble across this API while looking into autocompletion pop-up for `kmClass.`.
+* Non-OOP style and counterintuitivity; naturally, one wants to call something like `function.isPublic()`, and not `isPublic(function)`.
+* Applicability and soundness; it is not a compiler error to call `Flag.IS_PUBLIC(kmType.flags)`, while `KmType` obviously does not have a notion of visibility.
+
+To solve these problems, Flags API **is deprecated completely** for replacement with the new Attributes API.
+Attributes API is fairly simple and essentially is a broad set of extensions on Km nodes,
+such as `KmClass.visibility`, `KmClass.isData`, `KmFunction.isInline`, and so on.
+
+For almost every deprecated `Flag` instance, there is a corresponding mutable extension property.
+There are some exceptions to this rule, notably visibility and modality.
+For them, all flags are replaced with a single extension that returns an enum value.
+For example, `Flag.IS_PUBLIC(): Boolean` and `Flag.IS_PRIVATE(): Boolean`
+are both replaced by `KmClass.visibility: Visibility` or `KmFunction.visibility: Visibility`.
+
+For migration, replace `Flag` usages with access to corresponding extension properties.
+Deprecation message for a particular `Flag` instance should help you identify a correct extension.
+
+The function above can now be rewritten in a more clear and idiomatic way:
+
+```kotlin
+fun nameOfPublicDataClass(kmClass: KmClass): ClassName? {
+    return if (kmClass.visibility == Visibility.PUBLIC && kmClass.isData) kmClass.name else null
+}
+```
+
+### Changes in reading and writing API
+
+After collecting some feedback from our users, we have decided to implement the following changes:
+
+#### `KotlinClassMetadata.read()` now has a non-nullable return type of `KotlinClassMetadata`
+
+Previously, `null` value was returned in case a metadata version was not compatible.
+It was not very convenient, as `null` value does not state the exact version of the metadata and why it is incompatible (is it too old or too new).
+Now, an `IllegalStateException` with appropriate message is thrown in this case.
+To migrate, simply remove null-checks around `KotlinClassMetadata.read()`. In case you need special logic for the incompatible version case, add a try-catch block.
+
+The same is applicable to `KotlinModuleMetadata.read()`.
+
+#### Metadata validation moved from `toKmClass()` methods to `KotlinClassMetadata.read()`
+
+Checks related to validation of metadata encoding that used to happen in conversion methods
+(like `KotlinClassMetadata.Class.toKmClass()`, `KotlinClassMetadata.FileFacade.toKmPackage()`, etc)
+are moved to the `KotlinClassMetadata.read()`.
+As a result, these conversion methods are deprecated and replaced by the similarly named properties because they are no longer throw exceptions and simply return a cached result,
+while actual conversion is moved to `KotlinClassMetadata.read()`.
+To migrate, use provided replacements:
+
+**Before:**
+```kotlin
+when (val metadata = KotlinClassMetadata.read(header)) {
+    is KotlinClassMetadata.Class -> handleClass(metadata.toKmClass())
+    is KotlinClassMetadata.FileFacade -> handleFileFacade(metadata.toKmPackage())
+    is KotlinClassMetadata.MultiFileClassPart -> handleMFClassPart(metadata.facadeClassName, metadata.toKmPackage())
+    ...
+}
+```
+
+**After:**
+```kotlin
+when (val metadata = KotlinClassMetadata.read(header)) {
+    is KotlinClassMetadata.Class -> handleClass(metadata.kmClass)
+    is KotlinClassMetadata.FileFacade -> handleFileFacade(metadata.kmPackage)
+    is KotlinClassMetadata.MultiFileClassPart -> handleMFClassPart(metadata.facadeClassName, metadata.kmPackage)
+    ...
+}
+```
+
+The same is applicable to `KotlinModuleMetadata.toKmModule()`.
+
+#### Writing API returns the encoded result directly
+
+`KotlinClassMetadata.writeClass` and other similar functions now return a `Metadata` instance directly
+instead of returning a new `KotlinClassMetadata` instance.
+Previous behavior caused confusion because it was not clear what operations are valid on a returned instance and 
+how exactly it is supposed to be used.
+
+As a result, `KotlinClassMetadata.annotationData: Metadata` property has been made private because there is no longer need for it to be exposed.
+To migrate, simply remove `.annotationData` access from your writing logic:
+
+**Before:**
+```kotlin
+fun save(kmClass: KmClass) {
+    val metadata: Metadata = KotlinClassMetadata.writeClass(kmClass).annotationData
+    writeToClassFile(metadata)
+}
+```
+
+**After:**
+```kotlin
+fun save(kmClass: KmClass) {
+    val metadata: Metadata = KotlinClassMetadata.writeClass(kmClass)
+    writeToClassFile(metadata)
+}
+```
+
+The same is applicable to `KotlinModuleMetadata.write`: it returns `ByteArray` directly.
+
+## Migrating from 0.5.0 to 0.6.x
 
 There are several significant changes between 0.5.0 and 0.6.0:
 

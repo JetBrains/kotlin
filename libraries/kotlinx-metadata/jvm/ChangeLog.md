@@ -1,15 +1,29 @@
 # kotlinx-metadata-jvm
 
+## 0.7.0
+
+This release features several significant API changes. To help with migration, we've prepared a special [guide](Migration.md#migrating-from-06x-to-070).
+
+- Update to Kotlin 1.9 with metadata version 1.9, support reading/writing metadata of version 2.0 which will be used in Kotlin 2.0
+- Rework flags API (see [migration from Flags API to Attributes API](Migration.md#migration-from-flags-api-to-attributes-api)).
+- Restructure `KotlinClass(Module)Metadata.write/read` (see [changes in reading and writing API](Migration.md#changes-in-reading-and-writing-api)).
+- Add `@JvmStatic` + `@JvmOverloads` to writing functions in `KotlinClassMetadata`
+- Deprecate `KmModule.annotations` for removal because it is always empty and should not be used.
+- Move `KmModuleFragment` to an `kotlinx.metadata.internal.common` package. This class is intended for internal use only. If you have use-cases for it, please report an issue to YouTrack.
+- Improve `toString()` for `KmAnnotationArgument`
+- Add missing deprecation for `KmExtensionType` and experimentality for `KmConstantValue`.
+- Enhance kotlinx-metadata-jvm KDoc and set up Dokka.
+
 ## 0.6.2
 
 This release uses Kotlin 1.8.20 with metadata version 1.8, and as a special case, is able to read metadata of version 2.0. 
 This is done as an incentive to test K2 compiler and 2.0 language version. 
 No other changes were made and no migration is needed.
-Note: 0.6.1 was released with incorrect fix for this problem. Do not use 0.6.1.
+Note: 0.6.1 was released with an incorrect fix for this problem. Do not use 0.6.1.
 
 ## 0.6.0
 
-This release features several significant API changes. To help with migration, we've prepared a special [guide](Migration.md).
+This release features several significant API changes. To help with migration, we've prepared a special [guide](Migration.md#migrating-from-050-to-06x).
 
 - Update to Kotlin 1.8 with metadata version 1.8, support reading/writing metadata of version 1.9 which will be used in Kotlin 1.9
 - Deprecate Visitors API
