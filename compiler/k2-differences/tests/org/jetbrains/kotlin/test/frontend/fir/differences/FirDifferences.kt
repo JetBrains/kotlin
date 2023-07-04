@@ -225,6 +225,10 @@ val equivalentDiagnostics = listOf(
         "CANNOT_CHANGE_ACCESS_PRIVILEGE",
         "CANNOT_INFER_VISIBILITY",
     ),
+    listOf(
+        "ANNOTATION_IN_WHERE_CLAUSE_ERROR",
+        "ANNOTATION_IN_WHERE_CLAUSE_WARNING",
+    ),
 )
 
 val k2SpecificLanguageFeatures = listOf(
@@ -359,8 +363,9 @@ val MAGIC_DIAGNOSTICS_THRESHOLD = 80
 // no matches in K2. This means, if they do, then
 // the matching K2 error will be eliminated by
 // the algorithm.
-val k1WarningsMatchingK2Errors = setOf(
-    "INTEGER_OPERATOR_RESOLVE_WILL_CHANGE",
+val k1WarningsMatchingK2Errors = mapOf(
+    "INTEGER_OPERATOR_RESOLVE_WILL_CHANGE" to IssueInfo("25-2791259", 38895),
+//    "ANNOTATION_IN_WHERE_CLAUSE_WARNING" to IssueInfo("25-3281567", 46483),
 )
 
 val k1DefinitelyNonErrors = collectAllK1NonErrors() - k1WarningsMatchingK2Errors
@@ -672,7 +677,12 @@ fun logPossibleEquivalences(result: EquivalenceTestResult, writer: Writer) {
     }
 }
 
-fun printDiagnosticsStatistics(title: String? = null, diagnostics: Map<String, Set<File>>, writer: Writer) {
+fun printDiagnosticsStatistics(
+    title: String? = null,
+    diagnostics: Map<String, Set<File>>,
+    writer: Writer,
+    knownIssuesForDiagnostics: Map<String, IssueInfo> = emptyMap(),
+) {
     if (title != null) {
         writer.write("$title\n\n")
     }
@@ -682,7 +692,7 @@ fun printDiagnosticsStatistics(title: String? = null, diagnostics: Map<String, S
     for (it in sorted) {
         writer.write("- `${it.key}`: ${it.value.size} files")
 
-        val knownIssue = knownMissingDiagnostics[it.key]
+        val knownIssue = knownIssuesForDiagnostics[it.key]
 
         if (knownIssue != null) {
             val ticket = knownIssue.numberInProject
@@ -715,12 +725,14 @@ fun File.renderDiagnosticsStatistics(diagnosticsStatistics: DiagnosticsStatistic
             "Most common reasons of potential features (by the number of files) include:",
             diagnosticsStatistics.extractDisappearances(),
             writer,
+            knownDisappearedDiagnostics,
         )
         writer.write("\n")
         printDiagnosticsStatistics(
             "$MOST_COMMON_REASONS_OF_BREAKING_CHANGES (by the number of files) include:",
             diagnosticsStatistics.extractIntroductions(),
             writer,
+            knownIntroducedDiagnostics,
         )
     }
 }
@@ -904,128 +916,51 @@ fun buildFailingPassingAdditionalTestsStatisticsMessage(
     }
 }
 
-fun updateMissingDiagnosticsTags(
-    diagnosticsStatistics: DiagnosticsStatistics,
-) {
-    status.doneSilently("Assigning #k2-compiler-crash to diagnostics with all corresponding box tests failing..")
-    val disappearances = diagnosticsStatistics.extractDisappearances()
-
-    val testsAlwaysCausingCompilationCrashes = disappearances.filter { (_, files) ->
-        files.all { it.analogousK2RelativePath in knownFailingAdditionalBoxTests }
-    }
-
-    for ((diagnostic, files) in testsAlwaysCausingCompilationCrashes) {
-        val missingIssue = knownMissingDiagnostics[diagnostic] ?: continue
-
-        try {
-            if (files.any { knownFailingAdditionalBoxTests[it.analogousK2RelativePath] == RUNTIME }) {
-                postJson(
-                    "https://youtrack.jetbrains.com/api/issues/${missingIssue.id}/tags?fields=id,name",
-                    API_HEADERS,
-                    mapOf("id" to Tags.K2_RUNTIME_CRASH),
-                ).also(::println)
-            }
-
-            if (files.any { knownFailingAdditionalBoxTests[it.analogousK2RelativePath] == COMPILE_TIME }) {
-                postJson(
-                    "https://youtrack.jetbrains.com/api/issues/${missingIssue.id}/tags?fields=id,name",
-                    API_HEADERS,
-                    mapOf("id" to Tags.K2_COMPILER_CRASH),
-                ).also(::println)
-            }
-
-        } catch (e: IOException) {
-            println(e)
-        }
-    }
-
-    status.doneSilently("Assigning #k2-naive-box-passes-sometimes to diagnostics with some corresponding box tests failing..")
-
-    val testsSometimesCausingCompilationCrashes = disappearances.filter { (diagnostic, files) ->
-        files.any { it.analogousK2RelativePath in knownFailingAdditionalBoxTests }
-                && diagnostic !in testsAlwaysCausingCompilationCrashes
-    }
-
-    for ((diagnostic, files) in testsSometimesCausingCompilationCrashes) {
-        val missingIssue = knownMissingDiagnostics[diagnostic] ?: continue
-
-        val (failingBoxes, passingBoxes) = files.partition {
-            it.analogousK2RelativePath in knownFailingAdditionalBoxTests
+fun updateKnownIssuesDescriptions(statistics: DiagnosticsStatistics) {
+    for ((diagnostic, filesToEntries) in statistics) {
+        knownMissingDiagnostics[diagnostic]?.let { knownIssue ->
+            updateIssueDescription(knownIssue, filesToEntries)
         }
 
-        try {
-            postJson(
-                "https://youtrack.jetbrains.com/api/issues/${missingIssue.id}/tags?fields=id,name",
-                API_HEADERS,
-                mapOf("id" to Tags.K2_NAIVE_BOX_PASSES_SOMETIMES),
-            ).also(::println)
+        knownDisappearedDiagnostics[diagnostic]?.let { knownIssue ->
+            val disappearancesOnly = filesToEntries
+                .filterValues { it.significantK1MetaInfo.isNotEmpty() }
+                .mapValues { EquivalenceTestResult(significantK1MetaInfo = it.value.significantK1MetaInfo) }
+            updateIssueDescription(knownIssue, disappearancesOnly)
+        }
 
-            if (failingBoxes.any { knownFailingAdditionalBoxTests[it.analogousK2RelativePath] == RUNTIME }) {
-                postJson(
-                    "https://youtrack.jetbrains.com/api/issues/${missingIssue.id}/tags?fields=id,name",
-                    API_HEADERS,
-                    mapOf("id" to Tags.K2_RUNTIME_CRASH),
-                ).also(::println)
-            }
-
-            if (failingBoxes.any { knownFailingAdditionalBoxTests[it.analogousK2RelativePath] == COMPILE_TIME }) {
-                postJson(
-                    "https://youtrack.jetbrains.com/api/issues/${missingIssue.id}/tags?fields=id,name",
-                    API_HEADERS,
-                    mapOf("id" to Tags.K2_COMPILER_CRASH),
-                ).also(::println)
-            }
-
-            val commentsResult = getJson(
-                "https://youtrack.jetbrains.com/api/issues/${missingIssue.id}/comments?fields=text",
-               API_HEADERS,
-            )
-
-            if (WHEN_TURNED_INTO_BOX_TEST in commentsResult) {
-                continue
-            }
-
-            val addCommentResult = postJson(
-                "https://youtrack.jetbrains.com/api/issues/${missingIssue.id}/comments?fields=id,author(name),text",
-                API_HEADERS,
-                mapOf(
-                    "text" to buildFailingPassingAdditionalTestsStatisticsMessage(failingBoxes, passingBoxes),
-                ),
-            )
-
-            println(addCommentResult)
-        } catch (e: IOException) {
-            println(e)
+        knownIntroducedDiagnostics[diagnostic]?.let { knownIssue ->
+            val disappearancesOnly = filesToEntries
+                .filterValues { it.significantK2MetaInfo.isNotEmpty() }
+                .mapValues { EquivalenceTestResult(significantK2MetaInfo = it.value.significantK2MetaInfo) }
+            updateIssueDescription(knownIssue, disappearancesOnly)
         }
     }
 }
 
-val knownDiagnosticIssues = knownMissingDiagnostics + knownDisappearedDiagnostics + knownIntroducedDiagnostics
+fun updateIssueDescription(
+    knownIssue: IssueInfo,
+    filesToEntries: Map<File, EquivalenceTestResult>,
+) {
+    try {
+        val resolvedResult = getJson(
+            "https://youtrack.jetbrains.com/api/issues/${knownIssue.id}?fields=resolved",
+            API_HEADERS,
+        ).also(::println)
 
-fun updateKnownIssuesDescriptions(statistics: DiagnosticsStatistics) {
-    for ((diagnostic, filesToEntries) in statistics) {
-        val knownIssue = knownDiagnosticIssues[diagnostic] ?: continue
-
-        try {
-            val resolvedResult = getJson(
-                "https://youtrack.jetbrains.com/api/issues/${knownIssue.id}?fields=resolved",
-                API_HEADERS,
-            ).also(::println)
-
-            if ("\"resolved\":null" !in resolvedResult) {
-                continue
-            }
-
-            postJson(
-                "https://youtrack.jetbrains.com/api/issues/${knownIssue.id}?fields=id,resolved",
-                API_HEADERS,
-                mapOf(
-                    "description" to buildDiagnosticStatisticsIssueDescription(filesToEntries),
-                ),
-            ).also(::println)
-        } catch (e: IOException) {
-            println(e)
+        if ("\"resolved\":null" !in resolvedResult) {
+            return
         }
+
+        postJson(
+            "https://youtrack.jetbrains.com/api/issues/${knownIssue.id}?fields=id,resolved",
+            API_HEADERS,
+            mapOf(
+                "description" to buildDiagnosticStatisticsIssueDescription(filesToEntries),
+            ),
+        ).also(::println)
+    } catch (e: IOException) {
+        println(e)
     }
 }
 
@@ -1072,12 +1007,7 @@ fun publishReports() {
     ).also(::println)
 }
 
-fun doNonLocalThings(
-    containmentStatistics: DiagnosticsStatistics,
-) {
-//    updateMissingDiagnosticsTags(containmentStatistics)
-
-    updateKnownIssuesDescriptions(containmentStatistics)
+fun updateMainCompletenessIssue() {
     publishReports()
 
     postJson(
@@ -1087,6 +1017,19 @@ fun doNonLocalThings(
             "text" to status.outputCopy,
         ),
     ).also(::println)
+}
+
+fun doNonLocalThings(containmentStatistics: DiagnosticsStatistics) {
+    val diagnosticsWithNoIssuesCount = containmentStatistics.keys.count {
+        it !in knownMissingDiagnostics && it !in knownDisappearedDiagnostics && it !in knownIntroducedDiagnostics
+    }
+
+    status.doneSilently("There are $diagnosticsWithNoIssuesCount diagnostics with no issues")
+
+    generateMissingIssues(containmentStatistics)
+//    updateMissingDiagnosticsTags(containmentStatistics)
+    updateKnownIssuesDescriptions(containmentStatistics)
+    updateMainCompletenessIssue()
 }
 
 fun main() {
@@ -1220,8 +1163,10 @@ fun main() {
         )
 
         printDiagnosticsStatistics(
+            title = null,
             diagnostics = withKnownIssues.associate { it.key to it.value },
             writer = writer,
+            knownMissingDiagnostics,
         )
     }
 

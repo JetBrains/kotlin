@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.noarg.fir.KtErrorsNoArg
 import org.jetbrains.kotlin.parcelize.diagnostic.ErrorsParcelize
 import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmBackendErrors
 import org.jetbrains.kotlin.resolve.konan.diagnostics.ErrorsNative
 import org.jetbrains.kotlin.wasm.resolve.diagnostics.ErrorsWasm
 import org.jetbrains.kotlinx.serialization.compiler.diagnostic.SerializationErrors
@@ -92,7 +93,7 @@ fun collectAllK1NonErrors(): Set<String> {
 val k2DiagnosticsLists = listOf(
     FirErrors, FirJvmErrors, FirJsErrors, FirNativeErrors, FirSyntaxErrors,
     KtErrorsParcelize, FirSerializationErrors, KtErrorsNoArg, FirErrorsAssignmentPlugin,
-    PluginErrors,
+    PluginErrors, JvmBackendErrors,
 )
 
 fun collectAllK2NonErrors(): Set<String> {

@@ -28380,6 +28380,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/k2DifferencesChecks/Clash.kt");
         }
 
+        @TestMetadata("classLiteralsWithEmptyLHS.kt")
+        public void testClassLiteralsWithEmptyLHS() throws Exception {
+            runTest("compiler/testData/codegen/box/k2DifferencesChecks/classLiteralsWithEmptyLHS.kt");
+        }
+
         @TestMetadata("coercionToUnitWithNothingType.kt")
         public void testCoercionToUnitWithNothingType() throws Exception {
             runTest("compiler/testData/codegen/box/k2DifferencesChecks/coercionToUnitWithNothingType.kt");
@@ -28453,6 +28458,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         @TestMetadata("InheritanceAmbiguity4.kt")
         public void testInheritanceAmbiguity4() throws Exception {
             runTest("compiler/testData/codegen/box/k2DifferencesChecks/InheritanceAmbiguity4.kt");
+        }
+
+        @TestMetadata("inheritedFunctionN.kt")
+        public void testInheritedFunctionN() throws Exception {
+            runTest("compiler/testData/codegen/box/k2DifferencesChecks/inheritedFunctionN.kt");
         }
 
         @TestMetadata("InheritingJavaClassWithRawTypeInOverrideSignature.kt")
@@ -28705,6 +28715,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/k2DifferencesChecks/returnTypeNothingShouldBeSpecifiedExplicitly.kt");
         }
 
+        @TestMetadata("sealedFunInterface.kt")
+        public void testSealedFunInterface() throws Exception {
+            runTest("compiler/testData/codegen/box/k2DifferencesChecks/sealedFunInterface.kt");
+        }
+
         @TestMetadata("selfCallsInCompanionSuperConstructor_error.kt")
         public void testSelfCallsInCompanionSuperConstructor_error() throws Exception {
             runTest("compiler/testData/codegen/box/k2DifferencesChecks/selfCallsInCompanionSuperConstructor_error.kt");
@@ -28713,6 +28728,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         @TestMetadata("subtypingBetweenContextReceivers.kt")
         public void testSubtypingBetweenContextReceivers() throws Exception {
             runTest("compiler/testData/codegen/box/k2DifferencesChecks/subtypingBetweenContextReceivers.kt");
+        }
+
+        @TestMetadata("suspendTest.kt")
+        public void testSuspendTest() throws Exception {
+            runTest("compiler/testData/codegen/box/k2DifferencesChecks/suspendTest.kt");
         }
 
         @TestMetadata("upperBoundViolation.kt")
