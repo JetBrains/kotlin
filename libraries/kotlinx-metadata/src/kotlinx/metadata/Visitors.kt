@@ -52,7 +52,7 @@ public abstract class KmDeclarationContainerVisitor @JvmOverloads constructor(pr
      *
      * @param type the type of extension visitor to be returned
      */
-    public abstract fun visitExtensions(type: KmExtensionType): KmDeclarationContainerExtensionVisitor?
+    public open fun visitExtensions(type: KmExtensionType): KmDeclarationContainerExtensionVisitor? = delegate?.visitExtensions(type)
 }
 
 /**

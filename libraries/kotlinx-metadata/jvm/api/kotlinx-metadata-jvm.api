@@ -647,7 +647,7 @@ public abstract class kotlinx/metadata/KmDeclarationContainerVisitor {
 	public fun <init> (Lkotlinx/metadata/KmDeclarationContainerVisitor;)V
 	public synthetic fun <init> (Lkotlinx/metadata/KmDeclarationContainerVisitor;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	protected fun getDelegate ()Lkotlinx/metadata/KmDeclarationContainerVisitor;
-	public abstract fun visitExtensions (Lkotlinx/metadata/KmExtensionType;)Lkotlinx/metadata/KmDeclarationContainerExtensionVisitor;
+	public fun visitExtensions (Lkotlinx/metadata/KmExtensionType;)Lkotlinx/metadata/KmDeclarationContainerExtensionVisitor;
 	public fun visitFunction (ILjava/lang/String;)Lkotlinx/metadata/KmFunctionVisitor;
 	public fun visitProperty (ILjava/lang/String;II)Lkotlinx/metadata/KmPropertyVisitor;
 	public fun visitTypeAlias (ILjava/lang/String;)Lkotlinx/metadata/KmTypeAliasVisitor;
