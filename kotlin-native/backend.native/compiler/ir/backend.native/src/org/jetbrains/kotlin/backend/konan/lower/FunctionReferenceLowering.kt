@@ -343,7 +343,10 @@ internal class FunctionReferenceLowering(val generationState: NativeGenerationSt
                 val remappedSuperType = (samSuperType.classOrNull ?: error("Expected a class but was: ${samSuperType.render()}"))
                         .typeWith(samSuperType.remappedTypeArguments())
                 superTypes += remappedSuperType
-                transformedSuperMethod = remappedSuperType.classOrNull!!.functions.single { it.owner.modality == Modality.ABSTRACT }.owner
+                transformedSuperMethod = remappedSuperType.classOrNull!!.functions.single {
+                    val function = it.owner
+                    function.modality == Modality.ABSTRACT && function.origin !is DECLARATION_ORIGIN_BRIDGE_METHOD
+                }.owner
             } else {
                 val numberOfParameters = unboundFunctionParameters.size
                 if (isSuspend) {

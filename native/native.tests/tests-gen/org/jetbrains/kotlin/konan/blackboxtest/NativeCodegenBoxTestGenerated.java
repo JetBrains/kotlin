@@ -36725,6 +36725,12 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 runTest("compiler/testData/codegen/box/sam/kt56188.kt");
             }
 
+            @Test
+            @TestMetadata("kt59858.kt")
+            public void testKt59858() throws Exception {
+                runTest("compiler/testData/codegen/box/sam/kt59858.kt");
+            }
+
             @Nested
             @TestMetadata("compiler/testData/codegen/box/sam/adapters")
             @TestDataPath("$PROJECT_ROOT")
