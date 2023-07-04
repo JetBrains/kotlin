@@ -50,6 +50,9 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
+import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
+import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
 open class PsiRawFirBuilder(
     session: FirSession,
@@ -1117,17 +1120,19 @@ open class PsiRawFirBuilder(
                     for (declaration in file.declarations) {
                         declarations += when (declaration) {
                             is KtScript -> {
-                                require(file.declarations.size == 1) { "Expect the script to be the only declaration in the file $name" }
-                                convertScript(declaration, this.name) {
-                                    for (configurator in baseSession.extensionService.scriptConfigurators) {
-                                        with(configurator) { configure(this@buildFile) }
-                                    }
+                                requireWithAttachment(file.declarations.size == 1, message = { "Expect the script to be the only declaration in the file" }) {
+                                withEntry("fileName", file.name)
+                            }
+                            convertScript(declaration, this.name) {
+                                for (configurator in baseSession.extensionService.scriptConfigurators) {
+                                    with(configurator) { configure(this@buildFile) }
                                 }
                             }
-                            is KtDestructuringDeclaration -> buildErrorTopLevelDestructuringDeclaration(declaration.toFirSourceElement())
-                            else -> declaration.convert()
                         }
+                        is KtDestructuringDeclaration -> buildErrorTopLevelDestructuringDeclaration(declaration.toFirSourceElement())
+                        else -> declaration.convert()
                     }
+                }
 
                     for (danglingModifierList in file.danglingModifierLists) {
                         declarations += buildErrorTopLevelDeclarationForDanglingModifierList(danglingModifierList)
@@ -2262,7 +2267,9 @@ open class PsiRawFirBuilder(
                         is KtEscapeStringTemplateEntry -> KtNodeTypes.ESCAPE_STRING_TEMPLATE_ENTRY
                         is KtSimpleNameStringTemplateEntry -> KtNodeTypes.SHORT_STRING_TEMPLATE_ENTRY
                         is KtBlockStringTemplateEntry -> KtNodeTypes.LONG_STRING_TEMPLATE_ENTRY
-                        else -> error("invalid node type $element")
+                        else -> errorWithAttachment("invalid node type ${element::class.java}") {
+                            withPsiEntry("element", element)
+                        }
                     }
                 },
                 convertTemplateEntry = {

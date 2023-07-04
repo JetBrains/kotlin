@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.builder
 
+import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.KtNodeTypes.*
@@ -38,6 +39,9 @@ import org.jetbrains.kotlin.parsing.*
 import org.jetbrains.kotlin.psi.KtPsiUtil
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.utils.exceptions.ExceptionAttachmentBuilder
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
+import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
 //T can be either PsiElement, or LighterASTNode
 abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context: Context<T> = Context()) {
@@ -417,9 +421,19 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
                     setType = false
                 )
             else ->
-                throw AssertionError("Unknown literal type: $type, $text")
+                errorWithAttachment("Unknown literal type: $type") {
+                    withSourceElementEntry("literal", expression)
+                }
         }
     }
+
+    protected fun ExceptionAttachmentBuilder.withSourceElementEntry(name: String, element: T?) {
+        when (element) {
+            is PsiElement -> withPsiEntry(name, element)
+            else -> withEntry(name, element) { it.asText}
+        }
+    }
+
 
     fun convertUnaryPlusMinusCallOnIntegerLiteralIfNecessary(
         source: T,
