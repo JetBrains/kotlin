@@ -50,6 +50,7 @@ val equivalentDiagnostics = listOf(
         "SETTER_PROJECTED_OUT",
         "TYPE_MISMATCH_DUE_TO_TYPE_PROJECTIONS",
         "AMBIGUOUS_ANNOTATION_ARGUMENT",
+        "INTEGER_OPERATOR_RESOLVE_WILL_CHANGE",
 //    ),
 //    listOf(
         "UNRESOLVED_REFERENCE_WRONG_RECEIVER",
@@ -302,7 +303,7 @@ fun extractSignificantMetaInfosSlow(
     val (k1MetaInfos, k2MetaInfos, commonMetaInfos) = extractCommonMetaInfosSlow(erroneousK1MetaInfos, erroneousK2MetaInfos)
 
     val significantK1MetaInfo = k1MetaInfos.filterTo(mutableListOf()) { tagInK1 ->
-        commonMetaInfos.none { it.isOnSamePositionAs(tagInK1) }
+        commonMetaInfos.none { it.isOnSamePositionAs(tagInK1) } && tagInK1.tag !in k1WarningsMatchingK2Errors
     }
     val significantK2MetaInfo = k2MetaInfos.filterTo(mutableListOf()) { tagInK2 ->
         commonMetaInfos.none { it.isOnSamePositionAs(tagInK2) }
@@ -341,7 +342,7 @@ fun extractSignificantMetaInfos(
     val (k1MetaInfos, k2MetaInfos, commonMetaInfos) = extractCommonMetaInfos(erroneousK1MetaInfos, erroneousK2MetaInfos)
 
     val significantK1MetaInfo = k1MetaInfos.filterNotTo(mutableListOf()) { tagInK1 ->
-        commonMetaInfos.hasDiagnosticsAt(tagInK1.start, tagInK1.end)
+        commonMetaInfos.hasDiagnosticsAt(tagInK1.start, tagInK1.end) || tagInK1.tag in k1WarningsMatchingK2Errors
     }
     val significantK2MetaInfo = k2MetaInfos.filterNotTo(mutableListOf()) { tagInK2 ->
         commonMetaInfos.hasDiagnosticsAt(tagInK2.start, tagInK2.end)
@@ -352,7 +353,17 @@ fun extractSignificantMetaInfos(
 
 val MAGIC_DIAGNOSTICS_THRESHOLD = 80
 
-val k1DefinitelyNonErrors = collectAllK1NonErrors()
+// Ones that are replaced by errors in K2.
+// Such warnings are ignored in a "lazy fashion":
+// They are filtered only after we know they have
+// no matches in K2. This means, if they do, then
+// the matching K2 error will be eliminated by
+// the algorithm.
+val k1WarningsMatchingK2Errors = setOf(
+    "INTEGER_OPERATOR_RESOLVE_WILL_CHANGE",
+)
+
+val k1DefinitelyNonErrors = collectAllK1NonErrors() - k1WarningsMatchingK2Errors
 val k2DefinitelyNonErrors = collectAllK2NonErrors()
 
 val k1JvmDefinitelyNonErrors = collectFromFieldsOf(ErrorsJvm::class, instance = null, collector = ::getErrorFromFieldValue)
@@ -519,7 +530,7 @@ fun analyseEquivalencesAsHierarchyAmong(
     val commonK2MetaInfos = commonK2MetaInfoList.toMetaInfosHierarchySet()
 
     val significantK1MetaInfo = uniqueK1MetaInfos.filterNotTo(mutableListOf()) {
-        commonK1MetaInfos.overlapsWith(it)
+        commonK1MetaInfos.overlapsWith(it) || it.tag in k1WarningsMatchingK2Errors
     }
     val significantK2MetaInfo = uniqueK2MetaInfos.filterNotTo(mutableListOf()) {
         commonK2MetaInfos.overlapsWith(it)
@@ -696,6 +707,8 @@ fun DiagnosticsStatistics.extractIntroductions() =
         it.isNotEmpty()
     }
 
+const val MOST_COMMON_REASONS_OF_BREAKING_CHANGES = "Most common reasons of breaking changes"
+
 fun File.renderDiagnosticsStatistics(diagnosticsStatistics: DiagnosticsStatistics) {
     bufferedWriter().use { writer ->
         printDiagnosticsStatistics(
@@ -705,7 +718,7 @@ fun File.renderDiagnosticsStatistics(diagnosticsStatistics: DiagnosticsStatistic
         )
         writer.write("\n")
         printDiagnosticsStatistics(
-            "Most common reasons of breaking changes (by the number of files) include:",
+            "$MOST_COMMON_REASONS_OF_BREAKING_CHANGES (by the number of files) include:",
             diagnosticsStatistics.extractIntroductions(),
             writer,
         )
@@ -987,7 +1000,7 @@ fun updateMissingDiagnosticsTags(
     }
 }
 
-val knownDiagnosticIssues = knownMissingDiagnostics
+val knownDiagnosticIssues = knownMissingDiagnostics + knownDisappearedDiagnostics + knownIntroducedDiagnostics
 
 fun updateKnownIssuesDescriptions(statistics: DiagnosticsStatistics) {
     for ((diagnostic, filesToEntries) in statistics) {
@@ -1065,7 +1078,7 @@ fun doNonLocalThings(
 //    updateMissingDiagnosticsTags(containmentStatistics)
 
     updateKnownIssuesDescriptions(containmentStatistics)
-//    publishReports()
+    publishReports()
 
     postJson(
         "https://youtrack.jetbrains.com/api/issues/${mainCompletenessIssueId.id}/comments?fields=id,author(name),text",
