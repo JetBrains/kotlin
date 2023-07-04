@@ -28,7 +28,7 @@ USER $USERNAME
 WORKDIR /home/$USERNAME
 
 # Download zlib sources.
-RUN curl -LO https://zlib.net/zlib-1.2.11.tar.gz && \
+RUN curl -LO https://zlib.net/fossils/zlib-1.2.11.tar.gz && \
     tar -xf zlib-1.2.11.tar.gz && \
     rm zlib-1.2.11.tar.gz
 
