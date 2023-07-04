@@ -387,7 +387,10 @@ internal class PropertiesProvider private constructor(private val project: Proje
     private val enableCInteropCommonizationSetByExternalPluginKey = "kotlin.internal.mpp.enableCInteropCommonization.setByExternalPlugin"
 
     internal var enableCInteropCommonizationSetByExternalPlugin: Boolean?
-        get() = booleanProperty(enableCInteropCommonizationSetByExternalPluginKey)
+        get() {
+            if (!project.extensions.extraProperties.has(enableCInteropCommonizationSetByExternalPluginKey)) return null
+            return booleanProperty(enableCInteropCommonizationSetByExternalPluginKey)
+        }
         set(value) {
             project.extensions.extraProperties.set(enableCInteropCommonizationSetByExternalPluginKey, "$value")
         }

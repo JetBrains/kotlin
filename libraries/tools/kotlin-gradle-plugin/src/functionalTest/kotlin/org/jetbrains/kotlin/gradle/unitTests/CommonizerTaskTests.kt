@@ -10,10 +10,9 @@ package org.jetbrains.kotlin.gradle.unitTests
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCompilation
+import org.jetbrains.kotlin.gradle.targets.native.internal.cInteropCommonizationEnabled
 import org.jetbrains.kotlin.gradle.util.*
-import kotlin.test.Test
-import kotlin.test.assertNotNull
-import kotlin.test.assertNull
+import kotlin.test.*
 
 class CommonizerTaskTests {
 
@@ -135,5 +134,37 @@ class CommonizerTaskTests {
         val commonizeCInteropTask = subproject.assertContainsTaskWithName(commonizeCInteropTaskName)
         subproject.tasks.getByName("commonize").assertDependsOn(commonizeCInteropTask)
         rootProject.assertContainsNoTaskWithName(commonizeCInteropTaskName)
+    }
+
+    @Test
+    fun `test applying CocoaPods plugin - enables commonization`() {
+        val rootProject = ProjectBuilder.builder().build() as ProjectInternal
+        rootProject.applyMultiplatformPlugin()
+
+        rootProject.runLifecycleAwareTest {
+            assertFalse(rootProject.cInteropCommonizationEnabled())
+
+            rootProject.applyCocoapodsPlugin()
+
+            assertTrue(rootProject.cInteropCommonizationEnabled())
+        }
+    }
+
+    @Test
+    fun `test applying CocoaPods plugin - in a root project - enables commonization only in the root project`() {
+        val rootProject = ProjectBuilder.builder().build() as ProjectInternal
+        val subproject = ProjectBuilder.builder().withParent(rootProject).build() as ProjectInternal
+        rootProject.applyMultiplatformPlugin()
+        subproject.applyMultiplatformPlugin()
+
+        rootProject.runLifecycleAwareTest {
+            assertFalse(rootProject.cInteropCommonizationEnabled())
+            assertFalse(subproject.cInteropCommonizationEnabled())
+
+            rootProject.applyCocoapodsPlugin()
+
+            assertTrue(rootProject.cInteropCommonizationEnabled())
+            assertFalse(subproject.cInteropCommonizationEnabled())
+        }
     }
 }
