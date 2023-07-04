@@ -22931,6 +22931,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
             }
 
             @Test
+            @TestMetadata("notUselessComparasionAfterSmartcast.kt")
+            public void testNotUselessComparasionAfterSmartcast() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/nullableTypes/notUselessComparasionAfterSmartcast.kt");
+            }
+
+            @Test
             @TestMetadata("nullAssertOnTypeWithNullableUpperBound.kt")
             public void testNullAssertOnTypeWithNullableUpperBound() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/nullableTypes/nullAssertOnTypeWithNullableUpperBound.kt");
