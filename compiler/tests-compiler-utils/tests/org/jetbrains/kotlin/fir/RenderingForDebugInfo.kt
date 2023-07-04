@@ -11,7 +11,7 @@ fun ConeKotlinType.renderForDebugInfo(): String {
     val nullabilitySuffix = if (this !is ConeErrorType && this !is ConeErrorType) nullability.suffix else ""
     return when (this) {
         is ConeTypeVariableType -> "TypeVariable(${this.lookupTag.name})"
-        is ConeDefinitelyNotNullType -> "${original.renderForDebugInfo()}!!"
+        is ConeDefinitelyNotNullType -> "${original.renderForDebugInfo()} & Any"
         is ConeErrorType -> "ERROR CLASS: ${diagnostic.reason}"
         is ConeCapturedType -> "CapturedType(${constructor.projection.renderForDebugInfo()})"
         is ConeClassLikeType -> {
