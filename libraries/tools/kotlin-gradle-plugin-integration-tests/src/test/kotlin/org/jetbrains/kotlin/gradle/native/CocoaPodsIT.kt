@@ -250,6 +250,30 @@ class CocoaPodsIT : KGPBaseTest() {
         }
     }
 
+    @DisplayName("cinterops UTD after pod change")
+    @GradleTest
+    fun testCinteropsUTDAfterPodChange(gradleVersion: GradleVersion) {
+        nativeProjectWithCocoapodsAndIosAppPodFile(gradleVersion = gradleVersion) {
+
+            val podDeclaration = """pod("Base64", version = "1.0.1")"""
+            buildGradleKts.addCocoapodsBlock(podDeclaration)
+
+            buildWithCocoapodsWrapper(podImportTaskName) {
+                assertTasksExecuted(":cinteropBase64IOS")
+            }
+
+            buildWithCocoapodsWrapper(podImportTaskName) {
+                assertTasksUpToDate(":cinteropBase64IOS")
+            }
+
+            buildGradleKts.replaceText(podDeclaration, """pod("Base64", version = "1.1.2")""")
+
+            buildWithCocoapodsWrapper(podImportTaskName) {
+                assertTasksExecuted(":cinteropBase64IOS")
+            }
+        }
+    }
+
     @DisplayName("Installing pod without pod file")
     @GradleTest
     fun testPodInstallWithoutPodFile(gradleVersion: GradleVersion) {

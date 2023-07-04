@@ -338,6 +338,10 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
                     val podBuildTaskProvider = project.getPodBuildTaskProvider(target, pod)
                     val buildSettingsFileProvider = project.buildSettingsFileProvider(pod, target)
                     interopTask.inputs.file(buildSettingsFileProvider)
+
+                    // Since we can't properly declare frameworks as inputs (see below) it's the best approximation
+                    interopTask.inputs.files(podBuildTaskProvider.flatMap { it.srcDir })
+
                     interopTask.dependsOn(podBuildTaskProvider)
 
                     interopTask.doFirst { _ ->
