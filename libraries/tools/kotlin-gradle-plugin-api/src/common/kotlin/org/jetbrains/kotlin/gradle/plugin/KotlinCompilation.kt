@@ -140,11 +140,6 @@ interface KotlinCompilation<out T : KotlinCommonOptionsDeprecated> : Named,
 
     override fun getName(): String = compilationName
 
-    @Deprecated("Scheduled for removal with Kotlin 2.0")
-    @Suppress("DEPRECATION")
-    override val relatedConfigurationNames: List<String>
-        get() = super.relatedConfigurationNames + compileDependencyConfigurationName
-
     val disambiguatedName
         get() = target.disambiguationClassifier + name
 }
@@ -154,11 +149,6 @@ interface KotlinCompilationToRunnableFiles<T : KotlinCommonOptionsDeprecated> : 
     override val runtimeDependencyConfigurationName: String
 
     override var runtimeDependencyFiles: FileCollection
-
-    @Suppress("DEPRECATION")
-    @Deprecated("Scheduled for removal with Kotlin 2.0")
-    override val relatedConfigurationNames: List<String>
-        get() = super.relatedConfigurationNames + runtimeDependencyConfigurationName
 }
 
 @Deprecated("Scheduled for removal with Kotlin 2.0")

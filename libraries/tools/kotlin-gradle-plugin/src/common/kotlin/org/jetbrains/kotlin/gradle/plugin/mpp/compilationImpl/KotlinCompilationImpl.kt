@@ -127,16 +127,6 @@ internal class KotlinCompilationImpl constructor(
 
     override var runtimeDependencyFiles: FileCollection? = configurations.runtimeDependencyConfiguration
 
-    @Deprecated("Scheduled for removal with Kotlin 2.0")
-    override val relatedConfigurationNames: List<String> = listOfNotNull(
-        apiConfigurationName,
-        implementationConfigurationName,
-        compileOnlyConfigurationName,
-        runtimeOnlyConfigurationName,
-        compileDependencyConfigurationName,
-        runtimeDependencyConfigurationName
-    )
-
     override fun dependencies(configure: KotlinDependencyHandler.() -> Unit) {
         HasKotlinDependencies(project, configurations).dependencies(configure)
     }

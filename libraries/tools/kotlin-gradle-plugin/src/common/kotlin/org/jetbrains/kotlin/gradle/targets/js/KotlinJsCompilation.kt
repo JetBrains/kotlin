@@ -60,11 +60,6 @@ open class KotlinJsCompilation @Inject internal constructor(
     val publicPackageJsonConfigurationName
         get() = compilation.disambiguateName("publicPackageJsonConfiguration")
 
-    @Deprecated("Scheduled for removal with Kotlin 2.0")
-    @Suppress("DEPRECATION")
-    override val relatedConfigurationNames: List<String>
-        get() = super.relatedConfigurationNames + npmAggregatedConfigurationName + publicPackageJsonConfigurationName
-
     override fun getAttributes(): AttributeContainer {
         return compilation.attributes
     }

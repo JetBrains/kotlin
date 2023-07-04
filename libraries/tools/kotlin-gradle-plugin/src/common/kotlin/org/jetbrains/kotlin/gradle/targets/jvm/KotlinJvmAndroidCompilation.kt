@@ -49,13 +49,4 @@ open class KotlinJvmAndroidCompilation @Inject internal constructor(
     val compileJavaTaskProvider: TaskProvider<out JavaCompile>
         get() = androidVariant.getJavaTaskProvider()
 
-    @Deprecated("Scheduled for removal with Kotlin 2.0")
-    @Suppress("DEPRECATION")
-    override val relatedConfigurationNames: List<String>
-        get() = compilation.relatedConfigurationNames + listOf(
-            "${androidVariant.name}ApiElements",
-            "${androidVariant.name}RuntimeElements",
-            androidVariant.compileConfiguration.name,
-            androidVariant.runtimeConfiguration.name
-        )
 }

@@ -202,60 +202,6 @@ class KotlinMultiplatformPlugin : Plugin<Project> {
     }
 }
 
-/**
- * The attributes attached to the targets and compilations need to be propagated to the relevant Gradle configurations:
- * 1. Output configurations of each target need the corresponding compilation's attributes (and, indirectly, the target's attributes)
- * 2. Resolvable configurations of each compilation need the compilation's attributes
- */
-internal fun applyUserDefinedAttributes(target: AbstractKotlinTarget) {
-    val project = target.project
-    project.whenEvaluated {
-        // To copy the attributes to the output configurations, find those output configurations and their producing compilations
-        // based on the target's components:
-        val outputConfigurationsWithCompilations = target.kotlinComponents.filterIsInstance<KotlinVariant>().flatMap { kotlinVariant ->
-            kotlinVariant.usages.mapNotNull { usageContext ->
-                project.configurations.findByName(usageContext.dependencyConfigurationName)?.let { configuration ->
-                    configuration to usageContext.compilation
-                }
-            }
-        }.toMutableList()
-
-        val mainCompilation = target.compilations.findByName(KotlinCompilation.MAIN_COMPILATION_NAME)
-
-        // Add usages of android library when its variants are grouped by flavor
-        outputConfigurationsWithCompilations += target.kotlinComponents
-            .filterIsInstance<JointAndroidKotlinTargetComponent>()
-            .flatMap { variant -> variant.usages }
-            .mapNotNull { usage ->
-                val configuration = project.configurations.findByName(usage.dependencyConfigurationName) ?: return@mapNotNull null
-                configuration to usage.compilation
-            }
-
-        outputConfigurationsWithCompilations.forEach { (configuration, compilation) ->
-            copyAttributes(compilation.attributes, configuration.attributes)
-        }
-
-        target.compilations.all { compilation ->
-            val compilationAttributes = compilation.attributes
-
-            @Suppress("DEPRECATION")
-            compilation.relatedConfigurationNames
-                .mapNotNull { configurationName -> target.project.configurations.findByName(configurationName) }
-                .forEach { configuration -> copyAttributes(compilationAttributes, configuration.attributes) }
-        }
-
-        // Copy to host-specific metadata elements configurations
-        if (target is KotlinNativeTarget) {
-            val hostSpecificMetadataElements = project.configurations.findByName(target.hostSpecificMetadataElementsConfigurationName)
-            if (hostSpecificMetadataElements != null) {
-                copyAttributes(from = target.attributes, to = hostSpecificMetadataElements.attributes)
-            }
-        }
-    }
-}
-
-
-
 internal fun Project.setupGeneralKotlinExtensionParameters() {
     project.launch {
         for (sourceSet in kotlinExtension.awaitSourceSets()) {
