@@ -54,6 +54,7 @@ object FirUnsupportedArrayLiteralChecker : FirArrayOfCallChecker() {
 
                 for (unwrapped in unwrappedArguments) {
                     if (unwrapped == expression ||
+                        (unwrapped is FirErrorExpression && unwrapped.expression == expression) ||
                         unwrapped is FirArrayOfCall &&
                         unwrapped.arguments.any { arrayOfCallElement -> arrayOfCallElement.unwrapArgument() == expression }
                     ) {

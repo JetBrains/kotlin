@@ -41,7 +41,7 @@ object FirAnnotationExpressionChecker : FirAnnotationCallChecker() {
         val argumentMapping = expression.argumentMapping.mapping
         val fqName = expression.fqName(context.session)
         for (arg in argumentMapping.values) {
-            val argExpression = (arg as? FirNamedArgumentExpression)?.expression ?: arg
+            val argExpression = (arg as? FirNamedArgumentExpression)?.expression ?: (arg as? FirErrorExpression)?.expression ?: arg
             checkAnnotationArgumentWithSubElements(argExpression, context.session, reporter, context)
                 ?.let { reporter.reportOn(argExpression.source, it, context) }
         }

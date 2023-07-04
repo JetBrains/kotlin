@@ -18,11 +18,7 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
-import org.jetbrains.kotlin.fir.types.UnexpandedTypeCheck
-import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.fir.types.isArrayType
+import org.jetbrains.kotlin.fir.types.*
 
 object FirNamedVarargChecker : FirCallChecker() {
     override fun check(expression: FirCall, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -74,7 +70,7 @@ object FirNamedVarargChecker : FirCallChecker() {
 
         if (expression is FirArrayOfCall) {
             // FirArrayOfCall has the `vararg` argument expression pre-flattened and doesn't have an argument mapping.
-            expression.arguments.forEach { checkArgument(it, it is FirNamedArgumentExpression, null /* not used for annotation call */) }
+            expression.arguments.forEach { checkArgument(it, it is FirNamedArgumentExpression, expression.typeRef.coneTypeOrNull) }
         } else {
             val argumentMap = expression.resolvedArgumentMapping ?: return
             for ((argument, parameter) in argumentMap) {

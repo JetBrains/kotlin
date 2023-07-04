@@ -6,7 +6,7 @@ fun test() {
     val b: Array<Int> = []
     val c = [1, 2]
     val d: Array<Int> = [1, 2]
-    val e: Array<String> = <!INITIALIZER_TYPE_MISMATCH!>[1]<!>
+    val e: Array<String> = <!TYPE_MISMATCH, TYPE_MISMATCH!>[1]<!>
 
     val f: IntArray = [1, 2]
     val g = [f]

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.transformers
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fakeElement
@@ -22,6 +23,7 @@ import org.jetbrains.kotlin.fir.expressions.builder.buildFunctionCall
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.FirResolvedCallableReference
+import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedErrorReference
 import org.jetbrains.kotlin.fir.references.impl.FirStubReference
 import org.jetbrains.kotlin.fir.references.isError
@@ -30,6 +32,8 @@ import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.createErrorReferenceWithExistingCandidate
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeInapplicableCandidateError
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
+import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.toErrorReference
 import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
 import org.jetbrains.kotlin.fir.symbols.SyntheticCallableId
@@ -44,6 +48,7 @@ import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.ArrayFqNames
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.types.Variance
@@ -58,6 +63,12 @@ class FirSyntheticCallGenerator(
     private val idFunction: FirSimpleFunction = generateSyntheticSelectFunction(SyntheticCallableId.ID)
     private val checkNotNullFunction: FirSimpleFunction = generateSyntheticCheckNotNullFunction()
     private val elvisFunction: FirSimpleFunction = generateSyntheticElvisFunction()
+
+    private val arrayOfSymbol by lazy(LazyThreadSafetyMode.NONE) {
+        session.symbolProvider
+            .getTopLevelFunctionSymbols(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, ArrayFqNames.ARRAY_OF_FUNCTION)
+            .firstOrNull()
+    }
 
     private fun assertSyntheticResolvableReferenceIsNotResolved(resolvable: FirResolvable) {
         // All synthetic calls (FirWhenExpression, FirTryExpression, FirElvisExpression, FirCheckNotNullCall)
@@ -139,7 +150,7 @@ class FirSyntheticCallGenerator(
         return elvisExpression.transformCalleeReference(UpdateReference, reference)
     }
 
-    fun generateSyntheticCallForArrayOfCall(arrayOfCall: FirArrayOfCall, context: ResolutionContext): FirFunctionCall {
+    fun generateSyntheticIdCall(arrayOfCall: FirExpression, context: ResolutionContext): FirFunctionCall {
         val argumentList = buildArgumentList {
             arguments += arrayOfCall
         }
@@ -152,6 +163,26 @@ class FirSyntheticCallGenerator(
                 SyntheticCallableId.ID.callableName,
                 context = context
             )
+        }
+    }
+
+    fun generateSyntheticArrayOfCall(arrayOfCall: FirArrayOfCall, context: ResolutionContext): FirFunctionCall {
+        val argumentList = arrayOfCall.argumentList
+        return buildFunctionCall {
+            this.argumentList = argumentList
+            calleeReference = arrayOfSymbol?.let {
+                generateCalleeReferenceWithCandidate(
+                    arrayOfCall,
+                    it.fir,
+                    argumentList,
+                    ArrayFqNames.ARRAY_OF_FUNCTION,
+                    callKind = CallKind.Function,
+                    context = context,
+                )
+            } ?: buildErrorNamedReference {
+                diagnostic = ConeUnresolvedNameError(ArrayFqNames.ARRAY_OF_FUNCTION)
+            }
+            source = arrayOfCall.source
         }
     }
 

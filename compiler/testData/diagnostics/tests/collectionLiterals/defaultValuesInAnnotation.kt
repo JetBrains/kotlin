@@ -1,7 +1,10 @@
+import kotlin.reflect.KClass
+
 annotation class Foo(
         val a: Array<String> = ["/"],
         val b: Array<String> = [],
-        val c: Array<String> = ["1", "2"]
+        val c: Array<String> = ["1", "2"],
+        val d: Array<KClass<*>> = [Int::class, Array<Int>::class],
 )
 
 annotation class Bar(
