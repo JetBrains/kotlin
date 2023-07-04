@@ -14,7 +14,7 @@ import kotlinx.metadata.isLocalClassName
  * Converts [this] to a JVM internal name of the class, where package names are separated by '/', and class names are separated by '$',
  * for example: `"org/foo/bar/Baz.Nested"` -> `"org/foo/bar/Baz$Nested"`
  */
-fun ClassName.toJvmInternalName(): String =
+public fun ClassName.toJvmInternalName(): String =
     if (this.isLocalClassName()) substring(1)
     else replace('.', '$')
 
@@ -24,14 +24,14 @@ fun ClassName.toJvmInternalName(): String =
     ReplaceWith("toJvmInternalName()"),
     level = DeprecationLevel.WARNING
 )
-val ClassName.jvmInternalName: String get() = toJvmInternalName()
+public val ClassName.jvmInternalName: String get() = toJvmInternalName()
 
 /**
  * Helper function to instantiate [Metadata].
  * Contrary to a direct constructor call, this one accepts nullable parameters to substitute nulls with default values.
  * Also, this one does not accept [Metadata.bytecodeVersion] as it is deprecated.
  */
-fun Metadata(
+public fun Metadata(
     kind: Int? = null,
     metadataVersion: IntArray? = null,
     data1: Array<String>? = null,

@@ -16,4 +16,4 @@ package kotlinx.metadata
     RequiresOptIn.Level.ERROR
 )
 @MustBeDocumented
-annotation class ExperimentalContextReceivers
+public annotation class ExperimentalContextReceivers

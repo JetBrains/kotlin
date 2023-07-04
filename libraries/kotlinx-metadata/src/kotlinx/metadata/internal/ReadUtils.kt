@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.Argument.Value.Type.*
 import org.jetbrains.kotlin.metadata.deserialization.Flags
 import org.jetbrains.kotlin.metadata.deserialization.NameResolver
 
-fun ProtoBuf.Annotation.readAnnotation(strings: NameResolver): KmAnnotation =
+public fun ProtoBuf.Annotation.readAnnotation(strings: NameResolver): KmAnnotation =
     KmAnnotation(
         strings.getClassName(id),
         argumentList.mapNotNull { argument ->
@@ -23,7 +23,7 @@ fun ProtoBuf.Annotation.readAnnotation(strings: NameResolver): KmAnnotation =
         }.toMap()
     )
 
-fun ProtoBuf.Annotation.Argument.Value.readAnnotationArgument(strings: NameResolver): KmAnnotationArgument? {
+public fun ProtoBuf.Annotation.Argument.Value.readAnnotationArgument(strings: NameResolver): KmAnnotationArgument? {
     if (Flags.IS_UNSIGNED[flags]) {
         return when (type) {
             BYTE -> KmAnnotationArgument.UByteValue(intValue.toByte().toUByte())

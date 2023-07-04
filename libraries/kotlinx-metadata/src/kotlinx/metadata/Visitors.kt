@@ -15,14 +15,14 @@ internal const val VISITOR_API_MESSAGE =
  */
 @Deprecated(VISITOR_API_MESSAGE)
 @Suppress("DEPRECATION")
-abstract class KmDeclarationContainerVisitor @JvmOverloads constructor(protected open val delegate: KmDeclarationContainerVisitor? = null) {
+public abstract class KmDeclarationContainerVisitor @JvmOverloads constructor(protected open val delegate: KmDeclarationContainerVisitor? = null) {
     /**
      * Visits a function in the container.
      *
      * @param flags function flags, consisting of [Flag.HAS_ANNOTATIONS], visibility flag, modality flag and [Flag.Function] flags
      * @param name the name of the function
      */
-    open fun visitFunction(flags: Int, name: String): KmFunctionVisitor? =
+    public open fun visitFunction(flags: Int, name: String): KmFunctionVisitor? =
         delegate?.visitFunction(flags, name)
 
     /**
@@ -35,7 +35,7 @@ abstract class KmDeclarationContainerVisitor @JvmOverloads constructor(protected
      * @param setterFlags property accessor flags, consisting of [Flag.HAS_ANNOTATIONS], visibility flag, modality flag
      *   and [Flag.PropertyAccessor] flags
      */
-    open fun visitProperty(flags: Int, name: String, getterFlags: Int, setterFlags: Int): KmPropertyVisitor? =
+    public open fun visitProperty(flags: Int, name: String, getterFlags: Int, setterFlags: Int): KmPropertyVisitor? =
         delegate?.visitProperty(flags, name, getterFlags, setterFlags)
 
     /**
@@ -44,7 +44,7 @@ abstract class KmDeclarationContainerVisitor @JvmOverloads constructor(protected
      * @param flags type alias flags, consisting of [Flag.HAS_ANNOTATIONS] and visibility flag
      * @param name the name of the type alias
      */
-    open fun visitTypeAlias(flags: Int, name: String): KmTypeAliasVisitor? =
+    public open fun visitTypeAlias(flags: Int, name: String): KmTypeAliasVisitor? =
         delegate?.visitTypeAlias(flags, name)
 
     /**
@@ -52,7 +52,7 @@ abstract class KmDeclarationContainerVisitor @JvmOverloads constructor(protected
      *
      * @param type the type of extension visitor to be returned
      */
-    abstract fun visitExtensions(type: KmExtensionType): KmDeclarationContainerExtensionVisitor?
+    public abstract fun visitExtensions(type: KmExtensionType): KmDeclarationContainerExtensionVisitor?
 }
 
 /**
@@ -63,7 +63,7 @@ abstract class KmDeclarationContainerVisitor @JvmOverloads constructor(protected
  */
 @Deprecated(VISITOR_API_MESSAGE)
 @Suppress("DEPRECATION")
-abstract class KmClassVisitor @JvmOverloads constructor(delegate: KmClassVisitor? = null) : KmDeclarationContainerVisitor(delegate) {
+public abstract class KmClassVisitor @JvmOverloads constructor(delegate: KmClassVisitor? = null) : KmDeclarationContainerVisitor(delegate) {
     override val delegate: KmClassVisitor?
         get() = super.delegate as KmClassVisitor?
 
@@ -73,7 +73,7 @@ abstract class KmClassVisitor @JvmOverloads constructor(delegate: KmClassVisitor
      * @param flags class flags, consisting of [Flag.HAS_ANNOTATIONS], visibility flag, modality flag and [Flag.Class] flags
      * @param name the name of the class
      */
-    open fun visit(flags: Int, name: ClassName) {
+    public open fun visit(flags: Int, name: ClassName) {
         delegate?.visit(flags, name)
     }
 
@@ -86,7 +86,7 @@ abstract class KmClassVisitor @JvmOverloads constructor(delegate: KmClassVisitor
      *           the name isn't enough (e.g. `class A<T> { fun <T> foo(t: T) }`)
      * @param variance the declaration-site variance of the type parameter
      */
-    open fun visitTypeParameter(flags: Int, name: String, id: Int, variance: KmVariance): KmTypeParameterVisitor? =
+    public open fun visitTypeParameter(flags: Int, name: String, id: Int, variance: KmVariance): KmTypeParameterVisitor? =
         delegate?.visitTypeParameter(flags, name, id, variance)
 
     /**
@@ -94,7 +94,7 @@ abstract class KmClassVisitor @JvmOverloads constructor(delegate: KmClassVisitor
      *
      * @param flags type flags, consisting of [Flag.Type] flags
      */
-    open fun visitSupertype(flags: Int): KmTypeVisitor? =
+    public open fun visitSupertype(flags: Int): KmTypeVisitor? =
         delegate?.visitSupertype(flags)
 
     /**
@@ -102,7 +102,7 @@ abstract class KmClassVisitor @JvmOverloads constructor(delegate: KmClassVisitor
      *
      * @param flags constructor flags, consisting of [Flag.HAS_ANNOTATIONS], visibility flag and [Flag.Constructor] flags
      */
-    open fun visitConstructor(flags: Int): KmConstructorVisitor? =
+    public open fun visitConstructor(flags: Int): KmConstructorVisitor? =
         delegate?.visitConstructor(flags)
 
     /**
@@ -110,7 +110,7 @@ abstract class KmClassVisitor @JvmOverloads constructor(delegate: KmClassVisitor
      *
      * @param name the name of the companion object
      */
-    open fun visitCompanionObject(name: String) {
+    public open fun visitCompanionObject(name: String) {
         delegate?.visitCompanionObject(name)
     }
 
@@ -119,7 +119,7 @@ abstract class KmClassVisitor @JvmOverloads constructor(delegate: KmClassVisitor
      *
      * @param name the name of a nested class
      */
-    open fun visitNestedClass(name: String) {
+    public open fun visitNestedClass(name: String) {
         delegate?.visitNestedClass(name)
     }
 
@@ -128,7 +128,7 @@ abstract class KmClassVisitor @JvmOverloads constructor(delegate: KmClassVisitor
      *
      * @param name the name of an enum entry
      */
-    open fun visitEnumEntry(name: String) {
+    public open fun visitEnumEntry(name: String) {
         delegate?.visitEnumEntry(name)
     }
 
@@ -137,7 +137,7 @@ abstract class KmClassVisitor @JvmOverloads constructor(delegate: KmClassVisitor
      *
      * @param name the name of a direct subclass
      */
-    open fun visitSealedSubclass(name: ClassName) {
+    public open fun visitSealedSubclass(name: ClassName) {
         delegate?.visitSealedSubclass(name)
     }
 
@@ -146,7 +146,7 @@ abstract class KmClassVisitor @JvmOverloads constructor(delegate: KmClassVisitor
      *
      * @param name the name of the underlying property.
      */
-    open fun visitInlineClassUnderlyingPropertyName(name: String) {
+    public open fun visitInlineClassUnderlyingPropertyName(name: String) {
         delegate?.visitInlineClassUnderlyingPropertyName(name)
     }
 
@@ -155,7 +155,7 @@ abstract class KmClassVisitor @JvmOverloads constructor(delegate: KmClassVisitor
      *
      * @param flags type flags, consisting of [Flag.Type] flags
      */
-    open fun visitInlineClassUnderlyingType(flags: Int): KmTypeVisitor? =
+    public open fun visitInlineClassUnderlyingType(flags: Int): KmTypeVisitor? =
         delegate?.visitInlineClassUnderlyingType(flags)
 
     /**
@@ -164,13 +164,13 @@ abstract class KmClassVisitor @JvmOverloads constructor(delegate: KmClassVisitor
      * @param flags type flags, consisting of [Flag.Type] flags
      */
     @ExperimentalContextReceivers
-    open fun visitContextReceiverType(flags: Int): KmTypeVisitor? =
+    public open fun visitContextReceiverType(flags: Int): KmTypeVisitor? =
         delegate?.visitContextReceiverType(flags)
 
     /**
      * Visits the version requirement on this class.
      */
-    open fun visitVersionRequirement(): KmVersionRequirementVisitor? =
+    public open fun visitVersionRequirement(): KmVersionRequirementVisitor? =
         delegate?.visitVersionRequirement()
 
     /**
@@ -184,7 +184,7 @@ abstract class KmClassVisitor @JvmOverloads constructor(delegate: KmClassVisitor
     /**
      * Visits the end of the class.
      */
-    open fun visitEnd() {
+    public open fun visitEnd() {
         delegate?.visitEnd()
     }
 }
@@ -196,7 +196,8 @@ abstract class KmClassVisitor @JvmOverloads constructor(delegate: KmClassVisitor
  */
 @Deprecated(VISITOR_API_MESSAGE)
 @Suppress("DEPRECATION")
-abstract class KmPackageVisitor @JvmOverloads constructor(delegate: KmPackageVisitor? = null) : KmDeclarationContainerVisitor(delegate) {
+public abstract class KmPackageVisitor @JvmOverloads constructor(delegate: KmPackageVisitor? = null) :
+    KmDeclarationContainerVisitor(delegate) {
     override val delegate: KmPackageVisitor?
         get() = super.delegate as KmPackageVisitor?
 
@@ -211,7 +212,7 @@ abstract class KmPackageVisitor @JvmOverloads constructor(delegate: KmPackageVis
     /**
      * Visits the end of the package fragment.
      */
-    open fun visitEnd() {
+    public open fun visitEnd() {
         delegate?.visitEnd()
     }
 }
@@ -223,20 +224,20 @@ abstract class KmPackageVisitor @JvmOverloads constructor(delegate: KmPackageVis
  */
 @Deprecated(VISITOR_API_MESSAGE)
 @Suppress("DEPRECATION")
-abstract class KmLambdaVisitor @JvmOverloads constructor(private val delegate: KmLambdaVisitor? = null) {
+public abstract class KmLambdaVisitor @JvmOverloads constructor(private val delegate: KmLambdaVisitor? = null) {
     /**
      * Visits the signature of a synthetic anonymous function, representing the lambda.
      *
      * @param flags function flags, consisting of [Flag.HAS_ANNOTATIONS], visibility flag, modality flag and [Flag.Function] flags
      * @param name the name of the function (usually `"<anonymous>"` or `"<no name provided>"` for lambdas emitted by the Kotlin compiler)
      */
-    open fun visitFunction(flags: Int, name: String): KmFunctionVisitor? =
+    public open fun visitFunction(flags: Int, name: String): KmFunctionVisitor? =
         delegate?.visitFunction(flags, name)
 
     /**
      * Visits the end of the lambda.
      */
-    open fun visitEnd() {
+    public open fun visitEnd() {
         delegate?.visitEnd()
     }
 }
@@ -248,20 +249,20 @@ abstract class KmLambdaVisitor @JvmOverloads constructor(private val delegate: K
  */
 @Deprecated(VISITOR_API_MESSAGE)
 @Suppress("DEPRECATION")
-abstract class KmConstructorVisitor @JvmOverloads constructor(private val delegate: KmConstructorVisitor? = null) {
+public abstract class KmConstructorVisitor @JvmOverloads constructor(private val delegate: KmConstructorVisitor? = null) {
     /**
      * Visits a value parameter of the constructor.
      *
      * @param flags value parameter flags, consisting of [Flag.ValueParameter] flags
      * @param name the name of the value parameter
      */
-    open fun visitValueParameter(flags: Int, name: String): KmValueParameterVisitor? =
+    public open fun visitValueParameter(flags: Int, name: String): KmValueParameterVisitor? =
         delegate?.visitValueParameter(flags, name)
 
     /**
      * Visits the version requirement on this constructor.
      */
-    open fun visitVersionRequirement(): KmVersionRequirementVisitor? =
+    public open fun visitVersionRequirement(): KmVersionRequirementVisitor? =
         delegate?.visitVersionRequirement()
 
     /**
@@ -269,13 +270,13 @@ abstract class KmConstructorVisitor @JvmOverloads constructor(private val delega
      *
      * @param type the type of extension visitor to be returned
      */
-    open fun visitExtensions(type: KmExtensionType): KmConstructorExtensionVisitor? =
+    public open fun visitExtensions(type: KmExtensionType): KmConstructorExtensionVisitor? =
         delegate?.visitExtensions(type)
 
     /**
      * Visits the end of the constructor.
      */
-    open fun visitEnd() {
+    public open fun visitEnd() {
         delegate?.visitEnd()
     }
 }
@@ -288,7 +289,7 @@ abstract class KmConstructorVisitor @JvmOverloads constructor(private val delega
  */
 @Deprecated(VISITOR_API_MESSAGE)
 @Suppress("DEPRECATION")
-abstract class KmFunctionVisitor @JvmOverloads constructor(private val delegate: KmFunctionVisitor? = null) {
+public abstract class KmFunctionVisitor @JvmOverloads constructor(private val delegate: KmFunctionVisitor? = null) {
     /**
      * Visits a type parameter of the function.
      *
@@ -298,24 +299,24 @@ abstract class KmFunctionVisitor @JvmOverloads constructor(private val delegate:
      *           the name isn't enough (e.g. `class A<T> { fun <T> foo(t: T) }`)
      * @param variance the declaration-site variance of the type parameter
      */
-    open fun visitTypeParameter(flags: Int, name: String, id: Int, variance: KmVariance): KmTypeParameterVisitor? =
+    public open fun visitTypeParameter(flags: Int, name: String, id: Int, variance: KmVariance): KmTypeParameterVisitor? =
         delegate?.visitTypeParameter(flags, name, id, variance)
 
     /**
-     * Visits the type of the receiver of the function, if this is an extension function.
+     * Visits the type of the receiver of the function if this is an extension function.
      *
      * @param flags type flags, consisting of [Flag.Type] flags
      */
-    open fun visitReceiverParameterType(flags: Int): KmTypeVisitor? =
+    public open fun visitReceiverParameterType(flags: Int): KmTypeVisitor? =
         delegate?.visitReceiverParameterType(flags)
 
     /**
-     * Visits the type of a context receiver of the function.
+     * Visits the type of the context receiver of the function.
      *
      * @param flags type flags, consisting of [Flag.Type] flags
      */
     @ExperimentalContextReceivers
-    open fun visitContextReceiverType(flags: Int): KmTypeVisitor? =
+    public open fun visitContextReceiverType(flags: Int): KmTypeVisitor? =
         delegate?.visitContextReceiverType(flags)
 
     /**
@@ -324,7 +325,7 @@ abstract class KmFunctionVisitor @JvmOverloads constructor(private val delegate:
      * @param flags value parameter flags, consisting of [Flag.ValueParameter] flags
      * @param name the name of the value parameter
      */
-    open fun visitValueParameter(flags: Int, name: String): KmValueParameterVisitor? =
+    public open fun visitValueParameter(flags: Int, name: String): KmValueParameterVisitor? =
         delegate?.visitValueParameter(flags, name)
 
     /**
@@ -332,20 +333,20 @@ abstract class KmFunctionVisitor @JvmOverloads constructor(private val delegate:
      *
      * @param flags type flags, consisting of [Flag.Type] flags
      */
-    open fun visitReturnType(flags: Int): KmTypeVisitor? =
+    public open fun visitReturnType(flags: Int): KmTypeVisitor? =
         delegate?.visitReturnType(flags)
 
     /**
      * Visits the version requirement on this function.
      */
-    open fun visitVersionRequirement(): KmVersionRequirementVisitor? =
+    public open fun visitVersionRequirement(): KmVersionRequirementVisitor? =
         delegate?.visitVersionRequirement()
 
     /**
      * Visits the contract of the function.
      */
     @ExperimentalContracts
-    open fun visitContract(): KmContractVisitor? =
+    public open fun visitContract(): KmContractVisitor? =
         delegate?.visitContract()
 
     /**
@@ -353,13 +354,13 @@ abstract class KmFunctionVisitor @JvmOverloads constructor(private val delegate:
      *
      * @param type the type of extension visitor to be returned
      */
-    open fun visitExtensions(type: KmExtensionType): KmFunctionExtensionVisitor? =
+    public open fun visitExtensions(type: KmExtensionType): KmFunctionExtensionVisitor? =
         delegate?.visitExtensions(type)
 
     /**
      * Visits the end of the function.
      */
-    open fun visitEnd() {
+    public open fun visitEnd() {
         delegate?.visitEnd()
     }
 }
@@ -372,7 +373,7 @@ abstract class KmFunctionVisitor @JvmOverloads constructor(private val delegate:
  */
 @Deprecated(VISITOR_API_MESSAGE)
 @Suppress("DEPRECATION")
-abstract class KmPropertyVisitor @JvmOverloads constructor(private val delegate: KmPropertyVisitor? = null) {
+public abstract class KmPropertyVisitor @JvmOverloads constructor(private val delegate: KmPropertyVisitor? = null) {
     /**
      * Visits a type parameter of the property.
      *
@@ -382,15 +383,15 @@ abstract class KmPropertyVisitor @JvmOverloads constructor(private val delegate:
      *           the name isn't enough (e.g. `class A<T> { fun <T> foo(t: T) }`)
      * @param variance the declaration-site variance of the type parameter
      */
-    open fun visitTypeParameter(flags: Int, name: String, id: Int, variance: KmVariance): KmTypeParameterVisitor? =
+    public open fun visitTypeParameter(flags: Int, name: String, id: Int, variance: KmVariance): KmTypeParameterVisitor? =
         delegate?.visitTypeParameter(flags, name, id, variance)
 
     /**
-     * Visits the type of the receiver of the property, if this is an extension property.
+     * Visits the type of the receiver of the property if this is an extension property.
      *
      * @param flags type flags, consisting of [Flag.Type] flags
      */
-    open fun visitReceiverParameterType(flags: Int): KmTypeVisitor? =
+    public open fun visitReceiverParameterType(flags: Int): KmTypeVisitor? =
         delegate?.visitReceiverParameterType(flags)
 
     /**
@@ -399,7 +400,7 @@ abstract class KmPropertyVisitor @JvmOverloads constructor(private val delegate:
      * @param flags type flags, consisting of [Flag.Type] flags
      */
     @ExperimentalContextReceivers
-    open fun visitContextReceiverType(flags: Int): KmTypeVisitor? =
+    public open fun visitContextReceiverType(flags: Int): KmTypeVisitor? =
         delegate?.visitContextReceiverType(flags)
 
     /**
@@ -408,7 +409,7 @@ abstract class KmPropertyVisitor @JvmOverloads constructor(private val delegate:
      * @param flags value parameter flags, consisting of [Flag.ValueParameter] flags
      * @param name the name of the value parameter (`"<set-?>"` for properties emitted by the Kotlin compiler)
      */
-    open fun visitSetterParameter(flags: Int, name: String): KmValueParameterVisitor? =
+    public open fun visitSetterParameter(flags: Int, name: String): KmValueParameterVisitor? =
         delegate?.visitSetterParameter(flags, name)
 
     /**
@@ -416,13 +417,13 @@ abstract class KmPropertyVisitor @JvmOverloads constructor(private val delegate:
      *
      * @param flags type flags, consisting of [Flag.Type] flags
      */
-    open fun visitReturnType(flags: Int): KmTypeVisitor? =
+    public open fun visitReturnType(flags: Int): KmTypeVisitor? =
         delegate?.visitReturnType(flags)
 
     /**
      * Visits the version requirement on this property.
      */
-    open fun visitVersionRequirement(): KmVersionRequirementVisitor? =
+    public open fun visitVersionRequirement(): KmVersionRequirementVisitor? =
         delegate?.visitVersionRequirement()
 
     /**
@@ -430,13 +431,13 @@ abstract class KmPropertyVisitor @JvmOverloads constructor(private val delegate:
      *
      * @param type the type of extension visitor to be returned
      */
-    open fun visitExtensions(type: KmExtensionType): KmPropertyExtensionVisitor? =
+    public open fun visitExtensions(type: KmExtensionType): KmPropertyExtensionVisitor? =
         delegate?.visitExtensions(type)
 
     /**
      * Visits the end of the property.
      */
-    open fun visitEnd() {
+    public open fun visitEnd() {
         delegate?.visitEnd()
     }
 }
@@ -449,7 +450,7 @@ abstract class KmPropertyVisitor @JvmOverloads constructor(private val delegate:
  */
 @Deprecated(VISITOR_API_MESSAGE)
 @Suppress("DEPRECATION")
-abstract class KmTypeAliasVisitor @JvmOverloads constructor(private val delegate: KmTypeAliasVisitor? = null) {
+public abstract class KmTypeAliasVisitor @JvmOverloads constructor(private val delegate: KmTypeAliasVisitor? = null) {
     /**
      * Visits a type parameter of the type alias.
      *
@@ -459,7 +460,7 @@ abstract class KmTypeAliasVisitor @JvmOverloads constructor(private val delegate
      *           the name isn't enough (e.g. `class A<T> { fun <T> foo(t: T) }`)
      * @param variance the declaration-site variance of the type parameter
      */
-    open fun visitTypeParameter(flags: Int, name: String, id: Int, variance: KmVariance): KmTypeParameterVisitor? =
+    public open fun visitTypeParameter(flags: Int, name: String, id: Int, variance: KmVariance): KmTypeParameterVisitor? =
         delegate?.visitTypeParameter(flags, name, id, variance)
 
     /**
@@ -467,7 +468,7 @@ abstract class KmTypeAliasVisitor @JvmOverloads constructor(private val delegate
      *
      * @param flags type flags, consisting of [Flag.Type] flags
      */
-    open fun visitUnderlyingType(flags: Int): KmTypeVisitor? =
+    public open fun visitUnderlyingType(flags: Int): KmTypeVisitor? =
         delegate?.visitUnderlyingType(flags)
 
     /**
@@ -476,7 +477,7 @@ abstract class KmTypeAliasVisitor @JvmOverloads constructor(private val delegate
      *
      * @param flags type flags, consisting of [Flag.Type] flags
      */
-    open fun visitExpandedType(flags: Int): KmTypeVisitor? =
+    public open fun visitExpandedType(flags: Int): KmTypeVisitor? =
         delegate?.visitExpandedType(flags)
 
     /**
@@ -484,14 +485,14 @@ abstract class KmTypeAliasVisitor @JvmOverloads constructor(private val delegate
      *
      * @param annotation annotation on the type alias
      */
-    open fun visitAnnotation(annotation: KmAnnotation) {
+    public open fun visitAnnotation(annotation: KmAnnotation) {
         delegate?.visitAnnotation(annotation)
     }
 
     /**
      * Visits the version requirement on this type alias.
      */
-    open fun visitVersionRequirement(): KmVersionRequirementVisitor? =
+    public open fun visitVersionRequirement(): KmVersionRequirementVisitor? =
         delegate?.visitVersionRequirement()
 
     /**
@@ -499,13 +500,13 @@ abstract class KmTypeAliasVisitor @JvmOverloads constructor(private val delegate
      *
      * @param type the type of extension visitor to be returned
      */
-    open fun visitExtensions(type: KmExtensionType): KmTypeAliasExtensionVisitor? =
+    public open fun visitExtensions(type: KmExtensionType): KmTypeAliasExtensionVisitor? =
         delegate?.visitExtensions(type)
 
     /**
      * Visits the end of the type alias.
      */
-    open fun visitEnd() {
+    public open fun visitEnd() {
         delegate?.visitEnd()
     }
 }
@@ -518,13 +519,13 @@ abstract class KmTypeAliasVisitor @JvmOverloads constructor(private val delegate
  */
 @Deprecated(VISITOR_API_MESSAGE)
 @Suppress("DEPRECATION")
-abstract class KmValueParameterVisitor @JvmOverloads constructor(private val delegate: KmValueParameterVisitor? = null) {
+public abstract class KmValueParameterVisitor @JvmOverloads constructor(private val delegate: KmValueParameterVisitor? = null) {
     /**
      * Visits the type of the value parameter, if this is **not** a `vararg` parameter.
      *
      * @param flags type flags, consisting of [Flag.Type] flags
      */
-    open fun visitType(flags: Int): KmTypeVisitor? =
+    public open fun visitType(flags: Int): KmTypeVisitor? =
         delegate?.visitType(flags)
 
     /**
@@ -532,7 +533,7 @@ abstract class KmValueParameterVisitor @JvmOverloads constructor(private val del
      *
      * @param flags type flags, consisting of [Flag.Type] flags
      */
-    open fun visitVarargElementType(flags: Int): KmTypeVisitor? =
+    public open fun visitVarargElementType(flags: Int): KmTypeVisitor? =
         delegate?.visitVarargElementType(flags)
 
     /**
@@ -540,13 +541,13 @@ abstract class KmValueParameterVisitor @JvmOverloads constructor(private val del
      *
      * @param type the type of extension visitor to be returned
      */
-    open fun visitExtensions(type: KmExtensionType): KmValueParameterExtensionVisitor? =
+    public open fun visitExtensions(type: KmExtensionType): KmValueParameterExtensionVisitor? =
         delegate?.visitExtensions(type)
 
     /**
      * Visits the end of the value parameter.
      */
-    open fun visitEnd() {
+    public open fun visitEnd() {
         delegate?.visitEnd()
     }
 }
@@ -558,13 +559,13 @@ abstract class KmValueParameterVisitor @JvmOverloads constructor(private val del
  */
 @Deprecated(VISITOR_API_MESSAGE)
 @Suppress("DEPRECATION")
-abstract class KmTypeParameterVisitor @JvmOverloads constructor(private val delegate: KmTypeParameterVisitor? = null) {
+public abstract class KmTypeParameterVisitor @JvmOverloads constructor(private val delegate: KmTypeParameterVisitor? = null) {
     /**
      * Visits the upper bound of the type parameter.
      *
      * @param flags type flags, consisting of [Flag.Type] flags
      */
-    open fun visitUpperBound(flags: Int): KmTypeVisitor? =
+    public open fun visitUpperBound(flags: Int): KmTypeVisitor? =
         delegate?.visitUpperBound(flags)
 
     /**
@@ -572,13 +573,13 @@ abstract class KmTypeParameterVisitor @JvmOverloads constructor(private val dele
      *
      * @param type the type of extension visitor to be returned
      */
-    open fun visitExtensions(type: KmExtensionType): KmTypeParameterExtensionVisitor? =
+    public open fun visitExtensions(type: KmExtensionType): KmTypeParameterExtensionVisitor? =
         delegate?.visitExtensions(type)
 
     /**
      * Visits the end of the type parameter.
      */
-    open fun visitEnd() {
+    public open fun visitEnd() {
         delegate?.visitEnd()
     }
 }
@@ -596,13 +597,13 @@ abstract class KmTypeParameterVisitor @JvmOverloads constructor(private val dele
  */
 @Deprecated(VISITOR_API_MESSAGE)
 @Suppress("DEPRECATION")
-abstract class KmTypeVisitor @JvmOverloads constructor(private val delegate: KmTypeVisitor? = null) {
+public abstract class KmTypeVisitor @JvmOverloads constructor(private val delegate: KmTypeVisitor? = null) {
     /**
      * Visits the name of the class, if this type's classifier is a class.
      *
      * @param name the name of the class
      */
-    open fun visitClass(name: ClassName) {
+    public open fun visitClass(name: ClassName) {
         delegate?.visitClass(name)
     }
 
@@ -612,7 +613,7 @@ abstract class KmTypeVisitor @JvmOverloads constructor(private val delegate: KmT
      *
      * @param name the name of the type alias
      */
-    open fun visitTypeAlias(name: ClassName) {
+    public open fun visitTypeAlias(name: ClassName) {
         delegate?.visitTypeAlias(name)
     }
 
@@ -621,7 +622,7 @@ abstract class KmTypeVisitor @JvmOverloads constructor(private val delegate: KmT
      *
      * @param id id of the type parameter
      */
-    open fun visitTypeParameter(id: Int) {
+    public open fun visitTypeParameter(id: Int) {
         delegate?.visitTypeParameter(id)
     }
 
@@ -632,14 +633,14 @@ abstract class KmTypeVisitor @JvmOverloads constructor(private val delegate: KmT
      * @param flags type flags, consisting of [Flag.Type] flags
      * @param variance the variance of the type projection
      */
-    open fun visitArgument(flags: Int, variance: KmVariance): KmTypeVisitor? =
+    public open fun visitArgument(flags: Int, variance: KmVariance): KmTypeVisitor? =
         delegate?.visitArgument(flags, variance)
 
     /**
      * Visits the star (`*`) projection used in a type argument of the type based on a class or on a type alias.
      * For example, in `MutableMap<in String?, *>`, `*` is the star projection which is the second type argument of the type.
      */
-    open fun visitStarProjection() {
+    public open fun visitStarProjection() {
         delegate?.visitStarProjection()
     }
 
@@ -654,7 +655,7 @@ abstract class KmTypeVisitor @JvmOverloads constructor(private val delegate: KmT
      *
      * @param flags type flags, consisting of [Flag.Type] flags
      */
-    open fun visitAbbreviatedType(flags: Int): KmTypeVisitor? =
+    public open fun visitAbbreviatedType(flags: Int): KmTypeVisitor? =
         delegate?.visitAbbreviatedType(flags)
 
     /**
@@ -669,7 +670,7 @@ abstract class KmTypeVisitor @JvmOverloads constructor(private val delegate: KmT
      *
      * @param flags type flags, consisting of [Flag.Type] flags
      */
-    open fun visitOuterType(flags: Int): KmTypeVisitor? =
+    public open fun visitOuterType(flags: Int): KmTypeVisitor? =
         delegate?.visitOuterType(flags)
 
     /**
@@ -680,7 +681,7 @@ abstract class KmTypeVisitor @JvmOverloads constructor(private val delegate: KmT
      * @param typeFlexibilityId id of the kind of flexibility this type has. For example, "kotlin.jvm.PlatformType" for JVM platform types,
      *                          or "kotlin.DynamicType" for JS dynamic type
      */
-    open fun visitFlexibleTypeUpperBound(flags: Int, typeFlexibilityId: String?): KmTypeVisitor? =
+    public open fun visitFlexibleTypeUpperBound(flags: Int, typeFlexibilityId: String?): KmTypeVisitor? =
         delegate?.visitFlexibleTypeUpperBound(flags, typeFlexibilityId)
 
     /**
@@ -688,13 +689,13 @@ abstract class KmTypeVisitor @JvmOverloads constructor(private val delegate: KmT
      *
      * @param type the type of extension visitor to be returned
      */
-    open fun visitExtensions(type: KmExtensionType): KmTypeExtensionVisitor? =
+    public open fun visitExtensions(type: KmExtensionType): KmTypeExtensionVisitor? =
         delegate?.visitExtensions(type)
 
     /**
      * Visits the end of the type.
      */
-    open fun visitEnd() {
+    public open fun visitEnd() {
         delegate?.visitEnd()
     }
 }
@@ -708,7 +709,7 @@ abstract class KmTypeVisitor @JvmOverloads constructor(private val delegate: KmT
  * When using this class, [visit] must be called first, followed by [visitVersion], followed by [visitEnd].
  */
 @Deprecated(VISITOR_API_MESSAGE)
-abstract class KmVersionRequirementVisitor @JvmOverloads constructor(@Suppress("DEPRECATION") private val delegate: KmVersionRequirementVisitor? = null) {
+public abstract class KmVersionRequirementVisitor @JvmOverloads constructor(@Suppress("DEPRECATION") private val delegate: KmVersionRequirementVisitor? = null) {
     /**
      * Visits the description of this version requirement.
      *
@@ -718,7 +719,7 @@ abstract class KmVersionRequirementVisitor @JvmOverloads constructor(@Suppress("
      * @param errorCode optional error code to be displayed in the diagnostic
      * @param message optional message to be displayed in the diagnostic
      */
-    open fun visit(kind: KmVersionRequirementVersionKind, level: KmVersionRequirementLevel, errorCode: Int?, message: String?) {
+    public open fun visit(kind: KmVersionRequirementVersionKind, level: KmVersionRequirementLevel, errorCode: Int?, message: String?) {
         delegate?.visit(kind, level, errorCode, message)
     }
 
@@ -729,14 +730,14 @@ abstract class KmVersionRequirementVisitor @JvmOverloads constructor(@Suppress("
      * @param minor the minor component of the version (e.g. "2" in "1.2.3")
      * @param patch the patch component of the version (e.g. "3" in "1.2.3")
      */
-    open fun visitVersion(major: Int, minor: Int, patch: Int) {
+    public open fun visitVersion(major: Int, minor: Int, patch: Int) {
         delegate?.visitVersion(major, minor, patch)
     }
 
     /**
      * Visits the end of the version requirement.
      */
-    open fun visitEnd() {
+    public open fun visitEnd() {
         delegate?.visitEnd()
     }
 }
@@ -752,7 +753,7 @@ abstract class KmVersionRequirementVisitor @JvmOverloads constructor(@Suppress("
 @Deprecated(VISITOR_API_MESSAGE)
 @Suppress("DEPRECATION")
 @ExperimentalContracts
-abstract class KmContractVisitor @JvmOverloads constructor(private val delegate: KmContractVisitor? = null) {
+public abstract class KmContractVisitor @JvmOverloads constructor(private val delegate: KmContractVisitor? = null) {
     /**
      * Visits an effect of this contract.
      *
@@ -760,13 +761,13 @@ abstract class KmContractVisitor @JvmOverloads constructor(private val delegate:
      * @param invocationKind optional number of invocations of the lambda parameter of this function,
      *   specified further in the effect expression
      */
-    open fun visitEffect(type: KmEffectType, invocationKind: KmEffectInvocationKind?): KmEffectVisitor? =
+    public open fun visitEffect(type: KmEffectType, invocationKind: KmEffectInvocationKind?): KmEffectVisitor? =
         delegate?.visitEffect(type, invocationKind)
 
     /**
      * Visits the end of the contract.
      */
-    open fun visitEnd() {
+    public open fun visitEnd() {
         delegate?.visitEnd()
     }
 }
@@ -783,25 +784,25 @@ abstract class KmContractVisitor @JvmOverloads constructor(private val delegate:
 @Deprecated(VISITOR_API_MESSAGE)
 @Suppress("DEPRECATION")
 @ExperimentalContracts
-abstract class KmEffectVisitor @JvmOverloads constructor(private val delegate: KmEffectVisitor? = null) {
+public abstract class KmEffectVisitor @JvmOverloads constructor(private val delegate: KmEffectVisitor? = null) {
     /**
      * Visits the optional argument of the effect constructor, i.e. the constant value for the [KmEffectType.RETURNS_CONSTANT] effect,
      * or the parameter reference for the [KmEffectType.CALLS] effect.
      */
-    open fun visitConstructorArgument(): KmEffectExpressionVisitor? =
+    public open fun visitConstructorArgument(): KmEffectExpressionVisitor? =
         delegate?.visitConstructorArgument()
 
     /**
      * Visits the optional conclusion of the effect. If this method is called, the effect represents an implication with the
      * right-hand side handled by the returned visitor.
      */
-    open fun visitConclusionOfConditionalEffect(): KmEffectExpressionVisitor? =
+    public open fun visitConclusionOfConditionalEffect(): KmEffectExpressionVisitor? =
         delegate?.visitConclusionOfConditionalEffect()
 
     /**
      * Visits the end of the effect.
      */
-    open fun visitEnd() {
+    public open fun visitEnd() {
         delegate?.visitEnd()
     }
 }
@@ -817,7 +818,7 @@ abstract class KmEffectVisitor @JvmOverloads constructor(private val delegate: K
 @Deprecated(VISITOR_API_MESSAGE)
 @Suppress("DEPRECATION")
 @ExperimentalContracts
-abstract class KmEffectExpressionVisitor @JvmOverloads constructor(private val delegate: KmEffectExpressionVisitor? = null) {
+public abstract class KmEffectExpressionVisitor @JvmOverloads constructor(private val delegate: KmEffectExpressionVisitor? = null) {
     /**
      * Visits the basic information of the effect expression.
      *
@@ -825,7 +826,7 @@ abstract class KmEffectExpressionVisitor @JvmOverloads constructor(private val d
      * @param parameterIndex optional 1-based index of the value parameter of the function, for effects which assert something about
      *                       the function parameters. The index 0 means the extension receiver parameter
      */
-    open fun visit(flags: Int, parameterIndex: Int?) {
+    public open fun visit(flags: Int, parameterIndex: Int?) {
         delegate?.visit(flags, parameterIndex)
     }
 
@@ -834,7 +835,7 @@ abstract class KmEffectExpressionVisitor @JvmOverloads constructor(private val d
      *
      * @param value the constant value
      */
-    open fun visitConstantValue(value: Any?) {
+    public open fun visitConstantValue(value: Any?) {
         delegate?.visitConstantValue(value)
     }
 
@@ -843,27 +844,27 @@ abstract class KmEffectExpressionVisitor @JvmOverloads constructor(private val d
      *
      * @param flags type flags, consisting of [Flag.Type] flags
      */
-    open fun visitIsInstanceType(flags: Int): KmTypeVisitor? =
+    public open fun visitIsInstanceType(flags: Int): KmTypeVisitor? =
         delegate?.visitIsInstanceType(flags)
 
     /**
      * Visits the argument of an `&&`-expression. If this method is called, the expression represents the left-hand side and
      * the returned visitor handles the right-hand side.
      */
-    open fun visitAndArgument(): KmEffectExpressionVisitor? =
+    public open fun visitAndArgument(): KmEffectExpressionVisitor? =
         delegate?.visitAndArgument()
 
     /**
      * Visits the argument of an `||`-expression. If this method is called, the expression represents the left-hand side and
      * the returned visitor handles the right-hand side.
      */
-    open fun visitOrArgument(): KmEffectExpressionVisitor? =
+    public open fun visitOrArgument(): KmEffectExpressionVisitor? =
         delegate?.visitOrArgument()
 
     /**
      * Visits the end of the effect expression.
      */
-    open fun visitEnd() {
+    public open fun visitEnd() {
         delegate?.visitEnd()
     }
 }
@@ -872,7 +873,7 @@ abstract class KmEffectExpressionVisitor @JvmOverloads constructor(private val d
  * Variance applied to a type parameter on the declaration site (*declaration-site variance*),
  * or to a type in a projection (*use-site variance*).
  */
-enum class KmVariance {
+public enum class KmVariance {
     /**
      * The affected type parameter or type is *invariant*, which means it has no variance applied to it.
      */
@@ -896,7 +897,7 @@ enum class KmVariance {
  * may change in a subsequent release.
  */
 @ExperimentalContracts
-enum class KmEffectType {
+public enum class KmEffectType {
     /**
      * Represents `returns(value)` contract effect:
      * a situation when a function returns normally with the specified return value.
@@ -927,7 +928,7 @@ enum class KmEffectType {
  * may change in a subsequent release.
  */
 @ExperimentalContracts
-enum class KmEffectInvocationKind {
+public enum class KmEffectInvocationKind {
     /**
      * A function parameter will be invoked one time or not invoked at all.
      */
@@ -947,7 +948,7 @@ enum class KmEffectInvocationKind {
 /**
  * Severity of the diagnostic reported by the compiler when a version requirement is not satisfied.
  */
-enum class KmVersionRequirementLevel {
+public enum class KmVersionRequirementLevel {
     /**
      * Represents a diagnostic with 'WARNING' severity.
      */
@@ -967,7 +968,7 @@ enum class KmVersionRequirementLevel {
 /**
  * The kind of the version that is required by a version requirement.
  */
-enum class KmVersionRequirementVersionKind {
+public enum class KmVersionRequirementVersionKind {
     /**
      * Indicates that certain language version is required.
      */

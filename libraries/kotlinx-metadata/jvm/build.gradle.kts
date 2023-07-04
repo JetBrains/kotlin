@@ -50,6 +50,10 @@ dependencies {
     testImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
 }
 
+kotlin {
+    explicitApi()
+}
+
 if (deployVersion != null) {
     publish()
 }

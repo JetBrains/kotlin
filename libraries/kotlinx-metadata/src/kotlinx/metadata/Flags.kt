@@ -18,7 +18,7 @@ import kotlinx.metadata.internal.FlagImpl
     "Flags API is deprecated and this typealias will be removed. Use Int directly and then migrate to corresponding Km nodes extensions, e.g. KmClass.visibility",
     ReplaceWith("Int")
 )
-typealias Flags = Int
+public typealias Flags = Int
 
 /**
  * Combines several flags into an integer bitmask.
@@ -31,5 +31,5 @@ typealias Flags = Int
 @Deprecated(
     "Flags API is deprecated and this function will be removed. Create Km nodes directly and then use corresponding Km nodes extensions, e.g. KmClass.visibility",
 )
-fun flagsOf(vararg flags: Flag): Int =
+public fun flagsOf(vararg flags: Flag): Int =
     flags.fold(0) { acc, flag -> (flag as FlagImpl) + acc }

@@ -9,26 +9,26 @@ package kotlinx.metadata.internal.extensions
 import kotlinx.metadata.*
 import kotlinx.metadata.internal.common.KmModuleFragmentExtensionVisitor
 
-interface KmExtension<V : KmExtensionVisitor> : KmExtensionVisitor {
-    fun accept(visitor: V)
+public interface KmExtension<V : KmExtensionVisitor> : KmExtensionVisitor {
+    public fun accept(visitor: V)
 }
 
-interface KmClassExtension : KmClassExtensionVisitor, KmExtension<KmClassExtensionVisitor>
+public interface KmClassExtension : KmClassExtensionVisitor, KmExtension<KmClassExtensionVisitor>
 
-interface KmPackageExtension : KmPackageExtensionVisitor, KmExtension<KmPackageExtensionVisitor>
+public interface KmPackageExtension : KmPackageExtensionVisitor, KmExtension<KmPackageExtensionVisitor>
 
-interface KmModuleFragmentExtension : KmModuleFragmentExtensionVisitor, KmExtension<KmModuleFragmentExtensionVisitor>
+public interface KmModuleFragmentExtension : KmModuleFragmentExtensionVisitor, KmExtension<KmModuleFragmentExtensionVisitor>
 
-interface KmFunctionExtension : KmFunctionExtensionVisitor, KmExtension<KmFunctionExtensionVisitor>
+public interface KmFunctionExtension : KmFunctionExtensionVisitor, KmExtension<KmFunctionExtensionVisitor>
 
-interface KmPropertyExtension : KmPropertyExtensionVisitor, KmExtension<KmPropertyExtensionVisitor>
+public interface KmPropertyExtension : KmPropertyExtensionVisitor, KmExtension<KmPropertyExtensionVisitor>
 
-interface KmConstructorExtension : KmConstructorExtensionVisitor, KmExtension<KmConstructorExtensionVisitor>
+public interface KmConstructorExtension : KmConstructorExtensionVisitor, KmExtension<KmConstructorExtensionVisitor>
 
-interface KmTypeParameterExtension : KmTypeParameterExtensionVisitor, KmExtension<KmTypeParameterExtensionVisitor>
+public interface KmTypeParameterExtension : KmTypeParameterExtensionVisitor, KmExtension<KmTypeParameterExtensionVisitor>
 
-interface KmTypeExtension : KmTypeExtensionVisitor, KmExtension<KmTypeExtensionVisitor>
+public interface KmTypeExtension : KmTypeExtensionVisitor, KmExtension<KmTypeExtensionVisitor>
 
-interface KmTypeAliasExtension : KmTypeAliasExtensionVisitor, KmExtension<KmTypeAliasExtensionVisitor>
+public interface KmTypeAliasExtension : KmTypeAliasExtensionVisitor, KmExtension<KmTypeAliasExtensionVisitor>
 
-interface KmValueParameterExtension : KmValueParameterExtensionVisitor, KmExtension<KmValueParameterExtensionVisitor>
+public interface KmValueParameterExtension : KmValueParameterExtensionVisitor, KmExtension<KmValueParameterExtensionVisitor>

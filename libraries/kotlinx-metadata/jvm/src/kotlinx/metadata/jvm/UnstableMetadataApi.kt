@@ -15,4 +15,4 @@ package kotlinx.metadata.jvm
     level = RequiresOptIn.Level.WARNING
 )
 @MustBeDocumented
-annotation class UnstableMetadataApi
+public annotation class UnstableMetadataApi

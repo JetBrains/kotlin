@@ -13,10 +13,10 @@ import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMemberSignature as J
  * @property name name of method or field
  * @property descriptor JVM descriptor of a method, e.g. `(Ljava/lang/Object;)Z`, or a field type, e.g. `Ljava/lang/String;`
  */
-sealed class JvmMemberSignature {
+public sealed class JvmMemberSignature {
 
-    abstract val name: String
-    abstract val descriptor: String
+    public abstract val name: String
+    public abstract val descriptor: String
 
     /**
      * Returns a string representation of the signature.
@@ -30,14 +30,14 @@ sealed class JvmMemberSignature {
     // Two following declarations are deprecated since 0.6.1, should be error in 0.7.0+
 
     @Deprecated("Deprecated for removal. Use descriptor instead", ReplaceWith("descriptor"), level = DeprecationLevel.WARNING)
-    val desc: String get() = descriptor
+    public val desc: String get() = descriptor
 
     @Deprecated(
         "asString() is deprecated as redundant. Use toString() instead",
         ReplaceWith("toString()"),
         level = DeprecationLevel.WARNING
     )
-    fun asString(): String = toString()
+    public fun asString(): String = toString()
 }
 
 /**
@@ -47,8 +47,8 @@ sealed class JvmMemberSignature {
  *
  * @see JvmMemberSignature
  */
-data class JvmMethodSignature(override val name: String, override val descriptor: String) : JvmMemberSignature() {
-    override fun toString() = name + descriptor
+public data class JvmMethodSignature(override val name: String, override val descriptor: String) : JvmMemberSignature() {
+    override fun toString(): String = name + descriptor
 }
 
 /**
@@ -58,8 +58,8 @@ data class JvmMethodSignature(override val name: String, override val descriptor
  *
  * @see JvmMemberSignature
  */
-data class JvmFieldSignature(override val name: String, override val descriptor: String) : JvmMemberSignature() {
-    override fun toString() = "$name:$descriptor"
+public data class JvmFieldSignature(override val name: String, override val descriptor: String) : JvmMemberSignature() {
+    override fun toString(): String = "$name:$descriptor"
 }
 
 

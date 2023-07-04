@@ -19,15 +19,15 @@ import kotlin.contracts.ExperimentalContracts
  * Allows to populate [WriteContext] with additional data
  * that can be used when writing metadata in [MetadataExtensions].
  */
-interface WriteContextExtension
+public interface WriteContextExtension
 
-open class WriteContext(val strings: StringTable, val contextExtensions: List<WriteContextExtension> = emptyList()) {
-    val versionRequirements: MutableVersionRequirementTable = MutableVersionRequirementTable()
+public open class WriteContext(public val strings: StringTable, public val contextExtensions: List<WriteContextExtension> = emptyList()) {
+    internal val versionRequirements: MutableVersionRequirementTable = MutableVersionRequirementTable()
 
-    operator fun get(string: String): Int =
+    public operator fun get(string: String): Int =
         strings.getStringIndex(string)
 
-    fun getClassName(name: ClassName): Int =
+    internal fun getClassName(name: ClassName): Int =
         strings.getClassNameIndex(name)
 }
 
@@ -191,7 +191,7 @@ private fun writeFunction(c: WriteContext, flags: Int, name: String, output: (Pr
         }
     }
 
-fun writeProperty(
+public fun writeProperty(
     c: WriteContext, flags: Int, name: String, getterFlags: Int, setterFlags: Int, output: (ProtoBuf.Property.Builder) -> Unit
 ): KmPropertyVisitor = object : KmPropertyVisitor() {
     val t = ProtoBuf.Property.newBuilder()
@@ -424,8 +424,8 @@ private fun writeEffectExpression(c: WriteContext, output: (ProtoBuf.Expression.
         }
     }
 
-open class ClassWriter(stringTable: StringTable, contextExtensions: List<WriteContextExtension> = emptyList()) : KmClassVisitor() {
-    protected val t = ProtoBuf.Class.newBuilder()!!
+public open class ClassWriter(stringTable: StringTable, contextExtensions: List<WriteContextExtension> = emptyList()) : KmClassVisitor() {
+    protected val t: ProtoBuf.Class.Builder = ProtoBuf.Class.newBuilder()!!
     protected val c: WriteContext = WriteContext(stringTable, contextExtensions)
 
     override fun visit(flags: Int, name: ClassName) {
@@ -497,8 +497,8 @@ open class ClassWriter(stringTable: StringTable, contextExtensions: List<WriteCo
     }
 }
 
-open class PackageWriter(stringTable: StringTable, contextExtensions: List<WriteContextExtension> = emptyList()) : KmPackageVisitor() {
-    protected val t = ProtoBuf.Package.newBuilder()!!
+public open class PackageWriter(stringTable: StringTable, contextExtensions: List<WriteContextExtension> = emptyList()) : KmPackageVisitor() {
+    protected val t: ProtoBuf.Package.Builder = ProtoBuf.Package.newBuilder()!!
     protected val c: WriteContext = WriteContext(stringTable, contextExtensions)
 
     override fun visitFunction(flags: Int, name: String): KmFunctionVisitor? =
@@ -522,9 +522,9 @@ open class PackageWriter(stringTable: StringTable, contextExtensions: List<Write
     }
 }
 
-open class ModuleFragmentWriter(stringTable: StringTable, contextExtensions: List<WriteContextExtension> = emptyList()) :
+public open class ModuleFragmentWriter(stringTable: StringTable, contextExtensions: List<WriteContextExtension> = emptyList()) :
     KmModuleFragmentVisitor() {
-    protected val t = ProtoBuf.PackageFragment.newBuilder()!!
+    protected val t: ProtoBuf.PackageFragment.Builder = ProtoBuf.PackageFragment.newBuilder()!!
     protected val c: WriteContext = WriteContext(stringTable, contextExtensions)
 
     override fun visitPackage(): KmPackageVisitor? = object : PackageWriter(c.strings, c.contextExtensions) {
@@ -547,9 +547,9 @@ open class ModuleFragmentWriter(stringTable: StringTable, contextExtensions: Lis
         }
 }
 
-open class LambdaWriter(stringTable: StringTable) : KmLambdaVisitor() {
+public open class LambdaWriter(stringTable: StringTable) : KmLambdaVisitor() {
     protected var t: ProtoBuf.Function.Builder? = null
-    protected val c = WriteContext(stringTable)
+    protected val c: WriteContext = WriteContext(stringTable)
 
     override fun visitFunction(flags: Int, name: String): KmFunctionVisitor? =
         writeFunction(c, flags, name) { t = it }

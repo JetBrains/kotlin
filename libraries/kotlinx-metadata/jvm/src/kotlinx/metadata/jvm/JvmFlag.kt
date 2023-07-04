@@ -21,12 +21,12 @@ private const val prefix = "Flag API is deprecated. Please use"
  * @see Flags
  */
 @Deprecated("$prefix corresponding extensions on Km nodes, such as KmClass.hasMethodBodiesInInterface")
-object JvmFlag {
+public object JvmFlag {
     /**
      * JVM-specific property flags in addition to common property flags declared in [Flag.Property].
      */
     @Deprecated("$prefix corresponding extension on KmProperty: KmProperty.isMovedFromInterfaceCompanion")
-    object Property {
+    public object Property {
         /**
          * Applied to a property declared in an interface's companion object, signifies that its backing field is declared as a static
          * field in the interface. In Kotlin code, this usually happens if the property is annotated with [JvmField].
@@ -35,14 +35,14 @@ object JvmFlag {
          */
         @JvmField
         @Deprecated("$prefix KmProperty.isMovedFromInterfaceCompanion")
-        val IS_MOVED_FROM_INTERFACE_COMPANION = booleanFlag(JF.IS_MOVED_FROM_INTERFACE_COMPANION)
+        public val IS_MOVED_FROM_INTERFACE_COMPANION: Flag = booleanFlag(JF.IS_MOVED_FROM_INTERFACE_COMPANION)
     }
 
     /**
      * JVM-specific class flags in addition to common class flags declared in [Flag.Class].
      */
     @Deprecated("$prefix corresponding extensions on KmClass")
-    object Class {
+    public object Class {
         /**
          * Applied to an interface compiled with -Xjvm-default=all or all-compatibility.
          *
@@ -52,7 +52,7 @@ object JvmFlag {
          */
         @JvmField
         @Deprecated("$prefix KmClass.hasMethodBodiesInInterface")
-        val HAS_METHOD_BODIES_IN_INTERFACE = booleanFlag(JF.IS_COMPILED_IN_JVM_DEFAULT_MODE)
+        public val HAS_METHOD_BODIES_IN_INTERFACE: Flag = booleanFlag(JF.IS_COMPILED_IN_JVM_DEFAULT_MODE)
 
         /**
          * Applied to an interface compiled with -Xjvm-default=all-compatibility.
@@ -63,7 +63,7 @@ object JvmFlag {
          */
         @JvmField
         @Deprecated("$prefix KmClass.isCompiledInCompatibilityMode")
-        val IS_COMPILED_IN_COMPATIBILITY_MODE = booleanFlag(JF.IS_COMPILED_IN_COMPATIBILITY_MODE)
+        public val IS_COMPILED_IN_COMPATIBILITY_MODE: Flag = booleanFlag(JF.IS_COMPILED_IN_COMPATIBILITY_MODE)
     }
 
     internal fun booleanFlag(f: F.BooleanFlagField): Flag =

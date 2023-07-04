@@ -7,7 +7,7 @@ package kotlinx.metadata.internal
 
 import org.jetbrains.kotlin.metadata.deserialization.Flags as F
 
-class FlagImpl(internal val offset: Int, internal val bitWidth: Int, internal val value: Int) : @Suppress("DEPRECATION") kotlinx.metadata.Flag() {
+public class FlagImpl(internal val offset: Int, internal val bitWidth: Int, internal val value: Int) : @Suppress("DEPRECATION") kotlinx.metadata.Flag() {
     @IgnoreInApiDump
     internal constructor(field: F.FlagField<*>, value: Int) : this(field.offset, field.bitWidth, value)
 

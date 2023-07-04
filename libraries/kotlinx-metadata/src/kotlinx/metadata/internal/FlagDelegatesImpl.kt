@@ -39,9 +39,9 @@ public class BooleanFlagDelegate<Node>(private val flags: KMutableProperty1<Node
         mask = 1 shl flag.offset
     }
 
-    operator fun getValue(thisRef: Node, property: KProperty<*>): Boolean = flag(flags.get(thisRef))
+    public operator fun getValue(thisRef: Node, property: KProperty<*>): Boolean = flag(flags.get(thisRef))
 
-    operator fun setValue(thisRef: Node, property: KProperty<*>, value: Boolean) {
+    public operator fun setValue(thisRef: Node, property: KProperty<*>, value: Boolean) {
         val newValue = if (value) flags.get(thisRef) or mask else flags.get(thisRef) and mask.inv()
         flags.set(thisRef, newValue)
     }

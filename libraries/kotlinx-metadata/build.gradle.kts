@@ -15,3 +15,7 @@ dependencies {
     compileOnly(project(":core:metadata"))
     compileOnly(protobufLite())
 }
+
+kotlin {
+    explicitApi()
+}

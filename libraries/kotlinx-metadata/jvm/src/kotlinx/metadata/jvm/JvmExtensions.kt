@@ -20,13 +20,13 @@ import kotlinx.metadata.jvm.internal.jvm
  * If an incorrect index is used, either the `KProperty<*>` object passed to delegate methods will point to the wrong property
  * at runtime, or an exception will be thrown.
  */
-val KmClass.localDelegatedProperties: MutableList<KmProperty>
+public val KmClass.localDelegatedProperties: MutableList<KmProperty>
     get() = jvm.localDelegatedProperties
 
 /**
  * Name of the module where this class is declared.
  */
-var KmClass.moduleName: String?
+public var KmClass.moduleName: String?
     get() = jvm.moduleName
     set(value) {
         jvm.moduleName = value
@@ -36,7 +36,7 @@ var KmClass.moduleName: String?
  * JVM internal name of the original class this anonymous object is copied from. This value is set for anonymous objects
  * copied from bodies of inline functions to the use site by the Kotlin compiler.
  */
-var KmClass.anonymousObjectOriginName: String?
+public var KmClass.anonymousObjectOriginName: String?
     get() = jvm.anonymousObjectOriginName
     set(value) {
         jvm.anonymousObjectOriginName = value
@@ -46,7 +46,7 @@ var KmClass.anonymousObjectOriginName: String?
  * JVM-specific flags of the class, consisting of [JvmFlag.Class] flags.
  */
 @Deprecated("Flag API is deprecated. Please use corresponding member extensions on KmClass, such as KmClass.hasMethodBodiesInInterface")
-var KmClass.jvmFlags: Int
+public var KmClass.jvmFlags: Int
     get() = jvm.jvmFlags
     set(value) {
         jvm.jvmFlags = value
@@ -61,13 +61,13 @@ var KmClass.jvmFlags: Int
  * If an incorrect index is used, either the `KProperty<*>` object passed to delegate methods will point to the wrong property
  * at runtime, or an exception will be thrown.
  */
-val KmPackage.localDelegatedProperties: MutableList<KmProperty>
+public val KmPackage.localDelegatedProperties: MutableList<KmProperty>
     get() = jvm.localDelegatedProperties
 
 /**
  * Name of the module where this package fragment is declared.
  */
-var KmPackage.moduleName: String?
+public var KmPackage.moduleName: String?
     get() = jvm.moduleName
     set(value) {
         jvm.moduleName = value
@@ -78,7 +78,7 @@ var KmPackage.moduleName: String?
  *
  * Example: `JvmMethodSignature("equals", "(Ljava/lang/Object;)Z")`.
  */
-var KmFunction.signature: JvmMethodSignature?
+public var KmFunction.signature: JvmMethodSignature?
     get() = jvm.signature
     set(value) {
         jvm.signature = value
@@ -88,7 +88,7 @@ var KmFunction.signature: JvmMethodSignature?
  * JVM internal name of the original class the lambda class for this function is copied from. This value is set for lambdas
  * copied from bodies of inline functions to the use site by the Kotlin compiler.
  */
-var KmFunction.lambdaClassOriginName: String?
+public var KmFunction.lambdaClassOriginName: String?
     get() = jvm.lambdaClassOriginName
     set(value) {
         jvm.lambdaClassOriginName = value
@@ -98,7 +98,7 @@ var KmFunction.lambdaClassOriginName: String?
  * JVM-specific flags of the property, consisting of [JvmFlag.Property] flags.
  */
 @Deprecated("Flag API is deprecated. Please use corresponding member extensions on KmProperty, such as KmProperty.isMovedFromInterfaceCompanion")
-var KmProperty.jvmFlags: Int
+public var KmProperty.jvmFlags: Int
     get() = jvm.jvmFlags
     set(value) {
         jvm.jvmFlags = value
@@ -109,7 +109,7 @@ var KmProperty.jvmFlags: Int
  *
  * Example: `JvmFieldSignature("X", "Ljava/lang/Object;")`.
  */
-var KmProperty.fieldSignature: JvmFieldSignature?
+public var KmProperty.fieldSignature: JvmFieldSignature?
     get() = jvm.fieldSignature
     set(value) {
         jvm.fieldSignature = value
@@ -120,7 +120,7 @@ var KmProperty.fieldSignature: JvmFieldSignature?
  *
  * Example: `JvmMethodSignature("getX", "()Ljava/lang/Object;")`.
  */
-var KmProperty.getterSignature: JvmMethodSignature?
+public var KmProperty.getterSignature: JvmMethodSignature?
     get() = jvm.getterSignature
     set(value) {
         jvm.getterSignature = value
@@ -131,7 +131,7 @@ var KmProperty.getterSignature: JvmMethodSignature?
  *
  * Example: `JvmMethodSignature("setX", "(Ljava/lang/Object;)V")`.
  */
-var KmProperty.setterSignature: JvmMethodSignature?
+public var KmProperty.setterSignature: JvmMethodSignature?
     get() = jvm.setterSignature
     set(value) {
         jvm.setterSignature = value
@@ -142,7 +142,7 @@ var KmProperty.setterSignature: JvmMethodSignature?
  *
  * Example: `JvmMethodSignature("getX$annotations", "()V")`.
  */
-var KmProperty.syntheticMethodForAnnotations: JvmMethodSignature?
+public var KmProperty.syntheticMethodForAnnotations: JvmMethodSignature?
     get() = jvm.syntheticMethodForAnnotations
     set(value) {
         jvm.syntheticMethodForAnnotations = value
@@ -155,7 +155,7 @@ var KmProperty.syntheticMethodForAnnotations: JvmMethodSignature?
  *
  * Example: `JvmMethodSignature("getX$delegate", "()Ljava/lang/Object;")`.
  */
-var KmProperty.syntheticMethodForDelegate: JvmMethodSignature?
+public var KmProperty.syntheticMethodForDelegate: JvmMethodSignature?
     get() = jvm.syntheticMethodForDelegate
     set(value) {
         jvm.syntheticMethodForDelegate = value
@@ -166,7 +166,7 @@ var KmProperty.syntheticMethodForDelegate: JvmMethodSignature?
  *
  * Example: `JvmMethodSignature("<init>", "(Ljava/lang/Object;)V")`.
  */
-var KmConstructor.signature: JvmMethodSignature?
+public var KmConstructor.signature: JvmMethodSignature?
     get() = jvm.signature
     set(value) {
         jvm.signature = value
@@ -175,13 +175,13 @@ var KmConstructor.signature: JvmMethodSignature?
 /**
  * Annotations on the type parameter.
  */
-val KmTypeParameter.annotations: MutableList<KmAnnotation>
+public val KmTypeParameter.annotations: MutableList<KmAnnotation>
     get() = jvm.annotations
 
 /**
  * `true` if the type is seen as a raw type in Java.
  */
-var KmType.isRaw: Boolean
+public var KmType.isRaw: Boolean
     get() = jvm.isRaw
     set(value) {
         jvm.isRaw = value
@@ -190,5 +190,5 @@ var KmType.isRaw: Boolean
 /**
  * Annotations on the type.
  */
-val KmType.annotations: MutableList<KmAnnotation>
+public val KmType.annotations: MutableList<KmAnnotation>
     get() = jvm.annotations

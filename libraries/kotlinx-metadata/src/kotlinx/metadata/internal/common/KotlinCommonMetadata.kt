@@ -22,15 +22,16 @@ import java.io.ByteArrayInputStream
  * Usually such metadata comes from serialized klibs. However, special `kotlin_builtins` file from standard library
  * distribution can also be read with this reader.
  */
-class KotlinCommonMetadata private constructor(private val proto: ProtoBuf.PackageFragment) {
-    fun toKmModuleFragment(): KmModuleFragment =
+public class KotlinCommonMetadata private constructor(private val proto: ProtoBuf.PackageFragment) {
+    public fun toKmModuleFragment(): KmModuleFragment =
         KmModuleFragment().apply(this::accept)
 
-    class Writer : KmModuleFragmentVisitor() {
+    // private because there are no use-cases and it is not finished
+    private class Writer : KmModuleFragmentVisitor() {
         // TODO
     }
 
-    fun accept(v: KmModuleFragmentVisitor) {
+    public fun accept(v: KmModuleFragmentVisitor) {
         val strings = NameResolverImpl(proto.strings, proto.qualifiedNames)
         if (proto.hasPackage()) {
             v.visitPackage()?.let { proto.`package`.accept(it, strings) }
@@ -41,9 +42,9 @@ class KotlinCommonMetadata private constructor(private val proto: ProtoBuf.Packa
         v.visitEnd()
     }
 
-    companion object {
+    public companion object {
         @JvmStatic
-        fun read(bytes: ByteArray): KotlinCommonMetadata? {
+        public fun read(bytes: ByteArray): KotlinCommonMetadata? {
             val (proto, _) = ByteArrayInputStream(bytes).readBuiltinsPackageFragment()
             if (proto == null) return null
 
@@ -62,17 +63,17 @@ class KotlinCommonMetadata private constructor(private val proto: ProtoBuf.Packa
  * Can be read with [KotlinCommonMetadata.read].
  */
 @Suppress("DEPRECATION")
-class KmModuleFragment : KmModuleFragmentVisitor() {
+public class KmModuleFragment : KmModuleFragmentVisitor() {
 
     /**
      * Top-level functions, type aliases and properties in the module fragment.
      */
-    var pkg: KmPackage? = null
+    public var pkg: KmPackage? = null
 
     /**
      * Classes in the module fragment.
      */
-    val classes: MutableList<KmClass> = ArrayList()
+    public val classes: MutableList<KmClass> = ArrayList()
 
     private val extensions: List<KmModuleFragmentExtension> =
         MetadataExtensions.INSTANCES.map(MetadataExtensions::createModuleFragmentExtensions)
@@ -95,7 +96,7 @@ class KmModuleFragment : KmModuleFragmentVisitor() {
      * @param visitor the visitor which will visit data in the module fragment.
      */
     @Deprecated(VISITOR_API_MESSAGE)
-    fun accept(visitor: KmModuleFragmentVisitor) {
+    public fun accept(visitor: KmModuleFragmentVisitor) {
         pkg?.let { visitor.visitPackage()?.let(it::accept) }
         classes.forEach { visitor.visitClass()?.let(it::accept) }
         extensions.forEach { visitor.visitExtensions(it.type)?.let(it::accept) }
@@ -111,18 +112,18 @@ class KmModuleFragment : KmModuleFragmentVisitor() {
  */
 @Deprecated(VISITOR_API_MESSAGE)
 @Suppress("DEPRECATION")
-abstract class KmModuleFragmentVisitor @JvmOverloads constructor(private val delegate: KmModuleFragmentVisitor? = null) {
+public abstract class KmModuleFragmentVisitor @JvmOverloads constructor(private val delegate: KmModuleFragmentVisitor? = null) {
 
     /**
      * Visits a package within the module fragment.
      */
-    open fun visitPackage(): KmPackageVisitor? =
+    public open fun visitPackage(): KmPackageVisitor? =
         delegate?.visitPackage()
 
     /**
      * Visits a class within the module fragment.
      */
-    open fun visitClass(): KmClassVisitor? =
+    public open fun visitClass(): KmClassVisitor? =
         delegate?.visitClass()
 
     /**
@@ -130,13 +131,13 @@ abstract class KmModuleFragmentVisitor @JvmOverloads constructor(private val del
      *
      * @param type the type of extension visitor to be returned.
      */
-    open fun visitExtensions(type: KmExtensionType): KmModuleFragmentExtensionVisitor? =
+    public open fun visitExtensions(type: KmExtensionType): KmModuleFragmentExtensionVisitor? =
         delegate?.visitExtensions(type)
 
     /**
      * Visits the end of the module fragment.
      */
-    open fun visitEnd() {
+    public open fun visitEnd() {
         delegate?.visitEnd()
     }
 }
@@ -145,4 +146,4 @@ abstract class KmModuleFragmentVisitor @JvmOverloads constructor(private val del
  * A visitor to visit platform-specific extensions for a module fragment.
  */
 @Deprecated(VISITOR_API_MESSAGE)
-interface KmModuleFragmentExtensionVisitor : KmExtensionVisitor
+public interface KmModuleFragmentExtensionVisitor : KmExtensionVisitor

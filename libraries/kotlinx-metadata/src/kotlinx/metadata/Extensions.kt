@@ -30,7 +30,7 @@ import kotlin.reflect.KClass
  * In case an extension visitor of an unrelated type is returned, the code using the visitor API must ignore that visitor.
  */
 @Deprecated(VISITOR_API_MESSAGE)
-class KmExtensionType(private val klass: KClass<out KmExtensionVisitor>) {
+public class KmExtensionType(private val klass: KClass<out KmExtensionVisitor>) {
     override fun equals(other: Any?): Boolean =
         other is KmExtensionType && klass == other.klass
 
@@ -45,69 +45,69 @@ class KmExtensionType(private val klass: KClass<out KmExtensionVisitor>) {
  * A base interface for all extension visitors.
  */
 @Deprecated(VISITOR_API_MESSAGE)
-interface KmExtensionVisitor {
+public interface KmExtensionVisitor {
     /**
      * Type of this extension visitor.
      */
-    val type: KmExtensionType
+    public val type: KmExtensionType
 }
 
 /**
  * A visitor to visit platform-specific extensions for a declaration container, such as a class or a package fragment.
  */
 @Deprecated(VISITOR_API_MESSAGE)
-interface KmDeclarationContainerExtensionVisitor : KmExtensionVisitor
+public interface KmDeclarationContainerExtensionVisitor : KmExtensionVisitor
 
 /**
  * A visitor to visit platform-specific extensions for a class.
  */
 @Deprecated(VISITOR_API_MESSAGE)
-interface KmClassExtensionVisitor : KmDeclarationContainerExtensionVisitor
+public interface KmClassExtensionVisitor : KmDeclarationContainerExtensionVisitor
 
 /**
  * A visitor to visit platform-specific extensions for a package fragment.
  */
 @Deprecated(VISITOR_API_MESSAGE)
-interface KmPackageExtensionVisitor : KmDeclarationContainerExtensionVisitor
+public interface KmPackageExtensionVisitor : KmDeclarationContainerExtensionVisitor
 
 /**
  * A visitor to visit platform-specific extensions for a function.
  */
 @Deprecated(VISITOR_API_MESSAGE)
-interface KmFunctionExtensionVisitor : KmExtensionVisitor
+public interface KmFunctionExtensionVisitor : KmExtensionVisitor
 
 /**
  * A visitor to visit platform-specific extensions for a property.
  */
 @Deprecated(VISITOR_API_MESSAGE)
-interface KmPropertyExtensionVisitor : KmExtensionVisitor
+public interface KmPropertyExtensionVisitor : KmExtensionVisitor
 
 /**
  * A visitor to visit platform-specific extensions for a constructor.
  */
 @Deprecated(VISITOR_API_MESSAGE)
-interface KmConstructorExtensionVisitor : KmExtensionVisitor
+public interface KmConstructorExtensionVisitor : KmExtensionVisitor
 
 /**
  * A visitor to visit platform-specific extensions for a type parameter.
  */
 @Deprecated(VISITOR_API_MESSAGE)
-interface KmTypeParameterExtensionVisitor : KmExtensionVisitor
+public interface KmTypeParameterExtensionVisitor : KmExtensionVisitor
 
 /**
  * A visitor to visit platform-specific extensions for a type.
  */
 @Deprecated(VISITOR_API_MESSAGE)
-interface KmTypeExtensionVisitor : KmExtensionVisitor
+public interface KmTypeExtensionVisitor : KmExtensionVisitor
 
 /**
  * A visitor to visit platform-specific extensions for a type alias.
  */
 @Deprecated(VISITOR_API_MESSAGE)
-interface KmTypeAliasExtensionVisitor : KmExtensionVisitor
+public interface KmTypeAliasExtensionVisitor : KmExtensionVisitor
 
 /**
  * A visitor to visit platform-specific extensions for a value parameter.
  */
 @Deprecated(VISITOR_API_MESSAGE)
-interface KmValueParameterExtensionVisitor : KmExtensionVisitor
+public interface KmValueParameterExtensionVisitor : KmExtensionVisitor

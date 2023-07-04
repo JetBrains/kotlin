@@ -18,29 +18,29 @@ import org.jetbrains.kotlin.metadata.deserialization.Flags as F
  * Allows to populate [ReadContext] with additional data
  * that can be used when reading metadata in [MetadataExtensions].
  */
-interface ReadContextExtension
+public interface ReadContextExtension
 
-class ReadContext(
-    val strings: NameResolver,
-    val types: TypeTable,
+public class ReadContext(
+    public val strings: NameResolver,
+    public val types: TypeTable,
     @get:IgnoreInApiDump internal val versionRequirements: VersionRequirementTable,
     private val parent: ReadContext? = null,
-    val contextExtensions: List<ReadContextExtension> = emptyList()
+    internal val contextExtensions: List<ReadContextExtension> = emptyList()
 ) {
     private val typeParameterNameToId = mutableMapOf<Int, Int>()
 
     internal val extensions = MetadataExtensions.INSTANCES
 
-    operator fun get(index: Int): String =
+    public operator fun get(index: Int): String =
         strings.getString(index)
 
-    fun className(index: Int): ClassName =
+    internal fun className(index: Int): ClassName =
         strings.getClassName(index)
 
-    fun getTypeParameterId(name: Int): Int? =
+    internal fun getTypeParameterId(name: Int): Int? =
         typeParameterNameToId[name] ?: parent?.getTypeParameterId(name)
 
-    fun withTypeParameters(typeParameters: List<ProtoBuf.TypeParameter>): ReadContext =
+    internal fun withTypeParameters(typeParameters: List<ProtoBuf.TypeParameter>): ReadContext =
         ReadContext(strings, types, versionRequirements, this, contextExtensions).apply {
             for (typeParameter in typeParameters) {
                 typeParameterNameToId[typeParameter.name] = typeParameter.id
@@ -49,7 +49,7 @@ class ReadContext(
 }
 
 @OptIn(ExperimentalContextReceivers::class)
-fun ProtoBuf.Class.accept(
+public fun ProtoBuf.Class.accept(
     v: KmClassVisitor,
     strings: NameResolver,
     contextExtensions: List<ReadContextExtension> = emptyList()
@@ -130,7 +130,7 @@ private fun ProtoBuf.Class.loadInlineClassUnderlyingType(c: ReadContext): ProtoB
         ?.returnType(c.types)
 }
 
-fun ProtoBuf.Package.accept(
+public fun ProtoBuf.Package.accept(
     v: KmPackageVisitor,
     strings: NameResolver,
     contextExtensions: List<ReadContextExtension> = emptyList()
@@ -151,7 +151,7 @@ fun ProtoBuf.Package.accept(
     v.visitEnd()
 }
 
-fun ProtoBuf.PackageFragment.accept(
+public fun ProtoBuf.PackageFragment.accept(
     v: KmModuleFragmentVisitor,
     strings: NameResolver,
     contextExtensions: List<ReadContextExtension> = emptyList()
@@ -197,7 +197,7 @@ private fun KmDeclarationContainerVisitor.visitDeclarations(
     }
 }
 
-fun ProtoBuf.Function.accept(v: KmLambdaVisitor, strings: NameResolver) {
+public fun ProtoBuf.Function.accept(v: KmLambdaVisitor, strings: NameResolver) {
     val c = ReadContext(strings, TypeTable(typeTable), VersionRequirementTable.EMPTY)
 
     v.visitFunction(flags, c[name])?.let { accept(it, c) }
@@ -261,7 +261,7 @@ private fun ProtoBuf.Function.accept(v: KmFunctionVisitor, outer: ReadContext) {
 }
 
 @OptIn(ExperimentalContextReceivers::class)
-fun ProtoBuf.Property.accept(v: KmPropertyVisitor, outer: ReadContext) {
+public fun ProtoBuf.Property.accept(v: KmPropertyVisitor, outer: ReadContext) {
     val c = outer.withTypeParameters(typeParameterList)
 
     for (typeParameter in typeParameterList) {
@@ -520,10 +520,10 @@ private val ProtoBuf.Type.typeFlags: Int
 private val ProtoBuf.TypeParameter.typeParameterFlags: Int
     get() = if (reified) 1 else 0
 
-fun ProtoBuf.Property.getPropertyGetterFlags(): Int =
+public fun ProtoBuf.Property.getPropertyGetterFlags(): Int =
     if (hasGetterFlags()) getterFlags else getDefaultPropertyAccessorFlags(flags)
 
-fun ProtoBuf.Property.getPropertySetterFlags(): Int =
+public fun ProtoBuf.Property.getPropertySetterFlags(): Int =
     if (hasSetterFlags()) setterFlags else getDefaultPropertyAccessorFlags(flags)
 
 internal fun getDefaultPropertyAccessorFlags(flags: Int): Int =
