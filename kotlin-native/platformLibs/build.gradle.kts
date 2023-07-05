@@ -72,7 +72,7 @@ konanTargetList.forEach { target ->
                 libraries {
                     klibs(df.config.depends.map { "${fileNamePrefix}${it}" })
                 }
-                extraOpts("-Xpurge-user-libs", "-Xshort-module-name", df.name)
+                extraOpts("-Xpurge-user-libs", "-Xshort-module-name", df.name, "-Xdisable-experimental-annotation")
                 compilerOpts("-fmodules-cache-path=${project.buildDir}/clangModulesCache")
             }
         }
