@@ -634,4 +634,36 @@ class ConfigurationsTest : MultiplatformExtensionTest() {
             fail("Following configurations have the same attributes:\n$msg")
         }
     }
+
+    @Test
+    fun `user-defined attributes should be present in host-specific metadata dependencies configuration`() {
+        val attribute = Attribute.of("userAttribute", String::class.java)
+
+        val project = buildProjectWithMPP {
+            plugins.apply("maven-publish")
+            kotlin {
+                jvm()
+                iosX64 {
+                    attributes { attribute(attribute, "foo") }
+                }
+
+                iosArm64 {
+                    attributes { attribute(attribute, "bar") }
+                }
+
+                applyDefaultHierarchyTemplate()
+            }
+        }
+        project.evaluate()
+
+        val iosX64HostSpecificMetadataDependencies = project.configurations.getByName("iosX64CompilationDependenciesMetadata")
+        val iosX64MetadataElements = project.configurations.getByName("iosX64MetadataElements")
+        assertEquals("foo", iosX64HostSpecificMetadataDependencies.attributes.getAttribute(attribute))
+        assertEquals("foo", iosX64MetadataElements.attributes.getAttribute(attribute))
+
+        val iosArm64HostSpecificMetadataDependencies = project.configurations.getByName("iosArm64CompilationDependenciesMetadata")
+        val iosArm64MetadataElements = project.configurations.getByName("iosArm64MetadataElements")
+        assertEquals("bar", iosArm64HostSpecificMetadataDependencies.attributes.getAttribute(attribute))
+        assertEquals("bar", iosArm64MetadataElements.attributes.getAttribute(attribute))
+    }
 }
