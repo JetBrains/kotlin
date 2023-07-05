@@ -141,6 +141,7 @@ internal class ModuleMetadataEmitter(
         override fun visitTypealias(element: TypealiasStub, data: VisitingContext): KmTypeAlias =
                 data.withMappingExtensions {
                     KmTypeAlias(element.alias.topLevelName).also { km ->
+                        element.annotations.mapTo(km.annotations) { it.map() }
                         km.visibility = Visibility.PUBLIC
                         km.underlyingType = element.aliasee.map(shouldExpandTypeAliases = false)
                         km.expandedType = element.aliasee.map()
