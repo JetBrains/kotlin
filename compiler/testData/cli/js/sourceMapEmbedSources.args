@@ -1,9 +1,14 @@
 $TESTDATA_DIR$/sourceMap.kt
--Xforce-deprecated-legacy-compiler-usage
+-Xir-produce-js
+-Xir-only
+-libraries
+$STDLIB_JS$
 -source-map
 -source-map-prefix
 ./
 -source-map-embed-sources
 always
--output
-$TEMP_DIR$/out.js
+-ir-output-dir
+$TEMP_DIR$
+-ir-output-name
+out

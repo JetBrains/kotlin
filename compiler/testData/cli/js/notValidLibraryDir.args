@@ -1,6 +1,9 @@
 $TESTDATA_DIR$/withLib.kt
--Xforce-deprecated-legacy-compiler-usage
+-Xir-produce-klib-dir
+-Xir-only
 -libraries
-compiler/testData/integration/ant/js/simpleWithJsFileAsAnotherLib
--output
-$TEMP_DIR$/out.js
+$STDLIB_JS$:compiler/testData/integration/ant/js/simpleWithJsFileAsAnotherLib
+-ir-output-dir
+$TEMP_DIR$
+-ir-output-name
+out

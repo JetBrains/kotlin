@@ -111,7 +111,7 @@ val CompilerConfiguration.resolverLogger: Logger
 
             override fun fatal(message: String): Nothing {
                 messageLogger.report(IrMessageLogger.Severity.ERROR, message, null)
-                kotlin.error("FATAL ERROR: $message")
+                throw CompilationErrorException()
             }
         }
     }

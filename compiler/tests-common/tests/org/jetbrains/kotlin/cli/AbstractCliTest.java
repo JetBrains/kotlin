@@ -84,13 +84,22 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
     }
 
     @NotNull
-    public static String getNormalizedCompilerOutput(@NotNull String pureOutput, @Nullable ExitCode exitCode, @NotNull String testDataDir) {
+    public static String getNormalizedCompilerOutput(
+            @NotNull String pureOutput,
+            @Nullable ExitCode exitCode,
+            @NotNull String testDataDir,
+            @NotNull String tmpdir
+    ) {
         String testDataAbsoluteDir = new File(testDataDir).getAbsolutePath();
+        String tmpDirAbsoluteDir = new File(tmpdir).getAbsolutePath();
         String normalizedOutputWithoutExitCode = StringUtil.convertLineSeparators(pureOutput)
                 .replace(testDataAbsoluteDir, TESTDATA_DIR)
                 .replace(FileUtil.toSystemIndependentName(testDataAbsoluteDir), TESTDATA_DIR)
                 .replace(PathUtil.getKotlinPathsForDistDirectory().getHomePath().getAbsolutePath(), "$PROJECT_DIR$")
                 .replace(PathUtil.getKotlinPathsForDistDirectory().getHomePath().getParentFile().getAbsolutePath(), "$DIST_DIR$")
+                .replace(org.jetbrains.kotlin.konan.file.File.Companion.getUserDir().getAbsolutePath(), "$USER_DIR$")
+                .replace(tmpDirAbsoluteDir, "$TMP_DIR$")
+                .replaceAll("info: executable production duration: \\d+ms", "info: executable production duration: [time]")
                 .replace("expected version is " + JvmMetadataVersion.INSTANCE, "expected version is $ABI_VERSION$")
                 .replace("expected version is " + JsMetadataVersion.INSTANCE, "expected version is $ABI_VERSION$")
                 .replace("compiler version " + JvmMetadataVersion.INSTANCE, "compiler version $ABI_VERSION$")
@@ -115,7 +124,10 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
 
         Pair<String, ExitCode> outputAndExitCode = executeCompilerGrabOutput(compiler, readArgs(fileName, tmpdir.getPath()));
         String actual = getNormalizedCompilerOutput(
-                outputAndExitCode.getFirst(), outputAndExitCode.getSecond(), new File(fileName).getParent()
+                outputAndExitCode.getFirst(),
+                outputAndExitCode.getSecond(),
+                new File(fileName).getParent(),
+                tmpdir.getAbsolutePath()
         );
 
         File outFile = new File(fileName.replaceFirst("\\.args$", ".out"));
@@ -285,6 +297,9 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
                 ).replace(
                         "$JDK_17$",
                         KtTestUtil.getJdk17Home().getPath()
+                ).replace(
+                        "$STDLIB_JS$",
+                        PathUtil.getKotlinPathsForCompiler().getJsStdLibJarPath().getAbsolutePath()
                 );
     }
 

@@ -56,12 +56,12 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         val stdout =
             AbstractCliTest.getNormalizedCompilerOutput(
                 StringUtil.convertLineSeparators(process.inputStream.bufferedReader().use { it.readText() }),
-                null, testDataDirectory
+                null, testDataDirectory, tmpdir.absolutePath
             )
         val stderr =
             AbstractCliTest.getNormalizedCompilerOutput(
                 StringUtil.convertLineSeparators(process.errorStream.bufferedReader().use { it.readText() }),
-                null, testDataDirectory
+                null, testDataDirectory, tmpdir.absolutePath
             ).replace("Picked up [_A-Z]+:.*\n".toRegex(), "")
                 .replace("The system cannot find the file specified", "No such file or directory") // win -> unix
         process.waitFor(10, TimeUnit.SECONDS)
@@ -145,9 +145,14 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
             "kotlinc-js",
             "$testDataDirectory/emptyMain.kt",
             "-nowarn",
-            "-Xforce-deprecated-legacy-compiler-usage",
-            "-output",
-            File(tmpdir, "out.js").path,
+            "-libraries",
+            PathUtil.kotlinPathsForCompiler.jsStdLibJarPath.absolutePath,
+            "-Xir-produce-klib-dir",
+            "-Xir-only",
+            "-ir-output-dir",
+            tmpdir.path,
+            "-ir-output-name",
+            "out",
             environment = mapOf("JAVA_HOME" to KtTestUtil.getJdk8Home().absolutePath)
         )
     }

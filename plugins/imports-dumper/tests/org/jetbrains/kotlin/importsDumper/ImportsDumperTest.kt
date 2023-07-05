@@ -64,7 +64,7 @@ class ImportsDumperTest : TestCaseWithTmpdir() {
             )
         )
 
-        return getNormalizedCompilerOutput(output, exitCode, testDataDir.path)
+        return getNormalizedCompilerOutput(output, exitCode, testDataDir.path, tmpDir.absolutePath)
     }
 }
 

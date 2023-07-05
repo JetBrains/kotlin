@@ -88,10 +88,12 @@ class CompilerOutputTest : AbstractNativeSimpleTest() {
     }
 
     private fun normalizeOutput(output: String, exitCode: ExitCode): String {
+        val dir = "compiler/testData/compileKotlinAgainstCustomBinaries/"
         return AbstractCliTest.getNormalizedCompilerOutput(
             output,
             exitCode,
-            "compiler/testData/compileKotlinAgainstCustomBinaries/"
+            dir,
+            dir
         )
     }
 }

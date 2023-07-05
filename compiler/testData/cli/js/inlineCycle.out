@@ -1,7 +1,0 @@
-compiler/testData/cli/js/inlineCycle.kt:2:5: error: the 'b' invocation is a part of inline cycle
-    b(l)
-    ^
-compiler/testData/cli/js/inlineCycle.kt:15:5: error: the 'a' invocation is a part of inline cycle
-    a(p)
-    ^
-COMPILATION_ERROR

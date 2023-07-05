@@ -1,4 +1,9 @@
 $TESTDATA_DIR$/simple2js.kt
--Xforce-deprecated-legacy-compiler-usage
--output
-$TEMP_DIR$/out.js
+-Xir-produce-klib-dir
+-Xir-only
+-libraries
+$STDLIB_JS$
+-ir-output-dir
+$TEMP_DIR$
+-ir-output-name
+out

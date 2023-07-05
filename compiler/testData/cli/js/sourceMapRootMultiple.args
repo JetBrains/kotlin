@@ -1,8 +1,14 @@
 $TESTDATA_DIR$/sourceMapRoot/foo/file1.kt
 $TESTDATA_DIR$/sourceMapRoot/bar/file2.kt
--Xforce-deprecated-legacy-compiler-usage
+-Xir-produce-js
+-Xir-only
+-libraries
+$STDLIB_JS$
 -source-map
 -source-map-base-dirs
 $TESTDATA_DIR$/foo:$TESTDATA_DIR$/bar
--output
-$TEMP_DIR$/out.js
+-ir-output-dir
+$TEMP_DIR$
+-ir-output-name
+out
+

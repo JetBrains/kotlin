@@ -132,7 +132,12 @@ abstract class AbstractKotlinCompilerIntegrationTest : TestCaseWithTmpdir() {
     }
 
     protected fun normalizeOutput(output: Pair<String, ExitCode>): String {
-        return AbstractCliTest.getNormalizedCompilerOutput(output.first, output.second, testDataDirectory.path).removeFirWarning()
+        return AbstractCliTest.getNormalizedCompilerOutput(
+            output.first,
+            output.second,
+            testDataDirectory.path,
+            tmpdir.absolutePath
+        ).removeFirWarning()
             .replace(FileUtil.toSystemIndependentName(tmpdir.absolutePath), "\$TMP_DIR\$")
     }
 

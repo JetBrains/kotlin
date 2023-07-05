@@ -1,6 +1,11 @@
 $TESTDATA_DIR$/languageVersion.kt
--Xforce-deprecated-legacy-compiler-usage
--output
-$TEMP_DIR$/out.js
+-Xir-produce-klib-dir
+-Xir-only
+-ir-output-dir
+$TEMP_DIR$
+-ir-output-name
+out
 -language-version
 1.4
+-libraries
+$STDLIB_JS$

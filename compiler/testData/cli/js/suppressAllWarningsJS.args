@@ -1,5 +1,10 @@
 $TESTDATA_DIR$/../warnings.kt
--Xforce-deprecated-legacy-compiler-usage
+-Xir-produce-klib-dir
+-Xir-only
+-libraries
+$STDLIB_JS$
 -nowarn
--output
-$TEMP_DIR$/out.js
+-ir-output-dir
+$TEMP_DIR$
+-ir-output-name
+out

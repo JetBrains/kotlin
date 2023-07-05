@@ -1,2 +1,2 @@
-error: path 'not/existing/path' does not exist
+error: could not find "not/existing/path" in [$USER_DIR$]
 COMPILATION_ERROR
