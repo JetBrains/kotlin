@@ -9,14 +9,13 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
 import org.gradle.work.NormalizeLineEndings
-import org.jetbrains.kotlin.gradle.utils.future
 import java.io.File
+import javax.inject.Inject
 
 @DisableCachingByDefault
-internal open class CopyCommonizeCInteropForIdeTask : AbstractCInteropCommonizerTask() {
-
+internal open class CopyCommonizeCInteropForIdeTask @Inject constructor(
     private val commonizeCInteropTask: TaskProvider<CInteropCommonizerTask>
-        get() = project.future { project.commonizeCInteropTask() }.getOrThrow() ?: throw IllegalStateException("Missing commonizeCInteropTask")
+) : AbstractCInteropCommonizerTask() {
 
     @get:IgnoreEmptyDirectories
     @get:InputFiles

@@ -106,6 +106,7 @@ internal suspend fun Project.copyCommonizeCInteropForIdeTask(): TaskProvider<Cop
     if (commonizeCInteropTask != null) {
         return locateOrRegisterTask(
             "copyCommonizeCInteropForIde",
+            args = listOf(commonizeCInteropTask),
             invokeWhenRegistered = {
                 @OptIn(Idea222Api::class)
                 ideaImportDependsOn(this)

@@ -11,6 +11,7 @@ import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCompilation
 import org.jetbrains.kotlin.gradle.targets.native.internal.cInteropCommonizationEnabled
+import org.jetbrains.kotlin.gradle.targets.native.internal.copyCommonizeCInteropForIdeTask
 import org.jetbrains.kotlin.gradle.util.*
 import kotlin.test.*
 
@@ -165,6 +166,16 @@ class CommonizerTaskTests {
 
             assertTrue(rootProject.cInteropCommonizationEnabled())
             assertFalse(subproject.cInteropCommonizationEnabled())
+        }
+    }
+
+    @Test
+    fun `test copyCommonizeCInteropForIdeTask creation - doesn't fail`() {
+        val project = ProjectBuilder.builder().build()
+        project.applyMultiplatformPlugin()
+        project.enableCInteropCommonization(true)
+        project.runLifecycleAwareTest {
+            project.copyCommonizeCInteropForIdeTask()?.get()?.cInteropCommonizerTaskOutputDirectories
         }
     }
 }
