@@ -68,6 +68,7 @@ private val KotlinCompilation<*>.allOwnedConfigurationsNames
             runtimeOnlyConfigurationName,
             compileDependencyConfigurationName,
             runtimeDependencyConfigurationName,
+            internal.configurations.hostSpecificMetadataConfiguration?.name,
         )
 
         val implementationSpecificConfigurations = when (this) {
