@@ -157,13 +157,9 @@ internal fun KtDeclaration.isReanalyzableContainer(): Boolean = when (this) {
     else -> error("Unknown declaration type: ${this::class.simpleName}")
 }
 
-private fun KtNamedFunction.isReanalyzableContainer(): Boolean = name != null && (hasBlockBody() || typeReference != null)
+private fun KtNamedFunction.isReanalyzableContainer(): Boolean = hasBlockBody() || typeReference != null
 
-private fun KtPropertyAccessor.isReanalyzableContainer(): Boolean {
-    val property = property
-    return property.name != null && (isSetter || hasBlockBody() || property.typeReference != null)
-}
+private fun KtPropertyAccessor.isReanalyzableContainer(): Boolean = isSetter || hasBlockBody() || property.typeReference != null
 
-private fun KtProperty.isReanalyzableContainer(): Boolean =
-    name != null && typeReference != null && (isTopLevel || !hasDelegateExpressionOrInitializer())
+private fun KtProperty.isReanalyzableContainer(): Boolean = typeReference != null && (isTopLevel || !hasDelegateExpressionOrInitializer())
 
