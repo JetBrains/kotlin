@@ -13,9 +13,10 @@ dependencies {
     implementation(project(":analysis:kt-references:kt-references-fe10"))
 
     implementation(project(":compiler:backend"))
-    implementation(project(":compiler:backend.jvm"))
     implementation(project(":compiler:backend-common"))
     implementation(project(":compiler:backend.common.jvm"))
+    implementation(project(":compiler:backend.jvm"))
+    implementation(project(":compiler:backend.jvm.entrypoint"))
 
     testApiJUnit5()
     testImplementation(project(":analysis:analysis-api-providers"))
