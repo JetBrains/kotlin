@@ -62,6 +62,8 @@ val FirMemberDeclaration.nameOrSpecialName: Name
 
 val FirNamedFunctionSymbol.isMethodOfAny: Boolean
     get() {
+        if (receiverParameter != null) return false
+        if (resolvedContextReceivers.isNotEmpty()) return false
         return when (name) {
             OperatorNameConventions.EQUALS -> valueParameterSymbols.singleOrNull()?.resolvedReturnType?.isNullableAny == true
             OperatorNameConventions.HASH_CODE, OperatorNameConventions.TO_STRING -> fir.valueParameters.isEmpty()
