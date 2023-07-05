@@ -73,9 +73,27 @@ public class SourceInBlockModificationTestGenerated extends AbstractSourceInBloc
     }
 
     @Test
+    @TestMetadata("memberFunWithBodyWithoutTypeWithoutName.kt")
+    public void testMemberFunWithBodyWithoutTypeWithoutName() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/inBlockModification/memberFunWithBodyWithoutTypeWithoutName.kt");
+    }
+
+    @Test
     @TestMetadata("memberFunWithTypeWithoutBody.kt")
     public void testMemberFunWithTypeWithoutBody() throws Exception {
         runTest("analysis/low-level-api-fir/testdata/inBlockModification/memberFunWithTypeWithoutBody.kt");
+    }
+
+    @Test
+    @TestMetadata("memberFunWithoutBodyWithTypeWithoutName.kt")
+    public void testMemberFunWithoutBodyWithTypeWithoutName() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/inBlockModification/memberFunWithoutBodyWithTypeWithoutName.kt");
+    }
+
+    @Test
+    @TestMetadata("memberFunWithoutBodyWithoutTypeWithoutName.kt")
+    public void testMemberFunWithoutBodyWithoutTypeWithoutName() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/inBlockModification/memberFunWithoutBodyWithoutTypeWithoutName.kt");
     }
 
     @Test
@@ -91,6 +109,12 @@ public class SourceInBlockModificationTestGenerated extends AbstractSourceInBloc
     }
 
     @Test
+    @TestMetadata("memberGetterWithBodyWithContractWithoutName.kt")
+    public void testMemberGetterWithBodyWithContractWithoutName() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/inBlockModification/memberGetterWithBodyWithContractWithoutName.kt");
+    }
+
+    @Test
     @TestMetadata("memberGetterWithTypeWithBody.kt")
     public void testMemberGetterWithTypeWithBody() throws Exception {
         runTest("analysis/low-level-api-fir/testdata/inBlockModification/memberGetterWithTypeWithBody.kt");
@@ -100,6 +124,12 @@ public class SourceInBlockModificationTestGenerated extends AbstractSourceInBloc
     @TestMetadata("memberGetterWithTypeWithoutBody.kt")
     public void testMemberGetterWithTypeWithoutBody() throws Exception {
         runTest("analysis/low-level-api-fir/testdata/inBlockModification/memberGetterWithTypeWithoutBody.kt");
+    }
+
+    @Test
+    @TestMetadata("memberGetterWithTypeWithoutBodyWithoutName.kt")
+    public void testMemberGetterWithTypeWithoutBodyWithoutName() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/inBlockModification/memberGetterWithTypeWithoutBodyWithoutName.kt");
     }
 
     @Test
@@ -121,6 +151,12 @@ public class SourceInBlockModificationTestGenerated extends AbstractSourceInBloc
     }
 
     @Test
+    @TestMetadata("memberPropertyWithTypeInDelegateWithoutName.kt")
+    public void testMemberPropertyWithTypeInDelegateWithoutName() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/inBlockModification/memberPropertyWithTypeInDelegateWithoutName.kt");
+    }
+
+    @Test
     @TestMetadata("memberPropertyWithTypeInErrorDelegate.kt")
     public void testMemberPropertyWithTypeInErrorDelegate() throws Exception {
         runTest("analysis/low-level-api-fir/testdata/inBlockModification/memberPropertyWithTypeInErrorDelegate.kt");
@@ -130,6 +166,12 @@ public class SourceInBlockModificationTestGenerated extends AbstractSourceInBloc
     @TestMetadata("memberPropertyWithTypeInInitializer.kt")
     public void testMemberPropertyWithTypeInInitializer() throws Exception {
         runTest("analysis/low-level-api-fir/testdata/inBlockModification/memberPropertyWithTypeInInitializer.kt");
+    }
+
+    @Test
+    @TestMetadata("memberPropertyWithTypeInInitializerWithoutName.kt")
+    public void testMemberPropertyWithTypeInInitializerWithoutName() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/inBlockModification/memberPropertyWithTypeInInitializerWithoutName.kt");
     }
 
     @Test
@@ -157,9 +199,21 @@ public class SourceInBlockModificationTestGenerated extends AbstractSourceInBloc
     }
 
     @Test
+    @TestMetadata("memberSetterWithTypeWithBodyWithoutName.kt")
+    public void testMemberSetterWithTypeWithBodyWithoutName() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/inBlockModification/memberSetterWithTypeWithBodyWithoutName.kt");
+    }
+
+    @Test
     @TestMetadata("memberSetterWithTypeWithoutBody.kt")
     public void testMemberSetterWithTypeWithoutBody() throws Exception {
         runTest("analysis/low-level-api-fir/testdata/inBlockModification/memberSetterWithTypeWithoutBody.kt");
+    }
+
+    @Test
+    @TestMetadata("memberSetterWithTypeWithoutBodyWithoutName.kt")
+    public void testMemberSetterWithTypeWithoutBodyWithoutName() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/inBlockModification/memberSetterWithTypeWithoutBodyWithoutName.kt");
     }
 
     @Test
@@ -181,6 +235,12 @@ public class SourceInBlockModificationTestGenerated extends AbstractSourceInBloc
     }
 
     @Test
+    @TestMetadata("topLevelFunctionWithBodyWithoutTypeWithoutName.kt")
+    public void testTopLevelFunctionWithBodyWithoutTypeWithoutName() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/inBlockModification/topLevelFunctionWithBodyWithoutTypeWithoutName.kt");
+    }
+
+    @Test
     @TestMetadata("topLevelFunctionWithTypeWithBody.kt")
     public void testTopLevelFunctionWithTypeWithBody() throws Exception {
         runTest("analysis/low-level-api-fir/testdata/inBlockModification/topLevelFunctionWithTypeWithBody.kt");
@@ -190,6 +250,18 @@ public class SourceInBlockModificationTestGenerated extends AbstractSourceInBloc
     @TestMetadata("topLevelFunctionWithTypeWithoutBody.kt")
     public void testTopLevelFunctionWithTypeWithoutBody() throws Exception {
         runTest("analysis/low-level-api-fir/testdata/inBlockModification/topLevelFunctionWithTypeWithoutBody.kt");
+    }
+
+    @Test
+    @TestMetadata("topLevelFunctionWithoutBodyWithTypeWithoutName.kt")
+    public void testTopLevelFunctionWithoutBodyWithTypeWithoutName() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/inBlockModification/topLevelFunctionWithoutBodyWithTypeWithoutName.kt");
+    }
+
+    @Test
+    @TestMetadata("topLevelFunctionWithoutBodyWithoutTypeWithoutName.kt")
+    public void testTopLevelFunctionWithoutBodyWithoutTypeWithoutName() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/inBlockModification/topLevelFunctionWithoutBodyWithoutTypeWithoutName.kt");
     }
 
     @Test
@@ -211,9 +283,21 @@ public class SourceInBlockModificationTestGenerated extends AbstractSourceInBloc
     }
 
     @Test
+    @TestMetadata("topLevelGetterWithTypeWithBodyWithoutName.kt")
+    public void testTopLevelGetterWithTypeWithBodyWithoutName() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/inBlockModification/topLevelGetterWithTypeWithBodyWithoutName.kt");
+    }
+
+    @Test
     @TestMetadata("topLevelGetterWithTypeWithoutBody.kt")
     public void testTopLevelGetterWithTypeWithoutBody() throws Exception {
         runTest("analysis/low-level-api-fir/testdata/inBlockModification/topLevelGetterWithTypeWithoutBody.kt");
+    }
+
+    @Test
+    @TestMetadata("topLevelGetterWithTypeWithoutBodyWithoutName.kt")
+    public void testTopLevelGetterWithTypeWithoutBodyWithoutName() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/inBlockModification/topLevelGetterWithTypeWithoutBodyWithoutName.kt");
     }
 
     @Test
@@ -235,6 +319,12 @@ public class SourceInBlockModificationTestGenerated extends AbstractSourceInBloc
     }
 
     @Test
+    @TestMetadata("topLevelPropertyWithTypeInDelegateWithoutName.kt")
+    public void testTopLevelPropertyWithTypeInDelegateWithoutName() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/inBlockModification/topLevelPropertyWithTypeInDelegateWithoutName.kt");
+    }
+
+    @Test
     @TestMetadata("topLevelPropertyWithTypeInErrorDelegate.kt")
     public void testTopLevelPropertyWithTypeInErrorDelegate() throws Exception {
         runTest("analysis/low-level-api-fir/testdata/inBlockModification/topLevelPropertyWithTypeInErrorDelegate.kt");
@@ -244,6 +334,12 @@ public class SourceInBlockModificationTestGenerated extends AbstractSourceInBloc
     @TestMetadata("topLevelPropertyWithTypeInInititalzer.kt")
     public void testTopLevelPropertyWithTypeInInititalzer() throws Exception {
         runTest("analysis/low-level-api-fir/testdata/inBlockModification/topLevelPropertyWithTypeInInititalzer.kt");
+    }
+
+    @Test
+    @TestMetadata("topLevelPropertyWithTypeInInititalzerWithoutName.kt")
+    public void testTopLevelPropertyWithTypeInInititalzerWithoutName() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/inBlockModification/topLevelPropertyWithTypeInInititalzerWithoutName.kt");
     }
 
     @Test
@@ -271,9 +367,21 @@ public class SourceInBlockModificationTestGenerated extends AbstractSourceInBloc
     }
 
     @Test
+    @TestMetadata("topLevelSetterWithTypeWithBodyWithoutName.kt")
+    public void testTopLevelSetterWithTypeWithBodyWithoutName() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/inBlockModification/topLevelSetterWithTypeWithBodyWithoutName.kt");
+    }
+
+    @Test
     @TestMetadata("topLevelSetterWithTypeWithoutBody.kt")
     public void testTopLevelSetterWithTypeWithoutBody() throws Exception {
         runTest("analysis/low-level-api-fir/testdata/inBlockModification/topLevelSetterWithTypeWithoutBody.kt");
+    }
+
+    @Test
+    @TestMetadata("topLevelSetterWithTypeWithoutBodyWithoutName.kt")
+    public void testTopLevelSetterWithTypeWithoutBodyWithoutName() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/inBlockModification/topLevelSetterWithTypeWithoutBodyWithoutName.kt");
     }
 
     @Test

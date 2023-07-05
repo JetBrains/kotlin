@@ -155,4 +155,10 @@ public class OutOfContentRootFileStructureTestGenerated extends AbstractOutOfCon
     public void testTypeAlias() throws Exception {
         runTest("analysis/low-level-api-fir/testdata/fileStructure/typeAlias.kt");
     }
+
+    @Test
+    @TestMetadata("withoutName.kt")
+    public void testWithoutName() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/fileStructure/withoutName.kt");
+    }
 }
