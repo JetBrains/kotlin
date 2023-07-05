@@ -5,7 +5,10 @@
 
 package org.jetbrains.kotlin.test.frontend.fir.differences
 
+import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.json.*
+import kotlinx.serialization.json.internal.decodeStringToJsonTree
+import kotlinx.serialization.serializer
 import java.io.*
 import java.net.HttpURLConnection
 import java.net.URL
@@ -406,5 +409,46 @@ fun updateMissingDiagnosticsTags(diagnosticsStatistics: DiagnosticsStatistics) {
         } catch (e: IOException) {
             println(e)
         }
+    }
+}
+
+fun IssueInfo.setDefaultMetadata() {
+    val response = getJson(
+        "https://youtrack.jetbrains.com/api/issues/$id?fields=customFields(name,value(name))",
+        API_HEADERS,
+    )
+
+    @OptIn(InternalSerializationApi::class)
+    val fields = Json.decodeStringToJsonTree<String>(Json.serializersModule.serializer(), response).cast<JsonObject>()
+        .getChildAs<JsonArray>("customFields")
+        .mapChildrenAs<JsonObject, _> { field ->
+            val name = field.getChildAs<JsonPrimitive>("name").content
+            name to field["value"]?.takeIf { it !is JsonNull }
+        }.toMap()
+
+    val oldState = fields["State"]?.cast<JsonObject?>()?.getChildAs<JsonPrimitive>("name")?.content
+    val oldPriority = fields["Priority"]?.cast<JsonObject?>()?.getChildAs<JsonPrimitive>("name")?.content
+    val oldTargetVersions = fields["Target versions"]?.cast<JsonArray?>()
+        ?.takeIf { it.isNotEmpty() }
+        ?.mapChildrenAs<JsonObject, _> { it.getChildAs<JsonPrimitive>("name").content }
+
+    if (oldState != "Submitted" && oldPriority != null && oldTargetVersions != null) {
+        return
+    }
+
+    val newState = oldState?.takeIf { it != "Submitted" } ?: NEW_ISSUE_STATE
+    val newPriority = oldPriority ?: NEW_ISSUE_PRIORITY
+    val newTargetVersions = oldTargetVersions ?: NEW_ISSUE_TARGET_VERSIONS
+
+    try {
+        postJson(
+            "https://youtrack.jetbrains.com/api/issues/KT-$numberInProject?fields=customFields(name,value(name))",
+            API_HEADERS,
+            mapOf(
+                buildIssueCustomFields(newState, newPriority, newTargetVersions),
+            ),
+        ).also(::println)
+    } catch (e: IOException) {
+        println(e.message)
     }
 }

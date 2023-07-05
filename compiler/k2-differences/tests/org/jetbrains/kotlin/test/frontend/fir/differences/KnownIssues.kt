@@ -15,6 +15,38 @@ val INTRODUCED_DIAGNOSTICS_UMBRELLA = IssueInfo("25-4612482", 59871)
 
 private const val INSERTION_MARKER = "//<::>"
 
+const val NEW_ISSUE_STATE = "Open"
+const val NEW_ISSUE_PRIORITY = "Minor"
+val NEW_ISSUE_TARGET_VERSIONS = listOf("2.0-M1")
+
+fun buildIssueCustomFields(
+    state: String,
+    priority: String,
+    targetVersions: List<String>,
+) = "customFields" to listOf(
+    mapOf(
+        "name" to "State",
+        "\$type" to "StateIssueCustomField",
+        "value" to mapOf(
+            "name" to state,
+        ),
+    ),
+    mapOf(
+        "name" to "Priority",
+        "\$type" to "SingleEnumIssueCustomField",
+        "value" to mapOf(
+            "name" to priority,
+        ),
+    ),
+    mapOf(
+        "name" to "Target versions",
+        "\$type" to "MultiVersionIssueCustomField",
+        "value" to targetVersions.map {
+            mapOf("name" to it)
+        },
+    ),
+)
+
 private fun createNewKotlinIssue(summary: String, description: String, tags: List<String>): IssueInfo {
     val result = postJson(
         "https://youtrack.jetbrains.com/api/issues?fields=id,numberInProject",
@@ -26,6 +58,7 @@ private fun createNewKotlinIssue(summary: String, description: String, tags: Lis
             "summary" to summary,
             "tags" to tags.map { mapOf("id" to it) },
             "description" to description,
+            buildIssueCustomFields(NEW_ISSUE_STATE, NEW_ISSUE_PRIORITY, NEW_ISSUE_TARGET_VERSIONS)
         ),
     ).also(::println)
 

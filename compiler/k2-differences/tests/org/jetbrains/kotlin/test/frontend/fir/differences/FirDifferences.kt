@@ -5,17 +5,21 @@
 
 package org.jetbrains.kotlin.test.frontend.fir.differences
 
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonObject
 import org.jetbrains.kotlin.codeMetaInfo.CodeMetaInfoParser
 import org.jetbrains.kotlin.codeMetaInfo.clearTextFromDiagnosticMarkup
 import org.jetbrains.kotlin.codeMetaInfo.model.ParsedCodeMetaInfo
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
+import org.jetbrains.kotlin.test.frontend.fir.differences.AdditionalTestFailureKind.COMPILE_TIME
+import org.jetbrains.kotlin.test.frontend.fir.differences.AdditionalTestFailureKind.RUNTIME
 import org.jetbrains.kotlin.test.util.LANGUAGE_FEATURE_PATTERN
 import java.io.File
 import java.io.IOException
 import java.io.Writer
-import org.jetbrains.kotlin.test.frontend.fir.differences.AdditionalTestFailureKind.*
 
 val equivalentDiagnostics = listOf(
     listOf("PARCELABLE_CANT_BE_LOCAL_CLASS", "PARCELABLE_SHOULD_BE_CLASS"),
@@ -1030,6 +1034,14 @@ fun doNonLocalThings(containmentStatistics: DiagnosticsStatistics) {
 //    updateMissingDiagnosticsTags(containmentStatistics)
     updateKnownIssuesDescriptions(containmentStatistics)
     updateMainCompletenessIssue()
+}
+
+inline fun <reified T> JsonElement.cast(): T = this as? T ?: error("Expected ${T::class.simpleName}, but was: $this")
+
+inline fun <reified T> JsonObject.getChildAs(key: String): T = this[key] as? T ?: error("Expected ${T::class.simpleName}, but was: ${this[key]}")
+
+inline fun <reified T, R> JsonArray.mapChildrenAs(transform: (T) -> R): List<R> = map {
+    transform(it as? T ?: error("Expected ${T::class.simpleName}, but was: $it"))
 }
 
 fun main() {
