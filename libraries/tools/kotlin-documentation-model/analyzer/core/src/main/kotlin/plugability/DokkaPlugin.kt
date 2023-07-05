@@ -4,6 +4,7 @@ import com.fasterxml.jackson.dataformat.xml.JacksonXmlModule
 import com.fasterxml.jackson.dataformat.xml.XmlMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import org.jetbrains.dokka.DokkaConfiguration
+import org.jetbrains.dokka.utilities.DokkaLogger
 import org.jetbrains.dokka.utilities.parseJson
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
@@ -32,6 +33,8 @@ abstract class DokkaPlugin {
 
     @PublishedApi
     internal var context: DokkaContext? = null
+
+    protected val logger: DokkaLogger get() = context?.logger ?: throw IllegalStateException("No logger found")
 
     /**
      * @see PluginApiPreviewAcknowledgement

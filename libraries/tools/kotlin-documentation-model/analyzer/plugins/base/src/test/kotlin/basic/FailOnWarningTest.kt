@@ -1,8 +1,8 @@
 package basic
 
 import org.jetbrains.dokka.DokkaException
-import org.jetbrains.dokka.testApi.logger.TestLogger
 import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
+import org.jetbrains.dokka.testApi.logger.TestLogger
 import org.jetbrains.dokka.utilities.DokkaConsoleLogger
 import org.jetbrains.dokka.utilities.DokkaLogger
 import org.jetbrains.dokka.utilities.LoggingLevel

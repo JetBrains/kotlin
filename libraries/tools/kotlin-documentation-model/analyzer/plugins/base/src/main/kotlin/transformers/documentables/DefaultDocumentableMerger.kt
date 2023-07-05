@@ -1,13 +1,13 @@
 package org.jetbrains.dokka.base.transformers.documentables
 
 import org.jetbrains.dokka.DokkaConfiguration
+import org.jetbrains.dokka.base.utils.firstNotNullOfOrNull
 import org.jetbrains.dokka.model.*
 import org.jetbrains.dokka.model.properties.ExtraProperty
 import org.jetbrains.dokka.model.properties.MergeStrategy
 import org.jetbrains.dokka.model.properties.mergeExtras
 import org.jetbrains.dokka.plugability.DokkaContext
 import org.jetbrains.dokka.transformers.documentation.DocumentableMerger
-import org.jetbrains.kotlin.util.firstNotNullResult
 
 internal class DefaultDocumentableMerger(val context: DokkaContext) : DocumentableMerger {
     private val dependencyInfo = context.getDependencyInfo()
@@ -21,7 +21,7 @@ internal class DefaultDocumentableMerger(val context: DokkaContext) : Documentab
                     list.flatMap { it.packages }
                 ) { pck1, pck2 -> pck1.mergeWith(pck2) },
                 documentation = list.map { it.documentation }.flatMap { it.entries }.associate { (k, v) -> k to v },
-                expectPresentInSet = list.firstNotNullResult { it.expectPresentInSet },
+                expectPresentInSet = list.firstNotNullOfOrNull { it.expectPresentInSet },
                 sourceSets = list.flatMap { it.sourceSets }.toSet()
             ).mergeExtras(left, right)
         }

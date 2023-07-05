@@ -3,13 +3,10 @@ package model
 import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
 import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.links.PointingToDeclaration
-import org.jetbrains.dokka.model.childrenOfType
 import org.jetbrains.dokka.model.dfs
 import org.jetbrains.dokka.model.doc.*
-import org.jetbrains.dokka.model.firstMemberOfType
 import org.jetbrains.dokka.model.withDescendants
-import org.jetbrains.dokka.pages.ContentText
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
+import org.jetbrains.dokka.utilities.firstIsInstanceOrNull
 import org.junit.jupiter.api.Test
 import translators.documentationOf
 import utils.docs

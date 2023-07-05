@@ -1,13 +1,10 @@
 package model
 
-import org.jetbrains.dokka.links.Callable
-import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.model.*
 import org.junit.jupiter.api.Test
 import utils.AbstractModelTest
 import utils.assertNotNull
 import utils.name
-import kotlin.test.assertEquals
 
 class PropertyTest : AbstractModelTest("/src/main/kotlin/property/Test.kt", "property") {
 

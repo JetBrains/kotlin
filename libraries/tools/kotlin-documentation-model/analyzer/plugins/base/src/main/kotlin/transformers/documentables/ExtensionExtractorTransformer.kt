@@ -2,7 +2,6 @@ package org.jetbrains.dokka.base.transformers.documentables
 
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.*
-import org.jetbrains.dokka.base.transformers.documentables.utils.FullClassHierarchyBuilder
 import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.links.DriOfAny
 import org.jetbrains.dokka.model.*
@@ -10,16 +9,19 @@ import org.jetbrains.dokka.model.properties.ExtraProperty
 import org.jetbrains.dokka.model.properties.MergeStrategy
 import org.jetbrains.dokka.model.properties.plus
 import org.jetbrains.dokka.plugability.DokkaContext
+import org.jetbrains.dokka.plugability.plugin
+import org.jetbrains.dokka.plugability.querySingle
 import org.jetbrains.dokka.transformers.documentation.DocumentableTransformer
 import org.jetbrains.dokka.utilities.parallelForEach
 import org.jetbrains.dokka.utilities.parallelMap
+import org.jetbrains.kotlin.analysis.kotlin.internal.InternalKotlinAnalysisPlugin
 
 
 class ExtensionExtractorTransformer : DocumentableTransformer {
     override fun invoke(original: DModule, context: DokkaContext): DModule = runBlocking(Dispatchers.Default) {
         val classGraph = async {
             if (!context.configuration.suppressInheritedMembers)
-                FullClassHierarchyBuilder()(original)
+                context.plugin<InternalKotlinAnalysisPlugin>().querySingle { fullClassHierarchyBuilder }.build(original)
             else
                 emptyMap()
         }

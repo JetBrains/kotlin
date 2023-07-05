@@ -1,13 +1,13 @@
 package org.jetbrains.dokka.base.signatures
 
+import org.jetbrains.dokka.DokkaConfiguration.DokkaSourceSet
+import org.jetbrains.dokka.base.signatures.KotlinSignatureUtils.drisOfAllNestedBounds
 import org.jetbrains.dokka.base.translators.documentables.PageContentBuilder
 import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.model.*
+import org.jetbrains.dokka.model.AnnotationTarget
 import org.jetbrains.dokka.model.properties.WithExtraProperties
 import org.jetbrains.dokka.pages.*
-import org.jetbrains.dokka.DokkaConfiguration.DokkaSourceSet
-import org.jetbrains.dokka.base.signatures.KotlinSignatureUtils.drisOfAllNestedBounds
-import org.jetbrains.dokka.model.AnnotationTarget
 
 interface JvmSignatureUtils {
 

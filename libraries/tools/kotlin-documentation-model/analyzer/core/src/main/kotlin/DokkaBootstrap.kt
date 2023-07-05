@@ -1,7 +1,6 @@
 package org.jetbrains.dokka
 
 import java.util.function.BiConsumer
-import kotlin.jvm.Throws
 
 interface DokkaBootstrap {
     @Throws(Throwable::class)
