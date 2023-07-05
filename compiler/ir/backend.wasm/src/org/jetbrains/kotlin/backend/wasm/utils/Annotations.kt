@@ -61,3 +61,10 @@ fun IrAnnotationContainer.getJsFunAnnotation(): String? =
 
 fun IrAnnotationContainer.getJsPrimitiveType(): String? =
     getAnnotation(FqName("kotlin.wasm.internal.JsPrimitive"))?.getSingleConstStringArgument()
+
+@Suppress("UNCHECKED_CAST")
+fun IrFunction.getWasmExportNameIfWasmExport(): String? {
+    val annotation = getAnnotation(FqName("kotlin.wasm.WasmExport")) ?: return null
+    if (annotation.valueArgumentsCount == 0) return name.identifier
+    return (annotation.getValueArgument(0) as? IrConst<String>)?.value ?: name.identifier
+}

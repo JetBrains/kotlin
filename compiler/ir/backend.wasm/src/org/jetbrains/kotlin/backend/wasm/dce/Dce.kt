@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.backend.wasm.dce
 
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
+import org.jetbrains.kotlin.backend.wasm.ir2wasm.isExported
+import org.jetbrains.kotlin.backend.wasm.utils.getWasmExportNameIfWasmExport
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.backend.js.dce.DceDumpNameCache
 import org.jetbrains.kotlin.ir.backend.js.utils.*
@@ -51,7 +53,7 @@ private fun buildRoots(modules: List<IrModuleFragment>, context: WasmBackendCont
 
     modules.onAllFiles {
         declarations.forEach { declaration ->
-            if (declaration.isJsExport()) {
+            if (declaration is IrFunction && declaration.isExported()) {
                 declaration.acceptVoid(declarationsCollector)
             }
         }

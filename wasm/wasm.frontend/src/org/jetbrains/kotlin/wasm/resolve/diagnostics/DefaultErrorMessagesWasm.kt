@@ -25,6 +25,10 @@ private val DIAGNOSTIC_FACTORY_TO_RENDERER by lazy {
             Renderers.RENDER_TYPE
         )
 
+        put(ErrorsWasm.NESTED_WASM_EXPORT, "Only top-level functions can be exported with @WasmExport")
+        put(ErrorsWasm.WASM_EXPORT_ON_EXTERNAL_DECLARATION, "Functions annotated with @WasmExport must not be external")
+        put(ErrorsWasm.JS_AND_WASM_EXPORTS_ON_SAME_DECLARATION, "Cannot use @WasmExport and @JsExport for same function")
+
         put(ErrorsWasm.NESTED_WASM_IMPORT, "Only top-level functions can be imported with @WasmImport")
         put(ErrorsWasm.WASM_IMPORT_ON_NON_EXTERNAL_DECLARATION, "Functions annotated with @WasmImport must be external")
         put(ErrorsWasm.WASM_IMPORT_PARAMETER_DEFAULT_VALUE, "Default parameter values are not supported with @WasmImport")

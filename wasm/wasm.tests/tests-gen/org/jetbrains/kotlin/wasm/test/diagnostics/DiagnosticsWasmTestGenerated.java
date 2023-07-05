@@ -86,6 +86,12 @@ public class DiagnosticsWasmTestGenerated extends AbstractDiagnosticsWasmTest {
         }
 
         @Test
+        @TestMetadata("wasmExport.kt")
+        public void testWasmExport() throws Exception {
+            runTest("compiler/testData/diagnostics/wasmTests/wasmInterop/wasmExport.kt");
+        }
+
+        @Test
         @TestMetadata("wasmImport.kt")
         public void testWasmImport() throws Exception {
             runTest("compiler/testData/diagnostics/wasmTests/wasmInterop/wasmImport.kt");

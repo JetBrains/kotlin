@@ -12,13 +12,13 @@ import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.isBuiltInWasmRefType
-import org.jetbrains.kotlin.backend.wasm.ir2wasm.isExported
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.isExternalType
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.toJsStringLiteral
 import org.jetbrains.kotlin.backend.wasm.utils.getJsFunAnnotation
 import org.jetbrains.kotlin.backend.wasm.utils.getWasmImportDescriptor
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.backend.js.utils.getJsNameOrKotlinName
+import org.jetbrains.kotlin.ir.backend.js.utils.isJsExport
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -49,7 +49,7 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         if (declaration.isFakeOverride) return null
         if (declaration !is IrSimpleFunction) return null
-        val isExported = declaration.isExported()
+        val isExported = declaration.isJsExport()
         val isExternal = declaration.isExternal || declaration.getJsFunAnnotation() != null
         if (declaration.isPropertyAccessor) return null
         if (declaration.parent !is IrPackageFragment) return null

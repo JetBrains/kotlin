@@ -152,6 +152,12 @@ public class K1WasmCodegenWasmJsInteropTestGenerated extends AbstractK1WasmCodeg
     }
 
     @Test
+    @TestMetadata("wasmExport.kt")
+    public void testWasmExport() throws Exception {
+        runTest("compiler/testData/codegen/boxWasmJsInterop/wasmExport.kt");
+    }
+
+    @Test
     @TestMetadata("wasmImport.kt")
     public void testWasmImport() throws Exception {
         runTest("compiler/testData/codegen/boxWasmJsInterop/wasmImport.kt");

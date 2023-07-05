@@ -207,5 +207,5 @@ internal class WasmUsefulDeclarationProcessor(
         }
     }
 
-    override fun isExported(declaration: IrDeclaration): Boolean = declaration.isJsExport()
+    override fun isExported(declaration: IrDeclaration): Boolean = (declaration is IrFunction && declaration.isExported())
 }
