@@ -796,7 +796,7 @@ class CallAndReferenceGenerator(
                         if (argumentMapping != null && (visitor.annotationMode || argumentMapping.isNotEmpty())) {
                             if (valueParameters != null) {
                                 return applyArgumentsWithReorderingIfNeeded(
-                                    argumentMapping, valueParameters, substitutor, contextReceiverCount,
+                                    argumentMapping, valueParameters, substitutor, contextReceiverCount, call,
                                 )
                             }
                         }
@@ -873,6 +873,7 @@ class CallAndReferenceGenerator(
         valueParameters: List<FirValueParameter>,
         substitutor: ConeSubstitutor,
         contextReceiverCount: Int,
+        call: FirCall,
     ): IrExpression {
         val converted = argumentMapping.entries.map { (argument, parameter) ->
             parameter to convertArgument(argument, parameter, substitutor)
@@ -905,11 +906,11 @@ class CallAndReferenceGenerator(
                 putValueArgument(valueParameters.indexOf(parameter) + contextReceiverCount, irArgument)
             }
             if (visitor.annotationMode) {
+                val function = call.calleeReference?.toResolvedCallableSymbol()?.fir as? FirFunction
                 for ((index, parameter) in valueParameters.withIndex()) {
                     if (parameter.isVararg && !argumentMapping.containsValue(parameter)) {
-                        val defaultValue = parameter.defaultValue
-                        val value = if (defaultValue != null) {
-                            convertArgument(defaultValue, parameter, ConeSubstitutor.Empty)
+                        val value = if (function?.itOrExpectHasDefaultParameterValue(index) == true) {
+                            null
                         } else {
                             val elementType = parameter.returnTypeRef.toIrType()
                             IrVarargImpl(

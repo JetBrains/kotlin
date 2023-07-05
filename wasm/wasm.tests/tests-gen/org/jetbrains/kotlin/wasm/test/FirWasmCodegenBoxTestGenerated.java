@@ -36,6 +36,12 @@ public class FirWasmCodegenBoxTestGenerated extends AbstractFirWasmCodegenBoxTes
         }
 
         @Test
+        @TestMetadata("annotationWithDefaultArgInDifferentModule.kt")
+        public void testAnnotationWithDefaultArgInDifferentModule() throws Exception {
+            runTest("compiler/testData/codegen/box/annotations/annotationWithDefaultArgInDifferentModule.kt");
+        }
+
+        @Test
         @TestMetadata("genericAnnotations.kt")
         public void testGenericAnnotations() throws Exception {
             runTest("compiler/testData/codegen/box/annotations/genericAnnotations.kt");

@@ -1,5 +1,6 @@
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
+// DUMP_IR
 // MODULE: lib
 // FILE: JavaAnn.java
 

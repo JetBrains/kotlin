@@ -84,6 +84,12 @@ public class IrBlackBoxCodegenWithIrInlinerTestGenerated extends AbstractIrBlack
         }
 
         @Test
+        @TestMetadata("annotationWithDefaultArgInDifferentModule.kt")
+        public void testAnnotationWithDefaultArgInDifferentModule() throws Exception {
+            runTest("compiler/testData/codegen/box/annotations/annotationWithDefaultArgInDifferentModule.kt");
+        }
+
+        @Test
         @TestMetadata("annotationWithKotlinProperty.kt")
         public void testAnnotationWithKotlinProperty() throws Exception {
             runTest("compiler/testData/codegen/box/annotations/annotationWithKotlinProperty.kt");
