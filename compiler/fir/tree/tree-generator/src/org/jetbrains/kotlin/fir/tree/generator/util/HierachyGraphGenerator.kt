@@ -9,6 +9,8 @@ import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFirTreeBuilder
 import org.jetbrains.kotlin.fir.tree.generator.model.Implementation
 import java.io.File
 
+// It's used to generate a graph in dot format (it's useful for debugging)
+@Suppress("unused")
 fun printHierarchyGraph(builder: AbstractFirTreeBuilder) {
     fun Implementation.Kind.toColor(): String = when (this) {
         Implementation.Kind.Interface -> "green"

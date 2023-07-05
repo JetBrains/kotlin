@@ -45,7 +45,7 @@ sealed class TowerGroupKind(val index: Byte) : Comparable<TowerGroupKind> {
 
     class Local(depth: Int) : WithDepth(6, depth)
 
-    class ImplicitOrNonLocal(depth: Int, val kindForDebugSake: String) : WithDepth(7, depth)
+    class ImplicitOrNonLocal(depth: Int, @Suppress("unused") val kindForDebugSake: String) : WithDepth(7, depth)
 
     class ContextReceiverGroup(depth: Int) : WithDepth(8, depth)
 

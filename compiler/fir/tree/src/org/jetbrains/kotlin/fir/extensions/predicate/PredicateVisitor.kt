@@ -41,5 +41,9 @@ abstract class PredicateVisitor<P : AbstractPredicate<P>, R, D> {
     }
 }
 
+// It can be used externally by plugins
+@Suppress("unused")
 typealias DeclarationPredicateVisitor<R, D> = PredicateVisitor<DeclarationPredicate, R, D>
+// It can be used externally by plugins
+@Suppress("unused")
 typealias LookupPredicateVisitor<R, D> = PredicateVisitor<LookupPredicate, R, D>
