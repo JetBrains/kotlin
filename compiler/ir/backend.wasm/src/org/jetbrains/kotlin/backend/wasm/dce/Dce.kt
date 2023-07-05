@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.wasm.dce
 
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.backend.js.dce.DceDumpNameCache
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBody
@@ -16,7 +17,7 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 
-fun eliminateDeadDeclarations(modules: List<IrModuleFragment>, context: WasmBackendContext) {
+fun eliminateDeadDeclarations(modules: List<IrModuleFragment>, context: WasmBackendContext, dceDumpNameCache: DceDumpNameCache) {
     val printReachabilityInfo =
         context.configuration.getBoolean(JSConfigurationKeys.PRINT_REACHABILITY_INFO) ||
                 java.lang.Boolean.getBoolean("kotlin.wasm.dce.print.reachability.info")
@@ -29,7 +30,7 @@ fun eliminateDeadDeclarations(modules: List<IrModuleFragment>, context: WasmBack
         context = context,
         printReachabilityInfo = printReachabilityInfo,
         dumpReachabilityInfoToFile
-    ).collectDeclarations(rootDeclarations = buildRoots(modules, context))
+    ).collectDeclarations(rootDeclarations = buildRoots(modules, context), dceDumpNameCache)
 
     val remover = WasmUselessDeclarationsRemover(context, usefulDeclarations)
     modules.onAllFiles {

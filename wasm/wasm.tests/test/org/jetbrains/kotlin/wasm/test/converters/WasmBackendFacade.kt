@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.wasm.dce.eliminateDeadDeclarations
 import org.jetbrains.kotlin.backend.wasm.wasmPhases
 import org.jetbrains.kotlin.ir.backend.js.MainModule
 import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
+import org.jetbrains.kotlin.ir.backend.js.dce.DceDumpNameCache
 import org.jetbrains.kotlin.ir.backend.js.dce.dumpDeclarationIrSizesIfNeed
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageConfig
@@ -97,9 +98,10 @@ class WasmBackendFacade(
             generateWat = generateWat,
         )
 
-        eliminateDeadDeclarations(allModules, backendContext)
+        val dceDumpNameCache = DceDumpNameCache()
+        eliminateDeadDeclarations(allModules, backendContext, dceDumpNameCache)
 
-        dumpDeclarationIrSizesIfNeed(System.getProperty("kotlin.wasm.dump.declaration.ir.size.to.file"), allModules)
+        dumpDeclarationIrSizesIfNeed(System.getProperty("kotlin.wasm.dump.declaration.ir.size.to.file"), allModules, dceDumpNameCache)
 
         val compilerResultWithDCE = compileWasm(
             allModules = allModules,

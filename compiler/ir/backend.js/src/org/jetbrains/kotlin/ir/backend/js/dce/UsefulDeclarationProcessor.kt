@@ -235,7 +235,7 @@ abstract class UsefulDeclarationProcessor(
 
     protected open fun handleAssociatedObjects(): Unit = Unit
 
-    fun collectDeclarations(rootDeclarations: Iterable<IrDeclaration>): Set<IrDeclaration> {
+    fun collectDeclarations(rootDeclarations: Iterable<IrDeclaration>, dceDumpNameCache: DceDumpNameCache): Set<IrDeclaration> {
 
         rootDeclarations.forEach {
             it.enqueue(it, "<ROOT>")
@@ -274,7 +274,7 @@ abstract class UsefulDeclarationProcessor(
 
         if (reachabilityInfos != null) {
             if (printReachabilityInfo) {
-                println(transformToDotLikeString(reachabilityInfos))
+                println(transformToDotLikeString(reachabilityInfos, dceDumpNameCache))
             }
 
             if (dumpReachabilityInfoToFile != null) {
@@ -285,7 +285,7 @@ abstract class UsefulDeclarationProcessor(
                     else -> ::transformToDotLikeString
                 }
 
-                out.writeText(stringify(reachabilityInfos))
+                out.writeText(stringify(reachabilityInfos, dceDumpNameCache))
             }
         }
 
@@ -305,18 +305,24 @@ private data class ReachabilityInfo(
 private fun transformToStringBy(
     reachabilityInfos: List<ReachabilityInfo>,
     separator: String,
-    transformer: (sourceFqn: String, targetFqn: String, description: String, isTargetContagious: Boolean) -> String
+    dceDumpNameCache: DceDumpNameCache,
+    transformer: (sourceFqn: String, targetFqn: String, description: String, isTargetContagious: Boolean) -> String,
 ): String {
     return reachabilityInfos
         .map {
-            transformer(it.source.fqNameForDceDump(), it.target.fqNameForDceDump(), it.description, it.isTargetContagious)
+            transformer(
+                dceDumpNameCache.getOrPut(it.source),
+                dceDumpNameCache.getOrPut(it.target),
+                it.description,
+                it.isTargetContagious
+            )
         }
         .distinct()
         .joinToString(separator)
 }
 
-private fun transformToDotLikeString(reachabilityInfos: List<ReachabilityInfo>): String {
-    return transformToStringBy(reachabilityInfos, "\n") { sourceFqn, targetFqn, description, isTargetContagious ->
+private fun transformToDotLikeString(reachabilityInfos: List<ReachabilityInfo>, dceDumpNameCache: DceDumpNameCache): String {
+    return transformToStringBy(reachabilityInfos, "\n", dceDumpNameCache) { sourceFqn, targetFqn, description, isTargetContagious ->
         val comment = description + (if (isTargetContagious) "[CONTAGIOUS!]" else "")
         val info = "\"$sourceFqn\" -> \"$targetFqn\"" + (if (comment.isBlank()) "" else " // $comment")
 
@@ -324,8 +330,8 @@ private fun transformToDotLikeString(reachabilityInfos: List<ReachabilityInfo>):
     }
 }
 
-private fun transformToJsonString(reachabilityInfos: List<ReachabilityInfo>): String {
-    return "[\n" + transformToStringBy(reachabilityInfos, ",\n") { sourceFqn, targetFqn, description, isTargetContagious ->
+private fun transformToJsonString(reachabilityInfos: List<ReachabilityInfo>, dceDumpNameCache: DceDumpNameCache): String {
+    return "[\n" + transformToStringBy(reachabilityInfos, ",\n", dceDumpNameCache) { sourceFqn, targetFqn, description, isTargetContagious ->
         """
         |    {
         |        "source" : "${sourceFqn.removeQuotes()}",
@@ -336,6 +342,6 @@ private fun transformToJsonString(reachabilityInfos: List<ReachabilityInfo>): St
     } + "\n]"
 }
 
-private fun transformToJsConstDeclaration(reachabilityInfos: List<ReachabilityInfo>): String {
-    return "export const kotlinReachabilityInfos = " + transformToJsonString(reachabilityInfos) + ";"
+private fun transformToJsConstDeclaration(reachabilityInfos: List<ReachabilityInfo>, dceDumpNameCache: DceDumpNameCache): String {
+    return "export const kotlinReachabilityInfos = " + transformToJsonString(reachabilityInfos, dceDumpNameCache) + ";"
 }

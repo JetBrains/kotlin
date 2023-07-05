@@ -23,6 +23,7 @@ fun eliminateDeadDeclarations(
     modules: Iterable<IrModuleFragment>,
     context: JsIrBackendContext,
     removeUnusedAssociatedObjects: Boolean = true,
+    dceDumpNameCache: DceDumpNameCache,
 ) {
     val allRoots = buildRoots(modules, context)
 
@@ -31,7 +32,7 @@ fun eliminateDeadDeclarations(
                 java.lang.Boolean.getBoolean("kotlin.js.ir.dce.print.reachability.info")
 
     val usefulDeclarationProcessor = JsUsefulDeclarationProcessor(context, printReachabilityInfo, removeUnusedAssociatedObjects)
-    val usefulDeclarations = usefulDeclarationProcessor.collectDeclarations(allRoots)
+    val usefulDeclarations = usefulDeclarationProcessor.collectDeclarations(allRoots, dceDumpNameCache)
 
     val uselessDeclarationsProcessor =
         UselessDeclarationsRemover(removeUnusedAssociatedObjects, usefulDeclarations, context, context.dceRuntimeDiagnostic)

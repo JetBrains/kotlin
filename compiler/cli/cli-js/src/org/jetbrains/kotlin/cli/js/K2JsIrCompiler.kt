@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
 import org.jetbrains.kotlin.incremental.js.IncrementalNextRoundChecker
 import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer
 import org.jetbrains.kotlin.ir.backend.js.*
+import org.jetbrains.kotlin.ir.backend.js.dce.DceDumpNameCache
 import org.jetbrains.kotlin.ir.backend.js.dce.dumpDeclarationIrSizesIfNeed
 import org.jetbrains.kotlin.ir.backend.js.ic.*
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.*
@@ -347,11 +348,12 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                     exportedDeclarations = setOf(FqName("main")),
                     propertyLazyInitialization = arguments.irPropertyLazyInitialization,
                 )
+                val dceDumpNameCache = DceDumpNameCache()
                 if (arguments.irDce) {
-                    eliminateDeadDeclarations(allModules, backendContext)
+                    eliminateDeadDeclarations(allModules, backendContext, dceDumpNameCache)
                 }
 
-                dumpDeclarationIrSizesIfNeed(arguments.irDceDumpDeclarationIrSizesToFile, allModules)
+                dumpDeclarationIrSizesIfNeed(arguments.irDceDumpDeclarationIrSizesToFile, allModules, dceDumpNameCache)
 
                 val generateSourceMaps = configuration.getBoolean(JSConfigurationKeys.SOURCE_MAP)
 

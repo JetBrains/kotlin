@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.backend.js.dce
 
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.backend.js.lower.PrimaryConstructorLowering
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.dumpKotlinLike
@@ -31,7 +32,7 @@ internal fun IrDeclaration.fqNameForDceDump(): String {
 
 private data class IrDeclarationDumpInfo(val fqName: String, val type: String, val size: Int)
 
-fun dumpDeclarationIrSizesIfNeed(path: String?, allModules: List<IrModuleFragment>) {
+fun dumpDeclarationIrSizesIfNeed(path: String?, allModules: List<IrModuleFragment>, dceDumpNameCache: DceDumpNameCache) {
     if (path == null) return
 
     val declarations = linkedSetOf<IrDeclarationDumpInfo>()
@@ -53,7 +54,7 @@ fun dumpDeclarationIrSizesIfNeed(path: String?, allModules: List<IrModuleFragmen
                 type?.let {
                     declarations.add(
                         IrDeclarationDumpInfo(
-                            fqName = declaration.fqNameForDceDump().removeQuotes(),
+                            fqName = dceDumpNameCache.getOrPut(declaration).removeQuotes(),
                             type = it,
                             size = declaration.dumpKotlinLike().length
                         )
@@ -72,21 +73,13 @@ fun dumpDeclarationIrSizesIfNeed(path: String?, allModules: List<IrModuleFragmen
         else -> listOf("", "", "\n", "")
     }
 
-    val value = declarations
-        // TODO: introduce a way to assign unique names to each declaration and use it for both reachability and size infos
-        .groupBy { it.fqName }
-        .flatMap { (_, v) ->
-            v.mapIndexed { index: Int, declaration: IrDeclarationDumpInfo ->
-                if (index == 0) declaration
-                else declaration.copy(fqName = "${declaration.fqName} ($index)")
-            }
-        }.joinToString(separator, prefix, postfix) { declaration ->
-            """$indent"${declaration.fqName}": {
+    val value = declarations.joinToString(separator, prefix, postfix) { declaration ->
+        """$indent"${declaration.fqName}": {
                 |$indent$indent"size": ${declaration.size},
                 |$indent$indent"type": "${declaration.type}"
                 |$indent}
             """.trimMargin()
-        }
+    }
 
     out.writeText(value)
 }
