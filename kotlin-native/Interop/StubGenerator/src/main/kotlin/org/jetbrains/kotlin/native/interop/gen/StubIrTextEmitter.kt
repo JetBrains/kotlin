@@ -179,6 +179,9 @@ class StubIrTextEmitter(
         override fun visitTypealias(element: TypealiasStub, data: StubContainer?) {
             val alias = renderClassifierDeclaration(element.alias)
             val aliasee = renderStubType(element.aliasee)
+            element.annotations.forEach {
+                out(renderAnnotation(it))
+            }
             out("typealias $alias = $aliasee")
         }
 

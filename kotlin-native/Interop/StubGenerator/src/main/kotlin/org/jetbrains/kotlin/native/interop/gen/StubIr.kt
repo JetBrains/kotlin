@@ -540,8 +540,9 @@ class EnumEntryStub(
 class TypealiasStub(
         val alias: Classifier,
         val aliasee: StubType,
-        val origin: StubOrigin
-) : StubIrElement {
+        val origin: StubOrigin,
+        override val annotations: List<AnnotationStub> = emptyList(),
+) : StubIrElement, AnnotationHolder {
 
     override fun <T, R> accept(visitor: StubIrVisitor<T, R>, data: T) =
         visitor.visitTypealias(this, data)
