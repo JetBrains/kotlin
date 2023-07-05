@@ -128,6 +128,8 @@ private constructor(
 
     override val resolveExtensionInfoProviderImpl: KtResolveExtensionInfoProvider = KtFirResolveExtensionInfoProvider(this)
 
+    override val compilerFacilityImpl: KtCompilerFacility = KtFirCompilerFacility(this)
+
     @Suppress("AnalysisApiMissingLifetimeCheck")
     override fun createContextDependentCopy(originalKtFile: KtFile, elementToReanalyze: KtElement): KtAnalysisSession {
         check(mode == AnalysisSessionMode.REGULAR) {

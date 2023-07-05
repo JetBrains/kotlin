@@ -9,6 +9,7 @@ dependencies {
     api(project(":analysis:analysis-api-impl-barebone"))
     api(project(":analysis:kt-references"))
     api(project(":compiler:resolution.common.jvm"))
+    implementation(project(":compiler:backend-common"))
     api(intellijCore())
     implementation(project(":analysis:analysis-internal-utils"))
 

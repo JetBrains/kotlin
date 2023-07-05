@@ -130,6 +130,10 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
         testClass<AbstractClassIdTest> {
             model("classId")
         }
+
+        testClass<AbstractCompilationPeerAnalysisTest> {
+            model("compilationPeers")
+        }
     }
 
     testGroup(
