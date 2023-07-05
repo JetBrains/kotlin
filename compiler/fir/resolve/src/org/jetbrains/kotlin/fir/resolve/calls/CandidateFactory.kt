@@ -83,11 +83,20 @@ class CandidateFactory private constructor(
         )
 
         // The counterpart in FE 1.0 checks if the given descriptor is VariableDescriptor yet not PropertyDescriptor.
-        // Here, we explicitly check if the referred declaration/symbol is value parameter, local variable, or backing field.
+        // Here, we explicitly check if the referred declaration/symbol is value parameter, local variable, enum entry, or backing field.
         val callSite = callInfo.callSite
         if (callSite is FirCallableReferenceAccess) {
-            if (symbol is FirValueParameterSymbol || symbol is FirPropertySymbol && symbol.isLocal || symbol is FirBackingFieldSymbol) {
-                result.addDiagnostic(Unsupported("References to variables aren't supported yet", callSite.calleeReference.source))
+            when {
+                symbol is FirValueParameterSymbol || symbol is FirPropertySymbol && symbol.isLocal || symbol is FirBackingFieldSymbol -> {
+                    result.addDiagnostic(
+                        Unsupported("References to variables aren't supported yet", callSite.calleeReference.source)
+                    )
+                }
+                symbol is FirEnumEntrySymbol -> {
+                    result.addDiagnostic(
+                        Unsupported("References to enum entries aren't supported", callSite.calleeReference.source)
+                    )
+                }
             }
         } else if (objectsByName && symbol.isRegularClassWithoutCompanion(callInfo.session)) {
             result.addDiagnostic(NoCompanionObject)

@@ -1,6 +1,5 @@
-// !LANGUAGE: +EnumEntries
+// !LANGUAGE: +EnumEntries -PrioritizedEnumEntries
 // KT-59611
-// IGNORE_BACKEND_K2: JVM_IR, JS_IR, NATIVE, WASM
 // IGNORE_BACKEND: JS, JVM
 // WITH_STDLIB
 

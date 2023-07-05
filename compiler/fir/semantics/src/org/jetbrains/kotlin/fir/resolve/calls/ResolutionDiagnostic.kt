@@ -123,7 +123,7 @@ class InfixCallOfNonInfixFunction(val function: FirNamedFunctionSymbol) : Resolu
 class OperatorCallOfNonOperatorFunction(val function: FirNamedFunctionSymbol) : ResolutionDiagnostic(CONVENTION_ERROR)
 
 class InferenceError(val constraintError: ConstraintSystemError) : ResolutionDiagnostic(constraintError.applicability)
-class Unsupported(val message: String, val source: KtSourceElement? = null) : ResolutionDiagnostic(K2_UNSUPPORTED)
+class Unsupported(val message: String, val source: KtSourceElement?) : ResolutionDiagnostic(K2_UNSUPPORTED)
 
 object PropertyAsOperator : ResolutionDiagnostic(K2_PROPERTY_AS_OPERATOR)
 

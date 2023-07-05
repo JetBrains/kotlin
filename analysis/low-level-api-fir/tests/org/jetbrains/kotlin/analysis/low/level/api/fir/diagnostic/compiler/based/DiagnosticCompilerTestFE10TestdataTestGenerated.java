@@ -11063,6 +11063,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
             }
 
             @Test
+            @TestMetadata("referenceToEnumEntry.kt")
+            public void testReferenceToEnumEntry() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/enum/referenceToEnumEntry.kt");
+            }
+
+            @Test
             @TestMetadata("SecondaryConstructorCall.kt")
             public void testSecondaryConstructorCall() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/enum/SecondaryConstructorCall.kt");
