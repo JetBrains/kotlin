@@ -110,7 +110,11 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
             node, parameters, info, FieldRemapper(null, null, parameters), sourceCompiler.isCallInsideSameModuleAsCallee,
             "Method inlining " + sourceCompiler.callElementText,
             SourceMapCopier(sourceMapper, nodeAndSmap.classSMAP, callSite),
-            info.callSiteInfo, isInlineOnly, !isInlinedToInlineFunInKotlinRuntime(), maskStartIndex, maskStartIndex + maskValues.size,
+            info.callSiteInfo,
+            isInlineOnlyMethod = isInlineOnly,
+            !isInlinedToInlineFunInKotlinRuntime(),
+            maskStartIndex,
+            maskStartIndex + maskValues.size,
         ) //with captured
 
         val remapper = LocalVarRemapper(parameters, initialFrameSize)

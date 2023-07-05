@@ -47,7 +47,7 @@ class MethodInliner(
     private val errorPrefix: String,
     private val sourceMapper: SourceMapCopier,
     private val inlineCallSiteInfo: InlineCallSiteInfo,
-    private val overrideLineNumber: Boolean = false,
+    private val isInlineOnlyMethod: Boolean = false,
     private val shouldPreprocessApiVersionCalls: Boolean = false,
     private val defaultMaskStart: Int = -1,
     private val defaultMaskEnd: Int = -1
@@ -155,12 +155,12 @@ class MethodInliner(
 
         val fakeContinuationName = CoroutineTransformer.findFakeContinuationConstructorClassName(node)
         val markerShift = calcMarkerShift(parameters, node)
-        var currentLineNumber = if (overrideLineNumber) sourceMapper.callSite!!.line else -1
+        var currentLineNumber = if (isInlineOnlyMethod) sourceMapper.callSite!!.line else -1
         val lambdaInliner = object : InlineAdapter(remappingMethodAdapter, parameters.argsSizeOnStack, sourceMapper) {
             private var transformationInfo: TransformationInfo? = null
 
             override fun visitLineNumber(line: Int, start: Label) {
-                if (!overrideLineNumber) {
+                if (!isInlineOnlyMethod) {
                     currentLineNumber = line
                 }
                 super.visitLineNumber(line, start)
@@ -263,7 +263,7 @@ class MethodInliner(
                     }
 
                     val firstLine = info.node.node.instructions.asSequence().mapNotNull { it as? LineNumberNode }.firstOrNull()?.line ?: -1
-                    if ((info is DefaultLambda != overrideLineNumber) && currentLineNumber >= 0 && firstLine == currentLineNumber) {
+                    if ((info is DefaultLambda != isInlineOnlyMethod) && currentLineNumber >= 0 && firstLine == currentLineNumber) {
                         // This can happen in two cases:
                         //   1. `someInlineOnlyFunction { singleLineLambda }`: in this case line numbers are removed
                         //      from the inline function, so the entirety of its bytecode has the line number of
@@ -298,7 +298,8 @@ class MethodInliner(
                         newCapturedRemapper,
                         if (info is DefaultLambda) isSameModule else true /*cause all nested objects in same module as lambda*/,
                         "Lambda inlining " + info.lambdaClassType.internalName,
-                        SourceMapCopier(sourceMapper.parent, info.node.classSMAP, callSite), inlineCallSiteInfo
+                        SourceMapCopier(sourceMapper.parent, info.node.classSMAP, callSite), inlineCallSiteInfo,
+                        isInlineOnlyMethod = false
                     )
 
                     val varRemapper = LocalVarRemapper(lambdaParameters, valueParamShift)
@@ -316,7 +317,7 @@ class MethodInliner(
                     if (currentLineNumber != -1) {
                         val endLabel = Label()
                         mv.visitLabel(endLabel)
-                        if (overrideLineNumber) {
+                        if (isInlineOnlyMethod) {
                             // This is from the function we're inlining into, so no need to remap.
                             mv.visitLineNumber(currentLineNumber, endLabel)
                         } else {
@@ -414,7 +415,7 @@ class MethodInliner(
         )
 
         val transformationVisitor = object : InlineMethodInstructionAdapter(transformedNode) {
-            private val GENERATE_DEBUG_INFO = GENERATE_SMAP && !overrideLineNumber
+            private val GENERATE_DEBUG_INFO = GENERATE_SMAP && !isInlineOnlyMethod
 
             private val isInliningLambda = nodeRemapper.isInsideInliningLambda
 
@@ -477,19 +478,18 @@ class MethodInliner(
                 }
             }
 
-            override fun visitLocalVariable(
-                name: String, desc: String, signature: String?, start: Label, end: Label, index: Int
-            ) {
-                if (isInliningLambda || GENERATE_DEBUG_INFO) {
-                    val isInlineFunctionMarker = name.startsWith(JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_FUNCTION)
-                    val varSuffix = when {
-                        inliningContext.isRoot && !isInlineFunctionMarker -> INLINE_FUN_VAR_SUFFIX
-                        else -> ""
-                    }
+            override fun visitLocalVariable(name: String, desc: String, signature: String?, start: Label, end: Label, index: Int) {
+                if (!isInliningLambda && !GENERATE_DEBUG_INFO) return
 
-                    val varName = if (varSuffix.isNotEmpty() && name == AsmUtil.THIS) AsmUtil.INLINE_DECLARATION_SITE_THIS else name
-                    super.visitLocalVariable(varName + varSuffix, desc, signature, start, end, getNewIndex(index))
+                val isInlineFunctionMarker = name.startsWith(JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_FUNCTION)
+                val newName = when {
+                    inliningContext.isRoot && !isInlineFunctionMarker -> {
+                        val namePrefix = if (name == AsmUtil.THIS) AsmUtil.INLINE_DECLARATION_SITE_THIS else name
+                        namePrefix + INLINE_FUN_VAR_SUFFIX
+                    }
+                    else -> name
                 }
+                super.visitLocalVariable(newName, desc, signature, start, end, getNewIndex(index))
             }
         }
 

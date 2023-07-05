@@ -340,7 +340,8 @@ class AnonymousObjectTransformer(
                 inliningContext.callSiteInfo.inlineScopeVisibility,
                 inliningContext.callSiteInfo.file,
                 inliningContext.callSiteInfo.lineNumber
-            )
+            ),
+            isInlineOnlyMethod = false
         ).doInline(deferringVisitor, LocalVarRemapper(parameters, 0), false, mapOf())
         reifiedTypeParametersUsages?.let(result.reifiedTypeParametersUsages::mergeAll)
         deferringVisitor.visitMaxs(-1, -1)
