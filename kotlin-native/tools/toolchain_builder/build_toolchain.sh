@@ -43,7 +43,9 @@ build_archive() {
   mv "$TARGET" "$FULL_NAME"
   ARCHIVE_NAME="$FULL_NAME.tar.gz"
   tar -czvf "$ARCHIVE_NAME" "$FULL_NAME"
-  cp "$ARCHIVE_NAME" /artifacts/"$ARCHIVE_NAME"
+  echo "$PWD/$ARCHIVE_NAME"
+  mkdir -p ~/artifacts
+  cp "$ARCHIVE_NAME" ~/artifacts/"$ARCHIVE_NAME"
 }
 
 echo "building toolchain for $TARGET"
