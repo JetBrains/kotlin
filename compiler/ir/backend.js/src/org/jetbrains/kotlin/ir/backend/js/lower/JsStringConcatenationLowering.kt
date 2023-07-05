@@ -9,12 +9,15 @@ import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.util.overrides
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
+import org.jetbrains.kotlin.utils.filterIsInstanceAnd
 
 class JsStringConcatenationLowering(val context: CommonBackendContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
@@ -30,7 +33,9 @@ private class JsStringConcatenationTransformer(val context: CommonBackendContext
             // See KT-39891
             if (this !is IrSimpleType) return false
             return when (classifier.signature) {
-                IdSignatureValues.any, IdSignatureValues.comparable, IdSignatureValues.number, IdSignatureValues._long -> true
+                IdSignatureValues.any, IdSignatureValues.comparable, IdSignatureValues.number,
+                IdSignatureValues._long, IdSignatureValues._char
+                -> true
                 else -> false
             }
         }
@@ -43,7 +48,15 @@ private class JsStringConcatenationTransformer(val context: CommonBackendContext
                 extensionReceiver = this@explicitlyConvertedToString
             }
         } else {
-            JsIrBuilder.buildCall(context.ir.symbols.memberToString).apply {
+            val anyToStringMethodSymbol = context.ir.symbols.memberToString
+            val toStringMethodSymbol = type.classOrNull?.let {
+                val toStringMethods = it.owner.declarations.filterIsInstanceAnd<IrSimpleFunction> { f ->
+                    f.overrides(anyToStringMethodSymbol.owner)
+                }
+                toStringMethods.singleOrNull()?.symbol
+            } ?: anyToStringMethodSymbol
+
+            JsIrBuilder.buildCall(toStringMethodSymbol).apply {
                 dispatchReceiver = this@explicitlyConvertedToString
             }
         }
