@@ -9,13 +9,13 @@ import org.jetbrains.kotlin.backend.common.serialization.mangle.KotlinExportChec
 import org.jetbrains.kotlin.backend.common.serialization.mangle.KotlinMangleComputer
 import org.jetbrains.kotlin.backend.common.serialization.mangle.MangleMode
 import org.jetbrains.kotlin.fir.NoMutableState
-import org.jetbrains.kotlin.fir.backend.FirBasedKotlinMangler
+import org.jetbrains.kotlin.fir.backend.FirMangler
 import org.jetbrains.kotlin.fir.backend.FirExportCheckerVisitor
 import org.jetbrains.kotlin.fir.backend.FirMangleComputer
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 
 @NoMutableState
-class FirJsKotlinMangler : FirBasedKotlinMangler() {
+class FirJsKotlinMangler : FirMangler() {
 
     private class JsFirExportChecker : FirExportCheckerVisitor() {
         override fun FirDeclaration.isPlatformSpecificExported() = false

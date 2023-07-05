@@ -7,11 +7,11 @@ package org.jetbrains.kotlin.fir.backend.jvm
 
 import org.jetbrains.kotlin.backend.common.serialization.mangle.*
 import org.jetbrains.kotlin.fir.NoMutableState
-import org.jetbrains.kotlin.fir.backend.FirBasedKotlinMangler
+import org.jetbrains.kotlin.fir.backend.FirMangler
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 
 @NoMutableState
-class FirJvmKotlinMangler : FirBasedKotlinMangler() {
+class FirJvmKotlinMangler : FirMangler() {
 
     override fun getMangleComputer(mode: MangleMode, compatibleMode: Boolean): KotlinMangleComputer<FirDeclaration> {
         return FirJvmMangleComputer(StringBuilder(256), mode)

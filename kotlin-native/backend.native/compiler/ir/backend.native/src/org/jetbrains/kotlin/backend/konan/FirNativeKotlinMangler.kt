@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.backend.common.serialization.mangle.KotlinMangleComp
 import org.jetbrains.kotlin.backend.common.serialization.mangle.MangleMode
 import org.jetbrains.kotlin.backend.common.serialization.mangle.SpecialDeclarationType
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.backend.FirBasedKotlinMangler
+import org.jetbrains.kotlin.fir.backend.FirMangler
 import org.jetbrains.kotlin.fir.backend.FirExportCheckerVisitor
 import org.jetbrains.kotlin.fir.backend.FirMangleComputer
 import org.jetbrains.kotlin.fir.declarations.*
@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.fir.types.toSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 
-class FirNativeKotlinMangler : FirBasedKotlinMangler() {
+class FirNativeKotlinMangler : FirMangler() {
     override fun getMangleComputer(mode: MangleMode, compatibleMode: Boolean): KotlinMangleComputer<FirDeclaration> {
         return FirNativeKotlinMangleComputer(StringBuilder(256), mode)
     }

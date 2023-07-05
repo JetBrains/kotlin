@@ -9,16 +9,12 @@ import org.jetbrains.kotlin.backend.common.serialization.mangle.AbstractKotlinMa
 import org.jetbrains.kotlin.backend.common.serialization.mangle.KotlinExportChecker
 import org.jetbrains.kotlin.backend.common.serialization.mangle.KotlinMangleComputer
 import org.jetbrains.kotlin.backend.common.serialization.mangle.MangleMode
+import org.jetbrains.kotlin.fir.backend.FirMangler
 import org.jetbrains.kotlin.fir.backend.FirMetadataSource
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrMetadataSourceOwner
 import org.jetbrains.kotlin.ir.util.KotlinMangler
-
-interface FirMangler : KotlinMangler<FirDeclaration> {
-    override val manglerName: String
-        get() = "Fir"
-}
 
 class Ir2FirManglerAdapter(private val delegate: FirMangler) : AbstractKotlinMangler<IrDeclaration>(),
     KotlinMangler.IrMangler {

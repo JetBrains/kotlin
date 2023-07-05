@@ -10,9 +10,8 @@ import org.jetbrains.kotlin.backend.common.serialization.mangle.KotlinExportChec
 import org.jetbrains.kotlin.backend.common.serialization.mangle.MangleMode
 import org.jetbrains.kotlin.backend.common.serialization.mangle.SpecialDeclarationType
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.signaturer.FirMangler
 
-abstract class FirBasedKotlinMangler : AbstractKotlinMangler<FirDeclaration>(), FirMangler {
+abstract class FirMangler : AbstractKotlinMangler<FirDeclaration>() {
     override fun FirDeclaration.mangleString(compatibleMode: Boolean): String = getMangleComputer(MangleMode.FULL, compatibleMode).computeMangle(this)
 
     override fun FirDeclaration.signatureString(compatibleMode: Boolean): String = getMangleComputer(MangleMode.SIGNATURE, compatibleMode).computeMangle(this)
@@ -26,4 +25,7 @@ abstract class FirBasedKotlinMangler : AbstractKotlinMangler<FirDeclaration>(), 
             override fun FirDeclaration.isPlatformSpecificExported(): Boolean = true
         }
     }
+
+    override val manglerName: String
+        get() = "Fir"
 }
