@@ -17,8 +17,9 @@ import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.Usage
 import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.withType
-import org.jetbrains.kotlin.gradle.*
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
+import org.jetbrains.kotlin.gradle.plugin.HasKotlinDependencies
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
@@ -275,11 +276,23 @@ class ConfigurationsTest : MultiplatformExtensionTest() {
 
         project.evaluate()
 
+        fun HasKotlinDependencies.allDependenciesConfigurationNames() = listOfNotNull(
+            apiConfigurationName,
+            implementationConfigurationName,
+            compileOnlyConfigurationName,
+            runtimeOnlyConfigurationName
+        )
+
+        fun KotlinCompilation<*>.allCompilationDependenciesConfigurationNames() = allDependenciesConfigurationNames() + listOfNotNull(
+            compileDependencyConfigurationName,
+            runtimeDependencyConfigurationName,
+        )
+
         @Suppress("DEPRECATION")
         project.kotlinExtension.targets.flatMap { it.compilations }.forEach { compilation ->
             val compilationSourceSets = compilation.allKotlinSourceSets
-            val compilationConfigurationNames = compilation.relatedConfigurationNames
-            val sourceSetConfigurationNames = compilationSourceSets.flatMapTo(mutableSetOf()) { it.relatedConfigurationNames }
+            val compilationConfigurationNames = compilation.allCompilationDependenciesConfigurationNames()
+            val sourceSetConfigurationNames = compilationSourceSets.flatMapTo(mutableSetOf()) { it.allDependenciesConfigurationNames() }
 
             assert(compilationConfigurationNames.none { it in sourceSetConfigurationNames }) {
                 """A name clash between source set and compilation configurations detected for the following configurations:
