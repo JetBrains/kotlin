@@ -326,6 +326,7 @@ private fun processCLib(
             noStringConversion = def.config.noStringConversion.toSet(),
             exportForwardDeclarations = def.config.exportForwardDeclarations,
             disableDesignatedInitializerChecks = def.config.disableDesignatedInitializerChecks,
+            disableExperimentalAnnotation = cinteropArguments.disableExperimentalAnnotation ?: false,
             target = target
     )
 

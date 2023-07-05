@@ -32,6 +32,7 @@ class InteropConfiguration(
         val noStringConversion: Set<String>,
         val exportForwardDeclarations: List<String>,
         val disableDesignatedInitializerChecks: Boolean,
+        val disableExperimentalAnnotation: Boolean,
         val target: KonanTarget
 )
 

@@ -136,6 +136,9 @@ open class CInteropArguments(argParser: ArgParser =
 
     val userSetupHint by argParser.option(ArgType.String, USER_SETUP_HINT,
             description = "A suggestion that is displayed to the user if produced lib fails to link")
+
+    val disableExperimentalAnnotation by argParser.option(ArgType.Boolean, "Xdisable-experimental-annotation",
+            description = "Don't add @ExperimentalForeignApi to generated Kotlin declarations")
 }
 
 class JSInteropArguments(argParser: ArgParser = ArgParser("jsinterop",
