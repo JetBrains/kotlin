@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrReturnableBlockSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
@@ -88,7 +89,9 @@ class FunctionInlining(
     private val regenerateInlinedAnonymousObjects: Boolean = false,
     private val inlineArgumentsWithTheirOriginalTypeAndOffset: Boolean = false,
     private val allowExternalInlining: Boolean = false,
-    private val useTypeParameterUpperBound: Boolean = false
+    private val useTypeParameterUpperBound: Boolean = false,
+    private val copierBuilder: (Map<IrTypeParameterSymbol, IrType?>?, IrDeclarationParent?) -> AbstractDeepCopyIrTreeWithSymbolsForInliner =
+        ::DeepCopyIrTreeWithSymbolsForInliner,
 ) : IrElementTransformerVoidWithContext(), BodyLoweringPass {
     private var containerScope: ScopeWithIr? = null
 
@@ -171,7 +174,7 @@ class FunctionInlining(
                 (0 until callSite.typeArgumentsCount).associate {
                     typeParameters[it].symbol to callSite.getTypeArgument(it)
                 }
-            DeepCopyIrTreeWithSymbolsForInliner(typeArguments, parent)
+            copierBuilder(typeArguments, parent)
         }
 
         val substituteMap = mutableMapOf<IrValueParameter, IrExpression>()
