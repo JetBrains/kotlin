@@ -1,7 +1,7 @@
 package org.jetbrains.dokka.base.transformers.documentables
 
-import org.jetbrains.dokka.DokkaConfiguration.PackageOptions
 import org.jetbrains.dokka.DokkaConfiguration
+import org.jetbrains.dokka.DokkaConfiguration.PackageOptions
 import org.jetbrains.dokka.model.Annotations
 import org.jetbrains.dokka.model.Documentable
 import org.jetbrains.dokka.model.EnumValue

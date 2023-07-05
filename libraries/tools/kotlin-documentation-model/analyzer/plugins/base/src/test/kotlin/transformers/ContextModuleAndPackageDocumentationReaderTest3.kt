@@ -1,10 +1,12 @@
 package transformers
 
-import org.jetbrains.dokka.base.transformers.documentables.ModuleAndPackageDocumentationReader
 import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.plugability.DokkaContext
+import org.jetbrains.dokka.plugability.plugin
+import org.jetbrains.dokka.plugability.querySingle
 import org.jetbrains.dokka.utilities.DokkaConsoleLogger
 import org.jetbrains.dokka.utilities.LoggingLevel
+import org.jetbrains.kotlin.analysis.kotlin.internal.InternalKotlinAnalysisPlugin
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import testApi.testRunner.TestDokkaConfigurationBuilder
@@ -42,12 +44,12 @@ class ContextModuleAndPackageDocumentationReaderTest3 : AbstractContextModuleAnd
         )
     }
 
-    private val reader by lazy { ModuleAndPackageDocumentationReader(context) }
+    private val reader by lazy { context.plugin<InternalKotlinAnalysisPlugin>().querySingle { moduleAndPackageDocumentationReader } }
 
 
     @Test
     fun `root package is matched by empty string and the root keyword`() {
-        val documentation = reader[dPackage(DRI(""), sourceSets = setOf(sourceSet))]
+        val documentation = reader.read(dPackage(DRI(""), sourceSets = setOf(sourceSet)))
         assertEquals(
             listOf("This is the root package", "This is also the root package"), documentation.texts
         )

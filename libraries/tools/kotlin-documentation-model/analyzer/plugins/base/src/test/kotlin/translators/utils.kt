@@ -3,7 +3,6 @@ package translators
 import org.jetbrains.dokka.model.*
 import org.jetbrains.dokka.model.doc.Description
 import org.jetbrains.dokka.model.doc.Text
-import java.util.NoSuchElementException
 
 fun DModule.documentationOf(className: String, functionName: String? = null): String =
     descriptionOf(className, functionName)

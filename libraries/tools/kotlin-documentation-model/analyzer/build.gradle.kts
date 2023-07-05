@@ -41,10 +41,6 @@ apiValidation {
         // NAME                    PATH
         "frontend",            // :plugins:base:frontend
 
-        "kotlin-analysis",     // :kotlin-analysis
-        "compiler-dependency", // :kotlin-analysis:compiler-dependency
-        "intellij-dependency", // :kotlin-analysis:intellij-dependency
-
         "integration-tests",   // :integration-tests
         "gradle",              // :integration-tests:gradle
         "cli",                 // :integration-tests:cli

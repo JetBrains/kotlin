@@ -1,9 +1,11 @@
 package filter
 
-import com.jetbrains.rd.util.firstOrNull
 import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
 import org.jetbrains.dokka.links.DRI
-import org.jetbrains.dokka.model.*
+import org.jetbrains.dokka.model.DClass
+import org.jetbrains.dokka.model.FunctionalTypeConstructor
+import org.jetbrains.dokka.model.GenericTypeConstructor
+import org.jetbrains.dokka.model.Invariance
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
@@ -124,7 +126,7 @@ class KotlinArrayDocumentableReplacerTest : BaseAbstractTest() {
                 val arrTypealias = it.firstOrNull()?.packages?.firstOrNull()?.typealiases?.firstOrNull()
 
                 Assertions.assertEquals(GenericTypeConstructor(DRI("kotlin", "IntArray"), emptyList()),
-                    arrTypealias?.underlyingType?.firstOrNull()?.value)
+                    arrTypealias?.underlyingType?.values?.firstOrNull())
             }
         }
     }

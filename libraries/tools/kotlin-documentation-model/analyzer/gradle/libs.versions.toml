@@ -10,7 +10,13 @@ kotlinx-bcv = "0.12.1"
 ## Analysis
 kotlin-compiler = "1.8.10"
 kotlin-ide-plugin = "213-1.8.10-release-430-IJ6777.52"
-intellij = "213.6777.52"
+kotlin-jps-common = "213-1.6.21-release-334-IJ6777.52" # TODO [beresnev] not sure which version should be used exactly
+
+# MUST match the version of the intellij platform used in the kotlin compiler,
+# otherwise this will lead to different versions of psi API and implementations
+# on the classpath and will fail with hard to debug problems in runtime.
+# See: https://github.com/JetBrains/kotlin/blob/e6633d3d9214402fcf3585ae8c24213a4761cc8b/gradle/versions.properties#L1
+intellij-platform = "203.8084.24"
 
 ## HTML
 jsoup = "1.15.3"
@@ -65,10 +71,13 @@ kotlin-idePlugin-common = { module = "org.jetbrains.kotlin:common", version.ref 
 kotlin-idePlugin-idea = { module = "org.jetbrains.kotlin:idea", version.ref = "kotlin-ide-plugin" }
 kotlin-idePlugin-core = { module = "org.jetbrains.kotlin:core", version.ref = "kotlin-ide-plugin" }
 kotlin-idePlugin-native = { module = "org.jetbrains.kotlin:native", version.ref = "kotlin-ide-plugin" }
+kotlin-jps-common = { module = "org.jetbrains.kotlin:jps-common", version.ref = "kotlin-jps-common" }
 
 #### Java analysis ####
-jetbrains-intellij-core = { module = "com.jetbrains.intellij.idea:intellij-core", version.ref = "intellij" }
-jetbrains-intellij-jpsStandalone = { module = "com.jetbrains.intellij.idea:jps-standalone", version.ref = "intellij" }
+intellij-java-psi-api = { module = "com.jetbrains.intellij.java:java-psi", version.ref = "intellij-platform" }
+intellij-java-psi-impl = { module = "com.jetbrains.intellij.java:java-psi-impl", version.ref = "intellij-platform" }
+intellij-platform-util-api = { module = "com.jetbrains.intellij.platform:util", version.ref = "intellij-platform" }
+intellij-platform-util-rt = { module = "com.jetbrains.intellij.platform:util-rt", version.ref = "intellij-platform" }
 
 #### HTML ####
 jsoup = { module = "org.jsoup:jsoup", version.ref = "jsoup" }
