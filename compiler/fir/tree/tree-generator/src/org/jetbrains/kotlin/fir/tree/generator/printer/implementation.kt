@@ -18,7 +18,7 @@ fun Implementation.generateCode(generationPath: File): GeneratedFile {
     val stringBuilder = StringBuilder()
     SmartPrinter(stringBuilder).apply {
         printCopyright()
-        println("@file:Suppress(\"DuplicatedCode\")")
+        println("@file:Suppress(\"DuplicatedCode\", \"unused\")")
         println()
         println("package $packageName")
         println()
