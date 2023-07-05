@@ -29,5 +29,6 @@
 # See KT-23962 and https://sourceforge.net/p/proguard/bugs/482/
 -keep class kotlin.reflect.jvm.internal.impl.protobuf.GeneratedMessageLite$ExtendableMessageOrBuilder
 
-# It is used as a marker to suppress Animal Sniffer verification errors in :tools:jdk-api-validator
+# They are used as a marker to suppress Animal Sniffer verification errors in :tools:jdk-api-validator
 -keep class kotlin.reflect.jvm.internal.SuppressAnimalSniffer
+-keep class kotlin.reflect.jvm.internal.impl.SuppressAnimalSniffer
