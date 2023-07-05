@@ -656,7 +656,7 @@ open class FirDeclarationsResolveTransformer(
         val body = result.body
         if (result.returnTypeRef is FirImplicitTypeRef) {
             val simpleFunction = function as? FirSimpleFunction
-            val returnExpression = (body?.statements?.single() as? FirReturnExpression)?.result
+            val returnExpression = (body?.statements?.singleOrNull() as? FirReturnExpression)?.result
             val returnTypeRef = if (returnExpression?.typeRef is FirResolvedTypeRef) {
                 returnExpression.resultType.approximateDeclarationType(
                     session,

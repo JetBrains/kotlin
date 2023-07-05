@@ -531,6 +531,12 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
         }
 
         @Test
+        @TestMetadata("propertyGetterWithoutType.kt")
+        public void testPropertyGetterWithoutType() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/propertyGetterWithoutType.kt");
+        }
+
+        @Test
         @TestMetadata("qualifierWithCompanion.kt")
         public void testQualifierWithCompanion() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/qualifierWithCompanion.kt");

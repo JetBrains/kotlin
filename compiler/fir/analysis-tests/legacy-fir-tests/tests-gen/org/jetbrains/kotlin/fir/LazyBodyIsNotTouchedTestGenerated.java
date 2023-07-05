@@ -449,6 +449,11 @@ public class LazyBodyIsNotTouchedTestGenerated extends AbstractLazyBodyIsNotTouc
         runTest("compiler/fir/analysis-tests/testData/resolve/propertyFromJavaPlusAssign.kt");
     }
 
+    @TestMetadata("propertyGetterWithoutType.kt")
+    public void testPropertyGetterWithoutType() throws Exception {
+        runTest("compiler/fir/analysis-tests/testData/resolve/propertyGetterWithoutType.kt");
+    }
+
     @TestMetadata("qualifierWithCompanion.kt")
     public void testQualifierWithCompanion() throws Exception {
         runTest("compiler/fir/analysis-tests/testData/resolve/qualifierWithCompanion.kt");
