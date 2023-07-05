@@ -59,7 +59,8 @@ class CliFe10AnalysisFacade : Fe10AnalysisFacade {
         return getHandler(element).kotlinTypeRefiner ?: error("Resolution is not performed")
     }
 
-    override fun analyze(element: KtElement, mode: Fe10AnalysisFacade.AnalysisMode): BindingContext {
+    override fun analyze(elements: List<KtElement>, mode: Fe10AnalysisFacade.AnalysisMode): BindingContext {
+        val element = elements.firstOrNull() ?: return BindingContext.EMPTY
         return getResolveSession(element).bindingContext
     }
 
