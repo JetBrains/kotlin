@@ -205,6 +205,7 @@
 /compiler/util/src/org/jetbrains/kotlin/config/LanguageVersionSettings.kt "Kotlin Language Evolution"
 /compiler/util-io/ "Kotlin Native"
 /compiler/util-klib/ "Kotlin Native"
+/compiler/util-klib-abi/ "Kotlin Native"
 /compiler/util-klib-metadata/ "Kotlin Native"
 /compiler/visualizer/ "Kotlin Compiler Core"
 
