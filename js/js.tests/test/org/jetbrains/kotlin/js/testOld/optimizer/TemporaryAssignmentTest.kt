@@ -16,11 +16,9 @@
 
 package org.jetbrains.kotlin.js.testOld.optimizer
 
-import org.junit.Ignore
 import org.junit.Test
 
-@Ignore
-class TemporaryAssignmentEliminationTest : BasicOptimizerTest("temporary-assignment") {
+class TemporaryAssignmentTest : BasicOptimizerTest("temporary-assignment") {
     @Test fun assignment() = box()
 
     @Test fun returnStatement() = box()

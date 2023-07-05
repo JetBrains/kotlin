@@ -3,22 +3,19 @@ function f(x) {
 }
 
 function testRegular() {
-    var result;
-    result = f("testRegular");
+    var result = f("testRegular");
     return result;
 }
 
 function testIrregular() {
-    var result;
-    result = f("testIrregular");
+    var result = f("testIrregular");
     return result;
 }
 
 function testDoubleUse1() {
-    var result;
     var $b;
     $b = f("testDoubleUse1");
-    result = $b;
+    var result = $b;
     f($b);
     return result;
 }
@@ -32,10 +29,9 @@ function testDoubleUse2() {
 }
 
 function testDoubleUse3() {
-    var result;
     var $a;
     $a = f("testDoubleUse3");
-    result = $a;
+    var result = $a;
     f($a);
     return result;
 }

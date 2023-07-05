@@ -1,10 +1,12 @@
 function test(param) {
+    var $a;
     var result;
     if (param > 0) {
-        result = param;
+        $a = param;
     } else {
-        result = -param;
+        $a = -param;
     }
+    result = $a;
     return result;
 }
 

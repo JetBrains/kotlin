@@ -1,10 +1,11 @@
 function test(n) {
+    var $tmp;
     if (n >= 0) {
-        return n;
+        $tmp = n;
+    } else {
+        $tmp = -n;
     }
-    else {
-        return -n;
-    }
+    return $tmp;
 }
 
 function box() {
