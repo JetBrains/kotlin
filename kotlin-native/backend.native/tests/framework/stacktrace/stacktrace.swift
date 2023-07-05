@@ -3,6 +3,7 @@ import Stacktrace
 
 func testStackTrace() throws {
     let trace = StacktraceKt.getStackTrace()
+    print(trace)
     try assertTrue(trace[0].contains("Throwable.kt"))
     try assertTrue(trace[1].contains("Exceptions.kt"))
     try assertTrue(trace[2].contains("stacktrace.kt:8"))
