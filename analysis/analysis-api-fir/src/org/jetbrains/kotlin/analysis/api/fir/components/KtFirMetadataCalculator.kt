@@ -14,20 +14,19 @@ import org.jetbrains.kotlin.codegen.ClassBuilderMode
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings
 import org.jetbrains.kotlin.config.JvmAnalysisFlags
 import org.jetbrains.kotlin.config.JvmDefaultMode
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.backend.FirMetadataSource
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmSerializerExtension
-import org.jetbrains.kotlin.fir.declarations.FirClass
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.backend.jvm.jvmTypeMapper
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.classId
-import org.jetbrains.kotlin.fir.languageVersionSettings
-import org.jetbrains.kotlin.fir.packageFqName
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.serialization.FirElementAwareStringTable
 import org.jetbrains.kotlin.fir.serialization.FirElementSerializer
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
+import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.typeApproximator
+import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
@@ -86,7 +85,8 @@ internal class KtFirMetadataCalculator(
 
     private fun generateAnnotation(message: GeneratedMessageLite, stringTable: JvmStringTable, kind: Kind): Metadata {
         val languageVersionSettings = firSession.languageVersionSettings
-        var flags = 0
+        var flags = JvmAnnotationNames.METADATA_JVM_IR_FLAG or JvmAnnotationNames.METADATA_FIR_FLAG or
+                JvmAnnotationNames.METADATA_JVM_IR_STABLE_ABI_FLAG // TODO: check compiler configuration
         if (languageVersionSettings.isPreRelease()) {
             flags = flags or JvmAnnotationNames.METADATA_PRE_RELEASE_FLAG
         }
@@ -109,6 +109,25 @@ internal class KtFirMetadataCalculator(
         val scopeSession = scopeSession
         val typeApproximator = session.typeApproximator
         val stringTable = FirJvmElementAwareStringTableForLightClasses()
+        val bindings = JvmSerializationBindings()
+        metadata.fir?.accept(object : FirVisitorVoid() {
+            override fun visitElement(element: FirElement) {
+                element.acceptChildren(this)
+            }
+
+            override fun visitProperty(property: FirProperty) {
+                super.visitProperty(property)
+                property.backingField?.let {
+                    val name = if (property.delegate != null) "${property.name.asString()}\$delegate" else property.name.asString()
+                    bindings.put(
+                        FirJvmSerializerExtension.FIELD_FOR_PROPERTY,
+                        property,
+                        session.jvmTypeMapper.mapType(it.returnTypeRef.coneType) to name
+                    )
+                }
+                // TODO: getter, setter, ...
+            }
+        })
         val jvmSerializerExtension = FirJvmSerializerExtension(
             session,
             JvmSerializationBindings(),
@@ -116,7 +135,8 @@ internal class KtFirMetadataCalculator(
             localDelegatedProperties = emptyList(),
             typeApproximator,
             scopeSession,
-            JvmSerializationBindings(),
+            bindings,
+            //JvmSerializationBindings(),
             useTypeTable = true,
             moduleName = analysisSession.useSiteModule.moduleDescription,
             classBuilderMode = ClassBuilderMode.KAPT3,
