@@ -28,9 +28,8 @@ import org.jetbrains.kotlin.fir.originalOrSelf
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
-import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenFunctions
-import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenProperties
 import org.jetbrains.kotlin.fir.scopes.impl.toConeType
+import org.jetbrains.kotlin.fir.scopes.retrieveDirectOverriddenOf
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -53,22 +52,6 @@ object FirOverrideChecker : FirClassChecker() {
                 val callable = it as FirCallableDeclaration
                 checkMember(callable.symbol, declaration, reporter, typeCheckerState, firTypeScope, context)
             }
-        }
-    }
-
-    private fun FirTypeScope.retrieveDirectOverriddenOf(memberSymbol: FirCallableSymbol<*>): List<FirCallableSymbol<*>> {
-        return when (memberSymbol) {
-            is FirNamedFunctionSymbol -> {
-                processFunctionsByName(memberSymbol.name) {}
-                getDirectOverriddenFunctions(memberSymbol)
-            }
-
-            is FirPropertySymbol -> {
-                processPropertiesByName(memberSymbol.name) {}
-                getDirectOverriddenProperties(memberSymbol)
-            }
-
-            else -> throw IllegalArgumentException("unexpected member kind $memberSymbol")
         }
     }
 

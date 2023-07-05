@@ -890,21 +890,7 @@ class LightTreeRawFirExpressionBuilder(
             baseSource = whenCondition.toFirSourceElement(),
             operationReferenceSource = conditionSource
         )
-        return if (hasSubject) {
-            WhenConditionConvertedResults(result, false)
-        } else {
-            WhenConditionConvertedResults(
-                buildErrorExpression {
-                    source = whenCondition.toFirSourceElement()
-                    diagnostic = ConeSimpleDiagnostic(
-                        "No expression in condition with expression",
-                        DiagnosticKind.ExpressionExpected
-                    )
-                    nonExpressionElement = result
-                },
-                true,
-            )
-        }
+        return createWhenConditionConvertedResults(hasSubject, result, whenCondition)
     }
 
     private fun convertWhenConditionIsPattern(
@@ -934,6 +920,14 @@ class LightTreeRawFirExpressionBuilder(
             argumentList = buildUnaryArgumentList(subjectExpression)
         }
 
+        return createWhenConditionConvertedResults(hasSubject, result, whenCondition)
+    }
+
+    private fun createWhenConditionConvertedResults(
+        hasSubject: Boolean,
+        result: FirExpression,
+        whenCondition: LighterASTNode,
+    ): WhenConditionConvertedResults {
         return if (hasSubject) {
             WhenConditionConvertedResults(result, false)
         } else {
