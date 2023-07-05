@@ -27,8 +27,6 @@ enum class FirOperation(val operator: String = "???") {
     DIV_ASSIGN("/="),
     REM_ASSIGN("%="),
 
-    // Unary
-    EXCL("!"),
     // Type
     IS("is"),
     NOT_IS("!is"),
@@ -39,12 +37,6 @@ enum class FirOperation(val operator: String = "???") {
 
     companion object {
         val ASSIGNMENTS: Set<FirOperation> = EnumSet.of(ASSIGN, PLUS_ASSIGN, MINUS_ASSIGN, TIMES_ASSIGN, DIV_ASSIGN, REM_ASSIGN)
-
-        val BOOLEANS: Set<FirOperation> = EnumSet.of(
-            EQ, NOT_EQ, IDENTITY, NOT_IDENTITY, LT, GT, LT_EQ, GT_EQ, IS, NOT_IS
-        )
-
-        val COMPARISONS: Set<FirOperation> = EnumSet.of(LT, GT, LT_EQ, GT_EQ)
 
         val TYPES: Set<FirOperation> = EnumSet.of(IS, NOT_IS, AS, SAFE_AS)
     }

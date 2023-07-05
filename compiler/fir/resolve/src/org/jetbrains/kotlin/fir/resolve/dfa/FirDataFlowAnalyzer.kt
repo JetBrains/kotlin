@@ -1228,6 +1228,4 @@ abstract class FirDataFlowAnalyzer(
     private fun MutableFlow.commitOperationStatement(statement: OperationStatement) =
         addAllStatements(logicSystem.approveOperationStatement(this, statement, removeApprovedOrImpossible = true))
 
-    private fun VariableStorageImpl.getOrCreateIfRealAndUnchanged(originalFlow: PersistentFlow, currentFlow: MutableFlow, fir: FirElement) =
-        getOrCreateIfReal(originalFlow, fir)?.takeIf { !it.isReal() || logicSystem.isSameValueIn(originalFlow, currentFlow, it) }
 }

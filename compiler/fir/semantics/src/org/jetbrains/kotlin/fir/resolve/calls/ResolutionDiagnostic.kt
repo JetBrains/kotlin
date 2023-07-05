@@ -50,8 +50,7 @@ class NamedArgumentNotAllowed(
 
 class ArgumentPassedTwice(
     override val argument: FirExpression,
-    val valueParameter: FirValueParameter,
-    val firstOccurrence: ResolvedCallArgument
+    val valueParameter: FirValueParameter
 ) : InapplicableArgumentDiagnostic()
 
 class VarargArgumentOutsideParentheses(
@@ -72,9 +71,7 @@ class NameNotFound(
 ) : ResolutionDiagnostic(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR)
 
 class NameForAmbiguousParameter(
-    val argument: FirNamedArgumentExpression,
-    val matchedParameter: FirValueParameter,
-    val anotherParameter: FirValueParameter
+    val argument: FirNamedArgumentExpression
 ) : ResolutionDiagnostic(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR)
 
 object InapplicableCandidate : ResolutionDiagnostic(INAPPLICABLE)

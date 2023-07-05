@@ -8,11 +8,9 @@ package org.jetbrains.kotlin.fir.expressions.builder
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationArgumentMapping
-import org.jetbrains.kotlin.fir.expressions.FirArgumentList
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirAnnotationArgumentMappingImpl
 import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyAnnotationArgumentMapping
-import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.name.Name
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
@@ -35,15 +33,4 @@ inline fun buildAnnotationArgumentMapping(init: FirAnnotationArgumentMappingBuil
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirAnnotationArgumentMappingBuilder().apply(init).build()
-}
-
-fun FirArgumentList.toAnnotationArgumentMapping(): FirAnnotationArgumentMapping {
-    return buildAnnotationArgumentMapping {
-        source = this@toAnnotationArgumentMapping.source
-        if (this@toAnnotationArgumentMapping is FirResolvedArgumentList) {
-            this@toAnnotationArgumentMapping.mapping
-                .map { (argument, parameter) -> parameter.name to argument }
-                .toMap(mapping)
-        }
-    }
 }

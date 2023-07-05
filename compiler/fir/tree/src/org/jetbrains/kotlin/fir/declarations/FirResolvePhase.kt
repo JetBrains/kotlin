@@ -21,15 +21,6 @@ enum class FirResolvePhase(val noProcessor: Boolean = false) {
     ANNOTATIONS_ARGUMENTS_MAPPING,
     BODY_RESOLVE;
 
-    val requiredToLaunch: FirResolvePhase
-        get() = when (this) {
-            RAW_FIR -> RAW_FIR
-            IMPORTS -> RAW_FIR
-            STATUS -> TYPES
-            IMPLICIT_TYPES_BODY_RESOLVE, BODY_RESOLVE -> STATUS
-            else -> values()[ordinal - 1]
-        }
-
     val next: FirResolvePhase get() = values()[ordinal + 1]
     val previous: FirResolvePhase get() = values()[ordinal - 1]
 

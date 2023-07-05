@@ -29,8 +29,6 @@ val FirClass.delegateFields: List<FirField>
 
 inline val FirDeclaration.isJava: Boolean
     get() = origin is FirDeclarationOrigin.Java
-inline val FirDeclaration.isJavaSource: Boolean
-    get() = origin == FirDeclarationOrigin.Java.Source
 inline val FirDeclaration.isFromLibrary: Boolean
     get() = origin == FirDeclarationOrigin.Library || origin == FirDeclarationOrigin.Java.Library
 inline val FirDeclaration.isPrecompiled: Boolean

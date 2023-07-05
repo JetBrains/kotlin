@@ -97,8 +97,4 @@ inline val FirClassSymbol<*>.isEnumEntry: Boolean
 
 // ---------------------- specific callables ----------------------
 
-inline val FirPropertyAccessorSymbol.allowsToHaveFakeOverride: Boolean get() = visibility.allowsToHaveFakeOverride
-
-inline val FirPropertySymbol.allowsToHaveFakeOverride: Boolean get() = visibility.allowsToHaveFakeOverride
-
 inline val FirNamedFunctionSymbol.isLocal: Boolean get() = rawStatus.visibility == Visibilities.Local

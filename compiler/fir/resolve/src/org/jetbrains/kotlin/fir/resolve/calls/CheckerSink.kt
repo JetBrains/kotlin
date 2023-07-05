@@ -6,8 +6,6 @@
 package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.fir.PrivateForInline
-import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
-import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import kotlin.coroutines.Continuation
 
 abstract class CheckerSink {
@@ -50,8 +48,3 @@ class CheckerSinkImpl(
         get() = stopOnFirstError && !candidate.isSuccessful
 }
 
-fun CheckerSink.reportDiagnosticIfNotNull(diagnostic: ResolutionDiagnostic?) {
-    if (diagnostic != null) {
-        reportDiagnostic(diagnostic)
-    }
-}

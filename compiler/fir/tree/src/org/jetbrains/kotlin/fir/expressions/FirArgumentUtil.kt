@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.expressions
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.builder.buildArgumentList
-import org.jetbrains.kotlin.fir.expressions.impl.FirArraySetArgumentList
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentListForErrorCall
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentListImpl
@@ -21,9 +20,6 @@ fun buildBinaryArgumentList(left: FirExpression, right: FirExpression): FirArgum
     arguments += left
     arguments += right
 }
-
-fun buildArraySetArgumentList(rValue: FirExpression, indexes: List<FirExpression>): FirArgumentList =
-    FirArraySetArgumentList(rValue, indexes)
 
 fun buildResolvedArgumentList(
     mapping: LinkedHashMap<FirExpression, FirValueParameter>,

@@ -60,8 +60,6 @@ object FieldSets {
 
     val typeRefField = field(typeRef, withReplace = true)
 
-    val valueParameters by lazy { fieldList(valueParameter) }
-
     val typeParameters by lazy { fieldList("typeParameters", typeParameter) }
 
     val typeParameterRefs by lazy { fieldList("typeParameters", typeParameterRef) }

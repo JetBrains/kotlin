@@ -122,17 +122,6 @@ fun FirTypeProjection.toConeTypeProjection(): ConeTypeProjection =
         else -> error("!")
     }
 
-private fun ConeTypeParameterType.hasNotNullUpperBound(): Boolean {
-    return lookupTag.typeParameterSymbol.resolvedBounds.any {
-        val boundType = it.coneType
-        if (boundType is ConeTypeParameterType) {
-            boundType.hasNotNullUpperBound()
-        } else {
-            boundType.nullability == ConeNullability.NOT_NULL
-        }
-    }
-}
-
 val FirTypeRef.canBeNull: Boolean
     get() = coneType.canBeNull
 

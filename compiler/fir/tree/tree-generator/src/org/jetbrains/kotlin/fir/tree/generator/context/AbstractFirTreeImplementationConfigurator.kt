@@ -87,8 +87,6 @@ abstract class AbstractFirTreeImplementationConfigurator {
 
         val parents = ParentsHolder()
 
-        fun Implementation.withArg(argument: Importable): ImplementationWithArg = ImplementationWithArg(this, argument)
-
         fun optInToInternals() {
             implementation.requiresOptIn = true
         }

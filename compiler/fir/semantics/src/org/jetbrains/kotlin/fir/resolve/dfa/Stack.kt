@@ -22,7 +22,6 @@ fun <T> stackOf(vararg values: T): Stack<T> = StackImpl(*values)
 val Stack<*>.isEmpty: Boolean get() = size == 0
 val Stack<*>.isNotEmpty: Boolean get() = size != 0
 fun <T> Stack<T>.topOrNull(): T? = if (size == 0) null else top()
-fun <T> Stack<T>.popOrNull(): T? = if (size == 0) null else pop()
 
 private class StackImpl<T>(vararg values: T) : Stack<T>() {
     private val stack = mutableListOf(*values)

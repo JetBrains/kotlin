@@ -42,10 +42,6 @@ abstract class AbstractFieldConfigurator<T : AbstractFirTreeBuilder>(private val
             }
         }
 
-        fun parentArg(parent: Element, argument: String, type: String) {
-            parentArg(parent, Type(null, argument), Type(null, type))
-        }
-
         fun parentArg(parent: Element, argument: String, type: Importable) {
             parentArg(parent, Type(null, argument), type)
         }
@@ -59,10 +55,6 @@ abstract class AbstractFieldConfigurator<T : AbstractFirTreeBuilder>(private val
                 "Argument $argument already defined for parent $parent of $element"
             }
             argMap[argument] = type
-        }
-
-        fun Type.withArgs(vararg args: Importable): Pair<Type, List<Importable>> {
-            return this to args.toList()
         }
 
         fun Type.withArgs(vararg args: String): Pair<Type, List<Importable>> {

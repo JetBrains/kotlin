@@ -90,16 +90,6 @@ abstract class AbstractBuilderConfigurator<T : AbstractFirTreeBuilder>(val firTr
                 builder.materializedElement = element
                 return ExceptConfigurator()
             }
-
-            inner class Helper(val fieldName: String) {
-                infix fun from(element: Element) {
-                    val field = element[fieldName] ?: throw IllegalArgumentException("Element $element doesn't have field $fieldName")
-                    builder.fields += FieldWithDefault(field)
-                }
-            }
-
-            // fields has <field> from <element>
-            infix fun has(name: String): Helper = Helper(name)
         }
 
         inner class ExceptConfigurator {
@@ -114,12 +104,6 @@ abstract class AbstractBuilderConfigurator<T : AbstractFirTreeBuilder>(val firTr
 
         val fields = Fields()
         val parents: MutableList<IntermediateBuilder> get() = builder.parents
-
-        var materializedElement: Element
-            get() = throw IllegalArgumentException()
-            set(value) {
-                builder.materializedElement = value
-            }
 
     }
 

@@ -90,12 +90,6 @@ abstract class AbstractFirCompilerRequiredAnnotationsResolveTransformer(
         return file
     }
 
-    fun <T> withFileAndScopes(file: FirFile, f: () -> T): T {
-        annotationTransformer.withFile(file) {
-            return annotationTransformer.withFileScopes(file, f)
-        }
-    }
-
     override fun transformRegularClass(regularClass: FirRegularClass, data: Nothing?): FirStatement {
         return annotationTransformer.transformRegularClass(regularClass, null)
     }

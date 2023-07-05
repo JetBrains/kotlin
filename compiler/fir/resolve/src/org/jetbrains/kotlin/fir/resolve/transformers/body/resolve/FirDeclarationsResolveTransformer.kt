@@ -91,12 +91,6 @@ open class FirDeclarationsResolveTransformer(
         }
     }
 
-    protected fun createTypeParameterScope(declaration: FirMemberDeclaration): FirMemberTypeParameterScope? {
-        if (declaration.typeParameters.isEmpty()) return null
-        doTransformTypeParameters(declaration)
-        return FirMemberTypeParameterScope(declaration)
-    }
-
     protected fun doTransformTypeParameters(declaration: FirMemberDeclaration) {
         for (typeParameter in declaration.typeParameters) {
             typeParameter.transformChildren(transformer, ResolutionMode.ContextIndependent)
@@ -207,14 +201,6 @@ open class FirDeclarationsResolveTransformer(
                 }
             }
             property
-        }
-    }
-
-    fun FirProperty.getDefaultAccessorStatus(): FirDeclarationStatus {
-        // Downward propagation of `inline` and `external` modifiers (from property to its accessors)
-        return FirDeclarationStatusImpl(this.visibility, this.modality).apply {
-            isInline = this@getDefaultAccessorStatus.isInline
-            isExternal = this@getDefaultAccessorStatus.isExternal
         }
     }
 

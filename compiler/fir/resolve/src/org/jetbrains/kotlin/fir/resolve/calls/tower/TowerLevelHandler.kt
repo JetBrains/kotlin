@@ -6,12 +6,13 @@
 package org.jetbrains.kotlin.fir.resolve.calls.tower
 
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.resolve.calls.*
+import org.jetbrains.kotlin.fir.resolve.calls.CallInfo
+import org.jetbrains.kotlin.fir.resolve.calls.CallKind
+import org.jetbrains.kotlin.fir.resolve.calls.CandidateCollector
+import org.jetbrains.kotlin.fir.resolve.calls.CandidateFactory
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
-import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 
 internal class CandidateFactoriesAndCollectors(
     // Common calls
@@ -97,9 +98,5 @@ private class TowerScopeLevelProcessor(
                 isFromOriginalTypeInPresenceOfSmartCast
             ), candidateFactory.context
         )
-    }
-
-    companion object {
-        val defaultPackage = Name.identifier("kotlin")
     }
 }

@@ -70,28 +70,4 @@ inline fun <K : Any, V> FirCachesFactory.createCache(
     createValue = { key, _ -> createValue(key) },
 )
 
-inline fun <K : Any, V, CONTEXT> FirCachesFactory.createCacheWithPostCompute(
-    crossinline createValue: (K, CONTEXT) -> V,
-    crossinline postCompute: (K, V) -> Unit
-): FirCache<K, V, CONTEXT> = createCacheWithPostCompute(
-    createValue = { key, context -> createValue(key, context) to null },
-    postCompute = { key, value, _ -> postCompute(key, value) }
-)
-
-inline fun <K : Any, V> FirCachesFactory.createCacheWithPostCompute(
-    crossinline createValue: (K) -> V,
-    crossinline postCompute: (K, V) -> Unit
-): FirCache<K, V, Nothing?> = createCacheWithPostCompute(
-    createValue = { key, _ -> createValue(key) to null },
-    postCompute = { key, value, _ -> postCompute(key, value) }
-)
-
-inline fun <K : Any, V, DATA> FirCachesFactory.createCacheWithPostCompute(
-    crossinline createValue: (K) -> Pair<V, DATA>,
-    crossinline postCompute: (K, V, DATA) -> Unit
-): FirCache<K, V, Nothing?> = createCacheWithPostCompute(
-    createValue = { key, _ -> createValue(key) },
-    postCompute = { key, value, data -> postCompute(key, value, data) }
-)
-
 

@@ -243,7 +243,7 @@ private class FirCallArgumentsProcessor(
         val parameter = findParameterByName(argument) ?: return
 
         result[parameter]?.let {
-            addDiagnostic(ArgumentPassedTwice(argument, parameter, it))
+            addDiagnostic(ArgumentPassedTwice(argument, parameter))
             return
         }
 
@@ -349,7 +349,7 @@ private class FirCallArgumentsProcessor(
             val someName = someParameter?.name
             if (someName != null && someName != argument.name) {
                 addDiagnostic(
-                    NameForAmbiguousParameter(argument, matchedParameter = parameter!!, someParameter)
+                    NameForAmbiguousParameter(argument)
                 )
                 return ProcessorAction.STOP
             }
@@ -375,7 +375,7 @@ private class FirCallArgumentsProcessor(
                             val someParameter = allowedParameters?.getOrNull(matchedIndex)?.fir
                             if (someParameter != null) {
                                 addDiagnostic(
-                                    NameForAmbiguousParameter(argument, matchedParameter = parameter!!, anotherParameter = someParameter)
+                                    NameForAmbiguousParameter(argument)
                                 )
                                 ProcessorAction.STOP
                             } else {

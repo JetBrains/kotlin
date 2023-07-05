@@ -24,12 +24,12 @@ import org.jetbrains.kotlin.fir.deserialization.JvmDeserializedClassConfigurator
 import org.jetbrains.kotlin.fir.extensions.*
 import org.jetbrains.kotlin.fir.java.FirJavaVisibilityChecker
 import org.jetbrains.kotlin.fir.java.FirJvmDefaultModeComponent
+import org.jetbrains.kotlin.fir.java.FirSyntheticPropertiesStorage
 import org.jetbrains.kotlin.fir.java.JvmSupertypeUpdater
 import org.jetbrains.kotlin.fir.java.enhancement.FirAnnotationTypeQualifierResolver
 import org.jetbrains.kotlin.fir.java.enhancement.FirEnhancedSymbolsStorage
-import org.jetbrains.kotlin.fir.java.scopes.JavaOverridabilityRules
-import org.jetbrains.kotlin.fir.java.FirSyntheticPropertiesStorage
 import org.jetbrains.kotlin.fir.java.enhancement.JavaCompilerRequiredAnnotationEnhancementProvider
+import org.jetbrains.kotlin.fir.java.scopes.JavaOverridabilityRules
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.ConeCallConflictResolverFactory
 import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticNamesProvider
@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.impl.FirQualifierResolverImpl
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirTypeResolverImpl
 import org.jetbrains.kotlin.fir.resolve.transformers.FirDummyCompilerLazyDeclarationResolver
 import org.jetbrains.kotlin.fir.resolve.transformers.PlatformSupertypeUpdater
-import org.jetbrains.kotlin.fir.resolve.transformers.plugin.GeneratedClassIndex
+import org.jetbrains.kotlin.fir.resolve.transformers.plugin.CompilerRequiredAnnotationEnhancementProvider
 import org.jetbrains.kotlin.fir.scopes.FirOverrideChecker
 import org.jetbrains.kotlin.fir.scopes.FirOverrideService
 import org.jetbrains.kotlin.fir.scopes.FirPlatformClassMapper
@@ -54,7 +54,6 @@ import org.jetbrains.kotlin.fir.types.TypeComponents
 import org.jetbrains.kotlin.incremental.components.EnumWhenTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
-import org.jetbrains.kotlin.fir.resolve.transformers.plugin.CompilerRequiredAnnotationEnhancementProvider
 
 // -------------------------- Required components --------------------------
 
@@ -69,7 +68,6 @@ fun FirSession.registerCommonComponents(languageVersionSettings: LanguageVersion
     register(FirDefaultParametersResolver::class, FirDefaultParametersResolver())
 
     register(FirExtensionService::class, FirExtensionService(this))
-    register(GeneratedClassIndex::class, GeneratedClassIndex.create())
 
     register(FirSubstitutionOverrideStorage::class, FirSubstitutionOverrideStorage(this))
     register(FirIntersectionOverrideStorage::class, FirIntersectionOverrideStorage(this))

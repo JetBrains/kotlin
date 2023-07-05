@@ -70,8 +70,6 @@ class FirConstructorSymbol(callableId: CallableId) : FirFunctionSymbol<FirConstr
     val delegatedConstructorCallIsThis: Boolean
         get() = fir.delegatedConstructor?.isThis == true
 
-    val delegatedConstructorCallIsSuper: Boolean
-        get() = fir.delegatedConstructor?.isSuper == true
 }
 
 /**

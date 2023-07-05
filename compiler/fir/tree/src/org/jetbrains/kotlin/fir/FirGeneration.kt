@@ -66,18 +66,3 @@ fun generateTemporaryVariable(
         }
     }
 
-fun generateTemporaryVariable(
-    moduleData: FirModuleData,
-    source: KtSourceElement?,
-    specialName: String,
-    initializer: FirExpression,
-    extractedAnnotations: Collection<FirAnnotation>? = null,
-): FirProperty =
-    generateTemporaryVariable(
-        moduleData,
-        source,
-        Name.special("<$specialName>"),
-        initializer,
-        null,
-        extractedAnnotations,
-    )
