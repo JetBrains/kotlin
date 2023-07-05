@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.calls.jvm
 
 import org.jetbrains.kotlin.fir.containingClassLookupTag
-import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirConstructor
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
-import org.jetbrains.kotlin.fir.declarations.FirVariable
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.calls.AbstractConeCallConflictResolver
@@ -71,11 +68,21 @@ class ConeEquivalentCallConflictResolver(
         if (first is FirVariable != second is FirVariable) {
             return false
         }
+        if (!firstCandidate.orderOfMappedArguments.contentEquals(secondCandidate.orderOfMappedArguments)) {
+            return false
+        }
         val firstSignature = createFlatSignature(firstCandidate, first)
         val secondSignature = createFlatSignature(secondCandidate, second)
         return compareCallsByUsedArguments(firstSignature, secondSignature, discriminateGenerics = false, useOriginalSamTypes = false) &&
                 compareCallsByUsedArguments(secondSignature, firstSignature, discriminateGenerics = false, useOriginalSamTypes = false)
     }
+
+    private val Candidate.orderOfMappedArguments: IntArray?
+        get() {
+            val function = symbol.fir as? FirFunction ?: return null
+            val parametersToIndices = function.valueParameters.mapIndexed { index, it -> it to index }.toMap()
+            return argumentMapping?.map { parametersToIndices[it.value] ?: error("Unmapped argument in arguments mapping") }?.toIntArray()
+        }
 
     private fun createFlatSignature(call: Candidate, declaration: FirCallableDeclaration): FlatSignature<Candidate> {
         return when (declaration) {
