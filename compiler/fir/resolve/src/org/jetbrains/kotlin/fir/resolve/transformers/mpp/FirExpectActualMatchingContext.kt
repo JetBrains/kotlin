@@ -9,7 +9,10 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.collectEnumEntries
+import org.jetbrains.kotlin.fir.declarations.isAnnotationConstructor
 import org.jetbrains.kotlin.fir.isSubstitutionOrIntersectionOverride
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
@@ -301,10 +304,5 @@ class FirExpectActualMatchingContext(
     }
 
     override val CallableSymbolMarker.hasStableParameterNames: Boolean
-        get() = when (asSymbol().origin) {
-            is FirDeclarationOrigin.Java,
-            FirDeclarationOrigin.Enhancement,
-            FirDeclarationOrigin.DynamicScope -> false
-            else -> true
-        }
+        get() = asSymbol().rawStatus.hasStableParameterNames
 }

@@ -407,11 +407,19 @@ internal abstract class IrExpectActualMatchingContext(
     }
 
     override val CallableSymbolMarker.hasStableParameterNames: Boolean
-        get() = when (asIr().origin) {
-            IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB,
-            IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB,
-            -> false
-            else -> true
+        get() {
+            var ir = asIr()
+
+            if (ir.isFakeOverride && ir is IrOverridableDeclaration<*>) {
+                ir.resolveFakeOverrideOrNull()?.let { ir = it }
+            }
+
+            return when (ir.origin) {
+                IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB,
+                IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB,
+                -> false
+                else -> true
+            }
         }
 
     override fun onMatchedMembers(expectSymbol: DeclarationSymbolMarker, actualSymbol: DeclarationSymbolMarker) {

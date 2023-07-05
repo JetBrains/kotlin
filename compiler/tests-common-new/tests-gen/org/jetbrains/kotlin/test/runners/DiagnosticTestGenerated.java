@@ -23216,6 +23216,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("inheritedJavaMembers.kt")
+                public void testInheritedJavaMembers() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/multiplatform/java/inheritedJavaMembers.kt");
+                }
+
+                @Test
                 @TestMetadata("parameterNames.kt")
                 public void testParameterNames() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/multiplatform/java/parameterNames.kt");
