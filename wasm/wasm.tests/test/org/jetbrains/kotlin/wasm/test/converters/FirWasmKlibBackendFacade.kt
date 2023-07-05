@@ -6,31 +6,24 @@
 package org.jetbrains.kotlin.wasm.test.converters
 
 import org.jetbrains.kotlin.backend.common.CommonKLibResolver
-import org.jetbrains.kotlin.backend.common.actualizer.IrActualizer
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
-import org.jetbrains.kotlin.fir.pipeline.applyIrGenerationExtensions
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.ir.backend.js.JsFactories
 import org.jetbrains.kotlin.ir.backend.js.resolverLogger
 import org.jetbrains.kotlin.ir.backend.js.serializeModuleIntoKlib
-import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.ir.util.IrMessageLogger
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.test.backend.ir.IrBackendFacade
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
-import org.jetbrains.kotlin.test.backend.ir.irGenerationExtensions
 import org.jetbrains.kotlin.test.frontend.classic.ModuleDescriptorProvider
 import org.jetbrains.kotlin.test.frontend.classic.moduleDescriptorProvider
 import org.jetbrains.kotlin.test.frontend.fir.getAllWasmDependenciesPaths
 import org.jetbrains.kotlin.test.frontend.fir.resolveLibraries
 import org.jetbrains.kotlin.test.model.ArtifactKinds
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
-import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigurator
@@ -61,28 +54,7 @@ class FirWasmKlibBackendFacade(
         // TODO: consider avoiding repeated libraries resolution
         val libraries = resolveLibraries(configuration, getAllWasmDependenciesPaths(module, testServices))
 
-        // TODO: find out how to pass diagnostics to the test infra in this case
-        val diagnosticReporter = DiagnosticReporterFactory.createReporter()
-
         if (firstTimeCompilation) {
-            val irActualizedResult =
-                if (module.frontendKind == FrontendKinds.FIR && module.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)) {
-                    IrActualizer.actualize(
-                        inputArtifact.irModuleFragment,
-                        inputArtifact.dependentIrModuleFragments,
-                        diagnosticReporter,
-                        IrTypeSystemContextImpl(inputArtifact.irModuleFragment.irBuiltins),
-                        configuration.languageVersionSettings
-                    ).also {
-                        inputArtifact.irPluginContext.applyIrGenerationExtensions(
-                            inputArtifact.irModuleFragment,
-                            irGenerationExtensions = module.irGenerationExtensions(testServices)
-                        )
-                    }
-                } else {
-                    null
-                }
-
             serializeModuleIntoKlib(
                 configuration[CommonConfigurationKeys.MODULE_NAME]!!,
                 configuration,
@@ -99,7 +71,7 @@ class FirWasmKlibBackendFacade(
                 abiVersion = KotlinAbiVersion.CURRENT, // TODO get from test file data
                 jsOutputName = null
             ) {
-                inputArtifact.serializeSingleFile(it, irActualizedResult)
+                inputArtifact.serializeSingleFile(it, inputArtifact.irActualizerResult)
             }
         }
 

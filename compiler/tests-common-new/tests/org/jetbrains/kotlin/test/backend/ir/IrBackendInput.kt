@@ -67,6 +67,14 @@ sealed class IrBackendInput : ResultingArtifact.BackendInput<IrBackendInput>() {
      */
     abstract val firMangler: FirMangler?
 
+    /**
+     * Results of actualization, came from IrActulizer
+     *
+     * @see org.jetbrains.kotlin.backend.common.actualizer
+     * @see org.jetbrains.kotlin.test.backend.ir.IrActualizerAndPluginsFacade
+     */
+    abstract var irActualizerResult: IrActualizedResult?
+
     abstract val diagnosticReporter: BaseDiagnosticsCollector
 
     class JsIrBackendInput(
@@ -81,6 +89,7 @@ sealed class IrBackendInput : ResultingArtifact.BackendInput<IrBackendInput>() {
         override val descriptorMangler: KotlinMangler.DescriptorMangler,
         override val irMangler: KotlinMangler.IrMangler,
         override val firMangler: FirMangler?,
+        override var irActualizerResult: IrActualizedResult? = null,
         val serializeSingleFile: (KtSourceFile, IrActualizedResult?) -> ProtoBuf.PackageFragment,
     ) : IrBackendInput()
 
@@ -96,6 +105,7 @@ sealed class IrBackendInput : ResultingArtifact.BackendInput<IrBackendInput>() {
         override val descriptorMangler: KotlinMangler.DescriptorMangler,
         override val irMangler: KotlinMangler.IrMangler,
         override val firMangler: FirMangler?,
+        override var irActualizerResult: IrActualizedResult? = null,
         val serializeSingleFile: (KtSourceFile, IrActualizedResult?) -> ProtoBuf.PackageFragment,
     ) : IrBackendInput()
 
@@ -108,6 +118,7 @@ sealed class IrBackendInput : ResultingArtifact.BackendInput<IrBackendInput>() {
         override val descriptorMangler: KotlinMangler.DescriptorMangler,
         override val irMangler: KotlinMangler.IrMangler,
         override val firMangler: FirMangler?,
+        override var irActualizerResult: IrActualizedResult? = null,
     ) : IrBackendInput() {
         override val irModuleFragment: IrModuleFragment
             get() = backendInput.irModuleFragment

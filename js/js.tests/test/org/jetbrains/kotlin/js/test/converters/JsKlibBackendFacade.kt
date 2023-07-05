@@ -32,7 +32,7 @@ class JsKlibBackendFacade(
     override val additionalServices: List<ServiceRegistrationData>
         get() = listOf(service(::JsIrIncrementalDataProvider))
 
-    constructor(testServices: TestServices): this(testServices, firstTimeCompilation = true)
+    constructor(testServices: TestServices) : this(testServices, firstTimeCompilation = true)
 
     override fun shouldRunAnalysis(module: TestModule): Boolean {
         return module.backendKind == inputKind
@@ -63,7 +63,7 @@ class JsKlibBackendFacade(
                 abiVersion = KotlinAbiVersion.CURRENT, // TODO get from test file data
                 jsOutputName = null
             ) {
-                inputArtifact.serializeSingleFile(it, null)
+                inputArtifact.serializeSingleFile(it, inputArtifact.irActualizerResult)
             }
         }
 

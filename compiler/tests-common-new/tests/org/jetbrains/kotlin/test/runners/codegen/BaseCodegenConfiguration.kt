@@ -11,7 +11,9 @@ import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.HandlersStepBuilder
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.backend.handlers.*
+import org.jetbrains.kotlin.test.backend.ir.IrActualizerAndPluginsFacade
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
+import org.jetbrains.kotlin.test.backend.ir.IrDiagnosticsHandler
 import org.jetbrains.kotlin.test.builders.*
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_SMAP
@@ -39,6 +41,7 @@ fun <F : ResultingArtifact.FrontendOutput<F>, B : ResultingArtifact.BackendInput
     classicFrontendHandlersStep()
     firHandlersStep()
     facadeStep(frontendToBackendConverter)
+    actualizersAndPluginsFacadeStepIfNeeded(targetFrontend)
     irHandlersStep(init = {})
     facadeStep(backendFacade)
     jvmArtifactsHandlersStep(init = {})
@@ -192,6 +195,12 @@ fun HandlersStepBuilder<BinaryArtifacts.Jvm>.inlineHandlers() {
         ::BytecodeInliningHandler,
         ::SMAPDumpHandler
     )
+}
+
+fun TestConfigurationBuilder.actualizersAndPluginsFacadeStepIfNeeded(targetFrontend: FrontendKind<*>) {
+    if (targetFrontend == FrontendKinds.FIR) {
+        facadeStep(::IrActualizerAndPluginsFacade)
+    }
 }
 
 fun TestConfigurationBuilder.configureModernJavaTest(jdkKind: TestJdkKind, jvmTarget: JvmTarget) {

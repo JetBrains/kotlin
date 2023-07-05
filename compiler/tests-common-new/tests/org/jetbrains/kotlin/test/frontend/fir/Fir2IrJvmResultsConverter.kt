@@ -30,8 +30,6 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.CompilerEnvironment
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
-import org.jetbrains.kotlin.test.backend.ir.irGenerationExtensions
-import org.jetbrains.kotlin.test.backend.ir.useIrActualizer
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.model.BackendKinds
 import org.jetbrains.kotlin.test.model.Frontend2BackendConverter
@@ -139,13 +137,6 @@ class Fir2IrJvmResultsConverter(
             irMangler = irMangler,
             firMangler = commonMemberStorage.firSignatureComposer.mangler,
         )
-
-        if (!module.useIrActualizer()) {
-            result.irPluginContext.applyIrGenerationExtensions(
-                backendInput.irModuleFragment,
-                irGenerationExtensions = module.irGenerationExtensions(testServices)
-            )
-        }
 
         return result
     }

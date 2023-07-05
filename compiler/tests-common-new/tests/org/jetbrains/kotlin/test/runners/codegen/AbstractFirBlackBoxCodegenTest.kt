@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.test.builders.configureFirHandlersStep
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.USE_PSI_CLASS_FILES_READING
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.WITH_STDLIB
 import org.jetbrains.kotlin.test.FirParser
+import org.jetbrains.kotlin.test.backend.ir.IrDiagnosticsHandler
+import org.jetbrains.kotlin.test.builders.configureIrHandlersStep
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.directives.configureFirParser
 import org.jetbrains.kotlin.test.frontend.fir.Fir2IrResultsConverter
@@ -63,6 +65,10 @@ abstract class AbstractFirBlackBoxCodegenTestBase(
                     ::FirCfgDumpHandler,
                     ::FirResolvedTypesVerifier,
                 )
+            }
+
+            configureIrHandlersStep {
+                useHandlers(::IrDiagnosticsHandler)
             }
 
             useAfterAnalysisCheckers(

@@ -42,8 +42,6 @@ import org.jetbrains.kotlin.library.metadata.resolver.KotlinResolvedLibrary
 import org.jetbrains.kotlin.library.unresolvedDependencies
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
-import org.jetbrains.kotlin.test.backend.ir.irGenerationExtensions
-import org.jetbrains.kotlin.test.backend.ir.useIrActualizer
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.model.BackendKinds
 import org.jetbrains.kotlin.test.model.Frontend2BackendConverter
@@ -153,13 +151,6 @@ class Fir2IrJsResultsConverter(
                     components.annotationsFromPluginRegistrar.createMetadataAnnotationsProvider()
                 ),
                 configuration.languageVersionSettings,
-            )
-        }
-
-        if (!module.useIrActualizer()) {
-            result.irPluginContext.applyIrGenerationExtensions(
-                result.irModuleFragment,
-                irGenerationExtensions = module.irGenerationExtensions(testServices)
             )
         }
 
