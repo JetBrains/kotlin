@@ -5,7 +5,7 @@ import org.jetbrains.dokka.DokkaDefaults
 import org.jetbrains.dokka.PackageOptionsImpl
 import org.jetbrains.dokka.Platform
 import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 

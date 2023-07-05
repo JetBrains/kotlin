@@ -49,6 +49,15 @@ object IsVar : ExtraProperty<DProperty>, ExtraProperty.Key<DProperty, IsVar> {
     override val key: ExtraProperty.Key<DProperty, *> = this
 }
 
+data class IsAlsoParameter(val inSourceSets: List<DokkaSourceSet>) : ExtraProperty<DProperty> {
+    companion object : ExtraProperty.Key<DProperty, IsAlsoParameter> {
+        override fun mergeStrategyFor(left: IsAlsoParameter, right: IsAlsoParameter): MergeStrategy<DProperty> =
+            MergeStrategy.Replace(IsAlsoParameter(left.inSourceSets + right.inSourceSets))
+    }
+
+    override val key: ExtraProperty.Key<DProperty, *> = IsAlsoParameter
+}
+
 data class CheckedExceptions(val exceptions: SourceSetDependent<List<DRI>>) : ExtraProperty<Documentable>, ExtraProperty.Key<Documentable, ObviousMember> {
     companion object : ExtraProperty.Key<Documentable, CheckedExceptions> {
         override fun mergeStrategyFor(left: CheckedExceptions, right: CheckedExceptions) =

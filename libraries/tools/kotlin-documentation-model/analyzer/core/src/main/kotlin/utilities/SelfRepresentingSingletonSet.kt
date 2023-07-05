@@ -1,6 +1,6 @@
 package org.jetbrains.dokka.utilities
 
-import org.jetbrains.dokka.*
+import org.jetbrains.dokka.InternalDokkaApi
 
 @InternalDokkaApi
 interface SelfRepresentingSingletonSet<T : SelfRepresentingSingletonSet<T>> : Set<T> {

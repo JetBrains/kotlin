@@ -1,8 +1,8 @@
 package multiplatform
 
+import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
-import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
 
 class BasicMultiplatformTest : BaseAbstractTest() {
 

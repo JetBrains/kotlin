@@ -12,14 +12,15 @@ pluginManagement {
 }
 
 dependencyResolutionManagement {
-
-    // subproject :kotlin-analysis:intellij-dependency requires specific repositories that should not be used in
-    // the other subprojects, so use PREFER_PROJECT to allow subprojects to override the repositories defined here.
-    repositoriesMode.set(RepositoriesMode.PREFER_PROJECT)
-
     repositories {
         mavenCentral()
         google()
+
+        maven("https://cache-redirector.jetbrains.com/maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-ide")
+        maven("https://cache-redirector.jetbrains.com/maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-ide-plugin-dependencies")
+
+        maven("https://cache-redirector.jetbrains.com/intellij-repository/releases")
+        maven("https://cache-redirector.jetbrains.com/intellij-third-party-dependencies")
 
         // Declare the Node.js & Yarn download repositories
         // Required by Gradle Node plugin: https://github.com/node-gradle/gradle-node-plugin/blob/3.5.1/docs/faq.md#is-this-plugin-compatible-with-centralized-repositories-declaration
@@ -58,9 +59,17 @@ include(
     ":core:test-api",
     ":core:content-matcher-test-utils",
 
-    ":kotlin-analysis",
-    ":kotlin-analysis:intellij-dependency",
-    ":kotlin-analysis:compiler-dependency",
+    ":subprojects",
+
+    ":subprojects:analysis-java-psi",
+    ":subprojects:analysis-kotlin-api",
+    ":subprojects:analysis-kotlin-descriptors",
+    ":subprojects:analysis-kotlin-descriptors:compiler",
+    ":subprojects:analysis-kotlin-descriptors:ide",
+    ":subprojects:analysis-kotlin-symbols",
+    ":subprojects:analysis-kotlin-symbols:compiler",
+    ":subprojects:analysis-kotlin-symbols:ide",
+    ":subprojects:analysis-markdown-jb",
 
     ":runners:gradle-plugin",
     ":runners:cli",

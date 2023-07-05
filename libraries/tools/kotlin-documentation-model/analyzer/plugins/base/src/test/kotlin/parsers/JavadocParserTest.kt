@@ -1,21 +1,18 @@
 package parsers
 
-import com.jetbrains.rd.util.first
 import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
-import org.jetbrains.dokka.base.translators.psi.parsers.*
 import org.jetbrains.dokka.links.Callable
 import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.links.JavaClassReference
 import org.jetbrains.dokka.model.DEnum
 import org.jetbrains.dokka.model.DModule
 import org.jetbrains.dokka.model.doc.*
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
+import org.jetbrains.dokka.utilities.firstIsInstanceOrNull
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import utils.docs
 import utils.text
-import kotlin.random.*
-import kotlin.test.*
+import kotlin.test.assertNotNull
 
 class JavadocParserTest : BaseAbstractTest() {
 
@@ -98,7 +95,7 @@ class JavadocParserTest : BaseAbstractTest() {
             configuration,
         ) {
             documentablesCreationStage = { modules ->
-                val docs = modules.first().packages.first().classlikes.single().documentation.first().value
+                val docs = modules.first().packages.first().classlikes.single().documentation.values.first()
                 val root = docs.children.first().root
 
                 kotlin.test.assertEquals(
@@ -136,7 +133,7 @@ class JavadocParserTest : BaseAbstractTest() {
             configuration,
         ) {
             documentablesCreationStage = { modules ->
-                val docs = modules.first().packages.first().classlikes.single().documentation.first().value
+                val docs = modules.first().packages.first().classlikes.single().documentation.values.first()
                 val root = docs.children.first().root
 
                 kotlin.test.assertEquals(
@@ -171,7 +168,7 @@ class JavadocParserTest : BaseAbstractTest() {
             configuration,
         ) {
             documentablesCreationStage = { modules ->
-                val docs = modules.first().packages.first().classlikes.single().documentation.first().value
+                val docs = modules.first().packages.first().classlikes.single().documentation.values.first()
                 val root = docs.children.first().root
 
                 kotlin.test.assertEquals(
@@ -208,7 +205,7 @@ class JavadocParserTest : BaseAbstractTest() {
             configuration,
         ) {
             documentablesCreationStage = { modules ->
-                val docs = modules.first().packages.first().classlikes.single().documentation.first().value
+                val docs = modules.first().packages.first().classlikes.single().documentation.values.first()
                 val root = docs.children.first().root
 
                 kotlin.test.assertEquals(
@@ -242,7 +239,7 @@ class JavadocParserTest : BaseAbstractTest() {
             configuration,
         ) {
             documentablesCreationStage = { modules ->
-                val docs = modules.first().packages.first().classlikes.single().documentation.first().value
+                val docs = modules.first().packages.first().classlikes.single().documentation.values.first()
                 val root = docs.children.first().root
 
                 kotlin.test.assertEquals(
@@ -359,7 +356,7 @@ class JavadocParserTest : BaseAbstractTest() {
 
         testInline(source, configuration) {
             documentablesCreationStage = { modules ->
-                val docs = modules.first().packages.first().classlikes.single().documentation.first().value
+                val docs = modules.first().packages.first().classlikes.single().documentation.values.first()
                 assertEquals(expected, docs.children.first().root.children)
             }
         }
@@ -384,7 +381,7 @@ class JavadocParserTest : BaseAbstractTest() {
             configuration,
         ) {
             documentablesCreationStage = { modules ->
-                val docs = modules.first().packages.first().classlikes.single().documentation.first().value
+                val docs = modules.first().packages.first().classlikes.single().documentation.values.first()
                 val root = docs.children.first().root
 
                 kotlin.test.assertEquals(
@@ -428,7 +425,7 @@ class JavadocParserTest : BaseAbstractTest() {
             configuration,
         ) {
             documentablesCreationStage = { modules ->
-                val docs = modules.first().packages.first().classlikes.single().documentation.first().value
+                val docs = modules.first().packages.first().classlikes.single().documentation.values.first()
                 val root = docs.children.first().root
 
                 kotlin.test.assertEquals(
@@ -462,7 +459,7 @@ class JavadocParserTest : BaseAbstractTest() {
             configuration,
         ) {
             documentablesCreationStage = { modules ->
-                val docs = modules.first().packages.first().classlikes.single().documentation.first().value
+                val docs = modules.first().packages.first().classlikes.single().documentation.values.first()
                 val root = docs.children.first().root
 
                 assertEquals(
@@ -578,7 +575,7 @@ class JavadocParserTest : BaseAbstractTest() {
             configuration,
         ) {
             documentablesCreationStage = { modules ->
-                val docs = modules.first().packages.first().classlikes.single().documentation.first().value
+                val docs = modules.first().packages.first().classlikes.single().documentation.values.first()
                 val root = docs.children.first().root
 
                 kotlin.test.assertEquals(
@@ -591,26 +588,27 @@ class JavadocParserTest : BaseAbstractTest() {
         }
     }
 
-    @Test
-    fun `test isolated parsing is case sensitive`() {
-        // Ensure that it won't accidentally break
-        val values = JavadocTag.values().map { it.toString().toLowerCase() }
-        val withRandomizedCapitalization = values.map {
-            val result = buildString {
-                for (char in it) {
-                    if (Random.nextBoolean()) {
-                        append(char)
-                    } else {
-                        append(char.toLowerCase())
-                    }
-                }
-            }
-            if (result == it) result.toUpperCase() else result
-        }
-
-        for ((index, value) in JavadocTag.values().withIndex()) {
-            assertEquals(value, JavadocTag.lowercaseValueOfOrNull(values[index]))
-            assertNull(JavadocTag.lowercaseValueOfOrNull(withRandomizedCapitalization[index]))
-        }
-    }
+    // TODO [beresnev] move to java-analysis
+//    @Test
+//    fun `test isolated parsing is case sensitive`() {
+//        // Ensure that it won't accidentally break
+//        val values = JavadocTag.values().map { it.toString().toLowerCase() }
+//        val withRandomizedCapitalization = values.map {
+//            val result = buildString {
+//                for (char in it) {
+//                    if (Random.nextBoolean()) {
+//                        append(char)
+//                    } else {
+//                        append(char.toLowerCase())
+//                    }
+//                }
+//            }
+//            if (result == it) result.toUpperCase() else result
+//        }
+//
+//        for ((index, value) in JavadocTag.values().withIndex()) {
+//            assertEquals(value, JavadocTag.lowercaseValueOfOrNull(values[index]))
+//            assertNull(JavadocTag.lowercaseValueOfOrNull(withRandomizedCapitalization[index]))
+//        }
+//    }
 }

@@ -1,14 +1,14 @@
 package org.jetbrains.dokka.base.signatures
 
-import org.jetbrains.dokka.base.translators.documentables.PageContentBuilder
 import org.jetbrains.dokka.base.transformers.pages.annotations.SinceKotlinTransformer
-import org.jetbrains.dokka.pages.ContentKind
+import org.jetbrains.dokka.base.translators.documentables.PageContentBuilder
 import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.links.DriOfAny
 import org.jetbrains.dokka.links.DriOfUnit
 import org.jetbrains.dokka.model.*
 import org.jetbrains.dokka.model.AnnotationTarget
 import org.jetbrains.dokka.model.properties.WithExtraProperties
+import org.jetbrains.dokka.pages.ContentKind
 
 object KotlinSignatureUtils : JvmSignatureUtils {
 

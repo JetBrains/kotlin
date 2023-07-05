@@ -1,11 +1,11 @@
 package org.jetbrains.dokka.base.transformers.documentables
 
+import org.jetbrains.dokka.DokkaConfiguration.DokkaSourceSet
 import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.model.*
 import org.jetbrains.dokka.model.properties.ExtraProperty
 import org.jetbrains.dokka.model.properties.MergeStrategy
 import org.jetbrains.dokka.plugability.DokkaContext
-import org.jetbrains.dokka.DokkaConfiguration.DokkaSourceSet
 import org.jetbrains.dokka.transformers.documentation.DocumentableTransformer
 
 class InheritorsExtractorTransformer : DocumentableTransformer {

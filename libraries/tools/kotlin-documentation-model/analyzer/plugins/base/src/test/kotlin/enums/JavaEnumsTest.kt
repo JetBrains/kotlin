@@ -2,14 +2,11 @@ package enums
 
 import org.jetbrains.dokka.SourceLinkDefinitionImpl
 import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
-import org.jetbrains.dokka.model.DEnum
-import org.jetbrains.dokka.model.ObviousMember
 import org.junit.jupiter.api.Test
 import signatures.renderedContent
 import utils.TestOutputWriterPlugin
 import java.net.URL
 import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
 
 class JavaEnumsTest : BaseAbstractTest() {
 

@@ -1,6 +1,7 @@
 package model
 
 import org.jetbrains.dokka.links.DRI
+import org.jetbrains.dokka.links.TypeConstructor
 import org.jetbrains.dokka.links.sureClassNames
 import org.jetbrains.dokka.model.*
 import org.jetbrains.dokka.model.KotlinModifier.*
@@ -10,7 +11,6 @@ import utils.AbstractModelTest
 import utils.assertNotNull
 import utils.name
 import utils.supers
-import org.jetbrains.dokka.links.TypeConstructor
 
 
 class ClassesTest : AbstractModelTest("/src/main/kotlin/classes/Test.kt", "classes") {

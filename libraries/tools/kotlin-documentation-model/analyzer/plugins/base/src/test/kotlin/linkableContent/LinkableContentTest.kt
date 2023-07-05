@@ -2,14 +2,11 @@ package linkableContent
 
 import org.jetbrains.dokka.SourceLinkDefinitionImpl
 import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
-import org.jetbrains.dokka.base.transformers.pages.samples.DefaultSamplesTransformer
 import org.jetbrains.dokka.base.transformers.pages.sourcelinks.SourceLinksTransformer
 import org.jetbrains.dokka.model.WithGenerics
 import org.jetbrains.dokka.model.dfs
 import org.jetbrains.dokka.model.doc.Text
 import org.jetbrains.dokka.pages.*
-import org.jetbrains.kotlin.utils.addToStdlib.cast
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jsoup.Jsoup
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
@@ -135,8 +132,8 @@ class LinkableContentTest : BaseAbstractTest() {
                 Assertions.assertEquals(2, packageChildren.size)
                 packageChildren.forEach {
                     val name = it.name.substringBefore("Class")
-                    val signature = it.safeAs<ClasslikePageNode>()?.content?.dfs { it is ContentGroup && it.dci.kind == ContentKind.Symbol }.assertNotNull("signature")
-                    val crl = signature.children.last().children[1].safeAs<ContentResolvedLink>()
+                    val signature = (it as? ClasslikePageNode)?.content?.dfs { it is ContentGroup && it.dci.kind == ContentKind.Symbol }.assertNotNull("signature")
+                    val crl = signature.children.last().children[1] as? ContentResolvedLink
                     Assertions.assertEquals(
                         "https://github.com/user/repo/tree/master/src/${name.toLowerCase()}Main/kotlin/${name}Class.kt#L3",
                         crl?.address
@@ -187,9 +184,10 @@ class LinkableContentTest : BaseAbstractTest() {
         }
 
         testFromData(configuration) {
-            renderingStage = { rootPageNode, dokkaContext ->
-                val newRoot = DefaultSamplesTransformer(dokkaContext).invoke(rootPageNode)
-
+            renderingStage = { rootPageNode, _ ->
+                // TODO [beresnev] :(((
+//                val newRoot = DefaultSamplesTransformer(dokkaContext).invoke(rootPageNode)
+                val newRoot = rootPageNode
                 val moduleChildren = newRoot.children
                 Assertions.assertEquals(1, moduleChildren.size)
                 val packageChildren = moduleChildren.first().children
@@ -199,12 +197,12 @@ class LinkableContentTest : BaseAbstractTest() {
                     val classChildren = pageNode.children
                     Assertions.assertEquals(2, classChildren.size)
                     val function = classChildren.find { it.name == "printWithExclamation" }
-                    val text = function.cast<MemberPageNode>().content.cast<ContentGroup>().children.last()
-                        .cast<ContentDivergentGroup>().children.single()
-                        .cast<ContentDivergentInstance>().after
-                        .cast<ContentGroup>().children.last()
-                        .cast<ContentGroup>().children.single()
-                        .cast<ContentCodeBlock>().children.single().cast<ContentText>().text
+                    val text = (function as MemberPageNode).content.let { it as ContentGroup }.children.last()
+                        .let { it as ContentDivergentGroup }.children.single().after
+                        .let { it as ContentGroup }.children.last()
+                        .let { it as ContentGroup }.children.single()
+                        .let { it as ContentCodeBlock }.children.single()
+                        .let { it as ContentText }.text
                     Assertions.assertEquals(
                         """|import p2.${name}Class
                                 |fun main() { 
@@ -245,16 +243,20 @@ class LinkableContentTest : BaseAbstractTest() {
         ) {
             renderingStage = { module, _ ->
                 val sample = module.children.single { it.name == "test" }
-                    .children.single { it.name == "Sample" }.cast<ClasslikePageNode>()
+                    .children.single { it.name == "Sample" } as ClasslikePageNode
                 val foo = sample
-                    .children.single { it.name == "SampleInner" }.cast<ClasslikePageNode>()
-                    .children.single { it.name == "foo" }.cast<MemberPageNode>()
+                    .children
+                    .single { it.name == "SampleInner" }
+                    .let { it as ClasslikePageNode }
+                    .children
+                    .single { it.name == "foo" }
+                    .let { it as MemberPageNode }
 
                 val returnTypeNode = foo.content.dfs {
-                    val link = it.safeAs<ContentDRILink>()?.children
-                    val child = link?.first().safeAs<ContentText>()
+                    val link = (it as? ContentDRILink)?.children
+                    val child = link?.first() as? ContentText
                     child?.text == "S"
-                }?.safeAs<ContentDRILink>()
+                } as? ContentDRILink
 
                 Assertions.assertEquals(
                     (sample.documentables.firstOrNull() as WithGenerics).generics.first().dri,

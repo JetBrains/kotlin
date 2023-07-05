@@ -3,12 +3,12 @@ package transformers
 import org.jetbrains.dokka.DokkaSourceSetID
 import org.jetbrains.dokka.SourceLinkDefinitionImpl
 import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
+import org.jsoup.nodes.Element
 import org.junit.jupiter.api.Test
 import signatures.renderedContent
 import utils.TestOutputWriterPlugin
 import java.net.URL
 import kotlin.test.assertEquals
-import org.jsoup.nodes.Element
 
 class SourceLinkTransformerTest : BaseAbstractTest() {
 

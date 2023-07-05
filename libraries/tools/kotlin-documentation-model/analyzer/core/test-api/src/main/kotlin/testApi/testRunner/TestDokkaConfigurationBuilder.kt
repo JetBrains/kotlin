@@ -1,6 +1,5 @@
 package testApi.testRunner
 
-import org.intellij.markdown.MarkdownElementTypes
 import org.jetbrains.dokka.*
 import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.model.*
@@ -206,6 +205,5 @@ fun dPackage(
 fun documentationNode(vararg texts: String): DocumentationNode {
     return DocumentationNode(
         texts.toList()
-            .map { Description(CustomDocTag(listOf(Text(it)), name = MarkdownElementTypes.MARKDOWN_FILE.name)) })
+            .map { Description(CustomDocTag(listOf(Text(it)), name = "MARKDOWN_FILE")) })
 }
-

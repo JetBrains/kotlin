@@ -1,6 +1,7 @@
 package org.jetbrains.dokka.base.transformers.documentables
 
-import org.jetbrains.dokka.model.*
+import org.jetbrains.dokka.model.Documentable
+import org.jetbrains.dokka.model.InheritedMember
 import org.jetbrains.dokka.model.properties.WithExtraProperties
 import org.jetbrains.dokka.plugability.DokkaContext
 

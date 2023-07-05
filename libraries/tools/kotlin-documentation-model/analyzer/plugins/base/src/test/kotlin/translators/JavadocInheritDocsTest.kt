@@ -1,11 +1,10 @@
 package translators
 
+import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
 import org.jetbrains.dokka.model.doc.CustomDocTag
 import org.jetbrains.dokka.model.doc.Description
 import org.jetbrains.dokka.model.doc.P
 import org.jetbrains.dokka.model.doc.Text
-import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
-import org.junit.Ignore
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test

@@ -1,7 +1,7 @@
 package org.jetbrains.dokka.testApi.logger
 
 import org.jetbrains.dokka.utilities.DokkaLogger
-import java.util.Collections
+import java.util.*
 
 /*
  * Even in tests it be used in a concurrent environment, so needs to be thread safe

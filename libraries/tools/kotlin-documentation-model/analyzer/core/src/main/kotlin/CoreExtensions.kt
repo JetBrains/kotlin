@@ -1,7 +1,7 @@
 package org.jetbrains.dokka
 
 import org.jetbrains.dokka.generation.Generation
-import org.jetbrains.dokka.plugability.*
+import org.jetbrains.dokka.plugability.ExtensionPoint
 import org.jetbrains.dokka.renderers.PostAction
 import org.jetbrains.dokka.renderers.Renderer
 import org.jetbrains.dokka.transformers.documentation.DocumentableMerger

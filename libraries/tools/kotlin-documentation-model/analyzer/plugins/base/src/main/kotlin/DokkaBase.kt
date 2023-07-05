@@ -3,14 +3,14 @@
 package org.jetbrains.dokka.base
 
 import org.jetbrains.dokka.CoreExtensions
-import org.jetbrains.dokka.analysis.KotlinAnalysis
-import org.jetbrains.dokka.analysis.ProjectKotlinAnalysis
+import org.jetbrains.dokka.base.generation.SingleModuleGeneration
 import org.jetbrains.dokka.base.renderers.*
 import org.jetbrains.dokka.base.renderers.html.*
 import org.jetbrains.dokka.base.renderers.html.command.consumers.PathToRootConsumer
+import org.jetbrains.dokka.base.renderers.html.command.consumers.ReplaceVersionsConsumer
 import org.jetbrains.dokka.base.renderers.html.command.consumers.ResolveLinkConsumer
-import org.jetbrains.dokka.base.resolvers.external.ExternalLocationProviderFactory
 import org.jetbrains.dokka.base.resolvers.external.DefaultExternalLocationProviderFactory
+import org.jetbrains.dokka.base.resolvers.external.ExternalLocationProviderFactory
 import org.jetbrains.dokka.base.resolvers.external.javadoc.JavadocExternalLocationProviderFactory
 import org.jetbrains.dokka.base.resolvers.local.DokkaLocationProviderFactory
 import org.jetbrains.dokka.base.resolvers.local.LocationProviderFactory
@@ -23,24 +23,13 @@ import org.jetbrains.dokka.base.transformers.pages.annotations.SinceKotlinTransf
 import org.jetbrains.dokka.base.transformers.pages.comments.CommentsToContentConverter
 import org.jetbrains.dokka.base.transformers.pages.comments.DocTagToContentConverter
 import org.jetbrains.dokka.base.transformers.pages.merger.*
-import org.jetbrains.dokka.base.transformers.pages.samples.DefaultSamplesTransformer
 import org.jetbrains.dokka.base.transformers.pages.sourcelinks.SourceLinksTransformer
-import org.jetbrains.dokka.base.translators.descriptors.DefaultDescriptorToDocumentableTranslator
-import org.jetbrains.dokka.base.translators.documentables.DefaultDocumentableToPageTranslator
-import org.jetbrains.dokka.base.translators.psi.DefaultPsiToDocumentableTranslator
-import org.jetbrains.dokka.base.generation.SingleModuleGeneration
-import org.jetbrains.dokka.base.renderers.html.command.consumers.ReplaceVersionsConsumer
 import org.jetbrains.dokka.base.transformers.pages.tags.CustomTagContentProvider
 import org.jetbrains.dokka.base.transformers.pages.tags.SinceKotlinTagContentProvider
-import org.jetbrains.dokka.base.translators.descriptors.DefaultExternalDocumentablesProvider
-import org.jetbrains.dokka.base.translators.descriptors.ExternalClasslikesTranslator
-import org.jetbrains.dokka.base.translators.descriptors.ExternalDocumentablesProvider
-import org.jetbrains.dokka.base.utils.NoopIntellijLoggerFactory
+import org.jetbrains.dokka.base.translators.documentables.DefaultDocumentableToPageTranslator
 import org.jetbrains.dokka.plugability.DokkaPlugin
 import org.jetbrains.dokka.plugability.DokkaPluginApiPreview
 import org.jetbrains.dokka.plugability.PluginApiPreviewAcknowledgement
-import org.jetbrains.dokka.plugability.querySingle
-import org.jetbrains.dokka.renderers.PostAction
 import org.jetbrains.dokka.transformers.documentation.PreMergeDocumentableTransformer
 import org.jetbrains.dokka.transformers.pages.PageTransformer
 
@@ -55,23 +44,14 @@ class DokkaBase : DokkaPlugin() {
     val externalLocationProviderFactory by extensionPoint<ExternalLocationProviderFactory>()
     val outputWriter by extensionPoint<OutputWriter>()
     val htmlPreprocessors by extensionPoint<PageTransformer>()
-    val kotlinAnalysis by extensionPoint<KotlinAnalysis>()
+
     @Deprecated("It is not used anymore")
     val tabSortingStrategy by extensionPoint<TabSortingStrategy>()
     val immediateHtmlCommandConsumer by extensionPoint<ImmediateHtmlCommandConsumer>()
-    val externalDocumentablesProvider by extensionPoint<ExternalDocumentablesProvider>()
-    val externalClasslikesTranslator by extensionPoint<ExternalClasslikesTranslator>()
+
 
     val singleGeneration by extending {
         CoreExtensions.generation providing ::SingleModuleGeneration
-    }
-
-    val descriptorToDocumentableTranslator by extending {
-        CoreExtensions.sourceToDocumentableTranslator providing ::DefaultDescriptorToDocumentableTranslator
-    }
-
-    val psiToDocumentableTranslator by extending {
-        CoreExtensions.sourceToDocumentableTranslator providing ::DefaultPsiToDocumentableTranslator
     }
 
     val documentableMerger by extending {
@@ -168,7 +148,9 @@ class DokkaBase : DokkaPlugin() {
     }
 
     val pageMerger by extending {
-        CoreExtensions.pageTransformer providing ::PageMerger
+        CoreExtensions.pageTransformer providing ::PageMerger order {
+            // TODO [beresnev] make last() or at least after samples transformer
+        }
     }
 
     val sourceSetMerger by extending {
@@ -189,15 +171,6 @@ class DokkaBase : DokkaPlugin() {
         CoreExtensions.renderer providing ::HtmlRenderer
     }
 
-    val defaultKotlinAnalysis by extending {
-        kotlinAnalysis providing { ctx ->
-            ProjectKotlinAnalysis(
-                sourceSets = ctx.configuration.sourceSets,
-                logger = ctx.logger
-            )
-        }
-    }
-
     val locationProvider by extending {
         locationProviderFactory providing ::DokkaLocationProviderFactory
     }
@@ -216,12 +189,6 @@ class DokkaBase : DokkaPlugin() {
 
     val rootCreator by extending {
         htmlPreprocessors with RootCreator applyIf { !delayTemplateSubstitution }
-    }
-
-    val defaultSamplesTransformer by extending {
-        CoreExtensions.pageTransformer providing ::DefaultSamplesTransformer order {
-            before(pageMerger)
-        }
     }
 
     val sourceLinksTransformer by extending {
@@ -273,26 +240,6 @@ class DokkaBase : DokkaPlugin() {
     }
     val baseSearchbarDataInstaller by extending {
         htmlPreprocessors providing ::SearchbarDataInstaller order { after(sourceLinksTransformer) }
-    }
-
-    val defaultExternalDocumentablesProvider by extending {
-        externalDocumentablesProvider providing ::DefaultExternalDocumentablesProvider
-    }
-
-    val defaultExternalClasslikesTranslator by extending {
-        externalClasslikesTranslator providing ::DefaultDescriptorToDocumentableTranslator
-    }
-
-    internal val disposeKotlinAnalysisPostAction by extending {
-        CoreExtensions.postActions with PostAction { this@DokkaBase.querySingle { kotlinAnalysis }.close() }
-    }
-
-    private companion object {
-        init {
-            // Suppress messages emitted by the IntelliJ logger since
-            // there's not much the end user can do about it
-            com.intellij.openapi.diagnostic.Logger.setFactory(NoopIntellijLoggerFactory())
-        }
     }
 
     @OptIn(DokkaPluginApiPreview::class)

@@ -1,7 +1,8 @@
 package org.jetbrains.dokka.testApi.testRunner
 
-import com.intellij.openapi.application.PathManager
-import org.jetbrains.dokka.*
+import org.jetbrains.dokka.DokkaConfiguration
+import org.jetbrains.dokka.DokkaConfigurationImpl
+import org.jetbrains.dokka.ExternalDocumentationLinkImpl
 import org.jetbrains.dokka.model.DModule
 import org.jetbrains.dokka.pages.RootPageNode
 import org.jetbrains.dokka.plugability.DokkaContext
@@ -37,7 +38,7 @@ abstract class AbstractTest<M : TestMethods, T : TestBuilder<M>, D : DokkaTestGe
         cleanupOutput: Boolean = true,
         useOutputLocationFromConfig: Boolean = false,
         pluginOverrides: List<DokkaPlugin> = emptyList(),
-        block: T.() -> Unit
+        block: T.() -> Unit,
     ) {
         val testMethods = testBuilder().apply(block).build()
         val configurationToUse =
@@ -65,7 +66,7 @@ abstract class AbstractTest<M : TestMethods, T : TestBuilder<M>, D : DokkaTestGe
         cleanupOutput: Boolean = true,
         pluginOverrides: List<DokkaPlugin> = emptyList(),
         loggerForTest: DokkaLogger = logger,
-        block: T.() -> Unit
+        block: T.() -> Unit,
     ) {
         val testMethods = testBuilder().apply(block).build()
         val testDirPath = getTempDir(cleanupOutput).root.toPath().toAbsolutePath()
@@ -133,7 +134,7 @@ abstract class AbstractTest<M : TestMethods, T : TestBuilder<M>, D : DokkaTestGe
 
     private fun Map<String, String>.materializeFiles(
         root: Path = Paths.get("."),
-        charset: Charset = Charset.forName("utf-8")
+        charset: Charset = Charset.forName("utf-8"),
     ) = this.map { (path, content) ->
         val file = root.resolve(path)
         Files.createDirectories(file.parent)
@@ -160,11 +161,17 @@ abstract class AbstractTest<M : TestMethods, T : TestBuilder<M>, D : DokkaTestGe
 
 
     protected val jvmStdlibPath: String? by lazy {
-        PathManager.getResourceRoot(Strictfp::class.java, "/kotlin/jvm/Strictfp.class")
+        ClassLoader.getSystemResource("kotlin/jvm/Strictfp.class")
+            ?.file
+            ?.replace("file:", "")
+            ?.replaceAfter(".jar", "")
     }
 
     protected val jsStdlibPath: String? by lazy {
-        PathManager.getResourceRoot(Any::class.java, "/kotlin/jquery")
+        ClassLoader.getSystemResource("kotlin/jquery")
+            ?.file
+            ?.replace("file:", "")
+            ?.replaceAfter(".jar", "")
     }
 
     protected val commonStdlibPath: String? by lazy {
@@ -195,7 +202,7 @@ open class CoreTestMethods(
     open val documentablesTransformationStage: (DModule) -> Unit,
     open val pagesGenerationStage: (RootPageNode) -> Unit,
     open val pagesTransformationStage: (RootPageNode) -> Unit,
-    open val renderingStage: (RootPageNode, DokkaContext) -> Unit
+    open val renderingStage: (RootPageNode, DokkaContext) -> Unit,
 ) : TestMethods
 
 abstract class TestBuilder<M : TestMethods> {
@@ -206,7 +213,7 @@ abstract class DokkaTestGenerator<T : TestMethods>(
     protected val configuration: DokkaConfiguration,
     protected val logger: DokkaLogger,
     protected val testMethods: T,
-    protected val additionalPlugins: List<DokkaPlugin> = emptyList()
+    protected val additionalPlugins: List<DokkaPlugin> = emptyList(),
 ) {
     abstract fun generate()
 }

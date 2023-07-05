@@ -1,11 +1,10 @@
 package translators
 
+import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
 import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.links.PointingToDeclaration
 import org.jetbrains.dokka.model.DModule
 import org.jetbrains.dokka.model.doc.*
-import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.jetbrains.dokka.model.doc.Deprecated as DokkaDeprecatedTag
@@ -89,7 +88,7 @@ class JavadocInheritedDocTagsTest : BaseAbstractTest() {
     fun `work with return`() {
         performTagsTest { module ->
             val function = module.findFunction("sample", "Subclass", "test")
-            val renderedTag = function.documentation.values.first().children.firstIsInstance<Return>()
+            val renderedTag = function.documentation.values.first().children.filterIsInstance<Return>().first()
             val expectedTag = Return(
                 CustomDocTag(
                     children = listOf(
@@ -155,7 +154,7 @@ class JavadocInheritedDocTagsTest : BaseAbstractTest() {
     fun `work with deprecated`() {
         performTagsTest { module ->
             val function = module.findFunction("sample", "Subclass", "test")
-            val renderedTag = function.documentation.values.first().children.firstIsInstance<DokkaDeprecatedTag>()
+            val renderedTag = function.documentation.values.first().children.filterIsInstance<DokkaDeprecatedTag>().first()
             val expectedTag = DokkaDeprecatedTag(
                 CustomDocTag(
                     children = listOf(
@@ -175,7 +174,7 @@ class JavadocInheritedDocTagsTest : BaseAbstractTest() {
     fun `work with see also`() {
         performTagsTest { module ->
             val function = module.findFunction("sample", "Subclass", "test")
-            val renderedTag = function.documentation.values.first().children.firstIsInstance<See>()
+            val renderedTag = function.documentation.values.first().children.filterIsInstance<See>().first()
             val expectedTag = See(
                 CustomDocTag(
                     children = listOf(
@@ -197,7 +196,7 @@ class JavadocInheritedDocTagsTest : BaseAbstractTest() {
     fun `work with author`() {
         performTagsTest { module ->
             val classlike = module.findClasslike("sample", "Subclass")
-            val renderedTag = classlike.documentation.values.first().children.firstIsInstance<Author>()
+            val renderedTag = classlike.documentation.values.first().children.filterIsInstance<Author>().first()
             val expectedTag = Author(
                 CustomDocTag(
                     children = listOf(

@@ -1,9 +1,11 @@
 package transformers
 
-import org.jetbrains.dokka.base.transformers.documentables.ModuleAndPackageDocumentationReader
 import org.jetbrains.dokka.plugability.DokkaContext
+import org.jetbrains.dokka.plugability.plugin
+import org.jetbrains.dokka.plugability.querySingle
 import org.jetbrains.dokka.utilities.DokkaConsoleLogger
 import org.jetbrains.dokka.utilities.LoggingLevel
+import org.jetbrains.kotlin.analysis.kotlin.internal.InternalKotlinAnalysisPlugin
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import testApi.testRunner.TestDokkaConfigurationBuilder
@@ -65,14 +67,14 @@ class InvalidContentModuleAndPackageDocumentationReaderTest : AbstractContextMod
         )
     }
 
-    private val readerA by lazy { ModuleAndPackageDocumentationReader(contextA) }
-    private val readerB by lazy { ModuleAndPackageDocumentationReader(contextB) }
+    private val readerA by lazy { contextA.plugin<InternalKotlinAnalysisPlugin>().querySingle { moduleAndPackageDocumentationReader } }
+    private val readerB by lazy { contextB.plugin<InternalKotlinAnalysisPlugin>().querySingle { moduleAndPackageDocumentationReader } }
 
 
     @Test
     fun `parsing should fail with a message when documentation is in not proper format`() {
         val exception =
-            runCatching { readerA[dModule(name = "moduleA", sourceSets = setOf(sourceSetA))] }.exceptionOrNull()
+            runCatching { readerA.read(dModule(name = "moduleA", sourceSets = setOf(sourceSetA))) }.exceptionOrNull()
         assertEquals(
             "Unexpected classifier: \"Invalid\", expected either \"Module\" or \"Package\". \n" +
                     "For more information consult the specification: https://kotlinlang.org/docs/dokka-module-and-package-docs.html",
@@ -83,7 +85,7 @@ class InvalidContentModuleAndPackageDocumentationReaderTest : AbstractContextMod
     @Test
     fun `parsing should fail with a message where it encountered error and why`() {
         val exception =
-            runCatching { readerB[dModule(name = "moduleB", sourceSets = setOf(sourceSetB))] }.exceptionOrNull()?.message!!
+            runCatching { readerB.read(dModule(name = "moduleB", sourceSets = setOf(sourceSetB))) }.exceptionOrNull()?.message!!
 
         //I don't want to assert whole message since it contains a path to a temporary folder
         assertTrue(exception.contains("Wrong AST Tree. Header does not contain expected content in "))

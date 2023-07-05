@@ -3,7 +3,6 @@ package filter
 import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
-import kotlin.test.assertEquals
 
 class JavaFileFilterTest : BaseAbstractTest() {
     @Test

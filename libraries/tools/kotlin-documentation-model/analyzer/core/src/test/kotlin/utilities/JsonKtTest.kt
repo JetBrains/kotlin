@@ -2,8 +2,8 @@ package utilities
 
 import org.jetbrains.dokka.utilities.serializeAsCompactJson
 import org.jetbrains.dokka.utilities.serializeAsPrettyJson
-import kotlin.test.assertEquals
 import kotlin.test.Test
+import kotlin.test.assertEquals
 
 class JsonTest {
 

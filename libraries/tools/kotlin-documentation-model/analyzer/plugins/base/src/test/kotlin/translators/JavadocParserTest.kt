@@ -1,14 +1,14 @@
 package translators
 
+import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
 import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.model.DModule
 import org.jetbrains.dokka.model.childrenOfType
 import org.jetbrains.dokka.model.doc.*
 import org.jetbrains.dokka.model.firstChildOfType
 import org.jetbrains.dokka.model.firstMemberOfType
-import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.Assertions.*
 import utils.text
 
 class JavadocParserTest : BaseAbstractTest() {
