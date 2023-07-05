@@ -26,7 +26,8 @@ class StubIrMetadataEmitter(
             ModuleMetadataEmitter(
                     context.configuration.pkgName,
                     builderResult.stubs,
-                    bridgeBuilderResult
+                    bridgeBuilderResult,
+                    !context.configuration.disableExperimentalAnnotation
             ).emit().let { kmModuleFragment ->
                 // We need to create module fragment for each part of package name.
                 val pkgName = context.configuration.pkgName
@@ -47,7 +48,8 @@ class StubIrMetadataEmitter(
 internal class ModuleMetadataEmitter(
         private val packageFqName: String,
         private val module: SimpleStubContainer,
-        private val bridgeBuilderResult: BridgeBuilderResult
+        private val bridgeBuilderResult: BridgeBuilderResult,
+        private val experimental: Boolean = false
 ) {
 
     fun emit(): KmModuleFragment {
@@ -61,13 +63,33 @@ internal class ModuleMetadataEmitter(
         km.classes += elements.classes.toList()
         km.className += elements.classes.map(KmClass::name)
         km.pkg = writePackage(elements)
+
+        km.classes.forEach {
+            if (it.name.contains('.')) it.annotations.checkHasNoExperimentalAnnotation(it.name)
+            else it.annotations.checkHasExperimentalAnnotation(it.name)
+        }
     }
+
+    private fun List<KmAnnotation>.checkHasExperimentalAnnotation(hint: String) {
+        if (this.any { it.className == "kotlin/Deprecated" }) return
+        check(this.any { it.className == "kotlinx/cinterop/ExperimentalForeignApi" } == experimental) { hint }
+    }
+
+    private fun List<KmAnnotation>.checkHasNoExperimentalAnnotation(hint: String) {
+        check(this.none { it.className == "kotlinx/cinterop/ExperimentalForeignApi" }) { hint }
+    }
+
+//    private fun
 
     private fun writePackage(elements: KmElements) = KmPackage().also { km ->
         km.fqName = packageFqName
         km.typeAliases += elements.typeAliases.toList()
         km.properties += elements.properties.toList()
         km.functions += elements.functions.toList()
+
+        km.typeAliases.forEach { it.annotations.checkHasExperimentalAnnotation(it.name) }
+        km.properties.forEach { it.annotations.checkHasExperimentalAnnotation(it.name) }
+        km.functions.forEach { it.annotations.checkHasExperimentalAnnotation(it.name) }
     }
 
     /**
@@ -132,6 +154,11 @@ internal class ModuleMetadataEmitter(
                     if (element is ClassStub.Enum) {
                         element.entries.mapTo(km.klibEnumEntries) { mapEnumEntry(it, classVisitingContext) }
                     }
+
+                    km.typeAliases.forEach { it.annotations.checkHasNoExperimentalAnnotation(it.name) }
+                    km.properties.forEach { it.annotations.checkHasNoExperimentalAnnotation(it.name) }
+                    km.functions.forEach { it.annotations.checkHasNoExperimentalAnnotation(it.name) }
+                    km.constructors.forEach { it.annotations.checkHasNoExperimentalAnnotation(km.name) }
                 }
             }
             // Metadata stores classes as flat list.
