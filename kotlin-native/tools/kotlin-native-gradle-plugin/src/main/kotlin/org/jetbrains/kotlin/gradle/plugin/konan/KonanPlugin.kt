@@ -32,6 +32,7 @@ import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.internal.publication.MavenPublicationInternal
 import org.gradle.api.tasks.Exec
+import org.gradle.api.tasks.TaskProvider
 import org.gradle.jvm.toolchain.JavaLanguageVersion
 import org.gradle.jvm.toolchain.JavaLauncher
 import org.gradle.jvm.toolchain.JavaToolchainService
@@ -135,9 +136,6 @@ internal val Project.konanTargets: List<KonanTarget>
 internal val Project.konanExtension: KonanExtension
     get() = extensions.getByName(KonanPlugin.KONAN_EXTENSION_NAME) as KonanExtension
 
-internal val Project.konanCompilerDownloadTask
-    get() = tasks.getByName(KonanPlugin.KONAN_DOWNLOAD_TASK_NAME)
-
 internal val Project.requestedTargets
     get() = findProperty(KonanPlugin.ProjectProperty.KONAN_BUILD_TARGETS)?.let {
         it.toString().trim().split("\\s+".toRegex())
@@ -147,22 +145,21 @@ internal val Project.jvmArgs
     get() = (findProperty(KonanPlugin.ProjectProperty.KONAN_JVM_ARGS) as String?)?.split("\\s+".toRegex()).orEmpty()
 
 internal val Project.compileAllTask
-    get() = getOrCreateTask(COMPILE_ALL_TASK_NAME)
+    get() = getOrRegisterTask(COMPILE_ALL_TASK_NAME)
 
 internal fun Project.targetIsRequested(target: KonanTarget): Boolean {
     val targets = requestedTargets
     return (targets.isEmpty() || targets.contains(target.visibleName) || targets.contains("all"))
 }
 
-/** Looks for task with given name in the given project. Throws [UnknownTaskException] if there's not such task. */
-private fun Project.getTask(name: String): Task = tasks.getByPath(name)
-
 /**
  * Looks for task with given name in the given project.
- * If such task isn't found, will create it. Returns created/found task.
+ * If such task isn't found, will register it. Returns registered/found task.
  */
-private fun Project.getOrCreateTask(name: String): Task = with(tasks) {
-    findByPath(name) ?: create(name, DefaultTask::class.java)
+private fun Project.getOrRegisterTask(name: String): TaskProvider<out Task> = if (tasks.names.contains(name)) {
+    tasks.named(name)
+} else {
+    tasks.register(name, DefaultTask::class.java)
 }
 
 internal fun Project.konanCompilerName(): String =
@@ -309,8 +306,6 @@ class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderR
 
     companion object {
         internal const val ARTIFACTS_CONTAINER_NAME = "konanArtifacts"
-        internal const val KONAN_DOWNLOAD_TASK_NAME = "checkKonanCompiler"
-        internal const val KONAN_GENERATE_CMAKE_TASK_NAME = "generateCMake"
         internal const val COMPILE_ALL_TASK_NAME = "compileKonan"
 
         internal const val KONAN_EXTENSION_NAME = "konan"
@@ -372,15 +367,15 @@ class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderR
             project.setProperty(ProjectProperty.DOWNLOAD_COMPILER, true)
         }
 
-        // Create and set up aggregate building tasks.
-        val compileKonanTask = project.getOrCreateTask(COMPILE_ALL_TASK_NAME).apply {
+        // Register and set up aggregate building tasks.
+        val compileKonanTask = project.getOrRegisterTask(COMPILE_ALL_TASK_NAME).configure {
             group = BasePlugin.BUILD_GROUP
             description = "Compiles all the Kotlin/Native artifacts"
         }
-        project.getTask("build").apply {
+        project.tasks.named("build").configure {
             dependsOn(compileKonanTask)
         }
-        project.getTask("clean").apply {
+        project.tasks.named("clean").configure {
             doLast { project.cleanKonan() }
         }
 
@@ -406,13 +401,13 @@ class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderR
                 }
         }
 
-        val runTask = project.getOrCreateTask("run")
+        val runTask = project.getOrRegisterTask("run")
         project.afterEvaluate {
             project.konanArtifactsContainer
                 .filterIsInstance(KonanProgram::class.java)
                 .forEach { program ->
                     program.tasks().forEach { compile ->
-                        compile.configure { this@configure.runTask?.let { runTask.dependsOn(it) } }
+                        compile.configure { this@configure.runTask?.let { runTask.configure { dependsOn(it) } } }
                     }
                 }
         }

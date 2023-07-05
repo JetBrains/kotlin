@@ -134,7 +134,7 @@ abstract class KonanBuildingConfig<T : KonanBuildingTask>(
                 dependsOn(it.value)
             }
         }.also {
-            project.compileAllTask.dependsOn(it)
+            project.compileAllTask.configure { dependsOn(it) }
         }
 
     protected fun createTargetAliasTaskIfDeclared(targetName: String): TaskProvider<Task>? {

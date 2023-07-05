@@ -1,6 +1,8 @@
-description = 'Kotlin Common Standard Library'
+plugins {
+    id("kotlin-platform-common")
+}
 
-apply plugin: 'kotlin-platform-common'
+description = 'Kotlin Common Standard Library'
 
 RepoArtifacts.publish(project)
 
@@ -62,13 +64,13 @@ compileTestKotlinCommon {
     }
 }
 
-jar {
+tasks.named("jar", Jar) {
     LibrariesCommon.manifestAttributes(project, manifest, 'Main')
 }
 
 RepoArtifacts.sourcesJar(project)
 RepoArtifacts.javadocJar(project)
 
-sourcesJar.dependsOn(":prepare:build.version:writeStdlibVersion")
+tasks.named("sourcesJar").configure { it.dependsOn(":prepare:build.version:writeStdlibVersion") }
 
 classes.setDependsOn(classes.dependsOn.findAll { it != "compileJava" })
