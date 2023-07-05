@@ -1,16 +1,21 @@
 package transformers
 
-import org.jetbrains.dokka.base.transformers.documentables.ModuleAndPackageDocumentationReader
+
+import org.jetbrains.dokka.DokkaConfiguration
+import org.jetbrains.dokka.analysis.markdown.jb.MARKDOWN_ELEMENT_FILE_NAME
 import org.jetbrains.dokka.base.transformers.documentables.ModuleAndPackageDocumentationTransformer
 import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.model.DModule
 import org.jetbrains.dokka.model.DPackage
 import org.jetbrains.dokka.model.SourceSetDependent
+import org.jetbrains.dokka.model.doc.CustomDocTag
+import org.jetbrains.dokka.model.doc.Description
 import org.jetbrains.dokka.model.doc.DocumentationNode
+import org.jetbrains.dokka.model.doc.Text
+import org.jetbrains.kotlin.analysis.kotlin.internal.ModuleAndPackageDocumentationReader
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import testApi.testRunner.dPackage
-import testApi.testRunner.documentationNode
 import testApi.testRunner.sourceSet
 
 
@@ -20,8 +25,9 @@ class ModuleAndPackageDocumentationTransformerUnitTest {
     fun `empty list of modules`() {
         val transformer = ModuleAndPackageDocumentationTransformer(
             object : ModuleAndPackageDocumentationReader {
-                override fun get(module: DModule): SourceSetDependent<DocumentationNode> = throw NotImplementedError()
-                override fun get(pkg: DPackage): SourceSetDependent<DocumentationNode> = throw NotImplementedError()
+                override fun read(module: DModule): SourceSetDependent<DocumentationNode> = throw NotImplementedError()
+                override fun read(pkg: DPackage): SourceSetDependent<DocumentationNode> = throw NotImplementedError()
+                override fun read(module: DokkaConfiguration.DokkaModuleDescription): DocumentationNode = throw NotImplementedError()
             }
         )
 
@@ -34,13 +40,13 @@ class ModuleAndPackageDocumentationTransformerUnitTest {
     fun `single module documentation`() {
         val transformer = ModuleAndPackageDocumentationTransformer(
             object : ModuleAndPackageDocumentationReader {
-                override fun get(pkg: DPackage): SourceSetDependent<DocumentationNode> = throw NotImplementedError()
-                override fun get(module: DModule): SourceSetDependent<DocumentationNode> {
+                override fun read(pkg: DPackage): SourceSetDependent<DocumentationNode> = throw NotImplementedError()
+                override fun read(module: DModule): SourceSetDependent<DocumentationNode> {
                     return module.sourceSets.associateWith { sourceSet ->
                         documentationNode("doc" + sourceSet.displayName)
                     }
                 }
-
+                override fun read(module: DokkaConfiguration.DokkaModuleDescription): DocumentationNode = throw NotImplementedError()
             }
         )
 
@@ -77,13 +83,14 @@ class ModuleAndPackageDocumentationTransformerUnitTest {
     fun `merges with already existing module documentation`() {
         val transformer = ModuleAndPackageDocumentationTransformer(
             object : ModuleAndPackageDocumentationReader {
-                override fun get(pkg: DPackage): SourceSetDependent<DocumentationNode> = throw NotImplementedError()
-                override fun get(module: DModule): SourceSetDependent<DocumentationNode> {
+                override fun read(pkg: DPackage): SourceSetDependent<DocumentationNode> = throw NotImplementedError()
+                override fun read(module: DModule): SourceSetDependent<DocumentationNode> {
                     /* Only add documentation for first source set */
                     return module.sourceSets.take(1).associateWith { sourceSet ->
                         documentationNode("doc" + sourceSet.displayName)
                     }
                 }
+                override fun read(module: DokkaConfiguration.DokkaModuleDescription): DocumentationNode = throw NotImplementedError()
             }
         )
 
@@ -121,8 +128,8 @@ class ModuleAndPackageDocumentationTransformerUnitTest {
     fun `package documentation`() {
         val transformer = ModuleAndPackageDocumentationTransformer(
             object : ModuleAndPackageDocumentationReader {
-                override fun get(module: DModule): SourceSetDependent<DocumentationNode> = emptyMap()
-                override fun get(pkg: DPackage): SourceSetDependent<DocumentationNode> {
+                override fun read(module: DModule): SourceSetDependent<DocumentationNode> = emptyMap()
+                override fun read(pkg: DPackage): SourceSetDependent<DocumentationNode> {
                     /* Only attach documentation to packages with 'attach' */
                     if ("attach" !in pkg.dri.packageName.orEmpty()) return emptyMap()
                     /* Only attach documentation to two source sets */
@@ -130,6 +137,7 @@ class ModuleAndPackageDocumentationTransformerUnitTest {
                         documentationNode("doc:${sourceSet.displayName}:${pkg.dri.packageName}")
                     }
                 }
+                override fun read(module: DokkaConfiguration.DokkaModuleDescription): DocumentationNode = throw NotImplementedError()
             }
         )
 
@@ -239,4 +247,10 @@ class ModuleAndPackageDocumentationTransformerUnitTest {
         )
     }
 
+
+    private fun documentationNode(vararg texts: String): DocumentationNode {
+        return DocumentationNode(
+            texts.toList()
+                .map { Description(CustomDocTag(listOf(Text(it)), name = MARKDOWN_ELEMENT_FILE_NAME)) })
+    }
 }

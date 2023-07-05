@@ -1,7 +1,10 @@
 package org.jetbrains.dokka.utilities
 
-import kotlinx.coroutines.*
-import org.jetbrains.dokka.*
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
+import org.jetbrains.dokka.InternalDokkaApi
 
 @InternalDokkaApi
 suspend inline fun <A, B> Iterable<A>.parallelMap(crossinline f: suspend (A) -> B): List<B> = coroutineScope {

@@ -2,19 +2,19 @@ package enums
 
 import matchers.content.*
 import org.jetbrains.dokka.SourceLinkDefinitionImpl
-import org.jetbrains.dokka.pages.*
 import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
-import org.jetbrains.dokka.model.*
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
+import org.jetbrains.dokka.model.DEnum
+import org.jetbrains.dokka.model.dfs
+import org.jetbrains.dokka.pages.ClasslikePage
+import org.jetbrains.dokka.pages.ClasslikePageNode
+import org.jetbrains.dokka.pages.ContentGroup
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import org.junit.jupiter.api.Assertions.*
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import signatures.renderedContent
 import utils.TestOutputWriter
 import utils.TestOutputWriterPlugin
-import java.io.File
 import java.net.URL
 
 class KotlinEnumsTest : BaseAbstractTest() {
@@ -347,7 +347,7 @@ class KotlinEnumsTest : BaseAbstractTest() {
             configuration
         ) {
             pagesTransformationStage = { m ->
-                val entryNode = m.children.first { it.name == "testpackage" }.children.first { it.name == "TestEnum" }.children.firstIsInstance<ClasslikePageNode>()
+                val entryNode = m.children.first { it.name == "testpackage" }.children.first { it.name == "TestEnum" }.children.filterIsInstance<ClasslikePageNode>().first()
                 val signature = (entryNode.content as ContentGroup).dfs { it is ContentGroup && it.dci.toString() == "[testpackage/TestEnum.E1///PointingToDeclaration/{\"org.jetbrains.dokka.links.EnumEntryDRIExtra\":{\"key\":\"org.jetbrains.dokka.links.EnumEntryDRIExtra\"}}][Cover]" } as ContentGroup
 
                 signature.assertNode {

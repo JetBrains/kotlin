@@ -1,6 +1,6 @@
 package org.jetbrains.dokka.utilities
 
-import org.jetbrains.dokka.*
+import org.jetbrains.dokka.InternalDokkaApi
 import java.io.File
 import java.net.URISyntaxException
 import java.net.URL

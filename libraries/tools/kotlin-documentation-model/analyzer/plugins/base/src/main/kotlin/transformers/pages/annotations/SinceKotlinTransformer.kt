@@ -1,9 +1,9 @@
 package org.jetbrains.dokka.base.transformers.pages.annotations
 
-import com.intellij.util.containers.ComparatorUtil.max
-import org.intellij.markdown.MarkdownElementTypes
+
 import org.jetbrains.dokka.DokkaConfiguration
 import org.jetbrains.dokka.Platform
+import org.jetbrains.dokka.analysis.markdown.jb.MARKDOWN_ELEMENT_FILE_NAME
 import org.jetbrains.dokka.base.signatures.KotlinSignatureUtils.annotations
 import org.jetbrains.dokka.model.*
 import org.jetbrains.dokka.model.doc.CustomDocTag
@@ -13,7 +13,6 @@ import org.jetbrains.dokka.model.doc.Text
 import org.jetbrains.dokka.plugability.DokkaContext
 import org.jetbrains.dokka.transformers.documentation.DocumentableTransformer
 import org.jetbrains.dokka.utilities.associateWithNotNull
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class SinceKotlinVersion constructor(str: String) : Comparable<SinceKotlinVersion> {
     private val parts: List<Int> = str.split(".").map { it.toInt() }
@@ -124,7 +123,7 @@ class SinceKotlinTransformer(val context: DokkaContext) : DocumentableTransforme
         val annotatedVersion =
             annotations()[sourceSet]
                 ?.findSinceKotlinAnnotation()
-                ?.params?.get("version").safeAs<StringValue>()?.value
+                ?.params?.let { it["version"] as? StringValue }?.value
                 ?.let { SinceKotlinVersion(it) }
 
         val minSinceKotlin = minSinceKotlinVersionOfPlatform[sourceSet.analysisPlatform]
@@ -139,7 +138,7 @@ class SinceKotlinTransformer(val context: DokkaContext) : DocumentableTransforme
             val version = getVersion(sourceSet)
             val parentVersion = parent?.get(sourceSet)
             if (parentVersion != null)
-                max(version, parentVersion)
+                maxOf(version, parentVersion)
             else
                 version
         }
@@ -157,7 +156,7 @@ class SinceKotlinTransformer(val context: DokkaContext) : DocumentableTransforme
                             version.toString()
                         )
                     ),
-                    name = MarkdownElementTypes.MARKDOWN_FILE.name
+                    name = MARKDOWN_ELEMENT_FILE_NAME
                 ),
                 "Since Kotlin"
             )

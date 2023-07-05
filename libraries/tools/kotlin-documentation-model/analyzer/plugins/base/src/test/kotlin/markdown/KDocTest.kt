@@ -1,10 +1,10 @@
 package markdown
 
+import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
 import org.jetbrains.dokka.model.DPackage
 import org.jetbrains.dokka.model.doc.DocumentationNode
 import org.jetbrains.dokka.pages.ModulePageNode
-import org.junit.jupiter.api.Assertions.*
-import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
+import org.junit.jupiter.api.Assertions.assertEquals
 
 abstract class KDocTest : BaseAbstractTest() {
 

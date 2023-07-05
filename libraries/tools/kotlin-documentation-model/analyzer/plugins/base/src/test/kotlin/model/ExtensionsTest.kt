@@ -1,10 +1,13 @@
 package model
 
 import org.jetbrains.dokka.base.transformers.documentables.CallableExtensions
-import org.jetbrains.dokka.model.*
+import org.jetbrains.dokka.model.DClass
+import org.jetbrains.dokka.model.DFunction
+import org.jetbrains.dokka.model.DInterface
+import org.jetbrains.dokka.model.Documentable
+import org.jetbrains.dokka.model.properties.WithExtraProperties
 import org.junit.jupiter.api.Test
 import utils.AbstractModelTest
-import org.jetbrains.dokka.model.properties.WithExtraProperties
 
 class ExtensionsTest : AbstractModelTest("/src/main/kotlin/classes/Test.kt", "classes") {
     private fun <T : WithExtraProperties<R>, R : Documentable> T.checkExtension(name: String = "extension") =

@@ -1,6 +1,9 @@
 package utilities
 
-import org.jetbrains.dokka.*
+import org.jetbrains.dokka.DokkaConfigurationImpl
+import org.jetbrains.dokka.DokkaSourceSetID
+import org.jetbrains.dokka.DokkaSourceSetImpl
+import org.jetbrains.dokka.toCompactJsonString
 import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertEquals
