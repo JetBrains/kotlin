@@ -251,6 +251,12 @@ public class FirOldFrontendMPPDiagnosticsWithLightTreeTestGenerated extends Abst
         }
 
         @Test
+        @TestMetadata("expectAnnotationAndInlineClassWithDefaultValue.kt")
+        public void testExpectAnnotationAndInlineClassWithDefaultValue() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/defaultArguments/expectAnnotationAndInlineClassWithDefaultValue.kt");
+        }
+
+        @Test
         @TestMetadata("expectedDeclaresDefaultArguments.kt")
         public void testExpectedDeclaresDefaultArguments() throws Exception {
             runTest("compiler/testData/diagnostics/tests/multiplatform/defaultArguments/expectedDeclaresDefaultArguments.kt");

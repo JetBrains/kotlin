@@ -6,19 +6,23 @@
 package org.jetbrains.kotlin.fir.resolve.transformers.mpp
 
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.utils.isActual
+import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.resolve.getContainingClass
 import org.jetbrains.kotlin.fir.resolve.transformers.FirAbstractTreeTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.FirTransformerBasedResolveProcessor
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 
 class FirExpectActualMatcherProcessor(
     session: FirSession,
-    scopeSession: ScopeSession
+    scopeSession: ScopeSession,
 ) : FirTransformerBasedResolveProcessor(session, scopeSession, FirResolvePhase.EXPECT_ACTUAL_MATCHING) {
     private val enabled = session.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)
 
@@ -32,7 +36,7 @@ class FirExpectActualMatcherProcessor(
 
 open class FirExpectActualMatcherTransformer(
     override val session: FirSession,
-    private val scopeSession: ScopeSession
+    private val scopeSession: ScopeSession,
 ) : FirAbstractTreeTransformer<Nothing?>(FirResolvePhase.EXPECT_ACTUAL_MATCHING) {
 
     // --------------------------- classifiers ---------------------------
@@ -76,7 +80,7 @@ open class FirExpectActualMatcherTransformer(
     // ------------------------------------------------------
 
     fun transformMemberDeclaration(memberDeclaration: FirMemberDeclaration) {
-        if (!memberDeclaration.isActual) return
+        if (!memberDeclaration.isActual && !memberDeclaration.isImplicitlyActual()) return
         val actualSymbol = memberDeclaration.symbol
 
         // Regardless of whether any `expect` symbols are found for `memberDeclaration`, it must be assigned an `expectForActual` map.
@@ -88,5 +92,12 @@ open class FirExpectActualMatcherTransformer(
             scopeSession
         ) ?: mapOf()
         memberDeclaration.expectForActual = expectForActualData
+    }
+
+    // TODO KT-60139 Remove special handling when implicitly actual elements have the actual flag set.
+    private fun FirMemberDeclaration.isImplicitlyActual(): Boolean {
+        if (this !is FirPrimaryConstructor) return false
+        val klass = getContainingClass(session) ?: return false
+        return klass.isActual && (klass.isInline || klass.classKind == ClassKind.ANNOTATION_CLASS)
     }
 }
