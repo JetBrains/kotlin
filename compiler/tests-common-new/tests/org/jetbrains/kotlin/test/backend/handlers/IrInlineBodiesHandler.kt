@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.test.backend.handlers
 
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.declarations.IrExternalPackageFragment
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.lazy.AbstractIrLazyFunction
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
@@ -16,6 +17,7 @@ import org.jetbrains.kotlin.ir.util.resolveFakeOverride
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
+import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 
@@ -25,7 +27,7 @@ class IrInlineBodiesHandler(testServices: TestServices) : AbstractIrHandler(test
     override fun processModule(module: TestModule, info: IrBackendInput) {
         info.processAllIrModuleFragments(module) { irModule, _ ->
             irModule.acceptChildrenVoid(InlineFunctionsCollector())
-            irModule.acceptChildrenVoid(InlineCallBodiesCheck())
+            irModule.acceptChildrenVoid(InlineCallBodiesCheck(firEnabled = module.frontendKind == FrontendKinds.FIR))
         }
 
         assertions.assertTrue((info as IrBackendInput.JvmIrBackendInput).backendInput.symbolTable.allUnbound.isEmpty())
@@ -46,7 +48,7 @@ class IrInlineBodiesHandler(testServices: TestServices) : AbstractIrHandler(test
         }
     }
 
-    inner class InlineCallBodiesCheck : IrElementVisitorVoid {
+    inner class InlineCallBodiesCheck(val firEnabled: Boolean) : IrElementVisitorVoid {
         override fun visitElement(element: IrElement) {
             element.acceptChildrenVoid(this)
         }
@@ -68,7 +70,14 @@ class IrInlineBodiesHandler(testServices: TestServices) : AbstractIrHandler(test
             if (this !is AbstractIrLazyFunction) return body != null
             if (!isDeserializationEnabled) return false
             if (!isInline || isFakeOverride) return false
-            return getTopLevelDeclaration() is DeserializableClass
+            val topLevelDeclaration = getTopLevelDeclaration()
+            if (topLevelDeclaration is DeserializableClass) return true
+            return when (firEnabled) {
+                // In compilation with FIR parents of external top-levels functions are replaced
+                //   in lowerings, not in fir2ir converter
+                true -> topLevelDeclaration.parent is IrExternalPackageFragment
+                false -> false
+            }
         }
     }
 }

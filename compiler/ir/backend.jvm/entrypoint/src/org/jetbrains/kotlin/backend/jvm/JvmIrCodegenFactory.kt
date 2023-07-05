@@ -331,7 +331,8 @@ open class JvmIrCodegenFactory(
         val phases = if (evaluatorFragmentInfoForPsi2Ir != null) jvmFragmentLoweringPhases else jvmLoweringPhases
         val phaseConfig = customPhaseConfig ?: PhaseConfig(phases)
         val context = JvmBackendContext(
-            state, irModuleFragment.irBuiltins, symbolTable, phaseConfig, extensions, backendExtension, irSerializer, irPluginContext
+            state, irModuleFragment.irBuiltins, symbolTable, phaseConfig, extensions,
+            backendExtension, irSerializer, JvmIrDeserializerImpl(), irProviders, irPluginContext
         )
         if (evaluatorFragmentInfoForPsi2Ir != null) {
             context.localDeclarationsLoweringData = mutableMapOf()

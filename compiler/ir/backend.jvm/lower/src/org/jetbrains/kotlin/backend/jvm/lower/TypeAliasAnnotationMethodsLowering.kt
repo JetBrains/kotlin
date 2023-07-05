@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrBlockBodyImpl
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
 
+
 internal val typeAliasAnnotationMethodsPhase = makeIrFilePhase(
     ::TypeAliasAnnotationMethodsLowering,
     name = "TypeAliasAnnotationMethodsLowering",

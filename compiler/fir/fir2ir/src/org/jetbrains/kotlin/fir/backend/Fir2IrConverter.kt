@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.backend
 
 import org.jetbrains.kotlin.KtPsiSourceFileLinesMapping
 import org.jetbrains.kotlin.KtSourceFileLinesMappingFromLineStartOffsets
-import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.AnalysisFlags
@@ -32,12 +31,9 @@ import org.jetbrains.kotlin.ir.interpreter.IrInterpreter
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreterConfiguration
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreterEnvironment
 import org.jetbrains.kotlin.ir.interpreter.checker.EvaluationMode
-import org.jetbrains.kotlin.ir.interpreter.transformer.preprocessForConstTransformer
 import org.jetbrains.kotlin.ir.interpreter.transformer.transformConst
 import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.ir.util.NaiveSourceBasedFileEntryImpl
-import org.jetbrains.kotlin.ir.visitors.acceptVoid
-import org.jetbrains.kotlin.platform.isJs
 import org.jetbrains.kotlin.psi.KtFile
 
 class Fir2IrConverter(
@@ -54,7 +50,6 @@ class Fir2IrConverter(
         allFirFiles: List<FirFile>,
         irModuleFragment: IrModuleFragmentImpl,
         fir2irVisitor: Fir2IrVisitor,
-        fir2IrExtensions: Fir2IrExtensions,
         runPreCacheBuiltinClasses: Boolean
     ) {
         session.lazyDeclarationResolver.disableLazyResolveContractChecks()
@@ -98,8 +93,6 @@ class Fir2IrConverter(
         }
 
         evaluateConstants(irModuleFragment, configuration)
-
-        irModuleFragment.acceptVoid(ExternalPackageParentPatcher(components, fir2IrExtensions))
     }
 
     fun bindFakeOverridesOrPostpone(declarations: List<IrDeclaration>) {
@@ -499,8 +492,7 @@ class Fir2IrConverter(
             }
 
             converter.runSourcesConversion(
-                allFirFiles, irModuleFragment, fir2irVisitor, fir2IrExtensions,
-                runPreCacheBuiltinClasses = initializedIrBuiltIns == null
+                allFirFiles, irModuleFragment, fir2irVisitor, runPreCacheBuiltinClasses = initializedIrBuiltIns == null
             )
 
             return Fir2IrResult(irModuleFragment, components, moduleDescriptor)

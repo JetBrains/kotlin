@@ -473,7 +473,8 @@ private fun buildJvmLoweringPhases(
         nlevels = 1,
         actions = setOf(defaultDumper, validationAction),
         lower =
-        fragmentSharedVariablesLowering then
+        externalPackageParentPatcherPhase then
+                fragmentSharedVariablesLowering then
                 validateIrBeforeLowering then
                 processOptionalAnnotationsPhase then
                 expectDeclarationsRemovingPhase then
