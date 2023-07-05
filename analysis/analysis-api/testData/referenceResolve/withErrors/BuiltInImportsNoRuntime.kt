@@ -1,0 +1,4 @@
+// NO_RUNTIME
+// UNRESOLVED_REFERENCE
+// IGNORE_FE10
+val (<caret>x)

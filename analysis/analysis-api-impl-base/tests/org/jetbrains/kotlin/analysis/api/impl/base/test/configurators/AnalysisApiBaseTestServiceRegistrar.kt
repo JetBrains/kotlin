@@ -27,7 +27,9 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisA
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtFileClassProvider
+import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.NO_RUNTIME
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.moduleStructure
 
 object AnalysisApiBaseTestServiceRegistrar: AnalysisApiTestServiceRegistrar()  {
     override fun registerProjectExtensionPoints(project: MockProject, testServices: TestServices) {}
@@ -78,7 +80,8 @@ object AnalysisApiBaseTestServiceRegistrar: AnalysisApiTestServiceRegistrar()  {
                     KotlinDeclarationProviderFactory::class.java, KotlinStaticDeclarationProviderFactory(
                         project,
                         allKtFiles,
-                        additionalRoots = roots
+                        additionalRoots = roots,
+                        skipBuiltins = testServices.moduleStructure.allDirectives.contains(NO_RUNTIME),
                     )
                 )
             } finally {

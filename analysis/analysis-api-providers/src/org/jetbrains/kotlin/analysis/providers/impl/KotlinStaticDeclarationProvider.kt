@@ -127,6 +127,7 @@ public class KotlinStaticDeclarationProviderFactory(
     files: Collection<KtFile>,
     private val jarFileSystem: CoreJarFileSystem = CoreJarFileSystem(),
     additionalRoots: List<VirtualFile> = emptyList(),
+    skipBuiltins: Boolean = false,
 ) : KotlinDeclarationProviderFactory() {
 
     private val index = KotlinStaticDeclarationIndex()
@@ -299,9 +300,11 @@ public class KotlinStaticDeclarationProviderFactory(
         }
 
         val builtins = mutableSetOf<String>()
-        loadBuiltIns().forEach { stub ->
-            processStub(stub)
-            builtins.add(stub.psi.virtualFile.name)
+        if (!skipBuiltins) {
+            loadBuiltIns().forEach { stub ->
+                processStub(stub)
+                builtins.add(stub.psi.virtualFile.name)
+            }
         }
 
         val binaryClassCache = ClsKotlinBinaryClassCache.getInstance()

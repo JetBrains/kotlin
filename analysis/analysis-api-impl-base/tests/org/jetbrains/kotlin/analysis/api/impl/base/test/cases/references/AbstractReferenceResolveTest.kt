@@ -30,9 +30,6 @@ abstract class AbstractReferenceResolveTest : AbstractAnalysisApiBasedTest() {
     override fun configureTest(builder: TestConfigurationBuilder) {
         super.configureTest(builder)
         with(builder) {
-            defaultDirectives {
-                +ConfigurationDirectives.WITH_STDLIB
-            }
             useDirectives(Directives)
             forTestsMatching("analysis/analysis-api/testData/referenceResolve/kDoc/*") {
                 defaultDirectives {
@@ -40,6 +37,12 @@ abstract class AbstractReferenceResolveTest : AbstractAnalysisApiBasedTest() {
                     +AnalysisApiTestDirectives.IGNORE_FE10
                 }
             }
+            forTestsMatching("analysis/analysis-api/testData/referenceResolve/kDoc/qualified/stdlib/*") {
+                defaultDirectives {
+                    +ConfigurationDirectives.WITH_STDLIB
+                }
+            }
+
         }
     }
 

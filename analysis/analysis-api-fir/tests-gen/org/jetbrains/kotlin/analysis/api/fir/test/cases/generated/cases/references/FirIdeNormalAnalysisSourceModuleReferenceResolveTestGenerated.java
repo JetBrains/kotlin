@@ -2058,6 +2058,12 @@ public class FirIdeNormalAnalysisSourceModuleReferenceResolveTestGenerated exten
         }
 
         @Test
+        @TestMetadata("BuiltInImportsNoRuntime.kt")
+        public void testBuiltInImportsNoRuntime() throws Exception {
+            runTest("analysis/analysis-api/testData/referenceResolve/withErrors/BuiltInImportsNoRuntime.kt");
+        }
+
+        @Test
         @TestMetadata("ByReturnExpression.kt")
         public void testByReturnExpression() throws Exception {
             runTest("analysis/analysis-api/testData/referenceResolve/withErrors/ByReturnExpression.kt");

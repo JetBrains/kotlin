@@ -1,3 +1,4 @@
+// WITH_STDLIB
 import kotlin.collections.listOf as lst
 
 /**

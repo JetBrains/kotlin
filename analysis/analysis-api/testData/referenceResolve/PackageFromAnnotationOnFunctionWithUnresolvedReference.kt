@@ -1,3 +1,4 @@
+// WITH_STDLIB
 package foo
 
 @kotlin.jv<caret>m.JvmName2("Name")
