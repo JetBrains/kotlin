@@ -4,7 +4,6 @@
  */
 package org.jetbrains.kotlin.native.interop.gen
 
-import kotlinx.cinterop.ExperimentalForeignApi
 import org.jetbrains.kotlin.native.interop.gen.jvm.KotlinPlatform
 import org.jetbrains.kotlin.native.interop.indexer.*
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -506,6 +505,8 @@ class StubIrTextEmitter(
             "@Deprecated(${annotationStub.message.quoteAsKotlinLiteral()}, " +
                     "ReplaceWith(${annotationStub.replaceWith.quoteAsKotlinLiteral()}), " +
                     "DeprecationLevel.${annotationStub.level.name})"
+        is AnnotationStub.ExperimentalForeignApi ->
+            "@${KotlinTypes.experimentalForeignApi.topLevelName}"
         is AnnotationStub.CEnumEntryAlias,
         is AnnotationStub.CEnumVarTypeSize,
         is AnnotationStub.CStruct.MemberAt,
