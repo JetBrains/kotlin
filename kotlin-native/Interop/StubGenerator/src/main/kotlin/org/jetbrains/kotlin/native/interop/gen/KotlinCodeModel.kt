@@ -224,6 +224,8 @@ object KotlinTypes {
 
     val cValue by InteropClassifier
 
+    val experimentalForeignApi by InteropClassifier
+
     private open class ClassifierAtPackage(val pkg: String) {
         operator fun getValue(thisRef: KotlinTypes, property: KProperty<*>): Classifier =
                 Classifier.topLevel(pkg, property.name.replaceFirstChar(Char::uppercaseChar))
