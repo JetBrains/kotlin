@@ -663,12 +663,7 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/HasKotlinDepe
 	public abstract fun getApiConfigurationName ()Ljava/lang/String;
 	public abstract fun getCompileOnlyConfigurationName ()Ljava/lang/String;
 	public abstract fun getImplementationConfigurationName ()Ljava/lang/String;
-	public abstract fun getRelatedConfigurationNames ()Ljava/util/List;
 	public abstract fun getRuntimeOnlyConfigurationName ()Ljava/lang/String;
-}
-
-public final class org/jetbrains/kotlin/gradle/plugin/HasKotlinDependencies$DefaultImpls {
-	public static fun getRelatedConfigurationNames (Lorg/jetbrains/kotlin/gradle/plugin/HasKotlinDependencies;)Ljava/util/List;
 }
 
 public final class org/jetbrains/kotlin/gradle/plugin/HasKotlinDependenciesKt {
@@ -724,7 +719,6 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinCompila
 	public abstract fun getName ()Ljava/lang/String;
 	public abstract fun getOutput ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinCompilationOutput;
 	public abstract fun getPlatformType ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinPlatformType;
-	public abstract fun getRelatedConfigurationNames ()Ljava/util/List;
 	public abstract fun getRuntimeDependencyConfigurationName ()Ljava/lang/String;
 	public abstract fun getRuntimeDependencyFiles ()Lorg/gradle/api/file/FileCollection;
 	public abstract fun getTarget ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinTarget;
@@ -747,7 +741,6 @@ public final class org/jetbrains/kotlin/gradle/plugin/KotlinCompilation$DefaultI
 	public static fun getDisambiguatedName (Lorg/jetbrains/kotlin/gradle/plugin/KotlinCompilation;)Ljava/lang/String;
 	public static fun getName (Lorg/jetbrains/kotlin/gradle/plugin/KotlinCompilation;)Ljava/lang/String;
 	public static fun getPlatformType (Lorg/jetbrains/kotlin/gradle/plugin/KotlinCompilation;)Lorg/jetbrains/kotlin/gradle/plugin/KotlinPlatformType;
-	public static fun getRelatedConfigurationNames (Lorg/jetbrains/kotlin/gradle/plugin/KotlinCompilation;)Ljava/util/List;
 	public static fun kotlinOptions (Lorg/jetbrains/kotlin/gradle/plugin/KotlinCompilation;Lkotlin/jvm/functions/Function1;)V
 	public static fun kotlinOptions (Lorg/jetbrains/kotlin/gradle/plugin/KotlinCompilation;Lorg/gradle/api/Action;)V
 }
@@ -765,7 +758,6 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinCompila
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinCompilationToRunnableFiles : org/jetbrains/kotlin/gradle/plugin/KotlinCompilation {
-	public abstract fun getRelatedConfigurationNames ()Ljava/util/List;
 	public abstract fun getRuntimeDependencyConfigurationName ()Ljava/lang/String;
 	public abstract fun getRuntimeDependencyFiles ()Lorg/gradle/api/file/FileCollection;
 	public abstract fun setRuntimeDependencyFiles (Lorg/gradle/api/file/FileCollection;)V
@@ -779,7 +771,6 @@ public final class org/jetbrains/kotlin/gradle/plugin/KotlinCompilationToRunnabl
 	public static fun getDisambiguatedName (Lorg/jetbrains/kotlin/gradle/plugin/KotlinCompilationToRunnableFiles;)Ljava/lang/String;
 	public static fun getName (Lorg/jetbrains/kotlin/gradle/plugin/KotlinCompilationToRunnableFiles;)Ljava/lang/String;
 	public static fun getPlatformType (Lorg/jetbrains/kotlin/gradle/plugin/KotlinCompilationToRunnableFiles;)Lorg/jetbrains/kotlin/gradle/plugin/KotlinPlatformType;
-	public static fun getRelatedConfigurationNames (Lorg/jetbrains/kotlin/gradle/plugin/KotlinCompilationToRunnableFiles;)Ljava/util/List;
 	public static fun kotlinOptions (Lorg/jetbrains/kotlin/gradle/plugin/KotlinCompilationToRunnableFiles;Lkotlin/jvm/functions/Function1;)V
 	public static fun kotlinOptions (Lorg/jetbrains/kotlin/gradle/plugin/KotlinCompilationToRunnableFiles;Lorg/gradle/api/Action;)V
 }
@@ -796,7 +787,6 @@ public final class org/jetbrains/kotlin/gradle/plugin/KotlinCompilationWithResou
 	public static fun getDisambiguatedName (Lorg/jetbrains/kotlin/gradle/plugin/KotlinCompilationWithResources;)Ljava/lang/String;
 	public static fun getName (Lorg/jetbrains/kotlin/gradle/plugin/KotlinCompilationWithResources;)Ljava/lang/String;
 	public static fun getPlatformType (Lorg/jetbrains/kotlin/gradle/plugin/KotlinCompilationWithResources;)Lorg/jetbrains/kotlin/gradle/plugin/KotlinPlatformType;
-	public static fun getRelatedConfigurationNames (Lorg/jetbrains/kotlin/gradle/plugin/KotlinCompilationWithResources;)Ljava/util/List;
 	public static fun kotlinOptions (Lorg/jetbrains/kotlin/gradle/plugin/KotlinCompilationWithResources;Lkotlin/jvm/functions/Function1;)V
 	public static fun kotlinOptions (Lorg/jetbrains/kotlin/gradle/plugin/KotlinCompilationWithResources;Lorg/gradle/api/Action;)V
 }
@@ -1087,7 +1077,6 @@ public final class org/jetbrains/kotlin/gradle/plugin/KotlinSourceSet$Companion 
 
 public final class org/jetbrains/kotlin/gradle/plugin/KotlinSourceSet$DefaultImpls {
 	public static fun addCustomSourceFilesExtensions (Lorg/jetbrains/kotlin/gradle/plugin/KotlinSourceSet;Ljava/util/List;)V
-	public static fun getRelatedConfigurationNames (Lorg/jetbrains/kotlin/gradle/plugin/KotlinSourceSet;)Ljava/util/List;
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinSourceSetContainer {
