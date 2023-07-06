@@ -20,7 +20,10 @@ import org.jetbrains.kotlin.fir.backend.jvm.FirJvmSerializerExtension
 import org.jetbrains.kotlin.fir.backend.jvm.jvmTypeMapper
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.classId
+import org.jetbrains.kotlin.fir.declarations.utils.isSynthetic
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.resolve.getContainingClass
+import org.jetbrains.kotlin.fir.scopes.jvm.computeJvmDescriptor
 import org.jetbrains.kotlin.fir.serialization.FirElementAwareStringTable
 import org.jetbrains.kotlin.fir.serialization.FirElementSerializer
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
@@ -36,6 +39,7 @@ import org.jetbrains.kotlin.protobuf.GeneratedMessageLite
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.utils.toMetadataVersion
+import org.jetbrains.org.objectweb.asm.commons.Method
 
 internal class KtFirMetadataCalculator(
     override val analysisSession: KtFirAnalysisSession
@@ -49,6 +53,7 @@ internal class KtFirMetadataCalculator(
     private val targetMetadataVersion: BinaryVersion
         get() = metadataVersion ?: firSession.languageVersionSettings.languageVersion.toMetadataVersion()
 
+
     override fun calculate(ktClass: KtClassOrObject): Metadata {
         // TODO: support nested classes
 //        val firClasses = ktClass.parentsWithSelf
@@ -56,8 +61,9 @@ internal class KtFirMetadataCalculator(
 //            .map { it.getOrBuildFirOfType<FirRegularClass>(firResolveSession) }
 //            .toList()
         val firClass = ktClass.getOrBuildFirOfType<FirRegularClass>(firResolveSession)
-        firClass.symbol.lazyResolveToPhase(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)
-        val (serializer, stringTable) = createTopLevelSerializer(FirMetadataSource.Class(firClass))
+        val bindings = JvmSerializationBindings()
+        firClass.accept(bindingsCollector(bindings))
+        val (serializer, stringTable) = createTopLevelSerializer(FirMetadataSource.Class(firClass), bindings)
         val classProto = serializer.classProto(firClass)
         return generateAnnotation(classProto.build(), stringTable, Kind.Class)
     }
@@ -68,8 +74,10 @@ internal class KtFirMetadataCalculator(
 
     override fun calculate(ktFiles: Collection<KtFile>): Metadata {
         val firFiles = ktFiles.map { it.getOrBuildFirFile(firResolveSession) }
-        firFiles.forEach { it.symbol.lazyResolveToPhase(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE) }
-        val (serializer, stringTable) = createTopLevelSerializer(FirMetadataSource.File(firFiles))
+        val bindings = JvmSerializationBindings()
+        val collector = bindingsCollector(bindings)
+        firFiles.forEach { it.accept(collector) }
+        val (serializer, stringTable) = createTopLevelSerializer(FirMetadataSource.File(firFiles), bindings)
         val fileProto = serializer.packagePartProto(firFiles.first().packageFqName, firFiles, null)
 
         return generateAnnotation(fileProto.build(), stringTable, Kind.File)
@@ -104,39 +112,19 @@ internal class KtFirMetadataCalculator(
         )
     }
 
-    private fun createTopLevelSerializer(metadata: FirMetadataSource): Pair<FirElementSerializer, JvmStringTable> {
+    private fun createTopLevelSerializer(metadata: FirMetadataSource, bindings: JvmSerializationBindings): Pair<FirElementSerializer, JvmStringTable> {
         val session = firSession
         val scopeSession = scopeSession
         val typeApproximator = session.typeApproximator
         val stringTable = FirJvmElementAwareStringTableForLightClasses()
-        val bindings = JvmSerializationBindings()
-        metadata.fir?.accept(object : FirVisitorVoid() {
-            override fun visitElement(element: FirElement) {
-                element.acceptChildren(this)
-            }
-
-            override fun visitProperty(property: FirProperty) {
-                super.visitProperty(property)
-                property.backingField?.let {
-                    val name = if (property.delegate != null) "${property.name.asString()}\$delegate" else property.name.asString()
-                    bindings.put(
-                        FirJvmSerializerExtension.FIELD_FOR_PROPERTY,
-                        property,
-                        session.jvmTypeMapper.mapType(it.returnTypeRef.coneType) to name
-                    )
-                }
-                // TODO: getter, setter, ...
-            }
-        })
         val jvmSerializerExtension = FirJvmSerializerExtension(
             session,
-            JvmSerializationBindings(),
+            bindings,
             metadata,
             localDelegatedProperties = emptyList(),
             typeApproximator,
             scopeSession,
-            bindings,
-            //JvmSerializationBindings(),
+            JvmSerializationBindings(),
             useTypeTable = true,
             moduleName = analysisSession.useSiteModule.moduleDescription,
             classBuilderMode = ClassBuilderMode.KAPT3,
@@ -162,5 +150,52 @@ internal class KtFirMetadataCalculator(
             return firClass.classId
         }
     }
-}
 
+    private fun bindingsCollector(bindings: JvmSerializationBindings) = object : FirVisitorVoid() {
+        private val session = firSession
+
+        override fun visitElement(element: FirElement) {
+            (element as? FirDeclaration)?.symbol?.lazyResolveToPhase(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)
+            element.acceptChildren(this)
+        }
+
+        override fun visitProperty(property: FirProperty) {
+            super.visitProperty(property)
+            property.backingField?.let {
+                val name = if (property.delegate != null) "${property.name.asString()}\$delegate" else property.name.asString()
+                bindings.put(
+                    FirJvmSerializerExtension.FIELD_FOR_PROPERTY,
+                    property,
+                    session.jvmTypeMapper.mapType(it.returnTypeRef.coneType) to name
+                )
+            }
+        }
+
+        override fun visitFunction(function: FirFunction) {
+            super.visitFunction(function)
+            val name = (function as? FirSimpleFunction)?.name?.asString() ?: "<init>"
+            val method = Method(name, function.computeJvmDescriptor(""))
+            when {
+                name.endsWith("\$annotations") ->
+                    findProperty(function)?.let {
+                        bindings.put(FirJvmSerializerExtension.SYNTHETIC_METHOD_FOR_FIR_VARIABLE, it, method)
+                    }
+                name.endsWith("\$delegate") ->
+                    findProperty(function)?.let {
+                        bindings.put(FirJvmSerializerExtension.SYNTHETIC_METHOD_FOR_FIR_VARIABLE, it, method)
+                    }
+            }
+            bindings.put(FirJvmSerializerExtension.METHOD_FOR_FIR_FUNCTION, function, method)
+        }
+
+        private fun findProperty(function: FirFunction): FirProperty? {
+            if (!function.isSynthetic) return null
+            val functionName = (function as FirSimpleFunction).name.asString()
+            val propertyName = functionName.substring(0, functionName.lastIndexOf('$'))
+            return function.getContainingClass(firSession)
+                ?.declarations
+                ?.filterIsInstance<FirProperty>()
+                ?.singleOrNull { it.name.asString() == propertyName }
+        }
+    }
+}
