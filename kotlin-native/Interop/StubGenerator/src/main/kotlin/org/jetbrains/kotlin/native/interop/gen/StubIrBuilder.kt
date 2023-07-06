@@ -350,12 +350,59 @@ class StubIrBuilder(private val context: StubIrContext) {
                 typealiases.toList(),
                 containers.toList()
         )
+
+        stubs.addExperimentalAnnotations()
+
         return StubIrBuilderResult(
                 stubs,
                 buildingContext.declarationMapper,
                 buildingContext.bridgeComponentsBuilder.build(),
                 buildingContext.wrapperComponentsBuilder.build()
         )
+    }
+
+    private fun StubContainer.addExperimentalAnnotations() {
+        fun MutableList<AnnotationStub>.addExperimentalIfNecessary() {
+            if (!configuration.disableExperimentalAnnotation)
+                this.add(AnnotationStub.ExperimentalForeignApi)
+        }
+
+        this.accept(object : StubIrVisitor<Unit, Unit> {
+            override fun visitSimpleStubContainer(simpleStubContainer: SimpleStubContainer, data: Unit) {
+                simpleStubContainer.children.forEach { it.accept(this, data) }
+                simpleStubContainer.simpleContainers.forEach { visitSimpleStubContainer(it, data) }
+            }
+
+            override fun visitClass(element: ClassStub, data: Unit) {
+                val annotations = when (element) {
+                    is ClassStub.Companion -> return // Nested, see below.
+                    is ClassStub.Enum -> element.annotations
+                    is ClassStub.Simple -> element.annotations
+                }
+                annotations.addExperimentalIfNecessary()
+                // Not visiting nested declarations intentionally -- they inherit opt-in requirement from the enclosing
+                // class.
+            }
+
+            override fun visitTypealias(element: TypealiasStub, data: Unit) {
+                element.annotations.addExperimentalIfNecessary()
+            }
+
+            override fun visitFunction(element: FunctionStub, data: Unit) {
+                element.annotations.addExperimentalIfNecessary()
+            }
+
+            override fun visitProperty(element: PropertyStub, data: Unit) {
+                element.annotations.addExperimentalIfNecessary()
+            }
+
+            // Not visiting nested declarations intentionally -- they inherit opt-in requirement from the enclosing
+            // class.
+            override fun visitConstructor(constructorStub: ConstructorStub, data: Unit) {}
+
+            // Property accessors inherit opt-in requirements from the property.
+            override fun visitPropertyAccessor(propertyAccessor: PropertyAccessor, data: Unit) {}
+        }, Unit)
     }
 
     private fun generateStubsForWrappedMacro(macro: WrappedMacroDef) {
