@@ -239,9 +239,10 @@ fun TestConfigurationBuilder.enableLazyResolvePhaseChecking() {
         service<FirSessionComponentRegistrar>(::FirLazyDeclarationResolverWithPhaseCheckingSessionComponentRegistrar.coerce())
     )
 
-    useAfterAnalysisCheckers(
-        ::DisableLazyResolveChecksAfterAnalysisChecker,
-    )
+    // It's important to filter out failures from lazy resolve before calling other suppressors like BlackBoxCodegenSuppressor
+    // Otherwise other suppressors can filter out every failure from test and keep it as ignored even if
+    // the only problem in lazy resolve contracts, which disables with special directive
+    useAfterAnalysisCheckers(::DisableLazyResolveChecksAfterAnalysisChecker, insertAtFirst = true)
 
     configureFirHandlersStep {
         useHandlers(

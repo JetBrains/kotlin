@@ -196,8 +196,11 @@ class TestConfigurationBuilder {
         metaTestConfigurators += configurators
     }
 
-    fun useAfterAnalysisCheckers(vararg checkers: Constructor<AfterAnalysisChecker>) {
-        afterAnalysisCheckers += checkers
+    fun useAfterAnalysisCheckers(vararg checkers: Constructor<AfterAnalysisChecker>, insertAtFirst: Boolean = false) {
+        when (insertAtFirst) {
+            false -> afterAnalysisCheckers += checkers
+            true -> afterAnalysisCheckers.addAll(0, checkers.asList())
+        }
     }
 
     fun defaultDirectives(init: RegisteredDirectivesBuilder.() -> Unit) {
