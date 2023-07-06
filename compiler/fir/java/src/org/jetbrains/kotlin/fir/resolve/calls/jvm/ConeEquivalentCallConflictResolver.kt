@@ -68,7 +68,7 @@ class ConeEquivalentCallConflictResolver(
         if (first is FirVariable != second is FirVariable) {
             return false
         }
-        if (!firstCandidate.orderOfMappedArguments.contentEquals(secondCandidate.orderOfMappedArguments)) {
+        if (!firstCandidate.mappedArgumentsOrderRepresentation.contentEquals(secondCandidate.mappedArgumentsOrderRepresentation)) {
             return false
         }
         val firstSignature = createFlatSignature(firstCandidate, first)
@@ -77,11 +77,25 @@ class ConeEquivalentCallConflictResolver(
                 compareCallsByUsedArguments(secondSignature, firstSignature, discriminateGenerics = false, useOriginalSamTypes = false)
     }
 
-    private val Candidate.orderOfMappedArguments: IntArray?
+    /**
+     * If the candidate is a function, then the arguments
+     * order representation is an array containing the
+     * parameters count and the indices of the parameters
+     * that the call arguments correspond to in the order
+     * the call arguments happen to be.
+     *
+     * Otherwise, null.
+     */
+    private val Candidate.mappedArgumentsOrderRepresentation: IntArray?
         get() {
             val function = symbol.fir as? FirFunction ?: return null
             val parametersToIndices = function.valueParameters.mapIndexed { index, it -> it to index }.toMap()
-            return argumentMapping?.map { parametersToIndices[it.value] ?: error("Unmapped argument in arguments mapping") }?.toIntArray()
+            val mapping = argumentMapping ?: return null
+            val result = IntArray(mapping.size + 1) { function.valueParameters.size }
+            for ((index, parameter) in mapping.values.withIndex()) {
+                result[index + 1] = parametersToIndices[parameter] ?: error("Unmapped argument in arguments mapping")
+            }
+            return result
         }
 
     private fun createFlatSignature(call: Candidate, declaration: FirCallableDeclaration): FlatSignature<Candidate> {
