@@ -1,9 +1,2 @@
-import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
-
-plugins {
-    kotlin("jvm") version "1.8.21"
-    application
-}
-
-group = "org.example"
-version = "1.0-SNAPSHOT"
+FILE: scriptWithCustomImport.kts
+    plugins#(<L> = LAZY_EXPRESSION)group# = String(org.example)version# = String(1.0-SNAPSHOT)

@@ -405,7 +405,7 @@ fun generateJUnit3CompilerTests(args: Array<String>) {
             }
 
             testClass<AbstractRawFirBuilderLazyBodiesTestCase> {
-                model("rawBuilder", testMethod = "doRawFirTest")
+                model("rawBuilder", testMethod = "doRawFirTest", pattern = TestGeneratorUtil.KT_OR_KTS)
             }
 
             testClass<AbstractRawFirBuilderSourceElementMappingTestCase> {
