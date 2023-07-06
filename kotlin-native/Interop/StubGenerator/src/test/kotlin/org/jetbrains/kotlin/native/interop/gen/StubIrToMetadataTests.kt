@@ -27,7 +27,7 @@ class StubIrToMetadataTests {
                 returnType = intStubType,
                 parameters = listOf(),
                 origin = origin,
-                annotations = emptyList(),
+                annotations = mutableListOf(),
                 external = true,
                 receiver = null,
                 modality = MemberStubModality.FINAL
