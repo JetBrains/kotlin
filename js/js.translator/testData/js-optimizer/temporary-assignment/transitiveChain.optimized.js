@@ -13,32 +13,28 @@ function testIrregular() {
 }
 
 function testDoubleUse1() {
-    var $b;
-    $b = f("testDoubleUse1");
+    var $b = f("testDoubleUse1");
     var result = $b;
     f($b);
     return result;
 }
 
 function testDoubleUse2() {
-    var $d;
-    $d = f("testDoubleUse2");
+    var $d = f("testDoubleUse2");
     var result = $d;
     f($d);
     return result;
 }
 
 function testDoubleUse3() {
-    var $a;
-    $a = f("testDoubleUse3");
+    var $a = f("testDoubleUse3");
     var result = $a;
     f($a);
     return result;
 }
 
 function testCircular() {
-    var $b;
-    $b = f("testCircular");
+    var $b = f("testCircular");
     $b = $b;
     var result = $b;
     return result;

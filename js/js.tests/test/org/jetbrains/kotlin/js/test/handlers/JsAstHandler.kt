@@ -17,12 +17,13 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.test.services.isKtFile
+import java.io.File
 
 class JsAstHandler(testServices: TestServices) : JsBinaryArtifactHandler(testServices) {
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {}
 
     override fun processModule(module: TestModule, info: BinaryArtifacts.Js) {
-        val ktFiles = module.files.filter { it.isKtFile }.map { it.originalContent }
+        val ktFiles = module.files.filter { it.isKtFile }.associate { it.originalFile to it.originalContent }
         val jsProgram = when (val artifact = info.unwrap()) {
             is BinaryArtifacts.Js.OldJsArtifact -> (artifact.translationResult as TranslationResult.Success).program
             is BinaryArtifacts.Js.JsIrArtifact -> artifact.compilerResult.outputs[TranslationMode.FULL_DEV]?.jsProgram ?: return
@@ -31,8 +32,8 @@ class JsAstHandler(testServices: TestServices) : JsBinaryArtifactHandler(testSer
         processJsProgram(jsProgram, ktFiles, module.targetBackend!!)
     }
 
-    private fun processJsProgram(program: JsProgram, psiFiles: List<String>, targetBackend: TargetBackend) {
-        psiFiles.forEach { DirectiveTestUtils.processDirectives(program, it, targetBackend) }
+    private fun processJsProgram(program: JsProgram, psiFiles: Map<File, String>, targetBackend: TargetBackend) {
+        psiFiles.forEach { DirectiveTestUtils.processDirectives(program, it.key, it.value, targetBackend) }
         program.verifyAst(targetBackend)
     }
 

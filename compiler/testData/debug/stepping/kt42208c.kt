@@ -39,7 +39,7 @@ fun baz(v:(() -> Unit)) {
 // test.kt:8 box
 
 // EXPECTATIONS JS_IR
-// test1.kt:12 box
+// test1.kt:11 box
 // test.kt:5 box
 // test3.kt:15 baz
 // test1.kt:9 box$lambda

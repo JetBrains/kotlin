@@ -1,8 +1,7 @@
 var result = "";
 
 function box() {
-    var $tmp;
-    $tmp = result;
+    var $tmp = result;
     result += "fail";
     result = $tmp + "OK";
     return result;

@@ -7026,6 +7026,22 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     }
 
     @Nested
+    @TestMetadata("js/js.translator/testData/box/jsAstOptimizations")
+    @TestDataPath("$PROJECT_ROOT")
+    public class JsAstOptimizations {
+        @Test
+        public void testAllFilesPresentInJsAstOptimizations() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/jsAstOptimizations"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        }
+
+        @Test
+        @TestMetadata("tempVarDeclOnAssignment.kt")
+        public void testTempVarDeclOnAssignment() throws Exception {
+            runTest("js/js.translator/testData/box/jsAstOptimizations/tempVarDeclOnAssignment.kt");
+        }
+    }
+
+    @Nested
     @TestMetadata("js/js.translator/testData/box/jsCode")
     @TestDataPath("$PROJECT_ROOT")
     public class JsCode {
