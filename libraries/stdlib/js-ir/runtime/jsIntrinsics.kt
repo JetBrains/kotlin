@@ -228,3 +228,6 @@ internal fun jsDelete(e: Any?)
 
 @JsIntrinsic
 internal fun jsContextfulRef(context: dynamic, fn: dynamic): dynamic
+
+@JsIntrinsic
+internal fun jsIsEs6(): Boolean

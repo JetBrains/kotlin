@@ -7,9 +7,10 @@ package kotlin.js
 internal fun setMetadataFor(
     ctor: Ctor,
     name: String?,
-    metadataConstructor: (name: String?, associatedObjectKey: Number?, associatedObjects: dynamic, suspendArity: Array<Int>?) -> Metadata,
+    metadataConstructor: (name: String?, defaultConstructor: dynamic, associatedObjectKey: Number?, associatedObjects: dynamic, suspendArity: Array<Int>?) -> Metadata,
     parent: Ctor?,
     interfaces: Array<dynamic>?,
+    defaultConstructor: dynamic,
     associatedObjectKey: Number?,
     associatedObjects: dynamic,
     suspendArity: Array<Int>?
@@ -21,7 +22,7 @@ internal fun setMetadataFor(
         """)
     }
 
-    val metadata = metadataConstructor(name, associatedObjectKey, associatedObjects, suspendArity ?: js("[]"))
+    val metadata = metadataConstructor(name, defaultConstructor, associatedObjectKey, associatedObjects, suspendArity ?: js("[]"))
     ctor.`$metadata$` = metadata
 
     if (interfaces != null) {
@@ -45,16 +46,34 @@ private fun generateInterfaceId(): Int {
 }
 
 
-internal fun interfaceMeta(name: String?, associatedObjectKey: Number?, associatedObjects: dynamic, suspendArity: Array<Int>?): Metadata {
-    return createMetadata("interface", name, associatedObjectKey, associatedObjects, suspendArity, generateInterfaceId())
+internal fun interfaceMeta(
+    name: String?,
+    defaultConstructor: dynamic,
+    associatedObjectKey: Number?,
+    associatedObjects: dynamic,
+    suspendArity: Array<Int>?
+): Metadata {
+    return createMetadata("interface", name, defaultConstructor, associatedObjectKey, associatedObjects, suspendArity, generateInterfaceId())
 }
 
-internal fun objectMeta(name: String?, associatedObjectKey: Number?, associatedObjects: dynamic, suspendArity: Array<Int>?): Metadata {
-    return createMetadata("object", name, associatedObjectKey, associatedObjects, suspendArity, null)
+internal fun objectMeta(
+    name: String?,
+    defaultConstructor: dynamic,
+    associatedObjectKey: Number?,
+    associatedObjects: dynamic,
+    suspendArity: Array<Int>?
+): Metadata {
+    return createMetadata("object", name, defaultConstructor, associatedObjectKey, associatedObjects, suspendArity, null)
 }
 
-internal fun classMeta(name: String?, associatedObjectKey: Number?, associatedObjects: dynamic, suspendArity: Array<Int>?): Metadata {
-    return createMetadata("class", name, associatedObjectKey, associatedObjects, suspendArity, null)
+internal fun classMeta(
+    name: String?,
+    defaultConstructor: dynamic,
+    associatedObjectKey: Number?,
+    associatedObjects: dynamic,
+    suspendArity: Array<Int>?
+): Metadata {
+    return createMetadata("class", name, defaultConstructor, associatedObjectKey, associatedObjects, suspendArity, null)
 }
 
 // Seems like we need to disable this check if variables are used inside js annotation
@@ -62,6 +81,7 @@ internal fun classMeta(name: String?, associatedObjectKey: Number?, associatedOb
 private fun createMetadata(
     kind: String,
     name: String?,
+    defaultConstructor: dynamic,
     associatedObjectKey: Number?,
     associatedObjects: dynamic,
     suspendArity: Array<Int>?,
@@ -75,6 +95,7 @@ private fun createMetadata(
     associatedObjects: associatedObjects,
     suspendArity: suspendArity,
     ${'$'}kClass$: undef,
+    defaultConstructor: defaultConstructor,
     iid: iid
 })""")
 }
@@ -90,6 +111,7 @@ internal external interface Metadata {
     val iid: Int?
 
     var `$kClass$`: dynamic
+    val defaultConstructor: dynamic
 
     var errorInfo: Int? // Bits set for overridden properties: "message" => 0x1, "cause" => 0x2
 }

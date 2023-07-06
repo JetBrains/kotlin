@@ -30,6 +30,9 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
 
     // TODO: Should we drop operator intrinsics in favor of IrDynamicOperatorExpression?
 
+    // Modes
+    val jsIsEs6 = getInternalFunction("jsIsEs6")
+
     // Global variables
     val void = getInternalProperty("VOID")
     val globalThis = getInternalProperty("globalThis")

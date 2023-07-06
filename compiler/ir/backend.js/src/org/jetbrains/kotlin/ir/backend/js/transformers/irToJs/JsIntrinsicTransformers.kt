@@ -86,6 +86,8 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
 
             prefixOp(intrinsics.jsTypeOf, JsUnaryOperator.TYPEOF)
 
+            add(intrinsics.jsIsEs6) { _, _ -> JsBooleanLiteral(backendContext.es6mode) }
+
             add(intrinsics.jsObjectCreateSymbol) { call, context ->
                 val classToCreate = call.getTypeArgument(0)!!.classifierOrFail.owner as IrClass
                 val className = classToCreate.getClassRef(context.staticContext)

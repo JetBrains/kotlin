@@ -6,6 +6,7 @@
 package kotlin.js
 
 import kotlin.annotation.AnnotationTarget.*
+import kotlin.reflect.KClass
 
 /**
  * Gives a declaration (a function, a property or a class) specific name in JavaScript.
@@ -100,3 +101,30 @@ public expect annotation class JsExport() {
     public annotation class Ignore()
 }
 
+
+/**
+ * This annotation marks the experimental Kotlin/JS reflection API that allows to create an instance of provided [KClass]
+ * The API can be removed completely in any further release.
+ *
+ * Any usage of a declaration annotated with `@ExperimentalJsReflectionCreateInstance` should be accepted either by
+ * annotating that usage with the [OptIn] annotation, e.g. `@OptIn(ExperimentalJsReflectionCreateInstance::class)`,
+ * or by using the compiler argument `-opt-in=kotlin.js.ExperimentalJsReflectionCreateInstance`.
+ */
+@RequiresOptIn(level = RequiresOptIn.Level.WARNING)
+@Retention(AnnotationRetention.BINARY)
+@Target(
+    AnnotationTarget.CLASS,
+    AnnotationTarget.ANNOTATION_CLASS,
+    AnnotationTarget.PROPERTY,
+    AnnotationTarget.FIELD,
+    AnnotationTarget.LOCAL_VARIABLE,
+    AnnotationTarget.VALUE_PARAMETER,
+    AnnotationTarget.CONSTRUCTOR,
+    AnnotationTarget.FUNCTION,
+    AnnotationTarget.PROPERTY_GETTER,
+    AnnotationTarget.PROPERTY_SETTER,
+    AnnotationTarget.TYPEALIAS
+)
+@MustBeDocumented
+@SinceKotlin("1.9")
+public annotation class ExperimentalJsReflectionCreateInstance

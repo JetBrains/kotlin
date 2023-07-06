@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.utils.newHashMapWithExpectedSize
 
 object ES6_INIT_CALL : IrStatementOriginImpl("ES6_INIT_CALL")
 object ES6_CONSTRUCTOR_REPLACEMENT : IrDeclarationOriginImpl("ES6_CONSTRUCTOR_REPLACEMENT")
+object ES6_SYNTHETIC_EXPORT_CONSTRUCTOR: IrDeclarationOriginImpl("ES6_SYNTHETIC_EXPORT_CONSTRUCTOR")
 object ES6_PRIMARY_CONSTRUCTOR_REPLACEMENT : IrDeclarationOriginImpl("ES6_PRIMARY_CONSTRUCTOR_REPLACEMENT")
 object ES6_INIT_FUNCTION : IrDeclarationOriginImpl("ES6_INIT_FUNCTION")
 object ES6_DELEGATING_CONSTRUCTOR_REPLACEMENT : IrStatementOriginImpl("ES6_DELEGATING_CONSTRUCTOR_REPLACEMENT")
@@ -49,6 +50,9 @@ val IrDeclaration.isInitFunction: Boolean
 
 val IrFunctionAccessExpression.isInitCall: Boolean
     get() = origin == ES6_INIT_CALL
+
+val IrDeclaration.isSyntheticConstructorForExport: Boolean
+    get() = origin == ES6_SYNTHETIC_EXPORT_CONSTRUCTOR
 
 class ES6ConstructorLowering(val context: JsIrBackendContext) : DeclarationTransformer {
     private var IrConstructor.constructorFactory by context.mapping.secondaryConstructorToFactory
@@ -77,6 +81,7 @@ class ES6ConstructorLowering(val context: JsIrBackendContext) : DeclarationTrans
                         statements.add(JsIrBuilder.buildReturn(symbol, selfReplacedConstructorCall, returnType))
                     }
                 }
+                origin = ES6_SYNTHETIC_EXPORT_CONSTRUCTOR
             }
         }
     }

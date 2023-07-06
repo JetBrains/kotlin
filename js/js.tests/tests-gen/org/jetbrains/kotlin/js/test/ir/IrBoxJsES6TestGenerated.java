@@ -10021,6 +10021,18 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
         }
 
         @Test
+        @TestMetadata("createInstance.kt")
+        public void testCreateInstance() throws Exception {
+            runTest("js/js.translator/testData/box/reflection/createInstance.kt");
+        }
+
+        @Test
+        @TestMetadata("createInstanceByInstance.kt")
+        public void testCreateInstanceByInstance() throws Exception {
+            runTest("js/js.translator/testData/box/reflection/createInstanceByInstance.kt");
+        }
+
+        @Test
         @TestMetadata("external.kt")
         public void testExternal() throws Exception {
             runTest("js/js.translator/testData/box/reflection/external.kt");

@@ -8,8 +8,8 @@ package kotlin.js
 internal typealias BitMask = IntArray
 
 private fun bitMaskWith(activeBit: Int): BitMask {
-    val intArray = IntArray((activeBit shr 5) + 1)
     val numberIndex = activeBit shr 5
+    val intArray = IntArray(numberIndex + 1)
     val positionInNumber = activeBit and 31
     val numberWithSettledBit = 1 shl positionInNumber
     intArray[numberIndex] = intArray[numberIndex] or numberWithSettledBit

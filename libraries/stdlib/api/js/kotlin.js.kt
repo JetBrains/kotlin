@@ -216,6 +216,15 @@ public final annotation class ExperimentalJsFileName : kotlin.Annotation {
     public constructor ExperimentalJsFileName()
 }
 
+@kotlin.RequiresOptIn(level = Level.WARNING)
+@kotlin.annotation.Retention(value = AnnotationRetention.BINARY)
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.PROPERTY, AnnotationTarget.FIELD, AnnotationTarget.LOCAL_VARIABLE, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.TYPEALIAS})
+@kotlin.annotation.MustBeDocumented
+@kotlin.SinceKotlin(version = "1.9")
+public final annotation class ExperimentalJsReflectionCreateInstance : kotlin.Annotation {
+    public constructor ExperimentalJsReflectionCreateInstance()
+}
+
 public external object JSON {
     public final fun <T> parse(text: kotlin.String): T
 

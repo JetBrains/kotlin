@@ -60,6 +60,12 @@ class UselessDeclarationsRemover(
             .flatMap { it.classOrNull?.collectUsedSuperTypes() ?: emptyList() }
             .distinct()
             .memoryOptimizedMap { it.defaultType }
+
+        // Remove default constructor if the class was never constructed
+        val defaultConstructor = context.findDefaultConstructorFor(declaration)
+        if (defaultConstructor != null && defaultConstructor !in usefulDeclarations) {
+            context.mapping.classToItsDefaultConstructor.remove(declaration)
+        }
     }
 
     private fun IrClassSymbol.collectUsedSuperTypes(): Set<IrClassSymbol> {

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.backend.js.utils
 
 import org.jetbrains.kotlin.backend.common.lower.parents
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.isClass
 import org.jetbrains.kotlin.descriptors.isInterface
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -14,6 +15,10 @@ import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
 import org.jetbrains.kotlin.ir.backend.js.export.isExported
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
+import org.jetbrains.kotlin.ir.backend.js.lower.isBoxParameter
+import org.jetbrains.kotlin.ir.backend.js.lower.isEs6ConstructorReplacement
+import org.jetbrains.kotlin.ir.backend.js.lower.isSyntheticConstructorForExport
+import org.jetbrains.kotlin.ir.backend.js.lower.isSyntheticPrimaryConstructor
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
@@ -25,13 +30,10 @@ import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrNull
-import org.jetbrains.kotlin.ir.util.defaultType
-import org.jetbrains.kotlin.ir.util.isAnnotationClass
-import org.jetbrains.kotlin.ir.util.parentAsClass
-import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
-import org.jetbrains.kotlin.ir.util.isEnumClass
-import org.jetbrains.kotlin.ir.util.parentClassOrNull
+import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.js.backend.ast.JsNameRef
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.utils.filterIsInstanceAnd
 
 fun IrClass.jsConstructorReference(context: JsIrBackendContext): IrExpression {
     return JsIrBuilder.buildCall(context.intrinsics.jsClass, origin = JsStatementOrigins.CLASS_REFERENCE)
@@ -126,4 +128,10 @@ fun IrDeclaration.isObjectInstanceField(): Boolean {
 
 fun IrField.isObjectInstanceField(): Boolean {
     return origin == IrDeclarationOrigin.FIELD_FOR_OBJECT_INSTANCE
+}
+
+fun JsIrBackendContext.findDefaultConstructorFor(irClass: IrClass): IrFunction? {
+    return mapping.classToItsDefaultConstructor[irClass]?.let {
+        mapping.secondaryConstructorToFactory[it] ?: it
+    }
 }

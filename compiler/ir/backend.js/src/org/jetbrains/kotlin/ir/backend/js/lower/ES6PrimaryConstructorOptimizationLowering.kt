@@ -12,10 +12,7 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.export.isExported
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
-import org.jetbrains.kotlin.ir.backend.js.utils.JsAnnotations
-import org.jetbrains.kotlin.ir.backend.js.utils.MutableReference
-import org.jetbrains.kotlin.ir.backend.js.utils.irEmpty
-import org.jetbrains.kotlin.ir.backend.js.utils.mutableReferenceOf
+import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
@@ -35,12 +32,19 @@ class ES6PrimaryConstructorOptimizationLowering(private val context: JsIrBackend
         }
 
         val irClass = declaration.parentAsClass
+        val defaultConstructor = context.findDefaultConstructorFor(irClass)
 
         if (irClass.isExported(context)) {
             irClass.removeConstructorForExport()
         }
 
-        return listOf(declaration.convertToRegularConstructor(irClass))
+        val constructorReplacement = declaration.convertToRegularConstructor(irClass)
+
+        if (declaration == defaultConstructor) {
+            context.mapping.classToItsDefaultConstructor[irClass] = constructorReplacement
+        }
+
+        return listOf(constructorReplacement)
     }
 
     private fun IrFunction.convertToRegularConstructor(irClass: IrClass): IrConstructor {
