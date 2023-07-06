@@ -219,7 +219,17 @@ private fun KotlinTargetComponent.findUsageContext(configurationName: String): U
     return usageContexts.find { usageContext ->
         if (usageContext !is KotlinUsageContext) return@find false
         val compilation = usageContext.compilation
-        configurationName == compilation.target.apiElementsConfigurationName ||
-                configurationName == compilation.target.runtimeElementsConfigurationName
+        val outgoingConfigurations = mutableListOf(
+            compilation.target.apiElementsConfigurationName,
+            compilation.target.runtimeElementsConfigurationName
+        )
+        if (compilation is KotlinJvmAndroidCompilation) {
+            val androidVariant = compilation.androidVariant
+            outgoingConfigurations += listOf(
+                "${androidVariant.name}ApiElements",
+                "${androidVariant.name}RuntimeElements",
+            )
+        }
+        configurationName in outgoingConfigurations
     }
 }
