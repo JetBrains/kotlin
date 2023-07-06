@@ -1,2 +1,5 @@
 FILE: scriptWithCustomImport.kts
-    plugins#(<L> = LAZY_EXPRESSION)group# = String(org.example)version# = String(1.0-SNAPSHOT)
+    SCRIPT:
+        plugins#(<L> = LAZY_EXPRESSION)
+        group# = String(org.example)
+        version# = String(1.0-SNAPSHOT)
