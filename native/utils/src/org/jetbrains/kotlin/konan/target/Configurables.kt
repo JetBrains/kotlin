@@ -98,7 +98,7 @@ interface ConfigurablesWithEmulator : Configurables {
 interface AppleConfigurables : Configurables, ClangFlags {
     val arch get() = targetTriple.architecture
     val osVersionMin get() = targetString("osVersionMin")!!
-    val osVersionMinFlagLd get() = targetString("osVersionMinFlagLd")!!
+    val sdkVersion get() = targetString("sdkVersion")!!
     val stripFlags get() = targetList("stripFlags")
     val additionalToolsDir get() = hostString("additionalToolsDir")
     val absoluteAdditionalToolsDir get() = absolute(additionalToolsDir)

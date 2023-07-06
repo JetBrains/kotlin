@@ -202,10 +202,6 @@ class MacOSBasedLinker(targetProperties: AppleConfigurables)
         return if (dir != null) "$dir/libclang_rt.$mangledLibraryName$prefix$suffix$extension" else null
     }
 
-    private val osVersionMinFlags: List<String> by lazy {
-        listOf(osVersionMinFlagLd, osVersionMin + ".0")
-    }
-
     override fun filterStaticLibraries(binaries: List<String>) = binaries.filter { it.isUnixStaticLib }
 
     // Note that may break in case of 32-bit Mach-O. See KT-37368.
@@ -217,6 +213,28 @@ class MacOSBasedLinker(targetProperties: AppleConfigurables)
             +objectFiles
             +listOf("-o", output)
         }.let(::listOf)
+
+    /**
+     * Construct -platform_version ld64 argument which contains info about
+     * - SDK
+     * - minimal OS version
+     * - SDK version
+     */
+    private fun platformVersionFlags(): List<String> = mutableListOf<String>().apply {
+        add("-platform_version")
+
+        val platformName = when (target.family) {
+            Family.OSX -> "macos"
+            Family.IOS -> "ios"
+            Family.TVOS -> "tvos"
+            Family.WATCHOS -> "watchos"
+            else -> error("Unexpected Apple target family: ${target.family}")
+        } + if (targetTriple.isSimulator) "-simulator" else ""
+        add(platformName)
+
+        add("$osVersionMin.0")
+        add(sdkVersion)
+    }.toList()
 
     override fun finalLinkCommands(objectFiles: List<ObjectFile>, executable: ExecutableFile,
                                    libraries: List<String>, linkerArgs: List<String>,
@@ -242,7 +260,7 @@ class MacOSBasedLinker(targetProperties: AppleConfigurables)
         result += Command(linker).apply {
             +"-demangle"
             +listOf("-dynamic", "-arch", arch)
-            +osVersionMinFlags
+            +platformVersionFlags()
             +listOf("-syslibroot", absoluteTargetSysRoot, "-o", executable)
             +objectFiles
             if (optimize) +linkerOptimizationFlags
