@@ -30,6 +30,7 @@ fun optimizeProgramByIr(
 fun optimizeFragmentByJsAst(fragment: JsIrProgramFragment) {
     val optimizer = object : RecursiveJsVisitor() {
         override fun visitFunction(x: JsFunction) {
+            super.visitFunction(x)
             FunctionPostProcessor(x).apply()
         }
 

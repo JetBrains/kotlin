@@ -19,5 +19,9 @@ package org.jetbrains.kotlin.js.testOld.optimizer
 import org.junit.Test
 
 class DeadCodeEliminationTest : BasicOptimizerTest("dead-code-elimination") {
-    @Test fun switchCases() = box()
+    @Test
+    fun switchCases() = box()
+
+    @Test
+    fun afterReturn() = box()
 }

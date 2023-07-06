@@ -6929,6 +6929,12 @@ public class FirJsBoxTestGenerated extends AbstractFirJsBoxTest {
         }
 
         @Test
+        @TestMetadata("deadCodeElimination.kt")
+        public void testDeadCodeElimination() throws Exception {
+            runTest("js/js.translator/testData/box/jsAstOptimizations/deadCodeElimination.kt");
+        }
+
+        @Test
         @TestMetadata("tempVarDeclOnAssignment.kt")
         public void testTempVarDeclOnAssignment() throws Exception {
             runTest("js/js.translator/testData/box/jsAstOptimizations/tempVarDeclOnAssignment.kt");
