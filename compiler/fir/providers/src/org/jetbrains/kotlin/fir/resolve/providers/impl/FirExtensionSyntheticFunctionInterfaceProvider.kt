@@ -49,6 +49,10 @@ class FirExtensionSyntheticFunctionInterfaceProvider(
         /**
          * A [FirExtensionSyntheticFunctionInterfaceProvider] only needs to be created if the session's function type service has extension
          * function kinds. Otherwise, the provider would be useless.
+         *
+         * Important note: this provider should be created once per compiled set of modules, so all sessions will share the same provider
+         *   Otherwise it may lead to the situation when there are two different symbols for the same classId, which may trigger
+         *   errors during expect/actual matching
          */
         fun createIfNeeded(
             session: FirSession,

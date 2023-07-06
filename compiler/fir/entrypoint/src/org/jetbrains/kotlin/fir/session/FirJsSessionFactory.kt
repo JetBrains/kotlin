@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.fir.resolve.calls.ConeCallConflictResolverFactory
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirBuiltinSyntheticFunctionInterfaceProvider
-import org.jetbrains.kotlin.fir.resolve.providers.impl.FirExtensionSyntheticFunctionInterfaceProvider
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.scopes.FirPlatformClassMapper
 import org.jetbrains.kotlin.incremental.components.LookupTracker
@@ -54,7 +53,7 @@ object FirJsSessionFactory : FirAbstractSessionFactory() {
             },
             registerExtraCheckers = { it.registerJsCheckers() },
             createKotlinScopeProvider = { FirKotlinScopeProvider() },
-            createProviders = { session, kotlinScopeProvider, symbolProvider, generatedSymbolsProvider, syntheticFunctionInterfaceProvider, dependencies ->
+            createProviders = { session, kotlinScopeProvider, symbolProvider, generatedSymbolsProvider, dependencies ->
                 listOfNotNull(
                     symbolProvider,
                     generatedSymbolsProvider,
@@ -66,7 +65,6 @@ object FirJsSessionFactory : FirAbstractSessionFactory() {
                             it,
                         )
                     },
-                    syntheticFunctionInterfaceProvider,
                     *dependencies.toTypedArray(),
                 )
             }
@@ -92,11 +90,11 @@ object FirJsSessionFactory : FirAbstractSessionFactory() {
             registerExtraComponents(it)
         },
         createKotlinScopeProvider = { FirKotlinScopeProvider() },
-        createProviders = { session, builtinsModuleData, kotlinScopeProvider ->
+        createProviders = { session, builtinsModuleData, kotlinScopeProvider, syntheticFunctionInterfaceProvider ->
             listOfNotNull(
                 KlibBasedSymbolProvider(session, moduleDataProvider, kotlinScopeProvider, resolvedLibraries),
                 FirBuiltinSyntheticFunctionInterfaceProvider(session, builtinsModuleData, kotlinScopeProvider),
-                FirExtensionSyntheticFunctionInterfaceProvider.createIfNeeded(session, builtinsModuleData, kotlinScopeProvider),
+                syntheticFunctionInterfaceProvider
             )
         }
     )

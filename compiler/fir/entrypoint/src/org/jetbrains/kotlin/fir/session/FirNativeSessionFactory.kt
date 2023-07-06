@@ -41,7 +41,7 @@ object FirNativeSessionFactory : FirAbstractSessionFactory() {
                 registerExtraComponents(session)
             },
             createKotlinScopeProvider = { FirKotlinScopeProvider() },
-            createProviders = { session, builtinsModuleData, kotlinScopeProvider ->
+            createProviders = { session, builtinsModuleData, kotlinScopeProvider, syntheticFunctionInterfaceProvider ->
                 val forwardDeclarationsModuleData = BinaryModuleData.createDependencyModuleData(
                     Name.special("<forward declarations>"),
                     moduleDataProvider.platform,
@@ -54,7 +54,7 @@ object FirNativeSessionFactory : FirAbstractSessionFactory() {
                     KlibBasedSymbolProvider(session, moduleDataProvider, kotlinScopeProvider, kotlinLibraries),
                     NativeForwardDeclarationsSymbolProvider(session, forwardDeclarationsModuleData, kotlinScopeProvider, kotlinLibraries),
                     FirBuiltinSyntheticFunctionInterfaceProvider(session, builtinsModuleData, kotlinScopeProvider),
-                    FirExtensionSyntheticFunctionInterfaceProvider.createIfNeeded(session, builtinsModuleData, kotlinScopeProvider),
+                    syntheticFunctionInterfaceProvider,
                 )
             })
     }
@@ -85,11 +85,10 @@ object FirNativeSessionFactory : FirAbstractSessionFactory() {
             },
             registerExtraCheckers = { it.registerNativeCheckers() },
             createKotlinScopeProvider = { FirKotlinScopeProvider() },
-            createProviders = { _, _, symbolProvider, generatedSymbolsProvider, syntheticFunctionInterfaceProvider, dependencies ->
+            createProviders = { _, _, symbolProvider, generatedSymbolsProvider, dependencies ->
                 listOfNotNull(
                     symbolProvider,
                     generatedSymbolsProvider,
-                    syntheticFunctionInterfaceProvider,
                     *dependencies.toTypedArray(),
                 )
             }
