@@ -80,6 +80,12 @@ public class FirLightTreePluginBlackBoxCodegenTestGenerated extends AbstractFirL
     }
 
     @Test
+    @TestMetadata("replaceActualFunctionBodyWitExpectDefaultValue.kt")
+    public void testReplaceActualFunctionBodyWitExpectDefaultValue() throws Exception {
+        runTest("plugins/fir-plugin-prototype/testData/box/replaceActualFunctionBodyWitExpectDefaultValue.kt");
+    }
+
+    @Test
     @TestMetadata("serializer.kt")
     public void testSerializer() throws Exception {
         runTest("plugins/fir-plugin-prototype/testData/box/serializer.kt");
