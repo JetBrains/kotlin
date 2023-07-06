@@ -20,6 +20,8 @@ class SwitchGenerator(private val expression: IrWhen, private val data: BlockInf
     data class CallToLabel(val call: IrCall, val label: Label)
     data class ValueToLabel(val value: Any?, val label: Label)
 
+    private val context = codegen.context
+
     // @return null if the IrWhen cannot be emitted as lookupswitch or tableswitch.
     fun generate(): PromisedValue? {
         val expressionToLabels = ArrayList<ExpressionToLabel>()
@@ -31,7 +33,7 @@ class SwitchGenerator(private val expression: IrWhen, private val data: BlockInf
             if (branch is IrElseBranch) {
                 elseExpression = branch.result
             } else {
-                val conditions = IrWhenUtils.matchConditions(codegen.context.irBuiltIns.ororSymbol, branch.condition) ?: return null
+                val conditions = IrWhenUtils.matchConditions(context.irBuiltIns.ororSymbol, branch.condition) ?: return null
                 val thenLabel = Label()
                 expressionToLabels.add(ExpressionToLabel(branch.result, thenLabel))
                 callToLabels += conditions.map { CallToLabel(it, thenLabel) }
@@ -59,7 +61,7 @@ class SwitchGenerator(private val expression: IrWhen, private val data: BlockInf
         //     CALL EQEQ(var,_)
 
         val firstCondition = callToLabels[0].call
-        if (firstCondition.symbol != codegen.classCodegen.context.irBuiltIns.eqeqSymbol) return null
+        if (firstCondition.symbol != context.irBuiltIns.eqeqSymbol) return null
         val subject = firstCondition.getValueArgument(0)
         return when {
             subject is IrCall && subject.isCoerceFromUIntToInt() ->
@@ -72,7 +74,7 @@ class SwitchGenerator(private val expression: IrWhen, private val data: BlockInf
     }
 
     fun IrCall.isCoerceFromUIntToInt(): Boolean =
-        symbol == codegen.classCodegen.context.ir.symbols.unsafeCoerceIntrinsic
+        symbol == context.ir.symbols.unsafeCoerceIntrinsic
                 && getTypeArgument(0)?.isUInt() == true
                 && getTypeArgument(1)?.isInt() == true
 
@@ -149,7 +151,7 @@ class SwitchGenerator(private val expression: IrWhen, private val data: BlockInf
     //
     // where subject is taken to be the first variable compared on the left hand side, if any.
     private fun areConstUIntComparisons(conditions: List<IrCall>): Boolean {
-        val lhs = conditions.map { it.takeIf { it.symbol == codegen.context.irBuiltIns.eqeqSymbol }?.getValueArgument(0) as? IrCall }
+        val lhs = conditions.map { it.takeIf { it.symbol == context.irBuiltIns.eqeqSymbol }?.getValueArgument(0) as? IrCall }
         if (lhs.any { it == null || !it.isCoerceFromUIntToInt() }) return false
         val lhsVariableAccesses = lhs.map { it!!.getValueArgument(0) as? IrGetValue }
         if (lhsVariableAccesses.any { it == null || it.symbol != lhsVariableAccesses[0]!!.symbol }) return false
@@ -164,14 +166,14 @@ class SwitchGenerator(private val expression: IrWhen, private val data: BlockInf
 
         fun isValidIrGetValueTypeLHS(): Boolean {
             val lhs = conditions.map {
-                it.takeIf { it.symbol == codegen.context.irBuiltIns.eqeqSymbol }?.getValueArgument(0) as? IrGetValue
+                it.takeIf { it.symbol == context.irBuiltIns.eqeqSymbol }?.getValueArgument(0) as? IrGetValue
             }
             return lhs.all { it != null && it.symbol == lhs[0]!!.symbol }
         }
 
         fun isValidIrConstTypeLHS(): Boolean {
             val lhs = conditions.map {
-                it.takeIf { it.symbol == codegen.context.irBuiltIns.eqeqSymbol }?.getValueArgument(0) as? IrConst<*>
+                it.takeIf { it.symbol == context.irBuiltIns.eqeqSymbol }?.getValueArgument(0) as? IrConst<*>
             }
             return lhs.all { it != null && it.value == lhs[0]!!.value }
         }
@@ -280,7 +282,7 @@ class SwitchGenerator(private val expression: IrWhen, private val data: BlockInf
 
                 for ((thenExpression, label) in expressionToLabels) {
                     mv.visitLabel(label)
-                    thenExpression.accept(codegen, data).also {
+                    thenExpression.accept(this, data).also {
                         if (elseExpression != null) {
                             it.materializedAt(expression.type)
                         } else {
@@ -291,7 +293,7 @@ class SwitchGenerator(private val expression: IrWhen, private val data: BlockInf
                 }
 
                 mv.visitLabel(defaultLabel)
-                val result = elseExpression?.accept(codegen, data)?.materializedAt(expression.type) ?: unitValue
+                val result = elseExpression?.accept(this, data)?.materializedAt(expression.type) ?: unitValue
                 mv.mark(endLabel)
                 return result
             }
@@ -327,11 +329,13 @@ class SwitchGenerator(private val expression: IrWhen, private val data: BlockInf
             // to the `x == 24` line. This is accomplished by ignoring the line number
             // information for the subject as the `when` line number has already been
             // emitted.
-            codegen.noLineNumberScope {
-                val subjectValue = subject.accept(codegen, data)
-                subjectValue.materializeAt(Type.INT_TYPE, subjectValue.irType)
+            with(codegen) {
+                noLineNumberScope {
+                    val subjectValue = subject.accept(this, data)
+                    subjectValue.materializeAt(Type.INT_TYPE, subjectValue.irType)
+                }
+                genIntSwitch(cases)
             }
-            genIntSwitch(cases)
         }
     }
 
@@ -435,11 +439,11 @@ class SwitchGenerator(private val expression: IrWhen, private val data: BlockInf
                 // emitted.
                 noLineNumberScope {
                     if (subject.type.isNullableString()) {
-                        subject.accept(codegen, data).materialize()
+                        subject.accept(this, data).materialize()
                         mv.ifnull(cases.find { it.value == null }?.label ?: defaultLabel)
                     }
                     // Reevaluating the subject is fine here because it is a read of a temporary.
-                    subject.accept(codegen, data).materialize()
+                    subject.accept(this, data).materialize()
                     mv.invokevirtual("java/lang/String", "hashCode", "()I", false)
                 }
                 genIntSwitch(hashAndSwitchLabels)
@@ -450,7 +454,7 @@ class SwitchGenerator(private val expression: IrWhen, private val data: BlockInf
                     mv.visitLabel(switchLabel)
                     for ((string, label) in hashToStringAndExprLabels[hash]!!) {
                         noLineNumberScope {
-                            subject.accept(codegen, data).materialize()
+                            subject.accept(this, data).materialize()
                         }
                         mv.aconst(string)
                         mv.invokevirtual("java/lang/String", "equals", "(Ljava/lang/Object;)Z", false)
