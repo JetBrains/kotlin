@@ -79,7 +79,7 @@ abstract class AbstractNativeCInteropKT39120Test : AbstractNativeCInteropBaseTes
     private fun filterContentsOutput(contents: String, pattern: String) =
         contents.split("\n").filter {
             it.contains(Regex(pattern))
-        }.joinToString(separator = "\n")
+        }.joinToString(separator = "\n").replace("@ExperimentalForeignApi ", "")
 
     private fun createTestCaseNoTestRun(module: TestModule.Exclusive, compilerArgs: TestCompilerArgs) = TestCase(
         id = TestCaseId.Named(module.name),
