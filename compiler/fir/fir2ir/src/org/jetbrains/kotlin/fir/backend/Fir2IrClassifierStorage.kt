@@ -677,7 +677,7 @@ class Fir2IrClassifierStorage(
         return getCachedIrTypeParameter(firTypeParameter, typeContext)?.symbol
         // We can try to use default cache because setter can use parent type parameters
             ?: typeParameterCache[firTypeParameter]?.symbol
-            ?: error("Cannot find cached type parameter by FIR symbol: ${firTypeParameterSymbol.name}")
+            ?: error("Cannot find cached type parameter by FIR symbol: ${firTypeParameterSymbol.name} of the owner: ${firTypeParameter.containingDeclarationSymbol}")
     }
 
     private val temporaryParent by lazy {
