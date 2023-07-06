@@ -307,7 +307,7 @@ enum class LanguageFeature(
 
     ReferencesToSyntheticJavaProperties(KOTLIN_2_1), // KT-8575
     ProhibitImplementingVarByInheritedVal(KOTLIN_2_1, kind = BUG_FIX), // KT-56779
-    PrioritizedEnumEntries(KOTLIN_2_1, kind = UNSTABLE_FEATURE), // KT-xxxxx
+    PrioritizedEnumEntries(KOTLIN_2_1, kind = UNSTABLE_FEATURE), // KT-58920
 
     // End of 2.* language features --------------------------------------------------
 
