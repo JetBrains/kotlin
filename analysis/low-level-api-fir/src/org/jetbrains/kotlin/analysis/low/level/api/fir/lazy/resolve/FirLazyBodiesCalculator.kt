@@ -150,6 +150,7 @@ private fun replaceLazyDelegate(target: FirVariable, copy: FirVariable) {
 
 private fun calculateLazyBodiesForScript(designation: FirDesignation) {
     val firScript = designation.target as FirScript
+    require(needCalculatingLazyBodyForScript(firScript))
     val ktScript = firScript.psi as KtScript
 
     val replacement = RawFirReplacement(ktScript, ktScript)
