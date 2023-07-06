@@ -56,7 +56,7 @@ internal class LLFirImplicitBodyTargetResolver(
     lockProvider: LLFirLockProvider,
     session: FirSession,
     scopeSession: ScopeSession,
-    towerDataContextCollector: FirResolveContextCollector?,
+    firResolveContextCollector: FirResolveContextCollector?,
     implicitBodyResolveComputationSession: ImplicitBodyResolveComputationSession? = null,
 ) : LLFirAbstractBodyTargetResolver(
     target,
@@ -72,8 +72,8 @@ internal class LLFirImplicitBodyTargetResolver(
         phase = resolverPhase,
         implicitTypeOnly = true,
         scopeSession = scopeSession,
-        firResolveContextCollector = towerDataContextCollector,
-        returnTypeCalculator = createReturnTypeCalculator(towerDataContextCollector = towerDataContextCollector),
+        firResolveContextCollector = firResolveContextCollector,
+        returnTypeCalculator = createReturnTypeCalculator(firResolveContextCollector = firResolveContextCollector),
     ) {
         override val preserveCFGForClasses: Boolean get() = false
     }

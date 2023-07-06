@@ -38,7 +38,7 @@ internal class LLFirReturnTypeCalculatorWithJump(
             lockProvider = lockProvider,
             session = declaration.moduleData.session,
             scopeSession = scopeSession,
-            towerDataContextCollector = towerDataContextCollector,
+            firResolveContextCollector = towerDataContextCollector,
             implicitBodyResolveComputationSession = implicitBodyResolveComputationSession,
         )
 

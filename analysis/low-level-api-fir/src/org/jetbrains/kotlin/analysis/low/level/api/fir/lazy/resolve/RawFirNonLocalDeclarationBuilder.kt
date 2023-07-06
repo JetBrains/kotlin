@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignation
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.llFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.analysis.utils.errors.buildErrorWithAttachment
+import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
 import org.jetbrains.kotlin.analysis.utils.errors.withPsiEntry
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.builder.BodyBuildingMode
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.name.NameUtils
@@ -111,6 +113,12 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
     }
 
     private inner class VisitorWithReplacement(private val containingClass: FirRegularClass?) : Visitor() {
+        fun convertDestructuringDeclaration(element: KtDestructuringDeclaration): FirVariable {
+            val replacementDeclaration = replacementApplier?.tryReplace(element) ?: element
+            requireIsInstance<KtDestructuringDeclaration>(replacementDeclaration)
+            return buildErrorTopLevelDestructuringDeclaration(replacementDeclaration.toFirSourceElement())
+        }
+
         override fun convertElement(element: KtElement, original: FirElement?): FirElement? =
             super.convertElement(replacementApplier?.tryReplace(element) ?: element, original)
 
@@ -125,6 +133,34 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
                 property = replacementProperty,
                 ownerRegularOrAnonymousObjectSymbol = ownerRegularOrAnonymousObjectSymbol,
                 ownerRegularClassTypeParametersCount = ownerRegularClassTypeParametersCount
+            )
+        }
+
+        override fun convertPropertyAccessor(
+            accessor: KtPropertyAccessor?,
+            property: KtProperty,
+            propertyTypeRef: FirTypeRef,
+            propertySymbol: FirPropertySymbol,
+            isGetter: Boolean,
+            accessorAnnotationsFromProperty: List<FirAnnotation>,
+            parameterAnnotationsFromProperty: List<FirAnnotation>,
+        ): FirPropertyAccessor? {
+            val replacementAccessor = if (accessor != null) {
+                val replacementAccessor = replacementApplier?.tryReplace(accessor) ?: accessor
+                check(replacementAccessor is KtPropertyAccessor)
+                replacementAccessor
+            } else {
+                accessor
+            }
+
+            return super.convertPropertyAccessor(
+                replacementAccessor,
+                property,
+                propertyTypeRef,
+                propertySymbol,
+                isGetter,
+                accessorAnnotationsFromProperty,
+                parameterAnnotationsFromProperty
             )
         }
 
@@ -273,6 +309,7 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
                         else -> visitor.convertElement(declarationToBuild, originalDeclaration)
                     }
                 }
+                is KtDestructuringDeclaration -> visitor.convertDestructuringDeclaration(declarationToBuild)
                 else -> visitor.convertElement(declarationToBuild, originalDeclaration)
             } as FirDeclaration
         }

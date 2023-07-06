@@ -79,6 +79,12 @@ internal abstract class LLFirTargetResolver(
                 is LLFirWholeFileResolveTarget -> {
                     resolveTarget.forEachTopLevelDeclaration(::resolveTargetWithNestedDeclarations)
                 }
+                is LLFirWholeClassResolveTarget -> {
+                    performResolve(resolveTarget.target)
+                    withRegularClass(resolveTarget.target) {
+                        resolveTarget.forEachDeclaration(::resolveTargetWithNestedDeclarations)
+                    }
+                }
             }
         }
     }

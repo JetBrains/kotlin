@@ -48,14 +48,14 @@ internal object FirElementFinder {
         nonLocalDeclaration = nonLocalDeclaration,
     )?.pathWithTarget
 
-    private class FirDeclarationDesignation(
+    class FirDeclarationDesignation(
         val path: List<FirRegularClass>,
         val target: FirDeclaration,
     ) {
         val pathWithTarget: List<FirDeclaration> get() = path + target
     }
 
-    private fun collectDesignationPath(
+    fun collectDesignationPath(
         firFile: FirFile,
         nonLocalDeclaration: KtDeclaration,
     ): FirDeclarationDesignation? = collectDesignationPath(

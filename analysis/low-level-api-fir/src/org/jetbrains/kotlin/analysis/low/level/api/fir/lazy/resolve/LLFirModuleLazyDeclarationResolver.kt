@@ -7,9 +7,10 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignationWithFile
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirClassWithAllMembersResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirSingleResolveTarget
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirWholeClassResolveTarget
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirWholeFileResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.InvalidSessionException
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.llFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
@@ -106,6 +107,9 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
         towerDataContextCollector: FirResolveContextCollector?,
     ) {
         try {
+            resolveFileToImportsWithLock(target.firFile)
+            if (toPhase == FirResolvePhase.IMPORTS) return
+
             lazyResolveTargets(
                 targets = listOf(target),
                 moduleComponents.scopeSessionProvider.getScopeSession(),
@@ -117,31 +121,35 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
         }
     }
 
-    fun runLazyDesignatedOnAirResolveToBodyWithoutLock(
+    /**
+     * Resolve on-air created declaration in a context of real [FirDesignationWithFile.firFile] and [FirDesignationWithFile.path].
+     * If target declaration is [FirFile] then the entire file will be resolved.
+     * The same for [FirRegularClass] if [resolvePhase] is [FirResolvePhase.BODY_RESOLVE].
+     */
+    fun runLazyDesignatedOnAirResolve(
         designation: FirDesignationWithFile,
-        onAirCreatedDeclaration: Boolean,
         towerDataContextCollector: FirResolveContextCollector?,
+        resolvePhase: FirResolvePhase = FirResolvePhase.BODY_RESOLVE,
     ) {
         resolveFileToImportsWithLock(designation.firFile)
 
-        val target = when (designation.target) {
-            is FirRegularClass -> LLFirClassWithAllMembersResolveTarget(designation.firFile, designation.path, designation.target)
+        val target = when {
+            designation.target is FirFile -> LLFirWholeFileResolveTarget(designation.firFile)
+            resolvePhase == FirResolvePhase.BODY_RESOLVE && designation.target is FirRegularClass -> {
+                LLFirWholeClassResolveTarget(designation.firFile, designation.path, designation.target)
+            }
+
             else -> LLFirSingleResolveTarget(designation.firFile, designation.path, designation.target)
         }
 
-        fun runTransformation() {
-            val scopeSession = ScopeSession()
-            lazyResolveTargets(listOf(target), scopeSession, FirResolvePhase.BODY_RESOLVE, towerDataContextCollector)
-        }
-
         try {
-            if (onAirCreatedDeclaration) {
-                withOnAirDesignation(designation, ::runTransformation)
-            } else {
-                runTransformation()
+            withOnAirDesignation(designation) {
+                // New session to avoid garbage in the original session
+                val scopeSession = ScopeSession()
+                lazyResolveTargets(listOf(target), scopeSession, resolvePhase, towerDataContextCollector)
             }
         } catch (e: Exception) {
-            handleExceptionFromResolve(e, target, FirResolvePhase.BODY_RESOLVE)
+            handleExceptionFromResolve(e, target, resolvePhase)
         }
     }
 
@@ -200,7 +208,7 @@ private fun handleExceptionFromResolve(
     exception: Exception,
     firDeclarationToResolve: FirElementWithResolveState,
     fromPhase: FirResolvePhase,
-    toPhase: FirResolvePhase
+    toPhase: FirResolvePhase,
 ): Nothing {
     if (exception is InvalidSessionException) {
         throw exception
@@ -235,7 +243,7 @@ private fun handleExceptionFromResolve(
 private fun handleExceptionFromResolve(
     exception: Exception,
     designation: LLFirResolveTarget,
-    toPhase: FirResolvePhase
+    toPhase: FirResolvePhase,
 ): Nothing {
     if (exception is InvalidSessionException) {
         throw exception

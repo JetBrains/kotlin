@@ -32,7 +32,7 @@ internal object LLFirAnnotationArgumentMappingLazyResolver : LLFirLazyResolver(F
         scopeSession: ScopeSession,
         towerDataContextCollector: FirResolveContextCollector?,
     ) {
-        val resolver = LLFirAnnotationArgumentsMappingTargetResolver(target, lockProvider, session, scopeSession)
+        val resolver = LLFirAnnotationArgumentsMappingTargetResolver(target, lockProvider, session, scopeSession, towerDataContextCollector)
         resolver.resolveDesignation()
     }
 
@@ -57,6 +57,7 @@ private class LLFirAnnotationArgumentsMappingTargetResolver(
     lockProvider: LLFirLockProvider,
     session: FirSession,
     scopeSession: ScopeSession,
+    firResolveContextCollector: FirResolveContextCollector?,
 ) : LLFirAbstractBodyTargetResolver(
     resolveTarget,
     lockProvider,
@@ -67,7 +68,8 @@ private class LLFirAnnotationArgumentsMappingTargetResolver(
         session,
         scopeSession,
         resolverPhase,
-        returnTypeCalculator = createReturnTypeCalculator(towerDataContextCollector = null)
+        returnTypeCalculator = createReturnTypeCalculator(firResolveContextCollector = firResolveContextCollector),
+        firResolveContextCollector = firResolveContextCollector,
     )
 
     override fun doLazyResolveUnderLock(target: FirElementWithResolveState) {

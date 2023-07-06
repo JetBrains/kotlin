@@ -228,6 +228,23 @@ open class PsiRawFirBuilder(
             context
         )
 
+        open fun convertPropertyAccessor(
+            accessor: KtPropertyAccessor?,
+            property: KtProperty,
+            propertyTypeRef: FirTypeRef,
+            propertySymbol: FirPropertySymbol,
+            isGetter: Boolean,
+            accessorAnnotationsFromProperty: List<FirAnnotation>,
+            parameterAnnotationsFromProperty: List<FirAnnotation>,
+        ): FirPropertyAccessor? = accessor.toFirPropertyAccessor(
+            property,
+            propertyTypeRef,
+            propertySymbol,
+            isGetter,
+            accessorAnnotationsFromProperty,
+            parameterAnnotationsFromProperty,
+        )
+
         open fun convertValueParameter(
             valueParameter: KtParameter,
             functionSymbol: FirFunctionSymbol<*>,
@@ -1914,7 +1931,8 @@ open class PsiRawFirBuilder(
                             propertyAnnotations.filter { it.useSiteTarget == FIELD || it.useSiteTarget == PROPERTY_DELEGATE_FIELD },
                         )
 
-                        getter = this@toFirProperty.getter.toFirPropertyAccessor(
+                        getter = convertPropertyAccessor(
+                            this@toFirProperty.getter,
                             this@toFirProperty,
                             propertyType,
                             propertySymbol = symbol,
@@ -1922,7 +1940,9 @@ open class PsiRawFirBuilder(
                             accessorAnnotationsFromProperty = propertyAnnotations.filterUseSiteTarget(PROPERTY_GETTER),
                             parameterAnnotationsFromProperty = emptyList()
                         )
-                        setter = this@toFirProperty.setter.toFirPropertyAccessor(
+
+                        setter = convertPropertyAccessor(
+                            this@toFirProperty.setter,
                             this@toFirProperty,
                             propertyType,
                             propertySymbol = symbol,

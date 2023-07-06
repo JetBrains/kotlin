@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.psi.*
 internal data class RawFirReplacement(val from: KtElement, val to: KtElement) {
     companion object {
         fun isApplicableForReplacement(element: KtElement) = when (element) {
-            is KtFile, is KtScript, is KtClassInitializer, is KtClassOrObject, is KtObjectLiteralExpression, is KtTypeAlias,
+            is KtFile, is KtScript, is KtClassInitializer, is KtPropertyAccessor, is KtConstructor<*>, is KtClassOrObject, is KtObjectLiteralExpression, is KtTypeAlias,
             is KtNamedFunction, is KtLambdaExpression, is KtAnonymousInitializer, is KtProperty, is KtTypeReference,
             is KtAnnotationEntry, is KtTypeParameter, is KtTypeProjection, is KtParameter, is KtBlockExpression,
             is KtSimpleNameExpression, is KtConstantExpression, is KtStringTemplateExpression, is KtReturnExpression,
@@ -19,7 +19,8 @@ internal data class RawFirReplacement(val from: KtElement, val to: KtElement) {
             is KtIsExpression, is KtUnaryExpression, is KtCallExpression, is KtArrayAccessExpression, is KtQualifiedExpression,
             is KtThisExpression, is KtSuperExpression, is KtParenthesizedExpression, is KtLabeledExpression, is KtAnnotatedExpression,
             is KtThrowExpression, is KtDestructuringDeclaration, is KtClassLiteralExpression, is KtCallableReferenceExpression,
-            is KtCollectionLiteralExpression -> true
+            is KtCollectionLiteralExpression,
+            -> true
             else -> false
         }
     }

@@ -29,12 +29,12 @@ internal abstract class LLFirAbstractBodyTargetResolver(
     isJumpingPhase: Boolean = false
 ) : LLFirTargetResolver(resolveTarget, lockProvider, resolvePhase, isJumpingPhase) {
     protected fun createReturnTypeCalculator(
-        towerDataContextCollector: FirResolveContextCollector?,
+        firResolveContextCollector: FirResolveContextCollector?,
     ): ReturnTypeCalculator = LLFirReturnTypeCalculatorWithJump(
         scopeSession,
         implicitBodyResolveComputationSession,
         lockProvider,
-        towerDataContextCollector,
+        firResolveContextCollector,
     )
 
     abstract val transformer: FirAbstractBodyResolveTransformerDispatcher
@@ -47,6 +47,10 @@ internal abstract class LLFirAbstractBodyTargetResolver(
 
     override fun withFile(firFile: FirFile, action: () -> Unit) {
         transformer.context.withFile(firFile, transformer.components) {
+            transformer.firResolveContextCollector?.let { collector ->
+                collector.addFileContext(firFile, transformer.context.towerDataContext)
+            }
+
             action()
         }
     }
@@ -55,6 +59,10 @@ internal abstract class LLFirAbstractBodyTargetResolver(
     override fun withRegularClassImpl(firClass: FirRegularClass, action: () -> Unit) {
         transformer.declarationsTransformer.context.withContainingClass(firClass) {
             transformer.declarationsTransformer.withRegularClass(firClass) {
+                transformer.firResolveContextCollector?.let { collector ->
+                    collector.addDeclarationContext(firClass, transformer.context)
+                }
+
                 action()
                 firClass
             }
