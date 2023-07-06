@@ -922,6 +922,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
         }
 
         @Test
+        @TestMetadata("referenceToParameterizedFun.kt")
+        public void testReferenceToParameterizedFun() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/referenceToParameterizedFun.kt");
+        }
+
+        @Test
         @TestMetadata("ReserveYield.kt")
         public void testReserveYield() throws Exception {
             runTest("compiler/testData/diagnostics/tests/ReserveYield.kt");
