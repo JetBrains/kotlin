@@ -20,6 +20,8 @@ import kotlin.test.assertTrue
 @TestDataPath("\$PROJECT_ROOT")
 @EnforcedProperty(ClassLevelProperty.COMPILER_OUTPUT_INTERCEPTOR, "NONE")
 class LinkerOutputTestKT55578 : AbstractNativeLinkerOutputTest() {
+    private val defaultCompilerArguments = listOf("-opt-in=kotlinx.cinterop.ExperimentalForeignApi")
+
     private val testDir = File("native/native.tests/testData/CInterop/KT-55578/")
 
     private val hint1 = "<<HINT1>>"
@@ -166,7 +168,11 @@ class LinkerOutputTestKT55578 : AbstractNativeLinkerOutputTest() {
             files += TestFile.createCommitted(file, this)
         }
 
-        return compileToExecutable(module, libraries.asList().map { it.asLibraryDependency() }, extraArgs)
+        return compileToExecutable(
+            module,
+            libraries.asList().map { it.asLibraryDependency() },
+            defaultCompilerArguments + extraArgs
+        )
     }
 
     private fun compileKlib(defFile: File, sourceFile: File? = null, extraArgs: List<String> = emptyList()): KLIB {
