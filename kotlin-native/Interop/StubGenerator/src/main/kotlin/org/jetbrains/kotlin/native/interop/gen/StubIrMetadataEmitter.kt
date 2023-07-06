@@ -182,7 +182,7 @@ internal class ModuleMetadataEmitter(
                     } else {
                         element.copy(
                                 external = false,
-                                annotations = listOf(AnnotationStub.Deprecated.unableToImport)
+                                annotations = mutableListOf(AnnotationStub.Deprecated.unableToImport)
                         )
                     }
                     KmFunction(function.name).also { km ->
@@ -200,7 +200,7 @@ internal class ModuleMetadataEmitter(
                     val property = when (val bridgeSupportedKind = element.bridgeSupportedKind) {
                         null -> element.copy(
                                 kind = PropertyStub.Kind.Val(PropertyAccessor.Getter.SimpleGetter()),
-                                annotations = listOf(AnnotationStub.Deprecated.unableToImport)
+                                annotations = mutableListOf(AnnotationStub.Deprecated.unableToImport)
                         )
                         element.kind -> element
                         else -> element.copy(kind = bridgeSupportedKind)

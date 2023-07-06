@@ -95,7 +95,7 @@ internal class StructStubBuilder(
                             returnType = ClassifierStubType(Classifier("kotlin", "Unit")),
                             parameters = emptyList(),
                             origin = StubOrigin.Synthetic.ManagedTypeDetails,
-                            annotations = emptyList(),
+                            annotations = mutableListOf(),
                             receiver = null, // ReceiverParameterStub()
                             modality = MemberStubModality.FINAL
                     )
@@ -140,7 +140,7 @@ internal class StructStubBuilder(
                     }
                     val kind = PropertyStub.Kind.Val(getter)
                     // TODO: Should receiver be added?
-                    PropertyStub(fieldName, type.toStubIrType(), kind, annotations = annotations, origin = origin)
+                    PropertyStub(fieldName, type.toStubIrType(), kind, annotations = annotations.toMutableList(), origin = origin)
                 } else {
                     val pointedType = fieldRefType.pointedType.toStubIrType()
                     val pointedTypeArgument = TypeArgumentStub(pointedType)
@@ -460,7 +460,7 @@ internal class EnumStubBuilder(
                 origin = StubOrigin.Synthetic.EnumByValue(enumDef),
                 receiver = null,
                 modality = MemberStubModality.FINAL,
-                annotations = listOf(AnnotationStub.Deprecated.deprecatedCEnumByValue)
+                annotations = mutableListOf(AnnotationStub.Deprecated.deprecatedCEnumByValue)
         )
 
         val companion = ClassStub.Companion(
@@ -494,7 +494,7 @@ internal class EnumStubBuilder(
                 ClassifierStubType(classifier),
                 kind = PropertyStub.Kind.Val(PropertyAccessor.Getter.GetEnumEntry(entry)),
                 origin = StubOrigin.EnumEntry(enumConstant),
-                annotations = listOfNotNull(aliasAnnotation)
+                annotations = listOfNotNull(aliasAnnotation).toMutableList()
         )
     }
 
@@ -782,7 +782,7 @@ internal class FunctionStubBuilder(
             returnType,
             parameters.toList(),
             StubOrigin.Function(func),
-            annotations,
+            annotations.toMutableList(),
             mustBeExternal,
             null,
             MemberStubModality.FINAL,

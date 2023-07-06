@@ -231,7 +231,7 @@ private class ObjCMethodStubBuilder(
                             typeParameters = listOf(typeParameter),
                             external = true,
                             origin = StubOrigin.ObjCCategoryInitMethod(method),
-                            annotations = annotations,
+                            annotations = annotations.toMutableList(),
                             modality = MemberStubModality.FINAL
                     )
                     // TODO: Should we deprecate it as well?
@@ -252,7 +252,7 @@ private class ObjCMethodStubBuilder(
                         stubReturnType,
                         kotlinMethodParameters.toList(),
                         origin,
-                        annotations.toList(),
+                        annotations.toMutableList(),
                         external,
                         receiver,
                         modality,
@@ -645,7 +645,15 @@ private class ObjCPropertyStubBuilder(
         } else {
             emptyList()
         }
-        return listOf(PropertyStub(mangleSimple(property.name), kotlinType.toStubIrType(), kind, modality, receiver, annotations, origin = origin))
+        return listOf(PropertyStub(
+                mangleSimple(property.name),
+                kotlinType.toStubIrType(),
+                kind,
+                modality,
+                receiver,
+                annotations.toMutableList(),
+                origin = origin
+        ))
     }
 }
 
