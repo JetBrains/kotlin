@@ -472,7 +472,8 @@ internal object FirReferenceResolveHelper {
             importedFqName = selectedFqName
             isAllUnder = false
         }
-        val resolvedImport = FirImportResolveTransformer(session).transformImport(rawImportForSelectedFqName, null) as FirResolvedImport
+        val resolvedImport = FirImportResolveTransformer(session).transformImport(rawImportForSelectedFqName, null) as? FirResolvedImport
+            ?: return emptyList()
         val scope = FirExplicitSimpleImportingScope(listOf(resolvedImport), session, ScopeSession())
         val selectedName = resolvedImport.importedName ?: return emptyList()
         return buildList {
