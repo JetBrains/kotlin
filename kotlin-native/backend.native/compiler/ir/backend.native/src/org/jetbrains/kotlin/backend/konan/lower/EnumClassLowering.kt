@@ -113,7 +113,7 @@ internal class EnumUsageLowering(val context: Context) : IrElementTransformer<Ir
         expression.transformChildren(this, data)
 
         val intrinsicType = tryGetIntrinsicType(expression)
-        if (intrinsicType != IntrinsicType.ENUM_VALUES && intrinsicType != IntrinsicType.ENUM_VALUE_OF)
+        if (intrinsicType != IntrinsicType.ENUM_VALUES && intrinsicType != IntrinsicType.ENUM_VALUE_OF && intrinsicType != IntrinsicType.ENUM_ENTRIES)
             return expression
 
         data!!.at(expression)
@@ -129,19 +129,33 @@ internal class EnumUsageLowering(val context: Context) : IrElementTransformer<Ir
 
         require(irClass.kind == ClassKind.ENUM_CLASS)
 
+        fun IrClass.findStaticMethod(name: Name) = simpleFunctions().single {
+            it.name == name && it.dispatchReceiverParameter == null
+        }
+
         return when (intrinsicType) {
             IntrinsicType.ENUM_VALUES -> {
-                val function = irClass.simpleFunctions().single {
-                    it.name == Name.identifier("values") && it.dispatchReceiverParameter == null
-                }
+                val function = irClass.findStaticMethod(Name.identifier("values"))
                 data.irCall(function)
             }
             IntrinsicType.ENUM_VALUE_OF -> {
-                val function = irClass.simpleFunctions().single {
-                    it.name == Name.identifier("valueOf") && it.dispatchReceiverParameter == null
-                }
+                val function = irClass.findStaticMethod(Name.identifier("valueOf"))
                 data.irCall(function).apply {
                     putValueArgument(0, expression.getValueArgument(0)!!)
+                }
+            }
+            IntrinsicType.ENUM_ENTRIES -> {
+                val entriesProperty = irClass.properties.singleOrNull {
+                    it.name == Name.identifier("entries") && it.getter != null && it.getter!!.dispatchReceiverParameter == null
+                }
+                if (entriesProperty != null) {
+                    data.irCall(entriesProperty.getter!!)
+                } else {
+                    // fallback for enums from old klibs
+                    val valuesFunction = irClass.findStaticMethod(Name.identifier("values"))
+                    data.irCall(context.ir.symbols.createEnumEntries, listOf(irClass.defaultType)).apply {
+                        putValueArgument(0, data.irCall(valuesFunction))
+                    }
                 }
             }
             else -> TODO("Unsupported intrinsic type ${intrinsicType}")

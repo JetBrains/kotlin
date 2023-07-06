@@ -5,13 +5,10 @@
 
 package kotlin.enums
 
+import kotlin.native.internal.*
+
 @SinceKotlin("1.9")
 @ExperimentalStdlibApi
 @PublishedApi
-internal actual inline fun <reified T : Enum<T>> enumEntriesIntrinsic(): EnumEntries<T> {
-    /*
-     * Implementation note: this body will be replaced with `throw NotImplementedException()` the moment
-     * all backends starts intrinsifying this call.
-     */
-    return enumEntries(enumValues<T>())
-}
+@TypedIntrinsic(IntrinsicType.ENUM_ENTRIES)
+internal actual external inline fun <reified T : Enum<T>> enumEntriesIntrinsic(): EnumEntries<T>

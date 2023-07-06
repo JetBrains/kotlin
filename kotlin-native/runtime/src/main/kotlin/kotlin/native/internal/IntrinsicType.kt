@@ -59,6 +59,7 @@ internal class IntrinsicType {
         // Enums
         const val ENUM_VALUES                   = "ENUM_VALUES"
         const val ENUM_VALUE_OF                 = "ENUM_VALUE_OF"
+        const val ENUM_ENTRIES                  = "ENUM_ENTRIES"
 
         // Coroutines
         const val GET_CONTINUATION              = "GET_CONTINUATION"

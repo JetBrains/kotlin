@@ -71,6 +71,7 @@ internal enum class IntrinsicType {
     // Enums
     ENUM_VALUES,
     ENUM_VALUE_OF,
+    ENUM_ENTRIES,
     // Coroutines
     GET_CONTINUATION,
     RETURN_IF_SUSPENDED,
@@ -288,6 +289,7 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
                 IntrinsicType.INTEROP_CONVERT,
                 IntrinsicType.ENUM_VALUES,
                 IntrinsicType.ENUM_VALUE_OF,
+                IntrinsicType.ENUM_ENTRIES,
                 IntrinsicType.WORKER_EXECUTE,
                 IntrinsicType.COMPARE_AND_SET_FIELD,
                 IntrinsicType.COMPARE_AND_EXCHANGE_FIELD,
