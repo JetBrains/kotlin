@@ -4,7 +4,7 @@ public abstract interface CustomAnnotation : R|kotlin/Any| {
 
     }
     public final enum class MyEnum : R|kotlin/Enum<test/CustomAnnotation.MyEnum!>| {
-        public final static enum entry ONE: R|@EnhancedNullability test/CustomAnnotation.MyEnum|
+        public final static enum entry ONE: R|test/CustomAnnotation.MyEnum|
         public final static fun values(): R|kotlin/Array<test/CustomAnnotation.MyEnum>| {
         }
 

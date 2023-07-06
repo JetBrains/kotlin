@@ -18384,6 +18384,12 @@ public class FirLightTreeBlackBoxCodegenTestGenerated extends AbstractFirLightTr
         }
 
         @Test
+        @TestMetadata("capitalizationNotEnhanced.kt")
+        public void testCapitalizationNotEnhanced() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/capitalizationNotEnhanced.kt");
+        }
+
+        @Test
         @TestMetadata("ClassBuilder.kt")
         public void testClassBuilder() throws Exception {
             runTest("compiler/testData/codegen/box/fir/ClassBuilder.kt");

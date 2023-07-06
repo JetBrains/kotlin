@@ -2,8 +2,8 @@ public final annotation class Api : R|kotlin/Annotation| {
     public constructor(status: R|test/Api.Status|): R|test/Api|
 
     public final enum class Status : R|kotlin/Enum<test/Api.Status!>| {
-        public final static enum entry Ok: R|@EnhancedNullability test/Api.Status|
-        public final static enum entry Error: R|@EnhancedNullability test/Api.Status|
+        public final static enum entry Ok: R|test/Api.Status|
+        public final static enum entry Error: R|test/Api.Status|
         public final static fun values(): R|kotlin/Array<test/Api.Status>| {
         }
 

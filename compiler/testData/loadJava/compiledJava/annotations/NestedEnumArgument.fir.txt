@@ -8,7 +8,7 @@ public open class NestedEnumArgument : R|kotlin/Any| {
 
     }
     public final enum class E : R|kotlin/Enum<test/NestedEnumArgument.E!>| {
-        public final static enum entry FIRST: R|@EnhancedNullability test/NestedEnumArgument.E|
+        public final static enum entry FIRST: R|test/NestedEnumArgument.E|
         public final static fun values(): R|kotlin/Array<test/NestedEnumArgument.E>| {
         }
 

@@ -15275,6 +15275,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/fir/cannotCastToFunctionInIf.kt");
         }
 
+        @TestMetadata("capitalizationNotEnhanced.kt")
+        public void testCapitalizationNotEnhanced() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/capitalizationNotEnhanced.kt");
+        }
+
         @TestMetadata("ClassBuilder.kt")
         public void testClassBuilder() throws Exception {
             runTest("compiler/testData/codegen/box/fir/ClassBuilder.kt");

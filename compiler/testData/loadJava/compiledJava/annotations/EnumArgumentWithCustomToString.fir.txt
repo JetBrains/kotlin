@@ -4,7 +4,7 @@ public open class EnumArgumentWithCustomToString : R|kotlin/Any| {
     public constructor(): R|test/EnumArgumentWithCustomToString|
 
     public final enum class E : R|kotlin/Enum<test/EnumArgumentWithCustomToString.E!>| {
-        public final static enum entry CAKE: R|@EnhancedNullability test/EnumArgumentWithCustomToString.E|
+        public final static enum entry CAKE: R|test/EnumArgumentWithCustomToString.E|
         public final static fun values(): R|kotlin/Array<test/EnumArgumentWithCustomToString.E>| {
         }
 

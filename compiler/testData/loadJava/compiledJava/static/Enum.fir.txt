@@ -1,7 +1,7 @@
 public final enum class Enum : R|kotlin/Enum<test/Enum!>| {
-    public final static enum entry A: R|@EnhancedNullability test/Enum|
-    public final static enum entry B: R|@EnhancedNullability test/Enum|
-    public final static enum entry C: R|@EnhancedNullability test/Enum|
+    public final static enum entry A: R|test/Enum|
+    public final static enum entry B: R|test/Enum|
+    public final static enum entry C: R|test/Enum|
     public final static fun values(): R|kotlin/Array<test/Enum>| {
     }
 

@@ -1,5 +1,5 @@
 public final enum class EnumConstructorParameter : R|kotlin/Enum<test/EnumConstructorParameter!>| {
-    public final static enum entry INSTANCE: R|@EnhancedNullability test/EnumConstructorParameter|
+    public final static enum entry INSTANCE: R|test/EnumConstructorParameter|
     private constructor(@R|test/EnumConstructorParameter.Anno|(value = String(string)) s: R|kotlin/String!|): R|test/EnumConstructorParameter|
 
     private constructor(x: R|kotlin/Int|): R|test/EnumConstructorParameter|

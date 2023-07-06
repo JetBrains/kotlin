@@ -1,6 +1,6 @@
 public final enum class EnumWithSpecializedEntry : R|kotlin/Enum<test/EnumWithSpecializedEntry!>| {
-    public final static enum entry E1: R|@EnhancedNullability test/EnumWithSpecializedEntry|
-    public final static enum entry E2: R|@EnhancedNullability test/EnumWithSpecializedEntry|
+    public final static enum entry E1: R|test/EnumWithSpecializedEntry|
+    public final static enum entry E2: R|test/EnumWithSpecializedEntry|
     public final static fun values(): R|kotlin/Array<test/EnumWithSpecializedEntry>| {
     }
 

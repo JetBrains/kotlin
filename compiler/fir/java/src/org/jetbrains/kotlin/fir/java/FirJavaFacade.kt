@@ -501,6 +501,7 @@ abstract class FirJavaFacade(
                     isStatic = javaField.isStatic
                 }
                 returnTypeRef = returnType.toFirJavaTypeRef(session, javaTypeParameterStack)
+                    .resolveIfJavaType(session, javaTypeParameterStack, mode = FirJavaTypeConversionMode.ANNOTATION_MEMBER)
                 resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
                 origin = javaOrigin(javaField.isFromSource)
             }.apply {
