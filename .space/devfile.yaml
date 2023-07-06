@@ -1,0 +1,10 @@
+schemaVersion: 2.2.0
+attributes:
+  space:
+    instanceType: regular
+    editor:
+      type: Fleet
+components:
+  - name: kotlin-build-env
+    container:
+      image: registry.jetbrains.team/p/kt/containers/kotlin-build-env:v1
