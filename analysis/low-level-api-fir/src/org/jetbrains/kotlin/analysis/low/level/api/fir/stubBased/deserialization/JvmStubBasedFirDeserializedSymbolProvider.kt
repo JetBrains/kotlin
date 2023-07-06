@@ -271,7 +271,7 @@ internal open class JvmStubBasedFirDeserializedSymbolProvider(
     override fun getPackage(fqName: FqName): FqName? =
         fqName.takeIf {
             symbolNamesProvider.getTopLevelClassifierNamesInPackage(fqName)?.isNotEmpty() == true ||
-                    symbolNamesProvider.getPackageNamesWithTopLevelCallables()?.contains(fqName.asString()) == true
+                    symbolNamesProvider.getTopLevelCallableNamesInPackage(fqName)?.isNotEmpty() == true
         }
 
     override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? {
