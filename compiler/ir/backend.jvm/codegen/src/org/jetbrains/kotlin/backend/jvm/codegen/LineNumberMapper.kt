@@ -31,23 +31,25 @@ import org.jetbrains.kotlin.ir.util.parentClassOrNull
 import org.jetbrains.kotlin.ir.util.statements
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.org.objectweb.asm.Label
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 
 /**
- * This class basically is just another wrapper around SMAP.
+ * This class serves two purposes:
+ * 1. Generate line numbers for given `IrElement`
+ * 2. Keep track of `smap` for functions inlined by IR inliner. We can consider this class as basically just another wrapper around SMAP.
  * It is used to unify smap creation for functions inlined from IR and from bytecode.
  */
-// TODO extract all functions and fields responsible for LN modification from ExpressionCodegen.
-//  This includes `lastLineNumber`, `markLineNumber`, `noLineNumberScope`, `markLineNumberAfterInlineIfNeeded`, ...
-class LineNumberMapper(
-    private val expressionCodegen: ExpressionCodegen,
-) {
+class LineNumberMapper(private val expressionCodegen: ExpressionCodegen) {
     private val context: JvmBackendContext
         get() = expressionCodegen.context
     private val smap = expressionCodegen.smap
     private val irFunction = expressionCodegen.irFunction
-    private val lastLineNumber: Int
-        get() = expressionCodegen.lastLineNumber
     private val fileEntry = irFunction.fileParentBeforeInline.fileEntry
+
+    private var lastLineNumber: Int = -1
+    private var noLineNumberScope: Boolean = false
 
     private val smapStack = mutableListOf<DataForIrInlinedFunction>()
 
@@ -58,11 +60,84 @@ class LineNumberMapper(
         val tryInfo: TryWithFinallyInfo?
     )
 
+    private fun markNewLabel() = Label().apply { expressionCodegen.mv.visitLabel(this) }
+
+    fun markLineNumber(element: IrElement, startOffset: Boolean) {
+        if (noLineNumberScope) return
+        val offset = if (startOffset) element.startOffset else element.endOffset
+        if (offset < 0) return
+
+        val lineNumber = getLineNumberForOffset(offset)
+
+        assert(lineNumber > 0)
+        if (lastLineNumber != lineNumber) {
+            lastLineNumber = lineNumber
+            expressionCodegen.mv.visitLineNumber(lineNumber, markNewLabel())
+        }
+    }
+
+    @OptIn(ExperimentalContracts::class)
+    internal inline fun noLineNumberScopeWithCondition(flag: Boolean, block: () -> Unit) {
+        contract {
+            callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+        }
+        val previousState = noLineNumberScope
+        noLineNumberScope = noLineNumberScope || flag
+        block()
+        noLineNumberScope = previousState
+    }
+
+    fun noLineNumberScope(block: () -> Unit) {
+        val previousState = noLineNumberScope
+        noLineNumberScope = true
+        block()
+        noLineNumberScope = previousState
+    }
+
+    fun markLineNumberAfterInlineIfNeeded(registerLineNumberAfterwards: Boolean) {
+        if (noLineNumberScope || registerLineNumberAfterwards) {
+            if (lastLineNumber > -1) {
+                val label = Label()
+                expressionCodegen.mv.visitLabel(label)
+                expressionCodegen.mv.visitLineNumber(lastLineNumber, label)
+            }
+        } else {
+            // Inline function has its own line number which is in a separate instance of codegen,
+            // therefore we need to reset lastLineNumber to force a line number generation after visiting inline function.
+            lastLineNumber = -1
+        }
+    }
+
+    fun getLineNumber(): Int {
+        return lastLineNumber
+    }
+
+    fun resetLineNumber() {
+        lastLineNumber = -1
+    }
+
+    fun beforeIrInline(inlinedBlock: IrInlinedFunctionBlock) {
+        if (inlinedBlock.isLambdaInlining()) {
+            setUpAdditionalLineNumbersBeforeLambdaInlining(inlinedBlock)
+        }
+    }
+
+    fun afterIrInline(inlinedBlock: IrInlinedFunctionBlock) {
+        if (inlinedBlock.isFunctionInlining()) {
+            val callLineNumber = getLineNumberForOffset(inlinedBlock.inlineCall.startOffset)
+            // `takeUnless` is required to avoid `markLineNumberAfterInlineIfNeeded` for inline only
+            lastLineNumber = callLineNumber.takeUnless { noLineNumberScope } ?: -1
+            markLineNumberAfterInlineIfNeeded(expressionCodegen.isInsideCondition)
+        } else {
+            setUpAdditionalLineNumbersAfterLambdaInlining(inlinedBlock)
+        }
+    }
+
     fun dropCurrentSmap() {
         smapStack.removeFirst()
     }
 
-    fun getLineNumberForOffset(offset: Int): Int {
+    private fun getLineNumberForOffset(offset: Int): Int {
         if (smapStack.isEmpty()) {
             return fileEntry.getLineNumber(offset) + 1
         }
@@ -143,11 +218,11 @@ class LineNumberMapper(
         block()
         smapInTryBlock.reversed().forEach { smapStack.add(0, it) }
         if (smapInTryBlock.isNotEmpty()) {
-            expressionCodegen.lastLineNumber = lastLineNumberBeforeFinally
+            lastLineNumber = lastLineNumberBeforeFinally
         }
     }
 
-    fun setUpAdditionalLineNumbersBeforeLambdaInlining(inlinedBlock: IrInlinedFunctionBlock) {
+    private fun setUpAdditionalLineNumbersBeforeLambdaInlining(inlinedBlock: IrInlinedFunctionBlock) {
         val lineNumberForOffset = getLineNumberForOffset(inlinedBlock.inlineCall.startOffset)
         val callee = inlinedBlock.inlineDeclaration as? IrFunction
 
@@ -169,7 +244,7 @@ class LineNumberMapper(
         }
     }
 
-    fun setUpAdditionalLineNumbersAfterLambdaInlining(inlinedBlock: IrInlinedFunctionBlock) {
+    private fun setUpAdditionalLineNumbersAfterLambdaInlining(inlinedBlock: IrInlinedFunctionBlock) {
         val lineNumberForOffset = getLineNumberForOffset(inlinedBlock.inlineCall.startOffset)
 
         // TODO: reuse code from org/jetbrains/kotlin/codegen/inline/MethodInliner.kt:316
@@ -180,10 +255,10 @@ class LineNumberMapper(
         if (currentLineNumber != -1) {
             if (overrideLineNumber) {
                 // This is from the function we're inlining into, so no need to remap.
-                expressionCodegen.mv.visitLineNumber(currentLineNumber, Label().apply { expressionCodegen.mv.visitLabel(this) })
+                expressionCodegen.mv.visitLineNumber(currentLineNumber, markNewLabel())
             } else {
                 // Need to go through the superclass here to properly remap the line number via `sourceMapper`.
-                expressionCodegen.markLineNumber(inlinedBlock.inlineCall)
+                markLineNumber(inlinedBlock.inlineCall, startOffset = true)
             }
             expressionCodegen.mv.nop()
         }

@@ -71,7 +71,7 @@ open class IrIntrinsicFunction(
         expression: IrFunctionAccessExpression
     ): StackValue {
         loadArguments(codegen, data)
-        codegen.markLineNumber(expression)
+        with(codegen) { expression.markLineNumber(startOffset = true) }
         return StackValue.onStack(genInvokeInstructionWithResult(v))
     }
 

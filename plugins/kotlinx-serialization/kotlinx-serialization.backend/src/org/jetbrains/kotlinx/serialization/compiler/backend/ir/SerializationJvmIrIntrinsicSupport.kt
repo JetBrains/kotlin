@@ -88,7 +88,7 @@ class SerializationJvmIrIntrinsicSupport(
                     mv.store(storedIndex, materialVal.type)
                     IntrinsicType.WithModule(storedIndex)
                 } else {
-                    codegen.markLineNumber(expression)
+                    expression.markLineNumber(startOffset = true)
                     IntrinsicType.Simple
                 }
                 generateSerializerForType(

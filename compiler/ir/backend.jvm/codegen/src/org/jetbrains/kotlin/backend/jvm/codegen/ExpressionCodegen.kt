@@ -62,8 +62,6 @@ import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import java.util.*
-import kotlin.contracts.ExperimentalContracts
-import kotlin.contracts.contract
 
 sealed class ExpressionInfo {
     var blockInfo: BlockInfo? = null
@@ -142,8 +140,6 @@ class ExpressionCodegen(
     val smap: SourceMapper,
     val reifiedTypeParametersUsages: ReifiedTypeParametersUsages,
 ) : IrElementVisitor<PromisedValue, BlockInfo>, BaseExpressionCodegen {
-    private val lineNumberMapper = LineNumberMapper(this)
-
     override fun toString(): String = signature.toString()
 
     var finallyDepth = 0
@@ -165,10 +161,13 @@ class ExpressionCodegen(
     override val typeSystem: TypeSystemCommonBackendContext
         get() = typeMapper.typeSystem
 
-    override var lastLineNumber: Int = -1
-    var noLineNumberScope: Boolean = false
+    private val lineNumberMapper = LineNumberMapper(this)
 
-    private var isInsideCondition = false
+    override val lastLineNumber: Int
+        get() = lineNumberMapper.getLineNumber()
+
+    var isInsideCondition: Boolean = false
+        private set
 
     private val closureReifiedMarkers = hashMapOf<IrClass, ReifiedTypeParametersUsages>()
 
@@ -190,38 +189,16 @@ class ExpressionCodegen(
 
     private fun markNewLinkedLabel() = linkedLabel().apply { mv.visitLabel(this) }
 
-    private fun IrElement.markLineNumber(startOffset: Boolean) {
-        if (noLineNumberScope) return
-        val offset = if (startOffset) this.startOffset else endOffset
-        if (offset < 0) return
-
-        val lineNumber = lineNumberMapper.getLineNumberForOffset(offset)
-
-        assert(lineNumber > 0)
-        if (lastLineNumber != lineNumber) {
-            lastLineNumber = lineNumber
-            mv.visitLineNumber(lineNumber, markNewLabel())
-        }
-    }
-
-    fun markLineNumber(element: IrElement) = element.markLineNumber(true)
-
-    @OptIn(ExperimentalContracts::class)
-    private inline fun noLineNumberScopeWithCondition(flag: Boolean, block: () -> Unit) {
-        contract {
-            callsInPlace(block, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
-        }
-        val previousState = noLineNumberScope
-        noLineNumberScope = noLineNumberScope || flag
-        block()
-        noLineNumberScope = previousState
+    fun IrElement.markLineNumber(startOffset: Boolean) {
+        lineNumberMapper.markLineNumber(this, startOffset)
     }
 
     fun noLineNumberScope(block: () -> Unit) {
-        val previousState = noLineNumberScope
-        noLineNumberScope = true
-        block()
-        noLineNumberScope = previousState
+        lineNumberMapper.noLineNumberScope(block)
+    }
+
+    override fun markLineNumberAfterInlineIfNeeded(registerLineNumberAfterwards: Boolean) {
+        lineNumberMapper.markLineNumberAfterInlineIfNeeded(registerLineNumberAfterwards)
     }
 
     fun gen(expression: IrExpression, type: Type, irType: IrType, data: BlockInfo) {
@@ -422,16 +399,9 @@ class ExpressionCodegen(
             }
         }
 
+        // This block must be executed after `writeLocalVariablesInTable`
         if (expression is IrInlinedFunctionBlock) {
-            // This block must be executed after `writeLocalVariablesInTable`
-            if (expression.isFunctionInlining()) {
-                val callLineNumber = lineNumberMapper.getLineNumberForOffset(expression.inlineCall.startOffset)
-                // takeUnless is required to avoid markLineNumberAfterInlineIfNeeded for inline only
-                lastLineNumber = callLineNumber.takeUnless { noLineNumberScope } ?: -1
-                markLineNumberAfterInlineIfNeeded(isInsideCondition)
-            } else {
-                lineNumberMapper.setUpAdditionalLineNumbersAfterLambdaInlining(expression)
-            }
+            lineNumberMapper.afterIrInline(expression)
         }
 
         if (isSynthesizedInitBlock) {
@@ -496,11 +466,9 @@ class ExpressionCodegen(
             exp.accept(this, data).discard()
         }
 
-        if (inlinedBlock.isLambdaInlining()) {
-            lineNumberMapper.setUpAdditionalLineNumbersBeforeLambdaInlining(inlinedBlock)
-        }
+        lineNumberMapper.beforeIrInline(inlinedBlock)
 
-        noLineNumberScopeWithCondition(inlinedBlock.inlineDeclaration.isInlineOnly()) {
+        lineNumberMapper.noLineNumberScopeWithCondition(inlinedBlock.inlineDeclaration.isInlineOnly()) {
             inlineCall.markLineNumber(startOffset = true)
             mv.nop()
 
@@ -519,7 +487,7 @@ class ExpressionCodegen(
 
             if (inlineCall.usesDefaultArguments()) {
                 // we must reset LN because at this point in original inliner we will inline non default call
-                lastLineNumber = -1
+                lineNumberMapper.resetLineNumber()
             }
 
             // 3. Evaluate statements from inline function body
@@ -729,7 +697,7 @@ class ExpressionCodegen(
         val owner = typeMapper.mapClass(callee.constructedClass)
         val signature = methodSignatureMapper.mapSignatureSkipGeneric(callee)
 
-        markLineNumber(expression)
+        expression.markLineNumber(startOffset = true)
 
         // In this case the receiver is `this` (not specified in IR) and the return value is discarded anyway.
         mv.load(0, OBJECT_TYPE)
@@ -742,7 +710,7 @@ class ExpressionCodegen(
         }
 
         generateConstructorArguments(expression, signature, data)
-        markLineNumber(expression)
+        expression.markLineNumber(startOffset = true)
 
         mv.visitMethodInsn(Opcodes.INVOKESPECIAL, owner.internalName, signature.asmMethod.name, signature.asmMethod.descriptor, false)
 
@@ -759,13 +727,13 @@ class ExpressionCodegen(
 
         // IR constructors have no receiver and return the new instance, but on JVM they are void-returning
         // instance methods named <init>.
-        markLineNumber(expression)
+        expression.markLineNumber(startOffset = true)
         putNeedClassReificationMarker(callee.constructedClass)
         mv.anew(owner)
         mv.dup()
 
         generateConstructorArguments(expression, signature, data)
-        markLineNumber(expression)
+        expression.markLineNumber(startOffset = true)
 
         mv.visitMethodInsn(Opcodes.INVOKESPECIAL, owner.internalName, signature.asmMethod.name, signature.asmMethod.descriptor, false)
 
@@ -1628,20 +1596,6 @@ class ExpressionCodegen(
     override fun propagateChildReifiedTypeParametersUsages(reifiedTypeParametersUsages: ReifiedTypeParametersUsages) {
         this.reifiedTypeParametersUsages.propagateChildUsagesWithinContext(reifiedTypeParametersUsages) {
             irFunction.typeParameters.filter { it.isReified }.map { it.name.asString() }.toSet()
-        }
-    }
-
-    override fun markLineNumberAfterInlineIfNeeded(registerLineNumberAfterwards: Boolean) {
-        if (noLineNumberScope || registerLineNumberAfterwards) {
-            if (lastLineNumber > -1) {
-                val label = Label()
-                mv.visitLabel(label)
-                mv.visitLineNumber(lastLineNumber, label)
-            }
-        } else {
-            // Inline function has its own line number which is in a separate instance of codegen,
-            // therefore we need to reset lastLineNumber to force a line number generation after visiting inline function.
-            lastLineNumber = -1
         }
     }
 

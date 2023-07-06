@@ -35,7 +35,7 @@ object RangeTo : IntrinsicMethod() {
                 data: BlockInfo,
                 expression: IrFunctionAccessExpression
             ): StackValue {
-                codegen.markLineNumber(expression)
+                with(codegen) { expression.markLineNumber(startOffset = true) }
                 v.anew(returnType)
                 v.dup()
                 return super.invoke(v, codegen, data, expression)
