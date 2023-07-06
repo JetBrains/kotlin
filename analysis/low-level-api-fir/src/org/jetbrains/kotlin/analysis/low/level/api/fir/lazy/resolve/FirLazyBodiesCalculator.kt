@@ -151,20 +151,11 @@ private fun replaceLazyDelegate(target: FirVariable, copy: FirVariable) {
 private fun calculateLazyBodiesForScript(designation: FirDesignation) {
     val firScript = designation.target as FirScript
     require(needCalculatingLazyBodyForScript(firScript))
-    val ktScript = firScript.psi as KtScript
 
-    val replacement = RawFirReplacement(ktScript, ktScript)
+    val newFirScript = revive<FirScript>(designation)
 
-    val newDeclarationWithReplacement = RawFirNonLocalDeclarationBuilder.buildWithReplacement(
-        session = firScript.moduleData.session,
-        scopeProvider = firScript.moduleData.session.kotlinScopeProvider,
-        designation = designation,
-        rootNonLocalDeclaration = ktScript,
-        replacement = replacement,
-    ) as FirScript
-
-    firScript.replaceAnnotations(newDeclarationWithReplacement.annotations)
-    firScript.replaceStatements(newDeclarationWithReplacement.statements)
+    firScript.replaceAnnotations(newFirScript.annotations)
+    firScript.replaceStatements(newFirScript.statements)
 }
 
 private fun calculateLazyBodiesForFunction(designation: FirDesignation) {
