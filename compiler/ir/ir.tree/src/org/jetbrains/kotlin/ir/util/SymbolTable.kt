@@ -48,9 +48,6 @@ interface ReferenceSymbolTable {
     fun referenceProperty(signature: IdSignature): IrPropertySymbol
 
     @ObsoleteDescriptorBasedAPI
-    fun referenceProperty(descriptor: PropertyDescriptor, generate: () -> IrProperty): IrProperty
-
-    @ObsoleteDescriptorBasedAPI
     fun referenceSimpleFunction(descriptor: FunctionDescriptor): IrSimpleFunctionSymbol
     fun referenceSimpleFunction(signature: IdSignature): IrSimpleFunctionSymbol
 
@@ -66,9 +63,6 @@ interface ReferenceSymbolTable {
 
     @ObsoleteDescriptorBasedAPI
     fun referenceScopedTypeParameter(classifier: TypeParameterDescriptor): IrTypeParameterSymbol
-
-    @ObsoleteDescriptorBasedAPI
-    fun referenceVariable(descriptor: VariableDescriptor): IrVariableSymbol
 
     @ObsoleteDescriptorBasedAPI
     fun referenceTypeAlias(descriptor: TypeAliasDescriptor): IrTypeAliasSymbol
@@ -778,14 +772,6 @@ open class SymbolTable(
 
     val unboundFields: Set<IrFieldSymbol> get() = fieldSymbolTable.unboundSymbols
 
-    @Deprecated(message = "Use declareProperty/referenceProperty", level = DeprecationLevel.WARNING)
-    val propertyTable = HashMap<PropertyDescriptor, IrProperty>()
-
-    @ObsoleteDescriptorBasedAPI
-    override fun referenceProperty(descriptor: PropertyDescriptor, generate: () -> IrProperty): IrProperty =
-        @Suppress("DEPRECATION")
-        propertyTable.getOrPut(descriptor, generate)
-
     private fun createPropertySymbol(descriptor: PropertyDescriptor, signature: IdSignature?): IrPropertySymbol =
         signature?.let { IrPropertyPublicSymbolImpl(it, descriptor) } ?: IrPropertySymbolImpl(descriptor)
 
@@ -1143,10 +1129,6 @@ open class SymbolTable(
         declareVariable(startOffset, endOffset, origin, descriptor, type).apply {
             initializer = irInitializerExpression
         }
-
-    @ObsoleteDescriptorBasedAPI
-    override fun referenceVariable(descriptor: VariableDescriptor) =
-        variableSymbolTable.referenced(descriptor) { throw AssertionError("Undefined variable referenced: $descriptor") }
 
     @ObsoleteDescriptorBasedAPI
     fun declareLocalDelegatedProperty(
