@@ -74,12 +74,15 @@ class CliFe10AnalysisFacade : Fe10AnalysisFacade {
     }
 }
 
-class KtFe10AnalysisHandlerExtension(private val useSiteModule: KtSourceModule) : AnalysisHandlerExtension {
+class KtFe10AnalysisHandlerExtension(
+    private val useSiteModule: KtSourceModule? = null
+) : AnalysisHandlerExtension {
     internal companion object {
         fun getInstance(area: AreaInstance, module: KtModule): KtFe10AnalysisHandlerExtension {
-            return AnalysisHandlerExtension.extensionPointName.getExtensions(area)
+            val extensions = AnalysisHandlerExtension.extensionPointName.getExtensions(area)
                 .filterIsInstance<KtFe10AnalysisHandlerExtension>()
-                .firstOrNull { it.useSiteModule == module }
+            return extensions.firstOrNull { it.useSiteModule == module }
+                ?: extensions.singleOrNull { it.useSiteModule == null }
                 ?: error(KtFe10AnalysisHandlerExtension::class.java.name + " should be registered")
         }
     }
@@ -110,9 +113,14 @@ class KtFe10AnalysisHandlerExtension(private val useSiteModule: KtSourceModule) 
         bindingTrace: BindingTrace,
         componentProvider: ComponentProvider
     ): AnalysisResult? {
-        if (module.name.asString().removeSurrounding("<", ">") != useSiteModule.moduleName) {
+        // Single-module [KtFe10AnalysisHandlerExtension] can be registered without specific use-site module.
+        // Simple null-check below will skip the bail-out.
+        if (useSiteModule != null &&
+            module.name.asString().removeSurrounding("<", ">") != useSiteModule.moduleName
+        ) {
             // there is no way to properly map KtModule to ModuleDescriptor,
-            // KtFe10AnalysisHandlerExtension is used only for tests, so just by name comparasion should work as all module names are different
+            // Multi-module [KtFe10AnalysisHandlerExtension]s are used only for tests,
+            // so just by name comparison should work as all module names are different
             return null
         }
 
