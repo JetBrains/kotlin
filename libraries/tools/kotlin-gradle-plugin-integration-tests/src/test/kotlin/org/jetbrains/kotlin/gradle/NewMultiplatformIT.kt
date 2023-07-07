@@ -545,9 +545,15 @@ open class NewMultiplatformIT : BaseGradleIT() {
             }
 
             gradleBuildScript().modify {
-                if (testJavaSupportInJvmTargets) {
+                """
+                    apply plugin: 'com.github.johnrengelman.shadow'
+                    apply plugin: 'application'
+                    apply plugin: 'kotlin-kapt' // Check that Kapts works, generates and compiles sources
+                """.trimIndent() + if (testJavaSupportInJvmTargets) {
                     it + "\nkotlin.jvm(\"jvm6\") { " +
-                            "${KotlinJvmTarget::withJava.name.plus("();").repeat(2)} " + // also check that the function is idempotent
+                            "${
+                                KotlinJvmTarget::withJava.name.plus("();").repeat(2)
+                            } " + // also check that the function is idempotent
                             "}"
                 } else {
                     it.replace("presets.jvm", "presets.jvmWithJava").replace("jvm(", "targetFromPreset(presets.jvmWithJava, ")
@@ -561,10 +567,6 @@ open class NewMultiplatformIT : BaseGradleIT() {
                             classpath 'com.github.johnrengelman:shadow:${TestVersions.ThirdPartyDependencies.SHADOW_PLUGIN_VERSION}'
                         }
                     }
-                    
-                    apply plugin: 'com.github.johnrengelman.shadow'
-                    apply plugin: 'application'
-                    apply plugin: 'kotlin-kapt' // Check that Kapts works, generates and compiles sources
                     
                     mainClassName = 'com.example.lib.CommonKt'
                     

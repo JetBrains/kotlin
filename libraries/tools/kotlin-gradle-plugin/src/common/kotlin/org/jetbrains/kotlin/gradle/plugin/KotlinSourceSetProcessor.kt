@@ -29,7 +29,7 @@ import java.util.concurrent.Callable
 internal abstract class KotlinSourceSetProcessor<T : AbstractKotlinCompile<*>>(
     val tasksProvider: KotlinTasksProvider,
     val taskDescription: String,
-    kotlinCompilation: KotlinCompilationInfo
+    kotlinCompilation: KotlinCompilationInfo,
 ) : KotlinCompilationProcessor<T>(kotlinCompilation) {
     protected abstract fun doTargetSpecificProcessing()
     protected val logger = Logging.getLogger(this.javaClass)!!
@@ -41,13 +41,7 @@ internal abstract class KotlinSourceSetProcessor<T : AbstractKotlinCompile<*>>(
     protected val javaSourceSet: SourceSet?
         get() = when (val compilation = compilationInfo.safeAs<KotlinCompilationInfo.TCS>()?.origin) {
             is KotlinWithJavaCompilation<*, *> -> compilation.javaSourceSet
-            is KotlinJvmCompilation -> if (compilation.target.withJavaEnabled) {
-                project.variantImplementationFactory<JavaSourceSetsAccessor.JavaSourceSetsAccessorVariantFactory>()
-                    .getInstance(project)
-                    .sourceSets
-                    .maybeCreate(compilation.name)
-            } else null
-
+            is KotlinJvmCompilation -> compilation.javaSourceSet.getOrNull()
             else -> null
         }
 

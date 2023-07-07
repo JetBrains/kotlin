@@ -7,9 +7,11 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.provider.Provider
+import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.compile.JavaCompile
-import org.jetbrains.kotlin.gradle.dsl.*
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptions
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
 import org.jetbrains.kotlin.gradle.plugin.HasCompilerOptions
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationWithResources
 import org.jetbrains.kotlin.gradle.plugin.internal.JavaSourceSetsAccessor
@@ -17,10 +19,13 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationI
 import org.jetbrains.kotlin.gradle.plugin.variantImplementationFactory
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
+import org.jetbrains.kotlin.gradle.utils.LenientFuture
+import org.jetbrains.kotlin.gradle.utils.future
+import org.jetbrains.kotlin.gradle.utils.lenient
 import javax.inject.Inject
 
 open class KotlinJvmCompilation @Inject internal constructor(
-    compilation: KotlinCompilationImpl
+    compilation: KotlinCompilationImpl,
 ) : AbstractKotlinCompilationToRunnableFiles<KotlinJvmOptions>(compilation),
     KotlinCompilationWithResources<KotlinJvmOptions> {
 
@@ -62,13 +67,17 @@ open class KotlinJvmCompilation @Inject internal constructor(
      * will be enabled after call to this method.
      */
     internal val compileJavaTaskProviderSafe: Provider<JavaCompile> = target.project.providers
-        .provider { if (target.withJavaEnabled) Unit else null }
-        .map {
-            project.javaSourceSets.getByName(compilationName).compileJavaTaskName
+        .provider { javaSourceSet.getOrNull() }
+        .flatMap { javaSourceSet ->
+            @Suppress("RedundantRequireNotNullCall") // IDE and CLI disagree here
+            checkNotNull(javaSourceSet)
+            project.tasks.named(javaSourceSet.compileJavaTaskName, JavaCompile::class.java)
         }
-        .flatMap {
-            project.tasks.named(it, JavaCompile::class.java)
-        }
+
+    internal val javaSourceSet: LenientFuture<SourceSet> = target.project.future {
+        target.withJavaEnabledFuture.await()
+        target.project.javaSourceSets.maybeCreate(compilationName)
+    }.lenient
 
     override val processResourcesTaskName: String
         get() = compilation.processResourcesTaskName ?: error("Missing 'processResourcesTaskName'")

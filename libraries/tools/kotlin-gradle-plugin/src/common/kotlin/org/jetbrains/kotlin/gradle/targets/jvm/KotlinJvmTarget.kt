@@ -30,8 +30,9 @@ import org.jetbrains.kotlin.gradle.targets.jvm.tasks.KotlinJvmRunDsl
 import org.jetbrains.kotlin.gradle.targets.jvm.tasks.KotlinJvmRunDslImpl
 import org.jetbrains.kotlin.gradle.targets.jvm.tasks.registerMainRunTask
 import org.jetbrains.kotlin.gradle.tasks.withType
+import org.jetbrains.kotlin.gradle.utils.*
+import org.jetbrains.kotlin.gradle.utils.CompletableFuture
 import org.jetbrains.kotlin.gradle.utils.Future
-import org.jetbrains.kotlin.gradle.utils.addExtendsFromRelation
 import org.jetbrains.kotlin.gradle.utils.findAppliedAndroidPluginIdOrNull
 import org.jetbrains.kotlin.gradle.utils.future
 import org.jetbrains.kotlin.utils.addToStdlib.cast
@@ -90,9 +91,15 @@ abstract class KotlinJvmTarget @Inject constructor(
         mainRun.await()?.configure()
     }
 
+    /**
+     * Future that will complete once [withJava] is called and java support for this target
+     * was established.
+     */
+    internal val withJavaEnabledFuture: Future<Unit> get() = withJavaEnabledFutureImpl
+    private val withJavaEnabledFutureImpl = CompletableFuture<Unit>()
+
     var withJavaEnabled = false
         private set
-
 
     @Suppress("unused") // user DSL
     fun withJava() {
@@ -164,6 +171,8 @@ abstract class KotlinJvmTarget @Inject constructor(
                 copyUserDefinedAttributesToJavaConfigurations(javaSourceSet)
             }
         }
+
+        withJavaEnabledFutureImpl.complete(Unit)
     }
 
     private fun setupJavaSourceSetSourcesAndResources(
