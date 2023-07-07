@@ -357,6 +357,7 @@
 /plugins/kapt3/kapt3-compiler/test/ "Kotlin Compiler Core" "Kotlin JVM"
 /plugins/kapt3/kapt3-compiler/testData/ "Kotlin Compiler Core" "Kotlin JVM"
 /plugins/kapt3/kapt3-compiler/tests-gen/ "Kotlin Compiler Core" "Kotlin JVM"
+/plugins/kapt4/ "Kotlin Compiler Core" "Kotlin JVM"
 /plugins/kotlinx-serialization/ Sergey.Shanshin Leonid.Startsev
 /plugins/lombok/ "Kotlin Compiler Core"
 /plugins/noarg/ "Kotlin Compiler Core"

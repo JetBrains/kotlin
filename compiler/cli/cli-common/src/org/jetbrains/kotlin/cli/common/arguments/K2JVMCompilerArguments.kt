@@ -846,6 +846,15 @@ Also sets `-jvm-target` value equal to the selected JDK version"""
             field = value
         }
 
+    @Argument(
+        value = "-Xuse-kapt4",
+        description = "Enable the experimental KAPT 4."
+    )
+    var useKapt4 = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
     override fun configureAnalysisFlags(collector: MessageCollector, languageVersion: LanguageVersion): MutableMap<AnalysisFlag<*>, Any> {
         val result = super.configureAnalysisFlags(collector, languageVersion)

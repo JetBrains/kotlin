@@ -143,6 +143,7 @@ where advanced options include:
                              See KT-45671 for more details
   -Xuse-fast-jar-file-system Use fast implementation on Jar FS. This may speed up compilation time, but currently it's an experimental mode
   -Xuse-javac                Use javac for Java source and class files analysis
+  -Xuse-kapt4                Enable the experimental KAPT 4.
   -Xuse-old-backend          Use the old JVM backend
   -Xuse-old-class-files-reading Use old class files reading implementation. This may slow down the build and cause problems with Groovy interop.
                              Should be used in case of problems with the new implementation

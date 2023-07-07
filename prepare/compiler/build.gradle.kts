@@ -86,9 +86,10 @@ val outputJar = fileFrom(buildDir, "libs", "$compilerBaseName.jar")
 val compilerModules: Array<String> by rootProject.extra
 
 val distLibraryProjects = listOfNotNull(
-    ":kotlin-annotation-processing",
+    ":kotlin-annotation-processing-compiler",
     ":kotlin-annotation-processing-cli",
     ":kotlin-annotation-processing-runtime",
+    ":kotlin-annotation-processing",
     ":kotlin-annotations-jvm",
     ":kotlin-ant",
     ":kotlin-daemon",

@@ -56,17 +56,18 @@ fun CompilerConfiguration.setupCommonArguments(
     buildHmppModuleStructure(arguments)?.let { put(CommonConfigurationKeys.HMPP_MODULE_STRUCTURE, it) }
 }
 
-fun switchToFallbackModeIfNecessary(arguments: CommonCompilerArguments, messageCollector: MessageCollector) {
-    val isK2 = arguments.useK2 || (arguments.languageVersion?.startsWith('2') ?: (LanguageVersion.LATEST_STABLE >= LanguageVersion.KOTLIN_2_0))
-    if (isK2) {
-        val isKaptUsed = arguments.pluginOptions?.any { it.startsWith("plugin:org.jetbrains.kotlin.kapt3") } == true
-        if (isKaptUsed) {
-            if (!arguments.suppressVersionWarnings) {
-                messageCollector.report(
-                    CompilerMessageSeverity.STRONG_WARNING,
-                    "Kapt currently doesn't support language version 2.0+.\nFalling back to 1.9."
-                )
-            }
+private fun switchToFallbackModeIfNecessary(arguments: CommonCompilerArguments, messageCollector: MessageCollector) {
+    fun warn(message: String) {
+        if (!arguments.suppressVersionWarnings) messageCollector.report(CompilerMessageSeverity.STRONG_WARNING, message)
+    }
+
+    if (arguments !is K2JVMCompilerArguments) return
+    val isK2 =
+        arguments.useK2 || (arguments.languageVersion?.startsWith('2') ?: (LanguageVersion.LATEST_STABLE >= LanguageVersion.KOTLIN_2_0))
+    val isKaptUsed = arguments.pluginOptions?.any { it.startsWith("plugin:org.jetbrains.kotlin.kapt3") } == true
+    when {
+        isK2 && isKaptUsed && !arguments.useKapt4 -> {
+            warn("Kapt currently doesn't support language version 2.0+. Falling back to 1.9.")
             arguments.languageVersion = LanguageVersion.KOTLIN_1_9.versionString
             if (arguments.apiVersion?.startsWith("2") == true) {
                 arguments.apiVersion = ApiVersion.KOTLIN_1_9.versionString
@@ -74,8 +75,11 @@ fun switchToFallbackModeIfNecessary(arguments: CommonCompilerArguments, messageC
             arguments.useK2 = false
             arguments.skipMetadataVersionCheck = true
             arguments.skipPrereleaseCheck = true
-            (arguments as? K2JVMCompilerArguments)?.allowUnstableDependencies = true
+            arguments.allowUnstableDependencies = true
         }
+        isK2 && isKaptUsed && arguments.useKapt4 -> warn("Kapt 4 is still experimental. Use with caution.")
+        arguments.useKapt4 && !isK2 -> warn("-Xuse-kapt4 flag can be only used with language version 2.0+.")
+        arguments.useKapt4 && !isKaptUsed -> warn("-Xuse-kapt4 flag is present but no Kapt configuration options are provided.")
     }
 }
 

@@ -21,13 +21,13 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.base.kapt3.*
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
 import org.jetbrains.kotlin.cli.jvm.config.JavaSourceRoot
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.compiler.plugin.*
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.config.CommonConfigurationKeys.USE_FIR
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
@@ -59,7 +59,7 @@ import java.io.File
 import java.io.ObjectInputStream
 import java.util.*
 
-private val KAPT_OPTIONS = CompilerConfigurationKey.create<KaptOptions.Builder>("Kapt options")
+val KAPT_OPTIONS = CompilerConfigurationKey.create<KaptOptions.Builder>("Kapt options")
 
 class Kapt3CommandLineProcessor : CommandLineProcessor {
     override val pluginId: String = ANNOTATION_PROCESSING_COMPILER_PLUGIN_ID
@@ -70,12 +70,6 @@ class Kapt3CommandLineProcessor : CommandLineProcessor {
         doOpenInternalPackagesIfRequired()
         if (option !is KaptCliOption) {
             throw CliOptionProcessingException("Unknown option: ${option.optionName}")
-        }
-        if (configuration.getBoolean(CommonConfigurationKeys.USE_FIR)) {
-            configuration[CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY]?.report(
-                CompilerMessageSeverity.ERROR,
-                "kapt currently doesn't support language version 2.0\nPlease use language version 1.9 or below"
-            )
         }
 
         val kaptOptions = configuration[KAPT_OPTIONS]
@@ -173,6 +167,7 @@ class Kapt3CommandLineProcessor : CommandLineProcessor {
 @Suppress("DEPRECATION")
 class Kapt3ComponentRegistrar : ComponentRegistrar {
     override fun registerProjectComponents(project: MockProject, configuration: CompilerConfiguration) {
+        if (configuration.getBoolean(USE_FIR)) return
         doOpenInternalPackagesIfRequired()
         val contentRoots = configuration[CLIConfigurationKeys.CONTENT_ROOTS] ?: emptyList()
 

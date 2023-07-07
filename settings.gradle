@@ -226,6 +226,7 @@ include ":kotlin-imports-dumper-compiler-plugin",
         ":kotlin-annotation-processing-base",
         ":kotlin-annotation-processing-runtime",
         ":kotlin-annotation-processing-embeddable",
+        ":kotlin-annotation-processing-compiler",
         ":kotlin-daemon-embeddable",
         ":kotlin-annotations-jvm",
         ":kotlin-scripting-common",
@@ -749,10 +750,11 @@ project(':examples:annotation-processor-example').projectDir = "$rootDir/librari
 project(':kotlin-script-util').projectDir = "$rootDir/libraries/tools/kotlin-script-util" as File
 project(':kotlin-annotation-processing-embeddable').projectDir = "$rootDir/plugins/kapt3/kotlin-annotation-processing-embeddable" as File
 project(':kotlin-daemon-embeddable').projectDir = "$rootDir/prepare/kotlin-daemon-embeddable" as File
-project(':kotlin-annotation-processing').projectDir = "$rootDir/plugins/kapt3/kapt3-compiler" as File
+project(':kotlin-annotation-processing-compiler').projectDir = "$rootDir/plugins/kapt3/kapt3-compiler" as File
 project(':kotlin-annotation-processing-cli').projectDir = "$rootDir/plugins/kapt3/kapt3-cli" as File
 project(':kotlin-annotation-processing-base').projectDir = "$rootDir/plugins/kapt3/kapt3-base" as File
 project(':kotlin-annotation-processing-runtime').projectDir = "$rootDir/plugins/kapt3/kapt3-runtime" as File
+project(':kotlin-annotation-processing').projectDir = "$rootDir/plugins/kapt4" as File
 project(':kotlin-annotations-jvm').projectDir = "$rootDir/libraries/tools/kotlin-annotations-jvm" as File
 project(':kotlin-scripting-common').projectDir = "$rootDir/libraries/scripting/common" as File
 project(':kotlin-scripting-jvm').projectDir = "$rootDir/libraries/scripting/jvm" as File

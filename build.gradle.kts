@@ -810,6 +810,8 @@ tasks {
     register("kaptTests") {
         dependsOn(":kotlin-annotation-processing:test")
         dependsOn(":kotlin-annotation-processing:testJdk11")
+        dependsOn(":kotlin-annotation-processing-compiler:test")
+        dependsOn(":kotlin-annotation-processing-compiler:testJdk11")
         dependsOn(":kotlin-annotation-processing-base:test")
         dependsOn(":kotlin-annotation-processing-cli:test")
     }

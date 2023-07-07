@@ -78,6 +78,7 @@ fun copyK2JVMCompilerArguments(from: K2JVMCompilerArguments, to: K2JVMCompilerAr
     to.typeEnhancementImprovementsInStrictMode = from.typeEnhancementImprovementsInStrictMode
     to.useFastJarFileSystem = from.useFastJarFileSystem
     to.useJavac = from.useJavac
+    to.useKapt4 = from.useKapt4
     to.useOldBackend = from.useOldBackend
     to.useOldClassFilesReading = from.useOldClassFilesReading
     to.useOldInlineClassesManglingScheme = from.useOldInlineClassesManglingScheme

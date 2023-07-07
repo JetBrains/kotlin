@@ -47,8 +47,7 @@ output/sources/generated/Test.java
 Test.kt
 
 # output
-warning: kapt currently doesn't support language version 2.0+.
-Falling back to 1.9.
+warning: kapt currently doesn't support language version 2.0+. Falling back to 1.9.
 
 # java
 -cp output/classes:output/javaClasses:output/ap.jar:%KOTLIN_STDLIB%

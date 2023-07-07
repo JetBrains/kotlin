@@ -2,9 +2,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.jetbrains.kotlin</groupId>
-  <artifactId>kotlin-annotation-processing</artifactId>
+  <artifactId>kotlin-annotation-processing-compiler</artifactId>
   <version>ArtifactsTest.version</version>
-  <name>Kotlin Annotation Processing</name>
+  <name>Kotlin Annotation Processing Compiler</name>
   <description>Annotation Processor for Kotlin</description>
   <url>https://kotlinlang.org/</url>
   <licenses>
@@ -25,12 +25,4 @@
     <developerConnection>scm:git:https://github.com/JetBrains/kotlin.git</developerConnection>
     <url>https://github.com/JetBrains/kotlin</url>
   </scm>
-  <dependencies>
-    <dependency>
-      <groupId>org.jetbrains.kotlin</groupId>
-      <artifactId>kotlin-annotation-processing-compiler</artifactId>
-      <version>ArtifactsTest.version</version>
-      <scope>runtime</scope>
-    </dependency>
-  </dependencies>
 </project>

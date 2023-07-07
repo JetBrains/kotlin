@@ -76,6 +76,7 @@ import org.jetbrains.kotlin.extensions.*
 import org.jetbrains.kotlin.extensions.internal.CandidateInterceptor
 import org.jetbrains.kotlin.extensions.internal.InternalNonStableExtensionPoints
 import org.jetbrains.kotlin.extensions.internal.TypeResolutionInterceptor
+import org.jetbrains.kotlin.fir.extensions.FirAnalysisHandlerExtension
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.js.translate.extensions.JsSyntheticTranslateExtension
@@ -673,6 +674,7 @@ class KotlinCoreEnvironment private constructor(
             FirExtensionRegistrarAdapter.registerExtensionPoint(project)
             TypeAttributeTranslatorExtension.registerExtensionPoint(project)
             AssignResolutionAltererExtension.registerExtensionPoint(project)
+            FirAnalysisHandlerExtension.registerExtensionPoint(project)
         }
 
         internal fun registerExtensionsFromPlugins(project: MockProject, configuration: CompilerConfiguration) {
