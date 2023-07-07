@@ -17,6 +17,10 @@ class BuildScanExtensionHolder(val buildScan: BuildScanExtension) : java.io.Seri
                 // Build scan plugin is applied, but BuildScanExtension class is not available due to Gradle classpath isolation
                 // Could be reproduced by applying Gradle enterprise plugin via init script: KT-59589
                 null
+            } catch (e: NoClassDefFoundError) {
+                // Build scan plugin is applied, but BuildScanExtension class is not available due to Gradle classpath isolation
+                // Could be reproduced by applying Gradle enterprise plugin via init script: KT-59589
+                null
             }
 
             return buildScanExtension?.let { BuildScanExtensionHolder(it) }

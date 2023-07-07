@@ -16,6 +16,7 @@ import java.nio.file.Path
 import kotlin.io.path.*
 import kotlin.test.assertTrue
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
+import org.jetbrains.kotlin.gradle.testbase.TestVersions.ThirdPartyDependencies.GRADLE_ENTERPRISE_PLUGIN_VERSION
 
 @DisplayName("Build reports")
 @JvmGradlePluginTests
@@ -368,6 +369,49 @@ class BuildReportsIT : KGPBaseTest() {
             ) {
                 assertOutputContains("Unknown metric: 'unknown_prop', list of available metrics")
             }
+        }
+    }
+
+    @DisplayName("build reports work with init script")
+    @GradleTestVersions(
+        minVersion = TestVersions.Gradle.MIN_SUPPORTED,
+        additionalVersions = [TestVersions.Gradle.G_7_6, TestVersions.Gradle.G_8_0],
+        maxVersion = TestVersions.Gradle.G_8_1
+    )
+    @GradleTest
+    fun testBuildReportsWithInitScript(gradleVersion: GradleVersion) {
+        project("simpleProject", gradleVersion) {
+            gradleProperties.modify { "$it\nkotlin.build.report.output=BUILD_SCAN,FILE\n" }
+
+            val initScript = projectPath.resolve("init.gradle").createFile()
+            initScript.modify {
+                """
+                    initscript {
+                        repositories {
+                            maven { url = 'https://plugins.gradle.org/m2/' }
+                        }
+
+                        dependencies {
+                            classpath 'com.gradle:gradle-enterprise-gradle-plugin:$GRADLE_ENTERPRISE_PLUGIN_VERSION'
+                        }
+                    }
+
+                    beforeSettings {
+                        it.pluginManager.apply(com.gradle.enterprise.gradleplugin.GradleEnterprisePlugin)
+                    }
+                """.trimIndent()
+            }
+
+            build(
+                "compileKotlin",
+                "-I", "init.gradle",
+            )
+
+            build(
+                "compileKotlin",
+                "-I", "init.gradle",
+                enableBuildScan = true,
+            )
         }
     }
 
