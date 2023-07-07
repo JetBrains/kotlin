@@ -685,11 +685,17 @@ tasks {
         }
     }
 
+    val jvmTest by existing(Test::class)
 
     listOf(JdkMajorVersion.JDK_9_0, JdkMajorVersion.JDK_10_0, JdkMajorVersion.JDK_11_0).forEach { jvmVersion ->
         val jvmVersionTest = register("jvm${jvmVersion.majorVersion}Test", Test::class) {
             group = "verification"
             javaLauncher.set(getToolchainLauncherFor(jvmVersion))
+            // additional test tasks are not configured automatically same as the main test task
+            // after KMP plugin stopped applying java plugin
+            classpath = jvmTest.get().classpath
+            testClassesDirs = jvmTest.get().testClassesDirs
+
         }
         check.configure { dependsOn(jvmVersionTest) }
     }
