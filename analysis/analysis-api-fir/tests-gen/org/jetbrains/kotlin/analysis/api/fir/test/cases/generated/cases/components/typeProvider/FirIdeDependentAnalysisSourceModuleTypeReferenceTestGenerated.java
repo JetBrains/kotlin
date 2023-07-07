@@ -53,9 +53,27 @@ public class FirIdeDependentAnalysisSourceModuleTypeReferenceTestGenerated exten
     }
 
     @Test
+    @TestMetadata("annotationEntryBackingField.kt")
+    public void testAnnotationEntryBackingField() throws Exception {
+        runTest("analysis/analysis-api/testData/components/typeProvider/typeReference/annotationEntryBackingField.kt");
+    }
+
+    @Test
+    @TestMetadata("annotationEntryGetter.kt")
+    public void testAnnotationEntryGetter() throws Exception {
+        runTest("analysis/analysis-api/testData/components/typeProvider/typeReference/annotationEntryGetter.kt");
+    }
+
+    @Test
     @TestMetadata("annotationEntryOnParameter.kt")
     public void testAnnotationEntryOnParameter() throws Exception {
         runTest("analysis/analysis-api/testData/components/typeProvider/typeReference/annotationEntryOnParameter.kt");
+    }
+
+    @Test
+    @TestMetadata("annotationEntrySetter.kt")
+    public void testAnnotationEntrySetter() throws Exception {
+        runTest("analysis/analysis-api/testData/components/typeProvider/typeReference/annotationEntrySetter.kt");
     }
 
     @Test
