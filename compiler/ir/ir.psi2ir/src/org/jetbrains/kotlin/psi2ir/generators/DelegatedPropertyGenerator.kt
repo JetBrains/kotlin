@@ -263,7 +263,7 @@ internal class DelegatedPropertyGenerator(
     ): IrLocalDelegatedProperty {
         val kPropertyType = getKPropertyTypeForLocalDelegatedProperty(variableDescriptor)
 
-        val irLocalDelegatedProperty = context.symbolTable.declareLocalDelegatedProperty(
+        val irLocalDelegatedProperty = context.symbolTable.descriptorExtension.declareLocalDelegatedProperty(
             ktProperty.startOffsetSkippingComments, ktProperty.endOffset, IrDeclarationOrigin.DEFINED,
             variableDescriptor,
             variableDescriptor.type.toIrType()
@@ -314,7 +314,7 @@ internal class DelegatedPropertyGenerator(
         val delegateType = getDelegatedPropertyDelegateType(variableDescriptor, ktDelegate)
         val delegateDescriptor = createLocalPropertyDelegatedDescriptor(variableDescriptor, delegateType, kPropertyType)
 
-        return context.symbolTable.declareVariable(
+        return context.symbolTable.descriptorExtension.declareVariable(
             ktDelegate.startOffsetSkippingComments, ktDelegate.endOffset, IrDeclarationOrigin.PROPERTY_DELEGATE,
             delegateDescriptor, delegateDescriptor.type.toIrType()
         ).also { irVariable ->

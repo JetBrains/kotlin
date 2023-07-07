@@ -48,7 +48,7 @@ internal class StandaloneDeclarationGenerator(private val context: GeneratorCont
         from: List<TypeParameterDescriptor>
     ) {
         generateTypeParameterDeclarations(irTypeParametersOwner, from) { startOffset, endOffset, typeParameterDescriptor ->
-            symbolTable.declareScopedTypeParameter(startOffset, endOffset, IrDeclarationOrigin.DEFINED, typeParameterDescriptor)
+            symbolTable.descriptorExtension.declareScopedTypeParameter(startOffset, endOffset, IrDeclarationOrigin.DEFINED, typeParameterDescriptor)
         }
     }
 
@@ -90,7 +90,7 @@ internal class StandaloneDeclarationGenerator(private val context: GeneratorCont
                 it.toIrType()
             }
 
-            irClass.thisReceiver = context.symbolTable.declareValueParameter(
+            irClass.thisReceiver = context.symbolTable.descriptorExtension.declareValueParameter(
                 startOffset, endOffset,
                 IrDeclarationOrigin.INSTANCE_RECEIVER,
                 descriptor.thisAsReceiverParameter,
@@ -134,7 +134,7 @@ internal class StandaloneDeclarationGenerator(private val context: GeneratorCont
     }
 
     protected fun declareParameter(descriptor: ParameterDescriptor, ktElement: KtPureElement?, irOwnerElement: IrElement): IrValueParameter {
-        return symbolTable.declareValueParameter(
+        return symbolTable.descriptorExtension.declareValueParameter(
             ktElement?.pureStartOffset ?: irOwnerElement.startOffset,
             ktElement?.pureEndOffset ?: irOwnerElement.endOffset,
             IrDeclarationOrigin.DEFINED,

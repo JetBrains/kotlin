@@ -141,9 +141,7 @@ abstract class DeclarationStubGenerator(
         }
 
         val origin = computeOrigin(descriptor)
-        return symbolTable.declareProperty(
-            UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, descriptor.original, descriptor.isDelegated
-        ) {
+        return symbolTable.descriptorExtension.declareProperty(descriptor.original) {
             IrLazyProperty(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin,
                 it, descriptor,
@@ -294,7 +292,7 @@ abstract class DeclarationStubGenerator(
             return referenced.owner
         }
         val origin = computeOrigin(descriptor)
-        return symbolTable.declareEnumEntry(UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, descriptor) {
+        return symbolTable.declareEnumEntry(descriptor) {
             IrLazyEnumEntryImpl(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin,
                 it, descriptor,
@@ -309,7 +307,7 @@ abstract class DeclarationStubGenerator(
             return referenced.owner
         }
         val origin = computeOrigin(descriptor)
-        return symbolTable.declareGlobalTypeParameter(UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, descriptor) {
+        return symbolTable.descriptorExtension.declareGlobalTypeParameter(descriptor) {
             IrLazyTypeParameter(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin,
                 it, descriptor,

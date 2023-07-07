@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageLogger
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.IrMessageLogger
 import org.jetbrains.kotlin.ir.util.SymbolTable
-import org.jetbrains.kotlin.ir.util.allUnbound
 
 fun createPartialLinkageSupportForLinker(
     partialLinkageConfig: PartialLinkageConfig,
@@ -73,7 +72,7 @@ internal class PartialLinkageSupportForLinkerImpl(
 
     private fun generateStubsAndPatchUsagesInternal(symbolTable: SymbolTable, patchIrTree: () -> Unit) {
         // Generate stubs.
-        for (symbol in symbolTable.allUnbound) {
+        for (symbol in symbolTable.descriptorExtension.allUnboundSymbols) {
             stubGenerator.getDeclaration(symbol)
         }
 

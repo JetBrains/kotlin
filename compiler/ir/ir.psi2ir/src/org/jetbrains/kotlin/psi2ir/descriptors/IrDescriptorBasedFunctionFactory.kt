@@ -200,7 +200,7 @@ class IrDescriptorBasedFunctionFactory(
 
             override fun typeParameterDescriptor(index: Int, factory: (IrTypeParameterSymbol) -> IrTypeParameter): IrTypeParameterSymbol {
                 val descriptor = classDescriptor.declaredTypeParameters[index]
-                return symbolTable.declareGlobalTypeParameter(offset, offset, classOrigin, descriptor, factory).symbol
+                return symbolTable.descriptorExtension.declareGlobalTypeParameter(descriptor, factory).symbol
             }
 
             override fun classReceiverParameterDescriptor(): ReceiverParameterDescriptor {
@@ -444,7 +444,7 @@ class IrDescriptorBasedFunctionFactory(
         }
 
         fun createFakeOverrideProperty(descriptor: PropertyDescriptor): IrProperty {
-            return symbolTable.declareProperty(offset, offset, memberOrigin, descriptor) {
+            return symbolTable.declareProperty(descriptor) {
                 irFactory.createProperty(
                     startOffset = offset,
                     endOffset = offset,

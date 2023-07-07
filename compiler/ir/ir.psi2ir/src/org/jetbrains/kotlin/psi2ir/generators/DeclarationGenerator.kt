@@ -144,7 +144,7 @@ class DeclarationGenerator(override val context: GeneratorContext) : Generator {
         from: List<TypeParameterDescriptor>
     ) {
         generateTypeParameterDeclarations(irTypeParametersOwner, from) { startOffset, endOffset, typeParameterDescriptor ->
-            context.symbolTable.declareScopedTypeParameter(
+            context.symbolTable.descriptorExtension.declareScopedTypeParameter(
                 startOffset,
                 endOffset,
                 IrDeclarationOrigin.DEFINED,

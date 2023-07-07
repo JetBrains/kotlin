@@ -82,7 +82,7 @@ internal class ClassGenerator(
                 it.toIrType()
             }
 
-            irClass.thisReceiver = context.symbolTable.declareValueParameter(
+            irClass.thisReceiver = context.symbolTable.descriptorExtension.declareValueParameter(
                 startOffset, endOffset,
                 IrDeclarationOrigin.INSTANCE_RECEIVER,
                 classDescriptor.thisAsReceiverParameter,

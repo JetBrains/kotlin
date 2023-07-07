@@ -579,7 +579,7 @@ internal class ReflectionReferencesGenerator(statementGenerator: StatementGenera
             } else null
             if (!symbol.isBound) {
                 val offset = UNDEFINED_OFFSET
-                context.symbolTable.declareProperty(offset, offset, IrDeclarationOrigin.SYNTHETIC_JAVA_PROPERTY_DELEGATE, descriptor) {
+                context.symbolTable.descriptorExtension.declareProperty(descriptor) {
                     context.irFactory.createProperty(
                         startOffset = offset,
                         endOffset = offset,

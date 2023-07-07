@@ -39,7 +39,7 @@ internal class TryCatchExpressionGenerator(statementGenerator: StatementGenerato
 
             val irCatch = IrCatchImpl(
                 ktCatchClause.startOffsetSkippingComments, ktCatchClause.endOffset,
-                context.symbolTable.declareVariable(
+                context.symbolTable.descriptorExtension.declareVariable(
                     ktCatchParameter.startOffsetSkippingComments, ktCatchParameter.endOffset,
                     IrDeclarationOrigin.CATCH_PARAMETER,
                     catchParameterDescriptor, catchParameterDescriptor.type.toIrType()

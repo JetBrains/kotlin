@@ -96,7 +96,7 @@ internal class CEnumClassGenerator(
                 ?: error("No `value` property in ${irClass.name}")
         val irProperty = createProperty(propertyDescriptor)
         symbolTable.withScope(irProperty) {
-            irProperty.backingField = symbolTable.declareField(
+            irProperty.backingField = symbolTable.descriptorExtension.declareField(
                     SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, IrDeclarationOrigin.PROPERTY_BACKING_FIELD,
                     propertyDescriptor, propertyDescriptor.type.toIrType(), DescriptorVisibilities.PRIVATE
             ).also {

@@ -434,7 +434,7 @@ internal class FunctionGenerator(declarationGenerator: DeclarationGenerator) : D
                 origin = IrDeclarationOrigin.DESTRUCTURED_OBJECT_PARAMETER
             }
         }
-        return context.symbolTable.declareValueParameter(
+        return context.symbolTable.descriptorExtension.declareValueParameter(
             ktElement?.pureStartOffset ?: irOwnerElement.startOffset,
             ktElement?.pureEndOffset ?: irOwnerElement.endOffset,
             origin,

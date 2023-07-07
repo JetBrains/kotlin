@@ -158,7 +158,7 @@ internal class PropertyGenerator(declarationGenerator: DeclarationGenerator) : D
         propertyDescriptor: PropertyDescriptor,
         generateInitializer: (IrField) -> IrExpressionBody?
     ): IrField =
-        context.symbolTable.declareField(
+        context.symbolTable.descriptorExtension.declareField(
             ktPropertyElement.startOffsetSkippingComments, ktPropertyElement.endOffset,
             IrDeclarationOrigin.PROPERTY_BACKING_FIELD,
             propertyDescriptor, propertyDescriptor.type.toIrType(),

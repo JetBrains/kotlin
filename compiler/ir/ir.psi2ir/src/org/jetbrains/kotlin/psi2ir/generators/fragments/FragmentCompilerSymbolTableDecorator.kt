@@ -51,6 +51,7 @@ class FragmentCompilerSymbolTableDecorator(
         return super.referenceValueParameter(descriptor)
     }
 
+
     override fun referenceValue(value: ValueDescriptor): IrValueSymbol {
         val fi = fragmentInfo ?: return super.referenceValue(value)
 

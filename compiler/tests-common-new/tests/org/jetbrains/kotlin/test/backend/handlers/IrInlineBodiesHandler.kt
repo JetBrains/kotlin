@@ -7,12 +7,12 @@ package org.jetbrains.kotlin.test.backend.handlers
 
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrExternalPackageFragment
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.lazy.AbstractIrLazyFunction
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.util.DeserializableClass
 import org.jetbrains.kotlin.ir.util.IdSignature
-import org.jetbrains.kotlin.ir.util.allUnbound
 import org.jetbrains.kotlin.ir.util.resolveFakeOverride
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -24,13 +24,14 @@ import org.jetbrains.kotlin.test.services.TestServices
 class IrInlineBodiesHandler(testServices: TestServices) : AbstractIrHandler(testServices) {
     val declaredInlineFunctionSignatures = mutableSetOf<IdSignature>()
 
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
     override fun processModule(module: TestModule, info: IrBackendInput) {
         info.processAllIrModuleFragments(module) { irModule, _ ->
             irModule.acceptChildrenVoid(InlineFunctionsCollector())
             irModule.acceptChildrenVoid(InlineCallBodiesCheck(firEnabled = module.frontendKind == FrontendKinds.FIR))
         }
 
-        assertions.assertTrue((info as IrBackendInput.JvmIrBackendInput).backendInput.symbolTable.allUnbound.isEmpty())
+        assertions.assertTrue((info as IrBackendInput.JvmIrBackendInput).backendInput.symbolTable.descriptorExtension.allUnboundSymbols.isEmpty())
     }
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {

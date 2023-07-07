@@ -148,7 +148,7 @@ internal class CStructVarClassGenerator(
 
         val managedValType = managedVal.getter!!.returnType
 
-        managedVal.backingField = symbolTable.declareField(
+        managedVal.backingField = symbolTable.descriptorExtension.declareField(
                 SYNTHETIC_OFFSET,
                 SYNTHETIC_OFFSET,
                 IrDeclarationOrigin.PROPERTY_BACKING_FIELD,

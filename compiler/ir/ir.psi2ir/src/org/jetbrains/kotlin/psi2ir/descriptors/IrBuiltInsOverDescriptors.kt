@@ -85,7 +85,9 @@ class IrBuiltInsOverDescriptors(
     override val operatorsPackageFragment: IrExternalPackageFragment =
         IrExternalPackageFragmentImpl(symbolTable.referenceExternalPackageFragment(packageFragmentDescriptor), KOTLIN_INTERNAL_IR_FQN)
 
-    private fun ClassDescriptor.toIrSymbol() = symbolTable.referenceClass(this)
+    private fun ClassDescriptor.toIrSymbol(): IrClassSymbol {
+        return symbolTable.referenceClass(this)
+    }
     private fun KotlinType.toIrType() = typeTranslator.translateType(this)
 
     private fun defineOperator(

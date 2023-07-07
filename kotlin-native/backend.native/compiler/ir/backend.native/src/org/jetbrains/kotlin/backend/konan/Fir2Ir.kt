@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.fir.pipeline.convertToIrAndActualize
 import org.jetbrains.kotlin.fir.signaturer.Ir2FirManglerAdapter
 import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrExternalPackageFragment
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
@@ -103,8 +104,9 @@ internal fun PhaseContext.fir2Ir(
         "`${irModuleFragment.name}` must be Name.special, since it's required by KlibMetadataModuleDescriptorFactoryImpl.createDescriptorOptionalBuiltIns()"
     }
 
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
     val usedPackages = buildSet {
-        components.symbolTable.forEachDeclarationSymbol {
+        components.symbolTable.descriptorExtension.forEachDeclarationSymbol {
             val p = it.owner as? IrDeclaration ?: return@forEachDeclarationSymbol
             val fragment = (p.getPackageFragment() as? IrExternalPackageFragment) ?: return@forEachDeclarationSymbol
             add(fragment.packageFqName)

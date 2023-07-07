@@ -42,7 +42,7 @@ open class FragmentDeclarationGenerator(
                 Modality.FINAL
             )
         }.buildWithScope { irClass ->
-            irClass.thisReceiver = context.symbolTable.declareValueParameter(
+            irClass.thisReceiver = context.symbolTable.descriptorExtension.declareValueParameter(
                 startOffset, endOffset,
                 IrDeclarationOrigin.INSTANCE_RECEIVER,
                 classDescriptor.thisAsReceiverParameter,
@@ -128,14 +128,14 @@ open class FragmentDeclarationGenerator(
         // of IR generation. The replacement is delayed because the JVM
         // specific infrastructure (i.e. "SharedVariableContext") is not yet
         // instantiated: PSI2IR is kept backend agnostic.
-        return context.symbolTable.declareValueParameter(
+        return context.symbolTable.descriptorExtension.declareValueParameter(
             UNDEFINED_OFFSET,
             UNDEFINED_OFFSET,
             if (shouldPromoteToSharedVariable(parameterInfo)) IrDeclarationOrigin.SHARED_VARIABLE_IN_EVALUATOR_FRAGMENT else IrDeclarationOrigin.DEFINED,
             descriptor,
             descriptor.type.toIrType(),
             descriptor.varargElementType?.toIrType(),
-            null,
+            name = null,
             isAssignable = parameterInfo.isLValue
         )
     }

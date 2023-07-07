@@ -371,7 +371,7 @@ internal class BuiltInFictitiousFunctionIrClassFactory(
                         isExpect = descriptor.isExpect,
                         isFakeOverride = true)
             }
-            val property = symbolTable.declareProperty(offset, offset, memberOrigin, descriptor, propertyFactory = propertyDeclare)
+            val property = symbolTable.declareProperty(descriptor, propertyFactory = propertyDeclare)
 
             property.parent = this
             property.getter = descriptor.getter?.let { g -> createFakeOverrideFunction(g, property.symbol) }

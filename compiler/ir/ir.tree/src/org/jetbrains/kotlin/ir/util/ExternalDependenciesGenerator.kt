@@ -15,6 +15,7 @@
  */
 package org.jetbrains.kotlin.ir.util
 
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.linkage.IrProvider
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 
@@ -22,6 +23,7 @@ class ExternalDependenciesGenerator(
     private val symbolTable: SymbolTable,
     private val irProviders: List<IrProvider>
 ) {
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
     fun generateUnboundSymbolsAsDependencies() {
         // There should be at most one DeclarationStubGenerator (none in closed world?)
         irProviders.filterIsInstance<DeclarationStubGenerator>().singleOrNull()?.run { unboundSymbolGeneration = true }
@@ -30,7 +32,7 @@ class ExternalDependenciesGenerator(
         var unbound = emptySet<IrSymbol>()
         do {
             val prevUnbound = unbound
-            unbound = symbolTable.allUnbound
+            unbound = symbolTable.descriptorExtension.allUnboundSymbols
             for (symbol in unbound) {
                 // Symbol could get bound as a side effect of deserializing other symbols.
                 if (!symbol.isBound) {
