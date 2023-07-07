@@ -7,6 +7,7 @@ plugins {
     id("jps-compatible")
 }
 
+// TODO: Clean me up
 dependencies {
     compileOnly(project(":compiler:frontend.java"))
     compileOnly(project(":compiler:plugin-api"))
@@ -21,11 +22,11 @@ dependencies {
 //    api(project(":compiler:frontend.java"))
 //    api(project(":compiler:plugin-api"))
 //
-//    implementation(project(":analysis:analysis-api-standalone"))
-//    embedded(project(":analysis:analysis-api-standalone")) {
-//        exclude("org.jetbrains.kotlin", "kotlin-stdlib")
-//        exclude("org.jetbrains.kotlin", "kotlin-stdlib-common")
-//    }
+    implementation(project(":analysis:analysis-api-standalone"))
+    embedded(project(":analysis:analysis-api-standalone")) {
+        exclude("org.jetbrains.kotlin", "kotlin-stdlib")
+        exclude("org.jetbrains.kotlin", "kotlin-stdlib-common")
+    }
 //
 //    implementation(project(":kotlin-annotation-processing-compiler"))
 //    embedded(project(":kotlin-annotation-processing-compiler")) {
@@ -35,26 +36,26 @@ dependencies {
 //
 //    implementation(project(":compiler:backend.jvm.entrypoint"))
 //
-//    compileOnly(toolsJarApi())
+    compileOnly(toolsJarApi())
 //    compileOnly(intellijCore())
 //    compileOnly(commonDependency("org.jetbrains.intellij.deps:asm-all"))
 //
 //    testImplementation(intellijCore())
 //    testRuntimeOnly(intellijResources()) { isTransitive = false }
 //
-//    testApiJUnit5()
+    testApiJUnit5()
 //    testApi(projectTests(":compiler:tests-common-new"))
 //    testApi(projectTests(":compiler:test-infrastructure"))
 //    testApi(projectTests(":compiler:test-infrastructure-utils"))
-//    testApi(projectTests(":kotlin-annotation-processing-compiler"))
-//    testImplementation(projectTests(":kotlin-annotation-processing-cli"))
-//
+    testApi(projectTests(":kotlin-annotation-processing-compiler"))
+    testImplementation(projectTests(":kotlin-annotation-processing-cli"))
+
 //    testApi(projectTests(":kotlin-annotation-processing-base"))
 //
-//    testCompileOnly(toolsJarApi())
-//    testRuntimeOnly(toolsJar())
-//    testRuntimeOnly(commonDependency("org.codehaus.woodstox:stax2-api"))
-//    testRuntimeOnly(commonDependency("com.fasterxml:aalto-xml"))
+    testCompileOnly(toolsJarApi())
+    testRuntimeOnly(toolsJar())
+    testRuntimeOnly(commonDependency("org.codehaus.woodstox:stax2-api"))
+    testRuntimeOnly(commonDependency("com.fasterxml:aalto-xml"))
 }
 
 optInToExperimentalCompilerApi()
