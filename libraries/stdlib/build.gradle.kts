@@ -479,7 +479,7 @@ tasks {
         dependsOn(configurationBuiltins)
         duplicatesStrategy = DuplicatesStrategy.FAIL
         archiveAppendix.set(null as String?)
-        callGroovy("manifestAttributes", manifest, project, "Main", true)
+        manifestAttributes(manifest, "Main", multiRelease = true)
         manifest.attributes(mapOf("Implementation-Title" to "kotlin-stdlib"))
         from { zipTree(configurationBuiltins.singleFile) }
         from(kotlin.jvm().compilations["mainJdk7"].output.allOutputs)
@@ -615,7 +615,7 @@ tasks {
 
         includeEmptyDirs = false
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-        callGroovy("manifestAttributes", manifest, project, "Main")
+        manifestAttributes(manifest, "Main", multiRelease = true)
         manifest.attributes(mapOf("Implementation-Title" to "kotlin-stdlib-js"))
         from(jsOutputFileName)
         from(jsOutputMetaFileName)
