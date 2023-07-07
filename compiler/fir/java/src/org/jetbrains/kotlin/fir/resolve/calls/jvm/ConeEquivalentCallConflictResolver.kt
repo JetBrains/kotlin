@@ -77,6 +77,15 @@ class ConeEquivalentCallConflictResolver(
                 compareCallsByUsedArguments(secondSignature, firstSignature, discriminateGenerics = false, useOriginalSamTypes = false)
     }
 
+    /**
+     * If the candidate is a function, then the arguments
+     * order representation is an array containing the
+     * parameters count and the indices of the parameters
+     * that the call arguments correspond to in the order
+     * the call arguments happen to be.
+     *
+     * Otherwise, null.
+     */
     private val Candidate.mappedArgumentsOrderRepresentation: IntArray?
         get() {
             val function = symbol.fir as? FirFunction ?: return null
