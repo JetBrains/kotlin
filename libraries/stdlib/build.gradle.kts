@@ -172,8 +172,7 @@ kotlin {
                     }
                 }
             }
-            project.sourceSets.create("longRunningTest")
-            val longRunningTest by getting {
+            val longRunningTest by creating {
                 defaultSourceSet {
                     dependencies {
                         implementation(main.output.allOutputs)
