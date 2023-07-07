@@ -151,7 +151,7 @@ kotlin {
                 main.output.allOutputs,
                 mainJdk7.output.allOutputs,
                 mainJdk8.output.allOutputs,
-            ))
+            ), main.configurations.compileDependencyConfiguration)
             val test by getting {
                 compileTaskProvider.configure {
                     kotlinOptions {
