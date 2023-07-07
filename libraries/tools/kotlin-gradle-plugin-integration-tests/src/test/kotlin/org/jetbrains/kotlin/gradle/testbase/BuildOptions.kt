@@ -93,6 +93,7 @@ data class BuildOptions(
         val useXcodeMessageStyle: Boolean? = null,
         val version: String? = null,
         val cacheOrchestration: String? = null,
+        val incremental: Boolean? = null,
     )
 
     fun toArguments(
@@ -262,6 +263,9 @@ data class BuildOptions(
         }
         nativeOptions.cacheOrchestration?.let {
             arguments.add("-Pkotlin.native.cacheOrchestration=${it}")
+        }
+        nativeOptions.incremental?.let {
+            arguments.add("-Pkotlin.incremental.native=${it}")
         }
 
     }

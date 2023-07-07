@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlin.gradle.testbase
 
+import org.jetbrains.kotlin.gradle.dsl.NativeCacheKind
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.presetName
+import java.nio.file.Path
 import java.util.*
 
 val DEFAULT_CURRENT_PLATFORM_TARGET_NAME_POSTFIX = HostManager.host.presetName.lowercase(Locale.getDefault())
@@ -89,3 +91,32 @@ internal object MPPNativeTargets {
 
     val supported = listOf("linux64", "macos64", "mingw64").filter { !unsupported.contains(it) }
 }
+
+fun computeCacheDirName(
+    testTarget: KonanTarget,
+    cacheKind: String,
+    debuggable: Boolean,
+    partialLinkageEnabled: Boolean
+) = "$testTarget${if (debuggable) "-g" else ""}$cacheKind${if (partialLinkageEnabled) "-pl" else ""}"
+
+fun TestProject.getFileCache(fileProjectName: String, fileRelativePath: String, fqName: String) =
+    getFileCache("", fileProjectName, fileRelativePath, fqName)
+
+fun TestProject.getFileCache(
+    executableProjectName: String,
+    fileProjectName: String,
+    fileRelativePath: String,
+    fqName: String,
+): Path {
+    val cacheFlavor = computeCacheDirName(HostManager.host, NativeCacheKind.STATIC.name, true, true)
+    val libCacheDir = getICCacheDir(executableProjectName).resolve(cacheFlavor).resolve("$fileProjectName-per-file-cache")
+    val fileId = cacheFileId(fqName, projectPath.resolve(fileRelativePath).toFile().canonicalPath)
+    return libCacheDir.resolve(fileId)
+}
+
+private fun TestProject.getICCacheDir(projectName: String = "") =
+    (if (projectName == "") projectPath else projectPath.resolve(projectName))
+        .resolve("build/kotlin-native-ic-cache")
+
+private fun cacheFileId(fqName: String, filePath: String) =
+    "${if (fqName == "") "ROOT" else fqName}.${filePath.hashCode().toString(Character.MAX_RADIX)}"
