@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveT
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirWholeFileResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.asResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.throwUnexpectedFirElementError
+import org.jetbrains.kotlin.analysis.low.level.api.fir.compile.codeFragmentScopeProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLocalContainingOrThisDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.llFirModuleData
@@ -166,6 +167,11 @@ private class LLFirBodyTargetResolver(
         val module = firCodeFragment.llFirModuleData.ktModule
         val resolveSession = module.getFirResolveSession(ktCodeFragment.project) as LLFirResolvableResolveSession
 
+        fun FirTowerDataContext.withExtraScopes(): FirTowerDataContext {
+            return resolveSession.useSiteFirSession.codeFragmentScopeProvider.getExtraScopes(ktCodeFragment)
+                .fold(this) { context, scope -> context.addLocalScope(scope) }
+        }
+
         val contextPsiElement = ktCodeFragment.context
         val contextKtFile = contextPsiElement?.containingFile as? KtFile
 
@@ -186,9 +192,9 @@ private class LLFirBodyTargetResolver(
             val elementContext = contextProvider[contextPsiElement, ContextCollector.ContextKind.BODY]
                 ?: contextParentKtElements.firstNotNullOf { contextProvider[it, ContextCollector.ContextKind.SELF] }
 
-            LLFirCodeFragmentContext(elementContext.towerDataContext, elementContext.smartCasts)
+            LLFirCodeFragmentContext(elementContext.towerDataContext.withExtraScopes(), elementContext.smartCasts)
         } else {
-            val towerDataContext = FirTowerDataContext()
+            val towerDataContext = FirTowerDataContext().withExtraScopes()
             LLFirCodeFragmentContext(towerDataContext, emptyMap())
         }
     }
