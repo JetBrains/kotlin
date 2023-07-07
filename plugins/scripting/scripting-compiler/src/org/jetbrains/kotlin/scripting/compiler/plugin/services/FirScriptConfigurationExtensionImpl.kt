@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.scripting.compiler.plugin.services
 
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.descriptors.Modality
@@ -49,94 +50,102 @@ class FirScriptConfiguratorExtensionImpl(
     override fun FirScriptBuilder.configure(fileBuilder: FirFileBuilder) {
         val sourceFile = fileBuilder.sourceFile ?: return
 
-        withConfigurationIfAny(sourceFile) { configuration ->
-            // TODO: rewrite/extract decision logic for clarity
-            configuration[ScriptCompilationConfiguration.baseClass]?.let { baseClass ->
-                val baseClassFqn = FqName.fromSegments(baseClass.typeName.split("."))
-                contextReceivers.add(buildContextReceiverWithFqName(baseClassFqn, Name.special(SCRIPT_SPECIAL_NAME_STRING)))
+        val configuration = getOrLoadConfiguration(sourceFile)
+        check(configuration != null) { "Configuration for ${sourceFile.asString()} wasn't found" }
 
-                val baseClassSymbol =
-                    session.dependenciesSymbolProvider.getClassLikeSymbolByClassId(ClassId(baseClassFqn.parent(), baseClassFqn.shortName()))
-                            as? FirRegularClassSymbol
-                if (baseClassSymbol != null) {
-                    // assuming that if base class will be unresolved, the error will be reported on the contextReceiver
-                    baseClassSymbol.fir.primaryConstructorIfAny(session)?.fir?.valueParameters?.forEach { baseCtorParameter ->
-                        parameters.add(
-                            buildProperty {
-                                moduleData = session.moduleData
-                                origin = FirDeclarationOrigin.ScriptCustomization
-                                // TODO: copy type parameters?
-                                returnTypeRef = baseCtorParameter.returnTypeRef
-                                name = baseCtorParameter.name
-                                symbol = FirPropertySymbol(name)
-                                status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
-                                isLocal = true
-                                isVar = false
-                            }
-                        )
-                    }
+        // TODO: rewrite/extract decision logic for clarity
+        configuration[ScriptCompilationConfiguration.baseClass]?.let { baseClass ->
+            val baseClassFqn = FqName.fromSegments(baseClass.typeName.split("."))
+            contextReceivers.add(buildContextReceiverWithFqName(baseClassFqn, Name.special(SCRIPT_SPECIAL_NAME_STRING)))
+
+            val baseClassSymbol =
+                session.dependenciesSymbolProvider.getClassLikeSymbolByClassId(ClassId(baseClassFqn.parent(), baseClassFqn.shortName()))
+                        as? FirRegularClassSymbol
+            if (baseClassSymbol != null) {
+                // assuming that if base class will be unresolved, the error will be reported on the contextReceiver
+                baseClassSymbol.fir.primaryConstructorIfAny(session)?.fir?.valueParameters?.forEach { baseCtorParameter ->
+                    parameters.add(
+                        buildProperty {
+                            moduleData = session.moduleData
+                            origin = FirDeclarationOrigin.ScriptCustomization
+                            // TODO: copy type parameters?
+                            returnTypeRef = baseCtorParameter.returnTypeRef
+                            name = baseCtorParameter.name
+                            symbol = FirPropertySymbol(name)
+                            status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
+                            isLocal = true
+                            isVar = false
+                        }
+                    )
                 }
             }
-            configuration[ScriptCompilationConfiguration.implicitReceivers]?.forEach { implicitReceiver ->
-                contextReceivers.add(buildContextReceiverWithFqName(FqName.fromSegments(implicitReceiver.typeName.split("."))))
-            }
-            configuration[ScriptCompilationConfiguration.providedProperties]?.forEach { propertyName, propertyType ->
-                val typeRef = buildUserTypeRef {
-                    isMarkedNullable = propertyType.isNullable
-                    propertyType.typeName.split(".").forEach {
-                        qualifier.add(FirQualifierPartImpl(null, Name.identifier(it), FirTypeArgumentListImpl(null)))
-                    }
-                }
-                parameters.add(
-                    buildProperty {
-                        moduleData = session.moduleData
-                        origin = FirDeclarationOrigin.ScriptCustomization
-                        returnTypeRef = typeRef
-                        name = Name.identifier(propertyName)
-                        symbol = FirPropertySymbol(name)
-                        status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
-                        isLocal = true
-                        isVar = false
-                    }
-                )
-            }
-            configuration[ScriptCompilationConfiguration.annotationsForSamWithReceivers]?.forEach {
-                _knownAnnotationsForSamWithReceiver.add(it.typeName)
-            }
-
-            configuration[ScriptCompilationConfiguration.defaultImports]?.forEach { defaultImport ->
-                val trimmed = defaultImport.trim()
-                val endsWithStar = trimmed.endsWith("*")
-                val stripped = if (endsWithStar) trimmed.substring(0, trimmed.length - 2) else trimmed
-                val fqName = FqName.fromSegments(stripped.split("."))
-                fileBuilder.imports += buildImport {
-                    fileBuilder.sourceFile?.project()?.let {
-                        val dummyElement = KtPsiFactory(it, markGenerated = true).createColon()
-                        source = KtFakeSourceElement(dummyElement, KtFakeSourceElementKind.ImplicitImport)
-                    }
-                    importedFqName = fqName
-                    isAllUnder = endsWithStar
+        }
+        configuration[ScriptCompilationConfiguration.implicitReceivers]?.forEach { implicitReceiver ->
+            contextReceivers.add(buildContextReceiverWithFqName(FqName.fromSegments(implicitReceiver.typeName.split("."))))
+        }
+        configuration[ScriptCompilationConfiguration.providedProperties]?.forEach { propertyName, propertyType ->
+            val typeRef = buildUserTypeRef {
+                isMarkedNullable = propertyType.isNullable
+                propertyType.typeName.split(".").forEach {
+                    qualifier.add(FirQualifierPartImpl(null, Name.identifier(it), FirTypeArgumentListImpl(null)))
                 }
             }
+            parameters.add(
+                buildProperty {
+                    moduleData = session.moduleData
+                    origin = FirDeclarationOrigin.ScriptCustomization
+                    returnTypeRef = typeRef
+                    name = Name.identifier(propertyName)
+                    symbol = FirPropertySymbol(name)
+                    status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
+                    isLocal = true
+                    isVar = false
+                }
+            )
+        }
+        configuration[ScriptCompilationConfiguration.annotationsForSamWithReceivers]?.forEach {
+            _knownAnnotationsForSamWithReceiver.add(it.typeName)
+        }
 
-            configuration[ScriptCompilationConfiguration.annotationsForSamWithReceivers]?.forEach {
-                _knownAnnotationsForSamWithReceiver.add(it.typeName)
+        configuration[ScriptCompilationConfiguration.defaultImports]?.forEach { defaultImport ->
+            val trimmed = defaultImport.trim()
+            val endsWithStar = trimmed.endsWith("*")
+            val stripped = if (endsWithStar) trimmed.substring(0, trimmed.length - 2) else trimmed
+            val fqName = FqName.fromSegments(stripped.split("."))
+            fileBuilder.imports += buildImport {
+                fileBuilder.sourceFile?.project()?.let {
+                    val dummyElement = KtPsiFactory(it, markGenerated = true).createColon()
+                    source = KtFakeSourceElement(dummyElement, KtFakeSourceElementKind.ImplicitImport)
+                }
+                importedFqName = fqName
+                isAllUnder = endsWithStar
             }
+        }
+
+        configuration[ScriptCompilationConfiguration.annotationsForSamWithReceivers]?.forEach {
+            _knownAnnotationsForSamWithReceiver.add(it.typeName)
         }
     }
 
-    private fun withConfigurationIfAny(file: KtSourceFile, body: (ScriptCompilationConfiguration) -> Unit) {
-        val configuration = session.scriptDefinitionProviderService?.let { providerService ->
-            val sourceCode = file.toSourceCode()
-            val ktFile = sourceCode?.originalKtFile()
-            with(providerService) {
-                ktFile?.let { configurationFor(it) }
-                    ?: sourceCode?.let { configurationFor(it) }
-                    ?: defaultConfiguration()
-            }
-        }
+    private fun KtSourceFile.asString() = path ?: name
 
-        configuration?.let { body.invoke(it) }
+    private fun logConfiguration(file: KtSourceFile, config: ScriptCompilationConfiguration) {
+        log.debug(
+            "Using configuration: ${file.asString()} => " +
+                    "(${config[ScriptCompilationConfiguration.displayName]}, " +
+                    "ext=.${config[ScriptCompilationConfiguration.fileExtension]}, " +
+                    "pattern=${config[ScriptCompilationConfiguration.filePathPattern]})"
+        )
+    }
+
+    private fun getOrLoadConfiguration(file: KtSourceFile): ScriptCompilationConfiguration? {
+        val service = checkNotNull(session.scriptDefinitionProviderService)
+        val sourceCode = file.toSourceCode()
+        val ktFile = sourceCode?.originalKtFile()
+        return with(service) {
+            ktFile?.let { asKtFile -> configurationFor(asKtFile)?.also { logConfiguration(file, it) } }
+                ?: sourceCode?.let { asSourceCode -> configurationFor(asSourceCode)?.also { logConfiguration(file, it) } }
+        }
     }
 
     private fun buildContextReceiverWithFqName(classFqn: FqName, customName: Name? = null) =
@@ -160,6 +169,8 @@ class FirScriptConfiguratorExtensionImpl(
         get() = _knownAnnotationsForSamWithReceiver
 
     companion object {
+        private val log = Logger.getInstance(FirScriptConfiguratorExtensionImpl::class.java)
+
         fun getFactory(hostConfiguration: ScriptingHostConfiguration): Factory {
             return Factory { session -> FirScriptConfiguratorExtensionImpl(session, hostConfiguration) }
         }
@@ -177,9 +188,6 @@ private fun FirScriptDefinitionProviderService.configurationFor(file: KtFile): S
 
 private fun FirScriptDefinitionProviderService.configurationFor(sourceCode: SourceCode): ScriptCompilationConfiguration? =
     definitionProvider?.findDefinition(sourceCode)?.compilationConfiguration
-
-private fun FirScriptDefinitionProviderService.defaultConfiguration(): ScriptCompilationConfiguration? =
-    definitionProvider?.getDefaultDefinition()?.compilationConfiguration
 
 fun KtSourceFile.toSourceCode(): SourceCode? = when (this) {
     is KtPsiSourceFile -> (psiFile as? KtFile)?.let(::KtFileScriptSource) ?: VirtualFileScriptSource(psiFile.virtualFile)
