@@ -67,7 +67,7 @@ class WasmBoxRunner(
                 mjsFiles += AdditionalFile(it.name, it.readText())
             }
 
-        val debugMode = DebugMode.fromSystemProperty("kotlin.js.debugMode")
+        val debugMode = DebugMode.fromSystemProperty("kotlin.wasm.debugMode")
         val startUnitTests = RUN_UNIT_TESTS in testServices.moduleStructure.allDirectives
 
         val testJsQuiet = """
