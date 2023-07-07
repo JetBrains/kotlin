@@ -78,6 +78,7 @@ kotlin {
                 }
             }
 
+            project.sourceSets.create("main")
             val main by getting {
                 compileTaskProvider.configure {
                     this as UsesKotlinJavaToolchain
