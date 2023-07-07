@@ -10,6 +10,7 @@ package org.jetbrains.kotlin.gradle.unitTests
 import org.jetbrains.kotlin.gradle.idea.testFixtures.utils.deserialize
 import org.jetbrains.kotlin.gradle.idea.testFixtures.utils.serialize
 import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.CoroutineStart
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.IllegalLifecycleException
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.FinaliseDsl
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.ReadyForExecution
@@ -149,5 +150,18 @@ class FutureTest {
         assertFailsWith<IllegalLifecycleException> { mappedFuture.getOrThrow() }
         future.await()
         assertEquals(1, mappedFuture.getOrThrow())
+    }
+
+    @Test
+    fun `test - future is launched 'Undispatched' by default`() = project.runLifecycleAwareTest {
+        val future = project.future { }
+        future.getOrThrow()
+    }
+
+    @Test
+    fun `test - future with CoroutineStart 'Default'`() = project.runLifecycleAwareTest {
+        val future = project.future(CoroutineStart.Default) {}
+        assertFailsWith<IllegalLifecycleException> { future.getOrThrow() }
+        future.await()
     }
 }

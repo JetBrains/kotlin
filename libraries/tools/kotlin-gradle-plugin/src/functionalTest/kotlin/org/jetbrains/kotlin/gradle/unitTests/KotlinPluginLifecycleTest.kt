@@ -8,12 +8,10 @@
 package org.jetbrains.kotlin.gradle.unitTests
 
 import org.gradle.api.ProjectConfigurationException
-import org.gradle.internal.impldep.org.testng.TestException
 import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.IllegalLifecycleException
+import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.ProjectConfigurationResult.Failure
-import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.*
 import org.jetbrains.kotlin.gradle.util.applyMultiplatformPlugin
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
@@ -561,12 +559,133 @@ class KotlinPluginLifecycleTest {
     fun `test - runLifecycleAwareTest - in a project with lifecycle`() {
         val project = ProjectBuilder.builder().build()
         project.applyMultiplatformPlugin()
-        project.runLifecycleAwareTest{}
+        project.runLifecycleAwareTest {}
     }
 
     @Test
     fun `test - runLifecycleAwareTest - in a project without lifecycle`() {
         val project = ProjectBuilder.builder().build()
-        assertFailsWith<AssertionError> { project.runLifecycleAwareTest{} }
+        assertFailsWith<AssertionError> { project.runLifecycleAwareTest {} }
     }
+
+    @Test
+    fun `test - launch with CoroutineStart - Default`() = project.runLifecycleAwareTest {
+        val rootCoroutineExecuted = AtomicBoolean()
+        val coroutineAExecuted = AtomicBoolean()
+        val coroutineBExecuted = AtomicBoolean()
+
+        launch(CoroutineStart.Default) coroutineA@{
+            /*
+            This 'coroutine A' is launched using 'Default' which means that it will
+            be 'dispatched' by being placed at the back of the queue.
+
+            The currently executing 'root coroutine' therefore will finish.
+            Only if the previous queue is empty, this coroutine will start execution
+             */
+            assertTrue(
+                rootCoroutineExecuted.get(),
+                "Expected 'root coroutine' to have executed"
+            )
+
+
+            assertFalse(
+                coroutineBExecuted.get(),
+                "Expected 'coroutineA' being executed before 'coroutineB'"
+            )
+
+            assertFalse(coroutineAExecuted.getAndSet(true))
+        }
+
+        launch(CoroutineStart.Default) coroutineB@{
+            /*
+            See code comment above: This 'coroutineB' is put at the end of the current execution queue
+             */
+            assertTrue(
+                rootCoroutineExecuted.get(),
+                "Expected 'root coroutine' to have executed"
+            )
+            assertTrue(
+                coroutineAExecuted.get(),
+                "Expected 'coroutineA' being executed before 'coroutineB'"
+            )
+            assertFalse(coroutineBExecuted.getAndSet(true))
+        }
+
+        assertFalse(rootCoroutineExecuted.getAndSet(true))
+
+        assertFalse(
+            coroutineAExecuted.get(),
+            "Expected 'coroutineA' to not be executed yet"
+        )
+
+        assertFalse(
+            coroutineBExecuted.get(),
+            "Expected 'coroutineB' to not be executed yet"
+        )
+
+        launch(CoroutineStart.Default) {
+            assertTrue(
+                coroutineAExecuted.get(),
+                "Expected 'coroutineA' to be executed"
+            )
+
+            assertTrue(
+                coroutineBExecuted.get(),
+                "Expected 'coroutineB' to be executed"
+            )
+        }
+    }
+
+    @Test
+    fun `test - launch with CoroutineStart - Undispatched`() = project.runLifecycleAwareTest {
+        val rootCoroutineFinished = AtomicBoolean()
+        val coroutineAExecuted = AtomicBoolean()
+        val coroutineBExecuted = AtomicBoolean()
+
+        launch(CoroutineStart.Undispatched) coroutineA@{
+            /*
+            Undispatched will start executing the coroutine 'inline' and will
+            only suspend once the first 'suspension' point is hit.
+            This means, that at this point, the 'root coroutine' had no chance to finsih yet.
+             */
+            assertFalse(
+                rootCoroutineFinished.get(),
+                "Expected 'root coroutine' to not have finished yet"
+            )
+
+
+            assertFalse(
+                coroutineBExecuted.get(),
+                "Expected 'coroutineA' to be executed before 'coroutineB'"
+            )
+
+            assertFalse(coroutineAExecuted.getAndSet(true))
+        }
+
+        assertTrue(
+            coroutineAExecuted.get(),
+            "Expected 'coroutineA' to be executed 'inline'"
+        )
+
+        launch(CoroutineStart.Undispatched) coroutineB@{
+            /*
+            See comment in coroutineA
+             */
+            assertFalse(
+                rootCoroutineFinished.get(),
+                "Expected 'root coroutine' to not have finished yet"
+            )
+
+            assertTrue(
+                coroutineAExecuted.get(),
+                "Expected 'coroutineA' to be executed before 'coroutineB'"
+            )
+            assertFalse(coroutineBExecuted.getAndSet(true))
+        }
+
+        assertFalse(rootCoroutineFinished.getAndSet(true))
+        assertTrue(coroutineAExecuted.get())
+        assertTrue(coroutineBExecuted.get())
+    }
+
 }

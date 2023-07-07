@@ -58,8 +58,11 @@ Util functions
  *
  * If the lifecycle already finished and Gradle moved to its execution phase, then the block will be invoked right away.
  */
-internal fun Project.launch(block: suspend KotlinPluginLifecycle.() -> Unit) {
-    kotlinPluginLifecycle.launch(block)
+internal fun Project.launch(
+    start: CoroutineStart = CoroutineStart.Default,
+    block: suspend KotlinPluginLifecycle.() -> Unit,
+) {
+    kotlinPluginLifecycle.launch(start, block)
 }
 
 /**
@@ -289,6 +292,18 @@ internal interface KotlinPluginLifecycle {
         }
     }
 
+    enum class CoroutineStart {
+        /**
+         * Puts a coroutine at the end of the current execution queue
+         */
+        Default,
+
+        /**
+         * Immediately executes the coroutine until its first suspension point in the current thread
+         */
+        Undispatched
+    }
+
     sealed class ProjectConfigurationResult {
         object Success : ProjectConfigurationResult()
         data class Failure(val failures: List<Throwable>) : ProjectConfigurationResult()
@@ -302,7 +317,10 @@ internal interface KotlinPluginLifecycle {
 
     val isFinished: Boolean
 
-    fun launch(block: suspend KotlinPluginLifecycle.() -> Unit)
+    fun launch(
+        start: CoroutineStart = CoroutineStart.Default,
+        block: suspend KotlinPluginLifecycle.() -> Unit,
+    )
 
     suspend fun await(stage: Stage)
 

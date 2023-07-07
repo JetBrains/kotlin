@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.api.Project
+import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.CoroutineStart.Default
+import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.CoroutineStart.Undispatched
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.ProjectConfigurationResult
 import org.jetbrains.kotlin.gradle.utils.CompletableFuture
 import org.jetbrains.kotlin.gradle.utils.failures
@@ -151,7 +153,10 @@ internal class KotlinPluginLifecycleImpl(override val project: Project) : Kotlin
         }
     }
 
-    override fun launch(block: suspend KotlinPluginLifecycle.() -> Unit) {
+    override fun launch(
+        start: KotlinPluginLifecycle.CoroutineStart,
+        block: suspend KotlinPluginLifecycle.() -> Unit,
+    ) {
         val lifecycle = this
 
         val coroutine = block.createCoroutine(this, object : Continuation<Unit> {
@@ -161,8 +166,9 @@ internal class KotlinPluginLifecycleImpl(override val project: Project) : Kotlin
             override fun resumeWith(result: Result<Unit>) = result.getOrThrow()
         })
 
-        enqueue(stage) {
-            coroutine.resume(Unit)
+        when (start) {
+            Default -> enqueue(stage) { coroutine.resume(Unit) }
+            Undispatched -> coroutine.resume(Unit)
         }
     }
 
