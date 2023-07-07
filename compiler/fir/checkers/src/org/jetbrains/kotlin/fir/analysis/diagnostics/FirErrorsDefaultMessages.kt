@@ -476,6 +476,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PROPERTY_WITH_NO_
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PROTECTED_CALL_FROM_PUBLIC_INLINE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PROTECTED_CALL_FROM_PUBLIC_INLINE_ERROR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PROTECTED_CONSTRUCTOR_CALL_FROM_PUBLIC_INLINE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PROTECTED_CONSTRUCTOR_NOT_IN_SUPER_CALL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.QUALIFIED_SUPERTYPE_EXTENDED_BY_OTHER_SUPERTYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RECURSION_IN_IMPLICIT_TYPES
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RECURSION_IN_INLINE
@@ -841,6 +842,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(NON_PRIVATE_OR_PROTECTED_CONSTRUCTOR_IN_SEALED, "Constructor must be private or protected in sealed class")
         map.put(CYCLIC_CONSTRUCTOR_DELEGATION_CALL, "There's a cycle in the delegation calls chain")
         map.put(PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED, "Primary constructor call expected")
+        map.put(PROTECTED_CONSTRUCTOR_NOT_IN_SUPER_CALL, "Protected constructor ''{0}'' from other classes can only be used in super-call", SYMBOL)
         map.put(SUPERTYPE_INITIALIZED_WITHOUT_PRIMARY_CONSTRUCTOR, "Supertype initialization is impossible without primary constructor")
         map.put(DELEGATION_SUPER_CALL_IN_ENUM_CONSTRUCTOR, "Call to super is not allowed in enum constructor")
         map.put(PRIMARY_CONSTRUCTOR_REQUIRED_FOR_DATA_CLASS, "Primary constructor required for data class")

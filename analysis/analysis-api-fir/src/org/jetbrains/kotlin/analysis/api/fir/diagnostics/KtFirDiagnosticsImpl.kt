@@ -640,6 +640,12 @@ internal class PrimaryConstructorDelegationCallExpectedImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.PrimaryConstructorDelegationCallExpected
 
+internal class ProtectedConstructorNotInSuperCallImpl(
+    override val symbol: KtSymbol,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KtFirDiagnostic.ProtectedConstructorNotInSuperCall
+
 internal class SupertypeNotInitializedImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,

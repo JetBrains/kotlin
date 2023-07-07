@@ -70,6 +70,7 @@ object CommonExpressionCheckers : ExpressionCheckers() {
             FirNamedVarargChecker,
             FirUnderscoredTypeArgumentSyntaxChecker,
             FirContractNotFirstStatementChecker,
+            FirProtectedConstructorNotInSuperCallChecker,
         )
 
     override val propertyAccessExpressionCheckers: Set<FirPropertyAccessExpressionChecker>

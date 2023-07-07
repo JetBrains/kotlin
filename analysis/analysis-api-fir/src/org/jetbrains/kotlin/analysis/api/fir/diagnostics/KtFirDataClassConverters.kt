@@ -724,6 +724,13 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.PROTECTED_CONSTRUCTOR_NOT_IN_SUPER_CALL) { firDiagnostic ->
+        ProtectedConstructorNotInSuperCallImpl(
+            firSymbolBuilder.buildSymbol(firDiagnostic.a),
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.SUPERTYPE_NOT_INITIALIZED) { firDiagnostic ->
         SupertypeNotInitializedImpl(
             firDiagnostic as KtPsiDiagnostic,
