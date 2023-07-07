@@ -72,4 +72,8 @@ interface TestVersions {
     object AppleGradlePlugin {
         const val V222_0_21 = "222.4550-0.21"
     }
+
+    object ThirdPartyDependencies {
+        const val GRADLE_ENTERPRISE_PLUGIN_VERSION = "3.13.4"
+    }
 }
