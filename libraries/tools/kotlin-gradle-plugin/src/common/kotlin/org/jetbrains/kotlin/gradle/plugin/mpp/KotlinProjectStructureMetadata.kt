@@ -10,11 +10,11 @@ import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import com.google.gson.stream.JsonWriter
 import org.gradle.api.Project
+import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Nested
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmModule
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.currentBuildId
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope
@@ -419,10 +419,12 @@ internal object GlobalProjectStructureMetadataStorage {
     fun propertyName(buildName: String, projectPath: String) = "$propertyPrefix.$buildName.path.$projectPath"
 
     fun registerProjectStructureMetadata(project: Project, metadataProvider: () -> KotlinProjectStructureMetadata) {
-        project.compositeBuildRootProject.extensions.extraProperties.set(
-            propertyName(project.currentBuildId().name, project.path),
-            { metadataProvider().toJson() }
-        )
+        project.compositeBuildRootProject {
+            (it as ExtensionAware).extensions.extraProperties.set(
+                propertyName(project.currentBuildId().name, project.path),
+                { metadataProvider().toJson() }
+            )
+        }
     }
 
     fun getProjectStructureMetadataProvidersFromAllGradleBuilds(project: Project): Map<ProjectPathWithBuildName, Lazy<KotlinProjectStructureMetadata?>> {

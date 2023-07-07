@@ -17,7 +17,13 @@ import kotlin.reflect.KClass
 val Gradle.projectCacheDir
     get() = startParameter.projectCacheDir ?: this.rootProject.projectDir.resolve(".gradle")
 
-internal val Project.compositeBuildRootProject: Project get() = generateSequence(project.gradle) { it.parent }.last().rootProject
+internal val Project.compositeBuildRootGradle: Gradle get() = generateSequence(project.gradle) { it.parent }.last()
+internal val Project.compositeBuildRootProject: Project get() = compositeBuildRootGradle.rootProject
+
+/**
+ * Run block function on root project of the root build in composite build only when a root project becomes available
+ */
+internal fun Project.compositeBuildRootProject(block: (Project) -> Unit) = compositeBuildRootGradle.rootProject(block)
 
 internal fun <T : BuildService<P>, P : BuildServiceParameters> Gradle.registerClassLoaderScopedBuildService(
     serviceClass: KClass<T>,
