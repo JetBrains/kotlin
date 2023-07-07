@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
 open class A protected constructor(x: Int) {

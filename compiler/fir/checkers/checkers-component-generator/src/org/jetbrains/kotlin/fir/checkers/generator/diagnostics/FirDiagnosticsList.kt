@@ -259,6 +259,9 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val NON_PRIVATE_OR_PROTECTED_CONSTRUCTOR_IN_SEALED by error<PsiElement>()
         val CYCLIC_CONSTRUCTOR_DELEGATION_CALL by error<PsiElement>()
         val PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED by error<PsiElement>(PositioningStrategy.SECONDARY_CONSTRUCTOR_DELEGATION_CALL)
+        val PROTECTED_CONSTRUCTOR_NOT_IN_SUPER_CALL by error<KtExpression> {
+            parameter<FirBasedSymbol<*>>("symbol")
+        }
 
         // TODO: change it to KtSuperTypeEntry when possible (after re-targeter implementation)
         val SUPERTYPE_NOT_INITIALIZED by error<KtTypeReference>()

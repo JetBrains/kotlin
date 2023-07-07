@@ -542,6 +542,11 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = PrimaryConstructorDelegationCallExpected::class
     }
 
+    interface ProtectedConstructorNotInSuperCall : KtFirDiagnostic<KtExpression> {
+        override val diagnosticClass get() = ProtectedConstructorNotInSuperCall::class
+        val symbol: KtSymbol
+    }
+
     interface SupertypeNotInitialized : KtFirDiagnostic<KtTypeReference> {
         override val diagnosticClass get() = SupertypeNotInitialized::class
     }
