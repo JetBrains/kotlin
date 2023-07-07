@@ -763,16 +763,6 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
             field = value
         }
 
-    @Argument(
-        value = "-Xuse-kapt4",
-        description = "Preview the experimental KAPT 4."
-    )
-    var useKapt4 = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
     @OptIn(IDEAPluginsCompatibilityAPI::class)
     open fun configureAnalysisFlags(collector: MessageCollector, languageVersion: LanguageVersion): MutableMap<AnalysisFlag<*>, Any> {
         return HashMap<AnalysisFlag<*>, Any>().apply {
