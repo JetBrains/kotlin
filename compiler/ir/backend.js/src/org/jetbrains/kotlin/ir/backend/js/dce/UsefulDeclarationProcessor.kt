@@ -328,14 +328,14 @@ private fun transformToJsonString(reachabilityInfos: List<ReachabilityInfo>): St
     return "[\n" + transformToStringBy(reachabilityInfos, ",\n") { sourceFqn, targetFqn, description, isTargetContagious ->
         """
         |    {
-        |        "source" : "$sourceFqn",
-        |        "target" : "$targetFqn",
-        |        "description" : "$description",
+        |        "source" : "${sourceFqn.removeQuotes()}",
+        |        "target" : "${targetFqn.removeQuotes()}",
+        |        "description" : "${description.removeQuotes()}",
         |        "isTargetContagious" : $isTargetContagious
         |    }""".trimMargin()
     } + "\n]"
 }
 
 private fun transformToJsConstDeclaration(reachabilityInfos: List<ReachabilityInfo>): String {
-    return "const kotlinReachabilityInfos = " + transformToJsonString(reachabilityInfos) + ";"
+    return "export const kotlinReachabilityInfos = " + transformToJsonString(reachabilityInfos) + ";"
 }

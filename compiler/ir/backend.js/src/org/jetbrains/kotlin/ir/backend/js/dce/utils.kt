@@ -29,10 +29,12 @@ internal fun IrDeclaration.fqNameForDceDump(): String {
     return (fqn + signature + synthetic)
 }
 
+private data class IrDeclarationDump(val name: String, val type: String, val size: Int)
+
 fun dumpDeclarationIrSizesIfNeed(path: String?, allModules: List<IrModuleFragment>) {
     if (path == null) return
 
-    val declarations = linkedSetOf<IrDeclaration>()
+    val declarations = linkedSetOf<IrDeclarationDump>()
 
     allModules.forEach {
         it.acceptChildrenVoid(object : IrElementVisitorVoid {
@@ -41,13 +43,21 @@ fun dumpDeclarationIrSizesIfNeed(path: String?, allModules: List<IrModuleFragmen
             }
 
             override fun visitDeclaration(declaration: IrDeclarationBase) {
-                when (declaration) {
-                    is IrFunction,
-                    is IrProperty,
-                    is IrField,
-                    is IrAnonymousInitializer -> {
-                        declarations.add(declaration)
-                    }
+                val type = when (declaration) {
+                    is IrFunction -> "function"
+                    is IrProperty -> "property"
+                    is IrField -> "field"
+                    is IrAnonymousInitializer -> "anonymous initializer"
+                    else -> null
+                }
+                type?.let {
+                    declarations.add(
+                        IrDeclarationDump(
+                            name = declaration.fqNameForDceDump().removeQuotes(),
+                            type = it,
+                            size = declaration.dumpKotlinLike().length
+                        )
+                    )
                 }
 
                 super.visitDeclaration(declaration)
@@ -58,15 +68,28 @@ fun dumpDeclarationIrSizesIfNeed(path: String?, allModules: List<IrModuleFragmen
     val out = File(path)
     val (prefix, postfix, separator, indent) = when (out.extension) {
         "json" -> listOf("{\n", "\n}", ",\n", "    ")
-        "js" -> listOf("const kotlinDeclarationsSize = {\n", "\n};\n", ",\n", "    ")
+        "js" -> listOf("export const kotlinDeclarationsSize = {\n", "\n};\n", ",\n", "    ")
         else -> listOf("", "", "\n", "")
     }
 
-    val value = declarations.joinToString(separator, prefix, postfix) {
-        val fqn = it.fqNameForDceDump()
-        val size = it.dumpKotlinLike().length
-        "$indent\"$fqn\" : $size"
-    }
+    val value = declarations
+        .groupBy { it.name }
+        .flatMap { (_, v) ->
+            v.mapIndexed { index: Int, declaration: IrDeclarationDump ->
+                if (index == 0) declaration
+                else declaration.copy(name = "${declaration.name} ($index)")
+            }
+        }.joinToString(separator, prefix, postfix) { declaration ->
+            """$indent"${declaration.name}": {
+                |$indent$indent"size": ${declaration.size},
+                |$indent$indent"type": "${declaration.type}"
+                |$indent}
+            """.trimMargin()
+        }
 
     out.writeText(value)
 }
+
+internal fun String.removeQuotes() = replace('"'.toString(), "")
+    .replace("'", "")
+    .replace("\\", "\\\\")
