@@ -626,7 +626,7 @@ tasks {
     }
 
     val jsJar by existing(Jar::class) {
-        callGroovy("manifestAttributes", manifest, project, "Main")
+        manifestAttributes(manifest, "Main", multiRelease = true)
         manifest.attributes(mapOf("Implementation-Title" to "kotlin-stdlib-js"))
     }
 
