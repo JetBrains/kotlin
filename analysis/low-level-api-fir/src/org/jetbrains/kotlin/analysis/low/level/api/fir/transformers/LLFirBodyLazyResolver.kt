@@ -173,6 +173,11 @@ private class LLFirBodyTargetResolver(
         val module = firCodeFragment.llFirModuleData.ktModule
         val resolveSession = module.getFirResolveSession(ktCodeFragment.project) as LLFirResolvableResolveSession
 
+        fun FirTowerDataContext.withExtraScopes(): FirTowerDataContext {
+            return resolveSession.useSiteFirSession.codeFragmentScopeProvider.getExtraScopes(ktCodeFragment)
+                .fold(this) { context, scope -> context.addLocalScope(scope) }
+        }
+
         val contextPsiElement = ktCodeFragment.context
         val contextKtFile = contextPsiElement?.containingFile as? KtFile
 
@@ -193,9 +198,9 @@ private class LLFirBodyTargetResolver(
             val elementContext = contextProvider[contextPsiElement, ContextCollector.ContextKind.BODY]
                 ?: contextParentKtElements.firstNotNullOf { contextProvider[it, ContextCollector.ContextKind.SELF] }
 
-            LLFirCodeFragmentContext(elementContext.towerDataContext, elementContext.smartCasts)
+            LLFirCodeFragmentContext(elementContext.towerDataContext.withExtraScopes(), elementContext.smartCasts)
         } else {
-            val towerDataContext = FirTowerDataContext()
+            val towerDataContext = FirTowerDataContext().withExtraScopes()
             LLFirCodeFragmentContext(towerDataContext, emptyMap())
         }
     }
