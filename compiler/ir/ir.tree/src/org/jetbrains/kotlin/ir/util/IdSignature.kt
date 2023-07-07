@@ -281,6 +281,19 @@ sealed class IdSignature {
         val mask: Long,
         val description: String?,
     ) : IdSignature() {
+
+        @Deprecated(
+            "When constructing 'CommonSignature', you need to set 'description' to the mangled name from which 'id' was " +
+                    "computed, or to null if it's not applicable",
+            level = DeprecationLevel.WARNING,
+        )
+        constructor(
+            packageFqName: String,
+            declarationFqName: String,
+            id: Long?,
+            mask: Long,
+        ) : this(packageFqName, declarationFqName, id, mask, null)
+
         override val isPubliclyVisible: Boolean get() = true
 
         override fun packageFqName(): FqName = FqName(packageFqName)
