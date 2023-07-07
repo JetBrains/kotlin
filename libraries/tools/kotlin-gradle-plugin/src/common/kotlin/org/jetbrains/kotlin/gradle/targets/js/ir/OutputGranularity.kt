@@ -7,7 +7,8 @@ package org.jetbrains.kotlin.gradle.targets.js.ir
 
 enum class KotlinJsIrOutputGranularity {
     WHOLE_PROGRAM,
-    PER_MODULE;
+    PER_MODULE,
+    PER_FILE;
 
     companion object {
         fun byArgument(argument: String): KotlinJsIrOutputGranularity? =
@@ -17,6 +18,9 @@ enum class KotlinJsIrOutputGranularity {
 }
 
 fun KotlinJsIrOutputGranularity.toCompilerArgument(): String {
-    val perModule = this == KotlinJsIrOutputGranularity.PER_MODULE
-    return "$PER_MODULE=$perModule"
+    return when (this) {
+        KotlinJsIrOutputGranularity.PER_FILE -> PER_FILE
+        KotlinJsIrOutputGranularity.PER_MODULE -> PER_MODULE
+        KotlinJsIrOutputGranularity.WHOLE_PROGRAM -> ""
+    }
 }

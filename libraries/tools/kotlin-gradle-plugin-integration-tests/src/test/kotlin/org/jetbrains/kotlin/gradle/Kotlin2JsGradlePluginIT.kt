@@ -359,6 +359,27 @@ class Kotlin2JsIrGradlePluginIT : AbstractKotlin2JsGradlePluginIT(true) {
         }
     }
 
+    @DisplayName("per-file with the  declarations validation")
+    @GradleTest
+    fun testPerFileProjectWithResultFilesClash(gradleVersion: GradleVersion) {
+        project("kotlin-js-invalid-per-file-project", gradleVersion) {
+            buildAndFail("compileDevelopmentExecutableKotlinJs") {
+                assertTasksFailed(":compileDevelopmentExecutableKotlinJs")
+                assertOutputContains("""
+                   |There are two files in module '<kotlin-js-invalid-per-file-project>' that have the similar package and file names.
+                   |  - Package "com.example" and
+                """.trimMargin())
+            }
+            buildAndFail("compileProductionExecutableKotlinJs") {
+                assertTasksFailed(":compileProductionExecutableKotlinJs")
+                assertOutputContains("""
+                   |There are two files in module '<kotlin-js-invalid-per-file-project>' that have the similar package and file names.
+                   |  - Package "com.example" and path
+                """.trimMargin())
+            }
+        }
+    }
+
     @DisplayName("fully qualified names can be used in the sourcemap")
     @GradleTest
     fun testKotlinJsSourceMapGenerateFqNames(gradleVersion: GradleVersion) {

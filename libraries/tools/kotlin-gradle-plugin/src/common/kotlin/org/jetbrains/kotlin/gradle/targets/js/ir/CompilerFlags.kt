@@ -24,6 +24,7 @@ internal const val MINIMIZED_MEMBER_NAMES = "-Xir-minimized-member-names"
 
 internal const val KLIB_MODULE_NAME = "-Xir-module-name"
 
+internal const val PER_FILE = "-Xir-per-file"
 internal const val PER_MODULE = "-Xir-per-module"
 internal const val PER_MODULE_OUTPUT_NAME = "-Xir-per-module-output-name"
 
