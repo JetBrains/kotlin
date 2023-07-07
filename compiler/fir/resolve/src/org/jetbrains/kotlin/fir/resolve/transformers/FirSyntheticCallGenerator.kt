@@ -21,6 +21,8 @@ import org.jetbrains.kotlin.fir.expressions.builder.buildArgumentList
 import org.jetbrains.kotlin.fir.expressions.builder.buildFunctionCall
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.references.FirReference
+import org.jetbrains.kotlin.fir.references.FirResolvedCallableReference
+import org.jetbrains.kotlin.fir.references.builder.buildResolvedErrorReference
 import org.jetbrains.kotlin.fir.references.impl.FirStubReference
 import org.jetbrains.kotlin.fir.references.isError
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
@@ -196,6 +198,20 @@ class FirSyntheticCallGenerator(
             (completedCallableReference?.calleeReference as? FirNamedReferenceWithCandidate)
                 ?.toErrorReference(callCalleeReference.diagnostic)
                 ?.let { completedCallableReference.replaceCalleeReference(it) }
+
+            if (!callableReferenceAccess.calleeReference.isError()) {
+                val resolvedReference = callableReferenceAccess.calleeReference as? FirResolvedCallableReference
+                    ?: error("By this time the actual callable reference must have already been resolved")
+
+                callableReferenceAccess.replaceCalleeReference(
+                    buildResolvedErrorReference {
+                        this.name = resolvedReference.name
+                        this.source = resolvedReference.source
+                        this.resolvedSymbol = resolvedReference.resolvedSymbol
+                        this.diagnostic = callCalleeReference.diagnostic
+                    }
+                )
+            }
         }
 
         return completedCallableReference

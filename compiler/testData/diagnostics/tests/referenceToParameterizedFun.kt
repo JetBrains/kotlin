@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // ISSUE: KT-59233
 
 fun <T> consume(arg: T) {}

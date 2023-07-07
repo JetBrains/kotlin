@@ -149,7 +149,7 @@ fun poll42() {
 }
 
 fun poll43() {
-    val inv = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>try { ::bar4 } finally { ::foo4 }<!>
+    val inv = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>try { ::bar4 } finally { ::<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>foo4<!> }<!>
     inv<!NO_VALUE_FOR_PARAMETER!>()<!>
 }
 
@@ -164,7 +164,7 @@ fun poll45() {
 }
 
 fun poll46() {
-    val inv = try { foo7() } finally { ::Foo7 }
+    val inv = try { foo7() } finally { ::<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>Foo7<!> }
     inv
 }
 
@@ -184,7 +184,7 @@ fun poll52() {
 }
 
 fun poll53() {
-    val inv = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>try { ::bar4 } catch (e: Exception) { ::foo4 } finally { ::foo4 }<!>
+    val inv = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>try { ::bar4 } catch (e: Exception) { ::foo4 } finally { ::<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>foo4<!> }<!>
     inv<!NO_VALUE_FOR_PARAMETER!>()<!>
 }
 
@@ -219,7 +219,7 @@ fun poll62() {
 }
 
 fun poll63() {
-    val inv = ::bar4
+    val inv = ::<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>bar4<!>
     inv
 }
 
@@ -234,7 +234,7 @@ fun poll65() {
 }
 
 fun poll66() {
-    val inv = ::Foo7
+    val inv = ::<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>Foo7<!>
     inv
 }
 

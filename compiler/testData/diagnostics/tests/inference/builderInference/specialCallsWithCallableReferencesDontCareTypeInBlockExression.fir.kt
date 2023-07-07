@@ -134,7 +134,7 @@ fun poll45(): Flow<String> {
 
 fun poll46(): Flow<String> {
     return flow {
-        val inv = try { foo7() } finally { ::Foo7 }
+        val inv = try { foo7() } finally { ::<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>Foo7<!> }
         inv
     }
 }
