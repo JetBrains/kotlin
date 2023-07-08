@@ -1671,6 +1671,7 @@ internal object ControlFlowSensibleEscapeAnalysis {
                         val statementNode = statement.accept(this, data)
                         if (statementNode == Node.Nothing) break
                     }
+                    returnTargetResults.remove(returnableBlockSymbol)
                     controlFlowMergePoint(data.graph, data.toNodeContext(expression), expression.type, returnableBlockResult)
                 }.also {
                     debug {
@@ -1755,6 +1756,7 @@ internal object ControlFlowSensibleEscapeAnalysis {
                 val tryBlockThrowGraph = forest.GraphBuilder(function)
                 tryBlockThrowGraphs[aTry] = tryBlockThrowGraph
                 val successResult = aTry.tryResult.accept(this, BuilderState(data.graph, data.level, data.anchorIds, data.loop, aTry))
+                tryBlockThrowGraphs.remove(aTry)
                 val tryResult = MultipleExpressionResult(BitSet(), forest.GraphBuilder(function))
                 tryResult.merge(successResult, data.graph)
                 if (tryBlockThrowGraph.isEmpty) {
@@ -1862,6 +1864,8 @@ internal object ControlFlowSensibleEscapeAnalysis {
                             objectsReferencedFromThrown.cardinality()
                 } while (modCountsSum != nextModCountsSum && iteration < 10)
 
+                loopsBreakGraphs.remove(loop)
+
                 if (iteration >= 10)
                     error("BUGBUGBUG: ${function.render()} ${loop.dump()}")
                 data.graph.copyFrom(loopGraph.build())
@@ -1946,6 +1950,7 @@ internal object ControlFlowSensibleEscapeAnalysis {
                         val functionResult = MultipleExpressionResult(BitSet(), forest.GraphBuilder(function))
                         returnTargetResults[callee.symbol] = functionResult
                         copiedBody.statements.forEach { it.accept(this, state) }
+                        returnTargetResults.remove(callee.symbol)
                         if (forest.totalNodes > maxAllowedGraphSize)
                             state.graph.unreachable()
                         else {
