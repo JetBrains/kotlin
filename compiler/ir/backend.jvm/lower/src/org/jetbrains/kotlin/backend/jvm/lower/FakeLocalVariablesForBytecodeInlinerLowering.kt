@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.IrInlineReferenceLocator
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineOnly
 import org.jetbrains.kotlin.codegen.inline.coroutines.FOR_INLINE_SUFFIX
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.createTmpVariable
 import org.jetbrains.kotlin.ir.builders.irBlockBody
 import org.jetbrains.kotlin.ir.builders.irInt
@@ -23,35 +24,52 @@ import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.load.java.JvmAbi
 
-internal val fakeInliningLocalVariablesLowering = makeIrFilePhase(
-    ::FakeInliningLocalVariablesLowering,
-    name = "FakeInliningLocalVariablesLowering",
+internal val fakeLocalVariablesForBytecodeInlinerLowering = makeIrFilePhase(
+    ::FakeLocalVariablesForBytecodeInlinerLowering,
+    name = "FakeLocalVariablesForBytecodeInlinerLowering",
     description = "Add fake locals to identify the range of inlined functions and lambdas"
 )
 
-internal class FakeInliningLocalVariablesLowering(val context: JvmBackendContext) : IrInlineReferenceLocator(context), FileLoweringPass {
+interface FakeInliningLocalVariables<Container : IrElement> {
+    val context: JvmBackendContext
+
+    fun Container.addFakeLocalVariable(name: String)
+
+    fun Container.addFakeLocalVariableForFun(declaration: IrDeclaration) {
+        if (declaration !is IrFunction) return
+        if (declaration.isInline && !declaration.origin.isSynthetic && declaration.body != null && !declaration.isInlineOnly()) {
+            val currentFunctionName = context.defaultMethodSignatureMapper.mapFunctionName(declaration)
+            val localName = "${JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_FUNCTION}$currentFunctionName"
+            this.addFakeLocalVariable(localName)
+        }
+    }
+
+    fun Container.addFakeLocalVariableForLambda(argument: IrAttributeContainer, callee: IrFunction) {
+        val argumentToFunctionName = context.defaultMethodSignatureMapper.mapFunctionName(callee)
+        val lambdaReferenceName = context.getLocalClassType(argument)!!.internalName.substringAfterLast("/")
+        val localName = "${JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_ARGUMENT}-$argumentToFunctionName-$lambdaReferenceName"
+        this.addFakeLocalVariable(localName)
+    }
+}
+
+internal class FakeLocalVariablesForBytecodeInlinerLowering(
+    override val context: JvmBackendContext
+) : IrInlineReferenceLocator(context), FakeInliningLocalVariables<IrFunction>, FileLoweringPass {
     override fun lower(irFile: IrFile) {
         irFile.accept(this, null)
     }
 
     override fun visitFunction(declaration: IrFunction, data: IrDeclaration?) {
         super.visitFunction(declaration, data)
-        if (declaration.isInline && !declaration.origin.isSynthetic && declaration.body != null && !declaration.isInlineOnly()) {
-            val currentFunctionName = context.defaultMethodSignatureMapper.mapFunctionName(declaration)
-            val localName = "${JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_FUNCTION}$currentFunctionName"
-            declaration.addFakeLocalVariable(localName)
-        }
+        declaration.addFakeLocalVariableForFun(declaration)
     }
 
     override fun visitInlineLambda(argument: IrFunctionReference, callee: IrFunction, parameter: IrValueParameter, scope: IrDeclaration) {
         val lambda = argument.symbol.owner
-        val argumentToFunctionName = context.defaultMethodSignatureMapper.mapFunctionName(callee)
-        val lambdaReferenceName = context.getLocalClassType(argument)!!.internalName.substringAfterLast("/")
-        val localName = "${JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_ARGUMENT}-$argumentToFunctionName-$lambdaReferenceName"
-        lambda.addFakeLocalVariable(localName)
+        lambda.addFakeLocalVariableForLambda(argument, callee)
     }
 
-    private fun IrFunction.addFakeLocalVariable(name: String) {
+    override fun IrFunction.addFakeLocalVariable(name: String) {
         body = context.createIrBuilder(symbol).irBlockBody {
             // Create temporary variable, but make sure it's origin is `DEFINED` so that
             // it will materialize in the code.

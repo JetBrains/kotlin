@@ -455,8 +455,8 @@ private val jvmFilePhases = listOf(
     replaceNumberToCharCallSitesPhase,
 
     renameFieldsPhase,
-    fakeInliningLocalVariablesLowering,
-    fakeInliningLocalVariablesAfterInlineLowering,
+    fakeLocalVariablesForBytecodeInlinerLowering,
+    fakeLocalVariablesForIrInlinerLowering,
 
     // makePatchParentsPhase()
 )

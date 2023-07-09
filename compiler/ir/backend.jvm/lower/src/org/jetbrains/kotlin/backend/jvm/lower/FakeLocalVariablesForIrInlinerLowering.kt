@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.backend.common.ir.*
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.backend.jvm.ir.isInlineOnly
 import org.jetbrains.kotlin.backend.jvm.irInlinerIsEnabled
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.inline.INLINE_FUN_VAR_SUFFIX
@@ -33,25 +32,25 @@ import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 
-internal val fakeInliningLocalVariablesAfterInlineLowering = makeIrFilePhase<JvmBackendContext>(
+internal val fakeLocalVariablesForIrInlinerLowering = makeIrFilePhase<JvmBackendContext>(
     { context ->
         if (!context.irInlinerIsEnabled()) return@makeIrFilePhase FileLoweringPass.Empty
-        FakeInliningLocalVariablesAfterInlineLowering(context)
+        FakeLocalVariablesForIrInlinerLowering(context)
     },
-    name = "FakeInliningLocalVariablesAfterInlineLowering",
+    name = "FakeLocalVariablesForIrInlinerLowering",
     description = """Add fake locals to identify the range of inlined functions and lambdas. 
         |This lowering adds fake locals into already inlined blocks.""".trimMargin()
 )
 
-// TODO extract common code with FakeInliningLocalVariablesLowering
-internal class FakeInliningLocalVariablesAfterInlineLowering(
-    val context: JvmBackendContext
-) : IrElementVisitor<Unit, IrDeclaration?>, FileLoweringPass {
+internal class FakeLocalVariablesForIrInlinerLowering(
+    override val context: JvmBackendContext
+) : IrElementVisitorVoid, FakeInliningLocalVariables<IrInlinedFunctionBlock>, FileLoweringPass {
     private val inlinedStack = mutableListOf<IrInlinedFunctionBlock>()
+    private var container: IrDeclaration? = null
 
-    private fun IrInlinedFunctionBlock.insertInStackAndProcess(data: IrDeclaration?) {
+    private fun IrInlinedFunctionBlock.insertInStackAndProcess() {
         inlinedStack += this
-        super.visitBlock(this, data)
+        this.acceptChildren(this@FakeLocalVariablesForIrInlinerLowering, null)
         inlinedStack.removeLast()
     }
 
@@ -61,47 +60,42 @@ internal class FakeInliningLocalVariablesAfterInlineLowering(
         irFile.accept(LocalVariablesProcessor(), LocalVariablesProcessor.Data(processingOriginalDeclarations = false))
     }
 
-    override fun visitElement(element: IrElement, data: IrDeclaration?) {
-        val newData = if (element is IrDeclaration && element !is IrVariable) element else data
-        element.acceptChildren(this, newData)
+    override fun visitElement(element: IrElement) {
+        val oldContainer = container
+        try {
+            container = if (element is IrDeclaration && element !is IrVariable) element else container
+            element.acceptChildren(this, null)
+        } finally {
+            container = oldContainer
+        }
     }
 
-    override fun visitBlock(expression: IrBlock, data: IrDeclaration?) {
+    override fun visitBlock(expression: IrBlock) {
         when {
-            expression is IrInlinedFunctionBlock && expression.isFunctionInlining() -> handleInlineFunction(expression, data)
-            expression is IrInlinedFunctionBlock && expression.isLambdaInlining() -> handleInlineLambda(expression, data)
-            else -> super.visitBlock(expression, data)
+            expression is IrInlinedFunctionBlock && expression.isFunctionInlining() -> handleInlineFunction(expression)
+            expression is IrInlinedFunctionBlock && expression.isLambdaInlining() -> handleInlineLambda(expression)
+            else -> super.visitBlock(expression)
         }
     }
 
-    private fun handleInlineFunction(expression: IrInlinedFunctionBlock, data: IrDeclaration?) {
-        expression.insertInStackAndProcess(data)
-
+    private fun handleInlineFunction(expression: IrInlinedFunctionBlock) {
+        expression.insertInStackAndProcess()
         val declaration = expression.inlineDeclaration
-        if (declaration is IrFunction && declaration.isInline && !declaration.origin.isSynthetic && declaration.body != null && !declaration.isInlineOnly()) {
-            val currentFunctionName = context.defaultMethodSignatureMapper.mapFunctionName(declaration)
-            val localName = "${JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_FUNCTION}$currentFunctionName"
-            expression.addFakeLocalVariable(localName, data!!)
-        }
+        expression.addFakeLocalVariableForFun(declaration)
     }
 
-    private fun handleInlineLambda(expression: IrInlinedFunctionBlock, data: IrDeclaration?) {
-        expression.insertInStackAndProcess(data)
-
+    private fun handleInlineLambda(expression: IrInlinedFunctionBlock) {
+        expression.insertInStackAndProcess()
         // `inlinedElement` here can be either `IrFunctionExpression` or `IrFunctionReference`, so cast must be safe
         val argument = expression.inlinedElement as IrAttributeContainer
         val callee = inlinedStack.extractDeclarationWhereGivenElementWasInlined(argument) as? IrFunction ?: return
-
-        val argumentToFunctionName = context.defaultMethodSignatureMapper.mapFunctionName(callee)
-        val lambdaReferenceName = context.getLocalClassType(argument)!!.internalName.substringAfterLast("/")
-        val localName = "${JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_ARGUMENT}-$argumentToFunctionName-$lambdaReferenceName"
-        expression.addFakeLocalVariable(localName, data!!)
+        expression.addFakeLocalVariableForLambda(argument, callee)
     }
 
-    private fun IrInlinedFunctionBlock.addFakeLocalVariable(localName: String, container: IrDeclaration) {
-        with(context.createIrBuilder(container.symbol)) {
+    override fun IrInlinedFunctionBlock.addFakeLocalVariable(name: String) {
+        with(context.createIrBuilder(container!!.symbol)) {
             val tmpVar = scope.createTmpVariable(
-                irInt(0), localName.removeSuffix(FOR_INLINE_SUFFIX), origin = IrDeclarationOrigin.DEFINED
+                irInt(0), name.removeSuffix(FOR_INLINE_SUFFIX), origin = IrDeclarationOrigin.DEFINED
             )
             this@addFakeLocalVariable.putStatementsInFrontOfInlinedFunction(listOf(tmpVar))
         }
