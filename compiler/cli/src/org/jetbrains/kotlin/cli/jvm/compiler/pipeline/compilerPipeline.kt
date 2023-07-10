@@ -94,6 +94,9 @@ fun compileModulesUsingFrontendIrAndLightTree(
             put(JVMConfigurationKeys.FRIEND_PATHS, module.getFriendPaths())
         }
         val groupedSources = collectSources(compilerConfiguration, projectEnvironment, messageCollector)
+        if (messageCollector.hasErrors()) {
+            return false
+        }
 
         if (checkSourceFiles && groupedSources.isEmpty() && buildFile == null) {
             messageCollector.report(CompilerMessageSeverity.ERROR, "No source files")
