@@ -179,12 +179,12 @@ internal object StaticInitializersOptimization {
             val functionsRequiringGlobalInitializerCall = collectFunctionsRequiringInitializerCall(
                     initializedFiles.beforeCallGlobal,
                     callSitesRequiringGlobalInitializerCall.map { it.actualCallee }
-                            .toMutableSet().intersect(callSitesNotRequiringGlobalInitializerCall.map { it.actualCallee })
+                            .toMutableSet().intersect(callSitesNotRequiringGlobalInitializerCall.map { it.actualCallee }.toSet())
             )
             val functionsRequiringThreadLocalInitializerCall = collectFunctionsRequiringInitializerCall(
                     initializedFiles.beforeCallThreadLocal,
                     callSitesRequiringThreadLocalInitializerCall.map { it.actualCallee }
-                            .toMutableSet().intersect(callSitesNotRequiringThreadLocalInitializerCall.map { it.actualCallee })
+                            .toMutableSet().intersect(callSitesNotRequiringThreadLocalInitializerCall.map { it.actualCallee }.toSet())
             )
 
             return AnalysisResult(functionsRequiringGlobalInitializerCall, functionsRequiringThreadLocalInitializerCall,
