@@ -29262,6 +29262,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
             }
 
             @Test
+            @TestMetadata("accessTopLevelConstWithCustomFileName.kt")
+            public void testAccessTopLevelConstWithCustomFileName() throws Exception {
+                runTest("compiler/testData/codegen/box/involvesIrInterpreter/constEvaluationFromJavaWorld/accessTopLevelConstWithCustomFileName.kt");
+            }
+
+            @Test
             public void testAllFilesPresentInConstEvaluationFromJavaWorld() throws Exception {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/involvesIrInterpreter/constEvaluationFromJavaWorld"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
             }

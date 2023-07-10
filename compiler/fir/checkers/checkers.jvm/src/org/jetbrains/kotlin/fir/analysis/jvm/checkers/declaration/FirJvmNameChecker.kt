@@ -18,8 +18,8 @@ import org.jetbrains.kotlin.fir.declarations.utils.isOverridable
 import org.jetbrains.kotlin.fir.declarations.utils.isOverride
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirConstExpression
+import org.jetbrains.kotlin.fir.java.findJvmNameAnnotation
 import org.jetbrains.kotlin.fir.resolve.getContainingClass
-import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.name.JvmStandardClassIds
@@ -54,12 +54,6 @@ object FirJvmNameChecker : FirBasicDeclarationChecker() {
             ) {
                 reporter.reportOn(jvmName.source, FirJvmErrors.INAPPLICABLE_JVM_NAME, context)
             }
-        }
-    }
-
-    private fun FirDeclaration.findJvmNameAnnotation(): FirAnnotation? {
-        return annotations.firstOrNull {
-            it.annotationTypeRef.coneType.classId == JvmStandardClassIds.Annotations.JvmName
         }
     }
 

@@ -24708,6 +24708,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/involvesIrInterpreter/constEvaluationFromJavaWorld/accessTopLevelConst.kt");
             }
 
+            @TestMetadata("accessTopLevelConstWithCustomFileName.kt")
+            public void testAccessTopLevelConstWithCustomFileName() throws Exception {
+                runTest("compiler/testData/codegen/box/involvesIrInterpreter/constEvaluationFromJavaWorld/accessTopLevelConstWithCustomFileName.kt");
+            }
+
             public void testAllFilesPresentInConstEvaluationFromJavaWorld() throws Exception {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/involvesIrInterpreter/constEvaluationFromJavaWorld"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
             }

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.java
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
@@ -21,7 +22,6 @@ import org.jetbrains.kotlin.fir.expressions.builder.buildConstExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildErrorExpression
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.expectedConeType
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.java.RXJAVA3_ANNOTATIONS
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
@@ -142,3 +142,12 @@ fun FirProperty.hasJvmFieldAnnotation(session: FirSession): Boolean =
 
 fun FirAnnotation.isJvmFieldAnnotation(session: FirSession): Boolean =
     toAnnotationClassId(session) == JvmStandardClassIds.Annotations.JvmField
+
+fun FirDeclaration.findJvmNameAnnotation(): FirAnnotation? {
+    return annotations.firstOrNull {
+        // Access to type must be through `coneTypeOrNull`.
+        // Even if `JvmName` is in the list of annotations that must be resoled for compilation, we still could try to access some user
+        // annotations that could be not resolved.
+        it.annotationTypeRef.coneTypeOrNull?.classId == JvmStandardClassIds.Annotations.JvmName
+    }
+}
