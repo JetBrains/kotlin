@@ -90,10 +90,15 @@ class DependencyListForCliModule(
             filtersMap.getValue(binaryModuleData.dependsOn) += paths
         }
 
+
+        // Potentially, a part of a public API, so we leave it even while it's unused
+        @Suppress("unused")
         fun sourceFriendsDependencies(modules: Collection<FirModuleData>) {
             allFriendsDependencies += modules
         }
 
+        // Potentially, a part of a public API, so we leave it even while it's unused
+        @Suppress("unused")
         fun sourceDependsOnDependencies(modules: Collection<FirModuleData>) {
             allDependsOnDependencies += modules
         }
