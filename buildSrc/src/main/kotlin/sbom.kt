@@ -5,6 +5,7 @@
 
 import org.gradle.api.NamedDomainObjectProvider
 import org.gradle.api.Project
+import org.gradle.api.artifacts.ModuleVersionIdentifier
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.TaskProvider
@@ -12,7 +13,9 @@ import org.gradle.kotlin.dsl.*
 import org.spdx.sbom.gradle.SpdxSbomExtension
 import org.spdx.sbom.gradle.SpdxSbomPlugin
 import org.spdx.sbom.gradle.SpdxSbomTask
+import org.spdx.sbom.gradle.extensions.DefaultSpdxSbomTaskExtension
 import plugins.mainPublicationName
+import java.net.URI
 import java.util.*
 
 
@@ -46,6 +49,15 @@ fun Project.configureSbom(
                 packageSupplier.set("Organization: JetBrains s.r.o.")
             }
         }
+    }
+
+    val NOASSERTION = URI.create("NOASSERTION")
+    tasks.withType<SpdxSbomTask>().configureEach {
+        taskExtension.set(object : DefaultSpdxSbomTaskExtension() {
+            override fun mapRepoUri(input: URI?, moduleId: ModuleVersionIdentifier): URI {
+                return NOASSERTION
+            }
+        })
     }
 
     val sbomOutputDirectory = layout.buildDirectory.dir("spdx/$targetName")
