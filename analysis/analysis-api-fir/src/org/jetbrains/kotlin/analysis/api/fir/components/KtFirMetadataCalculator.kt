@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analysis.api.components.KtMetadataCalculator
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirOfType
+import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
 import org.jetbrains.kotlin.codegen.ClassBuilderMode
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings
 import org.jetbrains.kotlin.config.JvmAnalysisFlags
@@ -19,8 +20,7 @@ import org.jetbrains.kotlin.fir.backend.FirMetadataSource
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmSerializerExtension
 import org.jetbrains.kotlin.fir.backend.jvm.jvmTypeMapper
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.utils.classId
-import org.jetbrains.kotlin.fir.declarations.utils.isSynthetic
+import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.getContainingClass
 import org.jetbrains.kotlin.fir.scopes.jvm.computeJvmDescriptor
@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.typeApproximator
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
+import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
@@ -126,7 +127,9 @@ internal class KtFirMetadataCalculator(
             scopeSession,
             JvmSerializationBindings(),
             useTypeTable = true,
-            moduleName = analysisSession.useSiteModule.moduleDescription,
+            moduleName = analysisSession.useSiteModule.let {
+                (it as? KtSourceModule)?.run { stableModuleName ?: moduleName } ?: it.moduleDescription
+            },
             classBuilderMode = ClassBuilderMode.KAPT3,
             isParamAssertionsDisabled = true,
             unifiedNullChecks = false,
@@ -160,7 +163,6 @@ internal class KtFirMetadataCalculator(
         }
 
         override fun visitProperty(property: FirProperty) {
-            super.visitProperty(property)
             property.backingField?.let {
                 val name = if (property.delegate != null) "${property.name.asString()}\$delegate" else property.name.asString()
                 bindings.put(
@@ -169,23 +171,39 @@ internal class KtFirMetadataCalculator(
                     session.jvmTypeMapper.mapType(it.returnTypeRef.coneType) to name
                 )
             }
+            super.visitProperty(property)
         }
 
         override fun visitFunction(function: FirFunction) {
-            super.visitFunction(function)
-            val name = (function as? FirSimpleFunction)?.name?.asString() ?: "<init>"
-            val method = Method(name, function.computeJvmDescriptor(""))
+            val descriptor = function.computeJvmDescriptor(customName = (function as? FirConstructor)?.let{ "" })
+            val pos = descriptor.indexOf('(')
+            val name = descriptor.substring(0, pos)
+            val signature = descriptor.substring(pos)
+            val method = Method(name, signature)
             when {
-                name.endsWith("\$annotations") ->
+                name.endsWith(JvmAbi.ANNOTATED_PROPERTY_METHOD_NAME_SUFFIX) ->
                     findProperty(function)?.let {
                         bindings.put(FirJvmSerializerExtension.SYNTHETIC_METHOD_FOR_FIR_VARIABLE, it, method)
                     }
-                name.endsWith("\$delegate") ->
+                name.endsWith(JvmAbi.DELEGATED_PROPERTY_NAME_SUFFIX) ->
                     findProperty(function)?.let {
                         bindings.put(FirJvmSerializerExtension.SYNTHETIC_METHOD_FOR_FIR_VARIABLE, it, method)
                     }
             }
             bindings.put(FirJvmSerializerExtension.METHOD_FOR_FIR_FUNCTION, function, method)
+            super.visitFunction(function)
+        }
+
+        override fun visitSimpleFunction(simpleFunction: FirSimpleFunction) {
+            visitFunction(simpleFunction)
+        }
+
+        override fun visitPropertyAccessor(propertyAccessor: FirPropertyAccessor) {
+            visitFunction(propertyAccessor)
+        }
+
+        override fun visitConstructor(constructor: FirConstructor) {
+            visitFunction(constructor)
         }
 
         private fun findProperty(function: FirFunction): FirProperty? {

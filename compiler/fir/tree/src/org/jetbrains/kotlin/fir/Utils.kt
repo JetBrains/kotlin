@@ -111,6 +111,7 @@ fun FirDeclarationStatus.copy(
     isFromEnumClass: Boolean = this.isFromEnumClass,
     isFun: Boolean = this.isFun,
     hasStableParameterNames: Boolean = this.hasStableParameterNames,
+    isFromAnnotationClass: Boolean = this.isFromAnnotationClass
 ): FirDeclarationStatus {
     val newVisibility = visibility ?: this.visibility
     val newModality = modality ?: this.modality
@@ -139,6 +140,7 @@ fun FirDeclarationStatus.copy(
         this.isFromEnumClass = isFromEnumClass
         this.isFun = isFun
         this.hasStableParameterNames = hasStableParameterNames
+        this.isFromAnnotationClass = isFromAnnotationClass
     }
 }
 

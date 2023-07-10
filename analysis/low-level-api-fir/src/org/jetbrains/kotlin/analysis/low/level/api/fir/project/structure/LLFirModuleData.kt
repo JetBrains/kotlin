@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure
 
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
@@ -33,7 +34,7 @@ val FirBasedSymbol<*>.llFirModuleData: LLFirModuleData
 class LLFirModuleData(
     val ktModule: KtModule,
 ) : FirModuleData() {
-    override val name: Name get() = Name.special("<${ktModule.moduleDescription}>")
+    override val name: Name get() = Name.special("<${(ktModule as? KtSourceModule)?.run { stableModuleName ?: name } ?: ktModule.moduleDescription}>")
 
     override val dependencies: List<FirModuleData> by lazy(LazyThreadSafetyMode.PUBLICATION) {
         ktModule.directRegularDependencies.map(::LLFirModuleData)

@@ -62,6 +62,8 @@ class ClassWrapper(
             else -> Visibilities.Unknown
         }
     }
+
+    fun isAnnotation(): Boolean = classKind == ClassKind.ANNOTATION_CLASS
 }
 
 data class DelegatedConstructorWrapper(

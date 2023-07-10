@@ -6,19 +6,21 @@
 package org.jetbrains.kotlin.fir.scopes.jvm
 
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
+import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.containingClassLookupTag
-import org.jetbrains.kotlin.fir.declarations.FirFunction
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.*
+import org.jetbrains.kotlin.fir.resolve.getContainingClass
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitAnyTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitNullableAnyTypeRef
 import org.jetbrains.kotlin.fir.types.jvm.FirJavaTypeRef
+import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.structure.JavaPrimitiveType
 import org.jetbrains.kotlin.load.kotlin.SignatureBuildingComponents
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.name.*
 
 fun FirFunction.computeJvmSignature(typeConversion: (FirTypeRef) -> ConeKotlinType? = FirTypeRef::coneTypeSafe): String? {
     val containingClass = containingClassLookupTag() ?: return null
@@ -36,11 +38,7 @@ fun FirFunction.computeJvmDescriptor(
     if (customName != null) {
         append(customName)
     } else {
-        if (this@computeJvmDescriptor is FirSimpleFunction) {
-            append(name.asString())
-        } else {
-            append("<init>")
-        }
+        append(computeJvmName(typeConversion))
     }
 
     append("(")
@@ -50,12 +48,48 @@ fun FirFunction.computeJvmDescriptor(
     append(")")
 
     if (includeReturnType) {
-        if (this@computeJvmDescriptor !is FirSimpleFunction || returnTypeRef.isVoid()) {
+        if (this@computeJvmDescriptor !is FirSimpleFunction && this@computeJvmDescriptor !is FirPropertyAccessor || returnTypeRef.isVoid()) {
             append("V")
         } else {
             typeConversion(returnTypeRef)?.let { appendConeType(it, typeConversion, mutableSetOf()) }
         }
     }
+}
+
+fun FirFunction.computeJvmName(typeConversion: (FirTypeRef) -> ConeKotlinType? = FirTypeRef::coneTypeSafe): String {
+    if (this is FirConstructor) return "<init>"
+    annotations.firstOrNull {
+        typeConversion(it.typeRef)?.classId == StandardClassIds.Annotations.JvmName
+    }
+        ?.getStringArgument(Name.identifier("name"))
+        ?.let { return it }
+    val defaultName = when (this) {
+        is FirSimpleFunction -> this.name.identifier
+        is FirPropertyAccessor -> {
+            val identifier = this.propertySymbol.name.identifier
+            when {
+                isFromAnnotationClass -> identifier
+                isSetter -> JvmAbi.setterName(identifier)
+                else -> JvmAbi.getterName(identifier)
+            }
+        }
+        else -> throw IllegalStateException()
+    }
+    val visibility = when(this) {
+        is FirSimpleFunction -> symbol.visibility
+        is FirPropertyAccessor -> if (!isGetter && propertySymbol.run {
+                isConst || annotations.any { StandardClassIds.Annotations.JvmField == typeConversion(it.typeRef)?.classId } || isLateInit
+            })
+            symbol.visibility
+        else
+            propertySymbol.visibility
+        else -> throw IllegalStateException()
+    }
+    if (visibility != Visibilities.Internal) return defaultName
+    // TODO: facade?
+    if (annotations.any { StandardClassIds.Annotations.PublishedApi == typeConversion(it.typeRef)?.classId }) return defaultName
+    val moduleName = moduleData.name.asString().removeSurrounding("<", ">")
+    return defaultName + "$" + NameUtils.sanitizeAsJavaIdentifier(moduleName)
 }
 
 private val PRIMITIVE_TYPE_SIGNATURE: Map<String, String> = mapOf(
