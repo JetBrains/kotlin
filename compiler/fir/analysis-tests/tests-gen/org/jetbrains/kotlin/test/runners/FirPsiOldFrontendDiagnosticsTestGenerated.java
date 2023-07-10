@@ -25682,6 +25682,22 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
         }
 
         @Nested
+        @TestMetadata("compiler/testData/diagnostics/tests/rawTypes")
+        @TestDataPath("$PROJECT_ROOT")
+        public class RawTypes {
+            @Test
+            public void testAllFilesPresentInRawTypes() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/rawTypes"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+            }
+
+            @Test
+            @TestMetadata("kt57620.kt")
+            public void testKt57620() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/rawTypes/kt57620.kt");
+            }
+        }
+
+        @Nested
         @TestMetadata("compiler/testData/diagnostics/tests/reassignment")
         @TestDataPath("$PROJECT_ROOT")
         public class Reassignment {
