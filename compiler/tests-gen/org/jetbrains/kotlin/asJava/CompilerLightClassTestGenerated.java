@@ -94,6 +94,11 @@ public class CompilerLightClassTestGenerated extends AbstractCompilerLightClassT
         runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/DataClassWithCustomImplementedMembers.kt");
     }
 
+    @TestMetadata("DefaultImplsWithTypeParameters.kt")
+    public void testDefaultImplsWithTypeParameters() throws Exception {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/DefaultImplsWithTypeParameters.kt");
+    }
+
     @TestMetadata("DelegatedNested.kt")
     public void testDelegatedNested() throws Exception {
         runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/DelegatedNested.kt");

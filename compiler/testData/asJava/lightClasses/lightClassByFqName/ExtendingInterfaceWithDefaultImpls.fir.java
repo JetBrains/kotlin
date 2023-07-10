@@ -19,10 +19,10 @@ public abstract interface C /* p.C*/<T>  extends p.B {
     public static void getProp3$annotations();//  getProp3$annotations()
 
     @org.jetbrains.annotations.NotNull()
-    public static java.lang.String c(@org.jetbrains.annotations.NotNull() p.C<T>);//  c(p.C<T>)
+    public static <T> java.lang.String c(@org.jetbrains.annotations.NotNull() p.C<T>);// <T>  c(p.C<T>)
 
-    public static int getProp3(@org.jetbrains.annotations.NotNull() p.C<T>);//  getProp3(p.C<T>)
+    public static <T> int getProp3(@org.jetbrains.annotations.NotNull() p.C<T>);// <T>  getProp3(p.C<T>)
 
-    public static void setProp3(@org.jetbrains.annotations.NotNull() p.C<T>, int);//  setProp3(p.C<T>, int)
+    public static <T> void setProp3(@org.jetbrains.annotations.NotNull() p.C<T>, int);// <T>  setProp3(p.C<T>, int)
   }
 }

@@ -142,7 +142,8 @@ internal class SymbolLightAnnotationsMethod private constructor(
         }
     }
 
-    private fun propertyHasTypeParameters(): Boolean = hasTypeParameters(ktModule, containingPropertyDeclaration, containingPropertySymbolPointer)
+    private fun propertyHasTypeParameters(): Boolean =
+        hasTypeParameters(ktModule, containingPropertyDeclaration, containingPropertySymbolPointer)
 
     private val _parametersList by lazyPub {
         SymbolLightParameterList(

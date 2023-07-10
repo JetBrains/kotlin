@@ -103,6 +103,12 @@ public class SymbolLightClassesParentingByFqNameForLibraryTestGenerated extends 
     }
 
     @Test
+    @TestMetadata("DefaultImplsWithTypeParameters.kt")
+    public void testDefaultImplsWithTypeParameters() throws Exception {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/DefaultImplsWithTypeParameters.kt");
+    }
+
+    @Test
     @TestMetadata("DelegatedNested.kt")
     public void testDelegatedNested() throws Exception {
         runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/DelegatedNested.kt");

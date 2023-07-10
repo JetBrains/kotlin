@@ -70,7 +70,9 @@ internal class SymbolLightSimpleMethod(
         }
     }
 
-    override fun hasTypeParameters(): Boolean = hasTypeParameters(ktModule, functionDeclaration, functionSymbolPointer)
+    override fun hasTypeParameters(): Boolean =
+        hasTypeParameters(ktModule, functionDeclaration, functionSymbolPointer)
+                || containingClass.isDefaultImplsForInterfaceWithTypeParameters
 
     override fun getTypeParameterList(): PsiTypeParameterList? = _typeParameterList
     override fun getTypeParameters(): Array<PsiTypeParameter> = _typeParameterList?.typeParameters ?: PsiTypeParameter.EMPTY_ARRAY

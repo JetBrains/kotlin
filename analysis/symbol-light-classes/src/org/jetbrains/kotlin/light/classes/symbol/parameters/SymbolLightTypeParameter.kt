@@ -62,7 +62,9 @@ internal class SymbolLightTypeParameter private constructor(
 
     override val givenAnnotations: List<KtLightAbstractAnnotation> get() = invalidAccess()
 
-    override fun copy(): PsiElement = SymbolLightTypeParameter(
+    override fun copy(): PsiElement = copyTo(parent)
+
+    internal fun copyTo(parent: SymbolLightTypeParameterList): SymbolLightTypeParameter = SymbolLightTypeParameter(
         parent,
         index,
         typeParameterSymbolPointer,

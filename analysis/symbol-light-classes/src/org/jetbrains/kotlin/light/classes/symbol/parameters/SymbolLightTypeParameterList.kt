@@ -13,8 +13,10 @@ import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.idea.KotlinLanguage
+import org.jetbrains.kotlin.light.classes.symbol.*
 import org.jetbrains.kotlin.light.classes.symbol.basicIsEquivalentTo
 import org.jetbrains.kotlin.light.classes.symbol.compareSymbolPointers
+import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodBase
 import org.jetbrains.kotlin.light.classes.symbol.toArrayIfNotEmptyOrDefault
 import org.jetbrains.kotlin.light.classes.symbol.withSymbol
 import org.jetbrains.kotlin.psi.KtTypeParameterListOwner
@@ -42,11 +44,18 @@ internal class SymbolLightTypeParameterList(
 
     private val _typeParameters: Collection<PsiTypeParameter> by lazyPub {
         symbolWithTypeParameterPointer.withSymbol(ktModule) {
-            it.typeParameters.mapIndexed { index, parameter ->
+            val parentInterface =
+                (owner as? SymbolLightMethodBase)?.containingClass?.interfaceIfDefaultImpls
+
+            val fromInterface = parentInterface?.typeParameters?.mapNotNull {
+                (it as? SymbolLightTypeParameter)?.copyTo(this@SymbolLightTypeParameterList)
+            }.orEmpty()
+
+            fromInterface + it.typeParameters.mapIndexed { index, parameter ->
                 SymbolLightTypeParameter(
                     ktAnalysisSession = this,
                     parent = this@SymbolLightTypeParameterList,
-                    index = index,
+                    index = fromInterface.size + index,
                     typeParameterSymbol = parameter,
                 )
             }

@@ -128,6 +128,12 @@ public class ClassFileToSourceStubConverterTestGenerated extends AbstractClassFi
     }
 
     @Test
+    @TestMetadata("defaultImplsWithTypeParameters.kt")
+    public void testDefaultImplsWithTypeParameters() throws Exception {
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/defaultImplsWithTypeParameters.kt");
+    }
+
+    @Test
     @TestMetadata("defaultPackage.kt")
     public void testDefaultPackage() throws Exception {
         runTest("plugins/kapt3/kapt3-compiler/testData/converter/defaultPackage.kt");
