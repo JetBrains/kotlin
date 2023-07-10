@@ -15,7 +15,6 @@ internal interface InternalMap<K, V> {
     fun putAll(from: Map<out K, V>)
 
     operator fun get(key: K): V?
-    fun getEntry(entry: Map.Entry<K, V>): MutableMap.MutableEntry<K, V>?
 
     operator fun contains(key: K): Boolean
     fun containsValue(value: V): Boolean

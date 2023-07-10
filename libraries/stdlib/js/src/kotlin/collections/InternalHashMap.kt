@@ -425,15 +425,6 @@ internal class InternalHashMap<K, V> private constructor(
         return containsEntry(entry as Map.Entry<K, V>)
     }
 
-    override fun getEntry(entry: Map.Entry<K, V>): MutableMap.MutableEntry<K, V>? {
-        val index = findKey(entry.key)
-        return if (index < 0 || valuesArray!![index] != entry.value) {
-            null
-        } else {
-            EntryRef(this, index)
-        }
-    }
-
     private fun contentEquals(other: Map<*, *>): Boolean = _size == other.size && containsAllEntries(other.entries)
 
     private fun putEntry(entry: Map.Entry<K, V>): Boolean {

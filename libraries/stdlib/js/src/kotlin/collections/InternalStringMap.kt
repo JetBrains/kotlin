@@ -96,28 +96,19 @@ internal open class InternalStringMap<K, V> : InternalMap<K, V> {
     override val size: Int
         get() = keys.length
 
+    private fun findKeyIndex(key: K): Int? {
+        if (key !is String) return null
+        val index = backingMap[key]
+        return if (index !== undefined) index.unsafeCast<Int>() else null
+    }
+
     override operator fun contains(key: K): Boolean {
-        if (key !is String) return false
-        return backingMap[key] !== undefined
+        return findKeyIndex(key) != null
     }
 
     override operator fun get(key: K): V? {
-        if (key !is String) return null
-        val index = backingMap[key]
-        return if (index !== undefined) values.getElement(index.unsafeCast<Int>()) else null
-    }
-
-    override fun getEntry(entry: Map.Entry<K, V>): MutableEntry<K, V>? {
-        val key = entry.key as? String ?: return null
-        val index = backingMap[key]
-        if (index === undefined) {
-            return null
-        }
-        val value = values.getElement(index.unsafeCast<Int>())
-        if (value == entry.value) {
-            return EntryRef(entry.key, value, this)
-        }
-        return null
+        val index = findKeyIndex(key) ?: return null
+        return values.getElement(index)
     }
 
     override fun containsValue(value: V): Boolean {
@@ -125,7 +116,8 @@ internal open class InternalStringMap<K, V> : InternalMap<K, V> {
     }
 
     override fun containsEntry(entry: Map.Entry<K, V>): Boolean {
-        return getEntry(entry) != null
+        val index = findKeyIndex(entry.key) ?: return false
+        return values.getElement(index) == entry.value
     }
 
     override fun containsOtherEntry(entry: Map.Entry<*, *>): Boolean {
@@ -134,8 +126,12 @@ internal open class InternalStringMap<K, V> : InternalMap<K, V> {
     }
 
     override fun removeEntry(entry: Map.Entry<K, V>): Boolean {
-        val key = getEntry(entry)?.key ?: return false
-        return remove(key) != null
+        val index = findKeyIndex(entry.key) ?: return false
+        if (values.getElement(index) == entry.value) {
+            removeKeyIndex(keys.getElement(index), index)
+            return true
+        }
+        return false
     }
 
     override fun removeValue(value: V): Boolean {
@@ -171,17 +167,10 @@ internal open class InternalStringMap<K, V> : InternalMap<K, V> {
     }
 
     override fun remove(key: K): V? {
-        if (key !is String) return null
-        val index = backingMap[key]
-        if (index === undefined) {
-            return null
-        }
-
-        val i = index.unsafeCast<Int>()
-        val removedValue = values.getElement(i)
-
-        removeKeyIndex(key, i)
-        return removedValue
+        val index = findKeyIndex(key) ?: return null
+        val removingValue = values.getElement(index)
+        removeKeyIndex(key, index)
+        return removingValue
     }
 
     internal open fun removeKeyIndex(key: K, removingIndex: Int) {

@@ -68,7 +68,6 @@ internal abstract class HashMapEntrySetBase<K, V, E : Map.Entry<K, V>> internal 
     override val size: Int get() = backing.size
     override fun isEmpty(): Boolean = backing.size == 0
     override fun contains(element: E): Boolean = backing.containsEntry(element)
-    protected abstract fun getEntry(element: Map.Entry<K, V>): E?
     override fun clear() = backing.clear()
     override fun add(element: E): Boolean = throw UnsupportedOperationException()
     override fun addAll(elements: Collection<E>): Boolean = throw UnsupportedOperationException()
@@ -85,8 +84,5 @@ internal abstract class HashMapEntrySetBase<K, V, E : Map.Entry<K, V>> internal 
 internal class HashMapEntrySet<K, V> internal constructor(
     backing: InternalMap<K, V>,
 ) : HashMapEntrySetBase<K, V, MutableMap.MutableEntry<K, V>>(backing) {
-
-    override fun getEntry(element: Map.Entry<K, V>): MutableMap.MutableEntry<K, V>? = backing.getEntry(element)
-
     override fun iterator(): MutableIterator<MutableMap.MutableEntry<K, V>> = backing.entriesIterator()
 }

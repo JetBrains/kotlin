@@ -60,6 +60,12 @@ internal class InternalStringLinkedMap<K, V> : InternalStringMap<K, V>() {
         return prevValue
     }
 
+    private fun IntArray.updateIndexAt(indexReference: Int, newIndex: Int) {
+        if (indexReference >= 0) {
+            this[indexReference] = newIndex
+        }
+    }
+
     override fun removeKeyIndex(key: K, removingIndex: Int) {
         super.removeKeyIndex(key, removingIndex)
 
@@ -67,8 +73,8 @@ internal class InternalStringLinkedMap<K, V> : InternalStringMap<K, V>() {
         val nextIndex = nextIndexes[removingIndex]
         val prevIndex = prevIndexes[removingIndex]
 
-        nextIndexes[prevIndex] = nextIndex
-        prevIndexes[nextIndex] = prevIndex
+        nextIndexes.updateIndexAt(prevIndex, nextIndex)
+        prevIndexes.updateIndexAt(nextIndex, prevIndex)
 
         if (headIndex == removingIndex) {
             headIndex = nextIndex
@@ -82,8 +88,8 @@ internal class InternalStringLinkedMap<K, V> : InternalStringMap<K, V>() {
         if (removingIndex != lastIndex) {
             nextIndexes[removingIndex] = nextIndexes[lastIndex]
             prevIndexes[removingIndex] = prevIndexes[lastIndex]
-            nextIndexes[prevIndexes[removingIndex]] = removingIndex
-            prevIndexes[nextIndexes[removingIndex]] = removingIndex
+            nextIndexes.updateIndexAt(prevIndexes[removingIndex], removingIndex)
+            prevIndexes.updateIndexAt(nextIndexes[removingIndex], removingIndex)
             if (headIndex == lastIndex) {
                 headIndex = removingIndex
             }
