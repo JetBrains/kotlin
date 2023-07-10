@@ -117,7 +117,7 @@ class FunctionInlining(
             return expression
         if (Symbols.isLateinitIsInitializedPropertyGetter(callee.symbol))
             return expression
-        if (Symbols.isTypeOfIntrinsic(callee.symbol))
+        if (context.ir.symbols.isTypeOfIntrinsic(callee.symbol))
             return expression
 
         val actualCallee = inlineFunctionResolver.getFunctionDeclaration(callee.symbol)

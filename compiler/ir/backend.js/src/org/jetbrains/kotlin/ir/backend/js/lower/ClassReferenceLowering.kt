@@ -265,7 +265,7 @@ class ClassReferenceLowering(val context: JsCommonBackendContext) : BodyLowering
                 )
 
             override fun visitCall(expression: IrCall): IrExpression =
-                if (Symbols.isTypeOfIntrinsic(expression.symbol)) {
+                if (context.ir.symbols.isTypeOfIntrinsic(expression.symbol)) {
                     createKType(expression.getTypeArgument(0)!!, hashSetOf())
                 } else {
                     super.visitCall(expression)

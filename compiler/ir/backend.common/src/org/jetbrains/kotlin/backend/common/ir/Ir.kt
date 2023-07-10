@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.StandardNames.KOTLIN_REFLECT_FQ_NAME
 import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
@@ -18,6 +19,7 @@ import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 // This is what Context collects about IR.
@@ -239,6 +241,15 @@ abstract class Symbols(
 
     open val arraysContentEquals: Map<IrType, IrSimpleFunctionSymbol>? = null
 
+    // Should be overridden in JVM backend
+    protected open fun IrFunction.isTopLevelInPackage(packageName: FqName) = (parent as? IrPackageFragment)?.packageFqName == packageName
+
+    fun isTypeOfIntrinsic(symbol: IrFunctionSymbol): Boolean =
+        symbol is IrSimpleFunctionSymbol && symbol.owner.let { function ->
+            function.name.asString() == "typeOf" &&
+                    function.valueParameters.isEmpty() && function.isTopLevelInPackage(KOTLIN_REFLECT_FQ_NAME)
+        }
+
     companion object {
         fun isLateinitIsInitializedPropertyGetter(symbol: IrFunctionSymbol): Boolean =
             symbol is IrSimpleFunctionSymbol && symbol.owner.let { function ->
@@ -249,13 +260,6 @@ abstract class Symbols(
                         symbol.owner.extensionReceiverParameter?.type?.classOrNull?.owner.let { receiverClass ->
                             receiverClass?.fqNameWhenAvailable?.toUnsafe() == StandardNames.FqNames.kProperty0
                         }
-            }
-
-        fun isTypeOfIntrinsic(symbol: IrFunctionSymbol): Boolean =
-            symbol is IrSimpleFunctionSymbol && symbol.owner.let { function ->
-                function.name.asString() == "typeOf" &&
-                        function.valueParameters.isEmpty() &&
-                        (function.parent as? IrPackageFragment)?.packageFqName == KOTLIN_REFLECT_FQ_NAME
             }
     }
 }
