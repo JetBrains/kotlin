@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.getModifierList
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isActual
@@ -26,6 +27,9 @@ import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.toSymbol
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility.*
 
@@ -34,7 +38,7 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker() {
     override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
         if (declaration !is FirMemberDeclaration) return
         if (!context.session.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)) {
-            if ((declaration.isExpect || declaration.isActual) && context.containingDeclarations.lastOrNull() is FirFile) {
+            if ((declaration.isExpect || declaration.isActual) && containsExpectOrActualModifier(declaration)) {
                 reporter.reportOn(
                     declaration.source,
                     FirErrors.UNSUPPORTED_FEATURE,
@@ -51,6 +55,12 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker() {
         if (declaration.isActual) {
             checkActualDeclarationHasExpected(declaration, context, reporter)
         }
+    }
+
+    private fun containsExpectOrActualModifier(declaration: FirMemberDeclaration): Boolean {
+        return declaration.source.getModifierList()?.let { modifiers ->
+            KtTokens.EXPECT_KEYWORD in modifiers || KtTokens.ACTUAL_KEYWORD in modifiers
+        } ?: false
     }
 
     private fun checkExpectDeclarationModifiers(

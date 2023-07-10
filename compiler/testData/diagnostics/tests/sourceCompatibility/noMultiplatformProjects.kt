@@ -10,3 +10,8 @@
 <!UNSUPPORTED_FEATURE!>actual<!> fun foo2() = 42
 <!MUST_BE_INITIALIZED!><!UNSUPPORTED_FEATURE!>actual<!> val bar2: Int<!>
 <!UNSUPPORTED_FEATURE!>actual<!> interface Baz2
+
+<!UNSUPPORTED_FEATURE!>actual<!> class Baz1 {
+    <!UNSUPPORTED_FEATURE!>actual<!> fun foo() {
+    }
+}
