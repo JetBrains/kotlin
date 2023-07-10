@@ -46,6 +46,7 @@ fun KGPBaseTest.project(
     buildJdk: File? = null,
     localRepoDir: Path? = null,
     environmentVariables: EnvironmentalVariables = EnvironmentalVariables(),
+    enableCompilerArgsPropertiesPlugin: Boolean = true,
     test: TestProject.() -> Unit = {},
 ): TestProject {
     val projectPath = setupProjectFromTestResources(
@@ -73,7 +74,8 @@ fun KGPBaseTest.project(
         forceOutput = forceOutput,
         enableBuildScan = enableBuildScan,
         enableGradleDebug = enableGradleDebug,
-        environmentVariables = environmentVariables
+        environmentVariables = environmentVariables,
+        enableKotlinCompilerArgsPlugin = enableCompilerArgsPropertiesPlugin
     )
     addHeapDumpOptions.ifTrue { testProject.addHeapDumpOptions() }
     localRepoDir?.let { testProject.configureLocalRepository(localRepoDir) }
@@ -142,6 +144,13 @@ fun TestProject.build(
     environmentVariables: EnvironmentalVariables = this.environmentVariables,
     assertions: BuildResult.() -> Unit = {},
 ) {
+    //validate build option before build
+    if (!enableKotlinCompilerArgsPlugin) {
+        if (buildOptions.languageApiVersion != null || buildOptions.languageVersion != null) {
+            throw IllegalStateException("Unable to modify compiler arg without enabled plugin")
+        }
+    }
+
     if (enableBuildScan) agreeToBuildScanService()
 
     val allBuildArguments = commonBuildSetup(
@@ -341,11 +350,16 @@ class TestProject(
      */
     val kotlinDaemonDebugPort: Int? = null,
     val environmentVariables: EnvironmentalVariables = EnvironmentalVariables(),
+    /**
+     * Plugin gradle-plugin-common-configuration is used to be able to change compiler arguments for tests.
+     * This plugin can be found at kotlin/libraries/tools/gradle/kotlin-compiler-args-properties/Readme.md
+     */
+    val enableKotlinCompilerArgsPlugin: Boolean,
 ) : GradleProject(projectName, projectPath) {
     fun subProject(name: String) = GradleProject(name, projectPath.resolve(name))
 
     fun addKotlinCompilerArgumentsPlugin() {
-        if (buildOptions.languageVersion != null || buildOptions.languageApiVersion != null) {
+        if (enableKotlinCompilerArgsPlugin) {
             projectPath.toFile().walkTopDown().forEach { file ->
                 when {
                     file.name.equals("build.gradle") -> file.modify {
