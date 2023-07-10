@@ -4,3 +4,5 @@ $TESTDATA_DIR$/javacKotlinJavaInterdependency/test/ClassWithTypeParameter.java
 -Xcompile-java
 -d
 $TEMP_DIR$
+-language-version
+1.9

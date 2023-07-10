@@ -1,5 +1,7 @@
 $TESTDATA_DIR$/languageVersion.kt
 -d
 $TEMP_DIR$
--XXLanguage\:+SealedInterfaces
--XXLanguage\:-SealedInterfaces
+-language-version
+1.9
+-XXLanguage\:+SuspendFunctionAsSupertype
+-XXLanguage\:-SuspendFunctionAsSupertype
