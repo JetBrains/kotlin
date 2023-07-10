@@ -277,8 +277,3 @@ internal enum class CompilerOutputInterceptor {
     DEFAULT,
     NONE
 }
-
-internal enum class HeaderKlibsMode {
-    ENABLED,
-    DISABLED
-}
