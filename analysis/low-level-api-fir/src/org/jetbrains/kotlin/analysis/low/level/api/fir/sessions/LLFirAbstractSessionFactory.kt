@@ -128,6 +128,7 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
                     ?: error("Cannot load script definition for ${module.file.virtualFilePath}")
 
                 val extensionRegistrar = FirScriptingCompilerExtensionIdeRegistrar(
+                    project,
                     hostConfiguration,
                     scriptDefinitionSources = emptyList(),
                     scriptDefinitions = listOf(scriptDefinition)
