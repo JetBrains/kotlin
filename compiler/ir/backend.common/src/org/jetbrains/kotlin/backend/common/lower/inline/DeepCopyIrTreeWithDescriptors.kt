@@ -5,12 +5,15 @@
 
 package org.jetbrains.kotlin.backend.common.lower.inline
 
+import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
 import org.jetbrains.kotlin.ir.declarations.copyAttributes
+import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
+import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
@@ -63,6 +66,7 @@ abstract class AbstractDeepCopyIrTreeWithSymbolsForInliner(
 }
 
 class DeepCopyIrTreeWithSymbolsForInliner(
+    context: CommonBackendContext,
     typeArguments: Map<IrTypeParameterSymbol, IrType?>?, parent: IrDeclarationParent?,
 ) : AbstractDeepCopyIrTreeWithSymbolsForInliner(typeArguments, parent) {
 
@@ -70,14 +74,22 @@ class DeepCopyIrTreeWithSymbolsForInliner(
 
     init {
         val typeRemapper = InlinerTypeRemapper(symbolRemapper, typeArguments)
-        copier = IrTreeWithSymbolsCopier(symbolRemapper, typeRemapper)
+        copier = IrTreeWithSymbolsCopier(context, symbolRemapper, typeRemapper)
         typeRemapper.copier = copier
     }
 }
 
-open class IrTreeWithSymbolsCopier(protected val symbolRemapper: SymbolRemapper, open val typeRemapper: InlinerTypeRemapper) :
+open class IrTreeWithSymbolsCopier(
+    private val context: CommonBackendContext,
+    protected val symbolRemapper: SymbolRemapper,
+    open val typeRemapper: InlinerTypeRemapper,
+) :
     DeepCopyIrTreeWithSymbols(symbolRemapper, typeRemapper) {
-    private fun IrType.remapTypeAndErase() = typeRemapper.remapTypeAndOptionallyErase(this, erase = true)
+    private fun IrType.remapTypeAndErase() =
+        typeRemapper.remapTypeAndOptionallyErase(this, erase = true, dontRemapNonReifiedTypeParameters = false)
+
+    private fun IrType.remapExcludeNonReifiedTypeParameters() =
+        typeRemapper.remapTypeAndOptionallyErase(this, erase = false, dontRemapNonReifiedTypeParameters = true)
 
     override fun visitTypeOperator(expression: IrTypeOperatorCall) =
         IrTypeOperatorCallImpl(
@@ -87,6 +99,23 @@ open class IrTreeWithSymbolsCopier(protected val symbolRemapper: SymbolRemapper,
             expression.typeOperand.remapTypeAndErase(),
             expression.argument.transform()
         ).copyAttributes(expression)
+
+    override fun visitCall(expression: IrCall): IrCall {
+        if (!context.ir.symbols.isTypeOfIntrinsic(expression.symbol)) return super.visitCall(expression)
+        return IrCallImpl(
+            expression.startOffset, expression.endOffset,
+            expression.type,
+            expression.symbol,
+            expression.typeArgumentsCount,
+            expression.valueArgumentsCount,
+            expression.origin,
+            expression.superQualifierSymbol
+        ).apply {
+            for (i in 0 until typeArgumentsCount) {
+                putTypeArgument(i, expression.getTypeArgument(i)?.remapExcludeNonReifiedTypeParameters())
+            }
+        }.copyAttributes(expression)
+    }
 }
 
 open class InlinerTypeRemapper(
@@ -102,30 +131,39 @@ open class InlinerTypeRemapper(
 
     private fun remapTypeArguments(
         arguments: List<IrTypeArgument>,
-        erasedParameters: MutableSet<IrTypeParameterSymbol>?) =
+        erasedParameters: MutableSet<IrTypeParameterSymbol>?,
+        dontRemapNonReifiedTypeParameters: Boolean,
+    ) =
         arguments.memoryOptimizedMap { argument ->
             (argument as? IrTypeProjection)?.let { proj ->
-                remapTypeAndOptionallyErase(proj.type, erasedParameters)?.let { newType ->
+                remapTypeAndOptionallyErase(proj.type, erasedParameters, dontRemapNonReifiedTypeParameters)?.let { newType ->
                     makeTypeProjection(newType, proj.variance)
                 } ?: IrStarProjectionImpl
             }
                 ?: argument
         }
 
-    override fun remapType(type: IrType) = remapTypeAndOptionallyErase(type, erase = false)
+    override fun remapType(type: IrType) = remapTypeAndOptionallyErase(type, erase = false, dontRemapNonReifiedTypeParameters = false)
 
-    fun remapTypeAndOptionallyErase(type: IrType, erase: Boolean): IrType {
+    fun remapTypeAndOptionallyErase(type: IrType, erase: Boolean, dontRemapNonReifiedTypeParameters: Boolean): IrType {
         val erasedParams = if (erase) mutableSetOf<IrTypeParameterSymbol>() else null
-        return remapTypeAndOptionallyErase(type, erasedParams) ?: error("Cannot substitute type ${type.render()}")
+        return remapTypeAndOptionallyErase(type, erasedParams, dontRemapNonReifiedTypeParameters)
+            ?: error("Cannot substitute type ${type.render()}")
     }
 
     private fun remapTypeAndOptionallyErase(
         type: IrType,
-        erasedParameters: MutableSet<IrTypeParameterSymbol>?
+        erasedParameters: MutableSet<IrTypeParameterSymbol>?,
+        dontRemapNonReifiedTypeParameters: Boolean,
     ): IrType? {
         if (type !is IrSimpleType) return type
 
         val classifier = type.classifier
+
+        if (dontRemapNonReifiedTypeParameters && (classifier as? IrTypeParameterSymbol)?.owner?.isReified == false) {
+            return type
+        }
+
         val substitutedType = typeArguments?.get(classifier)?.let { transformBackendSpecific(it) }
 
         // Erase non-reified type parameter if asked to.
@@ -146,7 +184,7 @@ open class InlinerTypeRemapper(
             val upperBound = superClass ?: superTypes.first()
 
             // TODO: Think about how to reduce complexity from k^N to N^k
-            val erasedUpperBound = remapTypeAndOptionallyErase(upperBound, erasedParameters)
+            val erasedUpperBound = remapTypeAndOptionallyErase(upperBound, erasedParameters, dontRemapNonReifiedTypeParameters)
                 ?: error("Cannot erase upperbound ${upperBound.render()}")
 
             erasedParameters.remove(classifier)
@@ -163,7 +201,7 @@ open class InlinerTypeRemapper(
         return type.buildSimpleType {
             kotlinType = null
             this.classifier = symbolRemapper.getReferencedClassifier(classifier)
-            arguments = remapTypeArguments(type.arguments, erasedParameters)
+            arguments = remapTypeArguments(type.arguments, erasedParameters, dontRemapNonReifiedTypeParameters)
             annotations = type.annotations.memoryOptimizedMap { it.transform(copier, null) as IrConstructorCall }
         }
     }

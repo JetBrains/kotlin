@@ -91,7 +91,7 @@ class FunctionInlining(
     private val allowExternalInlining: Boolean = false,
     private val useTypeParameterUpperBound: Boolean = false,
     private val copierBuilder: (Map<IrTypeParameterSymbol, IrType?>?, IrDeclarationParent?) -> AbstractDeepCopyIrTreeWithSymbolsForInliner =
-        ::DeepCopyIrTreeWithSymbolsForInliner,
+        { typeArguments, parent -> DeepCopyIrTreeWithSymbolsForInliner(context, typeArguments, parent) },
 ) : IrElementTransformerVoidWithContext(), BodyLoweringPass {
     private var containerScope: ScopeWithIr? = null
 
