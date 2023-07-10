@@ -28,7 +28,7 @@ class NameResolverImpl(
     fun getPackageFqName(index: Int): String =
         traverseIds(index).first.joinToString(".")
 
-    private fun traverseIds(startingIndex: Int): Triple<List<String>, List<String>, Boolean> {
+    fun traverseIds(startingIndex: Int): Triple<List<String>, List<String>, Boolean> {
         var index = startingIndex
         val packageNameSegments = LinkedList<String>()
         val relativeClassNameSegments = LinkedList<String>()
