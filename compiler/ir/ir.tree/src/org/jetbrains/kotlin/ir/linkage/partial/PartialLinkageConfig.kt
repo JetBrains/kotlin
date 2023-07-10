@@ -34,7 +34,7 @@ enum class PartialLinkageLogLevel {
     INFO, WARNING, ERROR;
 
     companion object {
-        val DEFAULT = WARNING
+        val DEFAULT = INFO
 
         fun resolveLogLevel(key: String): PartialLinkageLogLevel? =
             values().firstOrNull { entry -> entry.name.equals(key, ignoreCase = true) }
