@@ -22806,6 +22806,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
                 }
 
                 @Test
+                @TestMetadata("kt57802.kt")
+                public void testKt57802() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/modifiers/const/kt57802.kt");
+                }
+
+                @Test
                 @TestMetadata("stdlibConstFun.kt")
                 public void testStdlibConstFun() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/modifiers/const/stdlibConstFun.kt");
