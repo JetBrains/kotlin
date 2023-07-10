@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.gradle.idea.testFixtures.tcs
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependency
 import kotlin.test.fail
 
-fun Iterable<IdeaKotlinDependency>.assertMatches(vararg notation: Any?): Iterable<IdeaKotlinDependency> {
+fun <T : IdeaKotlinDependency> Iterable<T>.assertMatches(vararg notation: Any?): Iterable<T> {
     val thisList = toList()
     val matchers = notation.flatMap { buildIdeaKotlinDependencyMatchers(it) }
 
@@ -50,4 +50,11 @@ fun Iterable<IdeaKotlinDependency>.assertMatches(vararg notation: Any?): Iterabl
             }
         }
     )
+}
+
+fun <T : IdeaKotlinDependency> Iterable<T>.getOrFail(matcher: IdeaKotlinDependencyMatcher): T {
+    val candidates = filter { matcher.matches(it) }
+    if (candidates.isEmpty()) fail("No dependency matching '$matcher' found")
+    if (candidates.size > 1) fail("Multiple dependencies matching '$matcher' found: ${candidates.map { it.coordinates }}")
+    return candidates.single()
 }
