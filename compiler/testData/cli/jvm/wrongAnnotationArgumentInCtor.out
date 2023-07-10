@@ -1,4 +1,4 @@
-compiler/testData/cli/jvm/wrongAnnotationArgumentInCtor.kt:4:32: error: too many arguments for public constructor Anno() defined in Anno
+compiler/testData/cli/jvm/wrongAnnotationArgumentInCtor.kt:4:32: error: too many arguments for public constructor(): Anno
 class UnresolvedArgument(@Anno(BLA) val s: Int)
                                ^
 compiler/testData/cli/jvm/wrongAnnotationArgumentInCtor.kt:4:32: error: unresolved reference: BLA

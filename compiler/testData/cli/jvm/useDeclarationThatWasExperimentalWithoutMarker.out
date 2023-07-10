@@ -1,8 +1,5 @@
-warning: language version 1.4 is deprecated and its support will be removed in a future version of Kotlin
-compiler/testData/cli/jvm/useDeclarationThatWasExperimentalWithoutMarker.kt:2:8: error: unresolved reference: lowercase
-    "".lowercase()
-       ^
-compiler/testData/cli/jvm/useDeclarationThatWasExperimentalWithoutMarker.kt:3:7: error: unresolved reference: digitToChar
-    1.digitToChar()
-      ^
+warning: API version 1.6 is deprecated and its support will be removed in a future version of Kotlin
+compiler/testData/cli/jvm/useDeclarationThatWasExperimentalWithoutMarker.kt:2:15: error: this declaration needs opt-in. Its usage must be marked with '@kotlin.ExperimentalStdlibApi' or '@OptIn(kotlin.ExperimentalStdlibApi::class)'
+    Regex("").matchAt("123", 0)
+              ^
 COMPILATION_ERROR
