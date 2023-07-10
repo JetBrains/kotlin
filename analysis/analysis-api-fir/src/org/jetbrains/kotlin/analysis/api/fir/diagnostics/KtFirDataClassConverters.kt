@@ -3451,6 +3451,12 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.NOT_A_MULTIPLATFORM_COMPILATION) { firDiagnostic ->
+        NotAMultiplatformCompilationImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.INITIALIZER_REQUIRED_FOR_DESTRUCTURING_DECLARATION) { firDiagnostic ->
         InitializerRequiredForDestructuringDeclarationImpl(
             firDiagnostic as KtPsiDiagnostic,
