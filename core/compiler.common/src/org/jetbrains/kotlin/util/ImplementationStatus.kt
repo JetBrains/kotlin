@@ -26,8 +26,7 @@ enum class ImplementationStatus {
     ALREADY_IMPLEMENTED,
 
     /**
-     * The symbol is not implemented in the class and it cannot be implemented. For example, it's final in super classes or the current
-     * class is `expect`.
+     * The symbol is not implemented in the class, and it cannot be implemented. For example, it's final in super classes.
      */
     CANNOT_BE_IMPLEMENTED;
 

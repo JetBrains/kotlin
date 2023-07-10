@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.platform.PlatformSpecificDiagnosticComponents
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.resolve.DescriptorUtils.classCanHaveAbstractFakeOverride
+import org.jetbrains.kotlin.resolve.DescriptorUtils.classCanHaveAbstractDeclaration
 import org.jetbrains.kotlin.resolve.OverridingUtil.OverrideCompatibilityInfo.Result.OVERRIDABLE
 import org.jetbrains.kotlin.resolve.calls.util.isOrOverridesSynthesized
 import org.jetbrains.kotlin.types.*
@@ -132,7 +132,7 @@ class OverrideResolver(
                 this(delegateStrategy.klass, delegateStrategy.classDescriptor)
 
         override fun doReportErrors() {
-            val canHaveAbstractMembers = classCanHaveAbstractFakeOverride(classDescriptor)
+            val canHaveAbstractMembers = classCanHaveAbstractDeclaration(classDescriptor)
             if (abstractInBaseClassNoImpl.isNotEmpty() && !canHaveAbstractMembers) {
                 if (languageVersionSettings.supportsFeature(AbstractClassMemberNotImplementedWithIntermediateAbstractClass)) {
                     trace.report(ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED.on(klass, klass, abstractInBaseClassNoImpl.first()))
@@ -260,7 +260,7 @@ class OverrideResolver(
         }
 
         open fun doReportErrors() {
-            val canHaveAbstractMembers = classCanHaveAbstractFakeOverride(classDescriptor)
+            val canHaveAbstractMembers = classCanHaveAbstractDeclaration(classDescriptor)
             if (abstractInBaseClassNoImpl.isNotEmpty() && !canHaveAbstractMembers) {
                 trace.report(ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED.on(klass, klass, abstractInBaseClassNoImpl.first()))
             } else if (abstractNoImpl.isNotEmpty() && !canHaveAbstractMembers) {
@@ -708,11 +708,9 @@ class OverrideResolver(
             for (overridden in relevantDirectlyOverridden) {
                 val containingDeclaration = overridden.containingDeclaration as? ClassDescriptor ?: continue
                 if (containingDeclaration.kind == ClassKind.CLASS) {
-                    if (overridden.kind == FAKE_OVERRIDE && !containingDeclaration.isExpect) {
+                    if (overridden.kind == FAKE_OVERRIDE) {
                         // Fake override in a class in fact can mean an interface member
                         // We will process it at the end
-                        // Note: with expect containing class, the situation is unclear, so we miss this case
-                        // See extendExpectedClassWithAbstractMember.kt (BaseA, BaseAImpl, DerivedA1)
                         fakeOverrideInBaseClass = overridden
                     }
                     overridesClassMember = true

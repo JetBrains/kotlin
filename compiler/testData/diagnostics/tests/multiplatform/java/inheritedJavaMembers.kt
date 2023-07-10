@@ -19,6 +19,7 @@ expect class FastArrayList<E> : MutableListEx<E>, RandomAccess {
     constructor(elements: Collection<E>)
 
     fun trimToSize()
+    override fun removeRange(fromIndex: Int, toIndex: Int)
     fun ensureCapacity(minCapacity: Int)
     override val size: Int
     override fun isEmpty(): Boolean
@@ -66,7 +67,7 @@ public actual open class FastArrayList<E> internal constructor(
     actual override fun addAll(index: Int, elements: Collection<E>): Boolean = true
     actual override fun remove(element: E): Boolean = true
     @Suppress("UNCHECKED_CAST") actual override fun removeAt(index: Int): E = array[0] as E
-    override fun removeRange(fromIndex: Int, toIndex: Int) {}
+    actual override fun removeRange(fromIndex: Int, toIndex: Int) {}
     override fun setAll(index: Int, elements: FastArrayList<E>, offset: Int, size: Int) {}
     override fun addAll(elements: FastArrayList<E>, offset: Int, size: Int) {}
     actual override fun clear() {}

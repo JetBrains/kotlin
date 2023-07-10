@@ -43,6 +43,8 @@ FILE fqName:<root> fileName:/common.kt
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS CLASS name:C modality:FINAL visibility:public [expect] superTypes:[<root>.I1; <root>.I2]
+    annotations:
+      Suppress(names = ['ABSTRACT_MEMBER_NOT_IMPLEMENTED'])
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C
     CONSTRUCTOR visibility:public <> () returnType:<root>.C [primary,expect]
     FUN FAKE_OVERRIDE name:f visibility:public modality:ABSTRACT <> ($this:<root>.I1) returnType:kotlin.String [expect,fake_override]

@@ -5,7 +5,7 @@ expect abstract class Base {
     abstract fun foo()
 }
 
-expect class DerivedImplicit : Base
+expect <!ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED, ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED{JVM}!>class DerivedImplicit<!> : Base
 
 expect class DerivedExplicit : Base {
     override fun foo()

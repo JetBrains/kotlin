@@ -386,7 +386,6 @@ fun FirCallableSymbol<*>.getImplementationStatus(
         isFinal -> ImplementationStatus.CANNOT_BE_IMPLEMENTED
         containingClassSymbol === parentClassSymbol && (origin == FirDeclarationOrigin.Source || origin == FirDeclarationOrigin.Precompiled) ->
             ImplementationStatus.ALREADY_IMPLEMENTED
-        containingClassSymbol is FirRegularClassSymbol && containingClassSymbol.isExpect -> ImplementationStatus.CANNOT_BE_IMPLEMENTED
         isAbstract -> ImplementationStatus.NOT_IMPLEMENTED
         else -> ImplementationStatus.INHERITED_OR_SYNTHESIZED
     }

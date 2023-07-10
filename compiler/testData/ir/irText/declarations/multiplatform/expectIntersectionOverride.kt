@@ -17,6 +17,7 @@ interface I2 {
     val p: Int
 }
 
+@Suppress("ABSTRACT_MEMBER_NOT_IMPLEMENTED") // Workaround for KT-60390
 expect class C() : I1, I2
 
 // MODULE: platform()()(common)

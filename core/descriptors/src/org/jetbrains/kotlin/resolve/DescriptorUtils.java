@@ -505,10 +505,6 @@ public class DescriptorUtils {
                UnsignedTypes.INSTANCE.isUnsignedType(type);
     }
 
-    public static boolean classCanHaveAbstractFakeOverride(@NotNull ClassDescriptor classDescriptor) {
-        return classCanHaveAbstractDeclaration(classDescriptor) || classDescriptor.isExpect();
-    }
-
     public static boolean classCanHaveAbstractDeclaration(@NotNull ClassDescriptor classDescriptor) {
         return classDescriptor.getModality() == Modality.ABSTRACT
                || isSealedClass(classDescriptor)

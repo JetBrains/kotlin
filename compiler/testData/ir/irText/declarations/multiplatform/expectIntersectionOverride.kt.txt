@@ -17,6 +17,7 @@ interface I2 {
 
 }
 
+@Suppress(names = ["ABSTRACT_MEMBER_NOT_IMPLEMENTED"])
 expect class C : I1, I2 {
   expect constructor() /* primary */
 
