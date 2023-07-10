@@ -47,7 +47,7 @@ object KotlinToolingDiagnostics {
         )
     }
 
-    object DeprecatedJvmWithJavaPresetDiagnostic : ToolingDiagnosticFactory(WARNING) {
+    object DeprecatedJvmWithJavaPresetDiagnostic : ToolingDiagnosticFactory(ERROR) {
         operator fun invoke() = build(
             """
                 The 'jvmWithJava' preset is deprecated and will be removed soon. Please use an ordinary JVM target with Java support: 

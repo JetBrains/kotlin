@@ -1,4 +1,4 @@
-[DeprecatedJvmWithJavaPresetDiagnostic | WARNING] The 'jvmWithJava' preset is deprecated and will be removed soon. Please use an ordinary JVM target with Java support:
+[DeprecatedJvmWithJavaPresetDiagnostic | ERROR] The 'jvmWithJava' preset is deprecated and will be removed soon. Please use an ordinary JVM target with Java support:
 
     kotlin {
         jvm {
