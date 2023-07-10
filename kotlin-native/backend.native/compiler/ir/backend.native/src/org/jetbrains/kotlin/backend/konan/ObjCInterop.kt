@@ -69,8 +69,10 @@ fun ClassDescriptor.isObjCForwardDeclaration(): Boolean = when (NativeForwardDec
     NativeForwardDeclarationKind.ObjCProtocol, NativeForwardDeclarationKind.ObjCClass -> true
 }
 
-fun IrClass.isObjCForwardDeclaration(): Boolean =
-        getPackageFragment().packageFqName.startsWith(objcnamesForwardDeclarationsPackageName)
+fun IrClass.isObjCForwardDeclaration(): Boolean = when (NativeForwardDeclarationKind.packageFqNameToKind[getPackageFragment().packageFqName]) {
+    null, NativeForwardDeclarationKind.Struct -> false
+    NativeForwardDeclarationKind.ObjCProtocol, NativeForwardDeclarationKind.ObjCClass -> true
+}
 
 
 fun ClassDescriptor.isObjCMetaClass(): Boolean = this.getAllSuperClassifiers().any {
