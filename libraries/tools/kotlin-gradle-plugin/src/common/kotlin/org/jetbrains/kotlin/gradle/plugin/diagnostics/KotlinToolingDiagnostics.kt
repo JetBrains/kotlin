@@ -35,7 +35,7 @@ object KotlinToolingDiagnostics {
         )
     }
 
-    object CommonMainWithDependsOnDiagnostic : ToolingDiagnosticFactory(WARNING) {
+    object CommonMainWithDependsOnDiagnostic : ToolingDiagnosticFactory(ERROR) {
         operator fun invoke() = build("commonMain can't declare dependsOn on other source sets")
     }
 
