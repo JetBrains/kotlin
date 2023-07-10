@@ -15,7 +15,10 @@ class ConeTypeRendererWithJavaFlexibleTypes : ConeTypeRenderer {
 
     private val idRendererCreator: () -> ConeIdRenderer
 
-    @Suppress("ConvertSecondaryConstructorToPrimary")
+    constructor(idRendererCreator: () -> ConeIdRenderer) : super() {
+        this.idRendererCreator = idRendererCreator
+    }
+
     constructor(builder: StringBuilder, idRendererCreator: () -> ConeIdRenderer) : super() {
         this.builder = builder
         this.idRendererCreator = idRendererCreator

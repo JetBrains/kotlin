@@ -1,5 +1,5 @@
 KtInapplicableCallCandidateInfo:
-  diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for public final fun /foo(): R|kotlin/Unit|>
+  diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for public final fun /foo(): kotlin/Unit>
   candidate = KtSimpleFunctionCall:
     isImplicitInvoke = false
     partiallyAppliedSymbol = KtPartiallyAppliedSymbol:

@@ -129,9 +129,13 @@ object FirDiagnosticRenderers {
     val RENDER_TYPE_WITH_ANNOTATIONS = RENDER_TYPE
 
     val FQ_NAMES_IN_TYPES = Renderer { symbol: FirBasedSymbol<*> ->
+        val idRendererCreator = { ConeIdFullRenderer() }
         @OptIn(SymbolInternals::class)
         FirRenderer(
-            annotationRenderer = null, bodyRenderer = null, idRenderer = ConeIdFullRenderer()
+            annotationRenderer = null,
+            bodyRenderer = null,
+            idRenderer = idRendererCreator(),
+            typeRenderer = ConeTypeRendererWithJavaFlexibleTypes(idRendererCreator)
         ).renderElementAsString(symbol.fir, trim = true)
     }
 

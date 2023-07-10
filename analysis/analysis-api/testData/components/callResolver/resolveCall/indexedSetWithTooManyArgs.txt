@@ -55,4 +55,4 @@ KtErrorCallInfo:
           callableIdIfNonLocal = null)
       }
   ]
-  diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for public final operator fun /C.set(a: R|kotlin/Int|, b: R|kotlin/String|, value: R|kotlin/Boolean|): R|kotlin/Unit|>
+  diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for public final operator fun /C.set(a: kotlin/Int, b: kotlin/String, value: kotlin/Boolean): kotlin/Unit>

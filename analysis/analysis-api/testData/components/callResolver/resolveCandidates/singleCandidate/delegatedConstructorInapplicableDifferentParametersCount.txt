@@ -1,5 +1,5 @@
 KtInapplicableCallCandidateInfo:
-  diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for public constructor(): R|A|>
+  diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for public constructor(): A>
   candidate = KtDelegatedConstructorCall:
     kind = SUPER_CALL
     partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
