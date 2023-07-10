@@ -11,6 +11,7 @@ import org.gradle.api.artifacts.result.ResolvedArtifactResult
 import org.gradle.jvm.JvmLibrary
 import org.gradle.language.base.artifact.SourcesArtifact
 import org.gradle.language.java.artifact.JavadocArtifact
+import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinBinaryCoordinates
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinResolvedBinaryDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.extras.documentationClasspath
@@ -19,7 +20,6 @@ import org.jetbrains.kotlin.gradle.idea.tcs.isKotlinCompileBinaryType
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeAdditionalArtifactResolver
-import org.jetbrains.kotlin.gradle.plugin.ide.IdeaKotlinBinaryCoordinates
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.gradle.plugin.mpp.resolvableMetadataConfiguration
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
@@ -33,10 +33,11 @@ import org.jetbrains.kotlin.gradle.plugin.sources.internal
  * cc Anton Lakotka, Sebastian Sellmair
  */
 internal object IdeArtifactResolutionQuerySourcesAndDocumentationResolver : IdeAdditionalArtifactResolver {
+
     override fun resolve(sourceSet: KotlinSourceSet, dependencies: Set<IdeaKotlinDependency>) {
         val binaryDependencies = dependencies.filterIsInstance<IdeaKotlinResolvedBinaryDependency>()
             .filter { dependency -> dependency.isKotlinCompileBinaryType }
-            .groupBy { dependency -> dependency.coordinates?.copy(sourceSetName = null) }
+            .groupBy { dependency -> Coordinates(dependency.coordinates ?: return@groupBy null) }
 
         val project = sourceSet.project
         val configuration = selectConfiguration(sourceSet)
@@ -50,9 +51,7 @@ internal object IdeArtifactResolutionQuerySourcesAndDocumentationResolver : IdeA
         }
 
         sourcesArtifacts.forEach { artifact ->
-            val artifactId = artifact.id.componentIdentifier as? ModuleComponentIdentifier ?: return@forEach
-            val artifactCoordinates = IdeaKotlinBinaryCoordinates(artifactId)
-            binaryDependencies[artifactCoordinates]?.forEach { dependency ->
+            binaryDependencies[Coordinates(artifact)]?.forEach { dependency ->
                 dependency.sourcesClasspath.add(artifact.file)
             }
         }
@@ -62,9 +61,7 @@ internal object IdeArtifactResolutionQuerySourcesAndDocumentationResolver : IdeA
         }
 
         javadocArtifacts.forEach { artifact ->
-            val artifactId = artifact.id.componentIdentifier as? ModuleComponentIdentifier ?: return@forEach
-            val artifactCoordinates = IdeaKotlinBinaryCoordinates(artifactId)
-            binaryDependencies[artifactCoordinates]?.forEach { dependency ->
+            binaryDependencies[Coordinates(artifact)]?.forEach { dependency ->
                 dependency.documentationClasspath.add(artifact.file)
             }
         }
@@ -74,5 +71,27 @@ internal object IdeArtifactResolutionQuerySourcesAndDocumentationResolver : IdeA
         val platformCompilation = sourceSet.internal.compilations.singleOrNull { it.platformType != KotlinPlatformType.common }
         return platformCompilation?.internal?.configurations?.compileDependencyConfiguration
             ?: sourceSet.internal.resolvableMetadataConfiguration
+    }
+
+    /**
+     * Specific 'Coordinates' type used to match previously resolved dependencies with their
+     * sources and javadoc artifact counterparts
+     */
+    private data class Coordinates(private val coordinates: String)
+
+    private fun Coordinates(coordinates: IdeaKotlinBinaryCoordinates): Coordinates? = when {
+        coordinates.capabilities.isEmpty() -> Coordinates("${coordinates.group}:${coordinates.module}:${coordinates.version}")
+        coordinates.capabilities.size == 1 -> coordinates.capabilities.single().run { Coordinates("$group:$name:$version") }
+
+        /*
+        We do have a dependency that declares multiple capabilities. In this case we cannot use this resolver
+        to find the sources as we can only specify the componentId and not the explicit artifact
+         */
+        else -> null
+    }
+
+    private fun Coordinates(artifact: ResolvedArtifactResult): Coordinates? {
+        val id = artifact.id.componentIdentifier as? ModuleComponentIdentifier ?: return null
+        return Coordinates("${id.group}:${id.module}:${id.version}")
     }
 }
