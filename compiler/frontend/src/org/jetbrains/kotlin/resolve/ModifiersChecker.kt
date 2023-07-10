@@ -216,8 +216,6 @@ object ModifierCheckerCore {
                 continue
             }
 
-            val featureSupport = languageVersionSettings.getFeatureSupport(dependency)
-
             if (dependency == LanguageFeature.Coroutines) {
                 checkCoroutinesFeature(languageVersionSettings, trace, node.psi)
                 continue
@@ -228,6 +226,13 @@ object ModifierCheckerCore {
                     trace.report(Errors.INLINE_CLASS_DEPRECATED.on(node.psi))
                     continue
                 }
+            }
+
+            val featureSupport = languageVersionSettings.getFeatureSupport(dependency)
+
+            if (dependency == LanguageFeature.MultiPlatformProjects && featureSupport == LanguageFeature.State.DISABLED) {
+                trace.report(Errors.NOT_A_MULTIPLATFORM_COMPILATION.on(node.psi))
+                continue
             }
 
             val diagnosticData = dependency to languageVersionSettings

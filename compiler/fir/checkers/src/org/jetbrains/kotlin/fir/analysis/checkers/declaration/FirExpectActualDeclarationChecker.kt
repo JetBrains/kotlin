@@ -41,8 +41,7 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker() {
             if ((declaration.isExpect || declaration.isActual) && containsExpectOrActualModifier(declaration)) {
                 reporter.reportOn(
                     declaration.source,
-                    FirErrors.UNSUPPORTED_FEATURE,
-                    LanguageFeature.MultiPlatformProjects to context.session.languageVersionSettings,
+                    FirErrors.NOT_A_MULTIPLATFORM_COMPILATION,
                     context,
                     positioningStrategy = SourceElementPositioningStrategies.EXPECT_ACTUAL_MODIFIER
                 )

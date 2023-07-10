@@ -1170,6 +1170,8 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         }
 
         val ACTUAL_MISSING by error<KtNamedDeclaration>(PositioningStrategy.ACTUAL_DECLARATION_NAME)
+
+        val NOT_A_MULTIPLATFORM_COMPILATION by error<PsiElement>()
     }
 
     val DESTRUCTING_DECLARATION by object : DiagnosticGroup("Destructuring declaration") {
