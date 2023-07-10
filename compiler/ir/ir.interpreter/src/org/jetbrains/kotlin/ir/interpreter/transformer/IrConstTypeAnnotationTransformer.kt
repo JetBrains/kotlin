@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.ir.interpreter.checker.IrInterpreterChecker
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.typeOrNull
-import org.jetbrains.kotlin.ir.visitors.IrTypeTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.IrTypeTransformer
 
 internal class IrConstTypeAnnotationTransformer(
     interpreter: IrInterpreter,
@@ -30,7 +30,7 @@ internal class IrConstTypeAnnotationTransformer(
     suppressExceptions: Boolean,
 ) : IrConstAnnotationTransformer(
     interpreter, irFile, mode, checker, evaluatedConstTracker, inlineConstTracker, onWarning, onError, suppressExceptions
-), IrTypeTransformerVoid<IrConstTransformer.Data> {
+), IrTypeTransformer<IrConstTransformer.Data> {
 
     override fun <Type : IrType?> transformType(container: IrElement, type: Type, data: Data): Type {
         if (type == null) return type

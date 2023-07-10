@@ -18,7 +18,7 @@ import java.io.File
 private val visitorTypeName = ClassName(VISITOR_PACKAGE, "IrElementVisitor")
 private val visitorVoidTypeName = ClassName(VISITOR_PACKAGE, "IrElementVisitorVoid")
 private val transformerTypeName = ClassName(VISITOR_PACKAGE, "IrElementTransformer")
-private val typeTransformerVoidTypeName = ClassName(VISITOR_PACKAGE, "IrTypeTransformerVoid")
+private val typeTransformerTypeName = ClassName(VISITOR_PACKAGE, "IrTypeTransformer")
 
 fun printVisitor(generationPath: File, model: Model): GeneratedFile {
     val visitorType = TypeSpec.interfaceBuilder(visitorTypeName).apply {
@@ -153,7 +153,7 @@ fun printTypeVisitor(generationPath: File, model: Model): GeneratedFile {
         return irTypeFields + parentsFields
     }
 
-    val visitorType = TypeSpec.interfaceBuilder(typeTransformerVoidTypeName).apply {
+    val visitorType = TypeSpec.interfaceBuilder(typeTransformerTypeName).apply {
         val d = TypeVariableName("D", KModifier.IN)
         addTypeVariable(d)
         addSuperinterface(transformerTypeName.parameterizedBy(d))
@@ -190,7 +190,7 @@ fun printTypeVisitor(generationPath: File, model: Model): GeneratedFile {
                             if (irTypeFields.singleOrNull()?.name != "typeArguments") {
                                 error(
                                     """`Ir${IrTree.memberAccessExpression.name.capitalizeAsciiOnly()}` has unexpected fields with `IrType` type. 
-                                        |Please adjust logic of `${typeTransformerVoidTypeName.simpleName}`'s generation.""".trimMargin()
+                                        |Please adjust logic of `${typeTransformerTypeName.simpleName}`'s generation.""".trimMargin()
                                 )
                             }
                             beginControlFlow("(0 until $visitorParam.typeArgumentsCount).forEach {")
@@ -213,7 +213,7 @@ fun printTypeVisitor(generationPath: File, model: Model): GeneratedFile {
         }
     }.build()
 
-    return printTypeCommon(generationPath, typeTransformerVoidTypeName.packageName, visitorType)
+    return printTypeCommon(generationPath, typeTransformerTypeName.packageName, visitorType)
 }
 
 private fun Element.getTransformExplicitType(): Element {

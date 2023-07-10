@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
 import org.jetbrains.kotlin.ir.expressions.IrVararg
 import org.jetbrains.kotlin.ir.types.IrType
 
-interface IrTypeTransformerVoid<in D> : IrElementTransformer<D> {
+interface IrTypeTransformer<in D> : IrElementTransformer<D> {
     fun <Type : IrType?> transformType(
         container: IrElement,
         type: Type,
