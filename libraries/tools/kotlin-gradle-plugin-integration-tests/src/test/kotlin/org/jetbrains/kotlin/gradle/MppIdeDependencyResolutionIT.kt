@@ -235,7 +235,7 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
             resolveIdeDependencies { dependencies ->
                 dependencies["commonMain"].assertMatches(
                     kotlinNativeDistributionDependencies,
-                    binaryCoordinates(Regex("com.example:cinterop-.*-dummy:.*:linux_x64")),
+                    binaryCoordinates(Regex("com.example:cinterop-.*-dummy:linux_x64")),
                     IdeaKotlinDependencyMatcher("Unresolved 'failing' cinterop") { dependency ->
                         dependency is IdeaKotlinUnresolvedBinaryDependency && dependency.cause.orEmpty().contains(
                             "cinterop-withFailingCInteropProcess-cinterop-failing.klib"
@@ -270,8 +270,8 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
             build(":lib:copyCommonizeCInteropForIde")
             resolveIdeDependencies { dependencies ->
                 dependencies["linuxMain"].cinteropDependencies().assertMatches(
-                    binaryCoordinates("org.example:included-lib-cinterop-a:null:(linux_arm64, linux_x64)"),
-                    binaryCoordinates("org.example:lib-cinterop-a:null:(linux_arm64, linux_x64)"),
+                    binaryCoordinates("org.example:included-lib-cinterop-a:(linux_arm64, linux_x64)"),
+                    binaryCoordinates("org.example:lib-cinterop-a:(linux_arm64, linux_x64)"),
                 )
             }
         }

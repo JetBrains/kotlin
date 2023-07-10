@@ -64,9 +64,9 @@ class IdeSourcesAndDocumentationResolutionTest {
         /* Check commonMain&commonTest */
         run {
             val expectedDependencies = listOf(
-                binaryCoordinates("com.arkivanov.mvikotlin:mvikotlin:3.0.2:commonMain"),
-                binaryCoordinates("com.arkivanov.essenty:lifecycle:0.4.2:commonMain"),
-                binaryCoordinates("com.arkivanov.essenty:instance-keeper:0.4.2:commonMain"),
+                binaryCoordinates("com.arkivanov.mvikotlin:mvikotlin:commonMain:3.0.2"),
+                binaryCoordinates("com.arkivanov.essenty:lifecycle:commonMain:0.4.2"),
+                binaryCoordinates("com.arkivanov.essenty:instance-keeper:commonMain:0.4.2"),
             )
 
             val resolvedDependencies = resolveDependencySources(commonMain)
@@ -78,10 +78,10 @@ class IdeSourcesAndDocumentationResolutionTest {
         /* Check nativeMain&nativeTest */
         run {
             val expectedDependencies = listOf(
-                binaryCoordinates("com.arkivanov.mvikotlin:mvikotlin:3.0.2:commonMain"),
-                binaryCoordinates("com.arkivanov.mvikotlin:mvikotlin:3.0.2:jsNativeMain"),
-                binaryCoordinates("com.arkivanov.essenty:lifecycle:0.4.2:commonMain"),
-                binaryCoordinates("com.arkivanov.essenty:instance-keeper:0.4.2:commonMain"),
+                binaryCoordinates("com.arkivanov.mvikotlin:mvikotlin:commonMain:3.0.2"),
+                binaryCoordinates("com.arkivanov.mvikotlin:mvikotlin:jsNativeMain:3.0.2"),
+                binaryCoordinates("com.arkivanov.essenty:lifecycle:commonMain:0.4.2"),
+                binaryCoordinates("com.arkivanov.essenty:instance-keeper:commonMain:0.4.2"),
                 IdeNativeStdlibDependencyResolver.nativeStdlibCoordinates(project),
                 binaryCoordinates(Regex(".*stdlib-common:.*")) /* KT-56278 */
             )

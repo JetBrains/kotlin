@@ -47,13 +47,15 @@ class IdeaKotlinBinaryCoordinates(
      * This, however, shall not be shown to users, as the String is hard to read
      * The identityString is not stable across Kotlin versions, hence not intended to be parsed.
      */
-    val identityString = buildString {
-        append("$group:$module")
-        if (version != null) append(":$version")
-        if (capabilities.isNotEmpty()) {
-            append(capabilities.joinToString(", ", "(", ")"))
+    val identityString: String
+        get() = buildString {
+            append("$group:$module")
+            if (sourceSetName != null) append(":$sourceSetName")
+            if (version != null) append(":$version")
+            if (capabilities.isNotEmpty()) {
+                append(capabilities.joinToString(", ", "(", ")"))
+            }
         }
-    }
 
     /**
      * String intended to be shown to users. E.g. a library within the IDE can use
@@ -82,23 +84,30 @@ class IdeaKotlinBinaryCoordinates(
      * "org.jetbrains:sample-test-fixtures:1.0.0"
      *
      */
-    val displayString = run {
-        val classifyingCapabilities = capabilities.filter { capability -> capability.group == group && capability.name.startsWith(module) }
-        when {
-            classifyingCapabilities.size == 1 -> classifyingCapabilities.single().toString()
-            classifyingCapabilities.size > 1 -> buildString {
-                append(group)
-                append(classifyingCapabilities.joinToString(prefix = "(", postfix = ")", separator = ", ") { capability ->
-                    capability.name.removePrefix(group)
-                })
-            }
-            else -> buildString {
-                append("$group:$module")
-                if (version != null) append(":$version")
-                if (sourceSetName != null) append(":$sourceSetName")
+    val displayString: String
+        get() {
+            val classifyingCapabilities =
+                capabilities.filter { capability -> capability.group == group && capability.name.startsWith(module) }
+            return when {
+                classifyingCapabilities.size == 1 -> buildString {
+                    append(classifyingCapabilities.single())
+                    if (sourceSetName != null) append(":$sourceSetName")
+                }
+                classifyingCapabilities.size > 1 -> buildString {
+                    append("$group:$module-")
+                    append(classifyingCapabilities.joinToString(prefix = "(", postfix = ")", separator = ", ") { capability ->
+                        capability.name.removePrefix(module).removePrefix("-")
+                    })
+                    if (sourceSetName != null) append(":$sourceSetName")
+                    if (version != null) append(":$version")
+                }
+                else -> buildString {
+                    append("$group:$module")
+                    if (sourceSetName != null) append(":$sourceSetName")
+                    if (version != null) append(":$version")
+                }
             }
         }
-    }
 
     override fun toString(): String = displayString
 

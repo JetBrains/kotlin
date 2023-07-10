@@ -77,7 +77,7 @@ class ResolvableMetadataConfigurationTest {
         /* Check IDE resolution for commonMain */
         project.kotlinIdeMultiplatformImport.resolveDependencies("commonMain")
             .assertMatches(
-                binaryCoordinates(Regex("com.squareup.okio:okio(-.*)?:3.3.0:.*")),
+                binaryCoordinates(Regex("com.squareup.okio:okio(-.*)?:.*:3.3.0")),
                 binaryCoordinates(Regex("org.jetbrains.kotlin.*"))
             )
 
@@ -86,8 +86,8 @@ class ResolvableMetadataConfigurationTest {
             .filterIsInstance<IdeaKotlinBinaryDependency>()
             .filter { it.coordinates?.group.orEmpty() in setOf("com.squareup.okio", "com.arkivanov.mvikotlin") }
             .assertMatches(
-                binaryCoordinates(Regex("com.squareup.okio:okio(-.*)?:3.3.0:.*")),
-                binaryCoordinates(Regex("com.arkivanov.mvikotlin:mvikotlin(-*)?:3.0.2:.*")),
+                binaryCoordinates(Regex("com.squareup.okio:okio(-.*)?:.*:3.3.0")),
+                binaryCoordinates(Regex("com.arkivanov.mvikotlin:mvikotlin(-*)?:.*:3.0.2")),
             )
     }
 }
