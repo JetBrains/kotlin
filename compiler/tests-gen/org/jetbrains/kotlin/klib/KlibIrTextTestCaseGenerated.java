@@ -2000,6 +2000,11 @@ public class KlibIrTextTestCaseGenerated extends AbstractKlibIrTextTestCase {
             runTest("compiler/testData/ir/irText/firProblems/ErrorInDefaultValue.kt");
         }
 
+        @TestMetadata("explicitIncrement.kt")
+        public void testExplicitIncrement() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/explicitIncrement.kt");
+        }
+
         @TestMetadata("FakeOverrideInAnonymousWithDelegation.kt")
         public void testFakeOverrideInAnonymousWithDelegation() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/FakeOverrideInAnonymousWithDelegation.kt");

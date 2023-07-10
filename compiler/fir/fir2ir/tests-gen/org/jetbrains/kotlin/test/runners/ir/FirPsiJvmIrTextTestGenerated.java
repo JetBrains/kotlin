@@ -2655,6 +2655,12 @@ public class FirPsiJvmIrTextTestGenerated extends AbstractFirPsiJvmIrTextTest {
         }
 
         @Test
+        @TestMetadata("explicitIncrement.kt")
+        public void testExplicitIncrement() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/explicitIncrement.kt");
+        }
+
+        @Test
         @TestMetadata("FakeOverrideInAnonymousWithDelegation.kt")
         public void testFakeOverrideInAnonymousWithDelegation() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/FakeOverrideInAnonymousWithDelegation.kt");

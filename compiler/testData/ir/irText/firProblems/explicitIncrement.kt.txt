@@ -1,0 +1,11 @@
+fun foo() {
+  var i: Int = 1
+  while (less(arg0 = i, arg1 = 10)) { // BLOCK
+    bar()
+    i = i.inc()
+  }
+}
+
+fun bar() {
+}
+

@@ -1,0 +1,16 @@
+FILE fqName:<root> fileName:/explicitIncrement.kt
+  FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Unit
+    BLOCK_BODY
+      VAR name:i type:kotlin.Int [var]
+        CONST Int type=kotlin.Int value=1
+      WHILE label=null origin=WHILE_LOOP
+        condition: CALL 'public final fun less (arg0: kotlin.Int, arg1: kotlin.Int): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=LT
+          arg0: GET_VAR 'var i: kotlin.Int declared in <root>.foo' type=kotlin.Int origin=null
+          arg1: CONST Int type=kotlin.Int value=10
+        body: BLOCK type=kotlin.Unit origin=null
+          CALL 'public final fun bar (): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+          SET_VAR 'var i: kotlin.Int declared in <root>.foo' type=kotlin.Unit origin=EQ
+            CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+              $this: GET_VAR 'var i: kotlin.Int declared in <root>.foo' type=kotlin.Int origin=null
+  FUN name:bar visibility:public modality:FINAL <> () returnType:kotlin.Unit
+    BLOCK_BODY

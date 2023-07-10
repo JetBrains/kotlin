@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.backend
 
 import com.intellij.psi.PsiCompiledElement
+import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.backend.common.actualizer.IrActualizedResult
 import org.jetbrains.kotlin.builtins.StandardNames.DATA_CLASS_COMPONENT_PREFIX
@@ -44,10 +45,7 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.UNDEFINED_PARAMETER_INDEX
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.GeneratedByPlugin
-import org.jetbrains.kotlin.ir.expressions.IrConst
-import org.jetbrains.kotlin.ir.expressions.IrConstKind
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
@@ -61,6 +59,7 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffsetSkippingComments
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import java.util.HashMap
 
 fun AbstractKtSourceElement?.startOffsetSkippingComments(): Int? {
     return when (this) {
@@ -724,9 +723,18 @@ fun FirDeclaration?.computeIrOrigin(predefinedOrigin: IrDeclarationOrigin? = nul
         ?: IrDeclarationOrigin.DEFINED
 }
 
+private typealias NameWithElementType = Pair<Name, IElementType>
+
+private val PREFIX_POSTFIX_ORIGIN_MAP: Map<NameWithElementType, IrStatementOrigin> = hashMapOf(
+    (OperatorNameConventions.INC to KtNodeTypes.PREFIX_EXPRESSION) to IrStatementOrigin.PREFIX_INCR,
+    (OperatorNameConventions.INC to KtNodeTypes.POSTFIX_EXPRESSION) to IrStatementOrigin.POSTFIX_INCR,
+    (OperatorNameConventions.DEC to KtNodeTypes.PREFIX_EXPRESSION) to IrStatementOrigin.PREFIX_DECR,
+    (OperatorNameConventions.DEC to KtNodeTypes.POSTFIX_EXPRESSION) to IrStatementOrigin.POSTFIX_DECR,
+)
+
 fun FirVariableAssignment.getIrAssignmentOrigin(): IrStatementOrigin {
     val callableName = getCallableNameFromIntClassIfAny() ?: return IrStatementOrigin.EQ
-    getIrPrefixPostfixOriginIfAny(callableName)?.let { return it }
+    PREFIX_POSTFIX_ORIGIN_MAP[callableName to source?.elementType]?.let { return it }
 
     val rValue = rValue as FirFunctionCall
     val kind = rValue.source?.kind
@@ -743,24 +751,7 @@ fun FirVariableAssignment.getIrAssignmentOrigin(): IrStatementOrigin {
 
 fun FirVariableAssignment.getIrPrefixPostfixOriginIfAny(): IrStatementOrigin? {
     val callableName = getCallableNameFromIntClassIfAny() ?: return null
-    return getIrPrefixPostfixOriginIfAny(callableName)
-}
-
-private fun FirVariableAssignment.getIrPrefixPostfixOriginIfAny(
-    callableNameFromIntClass: Name
-): IrStatementOrigin? {
-    if (callableNameFromIntClass == OperatorNameConventions.INC) {
-        return if (source?.elementType == KtNodeTypes.PREFIX_EXPRESSION)
-            IrStatementOrigin.PREFIX_INCR
-        else
-            IrStatementOrigin.POSTFIX_INCR
-    } else if (callableNameFromIntClass == OperatorNameConventions.DEC) {
-        return if (source?.elementType == KtNodeTypes.PREFIX_EXPRESSION)
-            IrStatementOrigin.PREFIX_DECR
-        else
-            IrStatementOrigin.POSTFIX_DECR
-    }
-    return null
+    return PREFIX_POSTFIX_ORIGIN_MAP[callableName to source?.elementType]
 }
 
 private fun FirVariableAssignment.getCallableNameFromIntClassIfAny(): Name? {
