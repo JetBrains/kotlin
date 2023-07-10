@@ -593,7 +593,7 @@ private class BackendChecker(
     }
 
     override fun visitClass(declaration: IrClass) {
-        if (declaration.isKotlinObjCClass()) {
+        if (!declaration.isExpect && declaration.isKotlinObjCClass()) {
             checkKotlinObjCClass(declaration)
         }
         super.visitClass(declaration)
