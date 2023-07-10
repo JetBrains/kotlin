@@ -143,6 +143,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                 names.singleOrNull() ?: names.joinToString()
             }
             if (configuration.getBoolean(CommonConfigurationKeys.USE_FIR) && configuration.getBoolean(CommonConfigurationKeys.USE_LIGHT_TREE))  {
+                if (messageCollector.hasErrors()) return COMPILATION_ERROR
                 val projectEnvironment =
                     createProjectEnvironment(configuration, rootDisposable, EnvironmentConfigFiles.JVM_CONFIG_FILES, messageCollector)
 
