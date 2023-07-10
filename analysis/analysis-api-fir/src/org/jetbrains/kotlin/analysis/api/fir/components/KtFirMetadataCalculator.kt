@@ -191,7 +191,6 @@ internal class KtFirMetadataCalculator(
                     }
             }
             bindings.put(FirJvmSerializerExtension.METHOD_FOR_FIR_FUNCTION, function, method)
-            super.visitFunction(function)
         }
 
         override fun visitSimpleFunction(simpleFunction: FirSimpleFunction) {
