@@ -55,7 +55,7 @@ internal class PreInlineLowering(val context: Context) : BodyLoweringPass {
                         require(expression.type.isUnit())
                         IrCompositeImpl(expression.startOffset, expression.endOffset, expression.type)
                     }
-                    Symbols.isTypeOfIntrinsic(expression.symbol) -> {
+                    context.ir.symbols.isTypeOfIntrinsic(expression.symbol) -> {
                         with (KTypeGenerator(context, irFile, expression, needExactTypeParameters = true)) {
                             data.at(expression).irKType(expression.getTypeArgument(0)!!, leaveReifiedForLater = true)
                         }

@@ -91,7 +91,7 @@ class FunctionInlining(
     private val allowExternalInlining: Boolean = false,
     private val useTypeParameterUpperBound: Boolean = false,
     private val copierBuilder: (Map<IrTypeParameterSymbol, IrType?>?, IrDeclarationParent?) -> AbstractDeepCopyIrTreeWithSymbolsForInliner =
-        ::DeepCopyIrTreeWithSymbolsForInliner,
+        { typeArguments, parent -> DeepCopyIrTreeWithSymbolsForInliner(context, typeArguments, parent) },
 ) : IrElementTransformerVoidWithContext(), BodyLoweringPass {
     private var containerScope: ScopeWithIr? = null
 
@@ -117,7 +117,7 @@ class FunctionInlining(
             return expression
         if (Symbols.isLateinitIsInitializedPropertyGetter(callee.symbol))
             return expression
-        if (Symbols.isTypeOfIntrinsic(callee.symbol))
+        if (context.ir.symbols.isTypeOfIntrinsic(callee.symbol))
             return expression
 
         val actualCallee = inlineFunctionResolver.getFunctionDeclaration(callee.symbol)

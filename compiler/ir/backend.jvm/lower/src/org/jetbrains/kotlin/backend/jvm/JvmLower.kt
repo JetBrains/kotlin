@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.backend.jvm.ir.constantValue
 import org.jetbrains.kotlin.backend.jvm.ir.shouldContainSuspendMarkers
 import org.jetbrains.kotlin.backend.jvm.lower.*
-import org.jetbrains.kotlin.backend.jvm.lower.JvmDeepCopyIrTreeWithSymbolsForInliner
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -390,10 +389,10 @@ private val jvmFilePhases = listOf(
     // makePatchParentsPhase(),
 
     enumWhenPhase,
-    singletonReferencesPhase,
 
     assertionPhase,
     returnableBlocksPhase,
+    singletonReferencesPhase,
     sharedVariablesPhase,
     localDeclarationsPhase,
     // makePatchParentsPhase(),

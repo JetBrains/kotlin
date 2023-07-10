@@ -76,6 +76,9 @@ class JvmSymbols(
 
     private val generateOptimizedCallableReferenceSuperClasses = context.state.generateOptimizedCallableReferenceSuperClasses
 
+    override fun IrFunction.isTopLevelInPackage(packageName: FqName) =
+        parent.isFacadeClass && getPackageFragment().packageFqName == packageName
+
     private fun createPackage(fqName: FqName): IrPackageFragment =
         IrExternalPackageFragmentImpl.createEmptyExternalPackageFragment(context.state.module, fqName)
 

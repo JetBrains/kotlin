@@ -488,7 +488,7 @@ private class BackendChecker(
                             reportError(it, "incorrect value for binary data: $value")
                     }
                 }
-                Symbols.isTypeOfIntrinsic(callee.symbol) ->
+                symbols.isTypeOfIntrinsic(callee.symbol) ->
                     checkIrKType(expression, expression.getTypeArgument(0)!!)
             }
         }

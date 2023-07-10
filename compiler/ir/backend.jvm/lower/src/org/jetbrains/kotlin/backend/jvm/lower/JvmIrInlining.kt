@@ -49,15 +49,16 @@ class JvmDeepCopyIrTreeWithSymbolsForInliner(
 
     init {
         val typeRemapper = JvmInlinerTypeRemapper(context, symbolRemapper, typeArguments)
-        copier = JvmIrTreeWithSymbolsCopier(symbolRemapper, typeRemapper)
+        copier = JvmIrTreeWithSymbolsCopier(context, symbolRemapper, typeRemapper)
         typeRemapper.copier = copier
     }
 }
 
 class JvmIrTreeWithSymbolsCopier(
+    context: JvmBackendContext,
     symbolRemapper: SymbolRemapper,
     override val typeRemapper: JvmInlinerTypeRemapper,
-) : IrTreeWithSymbolsCopier(symbolRemapper, typeRemapper) {
+) : IrTreeWithSymbolsCopier(context, symbolRemapper, typeRemapper) {
 
     override fun visitClassReference(expression: IrClassReference): IrClassReference {
         val boxPrimitivesBefore = typeRemapper.boxPrimitives
