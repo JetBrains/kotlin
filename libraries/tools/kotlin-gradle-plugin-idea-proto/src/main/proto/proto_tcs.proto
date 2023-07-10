@@ -59,6 +59,13 @@ message IdeaKotlinBinaryCoordinatesProto {
   optional string module = 2;
   optional string version = 3;
   optional string source_set_name = 4;
+  repeated IdeaKotlinBinaryCapabilityProto capabilities = 5;
+}
+
+message IdeaKotlinBinaryCapabilityProto {
+  optional string group = 1;
+  optional string name = 2;
+  optional string version = 3;
 }
 
 message IdeaKotlinSourceCoordinatesProto {

@@ -74,4 +74,28 @@ public interface IdeaKotlinBinaryCoordinatesProtoOrBuilder extends
    */
   com.google.protobuf.ByteString
       getSourceSetNameBytes();
+
+  /**
+   * <code>repeated .org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryCapabilityProto capabilities = 5;</code>
+   */
+  java.util.List<org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryCapabilityProto> 
+      getCapabilitiesList();
+  /**
+   * <code>repeated .org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryCapabilityProto capabilities = 5;</code>
+   */
+  org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryCapabilityProto getCapabilities(int index);
+  /**
+   * <code>repeated .org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryCapabilityProto capabilities = 5;</code>
+   */
+  int getCapabilitiesCount();
+  /**
+   * <code>repeated .org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryCapabilityProto capabilities = 5;</code>
+   */
+  java.util.List<? extends org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryCapabilityProtoOrBuilder> 
+      getCapabilitiesOrBuilderList();
+  /**
+   * <code>repeated .org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryCapabilityProto capabilities = 5;</code>
+   */
+  org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryCapabilityProtoOrBuilder getCapabilitiesOrBuilder(
+      int index);
 }

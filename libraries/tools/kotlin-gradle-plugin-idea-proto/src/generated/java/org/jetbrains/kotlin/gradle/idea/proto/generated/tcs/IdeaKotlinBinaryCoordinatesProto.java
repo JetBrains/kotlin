@@ -20,6 +20,7 @@ private static final long serialVersionUID = 0L;
     module_ = "";
     version_ = "";
     sourceSetName_ = "";
+    capabilities_ = java.util.Collections.emptyList();
   }
 
   @java.lang.Override
@@ -232,6 +233,46 @@ private static final long serialVersionUID = 0L;
     }
   }
 
+  public static final int CAPABILITIES_FIELD_NUMBER = 5;
+  private java.util.List<org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryCapabilityProto> capabilities_;
+  /**
+   * <code>repeated .org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryCapabilityProto capabilities = 5;</code>
+   */
+  @java.lang.Override
+  public java.util.List<org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryCapabilityProto> getCapabilitiesList() {
+    return capabilities_;
+  }
+  /**
+   * <code>repeated .org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryCapabilityProto capabilities = 5;</code>
+   */
+  @java.lang.Override
+  public java.util.List<? extends org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryCapabilityProtoOrBuilder> 
+      getCapabilitiesOrBuilderList() {
+    return capabilities_;
+  }
+  /**
+   * <code>repeated .org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryCapabilityProto capabilities = 5;</code>
+   */
+  @java.lang.Override
+  public int getCapabilitiesCount() {
+    return capabilities_.size();
+  }
+  /**
+   * <code>repeated .org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryCapabilityProto capabilities = 5;</code>
+   */
+  @java.lang.Override
+  public org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryCapabilityProto getCapabilities(int index) {
+    return capabilities_.get(index);
+  }
+  /**
+   * <code>repeated .org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryCapabilityProto capabilities = 5;</code>
+   */
+  @java.lang.Override
+  public org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryCapabilityProtoOrBuilder getCapabilitiesOrBuilder(
+      int index) {
+    return capabilities_.get(index);
+  }
+
   private byte memoizedIsInitialized = -1;
   @java.lang.Override
   public final boolean isInitialized() {
@@ -258,6 +299,9 @@ private static final long serialVersionUID = 0L;
     if (((bitField0_ & 0x00000008) != 0)) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 4, sourceSetName_);
     }
+    for (int i = 0; i < capabilities_.size(); i++) {
+      output.writeMessage(5, capabilities_.get(i));
+    }
     getUnknownFields().writeTo(output);
   }
 
@@ -278,6 +322,10 @@ private static final long serialVersionUID = 0L;
     }
     if (((bitField0_ & 0x00000008) != 0)) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, sourceSetName_);
+    }
+    for (int i = 0; i < capabilities_.size(); i++) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeMessageSize(5, capabilities_.get(i));
     }
     size += getUnknownFields().getSerializedSize();
     memoizedSize = size;
@@ -314,6 +362,8 @@ private static final long serialVersionUID = 0L;
       if (!getSourceSetName()
           .equals(other.getSourceSetName())) return false;
     }
+    if (!getCapabilitiesList()
+        .equals(other.getCapabilitiesList())) return false;
     if (!getUnknownFields().equals(other.getUnknownFields())) return false;
     return true;
   }
@@ -340,6 +390,10 @@ private static final long serialVersionUID = 0L;
     if (hasSourceSetName()) {
       hash = (37 * hash) + SOURCE_SET_NAME_FIELD_NUMBER;
       hash = (53 * hash) + getSourceSetName().hashCode();
+    }
+    if (getCapabilitiesCount() > 0) {
+      hash = (37 * hash) + CAPABILITIES_FIELD_NUMBER;
+      hash = (53 * hash) + getCapabilitiesList().hashCode();
     }
     hash = (29 * hash) + getUnknownFields().hashCode();
     memoizedHashCode = hash;
@@ -477,6 +531,13 @@ private static final long serialVersionUID = 0L;
       bitField0_ = (bitField0_ & ~0x00000004);
       sourceSetName_ = "";
       bitField0_ = (bitField0_ & ~0x00000008);
+      if (capabilitiesBuilder_ == null) {
+        capabilities_ = java.util.Collections.emptyList();
+      } else {
+        capabilities_ = null;
+        capabilitiesBuilder_.clear();
+      }
+      bitField0_ = (bitField0_ & ~0x00000010);
       return this;
     }
 
@@ -521,6 +582,15 @@ private static final long serialVersionUID = 0L;
         to_bitField0_ |= 0x00000008;
       }
       result.sourceSetName_ = sourceSetName_;
+      if (capabilitiesBuilder_ == null) {
+        if (((bitField0_ & 0x00000010) != 0)) {
+          capabilities_ = java.util.Collections.unmodifiableList(capabilities_);
+          bitField0_ = (bitField0_ & ~0x00000010);
+        }
+        result.capabilities_ = capabilities_;
+      } else {
+        result.capabilities_ = capabilitiesBuilder_.build();
+      }
       result.bitField0_ = to_bitField0_;
       onBuilt();
       return result;
@@ -590,6 +660,32 @@ private static final long serialVersionUID = 0L;
         sourceSetName_ = other.sourceSetName_;
         onChanged();
       }
+      if (capabilitiesBuilder_ == null) {
+        if (!other.capabilities_.isEmpty()) {
+          if (capabilities_.isEmpty()) {
+            capabilities_ = other.capabilities_;
+            bitField0_ = (bitField0_ & ~0x00000010);
+          } else {
+            ensureCapabilitiesIsMutable();
+            capabilities_.addAll(other.capabilities_);
+          }
+          onChanged();
+        }
+      } else {
+        if (!other.capabilities_.isEmpty()) {
+          if (capabilitiesBuilder_.isEmpty()) {
+            capabilitiesBuilder_.dispose();
+            capabilitiesBuilder_ = null;
+            capabilities_ = other.capabilities_;
+            bitField0_ = (bitField0_ & ~0x00000010);
+            capabilitiesBuilder_ = 
+              com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
+                 getCapabilitiesFieldBuilder() : null;
+          } else {
+            capabilitiesBuilder_.addAllMessages(other.capabilities_);
+          }
+        }
+      }
       this.mergeUnknownFields(other.getUnknownFields());
       onChanged();
       return this;
@@ -636,6 +732,19 @@ private static final long serialVersionUID = 0L;
               bitField0_ |= 0x00000008;
               break;
             } // case 34
+            case 42: {
+              org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryCapabilityProto m =
+                  input.readMessage(
+                      org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryCapabilityProto.parser(),
+                      extensionRegistry);
+              if (capabilitiesBuilder_ == null) {
+                ensureCapabilitiesIsMutable();
+                capabilities_.add(m);
+              } else {
+                capabilitiesBuilder_.addMessage(m);
+              }
+              break;
+            } // case 42
             default: {
               if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                 done = true; // was an endgroup tag
@@ -983,6 +1092,246 @@ private static final long serialVersionUID = 0L;
       sourceSetName_ = value;
       onChanged();
       return this;
+    }
+
+    private java.util.List<org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryCapabilityProto> capabilities_ =
+      java.util.Collections.emptyList();
+    private void ensureCapabilitiesIsMutable() {
+      if (!((bitField0_ & 0x00000010) != 0)) {
+        capabilities_ = new java.util.ArrayList<org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryCapabilityProto>(capabilities_);
+        bitField0_ |= 0x00000010;
+       }
+    }
+
+    private com.google.protobuf.RepeatedFieldBuilderV3<
+        org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryCapabilityProto, org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryCapabilityProto.Builder, org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryCapabilityProtoOrBuilder> capabilitiesBuilder_;
+
+    /**
+     * <code>repeated .org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryCapabilityProto capabilities = 5;</code>
+     */
+    public java.util.List<org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryCapabilityProto> getCapabilitiesList() {
+      if (capabilitiesBuilder_ == null) {
+        return java.util.Collections.unmodifiableList(capabilities_);
+      } else {
+        return capabilitiesBuilder_.getMessageList();
+      }
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryCapabilityProto capabilities = 5;</code>
+     */
+    public int getCapabilitiesCount() {
+      if (capabilitiesBuilder_ == null) {
+        return capabilities_.size();
+      } else {
+        return capabilitiesBuilder_.getCount();
+      }
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryCapabilityProto capabilities = 5;</code>
+     */
+    public org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryCapabilityProto getCapabilities(int index) {
+      if (capabilitiesBuilder_ == null) {
+        return capabilities_.get(index);
+      } else {
+        return capabilitiesBuilder_.getMessage(index);
+      }
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryCapabilityProto capabilities = 5;</code>
+     */
+    public Builder setCapabilities(
+        int index, org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryCapabilityProto value) {
+      if (capabilitiesBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureCapabilitiesIsMutable();
+        capabilities_.set(index, value);
+        onChanged();
+      } else {
+        capabilitiesBuilder_.setMessage(index, value);
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryCapabilityProto capabilities = 5;</code>
+     */
+    public Builder setCapabilities(
+        int index, org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryCapabilityProto.Builder builderForValue) {
+      if (capabilitiesBuilder_ == null) {
+        ensureCapabilitiesIsMutable();
+        capabilities_.set(index, builderForValue.build());
+        onChanged();
+      } else {
+        capabilitiesBuilder_.setMessage(index, builderForValue.build());
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryCapabilityProto capabilities = 5;</code>
+     */
+    public Builder addCapabilities(org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryCapabilityProto value) {
+      if (capabilitiesBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureCapabilitiesIsMutable();
+        capabilities_.add(value);
+        onChanged();
+      } else {
+        capabilitiesBuilder_.addMessage(value);
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryCapabilityProto capabilities = 5;</code>
+     */
+    public Builder addCapabilities(
+        int index, org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryCapabilityProto value) {
+      if (capabilitiesBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureCapabilitiesIsMutable();
+        capabilities_.add(index, value);
+        onChanged();
+      } else {
+        capabilitiesBuilder_.addMessage(index, value);
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryCapabilityProto capabilities = 5;</code>
+     */
+    public Builder addCapabilities(
+        org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryCapabilityProto.Builder builderForValue) {
+      if (capabilitiesBuilder_ == null) {
+        ensureCapabilitiesIsMutable();
+        capabilities_.add(builderForValue.build());
+        onChanged();
+      } else {
+        capabilitiesBuilder_.addMessage(builderForValue.build());
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryCapabilityProto capabilities = 5;</code>
+     */
+    public Builder addCapabilities(
+        int index, org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryCapabilityProto.Builder builderForValue) {
+      if (capabilitiesBuilder_ == null) {
+        ensureCapabilitiesIsMutable();
+        capabilities_.add(index, builderForValue.build());
+        onChanged();
+      } else {
+        capabilitiesBuilder_.addMessage(index, builderForValue.build());
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryCapabilityProto capabilities = 5;</code>
+     */
+    public Builder addAllCapabilities(
+        java.lang.Iterable<? extends org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryCapabilityProto> values) {
+      if (capabilitiesBuilder_ == null) {
+        ensureCapabilitiesIsMutable();
+        com.google.protobuf.AbstractMessageLite.Builder.addAll(
+            values, capabilities_);
+        onChanged();
+      } else {
+        capabilitiesBuilder_.addAllMessages(values);
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryCapabilityProto capabilities = 5;</code>
+     */
+    public Builder clearCapabilities() {
+      if (capabilitiesBuilder_ == null) {
+        capabilities_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000010);
+        onChanged();
+      } else {
+        capabilitiesBuilder_.clear();
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryCapabilityProto capabilities = 5;</code>
+     */
+    public Builder removeCapabilities(int index) {
+      if (capabilitiesBuilder_ == null) {
+        ensureCapabilitiesIsMutable();
+        capabilities_.remove(index);
+        onChanged();
+      } else {
+        capabilitiesBuilder_.remove(index);
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryCapabilityProto capabilities = 5;</code>
+     */
+    public org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryCapabilityProto.Builder getCapabilitiesBuilder(
+        int index) {
+      return getCapabilitiesFieldBuilder().getBuilder(index);
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryCapabilityProto capabilities = 5;</code>
+     */
+    public org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryCapabilityProtoOrBuilder getCapabilitiesOrBuilder(
+        int index) {
+      if (capabilitiesBuilder_ == null) {
+        return capabilities_.get(index);  } else {
+        return capabilitiesBuilder_.getMessageOrBuilder(index);
+      }
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryCapabilityProto capabilities = 5;</code>
+     */
+    public java.util.List<? extends org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryCapabilityProtoOrBuilder> 
+         getCapabilitiesOrBuilderList() {
+      if (capabilitiesBuilder_ != null) {
+        return capabilitiesBuilder_.getMessageOrBuilderList();
+      } else {
+        return java.util.Collections.unmodifiableList(capabilities_);
+      }
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryCapabilityProto capabilities = 5;</code>
+     */
+    public org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryCapabilityProto.Builder addCapabilitiesBuilder() {
+      return getCapabilitiesFieldBuilder().addBuilder(
+          org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryCapabilityProto.getDefaultInstance());
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryCapabilityProto capabilities = 5;</code>
+     */
+    public org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryCapabilityProto.Builder addCapabilitiesBuilder(
+        int index) {
+      return getCapabilitiesFieldBuilder().addBuilder(
+          index, org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryCapabilityProto.getDefaultInstance());
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryCapabilityProto capabilities = 5;</code>
+     */
+    public java.util.List<org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryCapabilityProto.Builder> 
+         getCapabilitiesBuilderList() {
+      return getCapabilitiesFieldBuilder().getBuilderList();
+    }
+    private com.google.protobuf.RepeatedFieldBuilderV3<
+        org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryCapabilityProto, org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryCapabilityProto.Builder, org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryCapabilityProtoOrBuilder> 
+        getCapabilitiesFieldBuilder() {
+      if (capabilitiesBuilder_ == null) {
+        capabilitiesBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
+            org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryCapabilityProto, org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryCapabilityProto.Builder, org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryCapabilityProtoOrBuilder>(
+                capabilities_,
+                ((bitField0_ & 0x00000010) != 0),
+                getParentForChildren(),
+                isClean());
+        capabilities_ = null;
+      }
+      return capabilitiesBuilder_;
     }
     @java.lang.Override
     public final Builder setUnknownFields(
