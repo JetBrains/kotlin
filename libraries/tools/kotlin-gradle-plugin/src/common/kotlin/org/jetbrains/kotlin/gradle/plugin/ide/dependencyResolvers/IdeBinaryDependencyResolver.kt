@@ -180,7 +180,12 @@ class IdeBinaryDependencyResolver @JvmOverloads constructor(
                     logger.warn("Unhandled componentId: ${componentId.javaClass}")
                     null
                 }
-            }?.also { dependency -> dependency.gradleArtifact = artifact }
+            }?.also { dependency ->
+                dependency.gradleArtifact = artifact
+                if (dependency is IdeaKotlinResolvedBinaryDependency) {
+                    dependency.isIdeaProjectLevel = false
+                }
+            }
         }.toSet()
 
         return resolvedDependencies + unresolvedDependencies
