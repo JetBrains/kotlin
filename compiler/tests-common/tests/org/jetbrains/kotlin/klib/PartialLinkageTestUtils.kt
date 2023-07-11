@@ -21,7 +21,7 @@ object PartialLinkageTestUtils {
         val testModeConstructorParameters: Map<String, String>
 
         // Customize the source code of a module before compiling it to a KLIB.
-        fun customizeModuleSources(moduleName: String, moduleSourceDir: File) = Unit
+        fun customizeModuleSources(moduleName: String, moduleSourceDir: File)
 
         // Build a KLIB from a module.
         fun buildKlib(moduleName: String, buildDirs: ModuleBuildDirs, dependencies: Dependencies, klibFile: File)
@@ -93,6 +93,9 @@ object PartialLinkageTestUtils {
                 // Populate the source dir with *.kt files.
                 copySources(from = moduleTestDir, to = moduleBuildDirs.sourceDir)
 
+                // Customize the source dir if necessary.
+                customizeModuleSources(moduleName, moduleBuildDirs.sourceDir)
+
                 // Include PL utils into the main module.
                 if (moduleName == MAIN_MODULE_NAME) {
                     val utilsDir = testDir.parentFile.resolve(PL_UTILS_DIR)
@@ -109,8 +112,6 @@ object PartialLinkageTestUtils {
                         )
                     }
                 }
-
-                customizeModuleSources(moduleName, moduleBuildDirs.sourceDir)
 
                 moduleBuildDirs.outputDir.apply { mkdirs() }
 
