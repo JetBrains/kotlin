@@ -2958,6 +2958,11 @@ internal class ActualMissingImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KtFirDiagnostic.ActualMissing
 
+internal class ExpectAndActualDifferentMembersImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KtFirDiagnostic.ExpectAndActualDifferentMembers
+
 internal class NotAMultiplatformCompilationImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,

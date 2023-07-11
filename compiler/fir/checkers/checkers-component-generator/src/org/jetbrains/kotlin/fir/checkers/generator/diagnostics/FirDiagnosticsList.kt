@@ -1184,6 +1184,8 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
 
         val ACTUAL_MISSING by error<KtNamedDeclaration>(PositioningStrategy.ACTUAL_DECLARATION_NAME)
 
+        val EXPECT_AND_ACTUAL_DIFFERENT_MEMBERS by error<KtNamedDeclaration>(PositioningStrategy.DECLARATION_NAME)
+
         val NOT_A_MULTIPLATFORM_COMPILATION by error<PsiElement>()
 
         val EXPECT_ACTUAL_OPT_IN_ANNOTATION by error<KtNamedDeclaration>(PositioningStrategy.EXPECT_ACTUAL_MODIFIER)

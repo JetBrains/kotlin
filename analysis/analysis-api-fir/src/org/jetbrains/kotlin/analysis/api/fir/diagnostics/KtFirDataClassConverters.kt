@@ -3511,6 +3511,12 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.EXPECT_AND_ACTUAL_DIFFERENT_MEMBERS) { firDiagnostic ->
+        ExpectAndActualDifferentMembersImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.NOT_A_MULTIPLATFORM_COMPILATION) { firDiagnostic ->
         NotAMultiplatformCompilationImpl(
             firDiagnostic as KtPsiDiagnostic,

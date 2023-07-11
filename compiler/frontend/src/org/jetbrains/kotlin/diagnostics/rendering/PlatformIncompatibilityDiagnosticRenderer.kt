@@ -18,14 +18,16 @@ package org.jetbrains.kotlin.diagnostics.rendering
 
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.MemberDescriptor
+import org.jetbrains.kotlin.resolve.checkers.ExpectActualMemberDiff
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility.Incompatible
+import java.text.MessageFormat
 
 class PlatformIncompatibilityDiagnosticRenderer(
-    private val mode: MultiplatformDiagnosticRenderingMode
+    private val mode: MultiplatformDiagnosticRenderingMode,
 ) : DiagnosticParameterRenderer<Map<out Incompatible<MemberDescriptor>, Collection<MemberDescriptor>>> {
     override fun render(
         obj: Map<out Incompatible<MemberDescriptor>, Collection<MemberDescriptor>>,
-        renderingContext: RenderingContext
+        renderingContext: RenderingContext,
     ): String {
         if (obj.isEmpty()) return ""
 
@@ -42,11 +44,11 @@ class PlatformIncompatibilityDiagnosticRenderer(
 }
 
 class IncompatibleExpectedActualClassScopesRenderer(
-    private val mode: MultiplatformDiagnosticRenderingMode
+    private val mode: MultiplatformDiagnosticRenderingMode,
 ) : DiagnosticParameterRenderer<List<Pair<MemberDescriptor, Map<out Incompatible<MemberDescriptor>, Collection<MemberDescriptor>>>>> {
     override fun render(
         obj: List<Pair<MemberDescriptor, Map<out Incompatible<MemberDescriptor>, Collection<MemberDescriptor>>>>,
-        renderingContext: RenderingContext
+        renderingContext: RenderingContext,
     ): String {
         if (obj.isEmpty()) return ""
 
@@ -60,6 +62,43 @@ class IncompatibleExpectedActualClassScopesRenderer(
         @JvmField
         val TEXT = IncompatibleExpectedActualClassScopesRenderer(MultiplatformDiagnosticRenderingMode())
     }
+}
+
+class ExpectActualScopeDiffsRenderer(
+    private val mode: MultiplatformDiagnosticRenderingMode,
+) : DiagnosticParameterRenderer<Set<ExpectActualMemberDiff>> {
+    override fun render(obj: Set<ExpectActualMemberDiff>, renderingContext: RenderingContext): String {
+        check(obj.isNotEmpty())
+        return buildString {
+            mode.renderList(this, obj.toList().map { diff ->
+                {
+                    appendLine()
+                    appendLine(ExpectActualScopeDiffRenderer.render(diff, renderingContext))
+                }
+            })
+        }
+    }
+
+    companion object {
+        @JvmField
+        val TEXT = ExpectActualScopeDiffsRenderer(MultiplatformDiagnosticRenderingMode())
+    }
+}
+
+class ListRenderer<T>(
+    private val elementRenderer: DiagnosticParameterRenderer<T>,
+    private val elemProcessor: (String) -> String = { it },
+) : DiagnosticParameterRenderer<List<T>> {
+    override fun render(obj: List<T>, renderingContext: RenderingContext): String =
+        obj.joinToString { elemProcessor(elementRenderer.render(it, renderingContext)) }
+}
+
+object ExpectActualScopeDiffRenderer : DiagnosticParameterRenderer<ExpectActualMemberDiff> {
+    override fun render(obj: ExpectActualMemberDiff, renderingContext: RenderingContext): String = MessageFormat.format(
+        obj.kind.rawMessage,
+        Renderers.DECLARATION_NAME_WITH_KIND.render(obj.actualMember, renderingContext),
+        Renderers.NAME.render(obj.expectClass)
+    )
 }
 
 open class MultiplatformDiagnosticRenderingMode {
@@ -85,7 +124,7 @@ private fun StringBuilder.renderIncompatibilityInformation(
     map: Map<out Incompatible<MemberDescriptor>, Collection<MemberDescriptor>>,
     indent: String,
     context: RenderingContext,
-    mode: MultiplatformDiagnosticRenderingMode
+    mode: MultiplatformDiagnosticRenderingMode,
 ) {
     for ((incompatibility, descriptors) in map) {
         append(indent)
@@ -112,7 +151,7 @@ private fun StringBuilder.renderIncompatibleClassScopes(
     unfulfilled: List<Pair<MemberDescriptor, Map<out Incompatible<MemberDescriptor>, Collection<MemberDescriptor>>>>,
     indent: String,
     context: RenderingContext,
-    mode: MultiplatformDiagnosticRenderingMode
+    mode: MultiplatformDiagnosticRenderingMode,
 ) {
     mode.renderList(this, unfulfilled.indices.map { index ->
         {
