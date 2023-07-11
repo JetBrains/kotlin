@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.contracts.impl.FirEmptyContractDescription
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isActual
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvable
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.fir.references.*
@@ -26,7 +27,7 @@ internal inline fun checkTypeRefIsResolved(
     typeRefName: String,
     owner: FirElementWithResolveState,
     acceptImplicitTypeRef: Boolean = false,
-    extraAttachment: ExceptionAttachmentBuilder.() -> Unit = {}
+    extraAttachment: ExceptionAttachmentBuilder.() -> Unit = {},
 ) {
     checkWithAttachmentBuilder(
         condition = typeRef is FirResolvedTypeRef || acceptImplicitTypeRef && typeRef is FirImplicitTypeRef,
@@ -43,6 +44,14 @@ internal inline fun checkTypeRefIsResolved(
         withFirEntry("typeRef", typeRef)
         withFirEntry("firDeclaration", owner)
         extraAttachment()
+    }
+}
+
+internal fun <T> checkAnnotationTypeIsResolved(annotationContainer: T) where T : FirAnnotationContainer, T : FirElementWithResolveState {
+    annotationContainer.annotations.forEach { annotation ->
+        checkTypeRefIsResolved(annotation.annotationTypeRef, "annotation type", owner = annotationContainer) {
+            withFirEntry("firAnnotation", annotation)
+        }
     }
 }
 
@@ -144,23 +153,31 @@ internal fun checkDeclarationStatusIsResolved(declaration: FirMemberDeclaration)
     }
 }
 
-internal inline fun checkAnnotationArgumentsMappingIsResolved(
-    annotation: FirAnnotationCall,
-    owner: FirAnnotationContainer,
-    extraAttachment: ExceptionAttachmentBuilder.() -> Unit = {}
-) {
-    checkWithAttachmentBuilder(
-        condition = annotation.argumentList is FirResolvedArgumentList,
-        message = {
-            buildString {
-                append("Expected ${FirResolvedArgumentList::class.simpleName}")
-                append(" for ${annotation::class.simpleName} of ${owner::class.simpleName}(${(owner as? FirDeclaration)?.origin})")
-                append(" but ${annotation.argumentList::class.simpleName} found")
+internal fun <T> checkAnnotationArgumentsMappingIsResolved(
+    annotationContainer: T,
+) where T : FirAnnotationContainer, T : FirElementWithResolveState {
+    for (annotation in annotationContainer.annotations) {
+        if (annotation is FirAnnotationCall) {
+            checkWithAttachmentBuilder(
+                condition = annotation.argumentList is FirResolvedArgumentList,
+                message = {
+                    buildString {
+                        append("Expected ${FirResolvedArgumentList::class.simpleName}")
+                        append(" for ${annotation::class.simpleName} of ${annotationContainer::class.simpleName}(${(annotationContainer as? FirDeclaration)?.origin})")
+                        append(" but ${annotation.argumentList::class.simpleName} found")
+                    }
+                }
+            ) {
+                withFirEntry("firAnnotation", annotation)
+                withFirEntry("firDeclaration", annotationContainer)
             }
         }
-    ) {
-        withFirEntry("annotation", annotation)
-        withFirEntry("firDeclaration", owner)
-        extraAttachment()
+
+        for (argument in annotation.argumentMapping.mapping.values) {
+            checkTypeRefIsResolved(argument.typeRef, "annotation argument", annotationContainer) {
+                withFirEntry("firAnnotation", annotation)
+                withFirEntry("firArgument", argument)
+            }
+        }
     }
 }

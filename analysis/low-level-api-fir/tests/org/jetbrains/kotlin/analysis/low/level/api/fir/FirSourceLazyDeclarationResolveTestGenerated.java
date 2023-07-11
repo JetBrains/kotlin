@@ -25,6 +25,12 @@ public class FirSourceLazyDeclarationResolveTestGenerated extends AbstractFirSou
     }
 
     @Test
+    @TestMetadata("annotationArgumentsMix.kt")
+    public void testAnnotationArgumentsMix() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/lazyResolve/annotationArgumentsMix.kt");
+    }
+
+    @Test
     @TestMetadata("annotationClassWithJavaTarget.kt")
     public void testAnnotationClassWithJavaTarget() throws Exception {
         runTest("analysis/low-level-api-fir/testdata/lazyResolve/annotationClassWithJavaTarget.kt");

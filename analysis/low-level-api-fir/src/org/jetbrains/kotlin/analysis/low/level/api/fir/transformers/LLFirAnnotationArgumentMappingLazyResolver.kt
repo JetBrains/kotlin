@@ -42,12 +42,10 @@ internal object LLFirAnnotationArgumentMappingLazyResolver : LLFirLazyResolver(F
 
     override fun checkIsResolved(target: FirElementWithResolveState) {
         target.checkPhase(resolverPhase)
-        if (target !is FirAnnotationContainer) return
-        for (annotation in target.annotations) {
-            if (annotation is FirAnnotationCall) {
-                checkAnnotationArgumentsMappingIsResolved(annotation, target)
-            }
+        if (target is FirAnnotationContainer) {
+            checkAnnotationArgumentsMappingIsResolved(target)
         }
+
         checkNestedDeclarationsAreResolved(target)
     }
 }
