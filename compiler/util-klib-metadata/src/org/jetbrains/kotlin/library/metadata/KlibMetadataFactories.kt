@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.library.metadata
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.deserialization.PlatformDependentTypeTransformer
 import org.jetbrains.kotlin.library.metadata.impl.KlibMetadataDeserializedPackageFragmentsFactoryImpl
 import org.jetbrains.kotlin.library.metadata.impl.KlibMetadataModuleDescriptorFactoryImpl
 import org.jetbrains.kotlin.library.metadata.impl.KlibModuleDescriptorFactoryImpl
@@ -19,12 +18,8 @@ import org.jetbrains.kotlin.storage.StorageManager
  */
 class KlibMetadataFactories(
     createBuiltIns: (StorageManager) -> KotlinBuiltIns,
-    val flexibleTypeDeserializer: FlexibleTypeDeserializer,
-    val platformDependentTypeTransformer: PlatformDependentTypeTransformer
+    val flexibleTypeDeserializer: FlexibleTypeDeserializer
 ) {
-
-    constructor(createBuiltIns:(StorageManager) -> KotlinBuiltIns, flexibleTypeDeserializer: FlexibleTypeDeserializer) :
-            this(createBuiltIns, flexibleTypeDeserializer, PlatformDependentTypeTransformer.None)
 
     /**
      * The default [KlibModuleDescriptorFactory] factory instance.
@@ -58,8 +53,7 @@ class KlibMetadataFactories(
         KlibMetadataModuleDescriptorFactoryImpl(
             descriptorFactory,
             packageFragmentsFactory,
-            flexibleTypeDeserializer,
-            platformDependentTypeTransformer
+            flexibleTypeDeserializer
         )
 
     fun createDefaultKonanResolvedModuleDescriptorsFactory(
