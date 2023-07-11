@@ -133,7 +133,7 @@ abstract class ConstantValueGenerator(
                     else -> IrGetEnumValueImpl(
                         startOffset, endOffset,
                         constantType,
-                        symbolTable.referenceEnumEntry(enumEntryDescriptor)
+                        symbolTable.descriptorExtension.referenceEnumEntry(enumEntryDescriptor)
                     )
                 }
             }
@@ -178,7 +178,7 @@ abstract class ConstantValueGenerator(
         val primaryConstructorDescriptor = annotationClassDescriptor.unsubstitutedPrimaryConstructor
             ?: annotationClassDescriptor.constructors.singleOrNull()
             ?: throw AssertionError("No constructor for annotation class $annotationClassDescriptor")
-        val primaryConstructorSymbol = symbolTable.referenceConstructor(primaryConstructorDescriptor)
+        val primaryConstructorSymbol = symbolTable.descriptorExtension.referenceConstructor(primaryConstructorDescriptor)
 
         val (startOffset, endOffset) = extractAnnotationOffsets(annotationDescriptor)
 

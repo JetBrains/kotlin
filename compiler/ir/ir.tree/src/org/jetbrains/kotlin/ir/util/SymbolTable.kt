@@ -39,7 +39,7 @@ open class SymbolTable(
 
     @Suppress("LeakingThis")
     @OptIn(ObsoleteDescriptorBasedAPI::class)
-    val descriptorExtension: DescriptorSymbolTableExtension = DescriptorSymbolTableExtension(this)
+    override val descriptorExtension: DescriptorSymbolTableExtension = DescriptorSymbolTableExtension(this)
 
     // ------------------------------------ script ------------------------------------
 
@@ -489,7 +489,7 @@ open class SymbolTable(
     // ------------------------------------ descriptors ------------------------------------
 
     @ObsoleteDescriptorBasedAPI
-    override fun referenceScript(descriptor: ScriptDescriptor): IrScriptSymbol {
+    fun referenceScript(descriptor: ScriptDescriptor): IrScriptSymbol {
         return descriptorExtension.referenceScript(descriptor)
     }
 
@@ -546,7 +546,7 @@ open class SymbolTable(
     }
 
     @ObsoleteDescriptorBasedAPI
-    override fun referenceClass(descriptor: ClassDescriptor): IrClassSymbol {
+    fun referenceClass(descriptor: ClassDescriptor): IrClassSymbol {
         return descriptorExtension.referenceClass(descriptor)
     }
 
@@ -567,7 +567,7 @@ open class SymbolTable(
     }
 
     @ObsoleteDescriptorBasedAPI
-    override fun referenceConstructor(descriptor: ClassConstructorDescriptor): IrConstructorSymbol {
+    fun referenceConstructor(descriptor: ClassConstructorDescriptor): IrConstructorSymbol {
         return descriptorExtension.referenceConstructor(descriptor)
     }
 
@@ -610,7 +610,7 @@ open class SymbolTable(
     }
 
     @ObsoleteDescriptorBasedAPI
-    override fun referenceEnumEntry(descriptor: ClassDescriptor): IrEnumEntrySymbol {
+    fun referenceEnumEntry(descriptor: ClassDescriptor): IrEnumEntrySymbol {
         return descriptorExtension.referenceEnumEntry(descriptor)
     }
 
@@ -640,7 +640,7 @@ open class SymbolTable(
     }
 
     @ObsoleteDescriptorBasedAPI
-    override fun referenceField(descriptor: PropertyDescriptor): IrFieldSymbol {
+    fun referenceField(descriptor: PropertyDescriptor): IrFieldSymbol {
         return descriptorExtension.referenceField(descriptor)
     }
 
@@ -678,12 +678,12 @@ open class SymbolTable(
     }
 
     @ObsoleteDescriptorBasedAPI
-    override fun referenceProperty(descriptor: PropertyDescriptor): IrPropertySymbol {
+    fun referenceProperty(descriptor: PropertyDescriptor): IrPropertySymbol {
         return descriptorExtension.referenceProperty(descriptor)
     }
 
     @ObsoleteDescriptorBasedAPI
-    override fun referenceTypeAlias(descriptor: TypeAliasDescriptor): IrTypeAliasSymbol {
+    fun referenceTypeAlias(descriptor: TypeAliasDescriptor): IrTypeAliasSymbol {
         return descriptorExtension.referenceTypeAlias(descriptor)
     }
 
@@ -723,12 +723,12 @@ open class SymbolTable(
     }
 
     @ObsoleteDescriptorBasedAPI
-    override fun referenceSimpleFunction(descriptor: FunctionDescriptor): IrSimpleFunctionSymbol {
+    fun referenceSimpleFunction(descriptor: FunctionDescriptor): IrSimpleFunctionSymbol {
         return descriptorExtension.referenceSimpleFunction(descriptor)
     }
 
     @ObsoleteDescriptorBasedAPI
-    override fun referenceDeclaredFunction(descriptor: FunctionDescriptor): IrSimpleFunctionSymbol {
+    fun referenceDeclaredFunction(descriptor: FunctionDescriptor): IrSimpleFunctionSymbol {
         return descriptorExtension.referenceDeclaredFunction(descriptor)
     }
 
@@ -791,17 +791,17 @@ open class SymbolTable(
     }
 
     @ObsoleteDescriptorBasedAPI
-    override fun referenceValueParameter(descriptor: ParameterDescriptor): IrValueParameterSymbol {
+    fun referenceValueParameter(descriptor: ParameterDescriptor): IrValueParameterSymbol {
         return descriptorExtension.referenceValueParameter(descriptor)
     }
 
     @ObsoleteDescriptorBasedAPI
-    override fun referenceTypeParameter(classifier: TypeParameterDescriptor): IrTypeParameterSymbol {
+    fun referenceTypeParameter(classifier: TypeParameterDescriptor): IrTypeParameterSymbol {
         return descriptorExtension.referenceTypeParameter(classifier)
     }
 
     @ObsoleteDescriptorBasedAPI
-    override fun referenceScopedTypeParameter(classifier: TypeParameterDescriptor): IrTypeParameterSymbol {
+    fun referenceScopedTypeParameter(classifier: TypeParameterDescriptor): IrTypeParameterSymbol {
         return descriptorExtension.referenceScopedTypeParameter(classifier)
     }
 

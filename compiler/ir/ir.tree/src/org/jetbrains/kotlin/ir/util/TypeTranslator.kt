@@ -84,7 +84,7 @@ abstract class TypeTranslator(
         }
         val originalTypeParameter = typeParameterDescriptor.originalTypeParameter
         return typeParametersResolver.resolveScopedTypeParameter(originalTypeParameter)
-            ?: symbolTable.referenceTypeParameter(originalTypeParameter)
+            ?: symbolTable.descriptorExtension.referenceTypeParameter(originalTypeParameter)
     }
 
     fun translateType(kotlinType: KotlinType): IrType {
@@ -136,7 +136,7 @@ abstract class TypeTranslator(
                 }
 
                 is ScriptDescriptor -> {
-                    classifier = symbolTable.referenceScript(upperTypeDescriptor)
+                    classifier = symbolTable.descriptorExtension.referenceScript(upperTypeDescriptor)
                 }
                 is ClassDescriptor -> {
                     // Types such as 'java.util.Collection<? extends CharSequence>' are treated as
@@ -154,7 +154,7 @@ abstract class TypeTranslator(
                         lowerType.constructor.declarationDescriptor as? ClassDescriptor
                             ?: throw AssertionError("No class descriptor for lower type $lowerType of $approximatedType")
                     annotations = translateTypeAnnotations(upperType, approximatedType)
-                    classifier = symbolTable.referenceClass(lowerTypeDescriptor)
+                    classifier = symbolTable.descriptorExtension.referenceClass(lowerTypeDescriptor)
                     arguments = when {
                         approximatedType is RawType ->
                             translateTypeArguments(approximatedType.arguments)
@@ -186,7 +186,7 @@ abstract class TypeTranslator(
         if (!isTypeAliasAccessibleHere(typeAliasDescriptor)) return null
 
         return IrTypeAbbreviationImpl(
-            symbolTable.referenceTypeAlias(typeAliasDescriptor),
+            symbolTable.descriptorExtension.referenceTypeAlias(typeAliasDescriptor),
             isMarkedNullable,
             translateTypeArguments(this.arguments),
             translateTypeAnnotations(this)

@@ -111,7 +111,7 @@ open class IrPluginContextImpl constructor(
         return resolveSymbol(fqName.parent()) { scope ->
             val classDescriptor = scope.getContributedClassifier(fqName.shortName(), NoLookupLocation.FROM_BACKEND) as? ClassDescriptor?
             classDescriptor?.let {
-                st.referenceClass(it)
+                st.descriptorExtension.referenceClass(it)
             }
         }
     }
@@ -122,7 +122,7 @@ open class IrPluginContextImpl constructor(
         return resolveSymbol(fqName.parent()) { scope ->
             val aliasDescriptor = scope.getContributedClassifier(fqName.shortName(), NoLookupLocation.FROM_BACKEND) as? TypeAliasDescriptor?
             aliasDescriptor?.let {
-                st.referenceTypeAlias(it)
+                st.descriptorExtension.referenceTypeAlias(it)
             }
         }
     }
@@ -138,7 +138,7 @@ open class IrPluginContextImpl constructor(
         assert(!fqName.isRoot)
         return resolveSymbolCollection(fqName.parent()) { scope ->
             val descriptors = scope.getContributedFunctions(fqName.shortName(), NoLookupLocation.FROM_BACKEND)
-            descriptors.map { st.referenceSimpleFunction(it) }
+            descriptors.map { st.descriptorExtension.referenceSimpleFunction(it) }
         }
     }
 
@@ -147,7 +147,7 @@ open class IrPluginContextImpl constructor(
         assert(!fqName.isRoot)
         return resolveSymbolCollection(fqName.parent()) { scope ->
             val descriptors = scope.getContributedVariables(fqName.shortName(), NoLookupLocation.FROM_BACKEND)
-            descriptors.map { st.referenceProperty(it) }
+            descriptors.map { st.descriptorExtension.referenceProperty(it) }
         }
     }
 

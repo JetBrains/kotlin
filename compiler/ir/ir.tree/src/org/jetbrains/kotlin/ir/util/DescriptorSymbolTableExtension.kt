@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.utils.threadLocal
 @ObsoleteDescriptorBasedAPI
 typealias DescriptorBasedReferenceSymbolTableExtension = ReferenceSymbolTableExtension<
         ClassDescriptor, TypeAliasDescriptor, ScriptDescriptor, FunctionDescriptor, ClassConstructorDescriptor,
-        PropertyDescriptor, ValueParameterDescriptor, TypeParameterDescriptor
+        PropertyDescriptor, ParameterDescriptor, TypeParameterDescriptor
         >
 
 @ObsoleteDescriptorBasedAPI

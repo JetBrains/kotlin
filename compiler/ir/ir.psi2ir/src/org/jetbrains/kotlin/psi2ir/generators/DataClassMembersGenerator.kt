@@ -139,7 +139,7 @@ internal class DataClassMembersGenerator(
                 var substituted: CallableDescriptor? = null
                 val symbol = getHashCodeFunction(type.toKotlinType()) { hashCodeDescriptor ->
                     substituted = hashCodeDescriptor
-                    symbolTable.referenceSimpleFunction(hashCodeDescriptor.original)
+                    symbolTable.descriptorExtension.referenceSimpleFunction(hashCodeDescriptor.original)
                 }
                 return Psi2IrHashCodeFunctionInfo(symbol, substituted ?: symbol.descriptor)
             }

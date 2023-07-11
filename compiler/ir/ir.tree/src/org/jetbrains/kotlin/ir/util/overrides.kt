@@ -55,6 +55,6 @@ fun generateOverriddenFunctionSymbols(
     symbolTable: ReferenceSymbolTable
 ) {
     declaration.overriddenSymbols = declaration.descriptor.overriddenDescriptors.memoryOptimizedMap {
-        symbolTable.referenceSimpleFunction(it.original)
+        symbolTable.descriptorExtension.referenceSimpleFunction(it.original)
     }
 }

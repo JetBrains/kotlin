@@ -21,7 +21,7 @@ class IrLazySymbolTable(private val originalTable: SymbolTable) : ReferenceSymbo
     /*Don't force builtins class linking before unbound symbols linking: otherwise stdlib compilation will failed*/
     var stubGenerator: DeclarationStubGenerator? = null
 
-    override fun referenceClass(descriptor: ClassDescriptor): IrClassSymbol {
+    fun referenceClass(descriptor: ClassDescriptor): IrClassSymbol {
         synchronized(lock) {
             return originalTable.referenceClass(descriptor).also {
                 if (!it.isBound) {
@@ -31,7 +31,7 @@ class IrLazySymbolTable(private val originalTable: SymbolTable) : ReferenceSymbo
         }
     }
 
-    override fun referenceTypeAlias(descriptor: TypeAliasDescriptor): IrTypeAliasSymbol {
+    fun referenceTypeAlias(descriptor: TypeAliasDescriptor): IrTypeAliasSymbol {
         synchronized(lock) {
             return originalTable.referenceTypeAlias(descriptor).also {
                 if (!it.isBound) {
@@ -41,7 +41,7 @@ class IrLazySymbolTable(private val originalTable: SymbolTable) : ReferenceSymbo
         }
     }
 
-    override fun referenceConstructor(descriptor: ClassConstructorDescriptor): IrConstructorSymbol {
+    fun referenceConstructor(descriptor: ClassConstructorDescriptor): IrConstructorSymbol {
         synchronized(lock) {
             return originalTable.referenceConstructor(descriptor).also {
                 if (!it.isBound) {
@@ -51,7 +51,7 @@ class IrLazySymbolTable(private val originalTable: SymbolTable) : ReferenceSymbo
         }
     }
 
-    override fun referenceEnumEntry(descriptor: ClassDescriptor): IrEnumEntrySymbol {
+    fun referenceEnumEntry(descriptor: ClassDescriptor): IrEnumEntrySymbol {
         synchronized(lock) {
             return originalTable.referenceEnumEntry(descriptor).also {
                 if (!it.isBound) {
@@ -61,7 +61,7 @@ class IrLazySymbolTable(private val originalTable: SymbolTable) : ReferenceSymbo
         }
     }
 
-    override fun referenceSimpleFunction(descriptor: FunctionDescriptor): IrSimpleFunctionSymbol {
+    fun referenceSimpleFunction(descriptor: FunctionDescriptor): IrSimpleFunctionSymbol {
         synchronized(lock) {
             return originalTable.referenceSimpleFunction(descriptor).also {
                 if (!it.isBound) {
@@ -71,7 +71,7 @@ class IrLazySymbolTable(private val originalTable: SymbolTable) : ReferenceSymbo
         }
     }
 
-    override fun referenceProperty(descriptor: PropertyDescriptor): IrPropertySymbol {
+    fun referenceProperty(descriptor: PropertyDescriptor): IrPropertySymbol {
         synchronized(lock) {
             return originalTable.referenceProperty(descriptor).also {
                 if (!it.isBound) {
@@ -81,7 +81,7 @@ class IrLazySymbolTable(private val originalTable: SymbolTable) : ReferenceSymbo
         }
     }
 
-    override fun referenceTypeParameter(classifier: TypeParameterDescriptor): IrTypeParameterSymbol {
+    fun referenceTypeParameter(classifier: TypeParameterDescriptor): IrTypeParameterSymbol {
         synchronized(lock) {
             return originalTable.referenceTypeParameter(classifier).also {
                 if (!it.isBound) {

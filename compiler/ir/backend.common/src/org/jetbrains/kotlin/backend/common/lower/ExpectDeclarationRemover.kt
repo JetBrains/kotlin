@@ -64,28 +64,28 @@ open class ExpectDeclarationRemover(val symbolTable: ReferenceSymbolTable, priva
     }
 
     override fun getActualClass(descriptor: ClassDescriptor): IrClassSymbol? {
-        return symbolTable.referenceClass(
+        return symbolTable.descriptorExtension.referenceClass(
             descriptor.findActualForExpect() as? ClassDescriptor ?: return null
         )
     }
 
     override fun getActualProperty(descriptor: PropertyDescriptor): ActualPropertyResult? {
-        val newSymbol = symbolTable.referenceProperty(
+        val newSymbol = symbolTable.descriptorExtension.referenceProperty(
             descriptor.findActualForExpect() as? PropertyDescriptor ?: return null
         )
-        val newGetter = newSymbol.descriptor.getter?.let { symbolTable.referenceSimpleFunction(it) }
-        val newSetter = newSymbol.descriptor.setter?.let { symbolTable.referenceSimpleFunction(it) }
+        val newGetter = newSymbol.descriptor.getter?.let { symbolTable.descriptorExtension.referenceSimpleFunction(it) }
+        val newSetter = newSymbol.descriptor.setter?.let { symbolTable.descriptorExtension.referenceSimpleFunction(it) }
         return ActualPropertyResult(newSymbol, newGetter, newSetter)
     }
 
     override fun getActualConstructor(descriptor: ClassConstructorDescriptor): IrConstructorSymbol? {
-        return symbolTable.referenceConstructor(
+        return symbolTable.descriptorExtension.referenceConstructor(
             descriptor.findActualForExpect() as? ClassConstructorDescriptor ?: return null
         )
     }
 
     override fun getActualFunction(descriptor: FunctionDescriptor): IrSimpleFunctionSymbol? {
-        return symbolTable.referenceSimpleFunction(
+        return symbolTable.descriptorExtension.referenceSimpleFunction(
             descriptor.findActualForExpect() as? FunctionDescriptor ?: return null
         )
     }
@@ -173,7 +173,7 @@ open class ExpectDeclarationRemover(val symbolTable: ReferenceSymbolTable, priva
                 override fun visitGetValue(expression: IrGetValue): IrExpression {
                     expression.transformChildrenVoid()
                     return expression.actualize(
-                        classActualizer = { symbolTable.referenceClass(it.descriptor.findActualForExpect() as ClassDescriptor).owner },
+                        classActualizer = { symbolTable.descriptorExtension.referenceClass(it.descriptor.findActualForExpect() as ClassDescriptor).owner },
                         functionActualizer = { symbolTable.referenceFunction(it.descriptor.findActualForExpect() as FunctionDescriptor).owner }
                     )
                 }

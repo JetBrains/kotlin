@@ -390,11 +390,11 @@ fun IrValueParameter.hasDefaultValue(): Boolean = DFS.ifAny(
 fun ReferenceSymbolTable.referenceClassifier(classifier: ClassifierDescriptor): IrClassifierSymbol =
     when (classifier) {
         is TypeParameterDescriptor ->
-            referenceTypeParameter(classifier)
+            descriptorExtension.referenceTypeParameter(classifier)
         is ScriptDescriptor ->
-            referenceScript(classifier)
+            descriptorExtension.referenceScript(classifier)
         is ClassDescriptor ->
-            referenceClass(classifier)
+            descriptorExtension.referenceClass(classifier)
         else ->
             throw IllegalArgumentException("Unexpected classifier descriptor: $classifier")
     }
@@ -403,9 +403,9 @@ fun ReferenceSymbolTable.referenceClassifier(classifier: ClassifierDescriptor): 
 fun ReferenceSymbolTable.referenceFunction(callable: CallableDescriptor): IrFunctionSymbol =
     when (callable) {
         is ClassConstructorDescriptor ->
-            referenceConstructor(callable)
+            descriptorExtension.referenceConstructor(callable)
         is FunctionDescriptor ->
-            referenceSimpleFunction(callable)
+            descriptorExtension.referenceSimpleFunction(callable)
         else ->
             throw IllegalArgumentException("Unexpected callable descriptor: $callable")
     }
