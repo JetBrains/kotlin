@@ -108,11 +108,6 @@ class KlibMetadataModuleDescriptorFactoryImpl(
             library, packageFragmentNames, moduleDescriptor, packageAccessHandler, storageManager, configuration
         )
 
-        // TODO: this is native specific. Move to a child class.
-        val syntheticPackageFragments = packageFragmentsFactory.createSyntheticPackageFragments(
-            library, deserializedPackageFragments, moduleDescriptor
-        )
-
         // Generate empty PackageFragmentDescriptor instances for packages that aren't mentioned in compilation units directly.
         // For example, if there's `package foo.bar` directive, we'll get only PackageFragmentDescriptor for `foo.bar`, but
         // none for `foo`. Various descriptor/scope code relies on presence of such package fragments, and currently we
@@ -128,7 +123,7 @@ class KlibMetadataModuleDescriptorFactoryImpl(
             }
         }
 
-        val provider = PackageFragmentProviderImpl(deserializedPackageFragments + syntheticPackageFragments + emptyPackageFragments)
+        val provider = PackageFragmentProviderImpl(deserializedPackageFragments + emptyPackageFragments)
         return initializePackageFragmentProvider(provider, deserializedPackageFragments, storageManager,
             moduleDescriptor, configuration, compositePackageFragmentAddend, lookupTracker)
     }

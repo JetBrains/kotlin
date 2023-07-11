@@ -70,99 +70,33 @@ open class KlibMetadataDeserializedPackageFragmentsFactoryImpl : KlibMetadataDes
         KlibMetadataCachedPackageFragment(byteArray, storageManager, moduleDescriptor)
     }
 
-    override fun createSyntheticPackageFragments(
-        library: KotlinLibrary,
-        deserializedPackageFragments: List<KlibMetadataPackageFragment>,
-        moduleDescriptor: ModuleDescriptor
-    ): List<PackageFragmentDescriptor> {
-
-        if (!library.isInterop) return emptyList()
-
-        val mainPackageFqName = library.packageFqName?. let{ FqName(it) }
-            ?: error("Inconsistent manifest: interop library ${library.libraryName} should have `package` specified")
-        val exportForwardDeclarations = library.exportForwardDeclarations.map{ FqName(it) }
-
-        val aliasedPackageFragments = deserializedPackageFragments.filter { it.fqName == mainPackageFqName }
-
-        val result = mutableListOf<PackageFragmentDescriptor>()
-        ExportedForwardDeclarationChecker.values().mapTo(result) { checker ->
-            ClassifierAliasingPackageFragmentDescriptor(aliasedPackageFragments, moduleDescriptor, checker)
-        }
-
-        result.add(ExportedForwardDeclarationsPackageFragmentDescriptor(moduleDescriptor, mainPackageFqName, exportForwardDeclarations))
-
-        return result
-    }
-
 }
 
 /**
  * The package fragment to export forward declarations from interop package namespace, i.e.
  * redirect "$pkg.$name" to e.g. "cnames.structs.$name".
  */
+@Deprecated(level = DeprecationLevel.ERROR, message = "This class is not removed for binary compatibility. It's never created now and should not be used.")
+@Suppress("UNUSED_PARAMETER")
 class ExportedForwardDeclarationsPackageFragmentDescriptor(
     module: ModuleDescriptor,
     fqName: FqName,
     declarations: List<FqName>
 ) : PackageFragmentDescriptorImpl(module, fqName) {
-
-    private val memberScope = object : MemberScopeImpl() {
-
-        private val nameToFqName = declarations.map { it.shortName() to it }.toMap()
-
-        override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? {
-            val declFqName = nameToFqName[name] ?: return null
-
-            val packageView = module.getPackage(declFqName.parent())
-            return packageView.memberScope.getContributedClassifier(name, location) // ?: FIXME(ddol): delegate to forward declarations synthetic module!
-        }
-
-        override fun printScopeStructure(p: Printer) {
-            p.println(this::class.java.simpleName, " {")
-            p.pushIndent()
-
-            p.println("declarations = $declarations")
-
-            p.popIndent()
-            p.println("}")
-        }
-
-    }
-
-    override fun getMemberScope() = memberScope
+    override fun getMemberScope() = MemberScope.Empty
 }
 
 /**
  * The package fragment that redirects all requests for classifier lookup to its targets.
  */
+@Deprecated(level = DeprecationLevel.ERROR, message = "This class is not removed for binary compatibility. It's never created now and should not be used.")
+@Suppress("UNUSED_PARAMETER")
 class ClassifierAliasingPackageFragmentDescriptor(
     targets: List<KlibMetadataPackageFragment>,
     module: ModuleDescriptor,
     private val checker: ExportedForwardDeclarationChecker,
 ) : PackageFragmentDescriptorImpl(module, checker.declKind.packageFqName) {
-    private val memberScope = object : MemberScopeImpl() {
-        override fun getContributedClassifier(name: Name, location: LookupLocation) =
-            targets.firstNotNullOfOrNull {
-                if (it.hasTopLevelClassifier(name)) {
-                    it.getMemberScope().getContributedClassifier(name, location)
-                        ?.takeIf(this@ClassifierAliasingPackageFragmentDescriptor.checker::check)
-                } else {
-                    null
-                }
-            }
-
-        override fun printScopeStructure(p: Printer) {
-            p.println(this::class.java.simpleName, " {")
-            p.pushIndent()
-
-            p.println("targets = $targets")
-
-            p.popIndent()
-            p.println("}")
-        }
-    }
-
-    override fun getMemberScope(): MemberScope = memberScope
+    override fun getMemberScope(): MemberScope = MemberScope.Empty
 }
 
 /**

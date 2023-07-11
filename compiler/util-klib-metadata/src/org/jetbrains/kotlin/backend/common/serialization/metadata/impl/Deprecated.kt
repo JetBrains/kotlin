@@ -17,12 +17,14 @@ typealias KlibMetadataDeserializedPackageFragmentsFactoryImpl = org.jetbrains.ko
     "This class has been moved from package org.jetbrains.kotlin.backend.common.serialization.metadata.impl to package org.jetbrains.kotlin.library.metadata.impl",
     ReplaceWith("org.jetbrains.kotlin.library.metadata.impl.ExportedForwardDeclarationsPackageFragmentDescriptor")
 )
+@Suppress("DEPRECATION_ERROR")
 typealias ExportedForwardDeclarationsPackageFragmentDescriptor = org.jetbrains.kotlin.library.metadata.impl.ExportedForwardDeclarationsPackageFragmentDescriptor
 
 @Deprecated(
     "This class has been moved from package org.jetbrains.kotlin.backend.common.serialization.metadata.impl to package org.jetbrains.kotlin.library.metadata.impl",
     ReplaceWith("org.jetbrains.kotlin.library.metadata.impl.ClassifierAliasingPackageFragmentDescriptor")
 )
+@Suppress("DEPRECATION_ERROR")
 typealias ClassifierAliasingPackageFragmentDescriptor = org.jetbrains.kotlin.library.metadata.impl.ClassifierAliasingPackageFragmentDescriptor
 
 @Deprecated(
