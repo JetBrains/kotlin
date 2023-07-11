@@ -12,9 +12,9 @@ import com.intellij.psi.impl.source.resolve.ResolveCache
 import org.jetbrains.kotlin.analysis.api.KtAllowAnalysisOnEdt
 import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.lifetime.allowAnalysisOnEdt
-import org.jetbrains.kotlin.diagnostics.PsiDiagnosticUtils
-import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.shouldIjPlatformExceptionBeRethrown
+import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
 object KtFirReferenceResolver : ResolveCache.PolyVariantResolver<KtReference> {
     class KotlinResolveResult(element: PsiElement) : PsiElementResolveResult(element)
@@ -29,18 +29,11 @@ object KtFirReferenceResolver : ResolveCache.PolyVariantResolver<KtReference> {
             } catch (e: Exception) {
                 if (shouldIjPlatformExceptionBeRethrown(e)) throw e
 
-                throw KtReferenceResolveException(ref, e)
+                errorWithAttachment("Unable to resolve reference ${ref.element::class.java}", cause = e) {
+                    withPsiEntry("reference", ref.element)
+                }
             }
             resolveToPsiElements.map { KotlinResolveResult(it) }.toTypedArray()
         }
-    }
-}
-
-class KtReferenceResolveException(
-    reference: KtReference,
-    cause: Throwable
-) : KotlinExceptionWithAttachments("Unable to resolve reference at: ${PsiDiagnosticUtils.atLocation(reference.element)}", cause) {
-    init {
-        withPsiAttachment("element.kt", reference.element)
     }
 }

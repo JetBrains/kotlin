@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.utils.exceptions
 
-import com.intellij.openapi.diagnostic.Attachment
 import com.intellij.openapi.diagnostic.Logger
 import org.jetbrains.kotlin.utils.SmartPrinter
 import org.jetbrains.kotlin.utils.withIndent
@@ -58,16 +57,6 @@ inline fun KotlinExceptionWithAttachments.buildAttachment(
     return withAttachment(name, ExceptionAttachmentBuilder().apply(buildContent).buildString())
 }
 
-inline fun errorWithAttachment(
-    message: String,
-    cause: Exception? = null,
-    attachmentName: String = "info.txt",
-    buildAttachment: ExceptionAttachmentBuilder.() -> Unit = {},
-): Nothing {
-    val exception = KotlinIllegalArgumentExceptionWithAttachments(message, cause)
-    exception.buildAttachment(attachmentName) { buildAttachment() }
-    throw exception
-}
 
 inline fun Logger.logErrorWithAttachment(
     message: String,
@@ -75,8 +64,27 @@ inline fun Logger.logErrorWithAttachment(
     attachmentName: String = "info.txt",
     buildAttachment: ExceptionAttachmentBuilder.() -> Unit = {},
 ) {
-    val attachment = Attachment(attachmentName, ExceptionAttachmentBuilder().apply(buildAttachment).buildString())
-    this.error(message, cause, attachment)
+    this.error(buildErrorWithAttachment(message, cause, attachmentName, buildAttachment))
+}
+
+inline fun buildErrorWithAttachment(
+    message: String,
+    cause: Exception? = null,
+    attachmentName: String = "info.txt",
+    buildAttachment: ExceptionAttachmentBuilder.() -> Unit = {},
+): Throwable {
+    val exception = KotlinIllegalArgumentExceptionWithAttachments(message, cause)
+    exception.buildAttachment(attachmentName) { buildAttachment() }
+    return exception
+}
+
+inline fun errorWithAttachment(
+    message: String,
+    cause: Exception? = null,
+    attachmentName: String = "info.txt",
+    buildAttachment: ExceptionAttachmentBuilder.() -> Unit = {},
+): Nothing {
+    throw buildErrorWithAttachment(message, cause, attachmentName, buildAttachment)
 }
 
 inline fun rethrowExceptionWithDetails(

@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.*
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.UNDEFINED_PARAMETER_INDEX
@@ -58,8 +59,8 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NameUtils
 import org.jetbrains.kotlin.name.SpecialNames
-import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.threadLocal
 import java.util.concurrent.ConcurrentHashMap
 
@@ -1783,8 +1784,10 @@ class Fir2IrDeclarationStorage(
     private inline fun <R> convertCatching(element: FirElement, block: () -> R): R {
         try {
             return block()
-        } catch (e: Throwable) {
-            throw KotlinExceptionWithAttachments("Exception was thrown during transformation of ${element.render()}", e)
+        } catch (e: Exception) {
+            errorWithAttachment("Exception was thrown during transformation of ${element::class.java}", cause = e) {
+                withFirEntry("element", element)
+            }
         }
     }
 }
