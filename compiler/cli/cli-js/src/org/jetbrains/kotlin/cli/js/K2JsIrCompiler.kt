@@ -72,6 +72,23 @@ import org.jetbrains.kotlin.utils.join
 import java.io.File
 import java.io.IOException
 
+import com.sun.management.HotSpotDiagnosticMXBean
+import java.lang.management.ManagementFactory
+import java.time.Instant
+import java.time.format.DateTimeFormatter
+
+object HeapDumper {
+    private val hotSpotDiagnostic: HotSpotDiagnosticMXBean by lazy {
+        val connection = ManagementFactory.getPlatformMBeanServer()
+        val name = "com.sun.management:type=HotSpotDiagnostic"
+        ManagementFactory.newPlatformMXBeanProxy(connection, name, HotSpotDiagnosticMXBean::class.java)
+    }
+
+    fun createHeapDump(file: String, live: Boolean) {
+        hotSpotDiagnostic.dumpHeap(file, live)
+    }
+}
+
 private val K2JSCompilerArguments.granularity: JsGenerationGranularity
     get() = when {
         this.irPerModule -> JsGenerationGranularity.PER_MODULE
@@ -454,6 +471,10 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 verifySignatures = true
             ) {
                 sourceModule.getModuleDescriptor(it)
+            }
+
+            if (moduleFragment.name.asString() in setOf("<space.app:app-web>", "<space:all-js>")) {
+                HeapDumper.createHeapDump("/Users/sergej.jaskiewicz/Developer/kotlin/heap-dumps/before-serialization-v2-${moduleFragment.name}-${DateTimeFormatter.ISO_INSTANT.format(Instant.now())}.hprof", false)
             }
 
             val metadataSerializer =
