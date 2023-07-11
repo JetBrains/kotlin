@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.descriptors.impl.ModuleDependenciesImpl
 import org.jetbrains.kotlin.descriptors.konan.isNativeStdlib
 import org.jetbrains.kotlin.library.metadata.CurrentKlibModuleOrigin
 import org.jetbrains.kotlin.library.metadata.KlibMetadataFactories
-import org.jetbrains.kotlin.library.metadata.NativeTypeTransformer
 import org.jetbrains.kotlin.library.metadata.NullFlexibleTypeDeserializer
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
@@ -29,7 +28,7 @@ import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProvid
 
 internal object TopDownAnalyzerFacadeForKonan {
 
-    private val nativeFactories = KlibMetadataFactories(::KonanBuiltIns, NullFlexibleTypeDeserializer, NativeTypeTransformer())
+    private val nativeFactories = KlibMetadataFactories(::KonanBuiltIns, NullFlexibleTypeDeserializer)
 
     fun analyzeFiles(files: Collection<KtFile>, context: FrontendContext): AnalysisResult {
         val config = context.config

@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.builtins.functions.functionInterfacePackageFragmentP
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.contracts.ContractDeserializerImpl
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.deserialization.PlatformDependentTypeTransformer
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
@@ -33,8 +32,7 @@ private val ModuleDescriptorImpl.isStdlibModule
 class KlibMetadataModuleDescriptorFactoryImpl(
     override val descriptorFactory: KlibModuleDescriptorFactory,
     override val packageFragmentsFactory: KlibMetadataDeserializedPackageFragmentsFactory,
-    override val flexibleTypeDeserializer: FlexibleTypeDeserializer,
-    override val platformDependentTypeTransformer: PlatformDependentTypeTransformer
+    override val flexibleTypeDeserializer: FlexibleTypeDeserializer
 ) : KlibMetadataModuleDescriptorFactory {
 
     override fun createDescriptorOptionalBuiltIns(
@@ -173,7 +171,6 @@ class KlibMetadataModuleDescriptorFactoryImpl(
             ContractDeserializerImpl(configuration, storageManager),
             extensionRegistryLite = KlibMetadataSerializerProtocol.extensionRegistry,
             samConversionResolver = SamConversionResolverImpl(storageManager, samWithReceiverResolvers = emptyList()),
-            platformDependentTypeTransformer = platformDependentTypeTransformer,
             enumEntriesDeserializationSupport = enumEntriesDeserializationSupport,
         )
 

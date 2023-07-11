@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.library.impl.KotlinLibraryLayoutForWriter
 import org.jetbrains.kotlin.library.impl.KotlinLibraryWriterImpl
 import org.jetbrains.kotlin.library.metadata.KlibMetadataFactories
 import org.jetbrains.kotlin.library.metadata.KlibMetadataVersion
-import org.jetbrains.kotlin.library.metadata.NativeTypeTransformer
 import org.jetbrains.kotlin.library.metadata.NullFlexibleTypeDeserializer
 import org.jetbrains.kotlin.library.resolveSingleFileKlib
 import org.jetbrains.kotlin.name.Name
@@ -114,7 +113,7 @@ object KlibTestUtil {
             strategy = ToolingSingleFileKlibResolveStrategy
         )
 
-        val metadataFactories = KlibMetadataFactories({ DefaultBuiltIns.Instance }, NullFlexibleTypeDeserializer, NativeTypeTransformer())
+        val metadataFactories = KlibMetadataFactories({ DefaultBuiltIns.Instance }, NullFlexibleTypeDeserializer)
 
         val module = metadataFactories.DefaultDeserializedDescriptorFactory.createDescriptor(
             library = library,

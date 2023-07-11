@@ -177,8 +177,7 @@ private class KlibMetadataDependencyContainer(
         KlibMetadataModuleDescriptorFactoryImpl(
             MetadataFactories.DefaultDescriptorFactory,
             MetadataFactories.DefaultPackageFragmentsFactory,
-            MetadataFactories.flexibleTypeDeserializer,
-            MetadataFactories.platformDependentTypeTransformer
+            MetadataFactories.flexibleTypeDeserializer
         )
     }
 
@@ -209,6 +208,5 @@ private class KlibMetadataDependencyContainer(
 private val MetadataFactories =
     KlibMetadataFactories(
         { DefaultBuiltIns.Instance },
-        NullFlexibleTypeDeserializer,
-        NativeTypeTransformer()
+        NullFlexibleTypeDeserializer
     )
