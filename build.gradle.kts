@@ -880,11 +880,27 @@ val zipCompiler by tasks.registering(Zip::class) {
 }
 
 fun Project.secureZipTask(zipTask: TaskProvider<Zip>): RegisteringDomainObjectDelegateProviderWithAction<out TaskContainer, Task> {
-    val checkSumTask = tasks.register("${zipTask.name}Checksum", Checksum::class) {
+    val checkSumTask: TaskProvider<Checksum> = tasks.register("${zipTask.name}Checksum", Checksum::class) {
         dependsOn(zipTask)
         inputFiles.setFrom(zipTask.map { it.outputs.files.singleFile })
-        outputDirectory.fileProvider(zipTask.map { it.outputs.files.singleFile.parentFile })
+        outputDirectory.fileProvider(zipTask.map { it.outputs.files.singleFile.parentFile.resolve("checksums") })
         checksumAlgorithm.set(Checksum.Algorithm.SHA256)
+    }
+
+    // Don't use Copy task, because it declares the full destination directory as an output
+    val copyChecksumTask = tasks.register("${zipTask.name}ChecksumCopy") {
+        dependsOn(checkSumTask)
+
+        val checksumFileName: Provider<String> = zipTask.map { "${it.outputs.files.singleFile.name}.sha256" }
+        val checksumFile: Provider<RegularFile> = checkSumTask.map { it.outputDirectory.file(checksumFileName.get()).get() }
+        val outputFile: Provider<File> = zipTask.map { it.outputs.files.singleFile.parentFile.resolve(checksumFileName.get()) }
+
+        inputs.file(checksumFile)
+        outputs.file(outputFile)
+
+        doLast {
+            checksumFile.get().asFile.copyTo(outputFile.get(), overwrite = true)
+        }
     }
 
     val signTask = tasks.register("${zipTask.name}Sign", Sign::class) {
@@ -893,7 +909,7 @@ fun Project.secureZipTask(zipTask: TaskProvider<Zip>): RegisteringDomainObjectDe
     }
 
     return tasks.registering {
-        dependsOn(checkSumTask)
+        dependsOn(copyChecksumTask)
         dependsOn(signTask)
     }
 }
