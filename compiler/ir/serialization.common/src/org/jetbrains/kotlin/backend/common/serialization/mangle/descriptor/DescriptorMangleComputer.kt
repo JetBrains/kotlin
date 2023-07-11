@@ -91,21 +91,10 @@ open class DescriptorMangleComputer(builder: StringBuilder, mode: MangleMode) :
         when (val type = wrappedType.unwrap()) {
             is SimpleType -> {
 
-                if (type is SupposititiousSimpleType) {
-                    val classId = type.overwrittenClass
-                    classId.packageFqName.let {
-                        if (!it.isRoot) {
-                            builder.appendSignature(it.asString())
-                            builder.appendSignature(MangleConstant.FQN_SEPARATOR)
-                        }
-                        builder.appendSignature(classId.relativeClassName.asString())
-                    }
-                } else {
-                    when (val classifier = type.constructor.declarationDescriptor) {
-                        is ClassDescriptor -> with(copy(MangleMode.FQNAME)) { classifier.visit() }
-                        is TypeParameterDescriptor -> tBuilder.mangleTypeParameterReference(classifier)
-                        else -> error("Unexpected classifier: $classifier")
-                    }
+                when (val classifier = type.constructor.declarationDescriptor) {
+                    is ClassDescriptor -> with(copy(MangleMode.FQNAME)) { classifier.visit() }
+                    is TypeParameterDescriptor -> tBuilder.mangleTypeParameterReference(classifier)
+                    else -> error("Unexpected classifier: $classifier")
                 }
 
                 mangleTypeArguments(tBuilder, type, null)

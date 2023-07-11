@@ -137,11 +137,6 @@ class TypeDeserializer(
             simpleType.withAbbreviation(simpleType(it, expandTypeAliases = false))
         } ?: simpleType
 
-        if (proto.hasClassName()) {
-            val classId = c.nameResolver.getClassId(proto.className)
-            return c.components.platformDependentTypeTransformer.transformPlatformType(classId, computedType)
-        }
-
         return computedType
     }
 

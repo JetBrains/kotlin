@@ -8,6 +8,11 @@ package sample.tensorflow
 import kotlinx.cinterop.*
 import platform.posix.size_t
 import tensorflow.*
+import cnames.structs.TF_Status
+import cnames.structs.TF_Operation
+import cnames.structs.TF_Tensor
+import cnames.structs.TF_OperationDescription
+import cnames.structs.TF_Session
 
 typealias Status = CPointer<TF_Status>
 typealias Operation = CPointer<TF_Operation>
