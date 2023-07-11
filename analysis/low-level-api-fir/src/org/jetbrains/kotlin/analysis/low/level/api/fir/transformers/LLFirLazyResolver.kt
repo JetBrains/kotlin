@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.LLFirPhaseUpdater
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
@@ -26,7 +27,13 @@ internal abstract class LLFirLazyResolver(
 
     abstract fun checkIsResolved(target: FirElementWithResolveState)
 
-    abstract fun updatePhaseForDeclarationInternals(target: FirElementWithResolveState)
+    fun updatePhaseForDeclarationInternals(target: FirElementWithResolveState) {
+        LLFirPhaseUpdater.updateDeclarationInternalsPhase(
+            target = target,
+            newPhase = resolverPhase,
+            updateForLocalDeclarations = resolverPhase == FirResolvePhase.BODY_RESOLVE,
+        )
+    }
 
     fun checkIsResolved(designation: LLFirResolveTarget) {
         designation.forEachTarget(::checkIsResolved)

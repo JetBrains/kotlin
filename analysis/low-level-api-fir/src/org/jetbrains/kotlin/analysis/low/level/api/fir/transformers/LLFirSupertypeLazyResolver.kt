@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirSingleRe
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.asResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.tryCollectDesignationWithFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
-import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.LLFirPhaseUpdater
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkPhase
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkTypeRefIsResolved
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
@@ -40,10 +39,6 @@ internal object LLFirSupertypeLazyResolver : LLFirLazyResolver(FirResolvePhase.S
     ) {
         val resolver = LLFirSuperTypeTargetResolver(target, lockProvider, session, scopeSession)
         resolver.resolveDesignation()
-    }
-
-    override fun updatePhaseForDeclarationInternals(target: FirElementWithResolveState) {
-        LLFirPhaseUpdater.updateDeclarationInternalsPhase(target, resolverPhase, updateForLocalDeclarations = false)
     }
 
     override fun checkIsResolved(target: FirElementWithResolveState) {

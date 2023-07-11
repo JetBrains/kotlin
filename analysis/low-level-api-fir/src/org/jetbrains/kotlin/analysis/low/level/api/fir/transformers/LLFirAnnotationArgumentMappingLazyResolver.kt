@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyBodiesCalculator.calculateAnnotations
-import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.LLFirPhaseUpdater
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkAnnotationArgumentsMappingIsResolved
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkPhase
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.expressionGuard
@@ -34,10 +33,6 @@ internal object LLFirAnnotationArgumentMappingLazyResolver : LLFirLazyResolver(F
     ) {
         val resolver = LLFirAnnotationArgumentsMappingTargetResolver(target, lockProvider, session, scopeSession, towerDataContextCollector)
         resolver.resolveDesignation()
-    }
-
-    override fun updatePhaseForDeclarationInternals(target: FirElementWithResolveState) {
-        LLFirPhaseUpdater.updateDeclarationInternalsPhase(target, resolverPhase, updateForLocalDeclarations = false)
     }
 
     override fun checkIsResolved(target: FirElementWithResolveState) {

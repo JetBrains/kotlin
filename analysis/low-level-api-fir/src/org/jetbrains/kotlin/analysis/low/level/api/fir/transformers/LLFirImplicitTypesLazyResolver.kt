@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.throwUnexpectedFirElementError
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
-import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.LLFirPhaseUpdater
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkPhase
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkReturnTypeRefIsResolved
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
@@ -31,14 +30,6 @@ internal object LLFirImplicitTypesLazyResolver : LLFirLazyResolver(FirResolvePha
     ) {
         val resolver = LLFirImplicitBodyTargetResolver(target, lockProvider, session, scopeSession, towerDataContextCollector)
         resolver.resolveDesignation()
-    }
-
-    override fun updatePhaseForDeclarationInternals(target: FirElementWithResolveState) {
-        LLFirPhaseUpdater.updateDeclarationInternalsPhase(
-            target,
-            resolverPhase,
-            updateForLocalDeclarations = false/* here should be true if we resolved the body*/
-        )
     }
 
     override fun checkIsResolved(target: FirElementWithResolveState) {
