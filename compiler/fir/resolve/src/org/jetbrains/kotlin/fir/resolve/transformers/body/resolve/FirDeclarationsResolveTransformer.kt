@@ -482,22 +482,17 @@ open class FirDeclarationsResolveTransformer(
     ): Unit = whileAnalysing(session, accessor) {
         context.withPropertyAccessor(owner, accessor, components) {
             val propertyTypeRef = owner.returnTypeRef
-            if (accessor is FirDefaultPropertyAccessor || accessor.body == null) {
-                transformFunction(accessor, withExpectedType(propertyTypeRef))
-            } else {
-                val returnTypeRef = accessor.returnTypeRef
-                val expectedReturnTypeRef = if (propertyTypeRef is FirResolvedTypeRef && returnTypeRef !is FirResolvedTypeRef) {
-                    propertyTypeRef
-                } else {
-                    returnTypeRef
-                }
-                val resolutionMode = if (owner.delegate == null || expectedReturnTypeRef.coneTypeSafe<ConeKotlinType>()?.isUnit == true) {
-                    ResolutionMode.ContextIndependent
-                } else {
-                    withExpectedType(expectedReturnTypeRef)
-                }
 
-                transformFunctionWithGivenSignature(accessor, resolutionMode)
+            // Currently, this condition might only be true for delegates, because if type is set explicitly for the property,
+            // it's been propagated to receivers in the RawFirBuilder
+            if (accessor.returnTypeRef is FirImplicitTypeRef && propertyTypeRef !is FirImplicitTypeRef) {
+                accessor.replaceReturnTypeRef(propertyTypeRef)
+            }
+
+            if (accessor is FirDefaultPropertyAccessor || accessor.body == null) {
+                transformFunction(accessor, ResolutionMode.ContextIndependent)
+            } else {
+                transformFunctionWithGivenSignature(accessor)
             }
         }
     }
@@ -630,18 +625,15 @@ open class FirDeclarationsResolveTransformer(
             }
             context.forFunctionBody(simpleFunction, components) {
                 withFullBodyResolve {
-                    transformFunctionWithGivenSignature(simpleFunction, ResolutionMode.ContextIndependent)
+                    transformFunctionWithGivenSignature(simpleFunction)
                 }
             }
         }
     }
 
-    private fun <F : FirFunction> transformFunctionWithGivenSignature(
-        function: F,
-        resolutionMode: ResolutionMode,
-    ): F {
+    private fun <F : FirFunction> transformFunctionWithGivenSignature(function: F): F {
         @Suppress("UNCHECKED_CAST")
-        val result = transformFunction(function, resolutionMode) as F
+        val result = transformFunction(function, ResolutionMode.ContextIndependent) as F
 
         val body = result.body
         if (result.returnTypeRef is FirImplicitTypeRef) {
