@@ -1124,14 +1124,14 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                             ConeStarProjection
                         }
                     }
-                val typeRef = symbol?.constructType(typeArguments, isNullable = false)
-                if (typeRef != null) {
+                val coneType = symbol?.constructType(typeArguments, isNullable = false)
+                if (coneType != null) {
                     lhs.replaceTypeRef(
-                        buildResolvedTypeRef { type = typeRef }.also {
+                        buildResolvedTypeRef { type = coneType }.also {
                             session.lookupTracker?.recordTypeResolveAsLookup(it, getClassCall.source, components.file.source)
                         }
                     )
-                    typeRef
+                    coneType
                 } else {
                     lhs.resultType.coneType
                 }

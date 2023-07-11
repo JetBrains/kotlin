@@ -117,10 +117,9 @@ fun FirResolvedQualifier.continueQualifier(
                     symbol = nestedClassSymbol as FirClassLikeSymbol<*>
                     isFullyQualified = true
 
-                    val outerTypeArguments = this.typeArguments.toList()
                     this.typeArguments.clear()
                     this.typeArguments.addAll(typeArguments)
-                    this.typeArguments.addAll(outerTypeArguments)
+                    this.typeArguments.addAll(this@continueQualifier.typeArguments)
                     this.nonFatalDiagnostics.addAll(nonFatalDiagnosticsFromExpression.orEmpty())
                     this.nonFatalDiagnostics.addAll(
                         extractNonFatalDiagnostics(
