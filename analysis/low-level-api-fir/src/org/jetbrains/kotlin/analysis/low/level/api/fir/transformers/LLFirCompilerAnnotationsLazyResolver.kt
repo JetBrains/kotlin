@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockPro
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyBodiesCalculator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkDeprecationProviderIsResolved
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkPhase
 import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
@@ -45,14 +44,11 @@ internal object LLFirCompilerAnnotationsLazyResolver : LLFirLazyResolver(FirReso
         resolver.resolveDesignation()
     }
 
-    override fun checkIsResolved(target: FirElementWithResolveState) {
-        target.checkPhase(resolverPhase)
+    override fun phaseSpecificCheckIsResolved(target: FirElementWithResolveState) {
         when (target) {
             is FirClassLikeDeclaration -> checkDeprecationProviderIsResolved(target, target.deprecationsProvider)
             is FirCallableDeclaration -> checkDeprecationProviderIsResolved(target, target.deprecationsProvider)
         }
-
-        checkNestedDeclarationsAreResolved(target)
     }
 }
 

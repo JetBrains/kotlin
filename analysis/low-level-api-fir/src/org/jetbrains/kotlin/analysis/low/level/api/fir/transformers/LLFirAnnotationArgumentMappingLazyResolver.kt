@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveT
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyBodiesCalculator.calculateAnnotations
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkAnnotationArgumentsMappingIsResolved
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkPhase
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.expressionGuard
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
@@ -35,13 +34,9 @@ internal object LLFirAnnotationArgumentMappingLazyResolver : LLFirLazyResolver(F
         resolver.resolveDesignation()
     }
 
-    override fun checkIsResolved(target: FirElementWithResolveState) {
-        target.checkPhase(resolverPhase)
-        if (target is FirAnnotationContainer) {
-            checkAnnotationArgumentsMappingIsResolved(target)
-        }
-
-        checkNestedDeclarationsAreResolved(target)
+    override fun phaseSpecificCheckIsResolved(target: FirElementWithResolveState) {
+        if (target !is FirAnnotationContainer) return
+        checkAnnotationArgumentsMappingIsResolved(target)
     }
 }
 

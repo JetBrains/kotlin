@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkExpectForActualIsResolved
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkPhase
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
@@ -29,13 +28,9 @@ internal object LLFirExpectActualMatcherLazyResolver : LLFirLazyResolver(FirReso
         resolver.resolveDesignation()
     }
 
-    override fun checkIsResolved(target: FirElementWithResolveState) {
-        target.checkPhase(resolverPhase)
-        if (target is FirMemberDeclaration && target.canHaveExpectCounterPart()) {
-            checkExpectForActualIsResolved(target)
-        }
-
-        checkNestedDeclarationsAreResolved(target)
+    override fun phaseSpecificCheckIsResolved(target: FirElementWithResolveState) {
+        if (target !is FirMemberDeclaration || !target.canHaveExpectCounterPart()) return
+        checkExpectForActualIsResolved(target)
     }
 }
 

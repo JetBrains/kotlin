@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirSingleRe
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.asResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.tryCollectDesignationWithFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkPhase
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkTypeRefIsResolved
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirSession
@@ -41,8 +40,7 @@ internal object LLFirSupertypeLazyResolver : LLFirLazyResolver(FirResolvePhase.S
         resolver.resolveDesignation()
     }
 
-    override fun checkIsResolved(target: FirElementWithResolveState) {
-        target.checkPhase(resolverPhase)
+    override fun phaseSpecificCheckIsResolved(target: FirElementWithResolveState) {
         when (target) {
             is FirClass -> {
                 for (superTypeRef in target.superTypeRefs) {
@@ -53,8 +51,6 @@ internal object LLFirSupertypeLazyResolver : LLFirLazyResolver(FirResolvePhase.S
             is FirTypeAlias -> {
                 checkTypeRefIsResolved(target.expandedTypeRef, typeRefName = "type alias expanded type", target)
             }
-
-            else -> {}
         }
     }
 }

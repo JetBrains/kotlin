@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveT
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyBodiesCalculator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkAnnotationTypeIsResolved
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkPhase
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkReceiverTypeRefIsResolved
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkReturnTypeRefIsResolved
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkTypeRefIsResolved
@@ -40,8 +39,7 @@ internal object LLFirTypeLazyResolver : LLFirLazyResolver(FirResolvePhase.TYPES)
         resolver.resolveDesignation()
     }
 
-    override fun checkIsResolved(target: FirElementWithResolveState) {
-        target.checkPhase(resolverPhase)
+    override fun phaseSpecificCheckIsResolved(target: FirElementWithResolveState) {
         if (target is FirAnnotationContainer) {
             checkAnnotationTypeIsResolved(target)
         }
@@ -63,11 +61,7 @@ internal object LLFirTypeLazyResolver : LLFirLazyResolver(FirResolvePhase.TYPES)
                     checkTypeRefIsResolved(bound, "type parameter bound", target)
                 }
             }
-
-            else -> {}
         }
-
-        checkNestedDeclarationsAreResolved(target)
     }
 }
 

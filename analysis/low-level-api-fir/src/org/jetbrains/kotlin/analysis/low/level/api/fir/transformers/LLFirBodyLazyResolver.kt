@@ -48,8 +48,7 @@ internal object LLFirBodyLazyResolver : LLFirLazyResolver(FirResolvePhase.BODY_R
         resolver.resolveDesignation()
     }
 
-    override fun checkIsResolved(target: FirElementWithResolveState) {
-        target.checkPhase(resolverPhase)
+    override fun phaseSpecificCheckIsResolved(target: FirElementWithResolveState) {
         when (target) {
             is FirValueParameter -> checkDefaultValueIsResolved(target)
             is FirVariable -> checkInitializerIsResolved(target)
@@ -59,8 +58,6 @@ internal object LLFirBodyLazyResolver : LLFirLazyResolver(FirResolvePhase.BODY_R
             }
             is FirFunction -> checkBodyIsResolved(target)
         }
-
-        checkNestedDeclarationsAreResolved(target)
     }
 }
 
@@ -146,7 +143,8 @@ private class LLFirBodyTargetResolver(
             is FirScript -> resolve(target, BodyStateKeepers.SCRIPT)
             is FirDanglingModifierList,
             is FirFileAnnotationsContainer,
-            is FirTypeAlias -> {
+            is FirTypeAlias,
+            -> {
                 // No bodies here
             }
             else -> throwUnexpectedFirElementError(target)
