@@ -2,6 +2,8 @@
     <taskdef resource="org/jetbrains/kotlin/ant/antlib.xml" classpath="${kotlin.lib}/kotlin-ant.jar"/>
 
     <target name="build">
-        <kotlinc src="${test.data}" output="${temp}"/>
+        <kotlinc src="${test.data}" output="${temp}">
+            <compilerarg line="-Xuse-fir-lt=false"/>
+        </kotlinc>
     </target>
 </project>
