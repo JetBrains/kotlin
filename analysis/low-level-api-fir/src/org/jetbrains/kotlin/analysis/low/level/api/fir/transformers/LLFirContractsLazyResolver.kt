@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveT
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.throwUnexpectedFirElementError
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.blockGuard
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkContractDescriptionIsResolved
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.isCallableWithSpecialBody
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirFileAnnotationsContainer
@@ -33,7 +34,7 @@ internal object LLFirContractsLazyResolver : LLFirLazyResolver(FirResolvePhase.C
 
     override fun phaseSpecificCheckIsResolved(target: FirElementWithResolveState) {
         if (target !is FirContractDescriptionOwner) return
-        // TODO checkContractDescriptionIsResolved(declaration)
+        checkContractDescriptionIsResolved(target)
     }
 }
 

@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.analysis.utils.errors.ExceptionAttachmentBuilder
 import org.jetbrains.kotlin.analysis.utils.errors.checkWithAttachmentBuilder
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
+import org.jetbrains.kotlin.fir.contracts.FirLegacyRawContractDescription
 import org.jetbrains.kotlin.fir.contracts.FirResolvedContractDescription
 import org.jetbrains.kotlin.fir.contracts.impl.FirEmptyContractDescription
 import org.jetbrains.kotlin.fir.declarations.*
@@ -136,7 +137,9 @@ internal fun checkReceiverTypeRefIsResolved(declaration: FirCallableDeclaration,
 internal fun checkContractDescriptionIsResolved(declaration: FirContractDescriptionOwner) {
     val contractDescription = declaration.contractDescription
     checkWithAttachmentBuilder(
-        condition = contractDescription is FirResolvedContractDescription || contractDescription is FirEmptyContractDescription,
+        condition = contractDescription is FirResolvedContractDescription ||
+                contractDescription is FirEmptyContractDescription ||
+                contractDescription is FirLegacyRawContractDescription /* TODO: should be dropped after KT-60310 */,
         message = { "Expected ${FirResolvedContractDescription::class.simpleName} or ${FirEmptyContractDescription::class.simpleName} but ${contractDescription::class.simpleName} found for ${declaration::class.simpleName}" }
     ) {
         withFirEntry("declaration", declaration)
