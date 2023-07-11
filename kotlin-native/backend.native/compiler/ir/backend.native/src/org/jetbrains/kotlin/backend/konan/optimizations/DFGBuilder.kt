@@ -500,14 +500,27 @@ internal class FunctionDFGBuilder(private val generationState: NativeGenerationS
                 values.forEach { node.value.values += expressionToEdge(it) }
             }
 
-            rootScope.nodes += templateParameters.values.map { it.value }
+            // Put a dummy in order to not bother with nullability. Then rewrite it with actual values.
+            val dummy = DataFlowIR.Node.Parameter(-1)
+            val orderedParameters = Array(templateParameters.size) { dummy }
+            templateParameters.values.forEach {
+                val parameter = it.value
+                val index = parameter.index
+                require(orderedParameters[index] == dummy) {
+                    "Two parameters with the same index $index: ${orderedParameters[index]} and $parameter"
+                }
+                orderedParameters[index] = parameter
+            }
+            require(orderedParameters.all { it != dummy }) { "Some parameters are missing" }
+            rootScope.nodes += orderedParameters
             rootScope.nodes += returnsNode
             rootScope.nodes += throwsNode
 
             return DataFlowIR.Function(
                     symbol = symbolTable.mapFunction(declaration),
                     body = DataFlowIR.FunctionBody(
-                            rootScope, listOf(rootScope) + scopes.values, returnsNode, throwsNode)
+                            rootScope, listOf(rootScope) + scopes.values,
+                            orderedParameters, returnsNode, throwsNode)
             )
         }
 

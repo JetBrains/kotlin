@@ -268,6 +268,7 @@ internal object DataFlowIR {
 
     // Note: scopes form a tree.
     class FunctionBody(val rootScope: Node.Scope, val allScopes: List<Node.Scope>,
+                       val parameters: Array<Node.Parameter>,
                        val returns: Node.Variable, val throws: Node.Variable) {
         inline fun forEachNonScopeNode(block: (Node) -> Unit) {
             for (scope in allScopes)

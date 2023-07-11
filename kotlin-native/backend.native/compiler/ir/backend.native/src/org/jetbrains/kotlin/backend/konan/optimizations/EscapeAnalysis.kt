@@ -462,43 +462,61 @@ internal object EscapeAnalysis {
             }
 
             var pointsToGraphs = mutableMapOf<DataFlowIR.FunctionSymbol.Declared, PointsToGraph>()
+
+            val isALoop = nodes.singleOrNull()?.let { node ->
+                callGraph.directEdges[node]!!.callSites.any { it.actualCallee == node }
+            } == true
+
             var failedToConverge = false
-            val toAnalyze = mutableSetOf<DataFlowIR.FunctionSymbol.Declared>()
-            toAnalyze.addAll(nodes)
-            val numberOfRuns = nodes.associateWith { 0 }.toMutableMap()
-            while (!failedToConverge && toAnalyze.isNotEmpty()) {
-                val function = toAnalyze.first()
-                toAnalyze.remove(function)
-                numberOfRuns[function] = numberOfRuns[function]!! + 1
+            if (isALoop) {
+                val function = nodes.first()
                 context.log { "Processing function $function" }
-
-                val startResult = escapeAnalysisResults[function]!!
-                context.log { "Start escape analysis result:\n$startResult" }
-
-                val pointsToGraph = PointsToGraph(function)
+                val pointsToGraph = PointsToGraph(function, true)
                 pointsToGraphs[function] = pointsToGraph
-
-                if (!analyze(callGraph.directEdges[function]!!.callSites, pointsToGraph, function, maxPointsToGraphSizeOf(function))) {
-                    failedToConverge = true
+                failedToConverge = !analyze(callGraph.directEdges[function]!!.callSites, pointsToGraph, function, maxPointsToGraphSizeOf(function))
+                if (failedToConverge) {
+                    context.log { "WARNING: Escape analysis for $function seems not to be converging. Falling back to conservative strategy." }
                 } else {
-                    val endResult = escapeAnalysisResults[function]!!
-                    if (startResult == endResult) {
-                        context.log { "Escape analysis is not changed" }
+                    context.log { "Escape analysis result:\n${escapeAnalysisResults[function]!!}" }
+                }
+            } else {
+                val toAnalyze = mutableSetOf<DataFlowIR.FunctionSymbol.Declared>()
+                toAnalyze.addAll(nodes)
+                val numberOfRuns = nodes.associateWith { 0 }.toMutableMap()
+                while (!failedToConverge && toAnalyze.isNotEmpty()) {
+                    val function = toAnalyze.first()
+                    toAnalyze.remove(function)
+                    numberOfRuns[function] = numberOfRuns[function]!! + 1
+                    context.log { "Processing function $function" }
+
+                    val startResult = escapeAnalysisResults[function]!!
+                    context.log { "Start escape analysis result:\n$startResult" }
+
+                    val pointsToGraph = PointsToGraph(function, false)
+                    pointsToGraphs[function] = pointsToGraph
+
+                    if (!analyze(callGraph.directEdges[function]!!.callSites, pointsToGraph, function, maxPointsToGraphSizeOf(function))) {
+                        failedToConverge = true
                     } else {
-                        context.log { "Escape analysis was refined:\n$endResult" }
-                        if (numberOfRuns[function]!! > DivergenceResolutionParams.MaxAttempts)
-                            failedToConverge = true
-                        else {
-                            callGraph.reversedEdges[function]?.forEach {
-                                if (nodes.contains(it))
-                                    toAnalyze.add(it)
+                        val endResult = escapeAnalysisResults[function]!!
+                        if (startResult == endResult) {
+                            context.log { "Escape analysis is not changed" }
+                        } else {
+                            context.log { "Escape analysis was refined:\n$endResult" }
+                            if (numberOfRuns[function]!! > DivergenceResolutionParams.MaxAttempts)
+                                failedToConverge = true
+                            else {
+                                callGraph.reversedEdges[function]?.forEach {
+                                    if (nodes.contains(it))
+                                        toAnalyze.add(it)
+                                }
                             }
                         }
                     }
-                }
 
-                if (failedToConverge)
-                    context.log { "WARNING: Escape analysis for $function seems not to be converging. Falling back to conservative strategy." }
+                    if (failedToConverge)
+                        context.log { "WARNING: Escape analysis for $function seems not to be converging. Falling back to conservative strategy." }
+                }
             }
 
             if (failedToConverge) {
@@ -584,7 +602,7 @@ internal object EscapeAnalysis {
                     ComputationState.PENDING -> {
                         toAnalyze.pop()
                         computationStates[function] = ComputationState.DONE
-                        val pointsToGraph = PointsToGraph(function)
+                        val pointsToGraph = PointsToGraph(function, false)
                         if (analyze(callSites, pointsToGraph, function, maxPointsToGraphSizeOf(function)))
                             pointsToGraphs[function] = pointsToGraph
                         else {
@@ -595,7 +613,7 @@ internal object EscapeAnalysis {
                             }
                             escapeAnalysisResults[function] = FunctionEscapeAnalysisResult.pessimistic(function.parameters.size)
                             // Invalidate the points-to graph.
-                            pointsToGraphs[function] = PointsToGraph(function).apply {
+                            pointsToGraphs[function] = PointsToGraph(function, false).apply {
                                 allNodes.forEach { it.depth = Depths.GLOBAL }
                             }
                         }
@@ -794,7 +812,7 @@ internal object EscapeAnalysis {
             BACKWARD
         }
 
-        private inner class PointsToGraph(val functionSymbol: DataFlowIR.FunctionSymbol) {
+        private inner class PointsToGraph(val functionSymbol: DataFlowIR.FunctionSymbol, val shouldConvertRecursionToLoop: Boolean) {
             val function = moduleDFG.functions[functionSymbol]!!
             val nodes = mutableMapOf<DataFlowIR.Node, PointsToGraphNode>()
 
@@ -859,6 +877,20 @@ internal object EscapeAnalysis {
 
             private val returnValues: Set<DataFlowIR.Node> = function.body.returns.values.map { it.node }.toSet()
 
+            val parameters: Array<PointsToGraphNode>
+            val parameterVariables = mutableMapOf<DataFlowIR.Node.Parameter, PointsToGraphNode>()
+
+            // The receiver node might be null due to unreachable code
+            // (including the one having appeared after the inlining phase).
+            fun DataFlowIR.Node.toPTGNode() =
+                    if (this == DataFlowIR.Node.Null)
+                        null
+                    else (this as? DataFlowIR.Node.Parameter)
+                            ?.let { parameterVariables[it] }
+                            ?: nodes[this]!!
+
+            fun DataFlowIR.Edge.toPTGNode() = node.toPTGNode()
+
             init {
                 fun traverseAndConvert(node: DataFlowIR.Node, depth: Int) {
                     when (node) {
@@ -879,20 +911,16 @@ internal object EscapeAnalysis {
 
                 traverseAndConvert(body.rootScope, Depths.ROOT_SCOPE - 1)
 
-                val dummyParameter = DataFlowIR.Node.Parameter(-1)
-                val parameters = Array(function.symbol.parameters.size) { dummyParameter } // Put dummy in order to not bother with nullability.
-                // Parameters are declared in the root scope
-                for (node in body.rootScope.nodes) {
-                    (node as? DataFlowIR.Node.Parameter)?.let {
-                        require(parameters[it.index] == dummyParameter) {
-                            "Two different parameters with the same index ${it.index} for $functionSymbol"
-                        }
-                        parameters[it.index] = it
-                    }
+                parameters = Array(body.parameters.size + 1) {
+                    if (it == body.parameters.size)
+                        returnsNode
+                    else nodes[body.parameters[it]]!!
                 }
-                parameters.forEachIndexed { index, parameter ->
-                    require(parameter != dummyParameter) {
-                        "No parameter with index $index for $functionSymbol"
+                if (shouldConvertRecursionToLoop) {
+                    for (index in body.parameters.indices) {
+                        val parameterVariable = newNode()
+                        parameterVariable.addAssignmentEdge(parameters[index])
+                        parameterVariables[body.parameters[index]] = parameterVariable
                     }
                 }
 
@@ -900,12 +928,9 @@ internal object EscapeAnalysis {
                 body.forEachNonScopeNode { node ->
                     when (node) {
                         is DataFlowIR.Node.FieldWrite -> {
-                            val receiverNode = node.receiver?.node
-                            // Here and below the receiver node might be null due to unreachable code
-                            // (including the one having appeared after the inlining phase).
-                            if (node.value.node != DataFlowIR.Node.Null && receiverNode != DataFlowIR.Node.Null) {
-                                val receiver = receiverNode?.let { nodes[it]!! }
-                                val value = nodes[node.value.node]!!
+                            val receiver = node.receiver?.toPTGNode()
+                            val value = node.value.toPTGNode()
+                            if (value != null) {
                                 if (receiver == null)
                                     escapeOrigins.add(value)
                                 else
@@ -916,52 +941,44 @@ internal object EscapeAnalysis {
                         is DataFlowIR.Node.Singleton -> {
                             val type = node.type
                             if (type != nothing)
-                                escapeOrigins.add(nodes[node]!!)
+                                escapeOrigins.add(node.toPTGNode()!!)
                         }
 
                         is DataFlowIR.Node.FieldRead -> {
-                            val receiverNode = node.receiver?.node
-                            if (receiverNode != DataFlowIR.Node.Null) {
-                                val readResult = nodes[node]!!
-                                val receiver = receiverNode?.let { nodes[it]!! }
-                                if (receiver == null)
-                                    escapeOrigins.add(readResult)
-                                else
-                                    readResult.addAssignmentEdge(receiver.getFieldNode(node.field, this))
-                            }
+                            val readResult = node.toPTGNode()!!
+                            val receiver = node.receiver?.toPTGNode()
+                            if (receiver == null)
+                                escapeOrigins.add(readResult)
+                            else
+                                readResult.addAssignmentEdge(receiver.getFieldNode(node.field, this))
                         }
 
                         is DataFlowIR.Node.ArrayWrite -> {
-                            val arrayNode = node.array.node
-                            val valueNode = node.value.node
-                            if (valueNode != DataFlowIR.Node.Null && arrayNode != DataFlowIR.Node.Null) {
-                                val array = nodes[arrayNode]!!
-                                val value = nodes[valueNode]!!
+                            val array = node.array.toPTGNode()
+                            val value = node.value.toPTGNode()
+                            if (value != null && array != null)
                                 array.getFieldNode(intestinesField, this).addAssignmentEdge(value)
-                            }
                         }
 
                         is DataFlowIR.Node.ArrayRead -> {
-                            val arrayNode = node.array.node
-                            if (arrayNode != DataFlowIR.Node.Null) {
-                                val array = nodes[arrayNode]!!
-                                val readResult = nodes[node]!!
+                            val array = node.array.toPTGNode()
+                            if (array != null) {
+                                val readResult = node.toPTGNode()!!
                                 readResult.addAssignmentEdge(array.getFieldNode(intestinesField, this))
                             }
                         }
 
                         is DataFlowIR.Node.SaveCoroutineState -> {
-                            val thisIntestines = nodes[parameters[0]]!!.getFieldNode(intestinesField, this)
-                            for (variable in node.liveVariables)
+                            val thisIntestines = nodes[body.parameters[0]]!!.getFieldNode(intestinesField, this)
+                            for (variable in node.liveVariables) {
                                 thisIntestines.addAssignmentEdge(nodes[variable]!!)
+                            }
                         }
 
                         is DataFlowIR.Node.Variable -> {
-                            val variable = nodes[node]!!
-                            for (value in node.values) {
-                                if (value.node != DataFlowIR.Node.Null)
-                                    variable.addAssignmentEdge(nodes[value.node]!!)
-                            }
+                            val variable = node.toPTGNode()!!
+                            for (value in node.values)
+                                value.toPTGNode()?.let { variable.addAssignmentEdge(it) }
                         }
                         is DataFlowIR.Node.Alloc,
                         is DataFlowIR.Node.Call,
@@ -973,18 +990,19 @@ internal object EscapeAnalysis {
                     }
                 }
 
-                body.throws.values.forEach { escapeOrigins.add(nodes[it.node]!!) }
-                body.returns.values.forEach {
-                    if (it.node != DataFlowIR.Node.Null)
-                        returnsNode.getFieldNode(returnsValueField, this).addAssignmentEdge(nodes[it.node]!!)
+                body.throws.values.forEach { escapeOrigins.add(it.toPTGNode()!!) }
+                body.returns.values.forEach { returnValue ->
+                    returnValue.toPTGNode()?.let {
+                        returnsNode.getFieldNode(returnsValueField, this).addAssignmentEdge(it)
+                    }
                 }
 
                 val escapes = functionSymbol.escapes
                 if (escapes != null) {
-                    for (parameter in parameters)
+                    for (parameter in body.parameters)
                         if (escapes.escapesAt(parameter.index))
                             escapeOrigins += nodes[parameter]!!
-                    if (escapes.escapesAt(parameters.size))
+                    if (escapes.escapesAt(body.parameters.size))
                         escapeOrigins += returnsNode
                 }
             }
@@ -1050,60 +1068,74 @@ internal object EscapeAnalysis {
                     +"Processing callSite"
                     +nodeToStringWhole(call)
                     +"Actual callee: ${callSite.actualCallee}"
-                    +"Callee escape analysis result:"
-                    +calleeEscapeAnalysisResult.toString()
                 }
 
                 val arguments = callSite.arguments
 
-                val calleeDrains = Array(calleeEscapeAnalysisResult.numberOfDrains) { newNode() }
-
-                fun mapNode(compressedNode: CompressedPointsToGraph.Node): Pair<DataFlowIR.Node?, PointsToGraphNode?> {
-                    val (arg, rootNode) = when (val kind = compressedNode.kind) {
-                        CompressedPointsToGraph.NodeKind.Return -> arguments.last() to nodes[arguments.last()]
-                        is CompressedPointsToGraph.NodeKind.Param -> arguments[kind.index] to nodes[arguments[kind.index]]
-                        is CompressedPointsToGraph.NodeKind.Drain -> null to calleeDrains[kind.index]
-                    }
-                    if (rootNode == null)
-                        return arg to rootNode
-                    val path = compressedNode.path
-                    var node: PointsToGraphNode = rootNode
-                    for (field in path) {
-                        node = when (field) {
-                            returnsValueField -> node
-                            else -> node.getFieldNode(field, this)
+                if (shouldConvertRecursionToLoop && callSite.actualCallee == functionSymbol) {
+                    context.log { "A recursive call: saving arguments to parameter values" }
+                    for (parameter in function.body.parameters) {
+                        val index = parameter.index
+                        arguments[index].toPTGNode()?.let {
+                            parameterVariables[parameter]!!.addAssignmentEdge(it)
                         }
                     }
-                    return arg to node
-                }
-
-                calleeEscapeAnalysisResult.escapes.forEach { escapingNode ->
-                    val (arg, node) = mapNode(escapingNode)
-                    if (node == null) {
-                        context.log { "WARNING: There is no node ${nodeToString(arg!!)}" }
-                        return@forEach
-                    }
-                    escapeOrigins += node
-                    context.log { "Node ${escapingNode.debugString(arg?.let { nodeToString(it) })} escapes" }
-                }
-
-                calleeEscapeAnalysisResult.pointsTo.edges.forEach { edge ->
-                    val (fromArg, fromNode) = mapNode(edge.from)
-                    if (fromNode == null) {
-                        context.log { "WARNING: There is no node ${nodeToString(fromArg!!)}" }
-                        return@forEach
-                    }
-                    val (toArg, toNode) = mapNode(edge.to)
-                    if (toNode == null) {
-                        context.log { "WARNING: There is no node ${nodeToString(toArg!!)}" }
-                        return@forEach
-                    }
-                    fromNode.addAssignmentEdge(toNode)
-
+                    arguments[functionSymbol.parameters.size].toPTGNode()?.addAssignmentEdge(returnsNode)
+                } else {
                     context.logMultiple {
-                        +"Adding edge"
-                        +"    FROM ${edge.from.debugString(fromArg?.let { nodeToString(it) })}"
-                        +"    TO ${edge.to.debugString(toArg?.let { nodeToString(it) })}"
+                        +"Callee escape analysis result:"
+                        +calleeEscapeAnalysisResult.toString()
+                    }
+
+                    val calleeDrains = Array(calleeEscapeAnalysisResult.numberOfDrains) { newNode() }
+
+                    fun mapNode(compressedNode: CompressedPointsToGraph.Node): Pair<DataFlowIR.Node?, PointsToGraphNode?> {
+                        val (arg, rootNode) = when (val kind = compressedNode.kind) {
+                            CompressedPointsToGraph.NodeKind.Return -> arguments.last() to arguments.last().toPTGNode()
+                            is CompressedPointsToGraph.NodeKind.Param -> arguments[kind.index] to arguments[kind.index].toPTGNode()
+                            is CompressedPointsToGraph.NodeKind.Drain -> null to calleeDrains[kind.index]
+                        }
+                        if (rootNode == null)
+                            return arg to rootNode
+                        val path = compressedNode.path
+                        var node: PointsToGraphNode = rootNode
+                        for (field in path) {
+                            node = when (field) {
+                                returnsValueField -> node
+                                else -> node.getFieldNode(field, this)
+                            }
+                        }
+                        return arg to node
+                    }
+
+                    calleeEscapeAnalysisResult.escapes.forEach { escapingNode ->
+                        val (arg, node) = mapNode(escapingNode)
+                        if (node == null) {
+                            context.log { "WARNING: There is no node ${nodeToString(arg!!)}" }
+                            return@forEach
+                        }
+                        escapeOrigins += node
+                        context.log { "Node ${escapingNode.debugString(arg?.let { nodeToString(it) })} escapes" }
+                    }
+
+                    calleeEscapeAnalysisResult.pointsTo.edges.forEach { edge ->
+                        val (fromArg, fromNode) = mapNode(edge.from)
+                        if (fromNode == null) {
+                            context.log { "WARNING: There is no node ${nodeToString(fromArg!!)}" }
+                            return@forEach
+                        }
+                        val (toArg, toNode) = mapNode(edge.to)
+                        if (toNode == null) {
+                            context.log { "WARNING: There is no node ${nodeToString(toArg!!)}" }
+                            return@forEach
+                        }
+                        fromNode.addAssignmentEdge(toNode)
+
+                        context.logMultiple {
+                            +"Adding edge"
+                            +"    FROM ${edge.from.debugString(fromArg?.let { nodeToString(it) })}"
+                            +"    TO ${edge.to.debugString(toArg?.let { nodeToString(it) })}"
+                        }
                     }
                 }
             }
@@ -1367,29 +1399,10 @@ internal object EscapeAnalysis {
                 return interestingDrains
             }
 
-            private fun getParameterNodes(): Array<PointsToGraphNode> {
-                // Put a dummyNode in order to not bother with nullability. Then rewrite it with actual values.
-                val dummyNode = returnsNode // Anything will do.
-                val parameters = Array(functionSymbol.parameters.size + 1) { dummyNode }
-
-                // Parameters are declared in the root scope.
-                function.body.rootScope.nodes
-                        .filterIsInstance<DataFlowIR.Node.Parameter>()
-                        .forEach {
-                            if (parameters[it.index] != dummyNode)
-                                error("Two parameters with the same index ${it.index}: $it, ${parameters[it.index].node}")
-                            parameters[it.index] = nodes[it]!!
-                        }
-                parameters[functionSymbol.parameters.size] = returnsNode
-
-                return parameters
-            }
-
             private fun paintInterestingNodes(): Pair<Int, Map<PointsToGraphNode, CompressedPointsToGraph.Node>> {
                 var drainsCount = 0
                 val drainFactory = { CompressedPointsToGraph.Node.drain(drainsCount++) }
 
-                val parameters = getParameterNodes()
                 val interestingDrains = findInterestingDrains(parameters)
                 val nodeIds = paintNodes(parameters, interestingDrains, drainFactory)
                 buildComponentsClosures(nodeIds)
