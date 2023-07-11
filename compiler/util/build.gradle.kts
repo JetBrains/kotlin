@@ -13,6 +13,9 @@ dependencies {
     compileOnly(commonDependency("org.jetbrains.intellij.deps:asm-all"))
     compileOnly(jpsModel()) { isTransitive = false }
     compileOnly(jpsModelImpl()) { isTransitive = false }
+
+    testImplementation(projectTests(":compiler:tests-common"))
+    testImplementation(intellijCore())
 }
 
 sourceSets {
@@ -20,5 +23,13 @@ sourceSets {
         projectDefault()
         resources.srcDir(File(rootDir, "resources"))
     }
-    "test" {}
+    "test" {
+        projectDefault()
+    }
+}
+
+testsJar()
+
+projectTest(parallel = true) {
+    workingDir = rootDir
 }
