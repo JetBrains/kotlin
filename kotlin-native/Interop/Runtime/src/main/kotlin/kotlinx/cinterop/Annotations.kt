@@ -14,7 +14,11 @@ package kotlinx.cinterop
 @Suppress("unused") // Is emitted by the Commonizer
 @Target(AnnotationTarget.TYPEALIAS, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY)
 @Retention(AnnotationRetention.BINARY)
-@RequiresOptIn(level = RequiresOptIn.Level.WARNING)
+@RequiresOptIn(
+        message = "The declaration is using numbers with different bit widths in least two actual platforms. " +
+                "Such types shall not be used in user-defined 'expect fun' signatures",
+        level = RequiresOptIn.Level.ERROR
+)
 public annotation class UnsafeNumber(val actualPlatformTypes: Array<String>)
 
 /**
