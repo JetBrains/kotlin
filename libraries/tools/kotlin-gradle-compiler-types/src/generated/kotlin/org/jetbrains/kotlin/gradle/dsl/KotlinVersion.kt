@@ -25,6 +25,6 @@ enum class KotlinVersion(val version: String) {
             KotlinVersion.values().firstOrNull { it.version == version }
                 ?: throw IllegalArgumentException("Unknown Kotlin version: $version")
 
-        val DEFAULT = KOTLIN_1_9
+        val DEFAULT = KOTLIN_2_0
     }
 }
