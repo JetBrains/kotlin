@@ -61,8 +61,8 @@ fun box() = abiTest {
     expectSuccess(91) { varargArgumentAndOtherArgumentsWithDefaultValues(100, 1) }
     expectSuccess(93) { varargArgumentAndOtherArgumentsWithDefaultValues(100, 1, 2) }
     expectSuccess(113) { varargArgumentAndOtherArgumentsWithDefaultValues(100, 1, 2, last = 10) }
-    expectSuccess(-109) { varargArgumentAndOtherArgumentsWithDefaultValues(elements = *intArrayOf(1)) }
-    expectSuccess(-107) { varargArgumentAndOtherArgumentsWithDefaultValues(elements = *intArrayOf(1, 2)) }
+    expectSuccess(-109) { @Suppress("REDUNDANT_SPREAD_OPERATOR_IN_NAMED_FORM_IN_FUNCTION") varargArgumentAndOtherArgumentsWithDefaultValues(elements = *intArrayOf(1)) }
+    expectSuccess(-107) { @Suppress("REDUNDANT_SPREAD_OPERATOR_IN_NAMED_FORM_IN_FUNCTION") varargArgumentAndOtherArgumentsWithDefaultValues(elements = *intArrayOf(1, 2)) }
     expectSuccess(104) { varargArgumentWithDefaultValueAndOtherArguments(100, last = 10) }
     expectSuccess(111) { varargArgumentWithDefaultValueAndOtherArguments(100, 1, last = 10) }
     expectSuccess(113) { varargArgumentWithDefaultValueAndOtherArguments(100, 1, 2, last = 10) }
@@ -74,8 +74,8 @@ fun box() = abiTest {
     expectSuccess(91) { varargArgumentWithDefaultValueAndOtherArgumentsWithDefaultValues(100, 1) }
     expectSuccess(93) { varargArgumentWithDefaultValueAndOtherArgumentsWithDefaultValues(100, 1, 2) }
     expectSuccess(113) { varargArgumentWithDefaultValueAndOtherArgumentsWithDefaultValues(100, 1, 2, last = 10) }
-    expectSuccess(-109) { varargArgumentWithDefaultValueAndOtherArgumentsWithDefaultValues(elements = *intArrayOf(1)) }
-    expectSuccess(-107) { varargArgumentWithDefaultValueAndOtherArgumentsWithDefaultValues(elements = *intArrayOf(1, 2)) }
+    expectSuccess(-109) { @Suppress("REDUNDANT_SPREAD_OPERATOR_IN_NAMED_FORM_IN_FUNCTION") varargArgumentWithDefaultValueAndOtherArgumentsWithDefaultValues(elements = *intArrayOf(1)) }
+    expectSuccess(-107) { @Suppress("REDUNDANT_SPREAD_OPERATOR_IN_NAMED_FORM_IN_FUNCTION") varargArgumentWithDefaultValueAndOtherArgumentsWithDefaultValues(elements = *intArrayOf(1, 2)) }
 
     expectSuccess(-1) { suspendToNonSuspendFunction1(1) }
     expectSuccess(-2) { suspendToNonSuspendFunction2(2) }

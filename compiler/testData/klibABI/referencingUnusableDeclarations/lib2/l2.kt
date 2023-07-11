@@ -18,9 +18,9 @@ class StableClass {
     }
 }
 
-fun functionWithUnlinkedParameter(p: RemovedClass?) = "functionWithUnlinkedParameter"
+fun functionWithUnlinkedParameter(@Suppress("UNUSED_PARAMETER") p: RemovedClass?) = "functionWithUnlinkedParameter"
 fun functionWithUnlinkedReturnValue(): RemovedClass = TODO("functionWithUnlinkedReturnValue")
-fun <T : RemovedClass> functionWithRemovedTypeParameter(a: Any?): T = TODO("functionWithRemovedTypeParameter")
+fun <T : RemovedClass> functionWithRemovedTypeParameter(@Suppress("UNUSED_PARAMETER") a: Any?): T = TODO("functionWithRemovedTypeParameter")
 
 fun referenceRemovedClassReference(): String = RemovedClass::class.simpleName.orEmpty()
 fun referenceRemovedClassConstructorReference(): String = ::RemovedClass.name

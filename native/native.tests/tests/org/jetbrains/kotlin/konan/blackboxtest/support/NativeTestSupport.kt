@@ -461,7 +461,7 @@ private object NativeTestSupport {
 
         val config = when (mode) {
             UsePartialLinkage.Mode.DISABLED -> PartialLinkageConfig(PartialLinkageMode.DISABLE, PartialLinkageLogLevel.ERROR)
-            UsePartialLinkage.Mode.ENABLED_WITH_WARNING -> PartialLinkageConfig(PartialLinkageMode.ENABLE, PartialLinkageLogLevel.WARNING)
+            UsePartialLinkage.Mode.DEFAULT -> PartialLinkageConfig(PartialLinkageMode.ENABLE, PartialLinkageLogLevel.DEFAULT)
             UsePartialLinkage.Mode.ENABLED_WITH_ERROR -> PartialLinkageConfig(PartialLinkageMode.ENABLE, PartialLinkageLogLevel.ERROR)
         }
 

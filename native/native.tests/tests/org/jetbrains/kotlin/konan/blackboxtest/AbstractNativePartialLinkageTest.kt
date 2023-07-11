@@ -27,7 +27,7 @@ import org.opentest4j.TestAbortedException
 import java.io.File
 
 @Tag("partial-linkage")
-@UsePartialLinkage(UsePartialLinkage.Mode.ENABLED_WITH_WARNING)
+@UsePartialLinkage(UsePartialLinkage.Mode.DEFAULT)
 abstract class AbstractNativePartialLinkageTest : AbstractNativeSimpleTest() {
     private inner class NativeTestConfiguration(testPath: String) : PartialLinkageTestUtils.TestConfiguration {
         override val testDir = getAbsoluteFile(testPath)
@@ -218,7 +218,11 @@ abstract class AbstractNativePartialLinkageTest : AbstractNativeSimpleTest() {
 
     companion object {
         private val COMPILER_ARGS = TestCompilerArgs(
-            listOf("-nostdlib") // stdlib is passed explicitly.
+            listOf(
+                "-nostdlib", // stdlib is passed explicitly.
+                "-Xsuppress-version-warnings", // Don't fail on language version warnings.
+                "-Werror" // Halt on any unexpected warning.
+            )
         )
 
         private val DEFAULT_EXTRAS = WithTestRunnerExtras(TestRunnerType.DEFAULT)
