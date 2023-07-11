@@ -4364,6 +4364,11 @@ internal class DelegationByDynamicImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KtFirDiagnostic.DelegationByDynamic
 
+internal class PropertyDelegationByDynamicImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KtFirDiagnostic.PropertyDelegationByDynamic
+
 internal class SpreadOperatorInDynamicCallImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,

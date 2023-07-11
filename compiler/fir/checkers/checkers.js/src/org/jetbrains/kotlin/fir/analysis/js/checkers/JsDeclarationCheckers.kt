@@ -39,4 +39,9 @@ object JsDeclarationCheckers : DeclarationCheckers() {
             FirJsNativeGetterChecker,
             FirJsNativeSetterChecker,
         )
+
+    override val propertyCheckers: Set<FirPropertyChecker>
+        get() = setOf(
+            FirJsPropertyDelegationByDynamicChecker
+        )
 }

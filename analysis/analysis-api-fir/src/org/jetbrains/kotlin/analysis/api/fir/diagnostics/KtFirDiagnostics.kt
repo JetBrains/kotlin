@@ -3609,6 +3609,10 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = DelegationByDynamic::class
     }
 
+    interface PropertyDelegationByDynamic : KtFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = PropertyDelegationByDynamic::class
+    }
+
     interface SpreadOperatorInDynamicCall : KtFirDiagnostic<KtElement> {
         override val diagnosticClass get() = SpreadOperatorInDynamicCall::class
     }
