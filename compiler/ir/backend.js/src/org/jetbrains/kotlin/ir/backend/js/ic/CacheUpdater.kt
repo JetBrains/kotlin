@@ -4,12 +4,14 @@
 
 package org.jetbrains.kotlin.ir.backend.js.ic
 
+import com.sun.management.HotSpotDiagnosticMXBean
 import org.jetbrains.kotlin.backend.common.CommonJsKLibResolver
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.serialization.IrInterningService
 import org.jetbrains.kotlin.backend.common.serialization.cityHash64
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.backend.js.*
+import org.jetbrains.kotlin.ir.backend.js.HeapDumper
 import org.jetbrains.kotlin.ir.backend.js.codegen.JsGenerationGranularity
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIrProgramFragment
 import org.jetbrains.kotlin.ir.declarations.*
@@ -25,8 +27,23 @@ import org.jetbrains.kotlin.utils.memoryOptimizedMap
 import org.jetbrains.kotlin.utils.newHashMapWithExpectedSize
 import org.jetbrains.kotlin.utils.newHashSetWithExpectedSize
 import java.io.File
+import java.lang.management.ManagementFactory
 import java.nio.file.Files
+import java.time.Instant
+import java.time.format.DateTimeFormatter
 import java.util.EnumSet
+
+object HeapDumper {
+    private val hotSpotDiagnostic: HotSpotDiagnosticMXBean by lazy {
+        val connection = ManagementFactory.getPlatformMBeanServer()
+        val name = "com.sun.management:type=HotSpotDiagnostic"
+        ManagementFactory.newPlatformMXBeanProxy(connection, name, HotSpotDiagnosticMXBean::class.java)
+    }
+
+    fun createHeapDump(file: String, live: Boolean) {
+        hotSpotDiagnostic.dumpHeap(file, live)
+    }
+}
 
 fun interface JsIrCompilerICInterface {
     fun compile(
@@ -659,6 +676,18 @@ class CacheUpdater(
             irFactory = irFactory()
         )
         var loadedIr = jsIrLinkerLoader.loadIr(dirtyFileExports)
+
+        val moduleName = loadedIr.loadedFragments[mainLibraryFile]?.name?.asString()
+        if (moduleName in setOf("<space.app:app-web>", "<space:all-js>")) {
+            HeapDumper.createHeapDump(
+                "/Users/sergej.jaskiewicz/Developer/kotlin/heap-dumps/after-serialization-IC-v1-${moduleName}-${
+                    DateTimeFormatter.ISO_INSTANT.format(
+                        Instant.now()
+                    )
+                }.hprof",
+                false
+            )
+        }
 
         var iterations = 0
         var lastDirtyFiles: KotlinSourceFileMap<KotlinSourceFileExports> = dirtyFileExports

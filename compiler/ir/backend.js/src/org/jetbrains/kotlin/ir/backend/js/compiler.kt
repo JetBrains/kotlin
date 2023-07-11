@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.backend.js
 
+import com.sun.management.HotSpotDiagnosticMXBean
 import org.jetbrains.kotlin.backend.common.linkage.issues.checkNoUnboundSymbols
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.phaser.invokeToplevel
@@ -24,6 +25,9 @@ import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.RuntimeDiagnostic
 import org.jetbrains.kotlin.name.FqName
+import java.lang.management.ManagementFactory
+import java.time.Instant
+import java.time.format.DateTimeFormatter
 
 class CompilerResult(
     val outputs: Map<TranslationMode, CompilationOutputs>,
@@ -35,6 +39,18 @@ class LoweredIr(
     val allModules: List<IrModuleFragment>,
     val moduleFragmentToUniqueName: Map<IrModuleFragment, String>,
 )
+
+object HeapDumper {
+    private val hotSpotDiagnostic: HotSpotDiagnosticMXBean by lazy {
+        val connection = ManagementFactory.getPlatformMBeanServer()
+        val name = "com.sun.management:type=HotSpotDiagnostic"
+        ManagementFactory.newPlatformMXBeanProxy(connection, name, HotSpotDiagnosticMXBean::class.java)
+    }
+
+    fun createHeapDump(file: String, live: Boolean) {
+        hotSpotDiagnostic.dumpHeap(file, live)
+    }
+}
 
 fun compile(
     depsDescriptors: ModulesStructure,
@@ -53,6 +69,16 @@ fun compile(
 
     val (moduleFragment: IrModuleFragment, dependencyModules, irBuiltIns, symbolTable, deserializer, moduleToName) =
         loadIr(depsDescriptors, irFactory, verifySignatures, filesToLower, loadFunctionInterfacesIntoStdlib = true)
+
+    if (moduleFragment.name.asString() in setOf("<space.app:app-web>", "<space:all-js>")) {
+        HeapDumper.createHeapDump(
+            "/Users/sergej.jaskiewicz/Developer/kotlin/heap-dumps/after-serialization-v1-${moduleFragment.name}-${
+                DateTimeFormatter.ISO_INSTANT.format(
+                    Instant.now()
+                )
+            }.hprof", false
+        )
+    }
 
     return compileIr(
         moduleFragment,
