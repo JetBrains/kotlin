@@ -634,10 +634,10 @@ actual class HashMap<K, V> private constructor(
             if (index >= map.length) throw NoSuchElementException()
             lastIndex = index++
             val key = map.keysArray[lastIndex]
-            if (key == map) sb.append("(this Map)") else sb.append(key)
+            if (key === map) sb.append("(this Map)") else sb.append(key)
             sb.append('=')
             val value = map.valuesArray!![lastIndex]
-            if (value == map) sb.append("(this Map)") else sb.append(value)
+            if (value === map) sb.append("(this Map)") else sb.append(value)
             initNext()
         }
     }

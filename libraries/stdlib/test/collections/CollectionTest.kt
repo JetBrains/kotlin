@@ -5,9 +5,7 @@
 
 package test.collections
 
-import test.assertIsNegativeZero
-import test.assertIsPositiveZero
-import test.assertStaticAndRuntimeTypeIs
+import test.*
 import kotlin.test.*
 import test.collections.behaviors.*
 import test.comparisons.STRING_CASE_INSENSITIVE_ORDER
@@ -1222,6 +1220,57 @@ class CollectionTest {
     @Test fun toStringTest() {
         // we need toString() inside pattern because of KT-8666
         assertEquals("[1, a, null, ${Long.MAX_VALUE.toString()}]", listOf(1, "a", null, Long.MAX_VALUE).toString())
+    }
+
+    @Test fun toStringContainingThis() = testExceptOn(TestPlatform.Js) {
+        // resulting string is platform-dependent, but shouldn't throw
+        arrayOf<Any>("a", "b", "c").apply { this[1] = this }.toString()
+
+        assertEquals(
+            "[a, (this Collection), c]",
+            arrayListOf<Any>("a", "b", "c").apply { this[1] = this }.toString()
+        )
+        assertEquals(
+            "[a, (this Collection), c]",
+            buildList<Any> {
+                addAll(listOf("a", "b", "c"))
+                this[1] = this
+            }.toString()
+        )
+
+        assertEquals(
+            "[a, (this Collection), c]",
+            linkedSetOf<Any>().apply {
+                add("a")
+                add(this)
+                add("c")
+            }.toString()
+        )
+        assertEquals(
+            "[a, (this Collection), c]",
+            buildSet<Any> {
+                add("a")
+                add(this)
+                add("c")
+            }.toString()
+        )
+
+        assertEquals(
+            "{a=1, (this Map)=(this Map), c=3}",
+            linkedMapOf<Any, Any>().apply {
+                put("a", "1")
+                put(this, this)
+                put("c", "3")
+            }.toString()
+        )
+        assertEquals(
+            "{a=1, (this Map)=(this Map), c=3}",
+            buildMap<Any, Any> {
+                put("a", "1")
+                put(this, this)
+                put("c", "3")
+            }.toString()
+        )
     }
 
     @Test fun randomAccess() {

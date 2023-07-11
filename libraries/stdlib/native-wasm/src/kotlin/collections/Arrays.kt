@@ -23,13 +23,18 @@ internal fun checkCopyOfRangeArguments(fromIndex: Int, toIndex: Int, size: Int) 
 /**
  * Returns a string representation of the contents of the subarray of the specified array as if it is [List].
  */
-internal inline fun <T> Array<out T>.subarrayContentToString(offset: Int, length: Int): String {
+internal inline fun <T> Array<out T>.subarrayContentToString(offset: Int, length: Int, thisCollection: Collection<T>): String {
     val sb = StringBuilder(2 + length * 3)
     sb.append("[")
     var i = 0
     while (i < length) {
         if (i > 0) sb.append(", ")
-        sb.append(this[offset + i])
+        val nextElement = this[offset + i]
+        if (nextElement === thisCollection) {
+            sb.append("(this Collection)")
+        } else {
+            sb.append(nextElement)
+        }
         i++
     }
     sb.append("]")

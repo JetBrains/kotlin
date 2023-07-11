@@ -174,7 +174,7 @@ internal class ListBuilder<E> private constructor(
     }
 
     override fun toString(): String {
-        return array.subarrayContentToString(offset, length)
+        return array.subarrayContentToString(offset, length, this)
     }
 
     // ---------------------------- private ----------------------------
@@ -359,13 +359,18 @@ internal fun <E> arrayOfUninitializedElements(size: Int): Array<E> {
     return arrayOfNulls<Any?>(size) as Array<E>
 }
 
-private fun <T> Array<out T>.subarrayContentToString(offset: Int, length: Int): String {
+private fun <T> Array<out T>.subarrayContentToString(offset: Int, length: Int, thisCollection: Collection<T>): String {
     val sb = StringBuilder(2 + length * 3)
     sb.append("[")
     var i = 0
     while (i < length) {
         if (i > 0) sb.append(", ")
-        sb.append(this[offset + i])
+        val nextElement = this[offset + i]
+        if (nextElement === thisCollection) {
+            sb.append("(this Collection)")
+        } else {
+            sb.append(nextElement)
+        }
         i++
     }
     sb.append("]")
