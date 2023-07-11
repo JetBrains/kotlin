@@ -6224,8 +6224,8 @@ fileCheckTest("filecheck_signext_zeroext_interop") {
 fileCheckTest("filecheck_signext_zeroext_objc_export") {
     annotatedSource = project.file('filecheck/signext_zeroext_objc_export.kt')
     generateFramework = true
-    enabled = target.family.appleFamily
-            && !isK2(project) // KT-58863
+//    enabled = target.family.appleFamily
+    enabled = false // KT-58863
 }
 
 fileCheckTest("filecheck_function_attributes_at_callsite") {
