@@ -18,6 +18,7 @@ package kotlin.collections
  * @param K the type of map keys. The map is invariant in its key type.
  * @param V the type of map values. The map is invariant in its value type.
  */
+@AllowDifferentMembersInActual // New 'createKeysView', 'checkIsMutable', etc. members are added compared to the expect declaration
 public actual abstract class AbstractMutableMap<K, V> protected actual constructor() : AbstractMap<K, V>(), MutableMap<K, V> {
 
     internal open fun createKeysView(): MutableSet<K> = HashMapKeysDefault(this)
