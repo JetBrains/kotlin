@@ -42,7 +42,7 @@ abstract class AbstractPodInstallTask : CocoapodsTask() {
 
     @TaskAction
     open fun doPodInstall() {
-        val podInstallCommand = listOf("pod", "install")
+        val podInstallCommand = listOf("env", "pod", "install")
 
         runCommand(podInstallCommand,
                    logger,
