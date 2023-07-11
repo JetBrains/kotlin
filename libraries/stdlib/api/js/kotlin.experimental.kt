@@ -30,6 +30,15 @@ public inline infix fun kotlin.Byte.xor(other: kotlin.Byte): kotlin.Byte
 @kotlin.internal.InlineOnly
 public inline infix fun kotlin.Short.xor(other: kotlin.Short): kotlin.Short
 
+@kotlin.RequiresOptIn(level = Level.ERROR)
+@kotlin.annotation.Retention(value = AnnotationRetention.BINARY)
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.PROPERTY, AnnotationTarget.FIELD, AnnotationTarget.LOCAL_VARIABLE, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.TYPEALIAS})
+@kotlin.annotation.MustBeDocumented
+@kotlin.SinceKotlin(version = "1.9")
+public final annotation class ExperimentalNativeApi : kotlin.Annotation {
+    public constructor ExperimentalNativeApi()
+}
+
 @kotlin.RequiresOptIn
 @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.ANNOTATION_CLASS})
 @kotlin.annotation.Retention(value = AnnotationRetention.BINARY)
