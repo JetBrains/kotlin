@@ -19,8 +19,8 @@ fun test() {
     a<Foo.Bar<String>>()
     a<Foo.Bar.Baz>()
 
-    Foo<String>.Bar::class
-    Foo<String>.Bar.Baz::class
+    <!CLASS_LITERAL_LHS_NOT_A_CLASS!>Foo<String>.Bar::class<!>
+    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Foo<String>.Bar.Baz<!>::class
 
     a<Foo<String>.<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Bar<!>>()
     a<Foo<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><String><!>.Bar.Baz>()
