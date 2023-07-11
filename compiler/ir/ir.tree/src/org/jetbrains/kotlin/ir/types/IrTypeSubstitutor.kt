@@ -38,6 +38,7 @@ abstract class BaseIrTypeSubstitutor(private val irBuiltIns: IrBuiltIns) : Abstr
             when (val typeArgument = getSubstitutionArgument(it)) {
                 is IrStarProjection -> irBuiltIns.anyNType // TODO upper bound for T
                 is IrTypeProjection -> typeArgument.type.mergeNullability(irType)
+                    .addAnnotations(irType.annotations)
             }
         }
         if (substitutedTypeParameter != null) {
