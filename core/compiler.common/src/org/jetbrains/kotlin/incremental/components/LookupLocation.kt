@@ -59,7 +59,8 @@ enum class NoLookupLocation : LookupLocation {
     WHEN_GET_LOCAL_VARIABLE,
     WHEN_FIND_BY_FQNAME,
     WHEN_GET_COMPANION_OBJECT,
-    FOR_DEFAULT_IMPORTS;
+    FOR_DEFAULT_IMPORTS,
+    FROM_FRONTEND_CHECKER; // I have no idea why it's needed
 
     override val location: LocationInfo? get() = null
 }

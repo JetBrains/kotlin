@@ -284,9 +284,15 @@ public class FirOldFrontendMPPDiagnosticsWithPsiTestGenerated extends AbstractFi
     }
 
     @Test
-    @TestMetadata("widerVisibilityInActualClassifier.kt")
-    public void testWiderVisibilityInActualClassifier() throws Exception {
-        runTest("compiler/testData/diagnostics/tests/multiplatform/widerVisibilityInActualClassifier.kt");
+    @TestMetadata("widerVisibilityInFinalActualClassifier.kt")
+    public void testWiderVisibilityInFinalActualClassifier() throws Exception {
+        runTest("compiler/testData/diagnostics/tests/multiplatform/widerVisibilityInFinalActualClassifier.kt");
+    }
+
+    @Test
+    @TestMetadata("widerVisibilityInOpenActualClassifier.kt")
+    public void testWiderVisibilityInOpenActualClassifier() throws Exception {
+        runTest("compiler/testData/diagnostics/tests/multiplatform/widerVisibilityInOpenActualClassifier.kt");
     }
 
     @Nested
@@ -940,6 +946,244 @@ public class FirOldFrontendMPPDiagnosticsWithPsiTestGenerated extends AbstractFi
             public void testSealedInheritorsInComplexModuleStructure() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/multiplatform/hmpp/multiplatformCompositeAnalysis/sealedInheritorsInComplexModuleStructure.kt");
             }
+        }
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/diagnostics/tests/multiplatform/injectIntoExpectOpenClassDuringActualization")
+    @TestDataPath("$PROJECT_ROOT")
+    public class InjectIntoExpectOpenClassDuringActualization {
+        @Test
+        @TestMetadata("actualTypealias.kt")
+        public void testActualTypealias() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/injectIntoExpectOpenClassDuringActualization/actualTypealias.kt");
+        }
+
+        @Test
+        public void testAllFilesPresentInInjectIntoExpectOpenClassDuringActualization() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/multiplatform/injectIntoExpectOpenClassDuringActualization"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), TargetBackend.JVM_IR, true);
+        }
+
+        @Test
+        @TestMetadata("allowDifferentMembersInActual_class.kt")
+        public void testAllowDifferentMembersInActual_class() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/injectIntoExpectOpenClassDuringActualization/allowDifferentMembersInActual_class.kt");
+        }
+
+        @Test
+        @TestMetadata("allowDifferentMembersInActual_typealias.kt")
+        public void testAllowDifferentMembersInActual_typealias() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/injectIntoExpectOpenClassDuringActualization/allowDifferentMembersInActual_typealias.kt");
+        }
+
+        @Test
+        @TestMetadata("changeGenericName.kt")
+        public void testChangeGenericName() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/injectIntoExpectOpenClassDuringActualization/changeGenericName.kt");
+        }
+
+        @Test
+        @TestMetadata("changeModalityInOverride.kt")
+        public void testChangeModalityInOverride() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/injectIntoExpectOpenClassDuringActualization/changeModalityInOverride.kt");
+        }
+
+        @Test
+        @TestMetadata("changeModalityOfSubstitutedFakeOverride.kt")
+        public void testChangeModalityOfSubstitutedFakeOverride() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/injectIntoExpectOpenClassDuringActualization/changeModalityOfSubstitutedFakeOverride.kt");
+        }
+
+        @Test
+        @TestMetadata("changeModalityOfToStringInOverride.kt")
+        public void testChangeModalityOfToStringInOverride() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/injectIntoExpectOpenClassDuringActualization/changeModalityOfToStringInOverride.kt");
+        }
+
+        @Test
+        @TestMetadata("changeParameterNameInOverride.kt")
+        public void testChangeParameterNameInOverride() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/injectIntoExpectOpenClassDuringActualization/changeParameterNameInOverride.kt");
+        }
+
+        @Test
+        @TestMetadata("changeVisibilityInOverride.kt")
+        public void testChangeVisibilityInOverride() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/injectIntoExpectOpenClassDuringActualization/changeVisibilityInOverride.kt");
+        }
+
+        @Test
+        @TestMetadata("covariantFunctionOverride.kt")
+        public void testCovariantFunctionOverride() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/injectIntoExpectOpenClassDuringActualization/covariantFunctionOverride.kt");
+        }
+
+        @Test
+        @TestMetadata("covariantOverrideGenericUpperBound.kt")
+        public void testCovariantOverrideGenericUpperBound() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/injectIntoExpectOpenClassDuringActualization/covariantOverrideGenericUpperBound.kt");
+        }
+
+        @Test
+        @TestMetadata("covariantOverrideGenerics.kt")
+        public void testCovariantOverrideGenerics() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/injectIntoExpectOpenClassDuringActualization/covariantOverrideGenerics.kt");
+        }
+
+        @Test
+        @TestMetadata("covariantPropertyOverride.kt")
+        public void testCovariantPropertyOverride() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/injectIntoExpectOpenClassDuringActualization/covariantPropertyOverride.kt");
+        }
+
+        @Test
+        @TestMetadata("fakeOverrideChangedToRealOverride.kt")
+        public void testFakeOverrideChangedToRealOverride() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/injectIntoExpectOpenClassDuringActualization/fakeOverrideChangedToRealOverride.kt");
+        }
+
+        @Test
+        @TestMetadata("finalClassIsActualizedByOpenClass.kt")
+        public void testFinalClassIsActualizedByOpenClass() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/injectIntoExpectOpenClassDuringActualization/finalClassIsActualizedByOpenClass.kt");
+        }
+
+        @Test
+        @TestMetadata("finalMethodIsActualizedByOpenMethod.kt")
+        public void testFinalMethodIsActualizedByOpenMethod() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/injectIntoExpectOpenClassDuringActualization/finalMethodIsActualizedByOpenMethod.kt");
+        }
+
+        @Test
+        @TestMetadata("injectClass.kt")
+        public void testInjectClass() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/injectIntoExpectOpenClassDuringActualization/injectClass.kt");
+        }
+
+        @Test
+        @TestMetadata("injectConstructor.kt")
+        public void testInjectConstructor() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/injectIntoExpectOpenClassDuringActualization/injectConstructor.kt");
+        }
+
+        @Test
+        @TestMetadata("injectContextReceiverOverload.kt")
+        public void testInjectContextReceiverOverload() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/injectIntoExpectOpenClassDuringActualization/injectContextReceiverOverload.kt");
+        }
+
+        @Test
+        @TestMetadata("injectEmptySuperClass.kt")
+        public void testInjectEmptySuperClass() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/injectIntoExpectOpenClassDuringActualization/injectEmptySuperClass.kt");
+        }
+
+        @Test
+        @TestMetadata("injectExtensionReceiverOverload.kt")
+        public void testInjectExtensionReceiverOverload() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/injectIntoExpectOpenClassDuringActualization/injectExtensionReceiverOverload.kt");
+        }
+
+        @Test
+        @TestMetadata("injectInnerClass.kt")
+        public void testInjectInnerClass() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/injectIntoExpectOpenClassDuringActualization/injectInnerClass.kt");
+        }
+
+        @Test
+        @TestMetadata("injectMethod_internalMethod.kt")
+        public void testInjectMethod_internalMethod() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/injectIntoExpectOpenClassDuringActualization/injectMethod_internalMethod.kt");
+        }
+
+        @Test
+        @TestMetadata("injectMethod_privateMethod.kt")
+        public void testInjectMethod_privateMethod() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/injectIntoExpectOpenClassDuringActualization/injectMethod_privateMethod.kt");
+        }
+
+        @Test
+        @TestMetadata("injectMethod_protectedMethod.kt")
+        public void testInjectMethod_protectedMethod() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/injectIntoExpectOpenClassDuringActualization/injectMethod_protectedMethod.kt");
+        }
+
+        @Test
+        @TestMetadata("injectMethod_publicMethod.kt")
+        public void testInjectMethod_publicMethod() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/injectIntoExpectOpenClassDuringActualization/injectMethod_publicMethod.kt");
+        }
+
+        @Test
+        @TestMetadata("injectParameterOverload.kt")
+        public void testInjectParameterOverload() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/injectIntoExpectOpenClassDuringActualization/injectParameterOverload.kt");
+        }
+
+        @Test
+        @TestMetadata("injectParameterOverloadWithGenerics.kt")
+        public void testInjectParameterOverloadWithGenerics() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/injectIntoExpectOpenClassDuringActualization/injectParameterOverloadWithGenerics.kt");
+        }
+
+        @Test
+        @TestMetadata("injectPrivateProperty.kt")
+        public void testInjectPrivateProperty() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/injectIntoExpectOpenClassDuringActualization/injectPrivateProperty.kt");
+        }
+
+        @Test
+        @TestMetadata("injectProperty.kt")
+        public void testInjectProperty() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/injectIntoExpectOpenClassDuringActualization/injectProperty.kt");
+        }
+
+        @Test
+        @TestMetadata("injectPropertyWithTheSameSignatureAsExistingFunction.kt")
+        public void testInjectPropertyWithTheSameSignatureAsExistingFunction() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/injectIntoExpectOpenClassDuringActualization/injectPropertyWithTheSameSignatureAsExistingFunction.kt");
+        }
+
+        @Test
+        @TestMetadata("injectPublicFakeOverrideMethod.kt")
+        public void testInjectPublicFakeOverrideMethod() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/injectIntoExpectOpenClassDuringActualization/injectPublicFakeOverrideMethod.kt");
+        }
+
+        @Test
+        @TestMetadata("nestedExpectOpenClass.kt")
+        public void testNestedExpectOpenClass() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/injectIntoExpectOpenClassDuringActualization/nestedExpectOpenClass.kt");
+        }
+
+        @Test
+        @TestMetadata("severalMismatches.kt")
+        public void testSeveralMismatches() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/injectIntoExpectOpenClassDuringActualization/severalMismatches.kt");
+        }
+
+        @Test
+        @TestMetadata("substitutedFakeOverrideChangedToRealOverride.kt")
+        public void testSubstitutedFakeOverrideChangedToRealOverride() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/injectIntoExpectOpenClassDuringActualization/substitutedFakeOverrideChangedToRealOverride.kt");
+        }
+
+        @Test
+        @TestMetadata("superTypesAreTheSameModuloActualTypealias.kt")
+        public void testSuperTypesAreTheSameModuloActualTypealias() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/injectIntoExpectOpenClassDuringActualization/superTypesAreTheSameModuloActualTypealias.kt");
+        }
+
+        @Test
+        @TestMetadata("superTypesAreTheSameModuloTypealias1.kt")
+        public void testSuperTypesAreTheSameModuloTypealias1() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/injectIntoExpectOpenClassDuringActualization/superTypesAreTheSameModuloTypealias1.kt");
+        }
+
+        @Test
+        @TestMetadata("superTypesAreTheSameModuloTypealias2.kt")
+        public void testSuperTypesAreTheSameModuloTypealias2() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/injectIntoExpectOpenClassDuringActualization/superTypesAreTheSameModuloTypealias2.kt");
         }
     }
 

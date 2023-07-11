@@ -32,7 +32,7 @@ interface KotlinXStringDemoInterface {
 // TARGET_PLATFORM: JS
 
 // FILE: StringDemoInterface.kt
-actual typealias StringDemoInterface = KotlinXStringDemoInterface
+actual typealias <!ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_MEMBERS_AS_NON_FINAL_EXPECT_CLASSIFIER!>StringDemoInterface<!> = KotlinXStringDemoInterface
 
 actual fun StringDemoIn<!INCOMPATIBLE_MATCHING!>terface.<!ACTUAL_WITHOUT_EXPECT("actual fun StringDemoInterface.plusK(): <ERROR TYPE REF: Unresolved name: value>; The following declaration is incompatible:    expect fun StringDemoInterface.plusK(): String")!>plusK<!>() = <!EXPECT_CLASS_AS_FUNCTION!>StringValue<!>(value).plus("K")<!>.<!UNRESOLVED_REFERENCE!>value<!>
 

@@ -10,14 +10,11 @@ import kotlin.Pair;
 import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.descriptors.MemberDescriptor;
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory;
 import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.diagnostics.UnboundDiagnostic;
 import org.jetbrains.kotlin.metadata.deserialization.VersionRequirement;
 import org.jetbrains.kotlin.resolve.VarianceConflictDiagnosticData;
-import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility;
-import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility.Incompatible;
 import org.jetbrains.kotlin.types.KotlinTypeKt;
 import org.jetbrains.kotlin.util.OperatorNameConventions;
 import org.jetbrains.kotlin.utils.addToStdlib.AddToStdlibKt;
@@ -394,6 +391,22 @@ public class DefaultErrorMessages {
         MAP.put(EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE,
                 "{0}: expect and corresponding actual are declared in the same module, which will be prohibited in Kotlin 2.0. See https://youtrack.jetbrains.com/issue/KT-55177",
                 CAPITALIZED_DECLARATION_NAME_WITH_KIND_AND_PLATFORM);
+
+        MAP.put(ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_MEMBERS_AS_NON_FINAL_EXPECT_CLASSIFIER,
+                "{0}: non-final expect class and its actual class must declare exactly the same non-private members. The following non-private members in actual class are mismatched:{1}",
+                CAPITALIZED_DECLARATION_NAME_WITH_KIND_AND_PLATFORM,
+                ExpectActualScopeDiffsRenderer.TEXT);
+        MAP.put(NON_ACTUAL_MEMBER_DECLARED_IN_EXPECT_NON_FINAL_CLASSIFIER_ACTUALIZATION, "{0}", ExpectActualScopeDiffRenderer.INSTANCE);
+        MAP.put(RETURN_TYPE_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION, "{0}", ExpectActualScopeDiffRenderer.INSTANCE);
+        MAP.put(MODALITY_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION, "{0}", ExpectActualScopeDiffRenderer.INSTANCE);
+        MAP.put(VISIBILITY_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION, "{0}", ExpectActualScopeDiffRenderer.INSTANCE);
+        MAP.put(PARAMETER_NAME_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION, "{0}", ExpectActualScopeDiffRenderer.INSTANCE);
+
+        MAP.put(ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_SUPERTYPES_AS_NON_FINAL_EXPECT_CLASSIFIER,
+                "{0}: Non-final expect class and its actual class must declare exactly the same supertypes. " +
+                "Actual class declares the following supertypes that are not presented in expect class: {1}",
+                CAPITALIZED_DECLARATION_NAME_WITH_KIND_AND_PLATFORM,
+                new ListRenderer<>(TO_STRING, (elem) -> "'" + elem + "'"));
 
         MAP.put(OPTIONAL_EXPECTATION_NOT_ON_EXPECTED, "'@OptionalExpectation' can only be used on an expected annotation class");
         MAP.put(OPTIONAL_DECLARATION_OUTSIDE_OF_ANNOTATION_ENTRY, "Declaration annotated with '@OptionalExpectation' can only be used inside an annotation entry");

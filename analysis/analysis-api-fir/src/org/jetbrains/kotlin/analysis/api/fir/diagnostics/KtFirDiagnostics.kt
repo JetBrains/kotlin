@@ -28,6 +28,8 @@ import org.jetbrains.kotlin.diagnostics.WhenMissingCase
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.lexer.KtKeywordToken
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.name.CallableId
@@ -41,7 +43,9 @@ import org.jetbrains.kotlin.psi.KtBackingField
 import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtBinaryExpressionWithTypeRHS
 import org.jetbrains.kotlin.psi.KtCallExpression
+import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtClass
+import org.jetbrains.kotlin.psi.KtClassLikeDeclaration
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtConstructor
 import org.jetbrains.kotlin.psi.KtConstructorDelegationCall
@@ -84,6 +88,7 @@ import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualAnnotationsIncompatibilityType
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility.Incompatible
+import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMemberDiff
 import org.jetbrains.kotlin.types.Variance
 
 /*
@@ -2457,6 +2462,43 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
 
     interface ActualMissing : KtFirDiagnostic<KtNamedDeclaration> {
         override val diagnosticClass get() = ActualMissing::class
+    }
+
+    interface ActualClassifierMustHaveTheSameMembersAsNonFinalExpectClassifier : KtFirDiagnostic<KtClassLikeDeclaration> {
+        override val diagnosticClass get() = ActualClassifierMustHaveTheSameMembersAsNonFinalExpectClassifier::class
+        val actualClassOrTypealias: KtClassLikeSymbol
+        val scopeDiff: List<ExpectActualMemberDiff<FirCallableSymbol<*>, FirClassSymbol<*>>>
+    }
+
+    interface NonActualMemberDeclaredInExpectNonFinalClassifierActualization : KtFirDiagnostic<KtCallableDeclaration> {
+        override val diagnosticClass get() = NonActualMemberDeclaredInExpectNonFinalClassifierActualization::class
+        val diff: ExpectActualMemberDiff<FirCallableSymbol<*>, FirClassSymbol<*>>
+    }
+
+    interface ReturnTypeChangedInNonFinalExpectClassifierActualization : KtFirDiagnostic<KtCallableDeclaration> {
+        override val diagnosticClass get() = ReturnTypeChangedInNonFinalExpectClassifierActualization::class
+        val diff: ExpectActualMemberDiff<FirCallableSymbol<*>, FirClassSymbol<*>>
+    }
+
+    interface ModalityChangedInNonFinalExpectClassifierActualization : KtFirDiagnostic<KtCallableDeclaration> {
+        override val diagnosticClass get() = ModalityChangedInNonFinalExpectClassifierActualization::class
+        val diff: ExpectActualMemberDiff<FirCallableSymbol<*>, FirClassSymbol<*>>
+    }
+
+    interface VisibilityChangedInNonFinalExpectClassifierActualization : KtFirDiagnostic<KtCallableDeclaration> {
+        override val diagnosticClass get() = VisibilityChangedInNonFinalExpectClassifierActualization::class
+        val diff: ExpectActualMemberDiff<FirCallableSymbol<*>, FirClassSymbol<*>>
+    }
+
+    interface ParameterNameChangedInNonFinalExpectClassifierActualization : KtFirDiagnostic<KtCallableDeclaration> {
+        override val diagnosticClass get() = ParameterNameChangedInNonFinalExpectClassifierActualization::class
+        val diff: ExpectActualMemberDiff<FirCallableSymbol<*>, FirClassSymbol<*>>
+    }
+
+    interface ActualClassifierMustHaveTheSameSupertypesAsNonFinalExpectClassifier : KtFirDiagnostic<KtClassLikeDeclaration> {
+        override val diagnosticClass get() = ActualClassifierMustHaveTheSameSupertypesAsNonFinalExpectClassifier::class
+        val actualClassOrTypealias: KtClassLikeSymbol
+        val supertypes: List<Name>
     }
 
     interface NotAMultiplatformCompilation : KtFirDiagnostic<PsiElement> {

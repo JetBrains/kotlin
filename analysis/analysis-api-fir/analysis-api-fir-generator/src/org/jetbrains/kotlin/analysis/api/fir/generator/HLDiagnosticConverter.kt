@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.resolve.ForbiddenNamedArgumentsTarget
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualAnnotationsIncompatibilityType
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility
+import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMemberDiff
 import org.jetbrains.kotlin.types.Variance
 import kotlin.reflect.KClass
 import kotlin.reflect.KType
@@ -365,6 +366,7 @@ internal object FirToKtConversionCreator {
         ExpectActualCompatibility::class,
         ExpectActualCompatibility.Incompatible::class,
         ExpectActualAnnotationsIncompatibilityType::class,
+        ExpectActualMemberDiff::class,
         DeprecationInfo::class,
         ApiVersion::class,
         CallableId::class,
