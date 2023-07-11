@@ -15,6 +15,7 @@ package kotlin.reflect
  *
  * @param V the type of the property value.
  */
+@AllowDifferentMembersInActual // KProperty for JVM adds new members compared to the expect declaration
 public actual interface KProperty<out V> : KCallable<V> {
     /**
      * `true` if this property is `lateinit`.
@@ -56,6 +57,7 @@ public actual interface KProperty<out V> : KCallable<V> {
 /**
  * Represents a property declared as a `var`.
  */
+@AllowDifferentMembersInActual // New 'setter' member is added compared to the expect declaration
 public actual interface KMutableProperty<V> : KProperty<V> {
     /** The setter of this mutable property, used to change the value of the property. */
     public val setter: Setter<V>
@@ -72,6 +74,7 @@ public actual interface KMutableProperty<V> : KProperty<V> {
  * Such property is either originally declared in a receiverless context such as a package,
  * or has the receiver bound to it.
  */
+@AllowDifferentMembersInActual // New 'getDelegate' and 'getter' members are added compared to the expect declaration
 public actual interface KProperty0<out V> : KProperty<V>, () -> V {
     /**
      * Returns the current value of the property.
@@ -99,6 +102,7 @@ public actual interface KProperty0<out V> : KProperty<V>, () -> V {
 /**
  * Represents a `var`-property without any kind of receiver.
  */
+@AllowDifferentMembersInActual // Covariant 'setter' override. The annotations can be dropped in K2 KT-61184
 public actual interface KMutableProperty0<V> : KProperty0<V>, KMutableProperty<V> {
     /**
      * Modifies the value of the property.
@@ -124,6 +128,7 @@ public actual interface KMutableProperty0<V> : KProperty0<V>, KMutableProperty<V
  * @param T the type of the receiver which should be used to obtain the value of the property.
  * @param V the type of the property value.
  */
+@AllowDifferentMembersInActual // New 'getDelegate' and 'getter' members are added compared to the expect declaration
 public actual interface KProperty1<T, out V> : KProperty<V>, (T) -> V {
     /**
      * Returns the current value of the property.
@@ -164,6 +169,7 @@ public actual interface KProperty1<T, out V> : KProperty<V>, (T) -> V {
 /**
  * Represents a `var`-property, operations on which take one receiver as a parameter.
  */
+@AllowDifferentMembersInActual // Covariant 'setter' override. The annotations can be dropped in K2 KT-61184
 public actual interface KMutableProperty1<T, V> : KProperty1<T, V>, KMutableProperty<V> {
     /**
      * Modifies the value of the property.
@@ -196,6 +202,7 @@ public actual interface KMutableProperty1<T, V> : KProperty1<T, V>, KMutableProp
  *        the type of the extension receiver.
  * @param V the type of the property value.
  */
+@AllowDifferentMembersInActual // New 'getDelegate' and 'getter' members are added compared to the expect declaration
 public actual interface KProperty2<D, E, out V> : KProperty<V>, (D, E) -> V {
     /**
      * Returns the current value of the property. In case of the extension property in a class,
@@ -236,6 +243,7 @@ public actual interface KProperty2<D, E, out V> : KProperty<V>, (D, E) -> V {
 /**
  * Represents a `var`-property, operations on which take two receivers as parameters.
  */
+@AllowDifferentMembersInActual // Covariant 'setter' override. The annotations can be dropped in K2 KT-61184
 public actual interface KMutableProperty2<D, E, V> : KProperty2<D, E, V>, KMutableProperty<V> {
     /**
      * Modifies the value of the property.

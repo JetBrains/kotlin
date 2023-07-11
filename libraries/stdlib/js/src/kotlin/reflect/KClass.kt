@@ -47,7 +47,7 @@ public actual interface KClass<T : Any> : KClassifier {
      * For example, on JVM, [KClass] instances for a primitive type (`int`) and the corresponding wrapper type (`java.lang.Integer`)
      * are considered equal, because they have the same fully qualified name "kotlin.Int".
      */
-    override fun equals(other: Any?): Boolean
+    actual override fun equals(other: Any?): Boolean
 
-    override fun hashCode(): Int
+    actual override fun hashCode(): Int
 }

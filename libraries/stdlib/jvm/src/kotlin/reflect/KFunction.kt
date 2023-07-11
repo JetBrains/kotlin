@@ -8,6 +8,7 @@ package kotlin.reflect
 /**
  * Represents a function with introspection capabilities.
  */
+@AllowDifferentMembersInActual // KFunction for JVM adds a lot of new members compared to the expect declaration
 public actual interface KFunction<out R> : KCallable<R>, Function<R> {
     /**
      * `true` if this function is `inline`.

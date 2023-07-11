@@ -3,6 +3,7 @@
  * Js backend is ignored because they use old test infrastructure which doesn't support HMPP
  */
 
+// WITH_STDLIB
 // !LANGUAGE: +MultiPlatformProjects
 
 // TARGET_BACKEND: JVM
@@ -25,6 +26,8 @@ fun getB(): B = B()
 
 // MODULE: main()()(intermediate)
 // FILE: main.kt
+@OptIn(ExperimentalMultiplatform::class)
+@AllowDifferentMembersInActual
 actual open class A actual constructor() {
     fun bar(): String = "K"
 }

@@ -3,6 +3,8 @@ Exit code: OK
 Output:
 
 -- JVM --
-Exit code: OK
+Exit code: COMPILATION_ERROR
 Output:
-
+compiler/testData/multiplatform/genericDeclarations/jvm.kt:15:17: error: actual class 'AbstractList': actual class and its non-final expect class must declare exactly the same supertypes. Actual class declares the following supertypes that are not presented in expect class: 'Serializable'. This error happens because the expect class 'AbstractList' is non-final. Also see https://youtrack.jetbrains.com/issue/KT-22841 for more details
+actual abstract class AbstractList<F> : MutableList<F>, java.io.Serializable
+                ^
