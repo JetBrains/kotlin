@@ -111,6 +111,8 @@ interface KotlinTargetContainerWithNativeShortcuts : KotlinTargetContainerWithPr
 
     @Deprecated(SHORTCUTS_DEPRECATION_MESSAGE)
     fun ios(namePrefix: String, configure: Action<KotlinNativeTarget>) = ios(namePrefix) { configure.execute(this) }
+
+    @Deprecated(SHORTCUTS_DEPRECATION_MESSAGE)
     fun ios(configure: Action<KotlinNativeTarget>) = ios { configure.execute(this) }
 
     @Deprecated(SHORTCUTS_DEPRECATION_MESSAGE)
